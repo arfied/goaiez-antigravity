@@ -255,7 +255,7 @@ merge. Week 2 is scoped **one wave at a time**; it is not a single wave.
 | UI-44 | the `<h1>` seam in `components/account/layout.blade.php` (opt-in `heading` prop, `sr-only`, thirteen module pages opt in via `#[Layout]` params) · the ROI empty state onto `<x-ui.empty-state>` · the three `h3`-first views promoted to `h2` | closed, pushed `3881aa9b` |
 | UI-45 | the copy pass (`cooling`'s raw `vis_N`/`contact_form`/`1 visits`, `visitors-live`'s raw `page_view`, and their two tests) · `advanced-segments`, the fourteenth `moderate` screen | closed, pushed `880a52b7` |
 | UI-46 | `Architecture/OwnerNavTest`, REACHABILITY HALF ONLY — every owner route has an `OwnerNav` entry, a written exclusion or a MEASURED `SAMPLE_STATE` place · the two unguarded `->diffForHumans()` calls on a nullable column | closed, pushed `7f052348` |
-| **UI-47** | **`OwnerNavTest`'s second half — *"refuses a hand-written link from one owner screen to another"*. ⛔ NO exclusion list: the admission is DERIVED from `OwnerNav::all()` (ruling below)** | **in flight — run 88** |
+| **UI-47** | **`OwnerNavTest`'s second half — *"refuses a hand-written link from one owner screen to another"*. ⛔ NO exclusion list: the admission is DERIVED from `OwnerNav::all()` (ruling below)** | **in flight — run 88 `BLOCK`, run 89 is fix 1 of 2** |
 | UI-48 | the **four** screens that still render `<x-surface.sample-state>` unconditionally — X-110 `cooling` · `visitors-live` · `tag-version-per`, X-138 `roi-dashboard` — each to real seeded data or a house `<x-ui.empty-state>`, then into `OwnerNav`. Closing each one reds `SAMPLE_STATE`, by design, and the nav entry is what makes it green again. **Plus the dead `$isSample` in X-199** — a `#[Locked] public bool = false` with no writer in `Invoices.php` and `Credits.php`, and the unreachable `@elseif($isSample)` at `invoices.blade.php:15` / `credits.blade.php:15`. It is SYSTEM, it is this lane's module, and it is what made the 17:2x six-screen list wrong | after UI-47 |
 
 ### ✅ RULED 2026-09-06 17:1x — the thirteen unreachable owner routes
@@ -403,6 +403,49 @@ the assertion to **`href` on an anchor**. ⛔ The route set and the owner-ness d
 report the raw failure and stop.** Do not add an exclusion, do not edit a blade, do not
 weaken the rule — an unexpected red means a screen is reachable only by URL, which is the
 exact bug the wave exists to find.
+
+### ⛔ RULED 2026-09-06 19:5x — a written exclusion list also arrives BY REFERENCE, and that is how run 88 got one
+
+Run 88 wrote the derived rule correctly and then added, inside the new test:
+`if (array_key_exists($routeTarget, $exclusions) || in_array($routeTarget, $sampleState, true)) continue;`
+— reaching the reachability half's eleven names and the four `SAMPLE_STATE` names through
+the shared helpers. **A list you call is the same list as a list you type.** Fifteen named
+routes were admitted as legal cross-link targets forever, in a wave whose whole point was
+zero exclusions. `BLOCK`, and it cost three lines to undo: ⚠️ **MEASURED 19:5x, zero call
+sites in the tree link to any of the fifteen**, so the clause changed no number and reded
+nothing. It bought nothing and spent the property.
+
+**The cross-link half admits by nav membership ONLY**, because the two lists answer
+different questions and only one is about doors:
+
+- A reachability exclusion states *"this route is not a screen"* — download, media
+  endpoint, second registration. The right expression of that fact is that the route never
+  enters `ownerScreenRoutes()`, which is exactly what happens to
+  `account.voicemail.recording` (`calls:276`) and why it needed no name anywhere. Excusing
+  it a second time writes one fact in two places, which is the `sampleStateRoutes()` lesson.
+- Where an excused route **is** a screen — the four `home.blade.php` tile duplicates,
+  `x192.memberships` — a hand-written `href` to it is precisely the door the rule refuses.
+  It **should** red.
+- ⛔ The `SAMPLE_STATE` arm points backwards and is the worse half: those four screens print
+  *"not built yet"*, so a hand-written door into one is the worst door in the tree, and that
+  clause was the one thing that would pass it in silence.
+
+⛔ If a link to a download or media endpoint ever reds, the fix is at the **derivation**
+(`ownerScreenRoutes()` stops treating it as a screen), never a new exclusion — and it is not
+pre-built, because machinery for a red that never happens is run 84's twenty-one excuses.
+
+✅ **The rest of run 88 held under re-measurement and is not to be re-done:** three helpers
+each declared once with both halves calling them; the scan widened to `components/account`
+and `livewire/advanced`, which is what puts the nav chrome and `advanced/credits` *in* the
+corpus rather than exempt from it; `href`/`:href` attribute scoping, so `<form action=>` and
+`<audio src=>` are out structurally; an honest eight-line doctor block; and `STATUS: wave
+closed` over a `result failed` suite, which is **correct** — the floor was met exactly, and
+meeting the floor is a close.
+
+⚠️ **Run 88 is the first suite from this checkout I can call non-void**: its own
+`gate-runs.tsv` rows put `grs-antig-ui` at `19:39:19–19:40:56` with `site` ended `19:37:26`
+and `stages` ended `19:39:19` — adjacent, not overlapping, one backend in the database. That
+is luck, not a fix: `pest.lock` is still unexplained and the trap above stands.
 
 ⛔ The `OwnerNavTest` comments are **not to be softened** meanwhile — in
 `OwnerNav.php`, `layout.blade.php`, `routes/web.php`, `texting.blade.php`,
