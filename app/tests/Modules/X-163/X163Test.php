@@ -1290,7 +1290,7 @@ class X163Test extends TestCase
         $action = new PriceQuoteAction;
         $res = $action->handle($biz->id, 'Can you unblock the drainage ditch?');
 
-        $this->assertArrayNotHasKey('amount', $res, 'Failed, wrong amount quoted: ' . ($res['amount'] ?? 'none'));
+        $this->assertArrayNotHasKey('amount', $res, 'Failed, wrong amount quoted: '.($res['amount'] ?? 'none'));
         $this->assertEquals('NO_FACT', $res['refusal_code'] ?? 'NONE');
     }
 

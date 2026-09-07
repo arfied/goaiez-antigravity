@@ -45,7 +45,7 @@ final class PriceQuoteAction
 
             // If the SKU or all its words appear in the question
             $skuMatches = preg_match('/\b'.preg_quote($sku, '/').'\b/', $normalizedQuestion) === 1;
-            
+
             if ($skuMatches || $matchesAll) {
                 return [
                     'amount' => $item->price_cents,
