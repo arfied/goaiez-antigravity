@@ -861,3 +861,4 @@
 - `2026-09-06T20:30:21` note: X-176 Supersedes 'capability  X-176  — page content relationship data to build the link graph (G8-25)' because there is no external content-graph API and none is needed; the graph is generated from the published page set's own slug ancestry, which this lane already holds.
 - `2026-09-06T20:51:21` (R245) X-176 — X-157 derives productOffers from up to 20 confirmed non-sample PriceBookItems and renders them visibly. --ruling R245
 - `2026-09-06T21:14:58` (R245) X-176 — the three schema claims are now rendered visibly at the X-157 deploy construction site and asserted to correspond to the JSON-LD --ruling R245
+- `2026-09-06T22:33:07` (R245) X-176 — an unresolvable or unpublished breadcrumb ancestor drops the whole breadcrumb; ancestor slugs are matched on the normalised form --ruling R245
