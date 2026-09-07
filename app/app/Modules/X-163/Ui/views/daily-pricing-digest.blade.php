@@ -23,7 +23,7 @@
                                 {{ $item->service_name }}
                                 <x-ui.status-pill state="alert" label="{{ $item->refusal_count }} refusals" />
                             </h3>
-                            <p class="text-sm text-ink-2 mt-1">Last refused: {{ $item->refusal_flagged_at->format('H:i') }}</p>
+                            <p class="text-sm text-ink-2 mt-1">Last refused: {{ $item->refusal_flagged_at->format('H:i') }} &middot; ${{ number_format($item->price_cents / 100, 2) }}</p>
                         </div>
                         
                         <button wire:click="confirm({{ $item->id }})" class="h-10 px-4 text-sm font-medium text-white bg-accent hover:bg-accent-hover rounded-md transition-colors whitespace-nowrap">

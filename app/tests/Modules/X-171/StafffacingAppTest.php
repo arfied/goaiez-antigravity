@@ -23,6 +23,35 @@ class StafffacingAppTest extends TestCase
         Livewire::test(StafffacingApp::class)->assertForbidden();
     }
 
+    public function test_seeded_row_reaches_the_page(): void
+    {
+        $user = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);
+        $biz = TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
+
+        $jobId = DB::table('work_orders')->insertGetId([
+            'business_id' => $biz->id,
+            'title' => 'Test Tech Job 149.99',
+            'scheduled_at' => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DB::table('dispatch_assignments')->insert([
+            'business_id' => $biz->id,
+            'job_id' => $jobId,
+            'tech_id' => $user->id,
+            'status' => 'en_route',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('x-171.stafffacing-app.admin'))
+            ->assertOk()
+            ->assertSee('149.99');
+    }
+
     public function test_staff_with_nothing_today_sees_empty_sentence(): void
     {
         $staff = User::factory()->role(UserRole::Staff)->create();

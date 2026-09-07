@@ -10,6 +10,7 @@ use App\Modules\X117\Actions\OrderCancelAction;
 use App\Modules\X117\Domain\CheckoutEngine;
 use App\Modules\X117\Events\InventoryUpdated;
 use App\Modules\X117\Models\Order;
+use App\Modules\X117\Models\OrderLine;
 use App\Modules\X117\Models\Sellable;
 use App\Modules\X121\Models\Person;
 use Illuminate\Support\Facades\DB;
@@ -115,14 +116,6 @@ class X117Test extends TestCase
     }
 
     /**
-     * [G6-02] post-charge upsell on the tokenised card
-     */
-    public function test_g6_02_upsell_token(): void
-    {
-        $this->assertTrue(true);
-    }
-
-    /**
      * [G6-07] one Sellable, six fulfilment types
      */
     public function test_g6_07_six_fulfilment_types(): void
@@ -144,14 +137,6 @@ class X117Test extends TestCase
     }
 
     /**
-     * [G7-10] bundle allocation on the Sellable
-     */
-    public function test_g7_10_bundle_allocation(): void
-    {
-        $this->assertTrue(true);
-    }
-
-    /**
      * [G8-29] §143–§144 — minor units, integers, no floats
      */
     public function test_g8_29_minor_units_integers(): void
@@ -163,11 +148,20 @@ class X117Test extends TestCase
             'business_id' => $biz->id,
             'name' => 'Integer Item',
             'sku' => 'INT-1',
+            'inventory_quantity' => 10,
             'unit_price_cents' => 1999, // $19.99
+            'fulfilment_type' => 'physical',
         ]);
 
-        $this->assertIsInt($s->unit_price_cents);
-        $this->assertEquals(1999, $s->unit_price_cents);
+        $res = $this->checkoutAction->handle(
+            businessId: $biz->id,
+            sellableId: $s->id,
+            quantity: 3,
+            freshAuthToken: 'auth_tok_'.uniqid()
+        );
+
+        $order = Order::findOrFail($res['order_id']);
+        $this->assertSame(5997, $order->total_cents);
     }
 
     /**
@@ -185,16 +179,100 @@ class X117Test extends TestCase
             'unit_price_cents' => 2000,
         ]);
 
-        $cart = $this->cartAction->handle($biz->id, 'sess_123', [['sellable_id' => $s->id, 'quantity' => 1]], 15);
-        $this->assertNotNull($cart->expires_at);
-        $this->assertTrue($cart->expires_at->isFuture());
+        $this->travelTo(now()->startOfMinute());
+
+        $cart15 = $this->cartAction->handle($biz->id, 'sess_15', [['sellable_id' => $s->id, 'quantity' => 1]], 15);
+        $this->assertSame(15, (int) now()->diffInMinutes($cart15->expires_at));
+
+        $cart30 = $this->cartAction->handle($biz->id, 'sess_30', [['sellable_id' => $s->id, 'quantity' => 1]], 30);
+        $this->assertSame(30, (int) now()->diffInMinutes($cart30->expires_at));
+
+        $this->assertSame(15, (int) $cart15->expires_at->diffInMinutes($cart30->expires_at));
     }
 
-    /**
-     * [G1-73], [G1-75], [G1-81], [G1-82], [G17-31] no refusal declared
-     */
-    public function test_no_refusal_declared(): void
+    /** [G18-29] */
+    public function test_g18_29_lifecycle_stops_at_money(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Checkout Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $sellable = Sellable::create([
+            'business_id' => $biz->id,
+            'name' => 'Physical Item',
+            'sku' => 'PHY-001',
+            'inventory_quantity' => 5,
+            'unit_price_cents' => 1500,
+            'fulfilment_type' => 'physical',
+        ]);
+
+        $res = $this->checkoutAction->handle(
+            businessId: $biz->id,
+            sellableId: $sellable->id,
+            quantity: 1,
+            freshAuthToken: 'auth_tok_'.uniqid()
+        );
+
+        $this->assertEquals('paid', $res['status']);
+
+        $order = Order::findOrFail($res['order_id']);
+        $this->assertEquals('paid', $order->status);
+
+        $orderLine = OrderLine::where('order_id', $order->id)->firstOrFail();
+
+        $this->assertContains($order->status, ['paid', 'cancelled', 'sold_out']);
+
+        $this->cancelAction->handle($biz->id, $order->id);
+        $order->refresh();
+        $this->assertEquals('cancelled', $order->status);
+
+        $allNames = array_merge(
+            array_keys($res),
+            array_keys($order->getAttributes()),
+            array_keys($orderLine->getAttributes()),
+            array_keys($sellable->getAttributes())
+        );
+
+        foreach ($allNames as $name) {
+            $this->assertDoesNotMatchRegularExpression(
+                '/(will_call|willcall|pickup|pick_up|driver|courier|shipment|waybill|tracking_number|delivery|dispatched_at)/i',
+                $name
+            );
+        }
+
+        $this->assertContains('status', $allNames);
+        $this->assertContains('total_cents', $allNames);
+        $this->assertContains('order_number', $allNames);
+        $this->assertGreaterThanOrEqual(18, count($allNames));
+
+        $sellableKeys = array_keys($sellable->getAttributes());
+        $orderKeys = array_keys($order->getAttributes());
+        $orderLineKeys = array_keys($orderLine->getAttributes());
+
+        $this->assertContains('fulfilment_type', $sellableKeys);
+        $this->assertNotContains('fulfilment_type', $orderKeys);
+        $this->assertNotContains('fulfilment_type', $orderLineKeys);
+
+        $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(app_path('Modules/X-117')));
+        $files = [];
+        $controlCount = 0;
+        foreach ($iterator as $file) {
+            if ($file->isFile() && $file->getExtension() === 'php' && ! in_array($file->getBasename(), ['capabilities.php', 'manifest.php'])) {
+                $files[] = $file->getPathname();
+                if (preg_match('/Order|Cart|Sellable|Checkout/', $file->getBasename())) {
+                    $controlCount++;
+                }
+            }
+        }
+
+        $this->assertGreaterThanOrEqual(14, count($files));
+        $this->assertGreaterThanOrEqual(6, $controlCount);
+
+        foreach ($files as $file) {
+            $content = file_get_contents($file);
+            $this->assertDoesNotMatchRegularExpression(
+                '/\b(will_call|willcall|pickup|pick_up|driver|courier|shipment|waybill|tracking_number|delivery_window|ready_for_pickup)\b/i',
+                $content
+            );
+        }
     }
 }

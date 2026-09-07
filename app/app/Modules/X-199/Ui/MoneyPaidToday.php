@@ -5,12 +5,16 @@ declare(strict_types=1);
 namespace App\Modules\X199\Ui;
 
 use App\Modules\X199\Models\Invoice;
+use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 /**
+ * Money Paid Today
  * Derives paid today from invoices updated today with status 'paid' or 'offline_recorded', summing paid_cents.
  */
+#[Layout('components.account.layout', ['heading' => 'Happened Today'])]
 class MoneyPaidToday extends Component
 {
     #[Locked]
@@ -24,7 +28,7 @@ class MoneyPaidToday extends Component
 
     public function mount(int $businessId = 0)
     {
-        $this->businessId = $businessId;
+        $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
     }
 
     public function render()

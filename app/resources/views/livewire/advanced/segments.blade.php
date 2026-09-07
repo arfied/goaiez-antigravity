@@ -26,7 +26,7 @@
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-paper text-ink-2 border border-rule whitespace-nowrap">High Review Propensity</span>
                     <span class="text-xs text-ink-2">Dynamic</span>
                 </div>
-                <h3 class="text-lg font-bold text-ink">Recent Satisfied Visitors</h3>
+                <h2 class="text-lg font-bold text-ink">Recent Satisfied Visitors</h2>
                 <p class="text-xs text-ink-2 mt-1">Customers with completed service in the last 14 days with zero complaints.</p>
             </div>
             <div class="mt-6 pt-4 border-t border-rule flex justify-between items-center">
@@ -41,7 +41,7 @@
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-paper text-ink-2 border border-rule whitespace-nowrap">VIP Advocates</span>
                     <span class="text-xs text-ink-2">Dynamic</span>
                 </div>
-                <h3 class="text-lg font-bold text-ink">5-Star Google Reviewers</h3>
+                <h2 class="text-lg font-bold text-ink">5-Star Google Reviewers</h2>
                 <p class="text-xs text-ink-2 mt-1">Confirmed 5-star public reviewers eligible for loyalty rewards and referral programs.</p>
             </div>
             <div class="mt-6 pt-4 border-t border-rule flex justify-between items-center">
@@ -56,7 +56,7 @@
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-paper text-ink-2 border border-rule whitespace-nowrap">Re-engagement</span>
                     <span class="text-xs text-ink-2">Dynamic</span>
                 </div>
-                <h3 class="text-lg font-bold text-ink">Lapsed Customers (60+ Days)</h3>
+                <h2 class="text-lg font-bold text-ink">Lapsed Customers (60+ Days)</h2>
                 <p class="text-xs text-ink-2 mt-1">Prior clients who have not visited recently. Perfect for seasonal win-back offers.</p>
             </div>
             <div class="mt-6 pt-4 border-t border-rule flex justify-between items-center">

@@ -6,6 +6,7 @@ namespace App\Modules\X157;
 
 use App\Models\Business;
 use App\Modules\X103\Events\SitePublished;
+use App\Modules\X137\Actions\CallAttributeAction;
 use App\Modules\X155\Actions\FormCaptureAction;
 use App\Modules\X157\Actions\EdgeDeployAction;
 use App\Modules\X157\Models\Deployment;
@@ -51,6 +52,31 @@ final class ModuleServiceProvider extends ServiceProvider
             abort_if($html === null, 404);
 
             return response($html, 200)->header('Content-Type', 'text/html');
+        })->whereNumber('business');
+
+        Route::get('/sites/{business}/{deploy_hash}/dni', function (string $business, string $deployHash, Request $request) {
+            $businessId = (int) $business;
+            Tenancy::set($businessId);
+
+            $deployment = Deployment::where('business_id', $businessId)->where('deploy_hash', $deployHash)->firstOrFail();
+            abort_if($deployment->status !== 'deployed', 404);
+
+            $zone = $deployment->edgeZone;
+            abort_if($zone === null || ! $zone->has_valid_ssl, 404);
+
+            try {
+                $token = app(CallAttributeAction::class)->allocateFromPool(
+                    businessId: $businessId,
+                    visitorSessionToken: $request->input('visitor_session_token', '')
+                );
+            } catch (\DomainException $e) {
+                return response()->json(['error' => $e->getMessage()], 409);
+            }
+
+            return response()->json([
+                'number' => $token->allocated_number,
+                'status' => $token->status,
+            ]);
         })->whereNumber('business');
 
         Route::post('/sites/{business}/{deploy_hash}/forms/{form}', function (string $business, string $deployHash, string $form, Request $request) {

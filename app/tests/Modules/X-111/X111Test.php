@@ -126,11 +126,18 @@ class X111Test extends TestCase
     }
 
     /**
-     * [G1-29], [G1-35], [G2-63], [G4-05], [G4-14], [G4-24], [G4-28], [G4-31], [G4-33], [G4-36], [G4-40], [G4-41], [G4-47], [G5-17], [G5-18], [G5-38], [G7-33], [G9-05], [G9-19], [G9-20], [G9-28], [G17-07], [G17-17], [G19-09], [G21-02], [G21-05], [G21-14], [G15-28]
+     * [G2-63]
      */
-    public function test_ops_console_capabilities(): void
+    public function test_g2_63_a_human_request_is_present_as_a_support_ticket(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Human Ticket Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $transcript = 'Please connect me to human support.';
+        $ticket = $this->ticketAction->handle($biz->id, $transcript, 'human_escalation');
+
+        $this->assertDatabaseHas('tenant_tickets', ['id' => $ticket->id, 'full_transcript' => $transcript]);
+        $this->assertSame('human_requested', $ticket->source);
     }
 
     /** [G9-06] */
@@ -181,5 +188,27 @@ class X111Test extends TestCase
         }
 
         $this->assertGreaterThanOrEqual(8, $controlCount);
+    }
+
+    /**
+     * [G5-18] the HELP path; reply HUMAN always escalates (R37)
+     */
+    public function test_g5_18_help_path_always_escalates(): void
+    {
+        Event::fake([TicketOpened::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Help Path Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $t1 = $this->ticketAction->handle($biz->id, '<a transcript>', 'billing');
+        $t2 = $this->ticketAction->handle($biz->id, '<a different transcript>', 'general');
+
+        $this->assertSame('billing', $t1->category);
+        $this->assertSame('general', $t2->category);
+
+        Event::assertDispatchedTimes(TicketOpened::class, 2);
+
+        Event::assertDispatched(TicketOpened::class, fn (TicketOpened $e) => $e->ticketId === $t1->id && $e->source === 'human_requested');
+        Event::assertDispatched(TicketOpened::class, fn (TicketOpened $e) => $e->ticketId === $t2->id && $e->source === 'human_requested');
     }
 }

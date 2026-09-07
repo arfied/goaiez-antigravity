@@ -18,7 +18,11 @@ class CoolingScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-110.cooling'))->assertOk();
+        $this->get(route('x-110.cooling'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
+            ->assertSee('<h1 class="sr-only">Cooling Visitors</h1>', false);
 
         Livewire::test(Cooling::class)->assertOk();
     }

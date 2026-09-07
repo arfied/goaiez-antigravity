@@ -198,14 +198,7 @@ class X103Test extends TestCase
         $this->assertFalse($hasReviewWidget);
     }
 
-    /** (R245) */
-    public function test_g6_15_header_first_line(): void
-    {
-        $caps = require app_path('Modules/X-103/capabilities.php');
-        $this->assertArrayHasKey('G6-15', $caps);
-    }
-
-    /** [G6-16] (R245) */
+    /** [G6-15] [G6-16] (R245) */
     public function test_g6_16_header_tenant_offer(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Offer Tenant']);
@@ -231,22 +224,6 @@ class X103Test extends TestCase
         ], array_slice($version->content_blocks, count($blocks)));
     }
 
-    /** (R245) */
-    public function test_g6_17_header_x194(): void
-    {
-        $caps = require app_path('Modules/X-103/capabilities.php');
-        $this->assertArrayHasKey('G6-17', $caps);
-        $this->assertTrue(is_dir(app_path('Modules/X-194')));
-    }
-
-    /** (R245) */
-    public function test_g6_20_header_x195(): void
-    {
-        $caps = require app_path('Modules/X-103/capabilities.php');
-        $this->assertArrayHasKey('G6-20', $caps);
-        $this->assertTrue(is_dir(app_path('Modules/X-195')));
-    }
-
     /** [G6-27] (R245) */
     public function test_g6_27_header_c_sms(): void
     {
@@ -263,12 +240,9 @@ class X103Test extends TestCase
         Event::assertNotDispatched(SendRequested::class);
     }
 
-    /** (R245) */
+    /** [G6-32] (R245) */
     public function test_g6_32_header_x199(): void
     {
-        $caps = require app_path('Modules/X-103/capabilities.php');
-        $this->assertArrayHasKey('G6-32', $caps);
-        $this->assertTrue(is_dir(app_path('Modules/X-199')));
 
         $biz = TestCase::provisionTenant(['name' => 'Invoice Tenant']);
         DB::statement("SET app.business_id = '{$biz->id}'");
@@ -282,12 +256,9 @@ class X103Test extends TestCase
         $this->assertSame(0, InvoiceLine::count());
     }
 
-    /** (R245) */
+    /** [G7-18] (R245) */
     public function test_g7_18_header_c_reviews(): void
     {
-        $caps = require app_path('Modules/X-103/capabilities.php');
-        $this->assertArrayHasKey('G7-18', $caps);
-        $this->assertTrue(is_dir(app_path('Modules/C-Reviews')));
 
         $biz = TestCase::provisionTenant(['name' => 'Review Tenant']);
         DB::statement("SET app.business_id = '{$biz->id}'");

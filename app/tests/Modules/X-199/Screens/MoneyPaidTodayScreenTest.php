@@ -18,7 +18,11 @@ class MoneyPaidTodayScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-199.money-paid-today'))->assertOk();
+        $this->get(route('x-199.money-paid-today'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
+            ->assertSee('<h1 class="sr-only">Happened Today</h1>', false);
 
         Livewire::test(MoneyPaidToday::class)->assertOk();
     }

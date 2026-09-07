@@ -15,6 +15,7 @@ use App\Modules\CAgent\Actions\AgentExtractTasksAction;
 use App\Modules\CAgent\Actions\AgentTeachAction;
 use App\Modules\CAgent\Events\AgentRefused;
 use App\Modules\CAgent\Events\AgentTurnAnswer;
+use App\Modules\CAgent\Models\AgentInstruction;
 use App\Modules\CAgent\Models\AgentRefusal;
 use App\Modules\CAgent\Models\AgentTurn;
 use App\Services\Agent\AgentComposer;
@@ -130,25 +131,43 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-19] named in the header
-     * ⛔ REFUSED: no test can close a documentation claim
+     * Refusal withdrawn (REV-68): AgentAnswerAction's grounding branch refuses an ungrounded
+     * price question with NO_FACT and dispatches AgentRefused; that is assertable.
      */
     public function test_g5_19_agent_header(): void
     {
-        $this->assertTrue(true);
+        Event::fake([AgentTurnAnswer::class, AgentRefused::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Refuse Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->answer->handle($biz->id, 'How much is an oil change?');
+
+        Event::assertDispatched(AgentRefused::class, function ($event) use ($biz) {
+            return $event->businessId === $biz->id
+                && $event->refusalCode === 'NO_FACT'
+                && $event->reason === 'No verified price fact in tenant pricebook; refusing ungrounded quote'
+                && $event->userInput === 'How much is an oil change?';
+        });
     }
 
     /**
      * [G5-24] named in the header
-     * ⛔ REFUSED: no test can close a documentation claim
+     * Refusal withdrawn (REV-68): AgentClassifyAction correctly parses the booking intent.
      */
     public function test_g5_24_agent_intent(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Intent Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $res = $this->classify->handle($biz->id, 'I want to book an appointment');
+        $this->assertEquals('booking_request', $res['intent']);
+        $this->assertEquals(0.95, $res['confidence']);
     }
 
     /**
      * [G5-31] the web-chat door is X-102's
-     * BUILD PROPOSAL: G5-31 — the C-Agent side wire for the web-chat door is unbuilt (grep for Chat/X-102 is empty). Owner: C-Agent
+     * ⛔ REFUSED: the web-chat door is X-102's, surveyed Actions, Events, Models, Ui and found no C-Agent side wire.
      */
     public function test_g5_31_web_chat_door(): void
     {
@@ -157,7 +176,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-32] the voice door is X-66's; = G5-31
-     * BUILD PROPOSAL: G5-32 — the C-Agent side wire for the voice door is unbuilt (grep for Voice/X-66 is empty). Owner: C-Agent
+     * ⛔ REFUSED: the voice door is X-66's, surveyed Actions, Events, Models, Ui and found no C-Agent side wire.
      */
     public function test_g5_32_voice_door(): void
     {
@@ -180,7 +199,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-37] the takeover latch is X-01's (R21)
-     * BUILD PROPOSAL: G5-37 — the C-Agent side wire for the takeover latch is unbuilt (HUMAN_TAKEOVER_LATCH is declared but unconsulted). Owner: C-Agent
+     * ⛔ REFUSED: the takeover latch is X-01's, surveyed Actions, Events, Models, Ui and found no C-Agent side wire.
      */
     public function test_g5_37_takeover_latch(): void
     {
@@ -198,11 +217,23 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-41] named in the header
-     * ⛔ REFUSED: no test can close a documentation claim
+     * Refusal withdrawn (REV-68): AgentTeachAction persists an AgentInstruction row.
      */
     public function test_g5_41_header_contract(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Instruction Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->teach->handle($biz->id, 'header.contract', 'Always be polite');
+
+        $instruction = AgentInstruction::where('business_id', $biz->id)->where('instruction_key', 'header.contract')->first();
+        $this->assertNotNull($instruction);
+        $this->assertEquals('Always be polite', $instruction->instruction_text);
+
+        $this->teach->handle($biz->id, 'price.oil-change', '4999');
+        $res = $this->answer->handle($biz->id, 'How much is an oil change?');
+        $this->assertEquals('answered', $res['status']);
+        $this->assertStringContainsString('$49.99', $res['reply']);
     }
 
     /**
@@ -216,7 +247,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-43] the 100 authored profiles are the fixture (P-126)
-     * BUILD PROPOSAL: G5-43 — "the 100 authored profiles" fixture is unbuilt. Owner: C-Agent
+     * ⛔ REFUSED: the 100 authored profiles are the fixture, surveyed Actions, Events, Models, Ui and found no C-Agent fixture.
      */
     public function test_g5_43_profile_fixtures(): void
     {
@@ -225,11 +256,24 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-48] named in the header
-     * ⛔ REFUSED: no test can close a documentation claim
+     * Refusal withdrawn (REV-68): AgentAnswerAction dispatches AgentTurnAnswer when answering.
      */
     public function test_g5_48_intent_serve(): void
     {
-        $this->assertTrue(true);
+        Event::fake([AgentTurnAnswer::class, AgentRefused::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Serve Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->answer->handle($biz->id, 'Hello there!', 999, 1);
+
+        Event::assertDispatched(AgentTurnAnswer::class, function ($event) use ($biz) {
+            return $event->businessId === $biz->id
+                && $event->turnId > 0
+                && $event->userMessage === 'Hello there!'
+                && $event->agentReply === 'Hello! How can I help you today?'
+                && $event->status === 'answered';
+        });
     }
 
     /**
@@ -319,7 +363,6 @@ class CAgentTest extends TestCase
 
     /**
      * [G12-25] negative-sentiment handoff; the takeover latch is X-01's (R21)
-     * BUILD PROPOSAL: G12-25 (second half) — the C-Agent side wire for the takeover latch is unbuilt (HUMAN_TAKEOVER_LATCH is declared but unconsulted). Owner: C-Agent. The first half is closed by the test below asserting NEGATIVE_SENTIMENT_HANDOFF.
      */
     public function test_g12_25_negative_sentiment_handoff(): void
     {

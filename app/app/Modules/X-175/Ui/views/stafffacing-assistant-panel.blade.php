@@ -30,7 +30,7 @@
                     @foreach($suggestions as $s)
                         <tr>
                             <td>{{ $s->query_text }}</td>
-                            <td>{{ $s->response }}</td>
+                            <td>{{ $s->response_text }}</td>
                             <td>
                                 <x-ui.status-pill :state="$pill[$s->id][0]" :label="$pill[$s->id][1]" />
                             </td>
