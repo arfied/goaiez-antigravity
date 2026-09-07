@@ -2326,6 +2326,81 @@ Watch for: <the trap that applies, by name>
   `TakeoverReleased` listener and gate**, unchanged in substance from tick 209/211 — sequenced, not
   cancelled. The live proposal list stays `grep -rn "BUILD PROPOSAL:" app/tests/Modules/`, and it must
   be re-run rather than inherited: the merge changed the files it greps.
+- ⚠️⚠️ **A merge can change a verdict's KIND instead of deleting it, and the per-file arithmetic is
+  structurally blind to that — the tell is the two live lists subtracted against EACH OTHER.** Wave
+  109 correctly measured `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` at **1** and never subtracted
+  it from the pre-merge **7** (`git grep -n "BUILD PROPOSAL:" 362b3b31^1`). Two of the six missing were
+  deleted with their methods and were re-filed; the other four — `G5-31 · G5-32 · G5-37 · G5-43` —
+  **still exist**, methods and all, with main having rewritten `BUILD PROPOSAL … Owner: C-Agent` into
+  `⛔ REFUSED: the web-chat door is X-102's, surveyed … found no C-Agent side wire.` The *finding*
+  survives (it is wave 96's own measurement); the **label** does not, and the label is the whole of the
+  wave-92 rule — `⛔ REFUSED` is for a pointer outside the checkout, a lane-owned unbuilt thing gets its
+  name and owner, because `grep -rn "BUILD PROPOSAL:"` **is** this lane's backlog and a refusal is
+  invisible to it. Four lane-owned build items left the board silently. ⚠️ **C-Agent reads `8 stubs / 8
+  verdicts` and passes the tick-191 check with four of its eight labels wrong**: counting verdict lines
+  cannot see one change kind. The cheap discriminator is a **proposal list that collapses while the
+  verdict totals hold** — nothing else produces that pair. This is main's third turn on those three ids
+  after wave 95's false absences and wave 96's correction, so expect it again: **the merge-safe home for
+  a verdict is the ledger, not the docblock**, and a wave that re-files should write both.
+- ⚠️ **A capability count that rises because a merge deleted SCENERY is the honest direction, and the
+  rows it opens are not work.** Post-merge, filtering `doctor-output.txt`'s capability section to the
+  thirteen and to `specced but no test names this id` gives **nine** rows where tick 189 recorded none:
+  eight X-01 ids (`G2-16 · G2-23 · G2-25 · G2-36 · G2-42 · G9-10 · G11-23 · G11-40`) — **exactly the
+  X-01 docblocks this merge deleted, minus `G11-22`** — plus `X-102 · G16-21`, which arrived with the
+  merge and is the lane's only genuinely open capability row. `CapabilityStage` counts an id named
+  anywhere in a file's text including comments (tick 169), so those eight were green on a comment alone.
+  ⛔ **RULED at tick 217: the eight stay open forever** — the only way to close them is to write the id
+  back into a comment, which is `green by construction` and is what the wave-109 brief already refused
+  when it refused restoring the stub methods. Their record is the ledger now (`0f7da5b0`). **Grade a
+  stage delta by the diff that caused it (waves 84/85); when the diff is a comment deletion, the correct
+  response is to leave the number alone and write down why.**
+- ⚠️ **A carry-over on the LEFT-HAND side of a delta is as unmeasured as one on the right.** Wave 109's
+  comparison was `739 → 806`. The `806` is a measured `--full-doctor` total; the `739` is the **sum of
+  `BUILD-STATE.json`'s stage rows** from `git show 0efbffad:…` — and the last *measured* total on the
+  pre-merge tree was **735** (tick 190). Neither number is wrong and the report named its command
+  honestly, but the two ends are different kinds of number, so the movement is `+67` or `+71` depending
+  which you mean. The tick-171 rule (*`STAGES` is a carry-over until proven otherwise*) had only ever
+  been written about the result. **Say which kind each end of a delta is, or the delta means nothing.**
+- ⚠️ **A 43-byte pest object is HONEST output when the gate log says `rc=137` — third geometry, third
+  verdict, and only §7's own `rc` field separates them.** `w109-pest-raw.log` is byte-identical to
+  `scratch/pest-raw-last.log` because the shared file *is* the silent object, so `cmp` says nothing and
+  the byte-identity that convicted waves 88b and 95 convicts nothing here. It is also **not** the
+  tick-213 placeholder defect (a zero-information file at an artifact's path), because it is real output
+  that the brief's *"save nothing rather than a placeholder"* rule does not reach — a genuine silent
+  object is not a placeholder. **Size, identity and mtime all mislead on this artifact; read
+  `w<N>-gate.log` §7's `rc` and `result` before grading it.**
+- ⚠️⚠️ **Second cross-lane kill of this lane's pest in thirty-five minutes, and the second one was
+  TARGETED — `coder-bin/kill` logs and performs, it enforces nothing.** Run 94 died in Track 4's blanket
+  `ps aux | grep pest | awk '{print $2}' | xargs kill -9` at `22:20:43`; run 95's suite died at
+  `22:55:04` to `/home/goaiez/agents/grs-antig-site` killing **exactly two pids, both with cwd
+  `/home/goaiez/agents/grs-antig-sixty/app`** — a lane reaching into another checkout on purpose, which
+  no `grep`-and-`xargs` guard would have caught because it named the pids. Tick 215 RULED that killing a
+  process whose cwd is another checkout is refused; only `killall` and `pkill` refuse, and the shim does
+  not. The shared `pest.lock` **serialises** runs, it does not **protect** them. Filed `TRACK 1 ACTION 1`
+  at tick 217. ⭐ Practical consequence for this column: **a lane whose gate is killed twice running is a
+  lane whose numbers are all the supervisor's**, and `bin/supervise.sh --tests` queued behind the lock is
+  now a normal cost of a tick, not a sign of anything wrong.
+- ⚠️ **"Did anything you measured contradict something you read" gets the contradiction that is EASIEST
+  TO NAME, not the largest.** Wave 109 answered with a correction to my brief's *"six files"* (there are
+  eight — verified, and `C-Billing` is not even in the thirteen): small, correct, unprompted, and the
+  weakest of the three contradictions sitting in the wave's own output. The `7 → 1` proposal collapse and
+  the `+70` capability rise were both larger and both lived in numbers the report itself printed. **Ask
+  instead which of the coder's OWN numbers it cannot account for** — that question cannot be satisfied by
+  a fact about the brief.
+- **Backlog at tick 217 — wave 110 is C-Agent's takeover listener and gate, with the four relabelled
+  verdicts folded in.** The tick-211 blocker is discharged and re-measured this tick rather than
+  inherited: `TakeoverStarted` (`UnifiedInboxManager:113`) and `TakeoverReleased` (`:150`) are both
+  dispatched from paths `Ui/Thread.php` reaches, both have **zero** listeners,
+  `AgentRefusal.php:30` declares `HUMAN_TAKEOVER_LATCH` with `grep` finding no other hit in the tree, and
+  `AgentAnswerAction` has a real production caller at `app/app/Jobs/AnswerAgentTurnJob.php:334` — so this
+  is not the tick-184/212 dead-class shape. ⛔ RULED: the store is X-01's, the consultation is C-Agent's,
+  the **receiver owns the listener** (`C-Sms/ModuleServiceProvider.php` is the house shape), and C-Agent
+  never `use`s X-01's `TakeoverLatch` — importing the **event** is the sanctioned crossing, importing the
+  **model** is not, and `BoundaryStage` cannot catch either (tick 194), so its own text is the only law.
+  ⚠️ `AgentAnswerAction`'s callers include `X-163/X163Test.php:232`, **out of lane** — a new refusal that
+  reddens it is a finding, never a licence to edit it. `G5-37` is the relabelled row this wave closes.
+  After 110 the live proposal list is `grep -rn "BUILD PROPOSAL:" app/tests/Modules/`, re-run and not
+  inherited.
 
 ## Style
 
