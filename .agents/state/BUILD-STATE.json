@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T18:22:45",
+ "updated": "2026-09-06T18:41:39",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -2152,6 +2152,12 @@
    "chose": "Hyper-Local schema is rendered from Business.address, passed by EdgeDeployAction on the same seam as videos and events --ruling R245",
    "at": "2026-09-06T18:22:45",
    "ruling": "R245"
+  },
+  {
+   "module": "X-176",
+   "chose": "built on the EdgeDeployAction seam, rendering with LlmsTxtRenderAction and writing to local storage alongside the html artifact, as this gives immediate artifact availability on the same deployment pass --ruling R245",
+   "at": "2026-09-06T18:41:39",
+   "ruling": "R245"
   }
  ],
  "notes": [
@@ -2206,6 +2212,10 @@
   {
    "at": "2026-09-06T18:22:48",
    "note": "X-176 G8-22 is BUILT, superseding the UNRESOLVED capability filing \u2014 Business.address is present on the core model and the gap was a missing seam, not a missing dependency (rule 09)"
+  },
+  {
+   "at": "2026-09-06T18:41:39",
+   "note": "X-176 G3-34 is BUILT, superseding the UNRESOLVED capability filing \u2014 measured the referent: the master plan's test condition is 'it is written and ignored gracefully; \u26d4 nothing depends on it being honoured'. Producing it requires no external party or credentials, and we already hold the page title, slug, and content blocks at deploy time, so the gap was a missing seam, not a missing dependency (rule 09)"
   }
  ]
 }
