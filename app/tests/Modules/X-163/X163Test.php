@@ -1014,4 +1014,40 @@ class X163Test extends TestCase
         $this->assertEquals('Oil Change', $item->service_name);
         $this->assertEquals('oil change', $item->service_key);
     }
+
+    public function test_two_refusals_differing_only_in_case_record_one_gap_row(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Gap Refusal Case Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        Event::dispatch(new AgentRefused($biz->id, 'NO_FACT', 'I do not know the pricebook rate', 'Oil Change'));
+        Event::dispatch(new AgentRefused($biz->id, 'NO_FACT', 'I do not know the pricebook rate', 'oil change'));
+
+        $this->assertEquals(1, PriceBookItem::where('business_id', $biz->id)->count());
+    }
+
+    public function test_a_refolded_gap_row_accumulates_its_refusal_count(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Gap Refusal Count Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        Event::dispatch(new AgentRefused($biz->id, 'NO_FACT', 'I do not know the pricebook rate', 'Oil Change'));
+        Event::dispatch(new AgentRefused($biz->id, 'NO_FACT', 'I do not know the pricebook rate', 'oil change'));
+
+        $item = PriceBookItem::where('business_id', $biz->id)->first();
+        $this->assertEquals(2, $item->refusal_count);
+    }
+
+    public function test_the_first_spelling_of_a_gap_row_keeps_its_display_case(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Gap Refusal Spelling Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        Event::dispatch(new AgentRefused($biz->id, 'NO_FACT', 'I do not know the pricebook rate', 'Oil Change'));
+        Event::dispatch(new AgentRefused($biz->id, 'NO_FACT', 'I do not know the pricebook rate', 'oil change'));
+
+        $item = PriceBookItem::where('business_id', $biz->id)->first();
+        $this->assertEquals('Oil Change', $item->service_name);
+        $this->assertEquals('oil change', $item->service_key);
+    }
 }

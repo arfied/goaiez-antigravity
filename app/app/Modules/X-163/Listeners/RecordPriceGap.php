@@ -34,10 +34,11 @@ final class RecordPriceGap
         $item = PriceBookItem::firstOrCreate(
             [
                 'business_id' => $event->businessId,
-                'service_name' => $serviceName,
+                'service_key' => PriceBookItem::serviceKey($serviceName),
                 'location_book_id' => null,
             ],
             [
+                'service_name' => $serviceName,
                 'price_cents' => 0,
                 'is_confirmed' => false,
                 'is_sample' => false,
