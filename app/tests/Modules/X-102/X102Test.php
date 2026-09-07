@@ -99,6 +99,14 @@ class X102Test extends TestCase
 
         // 3. Four rage-clicks escalate (TEST ANCHOR)
         $activeSession = $this->startAction->handle($biz->id, '192.168.1.2', false);
+        $this->captureAction->handle(
+            businessId: $biz->id,
+            sessionId: $activeSession->id,
+            name: 'Jane Doe',
+            phone: '+15551234568',
+            email: 'jane@example.com',
+            message: 'Help'
+        );
         $this->escalateAction->recordRageClick($biz->id, $activeSession->id); // 1
         $this->escalateAction->recordRageClick($biz->id, $activeSession->id); // 2
         $this->escalateAction->recordRageClick($biz->id, $activeSession->id); // 3
@@ -121,8 +129,17 @@ class X102Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Capture First', 'currency' => 'USD']);
         Tenancy::set((int) $biz->id);
+        Event::fake([ChatLeadCaptured::class, ChatEscalated::class]);
 
         $session = $this->startAction->handle($biz->id, '192.168.1.1', false);
+
+        $escalateBeforeCapture = $this->escalateAction->handle($biz->id, $session->id, 'test');
+        $this->assertEquals('capture_required', $escalateBeforeCapture['status']);
+        $this->assertEquals('NO_CONTACT_METHOD_ON_SESSION', $escalateBeforeCapture['refusal_code']);
+        
+        $sessionBefore = ChatSession::where('business_id', $biz->id)->find($session->id);
+        $this->assertEquals('active', $sessionBefore->status);
+        Event::assertNotDispatched(ChatEscalated::class);
 
         $unGroundedRes = $this->escalateAction->answerQuestion(
             businessId: $biz->id,
@@ -150,6 +167,20 @@ class X102Test extends TestCase
 
         $sessionFresh = ChatSession::where('business_id', $biz->id)->find($session->id);
         $this->assertEquals('lead_captured', $sessionFresh->status);
+        
+        $leadQuery = ChatLead::where('business_id', $biz->id)->where('chat_session_id', $session->id)->first();
+        $this->assertNotNull($leadQuery);
+        $this->assertNotEmpty($leadQuery->phone);
+
+        $escalateAfterCapture = $this->escalateAction->handle($biz->id, $session->id, 'test');
+        $this->assertEquals('escalated', $escalateAfterCapture['status']);
+        
+        $sessionEscalated = ChatSession::where('business_id', $biz->id)->find($session->id);
+        $this->assertEquals('escalated', $sessionEscalated->status);
+        
+        $leadAfter = ChatLead::where('business_id', $biz->id)->where('chat_session_id', $session->id)->first();
+        $this->assertNotNull($leadAfter);
+        $this->assertNotEmpty($leadAfter->phone);
     }
 
     /**
@@ -226,6 +257,14 @@ class X102Test extends TestCase
         Tenancy::set((int) $biz->id);
 
         $session = $this->startAction->handle($biz->id, '192.168.1.1', false);
+        $this->captureAction->handle(
+            businessId: $biz->id,
+            sessionId: $session->id,
+            name: 'Jane Doe',
+            phone: '+15551234568',
+            email: 'jane@example.com',
+            message: 'Help'
+        );
 
         $res1 = $this->escalateAction->recordRageClick($biz->id, $session->id);
         $this->assertEquals('rage_click_recorded', $res1['status']);

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X102\Actions;
 
 use App\Modules\X102\Events\ChatEscalated;
+use App\Modules\X102\Models\ChatLead;
 use App\Modules\X102\Models\ChatSession;
 use Illuminate\Support\Facades\Event;
 
@@ -13,6 +14,16 @@ final class ChatEscalateAction
     public function handle(int $businessId, int $sessionId, string $reason): array
     {
         $session = ChatSession::where('business_id', $businessId)->findOrFail($sessionId);
+
+        if (!ChatLead::where('business_id', $businessId)->where('chat_session_id', $session->id)->exists()) {
+            return [
+                'status'        => 'capture_required',
+                'refusal_code'  => 'NO_CONTACT_METHOD_ON_SESSION',
+                'session_id'    => $session->id,
+                'reason'        => $reason,
+            ];
+        }
+
         $session->update(['status' => 'escalated']);
 
         Event::dispatch(new ChatEscalated(
