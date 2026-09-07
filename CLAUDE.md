@@ -276,7 +276,72 @@ merge. Week 2 is scoped **one wave at a time**; it is not a single wave.
 | UI-56 | the three defects in the file UI-55 just created, all three the SUPERVISOR's. (1) `$total` re-derived by `substr_count($content, '<x-surface.sample-state')` so the partition assertion stops being an identity over its own loop. (2) the `$illegal` message's unmeasured *"on `tenant.role` routes"* replaced by what was measured, INCLUDING its counterexample. (3) the comment quoting `BRIEF.md` deleted. ⛔ No new `test(`, no blade, no generator. ⚠️ The floor does NOT move: `1729` | closed, pushed `790c4c92` — run 102 `PASS-WITH-NOTES`, **three of its five notes MINE** |
 | **UI-57** | **(1) the ONE clause of UI-56's new message that can rot — *"10 of them are in 6 modules carrying no `tenant.role` route at all (X-111, …)"*, a fact about ROUTES inside a test that measures FILES — deleted; the `Ui/views/` scope clause replaced by what the loop actually walks; *"no blade has been mapped to a route"* kept verbatim. (2) UI-54's `270` SPLIT IN TWO by whether the route's action class declares ANY `#[Layout]` — two `expect()` INSIDE the existing `test(` at `OwnerNavTest:247`, both halves off the one `$invisible` list, both pinned. ⛔⛔ The sum is NOT asserted: it would be UI-56's identity again. ⛔ No new `test(`, floor stays `1729`** | closed, pushed `784381fb` — run 103 `PASS-WITH-NOTES`, three notes, all shape |
 | UI-58 | (1) UI-57's two pins get MESSAGES instead of labels — each says what a red means in BOTH directions, as `:263` does. (2) the `257` SPLIT THREE WAYS by whether the screen behind the route exists: unbuilt · built · unresolved. (3) the duplicate-registration question answered in `RAW`. ⛔ No new `test(`, floor stays `1729` | **run 104 `BLOCK`** — item 1 delivered exactly, the split shipped with a tag literal that matches nothing. See the 05:3x ruling |
-| **UI-58b** | **the one-character repair and its three re-pins. `'<x-surface.sample-state>'` → `'<x-surface.sample-state'`, all three buckets re-pinned to what the run produces, `withLayout 13` and `withoutLayout 257` untouched, the `view()` first-match edge MEASURED only. ⛔⛔ The sum is still NOT asserted — fourth time. ⛔ No new `test(`, floor stays `1729`** | **in flight — run 105 live** |
+| UI-58b | the one-character repair and its three re-pins. `'<x-surface.sample-state>'` → `'<x-surface.sample-state'`, all three buckets re-pinned to what the run produces, `withLayout 13` and `withoutLayout 257` untouched, the `view()` first-match edge MEASURED only. ⛔⛔ The sum is still NOT asserted — fourth time. ⛔ No new `test(`, floor stays `1729` | closed, pushed `f4b04017` — run 105 `PASS-WITH-NOTES`, five notes, one of them a ⛔⛤ |
+| **UI-59** | **the FIRST conversion wave since UI-49, and the only two of the `33` in a lane the owner named: `x-108.calendar` (Customers) · `x-125.runs` (Marketing). `#[Layout('components.account.layout', ['heading' => …])]` · a `mount()` that resolves `businessId` from the tenant (`Invoices.php:22–25` is the shape) · the `<h3>` at `calendar.blade.php:4` promoted to `<h2>` · shell assertions INSIDE the two EXISTING `test_screen_renders_for_tenant` methods · two nav entries, `OwnerNav::all()` 36 → 38. ⛔ No new `test(`; `tests` stays `1729`. ⛔⛔ FOUR pins move together — `withoutLayout −2`, `built −2`, UI-54's `270` `−2`, `withLayout` and `unbuilt` UNMOVED. A different delta is a FINDING, never a re-pin** | **in flight — run 106 live** |
+
+### ✅ RULED 2026-09-07 05:5x — `supervise.sh` §1a: the framework-boot scan, and its control FAILED FIRST
+
+Run 105 left `app/scratch.php` in the tree — `require_once 'bootstrap/app.php'` →
+`$app->make(Illuminate\Contracts\Console\Kernel::class)` → `$kernel->bootstrap()` — to answer a
+brief item that asked for a measurement. **Fourth of the family, second that boots the kernel.**
+Blast radius nil (route reflection, no model, no write); the instrument is the one that dropped a
+schema on 2026-08-31 and hit production in `grs-antig`.
+
+⛔ **The script gets a GATE, not a lecture.** `bin/supervise.sh` §1a opens every **uncommitted**
+`.php` path — tracked-modified or untracked, above `app/` or below — and matches
+`bootstrap/app\.php|Contracts\\Console\\Kernel|Foundation\\Application`. A hit prints ⛔ with the
+path and sets `fail=1`. That is the tell the 20:5x ruling named and could not supply: §1 only
+counts paths and `pint` scans `app/` alone.
+
+⭐⭐ **My positive control printed `none`, and finding out why is the more useful half.**
+`.agents/supervisor/` is **gitignored**, so `git status --porcelain` never listed the control and
+the scan was never handed the path. ⛔ **A detector observed only printing `none` has not been
+observed** — run 95's constant column and run 104's tag literal, nearly shipped a third time by the
+author of both rulings. Proved on the real input instead: the pattern matches **both** lines of the
+actual `app/scratch.php`, quoted at `REPORT.md:67-68`, and the path half is *observed* — the
+coder's own §1 printed `?? app/scratch.php`.
+
+⚠️ **Its limit:** §1a sees only what is **uncommitted**. A *tracked* boot script above `app/` — run
+97's `scratch/` — is still in no set. That is the 00:3x blind spot, unchanged, still TRACK 1's.
+
+### ⚠️ RULED 2026-09-07 05:5x — a STALE `RAW`: a gate is evidence about the sha it ran on
+
+Run 105 gated at 05:33 with `scratch.php` present, wrote `REPORT.md` at 05:35 quoting that gate,
+**deleted the file, and never re-gated** — so the delivered sha `f4b04017` carries no gate of the
+coder's own, and the report's `⛔ pint FAILED (rc=1)` and `1 uncommitted path(s)` describe a tree
+that no longer exists.
+
+> ⛔ **Change the tree after gating and the `RAW` is a photograph of something else.** Here the
+> drift ran in the direction that made the report look *worse* than the tree, which is the
+> accident. **The identical shape with the sign flipped — gate green, then break the tree — hides a
+> real defect and is indistinguishable from this one.** Re-gate, or say in `RAW` what changed and
+> why it cannot matter.
+
+### ⛔ RULED 2026-09-07 05:5x — the `224` counts BANNERS, not unbuilt screens
+
+`X-118/Ui/DayOneSignup.php` is a 117-line component driving a 205-line view with two real Actions,
+full validation and a three-step wizard — wearing *"not built yet"* at line 2. ⚠️ It is **not** in
+the `224`: it declares `#[Layout('components.layouts.agency')]`, so it is one of the **thirteen**,
+and all six X-118 routes are. Measured while scoping UI-59, which is why this is a note and not a
+wave.
+
+> ⛔ **`unbuilt` is a bucket named for a state it does not measure.** The pin is right and worth
+> having — it counts a generated artefact and reds when the generator is fixed — but `224` is an
+> **upper bound** on build work, and nobody should scope a programme off the noun.
+
+### ⭐ MEASURED 2026-09-07 05:5x — the `33` barely intersects the owner's named lanes
+
+`built = 33` is the lane's convertible backlog and it is **corroborated exactly** by a derivation
+the test cannot see: 302 module `Ui/views` blades − 248 bannered = 54 non-bannered; − 16 in the five
+ADMITTED modules = 38; − 1 in X-124, which carries no `tenant.role` route = 37; − 4 with no route of
+their own (`X-01/account-inbox`, `X-108/partials/appointment-row`, `X-118/prospect-signup`,
+`X-118/signup-page`) = **33**. ⚠️ It assumes each remaining view backs exactly one invisible route
+name; an exact close over 33 with four identified exclusions is a corroboration, not a proof.
+
+⛔ **Only `x-108.calendar` and `x-125.runs` sit in a lane the owner named.** X-01's two are already
+unconvertible (01:2x). **So the owner's lanes are overwhelmingly the `224` — build work owned by
+module owners, not conversion work owned by this lane.** That is the tail-versus-programme answer
+the 05:0x split was commissioned for, on its first honest run.
 
 ### ⛔⛔ RULED 2026-09-07 05:3x — run 104 is a `BLOCK`, and the tag literal that killed it was MINE
 

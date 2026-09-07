@@ -181,6 +181,26 @@ git log --oneline -5 | sed 's/^/  /'
 git rev-list --left-right --count origin/main...HEAD 2>/dev/null \
   | awk '{print "  vs origin/main (local ref): behind " $1 ", ahead " $2 "  — refresh with: git fetch --no-write-fetch-head origin"}'
 
+bar "1a. uncommitted PHP that boots the framework  (walks around the §0 database pin)"
+# A script that require()s bootstrap/app.php reads app/.env, never app/phpunit.xml, so §0's pin
+# does not apply to it and nothing rolls its writes back. pint only sees files under app/; above
+# app/ there was no tell at all. This is that tell, and it is not width-limited.
+boot_hits=""
+for p in $(git status --porcelain | awk '{print $NF}' | grep -E '\.php$' || true); do
+  [ -f "$ROOT/$p" ] || continue
+  if grep -qE "bootstrap/app\.php|Contracts\\\\Console\\\\Kernel|Foundation\\\\Application" "$ROOT/$p"; then
+    boot_hits="$boot_hits$p
+"
+  fi
+done
+if [ -n "$boot_hits" ]; then
+  printf '%s' "$boot_hits" | sed 's/^/  ⛔ boots the framework outside PHPUnit — reads app\/.env, NOT phpunit.xml: /'
+  echo "  To see a screen, write a throwaway test and --filter it: that loads the pin and rolls back."
+  fail=1
+else
+  echo "  none"
+fi
+
 bar "2. forbidden paths touched  (uncommitted + last commit)"
 touched=$( { git diff --name-only HEAD~1 HEAD 2>/dev/null; } | sort -u)
 sup_edits=$(git diff --name-only HEAD -- .agents/supervisor CLAUDE.md bin/supervise.sh 2>/dev/null)
