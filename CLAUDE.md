@@ -281,7 +281,74 @@ merge. Week 2 is scoped **one wave at a time**; it is not a single wave.
 | **UI-60** | **(1) `runs.blade.php:13` `<h3>` → `<h2>` — the heading-order defect UI-59 shipped into the nav, specified by me. (2) ONE new `test(` in a new `Architecture/HeadingSeamTest`: the 19 components declaring the owner layout partitioned by whether their `#[Layout]` carries a `heading`, and their views' FIRST heading level checked against that shape. FIVE pins, all derived — ⛔ zero component names, view paths or route names; the view is the component's own first `view('…')` literal + `View::exists()`. ⛔⛤ The sum is NOT asserted — fifth time. ⚠️ The floor MOVES: `1729 → 1730`** | closed, pushed `03608032` — run 107 `PASS-WITH-NOTES`, five notes, **two of them MINE** |
 | UI-61 | the SIXTH bucket. `HeadingSeamTest`'s `if (preg_match('/<h([1-6])/', …))` has no `else`, so a resolved view with NO heading at all is counted NOWHERE. ONE new `expect()` INSIDE the existing `test(`. ⛔⛤ The sum is NOT asserted — sixth wave. ⛔ No new `test(`, floor stays `1730`. Plus a measurement acted on in no way: how many of the 19 carry more than one `#[Layout(` | closed, pushed `16b601f8` — run 108 `PASS-WITH-NOTES`, five notes, **two of them ⭐ superset re-derivations of mine that agree** |
 | **UI-62** | **the SEVENTH bucket, and the FIRST that is NOT empty on arrival. `HeadingSeamTest:43` is `preg_match`, not `preg_match_all` — it reads the blade's FIRST heading and never looks at another, so `x-108/calendar`'s `<h4>` at `:40` and `:53` under an `<h2>` at `:4` renders `<h1>` → `<h2>` → `<h4>` and NOTHING sees it. (1) add `$levelSkips` over the FULL sequence, pin it `0`, `--filter`, paste the failure, re-pin to what the run produced, commit the test ALONE. (2) THEN `<h4>` → `<h3>` on both lines, re-pin to `0`, `--filter`, paste it passing, commit blade + re-pin. ⭐ The pin is OBSERVED moving `1 → 0`, which UI-60's could not be. ⛔⛤ The sum is NOT asserted — seventh wave; and `$levelSkips`/`$skips` are NOT asserted disjoint. ⛔ No new `test(`, floor stays `1730`** | closed, pushed `15caddac` — run 109 `PASS-WITH-NOTES`, the pin **observed moving `1 → 0`** at both ends, and the one finding it produced was MINE |
-| **UI-63** | **the text-order blind spot in the check UI-62 just shipped gets an UPPER BOUND. `HeadingSeamTest:55` is `preg_match_all` over the blade's TEXT in document order, so mutually exclusive `@elseif` arms are concatenated into a sequence no page renders — and `calendar.blade.php:40`/`:53` are exactly that shape. (1) the `$levelSkips` message gains the limit it does not state, in BOTH directions — it can flag a skip that never renders and HIDE one that does. (2) ONE new `expect()` inside the existing `test(`: views with a `<h[1-6]` at `@if`/`@unless` depth ≥ 1, pinned. ⛔⛔ The message must contain the words "upper bound" and say why — it counts single-heading views and nested conditionals, neither of which is a blind spot. My reading is `8` of `19`; a different number is a FINDING. (3) the counted views listed in `RAW` ONLY. ⛔⛤ The sum is NOT asserted — eighth wave. ⛔ No new `test(`, no blade, floor stays `1730`** | **in flight — run 110 dispatched** |
+| **UI-63** | **the text-order blind spot in the check UI-62 just shipped gets an UPPER BOUND. `HeadingSeamTest:55` is `preg_match_all` over the blade's TEXT in document order, so mutually exclusive `@elseif` arms are concatenated into a sequence no page renders — and `calendar.blade.php:40`/`:53` are exactly that shape. (1) the `$levelSkips` message gains the limit it does not state, in BOTH directions — it can flag a skip that never renders and HIDE one that does. (2) ONE new `expect()` inside the existing `test(`: views with a `<h[1-6]` at `@if`/`@unless` depth ≥ 1, pinned. ⛔⛔ The message must contain the words "upper bound" and say why — it counts single-heading views and nested conditionals, neither of which is a blind spot. My reading is `8` of `19`; a different number is a FINDING. (3) the counted views listed in `RAW` ONLY. ⛔⛤ The sum is NOT asserted — eighth wave. ⛔ No new `test(`, no blade, floor stays `1730`** | closed, pushed `1d708711` — run 110 `PASS-WITH-NOTES`, three notes, **two of them MINE**; the `8` re-derived by me over all 23 blades without resolving a view name |
+| **UI-64** | **the blind spot's BLIND SPOT, and the directional clause `:109` never got. (1) `:109`'s message gains what a red means in BOTH directions ⛔⛔ INCLUDING that neither one is a defect — a red here is a POPULATION moving, not a broken heading, and the five pins above it all read the other way. (2) ONE new `expect()` inside the existing `test(`: resolved views containing any of the six Blade openers the depth arithmetic does NOT track (`@isset`, `@empty`, `@switch`, `@auth`, `@can` …), pinned — because an uncounted opener makes the count fall UNDER the population it claims to bound, which is "upper bound" going false in the wrong direction. ⛔ Zero view names; the matched set is Blade keywords. My reading is `0` of `19`; a different number is a FINDING. ⛔⛤ The sum is NOT asserted — ninth wave — and it is NOT asserted disjoint either. ⛔ No new `test(`, no blade, no new file, floor stays `1730`** | **in flight — run 111 dispatched** |
+
+### ⛔ RULED 2026-09-07 08:2x — a pin whose MOVEMENT is not a defect needs the directional clause MORE, not less
+
+`HeadingSeamTest:102–108` all open *"If it went UP … If it went DOWN …"*. `:109`, UI-63's new
+`$conditionalHeadings`, says what it counts and that it is an upper bound, and stops. **The 05:0x
+ruling applies and my UI-63 brief specified the "upper bound" clause and forgot the directional one**
+— the coder delivered exactly what I wrote.
+
+> ⛔⛔ **And this is the first pin in the file whose red is NOT a fault.** A red on `$skips` or
+> `$levelSkips` is a broken heading somebody fixes. A red on `:109` is a **population moving** — up,
+> a view gained a heading inside a conditional and the known blind spot grew; down, one moved out or
+> the view left the population. **A reader carrying the other five pins' grammar across will read a
+> red here as a defect and "fix" a view that is perfectly fine.** The message must say that neither
+> direction is by itself a defect, and that the response to a move is to re-read whether the arms it
+> counts are mutually exclusive — never to edit a blade.
+
+### ⭐⭐ MEASURED 2026-09-07 08:2x — `@if` is this population's ENTIRE conditional vocabulary, and nothing pins that
+
+`:109`'s message honestly names six Blade openers the depth arithmetic does not track. I measured
+both halves of what that costs.
+
+**It cannot mis-count, only under-count.** `@elseif`, `@endif` and `@endunless` contain neither `@if`
+nor `@unless` as a substring, so `substr_count` never double-counts a closer; and every uncounted
+opener's closer (`@endisset`, `@endempty`, `@endauth`, `@endcan`, `@endswitch`, `@endguest`) contains
+no `@endif`, so an uncounted opener cannot drive the depth negative either. **The arithmetic is
+balanced by construction.**
+
+**And the omission is empty today.** One grep for
+`@isset|@empty|@switch|@auth|@can|@guest|@forelse|@unless` across all nineteen resolved views returns
+**zero lines**, with the control that those same nineteen paths returned output for the `@if` grep
+two commands earlier — a measured `0`, not the 21:3x bad-path `0`. The `@unless` arms of the counter
+are forward-looking dead code.
+
+> ⛔ **So the `8` really is an upper bound over the whole of this population — TODAY.** Put a heading
+> inside an `@isset` tomorrow and the counter never sees it, the pin sits at `8`, nothing reds, and
+> "upper bound" has gone false **in the wrong direction**: the count is now *under* the population it
+> claims to bound. **Ninth member of the uncounted-state family**, and the first whose failure mode
+> is a bound inverting rather than a bucket standing empty. UI-64 gives it a number.
+
+⚠️ The emptiness is a fact about the **tree** and it is written here, never in the test — the 03:3x
+rule. The test states only what it counts.
+
+### ⚠️ 2026-09-07 08:2x — `state.py decided` swallowed its `--ruling` flag, and the record is append-only
+
+`BUILD-STATE.json`'s run-110 `chose` string and `JOURNAL.md:792` both end
+`… rather than left unstated. --ruling R245`, while the `ruling` field beside it is separately and
+correctly `R245`. The five earlier X-124 entries carry no such suffix, so the flag was eaten into the
+positional argument on that one call — the standing *"a `$` inside a double-quoted `state.py`
+argument is eaten by the shell"* trap in a new shape.
+
+⛔ **Not repairable and not to be repaired.** `state.py` owns `BUILD-STATE.json`, a hand edit there
+is a `BLOCK`, and this lane's records are append-only. It is written down so the next reader knows
+the tail is an artifact of the call and not part of the decision. **Check `JOURNAL.md`'s tail after
+every `decided` call.**
+
+### ⛔ RULED 2026-09-07 08:2x — every `RAW` block names the command that produced it
+
+Run 110's `RAW` carried `--- Counted Views ---` and eight view names with no command beside them.
+**The names were right** — I re-derived all eight — but the test does not print them, so something
+transient produced them, and §1 counts what is uncommitted *now*, §1a scans what is uncommitted
+*now*, and the coder's log is outside a supervisor session's read scope. **The 07:1x transient-file
+hole, arriving in the one part of a report that is a list rather than a number.**
+
+⭐ The likeliest route — widening the pin's own failure message and `--filter`ing it — is exactly the
+mandated procedure and leaves nothing behind. ⛔ **Saying that it cannot be told from the
+alternative is the finding, not a hedge.** A number with no command beside it is an assertion.
 
 ### ⛔⛔ RULED 2026-09-07 08:0x — the sequence is the blade's TEXT, and `calendar`'s two headings are in arms no page renders together
 
