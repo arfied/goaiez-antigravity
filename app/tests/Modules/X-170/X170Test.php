@@ -140,8 +140,16 @@ class X170Test extends TestCase
 
         $export = $this->engine->exportPayroll($biz->id);
 
+        $this->assertNotContains($comm1->id, array_column($export, 'id'), 'Pending commission absent from export');
         $this->assertCount(1, $export);
         $this->assertEquals($comm2->id, $export[0]['id'], 'Released commission present');
+
+        $this->releaseAction->handle($biz->id, $comm1->id, 'pay_456');
+
+        $export2 = $this->engine->exportPayroll($biz->id);
+        
+        $this->assertContains($comm1->id, array_column($export2, 'id'), 'Released commission now present in export');
+        $this->assertCount(2, $export2);
 
         $keys = array_keys($export[0]);
         $this->assertNotContains('wage', $keys, 'Export must not emit a wage (G7-14)');
