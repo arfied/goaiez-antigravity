@@ -268,8 +268,9 @@ merge. Week 2 is scoped **one wave at a time**; it is not a single wave.
 | UI-48b | the THREE screens that still render `<x-surface.sample-state>` unconditionally at line 2 of their root `<div>` — X-110 `cooling` · `visitors-live`, X-138 `roi-dashboard`: delete the banner, drop the name from `sampleStateRoutes()`, add the nav entry. `tag-version-per` stays `UNRESOLVED` | closed, pushed `104dc9b9` |
 | UI-49 | X-139, the last module in the Visitors & Attribution lane and the first wave outside X-110/X-138/X-199. The THREE components still rendering the staff console — `AdaccountConnectCard`, `ConversionsPushedTile`, `RejectionRate`: `#[Layout]` + the `Invoices.php` `mount()`, the bare `<p>` onto `<x-ui.empty-state>`, shell assertions into the three EXISTING tenant tests, three nav entries. ⛔ NOT home-tile exclusions — see the 21:3x ruling | closed, pushed `7b1b3a1a` — run 93 `PASS-WITH-NOTES`, run 94 `PASS-WITH-NOTES` + a finding that corrected me |
 | UI-50 | the owner-route CENSUS. ⛔ Pure measurement: no `app/**` diff, no new test, no nav entry, no exclusion, floor unmoved. One row per `tenant.role` route across all 113 modules, committed as one `state.py note`. See the 23:2x ruling: I could not scope a conversion wave without it | closed, pushed `393aeae0` — run 95 `BLOCK` (three constant columns), run 96 `PASS-WITH-NOTES` |
-| **UI-51** | **the census's `dup_of` column, re-derived by MEASUREMENT — twelve pairs opened, subject and table compared, target kept only when both agree · `test_file` dropped to a `## Totals` line (true and constant) · `## Totals` states the column's own false-negative limit. ⛔ Same shape as UI-50: zero `app/**` diff, floor unmoved** | **in flight — run 97 live** |
-| UI-52 | `x-192.memberships-list` — owner layout, in the nav since 17:1x, real query, and **no shell assertion**. The one row in the `visible 17` / `test_shell 16` gap. The first `app/**` item since UI-49; dispatched when a suite can actually run | queued |
+| UI-51 | the census's `dup_of` column, re-derived by MEASUREMENT — twelve pairs opened, subject and table compared, target kept only when both agree · `test_file` dropped to a `## Totals` line · `## Totals` states the column's own false-negative limit | closed, pushed `7f280357` |
+| **UI-52** | **`x-192.memberships-list` — the one row in the `visible 17` / `test_shell 16` gap. TWO assertions inside the existing `test_screen_renders_for_tenant`. ⛔ SHELL ONLY: no `heading` param, no blade edit — see the 00:3x `sr-only` ruling. Floor unmoved, one census cell** | **in flight — run 98 live** |
+| UI-53 | `memberships_list.blade.php:4` is the ONE owner view with its own visible `<h1>`; every other starts at `h2` under the layout's `sr-only` seam. Promote it and opt into `heading`, or rule the seam optional — a copy/consistency wave, deliberately NOT folded into UI-52 | queued |
 
 ✅ **UI-47 closed and pushed 2026-09-06 20:3x** (`7f052348..3c8e0ef1`). The cross-link half admits by
 nav membership only and carries **zero written exclusions**; `ownerRouteExclusions()` went 10 → 7
@@ -325,6 +326,67 @@ closes and pushes.
 row in the gap is `x-192.memberships-list` — owner layout, in the nav since 17:1x, real query, and
 nothing asserting it renders in the owner shell. A door this lane opened and did not prove. That is
 UI-52.
+
+✅ **UI-51 closed and pushed 2026-09-07 00:3x** (`393aeae0..7f280357`). All twelve `dup_of` pairs opened
+and pasted with `file:line`; **one survived, eleven became `none`.** ⭐ The measurement disagreed with
+the brief twice and was right both times: `x-206.connections` (`Credential::` vs `<h1>Google reviews</h1>`
+reading `Location::query()`) and `x-199.credits` (`CreditTerm::` vs `<h1>Your credit</h1>` reading
+`AutoTopUpArrangement::query()`) — the second is the sharpest, because this file's own 18:0x block named
+`x-199.credits` *"Credit you've extended"*, credit the tenant extends to **its** customers, against
+`account.credit`, the tenant's balance with us. Two subjects, one word. `test_file` moved to `## Totals`
+(twelve columns → **eleven**), the false-negative limit is stated, doctor the unmoved `745`, zero
+`app/**` diff. ⚠️ `RAW` shipped **nine** histograms, not eleven — `route` and `class` omitted; I ran them
+and nothing is hidden.
+
+### ⛔⛔ RULED 2026-09-07 00:3x — a TRACKED scratch file above `app/` is in NO guard's set
+
+Run 97 deleted 27 tracked files under `scratch/` unbriefed, and it was right to.
+`scratch/debug_test.php` is `require app/bootstrap/app.php` → `$app->make(Kernel::class)` →
+`User::factory()->create(...)` — **the nine-line §0 bypass, character for character**, plus
+`test_lw_layout.php` and `test_lw_macro.php`. They entered via `6e897bfe merge: track/sixty`; nothing in
+the tree references `scratch/` (measured); `scratch/` is in no `.gitignore`.
+
+⛔ **The deletion is not the finding. The blindness is.** The 20:5x ruling says a scratch file above
+`app/` escapes `pint` and *"`supervise.sh` §1 is the only tell there is."* **§1 reports what is
+UNCOMMITTED.** A *tracked* file above `app/` is in neither set, and these sat through every gate of runs
+84–96 printing `0 uncommitted path(s)` and `pint passed`.
+
+> **`pint` scans `app/`. §1 scans what is uncommitted. A tracked file above `app/` is in neither.**
+> There is no automatic guard for it — only a human reading `git ls-files` above `app/`. Every earlier
+> instance of this family was caught because the file was *new*; this one was caught by luck.
+
+⚠️ **Deleting them here is not the fix** — the same 27 are still on `main` and in every other checkout.
+Raised as TRACK 1 ACTION. And the process fault stands as a note: `REPORT.md` said `none` in five fields
+over a 1,227-line deletion. ⛔ **An action outside the brief is REPORTED, not merely committed** — the
+run-86 summary defect in a new field: true about the brief, silent about the run.
+
+### ⛔⛔ RULED 2026-09-07 00:3x — `App\Livewire\Account\AccountCustomers` IS NOT A CLASS. Eleventh, mine, and a new shape
+
+The surviving `dup_of` cell says `App\Livewire\Account\Customers`; my 23:2x block said
+`App\Livewire\Account\AccountCustomers`. They disagreed, so I measured: `app/app/Livewire/Account/`
+holds `Customers.php`, `CustomerProfile.php`, `ImportCustomers.php` and **no `AccountCustomers.php`**.
+`routes/web.php:58` is `use App\Livewire\Account\Customers as AccountCustomers;`. **It is an import
+alias.** The census was right; my prose was wrong. The conclusion — two different classes render a
+customers list, one in the nav, one URL-only — survives intact.
+
+> ⛔ **A class name read out of a `use … as` line is the alias, not the class. A symbol is only a name
+> inside the file that declares it.** Every earlier member of this family was a claim I never ran; this
+> one I *did* read out of a real file, at a real `file:line`, and it still named nothing. A false FQCN
+> in a ruling is a string the next reader greps, gets zero hits on, and must re-derive the block from.
+
+### ✅ RULED 2026-09-07 00:3x — the `sr-only` `<h1>` is a check on the SEAM, not the definition of proven
+
+UI-52 adds shell assertions to `x-192.memberships-list`. The other sixteen `test_shell` tests assert
+three lines; **the third does not transfer.** MEASURED: `cooling.blade.php`, `roi-dashboard.blade.php`
+and `invoices.blade.php` carry **no `<h1>` at all** (the only `sr-only` among them is a `<label>` at
+`cooling:28`) — they start at `h2` and `layout.blade.php:51–52` supplies the missing heading behind
+`@if ($heading)`. **`memberships_list.blade.php:4` already has a real, visible `<h1>Directory
+Memberships</h1>`**, and `MembershipsList.php:10` passes no `heading` param. Opting it in would ship
+**two `<h1>`s on one page** — worse than the seam it would satisfy.
+
+⛔ So UI-52 asserts `assertSee('Your account')` and `assertDontSee('Internal Platform Console')` and
+**nothing else**; no `heading`, no blade edit. Promoting that `<h1>` to `h2` for house consistency is
+**UI-53**, deliberately not folded in — that is the silent scope widening this same tick just noted.
 
 ### ⛔⛔ RULED 2026-09-07 00:1x — a VARYING column can be uniformly wrong. `dup_of` is a name match, and the false claim was MINE
 
@@ -426,9 +488,10 @@ I went to scope UI-50 against the owner's next named lanes and **could not**:
 - ⛔ **X-01 is the hard case and it is why this is a census.** Five `tenant.role` routes, no admin
   twins, no `#[Layout]` anywhere in `Ui/`; `thread`/`history`/`payment-risk` bannered,
   `customers-list`/`person` built. **`App\Modules\X01\Ui\CustomersList` is a DIFFERENT class from
-  `App\Livewire\Account\AccountCustomers`** — which is `account.customers` at `routes/web.php:1355`
+  `App\Livewire\Account\Customers`** — which is `account.customers` at `routes/web.php:1355`
   and `OwnerNav.php:92`. Two different customers-list screens, one in the nav, one reachable only by
-  URL. `CustomersList.php:23` also carries `public bool $isSample = false`, **not** `#[Locked]` unlike
+  URL. ⚠️ **CORRECTED 2026-09-07 00:3x: this used to read `App\Livewire\Account\AccountCustomers`,
+  which is not a class** — see the 00:3x alias ruling below. The conclusion is unchanged. `CustomersList.php:23` also carries `public bool $isSample = false`, **not** `#[Locked]` unlike
   UI-48a's nine, so whether it is dead turns on an `@livewire(…, ['isSample' => …])` measurement
   nobody has run.
 
