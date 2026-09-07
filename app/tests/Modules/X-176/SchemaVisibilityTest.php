@@ -472,7 +472,16 @@ final class SchemaVisibilityTest extends TestCase
         $html = Storage::disk('local')->get("sites/{$res['deploy_hash']}.html");
 
         $this->assertStringContainsString('id="breadcrumb-x176"', $html);
-        $this->assertStringContainsString('Services Slash Parent', $html);
+        $dom = new \DOMDocument;
+        libxml_use_internal_errors(true);
+        $dom->loadHTML($html);
+        $xpath = new \DOMXPath($dom);
+        $links = $xpath->query('//nav[@id="breadcrumb-x176"]//a');
+        $texts = [];
+        foreach ($links as $link) {
+            $texts[] = $link->textContent;
+        }
+        $this->assertContains('Services Slash Parent', $texts);
 
         preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $html, $matches);
         $json = json_decode($matches[1], true);
