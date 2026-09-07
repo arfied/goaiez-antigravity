@@ -27,15 +27,26 @@ final class PriceQuoteAction
             $skuWords = explode('-', $sku);
 
             $matchesAll = true;
+            $hasNonEmptyWord = false;
             foreach ($skuWords as $word) {
-                if (! str_contains($normalizedQuestion, $word)) {
+                if ($word === '') {
+                    continue;
+                }
+                $hasNonEmptyWord = true;
+                if (preg_match('/\b'.preg_quote($word, '/').'\b/', $normalizedQuestion) !== 1) {
                     $matchesAll = false;
                     break;
                 }
             }
 
+            if (! $hasNonEmptyWord) {
+                continue;
+            }
+
             // If the SKU or all its words appear in the question
-            if (str_contains($normalizedQuestion, $sku) || $matchesAll) {
+            $skuMatches = preg_match('/\b'.preg_quote($sku, '/').'\b/', $normalizedQuestion) === 1;
+            
+            if ($skuMatches || $matchesAll) {
                 return [
                     'amount' => $item->price_cents,
                 ];

@@ -1273,4 +1273,71 @@ class X163Test extends TestCase
         $this->assertEquals(0, $row1->refusal_count);
         $this->assertEquals(0, $row2->refusal_count);
     }
+
+    public function test_price_quote_defect_substring_match_returns_no_fact(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'PB105 Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'drain-unblock',
+            'price_cents' => 18551,
+            'is_sample' => false,
+            'is_confirmed' => true,
+        ]);
+
+        $action = new PriceQuoteAction;
+        $res = $action->handle($biz->id, 'Can you unblock the drainage ditch?');
+
+        $this->assertArrayNotHasKey('amount', $res, 'Failed, wrong amount quoted: ' . ($res['amount'] ?? 'none'));
+        $this->assertEquals('NO_FACT', $res['refusal_code'] ?? 'NONE');
+    }
+
+    public function test_price_quote_whole_word_still_matches(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'PB105 Biz 2', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $row = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'drain-unblock',
+            'price_cents' => 18551,
+            'is_sample' => false,
+            'is_confirmed' => true,
+        ]);
+
+        $action = new PriceQuoteAction;
+        $res = $action->handle($biz->id, 'How much to unblock a drain?');
+
+        $this->assertEquals($row->price_cents, $res['amount'] ?? -1);
+    }
+
+    public function test_price_quote_empty_word_guard(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'PB105 Biz 3', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => '',
+            'price_cents' => 1000,
+            'is_sample' => false,
+            'is_confirmed' => true,
+        ]);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'normal-service',
+            'price_cents' => 2000,
+            'is_sample' => false,
+            'is_confirmed' => true,
+        ]);
+
+        $action = new PriceQuoteAction;
+        $res = $action->handle($biz->id, 'something completely unrelated');
+
+        $this->assertArrayNotHasKey('amount', $res);
+        $this->assertEquals('NO_FACT', $res['refusal_code'] ?? 'NONE');
+    }
 }
