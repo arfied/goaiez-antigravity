@@ -22,7 +22,7 @@ final class AccountingSyncAction
     }
 
     /**
-     * Synchronizes transactions with external accounting system.
+     * Records a batch of transactions the caller supplies against a ledger connection; no ledger is contacted.
      * Category below confidence threshold posts to 'uncategorised' with review flag, NEVER to a guessed code (TEST ANCHOR & G1-03).
      * Conflict row is NEVER auto-closed (TEST ANCHOR).
      */
