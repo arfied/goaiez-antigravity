@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-07T14:25:02",
+ "updated": "2026-09-07T14:54:29",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -2277,6 +2277,12 @@
    "module": "X-157",
    "chose": "The published page omits a schema node whose validator-required strings are blank, rather than emitting it or substituting a label, because SchemaRenderAction refuses the whole document on an empty name and the JSON-LD block is one of J11 seven required elements (R245)",
    "at": "2026-09-07T14:25:02",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-157",
+   "chose": "--ruling R245 The reddened X157Test assertion that a malformed video block takes the whole JSON-LD off the served page asserted the behaviour SITE-154 changed, not a contract. The guard field lists are byte-identical to SchemaRenderAction validateSchema required-non-empty lists, and the fixture block carries no contentUrl, so it is exactly the member the guard excludes. The test now asserts that the required JSON-LD element survives and that the malformed video does not reach it. The whole-document refusal is preserved and still asserted for the case where it is correct, a blank top-level business name, at X176Test line 290.",
+   "at": "2026-09-07T14:54:29",
    "ruling": "R245"
   }
  ],
