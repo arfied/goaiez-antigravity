@@ -266,7 +266,8 @@ merge. Week 2 is scoped **one wave at a time**; it is not a single wave.
 | UI-47 | `OwnerNavTest`'s second half — *"refuses a hand-written link from one owner screen to another"*. ⛔ NO exclusion list: the admission is DERIVED from `OwnerNav::all()` | closed, pushed `3c8e0ef1` — run 88 `BLOCK`, run 89 `PASS-WITH-NOTES` + a real finding, run 90 `PASS` |
 | UI-48a | the dead `$isSample` flag — nine sites in two modules — plus the `state.py decided` record UI-47 never got | closed, pushed `c9843271` |
 | UI-48b | the THREE screens that still render `<x-surface.sample-state>` unconditionally at line 2 of their root `<div>` — X-110 `cooling` · `visitors-live`, X-138 `roi-dashboard`: delete the banner, drop the name from `sampleStateRoutes()`, add the nav entry. `tag-version-per` stays `UNRESOLVED` | closed, pushed `104dc9b9` |
-| **UI-49** | **X-139, the last module in the Visitors & Attribution lane and the first wave outside X-110/X-138/X-199. The THREE components still rendering the staff console — `AdaccountConnectCard`, `ConversionsPushedTile`, `RejectionRate`: `#[Layout]` + the `Invoices.php` `mount()`, the bare `<p>` onto `<x-ui.empty-state>`, shell assertions into the three EXISTING tenant tests, three nav entries. ⛔ NOT home-tile exclusions — see the 21:3x ruling** | **in flight — run 93 `PASS-WITH-NOTES` unpushed, run 94 closes** |
+| UI-49 | X-139, the last module in the Visitors & Attribution lane and the first wave outside X-110/X-138/X-199. The THREE components still rendering the staff console — `AdaccountConnectCard`, `ConversionsPushedTile`, `RejectionRate`: `#[Layout]` + the `Invoices.php` `mount()`, the bare `<p>` onto `<x-ui.empty-state>`, shell assertions into the three EXISTING tenant tests, three nav entries. ⛔ NOT home-tile exclusions — see the 21:3x ruling | closed, pushed `7b1b3a1a` — run 93 `PASS-WITH-NOTES`, run 94 `PASS-WITH-NOTES` + a finding that corrected me |
+| **UI-50** | **the owner-route CENSUS. ⛔ Pure measurement: no `app/**` diff, no new test, no nav entry, no exclusion, floor unmoved. One row per `tenant.role` route across all 113 modules — layout, banner, query, nav membership, candidate duplicate, embedder — committed as one `state.py note`. See the 23:2x ruling: I could not scope a conversion wave without it** | **in flight — run 95** |
 
 ✅ **UI-47 closed and pushed 2026-09-06 20:3x** (`7f052348..3c8e0ef1`). The cross-link half admits by
 nav membership only and carries **zero written exclusions**; `ownerRouteExclusions()` went 10 → 7
@@ -291,12 +292,60 @@ queued on `pest.lock` and ours was killed at 108s with `rc=143` and zero bytes. 
 myself once the lock was free** and it met the floor. A lock wait is not a suite verdict in either
 direction — do not read `stopped` here as a missed floor.
 
-⚠️ **UI-49 is `PASS-WITH-NOTES` at `28cb7a07` and NOT pushed** (2026-09-06 22:5x). The wave landed —
-`#[Layout]` + `mount()` on all three, `OwnerNav::all()` **33 → 36** with the ruled labels verbatim,
-shell assertions inside the three existing methods, `OwnerNavTest` untouched at 4, doctor the unmoved
-`745`, floor met **exactly** `1727 · 1720 · 3 · 4`, and `passed` unchanged while the nav test went from
-33 GETs to 36. It is held back for one blade line: see the 22:5x ruling below. Run 94 closes it and the
-whole `104dc9b9..<head>` range pushes in one go.
+✅ **UI-49 closed and pushed 2026-09-06 23:2x** (`104dc9b9..7b1b3a1a`). Run 93 landed `#[Layout]` +
+`mount()` on all three, `OwnerNav::all()` **33 → 36** with the ruled labels verbatim, and shell
+assertions inside the three existing methods; run 94 took the `action`/`href` off
+`adaccount-connect-card`, filed the `UNRESOLVED`, recorded the rule and committed the state files.
+`OwnerNavTest` untouched at **4**, `OwnerNav::all()` **36**, doctor the unmoved `745`, floor met
+**exactly** `1727 · 1720 · 3 · 4` — a number **I ran myself**, 93s, `assertions 6903`, exactly the
+seven known reds and no eighth. `MODULES` moved `117 done → 116` and `7 unresolved → 8`, which is the
+correct record: the screen is proven under the second branch and the module names its missing writer.
+
+⭐ **Run 94's finding corrected me, and it is the eighth of these.** The brief asserted
+`grep -rn "AdConnection" app/app/ -l` → four files; it returns **two**. My four was the `ad_connections`
+*table* query, not the `AdConnection` *class* query. The conclusion held and got shorter. ⛔ Corollary
+to the standing rule: **a grep measures the string you typed, not the thing you meant** — name the
+string in the claim, or the claim is about something you never ran. Same tick, same family: the 21:3x
+block's *"114 modules carry `tenant.role`"* re-measures as **113**.
+
+### ✅ RULED 2026-09-06 23:2x — UI-50 is the owner-route CENSUS, and the conversion waves stop until it lands
+
+**MEASURED this tick on `7b1b3a1a`.** UI-49 closed X-139 and with it the Visitors & Attribution lane.
+I went to scope UI-50 against the owner's next named lanes and **could not**:
+
+- ⛔ **X-124 has ZERO owner routes** — all four components sit under `can:AdminAccess::GATE` alone.
+  Nothing in it for this track, and the owner's lane list could not have known that.
+- **X-118's six `tenant.role` routes are all sample.** `<x-surface.sample-state>` at line 2 of all six
+  blades; five `render()` bodies are `return view('x-118::…');` with no query; **each of the six is
+  registered twice** in `routes.generated.php`. The sixth, `day-one-signup`, is a **205-line built
+  wizard** with two real Actions — wearing a *"not built yet"* banner. `ProspectSignup` has a
+  component and a view and no route.
+- **The Customers lane is the same or worse.** Eight of X-10/X-108/X-131/X-132/X-164's nine components
+  carry the banner and **not one of the nine declares any `#[Layout]`**.
+- ⛔ **X-01 is the hard case and it is why this is a census.** Five `tenant.role` routes, no admin
+  twins, no `#[Layout]` anywhere in `Ui/`; `thread`/`history`/`payment-risk` bannered,
+  `customers-list`/`person` built. **`App\Modules\X01\Ui\CustomersList` is a DIFFERENT class from
+  `App\Livewire\Account\AccountCustomers`** — which is `account.customers` at `routes/web.php:1355`
+  and `OwnerNav.php:92`. Two different customers-list screens, one in the nav, one reachable only by
+  URL. `CustomersList.php:23` also carries `public bool $isSample = false`, **not** `#[Locked]` unlike
+  UI-48a's nine, so whether it is dead turns on an `@livewire(…, ['isSample' => …])` measurement
+  nobody has run.
+
+**The population, measured:** 301 module views, **248** carrying the banner and **53** not; **113**
+modules with a `tenant.role` route; **17** components in **5** modules (X-110 · X-138 · X-139 · X-192
+· X-199) rendering `components.account.layout`.
+
+⛔⛔ **That last number is the trap, and it is the deepest one in this file.**
+`ownerScreenRoutes()` derives owner-ness from `#[Layout('components.account.layout')]` or an
+`account.*` name — **so a screen escapes the reachability check by never opting into the owner
+layout.** The check's population grows only as the work is done. ~108 modules of owner routes are
+invisible to it, no number anywhere states how many, and nothing goes red about it. ⛔ Re-deriving
+owner-ness from `tenant.role` reds the build on all of them at once: that is a programme, not a wave,
+and **UI-50 does not attempt it.**
+
+**So UI-50 measures and changes nothing** — one row per owner route, committed as a `state.py note`.
+⛔ Not because measurement is safe, but because **the duplicate question is unanswerable one module at
+a time** and guessing it wrong ships the owner two doors to one subject.
 
 ### ⛔ RULED 2026-09-06 22:5x — an empty state on a table with NO WRITER carries no `action` and no `href`
 
