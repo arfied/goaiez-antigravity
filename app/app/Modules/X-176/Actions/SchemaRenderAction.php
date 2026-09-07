@@ -24,7 +24,8 @@ final class SchemaRenderAction
         ?array $productOffers = null,
         ?array $videos = null,
         ?array $events = null,
-        ?array $address = null
+        ?array $address = null,
+        ?array $breadcrumbs = null
     ): array {
         if ($entityType === null) {
             $vertical = strtolower(trim((string) (Business::find($businessId)->vertical ?? '')));
@@ -116,6 +117,25 @@ final class SchemaRenderAction
                     'longitude' => $address['lng'],
                 ];
             }
+        }
+
+        if (! empty($breadcrumbs)) {
+            // BreadcrumbGeneration (TEST ANCHOR, G8-04)
+            $position = 1;
+            $itemListElement = [];
+            foreach ($breadcrumbs as $crumb) {
+                $itemListElement[] = [
+                    '@type' => 'ListItem',
+                    'position' => $position,
+                    'name' => $crumb['name'],
+                    'item' => 'https://'.$domainName.'/'.$crumb['slug'],
+                ];
+                $position++;
+            }
+            $jsonLd['breadcrumb'] = [
+                '@type' => 'BreadcrumbList',
+                'itemListElement' => $itemListElement,
+            ];
         }
 
         $isValid = $this->validateSchema($jsonLd);
@@ -237,6 +257,30 @@ final class SchemaRenderAction
             }
             foreach (['latitude', 'longitude'] as $k) {
                 if (! isset($geo[$k]) || ! is_numeric($geo[$k])) {
+                    return false;
+                }
+            }
+        }
+
+        if (isset($schema['breadcrumb'])) {
+            $bc = $schema['breadcrumb'];
+            if (! is_array($bc) || ($bc['@type'] ?? '') !== 'BreadcrumbList') {
+                return false;
+            }
+            if (! isset($bc['itemListElement']) || ! is_array($bc['itemListElement'])) {
+                return false;
+            }
+            foreach ($bc['itemListElement'] as $item) {
+                if (($item['@type'] ?? '') !== 'ListItem') {
+                    return false;
+                }
+                if (! isset($item['position']) || ! is_numeric($item['position'])) {
+                    return false;
+                }
+                if (! isset($item['name']) || ! is_string($item['name']) || $item['name'] === '') {
+                    return false;
+                }
+                if (! isset($item['item']) || ! is_string($item['item']) || $item['item'] === '') {
                     return false;
                 }
             }

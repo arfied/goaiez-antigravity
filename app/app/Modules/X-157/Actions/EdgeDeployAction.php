@@ -168,6 +168,40 @@ final class EdgeDeployAction
             }
 
             if ($pageId !== null && $businessName !== null && $commitId !== null) {
+                $breadcrumbs = [];
+                $page = Page::find($pageId);
+                if ($page && ! empty($page->slug) && ! empty($page->title)) {
+                    $parts = explode('/', trim($page->slug, '/'));
+                    if (count($parts) > 1) {
+                        $paths = [];
+                        $current = '';
+                        foreach ($parts as $part) {
+                            $current = $current ? $current.'/'.$part : $part;
+                            $paths[] = $current;
+                        }
+
+                        $hierarchyPages = Page::where('business_id', $businessId)
+                            ->whereIn('slug', $paths)
+                            ->get()
+                            ->keyBy('slug');
+
+                        $usable = true;
+                        foreach ($paths as $path) {
+                            if (! isset($hierarchyPages[$path]) || empty($hierarchyPages[$path]->title)) {
+                                $usable = false;
+                                break;
+                            }
+                            $breadcrumbs[] = [
+                                'name' => $hierarchyPages[$path]->title,
+                                'slug' => $path,
+                            ];
+                        }
+                        if (! $usable) {
+                            $breadcrumbs = [];
+                        }
+                    }
+                }
+
                 $seoResult = app(SeoRenderAction::class)->handle(
                     $businessId,
                     $pageId,
@@ -196,7 +230,8 @@ final class EdgeDeployAction
                     $zone->domain_name,
                     videos: $videos ?: null,
                     events: $events ?: null,
-                    address: $address ?: null
+                    address: $address ?: null,
+                    breadcrumbs: $breadcrumbs ?: null
                 );
 
                 if (isset($schemaResult['json_ld'])) {
