@@ -354,6 +354,33 @@ final class OwnerNav
             // real query and renders it on every GET, so it owes a nav entry.
             // A screen nobody can find would leave campaign revenue numbers hidden.
             OwnerNavItem::make('What your campaigns earned', 'x-138.roi-dashboard', OwnerNavItem::GROUP_MORE),
+
+            // Ad platform connections (X-139). Under More because connection
+            // management is set up infrequently, not a daily task.
+            // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
+            // Architecture/OwnerNavTest fails the build on an owner screen with
+            // neither a nav entry nor a written exclusion. This screen runs a
+            // real query and renders it on every GET, so it owes a nav entry.
+            // A screen nobody can find would leave ad platform connections inaccessible.
+            OwnerNavItem::make('Your ad accounts', 'x-139.adaccount-connect-card', OwnerNavItem::GROUP_MORE),
+
+            // Conversions uploaded to ad platforms (X-139). Under More because
+            // tracking attribution syncs is typically periodic.
+            // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
+            // Architecture/OwnerNavTest fails the build on an owner screen with
+            // neither a nav entry nor a written exclusion. This screen runs a
+            // real query and renders it on every GET, so it owes a nav entry.
+            // A screen nobody can find would leave pushed conversion numbers hidden.
+            OwnerNavItem::make('Sales sent back to your ads', 'x-139.conversions-pushed-tile', OwnerNavItem::GROUP_MORE),
+
+            // Rejected conversion uploads (X-139). Under More because reviewing
+            // integration failures is an administrative check, not a daily task.
+            // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
+            // Architecture/OwnerNavTest fails the build on an owner screen with
+            // neither a nav entry nor a written exclusion. This screen runs a
+            // real query and renders it on every GET, so it owes a nav entry.
+            // A screen nobody can find would leave upload rejection rates hidden.
+            OwnerNavItem::make('Uploads your ads rejected', 'x-139.rejection-rate', OwnerNavItem::GROUP_MORE),
         ];
     }
 

@@ -2,7 +2,9 @@
     <div class="adaccount-connect-view p-4">
         <h2 class="text-lg font-bold">Ad Platform Connections</h2>
         @if($connections->isEmpty())
-            <p class="text-ink-2">No ad accounts connected.</p>
+            <x-ui.empty-state icon="🔌" heading="No ad accounts connected" action="Connect an ad platform" href="{{ route('account.connections') }}">
+                When you connect an ad platform, your accounts will appear here.
+            </x-ui.empty-state>
         @else
             <ul>
                 @foreach($connections as $c)
