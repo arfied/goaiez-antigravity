@@ -71,20 +71,20 @@ HTML;
         // 1. Marker in footer is detected, but footer is excluded from service_description
         $rawPage1 = '<body>Main Content</body><footer>Powered by cdn.shopify.com</footer>';
         $content1 = $action->extractContent($biz->id, 1, 'site', $rawPage1);
-        
+
         $this->assertEquals('Shopify', $content1->tech_stack);
         $this->assertEquals('<body>Main Content</body>', $content1->service_description);
 
         // 2. No marker leaves tech_stack null
         $rawPage2 = '<body>Plain HTML Page</body>';
         $content2 = $action->extractContent($biz->id, 2, 'site', $rawPage2);
-        
+
         $this->assertNull($content2->tech_stack);
 
         // 3. Explicit techStack survives despite markers
         $rawPage3 = '<body>Content</body><footer>Powered by WooCommerce</footer>';
         $content3 = $action->extractContent($biz->id, 3, 'site', $rawPage3, 'React');
-        
+
         $this->assertEquals('React', $content3->tech_stack);
     }
 }
