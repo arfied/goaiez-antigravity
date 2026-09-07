@@ -929,3 +929,4 @@
 - `2026-09-06T19:19:26` UNRESOLVED capability X-183 - G12-05 - gap: builder or plugin is absent; X-104 owns plugin
 - `2026-09-06T19:19:31` UNRESOLVED capability X-183 - G16-28 - gap: transcript is absent; X-111 owns full_transcript
 - `2026-09-06T19:19:36` UNRESOLVED capability X-183 - G8-39 - gap: ContentGateAction::evaluateGate does not call prePublishGate and ContentDraft lacks has_grounding, cannot assert refusal reason
+- `2026-09-06T19:35:34` (R245) X-183 — (R245) G8-39's grounding half closes on GateEngine::prePublishGate at the unit level; evaluateGate does not call it and no migration or wiring is required to assert it, and the refusal-reason instrument is withdrawn because the method returns bool (REV-96)
