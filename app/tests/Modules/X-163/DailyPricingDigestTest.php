@@ -55,8 +55,8 @@ class DailyPricingDigestTest extends TestCase
             ->test(DailyPricingDigest::class)
             ->assertOk()
             ->assertSee('Refused Service')
-            ->assertSee('1 refusals')
-            ->assertSee('1 pricing questions we could not answer');
+            ->assertSee('1 refusal')
+            ->assertSee('1 pricing question we could not answer');
     }
 
     public function test_confirming_item_removes_it_from_digest(): void
@@ -126,8 +126,8 @@ class DailyPricingDigestTest extends TestCase
             ->test(DailyPricingDigest::class)
             ->assertOk()
             ->assertSee('drain unblock')
-            ->assertSee('1 refusals')
-            ->assertSee('1 pricing questions we could not answer');
+            ->assertSee('1 refusal')
+            ->assertSee('1 pricing question we could not answer');
     }
 
     public function test_confirming_a_price_with_no_amount_is_refused_and_says_so(): void
@@ -240,6 +240,7 @@ class DailyPricingDigestTest extends TestCase
             'is_confirmed' => false,
         ]);
     }
+
     public function test_it_sorts_items_by_refusal_count_desc_then_recency(): void
     {
         $owner = User::factory()->create();
