@@ -16,7 +16,7 @@ final class SandboxEngine
 
     public function destructionDue(bool $isUntouched, int $ageInDays, bool $warned): bool
     {
-        if (!$isUntouched) {
+        if (! $isUntouched) {
             return false;
         }
 
@@ -24,7 +24,7 @@ final class SandboxEngine
             return false;
         }
 
-        if (!$warned) {
+        if (! $warned) {
             return false;
         }
 

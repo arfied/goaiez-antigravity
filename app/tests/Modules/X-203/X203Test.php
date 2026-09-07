@@ -183,7 +183,7 @@ class X203Test extends TestCase
             'trigger_event' => 'test',
             'steps' => ['step'],
         ]);
-        
+
         $runRes = $this->runbookAction->handle($biz->id, $runbook->id);
         $this->assertEquals('completed', $runRes->status);
     }
