@@ -517,6 +517,27 @@ class X163Test extends TestCase
         $this->assertEquals('range-service', $res['service_name']);
     }
 
+    public function test_price_range_matches_normalised_key_with_mixed_case_and_double_space(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Mixed Case Range Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Drain  Unblocking',
+            'price_cents' => 10000,
+            'price_min_cents' => 4500,
+            'price_max_cents' => 16500,
+            'is_sample' => false,
+            'is_confirmed' => true,
+        ]);
+
+        $res = $this->range->handle($biz->id, 'drain unblocking');
+        $this->assertArrayNotHasKey('refusal_code', $res);
+        $this->assertEquals(4500, $res['min_cents']);
+        $this->assertEquals(16500, $res['max_cents']);
+    }
+
     public function test_price_range_refuses_unknown_service_with_no_fact(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Unknown Range Biz', 'currency' => 'USD']);
@@ -543,7 +564,7 @@ class X163Test extends TestCase
         ]);
 
         $res = $this->range->handle($biz->id, 'gap-service');
-        $this->assertEquals('NO_FACT', $res['refusal_code']);
+        $this->assertEquals('UNCONFIRMED', $res['refusal_code']);
         $this->assertArrayNotHasKey('min_cents', $res);
     }
 
@@ -563,7 +584,7 @@ class X163Test extends TestCase
         ]);
 
         $res = $this->range->handle($biz->id, 'sample-service');
-        $this->assertEquals('NO_FACT', $res['refusal_code']);
+        $this->assertEquals('SAMPLE_STATE_REFUSED', $res['refusal_code']);
         $this->assertArrayNotHasKey('min_cents', $res);
     }
 
