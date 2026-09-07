@@ -943,3 +943,4 @@
 - `2026-09-06T21:19:43` (R245) X-202 — ApprovalDeskEngine::decide return shape module contract per R245
 - `2026-09-06T22:08:35` (R245) X-184 — autoRefreshAllowed refuses when traffic is at or above floor
 - `2026-09-06T22:09:15` UNRESOLVED capability X-102 - X-102 exposes no rich-media/carousel render path; chat renders text only
+- `2026-09-06T22:27:10` (R245) X-161 — timeTravelAllowed(bool $isSandbox): bool and destructionDue(bool $isUntouched, int $ageInDays, bool $warned): bool - rules pure domain methods with 14 days and warning required
