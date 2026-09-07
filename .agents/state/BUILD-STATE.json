@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-07T00:04:23",
+ "updated": "2026-09-07T00:22:12",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -2223,6 +2223,12 @@
    "module": "X-176",
    "chose": "the breadcrumb and event schema assertions are scoped to the block they are about, so a string rendered elsewhere in the document cannot satisfy them --ruling R245",
    "at": "2026-09-07T00:04:23",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-157",
+   "chose": "Order price book items by id asc for deterministic page head deployment --ruling R245",
+   "at": "2026-09-07T00:22:12",
    "ruling": "R245"
   }
  ],

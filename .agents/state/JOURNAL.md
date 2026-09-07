@@ -867,3 +867,4 @@
 - `2026-09-06T23:43:45` note: X-103 pages has exactly one writer, X-103/Actions/PageCreateAction, and that writer has no production caller, so no page-creation path exists outside tests; a page is created by a tenant editing their site, which is a screen and therefore Track 2's under ruling 5
 - `2026-09-06T23:43:45` (R245) X-176 — the breadcrumb ancestry query is bounded on the SQL-normalised slug, so it accepts every form trim('/') accepts and agrees with the internal-link renderer by construction --ruling R245
 - `2026-09-07T00:04:23` (R245) X-176 — the breadcrumb and event schema assertions are scoped to the block they are about, so a string rendered elsewhere in the document cannot satisfy them --ruling R245
+- `2026-09-07T00:22:12` (R245) X-157 — Order price book items by id asc for deterministic page head deployment --ruling R245
