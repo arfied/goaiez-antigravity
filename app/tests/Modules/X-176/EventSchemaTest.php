@@ -49,7 +49,15 @@ final class EventSchemaTest extends TestCase
         $html = Storage::disk('local')->get("sites/{$res['deploy_hash']}.html");
 
         $this->assertStringContainsString('"@type":"Event"', $html);
-        $this->assertStringContainsString('Drain Cleaning', $html);
+        
+        preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $html, $matches);
+        $json = json_decode($matches[1], true);
+        
+        $this->assertArrayHasKey('event', $json);
+        $events = isset($json['event']['@type']) ? [$json['event']] : $json['event'];
+        $eventNames = array_column($events, 'name');
+        
+        $this->assertContains('Drain Cleaning', $eventNames);
     }
 
     public function test_rendered_schema_has_no_events_when_no_appointments(): void
