@@ -6,7 +6,7 @@
 @if($success) <p>{{ $success }}</p> @endif
 <div wire:loading><x-ui.skeleton label="Reading the disputes…" /></div>
 @if($disputes->isEmpty())
-<x-ui.empty-state heading="No disputes.">No chargeback has arrived. A dispute is opened here by X-198 when a gateway chargeback webhook reaches it; no such webhook is received in this checkout, so no bundle exists to add to yet.</x-ui.empty-state>
+<x-ui.empty-state heading="No disputes.">No chargeback has arrived. A dispute opens here when the gateway chargeback webhook reaches this app; no such webhook is received in this checkout, so no bundle exists to add to yet.</x-ui.empty-state>
 @else
 <ul class="space-y-4">
 @foreach($disputes as $d)

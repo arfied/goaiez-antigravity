@@ -86,7 +86,7 @@ class DisputeCardScreenTest extends TestCase
 
         Livewire::actingAs($owner)->test(DisputeCard::class)
             ->assertOk()
-            ->assertSee('no such webhook is received in this checkout, so no bundle exists to add to yet')
+            ->assertSee('A dispute opens here when the gateway chargeback webhook reaches this app; no such webhook is received in this checkout, so no bundle exists to add to yet.')
             ->assertSee('You compile the bundle from the dispute queue and add what only you know.');
     }
 
