@@ -45,8 +45,8 @@ class ChatDoorTest extends TestCase
 
         $response->assertStatus(404);
 
-        // Assert no rows anywhere (bypassing tenancy to check whole table)
-        $this->assertEquals(0, ChatSession::withoutGlobalScopes()->count());
+        // Assert no rows returned for empty tenant (RLS enforces isolation; we cannot read the whole table)
+        $this->assertEquals(0, ChatSession::count());
     }
 
     public function test_key_for_business_a_does_not_produce_row_readable_as_business_b(): void
