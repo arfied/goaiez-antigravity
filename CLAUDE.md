@@ -2267,6 +2267,65 @@ Watch for: <the trap that applies, by name>
   `TakeoverStarted`/`TakeoverReleased` listener and gate, ruled at tick 209 and unblocked since wave 107c
   gave a human a way to release. The live proposal list stays
   `grep -rn "BUILD PROPOSAL:" app/tests/Modules/`.
+- ⚠️⚠️ **A staged-but-uncommitted MERGE is a fifth death shape, and BOTH standing shape commands go
+  quiet on it — `git rev-parse MERGE_HEAD` is the third command and it is only ever needed on the wave
+  where the other two mislead.** Run 94 died on `AGY_EXIT=137` with `git log origin/track/sixty..HEAD`
+  **empty** and `git status --porcelain` showing **132 staged, zero unstaged** — which reads as *clean
+  tree, no commits* = shape 1, whose remedy is *re-dispatch verbatim*. The wave's entire deliverable was
+  in the index. Re-dispatching would have re-briefed 132 correctly staged paths (the wave-87 shape), and
+  the "clean tree" reading is doubly wrong because a merge index is the opposite of an empty one.
+  **Run all three commands on any wave whose brief contained the word merge**, and note the corollary:
+  a brief that says *make no commits* guarantees the commits-on-the-tip discriminator reads zero.
+- ⭐⭐ **`kill-log.tsv` made an unattributable `AGY_EXIT=137` attributable on its first day, and what it
+  caught is a cross-lane hazard nobody had modelled: `grep pest` matches every agy KICKOFF.** Track 4's
+  coder ran `ps aux | grep pest | awk '{print $2}' | xargs kill -9` at `22:20:43` and the log records it
+  killing four lanes' **coders** — this lane's run 94, Track 2's run 92, Track stages' run 151, its own —
+  plus two of this lane's pest processes, because every kickoff prompt contains the word *pest* and so
+  every agy command line matches. `AGY_EXIT=137` is the death cause that prints no sentence (tick 202),
+  so without the log this reads as an act of God. **On any bare-137 death, `Read` the kill log before
+  diagnosing anything**; and never write a lane's own stray-pest cleanup as a `grep`-and-`xargs`, which
+  is what `coder-bin/killall` and `coder-bin/pkill` already refuse and what `kill` cannot see coming.
+- ⭐⭐ **Prove a merge introduced no reds by comparing the failure NAMES, not the counts — identity is
+  cheap and a matching count is not evidence.** Wave 108: pre-merge `1865 · 1860 · 7889 · failed 1 ·
+  errors 4`, post-merge `1935 · 1930 · 8362 · failed 1 · errors 4`, and the `failures[]`/`error_details[]`
+  arrays name the **same five tests** — so `+70 tests, +70 passed, +473 assertions` and nothing broke.
+  Equal `failed`/`errors` counts across a 278-commit merge would otherwise be a coincidence worth
+  nothing: a merge that breaks one test and fixes another prints the identical line. ⭐ Two free
+  corroborations that the object is the merged tree's and not a stale copy: `duration_ms` differed
+  (`105281` vs `117062`), and the surviving failure's **line number moved** `268 → 252`, matching the
+  merge's own edit to that file. **A failure whose line tracks the diff cannot be from the old tree.**
+- ⚠️⚠️ **A merge can delete this lane's per-id VERDICTS wholesale, and no gate has an opinion about it —
+  the docblock is the durable record only for as long as its carrier method exists.** Main deleted
+  `assertTrue(true)` stubs (reasonably — they assert nothing) and took seventeen `⛔ REFUSED:` /
+  `BUILD PROPOSAL:` lines with them: the pile went `26 → 11` and X-01 went from **eleven verdicts to
+  two**, losing `BUILD PROPOSAL: G2-16` — a live lane-owned finding, not a refusal. `grep -rc` for the
+  eight orphaned ids across `app/tests/Modules/X-01/` returns **0 everywhere**, so `CapabilityStage`
+  cannot see one of them and `capability` rises. ⭐ **Not a `BLOCK`, for two measured reasons**: main
+  *replaced* two stubs with real tests, so reverting to our copy would delete main's checks (the One
+  Rule pointing the other way); and the rise is the honest direction, since those ids were green on a
+  comment alone (tick 169). **RULED: lost verdicts are re-filed to `JOURNAL.md` via `state.py note`,
+  never restored as stub methods** — the ledger is tracked and append-only and outlives any docblock.
+  ⭐ **The control that shows the check is sound sits in the same merge**: main also deleted
+  `X137Engine.php` and its only caller `test_header_capabilities`, a test that really asserted six
+  refusals — and that one is fine, because the engine was dead code (wave 83) and its six ids still
+  appear **8 times** on real `#[Group]` tests. Same merge, same shape, opposite verdicts; the
+  discriminator is one `grep` per id set. **After any merge, re-run the tick-191 per-file arithmetic.**
+- ⚠️ **`scratch/` is not writable by this column — the harness refuses `cp` into it — so a supervisor
+  gate's artifacts go to `.agents/supervisor/` and the brief must say so.** `pest-raw-last.log` is the
+  shared name the next wave overwrites (waves 88b, 95, 105), so a supervisor run that does not copy its
+  object somewhere it owns has produced a number nobody can re-read. Tick 216 kept
+  `.t216-gate.log` and `.t216-w108-pest.log`; cite those paths, not `scratch/`.
+- **Backlog at tick 216 — wave 109 is measurement and ledger only, then wave 110 is the C-Agent
+  listener.** RULED: no production code on top of an unmeasured 278-commit merge, because the first red
+  would be unattributable between the wave and the merge. Wave 109 owes (i) the real eight stage counts
+  and the `--full-doctor` **total** — unknown to this column by construction, since `php artisan doctor`
+  is outside its allow list and §3's `capability 393` is a carry-over from a `BUILD-STATE.json` restored
+  from `HEAD`, i.e. a pre-merge number on a post-merge tick (tick 171); (ii) the seventeen lost verdicts
+  re-filed with `state.py note`, `G2-16` in its own words as a build proposal; (iii) an account of the
+  `capability` movement against a named baseline. **Wave 110 is C-Agent's `TakeoverStarted`/
+  `TakeoverReleased` listener and gate**, unchanged in substance from tick 209/211 — sequenced, not
+  cancelled. The live proposal list stays `grep -rn "BUILD PROPOSAL:" app/tests/Modules/`, and it must
+  be re-run rather than inherited: the merge changed the files it greps.
 
 ## Style
 
