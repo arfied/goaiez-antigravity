@@ -2041,3 +2041,34 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     dictated string is checked against `N008Test`'s directory-wide gateway-name scan
     (`stripe|authorize|braintree|square|paypal|adyen`) and `N010Test`'s `refund` scan (ruling 63),
     and carries no apostrophe (ruling 82).
+90. **The MRR screen is the meters panel's twin, and both of its empty states describe machinery
+    nobody built (RULED by the lane supervisor 2026-09-06 20:5x, briefed as MONEY-90).** Ruling 88
+    cleaned `credits.blade.php` and recorded `mrr.blade.php:60` as "not changed, a smaller problem".
+    Sweeping the rest of that file shows it is not one problem but three. (a) **`:60` prints
+    `{{ $meter->meter_type }}` raw** — the owner reads `sms_segments` — and `MrrScreenTest:57`
+    asserts that token; MONEY-89 built a display map inside `Credits.php`, so the correct move is to
+    **share** it, not to duplicate it or to leave one screen speaking the schema's vocabulary.
+    (b) **`:55`** reads *"The five meters fill as the account sends, talks and thinks."* — the exact
+    fiction ruling 88 removed one file over, and the **"five"** is a fixed vocabulary that disagrees
+    both with the schema's documented `ai_seconds, sms_segments, voice_minutes`
+    (`2026_08_30_000025_create_c_billing_tables.php:44`) and with the screen's own fixture.
+    (c) **`:70`** reads *"Every debit, grant and top-up lands here the moment it happens."*
+    `credit_ledger_entries` has exactly three writers, all in `Domain/BillingLedgerEngine.php`
+    (`:37` grant, `:69` debit, `:109` topup), and **`LedgerGrantAction` and `LedgerDebitAction` have
+    no caller outside `CBillingTest`** — so for a real account a debit and a grant never happen; only
+    `topup()` has a production caller, the credits button MONEY-88b already made honest.
+    ⚠️ **`App\Services\Billing\CreditLedger:1007` does not fill this list**: it writes
+    `App\Models\CreditLedgerEntry`, whose table is **`credit_ledger`** — a different table neither
+    screen reads. Two ledgers, one name, and the shorter grep would have said the sentence was true.
+    **RULED:** the label map becomes the trait `App\Modules\CBilling\Ui\LabelsMeters` in the shape
+    `ReadsAgreedMonthly` already establishes there, read by both screens, carrying **both**
+    vocabularies with `?? $type` still the fallback; both empty states name what has not happened and
+    what it waits on; and `MrrScreenTest:57` is **changed** to the label **and gains**
+    `assertDontSee('sms_segments')`, which is what stops the positive passing for the wrong reason
+    (ruling 61). ⛔ Not resolved by minting a meter writer or a ledger writer — that is ruling 59's
+    "never add the method to satisfy the caller", and usage is track sixty's by ruling 5.
+    ⚠️ Neither sentence is asserted by anything today, so the item **adds** a method rather than
+    changing one: the existing test seeds a meter and two ledger entries and cannot reach either
+    branch (ruling 68). ⚠️ Measured before dictating: `File::allFiles()` appears in `X136Test`,
+    `N008Test` and `N010Test` only, each scoped to its own module, so **no directory-scanning lint
+    reads C-Billing** and ruling 63's prose-inflates-the-instrument hazard does not apply here.
