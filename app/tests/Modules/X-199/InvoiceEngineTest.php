@@ -287,3 +287,55 @@ test('the idempotency case: one Payment for two attempts at the same charge', fu
         expect($count)->toBe(1);
     });
 });
+
+test('an overflow on a non-Stripe connection is refused, not charged', function () {
+    Event::fake([LimitExceeded::class, OverflowCharged::class, OverflowReversed::class]);
+
+    $business = Business::factory()->create();
+    $customer = Person::create(['business_id' => $business->id]);
+
+    Tenancy::actingAs((int) $business->id, function () use ($business, $customer) {
+        MerchantConnection::create([
+            'business_id' => $business->id,
+            'gateway_name' => 'square',
+            'merchant_account_id' => 'acct_test',
+            'is_connected' => true,
+        ]);
+
+        // Setup terms with $5,000 limit, currently at $4,000 outstanding
+        $terms = CreditTerm::create([
+            'business_id' => $business->id,
+            'customer_id' => $customer->id,
+            'terms_type' => 'net_30',
+            'credit_limit_cents' => 500000,
+            'current_outstanding_cents' => 400000,
+            'card_on_file_token' => 'tok_visa',
+        ]);
+
+        $engine = app(InvoiceEngine::class);
+
+        // Issue $1,500 invoice -> outstanding becomes $5,500, overflow is $500.
+        $result = $engine->issueInvoice(
+            $business->id,
+            $customer->id,
+            [['description' => 'Big Service', 'quantity' => 1, 'unit_price_cents' => 150000]],
+            'net_30'
+        );
+
+        $invoice = $result['invoice'];
+
+        expect($result['is_over_limit'])->toBeTrue();
+
+        $charge = OverflowCharge::where('invoice_id', $invoice->id)->where('charge_type', 'overflow_charged')->first();
+        expect($charge)->not->toBeNull();
+        expect($charge->status)->toBe('refused');
+        expect($charge->reference_id)->toBeNull();
+
+        Event::assertNotDispatched(OverflowCharged::class);
+
+        $payment = Payment::where('business_id', $business->id)->first();
+        expect($payment)->not->toBeNull();
+        expect($payment->status)->toBe('awaiting_processor');
+        expect($payment->gateway_charge_id)->toBeNull();
+    });
+});

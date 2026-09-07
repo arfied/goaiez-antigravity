@@ -105,7 +105,7 @@ final class InvoiceEngine
                             idempotencyKey: 'overflow_'.$invoice->id.'_'.$overflowAmount
                         );
                         $gatewayChargeId = $payment->gateway_charge_id;
-                        $status = 'charged';
+                        $status = $gatewayChargeId !== null ? 'charged' : 'refused';
                     } catch (\Exception $e) {
                         Log::warning('Gateway capture failed: '.$e->getMessage(), ['exception' => $e]);
                         $status = 'refused';
