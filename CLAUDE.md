@@ -2166,3 +2166,42 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     asserts on is inside that branch. ⚠️ The coder's `REFUSED` was correct and is upheld; per ruling
     71's precedent it spends no dispatch, and per the 46/49/50/62/66/75/82/86 precedent the miss is the
     supervisor's, so MONEY-93 carries its own two.
+95. **The ruling-94 branch sweep is measured CLEAN lane-wide; `connect-card` was the only offender (RULED
+    by the lane supervisor 2026-09-06 23:0x, on MONEY-93's PASS).** Ruling 64 forbids an inherited
+    follow-up becoming a brief item before it is re-measured, and this one does not survive contact. Every
+    blade in the lane's eight modules carrying an `isEmpty()`/`@forelse` branch — **twenty-two screens**,
+    X-199's five, C-Billing's four, X-211's four, X-198's two, X-201's two, X-173's three, X-120's one and
+    X-117's two — puts its `$error` / `$success` / `$waiting` panels **above** the branch, at the
+    component's top level. The two near-misses are benign and worth recording so they are not re-raised:
+    X-120's empty state calls `addCard`, whose form renders at `card-screen.blade.php:49` in a section
+    **outside** the branch, and X-199's `unpaid` empty state calls `showPaid`, which renders the `@elseif`
+    arm and is therefore its own feedback. ⚠️ The generalisable half is ruling 64's, not ruling 94's: a
+    sweep proposed by a ruling is still a claim to be measured, and **a sweep that comes back empty is
+    struck with its measurement written down** — otherwise the next tick re-derives it under time pressure
+    or, worse, briefs a wave with nothing in it.
+96. **The 20:01 "no internal rule id in owner copy" decision was never swept past the modules it was
+    written in, and PHP strings were never swept at all (RULED by the lane supervisor 2026-09-06 23:0x,
+    briefed as MONEY-94).** Ruling 89 applied that R245 to X-199 and X-201 and recorded the id half
+    "measured clean, one hit lane-wide" — a measurement of **blade prose in the modules then being
+    worked**. Re-run across all eight modules' `Ui/` trees with PHP strings included it returns **five**
+    live hits, none in a module the earlier sweep touched: `X-173/Ui/views/conflicts-list.blade.php:4`
+    (`§141.5`), `connection-mapping.blade.php:4` (`§30.5`), `sync-error-rate.blade.php:4` (`§30.5`),
+    `X-173/Ui/ConnectionMappingView.php:32` (`§141.5`, inside the `$waiting` string) and
+    `X-117/Ui/CheckoutBlock.php:87` (`§147.2`, inside the cancel `$success` string). The two generated
+    `<x-surface.sample-state>` lines in X-201's blades stay byte-identical. ⚠️ **One of the five is not
+    only an id.** `connection-mapping.blade.php:4`'s *"Invoices and payments flow out; the chart of
+    accounts flows in"* is present tense about machinery that has never run — `connect()` refuses by
+    design (ruling 73a) and `syncTransactions` has no production caller (ruling 81) — so it is ruling
+    50(a) **in a screen header**, and a header renders in *both* arms of the branch, reaching the very
+    owner the empty state already tells the truth to. **RULED: an empty state is not the only prose a
+    screen shows an owner; the header is read more often and is swept with it.** ⚠️ **Not one of the five
+    clauses is asserted by anything** (measured with interior fragments, ruling 86), so every item extends
+    an existing assertion rather than relying on one — ruling 70 again. ⚠️ `§` is **not** escaped by `e()`
+    (`htmlspecialchars` converts only `& < > " '`), so `assertDontSee('§141.5')` matches raw blade prose
+    and is safe under ruling 82. ⚠️ Recorded in the same pass and **not** briefed:
+    `CheckoutBlock::pay()`'s `'paid'` branch is unreachable — `checkoutCart()` creates the order
+    `pending_payment` and returns its refreshed status, and ruling 45 emptied the only listener that could
+    promote it — so its *"The charge landed at the gateway"* is dead rather than false. **An unreachable
+    string is recorded, never edited: no test can render it and no mutation can redden it, so the edit is
+    ungated churn.** It is flagged for the wave that lands ruling 45's tokenisation dependency, when that
+    sentence must also be re-checked against ruling 93 (a charge lands in the **platform** account).
