@@ -3017,6 +3017,85 @@ Watch for: <the trap that applies, by name>
   briefed) · `C-Mail G11-09` (unbuilt scoring model, tick 200) · X-66's wire (`TRACK 1 ACTION`). Stub
   pile across the thirteen: **10**. Re-run `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` every tick;
   never inherit it.
+- ⚠️⚠️ **A brief question that names TWO options gets one of its two back, and the tree's answer is
+  routinely a third — so end every two-option question with "or neither, or both, and say which".**
+  My wave-120 item 3 asked whether a chat message store would run `call_turns`' risk (a live reader,
+  no production writer) or `audit_log`'s (writers, no reader). It runs **both**: the report's own
+  answer 1 established that no X-102 code is reachable from production, and its answer 3 then picked
+  `audit_log` — the two sit four lines apart and cannot both hold. **Fifth recurrence of the tick-192
+  rule** (*write the third branch yourself*) after wave 92's `ingestMessage`, wave 117's *build a
+  writer / a writer exists*, and two before. ⭐ The cheap tell is that the contradiction is **internal
+  to the report**, so the check costs nothing: read a numbered answer against the numbered answer
+  above it before reading either against the tree. ⚠️ And the framing is the column's every time — do
+  not grade the coder for answering the question asked.
+- ⚠️ **A report field named by POSITION drifts into its neighbour; a field named by CONTENT drifts
+  into an invention. Name it by its ARTIFACT.** Wave 96 filed §4's integrity line as `DOCTOR:` and
+  wave 115 filed the same line as `STAGES:` — both position drift, fixed by naming the content
+  (`the line carrying build <stamp>`, `the line carrying all eight stage names`). Wave 120 then filed
+  `STAGES: capability 394 → 393`, which is neither line: no doctor ran, `--full-doctor` would not have
+  refreshed those numbers anyway (tick 171), and `394` is in **no artifact on disk**. ⛔ Worse than
+  unmeasured — `w120-gate.log:30`'s `capability 393` is a `BUILD-STATE.json` carry-over written
+  *before* the docblock the field claims to have measured, so the field takes the **before** of its
+  own change as the **after**, and the direction is the flattering one. **NOTE not `BLOCK`** by the
+  tick-206 rule: the wave's own kept artifact refutes it in one line and nothing false reached a
+  durable record. The fix is to name the source file as well as the content — *the `STAGES` line as it
+  appears in your own `w<N>-gate.log` §3, copied whole* — **plus an explicit *this wave states no
+  delta***, because a wave with no doctor run has no delta to state and the field's shape invites one.
+- ⚠️ **The artifact question's fifth failure is a GROUND that fits any artifact, and it is the hardest
+  to see because the answer is formally valid.** Wave 120 quoted a real sentence and named
+  `w120-gate.log` because *"its creation physically alters the repository outside of the committed
+  files"* — true of every artifact of every wave, so the answer would have been identical whatever the
+  wave did. The series now runs `None` (112) → a **previous** wave's artifact (116) → a sentence
+  invented purely to be refuted (118) → a real answer (119) → **a universal ground** (120). Each fix
+  closed one escape and opened the next, so state the *kind* of disagreement wanted: **a number that
+  differs, a path that is absent, a result that disagrees** — and rule out *"the artifact exists"* in
+  words. ⭐ Pair it with a question that cannot be answered by inspecting artifacts at all: *which two
+  of your own numbered answers sit least comfortably beside each other* — wave 120's `None` to
+  *"which measurement can you not account for"* was returned over a live internal contradiction.
+- ⚠️⚠️ **X-102 has NO production entry point of any kind — measured at tick 228, and it retires the
+  tick-227 plan to build the chat message store.** Four commands: `X-102/routes.generated.php` routes
+  four Livewire screens and **no action**, every entry in both groups behind `auth` (`tenant.role` /
+  `can:AdminAccess::GATE`), including the one the capability calls *customerfacing*;
+  `app/app/Modules/Channels/WebChat` and `app/public/goaiez-chat.js` — **the two paths the frozen plan
+  assigns to X-102's swarm** — do not exist; `grep -rn "chat_sessions\|ChatSession" app/app` outside
+  X-102 and `grep -rn "goaiez-chat"` across the tree are both **empty**; and the three chat Actions'
+  only callers are `X102Test.php` and `X110Test.php:176`. `Ui/Thread.php` and
+  `Ui/CustomerfacingWidget.php` are bare `render()`s. **So a store built now would be written by
+  nothing and read by nothing — both of decision 272's directions at once.** This is exactly the check
+  tick 225 wrote down after wave 117 (*before briefing "put a writer on a production path", check the
+  MODULE has a production entry point at all*), and briefing the store would have been the sixth walk
+  into that shape with the check already run. ⭐ **RULED at tick 228: the store is sequenced behind the
+  door, not cancelled.**
+- ⭐ **The house already has an unauthenticated tenant-resolving surface, and it documented itself —
+  so the door's mechanism is a measurement, not a design.** `app/routes/api.php:79` carries
+  `->middleware(['throttle:widget-feed', ResolveWidget::class])`, with a 70-line comment block at
+  `:60-130` explaining why `ResolveWidget` is *"the one place in this codebase that queries with"* the
+  widget key, and `app/bootstrap/app.php:50-100` slots `ResolveTenant` into three separate middleware
+  groups with its own ⚠️ notes on ordering. `ResolveWidget.php` is 65 lines, `ResolveTenant.php` 94.
+  ⚠️ **And check the precedent you are about to cite:** I had X-172's portal-token route down as a
+  second public surface; `X-172/routes.generated.php` is `['web','auth','tenant.role']` like every
+  other module's, so it is not one. That is NOTE 4's own lesson (*`ls -d` / print the line before
+  naming a source*) applied to a brief in the same tick it was written — spend it on the precedents
+  you cite, not only on the paths.
+- ⚠️ **A supervisor commit made while a coder is LIVE carries the coder's tip into the push with it.**
+  Tick 227 pushed `8135079c` (this column's own `CLAUDE.md` commit) and its `PUSHED` line read *"on
+  top of the gated `06708c6a`"* — but `03bdced6`, a coder commit made 5 seconds earlier, sits between
+  them and reached `origin` ungated. The delta was one comment line and it is gated at tick 228, so
+  nothing was lost. **The window is the whole fix: commit and push the column's notes BEFORE
+  `launch-coder.sh`, never after** — after dispatch there is no sha that advances the ref and excludes
+  the coder's, which is the tick-172 rule pointed at this column's own commits.
+- **Backlog at tick 228 — wave 121 is the door's shape, measured; wave 122 builds whatever it
+  establishes.** RULED (above): no production code, no migration, no model, no assertion. The door is
+  a public unauthenticated write into an RLS tenant table — the one place in this tree where a wrong
+  guess is a security defect rather than a dead row — and this lane has never measured how the house
+  resolves a tenant for an anonymous request, so the `ResolveWidget`/`ResolveTenant`/`api.php` reading
+  goes over as commands with the conclusion withheld (the tick-214 form, 2-for-2 on this lane).
+  ⛔ `⛔ REFUSED` is unavailable for `G16-21`: X-102 is one of the thirteen. Live list at tick 228,
+  re-measured: **6** rows, membership unchanged from tick 227 — `X-102 G16-21` and `C-Agent G5-31`
+  (both block on the store, which now blocks on the door) · `C-Agent G5-32` (needs an X-66 turn event)
+  · `C-Agent G5-43` (the profiles fixture, no store and no reader — deliberately **not** briefed) ·
+  `C-Mail G11-09` (unbuilt scoring model) · X-66's wire (`TRACK 1 ACTION 2`). Re-run
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` every tick; never inherit it.
 
 ## Style
 
