@@ -309,7 +309,7 @@ test('the reachability check states the size of its own blind spot', function ()
 
             if ($viewPath && file_exists($viewPath)) {
                 $viewContent = file_get_contents($viewPath);
-                if (str_contains($viewContent, '<x-surface.sample-state>')) {
+                if (str_contains($viewContent, '<x-surface.sample-state')) {
                     $unbuilt++;
                 } else {
                     $built++;
@@ -322,7 +322,7 @@ test('the reachability check states the size of its own blind spot', function ()
 
     expect($withLayout)->toBe(13, 'If it went UP, a new module route shipped wearing some other shell behind tenant.role. If it went DOWN, one of those was converted onto the owner layout, or lost its route.');
     expect($withoutLayout)->toBe(257, 'If it went UP, a new module route shipped with no #[Layout] at all, falling through to the staff console. If it went DOWN, one was converted, or built out.');
-    expect($unbuilt)->toBe(0, 'If it went UP, a new unbuilt route shipped falling through to the staff console. If it went DOWN, an unbuilt route was built out, converted, or lost its route.');
-    expect($built)->toBe(257, 'If it went UP, a new built route shipped falling through to the staff console. If it went DOWN, a built route was converted onto the owner layout, or lost its route.');
+    expect($unbuilt)->toBe(224, 'If it went UP, a new unbuilt route shipped falling through to the staff console, or a screen went back to carrying the banner. If it went DOWN, an unbuilt route was built out, converted, or lost its route.');
+    expect($built)->toBe(33, 'If it went UP, a new built route shipped falling through to the staff console, or an unbuilt route was built out. If it went DOWN, a built route was converted onto the owner layout, went back to carrying the banner, or lost its route.');
     expect($unresolved)->toBe(0, 'If it went UP, a new route falling through to the staff console could not resolve its view. If it went DOWN, an unresolved route was fixed or converted.');
 });
