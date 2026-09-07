@@ -9412,3 +9412,138 @@ whole `tests` delta.
   spine — owner ruling 8's shape. Pre-existing, and **seven modules across four lanes do the same**
   (X-01, X-10, X-102, X-155, X-212), which makes it the house pattern rather than this lane's
   deviation ⇒ advisory to Track 1, no wave, ⛔ never a parallel fix.
+
+## ⛔ Tick 279's cold falsifier witness is an EQUALITY only for a LOOP-FREE file — in general a LOWER BOUND (tick 280)
+
+Tick 279 measured `grep -c 'assert' app/tests/Modules/X-102/X102Test.php` = **86** against a measured green
+total of **86**, and wrote it up as the cold witness the falsifier arithmetic had been missing — *"prefer it
+whenever the file is present, because it makes the arithmetic checkable cold."* Applied to SITE-153 it reads
+**191** against a green total of **230**, a 39-assertion gap that on its face falsifies the falsifier. It does
+not, and both sides were measured rather than argued:
+
+```
+X102Test.php   grep -c 'foreach' → 0    grep -c 'assert' → 86    green 86     ✅ equality
+X155Test.php   grep -c 'foreach' → 2    grep -c 'assert' → 191   green 230    ⛔ +39
+```
+
+⛔ **The equality was a property of the FILE, not of the instrument.** X102Test contains no loop, so every
+assert *line* executes once and lines = assertions. X155Test contains two, and SITE-153's new method shows the
+multiplier in miniature — **8 assert lines → 14 runtime assertions**, because a 3-iteration `foreach` over 3
+assert lines contributes 9. A `grep -c` counts source lines; pest counts executions, and nothing in either
+number says which. Restated correctly, with all three readings:
+
+- **witness = green** and `grep -c 'foreach'` is 0 → the arithmetic is confirmed **cold**, as 279 intended.
+- **witness < green** → the difference must be accounted for by loop iterations; unaccounted, it is a finding.
+- **witness > green** → impossible. A tooling fault, or the wrong file.
+
+⚠️ It matters more than a footnote because 279 offered it as the cold check for the one instrument whose bound
+had none, so a future tick meeting `191` against `230` would have read it as evidence that a reported falsifier
+was fabricated. **A proxy asserted as an equality on one observation is the `1 + 2n` error** (tick 188), the
+*three favourable firings* error (250) and the *two-point signature* error (251) — this ledger's most-repeated
+mistake, committed on the instrument it invented one tick earlier. **Fitting a rule to the first file it was
+tried on is fitting a rule to one point.**
+
+## ⚠️ A `$` inside a double-quoted `state.py` argument is eaten by the shell — the brief's defect, in its QUOTING (tick 280)
+
+SITE-153's item 8 supplied the `decided` text for verbatim transcription and it contained
+`$payload['phone'] ?? '+15550000000'` inside a **double-quoted** shell argument. `JOURNAL.md`'s
+`2026-09-07T13:38:51` line reads `keyed its Person on ['phone'] ?? '+15550000000'`: bash expanded `$payload` to
+the empty string. The coder transcribed exactly what it was given.
+
+⛔ **Not re-filed** — `state.py` has no withdraw (tick 210), and by tick 259's discriminator the sentence still
+names the operator, the sentinel, both consequences and all three refusals, so a careful reader of the record
+alone reaches the right conclusion; a second row about one fact compounds rather than corrects. **A `decided`
+text supplied for verbatim transcription carries no `$`, or is supplied single-quoted.** Nineteenth instance of
+the imprecise-brief family (208, 227, 235, 236, 237, 238, 244, 245, 247, 249, 250, 254, 262, 265, 271, 274,
+275, 276) and the first where the defect is not in the instruction's *meaning* at all but in its **quoting** —
+so no amount of reading the sentence reveals it, and only diffing the written record against the brief does.
+
+## ⛔ Two pattern sweeps of the SITE-152/153 defect class, both CLEAN — and the clean sweep is the result (tick 280)
+
+SITE-152 (X-102, a blank phone admitted by a NOT-NULL existence guard) and SITE-153 (X-155, a spam branch
+keying a contact on an unnormalised value) are two firings of one shape in two waves, which is exactly when
+tick 241's law applies: **grep the PATTERN, not the address.** Both sweeps ran in this seat before any brief
+was written, and per tick 224 the branch that fired is recorded per member so the next tick does not re-derive
+them.
+
+**Sweep 1 — `firstOrNew|updateOrCreate|firstOrCreate` across the seven owned modules.** Six hits:
+
+| site | verdict |
+| :-- | :-- |
+| `X-102/ChatCaptureAction:36` · `X-155/FormCaptureAction:55` · `:96` | ✅ **already done here** — SITE-152/153 |
+| `X-176/SchemaRenderAction:173` | ✅ **clean by construction** — keyed `['business_id' => int, 'page_id' => int]`; there is no string to normalise |
+| `X-157/EdgeProvisionAction:14` | ✅ a string key (`domain_name`) and **zero production callers** (tick 213's standing measurement, re-run) |
+| `X-103/FunnelBuildAction:21` | ✅ a string key (`short_slug`) **whose collapse is the intended semantics** — `2026_09_02_000000_scope_x103_short_slug_unique_per_business.php:20` declares `unique(['business_id','short_slug'])`, so the database enforces exactly the identity `updateOrCreate` assumes; zero production callers besides |
+
+**Sweep 2 — `?? '<literal>'`, the true generalisation of SITE-153** (a null-coalescing literal reaching a
+persisted column). Thirty hits, of which all but six are read-side comparisons (`($block['type'] ?? '') ===
+'faq'`) that persist nothing. Of the six:
+
+- ⭐ **`X-155/FormCaptureAction:59-61` and `:98-99` are the model and were already correct** — both branches
+  read `given(first_name) ?? given(name) ?? 'Visitor'`, so the normaliser converts a blank to null *before* the
+  `??` fires and the literal is reached exactly when it should be. SITE-153 fixed the file's **last**
+  unnormalised member; every other `??` chain in it was already right.
+- ⭐ **`X-176/SchemaRenderAction:32-43`** likewise — `strtolower(trim(…))` before `$map[$vertical] ??
+  'LocalBusiness'`.
+- `X-110/PixelEventsAction:20,21,30` · `PixelEngine:55` · `Ui/*` — declared placeholder defaults over browser
+  payloads (`'default_form'`, `'unknown_field'`, `'button#submit'`, `'/'`); the same `??`-vs-blank gap, none a
+  key, a contact or a reserved value, and `X-110/Ui/` is Track 2's.
+- `X-103/SiteEngine:139` — `$funnel->steps[0]['url'] ?? '/'`, on the funnel path that has no production caller.
+
+⛔ **RULED: no wave, because nothing either sweep returned is reachable from a production path this lane
+owns.** The sweeps' value is the **negative**: two whole defect classes measured closed across all seven
+modules, with the *disconfirming* members recorded — `SchemaSnapshot`'s integer keys, the tracked `unique`
+index on `short_slug`, `given()`'s two correct chains — so the closure is re-checkable rather than re-arguable.
+**A clean sweep is a result and must be written down**; nothing else will ever say so, and an unrecorded clean
+sweep is re-run as backlog three ticks later.
+
+## ⚠️ `EdgeDeployAction:122`'s `?? 'Appointment'` is a DEAD DEFAULT — a defence that reads as covering a case it cannot reach (tick 280)
+
+Sweep 2's one substantive residue, recorded and **not built**. `X-157/Actions/EdgeDeployAction.php:122`
+publishes `'name' => (string) ($apt->service_name ?? 'Appointment')` into the JSON-LD `Event` node, and
+X-108's migration declares `$table->string('service_name')` — **NOT NULL** — so the attribute is never null and
+**the default can never fire**. What it does not cover is the gap that exists: a blank `service_name` publishes
+`"name": ""`, a schema claim with no content, which is tick 240's ④ family reached from the value side.
+
+⛔ **Not a wave**, on two measurements: `appointments` is **X-108's**, another lane's under ruling 5's
+catch-all, so the write-side normalisation is not ours; and nothing measured shows any writer producing a blank
+into that column, so a read-side `trim()` would be built against a state nothing is shown to produce. Per tick
+224 the branch is a **third** one, neither *already done here* nor *cannot work here*: **the door is open and
+the room is empty** — recorded so a later tick with a measured writer opens it in one line.
+
+**The shape generalises and it is tick 279's one surface over.** 279 found an *assertion* whose fixture could
+not reach the branch it asserted about; this is a *defence* whose guard cannot reach the case it appears to
+handle. Both read, to anyone grepping, as the hazard being closed. ⛔ **When a null-coalescing default guards a
+database attribute, read the column: over a NOT NULL column the default is DEAD, and the live gap is the blank
+it does not test for.** That is SITE-152's law — *NOT NULL is not non-empty* — stated for a reader rather than
+for a writer.
+
+## ⚠️ ui's `HeadingSeamTest` cannot reach this lane, measured at source (tick 280)
+
+`app/tests/Feature/Architecture/HeadingSeamTest.php` entered the complement (ui's `d4fa8eeb`, `e87b60f5`,
+`2d0c4b0e`). Tick 262 warned that a new architecture lint in a shared directory is the one kind of complement
+growth that is **not** inert, so its scope was read rather than assumed: it iterates
+`glob(base_path('app/Modules/*/Ui/*.php'))` and `continue`s on anything lacking
+`#[Layout('components.account.layout'`. This lane renders HTML from `Actions/`, never from Livewire account
+screens, so no owned module can enter its population. *Unwatched, not uncovered* (tick 183) — ⛔ no fourth half.
+
+## The lane is FINISHED on SIX audit axes plus two defect-class sweeps — HOLD ruled at tick 280
+
+`state.py next` → `{"action": "FINISHED"}`. Every doctor line naming the seven owned ids is a filed
+`UNRESOLVED` whose disposition is a sealed-stage defect, a vendor credential, or another lane's construction
+site; **J11 is green on §7**, the only surface in the programme that reports it (tick 213). Closed axes: by
+module (231) · by shared `why` twice (261, 262) · by capability id (263) · by credit, all seven modules
+(264/265 → 279) · tracker-vs-generated set difference (279) · **the two sweeps above (280)**.
+
+⛔ **RULED by the lane supervisor: HOLD, because the alternative is a dispatch with no measured subject**,
+which writes to a `state.py` that has no withdraw and is the failure refused at ticks 210, 211, 223 and 224.
+Idle is not the default and a measured-empty backlog is not idleness — **it is a result, and it is recorded
+with the evidence that makes it re-checkable.** The four re-openers stand: an owner answer, a Track 1 merge of
+a sealed-file fix, a regeneration that moves a count, and the census.
+
+⚠️ **§7 baseline is now `tests 1973 · passed 1970 · FAILED 1 · errors 2`**, measured independently on
+`96e210fb` and byte-identical to the coder's. Read it as the error **SET minus the known-intermittent member**
+(tick 278), never the integer: J8's `a_deliberately_corrupted_backup_fails_the_restore` is absent again, and
+the three stable entries are `test_g2_76_unified_inbox_header` (X-01, **stages'**) plus two real-transport
+journeys of **sixty's**. `1970+1+2 = 1973` ✓, and the wave's diff adds exactly one `public function test_` and
+deletes none, so tick 226's arithmetic accounts for the whole `tests` delta.
