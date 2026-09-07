@@ -28,19 +28,25 @@
                 </div>
             </div>
             
-            @foreach(['sms' => 'SMS Segments', 'voice' => 'Voice Minutes', 'ai' => 'AI', 'email' => 'Email', 'lead' => 'Lead Credits'] as $type => $label)
+            @forelse($meters as $type => $meter)
                 <div class="bg-card overflow-hidden shadow rounded-[--radius-card] border border-rule">
                     <div class="px-4 py-5 sm:p-6">
-                        <dt class="text-sm font-medium text-ink-2 truncate">{{ $label }}</dt>
+                        <dt class="text-sm font-medium text-ink-2 truncate">{{ $meterLabels[$type] ?? $type }}</dt>
                         <dd class="mt-1 text-2xl font-semibold text-ink tabular-nums">
-                            {{ number_format(($meters[$type]->units_used ?? 0)) }}
+                            {{ number_format($meter->units_used) }}
                         </dd>
                         <dd class="text-xs text-ink-2 mt-1 tabular-nums">
-                            Cost: {{ number_format(($meters[$type]->cost_hundredths_cents ?? 0) / 10000, 4) }}
+                            Cost: {{ number_format($meter->cost_hundredths_cents / 10000, 4) }}
                         </dd>
                     </div>
                 </div>
-            @endforeach
+            @empty
+                <div class="sm:col-span-2">
+                    <x-ui.empty-state heading="No usage metered yet.">
+                        Nothing in this checkout writes a usage meter, so no SMS, voice, AI, email or lead usage has been recorded for this account. Usage lands here once the telephony and agent modules meter it.
+                    </x-ui.empty-state>
+                </div>
+            @endforelse
         </div>
 
         <div wire:loading.remove class="mt-8 flow-root">

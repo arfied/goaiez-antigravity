@@ -60,17 +60,29 @@ class Credits extends Component
     {
         abort_unless(auth()->check() && Tenancy::check(), 403);
 
-        $meters = Meter::where('business_id', Tenancy::id())->get()->keyBy('meter_type');
+        $meters = Meter::where('business_id', Tenancy::id())
+            ->orderBy('meter_type')
+            ->get()
+            ->keyBy('meter_type');
         $entries = CreditLedgerEntry::where('business_id', Tenancy::id())
             ->orderByDesc('id')
             ->get();
         $latestEntry = $entries->first();
         $aiBalance = $latestEntry ? $latestEntry->balance_after_hundredths_cents : 0;
 
+        $meterLabels = [
+            'sms' => 'SMS Segments',
+            'voice' => 'Voice Minutes',
+            'ai' => 'AI',
+            'email' => 'Email',
+            'lead' => 'Lead Credits',
+        ];
+
         return view('c-billing::credits', [
             'meters' => $meters,
             'entries' => $entries,
             'aiBalance' => $aiBalance,
+            'meterLabels' => $meterLabels,
         ]);
     }
 }

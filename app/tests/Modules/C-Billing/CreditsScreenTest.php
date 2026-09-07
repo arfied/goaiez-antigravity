@@ -82,15 +82,36 @@ class CreditsScreenTest extends TestCase
             ->assertSee('49.0000') // AI balance
             ->assertSeeInOrder(['AI Credits Balance', '49.0000', 'Ledger'])
             ->assertSee('-1.0000')
-            ->assertSee('100') // sms units
-            ->assertSee('5.0000') // sms cost
+            ->assertSeeInOrder(['SMS Segments', '100', 'Cost: 5.0000'])
             ->assertDontSee('888.0000') // entry B
-            ->assertDontSee('999') // sms units B
+            ->assertDontSee('99.9000') // other tenant's meter cost
             ->call('explain', $entryA2->id)
             ->assertSee('Used AI tokens')
             ->assertSee('Explanation')
             ->call('explain', 999999)
             ->assertSee("isn't in this account");
+    }
+
+    public function test_credits_screen_says_no_usage_is_metered_when_no_meter_row_exists(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        CreditLedgerEntry::create([
+            'business_id' => $biz->id,
+            'entry_type' => 'grant',
+            'amount_hundredths_cents' => 500000,
+            'balance_after_hundredths_cents' => 500000,
+            'reference_id' => 'ref-123', 'description' => 'Initial grant',
+            'created_at' => now()->subDay(),
+        ]);
+
+        Livewire::actingAs($owner)->test(Credits::class)
+            ->assertSee('Nothing in this checkout writes a usage meter')
+            ->assertDontSee('SMS Segments');
     }
 
     public function test_credits_topup_refuses_at_the_daily_ceiling(): void
