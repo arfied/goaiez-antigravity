@@ -5099,6 +5099,10 @@
   {
    "at": "2026-09-06T20:12:56",
    "note": "MEASUREMENT not a filing. CORRECTS the 2026-09-06T19:49:51 note, whose sentence \"Corrected blanket-regeneration total: 23 violations, 13 from emits and 10 from agent_reachable and 0 from ceiling\" is WRONG in its OPERATION. The 13 from emits is a module:scaffold regeneration delta and the 10 from agent_reachable is a remove-the-none-sentinel delta, and the two do not sum. Under regeneration X-175 loses field.ask and X-82 loses rate.set as well as none, per the 2026-09-06T18:50:21 and 2026-09-06T18:13:37 notes, and ModuleScaffoldCommand emits none only for a zero-grant module so neither regains the sentinel. Each therefore adds one violation at ContractStage.php:429. Corrected agent_reachable regeneration delta: 12. Corrected blanket-regeneration total: 25 violations, 13 from emits and 12 from agent_reachable and 0 from ceiling. The remove-the-sentinel delta of 10 stands and is a different number for a different edit. Coverage of the agent-reach check across all 127 modules, in provided actions: total 386, skipped as dotless at ContractStage.php:406 0, decided at :423 55, silenced by the none sentinel at :426 282, violating at :429 49. The silenced total splits 272 under the 92 deny-all modules and 10 under the 6 contradictory ones. Of the 92 deny-all modules 92 provide at least one action and 0 provide none at all. Dispositions unchanged, ceiling LEAVE agent_reachable LEAVE emits LEAVE, and no class moves the count downward."
+  },
+  {
+   "at": "2026-09-06T20:37:23",
+   "note": "MEASUREMENT not a filing. The tokens closure splits the input and filters out empty elements; when the input is empty it returns the string '[]'. A module whose plan omits the field regenerates to an empty allow list in the manifest rather than to the string 'none'. An empty allow list suppresses nothing, so every provided action fires a violation."
   }
  ]
 }
