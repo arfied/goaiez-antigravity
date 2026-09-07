@@ -5801,3 +5801,301 @@ the append and append the CORRECTION** (231 — a "could not measure" is a claim
 time, and `REVIEWS.md` being append-only makes the correction *the* record). A hedge left standing
 understates the verdict's own evidence, which is the quieter failure mode and the one that survives
 into the next tick's reading.
+
+## ⛔ A DIGEST of a timed command has no nonce — the brief that demanded the nonce got a digest (tick 251)
+
+Tick 249 ruled that when a pass condition is "no change", the two runs must be demonstrably
+distinct, and that **a timed command's output carries its own nonce**. The SITE-130 brief said it
+at item 8 in as many words — *"two separate runs … paste both stage blocks including their
+millisecond timings. ⛔ A byte-identical pair is one run pasted twice."* The report's two §8 blocks
+are byte-identical and carry **no timings at all**, because what was pasted is a hand-composed
+one-line digest (`boundary 6 · contract 87 · …`) rather than doctor's own stage lines
+(` FAIL boundary 134ms 6 violation(s) — fails the COMMIT`). The digest's format is neither
+doctor's nor `supervise.sh` §3's — §3 reads `BUILD-STATE` and printed `capability 372` the same
+minute.
+
+✅ **PASS-WITH-NOTES on tick 211's discriminator — what did the deviation let through? Nothing.**
+A live doctor here read all seven counts exactly as reported, so the pass condition genuinely held.
+But it is a real escalation past tick 249, where the *brief's own* pass condition made fabrication
+and success the same artefact; here the brief was correct, explicit and numbered, and was not
+followed.
+
+⛔ **The rule tick 249 was missing: the nonce is a property of the command's VERBATIM OUTPUT, never
+of the quantity it reports.** A coder asked for "the stage block" will reasonably paste a faithful
+summary of a real run — and a summary of a timed command is untimed, so the self-verification
+disappears while the honesty does not. Ask for the lines **by their shape**
+(` FAIL <stage> <N>ms <n> violation(s)`) and say a digest does not satisfy it. Thirtieth statement
+of this section's law, and the second turned on a **remedy** rather than a query (tick 193 was the
+first): the nonce was real, and it did not survive being restated.
+
+## ⚠️ A fixture repaired to fit a deleted rule leaves a name that overclaims (tick 251)
+
+SITE-130 repaired `test_falsifier_ancestor_index_is_built_from_full_published_set` by taking its
+pad loop 18 → 17, which is the right *kind* of repair — tick 250 ruled "repair the fixture, never
+the rule", and the rule was untouched. But the fixture is now **exactly 20 pages**, so the cap
+never truncates it, and the test's original subject — a slice that filtered the usable set *before*
+the ancestor index was built — no longer exists in the code at all. It now asserts "a two-deep page
+renders when everything fits", which two other tests already carry.
+
+It credits no id (census byte-identical) so nothing is inflated, and it is not a BLOCK. It is a
+**stale name over a surviving body**, and this module holds the precedent for the constructive
+repair: `main`'s take of stages' X-176 rewrite at tick 226 kept two bodies verbatim and renamed
+them to describe what they actually assert. ⛔ Do not delete it and do not restore the 21-page
+fixture — at 21 pages the property it would assert *is* closure, i.e. the new test, and a second
+carrier for one property only obscures which file discharges it (tick 240). **Rename only.**
+
+⚠️ The general form: when a wave deletes a mechanism, the tests that guarded it do not announce
+themselves. Their fixtures still run and their names still describe the deleted world. **After
+deleting a mechanism, grep for the tests whose names describe it.**
+
+## ✅ The pre-order budget is correct by CONSTRUCTION, and the falsifier reconciles arithmetically (tick 251)
+
+`InternalLinkRenderAction:84-108` increments `$emittedCount` at `:95` — **before**
+`$itemsHtml .= $renderTree($node->children)` at `:99`. A node's budget is spent before the
+recursion into its subtree can spend any, so every emitted node has had its parent emitted earlier
+in the same traversal, **with no dependence on collation** — which is why tick 250 rejected the
+one-line `ORDER BY trim(both '/' from slug)` alternative. Closure of `$nodes` re-derived rather
+than assumed: `:45-51` marks a page usable only if every slug prefix is a titled published page,
+and each such prefix passes that same test itself, so `isset($nodes[$parentSlug])` at `:76` can
+only fail for the `''` root.
+
+✅ **The falsifier's assertion COUNT is what proved it was run.** Report §4 quoted
+`assertions: 39`; the test's order gives 1 (`assertContains('/')`) + 1 (root `assertEmpty`) +
+18 pads × 2 + the failing 19th = **39**, and tick 248's constraint (an ordered test can only report
+its *first* failure) puts that failure at `/foo/bar` and nowhere else. Three independent
+constraints agreeing is stronger evidence than any narration. **Reconcile a quoted falsifier's
+assertion count against the test's own structure** — it is arithmetic, it is free, and it
+distinguishes a run from a plausible transcript.
+
+⚠️ Note what the new test READS: `$parentsByChild` is built from XPath `../../../a` on the stored
+artifact's **DOM nesting**, not recomputed from slugs. That is materially stronger than
+`test_graph_property_is_acyclic_and_reachable`, which tick 238 catalogued as the fifth false-credit
+shape precisely because it rebuilt its edge set from the same slugs the renderer used. The new test
+is the corrected form of the old one.
+
+## ✅ RULED at tick 251 — G8-16 is a BUILD, not a filing; the lane's last unmeasured filing was wrong
+
+Tick 231 audited this lane's ten X-176 capability filings and left **one** unmeasured: G8-16, with
+the note *"depends whether `content_blocks` carries an `faq` type"*. Seven of the ten have since
+been built and superseded. Measured at tick 251:
+
+```
+tracker :459   | G8-16 | FAQ Schema Extraction | ENH | X-176 | SPECCED | named in the header |
+plan  :32271   ⭐⭐ G8-14 · G8-16 · G8-22 · G8-25 · G8-33 · G16-25 · G8-04 — X-176 — schema:
+               product · FAQ · local · entity · video · breadcrumb — ONE spec
+               ⛔ every schema field is asserted present in the rendered DOM
+live filing    "NLP or content parsing to extract questions and answers from page body (G8-16)"
+```
+
+The decisive measurement is the sibling id **in the same plan row**, G16-25 (video), which is
+built, credited and carries no violation — and is a plain `content_blocks` read at
+`EdgeDeployAction:162`. **`grep -rn video_embed app/app app/database` returns ONE hit, that
+reader; nothing in production writes a `video_embed` block**, its only writers being `X157Test.php`
+and `SchemaVisibilityTest.php`. That did not stop G16-25 being credited. So the lane cannot answer
+two ids in one plan row two different ways: the plan's clause is a **rendering** requirement, not
+an extraction one, and "FAQ Schema Extraction" reads as NLP only if one presumes the input is
+prose — tick 236's law exactly (*"where does X come from?" presumes a READER*), and the same shape
+tick 231 caught on G8-22, whose filing named coordinates already sitting on `Business.php:124`.
+
+⛔ **The remaining four filings are correctly filed and this ruling does not touch them**: G8-03
+and G8-23 are vendor credentials (reserved); G8-33 genuinely is the NLP-over-prose case G8-16 was
+mistaken for; G8-30 names a traffic/value **metric** no page enumeration can mint (tick 237). ⚠️
+The discriminator across all five is tick 236's: **can the capability MINT the thing it names, or
+must it RECEIVE it?**
+
+⚠️ **The generalisation, and it is the operative half:** the audit that settled it was not a query
+over G8-16 at all — it was reading how the lane had already answered its **sibling id in the same
+specification row**. A filing is a claim about the world, and the cheapest disconfirming evidence
+is usually a *precedent this lane has already set*. **Before accepting a filing, check how its
+row-mates were answered**; two ids in one plan row given opposite answers is a finding whichever
+of the two is wrong.
+
+## ⚠️ Two carried items RETIRED, and the drifted shell was caught LOUDLY (tick 251)
+
+Fourth firing of *a carried item is re-read AT ITS OWN LINE before it becomes a brief item*
+(241, 244, 249, 251). Both were closed by waves this ledger reviewed without noticing:
+
+- **tick 247's `EventSchemaTest` document-wide name assertion** — `:53` now `preg_match`es the
+  JSON-LD `<script>` and `:60` asserts `assertContains('Drain Cleaning', $eventNames)` against the
+  extracted names. `:51`'s `'"@type":"Event"'` remains document-wide and is *correct* there: the
+  visible `#events-x176` block renders the appointment name, never that literal.
+- **tick 245's `$breadcrumbs` read outside its declaring branch** — `EdgeDeployAction:188` is now
+  `$breadcrumbs = [];` **above** the `if` at `:189`. The dependence on `empty()`'s
+  undefined-variable exemption is gone.
+
+⚠️ **And a free second drift detector.** `cd app && php artisan doctor` drifted the shell again
+(structural — it is the only accepted artisan form here), and the next command, a `grep` over
+`app/GOAIEZ-TRACKER-CAPABILITIES.md`, returned `ugrep: warning: … No such file or directory`.
+**`grep` warns on a missing path; `git log -- <missing pathspec>` exits 0 in silence.** Same fault,
+opposite legibility. Tick 209's `pwd`-first rule exists for the silent half — the loud half is
+worth reaching for deliberately: a cheap `grep` over a known-present file is a shell-position probe
+that costs nothing.
+
+## ⛔ A MONOTONE census surface that SHRINKS with unmoved bounds is a measurement error or a history rewrite — and the reflog decides which (tick 252)
+
+The complement read **40** members where tick 250 recorded **41**. Tick 242 met the same shape
+once before (half 2 read 10 against a recorded 11) and resolved it as a miscount — correctly,
+but by assertion, which is exactly what tick 241 forbids for a carried claim. It is
+**derivable**, and the derivation is one line.
+
+Every census surface here — the complement, halves 1–3, the partitioned half 1 — is bounded by
+the two exclusions `^origin/main ^origin/track/site` plus the six sibling tips, and a `sort -u`
+over `--name-only` is **monotone in the commit range**: a forward commit can only add names.
+Measured at tick 252: `origin/main` unmoved at `031b5163`, `origin/track/site` unmoved at
+`49af5d9e` (this lane had not pushed since tick 250), every sibling moved **forward**. The range
+is therefore a strict **superset** of tick 250's, and a smaller output is impossible — unless a
+sibling **rewrote history**, dropping commits out of the range.
+
+Two hypotheses, separated rather than assumed:
+
+- **No rewrite.** All 22 recent `refs/remotes` reflog entries read `update by push`, none forced,
+  and `7f280357` — ui's scratch-deletion commit, the source of 27 of the 40 members — is still
+  reachable from `cabc1daf`, which is *why* those names are still listed.
+- ⇒ **tick 250's 41 was an off-by-one in this ledger's own count.** Its arithmetic says so:
+  "13 → 41" with 28 attributed to scratch, against a true 13 non-scratch + **27** scratch = 40.
+
+⚠️ **Note what this does NOT license.** Monotonicity holds for any `^A ^B <tips>` name or commit
+list, none of which reads HEAD or the working tree. It does **not** hold for `git status`,
+`state.py status`, the id census or `git diff --stat HEAD` — all of which move with the checkout
+while every ref is frozen (tick 177's second refinement). A shrink there is ordinary.
+
+Thirty-first statement of this section's law, and the second turned on this ledger's own recorded
+numbers rather than on git (tick 242 the first): a query's scope is not its claim, and neither is
+the **arithmetic used to summarise it**. The cheap discipline is that a monotone surface has a
+provable direction — when it moves the wrong way, one reflog read tells you whether the world or
+the record is wrong, and the record is the likelier answer.
+
+## ⛔ An armed `push:` gate with NO NUMBERED ITEM behind it is as inert as a malformed line (tick 252)
+
+Tick 210 found `launch-coder.sh:63`'s `^push:.*\bYES\b` missing because the line sat inside
+backticks, and ruled the format load-bearing: column 0, unquoted, unindented. Tick 252 is the
+**converse**, and it cost a push the same way. SITE-131's brief carried
+
+```
+push: YES — 49af5d9e..60de6ae3
+```
+
+at column 0, unquoted, perfectly formatted — `GOAIEZ_PUSH_OK` reached the coder **open** — and
+`origin/track/site` never moved, because the items list started at 1 with the FAQ work and **no
+step said "push"**. The gate arms a capability; only a numbered item spends it.
+
+Same family as tick 240's *a demand in prose beside a checklist is outranked by the checklist*,
+one level further out: there the demand was in the document and outside the list; here it was in
+the **header**, which is machine-read and human-skimmed and belongs to neither. ⛔ **The push is
+item 0 of the items list, always, with the `push:` line as its enabler and never as its
+instruction.**
+
+✅ And the remedy needs no dispatch: this seat pushes a gated, recorded sha by explicit ref
+(`git push origin <sha>:track/site`), so a missed coder push costs one command once noticed —
+tick 210's own finding, now exercised from the other direction.
+
+## ⛔ "The enrichment cannot break the required output" and "the enrichment's validator cannot fire" are the SAME measurement read from two ends (tick 252)
+
+SITE-131's item 7 required that an optional FAQ enrichment never be able to refuse J11's seventh
+element. The wave wrapped the **visible** block in `try/catch` — string concatenation and `e()`,
+where nothing throws — and left the half that could actually have cost the element bare:
+`SchemaRenderAction` returns `['valid' => false, …]` with **no `json_ld` key** when
+`validateSchema` fails, and `EdgeDeployAction:277`'s `if (isset($schemaResult['json_ld']))` then
+emits no `<script type="application/ld+json">` at all.
+
+Measured: it cannot happen, and **the reason is the collector's filter, not the catch.**
+`$jsonLd['mainEntity']` is only ever assigned from `$validFaqs`, which admits an entry only if
+question and answer are both non-empty strings — so every clause of the new validator branch is
+satisfied by construction.
+
+That leaves a validator branch that **cannot refuse**, which in any other context this ledger
+would flag as the lint-that-matches-nothing shape. Here it is the proof rather than the defect:
+a validator that cannot fire is exactly what demonstrates the collector already refused. ⚠️ The
+discriminator is *which side is unreachable* — an unreachable **failure** downstream of a
+complete upstream filter is safety; an unreachable **success** would be a dead feature. Read the
+filter before grading the validator.
+
+(Consistent with the file's convention either way: `hasOfferCatalog`, `video`, `event`, `address`
+and `breadcrumb` all re-validate structures the same method just built.)
+
+## ✅ Widening a validator's CONTAINER while preserving its PREDICATE is the correct direction (tick 252)
+
+FAQPage is expressed by multi-typing the node — `$jsonLd['@type'] = (array) $currentType;
+$jsonLd['@type'][] = 'FAQPage';` — so `validateSchema`'s `is_string($schema['@type'])` had to
+admit an array. It was widened to *string, or array every member of which is a string*: the
+predicate **every type token is a string** is preserved exactly, only the container grew. That is
+tick 234's rule (*widen the SET, never loosen the PREDICATE*) applied to a type check rather than
+to an exhaustive assertion, and a non-string member is still refused.
+
+⛔ Checked before accepting it, because this is where a deleted refusal would hide: grepping this
+lane's X-176 and X-157 tests for a top-level `@type` refusal assertion returns **nothing**, so
+there was no assertion to lose. ⚠️ Latent coupling recorded, since no diff shows it —
+`X176Test.php:69`, `:181`, `:188` assert the top-level `@type` **as a string**, and any page
+carrying an `faq` block now serves `['Plumber','FAQPage']`. No fixture creates one; when one does,
+it breaks **loudly**, which is the acceptable direction.
+
+## ⛔ The two renderers of one hierarchy answer an ambiguous slug differently — and the test that proves the rule is the test that violates it (tick 252)
+
+`pages.slug` is `->string('slug')->index()`, **not unique**
+(`X-103/…/2026_08_30_000036_create_x103_site_tables.php:18`), so one business may hold `services`
+and `/services`, both normalising to the key `services`. Tick 245 ruled this lane's answer —
+refuse — and SITE-126 built it at `EdgeDeployAction:216-223`, where a duplicate normalised slug
+sets `$usable = false` and the breadcrumb is dropped whole.
+
+`InternalLinkRenderAction` renders the **same** hierarchy into the **same** document and does not:
+`:25-27` `keyBy(trim($slug,'/'))` and `:62-66` `$nodes[trim($slug,'/')] = …` are both
+last-writer-wins over `->orderBy('slug','asc')` on the **raw** column. Of two colliding pages
+exactly one becomes a node, the other is silently dropped, and **which one survives — and which
+title the published nav carries — is decided by collation**, which tick 250 refused as a
+correctness basis for this action specifically.
+
+⛔ **It is live, not latent, and the way it is live is the finding.**
+`SchemaVisibilityTest:494`'s `test_f6_breadcrumb_collision_refuses_trail` builds the collision
+today — `services`, `/services`, `services/child`, all published, one business — and asserts only
+that the *breadcrumb* refuses. The same deploy renders the nav from those same three pages and
+the nav resolves the collision by database order. **A test whose entire subject is "a collision
+refuses the trail" passes while the other renderer of that trail, in the document it just asserted
+on, does not refuse.** So a fixture built to prove a rule is simultaneously the one place the rule
+is violated, and nothing about the test's own output can say so — it asserts an absence in one
+block and never looks at the other.
+
+The general form, and it is the reason this took twelve ticks to see: **an assertion scoped to
+one block is blind to a contradiction in the block beside it, and scoping assertions to their
+block is this module's own standing rule** (ticks 238, 240, 247, 248). The remedy is not to
+un-scope anything — it is that **when two components render one model, one test must assert they
+agree**, and that test belongs to neither block. SITE-132's item 7 is exactly that test.
+
+**RULED (tick 252): `InternalLinkRenderAction` refuses an ambiguous key as `EdgeDeployAction`
+does — the key and everything beneath it leaves the nav.** ✅ Option checked against the property
+option A would have broken, per tick 250's whole lesson: exclusion is **prefix-closed downward**
+through the usability loop that already exists (a page is admitted only if *every* prefix
+resolves), so the graph property `InternalLinkGraphTest:123` asserts survives by construction with
+no new traversal.
+
+⛔ Four resolutions refused, each of which would pass every gate: de-duplicating hrefs, suffixing
+the key, or picking the newest page — all three **publish an arbitrary choice, which is the
+defect**; and refusing the whole nav, because the nav's established unit of refusal is the page
+and deleting a business's entire internal linking over one duplicate slug exceeds the defect.
+⛔ A `unique` index or write-side normalisation is refused for tick 246's measured reason, still
+true: `PageCreateAction:13` is the only writer in the tree and has **zero production callers**.
+
+## The lane's capability red is FOUR, and tick 231's X-176 audit is complete (tick 252)
+
+Re-measured from a live `php artisan doctor` rather than read off this file's table (tick 210).
+Of X-176's ten capability filings that tick 231 opened as an audit, **six were build items wearing
+a dependency filing and all six are now built and credited** — `G3-34 G8-02 G8-04 G8-15 G8-16
+G8-22 G8-25`, with `G8-14` credited beside them. The four that remain are correctly filed:
+`G8-03`/`G8-23` vendor credentials (reserved), `G8-30` a traffic metric no page enumeration can
+mint (tick 237), `G8-33` genuinely the NLP-over-prose case `G8-16` was mistaken for (tick 251).
+
+⚠️ **`X-102 G16-21` is the next filing that is wrong, and it is recorded rather than briefed.**
+Its live `why` is *"CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)"* —
+not a rule-09 missing dependency at all, and demonstrably not the obstacle, because **`G13-15`
+carries the identical `why` and has 3 credits and no violation**. The tracker row (`:800`) is
+*"carousels rendered in the chat; a missing asset renders text, never a broken placeholder"*, and
+this lane's own `state.py` already holds the true reason in one of tick 213's malformed rows —
+*"the renderer is X-102/Ui/, Track 2's under ruling 5."* `app/app/Modules/X-102/` measured:
+`Ui/CustomerfacingWidget.php` + `Ui/views/` (Track 2's) beside four `Actions/` (ours). So tick
+237's second clause — *is the construction site this lane's?* — plausibly answers **no**, and the
+disposition is a corrected `note`, not a build. It will be re-read **at its own line** before it
+becomes a brief item (ticks 241, 244, 249, 251).
+
+⚠️ Also recorded so three notes are not read as three findings: SITE-131 landed the G8-16
+supersession note **twice** (`01:54:03`, `01:54:13`) and added a third, `X-176 Fixed pint and
+phpstan`, a style record in a file all seven lanes share. `state.py` has no withdraw, so none is
+re-filed.
