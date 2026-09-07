@@ -869,3 +869,4 @@
 - `2026-09-07T00:04:23` (R245) X-176 — the breadcrumb and event schema assertions are scoped to the block they are about, so a string rendered elsewhere in the document cannot satisfy them --ruling R245
 - `2026-09-07T00:22:12` (R245) X-157 — Order price book items by id asc for deterministic page head deployment --ruling R245
 - `2026-09-07T00:46:25` (R245) X-176 — the internal-link query is ordered for a deterministic published nav, and that the cap is applied to the emitted list while the ancestor index is built from the full published set --ruling R245
+- `2026-09-07T01:13:04` (R245) X-176 — the internal-link cap is a pre-order budget over the built tree, so every emitted link's parent is emitted before it and the published nav can never carry an orphan --ruling R245
