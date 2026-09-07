@@ -630,7 +630,7 @@
 | G12-01 | "Powered By" Viral Loop | ENH | X-190 | SPECCED | named in the header |
 | G12-02 | AI Blog Publishing | ENH | X-183 | SPECCED | gated by grounding; the pre-publish gate is X-183's · refuses: publishing without grounding |
 | G12-03 | Auto-Detection | ENH | X-176 | SPECCED | entity type inferred for schema, zero user input |
-| G12-04 | Auto-Publish Sync | ENH | X-202 | SPECCED | approval granted → the publish action fires |
+| G12-04 | Auto-Publish Sync | ENH | X-202 | SPECCED | approval granted → the publish action fires — the item's own floor governs; an item whose floor is unmet does not authorize a publish, and the desk never calls the publisher itself |
 | G12-05 | Auto-Publishing | ENH | X-183 | SPECCED | to the builder or the plugin · ⛔ **REFUSES with UNATTENDED_LOCKED** |
 | G12-06 | Auto-Publishing | RE-HOME→G16 | X-158 | SPECCED | show notes and player — the video pass · ⛔ **REFUSES with FALSE_QUOTE** |
 | G12-07 | Automated Follow-Ups | ENH | X-191 | SPECCED | ONE follow-up only, per the header — not three |
