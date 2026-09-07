@@ -5081,6 +5081,10 @@
   {
    "at": "2026-09-06T19:13:22",
    "note": "MEASUREMENT not a filing. Consequence map for the 22 drifted manifests of S-132. Read paths: agent_reachable ManifestReader.php:180 and ContractStage.php:265, emits ManifestReader.php:171 and ContractStage.php:111, consumes ManifestReader.php:172 and ContractStage.php:111, ceiling ManifestReader.php:177 and ContractStage.php:492, provides ManifestReader.php:170 and ContractStage.php:249. Contract 87 decomposes as 49 agent-reach, 13 nothing-emits-it, 13 not-a-token, 6 other-emitters, 4 prose-not-token, 2 intent-GROW. Direction if regenerated: ceiling flat, agent_reachable up, emits up. The emits class removes members consumed by 19 other modules with no alternate emitter, so a blanket regeneration RAISES contract by 21. Dispositions recommended: ceiling LEAVE, emits LEAVE, agent_reachable REGENERATE and NEEDS-OWNER."
+  },
+  {
+   "at": "2026-09-06T19:36:08",
+   "note": "MEASUREMENT not a filing. CORRECTS the 2026-09-06T19:13:22 note, whose sentence \"The emits class removes members consumed by 19 other modules with no alternate emitter, so a blanket regeneration RAISES contract by 21\" is WRONG in its UNIT. ContractStage.php:551 loops over TOKENS and implodes all consumers of a token into one violation, so the count is per token, not per consuming instance. Corrected blanket-regeneration delta: 13 violations, all from emits, tokens credit.debited, subscription.renewed, cart.checkout, order.paid, order.cancelled, rule.fired, fetch.completed, upload.received, note.voice, zernio.webhook, invoice.overdue, limit.exceeded, country.detected. agent_reachable contributes 0 because ContractStage.php:281 fires only on an EMPTY declaration and no drifted module empties, and :295 skips the none sentinel by name. ceiling contributes 0 because :492 short-circuits on ships n/a and all seven carry it. Also corrected: five cited consumes lines pointed at the emits line, C-Billing 46 to 51, X-160 39 to 42, X-82 39 to 43, X-175 and X-177 likewise. Dispositions: ceiling LEAVE, agent_reachable LEAVE, emits LEAVE. No class moves the count downward and nothing under app was changed."
   }
  ]
 }
