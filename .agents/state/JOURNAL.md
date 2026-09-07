@@ -1229,3 +1229,5 @@ None of the 15 modules showed a SCAFFOLD-DEFECT.
 - `2026-09-07T04:39:38` note: 369 distinct defects are spread across 70 modules (57 carry none). The top 10 carry 174 of 369. The 242 is mostly a directory with real tests that simply never cite an id.
 - `2026-09-07T05:09:31` note: Deferred share is 79 of 369 distinct defects. Reachable remainder is 290. Capability cannot reach 0.
 - `2026-09-07T05:09:38` note: Per-class split: specced deferred 77 non-deferred 202, no tracker row deferred 27 non-deferred 66, no refusal deferred 7 non-deferred 70.
+- `2026-09-07T05:39:36` note: The two 27/66 partitions are different sets with equal marginals (deferred & :68-only = 0, deferred & also :54 = 27, non-deferred & :68-only = 27, non-deferred & also :54 = 39).
+- `2026-09-07T05:39:36` note: The single-action set is 242 of 290 rows, broken down by action: 154 close with a test (:54-only), 27 with a tracker/plan row (:68-only), and 61 with a refusal sentence (:97-only).
