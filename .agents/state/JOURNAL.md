@@ -821,3 +821,4 @@
 - `2026-09-06T21:54:35` (R245) X-163 — a NO_FACT pricebook refusal records a business-wide gap row and never mutates a location-scoped row
 - `2026-09-06T22:15:37` (R245) X-163 — a price gap is keyed by the service name trimmed and whitespace-collapsed, case preserved, and a blank name records nothing
 - `2026-09-06T22:37:03` (R245) X-163 — a wave reports the gate's test line only after the gate has printed its verdict, and a killed or zero-byte pest is reported verbatim as UNRESOLVED rather than as a computed count
+- `2026-09-06T22:47:47` (R245) X-163 — a service name is matched on a folded service_key written by the model on save, while service_name keeps its display case, so the pricebook reader and the duplicate guard agree by construction
