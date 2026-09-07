@@ -1557,6 +1557,10 @@
   {
    "at": "2026-09-06T19:17:07",
    "note": "X-201 MONEY-86: Livewire's assertSee escapes the needle only (MakesAssertions.php:18, $escape ? e($value) : $value against the raw rendered html), so an apostrophe in a needle matches only text that reached the page through {{ }} and never static blade prose. MONEY-85's two dictated needles carried an apostrophe against static prose and could never pass, which is what made the tip red at FAILED 3; the old line passed only because the previous blade had &#039; hardcoded in its prose, and :72's assertSee(\"isn't in this account\") passes in the same chain because that string is a flash message rendered through {{ }}. Both MONEY-85 mutation proofs quoted that always-failing assertion and proved nothing; both are re-run here."
+  },
+  {
+   "at": "2026-09-06T19:38:58",
+   "note": "X-173 MONEY-87: AccountingConnectAction:22 wrote the literal true into is_active regardless of whether an access token was supplied, so a connection carrying no credential rendered a green active pill at connection-mapping.blade.php:28 and cleared AccountingSyncEngine.php:88's mapAccount guard. All eight connect() fixture sites passed three arguments, so every connection in the suite was active with a NULL access_token and that guard had never refused for the reason it exists. is_active is now derived from the credential. The migration 2026_08_30_000092:21 still declares a default of true; ruling 41 part 3 forbids editing that file, and after this wave the only writer passes the column explicitly, so no code in the lane relies on the default \u2014 recorded here rather than migrated. The connect door itself still cannot succeed: ledger OAuth credentials are the owner's and are UNRESOLVED (ruling 73a)."
   }
  ],
  "decisions": [
