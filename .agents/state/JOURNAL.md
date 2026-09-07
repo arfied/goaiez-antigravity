@@ -645,3 +645,5 @@
 - `2026-09-06T20:01:33` (R245) X-211 — a string a screen prints to an owner carries no internal rule id
 - `2026-09-06T20:01:56` (R245) X-120 — a test asserts a state through the element that renders it, never through a phrase spliced into neighbouring prose.
 - `2026-09-06T20:02:02` note: a string a screen prints to an owner carries no internal rule id, and a test asserts a state through the element that renders it, never through a phrase spliced into neighbouring prose.
+- `2026-09-06T20:25:15` note: the paid top-up is App\Services\Billing\CreditTopUps, scheduled as credits:run-auto-top-ups, and wiring this button to it charges a real card — reserved to the owner and to Track 1, whose Domain/ returns the 'charged' key this lane cannot change.
+- `2026-09-06T20:25:21` (R245) C-Billing — (R245) a screen tells the owner a payment was taken only when a payment was taken; where an action grants credit with no charge, the sentence says so and names the charging path it waits on.

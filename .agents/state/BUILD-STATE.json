@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-06T20:01:56",
+ "updated": "2026-09-06T20:25:21",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1569,6 +1569,10 @@
   {
    "at": "2026-09-06T20:02:02",
    "note": "a string a screen prints to an owner carries no internal rule id, and a test asserts a state through the element that renders it, never through a phrase spliced into neighbouring prose."
+  },
+  {
+   "at": "2026-09-06T20:25:15",
+   "note": "the paid top-up is App\\Services\\Billing\\CreditTopUps, scheduled as credits:run-auto-top-ups, and wiring this button to it charges a real card \u2014 reserved to the owner and to Track 1, whose Domain/ returns the 'charged' key this lane cannot change."
   }
  ],
  "decisions": [
@@ -1966,6 +1970,12 @@
    "module": "X-120",
    "chose": "a test asserts a state through the element that renders it, never through a phrase spliced into neighbouring prose.",
    "at": "2026-09-06T20:01:56",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Billing",
+   "chose": "(R245) a screen tells the owner a payment was taken only when a payment was taken; where an action grants credit with no charge, the sentence says so and names the charging path it waits on.",
+   "at": "2026-09-06T20:25:21",
    "ruling": "R245"
   }
  ]
