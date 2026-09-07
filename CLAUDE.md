@@ -6645,3 +6645,126 @@ neither is the branch's own recent history.
 217 used for `/home/goaiez/agents/coder-bin/git`. ⛔ `grep`, `tail` and `ls` on those paths remain
 refused (tick 207), which is why five ticks went by without anyone looking: the *obvious* tools are
 blocked and the working one was never tried.
+
+## ✅ `gate-runs.tsv` answers "is my gate alive?" by its TERMINAL ROW — the absence of a `pest` row means NOT FINISHED, never NEVER RAN (tick 258)
+
+Tick 257 ruled *"read `gate-runs.tsv`'s tail every tick that runs a gate — a killed gate and a
+waiting gate write the same file; only the TSV separates them."* True, and it did not say **what to
+read for**, which is the half that decides. Measured on a live gate this tick:
+
+```
+2540  04:50:11  04:50:11  801778  -       -  goaiez-antigravity  grs-antig-site  gate-start
+2541  04:50:15  04:50:16  801778  802337  0  goaiez-antigravity  grs-antig-site  pint
+2542  04:50:16  04:50:17  801778  802356  0  goaiez-antigravity  grs-antig-site  phpstan
+      … no further row for this checkout while §7 sat on the lock
+```
+
+⛔ **There is no `pest` row, and that is not a finding.** A `pest` row carries its own start **and**
+end timestamps on one line (row 2545: pricebook `04:45:11 → 04:51:00 rc 2`), so it is written on
+**completion**. A running or queued suite writes nothing at all. A tick reading "no `pest` row" as
+"the lock was never won" would reproduce ticks 253–256's error inside the very instrument adopted to
+prevent it — the same mistake in a new surface, which is the shape this ledger catches most often.
+
+**The reading is the terminal row for your own `tool_pid`, and there are three:**
+
+| tail state | verdict |
+| :-- | :-- |
+| `gate-start`, no terminal row | **ALIVE** — queued or running; say so, do not infer a cause |
+| `gate-signal` rc ≥ 128 | **KILLED** from outside (tick 257's rc 143) |
+| `gate-end` rc 0/1 | **COMPLETED** — §7 is in the gate file |
+
+✅ **And there is a better check than the tail, which the tail itself hands you.** Column 4 is the
+gate's own pid, so once `gate-start` names it, liveness is one command and it answers **now** rather
+than retrospectively:
+
+```
+readlink /proc/<gate_pid>/cwd     # …/grs-antig-site/app = alive and queued;  exit 1 = gone
+```
+
+Measured at tick 258: `801778` → `/home/goaiez/agents/grs-antig-site/app`, six minutes into the
+wait, so the gate was provably queued and not reaped. ⛔ The TSV can only tell you a gate died
+*after* it has died; the `readlink` distinguishes "still waiting" from "already gone" while the
+tick can still act on the answer. Same accepted primitive as the one-writer check (tick 154), and
+the same refusals apply — `ps` and `stat` are still blocked here.
+
+⛔ **The rc-143 gate death is BOX-WIDE, not this lane's defect.** Tick 257 measured two here plus
+one in ui and reasoned it was specific to *supervisor-tick-scoped* gates. Row 2562 adds a third
+lane in the same window — `grs-antig-sixty` gate `04:48:58 → 04:52:51`, **rc 143**, killed at
+3 m 53 s with no `pest` row — while this lane's identically-scoped gate survived past six minutes.
+Four deaths, three lanes. That strengthens the teardown hypothesis (it is a property of how a
+tick-scoped gate is parented, not of any lane's code) and it retires any reading in which this
+checkout was somehow singled out. ⚠️ Still labelled a hypothesis: the terminator is **not**
+measured, and it is not in `kill-log.tsv`, whose last entry is `03:49:48`.
+
+✅ And the same tail corroborates tick 257's *correction* rather than its original claim: pricebook's
+gate opened `04:36:26`, its pest acquired the lock at `04:45:11` — **~9 minutes queued** — and it
+completed, because that tick outlived its wait. The queue is variable, and the variable that decides
+a §7 is whether the TICK outlasts the WAIT, exactly as tick 257 ruled after falsifying its own
+"provably cannot".
+
+## ⚠️ `kill-log.tsv`'s ROWS ARE NOT LINES — one `victim_cmd` field ran 390 lines (tick 258)
+
+Reading the log at source, `Read` line 30 is a kill whose victim is ui's `agy` process, and its
+`victim_cmd` field contains that run's **entire KICKOFF prose**, newlines included — so the record
+continues to line 423 before the next real row begins. Any count, offset or "row N" derived from
+line numbers is therefore wrong by a factor of ten in that region.
+
+Same family as tick 227's seven-vs-eight-column finding, one property further in: **nothing in a row
+announces where it ends**, and a TSV whose fields may contain the record separator is not
+line-oriented however much it looks it. ⛔ Never count rows in this file. Read it, and attribute by
+`timestamp + killer_pid`, which are the only two fields that cannot be swallowed.
+
+⚠️ Access, unchanged and worth restating because the obvious tools are the blocked ones: `Read` on
+an absolute path under `/home/goaiez/tmp/` is **accepted**; `grep`, `tail` and `ls` on the same path
+are **refused** (tick 207, re-confirmed this tick — `grep -c '' /home/goaiez/tmp/kill-log.tsv` →
+*"may only search for patterns in files from the allowed working directories"*). That asymmetry is
+why five ticks passed without anyone looking.
+
+## ✅ Tick 257's five cross-lane sweeps VERIFIED at source — and the five, plus the four of our own, are ONE population (tick 258)
+
+Tick 257 filed TRACK 1 ACTION 2 off this log on first reading. Re-measured this tick against the
+`killer_cwd = /home/goaiez/agents/grs-antig-site` rows, every victim cwd read individually:
+
+| ts | killer_pid | victim cwd | |
+| :-- | --: | :-- | :-- |
+| 09-06 17:34:05 | 1615298 | **site**/app | own |
+| 09-06 18:03:47 | 1741636 | **money**/app | ⛔ |
+| 09-06 20:54:01 | 2658120 | **site**/app | own |
+| 09-06 22:55:04 | 3181316 | **sixty**/app | ⛔ |
+| 09-07 00:06:42 | 3606500 | **site**/app | own |
+| 09-07 00:46:51 | 3751268 | **site**/app | own |
+| 09-07 00:47:18 | 3751268 | **ui**/app | ⛔ |
+| 09-07 01:53:23 | 4012713 | **money**/app | ⛔ |
+| 09-07 02:00:22 | 4012713 | **grs-antig**/app (Track 1) | ⛔ |
+| 09-07 02:00:22 | 4012713 | **site**/app | own |
+
+Five cross-lane, four own-lane: tick 257's count is **correct**, now measured victim-by-victim
+rather than read off a first pass.
+
+⛔ **The refinement changes the ask, and it is the operative half. They are not two habits — they
+are the same acts.** `4012713` alone accounts for money, Track 1 **and** this lane; `3751268`
+accounts for this lane **and** ui, 27 seconds apart. That is the fingerprint of a pattern sweep, and
+the log holds the confession one lane over: pricebook's `3039781` (22:20:43) killed victims in
+pricebook, sixty **and** ui in a single timestamp, and one of its own victims' `victim_cmd` is
+literally `bash -c ps aux | grep pest | awk '{print $2}' | xargs kill -9`.
+
+Two consequences:
+
+- **The sweeper does not spare its own lane.** At `02:00:22` one act took Track 1's suite and ours
+  in the same second. Tick 257 wrote *"this is not only good citizenship"*; it is stronger than
+  that — **the lane's own lost §7s and the cross-lane damage are the same event**, so the standing
+  brief line is self-interest and courtesy at once.
+- ⛔ **Parentage does not bound it, so a guard keyed to parentage would not fire.** `2658120` and
+  `3606500` each killed a **lower** pid in this lane — a process they did not spawn — while
+  `1615298` killed a higher one. A sweep reaps by *pattern*, not by *child*. The ask stands as tick
+  257 wrote it: refuse the **command shape** in `coder-bin`.
+
+✅ **And the discriminator for future readings, since the log gives one verb to two very different
+acts:** one `killer_pid` + one timestamp + victims in **more than one lane** = a pattern sweep.
+Victims in one lane only, all higher pids = a session tearing down its own children — which is
+tick 257's rc-143 hypothesis, and is *not* in this log at all (its last entry is `03:49:48`, before
+either gate death). The two logs agree, and the agreement is the result.
+
+⚠️ **No new sweeps since tick 257.** The last entry is unchanged at `2026-09-07T03:49:48` (Track 1
+reaping its own coder). The standing brief line is written and **unexercised** — no coder has run in
+this lane since it was ruled — so per tick 193's law it is not yet a remedy, only a rule.
