@@ -20,11 +20,14 @@ final class ContentExtractAction
         string $serviceDescription,
         ?string $techStack = null
     ): ExtractedContent {
+        $engine = new \App\Modules\X179\Domain\TemplateEngine();
+        $excludedDescription = $engine->excludeBoilerplate($serviceDescription);
+
         $content = ExtractedContent::create([
             'business_id' => $businessId,
             'prospect_id' => $prospectId,
             'source_type' => $sourceType,
-            'service_description' => $serviceDescription, // Verbatim source (TEST ANCHOR)
+            'service_description' => $excludedDescription, // Verbatim source (TEST ANCHOR)
             'tech_stack' => $techStack,
         ]);
 
