@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-07T00:39:25",
+ "updated": "2026-09-07T01:40:56",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1638,6 +1638,10 @@
   {
    "at": "2026-09-07T00:59:42",
    "note": "X-201 UNRESOLVED: nothing consumes DisputeLost \u2014 the commission clawback flag is written on the outcome row and no listener exists; X-170's CommissionEngine::clawback is another module's, so the seam is recorded and not built (rulings 5, 59)"
+  },
+  {
+   "at": "2026-09-07T01:40:56",
+   "note": "X-199 UNRESOLVED: cash received today is not derivable - recordPayment writes no payment row, X-198 payments carries no invoice column (ruling 102), and X-211 offline_payments is a separate store, so the receipt date of an instalment exists nowhere; the paid-today tile reports the value of invoices settled today instead"
   }
  ],
  "decisions": [
@@ -2113,6 +2117,18 @@
    "module": "X-199",
    "chose": "a partial payment records the money and nothing else - recordPayment derives the invoice status from paid_cents against total_cents instead of writing paid unconditionally, because every unpaid and overdue query filters on status before the paid_cents clause, so a partially paid invoice left the Unpaid screen, the ageing and the overdue chase while the customer still owed the balance.",
    "at": "2026-09-07T00:39:25",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-211",
+   "chose": "a partial offline payment keeps the reason the invoice was being chased - logOfflinePayment writes the invoice's own status on the losing branch instead of the issued literal, because ReceivableState moves to current only on paid, so a part-paid overdue invoice read issued while the receivable still said the account was being chased",
+   "at": "2026-09-07T01:40:56",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-199",
+   "chose": "the paid-today tile names the invoice value it sums rather than cash received - the screen totals total_cents over invoices that became paid today, and no per-instalment receipt date is stored anywhere in this lane, so the label states what is computed and the screen names the missing dependency",
+   "at": "2026-09-07T01:40:56",
    "ruling": "R245"
   }
  ]
