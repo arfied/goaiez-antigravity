@@ -825,3 +825,4 @@
 - `2026-09-06T23:07:49` (R245) X-163 — The gap writer firstOrCreate match key becomes ['business_id', 'service_key', 'location_book_id'] and service_name moves to the create attributes. This prevents two refusals differing only in case from creating two business-wide gap rows under one service_key.
 - `2026-09-06T23:26:10` (R245) X-163 — Sort the daily pricing digest by highest refusal count first, using the most recent refusal time only to break ties.
 - `2026-09-06T23:45:44` (R245) X-163 — a lookup with no location refuses only when the rows disagree on the amount, whether those rows are business-wide or location-scoped.
+- `2026-09-06T23:57:49` (R245) X-163 — a refusal caused by two pricebook entries disagreeing on the amount says so, and keeps the NO_FACT code and the word pricebook that the gap recorder matches on.

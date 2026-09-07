@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T23:45:44",
+ "updated": "2026-09-06T23:57:49",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1700,6 +1700,12 @@
    "module": "X-163",
    "chose": "a lookup with no location refuses only when the rows disagree on the amount, whether those rows are business-wide or location-scoped.",
    "at": "2026-09-06T23:45:44",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-163",
+   "chose": "a refusal caused by two pricebook entries disagreeing on the amount says so, and keeps the NO_FACT code and the word pricebook that the gap recorder matches on.",
+   "at": "2026-09-06T23:57:49",
    "ruling": "R245"
   }
  ],
