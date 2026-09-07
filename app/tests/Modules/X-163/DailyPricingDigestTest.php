@@ -240,4 +240,34 @@ class DailyPricingDigestTest extends TestCase
             'is_confirmed' => false,
         ]);
     }
+    public function test_it_sorts_items_by_refusal_count_desc_then_recency(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'High Refusals Service',
+            'price_cents' => 0,
+            'is_sample' => false,
+            'is_confirmed' => false,
+            'refusal_count' => 40,
+            'refusal_flagged_at' => now()->subHour(),
+        ]);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Recent Service',
+            'price_cents' => 0,
+            'is_sample' => false,
+            'is_confirmed' => false,
+            'refusal_count' => 1,
+            'refusal_flagged_at' => now(),
+        ]);
+
+        Livewire::actingAs($owner)
+            ->test(DailyPricingDigest::class)
+            ->assertSeeInOrder(['High Refusals Service', 'Recent Service']);
+    }
 }
