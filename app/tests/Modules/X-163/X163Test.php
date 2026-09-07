@@ -617,4 +617,43 @@ class X163Test extends TestCase
 
         $this->assertEquals($row->price_cents, $res['amount']);
     }
+
+    public function test_callout_refuses_when_no_fee_is_set(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'No Callout Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $res = $this->callout->handle($biz->id);
+
+        $this->assertEquals('NO_FACT', $res['refusal_code']);
+        $this->assertArrayNotHasKey('formatted_fee', $res);
+        $this->assertArrayNotHasKey('quote_response', $res);
+    }
+
+    public function test_callout_lookup_writes_no_row(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'No Write Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->callout->handle($biz->id);
+
+        $this->assertEquals(0, CalloutFee::where('business_id', $biz->id)->count());
+    }
+
+    public function test_callout_quotes_the_fee_the_owner_set(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Set Callout Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $fee = CalloutFee::create([
+            'business_id' => $biz->id,
+            'callout_fee_cents' => 6350,
+            'deducted_if_proceeding' => true,
+        ]);
+
+        $res = $this->callout->handle($biz->id);
+
+        $expected = '$'.number_format($fee->callout_fee_cents / 100, 2);
+        $this->assertEquals($expected, $res['formatted_fee']);
+    }
 }

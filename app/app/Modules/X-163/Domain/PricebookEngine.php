@@ -85,13 +85,11 @@ final class PricebookEngine
             ->first();
 
         if ($callout === null) {
-            $callout = CalloutFee::create([
-                'business_id' => $businessId,
-                'location_book_id' => $locationBookId,
-                'callout_fee_cents' => 7500,
-                'deducted_if_proceeding' => true,
-                'explanation_text' => 'Our callout fee is $75.00, which is fully deducted from the final invoice if you proceed with the repair.',
-            ]);
+            return [
+                'status' => 'refused',
+                'refusal_code' => 'NO_FACT',
+                'reason' => 'No callout fee is set for this business',
+            ];
         }
 
         $formattedFee = '$'.number_format($callout->callout_fee_cents / 100, 2);

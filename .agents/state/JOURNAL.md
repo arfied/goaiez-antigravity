@@ -812,3 +812,4 @@
 - `2026-09-06T18:50:13` (R245) X-163 — a confirmation with no positive amount refuses and writes nothing, so a cleared field can never erase the price it refused (R245)
 - `2026-09-06T19:08:08` (R245) X-163 — a price range refuses on the same terms a price quote does
 - `2026-09-06T19:26:33` (R245) X-163 — a price quote names the most specific matching service, not the first row found
+- `2026-09-06T19:43:54` (R245) X-163 — a callout fee the owner never set is refused, never invented and never written
