@@ -253,6 +253,13 @@ final class EdgeDeployAction
                 }
             }
 
+            if ($businessId !== null) {
+                $internalLinksHtml = app(\App\Modules\X176\Actions\InternalLinkRenderAction::class)->handle($businessId);
+                if ($internalLinksHtml !== '') {
+                    $html .= $internalLinksHtml;
+                }
+            }
+
             $html .= '</body></html>';
 
             // The local disk is configured 'throw' => false (config/filesystems.php:37), so a
