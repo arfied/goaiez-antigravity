@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T20:39:00",
+ "updated": "2026-09-06T21:01:41",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1417,6 +1417,12 @@
    "module": "X-110",
    "chose": "a route is not an owner screen when its action class declares __invoke and every type in that return type is StreamedResponse or BinaryFileResponse; media endpoints leave the owner screen set by derivation, never by a written exclusion (R245)",
    "at": "2026-09-06T20:39:00",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-110",
+   "chose": "a screen leaves SAMPLE_STATE when it renders a real query or the house <x-ui.empty-state> on a real authenticated GET, and the same commit that deletes its banner adds its OwnerNav entry \u2014 the three assertions interlock so a screen can never be half-released (R245)",
+   "at": "2026-09-06T21:01:41",
    "ruling": "R245"
   }
  ],
