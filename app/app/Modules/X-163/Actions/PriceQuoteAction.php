@@ -16,12 +16,44 @@ final class PriceQuoteAction
     {
         $normalizedQuestion = Str::lower($question);
 
-        $items = PriceBookItem::where('business_id', $businessId)
+        $confirmedItems = PriceBookItem::where('business_id', $businessId)
             ->where('is_confirmed', true)
             ->where('is_sample', false)
             ->orderByRaw('LENGTH(service_name) DESC')
             ->get();
 
+        if ($match = $this->findMatch($confirmedItems, $normalizedQuestion)) {
+            return [
+                'amount' => $match->price_cents,
+            ];
+        }
+
+        $allItems = PriceBookItem::where('business_id', $businessId)
+            ->orderByRaw('LENGTH(service_name) DESC')
+            ->get();
+
+        if ($match = $this->findMatch($allItems, $normalizedQuestion)) {
+            if ($match->is_sample === true) {
+                return [
+                    'refusal_code' => 'SAMPLE_STATE_REFUSED',
+                    'reason' => 'Sample prices must NEVER be returned to any customer channel',
+                ];
+            }
+
+            return [
+                'refusal_code' => 'UNCONFIRMED',
+                'reason' => 'Unconfirmed prices must NEVER be returned to any customer channel',
+            ];
+        }
+
+        return [
+            'refusal_code' => 'NO_FACT',
+            'reason' => 'No price quote available for the given intent',
+        ];
+    }
+
+    private function findMatch(iterable $items, string $normalizedQuestion): ?PriceBookItem
+    {
         foreach ($items as $item) {
             $sku = Str::lower($item->service_name);
             $skuWords = explode('-', $sku);
@@ -47,15 +79,10 @@ final class PriceQuoteAction
             $skuMatches = preg_match('/\b'.preg_quote($sku, '/').'\b/', $normalizedQuestion) === 1;
 
             if ($skuMatches || $matchesAll) {
-                return [
-                    'amount' => $item->price_cents,
-                ];
+                return $item;
             }
         }
 
-        return [
-            'refusal_code' => 'NO_FACT',
-            'reason' => 'No price quote available for the given intent',
-        ];
+        return null;
     }
 }

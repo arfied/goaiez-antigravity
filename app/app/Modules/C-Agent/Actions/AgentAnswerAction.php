@@ -161,6 +161,39 @@ final class AgentAnswerAction
                 $priceQuoteAction = app(PriceQuoteAction::class);
                 $quoteResult = $priceQuoteAction->handle($businessId, $lower);
 
+                if (isset($quoteResult['refusal_code']) && in_array($quoteResult['refusal_code'], ['SAMPLE_STATE_REFUSED', 'UNCONFIRMED'])) {
+                    $refusal = AgentRefusal::create([
+                        'business_id' => $businessId,
+                        'refusal_code' => $quoteResult['refusal_code'],
+                        'reason' => $quoteResult['reason'],
+                        'user_input' => $userMessage,
+                    ]);
+
+                    Event::dispatch(new AgentRefused(
+                        businessId: $businessId,
+                        refusalCode: $quoteResult['refusal_code'],
+                        reason: $refusal->reason,
+                        userInput: $userMessage
+                    ));
+
+                    $turn = AgentTurn::create([
+                        'business_id' => $businessId,
+                        'conversation_id' => $conversationId,
+                        'turn_number' => $turnNumber,
+                        'user_message' => $userMessage,
+                        'agent_reply' => 'I do not have verified pricing on file for this service. Let me connect you with our team for an accurate quote.',
+                        'status' => 'handoff',
+                        'refusal_code' => $quoteResult['refusal_code'],
+                    ]);
+
+                    return [
+                        'turn_id' => $turn->id,
+                        'status' => 'handoff',
+                        'refusal_code' => $quoteResult['refusal_code'],
+                        'reply' => $turn->agent_reply,
+                    ];
+                }
+
                 if (isset($quoteResult['amount'])) {
                     $amount = (int) $quoteResult['amount'];
                     $formatted = '$'.number_format($amount / 100, 2);

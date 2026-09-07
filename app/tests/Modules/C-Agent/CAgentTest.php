@@ -697,4 +697,67 @@ class CAgentTest extends TestCase
         $this->assertStringContainsString('$18,500.00', $res['reply']);
         $this->assertStringNotContainsString('85.00', $res['reply']);
     }
+
+    public function test_sample_row_refuses_and_never_quotes_the_fact(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Sample Refusal', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'drain-unblock',
+            'price_cents' => 1850000,
+            'is_confirmed' => true,
+            'is_sample' => true,
+        ]);
+
+        $this->teach->handle($biz->id, 'price.drain-unblock', '999900');
+
+        $res = $this->answer->handle($biz->id, 'how much to unblock a drain?');
+
+        $this->assertStringNotContainsString('$', $res['reply']);
+        $this->assertStringNotContainsString('9,999', $res['reply']);
+        $this->assertStringNotContainsString('18,500', $res['reply']);
+        $this->assertStringNotContainsString('9999', $res['reply']);
+        $this->assertEquals('handoff', $res['status']);
+        $this->assertEquals('SAMPLE_STATE_REFUSED', $res['refusal_code']);
+    }
+
+    public function test_unconfirmed_row_refuses_and_never_quotes_the_fact(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Unconfirmed Refusal', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'drain-unblock',
+            'price_cents' => 1850000,
+            'is_confirmed' => false,
+            'is_sample' => false,
+        ]);
+
+        $this->teach->handle($biz->id, 'price.drain-unblock', '999900');
+
+        $res = $this->answer->handle($biz->id, 'how much to unblock a drain?');
+
+        $this->assertEquals('handoff', $res['status']);
+        $this->assertEquals('UNCONFIRMED', $res['refusal_code']);
+        $this->assertStringNotContainsString('$', $res['reply']);
+        $this->assertStringNotContainsString('9,999', $res['reply']);
+        $this->assertStringNotContainsString('18,500', $res['reply']);
+        $this->assertStringNotContainsString('9999', $res['reply']);
+    }
+
+    public function test_no_pricebook_row_still_falls_back_to_facts(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Fallback Refusal', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        $this->teach->handle($biz->id, 'price.drain-unblock', '999900');
+
+        $res = $this->answer->handle($biz->id, 'how much to unblock a drain?');
+
+        $this->assertEquals('answered', $res['status']);
+        $this->assertStringContainsString('$99.99', $res['reply']);
+    }
 }
