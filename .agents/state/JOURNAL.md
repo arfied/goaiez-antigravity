@@ -772,3 +772,5 @@
 - `2026-09-06T22:43:08` (R245) X-139 — (R245) added Layout, empty state, and nav entries
 - `2026-09-06T22:59:17` UNRESOLVED capability X-139 - AdConnection model (ad_connections table) has no writer: nothing in the tree creates a row.
 - `2026-09-06T22:59:20` (R245) X-139 — an empty state on a screen whose table has no writer carries no action and no href, and the module files an UNRESOLVED naming the missing writer
+- `2026-09-06T23:30:46` note: row count: 304, visible count: 17, in_nav count: 12, rows with a named dup_of: 12
+- `2026-09-06T23:30:49` (R245) X-124 — a screen is not asked for a nav entry unless it opts into the owner layout, so the reachability check's population is the work already done; the census is the number that check cannot produce.
