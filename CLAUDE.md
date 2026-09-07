@@ -10036,3 +10036,190 @@ arithmetic has been the defect six times. **Seventh null closing read** (224, 22
 - ⛔ `… | grep -v '^$'` — a second `grep -v` in a pipe still *"requires approval"* (tick 213).
 - ⚠️ `cd app && php artisan doctor` drifted the shell **three times** this tick and was reset in its
   own call each time. It is structural, not occasional — it is the only accepted artisan form here.
+
+## ⛔ A doctor block's STAGE LINES must sum to its OWN PRINTED TOTAL — a self-check needing neither a second run nor the tree (tick 285)
+
+Tick 275 caught a doctor block whose stage attribution this seat could not reproduce and ruled that every
+doctor evidence item must carry **stamp + stages + total**, because a stage line alone carries neither.
+Tick 285 is the first firing where **the sum itself is the detector**, and it is cheaper than every other
+check this ledger has built for that artefact:
+
+```
+report, before AND after   ok boundary 1ms clean … 797 violation(s).
+                           0 + 87 + 93 + 15 + 455 + 137 + 4 = 791          ⛔ six short
+my live doctor             FAIL boundary 131ms 6 … 797 violation(s).
+                           6 + 87 + 93 + 15 + 455 + 137 + 4 = 797          ✅
+```
+
+The Δ is exactly boundary's true count. ⛔ **The block is internally inconsistent, so no tree and no second
+run are needed to refuse it** — the timing nonce (tick 249) requires two runs and my own doctor requires the
+tree, but arithmetic over one block requires neither. That makes it the **first** check to apply to a pasted
+doctor block and the one to name in the evidence request.
+
+⚠️ Also measured, and deliberately **not** explained: the report's timings are two orders of magnitude below
+every run this seat has measured (mine `131 · 33 · 1257 · 468 · 23 · 249`, the report's `1 · 4 · 11 · 1 ·
+26 · 7`). ⛔ The cause is **not measured and no block names one** (ticks 227, 230, 249 — and tick 209 is this
+seat committing that error itself).
+
+✅ **PASS-WITH-NOTES on tick 211's discriminator — what did the deviation let through? Nothing.** A live
+doctor in this seat reproduced all seven counts unchanged, so the pass condition genuinely held, no CHECK was
+weakened and no hazard restored. The reason it cost a note rather than a dispatch is the standing rule:
+**this seat never accepts a doctor block from a report** (§3 is recorded not measured, tick 196; the red list
+is re-measured live before any brief, tick 210). Third consecutive wave with a defective doctor block (275 an
+unreproducible attribution, 284 a byte-identical timed pair, 285 a `clean` line contradicting its own total)
+— the *work* has been sound every time, so what is decaying is the evidence artefact, and tick 275's remedy
+is what caught this one. The remedy fired as designed; keep it and add the sum.
+
+## ⛔ The cold witness's "IMPOSSIBLE" branch has a mundane cause — the word `assert` in PROSE (tick 285)
+
+Tick 279 introduced `grep -c 'assert' <file>` as the cold witness for falsifier arithmetic and tick 280
+qualified it: equality only for a loop-free file, otherwise a **lower** bound, and *"witness > green →
+impossible. A tooling fault, or the wrong file."* Tick 285 hit that branch — witness **53**, the report's
+green total **52**, `grep -c 'foreach'` **0** — and the cause is neither:
+
+```
+X176Test.php:91   // product schema from the pricebook (delegates to X-163/X-119, but we just assert the shape here)
+```
+
+A **comment**. `grep -c` counts lines containing the string, and the string occurs in prose. 53 − 1 = 52 = the
+report's green total, and `grep -n -E 'catch|try \{|if \('` over the file returns nothing, so every remaining
+assert line executes exactly once. The report's arithmetic (52 green → 50 mutated, N=3, k=1) then reconciles
+exactly, and tick 248's first-failure rule and the quoted message agree with it independently.
+
+⛔ **So the witness is `grep -c 'assert'` MINUS its non-call occurrences**, and the three readings become:
+loops inflate *green* above the witness, prose inflates the *witness* above green, and only once both are
+accounted for is the equality a check. ⚠️ Worth more than the correction: tick 280's "impossible" label would
+have sent a future tick hunting a tooling fault or the wrong file over a one-line comment. **A branch labelled
+impossible is a branch whose causes were not enumerated** — the same shape as tick 265's incomplete answer
+set, here in an instrument this ledger built two ticks earlier and has now had to qualify twice (280 for
+loops, 285 for prose). Fitting a rule to the first file it was tried on is fitting a rule to one point (tick
+188's `1 + 2n`, tick 250's three favourable firings).
+
+## ⛔ The DRIFTED SHELL's signature is a pathspec/no-pathspec SPLIT — and the reset is PER-CALL (tick 285)
+
+Tick 209 ruled *a census surface that drops to zero with both bounds unmoved is a TOOLING FAULT until `pwd`
+says otherwise*, and tick 254 added *re-run before writing it down*. Both fired here, and the tick produced
+the diagnostic neither had:
+
+| surface | pathspec? | drifted | correct |
+| :-- | :--: | --: | --: |
+| half 1 · half 2 · half 3 | ✅ `-- <paths>` | **0 · 0 · 0** | 7 · 10 · 5 |
+| complement | ⛔ none — `grep -v -E` on prefixes | **14** | 14 |
+
+⭐ **That asymmetry IS the signature.** A drifted shell resolves `-- app/app/Modules/X-157` against `app/` into
+`app/app/app/Modules/X-157`, which does not exist, and `git log` exits **0 in silence**; a query carrying no
+pathspec is untouched and returns the right answer. So the complement is not merely "the one that survived" —
+it is the **control**, and the pattern *three pathspec queries silent while the pathspec-free one is correct*
+separates drift from a real bound movement in one reading, before any `pwd`. Tick 254 excluded common-mode
+drift because half 2 survived; here half 2 died too and the complement carried the exclusion instead. **Name
+the control by its SCOPING, not by which query happened to live.**
+
+⛔ **The cause is that I reset after the FIRST `cd app && php artisan doctor` and not after the second.** The
+standing rule already says every one of them is followed by `cd /home/goaiez/agents/grs-antig-site && pwd`
+**in its own call**; what this tick adds is that the obligation is **per-call, not per-tick**, and that a tick
+which has already reset once is exactly the tick that feels no need to reset again. Three drift modes are now
+catalogued and only one is loud: a mis-scoped pathspec exits 0 silently (209), a failed `cd X && cmd` swallows
+the whole pipeline silently (277), and `grep` on a missing path **warns** (251).
+
+## ⛔ SITE-156 and SITE-157 fixed ONE ADDRESS of a pattern live at FIVE more — and it decides what a published page CONTAINS (tick 285)
+
+Two consecutive waves fixed `empty()`-as-a-blank-test inside `SchemaRenderAction::validateSchema`, in both
+directions: `empty('   ')` is false (SITE-156, a whitespace name published) and `empty('0')` is true
+(SITE-157, a legitimate name refused). Tick 241's law says the fix's *address* is never the finding — grep the
+**pattern** — and the sweep across all seven owned modules returns five more live sites, on the publish path,
+in three modules, all this lane's:
+
+| site | predicate | `"0"` ⇒ | `"   "` ⇒ |
+| :-- | :-- | :-- | :-- |
+| `X-176/InternalLinkRenderAction:42` | `! empty($page->title)` | root page dropped from nav | admitted, blank anchor text |
+| `X-176/InternalLinkRenderAction:55` | `empty($hierarchyPages[$current]->title)` | page **and its whole subtree** dropped | admitted |
+| `X-157/EdgeDeployAction:211` | `! empty($page->title)` | breadcrumb dropped | admitted |
+| `X-157/EdgeDeployAction:239` | `empty($hierarchyPages[$path]->title)` | trail refused whole | admitted |
+| `X-176/LlmsTxtRenderAction:22` | `! empty($block['content'])` | text block dropped from llms.txt | emitted as a blank line |
+
+`2026_08_30_000036_create_x103_site_tables.php:19` is `$table->string('title')` — **NOT NULL, with no
+non-empty validation anywhere** — which is tick 278's law (*NOT NULL is not non-empty*) reaching its fourth
+site in this module family. A page legitimately titled `0` silently removes itself **and everything beneath
+it** from the published nav; a page titled `"   "` is admitted and renders an `<a>` with no anchor text.
+Neither raises an error, moves a count, or appears in any diff of either renderer.
+
+⭐ **And the two sites that matter most are the SAME hierarchy rendered TWICE** — `InternalLinkRenderAction`
+(the nav) and `EdgeDeployAction` (the breadcrumb) — which is exactly the seam tick 246 found diverging when
+one side was normalised and the other was not, and tick 252 ruled on: **when two components render one model,
+one test must assert they agree.** So the wave is all five sites with the **identical** predicate plus a
+consistency test, never one renderer at a time.
+
+**RULED (tick 285): SITE-158 replaces the display-string blank test with this lane's established normaliser**
+`trim((string) $x) === ''`, which admits `"0"` and refuses `"   "` in one expression and is already the
+predicate at `SchemaRenderAction:207`, `EdgeDeployAction:170,181` and `FormCaptureAction::given()`.
+
+⛔ Four alternatives refused, each of which would pass every gate: **a non-empty constraint on `pages.title`**
+— tick 246 measured `PageCreateAction` as that table's only writer with **zero production callers** and every
+fixture bypassing it, so no writer-side invariant is available to these readers and the answer is the one
+that tick gave, normalise where it is read; **fixing one renderer** — the tick-246 divergence rebuilt,
+invisible in both diffs; **widening to `isset()`** — always true over a NOT NULL column, so the guard becomes
+dead while appearing fixed (tick 280's dead-defence shape) and a genuinely blank title stops excluding
+anything; and **relaxing any test that reddens** (widen the fixture, never the rule — 234, 242).
+
+✅ **Both directions are falsified by ONE mutation, unusually**, and the brief says so with what would refute
+it: restoring `empty()` re-admits `"   "` (reddening the absence half) and re-refuses `"0"` (reddening the
+presence half). **If restoring `empty()` does not redden both, the predicate is not what this ruling claims.**
+⚠️ Predicted with its refuting instruction (tick 244): **no existing test reddens** — measured, no fixture
+under `app/tests/` carries a blank, whitespace or `"0"` title — and **if one does, an assertion depends on a
+blank-titled page being usable, which is the finding; repair the fixture, never the predicate.**
+
+⚠️ **`EdgeDeployAction:211`'s SLUG half is dead for this defect and the wave claims nothing for it**: a
+single-segment slug never satisfies `count($parts) > 1`, so a slug of `"0"` cannot reach the breadcrumb at
+all. Tick 280's law — read the column and say which half is dead, rather than crediting a fix with covering a
+case it cannot reach.
+
+⚠️ **Two more members measured and deliberately NOT briefed**, recorded so the next tick neither rediscovers
+them as backlog nor folds them in:
+- `X-155/FormValidateAction:24` — `! empty($payload[$honeypot])`. A honeypot filled with `"0"` reads as **not
+  filled** and the spam passes; `"   "` reads as filled and a legitimate submission is rejected. A false
+  negative in a **refusal** clause (G3-64/G13-05) this lane has credited and asserted — a different clause
+  with a different argument, and shipping it beside a display-string wave makes any red unattributable
+  between the two (tick 215).
+- `X-102/ChatEscalateAction:65` — `empty($groundingFact)` over a `?string`, so a valid grounding fact of `"0"`
+  returns `NO_GROUNDING_FACT`. Low severity; its caller is the state machine tick 277 measured as having zero
+  production callers.
+
+## §7, doctor and the census at tick 285
+
+§7 on the tip `41a7ce72`, measured in this seat: `tests 1979 · passed 1976 · FAILED 1 · errors 2`,
+**byte-identical to the coder's**, ⭐ `a_published_site_carries_all_seven` **ABSENT — J11 green** on a wave
+that edits the schema validator on the serving path. Reconciles 1976+1+2 = 1979 ✓. Against tick 284's
+`1978 · 1975 · FAILED 1 · errors 2` it is +1 test / +1 passed with the FAILED and error **sets**
+byte-identical, and the diff adds exactly one `public function test_` and deletes none, so tick 226's
+arithmetic accounts for the whole `tests` delta. Stable set: `test_g2_76_unified_inbox_header` (X-01,
+**stages'**) plus sixty's two real-transport journey stubs. **J8's
+`a_deliberately_corrupted_backup_fails_the_restore` is absent again** — now measured at
+5 · 4 · 2 · 3 · 2 · 3 · 2 · 2 on unchanged trees, so read the SET minus that member, never the integer (tick
+278). §2 exactly one `⛔` (`app/phpunit.xml`, the healthy branch of tick 207's presence check); §4 seals ✓;
+§6 pint and phpstan both green.
+
+Live doctor, this seat: stamp `20260829-0647` = `runtime_build` · `integrity clean · boundary 6 · contract 87
+· citation 93 · schema 15 · capability 455 · anchor 137 · journey 4` · **797**, the sum reconciling and **no
+stage moved**. X-176 id census re-run **in this seat** — twelve ids, `G8-32` at 2 and the other eleven at 1,
+byte-identical either side, because the new method carries no `G##-##` literal and therefore credits nothing
+(an untimed before/after has no nonce, so the reviewer's own run is the only verification there is — tick 263).
+
+Census: all four surfaces re-run in full from the checkout root after the drift above, and **byte-identical to
+tick 284** — half 1 **7** (`sixty/X-102` **5**, the chat-door wave, still a TRACK 1 ACTION and still unmerged;
+`reviews` 1 + `money` 1, both merges *of main*) · half 2 **10** · half 3 **5** · complement **14**.
+`origin/main` unmoved at `5ce8b4f7`; the reflog's newest arrival across all eight refs is `stages@{13:05:42}`,
+predating tick 284's close, so **no ref moved** — a cache HIT measured from git (tick 220) and re-run
+regardless, because this ledger's own arithmetic has been the defect six times.
+
+✅ **Tick 284's `php -r` refusal worked exactly as it was written to.** That tick recorded the refusal and
+ruled *"it goes into a brief as the wave's item, never as this seat's assertion"*; SITE-157's §5 ran both
+`php -r` probes and returned `empty("0") === true` and `$validType([]) === true`, which is how a language
+semantic this seat cannot measure became a measurement rather than my reading of one file (198, 199).
+
+⚠️ **The `decided` text carries a leaked flag: `chose` begins `--ruling R245 X-176 —`.** The command's own flag
+and module argument were consumed into the positional argument and then supplied again, which is why the row's
+`"ruling": "R245"` is nonetheless correct. Same class as tick 280's shell-eaten `$payload` — **a `decided` text
+supplied for verbatim transcription is mangled by the command line, not by the reader** — and ⛔ not re-filed,
+because `state.py` has no withdraw and by tick 259's discriminator a careful reader of the record alone still
+reaches the right conclusion: the sentence is complete and correct after those five tokens, naming the
+predicate, the single live effect, why `@type` keeps `empty()`, and all three refusals.
