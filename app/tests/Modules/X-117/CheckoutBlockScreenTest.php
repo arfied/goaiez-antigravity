@@ -83,7 +83,8 @@ class CheckoutBlockScreenTest extends TestCase
 
         $orderId = Order::where('business_id', $biz->id)->first()->id;
         $screen->call('cancel', $orderId)
-            ->assertSee('cancelled');
+            ->assertSee('cancelled; its stock is back on the shelf')
+            ->assertDontSee('§147.2');
 
         $this->assertSame(1, $filter->fresh()->inventory_quantity);
         $this->assertSame(2, $boiler->fresh()->inventory_quantity);

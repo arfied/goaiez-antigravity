@@ -84,7 +84,7 @@ class CheckoutBlock extends Component
 
         try {
             $action->handle(Tenancy::idOrFail(), $orderId);
-            $this->success = sprintf('Order %d cancelled; its stock is back on the shelf (§147.2).', $orderId);
+            $this->success = sprintf('Order %d cancelled; its stock is back on the shelf.', $orderId);
         } catch (ModelNotFoundException $e) {
             $this->error = "That order isn't in this account.";
         } catch (\Throwable $e) {
