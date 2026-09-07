@@ -269,8 +269,8 @@ merge. Week 2 is scoped **one wave at a time**; it is not a single wave.
 | UI-49 | X-139, the last module in the Visitors & Attribution lane and the first wave outside X-110/X-138/X-199. The THREE components still rendering the staff console — `AdaccountConnectCard`, `ConversionsPushedTile`, `RejectionRate`: `#[Layout]` + the `Invoices.php` `mount()`, the bare `<p>` onto `<x-ui.empty-state>`, shell assertions into the three EXISTING tenant tests, three nav entries. ⛔ NOT home-tile exclusions — see the 21:3x ruling | closed, pushed `7b1b3a1a` — run 93 `PASS-WITH-NOTES`, run 94 `PASS-WITH-NOTES` + a finding that corrected me |
 | UI-50 | the owner-route CENSUS. ⛔ Pure measurement: no `app/**` diff, no new test, no nav entry, no exclusion, floor unmoved. One row per `tenant.role` route across all 113 modules, committed as one `state.py note`. See the 23:2x ruling: I could not scope a conversion wave without it | closed, pushed `393aeae0` — run 95 `BLOCK` (three constant columns), run 96 `PASS-WITH-NOTES` |
 | UI-51 | the census's `dup_of` column, re-derived by MEASUREMENT — twelve pairs opened, subject and table compared, target kept only when both agree · `test_file` dropped to a `## Totals` line · `## Totals` states the column's own false-negative limit | closed, pushed `7f280357` |
-| **UI-52** | **`x-192.memberships-list` — the one row in the `visible 17` / `test_shell 16` gap. TWO assertions inside the existing `test_screen_renders_for_tenant`. ⛔ SHELL ONLY: no `heading` param, no blade edit — see the 00:3x `sr-only` ruling. Floor unmoved, one census cell** | **in flight — run 98 live** |
-| UI-53 | `memberships_list.blade.php:4` is the ONE owner view with its own visible `<h1>`; every other starts at `h2` under the layout's `sr-only` seam. Promote it and opt into `heading`, or rule the seam optional — a copy/consistency wave, deliberately NOT folded into UI-52 | queued |
+| UI-52 | `x-192.memberships-list` — the one row in the `visible 17` / `test_shell 16` gap. TWO assertions inside the existing `test_screen_renders_for_tenant`. ⛔ SHELL ONLY: no `heading` param, no blade edit | closed, pushed `72819042` |
+| **UI-53** | **⛔ NOT the copy edit this row used to describe — see the 00:5x inversion below. ONE `expect()` inside `OwnerNavTest`'s existing `nav entries survive real get`: every owner screen renders EXACTLY ONE `<h1>`. Zero exclusions, population `OwnerNav::all()`, no new `test(`, floor unmoved** | **in flight — run 99 live** |
 
 ✅ **UI-47 closed and pushed 2026-09-06 20:3x** (`7f052348..3c8e0ef1`). The cross-link half admits by
 nav membership only and carries **zero written exclusions**; `ownerRouteExclusions()` went 10 → 7
@@ -338,6 +338,109 @@ reading `Location::query()`) and `x-199.credits` (`CreditTerm::` vs `<h1>Your cr
 `app/**` diff. ⚠️ `RAW` shipped **nine** histograms, not eleven — `route` and `class` omitted; I ran them
 and nothing is hidden.
 
+✅ **UI-52 closed and pushed 2026-09-07 00:5x** (`7f280357..72819042`). Two assertions chained onto the
+`get()` that already existed in `MembershipsListScreenTest::test_screen_renders_for_tenant`, one census
+cell, one `state.py decided`. `grep -c 'test(\|it('` **1 → 1**; `OwnerNav::all()` **36**; `OwnerNavTest`
+**4**; doctor the unmoved `745`. ⛔ The deliverable was checked **by row, not by histogram**: the
+seventeen `visible: yes` rows and the seventeen `test_shell: yes` rows are the **same seventeen**, so
+the gap UI-50 opened is closed rather than merely equal in count.
+
+⭐⭐ **`assertions 6905` against run 94's `6903` — exactly `+2`.** The floor `1727 · 1720 · 3 · 4` was met
+on a suite **I ran myself** (93s, one backend, non-void), and the assertion delta is what makes it
+evidence rather than a tautology: it shows the two new assertions *ran and passed*, which the five-field
+line alone cannot. **Quote `assertions` in every floor from now on.**
+
+### ⛔⛔ RULED 2026-09-07 00:5x — a `REPORT.md` with NO §7 line is not a close. The SILENT §7.
+
+Run 98's `REPORT.md` opens `STATUS: wave closed` and contains **no suite line anywhere** — no five-field
+`tests · passed · failed · errors · result`, no `pest rc=`, no `lock-timeout`, no `stopped: RUNTIME`, and
+no sentence saying the suite could not be run. The brief demanded a real number in bold, twice, because
+this was the first wave since UI-49 to touch `app/`.
+
+> ⛔ **`STATUS: wave closed` ASSERTS that the floor was met, and the floor is five numbers. A report that
+> omits them asserts a measurement it does not carry.** Where the suite genuinely could not run, the
+> honest report is `stopped: RUNTIME` **naming the blocker**. The defect is not a wrong number; it is the
+> **silent** one — neither the number nor the reason.
+
+⚠️ **This is a THIRD shape, not a repeat.** Run 86 was `wave closed` over raw output that **contradicted**
+it — a `BLOCK`. Run 87 was `stopped` over a met floor — the same defect sign-flipped, hiding only work,
+**not** a `BLOCK`. This one is unsupported rather than contradicted. **`PASS-WITH-NOTES`**, ruled: the
+deliverable is correct and I hold the measurement the report is missing, so a `BLOCK` would spend a
+dispatch asking for a number I already have.
+
+⚠️⚠️ **And the irony is the finding's edge.** Runs 94–97 each said out loud that they had no suite and
+why, and each was gated on that honesty. Run 98 said nothing — on the one wave in five whose diff made
+the number mandatory, and in a checkout where the suite turns out to have been runnable all along.
+**Silence is the only failure mode the report shape cannot tell from success.**
+
+⛔ **Its smaller half:** `DOCTOR:` carried the build stamp and `RAW` carried **no eight-stage block**. A
+stamp alone is the precondition of the run-84 defect — that report's stamp was right too. **The eight
+numbers go in `RAW` always, even when `STAGES: none`.**
+
+### ⛔⛔ RULED 2026-09-07 00:5x — "the ONE owner view with its own `<h1>`" is FALSE. There are TWENTY-SIX.
+
+The UI-53 row and the 00:3x `sr-only` ruling both said `memberships_list.blade.php:4` is the one owner
+view carrying its own visible `<h1>`, *"every other"* starting at `h2` under the layout seam.
+**MEASURED 00:5x on `72819042`:**
+
+```
+grep -rln "<h1"    app/resources/views/livewire/account/     → 25 files
+grep -rn  "#[Layout" app/app/Livewire/Account/               → 25 components, NOT ONE with `heading`
+grep -rn  "#[Layout" the five module Ui/ dirs                → 17 components, 16 with `heading`
+grep -rn  "<h1"      the five module views/ dirs             → 1 file, memberships_list.blade.php:4
+```
+
+**The house has TWO shapes and `x-192.memberships-list` is in the MAJORITY one** — 25 core
+`App\Livewire\Account\*` screens carry their own visible `<h1>` and pass no `heading`; the 16 X-110 ·
+X-138 · X-139 · X-199 module screens carry none and take the layout's `sr-only` seam. `memberships-list`
+is the 26th member of the first shape, not an exception to the second.
+
+⚠️ **Twelfth of the hand-derived-claim family, mine, and verbatim the 20:3x `$isSample` failure mode:** I
+opened the three files the question put in front of me — `cooling`, `roi-dashboard`, `invoices`, all
+three from *one* of the two populations — and wrote a sentence about *"every other owner view."*
+
+> ⛔ **A claim of the form "X is the only one" is a claim about a POPULATION, and a population is not
+> measured by opening the files that prompted the question. State which set you enumerated.**
+
+✅ **The 00:3x conclusion survives and is better supported.** UI-52 shell-only was right, and on the true
+measurement it is *more* right: opting `memberships_list` into the seam would have moved it **away from
+twenty-five screens**. The wave shipped correctly on a false premise — the run-96 situation exactly, and
+as there, **not a coder fault.**
+
+### ✅ RULED 2026-09-07 00:5x — UI-53 INVERTS: the invariant both shapes satisfy, asserted once
+
+⛔ **UI-53 is not a copy edit and promotes nothing.** There is no style defect: on the measurement above
+that edit would make the tree *less* consistent. What is missing is that **nothing checks either shape**,
+though both deliver the same property — **every owner screen renders exactly one `<h1>`** (25 from the
+view, 16 from the layout, 1 from the view). The real defects it would catch are a screen with **zero**
+— invisible in a screen reader's heading list — or **two**, which is precisely what UI-52 was ruled out
+of shipping.
+
+**One `expect()` inside `OwnerNavTest`'s existing `nav entries survive real get`**, which already drives
+an authenticated `GET` on all 36 `OwnerNav::all()` entries. ⛔ Zero exclusions, no new `test(`, no new
+GET, no new helper, no route named anywhere — the population is derived, which is the UI-47 property.
+
+**Measured green statically:** the 12 module nav routes get exactly one (11 seam, `memberships-list` its
+own; no other module view has an `<h1>`, so a double is impossible); the 24 account nav routes come from
+views that each carry exactly one (`grep -rc "<h1"` = 1 on all 25) whose components pass no `heading`.
+⚠️ **That is a derivation over sources, not a count over rendered HTML** — which is why it is worth
+asserting. ⛔ **An unexpected red is a FINDING: paste it and stop.** No exclusion, no blade edit, no
+weakened count.
+
+⭐ Two views under `livewire/account/` carry **zero** `<h1>` and both are out of scope, checked before
+writing this: `ReviewRules` is `setup.review-rules`, the onboarding wizard, not an `account.*` route;
+`ReplyExamples` has **no `#[Layout]` and no route at all** and is an embedded child. Neither is in
+`OwnerNav::all()`. They are proof that the zero case is real in this tree, not hypothetical.
+
+### ⭐ 2026-09-07 00:5x — the 00:3x `git ls-files` read, finally run: 33 files, none of them executable
+
+The 00:3x ruling said only a human reading `git ls-files` above `app/` could find that family. **I ran
+it:** `git ls-files -- '*.patch' ':!:*/*'` → **33** `debug-*` · `fix-*` · `test-*` patches at the
+repository root, and `git ls-files -- '*.php' ':!app/' ':!plugins/'` → **0**. ✅ So after run 97 removed
+`scratch/`, **nothing above `app/` on this branch boots the framework** — the blind spot is real and
+currently holds only litter. ⛔ Not deleted here: 33 files unbriefed is the scope-widening note, and they
+are Track 1's at the source.
+
 ### ⛔⛔ RULED 2026-09-07 00:3x — a TRACKED scratch file above `app/` is in NO guard's set
 
 Run 97 deleted 27 tracked files under `scratch/` unbriefed, and it was right to.
@@ -375,6 +478,11 @@ customers list, one in the nav, one URL-only — survives intact.
 > in a ruling is a string the next reader greps, gets zero hits on, and must re-derive the block from.
 
 ### ✅ RULED 2026-09-07 00:3x — the `sr-only` `<h1>` is a check on the SEAM, not the definition of proven
+
+⚠️⚠️ **CORRECTED 2026-09-07 00:5x — the sentence below about `memberships_list` being the only owner view
+with a visible `<h1>` is FALSE; there are twenty-six.** See the 00:5x population ruling above. **The
+conclusion — UI-52 is shell-only — survives and is strengthened**, because opting in would move the
+screen away from the twenty-five, not toward the house shape.
 
 UI-52 adds shell assertions to `x-192.memberships-list`. The other sixteen `test_shell` tests assert
 three lines; **the third does not transfer.** MEASURED: `cooling.blade.php`, `roi-dashboard.blade.php`
