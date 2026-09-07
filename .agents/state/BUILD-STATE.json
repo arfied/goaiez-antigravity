@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-07T14:54:29",
+ "updated": "2026-09-07T15:24:42",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -2283,6 +2283,12 @@
    "module": "X-157",
    "chose": "--ruling R245 The reddened X157Test assertion that a malformed video block takes the whole JSON-LD off the served page asserted the behaviour SITE-154 changed, not a contract. The guard field lists are byte-identical to SchemaRenderAction validateSchema required-non-empty lists, and the fixture block carries no contentUrl, so it is exactly the member the guard excludes. The test now asserts that the required JSON-LD element survives and that the malformed video does not reach it. The whole-document refusal is preserved and still asserted for the case where it is correct, a blank top-level business name, at X176Test line 290.",
    "at": "2026-09-07T14:54:29",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-176",
+   "chose": "A top-level schema name or url that is blank after trim now refuses the whole document, as the empty string already did. empty() returns false for a whitespace-only string, so a business whose name was whitespace published a LocalBusiness node carrying a blank name with the document intact and every gate green, while the empty-string case was refused and that refusal is asserted at X176Test line 290. The direction is deliberately opposite to the collection-member seam: a blank enrichment member is omitted and the document survives, but the top-level name is the subject of the whole schema, so the document is refused. The member predicates are unchanged, because two committed falsifiers depend on the validator accepting a whitespace member in order to show that member reaching the page with the page intact. Refused: a guard in EdgeDeployAction as well as or instead of this one, and a non-empty constraint on businesses.name, which is another lane column.",
+   "at": "2026-09-07T15:24:42",
    "ruling": "R245"
   }
  ],
