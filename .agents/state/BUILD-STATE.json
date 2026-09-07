@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T23:23:45",
+ "updated": "2026-09-06T23:43:45",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -2212,6 +2212,12 @@
    "chose": "the breadcrumb ancestry query is bounded to the ancestor paths across both stored slug forms, and a normalisation collision between two pages refuses the whole trail --ruling R245",
    "at": "2026-09-06T23:23:45",
    "ruling": "R245"
+  },
+  {
+   "module": "X-176",
+   "chose": "the breadcrumb ancestry query is bounded on the SQL-normalised slug, so it accepts every form trim('/') accepts and agrees with the internal-link renderer by construction --ruling R245",
+   "at": "2026-09-06T23:43:45",
+   "ruling": "R245"
   }
  ],
  "notes": [
@@ -2286,6 +2292,10 @@
   {
    "at": "2026-09-06T20:30:21",
    "note": "X-176 Supersedes 'capability  X-176  \u2014 page content relationship data to build the link graph (G8-25)' because there is no external content-graph API and none is needed; the graph is generated from the published page set's own slug ancestry, which this lane already holds."
+  },
+  {
+   "at": "2026-09-06T23:43:45",
+   "note": "X-103 pages has exactly one writer, X-103/Actions/PageCreateAction, and that writer has no production caller, so no page-creation path exists outside tests; a page is created by a tenant editing their site, which is a screen and therefore Track 2's under ruling 5"
   }
  ]
 }

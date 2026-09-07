@@ -864,3 +864,5 @@
 - `2026-09-06T22:33:07` (R245) X-176 — an unresolvable or unpublished breadcrumb ancestor drops the whole breadcrumb; ancestor slugs are matched on the normalised form --ruling R245
 - `2026-09-06T22:53:10` (R245) X-176 — the breadcrumb renders as nav#breadcrumb-x176 before the offers block, from the same derived trail as the JSON-LD; an unresolvable hierarchy emits neither surface --ruling R245
 - `2026-09-06T23:23:45` (R245) X-176 — the breadcrumb ancestry query is bounded to the ancestor paths across both stored slug forms, and a normalisation collision between two pages refuses the whole trail --ruling R245
+- `2026-09-06T23:43:45` note: X-103 pages has exactly one writer, X-103/Actions/PageCreateAction, and that writer has no production caller, so no page-creation path exists outside tests; a page is created by a tenant editing their site, which is a screen and therefore Track 2's under ruling 5
+- `2026-09-06T23:43:45` (R245) X-176 — the breadcrumb ancestry query is bounded on the SQL-normalised slug, so it accepts every form trim('/') accepts and agrees with the internal-link renderer by construction --ruling R245
