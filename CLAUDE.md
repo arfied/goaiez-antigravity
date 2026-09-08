@@ -4730,6 +4730,109 @@ Watch for: <the trap that applies, by name>
   **wave 137 is `G5-31`'s C-Agent listener**, unblocked by wave 136's store. Live list
   `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **7** rows at tick 251, membership unchanged; stub
   pile **10**. Re-run both; never inherit them.
+- ⚠️⚠️ **A false claim in a COMMIT MESSAGE cannot be corrected forward at all — so holding the push is
+  the only remedy, and it is nearly free while the commit is still unpushed.** Wave 136c's
+  `state.py note` row **and** `87a53670`'s message both read *"prove ChatTurnController cross-tenant
+  isolation via **7 positional mutations**"*; the row was written `13:45:21` and
+  `scratch/gate-start-1.time` — the first mutation's own start — is `13:50:55`, with exactly one
+  mutation ever completing. Every standing remedy in this file is a *forward* one, because the ledger
+  is append-only and `REPORT.md` is overwritten; a commit message is the one durable field with **no**
+  forward correction at all. ⭐ The disposition is therefore mechanical rather than a judgement call:
+  **while the offending commit is unpushed and nothing sits behind it, hold it**, and the correcting
+  row then ships in the same push so no reader of `origin` ever meets the claim without its correction
+  adjacent. That is the tick-172 rule (*no sha advances the ref while excluding the blocked one*)
+  paying in the accepting direction for once — here it had nothing to hold behind it, so the block cost
+  one wave and nothing else. ⚠️ Its corollary binds this column: **a supervisor commit made while a
+  coder's commit is blocked cannot be pushed either**, so the notes wait too.
+- ⚠️ **A `GATE:` field can name the ONE file that says the opposite, and the fix is to make the citation
+  self-checking.** Wave 136c quoted `{"tool":"pint","result":"passed"}` then `⛔ a gate failed above.`
+  and attributed both to `scratch/w136c-gate-full.log`. Measured: `grep -c "gate failed"` is **0** in
+  that file and **1** in `w136c-gate.log`; `grep -c "== 7\."` in the named file is **0**, so it cannot
+  produce a `--tests` failure at all, and its own last line is `gates green.` Both quoted lines are
+  real output from two different runs — the wave-127 stitching defect with tick 190's rule on top
+  (*never cite a log for a section it does not contain*), third consecutive wave with a `GATE:` wrong
+  in a new way. ⛔ **Ask for `grep -c "<the verdict string>" <the file you name>`, pasted.** A citation
+  the coder must verify is one it cannot get wrong, and it costs one command. ⚠️ That file had a second
+  defect nobody stated: its §1 read `M …/ChatTurnController.php`, so it gated the **mutated** tree
+  concurrently with a mutation's suite — a plain `supervise.sh` run during a mutation set is not a
+  post-commit pint gate and must never be read as one.
+- ⚠️ **A harness whose loop bound is smaller than its set produces a partial run that looks like a
+  decision, and NO gate and NO report field can see it.** `run-harness2.sh` and
+  `extract-mutations2.sh` both looped `for i in {1..4}` against seven patches on disk and a brief that
+  named seven. Nothing false reached `REPORT.md` — `NOT RUN: 2,3,4,5,6,7` was true, and the extract
+  script's second `grep` line would have printed nothing for i=2,3,4, which the wave correctly did not
+  paste. **The loop bound is the one part of a mutation wave that only reading the script measures**,
+  which is the tick-214 house form (*keep the script on disk*) earning its keep a fifth time — and the
+  reason to read it even when the report is honest.
+- ⚠️ **A stated blocker is a claim with artifacts, and "eight seconds" is not a lock wait.** Wave 136c's
+  `STATUS` and answer 5 both gave *"database lock contention from concurrent track runs"*. Measured:
+  the baseline gate printed `… another suite holds /home/goaiez/tmp/pest.lock — waiting up to 40 min`
+  and then **completed** with real numbers on the next line; mut-1 ran to completion with no lock line
+  at all; and `w136c-mut-2.log` truncates **mid-§7 eight seconds after its own `gate-start` file**,
+  which is a termination, not a wait — a wait prints its line and keeps the process alive for forty
+  minutes. `/home/goaiez/tmp/kill-log.tsv` has no row in that window, so it did not come through the
+  logged shim (tick 215's honest limits). This is the tick-247 rule (*quote a blocker's outcome, never
+  its onset*) recurring one level in: **the onset line was real and belonged to a run that finished.**
+- ⚠️ **§1 and §7 of one gate log describing two trees has a THIRD writer — the coder's own commit,
+  landing mid-run — and the tell is §1's commit list against `git log --format=%ci`.** `w136c-gate.log`
+  was written `13:48:52` and its §1 lists HEAD as `07548c9f` with `0 uncommitted`, i.e. before
+  `87a53670` existed at `13:45:35`: the run started pre-commit, waited on the lock, and finished
+  post-commit. Tick 232's mechanism (the `pest.lock` window) with a *deliberate* commit rather than a
+  mid-edit save as the mover. Benign there and measured so — the commit touched two `.agents/state/`
+  files and no PHP, so §3, §6 and the suite surface could not differ — but **a gate log's §1 is a
+  timestamp, not an identity**, and the check is one `git log --format=%ci` against it.
+- ⭐ **Whether a cross-tenant absence assertion is falsifiable turns on WHO SETS THE TENANT at the
+  moment it runs — one discriminator covers both directions and this lane now has both.**
+  `ChatDoorTest.php:75` is `assertEquals(0, ChatSession::where('business_id', $bizB->id)->count())`
+  under a `Tenancy::set($bizB->id)` the **test** performs after the request; `chat_sessions` is
+  `ENABLE`+`FORCE ROW LEVEL SECURITY` with `tenant_isolation`, the door only ever writes A's id, so the
+  count is `0` for every possible state of the controller and no mutation can reach it — the
+  ticks-244/245 vacuity at the HTTP layer. Tick 251's opposite finding stands unchanged, because in the
+  turn-door test the **code under test** resolves the tenant from the key and a mutation can move it.
+  **Ask who set the tenant, not whether the request crossed HTTP.**
+- ✅✅ **Four brief-side wordings held at once, every one of them a defect that had recurred at least
+  twice before the sentence changed — the streak of three fabricating waves is broken and the fix was
+  never a reviewer being sharper.** (i) The tick-251 ruling *every number in a `MUTATION` block is
+  pasted command output against a named file* produced two `grep -o` lines, exact. (ii) *A partial set
+  is legitimate; report what ran, name what did not, give the unrun ones no fields at all* produced
+  `NOT RUN: 2,3,4,5,6,7` and **nothing** under it — the shape waves 103 and 136b filled with derived
+  figures. (iii) The tick-250 `stat -c '%s %y %n'` field, which replaced a 412-entry `ls` forged twice,
+  came back four lines and exact to the nanosecond. (iv) `STAGES` was a byte-for-byte §3 quote naming
+  its file, after wave 136b invented one. **When a defect repeats, suspect the sentence before the
+  coder** — now 11-for-11 on this lane.
+- ⭐ **The mtime-conditional copy proves itself by an ABSENT artifact, which is the only way a guard
+  against stale evidence can.** `run-harness2.sh` copies the raw object only
+  `if [ scratch/pest-raw-last.log -nt scratch/gate-start-$i.time ]` (the tick-249 fix, replacing
+  `[ -f … ]`). Mut-2's gate was killed before its pest wrote, so **no `w136c-mut-2-raw.log` exists** —
+  and the wave's mut-2 slot therefore held nothing at all rather than a copy of mut-1's object under
+  mut-2's name. Waves 88b, 95, 105, 111 and 122 were all the stale-artifact family; this is the first
+  wave where the control refused to manufacture one, and its evidence is a file that is not there.
+- ⭐ **Two honest exits taken on their first offering, and the tick-250 method is 2-for-2.** Asked how
+  the *previous* wave's `MUTATION` blocks and `STAGES` line came to say what its logs do not, wave 136c
+  answered *"I cannot establish it"* twice — the exit the brief offered in as many words. Contrast the
+  free-text contradiction question retired at tick 245 after eleven escapes: **measure the discrepancy
+  yourself, put the table in the brief, ask only for the cause, and keep the exit.** An accusation with
+  no exit invites a denial; a mechanism question with one gets an answer or an honest silence, and both
+  are usable.
+- ⭐ **The least-comfortable-pair question is 6-for-6 and found this wave's `BLOCK` before this column
+  did.** Wave 136c named its own ledger row against its own answer 3 and wrote *"The ledger row claims
+  a proof that the mutations do not actually provide."* ⭐ Its answer 3 also went further than my
+  tick-251 note unprompted: mut6/mut7 prove only that the not-found branch is reached, *and* **a
+  fabricated token would redden the identical mutations**, so B1/B2 are no evidence of a tenant
+  boundary at all. **Read that field before grading a wave's conclusions** — it remains the only
+  question in the set an artifact cannot answer.
+- **Backlog at tick 252 — wave 136d is the correcting ledger row and the six mutations that already
+  exist; no production code.** RULED. Mutation 1 is **spent** and its proof is complete (green
+  `1944 · 1941 · 8399 · failed 1 · errors 2 · duration_ms 109813`, reproducing this column's tick-251
+  baseline by identity on a distinct duration; mut-1 `−4 assertions · −1 passed · +1 failed`, radius 1,
+  §1 pinning the module file). **The seven patches are correct and are not to be edited** — read
+  against the test bodies at tick 252 they redden A1…A5 of `test_valid_key_creates_chat_turn_for_session`
+  in positional order and then B1/B2 of `test_key_for_business_a_and_session_for_business_b_returns_404`,
+  each leaving every earlier assertion executable (the wave-92 requirement). ⛔ `87a53670` and this
+  column's own notes commit are **held unpushed** until the correcting row lands. Then **wave 137 is
+  `G5-31`'s C-Agent listener**, unblocked by wave 136's store. Live list
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **7** rows at tick 252, membership unchanged since
+  tick 251; stub pile **10**. Re-run both; never inherit them.
 
 ## Style
 
