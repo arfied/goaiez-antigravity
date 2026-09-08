@@ -4151,3 +4151,59 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     it does today only because this tick's own gate re-ran J9 and rewrote it. ⛔ Deleting X-198's
     `runtime-proof.json` is never the fallback (ruling 173): if the chain cannot complete, the outcome
     is `UNRESOLVED` with the command's refusal quoted and the old file left in place.
+179. **Ruling 27's caveat is LIVE, and on a ONE-SIDED per-track path the `merge=ours` driver cannot
+    fire — git takes `main`'s copy with no conflict, no marker and no announcement (RULED by the lane
+    supervisor 2026-09-08 14:4x, briefed as MONEY-121 Table B; measured against `origin/main` =
+    `acea8ad0`, base `5a0b7644`).** `.gitattributes` marks eight paths `merge=ours` and ruling 27
+    recorded Track 1's own caveat — *a merge driver runs only when BOTH sides changed the file* — then
+    rulings 52 and 154 measured the **two-sided** set and moved on. This merge inverts it: the
+    two-sided set is six paths and three of them are byte-identical on both sides, while the damage is
+    entirely in the **one-sided `main`-only** set.
+
+    | path | `main` since base | money | lost silently if not restored |
+    | :--- | :--- | :--- | :--- |
+    | `app/phpunit.xml` | **2** — `DB_DATABASE` → `goaiez_antig_test` | **0** | ⭐⭐ Track 1's database. Money's pin is a never-list value (owner ruling 3) and `supervise.sh` §0 exits 2 only on *production* — `goaiez_antig_test` is not production, so **no gate in this lane catches it** and every later run `migrate:fresh`es another track's test database |
+    | `bin/supervise.sh` | **458** | 0 | ruling 24's three gate hunks; ruling 74's `run_tool` rc capture, the `rc ≥ 124` KILLED line, the eight-column `gate-runs.tsv`, the shared `pest.lock` |
+    | `.agents/supervisor/launch-coder.sh` | **184** | 0 | `--allow-merge` (the flag the merge wave itself is dispatched with), `--coder claude`, `--check` (rulings 30, 52, 74) |
+    | `.claude/settings.json` | **23** | 0 | this lane's supervisor allowlist (`0634e31f`, ruling 24) |
+
+    **RULED: every merge brief in this lane carries a Table B of one-sided per-track paths with its
+    own proof command**, and the proof is `git diff --cached HEAD -- <those paths>` printing
+    **nothing** plus `grep -n DB_DATABASE app/phpunit.xml` printing `goaiez_antig_money_test`.
+    ⛔ The restore is never skipped because "the driver handles it" — the driver is a second belt, and
+    on a one-sided path there is no first one. ⚠️ Nothing downstream can see the loss: `php -l` reads
+    neither XML nor JSON, `pint` and `phpstan` read none of the four, and the one instrument that
+    would notice is `bin/supervise.sh`, which is itself being overwritten. ⚠️ This is rulings
+    83/136/145's family a fourth time — **the cheap signal moves for reasons unrelated to the fact it
+    stands for** — with the sign reversed: here it is the *absence* of a conflict marker that has to
+    be treated as suspicious, because absence is exactly what a one-sided overwrite looks like.
+180. **The `acea8ad0` merge has ZERO code conflicts, and ruling 171's fix pre-resolved the only
+    contention there would have been (measured 2026-09-08 14:4x).** Merge base `5a0b7644` is itself a
+    **money** commit, which Track 1 merged to `main` at 13:41 (`f823f136`) — money 8 ahead, 82 behind,
+    against `12447593`'s 1546/226 and `07a4ae2f`'s 784/402. The two-sided set is six paths:
+    `.agents/state/BUILD-STATE.json`, `.agents/state/JOURNAL.md` and `CLAUDE.md`, where the driver
+    fires correctly, and `X-198/Ui/{ConnectCard,ReconciliationDiscrepancies,SameAccount}.php`, where
+    **both sides made the byte-identical change** — `main` added
+    `#[Layout('components.layouts.agency')]` and money added the same attribute under ruling 171, and
+    the blob hashes match on both sides (`cec7e7d7`→`c2b15d52`, `a6167fd6`→`05cd389e`,
+    `198f6138`→`01d616e5`), so git merges them with nothing to ask. Measured absent, so a merge brief
+    tells the coder **not to look**: no deletions on either side (ruling 58 shape (3) cannot fire), no
+    `main`-added test against a money module (shape (1)), no one-sided `main` change inside a money
+    module tree (shape (2)/ruling 59). `main`'s only additions are X-102's five files (track sixty's)
+    and a **root** `pint.json`; this checkout already has `app/pint.json` and the gate runs pint from
+    `app/`, so the root file is inert here and the two are never merged. ⚠️ The generalisable half:
+    **a lane that applies another lane's one-sided hunk before the merge converts its next conflict
+    into a no-op** — ruling 171 was briefed as a dropped-attribute fix and paid for itself again here,
+    which is the argument for taking a merge's follow-ups forward rather than waiting for the merge to
+    re-raise them.
+181. **The three architecture reds clear on this merge and only on it, re-measured against the CHECK
+    file itself (measured 2026-09-08 14:4x; ruling 176 confirmed).**
+    `git diff 5a0b7644 origin/main -- app/tests/Feature/Architecture/` shows `main` moving
+    `HeadingSeamTest` `$conditionalHeadings` 8 → **10**, `OwnerNavTest` `$unbuilt` 220 → **214** and
+    `$built` 35 → **41**, `SampleStateModuleTest` `$total` 244 → **235** and `$illegal` 219 → **210**
+    — every one of them money's own measurement **to the digit**, on a tree where
+    `git diff origin/main HEAD -- app/app/Modules` carries zero `x-surface.sample-state` changes.
+    ⛔ TRACK 1 ACTION 7 stays closed and is never re-raised; ⛔ money never adopts a pin by editing
+    those files (CHECKs, another lane's, the One Rule); the merge takes `main`'s copies whole and the
+    reds go. ⚠️ Ruling 176's instrument — **diff the CHECK against `origin/main` before attributing
+    any pinned-counter red** — has now been the cheap half twice running.
