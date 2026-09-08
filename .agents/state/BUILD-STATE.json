@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-08T00:01:15",
+ "updated": "2026-09-08T00:29:48",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -2379,6 +2379,12 @@
    "module": "X-155",
    "chose": "FormValidateAction read the honeypot field name with a null-coalescing default over a NOT NULL column carrying a database default, so the fallback could never fire, and a blank or whitespace-only field name made the payload lookup miss and silently disabled the honeypot for that form. The reader now falls back to website_url when the configured name is blank after trim, which is the same literal the line already declared and the same value the column defaults to, so the seam decides nothing new. The trim decides only; the configured name is used verbatim, because a field name is a lookup key and trimming it would silently rewrite a caller key, which is also why a name of 0 is legitimate and is used as given. empty() is refused and the refusal is measured in BOTH directions: empty of three spaces is false, so it would re-admit a whitespace name and leave the original defect standing, and empty of the string 0 is true, so it would treat a form legitimately named 0 as unconfigured and fall back. Both wrong candidates are red under the two new tests. Refused deliberately: refusing the submission, which would refuse a legitimate visitor for a tenant misconfiguration and invert this module posture of capture and normalise; a non-empty database constraint, since no production writer of FormDefinition exists and every fixture bypasses one; guarding in FormCaptureAction, which leaves the validator other callers exposed; and relaxing the presence predicate on the submitted value, which is SITE-161 fix for the honeypot value and is correct.",
    "at": "2026-09-08T00:01:15",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-157",
+   "chose": "The published form endpoint maps the capture action status to a response code, returning 201 for captured and 422 otherwise, and only the 201 arm was asserted; three route level form posts all assert 201 and no test in this lane exercised the 422 arm. Every assertion on the spam path checked the persisted row and the dispatched events and none checked the returned status string, so a change that made the spam path return captured would have left every module test green and answered a bot with 201. The endpoint now has a test that reads the form action out of the served document, posts a filled honeypot to it, and asserts the 422 status, the rejected status in the body, and the stored submission flagged as spam with its payload intact, which is the storage half of the site law refusal proven at the endpoint rather than at the action. The action level tests are unchanged and still discharge the module clause; this test discharges the response mapping, which is the one line the route contributes beyond the action. Refused deliberately: asserting only the status code, which drops the storage half that this seam can silently lose; constructing the endpoint URL from the identifiers instead of reading the advertised form action; adding an incomplete step route test in the same wave, which is a second claim; and any new capability id literal, which would create a second carrier for a clause already discharged elsewhere.",
+   "at": "2026-09-08T00:29:48",
    "ruling": "R245"
   }
  ],
