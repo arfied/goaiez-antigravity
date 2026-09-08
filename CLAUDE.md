@@ -1085,3 +1085,106 @@ sweep is one grep for the formatter and one for the column suffix, and it either
 arithmetic bug immediately or clears the entire dimension in a single pass. **An instrument that clears
 cleanly in one pass is still a result**; the failure mode written down two sections up is loosening it
 until it fires.
+
+## ⛔⛔ Trap added 2026-09-08 10:0x — the report-vs-gate-log mtime check is a STALENESS detector, and staleness runs BOTH ways
+
+The PB-98 check (*if `REPORT.md`'s mtime is earlier than `pbNNN-gate.log`'s, the report cannot have read
+the verdict*) passed cleanly twenty-seven waves running, which is exactly long enough to start reading it
+as a formality. **PB-123 is the wave where it fired, and it was right.**
+
+```
+REPORT.md        09:58:24
+pb123-gate.log   09:59:26      ← 62 seconds LATER
+```
+
+`REPORT.md` said `GATE: NOT RUN — … another suite holds /home/goaiez/tmp/pest.lock — waiting up to
+40 min (never killing it)` and filed J3 and the failure list under `UNRESOLVED` as unconfirmable. **That
+string is `pb123-gate.log:126` — the WAIT line — and `:127` is the verdict, on the very next line:**
+`tests 2096 · passed 2092 · FAILED 1 · errors 3`. The coder read the log mid-wait, wrote the report, and
+exited before the lock released. Nothing was concealed and nothing was wrong with the run.
+
+⭐ **The generalisation, and it is the durable half: this repo's other artifact-over-prose rulings — the
+`/usr/bin/git` mis-transcription and the `REFUSED` line naming a command that succeeded — both
+EXONERATED a report that read worse than the truth. This one OVERRIDES a report that under-claimed.**
+The rule is symmetric and was only ever written down in one direction. ⛔ **Never grade a wave
+`INCOMPLETE`, and never re-dispatch for a missing number, on a `GATE: NOT RUN` line without opening the
+log yourself.** A re-dispatch here would have spent a cap on a wave that had already passed.
+
+⚠️ **And it was the brief's gap, not the coder's:** the brief said *wait on the lock and never kill it*,
+which it did, and never said *re-read the log's tail after the wait returns and quote the line starting
+`tests `*. ⭐ Put that clause in every brief. **Fourth consecutive wave whose shortfall traced to the
+brief** — the standing habit of reading a shortfall as evidence about the brief first keeps paying.
+
+## ⭐ Trap added 2026-09-08 10:0x — an action whose whole product is its RETURN VALUE, called as a statement
+
+The successor instrument after the `is_sample` dimension closed, and the exact converse of PB-116 (*an
+action that matches on a column and returns only the derived value has thrown away the evidence*). Here
+the **caller** throws the value away and keeps only the side effect.
+
+`CustomerfacingPortal::mount()` (X-172), the `expired_link` branch, called
+`PortalLinkAction::handle(...)` as a bare statement. It **returns the new `PortalLink`**; `$this->token`
+was never re-pointed. On one defined input — *a customer opens a portal URL whose `expires_at` has
+passed* — three things follow:
+
+- `PortalLinkAction:23` deactivates every prior link for the resource on its way to minting the new one,
+  so the customer's own URL is **expired AND `is_active = false`** after the visit — two kinds of dead
+  where it was one.
+- `render()` re-queries `where('token', $this->token)`, finds the **old** link, fails
+  `if ($link && $link->is_active)`, and the portal renders **blank**.
+- ⛔ `customerfacing-portal.blade.php:16` says *"A fresh link was sent to your email or phone."* and
+  **nothing sends it** — no mail, no SMS, no event on that path. **The new token exists only in the
+  database and reaches nobody.** Same family as the `deducted_if_proceeding` finding: a sentence the
+  customer reads that the code does not honour.
+
+⭐⭐ **And the existing test passed on the defect.** `CustomerfacingPortalTest:148`
+`test_expired_link_yields_new_active_link` asserts the new link **exists in the database** — true, and
+always was — and asserts nothing about whether the customer can reach it. **A test written against the
+side effect goes green over a discarded return value, by construction.**
+
+⭐ **The sweep, for whoever runs this instrument next:** grep the lane's modules for `->handle(`,
+`->lookup(`, `->grant(` on lines that **start a statement** (no `=`, no `return`), then ask of each
+whether the caller needs what came back. ⛔ Stop when it stops firing rather than loosening it into
+"calls that could return something" — that is the documented way a productive method turns into briefing
+leads.
+
+⚠️ **The fix seam matters as much as the finding.** Actually *sending* the link is an outbound vendor
+transport and out of this lane; `PortalViewAction:26`'s own message — *"A fresh token can be re-issued
+**without credential requirements**"* — says the re-issue is self-service and **in-band**. So the fix is
+to stop discarding the return value and stop claiming a send. ⛔ And the obvious wrong version collapses
+`invalid_link` (`! is_active`) into `expired_link` (`expires_at->isPast()`), turning a **revoked** link
+into a self-service re-issue — a security hole, and the reason PB-124 pre-declares two regression arms
+that prove a deactivated link still 404s and mints **nothing**.
+
+## ⭐ Recorded 2026-09-08 10:0x — the `is_sample` dimension is CLOSED across the lane, with the counts named
+
+The direct repair of the clearance-scope failure recorded above: that entry cleared X-166 on one
+component of four. **Every clearance below states the count**, so a future tick can falsify the table in
+one `ls` instead of re-deriving it.
+
+| module | components | measured before | now | verdict |
+| :--- | :--- | :--- | :--- | :--- |
+| **X-166** | 4 `Ui/` + `MarginReportAction` | `MarginByJob` only | all 5 | **was the defect — fixed at PB-123** |
+| **X-82** | 1 `Ui/` + **3** `Actions/` | 2 of 4 | all 4 | ✅ holds |
+| **X-163** | 3 `Ui/` + 3 `Actions/` + engine | "engine, actions, screens" | all 7 | ✅ holds |
+
+- **X-82 clears structurally, not by care:** `RateSetAction` is a **writer** and `AllowanceLookupAction`
+  operates on a **different model entirely** (`Allowance`, which has no `is_sample`). **Neither derives a
+  number from a set of rates**, so there is nothing a missing filter could corrupt.
+- **X-163's one unmeasured component was `DailyPricingDigest`** — the name says *digest*, so it was the
+  live suspect. ⭐ It aggregates nothing: a per-row **work list** of flagged/unconfirmed items, the
+  `MarginByJob` precedent, and correct — a sample row *should* appear on the owner's list of gaps.
+
+⛔ **SPENT across all 16 components. Do not re-derive.**
+
+⚠️ **Two candidates were measured and killed in the same pass** — recorded so nobody re-derives them
+either, and because both are the *right* shape of near-miss:
+
+1. **`ConfirmationScreen` lists on one predicate and counts on another** (`:38`/`:120`
+   `is_sample = true OR is_confirmed = false`; `:126` `is_confirmed = false` alone). ⛔ **Unreachable** —
+   every writer in X-163 makes the two columns **exact complements** (`Pricebook.php:111-112` writes
+   `is_sample => $x, is_confirmed => ! $x`), so the `orWhere` is redundant and the two numbers are equal
+   by construction. **latent + no wrong value = record.**
+2. **`PortalLink.is_active`'s boolean-column clearance named 2 readers; there are 5.** All five guard,
+   and the revocation hole is not there. ⭐⭐ **But re-counting it is what found the PB-124 defect one
+   line away — the clearance was right and the module was still wrong.** That is the case for
+   re-counting a clearance even when it confirms.
