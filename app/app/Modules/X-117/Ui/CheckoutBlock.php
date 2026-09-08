@@ -17,6 +17,8 @@ use Livewire\Component;
 
 class CheckoutBlock extends Component
 {
+    private const ORDER_WINDOW = 10;
+
     #[Locked]
     public string $sessionToken = '';
 
@@ -111,13 +113,18 @@ class CheckoutBlock extends Component
             }
         }
 
-        $orders = Order::where('business_id', $businessId)->orderByDesc('id')->limit(10)->get();
+        $orders = Order::where('business_id', $businessId)->orderByDesc('id')->limit(self::ORDER_WINDOW + 1)->get();
+
+        // One row past the window is the overflow probe: no second query, no count().
+        $ordersTruncated = $orders->count() > self::ORDER_WINDOW;
+        $orders = $orders->take(self::ORDER_WINDOW)->values();
 
         return view('x-117::checkout-block', [
             'cart' => $cart,
             'expired' => $expired,
             'lines' => $lines,
             'orders' => $orders,
+            'ordersTruncated' => $ordersTruncated,
         ]);
     }
 }

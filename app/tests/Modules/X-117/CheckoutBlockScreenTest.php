@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X117;
 
+use App\Models\User;
 use App\Modules\X117\Actions\CartAddAction;
 use App\Modules\X117\Models\Cart;
 use App\Modules\X117\Models\Order;
@@ -162,5 +163,44 @@ class CheckoutBlockScreenTest extends TestCase
             ->assertSee('Nothing authorised yet')
             ->assertSee('Nothing was authorised at any gateway')
             ->assertDontSee('Authorised at');
+    }
+
+    public function test_the_orders_list_says_when_older_orders_are_not_shown(): void
+    {
+        $biz = self::provisionTenant();
+        Tenancy::set($biz->id);
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::setUser($owner->id);
+
+        for ($i = 1; $i <= 10; $i++) {
+            $num = str_pad((string) $i, 2, '0', STR_PAD_LEFT);
+            Order::create([
+                'business_id' => $biz->id,
+                'customer_id' => null,
+                'order_number' => 'ORD-LIST'.$num,
+                'status' => 'pending_payment',
+                'total_cents' => 1000,
+                'auth_token' => 'auth_token_'.$i,
+            ]);
+        }
+
+        Livewire::actingAs($owner)->test(CheckoutBlock::class)
+            ->assertOk()
+            ->assertDontSee('The 10 most recent orders are shown');
+
+        Order::create([
+            'business_id' => $biz->id,
+            'customer_id' => null,
+            'order_number' => 'ORD-LIST11',
+            'status' => 'pending_payment',
+            'total_cents' => 1000,
+            'auth_token' => 'auth_token_11',
+        ]);
+
+        Livewire::actingAs($owner)->test(CheckoutBlock::class)
+            ->assertOk()
+            ->assertSee('ORD-LIST11')
+            ->assertDontSee('ORD-LIST01')
+            ->assertSee('The 10 most recent orders are shown');
     }
 }
