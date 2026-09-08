@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-08T05:47:46",
+ "updated": "2026-09-08T06:16:08",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2251,6 +2251,18 @@
    "module": "X-173",
    "chose": "the conflicts button records an account and the sync engine says a line is recorded rather than posted because X-173 has no Http call anywhere and its connect door cannot succeed, so no ledger exists to post to",
    "at": "2026-09-08T05:47:46",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-173",
+   "chose": "the sync engine records a mapping rather than posting one because X-173 has no Http call anywhere and its connect door cannot succeed, so no ledger exists to post to; this is the same sentence the conflict path already carries and the fact is not stated two ways",
+   "at": "2026-09-08T06:16:08",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-198",
+   "chose": "the connect card heads recorded gateways rather than Connect Gateway because both controls under it refuse - applyForMerchant on the absent processor adapter and connect on the absent Stripe client id - so the card manages nothing and the heading an owner reads in the non-empty arm said it did",
+   "at": "2026-09-08T06:16:08",
    "ruling": "R245"
   }
  ]
