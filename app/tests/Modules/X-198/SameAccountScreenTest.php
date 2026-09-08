@@ -85,8 +85,8 @@ class SameAccountScreenTest extends TestCase
 
         Livewire::actingAs($owner)->test(SameAccount::class)
             ->assertOk()
-            ->assertSee('Gateway charge ch_3TESTdetached00000000001')
             ->assertSee('No gateway charge id; our own reference')
+            ->assertSee('Gateway charge ch_3TESTdetached00000000001')
             ->assertSee('No payout has ever been imported: reading payouts from the gateway is not built in this checkout yet.')
             ->assertSee('are taken on the goaiez platform Stripe account')
             ->assertSee('which no charge is routed to yet')
