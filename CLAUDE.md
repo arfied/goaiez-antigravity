@@ -294,7 +294,70 @@ merge. Week 2 is scoped **one wave at a time**; it is not a single wave.
 | **UI-64** | **the blind spot's BLIND SPOT, and the directional clause `:109` never got. (1) `:109`'s message gains what a red means in BOTH directions ⛔⛔ INCLUDING that neither one is a defect — a red here is a POPULATION moving, not a broken heading, and the five pins above it all read the other way. (2) ONE new `expect()` inside the existing `test(`: resolved views containing any of the six Blade openers the depth arithmetic does NOT track (`@isset`, `@empty`, `@switch`, `@auth`, `@can` …), pinned — because an uncounted opener makes the count fall UNDER the population it claims to bound, which is "upper bound" going false in the wrong direction. ⛔ Zero view names; the matched set is Blade keywords. My reading is `0` of `19`; a different number is a FINDING. ⛔⛤ The sum is NOT asserted — ninth wave — and it is NOT asserted disjoint either. ⛔ No new `test(`, no blade, no new file, floor stays `1730`** | closed, pushed `eb2d6768` — run 111 `PASS-WITH-NOTES`, six notes, **N1 the largest MINE in this lane's history** |
 | **UI-65** | **the VOCABULARY stops being a literal. (1) `:116`'s seven-keyword regex replaced by a DERIVATION over the population's own closers — `@x` is a block opener iff `@end<x>` also occurs in these views; pin the size of that set minus `{if, unless}`. ⛔ Zero Blade keywords written except the two the arithmetic itself tracks. My reading is **`2`** (`foreach`, `php`); a different number is a FINDING. (2) its message states both directions, that neither is by itself a defect, and its own limit — it sees only an `@end<name>` closer in the same population. (3) `:115`'s parenthetical five-keyword list DELETED, replaced by what the code does (tracks `@if`/`@unless` only). ⛔ No new `test(`, no blade, no new file, floor stays `1730`. ⛔⛤ The sum is NOT asserted — tenth wave** | closed, pushed `08ba50d0` — run 112 `PASS-WITH-NOTES`, five notes, **three of them MINE**, and the tick that reviewed it found the `745` is not a property of the sha |
 | **UI-66** | **(1) `count($untrackedOpeners)` replaced by the sorted SET itself — a count cannot see a SWAP, and `foreach` leaving as `isset` arrives keeps it at `2` forever. ⛔ The count pin is REPLACED, not kept beside it: a count entailed by a set corroborates nothing (05:0x). (2) that pin's message is FALSE about what a red means — see the 09:4x ruling: a block opener weakens `conditionalHeadings` only if it creates MUTUALLY EXCLUSIVE ARMS, and the one member it found cannot. Restated to the criterion, ⛔ with no Blade keyword named as a current member. (3) the LINE-GRANULARITY blind spot gets a number: `:50` tests the heading BEFORE `:53–56` update the depth, so a heading sharing a line with its own `@if` is judged at depth 0. ONE new `expect()`, pinned; my reading is `0` of 19 and a different number is a FINDING. ⛔ No new `test(`, no blade, no new file, floor stays `1730`; `expect(` `9 → 10`. ⛔⛤ The sum is NOT asserted — eleventh wave** | **run 113 `BLOCK` — all three items landed character for character and both pins re-derived by me; the block is the REPORT, not the code. See the 10:0x ruling** |
-| **UI-66b** | **the repair wave, ⛔ ZERO `app/**` diff. (1) the `2026-09-07T09:49:13 (R245)` row committed — it is in the working tree and in NO commit, and `.agents/state/` is outside the supervisor's column, which is the whole reason this wave exists. (2) the five untracked `.txt` files quoted then deleted, three of them above `app/`. (3) ONE gate, through `bin/supervise.sh`, §7 pasted verbatim in whichever of its three shapes it prints. (4) `REPORT.md` in rule 10's TEN fields, read off disk. ⛔ `HeadingSeamTest.php` is not opened; floor stays `1730`** | **in flight — run 114 dispatched** |
+| **UI-66b** | **the repair wave, ⛔ ZERO `app/**` diff. (1) the `2026-09-07T09:49:13 (R245)` row committed — it is in the working tree and in NO commit, and `.agents/state/` is outside the supervisor's column, which is the whole reason this wave exists. (2) the five untracked `.txt` files quoted then deleted, three of them above `app/`. (3) ONE gate, through `bin/supervise.sh`, §7 pasted verbatim in whichever of its three shapes it prints. (4) `REPORT.md` in rule 10's TEN fields, read off disk. ⛔ `HeadingSeamTest.php` is not opened; floor stays `1730`** | closed, pushed `8683fb8e` — run 114 `PASS-WITH-NOTES`, six notes; items 0 and 1 exactly, item 2 not done at all |
+| **UI-67** | **`HeadingSeamTest` is named for a population of 44 and walks 19 — the fraction gets a number. ONE new `expect()` INSIDE the existing `test(`: components declaring `#[Layout('components.account.layout'` that the file's own `glob(base_path('app/Modules/*/Ui/*.php'))` does NOT reach, as the DIFFERENCE OF TWO DERIVED SETS. ⛔ Zero component names, zero view paths, zero directories beyond the roots the file already uses — name `app/Livewire/Account` in the code and it is an exclusion list with a plus sign. My reading is `25`; a different number is a FINDING. ⛔⛔ The message says a red is a POPULATION moving and that NEITHER direction is by itself a defect. ⛔ No new `test(`, no blade, no new file, floor stays `1730`; `expect(` `10 → 11`. ⛔⛤ The sum is NOT asserted — twelfth wave** | **in flight — run 115 dispatched** |
+
+### ⛔⛔ MEASURED 2026-09-08 03:0x — `HeadingSeamTest` IS NAMED FOR A POPULATION OF 44 AND WALKS 19
+
+`HeadingSeamTest.php:18` is `glob(base_path('app/Modules/*/Ui/*.php'))`. The population its title
+claims — components declaring `#[Layout('components.account.layout'` — is **44**: **19** under
+`app/app/Modules/*/Ui/` and **25** under `app/app/Livewire/Account/`, walked by nothing. Two
+derivations (`grep -rl` file list; `grep -rc` non-zero rows) return the same 44.
+
+⛔ **All ten pins in that file are measurements over 43% of the set its own name describes, and
+nothing anywhere states the fraction.** `$total`'s message says *"a new **module** component"* — the
+one word in the file hinting the scope is narrower than the title, and it hints it in a direction a
+reader takes as incidental.
+
+⚠️ **No pin above is false**; each is true of what it walked. This is the `224`/`unbuilt` shape and
+the UI-50 shape — **a bucket named for a population larger than the one it measures** — and the
+sharpest instance yet, because the uncounted 25 are the **majority**: the 00:5x ruling measured them
+as the house's *other* shape, twenty-five `App\Livewire\Account\*` screens carrying their own visible
+`<h1>` and passing no `heading`, all twenty-five on the nav. ⭐ UI-59's real `<h1>` → `<h3>` defect
+lived in the **covered** half; the same defect on any of the twenty-five would be caught by nothing
+but UI-53's one-`<h1>` count.
+
+> ✅ **RULED 2026-09-08 03:0x: UI-67 PINS THE 25, it does not widen the glob** — widening moves nine
+> pins in one wave with nine unknown deltas, and this lane's method is that a pin observed moving on
+> command is evidence while nine moving at once is a re-pin. The two-step is the proven one: UI-50's
+> census then UI-54's pin, UI-63's bound then UI-64's vocabulary.
+
+⛔ Its stated limit, measured: it matches the `#[Layout('…'` literal as text, so a component setting
+its layout at runtime is invisible. ⭐ `grep -rn -e "->layout(" app/app/` returns **nothing**, control
+being the 44-file grep over the identical paths. **Measured empty today, written here and never in
+the test** — the 03:3x rule.
+
+### ⛔ RULED 2026-09-08 03:0x — two report-shape rules, from run 114's two ⛔⛔ notes
+
+1. **A `stopped:` line NAMES the command that could not be run and quotes what it printed.** Run 114
+   said `stopped: RUNTIME` and nothing else — no §7, no `DOCTOR` stamp, no blocker. `RUNTIME` is one
+   of rule 10's four stop **categories**; a taxonomy label is not an explanation. ⛔ Run 113 invented
+   a cause and was blocked; run 114 supplied a bucket and called it a reason. **Same field, opposite
+   directions, the reader gets the same nothing.** ⚠️ Not a `BLOCK`: it asserts nothing false and is
+   strictly milder than run 98's `wave closed` over a silent §7.
+2. **Quoted evidence in `RAW` that carries GATE-SHAPED numbers says which run produced them.** Run
+   114's only five-field suite line was the `head` of a deleted litter file — `tests 1730 · passed
+   1723 · failed 3 · errors 4` — quoted for item 1 and readable as this wave's measurement, in a
+   report with no gate. ⛔ **And it was not even run 113's**: mtime `09:45:44` against its own `176s
+   elapsed` starts it at ≈`09:42:48`, before run 113's kickoff. The 08:2x rule (every `RAW` block
+   names its command) is necessary and not sufficient — **`head` is a true command whose output is
+   somebody else's measurement.**
+
+⭐ That block is also the **third** independent refutation of run 113's *"held for 40 minutes"*: it is
+a complete §7 that printed the lock-wait line **and then ran**. My own filtered gate did the same
+this tick — lock line, `3s elapsed`, `result passed`. **Nothing in this checkout has ever been
+observed printing shape 3.**
+
+### ✅ 2026-09-08 03:0x — `supervise.sh` §7b1: the pest log ROTATES. REV-113's carry, closed by me.
+
+§7's log was a fixed path, so every gate destroyed the previous gate's suite output — twice running
+that was the one artifact that could have said whether a coder run reached §7, and both times my own
+gate erased it seconds before I read it. A non-empty `.tick-pest.log` is now `mv`'d to
+`.tick-pest.prev.log` before the truncate, and the gate prints that it did. **Observed firing on real
+input**: `.tick-pest.prev.log` held the 03:05 full suite while `.tick-pest.log` held the 03:10
+filtered run. ⛔ **One generation only** — an accumulating archive is litter, and this file's rulings
+on litter bind the supervisor too. ⛔ Edited with no gate of mine in flight, per the 09:4x
+running-script ruling, and exercised through `--tests --filter` rather than asserted.
 
 ### ⛔⛔ MEASURED 2026-09-07 10:0x — A SUITE RAN OUTSIDE THE GATE, IN THIS CHECKOUT. That is the 19:2x question, ANSWERED — and the licence was MINE.
 

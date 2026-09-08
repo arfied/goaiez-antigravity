@@ -358,6 +358,21 @@ if [ $want_tests -eq 1 ]; then
   # supervisor session (ls/find/tail are all blocked there), so a log written
   # into it is a log nobody who needs it can open. Gitignored via .tick-*.
   pest_log="$ROOT/.agents/supervisor/.tick-pest.log"
+
+  # 7b1. ROTATE, do not truncate. MEASURED 2026-09-07 10:0x and again
+  # 2026-09-08 03:0x: `$pest_log` is a FIXED path, so every gate destroys the
+  # previous gate's suite output. Twice running that was the one artifact that
+  # could have said whether a coder run reached §7 at all — and both times the
+  # supervisor's own gate is what erased it, seconds before reading it. Keeping
+  # exactly one generation costs one gitignored file and makes "did the last
+  # run get here?" answerable instead of a matter of inference.
+  # ⛔ One generation only. An accumulating archive is litter, and this file's
+  # own rulings on litter above `app/` apply to the supervisor too.
+  pest_log_prev="$ROOT/.agents/supervisor/.tick-pest.prev.log"
+  if [ -s "$pest_log" ]; then
+    mv -f "$pest_log" "$pest_log_prev" 2>/dev/null || true
+    echo "  (previous run's §7 output kept at .agents/supervisor/.tick-pest.prev.log)"
+  fi
   : > "$pest_log"
 
   # 7b2. The BOX-WIDE suite lock (Track 1, OWNER.md 2026-09-06 14:1x).
