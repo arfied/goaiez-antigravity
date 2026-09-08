@@ -242,20 +242,24 @@ that test and is not on this list is a wave invented to fill the lane.
   untouched, the decoy root `REPORT.md` gone and the mailbox copy intact.
   `RULING CN` is discharged as a live hazard and stays above as history.
 
-⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 203 (2026-09-08) against pinned main
-`a8aa649a` (`merge: track/ui — architecture seam test`), lane 33 ahead / 629 behind; both `.claude/hooks`
-`A` rows still present, and `git diff --stat 7103f455 a8aa649a -- CLAUDE.md .agents/rules/` prints
-**nothing**, so TRACK 1 ACTION 1 is unanswered. **Pin the sha before checking
+⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 204 (2026-09-08) against pinned main
+`07a4ae2f`, lane 34 ahead / 703 behind; both `.claude/hooks`
+`A` rows still present, and `git diff --stat 7103f455 07a4ae2f -- CLAUDE.md .agents/rules/` prints
+**nothing** across all four of this morning's merges, so TRACK 1 ACTION 1 is unanswered. ⚠️ **Track 1's
+`OWNER.md` note of 09:1x is NOT the answer and disclaims itself** — *"Nothing here touches your two shut
+rows"*; it settles the product-file conflict (`RULING DS`) and leaves the guard question open, so a tick
+must not read the arrival of an `OWNER.md` reply as a lift. **Pin the sha before checking
 (`RULING DK`: `origin/main` moved 24 commits mid-tick 201 with no fetch from this seat).** The take is
 shut on **two** rows (`RULING DD`) — use the two-row re-check `git diff --name-status
 HEAD...<pinned sha> -- .claude/hooks/`, not `CP`'s seven-row command — and as of `RULING DH` those two
 rows are shut on **measurement**, not inference: `.claude/` is a never-list DIRECTORY and the
 byte-identity clause covers `app/app/Doctor/*` and nothing else; `RULING DM` adds site's measurement
 that `git rm` on `.claude/*` is refused too, so the ADDs are IRREMOVABLE. `RULING DA` closes the only
-body of work that looked parallel to it, and all three escapes are foreclosed — dropping the ADDs
+body of work that looked parallel to it, and all **four** escapes are foreclosed — dropping the ADDs
 (`DG`; `DL` corrects `DI` and records that **no guard can refuse a drop**, so this one rests on this
-seat's rule alone), pinning an older `MERGE_HEAD` (`DJ`), and reading the guard by dispatch
-(`CT`).** Do not
+seat's rule alone), pinning an older `MERGE_HEAD` (`DJ`), reading the guard by dispatch
+(`CT`), and **pre-resolving `X167Test.php` without merging (`DT`, tick 204 — the newest and most
+tempting, since it looks like it clears Track 1's blocker for free)**.** Do not
 open a wave. `state.py next` returns `{"action": "FINISHED"}`. Every remaining
 stage count needs the owner and is listed as **OWNER ACTION A–F** at the end of
 `REVIEWS.md`: vendor artifact ids (`anchor 137`), real Infobip and a real placed
@@ -1130,6 +1134,61 @@ item 3 *does* list, and the supervisor who trusted the attribute is the one who 
 number.** `DL` read a second-parent diff as an index, `DO` surveyed with a path-limited merge log,
 `DQ` compared a merge to a later tip. Three consecutive ticks found a git measurement whose
 **baseline**, not whose command, was wrong.
+
+### ✅ `RULING DS` (tick 204) — the `X167Test.php` conflict is quantified: this lane's ENTIRE divergence on it is ONE self-contained method, so Track 1 can clear its own blocker without this lane
+
+Track 1's `OWNER.md` note of 2026-09-08 09:1x reports `merge-tree rc=1` on exactly
+`app/tests/Modules/X-167/X167Test.php` and asks for a resolution built from the two blobs by line
+range. The read-only half is done — three `git show <ref>:<path>` reads, no merge, no `app/` write:
+
+| blob | lines | `test_` methods |
+| :--- | ---: | ---: |
+| base `b79ae957` | 236 | 3 |
+| ours `6eb3f093` | 268 | 4 |
+| theirs `07a4ae2f` | 422 | 15 |
+
+✅ **Track 1's measurement reproduces from this seat** — `git show 07a4ae2f:<path> | md5sum` is
+`7cf129bd3d9aa6d45a5288be88b82240`, the hash it quotes. Set-compared with `comm`: **main's 15 already
+contain all 3 of base's** (`comm -23 base main` empty), and **ours adds exactly one method not in
+main** — `test_g6_46_no_autonomous_ordering_path`, our blob lines **237–267**. `uniq -d` is empty by
+construction; the two sides' additions are disjoint.
+
+Two further reads make it a **zero-edit** append rather than a fixture merge: main's `use` list is a
+strict superset of ours (identical 15 plus `Schema`), and main already declares
+`private ReorderProposeAction $reorderAction` and constructs it in `setUp`.
+
+**RULED: the resolution of record is — take main's blob whole and insert our lines 237–267 before the
+final closing brace. No import change, no `setUp` change, no deletion, no marker-strip.** Falsifiers
+are Track 1's own and are mechanical: `php -l` parses, `grep -c 'function test_'` is **16**,
+`grep -o 'public function test_[a-z0-9_]*' | sort | uniq -d` is empty. Additive in the One Rule's
+direction — every assertion from both sides survives.
+
+⭐ **Filed as TRACK 1 ACTION 1b:** because the divergence is one method needing no import and no
+fixture, **Track 1 can resolve this on its own side today**, breaking the dependency between its merge
+of `track/stages` and this lane's shut take.
+
+### ⛔ `RULING DT` (tick 204) — REFUSED: pre-resolving `X167Test.php` in this lane without merging. It is the fourth escape, and the most tempting, because it looks like it clears Track 1's blocker for free.
+
+A tick reading `DS` will reach for the shortcut: the take is shut, but the only conflict is one file,
+so write the 16-method union straight into this lane's copy, commit, and let Track 1's `merge-tree` go
+green without this lane ever running `git merge`. Refused on three independent grounds, any one
+sufficient:
+
+1. **It absorbs 12 test methods from a `main` 703 commits ahead into a checkout lacking their
+   dependencies** (pricebook's four grep-style, reviews' eight schema/engine). That is `DC`/`DF`/`DR`'s
+   harm class — foreign content taken with no conflict and no alarming index row — executed
+   deliberately rather than suffered.
+2. **The success condition is unmeasurable from this seat.** `git merge-tree` is refused here (it
+   prefix-matches `git merge`), and so is `git merge-base`. As at ticks 188/190/191/197/203, **the
+   denial is the answer; do not re-run them.** Dispatching a wave whose premise this seat cannot
+   evaluate is `RULING DR`'s defect exactly.
+3. **Track 1 scoped the resolution to inside the merge**, *"under a gated wave"*, *"when your HOLD
+   lifts"*. Resolving it outside invents a route to satisfy another seat's gate condition — and seven
+   of the twelve `RULING C*` false-credit shapes were written by a wave that existed to keep the lane
+   busy.
+
+⚠️ **`RULING DL` binds: no tick may reason "the guard would stop me."** Nothing mechanical refuses this
+edit — it rests on this seat's rule alone, which is why it is named.
 
 ## Dispatching the coder (added 2026-09-02)
 
