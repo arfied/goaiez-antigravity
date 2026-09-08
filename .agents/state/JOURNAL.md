@@ -883,3 +883,5 @@
 - `2026-09-07T08:04:59` (R245) X-102 — provision a tenant and test db before status code to verify RLS bypasses
 - `2026-09-08T04:00:39` (R245) X-188 — (R245) BoundaryStage: delegate assignLiveNumber to root service TenantNumbers to use shared pool
 - `2026-09-08T04:47:51` (R245) X-188 — BoundaryStage: assignLiveNumber returns unassigned array instead of throwing on bootstrap empty pool
+- `2026-09-08T05:17:51` (R245) X-188 — BoundaryStage: OnboardingStartAction skips TenantProvisioned and AgentLive dispatch when the assigned number is null (bootstrap empty pool path)
+- `2026-09-08T05:17:56` (R245) X-188 — BoundaryStage: X188Test test_g18_10 asserts on a pre-populated shared pool number since claimForTenant does not take an area code and G18-10 capability refers to pool inventory screen
