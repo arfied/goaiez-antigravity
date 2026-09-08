@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-08T05:35:34",
+ "updated": "2026-09-08T06:17:48",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -3039,6 +3039,12 @@
    "module": "X-210",
    "chose": "deleted main's test_g7_47_rate_never_changes_without_notified_action",
    "at": "2026-09-08T05:35:34",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-01",
+   "chose": "twelve-noun lint takes a frozen four-name baseline of inherited core tables (outreach_messages, triage_conversations, inbound_messages, support_messages); it has never been green since f77b1b4e and all four predate base 12447593",
+   "at": "2026-09-08T06:17:48",
    "ruling": "R245"
   }
  ],
