@@ -134,9 +134,10 @@ class ChatDoorTest extends TestCase
     }
 
     /**
-     * The count assertion cannot fail on its own terms (cannot be reddened by a controller mutation)
-     * because ChatTurnAction::handle() enforces strict types. A bypassed 400 check results in a
-     * TypeError (500) before any row can be inserted.
+     * The count assertion can fail on its own terms. If the guard is bypassed,
+     * Eloquent finds the session (treating the integer token as a string), and
+     * ChatTurnAction::handle() succeeds because it receives the session's integer ID,
+     * not the non-string token, avoiding a TypeError.
      */
     public function test_non_string_inputs_return_400(): void
     {
