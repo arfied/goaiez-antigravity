@@ -85,7 +85,8 @@ final class TimesheetComputeAction
             'duration_minutes' => $durationMinutes,
         ]);
 
-        $this->updateTotalHoursAndDispatch($businessId, $entry->timesheet);
+        $timesheet = Timesheet::find($entry->timesheet_id);
+        $this->updateTotalHoursAndDispatch($businessId, $timesheet);
 
         return $entry;
     }
