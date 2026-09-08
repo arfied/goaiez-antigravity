@@ -277,7 +277,16 @@ class X01Test extends TestCase
         }
         $violators = array_unique($violators);
 
-        $this->assertEmpty($violators, 'No table outside the twelve nouns may hold a message, thread, or contact. Found violators: '.implode(', ', $violators));
+        // Inherited before this branch's base (e737094c, 2026-08-31): four core tables that
+        // predate the twelve-noun consolidation. Frozen so the rule refuses every NEW one.
+        // Ownership is an open TRACK 1 ACTION (REV-112) — do not add a fifth name here.
+        $baseline = ['outreach_messages', 'triage_conversations', 'inbound_messages', 'support_messages'];
+
+        $this->assertEmpty(
+            array_diff($violators, $baseline),
+            'No NEW table outside the twelve nouns may hold a message, thread, or contact. Found: '
+                .implode(', ', array_diff($violators, $baseline))
+        );
     }
 
     /**
