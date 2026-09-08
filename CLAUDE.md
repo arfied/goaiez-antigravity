@@ -242,13 +242,15 @@ that test and is not on this list is a wave invented to fill the lane.
   untouched, the decoy root `REPORT.md` gone and the mailbox copy intact.
   `RULING CN` is discharged as a live hazard and stays above as history.
 
-⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 208 (2026-09-08) against pinned main
-`034a9919`, which MOVED 3 commits from tick 207's `4dd461f6`; lane 38 ahead / 729 behind; both
-`.claude/hooks`
-`A` rows still present. TRACK 1 ACTION 1 is unanswered **by construction** — the 3 are two `build:`
+⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 209 (2026-09-08) against pinned main
+`034a9919`, UNMOVED from tick 208's pin** (the first still pin since tick 200, after moves of 24, 16, 6
+and 3); lane **39 ahead / 729 behind**; both `.claude/hooks`
+`A` rows still present. **TRACK 1 ACTION 1 is unanswered by construction in its cleanest form yet — at
+tick 208 no commit landed *in which it could have been answered*; at tick 209 no commit landed at
+all.** (Tick 208's reading, kept: the 3 were two `build:`
 commits and one supervisor note on `track/sixty`, and `git diff --stat 4dd461f6 034a9919 --
-CLAUDE.md .agents/rules/` prints nothing, so no commit landed on `main` in which it could have been
-answered. ⚠️ **Track 1's
+CLAUDE.md .agents/rules/` printed nothing, so no commit landed on `main` in which it could have been
+answered.) ⚠️ **Track 1's
 `OWNER.md` note of 09:1x is NOT the answer and disclaims itself** — *"Nothing here touches your two shut
 rows"*; it settles the product-file conflict (`RULING DS`) and leaves the guard question open, so a tick
 must not read the arrival of an `OWNER.md` reply as a lift. **Pin the sha before checking
@@ -280,7 +282,14 @@ that set base `b79ae957` — so containment was never this lane's precondition e
 sibling case landed the same morning (`track/sixty`, **604 behind**). Track 1 names the partition in
 its own subject line (`07a4ae2f`: *"oldest merge base among the rc=0 lanes"*), confirming `DW`'s
 reading that the gate is conflict-freedom. **`DZ` is not an opening** — `multiEmitterOk` is still `0`
-here at 729 behind (`DA`) — and it strengthens the request, not this seat's authority.** Do not
+here at 729 behind (`DA`) — and it strengthens the request, not this seat's authority.**
+⭐ **`RULING EA` (tick 209) makes the take MORE certainly shut, not less: the two `A` rows are
+irremovable through THREE separately measured mechanisms** (git's own behaviour for a path `HEAD` never
+held · `git rm --cached .claude/*` refused at `:22` · `--allow-restore` refusing `.claude/*` at `:68`
+even when open — the third new to this lane, from site's 06:54 block). It also re-confirms `DM`
+against that same newer block: site still records `app/phpunit.xml` as absent from main's range, which
+is **false here** and is `DC`'s destructive row. **Sibling GUARD facts are citable; sibling QUADRANTS
+are not.** Do not
 open a wave. `state.py next` returns `{"action": "FINISHED"}`. Every remaining
 stage count needs the owner and is listed as **OWNER ACTION A–F** at the end of
 `REVIEWS.md`: vendor artifact ids (`anchor 137`), real Infobip and a real placed
@@ -1341,6 +1350,46 @@ method: **the pin is the baseline for the take-check (`HEAD...<pin>`), the blob 
 for the resolution of record.** `DL` read a second-parent diff as an index, `DO` surveyed with a
 path-limited merge log, `DQ` compared a merge to a later tip, `DU` matched a prefix — `DY` is the same
 family answered in advance: the command was never in doubt, the baseline was.
+
+### ⭐ `RULING EA` (tick 209) — the two **A** rows are shut through THREE separately measured mechanisms, not one. A file's mtime is not its topic's mtime.
+
+`DH`'s method paid again and returned something this lane did not have. Cited per `DN` as a **dated
+sibling reading — `grs-antig-site`, 2026-09-08 06:54**, its newest block, which records that it
+**re-read the guard at source rather than citing it**.
+
+⚠️ **The tick's opening hypothesis was wrong and is kept as wrong.** site's ledger is frozen at 06:54
+while money/sixty/pricebook run at 09:44–09:53, and its `claude/hooks` count is still `DM`'s **61**, so
+it read as a lane that had stopped measuring — which would have staled `DH`'s only route. Measured
+instead: the hits are at lines **81738–82381 of 82447**, site's *most recent* block, and site is healthy
+(last tick dispatched SITE-186 run 201 and pushed; no orphaned `.blk*`, so no `CS` lockout recurrence).
+**A file's mtime is not its topic's mtime, in either direction.** Same family as `DL`, `DO`, `DQ`, `DU`,
+`DY`: the command was sound, the baseline was not.
+
+**New to this lane.** `DB` established `.claude` sits on `--allow-restore`'s exclusion list by reading
+main's copy of the launcher *comment*; site measured it at the guard's own line. The A rows are
+irremovable three ways:
+
+| mechanism | reading |
+| :--- | :--- |
+| `git checkout HEAD -- <it>` fails **inside git** for a path `HEAD` never held | structural, not a guard rule |
+| `git rm --cached .claude/*` refused **by name at `:22`** | site, 2026-09-08 (held here via `DM`) |
+| `--allow-restore` refuses `.claude/*` **by name at `:68`**, even when open | site, 2026-09-08 — **new** |
+
+site also re-confirms at source, later than any guard fact this lane holds, that `coder-bin/git:132`'s
+never-list still carries `\.claude/` **with no exemption of any kind** and `:117-131`'s byte-identity
+loop still covers `app/app/Doctor/*` **only**. `DD`, `DH`, `DJ`, `DM` corroborated; none amended.
+
+⛔ **The half a tick must NOT copy.** site's same table carries `app/phpunit.xml — absent from main's
+range ✅`. **False here**, and `DM` is re-confirmed against a newer sibling block rather than recalled:
+against pinned `034a9919` this lane's range is exactly `-goaiez_antig_stages_test` /
+`+goaiez_antig_test` — `DC`/`DF`/`DQ`'s destructive row, the one §0 does not flag. **Sibling GUARD facts
+are citable; sibling QUADRANTS are lane-specific**, shown load-bearing against the very block whose
+guard half was adopted in the same breath.
+
+**RULED: `EA` strengthens the refusal and is NOT an opening.** Three measured mechanisms where there was
+one inference makes the take *more* certainly shut. No wave to test it (`CT`), no bare `git merge`
+(`CQ`, `DP`), no dropped path (`DG`, `DL` binding), no pre-resolution of `X167Test.php` (`DT`,
+unrepealed). **TRACK 1 ACTION 1 gains a corroborating measurement and no new item.**
 
 ## Dispatching the coder (added 2026-09-02)
 
