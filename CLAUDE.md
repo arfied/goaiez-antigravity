@@ -187,11 +187,53 @@ Watch for: <the trap that applies, by name>
   lists a brief item under `REFUSED` because it would change a CHECK, that
   refusal stands. Re-read rule 01 before overruling it.
 
-## Where this lane stands — ALL EIGHT STAGES ARE CLOSED (2026-09-08, tick 182)
+## Where this lane stands — ⛔ THE CENSUS BELOW IS VOID. THE TAKE REPLACED THE CHECKERS (`RULING EQ`, tick 222)
 
-⛔ **Do not open a wave in any stage without re-reading this. `state.py next`
-returns `{"action": "FINISHED"}`.** The raw counts imply a backlog that does not
-exist; each was censused at source and the residue is unreachable, not unbuilt.
+⛔⛔ **STOP. Everything under this heading was measured against the PRE-MERGE checker and no longer
+describes this tree.** The take (`5d89dc84`, 2026-09-08 13:56) adopted main's `BoundaryStage.php`,
+`ContractStage.php`, `TestAnchorStage.php` and `seals.json` **byte-identical** — the only reason this
+lane may hold them — and the merged checker measures different numbers. **Measured at `3398f683`:**
+
+```
+integrity    0   (was 0)    ✅ clean
+boundary    44   (was 3)    ⛔ ROSE +41 — main's a42079bd revived the cross-module import check
+contract    85   (was 87)   −2 at the merge, before any withdrawal (RULING ER)
+citation     0   (was 0)    ✅ clean
+schema      15   (was 15)   unmoved
+capability 211   (was 358)  −147 — the seven-group decomposition CANNOT sum any more
+anchor     128   (was 137)  −9
+journey      4   (was 5)    −1
+```
+
+**`RULING EQ`: a stage census is a fact about a CHECKER at a sha, never about the code.** Four of eight
+moved and one rose by 41, so every decomposition below is arithmetic against an instrument that has
+been replaced. ⚠️ **This does not disprove the exhaustion claim — it removes the claim's support.** The
+honest standing is that this lane's stage backlog is **unmeasured**, and the way back to a defensible
+"closed" is the re-census dispatched as **STAGES-222** (tick 222): rebuild each decomposition against
+the live list, falsifier being that it sums to §5 exactly, and name whatever falls outside.
+
+⛔ **`boundary 44` is NOT this lane's wave.** The 44 span ~25 modules across every track — `C-Ai`,
+`C-Reviews` (7), `C-Sms`, `X-01` (6), `X-10`, `X-102`, `X-108`, `X-135`, `X-143`, `X-155`, `X-157` (5),
+`X-16`, `X-160`, `X-172`, `X-176`, `X-181`, `X-186`, `X-210`, `X-211`, `X-212`, `X-217`, `X-66`, plus
+two `Enums/AiModel.php` rows hardcoding `gpt-4o-mini` and `claude-opus-5` against R237 — and include a
+**mutual** `C-Reviews` ↔ `X-181` import no single lane can resolve. Module ownership is **TRACK 1
+ACTION 5**. Every lane that takes main inherits the same 44. Never fix a row in a module this lane does
+not own.
+
+⛔ **`RULING ER` — `state.py resolve` can NEVER move a stage count, so a withdrawal wave must not be
+gated on one.** It is the count-did-not-fall trap's inverse and this seat has now made both errors. A
+**fix** wave whose count did not fall did not land; a **withdrawal** wave claims no fix and reconciles
+a ledger row to a dependency that arrived elsewhere. ✅ **A withdrawal's falsifier is the LEDGER
+TRIPLE** — the `RESOLVED … (was: …)` line exists, the reason names what arrived, the module reads
+`BUILDING` — and its stage count is stated as *unchanged, and that is correct*.
+
+⚠️ **`RULING ES` — never `cd` in a Bash call from this seat.** `cd app` moves the session's primary
+working directory and silently revokes write access to `.agents/supervisor/**`; two absolute `Write`s
+to `.blk222.md` were refused until one `cd` back cured it. **It presents exactly like `RULING CS`'s
+lockout and is not one** — CS denied one FILE while its siblings stayed writable; ES denies the whole
+DIRECTORY and is cured by `cd` back. Do not reach for CS's closed diagnosis (`RULING CU`).
+
+### The pre-merge census, kept as history — do NOT quote these numbers as current
 
 ```
 integrity    0  ✅ clean
