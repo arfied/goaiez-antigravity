@@ -12,6 +12,8 @@ test('owner layout heading seam contract', function () {
     $levelSkips = 0;
     $conditionalHeadings = 0;
 
+    $directives = [];
+
     foreach (glob(base_path('app/Modules/*/Ui/*.php')) as $file) {
         $content = file_get_contents($file);
 
@@ -57,6 +59,11 @@ test('owner layout heading seam contract', function () {
                     $conditionalHeadings++;
                 }
 
+                preg_match_all('/@([a-zA-Z]+)/', $viewContent, $dMatches);
+                foreach ($dMatches[1] as $name) {
+                    $directives[$name] = true;
+                }
+
                 if (preg_match('/<h([1-6])/', $viewContent, $hMatches)) {
                     $level = $hMatches[1];
                     if ($hasHeading && $level !== '2') {
@@ -99,6 +106,14 @@ test('owner layout heading seam contract', function () {
         }
     }
 
+    $untrackedOpeners = [];
+    foreach (array_keys($directives) as $name) {
+        if (isset($directives['end'.$name]) && $name !== 'if' && $name !== 'unless') {
+            $untrackedOpeners[] = $name;
+        }
+    }
+    sort($untrackedOpeners);
+
     expect($total)->toBe(19, 'If it went UP, a new module component uses the owner layout. If it went DOWN, a component dropped the layout or was deleted.');
     expect($seam)->toBe(18, 'If it went UP, a component added the heading key to its layout. If it went DOWN, a component removed it or was deleted.');
     expect($own)->toBe(1, 'If it went UP, a component uses the layout without the heading key. If it went DOWN, a component added the heading key or was deleted.');
@@ -106,5 +121,6 @@ test('owner layout heading seam contract', function () {
     expect($skips)->toBe(0, 'If it went UP, a blade\'s first <h[1-6] tag is the wrong level (not h2 for seam, not h1 for own). This reads the blade\'s text, not a response body, and never sees a heading emitted by a component such as <x-ui.empty-state heading="…">. If it went DOWN, a blade heading was fixed.');
     expect($noHeading)->toBe(0, 'If it went UP, a resolved view has no <h[1-6] tag at all. This reads the blade\'s text, so a heading emitted by a component (<x-ui.empty-state heading="…"> renders its own <h2>) is not seen, and a $seam member landing in this bucket is not a defect while an $own member is. If it went DOWN, a heading was added or the view was removed.');
     expect($levelSkips)->toBe(0, 'If it went UP, a view\'s heading sequence descends by more than one level. This reads the blade\'s text, so a heading emitted by a component is not in the sequence. It is a count of views, not of bad steps. The <h1> prepended for a $seam member is an ASSUMPTION this code makes about the layout, not something it measures. The sequence is the blade\'s text in document order, so headings in mutually exclusive @if/@elseif/@else arms are concatenated into a sequence no rendered page emits — which can both flag a skip that never renders and hide one that does. If it went DOWN, a view\'s heading sequence was fixed.');
-    expect($conditionalHeadings)->toBe(8, 'This is a count of views, not headings (once per view), containing at least one <h[1-6] tag at an @if or @unless nesting depth >= 1 (it does not count @isset, @empty, @switch, @auth, or @can). Because it counts single-heading views, which cannot skip anything, and nested conditionals, whose headings do co-render in document order — so it is an upper bound on how many views the text-order assumption could be wrong about, not a count of views it is wrong about.');
+    expect($conditionalHeadings)->toBe(8, 'This is a count of views, not headings (once per view), containing at least one <h[1-6] tag at an @if or @unless nesting depth >= 1 (the depth arithmetic tracks @if and @unless only, and the size of what it does not track is pinned below). Because it counts single-heading views, which cannot skip anything, and nested conditionals, whose headings do co-render in document order — so it is an upper bound on how many views the text-order assumption could be wrong about, not a count of views it is wrong about. If it went UP, a view gained a heading inside a conditional and the blind spot grew. If it went DOWN, a heading moved out of a conditional, or a view left the population. Neither is by itself a defect — it is the size of a known limit, and the response to a move is to re-read whether the arms it counts are mutually exclusive, not to edit a view.');
+    expect(count($untrackedOpeners))->toBe(2, 'This counts distinct directive names, in these views, for which an @end<name> also occurs, other than the two the depth arithmetic tracks. If it went UP, the population gained a block construct the heading-depth arithmetic cannot see, which is the upper bound on conditionalHeadings getting weaker. If it went DOWN, one left. Neither is by itself a defect — the response is to re-read whether conditionalHeadings is still a bound, never to edit a view. Limit: it sees only a block whose closer follows the @end<name> convention and appears in this same population. A @section closed by @stop, or an opener whose closer lives in another file, is invisible to it. Found: '.implode(', ', $untrackedOpeners));
 });
