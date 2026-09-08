@@ -248,7 +248,7 @@ class CustomerfacingPortalTest extends TestCase
         $this->assertDatabaseHas('portal_links', [
             'token' => $newToken,
             'is_active' => true,
-        ], 'A PortalLink with that new token is is_active = true');
+        ]);
 
         $newLink = PortalLink::where('token', $newToken)->first();
         $this->assertTrue($newLink->expires_at->isFuture(), 'New link expires_at is in the future');
