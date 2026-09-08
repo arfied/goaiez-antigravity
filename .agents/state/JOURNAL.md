@@ -856,3 +856,4 @@
 - `2026-09-08T16:35:19` (R245) X-168 — closeJobWindow's job_id scope is load-bearing and is now pinned by a test that fails if the filter is dropped.
 - `2026-09-08T17:12:18` (R245) X-168 — one open window per job — a repeat call for a job that already has an open entry returns the existing entry and writes nothing. Refuse, do not supersede. Return the existing entry, not null.
 - `2026-09-08T17:54:57` (R245) X-171 — TechOnSite event now carries the occurredAt moment of the tap
+- `2026-09-08T18:11:48` (R245) X-168 — one open window per job per PERSON — the open-entry guard scopes on timesheet_id (an entry's person identity exists only through it), while closeJobWindow stays job-scoped and closes EVERY open window on the job, updating each affected timesheet
