@@ -253,5 +253,4 @@ class X210Test extends TestCase
         $limit->refresh();
         $this->assertEquals(9, $limit->rate_cents_per_min);
     }
-
 }
