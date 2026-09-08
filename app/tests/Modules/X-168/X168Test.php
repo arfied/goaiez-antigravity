@@ -227,4 +227,140 @@ class X168Test extends TestCase
         $this->assertNull($entry8802->ended_at);
         $this->assertEquals(0, $entry8802->duration_minutes);
     }
+
+    public function test_record_job_window_dedup_defect_arm_returns_existing_entry(): void
+    {
+        Event::fake([TimesheetSubmitted::class, PeriodReady::class]);
+        $biz = TestCase::provisionTenant(['name' => 'Dedup Defect Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $techPersonId = 405;
+        $now = Carbon::parse('2026-08-25 08:00:00');
+
+        $entry1 = $this->computeAction->recordJobWindow(
+            businessId: $biz->id,
+            personId: $techPersonId,
+            jobId: 9901,
+            stateWindow: 'on_site',
+            startedAt: $now,
+            endedAt: null,
+            locationLat: null,
+            locationLng: null
+        );
+
+        $initialCount = TimesheetEntry::where('business_id', $biz->id)->count();
+        $timesheet = Timesheet::find($entry1->timesheet_id);
+        $initialTotalHours = $timesheet->total_hours;
+
+        Event::assertDispatched(TimesheetSubmitted::class);
+        Event::assertDispatched(PeriodReady::class);
+        Event::fake([TimesheetSubmitted::class, PeriodReady::class]); // reset fake for second call
+
+        $entry2 = $this->computeAction->recordJobWindow(
+            businessId: $biz->id,
+            personId: $techPersonId,
+            jobId: 9901,
+            stateWindow: 'on_site',
+            startedAt: $now->copy()->addMinutes(5),
+            endedAt: null,
+            locationLat: null,
+            locationLng: null
+        );
+
+        $this->assertEquals($entry1->id, $entry2->id);
+        $this->assertEquals(1, TimesheetEntry::where('business_id', $biz->id)->count());
+
+        $entry1->refresh();
+        $this->assertNull($entry1->ended_at);
+        $this->assertEquals(0, $entry1->duration_minutes);
+
+        $timesheet->refresh();
+        $this->assertEquals($initialTotalHours, $timesheet->total_hours);
+
+        Event::assertNotDispatched(TimesheetSubmitted::class);
+        Event::assertNotDispatched(PeriodReady::class);
+    }
+
+    public function test_record_job_window_two_jobs_regression_arm(): void
+    {
+        Event::fake([TimesheetSubmitted::class, PeriodReady::class]);
+        $biz = TestCase::provisionTenant(['name' => 'Two Jobs Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $techPersonId = 406;
+        $now = Carbon::parse('2026-08-25 08:00:00');
+
+        $entry1 = $this->computeAction->recordJobWindow(
+            businessId: $biz->id,
+            personId: $techPersonId,
+            jobId: 9902,
+            stateWindow: 'on_site',
+            startedAt: $now,
+            endedAt: null,
+            locationLat: null,
+            locationLng: null
+        );
+
+        $entry2 = $this->computeAction->recordJobWindow(
+            businessId: $biz->id,
+            personId: $techPersonId,
+            jobId: 9903,
+            stateWindow: 'on_site',
+            startedAt: $now->copy()->addMinutes(10),
+            endedAt: null,
+            locationLat: null,
+            locationLng: null
+        );
+
+        $this->assertNotEquals($entry1->id, $entry2->id);
+        $this->assertEquals(2, TimesheetEntry::where('business_id', $biz->id)->count());
+
+        $entry1->refresh();
+        $this->assertNull($entry1->ended_at);
+
+        $entry2->refresh();
+        $this->assertNull($entry2->ended_at);
+    }
+
+    public function test_record_job_window_revisit_regression_arm(): void
+    {
+        Event::fake([TimesheetSubmitted::class, PeriodReady::class]);
+        $biz = TestCase::provisionTenant(['name' => 'Revisit Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $techPersonId = 407;
+        $now = Carbon::parse('2026-08-25 08:00:00');
+
+        $entry1 = $this->computeAction->recordJobWindow(
+            businessId: $biz->id,
+            personId: $techPersonId,
+            jobId: 9904,
+            stateWindow: 'on_site',
+            startedAt: $now,
+            endedAt: null,
+            locationLat: null,
+            locationLng: null
+        );
+
+        $closedAt = $now->copy()->addMinutes(30);
+        $this->computeAction->closeJobWindow($biz->id, 9904, $closedAt);
+
+        $entry2 = $this->computeAction->recordJobWindow(
+            businessId: $biz->id,
+            personId: $techPersonId,
+            jobId: 9904,
+            stateWindow: 'on_site',
+            startedAt: $now->copy()->addMinutes(60),
+            endedAt: null,
+            locationLat: null,
+            locationLng: null
+        );
+
+        $this->assertEquals(2, TimesheetEntry::where('business_id', $biz->id)->count());
+        $this->assertNotEquals($entry1->id, $entry2->id);
+
+        $entry1->refresh();
+        $this->assertNotNull($entry1->ended_at);
+        $this->assertEquals(30, $entry1->duration_minutes);
+    }
 }

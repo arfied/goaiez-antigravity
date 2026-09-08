@@ -38,6 +38,15 @@ final class TimesheetComputeAction
         $periodStart = $startedAt->copy()->startOfWeek()->toDateString();
         $periodEnd = $startedAt->copy()->endOfWeek()->toDateString();
 
+        $existingOpenEntry = TimesheetEntry::where('business_id', $businessId)
+            ->where('job_id', $jobId)
+            ->whereNull('ended_at')
+            ->first();
+
+        if ($existingOpenEntry) {
+            return $existingOpenEntry;
+        }
+
         $timesheet = Timesheet::firstOrCreate(
             ['business_id' => $businessId, 'person_id' => $personId, 'period_start' => $periodStart],
             ['period_end' => $periodEnd, 'total_hours' => 0.00, 'status' => 'open']
