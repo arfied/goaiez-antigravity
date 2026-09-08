@@ -1330,3 +1330,4 @@ Therefore, adding a row to the tracker could move only the capability count.
 - `2026-09-08T14:07:10` stage capability = 211
 - `2026-09-08T14:07:10` stage anchor = 128
 - `2026-09-08T14:07:10` stage journey = 4
+- `2026-09-08T14:54:13` (R245) X-211 — R245 — The schedule stored is the sub-threshold plan and the above-threshold path stores nothing and routes out

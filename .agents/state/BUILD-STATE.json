@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-08T14:06:21",
+ "updated": "2026-09-08T14:54:13",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -5380,6 +5380,12 @@
    "module": "X-210",
    "chose": "margin guard test now asserts the refusal names every below-cost service, per main's checkMarginGuard",
    "at": "2026-09-08T13:42:17",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-211",
+   "chose": "R245 \u2014 The schedule stored is the sub-threshold plan and the above-threshold path stores nothing and routes out",
+   "at": "2026-09-08T14:54:13",
    "ruling": "R245"
   }
  ],
