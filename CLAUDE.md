@@ -2856,3 +2856,101 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     replaced. ⚠️ The two `(3443)` lines render only for a subscription with no agreed price:
     `MrrScreenTest:79` already reaches that branch and is extended, `RevenueRecoveryScreenTest`
     reaches it in no method, so item 4 **adds one** (ruling 68).
+125. **The Authorize.Net floor allowance is RETIRED — the credential landed and both members cleared, so
+    the lane's floor is `2077 · 2072 · FAILED 2 · errors 3` (RULED by the lane supervisor 2026-09-08,
+    applying `OWNER.md`'s 09:0x reply; measured from `gate-money106-sup.txt`).** Ruling 85 attributed
+    `cancel_is_one_tap_with_nothing_in_between`'s `E00040` off the sha as a live vendor refusal inside
+    another lane's journey, and ruling 86 recorded it clearing itself once with no code change. The owner
+    has now saved the credentials and Track 1 copied the five `AUTHORIZE_NET_*` lines into this
+    checkout's `app/.env`. Measured this tick: **neither** that test **nor**
+    `a_completed_job_asks_for_a_review_once_inside_the_cadence` appears in the gate's red list, and no
+    `E00040` or `authorize_net_public_client_key` string appears anywhere in the gate file. ⚠️ **The
+    owner's instruction is the load-bearing half, and it is the count-did-not-fall trap pointed
+    backwards:** *"a floor that absorbs a fixed fault … is too high and hides real regressions."* So the
+    old `errors 5` is **struck and never carried forward**, and ruling 85's `E00040` clause survives
+    **only** as an attribution method — it is no longer a standing floor allowance and a brief that
+    quotes it as one is quoting a retired number. The five remaining reds are all other lanes':
+    `test_g2_76_unified_inbox_header` · `a_published_site_carries_all_seven` · the `SQLSTATE[25P02]`
+    invoice-number test · `a_missed_call_becomes_a_consented_text_back` ·
+    `two_fields_at_signup_put_a_live_agent_on_a_real_number`. ⚠️ The generalisable half: **a red this
+    lane attributes away is a debt, not a settlement** — every attribution under rulings 42, 67, 77 and
+    85 raises the floor by one, and the floor must be re-measured the moment the attributed cause is
+    fixed, because from then on it is absorbing something else.
+126. **The `-81` on `X117Test.php` is main's one-sided ADDITION that money's merge resolution dropped,
+    not money's deletion — and `G18-29`'s refusal is cited by no test in this lane (RULED by the lane
+    supervisor 2026-09-08, answering Track 1's `OWNER.md` 20:0x §6; briefed as MONEY-107 item 1).**
+    Track 1 asked it as a One Rule question — *"quote what was deleted and why"* — and it is the right
+    question with an inverted answer. Measured: `git log 12447593..HEAD -- <that file>` is **two**
+    commits totalling **`+18/-1`**, not `-81`; `git show fe094469:<that file>` — the true two-lane base —
+    is **200 lines with no `test_g18_29_lifecycle_stops_at_money` and no `will_call` scan**; and
+    `12447593` (main) **has** it at `:203`. So main added it and the `978041fc` merge kept money's side
+    under ruling 54. ⚠️ **`git diff <main-at-base> <lane-tip>` reports a one-sided addition on the other
+    side as a deletion** — Track 1's own §1 correction, one level in, and this lane must expect the same
+    shape on every path where ruling 54 kept its side. **It is still a real finding.**
+    `grep -rn "G18-29" app/app app/tests` returns `X-117/capabilities.php:61` and **nothing else**: the
+    capability (*"will-call / pickup routing = commerce fulfilment"*) has no test anywhere, and the body
+    that carried it is a genuine CHECK — two `assertDoesNotMatchRegularExpression` refusals of the
+    fulfilment vocabulary, one over every attribute name a checkout reaches and one over **every PHP file
+    in `app_path('Modules/X-117')`**; the `fulfilment_type` placement assertions; and the `≥14` files /
+    `≥6` control-files floors. **RULED: restore main's test, adapted in exactly one respect.** Measured
+    before briefing so the rest is byte-identical: the vocabulary scan is **clean** on money's X-117
+    today — the only lookalike is `EvidenceCheckoutCommand.php:62`'s `'queue_driver'`, and `\bdriver\b`
+    does **not** match inside it because `_` is a word character, while `capabilities.php:61`'s literal
+    `pickup` is excluded by the test's own basename filter, so **no ruling-63 reword is needed**; the
+    floors pass at **24** files and **15** control basenames; `$res['order_id']` and `$res['status']`
+    both exist at `CheckoutEngine.php:112-118`. **The one adaptation:** `assertEquals('paid', …)` ×2 →
+    `'pending_payment'` and `assertContains($order->status, […])` gains `'pending_payment'`, because
+    ruling 45 left no path to `paid` — which `CheckoutEngine.php:148-151`'s own docblock already records,
+    and which is the identical adaptation money applied to the anchor at `:75` in `44b43803`.
+    ⛔ Neither regex is narrowed, ⛔ no floor is lowered, ⛔ nothing else in the body is touched, and
+    ⛔ money's `test_an_order_row_written_without_a_status_is_pending_payment` is **kept alongside** — it
+    asserts a real column default and this is an addition, not a swap. ⚠️ Restoring it before the merge
+    collapses the `-81` to a near-identical two-sided change, which removes Track 1's stated blocker
+    rather than arguing with it.
+127. **Money's X-199 and main's are RECONCILABLE, and the seam is shell-versus-body with no overlap
+    (RULED by the lane supervisor 2026-09-08, answering `OWNER.md` 20:0x §6(a); a recommendation on a §5
+    question Track 1 reserved to itself).** Track 1 measured that ten of money's eleven conflicted paths
+    are `X-199/Ui/*` and are exactly the ten `track/ui` rewrote in `7264f2d9`, and asked whether two
+    independent rebuilds of the same owner screens can both survive. **They can, because both lanes
+    started from the same stub** — at the base `Credits.php` was `return view('x-199::credits');` with no
+    data, which is why money's side is `-1` on that file: both deleted the same single line and built
+    outward in different directions. **Main built the SHELL** (`f2888de9` render in the account shell,
+    `6ede8e4c` a full-page route resolving its own tenant, `dfebc508` page headings, `66a80715`/`930140ab`
+    the house kit, `75d10079` credit limit + outstanding, `143418ec` remove the dead `isSample`) — in
+    code, a `#[Layout('components.account.layout', ['heading' => …])]` per component, a `mount()` and a
+    `loadError` slot. **Money built the BODY** — twenty-four commits of the truth sweep: the queries, the
+    actions, the five states, the pills on `:label`, the isolation assertions, and every ruling from 43
+    through 124 that landed on these five screens. The `+/-` split says the same thing screen by screen:
+    main is `+4/-4` on `Declines` and `+5/-4` on `MoneyPaidToday` (shell only) against money's `+74/-21`
+    and `+30/-23`. **RULED: money's files win on the body and main's `#[Layout]`/heading line is
+    re-applied on top, per hunk (ruling 54's standing rule), never a whole-side pick.** The decisive
+    measurement is `grep -rn "isSample\|#\[Layout" app/app/Modules/X-199/Ui/*.php`, which returns
+    **nothing**: money carries no `isSample`, so taking money's side does **not** revert main's cleanup;
+    and money carries no `#[Layout]`, so **main's shell is money's one genuine gap** and money's five
+    screens do not render in the account shell without it. ⚠️ The generalisable half: **"whose copy
+    survives" is the wrong question whenever both sides grew from the same stub** — the right one is
+    *what did each side ADD*, and two lanes adding in different registers reconcile per hunk even when
+    every line conflicts.
+128. **Ruling 121 moved the floor out of `REPORT.md` and left the RED lines with no named field, so the
+    field went empty (RULED by the lane supervisor 2026-09-08, on MONEY-106's run 127).** The run log
+    records *"Iterated through the 4 mutation proofs serially, verifying the expected failing tests in
+    each"* and `REPORT.md`'s `RAW:` is **empty** — four proofs run, none quoted, which is ruling 72's
+    requirement unmet. Graded **PASS-WITH-NOTES, not BLOCK**: the substance is independently verifiable
+    because every new assertion is paired with an `assertDontSee` of the exact string it replaced
+    (ruling 61), so a reverted blade cannot leave the pair green — and ruling 74's principle governs the
+    rest, since withholding a correct tip over a paperwork defect is the error the gate exists to
+    prevent. ⚠️ **Half the defect is the brief's, and it is a new shape.** MONEY-106's step 7 named the
+    four RED lines to produce and never said **where** to write them, in the same brief that landed
+    ruling 121's *"the predicted floor leaves `REPORT.md`"*. **Moving one number out of a document
+    without naming the field the other stays in is how a field goes empty** — the instruction to remove
+    was explicit and the instruction to keep was assumed. **RULED: the RED lines stay in `REPORT.md`, in
+    `RAW:`, and every brief names that field explicitly**, exactly as ruling 121(a) dictates the
+    `GATE: NOT RUN` string. ⚠️ Recorded from the same review and **not** charged: run 127's item 4.0
+    sweep printed **11** lines where the brief's total said 10 (six to change plus Table B's five — the
+    brief's own tables summed to eleven and its total did not), and the coder logged the mismatch under
+    `REFUSED`, verified every line fell in one of the two tables, and **proceeded**. That is precisely
+    what ruling 118's stop-clause says — it fires only on a line in *neither* table — so the judgement
+    is upheld, it spends no dispatch, and the arithmetic is the supervisor's (ruling 92's family: every
+    number a brief states is the supervisor's to have measured). ⚠️ **Ruling 121's own first outing
+    worked**: `REPORT.md:392` carries `GATE: NOT RUN — … another suite holds /home/goaiez/tmp/pest.lock`
+    and no number anywhere, one wave after run 126 transcribed a predicted floor as a measurement.
