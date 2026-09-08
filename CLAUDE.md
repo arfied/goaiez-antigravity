@@ -1920,3 +1920,58 @@ foreign key and the only writer of `TimesheetEntry` is `recordJobWindow`, which 
 first, so no defined input reaches it. ⭐ **The durable half is the instrument's limit** — a green
 phpstan in this repo says nothing about a nullable reaching a non-nullable parameter, and a future
 review must not quote it as though it did.
+
+## ⭐ Ruling 33 — 2026-09-08 17:0x — one open job window per job, and REFUSE rather than SUPERSEDE
+
+PB-134's measure-only item found that two open `timesheet_entries` on one `job_id` leave the older
+one open **indefinitely** at `duration_minutes = 0` — `closeJobWindow` closes only the newest
+(`latest('id')->first()`). Reading `recordJobWindow:32` turned that into a constraint: the row is
+created **unconditionally**, and both `en_route` and `on_site` open one. So the day a listener is
+wired, the first repeat tap puts a permanently-open zero-hour row onto all three X-168 screens.
+
+**RULED: a `recordJobWindow` call for a job that already has an entry with `ended_at IS NULL` returns
+the existing entry and writes nothing.**
+
+- ⛔ **Refuse, not supersede.** Closing the old window on a new tap stamps an `ended_at` the
+  technician never generated and **invents a duration** that lands in `total_hours`. **Fourth
+  incarnation in this lane of *stricter/richer is always safe* being false** — after PB-128's
+  auto-proposing listener, PB-119's `status === 'refused'` and PB-120's unconditional refusal.
+- ⛔ **Return the existing entry, not `null`.** `null` already means *"invalid input, wrote nothing"*
+  at `:34`; returning it for an idempotent re-tap would be a lie about what happened. ⚠️ The return
+  then cannot distinguish *created* from *already open* — **measured, no caller needs that**, so it
+  is recorded rather than fixed with a status vocabulary nobody consumes (that would be briefing a
+  lead).
+- ⛔ **`en_route` stays unwired.** Whether travel time counts toward a technician's paid hours is a
+  business rule nobody has stated, and guessing puts a wrong number on the owner's approval screen.
+- ⛔ **The guard lands ALONE, before the listener** — third application of *never wire a producer to a
+  seam whose safety guard is not built and proven* (PB-133's close path, PB-134's scope pin). It is
+  testable by direct call and cannot regress anything, since `recordJobWindow` has no production
+  caller.
+
+## ⭐ Trap added 2026-09-08 17:0x — a measure-only item must name WHERE ITS EVIDENCE LANDS
+
+PB-127 established that a clean sweep's **count** is its only auditable part; PB-128 sharpened that to
+**falsifiable clauses** (name a file, a line or a query a reviewer can open). PB-134 adds the third
+leg, and it is the one nobody had written down.
+
+Item 2's answer was **correct** and carried a falsifiable clause — it named
+`->latest('id')->first()`. But its evidence was a scratch test the coder **correctly cleaned up**, so
+nothing on disk backed it and the measurement had to be re-derived from the query. ⚠️ The brief had
+told the coder to leave nothing behind and had never said where the evidence should live; the two
+instructions quietly conflicted.
+
+⭐ **The rule: require a `file:line` on every claim, and say explicitly ⛔ do not back it with a
+scratch test.** A `file:line` survives cleanup; a deleted file does not. ⚠️ Note the shape — this is
+not a coder failure and grading it as one would be the documented mistake; it is the third time a
+disclosure requirement has needed narrowing after being satisfied *literally* and unhelpfully.
+
+## ⭐ Trap added 2026-09-08 17:0x — a hunk header ending `@@ -N,4 +N,K @@` is a one-glance proof of a pure append
+
+PB-125's insertion reconciliation exists because an insertion-only diff can still silently rewrite
+lines inside an existing method. ⭐ **When the diff's only hunk header is at EOF with a small
+unchanged context count — `@@ -180,4 +180,51 @@` — every added line is an append and no pre-existing
+method was entered**, so the PB-125 hazard cannot arise and the auth-assertion grep is unnecessary.
+
+⚠️ **It proves the shape, not the content.** A pure append of 47 lines still has to be reconciled
+against the deliverable (here: one test, one method, 47 lines — exact). ⛔ Do not read "pure append"
+as "inert"; read it as "the only thing to grade is what was added."
