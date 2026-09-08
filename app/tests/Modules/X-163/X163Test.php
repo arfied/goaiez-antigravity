@@ -287,8 +287,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Mount Test Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $this->actingAs($owner);
@@ -303,8 +301,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Sample Filter Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         PriceBookItem::create([
             'business_id' => $biz->id,
@@ -335,8 +331,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Unconfirmed Test Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         PriceBookItem::create([
             'business_id' => $biz->id,
@@ -356,8 +350,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Confirmed Test Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         PriceBookItem::create([
             'business_id' => $biz->id,
@@ -376,8 +368,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Gap Test Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         $event = new AgentRefused(
             $biz->id,
@@ -406,8 +396,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'No Gap Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         $event = new AgentRefused(
             $biz->id,
@@ -434,8 +422,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Gap Quote Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         $event = new AgentRefused(
             $biz->id,
@@ -454,8 +440,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Zero Confirm Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         $zeroItem = PriceBookItem::create([
             'business_id' => $biz->id,
@@ -502,8 +486,6 @@ class X163Test extends TestCase
         ]);
 
         \DB::statement("SET app.business_id = '{$a->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         $this->expectException(ModelNotFoundException::class);
         app(PriceConfirmAction::class)->handle($a->id, $bItem->id);
@@ -523,8 +505,6 @@ class X163Test extends TestCase
         ]);
 
         \DB::statement("SET app.business_id = '{$a->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         try {
             app(PriceConfirmAction::class)->handle($a->id, $bItem->id);
@@ -533,8 +513,6 @@ class X163Test extends TestCase
         }
 
         \DB::statement("SET app.business_id = '{$b->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
         $bItem->refresh();
         $this->assertFalse($bItem->is_confirmed);
     }
@@ -543,8 +521,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Range Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         PriceBookItem::create([
             'business_id' => $biz->id,
@@ -566,8 +542,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Mixed Case Range Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         PriceBookItem::create([
             'business_id' => $biz->id,
@@ -589,8 +563,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Unknown Range Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         $res = $this->range->handle($biz->id, 'unknown-service');
         $this->assertEquals('NO_FACT', $res['refusal_code']);
@@ -601,8 +573,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Unconfirmed Range Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         PriceBookItem::create([
             'business_id' => $biz->id,
@@ -623,8 +593,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Sample Range Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         PriceBookItem::create([
             'business_id' => $biz->id,
@@ -645,8 +613,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Specific Biz 1', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         PriceBookItem::create([
             'business_id' => $biz->id,
@@ -674,8 +640,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Specific Biz 2', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         $row1 = PriceBookItem::create([
             'business_id' => $biz->id,
@@ -703,8 +667,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Regression Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         $row = PriceBookItem::create([
             'business_id' => $biz->id,
@@ -724,8 +686,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'No Callout Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         $res = $this->callout->handle($biz->id);
 
@@ -738,8 +698,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'No Write Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         $this->callout->handle($biz->id);
 
@@ -750,8 +708,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Set Callout Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         $fee = CalloutFee::create([
             'business_id' => $biz->id,
@@ -769,8 +725,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Wide Row Pref Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         $loc = LocationBook::create(['business_id' => $biz->id, 'location_name' => 'London', 'version' => 1]);
 
@@ -801,8 +755,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Two Locs Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         $loc1 = LocationBook::create(['business_id' => $biz->id, 'location_name' => 'London', 'version' => 1]);
         $loc2 = LocationBook::create(['business_id' => $biz->id, 'location_name' => 'Leeds', 'version' => 1]);
@@ -837,8 +789,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Single Loc Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         $loc = LocationBook::create(['business_id' => $biz->id, 'location_name' => 'London', 'version' => 1]);
 
@@ -861,8 +811,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Two Biz Wide Disagree', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         PriceBookItem::create([
             'business_id' => $biz->id,
@@ -892,8 +840,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Two Biz Wide Agree', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         $row1 = PriceBookItem::create([
             'business_id' => $biz->id,
@@ -923,8 +869,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Gap Loc Test Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         $loc = LocationBook::create(['business_id' => $biz->id, 'location_name' => 'GapLocation', 'version' => 1]);
         $row = PriceBookItem::create([
@@ -964,8 +908,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Gap Inc Test Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         $row = PriceBookItem::create([
             'business_id' => $biz->id,
@@ -1000,8 +942,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Gap Norm Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         $event1 = new AgentRefused($biz->id, 'NO_FACT', 'no pricebook', 'oil change');
         $event2 = new AgentRefused($biz->id, 'NO_FACT', 'no pricebook', 'oil change ');
@@ -1024,8 +964,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Gap Blank Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         $event = new AgentRefused($biz->id, 'NO_FACT', 'no pricebook', '   ');
 
@@ -1038,8 +976,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Gap Case Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         $event = new AgentRefused($biz->id, 'NO_FACT', 'no pricebook', 'Oil Change');
 
@@ -1053,8 +989,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Lookup Fold Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         $row = PriceBookItem::create([
             'business_id' => $biz->id,
@@ -1074,8 +1008,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Add Dup Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         PriceBookItem::create([
             'business_id' => $biz->id,
@@ -1104,8 +1036,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Disagree Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         PriceBookItem::create([
             'business_id' => $biz->id,
@@ -1135,8 +1065,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Keep Case Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         $item = PriceBookItem::create([
             'business_id' => $biz->id,
@@ -1154,8 +1082,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Gap Refusal Case Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         Event::dispatch(new AgentRefused($biz->id, 'NO_FACT', 'I do not know the pricebook rate', 'Oil Change'));
         Event::dispatch(new AgentRefused($biz->id, 'NO_FACT', 'I do not know the pricebook rate', 'oil change'));
@@ -1167,8 +1093,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Gap Refusal Count Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         Event::dispatch(new AgentRefused($biz->id, 'NO_FACT', 'I do not know the pricebook rate', 'Oil Change'));
         Event::dispatch(new AgentRefused($biz->id, 'NO_FACT', 'I do not know the pricebook rate', 'oil change'));
@@ -1181,8 +1105,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Gap Refusal Spelling Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         Event::dispatch(new AgentRefused($biz->id, 'NO_FACT', 'I do not know the pricebook rate', 'Oil Change'));
         Event::dispatch(new AgentRefused($biz->id, 'NO_FACT', 'I do not know the pricebook rate', 'oil change'));
@@ -1196,8 +1118,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Two Locs Agree Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         $loc1 = LocationBook::create(['business_id' => $biz->id, 'location_name' => 'London', 'version' => 1]);
         $loc2 = LocationBook::create(['business_id' => $biz->id, 'location_name' => 'Leeds', 'version' => 1]);
@@ -1230,8 +1150,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Three Locs Disagree Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         $loc1 = LocationBook::create(['business_id' => $biz->id, 'location_name' => 'London', 'version' => 1]);
         $loc2 = LocationBook::create(['business_id' => $biz->id, 'location_name' => 'Leeds', 'version' => 1]);
@@ -1274,8 +1192,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Wide Row Disagree Reason', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         PriceBookItem::create([
             'business_id' => $biz->id,
@@ -1306,8 +1222,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Reason Guard', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         // Genuine no-entry
         $res1 = $this->engine->lookup($biz->id, 'nonexistent service');
@@ -1360,8 +1274,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Gap Biz A', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         $res = $this->lookup->handle($biz->id, 'sms channel gap', 'sms');
         $this->assertEquals('refused', $res['status']);
@@ -1378,8 +1290,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Gap Biz B', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         $event = new PriceRefusalFlagged($biz->id, 'dispatch gap twice', 'NO_FACT');
         Event::dispatch($event);
@@ -1394,8 +1304,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Gap Biz C', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         $row1 = PriceBookItem::create([
             'business_id' => $biz->id,
@@ -1433,8 +1341,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'PB105 Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         PriceBookItem::create([
             'business_id' => $biz->id,
@@ -1455,8 +1361,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'PB105 Biz 2', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         $row = PriceBookItem::create([
             'business_id' => $biz->id,
@@ -1476,8 +1380,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'PB105 Biz 3', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         PriceBookItem::create([
             'business_id' => $biz->id,
@@ -1506,8 +1408,6 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Name Ret Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $this->actingAs($owner);
 
         PriceBookItem::create([
             'business_id' => $biz->id,
