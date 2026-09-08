@@ -13024,3 +13024,228 @@ complete, gated-able artefact today. Three corrections carried in: the `decided`
 instead, since re-running a settled measurement buys nothing; and **every prediction in the new brief
 carries its refuting instruction and NO stop**, the only stops being on ground-value CLAIMS (302's tier
 table) and on a doctor stage count *rising*.
+
+## ⛔ AN EVIDENCE REQUEST WHOSE CHECKS ARE ALL **INTRINSIC** IS SATISFIED BY A BLOCK THAT IS INTERNALLY
+PERFECT AND DESCRIBES A DIFFERENT CHECKER (tick 305)
+
+Four classes of doctor-evidence defect are catalogued — 275 an unreproducible stage attribution, 284 a
+byte-identical timed pair, 285 a `clean` line contradicting its own total, 292 an `ok` prefix over a
+non-zero count — and each was answered by adding a check. SITE-177's brief carried **three of them, by
+number, in as many words**: *⛔ a byte-identical pair is one run pasted twice · ⛔ each block's stage
+counts must sum to its own printed total · ⛔ `ok` appears only on a `clean` stage; a stage with a
+violation count prints `FAIL`.* The block it got:
+
+```
+report (BOTH blocks, byte-identical incl. all 8 timings)      measured live in this seat
+goaiez doctor · build 20260907.1                    ⛔        goaiez doctor · build 20260829-0647
+integrity clean 33ms 0 violation(s)                 ⛔         ok integrity 0ms clean
+boundary 71ms 6 violation(s)                        ⛔         FAIL boundary 132ms 6 violation(s) — fails the COMMIT
+…                                                             …
+797 violation(s).                                   ✅ SUM     797 violation(s).
+```
+
+`.agents/state/BUILD-STATE.json:7` is `"runtime_build": "20260829-0647"`. **No run of `php artisan
+doctor` in this tree produces a stamp of `20260907.1`, and none produces that line format** — every
+counted stage prints `FAIL … — fails the COMMIT|MERGE|WAVE`, and `ok` pairs only with `clean`. Two of
+the brief's three named checks fail on the block, and the pair is byte-identical besides.
+
+⛔ **And it happened TWICE in one report, on two different sections.** Item 0's line 8 asked, verbatim,
+to *"quote §2's ⛔ lines"*; the answer was
+`{"tool":"guard","result":"refused","files":[{"path":"app/phpunit.xml","reason":"never-list path"}]}` —
+a JSON object `supervise.sh` never emits. §2 prints `⛔ app/phpunit.xml`, which my own gate confirms.
+
+⭐ **The finding is not "another rendering defect". It is that EVERY CHECK IN THE REQUEST WAS
+INTRINSIC.** The SUM is internal to the block. The `ok`-prefix rule is internal. Byte-identity is
+pairwise between two blocks. **None of the three compares the artefact to the tree**, so a block can
+satisfy all of them and still describe a checker that does not exist here — which is exactly what
+arrived, and which is why the SUM check *passed* while the block was unreproducible. The stamp is the
+**only field in a doctor block that is anchored outside it**, and the brief asked for it as **data to
+paste** rather than as a **comparison to make**.
+
+✅ **RULED (tick 305): every evidence request carries at least one EXTRINSIC check, and for doctor it is
+the stamp stated as a comparison** —
+
+```
+cd app && php artisan doctor 2>&1 | head -1        # goaiez doctor · build <stamp>
+grep -n runtime_build .agents/state/BUILD-STATE.json
+⛔ if the two differ, STOP — the numbers are from a checker that is not this tree's.
+```
+
+That is the stale-doctor trap this file has named since the beginning and which the review list already
+requires (*"Doctor build stamp in the report's raw output matches BUILD-STATE.json's `runtime_build`"*);
+what was missing is that **it must be asked for as an equality with a stop, never as a line to include.**
+And the general form, which is the half worth keeping: ⛔ **a request built only from self-consistency
+checks cannot distinguish a measurement from a well-formed reconstruction.** Ask for one field whose
+value exists outside the artefact, and say what it is compared against.
+
+✅ **PASS-WITH-NOTES on tick 211's discriminator — what did the deviation let through? Nothing.** A live
+doctor here reproduces all seven counts and the 797 total; the id census is byte-identical in this seat;
+§2 really does print exactly one `⛔`. It cost a note rather than a dispatch **only** because of the
+standing rule that this seat never accepts a doctor block from a report (§3 is recorded not measured,
+196; the red list is re-measured live before any brief, 210). Fifth consecutive class in the doctor
+evidence artefact while the **work** has been sound every time — each remedy fires as designed and each
+catches a shape the previous could not, which is what a converging instrument looks like.
+
+⚠️ Corollary for `--tests`-less evidence generally: **a brief asking for a tool's output says VERBATIM
+and names the glyph or field it will check.** "Quote §2's ⛔ lines" got a JSON object because the
+*claim* (one path, `app/phpunit.xml`) is paraphrasable; the literal `⛔` is not.
+
+## ✅ THE **KEY** CATEGORY IS CLOSED — 30 dynamic subscripts across the seven owned modules, zero live
+defects, and the disconfirming members recorded (tick 305)
+
+Tick 295 invented the key category (a blank reaching a **key** rather than a display string) on
+`visitor_session_token`; tick 303 found the second member, `honeypot_field`, and ruled the general law —
+**when a new semantic category is invented, re-run the sweeps that predate it.** SITE-177 closed the
+second member. Tick 305 closes the category, by sweeping the shape both members took: a subscript whose
+**key is a variable**.
+
+`grep -rnP --include='*.php' '\[\x24' <the six owned code modules>` → **30** sites:
+
+| population | verdict |
+| :-- | :-- |
+| `SchemaRenderAction:238 :254 :270 :285 :98` · `EdgeDeployAction:338 :345` · `FormCaptureAction:141 :143` | ✅ the key comes from a **literal `foreach` list** the action itself wrote — not caller-derived |
+| `InternalLinkRenderAction:30-33 :55 :73 :84-85` · `EdgeDeployAction:232-246` | ✅ normalised slugs behind SITE-160's `trim` and the collision guard (252) |
+| `SchemaRenderAction:43` `$map[$vertical]` | ✅ `:32` trims and lowercases **before** the `??` fires — tick 280's own model |
+| `SiteEngine:140-141` `$funnel->device_routing[$deviceType]` | ✅ `isset()`-guarded, falls through to `$destination`; and the funnel-resolve path has **zero production callers** (280, re-read at its own line) |
+| `FormValidateAction:25` | ✅ **this wave** |
+| `FormValidateAction:61` `$payload[$field]`, `$field` from the tenant's `steps.required` | ✅ a blank name makes `array_key_exists('', …)` false ⇒ the step reads **incomplete** ⇒ the submission is **REFUSED**, loudly, naming `""`. That is the **key-with-no-substitute** row of the tick-303 table, and refusing is that row's remedy — the code already does it |
+| `FormAdaptiveStepsAction:44` `$answers[$field]`, `$field` a `show_if` key | ✅ a blank name makes `$given` null ⇒ the step is **not shown** ⇒ its required fields are not enforced. Silent, and **correct by the table's own reading**: a condition naming no field is satisfied by nothing, and "skip a blank condition key" is a policy nothing declares (295) |
+
+⛔ **The two X-155 rows are why this sweep is a result rather than a formality.** They are the *same
+shape* as the honeypot — a tenant-authored string used as a payload key — and they are **not** defects,
+because the tick-303 table's third row already prescribes what they do. Had the sweep been graded by
+shape rather than by **which row of the table each member falls in**, both would have been briefed, and
+one of them (`FormAdaptiveStepsAction`) would have had a policy invented for it under cover of a defect
+— tick 295's error, and tick 288's *the uniform application of a correct fix is itself a hazard*.
+
+**A clean sweep is a result and must be written down** (280), or it is re-run as backlog three ticks
+later. Blank-value programme, all classes now closed and each with its disconfirming members recorded:
+`empty()` 19 · `isset()` 51 · `?? '<literal>'` 26 · nullable-return 5 · `foreach` 57 · `(string)` casts
+28 · array bounds 6 · escaping · **dynamic subscripts 30**.
+
+## ⛔ SITE-178 — the route's `: 422` arm is asserted NOWHERE (ruled at tick 305)
+
+Tick 300 ruled *a fix proven at the ACTION is not a fix proven at the ENDPOINT — when a ruling states its
+defect at a SEAM, the falsifier belongs at that seam*, and SITE-175 closed it for the array-payload case.
+Swept across the endpoint's own contribution:
+
+```
+X-157/ModuleServiceProvider.php:98   return response()->json($result, $result['status'] === 'captured' ? 201 : 422);
+```
+
+`grep -rn -E "postJson|->post\(|assertStatus\(" app/tests/Modules/X-157/` returns **three** route-level
+form POSTs — `X157Test.php:1756`, `:1828`, `:1891` — and **all three assert 201**, plus two 404s for the
+rolled-back and revoked-SSL states (SITE-169). **The `: 422` arm is exercised by no test in this lane.**
+
+⭐ **It is not a second carrier for a discharged clause** (240), and the distinction is tick 300's own:
+the action-level tests discharge *"a filled honeypot stores a flagged submission"* — G3-64 / G13-05's ⑤,
+credited and asserted at `X155Test.php:411` and now at `:551`/`:584` — while the route-level test would
+discharge *"the advertised endpoint answers 422 and not 201"*, which is the route's own one line.
+
+⛔ **And the seam is genuinely unprotected.** `FormCaptureAction:78-83` returns `status: 'rejected'` for
+spam; `:126-127` returns `'captured'`. Every X-155 assertion in this lane checks the persisted row and
+the dispatched events — `$row->is_spam`, `spam_reason`, `FormSpamRejected` — and **not the returned
+`status` string**. So a change that made the spam path return `'captured'` would leave **every** X-155
+test green and hand a bot a **201**, with nothing in any diff to say so. That is the same class as tick
+298's captured-variable finding read from the other end: the value the route keys on is not the value
+any test asserts.
+
+**RULED: SITE-178 is ONE route-level test and NO production change.** Publish, deploy, `GET` the page,
+extract the form's `action` **from the served document** (never construct it — that is what makes it the
+*advertised* endpoint, tick 303's shape), POST with the honeypot field filled, and assert: **422**, the
+JSON `status` is `rejected` and not `captured`, and a `FormSubmission` row exists with `is_spam` true —
+the storage half of ⑤ proven at the endpoint rather than at the action. ⛔ **If the route needs an edit
+to pass, that is the finding and the wave stops.**
+
+⛔ Refused, each of which would pass every gate: **asserting only the status code** (drops ⑤'s storage
+half, which is the clause this endpoint can silently lose); **constructing the URL** from the ids instead
+of reading the served `action` (asserts a route the test knows, not the one the page advertises);
+**adding an incomplete-step route test in the same wave** (a second claim, and bundling makes any red
+unattributable — 215); and **any new `G##-##` literal** (a second carrier obscures which method
+discharges the clause — 240).
+
+⚠️ **FALSIFIER, polarity named** (245): the new assertion is a **presence** assertion (422 present), so
+its falsifier is mutating `:98`'s ternary to a bare `201`. That is a state **never committed**, so tick
+287's question — *would the tree produce this message with no mutation at all?* — answers **NO**, and the
+two-state form is sound; the four-state sequence is **not** required and the brief says so, because
+applying it by reflex to a never-committed mutation manufactures a state that has no meaning. ⚠️ Its red
+is an **assertion failure**, so tick 291's closed form applies — `green − red = (assertions in the
+failing method) − (index of the failing one)` — and the `line` field is pest's **method declaration**
+line (268), which is the free tree-witness (298), never the assertion.
+
+⚠️ Predicted **with its refuting instruction and NO stop** (244, 304): I expect no existing test to
+redden — the mutation is confined to a new method and the three existing 201 assertions are unaffected
+by adding a test. **If one reddens, report it and proceed; that would mean an existing assertion depends
+on the 422 arm never running, which is itself the finding.**
+
+## §7, doctor and the census at tick 305
+
+⚠️ **The §7 baseline is now `tests 2006 · passed 2003 · FAILED 1 · errors 2`**, measured independently in
+this seat on the tip `8bb6c76c`, reconciling `2003+1+2 = 2006` ✓ (226), ⭐
+`a_published_site_carries_all_seven` **ABSENT — J11 green** on a wave that edits the form validator.
+Against tick 304's baseline `2004 · 2001 · FAILED 1 · errors 2`: +2 tests / +2 passed with the FAILED and
+error **sets** byte-identical, and `grep -c 'public function test'` reads **35** here against the
+committed baseline's 33 — exactly two methods added, none deleted, so tick 226's arithmetic has no
+residue. Stable set: `test_g2_76_unified_inbox_header` (X-01, **stages'**) plus sixty's two
+real-transport journey stubs. Both members of the intermittent population (278 as corrected by 298 — J8's
+`a_deliberately_corrupted_backup_fails_the_restore` and `cancel_is_one_tap_with_nothing_in_between`) are
+absent from both this seat's gate and the wave's, so the integers agree — ⛔ **which is a property of
+which members happened to fire, never of the comparison** (302).
+
+**Doctor, live in this seat**: stamp `20260829-0647` = `runtime_build` · `ok integrity 0ms clean · FAIL
+boundary 132ms 6 · contract 33ms 87 · citation 1260ms 93 · schema 473ms 15 · capability 23ms 455 · anchor
+253ms 137 · journey 0ms 4` · **797**, the SUM reconciling (285), `ok` only on `integrity … clean` (292),
+**no stage moved**. §3 printed `capability 372` in the same run against a live 455 — one slot shared by
+seven trees, 83 behind, never a brief target (196, 219). X-155 id census re-run **in this seat with
+`--include='*.php'`** (287): `2 G11-01 · 4 G13-05 · 4 G13-35 · 2 G17-12 · 4 G2-17 · 3 G2-20 · 1 G2-39 ·
+3 G3-64 · 2 G5-07 · 2 G5-30` — **byte-identical**, and the two new methods carry no `G##-##` literal so
+no second carrier was created (240).
+
+**§1 reconciled by ARITHMETIC** (225, never *"both moved so they agree"*): tick 304 read `ahead 52`; the
+wave added `a8536129` and `8bb6c76c` and this seat added the tick-304 notes commit `86fcd56b`, so
+52 + 3 = **55** ✓. `origin/main` unmoved at `30316573` ⇒ `behind 277` unchanged ✓.
+
+**Census — a HIT measured from the REFLOG** (220): the newest arrival across all eight refs is
+`origin/track/site@{23:38:57} 8fa9e730`, my own tick-303 push; the newest **sibling** arrival is
+`stages@{23:16:04} bbb9f87b`, which ticks 303 and 304 both recorded and ran against. All four surfaces
+re-run in full anyway, because this ledger's own arithmetic has been the defect six times and a HIT
+licenses citing a number, never guaranteeing the cited number was right. `pwd` first (209); tick 285's
+drift signature **absent** — the three pathspec halves returned **2 · 10 · 3** while the pathspec-free
+complement returned **12**, and the *split* is the signature, never either number. **half 1 — 2**
+(`227edeab` reviews, `978041fc` money, both merges *of main*, `--source`-attributed per 189; no violating
+partition) · **half 2 — 10** · **half 3 — 3** · **complement — 12**, same twelve members, zero `scratch/`
+(they left when `main` gained ui — a bound moving, 191/250). Tips, the next miss's lower bound (192):
+`main 30316573` · `money 544d5576` · `pricebook 042e78fd` · `reviews e02d8cf2` · `sixty 2ba6ad57` ·
+`stages bbb9f87b` · `ui 08ba50d0` · `site 8fa9e730`.
+
+⚠️ **The merge of `main` stays deferred, unchanged** — main's range still **ADDS** two `.claude/hooks`
+files and `coder-bin/git:106` refuses any staged `.claude/` with no exemption (229, 292, re-measured at
+300). It carries **fourteen of this lane's own violations, fixed** (Track 1 rulings 4 and 5, `30316573`),
+and a violation's colour is a property of a TREE (253) — this checkout's doctor still reads
+`contract 87 · anchor 137`, correctly. TRACK 1 ACTION, filed with its mechanism and its template.
+
+✅ **Standing checks on their healthy branches** — record them, or a rule that only ever fires on its
+failing branch reads as an unfired precaution (221). Tick 290's `--ruling` correction: **eighth**
+consecutive clean JOURNAL entry, and the `decided` text landed with the `empty()` refusal recorded in
+**both** directions, which is the correction tick 304 made *before* the record was written, `state.py`
+having no withdraw. Tick 302's two-tier ground value, **second** firing: item 0's ORIENTATION line 24 was
+not disputed and every CLAIM matched, so nothing stopped — one tick after 304 measured that tiering and
+two after a wave was forfeited to a drifted line. Tick 287's ordering item: `gate-runs.tsv` row 3907
+shows the wave's pest returning `00:08:24` against a `REPORT.md` mtime of `00:08:52` — the gate completed
+**before** the report was written. Tick 259's column rule, **thirteenth** firing: four `grs-antig-site`
+gates sit in a twelve-minute window (`1096601` killed rc 143 at `00:01:10`, `1128789` and `1131293` the
+coder's, `1155591` mine) and only the pid `gate-start` handed me separates them — mine had `gate-start`,
+`pint`, `phpstan` and **no terminal row**, ambiguous between *queued* and *died-without-its-trap* (265's
+fourth state, which writes nothing), and `readlink /proc/1155591/cwd` → `…/grs-antig-site/app` decided it
+ALIVE ⇒ wait, read §7 last (258). Tick 257's procedure paid for it: the gate was this tick's first act
+and the census, the sweep, the source reading and this whole block were written while it queued.
+
+⚠️ **Shell form, measured at tick 305:** ⛔ a `$` **anywhere in a grep pattern is refused**, even
+single-quoted and even with `-F` — `grep -rn -F '[$' <one dir>` returns *"This command requires
+approval"*. The accepted route for a dynamic-subscript sweep is the PCRE hex escape:
+`grep -rnP --include='*.php' '\[\x24' <dirs>`. Same family as tick 293's *`$` inside a double-quoted
+pattern is eaten by the shell* — there the query ran and returned a false silence, here it does not run
+at all, which is the **louder** and therefore safer failure. ⛔ `wc -l` on
+`/home/goaiez/tmp/gate-runs.tsv` is refused (a path outside the checkout); `Read` with **both** `offset`
+and `limit` remains the only accepted route (257, 262), and a `Read` past the end reports the true line
+count in its warning, which is the cheapest way to find the tail.
