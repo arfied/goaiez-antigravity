@@ -793,6 +793,70 @@ is this lane's; read it with the **`Read` tool** and an `offset` (`grep`/`tail`/
 log.** PB-117's list had to be taken on the report's word. **Name the log file in every brief**, and
 keep both: the tsv is the independent timestamp, the log is the content.
 
+## ⭐ Trap added 2026-09-08 07:1x — a method that finds four defects in a row will eventually find nothing, and noticing THAT is the result
+
+The boolean-column method (PB-115→118: *grep every test seeding of a boolean column; if all pass the same
+value, that column has one untested arm*) was run to exhaustion across every remaining lane module on
+2026-09-08. **All six survivors are clear**, and the measurements are recorded so no future tick
+re-derives them: `X-163 is_confirmed` (both arms seeded ~26 times) · `X-172 PortalLink.is_active`
+(genuinely guarded at `PortalViewAction:18` and `PortalActionHandler:20`, `false` seeded at
+`CustomerfacingPortalTest.php:169`) · `X-175 is_unconfirmed_price` (both arms asserted) · `X-175
+is_upsell` (label branch only, X-166 precedent) · **`X-168 PayRule.is_active` and `X-165
+MemberVisit.rolled_over` — entirely unwired**, one and two grep hits respectively, no reader and no
+writer anywhere.
+
+⚠️ **An unwired column is a different thing from an untested arm.** There is no wrong value on any
+input, so it is **latent + no wrong value = record**, and briefing it would be exactly the misreading of
+that line this file already warns about.
+
+⭐ **The durable part is the failure mode, not the method.** The temptation when a productive method
+stops firing is to loosen the criterion until it fires again — an untested arm becomes "thin coverage",
+an unwired model becomes "a gap". ⛔ That is how a lane starts briefing **leads instead of defects**.
+Retire the method, write down what it cleared, and find the next one by applying a *different*
+generalisation. Here the successor was PB-116's: *a consumer that enumerates one member of a set has
+thrown away the fact that the set can grow* — which found PB-119 immediately.
+
+## ⛔ Trap added 2026-09-08 07:1x — a consumer that enumerates ONE refusal code, and why `status === 'refused'` is the wrong fix
+
+`PricebookEngine::lookup()` returns **three** refusal codes and they are not interchangeable:
+`NO_FACT` (`:41 :53 :68 :123` — **no row matched**), `SAMPLE_STATE_REFUSED` (`:81` — a row **matched**
+and is a sample), `UNCONFIRMED` (`:93` — a row **matched** and is not confirmed). Every one also sets
+`'status' => 'refused'`.
+
+`FieldAssistantEngine::ask():57` — the technician's on-site price path — enumerated **one**
+(`SAMPLE_STATE_REFUSED`), with `isPriceShaped($queryText)` (`/price|cost|how much|charge|quote/i`) as
+the other arm. So an **unconfirmed** row asked by **bare service name** (`"brake pads"` — matches the
+row, matches no price word) missed both arms, fell to the `else`, and was written as
+`is_unconfirmed_price = false`, `status => 'answered'`. ⚠️ **The pricebook refused and the module
+recorded that it answered** — and `is_unconfirmed_price` is persisted and read
+(`StafffacingAssistantPanel:55` branches on it), so the staff panel labelled a refused price as an
+ordinary answer. ⭐ The real defect is the **discriminator**: the code asked *"is the query
+price-shaped?"* when the engine had already answered *"did a row match?"*. The regex was doing the
+guard's job by luck of vocabulary.
+
+⛔⛔ **The obvious one-line fix is the WRONG fix, and this is the part to remember.** Branching on
+`$lookup['status'] === 'refused'` reads correct and would turn **every** genuinely non-price field
+question — "torque spec for the caliper bolt", which returns `NO_FACT` — into *"I'd need to confirm
+that price"*. **The regression is worse than the bug.** The fix is the two **matched-row** codes only;
+`NO_FACT` must keep falling through. ⭐ Any brief for a defect of this shape must pre-declare the
+**regression-guard test arm**, not just the defect arm — the fix's whole risk is that it swallows a
+path nobody asserted.
+
+## ⚠️ Recorded 2026-09-08 07:1x — two entangled findings, and why fixing the second one first re-opens the first
+
+`FieldAssistantEngine:52` calls `PriceLookupAction::handle($businessId, $queryText)` with **no channel**,
+and `handle()` defaults `$channel = 'customer'` — so a **technician's** question enters the pricebook as
+a customer, `increment('refusal_count')`s, and inflates the owner's daily digest of *customer* price
+refusals. Real, defined-input, a wrong number on a reported dimension.
+
+⛔ **It was deliberately not briefed with PB-119, and the reason generalises.** `PricebookEngine:78` and
+`:90` gate **both** refusals on `in_array($channel, ['customer','sms','voice','chat','web'])`, so
+passing a staff channel switches the sample and unconfirmed refusals **off** — precisely the hole
+PB-119 exists to close. ⭐ **Two findings surfaced by one read are not automatically one wave.** When
+the second fix's mechanism would undo the first's, land them in order and write the entanglement down,
+or the next tick "fixes" the leftover into a regression. Whether staff may see unconfirmed or sample
+prices at all is a genuine design question and gets decided on its own.
+
 ## ⛔ Trap added 2026-09-08 07:0x — "any `-` line is a BLOCK" is unenforceable against a formatter
 
 PB-117's brief pre-declared *"any `-` line in `X82Test.php` is a BLOCK."* The wave produced four — **all
