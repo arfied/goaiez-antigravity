@@ -842,3 +842,17 @@ reached pricebook whole (the `merge=ours` fail-open on a one-sided change) and, 
 **Seat-specific denies live in `.claude/settings.local.json`** (gitignored, cannot merge); the tracked
 file carries only what is true in every checkout. And a lane's merge of `main` will re-import the
 tracked file whenever only `main` has moved it — the per-track restore step exists for exactly this.
+
+⚠️ **THE SIX LANES ARE GIT WORKTREES OF THIS REPO, AND `settings.local.json` IS SHARED THROUGH THE
+COMMON DIR (N134, 2026-09-08).** Every lane's `.git` is a file pointing at
+`/home/goaiez/agents/grs-antig/.git/worktrees/<lane>`, and Claude Code resolves project-local settings
+via `git rev-parse --git-common-dir` — so Track 1's gitignored `.claude/settings.local.json` is loaded by
+every lane session and its denies are **enforced** there (three denial lines in two lanes' 06:00 logs).
+My 05:50 fix for the settings-leak moved the eight `grs-antig-*` denies out of the tracked file into the
+local one and thereby locked two more lanes out of their own mailboxes. **Deleted outright**: there is
+no per-checkout settings surface a worktree does not see, and no per-account one while all seven lanes
+share account 1. The protection they duplicated lives in the tick prompt (lanes are answered only via
+`OWNER.md`) and held for two days before the denies existed. Rule: **a fix that moves a problem from one
+shared surface to another has not measured which surfaces are shared** — before placing anything
+"per-lane", run `git rev-parse --git-common-dir`. These seven checkouts share the object store, the
+worktree table, the account, and the local settings; they do not share only branches.
