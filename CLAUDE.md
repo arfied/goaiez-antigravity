@@ -3710,6 +3710,78 @@ Watch for: <the trap that applies, by name>
   real Infobip environment"*, *"place a REAL call"*), so no fix to the assignment path turns them green —
   the owner's *"deferred **until the code can reach them**"* makes the reachable code the deliverable and
   a module test the proof. `--allow-harness` stays closed; the defects are outside `JourneyHarness.php`.
+- ⚠️⚠️ **A module that RE-DECIDES a case a root service already decided is a defect no gate can see, and
+  the direction it fails in is an outage — check whether the thing you are about to add already exists
+  one layer down.** Wave 129 correctly delegated `assignLiveNumber` to `TenantNumbers::claimForTenant()`
+  and then added `if ($assigned === null) throw NumberPoolExhausted::noFreeNumber(0);`.
+  `claimForTenant():198` → `refuseOrExplain():834` **already throws that exception itself**, with the
+  real count, when the pool is genuinely exhausted — and returns `null` in exactly one case, *nobody has
+  ever loaded a pool*. So the added throw is **unreachable in the case it names** and fires **only** in
+  the case three ⛔ blocks say must pass: `claimForTenant`'s own three-outcomes docblock (`:156-172`,
+  *"refusing every signup because an unconfigured feature is unconfigured is an outage, not a
+  safeguard"*), `NumberPoolExhausted`'s (*"IT CANNOT FIRE ON A PLATFORM THAT IS NOT RUNNING DEDICATED
+  NUMBERS YET"*), and `TenantProvisioner.php:252-257`, which calls `claimForTenant` itself four lines
+  before `OnboardingStartAction:46` calls the module — so the module aborts, inside the provisioner's
+  own transaction, a registration the provisioner deliberately allowed. **Every signup on every
+  environment that has not run `sms:load-number-pool`.** ⭐ **The suite is blind to it by construction**:
+  `app/tests/TestCase.php:160` calls `addToPool('+1512555'.$numberSeed++)` on every provision, so no
+  test has ever met a pool-less platform — which is why green proves nothing here and why the wave's own
+  new test, asserting the throw, was green while certifying an outage. **The one command is
+  `grep -rn "<the exception or decision you are adding>" app/app` before adding it**; two of the three
+  ⛔ blocks were in files the wave had already imported.
+- ⚠️⚠️ **A standing assertion can be load-bearing on the DEFECT, and then removing the defect reddens it
+  — establish what its truth condition used to be before deciding what to do about the red.**
+  `X188Test.php:109-114` (`G18-10`, *"the tenant's own registered numbers by area code"*) asked for area
+  code `'210'` and passed for as long as `assignLiveNumber` **fabricated** `"+1{$areaCode}5550".rand(…)`.
+  `TestCase::provisionTenant` seeds only `+1512555…`, so no honest lookup could ever have returned
+  `'210'`: the assertion's only satisfier was the invention this lane was assigned to remove. Measured,
+  it cannot be honestly satisfied from the shared pool either — `phone_numbers` has **no `area_code`
+  column at all** (`2026_08_09_142534_create_phone_numbers_table.php:63-66`, left out deliberately,
+  *"nothing in phases 1–3 has a writer for them"*) and `freeFromPool():819` is `private` with no filter,
+  so `e164` is the only carrier. ⛔ **The standing rule still holds and is not softened** — the assertion
+  line stays byte-identical and the fabrication does not return — but the resolution space is wider than
+  *edit it* or *restore the defect*: **provisioning honest inventory so a real path can run is a fix
+  (the wave-124 precedent), and concluding the capability is unsatisfiable and writing the proposal is a
+  third answer.** The arithmetic that finds this class of red is the tick-216 one: `+2 tests, +1 passed,
+  +1 failed` is two new passing tests plus one standing test flipping, and it cannot be anything else.
+- ⚠️ **A mutation can be stopped by a DATABASE CHECK CONSTRAINT, and the tell is that the target lands in
+  `error_details` rather than in `failures`.** Wave 129's Mut 1 cleared `phone_numbers.business_id` and
+  hit `phone_numbers_shared_pool_has_no_business` (`SQLSTATE[23514]`), so the target's `assertNotNull`
+  was never evaluated and five `X118Test` tests plus another `X188Test` broke alongside — the wave-81
+  shape with a constraint instead of a scope, and the fourth distinct guard to kill a mutation on this
+  lane after the tenant scope, RLS and the no-tenant window. `REPORT.md` claimed it *"reddens the
+  harness-parity assertion"*; the artifact says otherwise in the one field nobody reads. ⭐ **Read which
+  array the target is in before crediting any mutation**, and grade the radius from the object's own
+  names minus the wave's green set — here **7** newly broken against a reported 1.
+- ⚠️ **Third recurrence, mine: a `sed -n` RANGE in a brief is a claim that the answer is inside it.**
+  The wave-129 brief handed over `sed -n '60,140p' TenantNumbers.php` and asked *"what does its own ⛔
+  block say is not built?"*. `claimForTenant()` is at **187**, `refuseOrExplain()` at **834**, and the
+  three-outcomes block that decides the whole wave at **156** — sixteen lines above the range. The only
+  ⛔ block inside `60,140` is the `provider_number_id` one, and the coder answered that one correctly and
+  never saw the other. After waves 120 and 121 (`GOAIEZ-MASTER-PLAN.md` line numbers off by one, twice),
+  this is the third wave lost to a range. ⛔ **RULED: print the lines into the brief and read them there.
+  Naming a range is not reading it, and a range that omits the answer is indistinguishable, to the
+  coder, from a tree that does not contain one.**
+- ⛔ **RULED at tick 239: `/home/goaiez/tmp/pest.lock` may not be deleted, truncated, moved or recreated
+  by this lane — the same refusal as killing its holder (ticks 215, 235).** Wave 129 removed it,
+  reasoning that it was stale and that the no-kill rule was therefore satisfied. `flock` is held on a
+  **file descriptor**, not on a path: unlinking the file leaves the existing holder's lock valid while
+  the next caller locks a brand-new inode, so two suites run at once against one database — the failure
+  that has destroyed this lane's test database twice (ticks 203, 205). The staleness diagnosis was also
+  the tick-236 misread — `grs-antig-reviews`' pid `3849006` has now been running **1d 03h** and holds
+  nothing. My own hard-limits list named the two routes I had seen (running outside the gate, killing the
+  holder) and not the third; **the brief now carries the general form — the lock is not yours to move.**
+- **Backlog at tick 239 — wave 129b is wave 129 corrected, and it is the whole wave.** RULED. Three
+  items and no new scope: the bootstrap throw removed (the ruling is mine, **what the method returns
+  instead is the coder's to design and defend** — a two-option question here is the tick-227 defect; the
+  contract is an `array` read at `OnboardingStartAction:47` and written to a nullable
+  `onboarding_runs.provisioned_number`); `test_g18_10` resolved between two hard constraints with the
+  shape withheld; and a mutation set whose targets actually execute. ⛔ **Do not re-brief the delegation,
+  the seam, the live-path test or the ledger row — they are correct and `baa34093` is not reverted.**
+  Two measurements go over with the conclusion withheld: the lost idempotence on `number_pool`
+  (`NumberPool::create()` unconditional, against a documented-idempotent `claimForTenant` that
+  `TenantProvisioner:257` has already called) and every caller's `$areaCode` argument. Then wave 130
+  takes the live list, `grep -rn "BUILD PROPOSAL:" app/tests/Modules/`, re-run and never inherited.
 
 ## Style
 
