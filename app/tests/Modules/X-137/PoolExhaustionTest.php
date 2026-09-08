@@ -157,4 +157,40 @@ class PoolExhaustionTest extends TestCase
             $this->assertEquals($tokensBefore, CallToken::where('business_id', $biz->id)->count());
         }
     }
+
+    public function test_a_blank_pool_number_is_never_allocated(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Blank Pool Member', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        DB::table('dni_pool_numbers')->insert([
+            ['business_id' => $biz->id, 'phone_number' => '   '],
+            ['business_id' => $biz->id, 'phone_number' => '+15550001006'],
+        ]);
+
+        $t1 = $this->attributeAction->allocateFromPool($biz->id, 'v1', 'src');
+
+        $this->assertEquals('+15550001006', $t1->allocated_number);
+        $this->assertEquals('active', $t1->status);
+    }
+
+    public function test_a_pool_of_only_blank_numbers_falls_through_to_the_static_fallback(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Only Blank Pool', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        DB::table('dni_pool_numbers')->insert([
+            ['business_id' => $biz->id, 'phone_number' => '   '],
+        ]);
+
+        DB::table('dni_pool_settings')->insert([
+            'business_id' => $biz->id,
+            'fallback_number' => '+15559999999',
+        ]);
+
+        $t1 = $this->attributeAction->allocateFromPool($biz->id, 'v1', 'src');
+
+        $this->assertEquals('+15559999999', $t1->allocated_number);
+        $this->assertEquals('unattributed', $t1->status);
+    }
 }

@@ -25,6 +25,8 @@ final class CallAttributeAction
         $poolNumbers = DB::table('dni_pool_numbers')
             ->where('business_id', $businessId)
             ->pluck('phone_number')
+            ->filter(fn ($n) => trim((string) $n) !== '')
+            ->values()
             ->toArray();
 
         $activeTokens = CallToken::where('business_id', $businessId)

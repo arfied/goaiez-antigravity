@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-07T19:43:55",
+ "updated": "2026-09-07T20:11:40",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -2337,6 +2337,12 @@
    "module": "X-137",
    "chose": "The pool-exhaustion fallback guard in CallAttributeAction tested only whether a dni_pool_settings row exists, while the condition it is named for, BUSINESS_NOT_CONFIGURED_FOR_DNI, is whether that row is usable. fallback_number is declared NOT NULL with no non-empty validation and the table has no production writer, so a row holding an empty or whitespace fallback passed the guard and the live DNI route served a token with a blank number and status unattributed, which is the half of the pool-exhaustion clause that says the page renders the static fallback number. The guard now also refuses a fallback that is blank after trimming, throwing the same exception, because the route already maps that exception to a 409 and a test already asserts that body. The trim form is used rather than a bare non-empty comparison because a fallback number is a value rendered for a person to dial, so whitespace is not a value.",
    "at": "2026-09-07T19:43:55",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-137",
+   "chose": "The pool allocation path collected dni_pool_numbers without asking whether a row is usable. phone_number is declared NOT NULL with no non-empty validation and the table has no production writer, so a row holding an empty or whitespace number was allocated like any other and the live DNI route served a token with a blank number and status active, which is worse than the exhausted case because the status claims the call is tracked while the page renders no number to call and the later attribution join runs against the empty string. The pool is now filtered at the collection site so a number that is blank after trimming never enters it, which makes a pool with no usable number an exhausted pool and hands it to the fallback guard that already refuses an unusable fallback. Exclusion is used rather than refusal because a pool holding one blank and three good numbers must still serve a good number, and the trim form is used rather than a bare non-empty comparison because a phone number is a value rendered for a person to dial, so whitespace is not a value. Refused deliberately: throwing on a blank pool number, which refuses a business whose pool is mostly good; guarding inside allocateToken, whose other callers pass an explicit number where a blank is a caller error and a different question; guarding at the serving route, which leaves the actions other callers exposed when the invariant belongs in the action that allocates; and a non-empty column constraint, which no reader can rely on because the table has no production writer and every fixture bypasses one.",
+   "at": "2026-09-07T20:11:40",
    "ruling": "R245"
   }
  ],
