@@ -54,7 +54,9 @@ final class NumberPoolManager
     }
 
     /**
-     * Migrate brand, string $brandName, string $tcrId): array
+     * Migrate brand without losing or reordering messages (TEST ANCHOR).
+     */
+    public function migrateBrand(int $businessId, string $brandName, string $tcrId): array
     {
         return DB::transaction(function () use ($businessId, $brandName, $tcrId) {
             $brand = BrandRegistration::updateOrCreate(
