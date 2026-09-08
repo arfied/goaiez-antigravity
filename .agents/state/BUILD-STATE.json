@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-07T21:56:15",
+ "updated": "2026-09-07T22:22:14",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -2367,6 +2367,12 @@
    "module": "X-176",
    "chose": "Three guards on the published-site paths decided a value by casting it to a string, and in each the cast was the step that was not itself protected. The llms.txt renderer reads two keys off content blocks, a JSON column the publish path transforms not at all, so a nested array reached a string cast; that renderer is called after the deployment row is created and before the html is stored, with the only catch in the file downstream of it, so the throw left no artifact, a deployment that never reached deployed, and through the listeners catch a published site serving none of the seven required elements. The form capture age check reads a date of birth off the raw request array on the live form route, so the value is externally supplied, and its cast sat in an if condition one line above a try whose catch says an unparseable value is not a signal and which would have absorbed the error had the cast been one line lower. All three now require a scalar before any cast is reached, and the missing-key defaults are kept unchanged so a missing or null value behaves exactly as before. The remedy is exclusion for the renderer, because prose that is not prose must not stop a page publishing, and skipping for the age check, because a value that is not a date is not a signal and skipping is the identical outcome the existing catch already produces for an unparseable string. Recorded and deliberately not changed: the age check reads an age key one line above, and is_numeric of an array is false, so that branch was never exposed. Refused deliberately: moving the cast inside the try, which makes ordinary input decided by an exception where the module already decides a non-value explicitly; normalising in publish, whose asserted guarantee is that a tenants blocks survive verbatim and in order; validating in the route, which leaves the actions other callers exposed; and relaxing any test that reddens.",
    "at": "2026-09-07T21:56:15",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-155",
+   "chose": "The form capture normaliser reported a value as given whenever it was not a blank string, so an array survived it unchanged. The payload reaches this action from the raw request array on the live form route, which the published page advertises as a real form action, and the value then keys a contact lookup or fills a contact row, where the query builder binds an array to a string column and throws; nothing upstream refuses it, because the validator checks presence and completeness and never type, and there is no catch between the action and the route, so an arbitrary submission produced a server error where every sibling path on that prefix answers with its own status vocabulary. The normaliser now reports a non-scalar as not given, which is the decision this module has already recorded three times: a value that is blank or whitespace was not given, a submission that carries no phone gets its own contact rather than a shared one, and only the fields the payload actually carried are written. The remedy is placed in the normaliser rather than at its seven call sites so that one rule covers the contact key and the display fields together, which is safe here only because the module has already decided all three the same way and asserted each. The raw submission is not lost, because the submission row stores the whole payload; only the contact key is not set from it. Refused deliberately: refusing the submission with a new rejected reason, which would refuse a submission this module currently captures and would mint a public status string nothing asserts; validating in the route, which leaves the actions other callers exposed; type checking in the validator, whose subject is spam and completeness and which would refuse rather than normalise; and guarding at the seven call sites, which is the copied-shape error in a method whose whole purpose is to be the single normaliser.",
+   "at": "2026-09-07T22:22:14",
    "ruling": "R245"
   }
  ],
