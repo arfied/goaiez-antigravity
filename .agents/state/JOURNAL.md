@@ -897,3 +897,4 @@
 - `2026-09-08T13:45:21` note: boundary prove ChatTurnController cross-tenant isolation via 7 positional mutations on ChatDoorTest
 - `2026-09-08T14:10:53` note: boundary The 2026-09-08T13:45:21 row claimed 7 positional mutations, but only one mutation ever completed (the first started at 13:50:55, five minutes after the row was written), so the sentence was untrue when written and is untrue now.
 - `2026-09-08T18:26:27` note: boundary Established that the chat door's cross-tenant and token type assertions can fail on their own terms if tenancy and guards are bypassed, but the message type assertion cannot due to strict type enforcement in handle().
+- `2026-09-08T18:57:52` note: boundary The 2026-09-08T18:26:27 row was wrong to claim that the message type assertion cannot fail; a controller mutation replacing the message with a string variable bypasses both the 400 check and strict type enforcement, causing the count assertion to fail on its own terms.
