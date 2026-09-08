@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-07T23:30:59",
+ "updated": "2026-09-08T00:20:18",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1280,6 +1280,24 @@
      "stage": "contract",
      "why": "order.cancel \u2014 'does not declare whether the agent may reach it' (sealed in app/app/Modules/X-117/manifest.php:34)",
      "at": "2026-09-06T14:24:35"
+    },
+    {
+     "module": "X-117",
+     "stage": "capability",
+     "why": "G1-73: missing customer-accepted milestone column on Order or OrderLine",
+     "at": "2026-09-08T00:20:18"
+    },
+    {
+     "module": "X-117",
+     "stage": "capability",
+     "why": "G1-81: missing gift or credit model",
+     "at": "2026-09-08T00:20:18"
+    },
+    {
+     "module": "X-117",
+     "stage": "capability",
+     "why": "G17-31: missing currency column on Sellable, Cart, or Order",
+     "at": "2026-09-08T00:20:18"
     }
    ]
   },
@@ -4975,6 +4993,24 @@
    "stage": "capability",
    "why": "G6-51: missing atomic transfer location-to-location code",
    "at": "2026-09-07T23:30:59"
+  },
+  {
+   "module": "X-117",
+   "stage": "capability",
+   "why": "G1-73: missing customer-accepted milestone column on Order or OrderLine",
+   "at": "2026-09-08T00:20:18"
+  },
+  {
+   "module": "X-117",
+   "stage": "capability",
+   "why": "G1-81: missing gift or credit model",
+   "at": "2026-09-08T00:20:18"
+  },
+  {
+   "module": "X-117",
+   "stage": "capability",
+   "why": "G17-31: missing currency column on Sellable, Cart, or Order",
+   "at": "2026-09-08T00:20:18"
   }
  ],
  "decisions": [
@@ -5294,6 +5330,12 @@
    "module": "C-Mail",
    "chose": "(R245) CB: a capability whose fix is to author its own refusal clause inside a generated DO-NOT-EDIT file is refused under P-210, because an agent must not author the assertion it is graded on.",
    "at": "2026-09-07T23:24:38",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-167",
+   "chose": "(R245) RULING CC: a mutation proves the first assertion that fires and not the clause, so when a test carries two assertions the mutation must be chosen so the discriminating one fails first, or a second mutation is required.",
+   "at": "2026-09-08T00:18:26",
    "ruling": "R245"
   }
  ],
@@ -5637,6 +5679,10 @@
   {
    "at": "2026-09-07T23:01:38",
    "note": "X-108 app/app/Modules/X-108/Ui/views/partials/appointment-row.blade.php:15-21 matches status with a default arm. The closed set is in ...000021_create_x108_scheduling_tables.php:60. Deferred because the repair crosses a view this track does not own."
+  },
+  {
+   "at": "2026-09-08T00:18:22",
+   "note": "X-167 G6-47: correcting the S-177 filing. The restock path exists at InventoryEngine.php:51 restoreStockFromCancellation and is reachable from StockAdjustAction.php:16; what is missing is an idempotency ledger or column so a replayed refund is a no-op, not a Refund model. The UNRESOLVED stands, its why was inaccurate."
   }
  ],
  "history": [

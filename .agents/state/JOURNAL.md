@@ -1296,3 +1296,8 @@ Therefore, adding a row to the tracker could move only the capability count.
 - `2026-09-07T23:30:59` UNRESOLVED capability X-167 - G6-47: missing Refund model or idempotency key to prevent double restock
 - `2026-09-07T23:30:59` UNRESOLVED capability X-167 - G6-49: missing serial number tracking logic or column
 - `2026-09-07T23:30:59` UNRESOLVED capability X-167 - G6-51: missing atomic transfer location-to-location code
+- `2026-09-08T00:18:22` note: X-167 G6-47: correcting the S-177 filing. The restock path exists at InventoryEngine.php:51 restoreStockFromCancellation and is reachable from StockAdjustAction.php:16; what is missing is an idempotency ledger or column so a replayed refund is a no-op, not a Refund model. The UNRESOLVED stands, its why was inaccurate.
+- `2026-09-08T00:18:26` (R245) X-167 — (R245) RULING CC: a mutation proves the first assertion that fires and not the clause, so when a test carries two assertions the mutation must be chosen so the discriminating one fails first, or a second mutation is required.
+- `2026-09-08T00:20:18` UNRESOLVED capability X-117 - G1-73: missing customer-accepted milestone column on Order or OrderLine
+- `2026-09-08T00:20:18` UNRESOLVED capability X-117 - G1-81: missing gift or credit model
+- `2026-09-08T00:20:18` UNRESOLVED capability X-117 - G17-31: missing currency column on Sellable, Cart, or Order
