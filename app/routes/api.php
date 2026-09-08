@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\PublicAuditController;
 use App\Http\Controllers\Api\WidgetReviewController;
 use App\Http\Middleware\ResolveWidget;
 use App\Modules\X102\Http\Controllers\ChatStartController;
+use App\Modules\X102\Http\Controllers\ChatTurnController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -154,6 +155,10 @@ Route::post('/pixel/e', PixelIngestController::class)
 Route::post('/chat/{key}/start', ChatStartController::class)
     ->middleware('throttle:chat-start')
     ->name('api.chat.start');
+
+Route::post('/chat/{key}/turn', ChatTurnController::class)
+    ->middleware('throttle:chat-turn')
+    ->name('api.chat.turn');
 
 Route::middleware('auth:sanctum')->group(function (): void {
     /*

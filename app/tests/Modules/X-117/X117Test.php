@@ -13,6 +13,7 @@ use App\Modules\X117\Models\Order;
 use App\Modules\X117\Models\OrderLine;
 use App\Modules\X117\Models\Sellable;
 use App\Modules\X121\Models\Person;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -291,5 +292,39 @@ class X117Test extends TestCase
                 $content
             );
         }
+    }
+
+    /**
+     * [G1-75] a pricing STRUCTURE, not a promotion; the price is looked up or REFUSED (P-092)
+     */
+    public function test_g1_75_price_is_looked_up_or_refused(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Price Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $sellable = Sellable::create([
+            'business_id' => $biz->id,
+            'name' => 'Consultation',
+            'sku' => 'CON-PRICE',
+            'inventory_quantity' => 10,
+            'unit_price_cents' => 5000,
+        ]);
+
+        // (i) Assert the total equals the stored unit_price_cents, ignoring caller input
+        $cart = $this->cartAction->handle(
+            businessId: $biz->id,
+            sessionToken: 'sess_price_1',
+            items: [['sellable_id' => $sellable->id, 'quantity' => 2, 'unit_price_cents' => 1000]]
+        );
+
+        $this->assertEquals(10000, $cart->total_cents, 'Total must equal stored price * qty (5000 * 2), ignoring input price');
+
+        // (ii) Assert an unknown sellable is refused with ModelNotFoundException
+        $this->expectException(ModelNotFoundException::class);
+        $this->cartAction->handle(
+            businessId: $biz->id,
+            sessionToken: 'sess_price_2',
+            items: [['sellable_id' => 9999, 'quantity' => 1]]
+        );
     }
 }

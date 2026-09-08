@@ -177,4 +177,55 @@ class ConfirmationScreenTest extends TestCase
             'is_confirmed' => true,
         ]);
     }
+
+    public function test_confirmation_screen_prices_key_unset_on_confirm(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        $item = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'To Confirm',
+            'price_cents' => 15000,
+            'is_sample' => false,
+            'is_confirmed' => false,
+        ]);
+
+        $component = Livewire::actingAs($owner)->test(ConfirmationScreen::class);
+        $this->assertArrayHasKey($item->id, $component->get('prices'), 'Key must be present initially');
+
+        $component->call('confirm', $item->id);
+
+        $this->assertArrayNotHasKey($item->id, $component->get('prices'), 'Key must be unset after confirm');
+    }
+
+    public function test_confirmation_screen_prices_key_retained_for_other_items(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        $item1 = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'To Confirm',
+            'price_cents' => 15000,
+            'is_sample' => false,
+            'is_confirmed' => false,
+        ]);
+
+        $item2 = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'To Keep',
+            'price_cents' => 20000,
+            'is_sample' => false,
+            'is_confirmed' => false,
+        ]);
+
+        $component = Livewire::actingAs($owner)->test(ConfirmationScreen::class);
+        $component->call('confirm', $item1->id);
+
+        $this->assertArrayNotHasKey($item1->id, $component->get('prices'), 'Key must be unset for confirmed item');
+        $this->assertArrayHasKey($item2->id, $component->get('prices'), 'Key must be retained for unconfirmed item');
+    }
 }

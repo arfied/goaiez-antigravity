@@ -10,7 +10,7 @@ final class MarginReportAction
 {
     public function handle(int $businessId, string $groupBy = 'job'): array
     {
-        $query = JobCost::where('business_id', $businessId);
+        $query = JobCost::where('business_id', $businessId)->where('is_sample', false);
 
         if ($groupBy === 'tech') {
             return $query->selectRaw('tech_id, sum(revenue_cents) as total_revenue, sum(total_cost_cents) as total_cost, sum(gross_margin_cents) as total_margin')

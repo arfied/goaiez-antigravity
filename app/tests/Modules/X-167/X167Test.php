@@ -419,4 +419,118 @@ class X167Test extends TestCase
         $this->expectExceptionMessage('a serialised item with no serial cannot be closed — asserted');
         $this->engine->closeItem($biz->id, $item->id, true, null);
     }
+
+    /** [G6-18] */
+    public function test_g6_18_stock_cannot_be_represented_in_transit_between_locations(): void
+    {
+        $columns = Schema::getColumnListing('stock_items');
+        sort($columns);
+
+        $expected = [
+            'barcode',
+            'business_id',
+            'created_at',
+            'id',
+            'is_sample',
+            'location_id',
+            'name',
+            'quantity',
+            'reorder_point',
+            'sku',
+            'unit',
+            'updated_at',
+        ];
+
+        $this->assertSame($expected, $columns, 'Multi-warehouse shipping is out of scope; stock cannot be represented in transit between locations.');
+        $this->assertContains('location_id', $columns);
+    }
+
+    /** [G6-24] */
+    public function test_g6_24_retail_stock_is_tracked_per_location(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Inventory & Stock Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $van = StockLocation::create([
+            'business_id' => $biz->id,
+            'name' => 'Service Van 04',
+            'type' => 'van',
+        ]);
+
+        $storage = StockLocation::create([
+            'business_id' => $biz->id,
+            'name' => 'Storage Unit',
+            'type' => 'storage_unit',
+        ]);
+
+        StockItem::create([
+            'business_id' => $biz->id,
+            'location_id' => $van->id,
+            'sku' => 'COPPER-10M-SPOOL-24',
+            'barcode' => '784920192824',
+            'name' => '3/8" Copper Refrigerant Line',
+            'quantity' => 7.0,
+            'unit' => 'm',
+            'reorder_point' => 3.0,
+        ]);
+
+        StockItem::create([
+            'business_id' => $biz->id,
+            'location_id' => $storage->id,
+            'sku' => 'COPPER-10M-SPOOL-24',
+            'barcode' => '784920192824',
+            'name' => '3/8" Copper Refrigerant Line',
+            'quantity' => 3.0,
+            'unit' => 'm',
+            'reorder_point' => 3.0,
+        ]);
+
+        $vanStock = StockItem::where('business_id', $biz->id)
+            ->where('location_id', $van->id)
+            ->where('sku', 'COPPER-10M-SPOOL-24')
+            ->first();
+
+        $this->assertNotNull($vanStock, 'Van stock should exist');
+        $this->assertEquals(7.0, (float) $vanStock->quantity, 'The per-location query returns only that location\'s row and quantity.');
+
+        $storageStock = StockItem::where('business_id', $biz->id)
+            ->where('location_id', $storage->id)
+            ->where('sku', 'COPPER-10M-SPOOL-24')
+            ->first();
+
+        $this->assertNotNull($storageStock, 'Storage stock should exist');
+        $this->assertEquals(3.0, (float) $storageStock->quantity, 'The per-location query returns only that location\'s row and quantity.');
+    }
+
+    /** [G6-46] */
+    public function test_g6_46_no_autonomous_ordering_path(): void
+    {
+        Event::fake([InventoryConsumed::class, ReorderTriggered::class, StockLow::class, PoSent::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'G6-46 Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $supplier = Supplier::create([
+            'business_id' => $biz->id,
+            'name' => 'Supplier G6-46',
+            'email' => 'g646@supp.test',
+        ]);
+
+        $poCountBefore = PurchaseOrder::where('status', 'sent')->count();
+
+        // Propose path
+        $po = $this->reorderAction->handle(
+            businessId: $biz->id,
+            supplierId: $supplier->id,
+            items: [['sku' => 'ITM-1', 'qty' => 5, 'unit_price_cents' => 100]],
+            totalCents: 500
+        );
+
+        // Assert proposal exists
+        $this->assertEquals('proposed', $po->status);
+
+        // Assert count of released POs is unchanged across the call
+        $poCountAfter = PurchaseOrder::where('status', 'sent')->count();
+        $this->assertEquals($poCountBefore, $poCountAfter, 'No PO was released autonomously');
+    }
 }

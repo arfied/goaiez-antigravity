@@ -17,6 +17,7 @@ class Rate extends Model
         'amount_cents' => 'integer',
         'current_version' => 'integer',
         'is_active' => 'boolean',
+        'is_sample' => 'boolean',
     ];
 
     /**
