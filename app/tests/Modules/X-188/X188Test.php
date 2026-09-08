@@ -13,6 +13,7 @@ use App\Modules\X188\Events\TenantCancelled;
 use App\Modules\X188\Models\NumberPark;
 use App\Modules\X188\Models\NumberPool;
 use App\Modules\X188\Ui\PoolInventory;
+use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Livewire\Livewire;
@@ -126,7 +127,7 @@ class X188Test extends TestCase
 
         // Switch back to biz 1
         DB::statement("SET app.business_id = '{$biz->id}'");
-        \App\Support\Tenancy::set($biz->id);
+        Tenancy::set($biz->id);
 
         Livewire::test(PoolInventory::class)
             ->assertSee('Area Code: 512')

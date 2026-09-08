@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X188\Ui;
 
 use App\Modules\X188\Models\NumberPool;
+use App\Support\Tenancy;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
@@ -15,7 +16,7 @@ class PoolInventory extends Component
 
     public function mount(int $businessId = 0)
     {
-        $this->businessId = $businessId !== 0 ? $businessId : (\App\Support\Tenancy::id() ?? 0);
+        $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
     }
 
     public function render()
