@@ -180,4 +180,51 @@ class X168Test extends TestCase
         $timesheet->refresh();
         $this->assertEquals(1.0, (float) $timesheet->total_hours);
     }
+
+    public function test_close_job_window_pins_job_id_and_does_not_close_others(): void
+    {
+        Event::fake([TimesheetSubmitted::class, PeriodReady::class]);
+        $biz = TestCase::provisionTenant(['name' => 'Pin Job ID Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $techPersonId = 404;
+        $now = Carbon::parse('2026-08-25 08:00:00');
+
+        $entry8801 = $this->computeAction->recordJobWindow(
+            businessId: $biz->id,
+            personId: $techPersonId,
+            jobId: 8801,
+            stateWindow: 'on_site',
+            startedAt: $now,
+            endedAt: null,
+            locationLat: null,
+            locationLng: null
+        );
+
+        $entry8802 = $this->computeAction->recordJobWindow(
+            businessId: $biz->id,
+            personId: $techPersonId,
+            jobId: 8802,
+            stateWindow: 'en_route',
+            startedAt: $now,
+            endedAt: null,
+            locationLat: null,
+            locationLng: null
+        );
+
+        $this->assertNull($entry8801->ended_at);
+        $this->assertNull($entry8802->ended_at);
+
+        $closedAt = $now->copy()->addMinutes(45);
+        $closedEntry = $this->computeAction->closeJobWindow($biz->id, 8801, $closedAt);
+
+        $this->assertNotNull($closedEntry);
+        $this->assertEquals(8801, $closedEntry->job_id);
+        $this->assertEquals($closedAt->toDateTimeString(), $closedEntry->ended_at->toDateTimeString());
+        $this->assertNotEquals(0, $closedEntry->duration_minutes);
+
+        $entry8802->refresh();
+        $this->assertNull($entry8802->ended_at);
+        $this->assertEquals(0, $entry8802->duration_minutes);
+    }
 }
