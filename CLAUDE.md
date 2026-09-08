@@ -3523,3 +3523,93 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     and MONEY-113's cap is untouched. ⚠️ Ruling 82's collateral also applies to that wave's Proof A:
     its RED line is real, but the test is red **without** the mutation too, so the proof distinguishes
     nothing — a proof is only a proof if the test is green when the mutation is reverted.
+154. **The `origin/main` → `track/money` merge is OPEN on its SEVENTH measurement, and it is a
+    materially different merge from the six that were refused (RULED by the lane supervisor
+    2026-09-08 09:1x; measured against `origin/main` = `07a4ae2f`, base `12447593`, main 784
+    ahead, money 402).** `OWNER.md` 06:0x §3 conditions this lane on *reviews and pricebook having
+    landed*; measured with ruling 145's date instrument, **both have** — `888cabae` pricebook
+    2026-09-08 06:54:18 and `b56db171` reviews 2026-09-08 **08:18:02**, the first `merge:
+    track/reviews` newer than `57b8f881`. Ruling 150's half-open state is closed. **Every historical
+    blocker is measured away, and three of them by facts that did not hold before:** (1)
+    `git diff --stat 12447593 origin/main -- source/ app/phpunit.xml .agents/rules/ .gitignore` is
+    **empty** — `source/` is not touched on either side since the base, so ruling 31's decisive
+    one-sided `source/` hunk **does not exist in this merge** and money's `goaiez_antig_money_test`
+    pin cannot move; (2) `.gitattributes` is **in this worktree** (8 lines, all eight per-track paths
+    `merge=ours`) and `git config --get merge.ours.driver` returns **`true`**, so ruling 27's
+    working-tree caveat is satisfied and the driver **will** fire — six of the two-sided paths
+    resolve to money's copy with no conflict; (3) the whole two-sided set is **23 paths**, against
+    the `12447593` merge's forty. ⚠️ **The fact that explains the shape of the entire resolution:
+    `git log --merges origin/main` contains no `merge: track/money` at all — money has NEVER been
+    merged to `main`.** So for every path in this lane's eight modules and their tests, main's copy
+    is the stale base plus another lane's incidental bookkeeping; money's side carries rulings 36
+    through 153 and main's carries none of them. The seventeen non-driver paths are ten
+    `X-199/Ui/*`, six of this lane's module test files and `JourneyHarness.php`. ⚠️ Ruling 52's
+    two-party sequence is unchanged and mandatory — the coder merges `--no-ff --no-commit` and
+    **stops without committing**, the supervisor commits the staged merge as `chore(merge): …` —
+    and so is ruling 53's **default clause**: an uncovered conflicting path is reported with the
+    merge still staged, never aborted (`git merge --abort` has destroyed this lane's ledger once)
+    and never guessed.
+155. **The X-199 shell money adopts is the `#[Layout]` attribute and its import ALONE (RULED by the
+    lane supervisor 2026-09-08 09:1x, refining ruling 127 with a measurement 127 did not have).**
+    Ruling 127 measured that main built the shell and money the body, and that `grep -rn
+    "isSample\|#\[Layout" app/app/Modules/X-199/Ui/*.php` returns nothing on money's side — both
+    still true: main's three `-2` blade hunks are the `@elseif($isSample) <x-ui.sample />` removal
+    from **main's parallel blade**, which money's blades do not contain, so money's five blades take
+    **money's side whole and revert nothing**. What 127 did not measure is *what else* main's shell
+    carries. Measured now: main's `Credits.php` and `Invoices.php` add `#[Locked] public int
+    $businessId`, `#[Locked] public ?string $loadError`, and a `mount(int $businessId = 0)` that
+    falls back to `Tenancy::id()`. **Money's components have none of these and need none** — every
+    one resolves the tenant inside `render()` as `Tenancy::idOrFail()` behind
+    `abort_unless(auth()->check() && Tenancy::check(), 403)` (ruling 151(5) measured all 24). So
+    **RULED: adopt `#[Layout('components.account.layout', ['heading' => …])]` and `use
+    Livewire\Attributes\Layout;` — nothing else.** ⛔ Adopting `mount()`/`$businessId` puts a second
+    tenant-resolution path beside money's, which is ruling 37's *"a second place for the truth to
+    disagree"* on the one value that decides which tenant's money is displayed; ⛔ adopting
+    `$loadError` ships a declared-and-never-read property into components whose blades money keeps
+    (decision 272, this lane's own shape). Each is **recorded**, not adopted.
+156. **`X117Test.php` and `JourneyHarness.php` are this merge's two caller/callee seams, and main's
+    copy of each asserts against MAIN's engines (RULED by the lane supervisor 2026-09-08 09:1x;
+    ruling 56's finding re-measured against `07a4ae2f`).** Ruling 54 keeps money's `X-198`/`X-199`/
+    `X-211` while these two files are contended, which places a caller and its callee on opposite
+    sides by construction — ruling 56's exact shape, and it recurs verbatim. **(a) `X117Test.php`:**
+    main asserts `'paid'` in **three** places money has adapted — `:76`'s anchor branch and
+    `test_g18_29_lifecycle_stops_at_money`'s two `assertEquals`, plus an `assertContains` main
+    narrowed to `['paid','cancelled','sold_out']`. Ruling 45 left **no path to `paid`** in this lane
+    and `CheckoutEngine.php:148-151`'s own docblock records it, so **money's four status assertions
+    win** and money's `test_an_order_row_written_without_a_status_is_pending_payment` (ruling 126)
+    is kept. ⚠️ **Main's other four hunks are genuine work and are ADOPTED**: the deletion of
+    `test_g6_02_upsell_token`, `test_g7_10_bundle_allocation` and `test_no_refusal_declared` (three
+    `assertTrue(true)` placeholders whose capability ids are the stages lane's bookkeeping, ruling
+    5), and the strengthening of `test_g8_29_minor_units_integers` into a real checkout asserting
+    `5997` and of `test_g16_05_true_countdown_cart` into a real countdown delta — reverting another
+    lane's improvement to this lane's test file is the One Rule as surely as deleting it is.
+    **(b) `JourneyHarness.php` resolves PER METHOD, as ruling 56 already ruled**, and the
+    measurement is sharper than ever: main's `payInvoice` calls `capture()` with **six** arguments
+    and then `requestCharge()`, and `grep -rn "function requestCharge\|function capture("` over
+    money's `GatewayEngine` returns **one line, `capture(` at `:68`** — main's harness is written
+    against main's X-198, which this merge does not take. Money's `payInvoice`, `makeOverdue` and
+    `lastDunningAction` win (rulings 56, 59, 68, 69); `issueInvoice` and `invoiceStatus` are
+    untouched on both sides; **`publishSite` takes main's side WHOLE** — it is the site lane's J11
+    method and owner ruling 1 makes touching it a BLOCK. ⚠️ **The import block is composed, not
+    picked:** main's `EdgeProvisionAction` and `Deployment` are required by the `publishSite` money
+    adopts, main's removal of `PageVersion` follows it, and money's `Artisan` and `ArDunningAction`
+    are **restored** because the two methods money keeps use them. `ReceivableState` is **not**
+    imported — it belongs to main's `lastDunningAction`, which money declines (ruling 59). ⚠️ An
+    unused import is invisible to `pint`, `phpstan` and `php -l` alike (ruling 46), and a missing
+    one is a fatal `php -l` cannot see either; the composed block is read line by line.
+157. **The post-merge floor is NOT predicted, and that is ruling 92 obeyed rather than suspended
+    (RULED by the lane supervisor 2026-09-08 09:1x).** Ruling 92 makes every number a brief states
+    the supervisor's to have measured; 784 commits of another six lanes' tests arrive in one
+    commit, main deletes three placeholder tests from `X117Test.php` and adds three to
+    `X211Test.php`, and no arithmetic available before the merge produces the count. **So the merge
+    brief states no floor at all** — the gate measures it and the verdict block records it as the
+    new baseline — and a brief that guessed one would hand the next tick a comparison it must
+    either believe or re-derive under time pressure, which is exactly what 92 exists to stop.
+    ⚠️ **The reds to expect are ruling 58's four shapes, and the one that will dominate is shape
+    (1): main's test against money's kept module.** Main's `X211Test.php` is the pre-truth-sweep
+    copy — it asserts `'accepted'` where ruling 98 wrote `'offered'` and
+    `assertStringContainsString('.zip', …)` where ruling 44 wrote `assertNull` — and main adds
+    three X-211 tests and one `UnpaidTest` method written against main's engines. **Every such red
+    is resolved FORWARD by adapting main's test to this lane's ruled behaviour** (rulings 61, 62's
+    precedent), ⛔ never by reverting a ruling and ⛔ never by deleting the test; and none of that
+    is this wave's work — the merge wave resolves, lints and **stops**.
