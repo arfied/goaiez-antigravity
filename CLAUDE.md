@@ -266,13 +266,24 @@ its wave size (`RULING CF`)**: intersect the ⑤-bearing ids with the flagged id
 before choosing. `C-Mail` (13 flagged, 1 clause) and `X-173` (7 flagged, 5
 clauses) both look like waves and both have an empty intersection.
 
-**Say the lane is exhausted rather than invent a wave to fill it.** Seven of the
-twelve `RULING C*` false-credit shapes in `REVIEWS.md` were written by a wave that
-existed to keep the lane busy.
+⛔ **"Say the lane is exhausted rather than invent a wave to fill it" is SUSPENDED, not repealed
+(`RULING ET`, tick 223).** It was sound guidance against the pre-merge checker and it is the reason
+seven of the twelve `RULING C*` false-credit shapes exist — a wave that exists to keep the lane busy
+writes a false credit. But the exhaustion **claim** was arithmetic against an instrument that has been
+replaced, and re-measured at `c6b82c24` the intersection of ⑤-bearing ids with flagged ids is **not
+empty**: `X-117` G1-73/G1-81/G17-31 (already `UNRESOLVED` three times over — CITED, never re-filed,
+`RULING CM`), `X-212` G4-54 (the P-210 class — its fix edits a GENERATED `capabilities.php`,
+`RULING CB`), and ⭐ **`X-211` G1-61/G1-70 — never filed, no test names them, and the seam they assert
+is implemented at `Domain/ArEngine.php:55-62`.** The standing rule is now the **admission test**, not
+the presumption: a wave is admitted when its ids pass clauses∩flagged (`CF`), are not `UNRESOLVED`
+(`CM`), are not §257.4 deferred, are not a generated-file fix (`CB`), are not a `boundary` ownership
+row (TRACK 1 ACTION 5), and have an arithmetic falsifier in §5. Invent nothing; **measure before
+declaring either way.**
 
-### The residual backlog — hygiene only, no stage moves
+### The residual backlog — ⚠️ NOT empty; see `RULING ET`
 
-The stage backlog is empty. What is left is **ledger and tree hygiene**, and the
+The hygiene list below is intact and still governs hygiene items. What is **wrong** is the sentence
+that opened it — *"the stage backlog is empty"* — falsified at tick 223. The
 test for admitting one is the S-182 shape: *it writes no test, it asserts nothing,
 it cannot move a count, and it has a mechanical falsifier.* Anything that fails
 that test and is not on this list is a wave invented to fill the lane.
@@ -791,8 +802,14 @@ held · `git rm --cached .claude/*` refused at `:22` · `--allow-restore` refusi
 even when open — the third new to this lane, from site's 06:54 block). It also re-confirms `DM`
 against that same newer block: site still records `app/phpunit.xml` as absent from main's range, which
 is **false here** and is `DC`'s destructive row. **Sibling GUARD facts are citable; sibling QUADRANTS
-are not.** Do not
-open a wave. `state.py next` returns `{"action": "FINISHED"}`. Every remaining
+are not.** ⛔ **The two claims that used to close this paragraph are FALSE as of tick 223
+(`RULING ET`) — do not carry them.** *"Do not open a wave"* is superseded by the admission test above;
+`X-211` G1-61/G1-70 passes it and is dispatched as STAGES-223. And **`state.py next` no longer returns
+`{"action": "FINISHED"}`** — measured at `c6b82c24` it returns `BUILD_WAVE` wave 30 (`X-186 X-190
+X-191 X-192 X-196`, `next_module` `X-190`), the direct and expected consequence of `RULING ER`'s six
+withdrawals returning their modules to **BUILDING**. ⚠️ A `BUILD_WAVE` from `next` is **not** by itself
+a licence to build — `BUILDING` is not progress — but it is no longer evidence of exhaustion either.
+Every remaining
 stage count needs the owner and is listed as **OWNER ACTION A–F** at the end of
 `REVIEWS.md`: vendor artifact ids (`anchor 137`), real Infobip and a real placed
 call (`journey 5`), the sealed `ContractStage` exemption (`contract 87`), the
