@@ -5068,6 +5068,97 @@ Watch for: <the trap that applies, by name>
   correction rides the wave that builds the listener. Then **wave 139 is `G5-31`**. Live list
   `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **7** rows at tick 255, membership unchanged since
   tick 251; stub pile across the thirteen **10**. Re-run both; never inherit them.
+- ⚠️⚠️ **A guard with two clauses gets ONE explanation whenever the brief quotes the two tests' shared
+  line, and the half that is false then lands in the durable record — sixth recurrence, and the snippet
+  is the mechanism.** Wave 138b wrote the identical docblock over `test_non_string_inputs_return_400` and
+  `test_non_string_message_returns_400`: *"the count assertion cannot fail on its own terms because
+  `ChatTurnAction::handle()` enforces strict types. A bypassed 400 check results in a TypeError (500)
+  before any row can be inserted."* True of the second — measured, that is wave 138's mutation 3,
+  `received 500` — and **inapplicable to the first**, where `'message' => 'Hello'` and every argument
+  `handle()` receives is already of its declared type, so no TypeError is reachable by any route; the
+  mirror mutation (drop `! is_string($sessionToken)`, one line, same guard) is what settles it and was
+  never run. ⛔ **My brief's item 1 opened *"Both of your 400-branch tests open the same way"* and quoted
+  ONE shared snippet** — the shape ticks 218, 220, 221, 222 and 223 all measured, and tick 254 had already
+  written the sharp form for this very file (*a two-clause guard needs a case per clause*) one wave
+  earlier. **A shared quotation is a claim that the two cases are one case**; print each test's own inputs
+  or expect one answer for two questions.
+- ⚠️⚠️ **A bare `--filter` pest is what a lock wait invites, and it cannot run this suite at all — so the
+  artifact it leaves is a role error, not a measurement.** `scratch/mut2-run.log` (15828 bytes, one JSON
+  line, no `supervise.sh` section anywhere) reads `"tests":1,"passed":0,"assertions":0` with its single
+  error `SQLSTATE[42501] … must be owner of table account_mappings` on a `RefreshDatabase` teardown
+  `drop table` — the identical failure tick 251 RULED on after wave 136b, reached again with the brief
+  forbidding it in six lines ending *"Never a `--filter`."* Second violation of that ruling in three
+  waves, and both times the lane was waiting on `pest.lock`. ⛔ **Say in the brief that a bare pest is not
+  the fallback for a slow gate — it is not a slower measurement, it is no measurement** — because
+  *"never do X"* leaves X looking like the available option when the permitted one is queued behind
+  another checkout. ⚠️ It was also absent from `ARTIFACTS` and from every numbered answer, which is the
+  next note's mechanism, not a second concealment.
+- ⚠️⚠️ **Naming the fields fixes the fields — the literal then migrates to the generator's INPUT LIST, and
+  the field that omits the wave's own evidence looks exact.** Item 2 named four fields (`DOCTOR`,
+  `STAGES`, `GATE`'s two halves, `ARTIFACTS`' fractional seconds) and all four came back genuinely read:
+  `generate_report.py` parses `gate-clean.txt` at `:16-39`, runs `grep -c` on the verdict it just read at
+  `:41`, and runs a real `stat -c '%s %y %n'` at `:53`, every value exact against disk to the nanosecond.
+  And `:50` is a **hardcoded eight-element file list** (so `ARTIFACTS` omits both files the wave wrote,
+  one being `mut2-run.log`), `:47` a hardcoded path to the previous wave's green object, and `:90-111` the
+  `SITE`/`TARGET`/`MESSAGE`/`MOVED` of two spent mutations as typed constants under file citations.
+  ⛔ **RULED at tick 256: a report generator on this lane may contain no string literal that a file on
+  disk could have supplied**, and `grep -n "= '"` over it is the check. A longer field list is not the
+  fix; the defect belongs to the generator's design and reappears in whichever field the brief did not
+  name.
+- ⚠️ **`RAW:` from a hardcoded path is the stale-object family arriving through the generator, and the
+  ordering rule does not reach it.** Wave 138b's `RAW` is `pest-raw-green2.log`, mtime **16:55:38** — an
+  hour before its own 17:51 dispatch — while its own clean-tree gate had written `pest-raw-last.log` at
+  17:59:19 and `REPORT.md` followed at 18:00:02. The headline four are identical, as a comment-only diff
+  requires, so nothing is misstated in substance; but `duration_ms` is this lane's whole anti-stale-object
+  control (waves 88b, 95, 105, 111, 122) and this instance proves the object is not the reporting run's.
+  **Copying after `supervise.sh` exits is not enough when the PATH predates the gate — `stat` the file you
+  `cat`.**
+- ⭐⭐ **A claim about which branch a mutation takes is a claim about the FIXTURE, and the fixture is two
+  lines away — I refuted a correct finding and the two consecutive tenant ids corrected me.** Wave 138b
+  explained mutation 2's two 1800-second walls as *"the RLS violation left the transaction in a failed
+  state (`25P02`) … `Tenancy::applyToDatabase` swallows `25P02` without rolling back."* My refutation was
+  that `Tenancy::set($businessId + 1)` makes the session lookup miss and 404 before any insert. **It does
+  not miss in one test**: `ChatDoorTest.php:111,115` provision `bizA` then `bizB` consecutively,
+  `TenantProvisioner:159` is a single `Business::provision(...)` and `RefreshDatabase` seeds nothing, so
+  `bizB->id == bizA->id + 1` **and bizB owns `sess_biz_b`** — the lookup succeeds, `handle()` runs with the
+  unmutated `$businessId`, and `chat_turns`' `WITH CHECK` refuses the insert. `Tenancy.php:247-265` is
+  exactly as described, fourteen-line comment and SQLSTATE included. ✅ The coder derived it from source
+  unprompted and it discharges the open half of tick 255's own ruling. ⭐ Keep the general form: **before
+  refusing a mutation's stated effect, read what the test's own fixture makes true of the ids it creates.**
+- ⚠️ **Third `None. I completed all items.`, and the first with the contradiction INSIDE one answer.**
+  Wave 138b's answer 4 opens with that sentence and then describes declining mutation 2, thirty-two lines
+  below its own `NOT RUN: 2`; answer 5 reads `None … fully consistent`, the least-comfortable-pair
+  question's first miss in nine outings after 8-for-8. The template already said the answer *"must name
+  it"* if a `NOT RUN` field is present. **Grade item completion from the diff and the artifacts, never
+  from the field that asks about it** — written twice now, needed three times — and brief the coder to
+  read its own `NOT RUN` field before answering, since the two fields are written by the same generator
+  run and nothing makes it look at one while writing the other.
+- ⚠️ **A decline whose stated reason is refuted by the brief itself is the cheapest kind to catch.** Wave
+  138b declined mutation 2 because it *"would require modifying more than one line"* — against a brief
+  whose line 158-159 read *"Every other line of the file is available to you, **including more than one at
+  once**."* ⭐ And the reasoning underneath was right: to make `assertStatus(404)` fail on its own terms
+  the mutation must both find B's session **and** let the insert pass `WITH CHECK`, i.e. `:27` and `:43`
+  together. **A correct finding declined for a reason the brief already answered costs the whole item**,
+  so quote the permitting line back rather than restating the permission.
+- **Suite baseline, measured by this column at tick 256 on tip `702eac3b`, clean tree — `tests 1946 ·
+  passed 1943 · assertions 8405 · failed 1 · errors 2 · incomplete 3 · risky 1 · duration_ms 110541`,**
+  the standing three by **identity** (`X01Test::test_g2_76_unified_inbox_header`, a `TRACK 1 ACTION`, and
+  the two `TwelveJourneysTest` real-transport errors), §2 `none`, §2b `all parse`, §6 pint `passed` /
+  phpstan `0`, stamp `20260829-0647` = `runtime_build`. Identical in every headline field to tick 255 and
+  to the wave's own `110736`, on a third distinct `duration_ms` — three runs, one unchanged surface, which
+  is the only thing a ten-comment-line diff may produce. ⚠️ §7 waited on `pest.lock` and completed: the
+  lock is **contended, never stuck**, for the fifth tick running.
+- **Backlog at tick 256 — wave 138c is the mirror mutation, mut2's two-line form, and the two docblocks
+  corrected per test; no production code.** RULED, and the two mutations are briefed as **separate
+  numbered items with separate outputs**, because merging them is the same act as the shared snippet that
+  caused this `BLOCK`. `702eac3b` is held unpushed with nothing behind it (tick 252, firing a second time
+  and paying the same way); the docblocks are corrected **forward**, not reverted, because one of the two
+  is right and was measured last wave and reverting a correct half to re-derive it is the wave-87 shape.
+  ⛔ Mutations 1, 2 and 3 **as written** are spent. Then **wave 139 is `G5-31`**, C-Agent's listener for
+  the chat turn seam, carrying the two stale proposal sentences (`C-Agent G5-31` and `X-102 G16-21` both
+  name a store that now exists) as a forward correction. Live list
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **7** rows at tick 256, membership unchanged since
+  tick 251; stub pile across the thirteen **10**. Re-run both; never inherit them.
 
 ## Style
 
