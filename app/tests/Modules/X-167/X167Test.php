@@ -290,4 +290,53 @@ class X167Test extends TestCase
 
         $this->assertEmpty($lines, 'No path under app/Modules/X-167/ performs a location-to-location transfer by updating location_id.');
     }
+
+    /** [G6-24] */
+    public function test_g6_24_retail_stock_is_tracked_per_location(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Inventory & Stock Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $van = StockLocation::create([
+            'business_id' => $biz->id,
+            'name' => 'Service Van 04',
+            'type' => 'van',
+        ]);
+
+        $storage = StockLocation::create([
+            'business_id' => $biz->id,
+            'name' => 'Storage Unit',
+            'type' => 'storage_unit',
+        ]);
+
+        StockItem::create([
+            'business_id' => $biz->id,
+            'location_id' => $van->id,
+            'sku' => 'COPPER-10M-SPOOL-24',
+            'barcode' => '784920192824',
+            'name' => '3/8" Copper Refrigerant Line',
+            'quantity' => 7.0,
+            'unit' => 'm',
+            'reorder_point' => 3.0,
+        ]);
+
+        StockItem::create([
+            'business_id' => $biz->id,
+            'location_id' => $storage->id,
+            'sku' => 'COPPER-10M-SPOOL-24',
+            'barcode' => '784920192824',
+            'name' => '3/8" Copper Refrigerant Line',
+            'quantity' => 3.0,
+            'unit' => 'm',
+            'reorder_point' => 3.0,
+        ]);
+
+        $vanStock = StockItem::where('business_id', $biz->id)
+            ->where('location_id', $van->id)
+            ->where('sku', 'COPPER-10M-SPOOL-24')
+            ->first();
+
+        $this->assertNotNull($vanStock, 'Van stock should exist');
+        $this->assertEquals(7.0, (float) $vanStock->quantity, 'The per-location query returns only that location\'s row and quantity.');
+    }
 }
