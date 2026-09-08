@@ -160,4 +160,25 @@ class ConnectCardScreenTest extends TestCase
             ->assertSee('not applied')
             ->assertDontSee('external gateway');
     }
+
+    public function test_the_connect_card_heads_recorded_gateways_and_never_offers_to_manage_them(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        MerchantConnection::create([
+            'business_id' => $biz->id,
+            'gateway_name' => 'stripe',
+            'merchant_account_id' => 'acct_A1',
+            'is_connected' => true,
+        ]);
+
+        Livewire::actingAs($owner)->test(ConnectCard::class)
+            ->assertSee('Recorded gateways')
+            ->assertSee('wait on contracts that are not in this checkout yet')
+            ->assertDontSee('Connect Gateway')
+            ->assertDontSee('Manage your connections');
+    }
 }

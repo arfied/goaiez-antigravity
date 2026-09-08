@@ -12,8 +12,8 @@
             No gateway has been connected on this account. Connecting one waits on the Stripe Connect redirect, which is not built in this checkout yet.
         </x-ui.empty-state>
     @else
-        <x-ui.attention-card heading="Connect Gateway">
-            <p class="text-sm text-gray-600 mb-4">Manage your connections.</p>
+        <x-ui.attention-card heading="Recorded gateways">
+            <p class="text-sm text-gray-600 mb-4">These are recorded on this account. Connecting one and applying for a merchant account both wait on contracts that are not in this checkout yet, so the buttons below name what they wait on and change nothing.</p>
 
             <ul class="space-y-2">
                 @foreach($connections as $conn)
