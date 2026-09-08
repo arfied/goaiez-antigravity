@@ -133,4 +133,19 @@ class UnpaidScreenTest extends TestCase
             ->assertOk()
             ->assertSee('covered by the card on file; service never stopped');
     }
+
+    public function test_the_paid_list_says_no_invoice_has_been_paid_and_what_that_waits_on(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        Livewire::actingAs($owner)->test(Unpaid::class)
+            ->call('showPaid')
+            ->assertOk()
+            ->assertSee('No invoice has been paid')
+            ->assertSee('so nothing reaches this list yet');
+    }
 }
