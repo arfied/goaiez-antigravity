@@ -2023,6 +2023,10 @@
   {
    "at": "2026-09-08T06:29:06",
    "note": "BoundaryStage supersede row 'note: BoundaryStage BoundaryStage: correct test_g18_10 to assert the provisioned number\\'s extracted area code (512) and remove dead $areaCode parameter from assignLiveNumber, as G18-10 is about pool inventory view and not assignment by area code.': that row incorrectly asserted against an internal action's return array; the true G18-10 capability is the UI presentation of numbers by area code, which is now built and asserted on the PoolInventory screen."
+  },
+  {
+   "at": "2026-09-08T06:58:18",
+   "note": "note: BoundaryStage X-188: update test_g18_10_numbers_by_area_code to assert isolation (the tenant's own numbers) and wire PoolInventory component to gracefully default to the tenant context (Tenancy::id()) to fix the defect where it always rendered an empty pool for tenants."
   }
  ]
 }
