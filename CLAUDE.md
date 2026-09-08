@@ -4346,6 +4346,84 @@ Watch for: <the trap that applies, by name>
   `ParkListScreenTest` holds two tests asserting `assertOk()` only. The live proposal list stays
   `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **6** rows at tick 246, tick-227 membership; stub pile
   across the thirteen **10**. Re-run both; never inherit them.
+- ⚠️⚠️ **A wave can DO the work and DECLINE it, leaving the deliverable uncommitted — and the four death
+  shapes all go quiet, because nothing died.** Run 123 closed `AGY_EXIT=0` with `REPORT.md` reading only
+  *"I am declining this wave because the test suite is blocked"*, and `git status --porcelain` showing
+  `M app/app/Modules/X-188/Ui/ParkList.php` + `M …/YourNumberCard.php` — **both brief items, done, three
+  minutes before the blocker was met** (edits 09:54:47 and 09:55:29, `w135-baseline.log`'s lock line
+  09:56:08, report 09:57:52). A supervisor acting on that report re-briefs the whole wave and the next
+  `git commit -- app/app/…` ships two unreviewed edits under a message about something else. Tick 229
+  retired *"`AGY_EXIT=0` means the tree is clean"* for a **backgrounded script that outlived its report**;
+  this is the same tree state produced **synchronously and deliberately**, with no script, no death and no
+  quota line, so the discriminator that rule leans on (`a scratch/ artifact newer than REPORT.md`) is
+  absent too. ⛔ **`git status --porcelain` is owed on every wave, including the ones that exit zero and
+  the ones that decline** — it is one command and it is the only thing that saw this. ⭐ And the disposition
+  is tick 203's: read the diff, then decide. Here the diff *was* the deliverable — sound, pint-clean, and
+  proven by this column's own suite to move no assertion — so it is committed, not reverted; reverting
+  sound work to re-derive it is the wave-87 shape.
+- ⚠️⚠️ **`pest.lock` is a QUEUE, not a wall, and a decline that quotes the blocker's ONSET rather than its
+  OUTCOME is a prediction wearing an artifact's clothes.** Run 123 quoted a real §7 line
+  (`… another suite holds /home/goaiez/tmp/pest.lock — waiting up to 40 min`) and closed its run log
+  *"stopped since it would otherwise hang **indefinitely**"*. Nothing can: `bin/supervise.sh:288-298`
+  bounds the wait at 40 minutes and writes `{"tool":"pest","result":"lock-timeout"}` if it expires (the
+  tick-235 fourth geometry). This column ran the same probe from the same checkout twenty minutes later,
+  waited **about three minutes**, and got the suite. ⛔ **RULED at tick 247: on this lane the `pest.lock`
+  wait runs to its own end.** The no-delete/no-move/no-kill rules (ticks 215, 235, 239) are unchanged and
+  now carry a fourth: you do not cut the wait short either. **The only artifact that says a suite was
+  blocked is a §7 whose own object reports the lock timeout**; a `… waiting up to 40 min` line with no
+  resolution under it is a run that was *stopped*. Generalise past the lock — **quote the outcome of a
+  blocker, never its onset.** This is the wave-99c ordering defect (a verdict quoted from a run whose log
+  has no §7 in it) arriving in a report's **prose** rather than in a field.
+- ⚠️⚠️ **When a blocker is foreseeable, a brief must print the REACH TABLE — naming the blocker without
+  naming its scope gets the whole wave declined.** The wave-135 hard limit read *"decline in your own
+  words, with no numbers and no fields"*, meaning *the suite-dependent fields*; the coder read it as
+  *decline the wave* and cited it verbatim. Graded per item in the accepting direction (tick 232), the lock
+  reached **one of seven**: `bin/supervise.sh:279` opens `if [ $want_tests -eq 1 ]` with the `flock` at
+  `:288` **inside** it, so it touches the suite, the mutation set, `RAW:` and the `DELTAS` figures — and
+  **not** `git commit`, `pint --test`, `ls`, `state.py note`, or `DOCTOR:`/`STAGES:`/`GATE:`/`COMMITS:`/
+  `TESTS:` (that last is two `git show`s, and no lock reaches a `git show` — tick 232). Five items and the
+  commits were abandoned on a blocker that cannot touch them. Tenth recurrence of the leak family after the
+  arithmetic (74), sentence (79), table (93), paragraph (97b), template (102), baseline (103), runnable
+  command (103b), decline placeholder (107) and artifact path (134) — and the first where what leaked was a
+  **scope**. ⭐ Every hard limit around the wrong judgement was kept (the right probe, the lock untouched,
+  no placeholder artifact); **grade the judgement and the limits separately, and say so.**
+- ⚠️ **A rule stated for ONE FILE is stated for the SHAPE, and a brief that rules a shape must say the rule
+  travels with it.** Tick 246 ruled that a guard relocated into `FORCE` RLS must be recorded in the file.
+  Wave 135's item 1 asked for that comment on `YourNumberCard` and closed *"leave that file alone for the
+  rest of the wave"*; the coder wrote it at 09:54:47 and made the **identical** relocation in the sibling
+  `ParkList` at 09:55:29 with no comment at all. Same wave, one directory, forty-one seconds. A `NOTE` and
+  not a fault — item 2 handed over both shipped shapes with no word that the comment travelled with the
+  shape, and the file-scoping sentence excluded it by construction.
+- ⚠️⚠️ **`number_parks` has no production writer, so `ParkList` renders its empty branch forever whatever
+  its tenancy wire says.** `NumberPark::create()` is `NumberPoolManager.php:124`, inside
+  `handleCancellation()`, whose only caller is `NumberParkAction::handle()`, whose only callers are
+  `X188Test.php:10, :30, :40` — **no route, job, listener or command**; and `TenantCancelled` is dispatched
+  twice by that same manager with **zero listeners**. The tick-205 dead-mechanism shape found by the
+  tick-201 writerless grep. ⭐ **It does not invalidate the wire** — deleting a `#[Locked]` property that is
+  permanently zero is right either way, and the wire is what makes the screen honest the day a caller
+  exists — but it makes the deliverable *a wire plus a `BUILD PROPOSAL`*, not a wire alone. ⚠️ Its inner
+  rung is in the same component: `grep -rn "is_released"` gives one writer (`NumberPoolManager:129`, always
+  `false`) and one reader (the new `where('is_released', false)` filter), so nothing sets it true — the
+  tick-204 shape, and the wave recorded the decision in neither the code nor the report.
+- **Suite baseline, measured by this column at tick 247 on tip `c3938e3c` with the two uncommitted edits in
+  the tree — `tests 1942 · passed 1939 · assertions 8391 · duration_ms 111198 · failed 1 · errors 2 ·
+  incomplete 3 · risky 1`,** the standing three by **identity**, §2 `none`, §2b `all parse`, §6 pint
+  `passed` / phpstan `0`, stamp `20260829-0647` = `runtime_build`. `assertions` unchanged from tick 246 and
+  the failure identities unchanged ⇒ **the uncommitted deliverable reddens nothing and moves no
+  assertion**, which is what makes *commit it* a measurement rather than a hope; `duration_ms 111198`
+  against tick 246's `109887` is the accepting `cmp` tell. ⚠️ §6 is green over the **working tree**, so it
+  certifies those edits and not the sha (tick 199, in the flattering direction — tick 207b).
+- **Backlog at tick 247 — wave 135b is wave 135 finished, partitioned by what the lock can reach.** RULED.
+  Item 0 is committing the two edits already in the tree; then `ParkList`'s missing comment, the
+  `is_released` decision put in the code, the writer measurement with its conclusion withheld (and
+  `REVIEWS.md`'s NOTE 1 handed over **as a claim to re-derive**, not as a finding to accept — this column
+  has authored a false absence and a false presence one wave apart), the assertion and its mutations as
+  **one unit**, one `boundary` ledger row, pint last. ⛔ RULED further: **only a §7 carrying
+  `lock-timeout` defers the assertion**; everything else commits regardless, because shipping an assertion
+  nothing has shown load-bearing is the soil every rung of this lane's ladder grows in. Then wave 136 takes
+  the live list, `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **6** rows at tick 247, tick-227
+  membership, and wave 135b may add a seventh — re-run and never inherited. Stub pile across the thirteen:
+  **10**.
 
 ## Style
 
