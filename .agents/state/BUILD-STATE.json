@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-08T08:56:13",
+ "updated": "2026-09-08T10:22:54",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2293,6 +2293,18 @@
    "module": "X-198",
    "chose": "the payments cell on the same-account screen is one string built in the component rather than a blade loop because livewire wraps every foreach and if in block marker comments, so an assertSee needle that begins outside the loop and ends inside it can never match - the last reconciliation cell two lines down already had this shape and stayed green throughout",
    "at": "2026-09-08T08:56:13",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-211",
+   "chose": "money's packageForCollections keeps its ?int $packagedByUserId and main's boolean is not adopted \u2014 a caller-supplied flag certifies itself while a principal id varies and is auditable",
+   "at": "2026-09-08T10:22:42",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-173",
+   "chose": "inferCategory keeps its two-parameter signature and main's test adapts \u2014 the module winning over the caller",
+   "at": "2026-09-08T10:22:54",
    "ruling": "R245"
   }
  ]
