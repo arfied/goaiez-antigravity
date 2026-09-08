@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-08T18:01:53",
+ "updated": "2026-09-08T18:23:07",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2407,6 +2407,12 @@
    "module": "X-211",
    "chose": "an empty state that reports a settled ledger to an account with no ledger is the same fiction as one that reports a paid one, so the ageing screen says no invoice is past its terms and the payment-plan builder says there is no open invoice to split by either route, instead of saying every issued invoice is inside its terms or already on a plan; and every one of these four screens now names both unbuilt halves rather than one, because the frozen plan raises a draft from a completed job and no draft to issued transition exists, so the hand-off alone fills none of them; no transition, dispatcher, query, heading or door is built to make any sentence true",
    "at": "2026-09-08T18:01:53",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Billing",
+   "chose": "a screen that reads a table nothing writes may not report a healthy account, so the revenue recovery empty state says no account has been put on the dunning ladder and that nothing in this checkout puts one there, instead of saying this account is current, and the dunning board names the same missing dependency in front of the true sentence it keeps; the only writer of a dunning state sits behind a create branch neither advance button can reach, because both take an existing row id, so the table is empty forever for every real tenant and the empty state is the only thing a real owner ever sees; no writer, scheduler, query, heading or button is built to make either sentence true, because a ladder starts from a missed subscription payment and that path is another track's",
+   "at": "2026-09-08T18:23:07",
    "ruling": "R245"
   }
  ]
