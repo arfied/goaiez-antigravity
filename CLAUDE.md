@@ -11527,3 +11527,439 @@ clean JOURNAL entry; tick 274's ground-condition instrument (item 1 reported §2
 supervisor's own uncommitted notes fired no false stop); tick 287's ordering item (the gate was run
 against a named sha **after** the final commit, so §6/§7 describe the committed tree — 253); and tick
 293's pint path correction (`cd app && ./vendor/bin/pint …`) ran clean.
+
+## ⛔ THE COLD WITNESS'S PROSE FILTER IS ITSELF A DESCRIPTION-BASED SELECTOR — `grep -c '//'` over-counts, because a real assert line's STRING LITERAL can contain `//` (tick 297)
+
+Tick 279 introduced `grep -c 'assert' <file>` as the falsifier arithmetic's cold witness; tick 280
+qualified it (equality only for a loop-free file); tick 285 qualified it again, after a prose line
+containing the word "assertions" inflated the count, and prescribed subtracting the prose occurrences.
+**The prescribed subtraction is `grep -n 'assert' <file> | grep -c '//'`, and that filter is wrong in
+the same way the thing it fixes was wrong.** Measured at tick 297 on `X157Test.php`:
+
+```
+grep -c 'assert'                       232
+grep -n 'assert' | grep -c '//'          2      ⛔ the filter's answer
+  :1524   // the refusal; the four assertions below are the claim, not the exception     ← prose ✅
+  :1900   $this->assertSame('https://video.example.com/drain.mp4', $ld['video'][0][…])   ← a REAL assert
+```
+
+`https://` contains `//`. So the filter counts a live assertion as prose, the witness reads
+232 − 2 = **230** against a measured green of **231**, and a tick applying tick 285 mechanically lands
+on tick 280's *lower-bound* branch and goes hunting for a framework call registering two assertions
+(tick 290's `assertRedirect`) that does not exist in the file. Read the lines and the equality is
+exact: 232 − **1** = 231 = green.
+
+⛔ **The rule: the prose subtraction is READ, never COUNTED.** `grep -n 'assert' <file> | grep '//'`
+and look at what comes back — it is at most a handful of lines and the distinction (is the `//`
+inside a comment or inside a string?) is not expressible as a count.
+
+This is tick 246's **sixth false-credit shape** — *a subject identified by a PROPERTY can have that
+subject substituted* — arriving on the ledger's own instrument for the third time. Its remedy has been
+stated twice already (tick 247: *assert the description matches exactly one thing*; tick 265: *a wait
+predicate that names its subject cannot match a second thing*), and the same shape reappeared because
+the filter was written as a convenience inside a rule about something else. **A qualification bolted
+onto an instrument is an instrument, and it needs the same scrutiny as the thing it qualifies.**
+Fourth qualification of a witness introduced eighteen ticks ago: loops (280), prose (285), framework
+arity (290), and now the prose filter itself.
+
+## ⛔ A GUARD THAT EXCLUDES A MALFORMED MEMBER MUST EVALUATE IT TO DECIDE, AND THE EVALUATION IS THE UNPROTECTED STEP (tick 297)
+
+SITE-154/155 built the collection-site guards that stop a malformed video or faq member reaching
+`SchemaRenderAction`'s validator and taking the whole JSON-LD off the published page. Measured at
+tick 297, the guards decide blankness like this:
+
+```
+EdgeDeployAction:170   if (trim((string) ($block['name'] ?? '')) === '' || … contentUrl … || … uploadDate …) continue;
+EdgeDeployAction:181   if (trim((string) ($block['question'] ?? '')) === '' || … answer …) continue;
+```
+
+`content_blocks` is a caller-supplied JSON column that `SiteEngine::publish()` transforms **not at
+all** (tick 230, and G6-15/G6-16 assert that verbatim survival at `X103Test.php:202`), so a block whose
+`question` is a nested array reaches `(string)` on an array — **inside the guard whose purpose is to
+exclude it.** The defence's own predicate is the throw site.
+
+⚠️ **Whether it throws is the WAVE's measurement, not this seat's** — `php -r` is refused here (tick
+284). What the ledger holds is evidence *in kind*: SITE-164's own falsifier reported
+`ErrorException: Undefined array key "content"` from the sibling renderer, which is Laravel converting
+a PHP warning of that severity class into a thrown exception in this tree. That is a reason to measure
+and it is not a measurement (198, 199, 290, 291).
+
+⭐ **The severity, if it holds, is the whole published site rather than the faq block.** The throw is
+upstream of every marker, and on the listener path `ModuleServiceProvider:114-124`'s
+`catch (\Throwable) { return; }` swallows it — so the page stays published with **no deployed row and
+all seven of J11's elements gone**. Tick 281's family (*an optional enrichment must never be able to
+refuse the required output*) reached from a new direction: there the enrichment's **validator** dropped
+the JSON-LD; here the enrichment's **own blank-guard** aborts the deploy.
+
+**The generalisation, and it is what no prior statement covers.** This ledger's blank-value programme
+(SITE-152 through SITE-169, eight waves, six predicate classes, ~70 sites) has always asked *what does
+the guard admit?* — tick 278's **NOT NULL is not non-empty**, tick 288's three semantic categories,
+tick 295's key-versus-display-string. Every one of those is about the guard's **verdict**. This is
+about its **evaluation**: a guard that must coerce its input to judge it is only as safe as the
+coercion, and a coercion that can throw converts an exclusion into an abort. ⛔ **When a guard casts to
+decide, ask what the cast does to the values the guard exists to reject** — they are, by construction,
+the values nobody sanitised.
+
+## ⛔ A DEAD DEFENCE AND ITS LIVE GAP CAN BE TWO HALVES OF ONE FEATURE (tick 297)
+
+`EdgeDeployAction:361-369` wraps the faq **visible** block render in
+`try { … } catch (\Throwable $e) { Log::warning('the faq block could not be rendered: '…) }`. Every
+operation inside that try — `foreach` over the list built at `:185` from a literal two-key array, the
+`(string)` casts, `e()`, `.=` — **has already been performed on the identical values at `:181`,
+outside the try**. So any input that could throw inside it throws 180 lines earlier and escapes the
+deploy anyway: the catch cannot fire.
+
+Tick 280 catalogued the dead default and tick 281 sharpened it to *a dead defence hides the severity of
+the gap it fails to cover*. This is the sharpest instance yet, because **the dead defence and the live
+gap are the same feature's two halves**: the catch promises graceful degradation of the faq block, and
+the unprotected step is that feature's own collection guard. A reader who greps for "is the faq render
+protected?" finds a `try/catch` and stops.
+
+⛔ **The catch is RECORDED and NOT deleted.** Deleting a defence is a weakening, and the collection
+site can change — the same reasoning that keeps `SchemaRenderAction:204`'s `empty($schema['@type'])`
+(tick 284) and refuses every "tidy up the redundant check" wave this lane has considered.
+
+## ✅ Three hypotheses that DIED AT SOURCE before reaching a brief (tick 297)
+
+Recorded because the ledger otherwise keeps only the ones that survive, and because all three were
+reversed by **opening a file while writing the brief** — never by re-reading the queue, which is why
+the rule is *a carried item is re-read at its own line* (241, 244, 249, 251, 254, 263, 268, 284).
+
+1. ⛔ **"`sites/{hash}.llms.txt` is a write-only artifact — decision 272's shape."** The measurement is
+   right: **one** writer (`EdgeDeployAction:302`), **zero** readers, no route serves it, and the only
+   coverage reads it off the fake disk. And `GOAIEZ-MASTER-PLAN.md:32274` reads
+   *"⚠️ G3-34 · llms.txt injection · an emerging convention, not a standard · **it is written and
+   ignored gracefully**; ⛔ **nothing depends on it being honoured**."* The write-only artifact **IS
+   the specification**, and a serving route would create the dependency the ⛔ column forbids. Tick
+   282's discriminator working as designed — *compare the guard's predicate to the SPEC it was derived
+   from, never to the thing that looks wrong* — and the first time it has saved a wave rather than
+   graded one. Per tick 224: **cannot work here**; the door is shut.
+2. ✅ **The escaping sweep is CLEAN across the whole published document, and a clean sweep is a
+   result** (tick 280). Every visible block in `EdgeDeployAction` escapes with `e()` (`:263-265, 311,
+   319, 327, 337, 344, 355, 364`); the sibling renderer concatenated at `:374` escapes with
+   `htmlspecialchars(…, ENT_QUOTES)` (`InternalLinkRenderAction:106`); and ⭐ the JSON-LD at `:290` is
+   encoded with `JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT`, which is exactly what
+   closes the `</script>` breakout that a plain `json_encode` inside a `<script>` block leaves open.
+   Deliberate, correct, and worth writing down so it is not re-swept in three ticks.
+3. ⚠️ **The `e()` vs bare `htmlspecialchars` divergence between those two renderers** is real —
+   Laravel's `e()` adds `ENT_SUBSTITUTE`, so on invalid UTF-8 the two disagree (U+FFFD versus an empty
+   string) — and **unreachable**: a Postgres database in UTF8 rejects invalid byte sequences on input,
+   so `pages.title` cannot hold one. Tick 252's two-renderers-one-model shape with **no reachable
+   difference** ⇒ per tick 224, *the door is open and the room is empty*. ⛔ Not briefed, and the
+   reason matters: a consistency fix with no measurable behavioural difference is exactly the
+   count-chasing this lane refuses in other lanes' columns.
+
+## ⚠️ A ground value taken from MEMORY of a file this ledger has already measured twice (tick 297)
+
+My SITE-169 brief predicted `grep -c 'has_valid_ssl' ModuleServiceProvider.php` would read **2 → 3**.
+It reads **3 → 4**: I forgot the `SitePublished` listener's own `->where('has_valid_ssl', true)` at
+`:103` — a line **this file documents at tick 212** and cites again at tick 292. The coder measured it,
+reported the departure, correctly noted that the prediction carried no stop instruction, and proceeded.
+Nothing was let through.
+
+Twenty-fourth of the imprecise-brief family (208, 227, 235, 236, 237, 238, 244, 245, 247, 249, 250,
+254, 262, 265, 271, 274, 275, 276, 280, 283, 286, 292, 293) and the sub-shape is the one worth the
+line: **a ground value about a file is measured with a `grep` in the tick that writes the brief, never
+recalled** — even from this ledger, and *especially* from this ledger, because a number written here
+reads as measured forever (tick 209's law, which was about doctor counts and is not about doctor
+counts). ✅ Third firing of tick 262's both-directions stop working as designed: the coder reported a
+departure the brief had no branch for, which is precisely what that rule exists to produce.
+
+## §7, doctor and the census at tick 297
+
+§7 on the tip `ca4b1e09`, measured **independently in this seat**:
+`tests 1996 · passed 1992 · FAILED 1 · errors 3`, reconciling `1992+1+3 = 1996` ✓, and ⭐
+`a_published_site_carries_all_seven` **ABSENT — J11 green** on a wave that edits the serving path.
+Against tick 296's `1995 · 1992 · FAILED 1 · errors 2`: +1 test (the diff adds exactly one
+`public function test` and deletes none, so tick 226's arithmetic accounts for the whole delta), passed
+unchanged, errors +1 — the new test passes (+1) and **J8 flipped** (−1 passed, +1 error), netting zero.
+
+The coder's own §7 on the same sha read `1996 · 1993 · FAILED 1 · errors 2`, also reconciling, and
+**the single discriminating member is J8's `a_deliberately_corrupted_backup_fails_the_restore`** —
+now **5·4·2·3·2·3·2·2·2·3·2·2·3** across thirteen gates on unchanged trees. ⛔ Read the error **SET
+minus the known-intermittent member** (tick 278), never the integer: two correct gates on one sha an
+hour apart disagree on that member alone, and a tick comparing integers records a contradiction
+between two correct runs. Stable members: `test_g2_76_unified_inbox_header` (X-01, **stages'**) plus
+sixty's two real-transport journey stubs. ⛔ The cause is not measured and no block names one.
+
+§0 pin `goaiez_antig_site_test` · §2 exactly one `⛔` plus the `ℹ supervisor working notes` line, which
+is not a `⛔` (tick 263) — tick 207's **healthy** branch, `none` being the reading that would say the
+pin edit had been lost · §4 seals ✓ · §6 pint and phpstan green.
+
+Live doctor: stamp `20260829-0647` = `runtime_build` · `integrity clean · boundary 6 · contract 87 ·
+citation 93 · schema 15 · capability 455 · anchor 137 · journey 4` · **797**. **No stage moved.** The
+report's pair passed all three checks — SUM `797` in both (285), `ok` only on `integrity … clean`
+(292), five of seven timings differing ⇒ two runs (249), with `citation 1250/1250` and
+`capability 23/23` repeating **not** a defect because the discriminator is a byte-identical *block*
+(250). **Fourth consecutive clean doctor pair** (293, 295, 296, 297). X-157 id census re-run in this
+seat with `--include='*.php'` (287): `G13-31 1 · G6-06 1 · G6-33 1`, byte-identical.
+
+Census: `pwd` first, tick 285's drift signature **absent** (the three pathspec halves returned 2 · 10 ·
+5 while the pathspec-free complement returned 11 — the *split* is the signature, never either number).
+All four surfaces byte-identical to ticks 294–296 — half 1 **2** (`227edeab` reviews, `978041fc` money,
+**both merges of main**, attributed with `--source` per tick 189; no violating partition) · half 2 **10**
+· half 3 **5** · complement **11**. Cache HIT measured from the **reflog** (tick 220): newest arrival
+across all eight refs is `origin/track/site@{20:59:32}`, my own tick-296 push, and the newest *sibling*
+arrival is `origin/main@{19:56:08}`, predating tick 296's close. Every surface re-run in full anyway,
+because this ledger's own arithmetic has been the defect six times and a HIT licenses citing a number,
+never guaranteeing the cited number was right. Tips (the next miss's lower bound — tick 192):
+`main 4b26ffbc` · `money 544d5576` · `pricebook 042e78fd` · `reviews e02d8cf2` · `sixty 2ba6ad57` ·
+`stages b79ae957` · `ui 08ba50d0` · `site ca4b1e09`. **Eleventh null closing tip re-read** (224, 225,
+256, 279, 282, 283, 284, 293, 295, 296, 297), run at the close and never drafted (257).
+
+✅ Standing checks on their healthy branches: tick 290's `--ruling` correction, **fifth** consecutive
+clean JOURNAL entry, which took hold only once the correction was aimed at my own command line rather
+than at the coder; tick 287's ordering item (the gate ran against a named sha **after** the final
+commit); tick 293's pint path (`cd app && ./vendor/bin/pint …`); and tick 241's pattern sweep bounding
+SITE-170's second item to **one address in the whole lane** — `grep -rn -c 'shouldReceive'` across all
+seven owned test directories returns 43 files, 42 of them zero, the sole non-zero being
+`LlmsTxtTest.php` at 3.
+
+## ⛔ THE COPIED SHAPE IS LIVE IN THE SIBLING RENDERER, AND THE LEDGER ALREADY KNEW THE TWO WERE A PAIR (tick 298)
+
+SITE-170 fixed the unprotected `(string)` cast at `EdgeDeployAction:170` and `:181` — the collection
+guards that exclude a malformed video or faq member from the published page, which had to cast a
+caller-supplied `content_blocks` value to judge it and so threw `Array to string conversion` on a
+nested array, upstream of every marker on the page. Correct, falsified four ways, and **two sites of
+four**. Tick 241's law says the fix's address is never the finding; the sweep of every `(string)`
+cast in the seven owned modules, run in this seat before any brief, returns 28 hits of which
+**exactly two more** read a caller-supplied value:
+
+```
+X-176/Actions/LlmsTxtRenderAction.php:22   if (isset($block['type']) && $block['type'] === 'text' && trim((string) ($block['content'] ?? '')) !== '')
+X-176/Actions/LlmsTxtRenderAction.php:25   } elseif (trim((string) ($block['text'] ?? '')) !== '') {
+```
+
+Same JSON column, same publish path, same shape, same remedy — and **worse placed**.
+`EdgeDeployAction:298` calls that renderer, `:73` has already created the `Deployment` row, and the
+html is not stored until `:385`; the only `try/catch` in the file is `:361-367`, downstream. So a
+throw at `:22` leaves a `Deployment` row that never reaches `deployed`, **no artifact on disk**, and
+on the listener path `ModuleServiceProvider:114-124`'s `catch (\Throwable) { return; }` swallows it —
+the site stays published and `GET /sites/{b}/{h}` 404s on the status check. **All seven of J11's
+elements, gone, silently.** Byte-for-byte the consequence tick 297 measured for the faq guard, in the
+file the guard's sibling lives in.
+
+⛔ **The aggravating fact is that this pair is the most-swept pair in the lane.** Tick 246 found them
+diverging on `keyBy`; tick 252 ruled *when two components render one model, one test must assert they
+agree*; tick 285's `empty()` sweep spanned both; tick 291's SITE-164 fixed **both branches** of this
+very method for blankness. Every previous sweep of this pair covered both files and this one covered
+one — because the wave was briefed from a defect found in `EdgeDeployAction`, and a brief scoped to
+where a defect was *found* inherits that scope. **The pattern sweep belongs in the brief that fixes
+the first address, not in the tick that reviews it.**
+
+## ⛔ …AND THE SAME DEFECT IS LIVE ON AN EXTERNALLY-SUPPLIED INPUT, WITH ITS OWN CATCH THREE LINES BELOW PROMISING TO ABSORB IT (tick 298)
+
+The fourth site is not on the publish path and is the one an attacker can reach:
+
+```php
+X-157/ModuleServiceProvider.php:94        payload: $request->all(),        ← raw request array
+X-155/Actions/FormCaptureAction.php:134   private function isUnderEighteen(array $payload): bool
+                                   :141       if (trim((string) ($payload[$key] ?? '')) !== '') {   ← OUTSIDE the try
+                                   :142           try {
+                                   :143               $dob = Carbon::parse($payload[$key]);
+                                   :147           } catch (\Exception $e) {
+                                   :148               // unparseable value is not a signal
+```
+
+`$request->all()` means `?date_of_birth[]=x` arrives as an array, and `:141`'s cast is in the `if`
+**condition**, outside the `try` that begins on the next line. `ErrorException` extends `\Exception`,
+so the catch at `:147` **would** have absorbed it had the cast been one line lower — and its comment,
+*"unparseable value is not a signal"*, states precisely the intent that three lines of ordering
+defeat. An array IS an unparseable value.
+
+⭐ **That is the second instance of tick 297's shape and the sharper one.** 297 found a dead
+`try/catch` whose live gap was its own feature's collection guard; here the dead catch and the live
+gap are separated by **one line**, and the catch's own comment is the specification the gap violates.
+⛔ **When a guard casts to decide, read where the nearest `catch` starts** — a cast in an `if`
+condition immediately above a `try` is the maximally deceptive arrangement, because every reader who
+greps "is this parse protected?" finds the catch and stops.
+
+⚠️ **`:136`'s sibling branch is SAFE, and the disconfirming member is what makes the sweep
+re-checkable** (tick 280): `isset($payload['age']) && is_numeric($payload['age'])` — `is_numeric()`
+of an array is **false**, so an array `age` is skipped with no cast. One method, two payload reads,
+one hazardous. The predicate that happens to be type-safe is not the one anybody wrote deliberately.
+
+**RULED (tick 298): SITE-171 fixes all three measured sites with the SAME clause and DIFFERENT
+reasons**, per tick 288's law that the uniform application of a correct fix is itself a hazard —
+`LlmsTxtRenderAction`'s value is prose emitted into a published file, so a non-scalar is not prose
+and the block is **excluded**; `FormCaptureAction`'s value is a date to be parsed, so a non-scalar is
+not a signal and the key is **skipped**, which is the identical outcome the existing catch produces
+for an unparseable string and therefore changes no decision the module has not already recorded.
+⛔ The `?? ''` defaults stay, so a missing or null value is excluded exactly as before.
+
+⛔ Refused: **moving the cast inside the try** at `:141` (smaller, and it makes the loop's control
+flow depend on an exception for an ordinary input, where the module's own `given()` already says a
+non-value is decided explicitly); **normalising in `SiteEngine::publish()`** (tick 230 measured that
+publish transforms a provided block not at all, and G6-15/G6-16 assert at `X103Test.php:202` that
+tenant blocks survive verbatim and in order — normalising there deletes a credited, asserted
+refusal); **validating in the route** (a reader compensating for a writer, leaving the action's other
+callers exposed — 277, 278); and **relaxing any test that reddens** (234, 242).
+
+⚠️ **One member of the sweep is UNMEASURED and the wave writes nothing about it** (tick 264).
+`FormCaptureAction:52-62` and `:91-100` pass `$payload['phone'] ?? null` through `given()`, whose
+`is_string($value) && trim($value) === ''` returns an **array unchanged**, so an array phone reaches
+`Person::firstOrNew(['phone' => [...]])` and a string column. That is a *different* failure mode —
+an array reaching a DB column, not a cast — with a different remedy and no measurement behind it, and
+bundling it makes any red unattributable between the two (tick 215). SITE-171's last item measures it
+and **reports**; the next tick gets a measured population.
+
+## ⭐ AN ASSERTION ON CONTENT CAPTURED BY A MOCK'S CLOSURE IS AN OCCURRENCE ASSERTION — IF THE CAPTURED VARIABLE'S INITIAL VALUE WOULD FAIL IT (tick 298)
+
+Tick 235 ruled *a mock with no `->once()` proves the outcome, never that the path was TAKEN*, and
+SITE-170 closed that carried item by adding `->once()` to the `.llms.txt` write. Its report then
+claimed the **sibling** mock needs none, *"because an assertion on the captured content already
+proves that closure ran."* Verified rather than accepted:
+
+```php
+LlmsTxtTest.php:97    $htmlWritten = '';
+              :100    ->andReturnUsing(function ($path, $content) use (&$htmlWritten) { $htmlWritten = $content; …
+              :134    $this->assertStringContainsString('application/ld+json', $htmlWritten);
+```
+
+The claim holds, and it holds for a reason that is a **testable precondition rather than a
+judgement**: `$htmlWritten` initialises to `''`, and `assertStringContainsString('application/ld+json',
+'')` **fails**. So the assertion cannot pass unless the closure ran, which is exactly what `->once()`
+would assert and one assertion cheaper.
+
+⛔ **The precondition is not decorative and its failure is a shape this lane has already caught.**
+Initialise the captured variable to anything that satisfies the later assertion and the test is
+green with the closure never running — which is tick 291's `LlmsTxtTest:169`, where a positive
+document-wide containment of `'0'` was satisfied by the fixture's own business name `Local Biz F10`.
+So the rule is: **an occurrence expectation is redundant exactly when the captured variable's INITIAL
+value would fail the assertion made on it; read the initialiser, never the closure.** Tick 235 gains
+its exception and the exception gains a one-line test.
+
+## ⛔ THE ERROR SET SWAPPED UNDER A BYTE-IDENTICAL COUNT — "minus the known-intermittent member" NEEDS A POPULATION, AND THERE ARE NOW TWO (tick 298)
+
+Tick 278 ruled the sound comparison is *the error SET minus the members already known to be
+intermittent*, never the `errors` integer, after J8's
+`a_deliberately_corrupted_backup_fails_the_restore` took five different values on unchanged trees.
+Every firing since has had **one** such member. Tick 298 has two, and the count did not move:
+
+| | tick 297 (mine) | tick 298 coder | tick 298 **mine** |
+| :-- | --: | --: | --: |
+| errors | **3** | **3** | **2** |
+| `a_missed_call_becomes_a_consented_text_back` (sixty) | ✓ | ✓ | ✓ |
+| `two_fields_at_signup_put_a_live_agent_on_a_real_number` (sixty) | ✓ | ✓ | ✓ |
+| `a_deliberately_corrupted_backup_fails_the_restore` (J8, Postgres privilege) | ✓ | ⛔ absent | ⛔ absent |
+| `cancel_is_one_tap_with_nothing_in_between` — `Authorize.Net E00040` | ⛔ absent | ✓ | ⛔ absent |
+
+⭐ **Three gates, three different error sets, and the two gates on the SAME sha disagree** — the
+coder's `errors 3` and mine `errors 2` on `89c9fbd2`, an hour apart. That is the strongest available
+form of the finding, because it is a live disagreement inside one tick rather than a comparison
+across trees: read the integer and two correct runs of one commit contradict each other; read the set
+minus the **population** — J8 and `cancel_is_one_tap`, both external vendor/environment conditions in
+other lanes' columns — and all three gates agree exactly, on sixty's two real-transport stubs.
+
+⛔ **And a tick comparing tick 297 to the coder's block records "errors 3, unchanged" and misses the
+swap entirely** — the reading tick 278's rule exists to prevent, arriving in the one configuration
+where the rule's own remedy also fails: subtracting *the* known-intermittent member leaves 2 against 3
+and the comparison still looks broken.
+
+`cancel_is_one_tap_with_nothing_in_between` is `TwelveJourneysTest.php:385`, a real-transport
+subscription journey; `E00040` is Authorize.Net's *"the record cannot be found"* from its sandbox.
+⛔ The cause is **not measured and no block names one** (227, 230, 249). What is measured: unreachable
+from this wave's diff — two X-157/X-176 test files and one action, against a journey that contacts a
+payment vendor.
+
+**RULED: the lane's intermittent §7 population is TWO named members, and a block states the population
+it subtracted.** Tick 278's phrasing (*"the"* member) was a description of a population of one and
+read as a definition; a set with two members is not the same object, and nothing in the count says so.
+
+## ⚠️ A FALSIFIER'S FOUR STATES EACH MEASURE A TREE, AND PEST'S `line` FIELD IS THE FREE WITNESS OF WHICH (tick 298)
+
+Tick 268 measured that pest's `line` field is the **method's declaration line**, and recorded it as a
+limitation — it cannot discriminate two assertions inside one method. It has a use, and this tick is
+its first firing. SITE-170's four-state falsifier reports:
+
+```
+state 1 (before the fix)     "line":190   Array to string conversion
+state 3 (mutation restored)  "line":191   Array to string conversion
+committed file               191:  public function test_a_faq_block_whose_question_is_not_a_scalar…
+```
+
+State 3's 191 is the committed tree; state 1's 190 is **not**. So the two states ran against files
+that differ by one line above the method — benign for the claim, because the evidence is the pair of
+transitions 1→2 and 3→4 (tick 288) and both messages are identical, and worth recording because
+nothing else in a four-state block says which tree each state measured. ⛔ The cause is not measured
+and is not named.
+
+⭐ Tick 253 ruled *an evidence section measures a TREE, and the report must name which*, and applied
+it to §6/§7. It applies to a falsifier's states too, and there it is **free**: the `line` field is
+already in every pest JSON block, so two states of one method reporting different declaration lines
+is a one-glance tree-witness. Read it. A four-state sequence whose states 1 and 3 disagree on the
+declaration line has not measured the same code twice — which for a mutation that *restores a prior
+committed state* (tick 287's case, exactly this one) is the whole thing being claimed.
+
+## ✅ The `git checkout --` refusal, and why the substitution was VERIFIABLE (tick 298)
+
+`coder-bin/git:78` refuses any `checkout` carrying `--`; tick 278 measured that the **two-token**
+`git checkout <file>` slips through the `[ $# -gt 2 ]` clause and is permitted. SITE-170 was briefed
+with the three-token form, was refused, disclosed it, and substituted `git restore <file>` — which
+the brief itself named as the alternative.
+
+✅ Acceptable, and tick 267's discriminator is the reason: **a disclosed substitution whose result
+the reviewer can MEASURE is a report; one whose result only the coder can see is a claim.**
+`git status --porcelain` in this seat prints ` M CLAUDE.md` and ` M app/phpunit.xml` and nothing
+else — so `EdgeDeployAction.php` is byte-identical to HEAD, which proves the **fix** survived the
+restore and the **mutation** did not. That is tick 287's requirement (*paste `git diff -- <the file>`
+after the restore, proving the fix and not the mutation is what survived*) discharged by the
+reviewer's own measurement rather than by the report's word.
+
+## §7, doctor and the census at tick 298
+
+⚠️ **The §7 baseline is `tests 1998 · passed 1995 · FAILED 1 · errors 2`**, measured **independently
+in this seat** on the tip `89c9fbd2`, reconciling `1995+1+2 = 1998` ✓ (tick 226). Against tick 297's
+own independent gate (`1996 · 1992 · FAILED 1 · errors 3`): `tests` +2, and the diff adds exactly two
+`public function test` and deletes none, so tick 226's arithmetic accounts for the whole delta;
+`passed` +3 and `errors` −1 decompose as +2 from the two new tests and +1 from J8 clearing. ⭐
+`a_published_site_carries_all_seven` **ABSENT — J11 green** on a wave that edits the deploy path.
+Read the error set minus **both** intermittent members (above), never the integer — the coder's gate
+on this same sha read `errors 3`.
+
+§0 pin `goaiez_antig_site_test` · §1 `behind 237, ahead 43`, reconciled by my own
+`git rev-list --count` in both directions (tick 225 — do the arithmetic, "both moved so they agree"
+is not the check) · §2 exactly **one `⛔`** plus the `ℹ supervisor working notes` line, which is not
+a `⛔` (tick 263) — tick 207's **healthy** branch, `none` being the reading that would say the pin
+edit had been lost · §2a ledger unchanged · §2b all parse · §2c no debris · §4 seals ✓ · §6 pint and
+phpstan green.
+
+Live doctor in this seat: stamp `20260829-0647` = `runtime_build` · `integrity clean · boundary 6 ·
+contract 87 · citation 93 · schema 15 · capability 455 · anchor 137 · journey 4` · **797**. **No
+stage moved.** The report's pair passed all three checks — SUM `0+6+87+93+15+455+137+4 = 797` in both
+blocks and in mine (285), `ok` appearing only on `integrity … clean` while every counted stage prints
+`FAIL` (292), and three of seven timings differing so the pair is provably two runs (249), with
+`contract 33/33` and `capability 23/23` repeating **not** a defect because the discriminator is a
+byte-identical *block* (250). **Sixth consecutive clean doctor pair** (293, 295, 296, 297, 298).
+Both id censuses re-run **in this seat with `--include='*.php'`** (287) and byte-identical to the
+report: X-157 `G13-31 1 · G6-06 1 · G6-33 1`; X-176 twelve ids, `G8-32` at 2 and eleven at 1 — an
+untimed before/after has no nonce, so the reviewer's own run is the only verification there is (263).
+
+Census: `pwd` first and tick 285's drift signature **absent** (the three pathspec halves returned
+2 · 10 · 5 while the pathspec-free complement returned 11 — the *split* is the signature, never
+either number). **Cache MISS**: `origin/track/stages` moved `b79ae957 → bc7f983e`, so all four
+surfaces ran in full and the paired `--stat` ran unconditionally (tick 180). All four byte-identical
+to ticks 294–297 — half 1 **2** (`227edeab` reviews, `978041fc` money, **both merges of main**,
+attributed with `--source` per tick 189; no violating partition) · half 2 **10** · half 3 **5** ·
+complement **11**, same members.
+
+⚠️ Stages' two new commits (`65ec8e0c`, `bc7f983e`, both *"N asserted tests for &lt;ids&gt;"*) are
+`app/tests/Modules/X-149/X149Test.php` plus shared state — **X-149 is stages' own** under ruling 5's
+catch-all, so half 1's silence is correct and the paired stat is the only surface that prints them
+(tick 190, which is why this note exists). Tick 181's shared-state trigger fired on `bc7f983e`'s
+deletions and the diff is **one line, the top-level `updated` timestamp** — the benign minimum
+(183, 188); nothing of this lane's was touched. ⚠️ Recorded and not a finding: `bc7f983e`'s subject
+carries the literal unexpanded placeholder `<ids>`, and its `X149Test.php` hunk is `-1 +0`. Another
+lane's column; advisory to Track 1 at most, ⛔ never a parallel fix.
+
+Tips (the next miss's lower bound — tick 192): `main 4b26ffbc` · `money 544d5576` ·
+`pricebook 042e78fd` · `reviews e02d8cf2` · `sixty 2ba6ad57` · `stages bc7f983e` · `ui 08ba50d0` ·
+`site ca4b1e09`.
+
+✅ Standing checks on their healthy branches: tick 290's `--ruling` correction, **sixth** consecutive
+clean JOURNAL entry; tick 274's ground-condition instrument (item 1 reported §2's `⛔` **lines**, so
+the supervisor's own uncommitted notes fired no false stop); tick 287's ordering item (the gate ran
+against a named sha **after** the final commit, so §6/§7 describe the committed tree — 253); tick
+293's pint path; and tick 291's closed form on 6b (`green 3 − red 3 = 0`, the failure being a Mockery
+expectation raised at teardown so all three assertions ran in both runs — the Δ=0 branch, third
+firing after 291 and 293, and again **the correct result** rather than a copy-paste).
