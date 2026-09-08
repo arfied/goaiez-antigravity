@@ -846,3 +846,4 @@
 - `2026-09-08T09:07:50` (R245) X-167 — G6-24 is asserted against per-location stock; G6-18 is refused by the module's scope bound
 - `2026-09-08T09:28:24` (R245) X-167 — G6-18 is asserted as a closed-set schema refusal because the scope bound is about representability, and that the previous TESTS unresolved is superseded
 - `2026-09-08T09:47:49` (R245) X-166 — a margin *report* excludes sample rows at the action's query root because every production caller aggregates, while the per-job management screen keeps showing them labelled because it queries the model directly.
+- `2026-09-08T10:20:34` (R245) X-172 — the expired-link re-issue is adopted in-band — mount() keeps the PortalLink that PortalLinkAction returns and re-points the component's token, because PortalViewAction's own contract is a re-issue without credential requirements; the notice no longer claims an out-of-band send, and a deactivated link still 404s without minting
