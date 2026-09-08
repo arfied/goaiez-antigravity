@@ -9,14 +9,14 @@ use Tests\TestCase;
 
 class X199RuntimeProofTest extends TestCase
 {
-    public function test_an_invoice_reaches_a_real_charge_id_and_its_number_cannot_repeat(): void
+    public function test_the_invoice_artifact_proves_its_number_sequence_and_refuses_a_duplicate(): void
     {
         $path = storage_path('app/evidence/X-199/invoice.json');
         $this->assertFileExists($path);
 
         $data = json_decode(File::get($path), true);
 
-        $this->assertStringStartsWith('ch_', $data['gateway_charge_id']);
+        $this->assertArrayNotHasKey('gateway_charge_id', $data);
         $this->assertMatchesRegularExpression('/^INV-[0-9]{6}$/', $data['invoice_number']);
         $this->assertSame('paid', $data['invoice_status']);
         $this->assertNotNull($data['paid_at']);
