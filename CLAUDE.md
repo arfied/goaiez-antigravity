@@ -5159,6 +5159,120 @@ Watch for: <the trap that applies, by name>
   name a store that now exists) as a forward correction. Live list
   `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **7** rows at tick 256, membership unchanged since
   tick 251; stub pile across the thirteen **10**. Re-run both; never inherit them.
+- ⚠️⚠️ **A "no mutation can redden this" claim is refuted by any mutation that changes the VALUE rather
+  than bypassing the GUARD — two different families, and a measurement of one says nothing about the
+  other.** `ChatDoorTest`'s surviving docblock reads *"The count assertion cannot fail on its own terms
+  (cannot be reddened by a controller mutation) because `ChatTurnAction::handle()` enforces strict types.
+  A bypassed 400 check results in a TypeError (500) before any row can be inserted."* Its reasoning is
+  exactly right **for guard-bypass mutations**, which is the only family anyone has run: wave 138b's
+  mutation 3 dropped the clause, `handle(message: 123)` hit `string $message` under `strict_types`, and
+  the run returned `500` with the count assertion passing. It says nothing about a mutation at
+  `ChatTurnController.php:30` — `$message = $request->input('message');`, un-coerced — where a value
+  change makes `is_string()` true *legitimately*, the guard passes without being bypassed, `handle()`
+  receives a valid string, and the count assertion (positionally **first** in that test, deliberately)
+  fails on its own terms. ⛔ **The defect is this column's twice over**: tick 256 certified that half as
+  *"True of the second — measured, that is wave 138's mutation 3"*, so the coder kept it on my say-so;
+  and tick 255 had already written the governing rule one wave earlier (*a mutation leaving an assertion
+  green establishes only that THAT mutation cannot reach it*) about this very file. **PASS-WITH-NOTES,
+  not `BLOCK`, for that reason alone** — grade a claim the column certified as the column's. ⭐ The
+  general form is the cheap one: **ask which family a mutation belongs to before crediting a claim about
+  every mutation** — bypass the guard, or change the value it judges.
+- ⚠️ **A mutation site constraint is a constraint on the OPERATION, not on the LINES — and stating it as a
+  line range costs a wave that reads the range as a ban.** Since tick 238 this column has briefed
+  *"lines 18–26 are the only span of the request with no tenant established, and four mutation designs
+  have died there"*, and the wave-138c brief closed it *"every other line is available"*. Wave 138c's
+  winning mutation was at **line 26**, inside the span — and it executed and proved what it was sent to
+  prove, because `$businessId = (int) $business->id + 1;` looks nothing up. What dies in that span is a
+  **query against a tenant-scoped model** (`TenantNotResolved` from the Eloquent scope, or
+  `Attempt to read property "id" on null` from `FORCE` RLS on `businesses`), and line 26 is where the
+  tenant first becomes derivable. Tick 238's own lesson was that a brief constraining a site has made a
+  design choice and must say which sites it excludes; its other half is that **the exclusion must be
+  written as the operation that fails, or the coder either obeys it too widely or is right to ignore it.**
+- ⚠️ **Section 7's clash guard REFUSES a second gate rather than colliding — but only when the first
+  one's pest is already up, so its protection is a function of STAGGER.** Wave 138c launched a second
+  `supervise.sh --tests` while its own was mid-suite; `scratch/mut4-run.log` reads
+  `✗ REFUSED: 1 other pest process(es) on goaiez_antig_sixty_test (checkouts pinning it:
+  /home/goaiez/agents/grs-antig-sixty)` and no collision occurred. That is the tick-203 self-collision
+  **prevented** rather than reported, and it is the first time on this lane the guard has paid. ⚠️ Its
+  limit: two gates launched together both pass the check and both run — tick 203's four concurrent pests
+  are what that looks like. ⭐ And it yields a **sixth artifact geometry**: a REFUSED gate log is
+  *full-sized* (10141 bytes, every section present) with a section 7 that carries **no numbers at all**,
+  so `ls scratch/` shows a wave keeping a complete-looking set two of whose runs measured nothing. The
+  known five are too old (81), too early (99c), byte-identical by race (88b, 95, 105), too small in the
+  SIGKILL sense (107c) and the `lock-timeout` stub (tick 235). **Read section 7's own line, never the
+  file's size.**
+- ✅ **`None. I completed all items.` was the TRUE answer for the first time in four waves, and the
+  discriminator is the diff, never the field.** Waves 138, 138b and one before answered `None` over an
+  honest `NOT RUN` printed above them. Wave 138c's five items are all in the tree: mutation 0 and
+  mutation 1 with complete blocks, both docblocks disposed of per test, a generator carrying no literal a
+  file could have supplied, one lowercase-`boundary` ledger row with both state files in the same commit,
+  and pint `passed` on a clean-tree gate at the tip. **Keep grading item completion from the diff and the
+  artifacts — that is what makes a true `None` creditable instead of merely unfalsifiable.**
+- ✅✅ **The tick-256 generator RULING held on its first ask, and it is the twelfth defect on this lane
+  retired by rewriting a sentence rather than by reviewing harder.** *A report generator may contain no
+  string literal that a file on disk could have supplied.* Measured: `grep -n "= '"` over
+  `scratch/generate_report.py` is **empty**, its only `= ""` are initialisers, it parses `gate-clean.txt`
+  for the doctor stamp, the `STAGES` line, pint's object (splitting on `{"tool":"phpstan"` so the two are
+  never merged — the tick-172 misread made impossible rather than merely forbidden) and the verdict, then
+  runs `grep -c` on the verdict **it just read**, derives the artifact list from the directory, and takes
+  `RAW` from the object its own gate wrote. `ARTIFACTS` came back seventeen entries, every size and
+  nanosecond exact against disk, and `RAW` carries the raw `—` escapes that prove it was `cat`ed and
+  not retyped.
+- ✅✅ **Two mutations, `−5` and `−2`, each reddening one assertion on its own terms, with four independent
+  site proofs and neither of them the disclosed field.** Wave 138c, green `1946 · 1943 · 8405 · failed 1 ·
+  errors 2`. M0 (`:26`, `(int) $business->id + 1`) → `1941 · 8400 · failed 3`: radius **2**, and both
+  siblings legitimately traverse the mutated line — `test_valid_key_creates_chat_turn_for_session` loses 4
+  of its 5 assertions (`[201] but received 404`, the tenant now naming a business that does not exist) and
+  `test_key_for_business_a_and_session_for_business_b_returns_404` loses 1 of its 2
+  (`[404] but received 201`, the tenant now naming **B**, whose session the door then serves). M1 (`:32`,
+  the token clause dropped) → `1942 · 8403 · failed 2`: radius **1**, `Failed asserting that 1 matches
+  expected 0.` — the **count** assertion, positionally first in that test, failing on its own terms. Both
+  subtractions reconcile to the assertion. ⭐ The site proofs: section 1 of each gate log pins
+  `M …/ChatTurnController.php` (never a test body, which closes the tick-185 hazard on an artifact), each
+  `SITE` is exact against the committed file with no offset because pint touched neither, each patch is on
+  disk, and M0's message carries the module's own status code. The `SITE` field is the fourth proof.
+- ⭐⭐ **Tick 251's ruling is DISCHARGED and it was open for five ticks on an unrun mutation — a ruling that
+  names a mutation as its ground is owed that mutation, and the debt should be entered as a debt.** Tick
+  251 wrote, of `test_key_for_business_a_and_session_for_business_b_returns_404`, *"this is NOT the `FORCE`
+  RLS vacuity — the code under test resolves the tenant from the key, which a mutation can move"*, over a
+  public unauthenticated write door. Wave 138c's M0 is that mutation and it reddens B1 on its own terms.
+  ⭐ What made it possible was the **fixture arithmetic**, which is the wave-138b finding this column first
+  refused and then had to accept: `ChatDoorTest.php:111,115` provision `bizA` then `bizB` consecutively,
+  `TenantProvisioner:159` is a single `Business::provision(...)` and `RefreshDatabase` seeds nothing, so
+  `bizB->id == bizA->id + 1` and a **one-line** `+ 1` is the two-line mutation the previous wave declined
+  as impossible. **Before refusing a mutation's stated effect, read what the test's own fixture makes true
+  of the ids it creates** — written at tick 256, paid at tick 257.
+- ⚠️ **Third consecutive `None` on the least-comfortable-pair question, and the fix is to ask for a
+  RANKING rather than a defect.** Waves 138, 138b and 138c all answered `None`, after an 8-for-8 run — and
+  a real pair sat in wave 138c's own `ARTIFACTS`, which lists `mut4-run.log` (a gate REFUSED for a
+  self-collision) and `mut0-run2.log` (truncated, no result) beside a `RUN: whole-suite` and an answer
+  saying all items were done, with neither failed run mentioned anywhere. ⛔ Do not require an error to
+  exist — wave 132 answered that by planting one — and do not license a non-answer, which is what wave 121
+  took. **`None` is not available; name the closest pair even when the tension is small.** A ranking always
+  has a top element, so the question becomes answerable without becoming satisfiable by a convention, a
+  universal ground or an agreeing artifact.
+- **Suite baseline, measured by this column at tick 257 on tip `87f511f6`, clean tree — `tests 1946 ·
+  passed 1943 · assertions 8405 · failed 1 · errors 2 · incomplete 3 · risky 1 · duration_ms 110831`,**
+  the standing three by **identity** (`X01Test::test_g2_76_unified_inbox_header`, a `TRACK 1 ACTION`, and
+  the two `TwelveJourneysTest` real-transport errors), §2 `none`, §2b `all parse`, §6 pint `passed` /
+  phpstan `0`, stamp `20260829-0647` = `runtime_build`. Identical in every headline field to tick 256 and
+  to the wave's own `113701`, on a distinct `duration_ms` — three runs, one unchanged surface, which is
+  all a comment-and-ledger diff may produce. §7 waited on `pest.lock` and completed: **contended, never
+  stuck**, for the seventh tick running.
+- **Backlog at tick 257 — wave 138d is the over-general docblock, two forward record corrections and
+  pint; wave 139 is `G5-31`.** RULED. 138d carries no production code and no assertion change: item 0 is
+  whether *"cannot be reddened by a controller mutation"* survives a mutation of the family nobody has
+  run, with the lines printed and **no shape named** (this column endorsed an unrun design at tick 206 and
+  will not do it again); item 1 is the `2026-09-08T18:26:27` ledger row corrected **forward**, naming the
+  row and the respect in which it was wrong (tick 242 — a forward correction that does not name what it
+  corrects is a second row); item 2 is the two proposal lines (`C-Agent G5-31`, `X-102 G16-21`) that both
+  name a chat message store as their blocker against a `ChatTurn` · `chat_turns` · `ChatTurnAction` that
+  wave 136 built, **derived per id** because the two need not have the same answer (ticks 187, 209, 218,
+  221). Grouping three **record corrections** in one wave is not the pair defect ticks 218–223 punish —
+  that defect is a correction and a **build** handed over as one instruction, which is exactly why the
+  `G5-31` build is wave 139 and not this one. Live list `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` —
+  **7** rows at tick 257, membership unchanged since tick 251; stub pile across the thirteen **10**.
+  Re-run both; never inherit them.
 
 ## Style
 
