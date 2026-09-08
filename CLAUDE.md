@@ -661,7 +661,7 @@ Measured at `c4f2f2c1`, every class carrying the command that located its remedy
 | `boundary` | 44 | `TRACK 1 ACTION 5` — ~25 modules across every track, incl. a mutual `C-Reviews` ↔ `X-181` import, + 2 `RULING BQ` |
 | `contract` | 85 | 68 generated `manifest.php` headers (`CB`) + 4 sealed `ContractStage:575` (`DE`) + **13 generated `manifest.php` consumes — measured tick 230** — all OWNER |
 | `schema` | 16 | 12 CHECK defect · 2 `BS` · 1 deploy shape · **1 `RULING FD`** — all OWNER |
-| `capability` | 209 | ⛔ **an ADMISSION TEST, not a partition — `RULING FG`, the last stage without one.** Re-run at tick 231 and still empty; being decomposed as **S-188 / STAGES-230** |
+| `capability` | 209 | ✅ **PARTITIONED at tick 232** (`RULING FG` discharged). `77` rewrite a ⑤ in a `DO NOT EDIT`/P-210 generated `capabilities.php` (`CB`) · `132` = **4** clause-bearing (3 × `X-117` `CM`, 1 × `X-158` §257.4) + **128** clause-less = 37 UNBUILT (`X-221` `X-222` `X-223`) + 13 §257.4 + **78** built-not-deferred, whose fix needs a ⑤ they do not have, so authoring one is P-210. **All 209 OWNER** |
 | `anchor` | 128 | 127 vendor artifact ids (OWNER) + **1 measured tick 230**: `Console/Commands/ModuleDoneCommand.php` flagged for `Str::ulid(` at **`:173`/`:177`, inside the comment arguing `Str::ulid()` is the exact forgery the gate exists to catch** — `RULING BQ`'s shape |
 | `journey` | 4 | real Infobip + a real placed call — OWNER |
 
@@ -763,15 +763,57 @@ completely finished** — a false-negative generator. A coder obeying it reports
 forever and files a spurious `UNRESOLVED`, which is the exact harm `EW` was written to prevent,
 achieved from the other side.
 
-✅ **The replacement: `grep -c "== verdict" <gate>` → `1`, in its own tool call.** `EW`'s *ruling* —
-a brief that redirects a gate names the completion test — stands and is unchanged; only its command
-is replaced.
+⛔ **THIS COMMAND IS ITSELF FALSIFIED — see `RULING FH` below. `grep -c "== verdict" <gate>` returns
+`2`, not `1`, on every gate written after this ruling was committed.** Use the anchored form
+`grep -cE "^.\[1m== verdict" <gate>` → `1`, and read it as a **presence** test (`≥ 1`), never an
+exact count. `EW`'s *ruling* — a brief that redirects a gate names the completion test — stands and
+is unchanged; only its command is replaced, now for the second time.
 
 ⚠️ **`RULING EZ` applied to `EZ`'s own family.** `EU`/`EV`/`EW`/`EX`/`FE` were each a defect in a
 brief's instrument; `EZ` was the correction that says **run a floor's exact command before writing
 it**. `FF` is that rule failing on the correction that established it — `EW` reasoned the last line
 from the section order and never ran `tail -1`. **Seventh member of the family, and the first where
 the defective instrument was itself a standing correction.** No later tick cites `EW`'s command.
+
+### ⛔ `RULING FH` (tick 232) — a floor that greps a LITERAL over a gate file is falsified the moment the ruling defining it is committed. `supervise.sh` §1 prints commit messages, and this lane's commit messages quote their own commands and counts verbatim.
+
+`RULING FF` replaced `EW`'s inverted test with `grep -c "== verdict" <gate>` → **`1`**, measured on
+three finished gate files exactly as `RULING EZ` demands. **It was correct when measured and wrong
+one wave later:**
+
+```
+$ grep -c "== verdict" .agents/supervisor/.gateS231.txt   →  1    (written BEFORE the tick-231 commit)
+$ grep -c "== verdict" .agents/supervisor/.gateS230.txt   →  2    (written AFTER it)
+  48:  2de0b423 chore(supervisor): tick 231 … Replacement is grep -c '== verdict' -> 1 …
+ 186:  == verdict
+```
+
+**The second hit is this seat's own commit message, quoting the string in the act of defining the
+rule.** §1 prints the recent commit log into every gate, so the ruling published its own
+counter-example. A coder obeying the floor reports a perfectly finished gate as malformed.
+
+⚠️ **The general form is worse, and it is specific to this lane** — these commit messages are full
+ledger blocks quoting counts verbatim, so **any** literal grep over a gate is inflated by §1:
+`grep -c "capability 209"` → **2**, `grep -c "boundary 44"` → **2**, each one real §5 line plus one
+commit message. ⛔ **No floor may be written as a bare `grep -c "<literal>" <gate>`.**
+
+✅ **The replacement, verified on both gates at tick 232.** Section headers begin at column 0 behind
+an ANSI escape; §1's log lines are indented two spaces:
+
+```
+grep -cE "^.\[1m== verdict" <gate>    →  1
+```
+
+✅ **And the reading is corrected, not only the command: a completion test is a PRESENCE test, and
+flooring a presence test at an exact count is what re-introduced the fragility.** `≥ 1` is the
+verdict.
+
+⚠️ **Eighth member of the `EU`/`EV`/`EW`/`EX`/`EZ`/`FE`/`FF` family and the SECOND CONSECUTIVE one
+whose defective instrument was a standing correction** — `FF` corrected `EW`, `FH` corrects `FF`.
+The mechanism is new and is not carelessness: `FF` *did* run its command on every gate then in
+existence, and `EZ` is silent about an instrument that is correct when measured and invalidated **by
+the act of recording it**. ✅ **Standing correction: before flooring a `grep` over a gate file, check
+whether the string appears in `git log -3` — §1 will print it back.**
 
 ### ⚠️ Supervisor-seat gates are `.gateT<tick>.txt`; wave gates stay `.gateS<wave>.txt` (tick 231)
 
@@ -794,7 +836,7 @@ one apart since tick 221**, which is why this was the first collision. ✅ **Sta
 gate redirect is named for the WAVE that writes it (`.gateS229.txt`), and this seat `ls`-checks the
 path before writing it into a brief.**
 
-### The residual backlog — ⚠️ **S-188 is OPEN and dispatched (tick 231).** Every earlier item is closed.
+### The residual backlog — ⛔ **EMPTY on measurement (tick 232). S-182…S-188 are ALL COMPLETE.**
 
 ⭐ **S-182 … S-187 are all complete.** At tick 230 the admission test (`RULING ET`) was re-run across
 **all eight** stages and returns **empty** — every remaining row is a sealed file, a generated file,
@@ -808,9 +850,10 @@ voided.** The next tick re-measures rather than quoting this line.
 `X-117` G1-73/G1-81/G17-31 (`CM`, 4× each in `JOURNAL.md`), `X-158` G16-32 (§257.4) and `X-212` G4-54
 (`CB`, generated header measured at `capabilities.php:6`). ⛔ **But `RULING FG` found that the
 capability row of the routing table is that TEST rather than a PARTITION**, so *"the routing is empty
-for this lane"* rested for the largest stage on a test's silence. **S-188 is open and dispatched for
-exactly that**; do not read the empty admission test as the lane being closed until the partition is
-back and its 78 clause-less rows are accounted for. The test for admitting a new item
+for this lane"* rested for the largest stage on a test's silence. ✅ **S-188 answered exactly that at
+tick 232: the partition is back, all 78 clause-less rows are accounted for, and the 47-pair
+extraction is complete per shape** — so the empty admission test now rests on a decomposition rather
+than on silence. The test for admitting a new item
 is unchanged and is the S-182 shape: *it writes no test, it asserts nothing, it cannot move a count,
 and it has a mechanical falsifier.* Anything failing that and not on this list is a wave invented to
 fill the lane.
@@ -885,7 +928,18 @@ that test and is not on this list is a wave invented to fill the lane.
   `role goaiez_backup: has BYPASSRLS` — a `pg_roles` attribute, not a tree fact. **`RULING FB` is
   discharged at its mechanism; `RULING FD` records the consequences and `RULING FE` the probe's one
   weakness (spacing).** Filed as **OWNER ACTION H** + **TRACK 1 ACTION 6**. Nothing fixed.
-- **S-188 — the `capability 209` re-census.** ⭐ **OPEN. DISPATCHED at tick 231 as STAGES-230.** The
+- **S-188 — the `capability 209` re-census.** ✅ **COMPLETE at tick 232, and it CLOSES `RULING FG`.**
+  Every number reproduced from the supervisor seat: the 209 falsifier, both class counts, both module
+  tables byte-identical, the 47 clause pairs, the intersection at exactly 5 rows (4 in the 132 class,
+  1 in the 77), `132 − 4 = 128`, and `128 = 37 UNBUILT + 13 §257.4 + 78`. ⭐ **The 78 is PROVEN
+  clause-less, not merely measured** — `grep -h "⑤" … | grep -vE "^    '[A-Z0-9-]+'" | sort | uniq -c`
+  returns **exactly two header lines, each ×127 = 254, with no third shape**, so `301 − 254 = 47` is
+  uniform per file rather than coincidental in aggregate and no clause can hide in an imbalance. The
+  brief's one stated doubt is closed in the direction it did not expect. ⚠️ Two corrections earned
+  against this seat: the brief floored §257.4 deferred at **14** and the coherent number is **13**
+  (`RULING EZ`'s converse, second time), and `sort -u` over the 209 gives **202** distinct
+  `(module, id)` pairs — **seven ids are flagged in both classes**, so a later tick intersecting on
+  ids must not expect 209. **Shelf life is one code change.** The superseded dispatch text: The
   last stage `RULING EQ` voided whose routing is an **admission test rather than a partition**
   (`RULING FG`). Exact S-185/S-186 shape: no test, no assertion, no `app/**` edit, **cannot move a
   count**, floor is `capability` **209 UNCHANGED**, falsifier is arithmetic (`132 + 77 = 209`, and
