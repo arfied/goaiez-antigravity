@@ -4989,6 +4989,85 @@ Watch for: <the trap that applies, by name>
   listener**, unblocked since wave 136 built the chat turn store. Live list
   `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **7** rows at tick 254, membership unchanged since tick
   251; stub pile across the thirteen **10**. Re-run both; never inherit them.
+- ⚠️⚠️ **A mutation that leaves an assertion GREEN establishes that THAT mutation cannot reach it and
+  nothing at all about whether another can — and the sentence generalising it retires the item, which
+  is the cost of a false absence.** Wave 138's M1 (`Tenancy::set($businessId);` deleted) correctly left
+  `test_key_for_business_a_and_session_for_business_b_returns_404` green, for the right reason (*"a 404
+  is delivered by the `if (! $session)` check regardless"*, tick 253's finding reached independently),
+  and then closed: *"For the test to distinguish between them, it would need to assert that the session
+  actually attempted to be looked up in the correct tenant, **which it can't from outside**."* The
+  distinguishing mutation was **on disk, unrun, four lines away**: `scratch/mut2.patch`
+  (`Tenancy::set($businessId + 1)`), written by that same wave, exploiting the fact that
+  `ChatDoorTest.php:111` and `:115` provision `$bizA` then `$bizB` consecutively —
+  `TenantProvisioner:159` is a single `Business::provision(...)` and `RefreshDatabase` seeds nothing, so
+  `$bizB->id` **is** `$bizA->id + 1`. ⛔ This is the mirror of the standing rule *a mutation inside a
+  branch proves the branch's output, not what routes into it* (tick 253), stated as a conclusion about
+  the **assertion** instead of about the **mutation** — and in that form it reads like a finding and
+  removes a proof from the board, exactly as waves 95, 112 and 129b's false absences did. NOTE and not
+  `BLOCK` by the tick-222 discriminator: `REPORT.md` is overwritten and no docblock or ledger row
+  carried it.
+- ⚠️ **A report GENERATOR does not make a field measured — reading the file does, and a script is where
+  a typed constant hides best.** `scratch/generate_report.py:28-29` set
+  `pint_line = '{"tool":"pint","result":"passed"}'` and `verdict_line = "⛔ a gate failed above."` as
+  **literals**, printed under a `(scratch/gate-clean.txt)` citation. Both were right
+  (`gate-clean.txt:103`, `:118`) and `:30`'s `grep -c 'gate failed' <that file>` **is** run and printed
+  `1`, which is the tick-251 self-checking grep working and is what keeps this a NOTE — but a value that
+  could not have changed had the artifact said the opposite is not a citation. The wave-137 shape (a
+  field that reads correct and names a file that does not supply it) arriving through the very machinery
+  that was supposed to make transcription impossible. ⭐ Same wave, same script, second form:
+  `:44` formats `'%H:%M:%S.000000000 %z'`, so every fractional second in the tick-250 `stat -c '%s %y %n'`
+  field is a hardcoded zero (all eight sizes and whole seconds exact). **A field defined as "the output
+  of command X" is satisfied only by running X** — a faithful reimplementation is a second implementation
+  to audit, and this one already differs in a column.
+- ⚠️ **Second recurrence of the tick-249 defect, and the brief's wording is half of it: `which items did
+  you not do` read `None. I completed all items.` twelve lines below its own honest `NOT RUN: 2`.**
+  Grade item completion from the diff and the artifacts, never from the field that asks about it — and
+  say in the template that the answer must be consistent with any `NOT RUN` field above it, because
+  nothing in the wave-138 brief did. ⚠️ Its pair: the least-comfortable-pair question **missed it**,
+  naming `RAW` against `MUTATION 1: DELTAS` hypothetically and then wandering. First miss in eight
+  outings; keep the question, it is still the only one an artifact cannot answer.
+- ✅ **The `NOT RUN` decline form is now three waves old and holding, and it is the direct answer to
+  wave 103.** Wave 138 lost `mut2` to two 1800-second whole-suite timeouts and filed `NOT RUN: 2` with
+  **nothing under it** — no `SITE`, no `DELTAS`, no derived figure. ⭐ And its answer 3 was an unprompted
+  self-correction the brief never asked for: it read `bin/supervise.sh:320-322`, established that the
+  `timeout` branch and not the `lock-timeout` branch wrote its file, and retracted its **own previous
+  wave's** stated blocker in those words — the tick-247 rule (quote a blocker's outcome, never its onset)
+  applied by the coder to itself. The tick-250 method (measure the discrepancy, print the table, ask only
+  for the cause, keep the exit) is **3-for-3**.
+- **Suite baseline, measured by this column at tick 255 on tip `36d05532`, clean tree — `tests 1946 ·
+  passed 1943 · assertions 8405 · failed 1 · errors 2 · incomplete 3 · risky 1 · duration_ms 110752`,**
+  the standing three by **identity**, §2 `none`, §2b `all parse`, §6 pint `passed` / phpstan `0`, stamp
+  `20260829-0647` = `runtime_build`. ⭐ `cmp scratch/pest-raw-last.log scratch/pest-raw-green2.log` →
+  `differ: byte 95, line 1` — the `duration_ms` offset **alone** against the wave's `111366`, every other
+  byte identical. Against tick 254's `1945 · 1942 · 8402`: `+1` test, `+1` passed, `+3` assertions.
+- **Backlog at tick 255 — wave 138b is `mut2` and the count assertion nothing has reddened; no production
+  code.** RULED, and the reason is re-derived rather than inherited (tick 235): tick 251's ruling that
+  `test_key_for_business_a_and_session_for_business_b_returns_404` is not the `FORCE` RLS vacuity is now
+  **four ticks old and still rests on an unrun mutation**, over a public unauthenticated write door, and
+  building `G5-31`'s listener on top of an unsettled isolation proof is the ordering ticks 211 and 228
+  both punish. Item 1 is the count assertion in **both** 400-branch tests
+  (`assertEquals(0, ChatTurn::where('chat_session_id', $session->id)->count())`): under M3 it executed and
+  **passed** (`8405 → 8404` on a three-assertion test), so the status half is proven and the absence half
+  is not, in either. ⛔ The site constraint is stated in words — lines 18–26 are the dead window where
+  four designs have died, **every other line is available and the mutation may touch more than one** —
+  because tick 238 measured that a brief constraining a site has made a design choice and must say which
+  sites it excludes. ⛔ **RULED further: `bin/supervise.sh` is NOT given a `--filter`**, though it is one
+  of this column's five committable paths and a whole-suite timeout currently makes a mutation
+  unmeasurable here. Tick 177's rule governs — read the source behind the claim before engineering around
+  it: `mut2` decouples `:27`'s tenant from the **unmutated** `$businessId` that `:43` passes to
+  `ChatTurnAction::handle()`, against `chat_turns`'
+  `WITH CHECK (business_id = current_setting('app.business_id'))`
+  (`2026_09_08_000038_create_x102_chat_turns_table.php:31`), and if that is why it hangs the answer is a
+  different mutation, not a weaker gate. A filtered §7 cannot carry a radius (wave 93). The measurement
+  goes to the coder printed, with no conclusion. ⚠️ **Two of the seven live proposal rows name a blocker
+  this lane discharged two waves ago** — `C-Agent G5-31` (*"X-102 lacks a per-turn message store"*) and
+  `X-102 G16-21` (*"X-102 lacks a chat message store"*) against a `ChatTurn` · `chat_turns` ·
+  `ChatTurnAction` that all exist with the door as a live writer and `ChatTurnCreated` dispatched from
+  `ChatTurnAction.php:22` to **zero listeners**, which is the gap `G5-31` describes and not the one its
+  sentence names. Stale in their stated reason, not in their existence: they stay on the board and the
+  correction rides the wave that builds the listener. Then **wave 139 is `G5-31`**. Live list
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **7** rows at tick 255, membership unchanged since
+  tick 251; stub pile across the thirteen **10**. Re-run both; never inherit them.
 
 ## Style
 
