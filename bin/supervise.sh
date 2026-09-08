@@ -154,13 +154,25 @@ else
   echo "  empty — no history rewrites since the ledger began"
 fi
 
-bar "2b. php -l on every PHP file in that set"
+bar "2b. php -l on every PHP file in that set  (working tree AND the committed blob)"
+# REV-116, filed six times to Track 1 and unanswered: this section used to lint
+# only "$ROOT/$f", the file on disk, over a $touched set that includes
+# `git diff --name-only HEAD~1 HEAD`. A syntax error in a COMMITTED blob was
+# therefore masked by a clean working tree — the one case the last-commit half of
+# $touched exists to cover. Both copies are linted now, and they are reported
+# separately: "tree" is what the coder can still fix by saving the file, "HEAD"
+# is what a reviewer would otherwise have to read the diff to find.
 bad=0
 for f in $(printf '%s\n' "$touched" | grep -E '\.php$'); do
-  [ -f "$ROOT/$f" ] || continue
-  if ! php -l "$ROOT/$f" >/dev/null 2>&1; then echo "  ⛔ parse error: $f"; bad=1; fi
+  if [ -f "$ROOT/$f" ] && ! "$PHP" -l "$ROOT/$f" >/dev/null 2>&1; then
+    echo "  ⛔ parse error (tree): $f"; bad=1
+  fi
+  if git -C "$ROOT" cat-file -e "HEAD:$f" 2>/dev/null \
+     && ! git -C "$ROOT" show "HEAD:$f" 2>/dev/null | "$PHP" -l >/dev/null 2>&1; then
+    echo "  ⛔ parse error (HEAD blob): $f"; bad=1
+  fi
 done
-[ $bad -eq 0 ] && echo "  all parse" || fail=1
+[ $bad -eq 0 ] && echo "  all parse (both copies)" || fail=1
 
 bar "2c. debug debris in app code (dump/dd/var_dump)"
 dbg=$(grep -rnE '\b(dump|dd|var_dump)\(' "$APP/app" --include='*.php' 2>/dev/null | grep -vE ':[0-9]+:\s*(\*|//)' | grep -v '@allow-dump' | head -5)
@@ -225,6 +237,46 @@ printf '%s\n' "$GATE_OUT" | tail -3 | sed 's/^/  /'
 run_tool "phpstan" "$PHP" ./vendor/bin/phpstan analyse --memory-limit=1G --no-progress
 printf '%s\n' "$GATE_OUT" | tail -4 | sed 's/^/  /'
 [ "$GATE_RC" -ne 0 ] && fail=1
+
+bar "6b. pint from the REPO ROOT  (the surface §6 above cannot see)"
+# REV-115/116. The twenty-file reformat of 2026-09-08 was a pint run whose cwd was
+# the repo root. `app/pint.json`'s exclude/notPath and `ci.yml`'s
+# `working-directory: app` are BOTH scoped to app/, so §6 above and CI are blind to
+# app/app/Doctor/**, the three Doctor commands and all twelve plugins/wordpress/
+# files — both printed `passed` straight through the event. That is REV-59's shape:
+# a check that returns the same answer whatever those files contain.
+# Same binary, cwd = repo root, so it loads the root pint.json (b3e7b3b9) instead.
+# --test writes nothing.
+# Reddens the gate ONLY on a TRACKED path: pint does not honour .gitignore and
+# walks scratch/, which would otherwise pin this section red forever on two
+# ignored files. Untracked hits are printed, not gated.
+cd "$ROOT" || exit 1
+run_tool "pint-root" "$PHP" "$APP/vendor/bin/pint" --test
+root_pint=$(printf '%s\n' "$GATE_OUT" | python3 -c '
+import json, subprocess, sys
+raw = sys.stdin.read().strip()
+try:
+    d = json.loads(raw[raw.index("{"):raw.rindex("}") + 1])
+except Exception:
+    print("UNPARSED  (pint printed no JSON — see the gate row above)"); sys.exit(0)
+paths = [f["path"] for f in d.get("files", [])]
+if not paths:
+    sys.exit(0)
+known = set(subprocess.run(["git", "ls-files", "--"] + paths,
+                           capture_output=True, text=True).stdout.split())
+for p in paths:
+    print(("TRACKED  " if p in known else "ignored  ") + p)
+')
+if [ -z "$root_pint" ]; then
+  echo "  clean — a root-launched pint reformats nothing"
+else
+  printf '%s\n' "$root_pint" | sed 's/^/  /'
+  if printf '%s\n' "$root_pint" | grep -q '^TRACKED'; then
+    echo "  ⛔ a TRACKED file is reformatted by a root-launched pint — that is the 2026-09-08 surface"
+    fail=1
+  fi
+fi
+cd "$APP" || exit 1
 
 if [ $want_tests -eq 1 ]; then
   # The DB_DATABASE= export on the next line overrides phpunit.xml's $xml_db pin
