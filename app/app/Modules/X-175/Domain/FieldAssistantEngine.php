@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Event;
 
 final class FieldAssistantEngine
 {
+    private const MATCHED_ROW_REFUSALS = ['SAMPLE_STATE_REFUSED', 'UNCONFIRMED'];
+
     /**
      * Answers an on-site field question.
      * 1. No output routed to customer channel (TEST ANCHOR).
@@ -54,7 +56,7 @@ final class FieldAssistantEngine
         if (isset($lookup['status']) && $lookup['status'] === 'quoted') {
             $responseText = $lookup['service_name'].' is '.$lookup['formatted_price'].' from the pricebook';
             $isUnconfirmedPrice = false;
-        } elseif ($this->isPriceShaped($queryText) || (isset($lookup['refusal_code']) && $lookup['refusal_code'] === 'SAMPLE_STATE_REFUSED')) {
+        } elseif ($this->isPriceShaped($queryText) || (isset($lookup['refusal_code']) && in_array($lookup['refusal_code'], self::MATCHED_ROW_REFUSALS, true))) {
             $responseText = "I'd need to confirm that price";
             $isUnconfirmedPrice = true;
         } else {
