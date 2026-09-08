@@ -1778,3 +1778,95 @@ here of **stricter is not automatically safe**; and wiring only the arrival leg 
 ⛔ **Nor is pinning the absence right here**, unlike PB-128's ruling 3: there the absence was permanent,
 so the pin was the deliverable; here the declared end state is *wired*, so a pinned test is one a later
 wave must delete. **Record, measure, then build.**
+
+## ⛔⛔ Trap added 2026-09-08 15:5x — a FORMATTER run from the wrong directory rewrote 8 sealed files, and no gate in any lane can see it
+
+`git status --porcelain` in this checkout carries **24 ` M ` lines and 22 `??` lines**. Board item 14
+described *"18 scratch files … plus the uncommitted `.claude/settings.json`"* — it enumerated the
+**untracked** lines and silently dropped the **modified** ones, and was read as describing the whole
+output for at least six waves. ⭐ **The clearance-scope failure, this time in the board's own
+bookkeeping about a command every tick runs.**
+
+**What the 23 modified tracked files are, measured:** all stamped `13:10:02–13:10:04` — one ~3-second
+sweep — and every hunk is **pint formatting**. All eight `app/app/Doctor/**` diffs read in full
+(docblock `@param` alignment, `if` brace expansion, blank line removed before `return`, one `use`
+hoisted out of a docblock FQN); `DoctorCommand.php`'s 54/53 classified by line shape in one command
+(7× comment re-indentation, an import re-sort, array alignment); `plugins/wordpress/uninstall.php`
+unambiguous — tabs→spaces, `. `→`.`, brace-on-next-line, `@package` stripped. **No predicate, no regex,
+no assertion, no count changed.** ⭐ Behaviour-preserving, so ⛔ **not a `BLOCK` and not a weakened
+CHECK** — no number this lane has quoted is wrong.
+
+⭐⭐ **The mechanism is the finding.** `app/pint.json` **excludes `app/Doctor`** and `notPath`s the three
+Doctor console commands — *those exclusions are the thing protecting the sealed path from formatter
+churn*. `bin/supervise.sh:175` does `cd "$APP"` before `./vendor/bin/pint --test`, so the gate honours
+them. The 13:10 sweep hit **all three excluded groups plus `plugins/`**, which is outside `app/`
+entirely; the only way to do that is to run pint **from the repo root**, where `app/pint.json` is never
+discovered and the bare Laravel preset applies with no exclusions at all.
+⭐ **The generalisation: a protection expressed as a relative path is only as good as the cwd it is
+resolved from.** Identical in shape to this lane's 15:0x CWD permission trap — **second surface, same
+day**. ⛔ Always run pint from `app/`, never from the repo root, and put that line in every brief.
+
+⚠️ **Consequence: this is invisible to every gate in every lane, in BOTH directions.** pint skips 11 of
+the 23 by config and the other 12 by scope, so the reformat is neither what makes `pint --test` pass nor
+something reverting would make fail. ⛔ No count instrument, no `-` line reading, no `--numstat`
+reconciliation reaches it — only reading `git status` line by line does.
+
+⚠️⚠️ **The live hazard, and why the standing brief line is load-bearing rather than hygiene: the tree is
+one `git commit -a` away from putting a sealed-file diff into this lane's history, and it would arrive
+with a green gate and a clean pint.** *"Named paths, `git commit -m … -- <paths>`, never `-a`, never
+`add -A`"* is the only thing standing between this working tree and a One Rule `BLOCK`.
+⛔ This lane neither commits nor reverts them — zero of the 23 are ours (8 sealed, 3 Track 1 console
+commands, 12 WordPress plugin files). Filed as `TRACK 1 ACTION (e)`.
+
+## ⭐⭐ Trap added 2026-09-08 15:5x — a verdict vocabulary you DEFINE but only partly GRADE delivers its strongest row correctly reported and unread
+
+PB-132's brief defined three verdicts — `REACHABLE` / `TEST-ONLY` / `NO WRITER` — and then named only
+`TEST-ONLY` as the graded column. The sweep returned **21 / 2 / 3**. ⭐ **`NO WRITER` is strictly
+stronger than `TEST-ONLY`**: a table read in production that nothing writes *anywhere, not even a test*.
+Three such rows arrived perfectly reported and ungraded, and one of them was in this lane's **core
+module, on the goal path** — `location_books`, read at `PricebookEngine:153` (`firstOrFail`, so it
+**always throws** in production) and `Ui/Pricebook:202`, whose `'firstLocation' => $locations->first()`
+is therefore **always `null`, for every tenant, forever.**
+
+⭐ **The generalisation: grade every value of a vocabulary you define, or the instrument's sharpest
+output is the one nobody reads.** PB-128's ungraded-rows failure in a new form — there the exceptions
+were unreachable behind a blanket header, here a whole column was simply never named.
+
+⛔ **And the discriminator then DISARMED it, which is the other half of the lesson.**
+`grep -rn "location\|Location" app/app/Modules/X-163/capabilities.php` → **zero hits**. Undeclared and
+unwired is a **capability**, not a defect (week-2 build work under ruling 24). And
+`pricebook.blade.php:109` is `collect($locations)->first() ? …->version : 1` — an explicit null-guard
+with a sensible default — with `:135`'s `@foreach` rendering nothing on an empty collection. **No wrong
+value reaches anyone: latent + no wrong value = RECORD.** ⛔ Using "latent" to justify a wave here would
+be exactly the misreading this file already warns about. ⭐ **An instrument that fires and is then
+disarmed by the discriminator is the pair working, not the instrument failing** — record both halves,
+because the next tick will re-find the same row and needs the ruling, not the finding.
+
+## ⭐⭐ Ruling — 2026-09-08 15:5x — the X-168 window is an OPEN/CLOSE PAIR, and the close path lands ALONE
+
+⛔ **Read the action before designing the seam; it moved the question.** The board recorded
+*"`recordJobWindow()` has no close path — it always `create()`s"*, which is true and not the sharp fact.
+The sharp fact is that it takes **`$startedAt` AND `$endedAt` in one call** (`:21-30`) and derives
+`duration_minutes` from both (`:46-49`) — a **whole-window recorder**. So there were two real designs:
+**(a)** an open/close pair, or **(b)** keep the whole-window signature and let the listener hold the
+pairing until `completed`.
+
+**RULED (a), because (b) has nowhere to remember the open time.** `JobStateAction` keeps no state and
+dispatches unconditionally; this lane owns no timestamped job-state store; `work_orders` is X-121's and
+**ruling 8 forbids writing it**. (a) stores the open time in the row itself, in `timesheet_entries`,
+which X-168 owns. Two measurements agree: `N-072` says *"GPS **clock-in** is bound to job state"* and
+the anchor at `:18` says *"only inside an **active** job-state window"* — **an active window is a row
+with `ended_at = null`**, which (b) never has. And (a) is the only design under which the repeated
+`on_site` tap (measured: unconditional, no guard, no disabled button) is **detectable at all**.
+
+⛔⛔ **The close path lands ALONE — no listener, no producer wiring.** It is a **precondition**: wiring
+the arrival leg first is precisely the "zero-hour rows, worse than empty" hazard. It is testable in
+isolation today by calling the action directly. And it **cannot regress anything**, because nothing
+calls `recordJobWindow` in production — which turns the risky part into a later one-line registration
+against a seam already proven. ⚠️ The zero-hour hazard is thereby **scoped, not waved away**: under (a)
+an open row genuinely has 0 minutes *so far*, which is true rather than wrong.
+
+⛔ **Pre-declared wrong fixes, both of which read as correct:** `closeJobWindow` **creating** a row when
+it finds no open one (a stray `completed` mints a zero-length entry — the very outcome the design
+prevents, arriving through the fix); and closing **every** open entry for the person rather than the one
+for that `job_id`.
