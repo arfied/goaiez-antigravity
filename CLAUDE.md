@@ -1047,3 +1047,41 @@ instrument reports eleven findings that are all somebody's honest "not yet".
 actions *plus* the blanket-skip sentinel, with `rate.set` among them — a **write**. It looked like a live
 P-209 violation on a module this lane owns. One grep (`99/127`) killed it. Briefing it would have meant a
 wave against a **generated** file whose regeneration path was a guess.
+
+## ⛔⛔ Trap added 2026-09-08 09:3x — a CLEARANCE is only as wide as the thing that was measured, and this file recorded one that was not
+
+The `is_sample` table above clears **X-166** with the note *"`MarginByJob::render()` is per-row with a
+per-row banner and computes no aggregate, so a sample row is displayed labelled, never silently summed"*
+and ends ⛔ *"Do not brief X-166 on this."* **The measurement is true. It covered one of the module's
+FOUR components.** `ByTech`, `BySource` and `ByService` each compute `$totalRevenue`, `$totalCost`,
+`$totalMargin` — and their shared source, `MarginReportAction::handle()`, sums `revenue_cents`,
+`total_cost_cents` and `gross_margin_cents` on all three grouped branches **with no `is_sample` filter**.
+`JobCost::$casts` has seven numeric casts and no `is_sample`; the column's only reader in the whole
+module is one blade `@if`. The single test seeding `is_sample => true` is `MarginByJobTest.php:100` — the
+per-row label test — so **the three aggregating components never seed the column at all.**
+
+⚠️ **So the module that this file cites as the precedent for "a banner suffices" is the module where the
+number leaves.** An owner marking a job cost as a sample gets it correctly labelled on one screen and
+silently added into revenue, cost and margin on three others.
+
+⭐ **The generalisation, and it is about how this file is written, not about X-166: a clearance inherits
+the scope of its measurement, and prose drops that scope.** "X-166 cleared" is what the next tick reads;
+"`MarginByJob::render()` measured, three sibling components not looked at" is what was true. ⭐ **Record
+which path you measured, and name what you did NOT reach** — a ⛔ "do not brief this" written against one
+component will be obeyed against the whole module, by me, weeks later.
+
+⭐ The tell that reopened it was mechanical and is reusable: **count the module's components and compare
+against the number the clearance actually names.** Four `Ui/` classes, one measured.
+
+## ⭐ Recorded 2026-09-08 09:3x — the cents seam is CLEAN across the lane, and is now spent
+
+Run before the finding above, as the successor instrument after the contract instrument was spent on
+X-167. **All 29 `number_format` sites across X-163, X-82 and X-166 divide a `_cents` column by 100
+exactly once** — no double-divide, no missing divide, no dollars-as-cents. The two conventions differ
+cosmetically (`'$'.number_format(…, 2)` vs `number_format(…, 2, '.', '')`) and neither is wrong.
+
+⛔ **Spent — do not re-derive.** ⭐ Worth keeping as a method though: a money lane's cheapest whole-lane
+sweep is one grep for the formatter and one for the column suffix, and it either finds a customer-facing
+arithmetic bug immediately or clears the entire dimension in a single pass. **An instrument that clears
+cleanly in one pass is still a result**; the failure mode written down two sections up is loosening it
+until it fires.
