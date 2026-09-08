@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-08T04:51:19",
+ "updated": "2026-09-08T05:16:27",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2215,6 +2215,24 @@
    "module": "X-117",
    "chose": "G18-29's fulfilment-vocabulary refusal is restored from main and adapted to pending_payment because ruling 45 leaves no path to paid; the 81 lines were main's one-sided addition that the 978041fc merge dropped under ruling 54, not a deletion by this lane, and no test in this lane cited G18-29",
    "at": "2026-09-08T04:51:19",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-198",
+   "chose": "the merchant pill says not applied rather than external gateway because every charge in this lane posts with the platform key and no Stripe-Account header exists in X-198, so naming an external gateway denies the property the code has; the pending_kyc arm is unreachable in production because the only ProcessorAdapter binding in the tree is a test double, and that is recorded rather than fixed",
+   "at": "2026-09-08T05:16:27",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-211",
+   "chose": "the collections pill says a handover is recorded rather than sent because transmitted_at and partner have no writer outside a test fixture and the module has no transport of any kind, so the true arm asserted a transmission this app cannot perform; both columns stay, correct the day an operator records a real handover",
+   "at": "2026-09-08T05:16:27",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-201",
+   "chose": "a dispute whose status is submitted reads sealed, not sent because submit() seals a row and the module has no transport, and the screen's own confirmation already said nothing was sent two lines above the pill contradicting it; the status column keeps its vocabulary and only the label changes",
+   "at": "2026-09-08T05:16:27",
    "ruling": "R245"
   }
  ]
