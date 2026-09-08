@@ -20,5 +20,6 @@ class JobCost extends Model
         'revenue_cents' => 'integer',
         'gross_margin_cents' => 'integer',
         'gross_margin_pct' => 'float',
+        'is_sample' => 'boolean',
     ];
 }

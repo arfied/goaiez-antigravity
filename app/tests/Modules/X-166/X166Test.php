@@ -8,6 +8,7 @@ use App\Modules\X166\Actions\JobCostAction;
 use App\Modules\X166\Actions\MarginReportAction;
 use App\Modules\X166\Events\JobCosted;
 use App\Modules\X166\Events\MarginBelowThreshold;
+use App\Modules\X166\Models\JobCost;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -175,5 +176,97 @@ class X166Test extends TestCase
 
         $this->assertEquals(60000, $row['revenue_cents']);
         $this->assertFalse(in_array(100000, $row, true), 'No value in the row equals the invoiced amount of 100000');
+    }
+
+    public function test_3a_tech(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Tech Sample Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        JobCost::create([
+            'business_id' => $biz->id,
+            'job_id' => 101,
+            'price_book_version' => 'v1',
+            'tech_id' => 50,
+            'service_type' => 'install',
+            'source' => 'direct',
+            'revenue_cents' => 1500,
+            'total_cost_cents' => 500,
+            'labor_cost_cents' => 250,
+            'materials_cost_cents' => 250,
+            'overhead_cost_cents' => 0,
+            'gross_margin_cents' => 1000,
+            'gross_margin_pct' => 66.6,
+            'is_sample' => false,
+        ]);
+
+        JobCost::create([
+            'business_id' => $biz->id,
+            'job_id' => 102,
+            'price_book_version' => 'v1',
+            'tech_id' => 50,
+            'service_type' => 'install',
+            'source' => 'direct',
+            'revenue_cents' => 3000,
+            'total_cost_cents' => 1000,
+            'labor_cost_cents' => 500,
+            'materials_cost_cents' => 500,
+            'overhead_cost_cents' => 0,
+            'gross_margin_cents' => 2000,
+            'gross_margin_pct' => 66.6,
+            'is_sample' => true,
+        ]);
+
+        $report = $this->reportAction->handle($biz->id, 'tech');
+
+        $this->assertCount(1, $report, 'Margin report by tech should return one row');
+        $this->assertArrayHasKey(0, $report, 'Margin report array missing index 0');
+        $this->assertEquals(1500, $report[0]['total_revenue'], 'Margin report by tech should only sum non-sample jobs');
+    }
+
+    public function test_3b_service(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Service Sample Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        JobCost::create([
+            'business_id' => $biz->id,
+            'job_id' => 103,
+            'price_book_version' => 'v1',
+            'tech_id' => 60,
+            'service_type' => 'maintenance',
+            'source' => 'direct',
+            'revenue_cents' => 2500,
+            'total_cost_cents' => 500,
+            'labor_cost_cents' => 250,
+            'materials_cost_cents' => 250,
+            'overhead_cost_cents' => 0,
+            'gross_margin_cents' => 2000,
+            'gross_margin_pct' => 80.0,
+            'is_sample' => false,
+        ]);
+
+        JobCost::create([
+            'business_id' => $biz->id,
+            'job_id' => 104,
+            'price_book_version' => 'v1',
+            'tech_id' => 60,
+            'service_type' => 'maintenance',
+            'source' => 'direct',
+            'revenue_cents' => 4000,
+            'total_cost_cents' => 1000,
+            'labor_cost_cents' => 500,
+            'materials_cost_cents' => 500,
+            'overhead_cost_cents' => 0,
+            'gross_margin_cents' => 3000,
+            'gross_margin_pct' => 75.0,
+            'is_sample' => true,
+        ]);
+
+        $report = $this->reportAction->handle($biz->id, 'service');
+
+        $this->assertCount(1, $report, 'Margin report by service should return one row');
+        $this->assertArrayHasKey(0, $report, 'Margin report array missing index 0');
+        $this->assertEquals(2500, $report[0]['total_revenue'], 'Margin report by service should only sum non-sample jobs');
     }
 }
