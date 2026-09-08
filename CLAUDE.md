@@ -122,8 +122,26 @@ Watch for: <the trap that applies, by name>
   report.** Two consecutive briefs here asked for figures their own gate could
   not produce (no redirect, then no `--full-doctor`). If the brief wants a stage
   count it asks for `--full-doctor > .gate<N>.txt` and cites `§5`, never `§3`.
+  ✅ **REPAIRED at tick 183 (S-182, `2f008dd0`).** All eight fields were written
+  from a live `--full-doctor` run, `grep -c '"violations": null'` is `0`, and §3
+  now reads `integrity 0 · boundary 3 · contract 87 · citation 0 · schema 15 ·
+  capability 358 · anchor 137 · journey 5` — identical to §5 in the same gate
+  file. **§3 is still a LEDGER**: it is exact only until the next code change and
+  nothing keeps it in step, so the rule above is unchanged. Do not cite §3 as a
+  measurement; re-measure with `--full-doctor` and refresh the eight if they have
+  drifted.
 - **`state.py` owns `BUILD-STATE.json`.** A hand edit there is a `BLOCK`; so is
   a `JOURNAL.md` line with no matching commit.
+- ⛔ **There is a DECOY `REPORT.md` at the checkout root (`RULING CN`,
+  2026-09-08).** The mailbox is `.agents/supervisor/REPORT.md`; an untracked
+  `REPORT.md` sits at the repo root carrying wave S-179's push output
+  (`bbb9f87b..35c22db9`) and dated `2026-09-08 01:03`. **Always open the mailbox
+  copy by its full path.** A tick that opens `REPORT.md` relative to the root
+  reviews a stale wave and its `mtime` is newer than several REVIEWS blocks, so
+  the case-(b) freshness test passes on the wrong file. `REPORT.md.draft`,
+  `REPORT_draft.txt`, `REPORT_draft2.txt` and a root `add_test.php` are the same
+  class of debris. **Delete debris; never `.gitignore` it** — §1 "working tree"
+  is a CHECK, and widening its ignore list to quiet it is the One Rule shape.
 - ⛔ **This lane's coder can NEVER push, whatever `BRIEF.md` says — the SUPERVISOR
   pushes here (`RULING CL`, 2026-09-08).** `coder-bin/git:118` refuses `push`
   unless `GOAIEZ_PUSH_OK=1`, and its message claims *"launcher sets
@@ -209,6 +227,25 @@ clauses) both look like waves and both have an empty intersection.
 **Say the lane is exhausted rather than invent a wave to fill it.** Seven of the
 twelve `RULING C*` false-credit shapes in `REVIEWS.md` were written by a wave that
 existed to keep the lane busy.
+
+### The residual backlog — hygiene only, no stage moves
+
+The stage backlog is empty. What is left is **ledger and tree hygiene**, and the
+test for admitting one is the S-182 shape: *it writes no test, it asserts nothing,
+it cannot move a count, and it has a mechanical falsifier.* Anything that fails
+that test and is not on this list is a wave invented to fill the lane.
+
+- **S-182 — `BUILD-STATE.json` stage refresh.** ✅ done, tick 183.
+- **S-183 — root scratch removal (`RULING CN`).** 405 untracked paths make §1
+  unreadable and one of them is a decoy `REPORT.md`. Delete the debris by name;
+  **keep every `.gate*.txt` and `.sha*.txt`** — REVIEWS blocks cite them by line
+  (`.gate181.txt:135`), and deleting one breaks a citation that cannot be
+  reconstructed.
+- After S-183 this lane **HOLDS**. Every remaining stage count needs the owner:
+  vendor artifact ids (`anchor`), real Infobip and a real placed call
+  (`journey`), the sealed `ContractStage` exemption (`contract`), the
+  platform-scope RLS check defect (`schema`), the `§257.4` deferred list
+  (`capability`). None is this seat's to open.
 
 ## Dispatching the coder (added 2026-09-02)
 
