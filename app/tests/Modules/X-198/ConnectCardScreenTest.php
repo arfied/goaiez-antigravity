@@ -139,4 +139,24 @@ class ConnectCardScreenTest extends TestCase
             ->assertSee('The Stripe Connect redirect is not built in this checkout yet')
             ->assertDontSee('week 2');
     }
+    public function test_the_merchant_pill_says_not_applied_and_never_names_an_external_gateway()
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        MerchantConnection::create([
+            'business_id' => $biz->id,
+            'gateway_name' => 'stripe',
+            'merchant_account_id' => 'acct_A1',
+            'merchant_status' => 'external_gateway',
+            'is_connected' => true,
+        ]);
+
+        Livewire::actingAs($owner)->test(ConnectCard::class)
+            ->assertOk()
+            ->assertSee('not applied')
+            ->assertDontSee('external gateway');
+    }
 }
