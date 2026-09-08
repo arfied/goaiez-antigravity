@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-08T14:35:36",
+ "updated": "2026-09-08T16:02:02",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1856,6 +1856,12 @@
    "module": "X-167",
    "chose": "test_no_purchase_order_is_created_automatically_at_the_reorder_point duplicated test_g6_48_a_low_stock_alert_never_places_an_order line for line and died to the same single mutation, so the uncited duplicate is deleted and its named assertion message moves onto the G6-48 cited test, keeping one contract id to one independently reddenable assertion --ruling R245",
    "at": "2026-09-08T14:35:36",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-168",
+   "chose": "the X-168 job-state window is an open/close pair; closeJobWindow closes the most recent open entry for a job and writes nothing when there is none.",
+   "at": "2026-09-08T16:02:02",
    "ruling": "R245"
   }
  ],
