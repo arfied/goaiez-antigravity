@@ -199,7 +199,8 @@ integrity    0   (was 0)    ✅ clean
 boundary    44   (was 3)    ⛔ ROSE +41 — main's a42079bd revived the cross-module import check
 contract    85   (was 87)   −2 at the merge, before any withdrawal (RULING ER)
 citation     0   (was 0)    ✅ clean
-schema      15   (was 15)   unmoved
+schema      16   (was 15)   ⚠️ +1 at 16:38–16:44 on 2026-09-08 with NO commit — a `pg_roles`
+                            BYPASSRLS grant, NOT a tree fact. `RULING FD`; OWNER ACTION H.
 capability 209   (was 211 at 3398f683; 358 pre-take)  ⭐ STAGES-223 closed X-211 G1-61/G1-70, tick 224
 anchor     128   (was 137)  −9
 journey      4   (was 5)    −1
@@ -595,6 +596,97 @@ emitted token shares the **first** segment · **A2** none does but one shares th
 = **13**. ⚠️ Strictness is the point: `state_changed` does not match `changed`, `human_requested` does
 not match `requested` — a fuzzy match is how judgement gets back in (`RULING DU`'s substring hazard).
 
+### ⭐ `RULING FD` (tick 230) — a `schema` count is a fact about a SHARED DATABASE SERVER, so one `ALTER ROLE` moves every lane at once. `RULING FB` is DISCHARGED at its mechanism.
+
+STAGES-229's probe returned **16, 16, 16**, and with `.gate229.txt` (16:44) and `.gateS229.txt` §5
+(16:58) that is **five measurements of 16 across fourteen minutes** — the 15 → 16 move was a single
+event between 16:38 and 16:44. The 16-row list decomposes with nothing left over:
+
+```
+12  · <table>: tenant-owned table has no RLS               the platform-scope RLS CHECK defect
+ 2  · review_requests.csat_score, qa_tickets.csat_score     RULING BS
+ 1  · database/migrations: a SWITCH and a CONTRACT together
+ 1  · role goaiez_backup: has BYPASSRLS                     ⭐ THE 16th
+```
+
+⭐ **The 16th row is a PostgreSQL ROLE ATTRIBUTE**, read at `SchemaStage.php:171` by
+`select rolname from pg_roles where rolbypassrls and rolname not like 'pg\_%'` (superusers skipped
+at `:174`). **No repository changed.** Someone ran `ALTER ROLE goaiez_backup BYPASSRLS` on the
+shared cluster.
+
+⛔ **It is cross-lane and no lane caused it.** `pg_roles` is cluster-wide, so **all seven lanes'
+`schema` counts rose by one simultaneously** on unchanged trees. A sibling reading its own +1 as a
+regression is chasing a role grant. ⚠️ **It presents identically to the classmap trap and is not it**
+— that trap's cause is a merge, and there was none; `composer dump-autoload` finds nothing here.
+
+⭐ **The check fired as designed.** `SchemaStage.php:146-168` records that an agent once ran
+`ALTER ROLE goaiez_owner BYPASSRLS; ALTER ROLE goaiez_app BYPASSRLS;` to make a CLI query work,
+after which one tenant could read every other tenant's rows **while this stage reported zero**. The
+role check exists because of that. **Do not file this row beside the twelve platform-scope RLS rows**
+— those are a CHECK defect; this one is the check working.
+
+⛔ **No wave. The remedy is `ALTER ROLE … NOBYPASSRLS`, a database operation** — this seat may never
+touch a database, the coder may never migrate. **OWNER ACTION H**, TRACK 1 ACTION 6 as a
+notification. ✅ **Standing correction: a `schema` floor stays a RANGE (`RULING FB`), and any tick
+reporting a `schema` move says whether the moved row is a TABLE row (tree-derived) or a ROLE row
+(server-derived) before attributing it to anything.**
+
+### ⛔ `RULING FE` (tick 230) — a determinism probe's SPACING is part of its instrument. Three runs one second apart cannot detect a drift measured over six minutes.
+
+STAGES-229's brief asked for *"three `--stage=schema` runs, three separate tool calls, `diff` first
+and last"* and **named no interval**. The coder complied exactly: `.sch229a/b/c.txt` are stamped
+**16:57:50 · 16:57:51 · 16:57:52**. Agreement was very nearly guaranteed before the wave ran — **the
+probe as written could not have failed.**
+
+✅ The conclusion survived on evidence the probe did not supply (five measurements over fourteen
+minutes, above), which is why tick 230 is `PASS` and not `PASS-WITH-NOTES`; **the coder is not at
+fault.** ⚠️ **`EU`/`EV`/`EW`/`EX`/`EZ`'s family, sixth member, and the first about STATISTICAL POWER
+rather than the instrument's identity** — `EU` named an incapable command, `EV` floored only its
+subject, `EW` named no completion test, `EX` named no command for a census column, `EZ` wrote unrun
+values, **`FE` specified a repetition count and omitted the spacing that gives repetition meaning.**
+
+✅ **Standing correction: a brief asking for repeated measurements to test stability names the
+INTERVAL, chosen from the timescale of the drift being tested — never back-to-back.**
+
+### ⭐ ALL EIGHT STAGES ARE NOW DECOMPOSED **AND ROUTED** (tick 230) — and the routing is EMPTY for this lane
+
+`RULING EQ` voided the pre-merge census and named re-measurement as the way back. That is complete.
+Measured at `c4f2f2c1`, every class carrying the command that located its remedy surface
+(`RULING FA(i)`):
+
+| stage | count | routing |
+| :--- | ---: | :--- |
+| `integrity` | 0 | ✅ clean |
+| `citation` | 0 | ✅ clean |
+| `boundary` | 44 | `TRACK 1 ACTION 5` — ~25 modules across every track, incl. a mutual `C-Reviews` ↔ `X-181` import, + 2 `RULING BQ` |
+| `contract` | 85 | 68 generated `manifest.php` headers (`CB`) + 4 sealed `ContractStage:575` (`DE`) + **13 generated `manifest.php` consumes — measured tick 230** — all OWNER |
+| `schema` | 16 | 12 CHECK defect · 2 `BS` · 1 deploy shape · **1 `RULING FD`** — all OWNER |
+| `capability` | 209 | admission test **empty** at tick 225; `git diff --stat b8c88e47 HEAD -- app/` **empty**, so the tree has not moved and the result holds **on measurement, not by carrying** |
+| `anchor` | 128 | 127 vendor artifact ids (OWNER) + **1 measured tick 230**: `Console/Commands/ModuleDoneCommand.php` flagged for `Str::ulid(` at **`:173`/`:177`, inside the comment arguing `Str::ulid()` is the exact forgery the gate exists to catch** — `RULING BQ`'s shape |
+| `journey` | 4 | real Infobip + a real placed call — OWNER |
+
+**The 13 `contract` rows routed here in four commands:** `grep -rnF -f <13 tokens>
+app/app/Modules/ --include=manifest.php` → **17 declaration sites** across **16 modules** (X-185
+declares two — a brief flooring "13 file:line hits" would be wrong), and `grep -rl "GENERATED by"
+… --include=manifest.php` → **127**, i.e. every manifest. Concretely
+`app/app/Modules/X-111/manifest.php:46`. The alternative remedy — make some module emit the token —
+is a cross-module seam decision, and `RULING FA(ii)` established ownership is **unknown from this
+checkout by measurement**.
+
+⛔ **This is NOT the pre-merge exhaustion claim `RULING EQ` voided** — that was arithmetic against a
+replaced instrument. This is measured against the **merged** checker at a named sha. ⛔ **It has the
+shelf life every census here has: one code change.** Re-measure; never carry it forward.
+
+⛔ **`state.py next` returning `BUILD_WAVE` wave 30 is NOT a contradiction and NOT a licence** — it
+is the expected consequence of `RULING ER`'s six withdrawals returning modules to `BUILDING`, and
+**`BUILDING` is not progress.**
+
+⛔ **`BUILD-STATE.json` §3's `schema` field is deliberately NOT refreshed to 16 (tick 230).** By
+`RULING FD` it cannot be kept true by any procedure this lane controls — the owner's remedy returns
+it to 15. Writing a server-volatile number into a ledger manufactures a fact with a shelf life
+shorter than a code change. The field is **known-stale by construction**; `RULING CK` forbids citing
+§3 as a measurement anyway. **Cite §5.**
+
 ### ⚠️ Gate filenames are numbered by WAVE, not by tick (tick 229)
 
 `.gate229.txt` was written at 15:08 by STAGES-224 and is cited **by name** in this file as one of the
@@ -607,7 +699,17 @@ one apart since tick 221**, which is why this was the first collision. ✅ **Sta
 gate redirect is named for the WAVE that writes it (`.gateS229.txt`), and this seat `ls`-checks the
 path before writing it into a brief.**
 
-### The residual backlog — ⚠️ NOT empty; see `RULING ET` and `RULING EY`
+### The residual backlog — ⚠️ every dispatched item is CLOSED as of tick 230; the lane HOLDS on measurement
+
+⭐ **S-182 … S-187 are all complete.** At tick 230 the admission test (`RULING ET`) was re-run across
+**all eight** stages and returns **empty** — every remaining row is a sealed file, a generated file,
+a server/production value, a vendor account, or a cross-lane ownership question, which is the
+reserved list verbatim. See the eight-stage routing table above. ⛔ **That is a measurement with a
+one-code-change shelf life, not a standing fact, and it is NOT the pre-merge claim `RULING EQ`
+voided.** The next tick re-measures rather than quoting this line. The test for admitting a new item
+is unchanged and is the S-182 shape: *it writes no test, it asserts nothing, it cannot move a count,
+and it has a mechanical falsifier.* Anything failing that and not on this list is a wave invented to
+fill the lane.
 
 The hygiene list below is intact and still governs hygiene items. What is **wrong** is the sentence
 that opened it — *"the stage backlog is empty"* — falsified at tick 223. The
@@ -663,12 +765,22 @@ that test and is not on this list is a wave invented to fill the lane.
   reasoned. **The open set collapses from eight to two:** `X-111 help.human_requested` and
   `X-185 entity.state_changed` are the only rows with no first- or last-segment overlap anywhere in
   the 388.
+  ✅ **COMPLETE at tick 230.** The re-cut landed and **reproduces byte-identically from this seat** —
+  both segment sets `diff` empty against the coder's, and the partition re-derived independently as
+  **A1 4 · A2 6 · B 2 · C 1 = 13**. The open set is the two rows `X-111 help.human_requested` and
+  `X-185 entity.state_changed`, **both already `UNRESOLVED`** (X-111 at `JOURNAL.md:557`/`:599`/
+  `:1110`, X-185 at `:554`/`:596`) — CITED, never re-filed (`RULING CM`). The wave filed nothing,
+  correctly. Routing for all 13 measured at tick 230; see the eight-stage table above.
 - **S-187 — the `schema` determinism probe.** Dispatched at tick 229 as **STAGES-229** item 3.
   `RULING FB`: `schema` moved 15 → 16 with no commit and no tracked change. S-182 shape — no test, no
   assertion, no `app/**` edit, **cannot move a count**; the deliverable is three `--stage=schema` runs,
   whether they agree, the `diff`, and the 16-row list. ⛔ **Fix nothing**: all 15 known rows are
   OWNER-reserved (12 platform-scope RLS as a CHECK defect, 2 `csat_score`, 1 deploy shape), and a
   16th is a measurement, not a wave.
+  ✅ **COMPLETE at tick 230, and it found the row.** Three runs agreed at **16** and the 16th is
+  `role goaiez_backup: has BYPASSRLS` — a `pg_roles` attribute, not a tree fact. **`RULING FB` is
+  discharged at its mechanism; `RULING FD` records the consequences and `RULING FE` the probe's one
+  weakness (spacing).** Filed as **OWNER ACTION H** + **TRACK 1 ACTION 6**. Nothing fixed.
 
 ⚠️ **The Authorize.Net `E00040` error is a FLAP, not a fixed defect (tick 221).** The tick-220 floor
 named *"§7 errors down to exactly three"* including it; run 199 measured **two**. The third did not
