@@ -38,7 +38,13 @@ final class TimesheetComputeAction
         $periodStart = $startedAt->copy()->startOfWeek()->toDateString();
         $periodEnd = $startedAt->copy()->endOfWeek()->toDateString();
 
+        $timesheet = Timesheet::firstOrCreate(
+            ['business_id' => $businessId, 'person_id' => $personId, 'period_start' => $periodStart],
+            ['period_end' => $periodEnd, 'total_hours' => 0.00, 'status' => 'open']
+        );
+
         $existingOpenEntry = TimesheetEntry::where('business_id', $businessId)
+            ->where('timesheet_id', $timesheet->id)
             ->where('job_id', $jobId)
             ->whereNull('ended_at')
             ->first();
@@ -46,11 +52,6 @@ final class TimesheetComputeAction
         if ($existingOpenEntry) {
             return $existingOpenEntry;
         }
-
-        $timesheet = Timesheet::firstOrCreate(
-            ['business_id' => $businessId, 'person_id' => $personId, 'period_start' => $periodStart],
-            ['period_end' => $periodEnd, 'total_hours' => 0.00, 'status' => 'open']
-        );
 
         $durationMinutes = 0;
         if ($endedAt) {
@@ -76,28 +77,37 @@ final class TimesheetComputeAction
 
     public function closeJobWindow(int $businessId, int $jobId, ?Carbon $endedAt = null): ?TimesheetEntry
     {
-        $entry = TimesheetEntry::where('business_id', $businessId)
+        $entries = TimesheetEntry::where('business_id', $businessId)
             ->where('job_id', $jobId)
             ->whereNull('ended_at')
-            ->latest('id')
-            ->first();
+            ->get();
 
-        if (! $entry) {
+        $latestEntry = $entries->sortByDesc('id')->first();
+
+        if (! $latestEntry) {
             return null;
         }
 
         $endedAt = $endedAt ?? Carbon::now();
-        $durationMinutes = max(0, (int) $entry->started_at->diffInMinutes($endedAt));
 
-        $entry->update([
-            'ended_at' => $endedAt,
-            'duration_minutes' => $durationMinutes,
-        ]);
+        $timesheetIds = [];
+        foreach ($entries as $entry) {
+            $durationMinutes = max(0, (int) $entry->started_at->diffInMinutes($endedAt));
 
-        $timesheet = Timesheet::find($entry->timesheet_id);
-        $this->updateTotalHoursAndDispatch($businessId, $timesheet);
+            $entry->update([
+                'ended_at' => $endedAt,
+                'duration_minutes' => $durationMinutes,
+            ]);
 
-        return $entry;
+            $timesheetIds[] = $entry->timesheet_id;
+        }
+
+        foreach (array_unique($timesheetIds) as $timesheetId) {
+            $timesheet = Timesheet::find($timesheetId);
+            $this->updateTotalHoursAndDispatch($businessId, $timesheet);
+        }
+
+        return $latestEntry;
     }
 
     private function updateTotalHoursAndDispatch(int $businessId, Timesheet $timesheet): void
