@@ -170,7 +170,7 @@ final class LlmsTxtTest extends TestCase
         $this->assertStringNotContainsString('   ', $txt, 'Expected whitespace-only content to be refused');
     }
 
-    public function test_item2_measure_clause_b(): void
+    public function test_a_text_block_with_no_content_key_does_not_abort_the_deploy(): void
     {
         Storage::fake('local');
         $biz = self::provisionTenant([
@@ -201,7 +201,7 @@ final class LlmsTxtTest extends TestCase
         $this->assertEquals('deployed', $res['status']);
     }
 
-    public function test_clause_a_whitespace_text_block(): void
+    public function test_a_whitespace_text_key_is_not_emitted_to_llms_txt(): void
     {
         Storage::fake('local');
         $biz = self::provisionTenant([
@@ -236,7 +236,7 @@ final class LlmsTxtTest extends TestCase
         $this->assertStringNotContainsString('   ', $txt);
     }
 
-    public function test_clause_a_zero_text_block(): void
+    public function test_a_text_key_of_zero_is_emitted_to_llms_txt(): void
     {
         Storage::fake('local');
         $biz = self::provisionTenant([
