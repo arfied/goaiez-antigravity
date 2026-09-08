@@ -242,9 +242,28 @@ that test and is not on this list is a wave invented to fill the lane.
   untouched, the decoy root `REPORT.md` gone and the mailbox copy intact.
   `RULING CN` is discharged as a live hazard and stays above as history.
 
-⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 211 (2026-09-08) against pinned main
-`90ce5e99`, UNMOVED from tick 210** (the second still pin in twelve ticks, after moves of 24 · 16 · 6 ·
-3 · 0 · 5); lane **41 ahead / 734 behind**; both `.claude/hooks` `A` rows still present. ⭐ **`RULING EC`
+⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 212 (2026-09-08) against pinned main
+`90ce5e99`, UNMOVED from ticks 210 and 211** (the **third consecutive still pin**, in thirteen ticks,
+after moves of 24 · 16 · 6 · 3 · 0 · 5 · 0 · 0); lane **42 ahead / 734 behind**; both `.claude/hooks`
+`A` rows still present. ⭐ **`RULING ED` (tick 212) names what `EC` cannot reach: `EC`'s absolute check
+reads only TRACKED surfaces, and the blocker lives on an UNTRACKED one** — `coder-bin/git` is in no
+repository (`DN`), so an ACTION 1 answer delivered as a guard edit alone would leave `EC`'s grep
+reporting "unanswered" forever, right about the rule and wrong about the mechanism. `DH`'s method is
+the only route to a guard fact here and it has **gone dark**: `DM`'s census re-ran identical in all six
+lanes (site 61 · pricebook 2 · reviews 1 · money 0 · sixty 0 · ui 0) and site — the only lane that
+re-reads the guard at source — sits at 06:54 while pricebook and sixty are at 10:07/10:11, so **no new
+at-source guard reading has appeared in this seat's boundary in 3h37m.** ⚠️ That is a fact about the
+BOUNDARY, never about site: `EA`'s hypothesis about site was wrong once already on this exact reading,
+and a file's mtime is not its topic's mtime. Of `EA`'s three mechanisms only the structural one (git's
+own behaviour for a path `HEAD` never held) is guard-independent, and it is `:132`'s never-list — a
+dated sibling reading — that actually shuts the take. ⛔ **`ED` IS NOT AN OPENING and the asymmetry is
+the point: a stale guard reading is a reason to doubt a lift would be DETECTED, never a reason to act
+as though one occurred**; the two `A` rows are a *git* measurement this seat makes directly against the
+pin and they printed again. `CT` (no wave to read the guard) is exactly the temptation `ED` would
+otherwise create, and `DL` binds hardest here — nothing mechanical refuses a tick that acts on an
+undetected lift. **Filed to TRACK 1 ACTION 1 as a delivery-channel constraint, adding no item: an
+answer must arrive on one of `EC`'s three channels — tracked content on `main` (`CLAUDE.md` or
+`.agents/rules/`) or a note in this mailbox's `OWNER.md` — or this lane cannot see it.** ⭐ **`RULING EC`
 (tick 211) retires the delta form of the ACTION 1 check and answers it ABSOLUTELY: `TRACK 1 ACTION 1`
 is unanswered on MEASUREMENT, not merely by construction** — main's `CLAUDE.md` carries ten `.claude/`
 hits and **none** is an ADD-adoption rule for `.claude/hooks/` in a lane take (`N136` at `:862-869`
@@ -1483,6 +1502,57 @@ the house rule and not a local precaution. Main's `launch-coder.sh:24-27` still 
 flags and **no `--allow-push` exists in any lane's launcher** (`CL` re-confirmed at the pin), and its
 `:26` comment reproduces `DB`'s `--allow-restore` reading word for word, `.claude` on the exclusion
 list — corroborating `EA`'s third mechanism from main's side as well as site's.
+
+⚠️ **`EC`'s "ten `.claude/` hits" is a LOCATION count; `git grep -c` reports `18`** (re-measured at
+tick 212 against the same unmoved pin, so it is a line-count against a location-count and **not** a
+change). The eighteen lines sit at exactly `EC`'s ten locations. Reconciled here so that no later tick
+reads the discrepancy as main having moved.
+
+### ⭐ `RULING ED` (tick 212) — `EC`'s absolute check reads only TRACKED surfaces, and the blocker lives on an UNTRACKED one. `DH`'s method has gone dark, and the staleness is now measurable.
+
+`EC` retired the delta form of the ACTION 1 check for the absolute form and **that stands unamended** —
+it is the right check for *"is the rule written down on `main`?"*. `ED` names what it structurally
+cannot reach. `EC`'s grep runs over main's `CLAUDE.md` and `.agents/rules/` — **tracked** surfaces —
+while `RULING DN` records the operative artefact in Track 1's own words: the guard *"is in no
+repository, so it can change with no commit anywhere."* **An ACTION 1 answer delivered as a guard edit
+alone would leave `EC`'s check reporting "unanswered" indefinitely: correct about the rule, wrong about
+the mechanism.**
+
+The only route to a guard fact from this seat is `DH`'s — a sibling supervisor's at-source reading,
+quoted verbatim in its ledger. **Measured at tick 212, that route has produced nothing new in 3h37m.**
+`DM`'s census re-ran **identical in all six lanes**, unchanged since tick 201 — `site 61 · pricebook 2
+· reviews 1 · money 0 · sixty 0 · ui 0` — and `site`, the only lane that re-reads the guard at source,
+has a ledger mtime of **06:54** while `pricebook` and `sixty` are at **10:07** and **10:11**.
+
+⚠️ **Stated as a fact about this seat's read boundary, never about `site`.** `EA`'s opening hypothesis
+about site was wrong once already on this exact reading, and *a file's mtime is not its topic's mtime,
+in either direction*. All that is claimed: **no new at-source guard reading has appeared anywhere in
+this seat's boundary since 06:54.** No sibling mailbox written, no probe (`CV`).
+
+**Which mechanism survives the staleness.** Of `EA`'s three, exactly **one** is guard-independent —
+`git checkout HEAD -- <it>` failing inside git for a path `HEAD` never held, which is structural. The
+other two (`git rm --cached .claude/*` at `:22`; `--allow-restore` refusing `.claude/*` at `:68`) are
+dated sibling readings, as is `DH`'s `:132` never-list covering `.claude/` — and it is `:132`, not the
+structural one, that actually shuts the take.
+
+⛔ **`ED` IS NOT AN OPENING, and the asymmetry is the point.** The two **A** rows are a *git*
+measurement this seat makes directly against the pin, and they print every tick. **A stale guard
+reading is a reason to doubt a lift would be DETECTED; it is never a reason to act as though one
+occurred.** `RULING CT` (no wave dispatched to read the guard) is unrepealed and is precisely the
+temptation `ED` would otherwise create; `CQ`/`DP` likewise. **`RULING DL` binds hardest here**: nothing
+mechanical refuses a tick that acts on an undetected lift, so the refusal rests on this seat's rule
+alone.
+
+**Filed to `TRACK 1 ACTION 1` as a delivery-channel constraint, adding no item:** *an answer that lands
+only in `coder-bin/git` is invisible to this lane and to every check it can run.* To be detectable it
+must arrive on one of `EC`'s three channels — tracked content on `main` (`CLAUDE.md` or
+`.agents/rules/`), or a note in this mailbox's `OWNER.md`. The ask is unchanged: **a `MERGE_HEAD`
+byte-identity exemption for `.claude/hooks/` in lane checkouts, mirroring the `app/app/Doctor/*`
+clause** (`DJ`, in site's wording at `DM`).
+
+Same family as `DL`, `DO`, `DQ`, `DU`, `DY`, `EB`, `EC` — the command was never in doubt. **`ED` is the
+surface variant: the check is absolute and sound, and the artefact it must reach is not on any surface
+it reads.**
 
 ## Dispatching the coder (added 2026-09-02)
 
