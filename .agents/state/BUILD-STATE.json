@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-08T11:15:27",
+ "updated": "2026-09-08T13:16:38",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2323,6 +2323,18 @@
    "module": "X-211",
    "chose": "the late-fee refusal is asserted on money's own FeeWithoutTermException and its write-nothing sentence main's needle was a case-sensitive mismatch against money's message and the module wins over an adapted test",
    "at": "2026-09-08T11:15:27",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-199",
+   "chose": "the evidence artifact evidences the invoice and its number sequence, not an unlinked gateway charge, because payments carries no invoice column so the charge and the invoice status were two unrelated facts printed as one flow",
+   "at": "2026-09-08T13:16:38",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-211",
+   "chose": "the recovery artifact evidences the plan and its refusal, not an unlinked gateway charge, for the same reason",
+   "at": "2026-09-08T13:16:38",
    "ruling": "R245"
   }
  ]
