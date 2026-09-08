@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-08T06:34:28",
+ "updated": "2026-09-08T07:03:42",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2275,6 +2275,12 @@
    "module": "X-117",
    "chose": "the checkout card heads nothing authorised yet in an attention state because the auth token is a real one-shot nonce and a fabrication as a payment instrument, so no gateway ever saw it, and the heading and its state carried none of the qualifier the sentence buried at its end",
    "at": "2026-09-08T06:34:28",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-117",
+   "chose": "the checkout event no longer carries the auth token because that string is minted by this app and ruling 45 traced it to Stripe's source parameter, which only Stripe can issue - the nonce role stays on the order row where the double-charge guard reads it, and the field had no reader on the event at all",
+   "at": "2026-09-08T07:03:42",
    "ruling": "R245"
   }
  ]
