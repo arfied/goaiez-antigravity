@@ -242,8 +242,9 @@ that test and is not on this list is a wave invented to fill the lane.
   untouched, the decoy root `REPORT.md` gone and the mailbox copy intact.
   `RULING CN` is discharged as a live hazard and stays above as history.
 
-⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 194 (2026-09-08), against main's
-`257a6a12`; the seven-row take re-check still prints all seven.** Do not
+⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 196 (2026-09-08), against main's
+`257a6a12`, unmoved through ticks 194–196; the seven-row take re-check still prints all seven, and
+`RULING DA` closes the only body of work that looked parallel to it.** Do not
 open a wave. `state.py next` returns `{"action": "FINISHED"}`. Every remaining
 stage count needs the owner and is listed as **OWNER ACTION A–F** at the end of
 `REVIEWS.md`: vendor artifact ids (`anchor 137`), real Infobip and a real placed
@@ -604,6 +605,47 @@ capabilities from a sibling's command line; read `launch-coder.sh`.
 adding `--allow-restore` would hand every future run a capability it has never had** — the same
 reasoning `RULING CL` used to refuse `--allow-push`. The launcher is this seat's file, so the edit is
 inside its column; the judgement that it should not be made is the ruling.
+
+### ⛔ `RULING CZ` (tick 196) — `GOAIEZ_RESTORE_OK` is a REAL gate: a sibling was observed setting it to **1**, not 0
+
+**Strengthens `CY`; changes no verdict.** `CY` inferred the guard reads the variable from Track 1's
+`run137` setting it to `0`. At tick 196 a process (pid `2733616`, alive at the first `pgrep`, gone
+~40s later) exported `GOAIEZ_PUSH_OK=0; GOAIEZ_MERGE_OK=0; GOAIEZ_HARNESS_OK=0;
+**GOAIEZ_RESTORE_OK=1**`. **A launcher does not set a gate variable to `1` for a variable the guard
+ignores.** So `git checkout HEAD -- <path>` is gated, some lane can open it, and this one cannot —
+`launch-coder.sh:23` refuses every argument but `--coder` and `--allow-merge` by name, `:57`/`:59`
+export `GOAIEZ_MERGE_OK` alone (re-measured tick 196, unchanged). ⚠️ Its lane was **not** identified
+— it exited mid-read and `/proc` is outside the boundary (`RULING CT`); the env prefix is the
+finding, not the lane.
+
+⚠️ **Four launcher revisions are now in evidence**, widening `CX`'s warning: `run137` =
+`MERGE·HARNESS·RESTORE`; pid `2733616` = `PUSH·MERGE·HARNESS·RESTORE`; today's live `sixty` run120
+and `site` run201 = `MERGE·HARNESS` only; this lane = `MERGE`. Read `launch-coder.sh`, never a
+neighbour's command line.
+
+**RULED by the lane supervisor: `CY`'s refusal to add `--allow-restore` stands and is not re-opened
+by the stronger evidence, because the reason was never doubt that the gate exists** — it was
+`RULING CL`'s: the flag hands every future run a capability it has never had, to unblock one step of
+a take that is shut on three other rows regardless. Filed to **TRACK 1 ACTION 1** as an amendment to
+`CY`, adding no item.
+
+### ⛔ `RULING DA` (tick 196) — the thirteen `contract` withdrawals are NOT available now. They are downstream of the take, not parallel to it.
+
+**Corrects how `RULING CT`'s last bullet reads.** That bullet quantifies the take as *"worth 6 and
+plausibly all 13 of this lane's `contract` `UNRESOLVED` entries"*, which a tick scanning for work can
+read as a wave available today — thirteen `state.py resolve` calls, no code, a mechanical falsifier.
+It is not. Measured at tick 196:
+`grep -n "multiEmitterOk\|approval.requested" app/app/Doctor/Stages/ContractStage.php` prints
+**nothing** in this checkout. The exemption is on `origin/main` (`30316573`) and this lane is **374
+behind**. Rule 09 requires a withdrawal's reason to name **what arrived**; nothing has arrived here.
+Firing the thirteen now flips thirteen modules to `BUILDING` — `resolve` never returns `DONE` —
+while `contract` stays at **87**, because the local `ContractStage.php` still fails them
+unconditionally. That is the count-did-not-fall trap executed on purpose, thirteen times, and it is
+the very shape `CT` flags one sentence later.
+
+**RULED by the lane supervisor: no `resolve` wave until the take lands, because the dependency its
+reason would name is 374 commits away.** The thirteen are the take's *payoff*, not a substitute for
+it.
 
 ## Dispatching the coder (added 2026-09-02)
 
