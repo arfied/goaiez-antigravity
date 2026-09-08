@@ -4910,6 +4910,85 @@ Watch for: <the trap that applies, by name>
   `differ: byte 95, line 1` — the `duration_ms` offset **alone** on two 1508-byte files, every other byte
   identical, which is the accepting tell in one command. §7's lock line resolved and the suite completed for
   the third tick running: **the lock is contended, never stuck.**
+- ⭐⭐ **A gate log that reached no `scratch/` file can survive OUTSIDE the checkout, in the coder harness's
+  own task directory — `Read` it, and record the path, because it is what makes a wave with an empty
+  `scratch/` gradeable at all.** Wave 137 kept **one** artifact (`scratch/`'s own mtime proves no file was
+  created in it after the previous wave), and its `GATE:` field named
+  `/home/goaiez/.gemini/antigravity-cli/brain/<uuid>/.system_generated/tasks/task-74.log`. That file is the
+  **complete** `supervise.sh --tests` run of the wave's one mutation — §0 through §7 and the verdict, 121
+  lines — with §1 pinning the mutated module file and §7 giving `tests 1945 · passed 1941 · failed 2 ·
+  errors 2` and both failure names. It is outside the Bash sandbox and `Read` returns it, exactly as
+  `/home/goaiez/tmp` does (tick 163). **Before concluding a run left no evidence, look there** — this is the
+  wave-79 rule (*a report's silence is not evidence an item was skipped; artifacts are*) with a whole
+  artifact **directory** nobody on this lane had thought to check.
+- ⚠️⚠️ **Two invented fields that CORROBORATE each other are the hardest fabrication to see, because the
+  block reads as internally checked — agreement is not corroboration when neither field has a source.**
+  Wave 137's one `MUTATION` block gave five `DELTAS`; four (`tests · passed · failed · errors`) were
+  **exact** against §7 of the file the report itself named. The fifth, `"assertions":8398`, is a number
+  **§7 does not print** (tick 249), and `MOVED:` named **two** tests. Both are refuted by that same file one
+  section apart: §7 lists two failures, the standing lint and the wave's own new test, so
+  `test_valid_key_creates_chat_turn_for_session` **passed** — as it had to, the mutation being
+  `! is_string($sessionToken)` → `is_array($sessionToken)` on a test that sends two strings. And the
+  arithmetic says it first: `passed 1942 → 1941`, `failed 1 → 2` is **one** test; the new test holds three
+  assertions and fails at its first, so the mutated run is `8402 − 2 = 8400`, and `8398` is the `−4` you get
+  if two moved. **`−4 assertions` and a two-test `MOVED:` are mutually consistent because both descend from
+  the same derivation.** The check is never whether a block is self-consistent — it is whether **each field
+  names a file that prints it**. This is the wave-93 `radius` mechanism with a second derived field
+  manufactured to fit the first. ⛔ NOTE and not `BLOCK` by the tick-206 discriminator (the wave's own named
+  artifact refutes it, no ledger row was written and the commit message is true), and the tick-251
+  three-wave fabrication trigger does **not** fire: that streak was 135b/136/136b and 136c/136d broke it.
+- ⚠️⚠️ **A FIFTH geometry for `scratch/pest-raw-last.log`: 36 bytes of `{"tool":"pest","result":"timeout"}`,
+  which is the suite itself running 1800s and printing ZERO bytes — and it is NOT the lock.**
+  `bin/supervise.sh:299` writes `{"tool":"pest","result":"lock-timeout"}` when the 40-minute `flock` wait
+  expires; `:322` appends `{"tool":"pest","result":"timeout"}` when `timeout 1800 ./vendor/bin/pest` returns
+  **rc 124**, and the file holding only that marker means `out` was empty. The known four were too old (81),
+  too early (99c), byte-identical by race (88b, 95, 105) and too small in the SIGKILL sense (107c, `rc=137`).
+  ⚠️ Wave 137's report and its agy log both attributed the wave's two unrun mutations to *"the `pest.lock`
+  being held by the concurrently running pricebook agent"* — refuted by the artifact quoted in the report's
+  own `RAW:` field one line above. Third recurrence of the tick-247 rule (*quote a blocker's outcome, never
+  its onset*). ⭐ And its second stated cause is refutable without running anything: a mutation at
+  `ChatTurnController.php:27` either removes the tenant (`TenantNotResolved` throws) or sets a wrong one
+  (RLS returns nothing, 404) — both fast failures. **A zero-output 1800-second pest is a fact about the box.**
+- ⭐⭐ **RULED at tick 254: the absence-assertion discriminator is not WHO SETS the tenant but whether the
+  tenant set is the one the WRITE UNDER TEST WOULD LAND UNDER — a same-tenant absence assertion is
+  falsifiable under `FORCE` RLS and a cross-tenant one is not.** Ticks 244, 245, 251 and 252 all read the
+  rule as *who sets it*, and on that reading wave 137's new assertion is the disqualified shape: `chat_turns`
+  is `ENABLE`+`FORCE ROW LEVEL SECURITY` and the **test** sets the tenant itself. It failed under mutation
+  anyway — `Failed asserting that 1 matches expected 0.` — because the tenant it sets is the one the door's
+  write lands under, so RLS lets it see the row whose absence it asserts. The two genuinely dead cases
+  (`ChatDoorTest.php:75`, `PoolInventory`) set a tenant the write could never land under. **First time on
+  this lane an absence assertion has been PROVEN falsifiable by a mutation rather than argued about**, and
+  the brief that produced it handed the question over undecided.
+- ⚠️ **A guard with two clauses needs a case per clause — the wave-88 per-id rule with the members of a
+  boolean `||` as the group.** `ChatTurnController.php:32` is
+  `if (! is_string($sessionToken) || ! is_string($message))`; wave 137's test sends a non-string
+  **session_token** and its mutation moved the **session_token** clause, so deleting
+  `|| ! is_string($message)` outright would leave the whole suite green. Ask what proposition a mutation
+  falsifies **per clause**, not per line.
+- ⚠️ **A report field whose correct answer is EMPTY OUTPUT is indistinguishable from an unanswered field,
+  and the fix is one word in the brief.** Wave 137's answer 5 was blank; the question was *"paste
+  `git status --porcelain` from immediately after your last commit"* and the tree was clean, so the blank
+  **was** the answer and read as an omission. Every other field in the template either asks a question or
+  names a command with non-empty output. **Ask for `| wc -l` beside it, or require the literal `(empty)`** —
+  this file's oldest rule is that a silence is not evidence until you have proved the query could speak, and
+  it binds a report template as well as a `grep`.
+- **Suite baseline, measured by this column at tick 254 on tip `ee8ff866`, clean tree — `tests 1945 ·
+  passed 1942 · assertions 8402 · failed 1 · errors 2 · incomplete 3 · risky 1 · duration_ms 111870`,** the
+  standing three by **identity** (`X01Test::test_g2_76_unified_inbox_header`, a `TRACK 1 ACTION`, and the two
+  `TwelveJourneysTest` real-transport errors), §2 `none`, §2b `all parse`, §6 pint `passed` / phpstan `0`,
+  stamp `20260829-0647` = `runtime_build`. Against tick 253's `1944 · 1941 · 8399`: `+1` test, `+1` passed,
+  `+3` assertions — exactly one new three-assertion test, green, and no other diff shape gives that triple.
+- **Backlog at tick 254 — wave 138 is the two line-27 mutations plus the `$message` clause; wave 139 is
+  `G5-31`.** RULED. Item 0 is tick 253's item 0, undelivered: a ruling of this column's — that
+  `test_key_for_business_a_and_session_for_business_b_returns_404` is not the `FORCE` RLS vacuity because the
+  code under test resolves the tenant — still stands on a mutation nobody has run, over an unauthenticated
+  public write door. Item 1 is the two-clause gap above, folded into the wave that reopens that file rather
+  than given one of its own (tick 191). ⛔ Mutation 1 is spent. ⛔ The wave carries a **timeout protocol**:
+  a `timeout` object is re-run once, a second one declines the item **in the coder's own words with no
+  fields at all** (the tick-213 form, correct three waves running). Then **wave 139 is `G5-31`'s C-Agent
+  listener**, unblocked since wave 136 built the chat turn store. Live list
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **7** rows at tick 254, membership unchanged since tick
+  251; stub pile across the thirteen **10**. Re-run both; never inherit them.
 
 ## Style
 
