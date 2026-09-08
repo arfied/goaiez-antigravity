@@ -521,6 +521,92 @@ the four tokens are `win.first`, `campaign.sent`, `campaign.replied`, `sequence.
 is `send.requested` or `approval.requested`. `RULING ER`/`EY` stand. **A withdrawn ledger row does not
 mean a clean module.**
 
+### ⛔ `RULING FB` (tick 229) — a stage count is NOT necessarily a function of the tree. `schema` moved 15 → 16 across two gates with zero commits, an identical working tree and the same checker stamp.
+
+Every ruling from `CK` onward rests on an unstated premise: that §5 is *the* measurement, exact at a
+sha, and that a floor of "unchanged" is meetable whenever the code does not change. **Measured at tick
+229 that premise is false for at least one of the eight.**
+
+```
+.gate228.txt §5  (16:38, supervisor)   FAIL schema 445ms 15 violation(s)
+.gate229.txt §5  (16:44, STAGES-228)   FAIL schema 471ms 16 violation(s)
+```
+
+Seven of eight stages are identical across the pair — `integrity 0 · boundary 44 · contract 85 ·
+citation 0 · capability 209 · anchor 128 · journey 4` — and **`schema` alone moved.** Between them:
+**no commit** (`40925130` at both), **no tracked change** (`git status --porcelain -uno` empty), and
+the **same build stamp** `20260829-0647`, so the stale-doctor trap does not reach it. Six minutes
+apart.
+
+**The mechanism is in the checker.** `app/app/Doctor/Stages/SchemaStage.php` queries the live
+PostgreSQL server, not the repository: `information_schema.columns` at `:67`, `:81`, `:204` and
+`pg_roles` at `:171`. So `schema` is a joint fact about the tree **and** the state of
+`goaiez_antig_stages`, which any migration on that connection can move. `boundary`, `contract`,
+`citation`, `capability` and `anchor` are static scans; `journey` is a hand mark (`CK`).
+
+⛔ **NOT the classmap trap.** That trap's tell is identical (two gates, identical tree, disagreeing
+counts) and its cause is a **merge**. There was no merge here. Do not reach for
+`composer dump-autoload`.
+
+⚠️ **`CK`'s premise, not its conclusion.** *§3 is a LEDGER, §5 is the MEASUREMENT* stands. What `FB`
+removes is that §5 is therefore **reproducible from the tree**. For `schema` it is not, and the two
+ticks that wrote §3 true (183, 225) recorded a value with a shelf life shorter than a code change.
+⚠️ **`RULING ER`'s inverse, third case:** a count that moved with **no wave behind it** is neither a
+regression nor a fix — it is an instrument reading a shared resource.
+
+✅ **Standing correction: a `schema` floor is NEVER an exact number.** Write it as *"15 or 16 —
+`RULING FB` — report which, and report the row list."* Every other stage floor keeps its exact
+number. ⛔ **The identity of the 16th row is UNMEASURED** — §5 prints counts, not rows — and
+`php artisan doctor --stage=schema` was **refused from this seat** at tick 229 (as at ticks
+188/190/191/197/203/205/206/210/216, **the denial is the answer**), so the re-measure is the coder's.
+Dispatched as **STAGES-229** item 3.
+
+### ⛔ `RULING FC` (tick 229) — an (A)/(B) classification with no DECISION RULE. `FA` inverted: a column whose values DIFFER on identical evidence was also reasoned, not measured.
+
+STAGES-228's brief defined (A) as *"a near neighbour **is** emitted by some module"* and (B) as *"no
+module emits the token **or anything like it**"* — and gave no rule for **near** or **like**.
+Measured against the wave's own `.emit228b.txt`, three **(B)** rows have an emitted neighbour by the
+brief's own (A) criterion:
+
+| row, classified **(B)** | emitted neighbour that exists | the report's own justification |
+| :--- | :--- | :--- |
+| `agent.turn.started` | **`agent.turn.answer` (C-Agent)** — two segments shared | *"C-Agent only emits answer, no turn-start"* |
+| `agent.refused` | **`action.refused` (X-122)**, **`capability.refused` (X-126)** | *"C-Agent owns the refusals table but fails to emit this event"* |
+| `campaign.scheduled` | **`item.scheduled` (X-184)** | *"X-184 emits item.scheduled; campaigns are not scheduled as events"* |
+
+The internal contradiction is the tell: `entity.updated` was **(A)** on `person.updated` — a shared
+last segment and nothing more — while `campaign.scheduled` was **(B)** on `item.scheduled`, also a
+shared last segment and nothing more. **Same evidence shape, opposite verdicts, one table.**
+
+⚠️ **`FA` one wave later, inverted.** `FA`: a column with the **same** value in every row was
+reasoned. `FC`: a column whose values **differ on identical evidence** was also reasoned. Same defect
+— **a classification column is a census and a census needs a command** (`EX`) — and both times this
+seat supplied the categories without the rule that separates them.
+
+✅ **The coder is not at fault and the report was better than the brief**: every row carried the
+command and the neighbour it found, *including the three that contradict its own verdict*
+(`RULING EZ`'s converse). ✅ **The replacement rule, measured from this seat at tick 229 and floored
+into STAGES-229**: split on `.`, compare **whole exact** segments with `grep -x` — **A1** some
+emitted token shares the **first** segment · **A2** none does but one shares the **last** segment ·
+**B** neither · **C** wildcard. It partitions cleanly and collapses the open set from eight to
+**two**: **A1 4** (`agent.turn.started` `campaign.scheduled` `page.loaded` `agent.refused`) · **A2 6**
+(`message.received` `message.sent` `entity.updated` `outcome.recorded` `refresh.due` `mail.delivered`)
+· **B 2** (`help.human_requested` X-111 · `entity.state_changed` X-185) · **C 1** (`any.event` X-156)
+= **13**. ⚠️ Strictness is the point: `state_changed` does not match `changed`, `human_requested` does
+not match `requested` — a fuzzy match is how judgement gets back in (`RULING DU`'s substring hazard).
+
+### ⚠️ Gate filenames are numbered by WAVE, not by tick (tick 229)
+
+`.gate229.txt` was written at 15:08 by STAGES-224 and is cited **by name** in this file as one of the
+two files proving the tick-225 §3 refresh. STAGES-228's brief told the coder to write `--full-doctor`
+to that same path, and it did; the tick-225 file is gone. ⭐ **Measured, and the citation it destroyed
+was already half-wrong:** `grep -c "^== 5" .agents/supervisor/.gate230.txt` returns **`0`** —
+`.gate230.txt` has no §5 at all, so *"identical to §5 in `.gate229.txt`/`.gate230.txt`"* rested on one
+file, and that file is the one the brief overwrote. **The tick counter and the wave counter have been
+one apart since tick 221**, which is why this was the first collision. ✅ **Standing correction: a
+gate redirect is named for the WAVE that writes it (`.gateS229.txt`), and this seat `ls`-checks the
+path before writing it into a brief.**
+
 ### The residual backlog — ⚠️ NOT empty; see `RULING ET` and `RULING EY`
 
 The hygiene list below is intact and still governs hygiene items. What is **wrong** is the sentence
@@ -568,6 +654,21 @@ that test and is not on this list is a wave invented to fill the lane.
   in the brief from tick-228 measurements; the wave's work is the **13 `nothing_emits_it`** rows,
   classified as (A) naming drift · (B) real seam gap · (C) wildcard, falsifier `A + B + C = 13` and
   `contract` **85 UNCHANGED**. **(B) is the only category that can contain an open item.**
+  ⭐ **HALF COMPLETE at tick 229.** The census is CONFIRMED — the 13 rows match `.con228.txt` exactly,
+  `A+B+C = 4+8+1 = 13`, and the emitter set is **provably complete and corroborates the stage from the
+  other side**: 127 manifests, 127 modules represented, 388 tokens, and **zero** of the 13 consumed
+  tokens present in it. ⛔ What did **not** land is the **A/B boundary** (`RULING FC`), because the
+  brief named two categories and no rule. Re-cut as **STAGES-229** item 1 with the mechanical
+  whole-segment rule, floored at **A1 4 · A2 6 · B 2 · C 1 = 13** — measured from this seat, not
+  reasoned. **The open set collapses from eight to two:** `X-111 help.human_requested` and
+  `X-185 entity.state_changed` are the only rows with no first- or last-segment overlap anywhere in
+  the 388.
+- **S-187 — the `schema` determinism probe.** Dispatched at tick 229 as **STAGES-229** item 3.
+  `RULING FB`: `schema` moved 15 → 16 with no commit and no tracked change. S-182 shape — no test, no
+  assertion, no `app/**` edit, **cannot move a count**; the deliverable is three `--stage=schema` runs,
+  whether they agree, the `diff`, and the 16-row list. ⛔ **Fix nothing**: all 15 known rows are
+  OWNER-reserved (12 platform-scope RLS as a CHECK defect, 2 `csat_score`, 1 deploy shape), and a
+  16th is a measurement, not a wave.
 
 ⚠️ **The Authorize.Net `E00040` error is a FLAP, not a fixed defect (tick 221).** The tick-220 floor
 named *"§7 errors down to exactly three"* including it; run 199 measured **two**. The third did not
