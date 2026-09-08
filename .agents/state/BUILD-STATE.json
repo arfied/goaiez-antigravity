@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-08T15:13:47",
+ "updated": "2026-09-08T15:53:26",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2371,6 +2371,18 @@
    "module": "X-199",
    "chose": "a draft invoice row states that it was never issued and that nothing in this checkout issues a draft, instead of reporting a missing PDF, because pdf_url is permanently null since the fabricated constant was removed and the plan declares invoice.draft as a job.completed subscriber meaning an invoice you finish later; no draft to issued transition is built, because minting one so a plan line comes true inverts the dependency",
    "at": "2026-09-08T15:13:47",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-173",
+   "chose": "the sync screen says its lines were categorised inside this app and that nothing is posted to a ledger from here, because the module has no transport at all and its other two screens already assert that nothing was posted; the records_synced column is not renamed because it has six readers and synced is the module's own verb for the local categorisation",
+   "at": "2026-09-08T15:53:22",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-199",
+   "chose": "the invoice due latch is named due_detected_at rather than due_notified_at, because the module notifies nobody and the column is written daily by a scheduled command, so its name was the only place the truth could live; the command signature x199:mark-due is left alone although it marks nothing due, because it is pinned in a CHECK file that is another lane's, and X-120's alert_sent is left alone because its declaration line carries a TEST ANCHOR comment",
+   "at": "2026-09-08T15:53:26",
    "ruling": "R245"
   }
  ]
