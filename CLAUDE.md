@@ -242,15 +242,12 @@ that test and is not on this list is a wave invented to fill the lane.
   untouched, the decoy root `REPORT.md` gone and the mailbox copy intact.
   `RULING CN` is discharged as a live hazard and stays above as history.
 
-⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 209 (2026-09-08) against pinned main
-`034a9919`, UNMOVED from tick 208's pin** (the first still pin since tick 200, after moves of 24, 16, 6
-and 3); lane **39 ahead / 729 behind**; both `.claude/hooks`
-`A` rows still present. **TRACK 1 ACTION 1 is unanswered by construction in its cleanest form yet — at
-tick 208 no commit landed *in which it could have been answered*; at tick 209 no commit landed at
-all.** (Tick 208's reading, kept: the 3 were two `build:`
-commits and one supervisor note on `track/sixty`, and `git diff --stat 4dd461f6 034a9919 --
-CLAUDE.md .agents/rules/` printed nothing, so no commit landed on `main` in which it could have been
-answered.) ⚠️ **Track 1's
+⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 210 (2026-09-08) against pinned main
+`90ce5e99`, MOVED 5 commits from tick 209's `034a9919`** with no fetch from this seat; lane **40 ahead
+/ 734 behind**; both `.claude/hooks` `A` rows still present, and
+`git diff --stat 034a9919 90ce5e99 -- CLAUDE.md .agents/rules/` prints nothing across all five, so
+**TRACK 1 ACTION 1 is unanswered by construction.** (Tick 209's cleanest form, kept: at tick 208 no
+commit landed *in which it could have been answered*; at tick 209 no commit landed at all.) ⚠️ **Track 1's
 `OWNER.md` note of 09:1x is NOT the answer and disclaims itself** — *"Nothing here touches your two shut
 rows"*; it settles the product-file conflict (`RULING DS`) and leaves the guard question open, so a tick
 must not read the arrival of an `OWNER.md` reply as a lift. **Pin the sha before checking
@@ -1390,6 +1387,42 @@ guard half was adopted in the same breath.
 one inference makes the take *more* certainly shut. No wave to test it (`CT`), no bare `git merge`
 (`CQ`, `DP`), no dropped path (`DG`, `DL` binding), no pre-resolution of `X167Test.php` (`DT`,
 unrepealed). **TRACK 1 ACTION 1 gains a corroborating measurement and no new item.**
+
+### ⭐ `RULING EB` (tick 210) — main's `X167Test.php` blob MOVED for the first time since `DS`. Re-derive the resolution of record every tick; a method count is a fact about ONE BLOB AT ONE SHA, not about the file.
+
+`DY` obliged a tick to re-take **two** baselines on a moved pin — the pin for the take-check, the blob
+hash for the resolution of record. Ticks 207 and 208 re-took both and the blob was unchanged twice,
+which is exactly the shape that tempts a tick to stop re-taking it. **At tick 210 it moved.** Main's
+blob is now **`ef362ab820b4dcc15b2df6ab9567c869`**, 504 lines, **17** `test_` methods — it was
+`7cf129bd…`, 422 lines, 15, the hash Track 1 quoted in `OWNER.md` and this seat reproduced three
+times. The mover is pricebook's `26bd648f` (merged as the pin), appending two methods **at EOF before
+the final closing brace** — `DS`'s exact anchor.
+
+**`DS` survives in structure and is re-derived in every number.** Ours is unchanged (`ec9142aa`, 268
+lines, 4 methods), `comm -23` still prints exactly `test_g6_46_no_autonomous_ordering_path` and nothing
+else, main's `use` list is still a strict superset (16 vs 15) and still declares/constructs
+`$reorderAction` — so the resolution of record is unchanged in kind (**take main's blob whole, insert
+our lines 237–267 before the final closing brace; no import change, no `setUp` change, no deletion, no
+marker-strip**) and changed in one number: **the union is 18, not 16.**
+
+⚠️ **`DU`'s prefix hazard survives verbatim** — `grep -c` on the bare name still prints `1` against
+main's new blob (`…_no_autonomous_ordering_path_it_proposes`, now line 274), the parenthesised form
+still `0`. `DU`'s four falsifiers stand with the count updated to **18**.
+
+⛔ **The durable point is shelf life.** `X167Test.php` is a live target — two lanes append to its EOF,
+and pricebook filed `X-167` `UNRESOLVED` the same morning (`0455cd85`; its own filing, not a duplicate
+— `RULING CM` checked). **Any tick that hands Track 1 a method count re-derives it against the pin in
+the same tick.** A stale `16` fails `DU`'s second falsifier on a *correct* resolution and reads as a
+lost method — `RULING CK`'s stale-number shape, aimed at the one artefact this lane has offered another
+seat. Same family as `DL`, `DO`, `DQ`, `DU`, `DY`, `EA`: the command was never in doubt, the baseline
+was — except here the baseline actually moved, and re-taking it was the whole of the tick's value.
+
+⚠️ **Also measured at tick 210 and new to case (a): `ps -p <pid> -o pid=,cmd=` and `kill -0 <pid>` are
+now BOTH refused from this seat**, so the pidfile liveness test earlier ticks ran is no longer
+available here. As at ticks 188/190/191/197/203/205/206, **the denial is the answer; do not re-run
+them.** It costs nothing — `RULING CW`'s `pgrep -a -P 1 -f agy` is the prescribed check and is
+decisive alone, and `launch-coder.sh:29` is the launcher's authority, never this seat's. The rule is
+unchanged: never read the pidfile's mere presence as "coder running."
 
 ## Dispatching the coder (added 2026-09-02)
 
