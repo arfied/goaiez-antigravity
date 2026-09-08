@@ -1188,3 +1188,94 @@ either, and because both are the *right* shape of near-miss:
    and the revocation hole is not there. ⭐⭐ **But re-counting it is what found the PB-124 defect one
    line away — the clearance was right and the module was still wrong.** That is the case for
    re-counting a clearance even when it confirms.
+
+## ⛔⛔ Trap added 2026-09-08 10:3x — a convention phrased "always pass X" is only as good as the SIGNATURES it lands on
+
+PB-118's rule — *a named assertion message before every index, so a RED reads as a named failure rather
+than "Undefined array key"* — was required for **six consecutive waves** and was landing on the wrong
+parameter for at least one of them. PB-124's new test carried
+
+```php
+->assertSee('Distinctive Fixer Job', 'This is the assertion the whole wave exists for.')
+```
+
+but `livewire/src/Features/SupportTesting/MakesAssertions.php:14` is
+`assertSee($values, $escape = true, $stripInitialData = true)`. **The second parameter is `$escape`, not
+a message.** A non-empty string is truthy, so it silently resolved to the default and **was never
+printed.** Harmless (only the literal `'0'` would flip escaping) — **latent + no wrong value = record.**
+
+⭐⭐ **The tell is free and was already sitting in the coder's own report: mutation 3a's RED is the bare
+`contains "Distinctive Fixer Job"` failure with the sentence nowhere in it. If a mutation's RED does not
+contain your message, the parameter was not a message.** Require the quoted RED and this class of error
+reports itself.
+
+⭐ **The generalisation, and it is about how a reviewer states a rule, not about Livewire:** three
+libraries in this repo put a third-party value where a message "should" go — PHPUnit puts `$message`
+**last**, Livewire puts `$escape` **second**, Laravel's `assertDatabaseHas` puts `$connection` **third**.
+A blanket "always pass a message" is therefore wrong on two of the three, and the reviewer who issued it
+never checked a signature. ⭐ The coder **independently caught the `assertDatabaseHas` case** and removed
+the prose argument — that deletion is a **correction, not a weakening**, and a reviewer who counts `-`
+lines without reading them would have graded it backwards. **Narrowed, not closed: named messages on
+PHPUnit assertions only.**
+
+## ⛔ Trap added 2026-09-08 10:3x — a POST-gate commit, and the narrow reason one can still be pushed
+
+The converse case to the PB-117 mid-gate trap, and it needs a **different** rule rather than the same
+one stretched. PB-124's `chore(state)` commit landed at `10:20:43`, **28 s after the gate window closed**
+(`10:16:38 → 10:20:15`, from `gate-runs.tsv`), so the gated tip was `9ef1fb86` and not HEAD. Nothing was
+committed *inside* the window, so PB-117 did not fire.
+
+⭐ **Ruled pushable — but on a measurement, not on the size of the delta.** The gate **does** read
+`BUILD-STATE.json` (`runtime_build`, gate log `:119`), so this was a real check that could have failed.
+Verified field by field: `runtime_build` byte-identical, `plan_sha256` and `roster` unchanged; the only
+edits were `updated`, one appended decision object and one `JOURNAL.md` line — **none of which any gate
+instrument reads.**
+
+⛔⛔ **The narrow rule, so this is not stretched into PB-117's forbidden argument:** a post-gate commit is
+pushable **only** when every path it touches is verified inert against every gate instrument, **field by
+field**. PB-117's commit was a **test file**, which the gate absolutely measures — that is why
+"the delta is trivial" was forbidden there and a *measurement* is permitted here. **If a post-gate commit
+touches anything under `app/`, hold the push and re-gate.**
+
+⭐ **And the cause was the brief, fifth wave running.** PB-123 put its `chore(state)` commits *before* the
+gate and they landed inside the measurement; the PB-124 brief simply never said where the state commit
+goes. ⭐ **Order every brief: pint → fix → tests → mutations → `state.py decided` + commit → gate**, and
+require a clean `git status --porcelain` with no commit at all between the gate's start and finish.
+
+## ⭐ Trap added 2026-09-08 10:3x — a REFUSAL that lives only in a return value, and the sibling callers that prove the seam
+
+The successor sweep to PB-124 (*an action whose whole product is its return value, called as a
+statement*), run across the lane's ten modules. Three statement-position `->handle(` calls survive; one
+is a defect, and it is the sharpest shape of this family yet — **the discarded return value is a
+refusal.**
+
+`PriceConfirmAction::handle()` has two exits. The happy path updates the row and dispatches
+`PriceConfirmed` + `PricebookUpdated`; the refusal (`price_cents <= 0`) returns
+`['is_confirmed' => false, 'refusal_code' => 'FILL_ME']` and **writes nothing, dispatches nothing.** It
+exists *only* in the return value.
+
+| caller | captures | handles `FILL_ME` | surface |
+| :--- | :--- | :--- | :--- |
+| `ConfirmationScreen:92` | ✅ | ✅ `$this->refusals[$itemId] = true` | blade `:61` message, `:82` disables the button |
+| `DailyPricingDigest:53` | ✅ | ✅ identical | same |
+| **`Pricebook::confirmItem():154`** | ⛔ bare statement | ⛔ none | ⛔ **no `$refusals` property exists** |
+
+**An owner clicks Confirm on a zero-priced row: the action refuses, the row stays `is_confirmed = false`
+and `is_sample = true`, and the screen says nothing.** ⚠️ And that is precisely the row
+`PricebookEngine` refuses to quote from (`:81`, `:93`) — **so the owner believes they closed the gap
+blocking their quotes and has not.** This lane's goal sentence failing from the owner's side.
+
+⭐ **What made this cheap to rule on: two of the three callers already agreed.** A seam with two
+concordant implementations is not a design question — it is one component that was never finished, and
+the fix is "match the siblings", with no (a)/(b)/(c) to weigh. ⭐ **Look for the majority before
+designing anything.**
+
+⛔ **The wrong fix, pre-declared:** copying `ConfirmationScreen:81`'s own `$cents <= 0` pre-guard into
+`Pricebook`. The action already owns that predicate; a second copy in the screen is two places answering
+one question, free to drift — the PB-120 overloaded-predicate shape. **Capture the refusal the action
+already returns.**
+
+⚠️ **The instrument is now SPENT on `->handle(`.** The other two survivors were measured and are ⛔ not
+work: `Pricebook:177` (`BookVersionAction`) and `CustomerfacingPortal:69` (`PortalActionHandler`, inside
+a `try/catch`) return no refusal the caller needs. ⛔ Do not loosen the sweep into "calls that could
+return something" to make it fire again — that is the documented route from defects to leads.
