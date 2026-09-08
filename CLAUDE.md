@@ -815,3 +815,30 @@ larger merge would present as a phantom `Class not found` in a suite nobody woul
 Standing: **nothing writes into a checkout while its suite is reading it**, including this seat's own
 `CLAUDE.md` edits, and a gate's §7 attributes to a sha only if the gate STARTED after that sha landed
 and no writer existed for the duration.
+
+⚠️ **A RELAY DELIVERED TO A LANE THAT CANNOT TICK IS PARKED, NOT DELIVERED (N133, 2026-09-08).** Case (d)
+fires only if `OWNER.md` is newer than the lane's last REVIEWS block. A message written while the lane is
+dead (weekly limit) is older than the first block the lane writes when it wakes, and is never read. Fix:
+`touch` it after the lane's first post-outage block — under an idle coder, or queued behind a bounded
+waiter, because a touch under a live coder makes the next tick rewrite `BRIEF.md` mid-run. **And a
+strict needle for "did they read it" returns a false zero** — ticks paraphrase; money named the relay's
+heading verbatim and reviews wrote a whole block about it while `grep -c '<heading>'` read 0. Loosen the
+needle before concluding anything from a zero; three times this week in three costumes.
+
+⚠️ **A SEALED-CHECKER COMMIT ON `main` MADE EVERY LANE'S MERGE OF `main` UNCOMMITTABLE (2026-09-08).**
+`coder-bin/git`'s never-list refuses a commit that stages `app/app/Doctor/**`, and a lane merging a
+`main` that carries owner-ruled checker edits MUST stage them. reviews found it, one command short of a
+gated merge, and named the fix: the harness byte-identical clause. Applied — a Doctor path is admitted
+in a `GOAIEZ_MERGE_OK=1` merge only when the staged blob equals `MERGE_HEAD`'s (adopt `main`'s checker
+whole, never edit one), **lane checkouts only**: in `grs-antig`, `MERGE_HEAD` is a lane and the clause
+would let a lane smuggle a checker change onto `main`. **Any change to a never-list path on `main`
+needs its merge-adoption rule written in the same act**, or it blocks every lane.
+
+⚠️ **`.claude/settings.json` MERGES, AND A DENY GLOB THAT MATCHES EVERY CHECKOUT BUT YOUR OWN IS INVISIBLE
+FROM WHERE YOU SIT (2026-09-08).** `126595b6`'s eight denies on `//home/goaiez/agents/grs-antig-*/…`
+reached pricebook whole (the `merge=ours` fail-open on a one-sided change) and, from inside
+`grs-antig-pricebook`, matched its OWN mailbox — Bash redirects included — while matching nothing in
+`grs-antig`. pricebook diagnosed it and correctly refused to force a write past the approval gate.
+**Seat-specific denies live in `.claude/settings.local.json`** (gitignored, cannot merge); the tracked
+file carries only what is true in every checkout. And a lane's merge of `main` will re-import the
+tracked file whenever only `main` has moved it — the per-track restore step exists for exactly this.
