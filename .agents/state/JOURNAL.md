@@ -838,3 +838,4 @@
 - `2026-09-07T04:36:21` (R245) X-163 — a price range lookup matches on the normalised service key and refuses a sample or unconfirmed row with its own code instead of NO_FACT
 - `2026-09-08T06:02:32` (R245) X-163 — pricebook engine quote_response respects deducted_if_proceeding flag
 - `2026-09-08T06:20:34` (R245) X-163 — PriceQuoteAction returns service_name alongside amount so AgentAnswerAction can build an attributed quote
+- `2026-09-08T06:50:24` (R245) X-82 — RateLookupAction refuses a sample rate with SAMPLE_STATE_REFUSED and returns no amount, matching X-163's sample doctrine
