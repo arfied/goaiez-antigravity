@@ -672,3 +672,84 @@ statement's own exit status** — so the launcher would have exited silently the
 are deleted. A dispatcher that stops dispatching with no message is precisely the stall the change
 existed to end. Caught by reading it back, rewritten as `if`. ⚠️ And never edit `bin/supervise.sh`
 while a gate is running: bash reads a script incrementally.
+
+## ⭐ RESOLVED 2026-09-08 06:5x — the mailbox lockout, its real cause, and the model that was wrong twice
+
+**The lockout is over. `REVIEWS.md` is writable again via the `Edit` tool** — this section was written
+in the same tick that proved it. The `-NEXT` workaround is **retired**: `BRIEF-NEXT.md` and
+`KICKOFF-NEXT.md` are emptied (⛔ `rm` is outside this column, and `launch-coder.sh:86-87` tests `-s`, so
+**emptying is sufficient and is the supported retirement route**), and the launcher is back on
+`BRIEF.md`/`KICKOFF.md` — it prints which pair it took, so verify at every dispatch.
+
+⭐ **The real cause, from Track 1's 06:4x block, and it is the lesson:** the six lanes are **git worktrees
+of Track 1's repo and share its `.claude/settings.local.json` through the git common dir.** Stripping the
+eight `grs-antig-*` deny globs from our own *tracked* `settings.json` at 05:50 therefore changed nothing;
+relocating them to `settings.local.json` at 06:00 actually **re-locked reviews and money**. They were
+deleted outright at 06:12 and every tick launched after that parses zero such rules.
+
+⛔ **Two successive ticks built a confident, wrong model from a true measurement** — 05:5x concluded
+"session-start permission cache", 06:1x falsified that and concluded "a brace glob resolved from
+somewhere else, not keyed on session start." Both were reasoning from the *right* observation (a probe
+file writes, `REVIEWS.md` does not) to the *wrong* mechanism, because neither ran
+`git rev-parse --git-common-dir` to ask **which surfaces this checkout even shares.** ⭐ **The
+generalisation, and it is the durable part: before theorising about why a per-lane change did not take
+effect, establish what is actually per-lane.** In a worktree, less than you think.
+
+⭐ **What did work is unchanged and is the standing procedure:** the lane **filed `TRACK 1 ACTION` and
+waited**, twice refusing to force a write past an approval prompt. The door was opened by someone with
+the authority to open it, both times. ⛔ The refusal to self-unblock stays absolute — an unattended agent
+forcing past a permission gate to un-gate itself is hard rule ④ in supervisor form.
+
+⚠️ **One live correction:** `sed -n '1,$p' src >> REVIEWS.md` is **still refused**, now as *"sed command
+requires approval"* — a shell-operation gate, unrelated to the mailbox. ⛔ Stop reaching for the `sed`
+join; **`Edit` is the route.** ⚠️ `REVIEWS.md` is >1MB, so the `Read` tool refuses it whole — read a
+15-line tail with `offset`/`limit` to get an anchor, then `Edit`.
+
+## ⛔ Ruling 32 — 2026-09-08 06:4x (Track 1) — the lane supervisor does not merge and does not commit `app/**`
+
+`a638eb96`, the `origin/main` merge commit, was made by a **supervisor tick**, not by a coder under
+`--allow-merge`. **Substance was clean** — the four `app/app/Doctor/**` blobs are byte-identical to
+main's, adopted whole — and the result stands. **Process is what stops.**
+
+⭐ **Why it matters, and it is not a formality:** that same unwrapped commit is exactly how
+`.claude/settings.json` and main's hooks were taken **whole** instead of being restored. A coder under
+`--allow-merge` would have been **refused** the `.claude/` path by the guard and forced into a deliberate
+resolution step. **The guard's refusals are the procedure**; a supervisor whose `git` is not the guard
+silently skips them.
+
+**Standing from now on: this lane's supervisor runs no `git merge` and commits no `app/**` path.** Merge
+waves go to the coder with `--allow-merge` (⛔ a per-run gate, never a default — and a merge wave must
+also carry the `composer dump-autoload` step, or the classmap trap makes the gate read thousands of
+errors from a framework that never booted). The supervisor's git column is exactly: commit its own five
+files as `chore(supervisor)`, and `git push origin <sha>:track/pricebook` on a gated, recorded range.
+
+## ⭐ Trap added 2026-09-08 06:5x — this lane's `is_sample` doctrine is half-landed, and a banner is not a guard
+
+Third application of the PB-115 method, and the widest yet. `is_sample` was added to **three** of this
+lane's modules in one 2026-08-30/2026-09-04 batch. **Only X-163 implements what the column means.**
+
+| | cast | filtered from the price path | refusal | reader |
+| :--- | :--- | :--- | :--- | :--- |
+| **X-163** | ✅ `PriceBookItem:23` | ✅ `where('is_sample', false)` ×2 | ✅ `SAMPLE_STATE_REFUSED` | engine, actions, screens |
+| **X-82** | ⛔ absent from `Rate::$casts` | ⛔ none | ⛔ none | **one blade `@if`** |
+| **X-166** | ⛔ absent | n/a | ⛔ none | one blade `@if` |
+
+`RateLookupAction::lookup()` is X-82's only programmatic exit, and **both** its return paths hand out
+`'amount_formatted' => '$'.number_format(…)` for a sample rate exactly as for a real one. Its single test
+seeding (`RateRegistryTest.php:48`) passes `true` — **the untested-arm signature again**, with the
+untested arm being the only one that matters.
+
+⭐ **The generalisation: a `@if` in a blade is a *label*, not a *guard*.** It protects the one surface it
+sits on and nothing that derives a value. Ask of every such column: **what leaves the module carrying a
+number derived from it?**
+
+⚠️ **X-166 was measured and CLEARED, and the distinction is the useful half:** `MarginByJob::render()`
+is per-row with a per-row banner and computes **no aggregate**, so a sample row is displayed *labelled*,
+never silently summed. **The banner suffices where nothing is derived, and fails the moment a number
+leaves.** ⛔ Do not brief X-166 on this.
+
+⚠️ `RateLookupAction` has **no production caller** — so this is latent, not live. It was briefed anyway
+(PB-117), and the line drawn is worth keeping: **latent + no wrong value = record** (the `lookupCallout()`
+`status`-key split, still recorded and still not briefed); **latent + a wrong value on a defined input =
+fix**. ⛔ If that line is ever used to justify a wave with no wrong value behind it, it is being misread.
+⛔ PB-117 does **not** wire a caller — that is week-2 build work.
