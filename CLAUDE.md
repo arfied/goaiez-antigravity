@@ -242,12 +242,40 @@ that test and is not on this list is a wave invented to fill the lane.
   untouched, the decoy root `REPORT.md` gone and the mailbox copy intact.
   `RULING CN` is discharged as a live hazard and stays above as history.
 
-⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 215 (2026-09-08) against pinned main
-`8c17fb6c`, MOVED 5 commits from tick 214's `9b685e4c`** (after 0 · 0 · 0 · 5 · 3 · 6 · 16 · 24 · 6 ·
-5); lane **45 ahead / 750 behind**; both `.claude/hooks` `A` rows still present, plus `CR`'s
-`M settings.json`. The visible cause of the move is in the same tick's process scan: **Track 1 is
-mid-merge-wave** (`3970285`, `agy-grs-antig-run153.log`, `GOAIEZ_MERGE_OK=1`), which is `DK`
-corroborated at its mechanism rather than inferred, for a second consecutive tick.
+⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 216 (2026-09-08) against pinned main
+`8c17fb6c`, UNMOVED from tick 215** — the fourth still pin in fifteen ticks (after 24 · 16 · 6 · 3 ·
+0 · 5 · 0 · 0 · 5 · 3 · 6 · 5); lane **46 ahead / 750 behind**; `HEAD...origin/track/stages` is `0 0`
+so there is no push exposure; both `.claude/hooks` `A` rows still present, plus `CR`'s
+`M settings.json`. ⚠️ **Track 1 is mid-merge-wave again** (`4015770`, `agy-grs-antig-run154.log`,
+`GOAIEZ_MERGE_OK=1`) **and the pin did NOT move** — see `RULING EI`, which retires ticks 214/215's
+reading of that scan as the move's mechanism.
+
+⭐ **`RULING EI` (tick 216) — "Track 1 is mid-merge-wave" is CO-PRESENCE, not a mechanism. Ticks 214
+and 215 read a correlation as a cause; tick 216 is the negative control.** Both earlier ticks
+observed a live Track 1 merge wave in the same process scan that measured a moved pin and wrote that
+the wave was *"the visible cause of the move … `DK` corroborated at its mechanism rather than
+inferred"*. **The same observation carries the opposite outcome here:** tick 214 `run152` → pin moved
+5; tick 215 `run153` → moved 5; **tick 216 `run154` → moved 0**, every one with `GOAIEZ_MERGE_OK=1`.
+A live wave co-occurs with both, so **its presence cannot be the evidence for either.** The timing
+says why — pin `8c17fb6c` was committed **10:48:45**, tick 215 scanned ~11:01, `run154` is live at
+11:10 with nothing landed: **a wave in flight has not yet made its commit.** The correct reading
+inverts 214/215's: a running wave predicts a *future* move, while the move a tick *measures* was
+landed by an earlier, completed wave. ⛔ **Which wave landed the pin is NOT established and is
+deliberately not pursued** — that needs the run log's mtime, and `ls /home/goaiez/tmp/agy-grs-antig-run154.log`
+is refused by the workspace boundary; as at ticks 188/190/191/197/203/205/206/210, **the denial is
+the answer.** ✅ **`DK` itself is untouched and was vindicated this tick**: its rule is *pin the sha
+before any take check*, which neither claims nor needs a mechanism; `EI` retires only the gloss.
+Same family as `DL`, `DO`, `DQ`, `DU`, `DY`, `EB`, `EC`, `ED`, `EE`, `EF`, `EH` — **`EH` was the
+sample variant; `EI` is the inference variant: the two observations were each measured correctly and
+the link between them never was.** ⛔ **NOT an opening** — it removes a claim this seat was making
+about *why* `main` moves and adds nothing it may do.
+
+⚠️ **`RULING EG` is NOT corroborated on an empty range, and tick 216 declined to claim it.** `EG`
+requires the range to contain a per-track change before an unchanged per-track path means anything.
+Tick 216's range is **empty** (pin unmoved, `git rev-list --count` → `0`), so no restore behaviour is
+observable in it and none was asserted. `EG`'s corroborations at ticks 214 and 215 stand on their own
+ranges. A tick that reports "per-track paths held" on an empty range is repeating tick 213's exact
+error, which `EG` exists to correct.
 
 ⭐ **`RULING EH` (tick 215) — `EE`'s "WIDER but NOT FRESHER" is FALSIFIED as measured, and survives
 only as a PER-LANE structural claim. The commit-message channel carries a POSITIVE CONTROL for
