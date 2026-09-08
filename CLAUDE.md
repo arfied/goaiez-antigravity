@@ -396,6 +396,13 @@ each verdict block in `REVIEWS.md`.
   track idled). A block that says "dispatched" without the `LAUNCHED run N (pid …)
   log=…` line is a claim, not a dispatch. Confirm the coder's cwd with
   `ls -l /proc/<pid>/cwd` when the log name is not `agy-grs-antig-runN.log`.
+- **`coder.pid` outlives its run — "is the coder alive" is a liveness test, never a
+  file-existence test (tick 187).** `launch-coder.sh:29` is
+  `[ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")"`, so a stale pidfile blocks nothing
+  and the launcher is the authority. A tick that reads the file's mere presence as "coder
+  running" stops the lane on a dead pid: `2172009` has sat in `.agents/supervisor/coder.pid`
+  since 04:57 on 2026-09-08 with no such process. `pgrep -af agy` returning nothing with
+  `cwd` here is the check.
 - **Wave selection checks the deferred list first.** Plan §257.4 (owner ruling
   2026-09-04): X-200 X-158 X-159 X-114 X-144 X-197 X-147 X-143 X-141 X-145 X-213
   X-208 X-215 X-214 are kept, hidden and unbuilt. No brief opens a wave in one; a
