@@ -67,7 +67,10 @@ class SameAccount extends Component
         foreach ($connections as $conn) {
             $connPayments = $payments->where('merchant_connection_id', $conn->id);
             $conn->payments_count = $connPayments->count();
-            $conn->payments_cents = $connPayments->sum('amount_cents');
+            $conn->payments_by_currency = $connPayments
+                ->groupBy('currency')
+                ->map(fn ($rows) => $rows->sum('amount_cents'))
+                ->sortKeys();
 
             $connPayouts = $payouts->where('merchant_connection_id', $conn->id);
             $conn->payouts_count = $connPayouts->count();

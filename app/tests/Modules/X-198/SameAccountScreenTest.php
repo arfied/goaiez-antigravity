@@ -46,19 +46,20 @@ class SameAccountScreenTest extends TestCase
             ->assertOk()
             ->assertSee('acct_A1')
             ->assertSee('Recorded merchant account')
-            ->assertSee('2 payments · 75.00')
+            ->assertSee('2 payments · 75.00 USD')
             ->assertSee('1 payouts · 50.00')
             ->assertSee('balanced')
             ->assertDontSee('acct_B9')
             ->assertDontSee('99.00')
             ->assertSee('Not attached to any account')
             ->assertSee('25.00')
+            ->assertSee('No gateway charge id; our own reference')
             ->assertSee('idem_loose')
             ->assertSeeHtml('wire:click="attach('.$loose->id.', '.$connA->id.')"')
             ->call('attach', $loose->id, $connA->id)
             ->assertSee('25.00 is now recorded against acct_A1')
             ->assertDontSee('Not attached to any account')
-            ->assertSee('3 payments · 100.00')
+            ->assertSee('3 payments · 100.00 USD')
             ->call('attach', $loose->id, $connA->id)
             ->assertSee('already recorded against acct_A1')
             ->call('pull', $connA->id)
@@ -80,9 +81,13 @@ class SameAccountScreenTest extends TestCase
 
         $connA = MerchantConnection::create(['business_id' => $biz->id, 'gateway_name' => 'square', 'merchant_account_id' => 'acct_A1', 'is_connected' => true]);
         Payment::create(['business_id' => $biz->id, 'merchant_connection_id' => null, 'amount_cents' => 2500, 'currency' => 'USD', 'payment_token' => 'sq_tok_loose', 'idempotency_key' => 'idem_loose', 'status' => 'pending']);
+        Payment::create(['business_id' => $biz->id, 'merchant_connection_id' => null, 'amount_cents' => 1200, 'currency' => 'USD', 'payment_token' => 'sq_tok_ch', 'idempotency_key' => 'idem_ch', 'gateway_charge_id' => 'ch_3TESTdetached00000000001', 'status' => 'captured']);
 
         Livewire::actingAs($owner)->test(SameAccount::class)
             ->assertOk()
+            ->assertSee('Gateway charge ch_3TESTdetached00000000001')
+            ->assertSee('No gateway charge id; our own reference')
+            ->assertSee('No payout has ever been imported: reading payouts from the gateway is not built in this checkout yet.')
             ->assertSee('are taken on the goaiez platform Stripe account')
             ->assertSee('which no charge is routed to yet')
             ->assertSee('no account recorded')
@@ -120,5 +125,23 @@ class SameAccountScreenTest extends TestCase
             ->assertDontSee('Pull payouts')
             ->call('pull', $connA->id)
             ->assertSee('nothing was pulled and nothing changed');
+    }
+
+    public function test_the_same_account_screen_totals_each_currency_on_its_own_line(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $connA = MerchantConnection::create(['business_id' => $biz->id, 'gateway_name' => 'square', 'merchant_account_id' => 'acct_A1', 'is_connected' => true]);
+        Payment::create(['business_id' => $biz->id, 'merchant_connection_id' => $connA->id, 'amount_cents' => 3000, 'currency' => 'USD', 'payment_token' => 'sq_tok_1', 'idempotency_key' => 'idem_1', 'status' => 'pending']);
+        Payment::create(['business_id' => $biz->id, 'merchant_connection_id' => $connA->id, 'amount_cents' => 4500, 'currency' => 'USD', 'payment_token' => 'sq_tok_2', 'idempotency_key' => 'idem_2', 'status' => 'pending']);
+        Payment::create(['business_id' => $biz->id, 'merchant_connection_id' => $connA->id, 'amount_cents' => 4500, 'currency' => 'GBP', 'payment_token' => 'sq_tok_3', 'idempotency_key' => 'idem_3', 'status' => 'pending']);
+
+        Livewire::actingAs($owner)->test(SameAccount::class)
+            ->assertOk()
+            ->assertSee('3 payments · 45.00 GBP · 75.00 USD')
+            ->assertDontSee('120.00');
     }
 }
