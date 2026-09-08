@@ -400,7 +400,39 @@ if [ $want_tests -eq 1 ]; then
   if command -v flock >/dev/null 2>&1; then
     exec 9>>"$PEST_LOCK" 2>/dev/null && {
       if ! flock -n 9; then
+        # NAME THE HOLDER (sixty TRACK 1 ACTION 2, adopted by Track 1 2026-09-08). Until now
+        # this line printed the path and the timeout and never said WHO held it. A lane that
+        # cannot see what it is waiting on has a standing incentive to route around the wait,
+        # and on sixty's tick 251 that cost the wave its entire mutation set — the ask was
+        # filed as hygiene and was re-filed once it had cost a wave.
+        #
+        # Scanned from /proc, not from `fuser`/`lsof`: that is §1b's idiom, which is known to
+        # work on this box, and it needs no tool whose presence this seat cannot even test
+        # (`command -v` is denied here). All seven lanes run as one account, so the fds of the
+        # process we are actually waiting on are readable.
+        #
+        # ⚠ OUR OWN fd 9 IS ON THIS FILE — the row that is legitimate by construction, which
+        # every detector in this repo has been bitten by at least once. $$ is excluded by name,
+        # exactly as §1b excludes it. Fails open in every arm: an unreadable /proc, a vanished
+        # pid, or a holder on another account all fall back to the old message; nothing here
+        # can break the gate or shorten the wait.
         echo "  … another suite holds $PEST_LOCK — waiting up to 40 min (never killing it)"
+        held_by=0
+        for lp in /proc/[0-9]*; do
+          lpn=${lp#/proc/}
+          [ "$lpn" = "$$" ] && continue
+          for lfd in "$lp"/fd/*; do
+            [ "$(readlink "$lfd" 2>/dev/null)" = "$PEST_LOCK" ] || continue
+            lcwd=$(readlink "$lp/cwd" 2>/dev/null)
+            lcmd=$(tr '\0' ' ' < "$lp/cmdline" 2>/dev/null)
+            echo "      holder pid $lpn  cwd ${lcwd:-?}  ${lcmd:0:100}"
+            held_by=$((held_by+1))
+            break
+          done
+        done
+        if [ "$held_by" -eq 0 ]; then
+          echo "      (holder not identifiable from /proc — it may belong to another account)"
+        fi
       fi
       flock -w 2400 9 && lock_held=1
     }
