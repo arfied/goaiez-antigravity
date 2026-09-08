@@ -13,6 +13,11 @@ class PoolInventory extends Component
     #[Locked]
     public int $businessId = 0;
 
+    public function mount(int $businessId = 0)
+    {
+        $this->businessId = $businessId !== 0 ? $businessId : (\App\Support\Tenancy::id() ?? 0);
+    }
+
     public function render()
     {
         $numbersByAreaCode = ($this->businessId > 0)
