@@ -12351,3 +12351,282 @@ is the measurement and the hedge never had to stand. ⚠️ And the `errors` **i
 makes the two runs agree — the two-member intermittent population (298) was absent from both, and had one
 appeared in one gate and not the other the SET would still have reconciled while the integer did not. **Read
 the set, never the count.**
+
+## ⛔ AN INVENTED NAME THAT CORRECTLY DESCRIBES ITS SUBJECT IS INDISTINGUISHABLE FROM A MEASURED ONE — and it is MORE convincing than a stale one (tick 301)
+
+Tick 254 caught a brief whose two selectors for one test method disagreed, ruled that every brief naming a
+test method adds *"confirm the name resolves before editing; if it does not, say so and stop"*, and its
+remedy has now fired on its **healthy** branch for the first time: SITE-173 ran the grep, found no such
+method, said so in one sentence, and stopped without touching a file. Nothing was written, nothing was lost,
+and the wave was forfeited.
+
+The name I gave was `test_the_published_form_posts_to_its_own_address_and_a_rolled_back_site_refuses_it`
+"at `X157Test.php:1690-1776`". Measured at tick 301, the method at **1695–1777** is
+`test_the_published_form_posts_to_an_address_that_captures`, and **my description of it was accurate in
+every particular** — publish, deploy, `GET` 200 (`:1734`), `preg_match` the form's own `action` and assert
+the address (`:1738-1749`), POST scalars and assert 201 (`:1751-1756`), roll back and assert 404
+(`:1767-1776`).
+
+⛔ **So this is NOT tick 254's case, and the difference is the finding.** Tick 254's name had been *renamed
+away* — a real identifier gone stale, which a `git log -S` can date and explain (it did: `bf2f19c9`,
+SITE-131). **This name never existed.** It was minted from the description in the same sentence: I described
+the behaviour and then wrote a name describing that behaviour. A stale name is refutable by history; an
+invented one has no history to consult, and **its agreement with the description beside it reads as
+corroboration** — two selectors that concur, one of which is a paraphrase of the other, which is not two
+measurements at all.
+
+⛔ **And item 0 measured a LINE INSIDE the method and not the method's NAME.** The ground-value item was not
+lazy: five numbers and one line, every one correct and every one confirmed in this seat — `45` test methods,
+`232` `assert` lines, `0` `foreach`, the three-id census, and `grep -rn 'forms/'` → one hit at
+`X157Test.php:`**1746**. **1746 is inside the very method whose name was invented**, so item 0 measured a
+*point within the subject* and never the subject's *identifier*, and nothing in its output could say so.
+
+✅ **RULED (tick 301): every SYMBOL a brief names — a test method, a class, a private method, a route name, a
+constant — goes into the ground-value item as `grep -n '<the exact symbol>' <the exact file>` with its
+expected single hit and line**, because that is the only form that (a) forces this seat to run the grep in
+the tick that writes the brief and (b) carries tick 262's both-directions stop. A symbol named only in prose
+is a recollection however confident the sentence sounds; the ground-value list is the one place a brief's
+claims are obliged to be measurements.
+
+⚠️ **It converts a total stop into a reported departure, one item earlier.** A stop at item 1 forfeits items
+2–7; the same fact surfacing at item 0 is reported *before any work begins*, against a brief that has already
+stated the fixture's shape, so the next dispatch is a re-issue rather than a rediscovery. ⛔ **The stop is not
+weakened** — a name that fails to resolve still stops the wave. What changes is *where it is measured*.
+SITE-174's item 0 carries three symbol resolutions, one of them a **negative** (the method it is about to add
+must NOT already exist), which is the same both-directions discipline on an absence.
+
+Twenty-fifth of the imprecise-brief family (208 the *evidence request*, 227 the *branch condition*, 235 an
+*unread mechanism*, 236 a *presumed direction*, 237 an *existence question about an output*, 238 a *filing
+sentence*, 244 a *consequence inside a measurement*, 245 a *falsifier's polarity*, 247 an *output without its
+command*, 249 a *pass condition of "identical"*, 250 a *ruling's reasoning*, 254 *two selectors for one
+subject*, 262 a *one-directional stop*, 265 an *incomplete answer set*, 271 *two correct instructions
+composing wrong*, 274 the *wrong instrument*, 275 a *named delimiter*, 276 an *enumeration disagreeing with
+its summary*, 280 a *quoting defect*, 283 a *prohibition*, 286 a *stop condition's scope*, 292 the brief's
+*internal coordinate system*, 293 a *ledger digest*, 297 a *recalled ground value*) and the first where the
+imprecision is in the brief's **choice of what to put in the ground-value list** rather than in any value it
+contains.
+
+## ⛔ THE CENSUS'S PREVIOUS VALUE LIVES IN THE REVIEWS BLOCK, NEVER IN THIS FILE'S DIGEST (tick 301)
+
+Half 3 read **3** this tick. Ticks 294–299 all recorded **5**, and this file's tick-300 section — which
+carries that tick's rulings in full — does **not** carry its census numbers. With both bounds unmoved since
+tick 300's close, a shrink 5 → 3 is tick 209's tooling-fault trigger and tick 252's monotonicity violation,
+and this tick began opening a finding on it.
+
+`REVIEWS.md:77911` settles it in one read: **tick 300 recorded half 3 — 5 → 3**, attributed to `main` gaining
+`06eb6558 merge: track/stages`, so stages' two tracker commits fell out of `^origin/main`. They **merged**
+(191, 225). This tick's 3 is **unchanged, not a shrink**.
+
+⛔ Tick 186 ruled every census surface's signal is its **delta**, that a delta needs a previous value, and
+that *"the ledger is the only place it lives"*; tick 293 ruled that a `CLAUDE.md` digest of a ruling is a
+**paraphrase, and the digest is the copy that survives**. Compose them and the gap is exact: **the digest
+survived tick 300 carrying its rulings and not its numbers**, so a tick reading this file alone compares
+against a value five ticks stale and opens a finding against a bound that has already moved *and already been
+attributed*. Tick 293's case was a digest that was **wrong**; this is one that is **incomplete**, in the one
+field a delta reading cannot do without.
+
+**Read `REVIEWS.md` for a census's previous value, always** — one
+`grep -n 'half 3' .agents/supervisor/REVIEWS.md | tail` and one `Read`. A tick that re-runs the census after
+a bound moved records its new numbers in the block, which tick 300 did; the omission is in the digest, and
+**the digest is not the record.**
+
+## ⚠️ The two-member intermittent population, third consecutive disagreement on one sha (tick 301)
+
+§7 measured independently in this seat on `b6e0a803`: `tests 2003 · passed 2000 · FAILED 1 · errors 2`,
+reconciling `2000+1+2 = 2003` ✓ (226), ⭐ `a_published_site_carries_all_seven` **ABSENT — J11 green**, and
+**byte-identical to tick 300's baseline in all four numbers with the failure and error SETS unchanged** on a
+tick whose tree changed by nothing at all.
+
+The report's own §7 on the **same sha** read `errors 3`, and the single discriminating member is
+`a_deliberately_corrupted_backup_fails_the_restore` — J8, now measured at
+5·4·2·3·2·3·2·2·2·3·2·2·3·2·3·2 across sixteen gates on unchanged trees. ⛔ Read the error **SET minus the
+two-member population** (278 as corrected by 298 — J8 and `cancel_is_one_tap_with_nothing_in_between`) and
+the two gates agree exactly; read the integer and two correct runs of one commit contradict each other, for
+the third tick running. **Naming the population is what closes the comparison**: subtracting only J8 would
+still have left 2 against 3, which is precisely the half tick 278's singular phrasing did not carry.
+
+⚠️ **The §7 baseline is unchanged at `tests 2003 · passed 2000 · FAILED 1 · errors 2`.** Stable set:
+`test_g2_76_unified_inbox_header` (X-01, **stages'**) plus sixty's two real-transport journey stubs.
+
+## ✅ Standing checks that fired on their HEALTHY branches (tick 301)
+
+Recorded, or a rule that only ever fires on its failing branch reads as an unfired precaution (221).
+
+- **The write-nothing discipline, fifth firing, and the second on a wave that STOPPED** (273, 275, 286, 301).
+  `git status --porcelain` = ` M app/phpunit.xml` alone, `git log --oneline -1` = my own tick-300 notes
+  commit, `git diff --stat HEAD -- .agents/state/` **empty** ⇒ **no stage count and no id census can have
+  moved**, which is stronger evidence than a doctor run and needs none. Had SITE-173 filed against its own
+  stopped state there would be rows in a `state.py` that has no withdraw.
+- **The report quoted no doctor block at all, correctly** — item 5 was skipped with the rest and the wave
+  said so under its own number rather than inventing one. That ends eight ticks of doctor-evidence findings
+  (275, 284, 285, 292) by the only route ever available to a stopped wave: not running it.
+- **§2 printed exactly one `⛔`** (`app/phpunit.xml`) — tick 207's healthy branch; `none` is the reading that
+  would say the working-tree pin edit had been lost. §4 seals ✓ and `no split modules`; §6 `pint passed`,
+  `phpstan errors 0`.
+- **§1's cross-witness reconciled by ARITHMETIC** (225, never "both moved so they agree"): tick 299 read
+  `behind 237, ahead 46`; `main` has since gained 40 commits (`4b26ffbc → 30316573`) and this lane three.
+  237 + 40 = **277** ✓ · 46 + 3 = **49** ✓.
+- **Census cache HIT measured from the REFLOG** (220), not from a remembered table: the newest arrival across
+  all eight refs is `origin/track/site@{22:41:53}`, my own tick-300 push, and the newest **sibling** arrival
+  is `stages@{22:35:55}`, which tick 300 recorded and re-ran against. All four surfaces re-run in full anyway
+  — half 1 **2** (both merges *of main*, `--source`-attributed per 189; no violating partition) · half 2
+  **10** · half 3 **3** · complement **11**, same eleven members. Tick 285's drift signature **absent**: the
+  three pathspec halves returned 2 · 10 · 3 while the pathspec-free complement returned 11, and the *split*
+  is the signature, never either number.
+- **Thirteenth null closing tip re-read** (224, 225, 256, 279, 282, 283, 284, 293, 295, 296, 297, 299, 301),
+  left **literally blank until the command returned** (257, after 299 drafted it and 300 corrected the
+  habit). ⚠️ A null is the *common* result — thirteen of eighteen — which is what makes it cheap to assume
+  and expensive to assume wrongly; one of the five firings was `origin/main`, the ref that excludes in all
+  four surfaces at once.
+- **Doctor, live in this seat**: stamp `20260829-0647` = `runtime_build` · `integrity clean · boundary 6 ·
+  contract 87 · citation 93 · schema 15 · capability 455 · anchor 137 · journey 4` · **797**, the SUM check
+  reconciling (285) and no stage moved. §3 printed `capability 372` in the same run against a live 455 — one
+  slot shared by seven trees, **83 behind and never a brief target** (196, 219).
+
+⚠️ **Shell form, tick 301:** a heredoc append of ~120 lines was refused with *"Parser aborted (timeout,
+resource limit, or over-length)"*. The accepted route is the one this lane already uses for `REVIEWS.md` —
+`Write` a temp file under `.agents/supervisor/`, then `cat <tmp> >> <target>`. Keep heredocs short.
+
+## ⛔ A GROUND VALUE'S **STOP** IS ON THE SHAPE OF THE RESULT — A COUNT, A PRESENCE, AN ABSENCE — **NEVER ON A LINE NUMBER** (tick 302)
+
+Tick 301 ruled that every symbol a brief names goes into item 0 as
+`grep -n '<the exact symbol>' <the exact file>` with its expected hit, after SITE-173 was forfeited to
+a **method name I had invented** — one that correctly described its subject and had never existed.
+That ruling is right and it fired on its healthy branch immediately: item 0's positive (the fixture
+method, `1695`) and its **negative** (the method about to be added must NOT already exist, no hits)
+both landed as predicted. Both directions, both correct. Then line 10 broke the wave:
+
+```
+brief    grep -n 'private function given' …/X-155/Actions/FormCaptureAction.php  → one hit, line 159
+measured 160:    private function given(mixed $value): mixed
+```
+
+⭐ **The symbol RESOLVED.** One hit, present where I said present, in the file I said. What differed
+is a **coordinate**, and my stop sentence — *"if any of these ten differs — higher OR lower, present
+where I said absent or absent where I said present — say so and stop before editing"* — covered the
+claim and the coordinate with one word. A whole wave was forfeited to an off-by-one in a number that
+carries no claim about anything.
+
+⛔ **And the drift was CAUSED BY THIS LANE'S OWN PREVIOUS WAVE.** Measured, not inferred —
+`git show a1218afc -- …/FormCaptureAction.php`:
+
+```
+      /**
+       * A payload value that is blank or whitespace was not given (R245, 2026-09-05).
++      * A value which is not a scalar was not given either.
+       */
+      private function given(mixed $value): mixed
+```
+
+SITE-172 added a **docblock line** above the declaration. `159` is what tick 299's block measured,
+*before* that commit; `a1218afc` is a commit **tick 300 reviewed and passed**. This ledger held the
+citation and, in the very next section, the commit that invalidated it.
+
+**RULED: item 0 has two tiers, and only one of them stops the wave.**
+
+| tier | what it is | on a mismatch |
+| :-- | :-- | :-- |
+| **CLAIM** — a count, a presence, an absence, a set | the thing the brief's reasoning rests on | ⛔ **report and stop** |
+| **ORIENTATION** — a line number, a span, a byte size | a coordinate that drifts with any edit above it | ⚠️ **report the real value and PROCEED**, using yours |
+
+Print the line — it is free and it orients a reader — and gate on the shape. A symbol's *resolution*
+is falsifiable and load-bearing (301's invented name is exactly a resolution failure); its *line* is
+falsified by any edit anywhere above it, including one the same lane made an hour earlier.
+
+⛔ **The second half is worse, because tick 301's own text names it.** That ruling said the
+ground-value item exists to *"(a) force this seat to run the grep in the tick that writes the
+brief."* I did not run it. I copied `:159` out of tick 299's ledger section. Tick 297 had already
+ruled — **a ground value about a file is measured with a `grep` in the tick that writes the brief,
+never recalled, and especially not from this ledger, because a number written here reads as measured
+forever** — and the tick that ruled symbols must be grepped is the tick that recalled one.
+
+Twenty-sixth of the imprecise-brief family (208 the *evidence request*, 227 the *branch condition*,
+235 an *unread mechanism*, 236 a *presumed direction*, 237 an *existence question about an output*,
+238 a *filing sentence*, 244 a *consequence inside a measurement*, 245 a *falsifier's polarity*, 247
+an *output without its command*, 249 a *pass condition of "identical"*, 250 a *ruling's reasoning*,
+254 *two selectors for one subject*, 262 a *one-directional stop*, 265 an *incomplete answer set*,
+271 *two correct instructions composing wrong*, 274 the *wrong instrument*, 275 a *named delimiter*,
+276 an *enumeration disagreeing with its summary*, 280 a *quoting defect*, 283 a *prohibition*, 286 a
+*stop condition's scope*, 292 the brief's *internal coordinate system*, 293 a *ledger digest*, 297 a
+*recalled ground value*, 301 *what goes in the ground-value list*) and the first where the defect is
+in a ground value's **grade** — whether it is a claim at all — rather than in its value, its
+direction, its scope or its presence.
+
+⚠️ **Two waves, two item-0 stops, and the costs are not alike.** SITE-173's stop caught a real defect
+and was worth its wave. SITE-174's caught nothing and cost the same. Tick 286 ruled that *a stop
+condition is the most expensive place in a brief for a scope error, and the place least likely to be
+examined, because a stop that fires reads as the brief working* — this is that, twice running, and
+the second firing is what makes it a design problem rather than an incident. **A stop list that fires
+on drift teaches nothing and forfeits everything.**
+
+## ⓘ The complement grew 11 → 12 on a NEW FILE, and tick 183's second clause refused a fourth half (tick 302)
+
+The closing tip re-read **fired** — `origin/track/stages` moved twice in one tick
+(`31af841e → fbd3b0e1 → bbb9f87b`), the second arriving after this tick's fetch — and the census ran
+in full **twice**. Halves 1, 2 and 3 held at **2 · 10 · 3**; the complement went **11 → 12**.
+
+Read as a **membership** delta rather than a size (244), with the paired `--stat` before
+characterising it (250 — a file also enters this list by being **deleted**): the new member is
+`app/app/Enums/MailEventType.php`, a **new file** stages created (+16). That is tick 182's middle
+reading — *grew, and no half names it* — which tick 183's second clause then decides:
+
+- `app/app/Enums/` **is** a shared directory (the live `boundary` stage flags `Enums/AiModel.php`);
+- `grep -rn --include='*.php' 'MailEventType' <the seven owned module paths>` returns **nothing**;
+- C-Mail is **stages'** under ruling 5's catch-all.
+
+⇒ *unwatched, not uncovered.* ⛔ **No fourth half** — widening the census into it bolts a half onto
+another lane's column, which is the error 183 exists to prevent. The census asks *is a sibling writing
+where WE write*, never *is a sibling writing*.
+
+⚠️ **Both stages commits are its own `boundary` column and only the paired `--stat` will ever print
+them (190), so this note IS the record**: `fbd3b0e1` resolves C-Ai's embedding **model** from the
+`AiModel` registry; `bbb9f87b` types C-Mail's mail event set and resolves C-Ai's embedding
+**dimensions**. C-Ai and C-Mail are both stages'. Advisory to Track 1 at most; ⛔ never a parallel
+fix. Tick 181's shared-state trigger fired on both and each diff is **one line, the top-level
+`updated` timestamp** — the benign minimum (183, 188).
+
+⚠️ **Second closing-re-read firing in three ticks** (215, 218, 220, 223, 300, 302), against thirteen
+nulls. A null is the common result, which is exactly what makes it cheap to assume and expensive to
+assume wrongly — and two of the six firings were on `origin/main`, the one ref that excludes in all
+four surfaces at once.
+
+## ⚠️ Two gates on one sha agreed on the `errors` INTEGER — and that agreement is a coincidence (tick 302)
+
+§7 measured independently in this seat on `b6e0a803`: `tests 2003 · passed 2000 · FAILED 1 ·
+errors 2`, reconciling `2000+1+2 = 2003` ✓ (226), ⭐ `a_published_site_carries_all_seven` **ABSENT —
+J11 green**, and byte-identical to the wave's own §7 in all four numbers with the FAILED and error
+**sets** unchanged. First tick in four where the two gates on one sha agree on the integer as well as
+the set (298, 299, 301 each disagreed by exactly one member).
+
+⛔ **Reading that as vindication of the integer is the trap tick 278 exists to close.** Both members
+of the intermittent population — `a_deliberately_corrupted_backup_fails_the_restore` and
+`cancel_is_one_tap_with_nothing_in_between` — were absent from *both* runs. Had either appeared in one
+and not the other the SET would still have reconciled while the integer did not, exactly as at 298,
+299 and 301. **Read the set minus the two-member population; an agreeing integer is a property of
+which members happened to fire, not of the comparison.**
+
+**Baseline unchanged: `tests 2003 · passed 2000 · FAILED 1 · errors 2`.** Stable set:
+`test_g2_76_unified_inbox_header` (X-01, **stages'**) plus sixty's two real-transport journey stubs.
+
+⚠️ Tick 259's column rule, **eleventh** firing: two `grs-antig-site` gates seven minutes apart —
+`932462` (the coder's, `gate-end` rc 1) and `975125` (mine). Filter the tail by the pid `gate-start`
+handed you, never by the checkout column. ✅ And tick 287's ordering item held on the coder's side —
+its pest returned at 23:03:06 and `REPORT.md`'s mtime is 23:03.
+
+## ✅ The write-nothing discipline paid a SIXTH time, and doctor's numbers needed no run (tick 302)
+
+`git status --porcelain` = ` M CLAUDE.md` + ` M app/phpunit.xml` alone, HEAD = my own tick-300 notes
+commit, `git diff --stat HEAD -- .agents/state/` **empty** ⇒ **no stage count and no id census can
+have moved**, which is stronger evidence than a doctor run and needs none. Third firing on a wave that
+**stopped** (273, 275, 286, 301, 302).
+
+Live doctor in this seat anyway: stamp `20260829-0647` = `runtime_build` · `integrity clean ·
+boundary 6 · contract 87 · citation 93 · schema 15 · capability 455 · anchor 137 · journey 4` ·
+**797**, the SUM reconciling (285) and `ok` appearing only on `integrity … clean` (292). ⚠️ `main`'s
+sealed-file fix (`30316573`, Track 1 rulings 4 and 5) still moves **nothing here**, exactly as tick
+300 predicted — **a violation's colour is a property of a TREE** (253), and this lane's fourteen
+answered violations stay red in this checkout until the merge that `coder-bin/git:106` refuses.
+
+⚠️ §1 reconciled by **arithmetic** (225): `origin/main` unmoved and this lane committed nothing since
+tick 301 (its notes stayed uncommitted per 199), so `behind 277, ahead 49` must be unchanged, and it
+is.
