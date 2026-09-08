@@ -139,16 +139,18 @@ test('the same invoice number cannot be written twice for one business', functio
         );
 
         expect(function () use ($business, $customer) {
-            DB::table('invoices')->insert([
-                'business_id' => $business->id,
-                'customer_id' => $customer->id,
-                'invoice_number' => 'INV-000001',
-                'status' => 'issued',
-                'due_date' => now()->addDays(30),
-                'total_cents' => 100,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            DB::transaction(function () use ($business, $customer) {
+                DB::table('invoices')->insert([
+                    'business_id' => $business->id,
+                    'customer_id' => $customer->id,
+                    'invoice_number' => 'INV-000001',
+                    'status' => 'issued',
+                    'due_date' => now()->addDays(30),
+                    'total_cents' => 100,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            });
         })->toThrow(QueryException::class, 'invoices_business_id_invoice_number_unique');
     });
 });
