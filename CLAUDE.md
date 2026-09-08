@@ -241,6 +241,21 @@ that test and is not on this list is a wave invented to fill the lane.
   `.gate*.txt` or `.sha*.txt`. No commit, no tracked change, `.gitignore`
   untouched, the decoy root `REPORT.md` gone and the mailbox copy intact.
   `RULING CN` is discharged as a live hazard and stays above as history.
+- **S-184 — the six `contract` withdrawals + the §3 ledger refresh.** ⭐ **A REAL WAVE, and the first
+  since the lane was declared exhausted.** Unblocked by `5d89dc84` (tick 221): the dependency the six
+  reasons name is now in this checkout. Dispatched at tick 221 as STAGES-221. **Measure with
+  `--full-doctor` §5 first, withdraw only what cleared, re-measure to prove the count fell** — the
+  order is not negotiable, because `resolve` returns a module to BUILDING and six withdrawals against
+  an unmoved count is the count-did-not-fall trap six times over. **This does not re-open the other
+  stages**; `anchor`, `journey`, `schema` and `capability` remain OWNER ACTIONs.
+
+⚠️ **The Authorize.Net `E00040` error is a FLAP, not a fixed defect (tick 221).** The tick-220 floor
+named *"§7 errors down to exactly three"* including it; run 199 measured **two**. The third did not
+get fixed — `app/tests/Feature/Billing/AuthorizeNetPropagationRetryTest.php` is `Http::fake`-mocked and
+untouched by the merge, and the real source is the **journey** test
+`a_completed_job_asks_for_a_review_once_inside_the_cadence` hitting the live sandbox, recorded five
+times in `REVIEWS.md` as an external-credential flap. **A later gate showing three errors is that flap
+returning, not a regression.** Do not open a wave on it; it is a vendor account, OWNER ACTION.
 
 ⭐⭐ **THE HOLD LIFTED AT TICK 219 (2026-09-08). THE TAKE IS OPEN AND A MERGE WAVE IS DISPATCHED —
 read `RULING EM` before anything else on this page.** For thirty-five ticks this lane held because
@@ -262,6 +277,162 @@ Roles table's *"Commits only its own files"* is in real tension with `settings.j
 `Bash(git commit:*)`, and money's authority is money's rulings 24/52/26, which this lane does not
 hold. It is filed to Track 1 as a **notification with an opt-out**, not a question. If the review
 fails, the next dispatch runs `git merge --abort` under the same flag.
+
+## ⭐⭐ THE TAKE IS COMMITTED AND PUSHED — `5d89dc84` (tick 221, 2026-09-08). THE THIRTY-FIVE-TICK HOLD IS OVER.
+
+✅ **The merge landed.** `5d89dc84`, parents `652a312b` (ours) and `881f9bc9` (the gated pin), 235
+files, `12449 insertions(+), 870 deletions(-)`. **The supervisor committed it** — the decision tick 220
+deferred to the review of the staged tree, taken at tick 221 and reasoned in that REVIEWS block. Pushed
+by explicit ref, fast-forward: `git push origin 5d89dc84:refs/heads/track/stages` →
+`652a312b..5d89dc84`.
+
+**`MERGE_HEAD` is gone, and the mid-merge prohibition is discharged with it.** The tick-220 standing
+order forbidding `git merge`/`--abort`/`reset`/`rebase`/`checkout`/`restore`/`stash`/bare `commit`
+applied *while the merge was staged*; it has served its purpose. The ordinary column rules resume —
+this seat still never runs `merge`/`checkout`/`restore` (denied), and still commits only its own files
+plus, now on the record, a merge no other seat in this lane can commit.
+
+⭐ **Merge procedure step 3's proof passed: `git diff HEAD~1 HEAD --stat -- <the eight per-track paths>`
+prints NOTHING.** `app/phpunit.xml` still reads `goaiez_antig_stages_test` in the committed tree —
+`RULING DC`'s destructive row, the single outcome this lane most needed, and the one §0 would not have
+flagged had it moved.
+
+⭐ **`RULING DA` IS DISCHARGED ON MEASUREMENT.** `grep -c multiEmitterOk
+app/app/Doctor/Stages/ContractStage.php` is **2** here — `:575` is
+`$multiEmitterOk = ['send.requested', 'approval.requested']`, `:579` consumes it. It was `0` at every
+tick from 196 to 220. The withdrawals now have a dependency that has **arrived and is committed**,
+which is what rule 09 requires and what an uncommitted index could never supply.
+
+⚠️ **The withdrawal set is SIX, not thirteen.** `CT`'s *"worth 6 and plausibly all 13"* has been
+resolved by measurement: exactly six ledger entries carry the reason the arrival answers — **`X-186`,
+`X-190`, `X-205`, `X-217`, `X-218`, `C-Reviews`**, each *"…lacks a uniqueness exemption and
+unconditionally fails."* Main's *"across 13 modules"* was its count of **emitters** of the two tokens,
+never a count of this lane's `UNRESOLVED` rows. A brief that asks for thirteen `resolve` calls is
+asking for seven withdrawals with no reason to name.
+
+⛔ **Measure before withdrawing, and never the other way round.** `resolve` returns a module to
+**BUILDING**, never `DONE`, so six withdrawals against a `contract` count that does not move is the
+count-did-not-fall trap executed six times. The order is: `--full-doctor` §5 first, withdraw only what
+the measurement actually cleared, then §5 again to prove the count fell.
+
+⚠️ **§2 will keep listing the four `app/app/Doctor/**` paths, `seals.json` and `JourneyHarness.php`,
+now under *"last commit"*, and the gate verdict will read ⛔ because of it.** Re-measured at tick 221:
+`git diff HEAD 881f9bc9 --stat -- app/app/Doctor/ app/tests/Journeys/JourneyHarness.php` is **empty**,
+so those blobs are byte-identical to the merged pin and `DE`'s clause is satisfied. §2 is a static path
+check. **Do not "fix" it, and do not read it as a One Rule violation.** It clears when later commits
+move the window.
+
+⚠️ **§3's `STAGES` line is now stale by construction** — it still reads `contract 87` on a tree whose
+`ContractStage.php` carries the exemption. `RULING CK` is unchanged and binds harder than ever: **§3 is
+a LEDGER, §5 is the MEASUREMENT**, and only `supervise.sh --full-doctor` produces §5. Refreshing the
+eight fields is part of the next wave, in the S-182 shape.
+
+✅ **The classmap trap is not live**: `grep -c` on `app/vendor/composer/autoload_classmap.php` returns
+`TakeoverLatch` **2** and `ChatStartController` **1**.
+
+⭐ **A consequence for Track 1, earned rather than granted.** `RULING DV` recorded that Track 1's
+`rc=0 at your tip` was circular with `TRACK 1 ACTION 1`, since our tip could contain main's
+`X167Test.php` blob only through the take. **The take has landed and is pushed.** Our tip now carries
+main's blob plus our one method (union 18, `DS`/`EB`/`DU`), so the circularity is broken from this
+side. `TRACK 1 ACTION 1` stays open on its own terms — the `.claude/hooks/` byte-identity exemption is
+still unwritten and still blocks any *future* lane take — but it no longer blocks this one.
+
+✅ **Verified at tick 220 by re-measurement, not by reading the report:** per-track staged diff vs
+`HEAD` **empty** on all eight · `app/phpunit.xml` is `goaiez_antig_stages_test` in index *and*
+worktree · `git diff --cached MERGE_HEAD -- app/app/Doctor/` **empty**, same for `seals.json` and
+`JourneyHarness.php` · `.claude/` staged rows are exactly the two `A` hooks, nothing dropped · no
+conflict markers · `DU`'s four falsifiers pass (`18`, dupes empty, parenthesised `1`) · seals ✓ ·
+integrity `0` · stamp `20260829-0647` == `runtime_build` · phpstan `0`.
+
+⭐ **The payoff landed: `grep -c multiEmitterOk app/app/Doctor/Stages/ContractStage.php` is `2`**
+(`:575` = `['send.requested', 'approval.requested']`), `0` at every tick since `RULING DA`. **`DA` is
+discharged as a blocker.** The thirteen `contract` withdrawals are the next real wave — **but only
+after the merge is committed**, because rule 09 requires the withdrawal's reason to name a dependency
+that has *arrived*, and an uncommitted index is in no commit.
+
+⛔ **Two items block the commit; the floor is named so no later tick invents one.** pint `passed` ·
+phpstan `0` · integrity `0` · seals ✓ · stamp == `runtime_build` · per-track staged diff **empty** ·
+`--cached MERGE_HEAD -- app/app/Doctor/` **empty** · `DU`'s four · and §7 errors down to **exactly
+three**, all OWNER-blocked. STAGES-220 (`run 199`, merge-gate **closed**) is closing them:
+
+- **pint red** on `X167Test.php`. Cause diagnosed: the merge adds **`pint.json` as an `A` row**, a
+  style config this lane never had. ⛔ **Pint that one path only — a tree-wide run can reformat
+  `app/app/Doctor/**` and break the byte-identity clause, which is the One Rule.**
+- **`g1_67` margin-guard test fails.** Ours (in `HEAD`, absent from `MERGE_HEAD`) against main's
+  engine, which now **throws** `REFUSED BELOW_COST` where ours returned `named_below_cost`. The
+  merged engine is **exactly main's blob** — the dead return is main's own, not a splice. **RULED:
+  adapt the test to assert the throw *and* that its message names every below-cost service; never
+  edit `X210Engine.php` to make a lane's test pass** (`DG`/`DE`).
+
+⚠️ **§2 will keep listing the four Doctor/seal paths and `JourneyHarness.php` while the merge is
+staged. That is expected** — §2 is a static path check and those blobs are byte-identical to
+`MERGE_HEAD`. Do not "fix" them. ⚠️ **§7 can never reach zero here:** two journey harness refusals and
+one Authorize.Net `E00040` sandbox refusal are OWNER-blocked and inherited.
+
+### ⭐ `RULING EP` (tick 221) — census a merge's test methods against **ours-since-BASE**, never against **ours**. The naive form reports the base's own content as a lost lane assertion.
+
+`CLAUDE.md` requires grepping *"every added test name from both sides"* after a conflict resolution,
+because a merged-wrong test is green by construction. Run naively on `X210Test.php` it produced a
+false `BLOCK`:
+
+```
+comm -23 <ours> <result>   →  test_g7_47_rate_never_changes_without_notified_action
+comm -23 <main> <result>   →  (empty)
+```
+
+A method in **our** blob, absent from the result — on its face `DL`'s loss class. **It is not a loss,
+and the baseline says so.** The merge base `b79ae957` already carried that method at line 101, and our
+lane's *entire* divergence on the file since the base is **two appended methods** — `git diff
+b79ae957 HEAD -- <path>` is one `@@ -104,4 +104,59 @@` hunk, with `g7_47` appearing only as the hunk's
+**context header**. Our lane never touched it; main rewrote it as
+`test_g7_47_cohort_rate_never_changes_without_notified_action`, and the three-way merge correctly took
+that. Both methods this lane actually contributed survived.
+
+⚠️ **Main's rewrite is `g1_67`'s divergence class again**: ours was an engine stub calling
+`changeRate(true)`/`changeRate(false)` on the **old** signature; main's provisions a tenant, calls
+`changeRate($limit, 9, false)` on the **new** one, asserts the `\DomainException` names `NOTIFIED` and
+that the rate moved only when notified. Keeping ours would have been an `ArgumentCountError`, not
+coverage.
+
+⛔ **The rule: compare *what this lane added since the merge base* against the result.** The naive form
+cannot tell "our work was dropped" from "the base's content was legitimately rewritten by the other
+side", and it answers the second in the vocabulary of the first. Same family as `DL`, `DO`, `DQ`, `DU`,
+`DY`, `EB`, `EC`, `ED`, `EE`, `EF`, `EK`, `EN` — the command was right and the baseline was wrong;
+**`EP` is the PROVENANCE variant: the item really was missing, and it was never ours.**
+
+### ⛔ `RULING EN` (tick 220) — the RESTORE fired and `merge=ours` did NOT. This seat nearly credited the attribute, which is `EG`'s error turned on itself.
+
+The staged tree composes a tempting finding: zero per-track paths staged, `REPORT.md` saying *"no
+paths were restored"*, and the index holding **our** `app/phpunit.xml` — apparently the driver
+protecting the only-theirs-moved quadrant and falsifying `DC`. **False, and the brief falsifies it.**
+`BRIEF.md` item 2 restored `app/phpunit.xml`, `.claude/settings.json` and `bin/supervise.sh`
+**unconditionally, before item 3's derivation ran** — precisely the three paths in that quadrant,
+established here against the true base for the first time from this seat (`merge-base` → `b79ae957`;
+ours moved on four paths, theirs on those four **plus** those three). So item 3's silence is fully
+explained, and **`DC` is CORROBORATED: without item 2 this lane's suite would now point at
+`goaiez_antig_test`.** `DC`'s restore-first order earned its keep on its first live execution.
+✅ What *can* be claimed: `merge=ours` held the **both-moved** pair `BUILD-STATE.json`/`JOURNAL.md` —
+`DR`'s exact pair, which came out neither-ours-nor-theirs in pricebook's bare auto-commit. Same pair,
+same attributes, opposite outcome under `--no-ff --no-commit`: **`EG` corroborated from this lane's own
+side, the variable being the procedure and never the attribute.** Same family as `DL`, `DO`, `DQ`,
+`DU`, `DY`, `EB`–`EF`, `EI`–`EK`.
+
+⭐ **`git merge-base` is AVAILABLE from this seat** — refused at ticks 204 (`DT`) and 206 (`DW`), and
+both were right *then*. **A denial is a dated reading of the boundary, not a permanent property of
+it**; `DN`'s shelf-life rule now applies to this seat's own refusals. Re-test a refusal before
+building a ruling on it. (`merge-tree`/`ls-tree` were not re-run; nothing needed them.)
+
+### ⛔ `RULING EO` (tick 220) — merge step 0 is UNAVAILABLE once a merge is staged. The supervisor's notes stay uncommitted until the merge commit lands.
+
+`CLAUDE.md`'s merge procedure opens *"First, the SUPERVISOR commits its own tracked notes"* — written
+for the moment **before** `git merge`. With `MERGE_HEAD` present git refuses a partial commit
+(`fatal: cannot do a partial commit during a merge`), so `git commit -m … -- CLAUDE.md` cannot run.
+⚠️ **Asserted from git's documented behaviour and deliberately NOT tested: being wrong means a bare
+`git commit` creates the 757-commit merge commit by accident, ungated** — the one irreversible move
+available. So this seat's edits stay in the working tree **unstaged** (rule 10: never displaced) and
+are committed after the merge commit exists. **No supervisor commit is possible this tick; that is a
+consequence of the take, not an omission.** An unstaged working-tree change is not in the index and so
+cannot enter the merge commit.
 
 ⚠️ **`RULING DM`'s census is RETIRED as a proxy for "has anyone got past this."** Re-run at tick 219
 it is identical for the eighteenth time — site 61 · pricebook 2 · reviews 1 · **money 0** · sixty 0 ·
