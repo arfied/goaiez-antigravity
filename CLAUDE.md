@@ -11237,3 +11237,293 @@ room is empty, the door is not shut.
   separate calls, or separate them with a marker `echo`.
 - ⚠️ `cd app && php artisan doctor` drifted the shell once this tick and was reset in its own call.
   Per call, not per tick.
+
+## ⛔ A BLANK IN AN ATTRIBUTION KEY IS A DIFFERENT DEFECT CLASS FROM A BLANK IN A DISPLAY STRING — and the "honest" remedy is the worse one (tick 295)
+
+Six waves have now swept blank values through this lane (SITE-152 `chat_leads.phone`, 154/155 the
+schema collection guards, 156/157 the top-level `trim`, 160 five display-string sites, 161 the
+honeypot, 162 the grounding fact, 166 `fallback_number`, 167 `phone_number`). Every member so far
+was a **display string**, whose failure mode is a page that renders badly. Tick 295 found the class's
+first **key**, and it does not behave like the others.
+
+`X-157/ModuleServiceProvider.php:71` — this lane's own live DNI route — passes
+`$request->input('visitor_session_token', '')`, so a request omitting the parameter writes
+`call_tokens.visitor_session_token = ''`, declared `$table->string(…)->index()` at
+`2026_08_30_000039_create_x137_dni_tables.php:18`, **NOT NULL with no non-empty validation** (tick
+278's law, sixth site, fourth module). Read at source, the consequence is not a bad render:
+
+```
+CallAttributeAction:158   attributeCall finds the token by its ALLOCATED NUMBER, where status = active
+                   :177   $token->update(['status' => 'joined', 'joined_call_id' => $callId])
+                   :195   Event::dispatch(new VisitJoinedToCall(… visitorSessionToken: ''))
+                   :199   return ['status' => 'attributed', …]
+```
+
+**The record claims the call is tracked while carrying nothing to track it by.** A display string's
+blank is visible to whoever looks at the page; a key's blank is invisible everywhere and corrupts a
+join.
+
+⛔ **And the remedy that reads most honest is strictly worse than the defect.** Marking the token
+`unattributed` at allocation — reusing the module's own vocabulary for an unattributable
+allocation — fails because **two independent queries filter on `status = 'active'`**:
+`attributeCall:158` and `allocateFromPool:36`'s `$activeTokens`. So an `unattributed` token does
+**not** hold its number out of the pool, and the next visitor can be handed a number an anonymous
+visitor is already dialling — whose call is then attributed to a *real* session. The tracker's own
+⛔ at `:173`/`:456` is *"never a reused token"*. **RULED: refuse in the action, before the pool is
+queried**, so an unattributable request consumes no pool number; the route's existing
+`catch (\DomainException)` maps it to a 409 with no route edit, the mechanism SITE-166 reused.
+
+**The generalisation: when a blank reaches a column, ask what the column is FOR before choosing the
+remedy.** A display string wants exclusion or a trim; a key wants refusal, because there is no
+usable substitute for an identifier and every "graceful" fallback invents one. This is tick 288's
+law — *the uniform application of a correct fix is itself a hazard* — reaching a third semantic
+category after "display string" and "presence signal", and it is the first where the wrong remedy
+would have **passed every gate while making the system less correct**.
+
+## ⭐ THE OBVIOUS WAVE WAS REFUSED BY ASKING WHAT THE PUBLISHED PAGE EMITS, NOT WHAT THE ROUTE ACCEPTS (tick 295)
+
+The defect above is real, live, and **unfixtured** — all four methods in
+`app/tests/Modules/X-157/DniRouteTest.php` pass `?visitor_session_token=token1`, so nothing
+exercises the default. That is the shape tick 288 named for the honeypot and 279 for the
+`+15550000000` sentinel, and it argues for a wave. The wave I was one measurement from ruling was an
+**anonymous-visitor policy**: serve the static fallback, mark the session `unattributed`, reusing
+the tracker's own words at `:173`. One command refused it:
+
+```
+grep -n -A6 'dni-pool-x137' app/app/Modules/X-157/Actions/EdgeDeployAction.php
+    :203   $html .= "<div class=\"dni-pool-x137\"></div>\n";
+```
+
+**The published page emits a bare empty div — no script, no fetch, no request to that route at
+all.** Nothing this lane publishes calls it, so an anonymous-visitor policy would be *inventing a
+policy for a caller that does not exist*. Per tick 224, record **which** branch fires: this is the
+third — **the door is open and the room is empty** — neither *already done here* nor *cannot work
+here*. The hazard is real, unreachable from this lane's published output today, and one line from
+becoming reachable the moment that div gains its client script.
+
+⛔ **The durable half is which question decided it.** *"Is this route reachable?"* is answerable from
+the route and returns **yes** — it is registered, it is live, it has tests. *"Does anything this lane
+PUBLISHES call it?"* is answerable only from the generator's output and returns **no**. Both are
+about the same route; only the second bounds the wave. Tick 237 ruled *never ask whether a
+generator's output surface exists — ask where the document is constructed and whether this lane owns
+it*; this is its converse and the first firing of it: **before briefing a policy for a caller, grep
+the generator for the caller.** The refusal is what keeps the fix minimal — SITE-168 refuses a blank
+key and decides nothing about what an anonymous visitor gets, because there is no anonymous visitor
+to decide for.
+
+## ⚠️ A `?? ''`-style default can be an ADAPTER, not a dead defence — say which, or the next tick deletes it (tick 295)
+
+Tick 280 catalogued the **dead default**: `?? 'Appointment'` over a NOT NULL column, a guard that
+cannot fire, reading as though it covers a case it cannot reach. The route's
+`input('visitor_session_token', '')` looks identical and is **not** the same thing, and SITE-168's
+brief has to say so explicitly or the next wave removes it as debris.
+
+`allocateFromPool` types the parameter `string`, so `input()` returning `null` would `TypeError` —
+which the route's `catch (\DomainException)` does **not** handle, turning a named 409 into a 500. The
+default is an **adapter** normalising absence to blank; the action then refuses blank. One invariant,
+one place, and the adapter is what keeps the refusal reachable as a domain error.
+
+⛔ **The discriminator: does anything DOWNSTREAM refuse the normalised value?** If yes it is an
+adapter and it stays; if nothing does, the default is the thing standing between the caller and the
+column, and tick 280 applies. Reading the default alone cannot tell the two apart — the difference
+lives in the callee, one file away.
+
+## ✅ The borrowed §7's falsifier FIRED and PASSED, and the discriminating member was exactly the known-intermittent one (tick 295)
+
+Tick 255 built the §7 borrow with three conditions and insisted the block record whether its
+falsifier **fired** or merely went **missing**; tick 258 resolved it in the strong direction once.
+Tick 295 is the second, and it is the sharper case because the two runs' `errors` integers
+**disagree**:
+
+| | tests | passed | FAILED | errors |
+| :-- | --: | --: | --: | --: |
+| borrowed (coder, `cf6e7ad3`) | 1993 | 1989 | 1 | **3** |
+| mine (this seat, `cf6e7ad3`) | 1993 | **1990** | 1 | **2** |
+
+Both reconcile (tick 226), and the **single** discriminating member is
+`a_deliberately_corrupted_backup_fails_the_restore` — J8, the known-intermittent one, now measured
+at 5·4·2·3·2·3·2·2·2·3·2 across eleven gates on unchanged trees. The `tests` total, the FAILED
+member and the two stable error members are identical.
+
+⭐ **So tick 278's rule is load-bearing rather than pedantic**: read the error **SET minus the
+intermittent member** and the two runs agree exactly; read the `errors` integer and the borrow looks
+refuted. A tick comparing integers would have recorded a contradiction between two correct runs of
+one tree. The borrow's delta was **zero — the same sha** — which is the strongest form condition (2)
+can take, and it is what made the disagreement attributable to the suite rather than to the tree.
+
+## ✅ Standing checks that fired on their HEALTHY branches (tick 295)
+
+Record these, or a rule that has only ever fired on its failing branch reads as an unfired
+precaution (tick 221).
+
+- **The doctor pair passed all FOUR checks — second consecutive clean pair** (293, 295): stamp +
+  stages + total (275) · SUM `0+6+87+93+15+455+137+4 = 797` in both blocks and in my own live run
+  (285) · `ok` only on `integrity … clean` while every counted stage prints `FAIL` (292) · **all six**
+  stage timings differing, so tick 250's short-stage caveat did not have to be reached (249).
+- **Cold witness on its EQUALITY branch with both qualifications measured**: `foreach` 0 (280) and
+  prose-`assert` 0 (285), so witness `grep -c 'assert'` **14** plus `expectException` **4** = **18** =
+  the green total exactly. Tick 290's second cause (framework calls registering more than one
+  assertion) is absent here.
+- **Tick 293's SUM form, second firing**: green 18 − red 16 = 2 = (2−1) + (2−1) over two failing
+  methods, agreeing independently with tick 248's first-failure rule and with both quoted messages.
+  States 1 and 3 byte-identical, **which is the correct result** for a mutation restoring a committed
+  prior state (287, 288) — the evidence is the pair of transitions, never a single red.
+- **Tick 290's `--ruling` correction, third consecutive clean firing.** Three earlier corrective
+  instructions failed because they blamed the coder for transcribing a flag my own command line kept
+  supplying; `bin/state.py:204` has no such flag and simply joins it on.
+- **§2 printed exactly one `⛔`** (`app/phpunit.xml`) — the healthy branch of tick 207's presence
+  check, `none` being the reading that would say the pin edit had been lost.
+- **Tick 285's drift signature checked rather than assumed**: `pwd` opened the census and all three
+  pathspec-carrying halves returned non-zero while the pathspec-free complement returned 11. The
+  *split*, not either number, is what separates a tooling fault from a bound movement.
+- **Ninth null closing tip re-read** (224, 225, 256, 279, 282, 283, 284, 293, 295), run at the close
+  and never drafted (tick 257). Newest sibling arrival `origin/main@{19:56:08}`, before this tick
+  opened.
+- **Census cache HIT measured from the reflog** (220), and all four surfaces re-run in full anyway
+  and byte-identical to tick 294 — half 1 **2** (both commits merges *of main*: `227edeab` reviews,
+  `978041fc` money, attributed with `--source` per tick 189) · half 2 **10** · half 3 **5** ·
+  complement **11**. This ledger's own arithmetic has been the defect six times, so a HIT licenses
+  citing a number and never guarantees the cited number was right.
+- **The one-writer set turned over INSIDE the tick, in the shrinking direction**: two sibling pids at
+  review time (`366978` Track 1, `3046288` stages), one at dispatch time. Tick 196's rule — re-run it
+  in the same breath as the launch — holds in both directions (tick 230 measured the growing one).
+
+## ⛔ THE CLOSED FORM'S FIRST TRY/CATCH FIRING — green and red are DIFFERENT CODE, and `$this->fail()` COUNTS (tick 296)
+
+Tick 291 gave the falsifier's assertion delta a closed form, tick 293 generalised it to a **sum over
+failing methods**, and both are phrased as *(assertions in the failing method) − (index of the failing
+one)*. That phrasing presumes green and red execute **one linear assertion list** up to the failure.
+SITE-168's test (a) is a try/catch falsifier and does not:
+
+```php
+try   { $this->attributeAction->allocateFromPool($biz->id, '   ', 'src');
+        $this->fail('Expected exception was not thrown'); }        ← the RED run's only assertion
+catch (\DomainException $e) {
+        $this->assertEquals('VISITOR_SESSION_TOKEN_REQUIRED', $e->getMessage());
+        $this->assertEquals($tokensBefore, CallToken::where(…)->count()); }   ← the GREEN run's two
+```
+
+Green and red are **different branches of different code**, so there is no single list for an index to
+point into. The sum still reconciles read as **green-count-in-that-method minus red-count-in-that-method**:
+(a) contributes 2 − 1 = **1**, (b) (`assertStatus` passes on the 409, `assertJson` counted-then-failed)
+contributes 2 − 2 = **0**, Σ = **1** = the measured `32 − 31` ✓, with tick 248's first-failure rule and
+both quoted messages agreeing independently.
+
+⛔ **`$this->fail()` INCREMENTS the assertion counter, and that is DERIVED here rather than asserted.**
+Green is independently measured at 32 by the cold witness, and test (b) has only two assert lines
+neither of which registers more than one — else green would exceed 32 — so (b)'s red is forced to 2 and
+(a)'s red is forced to **1**. A tick assuming `fail()` does not count computes Δ = 2, reads the measured
+1 as unreconcilable, and **calls a correct falsifier broken**. Same family as tick 290's `assertRedirect`
+registering two: **a framework call's assertion arity is invisible in the file's own text**, and the way
+to settle it is to let two instruments constrain each other (tick 291) rather than to reason about the
+framework.
+
+**RULED: the closed form is green-count minus red-count PER FAILING METHOD, summed — never an index into
+one list.** The index phrasing survives as the special case where the two runs coincide.
+
+## ✅ The cold witness's equality branch, first firing across TWO files (tick 296)
+
+`grep -c 'foreach'` **0** in both files (tick 280) and the witness lands **exactly** on green, which
+forecloses a prose `assert` (tick 285) without a second command:
+
+```
+PoolExhaustionTest   assert 16 + expectException 4 = 20     foreach 0
+DniRouteTest         assert 12 + expectException 0 = 12     foreach 0
+                                          witness 32  =  green 32
+```
+
+⚠️ **The witness sums across the filtered file SET, not one file** — `tests 15` = 10 + 5 confirms the
+set is the one the falsifier ran. And `$this->fail(` contains no `assert`, so it is correctly absent
+from the green witness and present only in the red count: the two instruments agree about the single
+call that decides the arithmetic, which is what makes the derivation above sound rather than circular.
+
+## ⛔ SITE-169 — the form-capture route is the ONE sibling endpoint with no edge-zone guard (ruled at tick 296)
+
+Three endpoints share the prefix `/sites/{business}/{deploy_hash}` in this lane's own
+`X-157/ModuleServiceProvider.php`, read at their own lines:
+
+| route | `status !== 'deployed'` | `$zone === null \|\| ! $zone->has_valid_ssl` |
+| :-- | :--: | :--: |
+| `GET  /sites/{b}/{h}` — the published page (`:41`) | ✅ `:46` | ✅ `:49` |
+| `GET  /sites/{b}/{h}/dni` (`:57`) | ✅ `:62` | ✅ `:65` |
+| `POST /sites/{b}/{h}/forms/{f}` (`:82`) | ✅ `:87` | ⛔ **absent** |
+
+⭐ **The divergent state is not hypothetical — this lane's own committed test constructs it.**
+`SslDerivedTest.php:42` does `$zone->update(['has_valid_ssl' => false])` against a deployment already
+`deployed`, and `:50` asserts the page `GET` is **404** in that state. The form POST in the same state
+returns **201 and stores a `Person` and a `FormSubmission`** — PII accepted for a site that is not being
+served, from a page the visitor could not have loaded, because the page 404s.
+
+⚠️ **Reachability measured, and it BOUNDS the claim** (tick 230). `EdgeDeployAction:47-53` refuses a
+*new* deploy with `SSL_CERTIFICATE_REQUIRED` before any `Deployment` row is written, so the state arises
+only by revocation **after** deploy — and `grep -rn 'has_valid_ssl' app/app` shows **no production writer
+that sets it false**: the only writer is `EdgeProvisionAction:19` on create, in an action tick 213
+measured as having zero production callers. The wave therefore does **not** claim production reaches the
+state today; it makes the three siblings agree, so the day vendor edge delivery stops being
+`UNRESOLVED — no CDN credential` under ruling 16 the endpoint is already correct.
+
+⛔ **The 277/295 discriminator, and it is the durable half: ENFORCING AN EXISTING INVARIANT vs INVENTING
+A POLICY.** Tick 277 built an invariant into an action with zero production callers (*"the invariant
+belongs in the action BECAUSE the action writes the terminal state, whoever calls it"*); tick 295 refused
+a wave on a live route because it would have *invented a policy for a caller that does not exist*. Here
+the policy question is **already answered twice in the same file**, by the same two lines and the same
+404 — copying a decision to the endpoint that was missed decides nothing new, which is what puts it on
+277's side. ⚠️ Note the trap in the other direction: "the state is unreachable in production" is true of
+the two sibling guards as well, so it cannot be the discriminator — what makes the page guard
+load-bearing is that a test **asserts** it, which is J11's `ssl` element under ruling 16.
+
+⛔ Four alternatives refused, each of which would pass every gate: **guarding inside
+`FormCaptureAction`** (a reader compensating for a route, and that action is **X-155's** and knows
+nothing of edge zones, so every other caller would gain a zone dependency); **a different status code**
+(both siblings return 404 for this exact condition); **relaxing the page and DNI guards to match** (that
+deletes the assertion `SslDerivedTest:50` and `X157Test.php:604` depend on — the direction of a
+consistency fix is never free); and **adding a production writer that revokes SSL** (scope nobody asked
+for, vendor half reserved).
+
+✅ The test shape is already in the file: `X157Test.php:1751-1776` posts to the published form's own
+`action` attribute, asserts **201**, rolls the deployment back and asserts the same POST returns **404**
+with the submission count unmoved. The new method is that shape with the rollback replaced by the flag
+flip. **FALSIFIER: reverting the guard restores a committed prior state ⇒ tick 287 applies in full and
+the four-state sequence is required.** Per tick 293 this entry states the ruling and the falsifier and
+**no prediction**; the outcome is written by the next tick, after the measurement.
+
+## §7, doctor and the census at tick 296
+
+§7 on the tip `d020feec`, measured **independently in this seat**: `tests 1995 · passed 1992 · FAILED 1 ·
+errors 2`, **byte-identical to the coder's**, ⭐ `a_published_site_carries_all_seven` **ABSENT — J11
+green**. Reconciles `1992+1+2 = 1995` ✓. Against tick 295's `1993 · 1990 · FAILED 1 · errors 2` it is
++2 tests / +2 passed with the FAILED and error **sets** byte-identical, and the diff adds exactly two
+`public function test` and deletes none, so tick 226's arithmetic accounts for the whole delta. Stable
+set: `test_g2_76_unified_inbox_header` (X-01, **stages'**) plus sixty's two real-transport journey stubs.
+**J8's `a_deliberately_corrupted_backup_fails_the_restore` absent again — 5·4·2·3·2·3·2·2·2·3·2·2 across
+twelve gates on unchanged trees**; read the SET minus that member, never the integer (tick 278).
+
+§0 pin reads `goaiez_antig_site_test`; §2 exactly one `⛔` plus the `ℹ supervisor working notes` line,
+which is not a `⛔` (tick 263) — tick 207's **healthy** branch, `none` being the reading that would say
+the pin edit had been lost. §4 seals ✓; §6 pint and phpstan green.
+
+Live doctor: stamp `20260829-0647` = `runtime_build` · `integrity clean · boundary 6 · contract 87 ·
+citation 93 · schema 15 · capability 455 · anchor 137 · journey 4` · **797**. **No stage moved.** The
+report's pair passed all three checks — SUM 797 in both (285), `ok` only on `integrity … clean` (292),
+and three of seven timings differing so it is provably two runs (249), with `capability 25/25` repeating
+**not** a defect because the discriminator is a byte-identical *block* (250). Third consecutive clean
+pair (293, 295, 296). Both id censuses re-run **in this seat with `--include='*.php'`** (287) and
+byte-identical: X-137 `G13-19 1 · G13-24 3 · G18-17 1 · G18-24 1 · G3-11 1 · G8-13 1`; X-157
+`G13-31 1 · G6-06 1 · G6-33 1`.
+
+Census: `pwd` first and tick 285's drift signature **absent** (three pathspec halves non-zero, the
+pathspec-free complement 11 — the *split* is the signature, never either number). Newest arrival across
+all eight refs `origin/track/site@{20:27:40}`, my own tick-295 push; newest **sibling** arrival
+`origin/main@{19:56:08}`, predating tick 295's close ⇒ no ref moved, a HIT measured from the reflog
+(220). Re-run in full regardless and **byte-identical to tick 295** — half 1 **2** (both merges *of
+main*: `227edeab` reviews, `978041fc` money, attributed with `--source` per tick 189; no violating
+partition) · half 2 **10** · half 3 **5** · complement **11**. Tips (the next miss's lower bound —
+tick 192): `main 4b26ffbc` · `money 544d5576` · `pricebook 042e78fd` · `reviews e02d8cf2` ·
+`sixty 2ba6ad57` · `stages b79ae957` · `ui 08ba50d0` · `site cf6e7ad3`. **Tenth null closing tip
+re-read** (224, 225, 256, 279, 282, 283, 284, 293, 295, 296), run at the close and never drafted (257).
+
+✅ Standing checks on their healthy branches: tick 290's `--ruling` correction, **fourth** consecutive
+clean JOURNAL entry; tick 274's ground-condition instrument (item 1 reported §2's `⛔` **lines**, so the
+supervisor's own uncommitted notes fired no false stop); tick 287's ordering item (the gate was run
+against a named sha **after** the final commit, so §6/§7 describe the committed tree — 253); and tick
+293's pint path correction (`cd app && ./vendor/bin/pint …`) ran clean.
