@@ -3,6 +3,7 @@
 namespace Tests\Modules\X157;
 
 use App\Models\Business;
+use App\Modules\X137\Models\CallToken;
 use App\Modules\X157\Models\Deployment;
 use App\Modules\X157\Models\EdgeZone;
 use App\Support\Tenancy;
@@ -116,5 +117,27 @@ class DniRouteTest extends TestCase
         $response = $this->getJson("/sites/{$this->business->id}/test_hash/dni");
         $response->assertStatus(409);
         $response->assertJson(['error' => 'VISITOR_SESSION_TOKEN_REQUIRED']);
+    }
+
+    public function test_the_dni_route_refuses_a_rolled_back_deployment_and_allocates_nothing(): void
+    {
+        DB::table('dni_pool_numbers')->insert([
+            'business_id' => $this->business->id,
+            'phone_number' => '+15551234567',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $this->deployment->update(['status' => 'rolled_back']);
+
+        $response = $this->getJson("/sites/{$this->business->id}/test_hash/dni?visitor_session_token=token1");
+
+        $response->assertStatus(404);
+
+        $this->assertSame(
+            0,
+            CallToken::where('business_id', $this->business->id)->count(),
+            'a rolled back deployment still allocated a DNI token'
+        );
     }
 }
