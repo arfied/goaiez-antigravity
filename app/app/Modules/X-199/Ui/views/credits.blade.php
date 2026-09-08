@@ -18,7 +18,7 @@
     </div>
 
     @if($terms->isEmpty())
-        <x-ui.empty-state heading="Nobody is on terms yet.">A commercial customer gets terms at their first invoice; they appear here the moment they do.</x-ui.empty-state>
+        <x-ui.empty-state heading="Nobody is on terms yet.">A commercial customer gets terms at their first invoice. Nothing in this checkout raises one from a completed job, and a draft is never issued, so no terms row is created yet.</x-ui.empty-state>
     @else
         <ul class="space-y-4">
             @foreach($terms as $term)
