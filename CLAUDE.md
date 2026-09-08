@@ -4519,3 +4519,46 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     family a **nineteenth** time, with a new instrument: **a brief that dictates an assertion has
     dictated the ambient state that assertion runs in**, and ambient state is the one thing a diff
     does not show.
+194. **A list a screen cuts says that it is cut, and it keeps the end the screen exists to show —
+    the lane had swept every kind of STRING a screen prints and never swept the LISTS (RULED by the
+    lane supervisor 2026-09-08 16:2x, briefed as MONEY-126).** Ruling 36's question — *what is
+    actually at the other end of the string this screen prints?* — asked of a list is **is this the
+    whole list, and if not, which end was thrown away?** Nothing in rulings 36–193 had asked it.
+    `grep -rn "limit(\|take(" --include=*.php` over the eight modules returns **three** lines, and
+    they are three different answers. **(a) `X-199/Ui/Unpaid.php:59` is HONEST and is not touched:**
+    its `limit(5)` sits in the *paid* branch, the door that reaches it is labelled `View the last 5
+    paid` (`unpaid.blade.php:30`), and the unpaid count and value beside it are recomputed from
+    **all** rows at `:71-79` under a comment saying exactly that — the shape done right, and worth
+    keeping in mind as the model. **(b) `X-211/Ui/InvoiceThreadBeside.php:88-93` is the sharp one
+    and it is NOT a copy defect.** It is the only place in the lane where a limit meets an
+    **ascending** order (`orderBy('created_at')->orderBy('id')->limit(50)`), so the rows thrown away
+    are the **most recent** ones. This is J12's own screen — *an overdue invoice is chased by
+    reason, resolution first* — and an owner opening an invoice to find out why it is unpaid reads
+    months-old messages while the recent exchange that explains it is not on the page; the empty
+    state one line below (`:57`, *"Nothing has been said with X on any channel"*) presents the
+    section as the whole conversation. **(c) `X-117/Ui/CheckoutBlock.php:114`** keeps the right end
+    (`orderByDesc('id')->limit(10)`) and still does not say it is a window.
+    **RULED: (b) takes the newest 50 and renders them oldest-first, (c) says when older orders are
+    not shown, and both read ONE ROW PAST THE WINDOW off the collection they already fetch** — the
+    overflow probe, so there is one query per render exactly as there is today. ⛔ Not resolved by
+    removing either limit: an unbounded render on a screen with no pagination is a real hazard, and
+    `ls app/resources/views/components/ui/` is twelve components (`attention-card button empty-state
+    error-panel gauge row row-list sample skeleton status-pill submit systems-strip`) — **none
+    paginates**, and the kit is Track 2's (ruling 21). ⛔ Not by building pagination (ruling 59).
+    ⛔ Not by a second `count()` query. ⛔ `<h2>Orders</h2>` is **not** renamed: with ten orders or
+    fewer it is true, and above ten the notice corrects it, so a rename is churn a reviewer must
+    re-derive (ruling 47's companion).
+    ⚠️ **Blast radius: ZERO existing assertion moves**, and the reason is the finding.
+    `InvoiceThreadBesideScreenTest.php:51-52` seeds **two** messages with the **same** `created_at`,
+    so the `id` tiebreak leaves the rendered order unchanged; no test in the lane uses
+    `assertSeeInOrder` or asserts a message count; and `grep -rn ">Orders<"` returns
+    `checkout-block.blade.php:43` **alone** (ruling 70). Both proofs are therefore **new** methods
+    (ruling 68), and the X-117 one mounts **twice** — ten orders then eleven — because an assertion
+    made inside one component instance proves nothing about the next page load (ruling 35).
+    ⚠️ **Two sibling sweeps came back EMPTY and are STRUCK with their measurement** (rulings 95,
+    100, 111): every `_cents` figure in the lane's blades **and** components divides by 100 (or by
+    10000 for `hundredths_cents`) — 45 lines, no exceptions, so ruling 152(b)'s currency family has
+    no arithmetic half; and **no owner-facing string in the lane claims an order at all**
+    (`newest|latest|most recent|oldest|chronolog|in order|sorted` over the eight `Ui/` trees returns
+    13 lines, every one an internal variable or a method name), so this defect could never have been
+    found by sweeping copy — only by reading the query. ⛔ Neither is to be re-raised.
