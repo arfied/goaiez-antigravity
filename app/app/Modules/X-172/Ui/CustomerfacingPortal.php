@@ -35,12 +35,13 @@ class CustomerfacingPortal extends Component
             $oldLink = PortalLink::where('token', $this->token)->first();
             if ($oldLink) {
                 $newLinkAction = app(PortalLinkAction::class);
-                $newLinkAction->handle(
+                $newLink = $newLinkAction->handle(
                     $oldLink->business_id,
                     $oldLink->resource_type,
                     $oldLink->resource_id,
                     $oldLink->customer_id
                 );
+                $this->token = $newLink->token;
             }
             $this->refreshedToken = true;
         }
