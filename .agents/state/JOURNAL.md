@@ -855,3 +855,4 @@
 - `2026-09-08T16:02:02` (R245) X-168 — the X-168 job-state window is an open/close pair; closeJobWindow closes the most recent open entry for a job and writes nothing when there is none.
 - `2026-09-08T16:35:19` (R245) X-168 — closeJobWindow's job_id scope is load-bearing and is now pinned by a test that fails if the filter is dropped.
 - `2026-09-08T17:12:18` (R245) X-168 — one open window per job — a repeat call for a job that already has an open entry returns the existing entry and writes nothing. Refuse, do not supersede. Return the existing entry, not null.
+- `2026-09-08T17:54:57` (R245) X-171 — TechOnSite event now carries the occurredAt moment of the tap
