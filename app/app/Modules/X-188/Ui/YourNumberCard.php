@@ -14,7 +14,7 @@ class YourNumberCard extends Component
     {
         // RLS is ENABLED and FORCED on the number_assignments table, applying the tenant_isolation policy
         // even to table owners. The policy evaluates `business_id = nullif(current_setting('app.business_id', true), '')`,
-        // which rejects all rows if the setting is missing or empty. This guarantees the unscoped query 
+        // which rejects all rows if the setting is missing or empty. This guarantees the unscoped query
         // is safely bound to the tenant set by the ResolveTenant middleware.
         $assignment = NumberAssignment::where('status', 'active')->first();
         $number = $assignment ? NumberPool::find($assignment->phone_number_id)?->phone_number : null;

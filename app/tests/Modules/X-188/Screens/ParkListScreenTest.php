@@ -6,6 +6,8 @@ namespace Tests\Modules\X188\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X188\Models\NumberPark;
+use App\Modules\X188\Models\NumberPool;
 use App\Modules\X188\Ui\ParkList;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -23,12 +25,12 @@ class ParkListScreenTest extends TestCase
         $this->actingAs($owner);
 
         // Given a parked number
-        $pool = \App\Modules\X188\Models\NumberPool::create([
+        $pool = NumberPool::create([
             'business_id' => $biz->id,
             'phone_number' => '+15551234567',
             'area_code' => '555',
         ]);
-        $park = \App\Modules\X188\Models\NumberPark::create([
+        $park = NumberPark::create([
             'business_id' => $biz->id,
             'phone_number_id' => $pool->id,
             'parked_at' => now(),
