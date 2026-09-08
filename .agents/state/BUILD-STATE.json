@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-07T21:43:52",
+ "updated": "2026-09-07T22:15:25",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -5114,6 +5114,30 @@
    "module": "C-Sms",
    "chose": "RULING BP: A disqualification quotes the ARTIFACT that proves it, and the artifact outranks the command.",
    "at": "2026-09-07T21:43:52",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-01",
+   "chose": "BQ \u2014 A grep-based stage flags the file that defines or documents the pattern it greps for, and that violation is permanently refused because a fix deletes the rule or its explanation.",
+   "at": "2026-09-07T22:15:25",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-01",
+   "chose": "BR \u2014 Of 609 open violations across six red stages, zero are reachable by this lane's hand; each remaining class is gated on the frozen master plan, vendor credentials, a check flagging its own definition, or a product rule.",
+   "at": "2026-09-07T22:15:25",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-01",
+   "chose": "BS \u2014 A lint's fix prose is not authority to delete a product rule; read the check's predicate and the column's subject before acting on it.",
+   "at": "2026-09-07T22:15:25",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-01",
+   "chose": "BT \u2014 When a stage reads a generated file, find the generator's source before opening a wave, and if that source is reserved then the stage is reserved.",
+   "at": "2026-09-07T22:15:25",
    "ruling": "R245"
   }
  ],

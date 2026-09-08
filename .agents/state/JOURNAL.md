@@ -1273,3 +1273,7 @@ Therefore, adding a row to the tracker could move only the capability count.
 - `2026-09-07T21:43:52` (R245) C-Sms — RULING BN: A single-id bare stub selects for an UNBUILT CAPABILITY, not an untested seam.
 - `2026-09-07T21:43:52` (R245) C-Billing — RULING BO: Rank by a grep for the capability's own subject, never by aggregate density.
 - `2026-09-07T21:43:52` (R245) C-Sms — RULING BP: A disqualification quotes the ARTIFACT that proves it, and the artifact outranks the command.
+- `2026-09-07T22:15:25` (R245) X-01 — BQ — A grep-based stage flags the file that defines or documents the pattern it greps for, and that violation is permanently refused because a fix deletes the rule or its explanation.
+- `2026-09-07T22:15:25` (R245) X-01 — BR — Of 609 open violations across six red stages, zero are reachable by this lane's hand; each remaining class is gated on the frozen master plan, vendor credentials, a check flagging its own definition, or a product rule.
+- `2026-09-07T22:15:25` (R245) X-01 — BS — A lint's fix prose is not authority to delete a product rule; read the check's predicate and the column's subject before acting on it.
+- `2026-09-07T22:15:25` (R245) X-01 — BT — When a stage reads a generated file, find the generator's source before opening a wave, and if that source is reserved then the stage is reserved.
