@@ -461,4 +461,21 @@ class X108Test extends TestCase
 
         $this->assertTrue($found, 'Failed to find any money column in affiliates for positive control');
     }
+
+    /**
+     * [G2-06]
+     */
+    public function test_g2_06_availability_request_refuses_booked_time_p_093(): void
+    {
+        // ⑤ the agent calls availability.request; time is looked up or refused (P-093)
+        $biz = TestCase::provisionTenant(['name' => 'Test Tenant', 'currency' => 'USD']);
+        $date = Carbon::now()->addDay()->toDateString();
+        $this->book->handle($biz->id, 'Haircut', "$date 11:00:00", "$date 13:00:00");
+
+        $result = $this->avail->handle($biz->id, $date);
+
+        $this->assertCount(2, $result['offered_slots']);
+        $this->assertStringContainsString('14:00', $result['offered_slots'][0]['start_time']);
+        $this->assertStringContainsString('16:00', $result['offered_slots'][1]['start_time']);
+    }
 }
