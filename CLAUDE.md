@@ -242,11 +242,11 @@ that test and is not on this list is a wave invented to fill the lane.
   untouched, the decoy root `REPORT.md` gone and the mailbox copy intact.
   `RULING CN` is discharged as a live hazard and stays above as history.
 
-⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 207 (2026-09-08) against pinned main
-`4dd461f6`, which MOVED 6 commits from tick 206's `9f2c2d58`; lane 37 ahead / 725 behind; both
+⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 208 (2026-09-08) against pinned main
+`034a9919`, which MOVED 3 commits from tick 207's `4dd461f6`; lane 38 ahead / 729 behind; both
 `.claude/hooks`
-`A` rows still present. TRACK 1 ACTION 1 is unanswered **by construction** — the 6 are five Track 1
-supervisor/state commits plus one merge of `track/reviews`, and `git diff --stat 9f2c2d58 4dd461f6 --
+`A` rows still present. TRACK 1 ACTION 1 is unanswered **by construction** — the 3 are two `build:`
+commits and one supervisor note on `track/sixty`, and `git diff --stat 4dd461f6 034a9919 --
 CLAUDE.md .agents/rules/` prints nothing, so no commit landed on `main` in which it could have been
 answered. ⚠️ **Track 1's
 `OWNER.md` note of 09:1x is NOT the answer and disclaims itself** — *"Nothing here touches your two shut
@@ -274,7 +274,13 @@ lane's commits on `main` and still leaves `multiEmitterOk` out of this checkout,
 thirteen `contract` withdrawals wait on (`DA`). ⚠️ **`RULING DX` (tick 207) corroborates `DW` with a
 second case 16 minutes later — Track 1 merged `track/reviews` at a tip 5 ahead / 218 behind — and
 `RULING DY` records that a moved pin does NOT stale `DS`/`DU`; both are below, and neither is an
-opening.** Do not
+opening.** ⭐ **`RULING DZ` (tick 208) takes `DW`/`DX` off siblings entirely: Track 1 merged
+`track/stages` ITSELF at a tip 38 ahead / **359 behind** at `06eb6558` (2026-09-07 20:18) — the merge
+that set base `b79ae957` — so containment was never this lane's precondition either, and a third
+sibling case landed the same morning (`track/sixty`, **604 behind**). Track 1 names the partition in
+its own subject line (`07a4ae2f`: *"oldest merge base among the rc=0 lanes"*), confirming `DW`'s
+reading that the gate is conflict-freedom. **`DZ` is not an opening** — `multiEmitterOk` is still `0`
+here at 729 behind (`DA`) — and it strengthens the request, not this seat's authority.** Do not
 open a wave. `state.py next` returns `{"action": "FINISHED"}`. Every remaining
 stage count needs the owner and is listed as **OWNER ACTION A–F** at the end of
 `REVIEWS.md`: vendor artifact ids (`anchor 137`), real Infobip and a real placed
