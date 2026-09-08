@@ -242,7 +242,7 @@ that test and is not on this list is a wave invented to fill the lane.
   untouched, the decoy root `REPORT.md` gone and the mailbox copy intact.
   `RULING CN` is discharged as a live hazard and stays above as history.
 
-⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 191 (2026-09-08).** Do not
+⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 193 (2026-09-08).** Do not
 open a wave. `state.py next` returns `{"action": "FINISHED"}`. Every remaining
 stage count needs the owner and is listed as **OWNER ACTION A–F** at the end of
 `REVIEWS.md`: vendor artifact ids (`anchor 137`), real Infobip and a real placed
@@ -633,6 +633,25 @@ each verdict block in `REVIEWS.md`.
     print the matches (`pgrep -af agy | grep "grs-antig-stages" | cut -c1-400`) and read them
     before believing any count; a real dispatch's line begins `timeout -k 60 3h
     /home/goaiez/.local/bin/agy --print`, never `/bin/bash -c source …snapshot-bash…`.
+  - ✅ **`RULING CW` (tick 193) — USE THIS ONE. `pgrep -a -P 1 -f agy` is the case-(a) check.**
+    It supersedes 189's read-the-matches mitigation and closes 188's `/proc` gap; both findings
+    above were right, neither had the fix. **The self-match is structural, so no pattern escapes
+    it** — any `pgrep -af X | grep Y` matches the pipeline's own `bash -c` line, which necessarily
+    contains both. What separates a real coder is its **parent**: `launch-coder.sh:59` starts it as
+    `nohup bash -c '…' &`, the launcher exits, and the shell is reparented to **init**, while the
+    tick's own `bash -c` is a live child of the Claude session's shell. `-P 1` therefore filters the
+    artifact out by construction — measured at tick 193 on this lane, the same minute 189's pipeline
+    returned its two self-hits, `pgrep -a -P 1 -f agy` returned three real coders and **zero**
+    self-hits, with no `grep` in it at all.
+    **And it needs no `/proc`.** `launch-coder.sh:46-48` sets `TRACK=$(basename "$PWD")` and
+    `LOG="/home/goaiez/tmp/${CODER}-${TRACK}-run${n}.log"`, and that redirect is *in the command
+    line `pgrep -a` already prints* — so the lane is named in the output. Tick 193 identified
+    `pricebook` run115, `sixty` run119 and `site` run200 with no boundary violation. A stages coder
+    is running only if a printed line contains `agy-grs-antig-stages-runN.log`.
+    ⚠️ **One caveat: do not use `-P 1` to poll a dispatch you just made.** Inside
+    `launch-coder.sh:63`'s `sleep 2` the coder's parent is still the launcher, so a scan in that
+    ~2s window misses it. Case (a) asks about a *previous* run and is never in that window; a tick
+    that just dispatched has the `LAUNCHED run N (pid …)` line as its evidence instead.
 - **Wave selection checks the deferred list first.** Plan §257.4 (owner ruling
   2026-09-04): X-200 X-158 X-159 X-114 X-144 X-197 X-147 X-143 X-141 X-145 X-213
   X-208 X-215 X-214 are kept, hidden and unbuilt. No brief opens a wave in one; a
