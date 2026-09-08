@@ -51,6 +51,19 @@ final class EmailSendAction
                     'message' => 'Recipient has unsubscribed from marketing; the suppression is X-204\'s',
                 ];
             }
+
+            $hasBounceOrSpam = MailEvent::where('business_id', $businessId)
+                ->where('recipient_email', $recipientEmail)
+                ->whereIn('event_type', ['bounced', 'spam-trap'])
+                ->exists();
+
+            if ($hasBounceOrSpam) {
+                return [
+                    'status' => 'refused_bounced_or_spam',
+                    'refusal_code' => 'MARKETING_SEND_REFUSED_BOUNCE_OR_SPAM',
+                    'message' => 'Marketing send refused due to prior bounce or spam-trap',
+                ];
+            }
         }
 
         // 2. Warmup calendar check (applies to marketing sends: TEST ANCHOR)

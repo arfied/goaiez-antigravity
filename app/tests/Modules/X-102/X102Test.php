@@ -249,6 +249,9 @@ class X102Test extends TestCase
         Event::assertDispatched(ChatEscalated::class);
     }
 
+    /**
+     * BUILD PROPOSAL: G16-21 (R245) — Carousels require items and asset paths, but X-102 lacks a chat message store to provide them (it owns only chat_sessions and chat_leads). The store itself is currently blocked because X-102 lacks the client-side JS bundle (goaiez-chat.js) to drive it (the unauthenticated API door was built in Wave 122). Owner: X-102 to build, Track 1 to declare (manifest)
+     */
     public function test_g16_21_chat_carousels(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Chat Carousel', 'currency' => 'USD']);
@@ -369,6 +372,7 @@ class X102Test extends TestCase
     /**
      * [G21-01] P-120 — the claim law. Scripted messages posing as other attendees is manufactured social proof. (Same class as the "just in time" webinar killed at G15-01.)
      */
+    #[Group('G21-01')]
     public function test_g21_01_no_manufactured_social_proof(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Social Proof', 'currency' => 'USD']);

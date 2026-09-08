@@ -9,16 +9,16 @@ use App\Modules\X110\Actions\PixelInstallAction;
 use App\Modules\X110\Actions\PixelVerifyAction;
 use App\Modules\X110\Models\CwvSample;
 use App\Modules\X110\Models\PixelEvent;
+use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Tag Installation & Verification'])]
 class InstallVerify extends Component
 {
     #[Locked]
     public int $businessId = 0;
-
-    #[Locked]
-    public bool $isSample = false;
 
     #[Locked]
     public string $servedDomain = 'cdn.external-tracker.com';
@@ -35,7 +35,7 @@ class InstallVerify extends Component
 
     public function mount(int $businessId = 0)
     {
-        $this->businessId = $businessId;
+        $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
     }
 
     public function render()

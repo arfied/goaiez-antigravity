@@ -262,4 +262,18 @@ class X200Test extends TestCase
         $this->assertSame(100, $this->qaAction->scoreCall($biz->id, $seat->id, 2001, 150)->qa_rating);
         $this->assertSame(0, $this->qaAction->scoreCall($biz->id, $seat->id, 2002, -5)->qa_rating);
     }
+
+    /**
+     * [G18-13]
+     */
+    public function test_g18_13_qa_scorecard_is_positive_only(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Outbound Contact Center Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $seat = $this->loginAction->login($biz->id, 'Agent John', isAi: false);
+
+        $qa = $this->qaAction->scoreCall($biz->id, $seat->id, 2003, 50, 'Some negative note');
+        $this->assertTrue($qa->is_positive_only);
+    }
 }

@@ -7,8 +7,10 @@ namespace App\Modules\X01\Ui;
 use App\Models\Conversation;
 use App\Models\Customer;
 use App\Modules\CAgent\Actions\AgentDraftAction;
+use App\Modules\X01\Actions\ConversationTakeoverReleaseAction;
 use App\Modules\X01\Domain\UnifiedInboxManager;
 use App\Modules\X01\Models\LeadScore;
+use App\Modules\X01\Models\TakeoverLatch;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Locked;
@@ -33,10 +35,45 @@ class Thread extends Component
 
     public function mount(?Customer $customer = null)
     {
+        if (! $customer && request()->has('customer')) {
+            $customer = Customer::find(request()->query('customer'));
+        }
+
         $this->customer = $customer;
         if ($this->customer) {
             $score = LeadScore::where('person_id', $this->customer->id)->value('grade');
             $this->isGhostRisk = ($score === 'F');
+        }
+    }
+
+    /**
+     * Recomputed in render() on every lifecycle because Livewire re-renders after every action.
+     * Manual assignments (e.g. during releaseTakeover or sendReply) are redundant and immediately overwritten.
+     */
+    public bool $hasActiveTakeover = false;
+
+    public function releaseTakeover(ConversationTakeoverReleaseAction $action)
+    {
+        if (! $this->customer) {
+            return;
+        }
+
+        $this->errorMessage = null;
+        try {
+            $conversationIds = Conversation::where('customer_id', $this->customer->id)->pluck('id');
+            $latches = TakeoverLatch::whereIn('conversation_id', $conversationIds)
+                ->where('is_active', true)
+                ->get();
+
+            if ($latches->isEmpty()) {
+                return;
+            }
+
+            foreach ($latches as $latch) {
+                $action->handle(Tenancy::idOrFail(), $latch->conversation_id);
+            }
+        } catch (\Throwable $e) {
+            $this->errorMessage = 'Could not release takeover: '.$e->getMessage();
         }
     }
 
@@ -127,6 +164,10 @@ class Thread extends Component
                 ->select('messages.*', 'conversations.channel')
                 ->orderBy('messages.created_at', 'asc')
                 ->get();
+
+            $this->hasActiveTakeover = TakeoverLatch::whereIn('conversation_id', $conversationIds)
+                ->where('is_active', true)
+                ->exists();
         }
 
         return view('x-01::thread', [

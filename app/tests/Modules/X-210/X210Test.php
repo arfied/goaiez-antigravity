@@ -8,6 +8,7 @@ use App\Modules\X210\Actions\PromotionApplyAction;
 use App\Modules\X210\Actions\PromotionCreateAction;
 use App\Modules\X210\Actions\PromotionProposeTargetsAction;
 use App\Modules\X210\Actions\PromotionValidateAction;
+use App\Modules\X210\Domain\X210Engine;
 use App\Modules\X210\Events\PromotionCapReached;
 use App\Modules\X210\Events\PromotionCreated;
 use App\Modules\X210\Events\PromotionRedeemed;
@@ -85,10 +86,22 @@ class X210Test extends TestCase
     }
 
     /**
-     * [N-027], [N-028], [N-030], [N-032], [G1-66], [G1-67], [G1-69], [G6-38], [G7-47], [G15-21]
+     * [G15-21]
      */
-    public function test_promotion_capabilities(): void
+    public function test_g15_21_cancel_stays_one_tap(): void
     {
-        $this->assertTrue(true);
+        $engine = new X210Engine;
+        $this->assertSame(['status' => 'cancelled'], $engine->cancelAction(false));
+        $this->assertSame(['status' => 'refused', 'reason' => 'one tap cancel required'], $engine->cancelAction(true));
+    }
+
+    /**
+     * [G7-47]
+     */
+    public function test_g7_47_rate_never_changes_without_notified_action(): void
+    {
+        $engine = new X210Engine;
+        $this->assertSame(['status' => 'changed'], $engine->changeRate(true));
+        $this->assertSame(['status' => 'refused', 'reason' => 'rate never changes without a notified action'], $engine->changeRate(false));
     }
 }

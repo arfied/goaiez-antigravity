@@ -49,8 +49,10 @@ class AbandonedFormsTest extends TestCase
             ->assertDontSee('No abandoned forms yet')
             ->assertSee('Highest friction')
             ->assertSee('email')
-            ->assertSee('signup_form')
-            ->assertSee('vis_123');
+            ->assertSee('Signup form')
+            ->assertDontSee('signup_form')
+            ->assertSee('Someone')
+            ->assertDontSee('vis_123');
 
         $otherBiz = TestCase::provisionTenant(['name' => 'Other Tenant']);
         Tenancy::actingAs($otherBiz->id, function () use ($otherBiz) {
@@ -88,6 +90,36 @@ class AbandonedFormsTest extends TestCase
         Livewire::actingAs($user)
             ->test(AbandonedForms::class, ['businessId' => $biz->id])
             ->assertDontSee('wrong_form');
+    }
+
+    public function test_route_renders_abandoned_forms()
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Test Tenant 3']);
+        $user = $biz->owner;
+        Tenancy::set((int) $biz->id);
+
+        $visit = Visit::create(['business_id' => $biz->id, 'visitor_id' => 'vis_123', 'landing_page' => '/', 'created_at' => now()]);
+        $session = Session::create(['business_id' => $biz->id, 'visit_id' => $visit->id, 'session_token' => 'tok1', 'started_at' => now(), 'created_at' => now()]);
+        $event = PixelEvent::create([
+            'business_id' => $biz->id,
+            'session_id' => $session->id,
+            'event_name' => 'form.abandoned',
+            'payload' => [
+                'form_id' => 'quote_form',
+                'abandoned_field' => 'phone',
+            ],
+            'created_at' => now(),
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('x-110.abandoned-forms'))
+            ->assertOk()
+            ->assertSee('Someone')
+            ->assertSee('quote form')
+            ->assertSee('phone number')
+            ->assertDontSee('vis_123')
+            ->assertDontSee('quote_form')
+            ->assertDontSee("'phone'");
     }
 
     public function test_recovery_affordance_does_not_dispatch_send()

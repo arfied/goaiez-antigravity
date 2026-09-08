@@ -9,6 +9,8 @@ final class WhatsappSessionOpened
     public function __construct(
         public readonly int $businessId,
         public readonly int $sessionId,
-        public readonly string $recipientPhone
+        public readonly string $recipientPhone,
+        public readonly string $body = '',
+        public readonly string $senderName = ''
     ) {}
 }
