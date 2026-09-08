@@ -18,7 +18,7 @@ class X211RuntimeProofTest extends TestCase
         $data = json_decode(File::get($path), true);
         $this->assertArrayNotHasKey('gateway_charge_id', $data);
 
-        $this->assertIsInt($data['plan_id']);
+        $this->assertGreaterThan(0, $data['plan_id']);
         $this->assertIsInt($data['installment_amount_cents']);
         $this->assertMatchesRegularExpression('/^INV-[0-9]{6}$/', $data['invoice_number']);
         $this->assertArrayHasKey($data['reason'], ArEngine::REASONS);
