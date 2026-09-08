@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-08T17:40:39",
+ "updated": "2026-09-08T18:01:53",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2401,6 +2401,12 @@
    "module": "X-211",
    "chose": "an empty state names what has not happened and what it waits on, so the invoice thread screen says no invoice is open and that nothing in this checkout raises one from a completed job, instead of saying every issued invoice is paid; nothing in production creates an invoice at all, so that branch is the state every real tenant is in and the old sentence described a ledger that settled and never existed; the same clause is stated in X-199's existing words so the lane states one fact in one form, and no query, heading, picker or door changes",
    "at": "2026-09-08T17:40:39",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-211",
+   "chose": "an empty state that reports a settled ledger to an account with no ledger is the same fiction as one that reports a paid one, so the ageing screen says no invoice is past its terms and the payment-plan builder says there is no open invoice to split by either route, instead of saying every issued invoice is inside its terms or already on a plan; and every one of these four screens now names both unbuilt halves rather than one, because the frozen plan raises a draft from a completed job and no draft to issued transition exists, so the hand-off alone fills none of them; no transition, dispatcher, query, heading or door is built to make any sentence true",
+   "at": "2026-09-08T18:01:53",
    "ruling": "R245"
   }
  ]
