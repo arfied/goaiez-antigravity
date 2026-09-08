@@ -403,6 +403,16 @@ each verdict block in `REVIEWS.md`.
   running" stops the lane on a dead pid: `2172009` has sat in `.agents/supervisor/coder.pid`
   since 04:57 on 2026-09-08 with no such process. `pgrep -af agy` returning nothing with
   `cwd` here is the check.
+- ⚠️ **`pgrep -af agy` is lane-blind, and the prescribed `cwd` confirmation is refused from
+  this seat (tick 188).** `pgrep` routinely returns other lanes' live coders — at tick 188 it
+  returned three, all Track 4's run 113 — so its output is never "a coder is running" until
+  the checkout is identified. But `ls -l /proc/<pid>/cwd` on a foreign pid is **blocked** by
+  the workspace boundary, which allows only this checkout and the six sibling
+  `.agents/supervisor/` directories. **The denial is the answer: its message names the
+  resolved path** (`ls in '/home/goaiez/agents/grs-antig-pricebook' was blocked`). Read it and
+  move on; do not re-run it or treat the refusal as inconclusive. The `for p in /proc/[0-9]*`
+  `cwd`-walk in the one-writer bullet below is likewise refused here — the hook rejects it as
+  `simple_expansion`.
 - **Wave selection checks the deferred list first.** Plan §257.4 (owner ruling
   2026-09-04): X-200 X-158 X-159 X-114 X-144 X-197 X-147 X-143 X-141 X-145 X-213
   X-208 X-215 X-214 are kept, hidden and unbuilt. No brief opens a wave in one; a
