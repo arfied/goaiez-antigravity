@@ -3767,3 +3767,69 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     withholding a correct tip over a defect smaller than the thing withheld. A week of merged work is
     not held indefinitely against three known reds; it is held for one wave because one wave is what
     they cost.
+166. **A lane that WINS a merge resolution inherits every architecture pin that counted the losing
+    side, and all three of this lane's residual reds are that (RULED by the lane supervisor
+    2026-09-08 11:0x, on MONEY-116's `523c9fdb`).** Ruling 58 taught this lane to check a merge's
+    non-conflicting hunks; the damage can also land in another lane's **pinned counter**, where no
+    diff of this lane's files shows anything at all. Measured, with the numbers attached so Track 1
+    need not re-derive them. **(a) `HeadingSeamTest` `$conditionalHeadings` 10, pinned 8 — money is
+    +2.** The counter counts *views* (once per view) with a `<h[1-6]` at `@if`/`@unless` depth ≥ 1
+    over `app/Modules/*/Ui/*.php` components declaring the account layout: `declines.blade.php`
+    (`<h3>:37` inside the `@if` at `:26`) and `money-paid-today.blade.php` (`<h3>:32`, `<h4>:43`)
+    contribute; `unpaid`, `credits` and `invoices` carry their only heading at depth 0. ⚠️ **The
+    MONEY-116 demotion did not cause it** — those tags were untouched and a `h1`→`h2` edit cannot
+    move a count of headings-inside-conditionals; the count moved when money's five components joined
+    the population at the merge (ruling 155), and the previous gate could not see it because the
+    `expect` chain stopped at `$skips`. **The pin's own text is decisive** — *"the response to a move
+    is to re-read whether the arms it counts are mutually exclusive, not to edit a view"* — so, the
+    re-read: `declines` has `@else` at `:32` and `money-paid-today` at `:27`, both contributing
+    headings sit in the rows arm on a **single render path**, and each descends by exactly one level
+    from the `<h2>` above it. **The bound grew by two and the thing it bounds did not.**
+    **(b) `OwnerNavTest` `$withLayout` 10, pinned 13 — money is −3**, its own message naming the
+    cause (*"converted onto the owner layout"*), which is ruling 155. **(c) `SampleStateModuleTest`
+    `$total` 235, pinned 244 — money is −9**, which is ruling 54's deliberate resolution keeping
+    money's ten `Ui/` views over main's **one** generated `<x-surface.sample-state/>` line each, a
+    number ruling 54 recorded at the time. ⛔ **No blade is edited to move any of them** (the pin
+    forbids it in terms) and ⛔ **no `tests/Feature/Architecture/` file is edited** — they are CHECKs
+    and another lane's (the One Rule). Every pin's text says the honest response is to **re-pin and
+    record**, so the outcome is a **TRACK 1 ACTION with the numbers**, and until it lands every lane
+    taking money's merge inherits three reds.
+167. **`test_n_037` is main's needle against money's message — the SIBLING of MONEY-116's own item 2,
+    twenty-five lines later in the same class, and the brief swept neither (RULED by the lane
+    supervisor 2026-09-08 11:0x, briefed as MONEY-117).** `X-211/X211Test.php:411` expects
+    `'A fee with no matching TERM in the agreement is refused'`; money's `ArEngine::applyLateFee():55`
+    throws `FeeWithoutTermException` with `'No late-fee term in the agreement for %s: a fee with no
+    matching term is refused. Nothing was applied.'` `expectExceptionMessage` is a **case-sensitive
+    substring** match and main's needle is not a substring of money's message — the case differs on
+    `TERM`, and money's sentence carries no *"in the agreement"* between the noun and *"is refused"*.
+    **Deterministically red whenever reached.** It is ruling 58 shape (1), which is precisely what
+    MONEY-116 item 2 fixed at `:386` in the same file. **RULED: the test asserts money's
+    `FeeWithoutTermException` (already imported at `:14`) and the needle `'a fee with no matching term
+    is refused. Nothing was applied.'`** — the second sentence is not decoration, because `ArEngine:52`
+    records *"a refusal writes nothing (M29-C)"*, so the needle pins the refusal **and** its
+    write-nothing property (ruling 76). ⛔ Money's message is never reworded to main's — the module
+    wins (rulings 59, 161); ⛔ the needle is never shortened to a fragment that would match a
+    different refusal. ⚠️ Main's call also passes **four** arguments to money's **three**-parameter
+    method; PHP ignores a surplus argument to a userland function, so it is inert, but it is main's
+    signature standing in money's file and the fourth argument goes with the fix — ruling 156's
+    *"the arity half is the silent one"*, in its harmless direction. ⚠️ **The lane-wide sweep and its
+    instrument:** all seven `expectExceptionMessage`/`toThrow` assertions in the eight module test
+    directories were enumerated, and **six are green in this tick's own gate** with `:411` the only
+    red — so ruling 118's two-table sweep is answered by **the suite**, not by grepping needles
+    against sources, and that is the cheaper and stronger instrument whenever the population is
+    already under test. ⛔ Not to be re-raised. ⚠️ Per the
+    46/49/50/62/66/75/82/86/94/104/106/113/116/146 precedent the scoping miss is the supervisor's, so
+    MONEY-117 carries its own two dispatches.
+168. **An absence from a CAPPED list is not a clearance, and this ledger asserted both two lines
+    apart (RULED by the lane supervisor 2026-09-08 11:0x).** The 10:4x addendum recorded in one table
+    *"one unnamed | the §7 cap"* and, eleven lines below, that `test_n_037_fee_with_no_term_refused`
+    *"cleared without being touched"* on the evidence that it was *"absent from this gate"* — two
+    conclusions from the same eight-of-nine output, with ruling 160 having established the cap **that
+    same tick**. Measured now: the `:411` mismatch is deterministic and was untouched by two waves,
+    so it was almost certainly the unnamed ninth and never cleared. **RULED: a red is recorded as
+    cleared only when the run showing it absent is known to be COMPLETE** — a full captured list
+    (ruling 164), or a total that accounts for every member. From a capped §7, absence means
+    **unknown**, and it is written down as unknown. ⚠️ This is ruling 98's self-contradiction tell —
+    the cheapest kind to find, because both halves were already written down — arriving in the
+    **supervisor's own ledger** rather than in a screen. ⚠️ It cost a real thing: MONEY-116 was
+    scoped from that reading and shipped one method short of its own class.
