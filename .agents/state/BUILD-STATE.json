@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-08T01:39:08",
+ "updated": "2026-09-08T05:25:53",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -2403,6 +2403,12 @@
    "module": "X-157",
    "chose": "The published form endpoint forwards the whole request array to the capture action, whose first act is the under-18 gate that returns before the validator and before any write, and the endpoint had no test behind that gate: every assertion on the age clause calls the action directly, so narrowing the forwarded payload to a whitelist would drop a date of birth, write a minor contact row, and leave every module test green. The endpoint now has a test that reads the form action out of the served document, posts a real under-18 date of birth to it, and asserts first that no contact row and no submission row were written and only then the refusal status and reason, because an ordered test reports only its first failure and the assertion placed first is the one the falsifier proves, so the compliance clause is measured while the status mapping, already carried by the spam test on the same one line, is the half left reasoned. No production change: the gate already declares the policy and the test enforces an existing invariant rather than inventing one. Refused deliberately: asserting only the status code, which is the already-carried half and drops the write half this seam can silently lose; constructing the endpoint address from the identifiers instead of reading the advertised form action out of the served page; adding the cross-tenant and under-18 ordering question in the same wave, which is a second claim; and any new capability id literal, which would create a second carrier for a clause discharged elsewhere.",
    "at": "2026-09-08T01:39:08",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-157",
+   "chose": "The published form endpoint has three refusal arms with three different write behaviours and only two were asserted at the route level: an under-18 signal returns before the validator and writes nothing, a spam rejection is stored and flagged inside the transaction, and an incomplete step returns after the validator and is not stored at all. The third had no route-level test and was unreachable by every existing route fixture, because all seven form definitions in the serving module tests declare an empty steps array, so the required-field loop never ran through the endpoint and the three incomplete-step assertions in the module tests all call the action directly. The distinct claim is not the status mapping, already carried twice, nor the reason string, already carried three times, but that the route forwarding carries the tenant required-field answers to the validator: narrowing that forwarding, the ordinary hardening of a public endpoint that accepts an arbitrary array, would make every submission to a multi-step form refuse as incomplete while every module test stayed green. The satisfied post is asserted before the refusal because an ordered test reports only its first failure and the refusal half cannot prove the seam, over-refusal being what a narrowed payload produces anyway. The test also asserts the missing field list and the step number, which reach the visitor only through the route JSON, and that the refused post wrote no row. No production change: the arm already declares the policy and the test enforces an existing invariant rather than inventing one. Refused deliberately: asserting only the status code, which is the already-carried half; constructing the endpoint address from the identifiers instead of reading the advertised form action out of the served page; asserting the refusal half alone, which cannot fail under a narrowed payload and so proves nothing about the seam; any production change; and any new capability id literal, which would create a second carrier for a clause discharged elsewhere.",
+   "at": "2026-09-08T05:25:53",
    "ruling": "R245"
   }
  ],
