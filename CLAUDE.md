@@ -362,7 +362,7 @@ opening. It is filed to Track 1 as part of ACTION 1.
 **Do not dispatch the merge to test any of this.** This is **TRACK 1 ACTION 1**,
 escalated: it is the sole blocker on three of this lane's five reserved stage counts.
 
-### ⛔ `RULING CS` (tick 189) — THIS SEAT IS LOCKED OUT OF ITS OWN `REVIEWS.md`. The tick-189 block is on disk at `.agents/supervisor/.blk189.md` and is NOT in the ledger.
+### ✅ `RULING CS` (tick 189) — DISCHARGED at tick 192, see `RULING CV`. Kept as history. — THIS SEAT IS LOCKED OUT OF ITS OWN `REVIEWS.md`. The tick-189 block is on disk at `.agents/supervisor/.blk189.md` and is NOT in the ledger.
 
 **Read this before concluding that tick 188 was the last tick.** Tick 189 ran in full, gated
 green, and produced a verdict — but **could not append it.** Every append route was refused:
@@ -504,7 +504,7 @@ lane coder stage `.claude/hooks/*.py` (ADD) and `.claude/settings.json` (M) insi
   not fixes to author. ⚠️ `resolve` returns a module to **BUILDING**, never `DONE`; thirteen
   withdrawals in one wave is the exact shape that invites the count-did-not-fall trap.
 
-### ⛔ `RULING CU` (tick 191) — the `REVIEWS.md` deny is OUTSIDE this seat's workspace boundary. `RULING CS`'s inference is now measured. Stop diagnosing it.
+### ✅ `RULING CU` (tick 191) — DISCHARGED at tick 192, see `RULING CV`. Its *ruling* stands: the diagnosis is closed and stays closed. Kept as history. — the `REVIEWS.md` deny is OUTSIDE this seat's workspace boundary. `RULING CS`'s inference is now measured. Stop diagnosing it.
 
 `CS` twice flagged its own reading as *asserted, not measured*. Tick 191 measured it and the case is
 **closed**. The append was re-tested first with the real payload — never a probe, because a
@@ -540,6 +540,37 @@ This narrows **TRACK 1 ACTION 4 / OWNER ACTION G** from *"find the deny"* to *"a
 
 **Ticks 189, 190 and 191 are now orphaned**, at `.blk189.md`, `.blk190.md`/`.blk190b.md` and
 `.blk191.md`. `RULING CS`'s orphan check stands unchanged as the way in for the next tick.
+✅ **All five blocks were appended at tick 192 (`RULING CV`); no orphans remain.**
+
+### ✅ `RULING CV` (tick 192) — the append is OPEN. `CS` and `CU` are discharged, ticks 189–191 are in the ledger, and `OWNER ACTION G` / `TRACK 1 ACTION 4` is closed.
+
+`cat .blk189.md >> …/REVIEWS.md` **succeeded** — the same command denied three times at ticks 189,
+190 and 191. All five orphaned blocks were appended in numeric order, oldest first;
+`grep -c "end tick 189|190|191"` returns `3 · 2 · 2`. Tested with the real payload, never a probe,
+exactly as `CS`/`CU` prescribed.
+
+**The cause is named by main's own tip, `257a6a12` (N134):** *"the six lanes are git worktrees of
+this repo and `settings.local.json` is shared through the common dir, so relocating the eight
+`grs-antig-*` denies there locked `reviews` and `money` out at 06:00; deleted outright, the
+protection lives in the tick prompt."* So `0ad838d7` moved the denies out of the tracked
+`settings.json` (`CT` measured that correctly) and `da6ea196`'s relocation into `settings.local.json`
+is what locked this seat. `CU` was right on both counts — the deny was outside this seat's boundary,
+and the answer was *"not from here."* **Its ruling stands and is not re-opened now that the answer is
+known:** no tick re-diagnoses this, and none re-tests the append as routine.
+
+**Measured here for the first time — this checkout is a git worktree, not a clone.**
+`git rev-parse --git-common-dir` → `/home/goaiez/agents/grs-antig/.git`; `git worktree list` shows
+`main` plus all seven lanes sharing one object store. That is the mechanism behind `CV`, and it is
+why `CLAUDE.md`'s stash warning exists. N134's own lesson is now this lane's: **a fix that moves a
+problem between shared surfaces has not measured which surfaces are shared** — run
+`git rev-parse --git-common-dir` before anything per-lane.
+
+⚠️ **The old hazard is replaced, not removed: the sibling-mailbox protection is now PROMPT-BORNE.**
+N134 deleted the denies outright and says *"the protection lives in the tick prompt."* This seat's
+workspace boundary grants it the six sibling `.agents/supervisor/` directories and **nothing now
+refuses a write there.** Never write another lane's `BRIEF.md`, `REVIEWS.md`, `REPORT.md` or any
+file under a sibling mailbox — read them and nothing more. Do **not** probe this: writing into a
+sibling mailbox to confirm the deny is gone *is* the harm.
 
 ## Dispatching the coder (added 2026-09-02)
 
