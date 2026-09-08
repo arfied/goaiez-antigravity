@@ -4050,3 +4050,104 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     write the assertion, all in ONE commit — and if Stripe refuses, the outcome is `UNRESOLVED` with
     the provider error **quoted**, no artifact and **no test change committed**, which leaves the old
     `charge.json` in place and J9 green on it. That is a PASS-WITH-NOTES, never a BLOCK (ruling 39).
+174. **The gate's §7 red list is capped for DISPLAY only —
+    `/home/goaiez/tmp/last-pest-<checkout>.json` carries every failure with its file, line and full
+    message, and ruling 160's second half is CORRECTED (RULED by the lane supervisor 2026-09-08
+    14:1x).** Ruling 160 measured §7 printing ten of seventeen reds and concluded that a supervisor
+    forbidden to run pest outside `supervise.sh` cannot scope a wave from the gate, so the first wave
+    after a merge must open with a coder measurement item. **The file was there the whole time.**
+    `bin/supervise.sh:233` writes pest's own last line — its JSON summary — to
+    `/home/goaiez/tmp/last-pest-$(basename <toplevel>).json`, and that summary carries complete
+    `failures` and `error_details` arrays, each member with `test`, `file`, `line` and the assertion's
+    **entire** message. This tick's whole re-attribution (ruling 176) came out of it: §7 printed
+    `✗ FAILURE __pest_evaluable_the_reachability_check…` and nothing else, while the file gave
+    `OwnerNavTest:325` and `Failed asserting that 214 is identical to 220.` — a different pin from the
+    one the wave had just fixed, which no amount of reading the gate output could have shown. **So a
+    tick reads that file whenever §7 is red**, before attributing anything, and ruling 160's
+    measurement item is needed only for what pest does not report. ⚠️ It is read with `Read`, never
+    `grep` (ruling 77 — the lane's Bash is confined to this checkout, and a refused grep is not an
+    absent file). ⚠️ It is **overwritten by every gate in this checkout**, so it is read in the tick
+    that ran the gate; a stale one belongs to the previous sha and is ruling 83's family.
+175. **A brief that names a mailbox document names its PATH (RULED by the lane supervisor 2026-09-08
+    14:1x, on MONEY-119's run 141).** MONEY-119's Step 6 enumerated all ten `REPORT.md` fields by name
+    — ruling 147 obeyed, and it worked, every field is present and correct — and named **no
+    directory**. Run 140 wrote `.agents/supervisor/REPORT.md`; run 141 wrote
+    `/home/goaiez/agents/grs-antig-money/REPORT.md`. The mailbox is the former (this file's own table)
+    and the difference is not cosmetic: **`.agents/supervisor/` is gitignored and the repo root is
+    not**, so the stray report became the only entry in `git status` and made §1 read
+    `1 uncommitted path(s)` — muddying the exact instrument rulings 34 and 71 use to decide whether
+    §6's verdict belongs to the sha. It also leaves a stray untracked file one `git add -A` from a
+    commit at a live web document root (ruling 47), and it strands the next tick's case-(b) check on
+    run 140's report. ⚠️ The coder's own `FINAL GIT STATUS:` was empty and **correct** — the file did
+    not exist when it ran — so ruling 115 held and nothing in the report is false. **RULED: every
+    brief writes the mailbox paths in full** (`.agents/supervisor/REPORT.md`), and the note is the
+    brief's, spending no dispatch (rulings 60b, 71, 94, 106, 118). ⚠️ The ruling
+    66/75/82/92/94/106/118/147/153 family, thirteenth instrument: a dictated signature, line, needle,
+    floor, test, command, sweep, report-field list, proof RED line, resolution policy, finalisation
+    step, `--filter` string — and now a dictated **filename** — each dictates its own outcome. The
+    pattern is always the same: **detail is read as the spec and everything unstated is the coder's
+    guess**, and here two runs of the same coder guessed differently.
+176. **The three architecture reds are STALE CHECK COPIES that `main` has already re-pinned, ruling
+    166 is corrected on all three counts, and TRACK 1 ACTION 7 is CLOSED (RULED by the lane
+    supervisor 2026-09-08 14:1x).** Ruling 166 measured three pins moving *because money won three
+    merge resolutions* and filed them for Track 1 to re-pin; ruling 171 then corrected one of the
+    three, having measured a cause inside this lane's own files. **All three attributions were wrong,
+    and one command shows it:**
+    ```
+    git diff origin/main HEAD -- app/tests/Feature/Architecture/
+      HeadingSeamTest.php        $conditionalHeadings   main 10   money 8
+      OwnerNavTest.php           $unbuilt               main 214  money 220
+                                 $built                 main 41   money 35
+      SampleStateModuleTest.php  $total                 main 235  money 244
+                                 $illegal               main 210  money 219
+    ```
+    Money's measured `$unbuilt` is **214** — `main`'s new pin to the digit — and `$withoutLayout` 255
+    minus 214 gives `$built + $unresolved = 41`, `main`'s new pin again. The corroboration is that
+    `git diff origin/main HEAD -- app/app/Modules` is **752 lines carrying zero
+    `x-surface.sample-state` changes** and `grep -ro` counts **235** occurrences in this tree,
+    identical to `main`: the two trees agree about the thing being counted and only the pinned number
+    differs, because money carries the CHECK files from an older `main` and is 68 commits behind.
+    **⛔ Money may not adopt the new pins by editing these files** — they are CHECKs and another
+    lane's (the One Rule); they arrive with the next `origin/main` merge and all three reds clear
+    then. **⛔ TRACK 1 ACTION 7 is not to be re-raised**: it is answered. ⚠️ These cost Track 1
+    nothing — money has never modified the three files, so on the money → `main` merge they are
+    one-sided and `main`'s copies win with no conflict. ⚠️ **The generalisable half, and it is the
+    second wrong attribution in three ticks** (ruling 163 was the first): **a pin red in a CHECK file
+    is a claim about two things — the tree and the pin — and the cheap half is the pin.** Ruling 166
+    measured the tree three separate times, ruling 171 measured it a fourth, and not one of them ran
+    the one-line diff against the CHECK file itself. **Before attributing any pinned-counter red,
+    diff the CHECK against `origin/main`.**
+177. **`Doctor/Stages/JourneyStage.php:24` makes the claim rulings 169 and 173 measured this lane
+    cannot make, and the evidence SLUG is keyed by it (RULED by the lane supervisor 2026-09-08
+    14:1x).** The stage's `JOURNEYS` map reads
+    `'invoice-to-paid' => 'an invoice reaches a real charge-id'`. Rulings 169 and 173 measured that
+    `capture()`'s signature is `(businessId, amountCents, paymentToken, idempotencyKey, currency)`
+    over a `payments` table with **no invoice column**, so no invoice in this lane reaches a charge
+    id and J9's goal is `UNRESOLVED` against that schema gap — and the sentence asserting otherwise
+    now sits one layer up, in a CHECK. ⛔ It is a **TRACK 1 ACTION**: `app/app/Doctor/**` is a
+    forbidden path here and editing it is the One Rule. **The load-bearing half for this lane is the
+    key.** `JourneyStage:39` builds `storage/app/evidence/journeys/{$slug}.json` from that map, so
+    the slug `invoice-to-paid` is named by a file money may not touch: ⛔ **the evidence key is never
+    renamed**, even in the wave that renames the method it belongs to. Measured in the same pass and
+    recorded so a later wave does not re-derive it: `JourneyStage` reads only `passed` and
+    `artifact_id` and **never the test method's name**, so renaming the method is invisible to the
+    doctor's journey stage.
+178. **J9's rename has FOUR readers, not three, and the fourth is immovable (RULED by the lane
+    supervisor 2026-09-08 14:1x, briefed as MONEY-120 item 2).** The carried backlog named three —
+    `X-198/Console/RuntimeProofCommand`'s `$hasName` needle, `evidence/X-198/junit.xml`'s
+    `<testcase name>`, and `evidence/X-198/runtime-proof.json`'s `test` key. Measured with
+    `grep -rn` over `app/app` and `app/tests`, the command holds **three** of them, not one — `:80`
+    the needle, `:99` the error string that names the method, and `:125` the `'test' =>` key it
+    writes — and the fourth reader is `Doctor/Stages/JourneyStage.php:24`'s slug, which ruling 177
+    freezes. So the wave moves the method name and the command's three strings, regenerates the two
+    derived artifacts, and **leaves `invoice-to-paid` alone**. ⚠️ Two further ruling-50(b) defects in
+    the same method, found only by reading its body rather than grepping its name:
+    `TwelveJourneysTest:498`'s failure message reads *"The invoice was marked paid with no gateway
+    charge id — no money moved."* — an invoice the artifact no longer mentions — and it is read
+    exactly when someone is diagnosing a failure. ⚠️ **The ORDER is the risk.** `junit.xml` must be
+    regenerated **after** the rename or it names the old method; `runtime-proof.json` is written from
+    `junit.xml` and `charge.json` together, and `RuntimeProofCommand:60` refuses unless
+    `journeys/invoice-to-paid.json`'s `artifact_id` equals `charge.json`'s `gateway_charge_id` — which
+    it does today only because this tick's own gate re-ran J9 and rewrote it. ⛔ Deleting X-198's
+    `runtime-proof.json` is never the fallback (ruling 173): if the chain cannot complete, the outcome
+    is `UNRESOLVED` with the command's refusal quoted and the old file left in place.
