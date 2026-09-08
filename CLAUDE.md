@@ -4640,3 +4640,61 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     parameterless generated route is not a trap. ⛔ None to be re-raised. ⚠️ Ruling 95's lesson a
     fourth time: **a sweep proposed by a ruling is a claim**, and one that comes back empty is struck
     with its measurement written down.
+198. **A brief that dictates a dependency clause has dictated whether the screen names the whole wait,
+    and MONEY-127's named one of two halves (RULED by the lane supervisor 2026-09-08 17:5x, on
+    MONEY-127's `b76b60e1`; briefed as MONEY-128 item 3).** Ruling 196's wave landed correctly —
+    `invoice-thread-beside.blade.php:19`'s *"Every issued invoice is paid."* became *"No invoice is
+    open for this account. Nothing in this checkout raises one from a completed job, so this screen
+    fills when the job hand-off is built."*, and `unpaid.blade.php:31` gained the same tail. ⚠️ **The
+    first clause is better than the brief's model and deliberately so:**
+    `InvoiceReader::openForBusiness():41` is `whereNotIn('status', ['paid','draft'])`, so the branch
+    means *nothing open*, not *nothing ever raised*, and X-199's *"No invoice has been raised"* would
+    have been false on a tenant whose only invoice is paid. **The tail is the defect.** The frozen
+    plan's seam is `job.completed -> … billing.invoice.draft` (`GOAIEZ-MASTER-PLAN.md:972`, ruling
+    191), both `openForBusiness():41` and `openUnpaidForBusiness():49` exclude `draft`, and ruling 191
+    measured that **no `draft → issued` transition exists anywhere in X-199** — so building the
+    hand-off alone fills neither screen and the conditional is false as stated. The model sentence the
+    brief pointed at, `invoices.blade.php:20`, is **correct for its own screen**, because `Invoices.php`
+    queries every invoice with no status filter and a draft does show there: the tail was copied from a
+    file where it is true onto two files where it is one dependency short — rulings 113/116/123's shape
+    a fifth time, arriving through the **brief** rather than through the wave. **RULED: all four of the
+    lane's job-hand-off screens carry the same clause,
+    `Nothing in this checkout raises one from a completed job, and a draft is never issued`** — the
+    first half byte-identical, so the three existing assertions on it stay green, and each **extended**
+    to cover the new half, since a reword of a tail no assertion names is prose no gate reads (ruling
+    70). ⛔ Not resolved by building the transition or the dispatcher (ruling 59), ⛔ not by dropping
+    the dependency clause. **Graded PASS-WITH-NOTES and PUSHED**: nothing false in the ruling-43 sense
+    was introduced, the parent said *every issued invoice is paid* to a tenant with no ledger, and
+    withholding a tip that landed on its predicted floor to the digit over an incomplete forecast is
+    ruling 74's error. ⚠️ Both strings were dictated verbatim (`BRIEF-money127.md:108`, `:174`), so per
+    the 46/49/50/62/66/75/82/86/94/104/106/113/116/146/153/167/175/183/189/193/195 precedent the miss is
+    the supervisor's and MONEY-128 carries its own two dispatches. The ruling
+    66/75/82/92/94/106/118/147/153/175/183/189/192/193/195 family a **twenty-first** time.
+199. **The empty-state population is MEASURED — 28 states, and ruling 196's sentence is still standing
+    in two sibling X-211 screens (RULED by the lane supervisor 2026-09-08 17:5x, briefed as MONEY-128
+    items 1 and 2).** `grep -rn "x-ui.empty-state"` over the eight modules' `Ui/` trees returns **28**,
+    read one by one for ruling 50(a)'s two halves — *does it say what has not happened*, and *does it
+    name what it waits on*. **Two are false, and both are the sentence MONEY-127 had just removed one
+    file over:** `X-211/Ui/views/ageing-by-reason.blade.php:39` *"Every issued invoice is inside its
+    terms."* and `paymentplan-builder.blade.php:40` *"Every open invoice is paid or already on a
+    plan."* Nothing in production raises an invoice (ruling 170), so both report a **healthy ledger to
+    an account that has none** — ruling 196's reasoning verbatim, and rulings 113/116/123's shape a
+    fifth time in the same tick as ruling 198's. ⚠️ **The payment-plan branch is reachable by two
+    routes** — no invoice at all (every real tenant) and every open invoice already planned
+    (`PaymentplanBuilderScreenTest:96`'s fixture) — so its replacement must be true in **both**, which
+    is why it names both routes and carries **no** *"so nothing reaches this screen yet"* tail. ⛔ Not
+    resolved by building anything: no transition, dispatcher, query, heading or door moves. ⚠️ Blast
+    radius measured with interior fragments (rulings 46, 86): `PaymentplanBuilderScreenTest:97` asserts
+    `'Nothing to split'`, the **heading only** — ruling 80's partial cover and exactly why the body
+    survived — so that item **extends** a chain, while `ageing-by-reason`'s state is asserted by
+    **nothing** (ruling 70) and all four `AgeingByReasonScreenTest` methods seed an overdue invoice, so
+    none can render the branch (ruling 68) and that item **adds** a method. ⚠️ **A third group is
+    recorded and deliberately NOT briefed — nine states that are TRUE but name no dependency**
+    (`X-199 unpaid:37`, `money-paid-today:24`, `declines:29`, `credits:21` · `X-211
+    collections-package-preview:42` · `C-Billing revenue-recovery:24`, `dunning-board:19`, `mrr:24` ·
+    `X-117 checkout-block:45`, which has **no body at all**). Nothing in that group is false, which is
+    ruling 76's PASS-WITH-NOTES grade and a later wave, and ⛔ not one of them is to be re-raised as a
+    falsehood. The remaining seventeen are this lane's own corrected work or true-and-complete.
+    ⚠️ **The generalisable half is why this sweep paid twice in one tick:** the instrument that finds a
+    copied falsehood is the **population**, never the file — a wave that reads the file its ruling was
+    written about will keep leaving the sibling, which is now the fifth recorded instance.
