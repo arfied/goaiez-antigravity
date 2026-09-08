@@ -1421,3 +1421,84 @@ fully-gated wave sitting on disk** — the exact shape of a lane idling for hour
 cost of the check is one `ls`; the cost of skipping it is a stalled lane that looks correctly stalled.
 ⛔ Do not delete the both-paths check when a report next lands in the mailbox — one wave of correct
 behaviour is not evidence the coder cannot do it again.
+
+## ⛔⛔ Trap added 2026-09-08 13:4x — AN ABSENT TRANSITION IS NOT AN ABSENT BEHAVIOUR, and this one nearly went out as a brief
+
+The reviewer's own near-miss, and the sharpest one this lane has produced. PB-127's item 2 reported
+*"count of sentences examined: 1"* across 21 blades, which reads as a sweep that did not happen, so the
+instrument was re-run. Three candidates surfaced; the third looked like a certainty:
+
+`X-168 approvals.blade.php:5` — *"the week closes **AUTOMATICALLY** … it closes on the rule; the tenant
+may reopen it."* Header prose, not an empty state, asserting an action the system takes. And:
+
+```
+grep -rniE "close|closes|closed" app/app/Modules/X-168 --include=*.php   → ZERO hits in any PHP file
+```
+
+**No status ever moves to `closed`. `PeriodReady` is dispatched and nothing listens.** Same family as
+`deducted_if_proceeding` and the portal's *"a fresh link was sent"* — a sentence the owner reads that
+nothing performs. The brief was half-written.
+
+⛔ **It is honoured.** `ApprovalsView::getPendingTimesheets():44-51`:
+
+```php
+$query->where('status', 'submitted')
+    ->orWhere(fn ($q) => $q->where('status', 'open')->where('period_end', '<', Carbon::today()));
+```
+
+A week whose `period_end` has passed **lands in Approvals on the date rule, with no close transition at
+all.** *"It closes on the rule"* IS that predicate, and `TimesheetReopenAction` honours the reopen
+clause. It is the sweep's own last exclusion — *a sentence whose claim is plainly satisfied by the
+surrounding query* — and the coder was right to omit it.
+
+⭐⭐ **The generalisation, and it is PB-120's lesson turned on the reviewer: a state machine can be
+implemented as a predicate.** The finding rested entirely on `grep close → 0`, which was true,
+decisive-looking, and irrelevant, because the behaviour lives in a `WHERE` clause rather than in a
+column write. ⛔ **Read the consumer's query before ruling anything a defect.** ⚠️ The cost of getting
+this wrong is not one wasted wave — it is a coder trained to fix things that are not broken, which is
+the review-side twin of loosening a criterion until it fires.
+
+⭐ Worth noting for a third time: applying this file's own generalisations to the reviewer's draft brief
+is what caught it. The traps here are not only for grading diffs.
+
+## ⭐ Trap added 2026-09-08 13:4x — a clean sweep's COUNT is its only auditable part, and "1" audits nothing
+
+*"Count of sentences examined: 1"* makes a **correct** 21-blade sweep and a sweep that opened one file
+**indistinguishable**. The only way to grade PB-127's item 2 was to run the whole instrument again from
+scratch — and it was right, which is exactly the outcome that makes the reporting gap easy to forgive
+and expensive to keep.
+
+⭐ **The fix, and it belongs in every measure-only brief: ask for the count of ITEMS READ, and for each
+candidate CONSIDERED AND REJECTED, the one clause that killed it.** The rejections are where the
+judgement lives: this sweep's two best decisions — an `<x-ui.empty-state>` exclusion and a query that
+satisfies its own blade's claim — appear **nowhere** in the report.
+
+⚠️ **This is the necessary companion to the PB-121 STOP-condition ruling.** That ruling makes stopping a
+reportable outcome; this one makes a stop *reviewable*. **A pre-declared STOP is only cheap if the stop
+is legible** — otherwise the reviewer must redo the work to trust it, and the cheap signal was never
+cheap.
+
+## ⭐ Trap added 2026-09-08 13:4x — read EVERY gate row in the tsv, not just the last pair, and a red tool is recovered by a FULL re-gate
+
+PB-127's report presents **one** `GATE:` block. `gate-runs.tsv` shows **two** pricebook gates:
+
+```
+gate 1  pid 291954   13:16:41 → 13:19:22  rc 1    pint 13:16:46  rc 1   ← PINT RED
+        a9aecebf "fix pint" committed  13:20:01   ← in the 86-second GAP
+gate 2  pid 335007   13:20:48 → 13:23:14  rc 1    pint 13:20:53  rc 0   ← green
+```
+
+⭐ **Neither ordering trap fires, and it is close.** PB-117 needs a coder commit *inside* a window;
+PB-124 needs one *after* the last window. The pint commit is in the gap between them, so **the gated tip
+IS HEAD** and no measurement-versus-tip argument is needed.
+
+⭐⭐ **The recovery is now the standing instruction: if a gate tool goes red, fix it, commit it ALONE,
+and re-run the WHOLE gate.** Do not patch inside a running window. That is precisely what PB-117 asked
+for after the wave where a pint fix landed mid-pest, and PB-127 is the first wave to do it.
+
+⚠️ **Two things to carry forward.** First, the standing advice *"the wave gate is the LAST pricebook
+`gate` row pair"* is not sufficient — **this wave's whole story was in the second-to-last pair**, and a
+tick reading only the last would have seen a clean single gate and missed that a tool had gone red at
+all. Second, the report never said a first gate ran and failed; nothing was concealed (the pint fix is
+disclosed in `DONE` and the quoted verdict is the later gate's), but **the two-gate shape existed only
+in the instrument the gate writes, not in the one the run writes.**
