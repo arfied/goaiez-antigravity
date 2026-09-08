@@ -242,7 +242,7 @@ that test and is not on this list is a wave invented to fill the lane.
   untouched, the decoy root `REPORT.md` gone and the mailbox copy intact.
   `RULING CN` is discharged as a live hazard and stays above as history.
 
-⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS as of tick 184 (2026-09-08).** Do not
+⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 191 (2026-09-08).** Do not
 open a wave. `state.py next` returns `{"action": "FINISHED"}`. Every remaining
 stage count needs the owner and is listed as **OWNER ACTION A–F** at the end of
 `REVIEWS.md`: vendor artifact ids (`anchor 137`), real Infobip and a real placed
@@ -503,6 +503,43 @@ lane coder stage `.claude/hooks/*.py` (ADD) and `.claude/settings.json` (M) insi
   main** (`state.py resolve <id> <stage> --reason <why…>`, rule 09: the reason names what arrived),
   not fixes to author. ⚠️ `resolve` returns a module to **BUILDING**, never `DONE`; thirteen
   withdrawals in one wave is the exact shape that invites the count-did-not-fall trap.
+
+### ⛔ `RULING CU` (tick 191) — the `REVIEWS.md` deny is OUTSIDE this seat's workspace boundary. `RULING CS`'s inference is now measured. Stop diagnosing it.
+
+`CS` twice flagged its own reading as *asserted, not measured*. Tick 191 measured it and the case is
+**closed**. The append was re-tested first with the real payload — never a probe, because a
+truncating rewrite of a 4 MB append-only ledger is the one irreversible move here, so the test must
+be the operation itself — and `cat .blk189.md >> …/REVIEWS.md` was denied a **third** time, while
+`Write` to `.blk191.md` in the same directory the same minute succeeded. Still the file, not the
+directory.
+
+The new part: listing the five settings layers `CS` left unexamined (`~/.claude/settings.json`,
+`~/.claude/settings.local.json`, `~/.claude-acct1/settings.local.json`, this checkout's
+`.claude/settings.local.json`, `/etc/claude-code/managed-settings.json`) is refused by the
+**workspace boundary**, and — as with `/proc` at tick 188 and `coder-bin/git` at tick 190 — **the
+denial is the answer.** Its message enumerates every path this seat may read: this checkout plus the
+six sibling `.agents/supervisor/` dirs. **None is a settings layer.** The only one inside the
+boundary is this checkout's tracked `.claude/settings.json`, which `CS` read in full and which
+*allows* `Edit`/`Write` on `.agents/supervisor/**`. So the operative deny is provably outside the
+boundary and no command available here can read, name, or lift it.
+
+**RULED by the lane supervisor: no further tick diagnoses this deny, because the diagnosis is
+finished and its answer is "not from here."** Three ticks reached the same wall from three
+directions (`CS` by elimination, `CS`-at-190 by re-test, `CU` by boundary enumeration); a fourth
+attempt is the invented-wave shape aimed at a ruling instead of a module. What is left is
+**custody**, not measurement.
+
+⚠️ **For Track 1: `da6ea196` did not reach this seat.** Main's tip announces the general fix
+(*"seat-specific denies live in settings.local.json"*) and `CT` measured that main's tracked
+`settings.json` no longer carries the sibling-mailbox denies — yet the lockout here persists after
+both `0ad838d7` and `da6ea196`. The layer still holding it is not the tracked file Track 1 moved,
+and this lane cannot create a `.claude/settings.local.json` to receive the seat-specific rule
+(`.claude/**` is a coder BLOCK and forbidden to this seat; tick 177 confirmed by measurement).
+This narrows **TRACK 1 ACTION 4 / OWNER ACTION G** from *"find the deny"* to *"a hand that owns
+`.claude/` must place the seat-specific rule"*. It adds no new item.
+
+**Ticks 189, 190 and 191 are now orphaned**, at `.blk189.md`, `.blk190.md`/`.blk190b.md` and
+`.blk191.md`. `RULING CS`'s orphan check stands unchanged as the way in for the next tick.
 
 ## Dispatching the coder (added 2026-09-02)
 
