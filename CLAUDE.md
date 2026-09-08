@@ -753,3 +753,54 @@ leaves.** ⛔ Do not brief X-166 on this.
 `status`-key split, still recorded and still not briefed); **latent + a wrong value on a defined input =
 fix**. ⛔ If that line is ever used to justify a wave with no wrong value behind it, it is being misread.
 ⛔ PB-117 does **not** wire a caller — that is week-2 build work.
+
+## ⛔ Trap added 2026-09-08 07:0x — a CODER commit made mid-gate leaves the tip outside the measurement
+
+The converse of the §1-snapshot note above, and it bites harder. A *supervisor* commit during a gate is
+legitimately absent from §1 and is not a finding. A **coder** commit during a gate means **the sha the
+report is written about was never the sha the gate measured.**
+
+PB-117, off `gate-runs.tsv` (gate pid `2693760`):
+
+```
+06:49:05  gate start
+06:49:09  pint rc 1                        ← red, and absent from the report
+06:49:12  pest starts, on 9d236d21's tree
+06:49:50  7c2af698 "style fix X82Test.php" ← the coder fixes pint, INSIDE the window
+06:51:25  gate ends
+```
+
+⭐ **The tell is a commit timestamp between the gate's start and end rows**, and `git log --format='%h %cI'`
+against the tsv is the whole check — two commands. ⛔ **Do not discharge it by arguing the ungated delta
+is trivial** (here: four trailing-whitespace lines). The argument is usually right and is always the
+wrong habit: the value of *"gate the whole range, not the tip"* is that it is not re-litigated per
+commit. Hold the push one wave and re-gate — that is cheap, and the exception is not.
+
+⭐ **Brief order that prevents it:** pint **before** the gate, its fix committed as its own commit, and
+⛔ do not start the gate until `git status --porcelain` has no ` M ` lines. Also require pint's and
+phpstan's verdicts **in the report explicitly, including a red already fixed** — PB-117's report said
+`STAGES: All stages clean`, which was true of *doctor's* stages and silent about pint's `rc 1`.
+
+## ⭐ Trap added 2026-09-08 07:0x — `gate-runs.tsv` is the instrument when a report's numbers have no log
+
+PB-117's brief forgot to name a `pbNNN-gate.log` (earlier waves named one), so the `RAW` line had no
+on-disk artifact behind it. ⭐ **`/home/goaiez/tmp/gate-runs.tsv` carried the verdict instead, and carried
+it better — it is written by the gate, not by the run being graded.** Filter rows whose checkout column
+is this lane's; read it with the **`Read` tool** and an `offset` (`grep`/`tail`/`wc`/`ls` on
+`/home/goaiez/tmp/*` are all refused).
+
+⛔ **But it proves only that a gate RAN, with what rc, and when — the failure list lives only in the
+log.** PB-117's list had to be taken on the report's word. **Name the log file in every brief**, and
+keep both: the tsv is the independent timestamp, the log is the content.
+
+## ⛔ Trap added 2026-09-08 07:0x — "any `-` line is a BLOCK" is unenforceable against a formatter
+
+PB-117's brief pre-declared *"any `-` line in `X82Test.php` is a BLOCK."* The wave produced four — **all
+trailing-whitespace-only, on lines the same wave had added minutes earlier**, because pint ran after the
+fix. Ruled **not** a BLOCK.
+
+⭐ **Write the pre-declaration as "any `-` line other than pure whitespace."** The underlying rule is
+untouched and still the one that matters: an assertion, a fixture or a name disappearing is a BLOCK, no
+count instrument catches it, and only reading the hunks does. ⚠️ A pre-declaration that will predictably
+fire on something harmless trains the next reviewer to wave it through — which is the failure the
+pre-declaration existed to prevent.
