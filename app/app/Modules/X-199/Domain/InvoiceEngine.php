@@ -48,13 +48,7 @@ final class InvoiceEngine
                 ]);
             }
 
-            $termsDaysMap = [
-                'due_on_receipt' => 0,
-                'net_15' => 15,
-                'net_30' => 30,
-                'net_60' => 60,
-            ];
-            $dueDays = $termsDaysMap[$termsType] ?? 0;
+            $dueDays = CreditTerm::TERMS_DAYS[$terms->terms_type] ?? 0;
 
             $invoice = Invoice::create([
                 'business_id' => $businessId,
