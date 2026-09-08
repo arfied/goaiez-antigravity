@@ -57,7 +57,7 @@ final class MarkInvoicesDueCommand extends Command
             $dispatched += Tenancy::actingAs((int) $business->id, function () use ($business) {
                 $dueInvoices = Invoice::where('due_date', '<', now()->toDateString())
                     ->where('status', 'issued') // not fully paid
-                    ->whereNull('due_notified_at')
+                    ->whereNull('due_detected_at')
                     ->get();
 
                 $localDispatched = 0;
@@ -68,7 +68,7 @@ final class MarkInvoicesDueCommand extends Command
                         dueDate: $invoice->due_date->toDateString()
                     ));
 
-                    $invoice->update(['due_notified_at' => now()]);
+                    $invoice->update(['due_detected_at' => now()]);
                     $localDispatched++;
                 }
 
