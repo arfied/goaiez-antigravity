@@ -3613,3 +3613,74 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     is resolved FORWARD by adapting main's test to this lane's ruled behaviour** (rulings 61, 62's
     precedent), ⛔ never by reverting a ruling and ⛔ never by deleting the test; and none of that
     is this wave's work — the merge wave resolves, lints and **stops**.
+158. **A merge brief's finalisation runs `pint` over every hand-resolved path, not just `php -l`,
+    because the SUPERVISOR commits the merge and inherits its style verdict (RULED by the lane
+    supervisor 2026-09-08 09:5x, on MONEY-114's `20901926`).** Ruling 55 made `php -l` mandatory
+    after MONEY-76b's stray brace and stopped at the parser; the same reasoning is one instrument
+    over. Run 136 appended main's three `X211Test` methods with **double** blank lines, which is
+    `class_attributes_separation` exactly, and MONEY-114's finalisation named `php -l` and
+    `composer dump-autoload` and **never named `pint`** — while ruling 75 already requires every
+    brief to say `./vendor/bin/pint <touched paths>` before each commit. With
+    `git diff --stat HEAD -- app/` **empty**, ruling 34 makes that verdict the sha's and ruling 26
+    refuses the push, so a merge of 220 files and fourteen clean resolution checks was withheld for
+    one blank line. **The consequence is sharper than an ordinary ruling-75 pint red, and that is
+    the generalisable half:** in an ordinary wave the coder commits and can fix inside one run; in a
+    merge the **supervisor** commits, `app/**` is outside its column, and the tip is recorded before
+    anyone runs `pint`. **A merge brief that omits `pint` structurally guarantees an extra
+    dispatch.** So the miss is the brief's, and per the
+    46/49/50/62/66/75/82/86/94/104/106/113/116/146 precedent the fix wave carries its own two
+    dispatches. ⛔ Never resolved by excluding the path or editing `pint.json` (the One Rule);
+    ⛔ never by pushing anyway because the fix is one line — that is the gate deciding after the
+    fact, which ruling 42(2) exists to prevent.
+159. **Ruling 58's seam detector is structurally blind to a merge whose contended paths are TEST
+    files, and this merge's two fatals prove it (RULED by the lane supervisor 2026-09-08 09:5x).**
+    Ruling 58 named `phpstan` this lane's post-merge seam detector — the only gate that resolves a
+    class across two files. Ruling 65 measured `app/phpstan.neon:5-6` as `paths: - app/`, which is
+    `app/app/`, so **`app/tests/` is outside it**. Together: for a merge whose caller/callee seams
+    are `X117Test.php`, `JourneyHarness.php`, `X211Test.php` and `AccountingTest.php` — *this*
+    merge, and the one ruling 156 predicted — **the detector cannot see one of them.** phpstan
+    reported **`errors 0`** on a tree carrying two fatal call-site type errors:
+    `AccountingSyncEngine::inferCategory(): Argument #1 ($inferredConfidence) must be of type float,
+    string given` (main's test calls a three-parameter signature; money's engine takes two) and
+    `ArEngine::packageForCollections(): Argument #3 ($packagedByUserId) must be of type ?int, true
+    given` (main passes a boolean; money takes `?int`). `php -l`, `pint` and the classmap pass over
+    both, exactly as ruling 156 recorded for the six-versus-five arity case. **So after any merge
+    the seam check over `app/tests` is the SUITE and nothing else** — a green phpstan says nothing
+    about a test file, and this lane has now been told so twice (ruling 65's silent class
+    relocation, and this).
+160. **The gate's §7 red list is CAPPED, so a post-merge wave cannot be scoped from the gate output
+    (measured 2026-09-08 09:5x).** §7 reported `FAILED 10 · errors 7` = **17** red and printed
+    **ten** named lines plus `… 2 more`; five are named nowhere. Every prior wave in this lane had
+    two to four reds, so the cap had never bound and the ledger had never noticed it. A brief
+    written from the visible ten silently omits five, and ruling 118's stop-clause discipline —
+    enumerate the *whole* expected output in two tables — is **unavailable** to a supervisor who
+    cannot see it, because its column forbids running a test suite outside `supervise.sh --tests`.
+    **So the first wave after any merge opens with a MEASUREMENT item:** the coder runs the suite
+    and writes every red with its file and full message into `REPORT.md`'s `RAW:`, and the brief
+    names for repair only the reds the supervisor has itself measured. ⛔ That brief carries **no**
+    stop-clause on the red list, because ruling 118's precondition is not met. ⚠️ This is ruling 92
+    honoured rather than suspended: the supervisor states no number it has not measured.
+161. **Money's `packageForCollections` wins and main's boolean is NOT adopted — a flag the caller
+    passes to assert that a human acted is a self-certifying value, where money records the
+    PRINCIPAL (RULED by the lane supervisor 2026-09-08 09:5x, briefed as MONEY-115 item 3).**
+    Main's `test_g1_65_collections_transmission_is_human_action` calls
+    `packageForCollections($biz, $invoice, true)` and expects
+    `DomainException('Collections transmission is a human action only')` on `false`. Money's is
+    `packageForCollections(int $businessId, int $invoiceId, ?int $packagedByUserId = null)`, whose
+    own docblock states G1-65 as *"the bundle is BUILT here; transmission to an agency is a human
+    action (the principal is recorded on the row)"* — `packaged_by_user_id` written at `:249`,
+    returned at `:266`. **Money's is the better implementation of the same capability id**, on this
+    lane's own reasoning: a `bool $isHumanAction` supplied by the caller is ruling 51's shape one
+    register over (*"the difference between two numbers this app supplied"*) and ruling 43's *does
+    it even vary?* answered by the caller rather than by the world, while a user id varies, is
+    auditable and is already read by `CollectionsPackagePreview`. X-211 is money's by ruling 20, so
+    ruling 59 governs: **the module wins and the test is adapted, never the reverse** — ⛔ adopting
+    the boolean is ruling 56's `requestCharge` mistake, a signature minted to satisfy a caller.
+    ⚠️ **The arity is only half the failure and the second half is the interesting one:** main's
+    test packages an invoice with **no resolution attempt recorded**, which money's engine refuses
+    outright with `NoResolutionAttemptException` (`:221-223`, R211), so even with the argument fixed
+    it stays red — against a refusal money has and main does not. The adaptation **provisions the
+    real state so the real path runs** (ruling 74), asserts `packaged_collections` **and** the
+    acting user's id on the row, and keeps a refusal assertion by asserting **money's own**
+    exception for the no-attempt case. ⛔ No assertion is deleted and the name stands, being true of
+    money's implementation (rulings 39, 46).
