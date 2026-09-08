@@ -57,6 +57,26 @@ class YourNumberCardScreenTest extends TestCase
 
         $this->get(route('x-188.your-number-card'))
             ->assertSee('+15555551234');
+    }
+
+    public function test_screen_component_exposes_number(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        $pool = NumberPool::create([
+            'business_id' => $biz->id,
+            'phone_number' => '+15555551234',
+            'area_code' => '555',
+            'carrier_name' => 'telnyx',
+            'status' => 'assigned',
+        ]);
+        NumberAssignment::create([
+            'business_id' => $biz->id,
+            'phone_number_id' => $pool->id,
+            'status' => 'active',
+        ]);
 
         Livewire::test(YourNumberCard::class)
             ->assertViewHas('number', '+15555551234');
