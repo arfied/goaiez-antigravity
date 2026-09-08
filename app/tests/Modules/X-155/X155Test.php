@@ -648,6 +648,28 @@ class X155Test extends TestCase
         $this->assertEquals('captured', $res['status']);
     }
 
+    public function test_an_array_date_of_birth_is_not_an_age_signal(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Array DOB Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Array DOB Form',
+            'slug' => 'array-dob-form',
+            'steps' => [],
+            'schema' => [],
+        ]);
+
+        $res = $this->captureAction->handle($biz->id, $form->id, [
+            'first_name' => 'Adult',
+            'phone' => '+15550004444',
+            'date_of_birth' => ['1990-01-01'],
+        ]);
+
+        $this->assertEquals('captured', $res['status']);
+    }
+
     public function test_a_real_under_eighteen_date_of_birth_is_still_rejected(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Minor DOB Tenant']);

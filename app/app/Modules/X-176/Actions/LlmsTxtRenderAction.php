@@ -19,10 +19,10 @@ final class LlmsTxtRenderAction
         ];
 
         foreach ($contentBlocks as $block) {
-            if (isset($block['type']) && $block['type'] === 'text' && trim((string) ($block['content'] ?? '')) !== '') {
+            if (isset($block['type']) && $block['type'] === 'text' && is_scalar($block['content'] ?? '') && trim((string) ($block['content'] ?? '')) !== '') {
                 $lines[] = $block['content'];
                 $lines[] = '';
-            } elseif (trim((string) ($block['text'] ?? '')) !== '') {
+            } elseif (is_scalar($block['text'] ?? '') && trim((string) ($block['text'] ?? '')) !== '') {
                 $lines[] = $block['text'];
                 $lines[] = '';
             }

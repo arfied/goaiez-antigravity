@@ -270,4 +270,82 @@ final class LlmsTxtTest extends TestCase
         $txt = Storage::disk('local')->get("sites/{$res['deploy_hash']}.llms.txt");
         $this->assertContains('0', explode("\n", $txt));
     }
+
+    public function test_a_text_block_whose_content_is_not_a_scalar_is_excluded_and_the_deploy_survives(): void
+    {
+        Storage::fake('local');
+        $biz = self::provisionTenant([
+            'name' => 'Local Tenant ABC',
+        ]);
+        Tenancy::set((int) $biz->id);
+
+        $page = Page::create(['business_id' => $biz->id, 'title' => 'Services ABC', 'slug' => 'services-abc']);
+        PageVersion::create([
+            'business_id' => $biz->id,
+            'page_id' => $page->id,
+            'commit_id' => 'commit_llms_abc',
+            'content_blocks' => [
+                ['type' => 'text', 'content' => ['nested' => 'value']],
+                ['type' => 'text', 'content' => 'Valid prose here.'],
+            ],
+        ]);
+
+        $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'llms-abc.example.com', true);
+
+        $res = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            pageId: $page->id,
+            commitId: 'commit_llms_abc',
+            businessName: 'Local Biz ABC'
+        );
+
+        $this->assertEquals('deployed', $res['status']);
+
+        $llmsPath = "sites/{$res['deploy_hash']}.llms.txt";
+        $this->assertTrue(Storage::disk('local')->exists($llmsPath));
+
+        $content = Storage::disk('local')->get($llmsPath);
+        $this->assertStringContainsString('Valid prose here.', $content);
+        $this->assertStringNotContainsString('nested', $content);
+    }
+
+    public function test_a_block_whose_text_key_is_not_a_scalar_is_excluded_and_the_deploy_survives(): void
+    {
+        Storage::fake('local');
+        $biz = self::provisionTenant([
+            'name' => 'Local Tenant XYZ',
+        ]);
+        Tenancy::set((int) $biz->id);
+
+        $page = Page::create(['business_id' => $biz->id, 'title' => 'Services XYZ', 'slug' => 'services-xyz']);
+        PageVersion::create([
+            'business_id' => $biz->id,
+            'page_id' => $page->id,
+            'commit_id' => 'commit_llms_xyz',
+            'content_blocks' => [
+                ['type' => 'offer', 'text' => ['nested' => 'value']],
+                ['type' => 'offer', 'text' => '20% off winter service'],
+            ],
+        ]);
+
+        $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'llms-xyz.example.com', true);
+
+        $res = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            pageId: $page->id,
+            commitId: 'commit_llms_xyz',
+            businessName: 'Local Biz XYZ'
+        );
+
+        $this->assertEquals('deployed', $res['status']);
+
+        $llmsPath = "sites/{$res['deploy_hash']}.llms.txt";
+        $this->assertTrue(Storage::disk('local')->exists($llmsPath));
+
+        $content = Storage::disk('local')->get($llmsPath);
+        $this->assertStringContainsString('20% off winter service', $content);
+        $this->assertStringNotContainsString('nested', $content);
+    }
 }
