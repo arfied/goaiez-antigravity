@@ -236,16 +236,31 @@ it cannot move a count, and it has a mechanical falsifier.* Anything that fails
 that test and is not on this list is a wave invented to fill the lane.
 
 - **S-182 — `BUILD-STATE.json` stage refresh.** ✅ done, tick 183.
-- **S-183 — root scratch removal (`RULING CN`).** 405 untracked paths make §1
-  unreadable and one of them is a decoy `REPORT.md`. Delete the debris by name;
-  **keep every `.gate*.txt` and `.sha*.txt`** — REVIEWS blocks cite them by line
-  (`.gate181.txt:135`), and deleting one breaks a citation that cannot be
-  reconstructed.
-- After S-183 this lane **HOLDS**. Every remaining stage count needs the owner:
-  vendor artifact ids (`anchor`), real Infobip and a real placed call
-  (`journey`), the sealed `ContractStage` exemption (`contract`), the
-  platform-scope RLS check defect (`schema`), the `§257.4` deferred list
-  (`capability`). None is this seat's to open.
+- **S-183 — root scratch removal (`RULING CN`).** ✅ done, tick 184. 330 untracked
+  paths deleted by name, 75 kept; §1 fell **405 → 76** and every survivor is a
+  `.gate*.txt` or `.sha*.txt`. No commit, no tracked change, `.gitignore`
+  untouched, the decoy root `REPORT.md` gone and the mailbox copy intact.
+  `RULING CN` is discharged as a live hazard and stays above as history.
+
+⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS as of tick 184 (2026-09-08).** Do not
+open a wave. `state.py next` returns `{"action": "FINISHED"}`. Every remaining
+stage count needs the owner and is listed as **OWNER ACTION A–F** at the end of
+`REVIEWS.md`: vendor artifact ids (`anchor 137`), real Infobip and a real placed
+call (`journey 5`), the sealed `ContractStage` exemption (`contract 87`), the
+platform-scope RLS check defect (`schema 15`), the `§257.4` deferred list
+(`capability 358`). None is this seat's to open, and none is the coder's. Two
+**TRACK 1 ACTION** items are carried alongside them. The lane resumes only when
+`OWNER.md` answers one of them.
+
+- **The `JOURNEYS : 12/12 green` hand mark is NOT a wave — ruled tick 184.** It is
+  a genuine `RULING CK`-class false mark (§5 measures `journey 5` and calls three
+  journeys `not run`), and `state.py journey <Jn> red` would mechanically flip it.
+  Do not brief it. `state.py:131-141` turns any RED journey into a `next` that
+  says *implement the remaining journeys* — a directive only real Infobip
+  credentials and a real placed call satisfy, i.e. a wave this lane may not open
+  and cannot close. And §5 measures only five of the twelve, so flipping all
+  twelve swaps a false GREEN for a false RED. It is **OWNER ACTION F**; until the
+  owner rules, the trap note above is the mitigation.
 
 ## Dispatching the coder (added 2026-09-02)
 
