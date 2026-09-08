@@ -338,7 +338,6 @@ class X211Test extends TestCase
         $this->engine->packageForCollections($biz->id, $invoice->id, false);
     }
 
-
     /**
      * [G1-74]
      */
@@ -366,7 +365,6 @@ class X211Test extends TestCase
         $this->engine->logOfflinePayment($biz->id, $invoice->id, 10000, 'check', null, null);
     }
 
-
     /**
      * [N-037]
      */
@@ -392,5 +390,4 @@ class X211Test extends TestCase
 
         $this->engine->applyLateFee($biz->id, $invoice->id, 7500, false);
     }
-
 }
