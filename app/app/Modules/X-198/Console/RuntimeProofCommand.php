@@ -77,7 +77,7 @@ final class RuntimeProofCommand extends Command
             return self::FAILURE;
         }
 
-        $hasName = str_contains($junitContent, 'an_invoice_reaches_a_real_charge_id') || str_contains($junitContent, 'An invoice reaches a real charge id');
+        $hasName = str_contains($junitContent, 'a_real_gateway_charge_id_exists_and_no_invoice_is_tied_to_it') || str_contains($junitContent, 'A real gateway charge id exists and no invoice is tied to it');
 
         $rootSuite = null;
         if ($junitXml->getName() === 'testsuites' && isset($junitXml->testsuite[0])) {
@@ -96,7 +96,7 @@ final class RuntimeProofCommand extends Command
         $errors = (string) $rootSuite['errors'];
 
         if (! $hasName || $failures !== '0' || $errors !== '0') {
-            $this->error('junit.xml does not name an_invoice_reaches_a_real_charge_id with failures=0 errors=0');
+            $this->error('junit.xml does not name a_real_gateway_charge_id_exists_and_no_invoice_is_tied_to_it with failures=0 errors=0');
 
             return self::FAILURE;
         }
@@ -122,7 +122,7 @@ final class RuntimeProofCommand extends Command
             'captured_at' => $capturedAt,
             'junit' => 'storage/app/evidence/X-198/junit.xml',
             'module' => 'X-198',
-            'test' => 'an_invoice_reaches_a_real_charge_id',
+            'test' => 'a_real_gateway_charge_id_exists_and_no_invoice_is_tied_to_it',
         ];
 
         File::put(storage_path('app/evidence/X-198/runtime-proof.json'), json_encode($proof, JSON_PRETTY_PRINT));
