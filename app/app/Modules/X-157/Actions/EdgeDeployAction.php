@@ -118,10 +118,13 @@ final class EdgeDeployAction
                 ->limit(20)
                 ->get();
             foreach ($appointments as $apt) {
+                if (trim((string) $apt->service_name) === '' || $apt->start_time === null || $apt->end_time === null) {
+                    continue;
+                }
                 $events[] = [
-                    'name' => (string) ($apt->service_name ?? 'Appointment'),
-                    'startDate' => $apt->start_time?->toIso8601String(),
-                    'endDate' => $apt->end_time?->toIso8601String(),
+                    'name' => $apt->service_name,
+                    'startDate' => $apt->start_time->toIso8601String(),
+                    'endDate' => $apt->end_time->toIso8601String(),
                 ];
             }
 
@@ -133,9 +136,12 @@ final class EdgeDeployAction
                 ->limit(20)
                 ->get();
             foreach ($priceBookItems as $item) {
+                if (trim((string) $item->service_name) === '') {
+                    continue;
+                }
                 $productOffers[] = [
                     'name' => $item->service_name,
-                    'price' => $item->price_cents !== null ? ($item->price_cents / 100) : null,
+                    'price' => $item->price_cents / 100,
                 ];
             }
 
@@ -161,18 +167,26 @@ final class EdgeDeployAction
 
                     foreach ($version->content_blocks as $block) {
                         if (($block['type'] ?? '') === 'video_embed') {
+                            if (! is_scalar($block['name'] ?? '') || ! is_scalar($block['contentUrl'] ?? '') || ! is_scalar($block['uploadDate'] ?? '')
+                                || trim((string) ($block['name'] ?? '')) === '' || trim((string) ($block['contentUrl'] ?? '')) === '' || trim((string) ($block['uploadDate'] ?? '')) === '') {
+                                continue;
+                            }
                             // VideoObject injected on publish (TEST ANCHOR, G16-25, ruling 41)
                             $videos[] = [
-                                'name' => $block['name'] ?? null,
-                                'contentUrl' => $block['contentUrl'] ?? null,
-                                'uploadDate' => $block['uploadDate'] ?? null,
+                                'name' => $block['name'],
+                                'contentUrl' => $block['contentUrl'],
+                                'uploadDate' => $block['uploadDate'],
                             ];
                         }
                         if (($block['type'] ?? '') === 'faq') {
+                            if (! is_scalar($block['question'] ?? '') || ! is_scalar($block['answer'] ?? '')
+                                || trim((string) ($block['question'] ?? '')) === '' || trim((string) ($block['answer'] ?? '')) === '') {
+                                continue;
+                            }
                             // FAQPage schema injected on publish (TEST ANCHOR, G8-16, ruling 41)
                             $faqs[] = [
-                                'question' => $block['question'] ?? null,
-                                'answer' => $block['answer'] ?? null,
+                                'question' => $block['question'],
+                                'answer' => $block['answer'],
                             ];
                         }
                     }
@@ -196,7 +210,7 @@ final class EdgeDeployAction
             $breadcrumbs = [];
             if ($pageId !== null && $businessName !== null && $commitId !== null) {
                 $page = Page::find($pageId);
-                if ($page && ! empty($page->slug) && ! empty($page->title)) {
+                if ($page && ! empty($page->slug) && trim((string) $page->title) !== '') {
                     $parts = explode('/', trim($page->slug, '/'));
                     if (count($parts) > 1) {
                         $paths = [];
@@ -224,7 +238,7 @@ final class EdgeDeployAction
 
                         if ($usable) {
                             foreach ($paths as $path) {
-                                if (! isset($hierarchyPages[$path]) || empty($hierarchyPages[$path]->title)) {
+                                if (! isset($hierarchyPages[$path]) || trim((string) $hierarchyPages[$path]->title) === '') {
                                     $usable = false;
                                     break;
                                 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Modules\X137;
 
 use App\Modules\X137\Actions\CallAttributeAction;
+use App\Modules\X137\Models\CallToken;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
@@ -128,5 +129,89 @@ class PoolExhaustionTest extends TestCase
             'business_id' => $biz->id,
             'fallback_number' => '+15558880001',
         ]);
+    }
+
+    public function test_a_blank_fallback_number_is_refused_as_not_configured_for_dni(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Blank Fallback Refusal', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        DB::table('dni_pool_numbers')->insert([
+            ['business_id' => $biz->id, 'phone_number' => '+15550001005'],
+        ]);
+
+        DB::table('dni_pool_settings')->insert([
+            'business_id' => $biz->id,
+            'fallback_number' => '   ',
+        ]);
+
+        $this->attributeAction->allocateFromPool($biz->id, 'v1', 'src');
+
+        $tokensBefore = CallToken::where('business_id', $biz->id)->count();
+
+        try {
+            $this->attributeAction->allocateFromPool($biz->id, 'v2', 'src');
+            $this->fail('Expected exception was not thrown');
+        } catch (\DomainException $e) {
+            $this->assertEquals('BUSINESS_NOT_CONFIGURED_FOR_DNI', $e->getMessage());
+            $this->assertEquals($tokensBefore, CallToken::where('business_id', $biz->id)->count());
+        }
+    }
+
+    public function test_a_blank_pool_number_is_never_allocated(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Blank Pool Member', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        DB::table('dni_pool_numbers')->insert([
+            ['business_id' => $biz->id, 'phone_number' => '   '],
+            ['business_id' => $biz->id, 'phone_number' => '+15550001006'],
+        ]);
+
+        $t1 = $this->attributeAction->allocateFromPool($biz->id, 'v1', 'src');
+
+        $this->assertEquals('+15550001006', $t1->allocated_number);
+        $this->assertEquals('active', $t1->status);
+    }
+
+    public function test_a_pool_of_only_blank_numbers_falls_through_to_the_static_fallback(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Only Blank Pool', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        DB::table('dni_pool_numbers')->insert([
+            ['business_id' => $biz->id, 'phone_number' => '   '],
+        ]);
+
+        DB::table('dni_pool_settings')->insert([
+            'business_id' => $biz->id,
+            'fallback_number' => '+15559999999',
+        ]);
+
+        $t1 = $this->attributeAction->allocateFromPool($biz->id, 'v1', 'src');
+
+        $this->assertEquals('+15559999999', $t1->allocated_number);
+        $this->assertEquals('unattributed', $t1->status);
+    }
+
+    public function test_a_blank_visitor_session_token_is_refused_before_a_pool_number_is_touched(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Blank Token Refusal', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        DB::table('dni_pool_numbers')->insert([
+            ['business_id' => $biz->id, 'phone_number' => '+15550001007'],
+            ['business_id' => $biz->id, 'phone_number' => '+15550001008'],
+        ]);
+
+        $tokensBefore = CallToken::where('business_id', $biz->id)->count();
+
+        try {
+            $this->attributeAction->allocateFromPool($biz->id, '   ', 'src');
+            $this->fail('Expected exception was not thrown');
+        } catch (\DomainException $e) {
+            $this->assertEquals('VISITOR_SESSION_TOKEN_REQUIRED', $e->getMessage());
+            $this->assertEquals($tokensBefore, CallToken::where('business_id', $biz->id)->count());
+        }
     }
 }
