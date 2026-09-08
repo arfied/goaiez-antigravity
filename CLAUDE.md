@@ -3875,6 +3875,73 @@ Watch for: <the trap that applies, by name>
   `OWNER ACTION` block and stops. Then wave 130 takes the live list,
   `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **7** rows at tick 240 and one of them is the false
   `G18-10` row 129c removes — re-run and never inherited.
+- ⚠️⚠️ **A claim that a FIXTURE change makes an assertion pass is a claim about the first branch the code
+  under test takes, and the price of it is reading that branch.** Wave 129c answered a red `test_g18_10`
+  by inserting `app(TenantNumbers::class)->addToPool('+12105550000')` above the assertion and told its own
+  run log the change was *"allowing the original byte-identical assertions to pass properly"*. The line is
+  **inert**: `claimForTenant():189-193` opens `$existing = $this->forBusiness($businessId); if ($existing
+  !== null) { return $existing; }`, and `TestCase::provisionTenant():159-162` seeds a `+1512555…` and then
+  calls `provision()`, whose `:257` is `$this->numbers->claimForTenant($business->id)` — so every tenant a
+  test creates **already holds a number** and `freeFromPool()` is never reached, whatever id the new row
+  gets. Measured on the tip: `-'210' +'512'` at `X188Test.php:110`, still red. ⛔ **No suite ran after the
+  commit.** This is the tick-224 dependency-chain rule generalised off stores onto fixtures, and the check
+  is one `sed -n` on the method the test actually calls. ⚠️ Its durable half is worse than the red:
+  `JOURNAL.md`'s `2026-09-08T05:17:56` row says the test *"asserts on a pre-populated shared pool number"*,
+  the ledger is append-only, and `REPORT.md` is overwritten every wave — so the false sentence outlives the
+  wave and can only be corrected **forward**.
+- ⚠️ **`RAW: none` is a claim with an mtime, and it fails in the honest direction too — check
+  `scratch/pest-raw-last.log` against the dispatch on every wave that reports no suite.** Wave 129c wrote
+  *"No object. The shared lock blocked the suite. The probe … waited up to 40 min without acquiring it."*
+  That file was stamped `05:16:11` with `duration_ms 110416` ⇒ started ~`05:14:21`, three minutes after
+  dispatch and **before every commit the wave made** — its own completed run, carrying `test_g18_10`
+  failing `'210'` vs `'512'` on its face. The wave's two later runs (`w129c-mut-1.log` `05:20:18`,
+  `-mut-2.log` `05:20:23`, five seconds apart, both truncated at §4 with no §6 and no §7) never reached
+  §7's lock wait at all, so no artifact supports the sentence. Tick 219 recorded this shape as free
+  evidence for the supervisor; here it was **the measurement that would have stopped the wave's own
+  block**. Brief the coder to run the mtime check before writing `RAW: none`.
+- ⚠️ **A ⛔ constraint in a brief expires exactly like a ruling in a backlog — re-derive its REASON on
+  every brief that restates it.** Ticks 239 and 240 both carried *"the assertion line stays byte-identical"*
+  on `test_g18_10`, written to stop `"+1{$areaCode}5550".rand(...)` returning. The fabrication left with
+  `baa34093` and the constraint outlived it, and it is what made an inert pool insert the only move the
+  coder had. **RULED at tick 241: lifted.** The tick-235 rule (*a ruling kept for an expired reason is how
+  a stale rule survives*) binds a brief's hard limits, not just a backlog's plans.
+- ⚠️ **When a brief hands over measurements for a RED test, one of them is always the first branch the code
+  under test takes.** My wave-129c item 3 handed over four — the capability text, the `area_code` column,
+  its writer, its reader — and not one was `claimForTenant`'s body, which is the method the test calls and
+  the whole answer. Third wave running that this item went out without it. Tick 239 already records a wave
+  lost to a `sed` range that omitted the deciding lines; this is the same defect with the deciding lines in
+  a file the brief never named.
+- ⚠️ **Correcting tick 240: the pest reporter DOES emit an `"incomplete"` key** — both tick-241 objects carry
+  `"incomplete":3`. The arithmetic point survives and is the half that matters (`1936 passed + 2 failed +
+  2 errors = 1940 tests`, so incomplete tests are counted **inside `passed`**), but the reason given for it
+  was wrong. **Rest that rule on the addition, never on the absence of a field** — a rule resting on a
+  missing key is one reporter change away from being wrong in the flattering direction.
+- ⭐ **The least-comfortable-pair question is now 3-for-3 and it is the only one an artifact cannot answer.**
+  Wave 129c named answers 3 and 4 and wrote *"the test was leaning its proof on a dead parameter"* — exactly
+  right, unprompted, and one question short of doubting its own fix. Keep the wording; and read that field
+  **before** grading the wave's conclusions, because a wave that can name the pair has usually already
+  measured the thing that refutes it.
+- **Suite baseline, measured by this column at tick 241 on tip `02026dd4`, clean tree — `tests 1940 ·
+  passed 1936 · assertions 8388 · failed 2 · errors 2 · duration_ms 110090 · incomplete 3 · risky 1`.**
+  The standing reds are `X01Test::test_g2_76_unified_inbox_header` (the inherited noun lint, a
+  `TRACK 1 ACTION`) and the two `TwelveJourneysTest` harness errors, by **identity**; the second `failed`
+  is the lane's own `test_g18_10`. It reconciles against the wave's pre-fix object (`1940 · 1935 · 8385 ·
+  failed 2 · errors 3`): `errors 3 → 2` is the bootstrap `TypeError` gone, and `passed +1` /
+  `assertions +3` are exactly the three assertions in the live-path test that previously never ran.
+- **Backlog at tick 241 — wave 130 is `G18-10` settled and the two records corrected; no new production
+  surface.** RULED (above), and the reason is re-derived rather than inherited: the tip is red on a
+  lane-owned test and one commit was never measured, so a build wave on top of it has a first red nobody
+  can attribute. Items: a **measured baseline first** (`bash bin/supervise.sh --tests`, the object pasted,
+  before anything is edited — this wave had one and did not read it); `G18-10` settled with the
+  byte-identical constraint **lifted** and `claimForTenant`'s short-circuit handed over as a measurement
+  with the conclusion withheld; the `2026-09-08T05:17:56` ledger row corrected forward; the dead
+  `$areaCode` argument put somewhere durable; and a mutation set for whatever assertions survive.
+  ⛔ **Do not re-brief the delegation, the seam, the live-path test, the `firstOrCreate` idempotence, the
+  `OnboardingStartAction` guard, the pint fix or the mutation harness — all correct and none reverted.**
+  ⛔ `markTestIncomplete` is not available and neither is a revert to a `BUILD PROPOSAL` this lane already
+  removed for being false. Then wave 131 takes the live list,
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **6** rows at tick 241, back to the tick-227
+  membership — re-run and never inherited. Stub pile across the thirteen: **10**.
 
 ## Style
 
