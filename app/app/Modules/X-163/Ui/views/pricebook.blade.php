@@ -96,6 +96,9 @@
                                     @if($item->is_sample)
                                         <x-ui.status-pill state="attention" label="Sample" />
                                     @endif
+                                    @if(isset($refusals[$item->id]))
+                                        <span class="text-sm text-alert font-medium bg-alert-bg px-2 py-0.5 rounded">Needs a price</span>
+                                    @endif
                                 </div>
                                 @if($traceItemId === $item->id)
                                     <div class="text-sm text-ink-2 bg-surface p-3 rounded border border-rule mt-2 space-y-1">
@@ -114,7 +117,9 @@
                                     <input type="number" step="0.01" wire:model="inlinePrices.{{ $item->id }}" class="w-24 h-10 px-3 py-2 bg-paper border border-rule rounded-md focus:outline-none focus:ring-2 focus:ring-accent">
                                 </div>
                                 
-                                <button wire:click="confirmItem({{ $item->id }})" class="h-10 px-3 text-sm font-medium text-white bg-accent hover:bg-accent-hover rounded-md transition-colors">Confirm</button>
+                                <button wire:click="confirmItem({{ $item->id }})" 
+                                        @if(isset($refusals[$item->id])) disabled @endif
+                                        class="h-10 px-3 text-sm font-medium text-white bg-accent hover:bg-accent-hover rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Confirm</button>
                                 <button wire:click="deleteItem({{ $item->id }})" class="h-10 px-3 text-sm font-medium text-alert hover:bg-alert-bg rounded-md transition-colors">Delete</button>
                             </div>
                         </div>

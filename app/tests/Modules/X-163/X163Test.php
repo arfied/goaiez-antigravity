@@ -1435,4 +1435,78 @@ class X163Test extends TestCase
         $this->assertEquals('Brake Pad Replacement', $resLong['service_name']);
         $this->assertEquals(24900, $resLong['amount']);
     }
+
+    public function test_pricebook_confirm_refusal_surfaced()
+    {
+        $biz = TestCase::provisionTenant(['name' => 'PB125 Biz 1', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $this->actingAs($owner);
+
+        $item = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'zero price',
+            'price_cents' => 0,
+            'is_sample' => true,
+            'is_confirmed' => false,
+        ]);
+
+        $component = Livewire::test(Pricebook::class);
+        $component->call('confirmItem', $item->id);
+
+        $this->assertArrayHasKey($item->id, $component->get('refusals'), 'Refusal must be surfaced for 0 price');
+        $item->refresh();
+        $this->assertFalse($item->is_confirmed, 'Row must remain unconfirmed');
+    }
+
+    public function test_pricebook_confirm_works_on_positive_price()
+    {
+        $biz = TestCase::provisionTenant(['name' => 'PB125 Biz 2', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $this->actingAs($owner);
+
+        $item = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'real price',
+            'price_cents' => 1000,
+            'is_sample' => true,
+            'is_confirmed' => false,
+        ]);
+
+        $component = Livewire::test(Pricebook::class);
+        $component->call('confirmItem', $item->id);
+
+        $this->assertSame([], $component->get('refusals'), 'Refusal array must be empty');
+        $item->refresh();
+        $this->assertTrue($item->is_confirmed, 'Row must be confirmed');
+        $this->assertFalse($item->is_sample, 'Row must not be a sample');
+    }
+
+    public function test_pricebook_confirm_clears_after_correction()
+    {
+        $biz = TestCase::provisionTenant(['name' => 'PB125 Biz 3', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $this->actingAs($owner);
+
+        $item = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'corrected price',
+            'price_cents' => 0,
+            'is_sample' => true,
+            'is_confirmed' => false,
+        ]);
+
+        $component = Livewire::test(Pricebook::class);
+        $component->call('confirmItem', $item->id);
+        $this->assertArrayHasKey($item->id, $component->get('refusals'), 'Refusal must be surfaced initially');
+
+        $component->set('inlinePrices.'.$item->id, 20.00);
+        $component->call('confirmItem', $item->id);
+
+        $this->assertSame([], $component->get('refusals'), 'Refusal must be cleared after correction');
+        $item->refresh();
+        $this->assertTrue($item->is_confirmed, 'Row must be confirmed after correction');
+    }
 }
