@@ -47,7 +47,8 @@ test('it marks invoices due and dispatches event only once', function () {
         // Second run
         Artisan::call('x199:mark-due');
 
-        // It should have only been dispatched ONCE total (due to idempotency marker)
-        Event::assertDispatchedTimes(InvoiceDue::class, 1);
+        // Once for THIS invoice — the idempotency marker, not a fact about the whole database.
+        expect(Event::dispatched(InvoiceDue::class, fn ($e) => $e->invoiceId === $overdueInvoice->id))->toHaveCount(1);
+        expect(Event::dispatched(InvoiceDue::class, fn ($e) => $e->invoiceId === $notDueInvoice->id))->toHaveCount(0);
     });
 });
