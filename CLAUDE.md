@@ -242,9 +242,10 @@ that test and is not on this list is a wave invented to fill the lane.
   untouched, the decoy root `REPORT.md` gone and the mailbox copy intact.
   `RULING CN` is discharged as a live hazard and stays above as history.
 
-⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 197 (2026-09-08) against main's
-`888cabae` (`merge: track/pricebook — wave 137`), which moved 90 commits from `257a6a12` and left
-the lane 27 ahead / 464 behind; the seven-row take re-check still prints all seven, and
+⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 198 (2026-09-08) against main's
+unmoved `888cabae` (`merge: track/pricebook — wave 137`), lane 28 ahead / 464 behind. The take is
+now shut on **two** rows rather than seven (`RULING DD`) — use the two-row re-check
+`git diff --name-status HEAD...origin/main -- .claude/hooks/`, not `CP`'s seven-row command — and
 `RULING DA` closes the only body of work that looked parallel to it.** Do not
 open a wave. `state.py next` returns `{"action": "FINISHED"}`. Every remaining
 stage count needs the owner and is listed as **OWNER ACTION A–F** at the end of
@@ -650,7 +651,7 @@ it. ⚠️ Re-measured at tick 197 against main `888cabae`: `grep -c multiEmitte
 app/app/Doctor/Stages/ContractStage.php` is still **0** here and the lane is now **464 behind**.
 `DA` stands, with a larger number.
 
-### ⛔ `RULING DB` (tick 197) — `--allow-restore` WOULD NOT HAVE WORKED. Main's launcher revision is readable, and the flag's own scope permanently refuses three of the take's six restore targets.
+### ⚠️ `RULING DB` (tick 197) — **PARTLY WITHDRAWN at tick 198, see `RULING DD`.** Its *method* stands and is the best thing on this page (read main's copy of a per-track file). Its *conclusion* — that step 2 is unsatisfiable in every lane — is **wrong**: it read the `--allow-restore` flag, which governs restores OUTSIDE a merge, and there is a second gate for restores INSIDE one. Kept as history; do not act on its verdict. — `--allow-restore` WOULD NOT HAVE WORKED. Main's launcher revision is readable, and the flag's own scope permanently refuses three of the take's six restore targets.
 
 **Settles `CY`/`CZ` and rewrites the take's step 2 for whoever executes it.** `CY` and `CZ` inferred
 the newer launcher revision from sibling *command lines* and could not read it. At tick 197 it turned
@@ -729,6 +730,103 @@ own early-exit path (`--bogus-arg-197` → `REFUSED: unknown argument`). Accepte
 failure mode is **loud and this seat can repair it** (a syntax error prints `LAUNCH FAILED` or a bash
 error and changes nothing), while the failure it prevents is silent and unrecallable. If a future tick
 gains a parse check, run it over this file first.
+
+### ⛔ `RULING DC` (tick 198) — `merge=ours` does NOT protect this lane's `app/phpunit.xml`. Measured. The take would silently repoint this checkout at a database it may destroy.
+
+**`RULING CP`'s alarm with the mechanism proven and the blast radius named.** `.gitattributes` here
+carries `merge=ours` on all eight per-track paths and `merge.ours.driver=true` is configured, so a
+reader is entitled to think the file is guarded. It is not. **A merge driver is consulted only for a
+three-way content merge; when only *their* side moved, git takes theirs outright and asks no driver
+anything.** Measured against merge base `b79ae957`:
+
+```
+$ git diff --name-only b79ae957 HEAD -- <the eight per-track paths>
+.agents/state/BUILD-STATE.json · .agents/state/JOURNAL.md
+.agents/supervisor/launch-coder.sh · CLAUDE.md
+```
+
+Four moved on our side. **`app/phpunit.xml`, `.claude/settings.json`, `bin/supervise.sh` and
+`.agents/rules/10-supervisor.md` did not** — and main's range changed the first three. Those land
+**theirs, silently**: `merge=ours` **fails open in its own base case**, and a per-track file is quiet
+precisely when nobody is editing it.
+
+⚠️ **The cost.** Main pins `DB_DATABASE=goaiez_antig_test`; this lane pins
+`goaiez_antig_stages_test`. After the take and before a restore, this checkout's suite,
+`php artisan doctor` and `state.py status` all read `goaiez_antig_test`. `RefreshesTenantDatabase`
+runs `migrate:fresh`, which **drops every table first** — one `--tests` or one stage run from here
+destroys a test database this lane was never briefed to touch. **`supervise.sh` §0 will not catch
+it**: it exits 2 only on production, and `goaiez_antig_test` is not production. The same merge also
+hands over `bin/supervise.sh` (+479/-165) and `.claude/settings.json`, so the instrument and the
+permission set that would let you notice change in the same commit. Main's supervisor paid exactly
+this on 2026-09-07 against `goaiez_antig_sixty_test`.
+
+**RULED by the lane supervisor: any take this lane ever runs restores `app/phpunit.xml`,
+`.claude/settings.json` and `bin/supervise.sh` FIRST, in that order, before anything reads, gates,
+migrates or tests** — the failure is destructive, silent, and lands where §0 is designed not to flag
+it. Standing order: nothing here runs a suite while `app/phpunit.xml` differs from `HEAD`'s, and
+`grep -n DB_DATABASE app/phpunit.xml` is the proof, not the intention to have restored it.
+
+⚠️ **`RULING CR`'s "six files to restore" is retired as an instruction.** A fixed list is a superset
+by construction, and `git checkout HEAD -- <a path the merge did not stage>` is run 27's blanket
+clobber one path at a time — it eats this seat's uncommitted notes. **Restore what
+`git diff --cached --name-only` actually lists**, never "run these six commands"; `CR`'s list
+survives only as the set to *expect*. And **the proof that no restore was needed is item 4**
+(`git diff HEAD~1 HEAD -- <per-track paths>` printing nothing), never item 3's silence: an empty
+index listing measures the mechanism, not the result, and absence has two causes with opposite
+meanings.
+
+### ⛔ `RULING DD` (tick 198) — `DB` is corrected: the merge-time restore is a DIFFERENT gate, this lane already holds it, and the take narrows from SEVEN rows to TWO.
+
+Main's tracked `CLAUDE.md` §2 of the merge procedure:
+
+> `coder-bin/git` now allows `git checkout HEAD -- <existing file path>` only when
+> `GOAIEZ_MERGE_OK=1` **and `MERGE_HEAD` is present**, and refuses a directory argument by
+> construction … `restore` and `switch` stay refused.
+
+**Two gates, not one.** `GOAIEZ_RESTORE_OK` governs a restore *outside* a merge — the flag `DB`
+read, whose supervisor-owned exclusions are real and stand. Inside a `--no-ff --no-commit` take,
+`MERGE_HEAD` exists and `GOAIEZ_MERGE_OK=1` is the gate; main's own standing order is to restore
+`app/phpunit.xml`, `.claude/settings.json` and `bin/supervise.sh` under it, and Track 1 has executed
+that. **This lane has `--allow-merge`** (`launch-coder.sh:22`), so step 2 is satisfiable here.
+`CY`/`CZ`'s refusal to add `--allow-restore` is **unaffected and still correct** — that flag was
+never the mechanism the take needed.
+
+✅ **The method generalises, and it is the durable part.** `DB` found that main carries its own copy
+of every per-track file, so `git diff HEAD...origin/main -- <path>` reads it with no boundary
+violation and no `pgrep`; `DB` applied it to `launch-coder.sh` only. One
+`git show origin/main:CLAUDE.md` answered what `CY`, `CZ`, `DB` and `CP`'s step 2 spent four ticks
+inferring. **Before inferring a shared-guard behaviour from any indirect signal, read main's copy of
+the per-track file that documents it.** `coder-bin/git` stays outside the boundary (`RULING CT`
+unchanged); the file describing what it permits does not.
+
+**Shut on two rows now, not seven.** The four `app/app/Doctor/**` + `seals.json` rows are plausibly
+takeable (`CT`, asserted); `.claude/settings.json` (**M**) is **resolved** — restorable inside the
+take, and `DC` says restore it first. What remains is the two **A** rows,
+`.claude/hooks/{drive_hook,no-piped-gate-tool}.py`. They are **not** per-track (main's never-merge
+list is `.claude/settings.json`, not `.claude/**`), so a take must *carry* them — but an ADD has no
+blob in `HEAD`, so `git checkout HEAD --` cannot address it, `git restore --staged` is refused by
+name, and carrying them needs the commit to stage `.claude/`, which the never-list refuses. And
+`git log origin/main -20 -- .claude/` is **ten commits, zero merge commits**: every `.claude/` change
+was typed by a supervisor seat directly onto main. **`.claude/` has never traversed a lane take in
+any lane** — this is not the lane being under-equipped, it is a path with no precedent anywhere.
+
+**RULED by the lane supervisor: the take stays shut and is not dispatched**, because a wave sent now
+burns its run on two rows `kill` cannot recall (`RULING CL`/`CQ`). Do not dispatch to read the guard
+(`CT`), and do not reach for a bare `git merge` (`CQ`) — `DC` is the strongest reason yet, since the
+auto-commit path lands `app/phpunit.xml` with nothing between it and a destructive run.
+
+**TRACK 1 ACTION 1 is replaced, not added to:** *main's range adds two files under `.claude/hooks/`;
+`.claude/` is not per-track so a take must carry them; the never-list refuses a commit staging
+`.claude/`; an ADD cannot be restored to `HEAD`; and no lane has ever landed `.claude/` through a
+merge. **Who commits those two rows, and does the never-list carry a `MERGE_HEAD` exemption the way
+the checkout clause does?***
+
+**The two-row re-check** (supersedes `CP`'s seven-row command; run it, and only conclude the take is
+open if it prints nothing):
+
+```
+git diff --name-status HEAD...origin/main -- .claude/hooks/
+```
 
 ## Dispatching the coder (added 2026-09-02)
 
