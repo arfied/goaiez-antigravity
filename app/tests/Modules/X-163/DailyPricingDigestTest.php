@@ -295,4 +295,64 @@ class DailyPricingDigestTest extends TestCase
             ->assertDontSee('1 refusals')
             ->assertDontSee('1 pricing questions');
     }
+
+    public function test_confirming_clears_the_prices_key_for_that_item_defect_arm(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        $item = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Defect Arm',
+            'price_cents' => 10000,
+            'is_sample' => false,
+            'is_confirmed' => false,
+            'refusal_count' => 1,
+            'refusal_flagged_at' => now(),
+        ]);
+
+        $component = Livewire::actingAs($owner)
+            ->test(DailyPricingDigest::class)
+            ->set('prices.'.$item->id, 125.00)
+            ->call('confirm', $item->id);
+
+        $this->assertArrayNotHasKey($item->id, $component->get('prices'), 'Defect arm prices leak');
+    }
+
+    public function test_confirming_leaves_other_prices_keys_alone_regression_arm(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        $item1 = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Regression Arm 1',
+            'price_cents' => 10000,
+            'is_sample' => false,
+            'is_confirmed' => false,
+            'refusal_count' => 1,
+            'refusal_flagged_at' => now(),
+        ]);
+
+        $item2 = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Regression Arm 2',
+            'price_cents' => 20000,
+            'is_sample' => false,
+            'is_confirmed' => false,
+            'refusal_count' => 1,
+            'refusal_flagged_at' => now(),
+        ]);
+
+        $component = Livewire::actingAs($owner)
+            ->test(DailyPricingDigest::class)
+            ->set('prices.'.$item1->id, 100.00)
+            ->set('prices.'.$item2->id, 125.00)
+            ->call('confirm', $item1->id);
+
+        $prices = array_filter($component->get('prices'), fn ($p) => $p == 125.0);
+        $this->assertArrayHasKey($item2->id, $prices, 'Regression arm collateral wipe');
+    }
 }
