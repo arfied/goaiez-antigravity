@@ -265,12 +265,23 @@ if [ $want_tests -eq 1 ]; then
 import json,sys
 d=json.loads(sys.stdin.read())
 print("  tests %s · passed %s · FAILED %s · errors %s · result %s" % (d.get("tests"),d.get("passed"),d.get("failed",0),d.get("errors"),d.get("result")))
-for f in (d.get("failures") or [])[:5]:
+# FAILURES ARE NEVER TRUNCATED SILENTLY (N137 upstream; RULING FO here, tick 235).
+# This loop read [:5] while the errors loop below it printed a "… N more" line, so
+# a suite with FAILED 6 named five and said nothing about the sixth — tick 235 had
+# to record that sixth as NOT MEASURED. An instrument that can only under-report is
+# safe as a trigger and unsafe as a finding. Both lists now carry their own
+# overflow line, and a FAILURE prints its message the way an error does.
+FCAP=40
+fails=d.get("failures") or []
+errs=d.get("error_details") or []
+for f in fails[:FCAP]:
     print("   ✗ FAILURE %s" % f.get("test","?").split("::")[-1])
-for e in (d.get("error_details") or [])[:5]:
+    fm=" ".join((f.get("message") or "").split())
+    if fm: print("      %s" % fm[:200])
+if len(fails)>FCAP: print("   … %d more FAILURE(s) not listed" % (len(fails)-FCAP))
+for e in errs[:FCAP]:
     print("   ✗ %s\n      %s" % (e.get("test","?").split("::")[-1], (e.get("message") or "")[:160]))
-n=len(d.get("error_details") or [])
-if n>5: print("   … %d more" % (n-5))'
+if len(errs)>FCAP: print("   … %d more ERROR(s) not listed" % (len(errs)-FCAP))'
   else
     printf '%s\n' "$out" | tail -12 | sed 's/^/  /'
   fi

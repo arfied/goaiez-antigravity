@@ -276,7 +276,109 @@ row** — that is the forgery the `anchor` stage exists to catch, and `JourneySt
 its own comment. ⚠️ Eleventh member of the `EU`/`EV`/`EW`/`EX`/`EZ`/`FE`/`FF`/`FH`/`FI`/`FJ`/`FN`
 family and the third consecutive tick whose defective instrument is **the brief**, not the work.
 
-### ⭐ The admission test, RE-RUN at `capability 207` on the merged checker (tick 236) — **EMPTY**
+### ⛔ `RULING FQ` (tick 237) — this seat's §7 printer under-reported, `RULING FO` MEASURED it one tick ago and filed it as a footnote instead of repairing it, and the concealed row was a member of `FO`'s own class in a module `FO` never named.
+
+`RULING FO` closed with *"the gate prints **five** `✗ FAILURE` lines against a count of **six**; the
+sixth is **NOT MEASURED**."* That is a defect in this seat's own file, in this seat's own column, and
+tick 235 wrote it down as a caveat and moved on. **Track 1 hit the identical defect on a `FAILED 10`,
+named it `N137` and shipped the fix as `N138` at 13:06** — five hours before `FO` was written.
+
+```
+bin/supervise.sh:268   for f in (d.get("failures") or [])[:5]:          ← truncates, NO overflow line
+bin/supervise.sh:272-3 n=len(d.get("error_details") or []); if n>5: …   ← the errors loop HAD one
+```
+
+✅ **Adopted from main's copy, keeping this lane's `last-pest-<lane>.json` path**: `FCAP=40`, both
+lists carry their own overflow line, and a FAILURE prints its message the way an error does.
+
+⭐ **The positive control was live on this tree and is the cleanest this page has had** (`RULING FE`
+wanted real power; here the wave-shaped case existed already). Same suite, **same triple** as tick
+235's `.gateS231w.txt` — `tests 2345 · passed 2337 · FAILED 6 · errors 2` — and **six** `✗ FAILURE`
+lines where there were five. Nothing about the suite changed; only what the instrument would say
+about it.
+
+⛔ **And the sixth row is why this matters.** It is
+`a_real_gateway_charge_id_exists_and_no_invoice_is_tied_to_it` — *"Artifact missing. You must run
+`php artisan x198:evidence-charge` first"* — i.e. **`X-198`, a FOURTH module** beyond `FO`'s
+`X-117`/`X-199`/`X-211`. **`RULING FO`'s census was short by one module, and the truncation is
+exactly why.** `N137`'s own words are the rule: *an instrument that can only under-report is safe as
+a trigger and unsafe as a finding* — and `FO` was written as a finding.
+
+⚠️ **The structural half, and it is the durable one: `bin/supervise.sh` is PER-TRACK, so it NEVER
+merges, so this seat's instrument drifts behind main's silently and no gate reports the gap.**
+Measured: **372 lines behind / 157 ahead**. That is how a defect this seat measured at tick 235 was
+already fixed upstream at 13:06 with nobody here the wiser. ✅ **Standing correction: a tick that
+finds a defect in a per-track instrument runs `git diff <pin> HEAD -- <that file>` before writing a
+ruling about it — the fix is often already on `main` and cannot arrive on its own.**
+
+⭐ **Candidate recorded, deliberately NOT adopted this tick.** Main's `:417-434` names the `pest.lock`
+holder from `/proc` (`N142`, adopting sixty's `TRACK 1 ACTION 2`). Track 1 carries that arm as
+**explicitly unproven** — its positive control was refused to that seat. **This seat had the control
+live this tick**: §7 waited on a real holder (another lane's `run152`). A future tick can prove what
+Track 1 could not. Not taken now because one proven fix per tick beats two unproven ones, and
+`RULING EV` binds — a wave is measured against its floors, not its opportunities.
+
+⚠️ Twelfth member of the `EU`/`EV`/`EW`/`EX`/`EZ`/`FE`/`FF`/`FH`/`FI`/`FJ`/`FN`/`FP` family, and the
+first where the defective instrument was **already measured by this seat and left unrepaired**.
+
+### ⛔ `RULING FR` (tick 237) — the journey artifact ids are SELF-MINTED and CHURN ON EVERY RUN. `RULING FP` said `journey` is artifact-derived; the artifacts are manufactured by the seat doing the measuring.
+
+`FP` measured that a `--tests` run rewrites the evidence files and can move `journey` with no code
+change, and attributed the move to *"running main's harness on main's tree."* **Re-measured across
+this seat's OWN gate this tick, the mechanism is worse than that.** Ten of eleven files rewritten at
+**18:55:36–18:55:43** by `supervise.sh --tests`, on a tree whose only diff is this seat's uncommitted
+`bin/supervise.sh` — **zero `app/` change** — and the ids are **different values every time**:
+
+```
+site-publish.json    commit_nObZ2GiTDXAnGYwR  →  commit_ol6oflA62Z50F5bg
+quote-to-booking     6aa0978085d2e            →  6aa0a07a0e570
+migration-in         9908306                  →  9908327
+review-invite        ""                       →  ""            (the one that stays empty)
+```
+
+⛔ **They are not vendor-issued and they are not stable.** The set also carries `fake_decision_123`
+and `inv_123` — synthetic on their face. Read at source, `JourneyStage.php:59-63` demands an
+**external** artifact in its own comment (*"the same forgery the anchor stage exists for"*) and its
+fix text says *"a journey over real transports mints a real id; **without one it is a simulation**"*
+— **but the implementation tests only `($r['artifact_id'] ?? '') === ''`.** A locally minted string
+is non-empty, so **nine journeys leave the violation set on values the run generates for itself.**
+Intent and implementation diverge, and the local harness sits in the gap. This is the concrete,
+current measurement behind this page's standing warning that the on-disk `evidence/journeys/*.json`
+came from a forbidden simulation harness.
+
+⛔ **CHECK DEFECT — sealed, `app/app/Doctor/**`, byte-identical to main's, which is the only reason
+this lane may hold it (`RULING DE`). NEVER fixed here; touching it is the One Rule.** Filed as
+**OWNER ACTION I** and **TRACK 1 ACTION 8** — it is fleet-wide, since every lane runs the same stage
+against its own self-minted files.
+
+⚠️ **The consequence for this seat, which `FP` did not reach: the supervisor's own gate PERTURBS the
+subject it measures.** `journey` read after a `--tests` run is not the number that was there before
+it, and this seat caused the difference. ✅ **So `FP`'s standing correction is widened: a `journey`
+figure names the gate that produced it AND whether a `--tests` run preceded it in the same tick.**
+
+✅ **Measured live this tick with `--stage=journey` (`RULING FI`), stamp `20260829-0647` ==
+`runtime_build`, and it is unchanged at 3** — the churn kept every id non-empty, so no count moved:
+`missed-call-textback` (not run) · `day-one` (not run) · `review-invite` (passed with no external
+artifact id). Naming the slugs is `RULING FB`/`FP`'s requirement, not decoration.
+
+### ⭐ Track 1 measured ALL SEVEN LANES at product 0 (`N142`, 15:41) — and this lane reproduces it from its own side
+
+Track 1's tick 167 note supplies a measurement this page had reached only in its own vocabulary:
+`git rev-list --count --full-history HEAD..origin/track/<lane> -- app`, on the reasoning that **no
+lane-side commit touching `app/` means the merge cannot change `app/`**. Six lanes returned `0`;
+money's `1` resolved to its own merge of `origin/main`. **Run from this side against pin
+`43453694`, this lane returns `1`, and it resolves the same way** — the single commit is
+`6b7c315b`, *our own take of `origin/main`*. Settled by `RULING EP`'s ours-since-base census:
+
+```
+git diff --name-only 7a75f289 HEAD          →  the seven per-track paths, and nothing else
+git diff --name-only 7a75f289 HEAD -- app/  →  app/phpunit.xml          (the DB pin — RULING DC working)
+```
+
+⭐ **So `RULING FO`'s reframing is corroborated INDEPENDENTLY AND UPSTREAM, in Track 1's own form:
+this lane's product in `app/` is zero, and it is the fleet's condition rather than this lane's
+anomaly.** ⚠️ It is not a licence to invent one — `RULING ET`'s admission test is still the gate, and
+at `capability 207` it is empty. It is the reason the HOLD is a measurement and not a shrug.
 
 `RULING ET` requires measurement over presumption, and the 487-commit merge spent the previous census's
 one-code-change shelf life. Re-run from this seat (`RULING FI`: a census is supervisor work), with
@@ -1258,6 +1360,22 @@ arithmetic (§3 == §5 in the same gate, `grep -c '"violations": null'` → `0`)
 a ledger this lane owns, measurably wrong on three fields, with a one-command remedy that is the
 **coder's** because `state.py stage` is not this seat's. It also carries the `RULING FO`
 `state.py note`. ⚠️ `schema` is floored as a **RANGE**, never a number (`RULING FB`/`FD`).
+
+✅ **S-192 — the §7 truncation repair. COMPLETE at tick 237, and NOT dispatched — executed by the
+supervisor itself**, because `bin/supervise.sh` is this seat's own file and `RULING FI` already
+established that a measurement needing nothing the coder holds is supervisor work. `RULING FQ` has
+the result: `FCAP=40`, both lists carrying overflow lines, proven on a live positive control that
+named `X-198` as a fourth `RULING FO` module. ⛔ **It is NOT a wave and no count moved** — it changes
+what the instrument reports, never what the tree contains.
+
+⛔ **The backlog is EMPTY again at tick 237 and this tick writes a HOLD.** Re-measured rather than
+recalled: `main` moved **4 first-parent / 46 ancestor** commits (`7a75f289` → `43453694`) across four
+sibling merges, **none of them `track/stages`**; this lane's gated tip `18bbde18` is pushed and **not
+on `main`**; ours-since-base in `app/` is `app/phpunit.xml` alone; and Track 1's own `N142` form
+returns product **0** for this lane. The admission test at `capability 207` is empty and every
+remaining row is on the reserved list. ⚠️ **The next tick re-measures rather than quoting this line**
+— every census here has a one-code-change shelf life, and `RULING FP`/`FR` have now shown two stages
+whose shelf life is shorter than that.
 
 
 
