@@ -15,6 +15,7 @@ use App\Modules\X211\Domain\ArEngine;
 use App\Modules\X211\Events\ArFeeApplied;
 use App\Modules\X211\Events\ArPackaged;
 use App\Modules\X211\Events\ArPlanAccepted;
+use App\Modules\X211\Models\PaymentPlan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -185,7 +186,7 @@ class X211Test extends TestCase
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'Overdue', 'last_name' => 'Client']);
-        
+
         $invoiceSub = Invoice::create([
             'business_id' => $biz->id,
             'customer_id' => $customer->id,
@@ -195,7 +196,7 @@ class X211Test extends TestCase
             'status' => 'issued',
             'due_date' => now()->subDays(15)->toDateString(),
         ]);
-        
+
         $invoiceOver = Invoice::create([
             'business_id' => $biz->id,
             'customer_id' => $customer->id,
@@ -209,7 +210,7 @@ class X211Test extends TestCase
         Event::fake([ArPlanAccepted::class]);
 
         $plan = $this->engine->offerPlan($biz->id, $invoiceSub->id, 3, 'monthly', 50000);
-        $this->assertInstanceOf(\App\Modules\X211\Models\PaymentPlan::class, $plan);
+        $this->assertInstanceOf(PaymentPlan::class, $plan);
 
         $this->expectException(\DomainException::class);
         $this->expectExceptionMessage('routes to a financing partner');
@@ -236,7 +237,7 @@ class X211Test extends TestCase
             'due_date' => now()->subDays(15)->toDateString(),
         ]);
 
-        $countBefore = \App\Modules\X211\Models\PaymentPlan::count();
+        $countBefore = PaymentPlan::count();
 
         try {
             $this->engine->offerPlan($biz->id, $invoice->id, 3, 'monthly', 50000);
@@ -244,7 +245,7 @@ class X211Test extends TestCase
             $this->assertStringContainsString('routes to a financing partner', $e->getMessage());
         }
 
-        $countAfter = \App\Modules\X211\Models\PaymentPlan::count();
+        $countAfter = PaymentPlan::count();
         $this->assertEquals($countBefore, $countAfter);
     }
 }
