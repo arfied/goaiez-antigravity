@@ -4562,3 +4562,81 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     (`newest|latest|most recent|oldest|chronolog|in order|sorted` over the eight `Ui/` trees returns
     13 lines, every one an internal variable or a method name), so this defect could never have been
     found by sweeping copy — only by reading the query. ⛔ Neither is to be re-raised.
+195. **A quoted RED line carries the failing test's NAME, and item 1's proof was VOID because it did
+    not (RULED by the lane supervisor 2026-09-08 17:0x, on MONEY-126's `ed5d6e20`).** Ruling 72
+    requires every mutation proof to be re-run against the committed tree with its RED line quoted
+    verbatim. MONEY-126's item 1 quoted `Failed asserting that '<23 KB of HTML>' contains "THE NEWEST
+    MESSAGE IN THIS THREAD"` and nothing else, and **that render cannot have come from the committed
+    test.** Four independent discriminators: the dump carries `Floor install` (an `InvoiceLine` the
+    committed test never creates), `scratch on the floor` and `Sorry about that` (both
+    `InvoiceThreadBesideScreenTest:51-52`'s fixture, i.e. **another test's**), **zero** occurrences of
+    `THE OLDEST MESSAGE IN THIS THREAD` (which the committed test seeds and which, under the briefed
+    mutation, is precisely the row that survives the window and must therefore render), and **51**
+    rendered `<li>` rows under a `take(50)`. So the proof evidences a tree that is not in the sha —
+    ruling 72's exact defect, second instance. **RULED: pest prints the test name on the line above
+    the assertion message, and the quote carries it**; without the name, attribution costs a reviewer
+    a reconstruction of the fixture from a wall of markup, and here it was *only* possible because
+    the render happened to carry another test's fixture strings. The proof is also run under
+    `--filter` on the single test so the output is unambiguous, and it states that the test is
+    **green with the mutation reverted** — ruling 82's collateral: a proof whose test fails either
+    way proves nothing. ⚠️ Graded **PASS-WITH-NOTES, not BLOCK**, and the tip pushed: withholding a
+    gated tip that landed on its predicted floor to the digit over a proof-provenance defect is the
+    error ruling 74 exists to stop, and it is the grade rulings 76, 121, 128, 133 and 147 set for
+    paperwork. ⚠️ Item **2**'s proof on the same wave is by contrast **valid and from the committed
+    test** — its dump renders exactly `ORD-LIST11 … ORD-LIST02` with `ORD-LIST01` dropped and the
+    notice absent, which is what `limit(ORDER_WINDOW)` produces, and the RED line is the **last**
+    assertion exactly as the brief predicted. ⚠️ Half the defect is the brief's: MONEY-126 §1.6 and
+    §2.5 said *"quote the RED line verbatim"* without saying **which** line. This is the ruling
+    66/75/82/92/94/106/118/147/153/175/183/189/192/193 family a **twentieth** time — a dictated
+    signature, line, needle, floor, test, command, sweep, report-field list, proof RED line,
+    resolution policy, finalisation step, `pint` path list, mailbox path, working directory, ambient
+    state — and now a dictated **quotation** — each dictates its own outcome; **detail is read as the
+    spec and everything unstated is the coder's guess.** Per the
+    46/49/50/62/66/75/82/86/94/104/106/113/116/146/153/167/175/183/189/193 precedent the miss is the
+    supervisor's, so MONEY-127 carries its own two dispatches.
+196. **The thread screen's empty state tells every real tenant that every issued invoice is paid, and
+    ruling 89 fixed the same sentence one file over and stopped at the sibling (RULED by the lane
+    supervisor 2026-09-08 17:0x, briefed as MONEY-127 items 2 and 3).**
+    `X-211/Ui/views/invoice-thread-beside.blade.php:19` is
+    `<x-ui.empty-state heading="Nothing unpaid.">Every issued invoice is paid.</x-ui.empty-state>`,
+    rendered whenever `InvoiceReader::openForBusiness()` is empty. Ruling 170 measured that **nothing
+    in production creates an invoice at all** — `issueInvoice()`'s only non-test callers are three
+    evidence commands — so that branch is the state **every real tenant is in**, and the sentence
+    tells them a ledger settled that never existed. Ruling 50(a) at its most literal, on the one
+    thing a screen with no rows shows. ⚠️ `X-199/Ui/views/invoices.blade.php:19-21` has read *"No
+    invoice has been raised for this account. Nothing in this checkout raises one from a completed
+    job…"* since ruling 89, so the honest sentence was already in the tree, in another module, while
+    this one said the opposite — rulings 113/116/123's recurring shape, a wave sweeping the file it
+    was in. ⛔ Not resolved by building a dispatcher for `job.completed -> invoice.draft` (another
+    lane's, ruling 59), ⛔ not by deleting the state, and ⛔ not by touching the picker at `:21-29`.
+    **RULED: it names what has not happened and what it waits on.** ⚠️ Blast radius measured with
+    interior fragments (rulings 46, 86): `Every issued invoice is paid|Nothing unpaid` over `app/app`
+    and `app/tests` returns **three** lines and **no test asserts the X-211 string at all** (ruling
+    70), which is why it outlived every X-211 wave — so item 2 **adds** a method. The third,
+    `UnpaidTest:78`, asserts `X-199 unpaid`'s **heading only** — a ruling-80 partial cover over a
+    body clause (*"You have no outstanding invoices."*) that is **true** but names no dependency,
+    which is ruling 50(a)'s second half unmet — so item 3 **extends** that chain rather than adding
+    one, and the shared clause is stated in X-199's **existing** words (ruling 123: one fact, one
+    wording per module).
+197. **Two more sweeps are measured CLEAN and STRUCK (measured 2026-09-08 17:0x; rulings 64, 95, 100,
+    111, 114, 120, 132, 142, 151, 170, 184, 187, 190).** (a) **Singular reads** — `->first()` /
+    `->latest(` / `->sole()` over the eight `Ui/` trees is **14 lines, zero findings**: every one is
+    ordered or unique by **constraint**. `ar_plan_terms.business_id` and `subscriptions.business_id`
+    are `->unique()` in their migrations (`2026_09_04_170000:17`, `2026_07_30_080943:27`), so
+    `AgeingByReason:129`, `Mrr:70` and `RevenueRecovery:64` read *the* row and not an arbitrary one;
+    `Declines:82` orders by `created_at` and means the earliest recovery; `C-Billing/Credits:74`,
+    `X-199/Credits:92` and `SameAccount:85` each `first()` a collection their own query ordered
+    `orderByDesc('id')`, so every `$latest…` is genuinely the latest; `InvoiceThreadBeside:74`'s
+    fallback is over an `orderBy('due_date')` set; and both `Cart::…->first()` calls are safe because
+    **every** writer goes through `CheckoutEngine::writeCart()`'s
+    `updateOrCreate(['business_id','session_token'])` — the column is indexed and not unique, which
+    is recorded, not migrated. (b) **`whereIn` over a hardcoded vocabulary** (ruling 88's `meters`
+    shape) in the six modules that sweep never reached is **14 lines, zero new findings**: thirteen
+    are over a computed id set, and the only literal vocabulary is `RevenueRecovery:73`'s
+    `whereIn('entry_type', ['topup','grant'])`, which is **ruling 109's own subject** and already
+    ruled. ⚠️ Recorded because it looked like a wave for ten minutes: the X-211 thread screen is
+    **not** cut to one invoice — `invoice-thread-beside.blade.php:21-29` renders a `pick()` button
+    per open invoice under `@if($invoices->count() > 1)`, so every open invoice is reachable and the
+    parameterless generated route is not a trap. ⛔ None to be re-raised. ⚠️ Ruling 95's lesson a
+    fourth time: **a sweep proposed by a ruling is a claim**, and one that comes back empty is struck
+    with its measurement written down.
