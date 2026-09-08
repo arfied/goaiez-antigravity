@@ -242,10 +242,10 @@ that test and is not on this list is a wave invented to fill the lane.
   untouched, the decoy root `REPORT.md` gone and the mailbox copy intact.
   `RULING CN` is discharged as a live hazard and stays above as history.
 
-⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 204 (2026-09-08) against pinned main
-`07a4ae2f`, lane 34 ahead / 703 behind; both `.claude/hooks`
-`A` rows still present, and `git diff --stat 7103f455 07a4ae2f -- CLAUDE.md .agents/rules/` prints
-**nothing** across all four of this morning's merges, so TRACK 1 ACTION 1 is unanswered. ⚠️ **Track 1's
+⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 205 (2026-09-08) against pinned main
+`07a4ae2f`, which is UNMOVED since tick 204's pin; lane 35 ahead / 703 behind; both `.claude/hooks`
+`A` rows still present. TRACK 1 ACTION 1 is unanswered **by construction** — no commit has landed on
+`main` in which it could have been answered. ⚠️ **Track 1's
 `OWNER.md` note of 09:1x is NOT the answer and disclaims itself** — *"Nothing here touches your two shut
 rows"*; it settles the product-file conflict (`RULING DS`) and leaves the guard question open, so a tick
 must not read the arrival of an `OWNER.md` reply as a lift. **Pin the sha before checking
@@ -259,7 +259,10 @@ body of work that looked parallel to it, and all **four** escapes are foreclosed
 (`DG`; `DL` corrects `DI` and records that **no guard can refuse a drop**, so this one rests on this
 seat's rule alone), pinning an older `MERGE_HEAD` (`DJ`), reading the guard by dispatch
 (`CT`), and **pre-resolving `X167Test.php` without merging (`DT`, tick 204 — the newest and most
-tempting, since it looks like it clears Track 1's blocker for free)**.** Do not
+tempting, since it looks like it clears Track 1's blocker for free)**. ⚠️ **`RULING DV` (tick 205)
+closes the last way to read this HOLD as someone else's move: Track 1's `rc=0 at your tip`
+precondition is CIRCULAR with ACTION 1**, because our tip can contain main's blob only through the
+take those two rows shut — so 1b was mis-filed at tick 204 as an unblock and is not one.** Do not
 open a wave. `state.py next` returns `{"action": "FINISHED"}`. Every remaining
 stage count needs the owner and is listed as **OWNER ACTION A–F** at the end of
 `REVIEWS.md`: vendor artifact ids (`anchor 137`), real Infobip and a real placed
@@ -1189,6 +1192,64 @@ sufficient:
 
 ⚠️ **`RULING DL` binds: no tick may reason "the guard would stop me."** Nothing mechanical refuses this
 edit — it rests on this seat's rule alone, which is why it is named.
+
+### ⛔ `RULING DU` (tick 205) — `main` carries a method whose name has ours as a **strict prefix**. A substring grep says "already there" about a blob that does not have it.
+
+`DS`'s resolution of record stands and its falsifiers are **amended, not replaced**. Measured on
+pinned `07a4ae2f`: `grep -c "test_g6_46_no_autonomous_ordering_path"` on main's blob prints **1**, and
+the hit is line 274, `…_no_autonomous_ordering_path_it_proposes` — one of pricebook's grep-style
+tests, **not ours**. A resolver that greps the bare name to decide whether ours is already present
+drops this lane's only divergence on the file, and the merge then reads clean, additive and green.
+That is `DE`'s run-115 lesson again — **a check defeated by removing the case it exists for** — with
+`DL` binding, since nothing mechanical refuses it.
+
+The two are not near-duplicates: ours is **behavioural** (provisions a tenant, calls
+`reorderAction->handle`, asserts `status === 'proposed'` and that the `sent` PO count is unchanged);
+main's is a **static grep** for `Http::|curl_|Guzzle|file_get_contents('http` under
+`app/Modules/X-167`. Neither subsumes the other, so the union is correct.
+
+✅ **Duplicate anchors are not a hazard — measured, not argued.** Main's blob already carries
+`[G6-51]`, `[G6-46]` and `[G6-40]` **twice each** (the pricebook∪reviews union produced them) and
+`main` is live with them, so a third `[G6-46]` reddens nothing.
+
+**Four falsifiers, exact names only — the first three all pass on a blob that silently lost ours:**
+
+```
+php -l app/tests/Modules/X-167/X167Test.php
+grep -c 'public function test_' …                                     # 16
+grep -o 'public function test_[a-z0-9_]*' … | sort | uniq -d          # empty
+grep -c 'public function test_g6_46_no_autonomous_ordering_path()' …  # 1  ← NEW, note the ()
+```
+
+⚠️ **Generalises past this file, and it is `DR`'s point for identifiers: a `grep` for a method name is
+a substring match, so it cannot distinguish "present" from "a longer name starting with it."** `DL`
+read a second-parent diff as an index, `DO` surveyed with a path-limited merge log, `DQ` compared a
+merge to a later tip, `DU` matched a prefix — four measurements that ran correctly and answered a
+different question than the one asked.
+
+### ⛔ `RULING DV` (tick 205) — `TRACK 1 ACTION 1b` does NOT break the dependency. Track 1's `rc=0 at your tip` is **circular** with `TRACK 1 ACTION 1`.
+
+**Corrects this seat's own tick-204 filing**, in the direction that invites both seats to wait for
+each other. Track 1's condition is *"Track 1 merges `track/stages` only after `merge-tree` reads
+`rc=0` at your tip."* **`rc` is a property of the pair, and it is OUR tip that must change.** Track 1
+appending our method to main's blob leaves both sides still inserting *different* text at the *same*
+EOF anchor, so the hunks still overlap and `rc` stays `1`; what 1b buys is that the resolution
+*content* pre-exists on `main`, which is worth having and is not an unblock.
+
+⛔ **Asserted from git's three-way semantics, not executed** — `git merge-tree` and `git merge-base`
+are both refused from this seat (`DT`), and as at ticks 188/190/191/197/203 **the denial is the
+answer**; no later tick re-runs them. Track 1 has `merge-tree` and can falsify it in one command.
+
+**The consequence survives either falsification.** Our tip can come to contain main's blob only by
+this lane merging `main` — exactly what the two `.claude/hooks` **A** rows forbid (`DD`, `DH`, `DJ`,
+`DM`). So `rc=0 at your tip` is reachable only through `ACTION 1`, the item it waits behind. Two
+exits, **both Track 1's**: grant the `.claude/hooks/` byte-identity exemption so this lane's take
+opens; or waive `rc=0` and resolve the one file inside Track 1's own merge, as it has done on this
+exact file for two lanes already today.
+
+**RULED by the lane supervisor: state the circularity, choose neither exit — both are Track 1's and
+neither is inside this lane's authority.** `DT` is unrepealed: this lane does not pre-resolve the file
+outside a merge to manufacture exit 1.
 
 ## Dispatching the coder (added 2026-09-02)
 
