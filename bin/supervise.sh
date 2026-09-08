@@ -184,6 +184,12 @@ bar "4. checker soundness + seal"
 # Through $PHP, not bare `php`: on the cgi-fcgi SAPI artisan emits a `Content-type:`
 # header and the `goaiez doctor · build <stamp>` line gets pushed out of the tail —
 # and that stamp is the only proof the counts came from the live checker.
+# REV-113: the stamp is doctor's FIRST line, so both `tail`s below discard it, and the
+# line at the end of this section has been saying "compare with the doctor build stamp
+# above" when nothing above ever printed one. An instrument that cannot show its own
+# control cannot detect the stale-doctor trap it exists to detect (REV-59's shape).
+# Printed explicitly, from the cheapest stage, before anything tails.
+echo "  $("$PHP" artisan doctor --stage=integrity 2>&1 | head -1)"
 "$PHP" artisan doctor:selftest 2>&1 | tail -4 | sed 's/^/  /' || { fail=1; echo "  ⛔ RUNTIME — the checker, not the code"; }
 "$PHP" artisan doctor --stage=integrity 2>&1 | tail -6 | sed 's/^/  /' || { fail=1; echo "  ⛔ SEAL/integrity red"; }
 echo "  runtime_build in BUILD-STATE: $(python3 -c "import json;print(json.load(open('$ROOT/.agents/state/BUILD-STATE.json'))['runtime_build'])" 2>/dev/null) — compare with the doctor build stamp above"
