@@ -1331,3 +1331,11 @@ Therefore, adding a row to the tracker could move only the capability count.
 - `2026-09-08T14:07:10` stage anchor = 128
 - `2026-09-08T14:07:10` stage journey = 4
 - `2026-09-08T14:54:13` (R245) X-211 — R245 — The schedule stored is the sub-threshold plan and the above-threshold path stores nothing and routes out
+- `2026-09-08T15:08:25` stage integrity = 0
+- `2026-09-08T15:08:25` stage boundary = 44
+- `2026-09-08T15:08:25` stage contract = 85
+- `2026-09-08T15:08:25` stage citation = 0
+- `2026-09-08T15:08:25` stage schema = 15
+- `2026-09-08T15:08:25` stage capability = 209
+- `2026-09-08T15:08:25` stage anchor = 128
+- `2026-09-08T15:08:25` stage journey = 4
