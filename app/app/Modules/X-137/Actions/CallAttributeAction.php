@@ -39,7 +39,7 @@ final class CallAttributeAction
         if (empty($availableNumbers)) {
             $setting = DB::table('dni_pool_settings')->where('business_id', $businessId)->first();
 
-            if ($setting === null) {
+            if ($setting === null || trim((string) $setting->fallback_number) === '') {
                 throw new \DomainException('BUSINESS_NOT_CONFIGURED_FOR_DNI');
             }
 

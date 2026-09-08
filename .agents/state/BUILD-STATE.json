@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-07T19:15:34",
+ "updated": "2026-09-07T19:43:55",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -2331,6 +2331,12 @@
    "module": "X-176",
    "chose": "SITE-164 added three tests to LlmsTxtTest whose names were taken from the brief that ordered them, an item number and a clause letter, which is coordination vocabulary that does not survive the brief being overwritten. They are renamed to describe what each body asserts. Separately, SITE-164 falsified the whitespace half of the text-key blank test by restoring isset, which cannot falsify the presence half because isset admits the string zero, so the claim that a text key of zero is still emitted was reasoned rather than measured. The presence half is falsified by the wrong remedy instead, the presence predicate that belongs to a honeypot, and this wave measures it. No behaviour changed.",
    "at": "2026-09-07T19:15:34",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-137",
+   "chose": "The pool-exhaustion fallback guard in CallAttributeAction tested only whether a dni_pool_settings row exists, while the condition it is named for, BUSINESS_NOT_CONFIGURED_FOR_DNI, is whether that row is usable. fallback_number is declared NOT NULL with no non-empty validation and the table has no production writer, so a row holding an empty or whitespace fallback passed the guard and the live DNI route served a token with a blank number and status unattributed, which is the half of the pool-exhaustion clause that says the page renders the static fallback number. The guard now also refuses a fallback that is blank after trimming, throwing the same exception, because the route already maps that exception to a 409 and a test already asserts that body. The trim form is used rather than a bare non-empty comparison because a fallback number is a value rendered for a person to dial, so whitespace is not a value.",
+   "at": "2026-09-07T19:43:55",
    "ruling": "R245"
   }
  ],
