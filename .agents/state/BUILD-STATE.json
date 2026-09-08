@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-08T06:57:14",
+ "updated": "2026-09-08T08:11:27",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -3051,6 +3051,12 @@
    "module": "X-01",
    "chose": "restored 20 stray-pint reformats to HEAD (8 sealed checkers, 12 plugins/wordpress); REV-114 classified all six surviving-hunk files NEITHER improvement nor silencer, so the sealed bytes stand R245",
    "at": "2026-09-08T06:57:14",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-01",
+   "chose": "traced the 20-file reformat to a pint run launched from the repo root, where no pint.json existed; app/pint.json's excludes and ci.yml's working-directory:app are both scoped to app/, so neither the gate nor CI can see those files; added a repo-root pint.json covering app/app/Doctor, the three Doctor commands and plugins/",
+   "at": "2026-09-08T08:11:27",
    "ruling": "R245"
   }
  ],
