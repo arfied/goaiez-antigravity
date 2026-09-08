@@ -769,3 +769,49 @@ that manufactures a false BLOCK against a lane's best work.
 first. The free check that it is the right way round: **a side that only added files must report `-0`.**
 Use `--numstat`, not `--shortstat` — the latter fuses the file count to the insertion count and produced
 an unreadable table on the re-measurement, caught only by running it a third way.
+
+⚠️ **AN "ALREADY APPLIED" SENTINEL THAT CAN MATCH UNRELATED TEXT SKIPS THE EDIT AND REPORTS SUCCESS
+(N131, 2026-09-08).** My apply-script's idempotency check was `new_text.splitlines()[0] in source`, and
+for one edit that first line was `    /**` — present throughout the file. It printed `ALREADY APPLIED`,
+skipped that edit, and applied the other two, leaving a checker that parses, runs, and does nothing:
+`imports()` returned strings while the rewritten loop destructured pairs. **"The count did not move" is
+what a correctly-applied, correctly-scoped fix ALSO produces**, which is why I nearly filed a no-op as a
+result. Three rulings: **(1)** a sentinel is a string that exists nowhere else — a marker phrase, never a
+syntactic fragment; **(2)** a multi-part edit to one file is ONE atomic write or it is not an edit —
+independent replacements that can each silently no-op produce a half-applied file whose halves disagree;
+**(3)** verify the edit landed BEFORE measuring its effect — `grep` for the marker precedes every count.
+And the asymmetry: **this seat can edit a sealed checker but cannot roll one back** — `app/**` writes
+are refused here and the owner's scripts work because the owner runs them. Do not begin an edit that
+only the owner can finish undoing without saying so first.
+
+⚠️ **A VERIFIED EDIT WITH ZERO EFFECT IS DIAGNOSTIC; AN UNVERIFIED ONE IS NOTHING (2026-09-08, ruling
+6 delivered).** The second attempt at the boundary fix applied verifiably — three markers, `php -l`, four
+structural checks — and the count did not move. Under N131 that combination *means* something: a
+further defect, not a failed edit. One command (print what `getRelativePathname()` returns) found it.
+**The cross-module check had THREE independent faults, each alone sufficient to disable it:** the regex
+was anchored `#^app/Modules/#` while the Finder-relative paths arrive as `Modules/X-102/…` with no
+prefix (the disabling one — visible in the stage's own `· Modules/C-Mail/…` messages the whole time);
+the character class excluded the hyphen; and the directory form `X-102` was compared to `imports()`'s
+namespace form `X102`. I had diagnosed the second and third with a `php -r` demonstration and called
+them *the* bug — **a demonstration that a regex behaves as claimed says nothing about whether it is
+handed the input you assumed.** Result: `boundary 6 → 46`, 40 `Models\` reach-ins across 33 files
+that had been invisible for as long as the check existed, matching an independent classification to the
+digit (81 − 41 seams). Ruling 6 was going to *remove* the check on exactly the evidence its silence
+produced. **A check that reports zero forever is indistinguishable from a clean codebase, and nobody
+has reason to look.**
+
+⚠️ **A VERIFICATION INSTRUMENT NEEDS A POSITIVE CONTROL TOO (N132, 2026-09-08).** `boundary-fix3`'s
+verify step printed `optional app/ prefix : 0 (expect 1)` on an edit that was correct — line 329 carried
+the regex, confirmed by exact string count. The grep was malformed by shell escaping. Had the count
+*also* not moved I would have chased a phantom. This is the `/**` sentinel one layer up: a check that
+returns the wrong answer about its own subject. Every needle in this ledger gets a positive control;
+the checks that check the checks are not exempt.
+
+⚠️ **`pest.lock` SERIALISES SUITES BY DATABASE, AND NOTHING SERIALISES A SUITE AGAINST A MERGE IN ITS
+OWN CHECKOUT (N130, found by the unattended tick 2026-09-08 03:1x).** The tick's gate read the right
+numbers and it refused to cite them, because the merge committed 49 seconds before the gate finished
+writing — for its last minute the suite was reading `app/**` while a merge was written into it. A
+larger merge would present as a phantom `Class not found` in a suite nobody would think to distrust.
+Standing: **nothing writes into a checkout while its suite is reading it**, including this seat's own
+`CLAUDE.md` edits, and a gate's §7 attributes to a sha only if the gate STARTED after that sha landed
+and no writer existed for the duration.
