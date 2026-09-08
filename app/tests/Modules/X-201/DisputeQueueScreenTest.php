@@ -87,4 +87,20 @@ class DisputeQueueScreenTest extends TestCase
         Tenancy::set($bizB->id);
         $this->assertSame(1, Dispute::where('business_id', $bizB->id)->count());
     }
+
+    public function test_the_dispute_buttons_offer_to_seal_and_never_to_submit(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $open = app(DisputeRecordAction::class)->handle($biz->id, 902, 85000, 'unrecognized_transaction');
+
+        Livewire::actingAs($owner)->test(DisputeQueue::class)
+            ->set('note.'.$open->id, 'Customer signed on site, tech on the job 2 hours')
+            ->call('compile', $open->id)
+            ->assertSee('Seal the defence')
+            ->assertDontSee('Submit the defence');
+    }
 }

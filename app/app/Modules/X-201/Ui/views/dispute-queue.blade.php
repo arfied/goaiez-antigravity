@@ -28,7 +28,7 @@
 <x-ui.submit target="compile({{ $d->id }})" busy="Compiling…">Compile evidence</x-ui.submit>
 </form>
 @if($d->status === 'compiled')
-<x-ui.button size="default" wire:click="submit({{ $d->id }})" wire:loading.attr="disabled" wire:target="submit({{ $d->id }})">Submit the defence</x-ui.button>
+<x-ui.button size="default" wire:click="submit({{ $d->id }})" wire:loading.attr="disabled" wire:target="submit({{ $d->id }})">Seal the defence</x-ui.button>
 @endif
 @if($d->status === 'submitted')
 <x-ui.button size="default" wire:click="outcome({{ $d->id }}, 'won')" wire:loading.attr="disabled" wire:target="outcome({{ $d->id }}, 'won')">Won</x-ui.button>

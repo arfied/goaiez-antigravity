@@ -35,7 +35,7 @@
 </form>
 @endif
 @if($d->status === 'compiled')
-<x-ui.button size="default" wire:click="approve({{ $d->id }})" wire:loading.attr="disabled" wire:target="approve({{ $d->id }})">Approve the submission</x-ui.button>
+<x-ui.button size="default" wire:click="approve({{ $d->id }})" wire:loading.attr="disabled" wire:target="approve({{ $d->id }})">Approve and seal</x-ui.button>
 @endif
 @if($d->status === 'submitted')
 <p class="text-sm text-ink-2">Sealed. Nothing was sent to any gateway, so record the decision yourself from the dispute queue when it reaches you.</p>

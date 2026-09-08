@@ -61,6 +61,8 @@ class DisputeCardScreenTest extends TestCase
             ->call('addNote', $open->id)
             ->assertSee('Added to the bundle: 3 evidence items for invoice #902')
             ->assertSeeHtml('wire:click="approve('.$open->id.')"')
+            ->assertSee('Approve and seal')
+            ->assertDontSee('Approve the submission')
             ->call('approve', $open->id)
             ->assertSee('Defence for invoice #902 is sealed and recorded here')
             ->assertSee('Nothing was sent: filing it waits on the gateway chargeback contract')
