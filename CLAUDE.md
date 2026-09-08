@@ -4336,3 +4336,105 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     disk, and unrunnable in any checkout that takes money's merge. Committing vendor material and the
     ignore rule in `main`'s `.gitignore` are both reserved, so that is **TRACK 1 ACTION 9**, not a
     wave.
+188. **Ruling 140's "intermittent" `REVIEWS.md` refusal is CORRECTED: it is caused by the session's
+    working directory leaving the worktree root, because `.claude/settings.json`'s allow-patterns are
+    RELATIVE (RULED by the lane supervisor 2026-09-08 15:1x).** Ruling 140 recorded that
+    `Edit(.agents/supervisor/**)` and `cat … >> REVIEWS.md` were refused "despite that exact allow rule
+    being present", and ruling 141 downgraded it to *intermittent* after the identical command
+    succeeded a tick later with no settings change. It is neither. Measured this tick: the refusals
+    began immediately after a `cd app && ./vendor/bin/pint …` moved the session's primary working
+    directory to `app/`, and **every** write to `.agents/supervisor/` — `Write`, shell redirection and
+    `tee -a` alike — failed while it was there; a bare `cd /home/goaiez/agents/grs-antig-money`
+    restored all three on the next call, verified with a one-line probe append. `.claude/settings.json`
+    line 11 is `Write(.agents/supervisor/**)`, a **relative** pattern, so with cwd at `app/` it
+    resolves to `app/.agents/supervisor/**` and the real path stops matching. **RULED: a supervisor
+    tick never leaves the worktree root.** Run tools as `cd app && …` inside a single Bash call, which
+    does not move the session, or address them by path; if a supervisor write is ever refused, the
+    first check is `pwd`, not the settings file. ⚠️ The consequence was not cosmetic — for the length
+    of that window the tick could not append a verdict, write `BRIEF.md` or write `KICKOFF.md`, i.e.
+    it could not dispatch at all, and ruling 140 had already resolved to route around it by writing a
+    scratch file at the repo root, which is ruling 47's hazard adopted to solve a problem that does not
+    exist. ⚠️ **TRACK 1 ACTION 4 is CLOSED**: there is no permission-layer defect to fix.
+    ⚠️ The generalisable half is rulings 83/136/145/179's a fifth time — **the cheap signal moves for
+    reasons unrelated to the fact it stands for** — with the twist that here the ledger recorded the
+    symptom twice, as a hard block and then as intermittency, and neither reading named the variable
+    that was actually moving.
+189. **A brief's `pint` command names every path the SAME ITEM's commit stages (RULED by the lane
+    supervisor 2026-09-08 15:2x, on MONEY-122's `55e6d74e`).** MONEY-122 §1.3 and §2.2 each dictated
+    `./vendor/bin/pint <one source file>` while §1.4 and §2.4 committed that file **and** a test file
+    the same item told the coder to create. The coder ran exactly what it was given, `REPORT.md`'s two
+    `Item N pint: passed` lines are true of the paths named, and the tip landed §6-red on
+    `X199Test.php` with three fixers — `fully_qualified_strict_types`, `ordered_imports`,
+    `single_blank_line_at_eof` — all from the new method's inline
+    `\App\Modules\X199\Models\CreditTerm::create(` and its missing trailing newline. With
+    `git diff --stat HEAD -- app/` **empty**, ruling 34 makes that the sha's verdict and ruling 26
+    refuses the push, so a wave that was correct in every other respect — surface exactly the brief's
+    seven paths, both mutation proofs quotable from the committed assertions, `tests 2344` matching the
+    predicted floor to the digit — was withheld for three fixers on one file. Ruling 75 already
+    required *"`./vendor/bin/pint <touched paths>` before each commit"*; what was missing is that
+    **a brief that dictates the pint invocation has dictated which files go unlinted**, so the path
+    list is checked against the commit's own `--` list before the brief ships. ⛔ Never resolved by
+    excluding the path or editing `pint.json` (the One Rule); ⛔ never by pushing anyway because the
+    fix is small — that is the gate deciding after the fact (ruling 42(2)). ⚠️ The ruling
+    66/75/82/92/94/106/118/147/153/175/183 family a **sixteenth** time, and the sharpest yet because
+    the dictated command was a *lint*: the one instrument whose whole job is to catch what the author
+    did not look at. Per the 46/49/50/62/66/75/82/86/94/104/106/113/116/146/153/167/175/183 precedent
+    the miss is the supervisor's and MONEY-123 carries its own two dispatches.
+190. **Two carried backlog sweeps are measured CLEAN and STRUCK (measured 2026-09-08 15:1x; rulings
+    64, 95, 100, 111, 114, 120, 132, 142, 151, 170, 184, 187).** (a) **`InvoiceNumber::next()` under
+    concurrency** — the addendum carried it as *"unread so far … it may already take an advisory
+    lock"*. It does, and more: `X-199/Domain/InvoiceNumber.php:14-18` **refuses outright** outside a
+    transaction (`InvoiceNumberOutsideTransactionException`, *"the per-business lock is released at
+    commit"*), `:20` takes `pg_advisory_xact_lock(199, $businessId)` — per business, held to commit —
+    and `:22-26` re-reads the maximum under `lockForUpdate()`. Two racing requests for one business
+    serialise; two businesses do not block each other. Nothing to build. (b) **Ruling 63's
+    prose-feeds-the-instrument hazard does NOT widen.** The recorded measurement was that
+    `File::allFiles()` appears in `X136Test`, `N008Test` and `N010Test` only, *"each scoped to its own
+    module"*; the population is in fact larger and one member is **lane-wide** —
+    `X-157/EdgeProvisionRefusalTest.php:12` scans `base_path('app')`, every module in the tree. It is
+    nevertheless harmless to every other lane: it filters `getExtension() === 'php'`, so **no blade is
+    ever read**, and it matches the single literal token `EdgeProvisionAction`, not a vocabulary. So
+    prose dictated into an X-199 blade feeds no instrument. ⚠️ The correction is worth keeping even
+    though the conclusion is unchanged: *"each scoped to its own module"* was the wrong reason for the
+    right answer, and the next sweep that trusted it would have missed the one scanner that reads
+    everything. ⛔ Neither is to be re-raised. ⚠️ Recorded from the same gate and **not** a settlement:
+    the two Authorize.Net `E00040` members ruling 125 saw clear have **returned**
+    (`cancel_is_one_tap_with_nothing_in_between`,
+    `a_completed_job_asks_for_a_review_once_inside_the_cadence`), attributed off the sha by ruling 85's
+    three legs — the lane's only Authorize.Net string across all eight modules is
+    `C-Billing/capabilities.php:100`, a capability **refusal** — and appearing in **8 of 170** gate
+    files here. Ruling 125 binds: the floor stays `2344 · 2342 · FAILED 0 · errors 2` and absorbs
+    neither.
+191. **A draft invoice's only action is a PDF that can never exist, while the row's real condition —
+    never issued, and nothing here can issue it — is stated nowhere on the screen (RULED by the lane
+    supervisor 2026-09-08 15:2x, briefed as MONEY-123 item 2).**
+    `X-199/Ui/views/invoices.blade.php:54-70` gives `issued|due|offline_recorded` a **Record payment**
+    button, `paid` a receipt, and `draft` an `Open PDF` link falling back to
+    `<x-ui.status-pill state="unknown" label="PDF not available" />`. Measured: (1) ruling 43 stopped
+    both writers of the hardcoded `https://cdn.goaiez.com/invoices/inv.pdf` and left the nullable
+    column null — `X199Test.php:159` asserts `assertNull` — so **both `@if($invoice->pdf_url)` true
+    arms are unreachable** and every draft row renders the fallback; (2) `invoice.draft` is a **real
+    declared capability**, `manifest.php:32` providing it and the frozen plan carrying
+    `job.completed -> … billing.invoice.draft` (`GOAIEZ-MASTER-PLAN.md:972`, subscriber list `:2326`),
+    so `draft` means *an invoice you finish later*; (3) **nothing can finish it** — there is no
+    `draft -> issued` transition anywhere in X-199 — while `Invoices.php:48-50` queries every invoice
+    with no status filter, so the row does render, and `InvoiceReader:41,:49,:59` and
+    `Unpaid.php:61,:74` all exclude `draft`, so it never enters the chase. **The defect is not that
+    the string is false — there genuinely is no PDF — it is that the cell answers a question nobody
+    asked and the status pill's `draft` promises a finishing step this app does not have.** Nearest
+    prior shape is ruling 119(b), a submit button promising an act the same click refuses.
+    **RULED: the label states the row's condition and its dependency —
+    `Not issued; nothing here issues a draft yet` — and `state="unknown"` STAYS**, because `attention`
+    is a call to action and there is no action the owner can take (ruling 143: the state and the words
+    are one claim). ⛔ Not resolved by building the transition or adding a button — minting machinery
+    so a plan line comes true is ruling 59 — ⛔ not by deleting `InvoiceDraftAction`, the only
+    implementation of a declared capability (rulings 69, 186), and ⛔ not by touching `pdf_url`, whose
+    null is ruling 43's own outcome. The two unreachable `@if` arms are **recorded, not edited**
+    (ruling 96): they are correct the day a PDF generator exists. ⚠️ **`Receipt not available` at
+    `:59` and `unpaid.blade.php:83` is measured CLEAN and stays** — a status pill states a state and
+    is measured for **truth** (ruling 122), and ruling 50(a)'s name-the-dependency half binds empty
+    states and prose, not pills; a paid invoice genuinely has no receipt. ⚠️ Blast radius measured
+    with interior fragments (rulings 46, 86): `PDF not available` is asserted by **nothing** (ruling
+    70), which is why it outlived every X-199 screen wave, so the item **adds** a method seeding a
+    draft — the existing `InvoicesScreenTest` seeds none and cannot see the defect (ruling 68) —
+    while `Receipt not available`'s two assertions are untouched.
