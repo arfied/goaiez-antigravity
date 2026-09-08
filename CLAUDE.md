@@ -603,6 +603,16 @@ in a brief names the file it came from** — `.gate-tN.txt` §7, or `REPORT.md`'
 phrase "my own gate" is permitted only after `grep -c "Tests:\|· FAILED" <that file>` is non-zero.
 A borrow is legitimate (the killed-gate precedent, run 123); a borrow *presented as independent* is
 not.
+**RECURRED IN A SHARPER FORM, 2026-09-08, wave 155 — the named file did not exist at all.** That brief's
+baseline read *"my own `gate-t157.txt` on `881f9bc9`: `tests 2192 · passed 2190 · FAILED 0 · errors 2`"*.
+There is no `.gate-t157.txt` in the mailbox and there never was; the number lives in `.gate-w154.txt` and
+`.gate-w152.txt`, and the **`w` prefix is the file the brief tells the CODER to write** — `t` is this
+seat's own. So the check above (`grep -c` inside that file) never even got the chance to fire, because the
+argument was a filename nobody could open. **Ruling: the check is `ls -l <that file>` FIRST, then the
+`grep`** — existence before content, in that order, and a `w`-prefixed file may never be introduced with
+the words "my own". The number happened to be right and was corroborated by two independent coder gates,
+which is exactly what makes this shape survive: *a false attribution attached to a true number leaves no
+symptom at all until someone goes looking for the file.*
 
 ⚠️ **A VERDICT ANNOUNCED IN A BRIEF THAT THE LEDGER DOES NOT CONTAIN IS N103 IN THE MAILBOX (N112,
 2026-09-07).** Tick 128 wrote *"**Wave 127 is a `PASS`**"* as the fourth line of `BRIEF.md` at 06:27,
@@ -867,3 +877,82 @@ restored". The unattended tick measured it mid-wave (`.block139.txt`) and the co
 `.claude/` is restored from `HEAD`**, and the general form is the run-115 shape inverted — the harness rule
 ("take the incoming side whole") is right for a CHECK the lane built and wrong for a GUARD the lane lost.
 Measure which with `git diff --name-status <merge-base> HEAD^2 -- .claude/`: a `D` there is a loss.
+
+⚠️ **§7 PRINTED FIVE FAILURE NAMES OUT OF TEN AND SAID NOTHING ABOUT THE OTHER FIVE, WHILE THE BRIEF'S
+STOP CONDITION WAS A QUESTION ABOUT THAT LIST (N137, 2026-09-08, wave 155).** `bin/supervise.sh:440` read
+`for f in (d.get("failures") or [])[:5]` — and eight lines below it the **errors** loop ended
+`n=len(...); if n>5: print("   … %d more")`. So one list truncated **loudly** and the other **silently**,
+in the same twelve lines, and the silent one was the one the wave was graded on: my brief's only STOP
+conditions were *"a `FAILED` name not in that list"*, `errors` above 4, and `Class … not found`. The gate
+read `tests 2328 · passed 2316 · FAILED 10 · errors 2` and named five. The coder hit the STOP correctly on
+two unexpected names — and neither of us could know whether the five it could not see contained a third,
+or contained `test_n_037_fee_with_no_term_refused`, which the brief **expected** and which is not among the
+five printed. **A red gate under this printer could not distinguish "the four known pins plus one" from
+"the four known pins plus six new breakages".**
+Fixed: both lists cap at 40, both carry their own overflow line, and a `FAILURE` now prints its message the
+way an error already did — the message is what tells a pin (`Failed asserting that 10 matches expected 8`)
+from a breakage, and it cost a whole extra wave not to have it. Three rulings.
+- **The instrument family, stated generally at last.** §2e's baseline, wave 122's needle, N111's
+  attribution, N123's sign, N121's `-.*assert` count, N115's `STAGES` line — and now a **cap**. Six names
+  for one shape: *an instrument that can only under-report is safe as a trigger and unsafe as a finding.*
+  When a brief's STOP condition is a question about a list, the list must be **complete or self-declaring**;
+  a truncation with no overflow line is a lie of omission that reads as a full answer.
+- **Asymmetric handling of two sibling lists is the tell, and it is greppable.** The errors loop knew to
+  announce its cap. The failures loop, four lines away, did not. Whenever two lists are formatted by
+  adjacent code, diff their treatment — the one written second usually got the care.
+- **A STOP condition may only ask a question the instrument can answer.** Before writing *"a name not in
+  this list"* into a brief, confirm the tool prints every name. That check is `grep -n '\[:' bin/supervise.sh`
+  and it is one command.
+
+**Numbering note.** A second supervisor seat found this same defect in the same minutes and recorded it in
+`REVIEWS.md` as **N138**, while the fix committed into `bin/supervise.sh` (`46c3fd9e`) carries **N137** in its
+own comment. One finding, two numbers, because two seats wrote at once. Read the text, not the number; the
+next free number after this pair is N139, used below. See the concurrency ruling at N140.
+
+⚠️ **A MERGE WAVE MUST CAPTURE `doctor` COUNTS BEFORE IT MERGES, BECAUSE AFTER THE MERGE THE BASELINE IS
+UNREACHABLE FROM THIS SEAT (N139, 2026-09-08).** Reviewing `4d08de18` I measured
+`boundary 57 · contract 85 · citation 0 · schema 15 · capability 208 · anchor 4 · journey 1` and then could
+not answer the one question `CLAUDE.md` asks of every review — *did the count fall?* — because the
+pre-merge reading on `881f9bc9` was never taken and this seat may not check out a tree to take it now. The
+merge is not reversible into a measurement. Same family as §2e and N111: **an instrument is only as honest
+as the baseline it is handed, and a baseline that is only obtainable before an irreversible step must be
+written into the brief as a numbered item ahead of that step.** Every merge brief from now on reads
+`php artisan doctor` into `.agents/supervisor/.doctor-pre-wN.txt` as the item **before** `git merge`, and
+quotes both readings in the report. N115 still governs *which* number: `doctor`, never the `STAGES` line —
+which on this same tree recited `capability 372` against a measured **208**, 164 stale.
+
+⚠️ **"ONE WRITER PER CHECKOUT" HAS ALWAYS MEANT ONE *CODER*; TWO SUPERVISOR SEATS RAN THIS CHECKOUT
+SIMULTANEOUSLY AND NEITHER INSTRUMENT COULD SEE THE OTHER (N140, 2026-09-08, tick during wave 155/156).**
+This tick opened at 13:00:20, measured `coder.pid 4097207 DEAD`, `REPORT.md` (11:33) newer than the last
+`REVIEWS.md` block (11:28), and correctly entered case (b). While it reviewed, **another supervisor session
+was reviewing the same report**: at 13:0x it appended the wave-155 `PASS-WITH-NOTES`, committed
+`46c3fd9e` — *carrying this tick's own uncommitted `bin/supervise.sh` edit under its message*, which it
+noticed and wrote down — rewrote `BRIEF.md`/`KICKOFF.md` at 13:06:10 and dispatched **run 156 (pid 230825)**
+at 13:06:15. This tick discovered it only because it read `tail` of `REVIEWS.md` before appending, and the
+tail had grown by three blocks since the `ls -l` six minutes earlier.
+**Every existing guard missed it, and each for a principled reason.** §1a measures `coder.pid`, which was
+honestly DEAD — the other seat had not launched yet. §1b (`--census`) matches `argv[0]` of **`agy`**, the
+coder binary; a supervisor seat is not `agy`, so the one-writer census is blind to supervisors **by
+construction** — the row that is legitimate by construction, now in the census itself. `launch-coder.sh`
+refuses a second *coder*, not a second *supervisor*. And the mailbox `ls -l` that opens every tick is a
+**point measurement of a file another process may append to seconds later**, which is the pidfile trap
+(*"a pidfile reports an intention, not a state"*) transposed onto `REVIEWS.md`.
+**The near-miss is the whole lesson.** Had this tick followed the prompt to its end it would have appended a
+*second* verdict block for wave 155 and dispatched a *second* run 156 over a live coder — two agy processes
+in one checkout, which is the 2026-09-03 incident that `launch-coder.sh`, the pidfile and `--census` all
+exist to prevent, arriving by the one door none of them watches. What actually stopped it was **reading the
+ledger's tail immediately before appending to it**, and nothing else.
+Rulings, and the first is cheap enough that there is no excuse:
+- **`tail -5 REVIEWS.md` immediately before every append, and compare against the tail you read at tick
+  open.** An append-only ledger that grew underneath you means another seat is live: stop, write nothing,
+  dispatch nothing. This is the only check that fired.
+- **Re-measure `coder.pid` immediately before `launch-coder.sh`, never once at tick open.** The gap between
+  a tick's opening census and its dispatch is minutes, and a whole review fits inside it — as one just did.
+- **A dirty tree left by the other seat is the sharp edge.** This tick's uncommitted `CLAUDE.md` sat against
+  a live run 156 whose item 0 reads *"anything tracked dirty → STOP and report"*. The N108 order
+  (`review → REVIEWS → commit → push → brief → dispatch`) assumes one writer; under two, an uncommitted
+  supervisor note becomes **the other seat's wave-126 stop**. Commit supervisor notes the moment they are
+  written, or do not write them.
+- **A tick that discovers a live coder mid-review abandons its own conclusions as a DRAFT** (N112's rule,
+  from the other side): the verdict is already in the ledger, written by a seat that measured the same tree.
+  Do not append a competing one. Record the *concurrency*, which the other seat could not see, and stop.
