@@ -16,6 +16,7 @@ use App\Modules\X211\Domain\ArEngine;
 use App\Modules\X211\Domain\FeeWithoutTermException;
 use App\Modules\X211\Domain\NoResolutionAttemptException;
 use App\Modules\X211\Domain\PlanPastThresholdException;
+use App\Modules\X211\Domain\UnreferencedPaymentException;
 use App\Modules\X211\Events\ArFeeApplied;
 use App\Modules\X211\Events\ArOverdue;
 use App\Modules\X211\Events\ArPackaged;
@@ -381,8 +382,8 @@ class X211Test extends TestCase
         $pay = $this->engine->logOfflinePayment($biz->id, $invoice->id, 10000, 'check', 'REF-001');
         $this->assertEquals(10000, $pay->amount_cents);
 
-        $this->expectException(\DomainException::class);
-        $this->expectExceptionMessage('Offline payment needs a reference or a photo');
+        $this->expectException(UnreferencedPaymentException::class);
+        $this->expectExceptionMessage('must have a reference or photo. Nothing was logged.');
         $this->engine->logOfflinePayment($biz->id, $invoice->id, 10000, 'check', null, null);
     }
 
