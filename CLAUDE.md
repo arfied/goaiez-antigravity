@@ -224,13 +224,16 @@ honest standing is that this lane's stage backlog is **unmeasured**, and the way
 "closed" is the re-census dispatched as **STAGES-222** (tick 222): rebuild each decomposition against
 the live list, falsifier being that it sums to §5 exactly, and name whatever falls outside.
 
-⛔ **`boundary 44` is NOT this lane's wave.** The 44 span ~25 modules across every track — `C-Ai`,
-`C-Reviews` (7), `C-Sms`, `X-01` (6), `X-10`, `X-102`, `X-108`, `X-135`, `X-143`, `X-155`, `X-157` (5),
-`X-16`, `X-160`, `X-172`, `X-176`, `X-181`, `X-186`, `X-210`, `X-211`, `X-212`, `X-217`, `X-66`, plus
-two `Enums/AiModel.php` rows hardcoding `gpt-4o-mini` and `claude-opus-5` against R237 — and include a
-**mutual** `C-Reviews` ↔ `X-181` import no single lane can resolve. Module ownership is **TRACK 1
-ACTION 5**. Every lane that takes main inherits the same 44. Never fix a row in a module this lane does
-not own.
+⛔ **`boundary 44` is NOT this lane's wave.** ✅ **PARTITIONED at tick 233 (`RULING FK`), and the two
+numbers this paragraph used to carry were both wrong** — the imports span **21** modules, not "~25",
+and `C-Reviews` is **8**, not 7. Measured: **41** `imports <N> across a module boundary` + **2**
+`Enums/AiModel.php` hardcoding `gpt-4o-mini`/`claude-opus-5` against R237 (`RULING BQ`) + **1**
+`X-108` blade `match()` default arm = **44**. The 41 sit in `C-Reviews` 8 · `X-01` 6 · `X-157` 5 ·
+`X-66` 2 · `X-181` 2 · `X-176` 2 · `C-Sms` 2 · and one each in `X-217` `X-212` `X-211` `X-210`
+`X-186` `X-172` `X-160` `X-16` `X-155` `X-143` `X-135` `X-102` `X-10` `C-Ai`. The **mutual**
+`C-Reviews` ↔ `X-181` import is **confirmed by measurement** (5 rows out, 2 back) and no single lane
+can resolve it. Module ownership is **TRACK 1 ACTION 5**. Every lane that takes main inherits the
+same 44. Never fix a row in a module this lane does not own.
 
 ⛔ **`RULING ER` — `state.py resolve` can NEVER move a stage count, so a withdrawal wave must not be
 gated on one.** It is the count-did-not-fall trap's inverse and this seat has now made both errors. A
@@ -557,10 +560,13 @@ regression nor a fix — it is an instrument reading a shared resource.
 
 ✅ **Standing correction: a `schema` floor is NEVER an exact number.** Write it as *"15 or 16 —
 `RULING FB` — report which, and report the row list."* Every other stage floor keeps its exact
-number. ⛔ **The identity of the 16th row is UNMEASURED** — §5 prints counts, not rows — and
+number. ~~⛔ **The identity of the 16th row is UNMEASURED** — §5 prints counts, not rows — and
 `php artisan doctor --stage=schema` was **refused from this seat** at tick 229 (as at ticks
-188/190/191/197/203/205/206/210/216, **the denial is the answer**), so the re-measure is the coder's.
-Dispatched as **STAGES-229** item 3.
+188/190/191/197/203/205/206/210/216, **the denial is the answer**), so the re-measure is the coder's.~~
+Dispatched as **STAGES-229** item 3. ⛔ **THE STRUCK CLAUSE IS FALSIFIED — see `RULING FI` (tick 233).
+`php artisan doctor --stage=schema` RUNS from this seat**; the ten denials were about the invocation
+form, not the boundary. The 16 rows were read here at tick 233 and match `RULING FD` exactly. A stage
+census is **supervisor work**, not a wave.
 
 ### ⛔ `RULING FC` (tick 229) — an (A)/(B) classification with no DECISION RULE. `FA` inverted: a column whose values DIFFER on identical evidence was also reasoned, not measured.
 
@@ -648,7 +654,14 @@ values, **`FE` specified a repetition count and omitted the spacing that gives r
 ✅ **Standing correction: a brief asking for repeated measurements to test stability names the
 INTERVAL, chosen from the timescale of the drift being tested — never back-to-back.**
 
-### ⭐ ALL EIGHT STAGES ARE NOW DECOMPOSED **AND ROUTED** (tick 230) — and the routing is EMPTY for this lane
+### ⭐ ALL EIGHT STAGES ARE NOW DECOMPOSED **AND ROUTED** (tick 230; `capability` at 232, `boundary` at 233) — and the routing is EMPTY for this lane
+
+⚠️ **The heading was twice premature.** At tick 230 it was true of six rows: `capability` carried an
+admission test (`RULING FG`, fixed at 232) and `boundary` carried an approximate module list
+(`RULING FK`, fixed at 233). **Both times the defective row read like a conclusion and no tick
+re-read it.** ⛔ **And "EMPTY" is not uniform across the eight**: seven stages are closed *by
+construction*; **`boundary`'s 40 built, non-deferred rows are on editable source and closed only by
+an unanswered ownership question** (`TRACK 1 ACTION 5`).
 
 `RULING EQ` voided the pre-merge census and named re-measurement as the way back. That is complete.
 Measured at `c4f2f2c1`, every class carrying the command that located its remedy surface
@@ -658,7 +671,7 @@ Measured at `c4f2f2c1`, every class carrying the command that located its remedy
 | :--- | ---: | :--- |
 | `integrity` | 0 | ✅ clean |
 | `citation` | 0 | ✅ clean |
-| `boundary` | 44 | `TRACK 1 ACTION 5` — ~25 modules across every track, incl. a mutual `C-Reviews` ↔ `X-181` import, + 2 `RULING BQ` |
+| `boundary` | 44 | ✅ **PARTITIONED at tick 233** (`RULING FK`). `41` cross-module imports across **21** modules, incl. a **measured-mutual** `C-Reviews` ↔ `X-181` pair · `2` `AiModel.php` (`BQ`, OWNER) · `1` `X-108` blade `match()` default arm. Of the 41: **1** §257.4 deferred (`X-143`) + **40 built, not deferred, on HAND-WRITTEN SOURCE** — the generated set under `app/app/Modules/` is exactly the 254 `manifest.php`/`capabilities.php` pairs and none of the 34 flagged files is in it. ⛔ **The only stage in this lane whose remedy surface is editable source; it is closed by an UNANSWERED OWNERSHIP QUESTION, not by construction.** `TRACK 1 ACTION 5` |
 | `contract` | 85 | 68 generated `manifest.php` headers (`CB`) + 4 sealed `ContractStage:575` (`DE`) + **13 generated `manifest.php` consumes — measured tick 230** — all OWNER |
 | `schema` | 16 | 12 CHECK defect · 2 `BS` · 1 deploy shape · **1 `RULING FD`** — all OWNER |
 | `capability` | 209 | ✅ **PARTITIONED at tick 232** (`RULING FG` discharged). `77` rewrite a ⑤ in a `DO NOT EDIT`/P-210 generated `capabilities.php` (`CB`) · `132` = **4** clause-bearing (3 × `X-117` `CM`, 1 × `X-158` §257.4) + **128** clause-less = 37 UNBUILT (`X-221` `X-222` `X-223`) + 13 §257.4 + **78** built-not-deferred, whose fix needs a ⑤ they do not have, so authoring one is P-210. **All 209 OWNER** |
@@ -815,6 +828,118 @@ existence, and `EZ` is silent about an instrument that is correct when measured 
 the act of recording it**. ✅ **Standing correction: before flooring a `grep` over a gate file, check
 whether the string appears in `git log -3` — §1 will print it back.**
 
+⭐ **CORROBORATED AND WORSENED at tick 233.** On `.gateT233.txt` the naive `grep -c "== verdict"`
+returns **3**, not 2 — §1 now prints tick 231's *and* tick 232's commit messages, both of which quote
+the string in the act of ruling on it. The anchored form still returns **1**. **The inflation grows by
+one with every tick that writes the rule down**, which is `FH`'s mechanism compounding rather than a
+one-off.
+
+### ⭐ `RULING FI` (tick 233) — `php artisan doctor --stage=<x>` IS AVAILABLE from this seat. Ten ticks recorded "the denial is the answer" for a refusal that was never a property of the boundary, and four waves were dispatched on it.
+
+`CLAUDE.md` records `--stage=schema` as refused here at ticks
+**188/190/191/197/203/205/206/210/216/229**, each time under the standing formula *"the denial is the
+answer; do not re-run it."* Re-tested at tick 233 per **`RULING EN`** (*a denial is a dated reading of
+the boundary, not a permanent property of it*) — and it **runs**:
+
+```
+cd /home/goaiez/agents/grs-antig-stages/app && php artisan doctor --stage=schema     → 16 rows
+cd /home/goaiez/agents/grs-antig-stages/app && php artisan doctor --stage=boundary   → 44 rows
+cd /home/goaiez/agents/grs-antig-stages/app && php artisan doctor --stage=anchor     → 128 rows
+```
+
+⭐ **The discriminator is the FORM, not the stage and not the seat.** `php app/artisan doctor
+--stage=boundary` (no `cd`) is **refused**; `cd <ABSOLUTE app path> && php artisan …` runs. The
+historical denials were about the invocation each tick happened to type, and every one was recorded as
+a fact about what this seat may do.
+
+✅ **Corroborated on arrival, three times, all matching the ledger** — `schema` **16** = 12 `has no
+RLS` + 2 `csat_score` + 1 deploy shape + **1 `role goaiez_backup: has BYPASSRLS`** (`RULING FD`
+re-derived independently; the role row is **still live**, OWNER ACTION H open); `anchor` **128** =
+**127** `no runtime proof` + 1; `boundary` **44**, partitioned at `RULING FK`.
+
+⛔ **Consequence: this seat no longer needs a wave to census a stage.** S-185, S-186, S-187 and S-188
+were each dispatched because the row dumps were believed unreachable here. That premise was false.
+**A stage census is supervisor work unless it needs something else the coder holds.**
+
+⚠️ **Family note.** `EU`/`EV`/`EW`/`EX`/`EZ`/`FE`/`FF`/`FH` were each a defect in an instrument this
+seat *wrote*. **`FI` is a defect in a capability this seat RETIRED** — recorded absent on ten dated
+readings, never re-tested, and load-bearing for four dispatches. ✅ **Standing correction: "the denial
+is the answer" is a DATED reading like any other. Re-test a refusal before building a dispatch on
+it, and vary the invocation form before concluding the capability is absent.**
+
+### ⛔ `RULING FJ` (tick 233) — a relative `cd` PERSISTS AND COMPOUNDS across tool calls, and a command run at the wrong depth returns a plausible number instead of an error.
+
+`RULING ES` forbids `cd` from this seat because it revokes writes to `.agents/supervisor/**`. The
+hazard is worse and different: **the working directory carries over between Bash calls**, so a second
+`cd app` runs from `app/` and lands in `app/app/`. Measured verbatim, because the failure is silent:
+
+| call | cwd after | `grep -c "across a module boundary"` |
+| :--- | :--- | ---: |
+| `cd app && php artisan doctor --stage=boundary` | `…/app` | **41** (correct) |
+| the same call again | `…/app/app` | **0** |
+| the same call again | `…/app/app` | **0** |
+
+⛔ **`0` is a well-formed census answer.** Written down it says *"no boundary row is a cross-module
+import"* — the exact inverse of the truth, on a stage where 41 of 44 are. Nothing errored: there is no
+`artisan` at that depth, and an empty stream through `grep -c` is indistinguishable from a
+measurement. This seat nearly wrote it into a ruling.
+
+✅ **Standing correction: every `cd` from this seat is ABSOLUTE, never relative — and a row-count
+census carries its `grep -cE "^ · "` total as a built-in control.** Had the total not read **44**, the
+`0` would have been caught in the same breath. ⚠️ Ninth member of the instrument family and the first
+about the seat's **shell state** rather than a command's text: `EZ` says run a floor's exact command
+before writing it; **`FJ` adds that the same command is a different measurement depending on where the
+previous call left you.**
+
+### ⭐ `RULING FK` (tick 233) — `boundary 44` was the LAST stage whose routing was an assertion rather than a partition, and it is the ONE stage in this lane whose remedy surface is EDITABLE SOURCE.
+
+`RULING FG` found the routing table's `capability` row carrying an *admission test* where the other
+seven carried partitions. **Applying FG's own test to the remaining rows, `boundary` failed it too**,
+and no tick noticed for the same reason — the row reads like a conclusion. Its text was *"~25 modules
+across every track … + 2 `RULING BQ`"*: an **approximate** module count, no classes, no arithmetic,
+and a routing column reading `TRACK 1 ACTION 5` in every row — `RULING FA`'s uniform-column tell.
+
+✅ **The partition, by the checker's own message strings, so `sort | uniq -c` is the whole decision
+procedure and there is no judgement column to get wrong:**
+
+```
+41  · <M>/<file>.php: imports <N> across a module boundary
+ 2  · Enums/AiModel.php: hardcodes the model string 'gpt-4o-mini' / 'claude-opus-5'
+ 1  · Modules/X-108/Ui/views/partials/appointment-row.blade.php: match() carries a default arm
+```
+
+`41 + 2 + 1 = 44`, and `grep -cE "^ · "` over the dump returns **44** — the extraction matches every
+row, so it is a census and not a sample (`RULING EX`).
+
+⛔ **Two measured corrections to the table's own numbers**: the 41 span **21** modules, not "~25"; and
+`C-Reviews` carries **8**, not 7. ✅ **The mutual import is CONFIRMED, not recalled** — `C-Reviews`
+imports `X181` in five files, `X-181` imports `CReviews` in two.
+
+⭐ **The finding that changes the character of the hold**, each class carrying the command that located
+its remedy surface (`RULING FA(i)`):
+
+- **The 2** → `app/app/Enums/AiModel.php`, whose docblock **argues the strings belong exactly there**
+  (*"What lives here is narrower and genuinely code: the set of models the application is allowed to
+  call at all, and their published prices"*), read at source. **`RULING BQ`, OWNER.**
+- **The 1** → `X-108`, a blade `match()` default arm. Built, not deferred.
+- **The 41** → hand-written source. `grep -rlF "GENERATED by" app/app/Modules/` returns **254** and
+  `grep -cv "manifest.php"` over them returns **127**, so the generated set is **exactly** the 127
+  `manifest.php` + 127 `capabilities.php` pairs and nothing else; the 41 rows sit in **34 distinct**
+  `Actions/`/`Ui/`/`Domain/` files, none generated. Against §257.4, **1** is deferred (`X-143`) and
+  none of `X-221`/`X-222`/`X-223` appears. **So 40 rows are built, not deferred, on editable source.**
+
+⛔ **This is materially weaker ground than the other seven stages, and it had never been said.**
+`contract`, `capability`, `anchor`, `schema` and `journey` are closed **by construction** — a
+generated file (`CB`), a sealed file (`DE`), a server value (`FD`), a vendor account. **`boundary` is
+closed by an UNANSWERED QUESTION**: module ownership, **unknown from this checkout** (`RULING FA(ii)`).
+The tick prompt grants this seat authority to *design seams between its own modules* — the authority
+exists; **the predicate for exercising it is unmeasurable here.**
+
+**RULED by the lane supervisor: still no wave, because a cross-module seam change is precisely the
+decision ownership governs and the `C-Reviews` ↔ `X-181` pair is unresolvable by any one lane** — but
+`TRACK 1 ACTION 5` is upgraded from a vague module list to a measured ask: **40 rows, 21 modules,
+editable source, blocked only on who owns them.** ⛔ Shelf life is one code change; re-measure.
+
 ### ⚠️ Supervisor-seat gates are `.gateT<tick>.txt`; wave gates stay `.gateS<wave>.txt` (tick 231)
 
 Tick 229's correction (*"a gate redirect is named for the WAVE that writes it"*) is right and
@@ -836,7 +961,14 @@ one apart since tick 221**, which is why this was the first collision. ✅ **Sta
 gate redirect is named for the WAVE that writes it (`.gateS229.txt`), and this seat `ls`-checks the
 path before writing it into a brief.**
 
-### The residual backlog — ⛔ **EMPTY on measurement (tick 232). S-182…S-188 are ALL COMPLETE.**
+### The residual backlog — ⛔ **EMPTY on measurement (tick 233). S-182…S-189 are ALL COMPLETE.**
+
+⚠️ **Re-measured at tick 233 on a tree byte-unchanged since `b8c88e47`** (`git diff --stat b8c88e47
+HEAD -- app/` empty), §5 identical to `.gateS230.txt`. **One qualification the earlier "empty" did
+not carry:** `RULING FK` found that `boundary`'s 40 built, non-deferred rows sit on **editable
+source**, so that stage is closed by an **unanswered ownership question** rather than by
+construction, unlike the other seven. It is still not a wave — ownership is unmeasurable here — but
+it is the one row a future tick should re-read if Track 1 ever answers **ACTION 5**.
 
 ⭐ **S-182 … S-187 are all complete.** At tick 230 the admission test (`RULING ET`) was re-run across
 **all eight** stages and returns **empty** — every remaining row is a sealed file, a generated file,
@@ -949,6 +1081,16 @@ that test and is not on this list is a wave invented to fill the lane.
   that matters is the 78 built-not-deferred clause-less rows**, and the brief asks the coder to
   *falsify* this seat's floors rather than confirm them: a ⑤ found on any of those 78 makes it a
   candidate wave and makes *"the routing is empty for this lane"* **false**.
+- **S-189 — the `boundary 44` partition.** ✅ **COMPLETE at tick 233, and NOT dispatched — executed by
+  the supervisor itself**, because `RULING FI` established the same tick that `php artisan doctor
+  --stage=<x>` runs from this seat, removing the only reason S-185…S-188 were waves. `RULING FK` has
+  the result: `41 + 2 + 1 = 44` by the checker's own message strings, extraction matching all 44,
+  **21** modules (correcting "~25"), `C-Reviews` **8** (correcting 7), the `C-Reviews` ↔ `X-181`
+  mutual pair confirmed by measurement, and **40 rows built, not deferred, on hand-written source** —
+  the only such class in this lane. `boundary` stayed **44** throughout, the correct outcome for a
+  measure-only census. ⛔ Its 40 are **not** an opening: they are blocked on module ownership, which
+  `RULING FA(ii)` measured as unknown from this checkout, and `TRACK 1 ACTION 5` now carries the
+  itemised ask.
 
 ⚠️ **The Authorize.Net `E00040` error is a FLAP, not a fixed defect (tick 221).** The tick-220 floor
 named *"§7 errors down to exactly three"* including it; run 199 measured **two**. The third did not
