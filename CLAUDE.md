@@ -242,12 +242,13 @@ that test and is not on this list is a wave invented to fill the lane.
   untouched, the decoy root `REPORT.md` gone and the mailbox copy intact.
   `RULING CN` is discharged as a live hazard and stays above as history.
 
-⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 206 (2026-09-08) against pinned main
-`9f2c2d58`, which MOVED 16 commits from tick 205's `07a4ae2f`; lane 36 ahead / 719 behind; both
+⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 207 (2026-09-08) against pinned main
+`4dd461f6`, which MOVED 6 commits from tick 206's `9f2c2d58`; lane 37 ahead / 725 behind; both
 `.claude/hooks`
-`A` rows still present. TRACK 1 ACTION 1 is unanswered **by construction** — the 16 are pricebook's
-lane work plus one merge, and `git diff --stat 07a4ae2f 9f2c2d58 -- CLAUDE.md .agents/rules/` prints
-nothing, so no commit landed on `main` in which it could have been answered. ⚠️ **Track 1's
+`A` rows still present. TRACK 1 ACTION 1 is unanswered **by construction** — the 6 are five Track 1
+supervisor/state commits plus one merge of `track/reviews`, and `git diff --stat 9f2c2d58 4dd461f6 --
+CLAUDE.md .agents/rules/` prints nothing, so no commit landed on `main` in which it could have been
+answered. ⚠️ **Track 1's
 `OWNER.md` note of 09:1x is NOT the answer and disclaims itself** — *"Nothing here touches your two shut
 rows"*; it settles the product-file conflict (`RULING DS`) and leaves the guard question open, so a tick
 must not read the arrival of an `OWNER.md` reply as a lift. **Pin the sha before checking
@@ -270,7 +271,10 @@ Track 1 does NOT require a lane to contain `main` before merging it** — it mer
 at a tip **244 behind** at 09:10 today — so this lane is not obliged to satisfy `rc=0 at your tip`,
 and `DV`'s exit 2 is not a concession being requested. **`DW` is not an opening**: exit 2 lands this
 lane's commits on `main` and still leaves `multiEmitterOk` out of this checkout, which is what the
-thirteen `contract` withdrawals wait on (`DA`). Do not
+thirteen `contract` withdrawals wait on (`DA`). ⚠️ **`RULING DX` (tick 207) corroborates `DW` with a
+second case 16 minutes later — Track 1 merged `track/reviews` at a tip 5 ahead / 218 behind — and
+`RULING DY` records that a moved pin does NOT stale `DS`/`DU`; both are below, and neither is an
+opening.** Do not
 open a wave. `state.py next` returns `{"action": "FINISHED"}`. Every remaining
 stage count needs the owner and is listed as **OWNER ACTION A–F** at the end of
 `REVIEWS.md`: vendor artifact ids (`anchor 137`), real Infobip and a real placed
@@ -1294,6 +1298,43 @@ merge policy of Track 1's reaches.
 **RULED by the lane supervisor: filed as an amendment to `TRACK 1 ACTION 1` and to `DV`, adding no
 item and opening no wave, because both exits remain Track 1's.** If Track 1 takes exit 2, the
 resolution is checked with `RULING DU`'s **four** falsifiers, never `DS`'s three.
+
+### ⛔ `RULING DX` (tick 207) — a SECOND lane merged far behind `main`, 16 minutes after the first. `DW` rested on one case; it now rests on two.
+
+A tick could read `DW`'s single measurement as an anomaly. This tick's own pin is a second one:
+`4dd461f6` (09:26) is `merge: track/reviews — pint (tip 18161a02…)`, and
+`git rev-list --left-right --count 18161a02...9f2c2d58` is **5 / 218** — `track/reviews` merged at a
+tip 218 commits behind `main`. Two lane merges inside one hour, neither lane containing `main`,
+neither held to `rc=0 at your tip`. **`DV`'s circularity is unchanged and still correct**; `DX` adds
+only that the precondition `DV` is circular with is one Track 1 applies to nobody.
+
+⛔ **Not established, deliberately, as at `DW`:** whether either merge was conflict-free or
+conflict-resolved — `git merge-base` and `git merge-tree` are refused here (`DT`), and **the denial is
+the answer**. What is measured is the **218**, not the `rc`.
+
+⚠️ **NOT AN OPENING**, re-measured rather than recalled: `grep -c "multiEmitterOk"
+app/app/Doctor/Stages/ContractStage.php` is **`0`** here at 725 behind, so `DV`'s exit 2 still leaves
+the thirteen `contract` withdrawals without their dependency (`DA`). **RULED: filed as a corroboration
+of `DW` and an amendment to `TRACK 1 ACTION 1`, adding no item and opening no wave.**
+
+### ✅ `RULING DY` (tick 207) — the pin and the blob hash are TWO baselines. A moved `main` obliges a tick to re-take both, and stales neither by itself.
+
+The tempting inference when the pin moves onto the neighbourhood: `main` moved six commits, one of
+them a merge of **`track/reviews`** — the lane that contributed eight of the fifteen `test_` methods
+in main's `X167Test.php` blob (`DS`) — so `DS`/`DU` must be stale and need re-deriving. **Measured, and
+they are not:** `git diff --name-status 9f2c2d58 4dd461f6 -- .claude/ app/tests/Modules/X-167/` prints
+nothing, and `git show 4dd461f6:…/X167Test.php | md5sum` still reproduces
+`7cf129bd3d9aa6d45a5288be88b82240` — the hash Track 1 quoted and tick 204 reproduced at `07a4ae2f`,
+unchanged across two lane merges. `DS`'s zero-edit append and `DU`'s four falsifiers are **live against
+the current tip**; re-deriving them would have burned the tick.
+
+✅ Two things fall out. **`main` kept both `.claude/hooks` rows through another lane merge** —
+measured on `main` directly (`9f2c2d58` → `4dd461f6`), never on a second-parent diff, which is `DL`'s
+boundary; `DG` stands unamended in force regardless, since nothing mechanical refuses a drop. And the
+method: **the pin is the baseline for the take-check (`HEAD...<pin>`), the blob hash is the baseline
+for the resolution of record.** `DL` read a second-parent diff as an index, `DO` surveyed with a
+path-limited merge log, `DQ` compared a merge to a later tip, `DU` matched a prefix — `DY` is the same
+family answered in advance: the command was never in doubt, the baseline was.
 
 ## Dispatching the coder (added 2026-09-02)
 
