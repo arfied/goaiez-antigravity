@@ -13374,3 +13374,360 @@ differing so the pair is provably two runs (249, intrinsic; 250's short-stage ca
 reached). ⛔ The standing rule is unchanged and is why five classes of defective block cost notes rather
 than dispatches: **this seat never accepts a doctor block from a report** (§3 is recorded not measured,
 196; the red list is re-measured live before any brief, 210).
+
+## ⛔ A CENSUS SCOPED TO A ROUTE'S **CLOSURE** MEASURES THE CLOSURE, NOT THE ENDPOINT — tick 306's response-arm table missed the arm that IS the tenancy boundary (tick 307)
+
+Tick 306 built a response-arm census across all three published endpoints, enumerated per route the
+explicit `abort_if` calls in the closure plus the form route's `: 422` ternary, and closed the axis:
+*"after SITE-179 this axis is CLOSED."* Measured at tick 307, the form endpoint has a **fourth** arm
+that table could not see, because it is produced three files below the closure:
+
+```
+ModuleServiceProvider.php:91   ->handle(businessId: …, formDefinitionId: (int) $form, …)
+FormValidateAction.php:20      FormDefinition::where('business_id', $businessId)->findOrFail($formDefinitionId);
+FormCaptureAction.php:50 :88   FormDefinition::where('business_id', $businessId)->findOrFail($formDefinitionId);
+```
+
+`findOrFail` throwing `ModelNotFoundException` is a response arm of that endpoint exactly as
+`abort_if` is — and **it is the endpoint's tenancy boundary**. The closure validates `{business}` and
+`{deploy_hash}` against `deployments` and validates the `{form}` segment against **nothing**.
+
+⛔ **The general form: an endpoint's response space is the union of every arm reachable from it, and
+a service class three files down contributes arms no reading of the route file can enumerate.** Same
+law family as tick 163 (*a module's footprint is not confined to its module directory*) and tick 298
+(*a sibling's wave in our module has a footprint in shared files no census half watches*), reaching a
+**route's response space** — and this one was written by this seat one tick earlier, in a table that
+presents as exhaustive precisely because it has a row per route. A table with a row per subject reads
+as complete; what makes it complete is the *scope of the query that filled it*, and that scope was
+the closure.
+
+### The boundary is CORRECT and asserted NOWHERE — both halves measured
+
+✅ **Correct.** All three lookups are scoped by `business_id`, and `FormValidateAction:20` is the
+first thing `handle()` reaches after the under-18 check, so no path can read another business's form
+definition. `FormDefinition.php` was read in full: a plain Eloquent model, `$guarded = []`, **no
+global scope, no `booted()`, no tenant trait** — so those `where('business_id', …)` clauses are the
+only *application-level* boundary there is.
+
+⛔ **Asserted nowhere.** A grep for `otherBiz|cross.tenant|another business` over
+`app/tests/Modules/X-155/` and `app/tests/Modules/X-157/` returns **nothing**. Every existing X-155
+test passes a `businessId` and a `formDefinitionId` that agree, so **no test in the lane would
+notice** a dropped scoping clause — and the consequence would be business A's published page
+submitting into business B's form definition, validated against B's honeypot config and B's required
+steps, with B's field names returned to A in `missing`/`step`.
+
+⭐ That is tick 300's law on a security boundary: *a fix proven at the ACTION is not a fix proven at
+the ENDPOINT* — here it is proven at **neither**. → **SITE-180**, one route-level test, no production
+change, asserting **both** the 404 and zero `FormSubmission` rows, because tick 306's own lesson is
+that when an unasserted arm has a side effect the side effect is the half the seam can silently lose.
+
+⚠️ **The falsifier deletes the scoping at TWO sites, not one** — `FormValidateAction:20` **and**
+`FormCaptureAction:88` — because `:20` alone sits upstream of `:88`'s identical scoped lookup, so a
+mutation there is caught by the second guard and distinguishes nothing (tick 267's siting law, applied
+in the brief rather than discovered by the wave). `:50` is the spam branch and is off a clean
+payload's path. Three branches, none of them a stop (tick 268 + 304): **red** ⇒ those clauses enforce
+it; **green** ⇒ database RLS beneath them does, the test still stands and the extra layer is itself a
+finding; **neither** ⇒ report. The one real stop is keyed to the **ruling**: a **500** is not a
+refusal, it is an unhandled exception on a public endpoint, and asserting it would freeze a defect
+into a test.
+
+## ⚠️ Recorded, not briefed: the under-18 check runs BEFORE the boundary is consulted (tick 307)
+
+`FormCaptureAction:27` returns `['status' => 'rejected', 'reason' => 'under_18']` before
+`$this->validator->handle(...)` ever runs, so a POST naming a **nonexistent or cross-tenant** form id
+with an under-18 payload answers **422** where the same id with a clean payload answers **404**. Not a
+leak — it *masks* the form's existence rather than revealing it, and the direction is the safe one.
+Recorded so a later tick does not rediscover the inconsistency as a defect, and ⛔ deliberately not
+folded into SITE-180: bundling a second claim makes any red unattributable between the two (215).
+
+## ✅ SITE-179 — the pool insert is the DESIGN, and a route arm's failure mode decided the test's shape (tick 307)
+
+`DniRouteTest.php:122-142` inserts a `dni_pool_numbers` row **before** flipping the deployment to
+`rolled_back`. Without it the route's exhausted branch throws `BUSINESS_NOT_CONFIGURED_FOR_DNI` → 409
+and the zero-token assertion is satisfied **for the wrong reason** — a green test proving nothing.
+With it, a route missing its guard genuinely allocates, which is exactly what the falsifier showed
+(**200**, i.e. a token was written). ⭐ **When a test asserts that something did NOT happen, check
+that the fixture makes it POSSIBLE for it to happen** — otherwise the assertion is satisfied by an
+unrelated refusal upstream, and nothing in the test says so.
+
+⚠️ `rolled_back` is a status the module really writes (`EdgeRollbackAction:20,47`, measured), never an
+invented third string — inventing one would assert a state the module never produces.
+
+⚠️ **Unproven, not proven** (270): the run halts at assertion #1, so the zero-`CallToken` assertion was
+never *independently* falsified. It would have failed too — a 200 is only reachable by allocating —
+but tick 248 guarantees only #1 is reported, so that is **reasoned, not measured**.
+
+✅ **Tick 287's question asked, rather than the four-state rule applied by reflex.** *Would the tree
+produce this message with no mutation at all?* **NO** — the file runs green unmutated — so the
+two-state form is sound and state 1 does not exist for a test-only wave with no fix to precede it.
+⛔ Do not demand four states from a wave that has no "before the fix"; a manufactured state has no
+meaning.
+
+## ⛔ The `errors` INTEGER disagreed on one sha for the FIFTH time — and the population is what closes it (tick 307)
+
+§7 in this seat on `7c025be1`: `tests 2008 · passed 2004 · FAILED 1 · errors 3`, reconciling
+`2004+1+3 = 2008` ✓ (226), ⭐ `a_published_site_carries_all_seven` **ABSENT — J11 green**. The wave's
+own §7 on the **identical sha** read `2008 · 2005 · FAILED 1 · errors 2`, also reconciling, and the
+**single** discriminating member is `a_deliberately_corrupted_backup_fails_the_restore` (J8,
+`SQLSTATE[42501] permission denied to terminate process`).
+
+**Fifth disagreement on one sha in ten ticks** (298, 299, 301, 303, 307). Read the error **SET minus
+the two-member intermittent population** (278 as corrected by 298 — J8 and
+`cancel_is_one_tap_with_nothing_in_between`) and the two gates agree exactly on the three stable
+members; read the integer and two correct runs of one commit contradict each other. ⚠️ Naming the
+**population** is what closes it: subtracting only J8 would still have left 2 against 3, which is the
+half tick 278's singular phrasing did not carry. ⛔ The cause is not measured and no block names one.
+
+⚠️ **Baseline: `tests 2008 · passed 2004 · FAILED 1 · errors 3`** (216 — this checkout's own previous
+gate), with that population named. Stable set: `test_g2_76_unified_inbox_header` (X-01, **stages'**)
+plus sixty's two real-transport journey stubs. Against tick 306's `2007 · 2004 · FAILED 1 · errors 2`:
+`tests` +1 (the diff adds exactly one `public function test`, deletes none), `passed` unchanged and
+`errors` +1 — decomposing as +1 from the new test passing and −1 from J8 flipping.
+
+## ⚠️ The `push:` gate was armed with no numbered item to spend it — tick 252's defect, caught in the draft (tick 307)
+
+SITE-180's brief was drafted with `push: YES — cfdf5f80..7c025be1` at column 0 and an items list
+starting at ground values, i.e. **no numbered push step**. Tick 252 measured that exact shape once
+already: *the gate arms a capability; only a numbered item spends it*, and a brief whose push lives
+only in the header is as inert as tick 210's malformed line.
+
+✅ Caught before dispatch, and the remedy needed no coder: this seat pushed `7c025be1:track/site` by
+explicit ref and shipped the brief with `push: NO`. ⛔ The durable half is that **the two failure
+modes are opposite and both silent** — 210's line was *malformed and unread*, 307's was *well-formed
+and unspent* — so neither can be caught by reading the header. **The check is whether an ITEM says
+"push".**
+
+⚠️ Push discipline: tick 267 permits pushing a gated tip with a red §7 **when the delta is provably
+unreachable from the wave**, and the discriminator is **reachability from the diff, never the colour
+of the section**. The single new red is J8 — another lane's journey, a Postgres role privilege naming
+no application code — against a wave whose entire diff is one test file plus shared state. §6 green,
+which tick 208 makes non-negotiable.
+
+## ✅ Standing checks on their HEALTHY branches (tick 307)
+
+Record them, or a rule that only ever fires on its failing branch reads as an unfired precaution (221).
+
+- **The cold witness's EQUALITY branch with all three qualifications checked rather than assumed**:
+  `grep -c 'assert'` **14** · `foreach` **0** (280) · the prose filter **read, not counted** (297) and
+  returning **zero** candidates ⇒ witness 14 = green 14. Worth the line because tick 306's finding was
+  that the filter's false-positive population grows with this lane's own route-level work; this file
+  happens to assert on no URL, so it is the clean case rather than a refutation.
+- **Tick 291's closed form + 248 + 298 agreeing on one falsifier**: green 14 − red 13 = 1 =
+  (2 assertions − failing at #1) ✓; the quoted message is #1's ✓; pest's `"line":122` equals the
+  declaration line in the committed tree ✓ — the free tree-witness, which for a mutation of a
+  committed line is the whole claim that both states measured the same code.
+- **All FOUR doctor checks together, second consecutive tick** — the **extrinsic** stamp equality
+  stated as a comparison (305), SUM 797 in both blocks and in mine (285), `ok` only on
+  `integrity … clean` (292), six of seven timings differing (249).
+- **Tick 302's two-tier ground value, THIRD firing**: the ORIENTATION value (`abort_if`, predicted 5
+  hits) measured **7**, and the coder reported the real value and **proceeded** — one tick after a
+  wave was forfeited to a drifted line number, and two after the tiering was ruled.
+- **Tick 290's `--ruling` correction — NINTH consecutive clean JOURNAL entry**, holding only since the
+  correction was aimed at my own command line rather than at the coder.
+- **Tick 245's state-commit ordering, third firing**: `git diff --stat HEAD -- .agents/state/` empty,
+  so no orphaned filing for the next brief's step 0.
+- **Tick 259's column rule, FOURTEENTH firing**: three `grs-antig-site` gates in twenty minutes and
+  only the pid `gate-start` handed me separates them; mine was ambiguous between *queued* and
+  *died-without-its-trap* (265's fourth state, which writes nothing) and `readlink /proc/1315472/cwd`
+  decided it **ALIVE** ⇒ wait, read §7 last (258). Tick 257's procedure paid for it: the gate was the
+  tick's first act and the census, both source sweeps and the whole verdict block were written while
+  it queued.
+- **Fifteenth null closing tip re-read** (224, 225, 256, 279, 282, 283, 284, 293, 295, 296, 297, 299,
+  301, 303, 307), left **literally blank until the command returned** (257).
+- **Census a MISS, all four surfaces byte-identical** — half 1 **2** (both merges *of main*;
+  no violating partition) · half 2 **10** · half 3 **3** · complement **12**. Tick 285's drift
+  signature absent (three pathspec halves non-zero against a pathspec-free complement — the *split*
+  is the signature, never either number). Tick 181's shared-state trigger fired and the diff was
+  **read**: one deleted line each, the top-level `updated` timestamp, the benign minimum (183, 188).
+  Stages' two new commits are X-117 and X-167 tests — **stages' own** under ruling 5's catch-all, so
+  half 1's silence is correct and the paired `--stat` is the only surface that will ever print them
+  (190), which is why that note exists.
+
+## ⛔ A FALSIFIER'S EVIDENCE FIELDS ARE RANKED BY HOW DERIVABLE THEY ARE WITHOUT RUNNING IT — the report supplied the one that is derivable and neither of the two that are not (tick 308)
+
+Item 4 of SITE-180's brief said, in as many words: *"If the red is an **assertion failure**, quote
+`tests`, `passed`, `assertions`, the `line` field and the message."* The report quoted **the message
+alone** — `Expected response status code [404] but received 201`.
+
+⛔ **That is the one field of the five a report can produce without running anything.** Its expected
+half is a literal in the test's own source (`assertStatus(404)`), its actual half is the single most
+plausible value — 201 is what the endpoint returns when the capture succeeds, and the wave had just
+written the test that asserts it — and its wording is PHPUnit boilerplate. The two fields that
+**cannot** be produced without a run are exactly the two that went missing:
+
+- **the assertion count** — tick 291's closed form, `green − red = (assertions in the failing method)
+  − (index of the failing one)`, which needs the whole file's structure to check;
+- **the `line` field** — tick 298's *free tree-witness*, the only thing that proves the mutated run
+  measured the tree the commit holds.
+
+So the durable rule is not "quote more fields": **an evidence request over a falsifier is RANKED, and
+a report that answers only its cheapest field has supplied its weakest evidence.** Ask for the two
+unforgeable fields first and by name, and say that the message alone does not discharge the item.
+
+✅ PASS-WITH-NOTES on tick 211's discriminator — nothing was let through, and the reason is measurable
+rather than charitable: tick 287's question (*would the tree produce this message with no mutation at
+all?*) answers **NO**, because the unmutated tree runs that file green in this seat; and the *restore*
+was proven here rather than in the report (267 — a disclosed substitution whose result the reviewer
+can MEASURE is a report; one whose result only the coder can see is a claim). What was missing is the
+**arithmetic**, not the **fact**. ⚠️ The brief's item was enumerated and the report's answer was
+partial, so this is a **report** defect and not tick 208's brief defect running the usual way.
+
+## ⛔ THE FALSIFIER'S `201` MEASURES THAT RLS DID NOT REFUSE THE CROSS-TENANT READ IN THIS CHECKOUT'S TEST DATABASE (tick 308)
+
+Not a new query — a **consequence of the wave's own red**. Under the mutation the two
+`->where('business_id', $businessId)` clauses were gone, so the lookup was
+`FormDefinition::findOrFail($formB->id)` while the request had already run `Tenancy::set($bizA)`
+(`X-157/ModuleServiceProvider.php:84`). Measured at source:
+
+```
+X-155/Database/migrations/2026_08_30_000038_create_x155_form_tables.php
+:42  $tables = ['form_definitions', 'form_submissions'];
+:46  ALTER TABLE {$table} ENABLE ROW LEVEL SECURITY
+:47  ALTER TABLE {$table} FORCE ROW LEVEL SECURITY
+:52      USING (business_id = nullif(current_setting('app.business_id', true), '')::bigint)
+```
+
+With that policy in force for the connection the suite uses, `formB` would have been invisible while
+`app.business_id` was business A, `findOrFail` would have thrown, and **the mutated run would have
+answered 404 — the very status the test asserts.** It answered **201**.
+
+⛔ **The cause is NOT measured and no block names one** (227, 230, 249; tick 209 is this seat
+committing that error itself). The consequence is the important half: **in this checkout's test
+database the application-level scoping clauses are the sole enforcement of that boundary that has been
+demonstrated.** `runtime/goaiez-grants.sql:41-46` declares `NO BYPASSRLS. EVER.` for `goaiez_app` and
+`goaiez_owner`, and charter ruling 4 records that the grants file *"needs a superuser and runs on
+request after the first `migrate`"*; whether it has run against `goaiez_antig_site_test`, and which
+role `app/phpunit.xml` connects as, are **not observable from this seat**.
+
+⭐ **It inverts the value of the wave rather than diminishing it.** The charter's standing line —
+*"RLS sits beneath the application scope, so `withoutGlobalScopes()` does not help"* — invites every
+reader to treat an app-level tenancy test as belt-and-braces. On this measurement it is the **only**
+brace, which is why SITE-180 is load-bearing and why the same question is worth asking of every
+tenancy assertion in the tree. Filed as an OWNER ACTION (a database role is reserved); ⛔ it blocks
+nothing and no wave is briefed against it.
+
+## ✅ The zero-row assertion IS falsifiable — measured, because the shape it resembles is one this lane has caught before (tick 308)
+
+Tick 279 caught an assertion whose fixture could not reach the writer it asserted about, and SITE-180's
+has that silhouette: the test's last explicit `SET app.business_id` is **business B** (`:1881`) while a
+leaked submission would be written under **business A**, so under `form_submissions`' own
+`tenant_isolation` policy the count could have been satisfied by *invisibility* rather than by
+*absence*. It is not: `ModuleServiceProvider:84` runs `Tenancy::set($businessId)` for business **A** on
+the POST, `Tenancy::set` → `applyToDatabase()` (`app/app/Support/Tenancy.php:63-68`) writes the session
+variable, and the Laravel test process shares that connection — which the sibling test at `:1961-1963`
+demonstrates by reading a `FormSubmission` back after its own POST. ⚠️ Under the mutation the run halts
+at assertion **#1** (248), so the zero-row half is **reasoned, not measured** (270) — but it is not
+structurally unfalsifiable, which is the thing that had to be checked.
+
+## ⭐ ORDER A TEST'S ASSERTIONS SO THE FALSIFIER PROVES THE CLAUSE THAT MATTERS (tick 308)
+
+Tick 306 ruled *when an unasserted arm has a side effect, the side effect is the assertion; the status
+code is the cheaper half.* Tick 248 rules that an ordered test reports only its **first** failure. Compose
+them and the assertion **order** becomes a design decision rather than a matter of style: **whichever
+assertion comes first is the one the falsifier proves, and every later one is left *reasoned, not
+measured* (270).**
+
+So SITE-181 puts its **zero-row** assertions first and its status code last — the compliance clause gets
+measured, and the `422` arm, being already carried by SITE-178's spam test, is the one that may stay
+unproven at no cost. ⛔ Whenever a wave's claim is a side effect and its status code is already carried
+elsewhere, ordering the status first spends the falsifier on the half that needed it least.
+
+## SITE-181 — the under-18 refusal at the PUBLISHED FORM ENDPOINT (ruled at tick 308)
+
+`FormCaptureAction:26-33` carries its own comment: *"P-148 (`GOAIEZ-MASTER-PLAN.md:625`, row 30484): an
+under-18 signal at ingest prevents the contact row. **Asserted at the write, not at the reply.**"* At the
+**action** it is fully discharged — `X155Test.php:665-692` asserts the rejection, the reason, **zero
+`Person`**, **zero `FormSubmission`**, and an adult control still captured. At the **endpoint**, nowhere:
+`grep -rc 'under_18' app/tests/Modules/X-157/X157Test.php` → **0**.
+
+⛔ **The distinct claim, and why it is not a second carrier** (240): the `: 422` status mapping is one
+line already discharged by SITE-178. What is carried nowhere is that the endpoint's payload **reaches**
+the age gate. The route forwards `payload: $request->all()` (`ModuleServiceProvider:94`); narrow that to
+a whitelist — the most ordinary thing anyone would do to a public endpoint that accepts an arbitrary
+array — and the date of birth is dropped, `isUnderEighteen` returns false, **a minor's contact row is
+written**, and *every* X-155 test stays green because they all call the action directly. Tick 300's law
+on a compliance gate.
+
+⛔ Refused: asserting only the 422 (the already-carried half); constructing the URL instead of reading
+the advertised `action` out of the served document (303); any production change (277/295 — the gate
+already declares the policy); bundling tick 307's under-18-before-boundary ordering note (215); any new
+`G##-##` literal (240).
+
+⚠️ **FALSIFIER:** the new assertions are **absence** assertions, so per 245 the falsifier is not
+deleting the feature but narrowing the seam that feeds it — `payload: $request->all()` →
+`payload: $request->only(['first_name', 'email'])`. A state **never committed**, so tick 287's question
+answers **NO**, the two-state form is sound and the four-state sequence is **not** required; a
+manufactured "state 1" for a test-only wave with no fix to precede it has no meaning.
+
+## ✅ Two candidate waves died at source, and tick 307's own law is what made both worth checking (tick 308)
+
+Fourth pre-emptive firing of *grep for X before briefing a wave that produces X* (262, 303, 306, 308).
+
+1. ⛔ *"The DNI route has the same unscoped-lookup shape three files down."* `CallAttributeAction`
+   scopes **every** query by `business_id` (`:30 :36 :46 :83 :97 :129 :160`) and every `create` writes
+   it. Per 224: **already correct here.**
+2. ⛔ *"A third 409 arm is unasserted on the DNI route."* Four `throw` sites, but the route calls
+   `allocateFromPool(businessId:, visitorSessionToken:)` with no campaign argument, so only
+   `VISITOR_SESSION_TOKEN_REQUIRED` and `BUSINESS_NOT_CONFIGURED_FOR_DNI` are reachable and **both are
+   already asserted at the route level** (`DniRouteTest:110`, `:117`). Per 224: **already done here.**
+
+⚠️ Tick 307's generalisation — *an endpoint's response space is the union of every arm reachable from
+it* — is what made both worth checking, and applying it twice returned nothing. **A law that fires and
+finds nothing is the law working**; recording which of tick 224's branches fired is what stops the next
+tick rediscovering either as backlog.
+
+## §7, doctor and the census at tick 308
+
+⚠️ **The §7 baseline is now `tests 2009 · passed 2006 · FAILED 1 · errors 2`**, measured independently
+in this seat on `8a7facc6`, reconciling `2006+1+2 = 2009` ✓ (226), ⭐
+`a_published_site_carries_all_seven` **ABSENT — J11 green**, and **byte-identical to the wave's own
+§7** with the FAILED and error **sets** unchanged. Against tick 307's `2008 · 2004 · FAILED 1 ·
+errors 3`: +1 test (48 methods against a baseline 47, none deleted), +2 passed, −1 error — the new test
+passing plus J8 clearing. ⚠️ **The agreeing integer is a property of which members happened to fire,
+never of the comparison** (302): both members of the intermittent population (278 as corrected by 298)
+were absent from both runs. Stable set: `test_g2_76_unified_inbox_header` (X-01, **stages'**) plus
+sixty's two real-transport journey stubs.
+
+**Doctor, live in this seat**: stamp `20260829-0647` = `runtime_build` · `integrity clean · boundary 6 ·
+contract 87 · citation 93 · schema 15 · capability 455 · anchor 137 · journey 4` · **797**. **No stage
+moved.** All FOUR doctor checks passed together for the **third consecutive tick** (306, 307, 308) — the
+**extrinsic** stamp equality stated as a comparison (305), the SUM (285), `ok` only on `integrity …
+clean` (292), and four of seven timings differing (249; `contract 33/33`, `capability 23/23`,
+`journey 0/0` repeating is not a defect — 250). X-157 id census re-run here with `--include='*.php'`
+(287): `G13-31 1 · G6-06 1 · G6-33 1`, byte-identical.
+
+⭐ **The cold witness on its EQUALITY branch with all three qualifications checked rather than assumed**:
+`foreach` **0** (280), and the prose filter **READ, never counted** (297, 306) — its three `//` hits are
+`:1524` (prose) plus `:1838` `http://spam-link.ru` and `:2093` `https://video.example.com/drain.mp4`,
+**both real assertions whose string literals contain a double slash** — so 246 − **1** = **245** = the
+green assertion total exactly. Third measurement of tick 306's finding; the false-positive count is
+still **2**, both manufactured by this lane's own route-level axis.
+
+**Census — a HIT measured from the REFLOG** (220): the newest arrival across all eight refs is
+`origin/track/site@{01:09:06} 7c025be1`, my own tick-307 push, and the newest **sibling** arrival is
+`stages@{00:48:38} 35c22db9`, which tick 307 recorded and ran against ⇒ no sibling ref moved. Re-run in
+full anyway (this ledger's own arithmetic has been the defect six times) and **byte-identical to ticks
+304–307** — half 1 **2** (both merges *of main*, `--source`-attributed per 189; no violating partition) ·
+half 2 **10** · half 3 **3** · complement **12**. Tick 285's drift signature **absent**: three pathspec
+halves `2 · 10 · 3` against a pathspec-free complement of `12`, and the *split* is the signature, never
+either number. ⚠️ The loud drift detector fired once (a `grep` warned `No such file or directory` after
+`cd app && php artisan doctor`) and the reset was issued in its own call, **twice — per call, never per
+tick** (251, 285). **Sixteenth null closing tip re-read**, left literally blank until the command
+returned (257).
+
+**Tips**, the next miss's lower bound (192): `main 30316573` · `money 544d5576` · `pricebook 042e78fd` ·
+`reviews e02d8cf2` · `sixty 2ba6ad57` · `stages 35c22db9` · `ui 08ba50d0` · `site 8a7facc6`.
+
+✅ Standing checks on their healthy branches (221): tick 290's `--ruling` correction — **tenth**
+consecutive clean JOURNAL entry; tick 302's two-tier ground value, **fourth** firing (every CLAIM
+matched, every ORIENTATION reported without a stop); tick 301's symbol resolution in **both** directions,
+the negative being what proves no duplicate carrier was created; tick 245's state-commit ordering (an
+empty `.agents/state/` diff, so no orphaned filing for the next brief's step 0); tick 287's ordering item
+(the gate ran against a named sha after the final commit); and §2's **healthy** branch — exactly one
+`⛔` plus the `ℹ supervisor working notes` line, which is not a `⛔` (263).
+
+⚠️ **Gate liveness by the cheapest available witness**: the gate was this tick's **first act** (257) and
+its shell was still running while it queued on the box-wide lock, which distinguishes *queued* from tick
+265's fourth state (*died without its trap*, which writes nothing to `gate-runs.tsv` and is
+byte-identical there to a live queued gate). Every other measurement in the block was taken during the
+wait, and §7 was read last.
