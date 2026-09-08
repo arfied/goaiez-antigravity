@@ -1309,3 +1309,11 @@ Therefore, adding a row to the tracker could move only the capability count.
 - `2026-09-08T01:38:19` UNRESOLVED capability X-210 - N-027: the row carries a blank status and its text is the module's whole six-law list, byte-identical to N-032, with no fifth-clause assertion of its own; asserting any one law would author the other five, so missing is a per-id specced clause
 - `2026-09-08T01:38:19` UNRESOLVED capability X-210 - N-032: the row carries a blank status and its text is the module's whole six-law list, byte-identical to N-027, with no fifth-clause assertion of its own; asserting any one law would author the other five, so missing is a per-id specced clause
 - `2026-09-08T01:38:19` UNRESOLVED capability X-111 - G15-28: the clause names the doctor as its own asserter and BoundaryStage already holds WAGE_FIELDS gross, net_pay, withholding, tax_withheld, pay_run, so a module test would author a second copy of a CHECK; the subject is also absent - the migration creates only operator_alerts, ip_bans, tenant_tickets and manual_queue, with no roles or staff table to carry or refuse a pay field
+- `2026-09-08T04:45:40` stage integrity = 0
+- `2026-09-08T04:45:41` stage boundary = 3
+- `2026-09-08T04:45:41` stage contract = 87
+- `2026-09-08T04:45:41` stage citation = 0
+- `2026-09-08T04:45:41` stage schema = 15
+- `2026-09-08T04:45:41` stage capability = 358
+- `2026-09-08T04:45:41` stage anchor = 137
+- `2026-09-08T04:45:41` stage journey = 5
