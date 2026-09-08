@@ -106,7 +106,11 @@ class X199Test extends TestCase
     }
 
     /**
-     * [G1-05], [G1-31], [G1-40], [G1-51], [G1-60] no refusal declared
+     * ⛔ REFUSED: G1-05: Surveyed app/Modules/X-199 Actions, Domain, Models, Events, Listeners, Ui and found no seam for jobs or AI structuring lines.
+     * ⛔ REFUSED: G1-31: Surveyed app/Modules/X-199 Actions, Domain, Models, Events, Listeners, Ui and found no seam for HTML fallbacks or template branding; pdf_url is hardcoded.
+     * ⛔ REFUSED: G1-40: Surveyed app/Modules/X-199 Actions, Domain, Models, Events, Listeners, Ui and found no seam for link shorteners or URL generation.
+     * ⛔ REFUSED: G1-51: Surveyed app/Modules/X-199 Actions, Domain, Models, Events, Listeners, Ui and found no seam for Stripe or gateway-agnostic integrations.
+     * ⛔ REFUSED: G1-60: Surveyed app/Modules/X-199 Actions, Domain, Models, Events, Listeners, Ui and found no seam for channel choices on existing links.
      */
     public function test_g1_no_refusals(): void
     {
@@ -114,7 +118,7 @@ class X199Test extends TestCase
     }
 
     /**
-     * [G13-36] invoice opened the alert names an action
+     * ⛔ REFUSED: G13-36: Surveyed app/Modules/X-199 Actions, Domain, Models, Events, Listeners, Ui and found no seam for InvoiceOpened events or alerts.
      */
     public function test_g13_36_invoice_alert(): void
     {
@@ -137,7 +141,7 @@ class X199Test extends TestCase
     }
 
     /**
-     * [G21-04] card, invoices, seats — and R34's cancel in under 60 seconds
+     * ⛔ REFUSED: G21-04: Surveyed app/Modules/X-199 Actions, Domain, Models, Events, Listeners, Ui and found no seam for seats, cards, and cancels on a unified summary screen.
      */
     public function test_g21_04_billing_screen_summary(): void
     {

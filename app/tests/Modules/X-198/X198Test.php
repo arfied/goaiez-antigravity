@@ -112,6 +112,7 @@ class X198Test extends TestCase
 
     /**
      * [G17-04] the refId hash is named in X-122 — a duplicated ref charges once
+     * ⛔ REFUSED: surveyed Actions, Domain, Events, Models, Ui and found no seam for refId hash or X-122 logging; idempotency keys are used, but they do not write to X-122.
      */
     public function test_g17_04_refid_deduplication(): void
     {
@@ -120,6 +121,7 @@ class X198Test extends TestCase
 
     /**
      * [N-010] no refusal declared
+     * ⛔ REFUSED: these are register bookkeeping, not capabilities, so there is nothing to assert.
      */
     public function test_n_010_no_refusal(): void
     {

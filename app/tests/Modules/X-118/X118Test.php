@@ -14,9 +14,12 @@ use App\Modules\X118\Events\TenantCreated;
 use App\Modules\X118\Events\TenantProvisioned;
 use App\Modules\X118\Models\OnboardingRun;
 use App\Modules\X118\Models\OnboardingStep;
+use App\Modules\X118\Ui\ProspectSignup;
 use App\Modules\X188\Actions\NumberAssignAction;
 use App\Modules\X188\Domain\NumberPoolManager;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Event;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class X118Test extends TestCase
@@ -117,7 +120,8 @@ class X118Test extends TestCase
     }
 
     /**
-     * [G4-38] SAMPLE real on conversion; the $179.99 figure is dead (money-number law)
+     * [G4-38] SAMPLE → real on conversion;  the $179.99 figure is dead (money-number law)
+     * ⛔ REFUSED: surveyed X-118 Actions, Models, and Ui and found no 'SAMPLE' state, conversion logic, or $179.99 figure; these belong to a billing or sales module.
      */
     public function test_g4_38_sample_conversion(): void
     {
@@ -129,11 +133,19 @@ class X118Test extends TestCase
      */
     public function test_g4_44_frictionless_signup(): void
     {
-        $this->assertTrue(true);
+        Livewire::test(ProspectSignup::class)
+            ->set('businessName', 'Frictionless Plumbing')
+            ->set('contactPhone', '+15125550999')
+            ->call('startSignup')
+            ->assertSet('isSuccess', true);
+
+        $this->assertNotNull(Auth::user(), 'Signup must create and authenticate the user without asking for a password');
+        $this->assertEquals('Frictionless Plumbing Owner', Auth::user()->name);
     }
 
     /**
      * [G4-45] the hub is a generated index over every module's .connect action (X-122) — not a module
+     * ⛔ REFUSED: surveyed X-118 Actions, Events, Models, and Ui and found no .connect action or hub logic; the module only implements the onboarding flow itself.
      */
     public function test_g4_45_connect_hub(): void
     {
@@ -145,7 +157,18 @@ class X118Test extends TestCase
      */
     public function test_g5_05_inference_run(): void
     {
-        $this->assertTrue(true);
+        $user = User::factory()->create();
+        $res = $this->starter->handle($user, 'Inference Biz', '+15125550200');
+
+        $run = OnboardingRun::find($res['run_id']);
+        $this->assertNotNull($run, 'The onboarding flow must create an inference run');
+
+        $inferenceStep = OnboardingStep::where('run_id', $run->id)
+            ->where('step_name', 'industry_inference')
+            ->first();
+
+        $this->assertNotNull($inferenceStep, 'The run must include an industry_inference step');
+        $this->assertEquals('completed', $inferenceStep->status);
     }
 
     public function test_signup_closed_by_default(): void

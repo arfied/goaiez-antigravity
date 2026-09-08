@@ -67,6 +67,20 @@ final class OpsEngine
     /**
      * IP Ban with TTL (G17-07).
      */
+    public function checkThrottle(int $businessId, string $ipAddress): void
+    {
+        $ban = IpBan::where('business_id', $businessId)
+            ->where('ip_address', $ipAddress)
+            ->where(function ($query) {
+                $query->whereNull('expires_at')
+                    ->orWhere('expires_at', '>', Carbon::now());
+            })->first();
+
+        if ($ban) {
+            throw new \DomainException('THROTTLE REFUSED: IP is banned');
+        }
+    }
+
     public function banIp(int $businessId, string $ipAddress, string $reason, ?int $ttlHours = 24): IpBan
     {
         $expiresAt = $ttlHours !== null ? Carbon::now()->addHours($ttlHours) : null;

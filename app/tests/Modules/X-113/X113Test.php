@@ -4,15 +4,20 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X113;
 
+use App\Enums\UserRole;
+use App\Models\User;
 use App\Modules\X113\Actions\RoleAssignAction;
 use App\Modules\X113\Actions\SecureFieldRevealAction;
 use App\Modules\X113\Actions\StaffAuthenticateCheckAction;
 use App\Modules\X113\Actions\StaffDeactivateAction;
 use App\Modules\X113\Actions\StaffInviteAction;
+use App\Modules\X113\Domain\StaffEngine;
 use App\Modules\X113\Events\RoleAssigned;
 use App\Modules\X113\Events\StaffDeactivated;
 use App\Modules\X113\Models\Role;
 use App\Modules\X113\Models\RolePermission;
+use App\Modules\X113\Models\StaffUser;
+use App\Modules\X113\Ui\DocumentVault;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Schema;
@@ -122,5 +127,292 @@ class X113Test extends TestCase
         $this->assertEquals('revealed', $inScopeRes['status']);
         $this->assertEquals('GATE-CODE-4491', $inScopeRes['value']);
         $this->assertTrue($inScopeRes['audit_logged']);
+    }
+
+    /**
+     * [G7-29] [G15-02]
+     * The scorecard is POSITIVE ONLY (T677).
+     * No ranking of people.
+     */
+    public function test_g7_29_g15_02_positive_only_scorecard_and_no_ranking_surface(): void
+    {
+        $this->assertTrue(Schema::hasColumn('staff_users', 'coaching_notes'), 'staff_users must have coaching_notes for positive feedback');
+
+        foreach (['score', 'rating', 'ranking', 'grade', 'points', 'percentile', 'stack_rank', 'performance_score'] as $col) {
+            $this->assertFalse(Schema::hasColumn('staff_users', $col), "staff_users must not have $col");
+        }
+
+        $classes = [
+            StaffEngine::class,
+            StaffInviteAction::class,
+            StaffDeactivateAction::class,
+            RoleAssignAction::class,
+            StaffAuthenticateCheckAction::class,
+            SecureFieldRevealAction::class,
+        ];
+
+        foreach ($classes as $class) {
+            $reflection = new \ReflectionClass($class);
+            foreach ($reflection->getMethods() as $method) {
+                $name = strtolower($method->getName());
+                $this->assertFalse(
+                    str_starts_with($name, 'score') || str_starts_with($name, 'rate') || str_starts_with($name, 'rank'),
+                    "$class must not have scoring method $name"
+                );
+            }
+        }
+    }
+
+    /**
+     * [G9-36]
+     * Hiring is not the platform.
+     */
+    public function test_g9_36_hiring_is_not_the_platform(): void
+    {
+        foreach (['interview', 'candidate', 'applicant', 'scorecard'] as $col) {
+            $this->assertFalse(Schema::hasColumn('staff_users', $col), "staff_users must not have hiring column $col");
+        }
+
+        $models = [
+            Role::class,
+            RolePermission::class,
+            StaffUser::class,
+        ];
+        foreach ($models as $modelClass) {
+            $model = new $modelClass;
+            $table = $model->getTable();
+            $this->assertFalse(
+                str_contains($table, 'interview') || str_contains($table, 'candidate') || str_contains($table, 'applicant') || str_contains($table, 'scorecard'),
+                "Model $modelClass must not own a hiring table"
+            );
+        }
+
+        $reflection = new \ReflectionClass(StaffEngine::class);
+        foreach ($reflection->getMethods() as $method) {
+            $name = strtolower($method->getName());
+            $this->assertFalse(
+                str_contains($name, 'hire') || str_contains($name, 'interview') || str_contains($name, 'candidate'),
+                "StaffEngine must not have hiring method $name"
+            );
+        }
+    }
+
+    /**
+     * [G4-15]
+     * The permission row is the gate.
+     */
+    public function test_g4_15_permission_row_is_the_gate(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Staff Security Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $role = Role::create([
+            'business_id' => $biz->id,
+            'name' => 'Junior Technician',
+            'description' => 'Field tech without gate access',
+        ]);
+
+        $staff = $this->inviteAction->handle(
+            businessId: $biz->id,
+            email: 'tech_no_access@example.com',
+            name: 'No Access Bob',
+            roleId: $role->id
+        );
+
+        // In-scope reveal attempt -> REFUSED because no permission row
+        $refusedRes = $this->revealAction->revealField(
+            businessId: $biz->id,
+            staffUserId: $staff->id,
+            targetJobId: 101,
+            assignedJobId: 101,
+            requiredPermission: 'view_gate_access_code',
+            secretFieldValue: 'GATE-CODE-4491'
+        );
+        $this->assertEquals('refused', $refusedRes['status']);
+        $this->assertEquals('INSUFFICIENT_ROLE_PERMISSIONS', $refusedRes['refusal_code']);
+
+        // Grant the permission to that role
+        RolePermission::create([
+            'business_id' => $biz->id,
+            'role_id' => $role->id,
+            'permission' => 'view_gate_access_code',
+        ]);
+
+        // Same call again -> REVEALED
+        $revealedRes = $this->revealAction->revealField(
+            businessId: $biz->id,
+            staffUserId: $staff->id,
+            targetJobId: 101,
+            assignedJobId: 101,
+            requiredPermission: 'view_gate_access_code',
+            secretFieldValue: 'GATE-CODE-4491'
+        );
+        $this->assertEquals('revealed', $revealedRes['status']);
+        $this->assertEquals('GATE-CODE-4491', $revealedRes['value']);
+        $this->assertTrue($revealedRes['audit_logged']);
+    }
+
+    /**
+     * [G4-35]
+     * The role is what carries the grant.
+     */
+    public function test_g4_35_role_carries_the_grant(): void
+    {
+        Event::fake([RoleAssigned::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Staff Security Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $roleGranted = Role::create([
+            'business_id' => $biz->id,
+            'name' => 'Granted Role',
+            'description' => 'Role with gate access',
+        ]);
+        RolePermission::create([
+            'business_id' => $biz->id,
+            'role_id' => $roleGranted->id,
+            'permission' => 'view_gate_access_code',
+        ]);
+
+        $roleUngranted = Role::create([
+            'business_id' => $biz->id,
+            'name' => 'Ungranted Role',
+            'description' => 'Role without gate access',
+        ]);
+
+        $staff = $this->inviteAction->handle(
+            businessId: $biz->id,
+            email: 'tech_mover@example.com',
+            name: 'Mover Tech',
+            roleId: $roleGranted->id
+        );
+
+        // Put the staff user on the granted role, reveal in scope, assert revealed
+        $revealedRes = $this->revealAction->revealField(
+            businessId: $biz->id,
+            staffUserId: $staff->id,
+            targetJobId: 101,
+            assignedJobId: 101,
+            requiredPermission: 'view_gate_access_code',
+            secretFieldValue: 'GATE-CODE-4491'
+        );
+        $this->assertEquals('revealed', $revealedRes['status']);
+
+        // Move them with RoleAssignAction to the ungranted role
+        $this->roleAction->handle(
+            businessId: $biz->id,
+            staffUserId: $staff->id,
+            roleId: $roleUngranted->id
+        );
+
+        // Call revealField again with identical arguments -> REFUSED
+        $refusedRes = $this->revealAction->revealField(
+            businessId: $biz->id,
+            staffUserId: $staff->id,
+            targetJobId: 101,
+            assignedJobId: 101,
+            requiredPermission: 'view_gate_access_code',
+            secretFieldValue: 'GATE-CODE-4491'
+        );
+        $this->assertEquals('refused', $refusedRes['status']);
+        $this->assertEquals('INSUFFICIENT_ROLE_PERMISSIONS', $refusedRes['refusal_code']);
+    }
+
+    /**
+     * [G10-15]
+     * Employee documents under RBAC.
+     */
+    public function test_g10_15_employee_documents_under_rbac(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Doc Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $role = Role::create([
+            'business_id' => $biz->id,
+            'name' => 'Doc Reader',
+            'description' => 'Can read docs',
+        ]);
+
+        $staff = $this->inviteAction->handle(
+            businessId: $biz->id,
+            email: 'docreader@example.com',
+            name: 'Doc Reader',
+            roleId: $role->id
+        );
+
+        $vault = new DocumentVault;
+
+        // 1. Refusal when permission is missing
+        try {
+            $vault->downloadDocument($biz->id, $staff->id, 999);
+            $this->fail('Expected exception for missing permission');
+        } catch (\Exception $e) {
+            $this->assertEquals('INSUFFICIENT_ROLE_PERMISSIONS', $e->getMessage());
+        }
+
+        // 2. Grant permission
+        RolePermission::create([
+            'business_id' => $biz->id,
+            'role_id' => $role->id,
+            'permission' => 'view_employee_documents',
+        ]);
+
+        // 3. Allowed path works
+        $this->assertEquals('document_content_999', $vault->downloadDocument($biz->id, $staff->id, 999));
+    }
+
+    /**
+     * [G15-05]
+     * T677 — coaching framing; the quarterly nag is a reminder, not a ranking
+     */
+    public function test_g15_05_quarterly_nag_is_coaching_reminder_not_ranking(): void
+    {
+        $this->assertTrue(Schema::hasColumn('staff_users', 'coaching_notes'), 'staff_users must have coaching_notes for positive feedback');
+        $this->assertFalse(Schema::hasColumn('staff_users', 'quarterly_rank'), 'no quarterly ranking');
+
+        $reflection = new \ReflectionClass(StaffEngine::class);
+        foreach ($reflection->getMethods() as $method) {
+            $name = strtolower($method->getName());
+            $this->assertFalse(
+                str_contains($name, 'rank'),
+                "StaffEngine must not have ranking method $name"
+            );
+        }
+    }
+
+    /**
+     * [G20-02]
+     * nagging managers about performance reviews — not customer reviews
+     */
+    public function test_g20_02_performance_reviews_are_not_customer_reviews(): void
+    {
+        $this->assertFalse(Schema::hasColumn('staff_users', 'customer_review'));
+        $this->assertTrue(Schema::hasColumn('staff_users', 'coaching_notes'));
+
+        $reflection = new \ReflectionClass(StaffEngine::class);
+        foreach ($reflection->getMethods() as $method) {
+            $name = strtolower($method->getName());
+            $this->assertFalse(
+                str_contains($name, 'customer'),
+                "StaffEngine must not have customer method $name"
+            );
+        }
+    }
+
+    /**
+     * [G21-08]
+     * /pto — the time-off workflow, not a platform decision
+     */
+    public function test_g21_08_pto_is_workflow_not_platform_decision(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        // Positive assertion beside it showing the allowed path works
+        $this->get(route('x-113.staff'))->assertOk();
+
+        // Assert on the real surface that the thing is genuinely not there
+        $this->get('/app/x-113/pto')->assertNotFound();
     }
 }

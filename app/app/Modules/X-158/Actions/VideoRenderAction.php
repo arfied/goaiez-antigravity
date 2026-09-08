@@ -27,7 +27,7 @@ final class VideoRenderAction
         $cUrl = $captionTrackUrl ?? "https://cdn.goaiez.com/captions/{$businessId}/demo_{$demoNumber}.vtt";
 
         // TEST ANCHOR: Transcript must contain demo number as digits
-        $transcript = $customTranscript ?? "Welcome to Demo {$demoNumber} showing how your local HVAC business can capture 35% more missed calls.";
+        $transcript = $customTranscript ?? "Welcome to Demo {$demoNumber} showing how your local HVAC business can capture more missed calls.";
 
         $video = Video::create([
             'business_id' => $businessId,

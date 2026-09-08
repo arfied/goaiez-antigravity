@@ -17,11 +17,15 @@ final class PromotionCreateAction
         string $code,
         int $discountValue,
         string $discountType = 'percentage',
-        int $maxRedemptions = 100,
+        ?int $maxRedemptions = null,
         int $velocityThreshold = 10,
         ?DateTimeInterface $expiresAt = null,
         array $scopes = []
     ): Promotion {
+        if ($maxRedemptions === null || $maxRedemptions <= 0) {
+            throw new \InvalidArgumentException('A promotion with no cap cannot be saved.');
+        }
+
         $promo = Promotion::create([
             'business_id' => $businessId,
             'code' => strtoupper($code),
