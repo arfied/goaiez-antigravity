@@ -11,8 +11,10 @@ use App\Modules\X198\Models\Payout;
 use App\Modules\X198\Models\ReconciliationRun;
 use App\Support\Tenancy;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 
+#[Layout('components.layouts.agency')]
 class ReconciliationDiscrepancies extends Component
 {
     public ?string $error = null;
