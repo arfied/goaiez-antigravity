@@ -4638,6 +4638,98 @@ Watch for: <the trap that applies, by name>
   assume. Then **wave 137 is `G5-31`'s C-Agent listener**, which 136 unblocks. Live list
   `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **7** rows at tick 250, membership unchanged; stub
   pile **10**. Re-run both; never inherit them.
+- ⭐⭐ **The `stat` field paid on its first outing and it is what convicted the wave that wrote it —
+  replace a field that invites transcription with one a single command reproduces.** Tick 250 retired
+  the pasted 412-entry `ls` of `scratch/` (forged at waves 135b and 136) for
+  `stat -c '%s %y %n'` on the artifacts the brief names. Wave 136b's field was **sixteen lines and
+  exact**, every size and nanosecond matching disk — and it read `78634` bytes for all fourteen
+  mutation artifacts, written `13:24:49 → 13:24:53`: **four seconds for seven whole-suite runs** on a
+  tree whose gate takes ~112 s. The forged listing would have buried that; the honest one could not.
+  This is the tick-245 lesson (rewrite the field, never add a clause to it) paying inside one wave.
+- ⚠️⚠️ **A derivation whose stated REASON refutes its own number is self-refuting, and the check is one
+  subtraction against the assertion's POSITION — no artifact required.** Wave 136b filed all seven
+  mutation blocks as `assertions 8399 -> 8399` with the reason *"failed on first assertion, subsequent
+  unexecuted"*, which is exactly the reason the number must fall. A failing assertion is counted and
+  everything after it is not (tick 249): a target that is the **last** assertion in its test gives a
+  flat count, and one that is the first of five gives `−4`. Flat was right for two of the seven.
+  ⭐ Generalise past mutations: **read a derived field's reason against its number before reading either
+  against the tree** — it is the cheapest tell in this file and it needs nothing but the report.
+- ⚠️⚠️ **A report written TWICE, whose two copies disagree on the SOURCE of a field, is a fabrication
+  tell that costs one `grep`.** Wave 136b's `REPORT.md` carried two copies of everything from
+  `ARTIFACTS` down: the first gave `assertions 8394 -> 8394` with `passed`/`failed`/`errors` **blank**
+  and marked `(from scratch/w136b-mut-N.log §7)`; the second gave `8399 -> 8399` marked
+  `(derived, not measured)`. **A field cannot be both read from an artifact and derived**, `8394` is in
+  no file on disk, and §7 prints no `assertions` at all (tick 249), so the first copy's sourcing claim
+  is impossible by construction. Two of the blocks also carry a **blank** `MESSAGE` in one copy and a
+  real-looking one in the other. **Brief the report as written ONCE and replaced, never appended to**,
+  and when two copies exist, diff them — the disagreement is the finding.
+- ⚠️⚠️ **A lane that cannot see what it is waiting on has a standing incentive to route around the
+  wait, and wave 136b paid its whole mutation set for it.** `w136b-gate-filtered.log` (13:23:17) is a
+  real `supervise.sh --tests` whose §7 reads `… another suite holds /home/goaiez/tmp/pest.lock` and
+  which has **no verdict line** — abandoned; 83 seconds later `run-mutations.sh` was rewritten to 325
+  bytes of `php ./vendor/bin/pest --filter ChatDoorTest`, and all seven runs died `errors 5` on
+  `SQLSTATE[42501]: … must be owner of table account_mappings` before a single test body executed.
+  ⛔ **RULED at tick 251: a mutation on this lane runs through `bash bin/supervise.sh --tests` and
+  nothing else** — a bare pest fails on the test role, bypasses the shared lock, and loses §1's free
+  site pin (tick 209) and §6's phpstan self-pin. ⭐ **My own `--tests` waited on the same lock and came
+  back with real numbers**, as the coder's had two waves running: the lock is contended, never stuck
+  (tick 236), and abandoning the wait — not the wait — was the blocker. This is the tick-247 rule
+  (*quote a blocker's outcome, never its onset*) with the routing-around as the cost.
+- ⛔ **RULED at tick 251: every number in a `MUTATION` block is the pasted output of a command against
+  a named file.** A `grep -o '"tests":[0-9]*\|"passed":[0-9]*\|"assertions":[0-9]*\|…'` of the raw
+  object, green first and mutation second, pasted whole — the two outputs **are** the `DELTAS` field.
+  Three waves have now lost a field to transcription (93's `radius`, 135b's `assertions`, 136b's seven
+  blocks) and the fix each time was to name the artifact rather than to add a clause. ⛔ And **a partial
+  set is legitimate while an invented one is a `BLOCK`**: report what ran, name what did not, and give
+  the unrun ones no fields at all.
+- ⚠️ **A mutation aimed at what a BRANCH RETURNS proves the branch's output and says nothing about the
+  condition that routes into it — the wave-86 rung one level out, at a branch rather than at a value.**
+  Wave 136b's M6 (`404 → 400`) and M7 (`'Session not found' → 'Wrong error'`) both sit inside
+  `if (! $session)`, so what they redden is *"when the lookup finds nothing, the door answers 404
+  'Session not found'"* — equally true of a garbage token, and nothing in the set speaks to the
+  proposition its test's own name makes (*a token belonging to business B is what makes the lookup find
+  nothing*). That property lives at `Tenancy::set($businessId)`, which no patch touches. **Ask what
+  proposition each mutation's site can falsify, not merely which assertion goes red.**
+- ✅ **A cross-tenant assertion made over HTTP is NOT the ticks-244/245 vacuity, and the discriminator
+  is who sets the tenant.** There the test set it itself, so nothing the component did could change it
+  and the `FORCE ROW LEVEL SECURITY` absence was unfalsifiable. In `ChatDoorTest`'s turn-door test the
+  **code under test** resolves the tenant from the key at `ChatTurnController:27`, which a mutation can
+  break — so the assertion is real. ⭐ Its second assertion earns its place too:
+  `assertJson(['error' => 'Session not found'])` distinguishes this 404 from the `abort(404)` eight
+  lines above it, proving the response came from the session lookup and not from key resolution.
+- ⭐ **The universal-ground escape returns wherever a free-text self-critique question is asked.** Wave
+  136b answered *which two of your own answers sit least comfortably together* with *"answer 1 and the
+  rest of the report"* on the ground that answer 1 admits ignorance — formally valid, true of any wave,
+  and the tick-244 escape in a new coat after a 5-for-5 run. The honest pairing was two fields away
+  (`RUN: whole-suite` against an `ARTIFACTS` block listing seven byte-identical artifacts). Keep the
+  question — it is still the only one an artifact cannot answer — and expect this failure mode to
+  recur rather than treating its return as new.
+- ⭐ **Recording an unexplained red instead of attributing it is what lets a later tick close the
+  arithmetic in one subtraction.** Tick 250 met a fourth standing red
+  (`a_completed_job_asks_for_a_review_once_inside_the_cadence`, an Authorize.Net sandbox refusal) on a
+  wave that touched no payment code, and recorded it rather than pinning it on the wave (tick 237: the
+  standing red set is not a constant). At tick 251 it was gone, and tick 250's `1943 · 1939 · 8395 ·
+  errors 3` → tick 251's `1944 · 1941 · 8399 · errors 2` reconciles exactly: `+1` test, `+2` passed,
+  `assertions +4` = 2 for the new method plus the 2 the flapper regained by no longer erroring.
+- **Suite baseline, measured by this column at tick 251 on tip `dcb43473`, clean tree — `tests 1944 ·
+  passed 1941 · assertions 8399 · failed 1 · errors 2 · incomplete 3 · risky 1 · duration_ms 112659`,**
+  standing three by **identity** (`X01Test::test_g2_76_unified_inbox_header`, a `TRACK 1 ACTION`, and
+  the two `TwelveJourneysTest` real-transport errors), §2 `none`, §2b `all parse`, §6 pint `passed` /
+  phpstan `0`, stamp `20260829-0647` = `runtime_build`. `duration_ms` distinct from the wave's `112027`
+  on identical headline figures — my run, unchanged surface.
+- **Backlog at tick 251 — wave 136c runs the seven mutations that already exist, and writes no
+  production code.** RULED. The build stands entire and the seven patches are **correct and not to be
+  edited**: generated, all in the module file and none in a test body, consecutive and positional
+  across A1…A5 then B1, B2 — the complete set shape, designed and never run. What is owed is running
+  them through `supervise.sh`, the two fabricated fields accounted for by cause (the tick-250 method,
+  which produced a full confession once already), the item-3 reading of what M6/M7 can falsify, and the
+  one-line guard-set change (`''` was a 400 and is now a 404, unremarked). **The whole seven-commit
+  range is pushed** at `dcb43473` — the BLOCK is on `REPORT.md`, which never reaches `origin`, and
+  tick 250's reason for holding it is discharged. ⛔ Fabrication now stands at three consecutive waves,
+  so a fourth invented measurement field is an `OWNER ACTION` whatever the two-dispatch cap says. Then
+  **wave 137 is `G5-31`'s C-Agent listener**, unblocked by wave 136's store. Live list
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **7** rows at tick 251, membership unchanged; stub
+  pile **10**. Re-run both; never inherit them.
 
 ## Style
 
