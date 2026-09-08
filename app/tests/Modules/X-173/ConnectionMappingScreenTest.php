@@ -48,7 +48,9 @@ class ConnectionMappingScreenTest extends TestCase
             ->set("map.$connId.glId", 'gl_4000')
             ->set("map.$connId.glName", 'HVAC Service Income')
             ->call('mapAccount', $connId)
-            ->assertSee('now posts to gl_4000');
+            ->assertSee('is recorded against gl_4000')
+            ->assertSee('Nothing was posted')
+            ->assertDontSee('now posts to');
 
         $screen->set("map.$connId.category", 'Job Revenue')
             ->set("map.$connId.glId", 'gl_4100')
