@@ -108,10 +108,9 @@ class X188Test extends TestCase
      */
     public function test_g18_10_numbers_by_area_code(): void
     {
-        $this->markTestIncomplete('BUILD PROPOSAL: [G18-10] cannot be satisfied because the shared `phone_numbers` pool (owned by root Sms/doc 51) lacks an `area_code` column and claimForTenant() accepts no parameter to request one.');
-
         $biz = TestCase::provisionTenant(['name' => 'Area Code Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
+        app(\App\Services\Sms\TenantNumbers::class)->addToPool('+12105550000');
 
         $assigned = $this->assigner->handle($biz->id, '210');
         $this->assertEquals('210', $assigned['area_code']);

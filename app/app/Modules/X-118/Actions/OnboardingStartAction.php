@@ -71,8 +71,10 @@ final class OnboardingStartAction
             }
 
             Event::dispatch(new TenantCreated($biz->id, $businessName));
-            Event::dispatch(new TenantProvisioned($biz->id, $liveNumber));
-            Event::dispatch(new AgentLive($biz->id, $liveNumber));
+            if ($liveNumber !== null) {
+                Event::dispatch(new TenantProvisioned($biz->id, $liveNumber));
+                Event::dispatch(new AgentLive($biz->id, $liveNumber));
+            }
             Event::dispatch(new TtfmMeasured($biz->id, $run->ttfm_ms));
 
             return [
