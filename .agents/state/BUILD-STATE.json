@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-07T22:15:25",
+ "updated": "2026-09-07T22:37:00",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -5139,6 +5139,18 @@
    "chose": "BT \u2014 When a stage reads a generated file, find the generator's source before opening a wave, and if that source is reserved then the stage is reserved.",
    "at": "2026-09-07T22:15:25",
    "ruling": "R245"
+  },
+  {
+   "module": "C-Ai",
+   "chose": "BU \u2014 RULING BQ is CONFIRMED, not broken: all ten flagged anchor sites are a definition or a comment, and the AiModel counterexample belonged to a different proposition that merely shared its item number.",
+   "at": "2026-09-07T22:36:56",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Ai",
+   "chose": "BV \u2014 RULING BR is WITHDRAWN: two modules hardcode 'text-embedding-3-small', which is a true R237 violation that BoundaryStage's prefix list cannot match, so a census of open violations is never a census of open work.",
+   "at": "2026-09-07T22:37:00",
+   "ruling": "R245"
   }
  ],
  "notes": [
@@ -5473,6 +5485,10 @@
   {
    "at": "2026-09-07T12:38:10",
    "note": "CORRECTION to the 2026-09-07T11:56:46 note on X-200: QaScoreAction.php line 32 writes is_positive_only as a hard-coded true, so no input reaches that field and a test asserting on it would assert a constant."
+  },
+  {
+   "at": "2026-09-07T22:38:24",
+   "note": "C-Ai deferred whisper-1 at C-Ai/Actions/AiTranscribeAction.php:13 and C-Ai/Domain/AiEngine.php:121, and alloy at C-Ai/Actions/AiSpeakAction.php:13 and C-Ai/Domain/AiEngine.php:130. Reason: no registry case; whisper's per-minute price does not fit the enum's per-token unit; alloy is a voice."
   }
  ],
  "history": [
