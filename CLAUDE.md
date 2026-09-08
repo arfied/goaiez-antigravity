@@ -12630,3 +12630,197 @@ answered violations stay red in this checkout until the merge that `coder-bin/gi
 ⚠️ §1 reconciled by **arithmetic** (225): `origin/main` unmoved and this lane committed nothing since
 tick 301 (its notes stayed uncommitted per 199), so `behind 277, ahead 49` must be unchanged, and it
 is.
+
+## ⛔ A SWEEP CLASSIFIED BY CONSEQUENCE MISSES THE MEMBER WHOSE CONSEQUENCE CATEGORY DID NOT EXIST YET (tick 303)
+
+Tick 280 swept `?? '<literal>'` across all seven owned modules, classified **30** hits, and closed the
+class: *"all but six are read-side comparisons that persist nothing"*, then graded the six by what they
+**write** — `?? 'Appointment'` dead over a NOT NULL column, `given(...) ?? 'Visitor'` correct because the
+normaliser fires first, four placeholder defaults over browser payloads. The partition was
+**persisted vs read-side**, and every individual classification in it was right.
+
+Re-swept in this seat at tick 303 — **26** hits — and one member sits in neither bucket:
+
+```
+X-155/Actions/FormValidateAction.php:23   $honeypot  = $form->honeypot_field ?? 'website_url';
+                                   :24   $submitted = $payload[$honeypot] ?? null;
+2026_08_30_000038_create_x155_form_tables.php:22
+                                         $table->string('honeypot_field')->default('website_url');  // G3-64, G13-05
+```
+
+It persists nothing and it is not a read-side comparison: it is a **KEY INTO A PAYLOAD**, and that
+category was invented at **tick 295**, fifteen ticks after the sweep that should have caught it.
+⛔ **A sweep bucketed by what a value DOES DOWNSTREAM cannot hold a member whose downstream role has no
+bucket**, and no amount of re-reading the sweep's output reveals it, because every row it printed was
+correctly classified. **When a new semantic category is invented, re-run the sweeps that predate it** —
+this lane invented the key category at 295 and re-swept nothing.
+
+⛔ **The defect is live and it disables a credited, asserted refusal.** The column is **NOT NULL with a
+default**, so `??` can never fire — tick 280's own **dead default** shape and tick 278's law *NOT NULL is
+not non-empty*, seventh site. The live gap is a **blank**: `honeypot_field = ''` or `'   '` makes
+`$honeypot = ''`, so `:24` reads `$payload[''] ?? null` → `null`, `:25`'s presence predicate never fires,
+and **every bot passes the honeypot for that form** — G3-64 / G13-05's ⑤, *"a SPAM rejection is stored and
+flagged, never discarded"*, silently switched off with no error, no count movement, nothing in any diff.
+
+⭐ **Third member of tick 281's family, from a new direction.** 281: a dead defence hides the severity of
+the gap it fails to cover. 297: a dead `try/catch` whose live gap is its own feature's collection guard.
+Here the dead `??` reads as *"if there is no honeypot field name, use the default"* — a promise that the
+absent case is handled — while the case that actually arrives is handled by nothing.
+
+**RULED (tick 303): SITE-176 widens the `??` to cover blank, falling back to the SAME literal it already
+falls back to**, because the remedy is already written in the code and in the column's own DB default, so
+the fix **decides nothing new** — tick 277/295's discriminator, *enforcing an existing invariant* rather
+than *inventing a policy*.
+
+### ⛔ The blank-value remedy table now has FOUR categories, not three
+
+Tick 288's law — *the uniform application of a correct fix is itself a hazard* — with the category this
+tick added:
+
+| the value is | remedy | why |
+| :-- | :-- | :-- |
+| a **display string** (`pages.title`, `content_blocks.content`) | `trim(…) !== ''` | whitespace is not a usable title |
+| a **presence signal** (the honeypot's *value*) | `!== ''`, **no trim** | whitespace IS something having been written |
+| a **key with NO substitute** (`visitor_session_token`) | **refuse** | there is no usable substitute for an identifier |
+| a **key WITH a declared substitute** (the honeypot's *field name*) | **fall back to the declared default** | the substitute is already chosen — in the code and in the column |
+
+⛔ **Never `empty()` for the fourth.** `empty("0")` is true, so a form whose honeypot field is legitimately
+named `0` would silently fall back to `website_url` — a *different* silent disabling, and precisely the
+trap SITE-157 spent a wave removing. The second test makes that refusal load-bearing rather than leaving
+it in this untracked ledger (213).
+
+⛔ Four alternatives refused, each of which would pass every gate: **refusing the submission** (tick 295's
+key answer, wrong on its own terms because that rule refuses *for want of a substitute* and one exists; it
+would also refuse a legitimate visitor for a tenant misconfiguration, inverting the module's recorded
+posture of **capture and normalise, never refuse** — tick 300 — and mint a public status string nothing
+asserts, 240); **a non-empty DB constraint** (measured: `FormDefinition::create|updateOrCreate|
+firstOrCreate|insert` returns **no hits** in `app/app`, so there is **no production writer** and every
+fixture bypasses any writer — tick 246's `pages.title` ruling applies unchanged, the agreement lives in
+the reader); **guarding in `FormCaptureAction`** (a reader compensating for a reader, leaving
+`FormValidateAction`'s other callers exposed — 277, 278); **relaxing `:25`'s presence predicate** (that
+deletes SITE-161's fix, which tick 288 measured as the correct *presence* remedy).
+
+⚠️ **Bounded** (230): the wave makes the **reader** honour the fallback the code already declares, whoever
+writes the column. It does **not** claim production holds a blank `honeypot_field` today. Same reachability
+posture as SITE-152, SITE-160 and SITE-166, and this lane's answer has been consistent — **the invariant
+belongs where the value is READ, because the reader reads it whoever wrote it** (277).
+
+⚠️ Predicted **with its refuting instruction** (244): no existing test reddens — measured, all **eight**
+`honeypot_field` fixtures in `X155Test.php` (`:66 :319 :411 :497 :530 :1167 :1225 :1535`) set
+`'website_url'` explicitly. ⛔ **If one reddens, an assertion depends on a blank honeypot field disabling
+the honeypot — that IS the finding: repair the FIXTURE, never the predicate** (234, 242).
+
+## ✅ TICK 300's LAW GENERALISED INTO A SWEEP, AND THE DNI HALF WAS ALREADY DONE (tick 303)
+
+Tick 300 ruled *a fix proven at the ACTION is not a fix proven at the ENDPOINT — when a ruling states its
+defect at a SEAM, the falsifier belongs at that seam*, and SITE-175 closed it for the form. Swept across
+this lane's other production refusals, measured rather than assumed:
+
+```
+CallAttributeAction:26  VISITOR_SESSION_TOKEN_REQUIRED   → DniRouteTest.php:118   409 + assertJson
+CallAttributeAction:49  BUSINESS_NOT_CONFIGURED_FOR_DNI  → DniRouteTest.php:111   409 + assertJson
+```
+
+Both SITE-166's and SITE-168's refusals already carry a **route-level** assertion of the status *and* the
+message, not merely an action-level `expectExceptionMessage`. Per tick 224, which branch fired: **already
+done here** — the room is empty, the door is not shut. ⛔ And a route test for SITE-166's *second* input to
+the same message would be a second carrier for a mapping already discharged (240), not a gap.
+
+**A clean sweep is a result and must be written down** (280), or it is re-run as backlog three ticks later.
+
+⚠️ The `?? '<literal>'` re-sweep's **disconfirming** members, which are what make its closure re-checkable
+rather than re-arguable: `EdgeDeployAction:169-183, 366` are the caller-supplied guards SITE-154/155/170/171
+fixed; `SchemaRenderAction:200-327` are `?? ''` inside `!==` comparisons; `:43`'s
+`$map[$vertical] ?? 'LocalBusiness'` is safe because `:32` trims first; `LlmsTxtRenderAction:22,25` are
+SITE-164/171's; `FormCaptureAction:61` is tick 280's own model (`given()` normalises blank to null **before**
+the `??` fires, so the literal is reached exactly when it should be); `:141` is SITE-171's.
+
+⚠️ **`SiteEngine:139` re-read at its own line** (241, 302) and **not briefed**: `$funnel->steps[0]['url'] ??
+'/'` is the same dead-`??`-over-a-blank shape and sits on the funnel resolve path, whose caller grep across
+X-157 and X-103's `Actions/` returns **nothing** — tick 280 measured it caller-less and the line is unchanged.
+Per 224: **the door is open and the room is empty.** Bundling it with a live defect would make any red
+unattributable between the two (215).
+
+## ⚠️ Two candidates that DIED AT SOURCE before reaching the brief (tick 303)
+
+Recorded because this ledger otherwise keeps only the hypotheses that survive, and because both were reversed
+by **opening a file while writing the brief** rather than by re-reading any queue.
+
+1. ⛔ *"The published form posts to the business's FIRST form definition regardless of which form the block
+   names."* `EdgeDeployAction:198` is `FormDefinition::where('business_id', …)->orderBy('id')->value('id')`,
+   which is true — and the `form_capture` block is `['type' => 'form_capture']` with **no form reference**,
+   because *the type string is the whole contract on every path* (tick 268). There is no per-block form id to
+   honour, and `form_definitions` carries **no `is_active` column** (measured), so "first by id" is the only
+   available policy. Inventing a second one is tick 295's error.
+2. ⚠️ *"The published `<form>` carries no input elements, so a visitor can submit nothing."* Measured and
+   **true** — `EdgeDeployAction:202` emits `<form class="form-capture-x155"{$action}></form>`. Not briefed:
+   rendering the form's `steps`/`schema` into the page is a **feature nobody has decided**, and the governing
+   question is not tick 237's *is the construction site ours?* (it is) but tick 282's — **compare to the SPEC
+   it derives from** — and no clause measured this tick asks the published form to render fields. A wave here
+   would invent a policy under cover of a defect.
+
+## ✅ SITE-175 closed tick 300's gap at the seam, and three instruments agreed on ONE number (tick 303)
+
+The new route-level test extracts the form's `action` **from the served document** (`preg_match` on the GET's
+body), never constructs it, which is what makes it the *advertised* endpoint rather than a route the test
+happens to know. It POSTs an array `phone`, asserts **201**, asserts the raw array survives in
+`FormSubmission.payload`, asserts the contact key is **null**, and asserts the scalar sibling still lands.
+
+Tick 291's closed form reconciled exactly, reconstructed here rather than read: **5** assertions, failing at
+**#2**, green − red = 5 − 2 = **3** ✓ with red = 2 ✓; tick 248's first-failure rule and the quoted message
+agree independently. ⭐ Tick 298's free tree-witness fired — `"line":1779` is the method's declaration line in
+the committed tree, so the red state measured the tree the commit holds. ⚠️ And the cold witness corroborated
+by **delta** rather than equality: `grep -c 'assert'` 232 → **237**, and the diff adds exactly **5** assert
+lines — the same 5 the green run reports, with `foreach` **0**.
+
+⚠️ **Unproven, not proven** (270): the run halts at assertion #2, so the payload-retention and null-contact
+assertions were never independently falsified.
+
+✅ **Tick 302's two-tier ground value, first firing and immediate.** Item 0 reported `private function given`
+at **160** against the **159** tick 302 ruled an ORIENTATION; the coder reported the real value and
+**proceeded**, and the wave ran — one tick after a wave was forfeited to that same number. ✅ Tick 301's
+symbol resolution fired in **both** directions, the negative (the method about to be added must not already
+exist) being what proves no duplicate carrier was created.
+
+## §7, doctor and the census at tick 303
+
+⚠️ **The §7 baseline is now `tests 2004 · passed 2001 · FAILED 1 · errors 2`**, measured independently in
+this seat on `e0731e78`, reconciling `2001+1+2 = 2004` ✓ (226), ⭐ `a_published_site_carries_all_seven`
+**ABSENT — J11 green**. Against tick 302's `2003 · 2000 · FAILED 1 · errors 2`: +1 test, +1 passed, sets
+byte-identical, and `grep -c 'public function test'` reads **46** here against the wave's pre-measured
+**45** — exactly one method added, none deleted, so tick 226's arithmetic has no residue.
+
+⛔ **The coder's §7 on the SAME sha read `errors 3`** — the single discriminating member is J8's
+`a_deliberately_corrupted_backup_fails_the_restore`, now **5·4·2·3·2·3·2·2·2·3·2·2·3·2·3·2·3·2** across
+eighteen gates on unchanged trees. **Fourth disagreement on one sha in six ticks** (298, 299, 301, 303).
+Read the error **SET minus the two-member intermittent population** (278 as corrected by 298 — J8 and
+`cancel_is_one_tap_with_nothing_in_between`) and the two gates agree exactly; read the integer and two
+correct runs of one commit contradict each other. Stable set: `test_g2_76_unified_inbox_header` (X-01,
+**stages'**) plus sixty's two real-transport journey stubs. ⛔ The cause is not measured and no block names
+one.
+
+**Doctor, live in this seat**: stamp `20260829-0647` = `runtime_build` · `integrity clean · boundary 6 ·
+contract 87 · citation 93 · schema 15 · capability 455 · anchor 137 · journey 4` · **797**, the SUM
+reconciling (285), `ok` only on `integrity … clean` (292), **no stage moved**. The report's pair passed all
+three checks with five of seven timings differing (249); `boundary 130/130` repeating is not a defect (250).
+**Ninth consecutive clean doctor pair.** X-157 id census re-run here with `--include='*.php'` (287):
+`G13-31 1 · G6-06 1 · G6-33 1`, byte-identical.
+
+**§1 reconciled by ARITHMETIC** (225): tick 302 read `ahead 49`; this lane has since committed tick 302's
+notes and `e0731e78`, so 49 + 2 = **51** ✓, and `origin/main` unmoved at `30316573` ⇒ `behind 277` unchanged.
+
+**Census — a HIT measured from the REFLOG** (220), re-run in full anyway because this ledger's own arithmetic
+has been the defect six times. `pwd` first (209) and tick 285's drift signature **absent** — the three
+pathspec halves returned **2 · 10 · 3** while the pathspec-free complement returned **12**, and the *split*
+is the signature, never either number. **half 1 — 2** (`227edeab` reviews, `978041fc` money, both merges *of
+main*, `--source`-attributed per 189; no violating partition) · **half 2 — 10** · **half 3 — 3** ·
+**complement — 12**, same twelve members. Tips (the next miss's lower bound — 192): `main 30316573` ·
+`money 544d5576` · `pricebook 042e78fd` · `reviews e02d8cf2` · `sixty 2ba6ad57` · `stages bbb9f87b` ·
+`ui 08ba50d0` · `site e0731e78`. **Fourteenth null closing tip re-read**, left literally blank until the
+command returned (257).
+
+⚠️ **The merge of `main` stays deferred, unchanged** — `main`'s range still ADDS two `.claude/hooks` files
+and `coder-bin/git:106` refuses any staged `.claude/` with no exemption (229, 292, re-measured at 300). It
+now carries **fourteen of this lane's own violations, fixed** (Track 1 rulings 4 and 5, `30316573`), and a
+violation's colour is a property of a TREE (253) — this checkout's doctor still reads `contract 87 · anchor
+137`, correctly. TRACK 1 ACTION, already filed with its mechanism and its template.
