@@ -65,9 +65,11 @@ final class ModuleServiceProvider extends ServiceProvider
             abort_if($zone === null || ! $zone->has_valid_ssl, 404);
 
             try {
+                // A token that is not a string is not a token, so it is normalised to blank and refused by the message the action already declares.
+                $rawToken = $request->input('visitor_session_token', '');
                 $token = app(CallAttributeAction::class)->allocateFromPool(
                     businessId: $businessId,
-                    visitorSessionToken: $request->input('visitor_session_token', '')
+                    visitorSessionToken: is_string($rawToken) ? $rawToken : ''
                 );
             } catch (\DomainException $e) {
                 return response()->json(['error' => $e->getMessage()], 409);
@@ -85,6 +87,8 @@ final class ModuleServiceProvider extends ServiceProvider
 
             $deployment = Deployment::where('business_id', $businessId)->where('deploy_hash', $deployHash)->firstOrFail();
             abort_if($deployment->status !== 'deployed', 404);
+            $zone = $deployment->edgeZone;
+            abort_if($zone === null || ! $zone->has_valid_ssl, 404);
 
             $result = app(FormCaptureAction::class)->handle(
                 businessId: $businessId,

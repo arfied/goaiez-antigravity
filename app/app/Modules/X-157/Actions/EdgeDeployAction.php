@@ -4,16 +4,23 @@ declare(strict_types=1);
 
 namespace App\Modules\X157\Actions;
 
+use App\Models\Business;
+use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
+use App\Modules\X108\Models\Appointment;
 use App\Modules\X155\Models\FormDefinition;
 use App\Modules\X157\Events\DeployCompleted;
 use App\Modules\X157\Events\DeployRolledBack;
 use App\Modules\X157\Models\Deployment;
 use App\Modules\X157\Models\EdgeZone;
+use App\Modules\X163\Models\PriceBookItem;
+use App\Modules\X176\Actions\InternalLinkRenderAction;
+use App\Modules\X176\Actions\LlmsTxtRenderAction;
 use App\Modules\X176\Actions\SchemaRenderAction;
 use App\Modules\X176\Actions\SeoRenderAction;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -99,6 +106,45 @@ final class EdgeDeployAction
 
             // Compile HTML artifact to local storage
             $videos = [];
+            $events = [];
+            $faqs = [];
+
+            $business = Business::find($businessId);
+            $address = is_array($business?->address) ? $business->address : null;
+
+            $appointments = Appointment::where('business_id', $businessId)
+                ->where('start_time', '>=', now())
+                ->orderBy('start_time', 'asc')
+                ->limit(20)
+                ->get();
+            foreach ($appointments as $apt) {
+                if (trim((string) $apt->service_name) === '' || $apt->start_time === null || $apt->end_time === null) {
+                    continue;
+                }
+                $events[] = [
+                    'name' => $apt->service_name,
+                    'startDate' => $apt->start_time->toIso8601String(),
+                    'endDate' => $apt->end_time->toIso8601String(),
+                ];
+            }
+
+            $productOffers = [];
+            $priceBookItems = PriceBookItem::where('business_id', $businessId)
+                ->where('is_confirmed', true)
+                ->where('is_sample', false)
+                ->orderBy('id', 'asc')
+                ->limit(20)
+                ->get();
+            foreach ($priceBookItems as $item) {
+                if (trim((string) $item->service_name) === '') {
+                    continue;
+                }
+                $productOffers[] = [
+                    'name' => $item->service_name,
+                    'price' => $item->price_cents / 100,
+                ];
+            }
+
             $html = '<html><head>';
             $html .= "<meta name=\"ssl\" content=\"valid\">\n";
             $html .= "</head><body>\n";
@@ -121,11 +167,26 @@ final class EdgeDeployAction
 
                     foreach ($version->content_blocks as $block) {
                         if (($block['type'] ?? '') === 'video_embed') {
+                            if (! is_scalar($block['name'] ?? '') || ! is_scalar($block['contentUrl'] ?? '') || ! is_scalar($block['uploadDate'] ?? '')
+                                || trim((string) ($block['name'] ?? '')) === '' || trim((string) ($block['contentUrl'] ?? '')) === '' || trim((string) ($block['uploadDate'] ?? '')) === '') {
+                                continue;
+                            }
                             // VideoObject injected on publish (TEST ANCHOR, G16-25, ruling 41)
                             $videos[] = [
-                                'name' => $block['name'] ?? null,
-                                'contentUrl' => $block['contentUrl'] ?? null,
-                                'uploadDate' => $block['uploadDate'] ?? null,
+                                'name' => $block['name'],
+                                'contentUrl' => $block['contentUrl'],
+                                'uploadDate' => $block['uploadDate'],
+                            ];
+                        }
+                        if (($block['type'] ?? '') === 'faq') {
+                            if (! is_scalar($block['question'] ?? '') || ! is_scalar($block['answer'] ?? '')
+                                || trim((string) ($block['question'] ?? '')) === '' || trim((string) ($block['answer'] ?? '')) === '') {
+                                continue;
+                            }
+                            // FAQPage schema injected on publish (TEST ANCHOR, G8-16, ruling 41)
+                            $faqs[] = [
+                                'question' => $block['question'],
+                                'answer' => $block['answer'],
                             ];
                         }
                     }
@@ -146,7 +207,53 @@ final class EdgeDeployAction
                 }
             }
 
+            $breadcrumbs = [];
             if ($pageId !== null && $businessName !== null && $commitId !== null) {
+                $page = Page::find($pageId);
+                if ($page && ! empty($page->slug) && trim((string) $page->title) !== '') {
+                    $parts = explode('/', trim($page->slug, '/'));
+                    if (count($parts) > 1) {
+                        $paths = [];
+                        $current = '';
+                        foreach ($parts as $part) {
+                            $current = $current ? $current.'/'.$part : $part;
+                            $paths[] = $current;
+                        }
+
+                        $pages = Page::where('business_id', $businessId)
+                            ->where('is_published', true)
+                            ->whereIn(DB::raw("trim(both '/' from slug)"), $paths)
+                            ->get();
+
+                        $hierarchyPages = [];
+                        $usable = true;
+                        foreach ($pages as $p) {
+                            $norm = trim((string) $p->slug, '/');
+                            if (isset($hierarchyPages[$norm])) {
+                                $usable = false;
+                                break;
+                            }
+                            $hierarchyPages[$norm] = $p;
+                        }
+
+                        if ($usable) {
+                            foreach ($paths as $path) {
+                                if (! isset($hierarchyPages[$path]) || trim((string) $hierarchyPages[$path]->title) === '') {
+                                    $usable = false;
+                                    break;
+                                }
+                                $breadcrumbs[] = [
+                                    'name' => $hierarchyPages[$path]->title,
+                                    'slug' => $path,
+                                ];
+                            }
+                        }
+                        if (! $usable) {
+                            $breadcrumbs = [];
+                        }
+                    }
+                }
+
                 $seoResult = app(SeoRenderAction::class)->handle(
                     $businessId,
                     $pageId,
@@ -173,12 +280,100 @@ final class EdgeDeployAction
                     $businessName,
                     $commitId,
                     $zone->domain_name,
-                    videos: $videos ?: null
+                    productOffers: $productOffers ?: null,
+                    videos: $videos ?: null,
+                    events: $events ?: null,
+                    address: $address ?: null,
+                    breadcrumbs: $breadcrumbs ?: null,
+                    faqs: $faqs ?: null
                 );
 
                 if (isset($schemaResult['json_ld'])) {
                     $html .= "<script type=\"application/ld+json\">\n".json_encode($schemaResult['json_ld'], JSON_THROW_ON_ERROR | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT)."\n</script>\n";
                 }
+
+                $page = Page::find($pageId);
+                if ($page) {
+                    $contentBlocks = (isset($version) && $version && is_array($version->content_blocks)) ? $version->content_blocks : [];
+                    $llmsTxtContent = app(LlmsTxtRenderAction::class)->handle(
+                        $businessName,
+                        $page->title,
+                        $page->slug,
+                        $contentBlocks
+                    );
+                    if (Storage::disk('local')->put("sites/{$deployHash}.llms.txt", $llmsTxtContent) === false) {
+                        Log::warning("the llms.txt artifact could not be written: sites/{$deployHash}.llms.txt");
+                    }
+                }
+            }
+
+            if (! empty($breadcrumbs)) {
+                $html .= "<nav id=\"breadcrumb-x176\">\n";
+                foreach ($breadcrumbs as $crumb) {
+                    $html .= '  <a href="/'.e($crumb['slug']).'">'.e($crumb['name'])."</a>\n";
+                }
+                $html .= "</nav>\n";
+            }
+
+            if (! empty($productOffers)) {
+                $html .= "<div id=\"offers-x176\">\n";
+                foreach ($productOffers as $offer) {
+                    $html .= '  <div class="offer-item" data-name="'.e($offer['name']).'">'.e($offer['name']).' - $'.e((string) $offer['price'])."</div>\n";
+                }
+                $html .= "</div>\n";
+            }
+
+            if (! empty($events)) {
+                $html .= "<div id=\"events-x176\">\n";
+                foreach ($events as $event) {
+                    $html .= '  <div class="event-item" data-name="'.e($event['name']).'">'.e($event['name']).' - '.e($event['startDate'])."</div>\n";
+                }
+                $html .= "</div>\n";
+            }
+
+            if (! empty($address)) {
+                $html .= "<div id=\"address-x176\">\n";
+                $html .= '  <div class="address-item"';
+                foreach (['line1', 'city', 'region', 'postal_code', 'country'] as $key) {
+                    if (isset($address[$key]) && is_string($address[$key]) && $address[$key] !== '') {
+                        $html .= ' data-'.str_replace('_', '-', $key).'="'.e($address[$key]).'"';
+                    }
+                }
+                $html .= '>';
+                $parts = [];
+                foreach (['line1', 'city', 'region', 'postal_code', 'country'] as $key) {
+                    if (isset($address[$key]) && is_string($address[$key]) && $address[$key] !== '') {
+                        $parts[] = e($address[$key]);
+                    }
+                }
+                $html .= implode(', ', $parts);
+                $html .= "</div>\n";
+                $html .= "</div>\n";
+            }
+
+            if (! empty($videos)) {
+                $html .= "<div id=\"videos-x176\">\n";
+                foreach ($videos as $video) {
+                    $html .= '  <div class="video-item" data-name="'.e($video['name']).'" data-url="'.e($video['contentUrl']).'">'.e($video['name'])."</div>\n";
+                }
+                $html .= "</div>\n";
+            }
+
+            if (! empty($faqs)) {
+                try {
+                    $html .= "<div id=\"faq-x176\">\n";
+                    foreach ($faqs as $faq) {
+                        $html .= '  <div class="faq-item" data-question="'.e((string) ($faq['question'] ?? '')).'">'.e((string) ($faq['question'] ?? '')).' - '.e((string) ($faq['answer'] ?? ''))."</div>\n";
+                    }
+                    $html .= "</div>\n";
+                } catch (\Throwable $e) {
+                    Log::warning('the faq block could not be rendered: '.$e->getMessage());
+                }
+            }
+
+            $internalLinksHtml = app(InternalLinkRenderAction::class)->handle($businessId);
+            if ($internalLinksHtml !== '') {
+                $html .= $internalLinksHtml;
             }
 
             $html .= '</body></html>';

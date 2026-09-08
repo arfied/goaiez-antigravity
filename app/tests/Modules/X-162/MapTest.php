@@ -132,9 +132,12 @@ class MapTest extends TestCase
             'updated_at' => now(),
         ]);
 
-        app(RouteOptimiseAction::class)->handle($biz->id, 7, [$firstId], 257.7);
+        app(RouteOptimiseAction::class)->handle($biz->id, 7, [$firstId], 257.75);
 
         $this->actingAs($owner);
-        $this->get(route('x-162.map'))->assertOk()->assertSee('257.7');
+        $this->get(route('x-162.map'))
+            ->assertOk()
+            ->assertSee('257.8 km')
+            ->assertDontSee('257.75');
     }
 }

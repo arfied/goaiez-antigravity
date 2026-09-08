@@ -80,6 +80,30 @@ class X173Test extends TestCase
 
     /**
      * [G1-03], [G1-77], [G15-13], [G15-22], [G15-25], [G15-26]
+     * [N-063] ⛔ REFUSED: `php artisan why N-063` reports it is never DEFINED, and its ⑤ in
+     *   capabilities.php is boilerplate identical across every N row and across X-141, X-147
+     *   and X-173 — it names X-168, X-163 and X-130, which are other modules. Nothing to assert.
+     * [N-064] ⛔ REFUSED: `php artisan why N-064` reports it is never DEFINED, and its ⑤ in
+     *   capabilities.php is boilerplate identical across every N row and across X-141, X-147
+     *   and X-173 — it names X-168, X-163 and X-130, which are other modules. Nothing to assert.
+     * [N-067] ⛔ REFUSED: `php artisan why N-067` reports it is never DEFINED, and its ⑤ in
+     *   capabilities.php is boilerplate identical across every N row and across X-141, X-147
+     *   and X-173 — it names X-168, X-163 and X-130, which are other modules. Nothing to assert.
+     * [N-073] ⛔ REFUSED: `php artisan why N-073` reports it is never DEFINED, and its ⑤ in
+     *   capabilities.php is boilerplate identical across every N row and across X-141, X-147
+     *   and X-173 — it names X-168, X-163 and X-130, which are other modules. Nothing to assert.
+     * [N-076] ⛔ REFUSED: `php artisan why N-076` reports it is never DEFINED, and its ⑤ in
+     *   capabilities.php is boilerplate identical across every N row and across X-141, X-147
+     *   and X-173 — it names X-168, X-163 and X-130, which are other modules. Nothing to assert.
+     * [N-079] ⛔ REFUSED: `php artisan why N-079` reports it is never DEFINED, and its ⑤ in
+     *   capabilities.php is boilerplate identical across every N row and across X-141, X-147
+     *   and X-173 — it names X-168, X-163 and X-130, which are other modules. Nothing to assert.
+     * [N-082] ⛔ REFUSED: `php artisan why N-082` reports it is never DEFINED, and its ⑤ in
+     *   capabilities.php is boilerplate identical across every N row and across X-141, X-147
+     *   and X-173 — it names X-168, X-163 and X-130, which are other modules. Nothing to assert.
+     * [N-085] ⛔ REFUSED: `php artisan why N-085` reports it is never DEFINED, and its ⑤ in
+     *   capabilities.php is boilerplate identical across every N row and across X-141, X-147
+     *   and X-173 — it names X-168, X-163 and X-130, which are other modules. Nothing to assert.
      */
     public function test_accounting_capabilities(): void
     {

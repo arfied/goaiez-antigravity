@@ -62,7 +62,7 @@
                                         @foreach($recentEvents as $event)
                                             <li class="flex justify-between items-center text-xs">
                                                 <span class="font-mono text-ink">{{ $event->event_name }}</span>
-                                                <span class="text-ink-2">{{ $event->created_at->diffForHumans() }}</span>
+                                                <span class="text-ink-2">{{ $event->created_at ? $event->created_at->diffForHumans() : 'unknown' }}</span>
                                             </li>
                                         @endforeach
                                     </ul>

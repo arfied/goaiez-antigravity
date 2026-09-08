@@ -135,23 +135,31 @@ final class VoiceSessionEngine
 
     public function coach(int $businessId, int $sessionId, string $transcript): CallAutopsy
     {
-        $hasObjection = str_contains(strtolower($transcript), 'too expensive') || str_contains(strtolower($transcript), 'competitor');
-        $sentiment = $hasObjection ? 'negative' : 'positive';
+        return DB::transaction(function () use ($businessId, $sessionId, $transcript) {
+            $hasObjection = str_contains(strtolower($transcript), 'too expensive') || str_contains(strtolower($transcript), 'competitor');
+            $sentiment = $hasObjection ? 'negative' : 'positive';
 
-        if ($sentiment === 'negative') {
-            Event::dispatch(new SentimentNegative(
-                businessId: $businessId,
-                sessionId: $sessionId,
-                reason: 'Price objection detected'
-            ));
-        }
+            $turnIndex = CallTurn::where('business_id', $businessId)
+                ->where('session_id', $sessionId)
+                ->max('turn_index') + 1;
 
-        return CallAutopsy::create([
-            'business_id' => $businessId,
-            'call_session_id' => $sessionId,
-            'metrics' => ['objection_count' => $hasObjection ? 1 : 0],
-            'sentiment' => $sentiment,
-            'coaching_notes' => $hasObjection ? 'Reinforce value proposition before price discussion' : 'Good rapport',
-        ]);
+            $this->recordTurn($businessId, $sessionId, (int) $turnIndex, 'caller', $transcript);
+
+            if ($sentiment === 'negative') {
+                Event::dispatch(new SentimentNegative(
+                    businessId: $businessId,
+                    sessionId: $sessionId,
+                    reason: 'Price objection detected'
+                ));
+            }
+
+            return CallAutopsy::create([
+                'business_id' => $businessId,
+                'call_session_id' => $sessionId,
+                'metrics' => ['objection_count' => $hasObjection ? 1 : 0],
+                'sentiment' => $sentiment,
+                'coaching_notes' => $hasObjection ? 'Reinforce value proposition before price discussion' : 'Good rapport',
+            ]);
+        });
     }
 }

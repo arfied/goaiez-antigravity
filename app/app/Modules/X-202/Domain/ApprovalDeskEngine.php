@@ -65,6 +65,14 @@ final class ApprovalDeskEngine
     }
 
     /**
+     * Determine if a decision authorizes an automated publish. (R245)
+     */
+    public function authorizesPublish(bool $isL1Forever, string $status): bool
+    {
+        return $status === 'approved' && ! $isL1Forever;
+    }
+
+    /**
      * Decide approval item (approve or reject).
      */
     public function decide(
@@ -106,6 +114,7 @@ final class ApprovalDeskEngine
                     'approval_item_id' => $item->id,
                     'status' => 'pending',
                     'current_step' => $item->current_step,
+                    'publish_authorized' => false,
                 ];
             }
 
@@ -132,6 +141,7 @@ final class ApprovalDeskEngine
                 'status' => $decision,
                 'current_step' => $item->current_step,
                 'decided_at' => $item->decided_at->toIso8601String(),
+                'publish_authorized' => $this->authorizesPublish((bool) $item->is_l1_forever, $decision),
             ];
         });
     }

@@ -11,8 +11,6 @@
                 <x-ui.error-panel heading="Could not load declines">
                     {{ $loadError }}
                 </x-ui.error-panel>
-            @elseif($isSample)
-                <x-ui.sample />
             @else
                 <div class="mb-4">
                     <p class="text-3xl font-display font-bold text-ink">${{ number_format($totalDeclined / 100, 2) }}</p>

@@ -49,10 +49,10 @@ final class FormCaptureAction
             return DB::transaction(function () use ($businessId, $formDefinitionId, $payload, $ipAddress, $userTimezone, $validation) {
                 $form = FormDefinition::where('business_id', $businessId)->findOrFail($formDefinitionId);
 
-                $person = Person::firstOrNew([
-                    'business_id' => $businessId,
-                    'phone' => $payload['phone'] ?? '+15550000000',
-                ]);
+                $spamPhone = $this->given($payload['phone'] ?? null);
+                $person = $spamPhone === null
+                    ? new Person(['business_id' => $businessId])
+                    : Person::firstOrNew(['business_id' => $businessId, 'phone' => $spamPhone]);
                 // A submission judged spam never rewrites a contact the business already has (R245, 2026-09-05).
                 if (! $person->exists) {
                     $person->fill([
@@ -138,7 +138,7 @@ final class FormCaptureAction
         }
 
         foreach (['date_of_birth', 'dob'] as $key) {
-            if (! empty($payload[$key])) {
+            if (is_scalar($payload[$key] ?? '') && trim((string) ($payload[$key] ?? '')) !== '') {
                 try {
                     $dob = Carbon::parse($payload[$key]);
                     if ($dob->diffInYears(now()) < 18) {
@@ -155,9 +155,14 @@ final class FormCaptureAction
 
     /**
      * A payload value that is blank or whitespace was not given (R245, 2026-09-05).
+     * A value which is not a scalar was not given either.
      */
     private function given(mixed $value): mixed
     {
+        if (! is_scalar($value)) {
+            return null;
+        }
+
         return is_string($value) && trim($value) === '' ? null : $value;
     }
 }

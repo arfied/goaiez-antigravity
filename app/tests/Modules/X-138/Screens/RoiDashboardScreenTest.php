@@ -18,7 +18,11 @@ class RoiDashboardScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-138.roi-dashboard'))->assertOk();
+        $this->get(route('x-138.roi-dashboard'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
+            ->assertSee('<h1 class="sr-only">Campaign ROI Dashboard</h1>', false);
 
         Livewire::test(RoiDashboard::class)->assertOk();
     }

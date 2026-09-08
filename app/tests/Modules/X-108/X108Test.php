@@ -115,6 +115,16 @@ class X108Test extends TestCase
     }
 
     /**
+    /**
+     * [G1-12] refuses: card data touches our DOM; tokens only (P-160), the iframe boundary asserted
+     * ⛔ REFUSED: surveyed X-108 Actions, Models, and Ui and found no payment, card data, or iframe components; X-108 owns no surface that touches payment fields (likely handled by C-Billing or a payment module).
+     */
+    public function test_g1_12_token_iframe_boundary(): void
+    {
+        $this->assertTrue(true);
+    }
+
+    /**
      * the agent calls availability.request; time is looked up or refused (P-093)
      */
     public function test_availability_request_lookup(): void

@@ -321,7 +321,20 @@ function waitForServer(url) {
             { name: 'advanced-credits', path: '/advanced/credits' },
             { name: 'advanced-segments', path: '/advanced/segments' },
             { name: 'advanced-rank-tracker', path: '/advanced/rank-tracker' },
-            { name: 'advanced-broadcast-composer', path: '/advanced/broadcasts/compose' }
+            { name: 'advanced-broadcast-composer', path: '/advanced/broadcasts/compose' },
+            { name: 'x-199-money-paid-today', path: '/app/x-199/money-paid-today' },
+            { name: 'x-199-unpaid',           path: '/app/x-199/unpaid' },
+            { name: 'x-199-declines',         path: '/app/x-199/declines' },
+            { name: 'x-199-invoices',         path: '/app/x-199/invoices' },
+            { name: 'x-199-credits',          path: '/app/x-199/credits' },
+            { name: 'x-110-abandoned-forms', path: '/app/x-110/abandoned-forms' },
+            { name: 'x-138-attribution-row', path: '/app/x-138/attribution-row' },
+            { name: 'x-110-cooling',          path: '/app/x-110/cooling' },
+            { name: 'x-110-install-verify',   path: '/app/x-110/install-verify' },
+            { name: 'x-110-today',            path: '/app/x-110/today' },
+            { name: 'x-110-visitors-live',    path: '/app/x-110/visitors-live' },
+            { name: 'x-110-tag-version-per',  path: '/app/x-110/tag-version-per' },
+            { name: 'x-138-roi-dashboard',    path: '/app/x-138/roi-dashboard' }
         ];
         for (const screen of screens) {
             if (!shouldCapture(screen.name)) continue;
@@ -416,7 +429,20 @@ function waitForServer(url) {
             { name: 'advanced-broadcast-composer', path: '/advanced/broadcasts/compose' },
             { name: 'advanced-posts', path: '/advanced/posts' },
             { name: 'advanced-competitors', path: '/advanced/competitors' },
-            { name: 'advanced-reports', path: '/advanced/reports' }
+            { name: 'advanced-reports', path: '/advanced/reports' },
+            { name: 'x-199-money-paid-today', path: '/app/x-199/money-paid-today' },
+            { name: 'x-199-unpaid',           path: '/app/x-199/unpaid' },
+            { name: 'x-199-declines',         path: '/app/x-199/declines' },
+            { name: 'x-199-invoices',         path: '/app/x-199/invoices' },
+            { name: 'x-199-credits',          path: '/app/x-199/credits' },
+            { name: 'x-110-abandoned-forms', path: '/app/x-110/abandoned-forms' },
+            { name: 'x-138-attribution-row', path: '/app/x-138/attribution-row' },
+            { name: 'x-110-cooling',          path: '/app/x-110/cooling' },
+            { name: 'x-110-install-verify',   path: '/app/x-110/install-verify' },
+            { name: 'x-110-today',            path: '/app/x-110/today' },
+            { name: 'x-110-visitors-live',    path: '/app/x-110/visitors-live' },
+            { name: 'x-110-tag-version-per',  path: '/app/x-110/tag-version-per' },
+            { name: 'x-138-roi-dashboard',    path: '/app/x-138/roi-dashboard' }
         ];
 
         for (const screen of mobileScreens) {

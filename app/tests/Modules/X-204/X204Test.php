@@ -104,4 +104,29 @@ class X204Test extends TestCase
         $regCheck = $this->register->handle($biz->id, 'tcpa_quiet_hours');
         $this->assertTrue($regCheck['is_compliant']);
     }
+
+    /**
+     * [G7-17]
+     */
+    public function test_g7_17_suppress_and_lift_roundtrip(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Consent Tenant G7-17', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $phone = '+15125550200';
+
+        // 1. un-suppressed recipient -> decide() allows
+        $res1 = $this->consent->decide($biz->id, $phone, 'sms', 'opted_in');
+        $this->assertTrue($res1['granted']);
+
+        // 2. after suppress() -> decide() refuses
+        $this->consent->suppress($biz->id, $phone, 'sms', 'opt_out');
+        $res2 = $this->consent->decide($biz->id, $phone, 'sms', 'opted_in');
+        $this->assertFalse($res2['granted']);
+
+        // 3. after lift() -> decide() allows again
+        $this->consent->lift($biz->id, $phone, 'sms');
+        $res3 = $this->consent->decide($biz->id, $phone, 'sms', 'opted_in');
+        $this->assertTrue($res3['granted']);
+    }
 }

@@ -7,10 +7,13 @@ namespace App\Modules\X110\Ui;
 use App\Modules\X110\Models\PixelEvent;
 use App\Modules\X110\Models\Session;
 use App\Modules\X110\Models\Visit;
+use App\Support\Tenancy;
 use Exception;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Abandoned Forms'])]
 class AbandonedForms extends Component
 {
     #[Locked]
@@ -22,7 +25,7 @@ class AbandonedForms extends Component
 
     public function mount(int $businessId = 0)
     {
-        $this->businessId = $businessId;
+        $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
     }
 
     public function recover(int $eventId)
@@ -52,8 +55,14 @@ class AbandonedForms extends Component
         $fieldCounts = [];
 
         foreach ($events as $event) {
-            $field = $event->payload['abandoned_field'] ?? 'unknown';
-            $form = $event->payload['form_id'] ?? 'form';
+            $rawField = $event->payload['abandoned_field'] ?? 'unknown';
+            $rawForm = $event->payload['form_id'] ?? 'form';
+
+            $field = ['phone' => 'phone number', 'email' => 'email address'][$rawField]
+                ?? ucfirst(str_replace('_', ' ', (string) $rawField));
+
+            $form = ['quote_form' => 'quote form', 'contact_form' => 'contact form'][$rawForm]
+                ?? ucfirst(str_replace('_', ' ', (string) $rawForm));
 
             $visitorId = 'unknown';
             if ($event->session_id && isset($sessions[$event->session_id])) {

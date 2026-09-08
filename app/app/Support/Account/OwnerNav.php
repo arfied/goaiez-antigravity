@@ -268,6 +268,133 @@ final class OwnerNav
             // language (`22`) — the label is what the person is about to do,
             // not the module it opens, so no "Support" and no "Tickets".
             OwnerNavItem::make('Ask us something', 'account.support', OwnerNavItem::GROUP_MORE),
+
+            // The list of forms people gave up on (X-110). Under More because it is
+            // a thing checked periodically rather than an everyday surface.
+            // ⚠️ THIS ENTRY IS THE WHOLE OF THE SCREEN'S REACHABILITY AND IT IS
+            // NOT OPTIONAL POLISH. Architecture/OwnerNavTest fails the build on
+            // an owner screen with neither a nav entry nor a written exclusion,
+            // and this is the only way a person can see these abandoned forms.
+            // A screen nobody can find is useless.
+            OwnerNavItem::make('Forms people gave up on', 'x-110.abandoned-forms', OwnerNavItem::GROUP_MORE),
+
+            // Verifying the tag installation (X-110). Under More on the same
+            // distinction — it is used during initial setup or troubleshooting,
+            // not every day.
+            // ⚠️ THIS ENTRY IS NOT NAVIGATION POLISH. Architecture/OwnerNavTest
+            // fails the build on an owner screen that lacks both a nav entry
+            // and an exclusion. This is the only place a tenant can confirm their
+            // tag is working. A screen nobody can reach would leave them guessing
+            // whether we are actually collecting their data.
+            OwnerNavItem::make('Is our tag working', 'x-110.install-verify', OwnerNavItem::GROUP_MORE),
+
+            // What their pages earn (X-138). Ruled to be under More deliberately,
+            // despite being potentially daily: the primary row is a design the
+            // owner has already seen, and re-cutting it is a nav question.
+            // ⚠️ THIS ENTRY IS THE ONLY DOOR TO THIS ATTRIBUTION DATA.
+            // Architecture/OwnerNavTest refuses to let an owner screen exist
+            // without a nav entry or a written exclusion, and it also refuses
+            // hand-written links between screens. A screen without a nav entry
+            // would be unreachable, leaving the revenue numbers hidden.
+            OwnerNavItem::make('What your pages earn', 'x-138.attribution-row', OwnerNavItem::GROUP_MORE),
+
+            // Where the business is listed (X-192). Placed under More because
+            // directory registrations are generally set and forgotten.
+            // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH. Architecture/OwnerNavTest
+            // fails the build on any owner screen with neither a nav entry nor
+            // a written exclusion. This is the canonical owner door for directory
+            // memberships, so a screen nobody can navigate to would leave the
+            // owner unable to manage their listings.
+            OwnerNavItem::make('Where you are listed', 'x-192.memberships-list', OwnerNavItem::GROUP_MORE),
+
+            // Invoices the owner has sent (X-199). Under More because dealing
+            // with past billing is typically periodic, not a daily task.
+            // ⚠️ THIS ENTRY EXITS THE SCREEN FROM A WRONG MEASUREMENT.
+            // Architecture/OwnerNavTest fails the build on an owner screen with
+            // neither a nav entry nor a written exclusion. This screen runs a
+            // real query and renders it on every GET, so it owes a nav entry.
+            // Leaving it out of the nav makes the invoices unreachable.
+            OwnerNavItem::make('Invoices you sent', 'x-199.invoices', OwnerNavItem::GROUP_MORE),
+
+            // Credit the owner has extended to customers (X-199). Under More on
+            // the same distinction as the invoices screen: it is a financial
+            // ledger checked when necessary.
+            // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
+            // Architecture/OwnerNavTest fails the build on an owner screen with
+            // neither a nav entry nor a written exclusion. This screen runs a
+            // real query and renders it on every GET, so it owes a nav entry.
+            // A screen nobody can find would leave every extended credit invisible
+            // to the funder.
+            OwnerNavItem::make("Credit you've extended", 'x-199.credits', OwnerNavItem::GROUP_MORE),
+
+            // People who went quiet (X-110). Under More because re-engaging cold leads
+            // is typically periodic, not a daily task.
+            // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
+            // Architecture/OwnerNavTest fails the build on an owner screen with
+            // neither a nav entry nor a written exclusion. This screen runs a
+            // real query and renders it on every GET, so it owes a nav entry.
+            // A screen nobody can find would leave these cooling leads invisible.
+            OwnerNavItem::make('People who went quiet', 'x-110.cooling', OwnerNavItem::GROUP_MORE),
+
+            // Live visitors on the site (X-110). Under More because monitoring
+            // live traffic is typically done when checking campaigns rather than
+            // every single day.
+            // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
+            // Architecture/OwnerNavTest fails the build on an owner screen with
+            // neither a nav entry nor a written exclusion. This screen runs a
+            // real query and renders it on every GET, so it owes a nav entry.
+            // A screen nobody can find would leave live visitor traffic hidden.
+            OwnerNavItem::make('Who is on your site now', 'x-110.visitors-live', OwnerNavItem::GROUP_MORE),
+
+            // Campaign ROI dashboard (X-138). Under More because campaign
+            // reporting is typically checked periodically, not every day.
+            // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
+            // Architecture/OwnerNavTest fails the build on an owner screen with
+            // neither a nav entry nor a written exclusion. This screen runs a
+            // real query and renders it on every GET, so it owes a nav entry.
+            // A screen nobody can find would leave campaign revenue numbers hidden.
+            OwnerNavItem::make('What your campaigns earned', 'x-138.roi-dashboard', OwnerNavItem::GROUP_MORE),
+
+            // Ad platform connections (X-139). Under More because connection
+            // management is set up infrequently, not a daily task.
+            // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
+            // Architecture/OwnerNavTest fails the build on an owner screen with
+            // neither a nav entry nor a written exclusion. This screen runs a
+            // real query and renders it on every GET, so it owes a nav entry.
+            // A screen nobody can find would leave ad platform connections inaccessible.
+            OwnerNavItem::make('Your ad accounts', 'x-139.adaccount-connect-card', OwnerNavItem::GROUP_MORE),
+
+            // Conversions uploaded to ad platforms (X-139). Under More because
+            // tracking attribution syncs is typically periodic.
+            // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
+            // Architecture/OwnerNavTest fails the build on an owner screen with
+            // neither a nav entry nor a written exclusion. This screen runs a
+            // real query and renders it on every GET, so it owes a nav entry.
+            // A screen nobody can find would leave pushed conversion numbers hidden.
+            OwnerNavItem::make('Sales sent back to your ads', 'x-139.conversions-pushed-tile', OwnerNavItem::GROUP_MORE),
+
+            // Rejected conversion uploads (X-139). Under More because reviewing
+            // integration failures is an administrative check, not a daily task.
+            // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
+            // Architecture/OwnerNavTest fails the build on an owner screen with
+            // neither a nav entry nor a written exclusion. This screen runs a
+            // real query and renders it on every GET, so it owes a nav entry.
+            // A screen nobody can find would leave upload rejection rates hidden.
+            OwnerNavItem::make('Uploads your ads rejected', 'x-139.rejection-rate', OwnerNavItem::GROUP_MORE),
+
+            // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
+            // Architecture/OwnerNavTest fails the build on an owner screen with
+            // neither a nav entry nor a written exclusion. This screen runs a
+            // real query and renders it on every GET once mount() resolves the
+            // tenant, so it owes a nav entry.
+            OwnerNavItem::make('What is booked', 'x-108.calendar', OwnerNavItem::GROUP_MORE),
+
+            // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
+            // Architecture/OwnerNavTest fails the build on an owner screen with
+            // neither a nav entry nor a written exclusion. This screen runs a
+            // real query and renders it on every GET once mount() resolves the
+            // tenant, so it owes a nav entry.
+            OwnerNavItem::make('Automations that ran', 'x-125.runs', OwnerNavItem::GROUP_MORE),
         ];
     }
 
