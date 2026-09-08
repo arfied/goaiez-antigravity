@@ -242,12 +242,22 @@ that test and is not on this list is a wave invented to fill the lane.
   untouched, the decoy root `REPORT.md` gone and the mailbox copy intact.
   `RULING CN` is discharged as a live hazard and stays above as history.
 
-⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 210 (2026-09-08) against pinned main
-`90ce5e99`, MOVED 5 commits from tick 209's `034a9919`** with no fetch from this seat; lane **40 ahead
-/ 734 behind**; both `.claude/hooks` `A` rows still present, and
-`git diff --stat 034a9919 90ce5e99 -- CLAUDE.md .agents/rules/` prints nothing across all five, so
-**TRACK 1 ACTION 1 is unanswered by construction.** (Tick 209's cleanest form, kept: at tick 208 no
-commit landed *in which it could have been answered*; at tick 209 no commit landed at all.) ⚠️ **Track 1's
+⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 211 (2026-09-08) against pinned main
+`90ce5e99`, UNMOVED from tick 210** (the second still pin in twelve ticks, after moves of 24 · 16 · 6 ·
+3 · 0 · 5); lane **41 ahead / 734 behind**; both `.claude/hooks` `A` rows still present. ⭐ **`RULING EC`
+(tick 211) retires the delta form of the ACTION 1 check and answers it ABSOLUTELY: `TRACK 1 ACTION 1`
+is unanswered on MEASUREMENT, not merely by construction** — main's `CLAUDE.md` carries ten `.claude/`
+hits and **none** is an ADD-adoption rule for `.claude/hooks/` in a lane take (`N136` at `:862-869`
+governs the `D` direction, the opposite one), and `git grep -n "claude/hooks" <pin> -- .agents/rules/`
+prints nothing. **The standing check is that absolute grep**, never
+`git diff --stat <prev pin> <pin> -- CLAUDE.md .agents/rules/`, which by construction cannot see an
+answer that landed before the earliest pin it compared — five consecutive ticks (206–210) asked the
+delta question and got the right word for the wrong reason. `EC` also fixes the ceiling on `DH`'s
+method: **main tracks exactly ONE file under `.agents/supervisor/`, `launch-coder.sh`**
+(`git show <pin>:.agents/supervisor/`), Track 1's ledger is on `main` nowhere, and `grs-antig` is not
+one of the six sibling mailboxes in this seat's read boundary — so a sibling supervisor's ledger is
+readable and **Track 1's is not, by any route**. The three channels Track 1 → this seat are `OWNER.md`,
+tracked content on `main`, and main's copy of `launch-coder.sh`. ⚠️ **Track 1's
 `OWNER.md` note of 09:1x is NOT the answer and disclaims itself** — *"Nothing here touches your two shut
 rows"*; it settles the product-file conflict (`RULING DS`) and leaves the guard question open, so a tick
 must not read the arrival of an `OWNER.md` reply as a lift. **Pin the sha before checking
@@ -1423,6 +1433,56 @@ available here. As at ticks 188/190/191/197/203/205/206, **the denial is the ans
 them.** It costs nothing — `RULING CW`'s `pgrep -a -P 1 -f agy` is the prescribed check and is
 decisive alone, and `launch-coder.sh:29` is the launcher's authority, never this seat's. The rule is
 unchanged: never read the pidfile's mere presence as "coder running."
+
+### ⭐ `RULING EC` (tick 211) — Track 1's ledger is unreachable from this seat by ANY route, so the ACTION 1 check must be **ABSOLUTE, not delta**. Run absolutely, it is unanswered on MEASUREMENT.
+
+`DH` gave this lane its most productive method — *a guard behaviour this seat cannot measure has
+usually already been measured by a sibling supervisor and quoted verbatim in its ledger* — and
+`DB`/`DD` gave its companion: *main carries its own copy of every per-track file, so
+`git show origin/main:<path>` reads it with no boundary violation.* A tick holding both will reach next
+for the obvious composition: **read Track 1's own `REVIEWS.md` on `main`** and see whether
+`TRACK 1 ACTION 1` has been ruled on. Measured at tick 211, **that route does not exist**:
+
+```
+$ git show 90ce5e99:.agents/supervisor/        →  tree, one entry: launch-coder.sh
+$ git diff --name-status HEAD...90ce5e99 -- .agents/supervisor/
+M   .agents/supervisor/launch-coder.sh
+```
+
+Track 1's `REVIEWS.md`/`BRIEF.md`/`REPORT.md`/`OWNER.md` are on `main` nowhere, and `grs-antig` is
+**not** one of the six sibling `.agents/supervisor/` directories in this seat's read boundary — the
+boundary enumerates the six lanes and Track 1 is the seventh. **`DH`'s method has a hard ceiling at
+the six lanes**: it reaches any sibling *supervisor* and never the seat that answers `TRACK 1 ACTION`
+items. The complete channel list Track 1 → this seat is three: `OWNER.md` written into this mailbox,
+tracked content on `main`, and main's copy of `launch-coder.sh`.
+
+⛔ **The durable half.** Ticks 206–210 each answered *"is ACTION 1 answered?"* in a **delta** form —
+`git diff --stat <previous pin> <pin> -- CLAUDE.md .agents/rules/` — and each correctly reported
+*unanswered by construction*. **A delta over the commits since the last pin cannot see an answer that
+landed before the earliest pin it ever compared.** Five consecutive ticks asked a question whose form
+could only confirm the absence of a *change*, never the absence of the *rule*, and both return the same
+word. Run absolutely against the pin for the first time: main's `CLAUDE.md` has ten `.claude/` hits —
+role table and column (`:20`, `:22`), per-track never-merge list (`:305`), disarmed-instruments warning
+(`:434`, `:447`), `N114` (`:644-652`), `N134` (`:837-849`), and `N136` (`:862-869`) — and **none is an
+adoption rule for an ADD under `.claude/hooks/` in a lane take**; `N136` is the **`D`** direction, the
+loss case, the opposite of this lane's two ADDs. `git grep -n "claude/hooks" <pin> -- .agents/rules/`
+prints nothing.
+
+**RULED: the ACTION 1 check is that absolute grep from here; the delta form is retired as its
+evidence.** Same family as `DL`, `DO`, `DQ`, `DU`, `DY`, `EB` — the command was never in doubt, the
+baseline was — except here the defect was the baseline's *shape*, delta where absolute was required.
+**`EC` is NOT an opening**: knowing the rule is absent rather than merely unchanged does not supply it,
+`multiEmitterOk` is still `0` here at 734 behind (`DA`), and `TRACK 1 ACTION 1` gains a strictly
+stronger statement and no new item.
+
+✅ **Corroborated in the same reads, none amending.** Main's `CLAUDE.md` `:434-452` states `DC`'s
+restore-first order verbatim — *"Restore `app/phpunit.xml`, `.claude/settings.json` and
+`bin/supervise.sh` first, in that order, before any other restore and before anything reads, gates or
+tests"* — with the `goaiez_antig_sixty_test` incident written out, so this lane's tick-198 finding is
+the house rule and not a local precaution. Main's `launch-coder.sh:24-27` still offers exactly three
+flags and **no `--allow-push` exists in any lane's launcher** (`CL` re-confirmed at the pin), and its
+`:26` comment reproduces `DB`'s `--allow-restore` reading word for word, `.claude` on the exclusion
+list — corroborating `EA`'s third mechanism from main's side as well as site's.
 
 ## Dispatching the coder (added 2026-09-02)
 
