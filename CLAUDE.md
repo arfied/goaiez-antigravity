@@ -818,9 +818,11 @@ take, and `DC` says restore it first. What remains is the two **A** rows,
 list is `.claude/settings.json`, not `.claude/**`), so a take must *carry* them — but an ADD has no
 blob in `HEAD`, so `git checkout HEAD --` cannot address it, `git restore --staged` is refused by
 name, and carrying them needs the commit to stage `.claude/`, which the never-list refuses. And
-`git log origin/main -20 -- .claude/` is **ten commits, zero merge commits**: every `.claude/` change
-was typed by a supervisor seat directly onto main. **`.claude/` has never traversed a lane take in
-any lane** — this is not the lane being under-equipped, it is a path with no precedent anywhere.
+~~`git log origin/main -20 -- .claude/` is **ten commits, zero merge commits** … **`.claude/` has
+never traversed a lane take in any lane**.~~ ⛔ **FALSIFIED at tick 202 — see `RULING DP`.** That
+command cannot see the case it was asked about (`RULING DO`), and pricebook's `a638eb96` carried both
+ADDs on 2026-09-08. `DD`'s **verdict is unchanged** — the take is still shut — because the precedent
+is the bare auto-commit merge `RULING CQ` forbids, not the guarded route.
 
 **RULED by the lane supervisor: the take stays shut and is not dispatched**, because a wave sent now
 burns its run on two rows `kill` cannot recall (`RULING CL`/`CQ`). Do not dispatch to read the guard
@@ -1013,6 +1015,77 @@ can **never** read it (`RULING CT`, unrepealed). **RULED: every guard citation t
 the lane and date of the sibling reading it came from.** `DH`'s method is still the only route to a
 guard fact here, but its output has a shelf life: the **behaviours** survive (never-list covers
 `.claude/`; byte-identity covers `app/app/Doctor/*` only; ADD rows irremovable), the offsets do not.
+
+### ⛔ `RULING DO` (tick 202) — `git log --merges -- <path>` CANNOT see a dropped path. Fourth blind spot, and it is the one a supervisor reaches for when surveying precedent.
+
+`DL` named three surfaces blind to a dropped path — `git diff --cached`, the never-list,
+`supervise.sh` §2 — for one reason: byte-identical to `HEAD`, i.e. absent. **There is a fourth.**
+`git log --all --merges --format='%h' -- .claude/ | grep -c 3768142e` prints **`0`**, yet
+`3768142e` is reviews' take of main and `git diff --name-status 3768142e^2 3768142e -- .claude/`
+prints three rows. History simplification drops a merge TREESAME to *any* parent, and dropping an
+incoming ADD makes it TREESAME to parent 1 **by construction** — so the merges that resolved the
+question are exactly the ones the survey cannot show.
+
+**RULED by the lane supervisor: never survey merge precedent with a path-limited `git log --merges`.**
+The sound form splits per parent and is what produced `DP` on the first tick that ran it:
+
+```
+git log --all --merges -m --name-status -- <path>
+```
+
+### ⛔ `RULING DP` (tick 202) — `DD` is FALSIFIED on fact: a lane HAS landed both `.claude/hooks` ADDs. It used the route `CQ` forbids, and the bill is in the same range.
+
+Run soundly (`DO`), the precedent is one day old — pricebook, **`a638eb96`** (2026-09-08 05:14),
+parents `3334a8f3` (lane) and `c47a7c4f` (main): `A drive_hook.py · A no-piped-gate-tool.py ·
+M settings.json` **vs the lane side**, and **nothing vs main** — `.claude/` landed byte-identical to
+main. Author and committer `Antigravity Autopilot`, i.e. **a coder, on the guard's `PATH`.**
+
+⚠️ **The subject line is the whole finding.** `a638eb96` carries git's **default** merge message;
+reviews' `3768142e` carries the lane convention. That is `RULING CQ` executed: a conflict-free
+`git merge origin/main` without `--no-commit` commits inside one git process, never invokes the
+`commit` shim, and the never-list is never consulted. **It does not show the guarded route works — it
+shows the unguarded one does, which was never in doubt.**
+
+**The bill is measurable 36 minutes later.** `a638eb96` took main's `.claude/settings.json` wholesale;
+main's `0ad838d7` (05:50) is *"move the sibling-mailbox deny rules out of the tracked settings.json —
+**they merged into pricebook and locked its supervisor out of its own ledger**."* `RULING CR` warned
+this lane's take must not repeat pricebook's lockout; `DP` supplies the commit that caused it.
+
+**RULED by the lane supervisor: `CQ` stands and is strengthened by its own precedent** — no brief
+names a bare `git merge`. `DD`'s verdict is untouched; the correction makes **TRACK 1 ACTION 1 more
+urgent**: the only mechanism by which `.claude/hooks/` has ever reached a lane is the *absence* of the
+guard, so a lane that obeys it still cannot take those rows.
+⚠️ **Not measured, deliberately not tested: this seat's own `git` has no `coder-bin` on its `PATH`, so
+its `git merge` is unguarded** — the same hole `DP` just refused a coder. Filed to **TRACK 1 ACTION 1**
+as a question, not attempted: running it would put the seat that reviews a 621-commit merge in the
+seat that made it, with `DC`'s destructive row live.
+
+### ⛔ `RULING DQ` (tick 202) — `DC` confirmed in the field; the row that saved pricebook is MISSING here; and `merge=ours` is lossy even when consulted.
+
+`a638eb96` executes `DC` in a sibling whose `.gitattributes` is byte-identical to this lane's
+(verified at `3334a8f3`, same eight paths). By which side moved since pricebook's base `9d4de6f9`:
+`CLAUDE.md` + `bin/supervise.sh` **both moved → ours kept**; `app/phpunit.xml` **ours moved, main did
+not → kept**; `.claude/settings.json` **only main moved → driver never consulted → theirs taken**, which
+is `DC`'s base case executed.
+
+⛔ **This lane lacks pricebook's luck on the destructive row.** Re-measured against base `b79ae957` and
+pinned `7103f455`, the only-main-moved quadrant here is **`app/phpunit.xml` · `bin/supervise.sh` ·
+`.claude/settings.json`**. `app/phpunit.xml` survived pricebook's merge *only because pricebook had
+edited it*; this lane has not. The identical operation here swaps `goaiez_antig_stages_test` →
+`goaiez_antig_test`, and the next `--tests`/`doctor`/`status` runs `RefreshesTenantDatabase` →
+`migrate:fresh` → `DROP` on another lane's database, §0 silent (not production) and `bin/supervise.sh`
+replaced in the same commit. **`DC`'s restore-first order is re-confirmed against the current tip and
+is item 1 of any take brief this lane ever writes.**
+
+⚠️ **New and unexplained from this seat: `merge=ours` was consulted and still lost 10 lines.**
+`.agents/state/BUILD-STATE.json` (−8) and `JOURNAL.md` (−2) differ from pricebook's own tip in the
+merge result — both-moved, same attribute, same commit — while `CLAUDE.md` and `bin/supervise.sh` came
+through byte-exact; and the result is 587 deletions away from main's blob, so it is not "theirs taken"
+but a **lossy ours**. *Measured; mechanism undetermined* (this seat cannot read another checkout's
+config, and `merge.ours.driver` is untracked per-checkout state). **Consequence here:**
+`.agents/state/**` is in the both-moved quadrant in this lane too, so the attribute is **not** a reason
+to leave it out of a take's restore set — `DC`'s rule already covers it (restore what
+`git diff --cached --name-only` lists, prove it with item 4, never item 3's silence).
 
 ## Dispatching the coder (added 2026-09-02)
 
