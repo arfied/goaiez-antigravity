@@ -242,13 +242,49 @@ that test and is not on this list is a wave invented to fill the lane.
   untouched, the decoy root `REPORT.md` gone and the mailbox copy intact.
   `RULING CN` is discharged as a live hazard and stays above as history.
 
-⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 217 (2026-09-08) against pinned main
-`8c17fb6c`, UNMOVED from ticks 215 and 216** — the fifth still pin in sixteen ticks and the **second
-consecutive** (after 24 · 16 · 6 · 3 · 0 · 5 · 0 · 0 · 5 · 3 · 6 · 5 · 0); lane **47 ahead / 750
-behind**; `HEAD...origin/track/stages` is `0 0` so there is no push exposure; both `.claude/hooks`
-`A` rows still present, plus `CR`'s `M settings.json`. ⚠️ **No Track 1 coder is running at all this
-tick, and the pin still did not move** — `run154`, live and holding `MERGE_OK=1` at tick 216,
-completed and landed nothing. See `RULING EJ`.
+⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 218 (2026-09-08) against pinned main
+`881f9bc9`**, MOVED from ticks 215–217's `8c17fb6c`; lane **48 ahead / 67 behind on `--first-parent`**
+(757 by ancestor count — ⚠️ **read `RULING EK` before quoting either number**);
+`HEAD...origin/track/stages` is `0 0` so there is no push exposure; both `.claude/hooks` `A` rows
+still present, plus `CR`'s `M settings.json`, and re-measured this tick they print **identically
+against local `main`**, so the take is shut on either ref. ⚠️ **No coder is running in ANY lane this
+tick** — the first such scan in this ledger.
+
+⭐ **`RULING EK` (tick 218) — a "behind" count over a merge-based history counts ANCESTORS, not the
+ref's own progress; and `DK`'s `main...origin/main = 0 0` is a DATED measurement, now false by 416.**
+**(1) The counting half.** One merge on `main`'s first-parent line contributes itself *plus every
+commit of the lane it merged*. Measured: lane **757 behind by ancestor count / 67 on
+`--first-parent`** (11×); this tick's "moved 7" is **1** merge carrying six of sixty's commits;
+`8c17fb6c..main` is **423 / 2**. ⛔ **The sequence `EI`/`EJ` were built on — 24 · 16 · 6 · 5 · 3 · 5 ·
+5 · 0 · 0 — is ancestor counts, not `main`'s own commits**, and eighteen ticks quoted "750 behind" as
+though it were main's progress. **(2) The referent half.** `git rev-list --left-right --count
+main...origin/main` → **`416 0`**; `git worktree list` shows `/home/goaiez/agents/grs-antig
+4d08de18 [main]`. So `origin/main` is a **push-and-fetch artifact** lagging Track 1's live ref, and
+the lag is *directly measured*: `881f9bc9` was committed **11:14:45** while tick 217 pinned
+`8c17fb6c` and committed at **11:24:56** reporting "moved 0". ⚠️ **Apply half (1) to half (2) before
+quoting the 416** — main's own progress beyond the pin is **1** first-parent commit; the 416 is one
+`merge: track/money` dragging in 415 lane commits. **The lag is real and its magnitude is small.**
+⛔ **Consequence for `EJ` — a further subtraction, not a repeal:** its fourth datapoint ("tick 217, no
+Track 1 seat → moved 0") is **contaminated**, since `main` had moved ten minutes before tick 217
+measured. **`EJ`'s conclusion stands and stands more firmly** — the pin does not track `main` closely
+enough to support *any* inference about wave activity. ⛔ **NOT an opening**, on two grounds: the take
+prints the same three rows against both refs, and local `main` is **unpushed**, so `CLAUDE.md`'s
+standing bullet (*"a lane cannot contain main while main is unpushed"*, recorded at 283 on
+2026-09-05) is **live again at 416** — a reason not to reach for local `main`, never a licence.
+Same family as `DL`, `DO`, `DQ`, `DU`, `DY`, `EB`, `EC`, `ED`, `EE`, `EF`, `EH`, `EI`, `EJ` —
+**`EJ` was the predicate variant; `EK` is the REFERENT variant: the ref was read correctly and was
+not the thing the ledger thought it was naming.** ✅ **Standing correction: every "behind" or "moved"
+figure this lane writes gives the `--first-parent` number, or says explicitly that it is an ancestor
+count.**
+
+✅ **`RULING EG` corroborated a THIRD time (tick 218), precondition verified at the commits:** the
+range carries `9f54a96a chore(state)` (`.agents/state/BUILD-STATE.json` +4, `JOURNAL.md` +1) and
+`aa87b887 chore(supervisor)` (`CLAUDE.md` +79), yet per-track paths differ **zero** across the range
+and **eight** against parent 2. Merge step 2 executed, proven by step 3's own test, again on `DR`'s
+exact pair. The variable is **the explicit restore step, never `merge=ours`**. ⛔ The asymmetry is
+unchanged — it measures the restore in **Track 1's** direction, taking a lane. ⭐ **Eighth sibling
+merge case for `DW`/`DX`/`DZ`:** the pin is itself `merge: track/sixty — X-188` at **6 / 621 behind
+(ancestor count, flagged per `EK`)**, after 244 · 218 · 604 · 359 · 255 · 610 · 263.
 
 ⭐ **`RULING EJ` (tick 217) — `GOAIEZ_MERGE_OK=1` on a live wave is a CAPABILITY GRANT, not a merge
 in progress. `EI`'s PREDICTIVE half is falsified on its first test.** `EI` rightly retired
