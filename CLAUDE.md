@@ -200,10 +200,17 @@ boundary    44   (was 3)    ⛔ ROSE +41 — main's a42079bd revived the cross-m
 contract    85   (was 87)   −2 at the merge, before any withdrawal (RULING ER)
 citation     0   (was 0)    ✅ clean
 schema      15   (was 15)   unmoved
-capability 211   (was 358)  −147 — the seven-group decomposition CANNOT sum any more
+capability 209   (was 211 at 3398f683; 358 pre-take)  ⭐ STAGES-223 closed X-211 G1-61/G1-70, tick 224
 anchor     128   (was 137)  −9
 journey      4   (was 5)    −1
 ```
+
+⭐ **`capability` is 209 as of `bbb0b4a2`, measured in `.gate226.txt` §5 and gated at tick 224.** It is
+the **first `capability` movement this lane has produced since tick 182**, and it is the answer to
+`RULING ET`: the admission test found a real item, the item closed on measurement, and the falsifier
+(211 → 209) fell exactly as stated in advance. ⚠️ **§3's ledger still reads `capability 211`** — stale
+again one wave after tick 183 wrote it true, which is `RULING CK` being structural rather than
+neglect. STAGES-224 refreshes the eight; until its gate is reviewed, **cite §5, never §3.**
 
 **`RULING EQ`: a stage census is a fact about a CHECKER at a sha, never about the code.** Four of eight
 moved and one rose by 41, so every decomposition below is arithmetic against an instrument that has
@@ -280,6 +287,50 @@ the presumption: a wave is admitted when its ids pass clauses∩flagged (`CF`), 
 row (TRACK 1 ACTION 5), and have an arithmetic falsifier in §5. Invent nothing; **measure before
 declaring either way.**
 
+⭐ **`RULING ET` is VINDICATED on its first executed wave (tick 224).** `X-211` G1-61/G1-70 was
+dispatched as STAGES-223 and **closed on measurement**: two real behavioural tests naming their ids in
+the method name, mutation-proven load-bearing against `ArEngine.php:61`, the decision recorded by
+`state.py decided` with a matching commit, and `capability` **211 → 209** in `.gate226.txt` §5 — the
+ceiling stated in advance, hit exactly. The lane was not exhausted, and the admission test is what
+found that out. ⚠️ **The other two of the three stay closed and are not re-derived**: `X-117`'s three
+ids are `UNRESOLVED` three times over (`RULING CM`), `X-212` G4-54's remedy edits a generated file
+(`RULING CB`). **Whether anything else survives the test is now UNMEASURED again** — the census is one
+wave old and STAGES-224 item 5 re-runs it against the live 209. Do not read "one item found and
+closed" as "the backlog is one item long"; measure.
+
+### ⛔ `RULING EV` (tick 224) — a brief's floor list is the only thing a wave is measured against, and this seat has now omitted a gate section from one twice in three waves.
+
+STAGES-223 turned `pint` red and was entitled to. Measured across two gate files on this lane, so the
+attribution is not an inference:
+
+```
+.gate225.txt §6   {"tool":"pint","result":"passed"}
+.gate226.txt §6   {"tool":"pint","result":"fail","files":[{"path":"tests/Modules/X-211/X211Test.php",
+                   "fixers":["fully_qualified_strict_types","ordered_imports","no_whitespace_in_blank_line"]}]}
+```
+
+Green before the wave, red after it, on **the one file the wave wrote**. The brief stated floors for
+`capability 209` and for §7 `FAILED 0` — **the two sections the wave was about** — and stated none for
+the section the wave's own edits could move. **A coder that meets every stated floor has done what was
+asked**, and the report quoted the red honestly rather than glossing it, which is why tick 224 recorded
+`PASS-WITH-NOTES` and not a `BLOCK`.
+
+⚠️ **`RULING EU`'s family, one step over.** `EU`: a brief asked for a figure its own named command could
+not produce. `EV`: a brief floored only its subject. Both are the same defect — **the brief's
+instrument and its floor list are as much a part of the wave as its task**, and this seat has now
+written a malformed one in two of the last three waves.
+
+✅ **Standing correction: a brief states the floor for every gate section the wave's edits can move,
+not only the section the wave is about.** For any wave writing a PHP file that is `pint` `result:
+passed` and `phpstan errors 0`; for any wave touching `.agents/state/**` it is the `JOURNAL.md`/commit
+correspondence; for any wave at all it is §2 `none` and stamp == `runtime_build`. Cheap to write, and
+it is the difference between a red a coder was told to prevent and a red a coder was entitled to leave.
+
+⛔ **Never fix a `pint` red with a tree-wide run.** It can reformat `app/app/Doctor/**`, whose blobs
+plus `seals.json` are byte-identical to main's — **the only reason this lane may hold them**
+(`RULING DE`) — so reformatting one is the **One Rule**. Name the single path, as the tick-220 floor
+did for `X167Test.php`.
+
 ### The residual backlog — ⚠️ NOT empty; see `RULING ET`
 
 The hygiene list below is intact and still governs hygiene items. What is **wrong** is the sentence
@@ -309,6 +360,17 @@ untouched by the merge, and the real source is the **journey** test
 `a_completed_job_asks_for_a_review_once_inside_the_cadence` hitting the live sandbox, recorded five
 times in `REVIEWS.md` as an external-credential flap. **A later gate showing three errors is that flap
 returning, not a regression.** Do not open a wave on it; it is a vendor account, OWNER ACTION.
+✅ **Corroborated at tick 224**: `.gate226.txt` §7 reads `errors 2` — the two journey-harness refusals
+and no `E00040` — on a tree whose billing test is byte-unchanged since run 199. The error count moving
+between 2 and 3 with no diff behind it **is** the flap, measured twice now.
+
+⭐ **The §7 baseline this lane should compare against, added tick 224.** `.gate220-coder.txt` reads
+`tests 2197 · passed 2195 · FAILED 0 · errors 2`; `.gate226.txt` reads
+`tests 2199 · passed 2197 · FAILED 0 · errors 2`. **Compare the triple across gates, not the error list
+in one.** That is what proved `test_g1_67_margin_guard_names_every_service_put_below_cost` green at
+tick 224 — `+2 tests, +2 passed, errors unchanged` accounts for every test in the suite, where "it is
+not in the error list" is the weaker reading STAGES-223's report offered and `RULING EU`(b) struck the
+tick before.
 
 ⭐⭐ **THE HOLD LIFTED AT TICK 219 (2026-09-08). THE TAKE IS OPEN AND A MERGE WAVE IS DISPATCHED —
 read `RULING EM` before anything else on this page.** For thirty-five ticks this lane held because
