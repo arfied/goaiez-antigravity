@@ -133,6 +133,11 @@ class ChatDoorTest extends TestCase
         $response->assertJson(['error' => 'Session not found']);
     }
 
+    /**
+     * The count assertion cannot fail on its own terms (cannot be reddened by a controller mutation)
+     * because ChatTurnAction::handle() enforces strict types. A bypassed 400 check results in a
+     * TypeError (500) before any row can be inserted.
+     */
     public function test_non_string_inputs_return_400(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Bad Request Tenant', 'currency' => 'USD']);
@@ -162,6 +167,11 @@ class ChatDoorTest extends TestCase
         $response->assertJson(['error' => 'Bad Request']);
     }
 
+    /**
+     * The count assertion cannot fail on its own terms (cannot be reddened by a controller mutation)
+     * because ChatTurnAction::handle() enforces strict types. A bypassed 400 check results in a
+     * TypeError (500) before any row can be inserted.
+     */
     public function test_non_string_message_returns_400(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Bad Message Tenant', 'currency' => 'USD']);
