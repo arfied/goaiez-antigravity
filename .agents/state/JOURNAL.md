@@ -976,3 +976,11 @@
 - `2026-09-08T06:17:48` (R245) X-01 — twelve-noun lint takes a frozen four-name baseline of inherited core tables (outreach_messages, triage_conversations, inbound_messages, support_messages); it has never been green since f77b1b4e and all four predate base 12447593
 - `2026-09-08T06:57:14` (R245) X-01 — restored 20 stray-pint reformats to HEAD (8 sealed checkers, 12 plugins/wordpress); REV-114 classified all six surviving-hunk files NEITHER improvement nor silencer, so the sealed bytes stand R245
 - `2026-09-08T08:11:27` (R245) X-01 — traced the 20-file reformat to a pint run launched from the repo root, where no pint.json existed; app/pint.json's excludes and ci.yml's working-directory:app are both scoped to app/, so neither the gate nor CI can see those files; added a repo-root pint.json covering app/app/Doctor, the three Doctor commands and plugins/
+- `2026-09-08T08:30:07` stage integrity = 0
+- `2026-09-08T08:30:07` stage boundary = 47
+- `2026-09-08T08:30:07` stage contract = 85
+- `2026-09-08T08:30:07` stage citation = 0
+- `2026-09-08T08:30:07` stage schema = 15
+- `2026-09-08T08:30:07` stage capability = 214
+- `2026-09-08T08:30:07` stage anchor = 128
+- `2026-09-08T08:30:07` stage journey = 3
