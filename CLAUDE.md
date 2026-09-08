@@ -187,6 +187,117 @@ Watch for: <the trap that applies, by name>
   lists a brief item under `REFUSED` because it would change a CHECK, that
   refusal stands. Re-read rule 01 before overruling it.
 
+## ⭐⭐ THE LANE IS NOT HELD. Track 1 REVERTED our merge and asked for a second take (tick 234) — read `RULING FL` and `RULING FM` before anything else on this page
+
+⛔ **Ticks 227–233 each wrote HOLD while an unprocessed, actionable Track 1 ask sat in `OWNER.md`.**
+The note is `## TRACK 1 — 2026-09-08 16:2x` at `OWNER.md:678`, and `grep -n "e669a273\|being reverted"
+REVIEWS.md` returns **nothing** — no tick ever quoted it. Measured on `main` and exact:
+
+```
+e669a273  16:06  merge: track/stages — X-211 G1-61/G1-70 tests (tip 6b3e7d63)
+a5042da2  16:46  Revert "merge: track/stages — X-211 G1-61/G1-70 tests (tip 6b3e7d63)"
+                 app/tests/Modules/X-211/X211Test.php | 72 ------------------
+```
+
+Our two STAGES-223 tests went to `main`, **both failed against money's engine**, and Track 1 reverted
+so `main` would not ship red. Track 1 does not adjudicate the behaviour — *"that is between stages and
+money"* — and **money owns X-211**, covering the pair itself at `X211Test.php:157`
+(`test_g1_61_g1_70_plan_past_threshold_is_refused`). The ask: *merge `origin/main`, run the two tests
+against money's engine, and either drop them as duplicates or record with money the behaviour the
+capability text requires.* Dispatched as **STAGES-231**, merge gate **OPEN**.
+
+### ⛔ `RULING FL` (tick 234) — case (d)'s freshness test is an MTIME COMPARISON, and it fails silently and permanently when an owner note lands minutes before a review block.
+
+Case (d) fires when `OWNER.md` is *newer than the last `REVIEWS.md` block*. Measured:
+
+| `OWNER.md` mtime | **16:15** |
+| :--- | :--- |
+| tick 226's block (`6b3e7d63`) | 15:56 — **older**, so at tick 227 case (d) was live and should have beaten case (b) |
+| tick 227's block (`2e31ddf2`) | **16:17** — two minutes later |
+
+Tick 227 ran case (b) on STAGES-226's report and never looked. **From tick 228 onward `REVIEWS.md` was
+always newer than 16:15, so the test could never fire again** — the note became invisible by
+construction, not by neglect, and seven consecutive ticks wrote a HOLD over an open ask. ⚠️ The note's
+own heading says **16:2x** while the file's mtime is **16:15**, so even a careful mtime reading
+understates it.
+
+✅ **Standing correction: a tick reads `OWNER.md`'s newest `## ` heading and greps a token from it
+against `REVIEWS.md`; mtime is never the test.**
+
+```
+grep -n "^## TRACK 1 — \|^## OWNER — " .agents/supervisor/OWNER.md | tail -3
+grep -c "<a sha or phrase unique to that note>" .agents/supervisor/REVIEWS.md      # 0 ⇒ unprocessed
+```
+
+⚠️ **`RULING CK`'s family, and the worst member so far.** `CK` is a stale number read as a
+measurement; `EY` a stale completion claim read as one; **`FL` is a stale *instrument* — the case
+selector itself — silently answering "nothing new" for seven ticks.** Every earlier member cost a
+wave; this one cost the lane its liveness.
+
+### ⛔ `RULING FM` (tick 234) — a merge base can be YOUR OWN TIP. When upstream merges you and reverts, "ours since base" is EMPTY and the revert arrives as a CONFLICT-FREE deletion of your own work.
+
+Measured against pinned `main` `7a75f289`:
+
+```
+git merge-base HEAD 7a75f289          →  6b3e7d63     ← this lane's own tick-226 commit
+git diff --name-only 6b3e7d63 HEAD -- app/            →  (empty)
+git show 7a75f289:…/X211Test.php | grep -c "test_g1_61_past_the_threshold…()"   →  0
+```
+
+Track 1 merged our tip, so the base **is** our tip; our side has not touched `app/` since. Main's side
+deleted our two tests. **Three-way merge therefore takes theirs with no conflict, no marker and no
+index row that says a test was lost** — `RULING DL`'s loss class, arriving through the front door.
+`CLAUDE.md`'s *"a merged-wrong lint is green by construction"* is the same hazard for a test.
+
+⚠️ **`RULING EP` inverted.** `EP`: the item really was missing **and was never ours** — census
+ours-since-BASE, not ours. **`FM`: the item IS ours, it is being deleted on purpose by upstream, and
+ours-since-BASE is empty precisely BECAUSE upstream already took it.** So `EP`'s command returns
+"nothing of ours is at risk" in the one case where all of it is. ✅ **Standing correction: when
+`merge-base` equals a commit this lane authored, `EP`'s test is void — diff the base against THEIRS
+and read every deletion as ours.**
+
+⭐ **The wave's real question is a two-branch measurement with a mechanical falsifier**, which is why
+this is a wave and not an invented one: after the take, `capability` reads **209** (money's
+`test_g1_61_g1_70_…` names both ids — our two were genuine duplicates, drop them, `RULING ET`'s credit
+survives in money's lane) **or 211** (it does not — dropping ours costs this lane its only capability
+movement since tick 182, and the behaviour goes to money). ⛔ **Which one is NOT predicted in the
+brief** — `RULING EZ` forbids flooring a number this seat has not run, and this one cannot be run
+before the merge.
+
+### ⭐ The take is OPEN again — the two `.claude/hooks` **A** rows are GONE, measured at tick 234
+
+`RULING DD`'s two-row re-check against `7a75f289` returns **one `M` row**, not two `A` rows:
+
+```
+git diff --name-status HEAD...7a75f289 -- .claude/     →  M .claude/settings.json
+git diff --name-status HEAD...7a75f289 -- app/app/Doctor/ …/JourneyHarness.php
+                                                       →  M app/tests/Journeys/JourneyHarness.php
+```
+
+The hooks landed in this tree at `5d89dc84` (tick 221), so they are no longer ADDs and
+`RULING EA`'s three irremovability mechanisms have nothing to bite on. **No `app/app/Doctor/**` and no
+`seals.json` in the range at all**, so `RULING DE`'s byte-identity clause is not even reached for
+those. ⚠️ **`TRACK 1 ACTION 1` is unchanged and still open** — the `.claude/hooks/` exemption is still
+unwritten and still blocks any lane whose range carries those rows as ADDs. It simply no longer
+describes this lane.
+
+⚠️ **`JourneyHarness.php` is the one row whose commit admissibility is not certain.** This lane has no
+`--allow-harness` (`launch-coder.sh:23` takes only `--coder` and `--allow-merge`), so
+`GOAIEZ_HARNESS_OK` is never exported and the commit rests entirely on `RULING DE`'s byte-identity
+clause — a **dated** reading (`RULING DN`). The wave is therefore **stage-and-attempt**: adopt main's
+harness blob whole, attempt the commit, and report the guard's refusal **verbatim** if it fires. Tick
+221 executed exactly this shape. Never edit that file to get past a refusal (`RULING DE`, run 115).
+
+⛔ **`app/phpunit.xml` carries the destructive row again**, re-measured at tick 234 against this pin:
+`-goaiez_antig_stages_test` / `+goaiez_antig_test`. `RULING DC`/`DF`/`DQ` — **restore it FIRST, before
+anything reads, gates, migrates or tests.** Seven per-track `M` rows are in the range
+(`RULING EG`'s exact seven), including `RULING DR`'s `.agents/state/**` pair.
+
+⛔ **The classmap trap is live and large: 81 `A` rows under `app/app/Modules/`** and 20 new
+migrations. `composer dump-autoload` **before the first gate**, or a class-not-found lands in an
+innocent module's test. Lockfiles and `app/resources/` did **not** move, so no `composer install` and
+no `npm run build`.
+
 ## Where this lane stands — ⛔ THE CENSUS BELOW IS VOID. THE TAKE REPLACED THE CHECKERS (`RULING EQ`, tick 222)
 
 ⛔⛔ **STOP. Everything under this heading was measured against the PRE-MERGE checker and no longer
@@ -961,7 +1072,15 @@ one apart since tick 221**, which is why this was the first collision. ✅ **Sta
 gate redirect is named for the WAVE that writes it (`.gateS229.txt`), and this seat `ls`-checks the
 path before writing it into a brief.**
 
-### The residual backlog — ⛔ **EMPTY on measurement (tick 233). S-182…S-189 are ALL COMPLETE.**
+### The residual backlog — ⛔ **NO LONGER EMPTY. S-190 is open (tick 234).** S-182…S-189 are complete; the emptiness claim was true of the STAGE backlog and was never a statement about the mailbox.
+
+⭐ **S-190 — the second take, and the X-211 duplicate decision.** Dispatched at tick 234 as
+**STAGES-231**, merge gate **OPEN**. Not an invented wave and not a stage wave: **Track 1 asked for
+it in writing** and `main` will not take this lane until it lands (`RULING FL`, `RULING FM`). ⛔ The
+seven ticks of HOLD were correct about the stages and wrong about the lane, because the case selector
+could not see the ask.
+
+
 
 ⚠️ **Re-measured at tick 233 on a tree byte-unchanged since `b8c88e47`** (`git diff --stat b8c88e47
 HEAD -- app/` empty), §5 identical to `.gateS230.txt`. **One qualification the earlier "empty" did
