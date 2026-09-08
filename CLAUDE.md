@@ -14210,3 +14210,554 @@ reversed by **opening a file while writing the brief** rather than by re-reading
    `is_array($form->steps) ? $form->steps : []` and `continue`s on `! is_array($step)`, and its
    `$comparable` closure guards the `(string)` casts against non-scalars — tick 297/298's cast hazard
    already closed, in a file nobody briefed for it. Per 224: **already done here.**
+
+## ⛔ THE `origin/main` TAKE FELL FROM SEVEN BLOCKING PATHS TO TWO — and the blocking set is decided by the QUADRANT, never by a file list (tick 312)
+
+`origin/main` moved `90e4fcca → da6ea196` and its own subject names the change: *"a sealed-checker commit on
+main made every lane's merge uncommittable until the harness byte-identical clause was generalised to
+app/app/Doctor in lane checkouts only."* That is tick 311's TRACK 1 ACTION, filed by mechanism with the
+clause to copy, implemented. ⭐ **Fifth firing of tick 215's law** (*before recording a problem as having no
+remedy, read a sibling lane's supervisor commits*) paying on the **filed** side rather than the reading side.
+
+`coder-bin/git` re-read at source (218, 278). The new clause is `:117-131`: under `GOAIEZ_MERGE_OK=1` +
+`MERGE_HEAD` present + **checkout basename ≠ `grs-antig`**, every staged `app/app/Doctor/*` whose blob is
+byte-identical to `MERGE_HEAD`'s is **removed from `bad`** before `:132`'s never-list regex runs.
+`app/app/Doctor/seals.json` matches that prefix, so both alternatives that refused it clear at once.
+
+⛔ **`bad` is `git diff --cached --name-only` — paths whose merged index differs from HEAD — so a path the
+`merge=ours` driver resolves to our own blob NEVER APPEARS IN IT.** The blocking set is therefore the
+**two-sided quadrant** (215, 225, 228), not the file list `git diff --name-only` prints. Measured against the
+merge-base `c2544d67`, `merge.ours.driver` = `true`:
+
+| path | ours | main | driver | in `bad`? |
+| :-- | :--: | :--: | :--: | :-- |
+| `CLAUDE.md` | ✅ | ✅ M | **fires** | ✅ no — ours wins, index == HEAD |
+| `app/app/Doctor/**` ×4 | ❌ | ✅ M | — | ✅ **cleared by the new clause** |
+| `launch-coder.sh` · `.claude/settings.json` · `bin/supervise.sh` | ❌ | ✅ **M** | — | ⛔ blocks — **restorable** via `:34-46` |
+| `.claude/hooks/drive_hook.py` · `no-piped-gate-tool.py` | ❌ | ✅ **A** | — | ⛔ **blocks, IRREMOVABLE** |
+| `app/phpunit.xml` | ❌ | ❌ | — | ✅ untouched — the working-tree pin survives a take |
+
+⭐ **The two `A` rows are tick 229's sub-case distinction and they are the whole residue.** A path main
+*modified* is taken silently and is restorable; a path main *added* is taken silently and has **no route
+out**: `git checkout HEAD -- <it>` fails inside git (HEAD has never held the path), `git rm --cached
+.claude/*` is refused **by name** at `:22`, `--allow-restore` refuses `.claude/*` **by name** at `:68` even
+when open, and `:132` has no `.claude/` exemption. Three refusals and one impossibility.
+
+⛔ **RULED: the take stays DEFERRED, no merge wave** — a dispatch spends itself on a *certain* refusal and a
+bare merge dispatch is unrecallable. Per 224: **cannot work here.** ⛔ And this lane does **not** adopt the
+sibling pattern (*the coder merges, the supervisor commits*): a merge commit is **pathless** and carries
+everything, where pricebook's ruling 27 and money's ruling 60 each cover **one named file**. Helping itself
+to another lane's ruling to get past a guard aimed at this seat is "patch the thing that is refusing you"
+one step removed — the reasoning that stopped this seat at 213, 215 and 222.
+
+⭐ **The ask is now two paths and the clause exists in the same file three times over** — `:100-105`
+(harness), `:117-131` (Doctor, lane checkouts only), `:62-76` (`--allow-restore`). Extending `:117-131`'s
+loop to `.claude/` covers the **added** case *by construction*: for a path only `MERGE_HEAD` carries, the
+index takes `MERGE_HEAD`'s blob necessarily, so the byte-identity test passes without argument — and a
+**locally modified** `.claude/` file still refuses, in every lane, so the One Rule is untouched.
+
+⚠️ **The deferral has been PROTECTIVE, not merely blocking, and it is measured.** Main's `0ad838d7` —
+*"move the sibling-mailbox deny rules out of the tracked settings.json — they merged into pricebook and
+locked its supervisor out of its own ledger"* — plus stages' `ed4270d0` and `dd9dd13b` (*"RULING CS
+re-confirmed, two ticks now orphaned"*). **Two lanes lost the ability to write their own `REVIEWS.md` to a
+deny glob in the TRACKED `.claude/settings.json` that arrived through a merge.** ⛔ A deny glob matching
+every checkout but its author's is **invisible from where its author sits** — which is the general form, and
+it is why `.claude/settings.json` being an **M** row rather than an **A** row matters: it is restorable, and
+any merge brief must name it in the restore step.
+
+⚠️ **Stages counts THREE `.claude` blocking rows where this lane counts TWO irremovable.** Both are right and
+they answer different questions — stages counts rows that must be *handled*, this counts rows with *no route
+out*. Per 223/311: **the sibling's method transfers and its count does not.**
+
+## ⛔ A jsonb LIST's member is a VALUE; a jsonb OBJECT's member is a KEY. Same column, same depth, opposite exposure (tick 312)
+
+SITE-184 fixed a tenant-authored jsonb **list** member reaching a scalar-only position
+(`FormValidateAction:60`'s `$field` → `array_key_exists`, a `TypeError` on an array). Tick 241 says the fix's
+address is never the finding and tick 303 says **when a new semantic category is invented, re-run the sweeps
+that predate it** — so tick 300's `foreach` sweep (57 sites, which asked *is the CONTAINER safe?*) was re-run
+under the new question: *is the MEMBER's TYPE safe where it lands?*
+
+⭐ **The sweep is CLEAN, and the disconfirming member is the finding.** `FormAdaptiveStepsAction:43` is
+`foreach ($conditions as $field => $accepted)` with `:44` subscripting `$answers[$field]` — the identical
+defect one file over, and it **cannot be**: `$field` there is an array **key**, and PHP array keys are `int`
+or `string` **by construction**, so a JSON object's members can never arrive non-scalar in that position.
+`show_if` is a **map**; `required` is a **list**. ⛔ **The exposure is decided by whether the config shape is
+an object or an array, and by nothing else** — the cheap discriminator for the next sweep of this class, and
+it is visible in neither the column, the cast, nor the guard.
+
+The rest, each read at its own line: `SiteEngine:33-34`'s `isset($block['type'])` is safe on a string member
+(a non-numeric string offset in `isset()` is `false`, no warning — 311 measured this through the real deploy
+path) and `:44`'s `array_column` skips a non-array member; `SchemaRenderAction`'s eight loops iterate values
+the action itself built; `EdgeDeployAction`'s collection guards are SITE-154/155/170/171's;
+`FormGenerateAction`'s two loops iterate **literals the action wrote** over a `string`-typed `$description`.
+**A clean sweep is a result and must be written down** (280).
+
+⚠️ SITE-184's guard is **wider than what throws**: `array_key_exists` throws only on an array or object key,
+while `float`, `bool` and `null` are valid offset types that coerce, so `! is_string && ! is_int` skips those
+three too. Benign — none is a field name and `$request->all()` produces only `string`/`int` keys — but the
+comment's *"not a valid array key"* names a category the code does not implement. Not re-filed (210, 259).
+
+## ⛔ SITE-185 — the DNI route hands an ARRAY to a `string`-typed parameter (ruled at tick 312)
+
+Tick 241's law applied to **SITE-172's** pattern rather than SITE-184's: *a route forwards an unvalidated
+request value into a scalar-typed action parameter.* SITE-172 fixed the form route's `given()`; the DNI route
+was never swept for it. `$request->input(...)` appears **exactly once** across all six owned code modules,
+and it is the defect: `?visitor_session_token[]=x` makes it return an array, `allocateFromPool` types the
+parameter `string` under `declare(strict_types=1)`, and the resulting **`TypeError` is an `\Error`** which
+the route's sole `catch (\DomainException)` does not see ⇒ **a 500 on a published endpoint** where every
+sibling arm answers 404, 409 or 422.
+
+⛔ **The remedy CANNOT go in the reader, and that is measured rather than preferred.** This lane's standing
+answer is *the invariant belongs where the value is READ* (277, 278, 295) — and here the reader's own type
+declaration rejects the value **before its first line runs**, so no guard inside `allocateFromPool` could
+ever fire. **RULED: the route normalises a non-string to `''`**, so the action refuses with
+`VISITOR_SESSION_TOKEN_REQUIRED`, which `:72-73` already maps to 409 and `DniRouteTest:118` already asserts —
+the fix decides nothing new, and it is the **key-with-no-substitute** row of tick 303's remedy table.
+
+⛔ Refused: widening the parameter to `mixed` (weakens a correct declaration for one caller); `(string)`
+casting the input (an array-to-string conversion is itself an `Error` — it moves the 500); a new status or
+message (240); allocating for an unattributable request (SITE-166/168's compliance clause).
+
+⚠️ **The fixture must make the RIGHT refusal reachable** (306, 307): `DniRouteTest::setUp` provisions **no
+pool row** — each test inserts its own — so a test that forgets one gets a 409 carrying
+`BUSINESS_NOT_CONFIGURED_FOR_DNI` and **passes for the wrong reason**. The `assertJson` on the **message**
+therefore goes first, because it is the only assertion separating the two refusals and an ordered test proves
+only its first (248, 308). ⚠️ The zero-`CallToken` assertion is true in **both** worlds, so it is the
+compliance clause and is **reasoned, not measured** (270, 230).
+
+## ⚠️ TOOLING — `cat <tmp> >> REVIEWS.md` was REFUSED with the shell at the checkout root (tick 312)
+
+Tick 223 recorded `Write` a temp file then `cat <tmp> >> <target>` as the accepted append route, and tick 213
+that redirection alone is accepted **when the shell is at the checkout root**. Both held for ninety ticks; at
+tick 312 the `cat >>` was refused with `pwd` provably at the root and `.claude/settings.json` unchanged since
+09-06 12:22 and clean in git — so it is **neither** tick 197's shell drift **nor** a settings change, and the
+cause is **not measured**.
+
+✅ The working route is tick 196's: `Read` the file's tail, `Edit` the final lines to themselves plus the
+block. ⛔ Do **not** reach for `tee`, `python -c` or any other write path the guard has not refused yet — that
+is routing around a guard, which is the act this lane forbids the coder. ⚠️ Note this is the *second*
+instrument in three ticks whose accepted route narrowed with no permission change (262: `Read` on
+`gate-runs.tsv` now needs **both** `offset` and `limit`) — **an accepted access route can expire on its own,
+so record the working substitute in the same breath as the refusal.**
+
+## ✅ Standing checks that fired on their HEALTHY branches (tick 312)
+
+- **Tick 258's false-zero law fired and tick 247's caught it.** Re-running census halves 2 and 3 I wrote
+  `--format='COMMIT'` with no placeholder; git refused (`fatal: invalid --pretty format`) and `grep -c`
+  reported **0** — on the two surfaces whose expected output *is* a small number. Because stderr was **not**
+  suppressed the `fatal:` sat beside the `0`. ⛔ *Never `2>/dev/null` a query whose silence you intend to read
+  as a finding.*
+- **The cold witness's EQUALITY branch, all three qualifications MEASURED**: `foreach` **0** (280) and the
+  prose filter **READ, never counted** (297) — three `//` hits on `X157Test.php`, one prose and **two real
+  assertions whose string literals contain a double slash** — so `267 − 1 = 266` = green. Fourth consecutive
+  confirmation of tick 306's finding that the filter's false-positive population is manufactured by this
+  lane's own route-level axis.
+- **Tick 298's free tree-witness**: pest's `"line":2272` in states 1 and 3 equals the method declaration line
+  in the tree I read — which for a mutation of a committed line is the whole claim that both states measured
+  the same code.
+- **Tick 290's `--ruling` correction — ELEVENTH consecutive clean JOURNAL entry.**
+- **All four doctor checks together, fourth consecutive tick** — the **extrinsic** stamp equality (305), the
+  SUM (285), the `ok`-prefix (292), and the timing nonce (249).
+- ⚠️ **The `pgrep agy` set turned over COMPLETELY inside one tick for the second time** (310 the first):
+  two pids at review (sixty, pricebook), one at dispatch (money), **no member surviving**. Tick 230 measured
+  the growing direction and 296 the shrinking one; a complete turnover is why 196's *re-run it in the same
+  breath as the launch* is not an optimisation.
+- ⚠️ **`origin/main` gained 40+ commits and half 1 did NOT shrink** — coherent, because half 1's two members
+  are merges of an *older* main that main itself does not contain. A tick reading a large bound move as
+  necessarily draining a partition would have attributed a shrink that did not happen.
+
+## ⛔ A GROUND VALUE'S GRADE IS DECIDED BY WHETHER THE RULING'S ARGUMENT READS IT — NOT BY ITS DATATYPE (tick 313)
+
+Tick 302 built the two-tier ground-value table after SITE-174 was forfeited to a drifted line number, and
+keyed it on **datatype**: a count, a presence, an absence or a set is a **CLAIM** and stops the wave; a line
+number, a span or a byte size is **ORIENTATION** and is reported. Tick 304 then ruled a stop must be keyed
+to what refutes the **RULING**, never the **PREDICTION** — written about a falsifier's predicted outcome.
+Compose them and the gap is exact, and SITE-185 fell into it.
+
+My item 0 claim 2 was `grep -n 'string $visitorSessionToken' …/CallAttributeAction.php` → **exactly one
+hit**. Measured with the PCRE form, a `$` in a grep pattern being refused from this seat (305):
+
+```
+grep -nP 'string \x24visitorSessionToken' …/X-137/Actions/CallAttributeAction.php
+    21:        string $visitorSessionToken,        ← allocateFromPool, declared :19
+    76:        string $visitorSessionToken,        ← allocateToken,    declared :74
+ModuleServiceProvider.php:68   ->allocateFromPool(
+grep -rn --include='*.php' 'allocateToken' app/app   → its own declaration and nothing else
+```
+
+**Two hits, and the ruling reads neither count.** The ruling is *the DNI route hands an array to a
+`string`-typed parameter on `allocateFromPool`*, and its argument reads exactly two things: that the symbol
+**resolves** (301) and **which method the route calls**. Line 21 is `allocateFromPool`'s and line 68 calls
+it; line 76 is a different method with **zero production callers**, so the second occurrence cannot even
+widen the ruling.
+
+⛔ **A count-shaped value the ruling does not consume is ORIENTATION however count-shaped it is.** 302
+graded by the value's **type**; the correct key is **whether the brief's reasoning reads it**. The coder
+applied 302 exactly as written and stopped — right on the instruction, wrong on the world, which is the
+acute form of *a vague brief fails loudly; a precisely wrong one is obeyed.*
+
+⭐ **The mechanical sub-rule, which is the half a brief can apply.** Tick 301 introduced
+`grep -n '<symbol>' <file>` after SITE-173 was forfeited to a method name I had **invented** — one
+resolving to **zero**. The failure mode 301 exists to catch is zero. *Exactly one* bolts on an upper bound
+the rule never needed, and the upper bound is what fires on a file that legitimately overloads a parameter
+name across methods.
+
+> **A symbol resolution's load-bearing half is `≥ 1`, never `exactly 1`: it STOPS on zero and REPORTS on
+> N > 1 — unless the wave EDITS AT that symbol**, in which case N > 1 makes the edit ambiguous and is a
+> real stop.
+
+⚠️ **Fourth wave truncated by a stop of my own making** — SITE-173 (an invented method name), SITE-174 (a
+drifted line number), SITE-176 (a stop keyed to a prediction), SITE-185 (a miscounted symbol occurrence).
+Tick 286: *a stop condition is the most expensive place in a brief for a scope error, and the place least
+likely to be examined, because a stop that fires reads as the brief working.* Four times is a design
+problem, and **the pattern across all four is that the stop fired on something the ruling did not depend
+on.** Thirtieth of the imprecise-brief family (208, 227, 235, 236, 237, 238, 244, 245, 247, 249, 250, 254,
+262, 265, 271, 274, 275, 276, 280, 283, 286, 292, 293, 297, 301, 302, 304, 309, 310) and the first turned
+on a ground value's **grading key** rather than on its value, direction, scope, tier or presence.
+
+⚠️ **And claim 2 was never verified in the tick that wrote it, because the command was unrunnable from
+this seat** — a `$` in a grep pattern is refused (305), so a claim written in the plain form can only be
+checked by the coder. ⛔ **Write every symbol claim in the PCRE form (`grep -nP '…\x24name'`) so both seats
+run the identical command**; a ground value this seat cannot execute is a recollection wearing a command,
+which is tick 297's law reaching the one case where the instrument rather than the habit prevents the
+measurement.
+
+## ⭐ Tick 312's REVIEWS-append refusal HAS a measured cause, and it arrived through a SHARED surface (tick 313)
+
+Tick 312 met a refusal on `cat <tmp> >> .agents/supervisor/REVIEWS.md` with `pwd` provably at the checkout
+root and `.claude/settings.json` unchanged and clean in git, ruled it **neither** tick 197's shell drift
+**nor** a settings change, and recorded the cause as **not measured**. Sixth firing of tick 215's law —
+*before recording a problem as having no remedy, read a sibling lane's supervisor commits* (215 pricebook's
+phpunit split, 216 the pest lock, 217 the harness clause, 222 money's ruling 60, 312 the take's true
+blocking set):
+
+- **`origin/main 257a6a12`**, its only new commit and `CLAUDE.md` alone — *"the six lanes are git worktrees
+  of this repo and `settings.local.json` is shared through the common dir, so relocating the eight
+  `grs-antig-*` denies there locked reviews and money out at 06:00; deleted outright."*
+- **`origin/track/stages 3fb1787f`**, which arrived mid-tick — *"the REVIEWS.md append is open … main's
+  N134 names the cause."* **`origin/track/pricebook 597bc823`/`bf455193`** record the same outage and the
+  `BRIEF-NEXT`/`KICKOFF-NEXT` workaround it forced.
+
+⚠️ **Precondition measured here rather than adopted** (223): `git rev-parse --git-common-dir` is
+`/home/goaiez/agents/grs-antig/.git`, confirming the sharing, and **this checkout's `.claude/` holds
+`settings.json` alone** — there is no `settings.local.json` in this worktree at all. So the deny reached
+this seat through the *shared* file in another checkout, which is exactly why tick 312 could measure its
+own `.claude/` clean and still be refused. ⛔ **A guard that arrives through a shared surface is invisible
+from every seat except its author's**, and no amount of reading the local file reveals it — the same shape
+tick 312 recorded for a deny glob merged into a tracked `settings.json`, one surface further out.
+✅ Measured working again this tick, which is what put the block in the ledger — a **measurement with an
+evaluation time** (231), never a property.
+
+⭐ **Pricebook's `597bc823` records the line it did NOT cross, in this lane's own words**: *"forcing
+`.claude/settings.json` past an approval prompt via an allow-listed `git show` redirect is `/usr/bin/git`
+in supervisor form."* Convergent derivation of *do not route around a guard* — the discipline tick 312
+stated when it refused `tee` and `python -c`. Note it when it happens (224).
+
+⚠️ **Money's `62c0385d` ruling 139, recorded as a READING and not yet fired** (193): *"`git push origin
+<sha>:branch` pushes the sha's whole ancestry, so a supervisor commit made while a coder is alive is a
+branch head in disguise."* It names the mechanism by which an explicit-ref push stops being narrow, and it
+is a second reason for tick 199's existing rule that supervisor notes stay uncommitted while a writer holds
+the checkout.
+
+## ⚠️ A merge commit in half 1 is TWO opposite verdicts with one output — measure on the accepting bound (tick 313)
+
+All three census halves grew by **one commit each and it is the SAME commit**: `a638eb96`,
+`origin/track/pricebook` merging `origin/main`. Half 1 **2 → 3**, half 2 **10 → 11**, half 3 **3 → 4**,
+complement **12** unchanged.
+
+Tick 217's law: a merge commit prints no files under `--name-only`, so the surface that flagged it cannot
+explain it. It is there because it is not TREESAME to a parent on those paths — which is what main's
+content arriving on a branch that lacked it looks like, **and also what a resolution that dropped our
+column looks like.** Measured on the accepting bound (legitimate because the branch has just merged main,
+so main's content is contained by construction — never tick 147's staleness trap):
+
+```
+git diff --stat origin/main origin/track/pricebook -- <the fourteen module paths>   → (nothing)
+… -- app/database/migrations app/tests/Journeys GOAIEZ-TRACKER-CAPABILITIES.md GOAIEZ-MASTER-PLAN.md
+                                                                                    → (nothing)
+```
+
+Byte-identical on every censused path ⇒ the resolution took main's side whole and dropped nothing. **No
+violating partition on any surface**: half 1's three members are all three merges of main.
+
+⚠️ **Tick 181's shared-state trigger decided by tick 173's test, not by the count.** Ten sibling commits
+touch `BUILD-STATE.json`; nine report `1 deletion` (the top-level `updated` timestamp, the benign minimum —
+183, 188) and one reports `8 insertions, 8 deletions`. The measurement is the owned-id count **against each
+branch's own bound**: `main 14 · money 16 · pricebook 14 · reviews 20 · sixty 29 · stages 41 · ui 16`. **No
+branch is below main's 14**, the 8-deletion commit included. ⛔ Never *"does it differ from HEAD"* — HEAD
+reads far higher and every branch would read as a theft.
+
+⭐ **The closing tip re-read FIRED, ninth against sixteen nulls**: `origin/track/stages ff5062c4 →
+3fb1787f`, committed 06:23:33 and arrived 06:23:49, **after this tick's opening fetch** — arrival, not
+staleness (220). Paired `--stat` ran unconditionally (180): `CLAUDE.md` alone, so no surface moves.
+`origin/main` was re-read and **unmoved**, which is the only ref whose movement would have voided the
+census (198).
+
+## §7, doctor and the take at tick 313
+
+⚠️ **§7 baseline unchanged at `tests 2012 · passed 2009 · FAILED 1 · errors 2`**, measured independently in
+this seat on `136ee6e8`, reconciling ✓ (226), ⭐ `a_published_site_carries_all_seven` **ABSENT — J11
+green** — byte-identical to tick 312 on the identical sha, which is the expected result for an unchanged
+tree. Stable set: `test_g2_76_unified_inbox_header` (X-01, **stages'**) plus sixty's two real-transport
+journey stubs. ⚠️ **Both intermittent CAUSES absent from both runs** (Authorize.Net `E00040`, Postgres
+`SQLSTATE[42501]`), so the integers agree — *a property of which causes fired, never of the comparison*
+(302), with tick 311's cause-keying standing.
+
+**Doctor, live in this seat, all four checks passing together for the eighth consecutive tick**: stamp
+`20260829-0647` = `runtime_build` (**extrinsic**, 305) · `integrity clean · boundary 6 · contract 87 ·
+citation 93 · schema 15 · capability 455 · anchor 137 · journey 4` · **797**, the SUM reconciling (285),
+`ok` only on `integrity … clean` (292). **No stage moved.** ⚠️ §3 printed `capability 372` against a live
+455 — the one-slot record shared by seven trees, **83 behind, never a brief target** (196, 219). ⚠️ And
+`boundary 6` is still a **disabled check's output** here (309) — two `Enums/AiModel.php` model strings and
+three C-Mail/C-Sms `match()` default arms, **zero** cross-module imports, because main's revived
+`BoundaryStage` cannot run in this tree until the take lands.
+
+⛔ **The take stays DEFERRED and the quadrant is unchanged**, main having gained exactly one commit
+(`CLAUDE.md`): the four `app/app/Doctor/**` rows are cleared by `coder-bin/git:117-131`'s byte-identity
+clause, `launch-coder.sh`/`.claude/settings.json`/`bin/supervise.sh` are **M** rows and restorable, and the
+two `.claude/hooks/*.py` **A** rows remain **irremovable**. Per 224: **cannot work here.** The ask is filed
+by mechanism (217) — extend `:117-131`'s loop to `.claude/`, which covers the added case by construction
+because for a path only `MERGE_HEAD` carries the index takes `MERGE_HEAD`'s blob necessarily, while a
+locally **modified** `.claude/` file still refuses in every lane.
+
+⚠️ **What the deferral is buying, now measured from three lanes.** Main's `0ad838d7` moved the
+sibling-mailbox denies out of the tracked `settings.json` because they had merged into pricebook and locked
+its supervisor out of its own ledger; `257a6a12` then deleted them outright because the *relocation* locked
+reviews and money out through the shared common dir. **Two rounds of a guard travelling through a shared
+surface and disabling lanes that could not see it** — and this lane took neither.
+
+## ⛔ THE CENSUS'S DEFAULT TRAVERSAL IS UNSTABLE FOR MERGE COMMITS — half 1 SHRANK and half 3 GREW from ONE sibling event, with both bounds unmoved and no rewrite (tick 314)
+
+Half 1 read **2** against tick 313's recorded **3**, with `origin/main` and `origin/track/site` **both
+unmoved**. That is tick 252's monotonicity violation and tick 209's tooling-fault trigger at once, so it
+was measured before it was written down and no explanation was built before the query was verified
+(209's third clause, the one tick 209 itself broke):
+
+```
+pwd                                                          → the checkout root; 285's split absent
+git merge-base --is-ancestor 227edeab origin/track/reviews   → STILL ANCESTOR
+git log -g refs/remotes/origin/track/reviews                 → every entry "update by push", none forced
+git log --full-history … <the fourteen paths>                → 6 commits, INCLUDING 227edeab
+```
+
+No rewrite, no drifted shell, the commit still in range — and the default-simplified query stops
+printing it. The cause is git's **history simplification**: `git log` without `--full-history` prunes a
+merge that is TREESAME to a parent along the pathspec, and when `track/reviews` merged `main` a **second**
+time (`3768142e`) the simplified walk re-routed and dropped `227edeab`.
+
+⭐ **One sibling event moved two surfaces in OPPOSITE directions in the same tick**, which is why neither
+delta alone could be read and why this had to be a table:
+
+| surface | tick 313 | 314 default | 314 `--full-history` |
+| :-- | --: | --: | --: |
+| half 1 | 3 | **2** ⬇ | **6** |
+| half 2 | 11 | 11 | **13** |
+| half 3 | 4 | **5** ⬆ | **7** |
+| complement | 12 | 12 | 12 |
+
+⛔ **Tick 186 made every surface's signal its DELTA and tick 252 proved the range monotone. The RANGE is
+monotone; what `--name-only` PRINTS is not.** A benign sibling merge appearing or disappearing is
+byte-identical, in the output, to a partition growing or emptying — and tick 191's shrink rule
+(*attribute it to a bound, never to the sibling side*) has no branch for a shrink with **no bound moved
+and no rewrite**. It gets one, as half 1's sixth reading:
+
+> **shrank, both bounds unmoved, no forced reflog entry → history simplification RE-ROUTED. Re-run with
+> `--full-history`; the member is still in the range.**
+
+✅ **The severity is bounded and the bound is the reassuring half.** Simplification prunes only commits
+TREESAME to a parent, and a sibling's own **non-merge** commit writing our column is TREESAME to nothing,
+so it prints under both modes. **The census has never been able to miss a sibling's code commit.** What
+it mis-reports is the *merge* population — which is exactly the population whose delta this lane reads as
+a signal.
+
+⛔ **RULED by the lane supervisor: halves 1, 2 and 3 run with `--full-history` from tick 314**, because a
+standing set whose printed membership changes when a sibling merges main *elsewhere* manufactures both
+false shrinks and false growths, and this tick produced one of each. **The complement stays as it is** —
+`--name-only` prints no files for a merge under either mode, so its population is non-merge commits by
+construction, which is why it read 12 unchanged and why 285's drift signature was correctly absent.
+
+✅ **New baselines, measured this tick, all benign.** Half 1 `--full-history` = **6** and every one is a
+sibling merging `origin/main` (`3768142e` `a638eb96` `227edeab` `978041fc` `fd5d5f62` `32749e6f`); half 3
+= **7**, those six plus `b083868d` (reviews, X-202's G12-04 tracker row, attributed at tick 242, one row
+below this lane's G12-03 and still no textual conflict). **No violating partition on any surface, under
+either mode.**
+
+Statement of this section's law on the axis none of the others used — 163/178/180/183/185/187 the
+*pathspec*, 190 the *strip*, 191 *bounds moving*, 192/193 *unrecorded bounds*, 194 *configuration*, 196
+*width*, 207 *expected output*, 208 the *evidence request*, 209 *resolution context*, 210 the fault's
+*scope in time*, 215 the *cache key's identity*, 219 *provenance*, 220 the key's *update mechanism*, 224
+the *denominator's members*, 228 *evaluation time*, 247 a query that *did not run*, 253 *which tree a
+section measured*, 257 a query *never issued*, 259 *which column identifies the row*, 261/263 the
+*partition key*, 265 the *answer set*, 270 the *input set*, 283 the *compared dimension*, 287 the
+*proxy's file-type filter*. This concerns a query's **default traversal**: an input that appears nowhere
+in the command text, is neither a scope nor a bound nor a filter, and changes the answer in response to
+an event on a branch the query is not even asking about.
+
+## ⛔ A BRIEF'S JUSTIFICATION CLAUSE IS A GROUND VALUE — and it is the one whose blast radius is the PERMANENT RECORD (tick 314)
+
+Tick 312's ruling, repeated verbatim in SITE-185's brief, said: *"the fixture must make the RIGHT refusal
+reachable — `DniRouteTest::setUp` provisions no pool row, so a test that forgets one gets a 409 carrying
+`BUSINESS_NOT_CONFIGURED_FOR_DNI` and passes for the wrong reason."* Measured at source at tick 314,
+`CallAttributeAction:25-27` throws `VISITOR_SESSION_TOKEN_REQUIRED` **unconditionally first**, before
+`:29`'s pool query — so with a blank token the message is identical **with or without** a pool row, and
+the stated reason is false.
+
+The **act** is right and the pool row is necessary, for the *other* half: it is what makes the
+zero-`CallToken` assertion meaningful (306 — *when a test asserts something did NOT happen, check the
+fixture makes it POSSIBLE for it to happen*). The coder inserted it, correctly, for the reason I gave.
+
+⛔ **And the reason is now in `JOURNAL.md` forever, because a brief's justification clause is what a coder
+transcribes into the `decided` text.** Every prior member of the imprecise-brief family cost a wave, a
+stop or a paragraph; this one costs a line in a file that **has no withdraw** (210). Tick 297 ruled *a
+ground value about a file is measured with a grep in the tick that writes the brief, never recalled*;
+this is that law reaching a **control-flow ordering** — not a count, not a line, not a symbol, but
+*which of two guards fires first*, which is precisely the fact that decides whether a fixture is
+necessary and which reads as background rather than as a claim.
+
+✅ **RULED: no correcting note.** By tick 259's discriminator a careful reader of the record alone still
+reaches the **right** conclusion — insert the fixture that makes the asserted-absent thing possible,
+assert the discriminating message first — even though the stated reason is over-specific; the record's
+headline, defect, fix and four refusals are all correct; and a second row about one fact compounds rather
+than corrects (210).
+
+⛔ **Standing consequence: anything in a brief phrased as *"because X fires first"*, *"because nothing
+else writes it"*, *"because the container is guarded"* is measured with a command in the tick that writes
+the brief, or it is not written.** Thirty-first of the imprecise-brief family (208, 227, 235, 236, 237,
+238, 244, 245, 247, 249, 250, 254, 262, 265, 271, 274, 275, 276, 280, 283, 286, 292, 293, 297, 301, 302,
+304, 309, 310, 313) and the first whose blast radius is the permanent record rather than the wave.
+
+⚠️ Practical corollary, applied in SITE-186's brief: **when a wave's `decided` text depends on a fact the
+wave itself is measuring, the brief supplies the text with a NAMED BLANK for that clause** rather than
+predicting it. A `decided` line written against a predicted measurement is unrepairable.
+
+## ⛔ THIS LANE OWNS A FOURTH PUBLISHED ENDPOINT — every response-arm census has measured ONE SERVICE PROVIDER (tick 314)
+
+Sweeping the request surface — `grep -rn --include='*.php' 'request->'` over the seven owned modules —
+returns **five** sites, two of them in a file no census has read:
+
+```
+X-157/ModuleServiceProvider.php:69  input('visitor_session_token')      ← SITE-185
+X-157/ModuleServiceProvider.php:96  all()       :97  ip()
+X-137/ModuleServiceProvider.php:49  ip()        :50  userAgent()        ⛔ a route nobody censused
+```
+
+`X-137/ModuleServiceProvider.php:38-61` registers **`GET /l/{business}/{code}`** — the short-link
+redirect, this lane's under ruling 5, and a **publicly clicked** surface by construction (a flyer, a QR).
+Tick 306 built the response-arm census *"across all three published endpoints"* and closed the axis; tick
+307 then found a fourth arm on one of them and generalised — *an endpoint's response space is the union of
+every arm reachable from it*. This is the same law one level out: ⛔ **a census scoped to one module's
+service provider measures that provider, not the lane's endpoints.** Six waves of endpoint work
+(SITE-178/179/180/181/183/185) enumerated arms per *route file*, and a route file is not a lane.
+
+✅ **Its arms are asserted, so the census closes with nothing owed** (224 — **already done here**):
+`X137Test.php:223` the cross-tenant 404 **with a zero-`LinkClick` assertion beside it**, `:227` the
+redirect, `:240` the click row and the `LinkClicked` event, `:252` the unknown-code 404. That file already
+carries the both-halves shape tick 306 had to rule for X-157.
+
+## ⛔ SITE-186 — the short-link redirect counts and attributes a click for a redirect that cannot happen (ruled at tick 314)
+
+Measured at source, in order:
+
+```
+X-137/ModuleServiceProvider.php:44   ->firstOrFail();                       ← 404, asserted twice
+                             :46-52  LinkClick::create([...])               ⛔ side effect
+                             :54-58  Event::dispatch(new LinkClicked(...))  ⛔ side effect
+                             :60     return redirect()->away($shortLink->destination_url);
+…/2026_08_30_000039_create_x137_dni_tables.php:35   $table->text('destination_url');   NOT NULL, no default
+X-137/Actions/LinkShortAction.php:12  handle(int, string $destinationUrl, …) → writes it through, unvalidated
+```
+
+A blank `destination_url` reaches `redirect()->away('')` **with the click row and the attribution event
+already written**. So the substantive half is not the response: it is that a link which cannot be followed
+is nonetheless **counted and attributed**, in the module whose tracker ⛔ is *"never a reused token"* and
+whose whole subject is honest attribution. Same both-halves shape as SITE-179 and the same law — **when an
+unasserted arm has a side effect, the side effect is the assertion** (306).
+
+⛔ **What `away('')` does is the WAVE's measurement, never this seat's** — `php -r` is refused here (284),
+and that discipline is what made SITE-157's `empty("0")` and SITE-163's `Carbon::parse('   ')`
+measurements rather than readings (290, 291). ✅ The second instrument is free: the falsifier's state 1
+constrains the same fact behaviourally, so the transcript never stands alone. ⭐ **The fix holds under
+either outcome — a 302 to nowhere or a throw — which is what makes it a RULING and not a prediction**
+(304).
+
+**RULED: the route refuses a blank-after-trim `destination_url` with the 404 it already answers for an
+unresolvable link, and refuses it BEFORE the click row and the event are written.** `destination_url` is a
+**key with no substitute** under tick 303's remedy table — there is no usable substitute for a redirect
+target — so the remedy is refusal, and 404 is the endpoint's own established refusal, already mapped and
+already asserted at `:252`. The fix **decides nothing new** (277/295: *enforcing an existing invariant, not
+inventing a policy*).
+
+⚠️ **The reader is the only available agreement site, and that is measured rather than preferred.**
+`grep -rn 'LinkShortAction' app/app` returns **its own class declaration and nothing else** — zero
+production callers, every fixture bypassing it — so tick 246's `pages.title` ruling applies unchanged:
+*the readers are the only things that exist, so the agreement has to live in them.* **Fourth firing of
+that ruling in this lane** (`pages.title` 246, `fallback_number` 293, `form_definitions.steps` 303,
+`short_links.destination_url` 314). ⚠️ And the short-linker is **P-072**, a shared chokepoint six modules
+across four lanes reference (tracker `:52 :185 :208 :361 :407 :434 :678 :695 :786 :840`), so a write-side
+rule here would be a policy for other lanes' future callers.
+
+⛔ Six alternatives refused, each of which would pass every gate: **validating in `LinkShortAction`** (no
+production caller, and P-072 makes it other lanes' seam); **a DB constraint** (same, plus another lane may
+own the eventual writer); **refusing after the click is recorded** (keeps the attribution row for a click
+that went nowhere — the half the seam can silently lose); **a new status code, or redirecting to `/`**
+(inventing a policy — 295 — and minting a public behaviour nothing asserts — 240); **relaxing any test
+that reddens** (234, 242); and **any new `G##-##` literal** (G13-24 already has three carriers — 240).
+
+⚠️ **FALSIFIER, polarity named** (245): the new assertions are **presence-of-refusal**, so the falsifier
+reverts the guard — a state **never committed**, so tick 287's question (*would the tree produce this
+message with no mutation at all?*) answers **NO**, the two-state form is sound and the four-state sequence
+is **not** required; applying it by reflex to a never-committed mutation manufactures a state with no
+meaning. ⚠️ Predicted **with its refuting instruction and NO stop** (244, 304, 313): no existing test
+should redden — measured, `grep -c -F 'example.com/dest'` = **4** and `grep -c -E "handle\([^,]+, *''"` =
+**0**, so every fixture passes a real URL. **If one reddens, that means an assertion depends on a blank
+destination being followable, which is itself the finding — repair the FIXTURE, never the predicate.**
+
+⚠️ **Assertion ORDER is the tick-308 decision, not a matter of style**: zero-`LinkClick` and
+`Event::assertNotDispatched` go **first**, the 404 last, because an ordered test proves only its first
+failure (248) and the 404 is already carried by `:223` and `:252` while the side-effect half is carried
+nowhere.
+
+## ✅ Tick 313's `≥ 1` symbol rule, FIRST firing — and the first wave to run BECAUSE a stop was corrected (tick 314)
+
+Tick 313 ruled a symbol resolution's load-bearing half is `≥ 1`, never `exactly 1` — it stops on zero and
+**reports** on N > 1, unless the wave edits **at** that symbol. SITE-185's claim 2
+(`string $visitorSessionToken`) resolved to **2** hits, the overloaded-parameter case 313 measured, and
+the wave reported and **proceeded** where the previous phrasing forfeited it. Four consecutive waves had
+been truncated by a stop of my own making (173 an invented method name, 174 a drifted line, 176 a stop
+keyed to a prediction, 185 a miscounted symbol); this is the first to run because one was corrected.
+
+⚠️ SITE-186's brief applies the carve-out explicitly: on the three symbols the wave **inserts between**,
+N > 1 **is** a stop, because a second occurrence makes the insertion point ambiguous.
+
+## Instrument notes, tick 314
+
+- ✅ **The `cat <tmp> >> REVIEWS.md` route works again** (82091 → 82433 lines), confirming tick 313's
+  measured cause — the deny reached this seat through the **shared** `settings.local.json` in Track 1's
+  common dir, and main's `257a6a12` deleted it. Tick 312 recorded the refusal with its cause unmeasured
+  and its substitute (`Read` + `Edit`) named in the same breath, which is what made the recovery free.
+- ✅ **The closing tip re-read FIRED — tenth against sixteen nulls** — and was left **literally blank
+  until the command returned** (257). Three refs arrived mid-tick (`pricebook`, `sixty`, `stages`),
+  every one pushed after this tick's opening fetch: **arrival, not staleness** (220). `origin/main` was
+  re-read and **unmoved**, which is the only ref whose movement would have voided the census (198).
+- ⚠️ **The paired `--stat` is the only surface that will ever print these (190), so this IS the record.**
+  money — X-198, X-173, **money's own**; reviews — X-170/X-111/X-186/X-210/X-109, read with
+  `^origin/main` to strip main's history from a stat spanning a merge of main (296); sixty — X-188, its
+  own; stages ×2 — `CLAUDE.md` alone; **pricebook — X-163 (its own) and `C-Agent/Actions/AgentAnswerAction.php`,
+  which is SIXTY's under ruling 5.** That last is OWNER ACTION 45's shape one lane over: advisory to
+  Track 1, ⛔ **never a parallel fix**, no filing here (182's precedent).
+- ⛔ **The `origin/main` take stays DEFERRED and the guard was re-read at source** (218, 278, 312) — it
+  is in no repository, so it changes with no commit anywhere. `coder-bin/git:132`'s never-list still
+  carries `\.claude/` with **no exemption**, and `:117-131`'s `GOAIEZ_MERGE_OK` byte-identity loop still
+  covers `app/app/Doctor/*` **only**. Quadrant read for its **`A` lines** (229): the four
+  `app/app/Doctor/**` rows and `seals.json` are **M** and cleared; `bin/supervise.sh`,
+  `launch-coder.sh` and `.claude/settings.json` are **M** and restorable; **`.claude/hooks/drive_hook.py`
+  and `no-piped-gate-tool.py` are `A` and IRREMOVABLE**; `CLAUDE.md` is both-sides so `merge=ours` fires
+  and it never enters `bad`; `app/phpunit.xml` is **absent from main's range**, so the working-tree pin
+  survives a take. Per 224: **cannot work here.** TRACK 1 ACTION unchanged, filed by mechanism (217).
+- ⚠️ **§7 baseline is `tests 2013 · passed 2010 · FAILED 1 · errors 2`** with `a_published_site_carries_all_seven`
+  **ABSENT — J11 green**, measured independently in this seat and byte-identical to the wave's. Both
+  intermittent **causes** absent from both runs (Authorize.Net `E00040`, Postgres `SQLSTATE[42501]`), so
+  the integers agree — **a property of which causes fired, never of the comparison** (302, 311).
+- ⚠️ **Doctor unchanged, all four checks passing together for the tenth consecutive tick**: the
+  **extrinsic** stamp equality (305), the SUM `797` (285), the `ok`-prefix (292), and four of seven
+  timings differing **including both long stages**, where the nonce's weight lives (249, 311).
