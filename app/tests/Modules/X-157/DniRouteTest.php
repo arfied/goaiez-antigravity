@@ -140,4 +140,20 @@ class DniRouteTest extends TestCase
             'a rolled back deployment still allocated a DNI token'
         );
     }
+
+    public function test_the_dni_route_refuses_a_non_string_visitor_session_token(): void
+    {
+        DB::table('dni_pool_numbers')->insert([
+            'business_id' => $this->business->id,
+            'phone_number' => '+15551234567',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $response = $this->getJson("/sites/{$this->business->id}/test_hash/dni?visitor_session_token[]=x");
+
+        $response->assertJson(['error' => 'VISITOR_SESSION_TOKEN_REQUIRED']);
+        $response->assertStatus(409);
+        $this->assertSame(0, CallToken::where('business_id', $this->business->id)->count());
+    }
 }
