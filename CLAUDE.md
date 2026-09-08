@@ -1502,3 +1502,88 @@ tick reading only the last would have seen a clean single gate and missed that a
 all. Second, the report never said a first gate ran and failed; nothing was concealed (the pint fix is
 disclosed in `DONE` and the quoted verdict is the later gate's), but **the two-gate shape existed only
 in the instrument the gate writes, not in the one the run writes.**
+
+## ⛔⛔ Trap added 2026-09-08 14:0x — a hand-over table must not carry BOTH a blanket ⛔ and per-row exceptions
+
+PB-128's brief listed six pre-measured events under the header *"Six are already measured. ⛔ **Do not
+re-derive them — take them and move on**"*, and then marked **four of those six rows** *"yours to
+discriminate"* in the verdict column. **All four are absent from the report.** One of them
+(`ReorderTriggered`) is a live defect the reviewer then had to find unaided.
+
+⭐ **The coder read it correctly, and that is the point.** A ⛔ in a header outranks a phrase in a cell —
+that is the *right* resolution of the conflict, and a coder who resolved it the other way would be the
+one to worry about. ⛔ Do not grade this shape as a coder shortfall; **eighth consecutive wave whose
+shortfall traced to the brief**, and the habit of reading a shortfall as evidence about the brief first
+is the only reason it was caught.
+
+⭐ **The fix is structural, not a wording tweak: split the table in two** — `MEASURED, take as given` and
+`HANDED TO YOU, discriminate these`. A single table cannot carry a blanket prohibition and its own
+exceptions, because the reader must resolve the conflict *before* reaching the cell that would have
+lifted it.
+
+## ⛔ Trap added 2026-09-08 14:0x — a REJECTION CLAUSE must be falsifiable, or it audits exactly as much as `1` did
+
+PB-127 established that a clean sweep's count is its only auditable part, so PB-128's brief demanded
+three counts **and**, for every rejected candidate, the one clause that killed it. ⭐ **The counts half
+landed perfectly** — 36 dispatch sites and 30 distinct events, both confirmed independently in two
+commands. ⛔ **The rejections half did not: all 22 read *"Killed because no surface tells someone the
+alarm happened."***
+
+That sentence is **the discriminator's No branch quoted back**. It names no file, no line, no query, and
+twenty-two identical strings are exactly as checkable as the single `1` that prompted the rule.
+
+⭐ **The generalisation, and it is the correction to PB-127's rule rather than a repeat of it: demand
+that the clause be FALSIFIABLE — that it name a file, a line or a query a reviewer can open.** The
+distinction is sharp and worth stating in every measure-only brief:
+
+- ⛔ *"No surface claims it"* — a **conclusion**. Restates the verdict.
+- ⭐ *"`Reorders::render():38` queries all `PurchaseOrder` rows with no reorder predicate"* — a **clause**.
+  Falsifiable in one `Read`.
+
+⚠️ Note the shape of the near-miss: asking for "a clause" got a clause, syntactically. **A disclosure
+requirement that can be satisfied by a constant string has not been specified**, and the reviewer only
+notices because the constant repeats.
+
+## ⭐⭐ Trap added 2026-09-08 14:0x — the screen that explains its own EMPTINESS with a claim that would mean it should not be empty
+
+The sharpest member yet of this lane's *sentence-the-code-does-not-honour* family
+(`deducted_if_proceeding`, the portal's *"a fresh link was sent"*), and it earns its own name because the
+falsehood is **self-concealing**.
+
+`InventoryEngine:35-36` dispatches `StockLow` and `ReorderTriggered` at
+`$newQty <= $item->reorder_point`. **Neither has a listener** — measured across `app/app/Modules`,
+`app/app/Providers`, `app/bootstrap`, `app/config`; every reference outside `Events/` is a dispatch site
+or an `Event::fake`. And `X-167/Ui/views/reorders.blade.php` says, at `:5` and again inside its empty
+state at `:8`, that *"a restock **is proposed** at the reorder point."*
+
+Nothing proposes it. `Reorders::render():38` lists existing `PurchaseOrder` rows with no predicate, and
+the only production writer is `StockByVan::proposeRestock():32` — a `wire:click` a human presses.
+
+⚠️⚠️ **So the screen stays empty, and its empty state accounts for the emptiness by asserting the very
+mechanism that would have filled it.** The owner concludes nothing needed reordering. ⭐ The other
+members of this family were sentences sitting *beside* working code; this one's whole job is to explain
+the absence its own falsehood causes — which is why no reader of the screen can detect it from the
+screen.
+
+⭐ **And the contrast is what makes it rulable, not the finding itself.** PB-127's `PeriodReady` looked
+identical — dispatched, unlistened, with a blade claiming *"the week closes automatically"* — and is
+**honoured**, by `ApprovalsView`'s `status='open' AND period_end < today` predicate. ⛔ **The
+discriminator between the two is the consumer's query, every time.** `ApprovalsView` synthesises the
+claimed state in a `WHERE` clause; `Reorders::render()` has no predicate at all. **Read the query before
+ruling either way** — the grep for a missing transition is decisive-looking and answers nothing.
+
+⭐ Two review-side rulings recorded with it, both of which will recur:
+
+1. **The fix was the SENTENCE, not the listener** — `capabilities.php` declares no automatic proposal, so
+   wiring one is a new capability (week-2, PB-117), and the condition stays true for every subsequent
+   consumption while stock is low with **no dedup in `PurchaseOrder`**, so the "obvious" listener mints a
+   fresh PO each time. ⛔ Third incarnation in this lane of *stricter is always safe* being false.
+2. ⚠️ **The false sentence was ASSERTED VERBATIM by a test** (`ReordersTest.php:44`
+   `->assertSee('No reorders yet. A restock is proposed …')`). ⭐ Updating it is a **correction, not a
+   weakening** — PB-124's `assertDatabaseHas` shape — and it must be **pre-declared in the verdict block
+   that briefs the fix**, or the next reviewer counting `-` lines grades the fix backwards. ⛔ Deleting
+   such an assertion rather than updating it stays a `BLOCK`.
+3. ⭐ **A corrected sentence is prose against prose.** The load-bearing deliverable is the assertion that
+   the automatic path **does not exist** — consuming below the reorder point creates zero
+   `PurchaseOrder` rows — because that is what goes red the day someone wires the listener without
+   revisiting the sentence. **Fix the claim, then pin the absence.**
