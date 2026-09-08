@@ -280,35 +280,87 @@ Diffstat: `ContractStage.php +12`, `TestAnchorStage.php +19`, `BoundaryStage.php
 "APPROVED but NOT EXECUTABLE"; that is **out of date** — an executor was found and they
 are on main.
 
-**The take is one guard change away, and everything else about it is clean.** Measured
-this tick, not remembered:
-
-- our side `git diff --name-only origin/main...HEAD` → **14 files**; intersection with
-  main's **133** → **3**: `.agents/state/BUILD-STATE.json`, `.agents/state/JOURNAL.md`,
-  `CLAUDE.md`. All three `M` on both sides, all three on the never-merge list, all three
-  handled by `coder-bin/git:34-44` (`git checkout HEAD -- <file>` inside an
-  `--allow-merge` run). Our eleven `app/` files are untouched by main.
-- `--allow-merge` **is** wired into this lane's `launch-coder.sh:22`.
-- ⛔ **The blocker is two files and nothing else.** Main's range **ADDs**
-  `.claude/hooks/drive_hook.py` and `.claude/hooks/no-piped-gate-tool.py`.
-  `coder-bin/git:106` refuses any commit staging `\.claude/`; an ADD cannot be undone by
-  `git checkout HEAD --` (not in `HEAD`), `git rm --cached` (`:22`), `git reset` (`:16`)
-  or `git restore --staged` (`:78`), and a merge commit cannot be path-limited. The only
-  byte-identity exemption (`:100-105`) covers `JourneyHarness.php` alone. **Re-read at
-  tick 185: the guard is unchanged in this respect.**
-- Not fixable from this seat either: `.claude/**` is outside the supervisor's column
+- `--allow-merge` **is** wired into this lane's `launch-coder.sh:22`. Nothing else is:
+  no `--allow-restore`, no `--allow-harness`, no `--allow-push` (`launch-coder.sh:22-23`
+  takes only `--coder` and `--allow-merge`). Do not spend a tick rediscovering that.
+- Not fixable from this seat: `.claude/**` is outside the supervisor's column
   (`Bash` denied, `Write` refuses it as sensitive — tick 177 tried both).
 
-**Do not dispatch the merge to test this.** `RULING CA` stands: a merge wave that cannot
-commit burns the whole run, and the guard refusal is a STOP, not a variable to set.
-**Re-check with one command before ever re-deriving the above:**
-`git diff --name-status HEAD...origin/main -- .claude/` — if the two `A` rows are gone,
-or `coder-bin/git:106` no longer lists `\.claude/`, the take is open and it is the first
-wave this lane runs (with `--allow-merge`, and `composer dump-autoload` before the first
-gate — main adds 6 classes under `app/app/Modules/`, which is the classmap trap).
+### ⛔ `RULING CP` (tick 186) — CO's "two files and nothing else" is WRONG. It is six, and CO's re-check command reports the take open when it is not.
 
-This is **TRACK 1 ACTION 1**, escalated: it is no longer housekeeping, it is the sole
-blocker on three of this lane's five reserved stage counts.
+**Supersedes the last three bullets of `RULING CO`.** CO measured the *intersection* of
+our 14 changed files with main's 133 and read the remainder as clean. That is the wrong
+set. **A per-track file this lane never touched is not in any intersection, merges
+without a conflict, and lands silently** — which is the whole danger. Measured at tick
+186 with `git diff --name-status HEAD...origin/main -- <never-list paths>`, main's range
+touches **ten** of them:
+
+```
+M .agents/state/BUILD-STATE.json      M app/app/Doctor/Stages/BoundaryStage.php
+M .agents/state/JOURNAL.md            M app/app/Doctor/Stages/ContractStage.php
+M CLAUDE.md                           M app/app/Doctor/Stages/TestAnchorStage.php
+M bin/supervise.sh        (+479/-165) M app/app/Doctor/seals.json
+M app/phpunit.xml         (1 line)    M app/tests/Journeys/JourneyHarness.php (+36)
+```
+
+plus the two `.claude/hooks/*.py` **A** rows. Twelve files need a decision, not three.
+
+⚠️ **`app/phpunit.xml` is the one to see first.** Main pins
+`DB_DATABASE=goaiez_antig_test`; this lane pins `goaiez_antig_stages_test`. It is a
+**one-line change inside a 133-file merge** and CO's analysis did not see it at all,
+because this lane has never edited that file. Landing it silently repoints this lane's
+whole suite at another lane's database. That is the `goaiez_antig` trap's neighbour and
+it is exactly why §0 of `supervise.sh` exists.
+
+**The blocker is six files, not two.** `coder-bin/git:106` refuses a commit staging
+`app/app/Doctor/` and `.*seals\.json$` **unconditionally** — the `$HARNESS` variable
+(`:83`, `:95`, `:100-105`) gates only `JourneyHarness.php`, never those two. So the
+take's commit stages, and is refused on:
+
+| refused, and restoring to `HEAD` defeats the take | `app/app/Doctor/Stages/{Boundary,Contract,TestAnchor}Stage.php`, `app/app/Doctor/seals.json` |
+| :--- | :--- |
+| refused, and cannot be unstaged at all (ADD) | `.claude/hooks/drive_hook.py`, `.claude/hooks/no-piped-gate-tool.py` |
+
+The four Doctor/seal files **are the owner's fixes** — taking them is the entire point of
+the take, so `git checkout HEAD -- <them>` is not a resolution, it is a withdrawal.
+⛔ **Therefore: even if both `.claude/hooks` ADDs vanished tomorrow, the take would still
+be refused.** CO's one-command re-check
+(`git diff --name-status HEAD...origin/main -- .claude/`) is **retired** — it tests one
+third of the blocker and answers "open" when the take is shut.
+
+**Re-check with this instead**, and only conclude the take is open if it prints nothing:
+
+```
+git diff --name-only HEAD...origin/main -- .claude/ app/app/Doctor/ app/app/Doctor/seals.json
+```
+
+The rest of the twelve are genuinely resolvable and the plan for the day the take opens
+is: **restore to `HEAD`** (per-track, `coder-bin/git:34-44`) — `CLAUDE.md`,
+`bin/supervise.sh`, `app/phpunit.xml`, `.agents/state/BUILD-STATE.json`,
+`.agents/state/JOURNAL.md`; **take main's side** — `JourneyHarness.php`, which
+`:100-105`'s byte-identity exemption already covers by name. Then
+`composer dump-autoload` before the first gate (main adds 6 classes under
+`app/app/Modules/` — the classmap trap), then `--full-doctor`.
+
+### ⛔ `RULING CQ` (tick 186) — a bare `git merge` auto-commits straight past `:106`. It is a HAZARD, not the way through.
+
+`coder-bin/git`'s `merge` case (`:109-117`) checks only `GOAIEZ_MERGE_OK` and refuses
+`--rebase`, then `exec`s the real git. A conflict-free `git merge origin/main` **without**
+`--no-commit` therefore creates its merge commit inside one git process and **never
+invokes the `commit` shim at all** — `:106`'s never-list is not consulted, and every one
+of `RULING CP`'s twelve files lands. The guard's own comment at `:110-115` says so in as
+many words; `--allow-merge` is the control it chose instead.
+
+**RULED by the lane supervisor: this lane will not use it, and no brief will name it,
+because the refusal it evades is the only thing standing between a 133-file merge and a
+silent one-line swap of this lane's test database** (`RULING CP`). `CLAUDE.md`'s merge
+procedure is `--no-ff --no-commit` + selective restore + commit **for this exact reason**,
+and `RULING CA` already says a guard refusal is a STOP, not a variable to set. Recorded
+here only because a future tick — in any lane — will find this hole and read it as an
+opening. It is filed to Track 1 as part of ACTION 1.
+
+**Do not dispatch the merge to test any of this.** This is **TRACK 1 ACTION 1**,
+escalated: it is the sole blocker on three of this lane's five reserved stage counts.
 
 ## Dispatching the coder (added 2026-09-02)
 
