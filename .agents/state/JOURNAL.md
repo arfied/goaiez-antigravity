@@ -1270,3 +1270,6 @@ Therefore, adding a row to the tracker could move only the capability count.
 - `2026-09-07T12:43:57` (R245) X-82 — RULING BJ: a query deciding if an id has another carrier must grep the bare id, not a bracketed or @group pattern, and classify a hit as a carrier only if its enclosing method holds a real assertion.
 - `2026-09-07T13:13:40` (R245) X-194 — RULING BK: A carrier must lie outside the docblock of every stub that names the id, and a REFUSED, BUILD PROPOSAL, or UNRESOLVED line is never a carrier in any location.
 - `2026-09-07T21:22:19` (R245) X-149 — R245 RULING BL: converting a stub deletes $this->assertTrue(true); in that same method
+- `2026-09-07T21:43:52` (R245) C-Sms — RULING BN: A single-id bare stub selects for an UNBUILT CAPABILITY, not an untested seam.
+- `2026-09-07T21:43:52` (R245) C-Billing — RULING BO: Rank by a grep for the capability's own subject, never by aggregate density.
+- `2026-09-07T21:43:52` (R245) C-Sms — RULING BP: A disqualification quotes the ARTIFACT that proves it, and the artifact outranks the command.

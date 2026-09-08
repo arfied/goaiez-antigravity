@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-07T21:22:19",
+ "updated": "2026-09-07T21:43:52",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -5096,6 +5096,24 @@
    "module": "X-149",
    "chose": "R245 RULING BL: converting a stub deletes $this->assertTrue(true); in that same method",
    "at": "2026-09-07T21:22:19",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Sms",
+   "chose": "RULING BN: A single-id bare stub selects for an UNBUILT CAPABILITY, not an untested seam.",
+   "at": "2026-09-07T21:43:52",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Billing",
+   "chose": "RULING BO: Rank by a grep for the capability's own subject, never by aggregate density.",
+   "at": "2026-09-07T21:43:52",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Sms",
+   "chose": "RULING BP: A disqualification quotes the ARTIFACT that proves it, and the artifact outranks the command.",
+   "at": "2026-09-07T21:43:52",
    "ruling": "R245"
   }
  ],
