@@ -5,7 +5,8 @@
         @if(!$assignment)
             <p class="text-gray-500">No active number assigned.</p>
         @else
-            <p class="font-mono text-xl text-green-600">Active</p>
+            <p class="font-mono text-xl text-green-600">{{ $number }}</p>
+            <p class="text-sm text-green-600">Active</p>
         @endif
     </div>
 </div>
