@@ -3044,3 +3044,77 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     second clause is **unearned**, since ruling 110 measured that nothing reads
     `phone_answering`/`ai_enabled`/`voicemail_only`, so nothing can stop service either way. It
     asserts a negative that holds, which is ruling 76's PASS-WITH-NOTES grade, not a wave.
+133. **A brief's "expect exactly N commits" clause states the authorised SURFACE, not a count, and the
+    instrument is the diff (RULED by the lane supervisor 2026-09-08, on MONEY-108's `4f9be1b4`).**
+    Run 129 produced **five** commits where the brief said four and called anything else a BLOCK: the
+    fifth, `19aa975f`, carries the same `fix(X-198)` message as `c03cc7d1` and adds **one blank line**
+    between two test methods — a `pint` fix committed after the fact. Measured, `git diff
+    2fd72db5..HEAD --stat` is exactly four blades, four test files and the two state files: no `app/`
+    path outside the four modules, no migration, nothing under `bin`/`.claude`/`CLAUDE.md`/
+    `.agents/supervisor`. **The surface was respected in full.** Reading the clause as a literal count
+    would withhold a correct tip over a blank line, which is the error ruling 74 exists to stop and the
+    grade rulings 76, 121 and 128 already set for paperwork. So: **the reviewer measures
+    `git diff <pushed ref>..HEAD --stat` against a named path list, never `git log | wc -l`**, and every
+    brief writes the clause as a surface — *"the authorised surface is <paths>; a commit touching
+    anything else is a BLOCK."* ⚠️ The **cause** is ruling 75 not followed: that ruling requires
+    `./vendor/bin/pint <touched paths>` **before** each commit, because the gate's `--test` has no fix
+    mode and its verdict is the sha's (ruling 34). ⚠️ The tell is two commits sharing one message —
+    ruling 47's family (a commit message naming a syntax or style problem in a file the wave meant only
+    to add a line to), one notch milder, and it cost one commit rather than three.
+134. **A button label is a promise about an ACT, and in four of five cases the method's own message
+    already denied it (RULED by the lane supervisor 2026-09-08, briefed as MONEY-109).** Ruling 122
+    closed with *"a status pill is a sentence of two words and is swept with the prose"*; a button is a
+    sentence of two words that also **acts**, and this is the first sweep of that population —
+    **50 `<x-ui.button>`/`<x-ui.submit>` + 6 `<x-ui.empty-state action="…">` = 56**, each label measured
+    against the method it calls. Five are false, and four share one shape: **the screen contradicts
+    itself at one element's distance, with the disproof already written directly beneath the button.**
+    (a) `X-199/Ui/views/declines.blade.php:55` *"Send pay link"* — `sendPayLink()` calls
+    `PaymentLinkAction`, which ruling 36 built to **create and persist** a Stripe link that `render()`
+    reads back for the owner to send; `grep -rn "Mail::\|Notification::\|Http::\|->send("
+    app/app/Modules/X-199` is **empty**, and `Declines.php:30` already says *"The pay link was not
+    made"*. (b) `X-198/Ui/views/same-account.blade.php:22` *"Pull payouts from {gateway}"* —
+    `SameAccount::pull():51` makes **no call** and sets *"nothing was pulled and nothing changed"*
+    (ruling 51: payout ingestion does not exist). (c) `X-201`'s *"Submit the defence"*
+    (`dispute-queue:31`) and *"Approve the submission"* (`dispute-card:38`) — ruling 97 measured
+    `grep -rn "Http::\|curl_" app/app/Modules/X-201` **empty**, and MONEY-108 had just made the pill
+    (`sealed, not sent`) and the confirmation (*"Nothing was sent to any gateway"*) honest **on these
+    exact two screens**, leaving the buttons: rulings 113/116 recurring in the wave written about them,
+    one element over. (d) `X-173/Ui/views/conflicts-list.blade.php:31` *"Post to this account"* —
+    `grep -rn "Http::\|curl" app/app/Modules/X-173` is **empty** and ruling 73a measured the connect
+    door cannot succeed, so no ledger exists to post to. ⛔ None is resolved by building a transport
+    (ruling 13's evidence run) and ⛔ none by removing the button — an owner is owed the act the code
+    *does* perform, and the labels name it. ⚠️ **Blast radius: ZERO** — no test in the lane asserts any
+    of the five, which is ruling 70 again and exactly why they outlived every screen wave this lane has
+    run; all five items **add** assertions. ⚠️ The other **51 are measured clean and STRUCK**, listed
+    with a reason each in MONEY-109's Table B; three groups are recorded rather than briefed — ruling
+    73a's doors, the **unreachable** `pdf_url` links (ruling 43 left the column null, so ruling 96
+    governs), and X-117's *"Pay {amount}"* / *"Authorise this charge"* plus C-Billing's *"Top up"*,
+    where rulings 45/87/96/100/109 already made the confirmation beneath each carry the truth (ruling
+    76's grade).
+135. **A `$success` sweep follows the VALUE, not the assignment — ruling 97 could not see a message
+    minted in `Domain/` (RULED by the lane supervisor 2026-09-08, briefed as MONEY-109 item 5).**
+    Ruling 97 swept this lane's 24 `$this->success` / `$this->waiting` **assignments in `Ui/`**.
+    `X-173/Ui/ConflictsListView:34` is `$this->success = $r['message']`, so its sentence is minted two
+    files away in `Domain/AccountingSyncEngine` and was **invisible** to that sweep. Two are present
+    tense in a module with no transport: `:69` *"%s **now posts to** %s."* and `:110` *"%s **now posts
+    to** %s · %s."* Nothing posts anywhere. This is ruling 81's docblock finding one file type over —
+    same module, same absent transport — and the generalisable half is that **where a component assigns
+    a message from a result array, the sentence lives in `Domain/` or `Actions/` and must be swept
+    there**. ⛔ Not resolved by moving the strings into `Ui/`: the engine is the right place for them and
+    only the tense is wrong. ⚠️ The four refusal messages on the same methods (`:48`, `:55`, `:82`,
+    `:91`) are **measured true** and stay byte-identical — `:91` is a model ruling-21 waiting state.
+    ⚠️ The widened sweep — every `['message']` assignment across the eight modules' `Ui/` trees, read
+    back to the file that mints it — is the next backlog item, to be struck with its measurement if it
+    comes back empty (ruling 95).
+136. **Case (d)'s gate is new CONTENT in `OWNER.md`, never a newer mtime (measured 2026-09-08 05:2x).**
+    `OWNER.md`'s mtime moved from `Sep 7 19:57` to `Sep 8 05:21` between two ticks and its text did not
+    change: the newest heading is still `## TRACK 1 — 2026-09-07 20:0x`, which run 128 had already
+    answered (§6(a) → ruling 127, §6(b) → ruling 126), and `grep -n "2026-09-08"` over the file returns
+    nothing. A tick that had taken the timestamp as the signal would have re-consumed a spent section,
+    re-answered two questions Track 1 already has, and displaced a real wave. **So a tick judges
+    `OWNER.md` by its heading list — `grep -n "^## \|^# "` and read the last one — and the addendum
+    records the newest heading, not the mtime.** ⚠️ This is ruling 83's shape in a different instrument:
+    there a stale `FETCH_HEAD` named a sha the branch never contained while `origin/<branch>` was the
+    measurement; here a fresh mtime names a reply that was never written while the heading is the
+    measurement. **In both cases the cheap signal moves for reasons unrelated to the fact it stands
+    for.**
