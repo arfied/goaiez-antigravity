@@ -890,3 +890,4 @@
 - `2026-09-08T06:58:18` note: note: BoundaryStage X-188: update test_g18_10_numbers_by_area_code to assert isolation (the tenant's own numbers) and wire PoolInventory component to gracefully default to the tenant context (Tenancy::id()) to fix the defect where it always rendered an empty pool for tenants.
 - `2026-09-08T08:26:56` note: capability drop dead negative assertion in test_g18_10 and correct docblock
 - `2026-09-08T09:28:21` note: BoundaryStage X-188: YourNumberCard implicitly queries the provisioned number from number_assignments relying on the RLS tenant context rather than component state, displaying the assigned phone number on the UI.
+- `2026-09-08T10:16:05` note: boundary Wired ParkList to number_parks with RLS scoping, and added test with assertions.
