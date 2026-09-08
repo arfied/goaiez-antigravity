@@ -856,3 +856,14 @@ share account 1. The protection they duplicated lives in the tick prompt (lanes 
 shared surface to another has not measured which surfaces are shared** — before placing anything
 "per-lane", run `git rev-parse --git-common-dir`. These seven checkouts share the object store, the
 worktree table, the account, and the local settings; they do not share only branches.
+
+⚠️ **A LANE'S MERGE RESOLUTION CAN DELETE A SUPERVISOR FILE THAT NEITHER SIDE MEANT TO TOUCH, AND THE
+THREE-WAY MERGE CARRIES THE DELETION ONTO `main` (N136, 2026-09-08, wave 140).** `track/reviews`' own
+`merge: origin/main into track/reviews` resolved `.claude/hooks/drive_hook.py` and
+`.claude/hooks/no-piped-gate-tool.py` as deleted; `main` had not touched them; base-has / ours-unchanged /
+theirs-deleted takes the deletion, and my brief said in as many words that `.claude/hooks/*.py` are "not
+restored". The unattended tick measured it mid-wave (`.block139.txt`) and the coder restored both from
+`HEAD`. **RULED: `.claude/hooks/` is a supervisor path; in a merge, every `D` the index lists under
+`.claude/` is restored from `HEAD`**, and the general form is the run-115 shape inverted — the harness rule
+("take the incoming side whole") is right for a CHECK the lane built and wrong for a GUARD the lane lost.
+Measure which with `git diff --name-status <merge-base> HEAD^2 -- .claude/`: a `D` there is a loss.
