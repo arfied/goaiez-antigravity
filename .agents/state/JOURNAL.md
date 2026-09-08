@@ -845,3 +845,4 @@
 - `2026-09-08T09:07:33` UNRESOLVED TESTS X-167 - grep for warehouse|shipment|shipping_label|freight matches Database/migrations/2026_08_30_000076_create_x167_inventory_tables.php:19
 - `2026-09-08T09:07:50` (R245) X-167 — G6-24 is asserted against per-location stock; G6-18 is refused by the module's scope bound
 - `2026-09-08T09:28:24` (R245) X-167 — G6-18 is asserted as a closed-set schema refusal because the scope bound is about representability, and that the previous TESTS unresolved is superseded
+- `2026-09-08T09:47:49` (R245) X-166 — a margin *report* excludes sample rows at the action's query root because every production caller aggregates, while the per-job management screen keeps showing them labelled because it queries the model directly.
