@@ -51,7 +51,7 @@ final class RateLookupAction
             ];
         }
 
-        if (!$rate->is_active) {
+        if (! $rate->is_active) {
             return [
                 'refusal_code' => 'INACTIVE_RATE_REFUSED',
             ];
