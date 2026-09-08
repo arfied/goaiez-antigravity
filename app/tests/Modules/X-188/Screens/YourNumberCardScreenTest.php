@@ -14,6 +14,7 @@ use Tests\TestCase;
 
 class YourNumberCardScreenTest extends TestCase
 {
+    /** @test */
     public function test_screen_renders_for_tenant(): void
     {
         $owner = User::factory()->create(['role' => UserRole::Owner]);
@@ -22,7 +23,7 @@ class YourNumberCardScreenTest extends TestCase
 
         $this->get(route('x-188.your-number-card'))->assertOk();
 
-        Livewire::test(YourNumberCard::class)->assertOk();
+        Livewire::test(YourNumberCard::class)->assertOk(); // standing check
     }
 
     public function test_screen_renders_for_admin(): void
@@ -33,7 +34,7 @@ class YourNumberCardScreenTest extends TestCase
 
         $this->get(route('x-188.your-number-card.admin'))->assertOk();
 
-        Livewire::test(YourNumberCard::class)->assertOk();
+        Livewire::test(YourNumberCard::class)->assertOk(); // standing check
     }
 
     public function test_screen_shows_assigned_number(): void

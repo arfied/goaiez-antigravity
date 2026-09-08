@@ -2031,6 +2031,10 @@
   {
    "at": "2026-09-08T08:26:56",
    "note": "capability drop dead negative assertion in test_g18_10 and correct docblock"
+  },
+  {
+   "at": "2026-09-08T09:28:21",
+   "note": "BoundaryStage X-188: YourNumberCard implicitly queries the provisioned number from number_assignments relying on the RLS tenant context rather than component state, displaying the assigned phone number on the UI."
   }
  ]
 }
