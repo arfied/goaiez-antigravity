@@ -208,9 +208,13 @@ journey      4   (was 5)    −1
 ⭐ **`capability` is 209 as of `bbb0b4a2`, measured in `.gate226.txt` §5 and gated at tick 224.** It is
 the **first `capability` movement this lane has produced since tick 182**, and it is the answer to
 `RULING ET`: the admission test found a real item, the item closed on measurement, and the falsifier
-(211 → 209) fell exactly as stated in advance. ⚠️ **§3's ledger still reads `capability 211`** — stale
-again one wave after tick 183 wrote it true, which is `RULING CK` being structural rather than
-neglect. STAGES-224 refreshes the eight; until its gate is reviewed, **cite §5, never §3.**
+(211 → 209) fell exactly as stated in advance. ✅ **§3 was refreshed at tick 225 (STAGES-224,
+`b8c88e47`) and now reads `integrity 0 · boundary 44 · contract 85 · citation 0 · schema 15 ·
+capability 209 · anchor 128 · journey 4`, identical to §5 in `.gate229.txt`/`.gate230.txt`, with
+`grep -c '"violations": null'` at `0`.** ⚠️ **§3 is still a LEDGER** — exact only until the next code
+change, nothing keeps it in step, and it has now gone stale one wave after being written true
+**twice** (ticks 183 and 225), which is `RULING CK` being structural rather than neglect. **Cite §5,
+never §3.**
 
 **`RULING EQ`: a stage census is a fact about a CHECKER at a sha, never about the code.** Four of eight
 moved and one rose by 41, so every decomposition below is arithmetic against an instrument that has
@@ -329,7 +333,87 @@ it is the difference between a red a coder was told to prevent and a red a coder
 ⛔ **Never fix a `pint` red with a tree-wide run.** It can reformat `app/app/Doctor/**`, whose blobs
 plus `seals.json` are byte-identical to main's — **the only reason this lane may hold them**
 (`RULING DE`) — so reformatting one is the **One Rule**. Name the single path, as the tick-220 floor
-did for `X167Test.php`.
+did for `X167Test.php`. ✅ **Executed cleanly at tick 225**: STAGES-224 pinted the one path,
+`.gate230.txt` §6 reads `passed`, and the diff is six formatting hunks with no assertion, test name or
+`expectExceptionMessage` string moved.
+
+### ⭐ `RULING EW` (tick 225) — a redirect target is not a finished artifact. A coder can report `NOT MEASURED` about a gate that is STILL RUNNING and be honest and wrong in the same sentence.
+
+STAGES-224's report says **`§7 NOT MEASURED (pest.lock was still held)`** and files
+`UNRESOLVED: pest.lock held tests hostage`. It obeyed `RULING EU`(b) exactly — **no sentence at all**
+about any test's result — which is why this is a note and not a finding. **But the gate finished.** The
+mtimes are out of order and that is the tell:
+
+```
+.gate229.txt  15:08   (item 4, written AFTER item 2)
+REPORT.md     15:11
+.gate228.txt  15:37   (item 2, written BEFORE item 4)
+```
+
+`supervise.sh --tests` waits up to 40 minutes on `pest.lock` **without killing it** and holds the
+redirect open for the whole wait. Read after it exited, §7 is
+`tests 2199 · passed 2197 · FAILED 0 · errors 2` — **the floor was MET**, the two errors being the
+OWNER-blocked journey-harness refusals with no `E00040`, and the **triple identical** to `.gate226.txt`,
+which is exactly right for a whitespace-and-import wave.
+
+⚠️ **The LIFECYCLE variant of `DL`/`DO`/`DQ`/`DU`/`DY`/`EB`/`EK`/`EP`.** Every earlier one was a wrong
+**baseline**; here the baseline was right, the file was the right file, **and it was still being
+written**. A section being present above the one you need does not mean the run is over.
+✅ **Standing correction: a brief that redirects a gate to a file names the completion test too.** The
+last line of `supervise.sh` output is `== verdict`, so **`tail -1 <gate> | grep -q verdict`** before
+quoting it. Third brief-instrument defect from this seat in five waves, after `EU` and `EV`.
+
+### ⛔ `RULING EX` (tick 225) — an "intersection" column that is really the flagged set re-sorted. The admission test needs its COMMAND named, or it produces a 31-id wave into an UNBUILT module.
+
+STAGES-224 item 5 re-ran `RULING ET`'s admission test and returned a table whose column
+*"ids in clauses ∩ flagged"* **is not an intersection** — it is the flagged set, sorted. The
+contradiction is internal to each row: `C-Agent` has `⑤ count` **0** and six ids in its intersection,
+and **a module with zero ⑤ clauses has an empty intersection by construction.** Twenty-odd of the 29
+modules in its "surviving set" are `⑤ 0` rows.
+
+⛔ **Two rows prove it against measurements already on this page.** `C-Mail` is `RULING CF`'s canonical
+"looks like a wave, intersection empty" example — its one clause is **`G15-31`**, which is **not among
+its 13 flagged ids** — yet the report proposed all 13 at `209 → 196`. And the largest proposal,
+`X-221` at `209 → 178` (31 ids), is a module with **⑤ 0** whose directory holds
+`capabilities.php`, `manifest.php`, `seeds.yml` **and nothing else** — no `Domain/`, no tests, recorded
+here as **UNBUILT**. That is the invented-wave shape at the largest scale this lane has been offered.
+
+✅ **The command, which the brief failed to name (`EU` again — hence `PASS-WITH-NOTES`, not `BLOCK`).**
+A ⑤ clause lives **on the `'<ID>' => '…⑤…'` array-key line**, so:
+
+```
+grep -rn "⑤" app/app/Modules/*/capabilities.php \
+  | grep -oE "Modules/[A-Za-z0-9-]+/capabilities\.php:[0-9]+:    '[A-Z0-9-]+'" | sort -u
+```
+
+⭐ **Completeness is provable, so this is a census and not a sample:** 127 `capabilities.php` × 2
+header ⑤ = **254**; total ⑤ lines **301**; 301 − 254 = **47**; the command returns **47** module+id
+pairs across 19 modules. Nothing is missed and no clause spans a continuation line.
+
+**RULED: any brief asking for the admission test names that command and quotes the 47/254/301
+arithmetic as its own falsifier.** A census whose completeness is not proven is a sample wearing a
+census's clothes.
+
+### ⭐ The admission test re-run correctly at `b8c88e47` — the surviving set is **EMPTY, on measurement**
+
+Intersecting the 47 clause-bearing ids against the live flagged set at `capability 209`, exactly
+**three** modules are non-empty and **all three are closed by standing rulings**:
+
+| module | clauses ∩ flagged | closed by |
+| :--- | :--- | :--- |
+| `X-117` | G1-73 · G1-81 · G17-31 | `RULING CM` — each appears **4×** in `JOURNAL.md`; CITED, never re-filed |
+| `X-158` | G16-32 | **§257.4 deferred** — a defect there is a `state.py note` |
+| `X-212` | G4-54 | `RULING CB` — the remedy edits a **generated** file |
+
+⭐ `X-211` is now empty — its clauses are `G1-61 G1-65 G1-70 G1-74` and its flagged ids `N-033 G1-71`;
+G1-61/G1-70 left the flagged set at STAGES-223. Same fact as
+`grep -c "G1-61\|G1-70" .cap224.txt` → **`0`**, reached from the other side.
+
+⛔ **This is NOT a return to the pre-merge exhaustion claim `RULING EQ` voided.** That one was
+arithmetic against a replaced instrument. This is measured against the **merged** checker at a named
+sha with a completeness proof — and it has the shelf life every census here has: **one code change.**
+`RULING ET` is satisfied, not repealed: the test was re-run and answered, and this time the answer is
+empty. **Measure again after any code change; never carry this table forward as a standing fact.**
 
 ### The residual backlog — ⚠️ NOT empty; see `RULING ET`
 
