@@ -187,7 +187,102 @@ Watch for: <the trap that applies, by name>
   lists a brief item under `REFUSED` because it would change a CHECK, that
   refusal stands. Re-read rule 01 before overruling it.
 
-## ⭐⭐ THE LANE IS NOT HELD. Track 1 REVERTED our merge and asked for a second take (tick 234) — read `RULING FL` and `RULING FM` before anything else on this page
+## ⭐⭐ THE SECOND TAKE LANDED AND IS PUSHED — `18bbde18` (tick 235). Track 1's ask is SATISFIED. Read `RULING FO` before reading any test result on this page.
+
+✅ **STAGES-231 did what Track 1 asked, measured from this seat.** The two STAGES-223 tests are gone
+(`grep -c` on the parenthesised names → `0`, `0`), money's covering
+`test_g1_61_g1_70_plan_past_threshold_is_refused()` is present (`1`) and **passes in the suite**, and
+`php artisan doctor --stage=capability | grep -E "G1-61|G1-70|X-211"` is **empty** — both ids are out
+of the flagged set. Our two were genuine duplicates exactly as Track 1 said; `RULING ET`'s credit
+survives in money's lane. Pushed by explicit ref, fast-forward: `17d393b0..18bbde18`.
+
+⭐⭐ **THE FACT THAT REFRAMES EVERY NUMBER BELOW: this lane's `app/` tree is BYTE-IDENTICAL to main's.**
+
+```
+git diff --stat 7a75f289 HEAD -- app/   →   app/phpunit.xml | 2 +-    and nothing else
+git diff --name-only 7a75f289 HEAD      →   the seven per-track paths, and nothing else
+```
+
+The one `app/` difference is the per-track `DB_DATABASE` pin — the restore working, `RULING DC`'s
+third live execution. **This lane holds no lane-authored `app/**` content at all**: Track 1's
+`e669a273` took all of it and its `a5042da2` revert removed only the two X-211 tests, which this take
+has now dropped on our side too. ⛔ **So `boundary 55`, `contract 85`, `capability 207`, `anchor 128`
+and `schema 16` are MAIN'S NUMBERS, measured by main's checker on main's tree.** Not one is a fact
+about work this lane has done or can do. `RULING EQ` said a census is a fact about a checker at a sha;
+this is the stronger form — it is now a fact about **another lane's tree entirely**, and no wave in
+this lane can move any of them.
+
+⚠️ **The counts moved at the take and the §3 ledger did not follow.** §5 reads
+`integrity 0 · boundary 55 · contract 85 · citation 0 · schema 16 · capability 207 · anchor 128 ·
+journey 4`; §3 still reads `boundary 44 · schema 15 · capability 209`. Dispatched as **STAGES-232**
+(S-191), the S-182 shape. **`RULING CK` is structural, not neglect — this is the third time the ledger
+has gone stale exactly one code change after being written true** (ticks 183, 225, now).
+
+⭐ **`boundary` 44 → 55 is inherited, and the partition survives the merge in shape.** Re-measured at
+tick 235 with `RULING FI`'s form and `RULING FJ`'s row-count control (`grep -cE "^ · "` → **55**):
+**52** `across a module boundary` (was 41, +11 from main's 81 new module classes) + **2** `AiModel.php`
+(`RULING BQ`) + **1** `X-108` blade default arm = **55**. `RULING FK`'s three classes are unchanged;
+only the import class moved. **A rise with no lane-authored byte behind it is not a regression** — but
+say the arithmetic out loud, which STAGES-231's report did not.
+
+### ⛔⛔ `RULING FO` (tick 235) — a test that asserts on an UNTRACKED artifact is green ONLY in the checkout that minted it. Main ships five of them, and they make "your tip measures green" unsatisfiable for every lane.
+
+§7 read `tests 2345 · passed 2337 · **FAILED 6** · errors 2`. The five named failures all live in three
+files — `app/tests/Modules/X-117/X117RuntimeProofTest.php`, `X-199/X199RuntimeProofTest.php`,
+`X-211/X211RuntimeProofTest.php` — and `git diff --name-status 6b7c315b^1 6b7c315b` reports all three
+as **`A`**: they arrived in this merge, authored on main. Read at source,
+`X199RuntimeProofTest.php:14` is `assertFileExists(storage_path('app/evidence/X-199/invoice.json'))` —
+**the assertion's subject is an artifact on disk, not code.** And:
+
+```
+ls app/storage/app/evidence/            →  journeys      (no X-199, no X-211, no X-117)
+git ls-files app/storage/app/evidence/  →  (empty)
+```
+
+**No evidence artifact is tracked.** It is in no tree, so it travels through no merge, and minting one
+needs real transports and real money — the reserved list. ⛔ **These tests are red in every checkout
+but the minting lane, by construction, and every lane that takes `main` inherits the identical six.**
+
+⚠️ **The inverse of the shape this page already knows.** `CLAUDE.md`'s *"a merged-wrong lint is green
+by construction"* is a check that passes because it matches nothing; **`FO` is a check that fails
+because what it matches is not in the repository.** Same root — the assertion's subject is not the
+tree — and it is `RULING FM`'s neighbour: `FM` was our work deleted through the front door, `FO` is
+another lane's evidence *required* through a door that does not exist.
+
+⛔ **No wave, and nothing is authored in `app/**`.** Track 1's re-merge condition — *"once your tip
+measures green"* — is **unsatisfiable by construction** for any lane once main carries an
+evidence-artifact test, and this lane's tip meets the condition Track 1 actually cared about (the two
+X-211 tests). Filed as **TRACK 1 ACTION 7**. ⛔ **Never make them pass here**: hand-writing an evidence
+JSON is the exact forgery the `anchor` stage exists to catch. Recorded by the coder as a
+`state.py note`, never an `UNRESOLVED` against a module this lane does not own. ⚠️ The gate prints
+**five** `✗ FAILURE` lines against a count of **six**; the sixth is **NOT MEASURED**.
+
+### ⛔ `RULING FN` (tick 235) — a floor can be correct, its command runnable, and the BRIEF'S OWN SEQUENCE still make it unmeetable. Three of STAGES-231's floors failed that way.
+
+`RULING EZ` says run a floor's exact command before writing it. This seat did — all three were true
+when run against the pre-merge tree — and the brief then ordered the wave so that none could be
+answered:
+
+| floor | why the sequence broke it |
+| :--- | :--- |
+| §1 **77** uncommitted paths | item 7 gated **before** item 8 committed, so §1 describes a **mid-merge** tree: `.gateS231w.txt:47` reads **`301`**. The report answered `77`, correct *now* and not reproducible from the gate it cited. §2's floor was worse — phrased *"under **last commit** once you commit"*, which a gate running before the commit cannot satisfy in those words |
+| money's test **passes** | item 5 migrated the **dev** database (`--database=pgsql`, as written) and item 6 then ran one test against the **test** database, which no step had migrated — hence `SQLSTATE[42P01] … "ar_plan_terms" does not exist`. In the full suite, which migrates, the test does not appear among the failures: **it passes** |
+| `capability` **209 or 211** | a two-branch falsifier is sound only when nothing else in the change can move the number. **A 487-commit merge moves everything** — it measured **207**, for reasons unrelated to the X-211 pair |
+
+✅ **Standing correction: a brief that floors §1/§2 puts its gate AFTER the commit, or states which
+moment each section is floored at; a floor naming a database names the command that migrated THAT
+database; and a two-branch falsifier is only written when the change is small enough that no third
+branch exists.** Ninth-and-tenth members of the `EU`/`EV`/`EW`/`EX`/`EZ`/`FE`/`FF`/`FH`/`FI`/`FJ`
+family, and the first about **ORDERING**: `EZ` governs an instrument's text, `FJ` its shell state,
+**`FN` its position in the sequence.**
+
+✅ **`RULING EZ`'s converse, earned a third time.** The coder pasted the raw `SQLSTATE` refusal and the
+raw `FAILED 6` instead of massaging either into the floor's shape, and the raw output is what made both
+diagnoses possible. It is why tick 235 is `PASS-WITH-NOTES` and not a `BLOCK`.
+
+### History — tick 234's block, superseded by the above and kept for its rulings
+
+## ⭐⭐ Track 1 REVERTED our merge and asked for a second take (tick 234) — `RULING FL` and `RULING FM`
 
 ⛔ **Ticks 227–233 each wrote HOLD while an unprocessed, actionable Track 1 ask sat in `OWNER.md`.**
 The note is `## TRACK 1 — 2026-09-08 16:2x` at `OWNER.md:678`, and `grep -n "e669a273\|being reverted"
@@ -1074,11 +1169,19 @@ path before writing it into a brief.**
 
 ### The residual backlog — ⛔ **NO LONGER EMPTY. S-190 is open (tick 234).** S-182…S-189 are complete; the emptiness claim was true of the STAGE backlog and was never a statement about the mailbox.
 
-⭐ **S-190 — the second take, and the X-211 duplicate decision.** Dispatched at tick 234 as
-**STAGES-231**, merge gate **OPEN**. Not an invented wave and not a stage wave: **Track 1 asked for
-it in writing** and `main` will not take this lane until it lands (`RULING FL`, `RULING FM`). ⛔ The
-seven ticks of HOLD were correct about the stages and wrong about the lane, because the case selector
-could not see the ask.
+✅ **S-190 — the second take, and the X-211 duplicate decision. COMPLETE at tick 235** (STAGES-231,
+`PASS-WITH-NOTES`). Merge clean, restore fired, per-track proof empty, harness byte-identical, both
+tests dropped, both ids closed by money's test, `capability` 209 → **207**, decision recorded at
+`JOURNAL.md:1344` with matching commit `18bbde18`, tip pushed `17d393b0..18bbde18`. ⛔ The seven ticks
+of HOLD were correct about the stages and wrong about the lane, because the case selector could not
+see the ask (`RULING FL`).
+
+⭐ **S-191 — the §3 ledger refresh.** Dispatched at tick 235 as **STAGES-232**, merge gate **CLOSED**.
+Exact S-182 shape: no test, no assertion, no `app/**` edit, **cannot move a count**, falsifier is
+arithmetic (§3 == §5 in the same gate, `grep -c '"violations": null'` → `0`). Not an invented wave —
+a ledger this lane owns, measurably wrong on three fields, with a one-command remedy that is the
+**coder's** because `state.py stage` is not this seat's. It also carries the `RULING FO`
+`state.py note`. ⚠️ `schema` is floored as a **RANGE**, never a number (`RULING FB`/`FD`).
 
 
 
