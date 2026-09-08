@@ -415,7 +415,7 @@ sha with a completeness proof — and it has the shelf life every census here ha
 `RULING ET` is satisfied, not repealed: the test was re-run and answered, and this time the answer is
 empty. **Measure again after any code change; never carry this table forward as a standing fact.**
 
-### ⭐ `RULING EY` (tick 226) — **THE SIX WITHDRAWALS WERE FOUR.** A wave's completion is a measurement, and this seat asserted it for five consecutive blocks instead.
+### ✅ `RULING EY` (tick 226) — **DISCHARGED ON MEASUREMENT at tick 227.** All six rows now exist: `grep -nE "^- .+ RESOLVED contract "` returns `:1321` X-190 · `:1322` X-205 · `:1323` X-217 · `:1324` X-218 · `:1342` X-186 · `:1343` C-Reviews, counted **per module by the supervisor**, and `contract` stayed **85** exactly as `RULING ER` requires. Kept below as history; its standing correction is unchanged and binds. — **THE SIX WITHDRAWALS WERE FOUR.** A wave's completion is a measurement, and this seat asserted it for five consecutive blocks instead.
 
 `RULING ER` settled the withdrawal set correctly — *"exactly six ledger entries carry the reason the
 arrival answers — `X-186`, `X-190`, `X-205`, `X-217`, `X-218`, `C-Reviews`"* — and correctly ruled that
@@ -452,6 +452,35 @@ grep per module.** `grep -c "RESOLVED <stage> <module>"` for each expected modul
 remainder of a wave already ruled correct, with `contract` floored at **85 unchanged** because
 `RULING ER` says an unmoved count is the right outcome.
 
+### ⭐ `RULING EZ` (tick 227) — a floor is a PREDICTION, and an unrun prediction is a guess. STAGES-226's brief carried **three** floors its own commands could not meet, all three runnable from this seat.
+
+`EU`/`EV`/`EW`/`EX` were each about a brief's **instrument**. STAGES-226's brief fixed all four — it
+named `--full-doctor` for §5 and cited §5 over §3, floored §2/§4/§6 as well as its subject, added
+`tail -1 … == verdict` as the completion test, and named every command. It still failed three floors,
+for a **new** reason: **the commands were right and runnable, and the numbers written beside them were
+reasoned rather than measured.**
+
+| floor as written | measured at tick 227 | why |
+| :--- | :--- | :--- |
+| `grep -c "RESOLVED contract X-186"` → **1** | **2** | `RESOLVED` is a substring of `UNRESOLVED`; the module's filing line `JOURNAL.md:723` matches |
+| `grep -n "RESOLVED contract"` → **6 lines** | **102** | same substring, over every `UNRESOLVED contract` row ever filed |
+| §7 triple from `supervise.sh --full-doctor` | **§7 absent**, `grep -c "== 7"` → `0` | `--tests` is a **separate flag**; `--full-doctor` runs the eight stages and no pest |
+
+⚠️ The third is `EU`'s exact shape one wave after `EU` was corrected: the brief quotes `RULING CK`'s
+*"`--tests` alone omits §5"* and fails to notice the converse. **Reading a rule and inverting it is not
+running the command.**
+
+✅ **The coder met the substance of all three and named the §7 miss plainly with its cause.**
+`RULING EV`'s converse is established: **a coder that cannot meet a floor because the floor is wrong,
+and says so with the raw output, has done better than what was asked.**
+
+✅ **Standing correction: this seat RUNS a floor's exact command against the current tree before
+writing it into a brief, and pastes the output it got.** And **every grep floor over `JOURNAL.md` uses
+the anchored form** `^- .+ <VERB> <stage> <module> ` — the bare form cannot tell `RESOLVED` from
+`UNRESOLVED`, which is `RULING DU`'s substring hazard in a second file. ⚠️ A report that quotes a
+filtered result under an unfiltered command's name is `RULING EX`'s shape with a correct answer; ask
+for the anchored form so no filtering is needed.
+
 ### The residual backlog — ⚠️ NOT empty; see `RULING ET` and `RULING EY`
 
 The hygiene list below is intact and still governs hygiene items. What is **wrong** is the sentence
@@ -473,6 +502,22 @@ that test and is not on this list is a wave invented to fill the lane.
   order is not negotiable, because `resolve` returns a module to BUILDING and six withdrawals against
   an unmoved count is the count-did-not-fall trap six times over. **This does not re-open the other
   stages**; `anchor`, `journey`, `schema` and `capability` remain OWNER ACTIONs.
+  ✅ **COMPLETE at tick 227.** Four rows landed at 14:06 (STAGES-221) and the last two at 15:57
+  (STAGES-226, `687cc491`), after `RULING EY` found the wave had been recorded as done while short by
+  two. Six anchored rows verified per module; `contract` **85 → 85**, the correct outcome.
+- **S-185 — the `contract 85` re-census.** ⭐ **THE ONLY STAGE `RULING EQ` LEFT UNDECOMPOSED.**
+  `capability` (209), `anchor` (128 = 127+1), `boundary` (44, TRACK 1 ACTION 5) and `journey` (4, named
+  in the gate itself) all have post-merge decompositions; `contract` has only the **pre-merge** one
+  (*"the only writer is `module:scaffold`"*), which is arithmetic against the instrument `EQ` retired —
+  `ContractStage.php` was replaced byte-identical at the take and the count moved 87 → 85. ⚠️ **The gap
+  is visible without the checker:** this lane holds **7** open `contract` ledger rows across three
+  modules (`X-01` ×4, `X-117` ×2, `X-111` ×1) against **85** violations, and nothing on this page says
+  what the other seventy-eight are or whose modules they sit in. Dispatched at tick 227 as
+  **STAGES-227**. S-182 shape: no test, no assertion, no `app/**` edit, **cannot move a count**, floor
+  is `contract` **85 UNCHANGED**, falsifier is arithmetic (the classes sum to 85 exactly = §5) with
+  `RULING EX`'s completeness requirement — every class names the command that produced it. ⛔ If the 85
+  sit mostly in modules this lane does not own, **naming them IS the deliverable**; module ownership is
+  TRACK 1 ACTION 5 and no row is fixed in a module this lane does not own.
 
 ⚠️ **The Authorize.Net `E00040` error is a FLAP, not a fixed defect (tick 221).** The tick-220 floor
 named *"§7 errors down to exactly three"* including it; run 199 measured **two**. The third did not
