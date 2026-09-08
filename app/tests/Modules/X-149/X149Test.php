@@ -104,7 +104,6 @@ class X149Test extends TestCase
 
         // Valid: test
         $engine->enforcePersonaSplitIsTest('test');
-        $this->assertTrue(true);
 
         // Invalid: permit_change
         $this->expectException(\InvalidArgumentException::class);

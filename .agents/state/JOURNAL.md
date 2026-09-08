@@ -1269,3 +1269,4 @@ Therefore, adding a row to the tracker could move only the capability count.
 - `2026-09-07T12:38:10` note: CORRECTION to the 2026-09-07T11:56:46 note on X-200: QaScoreAction.php line 32 writes is_positive_only as a hard-coded true, so no input reaches that field and a test asserting on it would assert a constant.
 - `2026-09-07T12:43:57` (R245) X-82 — RULING BJ: a query deciding if an id has another carrier must grep the bare id, not a bracketed or @group pattern, and classify a hit as a carrier only if its enclosing method holds a real assertion.
 - `2026-09-07T13:13:40` (R245) X-194 — RULING BK: A carrier must lie outside the docblock of every stub that names the id, and a REFUSED, BUILD PROPOSAL, or UNRESOLVED line is never a carrier in any location.
+- `2026-09-07T21:22:19` (R245) X-149 — R245 RULING BL: converting a stub deletes $this->assertTrue(true); in that same method
