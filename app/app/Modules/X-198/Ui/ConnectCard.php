@@ -8,8 +8,10 @@ use App\Modules\X198\Actions\MerchantApplyAction;
 use App\Modules\X198\Models\MerchantConnection;
 use App\Support\Tenancy;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 
+#[Layout('components.layouts.agency')]
 class ConnectCard extends Component
 {
     public ?string $error = null;
