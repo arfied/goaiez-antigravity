@@ -441,12 +441,6 @@
     },
     {
      "module": "C-Reviews",
-     "stage": "contract",
-     "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
-     "at": "2026-09-04T08:05:31"
-    },
-    {
-     "module": "C-Reviews",
      "stage": "capability",
      "why": "G20-06 \u2014 credited by app/tests/Modules/C-Reviews/CReviewsTest.php:269, whose body is assertTrue(true); the docblock states the clause '[G20-06] named in the header' and declares NO refusal, so the id is counted satisfied with nothing asserting it. A grep for 'header' returns blade templates and unrelated documentation.",
      "at": "2026-09-06T15:17:02"
@@ -2387,12 +2381,6 @@
    "unresolved": [
     {
      "module": "X-186",
-     "stage": "contract",
-     "why": "send.requested correctly emitted by multiple modules per R231, but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
-     "at": "2026-09-03T13:47:25"
-    },
-    {
-     "module": "X-186",
      "stage": "capability",
      "why": "no action enrols a person into a campaign",
      "at": "2026-09-04T22:41:56"
@@ -3143,12 +3131,6 @@
  },
  "unresolved": [
   {
-   "module": "X-186",
-   "stage": "contract",
-   "why": "send.requested correctly emitted by multiple modules per R231, but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
-   "at": "2026-09-03T13:47:25"
-  },
-  {
    "module": "X-193",
    "stage": "tests",
    "why": "column quiet_hours_start is missing from notification_classes and not named in the brief",
@@ -3165,12 +3147,6 @@
    "stage": "tests",
    "why": "ReviewRequested event lacks messageClass so the module cannot express the send class (marketing) without a legacy change",
    "at": "2026-09-04T07:55:55"
-  },
-  {
-   "module": "C-Reviews",
-   "stage": "contract",
-   "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
-   "at": "2026-09-04T08:05:31"
   },
   {
    "module": "X-186",
@@ -5769,6 +5745,20 @@
    "was": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
    "why": "multiEmitterOk exemption for send.requested arrived on main and is committed here in 5d89dc84 at app/app/Doctor/Stages/ContractStage.php:575",
    "at": "2026-09-08T14:06:21"
+  },
+  {
+   "module": "X-186",
+   "stage": "contract",
+   "was": "send.requested correctly emitted by multiple modules per R231, but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+   "why": "multiEmitterOk exemption for send.requested arrived on main and is committed here in 5d89dc84 at app/app/Doctor/Stages/ContractStage.php:575",
+   "at": "2026-09-08T15:57:14"
+  },
+  {
+   "module": "C-Reviews",
+   "stage": "contract",
+   "was": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+   "why": "multiEmitterOk exemption for send.requested arrived on main and is committed here in 5d89dc84 at app/app/Doctor/Stages/ContractStage.php:575",
+   "at": "2026-09-08T15:57:18"
   }
  ]
 }

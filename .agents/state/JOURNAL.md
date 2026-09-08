@@ -1339,3 +1339,5 @@ Therefore, adding a row to the tracker could move only the capability count.
 - `2026-09-08T15:08:25` stage capability = 209
 - `2026-09-08T15:08:25` stage anchor = 128
 - `2026-09-08T15:08:25` stage journey = 4
+- `2026-09-08T15:57:14` RESOLVED contract X-186 - multiEmitterOk exemption for send.requested arrived on main and is committed here in 5d89dc84 at app/app/Doctor/Stages/ContractStage.php:575 (was: send.requested correctly emitted by multiple modules per R231, but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.)
+- `2026-09-08T15:57:18` RESOLVED contract C-Reviews - multiEmitterOk exemption for send.requested arrived on main and is committed here in 5d89dc84 at app/app/Doctor/Stages/ContractStage.php:575 (was: send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.)
