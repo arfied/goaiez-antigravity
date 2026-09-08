@@ -238,7 +238,7 @@ class X167Test extends TestCase
 
         Event::assertDispatched(StockLow::class);
         Event::assertDispatched(ReorderTriggered::class);
-        $this->assertSame(0, PurchaseOrder::where('business_id', $biz->id)->count());
+        $this->assertSame(0, PurchaseOrder::where('business_id', $biz->id)->count(), 'Nothing proposes a restock automatically; the Reorders blade must not claim otherwise.');
     }
 
     /** [G1-64] */

@@ -41,7 +41,7 @@ class ReordersTest extends TestCase
         Tenancy::setUser($user->id);
 
         Livewire::actingAs($user)->test(Reorders::class)
-            ->assertSee('No reorders yet. A restock is proposed when stock falls to its reorder point.');
+            ->assertSee('No reorders yet. Stock at its reorder point is flagged on Stock by van; propose a restock there and it appears here.');
     }
 
     public function test_seeded_reorders_show_correctly(): void

@@ -2,10 +2,10 @@
     <x-surface.sample-state module="van and storage-unit stock" screen="reorders" />
     <div class="reorders-view p-4">
         <h2>Reorders</h2>
-        <p>A restock is proposed at the reorder point; the supplier prices it.</p>
+        <p>Stock at its reorder point is flagged on Stock by van; propose the restock there and the supplier prices it.</p>
         
         @if($orders->isEmpty())
-            <x-ui.empty-state>No reorders yet. A restock is proposed when stock falls to its reorder point.</x-ui.empty-state>
+            <x-ui.empty-state>No reorders yet. Stock at its reorder point is flagged on Stock by van; propose a restock there and it appears here.</x-ui.empty-state>
         @else
             <table class="w-full text-left">
                 <thead>

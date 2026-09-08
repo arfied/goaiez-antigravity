@@ -1,40 +1,59 @@
 <div>
-    <div class="mb-6 sm:mb-8">
-        <h2 class="text-sm font-semibold text-ink-2 uppercase tracking-wider mb-3">Happened Today</h2>
-        
-        <div wire:loading>
-            <x-ui.skeleton label="Loading payments..." />
+    <div class="p-4 sm:p-6 lg:p-8 max-w-lg mx-auto">
+        <div class="mb-8">
+            <h2 class="font-display text-xl font-semibold leading-6 text-ink">Paid Today</h2>
+            <div class="mt-4 bg-card px-4 py-5 shadow sm:rounded-[--radius-card] border border-rule">
+                <dt class="truncate text-sm font-medium text-ink-2">Total value of invoices settled today</dt>
+                <dd class="mt-1 text-3xl font-semibold tracking-tight text-ink tabular-nums">{{ number_format($totalCents / 100, 2) }}</dd>
+                <p class="mt-2 text-sm text-ink-2">An invoice part-paid earlier counts here in full: this app records no date against an instalment, so the cash that arrived today is not a figure it can print.</p>
+            </div>
         </div>
-        
-        <div wire:loading.remove>
-            @if($loadError)
-                <x-ui.error-panel heading="Could not load payments">
-                    {{ $loadError }}
-                </x-ui.error-panel>
-            @else
-                <div class="mb-4">
-                    <p class="text-3xl font-display font-bold text-ink">${{ number_format($total / 100, 2) }}</p>
-                    <p class="text-xs text-ink-2">Paid today</p>
-                </div>
-                @if($invoices->isEmpty())
-                    <x-ui.empty-state icon="💰" heading="No payments yet">
-                        No invoices have been paid today.
+
+        <div class="mt-8 flow-root">
+            <div wire:loading>
+                <x-ui.skeleton label="Reading today's payments…" lines="3" />
+            </div>
+
+            @if($error)
+                <x-ui.error-panel heading="We couldn't open that invoice">{{ $error }}</x-ui.error-panel>
+            @endif
+            
+            @if($invoices->isEmpty())
+                <div wire:loading.remove>
+                    <x-ui.empty-state icon="○" heading="No paid invoices today.">
+                        When invoices are paid today, they will appear here.
                     </x-ui.empty-state>
-                @else
-                    <x-ui.row-list>
-                        @foreach($invoices as $inv)
-                            {{-- Row acts: leads to the receipt/invoice details --}}
-                            <x-ui.row >
-                                <div class="flex-1 min-w-0 pr-4">
-                                    <p class="text-sm font-medium text-ink truncate">Invoice {{ $inv->invoice_number }}</p>
+                </div>
+            @else
+                <div wire:loading.remove class="space-y-6">
+                    @foreach($invoices as $invoice)
+                        <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-[--radius-card] bg-card">
+                            <div class="p-4 border-b border-rule">
+                                <h3 class="text-base font-medium text-ink">{{ $invoice->invoice_number }} <x-ui.status-pill state="ok" label="Paid" /></h3>
+                                <p class="mt-1 text-sm text-ink-2">Paid: {{ $invoice->paid_at->format('g:i A') }}</p>
+                                <p class="mt-3 text-base text-ink">
+                                    <x-ui.button wire:click="explain({{ $invoice->id }})" wire:loading.attr="disabled" wire:target="explain({{ $invoice->id }})" variant="quiet" size="default" class="!px-0 tabular-nums">
+                                        {{ number_format($invoice->total_cents / 100, 2) }}
+                                    </x-ui.button>
+                                </p>
+                            </div>
+                            
+                            @if($explainedInvoiceId === $invoice->id)
+                                <div class="bg-paper px-4 py-4 sm:px-6 border-t border-rule">
+                                    <h4 class="text-sm font-semibold text-ink mb-2">Invoice Lines</h4>
+                                    <ul class="space-y-2">
+                                        @foreach($invoiceLines as $line)
+                                            <li class="flex justify-between text-sm text-ink-2">
+                                                <span>{{ $line->description }} ({{ $line->quantity }}x)</span>
+                                                <span class="tabular-nums font-medium text-ink">{{ number_format($line->subtotal_cents / 100, 2) }}</span>
+                                            </li>
+                                        @endforeach
+                                    </ul>
                                 </div>
-                                <div class="text-sm font-semibold text-ink">
-                                    +${{ number_format($inv->paid_cents / 100, 2) }}
-                                </div>
-                            </x-ui.row>
-                        @endforeach
-                    </x-ui.row-list>
-                @endif
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
             @endif
         </div>
     </div>

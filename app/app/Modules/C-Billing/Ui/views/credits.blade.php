@@ -1,15 +1,101 @@
 <div>
     <x-surface.sample-state module="C-Billing" screen="credits" />
-    <div class="credits-ledger p-4">
-        <h3 class="text-lg font-bold">Credits Ledger</h3>
-        @if($entries->isEmpty())
-            <p class="text-gray-500">Ledger empty.</p>
-        @else
-            <ul>
-                @foreach($entries as $e)
-                    <li>#{{ $e->id }} ({{ $e->entry_type }}): ${{ number_format($e->amount_hundredths_cents / 10000, 2) }}</li>
-                @endforeach
-            </ul>
+    <div class="p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto">
+        <div class="mb-8 flex justify-between items-center">
+            <h1 class="text-xl font-semibold leading-6 text-ink">Credits & Usage</h1>
+            <x-ui.button size="default" wire:click="topup" wire:loading.attr="disabled" wire:target="topup">Top up</x-ui.button>
+        </div>
+
+        <div wire:loading>
+            <x-ui.skeleton label="Reading the credits…" lines="3" />
+        </div>
+
+        @if($error)
+            <x-ui.error-panel heading="That didn't go through">{{ $error }}</x-ui.error-panel>
         @endif
+
+        @if($success)
+            <x-ui.attention-card state="ok" heading="Top-up recorded">{{ $success }}</x-ui.attention-card>
+        @endif
+
+        <div wire:loading.remove class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 mb-8">
+            <div class="bg-card overflow-hidden shadow rounded-[--radius-card] border border-rule">
+                <div class="px-4 py-5 sm:p-6">
+                    <dt class="text-sm font-medium text-ink-2 truncate">Credit balance</dt>
+                    <dd class="mt-1 text-3xl font-semibold text-ink tabular-nums">
+                        {{ number_format($aiBalance / 10000, 4) }}
+                    </dd>
+                </div>
+            </div>
+            
+            @forelse($meters as $type => $meter)
+                <div class="bg-card overflow-hidden shadow rounded-[--radius-card] border border-rule">
+                    <div class="px-4 py-5 sm:p-6">
+                        <dt class="text-sm font-medium text-ink-2 truncate">{{ $meterLabels[$type] ?? $type }}</dt>
+                        <dd class="mt-1 text-2xl font-semibold text-ink tabular-nums">
+                            {{ number_format($meter->units_used) }}
+                        </dd>
+                        <dd class="text-xs text-ink-2 mt-1 tabular-nums">
+                            Cost: {{ number_format($meter->cost_hundredths_cents / 10000, 4) }}
+                        </dd>
+                    </div>
+                </div>
+            @empty
+                <div class="sm:col-span-2">
+                    <x-ui.empty-state heading="No usage metered yet.">
+                        Nothing in this checkout writes a usage meter, so no SMS, voice, AI, email or lead usage has been recorded for this account. Usage lands here once the telephony and agent modules meter it.
+                    </x-ui.empty-state>
+                </div>
+            @endforelse
+        </div>
+
+        <div wire:loading.remove class="mt-8 flow-root">
+            <h2 class="text-lg font-semibold leading-6 text-ink mb-4">Ledger</h2>
+            @if($entries->isEmpty())
+                <x-ui.empty-state heading="No ledger entries yet." action="Top up" target="topup">A top-up from this screen writes a row here. Nothing in this checkout raises a debit or a grant, so usage charges and plan credits appear once they are built.</x-ui.empty-state>
+            @else
+                <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+                    <table class="min-w-full divide-y divide-gray-300">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Type</th>
+                                <th scope="col" class="px-3 py-3.5 text-right text-sm font-semibold text-gray-900">Amount</th>
+                                <th scope="col" class="px-3 py-3.5 text-right text-sm font-semibold text-gray-900">Balance After</th>
+                                <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                                    <span class="sr-only">Actions</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 bg-white">
+                            @foreach($entries as $entry)
+                                <tr>
+                                    <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-gray-900 sm:pl-6">
+                                        <x-ui.status-pill :state="$entry->amount_hundredths_cents < 0 ? 'attention' : 'ok'" :label="$entry->entry_type" />
+                                    </td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 text-right tabular-nums">
+                                        {{ number_format($entry->amount_hundredths_cents / 10000, 4) }}
+                                    </td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 text-right tabular-nums">
+                                        {{ number_format($entry->balance_after_hundredths_cents / 10000, 4) }}
+                                    </td>
+                                    <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                                        <x-ui.button size="default" variant="quiet" wire:click="explain({{ $entry->id }})" wire:loading.attr="disabled" wire:target="explain({{ $entry->id }})">Explain</x-ui.button>
+                                    </td>
+                                </tr>
+                                @if($explainedEntryId === $entry->id && $explanation)
+                                    <tr class="bg-gray-50">
+                                        <td colspan="4" class="px-6 py-4">
+                                            <p class="text-sm text-gray-900 font-medium mb-1">Explanation</p>
+                                            <p class="text-sm text-gray-600">{{ $explanation['description'] }}</p>
+                                            <p class="text-xs text-gray-500 mt-2">Ref: {{ $explanation['reference_id'] ?? 'none' }}</p>
+                                        </td>
+                                    </tr>
+                                @endif
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @endif
+        </div>
     </div>
 </div>
