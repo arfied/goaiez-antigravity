@@ -4833,6 +4833,83 @@ Watch for: <the trap that applies, by name>
   `G5-31`'s C-Agent listener**, unblocked by wave 136's store. Live list
   `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **7** rows at tick 252, membership unchanged since
   tick 251; stub pile **10**. Re-run both; never inherit them.
+- ⚠️⚠️ **When a report is assembled by a SCRIPT, diff `REPORT.md` against the script's own INPUT files —
+  the intermediates are the control, and a divergence between an exact intermediate and the report is
+  TRANSCRIPTION, not measurement.** Wave 136d's `make_final_report.sh:12` is `cat scratch/raw_object.json`
+  and `:15` is `cat scratch/artifacts.txt`; `cmp raw_object.json pest-raw-last.log` is **silent** and that
+  file carries `"duration_ms":110140`, while `REPORT.md` carries **`10140`** — and `artifacts.txt`'s
+  `14:11:27.204515010` arrives as **`14:1:27`**. Two dropped digits and a missing `grep -c` prefix, in a
+  wave whose generator's inputs were byte-exact. ⛔ The cost is specific: **`duration_ms` is the entire
+  anti-stale-object control on this lane** (waves 88b, 95, 105, 111, 122 caught by a *shared* one; the
+  accepting `cmp` tells at ticks 202, 210, 219, 253), so a report that retypes it has destroyed the only
+  thing the field is for. **NOTE and not `BLOCK`** by the tick-222 discriminator, and distinct from the
+  wave-130 defect it resembles — there `duration_ms` matched **no** file on disk, which is the retyping
+  tell; here it matched an intermediate the report claimed to `cat`. ⭐ The fix is one character and
+  belongs in the brief: **redirect the generator into the path**, never copy its output through anything
+  that can retype a digit.
+- ⚠️ **`DELTAS` without `assertions` carries no positional information at all, and the field list is the
+  brief's job.** Tick 245 RULED all four of `assertions · passed · failed · errors` together; my wave-136d
+  table said only *"the two pasted `grep -o` lines"* and never spelled the pattern, so six blocks came back
+  with three fields each and the `−4 · −3 · −2 · −1 · −0` ladder — the whole proof — exists only in the
+  artifacts. **Print the `grep -o` verbatim in the brief.** Eleventh defect on this lane retired by
+  rewriting a sentence rather than by reviewing harder.
+- ✅✅ **Seven mutations for seven assertions across two tests, subtractions `−4 · −3 · −2 · −1 · −0` then
+  `−1 · −0` — the target shape at file scale, and it supersedes wave 107c/107d's five.** Wave 136d, green
+  `assertions 8399`, radius 1 on every one, each failure carrying a message that discriminates its own
+  assertion. ⭐ Four independent site proofs and none of them the coder's word: §1 of every gate log pinning
+  `M …/ChatTurnController.php` (never a test body, which closes the tick-185 hazard on an artifact); every
+  `SITE:` exact against the committed file; two failure messages carrying the **module's own output**
+  (`'Mutated message'`, `'agent'` — the tick-200 exception); and the uniform `passed −1 / failed +1` with no
+  flapper to net out. **The `SITE:` field is now the fourth proof, not the first.**
+- ⚠️⚠️ **A mutation inside a branch proves the branch's OUTPUT; what routes INTO the branch is a different
+  line, and a ruling of this column's stood on it unmeasured for two ticks.** Wave 136d's M6/M7 both sit at
+  `ChatTurnController.php:39`, inside `if (! $session) {`, so they redden *"when the lookup misses, the door
+  answers 404 with that body"* — equally true of a garbage token. The proposition
+  `test_key_for_business_a_and_session_for_business_b_returns_404` makes is that **B's session** is what
+  makes the lookup miss, and that lives at `:27` `Tenancy::set($businessId)`, which **no patch in the set
+  touches**. ⛔ Tick 251 RULED, in this column's own words, that this assertion *"is NOT the `FORCE` RLS
+  vacuity … the code under test resolves the tenant from the key, which a mutation can move"* — a claim
+  about a mutation nobody had run, over a public unauthenticated write door. **A ruling that names a
+  mutation as its ground is owed that mutation in the next wave**, and this is the tick-206 shape (*"I
+  checked both by hand"*, having checked only the half I predicted) recurring in a ruling rather than in a
+  brief. ⭐ The coder saw the shape unprompted in its least-comfortable-pair answer, which is 7-for-7.
+- ⭐ **A whole-controller mismatch is a cheaper disqualifier than an RLS argument, and it does not depend on
+  one.** Tick 252 disqualified `ChatDoorTest.php:75` as the ticks-244/245 vacuity (the *test* sets the tenant
+  after the request, over a `FORCE` RLS table). Wave 136d reached the same verdict by a route this column had
+  not written down: **line 75 belongs to a test that posts to `/start`, and all six mutations are on the
+  `/turn` controller.** One `grep` for the test's own request line settles it. **Ask which controller an
+  assertion's request reaches before reasoning about what its database can see.**
+- **Backlog at tick 253 — wave 137 is the two mutations at `ChatTurnController.php:27` and a test for the
+  untested `400` refusal; wave 138 is `G5-31`'s C-Agent listener.** RULED, and it reorders tick 252's plan
+  for the reason in the block above: a ruling of mine about this door's isolation stands on an unrun
+  mutation, and building `G5-31` on top of an unsettled isolation proof is the ordering ticks 211 and 228
+  both punish. The second item is measured this tick and not inherited: `ChatTurnController.php:32-34`
+  returns `400 ['error' => 'Bad Request']` when either input is not a string, and
+  `grep -rn "api/chat" app/tests --include=*.php` returns **five** lines, all in `ChatDoorTest.php` (29, 49,
+  70 on `/start`; 94, 127 on `/turn`), neither `/turn` caller sending a non-string — **an untested refusal
+  branch on a public unauthenticated door.** In lane, single-module, no vendor, no credentials, moves no
+  doctor count. ⛔ Two items, numbered apart, with different outputs (a paragraph and a test) — ticks 218,
+  220, 221, 222 and 223 all measured that a pair handed over as one instruction comes back as one shape.
+  ⛔ The item-0 mutations go over as a **property with the conclusion withheld** (tick 214, 5-for-5) with
+  one recorded constraint stated as a trap: lines 18–26 are the only span of the request with no tenant and
+  **four mutation designs have already died there** (`TenantNotResolved` from the Eloquent scope;
+  `Attempt to read property "id" on null` from `FORCE` RLS on `businesses`), so a mutation that *looks
+  anything up* in that window cannot execute — tick 238's lesson that a brief constraining a site has made a
+  design choice and must say which sites it excludes. ⚠️ Item 1 carries the ticks-244/245 hazard explicitly
+  and undecided: `chat_turns` is `ENABLE`+`FORCE ROW LEVEL SECURITY` with `tenant_isolation`
+  (`2026_09_08_000038_create_x102_chat_turns_table.php:23-33`), so whether an absence assertion can fail at
+  all turns on **who sets the tenant when it runs** — handed over as the question, never the answer. ⛔
+  **Mutations 1 through 7 are spent and the seven patches are not to be edited** (tick 191). Live list
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **7** rows at tick 253, membership unchanged since tick
+  251; stub pile across the thirteen **10**. Re-run both; never inherit them.
+- **Suite baseline, measured by this column at tick 253 on tip `72be7079`, clean tree — `tests 1944 ·
+  passed 1941 · assertions 8399 · failed 1 · errors 2 · incomplete 3 · risky 1 · duration_ms 111130`,** the
+  standing three by **identity** (`X01Test::test_g2_76_unified_inbox_header`, a `TRACK 1 ACTION`, and the two
+  `TwelveJourneysTest` real-transport errors), §2 `none`, §2b `all parse`, §6 pint `passed` / phpstan `0`,
+  stamp `20260829-0647` = `runtime_build`. ⭐ `cmp scratch/pest-raw-last.log scratch/w136d-gate-raw.log` →
+  `differ: byte 95, line 1` — the `duration_ms` offset **alone** on two 1508-byte files, every other byte
+  identical, which is the accepting tell in one command. §7's lock line resolved and the suite completed for
+  the third tick running: **the lock is contended, never stuck.**
 
 ## Style
 
