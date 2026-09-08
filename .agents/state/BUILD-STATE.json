@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-08T13:13:59",
+ "updated": "2026-09-08T14:10:30",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1844,6 +1844,12 @@
    "module": "X-163",
    "chose": "DailyPricingDigest::confirm() unsets the prices key on the success arm, mirroring ConfirmationScreen, because the digest query filters is_confirmed=false so a confirmed row leaves the view and its typed price must not outlive it --ruling R245",
    "at": "2026-09-08T13:13:59",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-167",
+   "chose": "Reorders claims a restock is proposed at the reorder point; StockLow and ReorderTriggered have no listener and the only PurchaseOrder writer is the manual Propose restock button, so the sentence is corrected to describe the shipped manual path rather than wiring an auto-proposing listener, which capabilities.php does not declare and which would mint a duplicate PO on every consumption below the point --ruling R245",
+   "at": "2026-09-08T14:10:30",
    "ruling": "R245"
   }
  ],
