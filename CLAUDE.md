@@ -4744,3 +4744,38 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     `DunningBoardScreenTest` seed a `DunningState` in **every** method, so not one can render either
     branch (ruling 68) and no assertion anywhere names either sentence (ruling 70), which is why both
     outlived every C-Billing wave. Both items therefore **add** methods.
+202. **A compiled Blade view whose INTEGER mtime beats its source's is served forever, and a mutation
+    proof on a blade is what manufactures the condition — a FOURTH attribution class beside the sha
+    (RULED by the lane supervisor 2026-09-08 18:5x, on MONEY-129's `7625f457`).** The gate landed
+    `2351 · 2348 · FAILED 1 · errors 2` against a predicted `2351 · 2349 · FAILED 0 · errors 2` — the
+    test **count** to the digit — and the one failure was the wave's own new test, whose failure message
+    renders the **pre-wave** blade text while the committed blade carries the new sentence. Three legs.
+    **(a) Mechanism, read out of vendor rather than guessed.** `Compiler.php:125-126` is
+    `lastModified($path) >= lastModified($compiled)`, and `lastModified()` is `filemtime()` — an
+    **integer second**; `BladeCompiler.php:212-216` then does, whenever a recompile produces contents
+    identical to the existing compiled file, `touch($compiledPath, $lastModified + 1)`. Measured:
+    `dunning-board.blade.php` at `18:22:08.566275577` against
+    `storage/framework/views/cc9715…php` at `18:22:09.000000000` — `08 >= 09` is **false**, so the stale
+    file is served. The exact `.000000000` is the `touch()` signature; every other compiled view in that
+    directory carries a real nanosecond mtime, and the file holds **1** hit for the old sentence and
+    **0** for the new. **(b) Scope — the artifact cannot travel.**
+    `git ls-files app/storage/framework/views/` is **empty** and `git status --untracked-files=all`
+    prints nothing against **405** files there, so the tree is gitignored and every other checkout
+    compiles fresh. **(c) Reachability from the diff — nil**, and the **sibling item is the control**:
+    `revenue-recovery.blade.php` was written 15 s later, past any compiled artifact of that second, so it
+    recompiled and its identically-shaped test passed. ⚠️ **The generalisable half is that this lane
+    MANUFACTURES the condition.** A mutation proof on a blade is write-new → compile → revert → compile →
+    restore, and `filemtime` cannot see the sub-second spacing, so a restore landing in the same second as
+    a compile is indistinguishable from an already-compiled source and the stale artifact wins
+    **permanently**, not for one run. **So every brief whose mutation proof mutates a blade ends with
+    `php artisan view:clear` before the gate, and the proof clears the view cache between the revert and
+    the restore.** ⚠️ **Corollary: MONEY-129's proof 2 was VOID** — its RED render is byte-for-byte the
+    stale render the gate produced, so it cannot distinguish the mutation from the staleness, which is
+    ruling 82's collateral in a new instrument. Proof 1 is valid, for the same reason its test passed.
+    ⛔ **The red is a DEBT, not a settlement (ruling 125)**: it is absorbed into no floor, the floor stays
+    `2351 · 2349 · FAILED 0 · errors 2`, and the clear plus a quoted green re-run opens the next wave.
+    ⚠️ Ruling 26 was satisfied and the tip **pushed**: a gitignored artifact on one disk is not a red
+    handed to Track 1, and withholding a tip whose code is correct and whose §1–§6 are green over an
+    untracked file is ruling 74's error. ⚠️ Distinguish from the three prior attributions — ruling 42/77's
+    concurrency (`42501`, `relation … does not exist`), ruling 67/74's kill (`rc ≥ 124`), ruling 85's
+    vendor refusal — by the tell: **the failure message renders content that is not in the sha.**
