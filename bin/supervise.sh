@@ -110,6 +110,65 @@ run_tool() { # label cmd...
   return 0
 }
 
+# §6b's classifier, factored out so the selftest below drives the SAME code and
+# not a copy of it (REV-117). Reads pint's JSON on stdin with cwd = repo root;
+# prints one `TRACKED  <path>` / `ignored  <path>` row per reformatted file, and
+# nothing at all when pint reformats nothing. `TRACKED` is what reddens the gate,
+# so this membership test is the whole check — pint does not honour .gitignore and
+# walks scratch/, which would otherwise pin §6b red forever on two ignored files.
+pint_classify() {
+  python3 -c '
+import json, subprocess, sys
+raw = sys.stdin.read().strip()
+try:
+    d = json.loads(raw[raw.index("{"):raw.rindex("}") + 1])
+except Exception:
+    print("UNPARSED  (pint printed no JSON — see the gate row above)"); sys.exit(0)
+paths = [f["path"] for f in d.get("files", [])]
+if not paths:
+    sys.exit(0)
+known = set(subprocess.run(["git", "ls-files", "--"] + paths,
+                           capture_output=True, text=True).stdout.split())
+for p in paths:
+    print(("TRACKED  " if p in known else "ignored  ") + p)
+'
+}
+
+# --selftest-6b: exercise pint_classify's TRACKED branch, which a green tree can
+# never reach. REV-116 shipped §6b with that branch unfired and REV-116's own
+# control tested a hand-copied `grep -q ^TRACKED` instead of this function, so it
+# could not have caught a classifier that labelled everything `ignored`. The two
+# probe paths are DERIVED from git here, never hardcoded: a name that has stopped
+# being tracked would otherwise turn this control green by accident.
+if [ "${1:-}" = "--selftest-6b" ]; then
+  bar "selftest 6b. pint_classify, driven with synthetic pint JSON"
+  tracked=$(git ls-files -- 'app/app/Doctor/*.php' | head -1)
+  absent="scratch/no-such-file-$$.php"
+  if [ -z "$tracked" ]; then
+    echo "  ⛔ no tracked file under app/app/Doctor/ — cannot probe the TRACKED branch"; exit 1
+  fi
+  echo "  probe tracked : $tracked   (from git ls-files)"
+  echo "  probe untracked: $absent   (git knows nothing of it)"
+  st=0
+  got=$(printf '{"tool":"pint","result":"fail","files":[{"path":"%s"}]}' "$tracked" | pint_classify)
+  echo "  tracked  -> $got"
+  case "$got" in "TRACKED  $tracked") ;; *) echo "  ⛔ expected TRACKED"; st=1;; esac
+  got=$(printf '{"tool":"pint","result":"fail","files":[{"path":"%s"}]}' "$absent" | pint_classify)
+  echo "  untracked-> $got"
+  case "$got" in "ignored  $absent") ;; *) echo "  ⛔ expected ignored"; st=1;; esac
+  got=$(printf '{"tool":"pint","result":"fail","files":[{"path":"%s"},{"path":"%s"}]}' "$tracked" "$absent" | pint_classify)
+  echo "  both     -> $(printf '%s' "$got" | tr '\n' '|')"
+  printf '%s\n' "$got" | grep -q "^TRACKED  $tracked\$" || { echo "  ⛔ mixed input lost the tracked row"; st=1; }
+  got=$(printf '{"tool":"pint","result":"passed","files":[]}' | pint_classify)
+  echo "  empty    -> '${got}'   (must be empty — §6b prints 'clean' on this)"
+  [ -z "$got" ] || { echo "  ⛔ expected no rows"; st=1; }
+  got=$(printf 'not json at all' | pint_classify)
+  echo "  garbage  -> $got"
+  case "$got" in UNPARSED*) ;; *) echo "  ⛔ expected UNPARSED"; st=1;; esac
+  [ $st -eq 0 ] && echo "  selftest 6b: all five probes correct — the TRACKED branch discriminates"
+  exit $st
+fi
+
 bar "0. database guard  (production is $PROD_DB — see NEXT-SESSION.md, 2026-08-31)"
 env_db=$(grep -E '^DB_DATABASE=' "$APP/.env" 2>/dev/null | head -1 | cut -d= -f2- | tr -d "\"' ")
 xml_db=$(grep -oE 'name="DB_DATABASE" value="[^"]*"' "$APP/phpunit.xml" 2>/dev/null | sed -E 's/.*value="([^"]*)"/\1/')
@@ -252,21 +311,7 @@ bar "6b. pint from the REPO ROOT  (the surface §6 above cannot see)"
 # ignored files. Untracked hits are printed, not gated.
 cd "$ROOT" || exit 1
 run_tool "pint-root" "$PHP" "$APP/vendor/bin/pint" --test
-root_pint=$(printf '%s\n' "$GATE_OUT" | python3 -c '
-import json, subprocess, sys
-raw = sys.stdin.read().strip()
-try:
-    d = json.loads(raw[raw.index("{"):raw.rindex("}") + 1])
-except Exception:
-    print("UNPARSED  (pint printed no JSON — see the gate row above)"); sys.exit(0)
-paths = [f["path"] for f in d.get("files", [])]
-if not paths:
-    sys.exit(0)
-known = set(subprocess.run(["git", "ls-files", "--"] + paths,
-                           capture_output=True, text=True).stdout.split())
-for p in paths:
-    print(("TRACKED  " if p in known else "ignored  ") + p)
-')
+root_pint=$(printf '%s\n' "$GATE_OUT" | pint_classify)
 if [ -z "$root_pint" ]; then
   echo "  clean — a root-launched pint reformats nothing"
 else
