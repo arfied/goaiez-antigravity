@@ -295,7 +295,8 @@ merge. Week 2 is scoped **one wave at a time**; it is not a single wave.
 | **UI-65** | **the VOCABULARY stops being a literal. (1) `:116`'s seven-keyword regex replaced by a DERIVATION over the population's own closers — `@x` is a block opener iff `@end<x>` also occurs in these views; pin the size of that set minus `{if, unless}`. ⛔ Zero Blade keywords written except the two the arithmetic itself tracks. My reading is **`2`** (`foreach`, `php`); a different number is a FINDING. (2) its message states both directions, that neither is by itself a defect, and its own limit — it sees only an `@end<name>` closer in the same population. (3) `:115`'s parenthetical five-keyword list DELETED, replaced by what the code does (tracks `@if`/`@unless` only). ⛔ No new `test(`, no blade, no new file, floor stays `1730`. ⛔⛤ The sum is NOT asserted — tenth wave** | closed, pushed `08ba50d0` — run 112 `PASS-WITH-NOTES`, five notes, **three of them MINE**, and the tick that reviewed it found the `745` is not a property of the sha |
 | **UI-66** | **(1) `count($untrackedOpeners)` replaced by the sorted SET itself — a count cannot see a SWAP, and `foreach` leaving as `isset` arrives keeps it at `2` forever. ⛔ The count pin is REPLACED, not kept beside it: a count entailed by a set corroborates nothing (05:0x). (2) that pin's message is FALSE about what a red means — see the 09:4x ruling: a block opener weakens `conditionalHeadings` only if it creates MUTUALLY EXCLUSIVE ARMS, and the one member it found cannot. Restated to the criterion, ⛔ with no Blade keyword named as a current member. (3) the LINE-GRANULARITY blind spot gets a number: `:50` tests the heading BEFORE `:53–56` update the depth, so a heading sharing a line with its own `@if` is judged at depth 0. ONE new `expect()`, pinned; my reading is `0` of 19 and a different number is a FINDING. ⛔ No new `test(`, no blade, no new file, floor stays `1730`; `expect(` `9 → 10`. ⛔⛤ The sum is NOT asserted — eleventh wave** | **run 113 `BLOCK` — all three items landed character for character and both pins re-derived by me; the block is the REPORT, not the code. See the 10:0x ruling** |
 | **UI-66b** | **the repair wave, ⛔ ZERO `app/**` diff. (1) the `2026-09-07T09:49:13 (R245)` row committed — it is in the working tree and in NO commit, and `.agents/state/` is outside the supervisor's column, which is the whole reason this wave exists. (2) the five untracked `.txt` files quoted then deleted, three of them above `app/`. (3) ONE gate, through `bin/supervise.sh`, §7 pasted verbatim in whichever of its three shapes it prints. (4) `REPORT.md` in rule 10's TEN fields, read off disk. ⛔ `HeadingSeamTest.php` is not opened; floor stays `1730`** | closed, pushed `8683fb8e` — run 114 `PASS-WITH-NOTES`, six notes; items 0 and 1 exactly, item 2 not done at all |
-| **UI-67** | **`HeadingSeamTest` is named for a population of 44 and walks 19 — the fraction gets a number. ONE new `expect()` INSIDE the existing `test(`: components declaring `#[Layout('components.account.layout'` that the file's own `glob(base_path('app/Modules/*/Ui/*.php'))` does NOT reach, as the DIFFERENCE OF TWO DERIVED SETS. ⛔ Zero component names, zero view paths, zero directories beyond the roots the file already uses — name `app/Livewire/Account` in the code and it is an exclusion list with a plus sign. My reading is `25`; a different number is a FINDING. ⛔⛔ The message says a red is a POPULATION moving and that NEITHER direction is by itself a defect. ⛔ No new `test(`, no blade, no new file, floor stays `1730`; `expect(` `10 → 11`. ⛔⛤ The sum is NOT asserted — twelfth wave** | **in flight — run 115 dispatched** |
+| **UI-67** | **`HeadingSeamTest` is named for a population of 44 and walks 19 — the fraction gets a number. ONE new `expect()` INSIDE the existing `test(`: components declaring `#[Layout('components.account.layout'` that the file's own `glob(base_path('app/Modules/*/Ui/*.php'))` does NOT reach, as the DIFFERENCE OF TWO DERIVED SETS. ⛔ Zero component names, zero view paths, zero directories beyond the roots the file already uses — name `app/Livewire/Account` in the code and it is an exclusion list with a plus sign. My reading is `25`; a different number is a FINDING. ⛔⛔ The message says a red is a POPULATION moving and that NEITHER direction is by itself a defect. ⛔ No new `test(`, no blade, no new file, floor stays `1730`; `expect(` `10 → 11`. ⛔⛤ The sum is NOT asserted — twelfth wave** | closed, pushed `373c6d41` — run 115 `PASS-WITH-NOTES`, three notes, **all three report-shape and none of them the code** |
+| **UI-68** | **the 25 stop being merely COUNTED. TWO new `expect()` INSIDE the existing `test(`, measuring the unwalked set alongside — all eleven existing pins untouched, the glob still NOT widened. (1) `$unwalkedSeam`, unwalked components declaring a `heading` key; my reading is `0`. (2) `$unwalkedSkips`, one FAIL-CLOSED counter: no resolvable `view('…')` literal, OR no `<h[1-6]` at all, OR a first heading at the wrong level for the component's own shape; my reading is `0`, and its message names all three causes in order. ⛔ Both pins are COMPLEMENTS — `$unwalkedOwn = 25` beside `$unwalked = 25` is run 104's `built = 257` and is refused. ⛔ `$unwalked` becomes a genuine SET DIFFERENCE and its pin does NOT move. ⛔ Zero component names, zero view paths, zero new directory literals; the file's own `#[Layout]`, `heading`, `view('…')` + `View::exists()` and first-heading derivations are reused verbatim in shape. ⛔ No new `test(`, no blade, no component, no new file, floor stays `1730`; `expect(` `11 → 13`. ⛔⛤ The sum is NOT asserted — thirteenth wave** | **in flight — run 116 dispatched** |
 
 ### ⛔⛔ MEASURED 2026-09-08 03:0x — `HeadingSeamTest` IS NAMED FOR A POPULATION OF 44 AND WALKS 19
 
@@ -326,6 +327,56 @@ but UI-53's one-`<h1>` count.
 its layout at runtime is invisible. ⭐ `grep -rn -e "->layout(" app/app/` returns **nothing**, control
 being the 44-file grep over the identical paths. **Measured empty today, written here and never in
 the test** — the 03:3x rule.
+
+### ✅ RULED 2026-09-08 03:5x — UI-68 applies the CONTRACT to the 25. A NUMBER IS NOT A CHECK.
+
+UI-67 closed and the `25` matched. **All eleven pins in that file still describe 19 of 44**, and the
+25 are subject to no heading assertion anywhere in this suite except UI-53's one-`<h1>` count in
+`OwnerNavTest`, which counts `<h1>` tags in a rendered body and says nothing about `<h2>`/`<h3>`
+order. ⭐ UI-59's real `<h1>` → `<h3>` defect lived in the covered half and this file's checks
+eventually caught it; **the same defect on any of the twenty-five would be caught by nothing.**
+
+The 03:0x two-step stands — the glob is **not** widened. UI-68 measures the unwalked set **alongside**,
+with its own two pins, leaving the eleven at their current values.
+
+**MEASURED 03:5x, which is what makes both readings mine to defend:** all 25 layout attributes under
+`app/app/Livewire/Account/` are `#[Layout('components.account.layout')]` with **no second argument at
+all**; `grep -rnoP "view\(\s*['\"]\K[^'\"]+"` over that directory returns **27 files with exactly one
+`view(` literal each**; and of the 27 blades, **25 start at `<h1>`** — the two starting at `<h2>`
+(`reply-examples`, `review-rules`) being **exactly the two components that declare no `#[Layout]`**,
+so neither is in the 25.
+
+- **`$unwalkedSeam`** — unwalked components declaring a `heading` key. **`0`.**
+- **`$unwalkedSkips`** — unwalked components whose resolved view's first `<h[1-6]` is the wrong level
+  for their own shape. **`0`.**
+
+⛔ **Both pins are COMPLEMENTS, deliberately.** `$unwalkedOwn = 25` beside `$unwalked = 25` was the
+first draft and is refused: **a bucket that equals the population it partitions has not partitioned
+anything** — run 104's `built = 257` against `withoutLayout 257`, the defect this lane blocked a coder
+for. A zero beside a twenty-five cannot be misread as a restatement of it.
+
+⛔⛤ **(a) an unresolvable view literal and (b) a view with no `<h[1-6]` at all are FOLDED INTO the
+second pin, fail-closed, and its message names all three causes in order.** Thirteen findings of the
+uncounted-state family say a conditional incrementing in one arm only leaves a state counted nowhere;
+**folding is one pin with no uncounted state, three buckets is three pins and the sum temptation
+back.** The sum is NOT asserted — thirteenth wave.
+
+⛔ **`$unwalked` becomes a genuine SET DIFFERENCE and its pin does not move.** `$whole - $total`
+assumes the subset relation; the first pin needs the per-file identity anyway, so the assumption
+stops being one at no cost.
+
+### ⚠️ 2026-09-08 03:5x — `state.py decided` swallowed `--ruling R245` for the SECOND time, and my brief is half the cause
+
+Run 115's `JOURNAL.md` row and `BUILD-STATE.json` `chose` string both end
+`… without moving multiple pins at once --ruling R245`, while the `ruling` field beside them is
+separately and correctly `R245`. Identical to the 08:2x defect on run 110. ⛔ **Not repairable and not
+to be repaired** — `state.py` owns the file, a hand edit is a `BLOCK`, the records are append-only.
+
+> ⛔ **Twice is a pattern.** My brief printed the command as
+> `python3 bin/state.py decided X-124 "…" --ruling R245` — flag **after** the quoted string, which is
+> the ordering that loses it. **Every brief from UI-68 puts the flag BEFORE the string** and requires
+> a `tail -3 .agents/state/JOURNAL.md` read afterwards. If it is swallowed anyway, that is a report
+> line and nothing else.
 
 ### ⛔ RULED 2026-09-08 03:0x — two report-shape rules, from run 114's two ⛔⛔ notes
 
