@@ -1403,4 +1403,36 @@ class X163Test extends TestCase
         $this->assertArrayNotHasKey('amount', $res);
         $this->assertEquals('NO_FACT', $res['refusal_code'] ?? 'NONE');
     }
+
+    public function test_price_quote_returns_service_name_alongside_amount(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Name Ret Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Oil Change',
+            'price_cents' => 4900,
+            'is_sample' => false,
+            'is_confirmed' => true,
+        ]);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Brake Pad Replacement',
+            'price_cents' => 24900,
+            'is_sample' => false,
+            'is_confirmed' => true,
+        ]);
+
+        $action = new PriceQuoteAction;
+
+        $resShort = $action->handle($biz->id, 'how much is an Oil Change?');
+        $this->assertEquals('Oil Change', $resShort['service_name']);
+        $this->assertEquals(4900, $resShort['amount']);
+
+        $resLong = $action->handle($biz->id, 'how much is a Brake Pad Replacement?');
+        $this->assertEquals('Brake Pad Replacement', $resLong['service_name']);
+        $this->assertEquals(24900, $resLong['amount']);
+    }
 }

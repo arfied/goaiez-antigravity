@@ -785,4 +785,36 @@ class CAgentTest extends TestCase
         $this->assertEquals('answered', $res['status']);
         $this->assertStringContainsString('$9,999.00', $res['reply']);
     }
+
+    public function test_agent_answers_with_service_name_when_available(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Agent Name Biz', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Oil Change',
+            'price_cents' => 4900,
+            'is_sample' => false,
+            'is_confirmed' => true,
+        ]);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Brake Pad Replacement',
+            'price_cents' => 24900,
+            'is_sample' => false,
+            'is_confirmed' => true,
+        ]);
+
+        $resShort = $this->answer->handle($biz->id, 'how much is an Oil Change?');
+        $this->assertEquals('answered', $resShort['status']);
+        $this->assertStringContainsString('Oil Change', $resShort['reply']);
+        $this->assertStringContainsString('$49.00', $resShort['reply']);
+
+        $resLong = $this->answer->handle($biz->id, 'how much is a Brake Pad Replacement?');
+        $this->assertEquals('answered', $resLong['status']);
+        $this->assertStringContainsString('Brake Pad Replacement', $resLong['reply']);
+        $this->assertStringContainsString('$249.00', $resLong['reply']);
+    }
 }

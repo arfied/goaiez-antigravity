@@ -25,6 +25,7 @@ final class PriceQuoteAction
         if ($match = $this->findMatch($confirmedItems, $normalizedQuestion)) {
             return [
                 'amount' => $match->price_cents,
+                'service_name' => $match->service_name,
             ];
         }
 

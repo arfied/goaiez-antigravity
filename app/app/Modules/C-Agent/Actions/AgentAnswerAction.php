@@ -234,7 +234,9 @@ final class AgentAnswerAction
                 if (isset($quoteResult['amount'])) {
                     $amount = (int) $quoteResult['amount'];
                     $formatted = '$'.number_format($amount / 100, 2);
-                    $reply = "Our standard service is {$formatted}.";
+                    $reply = isset($quoteResult['service_name'])
+                        ? "Our price for {$quoteResult['service_name']} is {$formatted}."
+                        : "Our standard service is {$formatted}.";
                 } else {
                     // (R245) agent fact key schema: price.<slug> parsed generically
                     $facts = DB::table('facts')
