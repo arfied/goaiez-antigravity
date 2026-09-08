@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-08T16:54:47",
+ "updated": "2026-09-08T17:40:39",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2395,6 +2395,12 @@
    "module": "X-211",
    "chose": "a screen that cuts a list says so on the page and keeps the end the screen exists to show, so the invoice thread takes the newest fifty messages and renders them oldest first and the orders list says when older orders are not shown, because an ascending order under a limit throws away the most recent messages which are the ones that explain why an invoice is unpaid; the limit is not removed and no pagination is built, because there is no pagination component in the kit and the kit is another track's",
    "at": "2026-09-08T16:54:47",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-211",
+   "chose": "an empty state names what has not happened and what it waits on, so the invoice thread screen says no invoice is open and that nothing in this checkout raises one from a completed job, instead of saying every issued invoice is paid; nothing in production creates an invoice at all, so that branch is the state every real tenant is in and the old sentence described a ledger that settled and never existed; the same clause is stated in X-199's existing words so the lane states one fact in one form, and no query, heading, picker or door changes",
+   "at": "2026-09-08T17:40:39",
    "ruling": "R245"
   }
  ]
