@@ -105,7 +105,7 @@ class InvoicesScreenTest extends TestCase
             'last_name' => 'Doe',
         ]);
 
-        app(InvoiceDraftAction::class)->execute($biz->id, $customer->id, [
+        app(InvoiceDraftAction::class)->handle($biz->id, $customer->id, [
             ['description' => 'Draft Item', 'quantity' => 1, 'unit_price_cents' => 10000],
         ]);
 
