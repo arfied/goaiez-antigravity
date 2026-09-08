@@ -56,6 +56,9 @@
                 @if($messages->isEmpty())
                     <x-ui.empty-state heading="No messages yet.">Nothing has been said with {{ $customer ? $customer->first_name : 'this customer' }} on any channel.</x-ui.empty-state>
                 @else
+                    @if($threadTruncated)
+                        <p class="text-sm text-ink-2">The 50 most recent messages are shown. Older messages in this conversation are not on this page.</p>
+                    @endif
                     <ul class="space-y-2">
                         @foreach($messages as $message)
                             <li class="text-sm">
