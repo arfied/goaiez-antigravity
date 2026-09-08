@@ -1838,6 +1838,75 @@ class X157Test extends TestCase
         $this->assertSame('http://spam-link.ru', $submission->payload['website_url']);
     }
 
+    public function test_the_published_form_refuses_a_form_belonging_to_another_business(): void
+    {
+        Storage::fake('local');
+        $bizA = TestCase::provisionTenant(['name' => 'Tenant A', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$bizA->id}'");
+
+        $page = Page::create([
+            'business_id' => $bizA->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($bizA->id, $page->id, [
+                ['type' => 'chat'],
+                ['type' => 'form_capture'],
+                ['type' => 'dni'],
+            ]);
+
+        $zone = $this->provisionAction->handle($bizA->id, 'acme-a.com', true);
+
+        $formA = FormDefinition::create([
+            'business_id' => $bizA->id,
+            'form_name' => 'Contact A',
+            'slug' => 'contact-a',
+            'steps' => [],
+            'schema' => [],
+        ]);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $bizA->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $bizA->name
+        );
+
+        $bizB = TestCase::provisionTenant(['name' => 'Tenant B', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$bizB->id}'");
+
+        $formB = FormDefinition::create([
+            'business_id' => $bizB->id,
+            'form_name' => 'Contact B',
+            'slug' => 'contact-b',
+            'steps' => [],
+            'schema' => [],
+        ]);
+
+        $pageResp = $this->get("/sites/{$bizA->id}/{$deploy['deploy_hash']}");
+        $pageResp->assertStatus(200);
+
+        $html = (string) $pageResp->getContent();
+        preg_match('/<form class="form-capture-x155"[^>]*action="([^"]+)"/', $html, $m);
+
+        $action = preg_replace('/\/forms\/\d+$/', '/forms/'.$formB->id, $m[1]);
+
+        $post = $this->post($action, [
+            'first_name' => 'Rae',
+            'email' => 'rae@example.com',
+        ]);
+
+        $post->assertStatus(404);
+
+        $count = FormSubmission::whereIn('business_id', [$bizA->id, $bizB->id])->count();
+        $this->assertSame(0, $count, 'a cross-tenant form id captured a submission');
+    }
+
     public function test_the_published_form_accepts_an_array_valued_field_without_a_server_error(): void
     {
         Storage::fake('local');
