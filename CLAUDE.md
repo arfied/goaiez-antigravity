@@ -242,8 +242,10 @@ that test and is not on this list is a wave invented to fill the lane.
   untouched, the decoy root `REPORT.md` gone and the mailbox copy intact.
   `RULING CN` is discharged as a live hazard and stays above as history.
 
-⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 201 (2026-09-08) against main's
-`7103f455` (`merge: track/sixty — X-188`), lane 31 ahead / 621 behind. **Pin the sha before checking
+⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 203 (2026-09-08) against pinned main
+`a8aa649a` (`merge: track/ui — architecture seam test`), lane 33 ahead / 629 behind; both `.claude/hooks`
+`A` rows still present, and `git diff --stat 7103f455 a8aa649a -- CLAUDE.md .agents/rules/` prints
+**nothing**, so TRACK 1 ACTION 1 is unanswered. **Pin the sha before checking
 (`RULING DK`: `origin/main` moved 24 commits mid-tick 201 with no fetch from this seat).** The take is
 shut on **two** rows (`RULING DD`) — use the two-row re-check `git diff --name-status
 HEAD...<pinned sha> -- .claude/hooks/`, not `CP`'s seven-row command — and as of `RULING DH` those two
@@ -1077,15 +1079,57 @@ edited it*; this lane has not. The identical operation here swaps `goaiez_antig_
 replaced in the same commit. **`DC`'s restore-first order is re-confirmed against the current tip and
 is item 1 of any take brief this lane ever writes.**
 
-⚠️ **New and unexplained from this seat: `merge=ours` was consulted and still lost 10 lines.**
+⚠️ ~~**New and unexplained from this seat: `merge=ours` was consulted and still lost 10 lines.**
 `.agents/state/BUILD-STATE.json` (−8) and `JOURNAL.md` (−2) differ from pricebook's own tip in the
-merge result — both-moved, same attribute, same commit — while `CLAUDE.md` and `bin/supervise.sh` came
-through byte-exact; and the result is 587 deletions away from main's blob, so it is not "theirs taken"
-but a **lossy ours**. *Measured; mechanism undetermined* (this seat cannot read another checkout's
-config, and `merge.ours.driver` is untracked per-checkout state). **Consequence here:**
-`.agents/state/**` is in the both-moved quadrant in this lane too, so the attribute is **not** a reason
-to leave it out of a take's restore set — `DC`'s rule already covers it (restore what
-`git diff --cached --name-only` lists, prove it with item 4, never item 3's silence).
+merge result … so it is not "theirs taken" but a **lossy ours**.~~ ⛔ **CORRECTED IN SIGN AND
+BASELINE at tick 203 — see `RULING DR`.** It is **+8/+2**, a gain from theirs, and the baseline was
+wrong: a merge is measured against its own parents, never against what the lane became afterwards.
+`DQ`'s **consequence** survives and is strengthened — keep `.agents/state/**` in a take's restore set.
+
+### ⛔ `RULING DR` (tick 203) — the `merge=ours` driver ran for two per-track paths and **not** for two others **in the same merge**. The attribute is not the variable, and `.agents/state/**` is the pair it failed.
+
+**Corrects `DQ`'s sign and baseline; keeps and sharpens its instruction.** Main's tracked `CLAUDE.md`
+(wave 127, read by `DD`/`DH`'s method) supplies the rule `DQ` broke: `merge=ours` returns *our blob as
+of the merge*, so a merge is measured against its **first parent** and its **base**, never against the
+lane's later tip. Re-measured on pricebook's `a638eb96` against `a638eb96^1`: `BUILD-STATE.json`
+**+8**, `JOURNAL.md` **+2**, `.claude/settings.json` **+23**. Nothing was lost.
+
+**What survives is worse than what was withdrawn.** Quadrants against the true base `9d4de6f9`:
+
+| quadrant | paths | result |
+| :--- | :--- | :--- |
+| both moved | `CLAUDE.md`, `bin/supervise.sh` | byte-identical to ours ✅ driver fired |
+| **both moved** | **`.agents/state/BUILD-STATE.json`, `JOURNAL.md`** | **neither ours nor theirs ⛔** |
+| only ours moved | `app/phpunit.xml` | kept ✅ |
+| only theirs moved | `.claude/settings.json` | theirs taken ✅ `DC`'s base case executed |
+
+The middle row is measured twice: **+8/+2 from parent 1** and **587 deletions from parent 2**. Neither
+side — therefore a genuine three-way text merge, i.e. **the driver did not run for those two paths**
+while it demonstrably did for their neighbours in the same commit. Both `.gitattributes` are
+byte-identical to this lane's and name all four by exact literal path, so the attribute is not the
+variable.
+
+⛔ **Mechanism undetermined and deliberately not pursued.** `git check-attr merge` is **refused from
+this seat**, and another checkout's config is untracked and outside the read boundary. As at ticks
+188/190/191/197 — **the denial is the answer; do not re-run it.** The *behaviour* is what a restore
+set needs; the *cause* needs a hand that can read another checkout's config.
+
+⚠️ **This is `RULING DF`'s harm with its vector named** — a lane's state ledger absorbing foreign
+content with no conflict, no alarming index row, and `merge=ours` present and apparently honoured on
+its neighbours. `.agents/state/**` is in the both-moved quadrant in **this** lane too.
+
+**RULED by the lane supervisor: `.agents/state/BUILD-STATE.json` and `JOURNAL.md` are named
+explicitly in item 1 of any take brief this lane writes, alongside `DC`'s three, because the attribute
+meant to make them safe has been measured failing on exactly them in a sibling with a byte-identical
+`.gitattributes`.** This does not replace `DC`'s rule: the restore set is still derived from
+`git diff --cached --name-only`, never a fixed list, and the proof is still item 4, never item 3's
+silence. `DR` is why item 4 is not optional — a driver that silently declines to fire produces a row
+item 3 *does* list, and the supervisor who trusted the attribute is the one who skipped reading it.
+
+✅ **The durable point, and `DQ`'s real defect: name the baseline in the sentence that reports the
+number.** `DL` read a second-parent diff as an index, `DO` surveyed with a path-limited merge log,
+`DQ` compared a merge to a later tip. Three consecutive ticks found a git measurement whose
+**baseline**, not whose command, was wrong.
 
 ## Dispatching the coder (added 2026-09-02)
 
