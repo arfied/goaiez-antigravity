@@ -2138,4 +2138,65 @@ class X157Test extends TestCase
         $this->assertStringNotContainsString('Broken', $body);
         $this->assertStringContainsString('dni-pool-x137', $body);
     }
+
+    public function test_the_published_form_refuses_a_minor_and_writes_no_contact(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, [
+                ['type' => 'chat'],
+                ['type' => 'form_capture'],
+                ['type' => 'dni'],
+            ]);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Contact',
+            'slug' => 'contact',
+            'steps' => [],
+            'schema' => [],
+        ]);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        $pageResp = $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}");
+        $pageResp->assertStatus(200);
+
+        $html = (string) $pageResp->getContent();
+        preg_match('/<form class="form-capture-x155"[^>]*action="([^"]+)"/', $html, $m);
+
+        $post = $this->post($m[1], [
+            'first_name' => 'Kid',
+            'phone' => '+15550008181',
+            'date_of_birth' => now()->subYears(15)->toDateString(),
+        ]);
+
+        $this->assertSame(0, Person::where('business_id', $biz->id)->where('phone', '+15550008181')->count(),
+            'P-148: an under-18 signal at ingest wrote a contact row through the published form');
+
+        $this->assertSame(0, FormSubmission::where('business_id', $biz->id)->count(),
+            'P-148: an under-18 submission was stored through the published form');
+
+        $post->assertStatus(422);
+        $this->assertSame('under_18', $post->json('reason'));
+    }
 }
