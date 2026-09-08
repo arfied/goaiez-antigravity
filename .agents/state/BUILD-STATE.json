@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-07T22:22:14",
+ "updated": "2026-09-08T00:01:15",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -2373,6 +2373,12 @@
    "module": "X-155",
    "chose": "The form capture normaliser reported a value as given whenever it was not a blank string, so an array survived it unchanged. The payload reaches this action from the raw request array on the live form route, which the published page advertises as a real form action, and the value then keys a contact lookup or fills a contact row, where the query builder binds an array to a string column and throws; nothing upstream refuses it, because the validator checks presence and completeness and never type, and there is no catch between the action and the route, so an arbitrary submission produced a server error where every sibling path on that prefix answers with its own status vocabulary. The normaliser now reports a non-scalar as not given, which is the decision this module has already recorded three times: a value that is blank or whitespace was not given, a submission that carries no phone gets its own contact rather than a shared one, and only the fields the payload actually carried are written. The remedy is placed in the normaliser rather than at its seven call sites so that one rule covers the contact key and the display fields together, which is safe here only because the module has already decided all three the same way and asserted each. The raw submission is not lost, because the submission row stores the whole payload; only the contact key is not set from it. Refused deliberately: refusing the submission with a new rejected reason, which would refuse a submission this module currently captures and would mint a public status string nothing asserts; validating in the route, which leaves the actions other callers exposed; type checking in the validator, whose subject is spam and completeness and which would refuse rather than normalise; and guarding at the seven call sites, which is the copied-shape error in a method whose whole purpose is to be the single normaliser.",
    "at": "2026-09-07T22:22:14",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-155",
+   "chose": "FormValidateAction read the honeypot field name with a null-coalescing default over a NOT NULL column carrying a database default, so the fallback could never fire, and a blank or whitespace-only field name made the payload lookup miss and silently disabled the honeypot for that form. The reader now falls back to website_url when the configured name is blank after trim, which is the same literal the line already declared and the same value the column defaults to, so the seam decides nothing new. The trim decides only; the configured name is used verbatim, because a field name is a lookup key and trimming it would silently rewrite a caller key, which is also why a name of 0 is legitimate and is used as given. empty() is refused and the refusal is measured in BOTH directions: empty of three spaces is false, so it would re-admit a whitespace name and leave the original defect standing, and empty of the string 0 is true, so it would treat a form legitimately named 0 as unconfigured and fall back. Both wrong candidates are red under the two new tests. Refused deliberately: refusing the submission, which would refuse a legitimate visitor for a tenant misconfiguration and invert this module posture of capture and normalise; a non-empty database constraint, since no production writer of FormDefinition exists and every fixture bypasses one; guarding in FormCaptureAction, which leaves the validator other callers exposed; and relaxing the presence predicate on the submitted value, which is SITE-161 fix for the honeypot value and is correct.",
+   "at": "2026-09-08T00:01:15",
    "ruling": "R245"
   }
  ],
