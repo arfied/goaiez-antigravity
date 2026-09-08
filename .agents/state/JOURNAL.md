@@ -707,3 +707,4 @@
 - `2026-09-08T10:22:54` (R245) X-173 — inferCategory keeps its two-parameter signature and main's test adapts — the module winning over the caller
 - `2026-09-08T10:51:08` (R245) X-199 — money's five owner-layout screens open at h2 because the account layout emits the page h1 as sr-only and the blades kept theirs when the merge adopted the layout attribute
 - `2026-09-08T10:51:08` (R245) X-211 — the offline-payment refusal is asserted on money's own UnreferencedPaymentException and message because the module wins over an adapted test
+- `2026-09-08T11:15:27` (R245) X-211 — the late-fee refusal is asserted on money's own FeeWithoutTermException and its write-nothing sentence main's needle was a case-sensitive mismatch against money's message and the module wins over an adapted test
