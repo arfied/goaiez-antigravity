@@ -163,4 +163,25 @@ class X82Test extends TestCase
         $this->assertArrayNotHasKey('amount_cents', $sampleGrandfathered);
         $this->assertArrayNotHasKey('amount_formatted', $sampleGrandfathered);
     }
+
+    public function test_rate_lookup_refuses_inactive_rate_instead_of_quoting(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Inactive Test Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $rate = $this->setAction->setRate($biz->id, 'inactive_rate', 15000);
+
+        // 1. Active rate (Positive Control)
+        $activeGlobal = $this->lookupAction->lookup($biz->id, 'inactive_rate');
+        $this->assertEquals(15000, $activeGlobal['amount_cents']);
+        $this->assertEquals('$150.00', $activeGlobal['amount_formatted']);
+
+        // 2. Inactive rate
+        $rate->update(['is_active' => false]);
+
+        $inactiveGlobal = $this->lookupAction->lookup($biz->id, 'inactive_rate');
+        $this->assertEquals('INACTIVE_RATE_REFUSED', $inactiveGlobal['refusal_code']);
+        $this->assertArrayNotHasKey('amount_cents', $inactiveGlobal);
+        $this->assertArrayNotHasKey('amount_formatted', $inactiveGlobal);
+    }
 }
