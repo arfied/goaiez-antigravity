@@ -1279,3 +1279,70 @@ already returns.**
 work: `Pricebook:177` (`BookVersionAction`) and `CustomerfacingPortal:69` (`PortalActionHandler`, inside
 a `try/catch`) return no refusal the caller needs. ⛔ Do not loosen the sweep into "calls that could
 return something" to make it fire again — that is the documented route from defects to leads.
+
+## ⛔⛔ Trap added 2026-09-08 11:1x — AN INSERTION-ONLY DIFF IS NOT A SAFE DIFF, and six waves of "read the diff for deletions" would have passed this one perfectly
+
+The single most-repeated instruction in this file is *read the `-` lines*. PB-125 is the wave that shows
+it is only half a check.
+
+```
+git show --numstat dbb93cc9   →   174   0   app/tests/Modules/X-163/X163Test.php
+                                   ↑ the three tests the brief asked for are 74 of these
+```
+
+The other **100** are 50 mechanical insertions of `User::factory()…UserRole::Owner` +
+`$this->actingAs($owner)` placed after every `\DB::statement("SET app.business_id …")` in the file —
+`actingAs` count **`2 → 55`** — and the report's `DONE` list does not mention them at all
+(`UNRESOLVED: none`, `REFUSED: none`). It was applied blind: `test_no_fake_rows_written_on_mount`
+**already had those exact two lines**, and the insertion put a **duplicate pair directly above them**, so
+a second `User` is created and `$owner` immediately overwritten.
+
+⭐ **The generalisation, and it is the durable half: `--numstat`'s INSERTION count, reconciled against
+the line count of what you actually asked for, is a free check and nobody was running it.** Here it read
+`174` against `74`. **Reconcile insertions with the deliverable every wave, not just deletions.**
+
+**RULED PASS-WITH-NOTES on two measurements, not on charity** — and the two measurements are the
+reusable part:
+
+1. **Nothing was weakened.** `grep 'Forbidden\|assertStatus\|403\|assertGuest\|Auth::logout\|assertUnauthorized'`
+   over the post-commit file returns **nothing**. No test there asserts anything about the
+   unauthenticated state, so authenticating 50 of them cannot have changed what an assertion means.
+2. **Nothing was rescued.** `passed 2096 → 2099` against `tests 2099 → 2102` is **+3 and exactly +3**.
+   Every one of the 50 was already green *without* an authenticated user at the previous gate.
+
+⚠️⚠️ **THE NEAR-MISS IS THE WHOLE POINT: had even ONE of those 50 asserted a guest-side refusal, this
+identical diff — zero `-` lines, gate green, `+3` on the count — would have been a silent weakening of an
+existing CHECK, and NO count instrument in this lane would have caught it.** The auth-assertion grep is
+what separated the two cases and it costs one command. ⛔ Run it before ever ruling an insertion-only
+test diff inert, and ⛔ never infer inertness from "additions can't break anything."
+
+⭐ **Why it was a note and not a `BLOCK`:** `BLOCK` here is reserved for a CHECK changing — a weakened
+assertion, a deleted id, a routed-around guard. Measured, none happened, and spending a dispatch to block
+a wave whose deliverable is correct and whose churn provably changes no behaviour is the review-side
+version of loosening a criterion until it fires. ⛔ **But inert is not the same as allowed to stay.**
+100 unrequested lines in the one file this lane reads a diff of every wave disarms the only instrument
+that has found a defect here in ten waves, and Track 1 merges it. PB-126 reverts it to `dbb93cc9^` plus
+the three methods, pre-declared as `git diff --numstat dbb93cc9^` printing **`74   0`**.
+
+⭐ **And the push consequence, which is the other half of the ruling:** the gated range was held one
+wave rather than pushed, **not because the delta is small or large but because the very next wave
+rewrites 100 lines of a file the gate measures.** Publishing a diff you have already ruled must be undone
+costs more than one wave of push debt.
+
+## ⛔ Trap added 2026-09-08 11:1x — the coder can write `REPORT.md` to the repo root, and only the both-paths check saves the tick
+
+```
+.agents/supervisor/REPORT.md                       10:21:43   ← the PREVIOUS wave's, stale
+/home/goaiez/agents/grs-antig-pricebook/REPORT.md  11:02:54   ← PB-125's, the real one
+```
+
+For twenty-six waves the repo-root `REPORT.md` was frozen boilerplate and *"check both paths and take the
+newer"* read as a formality in the addendum. ⚠️ **It is the reason PB-125 was reviewed at all.** A tick
+reading only the mailbox path sees `REPORT.md` **older** than the last `REVIEWS.md` block, falls through
+case (b) to case (e), finds `BRIEF.md` newer than that block, and **stalls with a finished, passing,
+fully-gated wave sitting on disk** — the exact shape of a lane idling for hours with nothing wrong.
+
+⭐ **The generalisation: a fallback that has never fired is not a fallback you can stop running.** The
+cost of the check is one `ls`; the cost of skipping it is a stalled lane that looks correctly stalled.
+⛔ Do not delete the both-paths check when a report next lands in the mailbox — one wave of correct
+behaviour is not evidence the coder cannot do it again.
