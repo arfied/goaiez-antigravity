@@ -144,4 +144,23 @@ class CheckoutBlockScreenTest extends TestCase
             ->assertSee('nothing is held for you until the order is placed here')
             ->assertDontSee('it is held for 15 minutes');
     }
+
+    public function test_the_checkout_card_says_nothing_was_authorised_and_never_heads_it_authorised(): void
+    {
+        $biz = self::provisionTenant();
+        Tenancy::set($biz->id);
+        $filter = Sellable::create(['business_id' => $biz->id, 'name' => 'Limited filter', 'sku' => 'FLT-1', 'inventory_quantity' => 1, 'unit_price_cents' => 4500, 'fulfilment_type' => 'physical']);
+        $boiler = Sellable::create(['business_id' => $biz->id, 'name' => 'Boiler service', 'sku' => 'BOI-1', 'inventory_quantity' => 10, 'unit_price_cents' => 12000, 'fulfilment_type' => 'service']);
+
+        $addAction = new CartAddAction;
+        $addAction->handle($biz->id, 'sess_1', $filter->id);
+        $addAction->handle($biz->id, 'sess_1', $boiler->id, 2);
+
+        $screen = Livewire::test(CheckoutBlock::class, ['sessionToken' => 'sess_1']);
+
+        $screen->call('authorise')
+            ->assertSee('Nothing authorised yet')
+            ->assertSee('Nothing was authorised at any gateway')
+            ->assertDontSee('Authorised at');
+    }
 }

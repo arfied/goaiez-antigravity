@@ -7,7 +7,7 @@
     @endif
     
     @if($authorised)
-        <x-ui.attention-card state="ok" heading="Authorised">{{ $authorised }}</x-ui.attention-card>
+        <x-ui.attention-card state="attention" heading="Nothing authorised yet">{{ $authorised }}</x-ui.attention-card>
     @endif
     
     @if($success)

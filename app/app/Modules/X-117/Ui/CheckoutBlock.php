@@ -43,7 +43,7 @@ class CheckoutBlock extends Component
         $this->waiting = null;
 
         $this->authToken = 'auth_'.Str::random(20);
-        $this->authorised = sprintf('Authorised at %s — the order will be placed and is waiting on a card-entry surface that is not connected yet.', now()->format('H:i:s'));
+        $this->authorised = sprintf('A one-time checkout token was issued at %s and can be used once. Nothing was authorised at any gateway: this waits on a card-entry surface that is not connected yet.', now()->format('H:i:s'));
     }
 
     public function pay(CartPayAction $action): void
