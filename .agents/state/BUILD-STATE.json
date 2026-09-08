@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-08T18:11:48",
+ "updated": "2026-09-08T18:41:15",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1886,6 +1886,12 @@
    "module": "X-168",
    "chose": "one open window per job per PERSON \u2014 the open-entry guard scopes on timesheet_id (an entry's person identity exists only through it), while closeJobWindow stays job-scoped and closes EVERY open window on the job, updating each affected timesheet",
    "at": "2026-09-08T18:11:48",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-171",
+   "chose": "JobCompleted carries a nullable occurredAt: the live tap in JobStateAction passes Carbon::now(), and the offline replay in ReplayOfflineSyncAction passes null because its jsonb payload carries no occurrence time and inventing now() there would stamp the sync moment onto every replayed window",
+   "at": "2026-09-08T18:41:15",
    "ruling": "R245"
   }
  ],

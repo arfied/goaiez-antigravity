@@ -857,3 +857,4 @@
 - `2026-09-08T17:12:18` (R245) X-168 — one open window per job — a repeat call for a job that already has an open entry returns the existing entry and writes nothing. Refuse, do not supersede. Return the existing entry, not null.
 - `2026-09-08T17:54:57` (R245) X-171 — TechOnSite event now carries the occurredAt moment of the tap
 - `2026-09-08T18:11:48` (R245) X-168 — one open window per job per PERSON — the open-entry guard scopes on timesheet_id (an entry's person identity exists only through it), while closeJobWindow stays job-scoped and closes EVERY open window on the job, updating each affected timesheet
+- `2026-09-08T18:41:15` (R245) X-171 — JobCompleted carries a nullable occurredAt: the live tap in JobStateAction passes Carbon::now(), and the offline replay in ReplayOfflineSyncAction passes null because its jsonb payload carries no occurrence time and inventing now() there would stamp the sync moment onto every replayed window
