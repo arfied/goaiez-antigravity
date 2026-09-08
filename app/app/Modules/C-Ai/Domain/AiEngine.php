@@ -113,11 +113,12 @@ final class AiEngine
     public function embed(int $businessId, string $text, ?string $model = null): array
     {
         $model ??= AiModel::TextEmbedding3Small->apiModelId();
+        $dim = AiModel::TextEmbedding3Small->embeddingDimensions();
 
         return [
             'model' => $model,
-            'dimensions' => 1536,
-            'embedding' => array_fill(0, 1536, 0.01),
+            'dimensions' => $dim,
+            'embedding' => array_fill(0, $dim, 0.01),
         ];
     }
 

@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-07T22:37:00",
+ "updated": "2026-09-07T23:00:41",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -5151,6 +5151,24 @@
    "chose": "BV \u2014 RULING BR is WITHDRAWN: two modules hardcode 'text-embedding-3-small', which is a true R237 violation that BoundaryStage's prefix list cannot match, so a census of open violations is never a census of open work.",
    "at": "2026-09-07T22:37:00",
    "ruling": "R245"
+  },
+  {
+   "module": "C-Mail",
+   "chose": "BW: a grep answers the pattern and never the question, and the seat that wrote the pattern owns what it missed.",
+   "at": "2026-09-07T23:00:31",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Ai",
+   "chose": "BX: an exhaustion claim is only as wide as the list actually printed; two of boundary's four violations are live work that a 609-total argument hid.",
+   "at": "2026-09-07T23:00:41",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Ai",
+   "chose": "BY: R237's fix string prescribes a C-Ai resolver and a table that C-Ai does not have, so the prescribed remedy is unbuildable and the registry route is the only in-lane one.",
+   "at": "2026-09-07T23:00:41",
+   "ruling": "R245"
   }
  ],
  "notes": [
@@ -5489,6 +5507,10 @@
   {
    "at": "2026-09-07T22:38:24",
    "note": "C-Ai deferred whisper-1 at C-Ai/Actions/AiTranscribeAction.php:13 and C-Ai/Domain/AiEngine.php:121, and alloy at C-Ai/Actions/AiSpeakAction.php:13 and C-Ai/Domain/AiEngine.php:130. Reason: no registry case; whisper's per-minute price does not fit the enum's per-token unit; alloy is a voice."
+  },
+  {
+   "at": "2026-09-07T23:01:38",
+   "note": "X-108 app/app/Modules/X-108/Ui/views/partials/appointment-row.blade.php:15-21 matches status with a default arm. The closed set is in ...000021_create_x108_scheduling_tables.php:60. Deferred because the repair crosses a view this track does not own."
   }
  ],
  "history": [
