@@ -2954,3 +2954,93 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     number a brief states is the supervisor's to have measured). ⚠️ **Ruling 121's own first outing
     worked**: `REPORT.md:392` carries `GATE: NOT RUN — … another suite holds /home/goaiez/tmp/pest.lock`
     and no number anywhere, one wave after run 126 transcribed a predicted floor as a measurement.
+129. **A pill that names a processor relationship this app does not have, on a column whose other
+    value is unreachable (RULED by the lane supervisor 2026-09-08, briefed as MONEY-108 item 1).**
+    Ruling 122 closed with *"a status pill is a sentence of two words and is swept with the prose"*,
+    and this is the first sweep in this lane ever to read a `:label=`:
+    `grep -rn "x-ui.status-pill"` over the eight modules returns **43** lines, four of them wrong.
+    `X-198/Ui/views/connect-card.blade.php:23` is
+    `:label="str_replace('_',' ', $conn->merchant_status ?? 'external_gateway')"` with `state="ok"`
+    for everything but `pending_kyc`. Measured: `merchant_status` has two writers — the
+    `2026_09_04_204958*` backfills writing `'external_gateway'` and `GatewayEngine.php:44` writing
+    `'pending_kyc'` — and `:44` sits past `:36`'s `PROCESSOR_ADAPTER_ABSENT` refusal, while
+    `grep -rn "ProcessorAdapter" app/app app/tests app/config app/bootstrap` shows the **only**
+    binding in the tree is `$this->app->instance(...)` at `ConnectCardScreenTest:49`. So the
+    `pending_kyc` arm is **unreachable in production** and every real tenant reads a green
+    `external gateway`, always. ⚠️ **The headline is that this is a NEGATION, not an absence** —
+    ruling 93 measured `StripeGatewayClient::charge():13-24` posting with the platform's key and no
+    `Stripe-Account`/`on_behalf_of` anywhere in X-198, so a pill calling the connection an *external
+    gateway* denies the property the code has. It sits **one line below** the `:22` ruling 93 itself
+    corrected to *"Recorded merchant account …, which no charge is routed to yet"*: ruling 98's
+    self-contradiction tell at one line's distance, in the module 93 swept. **RULED: the labels
+    become `not applied` and `application recorded`, and the `str_replace` goes.** ⛔ The `:state=`
+    expression is untouched and the column is **not** made to vary — `merchant_status` is a real
+    guard with a real reader (`GatewayEngine:32` refuses a second application on it), so deriving it
+    from a processor that does not exist would flip every fixture and redden the module to assert a
+    state this lane cannot reach: the blast radius ruling 84 refused for `is_active` and ruling 122
+    refused for `is_connected`. The unreachability is **recorded, not migrated**. ⚠️ Blast radius
+    measured with interior fragments (rulings 46, 86): **ZERO** — the test file's only hits are an
+    `assertSame` on the column and two fixtures, so **no test asserts the rendered label**, which is
+    ruling 70 and is why the pill outlived MONEY-91's and MONEY-92's passes over this screen. The
+    item therefore **adds** a method.
+130. **A pill that says `sent to <partner>` off two columns nothing in this app writes, in a module
+    with no transport (RULED by the lane supervisor 2026-09-08, briefed as MONEY-108 item 2).**
+    `X-211/Ui/views/collections-package-preview.blade.php:33` is
+    `:label="$package->transmitted_at ? 'sent to '.$package->partner : 'waiting on a collections
+    partner'"`. Measured: `grep -rn "transmitted_at\|partner" app/app/Modules/X-211 --include=*.php`
+    returns, for **both** columns, the migration and the model cast and nothing else — the
+    migration's own comment says *"null = no collections agency yet"* — and ruling 98 already
+    measured `grep -rn "Mail::\|Notification::\|Http::\|->send(" app/app/Modules/X-211` **empty**.
+    So the true arm asserts a transmission this module cannot perform, off a column it never writes.
+    ⚠️ **What stops ruling 96's record-it-do-not-edit-it applying is a test:**
+    `CollectionsPackagePreviewScreenTest:111` `forceFill`s both columns and `:118` asserts
+    `"sent to O'Brien & Sons"`, so the branch **is** rendered and **is** gated — 96's *"no test can
+    render it and no mutation can redden it"* does not hold, and it is instead ruling 41 part 2 one
+    level up: a fixture written to the blade rather than to a real thing's shape, so one green
+    assertion certifies a claim the app can never make. **RULED: the true arm says the handover is
+    RECORDED, not performed** — `'recorded as sent to '.$package->partner.'; nothing was sent from
+    here'` — which is ruling 122's `recorded only` and ruling 98's `offered` applied to a third
+    column, and it keeps the partner name, real once an operator enters one. ⛔ Not by deleting the
+    arm or the columns (both are correct the day a partner is named), ⛔ not by building a
+    transmission (ruling 13's evidence run). ⚠️ The `waiting on a collections partner` arm is **true**
+    and is the only one a real tenant sees; `:18`'s empty state already says the same in prose.
+131. **A pill saying `submitted` two lines under a confirmation saying nothing was sent (RULED by the
+    lane supervisor 2026-09-08, briefed as MONEY-108 item 3).** `dispute-queue.blade.php:17` and
+    `dispute-card.blade.php:17` both render `:label="$d->status"`, and `dispute-card.blade.php:41`
+    opens *"Submitted; the bundle is sealed."* Ruling 97 measured
+    `grep -rn "Http::\|curl_" app/app/Modules/X-201` **empty** and MONEY-95 changed the confirmation
+    to say the defence is sealed and recorded and that **nothing was sent** — and the pill was not
+    swept with it. `DisputeQueueScreenTest:66-68` is the proof inside one chain:
+    `assertSee('… is sealed and recorded here')`, `assertSee('Nothing was sent: filing it waits on
+    the gateway chargeback contract')`, `assertSee('submitted')`. **Ruling 98's tell at the shortest
+    distance this lane has found**, and it is ruling 97's blind spot by construction: 97 swept
+    `$success` strings in PHP, ruling 80 swept per-row blade prose before 97 existed, and a
+    `:label=` was read by neither. **RULED: the `submitted` status renders as `sealed, not sent`,
+    and `:41`'s prose opens on the same fact**, keeping its tail clause word for word so the
+    existing assertion on it stays green. ⛔ The `status` **column** is not renamed — unlike ruling
+    98's fabricated `accepted`, this is a legitimate state-machine value with real readers, so
+    renaming it would move a state rather than a sentence; this is ruling 90's display-map shape.
+    ⛔ `opened`, `compiled`, `won` and `lost` are left **raw**: each is true of what the code did.
+    ⚠️ Blast radius measured with interior fragments (rulings 46, 86): exactly **two** assertions
+    lane-wide, both **changed**, never deleted. ⚠️ **A bare `assertDontSee('submitted')` is refused
+    as the pairing without measurement** — `DisputeCardScreenTest:71` asserts `'already submitted'`
+    on a later render in the same chain — so the supervisor measured, before dictating it, that at
+    the render it sits on the pill is the only source of the lowercase word (`wire:submit="…"` and
+    `wire:click="submit(…)"` do not contain it, the queue's `submitted` branch renders only Won/Lost
+    buttons, and its footer says *submission*, not *submitted*).
+132. **The other 39 pill lines are measured CLEAN and STRUCK (measured 2026-09-08; rulings 64, 95,
+    100, 111, 114, 120).** X-199's thirteen (the `paid` filter guarantees `money-paid-today:32`;
+    `credits.php:85` computes headroom per row; declines, invoices and unpaid are rulings 114, 43 and
+    99's own outcomes) · X-198's four (`reviewed_label` derives from `reviewed_at`; `same-account:16`
+    is ruling 122's own fix) · X-211's eight (rulings 111, 114, 98, and `attempts` is a live
+    `ArDunningAction::…->count()`) · X-117's three (ruling 45 leaves the `paid` arm unreachable —
+    ruling 96 — and the labels are real columns) · X-120's one (`is_default` has two real writers
+    reached from the screen's own button) · C-Billing's four (`BillingLedgerEngine:154` writes the
+    dunning status per advance; `entry_type` was struck under ruling 90) · X-173's four (ruling 84's
+    own `is_active` fix, and the sync-run pills are unreachable because ruling 81 measured
+    `syncTransactions` has no production caller). ⛔ Not to be re-raised. ⚠️ One is **recorded, not
+    briefed**: `X-199/Ui/views/unpaid.blade.php:61`'s *"covered by the card on file; service never
+    stopped"* is true — ruling 99 made `status = 'charged'` conditional on a real charge id — but its
+    second clause is **unearned**, since ruling 110 measured that nothing reads
+    `phone_answering`/`ai_enabled`/`voicemail_only`, so nothing can stop service either way. It
+    asserts a negative that holds, which is ruling 76's PASS-WITH-NOTES grade, not a wave.
