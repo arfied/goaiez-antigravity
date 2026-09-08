@@ -3684,3 +3684,86 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     acting user's id on the row, and keeps a refusal assertion by asserting **money's own**
     exception for the no-attempt case. ⛔ No assertion is deleted and the name stands, being true of
     money's implementation (rulings 39, 46).
+162. **Adopting a layout moved the page's `<h1>` into it and left five blades still emitting one —
+    the heading-seam red is MONEY's, and the fix is a demotion, never a removal (RULED by the lane
+    supervisor 2026-09-08 10:5x, briefed as MONEY-116 item 1).** The previous tick deferred this
+    attribution *"with the number in hand"*; the number is **`$skips` 5 vs 0** and it is this lane's.
+    Measured: `app/resources/views/components/account/layout.blade.php:51-52` emits
+    `<h1 class="sr-only">{{ $heading }}</h1>`, so the layout owns the page's `<h1>` for assistive
+    technology and a blade under it must open at `<h2>` — which
+    `Feature/Architecture/HeadingSeamTest.php:76-81` enforces and which the other fourteen components
+    in the population already satisfy (`X-110/today.blade.php:3`, `X-138/roi-dashboard.blade.php:3`).
+    Money's five X-199 blades still open `<h1>` — `declines:4`, `credits:2`, `invoices:5`, `unpaid:4`,
+    `money-paid-today:4` — because before the `12447593` merge they carried no layout and owned the
+    page heading legitimately; ruling 155 adopted main's `#[Layout(…, ['heading' => …])]` and nothing
+    swept the blades under it. **RULED: the tag level changes and nothing else** — same text, same
+    classes. ⛔ **Never remove the blade's heading:** `declines` then reads `[1,3]` and
+    `money-paid-today` `[1,3,4]`, so a removal creates a level skip where a demotion removes two
+    (`$levelSkips` is pinned 0 and is failing at **2** today, behind `$skips` in the expect order).
+    ⛔ Never edit a file under `Feature/Architecture/` — it is a CHECK and another lane's (the One
+    Rule). ⚠️ **Blast radius: ZERO, and the reason is the point.** All five
+    `tests/Modules/X-199/Screens/*ScreenTest.php:25` assert
+    `assertSee('<h1 class="sr-only">…</h1>', false)` — the **layout's** heading, not the blade's — so
+    no test in this lane has ever asserted the tag level of the string an owner actually sees.
+    ⚠️ Four pins sit **after** `$skips` and are therefore unmeasured (`$conditionalHeadings` 8,
+    `$inlineConditionalHeadings` 0, `$untrackedOpeners`, `$unwalked` 25); a demotion changes none of
+    them by construction — it moves no heading into or out of a conditional and adds no directive —
+    so the brief predicts the two counters it measured and **names the tail as unmeasured** rather
+    than promising green (ruling 92).
+163. **Ruling 125 mis-attributed the `SQLSTATE[25P02]` invoice-number red to another lane; it is
+    `tests/Modules/X-199/InvoiceNumberTest.php`, and the mechanism is a deliberately-failing statement
+    with no savepoint (RULED by the lane supervisor 2026-09-08 10:5x, briefed as MONEY-116 item 3).**
+    Ruling 125 listed *"the `SQLSTATE[25P02]` invoice-number test"* among five reds it called *"all
+    other lanes'"*. Measured: the file is `app/tests/Modules/X-199/InvoiceNumberTest.php`, X-199 is
+    money's by ruling 20, and `git log` on it is **three money commits** (`4475cf32`, `241fd1ab`,
+    `c421dc15`). It has been this lane's for as long as it has existed. **The mechanism explains why it
+    reads as somebody else's:** `:141-152` asserts a unique-index violation by inserting a duplicate
+    `invoice_number` through `DB::table('invoices')->insert()`, and in Postgres a failed statement
+    aborts the **whole** enclosing transaction — the suite's own — so every statement after it dies
+    `25P02`, and the one the runner reports is the *teardown*'s
+    `update "phone_numbers" … Released in teardown`. The failure names a table this lane does not own,
+    in a file this lane does not own, for a defect that is entirely this lane's. **RULED: the failing
+    insert runs inside a nested `DB::transaction()`**, which Laravel implements as a `SAVEPOINT` when
+    a transaction is already open, so the rollback returns the outer transaction to a usable state and
+    the assertion is unchanged. ⛔ Not by deleting or weakening the `toThrow(QueryException::class,
+    'invoices_business_id_invoice_number_unique')` — that assertion is the unique index's only proof;
+    ⛔ not by dropping `DatabaseTransactions`, which would leak rows into
+    `goaiez_antig_money_test`. ⚠️ The generalisable half is ruling 64's, and it is the second
+    correction of an inherited attribution in three ticks: **a red attributed to another lane is an
+    inherited follow-up like any other and decays the same way** — re-measure the FILE, never the
+    message, because a cascading failure reports the innocent statement.
+164. **A measurement item's output belongs in `REPORT.md`; a count is not a list, and this one
+    survived only because ruling 47 was violated too (RULED by the lane supervisor 2026-09-08 10:5x,
+    on MONEY-115's run 137).** Ruling 160 made the first wave after a merge open with a measurement
+    item, because §7's red list is capped and a supervisor forbidden to run pest outside
+    `supervise.sh` cannot see what it cannot scope. Run 137 ran that measurement correctly and wrote
+    into `RAW:` the string `FULL RED LIST (15 failures/errors extracted …)` — **the number and not the
+    list** — leaving all fifteen entries and their verbatim messages in `full_red_list.txt`,
+    untracked, **at the repo root**. This supervisor recovered them, and could do so *only* because
+    the run also left its scratch behind: had it tidied up as ruling 47 requires, the deliverable
+    would have been destroyed by the cleanup, the report would still have read `(15)`, and the wave
+    would have been unscopeable. **Two defects that each conceal the other is not a near miss, it is
+    the pair to write down.** ⚠️ The count was also **short and silent**: the gate that produced it
+    read `FAILED 10 · errors 7` = **17** and the capture names **15**, with no line saying so. **RULED:
+    a brief's measurement item names the field, the heading and the shape** — every red with its
+    file, its test name and its first failure line, written into `REPORT.md` under a named heading —
+    **and states the total the gate reported beside the total captured**, so a short capture announces
+    itself. This is ruling 147's family (detail is read as the spec, a by-name reference as decoration)
+    reaching the one item whose entire purpose is to be read by the next tick. ⛔ A scratch file is
+    never the delivery vehicle: it is untracked, it is outside every gate, and it is one `git add -A`
+    from a live web document root (ruling 47).
+165. **The push of the merge is HELD for exactly one wave, and the escape clause is written down now
+    so the next tick does not re-litigate it (RULED by the lane supervisor 2026-09-08 10:5x).**
+    `20901926` — the first `origin/main` this branch has ever carried, 220 files, and the first thing
+    Track 1 has ever had of money's (ruling 154) — was blocked on §6's `pint` red and *"three
+    lane-owned §7 reds"*. MONEY-115 cleared all four. But the same tick's measurement moved three
+    reds the previous tick had filed as *"not this lane's tree"* into this lane's column: rulings 162
+    and 163, plus `test_g1_74`, which is ruling 58 shape (1) and one line. Ruling 26 exists to stop
+    handing Track 1 a red this lane authored, and all three are small, measured and fixable in one
+    wave. **So the push waits for MONEY-116 and no longer.** ⚠️ **The escape clause is binding: if
+    MONEY-116 leaves ANY of the three standing, the next tick pushes anyway** and names the residue in
+    its verdict block. Ruling 26c's reasoning is the stronger one at that point — a gated tip nobody
+    pushes never reaches Track 1 and there is no human left to catch it — and ruling 74 forbids
+    withholding a correct tip over a defect smaller than the thing withheld. A week of merged work is
+    not held indefinitely against three known reds; it is held for one wave because one wave is what
+    they cost.
