@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace App\Modules\X198\Console;
 
 use App\Models\User;
-use App\Modules\X121\Models\Person;
 use App\Modules\X198\Domain\GatewayEngine;
-use App\Modules\X199\Domain\InvoiceEngine;
+use App\Modules\X198\Models\Payment;
 use App\Services\TenantProvisioner;
 use App\Support\Tenancy;
 use Illuminate\Console\Command;
@@ -21,7 +20,6 @@ final class EvidenceChargeCommand extends Command
 
     public function handle(
         TenantProvisioner $provisioner,
-        InvoiceEngine $invoiceEngine,
         GatewayEngine $gatewayEngine
     ): int {
         if (app()->runningUnitTests()) {
@@ -35,28 +33,12 @@ final class EvidenceChargeCommand extends Command
         Tenancy::set($tenant->id);
         $businessId = $tenant->id;
 
-        $person = Person::create([
-            'business_id' => $businessId,
-            'first_name' => 'Evidence',
-            'last_name' => 'Customer',
-            'phone' => '+15555555555',
-        ]);
-
-        $lines = [
-            ['description' => 'Test Line', 'quantity' => 1, 'unit_price_cents' => 12500],
-        ];
-        $invoiceRes = $invoiceEngine->issueInvoice($businessId, $person->id, $lines);
-        $invoice = $invoiceRes['invoice'];
-
         $gatewayEngine->connect($businessId, 'stripe', 'acct_tenant_stripe_123');
         $payment = $gatewayEngine->capture($businessId, 12500, 'tok_visa', 'idem_j9_'.time());
 
-        $invoiceEngine->recordPayment($businessId, $invoice->id, 12500);
-
         $data = [
+            'payments_written' => Payment::where('business_id', $businessId)->count(),
             'gateway_charge_id' => $payment->gateway_charge_id,
-            'invoice_id' => $invoice->id,
-            'invoice_status' => $invoice->fresh()->status,
             'payment_status' => $payment->status,
             'amount_cents' => 12500,
             'database' => config('database.connections.'.config('database.default').'.database', 'goaiez_antig_money'),

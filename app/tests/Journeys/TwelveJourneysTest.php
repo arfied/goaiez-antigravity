@@ -482,7 +482,7 @@ final class TwelveJourneysTest extends TestCase
     // ═══════════════════════════════════════════════════════════════════
 
     #[Test]
-    public function an_invoice_reaches_a_real_charge_id(): void
+    public function a_real_gateway_charge_id_exists_and_no_invoice_is_tied_to_it(): void
     {
         $path = storage_path('app/evidence/j9/charge.json');
         if (! file_exists($path)) {
@@ -495,11 +495,16 @@ final class TwelveJourneysTest extends TestCase
         //    reason this assertion means anything.
         $this->assertNotEmpty(
             $artifact['gateway_charge_id'] ?? '',
-            'The invoice was marked paid with no gateway charge id — no money moved.'
+            'The artifact carries no gateway charge id — nothing reached the provider.'
         );
         $this->assertTrue(str_starts_with($artifact['gateway_charge_id'], 'ch_'), 'Charge id must start with ch_');
         $this->assertFalse($artifact['running_unit_tests'], 'Artifact must not be created under test');
-        $this->assertSame('paid', $artifact['invoice_status']);
+        // ⛔ The artifact carries no invoice status, and that is the finding.
+        //    capture() takes (businessId, amountCents, paymentToken, idempotencyKey,
+        //    currency) over a payments table with no invoice column, so this journey
+        //    can prove a real charge id and cannot prove it paid THIS invoice.
+        //    J9's goal is UNRESOLVED against that schema gap.
+        $this->assertArrayNotHasKey('invoice_status', $artifact);
 
         $this->writeEvidence('invoice-to-paid', [
             'passed' => true,
