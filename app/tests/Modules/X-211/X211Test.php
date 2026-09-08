@@ -175,4 +175,76 @@ class X211Test extends TestCase
 
         $this->engine->applyLateFee($biz->id, $invoice->id, 7500, false);
     }
+
+    /**
+     * [G1-61]
+     */
+    public function test_g1_61_past_the_threshold_routes_to_a_financing_partner(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'AR Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'Overdue', 'last_name' => 'Client']);
+        
+        $invoiceSub = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-AR-SUB',
+            'total_cents' => 40000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(15)->toDateString(),
+        ]);
+        
+        $invoiceOver = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-AR-OVER',
+            'total_cents' => 60000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(15)->toDateString(),
+        ]);
+
+        Event::fake([ArPlanAccepted::class]);
+
+        $plan = $this->engine->offerPlan($biz->id, $invoiceSub->id, 3, 'monthly', 50000);
+        $this->assertInstanceOf(\App\Modules\X211\Models\PaymentPlan::class, $plan);
+
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('routes to a financing partner');
+
+        $this->engine->offerPlan($biz->id, $invoiceOver->id, 3, 'monthly', 50000);
+    }
+
+    /**
+     * [G1-70]
+     */
+    public function test_g1_70_we_never_hold_the_paper(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'AR Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'Overdue', 'last_name' => 'Client']);
+        $invoice = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-AR-PAPER',
+            'total_cents' => 60000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(15)->toDateString(),
+        ]);
+
+        $countBefore = \App\Modules\X211\Models\PaymentPlan::count();
+
+        try {
+            $this->engine->offerPlan($biz->id, $invoice->id, 3, 'monthly', 50000);
+        } catch (\DomainException $e) {
+            $this->assertStringContainsString('routes to a financing partner', $e->getMessage());
+        }
+
+        $countAfter = \App\Modules\X211\Models\PaymentPlan::count();
+        $this->assertEquals($countBefore, $countAfter);
+    }
 }
