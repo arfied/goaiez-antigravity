@@ -892,3 +892,4 @@
 - `2026-09-08T09:28:21` note: BoundaryStage X-188: YourNumberCard implicitly queries the provisioned number from number_assignments relying on the RLS tenant context rather than component state, displaying the assigned phone number on the UI.
 - `2026-09-08T10:16:05` note: boundary Wired ParkList to number_parks with RLS scoping, and added test with assertions.
 - `2026-09-08T10:43:35` note: boundary Prove tenant isolation for parked numbers via Livewire component test.
+- `2026-09-08T11:17:19` note: boundary The 10:43:35 row's text restated the ParkList work from the 10:16:05 row, leaving the harness gate proof (the set -e fix) unrecorded, which is what the commit message correctly stated.

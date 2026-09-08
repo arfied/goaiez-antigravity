@@ -2043,6 +2043,10 @@
   {
    "at": "2026-09-08T10:43:35",
    "note": "boundary Prove tenant isolation for parked numbers via Livewire component test."
+  },
+  {
+   "at": "2026-09-08T11:17:19",
+   "note": "boundary The 10:43:35 row's text restated the ParkList work from the 10:16:05 row, leaving the harness gate proof (the set -e fix) unrecorded, which is what the commit message correctly stated."
   }
  ]
 }
