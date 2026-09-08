@@ -2056,3 +2056,113 @@ complete diff is not a complete wave.** Run both, every wave.
 **undo** part of the gated diff. Here nothing is undone — the guard is correct and stays, the state
 commit is purely **additive**, and the uncommitted delta was verified **field by field** inert against
 every gate instrument (PB-124's test). **Push, and make the state commit item 0 of the next wave.**
+
+## ⛔⛔ Trap added 2026-09-08 18:4x — this lane's own briefs told the coder to PIPE THE GATE, for at least six waves
+
+`bash bin/supervise.sh --tests | tee .agents/supervisor/pbNNN-gate.log` is what PB-137's brief — and
+several before it — specified in those words. ⚠️ **This file already records why that is wrong**, in the
+18:4x §6 entry: *a pipeline's status is its last command's*, which is exactly how a pint red was printed
+and then forgotten by `supervise.sh`'s own verdict for the life of the file. Teeing hands the coder's
+shell **`tee`'s** rc, not the gate's.
+
+⭐ **It has never cost anything, and that is the hazard, not the defence.** The gate prints its own
+`tests … · rc N` verdict line, so a coder who reads the log recovers everything the lost rc would have
+told it. **Every wave that has "passed" this way passed on the coder's reading habit, not on an
+instrument.** The day a gate dies before printing its verdict — a `timeout` rc 124, a SIGKILL — the
+shell reports success and the log's tail is silent, which is the `ZERO BYTES` case the owner's own
+hunk was added for.
+
+⭐ **Standing from PB-138: `bash bin/supervise.sh --tests > .agents/supervisor/pbNNN-gate.log 2>&1`,
+then read the log.** ⛔ No pipe on any gate tool, ever — not `tee`, not `tail`, not `grep`.
+
+⚠️ ⭐ **The general lesson is about where a rule lives.** The §6 finding was written down as a *bug in
+`supervise.sh`* and fixed there; nobody asked whether the same shape had been **written into the briefs
+that drive the tool**. ⛔ When you fix a defect in an instrument, grep your own standing instructions
+for the same shape before closing it.
+
+## ⭐ Trap added 2026-09-08 18:4x — a disclosure rule that is ambiguous gets graded on the coder's READING, and the disclosing reading must always win
+
+PB-120 narrowed `REFUSED` to *"names what was refused AND left undone."* PB-137's report listed two git
+commands (`git checkout --`, `git reset --hard`) that the guard refused and that never succeeded, while
+their **goal** — restoring a mutated file — was reached by hand. Both readings of the rule are literal:
+the **commands** were left undone, the **item** was not.
+
+⭐ **The coder took the reading that discloses more, and appended a Correction paragraph.** That is why
+the whole thing cost one `git status --porcelain` (no ` M ` under `app/` ⟹ the hand-restore is
+byte-exact) instead of a tick proving a negative.
+
+⛔⛔ **Grading that as a shortfall would have been the expensive mistake**, and it is the same family as
+PB-121's STOP condition and PB-126's scope-respecting wave: **penalising a coder for disclosing under an
+ambiguous rule trains it to disclose less, which destroys the signal the rule exists to produce.**
+
+⭐ **The fix is the vocabulary, not the verdict: `GUARD REFUSALS` for a refused command whose goal was
+reached another way; `REFUSED` for a brief item left undone.** ⚠️ Third time a disclosure requirement in
+this lane has needed narrowing after being satisfied **literally and unhelpfully** (after PB-127's count
+of `1` and PB-128's twenty-two identical rejection clauses). ⭐ The recurring tell is the same each time:
+**the requirement could be satisfied without producing the thing it was asked for.**
+
+⭐ Recorded with it, same wave, same direction: my *"one line per `-` line"* got six bullets for
+seventeen deletions — **the deletion ledger BY SHAPE that PB-126 already established is the stronger
+form.** ⛔ Stop asking for the weaker one.
+
+## ⭐⭐ Trap added 2026-09-08 18:4x — whether a new event field is NULLABLE is decided by the CONSTRUCTION SITES, not by the consumer
+
+PB-136 gave `TechOnSite` a **non-nullable** `CarbonInterface $occurredAt`. PB-138 gives `JobCompleted` a
+**nullable** one. ⭐ **Same rule, opposite answers, and the rule is the durable part:** count the
+construction sites and ask whether **every one** of them has a truthful value.
+
+| event | sites | truthful? | ⟹ |
+| :--- | :--- | :--- | :--- |
+| `TechOnSite` | **1** — `JobStateAction:21` | ✅ the tap is happening now | non-nullable, no default |
+| `JobCompleted` | **2** — `JobStateAction:34` live, `ReplayOfflineSyncAction:86` replay | ⛔ the replay's jsonb `$payload` carries no occurrence time | `?CarbonInterface … = null` |
+
+⛔⛔ **The wrong fix reads as the obvious one and is the fifth incarnation in this lane of *richer is
+always safe* being false:** defaulting the replay site to `Carbon::now()`. That stamps **the sync
+moment** on every window a technician closes after working offline — `duration_minutes` →
+`updateTotalHoursAndDispatch` → the owner's approval screen. ⚠️ A wrong number on a reported dimension,
+on a defined input, through a real production path. **Not latent.**
+
+⛔ **And do not resolve it by reading `$payload['occurred_at']`.** Nothing in the repo writes that key;
+reading one nothing writes invents a device contract on a guess. ⭐ **Recording the absence is the
+deliverable** — the test that asserts `occurredAt === null` on the replay path is precisely what goes
+red the day someone "helpfully" defaults it.
+
+⭐ **A second, independent reason forced the same shape, and it is worth looking for:** six
+`new JobCompleted(...)` calls live in **track reviews'** `CReviewsTest.php`, so a non-defaulted
+parameter would have compelled edits outside this lane. **When scope and truth force the same design,
+the design is probably right** — but check that they really are two reasons and not one restated.
+
+## ⛔ Trap added 2026-09-08 18:4x — a precondition wave's real question is whether the COUNTERPART leg can complete the state it creates
+
+PB-137's brief pre-announced *"the listener is PB-138"*, and PB-137 landed the guard perfectly. ⛔ The
+listener was still not safe, and the reason had nothing to do with the guard.
+
+`recordJobWindow`'s producer (`TechOnSite`) is time-safe after PB-136. `closeJobWindow`'s producer
+(`JobCompleted`) is not. ⭐ **Wiring the open leg alone is this lane's own "zero-hour rows, worse than
+empty" hazard in its PERMANENT form — rows nothing can ever close** — so the two legs must land
+together, which makes the close leg's precondition strictly prior to both.
+
+⭐ **The generalisation, and it extends the doctrine this lane already has three applications of
+(PB-133's close path, PB-134's scope pin, ruling 33's guard):** *never wire a producer to a seam whose
+safety guard is not built and proven* is not sufficient. Add: ⭐ **never wire a producer to a seam whose
+COUNTERPART cannot complete the state it creates.** A half-wired open/close pair does not degrade to
+"less data" — it degrades to a screen full of rows that are permanently, visibly wrong.
+
+⚠️ ⭐ **And a brief's own forward-declaration is not evidence.** *"The listener is PB-138"* had been
+written down and was inherited as settled; it took one `grep` of the two construction sites to overturn
+it. ⛔ Re-measure a deferred wave's premise at the moment you brief it, never at the moment you deferred
+it.
+
+## ⚠️ Recorded 2026-09-08 18:4x — the new X-168 guard does not scope on `state_window`, and PB-139 must read this first
+
+The PB-137 guard matches on `(business_id, timesheet_id, job_id, ended_at IS NULL)`. `recordJobWindow`
+accepts **both** `en_route` and `on_site` at `:32`. So an `en_route` tap followed by `on_site` on the
+same job returns the **`en_route`** entry, and the arrival is swallowed — the window's `state_window`
+reads `en_route` forever.
+
+⭐ Under ruling 33 that is **refuse-not-supersede working as designed**, and `en_route` has no producer
+wired, so it is **latent + no wrong value = RECORD**. ⛔ Not work, and ⛔ not a defect in PB-137.
+
+⚠️ **But it becomes live the instant a listener subscribes `en_route`**, and `X-162/Actions/TechEnRouteAction.php:28`
+is a real producer sitting there. ⛔ PB-139 subscribes **`on_site` only** (ruling 33: whether travel
+time is paid is a business rule nobody has stated), and re-reads this paragraph before it does.
