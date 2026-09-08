@@ -3484,3 +3484,42 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     one line and reading the forty lines around it found two more defects of a different class, and
     the three previous waves on this exact file each swept a *file type* or a *string population*
     and stopped there (ruling 97's lesson, arriving from the other direction).
+153. **An `assertSee` needle may not span a Livewire control-structure boundary, and the only witness
+    to a Blade template is a render (RULED by the lane supervisor 2026-09-08 09:0x, on MONEY-113's
+    `774ee31f`; briefed as MONEY-113b).** Livewire wraps **every** `@foreach` and `@if` in
+    `<!--[if BLOCK]><![endif]-->` / `<!--[if ENDBLOCK]><![endif]-->`, once per structure and **not**
+    once per iteration. So `same-account.blade.php:18`'s
+    `{{ $conn->payments_count }} payments @foreach(…)· … @endforeach` renders
+    `3 payments <!--[if BLOCK]><![endif]-->· 45.00 GBP · 75.00 USD <!--[if ENDBLOCK]><![endif]-->`,
+    and all three needles MONEY-113 dictated — `'2 payments · 75.00 USD'`, `'3 payments · 100.00 USD'`
+    and `'3 payments · 45.00 GBP · 75.00 USD'` — begin outside the loop and end inside it, so **none
+    can ever match**: `tests 2087 · passed 2080 · FAILED 4` against a floor of 2, both extra members
+    this lane's own. ⚠️ Everything else in that wave was right, including the two neighbouring cells:
+    `'1 payouts · 50.00'` sits wholly inside one `@if` arm and stayed green, and a needle spanning two
+    iterations of one loop is fine. **RULED: the payments cell is a single component-computed string,
+    `{{ $conn->payments_line }}`** — the shape the same `<dl>` already uses one line down at `:20`'s
+    `{{ $conn->last_reconciliation }}` — which keeps all three committed needles working unchanged and
+    removes the trap rather than routing around it. ⛔ Not by rewording the needles to sit inside the
+    loop (the count leaves the assertion and every future needle on that cell inherits the boundary);
+    ⛔ not by `assertSeeHtml` carrying the markers, which pins Livewire's internal comment syntax in a
+    money assertion. ⚠️ **The dangerous direction is the inverse:** an `assertDontSee` whose needle
+    spans a boundary passes **vacuously**, with no red to announce it — measured clean lane-wide today
+    (`'120.00'`, `'idem_loose'`, `'99.00'`, `'acct_B9'` are single tokens inside one structure), and it
+    is ruling 61's passes-for-the-wrong-reason arriving through the template instead of the needle.
+    ⚠️ **`php -l` is blind to Blade.** It reported `No syntax errors detected` on a template whose
+    `@foreach` did not compile at all — Blade matches directives with `\B@`, so `payments@foreach`
+    after a word character is emitted literally while the trailing `@endforeach` after `}` compiles,
+    leaving an unmatched directive — and `pint` and `phpstan` never read the file either. Ruling 55's
+    `php -l` requirement is a PHP check, not a template check; **the suite is the only witness.**
+    ⚠️ **Three brief-caused defects in one brief**, all the supervisor's: the blade line was dictated
+    verbatim in its broken form (`BRIEF-money113.md:124`), the needles were dictated, and `:191-192`
+    dictated an assertion **order** that contradicts `:239`'s dictated Proof B **RED line** — a
+    Livewire chain stops at the first failure and the mutation fails both, so the coder reordered the
+    committed test (`59b82ebb`), which is the only resolution and is **upheld**. **RULED: a brief that
+    names the RED line a proof must produce has dictated the ASSERTION ORDER of the committed test**,
+    so it checks one against the other before shipping — ruling 92's arithmetic discipline applied to
+    a proof. This is the ruling 66/75/82/92/94/106/118/147 family three times over, and per the
+    46/49/50/62/66/75/82/86/94/104/106/113/116/146 precedent MONEY-113b carries its own two dispatches
+    and MONEY-113's cap is untouched. ⚠️ Ruling 82's collateral also applies to that wave's Proof A:
+    its RED line is real, but the test is red **without** the mutation too, so the proof distinguishes
+    nothing — a proof is only a proof if the test is green when the mutation is reverted.
