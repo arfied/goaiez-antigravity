@@ -169,8 +169,7 @@ class X168Test extends TestCase
 
         // 2. Close a second time on the already-closed window
         $secondCloseAt = $now->copy()->addMinutes(90);
-        $result2 = $this->computeAction->closeJobWindow($biz->id, 7703, $secondCloseAt); 
-
+        $result2 = $this->computeAction->closeJobWindow($biz->id, 7703, $secondCloseAt);
 
         $this->assertNull($result2);
         $this->assertEquals($countAfterCreate, TimesheetEntry::where('business_id', $biz->id)->count());
