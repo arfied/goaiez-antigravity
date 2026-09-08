@@ -14,6 +14,7 @@ use App\Modules\X199\Domain\InvoiceEngine;
 use App\Modules\X199\Events\InvoiceIssued;
 use App\Modules\X199\Events\InvoiceOverdue;
 use App\Modules\X199\Events\InvoicePaid;
+use App\Modules\X199\Models\CreditTerm;
 use App\Modules\X199\Models\Invoice;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -215,5 +216,40 @@ class X199Test extends TestCase
         });
 
         Carbon::setTestNow();
+    }
+
+    public function test_a_draft_takes_its_due_date_from_the_stored_terms_and_falls_back_to_the_argument(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Draft Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $customer1 = Person::create([
+            'business_id' => $biz->id,
+            'first_name' => 'Has',
+            'last_name' => 'Terms',
+        ]);
+
+        $customer2 = Person::create([
+            'business_id' => $biz->id,
+            'first_name' => 'No',
+            'last_name' => 'Terms',
+        ]);
+
+        CreditTerm::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer1->id,
+            'terms_type' => 'net_60',
+            'credit_limit_cents' => 500000,
+            'current_outstanding_cents' => 0,
+            'card_on_file_token' => null,
+        ]);
+
+        $lines = [['description' => 'Work', 'quantity' => 1, 'unit_price_cents' => 10000]];
+
+        $invoice1 = $this->draftAction->handle($biz->id, $customer1->id, $lines, 30);
+        $this->assertEquals(now()->addDays(60)->toDateString(), $invoice1->due_date->toDateString());
+
+        $invoice2 = $this->draftAction->handle($biz->id, $customer2->id, $lines, 30);
+        $this->assertEquals(now()->addDays(30)->toDateString(), $invoice2->due_date->toDateString());
     }
 }

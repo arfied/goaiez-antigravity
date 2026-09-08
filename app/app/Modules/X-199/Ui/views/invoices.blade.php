@@ -64,7 +64,7 @@
                                             @if($invoice->pdf_url)
                                                 <x-ui.button :href="$invoice->pdf_url" variant="quiet" size="default" target="_blank">Open PDF</x-ui.button>
                                             @else
-                                                <x-ui.status-pill state="unknown" label="PDF not available" />
+                                                <x-ui.status-pill state="unknown" label="Not issued; nothing here issues a draft yet" />
                                             @endif
                                         @endif
                                     </td>

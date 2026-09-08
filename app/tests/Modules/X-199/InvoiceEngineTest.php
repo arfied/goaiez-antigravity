@@ -461,3 +461,25 @@ test('a partial payment on an overdue invoice keeps it overdue', function () {
         Event::assertNotDispatched(InvoicePaid::class);
     });
 });
+
+test('the due date comes from the stored terms row and not the caller', function () {
+    $business = Business::factory()->create();
+    $customer = Person::create(['business_id' => $business->id]);
+
+    CreditTerm::create([
+        'business_id' => $business->id,
+        'customer_id' => $customer->id,
+        'terms_type' => 'net_60',
+        'credit_limit_cents' => 500000,
+        'current_outstanding_cents' => 0,
+        'card_on_file_token' => null,
+    ]);
+
+    $result = app(InvoiceEngine::class)->issueInvoice(
+        $business->id,
+        $customer->id,
+        [['description' => 'Work', 'quantity' => 1, 'unit_price_cents' => 10000]]
+    );
+
+    expect($result['invoice']->due_date->toDateString())->toBe(now()->addDays(60)->toDateString());
+});
