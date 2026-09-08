@@ -187,4 +187,88 @@ class EdgeDeployBlankNamesTest extends TestCase
         $this->assertCount(1, $json['mainEntity']);
         $this->assertEquals('Valid Question', $json['mainEntity'][0]['name']);
     }
+
+    public function test_a_faq_block_whose_question_is_not_a_scalar_is_excluded_and_the_deploy_survives()
+    {
+        $biz = Business::factory()->create();
+        $zone = $this->provisionAction->handle($biz->id, 'blank-faq.com', true);
+
+        $page = Page::create(['business_id' => $biz->id, 'title' => 'Home', 'slug' => 'home', 'is_published' => true]);
+        $commitId = 'commit_faq';
+
+        PageVersion::create([
+            'business_id' => $biz->id,
+            'page_id' => $page->id,
+            'commit_id' => $commitId,
+            'content_blocks' => [
+                [
+                    'type' => 'faq',
+                    'question' => ['nested' => 'value'],
+                    'answer' => 'Answer text',
+                ],
+                [
+                    'type' => 'faq',
+                    'question' => 'Valid Question',
+                    'answer' => 'Valid Answer',
+                ],
+            ],
+            'ssl_installed' => true,
+        ]);
+
+        $result = $this->deployAction->handle($biz->id, $zone->id, 100, 1500, $page->id, $commitId, 'Biz Name');
+        $this->assertEquals('deployed', $result['status']);
+
+        $html = Storage::disk('local')->get("sites/{$result['deploy_hash']}.html");
+        $this->assertStringContainsString('application/ld+json', $html);
+
+        preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $html, $matches);
+        $json = json_decode($matches[1], true);
+
+        $this->assertArrayHasKey('mainEntity', $json);
+        $this->assertCount(1, $json['mainEntity']);
+        $this->assertEquals('Valid Question', $json['mainEntity'][0]['name']);
+    }
+
+    public function test_a_video_block_whose_name_is_not_a_scalar_is_excluded_and_the_deploy_survives()
+    {
+        $biz = Business::factory()->create();
+        $zone = $this->provisionAction->handle($biz->id, 'blank-video.com', true);
+
+        $page = Page::create(['business_id' => $biz->id, 'title' => 'Home', 'slug' => 'home', 'is_published' => true]);
+        $commitId = 'commit_video';
+
+        PageVersion::create([
+            'business_id' => $biz->id,
+            'page_id' => $page->id,
+            'commit_id' => $commitId,
+            'content_blocks' => [
+                [
+                    'type' => 'video_embed',
+                    'name' => ['nested' => 'value'],
+                    'contentUrl' => 'https://video.com',
+                    'uploadDate' => '2026-09-07T00:00:00Z',
+                ],
+                [
+                    'type' => 'video_embed',
+                    'name' => 'Valid Video',
+                    'contentUrl' => 'https://video.com/valid',
+                    'uploadDate' => '2026-09-07T00:00:00Z',
+                ],
+            ],
+            'ssl_installed' => true,
+        ]);
+
+        $result = $this->deployAction->handle($biz->id, $zone->id, 100, 1500, $page->id, $commitId, 'Biz Name');
+        $this->assertEquals('deployed', $result['status']);
+
+        $html = Storage::disk('local')->get("sites/{$result['deploy_hash']}.html");
+        $this->assertStringContainsString('application/ld+json', $html);
+
+        preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $html, $matches);
+        $json = json_decode($matches[1], true);
+
+        $this->assertArrayHasKey('video', $json);
+        $this->assertCount(1, $json['video']);
+        $this->assertEquals('Valid Video', $json['video'][0]['name']);
+    }
 }

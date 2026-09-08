@@ -90,6 +90,7 @@ final class LlmsTxtTest extends TestCase
     {
         $disk = \Mockery::mock(Filesystem::class);
         $disk->shouldReceive('put')
+            ->once()
             ->withArgs(fn ($path) => str_ends_with($path, '.llms.txt'))
             ->andReturn(false);
 

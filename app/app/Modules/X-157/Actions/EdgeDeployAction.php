@@ -167,7 +167,8 @@ final class EdgeDeployAction
 
                     foreach ($version->content_blocks as $block) {
                         if (($block['type'] ?? '') === 'video_embed') {
-                            if (trim((string) ($block['name'] ?? '')) === '' || trim((string) ($block['contentUrl'] ?? '')) === '' || trim((string) ($block['uploadDate'] ?? '')) === '') {
+                            if (! is_scalar($block['name'] ?? '') || ! is_scalar($block['contentUrl'] ?? '') || ! is_scalar($block['uploadDate'] ?? '')
+                                || trim((string) ($block['name'] ?? '')) === '' || trim((string) ($block['contentUrl'] ?? '')) === '' || trim((string) ($block['uploadDate'] ?? '')) === '') {
                                 continue;
                             }
                             // VideoObject injected on publish (TEST ANCHOR, G16-25, ruling 41)
@@ -178,7 +179,8 @@ final class EdgeDeployAction
                             ];
                         }
                         if (($block['type'] ?? '') === 'faq') {
-                            if (trim((string) ($block['question'] ?? '')) === '' || trim((string) ($block['answer'] ?? '')) === '') {
+                            if (! is_scalar($block['question'] ?? '') || ! is_scalar($block['answer'] ?? '')
+                                || trim((string) ($block['question'] ?? '')) === '' || trim((string) ($block['answer'] ?? '')) === '') {
                                 continue;
                             }
                             // FAQPage schema injected on publish (TEST ANCHOR, G8-16, ruling 41)
