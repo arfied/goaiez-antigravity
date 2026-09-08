@@ -6,12 +6,12 @@ namespace Tests\Modules\X102;
 
 use App\Models\Business;
 use App\Modules\X102\Models\ChatSession;
+use App\Modules\X102\Models\ChatTurn;
 use App\Services\Pixel\PixelKeys;
 use App\Support\Tenancy;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 use Tests\TestCase;
-use App\Modules\X102\Models\ChatTurn;
 
 class ChatDoorTest extends TestCase
 {

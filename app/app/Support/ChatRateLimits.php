@@ -28,6 +28,7 @@ use Symfony\Component\HttpFoundation\Response;
 final class ChatRateLimits
 {
     public const int START_PER_MINUTE = 5;
+
     public const int TURN_PER_MINUTE = 60;
 
     public static function register(): void
