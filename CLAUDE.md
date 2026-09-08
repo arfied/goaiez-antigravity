@@ -3833,3 +3833,95 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     the cheapest kind to find, because both halves were already written down — arriving in the
     **supervisor's own ledger** rather than in a screen. ⚠️ It cost a real thing: MONEY-116 was
     scoped from that reading and shipped one method short of its own class.
+169. **X-199's and X-211's evidence artifacts print an unlinked Stripe charge id beside a
+    locally-written status as ONE flow, and both derived `runtime-proof.json`s promote it to the
+    doctor's `artifact_id` — ruling 48's construction, in the two modules carrying this lane's owned
+    journeys, never read until now (RULED by the lane supervisor 2026-09-08 13:0x, briefed as
+    MONEY-118).** Ruling 48 found `X-117/Console/EvidenceCheckoutCommand` capturing directly with
+    Stripe's own `tok_visa` under its own idempotency key, touching no cart, and writing
+    `gateway_charge_id` beside `order_status` as though the checkout produced the charge; ruling 49
+    then found the **derived** `runtime-proof.json` certifying `TestAnchorStage` on that same
+    fabrication, and closed by admitting the scoping miss — *"49 named `runtime-proof.json` and
+    stopped at the sibling"*. It stopped at the sibling **module**, too. Measured now, the identical
+    construction is in both of this lane's journey modules. **(a) X-199.**
+    `EvidenceInvoiceCommand:57` issues an invoice for 12500 through `issueInvoice()`; `:67`
+    **separately** captures 12500 with `tok_visa` under `idem_x199_<time>`; `:74` then calls
+    `recordPayment($businessId, $invoice->id, 12500)`, a **purely local ledger write** that consults
+    no gateway; and `:100` writes `gateway_charge_id` beside `invoice_status` in one JSON object.
+    ⚠️ **They cannot be linked, and the schema is the proof:** ruling 102 measured that `capture()`'s
+    signature is `(businessId, amountCents, paymentToken, idempotencyKey, currency)` over a
+    `payments` table with **no invoice column**, so the charge is not for the invoice and never
+    could be — the invoice reads `paid` with or without the Stripe call, and the charge exists with
+    or without the invoice. **(b) X-211** is the same three moves: `:58` issues, `:64`
+    `offerPlan()`s, `:67` separately captures under `idem_x211_<time>`, `:86` writes
+    `gateway_charge_id` beside `plan_id` and `reason`. **(c) The derived half is the decisive one,
+    exactly as in ruling 49:** `X-199/Console/RuntimeProofCommand:32` guards on the key and `:96`
+    promotes it to `artifact_id`, `X-211`'s does the same at the same two lines, and
+    `Doctor/Stages/TestAnchorStage:81-89` refuses only ids prefixed `TEST|MOCK|FAKE|SAMPLE|DEMO` —
+    so **both anchors are green on a charge id that paid for nothing the artifact names**.
+    **(d) The test names carry the claim** (ruling 50(b)):
+    `test_an_invoice_reaches_a_real_charge_id_and_its_number_cannot_repeat` and
+    `test_a_recovery_reaches_a_real_charge_id`, the first of which restates J9's own goal.
+    **RULED, per rulings 48 and 49 unchanged: each artifact evidences what its command actually
+    proves and nothing else — the Stripe capture and the `gateway_charge_id` key are REMOVED, not
+    relabelled**, because X-198 already owns that proof (`EvidenceChargeCommand` →
+    `evidence/j9/charge.json`, asserted by `GatewayEngineTest:12-13` for `ch_` and `strlen === 27`,
+    verified again this tick per ruling 39's companion lesson). What each command genuinely proves
+    stays: X-199's `INV-` sequence and the unique-index refusal of a duplicate number, X-211's plan
+    and its second non-repeating number. ⛔ **`gateway_call_made: false` is never written as a
+    literal** (ruling 48(2)) — a boolean that certifies itself is ruling 43's fiction in miniature;
+    a real `Payment::…->count()` moves if the code changes. ⛔ **Never substitute the invoice id,
+    invoice number or plan id for `artifact_id`** — ruling 49's explicit prohibition, since `:89`
+    lets an app-minted integer sail through and certifies the anchor with a number this app minted.
+    ⛔ Not resolved by giving `capture()` an invoice column: that is a cross-module API change
+    ruling 102 already recorded `UNRESOLVED`, and minting it to satisfy an artifact is ruling 56's
+    `requestCharge` mistake. Both `RuntimeProofCommand`s refuse with the real missing dependency
+    named and write nothing; both stale `runtime-proof.json`s are deleted so the stage measures the
+    truth; both anchors join ruling 32's group (2). **A doctor count that rises for an honest reason
+    is the correct outcome and is recorded, never avoided.** ⚠️ **There is no credential dependency
+    and no `UNRESOLVED` path** — the wave *removes* the only vendor call in both commands, so they
+    become always-runnable (ruling 48(3)); ruling 39's sequence still binds absolutely: run the
+    command FIRST, open the artifact and read it, then write the assertions, all in ONE commit.
+    ⚠️ **The reader sweep was done over `app/tests` too** (ruling 65 — phpstan reads `app/app/` only)
+    and it has a three-member **keep** list that must not be touched: `InvoiceEngine.php:107`,
+    `declines.blade.php:39` and `InvoiceEngineTest.php:342` all read a **`Payment` row's own** charge
+    id, which is ruling 99's own fix and is the honest use of that column. ⚠️ Renaming the two tests
+    also moves a reader: both `RuntimeProofCommand`s match the test **name** inside `junit.xml` at
+    `:60` and `:79`, which is ruling 49's owns-every-reader rule applied to a name rather than a key.
+    ⚠️ J9 is **not** broken by this: ruling 57 measured that `TwelveJourneysTest:485-508` reads
+    `evidence/j9/charge.json` — X-198's artifact — so deleting X-199's fabricated linkage leaves J9's
+    assertion untouched, and J9's goal *"an invoice reaches a real charge id"* is recorded
+    `UNRESOLVED` against the schema gap ruling 102 named, which is what it has always been.
+170. **Three of the four carried backlog sweeps are measured CLEAN and STRUCK, and the fourth is a
+    census whose honest outcome is a recording (measured 2026-09-08 13:0x; rulings 64, 95, 100, 111,
+    114, 120, 132, 142, 151).** (1) **Computed model accessors: the population is EMPTY.** `grep -rn
+    "Attribute"` over all eight modules' `Models/` directories returns **nothing** — there is not one
+    accessor in the lane, so ruling 43's *does it even vary?* has no accessor to ask it of, and the
+    four instances already recorded (`is_active`, `is_connected`, `merchant_status`,
+    `credit_limit_cents`) are **column defaults**, a different population already ruled in 84, 122,
+    129 and here. ⛔ Not to be re-raised. (2) **The merge-adapted `assertSee` needles are clean.**
+    Ruling 167's shape in the other direction: `CreditsTest`, `InvoicesTest` and `AccountingTest`
+    were read needle by needle, and every one is a substantial string (`'5,000.00'`, `'net 30'`,
+    `'INV-INV-001'`, `'No invoice has been raised for this account.'`) — **no bare digit**, so ruling
+    61's defect does not recur, and the suite is green over all of them. ⛔ Struck. (3) **The
+    `Actions/` census: 16 of the lane's 43 Action classes have no production caller**, seven of them
+    already ruled (`PayoutReconcileAction` 51, `DisputeRecordAction` 79, `LedgerDebitAction` and
+    `LedgerGrantAction` 90, `CardStoreAction` 119, `AccountingConnectAction` 73a,
+    `AccountingSyncAction` 81) and the other nine — `MerchantConnectAction`, `PaymentCaptureAction`,
+    `InvoiceDraftAction`, `InvoiceIssueAction`, `InvoiceRecordOfflineAction`, `ArForceAchAction`,
+    `CartBuildAction`, `CartCheckoutAction`, `CardExpiringScanAction` — **inert delegates whose
+    screens call the `Domain/` engine directly**. ⛔ Wiring one to a screen is ruling 59 inverted and
+    deleting one removes a declared layer; the outcome is a recording. ⚠️ **One member is not a
+    delegate and is recorded as the live residue:** `InvoiceDraftAction:22` calls `Invoice::create`
+    **directly**, bypassing `InvoiceEngine::issueInvoice()` — a second, unreachable invoice-creation
+    path that allocates from the same `InvoiceNumber::next()` sequence, writes `status = 'draft'` and
+    a flat `now()+30` due date, and consults `CreditTerm` not at all. It is inert today (no
+    production caller; `draft` is excluded from every reader by ruling 103) and it is the one place
+    the app has two vocabularies for creating an invoice. ⚠️ Measured in the same pass and **already
+    honest**: nothing in production creates an invoice at all — `issueInvoice()`'s only non-test
+    callers are three evidence commands — and `invoices.blade.php:19-21`'s empty state **already says
+    so**, naming the job hand-off and a delivery as what it waits on, which is ruling 89's wave
+    holding up under a sweep aimed at it. ⚠️ Recorded, not briefed: `invoices` carries **no
+    `currency` column at all**, so X-199's screens print unlabelled money; unlike ruling 152(b) there
+    is no real column to group by and the per-tenant currency source is another lane's, so the fix is
+    a cross-lane dependency and not this lane's wave.
