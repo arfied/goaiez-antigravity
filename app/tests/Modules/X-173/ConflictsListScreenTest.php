@@ -99,4 +99,23 @@ class ConflictsListScreenTest extends TestCase
             ->assertSee('two systems disagreeing about money is a human decision')
             ->assertDontSee('§141.5');
     }
+
+    public function test_the_conflicts_screen_offers_to_record_the_account_and_never_to_post_to_it(): void
+    {
+        $bizA = self::provisionTenant();
+        Tenancy::set($bizA->id);
+
+        $connectAction = app(AccountingConnectAction::class);
+        $syncAction = app(AccountingSyncAction::class);
+
+        $connA = $connectAction->connect($bizA->id, 'quickbooks', 'realm_qb_4412');
+        $syncAction->syncTransactions($bizA->id, $connA->id, [
+            ['ref' => 'inv_tx_102', 'description' => 'desc2', 'confidence' => 0.62, 'category' => 'guess'],
+        ]);
+
+        Livewire::test(ConflictsListView::class)
+            ->assertOk()
+            ->assertSee('Record the account')
+            ->assertDontSee('Post to this account');
+    }
 }

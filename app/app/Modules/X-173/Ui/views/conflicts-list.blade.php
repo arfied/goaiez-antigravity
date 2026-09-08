@@ -28,7 +28,7 @@
                     @if($c->status === 'open')
                         <form wire:submit="resolve({{ $c->id }})">
                             <input type="text" wire:model="resolutions.{{ $c->id }}" placeholder="The account this line belongs to">
-                            <x-ui.submit target="resolve({{ $c->id }})" busy="Posting…">Post to this account</x-ui.submit>
+                            <x-ui.submit target="resolve({{ $c->id }})" busy="Recording…">Record the account</x-ui.submit>
                         </form>
                     @else
                         <p>Resolved by a person — {{ $c->assigned_category }}</p>
