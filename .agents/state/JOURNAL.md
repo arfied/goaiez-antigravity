@@ -836,3 +836,4 @@
 - `2026-09-07T02:51:43` (R245) C-Agent — a callout question is answered from X-163's callout fee verbatim, and refuses NO_FACT when no fee is set (ruling 20)
 - `2026-09-07T03:27:54` (R245) C-Agent — — a pricebook row in SAMPLE state or left unconfirmed refuses to the customer and never falls back to the facts table (ruling 20)
 - `2026-09-07T04:36:21` (R245) X-163 — a price range lookup matches on the normalised service key and refuses a sample or unconfirmed row with its own code instead of NO_FACT
+- `2026-09-08T06:02:32` (R245) X-163 — pricebook engine quote_response respects deducted_if_proceeding flag
