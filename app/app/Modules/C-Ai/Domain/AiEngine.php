@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\CAi\Domain;
 
+use App\Enums\AiModel;
 use App\Modules\CAi\Events\AiCalled;
 use App\Modules\CAi\Events\AiFailedOver;
 use App\Modules\CAi\Models\AiCall;
@@ -109,12 +110,15 @@ final class AiEngine
         });
     }
 
-    public function embed(int $businessId, string $text, string $model = 'text-embedding-3-small'): array
+    public function embed(int $businessId, string $text, ?string $model = null): array
     {
+        $model ??= AiModel::TextEmbedding3Small->apiModelId();
+        $dim = AiModel::TextEmbedding3Small->embeddingDimensions();
+
         return [
             'model' => $model,
-            'dimensions' => 1536,
-            'embedding' => array_fill(0, 1536, 0.01),
+            'dimensions' => $dim,
+            'embedding' => array_fill(0, $dim, 0.01),
         ];
     }
 

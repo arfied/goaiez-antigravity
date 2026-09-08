@@ -253,4 +253,65 @@ class X210Test extends TestCase
         $limit->refresh();
         $this->assertEquals(9, $limit->rate_cents_per_min);
     }
+
+    /**
+     * The redemption cap is enforced at validation once redemptions_count reaches max_redemptions.
+     */
+    public function test_promotion_redemption_cap_is_enforced_at_validation(): void
+    {
+        Event::fake([PromotionCapReached::class]);
+        $biz = TestCase::provisionTenant(['name' => 'Promo Cap Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $promo = $this->createAction->createPromotion(
+            businessId: $biz->id,
+            code: 'NOCAP',
+            discountValue: 10,
+            discountType: 'percentage',
+            maxRedemptions: 1,
+            velocityThreshold: 2,
+            expiresAt: now()->addDays(7),
+            scopes: []
+        );
+
+        $promo->redemptions_count = 0;
+        $promo->save();
+        $validPromo = $this->validateAction->validatePromotion($biz->id, 'NOCAP');
+        $this->assertEquals($promo->id, $validPromo->id);
+
+        $promo->redemptions_count = 1;
+        $promo->save();
+
+        try {
+            $this->validateAction->validatePromotion($biz->id, 'NOCAP');
+            $this->fail('cap was not enforced');
+        } catch (\InvalidArgumentException $e) {
+            $this->assertEquals('Promotion maximum redemptions cap reached', $e->getMessage());
+        }
+
+        Event::assertDispatched(PromotionCapReached::class);
+    }
+
+    /**
+     * [G1-67] the margin guard names every service put below cost
+     */
+    public function test_g1_67_margin_guard_names_every_service_put_below_cost(): void
+    {
+        $engine = new X210Engine;
+        $services = [
+            ['name' => 'below_cost_service_1', 'price' => 50, 'cost' => 100],
+            ['name' => 'below_cost_service_2', 'price' => 40, 'cost' => 100],
+            ['name' => 'above_cost_service', 'price' => 150, 'cost' => 100],
+        ];
+
+        try {
+            $engine->checkMarginGuard($services);
+            $this->fail('Margin guard should have thrown a DomainException');
+        } catch (\DomainException $e) {
+            $msg = $e->getMessage();
+            $this->assertStringContainsString('below_cost_service_1', $msg);
+            $this->assertStringContainsString('below_cost_service_2', $msg);
+            $this->assertStringNotContainsString('above_cost_service', $msg);
+        }
+    }
 }

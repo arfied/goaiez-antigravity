@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\CAi;
 
+use App\Enums\AiModel;
 use App\Modules\CAi\Actions\AiCompleteAction;
 use App\Modules\CAi\Actions\AiEmbedAction;
 use App\Modules\CAi\Actions\AiSpeakAction;
@@ -220,5 +221,20 @@ class CAiTest extends TestCase
 
         $newCount = AiCall::where('business_id', $biz->id)->count();
         $this->assertEquals($initialCount + 1, $newCount);
+    }
+
+    public function test_ai_embed_resolves_dimensions_from_registry(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Embed Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $res1 = $this->embed->handle($biz->id, 'some text');
+        $this->assertEquals(AiModel::TextEmbedding3Small->apiModelId(), $res1['model']);
+        $this->assertEquals(AiModel::TextEmbedding3Small->embeddingDimensions(), $res1['dimensions']);
+        $this->assertCount(AiModel::TextEmbedding3Small->embeddingDimensions(), $res1['embedding']);
+
+        $res2 = $this->embed->handle($biz->id, 'some text', 'a-different-model');
+        $this->assertEquals('a-different-model', $res2['model']);
+        $this->assertNotEquals($res1['model'], $res2['model']);
     }
 }
