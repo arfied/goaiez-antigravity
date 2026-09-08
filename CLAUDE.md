@@ -415,7 +415,44 @@ sha with a completeness proof — and it has the shelf life every census here ha
 `RULING ET` is satisfied, not repealed: the test was re-run and answered, and this time the answer is
 empty. **Measure again after any code change; never carry this table forward as a standing fact.**
 
-### The residual backlog — ⚠️ NOT empty; see `RULING ET`
+### ⭐ `RULING EY` (tick 226) — **THE SIX WITHDRAWALS WERE FOUR.** A wave's completion is a measurement, and this seat asserted it for five consecutive blocks instead.
+
+`RULING ER` settled the withdrawal set correctly — *"exactly six ledger entries carry the reason the
+arrival answers — `X-186`, `X-190`, `X-205`, `X-217`, `X-218`, `C-Reviews`"* — and correctly ruled that
+a withdrawal's falsifier is the **LEDGER TRIPLE**, never a stage count. **What no tick checked is
+whether six were written.** Measured at tick 226:
+
+```
+$ grep -n "RESOLVED contract" .agents/state/JOURNAL.md
+1321  X-190  14:06:06     1323  X-217  14:06:15
+1322  X-205  14:06:10     1324  X-218  14:06:21
+```
+
+**Four lines.** `X-186` (filed `JOURNAL.md:723`) and `C-Reviews` (`:753`) were never withdrawn and are
+still live in §3, carrying the *identical* reason — *"send.requested correctly emitted by multiple
+modules per R231, but sealed ContractStage.php lacks a uniqueness exemption and unconditionally
+fails"* — as `X-217` (`:732`) and `X-218` (`:734`), both of which were withdrawn and accepted. The
+dependency is present and committed: `ContractStage.php:575` is
+`$multiEmitterOk = ['send.requested', 'approval.requested']`.
+
+⛔ **`RULING ER` correctly refused to gate a withdrawal on a stage count — and in doing so removed the
+only thing that would have failed.** `contract` was right to be 85 and stayed 85; the ledger was short
+by two and nothing looked. Ticks 222–225 each repeated *"the six withdrawals"* from this page rather
+than from `JOURNAL.md`.
+
+⚠️ **`RULING CK`'s family, one step over.** `CK` is a stale **number** carried as a measurement; `EY` is
+a stale **completion claim** carried as one — the wave was dispatched, the report came back, the verdict
+was `PASS`, and how many of its items actually landed was never counted. Same root as `EU`/`EV`/`EW`/`EX`,
+but those were about the instrument a brief names; **`EY` is about the seat's own close-out.**
+
+✅ **Standing correction: when a wave's deliverable is N ledger rows, the review COUNTS the rows, one
+grep per module.** `grep -c "RESOLVED <stage> <module>"` for each expected module — never a single
+`grep -c "RESOLVED <stage>"`, which returns `4` here and reads as a healthy number unless the expected
+`6` is held beside it. Dispatched as **STAGES-226** (tick 226): not an invented wave, but the unlanded
+remainder of a wave already ruled correct, with `contract` floored at **85 unchanged** because
+`RULING ER` says an unmoved count is the right outcome.
+
+### The residual backlog — ⚠️ NOT empty; see `RULING ET` and `RULING EY`
 
 The hygiene list below is intact and still governs hygiene items. What is **wrong** is the sentence
 that opened it — *"the stage backlog is empty"* — falsified at tick 223. The
