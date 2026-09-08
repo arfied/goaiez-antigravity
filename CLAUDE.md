@@ -212,11 +212,14 @@ about work this lane has done or can do. `RULING EQ` said a census is a fact abo
 this is the stronger form — it is now a fact about **another lane's tree entirely**, and no wave in
 this lane can move any of them.
 
-⚠️ **The counts moved at the take and the §3 ledger did not follow.** §5 reads
+✅ **The §3 ledger is REFRESHED and true as of tick 236 (STAGES-232, `f8461495`).** All eight fields
+were written from `.gateS232w.txt` §5, `grep -c '"violations": null'` is **`0`**, and §3 in
+`.gateS232v.txt` is identical to §5 in the measure gate:
 `integrity 0 · boundary 55 · contract 85 · citation 0 · schema 16 · capability 207 · anchor 128 ·
-journey 4`; §3 still reads `boundary 44 · schema 15 · capability 209`. Dispatched as **STAGES-232**
-(S-191), the S-182 shape. **`RULING CK` is structural, not neglect — this is the third time the ledger
-has gone stale exactly one code change after being written true** (ticks 183, 225, now).
+journey 3`. ⚠️ **§3 is still a LEDGER** and this is now the **fourth** time it has been written true
+(ticks 183, 225, 231's aftermath, 236); `RULING CK` is structural, not neglect. ⛔ **And its shelf life
+is shorter than "one code change" — `RULING FP` measured `journey` moving with no code change at all.**
+Cite §5, never §3.
 
 ⭐ **`boundary` 44 → 55 is inherited, and the partition survives the merge in shape.** Re-measured at
 tick 235 with `RULING FI`'s form and `RULING FJ`'s row-count control (`grep -cE "^ · "` → **55**):
@@ -224,6 +227,73 @@ tick 235 with `RULING FI`'s form and `RULING FJ`'s row-count control (`grep -cE 
 (`RULING BQ`) + **1** `X-108` blade default arm = **55**. `RULING FK`'s three classes are unchanged;
 only the import class moved. **A rise with no lane-authored byte behind it is not a regression** — but
 say the arithmetic out loud, which STAGES-231's report did not.
+
+### ⛔ `RULING FP` (tick 236) — `journey` is the SECOND stage that is not a function of the tree, and it is ARTIFACT-derived. A count fell because the PREVIOUS wave's test run wrote an untracked file.
+
+`RULING FB`/`FD` established that `schema` is joint on the tree **and the PostgreSQL server**, so a
+`schema` floor is never an exact number. **`journey` has the same defect through a different
+mechanism**, found because STAGES-232 — a wave that edits no `app/**` at all — measured `journey` **3**
+against a floor of **4 unchanged**:
+
+```
+app/app/Doctor/Stages/JourneyStage.php:40   $file = storage_path("app/evidence/journeys/{$slug}.json");
+                                     :42-44  is_file() false      → "not run"
+                                     :56-58  artifact_id === ''   → "passed with no external artifact id"
+```
+
+**The stage's subject is a file on disk in this checkout, and that directory is in no repository** —
+`git ls-files app/storage/app/evidence/` is empty, `RULING FO`'s own measurement. Ten of the eleven
+evidence files were rewritten at **18:17:18–18:17:25**, between tick 235's gate (`.gateS231w.txt`,
+18:11:36) and STAGES-232's (`.gateS232w.txt`, 18:31:00), and the mover is legible in the file:
+
+```
+site-publish.json   {"passed": true, "artifact_id": "commit_nObZ2GiTDXAnGYwR", "captured_at": "2026-09-08T23:17:24+00:00"}
+review-invite.json  {"passed": true, "artifact_id": "",                        "captured_at": "2026-09-02T18:00:00+00:00"}
+```
+
+`site-publish` gained an artifact id and left the violation set. **No commit in that window touches
+`app/`** — the only two are `18bbde18` and `f41154c5`, both ledger and notes. The writer was
+**STAGES-231's `--tests` run**, the wave before. The three surviving rows are `missed-call-textback`
+(not run) · `day-one` (not run) · `review-invite` (passed with no external artifact id).
+
+⚠️ **The exact inverse of `RULING FO`, one tick later.** `FO` is a **test** that fails because the
+artifact it asserts on is not in the repository; **`FP` is a STAGE that passes because an artifact
+appeared in a directory that is in no repository.** Same root as *"a merged-wrong lint is green by
+construction"* — the assertion's subject is not the tree — and it is the measured mechanism behind this
+page's standing warning that the on-disk `evidence/journeys/*.json` came from a forbidden simulation
+harness. **Six of the eight stages are static scans; two are not, and both were found only after a
+count moved with no wave behind it.**
+
+✅ **Standing correction, two clauses.** **(i)** A `journey` floor is **never an exact number**, exactly
+as `RULING FB` ruled for `schema`: *"3 or 4 — `RULING FP` — report which, and name the slug."*
+**(ii)** A wave that runs `--tests` can move `journey` **without touching the tree**, and a wave that
+runs none can inherit the move from the wave before it. *"This wave cannot move a count"* is a claim
+about a wave's **edits**, never about its gate.
+
+⛔ **A `journey` fall is NOT a lane credit.** Nothing here authored `commit_nObZ2GiTDXAnGYwR`; it is a
+by-product of running main's harness on main's tree. ⛔ **Never hand-write an evidence JSON to clear a
+row** — that is the forgery the `anchor` stage exists to catch, and `JourneyStage.php:53-58` says so in
+its own comment. ⚠️ Eleventh member of the `EU`/`EV`/`EW`/`EX`/`EZ`/`FE`/`FF`/`FH`/`FI`/`FJ`/`FN`
+family and the third consecutive tick whose defective instrument is **the brief**, not the work.
+
+### ⭐ The admission test, RE-RUN at `capability 207` on the merged checker (tick 236) — **EMPTY**
+
+`RULING ET` requires measurement over presumption, and the 487-commit merge spent the previous census's
+one-code-change shelf life. Re-run from this seat (`RULING FI`: a census is supervisor work), with
+`RULING EX`'s completeness proof intact after the merge — **127** `capabilities.php` × 2 header ⑤ =
+254, total ⑤ **301**, so **47** module+id clause pairs; **200** distinct flagged pairs across 207 rows.
+Intersected, exactly three modules survive and all three are closed by standing rulings:
+
+| module | clauses ∩ flagged | closed by |
+| :--- | :--- | :--- |
+| `X-117` | G1-73 · G1-81 · G17-31 | `RULING CM` — `UNRESOLVED` 4× each; CITED, never re-filed |
+| `X-158` | G16-32 | **§257.4 deferred** — a `state.py note`, not a wave |
+| `X-212` | G4-54 | `RULING CB` — the remedy edits a **generated** file |
+
+⭐ `X-211`'s four clauses intersect nothing — **X-211 has no flagged row at all**, STAGES-231's close
+reached from the other side. `X-167`'s eleven and `X-210`'s six intersect nothing; `C-Mail`'s `G15-31`
+is still `RULING CF`'s canonical looks-like-a-wave-and-is-not. ⛔ **One code change of shelf life.
+Re-measure; never carry this table forward.**
 
 ### ⛔⛔ `RULING FO` (tick 235) — a test that asserts on an UNTRACKED artifact is green ONLY in the checkout that minted it. Main ships five of them, and they make "your tip measures green" unsatisfiable for every lane.
 
@@ -1176,7 +1246,13 @@ tests dropped, both ids closed by money's test, `capability` 209 → **207**, de
 of HOLD were correct about the stages and wrong about the lane, because the case selector could not
 see the ask (`RULING FL`).
 
-⭐ **S-191 — the §3 ledger refresh.** Dispatched at tick 235 as **STAGES-232**, merge gate **CLOSED**.
+✅ **S-191 — the §3 ledger refresh. COMPLETE at tick 236** (STAGES-232, `f8461495`, **PASS**). Eight
+`state.py stage` rows plus the `RULING FO` note = nine `JOURNAL.md` rows, counted per row rather than
+in one total (`RULING EY`); `null` count `0`; §3 == §5; commit touches `.agents/state/**` only. Its one
+failed floor was **mine** — `journey 4 unchanged`, unmeetable because of `RULING FP`. ⛔ **The backlog
+is EMPTY again and tick 236 wrote a HOLD**: the admission test re-run at `capability 207` returns
+empty, this lane's `app/` is byte-identical to main's, and every remaining row is on the reserved list.
+The superseded dispatch text: Dispatched at tick 235 as **STAGES-232**, merge gate **CLOSED**.
 Exact S-182 shape: no test, no assertion, no `app/**` edit, **cannot move a count**, falsifier is
 arithmetic (§3 == §5 in the same gate, `grep -c '"violations": null'` → `0`). Not an invented wave —
 a ledger this lane owns, measurably wrong on three fields, with a one-command remedy that is the
