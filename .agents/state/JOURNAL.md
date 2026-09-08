@@ -974,3 +974,4 @@
 - `2026-09-06T23:16:43` note: J8 restore drill: JourneyHarness:814 names its scratch db goaiez_antig_drill_<pid> and :908 force-drops it; the supervisor's wave-119 gate errored 42501 permission denied to terminate process where the coder's gate on the identical tree did not; drill dbs on the box at 2026-09-06 23:10: UNRESOLVED; reproduced in wave 120: no
 - `2026-09-08T05:35:34` (R245) X-210 — deleted main's test_g7_47_rate_never_changes_without_notified_action
 - `2026-09-08T06:17:48` (R245) X-01 — twelve-noun lint takes a frozen four-name baseline of inherited core tables (outreach_messages, triage_conversations, inbound_messages, support_messages); it has never been green since f77b1b4e and all four predate base 12447593
+- `2026-09-08T06:57:14` (R245) X-01 — restored 20 stray-pint reformats to HEAD (8 sealed checkers, 12 plugins/wordpress); REV-114 classified all six surviving-hunk files NEITHER improvement nor silencer, so the sealed bytes stand R245
