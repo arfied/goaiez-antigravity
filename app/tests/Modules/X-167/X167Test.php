@@ -18,6 +18,7 @@ use App\Modules\X167\Models\StockLocation;
 use App\Modules\X167\Models\Supplier;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 class X167Test extends TestCase
@@ -291,6 +292,31 @@ class X167Test extends TestCase
         $this->assertEmpty($lines, 'No path under app/Modules/X-167/ performs a location-to-location transfer by updating location_id.');
     }
 
+    /** [G6-18] */
+    public function test_g6_18_stock_cannot_be_represented_in_transit_between_locations(): void
+    {
+        $columns = Schema::getColumnListing('stock_items');
+        sort($columns);
+
+        $expected = [
+            'barcode',
+            'business_id',
+            'created_at',
+            'id',
+            'is_sample',
+            'location_id',
+            'name',
+            'quantity',
+            'reorder_point',
+            'sku',
+            'unit',
+            'updated_at',
+        ];
+
+        $this->assertSame($expected, $columns, 'Multi-warehouse shipping is out of scope; stock cannot be represented in transit between locations.');
+        $this->assertContains('location_id', $columns);
+    }
+
     /** [G6-24] */
     public function test_g6_24_retail_stock_is_tracked_per_location(): void
     {
@@ -338,5 +364,13 @@ class X167Test extends TestCase
 
         $this->assertNotNull($vanStock, 'Van stock should exist');
         $this->assertEquals(7.0, (float) $vanStock->quantity, 'The per-location query returns only that location\'s row and quantity.');
+
+        $storageStock = StockItem::where('business_id', $biz->id)
+            ->where('location_id', $storage->id)
+            ->where('sku', 'COPPER-10M-SPOOL-24')
+            ->first();
+
+        $this->assertNotNull($storageStock, 'Storage stock should exist');
+        $this->assertEquals(3.0, (float) $storageStock->quantity, 'The per-location query returns only that location\'s row and quantity.');
     }
 }
