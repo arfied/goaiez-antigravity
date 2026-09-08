@@ -352,7 +352,7 @@ class DailyPricingDigestTest extends TestCase
             ->set('prices.'.$item2->id, 125.00)
             ->call('confirm', $item1->id);
 
-        $prices = array_filter($component->get('prices'), fn($p) => $p == 125.0);
+        $prices = array_filter($component->get('prices'), fn ($p) => $p == 125.0);
         $this->assertArrayHasKey($item2->id, $prices, 'Regression arm collateral wipe');
     }
 }
