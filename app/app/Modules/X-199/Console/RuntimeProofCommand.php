@@ -29,11 +29,6 @@ final class RuntimeProofCommand extends Command
         }
 
         $invoiceData = json_decode(File::get($invoicePath), true);
-        if (! isset($invoiceData['gateway_charge_id']) || ! str_starts_with($invoiceData['gateway_charge_id'], 'ch_')) {
-            $this->error('invoice.json gateway_charge_id must start with ch_');
-
-            return self::FAILURE;
-        }
 
         $queueDriver = $invoiceData['queue_driver'] ?? '';
         if ($queueDriver === '' || $queueDriver === 'sync') {
@@ -57,7 +52,7 @@ final class RuntimeProofCommand extends Command
             return self::FAILURE;
         }
 
-        $hasName = str_contains($junitContent, 'test_an_invoice_reaches_a_real_charge_id_and_its_number_cannot_repeat') || str_contains($junitContent, 'An invoice reaches a real charge id and its number cannot repeat');
+        $hasName = str_contains($junitContent, 'test_the_invoice_artifact_proves_its_number_sequence_and_refuses_a_duplicate') || str_contains($junitContent, 'The invoice artifact proves its number sequence and refuses a duplicate');
 
         $rootSuite = null;
         if ($junitXml->getName() === 'testsuites' && isset($junitXml->testsuite[0])) {
@@ -76,7 +71,7 @@ final class RuntimeProofCommand extends Command
         $errors = (string) $rootSuite['errors'];
 
         if (! $hasName || $failures !== '0' || $errors !== '0') {
-            $this->error('junit.xml does not name test_an_invoice_reaches_a_real_charge_id_and_its_number_cannot_repeat with failures=0 errors=0');
+            $this->error('junit.xml does not name test_the_invoice_artifact_proves_its_number_sequence_and_refuses_a_duplicate with failures=0 errors=0');
 
             return self::FAILURE;
         }
@@ -92,17 +87,8 @@ final class RuntimeProofCommand extends Command
             return self::FAILURE;
         }
 
-        $proof = [
-            'artifact_id' => $invoiceData['gateway_charge_id'],
-            'driver' => $queueDriver,
-            'captured_at' => $capturedAt,
-            'junit' => 'storage/app/evidence/X-199/junit.xml',
-            'module' => 'X-199',
-            'test' => 'test_an_invoice_reaches_a_real_charge_id_and_its_number_cannot_repeat',
-        ];
+        $this->error('X-199 has no runtime proof: an invoice cannot reach a gateway charge id, because payments carries no invoice column (see ruling 102). No artifact was written.');
 
-        File::put(storage_path('app/evidence/X-199/runtime-proof.json'), json_encode($proof, JSON_PRETTY_PRINT));
-
-        return self::SUCCESS;
+        return self::FAILURE;
     }
 }

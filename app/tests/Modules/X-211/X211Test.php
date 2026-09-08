@@ -407,9 +407,9 @@ class X211Test extends TestCase
             'due_date' => now()->subDays(15)->toDateString(),
         ]);
 
-        $this->expectException(\DomainException::class);
-        $this->expectExceptionMessage('a fee with no matching term is refused');
+        $this->expectException(FeeWithoutTermException::class);
+        $this->expectExceptionMessage('a fee with no matching term is refused. Nothing was applied.');
 
-        $this->engine->applyLateFee($biz->id, $invoice->id, 7500, false);
+        $this->engine->applyLateFee($biz->id, $invoice->id, 7500);
     }
 }

@@ -6,7 +6,7 @@ namespace App\Modules\X199\Console;
 
 use App\Models\User;
 use App\Modules\X121\Models\Person;
-use App\Modules\X198\Domain\GatewayEngine;
+use App\Modules\X198\Models\Payment;
 use App\Modules\X199\Domain\InvoiceEngine;
 use App\Services\TenantProvisioner;
 use App\Support\Tenancy;
@@ -23,8 +23,7 @@ final class EvidenceInvoiceCommand extends Command
 
     public function handle(
         TenantProvisioner $provisioner,
-        InvoiceEngine $invoiceEngine,
-        GatewayEngine $gatewayEngine
+        InvoiceEngine $invoiceEngine
     ): int {
         if (app()->runningUnitTests()) {
             $this->error('The artifact may only be produced by a real CLI run.');
@@ -63,15 +62,6 @@ final class EvidenceInvoiceCommand extends Command
             return self::FAILURE;
         }
 
-        $gatewayEngine->connect($businessId, 'stripe', 'acct_tenant_stripe_123');
-        $payment = $gatewayEngine->capture($businessId, 12500, 'tok_visa', 'idem_x199_'.time());
-
-        if (! str_starts_with((string) $payment->gateway_charge_id, 'ch_')) {
-            $this->error('gateway_charge_id must start with ch_');
-
-            return self::FAILURE;
-        }
-
         $invoiceEngine->recordPayment($businessId, $invoice->id, 12500);
         $invoice = $invoice->fresh();
 
@@ -97,7 +87,7 @@ final class EvidenceInvoiceCommand extends Command
         }
 
         $data = [
-            'gateway_charge_id' => $payment->gateway_charge_id,
+            'payments_written' => Payment::where('business_id', $businessId)->count(),
             'invoice_number' => $invoice->invoice_number,
             'invoice_status' => $invoice->status,
             'paid_at' => $invoice->paid_at,
@@ -113,8 +103,6 @@ final class EvidenceInvoiceCommand extends Command
         $path = storage_path('app/evidence/X-199/invoice.json');
         File::ensureDirectoryExists(dirname($path));
         File::put($path, json_encode($data, JSON_PRETTY_PRINT));
-
-        $this->info($payment->gateway_charge_id);
 
         return self::SUCCESS;
     }
