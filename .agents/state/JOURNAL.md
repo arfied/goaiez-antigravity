@@ -710,3 +710,5 @@
 - `2026-09-08T11:15:27` (R245) X-211 — the late-fee refusal is asserted on money's own FeeWithoutTermException and its write-nothing sentence main's needle was a case-sensitive mismatch against money's message and the module wins over an adapted test
 - `2026-09-08T13:16:38` (R245) X-199 — the evidence artifact evidences the invoice and its number sequence, not an unlinked gateway charge, because payments carries no invoice column so the charge and the invoice status were two unrelated facts printed as one flow
 - `2026-09-08T13:16:38` (R245) X-211 — the recovery artifact evidences the plan and its refusal, not an unlinked gateway charge, for the same reason
+- `2026-09-08T13:48:14` (R245) X-198 — the j9 evidence artifact evidences the gateway charge and nothing else, because payments carries no invoice column so the charge id and the invoice status were two unrelated facts printed as one flow
+- `2026-09-08T13:48:14` (R245) X-198 — the three merchant screens wear main's agency layout attribute, adopted per hunk with no other main hunk, because the merge resolution that kept money's body dropped it and the screens fell through to the staff console

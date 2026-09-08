@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-08T13:16:38",
+ "updated": "2026-09-08T13:48:14",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2335,6 +2335,18 @@
    "module": "X-211",
    "chose": "the recovery artifact evidences the plan and its refusal, not an unlinked gateway charge, for the same reason",
    "at": "2026-09-08T13:16:38",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-198",
+   "chose": "the j9 evidence artifact evidences the gateway charge and nothing else, because payments carries no invoice column so the charge id and the invoice status were two unrelated facts printed as one flow",
+   "at": "2026-09-08T13:48:14",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-198",
+   "chose": "the three merchant screens wear main's agency layout attribute, adopted per hunk with no other main hunk, because the merge resolution that kept money's body dropped it and the screens fell through to the staff console",
+   "at": "2026-09-08T13:48:14",
    "ruling": "R245"
   }
  ]
