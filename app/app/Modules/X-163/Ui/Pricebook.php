@@ -39,6 +39,8 @@ class Pricebook extends Component
 
     public array $inlinePrices = [];
 
+    public array $refusals = [];
+
     public ?int $traceItemId = null;
 
     public function mount(): void
@@ -151,7 +153,13 @@ class Pricebook extends Component
         }
 
         $confirmer = app(PriceConfirmAction::class);
-        $confirmer->handle($businessId, $id);
+        $result = $confirmer->handle($businessId, $id);
+
+        if (isset($result['refusal_code']) && $result['refusal_code'] === 'FILL_ME') {
+            $this->refusals[$id] = true;
+        } else {
+            unset($this->refusals[$id]);
+        }
     }
 
     public function deleteItem(int $id): void
@@ -159,6 +167,7 @@ class Pricebook extends Component
         $businessId = Tenancy::id();
         PriceBookItem::where('business_id', $businessId)->where('id', $id)->delete();
         unset($this->inlinePrices[$id]);
+        unset($this->refusals[$id]);
     }
 
     public function tracePrice(int $id): void
