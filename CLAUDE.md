@@ -12824,3 +12824,203 @@ and `coder-bin/git:106` refuses any staged `.claude/` with no exemption (229, 29
 now carries **fourteen of this lane's own violations, fixed** (Track 1 rulings 4 and 5, `30316573`), and a
 violation's colour is a property of a TREE (253) — this checkout's doctor still reads `contract 87 · anchor
 137`, correctly. TRACK 1 ACTION, already filed with its mechanism and its template.
+
+## ⛔ A STOP CONDITION MUST BE KEYED TO WHAT REFUTES THE **RULING**, NEVER TO WHAT REFUTES THE **PREDICTION** — and the world that fired it is the world where the ruling was MORE right (tick 304)
+
+SITE-176's item 6 mutated the honeypot fix to `! empty(…)` and carried this, in one sentence:
+
+> **Predicted:** (a) **GREEN** (`empty('   ')` is true, so it correctly falls back), (b) **RED**.
+> ⛔ If this mutation reddens (a) **instead of** (b), my reading of `empty()` is wrong — say so and stop.
+
+Measured: **both reddened.** `empty('   ')` is **false** in PHP, so `! empty('   ')` re-admits the
+whitespace field name and (a) fails, exactly as (b) fails on `empty('0')` being true. The coder ran it,
+diagnosed the error correctly in one sentence, restored the fix, re-ran to green, and stopped — because
+the stop's literal wording was met. The work was correct, complete and **uncommitted**, and items 7–11
+were forfeited.
+
+⭐ **The outcome is STRONGER than the prediction, and that is the finding.** The ruling was *"`empty()`
+is the wrong predicate for a key with a declared substitute."* Both-red does not refute it — it
+**confirms it in both directions**. A brief carries two claims and they are different objects:
+
+| | what it is | may a stop be keyed to it? |
+| :-- | :-- | :--: |
+| the **RULING** | the durable thing the wave exists to establish | ✅ yes — that is what a stop is for |
+| the **PREDICTION** | an ephemeral expectation about how the measurement will *look* | ⛔ **never** |
+
+A stop keyed to the prediction forfeits the wave in precisely those worlds where the ruling is
+confirmed more strongly than expected. **Every prediction gets tick 244's refuting instruction — report
+the departure and PROCEED — and a stop is reserved for a result that would make the ruling false.**
+
+⛔ **And the stop had no BOTH branch — tick 268's law, written by this seat, broken by this seat.** 268
+ruled that *every falsifier stated as a two-way test carries "— or BOTH, on an unchanged tree" as its
+third branch*, after this lane wrote a two-outcome falsifier over a three-member outcome space.
+`"reddens (a) instead of (b)"` is that error verbatim, ten ticks later.
+
+Twenty-seventh of the imprecise-brief family (208 the *evidence request*, 227 the *branch condition*,
+235 an *unread mechanism*, 236 a *presumed direction*, 237 an *existence question about an output*, 238
+a *filing sentence*, 244 a *consequence inside a measurement*, 245 a *falsifier's polarity*, 247 an
+*output without its command*, 249 a *pass condition of "identical"*, 250 a *ruling's reasoning*, 254
+*two selectors for one subject*, 262 a *one-directional stop*, 265 an *incomplete answer set*, 271 *two
+correct instructions composing wrong*, 274 the *wrong instrument*, 275 a *named delimiter*, 276 an
+*enumeration disagreeing with its summary*, 280 a *quoting defect*, 283 a *prohibition*, 286 a *stop
+condition's scope*, 292 the brief's *internal coordinate system*, 293 a *ledger digest*, 297 a
+*recalled ground value*, 301 *what goes in the ground-value list*, 302 a ground value's *grade*) — and
+the first about **which of a brief's two claims the stop protects**. Ticks 244, 262, 265 and 268 all
+concern the *shape* of an answer space; this concerns its *subject*.
+
+⚠️ **Third consecutive wave truncated by a stop of my own making** — SITE-173 (an invented method name,
+item 0), SITE-174 (a drifted line number, item 0), SITE-176 (this). Tick 286: *a stop condition is the
+most expensive place in a brief for a scope error, and the place least likely to be examined, because a
+stop that fires reads as the brief working.* Three times running is a design problem, not three
+incidents. A wrong prediction **alone** is harmless — 244's refuting instruction absorbs it. A wrong
+prediction **inside a stop** forfeits the wave.
+
+## ⛔ THE PREDICTION CONTRADICTED A FACT THIS LEDGER STATES IN FIVE PLACES — one of them the section recording the IDENTICAL error on the IDENTICAL predicate (tick 304)
+
+`grep -n "empty('   ')" CLAUDE.md` returns **five** hits and every one asserts it is **false** — lines
+9856, 9918, 10127, 11058, 11059. ⛔ **11058–11059 are the tick-293 section, and they record this exact
+experiment**: SITE-165 mutated a `trim(…) !== ''` predicate to `! empty(…)`, both halves reddened, and
+tick 293 wrote it up — including the sentence *"this file already held the correct claim when the wrong
+one was written into it."* Eleven ticks later I wrote the negation of that measured fact into a brief,
+on the same predicate, in the same lane.
+
+This is neither tick 293's case (a *digest* wrong while the brief was right) nor tick 297's (a ground
+value *recalled* rather than measured). It is a **third** shape: a fact recorded **correctly and
+repeatedly**, contradicted by a prediction that consulted neither the ledger nor the language.
+⛔ **A brief's prediction about a LANGUAGE SEMANTIC is a ground value like any other.** `php -r` is
+refused from this seat (284), so the discipline is the one ticks 290/291 already set — **delegate it to
+the wave as a numbered item, or grep this ledger for it; never assert it.** Both routes were free.
+
+## ⭐ `empty()` is refused in BOTH directions, and the two tests pin the predicate UNIQUELY (tick 304)
+
+The lane's tick-303 note gave one reason (`empty('0')`). Measured, there are two, and the record must
+carry both or a future tick inherits the half-truth:
+
+| candidate | `honeypot_field = '   '` | `honeypot_field = '0'` |
+| :-- | :-- | :-- |
+| `?? 'website_url'` — the defect | ⛔ used verbatim → `$payload['   ']` null → **bot passes** | ✅ correct |
+| `! empty(…)` — the refused remedy | ⛔ `empty('   ')` is **false** → used verbatim → **bot passes** | ⛔ `empty('0')` is **true** → falls back → **bot passes** |
+| `trim(…) !== ''` — the fix | ✅ falls back | ✅ used verbatim |
+
+Test (a) falsifies **both** wrong candidates; test (b) falsifies `empty()`. ⛔ Item 8's `decided` text
+was **never written** because the wave stopped first, so SITE-177 writes the complete version — **a
+record that has not yet been written is the one place a correction is free**, `state.py` having no
+withdraw (210).
+
+## ✅ The fix trims to DECIDE and uses the value VERBATIM — do not "tidy" it (tick 304)
+
+```php
+-        $honeypot = $form->honeypot_field ?? 'website_url';
++        $configured = $form->honeypot_field ?? '';
++        $honeypot   = trim((string) $configured) !== '' ? (string) $configured : 'website_url';
+```
+
+`grep -rn --include='*.php' 'honeypot_field' app/app` returns **two** lines and only one is a reader —
+this one, plus the migration's `->default('website_url')`. Tick 241's pattern has **one address** here,
+so the class is closed by the one edit. The `?? ''` is preserved, so the (unreachable, NOT NULL) null
+path resolves to the fallback exactly as before.
+
+⛔ **The trim is a PREDICATE, not a normaliser.** A field name is a **key**: `' website_url '` stays
+`' website_url '`, because trimming the value before using it as a lookup key would silently rewrite a
+caller's key — the same reasoning that makes `'0'` a legitimate name. A future tick must not rewrite
+this to `trim($configured)`; nothing in the one-line diff says which of the two it is.
+
+## ✅ The falsifier arithmetic reconciled three ways across TWO falsifiers, and the tree-witness held (tick 304)
+
+Each new method carries **5** assertions on the persisted `FormSubmission` row and the dispatched
+events. States, as reported and as re-derived here:
+
+| state | tests | passed | assertions | failing at |
+| :-- | --: | --: | --: | :-- |
+| 1 — before the fix | 2 | 1 | **7** | (a) #2 |
+| 2 — after the fix | 2 | 2 | **10** | — |
+| 3 — falsifier A (`??` restored) | 2 | 1 | **7** | (a) #2 |
+| 4 — restored | 2 | 2 | **10** | — |
+| falsifier B (`empty()`) | 2 | 0 | **4** | (a) **and** (b), both #2 |
+
+- **Tick 291's closed form**, single method: 10 − 7 = 3 = (5 − 2) ✓.
+- **Tick 293's SUM form**, multi-failure: 10 − 4 = **6** = 3 + 3 ✓ — fifth firing, and the first needed
+  to check a falsifier inside its own wave.
+- ⭐ **Tick 298's free tree-witness**: pest reports `"line":551` and `"line":584`, and `grep -n` puts the
+  two declarations at **exactly 551 and 584** in the tree I read. States 1, 3 and B all report the same
+  two lines ⇒ every state measured the same code, which for a mutation restoring a committed prior
+  state (287) is the whole claim.
+- **Tick 287's four states, present and in order, state 1 first** — third consecutive wave since tick
+  299 made state 1 its own numbered item (299, 303, 304).
+
+⚠️ **Unproven, not proven** (270): both runs halt at assertion #2, so the `spam_reason` value and the
+two event assertions were never independently falsified in either test. ⚠️ The cold witness is not an
+equality on this file — `grep -c 'foreach'` = **2**, so tick 280's lower-bound branch applies and the
+per-filter arithmetic above did the work.
+
+## ⛔ §6 pint RED is the residue of a wave that stopped before its pint step (tick 304)
+
+`{"tool":"pint","result":"fail","files":[{"path":"app/Modules/X-155/Actions/FormValidateAction.php",
+"fixers":["unary_operator_spaces","not_operator_with_successor_space","binary_operator_spaces"]}]}` —
+the aligned `$honeypot   =`. Item 7 was the pint step and the wave never reached it, so this is
+**expected and is not a defect of the work**; it is exactly what tick 208's *every brief quotes §6 and
+§7 in full, unconditionally* exists to surface. It decides the push: a red §6 is not *"gated and
+recorded as passing"* however cosmetic. ✅ And tick 264's write-nothing discipline held on the truncated
+wave — `git diff --stat HEAD -- .agents/state/` is **empty**, so there is no orphaned `state.py` row to
+sweep as the next brief's step 0 (the residue tick 197 requires looking for).
+
+## §7, doctor and the census at tick 304
+
+**Doctor, live in this seat**: stamp `20260829-0647` = `runtime_build` · `integrity clean · boundary 6 ·
+contract 87 · citation 93 · schema 15 · capability 455 · anchor 137 · journey 4` · **797**. SUM
+reconciles (285); `ok` appears only on `integrity … clean` (292); **no stage moved**. ⚠️ The report
+quoted **no** doctor block, correctly — item 9 was never reached, and not running a command is the only
+honest way to have no block. §3 printed `capability 372` in the same run against a live 455 — one slot
+shared by seven trees, 83 behind, never a brief target (196, 219).
+
+**Id census re-run in this seat with `--include='*.php'`** (287), the reviewer's own run being the only
+verification an untimed before/after has (263): `2 G11-01 · 4 G13-05 · 4 G13-35 · 2 G17-12 · 4 G2-17 ·
+3 G2-20 · 1 G2-39 · 3 G3-64 · 2 G5-07 · 2 G5-30` — **byte-identical**. The two new methods carry no
+`G##-##` literal, so no second carrier obscures which method discharges G3-64/G13-05 (240). Test
+methods **33 → 35**, exactly two added.
+
+**§1 reconciled by ARITHMETIC** (225, never *"both moved so they agree"*): tick 303 read `ahead 51`;
+this lane has since committed `8fa9e730` alone and §1 reads `ahead 52`. 51 + 1 = 52 ✓. `origin/main`
+unmoved at `30316573` ⇒ `behind 277` unchanged ✓.
+
+**Census — a HIT measured from the REFLOG** (220): the newest arrival across all eight refs is
+`origin/track/site@{23:38:57} 8fa9e730`, my own tick-303 push; the newest **sibling** arrival is
+`stages@{23:16:04} bbb9f87b`, which tick 303 recorded and ran against. All four surfaces re-run in full
+anyway — this ledger's own arithmetic has been the defect six times, and a HIT licenses citing a number,
+never guaranteeing the cited number was right. `pwd` first (209); tick 285's drift signature **absent**
+(three pathspec halves **2 · 10 · 3** against a pathspec-free complement of **12** — the *split* is the
+signature, never either number). **half 1 — 2** (`227edeab` reviews, `978041fc` money, both merges *of
+main*, `--source`-attributed per 189; no violating partition) · **half 2 — 10** · **half 3 — 3** ·
+**complement — 12**, same twelve members. Tips, the next miss's lower bound (192): `main 30316573` ·
+`money 544d5576` · `pricebook 042e78fd` · `reviews e02d8cf2` · `sixty 2ba6ad57` · `stages bbb9f87b` ·
+`ui 08ba50d0` · `site 8fa9e730`.
+
+**Tick 258's decidable rule + tick 259's column rule, TWELFTH firing.** `gate-runs.tsv` holds **three**
+`grs-antig-site` gates in a twenty-minute window — `1039726` (tick 303's, `gate-end` rc 1 at 23:34:19),
+`1071067` (the **coder's** item-0 no-`--tests` check, `gate-end` rc 1 at 23:41:51) and `1096601` (mine,
+`gate-start 23:50:10`, `pint` rc 1, `phpstan` rc 0, **no terminal row**). Mine was ambiguous between
+*queued* and *died-without-its-trap* (265's fourth state, which writes nothing) and only
+`readlink /proc/1096601/cwd` → `…/grs-antig-site/app` separated them ⇒ ALIVE ⇒ wait, read §7 last.
+**Filter the tail by the pid `gate-start` handed you, never by the checkout column.**
+
+⚠️ **There is NO borrowed §7 available this tick** — SITE-176 stopped at item 6 and never reached its
+gate, so no §7 exists on either side. Tick 255's substitution needs a borrowed section that names its
+sha, and a section that never ran names nothing. The block was appended with §7 named unmeasured (242 —
+never wait, never carry) and re-checked at the append (231).
+
+⚠️ **The merge of `main` stays deferred, unchanged**: main's range still **ADDS** two `.claude/hooks`
+files and `coder-bin/git:106` refuses any staged `.claude/` with no exemption (229, 292, 300). It
+carries **fourteen of this lane's own violations, fixed** (Track 1 rulings 4 and 5, `30316573`), and a
+violation's colour is a property of a TREE (253) — this checkout's doctor still reads `contract 87 ·
+anchor 137`, correctly. TRACK 1 ACTION, filed with its mechanism and its template.
+
+## RULED at tick 304 — SITE-177 re-issues items 7–11 and adds NOTHING
+
+A defect this seat's brief caused is a new item with its own two dispatches, and SITE-176 spent none.
+⛔ **No new code, no new test, no new sweep** — a wave that lands work *and* builds makes any red
+unattributable between the two (215), and the uncommitted fix plus its two falsified tests are a
+complete, gated-able artefact today. Three corrections carried in: the `decided` text states the
+`empty()` refusal in **both** directions; item 6's stop is **retired** and its finding recorded here
+instead, since re-running a settled measurement buys nothing; and **every prediction in the new brief
+carries its refuting instruction and NO stop**, the only stops being on ground-value CLAIMS (302's tier
+table) and on a doctor stage count *rising*.
