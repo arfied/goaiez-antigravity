@@ -20,7 +20,8 @@ final class FormValidateAction
         $form = FormDefinition::where('business_id', $businessId)->findOrFail($formDefinitionId);
 
         // 1. Honeypot bot check (G3-64, G13-05)
-        $honeypot = $form->honeypot_field ?? 'website_url';
+        $configured = $form->honeypot_field ?? '';
+        $honeypot = trim((string) $configured) !== '' ? (string) $configured : 'website_url';
         $submitted = $payload[$honeypot] ?? null;
         if ($submitted !== null && $submitted !== '' && $submitted !== []) {
             Event::dispatch(new FormSpamRejected($businessId, $formDefinitionId, 'honeypot_triggered', $ipAddress));

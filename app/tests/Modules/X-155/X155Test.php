@@ -548,6 +548,72 @@ class X155Test extends TestCase
         Event::assertNotDispatched(FormCaptured::class);
     }
 
+    public function test_a_form_with_a_blank_honeypot_field_still_rejects_a_bot(): void
+    {
+        Event::fake([FormCaptured::class, FormSpamRejected::class]);
+        $biz = TestCase::provisionTenant(['name' => 'Whitespace Spam Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Whitespace Spam Form',
+            'slug' => 'whitespace-spam',
+            'steps' => [],
+            'schema' => [],
+            'honeypot_field' => '   ',
+        ]);
+
+        $res = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'website_url' => 'http://spam-link.ru',
+            ],
+            ipAddress: '194.55.22.1'
+        );
+
+        $row = FormSubmission::find($res['submission_id']);
+        $this->assertNotNull($row);
+        $this->assertTrue($row->is_spam);
+        $this->assertEquals('honeypot_triggered', $row->spam_reason);
+
+        Event::assertDispatched(FormSpamRejected::class);
+        Event::assertNotDispatched(FormCaptured::class);
+    }
+
+    public function test_a_form_whose_honeypot_field_is_named_zero_still_rejects_a_bot(): void
+    {
+        Event::fake([FormCaptured::class, FormSpamRejected::class]);
+        $biz = TestCase::provisionTenant(['name' => 'Whitespace Spam Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Whitespace Spam Form',
+            'slug' => 'whitespace-spam',
+            'steps' => [],
+            'schema' => [],
+            'honeypot_field' => '0',
+        ]);
+
+        $res = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                '0' => 'http://spam-link.ru',
+            ],
+            ipAddress: '194.55.22.1'
+        );
+
+        $row = FormSubmission::find($res['submission_id']);
+        $this->assertNotNull($row);
+        $this->assertTrue($row->is_spam);
+        $this->assertEquals('honeypot_triggered', $row->spam_reason);
+
+        Event::assertDispatched(FormSpamRejected::class);
+        Event::assertNotDispatched(FormCaptured::class);
+    }
+
     /**
      * [G5-07] describing the form is the wizard
      */
