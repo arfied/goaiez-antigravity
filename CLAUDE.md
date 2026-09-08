@@ -1691,3 +1691,90 @@ declaring it exhausted.
 scope correction; **widening its criterion** so it fires again on scope it already cleared is the
 documented failure. ⛔ If the re-application needs the definition loosened to find anything, it is the
 second thing wearing the first thing's clothes.
+
+## ⛔⛔ Trap added 2026-09-08 15:0x — a PERMISSION refusal can be caused by your own working directory, and the probe file tells you which
+
+Writing PB-131's verdict failed twice: `Edit` on `REVIEWS.md` **and** `Write` on a brand-new name in the
+same directory both returned *"requested permissions … but you haven't granted it yet"*. That is the
+exact symptom of the 05:3x–06:5x mailbox lockout recorded above, and the pull to conclude "the deny glob
+is back" was very strong.
+
+⭐ **It was the tick's own doing, and the cause is new.** `.claude/settings.json` allows
+`Edit(.agents/supervisor/**)` and `Write(.agents/supervisor/**)` as **relative** patterns, with **no**
+deny rule matching that path — established by reading the file end to end rather than inferring a rule
+from the refusal. Earlier in the tick a measurement ran `cd …/app && …`, and the harness moved the
+primary working directory to `…/grs-antig-pricebook/app`. **From there the relative pattern no longer
+matches the mailbox**, so every write fell through to *ask*. One `cd` back to the checkout root plus a
+probe write, and it was fixed.
+
+⭐⭐ **The generalisation: before theorising about a permission refusal, establish the state the
+permission set is resolved AGAINST — and the working directory is part of that state.** This is the
+06:5x lesson ("establish what is actually per-lane before theorising") on a new surface; three ticks
+have now built a confident wrong model from this one symptom.
+
+⭐ **The discriminator costs one command and separates the two causes exactly:** write a probe file to
+another name in the same directory. **Probe writes + `REVIEWS.md` refused = the deny glob** (file a
+`TRACK 1 ACTION` and use `-NEXT`). **Probe ALSO refused = check your CWD first.** ⚠️ ⛔ This does **not**
+retro-explain the 05:3x lockout — there the probe *wrote* while `REVIEWS.md` was refused, which a CWD
+change cannot produce since both share the matched directory.
+
+⛔ **Practical rule: prefer absolute paths in Bash and never leave the CWD parked outside the checkout
+root.** The harness prints an environment-update block when the working directory moves — ⭐ that block
+is the warning, and it was ignored for six calls.
+
+⭐ **And the line held while the cause was unknown** — no `sed` redirect, no
+`git show <sha>:<path> > <path>`, no self-granting; the tick was preparing to file upward and dispatch
+through `BRIEF-NEXT.md`. ⛔ **That refusal stays absolute however mundane the cause turns out to be.**
+Discovering afterwards that the door was only stuck is not a licence to have forced it.
+
+## ⭐ Trap added 2026-09-08 15:0x — a per-row output format destroys a finding whose subject is a relationship BETWEEN rows
+
+PB-131's brief asked for the capability-id sweep as **one row per module**, and got nine exact rows. The
+real finding is invisible in that shape: the nine scaffold ids `N-063 N-064 N-067 N-070 N-073 N-076
+N-079 N-082 N-085` are **the same nine, declared in X-165, X-168 AND X-175 at once**, at the same line
+numbers, carrying the same byte-identical string. The report could only say "9 of 12", "9 of 11",
+"9 of 12" — three per-module facts where there is one three-module fact.
+
+⭐ **It matters because it converts a vague filing into a mechanism.** `capabilities.php` fails the build
+for a declared id with no matching test under `tests/Modules/<id>/`, so an id declared by three modules
+**requires three separate test files to each carry a test citing it** — the byte-identical duplicates
+PB-130 found are the checker's *requirement*, not carelessness, and no lane-side deletion can help.
+
+⭐ **The generalisation: when an instrument's finding might be a relationship between rows, ask for the
+union and the intersection, not just the per-row counts.** ⚠️ And the companion, from the same tick:
+`N-165-01` / `N-175-01` are **three-part** ids that both `'[A-Z0-9]+-[0-9]+'` and `N-0[0-9][0-9]` drop,
+which made the reviewer's own count disagree with the coder's by one on two modules. ⛔ **Never
+reconcile a count discrepancy by assuming your own regex was right** — chasing it is what confirmed both
+ids were covered.
+
+## ⭐⭐ Trap added 2026-09-08 15:0x — WRITE-SIDE REACHABILITY, and the discriminator between a defect and a new capability
+
+The successor instrument after the capability-id contract sweep came back empty lane-wide. It is
+decision 272's shape **inverted** — `audit_log` had eight writers and no reader; this finds the reverse:
+**for every table a lane's screens and actions READ, name the production path that WRITES it.**
+
+Measured on X-168, and it fired on the item the board had carried as "recorded, not work" for four
+waves. The only writers of `timesheets` / `timesheet_entries` in all of `app/app/Modules` are
+`TimesheetComputeAction.php:41` and `:51`, and that action has **zero production callers** — all 15
+references are the class plus six test files. Meanwhile **five readers** depend on those tables
+(`TimesheetApproveAction:13`, `TimesheetReopenAction:13`, `ApprovalsView:44`, `TimesheetsView:42,:50`,
+`OwnHoursView:36,:41`). **All three of X-168's owner/staff screens read tables nothing in production
+writes**; the module's whole surface is unreachable outside the suite. And the producers already exist
+in this lane speaking the exact vocabulary `recordJobWindow()` accepts —
+`X-171/Actions/JobStateAction.php:19` (`on_site`), `:29` (`completed`),
+`X-162/Actions/TechEnRouteAction.php:28` (`en_route`) — simply not connected.
+
+⛔⛔ **The discriminator against PB-128, and it is the reusable half.** PB-128 ruled X-167's missing
+listener a **new capability** because `capabilities.php` declared no automatic proposal, so the fix
+there was the *sentence*. **Here the capability IS declared** — X-168 `capabilities.php:37` (`N-072`),
+*"GPS clock-in is bound to job state"*. ⭐ **Declared and unwired is a defect; undeclared and unwired is
+a capability. Read `capabilities.php` before choosing between them.**
+
+⛔ **Wiring it is still not a one-wave job, and the reasons are the standing ones.** `recordJobWindow()`
+has **no close path** (it always `create()`s); there is **no dedup**, and `tap_count` implies taps
+repeat — verbatim PB-128's *"the obvious listener mints a fresh PO each time"*, the third incarnation
+here of **stricter is not automatically safe**; and wiring only the arrival leg leaves every entry at
+`duration_minutes = 0`, filling three screens with **zero-hour rows, which is worse than empty**.
+⛔ **Nor is pinning the absence right here**, unlike PB-128's ruling 3: there the absence was permanent,
+so the pin was the deliverable; here the declared end state is *wired*, so a pinned test is one a later
+wave must delete. **Record, measure, then build.**
