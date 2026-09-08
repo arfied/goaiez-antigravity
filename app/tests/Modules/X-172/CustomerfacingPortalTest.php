@@ -162,7 +162,7 @@ class CustomerfacingPortalTest extends TestCase
 
         Livewire::test(CustomerfacingPortal::class, ['token' => $token])
             ->assertOk()
-            ->assertSee('A fresh link was sent');
+            ->assertSee('has been refreshed');
 
         $this->assertDatabaseHas('portal_links', [
             'id' => $oldLink->id,
@@ -213,5 +213,79 @@ class CustomerfacingPortalTest extends TestCase
         Livewire::test(CustomerfacingPortal::class, ['token' => $token])
             ->assertOk()
             ->assertSee('active');
+    }
+
+    public function test_expired_link_refreshes_in_band_and_shows_the_resource(): void
+    {
+        $biz = TestCase::provisionTenant(['owner_user_id' => User::factory()->create()->id]);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $jobId = DB::table('work_orders')->insertGetId([
+            'business_id' => $biz->id,
+            'title' => 'Distinctive Fixer Job',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $token = 'expired_in_band_tok_'.uniqid();
+        $oldLink = PortalLink::create([
+            'business_id' => $biz->id,
+            'resource_type' => 'job',
+            'resource_id' => $jobId,
+            'token' => $token,
+            'expires_at' => now()->subHours(1),
+            'is_active' => true,
+        ]);
+
+        $component = Livewire::test(CustomerfacingPortal::class, ['token' => $token])
+            ->assertOk()
+            ->assertSee('has been refreshed', 'The notice still shows')
+            ->assertSee('Distinctive Fixer Job', 'This is the assertion the whole wave exists for.');
+
+        $newToken = $component->get('token');
+        $this->assertNotSame($token, $newToken, 'Component token must be updated to the new token');
+
+        $this->assertDatabaseHas('portal_links', [
+            'token' => $newToken,
+            'is_active' => true,
+        ], 'A PortalLink with that new token is is_active = true');
+
+        $newLink = PortalLink::where('token', $newToken)->first();
+        $this->assertTrue($newLink->expires_at->isFuture(), 'New link expires_at is in the future');
+    }
+
+    public function test_unknown_token_mints_no_link(): void
+    {
+        $countBefore = PortalLink::count();
+
+        Livewire::test(CustomerfacingPortal::class, ['token' => 'nope_'.uniqid()])
+            ->assertNotFound();
+
+        $countAfter = PortalLink::count();
+        $this->assertSame($countBefore, $countAfter, 'a 404 must never mint a portal link');
+    }
+
+    public function test_deactivated_link_is_404_and_mints_no_link(): void
+    {
+        $biz = TestCase::provisionTenant(['owner_user_id' => User::factory()->create()->id]);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $token = 'deactivated_tok_'.uniqid();
+        PortalLink::create([
+            'business_id' => $biz->id,
+            'resource_type' => 'job',
+            'resource_id' => 1,
+            'token' => $token,
+            'expires_at' => now()->addHours(24),
+            'is_active' => false,
+        ]);
+
+        $countBefore = PortalLink::count();
+
+        Livewire::test(CustomerfacingPortal::class, ['token' => $token])
+            ->assertNotFound();
+
+        $countAfter = PortalLink::count();
+        $this->assertSame($countBefore, $countAfter, 'a 404 must never mint a portal link');
     }
 }
