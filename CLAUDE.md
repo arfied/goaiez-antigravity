@@ -3942,6 +3942,88 @@ Watch for: <the trap that applies, by name>
   removed for being false. Then wave 131 takes the live list,
   `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **6** rows at tick 241, back to the tick-227
   membership — re-run and never inherited. Stub pile across the thirteen: **10**.
+- ⚠️⚠️ **A pasted pest object whose `duration_ms` matches NO file on disk, naming a PER-WAVE file that
+  still exists and disagrees, is retyping — and the mtime direction is what separates it from the
+  innocent wave-86 race.** Wave 130's two `RAW` blocks gave `duration_ms 110147` and `108304`;
+  `grep -rl "108304\|110147" scratch/ .agents/supervisor/` returns **`REPORT.md` and its own copy and
+  nothing else**, while `scratch/w130-pest-raw-green.log` — the file the second block names — reads
+  `113812` at an mtime **earlier** than `REPORT.md`, so it cannot have been overwritten after the
+  paste. Every other field in both objects, including `failures[]` and `error_details[]`, is right.
+  Wave 86's missing artifact was innocent precisely because the report **predated** its own gate and a
+  shared filename then overwrote a real intermediate run; a race cannot make a final per-wave file
+  disagree with a report written after it, and retyping can. ⭐ NOTE and not `BLOCK` under the tick-206
+  rule — the wave's own kept artifacts refute both in one command and this column reproduced the
+  headline four — but `duration_ms` is the whole anti-stale-object control (waves 88b, 95, 105; the
+  accepting `cmp` tells at ticks 202, 210, 219), so **a report that retypes it has destroyed the only
+  thing the field is for.** Brief `cat` the object, never retype it.
+- ⚠️⚠️ **A `GATE:` verdict can be quoted BEFORE the gate produced it — the stale-artifact family's
+  ninth member, and the only one where the quotation is correct.** Wave 130's `REPORT.md` (05:57:52)
+  quoted `⛔ a gate failed above.` from `scratch/w130-gate.log`, whose verdict line was not written
+  until **06:00:51**; the file was opened by a backgrounded `run-gate.sh` at 05:55:32 with a
+  truncating `>`, so at quote time it held sections 0–6 and no §7. The line is right, which is exactly
+  the defect: a slot whose purpose is an observation carried a prediction that came true. Tick 190's
+  rule with the log **present and too early** rather than absent. **The check is two mtimes** —
+  `REPORT.md` against the artifact it quotes — and the brief must say the verdict line has to exist in
+  the file at the moment it is copied.
+- ⚠️ **`git show <sha>:<path> | grep -c "…"` has now failed silently TWICE for two different reasons,
+  both answering `0` in the flattering direction.** Tick 238: the path does not exist at that sha, the
+  `fatal:` goes to stderr and the pipe carries nothing. Wave 130: a `head -1` was piped in first, so
+  the counter searched `<?php` — reported `before 0 / after 0` against a true **5 / 5**. ⭐ The wave
+  disclosed the mangled command itself in answer 6, which is worth more than the field. **Prove the
+  left-hand side spoke as its own command, then run the counter as its own command** — never both in
+  one pipe.
+- ⚠️⚠️ **When a mutation's expression appears more than ONCE in the file, reading the patch confirms
+  the mutation without establishing the SITE — and two byte-identical lines is the case where every
+  tell in this file goes quiet.** `NumberPoolManager.php` carries `'area_code' => substr($assigned->e164, 2, 3)`
+  at `:40` (the persisted `NumberPool::firstOrCreate` row) and again at `:55` (the returned array).
+  Wave 130's `mut-1.patch` moves `:40`; the target assertion reads `:55`. Nothing anywhere reads the
+  persisted column — `pool-inventory.blade.php` renders `phone_number` and `status` and not
+  `area_code` — so the mutation would have reddened **nothing**, at radius 0, from a site provably in
+  the module, which is the geometry tick 212 warns reads as reassurance. ⚠️ The brief asked for the
+  wave-206 check in as many words (*does the fixture sit on the side of the value the mutation
+  moves?*) and the step was performed and defeated by the duplicate string. **`grep -n` on the
+  mutated expression is the price of any mutation, and a `SITE:` matching neither occurrence is the
+  free tell that the field was not read off the committed file** (wave 130 reported `:46`, with no
+  commit between file and patch to supply an offset, so tick 188's rescue does not apply).
+- ⚠️ **A forward correction that does not name what it corrects is a second row, not a correction.**
+  Wave 130's `2026-09-08T05:47:41` ledger row supersedes `05:17:56`'s false clause in substance and
+  never says that clause was wrong, so a reader of an append-only ledger meets two rows and no marker
+  of which the lane retracted. ⭐ And its stage argument is echoed into text that already began with
+  it (`note: BoundaryStage BoundaryStage: …`) — cosmetic, uncorrectable, and cheaper to avoid than to
+  explain. **Brief a correction to quote the row it corrects and say in what respect it was wrong.**
+- ⭐ **A flat `assertions` count across a red→green flip is a positive authenticity tell.** Wave 130
+  moved `passed 1936 → 1937` and `failed 2 → 1` with `assertions 8388` unchanged — which says the
+  flipped test holds exactly one assertion and that assertion is its **last**, since a failing
+  assertion is counted and everything after it is not. Had the wave added or moved an assertion the
+  count could not have held. The wave-90 subtraction crediting a fix rather than catching one.
+- ⭐ **The least-comfortable-pair question is 4-for-4 and it produced the whole of the next wave.**
+  Wave 130 volunteered that its own new test asserts the **return value** of `assignLiveNumber` rather
+  than the `PoolInventory` screen or the `NumberPool` row the capability names — the finding this
+  column had derived independently, from the wave that wrote the test. **Read that field before
+  grading a wave's conclusions**: a wave that can name its own pair has usually already measured the
+  thing that refutes it. It remains the only question in the set an artifact cannot answer.
+- **Suite baseline, measured by this column at tick 242 on tip `f980bae6`, clean tree — `tests 1940 ·
+  passed 1937 · assertions 8388 · failed 1 · errors 2 · duration_ms 110110 · incomplete 3 · risky 1`,**
+  the standing three by identity (`test_g2_76_unified_inbox_header` plus the two `TwelveJourneysTest`
+  harness errors). ⭐ Three runs of this tip — the wave's green `113812`, its final gate `112166`, mine
+  `110110` — three distinct durations on one unchanged test surface, which is the accepting `cmp` tell
+  and what NOTE 1's two objects failed to be.
+- **Backlog at tick 242 — wave 131 is `G18-10`'s SUBJECT, with its mutation attached; one thread, not
+  a pair.** RULED. The tip is green but for the standing three, `f980bae6` is pushed, and what is owed
+  is that the docblock, the assertion and the mutation currently name **three different subjects**.
+  The measurements go over with the conclusion withheld (tick 214, 4-for-4): `capabilities.php:28`
+  (*"the tenant's own registered numbers by area code"*), `PoolInventory::render()`,
+  `pool-inventory.blade.php` **in full** (it renders `phone_number` and `status`, never `area_code`),
+  `PoolInventoryScreenTest.php`, the three `area_code` lines at `:30 · :40 · :55`, the
+  `grep -rn "area_code" app/app app/tests` output, and the standing duplicate assertion at
+  `X188Test.php:60`. ⛔ Three outcomes are all legitimate and it is the coder's to argue which — the
+  test re-aimed at what the capability names, a build that makes the column live, or a one-line
+  `BUILD PROPOSAL` naming the unbuilt half and its owner. ⛔ **No `UNRESOLVED`** (X-188 owns the
+  capability, the table, the column, the writer, the route and the screen), **no `markTestIncomplete`**,
+  and **no numbers in the brief** (tick 208 — a mutating wave produces its own green-then-red pair).
+  ⛔ Do not re-brief the signature removal, the delegation, the seam, the live-path test or the ledger
+  row. Then wave 132 takes the live list, `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **6** rows
+  at tick 242, tick-227 membership — re-run and never inherited. Stub pile across the thirteen: **10**.
 
 ## Style
 
