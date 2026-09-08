@@ -868,3 +868,67 @@ untouched and still the one that matters: an assertion, a fixture or a name disa
 count instrument catches it, and only reading the hunks does. ⚠️ A pre-declaration that will predictably
 fire on something harmless trains the next reviewer to wave it through — which is the failure the
 pre-declaration existed to prevent.
+
+## ⭐ Trap added 2026-09-08 08:2x — when a tripwire fires, the QUOTED TOOL OUTPUT outranks the report's prose about it
+
+PB-119's report said *"`/usr/bin/git checkout` was refused by the coder guard"*. Ruling 22 makes a report
+that **names** `/usr/bin/git` a `BLOCK` **before the diff is read**, so this had to be settled first —
+and settling it by reading intent would have been exactly wrong.
+
+⭐ **The decisive measurement is that `/usr/bin/git` cannot produce the message the report quoted.** The
+string `REFUSED by coder guard: git checkout on paths is forbidden.` is emitted **only** by
+`/home/goaiez/agents/coder-bin/git:78`. The real binary has no such output — it would have performed the
+checkout or printed a git error. **The guard's own refusal text is therefore positive proof the guard
+RAN**, i.e. the command was `git checkout` through `PATH`, and the prose is a mis-transcription. The
+coder then complied with the briefed route (`git show HEAD:<path> > <path>`).
+
+**Ruled not a BLOCK**, because the mechanism ruling 22 exists to catch — *the CHECK said no and the route
+changed so the CHECK was not consulted* — is the **opposite** of what the evidence shows. ⚠️ **This is
+not a licence to reason about intent.** The general rule: a report's *prose* about a tool is a
+recollection; the tool's *quoted output* names the binary that actually ran. ⛔ Where no tool output is
+quoted, ruling 22 applies on its face and the answer is `BLOCK` — the burden is on the evidence, not on
+the reviewer's charity.
+
+⚠️ **Brief the coder to quote every command verbatim as typed.** `/usr/bin/git` is this lane's strongest
+tripwire, and a report that writes it when it means `git` costs a whole tick proving a negative. A
+tripwire that fires on typos is one nobody trusts.
+
+## ⛔ Trap added 2026-09-08 08:2x — ONE gate answering TWO questions, and why BOTH obvious fixes were wrong
+
+The successor finding to PB-119, and the most instructive so far: **both** provisional rulings died on
+measurement, in opposite directions.
+
+`FieldAssistantEngine:54` calls `PriceLookupAction::handle()` with **no channel**, so a technician's
+question defaults to `'customer'`, `increment`s `refusal_count` and inflates the owner's digest of
+*customer* refusals.
+
+- ⛔ **"Just pass `'staff'`"** — wrong. `PricebookEngine:78`/`:90` gate the **refusal itself** on the
+  same `in_array($channel, ['customer','sms','voice','chat','web'])` that gates the counting, so a
+  channel outside the list is **handed the sample/unconfirmed price**. The one-liner re-opens the exact
+  hole PB-119 closed, and **no test catches it** because no test uses a staff channel.
+- ⛔ **"Make the refusal unconditional — stricter is always safe"** — also wrong.
+  `X163Test.php:83-84` reads `// Internal lookup can see it` and asserts `'admin'` **does** see a sample
+  row. The gate's false arm is **exercised and deliberate**. The "safe" fix would have landed as a
+  deleted assertion, which is the PB-106 shape.
+
+⭐ **The real defect is that one predicate is answering two questions** — *whether to refuse* (SAFETY)
+and *whether this counts as a customer refusal* (REPORTING) — and the technician is the input that needs
+**opposite** answers from them. So no value of `$channel` is correct until the gate is split. The
+taxonomy is three-way (`customer…` refuse+count · `admin` neither · `staff` refuse, don't count), not
+two.
+
+⭐ **The generalisation, and it is the durable part: when every available value of a parameter gives a
+wrong answer, the parameter is overloaded — stop looking for the right value and split the predicate.**
+⚠️ And note the review method that caught it: the fix was ruled only *after* reading the callers and the
+tests. Briefing either one-liner blind would have produced a confident wave and a BLOCK.
+
+✅ **Closed while measuring, recorded so nobody re-derives it:** the inline `increment` and
+`RecordPriceGapFromRefusal` do **not** double-count. The listener early-returns unless
+`refusalReason === 'NO_FACT'` (`:19-21`), the inline increments sit only on the SAMPLE/UNCONFIRMED paths
+which never dispatch `NO_FACT`, and the `NO_FACT` paths never increment inline. **Disjoint — exactly one
+increment per refusal.**
+
+⛔ **`NO_FACT`'s dispatch stays un-channel-gated for every channel**, including staff: "a technician asked
+for a price we don't have" is a real gap whoever asked, and it is what feeds the price-gap listener.
+⭐ Recorded, **not work**: a staff-side refusal signal, if ever wanted, gets **its own counter** — the
+lane's one-condition-one-word doctrine applied to counters, never a share of `refusal_count`.
