@@ -2027,6 +2027,10 @@
   {
    "at": "2026-09-08T06:58:18",
    "note": "note: BoundaryStage X-188: update test_g18_10_numbers_by_area_code to assert isolation (the tenant's own numbers) and wire PoolInventory component to gracefully default to the tenant context (Tenancy::id()) to fix the defect where it always rendered an empty pool for tenants."
+  },
+  {
+   "at": "2026-09-08T08:26:56",
+   "note": "capability drop dead negative assertion in test_g18_10 and correct docblock"
   }
  ]
 }
