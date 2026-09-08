@@ -1632,3 +1632,62 @@ it.** `test_g6_48` carries `[G6-48]`; deleting a cited test to keep an uncited d
 checker-satisfied-by-comment failure inverted. ⛔ And the deletion must be **pre-declared in the verdict
 block that briefs it**, with the surviving test's RED — carrying the named message — demanded as proof
 the guard outlived the deletion.
+
+## ⛔⛔ Trap added 2026-09-08 14:4x — a duplicate test whose twin carries a DIFFERENT contract id is a duplicated CONTRACT, and the test file is the wrong place to fix it
+
+The direct limit on the consolidation shape recorded one section above, found one wave later by applying
+it. PB-130's duplicate-test sweep (57 files, 295 methods) returned three byte-identical pairs in
+`X165Test.php` — `test_n_064_priority_scheduling_applied` / `test_n_079_…_repeat`, and the same for
+`N-067`/`N-082` and `N-070`/`N-085`. Same tenant, same
+`scheduleWindow($biz->id, '2026-09-01 09:00-11:00', 99, 88)`, same single assertion; the docblocks
+themselves say *"(repeat of N-064)"*. **The obvious next wave was PB-130's own shape: delete the
+repeats, fold their messages onto the originals.** One grep before briefing killed it:
+
+```
+grep -rn "N-064\|N-067\|N-070\|N-079\|N-082\|N-085" app/app/Modules/X-165/
+→ capabilities.php:28 :34 :40 :49 :52 :55      ALL SIX IDS ARE DECLARED
+```
+
+`capabilities.php` fails the build for a declared id with no matching test under `tests/Modules/<id>/`,
+so deleting the three repeats **strands three declared ids** — a count that rose, which is this lane's
+own blocker condition. ⭐ **The consolidation would have bought tidiness with a red checker**, and every
+count instrument would have read clean while doing it.
+
+⭐⭐ **The second grep is the finding.** All six ids carry the **byte-identical** assertion string — the
+same eight-clause blob, *"a tenant is never left on an empty domain · priority scheduling MUST BE REAL ·
+a sync conflict goes UNKNOWN not STALE · …"*. Measured: **9 of X-165's 12 declared ids share that one
+string.** So the duplicate TESTS are the symptom and the duplicate CONTRACT is the disease. `N-079`
+states no subject `N-064` does not, and a test that distinguished them would have to assert a contract
+the generated file does not contain. **This is ruling 18's pathology in a second module** —
+`capabilities:scaffold` attributes by prose mention and collapses a range row, stamping every id in the
+range with one undifferentiated assertion.
+
+⛔ **RULED: record and file, do not fix, because every lane-side move is worse than the defect.**
+Deleting reddens the checker; inventing distinct subjects writes a contract the generated file does not
+state (checker-satisfied-by-comment, inverted); editing `capabilities.php` by hand touches a **generated**
+file whose regeneration path is Track 1's. ⛔ The one-id-one-assertion trap is *not* violated by leaving
+this alone — it is violated by **citing** an id on an assertion that cannot independently redden, and no
+new citation is made by doing nothing.
+
+⭐ **The generalisation: before folding any duplicate onto its twin, check what each twin CITES.**
+PB-130's item 1 was deletable *precisely because* the duplicate carried **no** contract id and the
+survivor carried `[G6-48]`. ⛔ Never generalise the consolidation past that condition.
+
+## ⭐ Trap added 2026-09-08 14:4x — a SPENT-list entry inherits the scope of the run that produced it, exactly as a clearance does
+
+PB-122 ran the capability-id contract instrument (ids declared vs ids cited in tests, minus honest
+`UNRESOLVED` deferrals) against **X-167 alone** — 13 uncovered, 11 correctly deferred under rule 09,
+2 neither. It was then written onto the addendum's SPENT list as *"X-167's capability-id contract gap"*,
+and read by six subsequent ticks as though the lane had been measured. **Nine modules never were**, and
+this tick found real material in one of them (X-165) by accident, while chasing something else.
+
+⭐ **This is the `is_sample` clearance-scope failure in a second form**, and the two together give the
+rule: **a SPENT entry and a CLEARANCE are the same object — a measurement with a scope, written down in
+prose that drops the scope.** ⭐ Write the scope into the entry itself (*"X-167 ONLY — the other nine are
+unmeasured"*), and when a method stops firing, ⛔ check whether it was ever run everywhere before
+declaring it exhausted.
+
+⚠️ **The distinction that keeps this honest:** re-applying an instrument to **unmeasured scope** is a
+scope correction; **widening its criterion** so it fires again on scope it already cleared is the
+documented failure. ⛔ If the re-application needs the definition loosened to find anything, it is the
+second thing wearing the first thing's clothes.
