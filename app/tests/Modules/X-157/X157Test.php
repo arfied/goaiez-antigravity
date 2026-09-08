@@ -1776,6 +1776,76 @@ class X157Test extends TestCase
             'a rolled back site still accepted a submission');
     }
 
+    public function test_a_lapsed_certificate_stops_the_published_form_from_accepting_a_submission(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, [
+                ['type' => 'chat'],
+                ['type' => 'form_capture'],
+                ['type' => 'dni'],
+            ]);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Contact',
+            'slug' => 'contact',
+            'steps' => [],
+            'schema' => [],
+        ]);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        $pageResp = $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}");
+        $pageResp->assertStatus(200);
+
+        $html = (string) $pageResp->getContent();
+        preg_match('/<form class="form-capture-x155"[^>]*action="([^"]+)"/', $html, $m);
+
+        $post = $this->post($m[1], [
+            'first_name' => 'Rae',
+            'phone' => '+15559990001',
+            'email' => 'rae@example.com',
+        ]);
+        $post->assertStatus(201);
+
+        $this->assertSame(1, FormSubmission::where('business_id', $biz->id)
+            ->where('form_definition_id', $form->id)->count());
+
+        $zone->update(['has_valid_ssl' => false]);
+
+        $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}")->assertStatus(404);
+
+        $this->post($m[1], [
+            'first_name' => 'Rae',
+            'phone' => '+15559990001',
+            'email' => 'rae@example.com',
+        ])->assertStatus(404);
+
+        $this->assertSame(1, FormSubmission::where('business_id', $biz->id)
+            ->where('form_definition_id', $form->id)->count(),
+            'a site whose certificate lapsed still accepted a submission');
+    }
+
     /** (R245) */
     public function test_a_video_block_becomes_videoobject_in_the_served_page_schema(): void
     {

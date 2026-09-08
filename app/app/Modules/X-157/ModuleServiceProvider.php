@@ -85,6 +85,8 @@ final class ModuleServiceProvider extends ServiceProvider
 
             $deployment = Deployment::where('business_id', $businessId)->where('deploy_hash', $deployHash)->firstOrFail();
             abort_if($deployment->status !== 'deployed', 404);
+            $zone = $deployment->edgeZone;
+            abort_if($zone === null || ! $zone->has_valid_ssl, 404);
 
             $result = app(FormCaptureAction::class)->handle(
                 businessId: $businessId,
