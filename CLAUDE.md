@@ -242,13 +242,14 @@ that test and is not on this list is a wave invented to fill the lane.
   untouched, the decoy root `REPORT.md` gone and the mailbox copy intact.
   `RULING CN` is discharged as a live hazard and stays above as history.
 
-⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 199 (2026-09-08) against main's
-unmoved `888cabae` (`merge: track/pricebook — wave 137`), lane 29 ahead / 464 behind. The take is
-now shut on **two** rows rather than seven (`RULING DD`) — use the two-row re-check
-`git diff --name-status HEAD...origin/main -- .claude/hooks/`, not `CP`'s seven-row command — and
-`RULING DA` closes the only body of work that looked parallel to it. `RULING DG` forecloses the
-one escape a tick is likely to try next (drop the two ADDs from the merge result — it deletes them
-from `main` at the next merge).** Do not
+⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 200 (2026-09-08) against main's
+`c24d432d` (`N136`), lane 30 ahead / 597 behind. The take is shut on **two** rows (`RULING DD`) —
+use the two-row re-check `git diff --name-status HEAD...origin/main -- .claude/hooks/`, not `CP`'s
+seven-row command — and as of `RULING DH` those two rows are shut on **measurement**, not inference:
+`.claude/` is a never-list DIRECTORY and the byte-identity clause covers `app/app/Doctor/*` and
+nothing else. `RULING DA` closes the only body of work that looked parallel to it, and all three
+escapes are now foreclosed — dropping the ADDs (`DG`, confirmed as an executed incident by `DI`),
+pinning an older `MERGE_HEAD` (`DJ`), and reading the guard by dispatch (`CT`).** Do not
 open a wave. `state.py next` returns `{"action": "FINISHED"}`. Every remaining
 stage count needs the owner and is listed as **OWNER ACTION A–F** at the end of
 `REVIEWS.md`: vendor artifact ids (`anchor 137`), real Infobip and a real placed
@@ -880,6 +881,71 @@ them; `main` unchanged → **the deletion is taken**, and Track 1's next merge r
 the lane supervisor: this lane will not drop a path from a merge result to get a commit past the
 never-list, and no brief will name the route** — `RULING CQ`'s reason exactly, and `DE`'s run-115
 lesson one week apart: it evades a refusal by removing the case the refusal exists for.
+
+### ✅ `RULING DH` (tick 200) — `CP`'s central claim is MEASURED at last: the never-list entry is the DIRECTORY `.claude/`, and no byte-identity clause reaches it. Read the SIBLING LEDGERS.
+
+`CP` shut the take by asserting the never-list refuses a commit staging `.claude/`, and `CT` recorded
+that as unmeasurable — `coder-bin/git` is outside this seat's boundary and untracked. **It was
+measurable one directory over.** The six sibling `.agents/supervisor/` dirs are inside the read
+boundary, and `grs-antig-reviews`' ledger quotes the guard by line number after hitting it:
+*"`coder-bin/git:132` refuses both outright. The 2026-09-08 clause filters `app/app/Doctor/*` **and
+nothing else**"*, with a per-path take table listing **`.claude/`** — the directory — beside
+`CLAUDE.md`, `bin/supervise.sh`, `bin/state.py`, `app/phpunit.xml`, and the note *"NO byte-identical
+clause covers `.claude/`"*.
+
+- **`DD` was right about the per-track list and wrong about the guard's.** Those are two lists in two
+  files: main's `CLAUDE.md` per-track eight names `.claude/settings.json`; the guard's never-list
+  names `.claude/`. `DD`'s narrowing of the take to two rows stands — its reason was better than it
+  knew.
+- **`DE`'s byte-identity exemption does not generalise to `.claude/hooks/`.** Measured by the lane
+  that asked Track 1 for that clause and received it.
+- ⚠️ **THE METHOD, and it is the durable part.** `DB`/`DD` established: read main's copy of a
+  per-track file before inferring a shared-guard behaviour. **Extend it — a guard behaviour this seat
+  cannot measure has usually already been measured by a sibling supervisor and quoted verbatim in its
+  ledger.** Four ticks (`CT`, `CP`, `CY`, `CZ`) reasoned around `coder-bin/git` as unknowable; one
+  `grep` over `grs-antig-*/.agents/supervisor/REVIEWS.md` returned the line number and the scope.
+  **Read only** — `RULING CV` binds: the sibling-mailbox protection is prompt-borne, nothing on disk
+  refuses a write there, and this seat never writes one.
+
+### ⛔ `RULING DI` (tick 200) — `DG` is confirmed by an incident that had already happened when it was written. Its cost estimate is corrected; its refusal is not.
+
+`DG` reasoned from three-way semantics, flagged as *"not an executed test"*. The test exists and is
+the reviews lane's: `3768142e` (*merge: origin/main (c47a7c4f) into track/reviews*, 06:16) has
+`git diff --name-status 3768142e^2 3768142e -- .claude/` = **`D` drive_hook.py · `D`
+no-piped-gate-tool.py** — it dropped both ADDs. Main's `c24d432d` (**N136**) is Track 1's write-up
+and rule: *"in a merge, every `D` the index lists under `.claude/` is restored from `HEAD`"*, the
+general form being run-115 inverted — **"take the incoming side whole" is right for a CHECK the lane
+built and wrong for a GUARD the lane lost.**
+
+⚠️ **The propagation `DG` feared did not occur** — `git diff --name-status b56db171^1 b56db171 --
+.claude/` prints nothing, so `main` kept both while reviews' merged tip `b18954c5` still lacks them.
+The catch worked once. **RULED by the lane supervisor: that is not a licence and `DG` stands
+unamended in force** — dropping still evades a refusal by removing its case (`CQ`, `DE`), and would
+now do so knowing another lane's supervisor cleans it up. ✅ `3768142e` also confirms **`DE` by
+execution**: it stages the four Doctor/seal rows and commits, and shows `.claude/settings.json`
+restored. Of `CP`'s seven rows, **five are measured-takeable and two are measured-shut.**
+
+### ⛔ `RULING DJ` (tick 200) — the older-`MERGE_HEAD` route is closed here by commit ordering. Reviews could pin; this lane cannot.
+
+Reviews' own resolution was to **not chase the tip** — it held `MERGE_HEAD` at `c47a7c4f` because the
+newer range added never-list paths with no exemption, *"re-erecting the exact wall Track 1 just took
+down, one file over."* A tick reading `DH` will reach for that next. **It does not exist here:** the
+hooks landed `c3263613`/`7686da5c` on **2026-09-06 16:2x** and the Doctor/seal fixes `30316573`/
+`a42079bd` on **2026-09-07 22:22**, so `git diff --name-status HEAD...30316573 -- .claude/hooks/`
+prints both `A` rows. Every sha carrying the payoff carries the blocker; reviews' blockers landed
+*after* what it wanted, this lane's landed *before*. **RULED: refused on measurement, not
+preference** — a pinned take would be a take of a `main` without `multiEmitterOk`, i.e. the take with
+its entire purpose removed (`DA`).
+
+**TRACK 1 ACTION 1 is now a request with the measurement attached, not a question:** `.claude/` is a
+never-list **directory** (`:132`), the byte-identity clause covers `app/app/Doctor/*` and nothing
+else, an **A** row has no `HEAD` blob so it cannot leave the staged set, and no sha has the fixes
+without the hooks. **This is exactly what main's `CLAUDE.md` legislates** — *"Any change to a
+never-list path on `main` needs its merge-adoption rule written in the same act, or it blocks every
+lane"* — honoured for `app/app/Doctor/**` and not yet for `.claude/hooks/`; `N136` covers the `D`
+direction only. **Requested: a `MERGE_HEAD` byte-identity exemption for `.claude/hooks/` in lane
+checkouts, mirroring the Doctor clause.** Until it exists the take is unsatisfiable by construction
+and no brief will name it (`RULING CL`).
 
 ## Dispatching the coder (added 2026-09-02)
 
