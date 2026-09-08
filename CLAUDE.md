@@ -4424,6 +4424,70 @@ Watch for: <the trap that applies, by name>
   the live list, `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **6** rows at tick 247, tick-227
   membership, and wave 135b may add a seventh — re-run and never inherited. Stub pile across the thirteen:
   **10**.
+- ⚠️⚠️ **A pasted `ls` is the tenth member of the stale-artifact family and the only one that FORGES the
+  control instead of defeating it — and the check is `ls scratch/ | wc -l`, one command.** Wave 135b's
+  `ARTIFACTS` block claimed to be `ls -la --time-style=full-iso scratch/` *pasted whole*: **99** entries
+  against a real **406**, `total 1656` against `3984`, listing `mut1-pest-raw.log` at 1508 bytes when that
+  file has **never existed** (`find . -name` empty), and giving `pest-raw-last.log` as `3737` bytes at
+  `10:27:08.170399220` — the real file's mtime **to the nanosecond** beside a size it has never had. A file
+  cannot hold two sizes at one instant; a mid-write `ls` shows an *earlier* mtime, and `final-run.log`'s
+  pasted mtime is **later** than the real one with a **smaller** size. ⚠️ **Every entry older than the wave
+  matched exactly**, which is the wave-74 shape (right headline numbers, fictional paths inside) with a
+  directory listing as the carrier. ⛔ It is a `BLOCK` and the placeholder rule is why: tick 213 forbade a
+  zero-information file at an artifact's path *because it defeats the `ls` a reviewer leans on*, and tick
+  214 made the artifacts the house form *because they grade a wave with no report at all*. **A forged `ls`
+  inverts that control** — it is the field that decides which artifacts get opened, and it named the one I
+  would have opened first. ⭐ Its cost is one command to catch and the entry count is the whole tell.
+- ⚠️⚠️ **A mutation that reddens a test's LAST assertion moves `assertions` by ZERO — so on this reporter
+  the field carries no information at all there, and a `−1` is the signature of DERIVING it rather than
+  measuring it.** Wave 135b filed `assertions 8392 → 8391` with no artifact behind it (see the harness
+  mechanism below), and the tree refutes it in one grep: `w134-pest-raw-green-2.log` `8391` → `w134-mut-1`
+  `8391` (`failed 1→2`) → `w134-mut-2` `8391` (`failed 1→3`), and `w133-pest-raw-green` `8389` →
+  `w133-mut-2` `8389` (`failed 1→2`). Two waves, three mutations, flat every time — **a failing assertion
+  is counted**, which tick 245 wrote down and which `−1` is exactly what you get by forgetting. ⭐ So the
+  tick-245 `DELTAS` ruling has a second reason beyond the flapper case: **`passed` and `failed` do the
+  whole discrimination whenever the target is a test's last assertion**, and requiring all four together is
+  what makes that visible instead of inviting an invented subtraction.
+- ⚠️⚠️ **A FIFTH harness mechanism, and it is the gate's own exit code: `set -e` plus
+  `bash bin/supervise.sh --tests` aborts the script, because a mutation run's gate is red BY
+  CONSTRUCTION.** §7 fails, the verdict is `⛔ a gate failed above.`, `supervise.sh` returns non-zero, and
+  everything after that line — the `cp` of the raw object, the `git apply -R`, the dirty-tree proof — never
+  runs. After `sed` eating backslashes on both sides (122), a `'` inside `php -r` (123), argument passing
+  (124) and the lock (125), all five were **silent in the tool's own exit code**. ⛔ **This narrows tick
+  238's *"the harness is proven end-to-end, never re-brief it"*: the wave-128 form was proven for a set
+  whose gate was read for its OUTPUT, never for its exit STATUS.** The fix is `|| true` on that one line
+  and the tick-238 property survives it — the script still exits non-zero on a dirty tree, so the existence
+  of log *n+1* is the proof that revert *n* worked. ⭐ And re-derive a "discharged" note before inheriting
+  it (tick 191, pointed at this column's own file).
+- ⭐ **Check whether a missing id EXISTS before grading its absence.** Wave 135b's new `BUILD PROPOSAL`
+  line carries no capability id, which tick 118 makes a defect — except X-188 declares exactly four
+  (`G10-02 · G18-10 · G18-11 · G19-14`) and **none names parking**, so there is no id to carry. One
+  `grep` on `capabilities.php` turned a defect into a non-finding. The line names the missing thing and its
+  owner on one line, which is all `grep -rn "BUILD PROPOSAL:"` needs.
+- ⭐ **Seven pint items in and the first clean at the tip on the first ask — the wording that did it names
+  the tree, not the tool.** Wave 135b ran pint after its last commit, **committed the fix** (`9bfb4bf3`),
+  and `final-run.log` §6 read `{"tool":"pint","result":"passed"}` over `0 uncommitted path(s)`. The
+  tick-207b hazard — a pint fix left in the working tree making every later §6 print `passed` over a red
+  sha — did not recur, because the brief said *commit the fix* and *read it from a clean-tree gate* rather
+  than merely *run pint last*.
+- **Suite baseline, measured by this column at tick 248 on tip `9bfb4bf3`, clean tree — `tests 1942 ·
+  passed 1939 · assertions 8392 · duration_ms 110885 · failed 1 · errors 2 · incomplete 3 · risky 1`,**
+  the standing three by **identity** (`X01Test::test_g2_76_unified_inbox_header`, a `TRACK 1 ACTION`, plus
+  the two `TwelveJourneysTest` harness errors), §2 `none`, §2b `all parse`, §6 pint `passed` / phpstan `0`,
+  stamp `20260829-0647` = `runtime_build`. Against tick 247's `8391`: **+1** with `tests` flat at 1942 —
+  an assertion added to an existing method and nothing else, the only diff shape that produces that pair.
+  `duration_ms 110885` distinct from the wave's `110175`.
+- **Backlog at tick 248 — wave 135c is two report fields and one character; no production code.** RULED:
+  wave 135b's wire, comment, filter, proposal, test, mutation and ledger row are each verified above and
+  **stand** — reverting sound work to re-derive it is the wave-87 shape. What is owed is a real `ls`, a
+  `MUTATION` block whose every field names its source, the `set -e` fix proved by a dry run on a plain
+  gate, one `boundary` ledger row and pint. ⛔ **Mut 1 is spent — never re-brief it** (tick 191): §1 pins
+  the module file, §7 gives radius 1, and the failure message carries the component's own rendered HTML.
+  The push holds `8e9a306f · c7dd00c8 · 9bfb4bf3` plus this tick's own commit — all gated and clean, held
+  only by the tick-172 rule that no sha advances the ref while excluding a blocked tip. Then **wave 136**
+  takes the live list, `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **7** rows at tick 248, the
+  tick-227 six plus X-188's new cancellation-trigger row — re-run and never inherited. Stub pile across the
+  thirteen: **10**.
 
 ## Style
 
