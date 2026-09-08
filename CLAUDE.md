@@ -410,6 +410,16 @@ must not read tick 188's `HOLD` as the newest word. When the deny is lifted, app
 blocks in numeric order, oldest first. Filed as **TRACK 1 ACTION 4** and **OWNER ACTION G** —
 `.claude/settings.json` is the owner's file and no seat in this lane may edit it.
 
+⚠️ **RE-CONFIRMED at tick 190, and now TWO ticks are orphaned — `.blk189.md` and `.blk190.md`.**
+Both shell routes were re-tested against the real payload (never a probe: a truncating rewrite of a
+4 MB append-only ledger is the one irreversible move here) and both were denied again, while
+`Write` to `.blk190.md` in the same directory the same minute succeeded. It remains the file, not
+the directory. `da6ea196`'s subject — *"a deny glob matching every checkout but your own is
+invisible from where you sit, so seat-specific denies live in settings.local.json"* — describes this
+symptom precisely, but the deny is still in force here, so whatever Track 1 moved has not reached
+this seat's layer. No `.claude/settings.local.json` exists in this checkout and this seat may not
+create one. Still asserted, still unmeasured.
+
 ### ⛔ `RULING CR` (tick 189) — the blocker is SEVEN files, not six: `.claude/settings.json` is an `M` row, and a sibling lane has already been harmed by exactly it
 
 **Corrects `RULING CP`'s count, not its method.** CP's re-check command is right and is retained
@@ -442,6 +452,57 @@ Track 1 chooses, this lane's take must not repeat it.
 `.claude/`, which is a third party to both seats here. Filed to **TRACK 1 ACTION 1**; it does not
 change that item's verdict (the take was already shut on the four Doctor/seal files alone,
 `RULING CP`), only its resolution list.
+
+### ⛔ `RULING CT` (tick 190) — main fixed the Doctor/seal half of the take. The take is STILL SHUT, on the three `.claude/` rows. Narrow the resolution list, not the verdict.
+
+`origin/main` moved to `da6ea196` (2026-09-08 05:53); this lane is **373 behind / 20 ahead**. Its
+subject carries the fix for `RULING CP`'s largest row-group: *"a sealed-checker commit on main made
+every lane's merge uncommittable until the harness byte-identical clause was generalised to
+**app/app/Doctor in lane checkouts only**."* That is Track 1 addressing exactly what CP measured —
+`coder-bin/git:106` refusing `app/app/Doctor/` and `.*seals\.json$` unconditionally while the
+`$HARNESS` byte-identity exemption covered only `JourneyHarness.php`.
+
+⛔ **Asserted from a commit message; NOT measurable from this seat.** `sed
+/home/goaiez/agents/coder-bin/git` is refused by the workspace boundary (this checkout + the six
+sibling `.agents/supervisor/` dirs). As at tick 188 with `/proc`, **the denial is the answer** — do
+not re-run it, do not read the refusal as inconclusive. `coder-bin` is untracked here
+(`git log origin/main -- coder-bin/git` is empty), so there is no in-tree copy either.
+
+**Seven rows; the fix touches four. The other three shut the take on their own:**
+
+| rows | status after `da6ea196` |
+| :--- | :--- |
+| the four `app/app/Doctor/**` + `seals.json` | **plausibly takeable now** — unverifiable here |
+| `.claude/hooks/{drive_hook,no-piped-gate-tool}.py` (**A**) | **still shut** — `.claude/**` is a coder BLOCK, and an ADD cannot be `git checkout HEAD --`'d at all |
+| `.claude/settings.json` (**M**) | **still shut** — `RULING CR`'s row; per-track never-merge, restorable from neither seat |
+
+So **a merge wave dispatched now would still burn its run**, and `RULING CP`/`CQ`'s verdict stands.
+Do not read `da6ea196` as an opening.
+
+⚠️ **One fear of `CR`'s is measured and is NOT a hazard.** `git diff HEAD...origin/main --
+.claude/settings.json` is **only** an added `PreToolUse`/`no-piped-gate-tool.py` hook block. Main's
+tracked `settings.json` carries no sibling-mailbox deny — `0ad838d7` really did remove them. The
+row is shut on **custody**, not on damage; correct `CR`'s reasoning, keep its instruction.
+
+**RULED by the lane supervisor: do not dispatch a wave to read the guard.** `coder-bin/git` is
+Track 1's file and was edited three times in the hour before tick 190, so any reading this lane
+obtained is stale on arrival; the answer cannot change the verdict while the three `.claude/` rows
+stand; and seven of the twelve `RULING C*` false-credit shapes were written by a wave that existed
+to keep the lane busy. The one question for **TRACK 1 ACTION 1**: *does `coder-bin/git` now let a
+lane coder stage `.claude/hooks/*.py` (ADD) and `.claude/settings.json` (M) inside a `--no-ff
+--no-commit` take — and if not, who executes those three rows?*
+
+- **The take is now QUANTIFIED — it is worth 6 and plausibly all 13 of this lane's `contract`
+  `UNRESOLVED` entries.** `state.py next` decomposes its 50 unresolved as `capability 296 ·
+  contract 13 · tests 5 · schema 1` plus six `G*` ids. Six `contract` entries say verbatim
+  *"…lacks a uniqueness exemption and unconditionally fails"* (`X-186`, `X-190`, `X-205`, `X-217`,
+  `X-218`, + the `approval.requested` variant), and main's `30316573` adds exactly
+  `$multiEmitterOk = ['send.requested', 'approval.requested']`. Its comment records the owner's
+  measurement: *"'send.requested' had 8 emitters, 'approval.requested' had 5, **across 13
+  modules**"* — the same 13. These are **withdrawals waiting on a dependency that already exists on
+  main** (`state.py resolve <id> <stage> --reason <why…>`, rule 09: the reason names what arrived),
+  not fixes to author. ⚠️ `resolve` returns a module to **BUILDING**, never `DONE`; thirteen
+  withdrawals in one wave is the exact shape that invites the count-did-not-fall trap.
 
 ## Dispatching the coder (added 2026-09-02)
 
