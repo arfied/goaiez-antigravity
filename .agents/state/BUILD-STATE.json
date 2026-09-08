@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-07T07:35:01",
+ "updated": "2026-09-08T04:51:19",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2209,6 +2209,12 @@
    "module": "X-201",
    "chose": "owner copy on the dispute queue names the missing cross-account read path in owner words and carries no internal action id",
    "at": "2026-09-07T07:35:01",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-117",
+   "chose": "G18-29's fulfilment-vocabulary refusal is restored from main and adapted to pending_payment because ruling 45 leaves no path to paid; the 81 lines were main's one-sided addition that the 978041fc merge dropped under ruling 54, not a deletion by this lane, and no test in this lane cited G18-29",
+   "at": "2026-09-08T04:51:19",
    "ruling": "R245"
   }
  ]
