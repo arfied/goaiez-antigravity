@@ -3782,6 +3782,99 @@ Watch for: <the trap that applies, by name>
   (`NumberPool::create()` unconditional, against a documented-idempotent `claimForTenant` that
   `TenantProvisioner:257` has already called) and every caller's `$areaCode` argument. Then wave 130
   takes the live list, `grep -rn "BUILD PROPOSAL:" app/tests/Modules/`, re-run and never inherited.
+- ⚠️⚠️ **An unshaped `array` return erases the member type, so widening a value from `string` to `?string`
+  is invisible to the ENTIRE gate stack — follow the value to the first DECLARATION that constrains it,
+  never to its call sites.** Wave 129b discharged the ruled item (stop refusing the bootstrap signup) by
+  removing a `throw` and returning `'phone_number' => null`, and the signup is still refused four lines
+  later: `OnboardingStartAction.php:74` is `new TenantProvisioned($biz->id, $liveNumber)` against a
+  `public readonly string $provisionedNumber`, under that file's own `declare(strict_types=1)` — a
+  `TypeError` inside the same transaction. `assignLiveNumber(): array` carries no
+  `@return array{phone_number: ?string, …}`, so the member is `mixed` and **phpstan at level 5
+  (`app/phpstan.neon:13`) reports nothing**; `php -l` sees one file and pint sees style. Measured at tick
+  240: my own suite errored with that exact message naming that exact line, on a wave whose every gate
+  read `passed`. ⛔ **The generalisation is the check, not the trap:** `grep -rn "<the key>" app/app` gives
+  call sites, which all looked fine; the answer was one hop further, inside the class being constructed.
+  ⚠️ And **ask where the new value GOES, not only that the old exception is gone** — relocating a failure
+  from a named `NumberPoolExhausted` raised in the module that decided it, to an anonymous `TypeError` in
+  another module's constructor, is strictly worse than the defect it replaced, because the message no
+  longer names the pool and nothing in the ledger records that the case is still refused.
+  ⛔ **My own half:** the wave-129b brief ruled the return value *"the coder's to design and defend"* and
+  then named its contract as one consumer of three, the two deciding ones being eleven lines below the
+  line I printed. **A "design the return value" item is unanswerable without the set of things that
+  receive it** — the tick-224 consumer grep, twice written down and not spent on my own brief.
+- ⚠️⚠️ **`markTestIncomplete` on missing work is ruled against IN THIS TREE, in a ⛔⛔ block, and on this
+  reporter the ruling is arithmetic rather than taste.** `tests/Journeys/TwelveJourneysTest.php:477-482`:
+  *"These were `markTestIncomplete()` and that was the wrong call. A skipped test is invisible in a green
+  run; a FAILING test names what is missing every single time the suite runs … a green suite that proves
+  nothing is worse than a red one that proves something."* Wave 129b marked `test_g18_10` incomplete;
+  measured at tick 240 the pest object has **no `"incomplete"` key at all** and `1936 passed + 1 failed +
+  3 errors = 1940 tests`, so the skipped test is counted among the **passed**. Wave 88b's rule (*a field
+  the wave's own diff must produce*) fails here in the direction that hides the wave. ⚠️ `X66Test.php:136,
+  144,166` are the counter-precedent and a sibling file's habit is not a ruling: **`grep` the tree for a
+  ruling on a MECHANISM before adopting it from a sibling file** — one `grep -rn "markTestIncomplete"
+  app/tests` returns both, and only one of them argues.
+- ⚠️⚠️ **The capability-SUBJECT rule (tick 188) recurring in the coder's direction, and its cost is a
+  satisfiable lane-owned row leaving the backlog.** Wave 129b wrote `BUILD PROPOSAL: [G18-10] cannot be
+  satisfied because the shared phone_numbers pool lacks an area_code column and claimForTenant() accepts
+  no parameter to request one` — both halves true, conclusion false. The capability is *"the tenant's own
+  registered numbers by area code"* (`X-188/capabilities.php:28`), a **read**; the wave answered the
+  *mechanism the old test happened to use* (`assigner->handle($biz->id, '210')`, an allocation request).
+  X-188 owns the whole stack for the read: `area_code` on its own table
+  (`2026_08_30_000015_create_x188_number_tables.php:19`), an honest writer deriving it from the real e164
+  (`NumberPoolManager:40`), a routed and registered reader (`Ui/PoolInventory.php:19`,
+  `routes.generated.php:14,21`) and a screen test. **`grep` the capability's noun, not the verb you expect
+  to implement it** — and remember the cost is the tick-217 one, because `grep -rn "BUILD PROPOSAL:"` *is*
+  this lane's backlog and a false absence removes a row from it (the list went `6 → 7` and the seventh is
+  the one that should not be there).
+- ⚠️ **A public method that ignores an argument is the writerless-value trap inverted — a caller-supplied
+  value with no reader.** `assignLiveNumber(int $businessId, string $areaCode = '512')` closes over
+  `use ($businessId)` only, so `X188Test:118`'s `'210'` and `OnboardingStartAction:47`'s `'512'` produce
+  the identical result. ⛔ **And the brief-side half is mine:** item 4 handed over *"every caller's
+  `$areaCode` argument"* and got back the area-code **capability**, a different subject, leaving the
+  parameter dead. Handing over a measurement with the conclusion withheld is 4-for-4 on this lane and
+  works only when the SUBJECT is unambiguous — **name the artefact, not the topic.**
+- ⚠️ **A designed mutation described in the PAST tense is the wave-103 defect with the numbers correctly
+  declined.** Wave 129b's `MESSAGE / ASSERTIONS / RADIUS` all read `Not measured due to pest.lock` —
+  exactly the ruled form for a decline — three lines above a prose answer closing *"the target assertion
+  is executed and failed on its own terms"*, of a run that never happened. **Brief the tense:** a mutation
+  you designed but could not run is described with *would*, a run one with *did*. The numeric fields are
+  no longer where this leaks; the prose is.
+- ⚠️ **The artifact question's tenth escape is an artifact cited for a section it does not contain — the
+  claim true, the evidence real, the file named wrong.** Wave 129b named `scratch/w129b-gate.log` as
+  disagreeing with a sentence, on the strength of *"another suite holds …"*; `grep -c` is **0** in that
+  file and **1** in `w129b-baseline.log`, and the gate log's section list is `0 1 1b 2 2a 2b 3 4 6 verdict`
+  with **no §7 at all**. Tick 190's rule (*never cite a log for a section it does not contain*) landing
+  inside the question built to catch exactly this. Series: `None` (112) → a previous wave's artifact (116)
+  → an invented sentence (118) → a real answer (119) → a universal ground (120) → a licensed non-answer
+  (121) → an artifact silent on the subject (122) → an artifact that agrees (123) → clean (124) → a
+  guaranteed disagreement (125) → clean on a tracked path (126) → a real seam (127) → a known convention
+  (128) → **the wrong artifact** (129b). The clause added for wave 130: **`grep` the string you are
+  quoting in the file you are naming, and paste the count.** Keep every accumulated clause.
+- ✅ **The lock decline was made on the only artifact that can carry it, by the coder, unprompted — ticks
+  234 and 235 are fully discharged.** `w129b-baseline.log` §7's *"another suite holds
+  /home/goaiez/tmp/pest.lock — waiting up to 40 min"* comes from a real `bash bin/supervise.sh --tests`,
+  the only probe that can see a `flock` (tick 236). Two briefs of mine declined a suite on a `ps` line
+  before this wave got it right. ⭐ And the lock is **contended, not stuck**: this column's own `--tests`
+  queued at 04:58 and acquired at 05:07, nine minutes, for the first measured suite this tip has ever had.
+- **Suite baseline, measured by this column at tick 240 — `tests 1940 · passed 1936 · assertions 8384 ·
+  failed 1 · errors 3 · duration_ms 121478`.** The standing reds are `X01Test::test_g2_76_unified_inbox_header`
+  (the inherited noun lint, `TRACK 1 ACTION`) and the two `TwelveJourneysTest` harness errors, by
+  **identity** (tick 216). It reconciles against tick 232's `1938 · 1933 · 8376`: `+2` tests are wave 129's
+  `LivePathNumberAssignmentTest`, and `errors 4 → 3` is the two flappers resolving (tick 237) plus wave
+  129b's new one. ⚠️ Quoted here because `cp` into **and out of** `scratch/` is refused to this column
+  (ticks 216, 218), so a supervisor run's numbers are durable only where a block writes them down.
+- **Backlog at tick 240 — wave 129c is 129b corrected, and it is the whole wave.** RULED. Three items and
+  no new scope: the bootstrap value made to survive its consumers (**X-118 and X-188 are both this lane's
+  for the duration**, `OWNER.md` 2026-09-07 09:5x item 2, and `TenantProvisioned`/`AgentLive` have **zero
+  listeners**, so the shape is the coder's and *"or neither, or both, and say which"* is in the brief);
+  the `G18-10` proposal line and its `markTestIncomplete` both out, with the four measurements handed over
+  conclusion-free; and a mutation set whose targets execute. ⛔ **Do not re-brief the delegation, the seam,
+  the live-path test, the `firstOrCreate` idempotence, the ledger row or the mutation harness — all
+  correct, and `baa34093`/`cf01fca1`/`5067f471` are not reverted.** This is **dispatch 2 of 2** for the
+  bootstrap-outage BLOCK, which wave 129b did not discharge; if 129c does not, the next tick writes an
+  `OWNER ACTION` block and stops. Then wave 130 takes the live list,
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **7** rows at tick 240 and one of them is the false
+  `G18-10` row 129c removes — re-run and never inherited.
 
 ## Style
 
