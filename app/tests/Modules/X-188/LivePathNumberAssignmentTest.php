@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X188;
 
-use App\Exceptions\NumberPoolExhausted;
 use App\Models\User;
 use App\Modules\X118\Actions\OnboardingStartAction;
 use App\Services\Sms\TenantNumbers;

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Modules\X188\Domain;
 
-use App\Exceptions\NumberPoolExhausted;
 use App\Modules\X188\Events\TenantCancelled;
 use App\Modules\X188\Models\BrandRegistration;
 use App\Modules\X188\Models\NumberAssignment;
