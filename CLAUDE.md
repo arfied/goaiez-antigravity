@@ -932,3 +932,59 @@ increment per refusal.**
 for a price we don't have" is a real gap whoever asked, and it is what feeds the price-gap listener.
 ⭐ Recorded, **not work**: a staff-side refusal signal, if ever wanted, gets **its own counter** — the
 lane's one-condition-one-word doctrine applied to counters, never a share of `refusal_count`.
+
+## ⭐ Trap added 2026-09-08 08:5x — a `REFUSED` line that names a command which SUCCEEDED, and the artifact that settles it
+
+Sibling of the `/usr/bin/git` ruling, same resolution, different field. PB-120's report listed
+`python3 bin/state.py decided …` under `REFUSED`, yet commit `c8dec6e5` records exactly that decision.
+**A hand edit to `.agents/state/BUILD-STATE.json` is a `BLOCK`, so proving the tool ran was the whole
+question** — and the diff proves it: `updated` bumped, one decision object appended, one `JOURNAL.md`
+line appended, `at` matching to the second across both files. **No hand edit produces that triple.** The
+first invocation was refused (ruling 106 — module id first) and the coder retried correctly.
+
+⭐ **The general rule, already stated for tools and now for fields: a report's PROSE is a recollection;
+the ARTIFACT names what actually happened.** ⚠️ And the coder-side correction that prevents it:
+**`REFUSED` names what was refused *and left undone*.** A command refused once and then retried
+successfully is `DONE`. ⛔ Reporting it as `REFUSED` costs a whole tick proving a negative, exactly as a
+mis-typed `/usr/bin/git` does.
+
+## ⛔ Trap added 2026-09-08 08:5x — never hang a second contract id on an existing green assertion
+
+`capabilities.php` fails the build for an id with no matching test under `tests/Modules/<id>/`. That
+makes **citing** an id the cheapest possible way to clear it — and therefore the most dangerous.
+
+Measured: `G6-18` ("multi-warehouse shipping") has no test, and `X167Test.php:281-292` asserts *"No path
+under app/Modules/X-167/ performs a location-to-location transfer by updating location_id."* It reads
+like exactly the bound `G6-18` needs. **It is already cited, as `[G6-51]`.** Adding `[G6-18]` beside it
+would have marked the id covered while **asserting nothing new** — the checker satisfied by comment.
+
+⭐ **The rule: one contract id, one assertion that can independently go red.** If a proposed citation
+adds no assertion whose mutation reddens *that id*, it is padding with a contract number on it. When two
+ids really do share a subject, the second needs its **own** subject — here `G6-51` greps `location_id`
+for a *transfer*, so `G6-18` must grep `warehouse|shipment|freight` for the *concept*.
+⚠️ And when the new test is a grep-lint, **demand the hand-run grep output in the report**: ⛔ a filter
+list tuned until the lint goes green is the lint deleting itself.
+
+## ⭐ Trap added 2026-09-08 08:5x — when the defect hunt runs dry, measure the CONTRACT, not harder
+
+PB-115→120 found five defects by five behavioural generalisations. On 2026-09-08 the successors were run
+to ground and **eight candidates in a row came back cleared** — the registry screen (X-166 precedent),
+X-172's placeholders (gone), `service_name` on the quoted path (present), the staff panel's pill
+(remedy-neutral in all three arms), the `'none'` sentinel (**99 of 127** manifests carry it — scaffold
+convention), `lookupCallout()`'s missing `status` key (C-Agent guards on `refusal_code`), C-Agent's
+customer price path (enumerates **both** matched-row codes), and week-2 screen coverage (**23 of 23**).
+
+⛔ **The failure mode at that moment is to loosen a criterion until something fires again.** ⭐ The move
+that worked instead was to change the *instrument*: stop reading behaviour and read the **contract**.
+Cross-referencing every capability id in the lane's ten modules against the ids cited in their tests took
+two greps and found a real gap — **13 ids with no test, 11 correctly carrying an `UNRESOLVED` for a
+missing dependency, and 2 (`G6-24`, `G6-18`) neither built nor honestly deferred.**
+
+⚠️ Note what the same measurement also *cleared*: the eleven X-167 `UNRESOLVED` rows are **correct** under
+rule 09 and are ⛔ not work. **A gap list is only useful once you subtract the deferrals** — otherwise the
+instrument reports eleven findings that are all somebody's honest "not yet".
+
+⛔ **And the `'none'` near-miss is the standing warning.** X-82's manifest declares three agent-reachable
+actions *plus* the blanket-skip sentinel, with `rate.set` among them — a **write**. It looked like a live
+P-209 violation on a module this lane owns. One grep (`99/127`) killed it. Briefing it would have meant a
+wave against a **generated** file whose regeneration path was a guess.
