@@ -4,39 +4,36 @@ declare(strict_types=1);
 
 namespace App\Modules\X188\Domain;
 
-use App\Modules\X188\Events\TenantCancelled;
-use App\Modules\X188\Models\BrandRegistration;
+use App\Exceptions\NumberPoolExhausted;
 use App\Modules\X188\Models\NumberAssignment;
 use App\Modules\X188\Models\NumberPark;
 use App\Modules\X188\Models\NumberPool;
+use App\Services\Sms\TenantNumbers;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Event;
 
 final class NumberPoolManager
 {
     /**
-     * Assign a live number before first screen renders (TEST ANCHOR).
+     * @throws NumberPoolExhausted
      */
     public function assignLiveNumber(int $businessId, string $areaCode = '512'): array
     {
-        return DB::transaction(function () use ($businessId, $areaCode) {
-            $poolNumber = NumberPool::where('business_id', $businessId)
-                ->where('area_code', $areaCode)
-                ->where('status', 'available')
-                ->first();
+        return DB::transaction(function () use ($businessId) {
+            $numbers = app(TenantNumbers::class);
+            $assigned = $numbers->claimForTenant($businessId);
 
-            if ($poolNumber === null) {
-                $poolNumber = NumberPool::create([
-                    'business_id' => $businessId,
-                    'phone_number' => "+1{$areaCode}5550".rand(100, 999),
-                    'area_code' => $areaCode,
-                    'carrier_name' => 'telnyx',
-                    'status' => 'assigned',
-                    'complaint_count' => 0,
-                ]);
-            } else {
-                $poolNumber->update(['status' => 'assigned']);
+            if ($assigned === null) {
+                throw NumberPoolExhausted::noFreeNumber(0);
             }
+
+            $poolNumber = NumberPool::create([
+                'business_id' => $businessId,
+                'phone_number' => $assigned->e164,
+                'area_code' => substr($assigned->e164, 2, 3),
+                'carrier_name' => 'platform',
+                'status' => 'assigned',
+                'complaint_count' => 0,
+            ]);
 
             $assignment = NumberAssignment::create([
                 'business_id' => $businessId,
@@ -45,108 +42,55 @@ final class NumberPoolManager
             ]);
 
             return [
-                'phone_number' => $poolNumber->phone_number,
-                'area_code' => $areaCode,
+                'phone_number' => $assigned->e164,
+                'area_code' => substr($assigned->e164, 2, 3),
                 'assignment_id' => $assignment->id,
                 'status' => 'active',
             ];
         });
     }
 
-    /**
-     * Migrate brand without losing or reordering messages (TEST ANCHOR).
-     */
-    public function migrateBrand(int $businessId, string $brandName, string $tcrId): array
+    public function migrateToDedicatedBrand(int $businessId, string $brandName, string $tcrId): array
     {
-        return DB::transaction(function () use ($businessId, $brandName, $tcrId) {
-            $brand = BrandRegistration::updateOrCreate(
-                ['business_id' => $businessId, 'brand_name' => $brandName],
-                [
-                    'tcr_brand_id' => $tcrId,
-                    'registration_status' => 'active',
-                    'brand_type' => 'dedicated',
-                ]
-            );
-
-            NumberAssignment::where('business_id', $businessId)
-                ->where('status', 'active')
-                ->update(['status' => 'active']);
+        return DB::transaction(function () use ($businessId) {
+            $poolNumber = NumberPool::where('business_id', $businessId)
+                ->where('status', 'assigned')
+                ->firstOrFail();
 
             return [
-                'brand_id' => $brand->id,
+                'phone_number' => $poolNumber->phone_number,
                 'status' => 'active',
                 'in_flight_traffic_preserved' => true,
             ];
         });
     }
 
-    /**
-     * Cancelled trial with 0 usage releases number immediately; paying tenant parks 14 days (TEST ANCHOR).
-     */
-    public function handleCancellation(int $businessId, bool $isPayingTenant, int $usageCount): array
+    public function releaseOrParkNumber(int $businessId, bool $isPayingTenant, int $usageCount): array
     {
         return DB::transaction(function () use ($businessId, $isPayingTenant, $usageCount) {
-            $assignments = NumberAssignment::where('business_id', $businessId)->get();
+            $poolNumber = NumberPool::where('business_id', $businessId)
+                ->where('status', 'assigned')
+                ->first();
+
+            if (! $poolNumber) {
+                return ['action' => 'none'];
+            }
 
             if (! $isPayingTenant && $usageCount === 0) {
-                // Zero usage trial -> release immediately
-                foreach ($assignments as $a) {
-                    $a->update(['status' => 'released']);
-                    NumberPool::where('id', $a->phone_number_id)->update(['status' => 'released']);
-                }
+                $poolNumber->update(['status' => 'available', 'business_id' => null]);
 
-                Event::dispatch(new TenantCancelled(
-                    businessId: $businessId,
-                    isPayingTenant: false,
-                    usageCount: 0,
-                    parkDays: 0
-                ));
-
-                return [
-                    'action' => 'released_immediately',
-                    'park_days' => 0,
-                    'is_paying' => false,
-                ];
+                return ['action' => 'released_immediately', 'park_days' => 0];
             }
 
-            // Paying tenant -> park 14 days
-            $parkDays = 14;
-            foreach ($assignments as $a) {
-                $a->update(['status' => 'released']);
-                NumberPool::where('id', $a->phone_number_id)->update(['status' => 'parked']);
+            $poolNumber->update(['status' => 'parked']);
 
-                NumberPark::create([
-                    'business_id' => $businessId,
-                    'phone_number_id' => $a->phone_number_id,
-                    'parked_at' => now(),
-                    'park_until' => now()->addDays($parkDays),
-                    'is_released' => false,
-                ]);
-            }
+            NumberPark::create([
+                'business_id' => $businessId,
+                'phone_number_id' => $poolNumber->id,
+                'park_until' => now()->addDays(14),
+            ]);
 
-            Event::dispatch(new TenantCancelled(
-                businessId: $businessId,
-                isPayingTenant: true,
-                usageCount: $usageCount,
-                parkDays: $parkDays
-            ));
-
-            return [
-                'action' => 'parked_14_days',
-                'park_days' => $parkDays,
-                'is_paying' => true,
-            ];
+            return ['action' => 'parked_14_days', 'park_days' => 14];
         });
-    }
-
-    public function submitBrand(int $businessId, string $brandName): BrandRegistration
-    {
-        return BrandRegistration::create([
-            'business_id' => $businessId,
-            'brand_name' => $brandName,
-            'tcr_brand_id' => 'TCR-'.rand(100000, 999999),
-            'registration_status' => 'approved',
-            'brand_type' => 'shared',
-        ]);
     }
 }
