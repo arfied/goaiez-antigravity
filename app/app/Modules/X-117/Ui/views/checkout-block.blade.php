@@ -44,6 +44,9 @@
     @if(count($orders) === 0)
         <x-ui.empty-state heading="No orders yet." />
     @else
+        @if($ordersTruncated)
+            <p class="text-sm text-ink-2">The 10 most recent orders are shown. Older orders are not on this page.</p>
+        @endif
         <ul>
             @foreach($orders as $o)
                 <li>

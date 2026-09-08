@@ -74,7 +74,8 @@ class SyncErrorRateScreenTest extends TestCase
             ->assertSee('100% conflicts')
             ->assertSee('nothing to sync')
             ->assertSee('6 lines seen')
-            ->assertSee('50% conflicts');
+            ->assertSee('50% conflicts')
+            ->assertSee('Nothing is posted to a ledger from here');
 
         $screen->call('show', $run1Id)
             ->assertSee('inv_tx_r1_low');
@@ -88,7 +89,8 @@ class SyncErrorRateScreenTest extends TestCase
         ]);
 
         $screen->call('show', $run3Id)
-            ->assertSee('888')
+            ->assertSee('888 lines categorised')
+            ->assertDontSee('lines posted')
             ->assertSee('This run had no conflicts')
             ->assertDontSee('inv_tx_b_low');
 

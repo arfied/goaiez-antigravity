@@ -90,7 +90,8 @@ class InvoiceThreadBesideScreenTest extends TestCase
             ->assertSee('Recorded: Complaint on the thread')
             ->assertSee('needs a human')
             ->assertSee('no reminder sequence and no way to contact anyone')
-            ->assertDontSee('will not enter');
+            ->assertDontSee('will not enter')
+            ->assertDontSee('The 50 most recent messages are shown');
 
         $this->assertSame(1, ArDunningAction::where('business_id', $biz->id)->where('invoice_id', $inv1->id)->where('action', 'reason_recorded')->count());
         $this->assertSame(1, ArDunningAction::where('business_id', $biz->id)->where('invoice_id', $inv1->id)->where('action', 'escalate_to_human')->count());
@@ -117,5 +118,51 @@ class InvoiceThreadBesideScreenTest extends TestCase
             ->set('reason.999999', 'silence')
             ->call('recordReason', 999999)
             ->assertSee("isn't in this account");
+    }
+
+    public function test_the_thread_keeps_the_newest_messages_and_says_when_it_is_cut(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'John', 'last_name' => 'Doe']);
+        $conv = Conversation::create(['business_id' => $biz->id, 'person_id' => $customer->id, 'channel' => 'sms', 'status' => 'open']);
+
+        $invoice = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-A1',
+            'total_cents' => 45000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(12),
+        ]);
+
+        DB::table('messages')->insert(['business_id' => $biz->id, 'conversation_id' => $conv->id, 'sender_type' => 'person', 'body' => 'THE OLDEST MESSAGE IN THIS THREAD', 'direction' => 'inbound', 'created_at' => now()->subMinutes(51)]);
+        for ($i = 2; $i <= 50; $i++) {
+            DB::table('messages')->insert(['business_id' => $biz->id, 'conversation_id' => $conv->id, 'sender_type' => 'person', 'body' => "Message $i", 'direction' => 'inbound', 'created_at' => now()->subMinutes(52 - $i)]);
+        }
+        DB::table('messages')->insert(['business_id' => $biz->id, 'conversation_id' => $conv->id, 'sender_type' => 'person', 'body' => 'THE NEWEST MESSAGE IN THIS THREAD', 'direction' => 'inbound', 'created_at' => now()->subMinutes(1)]);
+
+        Livewire::actingAs($owner)->test(InvoiceThreadBeside::class, ['invoiceId' => $invoice->id])
+            ->assertOk()
+            ->assertSee('THE NEWEST MESSAGE IN THIS THREAD')
+            ->assertDontSee('THE OLDEST MESSAGE IN THIS THREAD')
+            ->assertSee('The 50 most recent messages are shown');
+    }
+
+    public function test_the_thread_screen_says_no_invoice_is_open_and_what_that_waits_on(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        Livewire::actingAs($owner)->test(InvoiceThreadBeside::class)
+            ->assertOk()
+            ->assertSee('Nothing in this checkout raises one from a completed job')
+            ->assertDontSee('Every issued invoice is paid');
     }
 }

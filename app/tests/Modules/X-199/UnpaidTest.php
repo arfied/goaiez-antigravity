@@ -75,7 +75,8 @@ class UnpaidTest extends TestCase
             ->assertViewHas('unpaidCount', 0)
             ->assertViewHas('unpaidValueCents', 0)
             ->assertSee('0.00')
-            ->assertSee('Nothing unpaid.');
+            ->assertSee('Nothing unpaid.')
+            ->assertSee('Nothing in this checkout raises one from a completed job');
 
         Carbon::setTestNow();
     }

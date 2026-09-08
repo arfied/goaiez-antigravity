@@ -28,7 +28,7 @@
             @if($invoices->isEmpty() && !$showLastFivePaid)
                 <div wire:loading.remove>
                     <x-ui.empty-state heading="Nothing unpaid." action="View the last 5 paid" target="showPaid">
-                        You have no outstanding invoices.
+                        You have no outstanding invoices. Nothing in this checkout raises one from a completed job, so this list fills when the job hand-off is built.
                     </x-ui.empty-state>
                 </div>
             @elseif($invoices->isEmpty() && $showLastFivePaid)
