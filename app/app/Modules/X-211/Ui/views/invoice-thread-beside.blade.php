@@ -30,7 +30,7 @@
 
         @if($escalation)
             <x-ui.attention-card state="alert" heading="This one needs a human">
-                {{ $escalation->reason }} — recorded {{ $escalation->created_at->diffForHumans() }}. It will not enter a reminder sequence.
+                {{ $escalation->reason }} — recorded {{ $escalation->created_at->diffForHumans() }}. Nothing is sent from here: this module has no reminder sequence and no way to contact anyone.
             </x-ui.attention-card>
         @endif
 

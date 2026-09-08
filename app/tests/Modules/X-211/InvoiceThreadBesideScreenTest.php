@@ -89,7 +89,8 @@ class InvoiceThreadBesideScreenTest extends TestCase
             ->call('recordReason', $inv1->id)
             ->assertSee('Recorded: Complaint on the thread')
             ->assertSee('needs a human')
-            ->assertSee('will not enter a reminder sequence');
+            ->assertSee('no reminder sequence and no way to contact anyone')
+            ->assertDontSee('will not enter');
 
         $this->assertSame(1, ArDunningAction::where('business_id', $biz->id)->where('invoice_id', $inv1->id)->where('action', 'reason_recorded')->count());
         $this->assertSame(1, ArDunningAction::where('business_id', $biz->id)->where('invoice_id', $inv1->id)->where('action', 'escalate_to_human')->count());
