@@ -3925,3 +3925,128 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     `currency` column at all**, so X-199's screens print unlabelled money; unlike ruling 152(b) there
     is no real column to group by and the per-tenant currency source is another lane's, so the fix is
     a cross-lane dependency and not this lane's wave.
+171. **Ruling 166(b) is CORRECTED: `$withLayout` 10 vs 13 is not a re-pin, it is three `#[Layout]`
+    attributes this lane's own merge resolution dropped, and it is fixable here (RULED by the lane
+    supervisor 2026-09-08 13:5x, applying `OWNER.md`'s 2026-09-08 Track 1 section; briefed as
+    MONEY-119 item 1).** Ruling 166 measured three architecture pins moving *because money won three
+    merge resolutions* and filed all three as **TRACK 1 ACTION 7**, on the reasoning that each pin's
+    own text says the honest response is to re-pin and record. That reasoning holds for (a) and (c)
+    and is **wrong** for (b). Track 1 measured the cause: money's merge of `origin/main` `07a4ae2f`
+    kept money's side whole for `X-198/Ui/ConnectCard.php`, `ReconciliationDiscrepancies.php` and
+    `SameAccount.php` — ruling 54's policy applied correctly — and in doing so dropped `main`'s
+    `#[Layout('components.layouts.agency')]` from all three (added by `de435ba2`, 2026-09-04), so the
+    three screens fall through to the staff console. **This is ruling 58 shape (2) — main's
+    one-sided change inside a money module tree — and ruling 59 makes the files money's to resolve
+    on money's terms regardless of who last touched them.** Verified here: `grep -n "Layout"` over
+    the three returns **nothing**, `git show origin/main:<each>` carries `use
+    Livewire\Attributes\Layout;` in the import block and `#[Layout('components.layouts.agency')]`
+    directly above the class, and `components/layouts/agency.blade.php` exists and is worn by ten
+    other modules' screens. **RULED: adopt the attribute and its import, and NOTHING else** — ruling
+    155's discipline verbatim, so no `mount()`, no `$businessId`, no `$loadError`.
+    ⚠️ **The two architecture tests do not read the same thing, and that is what makes this safe.**
+    `OwnerNavTest:284`'s `$hasLayout` is `! empty($reflection->getAttributes(Layout::class))` —
+    **any** `#[Layout]`, whatever its argument — so the restoration moves `$withLayout` 10 → 13 and
+    `$withoutLayout` 258 → 255, both to their pins. `HeadingSeamTest:21,:131` and `OwnerNavTest:99`
+    match the **literal** `components.account.layout` as text, so `layouts.agency` enters neither
+    population and ruling 162's `<h1>`-under-a-layout hazard **cannot** fire here. ⛔ The three blades
+    are not touched and no `Feature/Architecture/` file is edited (the One Rule). ⚠️ Blast radius
+    measured: every `assertDontSee` in the three screens' tests is inside a `Livewire::test` chain,
+    which never renders the layout (this lane's standing field note), and the three real GET tests in
+    `tests/Modules/X-198/Screens/` assert `assertOk()` and nothing else — so **zero** existing
+    assertion can move. ⚠️ The three pins **after** `$withoutLayout` (`$unbuilt` 220, `$built` 35,
+    `$unresolved` 0) are unmeasured today because the chain stops at `$withLayout` (ruling 162's
+    lesson); the argument that they will hit is that every pin in that test was authored against a
+    tree **carrying** the attribute, so restoring it restores main's own measurement. That is a
+    prediction, and it is named as one rather than promised (ruling 92). ⚠️ The generalisable half:
+    **a pin that moved at a merge is a symptom, and the honest response is to re-pin only once the
+    cause is measured** — 166 filed three symptoms together because they moved together, and one of
+    them had a cause inside this lane's own files. TRACK 1 ACTION 7 now carries **two** pins.
+
+172. **A wave that renames a test owns every artifact that NAMES it, and MONEY-118 left the sibling
+    file for the third time in the same family (RULED by the lane supervisor 2026-09-08 13:5x,
+    briefed as MONEY-119 item 2).** Ruling 169 named X-199's and X-211's `runtime-proof.json` files
+    and required their deletion; MONEY-118 deleted both correctly. It also **renamed both tests** —
+    `test_an_invoice_reaches_a_real_charge_id_and_its_number_cannot_repeat` →
+    `test_the_invoice_artifact_proves_its_number_sequence_and_refuses_a_duplicate`, and
+    `test_a_recovery_reaches_a_real_charge_id` →
+    `test_the_recovery_artifact_proves_the_plan_and_its_refusal` — which ruling 50(b) required and
+    which is right. Measured now: `app/storage/app/evidence/X-199/junit.xml` and
+    `.../X-211/junit.xml`, both dated **2026-09-06**, still name the OLD methods with
+    `failures="0" errors="0"`. X-199's reads `<testcase name="An invoice reaches a real charge id and
+    its number cannot repeat" … assertions="8"/>` — **the exact sentence rulings 48 and 169 removed
+    from `invoice.json`, relocated intact into the file beside it**, certifying as passed a method
+    that no longer exists. That is ruling 49's derived-artifact class and ruling 50(c)'s
+    owns-the-artifact rule, in the wave written about both. ⚠️ **The readers make it worse, not
+    better.** Both `RuntimeProofCommand`s still carry ~60 lines of artifact-reading apparatus — the
+    junit parse, the root-suite walk, and `:74`'s `$hasName` against the **new** name, which can
+    therefore never match these files — sitting **above** an unconditional `$this->error(...)` +
+    `return self::FAILURE`. The mismatch is real and structurally invisible, because the command
+    refuses whatever the junit says. **RULED: both commands reduce to the shape ruling 49 already
+    established for X-117** — the `runningUnitTests()` guard, the refusal naming the real missing
+    dependency, `return self::FAILURE`, and nothing else (`X-117/Console/RuntimeProofCommand.php` is
+    31 lines and is the model) — **and both stale `junit.xml` files are deleted**, which is ruling
+    49's own remedy for the sibling it stopped at. ⛔ Not resolved by regenerating the two junits:
+    they would then certify a passing test for a command that refuses by design, which is the fiction
+    with a fresh date on it. ⛔ Not by leaving the apparatus in place "in case the dependency lands":
+    dead code above an unconditional refusal is the invitation ruling 102 refused for
+    `RecordPaymentOnCapture`, and the day `payments` carries an invoice column the command is
+    rewritten anyway. ⚠️ **There is no mutation proof for this item and none is asked for** — nothing
+    reads either junit but the code being deleted, and no test in the lane references them (measured:
+    `grep -rn "junit.xml" app/tests` returns only `X198Test.php:136-139`, which is X-198's). ⚠️ The
+    generalisable half, and ruling 50's closing instruction restated because it keeps being one line
+    short: **after a wave renames a method or removes a key, `ls` the artifact directory and account
+    for EVERY file left in it** — 49 stopped at `runtime-proof.json`'s sibling, 50 stopped at
+    `junit.xml`'s sibling in another module, and 169 stopped at the same sibling here. Per the
+    46/49/50/62/66/75/82/86/94/104/106/113/116/146/153/167 precedent the miss is the supervisor's and
+    MONEY-119 carries its own two dispatches.
+
+173. **`evidence/j9/charge.json` is the FOURTH and last instance of ruling 48's construction, and it
+    is the artifact this lane's own owned journey asserts on (RULED by the lane supervisor
+    2026-09-08 13:5x, briefed as MONEY-119 item 3).** Ruling 169 wrote that *"X-198 already owns that
+    proof (`EvidenceChargeCommand` → `evidence/j9/charge.json` … verified again this tick per ruling
+    39's companion lesson)"* — the verification read the **charge id**, which is honest, and never
+    read the command that writes it. Measured now, `X-198/Console/EvidenceChargeCommand.php` is the
+    same three moves ruling 48 found in X-117 and ruling 169 found in X-199 and X-211: `:49` issues
+    an invoice for 12500 through `issueInvoice()`; `:52` **separately** captures 12500 with Stripe's
+    own `tok_visa` under `idem_j9_<time>`, touching no invoice, because `capture()`'s signature is
+    `(businessId, amountCents, paymentToken, idempotencyKey, currency)` over a `payments` table with
+    **no invoice column** (ruling 102); `:54` calls `recordPayment($businessId, $invoice->id, 12500)`,
+    a purely local ledger write that consults no gateway; and `:57-59` writes `gateway_charge_id`
+    beside `invoice_id` and `invoice_status` in **one** JSON object. The charge exists with or without
+    the invoice and the invoice reads `paid` with or without the charge. ⚠️ **What makes this the
+    sharpest of the four is the reader.** `TwelveJourneysTest.php:485-508` — **J9**, whose goal in
+    this lane's TRACK section is *"an invoice reaches a real charge id"* — asserts the `ch_` prefix
+    (true, and honest), `running_unit_tests === false` (true), and **`assertSame('paid',
+    $artifact['invoice_status'])`**, under a comment reading *"⛔ The gateway's own id. Nothing here
+    can mint one, which is the only reason this assertion means anything."* That comment is true of
+    the charge id and false of the line beneath it: `invoice_status` is minted here, by
+    `recordPayment`, and the journey's name joins the two. **J9 has been green on exactly the
+    construction rulings 48, 49 and 169 removed from three other modules.**
+    **RULED, per ruling 48 unchanged: the artifact evidences what its command actually proves and
+    nothing else — `invoice_id` and `invoice_status` are REMOVED, not relabelled, and the invoice
+    issuance and `recordPayment` go with them**, because they exist only to populate those two keys
+    and a local ledger write left in a command whose artifact no longer mentions it reads as a linkage
+    to the next person. `payments_written` is added as a real `Payment::…->count()` (ruling 48(2) —
+    ⛔ never a self-certifying literal). J9's `assertSame` is **inverted and kept**, never deleted
+    (rulings 39, 46), and its comment states what the artifact cannot prove. `GatewayEngineTest:11-14`
+    is measured and **untouched**: it asserts only `ch_`, `strlen === 27` and `payment_status ===
+    'captured'`, every one X-198's own subject. ⛔ Not resolved by giving `capture()` an invoice
+    column — a cross-module API change ruling 102 already recorded `UNRESOLVED`, and minting it to
+    satisfy an artifact is ruling 56's `requestCharge` mistake. **J9's goal stays `UNRESOLVED` against
+    that schema gap, which ruling 169 already recorded and which is what it has always been.**
+    ⚠️ **The method name is deliberately NOT changed in this wave, and the reason is written down so
+    the next tick does not read it as an oversight.** `an_invoice_reaches_a_real_charge_id` is ruling
+    50(b)'s defect and it has three readers — `X-198/Console/RuntimeProofCommand:99`'s `$hasName`
+    needle, `evidence/X-198/junit.xml`'s `<testcase name>`, and `evidence/X-198/runtime-proof.json`'s
+    `test` key — and that `runtime-proof.json` carries `artifact_id: ch_3UCgYZFXLB0i1zXl0NCv569q`,
+    **the one genuinely vendor-issued `artifact_id` in this lane** and the only honest runtime proof
+    it has. Renaming requires regenerating both derived files through a filtered pest run and a second
+    command; a botched regeneration destroys a true anchor to fix a name. So the rename plus its
+    regeneration chain is sequenced as its own wave, with the two commands named, exactly as ruling
+    165 held the push for one wave with the escape clause written down. ⛔ Deleting X-198's
+    `runtime-proof.json` is **not** the alternative: it is true, and raising the doctor count by
+    discarding a real vendor artifact is the inverse of ruling 49's purpose. ⚠️ Ruling 39's sequence
+    binds absolutely and the vendor half is the risk: run the command FIRST, read the artifact, then
+    write the assertion, all in ONE commit — and if Stripe refuses, the outcome is `UNRESOLVED` with
+    the provider error **quoted**, no artifact and **no test change committed**, which leaves the old
+    `charge.json` in place and J9 green on it. That is a PASS-WITH-NOTES, never a BLOCK (ruling 39).
