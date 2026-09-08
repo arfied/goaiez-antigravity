@@ -14,7 +14,7 @@
 <span class="font-semibold">Invoice #{{ $d->invoice_id }}</span>
 <span class="tabular-nums">{{ number_format($d->chargeback_amount_cents / 100, 2) }}</span>
 <span class="text-sm text-ink-2">{{ $d->reason }}</span>
-<x-ui.status-pill :state="$d->status === 'won' ? 'ok' : ($d->status === 'lost' ? 'alert' : 'attention')" :label="$d->status" />
+<x-ui.status-pill :state="$d->status === 'won' ? 'ok' : ($d->status === 'lost' ? 'alert' : 'attention')" :label="$d->status === 'submitted' ? 'sealed, not sent' : $d->status" />
 <p class="text-sm">{{ $d->evidence_count }} evidence items</p>
 @if($d->evidence_items->isNotEmpty())
 <ul class="text-sm">
@@ -38,7 +38,7 @@
 <x-ui.button size="default" wire:click="approve({{ $d->id }})" wire:loading.attr="disabled" wire:target="approve({{ $d->id }})">Approve the submission</x-ui.button>
 @endif
 @if($d->status === 'submitted')
-<p class="text-sm text-ink-2">Submitted; the bundle is sealed. Record the gateway's decision yourself from the dispute queue when it reaches you.</p>
+<p class="text-sm text-ink-2">Sealed. Nothing was sent to any gateway, so record the decision yourself from the dispute queue when it reaches you.</p>
 @endif
 </li>
 @endforeach
