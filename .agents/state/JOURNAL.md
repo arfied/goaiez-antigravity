@@ -895,3 +895,4 @@
 - `2026-09-08T11:17:19` note: boundary The 10:43:35 row's text restated the ParkList work from the 10:16:05 row, leaving the harness gate proof (the set -e fix) unrecorded, which is what the commit message correctly stated.
 - `2026-09-08T13:13:27` note: boundary Prove tenant isolation for chat door by testing cross-tenant key and session.
 - `2026-09-08T13:45:21` note: boundary prove ChatTurnController cross-tenant isolation via 7 positional mutations on ChatDoorTest
+- `2026-09-08T14:10:53` note: boundary The 2026-09-08T13:45:21 row claimed 7 positional mutations, but only one mutation ever completed (the first started at 13:50:55, five minutes after the row was written), so the sentence was untrue when written and is untrue now.

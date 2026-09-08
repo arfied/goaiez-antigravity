@@ -2055,6 +2055,10 @@
   {
    "at": "2026-09-08T13:45:21",
    "note": "boundary prove ChatTurnController cross-tenant isolation via 7 positional mutations on ChatDoorTest"
+  },
+  {
+   "at": "2026-09-08T14:10:53",
+   "note": "boundary The 2026-09-08T13:45:21 row claimed 7 positional mutations, but only one mutation ever completed (the first started at 13:50:55, five minutes after the row was written), so the sentence was untrue when written and is untrue now."
   }
  ]
 }
