@@ -318,6 +318,7 @@ class X211Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'AR Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
+        $user = User::factory()->create();
 
         $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'Overdue', 'last_name' => 'Client']);
         $invoice = Invoice::create([
@@ -330,12 +331,32 @@ class X211Test extends TestCase
             'due_date' => now()->subDays(15)->toDateString(),
         ]);
 
-        $res = $this->engine->packageForCollections($biz->id, $invoice->id, true);
-        $this->assertSame('packaged_collections', $res['status']);
+        ArDunningAction::create([
+            'business_id' => $biz->id,
+            'invoice_id' => $invoice->id,
+            'action' => 'escalate_to_human',
+            'reason' => 'Silence',
+        ]);
 
-        $this->expectException(\DomainException::class);
-        $this->expectExceptionMessage('Collections transmission is a human action only');
-        $this->engine->packageForCollections($biz->id, $invoice->id, false);
+        $res = $this->engine->packageForCollections($biz->id, $invoice->id, $user->id);
+        $this->assertSame('packaged_collections', $res['status']);
+        $this->assertSame($user->id, $res['packaged_by_user_id']);
+
+        $package = ArCollectionsPackage::where('invoice_id', $invoice->id)->first();
+        $this->assertSame($user->id, $package->packaged_by_user_id);
+
+        $invoice2 = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-AR-104',
+            'total_cents' => 60000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(15)->toDateString(),
+        ]);
+
+        $this->expectException(NoResolutionAttemptException::class);
+        $this->engine->packageForCollections($biz->id, $invoice2->id, $user->id);
     }
 
     /**
