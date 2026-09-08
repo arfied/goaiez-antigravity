@@ -28,10 +28,18 @@ use Symfony\Component\HttpFoundation\Response;
 final class ChatRateLimits
 {
     public const int START_PER_MINUTE = 5;
+    public const int TURN_PER_MINUTE = 60;
 
     public static function register(): void
     {
         RateLimiter::for('chat-start', fn (Request $request): Limit => Limit::perMinute(self::START_PER_MINUTE)
+            ->by(self::chatKey($request))
+            ->response(fn (): Response => response()->json(
+                ['message' => 'Too many requests.'],
+                Response::HTTP_TOO_MANY_REQUESTS,
+            )));
+
+        RateLimiter::for('chat-turn', fn (Request $request): Limit => Limit::perMinute(self::TURN_PER_MINUTE)
             ->by(self::chatKey($request))
             ->response(fn (): Response => response()->json(
                 ['message' => 'Too many requests.'],

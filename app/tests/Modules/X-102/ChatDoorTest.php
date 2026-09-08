@@ -11,6 +11,7 @@ use App\Support\Tenancy;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 use Tests\TestCase;
+use App\Modules\X102\Models\ChatTurn;
 
 class ChatDoorTest extends TestCase
 {
@@ -72,5 +73,36 @@ class ChatDoorTest extends TestCase
         // Read as B
         Tenancy::set((int) $bizB->id);
         $this->assertEquals(0, ChatSession::where('business_id', $bizB->id)->count());
+    }
+
+    public function test_valid_key_creates_chat_turn_for_session(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Turn Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+        $keys = app(PixelKeys::class);
+        $key = $keys->ensureFor($biz);
+
+        $session = ChatSession::create([
+            'business_id' => $biz->id,
+            'session_token' => 'sess_turn_test',
+            'status' => 'active',
+            'rage_clicks_count' => 0,
+            'is_ai_capped' => false,
+        ]);
+        Tenancy::forgetAll();
+
+        $response = $this->postJson("/api/chat/{$key}/turn", [
+            'session_token' => 'sess_turn_test',
+            'message' => 'Hello from visitor',
+        ]);
+
+        $response->assertStatus(201);
+        $response->assertJsonStructure(['id']);
+
+        Tenancy::set((int) $biz->id);
+        $this->assertEquals(1, ChatTurn::where('chat_session_id', $session->id)->count());
+        $turn = ChatTurn::first();
+        $this->assertEquals('Hello from visitor', $turn->message);
+        $this->assertEquals('visitor', $turn->author_type);
     }
 }
