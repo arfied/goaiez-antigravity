@@ -97,7 +97,7 @@ final class TimesheetComputeAction
         $timesheet->update(['total_hours' => $totalHours]);
 
         Event::dispatch(new TimesheetSubmitted($businessId, $timesheet->id, $totalHours));
-        Event::dispatch(new PeriodReady($businessId, $timesheet->id, $timesheet->period_end));
+        Event::dispatch(new PeriodReady($businessId, $timesheet->id, $timesheet->period_end->toDateString()));
 
     }
 }
