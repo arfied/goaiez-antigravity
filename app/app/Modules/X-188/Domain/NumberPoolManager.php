@@ -26,21 +26,28 @@ final class NumberPoolManager
             $assigned = $numbers->claimForTenant($businessId);
 
             if ($assigned === null) {
-                throw NumberPoolExhausted::noFreeNumber(0);
+                return [
+                    'phone_number' => null,
+                    'area_code' => null,
+                    'assignment_id' => null,
+                    'status' => 'unassigned',
+                ];
             }
 
-            $poolNumber = NumberPool::create([
+            $poolNumber = NumberPool::firstOrCreate([
                 'business_id' => $businessId,
                 'phone_number' => $assigned->e164,
+            ], [
                 'area_code' => substr($assigned->e164, 2, 3),
                 'carrier_name' => 'platform',
                 'status' => 'assigned',
                 'complaint_count' => 0,
             ]);
 
-            $assignment = NumberAssignment::create([
+            $assignment = NumberAssignment::firstOrCreate([
                 'business_id' => $businessId,
                 'phone_number_id' => $poolNumber->id,
+            ], [
                 'status' => 'active',
             ]);
 

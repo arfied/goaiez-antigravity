@@ -882,3 +882,4 @@
 - `2026-09-07T06:24:17` (R245) X-102 — The chat widget door is an unauthenticated HTTP route taking a PixelKey as a route parameter to resolve the tenant, matching T3InjectionController's pattern and ensuring chat capability respects pixel grounding without relying on ReviewWidget configurations.
 - `2026-09-07T08:04:59` (R245) X-102 — provision a tenant and test db before status code to verify RLS bypasses
 - `2026-09-08T04:00:39` (R245) X-188 — (R245) BoundaryStage: delegate assignLiveNumber to root service TenantNumbers to use shared pool
+- `2026-09-08T04:47:51` (R245) X-188 — BoundaryStage: assignLiveNumber returns unassigned array instead of throwing on bootstrap empty pool

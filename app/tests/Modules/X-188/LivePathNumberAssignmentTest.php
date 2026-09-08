@@ -53,15 +53,13 @@ class LivePathNumberAssignmentTest extends TestCase
 
         $user = User::factory()->create();
 
-        // 2. Assert that calling the live path raises the NumberPoolExhausted exception
-        // (which is "a way a caller can act on")
-        $this->expectException(NumberPoolExhausted::class);
-        $this->expectExceptionMessage('The platform number pool is empty: all 0 assignable');
-
-        $this->starter->handle(
+        // 2. Call the live path, expecting it to succeed without a number
+        $signupRes = $this->starter->handle(
             user: $user,
             businessName: 'Empty Pool Biz',
             contactPhone: '+15125550199'
         );
+
+        $this->assertNull($signupRes['provisioned_number']);
     }
 }
