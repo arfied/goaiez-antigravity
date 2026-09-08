@@ -242,10 +242,12 @@ that test and is not on this list is a wave invented to fill the lane.
   untouched, the decoy root `REPORT.md` gone and the mailbox copy intact.
   `RULING CN` is discharged as a live hazard and stays above as history.
 
-⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 205 (2026-09-08) against pinned main
-`07a4ae2f`, which is UNMOVED since tick 204's pin; lane 35 ahead / 703 behind; both `.claude/hooks`
-`A` rows still present. TRACK 1 ACTION 1 is unanswered **by construction** — no commit has landed on
-`main` in which it could have been answered. ⚠️ **Track 1's
+⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 206 (2026-09-08) against pinned main
+`9f2c2d58`, which MOVED 16 commits from tick 205's `07a4ae2f`; lane 36 ahead / 719 behind; both
+`.claude/hooks`
+`A` rows still present. TRACK 1 ACTION 1 is unanswered **by construction** — the 16 are pricebook's
+lane work plus one merge, and `git diff --stat 07a4ae2f 9f2c2d58 -- CLAUDE.md .agents/rules/` prints
+nothing, so no commit landed on `main` in which it could have been answered. ⚠️ **Track 1's
 `OWNER.md` note of 09:1x is NOT the answer and disclaims itself** — *"Nothing here touches your two shut
 rows"*; it settles the product-file conflict (`RULING DS`) and leaves the guard question open, so a tick
 must not read the arrival of an `OWNER.md` reply as a lift. **Pin the sha before checking
@@ -262,7 +264,13 @@ seat's rule alone), pinning an older `MERGE_HEAD` (`DJ`), reading the guard by d
 tempting, since it looks like it clears Track 1's blocker for free)**. ⚠️ **`RULING DV` (tick 205)
 closes the last way to read this HOLD as someone else's move: Track 1's `rc=0 at your tip`
 precondition is CIRCULAR with ACTION 1**, because our tip can contain main's blob only through the
-take those two rows shut — so 1b was mis-filed at tick 204 as an unblock and is not one.** Do not
+take those two rows shut — so 1b was mis-filed at tick 204 as an unblock and is not one.**
+⚠️ **`RULING DW` (tick 206) keeps `DV`'s circularity and removes the inference a tick draws next:
+Track 1 does NOT require a lane to contain `main` before merging it** — it merged `track/pricebook`
+at a tip **244 behind** at 09:10 today — so this lane is not obliged to satisfy `rc=0 at your tip`,
+and `DV`'s exit 2 is not a concession being requested. **`DW` is not an opening**: exit 2 lands this
+lane's commits on `main` and still leaves `multiEmitterOk` out of this checkout, which is what the
+thirteen `contract` withdrawals wait on (`DA`). Do not
 open a wave. `state.py next` returns `{"action": "FINISHED"}`. Every remaining
 stage count needs the owner and is listed as **OWNER ACTION A–F** at the end of
 `REVIEWS.md`: vendor artifact ids (`anchor 137`), real Infobip and a real placed
@@ -1250,6 +1258,42 @@ exact file for two lanes already today.
 **RULED by the lane supervisor: state the circularity, choose neither exit — both are Track 1's and
 neither is inside this lane's authority.** `DT` is unrepealed: this lane does not pre-resolve the file
 outside a merge to manufacture exit 1.
+
+### ⛔ `RULING DW` (tick 206) — Track 1 merged a lane **244 commits behind** `main` today. `rc=0 at your tip` is about CONFLICT-FREEDOM, not about containing `main`.
+
+The tick's own pin turned out to be a Track 1 merge of a lane, 15 minutes old:
+
+```
+9f2c2d58  2026-09-08 09:10:41  Antigravity Autopilot
+          parents 07a4ae2f (main)  91b578fb (track/pricebook)
+$ git rev-list --left-right --count 91b578fb...07a4ae2f
+15	244
+```
+
+**`DV`'s circularity is unchanged and still correct** — our tip can contain main's blob only through
+the take. What `DW` removes is the **inference a tick draws next**: that Track 1's precondition is
+therefore one this lane must satisfy. It is not, and no lane here has been held to it. The condition
+Track 1 enforces in practice is conflict-freedom, and `RULING DS` measured this lane's entire
+conflict surface as **one file and one method**. So `DV`'s **exit 2** — waive `rc=0`, resolve
+`X167Test.php` inside Track 1's own merge — is not a concession being requested; it is what Track 1
+did for pricebook this morning, for a lane far further behind, on a file it has already resolved for
+two lanes.
+
+⛔ **Not established, deliberately: whether pricebook's merge was conflict-free or conflict-resolved.**
+`git merge-base` and `git merge-tree` are refused here (`DT`), and `git ls-tree` was refused at tick
+206 too — as at ticks 188/190/191/197/203/205, **the denial is the answer; do not re-run them.** What
+is measured is the **244**, not the `rc`. The subject's *"oldest merge base"* means Track 1 selected
+among several bases; `DJ` already closed the base/`MERGE_HEAD` pinning route here on commit ordering
+and `DW` does not re-open it.
+
+⚠️ **`DW` IS NOT AN OPENING.** Exit 2 lands this lane's commits on `main` and still leaves
+`multiEmitterOk` out of **this checkout**, which is what the thirteen `contract` withdrawals wait on
+(`DA`). The take stays the only route to this lane's own stage counts, and it is shut on two rows no
+merge policy of Track 1's reaches.
+
+**RULED by the lane supervisor: filed as an amendment to `TRACK 1 ACTION 1` and to `DV`, adding no
+item and opening no wave, because both exits remain Track 1's.** If Track 1 takes exit 2, the
+resolution is checked with `RULING DU`'s **four** falsifiers, never `DS`'s three.
 
 ## Dispatching the coder (added 2026-09-02)
 
