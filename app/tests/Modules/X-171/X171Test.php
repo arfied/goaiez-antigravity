@@ -11,6 +11,7 @@ use App\Modules\X171\Events\SyncConflict;
 use App\Modules\X171\Events\TechOnSite;
 use App\Modules\X171\Models\DeviceSyncConflict;
 use App\Modules\X171\Models\DeviceSyncQueue;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -238,5 +239,21 @@ class X171Test extends TestCase
 
         Event::assertDispatchedTimes(JobCompleted::class, 1);
         $this->assertEquals(4, $emittedTotal);
+    }
+
+    public function test_tech_on_site_occurred_at_is_frozen_instant(): void
+    {
+        Event::fake([TechOnSite::class]);
+        $frozen = Carbon::parse('2025-01-01 10:00:00');
+        Carbon::setTestNow($frozen);
+
+        $action = new JobStateAction;
+        $action->updateState(1, 2, 3, 'on_site');
+
+        Event::assertDispatched(TechOnSite::class, function ($event) use ($frozen) {
+            return $event->occurredAt->equalTo($frozen);
+        });
+
+        Carbon::setTestNow();
     }
 }
