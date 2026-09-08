@@ -262,6 +262,54 @@ platform-scope RLS check defect (`schema 15`), the `§257.4` deferred list
   twelve swaps a false GREEN for a false RED. It is **OWNER ACTION F**; until the
   owner rules, the trap note above is the mitigation.
 
+### ⛔ `RULING CO` (tick 185) — the owner ALREADY answered items A, C and the boundary question, and this lane cannot reach the answer
+
+**Do not read the HOLD above as "the owner has not ruled."** They have. `origin/main`
+is **not stale** — it is `90e4fcca`, 2026-09-08 04:47, and this lane is **371 behind /
+15 ahead**. Main's range carries the owner's reserved-question rulings as *committed
+code*:
+
+- `30316573` — `fix(doctor): multi-emitter exemption and stop the anchor scanning its
+  own source — owner ruling 2026-09-07, reserved questions 4 and 5`
+- `a42079bd` — `fix(doctor): revive BoundaryStage's cross-module import check — owner
+  ruling 2026-09-07, reserved question 6 (as corrected)`
+
+Diffstat: `ContractStage.php +12`, `TestAnchorStage.php +19`, `BoundaryStage.php +64`,
+`seals.json ±8`. These are the fixes for **OWNER ACTION C (`contract 87`)** and
+**A (`anchor 137`)**, plus `boundary 3`. `OWNER.md` (2026-09-07 10:03) says they were
+"APPROVED but NOT EXECUTABLE"; that is **out of date** — an executor was found and they
+are on main.
+
+**The take is one guard change away, and everything else about it is clean.** Measured
+this tick, not remembered:
+
+- our side `git diff --name-only origin/main...HEAD` → **14 files**; intersection with
+  main's **133** → **3**: `.agents/state/BUILD-STATE.json`, `.agents/state/JOURNAL.md`,
+  `CLAUDE.md`. All three `M` on both sides, all three on the never-merge list, all three
+  handled by `coder-bin/git:34-44` (`git checkout HEAD -- <file>` inside an
+  `--allow-merge` run). Our eleven `app/` files are untouched by main.
+- `--allow-merge` **is** wired into this lane's `launch-coder.sh:22`.
+- ⛔ **The blocker is two files and nothing else.** Main's range **ADDs**
+  `.claude/hooks/drive_hook.py` and `.claude/hooks/no-piped-gate-tool.py`.
+  `coder-bin/git:106` refuses any commit staging `\.claude/`; an ADD cannot be undone by
+  `git checkout HEAD --` (not in `HEAD`), `git rm --cached` (`:22`), `git reset` (`:16`)
+  or `git restore --staged` (`:78`), and a merge commit cannot be path-limited. The only
+  byte-identity exemption (`:100-105`) covers `JourneyHarness.php` alone. **Re-read at
+  tick 185: the guard is unchanged in this respect.**
+- Not fixable from this seat either: `.claude/**` is outside the supervisor's column
+  (`Bash` denied, `Write` refuses it as sensitive — tick 177 tried both).
+
+**Do not dispatch the merge to test this.** `RULING CA` stands: a merge wave that cannot
+commit burns the whole run, and the guard refusal is a STOP, not a variable to set.
+**Re-check with one command before ever re-deriving the above:**
+`git diff --name-status HEAD...origin/main -- .claude/` — if the two `A` rows are gone,
+or `coder-bin/git:106` no longer lists `\.claude/`, the take is open and it is the first
+wave this lane runs (with `--allow-merge`, and `composer dump-autoload` before the first
+gate — main adds 6 classes under `app/app/Modules/`, which is the classmap trap).
+
+This is **TRACK 1 ACTION 1**, escalated: it is no longer housekeeping, it is the sole
+blocker on three of this lane's five reserved stage counts.
+
 ## Dispatching the coder (added 2026-09-02)
 
 When the user has enabled the settings rule for
