@@ -242,14 +242,18 @@ that test and is not on this list is a wave invented to fill the lane.
   untouched, the decoy root `REPORT.md` gone and the mailbox copy intact.
   `RULING CN` is discharged as a live hazard and stays above as history.
 
-⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 200 (2026-09-08) against main's
-`c24d432d` (`N136`), lane 30 ahead / 597 behind. The take is shut on **two** rows (`RULING DD`) —
-use the two-row re-check `git diff --name-status HEAD...origin/main -- .claude/hooks/`, not `CP`'s
-seven-row command — and as of `RULING DH` those two rows are shut on **measurement**, not inference:
-`.claude/` is a never-list DIRECTORY and the byte-identity clause covers `app/app/Doctor/*` and
-nothing else. `RULING DA` closes the only body of work that looked parallel to it, and all three
-escapes are now foreclosed — dropping the ADDs (`DG`, confirmed as an executed incident by `DI`),
-pinning an older `MERGE_HEAD` (`DJ`), and reading the guard by dispatch (`CT`).** Do not
+⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 201 (2026-09-08) against main's
+`7103f455` (`merge: track/sixty — X-188`), lane 31 ahead / 621 behind. **Pin the sha before checking
+(`RULING DK`: `origin/main` moved 24 commits mid-tick 201 with no fetch from this seat).** The take is
+shut on **two** rows (`RULING DD`) — use the two-row re-check `git diff --name-status
+HEAD...<pinned sha> -- .claude/hooks/`, not `CP`'s seven-row command — and as of `RULING DH` those two
+rows are shut on **measurement**, not inference: `.claude/` is a never-list DIRECTORY and the
+byte-identity clause covers `app/app/Doctor/*` and nothing else; `RULING DM` adds site's measurement
+that `git rm` on `.claude/*` is refused too, so the ADDs are IRREMOVABLE. `RULING DA` closes the only
+body of work that looked parallel to it, and all three escapes are foreclosed — dropping the ADDs
+(`DG`; `DL` corrects `DI` and records that **no guard can refuse a drop**, so this one rests on this
+seat's rule alone), pinning an older `MERGE_HEAD` (`DJ`), and reading the guard by dispatch
+(`CT`).** Do not
 open a wave. `state.py next` returns `{"action": "FINISHED"}`. Every remaining
 stage count needs the owner and is listed as **OWNER ACTION A–F** at the end of
 `REVIEWS.md`: vendor artifact ids (`anchor 137`), real Infobip and a real placed
@@ -945,7 +949,70 @@ never-list path on `main` needs its merge-adoption rule written in the same act,
 lane"* — honoured for `app/app/Doctor/**` and not yet for `.claude/hooks/`; `N136` covers the `D`
 direction only. **Requested: a `MERGE_HEAD` byte-identity exemption for `.claude/hooks/` in lane
 checkouts, mirroring the Doctor clause.** Until it exists the take is unsatisfiable by construction
-and no brief will name it (`RULING CL`).
+and no brief will name it (`RULING CL`). ⭐ **Restated in site's better wording at `RULING DM`: extend
+the `GOAIEZ_MERGE_OK` byte-identity loop to `.claude/`** — that covers the **added** case by
+construction, since for a path only `MERGE_HEAD` carries the index takes `MERGE_HEAD`'s blob
+necessarily, while a locally **modified** `.claude/` file still refuses in every lane.
+
+### ⛔ `RULING DK` (tick 201) — `origin/main` moves MID-TICK without this seat fetching. Pin the sha before any take check.
+
+Remote-tracking refs and the local `main` branch are **shared through the common dir**, like the object
+store, the worktree table, the account and `settings.local.json` (`RULING CV`/N134 — this extends that
+list). `git rev-parse --git-common-dir` is `/home/goaiez/agents/grs-antig/.git` for all seven
+checkouts, and `main` is Track 1's live working ref: `git rev-list --left-right --count
+main...origin/main` is `0 0`. Tick 201 opened at `c24d432d` (597 behind) and `supervise.sh` §3
+minutes later read **621 behind** — `origin/main` had become `7103f455` (24 commits) with no fetch
+from this seat.
+
+**RULED by the lane supervisor: pin `git rev-parse origin/main` into `.sha<N>.txt` first, run every
+take check against the pinned sha, and name that sha in the block** — a two-command check whose two
+commands see different `main`s reports on a tree that never existed. Every earlier *"re-checked
+against unmoved main `<sha>`"* on this page (`CZ`, `DB`, `DE`, `DJ`) asserted a stability it did not
+have.
+
+### ⛔ `RULING DL` (tick 201) — the guard CANNOT refuse a dropped path. `DG` has no mechanical backing and that is now its recorded status.
+
+`DI` read reviews' `3768142e` as a commit that got `.claude/` rows past the never-list. It did not:
+`git diff --name-status 3768142e^1 3768142e -- .claude/` prints **nothing**. The `D` rows appear only
+against the **second** parent. **A commit stages against `HEAD`, and dropping an incoming ADD makes
+the path equal `HEAD`, so it leaves the staged set and no refusal is possible.** `DH`'s
+never-list-is-the-directory finding is untouched by that commit.
+
+⚠️ A dropped path is invisible to `git diff --cached`, to the never-list, and to `supervise.sh` §2 —
+one reason for all three: **byte-identical to `HEAD`, i.e. absent.** So `DG`'s refusal of the
+drop-a-path escape is a **supervisor rule with nothing mechanical behind it**; a tick must never
+reason *"the guard would stop me."* It would not, and `DI`'s "the catch worked once" was an
+unattended tick reading a second-parent diff. Detector for the loss class, never the index:
+`git diff --name-status <merge-base> HEAD^2 -- .claude/` (what N136 independently prescribes).
+**Boundary on `DC`/`DF`: `git diff --cached` measures what a merge TOOK and is structurally incapable
+of measuring what a merge LOST.** Both rules are right; neither substitutes for the other.
+✅ Same commit confirms `DE` by execution — it staged the four Doctor/seal rows HEAD-relative and
+`git diff --name-only 3768142e c47a7c4f -- app/app/Doctor/` is empty.
+
+### ⛔ `RULING DM` (tick 201) — sibling GUARD facts are citable; sibling QUADRANTS are lane-specific. `app/phpunit.xml` is in main's range HERE and absent in site's.
+
+`grep -c "claude/hooks"` over the six sibling ledgers: **site 61**, pricebook 2, reviews 1, others 0.
+site is blocked on the identical two `A` rows, re-reads the guard at source every tick, and adds the
+measurement this lane lacked — **`:22` refuses `git rm` on `.claude/*`, so the ADD rows are
+IRREMOVABLE**, not merely unrestorable.
+
+⚠️ **But do not copy its quadrant table.** site records `app/phpunit.xml` as *"absent from main's
+range — the working-tree pin survives a take"*. **False here**: against `7103f455` the range is
+exactly `-goaiez_antig_stages_test` / `+goaiez_antig_test`. Adopting site's green row would silently
+green the one path whose loss is destructive in this lane (`RULING DC`'s hazard, `RULING DF`'s
+documented cross-lane incident, and the row §0 does not flag because `goaiez_antig_test` is not
+production). **`DC`'s restore-first standing order is re-measured against the current tip and live.**
+
+### ⚠️ `RULING DN` (tick 201) — cite the guard only as a DATED SIBLING READING, never as a standing fact.
+
+Four sets of line numbers for one file, all within two days: main's `CLAUDE.md` cites `:53`, `:70-75`,
+`:86`; site read `:132`, `:117-131`, `:22`; this page carries `:106` (`CP`) and `:118` (`CL`). Main
+says why — *"Read the guard, do not remember it — it is on all seven lanes' PATH and it changes"* —
+and site adds *"the guard is in no repository, so it can change with no commit anywhere."* This seat
+can **never** read it (`RULING CT`, unrepealed). **RULED: every guard citation this lane writes names
+the lane and date of the sibling reading it came from.** `DH`'s method is still the only route to a
+guard fact here, but its output has a shelf life: the **behaviours** survive (never-list covers
+`.claude/`; byte-identity covers `app/app/Doctor/*` only; ADD rows irremovable), the offsets do not.
 
 ## Dispatching the coder (added 2026-09-02)
 
