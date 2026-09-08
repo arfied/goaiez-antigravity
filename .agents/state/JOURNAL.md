@@ -712,3 +712,4 @@
 - `2026-09-08T13:16:38` (R245) X-211 — the recovery artifact evidences the plan and its refusal, not an unlinked gateway charge, for the same reason
 - `2026-09-08T13:48:14` (R245) X-198 — the j9 evidence artifact evidences the gateway charge and nothing else, because payments carries no invoice column so the charge id and the invoice status were two unrelated facts printed as one flow
 - `2026-09-08T13:48:14` (R245) X-198 — the three merchant screens wear main's agency layout attribute, adopted per hunk with no other main hunk, because the merge resolution that kept money's body dropped it and the screens fell through to the staff console
+- `2026-09-08T14:15:57` (R245) X-198 — J9's method name states what the artifact proves - a real gateway charge id with no invoice tied to it - because payments carries no invoice column, while the evidence slug invoice-to-paid is keyed by Doctor/Stages/JourneyStage.php and may not move

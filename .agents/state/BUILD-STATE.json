@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-08T13:48:14",
+ "updated": "2026-09-08T14:15:57",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2347,6 +2347,12 @@
    "module": "X-198",
    "chose": "the three merchant screens wear main's agency layout attribute, adopted per hunk with no other main hunk, because the merge resolution that kept money's body dropped it and the screens fell through to the staff console",
    "at": "2026-09-08T13:48:14",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-198",
+   "chose": "J9's method name states what the artifact proves - a real gateway charge id with no invoice tied to it - because payments carries no invoice column, while the evidence slug invoice-to-paid is keyed by Doctor/Stages/JourneyStage.php and may not move",
+   "at": "2026-09-08T14:15:57",
    "ruling": "R245"
   }
  ]
