@@ -11048,3 +11048,192 @@ and the equality holds — both qualifications checked rather than assumed.
 ✅ **Tick 290's `--ruling` correction held a second time**: the JOURNAL's `18:46:05` entry is clean.
 Three earlier corrective instructions failed because they blamed the coder for transcribing a flag my
 own command line supplied — `bin/state.py:204` has no such flag and simply joins it on.
+
+## ⛔ CORRECTED AT TICK 293 — tick 292's note above says the whitespace test "stays green". It does not. **A LEDGER DIGEST OF A RULING IS A PARAPHRASE, AND THE DIGEST IS THE COPY THAT SURVIVES**
+
+Tick 292's SITE-165 ruling, as written into this file, reads *"mutate `:25` to
+`! empty($block['text'])` … and show the zero test goes red while **the whitespace test stays
+green**."* `BRIEF.md:100`, written in the same tick, says the opposite and is **right** — *"I predict
+**BOTH** halves redden under this one mutation"* — with both refuting instructions attached at
+`:105` and `:109`. Measured by SITE-165: **both reddened.** `empty('   ')` is **false**, so
+`! empty('   ')` re-admits whitespace and the absence half fails; `empty('0')` is **true**, so the
+block is dropped and the presence half fails. One mutation, both directions — which is exactly what
+tick 285 measured for this predicate and wrote down four sections above, so this file already held
+the correct claim when the wrong one was written into it.
+
+⛔ **`BRIEF.md` is overwritten every tick; `CLAUDE.md` is forever. The WRONG version is the durable
+one.** A tick reading tick 292's note carries a false claim about `empty()`'s treatment of
+whitespace into the predicate class this lane has swept nineteen sites for, and nothing contradicts
+it, because the brief that did is gone.
+
+The mechanism is specific and avoidable: the digest was written **before the wave ran**, so it
+recorded a **prediction** as though it were the ruling — and in compressing it, the *refuting
+instruction* was dropped, because a refuting instruction is addressed to the coder and reads as
+brief scaffolding. Tick 244 requires every predicted consequence to carry what would refute it. That
+requirement has always protected the **brief** and has never once protected the **ledger**.
+
+✅ **RULED: a ledger entry never states a PREDICTION. It states the RULING and the FALSIFIER; the
+OUTCOME is written by the next tick's block, after the measurement.** Where a digest must mention a
+prediction it carries the refuting clause with it, or it is not written at all.
+
+Inverse of tick 273 (*an answer set retyped in a paraphrase loses what was added late*): there the
+lossy paraphrase went into the **ephemeral** artefact and the durable one was right; here it went
+into the **durable** artefact and the ephemeral one was right. Twenty-third of the imprecise-brief
+family (208, 227, 235, 236, 237, 238, 244, 245, 247, 249, 250, 254, 262, 265, 271, 274, 275, 276,
+280, 283, 286, 292) and **the first that is not in a brief at all.**
+
+## ⛔ Tick 291's closed form generalises to a SUM over failing methods — first MULTI-failure firing, and Δ=0 twice over (tick 293)
+
+Tick 291 gave the falsifier's assertion delta a closed form and stated it for **one** failing method.
+SITE-165's falsifier reddens **two**, with green 18 and red 18 — a Δ of 0 that under a mechanical
+reading looks like one run pasted twice (tick 249's nonce shape). It is arithmetically required:
+
+> green − red = **Σ over failing methods** ( assertions in that method − index of the failing one )
+
+| failing method | assertions | fails at | contributes |
+| :-- | --: | --: | --: |
+| `test_a_whitespace_text_key_is_not_emitted_to_llms_txt` | 2 (`:233` `:236`) | #2 | 0 |
+| `test_a_text_key_of_zero_is_emitted_to_llms_txt` | 2 (`:267` `:270`) | #2 | 0 |
+
+Σ = 0 ⇒ 18 = 18 ✓, each quoted message is its method's assertion **#2**, and tick 248's
+first-failure rule agrees independently (assertion #1 is the `deployed` assertion, which passes in
+both). ⛔ **A tick applying tick 291's single-method form to a two-failure transcript cannot check
+it** and would read Δ = 0 as fabrication — the misreading 291 warned about, reachable by a second
+route. Second consecutive Δ = 0 firing, both correct.
+
+## ✅ Tick 287's restore-of-a-prior-state hazard does NOT apply to a mutation into a NEVER-COMMITTED state (tick 293)
+
+287 forbids accepting a falsifier whose mutation **restores a prior state**, because the message it
+quotes is what the unmutated tree already produces. `! empty($block['text'])` was never committed at
+`LlmsTxtRenderAction:25`: the prior state was `isset(…)` (SITE-164's, the tick-291 `isset` sweep's
+one defect) and the current state is `trim(…) !== ''`. It is a **third** state, and the unmutated
+tree runs all seven `LlmsTxtTest` methods green. 287's own test — *would the tree produce this
+message with no mutation at all?* — answers **NO**, so the two-state form is sound here and the
+four-state sequence was not required. ⛔ Ask 287's question; do not apply the four-state rule by
+reflex, and do not skip it when the answer is yes.
+
+## ⛔ A supplied command's PATH is relative to the shell's cwd — this lane's tooling is in `app/` (tick 293)
+
+My SITE-165 brief supplied `./vendor/bin/pint <file>`. The binary is **`app/vendor/bin/pint`**; from
+the checkout root there is none, and the coder ran exactly what it was given, reported
+`No such file or directory`, and proceeded. Nothing was let through (§6 green on the committed
+tree). ⛔ **Every `./vendor/bin/*` in a brief is written `cd app && ./vendor/bin/… ` followed by
+`cd /home/goaiez/agents/grs-antig-site && pwd` in its own call.** Related to but distinct from tick
+267 (*a brief that names a command names one the guard permits*): that concerns the **guard**, this
+the **working directory**.
+
+## ✅ Two more predicate classes swept CLEAN — a clean sweep is a result (tick 293)
+
+**① Caller-supplied `content_blocks` key reads**, the continuation of SITE-164 under tick 241
+(*grep the PATTERN, not the address*). `grep -rn --include='*.php' -F 'block['` over X-176, X-157
+and X-103 returns **14** hits and every direct access is dominated by a guard proving the key set
+and non-blank: `LlmsTxtRenderAction:22→23` and `:25→26` (both branches, SITE-164),
+`EdgeDeployAction:170→175-177` (video) and `:181→186-187` (faq) (SITE-154/155), `SiteEngine:34`
+(`isset`).
+
+**② Array indexing / bounds** — `[0]`, `explode(`, `end(`, `reset(`, `array_slice` across all six
+owned code modules returns **6** sites, all safe: `CallAttributeAction:60`'s
+`array_values($availableNumbers)[0]` is dominated by `:39`'s `empty($availableNumbers)` (and
+`empty()` over an array carries no `"0"` hazard — tick 291) · `FormAbandonPointAction:30` and
+`SiteEngine:139` wrap the whole subscript chain in `??` · `EdgeDeployAction:212`'s `explode` is
+gated by `count($parts) > 1` · the two `InternalLinkRenderAction` `explode`s are iterated, never
+indexed.
+
+⚠️ Sweep ② is what surfaced SITE-166 below — **the disconfirming members are what make a closure
+re-checkable, and the sweep that returns them is the sweep that finds the one live site.**
+
+## ⛔ SITE-166 — an EXISTENCE guard named for a USABILITY condition, on a live serving route (ruled at tick 293)
+
+```php
+X-137/Actions/CallAttributeAction.php          (pool-exhausted branch)
+:39   if (empty($availableNumbers)) {
+:40       $setting = DB::table('dni_pool_settings')->where('business_id', $businessId)->first();
+:42       if ($setting === null) { throw new \DomainException('BUSINESS_NOT_CONFIGURED_FOR_DNI'); }
+:46       $fallback = $setting->fallback_number;
+:51       'allocated_number' => $fallback,   :55  'status' => 'unattributed',
+
+2026_09_06_063000_create_dni_pools.php:24   $table->string('fallback_number');   ← NOT NULL, no non-empty validation
+```
+
+`:42` is a **row-existence** test while the condition it is named for — *this business is not
+configured for DNI* — is a **usability** test, so a row whose `fallback_number` is `''` or `'   '`
+passes it. Tick 278's law, **NOT NULL is not non-empty**, on a fifth site and a fourth module.
+
+⭐ **Live, and this lane's own.** `X-157/ModuleServiceProvider:57-80` serves
+`GET /sites/{business}/{deploy_hash}/dni` behind the same `deployed` + `has_valid_ssl` pair as the
+published-site route and returns `json(['number' => $token->allocated_number, 'status' => …])`, so a
+blank fallback serves `{"number":"","status":"unattributed"}` and the page renders **no number to
+call** — against G3-11 / G8-13's ⑤, *"the page renders the static fallback number and the session is
+marked `unattributed`"*, whose refusal half is discharged at `PoolExhaustionTest:22-45` and whose
+fallback half this silently breaks. No error, no count movement, nothing in any diff.
+
+✅ **The remedy's whole mechanism already exists and is already asserted end to end.**
+`ModuleServiceProvider:67-71` catches `\DomainException` → **409** with `['error' => $e->getMessage()]`,
+and `DniRouteTest.php:111` asserts `assertJson(['error' => 'BUSINESS_NOT_CONFIGURED_FOR_DNI'])`.
+**RULED: extend `:42` to `|| trim((string) $setting->fallback_number) === ''`, throwing the SAME
+message** — the two conditions are one fact, the route already maps it, and a second message becomes
+a public API string nothing asserts (tick 240).
+
+⛔ **The predicate is the CONTENT-STRING form and not the presence form** — a fallback number is a
+value rendered for a person to dial, so whitespace is not a value; the presence form belongs to the
+honeypot (tick 288), and carrying one member's remedy across a class is that tick's error, here in
+the opposite direction.
+
+⛔ Four alternatives refused, each of which would pass every gate: **a non-empty column constraint**
+(measured — `grep -rn -F 'fallback_number'` returns 7 hits: the migration, the one reader, five test
+fixtures, and **no production writer**, so tick 246's ruling on `pages.title` applies unchanged and
+the agreement has to live in the reader); **guarding at the route instead** (a reader compensating
+for a writer, leaving `allocateFromPool`'s other callers exposed — ticks 277, 278); **guarding at
+both** (two writers of one invariant — 240, 278); and **serving the blank** (the ⛔ column itself).
+
+⚠️ Predicted **with its refuting instruction** (tick 244, and this tick's own ruling about
+predictions): no existing test reddens — measured, all five fixtures write real `+1555…` numbers and
+none is blank. ⛔ **If one reddens, an assertion depends on a blank fallback being usable, which is
+the finding: repair the FIXTURE, never the predicate** (234, 242). ⚠️ Falsifier polarity (245): the
+new assertion is a **presence-of-refusal**, so its falsifier reverts the clause — which **does**
+restore a committed prior state, so tick 287 applies in full and the four-state sequence is
+required.
+
+## ✅ Standing checks that fired on their HEALTHY branches (tick 293)
+
+- **The doctor pair passed all THREE checks, and it is tick 292's prefix check's first healthy
+  firing.** stamp + stages + total (275) ✓ · SUM `0+6+87+93+15+455+137+4 = 797` in both blocks and
+  in my own live run (285) ✓ · `ok` appearing only on `integrity … clean` while every counted stage
+  prints `FAIL` (292) ✓ · 5 of 7 timings differing ⇒ two runs (249), with `contract 33/33` and
+  `capability 23/23` repeating **not** a defect because the discriminator is a byte-identical *block*
+  and a 23 ms stage has few distinguishable values (250). A rule that has only ever fired on its
+  failing branch reads as an unfired precaution (tick 221) — record the clean firing.
+- **Cold witness on its EQUALITY branch with both qualifications measured**: `foreach` 0 (280) and
+  prose-`assert` 0 (285) ⇒ witness 18 = green 18.
+- **Tick 287's ordering item, second firing**: the coder's gate wrote `gate-end` at 19:19:27 and
+  `REPORT.md`'s mtime is 19:20 — the gate completed **before** the report was written.
+- **Tick 259's column rule, TENTH firing**: three `grs-antig-site` gates in one 16-minute window —
+  34387 (the coder's no-`--tests` ground gate), 45950 (its `--tests` gate, the report's §7), 99659
+  (mine). Mine was ambiguous between **queued** and **died-without-its-trap** (tick 265's fourth
+  state, which writes nothing) and only `readlink /proc/99659/cwd` separated them ⇒ ALIVE ⇒ wait ⇒
+  it landed. Tick 257's procedure is what paid for it: the gate was the tick's first act and every
+  other measurement was taken while it queued.
+- **Eighth null closing tip re-read** (224, 225, 256, 279, 282, 283, 284, 293), and it was **run at
+  the close, never drafted** (tick 257).
+
+## Two carried items RETIRED, both ALREADY DONE HERE — seventh firing of the carried-item rule (tick 293)
+
+Re-read **at their own lines** before either could become a brief item (241, 244, 249, 251, 254,
+263, 268, 284): `X-155/FormValidateAction:25` is now
+`$submitted !== null && $submitted !== '' && $submitted !== []` — tick 288's **presence** predicate
+plus the empty-array case, so `"0"` triggers the honeypot (SITE-161); and
+`X-102/ChatEscalateAction:65` is now `$groundingFact === null || trim($groundingFact) === ''` — the
+**content-string** remedy (SITE-162). Per tick 224 the branch is *already done here* for both: the
+room is empty, the door is not shut.
+
+## Shell forms — measured at tick 293
+
+- ⛔ `grep -rn "\$block\['"` — a `$` inside a **double-quoted** pattern returns nothing and prints no
+  error, which is indistinguishable from a measurement of nothing. ✅ Use
+  `grep -rn --include='*.php' -F 'block['` — fixed-string, single-quoted. Tick 209's rule caught it:
+  **a surface that drops to zero is a tooling fault until a positive control says otherwise.**
+- ⚠️ A `&&` chain whose middle link is `grep -c` returning **0** exits 1 and **silently drops every
+  later command in the chain** — the same family as tick 277's `cd X && cmd`. Issue counts as
+  separate calls, or separate them with a marker `echo`.
+- ⚠️ `cd app && php artisan doctor` drifted the shell once this tick and was reset in its own call.
+  Per call, not per tick.
