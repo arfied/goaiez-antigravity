@@ -242,11 +242,72 @@ that test and is not on this list is a wave invented to fill the lane.
   untouched, the decoy root `REPORT.md` gone and the mailbox copy intact.
   `RULING CN` is discharged as a live hazard and stays above as history.
 
-⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 213 (2026-09-08) against pinned main
-`1e6757f2`, MOVED 6 commits from tick 212's `90ce5e99`** (after 0 · 0 · 0 · 5 · 3 · 6 · 16 · 24); lane
-**43 ahead / 740 behind**; both `.claude/hooks` `A` rows still present, plus `CR`'s `M settings.json`.
-The whole 6-commit range is three files under `app/` and **zero per-track paths**. ⭐ **`RULING EE`
-(tick 213) FALSIFIES `EC`'s ceiling: Track 1's ledger IS reachable from this seat — in COMMIT MESSAGES
+⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 214 (2026-09-08) against pinned main
+`9b685e4c`, MOVED 5 commits from tick 213's `1e6757f2`** (after 0 · 0 · 0 · 5 · 3 · 6 · 16 · 24 · 6);
+lane **44 ahead / 745 behind**; both `.claude/hooks` `A` rows still present, plus `CR`'s
+`M settings.json`. The visible cause of the move is in the same tick's process scan: **Track 1 is
+mid-merge-wave** (`3877908`, `agy-grs-antig-run152.log`, `GOAIEZ_MERGE_OK=1`), which is `DK`
+corroborated at its mechanism rather than inferred.
+
+⭐ **`RULING EF` (tick 214) — a run number is NOT an identity: it is a PER-LANE counter and it
+collides across lanes.** `launch-coder.sh:87-89` sets `n=1` and increments while
+`/home/goaiez/tmp/agy-${TRACK}-run${n}.log` exists — the name it scans **already contains the
+lane**, so two lanes reach `run137` independently. The ledger carries the collision unnoticed:
+`CY` (tick 195) recorded *"Track 1's live `run137`"* exporting `MERGE·HARNESS·RESTORE`, while ticks
+209/210 recorded pid `3627732` `run137` with a **relative** `logs/agy-run137.log` redirect exporting
+`PUSH·MERGE·HARNESS` — two env trios, two redirect styles, one number, read as one process across
+four ticks. Measured simultaneously at tick 214 they are **two seats**: `3877908` →
+`/home/goaiez/tmp/agy-grs-antig-run152.log` (absolute, names Track 1) with
+`MERGE=1·HARNESS=0·RESTORE=0`, and `3869816` → relative `.agents/supervisor/logs/agy-run138.log`
+with `PUSH·MERGE·HARNESS`. So **`CY`'s attribution of the `MERGE·HARNESS·RESTORE` trio to Track 1 is
+corroborated**, and the relative-`logs/` seat is a *different lane* — not Track 1 (main's launcher
+`:78` is the **absolute** form, read at the pin by `DB`/`DD`'s method, and Track 1 is separately
+visible) and not this lane (`ls -d .agents/supervisor/logs` → `No such file or directory`, `CX`'s
+tell). ⛔ **Every run-number citation in this ledger must carry its lane; a bare `runN` from a
+sibling is not a reference.** Same family as `DL`, `DO`, `DQ`, `DU`, `DY`, `EB`, `EC`, `ED`, `EE` —
+**`EE` was the object-type variant; `EF` is the uniqueness variant: the identifier was read
+correctly and was never unique.** Not an opening; it corrects an attribution and adds no capability.
+
+⭐ **`RULING EG` (tick 214) — the per-track restore was measured FIRING for the first time from this
+seat, on the exact pair `DR` measured it FAILING. The variable is the PROCEDURE, not the attribute.**
+⚠️ Tick 213 reported *"zero per-track paths moved"* and read it as the restore holding; **that
+reading was not available to it** — an unchanged per-track path has two causes (nobody touched it,
+or the restore fired) and its range contained no per-track change at all, so it measured the first
+and credited the second. Tick 214's range **does** contain one: `ff6359f8 chore(state)` changes
+`.agents/state/BUILD-STATE.json` (+8/−1) and `JOURNAL.md` (+1). Yet against the merge `9b685e4c`,
+per-track paths differ **zero** from parent 1 and **seven** from parent 2
+(`BUILD-STATE.json`, `JOURNAL.md`, `launch-coder.sh`, `.claude/settings.json`, `CLAUDE.md`,
+`app/phpunit.xml`, `bin/supervise.sh`) — merge step 2 executed and proven by step 3's own test.
+⚠️ Those first two are **`RULING DR`'s exact pair**, which in pricebook's `a638eb96` came out
+neither-ours-nor-theirs with the `merge=ours` driver demonstrably not firing. Same two files, same
+`.gitattributes`, opposite outcomes: `a638eb96` was a lane taking `main` by the bare auto-commit
+route (`CQ`, `DP`); `9b685e4c` is Track 1 taking a lane by guarded `--no-ff --no-commit` +
+selective restore. **`DR` is corroborated and `EG` names the variable: the explicit restore step,
+never `merge=ours`.** ⛔ **NOT an opening, and the asymmetry is the point** — it measures the restore
+working in *Track 1's* direction, taking a lane; this lane's take runs the other way and `DC`/`DQ`'s
+destructive row is live in it, re-measured against this pin as exactly
+`-goaiez_antig_stages_test` / `+goaiez_antig_test`. `DC`'s restore-first order, `DR`'s naming of
+`.agents/state/**` in item 1, the restore set derived from `git diff --cached --name-only` and the
+proof being item 4 and never item 3's silence are all unchanged.
+
+⛔ **`TRACK 1 ACTION 1` is UNANSWERED on all four `EE` channels, each run at tick 214**: `EC`'s
+absolute grep prints nothing in `.agents/rules/` and main's `CLAUDE.md`'s four `claude/hooks` lines
+are all `N136`'s **`D`** direction at `:862-866`; the commit-message grep finds four hits in 400
+bodies (`c24d432d` `N136`, plus site's `b6e0a803`/`3deec0e0`/`84df2b66` filing the identical ask) and
+**the highest note on `main` is still `N136`**; `OWNER.md` is byte-unchanged at md5
+`b3806eeac79d6deb502603ed05723aa6`; main's `launch-coder.sh` still has no `--allow-push`. `DH`'s
+method is **still dark** — `DM`'s census re-ran identical in all six lanes (site 61 · pricebook 2 ·
+reviews 1 · money 0 · sixty 0 · ui 0) with site at 06:54 against money 10:43 / sixty 10:40 /
+pricebook 10:35, **no new at-source guard reading in this seat's boundary in 3h59m** — a fact about
+the BOUNDARY, never about site (`EA`'s hypothesis was wrong once already on this exact reading).
+`EB` re-derived against the pin: `X-167`'s blobs did not move (main `ef362ab8…`, 17 methods; ours
+`ec9142aa…`, 4), `DU`'s prefix hazard still 1 bare / 0 parenthesised, resolution of record unchanged,
+**union 18**, checked with `DU`'s four falsifiers and never `DS`'s three — note the range carries
+`d46bec92 chore(state): record X-167 G6-18 closed-set decision` and pricebook's `808c56e1` reports a
+`G6-18` landing, i.e. **a decision recorded about `X-167` without the test blob moving**; the two
+baselines are independent (`DY`).
+
+⭐ **`RULING EE` (tick 213) FALSIFIES `EC`'s ceiling: Track 1's ledger IS reachable from this seat — in COMMIT MESSAGES
 on `main`.** `EC` ran `git show <pin>:.agents/supervisor/`, correctly found one tree entry, and
 generalised from a **tree** measurement to a **reachability** claim; `ED` inherited that enumeration
 rather than re-deriving it. Measured: main's last 400 commits carry **125 `chore(supervisor)` commits**
@@ -1649,6 +1710,92 @@ this mailbox, tracked content on `main` (`CLAUDE.md` or `.agents/rules/`), main'
 fourth check and **no new item**; the ask is unchanged — **a `MERGE_HEAD` byte-identity exemption for
 `.claude/hooks/` in lane checkouts, mirroring the `app/app/Doctor/*` clause** (`DJ`, in site's wording
 at `DM`), which `N133` shows Track 1 has already written once, for `app/app/Doctor` only.
+
+### ⭐ `RULING EF` (tick 214) — a run number is NOT an identity. It is a per-lane counter and it collides across lanes.
+
+`CW` and `CX` taught this seat to identify a coder by its **redirect**, not its number, and both were
+right. `EF` supplies the reason and retires a stale attribution the ledger carries.
+`launch-coder.sh:87-89` derives the number by scanning for a file whose name **already contains the
+lane**:
+
+```
+n=1
+TRACK=$(basename "$PWD")
+while [ -e "/home/goaiez/tmp/agy-${TRACK}-run${n}.log" ] || [ -e "/home/goaiez/tmp/claude-${TRACK}-run${n}.log" ]; do n=$((n+1)); done
+```
+
+So `n` is **per-lane by construction** and two lanes reach `run137` independently. The ledger already
+contains the collision and did not notice it: `RULING CY` (tick 195) recorded *"Track 1's live
+`run137`"* exporting `MERGE·HARNESS·RESTORE`, while ticks 209/210 recorded pid `3627732` `run137`
+with a **relative** `.agents/supervisor/logs/agy-run137.log` redirect exporting
+`PUSH·MERGE·HARNESS` — two env trios, two redirect styles, one number, read as one process across
+four ticks.
+
+**Measured simultaneously at tick 214, they are two seats:**
+
+| pid | redirect | gate variables |
+| :--- | :--- | :--- |
+| `3877908` | `/home/goaiez/tmp/agy-grs-antig-run152.log` — **absolute, names Track 1** | `MERGE=1 · HARNESS=0 · RESTORE=0` |
+| `3869816` | `.agents/supervisor/logs/agy-run138.log` — **relative, names nobody** | `PUSH=0 · MERGE=0 · HARNESS=0` |
+
+**`CY`'s attribution of the `MERGE·HARNESS·RESTORE` trio to Track 1 is corroborated** — it is what
+Track 1's live process exports today — and the relative-`logs/` seat is a *different lane*: not
+Track 1, whose launcher at the pin is `LOG="/home/goaiez/tmp/${CODER}-${TRACK}-run${n}.log"` at
+`:78` (**absolute**, `DB`/`DD`'s method) and who is separately visible at `3877908`; and not this
+lane, where `ls -d .agents/supervisor/logs` returns `No such file or directory` (`CX`'s tell).
+
+⛔ **Every run-number citation in this ledger must carry its lane, and a bare `runN` from a sibling
+is not a reference.** Same family as `DL`, `DO`, `DQ`, `DU`, `DY`, `EB`, `EC`, `ED`, `EE` — the
+command was never in doubt. **`EE` was the object-type variant; `EF` is the uniqueness variant: the
+identifier was read correctly and was never unique.** **NOT an opening** — it corrects an
+attribution and adds no capability.
+
+### ⭐ `RULING EG` (tick 214) — the per-track restore measured FIRING, on the exact pair `DR` measured it FAILING. The variable is the PROCEDURE, not the attribute.
+
+⚠️ **Tick 213's reading was not available to it.** It reported *"zero per-track paths moved"* across
+its range and read that as the restore holding. **An unchanged per-track path has two causes** —
+nobody touched it, or the restore fired — and tick 213's range contained no per-track change at all,
+so it measured the first and credited the second. Tick 214's range **does** contain one:
+`ff6359f8 chore(state): record X-166 margin report sample exclusion` changes
+`.agents/state/BUILD-STATE.json` (+8/−1) and `JOURNAL.md` (+1). Yet:
+
+```
+$ git diff --name-status 1e6757f2 9b685e4c   -- <the eight per-track paths>   (nothing)
+$ git diff --name-status 9b685e4c^1 9b685e4c -- <the eight per-track paths>   (nothing)
+$ git diff --name-status 9b685e4c^2 9b685e4c -- <the eight per-track paths>
+M .agents/state/BUILD-STATE.json    M .claude/settings.json    M app/phpunit.xml
+M .agents/state/JOURNAL.md          M CLAUDE.md                M bin/supervise.sh
+M .agents/supervisor/launch-coder.sh
+```
+
+**Zero against parent 1, seven against parent 2** — the merge carried pricebook's per-track content
+on its second parent and landed none of it on `main`'s tree. That is `CLAUDE.md`'s merge step 2
+executed and proven by step 3's own test.
+
+⚠️ **Those first two are `RULING DR`'s exact pair**, which in pricebook's `a638eb96` came out
+**neither ours nor theirs** — a genuine three-way text merge, the `merge=ours` driver demonstrably
+not firing while it fired for their neighbours in the same commit. Same two files, same
+`.gitattributes`, opposite outcomes. **The difference is the procedure, not the attribute:**
+`a638eb96` was a lane taking `main` by the bare auto-commit route `CQ` forbids and `DP` documented;
+`9b685e4c` is Track 1 taking a lane by guarded `--no-ff --no-commit` + selective restore. `DR`'s
+core claim — *the attribute is not the variable* — is corroborated, and `EG` names what the variable
+is: **the explicit restore step, never `merge=ours`.**
+
+⛔ **`EG` is NOT an opening, and the asymmetry is the point.** It measures the restore working in
+*Track 1's* direction, taking a lane. This lane's take runs the **opposite** way, and `DC`/`DQ`'s
+destructive row is live in it — re-measured against this pin:
+
+```
+$ git diff HEAD...9b685e4c -- app/phpunit.xml | grep DB_DATABASE
+-        <env name="DB_DATABASE" value="goaiez_antig_stages_test"/>
++        <env name="DB_DATABASE" value="goaiez_antig_test"/>
+```
+
+A restore that fires reliably for the seat that owns the procedure says nothing about a take this
+lane cannot commit. `DC`'s restore-first standing order is unchanged and is item 1 of any take brief
+this lane ever writes; `DR`'s naming of `.agents/state/**` in that item is unchanged; the restore
+set is still derived from `git diff --cached --name-only`, never a fixed list, and the proof is
+still item 4, never item 3's silence.
 
 ## Dispatching the coder (added 2026-09-02)
 
