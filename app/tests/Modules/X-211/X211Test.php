@@ -408,7 +408,7 @@ class X211Test extends TestCase
         ]);
 
         $this->expectException(\DomainException::class);
-        $this->expectExceptionMessage('A fee with no matching TERM in the agreement is refused');
+        $this->expectExceptionMessage('a fee with no matching term is refused');
 
         $this->engine->applyLateFee($biz->id, $invoice->id, 7500, false);
     }
