@@ -94,4 +94,90 @@ class X168Test extends TestCase
         $approvedTimesheet = $this->approveAction->approve($biz->id, $timesheet->id);
         $this->assertEquals('approved', $approvedTimesheet->status);
     }
+
+    public function test_defect_arm_close_job_window_updates_open_entry(): void
+    {
+        Event::fake([TimesheetSubmitted::class, PeriodReady::class]);
+        $biz = TestCase::provisionTenant(['name' => 'Defect Arm Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $techPersonId = 402;
+        $now = Carbon::parse('2026-08-25 08:00:00');
+
+        $entry = $this->computeAction->recordJobWindow(
+            businessId: $biz->id,
+            personId: $techPersonId,
+            jobId: 7702,
+            stateWindow: 'on_site',
+            startedAt: $now,
+            endedAt: null,
+            locationLat: null,
+            locationLng: null
+        );
+
+        $this->assertNotNull($entry);
+        $this->assertNull($entry->ended_at);
+        $this->assertEquals(0, $entry->duration_minutes);
+
+        $closedAt = $now->copy()->addMinutes(45);
+        $closedEntry = $this->computeAction->closeJobWindow($biz->id, 7702, $closedAt);
+
+        $this->assertNotNull($closedEntry);
+        $this->assertEquals($closedAt->toDateTimeString(), $closedEntry->ended_at->toDateTimeString());
+        $this->assertEquals(45, $closedEntry->duration_minutes);
+
+        $timesheet = Timesheet::find($closedEntry->timesheet_id);
+        $this->assertEquals(0.75, (float) $timesheet->total_hours);
+    }
+
+    public function test_regression_arm_close_job_window_without_open_entry_writes_nothing(): void
+    {
+        Event::fake([TimesheetSubmitted::class, PeriodReady::class]);
+        $biz = TestCase::provisionTenant(['name' => 'Regression Arm Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $techPersonId = 403;
+        $now = Carbon::parse('2026-08-25 08:00:00');
+
+        $initialCount = TimesheetEntry::where('business_id', $biz->id)->count();
+
+        // 1. Close when no open entry exists
+        $result = $this->computeAction->closeJobWindow($biz->id, 7703, $now);
+        $this->assertNull($result);
+        $this->assertEquals($initialCount, TimesheetEntry::where('business_id', $biz->id)->count());
+
+        // Now create a closed entry so we can test closing an already closed window
+        $entry = $this->computeAction->recordJobWindow(
+            businessId: $biz->id,
+            personId: $techPersonId,
+            jobId: 7703,
+            stateWindow: 'on_site',
+            startedAt: $now,
+            endedAt: $now->copy()->addMinutes(60),
+            locationLat: null,
+            locationLng: null
+        );
+
+        $this->assertNotNull($entry);
+        $this->assertNotNull($entry->ended_at);
+        $this->assertEquals(60, $entry->duration_minutes);
+
+        $timesheet = Timesheet::find($entry->timesheet_id);
+        $this->assertEquals(1.0, (float) $timesheet->total_hours);
+
+        $countAfterCreate = TimesheetEntry::where('business_id', $biz->id)->count();
+
+        // 2. Close a second time on the already-closed window
+        $secondCloseAt = $now->copy()->addMinutes(90);
+        $result2 = $this->computeAction->closeJobWindow($biz->id, 7703, $secondCloseAt);
+
+        $this->assertNull($result2);
+        $this->assertEquals($countAfterCreate, TimesheetEntry::where('business_id', $biz->id)->count());
+
+        $entry->refresh();
+        $this->assertEquals(60, $entry->duration_minutes);
+
+        $timesheet->refresh();
+        $this->assertEquals(1.0, (float) $timesheet->total_hours);
+    }
 }
