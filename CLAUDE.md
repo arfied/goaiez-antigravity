@@ -4207,3 +4207,132 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     those files (CHECKs, another lane's, the One Rule); the merge takes `main`'s copies whole and the
     reds go. ⚠️ Ruling 176's instrument — **diff the CHECK against `origin/main` before attributing
     any pinned-counter red** — has now been the cheap half twice running.
+182. **A merge brief's measured sha is a FLOOR, never the sha, and the reviewing tick re-measures
+    against `MERGE_HEAD` (RULED by the lane supervisor 2026-09-08 15:0x, on MONEY-121's `3f2eeb14`).**
+    Rulings 179 and 180 measured Table B, the two-sided set, the zero-conflict prediction and four
+    "measured absent, do not look" clauses against `origin/main` = **`acea8ad0`**. The coder fetched
+    and merged **`42e05e25`** — `acea8ad0` plus `5d89dc84 merge: origin/main into track/stages` and
+    `42e05e25 merge: track/stages`. That is **correct**: a brief that says *merge `origin/main`* means
+    the ref, and a ref moves. But every measurement was a claim about a different tree, and the four
+    clauses that tell the coder *not to look* are exactly the ones a moved `main` can falsify — a new
+    one-sided per-track path gets no conflict and no marker (ruling 179), and a new one-sided `main`
+    hunk inside a money module tree is ruling 58 shape (2). **RULED: the reviewing tick re-measures
+    Table B and all four ruling-58 shapes against `MERGE_HEAD`, never against the briefed sha, and
+    every merge brief tells the coder to report the sha it actually merged.** Re-measured on this
+    merge, all four survived: zero deletions in the whole staged set, zero staged hunks in money's
+    eight module trees, one addition in a money test file (ruling 184), and the four Table B paths
+    byte-identical to money's `HEAD` (`git diff --cached HEAD` over them empty, `app/phpunit.xml:34`
+    still `goaiez_antig_money_test`). ⚠️ **Nothing in the run's own output named `42e05e25`** — the
+    report said `CONFLICTS: 0` and the log said *"the merge completed smoothly"*; the sha was
+    recovered only by the supervisor running `git rev-parse MERGE_HEAD`. A merge wave whose report
+    does not name its `MERGE_HEAD` cannot be reviewed against the tree it actually merged, which is
+    the ruling 147/175 family reaching the one field a merge review turns on.
+183. **`php -l` on a non-PHP file is not a no-op — it writes a parse error to an untracked `error_log`
+    at the repo root — and in a merge wave most hand-resolved paths are not PHP (RULED by the lane
+    supervisor 2026-09-08 15:0x, same review).** Rulings 55 and 158 made `php -l` and `pint --test`
+    mandatory in a merge's finalisation. In *this* merge the hand-resolved paths were
+    `app/phpunit.xml` (XML), `.claude/settings.json` (JSON), `bin/supervise.sh` and
+    `launch-coder.sh` (bash) — **not one of them PHP**. Two consequences, both measured:
+    (a) `php -l app/phpunit.xml` wrote `./error_log`, 120 bytes, `Sep 8 14:30`, one line — *"PHP Parse
+    error: syntax error, unexpected identifier `version` in app/phpunit.xml on line 1"* — because
+    `<?xml version` opens a PHP short tag. It is untracked and unignored, so §1 read `1 uncommitted
+    path(s)`: the exact instrument rulings 34 and 71 use to decide whether §6's verdict belongs to the
+    sha, muddied by a lint, and a stray file left at a **live web document root** one `git add -A`
+    from a commit (ruling 47). (b) `php -l` on the two **bash** scripts reported `No syntax errors
+    detected` and proved nothing — a file with no `<?php` tag is all inline HTML to the linter, so it
+    passes whatever it contains. Two of the report's three lint lines were vacuous: ruling 61's
+    passes-for-the-wrong-reason arriving in a *finalisation step*. **RULED: `php -l` runs over `*.php`
+    only, and a merge brief lists its resolved paths by extension, saying which check each gets** —
+    `php -l` and `pint` for PHP, and for XML/JSON/shell the check that actually reads them (a `grep`
+    for the pinned value, which is what Table B's proof already does). ⛔ Never widened to "every file
+    the wave touched". ⚠️ The tell is an `error_log` at the repo root. The miss is the brief's and
+    spends no dispatch; this is the ruling 66/75/82/92/94/106/118/147/153/175 family a **fifteenth**
+    time — a dictated **finalisation command** dictates what it writes as well as what it checks.
+184. **The post-merge ruling-58 sweep is MEASURED and STRUCK; the merge's one lane-facing hunk is an
+    ADDITION and it is green (measured 2026-09-08 15:0x).** Shape (1) — main adds a test against
+    money's kept code: **one**, and it passes. `X117Test.php` gains
+    `test_g1_75_price_is_looked_up_or_refused` (+1 import, `ModelNotFoundException`), asserting that a
+    cart total uses the **stored** `unit_price_cents` and ignores a caller-supplied price, and that an
+    unknown sellable is refused; money's `CheckoutEngine::buildCart():27-28` reads
+    `$sellable->unit_price_cents` through `Sellable::where(business_id)->findOrFail()`, so both arms
+    hold and §7's `FAILED` reached **0**. It is **adopted, not reverted** — reverting another lane's
+    genuine addition to this lane's test file is the One Rule as surely as deleting it is (ruling
+    156). Shape (2) one-sided `main` change inside a money module tree: **none**. Shape (3) a deleted
+    class money reads: **none** (zero deletions in the whole staged set). Shape (4) generated tests
+    for unmounted routes: **none**. ⛔ Not to be re-raised. ⚠️ Ruling 159 was honoured: phpstan reads
+    `app/app/` only, so the **suite** was the witness over `app/tests`, which is why this sweep is
+    answered by a gate and not by a wave. ⚠️ **New floor: `2342 · 2340 · FAILED 0 · errors 2`**, the
+    first `FAILED 0` in this lane's recorded history; the two errors are track sixty's Infobip
+    journeys and ruling 125 requires the floor to fall the moment either lands.
+185. **`issueInvoice` reads the customer's credit terms and then computes the due date from the
+    CALLER's argument instead, so an owner who set `net_60` gets a 30-day invoice (RULED by the lane
+    supervisor 2026-09-08 15:0x, briefed as MONEY-122 item 1).**
+    `X-199/Domain/InvoiceEngine::issueInvoice():39-49` looks up
+    `CreditTerm::where(business_id)->where(customer_id)->first()`, creating one from `$termsType` when
+    there is none; then `:57` is `$dueDays = $termsDaysMap[$termsType] ?? 0;` — **the parameter, not
+    `$terms->terms_type`** — and `:66` writes `due_date` from it. **This is ruling 51 and ruling 37
+    verbatim** — *the row already knows, and a caller-supplied value is a second place for the truth
+    to disagree* — landing on `invoices.due_date`, the column J12's overdue chase keys on
+    (`InvoiceReader:70`), and on the one field an owner and a customer have actually agreed between
+    them. The stored row is authoritative and has a real writer: `TermsSetAction:31,:41`
+    `updateOrCreate`s `terms_type`, the declared `terms.set` capability, so a real tenant reaches the
+    disagreement through the product. Every production call site takes the default
+    (`EvidenceInvoiceCommand:56`, `EvidenceRecoveryCommand:57,:65`). **RULED: `$dueDays` derives from
+    `$terms->terms_type`, through a `CreditTerm::TERMS_DAYS` const on the model that owns the column**
+    — the map is shared rather than copied, because a second copy is this wave's own defect one level
+    down. ⛔ **The `$termsType` parameter STAYS**: unlike rulings 37 and 51 it has a second and
+    legitimate role, founding the terms row at `:44` when the customer has none — two roles, one
+    fiction, which is ruling 45's structure. ⚠️ **Why ten green tests cannot see it (ruling 68):** all
+    six `CreditTerm::create` fixtures in `InvoiceEngineTest` seed `net_30` and every `issueInvoice`
+    call in that file takes the `net_30` default, so the two agree by construction — ruling 99's
+    fixture-omission trap. ⚠️ **Blast radius: ZERO.** All 44 call sites either pass no fourth argument
+    against a `net_30`-or-absent fixture, or — `JourneyHarness:532` — pass `'due_on_receipt'` for a
+    person with no terms row, so `:44` founds it with that same value. The proof must therefore be a
+    **new** test, and it asserts the 60-day date **positively** (ruling 104). ⚠️ `InvoiceEngineTest.php`
+    is **pest-style** (`test('…', …)`, 10 tests, `grep -c "public function test_"` = 0) — ruling 86's
+    census hazard, stated so the floor names the shape it counted.
+186. **`InvoiceDraftAction` is the second invoice-creation vocabulary in a module that should have
+    one, it consults no credit terms at all, and it is KEPT because it is the only implementation of a
+    declared capability (RULED by the lane supervisor 2026-09-08 15:0x, briefed as MONEY-122 item 2).**
+    Measured: `grep -rn "InvoiceDraftAction" app/app app/tests` returns the class, and in
+    `X199Test.php` a property at `:29` and `new InvoiceDraftAction` in `setUp` at `:41` — **and no call
+    anywhere**, production or test. It is constructed on every test in that file and invoked by none,
+    which is why no census flagged it: it is not dead by any grep for its name. `:29` writes
+    `now()->addDays($dueDays)` off a caller-supplied int and **never reads `CreditTerm`**, so X-199 has
+    two writers of `invoices.due_date` that cannot agree — ruling 185's finding in the sibling path and
+    ruling 98's self-contradiction latent. ⛔ **Not deleted:** `X-199/manifest.php:32` declares
+    `provides: 'invoice.draft'` and this is its only implementation, so deleting it removes the only
+    thing that could satisfy a generated declaration harvested from the frozen plan (rulings 29, 69),
+    and `invoices.blade.php:45,:63` already render the `draft` state. ⛔ Not wired to a screen, an
+    engine call or a new transition (ruling 59 inverted). ⛔ `$dueDays` is not removed — with no terms
+    row it is the only information there is. **RULED: the draft path reads the same row the issue path
+    does and uses `CreditTerm::TERMS_DAYS` when one exists, falling back to `$dueDays` only when the
+    customer has no terms.** That is not new machinery to make a sentence true; it is two existing
+    writers of one column made unable to disagree. ⚠️ It has **no test at all** (ruling 70), so the
+    item **adds** a method asserting **both** branches — either alone passes for the wrong reason.
+    ⚠️ Recorded and **not** briefed: `draft` is excluded from every reader (`InvoiceReader:41,:49,:59`,
+    `Unpaid.php:61,:74`) and **there is no draft → issued transition anywhere in the module**, so an
+    invoice created through this path can never enter the chase — a decision-272 dead end, and a wave
+    of its own *after* the two paths agree, since minting a transition for a path with no caller is
+    ruling 59.
+187. **The evidence-command sweep is measured CLEAN and STRUCK, and the case-split evidence directory
+    is harmless (measured 2026-09-08 15:0x; rulings 64, 95, 100, 111, 114, 120, 132, 142, 151, 170).**
+    (a) **`X-117/Console/EvidenceCheckoutCommand`** — MONEY-73's cleanup **holds** against the current
+    code: no direct capture, no `tok_visa`, no `gateway_charge_id` key; `payments_written` is a real
+    `Payment::…->count()` and `merchant_connected` a real `exists()` (ruling 48(2) — never a
+    self-certifying literal); the `connect()` stays, which is ruling 45's substance. (b)
+    **`X-198/Console/EvidencePaymentLinkCommand`** — **one flow, not two**: it creates a `failed`
+    `Payment` and calls `PaymentLinkAction` **for that payment**, and every artifact key comes from
+    the payment or the link made from it, rulings 36/37 having already made the link real, persisted,
+    idempotent and currency-correct. There is no unrelated second fact printed as one flow. (c) **The
+    two directories differing only in case are two consumers, not a split:**
+    `Doctor/Stages/TestAnchorStage:55` builds `storage/app/evidence/{$m->id}/runtime-proof.json` from
+    the module id, so the doctor reads `X-198/` and reads **only** `runtime-proof.json`, while
+    `GatewayEngineTest:18` reads `x198/payment-link.json`, which the doctor never opens. ⛔ The
+    lowercase directory is **not** renamed: moving it breaks the one test that reads it to satisfy a
+    symmetry no code requires. ⛔ Not to be re-raised. ⚠️ Re-measured after the merge and unchanged
+    since ruling 39: `git ls-files app/storage/app/evidence/` prints **nothing**, while five tests
+    `$this->fail('Artifact missing…')` without one — green here because the artifacts are on this
+    disk, and unrunnable in any checkout that takes money's merge. Committing vendor material and the
+    ignore rule in `main`'s `.gitignore` are both reserved, so that is **TRACK 1 ACTION 9**, not a
+    wave.
