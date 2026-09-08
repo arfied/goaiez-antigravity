@@ -37,7 +37,7 @@
     @endif
 
     @if($invoices->isEmpty())
-        <x-ui.empty-state heading="Nothing to split.">Every open invoice is paid or already on a plan.</x-ui.empty-state>
+        <x-ui.empty-state heading="Nothing to split.">There is no open invoice to split: either none has been raised, or every one is already on a plan. Nothing in this checkout raises one from a completed job, and a draft is never issued.</x-ui.empty-state>
     @else
         <h2>Split an open invoice</h2>
         <ul class="space-y-4">

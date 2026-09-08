@@ -95,6 +95,8 @@ class PaymentplanBuilderScreenTest extends TestCase
 
         Livewire::actingAs($owner)->test(PaymentplanBuilder::class)
             ->assertSee('Nothing to split')
+            ->assertSee('and a draft is never issued')
+            ->assertDontSee('Every open invoice is paid or already on a plan')
             ->set('installments.999999', 3)
             ->call('offerPlan', 999999)
             ->assertSee("isn't in this account");
