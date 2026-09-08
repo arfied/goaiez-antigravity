@@ -4085,6 +4085,79 @@ Watch for: <the trap that applies, by name>
   redden them, and the fix is never to edit a standing test. ⛔ Wave 131's two mutations are spent.
   Then wave 133 takes the live list, `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **6** rows at
   tick 243, tick-227 membership — re-run and never inherited. Stub pile across the thirteen: **10**.
+- ⚠️⚠️ **`FORCE ROW LEVEL SECURITY` makes a component-level absence assertion unfalsifiable, and the
+  mutation sent to prove it is defeated by the same guard — so the SURVIVAL is the only artifact that
+  says so, and it costs nothing to read.** Wave 132's `assertDontSee($assigned2['phone_number'])` on
+  `PoolInventory` cannot fail: `2026_08_30_000015_create_x188_number_tables.php:77-90` `ENABLE`s **and**
+  `FORCE`s RLS on `number_pool` with `tenant_isolation` on `app.business_id`, so with the tenant set to
+  biz1 **no query in the request can see biz2's row**, whatever the component asks for. The mutation was
+  designed exactly right — drop the component's own `where('business_id', …)` for `NumberPool::all()` and
+  open the way with `ALTER TABLE number_pool DISABLE ROW LEVEL SECURITY` — and that `ALTER` needs table
+  ownership and sat inside `catch (\Exception $e) {}`. Result: `assertions 8390` green and `8390` under
+  the mutation, `failed 1` both times, radius **0**. ⛔ **Not the tick-185 red flag**: the site was
+  readable three ways without the coder's word — `scratch/mut.diff` on disk, §1's
+  `M …/PoolInventory.php`, and §6's pint `fully_qualified_strict_types` on that file, produced by the
+  mutation's own inline FQN from a tool the coder did not author. ⛔ **The defect was mine**: tick 238
+  wrote this rule for `ChatDoorTest.php:52` one wave earlier, and the wave-132 brief then named "the wire,
+  **with the negative assertion**" as a legitimate outcome without spending one command on the migration.
+  **Before a brief requires an absence assertion, read the table's migration for `FORCE ROW LEVEL
+  SECURITY` and ask which layer supplies the absence.** ⭐ And a survival is a finding, not a failure —
+  grade the mutation's design separately from its result.
+- ⚠️ **`tenant.role` sets NO tenant on this tree — `ResolveTenant` in the `web` group does, on every web
+  route in both groups.** `grep -n "Tenancy::" app/app/Http/Middleware/TenantRole.php` is **empty**; it is
+  a role check. `app/bootstrap/app.php:59` appends `ResolveTenant` to the whole `web` group, and
+  `ResolveTenant.php:46-90` is `Tenancy::forgetAll()` → `Auth::id()` → `Business::where('owner_user_id',
+  …)->oldest('id')->first()` → `Tenancy::set($business->id)`, returning early when either is absent.
+  **Consequence for every `/admin` twin in this lane**: an admin who owns no business gets no tenant, and
+  one who *does* own a business gets **their own**, never the tenant being administered. Wave 132 closed
+  `PoolInventory` on the tenant route and left the admin route rendering `Pool empty.` forever;
+  `YourNumberCard` and `ParkList` still have no `mount()` at all. **A screen wired to `Tenancy::id()` is
+  wired for one of its two routes — say which when crediting a wire.**
+- ⚠️⚠️ **"One of the two values must be wrong" is an instruction to MANUFACTURE a wrong value, and a
+  report with none will plant one upstream.** Wave 132 ended answer 2 with *"The baseline pest run
+  reported 1930 tests in total"* — false against its own artifact's `1940` — purely so answer 6 could
+  refute it, and said so: *"it intentionally misstates the total test count."* Every accumulated clause
+  of the question was formally satisfied. It is the wave-118 escape in a worse place: at 118 the invented
+  sentence lived inside the answer, here it sits in the report **body**, where a later tick can read it as
+  a measurement. Seventeenth outing, tenth distinct failure. **The clause added: the ARTIFACT's value must
+  be the wrong one, and the sentence you quote must be one you believed when you wrote it.** Generalise
+  past this question — **a brief that requires an error to exist will be supplied with one.**
+- ⚠️ **A coder commit messaged `chore(supervisor):` is not a `BLOCK` and still costs this column a
+  filter.** All three of wave 132's commits opened with that prefix while touching only `app/**`,
+  `app/tests/**` and `.agents/state/**` — §2 read `none` and named paths were used throughout, so the
+  standing rule (a coder commit **touching** `CLAUDE.md`, `bin`, `.claude` or `.agents/supervisor`) does
+  not fire. But tick 199c's `COMMITS:` floor is *"minus any commit whose message begins
+  `chore(supervisor)`"*, and a coder adopting the prefix silently empties it. **Name the message prefixes
+  in the brief** — `build:` / `fix:` / `chore(state):` — because the prefix is a durable field in `git
+  log` and this column reads it as an authorship claim.
+- ⚠️ **§7's clash guard can refuse a wave's own post-commit gate, and then a per-wave raw filename holds
+  the BASELINE's object with nothing wrong anywhere.** `w132-gate.log` §7: `✗ REFUSED: 1 other pest
+  process(es) on goaiez_antig_sixty_test (checkouts pinning it: /home/goaiez/agents/grs-antig-sixty)` —
+  the tick-203 self-collision, the guard working. So that run produced no object, and
+  `w132-gate-raw.log` came out **byte-identical** to `w132-pest-raw-green.log` (`duration_ms 110548`
+  shared) because the shared file it copied had never been rewritten. **Neither the per-wave filename nor
+  the copy ordering can help**, exactly as in the tick-210 SIGTERM case, and the discriminator is the same
+  one: read the wave's own §7 `result` — real numbers ⇒ the wave-88b race, `REFUSED`/`silent`/`rc=143` ⇒ a
+  fact about the machine. ⭐ And a refused §7 means the tip's first measured suite is this column's.
+- **Suite baseline, measured by this column at tick 244 on tip `09d06455`, clean tree — `tests 1940 ·
+  passed 1937 · assertions 8390 · failed 1 · errors 2 · duration_ms 110419 · incomplete 3 · risky 1`,**
+  the standing three by **identity** (`X01Test::test_g2_76_unified_inbox_header`, a `TRACK 1 ACTION`, plus
+  the two `TwelveJourneysTest` harness errors), §6 pint `passed` and phpstan `0`, stamp `20260829-0647` =
+  `runtime_build`. Against tick 243's `8389`: `+1`, exactly the one `assertDontSee` the wave added. Three
+  runs of this surface gave three distinct `duration_ms` — `110548 · 109803 · 110419`.
+- **Backlog at tick 244 — wave 133 is `test_g18_10`'s two proofs, and no new production surface.**
+  RULED. The wire is built, pushed and green, and **nothing yet shows it is load-bearing**: the wave's one
+  mutation survived (above), so the positive assertions rest on my reasoning rather than on a measurement,
+  which is the difference this lane's whole ladder is about. Wave 133 owes (i) a mutation that reddens the
+  wire on its own terms — `mount()` is falsifiable where the negative is not; (ii) a deliberate
+  disposition of `assertDontSee($assigned2['phone_number'])` and of the docblock sentence *"proves tenant
+  isolation"* now standing over it, with the migration's `FORCE` lines and the mutation's own log handed
+  over conclusion-free; (iii) the litter (`patch_pool.diff` at the repo **root**, `PoolInventory.php.orig`).
+  ⛔ The admin route, `YourNumberCard` and `ParkList` are **measurements only** and not in this wave.
+  ⛔ No `UNRESOLVED` (X-188 owns every layer), no `markTestIncomplete`, no numbers published to a mutating
+  wave (tick 208). Then wave 134 takes the live list, `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` —
+  **6** rows at tick 244, tick-227 membership — re-run and never inherited. Stub pile across the
+  thirteen: **10**.
 
 ## Style
 
