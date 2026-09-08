@@ -733,3 +733,39 @@ verdict** — the check is `added − removed` reconciled against the suite tota
 line the grep names** (six took one command). Same relationship as `STAGES` to `doctor` (N115) and the
 `--census` needle to `argv[0]`: an instrument that can only over-report is safe as a trigger and unsafe
 as a finding.
+
+⚠️ **A MERGE BRIEF'S CLASSMAP ITEM IS UNCONDITIONAL, BECAUSE ITS TRIGGER IS MEASURED BY THE CODER AND
+NOT PREDICTED BY ME (N122, 2026-09-07).** The `track/sixty` merge added
+`app/app/Modules/X-102/Http/Controllers/ChatStartController.php` and pointed `routes/api.php` at it. The
+gate came back **`tests 1989 · passed 10 · FAILED 0 · errors 1979`**, every one
+`Invalid route action: [App\Modules\X102\Http\Controllers\ChatStartController]`. That is run 110's
+classmap trap: `app/composer.json` declares `"classmap": ["app/Modules/"]`, module directories (`X-102`)
+do not match namespaces (`X102`), so **PSR-4 cannot resolve them and only a generated classmap can.**
+The four measurements that settle it, and the mtime is the one that makes it conclusive rather than
+suspected (wave 122's rule): `grep -c ChatStartController <classmap>` → **0**; classmap mtime **16 h
+stale** ⇒ the dump did not run; `grep -c SchemaRenderAction` → **1** ⇒ the needle is sound;
+`grep -c dump-autoload BRIEF.md` → **0**.
+**The cause was mine.** Wave 129's brief carried the item verbatim; I dropped it when rewriting the
+brief for the merge waves, and **wave 133 had zero `A` rows so the omission cost nothing for exactly one
+wave.** That is the failure mode to name: *a brief item that only matters in a case which has not yet
+occurred is deleted without consequence, and is missing when the case arrives.* `app/vendor` is
+gitignored, so the fix commits nothing and the merge commit stands — `errors 1979 → errors 2` on a
+rebuild that changed nothing tracked.
+
+⚠️ **A REVERSED DIFF RETURNS A PLAUSIBLE NUMBER WITH THE WRONG SIGN, AND THAT INVERTS THE MORAL READING
+OF THE EVIDENCE (N123, 2026-09-07).** My conflict-data brief asked for
+`git diff --stat <lane-tip> <merge-base>` — backwards. `git diff A B` reports what it takes to turn A
+*into* B, so it describes **undoing** the lane's work and reports every insertion as a deletion. Proved
+both ways on one file: `CAgentTest.php | 271 deletions(-)` as briefed, `271 insertions(+)` correct.
+**I reported the reversed reading to the owner in prose**, describing pricebook as *"theirs deletes 431
+lines"* when pricebook **adds 271 lines of tests**.
+Why this outranks the wrong-needle (wave 122) and wrong-baseline (§2e) defects it belongs with: **a
+wrong needle returns a false ZERO, which reads as "nothing here" and invites a second look; a reversed
+diff returns a well-formed number of the right magnitude with the wrong sign.** Nothing about it looks
+broken, and under the One Rule it turns *"this lane built a lot"* into *"this lane is deleting your
+checks"* — which is precisely what a `BLOCK` exists to catch, so the instrument fails in the direction
+that manufactures a false BLOCK against a lane's best work.
+**RULED:** a diff asking *what did a side DO* is always `git diff <merge-base> <that side's tip>`, base
+first. The free check that it is the right way round: **a side that only added files must report `-0`.**
+Use `--numstat`, not `--shortstat` — the latter fuses the file count to the insertion count and produced
+an unreadable table on the re-measurement, caught only by running it a third way.
