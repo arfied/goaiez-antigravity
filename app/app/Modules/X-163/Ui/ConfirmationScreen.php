@@ -95,6 +95,7 @@ class ConfirmationScreen extends Component
             $this->refusals[$itemId] = true;
         } else {
             unset($this->refusals[$itemId]);
+            unset($this->prices[$itemId]);
         }
     }
 
