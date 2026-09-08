@@ -29,11 +29,6 @@ final class RuntimeProofCommand extends Command
         }
 
         $recoveryData = json_decode(File::get($recoveryPath), true);
-        if (! isset($recoveryData['gateway_charge_id']) || ! str_starts_with($recoveryData['gateway_charge_id'], 'ch_')) {
-            $this->error('recovery.json gateway_charge_id must start with ch_');
-
-            return self::FAILURE;
-        }
 
         $queueDriver = $recoveryData['queue_driver'] ?? '';
         if ($queueDriver === '' || $queueDriver === 'sync') {
@@ -57,7 +52,7 @@ final class RuntimeProofCommand extends Command
             return self::FAILURE;
         }
 
-        $hasName = str_contains($junitContent, 'test_a_recovery_reaches_a_real_charge_id') || str_contains($junitContent, 'A recovery reaches a real charge id');
+        $hasName = str_contains($junitContent, 'test_the_recovery_artifact_proves_the_plan_and_its_refusal') || str_contains($junitContent, 'The recovery artifact proves the plan and its refusal');
 
         $rootSuite = null;
         if ($junitXml->getName() === 'testsuites' && isset($junitXml->testsuite[0])) {
@@ -76,7 +71,7 @@ final class RuntimeProofCommand extends Command
         $errors = (string) $rootSuite['errors'];
 
         if (! $hasName || $failures !== '0' || $errors !== '0') {
-            $this->error('junit.xml does not name test_a_recovery_reaches_a_real_charge_id with failures=0 errors=0');
+            $this->error('junit.xml does not name test_the_recovery_artifact_proves_the_plan_and_its_refusal with failures=0 errors=0');
 
             return self::FAILURE;
         }
@@ -92,17 +87,8 @@ final class RuntimeProofCommand extends Command
             return self::FAILURE;
         }
 
-        $proof = [
-            'artifact_id' => $recoveryData['gateway_charge_id'],
-            'driver' => $queueDriver,
-            'captured_at' => $capturedAt,
-            'junit' => 'storage/app/evidence/X-211/junit.xml',
-            'module' => 'X-211',
-            'test' => 'test_a_recovery_reaches_a_real_charge_id',
-        ];
+        $this->error('X-211 has no runtime proof: a recovery cannot reach a gateway charge id, because payments carries no plan column (see ruling 102). No artifact was written.');
 
-        File::put(storage_path('app/evidence/X-211/runtime-proof.json'), json_encode($proof, JSON_PRETTY_PRINT));
-
-        return self::SUCCESS;
+        return self::FAILURE;
     }
 }

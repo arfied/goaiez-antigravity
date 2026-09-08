@@ -6,7 +6,7 @@ namespace App\Modules\X211\Console;
 
 use App\Models\User;
 use App\Modules\X121\Models\Person;
-use App\Modules\X198\Domain\GatewayEngine;
+use App\Modules\X198\Models\Payment;
 use App\Modules\X199\Domain\InvoiceEngine;
 use App\Modules\X211\Domain\ArEngine;
 use App\Modules\X211\Domain\NoResolutionAttemptException;
@@ -24,7 +24,6 @@ final class EvidenceRecoveryCommand extends Command
     public function handle(
         TenantProvisioner $provisioner,
         InvoiceEngine $invoiceEngine,
-        GatewayEngine $gatewayEngine,
         ArEngine $arEngine
     ): int {
         if (app()->runningUnitTests()) {
@@ -63,15 +62,6 @@ final class EvidenceRecoveryCommand extends Command
         $arEngine->recordReason($businessId, $invoice->id, 'card_expired');
         $plan = $arEngine->offerPlan($businessId, $invoice->id, 3, 'monthly');
 
-        $gatewayEngine->connect($businessId, 'stripe', 'acct_tenant_stripe_123');
-        $payment = $gatewayEngine->capture($businessId, $plan->installment_amount_cents, 'tok_visa', 'idem_x211_'.time());
-
-        if (! str_starts_with((string) $payment->gateway_charge_id, 'ch_')) {
-            $this->error('gateway_charge_id must start with ch_');
-
-            return self::FAILURE;
-        }
-
         $invoice2Res = $invoiceEngine->issueInvoice($businessId, $person->id, $lines);
         $invoice2 = $invoice2Res['invoice'];
 
@@ -83,7 +73,7 @@ final class EvidenceRecoveryCommand extends Command
         }
 
         $data = [
-            'gateway_charge_id' => $payment->gateway_charge_id,
+            'payments_written' => Payment::where('business_id', $businessId)->count(),
             'plan_id' => $plan->id,
             'installment_amount_cents' => $plan->installment_amount_cents,
             'reason' => 'card_expired',
@@ -99,8 +89,6 @@ final class EvidenceRecoveryCommand extends Command
         $path = storage_path('app/evidence/X-211/recovery.json');
         File::ensureDirectoryExists(dirname($path));
         File::put($path, json_encode($data, JSON_PRETTY_PRINT));
-
-        $this->info($payment->gateway_charge_id);
 
         return self::SUCCESS;
     }
