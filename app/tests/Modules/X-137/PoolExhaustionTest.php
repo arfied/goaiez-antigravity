@@ -193,4 +193,25 @@ class PoolExhaustionTest extends TestCase
         $this->assertEquals('+15559999999', $t1->allocated_number);
         $this->assertEquals('unattributed', $t1->status);
     }
+
+    public function test_a_blank_visitor_session_token_is_refused_before_a_pool_number_is_touched(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Blank Token Refusal', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        DB::table('dni_pool_numbers')->insert([
+            ['business_id' => $biz->id, 'phone_number' => '+15550001007'],
+            ['business_id' => $biz->id, 'phone_number' => '+15550001008'],
+        ]);
+
+        $tokensBefore = CallToken::where('business_id', $biz->id)->count();
+
+        try {
+            $this->attributeAction->allocateFromPool($biz->id, '   ', 'src');
+            $this->fail('Expected exception was not thrown');
+        } catch (\DomainException $e) {
+            $this->assertEquals('VISITOR_SESSION_TOKEN_REQUIRED', $e->getMessage());
+            $this->assertEquals($tokensBefore, CallToken::where('business_id', $biz->id)->count());
+        }
+    }
 }

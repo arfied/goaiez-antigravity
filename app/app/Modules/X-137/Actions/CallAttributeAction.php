@@ -22,6 +22,10 @@ final class CallAttributeAction
         string $campaignSource = 'google_cpc',
         int $ttlMinutes = 30
     ): CallToken {
+        if (trim((string) $visitorSessionToken) === '') {
+            throw new \DomainException('VISITOR_SESSION_TOKEN_REQUIRED');
+        }
+
         $poolNumbers = DB::table('dni_pool_numbers')
             ->where('business_id', $businessId)
             ->pluck('phone_number')

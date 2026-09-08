@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-07T20:11:40",
+ "updated": "2026-09-07T20:33:29",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -2343,6 +2343,12 @@
    "module": "X-137",
    "chose": "The pool allocation path collected dni_pool_numbers without asking whether a row is usable. phone_number is declared NOT NULL with no non-empty validation and the table has no production writer, so a row holding an empty or whitespace number was allocated like any other and the live DNI route served a token with a blank number and status active, which is worse than the exhausted case because the status claims the call is tracked while the page renders no number to call and the later attribution join runs against the empty string. The pool is now filtered at the collection site so a number that is blank after trimming never enters it, which makes a pool with no usable number an exhausted pool and hands it to the fallback guard that already refuses an unusable fallback. Exclusion is used rather than refusal because a pool holding one blank and three good numbers must still serve a good number, and the trim form is used rather than a bare non-empty comparison because a phone number is a value rendered for a person to dial, so whitespace is not a value. Refused deliberately: throwing on a blank pool number, which refuses a business whose pool is mostly good; guarding inside allocateToken, whose other callers pass an explicit number where a blank is a caller error and a different question; guarding at the serving route, which leaves the actions other callers exposed when the invariant belongs in the action that allocates; and a non-empty column constraint, which no reader can rely on because the table has no production writer and every fixture bypasses one.",
    "at": "2026-09-07T20:11:40",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-137",
+   "chose": "The DNI serving route passed request input visitor_session_token with an empty string as its default, so a request omitting the parameter allocated a real pool number and wrote a call token whose visitor session token was blank. That column is declared NOT NULL with no non-empty validation and the table has no production writer outside this action, and unlike the earlier blank-value defects in this lane the value is the attribution key rather than a display string: attributeCall finds the token by its allocated number, marks it joined, dispatches VisitJoinedToCall carrying the blank token and returns a status of attributed, so the record claimed the call was tracked while carrying nothing to track it by. The allocation path now refuses a visitor session token that is blank after trimming, before it queries the pool, so an unattributable request consumes no pool number, and the route maps the resulting domain exception to a 409 through the catch it already has. A new message is used rather than the existing one because the two conditions are different facts and a test asserts the existing message by name. No anonymous-visitor policy is decided here, because the published page emits an empty div with no script and makes no request to this route, so there is no caller for such a policy to serve. Refused deliberately: serving the static fallback or marking the session unattributed, which invents a policy for a caller that does not exist and, in the unattributed form, is worse than the defect because an unattributed token does not hold its number out of the pool and the next visitor can be handed a number an anonymous visitor is already dialling; minting a session token, which fabricates an identifier nothing can correlate; guarding at the route, which leaves the actions other callers exposed when the invariant belongs in the action that allocates; deleting the routes empty-string default, which is an adapter that keeps a missing parameter from becoming a type error the routes catch does not handle; and a non-empty column constraint, which no reader can rely on because the table has no production writer and every fixture bypasses one.",
+   "at": "2026-09-07T20:33:29",
    "ruling": "R245"
   }
  ],

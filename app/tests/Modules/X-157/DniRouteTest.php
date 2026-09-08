@@ -110,4 +110,11 @@ class DniRouteTest extends TestCase
         $response->assertStatus(409);
         $response->assertJson(['error' => 'BUSINESS_NOT_CONFIGURED_FOR_DNI']);
     }
+
+    public function test_the_dni_route_refuses_a_request_with_no_visitor_session_token()
+    {
+        $response = $this->getJson("/sites/{$this->business->id}/test_hash/dni");
+        $response->assertStatus(409);
+        $response->assertJson(['error' => 'VISITOR_SESSION_TOKEN_REQUIRED']);
+    }
 }
