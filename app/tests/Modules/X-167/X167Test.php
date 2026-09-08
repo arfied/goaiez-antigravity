@@ -233,4 +233,36 @@ class X167Test extends TestCase
         Event::assertDispatched(ReorderTriggered::class);
         $this->assertSame(0, PurchaseOrder::where('business_id', $biz->id)->count());
     }
+
+    /** [G6-46] */
+    public function test_g6_46_no_autonomous_ordering_path(): void
+    {
+        Event::fake([InventoryConsumed::class, ReorderTriggered::class, StockLow::class, PoSent::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'G6-46 Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $supplier = Supplier::create([
+            'business_id' => $biz->id,
+            'name' => 'Supplier G6-46',
+            'email' => 'g646@supp.test',
+        ]);
+
+        $poCountBefore = PurchaseOrder::where('status', 'sent')->count();
+
+        // Propose path
+        $po = $this->reorderAction->handle(
+            businessId: $biz->id,
+            supplierId: $supplier->id,
+            items: [['sku' => 'ITM-1', 'qty' => 5, 'unit_price_cents' => 100]],
+            totalCents: 500
+        );
+
+        // Assert proposal exists
+        $this->assertEquals('proposed', $po->status);
+
+        // Assert count of released POs is unchanged across the call
+        $poCountAfter = PurchaseOrder::where('status', 'sent')->count();
+        $this->assertEquals($poCountBefore, $poCountAfter, 'No PO was released autonomously');
+    }
 }

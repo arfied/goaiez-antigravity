@@ -1284,3 +1284,15 @@ Therefore, adding a row to the tracker could move only the capability count.
 - `2026-09-07T23:00:41` (R245) C-Ai — BX: an exhaustion claim is only as wide as the list actually printed; two of boundary's four violations are live work that a 609-total argument hid.
 - `2026-09-07T23:00:41` (R245) C-Ai — BY: R237's fix string prescribes a C-Ai resolver and a table that C-Ai does not have, so the prescribed remedy is unbuildable and the registry route is the only in-lane one.
 - `2026-09-07T23:01:38` note: X-108 app/app/Modules/X-108/Ui/views/partials/appointment-row.blade.php:15-21 matches status with a default arm. The closed set is in ...000021_create_x108_scheduling_tables.php:60. Deferred because the repair crosses a view this track does not own.
+- `2026-09-07T23:24:31` (R245) C-Ai — (R245) BZ: the hardcoded-model class is exhausted on a printed list of seven lines, of which two are the standing whisper deferral and five are a UI component name, so widening the pattern would manufacture more false hits than it caught real ones.
+- `2026-09-07T23:24:38` (R245) X-167 — (R245) CA: the main take is blocked because the guard cannot commit a merge that adds a never-list path, which is a tooling limit and not a measurement.
+- `2026-09-07T23:24:38` (R245) C-Mail — (R245) CB: a capability whose fix is to author its own refusal clause inside a generated DO-NOT-EDIT file is refused under P-210, because an agent must not author the assertion it is graded on.
+- `2026-09-07T23:30:59` UNRESOLVED capability X-167 - G1-64: missing BlanketPO model and drawdown code
+- `2026-09-07T23:30:59` UNRESOLVED capability X-167 - G1-76: missing Receipt model and partial receipt logic
+- `2026-09-07T23:30:59` UNRESOLVED capability X-167 - G1-79: missing Receipt model and reconciliation logic
+- `2026-09-07T23:30:59` UNRESOLVED capability X-167 - G6-39: missing job completion reconciliation logic
+- `2026-09-07T23:30:59` UNRESOLVED capability X-167 - G6-40: missing dead stock reporting logic or column
+- `2026-09-07T23:30:59` UNRESOLVED capability X-167 - G6-43: missing kit component decrement logic
+- `2026-09-07T23:30:59` UNRESOLVED capability X-167 - G6-47: missing Refund model or idempotency key to prevent double restock
+- `2026-09-07T23:30:59` UNRESOLVED capability X-167 - G6-49: missing serial number tracking logic or column
+- `2026-09-07T23:30:59` UNRESOLVED capability X-167 - G6-51: missing atomic transfer location-to-location code

@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-07T23:00:41",
+ "updated": "2026-09-07T23:30:59",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1906,6 +1906,60 @@
      "stage": "capability",
      "why": "G19-02 - The module has a nullable barcode string and nothing that generates, scans, syncs or rates.",
      "at": "2026-09-06T09:57:27"
+    },
+    {
+     "module": "X-167",
+     "stage": "capability",
+     "why": "G1-64: missing BlanketPO model and drawdown code",
+     "at": "2026-09-07T23:30:59"
+    },
+    {
+     "module": "X-167",
+     "stage": "capability",
+     "why": "G1-76: missing Receipt model and partial receipt logic",
+     "at": "2026-09-07T23:30:59"
+    },
+    {
+     "module": "X-167",
+     "stage": "capability",
+     "why": "G1-79: missing Receipt model and reconciliation logic",
+     "at": "2026-09-07T23:30:59"
+    },
+    {
+     "module": "X-167",
+     "stage": "capability",
+     "why": "G6-39: missing job completion reconciliation logic",
+     "at": "2026-09-07T23:30:59"
+    },
+    {
+     "module": "X-167",
+     "stage": "capability",
+     "why": "G6-40: missing dead stock reporting logic or column",
+     "at": "2026-09-07T23:30:59"
+    },
+    {
+     "module": "X-167",
+     "stage": "capability",
+     "why": "G6-43: missing kit component decrement logic",
+     "at": "2026-09-07T23:30:59"
+    },
+    {
+     "module": "X-167",
+     "stage": "capability",
+     "why": "G6-47: missing Refund model or idempotency key to prevent double restock",
+     "at": "2026-09-07T23:30:59"
+    },
+    {
+     "module": "X-167",
+     "stage": "capability",
+     "why": "G6-49: missing serial number tracking logic or column",
+     "at": "2026-09-07T23:30:59"
+    },
+    {
+     "module": "X-167",
+     "stage": "capability",
+     "why": "G6-51: missing atomic transfer location-to-location code",
+     "at": "2026-09-07T23:30:59"
     }
    ]
   },
@@ -4867,6 +4921,60 @@
    "stage": "capability",
    "why": "docblock: no docblock at all at line 652. Evidence: grep -B 3 \"test_header_capabilities\" app/tests/Modules/C-Mail/CMailTest.php. Target: a real assertion would test email header capabilities against MailDomain. Class D: a placeholder with no subject (method cites no id and credits nothing).",
    "at": "2026-09-06T16:21:16"
+  },
+  {
+   "module": "X-167",
+   "stage": "capability",
+   "why": "G1-64: missing BlanketPO model and drawdown code",
+   "at": "2026-09-07T23:30:59"
+  },
+  {
+   "module": "X-167",
+   "stage": "capability",
+   "why": "G1-76: missing Receipt model and partial receipt logic",
+   "at": "2026-09-07T23:30:59"
+  },
+  {
+   "module": "X-167",
+   "stage": "capability",
+   "why": "G1-79: missing Receipt model and reconciliation logic",
+   "at": "2026-09-07T23:30:59"
+  },
+  {
+   "module": "X-167",
+   "stage": "capability",
+   "why": "G6-39: missing job completion reconciliation logic",
+   "at": "2026-09-07T23:30:59"
+  },
+  {
+   "module": "X-167",
+   "stage": "capability",
+   "why": "G6-40: missing dead stock reporting logic or column",
+   "at": "2026-09-07T23:30:59"
+  },
+  {
+   "module": "X-167",
+   "stage": "capability",
+   "why": "G6-43: missing kit component decrement logic",
+   "at": "2026-09-07T23:30:59"
+  },
+  {
+   "module": "X-167",
+   "stage": "capability",
+   "why": "G6-47: missing Refund model or idempotency key to prevent double restock",
+   "at": "2026-09-07T23:30:59"
+  },
+  {
+   "module": "X-167",
+   "stage": "capability",
+   "why": "G6-49: missing serial number tracking logic or column",
+   "at": "2026-09-07T23:30:59"
+  },
+  {
+   "module": "X-167",
+   "stage": "capability",
+   "why": "G6-51: missing atomic transfer location-to-location code",
+   "at": "2026-09-07T23:30:59"
   }
  ],
  "decisions": [
@@ -5168,6 +5276,24 @@
    "module": "C-Ai",
    "chose": "BY: R237's fix string prescribes a C-Ai resolver and a table that C-Ai does not have, so the prescribed remedy is unbuildable and the registry route is the only in-lane one.",
    "at": "2026-09-07T23:00:41",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Ai",
+   "chose": "(R245) BZ: the hardcoded-model class is exhausted on a printed list of seven lines, of which two are the standing whisper deferral and five are a UI component name, so widening the pattern would manufacture more false hits than it caught real ones.",
+   "at": "2026-09-07T23:24:31",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-167",
+   "chose": "(R245) CA: the main take is blocked because the guard cannot commit a merge that adds a never-list path, which is a tooling limit and not a measurement.",
+   "at": "2026-09-07T23:24:38",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Mail",
+   "chose": "(R245) CB: a capability whose fix is to author its own refusal clause inside a generated DO-NOT-EDIT file is refused under P-210, because an agent must not author the assertion it is graded on.",
+   "at": "2026-09-07T23:24:38",
    "ruling": "R245"
   }
  ],
