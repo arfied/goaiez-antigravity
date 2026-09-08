@@ -106,12 +106,12 @@ class X210Test extends TestCase
     }
 
     /**
-     * [G1-66] a promotion with no cap cannot be saved
+     * The redemption cap is enforced at validation once redemptions_count reaches max_redemptions.
      */
-    public function test_g1_66_promotion_with_no_cap_cannot_be_saved(): void
+    public function test_promotion_redemption_cap_is_enforced_at_validation(): void
     {
         Event::fake([PromotionCapReached::class]);
-        $biz = TestCase::provisionTenant(['name' => 'G1-66 Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Promo Cap Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $promo = $this->createAction->createPromotion(
