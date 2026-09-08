@@ -3276,3 +3276,98 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     `assertDontSee('will not enter')` and **not** `'reminder sequence'` — the corrected sentence
     contains those two words, so the longer needle would fail against the correct copy, which is
     ruling 61's pairing discipline meeting ruling 76's clause-choice discipline in one line.
+145. **The merge gate is measured by DATE against the section that set the condition, never by the
+    presence of a lane name in the merge list (RULED by the lane supervisor 2026-09-08, measured
+    against `origin/main` = `257a6a12`).** `OWNER.md`'s 06:0x §3 conditions money's merge on
+    *reviews and pricebook having landed*, and ruling 138 already established that the lane's gate
+    is the sentence naming the lane, not the headline. The check itself has a trap one level down:
+    `git log --merges origin/main | grep -i "reviews\|pricebook"` **returns hits** —
+    `cb2a8aa3 merge: track/reviews` and `4bb58153 merge: track/pricebook` — and both are dated
+    **2026-09-06**, *older* than `57b8f881 merge: origin/main 12447593`, which is the state money
+    already carries. Main's four newest lane merges are `track/ui` (09-08), `track/stages`,
+    `track/sixty` and `track/site` (09-07); **neither blocked lane has landed since the walls came
+    down**. A tick that grepped the name and stopped would have read a stale merge as a lift and
+    dispatched `--allow-merge` against a base about to move — exactly what ruling 138 spent a
+    dispatch avoiding, arriving through the *body* rather than the headline. **So: measure
+    `git log --merges --format="%h %ad %s" --date=short origin/main` and compare the date against
+    the `OWNER.md` section that set the condition.** ⚠️ Same family as rulings 83 and 136 — a
+    stale `FETCH_HEAD` naming a sha the branch never contained, a fresh mtime over unchanged
+    content, and now a merge subject line that is true and spent. **The cheap signal keeps moving
+    for reasons unrelated to the fact it stands for.**
+146. **A wave that rewords a SENTENCE owns every clause of the old sentence, not just the clause
+    the finding is named after (RULED by the lane supervisor 2026-09-08, on MONEY-111's
+    `350ee3c4`).** MONEY-111 §2.1 declared item 2's blast radius **ZERO** — *"No test asserts
+    either string"* — on the strength of a ruling-118 two-table sweep over the token
+    `authorised`/`Authorised`, which returned seven lines and no test.
+    `CheckoutBlockScreenTest:57` asserted `'waiting on a card-entry surface that is not connected
+    yet'`: the **tail dependency clause of the sentence being replaced**, carrying not one of the
+    swept words. The brief's own dictated rewording changed *is waiting on* to *this waits on*, and
+    a one-word grammar change broke it. **The coder found it and fixed it forward** — the needle
+    became `'waits on a card-entry surface that is not connected yet'`, the same load-bearing
+    clause (ruling 76), **changed and not deleted** (rulings 39, 46), inside the authorised
+    surface. That judgement is upheld and cost one commit. **RULED: when a wave replaces a
+    sentence, the blast-radius sweep runs over every CLAUSE of the old sentence** — the finding's
+    own noun, and the dependency clause, and the tail — because a test asserts the clause it cares
+    about, which is rarely the clause the ruling is named after. ⚠️ This is rulings 113 and 116
+    arriving from a third direction: 113 said sweep with interior fragments, 116 said the fragments
+    are synonyms of the FACT and not of the phrasing, and 146 says the *unit* is the whole sentence
+    being replaced. ⚠️ Per the 46/49/50/62/66/75/82/86/94/104/106/113/116 precedent the miss is the
+    supervisor's and carries its own two dispatches.
+147. **A brief that details two fields of a fixed-shape document gets those two fields (RULED by
+    the lane supervisor 2026-09-08, same review).** MONEY-111's `REPORT.md` carries `RAW:` and
+    `GATE: NOT RUN — …` and **nothing else**: no `COMMITS`, no `DONE`, no `UNRESOLVED`, no
+    `REFUSED`. The brief's Step 5 said *"Fixed shape (rule 10)"* by reference and then spelled out,
+    in detail, exactly two fields — what `RAW:` must carry (rulings 72, 128) and the literal
+    `GATE: NOT RUN` string (ruling 121a). The coder produced precisely the two fields the brief
+    detailed. **Graded PASS-WITH-NOTES, never a BLOCK:** withholding a correct, gated tip over a
+    paperwork defect is the error ruling 74 exists to stop, and the substance was independently
+    verifiable in full — the surface, the diff, both RED lines and the gate were all measured by
+    the supervisor anyway (ruling 42(2) requires the re-gate regardless). **RULED: every brief
+    enumerates the report's fields BY NAME.** ⚠️ Ruling 128 found that moving one number out of a
+    document without naming the field the other stays in is how a field goes empty; this is the
+    same mechanism with no move at all, and it generalises past `REPORT.md` — **detail is read as
+    the spec and a by-name reference is read as decoration**, which is the ruling 66/75/82/92/94/
+    106/118 family (a dictated signature, line, needle, floor, test, command and sweep each dictate
+    their own outcome) reaching the shape of the document itself.
+148. **The events population is MEASURED — 32 classes, one live seam per module at most — and
+    `CartCheckedOut::$authToken` is ruling 45's fabrication riding this lane's one live seam with
+    zero readers (RULED by the lane supervisor 2026-09-08, briefed as MONEY-112).** No sweep had
+    ever enumerated the lane's `Events/` directories against their dispatchers and consumers.
+    Measured: **32 event classes** across the eight modules. **Exactly three have a dispatcher AND
+    a registered consumer** — `X-117\CartCheckedOut` → `X-198\CaptureCheckedOutCart`
+    (`X-198/ModuleServiceProvider.php:30`), `X-211\ArOverdue` → `X-211\ProcessOverdueReceivable`
+    (`X-211/ModuleServiceProvider.php:36`), and nothing else. **Five are dead at both ends** —
+    `C-Billing\LedgerPeriodClosed`, `C-Billing\RefundIssued`, `X-120\CardDeclined`,
+    `X-198\PaymentFailed` (the hits for that name are all `App\Notifications\PaymentFailed`, a
+    different class) and `X-198\ChargebackReceived` (ruling 79). **The remaining twenty-four are
+    dispatched and consumed by nobody**, which is this lane's known shape and is already recorded
+    across rulings 44, 69, 79, 101, 102, 105 and 120 — ⛔ they are **not** a wave: wiring a
+    consumer to satisfy a declaration is ruling 59 inverted, and deleting the class removes the
+    only thing that could ever satisfy a generated `@emits` harvested from the frozen plan (rulings
+    29, 32, 69). **The one buildable finding is a PAYLOAD.**
+    `CheckoutEngine.php:108` and `:242` dispatch `CartCheckedOut` carrying
+    `authToken: $freshAuthToken` — the self-minted `auth_<random20>` string ruling 45 traced to
+    `StripeGatewayClient::charge()` and on to `POST /v1/charges` as **`source`**. Ruling 45
+    correctly stopped it *at the listener*; **it never took it off the event**. Measured now:
+    `grep -rn -- "->authToken" app/app app/tests` returns **four lines, all
+    `X-117/Ui/CheckoutBlock.php`'s own Livewire property**, and `grep -rn "authToken\|auth_token"
+    app/app/Modules/X-198` returns **nothing** — `CaptureCheckedOutCart` reads only
+    `$event->businessId`. **The field has no reader anywhere.** That is ruling 44's shape and
+    strictly worse than its `bundle_url`: 44's fabrication was an inert string on an event with no
+    consumer, this one is the payment-instrument fabrication riding the lane's **one** live seam
+    that a registered listener actually receives, under a listener docblock reading *"It still has
+    a job the day a real token arrives"* — an invitation to reach for exactly the field ruling 45
+    exists to stop anyone using. **RULED: the constructor parameter is dropped**, per ruling 44's
+    own precedent that *"dropping a constructor parameter is not minting or renaming an event, so
+    rulings 29 and 32 are untouched; the `@emits` name does not move"*. ⛔ **The nonce role is
+    untouched** — `:85` and `:212` still write `auth_token` on the order row and `:164` still
+    guards the double charge on it, which is the real one-shot mechanism ruling 45 preserved; only
+    the copy riding the event goes. ⚠️ **Blast radius: `grep -rn "CartCheckedOut" app/tests`
+    returns NOTHING** — the lane's one live seam is asserted by no test at all, ruling 70 at its
+    sharpest — so the wave **adds** a test, and per ruling 101 it must assert the seam **positively
+    and negatively** in one place: the event is dispatched for the order, and it carries no
+    payment-instrument field. ⚠️ Recorded and **not** briefed: `PaymentCaptured`'s
+    `int $amountCents = 0` and `?int $invoiceId = null` defaults are ruling 43's shape latent in a
+    signature — the live dispatcher at `GatewayEngine:112` passes `amountCents` and ruling 102
+    measured why `invoiceId` is never passed, so both defaults are unreachable today (ruling 96
+    governs) and they become a wave the day a second dispatcher exists.
