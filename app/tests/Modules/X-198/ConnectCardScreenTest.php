@@ -139,6 +139,7 @@ class ConnectCardScreenTest extends TestCase
             ->assertSee('The Stripe Connect redirect is not built in this checkout yet')
             ->assertDontSee('week 2');
     }
+
     public function test_the_merchant_pill_says_not_applied_and_never_names_an_external_gateway()
     {
         $biz = self::provisionTenant();
