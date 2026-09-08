@@ -147,7 +147,7 @@ class X170Test extends TestCase
         $this->releaseAction->handle($biz->id, $comm1->id, 'pay_456');
 
         $export2 = $this->engine->exportPayroll($biz->id);
-        
+
         $this->assertContains($comm1->id, array_column($export2, 'id'), 'Released commission now present in export');
         $this->assertCount(2, $export2);
 

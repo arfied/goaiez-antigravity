@@ -52,23 +52,6 @@ class X111Test extends TestCase
      * TEST ANCHOR
      * every alert row's message begins with a verb — asserted by a lint on the alert templates;
      * a tenant HUMAN request produces a ticket within one minute with the full transcript
-     *
-     * ⛔ REFUSED: G4-05 — the capability's own text is "named in the header"; there is no clause to assert
-     * ⛔ REFUSED: G4-28 — the capability's own text is "named in the header"; there is no clause to assert
-     * ⛔ REFUSED: G4-33 — the capability's own text is "named in the header"; there is no clause to assert
-     * ⛔ REFUSED: G9-05 — the capability's own text is "named in the header; the export row is X-122's log"; there is no clause to assert; the log is X-122's
-     * ⛔ REFUSED: G17-17 — the capability's own text is "fraud velocity is named in the header"; there is no clause to assert
-     * ⛔ REFUSED: G5-38 — the capability's own text is "ticket categorisation"; a noun phrase, not a refusal
-     * ⛔ REFUSED: G9-20 — the capability's own text is "fleet-wide operator roll-up"; a noun phrase, not a refusal
-     * ⛔ REFUSED: G9-28 — the capability's own text is "API traffic per endpoint"; a noun phrase, not a refusal
-     * ⛔ REFUSED: G4-36 — the capability's own text is "the auto-healing supervisor"; a noun phrase, not a refusal
-     * ⛔ REFUSED: G4-41 — the capability's own text is "the T443 delete-list runner"; a noun phrase, not a refusal
-     * ⛔ REFUSED: G4-31 — the capability's own text is "the screen; the mechanism is X-123's"; the mechanism is assigned to X-123
-     * ⛔ REFUSED: G4-40 — the capability's own text is "ops.ban plus a mass token.revoke through X-142"; the mechanism runs through X-142
-     * ⛔ REFUSED: G4-47 — the capability's own text is "SOP edit history; the same home as […] Interactive SOPs" (the id in the original is elided: quoting it here would close it); a restatement, and the Interactive SOPs capability it points at is UNRESOLVED on this module — X-111 exposes no SOP or revenue surface
-     * ⛔ REFUSED: G5-17 — the capability's own text is "a resolved ticket drafts a help row;  the help registry generates itself from X-122"; the registry is X-122's
-     * ⛔ REFUSED: G9-19 — the capability's own text is "failed searches open a help topic;  the help registry generates itself from X-122"; the registry is X-122's
-     * ⛔ REFUSED: G21-14 — the capability's own text is "the help card offered before the ticket is submitted"; a restatement, no refusal
      */
     public function test_anchor_action_verb_alert_message_and_human_request_ticket_generation(): void
     {
@@ -208,6 +191,28 @@ class X111Test extends TestCase
         $this->assertGreaterThanOrEqual(8, $controlCount);
     }
 
+    /**
+     * [G5-18] the HELP path; reply HUMAN always escalates (R37)
+     */
+    public function test_g5_18_help_path_always_escalates(): void
+    {
+        Event::fake([TicketOpened::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Help Path Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $t1 = $this->ticketAction->handle($biz->id, '<a transcript>', 'billing');
+        $t2 = $this->ticketAction->handle($biz->id, '<a different transcript>', 'general');
+
+        $this->assertSame('billing', $t1->category);
+        $this->assertSame('general', $t2->category);
+
+        Event::assertDispatchedTimes(TicketOpened::class, 2);
+
+        Event::assertDispatched(TicketOpened::class, fn (TicketOpened $e) => $e->ticketId === $t1->id && $e->source === 'human_requested');
+        Event::assertDispatched(TicketOpened::class, fn (TicketOpened $e) => $e->ticketId === $t2->id && $e->source === 'human_requested');
+    }
+
     /** [G5-18] */
     public function test_g5_18_human_reply_escalates(): void
     {
@@ -288,7 +293,7 @@ class X111Test extends TestCase
         $engine->checkThrottle($biz->id, '10.0.0.2');
         $this->assertDatabaseHas('ip_bans', ['business_id' => $biz->id, 'ip_address' => '10.0.0.1']);
         $this->assertDatabaseMissing('ip_bans', ['business_id' => $biz->id, 'ip_address' => '10.0.0.2']);
-        
+
         // The dead-tier half is not assertable here: X-111 exposes no pricing or plan surface, and the module's only occurrence of $99/$999 is the ⑤ tracker text in capabilities.php.
     }
 }

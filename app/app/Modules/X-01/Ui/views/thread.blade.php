@@ -11,8 +11,14 @@
                     @endif
                 @endif
             </h3>
-            
-            <div wire:loading class="text-sm text-ink-3">Loading...</div>
+            <div class="flex items-center gap-4">
+                @if($hasActiveTakeover)
+                    <button type="button" wire:click="releaseTakeover" class="text-sm font-medium text-blue-600 hover:text-blue-700 bg-blue-50 px-3 py-1.5 rounded-md border border-blue-200 shadow-sm transition-colors">
+                        Release Takeover
+                    </button>
+                @endif
+                <div wire:loading class="text-sm text-ink-3">Loading...</div>
+            </div>
         </div>
 
         @if($errorMessage)

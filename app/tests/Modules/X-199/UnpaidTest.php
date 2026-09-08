@@ -81,4 +81,17 @@ class UnpaidTest extends TestCase
         $this->actingAs($owner)->get('/home')
             ->assertOk();
     }
+
+    public function test_home_renders_money_quick_actions(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Home Actions Tenant']);
+        Tenancy::set((int) $biz->id);
+        $this->seed(UiReviewSeeder::class);
+        $owner = User::where('email', 'owner2@business.com')->first();
+
+        $this->actingAs($owner)->get('/home')
+            ->assertOk()
+            ->assertSee(route('x-199.invoices'))
+            ->assertSee(route('x-199.credits'));
+    }
 }

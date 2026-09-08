@@ -34,6 +34,11 @@ class X191Test extends TestCase
      * a target flagged PBN never receives a pitch;
      * the monthly send count never exceeds the target ceiling;
      * a pitch template with no page-specific fact fails the qualify gate
+     * [G8-20]
+     * [G8-21]
+     * [G12-07]
+     * [G17-06]
+     * [G11-34]
      */
     public function test_anchor_pbn_target_rejected_ceiling_enforced_and_page_fact_required(): void
     {
@@ -42,7 +47,7 @@ class X191Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Backlink Outreach Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
-        // 1. Prospect legitimate target and PBN target (G3-13, G8-05)
+        // 1. Prospect legitimate target and PBN target
         $cleanTarget = $this->prospectAction->prospectDomain(
             businessId: $biz->id,
             domain: 'hvacinsider.com',
@@ -109,16 +114,8 @@ class X191Test extends TestCase
             $this->assertStringContainsString('one follow-up', $e->getMessage());
         }
 
-        // 5. Monitor placement (G8-34)
+        // 5. Monitor placement
         $placement = $this->monitorAction->recordPlacement($biz->id, 'https://hvacinsider.com/best-heat-pumps', 'Dallas HVAC repair experts', $pitch->id);
         $this->assertTrue($placement->is_active);
-    }
-
-    /**
-     * [G3-13], [G3-61], [G3-62], [G4-19], [G8-05], [G8-06], [G8-11], [G8-20], [G8-21], [G8-34], [G11-34], [G12-07], [G12-14], [G12-15], [G17-06], [G17-09]
-     */
-    public function test_link_capabilities(): void
-    {
-        $this->assertTrue(true);
     }
 }

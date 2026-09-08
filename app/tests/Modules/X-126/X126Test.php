@@ -113,6 +113,28 @@ class X126Test extends TestCase
     }
 
     /**
+     * [N-126-01] refusal path: no fact
+     */
+    public function test_n_126_01_refusal_no_fact(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Policy Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $res = $this->checker->handle(
+            businessId: $biz->id,
+            capabilityName: 'entity.update',
+            context: [
+                'requires_grounding' => true,
+                'has_grounding_fact' => false,
+                'has_consent' => true,
+            ]
+        );
+
+        $this->assertEquals('refused', $res['decision']);
+        $this->assertEquals('NO_FACT', $res['refusal_code']);
+    }
+
+    /**
      * [N-126-02] capability arbiter persistence and audit trail
      */
     public function test_n_126_02_persistence_audit(): void

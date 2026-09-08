@@ -7,7 +7,6 @@ namespace Tests\Modules\X186;
 use App\Modules\X186\Actions\CampaignCreateAction;
 use App\Modules\X186\Actions\CampaignRunAction;
 use App\Modules\X186\Actions\SequenceStopAction;
-use App\Modules\X186\Domain\X186Engine;
 use App\Modules\X186\Events\CampaignExhausted;
 use App\Modules\X186\Events\CampaignReplied;
 use App\Modules\X186\Events\CampaignSent;
@@ -90,5 +89,4 @@ class X186Test extends TestCase
     {
         $this->assertTrue(true);
     }
-
 }

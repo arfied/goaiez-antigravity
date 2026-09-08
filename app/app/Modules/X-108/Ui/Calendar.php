@@ -7,11 +7,14 @@ namespace App\Modules\X108\Ui;
 use App\Modules\X108\Actions\AppointmentCancelAction;
 use App\Modules\X108\Models\Appointment;
 use App\Modules\X108\Models\Resource;
+use App\Support\Tenancy;
 use Carbon\Carbon;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Throwable;
 
+#[Layout('components.account.layout', ['heading' => 'Your Appointments'])]
 class Calendar extends Component
 {
     #[Locked]
@@ -23,8 +26,9 @@ class Calendar extends Component
 
     public bool $failed = false;
 
-    public function mount()
+    public function mount(int $businessId = 0)
     {
+        $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
         $this->date = Carbon::today()->toDateString();
     }
 

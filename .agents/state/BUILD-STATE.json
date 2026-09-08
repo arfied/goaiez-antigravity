@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-07T00:57:37",
+ "updated": "2026-09-08T05:35:34",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -3034,6 +3034,12 @@
    "chose": "G21-08 /pto is the time-off workflow, not a platform decision",
    "at": "2026-09-07T00:01:38",
    "ruling": "R245"
+  },
+  {
+   "module": "X-210",
+   "chose": "deleted main's test_g7_47_rate_never_changes_without_notified_action",
+   "at": "2026-09-08T05:35:34",
+   "ruling": "R245"
   }
  ],
  "notes": [
@@ -3092,6 +3098,10 @@
   {
    "at": "2026-09-06T08:25:57",
    "note": "X-201 phone_numbers UNRESOLVED withdrawn (REV-61): same cause; X-201 remains UNRESOLVED on its standing deadline_at entry, which is untouched"
+  },
+  {
+   "at": "2026-09-06T23:16:43",
+   "note": "J8 restore drill: JourneyHarness:814 names its scratch db goaiez_antig_drill_<pid> and :908 force-drops it; the supervisor's wave-119 gate errored 42501 permission denied to terminate process where the coder's gate on the identical tree did not; drill dbs on the box at 2026-09-06 23:10: UNRESOLVED; reproduced in wave 120: no"
   }
  ],
  "resolved": [

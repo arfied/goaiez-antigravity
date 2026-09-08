@@ -8,6 +8,7 @@ use App\Modules\CAgent\Events\AgentRefused;
 use App\Modules\CAgent\Events\AgentTurnAnswer;
 use App\Modules\CAgent\Models\AgentRefusal;
 use App\Modules\CAgent\Models\AgentTurn;
+use App\Modules\CAgent\Models\TakeoverLatch;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 
@@ -23,6 +24,42 @@ final class AgentAnswerAction
         int $turnNumber = 1
     ): array {
         return DB::transaction(function () use ($businessId, $userMessage, $conversationId, $turnNumber) {
+            if ($conversationId !== null) {
+                $latch = TakeoverLatch::where('business_id', $businessId)
+                    ->where('conversation_id', $conversationId)
+                    ->first();
+                if ($latch && $latch->is_active) {
+                    $refusal = AgentRefusal::create([
+                        'business_id' => $businessId,
+                        'refusal_code' => 'HUMAN_TAKEOVER_LATCH',
+                        'reason' => 'Human operator has taken over this conversation.',
+                        'user_input' => $userMessage,
+                    ]);
+                    Event::dispatch(new AgentRefused(
+                        businessId: $businessId,
+                        refusalCode: 'HUMAN_TAKEOVER_LATCH',
+                        reason: $refusal->reason,
+                        userInput: $userMessage
+                    ));
+                    $turn = AgentTurn::create([
+                        'business_id' => $businessId,
+                        'conversation_id' => $conversationId,
+                        'turn_number' => $turnNumber,
+                        'user_message' => $userMessage,
+                        'agent_reply' => '',
+                        'status' => 'refused',
+                        'refusal_code' => 'HUMAN_TAKEOVER_LATCH',
+                    ]);
+
+                    return [
+                        'turn_id' => $turn->id,
+                        'status' => 'refused',
+                        'refusal_code' => 'HUMAN_TAKEOVER_LATCH',
+                        'reply' => '',
+                    ];
+                }
+            }
+
             $lower = strtolower($userMessage);
 
             // 1. Under-18 Check (G10-37)

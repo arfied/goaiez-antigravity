@@ -214,6 +214,16 @@ class X210Test extends TestCase
     }
 
     /**
+     * [G15-21]
+     */
+    public function test_g15_21_cancel_stays_one_tap(): void
+    {
+        $engine = new X210Engine;
+        $this->assertSame(['status' => 'cancelled'], $engine->cancelAction(false));
+        $this->assertSame(['status' => 'refused', 'reason' => 'one tap cancel required'], $engine->cancelAction(true));
+    }
+
+    /**
      * [G7-47]
      */
     public function test_g7_47_cohort_rate_never_changes_without_notified_action(): void
@@ -243,4 +253,5 @@ class X210Test extends TestCase
         $limit->refresh();
         $this->assertEquals(9, $limit->rate_cents_per_min);
     }
+
 }

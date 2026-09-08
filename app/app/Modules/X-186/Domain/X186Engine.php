@@ -34,5 +34,4 @@ final class X186Engine
             throw new \DomainException('REFUSES: to continue the sequence after a won deal [G12-28]');
         }
     }
-
 }

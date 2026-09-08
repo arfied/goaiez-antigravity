@@ -116,14 +116,6 @@ class X117Test extends TestCase
     }
 
     /**
-     * ⛔ REFUSED: G6-02: Surveyed app/Modules/X-117 Actions, Domain, Models, Events, Ui and found no seam for upsells.
-     */
-    public function test_g6_02_upsell_token(): void
-    {
-        $this->assertTrue(true);
-    }
-
-    /**
      * [G6-07] one Sellable, six fulfilment types
      */
     public function test_g6_07_six_fulfilment_types(): void
@@ -145,14 +137,6 @@ class X117Test extends TestCase
     }
 
     /**
-     * ⛔ REFUSED: G7-10: Surveyed app/Modules/X-117 Actions, Domain, Models, Events, Ui and found no seam for bundle allocations.
-     */
-    public function test_g7_10_bundle_allocation(): void
-    {
-        $this->assertTrue(true);
-    }
-
-    /**
      * [G8-29] §143–§144 — minor units, integers, no floats
      */
     public function test_g8_29_minor_units_integers(): void
@@ -164,11 +148,20 @@ class X117Test extends TestCase
             'business_id' => $biz->id,
             'name' => 'Integer Item',
             'sku' => 'INT-1',
+            'inventory_quantity' => 10,
             'unit_price_cents' => 1999, // $19.99
+            'fulfilment_type' => 'physical',
         ]);
 
-        $this->assertIsInt($s->unit_price_cents);
-        $this->assertEquals(1999, $s->unit_price_cents);
+        $res = $this->checkoutAction->handle(
+            businessId: $biz->id,
+            sellableId: $s->id,
+            quantity: 3,
+            freshAuthToken: 'auth_tok_'.uniqid()
+        );
+
+        $order = Order::findOrFail($res['order_id']);
+        $this->assertSame(5997, $order->total_cents);
     }
 
     /**
@@ -186,22 +179,15 @@ class X117Test extends TestCase
             'unit_price_cents' => 2000,
         ]);
 
-        $cart = $this->cartAction->handle($biz->id, 'sess_123', [['sellable_id' => $s->id, 'quantity' => 1]], 15);
-        $this->assertNotNull($cart->expires_at);
-        $this->assertTrue($cart->expires_at->isFuture());
-    }
+        $this->travelTo(now()->startOfMinute());
 
-    /**
-     * ⛔ REFUSED: G1-73: Surveyed app/Modules/X-117 Actions, Domain, Models, Events, Ui and found no seam for milestones.
-     * ⛔ REFUSED: G1-75: Surveyed app/Modules/X-117 Actions, Domain, Models, Events, Ui and found no seam for pricing structures or promotions; the price is looked up or REFUSED (P-092).
-     * ⛔ REFUSED: G1-81: doctor asserts no platform-scope path.
-     * ⛔ REFUSED: G1-82: Surveyed app/Modules/X-117 Actions, Domain, Models, Events, Ui and found no seam for pausing meters.
-     * ⛔ REFUSED: G17-31: doctor asserts no conversion path.
-     * [G1-73], [G1-75], [G1-81], [G1-82] no refusal declared
-     */
-    public function test_no_refusal_declared(): void
-    {
-        $this->assertTrue(true);
+        $cart15 = $this->cartAction->handle($biz->id, 'sess_15', [['sellable_id' => $s->id, 'quantity' => 1]], 15);
+        $this->assertSame(15, (int) now()->diffInMinutes($cart15->expires_at));
+
+        $cart30 = $this->cartAction->handle($biz->id, 'sess_30', [['sellable_id' => $s->id, 'quantity' => 1]], 30);
+        $this->assertSame(30, (int) now()->diffInMinutes($cart30->expires_at));
+
+        $this->assertSame(15, (int) $cart15->expires_at->diffInMinutes($cart30->expires_at));
     }
 
     /** [G18-29] */

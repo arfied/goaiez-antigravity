@@ -73,11 +73,12 @@ class VisitorsLiveTest extends TestCase
         ]);
 
         Livewire::test(VisitorsLive::class, ['businessId' => $biz->id])
-            ->assertSee('v-123')
+            ->assertSee('Visitor 1')
+            ->assertSee("openEvents('v-123')", false)
             ->assertSee('https://example.com/pricing')
             ->assertSee('google')
-            ->assertDontSee('page_view')
+            ->assertDontSee('Viewed a page')
             ->call('openEvents', 'v-123')
-            ->assertSee('page_view');
+            ->assertSee('Viewed a page');
     }
 }

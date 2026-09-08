@@ -270,6 +270,20 @@ class X200Test extends TestCase
     }
 
     /**
+     * [G18-13]
+     */
+    public function test_g18_13_qa_scorecard_is_positive_only(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Outbound Contact Center Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $seat = $this->loginAction->login($biz->id, 'Agent John', isAi: false);
+
+        $qa = $this->qaAction->scoreCall($biz->id, $seat->id, 2003, 50, 'Some negative note');
+        $this->assertTrue($qa->is_positive_only);
+    }
+
+    /**
      * [G3-04]
      */
     public function test_g3_04_predictive_pacing_under_the_3_percent_abandonment_ceiling(): void

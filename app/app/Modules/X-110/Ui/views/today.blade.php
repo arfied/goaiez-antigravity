@@ -11,8 +11,6 @@
                 <x-ui.error-panel heading="Could not load visitors">
                     {{ $loadError }}
                 </x-ui.error-panel>
-            @elseif($isSample)
-                <x-ui.sample />
             @elseif(!$isVerified)
                 <x-ui.empty-state icon="🌐" heading="Pixel not verified" action="Install and verify" href="{{ route('account.pixel-install') }}">
                     Your tracking pixel hasn't received any events yet.

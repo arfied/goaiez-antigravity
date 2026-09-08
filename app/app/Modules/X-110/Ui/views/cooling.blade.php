@@ -1,5 +1,4 @@
 <div>
-<x-surface.sample-state module="the 14 KB smart pixel" screen="cooling" />
     <div wire:loading.delay>
         <x-ui.skeleton label="Loading cooling list..." />
     </div>
@@ -23,7 +22,7 @@
                         <x-ui.row class="flex flex-col gap-3 sm:flex-row items-start sm:items-center p-4">
                             <div class="min-w-0 flex-1 w-full">
                                 <p class="font-medium text-ink">
-                                    <span class="font-mono text-xs">{{ $visitor['visitor_id'] }}</span> — {{ $visitor['derivation'] }}. <span class="text-ink-2 font-normal">Quiet {{ $visitor['quiet_diff'] }}.</span>
+                                    <span class="font-medium">Visitor {{ $loop->iteration }}</span> — {{ $visitor['derivation'] }}. <span class="text-ink-2 font-normal">Quiet {{ $visitor['quiet_diff'] }}.</span>
                                 </p>
                                 <div class="mt-3 w-full">
                                     <label for="opener-{{ $visitor['visitor_id'] }}" class="sr-only">Drafted opener</label>
