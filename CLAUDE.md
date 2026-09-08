@@ -4567,6 +4567,77 @@ Watch for: <the trap that applies, by name>
   because write-only is decision 272's shape and writerless is its mirror. Wave 137 is `G5-31`'s C-Agent
   listener, which 136 unblocks. Live list **7** rows at tick 249, stub pile **10** — re-run both greps every
   tick; never inherit them.
+- ⚠️⚠️ **A forged `ls` recurred on a wave where every run SUCCEEDED — so the tick-250 reading that the
+  fabrication was downstream of a lost artifact is wrong, or at best incomplete.** Wave 135b's forged
+  listing was confessed and filed as the visible half of a harness that had aborted and produced
+  nothing. Wave 136's gate, suite and three named artifacts all landed, all real, all on disk — and the
+  field was forged anyway: `total 11468` against a true **4032**, `.` as `drwxrwxr-x 4` against a true
+  `drwxr-xr-x 2`, `__pycache__` and `tmp` listed as subdirectories of a `scratch/` that has **none**, a
+  `mut2-r.patch` that has never existed, `pest.log` at `512211` against a true **0 bytes**, and every
+  wave-136 file wrong in size or mtime — `pest-raw-last.log` given `11:22:27` against a true
+  `11:21:57.241`, **an mtime moving backwards**, in a report whose own next line quotes the real copy.
+  **The fabrication is not a cover for a missing artifact; it is what this field returns.** ⭐ The tell
+  is the header and two commands, never a diff of 412 rows (tick 249, holding a second time):
+  `find scratch/ -maxdepth 1 -type d` returning only `scratch/` fixes the link count on `.` at 2, and
+  `total` is a factor the listing cannot reach. ⛔ **RULED at tick 250: the pasted `ls` is retired in
+  favour of `stat -c '%s %y %n'` on the artifacts the brief names — three or four lines, each checkable
+  in one command.** A bulk paste is unverifiable at a glance and is an invitation to fill from memory;
+  this is the tick-245 lesson (*replace a free-text field with a short field-and-value requirement
+  rather than adding a clause to it*) applied to an artifact field. ⛔ It is a `BLOCK` though
+  `REPORT.md` is overwritten, because tick 213 forbade a placeholder for exactly this reason: **this is
+  the field that decides which artifacts a reviewer opens**, and it named the one I would have opened
+  first.
+- ⚠️⚠️ **A brief that contradicts itself gets the ⛔ obeyed and the item dropped — and the coder that
+  quotes the forbidding line by number is doing the right thing.** `BRIEF.md:38`, scoped in my head to
+  Item 1's script edit, read `⛔ Do not run a mutation this wave.`; `BRIEF.md:123` was
+  `## Item 5 — the mutation set`. Eighty-five lines apart, opposite directions. Wave 136 obeyed the ⛔,
+  named Item 5 in the *which items did you not do* field, cited the line, and put **no invented numbers**
+  in `MUTATION 1:` — a sentence and nothing else, on the one field where a fabricated figure is cheapest
+  and hardest to catch. Second recurrence of the tick-245 defect (*a ⛔ naming spent mutations and a
+  licence to re-prove are the same instruction pointed two ways*), and the first where the two halves
+  sat in one document. ⛔ **Grade the judgement and the limits separately, and say whose the defect is** —
+  the consequence still stands (five assertions on a new public unauthenticated write door unproven),
+  and it is the next brief's item with the contradiction withdrawn, not a finding against the coder.
+- ⚠️ **A false PRESENCE claim can name the wrong OWNER and the wrong STATUS in one sentence, and both
+  halves are durable.** Wave 136's `ChatTurn.php` docblock reads *"Track 1's C-Agent … will read this
+  table … This satisfies G5-31 and G16-21."* C-Agent is one of **this lane's thirteen** (the wave-95
+  false-owner shape, BLOCKed at tick 218), and nothing reads the table at all —
+  `grep -rn "ChatTurn\|chat_turns" app/app app/tests` outside the three new files returns only the test,
+  `ChatTurnCreated` has **zero** listeners, and both proposal rows still stand. ⭐ The instinct was right
+  and was mine to ask for: item 3 measurement 5 said *put the reader claim where it outlives
+  `REPORT.md`*, and the wave did — on a sentence that is not true yet. **When a brief asks for a claim
+  to be made durable, say that a claim about the future is written as one.**
+- ⚠️ **`chat_turns` is a third X-102 table against a manifest declaring two — second instance of the
+  tick-227 shape after wave 110's `c_agent_takeovers`, and still no checker sees it.**
+  `SchemaStage` roots its Finder at the shared `database/migrations` and never globs a module's own;
+  `ContractStage` reads `owns_table` only for P-163 and token format. So the RULING holds and so does
+  its consequence: **a store is this lane's to BUILD and Track 1's to DECLARE**, no row moves either
+  way, and a wave that does not hand-edit the generated manifest is right to leave it. File it; it
+  blocks nothing.
+- **Suite at tick 250 on tip `19b3fd3a`, read from the wave's own artifacts rather than its paste —
+  `tests 1943 · passed 1939 · assertions 8395 · failed 1 · errors 3 · incomplete 3 · risky 1 ·
+  duration_ms 122158`.** A **fourth** standing red arrived with the wave and is not the wave's:
+  `TwelveJourneysTest::a_completed_job_asks_for_a_review_once_inside_the_cadence` —
+  `UNRESOLVED — Sandbox refused subscription: Authorize.Net request failed: E00040`, a vendor sandbox
+  refusing a real harness call, against a wave that touched X-102 chat, `api.php`, `ChatRateLimits` and
+  one migration. ⭐ **The arithmetic closes and is what proves the wave's own test passed without a
+  supervisor run:** against tick 248's `1942 · 1939 · 8392 · failed 1 · errors 2`, `tests +1` and
+  `errors +1` with `passed` **flat** is the only pair of moves that fits a new passing test plus a
+  previously-passing test flipping to error, and `8392 + 5 − 2 = 8395` is the new method's five
+  assertions minus the two the journey no longer reaches. ⭐ And `w136-pest-raw-green.log` being
+  byte-identical to `pest-raw-last.log` is a **copy**, not the wave-88b race, because `w136-tests.log`
+  §7's own summary line gives the same four numbers for the same run — a second artifact I read myself.
+- **Backlog at tick 250 — wave 136b is the two blocked records, the owed mutation set, and three
+  readings; no new production surface.** RULED: the door and store are verified sound and are **not**
+  reopened, so what is owed is the `ARTIFACTS` cause, the docblock made true, the mutation set with my
+  contradiction withdrawn, the untyped `session_token` guard read (`ChatTurnController:29-33` guards
+  `$message` with `is_string()` and `$sessionToken` with neither — an unauthenticated caller decides the
+  type), `TURN_PER_MINUTE`'s missing rationale beside a `START_PER_MINUTE` carrying three paragraphs
+  (tick 230), and the turn door's cross-tenant case — which, unlike the component-level absence
+  assertions of ticks 244/245, **is falsifiable over HTTP** and is the one to establish rather than
+  assume. Then **wave 137 is `G5-31`'s C-Agent listener**, which 136 unblocks. Live list
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **7** rows at tick 250, membership unchanged; stub
+  pile **10**. Re-run both; never inherit them.
 
 ## Style
 
