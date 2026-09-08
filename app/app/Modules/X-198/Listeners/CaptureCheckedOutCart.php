@@ -9,8 +9,9 @@ use App\Modules\X198\Models\MerchantConnection;
 
 /**
  * This listener makes no gateway call and leaves the order at pending_payment.
- * It still has a job the day a real token arrives from a connected card-entry surface
- * (citing ruling 45).
+ * It still has a job the day a real token arrives from a connected card-entry surface.
+ * That token comes from the card-entry surface, never from this event: the event carries no
+ * payment instrument and never did carry a real one (citing rulings 45 and 148).
  */
 final class CaptureCheckedOutCart
 {

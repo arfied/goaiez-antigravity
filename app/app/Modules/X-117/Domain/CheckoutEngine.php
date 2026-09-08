@@ -105,7 +105,6 @@ final class CheckoutEngine
                 orderId: $order->id,
                 orderNumber: $order->order_number,
                 totalCents: $totalCents,
-                authToken: $freshAuthToken,
                 customerId: $customerId,
             ));
 
@@ -239,7 +238,6 @@ final class CheckoutEngine
                 orderId: $order->id,
                 orderNumber: $order->order_number,
                 totalCents: $totalCents,
-                authToken: $freshAuthToken,
                 customerId: $customerId,
             ));
 

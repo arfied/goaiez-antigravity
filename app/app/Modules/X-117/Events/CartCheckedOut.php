@@ -11,7 +11,6 @@ final class CartCheckedOut
         public readonly int $orderId,
         public readonly string $orderNumber,
         public readonly int $totalCents,
-        public readonly string $authToken,
         public readonly ?int $customerId = null,
     ) {}
 }
