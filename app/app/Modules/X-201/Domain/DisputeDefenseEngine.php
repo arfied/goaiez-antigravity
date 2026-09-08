@@ -31,9 +31,12 @@ final class DisputeDefenseEngine
         return $dispute;
     }
 
-    public function getExposure(int $businessId): float
+    /**
+     * No delivery or fulfilment store exists in this lane, so money-taken-vs-work-delivered has no second term.
+     */
+    public function getExposure(int $businessId): null
     {
-        return (float) ($businessId * 100.0);
+        return null;
     }
 
     /**
@@ -42,6 +45,13 @@ final class DisputeDefenseEngine
     public function compile(int $businessId, int $disputeId, array $evidenceItems): array
     {
         $dispute = Dispute::where('business_id', $businessId)->findOrFail($disputeId);
+
+        if (in_array($dispute->status, ['submitted', 'won', 'lost'], true)) {
+            throw new DisputeAlreadySubmittedException(sprintf(
+                'Invoice #%d is already submitted: a submitted bundle is sealed and nothing is added to it.',
+                $dispute->invoice_id
+            ));
+        }
 
         $savedItems = [];
         foreach ($evidenceItems as $item) {
@@ -69,6 +79,10 @@ final class DisputeDefenseEngine
     public function submit(int $businessId, int $disputeId): Dispute
     {
         $dispute = Dispute::where('business_id', $businessId)->findOrFail($disputeId);
+
+        if ($dispute->status !== 'compiled') {
+            throw new DisputeNotCompiledException('Compile the evidence first: a dispute is never submitted empty.');
+        }
 
         if ($dispute->deadline_at && Carbon::now()->isAfter($dispute->deadline_at)) {
             throw new \Exception('Dispute deadline has passed');

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\X199\Actions;
 
+use App\Modules\X199\Domain\InvoiceNumber;
 use App\Modules\X199\Models\Invoice;
 use App\Modules\X199\Models\InvoiceLine;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 final class InvoiceDraftAction
 {
@@ -22,12 +22,11 @@ final class InvoiceDraftAction
             $invoice = Invoice::create([
                 'business_id' => $businessId,
                 'customer_id' => $customerId,
-                'invoice_number' => 'INV-'.strtoupper(Str::random(6)),
+                'invoice_number' => InvoiceNumber::next($businessId),
                 'total_cents' => $totalCents,
                 'paid_cents' => 0,
                 'status' => 'draft',
                 'due_date' => now()->addDays($dueDays)->toDateString(),
-                'pdf_url' => 'https://cdn.goaiez.com/invoices/inv.pdf',
             ]);
 
             foreach ($lines as $line) {

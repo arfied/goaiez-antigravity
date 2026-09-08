@@ -4,19 +4,32 @@ declare(strict_types=1);
 
 namespace App\Modules\X198\Actions;
 
-use Illuminate\Support\Str;
+use App\Modules\X198\Domain\StripeGatewayClient;
+use App\Modules\X198\Models\Payment;
+use App\Modules\X198\Models\PaymentLink;
 
 final class PaymentLinkAction
 {
-    public function handle(int $businessId, int $amountCents, string $description): array
+    public function handle(int $businessId, int $paymentId, string $description): PaymentLink
     {
-        $linkToken = Str::random(24);
+        $payment = Payment::where('business_id', $businessId)->findOrFail($paymentId);
 
-        return [
-            'payment_url' => "https://pay.goaiez.com/link/{$linkToken}",
-            'link_token' => $linkToken,
-            'amount_cents' => $amountCents,
-            'description' => $description,
-        ];
+        $existing = PaymentLink::where('business_id', $businessId)
+            ->where('payment_id', $paymentId)
+            ->first();
+
+        if ($existing !== null) {
+            return $existing;
+        }
+
+        $client = app(StripeGatewayClient::class);
+        $result = $client->createPaymentLink($payment->amount_cents, $description, $payment->currency);
+
+        return PaymentLink::create([
+            'business_id' => $businessId,
+            'payment_id' => $paymentId,
+            'provider_link_id' => $result['id'],
+            'url' => $result['url'],
+        ]);
     }
 }

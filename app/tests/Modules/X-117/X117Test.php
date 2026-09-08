@@ -73,7 +73,7 @@ class X117Test extends TestCase
                 customerId: $customer->id
             );
 
-            if ($res['status'] === 'paid') {
+            if ($res['status'] === 'pending_payment') {
                 $paidCount++;
             } elseif ($res['status'] === 'sold_out') {
                 $soldOutCount++;
@@ -190,6 +190,23 @@ class X117Test extends TestCase
         $this->assertSame(15, (int) $cart15->expires_at->diffInMinutes($cart30->expires_at));
     }
 
+    public function test_an_order_row_written_without_a_status_is_pending_payment(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Default Status Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $id = DB::table('orders')->insertGetId([
+            'business_id' => $biz->id,
+            'order_number' => 'ORD-TEST-123',
+            'total_cents' => 1000,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $order = DB::table('orders')->find($id);
+        $this->assertEquals('pending_payment', $order->status);
+    }
+
     /** [G18-29] */
     public function test_g18_29_lifecycle_stops_at_money(): void
     {
@@ -212,14 +229,14 @@ class X117Test extends TestCase
             freshAuthToken: 'auth_tok_'.uniqid()
         );
 
-        $this->assertEquals('paid', $res['status']);
+        $this->assertEquals('pending_payment', $res['status']);
 
         $order = Order::findOrFail($res['order_id']);
-        $this->assertEquals('paid', $order->status);
+        $this->assertEquals('pending_payment', $order->status);
 
         $orderLine = OrderLine::where('order_id', $order->id)->firstOrFail();
 
-        $this->assertContains($order->status, ['paid', 'cancelled', 'sold_out']);
+        $this->assertContains($order->status, ['paid', 'cancelled', 'sold_out', 'pending_payment']);
 
         $this->cancelAction->handle($biz->id, $order->id);
         $order->refresh();
