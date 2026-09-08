@@ -132,4 +132,33 @@ class ChatDoorTest extends TestCase
         $response->assertStatus(404);
         $response->assertJson(['error' => 'Session not found']);
     }
+
+    public function test_non_string_inputs_return_400(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Bad Request Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+        $key = app(PixelKeys::class)->ensureFor($biz);
+
+        $session = ChatSession::create([
+            'business_id' => $biz->id,
+            'session_token' => '123',
+            'status' => 'active',
+            'rage_clicks_count' => 0,
+            'is_ai_capped' => false,
+        ]);
+        Tenancy::forgetAll();
+
+        // Send integer as session_token
+        $response = $this->postJson("/api/chat/{$key}/turn", [
+            'session_token' => 123,
+            'message' => 'Hello',
+        ]);
+
+        // Assert the database first, so a bypass fails here rather than on the status code.
+        Tenancy::set((int) $biz->id);
+        $this->assertEquals(0, ChatTurn::where('chat_session_id', $session->id)->count());
+
+        $response->assertStatus(400);
+        $response->assertJson(['error' => 'Bad Request']);
+    }
 }
