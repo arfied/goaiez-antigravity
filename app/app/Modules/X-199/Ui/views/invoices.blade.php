@@ -2,7 +2,7 @@
     <div class="p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto">
         <div class="sm:flex sm:items-center">
             <div class="sm:flex-auto">
-                <h1 class="text-xl font-semibold leading-6 text-gray-900">Invoices</h1>
+                <h2 class="text-xl font-semibold leading-6 text-gray-900">Invoices</h2>
             </div>
         </div>
         <div class="mt-8 flow-root">

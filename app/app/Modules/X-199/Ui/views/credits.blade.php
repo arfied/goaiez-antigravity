@@ -1,5 +1,5 @@
 <div>
-    <h1>Credit terms</h1>
+    <h2>Credit terms</h2>
 
     <p class="text-base text-ink-2">A commercial customer on terms keeps getting service past their limit: the card on file absorbs the overflow, and paying the invoice reverses it.</p>
 

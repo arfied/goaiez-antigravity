@@ -1,7 +1,7 @@
 <div>
     <div class="p-4 sm:p-6 lg:p-8 max-w-lg mx-auto">
         <div class="mb-8">
-            <h1 class="font-display text-xl font-semibold leading-6 text-ink">Paid Today</h1>
+            <h2 class="font-display text-xl font-semibold leading-6 text-ink">Paid Today</h2>
             <div class="mt-4 bg-card px-4 py-5 shadow sm:rounded-[--radius-card] border border-rule">
                 <dt class="truncate text-sm font-medium text-ink-2">Total value of invoices settled today</dt>
                 <dd class="mt-1 text-3xl font-semibold tracking-tight text-ink tabular-nums">{{ number_format($totalCents / 100, 2) }}</dd>

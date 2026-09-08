@@ -1,7 +1,7 @@
 <div>
     <div class="p-4 sm:p-6 lg:p-8 max-w-lg mx-auto">
         <div class="mb-8">
-            <h1 class="text-xl font-semibold leading-6 text-ink">Payment Declines & Exceptions</h1>
+            <h2 class="text-xl font-semibold leading-6 text-ink">Payment Declines & Exceptions</h2>
             <div class="mt-4 grid grid-cols-2 gap-4">
                 <div class="bg-card px-4 py-5 shadow sm:rounded-[--radius-card] border border-rule">
                     <dt class="truncate text-sm font-medium text-ink-2">{{ $showAll ? 'All declines' : 'Declines this week' }}</dt>
