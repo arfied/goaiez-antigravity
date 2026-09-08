@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-08T16:09:23",
+ "updated": "2026-09-08T16:54:47",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2389,6 +2389,12 @@
    "module": "X-199",
    "chose": "a test that reads a row after x199:mark-due re-establishes the tenant with Tenancy::actingAs, because the command ends in Tenancy::forgetAll and Model::fresh bypasses the Eloquent scope but not RLS, so the read returns null with no tenant set; the command is not changed, because a scheduled sweep over every owner must leave no ambient identity behind and X-211's sibling command and its test already work this way",
    "at": "2026-09-08T16:09:23",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-211",
+   "chose": "a screen that cuts a list says so on the page and keeps the end the screen exists to show, so the invoice thread takes the newest fifty messages and renders them oldest first and the orders list says when older orders are not shown, because an ascending order under a limit throws away the most recent messages which are the ones that explain why an invoice is unpaid; the limit is not removed and no pagination is built, because there is no pagination component in the kit and the kit is another track's",
+   "at": "2026-09-08T16:54:47",
    "ruling": "R245"
   }
  ]
