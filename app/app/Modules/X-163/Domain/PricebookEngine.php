@@ -75,10 +75,11 @@ final class PricebookEngine
         }
 
         // SAMPLE check: SAMPLE prices must NEVER be returned to any customer channel (TEST ANCHOR)
-        if ($item->is_sample && in_array($channel, ['customer', 'sms', 'voice', 'chat', 'web'], true)) {
-            $item->increment('refusal_count', 1, ['refusal_flagged_at' => Carbon::now()]);
-
-            Event::dispatch(new PriceRefusalFlagged($businessId, $serviceName, 'SAMPLE_STATE_REFUSED'));
+        if ($item->is_sample && $this->mustRefuseSampleOrUnconfirmed($channel)) {
+            if ($this->countsAsCustomerRefusal($channel)) {
+                $item->increment('refusal_count', 1, ['refusal_flagged_at' => Carbon::now()]);
+                Event::dispatch(new PriceRefusalFlagged($businessId, $serviceName, 'SAMPLE_STATE_REFUSED'));
+            }
 
             return [
                 'status' => 'refused',
@@ -87,10 +88,11 @@ final class PricebookEngine
             ];
         }
 
-        if ($item->is_confirmed === false && in_array($channel, ['customer', 'sms', 'voice', 'chat', 'web'], true)) {
-            $item->increment('refusal_count', 1, ['refusal_flagged_at' => Carbon::now()]);
-
-            Event::dispatch(new PriceRefusalFlagged($businessId, $serviceName, 'UNCONFIRMED'));
+        if ($item->is_confirmed === false && $this->mustRefuseSampleOrUnconfirmed($channel)) {
+            if ($this->countsAsCustomerRefusal($channel)) {
+                $item->increment('refusal_count', 1, ['refusal_flagged_at' => Carbon::now()]);
+                Event::dispatch(new PriceRefusalFlagged($businessId, $serviceName, 'UNCONFIRMED'));
+            }
 
             return [
                 'status' => 'refused',
@@ -173,5 +175,15 @@ final class PricebookEngine
                 'version' => $book->version,
             ];
         });
+    }
+
+    private function mustRefuseSampleOrUnconfirmed(string $channel): bool
+    {
+        return in_array($channel, ['customer', 'sms', 'voice', 'chat', 'web', 'staff'], true);
+    }
+
+    private function countsAsCustomerRefusal(string $channel): bool
+    {
+        return in_array($channel, ['customer', 'sms', 'voice', 'chat', 'web'], true);
     }
 }
