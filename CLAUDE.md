@@ -106,8 +106,41 @@ Watch for: <the trap that applies, by name>
   green on 2026-08-29/30 before any harness that could pass existed, and the
   on-disk `evidence/journeys/*.json` came from a forbidden simulation harness.
   Only `supervise.sh --tests` output counts as the journey number.
+- ⚠️ **EVERY number on the `state.py status` board is a hand mark, not just the
+  journeys (`RULING CK`, 2026-09-08).** `state.py:230` prints §3's `STAGES` line
+  from the stored `stages.<name>.violations` field, written only by
+  `state.py stage <name> <n>`. On 2026-09-08 that field read
+  `integrity ? · boundary ? · contract ? · citation ? · schema ? ·
+  capability 372 · anchor ? · journey ?` — seven `null`s and one number **five
+  days stale and wrong by 14** (the live count was 358). A coder read `372` off
+  §3 and correctly stopped the wave on it, because its brief had asked for a
+  stage count its own gate file could not contain.
+  **§3 is a LEDGER; §5 is the MEASUREMENT.** Only `php artisan doctor --stage=<x>`
+  — i.e. §5, which appears **only** under `supervise.sh --full-doctor` — is a
+  stage count. `--tests` alone omits §5 entirely.
+  ⛔ **A brief must name the command for every number it asks the coder to
+  report.** Two consecutive briefs here asked for figures their own gate could
+  not produce (no redirect, then no `--full-doctor`). If the brief wants a stage
+  count it asks for `--full-doctor > .gate<N>.txt` and cites `§5`, never `§3`.
 - **`state.py` owns `BUILD-STATE.json`.** A hand edit there is a `BLOCK`; so is
   a `JOURNAL.md` line with no matching commit.
+- ⛔ **This lane's coder can NEVER push, whatever `BRIEF.md` says — the SUPERVISOR
+  pushes here (`RULING CL`, 2026-09-08).** `coder-bin/git:118` refuses `push`
+  unless `GOAIEZ_PUSH_OK=1`, and its message claims *"launcher sets
+  GOAIEZ_PUSH_OK=1"* — **false in this lane.** `.agents/supervisor/launch-coder.sh`
+  has no `--allow-push` flag and sets only `GOAIEZ_MERGE_OK`; five of the seven
+  lanes carry the flag, `stages` and `sixty` do not. So a `push: YES` item is
+  unsatisfiable **by construction** and burns item 0 of the run.
+  **`BRIEF.md`'s `push:` line is permanently `NO — the supervisor pushes in this
+  lane`**, and this seat pushes a gated, recorded sha itself by explicit ref
+  (`git push origin <sha>:refs/heads/track/stages`). Do **not** fix this by adding
+  the flag: that hands every future run a capability it has never had, to solve
+  what one line of supervisor typing solves.
+- **Before briefing a filing, `grep` the id in `JOURNAL.md` (`RULING CM`).** An id
+  already `UNRESOLVED` is cited, never re-filed. `G15-28` was filed three times on
+  three days by three briefs, each rediscovering the same refusal — a re-filing is
+  count-neutral, so no gate reddens, and the duplicates later read as independent
+  evidence in an exhaustion census.
 - **`BUILDING` is not progress.** On 2026-08-31 13:04:41 twelve modules flipped
   to `BUILDING` in one second — a batch mark. Count `DONE` transitions and
   commits, never `BUILDING`.
@@ -135,6 +168,47 @@ Watch for: <the trap that applies, by name>
 - **The supervisor can be wrong; the seal cannot.** If the coder's `REPORT.md`
   lists a brief item under `REFUSED` because it would change a CHECK, that
   refusal stands. Re-read rule 01 before overruling it.
+
+## Where this lane stands — ALL EIGHT STAGES ARE CLOSED (2026-09-08, tick 182)
+
+⛔ **Do not open a wave in any stage without re-reading this. `state.py next`
+returns `{"action": "FINISHED"}`.** The raw counts imply a backlog that does not
+exist; each was censused at source and the residue is unreachable, not unbuilt.
+
+```
+integrity    0  ✅ clean
+citation     0  ✅ clean
+boundary     3  2 = RULING BQ (the check flags the enum whose docblock argues the
+                model strings belong exactly there) · 1 = an X-108 blade view
+contract    87  the only writer is `module:scaffold --plan=GOAIEZ-MASTER-PLAN.md`
+schema      15  12 = platform-scope RLS, permanently refused as a CHECK defect
+                (SchemaStage infers tenant-ownership from a business_id column and
+                carries no exemption list) · 2 = csat_score, RULING BS, owner's
+                call · 1 = deploy shape
+capability 358  CLOSED at tick 182 — see below
+anchor     137  127 need a vendor-issued artifact id · 10 = RULING BQ again
+journey      5  needs real Infobip and a real placed call
+```
+
+**`capability` is CLOSED at 358 (tick 182).** The measured intersection of
+clause-bearing ids with FLAGGED ids is **empty in every module this lane may
+touch**, and the count decomposes with nothing left over: 83 §257.4 deferred · 35
+`X-221` (UNBUILT — `capabilities.php`, `manifest.php`, `seeds.yml`, no `Domain/`,
+no tests) · 24 the P-210 class whose fix authors a GENERATED file (`RULING CB`) ·
+15 `X-113` clause-less (`RULING BF`) · 60 the clause-less eight `X-191 X-175 X-01
+X-138 X-130 X-128 X-126 X-150` (`grep -c "⑤"` is exactly 2 in each, both the file
+header) · 7 `X-173` (clauses ∩ flagged = ∅, `RULING CF`) · the rest worked out
+across S-172…S-181 and filed `UNRESOLVED` or refused.
+
+⚠️ **`grep -c "⑤"` must have 2 subtracted** — every `capabilities.php` carries two
+⑤ in its header comment (lines 14 and 21). And **a module's clause count is not
+its wave size (`RULING CF`)**: intersect the ⑤-bearing ids with the flagged ids
+before choosing. `C-Mail` (13 flagged, 1 clause) and `X-173` (7 flagged, 5
+clauses) both look like waves and both have an empty intersection.
+
+**Say the lane is exhausted rather than invent a wave to fill it.** Seven of the
+twelve `RULING C*` false-credit shapes in `REVIEWS.md` were written by a wave that
+existed to keep the lane busy.
 
 ## Dispatching the coder (added 2026-09-02)
 
