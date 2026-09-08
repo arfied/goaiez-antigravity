@@ -242,7 +242,8 @@ that test and is not on this list is a wave invented to fill the lane.
   untouched, the decoy root `REPORT.md` gone and the mailbox copy intact.
   `RULING CN` is discharged as a live hazard and stays above as history.
 
-⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 193 (2026-09-08).** Do not
+⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 194 (2026-09-08), against main's
+`257a6a12`; the seven-row take re-check still prints all seven.** Do not
 open a wave. `state.py next` returns `{"action": "FINISHED"}`. Every remaining
 stage count needs the owner and is listed as **OWNER ACTION A–F** at the end of
 `REVIEWS.md`: vendor artifact ids (`anchor 137`), real Infobip and a real placed
@@ -652,6 +653,31 @@ each verdict block in `REVIEWS.md`.
     `launch-coder.sh:63`'s `sleep 2` the coder's parent is still the launcher, so a scan in that
     ~2s window misses it. Case (a) asks about a *previous* run and is never in that window; a tick
     that just dispatched has the `LAUNCHED run N (pid …)` line as its evidence instead.
+  - ⚠️ **`RULING CX` (tick 194) corrects `CW`: the printed log path does NOT always name the lane.**
+    `CW`'s `-P 1` filter is right and stays; the clause *"a stages coder is running only if a printed
+    line contains `agy-grs-antig-stages-runN.log`"* is **wrong as a general test**, because sibling
+    launchers have moved on. Tick 194's single hit redirected to a **relative**
+    `.agents/supervisor/logs/agy-run132.log` — no lane anywhere in the line — so `CW`'s test says
+    "not ours" for a reason it did not anticipate, leaving a tick with an ambiguity it may read as
+    grounds to stop. **The decisive tell is the directory:** a relative redirect is resolved against
+    the process's cwd, so if its cwd were here the shell could not have opened the file and the
+    process would be dead. **This lane has no `.agents/supervisor/logs/` directory at all**, so any
+    relative-`logs/` line is provably another lane. Two independent confirmations, both worth
+    knowing: `launch-coder.sh:48` here is `LOG="/home/goaiez/tmp/${CODER}-${TRACK}-run${n}.log"`
+    (**absolute**) and `:57`/`:59` export only `GOAIEZ_MERGE_OK` under a bare `timeout 8h`, while the
+    observed process exported **three** gate variables (`GOAIEZ_PUSH_OK`, `GOAIEZ_MERGE_OK`,
+    `GOAIEZ_HARNESS_OK`, all `0`) under `timeout -k 60 3h` — **a newer launcher revision this lane
+    does not have.** Case (a) is therefore: `pgrep -a -P 1 -f agy`; ours only if the redirect is
+    `/home/goaiez/tmp/agy-grs-antig-stages-runN.log`; a relative `logs/` redirect is another lane.
+    Filed to **TRACK 1 ACTION 1** as an observation adding no item: if Track 1 ever tightens
+    `coder-bin` to require those variables set explicitly to `0`, this lane's launcher is the one
+    that has not been updated.
+- **Write gate evidence with a RELATIVE path under `.agents/supervisor/` (tick 194).** An
+  **absolute** redirect to this checkout's root (`> /home/goaiez/agents/grs-antig-stages/.gateN.txt`)
+  is refused by the session write guard even though that directory is the primary working directory;
+  the relative `> .agents/supervisor/.gateN.txt` succeeded the same minute. It is also where the
+  evidence belongs — `supervise.sh` §1 does not count paths under `.agents/supervisor/`, so the 76
+  does not grow.
 - **Wave selection checks the deferred list first.** Plan §257.4 (owner ruling
   2026-09-04): X-200 X-158 X-159 X-114 X-144 X-197 X-147 X-143 X-141 X-145 X-213
   X-208 X-215 X-214 are kept, hidden and unbuilt. No brief opens a wave in one; a
