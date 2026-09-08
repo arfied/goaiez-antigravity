@@ -12,8 +12,10 @@ use App\Modules\X188\Domain\NumberPoolManager;
 use App\Modules\X188\Events\TenantCancelled;
 use App\Modules\X188\Models\NumberPark;
 use App\Modules\X188\Models\NumberPool;
+use App\Modules\X188\Ui\PoolInventory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class X188Test extends TestCase
@@ -106,9 +108,9 @@ class X188Test extends TestCase
     /**
      * [G18-10] the tenant's own registered numbers by area code
      *
-     * Old subject: asserted that the assigned number's area_code matched the one passed in (e.g. '210').
-     * New subject: assert that the returned pool inventory record extracts and returns the correct area_code from the tenant's existing provisioned number.
-     * Why: The G18-10 capability refers to viewing the tenant's own registered numbers on the pool inventory screen, which pulls records with their extracted area codes. The module ignores the requested area code and instead records the area code of the number actually claimed for the tenant.
+     * Old subject: assert that the returned pool inventory record extracts and returns the correct area_code from the tenant's existing provisioned number.
+     * New subject: assert that the PoolInventory screen groups and renders the tenant's registered numbers by their area code.
+     * Why: The G18-10 capability plainly names a UI presentation ("numbers by area code"). The previous assertion only checked the internal array returned by an assignment action; asserting on the Livewire screen proves the capability is actually delivered to the tenant.
      */
     public function test_g18_10_numbers_by_area_code(): void
     {
@@ -116,7 +118,9 @@ class X188Test extends TestCase
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $assigned = $this->assigner->handle($biz->id);
-        $this->assertEquals('512', $assigned['area_code']);
+        Livewire::test(PoolInventory::class, ['businessId' => $biz->id])
+            ->assertSee('Area Code: 512')
+            ->assertSee($assigned['phone_number']);
     }
 
     /**

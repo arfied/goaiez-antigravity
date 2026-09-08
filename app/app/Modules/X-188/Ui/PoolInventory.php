@@ -15,12 +15,12 @@ class PoolInventory extends Component
 
     public function render()
     {
-        $numbers = ($this->businessId > 0)
-            ? NumberPool::where('business_id', $this->businessId)->get()
+        $numbersByAreaCode = ($this->businessId > 0)
+            ? NumberPool::where('business_id', $this->businessId)->get()->groupBy('area_code')
             : collect();
 
         return view('x-188::pool-inventory', [
-            'numbers' => $numbers,
+            'numbersByAreaCode' => $numbersByAreaCode,
         ]);
     }
 }
