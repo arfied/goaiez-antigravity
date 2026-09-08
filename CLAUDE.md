@@ -584,6 +584,82 @@ the `TRACK 1 — 2026-09-07 20:0x` merge instruction that the previous wave had 
 the last inbound heading, never the mtime** — and expect the mtime to stay misleading for as long as
 `REVIEWS.md` cannot be updated, because every tick that writes outbound moves it again.
 
+## ⭐ Resolved 2026-09-08 05:5x — the deny glob was removed by someone else, and a permission set is CACHED AT SESSION START
+
+The eight mailbox deny rules are **gone from `.claude/settings.json`** as of 05:50 — removed by an
+actor outside this lane, thirteen minutes after the 05:3x tick filed `TRACK 1 ACTION (d)`. ⭐ **The
+door opened because the lane filed it and waited, not because it forced it.** The refusal recorded
+above is what got it fixed; that is the whole case for refusing.
+
+⚠️ **But the 05:5x tick still could not write `REVIEWS.md`.** Claude Code loads its permission set at
+**session start**, and that session started at 05:50 alongside the edit — **a stale key to an open
+door.** ⛔ A session cannot clear its own cached permissions, so re-testing a write inside the session
+that cached the refusal can never succeed. Read the file to learn the truth (`grep -rn 'REVIEWS.md'
+.claude/` → nothing), and let the **next** session use it. ⛔ Do not read a stale refusal as "still
+locked", and ⛔ do not go looking for a way around it — the fix has landed and costs one tick.
+
+⛔⛔ **CORRECTED 2026-09-08 06:1x — "the next session is fine" was WRONG, and the `-NEXT` route is now
+STANDING, not interim.** The 06:1x tick started ~20 minutes after the file was cleaned and **still
+could not write `REVIEWS.md`.** Measured in one session, in this order: `grep -rn 'REVIEWS' .claude/`
+→ nothing · `sed … >> REVIEWS.md` → denied · `Edit(REVIEWS.md)` → *"File is in a directory that is
+denied by your permission settings"* · **`Write` AND `Edit` on `.agents/supervisor/.perm-probe-0610.md`,
+same directory → both succeed.** ⭐ **That last one is the discriminator and it names the rule
+exactly:** a directory-wide deny would have refused the probe too, so what is still being enforced is
+the old `{BRIEF,REVIEWS,REPORT,KICKOFF}.md` **brace glob** — a permission set resolved from somewhere
+other than the on-disk file, and **not keyed on session start.** ⛔ Do not spend a tick waiting for it
+to expire and ⛔ do not hunt for a door: **try the append once at the top of the tick, then use
+`pbNNN-verdict.md` + `BRIEF-NEXT.md`/`KICKOFF-NEXT.md` and get on with the wave.** The scheduled
+deletion of the `-NEXT` files and of `launch-coder.sh`'s lines 68–85 is **cancelled** — it was tied to
+"once the push lands", which was never the real condition; the condition is a `REVIEWS.md` write that
+actually succeeds.
+
+⛔ **The change is uncommitted and this lane did not commit it.** We did not make it and cannot
+attribute it; authoring an unattributed permission-loosening into the history Track 1 merges is the
+shape this repo distrusts. It works fine uncommitted. Filed to Track 1 to carry into `main`, because
+the glob `grs-antig-*` does not match Track 1's own checkout `grs-antig` — **every other lane still
+has it**, and a lane that takes it cannot dispatch.
+
+## ⭐ Trap added 2026-09-08 05:5x — a defaulted column is only as safe as every sentence that claims to read it
+
+`X163Test` had five seedings of `callout_fees.deducted_if_proceeding` and **all five pass `true`**, so
+the false arm had never executed. Meanwhile `PricebookEngine::lookupCallout()` builds two sentences
+from that one row and **only one reads it**: `:130-132` `$deductText` branches on the flag, `:138`
+`quote_response` hardcodes *"which is deducted from your total if you proceed with the work"*. And
+`AgentAnswerAction:167` speaks `quote_response` **verbatim** to the customer.
+
+**So an owner who turns the deduction off has the agent promise every caller a deduction the business
+will not honour** — reachable in production, since two owner-facing screens write the column
+(`Ui/Pricebook.php:81`, `Ui/ConfirmationScreen.php:62`).
+
+⚠️ This is the sibling of the `callout_fee_cents` note already closed above as safe. **The default
+being sensible is not the question; the question is whether every sentence built from the row
+consults it.** ⭐ The generalisation, worth applying to any flag: **grep every test seeding of a
+boolean column — if they all pass the same value, that column has one untested arm**, and the arm
+nobody tests is the one that reaches a customer wrong. Found by measurement, fixed as PB-115.
+
+## ⭐ Trap added 2026-09-08 06:1x — a price is not a quote until something names the SERVICE, and X-163 drops the name at the door
+
+Same family as the trap above, found by applying its method one layer out. `PriceQuoteAction::handle()`
+matches a pricebook row and returns **`['amount' => $match->price_cents]` and nothing else** — the
+`service_name` it matched on is dropped. `AgentAnswerAction:232-237` then builds the customer-facing
+sentence *"Our standard service is $X."* **from the amount alone.**
+
+`findMatch()` iterates `orderByRaw('LENGTH(service_name) DESC')`, so on *"how much for brake pads and an
+oil change?"* the **longest matching name wins silently** and the caller is told one number with no
+service attached to it. ⚠️ **This is not a wording preference.** The lane's whole goal sentence is *"a
+quote comes from the pricebook or does not come at all"* — the number does come from the pricebook, and
+is then spoken **unattributed**, which in the customer's ear is a quote for whichever service they
+happened to mention first. `lookupCallout()` gets this right (its sentence names what the fee is for);
+`lookup()`/`PriceQuoteAction` do not. ⭐ **The generalisation: an action that matches on a column and
+returns only the derived value has thrown away the evidence that the match was right** — and the
+sentence built downstream cannot put it back.
+
+⚠️ The two spoken-price conventions still disagree and PB-116 does **not** close that (`lookup()`
+returns `formatted_price` with no `quote_response`; `lookupCallout()` returns a verbatim
+`quote_response`). ⛔ `AgentAnswerAction:317` and `:320` build the same sentence from the **facts
+table**, not from X-163 — that is track sixty's grounding path, ⛔ **out of this seam and not to be
+touched under ruling 20.**
+
 ## ⚠️ Trap added 2026-09-08 05:3x — a shell script this supervisor edits gets no syntax check
 
 ⛔ `bash -n` is **not** allow-listed here (measured: *"This command requires approval"*). A
