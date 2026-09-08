@@ -2051,6 +2051,10 @@
   {
    "at": "2026-09-08T13:13:27",
    "note": "boundary Prove tenant isolation for chat door by testing cross-tenant key and session."
+  },
+  {
+   "at": "2026-09-08T13:45:21",
+   "note": "boundary prove ChatTurnController cross-tenant isolation via 7 positional mutations on ChatDoorTest"
   }
  ]
 }

@@ -894,3 +894,4 @@
 - `2026-09-08T10:43:35` note: boundary Prove tenant isolation for parked numbers via Livewire component test.
 - `2026-09-08T11:17:19` note: boundary The 10:43:35 row's text restated the ParkList work from the 10:16:05 row, leaving the harness gate proof (the set -e fix) unrecorded, which is what the commit message correctly stated.
 - `2026-09-08T13:13:27` note: boundary Prove tenant isolation for chat door by testing cross-tenant key and session.
+- `2026-09-08T13:45:21` note: boundary prove ChatTurnController cross-tenant isolation via 7 positional mutations on ChatDoorTest
