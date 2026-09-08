@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-08T08:42:17",
+ "updated": "2026-09-08T09:07:50",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -864,6 +864,12 @@
      "stage": "capability",
      "why": "G6-08: missing barcode library",
      "at": "2026-09-06T14:05:28"
+    },
+    {
+     "module": "X-167",
+     "stage": "TESTS",
+     "why": "grep for warehouse|shipment|shipping_label|freight matches Database/migrations/2026_08_30_000076_create_x167_inventory_tables.php:19",
+     "at": "2026-09-08T09:07:33"
     }
    ]
   },
@@ -1423,6 +1429,12 @@
    "stage": "capability",
    "why": "G6-08: missing barcode library",
    "at": "2026-09-06T14:05:28"
+  },
+  {
+   "module": "X-167",
+   "stage": "TESTS",
+   "why": "grep for warehouse|shipment|shipping_label|freight matches Database/migrations/2026_08_30_000076_create_x167_inventory_tables.php:19",
+   "at": "2026-09-08T09:07:33"
   }
  ],
  "decisions": [
@@ -1790,6 +1802,12 @@
    "module": "X-163",
    "chose": "a staff channel is refused a sample or unconfirmed price exactly as a customer channel is, but the refusal does not increment refusal_count or dispatch PriceRefusalFlagged, because the owner's digest reports CUSTOMER refusals; admin still sees the row unrefused",
    "at": "2026-09-08T08:42:17",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-167",
+   "chose": "G6-24 is asserted against per-location stock; G6-18 is refused by the module's scope bound",
+   "at": "2026-09-08T09:07:50",
    "ruling": "R245"
   }
  ],

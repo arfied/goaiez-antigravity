@@ -842,3 +842,5 @@
 - `2026-09-08T07:07:35` (R245) X-82 — RateLookupAction refuses an inactive rate with INACTIVE_RATE_REFUSED and returns no amount; the grandfathered branch is deliberately exempt so a tenant lock survives deactivation of the global rate
 - `2026-09-08T08:14:59` (R245) X-175 — the field assistant refuses an on-site price whenever the pricebook refused a MATCHED row (SAMPLE_STATE_REFUSED or UNCONFIRMED), not only a sample; NO_FACT still falls through to the verified-procedure path because no row matched
 - `2026-09-08T08:42:17` (R245) X-163 — a staff channel is refused a sample or unconfirmed price exactly as a customer channel is, but the refusal does not increment refusal_count or dispatch PriceRefusalFlagged, because the owner's digest reports CUSTOMER refusals; admin still sees the row unrefused
+- `2026-09-08T09:07:33` UNRESOLVED TESTS X-167 - grep for warehouse|shipment|shipping_label|freight matches Database/migrations/2026_08_30_000076_create_x167_inventory_tables.php:19
+- `2026-09-08T09:07:50` (R245) X-167 — G6-24 is asserted against per-location stock; G6-18 is refused by the module's scope bound
