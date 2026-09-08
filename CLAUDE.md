@@ -965,6 +965,65 @@ for a *transfer*, so `G6-18` must grep `warehouse|shipment|freight` for the *con
 ⚠️ And when the new test is a grep-lint, **demand the hand-run grep output in the report**: ⛔ a filter
 list tuned until the lint goes green is the lint deleting itself.
 
+## ⛔ Trap added 2026-09-08 09:2x — a refusal lint's INSTRUMENT must match the KIND of the refusal, or it is unwinnable
+
+PB-121 was briefed to prove `G6-18` "multi-warehouse shipping is out of scope" with a text lint:
+`grep -rniE 'warehouse|shipment|shipping_label|freight'` over `app/Modules/X-167`, filtering
+`capabilities.php` and `manifest.php`. The brief carried a STOP condition — *run the grep by hand first;
+if it already matches, stop and record, do not add filter clauses.* **It matched**, and the coder
+stopped.
+
+⭐ **The subject was unwinnable by construction, and the reason generalises.** The word `warehouse` lives
+in that module in exactly two places: a type-enum comment
+(`$table->string('type')->default('van'); // van, storage_unit, warehouse`) and the three
+`capabilities.php` scope notes **that state the bound**. So the lint's only route to green was filtering
+out the very lines that declare the refusal — the lint deleting itself, dressed as hygiene.
+
+⭐ **The tell is available BEFORE briefing, in one grep:** if the word you propose to lint on appears in
+`capabilities.php` *stating the bound*, a text lint on that word is self-defeating. ⭐ **The fix is to
+match the instrument to the claim** — a scope bound about what a module can **represent** is a *schema*
+claim, so it is asserted with `Schema::getColumnListing`, not with `grep`. Here: `stock_items` carries
+exactly one positional column (`location_id`) and the module has no `transit|carrier|tracking|consign`
+anywhere, so "stock cannot be represented as being *between* two locations" is both true and assertable.
+
+⚠️ **And it is independently red-able against the neighbouring id, which is the bar** (see the
+one-id-one-assertion trap above): adding `$table->foreignId('to_location_id')` reddens the schema
+assertion and does **not** redden `G6-51`, whose filter list drops any line containing `foreignId`.
+
+## ⛔ Trap added 2026-09-08 09:2x — an absence assertion that ENUMERATES forbidden names is PB-119 committed by the reviewer
+
+The first draft of the `G6-18` replacement asserted
+`assertFalse(Schema::hasColumn('stock_items','to_location_id'))` and six named siblings. **Killed before
+briefing.** A column named `dest_loc` sails straight through it — which is this lane's own PB-119
+generalisation (*a consumer that enumerates one member of a set has thrown away the fact that the set
+can grow*) reappearing in **test design** rather than in production code.
+
+⭐ **The shape that works is the closed set, not the enumerated absence:** assert the column list *is
+exactly* this whitelist. Then **any** added column reddens it, whatever it is named, and a future schema
+change is forced to stop and revisit the bound deliberately. ⚠️ Brittleness is the feature here, not a
+cost — that is the difference between a scope-bound refusal and a lint that can be quietly filtered.
+
+⭐ Worth noting where the reviewer's own rules bite the reviewer: the generalisations in this file are
+not just for grading the coder's diffs. Two ticks running, applying one to my own draft brief is what
+caught the defect before it shipped.
+
+## ⭐ Trap added 2026-09-08 09:2x — a pre-declared STOP condition is what converts a supervisor's bad subject into a cheap report
+
+`G6-18`'s brief could have produced a green-by-filtering lint that asserted nothing and read as a clean
+wave. It produced a one-line report instead, and cost **no** wave — the coder ran the grep, saw a match,
+and stopped exactly as instructed.
+
+⭐ **The generalisation: when a brief asks for a lint, name in advance the observation that means STOP,
+and make stopping the reportable outcome rather than a failure.** A brief that only describes success
+leaves the coder's cheapest route to "success" being to tune the filter until it passes — and this repo
+already records that as the lint deleting itself.
+
+⚠️ **Then read the stop as evidence about the BRIEF, not about the coder.** The instinct on a wave that
+delivered half its items is to grade the half; the useful move is to ask why the other half was
+impossible, which here was answerable in one independent re-run of the coder's own grep. ⛔ A STOP
+condition that fires and is then treated as the coder's shortfall trains the next run to filter instead
+of stop, and destroys the only cheap signal a bad subject ever gives.
+
 ## ⭐ Trap added 2026-09-08 08:5x — when the defect hunt runs dry, measure the CONTRACT, not harder
 
 PB-115→120 found five defects by five behavioural generalisations. On 2026-09-08 the successors were run
