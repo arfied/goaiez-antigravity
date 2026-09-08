@@ -27,4 +27,18 @@ class PriceBookItem extends Model implements TenantScoped
         'refusal_count' => 'integer',
         'confirmed_at' => 'immutable_datetime',
     ];
+
+    public static function serviceKey(string $name): string
+    {
+        return substr(mb_strtolower(preg_replace('/\s+/', ' ', trim($name))), 0, 255);
+    }
+
+    protected static function booted(): void
+    {
+        static::saving(function (PriceBookItem $item) {
+            if ($item->isDirty('service_name') || empty($item->service_key)) {
+                $item->service_key = self::serviceKey($item->service_name);
+            }
+        });
+    }
 }

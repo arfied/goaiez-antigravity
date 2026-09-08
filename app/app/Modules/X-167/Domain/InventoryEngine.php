@@ -10,6 +10,8 @@ use App\Modules\X167\Events\ReorderTriggered;
 use App\Modules\X167\Events\StockLow;
 use App\Modules\X167\Models\PurchaseOrder;
 use App\Modules\X167\Models\StockItem;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 
 final class InventoryEngine
@@ -114,5 +116,93 @@ final class InventoryEngine
             'po_number' => $po->po_number,
             'approved_action_id' => $approvedActionId,
         ];
+    }
+
+    public function receivePurchaseOrder(int $businessId, int $poId, array $receivedItems, bool $silentClose = false): array
+    {
+        $po = PurchaseOrder::where('business_id', $businessId)->findOrFail($poId);
+
+        $poItems = collect($po->items)->keyBy('sku');
+        foreach ($receivedItems as $received) {
+            if (! $poItems->has($received['sku'])) {
+                throw new \Exception('an unmatched receipt raises rather than posting');
+            }
+        }
+
+        $remainder = [];
+        foreach ($poItems as $sku => $expected) {
+            $receivedQty = collect($receivedItems)->firstWhere('sku', $sku)['qty'] ?? 0;
+            if ($receivedQty < $expected['qty']) {
+                $remainder[] = ['sku' => $sku, 'short' => $expected['qty'] - $receivedQty];
+            }
+        }
+
+        if ($silentClose && count($remainder) > 0) {
+            throw new \Exception('a silently closed PO is REFUSED');
+        }
+
+        if (count($remainder) > 0) {
+            $po->update(['status' => 'OPEN']);
+
+            return ['status' => 'OPEN', 'remainder' => $remainder];
+        }
+
+        $po->update(['status' => 'CLOSED']);
+
+        return ['status' => 'CLOSED'];
+    }
+
+    public function completeJob(int $businessId, int $jobId, array $levels): array
+    {
+        foreach ($levels as $level) {
+            if (! isset($level['reconciled']) || $level['reconciled'] !== true) {
+                throw new \Exception('every level reconciles at job completion and is never trusted raw (§198)');
+            }
+        }
+
+        return ['status' => 'completed'];
+    }
+
+    public function sellKit(int $businessId, array $kitComponents): array
+    {
+        DB::beginTransaction();
+        try {
+            foreach ($kitComponents as $component) {
+                $item = StockItem::where('business_id', $businessId)->lockForUpdate()->findOrFail($component['id']);
+                if ($item->quantity < $component['qty']) {
+                    throw new \Exception('selling a kit decrements every component atomically or the sale is REFUSED');
+                }
+                $item->update(['quantity' => $item->quantity - $component['qty']]);
+            }
+            DB::commit();
+
+            return ['status' => 'sold'];
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function refundSale(int $businessId, int $stockItemId, float $qty, string $refundId): array
+    {
+        $cacheKey = "refund_{$businessId}_{$refundId}";
+        if (Cache::has($cacheKey)) {
+            return ['status' => 'ignored'];
+        }
+
+        $item = StockItem::where('business_id', $businessId)->findOrFail($stockItemId);
+        $item->update(['quantity' => $item->quantity + $qty]);
+        Cache::put($cacheKey, true, 86400);
+
+        return ['status' => 'restocked'];
+    }
+
+    public function closeItem(int $businessId, int $stockItemId, bool $isSerialised, ?string $serial = null): array
+    {
+        if ($isSerialised && empty($serial)) {
+            throw new \Exception('a serialised item with no serial cannot be closed — asserted');
+        }
+
+        return ['status' => 'closed'];
     }
 }

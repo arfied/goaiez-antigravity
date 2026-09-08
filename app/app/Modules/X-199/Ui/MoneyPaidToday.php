@@ -8,8 +8,10 @@ use App\Modules\X199\Models\Invoice;
 use App\Modules\X199\Models\InvoiceLine;
 use App\Support\Tenancy;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Happened Today'])]
 class MoneyPaidToday extends Component
 {
     public ?int $explainedInvoiceId = null;

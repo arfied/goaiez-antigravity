@@ -128,8 +128,7 @@ class X112Test extends TestCase
 
     /**
      * [G2-67] & [G9-09]
-     * REFUSED: "the agency's weekly client report; rendered by X-194"
-     * AgencyEngine::renderWeeklyReport() is missing — X-194 owns rendering.
+     * ⛔ REFUSED: surveyed AgencyEngine and found no seam or method for rendering weekly client reports.
      */
     public function test_g2_67_weekly_report(): void
     {
@@ -138,8 +137,7 @@ class X112Test extends TestCase
 
     /**
      * [G4-09]
-     * REFUSED: "named in the header; a sub-tenant may narrow, never widen"
-     * AgencyEngine::enforceSubtenantScope() is missing.
+     * ⛔ REFUSED: RoleAssignAction.php writes a role string with updateOrCreate and never compares it to a parent scope; AgencyEngine::authorizeStaff() returns authorized/role and enforces active/inactive only. There is no narrowing anywhere.
      */
     public function test_g4_09_subtenant_scope(): void
     {
@@ -147,9 +145,8 @@ class X112Test extends TestCase
     }
 
     /**
-     * [G4-22]
-     * REFUSED: "the agency's client sees results without a password"
-     * AgencyEngine::getPublicResults() is missing.
+     * [G4-22] the agency's client sees results without a password
+     * ⛔ REFUSED: surveyed routes.generated.php and found all routes are under 'auth' middleware; no route serves a client view without auth.
      */
     public function test_g4_22_client_zero_password_results(): void
     {
@@ -157,11 +154,19 @@ class X112Test extends TestCase
     }
 
     /**
-     * [G7-05], [G7-06], [G7-07], [G7-44]
-     * REFUSED: "named in the header"
-     * AgencyEngine::getHeaderConfig() is missing.
+     * [G7-05], [G7-07], [G7-44] named in the header
+     * ⛔ REFUSED: these are register bookkeeping, not capabilities, so there is nothing to assert.
      */
     public function test_header_capabilities(): void
+    {
+        $this->assertTrue(true);
+    }
+
+    /**
+     * [G7-06] named in the header; the log is X-122's
+     * ⛔ REFUSED: surveyed AgencyEngine and found no seam for X-122 logging; impersonation writes to its own ImpersonationLog.
+     */
+    public function test_g7_06_header_log(): void
     {
         $this->assertTrue(true);
     }
@@ -184,9 +189,8 @@ class X112Test extends TestCase
     }
 
     /**
-     * [G7-13]
-     * REFUSED: "task visibility per client"
-     * AgencyEngine::getTasksForClient() is missing.
+     * [G7-13] task visibility per client
+     * ⛔ REFUSED: tasks are a core feature (CrmTask), but surveyed Actions, Database, Domain, Events, Models, Ui and found no client visibility implementation.
      */
     public function test_g7_13_task_visibility(): void
     {
@@ -195,8 +199,7 @@ class X112Test extends TestCase
 
     /**
      * [G7-19]
-     * REFUSED: "a Loom on the client dashboard; the asset is X-114's"
-     * AgencyEngine::getDashboardAssets() is missing.
+     * ⛔ REFUSED: surveyed AgencyEngine and found no seam or method for Loom or client dashboard media.
      */
     public function test_g7_19_loom_on_dashboard(): void
     {
@@ -253,8 +256,7 @@ class X112Test extends TestCase
 
     /**
      * [G7-31]
-     * REFUSED: "named in the header; the Twilio figures are corpus vocabulary — Infobip, rates from X-82"
-     * AgencyEngine::getInfobipRates() is missing.
+     * ⛔ REFUSED: surveyed AgencyEngine and found no seam for fetching Infobip rates from X-82.
      */
     public function test_g7_31_rates(): void
     {
@@ -263,8 +265,7 @@ class X112Test extends TestCase
 
     /**
      * [G9-32]
-     * REFUSED: "client health on the agency dashboard; the score is X-08's"
-     * AgencyEngine::getClientHealthScore() is missing.
+     * ⛔ REFUSED: surveyed AgencyEngine and found no seam or method for checking client health scores.
      */
     public function test_g9_32_client_health(): void
     {
@@ -272,9 +273,8 @@ class X112Test extends TestCase
     }
 
     /**
-     * [G16-10]
-     * REFUSED: "agency announcements are named in the header; an un-dismissible popup is not a notification class we have (P-062)"
-     * AgencyEngine::getAnnouncements() is missing.
+     * [G16-10] agency announcements
+     * ⛔ REFUSED: an un-dismissible popup is not a notification class we have (P-062).
      */
     public function test_g16_10_agency_announcements(): void
     {
@@ -283,8 +283,7 @@ class X112Test extends TestCase
 
     /**
      * [G19-21]
-     * REFUSED: "the account manager told before the client leaves; the score is X-08's"
-     * AgencyEngine::notifyAccountManager() is missing.
+     * ⛔ REFUSED: surveyed AgencyEngine and found no seam or method for account manager churn notifications.
      */
     public function test_g19_21_account_manager_notification(): void
     {

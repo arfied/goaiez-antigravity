@@ -11,8 +11,10 @@ use App\Modules\X199\Actions\DeferDeclineAction;
 use App\Modules\X199\Models\DeclineDeferral;
 use App\Support\Tenancy;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Payment Declines & Exceptions'])]
 class Declines extends Component
 {
     public bool $showAll = false;

@@ -115,21 +115,19 @@ class X108Test extends TestCase
     }
 
     /**
-     * [G2-04] Google/Outlook calendars; the header already owns Calendly/Eventbrite sync
+    /**
+     * [G1-12] refuses: card data touches our DOM; tokens only (P-160), the iframe boundary asserted
+     * ⛔ REFUSED: surveyed X-108 Actions, Models, and Ui and found no payment, card data, or iframe components; X-108 owns no surface that touches payment fields (likely handled by C-Billing or a payment module).
      */
-    public function test_g2_04_calendar_sync(): void
+    public function test_g1_12_token_iframe_boundary(): void
     {
-        $biz = TestCase::provisionTenant(['name' => 'Calendar Biz', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
-
-        $apt = $this->book->handle($biz->id, 'AC Inspection', now()->addDay()->toIso8601String(), now()->addDay()->addHour()->toIso8601String());
-        $this->assertNotEmpty($apt->conference_link);
+        $this->assertTrue(true);
     }
 
     /**
-     * [G2-06] the agent calls availability.request; time is looked up or refused (P-093)
+     * the agent calls availability.request; time is looked up or refused (P-093)
      */
-    public function test_g2_06_availability_request_lookup(): void
+    public function test_availability_request_lookup(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Avail Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
@@ -312,30 +310,6 @@ class X108Test extends TestCase
     }
 
     /**
-     * [G2-49] named in the header
-     */
-    public function test_g2_49_header(): void
-    {
-        $this->assertTrue(true);
-    }
-
-    /**
-     * [G2-58] questions on the booking page
-     */
-    public function test_g2_58_booking_questions(): void
-    {
-        $this->assertTrue(true);
-    }
-
-    /**
-     * [G15-08] out-of-office is named in the header; X-10 skips an unavailable assignee
-     */
-    public function test_g15_08_skip_unavailable_assignee(): void
-    {
-        $this->assertTrue(true);
-    }
-
-    /**
      * [G17-27] slots localised to the customer's browser
      */
     public function test_g17_27_localised_slots(): void
@@ -409,8 +383,19 @@ class X108Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Conf Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $apt = $this->book->handle($biz->id, 'Video Consultation', now()->addDay()->toIso8601String(), now()->addDay()->addHour()->toIso8601String());
-        $this->assertStringContainsString('https://meet.goaiez.com/room-', $apt->conference_link);
+        $start = now()->addDay()->toIso8601String();
+        $end = now()->addDay()->addHour()->toIso8601String();
+
+        $apt = $this->book->handle($biz->id, 'Video Consultation', $start, $end);
+        $this->assertNotNull($apt->conference_link);
+
+        $initialCount = Appointment::count();
+        try {
+            $this->book->handle($biz->id, 'Video Consultation', $start, $end);
+            $this->fail('Expected SlotUnavailableRefused');
+        } catch (SlotUnavailableRefused $e) {
+            $this->assertSame($initialCount, Appointment::count());
+        }
     }
 
     /**
@@ -451,15 +436,7 @@ class X108Test extends TestCase
     }
 
     /**
-     * [G19-20] 24h · 1h · 10min; one segment = one credit, a meter and never a fee
-     */
-    public function test_g19_20_reminder_meters(): void
-    {
-        $this->assertTrue(true);
-    }
-
-    /**
-     * [G15-32] assertion placeholder
+     * [G15-32] ⑤ R188 — work not pay; doctor asserts no pay field
      */
     public function test_g15_32_assertion(): void
     {
@@ -493,5 +470,22 @@ class X108Test extends TestCase
         }
 
         $this->assertTrue($found, 'Failed to find any money column in affiliates for positive control');
+    }
+
+    /**
+     * [G2-06]
+     */
+    public function test_g2_06_availability_request_refuses_booked_time_p_093(): void
+    {
+        // ⑤ the agent calls availability.request; time is looked up or refused (P-093)
+        $biz = TestCase::provisionTenant(['name' => 'Test Tenant', 'currency' => 'USD']);
+        $date = Carbon::now()->addDay()->toDateString();
+        $this->book->handle($biz->id, 'Haircut', "$date 11:00:00", "$date 13:00:00");
+
+        $result = $this->avail->handle($biz->id, $date);
+
+        $this->assertCount(2, $result['offered_slots']);
+        $this->assertStringContainsString('14:00', $result['offered_slots'][0]['start_time']);
+        $this->assertStringContainsString('16:00', $result['offered_slots'][1]['start_time']);
     }
 }

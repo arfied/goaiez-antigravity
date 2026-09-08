@@ -113,7 +113,23 @@ class X203Test extends TestCase
      */
     public function test_g13_07_restore_proof(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'DR Tenant 2', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $goodChecksum = 'sha256_e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855';
+        $corruptChecksum = 'sha256_0000000000000000000000000000000000000000000000000000000000000000';
+
+        $failChecksumRes = $this->restoreTestAction->handle(
+            businessId: $biz->id,
+            backupId: 'bak_corrupted_02',
+            expectedChecksum: $goodChecksum,
+            actualChecksum: $corruptChecksum,
+            expectedRowCount: 15420,
+            restoredRowCount: 15420
+        );
+
+        $this->assertEquals('failed', $failChecksumRes['status']);
+        $this->assertEquals('checksum_mismatch', $failChecksumRes['reason']);
     }
 
     /**
@@ -121,6 +137,54 @@ class X203Test extends TestCase
      */
     public function test_g21_03_runbook_response(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'DR Tenant 3', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $runbook = Runbook::create([
+            'business_id' => $biz->id,
+            'title' => 'Failover Database Primary',
+            'trigger_event' => 'primary_db_unreachable',
+            'steps' => ['promote_replica', 'update_dns_records', 'notify_engineering_oncall'],
+        ]);
+
+        $runRes = $this->runbookAction->handle($biz->id, $runbook->id);
+        $this->assertEquals('completed', $runRes->status);
+    }
+
+    /**
+     * [G4-04]
+     */
+    public function test_g4_04_no_ad_budget_scaling(): void
+    {
+        $dir = base_path('app/Modules/X-203');
+        $this->assertDirectoryExists($dir);
+
+        $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($dir));
+        $found = false;
+        $match = '';
+        foreach ($files as $file) {
+            if ($file->getExtension() === 'php' && $file->getFilename() !== 'capabilities.php') {
+                $content = file_get_contents($file->getPathname());
+                if (preg_match('/(ad_budget|adBudget|budget_scal|scale_ad)/i', $content)) {
+                    $found = true;
+                    $match = $file->getPathname();
+                    break;
+                }
+            }
+        }
+        $this->assertFalse($found, "Ad budget scaling path found in: $match");
+
+        $biz = TestCase::provisionTenant(['name' => 'DR Tenant G4-04', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $runbook = Runbook::create([
+            'business_id' => $biz->id,
+            'title' => 'Test',
+            'trigger_event' => 'test',
+            'steps' => ['step'],
+        ]);
+
+        $runRes = $this->runbookAction->handle($biz->id, $runbook->id);
+        $this->assertEquals('completed', $runRes->status);
     }
 }

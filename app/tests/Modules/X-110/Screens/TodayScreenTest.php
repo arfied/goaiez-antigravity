@@ -18,7 +18,11 @@ class TodayScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-110.today'))->assertOk();
+        $this->get(route('x-110.today'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
+            ->assertSee('<h1 class="sr-only">Worth a minute</h1>', false);
 
         Livewire::test(Today::class)->assertOk();
     }

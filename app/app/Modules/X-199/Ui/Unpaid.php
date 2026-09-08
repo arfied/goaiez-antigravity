@@ -9,8 +9,10 @@ use App\Modules\X199\Models\Invoice;
 use App\Modules\X199\Models\OverflowCharge;
 use App\Support\Tenancy;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Unpaid Invoices'])]
 class Unpaid extends Component
 {
     public array $expanded = [];

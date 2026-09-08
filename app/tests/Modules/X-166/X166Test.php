@@ -86,6 +86,7 @@ class X166Test extends TestCase
 
     /**
      * [N-166-01] no refusal declared
+     * [N-048] ⛔ REFUSED: `php artisan why N-048` reports it is never DEFINED. a margin figure is NEVER computed from invoiced revenue. Nothing to assert. (R245, REV-81/REV-83)
      */
     public function test_n_166_01_no_refusal(): void
     {
@@ -124,5 +125,56 @@ class X166Test extends TestCase
         // and does not appear carrying any margin figure.
         $this->assertArrayNotHasKey($emptyJobId, $jobsWithMargins);
         $this->assertCount(1, $jobsWithMargins);
+    }
+
+    /** [N-048] */
+    public function test_n_048_a_margin_never_reads_an_invoiced_source(): void
+    {
+        $path = base_path('app/Modules/X-166');
+        $pattern = '(invoice|amount_due|receivable|invoiced|balance_due)';
+        $grepCommand = sprintf('grep -rniE %s %s', escapeshellarg($pattern), escapeshellarg($path));
+        $output = shell_exec($grepCommand);
+
+        // The capabilities.php filter is load-bearing here because the assertion
+        // prose in the generated capabilities.php contains the word "invoiced".
+        $lines = array_filter(explode("\n", $output ?? ''), function ($line) {
+            return ! empty($line) && ! str_contains($line, 'capabilities.php') && ! str_contains($line, 'manifest.php');
+        });
+
+        $this->assertEmpty($lines, 'No path under app/Modules/X-166/ reads an invoiced source.');
+    }
+
+    /** [N-048] */
+    public function test_n_048_margin_is_the_collected_figure_not_the_invoiced_one(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Collected Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $invoicedCents = 100000;
+        $collectedCents = 60000;
+
+        $cost = $this->costAction->handle(
+            businessId: $biz->id,
+            jobId: 777,
+            priceBookVersion: 'v2.1',
+            laborCostCents: 20000,
+            materialsCostCents: 10000,
+            overheadCostCents: 10000,
+            revenueCents: $collectedCents, // only 60000 ever enters
+            techId: 44,
+            serviceType: 'repair',
+            source: 'direct'
+        );
+
+        $this->assertEquals(40000, $cost->total_cost_cents);
+        $this->assertEquals(20000, $cost->gross_margin_cents, 'Margin is derived from the 60000 collected figure, not 60000 produced from 100000 invoiced figure minus 40000 costs');
+        $this->assertEquals(33.33, $cost->gross_margin_pct);
+
+        $report = $this->reportAction->handle($biz->id, 'job');
+        $row = (array) collect($report)->firstWhere('job_id', 777);
+        $this->assertNotEmpty($row);
+
+        $this->assertEquals(60000, $row['revenue_cents']);
+        $this->assertFalse(in_array(100000, $row, true), 'No value in the row equals the invoiced amount of 100000');
     }
 }

@@ -1,5 +1,4 @@
 <div>
-<x-surface.sample-state module="the 14 KB smart pixel" screen="visitors_live" />
     <div wire:loading.delay>
         <x-ui.skeleton label="Loading live visitors..." />
     </div>
@@ -27,7 +26,7 @@
                         <x-ui.row class="flex flex-col gap-3 sm:flex-row items-start sm:items-center">
                             <div class="min-w-0 flex-1">
                                 <p class="font-medium text-ink">
-                                    <span class="font-mono text-xs">{{ $session->visitor_id }}</span>
+                                    <span class="font-medium">Visitor {{ $loop->iteration }}</span>
                                     <span class="text-ink-2 font-normal ml-2">{{ $session->started_at->diffForHumans() }}</span>
                                 </p>
                                 <p class="text-sm text-ink-2 truncate mt-1">
@@ -51,8 +50,8 @@
                                     <ul class="space-y-2">
                                         @foreach($openVisitorEvents as $event)
                                             <li class="flex justify-between items-center text-ink-2">
-                                                <span class="font-mono text-xs text-ink">{{ $event->event_name }}</span>
-                                                <span>{{ $event->created_at->diffForHumans() }}</span>
+                                                <span class="text-ink">{{ $event['label'] }}</span>
+                                                <span>{{ $event['at'] }}</span>
                                             </li>
                                         @endforeach
                                     </ul>

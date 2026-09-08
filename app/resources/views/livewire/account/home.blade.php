@@ -97,7 +97,7 @@
     <!-- Quick Navigation & Growth Shortcuts -->
     <div class="rounded-[--radius-card] border border-rule bg-card p-4 sm:p-6 shadow-xs">
         <h2 class="font-display text-sm sm:text-base font-bold text-ink mb-3 sm:mb-4">Quick Actions & Shortcuts</h2>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3">
             <a href="{{ route('account.inbox') }}" class="p-3 sm:p-3.5 rounded-[--radius-control] border border-rule bg-paper hover:border-rule-strong text-center transition group">
                 <div class="text-lg sm:text-xl mb-1">📥</div>
                 <div class="text-xs font-semibold text-ink group-hover:underline">Review Inbox</div>
@@ -117,6 +117,16 @@
                 <div class="text-lg sm:text-xl mb-1">📍</div>
                 <div class="text-xs font-semibold text-ink group-hover:underline">Directory Citations</div>
                 <div class="text-[10px] text-ink-3 mt-0.5 hidden xs:block">NAP Consistency</div>
+            </a>
+            <a href="{{ route('x-199.invoices') }}" class="p-3 sm:p-3.5 rounded-[--radius-control] border border-rule bg-paper hover:border-rule-strong text-center transition group">
+                <div class="text-lg sm:text-xl mb-1">🧾</div>
+                <div class="text-xs font-semibold text-ink group-hover:underline">Invoices</div>
+                <div class="text-[10px] text-ink-3 mt-0.5 hidden xs:block">Billing & Payments</div>
+            </a>
+            <a href="{{ route('x-199.credits') }}" class="p-3 sm:p-3.5 rounded-[--radius-control] border border-rule bg-paper hover:border-rule-strong text-center transition group">
+                <div class="text-lg sm:text-xl mb-1">💰</div>
+                <div class="text-xs font-semibold text-ink group-hover:underline">Credits</div>
+                <div class="text-[10px] text-ink-3 mt-0.5 hidden xs:block">Account Balance</div>
             </a>
         </div>
     </div>

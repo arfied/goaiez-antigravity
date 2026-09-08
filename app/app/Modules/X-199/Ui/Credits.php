@@ -11,8 +11,10 @@ use App\Modules\X199\Models\CreditTerm;
 use App\Modules\X199\Models\OverflowCharge;
 use App\Support\Tenancy;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Credit Balances & Terms'])]
 class Credits extends Component
 {
     public const LABELS = [

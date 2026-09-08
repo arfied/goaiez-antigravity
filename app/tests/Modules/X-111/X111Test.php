@@ -20,6 +20,7 @@ use App\Modules\X111\Models\TenantTicket;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 class X111Test extends TestCase
@@ -188,5 +189,111 @@ class X111Test extends TestCase
         }
 
         $this->assertGreaterThanOrEqual(8, $controlCount);
+    }
+
+    /**
+     * [G5-18] the HELP path; reply HUMAN always escalates (R37)
+     */
+    public function test_g5_18_help_path_always_escalates(): void
+    {
+        Event::fake([TicketOpened::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Help Path Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $t1 = $this->ticketAction->handle($biz->id, '<a transcript>', 'billing');
+        $t2 = $this->ticketAction->handle($biz->id, '<a different transcript>', 'general');
+
+        $this->assertSame('billing', $t1->category);
+        $this->assertSame('general', $t2->category);
+
+        Event::assertDispatchedTimes(TicketOpened::class, 2);
+
+        Event::assertDispatched(TicketOpened::class, fn (TicketOpened $e) => $e->ticketId === $t1->id && $e->source === 'human_requested');
+        Event::assertDispatched(TicketOpened::class, fn (TicketOpened $e) => $e->ticketId === $t2->id && $e->source === 'human_requested');
+    }
+
+    /** [G5-18] */
+    public function test_g5_18_human_reply_escalates(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Human Escalate', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $ticket = $this->ticketAction->handle($biz->id, 'HUMAN', 'human_escalation');
+        $this->assertEquals('human_requested', $ticket->source);
+        $this->assertEquals('open', $ticket->status);
+        $this->assertDatabaseHas('tenant_tickets', ['id' => $ticket->id, 'full_transcript' => 'HUMAN']);
+    }
+
+    /** [G7-33] */
+    public function test_g7_33_spend_ceiling_alerts_never_stops_phone(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Ceiling', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $alert = $this->alertAction->handle($biz->id, 'warning', 'Spend ceiling reached');
+        $this->assertEquals('warning', $alert->severity);
+        $this->assertStringContainsString('Spend ceiling reached', $alert->action_verb_message);
+
+        $alertKeys = array_keys($alert->getAttributes());
+        $params = (new \ReflectionMethod(OpsAlertAction::class, 'handle'))->getParameters();
+        $paramNames = array_map(fn ($p) => $p->getName(), $params);
+
+        $names = array_merge($alertKeys, $paramNames);
+        foreach ($names as $name) {
+            $this->assertDoesNotMatchRegularExpression('/(phone|telephony|answering|hangup|divert)/i', $name);
+        }
+    }
+
+    /** [G19-09] */
+    public function test_g19_09_compromise_halt_is_security_stop(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Security Halt', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $ban = $this->banAction->handle($biz->id, '203.0.113.5', 'Compromise halt');
+        $this->assertDatabaseHas('ip_bans', ['id' => $ban->id]);
+
+        $banKeys = array_keys($ban->getAttributes());
+        $params = (new \ReflectionMethod(OpsBanAction::class, 'handle'))->getParameters();
+        $paramNames = array_map(fn ($p) => $p->getName(), $params);
+
+        $names = array_merge($banKeys, $paramNames);
+        foreach ($names as $name) {
+            $this->assertDoesNotMatchRegularExpression('/(balance|credit|cap|dunning|arrears)/i', $name);
+        }
+    }
+
+    /** [G15-28] */
+    public function test_g15_28_no_pay_field_exposed(): void
+    {
+        $this->assertFalse(Schema::hasColumn('operator_alerts', 'pay'));
+        $this->assertFalse(Schema::hasColumn('tenant_tickets', 'pay'));
+    }
+
+    /** [G4-24] */
+    public function test_g4_24_throttle_refusal(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Throttle Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $ip = '10.0.0.1';
+        $this->banAction->handle($biz->id, $ip, 'fraud', 24);
+
+        $engine = new OpsEngine;
+
+        try {
+            $engine->checkThrottle($biz->id, $ip);
+            $this->fail('Throttle did not refuse.');
+        } catch (\DomainException $e) {
+            $this->assertStringContainsString('THROTTLE REFUSED', $e->getMessage());
+        }
+
+        // Pass case
+        $engine->checkThrottle($biz->id, '10.0.0.2');
+        $this->assertDatabaseHas('ip_bans', ['business_id' => $biz->id, 'ip_address' => '10.0.0.1']);
+        $this->assertDatabaseMissing('ip_bans', ['business_id' => $biz->id, 'ip_address' => '10.0.0.2']);
+
+        // The dead-tier half is not assertable here: X-111 exposes no pricing or plan surface, and the module's only occurrence of $99/$999 is the ⑤ tracker text in capabilities.php.
     }
 }

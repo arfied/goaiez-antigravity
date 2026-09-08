@@ -122,4 +122,24 @@ class X184Test extends TestCase
             $this->assertCount(5, $items);
         });
     }
+
+    /**
+     * [G9-16]
+     */
+    public function test_g9_16_decay_proposes_refresh_never_auto_refreshed_above_floor()
+    {
+        $engine = new PlanEngine;
+
+        // fatigued and below floor -> refresh proposed
+        $this->assertTrue($engine->autoRefreshAllowed(true, 100, 200));
+
+        // fatigued and above floor -> not auto-refreshed
+        $this->assertFalse($engine->autoRefreshAllowed(true, 250, 200));
+
+        // fatigued and AT the floor -> not auto-refreshed
+        $this->assertFalse($engine->autoRefreshAllowed(true, 200, 200));
+
+        // not fatigued -> no refresh
+        $this->assertFalse($engine->autoRefreshAllowed(false, 100, 200));
+    }
 }

@@ -18,6 +18,7 @@ use App\Modules\X167\Models\StockLocation;
 use App\Modules\X167\Models\Supplier;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 class X167Test extends TestCase
@@ -46,6 +47,8 @@ class X167Test extends TestCase
      * a cancelled unfulfilled order restores its decrement
      * [G6-14]
      * [G1-58]
+     * [G6-46] doctor asserts NO autonomous ordering path - it PROPOSES; L1, MONEY
+     * [G1-64] a blanket PO draws down; doctor asserts no autonomous release
      */
     public function test_anchor_fractional_stock_po_approval_and_cancellation_restoration(): void
     {
@@ -130,6 +133,10 @@ class X167Test extends TestCase
         $this->assertEquals('refused', $unapprovedSend['status']);
         $this->assertEquals('PO_APPROVAL_REQUIRED', $unapprovedSend['refusal_code']);
         $this->assertFalse($unapprovedSend['sent']);
+
+        $po->refresh();
+        $this->assertEquals('proposed', $po->status);
+        $this->assertNull($po->approved_action_id);
 
         Event::assertNotDispatched(PoSent::class);
 
@@ -232,5 +239,184 @@ class X167Test extends TestCase
         Event::assertDispatched(StockLow::class);
         Event::assertDispatched(ReorderTriggered::class);
         $this->assertSame(0, PurchaseOrder::where('business_id', $biz->id)->count());
+    }
+
+    /** [G1-64] */
+    public function test_g1_64_a_blanket_po_draws_down_no_autonomous_release(): void
+    {
+        $path = base_path('app/Modules/X-167');
+        $pattern = '(Console|Jobs|Schedule|->cron|artisan\()';
+        $grepCommand = sprintf('grep -rniE %s %s', escapeshellarg($pattern), escapeshellarg($path));
+        $output = shell_exec($grepCommand);
+
+        $lines = array_filter(explode("\n", $output ?? ''), function ($line) {
+            return ! empty($line) && ! str_contains($line, 'capabilities.php') && ! str_contains($line, 'manifest.php');
+        });
+
+        $this->assertEmpty($lines, 'No path under app/Modules/X-167/ performs an autonomous release.');
+    }
+
+    /** [G6-40] */
+    public function test_g6_40_dead_stock_is_reported_never_auto_disposed(): void
+    {
+        $path = base_path('app/Modules/X-167');
+        $grepCommand = sprintf('grep -rniE "(delete\(|destroy\(|forceDelete\()" %s', escapeshellarg($path));
+        $output = shell_exec($grepCommand);
+
+        $lines = array_filter(explode("\n", $output ?? ''), function ($line) {
+            return ! empty($line) && ! str_contains($line, 'capabilities.php') && ! str_contains($line, 'manifest.php') && ! str_contains($line, 'cascadeOnDelete') && ! str_contains($line, 'nullOnDelete');
+        });
+
+        $this->assertEmpty($lines, 'No path under app/Modules/X-167/ performs an auto-dispose (delete).');
+    }
+
+    /** [G6-46] */
+    public function test_g6_46_no_autonomous_ordering_path_it_proposes(): void
+    {
+        $path = base_path('app/Modules/X-167');
+        $grepCommand = sprintf('grep -rniE "(Http::|curl_|Guzzle|file_get_contents\(\'http)" %s', escapeshellarg($path));
+        $output = shell_exec($grepCommand);
+
+        $lines = array_filter(explode("\n", $output ?? ''), function ($line) {
+            return ! empty($line) && ! str_contains($line, 'capabilities.php') && ! str_contains($line, 'manifest.php');
+        });
+
+        $this->assertEmpty($lines, 'No external purchase API call exists for autonomous ordering.');
+    }
+
+    /** [G6-51] */
+    public function test_g6_51_a_transfer_is_atomic_truck_to_truck_only(): void
+    {
+        $path = base_path('app/Modules/X-167');
+        $grepCommand = sprintf('grep -rniE "location_id" %s', escapeshellarg($path));
+        $output = shell_exec($grepCommand);
+
+        $lines = array_filter(explode("\n", $output ?? ''), function ($line) {
+            return ! empty($line) && ! str_contains($line, 'capabilities.php') && ! str_contains($line, 'manifest.php') && ! str_contains($line, 'groupBy') && ! str_contains($line, 'nullOnDelete') && ! str_contains($line, 'foreignId');
+        });
+
+        $this->assertEmpty($lines, 'No path under app/Modules/X-167/ performs a location-to-location transfer by updating location_id.');
+    }
+
+    /**
+     * [G6-40] dead stock is REPORTED, never auto-disposed
+     * Asserts the absence of disposal columns and methods.
+     */
+    public function test_g6_40_no_auto_disposal_path_exists(): void
+    {
+        foreach (['disposed_at', 'written_off_at', 'disposal_id', 'auto_disposed'] as $col) {
+            $this->assertFalse(Schema::hasColumn('stock_items', $col), "stock_items must not have $col");
+        }
+        $this->assertFalse(method_exists(InventoryEngine::class, 'disposeStock'), 'InventoryEngine must not have disposeStock');
+        $this->assertFalse(method_exists(InventoryEngine::class, 'writeOffStock'), 'InventoryEngine must not have writeOffStock');
+    }
+
+    /**
+     * [G6-51] TRUCK-to-truck only; doctor asserts no location-to-location path
+     * Asserts the absence of transfer paths (methods and columns).
+     * This asserts the R201/R203 half of the clause only, as the atomicity half has no surface to test.
+     */
+    public function test_g6_51_no_location_transfer_path_exists(): void
+    {
+        $this->assertFalse(Schema::hasColumn('stock_items', 'transfer_id'), 'stock_items must not have transfer_id');
+        $this->assertFalse(Schema::hasColumn('stock_locations', 'transfer_status'), 'stock_locations must not have transfer_status');
+
+        $methods = get_class_methods(InventoryEngine::class);
+        foreach ($methods as $method) {
+            $this->assertStringStartsNotWith('transfer', $method, 'InventoryEngine must not have transfer methods');
+        }
+
+        $actions = [
+            StockAdjustAction::class,
+            ReorderProposeAction::class,
+            PoGenerateAction::class,
+        ];
+
+        foreach ($actions as $actionClass) {
+            $methods = get_class_methods($actionClass);
+            foreach ($methods as $method) {
+                if ($method !== 'handle' && $method !== '__construct' && $method !== 'send') {
+                    $this->assertStringStartsNotWith('transfer', $method, "$actionClass must not have transfer methods");
+                }
+            }
+        }
+    }
+
+    /** [G1-76] */
+    public function test_g1_76_a_partial_receipt_leaves_po_open_and_silent_close_is_refused(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'T1', 'currency' => 'USD']);
+        $po = PurchaseOrder::create(['business_id' => $biz->id, 'supplier_id' => null, 'po_number' => 'PO-123', 'items' => [['sku' => 'ITM1', 'qty' => 10]], 'total_cents' => 100, 'status' => 'proposed']);
+
+        $res = $this->engine->receivePurchaseOrder($biz->id, $po->id, [['sku' => 'ITM1', 'qty' => 5]]);
+        $this->assertEquals('OPEN', $res['status']);
+        $this->assertCount(1, $res['remainder']);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('a silently closed PO is REFUSED');
+        $this->engine->receivePurchaseOrder($biz->id, $po->id, [['sku' => 'ITM1', 'qty' => 5]], true);
+    }
+
+    /** [G1-79] */
+    public function test_g1_79_unmatched_receipt_raises_rather_than_posting(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'T2', 'currency' => 'USD']);
+        $po = PurchaseOrder::create(['business_id' => $biz->id, 'supplier_id' => null, 'po_number' => 'PO-124', 'items' => [['sku' => 'ITM1', 'qty' => 10]], 'total_cents' => 100, 'status' => 'proposed']);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('an unmatched receipt raises rather than posting');
+        $this->engine->receivePurchaseOrder($biz->id, $po->id, [['sku' => 'ITM-GHOST', 'qty' => 5]]);
+    }
+
+    /** [G6-39] */
+    public function test_g6_39_every_level_reconciles_at_job_completion(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'T3', 'currency' => 'USD']);
+        $res = $this->engine->completeJob($biz->id, 1, [['reconciled' => true]]);
+        $this->assertEquals('completed', $res['status']);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('every level reconciles at job completion and is never trusted raw (§198)');
+        $this->engine->completeJob($biz->id, 1, [['reconciled' => false]]);
+    }
+
+    /** [G6-43] */
+    public function test_g6_43_selling_a_kit_decrements_every_component_atomically_or_refused(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'T4', 'currency' => 'USD']);
+        $item = StockItem::create(['business_id' => $biz->id, 'location_id' => 1, 'sku' => 'K1', 'barcode' => 'K1', 'name' => 'K1', 'quantity' => 10.0, 'unit' => 'ea', 'reorder_point' => 0.0]);
+        $res = $this->engine->sellKit($biz->id, [['id' => $item->id, 'qty' => 2]]);
+        $this->assertEquals('sold', $res['status']);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('selling a kit decrements every component atomically or the sale is REFUSED');
+        $this->engine->sellKit($biz->id, [['id' => $item->id, 'qty' => 20]]);
+    }
+
+    /** [G6-47] */
+    public function test_g6_47_a_refund_restocks_exactly_once(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'T5', 'currency' => 'USD']);
+        $item = StockItem::create(['business_id' => $biz->id, 'location_id' => 1, 'sku' => 'R1', 'barcode' => 'R1', 'name' => 'R1', 'quantity' => 10.0, 'unit' => 'ea', 'reorder_point' => 0.0]);
+
+        $res1 = $this->engine->refundSale($biz->id, $item->id, 5.0, 'ref-123');
+        $this->assertEquals('restocked', $res1['status']);
+
+        $res2 = $this->engine->refundSale($biz->id, $item->id, 5.0, 'ref-123');
+        $this->assertEquals('ignored', $res2['status']);
+    }
+
+    /** [G6-49] */
+    public function test_g6_49_serialised_item_with_no_serial_cannot_be_closed(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'T6', 'currency' => 'USD']);
+        $item = StockItem::create(['business_id' => $biz->id, 'location_id' => 1, 'sku' => 'S1', 'barcode' => 'S1', 'name' => 'S1', 'quantity' => 1.0, 'unit' => 'ea', 'reorder_point' => 0.0]);
+
+        $res = $this->engine->closeItem($biz->id, $item->id, true, 'SN-123');
+        $this->assertEquals('closed', $res['status']);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('a serialised item with no serial cannot be closed — asserted');
+        $this->engine->closeItem($biz->id, $item->id, true, null);
     }
 }

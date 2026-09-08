@@ -73,6 +73,7 @@ use App\Support\Admin\AdminAccess;
 use App\Support\Admin\CreditGrantAccess;
 use App\Support\Admin\LifecycleAccess;
 use App\Support\Admin\SupportAccess;
+use App\Support\ChatRateLimits;
 use App\Support\FeedbackRateLimits;
 use App\Support\LegalDocumentRateLimits;
 use App\Support\MeRateLimits;
@@ -598,6 +599,7 @@ class AppServiceProvider extends ServiceProvider
         MeRateLimits::register();
         PixelRateLimits::register();
         ActuationRateLimits::register();
+        ChatRateLimits::register();
 
         Livewire::addPersistentMiddleware([TenantRole::class]);
     }

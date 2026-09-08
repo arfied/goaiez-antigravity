@@ -27,7 +27,7 @@
                         <x-ui.row class="flex flex-col gap-3 sm:flex-row items-start sm:items-center p-4">
                             <div class="min-w-0 flex-1 w-full">
                                 <p class="font-medium text-ink">
-                                    <span class="font-mono text-xs">{{ substr((string)$a['visitor_id'], 0, 8) }}</span> — Quit {{ $a['form'] }} at '{{ $a['field'] }}'. 
+                                    Someone — Quit {{ $a['form'] }} at '{{ $a['field'] }}'. 
                                     <span class="text-ink-2 font-normal">Happened {{ $a['time'] }}.</span>
                                 </p>
                                 @if (!$a['sent'])

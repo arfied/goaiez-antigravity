@@ -12,8 +12,11 @@ use App\Modules\X188\Domain\NumberPoolManager;
 use App\Modules\X188\Events\TenantCancelled;
 use App\Modules\X188\Models\NumberPark;
 use App\Modules\X188\Models\NumberPool;
+use App\Modules\X188\Ui\PoolInventory;
+use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class X188Test extends TestCase
@@ -53,7 +56,7 @@ class X188Test extends TestCase
 
         // 1. Instant live number assignment before first screen renders
         DB::statement("SET app.business_id = '{$biz1->id}'");
-        $assignRes = $this->assigner->handle($biz1->id, '512');
+        $assignRes = $this->assigner->handle($biz1->id);
 
         $this->assertNotEmpty($assignRes['phone_number']);
         $this->assertEquals('active', $assignRes['status']);
@@ -75,7 +78,7 @@ class X188Test extends TestCase
 
         // 4. Paying tenant cancelled parks number for 14 days
         DB::statement("SET app.business_id = '{$biz2->id}'");
-        $this->assigner->handle($biz2->id, '512');
+        $this->assigner->handle($biz2->id);
 
         $payingCancel = $this->parker->handle(
             businessId: $biz2->id,
@@ -105,14 +108,31 @@ class X188Test extends TestCase
 
     /**
      * [G18-10] the tenant's own registered numbers by area code
+     *
+     * Old subject: assert that the returned pool inventory record extracts and returns the correct area_code from the tenant's existing provisioned number.
+     * New subject: assert that the PoolInventory screen groups and renders the tenant's registered numbers by their area code.
+     * Why: The G18-10 capability plainly names a UI presentation ("numbers by area code"). The previous assertion only checked the internal array returned by an assignment action; asserting on the Livewire screen proves the capability is actually delivered to the tenant.
+     * Newer subject: assert that the PoolInventory screen only shows the tenant's own numbers, by asserting a second tenant's number is absent.
+     * Why: The screen previously did not read the tenant context and the test explicitly provided it, masking that the component was unwired. The test now tests the component bare, relying on Tenancy::id(), and proves tenant isolation.
      */
     public function test_g18_10_numbers_by_area_code(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Area Code Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
+        $assigned = $this->assigner->handle($biz->id);
 
-        $assigned = $this->assigner->handle($biz->id, '210');
-        $this->assertEquals('210', $assigned['area_code']);
+        $biz2 = TestCase::provisionTenant(['name' => 'Other Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz2->id}'");
+        $assigned2 = $this->assigner->handle($biz2->id);
+
+        // Switch back to biz 1
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        Tenancy::set($biz->id);
+
+        Livewire::test(PoolInventory::class)
+            ->assertSee('Area Code: 512')
+            ->assertSee($assigned['phone_number'])
+            ->assertDontSee($assigned2['phone_number']);
     }
 
     /**

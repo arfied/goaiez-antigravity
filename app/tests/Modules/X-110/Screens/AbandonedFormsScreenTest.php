@@ -18,7 +18,11 @@ class AbandonedFormsScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-110.abandoned-forms'))->assertOk();
+        $this->get(route('x-110.abandoned-forms'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
+            ->assertSee('<h1 class="sr-only">Abandoned Forms</h1>', false);
 
         Livewire::test(AbandonedForms::class)->assertOk();
     }

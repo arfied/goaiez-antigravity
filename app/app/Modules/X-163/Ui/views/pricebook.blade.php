@@ -59,6 +59,9 @@
                     <div class="lg:col-span-2">
                         <label class="block text-sm font-medium text-ink-2 mb-1">Service Name</label>
                         <input type="text" wire:model="newServiceName" class="w-full h-10 px-3 py-2 bg-paper border border-rule rounded-md focus:outline-none focus:ring-2 focus:ring-accent" placeholder="Service">
+                        @error('newServiceName')
+                            <p class="mt-1 text-sm text-alert">{{ $message }}</p>
+                        @enderror
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-ink-2 mb-1">Price ($)</label>

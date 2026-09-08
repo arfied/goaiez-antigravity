@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X210;
 
+use App\Modules\CBilling\Models\TrialLimit;
 use App\Modules\X210\Actions\PromotionApplyAction;
 use App\Modules\X210\Actions\PromotionCreateAction;
 use App\Modules\X210\Actions\PromotionProposeTargetsAction;
 use App\Modules\X210\Actions\PromotionValidateAction;
+use App\Modules\X210\Domain\X210Engine;
 use App\Modules\X210\Events\PromotionCapReached;
 use App\Modules\X210\Events\PromotionCreated;
 use App\Modules\X210\Events\PromotionRedeemed;
@@ -85,10 +87,170 @@ class X210Test extends TestCase
     }
 
     /**
-     * [N-027], [N-028], [N-030], [N-032], [G1-66], [G1-67], [G1-69], [G6-38], [G7-47], [G15-21]
+     * [G18-05]
      */
-    public function test_promotion_capabilities(): void
+    public function test_g18_05_no_feature_gating(): void
     {
-        $this->assertTrue(true);
+        $dir = base_path('app/Modules/X-210');
+        $this->assertDirectoryExists($dir);
+
+        $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($dir));
+        $found = false;
+        $match = '';
+        foreach ($files as $file) {
+            if ($file->getExtension() === 'php' && $file->getFilename() !== 'capabilities.php') {
+                $content = file_get_contents($file->getPathname());
+                if (preg_match('/(padlock|locked_tier|lockedTier|feature_gate|featureGate|upgrade_to_unlock)/i', $content)) {
+                    $found = true;
+                    $match = $file->getPathname();
+                    break;
+                }
+            }
+        }
+        $this->assertFalse($found, "Locked tier path found in: $match");
+
+        $biz = TestCase::provisionTenant(['name' => 'Promotion Tenant G18-05', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $promo = $this->createAction->createPromotion(
+            businessId: $biz->id,
+            code: 'FALL10',
+            discountValue: 10,
+            discountType: 'percentage',
+            maxRedemptions: 1,
+            velocityThreshold: 1,
+            expiresAt: now()->addDays(7),
+            scopes: []
+        );
+
+        $redemption = $this->applyAction->applyPromotion($biz->id, 'FALL10', 8801, 'ORD-G1805', 10000);
+        $this->assertEquals(1000, $redemption->discount_applied_cents);
+    }
+
+    /**
+     * [G1-66]
+     */
+    public function test_g1_66_promotion_with_no_cap_cannot_be_saved(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Promotion Tenant G1-66', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('A promotion with no cap cannot be saved.');
+
+        $this->createAction->createPromotion(
+            businessId: $biz->id,
+            code: 'NOCAP',
+            discountValue: 10,
+            discountType: 'percentage',
+            maxRedemptions: null
+        );
+    }
+
+    /**
+     * [G1-69], [G6-38], [G15-21]
+     */
+    public function test_g1_69_g6_38_g15_21_no_interstitial_on_cancel(): void
+    {
+        $dir = base_path('app/Modules/X-210/Ui');
+        $this->assertDirectoryExists($dir);
+
+        $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($dir));
+        $found = false;
+        $match = '';
+        foreach ($files as $file) {
+            if ($file->getExtension() === 'php') {
+                $content = file_get_contents($file->getPathname());
+                if (preg_match('/(interstitial|cancel_confirm|are_you_sure_cancel|save_offer_modal|prevent_cancel)/i', $content)) {
+                    $found = true;
+                    $match = $file->getPathname();
+                    break;
+                }
+            }
+        }
+        $this->assertFalse($found, "Interstitial or cancel wall found in: $match");
+
+        $biz = TestCase::provisionTenant(['name' => 'Promotion Tenant Interstitial Test', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $promo = $this->createAction->createPromotion(
+            businessId: $biz->id,
+            code: 'NOCANCELWALL',
+            discountValue: 10,
+            discountType: 'percentage',
+            maxRedemptions: 5
+        );
+        $this->assertNotNull($promo);
+        $this->assertEquals('NOCANCELWALL', $promo->code);
+    }
+
+    /**
+     * [G1-67]
+     */
+    public function test_g1_67_margin_guard_names_below_cost_services(): void
+    {
+        $engine = new X210Engine;
+        $services = [
+            ['name' => 'HVAC Install', 'cost' => 50000, 'price' => 45000], // below cost
+            ['name' => 'Plumbing Repair', 'cost' => 10000, 'price' => 12000],
+            ['name' => 'Electrical Inspection', 'cost' => 15000, 'price' => 14000], // below cost
+        ];
+
+        try {
+            $engine->checkMarginGuard($services);
+            $this->fail('Margin guard did not refuse.');
+        } catch (\DomainException $e) {
+            $this->assertStringContainsString('BELOW_COST', $e->getMessage());
+            $this->assertStringContainsString('HVAC Install', $e->getMessage());
+            $this->assertStringContainsString('Electrical Inspection', $e->getMessage());
+        }
+
+        // Pass case
+        $servicesPass = [
+            ['name' => 'Plumbing Repair', 'cost' => 10000, 'price' => 12000],
+        ];
+        $result = $engine->checkMarginGuard($servicesPass);
+        $this->assertEquals('ok', $result['status']);
+    }
+
+    /**
+     * [G15-21]
+     */
+    public function test_g15_21_cancel_stays_one_tap(): void
+    {
+        $engine = new X210Engine;
+        $this->assertSame(['status' => 'cancelled'], $engine->cancelAction(false));
+        $this->assertSame(['status' => 'refused', 'reason' => 'one tap cancel required'], $engine->cancelAction(true));
+    }
+
+    /**
+     * [G7-47]
+     */
+    public function test_g7_47_cohort_rate_never_changes_without_notified_action(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Cohort Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $limit = TrialLimit::create([
+            'business_id' => $biz->id,
+            'rate_cents_per_min' => 7,
+        ]);
+
+        $engine = new X210Engine;
+
+        try {
+            $engine->changeRate($limit, 9, false); // Not notified
+            $this->fail('Rate change was not refused.');
+        } catch (\DomainException $e) {
+            $this->assertStringContainsString('NOTIFIED', $e->getMessage());
+        }
+
+        $limit->refresh();
+        $this->assertEquals(7, $limit->rate_cents_per_min);
+
+        // Pass case
+        $engine->changeRate($limit, 9, true); // Notified
+        $limit->refresh();
+        $this->assertEquals(9, $limit->rate_cents_per_min);
     }
 }

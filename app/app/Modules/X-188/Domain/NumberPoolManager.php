@@ -9,6 +9,7 @@ use App\Modules\X188\Models\BrandRegistration;
 use App\Modules\X188\Models\NumberAssignment;
 use App\Modules\X188\Models\NumberPark;
 use App\Modules\X188\Models\NumberPool;
+use App\Services\Sms\TenantNumbers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 
@@ -17,36 +18,41 @@ final class NumberPoolManager
     /**
      * Assign a live number before first screen renders (TEST ANCHOR).
      */
-    public function assignLiveNumber(int $businessId, string $areaCode = '512'): array
+    public function assignLiveNumber(int $businessId): array // (R245) BoundaryStage: delegate to TenantNumbers
     {
-        return DB::transaction(function () use ($businessId, $areaCode) {
-            $poolNumber = NumberPool::where('business_id', $businessId)
-                ->where('area_code', $areaCode)
-                ->where('status', 'available')
-                ->first();
+        return DB::transaction(function () use ($businessId) {
+            $numbers = app(TenantNumbers::class);
+            $assigned = $numbers->claimForTenant($businessId);
 
-            if ($poolNumber === null) {
-                $poolNumber = NumberPool::create([
-                    'business_id' => $businessId,
-                    'phone_number' => "+1{$areaCode}5550".rand(100, 999),
-                    'area_code' => $areaCode,
-                    'carrier_name' => 'telnyx',
-                    'status' => 'assigned',
-                    'complaint_count' => 0,
-                ]);
-            } else {
-                $poolNumber->update(['status' => 'assigned']);
+            if ($assigned === null) {
+                return [
+                    'phone_number' => null,
+                    'area_code' => null,
+                    'assignment_id' => null,
+                    'status' => 'unassigned',
+                ];
             }
 
-            $assignment = NumberAssignment::create([
+            $poolNumber = NumberPool::firstOrCreate([
+                'business_id' => $businessId,
+                'phone_number' => $assigned->e164,
+            ], [
+                'area_code' => substr($assigned->e164, 2, 3),
+                'carrier_name' => 'platform',
+                'status' => 'assigned',
+                'complaint_count' => 0,
+            ]);
+
+            $assignment = NumberAssignment::firstOrCreate([
                 'business_id' => $businessId,
                 'phone_number_id' => $poolNumber->id,
+            ], [
                 'status' => 'active',
             ]);
 
             return [
-                'phone_number' => $poolNumber->phone_number,
-                'area_code' => $areaCode,
+                'phone_number' => $assigned->e164,
+                'area_code' => substr($assigned->e164, 2, 3),
                 'assignment_id' => $assignment->id,
                 'status' => 'active',
             ];

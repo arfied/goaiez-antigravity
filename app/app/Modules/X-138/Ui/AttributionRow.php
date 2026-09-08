@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Modules\X138\Ui;
 
+use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Page Earnings'])]
 class AttributionRow extends Component
 {
     #[Locked]
@@ -15,7 +18,7 @@ class AttributionRow extends Component
 
     public function mount(int $businessId = 0)
     {
-        $this->businessId = $businessId;
+        $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
     }
 
     public function render()
