@@ -4698,3 +4698,49 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     ⚠️ **The generalisable half is why this sweep paid twice in one tick:** the instrument that finds a
     copied falsehood is the **population**, never the file — a wave that reads the file its ruling was
     written about will keep leaving the sibling, which is now the fifth recorded instance.
+200. **A brief's PROOF COUNT is arithmetic, exactly like its floor (RULED by the lane supervisor
+    2026-09-08 18:1x, on MONEY-128's `e1d2ba06`).** The brief's `REPORT.md` spec demanded *"the four
+    mutation-proof RED lines"* while its own steps define **three** proofs — 1.4, 2.4 and 3.6, the last
+    reading in terms *"one mutation proof for the pair"*. The coder produced three, matching the steps,
+    which is correct. The same brief said *"four blades and three test files"* while item 3 edits **two**
+    test files, and *"the authorised surface is exactly these nine paths"* over a list whose last bullet
+    holds two — **ten**. Measured, `git diff 71ef114f..HEAD --stat` is those ten and nothing else, so
+    **ruling 133 governed the reading and held**: the clause states the authorised SURFACE, never a count,
+    and nothing was withheld over a miscount. **RULED: every count a brief states — paths, proofs, sweep
+    lines, added methods — is derived by listing the items that produce it, and that list is printed in
+    the brief beside the number**, exactly as ruling 92 already requires of the floor. ⚠️ Recorded, not
+    charged: item 3's single proof mutates `unpaid.blade.php` only, so `invoice-thread-beside`'s new
+    assertion is verified by re-derivation (the needle is absent from proofs 2 and 3's renders) rather
+    than by its own mutation — ruling 72 warns that a reviewer who can re-derive a proof can talk
+    themselves past one, and the pairing was the brief's choice. ⚠️ This is the ruling
+    66/75/82/92/94/106/118/147/153/175/183/189/192/193/195/198 family a **twenty-second** time.
+201. **`DunningState` has NO production writer, so the revenue-recovery screen tells every real owner
+    their account is current off a table nothing fills (RULED by the lane supervisor 2026-09-08 18:1x,
+    briefed as MONEY-129).** Ruling 199 recorded nine empty states as *true but incomplete* and named two
+    for measurement before they could be briefed (ruling 64). Measured, one of the two is **false** and
+    leads the wave. `grep -rn "DunningState::create\|::firstOrCreate\|::updateOrCreate\|new DunningState"
+    app/app app/database` returns **one** line — `C-Billing/Domain/BillingLedgerEngine.php:135`, inside
+    `advanceDunning()`'s `$state === null` branch — and `advanceDunning()`'s only caller is
+    `DunningAdvanceAction`, whose only callers are `RevenueRecovery::advance(int $stateId)` and
+    `DunningBoard::advance(int $stateId)`. **Both take an existing row's id**, so the create branch is
+    unreachable from either screen and nothing in this checkout ever puts an account on the ladder: the
+    table is empty forever for every real tenant (decision 272, ruling 51), and the empty state is the
+    only thing a real owner ever sees on that screen. It reads *"Nobody is in dunning. **This account is
+    current; there is nothing to recover.**"* — a claim about the account's payment standing that
+    **nothing in this lane measures**, ruling 50(a) at its most literal and the same class as ruling
+    199's two X-211 states. `dunning-board.blade.php:19` reads the same table: its heading is true and
+    its body — *"Declines live on the Money screen."* — is **true** (X-199's declines screen exists) and
+    is **kept**, so that half is 50(a)'s missing-dependency clause alone. ⛔ Not resolved by minting a
+    writer: a ladder starts from a missed subscription payment, which is `App\Services\Billing`'s and
+    Track 1's (ruling 5, TRACK 1 ACTION 11), and writing one from C-Billing to fill its own screen is
+    ruling 59. ⛔ Not by deleting either screen — both are correct the day a ladder runs. **RULED: each
+    names what has not happened and what it waits on, and no heading, query, button or pill moves.**
+    ⚠️ **The second measured candidate is TRUE and is STRUCK — `mrr.blade.php:24`'s *"Signing up creates
+    it"* is accurate**: `App\Services\TenantProvisioner.php:280` calls
+    `Subscriptions::openPendingSignup($business)` at provisioning, which writes the `Subscription`
+    `Mrr.php:70` reads, so a provisioned business always has one and the branch is effectively
+    unreachable in production besides. ⛔ Not to be edited or re-raised. ⚠️ Blast radius measured with
+    interior fragments (rulings 46, 86): **ZERO** — `RevenueRecoveryScreenTest` and
+    `DunningBoardScreenTest` seed a `DunningState` in **every** method, so not one can render either
+    branch (ruling 68) and no assertion anywhere names either sentence (ruling 70), which is why both
+    outlived every C-Billing wave. Both items therefore **add** methods.
