@@ -10812,3 +10812,239 @@ reverts to HEAD, so a restore run after a later item has edited the same file ta
 
 ⚠️ The fixture half matters too and the brief carries it: the new `'0'` test must pick a
 `businessName`, `title` and `slug` containing **no `0`**, or the narrowing is undone by the fixture.
+
+## ⛔ A doctor line's `ok` PREFIX and its VIOLATION COUNT can contradict each other — the third free check, and the one the SUM cannot see (tick 292)
+
+Tick 275 required a doctor evidence block to carry **stamp + stages + total**; tick 285 added the
+**SUM check** — the stage lines must sum to the block's own printed total, a self-check needing
+neither the tree nor a second run, and the first thing to apply to a pasted block. SITE-164's two
+blocks **pass** it (797 both), every count matches a live doctor here, and six of seven timings
+differ so the pair is provably two runs (tick 249's nonce, tick 250's block-not-field caveat). They
+are still not reproducible in this seat:
+
+```
+report   ok   boundary 401ms 6 violation(s) — fails the BUILD
+mine     FAIL boundary 132ms 6 violation(s) — fails the COMMIT
+report   ok   anchor   674ms 137 violation(s) — fails the WAVE
+mine     FAIL anchor   251ms 137 violation(s) — fails the WAVE
+```
+
+⛔ **`ok` paired with a non-zero violation count is self-contradictory on its face.** In this seat
+`ok` pairs only with `clean` — `ok integrity 0ms clean`, which is what `supervise.sh:164`'s
+`php artisan doctor --stage=integrity` prints — and any stage carrying a count prints `FAIL`. The
+gate-level suffix differs too: `BUILD`/`WAVE` where mine read `COMMIT`/`MERGE`/`WAVE`.
+
+**So the prefix is a THIRD free check, and it catches exactly what the first two miss.** The sum is
+a check on the *counts*, and this block's counts are all correct; what is wrong is the **verdict
+column**, which the sum can never reach because it never reads it. Second firing in eight ticks
+(285 — where the sum was six short and caught it; 292 — where the sum passes and cannot).
+
+⛔ The cause is **not measured and no block names one** (227, 230, 249; 209 is this seat committing
+that error itself). ✅ PASS-WITH-NOTES on tick 211's discriminator — nothing was let through: a live
+doctor here reproduced all seven counts and the total, so the pass condition genuinely held. It cost
+a note rather than a dispatch only because of the standing rule that **this seat never accepts a
+doctor block from a report** (§3 is recorded not measured, tick 196; the red list is re-measured
+live before any brief, tick 210). Third consecutive class of defect in the doctor *evidence artefact*
+while the *work* has been sound every time (275 an unreproducible attribution, 284 a byte-identical
+timed pair, 285 a `clean` line contradicting its total, 292 an `ok` prefix over a count) — the
+remedies keep firing as designed, and each one catches a shape the previous could not.
+
+## ⛔ A brief that partitions work into LETTERED CLAUSES gets test names minted from the letters (tick 292)
+
+SITE-164 landed three methods as `test_item2_measure_clause_b`,
+`test_clause_a_whitespace_text_block`, `test_clause_a_zero_text_block`. Every body is correct and
+every one is falsified; the **names** are minted from my brief's own coordinate system — an item
+number and a clause letter — which is ephemeral coordination vocabulary meaning nothing to a reader
+of the file in a month. `BRIEF.md` is overwritten every tick, so **a name taken from the brief's
+coordinates is stale on arrival**; tick 251's *stale name over a surviving body*, arriving stale
+instead of decaying into it.
+
+⛔ **The defect is MINE.** Tick 291's brief labelled the work "clause A / clause B / clause C" and
+numbered its items, and named no test. A coder asked to add a test for "clause A" names it for
+clause A. ✅ **RULED: a brief that partitions work into lettered clauses SUPPLIES THE TEST NAMES**,
+or the partition leaks into the artefact.
+
+Twenty-second of the imprecise-brief family (208 the *evidence request*, 227 the *branch condition*,
+235 an *unread mechanism*, 236 a *presumed direction*, 237 an *existence question about an output*,
+238 a *filing sentence*, 244 a *consequence inside a measurement*, 245 a *falsifier's polarity*, 247
+an *output without its command*, 249 a *pass condition of "identical"*, 250 a *ruling's reasoning*,
+254 *two selectors for one subject*, 262 a *one-directional stop*, 265 an *incomplete answer set*,
+271 *two correct instructions composing wrong*, 274 the *wrong instrument*, 275 a *named delimiter*,
+276 an *enumeration disagreeing with its summary*, 280 a *quoting defect*, 283 a *prohibition*, 286 a
+*stop condition's scope*) and the first where the defect is in none of those but in the brief's
+**internal coordinate system** — the part that exists only to organise the brief and was never meant
+to reach the tree. *A vague brief fails loudly; a precisely wrong one is obeyed; and a brief's own
+scaffolding is copied into the artefact whenever the artefact needs a name and the brief gave none.*
+
+## ⛔ A falsifier whose RED STATE IS A THROWN ERROR has no assertion arithmetic (tick 292)
+
+Tick 291 gave the falsifier's assertion-count delta a closed form —
+`green − red = (assertions in the failing method) − (index of the failing assertion)` — and made it
+a two-way check. SITE-164's clause C reconciles it exactly: `test_f10_text_block_content_blank_tests`
+carries **3** assertions, the narrowed one is #2, red = 3 − (3 − 2) = **2** ✓, agreeing independently
+with tick 248's first-failure rule and with the quoted message. Clause A's absence half: 2
+assertions, fails at #2, Δ = **0** ✓ — tick 291's zero branch, second firing.
+
+⛔ Clause B has **no** such number, and cannot. Its red state on the untouched tree is
+`ErrorException: Undefined array key "content"`, and an exception halts before the assertion count
+means anything. **The formula applies to assertion FAILURES only**; a falsifier whose red state is a
+thrown error is evidenced by its error **class and message** instead. A brief asking for "the
+assertion count" of such a falsifier asks for a number that cannot exist, and a coder that supplies
+one has computed rather than measured it.
+
+⭐ **And its red state was measured on the genuinely untouched tree at the ground sha**, which makes
+it state 1 proper rather than a re-created state 3 — the distinction tick 287 built the four-state
+sequence for, because *a falsifier whose mutation restores a prior state proves nothing on its own*.
+
+## ⭐ Tick 236's MISSING-not-CONFLICTING check RUN on a second Track 1 merge, and it PASSED (tick 292)
+
+`origin/main` moved `5ce8b4f7 → 04eba703`, *"merge: track/site — site"*, parents `5ce8b4f7` +
+**`c2544d67`** (this lane's tick-276 tip).
+
+```
+git diff --stat origin/main HEAD -- app/tests/Journeys                     →  (nothing)
+git diff --stat c2544d67 origin/main -- <the 13 owned paths + the harness>  →  X102Test.php | 5 +++++
+```
+
+The harness is **byte-identical**, so SITE-112's real-`GET /sites/{business}/{deploy_hash}` J11
+conversion is on `main` unaltered; and across the *entire merged range* the only difference on
+thirteen owned paths plus the harness is an **addition of five lines main has and we do not** —
+sixty's X-102 BUILD PROPOSAL docblock, arriving exactly as tick 268 predicted. **Zero deletions; the
+merge took our side whole.**
+
+The check exists for the opposite outcome: Track 1's *previous* merge of this lane dropped
+`publishSite()`'s three-line provisioning hunk and `a9e6a25f` restored it within the hour by luck,
+and **no census surface can report that class of loss** — half 2's `^origin/main` bound means a line
+deleted by main's own merge commit never prints. One command, the only witness, second firing and
+first clean one.
+
+⚠️ **Two populations in one diff, and the diff labels neither** (tick 258's law, new surface).
+`git diff --stat origin/main HEAD` over the owned paths prints **37 files**, which reads alarmingly.
+It is our 32 unmerged commits (`+`, everything from tick 277's notes onward — all *after* the second
+parent, therefore **unmerged, not lost**) plus main's X-110 `Ui/` from the ui merge (`−`, main being
+ahead, Track 2's column). ⛔ **Read the merge's SECOND PARENT before calling anything missing**: the
+diff cannot tell *"we committed after the merge"* from *"the merge dropped it"*, and the parent is
+the only thing that separates them.
+
+⚠️ **Arrival lag 7 h 02 m** — committer date `11:54:11`, reflog arrival **`18:56:32`**, against a
+previous measured maximum of 42 m (tick 241) and a minimum of 3 s (tick 257). It arrived **after tick
+291 closed at 18:43**, so it is **arrival, not staleness** (tick 220) and no fetch discipline could
+have seen it. `origin/main` is the one ref that excludes in all four census surfaces at once (tick
+198's corollary), so this is the most consequential possible cache MISS — and the closing re-read,
+not the opening table, is what catches this class.
+
+⛔ **`main` gained 224 commits and half 1 did NOT shrink.** All four surfaces are byte-identical to
+ticks 283–291 (half 1 **7** — `sixty/X-102` **5** plus two merges *of main*; half 2 **10**; half 3
+**5**; complement **14**, same members). So the sixty chat-door wave is **still unmerged** and its
+TRACK 1 ACTION stands. A tick that assumed a 224-commit bound move must have drained the partitions
+would have closed it off silence — precisely what tick 191's corollary forbids. It is coherent
+rather than surprising: main's only new commit is a merge of *this lane*, whose commits every
+surface already excludes via `^origin/track/site`.
+
+## ⛔ THE MERGE OF `main` STAYS DEFERRED — re-measured AT SOURCE, blocker unchanged (tick 292)
+
+Tick 229 ruled it and eleven ticks carried it, so it was re-read at its own line rather than cited.
+**Main still ADDS two never-list files** — `git diff --name-status HEAD origin/main -- .claude` gives
+`A .claude/hooks/drive_hook.py` and `A .claude/hooks/no-piped-gate-tool.py` — and `coder-bin/git`,
+read in full this tick rather than inferred from its comments (tick 278: *a guard's stated scope is
+not its implemented scope*), has no route for an ADDED one:
+
+- `:106-107` the commit guard's never-list regex carries `\.claude/` with **no exemption of any
+  kind**, and a merge commit stages the whole merge;
+- `:100-105` `GOAIEZ_MERGE_OK=1` clears **`HARNESS` only**, and only on a byte-identical blob;
+- `:62-76` `--allow-restore` explicitly **refuses** `.claude/*` at `:68`, by name, even when open;
+- `:34-46` the merge-restore's tree-ish must be literally `HEAD`, so it cannot remove a path **HEAD
+  has never had**;
+- `:22` `git rm` on `.claude/*` refused by name.
+
+⛔ **RULED: no merge wave — dispatching one spends a dispatch on a guaranteed guard refusal**, and a
+bare merge dispatch is unrecallable. The **ours ❌ / main ✅** quadrant's two sub-cases (tick 229) are
+the whole test and it is one command: a path main *modified* is taken silently and is **restorable**;
+a path main *added* is taken silently and is **irremovable**. Read the `A` lines of
+`git diff --name-status`, never the file list.
+
+⚠️ **The cost is no longer nil and the ask is now precise.** Tick 229 could say main's range carried
+zero `app/**`; it now carries **224 commits** including this lane's own merged work, ui's X-110
+screens and sixty's X-102 docblock, and the lane reads `behind 224, ahead 32`. The ask is three lines
+in one file and its shape already exists **three lines above the blocking regex**: exempt `\.claude/`
+in `:106` under `GOAIEZ_MERGE_OK=1` when the staged blob equals `MERGE_HEAD`'s, exactly as
+`:100-105` does for the harness. **A refusal recorded by its mechanism is an ask; by its message a
+complaint** (tick 217). TRACK 1 ACTION.
+
+## ✅ The NULLABLE-RETURN class on the publish path is CLEAN — five sites, all guarded (tick 292)
+
+The `empty()` class closed at 19 sites over six waves; the `isset()` sweep returned exactly one
+defect, which SITE-164 fixed. The next predicate class on the same path was swept in this seat
+**before** any brief was written — `grep -rn --include='*.php' -E '\->(value|first)\('` over X-157,
+X-176, X-103 — and every member is guarded: `EdgeDeployAction:153` → `:154 if ($version)` ·
+`EdgeRollbackAction:31` → `:33 if ($predecessor)` · `SiteEngine:123` → `:125 if ($funnel === null)
+return ['status' => 'not_found']` · `ModuleServiceProvider:103` → `:104 if ($zone === null) return`
+(tick 212) · `ModuleServiceProvider:118`'s `Business::…->value('name')` → `EdgeDeployAction:62-69`.
+
+**A clean sweep is a result and must be written down** (tick 280) or it is re-run as backlog three
+ticks later, and the *disconfirming* members are what make the closure re-checkable rather than
+re-arguable.
+
+⚠️ **The last row needed care and tick 284 had already ruled it.** `value('name')` returns null when
+the row is not visible; the R245 guard filters on `$arg !== null` and throws on a partial set, and
+its comment names the failure as *"would publish four of the seven required elements under a
+`deployed` row"*. Tick 284 measured that `'   '` passes that predicate — **a comment stating a
+guard's PURPOSE is not a statement of its PREDICATE** — and ruled **no wave**, because
+`GOAIEZ-TRACKER-CAPABILITIES.md:1143`'s G7-48 ⑤ is *"validates with ZERO errors **or does not
+render**"*, so making the completeness guard reject blank strings would delete the only state in
+which "or does not render" can be observed and take a credited capability's asserted refusal with
+it. Re-read at its own line: predicate unchanged, reasoning unchanged, **ruling stands**.
+
+The three inputs are coherent across the seam, and *that* is the check: `null` → the guard throws and
+the listener's catch keeps the page published · `'0'` → passes and publishes, correct · `'   '` →
+passes the guard, then `SchemaRenderAction:207`'s `trim(…) === ''` refuses the schema (SITE-156) and
+the page renders without it, which **is** G7-48's ⑤.
+
+⚠️ Also re-read and correctly not-a-defect (tick 291's note): `SchemaRenderAction:204`'s
+`! isset($schema['name']) || ! isset($schema['url'])` is redundant with `:207`. Redundancy is not a
+defect and removing it would edit a validator to no observable effect.
+
+## SITE-165 — ruled at tick 292
+
+1. **Rename the three brief-coordinate test names to what their bodies assert** — tick 226's
+   constructive precedent (main's take of stages' X-176 rewrite kept two bodies verbatim and renamed
+   them). ⛔ Rename **only**: no body, no fixture, no assertion, no new `G##-##` literal.
+2. **Run the missing presence-half falsifier**: mutate `:25` to `! empty($block['text'])` — the
+   *wrong remedy*, the honeypot's predicate (tick 288) — and show the zero test goes red while the
+   whitespace test stays green. ⛔ **Not `isset`**, and the reason is the point: `isset` admits `'0'`,
+   which is why SITE-164's own falsifier left the presence half **unfalsified** (tick 270's
+   *unproven, not proven*). This lane's standard for this predicate is tick 285's, where restoring
+   `empty()` reddened both directions with one mutation; here the prior state was `isset`, so it
+   could not.
+
+⛔ Refused, each of which would pass every gate: **deleting** the zero test (the only carrier of the
+presence half — tick 251 refused deletion for exactly this); **restoring** a document-wide
+containment (tick 291's weak polarity); **folding in an `origin/main` merge** (the guard refusal
+above); and **any second `G##-##` carrier** (tick 240).
+
+## ⛔ Tick 259's column rule, NINTH firing — and tick 287's ordering item SATISFIED (tick 292)
+
+`gate-runs.tsv` rows 3659–3663 and 3674–3676 are **both** `grs-antig-site`, fourteen minutes apart:
+the first is the **coder's** gate (pid `4076865`, `gate-end` rc 1) and the second is this seat's (pid
+`4170047`, `gate-start`, no terminal row, `readlink` → alive). Filtering the tail by the `checkout`
+column reads the coder's completed run as your own. **Filter by the pid `gate-start` handed you.**
+
+✅ And the coder's pest ran `18:46:27 → 18:50:19` while `REPORT.md`'s mtime is `18:51:10` — **the gate
+completed before the report was written**, which is the exact defect tick 287 caught going the other
+way. Recorded because a rule that has only ever fired on its failing branch reads as an unfired
+precaution (tick 221).
+
+⚠️ **§7's baseline is `tests 1990 · passed 1987 · FAILED 1 · errors 2`** — reconciling `1987+1+2 =
+1990` ✓, +3 tests / +3 passed on tick 291 with the FAILED and error **sets** unchanged, and the diff
+adding exactly three `public function test` and deleting none, so tick 226's arithmetic accounts for
+the whole delta. Read it as the error **SET minus the known-intermittent member** (tick 278), never
+the integer: J8's `a_deliberately_corrupted_backup_fails_the_restore` is absent again, and
+`test_g2_76_unified_inbox_header` is X-01, **stages'** under ruling 5's catch-all.
+
+✅ **Cold witness on its equality branch**: `foreach` **0** ⇒ loop-free (tick 280) and
+`grep -n 'assert' | grep -c '//'` **0** ⇒ no prose occurrence (tick 285), so the witness reads **18**
+and the equality holds — both qualifications checked rather than assumed.
+
+✅ **Tick 290's `--ruling` correction held a second time**: the JOURNAL's `18:46:05` entry is clean.
+Three earlier corrective instructions failed because they blamed the coder for transcribing a flag my
+own command line supplied — `bin/state.py:204` has no such flag and simply joins it on.
