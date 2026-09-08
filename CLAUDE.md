@@ -242,8 +242,9 @@ that test and is not on this list is a wave invented to fill the lane.
   untouched, the decoy root `REPORT.md` gone and the mailbox copy intact.
   `RULING CN` is discharged as a live hazard and stays above as history.
 
-⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 196 (2026-09-08), against main's
-`257a6a12`, unmoved through ticks 194–196; the seven-row take re-check still prints all seven, and
+⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 197 (2026-09-08) against main's
+`888cabae` (`merge: track/pricebook — wave 137`), which moved 90 commits from `257a6a12` and left
+the lane 27 ahead / 464 behind; the seven-row take re-check still prints all seven, and
 `RULING DA` closes the only body of work that looked parallel to it.** Do not
 open a wave. `state.py next` returns `{"action": "FINISHED"}`. Every remaining
 stage count needs the owner and is listed as **OWNER ACTION A–F** at the end of
@@ -645,7 +646,89 @@ the very shape `CT` flags one sentence later.
 
 **RULED by the lane supervisor: no `resolve` wave until the take lands, because the dependency its
 reason would name is 374 commits away.** The thirteen are the take's *payoff*, not a substitute for
-it.
+it. ⚠️ Re-measured at tick 197 against main `888cabae`: `grep -c multiEmitterOk
+app/app/Doctor/Stages/ContractStage.php` is still **0** here and the lane is now **464 behind**.
+`DA` stands, with a larger number.
+
+### ⛔ `RULING DB` (tick 197) — `--allow-restore` WOULD NOT HAVE WORKED. Main's launcher revision is readable, and the flag's own scope permanently refuses three of the take's six restore targets.
+
+**Settles `CY`/`CZ` and rewrites the take's step 2 for whoever executes it.** `CY` and `CZ` inferred
+the newer launcher revision from sibling *command lines* and could not read it. At tick 197 it turned
+out to be readable the whole time, from inside the boundary: `.agents/supervisor/launch-coder.sh` is
+an **M** row in main's range (`git diff HEAD...origin/main -- .agents/supervisor/launch-coder.sh`),
+because `.agents/supervisor/**` never merges but main still carries its own copy. No boundary
+violation, no reading of `coder-bin`, no sibling process. **Read main's copy of a per-track file
+before inferring a sibling's capabilities from `pgrep` output again** — three ticks (`CX`, `CY`, `CZ`)
+reconstructed from command lines what one `git diff` prints in full.
+
+It confirms `CZ`'s finding and adds the part that matters. `--allow-restore` is real and
+owner-ruled — its comment cites *"owner ruling 2026-09-07, reserved-questions item 3B; guard clause
+added the same day"*. But it is **narrowly scoped, in the flag's own words**:
+
+> It permits `git checkout|restore -- <existing file paths>` and NOTHING else: no directory, no
+> option, and supervisor-owned paths (`.agents/supervisor`, `.agents/rules`, `.claude`, `CLAUDE.md`,
+> `bin/supervise.sh`, `bin/state.py`, any `.env`) stay refused inside it, because restoring one of
+> those discards the supervisor's uncommitted notes — that is run 27.
+
+⚠️ **Three of `RULING CR`'s six restore targets are on that permanent refusal list**: `CLAUDE.md`,
+`bin/supervise.sh`, `.claude/settings.json`. Only `app/phpunit.xml`,
+`.agents/state/BUILD-STATE.json` and `.agents/state/JOURNAL.md` are restorable even *with* the flag.
+**So `CP`/`CR`'s step 2 is unsatisfiable in every lane, flag or no flag** — `CY` read this as "this
+lane lacks a capability others have", and it is not: the capability does not exist anywhere. Adding
+`--allow-restore` here would have burned the run exactly as `CY` feared, for a reason `CY` did not
+have. Its refusal stands, now on measured grounds rather than prudential ones.
+
+**RULED by the lane supervisor: the take's resolution list is not this seat's to redesign, because
+three of its rows need a hand that owns `.claude/` and `CLAUDE.md`-class paths — a third party to
+both seats here.** Filed to **TRACK 1 ACTION 1** as an amendment: the open question is no longer
+*"who executes the three `.claude/` rows"* but *"by what mechanism does ANY lane restore a
+supervisor-owned path inside a `--no-ff --no-commit` take, given the restore gate refuses them by
+design?"* The take stays shut; `CP`/`CQ`/`CR`/`CT`'s verdict is unchanged.
+
+#### What this seat adopted from that launcher, and what it declined
+
+The two **protective** changes were taken into this lane's `launch-coder.sh` at tick 197. Neither
+hands a run any capability — both only refuse more — so `RULING CL`/`CY`'s reasoning does not reach
+them, and both pass the S-182 admission test (no test, no assertion, cannot move a count, mechanical
+falsifier):
+
+- **The GATE/BRIEF AGREEMENT block.** The launcher now refuses a `KICKOFF.md` declaring
+  `Merge gate **OPEN` when `--allow-merge` is absent. This is the N103/run-124 failure — a merge wave
+  dispatched bare, whose guard then refuses the one thing it exists to do, unrecallable because
+  `kill` is outside this seat's column. It matters here specifically because **the one wave this lane
+  is queued for is a merge wave.** The harness needle is adopted as an **unconditional** refusal
+  rather than a flag-gated one, since this lane has no `--allow-harness` and such a kickoff is
+  unsatisfiable by construction (`RULING CL`).
+- **The N104 snapshot fix.** The pre-dispatch snapshot globbed `*.md` only, so the supervisor file
+  most likely to be edited *at dispatch time* — the launcher itself — was the one it did not
+  preserve. Now `*.sh` too.
+
+Declined, deliberately:
+
+- **`--allow-restore` and `--allow-harness`** — `CY`/`CZ`, now on `DB`'s stronger grounds.
+- **The `timeout -k 60 3h` outer bound.** Its own upstream comment calibrates it to Track 1
+  (*"Track 1 builds nothing — its longest honest wave is one gate plus a 40-minute pest-lock wait"*).
+  This lane's waves are not Track 1's and this seat has no duration evidence of its own, so adopting
+  the number would be inheriting a bound rather than choosing one — the drift shape. A candidate for
+  the day this lane has measured its own wave lengths.
+
+⚠️ **Positive control, recorded honestly — this lane's is weaker than upstream's.** Upstream's comment
+insists *"a needle that has never matched anything is not an instrument"* and says both of its needles
+matched its live `KICKOFF.md` when written. Here they match **nothing**:
+`grep -c 'Merge gate \*\*OPEN' REVIEWS.md` is `0`, because this seat has never opened the gate. The
+needles were therefore verified against **synthetic** positive controls at tick 197 (match `1`), with
+the live `KICKOFF.md` and a synthetic `Merge gate **CLOSED**` as negative controls (both `0`). The
+convention is now **bound here**: a kickoff opening the merge gate says exactly `Merge gate **OPEN**`.
+The block fails **open** by construction, so a broken convention costs the protection, never a run.
+
+⛔ **`bash -n` is refused from this seat, so the launcher edit carries NO parse check.** `bash -n`,
+`sh -n` and `/bin/bash -n` were each denied, and `mkdir` and any write outside this checkout were
+denied too, so the sandbox-a-copy route is closed as well — as at ticks 188/190/191, **the denial is
+the answer; do not re-run them.** What was run instead: the needle controls above, and the launcher's
+own early-exit path (`--bogus-arg-197` → `REFUSED: unknown argument`). Accepted because the untested
+failure mode is **loud and this seat can repair it** (a syntax error prints `LAUNCH FAILED` or a bash
+error and changes nothing), while the failure it prevents is silent and unrecallable. If a future tick
+gains a parse check, run it over this file first.
 
 ## Dispatching the coder (added 2026-09-02)
 
