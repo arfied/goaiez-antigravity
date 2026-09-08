@@ -854,3 +854,4 @@
 - `2026-09-08T14:35:36` (R245) X-167 — test_no_purchase_order_is_created_automatically_at_the_reorder_point duplicated test_g6_48_a_low_stock_alert_never_places_an_order line for line and died to the same single mutation, so the uncited duplicate is deleted and its named assertion message moves onto the G6-48 cited test, keeping one contract id to one independently reddenable assertion --ruling R245
 - `2026-09-08T16:02:02` (R245) X-168 — the X-168 job-state window is an open/close pair; closeJobWindow closes the most recent open entry for a job and writes nothing when there is none.
 - `2026-09-08T16:35:19` (R245) X-168 — closeJobWindow's job_id scope is load-bearing and is now pinned by a test that fails if the filter is dropped.
+- `2026-09-08T17:12:18` (R245) X-168 — one open window per job — a repeat call for a job that already has an open entry returns the existing entry and writes nothing. Refuse, do not supersede. Return the existing entry, not null.

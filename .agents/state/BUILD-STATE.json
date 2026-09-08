@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-08T16:35:19",
+ "updated": "2026-09-08T17:12:18",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1868,6 +1868,12 @@
    "module": "X-168",
    "chose": "closeJobWindow's job_id scope is load-bearing and is now pinned by a test that fails if the filter is dropped.",
    "at": "2026-09-08T16:35:19",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-168",
+   "chose": "one open window per job \u2014 a repeat call for a job that already has an open entry returns the existing entry and writes nothing. Refuse, do not supersede. Return the existing entry, not null.",
+   "at": "2026-09-08T17:12:18",
    "ruling": "R245"
   }
  ],
