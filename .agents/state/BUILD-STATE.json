@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-08T07:07:35",
+ "updated": "2026-09-08T08:14:59",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1778,6 +1778,12 @@
    "module": "X-82",
    "chose": "RateLookupAction refuses an inactive rate with INACTIVE_RATE_REFUSED and returns no amount; the grandfathered branch is deliberately exempt so a tenant lock survives deactivation of the global rate",
    "at": "2026-09-08T07:07:35",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-175",
+   "chose": "the field assistant refuses an on-site price whenever the pricebook refused a MATCHED row (SAMPLE_STATE_REFUSED or UNCONFIRMED), not only a sample; NO_FACT still falls through to the verified-procedure path because no row matched",
+   "at": "2026-09-08T08:14:59",
    "ruling": "R245"
   }
  ],
