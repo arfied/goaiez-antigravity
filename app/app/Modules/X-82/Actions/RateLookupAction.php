@@ -26,6 +26,12 @@ final class RateLookupAction
                 ->first();
 
             if ($grandfathered) {
+                if ($grandfathered->rate->is_sample) {
+                    return [
+                        'refusal_code' => 'SAMPLE_STATE_REFUSED',
+                    ];
+                }
+
                 return [
                     'rate_code' => $rateCode,
                     'amount_cents' => $grandfathered->amount_cents,
@@ -38,6 +44,12 @@ final class RateLookupAction
 
         // 2. Global current active rate
         $rate = Rate::where('business_id', $businessId)->where('rate_code', $rateCode)->firstOrFail();
+
+        if ($rate->is_sample) {
+            return [
+                'refusal_code' => 'SAMPLE_STATE_REFUSED',
+            ];
+        }
 
         return [
             'rate_code' => $rate->rate_code,
