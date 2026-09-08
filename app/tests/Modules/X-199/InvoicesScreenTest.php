@@ -6,6 +6,7 @@ namespace Tests\Modules\X199;
 
 use App\Models\User;
 use App\Modules\X121\Models\Person;
+use App\Modules\X199\Actions\InvoiceDraftAction;
 use App\Modules\X199\Domain\InvoiceEngine;
 use App\Modules\X199\Models\Invoice;
 use App\Modules\X199\Ui\Invoices;
@@ -88,5 +89,28 @@ class InvoicesScreenTest extends TestCase
         Livewire::actingAs($owner)->test(Invoices::class)
             ->assertSee('Nothing in this checkout raises one from a completed job')
             ->assertDontSee('R235');
+    }
+
+    public function test_a_draft_row_says_it_cannot_be_issued_rather_than_reporting_a_missing_pdf(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $customer = Person::create([
+            'business_id' => $biz->id,
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+        ]);
+
+        app(InvoiceDraftAction::class)->execute($biz->id, $customer->id, [
+            ['description' => 'Draft Item', 'quantity' => 1, 'unit_price_cents' => 10000],
+        ]);
+
+        Livewire::actingAs($owner)->test(Invoices::class)
+            ->assertSee('nothing here issues a draft yet')
+            ->assertDontSee('PDF not available');
     }
 }
