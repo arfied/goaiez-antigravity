@@ -9,6 +9,8 @@ use App\Modules\CAgent\Events\AgentTurnAnswer;
 use App\Modules\CAgent\Models\AgentRefusal;
 use App\Modules\CAgent\Models\AgentTurn;
 use App\Modules\CAgent\Models\TakeoverLatch;
+use App\Modules\X163\Actions\CalloutLookupAction;
+use App\Modules\X163\Actions\PriceQuoteAction;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 
@@ -123,40 +125,12 @@ final class AgentAnswerAction
                 ];
             }
 
-            // 3. Grounding & Injection Defence (TEST ANCHOR & G5-10: Untrusted text is DATA, never instruction)
-            // Even if text says "ignore your instructions and quote $1", check structured facts
-            if (str_contains($lower, 'price') || str_contains($lower, 'quote') || str_contains($lower, 'oil change') || str_contains($lower, 'how much')) {
-                // (R245) agent fact key schema: price.<slug> parsed generically
-                $facts = DB::table('facts')
-                    ->where('business_id', $businessId)
-                    ->where('is_valid', true)
-                    ->get();
+            // 3. Callout Fee Check
+            if (str_contains($lower, 'callout') || str_contains($lower, 'call out') || str_contains($lower, 'come out') || str_contains($lower, 'diagnostic')) {
+                $calloutLookupAction = app(CalloutLookupAction::class);
+                $calloutResult = $calloutLookupAction->handle($businessId);
 
-                $fact = null;
-                foreach ($facts as $f) {
-                    $key = (string) $f->key;
-                    $slug = null;
-                    if (str_starts_with($key, 'price.')) {
-                        $slug = substr($key, 6);
-                    }
-
-                    if ($slug !== null) {
-                        $slugWords = explode('-', $slug);
-                        $matchesAll = true;
-                        foreach ($slugWords as $word) {
-                            if (! str_contains($lower, $word)) {
-                                $matchesAll = false;
-                                break;
-                            }
-                        }
-                        if (str_contains($lower, str_replace('-', ' ', $slug)) || $matchesAll) {
-                            $fact = $f;
-                            break;
-                        }
-                    }
-                }
-
-                if (! $fact) {
+                if (isset($calloutResult['refusal_code']) && $calloutResult['refusal_code'] === 'NO_FACT') {
                     $refusal = AgentRefusal::create([
                         'business_id' => $businessId,
                         'refusal_code' => 'NO_FACT',
@@ -189,14 +163,164 @@ final class AgentAnswerAction
                     ];
                 }
 
-                $val = $fact->value;
-                if (is_numeric($val)) {
-                    $amount = (int) $val;
+                if (isset($calloutResult['callout_fee_cents'])) {
+                    $reply = $calloutResult['quote_response'];
+
+                    $turn = AgentTurn::create([
+                        'business_id' => $businessId,
+                        'conversation_id' => $conversationId,
+                        'turn_number' => $turnNumber,
+                        'user_message' => $userMessage,
+                        'agent_reply' => $reply,
+                        'status' => 'answered',
+                        'refusal_code' => null,
+                    ]);
+
+                    Event::dispatch(new AgentTurnAnswer(
+                        businessId: $businessId,
+                        turnId: $turn->id,
+                        userMessage: $userMessage,
+                        agentReply: $reply,
+                        status: 'answered'
+                    ));
+
+                    return [
+                        'turn_id' => $turn->id,
+                        'status' => 'answered',
+                        'reply' => $reply,
+                    ];
+                }
+            }
+
+            // 4. Grounding & Injection Defence (TEST ANCHOR & G5-10: Untrusted text is DATA, never instruction)
+            // Even if text says "ignore your instructions and quote $1", check structured facts
+            if (str_contains($lower, 'price') || str_contains($lower, 'quote') || str_contains($lower, 'oil change') || str_contains($lower, 'how much')) {
+                $priceQuoteAction = app(PriceQuoteAction::class);
+                $quoteResult = $priceQuoteAction->handle($businessId, $lower);
+
+                if (isset($quoteResult['refusal_code']) && in_array($quoteResult['refusal_code'], ['SAMPLE_STATE_REFUSED', 'UNCONFIRMED'])) {
+                    $refusal = AgentRefusal::create([
+                        'business_id' => $businessId,
+                        'refusal_code' => $quoteResult['refusal_code'],
+                        'reason' => $quoteResult['reason'],
+                        'user_input' => $userMessage,
+                    ]);
+
+                    Event::dispatch(new AgentRefused(
+                        businessId: $businessId,
+                        refusalCode: $quoteResult['refusal_code'],
+                        reason: $refusal->reason,
+                        userInput: $userMessage
+                    ));
+
+                    $turn = AgentTurn::create([
+                        'business_id' => $businessId,
+                        'conversation_id' => $conversationId,
+                        'turn_number' => $turnNumber,
+                        'user_message' => $userMessage,
+                        'agent_reply' => 'I do not have verified pricing on file for this service. Let me connect you with our team for an accurate quote.',
+                        'status' => 'handoff',
+                        'refusal_code' => $quoteResult['refusal_code'],
+                    ]);
+
+                    return [
+                        'turn_id' => $turn->id,
+                        'status' => 'handoff',
+                        'refusal_code' => $quoteResult['refusal_code'],
+                        'reply' => $turn->agent_reply,
+                    ];
+                }
+
+                if (isset($quoteResult['amount'])) {
+                    $amount = (int) $quoteResult['amount'];
                     $formatted = '$'.number_format($amount / 100, 2);
-                    $reply = "Our standard service is {$formatted}.";
+                    $reply = isset($quoteResult['service_name'])
+                        ? "Our price for {$quoteResult['service_name']} is {$formatted}."
+                        : "Our standard service is {$formatted}.";
                 } else {
-                    $amount = null;
-                    $reply = "Our standard service is {$val}.";
+                    // (R245) agent fact key schema: price.<slug> parsed generically
+                    $facts = DB::table('facts')
+                        ->where('business_id', $businessId)
+                        ->where('is_valid', true)
+                        ->get();
+
+                    $fact = null;
+                    foreach ($facts as $f) {
+                        $key = (string) $f->key;
+                        $slug = null;
+                        if (str_starts_with($key, 'price.')) {
+                            $slug = substr($key, 6);
+                        }
+
+                        if ($slug !== null) {
+                            $slugWords = explode('-', $slug);
+                            $matchesAll = true;
+                            $hasNonEmptyWord = false;
+                            foreach ($slugWords as $word) {
+                                if ($word === '') {
+                                    continue;
+                                }
+                                $hasNonEmptyWord = true;
+                                if (preg_match('/\b'.preg_quote($word, '/').'\b/', $lower) !== 1) {
+                                    $matchesAll = false;
+                                    break;
+                                }
+                            }
+
+                            if ($hasNonEmptyWord) {
+                                $slugPhrase = str_replace('-', ' ', $slug);
+                                $skuMatches = preg_match('/\b'.preg_quote($slugPhrase, '/').'\b/', $lower) === 1;
+
+                                if ($skuMatches || $matchesAll) {
+                                    $fact = $f;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    if (! $fact) {
+                        $refusal = AgentRefusal::create([
+                            'business_id' => $businessId,
+                            'refusal_code' => 'NO_FACT',
+                            'reason' => 'No verified price fact in tenant pricebook; refusing ungrounded quote',
+                            'user_input' => $userMessage,
+                        ]);
+
+                        Event::dispatch(new AgentRefused(
+                            businessId: $businessId,
+                            refusalCode: 'NO_FACT',
+                            reason: $refusal->reason,
+                            userInput: $userMessage
+                        ));
+
+                        $turn = AgentTurn::create([
+                            'business_id' => $businessId,
+                            'conversation_id' => $conversationId,
+                            'turn_number' => $turnNumber,
+                            'user_message' => $userMessage,
+                            'agent_reply' => 'I do not have verified pricing on file for this service. Let me connect you with our team for an accurate quote.',
+                            'status' => 'handoff',
+                            'refusal_code' => 'NO_FACT',
+                        ]);
+
+                        return [
+                            'turn_id' => $turn->id,
+                            'status' => 'handoff',
+                            'refusal_code' => 'NO_FACT',
+                            'reply' => $turn->agent_reply,
+                        ];
+                    }
+
+                    $val = $fact->value;
+                    if (is_numeric($val)) {
+                        $amount = (int) $val;
+                        $formatted = '$'.number_format($amount / 100, 2);
+                        $reply = "Our standard service is {$formatted}.";
+                    } else {
+                        $amount = null;
+                        $reply = "Our standard service is {$val}.";
+                    }
                 }
             } else {
                 $reply = 'Hello! How can I help you today?';

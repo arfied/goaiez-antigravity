@@ -124,4 +124,57 @@ class ConfirmationScreenTest extends TestCase
         $this->actingAs($owner);
         $this->get(route('x-163.confirmation-screen'))->assertOk()->assertSee('623.75');
     }
+
+    public function test_a_cleared_price_is_refused_without_erasing_the_stored_one(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        $item = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Existing Service',
+            'price_cents' => 15000,
+            'is_sample' => false,
+            'is_confirmed' => false,
+        ]);
+
+        Livewire::actingAs($owner)
+            ->test(ConfirmationScreen::class)
+            ->set('prices.'.$item->id, 0)
+            ->call('confirm', $item->id)
+            ->assertSee('Needs a price');
+
+        $this->assertDatabaseHas('price_book_items', [
+            'id' => $item->id,
+            'price_cents' => 15000,
+            'is_confirmed' => false,
+        ]);
+    }
+
+    public function test_a_typed_price_is_still_written_and_confirmed(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        $item = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Existing Service',
+            'price_cents' => 15000,
+            'is_sample' => false,
+            'is_confirmed' => false,
+        ]);
+
+        Livewire::actingAs($owner)
+            ->test(ConfirmationScreen::class)
+            ->set('prices.'.$item->id, 250.00)
+            ->call('confirm', $item->id);
+
+        $this->assertDatabaseHas('price_book_items', [
+            'id' => $item->id,
+            'price_cents' => 25000,
+            'is_confirmed' => true,
+        ]);
+    }
 }

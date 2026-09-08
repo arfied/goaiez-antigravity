@@ -28,7 +28,25 @@ class CustomerfacingPortalTest extends TestCase
 
         $jobId = DB::table('work_orders')->insertGetId([
             'business_id' => $biz->id,
-            'title' => 'Test Tech Job 369.99',
+            'title' => 'Test Tech Job',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DB::table('dispatch_assignments')->insert([
+            'business_id' => $biz->id,
+            'job_id' => $jobId,
+            'tech_id' => 1,
+            'status' => 'en_route',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DB::table('eta_predictions')->insert([
+            'business_id' => $biz->id,
+            'job_id' => $jobId,
+            'eta_minutes' => 47,
+            'estimated_arrival_at' => now()->addMinutes(47),
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -47,7 +65,7 @@ class CustomerfacingPortalTest extends TestCase
 
         $response = $this->actingAs($owner)->get(route('x-172.customerfacing-portal', ['token' => $token]));
         $response->assertOk()
-            ->assertSee('369.99');
+            ->assertSee('47 minutes out');
     }
 
     public function test_valid_job_link_renders_title_and_live_eta(): void

@@ -91,6 +91,13 @@ class Pricebook extends Component
 
         $businessId = Tenancy::id();
 
+        if (PriceBookItem::where('business_id', $businessId)->where('service_key', PriceBookItem::serviceKey($this->newServiceName))->whereNull('location_book_id')->exists()) {
+            // (R245) addItem() refuses a second business-wide row with the same service_name for the same business, and says so through addError
+            $this->addError('newServiceName', 'A business-wide price for this service already exists.');
+
+            return;
+        }
+
         $min = $this->newMinPriceDollars ? (int) round((float) $this->newMinPriceDollars * 100) : null;
         $max = $this->newMaxPriceDollars ? (int) round((float) $this->newMaxPriceDollars * 100) : null;
 
@@ -120,9 +127,19 @@ class Pricebook extends Component
     {
         $businessId = Tenancy::id();
         if (isset($this->inlinePrices[$id])) {
-            PriceBookItem::where('business_id', $businessId)->where('id', $id)->update([
-                'price_cents' => (int) round((float) $this->inlinePrices[$id] * 100),
-            ]);
+            $newCents = (int) round((float) $this->inlinePrices[$id] * 100);
+            $query = PriceBookItem::where('business_id', $businessId)->where('id', $id);
+            $row = $query->first();
+
+            if ($row) {
+                $payload = ['price_cents' => $newCents];
+                if ($row->price_cents !== $newCents) {
+                    // (R245) an inline price edit that changes the amount clears the confirmation, and one that does not changes nothing
+                    $payload['is_confirmed'] = false;
+                    $payload['confirmed_at'] = null;
+                }
+                $query->update($payload);
+            }
         }
     }
 

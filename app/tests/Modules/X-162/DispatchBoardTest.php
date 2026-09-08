@@ -135,7 +135,11 @@ class DispatchBoardTest extends TestCase
             'notification_sent_at' => Carbon::now(),
         ]);
 
+        $pred = EtaPrediction::where('job_id', $jobId)->first();
+
         $this->actingAs($owner);
-        $this->get(route('x-162.dispatch-board'))->assertOk()->assertSee('718');
+        $this->get(route('x-162.dispatch-board'))
+            ->assertOk()
+            ->assertSee("en route, {$pred->eta_minutes} minutes out");
     }
 }

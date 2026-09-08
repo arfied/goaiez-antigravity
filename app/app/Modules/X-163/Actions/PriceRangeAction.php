@@ -10,12 +10,43 @@ final class PriceRangeAction
 {
     public function handle(int $businessId, string $serviceName): array
     {
-        $item = PriceBookItem::where('business_id', $businessId)->where('service_name', $serviceName)->first();
+        $serviceKey = PriceBookItem::serviceKey($serviceName);
+
+        $item = PriceBookItem::where('business_id', $businessId)
+            ->where('service_key', $serviceKey)
+            ->where('is_confirmed', true)
+            ->where('is_sample', false)
+            ->first();
+
+        if ($item) {
+            return [
+                'service_name' => $serviceName,
+                'min_cents' => $item->price_min_cents,
+                'max_cents' => $item->price_max_cents,
+            ];
+        }
+
+        $item = PriceBookItem::where('business_id', $businessId)
+            ->where('service_key', $serviceKey)
+            ->first();
+
+        if ($item) {
+            if ($item->is_sample === true) {
+                return [
+                    'refusal_code' => 'SAMPLE_STATE_REFUSED',
+                    'reason' => 'Sample prices must NEVER be returned to any customer channel',
+                ];
+            }
+
+            return [
+                'refusal_code' => 'UNCONFIRMED',
+                'reason' => 'Unconfirmed prices must NEVER be returned to any customer channel',
+            ];
+        }
 
         return [
-            'service_name' => $serviceName,
-            'min_cents' => $item ? $item->price_min_cents : 5000,
-            'max_cents' => $item ? $item->price_max_cents : 15000,
+            'refusal_code' => 'NO_FACT',
+            'reason' => 'No price quote available for the given intent',
         ];
     }
 }

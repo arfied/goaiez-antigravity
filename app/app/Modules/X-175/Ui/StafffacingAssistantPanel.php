@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Modules\X175\Ui;
 
 use App\Enums\UserRole;
-use App\Modules\X163\Actions\PriceLookupAction;
 use App\Modules\X175\Actions\FieldAskAction;
 use App\Modules\X175\Models\FieldSuggestion;
 use App\Support\Tenancy;
@@ -34,27 +33,7 @@ class StafffacingAssistantPanel extends Component
             return;
         }
 
-        $lookup = app(PriceLookupAction::class)->handle($this->businessId, $q, 'staff');
-
-        if ($lookup['status'] === 'quoted' && ! empty($lookup['is_sample'])) {
-            $isSamplePrice = true;
-            $verifiedAnswer = null;
-        } elseif ($lookup['status'] === 'quoted') {
-            $isSamplePrice = false;
-            $verifiedAnswer = $lookup['service_name'].' is '.$lookup['formatted_price'].' from the pricebook';
-        } else {
-            $isSamplePrice = false;
-            $verifiedAnswer = 'Not in the pricebook. Nothing to quote.';
-        }
-
-        $result = app(FieldAskAction::class)->handle(
-            $this->businessId,
-            null,
-            auth()->id(),
-            $q,
-            $isSamplePrice,
-            $verifiedAnswer
-        );
+        $result = app(FieldAskAction::class)->handle($this->businessId, null, auth()->id(), $q);
 
         $this->lastAnswer = $result['response'];
         $this->question = '';
