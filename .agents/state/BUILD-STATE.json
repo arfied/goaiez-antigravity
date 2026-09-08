@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-08T05:16:27",
+ "updated": "2026-09-08T05:47:46",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2233,6 +2233,24 @@
    "module": "X-201",
    "chose": "a dispute whose status is submitted reads sealed, not sent because submit() seals a row and the module has no transport, and the screen's own confirmation already said nothing was sent two lines above the pill contradicting it; the status column keeps its vocabulary and only the label changes",
    "at": "2026-09-08T05:16:27",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-199",
+   "chose": "the declines button offers to make a pay link rather than to send one because X-199 has no Mail, Notification or Http call anywhere and PaymentLinkAction creates and persists a link the owner sends themselves; the action's own catch already said the link was not made",
+   "at": "2026-09-08T05:47:42",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-201",
+   "chose": "the dispute buttons offer to seal rather than to submit because the module has no transport of any kind and submit() only updates a row; the pill and the confirmation on the same screens already say sealed and not sent",
+   "at": "2026-09-08T05:47:46",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-173",
+   "chose": "the conflicts button records an account and the sync engine says a line is recorded rather than posted because X-173 has no Http call anywhere and its connect door cannot succeed, so no ledger exists to post to",
+   "at": "2026-09-08T05:47:46",
    "ruling": "R245"
   }
  ]
