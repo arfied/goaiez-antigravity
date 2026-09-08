@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-08T01:16:09",
+ "updated": "2026-09-08T01:38:19",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1036,6 +1036,12 @@
      "stage": "contract",
      "why": "consumes help.human_requested \u2014 nothing emits it (sealed in app/app/Modules/X-111/manifest.php:46)",
      "at": "2026-09-06T14:24:35"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G15-28: the clause names the doctor as its own asserter and BoundaryStage already holds WAGE_FIELDS gross, net_pay, withholding, tax_withheld, pay_run, so a module test would author a second copy of a CHECK; the subject is also absent - the migration creates only operator_alerts, ip_bans, tenant_tickets and manual_queue, with no roles or staff table to carry or refuse a pay field",
+     "at": "2026-09-08T01:38:19"
     }
    ]
   },
@@ -2974,6 +2980,24 @@
      "stage": "capability",
      "why": "G1-66: max_redemptions is a non-nullable unsignedInteger defaulting to 100 and PromotionCreateAction::createPromotion types it int maxRedemptions = 100, so a promotion with no cap cannot be represented and no create-time refusal exists to test",
      "at": "2026-09-08T01:16:09"
+    },
+    {
+     "module": "X-210",
+     "stage": "capability",
+     "why": "G18-05: the row is status SPECCED but its text is product positioning - two packages, everything shipped at the price you joined at, no locked tier to show a padlock for - and it carries no fifth-clause assertion; missing is a specced refusal to test",
+     "at": "2026-09-08T01:38:18"
+    },
+    {
+     "module": "X-210",
+     "stage": "capability",
+     "why": "N-027: the row carries a blank status and its text is the module's whole six-law list, byte-identical to N-032, with no fifth-clause assertion of its own; asserting any one law would author the other five, so missing is a per-id specced clause",
+     "at": "2026-09-08T01:38:19"
+    },
+    {
+     "module": "X-210",
+     "stage": "capability",
+     "why": "N-032: the row carries a blank status and its text is the module's whole six-law list, byte-identical to N-027, with no fifth-clause assertion of its own; asserting any one law would author the other five, so missing is a per-id specced clause",
+     "at": "2026-09-08T01:38:19"
     }
    ]
   },
@@ -5047,6 +5071,30 @@
    "stage": "capability",
    "why": "G1-66: max_redemptions is a non-nullable unsignedInteger defaulting to 100 and PromotionCreateAction::createPromotion types it int maxRedemptions = 100, so a promotion with no cap cannot be represented and no create-time refusal exists to test",
    "at": "2026-09-08T01:16:09"
+  },
+  {
+   "module": "X-210",
+   "stage": "capability",
+   "why": "G18-05: the row is status SPECCED but its text is product positioning - two packages, everything shipped at the price you joined at, no locked tier to show a padlock for - and it carries no fifth-clause assertion; missing is a specced refusal to test",
+   "at": "2026-09-08T01:38:18"
+  },
+  {
+   "module": "X-210",
+   "stage": "capability",
+   "why": "N-027: the row carries a blank status and its text is the module's whole six-law list, byte-identical to N-032, with no fifth-clause assertion of its own; asserting any one law would author the other five, so missing is a per-id specced clause",
+   "at": "2026-09-08T01:38:19"
+  },
+  {
+   "module": "X-210",
+   "stage": "capability",
+   "why": "N-032: the row carries a blank status and its text is the module's whole six-law list, byte-identical to N-027, with no fifth-clause assertion of its own; asserting any one law would author the other five, so missing is a per-id specced clause",
+   "at": "2026-09-08T01:38:19"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G15-28: the clause names the doctor as its own asserter and BoundaryStage already holds WAGE_FIELDS gross, net_pay, withholding, tax_withheld, pay_run, so a module test would author a second copy of a CHECK; the subject is also absent - the migration creates only operator_alerts, ip_bans, tenant_tickets and manual_queue, with no roles or staff table to carry or refuse a pay field",
+   "at": "2026-09-08T01:38:19"
   }
  ],
  "decisions": [
