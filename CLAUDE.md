@@ -242,13 +242,42 @@ that test and is not on this list is a wave invented to fill the lane.
   untouched, the decoy root `REPORT.md` gone and the mailbox copy intact.
   `RULING CN` is discharged as a live hazard and stays above as history.
 
-⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 218 (2026-09-08) against pinned main
-`881f9bc9`**, MOVED from ticks 215–217's `8c17fb6c`; lane **48 ahead / 67 behind on `--first-parent`**
-(757 by ancestor count — ⚠️ **read `RULING EK` before quoting either number**);
-`HEAD...origin/track/stages` is `0 0` so there is no push exposure; both `.claude/hooks` `A` rows
-still present, plus `CR`'s `M settings.json`, and re-measured this tick they print **identically
-against local `main`**, so the take is shut on either ref. ⚠️ **No coder is running in ANY lane this
-tick** — the first such scan in this ledger.
+⭐⭐ **THE HOLD LIFTED AT TICK 219 (2026-09-08). THE TAKE IS OPEN AND A MERGE WAVE IS DISPATCHED —
+read `RULING EM` before anything else on this page.** For thirty-five ticks this lane held because
+the two `.claude/hooks` **A** rows could not be committed. That was always a statement about the
+**coder**: `coder-bin/git` is a coder guard, this seat has no `coder-bin` on its `PATH`, and this
+checkout's `.claude/settings.json` **allows `Bash(git commit:*)` and `Bash(git add:*)` while denying
+`merge`/`checkout`/`restore`** — the exact complement of the coder's column. `track/money` executed
+that split at `20901926` (2026-09-08 09:43) and **landed both ADD rows**, with the per-track restore
+proven clean. `CP`, `DD`, `DH`, `DJ`, `DM` and `EA` are each correct on their own measurement and
+none is withdrawn; what `EM` supersedes is the inference they were carrying, that no seat could
+commit those rows. Pinned main `881f9bc9`, **UNMOVED** from tick 218; lane **49 ahead / 67 behind on
+`--first-parent`** (757 by ancestor count — ⚠️ **read `RULING EK` before quoting either number**);
+`HEAD...origin/track/stages` is `0 0`, so there is no push exposure.
+
+⛔ **The wave is STAGE-AND-STOP and the commit is NOT pre-decided.** The coder merges, restores,
+resolves, gates, attempts the commit and reports the guard's refusal verbatim. Whether **this seat**
+commits a staged 757-commit merge is decided at the review of that staged tree, not in advance: the
+Roles table's *"Commits only its own files"* is in real tension with `settings.json`'s unrestricted
+`Bash(git commit:*)`, and money's authority is money's rulings 24/52/26, which this lane does not
+hold. It is filed to Track 1 as a **notification with an opt-out**, not a question. If the review
+fails, the next dispatch runs `git merge --abort` under the same flag.
+
+⚠️ **`RULING DM`'s census is RETIRED as a proxy for "has anyone got past this."** Re-run at tick 219
+it is identical for the eighteenth time — site 61 · pricebook 2 · reviews 1 · **money 0** · sixty 0 ·
+ui 0 — and **money is the `0`**: the lane that solved this blocker never wrote the string
+`claude/hooks` once, because it never experienced the rows as a blocker. A census over the term a
+stuck lane uses cannot find the lane that was not stuck. Keep `DM` for guard *readings*; survey
+precedent over merge commits with `DO`'s split-per-parent form.
+
+⚠️ **`RULING EL` (tick 219) — `EK`'s referent half applies to `EE`'s COMMIT-MESSAGE channel too.**
+Every tick since 213 ran that grep against the **pin**, which lags Track 1's live `main`. Measured:
+the pin tops at **`N136`** while local `main` (`ddb4e92e`, 13:08) carries **`N137`–`N140`**, four
+notes newer than the ACTION 1 check has ever read. Run against the fresher ref the answer is
+unchanged (`881f9bc9..main` has zero `claude/hooks` hits), so `EL` subtracts staleness from the
+instrument and not from the verdict. ✅ **Standing correction: the ACTION 1 commit-message check runs
+against local `main`, and says which ref it read.** Reading `main`'s messages is a *read*; the
+*"cannot contain main while main is unpushed"* bullet governs containment, never inspection.
 
 ⭐ **`RULING EK` (tick 218) — a "behind" count over a merge-based history counts ANCESTORS, not the
 ref's own progress; and `DK`'s `main...origin/main = 0 0` is a DATED measurement, now false by 416.**
