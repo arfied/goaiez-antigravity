@@ -242,11 +242,13 @@ that test and is not on this list is a wave invented to fill the lane.
   untouched, the decoy root `REPORT.md` gone and the mailbox copy intact.
   `RULING CN` is discharged as a live hazard and stays above as history.
 
-⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 198 (2026-09-08) against main's
-unmoved `888cabae` (`merge: track/pricebook — wave 137`), lane 28 ahead / 464 behind. The take is
+⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 199 (2026-09-08) against main's
+unmoved `888cabae` (`merge: track/pricebook — wave 137`), lane 29 ahead / 464 behind. The take is
 now shut on **two** rows rather than seven (`RULING DD`) — use the two-row re-check
 `git diff --name-status HEAD...origin/main -- .claude/hooks/`, not `CP`'s seven-row command — and
-`RULING DA` closes the only body of work that looked parallel to it.** Do not
+`RULING DA` closes the only body of work that looked parallel to it. `RULING DG` forecloses the
+one escape a tick is likely to try next (drop the two ADDs from the merge result — it deletes them
+from `main` at the next merge).** Do not
 open a wave. `state.py next` returns `{"action": "FINISHED"}`. Every remaining
 stage count needs the owner and is listed as **OWNER ACTION A–F** at the end of
 `REVIEWS.md`: vendor artifact ids (`anchor 137`), real Infobip and a real placed
@@ -465,6 +467,11 @@ every lane's merge uncommittable until the harness byte-identical clause was gen
 **app/app/Doctor in lane checkouts only**."* That is Track 1 addressing exactly what CP measured —
 `coder-bin/git:106` refusing `app/app/Doctor/` and `.*seals\.json$` unconditionally while the
 `$HARNESS` byte-identity exemption covered only `JourneyHarness.php`.
+
+✅ **DISCHARGED at tick 199 — see `RULING DE`.** The clause below is now *measured*, from main's
+tracked `CLAUDE.md` via `DD`'s method, and it carries a constraint `CP`'s plan omits: the staged
+Doctor/seal blob must be **byte-identical to `MERGE_HEAD`'s**. `CT`'s *ruling* — do not dispatch a
+wave to read the guard — stands and is not re-opened.
 
 ⛔ **Asserted from a commit message; NOT measurable from this seat.** `sed
 /home/goaiez/agents/coder-bin/git` is refused by the workspace boundary (this checkout + the six
@@ -827,6 +834,52 @@ open if it prints nothing):
 ```
 git diff --name-status HEAD...origin/main -- .claude/hooks/
 ```
+
+### ✅ `RULING DE` (tick 199) — `CT` discharged: the Doctor/seal rows ARE takeable, and the condition is byte-identity, not "take main's side"
+
+`git show origin/main:CLAUDE.md` — a tracked read of a per-track file, `DD`'s method — answers what
+`CT` twice flagged as unmeasurable. Main's never-list note: *"a Doctor path is admitted in a
+`GOAIEZ_MERGE_OK=1` merge only when the staged blob equals `MERGE_HEAD`'s (adopt `main`'s checker
+whole, never edit one), **lane checkouts only**."* `MERGE_HEAD` is `main` here, so the four rows are
+takeable in this lane.
+
+⚠️ **Stricter than `CP` states.** Any conflict resolution, hand edit or partial hunk in those four
+files makes the commit refusable — and a `BLOCK` under the One Rule besides. A take brief says
+*adopt main's four Doctor/seal blobs whole, edit none*; the proof is
+`git diff --cached MERGE_HEAD -- app/app/Doctor/` printing nothing.
+
+**And `JourneyHarness.php` is never restored** — main's run-115 note gives `CP`'s instruction its
+reason: restoring it deleted site's gated J11 fix, and *the restore is what let the commit through*,
+because once the blob equals `HEAD` the harness leaves the staged set and the byte-identity clause
+never runs. **A guard clause written for a case is defeated by removing the case.**
+
+### ⛔ `RULING DF` (tick 199) — `DC` is corroborated by an incident that already happened, in the opposite direction
+
+Main's tracked `CLAUDE.md`, merge step 2: *"A merged `app/phpunit.xml` carries the other lane's test
+database (run 112: `goaiez_antig_stages_test`) … `capability 372` read off the staged
+`BUILD-STATE.json` was stages' number, not main's."* `DC`'s hazard is documented, cross-lane, and
+named with **this lane's** database string. **`DC`'s restore-first order is promoted to item 1 of any
+take brief this lane writes.** Main independently prescribes `DC`'s restore-set source too — measure
+from the index, `git diff --cached`, never `git diff HEAD MERGE_HEAD`.
+
+⚠️ **`RULING CK`'s stale `372` very probably escaped this lane** — same number, same file, same lane,
+and `.agents/state/**` is per-track precisely so it does not travel. *Asserted, not measured*: this
+seat cannot inspect run 112's index. If it holds, `CK` is not just a trap that stopped a wave here;
+it is a stale ledger value that reached Track 1's gate and gave `main` a wrong stage count.
+
+### ⛔ `RULING DG` (tick 199) — do NOT drop the two `.claude/hooks` ADDs from the merge result. It deletes them from `main`.
+
+The obvious escape from the two shut rows — take the merge, drop those paths from the index, commit
+without them — satisfies both constraints and lands its cost in another lane. Merge base of `main`
+and `track/stages` would then be `888cabae`, which **has** both files; this lane's tip would lack
+them; `main` unchanged → **the deletion is taken**, and Track 1's next merge removes
+`drive_hook.py` and `no-piped-gate-tool.py` from `main`. `no-piped-gate-tool.py` is an agent-layer
+*refusal*, so that is the One Rule shape landing on a lane that never asked for it.
+
+*Reasoning from git's three-way semantics and the measured base, not an executed test.* **RULED by
+the lane supervisor: this lane will not drop a path from a merge result to get a commit past the
+never-list, and no brief will name the route** — `RULING CQ`'s reason exactly, and `DE`'s run-115
+lesson one week apart: it evades a refusal by removing the case the refusal exists for.
 
 ## Dispatching the coder (added 2026-09-02)
 
