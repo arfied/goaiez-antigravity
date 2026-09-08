@@ -3645,6 +3645,71 @@ Watch for: <the trap that applies, by name>
   and it is a measurement wave first: which of the three named defects is real on this tree, and whether
   any of it reaches the harness. The live proposal list stays `grep -rn "BUILD PROPOSAL:"
   app/tests/Modules/` — re-run, never inherited.
+- ⚠️⚠️ **A guard defeated is not a guard passed — `DB::table()` is beneath Eloquent's tenant scope and
+  still ABOVE row-level security, so the second design dies one layer down with a different message and
+  the same 500.** Tick 237 recorded Mut 5/7 dying in `TenantScope` (`TenantNotResolved`); wave 128
+  engineered past it with `\DB::table('businesses')->first()` and died on `ErrorException: Attempt to
+  read property "id" on null`, because the query returned **no rows**.
+  `2026_07_30_072149_create_businesses_table.php:143` is `CREATE POLICY tenant_isolation ON businesses
+  USING (id = nullif(current_setting('app.business_id', true), '')::bigint)` and `2026_08_06_063758:30`
+  records the table `ENABLE`+`FORCE`d — so `ChatStartController.php:18`'s `Tenancy::forgetAll()` closes
+  **both** routes to a business until `Tenancy::set()` at `:26`. This file's own field note said it
+  already (*RLS sits beneath the application scope, so `withoutGlobalScopes()` does not help*); what is
+  new is that it governs **mutation sites**, not just assertions. ⭐ The two failures are told apart by
+  their message alone — `TenantNotResolved` is the scope, `property "id" on null` is the policy — so
+  **read a mutation's exception class before calling the second attempt "the same reason as the first"**,
+  which is what wave 128's report did.
+- ⚠️⚠️ **Four mutation designs have now died in ONE eight-line window, and the window was named by my own
+  brief rather than by the coder.** Muts 5, 7, 8 and 9 all sit between `forgetAll()` at `:18` and
+  `Tenancy::set()` at `:26` — the only span of the request with no tenant, and therefore the only span
+  where nothing can be looked up at all. My wave-128 brief said *"both sites are in a module or view file
+  under `app/app/`"* and *"cannot be done under this controller's structure"*, which **excludes
+  `App\Services\Pixel\PixelKeys`** — the one class on the path that reaches a business with no tenant
+  established, because `resolve()` runs `Tenancy::actingAs()` internally. ⛔ **RULED at tick 238: `:52`
+  cannot be reddened from `ChatStartController` at all, and that is a fact about the door, not about the
+  assertion** — with an unknown key the controller never learns any tenant id, so a mutation would have
+  to invent one, which proves nothing. The untried site is `PixelKeys::resolve()`; it is **recorded, not
+  endorsed** (tick 237 is the price of endorsing an unrun design). `:74` is nearer and structurally
+  different: in test 3 a tenant **is** established at `:26`, so a mutation below that line has one in
+  hand. ⭐ Generalise past this door: **when a brief constrains a mutation's site, it has made a design
+  choice — say which sites are excluded and why, or the coder will spend waves inside the one window
+  that cannot work.**
+- ⚠️ **The artifact question's twelfth escape is a difference that is a REPORTING CONVENTION, so both
+  numbers are right and neither is evidence.** Wave 128 quoted its own `TARGET: …ChatDoorTest.php:52`
+  against a log reporting the failure at **line 38** — which is that test's **declaration line**, the
+  convention this file already records. Every accumulated clause was satisfied. Series: `None` (112) →
+  a previous wave's artifact (116) → an invented sentence (118) → a real answer (119) → a universal
+  ground (120) → a licensed non-answer (121) → an artifact silent on the subject (122) → an artifact
+  that agrees (123) → clean (124) → a guaranteed disagreement (125) → clean on a tracked path (126) →
+  a real seam (127) → **a known convention** (128). **The clause added for wave 129: the disagreement
+  must mean one of the two is WRONG.** Keep every accumulated clause; do not simplify.
+- ✅ **The mutation harness is proven end-to-end and the four-wave harness debt is discharged — never
+  re-brief it.** Waves 122 (`sed` eating backslashes), 123 (a `'` inside `php -r`), 124 (argument
+  passing) and 125 (the lock) each lost a set to the harness rather than to the code.
+  `scratch/run-mutations-w128.sh` is the working form: `git apply --check` on every patch up front,
+  `git apply` forward, gate, **copy the raw object only after `supervise.sh` exits**, `git apply -R` to
+  revert, and a final non-zero exit on a dirty tree. ⭐ Because it exits on a dirty tree, **the existence
+  of log N+1 is proof that revert N succeeded** — the whole set verifies from §1 of the gate logs
+  (`0 uncommitted` → `M <file>` / `1 uncommitted` → `0 uncommitted`) with no reliance on the coder's word.
+- **Backlog at tick 238 — wave 129 is the owner-assigned J1/J2 number-assignment path; the two ChatDoor
+  mutations are owed and DEFERRED, not cancelled.** RULED: owner-assigned work (`OWNER.md` 2026-09-07
+  09:5x #2, *"Track 1 assigns this work to `track/sixty`"*) outranks a fourth attempt at one assertion,
+  and a correction plus a build handed over together come back as one shape (ticks 218, 220, 221, 222,
+  223). All three owner-named defects **verified at tick 238**: `NumberPoolManager.php:31` fabricates
+  `"+1{$areaCode}5550".rand(100,999)`; `:23`'s `NumberPool::where('business_id', $businessId)` is scoped
+  to the tenant *being created*, so the lookup is always null at signup and the fabrication branch always
+  runs; and `NumberPool::$table` is `number_pool` while `JourneyHarness.php:101,302,316` reads
+  `phone_numbers`. ⭐ **Not the dead-class shape** — `X-118/Ui/DayOneSignup.php:61` and
+  `Ui/ProspectSignup.php:42` → `OnboardingStartAction` → `NumberAssignAction:15` → `assignLiveNumber` is
+  a real production path, unlike X-102's chat actions (tick 228) or X-66's `coach()` (tick 225). ⭐ **The
+  seam needs no manifest change**: X-188's `manifest.php:47` owns `number_pool · number_assignments ·
+  brand_registrations · number_parks` and **not** `phone_numbers`, which is a shared root table served by
+  the root service `App\Services\Sms\TenantNumbers` — a root service is not a module class, so
+  `BoundaryStage`'s text is not engaged (the `PixelKeys` precedent, tick 232). ⛔ **The journeys are not
+  the deliverable and cannot be graded as one**: both J1/J2 tests throw from the harness itself (*"needs
+  real Infobip environment"*, *"place a REAL call"*), so no fix to the assignment path turns them green —
+  the owner's *"deferred **until the code can reach them**"* makes the reachable code the deliverable and
+  a module test the proof. `--allow-harness` stays closed; the defects are outside `JourneyHarness.php`.
 
 ## Style
 
