@@ -1975,3 +1975,84 @@ method was entered**, so the PB-125 hazard cannot arise and the auth-assertion g
 ⚠️ **It proves the shape, not the content.** A pure append of 47 lines still has to be reconciled
 against the deliverable (here: one test, one method, 47 lines — exact). ⛔ Do not read "pure append"
 as "inert"; read it as "the only thing to grade is what was added."
+
+## ⭐⭐ Trap added 2026-09-08 17:4x — a mutation can redden a neighbour through its FIXTURE, and that is COUPLING, not duplication
+
+PB-129 gave this lane its duplicate-detector: *a mutation that reddens an unbriefed test means the brief
+asked for something the file already had.* PB-135 is the wave where it fired and the answer was the
+opposite.
+
+W2 (drop `->where('job_id', …)` from the new guard's query) reddened T2 **and** PB-134's
+`test_close_job_window_pins_job_id_and_does_not_close_others`. Measured: that test opens **two windows
+on two jobs in its SETUP**. A guard with no `job_id` scope hands back the first entry for the second
+job, so the second job never gets a window and `closeJobWindow(8802)` finds nothing to close.
+
+⭐⭐ **The discriminator is the FAILING ASSERTION, not the test name.** The neighbour failed on
+`assertNull` receiving a Carbon — *its own subject, starved of its fixture*. T2 failed on
+`51 is not equal to 51`, an **id equality** — a different subject entirely. Two tests reddened, one
+mechanism each, no duplication anywhere.
+
+⛔ **Folding T2 onto the neighbour on the strength of the co-firing** — the PB-130 consolidation shape —
+**would have deleted the regression arm the wave exists for.** ⭐ The general rule: the duplicate
+detector's premise is that the other test asserts the **same subject**. Read the assertion before
+concluding it does.
+
+## ⛔⛔ Trap added 2026-09-08 17:4x — ask for the id SPACE, never the field NAME
+
+PB-135's item 4 asked, of each producer event, *does the payload carry a business id, a person id, a job
+id and a timestamp* — the four things a listener needs. The answer came back correctly and **inverted on
+both rows that mattered**, because presence and identity are different questions:
+
+- `timesheets.person_id` is a **USER id** — `X-168/Ui/ApprovalsView.php:60` resolves it with
+  `User::whereIn('id', $ids)`, and `X-171/Ui/StafffacingApp.php:47`/`:155` set `$techId = auth()->id()`.
+  ⭐ So `TechOnSite->techId` **is** the right value for `recordJobWindow(personId:)`. The report's
+  `No (techId)` understated the payload.
+- ⛔⛔ `JobCompleted->personId` is the **CUSTOMER**. `X-171/Actions/JobStateAction.php:30` reads it from
+  `work_orders.person_id`, which is
+  `X-121/…/2026_09_03_055945_add_person_id_to_work_orders.php:13` →
+  `foreignId('person_id')->constrained('people')`. A listener taking it as the timesheet's person files
+  a technician's hours under a customer's `people` id, resolved against `User`. **The `Yes` was the most
+  dangerous cell in the table.**
+
+⭐ **The rule: name the `constrained('…')` target, or the model the reader resolves against.** Two
+columns called `person_id` in one repo can point at two different tables, and a field-name audit reports
+them identical. ⚠️ Latent here — `closeJobWindow` takes no `personId` — so **latent + no wrong value =
+RECORD**, written into the next brief so the listener cannot walk into it.
+
+## ⛔ Trap added 2026-09-08 17:4x — quoting the floor line is not reconciling it, and a prediction that keeps being right stops being read
+
+PB-133 made the gate's floor line an explicit report deliverable, and it held perfectly for three waves.
+PB-135 quoted `tests 2112 · passed 2107 · FAILED 1 · errors 4` verbatim and correctly — and said nothing
+about `errors` having risen `2 → 4`, which is this lane's own blocker condition (*a count that rose
+without a report line saying why*).
+
+⭐ **The cause was the brief, and it is a shape worth naming: a prediction that has been right eleven
+waves running becomes a check nobody performs.** The brief demanded the line *verbatim* and never
+demanded a **comparison**. The reviewer caught it only by holding the two numbers side by side.
+
+⭐ **Fix, standing from PB-136: the report reconciles all four numbers — `tests`, `passed`, `FAILED`,
+`errors` — against the predicted floor and names the cause of every difference, quoting the gate line
+that supplies it.** ⛔ Its absence is a note, not a re-dispatch: PB-123's artifact-over-prose rule
+applies, and here the gate's own failure list named the cause in two lines (J10's Authorize.Net `E00040`
+returning after eleven clean waves — external, and `TRACK 1 ACTION (c)` reopened).
+
+⚠️ Companion, recorded because this lane had been reading the quiet the other way: **eleven clean waves
+were evidence FOR the diagnosis, never evidence the problem had left.** The file already said so; the
+wave proved it.
+
+## ⛔ Trap added 2026-09-08 17:4x — `state.py` ran, the artifact proves it, and the commit never happened
+
+PB-135's ruling was recorded on disk and **not in the history Track 1 merges**:
+`.agents/state/BUILD-STATE.json` and `JOURNAL.md` sat ` M ` at review time. ⭐ **The PB-120 triple
+proves the tool ran rather than a hand edit** — `updated 16:35:19 → 17:12:18`, exactly one decision
+object appended, exactly one `JOURNAL.md` line, `at` matching **to the second**, with `plan_sha256`,
+`roster` and `runtime_build` untouched. ⛔ Not a `BLOCK`: nothing weakened, no CHECK changed.
+
+⭐ **But `git status --porcelain` is the only instrument that sees it** — `git show` on the wave's commit
+is clean and complete, and every count reconciles. ⚠️ **An empty diff is not an empty tree, and a
+complete diff is not a complete wave.** Run both, every wave.
+
+⭐ **And the push consequence, which is NOT PB-125's:** PB-125 held a push because the next wave had to
+**undo** part of the gated diff. Here nothing is undone — the guard is correct and stays, the state
+commit is purely **additive**, and the uncommitted delta was verified **field by field** inert against
+every gate instrument (PB-124's test). **Push, and make the state commit item 0 of the next wave.**
