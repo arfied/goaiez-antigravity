@@ -301,4 +301,31 @@ class DeclinesScreenTest extends TestCase
 
         Carbon::setTestNow();
     }
+
+    public function test_the_declines_screen_offers_to_make_a_pay_link_and_never_to_send_one(): void
+    {
+        $base = now()->startOfWeek()->addDays(3)->setTime(10, 0);
+        Carbon::setTestNow($base);
+
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $payment = Payment::create([
+            'business_id' => $biz->id,
+            'amount_cents' => 15000,
+            'currency' => 'USD',
+            'payment_token' => 'tok_pay_1',
+            'idempotency_key' => 'idem_pay_1',
+            'status' => 'failed',
+            'created_at' => $base,
+        ]);
+
+        Livewire::actingAs($owner)->test(Declines::class)
+            ->assertSee('Make a pay link')
+            ->assertDontSee('Send pay link');
+
+        Carbon::setTestNow();
+    }
 }

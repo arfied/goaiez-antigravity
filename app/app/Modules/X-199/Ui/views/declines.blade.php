@@ -52,7 +52,7 @@
                                 <p class="mt-3 text-base text-ink">no decline code was recorded for this attempt — switch method</p>
                             </div>
                             <div class="bg-gray-50 px-4 py-4 sm:flex sm:flex-row-reverse sm:px-6">
-                                <x-ui.button size="default" wire:loading.attr="disabled" wire:target="sendPayLink({{ $decline->id }})" wire:click="sendPayLink({{ $decline->id }})" class="sm:ml-3 sm:w-auto">Send pay link</x-ui.button>
+                                <x-ui.button size="default" wire:loading.attr="disabled" wire:target="sendPayLink({{ $decline->id }})" wire:click="sendPayLink({{ $decline->id }})" class="sm:ml-3 sm:w-auto">Make a pay link</x-ui.button>
                                 @if(!$decline->deferred)
                                 <x-ui.button size="default" variant="secondary" wire:loading.attr="disabled" wire:target="settleUpLater({{ $decline->id }})" wire:click="settleUpLater({{ $decline->id }})" class="sm:mt-0 sm:w-auto mt-3">Settle up later</x-ui.button>
                                 @endif
