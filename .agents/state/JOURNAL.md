@@ -891,3 +891,4 @@
 - `2026-09-08T08:26:56` note: capability drop dead negative assertion in test_g18_10 and correct docblock
 - `2026-09-08T09:28:21` note: BoundaryStage X-188: YourNumberCard implicitly queries the provisioned number from number_assignments relying on the RLS tenant context rather than component state, displaying the assigned phone number on the UI.
 - `2026-09-08T10:16:05` note: boundary Wired ParkList to number_parks with RLS scoping, and added test with assertions.
+- `2026-09-08T10:43:35` note: boundary Prove tenant isolation for parked numbers via Livewire component test.
