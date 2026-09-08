@@ -54,7 +54,7 @@ class CheckoutBlockScreenTest extends TestCase
         $this->assertSame(1, $filter->fresh()->inventory_quantity);
 
         $screen->call('authorise')
-            ->assertSee('waiting on a card-entry surface that is not connected yet');
+            ->assertSee('waits on a card-entry surface that is not connected yet');
 
         $token = $screen->get('authToken');
 
