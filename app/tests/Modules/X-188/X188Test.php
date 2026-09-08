@@ -12,6 +12,7 @@ use App\Modules\X188\Domain\NumberPoolManager;
 use App\Modules\X188\Events\TenantCancelled;
 use App\Modules\X188\Models\NumberPark;
 use App\Modules\X188\Models\NumberPool;
+use App\Services\Sms\TenantNumbers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -110,7 +111,7 @@ class X188Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Area Code Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
-        app(\App\Services\Sms\TenantNumbers::class)->addToPool('+12105550000');
+        app(TenantNumbers::class)->addToPool('+12105550000');
 
         $assigned = $this->assigner->handle($biz->id, '210');
         $this->assertEquals('210', $assigned['area_code']);

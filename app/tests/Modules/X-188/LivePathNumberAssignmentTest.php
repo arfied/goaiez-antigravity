@@ -6,6 +6,8 @@ namespace Tests\Modules\X188;
 
 use App\Models\User;
 use App\Modules\X118\Actions\OnboardingStartAction;
+use App\Modules\X118\Events\AgentLive;
+use App\Modules\X118\Events\TenantProvisioned;
 use App\Services\Sms\TenantNumbers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -47,7 +49,7 @@ class LivePathNumberAssignmentTest extends TestCase
 
     public function test_it_says_so_when_there_is_nothing_to_hand_out(): void
     {
-        Event::fake([\App\Modules\X118\Events\TenantProvisioned::class, \App\Modules\X118\Events\AgentLive::class]);
+        Event::fake([TenantProvisioned::class, AgentLive::class]);
 
         // 1. Ensure the pool is entirely empty
         DB::table('phone_numbers')->delete();
@@ -64,7 +66,7 @@ class LivePathNumberAssignmentTest extends TestCase
 
         $this->assertNull($signupRes['provisioned_number']);
 
-        Event::assertNotDispatched(\App\Modules\X118\Events\TenantProvisioned::class);
-        Event::assertNotDispatched(\App\Modules\X118\Events\AgentLive::class);
+        Event::assertNotDispatched(TenantProvisioned::class);
+        Event::assertNotDispatched(AgentLive::class);
     }
 }
