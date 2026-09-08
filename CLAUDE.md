@@ -4158,6 +4158,100 @@ Watch for: <the trap that applies, by name>
   wave (tick 208). Then wave 134 takes the live list, `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` —
   **6** rows at tick 244, tick-227 membership — re-run and never inherited. Stub pile across the
   thirteen: **10**.
+- ⚠️⚠️ **A concurrency FLAPPER inside a mutation run contaminates the `assertions` subtraction — the
+  soft spot of the whole method — and the `passed` delta is the only thing that separates the two
+  contributions.** Wave 133's M1 returned `assertions 8387` against a green of `8389`: **`−2` on a
+  two-assertion test**, one more than the target can account for, which read literally is the wave-81
+  signature (a mutation that throws upstream so nothing is evaluated) and would have made the mutation
+  worthless. It is not. M1's object alone carries **`errors 3`** — the third being
+  `a_deliberately_corrupted_backup_fails_the_restore — SQLSTATE[42501] … permission denied to terminate
+  process`, the `pg_terminate_backend` flapper ruled box concurrency at tick 237 — and removing a
+  Livewire `mount()` cannot cause a Postgres privilege refusal. **The arithmetic closes on `passed`:**
+  `1937 → 1935` is **two** tests moved, `failed +1` names the target and `errors +1` names the flapper,
+  so the target lost one assertion (A2, unreached) and the flapper lost one. Radius **1**, not 2 (tick
+  237: grade a wide radius by what broke the sibling). ⛔ **RULED at tick 245: a `MUTATION` block carries
+  the `assertions`, `passed`, `failed` and `errors` deltas TOGETHER, plus one line naming every test
+  that moved**, and anything that moved for a reason the mutation cannot have caused is netted out
+  *inside that block*. Every proof on this lane rests on an `assertions` delta; a flapper makes a clean
+  `−1` read as an ambiguous `−2`, and in the other direction would make a contaminated run read clean.
+  ⭐ The wave knew — answer 6 named `errors 3` correctly — and disclosed it three fields away from the
+  number it explains, which is why the fix is the field and not the reviewer.
+- ⚠️⚠️ **The free-text contradiction question has CYCLED rather than converged, and it is RETIRED —
+  replace a free-text question with a field-and-value REQUIREMENT.** The series ran `None` (112) → a
+  previous wave's artifact (116) → an invented sentence (118) → clean (119) → a universal ground (120) →
+  a licensed non-answer (121) → an artifact silent on the subject (122) → an artifact that agrees (123)
+  → clean (124) → a guaranteed disagreement (125) → clean on a tracked path (126) → a real seam (127) →
+  a known convention (128) → the wrong artifact (129b) → **a licensed non-answer again (133)**. That is
+  a two-state cycle between *licensed non-answer* and *planted falsehood*, and **both ends are this
+  column's**: tick 229 removed the escape clause after wave 121, wave 132 then planted a sentence it
+  knew to be false purely to be refuted, tick 244 re-added the escape with a ⛔ against planting, and
+  wave 133 took the licence. A thirteenth clause returns the twelfth failure. ⛔ **RULED at tick 245:
+  retired in favour of the delta-table requirement above** — a required reconciliation has no free-text
+  slot, so it cannot be satisfied by a convention, a universal ground, an agreeing artifact or a
+  licence. ⭐ Keep what the escape accidentally bought: wave 133's non-answer carried the **only**
+  disclosure of the flapper in the whole report. Ask for that disclosure directly instead.
+- ⚠️ **The root-`REPORT.md` mailbox trap, second occurrence — and the wave's own gate then vouches for
+  the PREVIOUS wave's report.** Wave 133 wrote to `/…/grs-antig-sixty/REPORT.md`, leaving
+  `.agents/supervisor/REPORT.md` at wave 132's 07:03; `w133-gate.log` §3's mailbox line duly printed
+  `REPORT.md 2026-09-08 07:03:32 54 lines`, so a tick trusting that line reviews the previous wave twice
+  and never sees this one. It is also why §1 read `1 uncommitted path(s)` on a wave that committed
+  everything. **`stat` BOTH paths every tick**, and grade the mtime against the dispatch (wave 88).
+- ⚠️ **A report field whose label is not a QUESTION is not answered — and two of this wave's three field
+  defects were in my template, not in the report.** `STATUS:` is a bare label among six fields that
+  name their artifact or ask something, and it is the one that came back **blank**. `TESTS:` printed one
+  command (`git show <sha>~1:<file> | …`, the *before*) for a field wanting `before -> after`, and got
+  `<?php` / `5`. Wave 102's rule was *a template is a brief too, and every literal in it is a
+  prediction*; its complement is that **a literal that is not a prediction gets nothing at all.** Phrase
+  every field as a question or name the exact command for each half of it.
+- ✅ **Deleting a VACUOUS assertion is not the ladder's top rung, and the four things that distinguish
+  it are all cheap.** Wave 133 removed `assertDontSee($assigned2['phone_number'])` and the wave-107 rung
+  (*deleting your own assertion*) does **not** reach it: that rung is deleting an assertion **because it
+  went red**, to make a wave green. This one was (i) green, (ii) measured unfalsifiable — `number_pool`
+  is `ENABLE`+`FORCE ROW LEVEL SECURITY`, so no component-level query can see another tenant's row —
+  (iii) re-proved so by the wave's own mutation artifact (`w132-mut-1-raw.log`, `assertions 8390 ·
+  failed 1`, the standing lint alone), and (iv) its reason went into the **docblock**, which outlives
+  every `REPORT.md`. ⛔ Require all four; any one of them alone is the shape the rung describes.
+- ⚠️ **Measured at tick 245 and it generalises the tick-244 error across a whole module: ALL FOUR X-188
+  tables are `ENABLE`+`FORCE ROW LEVEL SECURITY` with `tenant_isolation`** (`number_pool ·
+  number_assignments · brand_registrations · number_parks`,
+  `2026_08_30_000015_create_x188_number_tables.php:77-90`). So **no component-level absence assertion is
+  falsifiable anywhere in X-188**, and a brief that asks for one is repeating the error that cost wave
+  132. Read the migration before requiring an absence, per module and not per table.
+- ⚠️ **A ⛔ "these mutations are spent" and a licence to re-prove inherited assertions are the same
+  instruction pointed two ways — say which governs.** Tick 244 recorded wave 131's two mutations as
+  spent; my wave-133 item 2 then asked for one mutation per surviving assertion *"including assertions
+  you did not write this wave but are now relying on"*, and got wave 131's M2 re-run at the same site
+  for `−0`. Defensible (the test body changed in both intervening waves) and it cost one gate run, but
+  the two sentences contradict each other and the coder cannot tell which I meant.
+- **Suite baseline, measured by this column at tick 245 on tip `22865e62` — `tests 1940 · passed 1937 ·
+  assertions 8389 · failed 1 · errors 2 · duration_ms 109835 · incomplete 3 · risky 1`**, the standing
+  three by **identity**, §6 pint `passed` / phpstan `0`, stamp `20260829-0647` = `runtime_build`, §2
+  `none`. Against tick 244's `8390`: **−1**, exactly the one `assertDontSee` removed. ⭐ Five runs of
+  this surface gave five distinct `duration_ms` — `109753 · 109006 · 113769 · 110894 · 109835` — with
+  the headline four identical wherever the tree was unmutated. ⚠️ §1's `1 uncommitted path(s)` is the
+  wave's untracked root `REPORT.md`: no PHP, not under `app/`, not classmapped, read by no test, so the
+  tracked tree at the gate is byte-for-byte the sha (tick 202 — state why each dirty path is inert, or
+  do not push).
+- **Backlog at tick 245 — wave 134 is `YourNumberCard`'s tenant wire and what the card actually shows;
+  `ParkList` is a measurement only.** RULED. It is the same defect wave 132 closed on the third screen
+  of the same module: `YourNumberCard.php:14` and `ParkList.php:14` are a bare `public int $businessId =
+  0;` with **no `mount()`**, `grep` outside the module and its provider is empty so no parent blade
+  passes the property, `routes.generated.php:13,15,21,23` mounts both bare on both route groups, and
+  their only callers that supply a `businessId` are their own tests — **both render their empty branch on
+  every route in production.** ⚠️ And `your-number-card.blade.php`'s `@else` is
+  `<p …>Active</p>`: a screen titled *"Your Live Business Number"* that prints the word `Active` and
+  never the number, with `NumberAssignment` carrying `phone_number_id` and **no Eloquent relation**, so
+  the number is one hop through `number_pool`. ⭐ The wave-97/tick-200 hazard is **low and checked**:
+  `YourNumberCardScreenTest:21,23,32,34` assert `assertOk()` only. ⛔ No absence assertion (the `FORCE`
+  finding above); ⛔ the admin twin's tenant is `TRACK 1 ACTION 2` and not this wave's to design; ⛔ no
+  `UNRESOLVED` (X-188 owns every layer) and no `markTestIncomplete`. ⚠️ X-188 declares four capabilities
+  (`G10-02 · G18-10 · G18-11 · G19-14`) and **none names either screen**, so the wave moves no doctor
+  count — say so, or it gets graded on a number that cannot move (tick 171). The owner-assigned J1/J2
+  path is otherwise discharged: all three defects tick 237 named are gone, `LivePathNumberAssignmentTest`
+  proves both polarities through `OnboardingStartAction`, and both journeys now throw from the harness's
+  own real-transport refusal, which is the deferred half. Live list:
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **6** rows at tick 245, tick-227 membership; stub
+  pile across the thirteen **10**. Re-run both; never inherit them.
 
 ## Style
 
