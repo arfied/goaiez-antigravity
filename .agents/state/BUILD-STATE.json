@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-07T09:49:13",
+ "updated": "2026-09-08T03:20:53",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1568,6 +1568,12 @@
    "module": "X-124",
    "chose": "a count pin is blind to a vocabulary swap so the set is pinned as a string instead, and a block construct emitting its body in document order cannot weaken the heading depth upper bound so its arrival is not by itself a defect",
    "at": "2026-09-07T09:49:13",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-124",
+   "chose": "a check whose scope covers a fraction of the population its title names pins the size of the unwalked fraction, so that a later wave can widen the scope against an existing number without moving multiple pins at once --ruling R245",
+   "at": "2026-09-08T03:20:53",
    "ruling": "R245"
   }
  ],
