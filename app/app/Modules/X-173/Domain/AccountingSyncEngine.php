@@ -107,7 +107,7 @@ final class AccountingSyncEngine
         return [
             'status' => 'mapped',
             'mapping_id' => $mapping->id,
-            'message' => sprintf('%s is mapped to %s · %s. Nothing was posted: no ledger is connected in this checkout yet.', $internalCategory, $remoteGlAccountId, $remoteGlAccountName),
+            'message' => sprintf('%s now posts to %s · %s.', $internalCategory, $remoteGlAccountId, $remoteGlAccountName),
         ];
     }
 
