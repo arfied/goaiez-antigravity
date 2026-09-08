@@ -15,7 +15,7 @@
    "fails": "COMMIT"
   },
   "boundary": {
-   "violations": 44,
+   "violations": 55,
    "fails": "COMMIT"
   },
   "contract": {
@@ -27,11 +27,11 @@
    "fails": "COMMIT"
   },
   "schema": {
-   "violations": 15,
+   "violations": 16,
    "fails": "MERGE"
   },
   "capability": {
-   "violations": 209,
+   "violations": 207,
    "fails": "MERGE"
   },
   "anchor": {
@@ -39,7 +39,7 @@
    "fails": "WAVE"
   },
   "journey": {
-   "violations": 4,
+   "violations": 3,
    "fails": "WAVE"
   }
  },
@@ -5715,6 +5715,10 @@
   {
    "at": "2026-09-08T00:18:22",
    "note": "X-167 G6-47: correcting the S-177 filing. The restock path exists at InventoryEngine.php:51 restoreStockFromCancellation and is reachable from StockAdjustAction.php:16; what is missing is an idempotency ledger or column so a replayed refund is a no-op, not a Refund model. The UNRESOLVED stands, its why was inaccurate."
+  },
+  {
+   "at": "2026-09-08T18:31:13",
+   "note": "RULING FO: X-117/X-199/X-211 RuntimeProofTest assert on untracked storage/app/evidence artifacts, so they are red in every checkout but the minting lane; six section 7 failures inherited from main at 6b7c315b, not lane-authored, filed to TRACK 1"
   }
  ],
  "history": [

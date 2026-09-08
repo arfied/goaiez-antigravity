@@ -1342,3 +1342,12 @@ Therefore, adding a row to the tracker could move only the capability count.
 - `2026-09-08T15:57:14` RESOLVED contract X-186 - multiEmitterOk exemption for send.requested arrived on main and is committed here in 5d89dc84 at app/app/Doctor/Stages/ContractStage.php:575 (was: send.requested correctly emitted by multiple modules per R231, but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.)
 - `2026-09-08T15:57:18` RESOLVED contract C-Reviews - multiEmitterOk exemption for send.requested arrived on main and is committed here in 5d89dc84 at app/app/Doctor/Stages/ContractStage.php:575 (was: send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.)
 - `2026-09-08T18:12:34` (R245) X-211 — money's engine throws PlanPastThresholdException for plans past the threshold, and our R245 line of 2026-09-08T14:54:13 is superseded by it
+- `2026-09-08T18:31:13` stage integrity = 0
+- `2026-09-08T18:31:13` stage boundary = 55
+- `2026-09-08T18:31:13` stage contract = 85
+- `2026-09-08T18:31:13` stage citation = 0
+- `2026-09-08T18:31:13` stage schema = 16
+- `2026-09-08T18:31:13` stage capability = 207
+- `2026-09-08T18:31:13` stage anchor = 128
+- `2026-09-08T18:31:13` stage journey = 3
+- `2026-09-08T18:31:13` note: RULING FO: X-117/X-199/X-211 RuntimeProofTest assert on untracked storage/app/evidence artifacts, so they are red in every checkout but the minting lane; six section 7 failures inherited from main at 6b7c315b, not lane-authored, filed to TRACK 1
