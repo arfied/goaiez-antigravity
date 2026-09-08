@@ -17,12 +17,13 @@ final class ChatTurnController
     {
         Tenancy::forgetAll();
 
-        $businessId = $keys->resolveBusinessId($key);
+        $business = $keys->resolve($key);
 
-        if (! $businessId) {
-            return response()->json(['error' => 'Not found'], 404);
+        if (! $business) {
+            abort(404);
         }
 
+        $businessId = (int) $business->id;
         Tenancy::set($businessId);
 
         $sessionToken = $request->input('session_token');
