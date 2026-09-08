@@ -4468,3 +4468,54 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     pass and recorded so it is not re-derived: `pint` **does** accept a `.blade.php` path and returns
     `{"tool":"pint","result":"passed"}`, so ruling 189's path list covers blades and a blade in a
     commit is linted, not skipped.
+193. **A command that ends in `Tenancy::forgetAll()` clears its CALLER's tenant, and `Model::fresh()`
+    bypasses the Eloquent scope but not RLS — so the first database read a test ever made after that
+    command returned null (RULED by the lane supervisor 2026-09-08 16:0x, on MONEY-124's `24fe06cf`;
+    briefed as MONEY-125).** MONEY-124's item 2.5 dictated, verbatim,
+    `expect($overdueInvoice->fresh()->due_detected_at)->not->toBeNull();` in
+    `X-199/MarkInvoicesDueTest.php`, immediately after `Artisan::call('x199:mark-due')`. It cannot
+    run: `MarkInvoicesDueCommand.php:35` is `Tenancy::forgetAll();` at the end of `handle()`, so the
+    test's ambient tenant is gone the moment the command returns — the command's own inner
+    `actingAs` at `:56` restores correctly (`Tenancy.php:170-181`, a `finally`), and it is the
+    `forgetAll()` that reaches out and clears the **caller's**. The read then fails **beneath**
+    Eloquent: `Model.php:2089-2099` shows `fresh()` is
+    `setKeysForSelectQuery($this->newQueryWithoutScopes())->useWritePdo()->first()`, so the tenant
+    global scope is not the obstacle, and `Tenancy::forget()`'s own docblock (`:130-137`) states the
+    one that is — *"an RLS policy comparing business_id against an empty setting matches nothing, so
+    a connection left over from a previous tenant returns zero rows"*. The wave shipped
+    `errors 3` against a floor of 2, the extra member being
+    `Attempt to read property "due_detected_at" on null`.
+    ⚠️ **This is the lane's standing field note arriving from the opposite direction.** The note is
+    *RLS sits beneath the application scope, so `withoutGlobalScopes()` does not help*; here Laravel
+    removes the scope **for** you, inside a method whose name suggests nothing of the kind, and the
+    row is still refused. ⛔ So the fix is never `withoutGlobalScopes()`, `withoutGlobalScope(…)` or
+    `DB::table(…)`: each reaches the same refusal, and any that appeared to work would do so only by
+    asking the database a question with no tenant in it.
+    **RULED: the TEST re-establishes the tenant around the read and the command is not changed.**
+    `Tenancy::forgetAll()` is deliberate in a scheduled sweep that walks every owner and every
+    business — it must leave no ambient identity behind — and softening it to a save-and-restore so
+    a test reads more conveniently would be changing production code to suit a test *and* would make
+    a full-tenant sweep look safe to call from inside a tenant context. ⚠️ **The shape was already in
+    this lane and the brief departed from it:** `X-211/Console/DetectOverdueReceivablesCommand.php:36`
+    carries the identical `Tenancy::forgetAll()`, and every post-command database read in
+    `DetectOverdueReceivablesCommandTest.php` (`:67-84` is the worked example) is wrapped in
+    `Tenancy::actingAs((int) $business->id, function () {…})`.
+    ⚠️ **Why four green assertions in that very test could not see it:** every assertion the file had
+    before MONEY-124 — `:43`, `:54`, `:55` — is an `Event::` assertion, which touches no database at
+    all. **The test had no database read after the command until this wave added one**, which is
+    ruling 68's *a test that cannot see the defect is not the test that proves the fix* applied to a
+    whole file rather than to one fixture. The lane-wide sweep is small and is recorded so it is not
+    re-derived: exactly **two** commands clear the caller's tenant (`X-199`'s and `X-211`'s), and of
+    the twelve `Artisan::call`/`->artisan(` lines in the eight modules' tests, only this one is
+    followed by an unwrapped database read.
+    ⚠️ **The proof was void and its tell was in the report** (ruling 72): the RED line quoted for
+    item 2 was `Expecting null not to be null .`, an `expect()->not->toBeNull()` message, while the
+    committed test errors with `Attempt to read property … on null` **before** reaching any
+    assertion — so the message shape quoted is one the committed assertion cannot emit, and no
+    re-run was needed to see it. ⚠️ Per the
+    46/49/50/62/66/75/82/86/94/104/106/113/116/146/153/167/175/183/189 precedent the miss is the
+    supervisor's — the brief dictated both lines — so MONEY-125 carries its own two dispatches and
+    MONEY-124's cap is untouched. It is the ruling 66/75/82/92/94/106/118/147/153/175/183/189/192
+    family a **nineteenth** time, with a new instrument: **a brief that dictates an assertion has
+    dictated the ambient state that assertion runs in**, and ambient state is the one thing a diff
+    does not show.
