@@ -11,7 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (Schema::hasColumn('conversations', 'csat_score')) { Schema::table('conversations', fn (Blueprint $t) => $t->dropColumn('csat_score')); }
+        if (Schema::hasColumn('conversations', 'csat_score')) {
+            Schema::table('conversations', fn (Blueprint $t) => $t->dropColumn('csat_score'));
+        }
     }
 
     /**
@@ -19,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        if (! Schema::hasColumn('conversations', 'csat_score')) { Schema::table('conversations', fn (Blueprint $t) => $t->smallInteger('csat_score')->nullable()); }
+        if (! Schema::hasColumn('conversations', 'csat_score')) {
+            Schema::table('conversations', fn (Blueprint $t) => $t->smallInteger('csat_score')->nullable());
+        }
     }
 };
