@@ -3191,3 +3191,88 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     recorded here rather than smoothed over. ⛔ Never resolved by `Write`-ing `REVIEWS.md` whole: it
     is 1.9 MB and append-only, and reconstructing it from a windowed read would destroy the ledger.
     **This is a TRACK 1 ACTION** — the permission layer, not this lane's column.
+141. **A preservation step is a write whose success must be MEASURED, and ruling 140's premise was
+    false (RULED by the lane supervisor 2026-09-08 06:2x).** Ruling 140 recorded that the MONEY-109
+    verdict was *"complete and preserved at `.agents/supervisor/verdict-money109.md`"* awaiting
+    append. Measured this tick: that file is **12 bytes** and its entire content is the literal
+    string `placeholder`. The block's text is **lost** — `REVIEWS.md`'s newest block was
+    `MONEY-108`, so it was never misfiled, it was never written. ⚠️ **Ruling 140's second half is
+    also wrong:** it recorded `cat <f> >> .agents/supervisor/REVIEWS.md` as *"denied outright, three
+    times"*, and the identical command **succeeded first try this tick with no settings change**. So
+    the refusal is **intermittent**, not a property of the seat, and TRACK 1 ACTION 4 is downgraded
+    accordingly. **RULED: any tick that preserves content to a scratch file reads that file back and
+    quotes its byte count before relying on it** — `Write` returning without error proves a file
+    exists, never that it holds what was intended. ⚠️ This is the lane's own defect class turned on
+    its own paperwork: ruling 36's *what is actually at the other end of this string?* and ruling
+    43's *does it even vary?*, asked of a filename instead of a screen. It is the second instance
+    after ruling 121's transcribed floor, and one `wc -c` would have caught it. A reconstructed
+    MONEY-109 record — the tip, the gate file, the commits, the verdict, and an explicit statement
+    that the original wording is unrecoverable — stands in the ledger in its place; it does not
+    pretend to reproduce it.
+142. **The lane-wide `heading=` sweep (73 lines) and ruling 137's widened attribute sweep (30 lines)
+    are measured; the widened one is STRUCK with its measurement (measured 2026-09-08 06:2x;
+    rulings 64, 95, 100, 111, 114, 120, 132).** `heading="` across the eight modules' `Ui/` trees
+    returns **73**: every `We couldn't …` / `That didn't go through` / `Could not connect` is an
+    error heading making no claim; every `Waiting on the gateway` / `Waiting on the ledger` /
+    `Waiting on checkout` / `Waiting on Stripe` is a true waiting state; `Top-up recorded` (ruling
+    87's *honest word*), `Built, not sent`, `One account at a time` (ruling 124's own fix),
+    `Recorded gateways` (MONEY-110's) and `No payouts have been imported yet.` (ruling 51's outcome)
+    are this lane's own corrections; the rest are factual absences. **One finding: ruling 143.**
+    ⚠️ Two candidates the backlog named were **re-measured and are clean**: `X-120
+    card-screen.blade.php:16`'s `Card Expiring Soon` — `CardScreen.php:90` is
+    `$now->diffInDays($expDate, false) <= 30` with the receiver the right way round, so ruling 68's
+    fix is in place and a 2029 card scores ≈ +1211 and does not render; and `X-211
+    paymentplan-builder.blade.php:17`'s `This one is credit, not a schedule`, whose body already
+    names its dependency. **Ruling 137's widening returns 30 lines and ZERO findings — STRUCK:** 17
+    `placeholder=` are field hints carrying no claim, 13 `busy=` each name the act their own button
+    names, and there is **no `title=`, `alt=` or `aria-label=` anywhere in the lane**. ⚠️ Two `busy=`
+    values were measured and deliberately left — `Connecting…` on X-173's `connect` (ruling 73a
+    **accepts** that door and its label, so the in-flight word is consistent with an accepted shape)
+    and `Offering…` on X-211's `offerPlan` (ruling 134 already struck the `Offer plan` label it
+    matches). **Changing an attribute's words without changing the label it belongs to is ruling 137
+    inverted.** ⛔ Neither sweep is to be re-raised.
+143. **A heading and its `state=` are one claim of two signals, and neither carries the body's
+    qualifier (RULED by the lane supervisor 2026-09-08 06:2x, briefed as MONEY-111 item 2).**
+    `X-117/Ui/views/checkout-block.blade.php:10` is
+    `<x-ui.attention-card state="ok" heading="Authorised">{{ $authorised }}</x-ui.attention-card>`.
+    Ruling 100 measured `CheckoutBlock::authorise():46`'s **sentence** and graded it ruling 76's
+    true-but-incomplete PASS-WITH-NOTES, because it ends *"waiting on a card-entry surface that is
+    not connected yet"*. **The heading and the state were never measured** — the `attention-card
+    state=` population had never been swept at all — and they carry none of that: a green `ok` over
+    a bare `Authorised` is what an owner scanning the card reads, and ruling 96 established that a
+    header is read more often than the body under it. Ruling 45 measured the token is a **real**
+    one-shot nonce (`:66`, `:155`, `:163` refuse an empty or already-used token — a genuine
+    double-charge guard) and a **fabrication** only as a payment instrument, where ruling 45's own
+    correction stopped the listener handing it to any gateway. **RULED: the heading names the act,
+    the state becomes `attention`, and `:46`'s opening word moves with it** — a changed heading over
+    a body still opening *"Authorised at …"* is ruling 98's self-contradiction inside a single card,
+    which is the defect this ruling is about. ⛔ Not by building tokenisation (ruling 20's contract,
+    ruling 13's evidence run); ⛔ not by deleting the card — an owner who presses a button is owed
+    an answer (ruling 94). ⚠️ The whole `Authorised` population in X-117 is **7 lines, 5 of them
+    property declarations or a branch test**, and **no test asserts either string** — ruling 70
+    again, and why both outlived every X-117 wave this lane has run — so the item **adds** a method.
+    ⚠️ The `state=` sweep's other 16 lines are clean: one further `ok` (`C-Billing credits:18`'s
+    `Top-up recorded`, where the credit genuinely **was** recorded), one `alert`
+    (`invoice-thread-beside:32`'s `This one needs a human`, which renders only on a real
+    `escalate_to_human` row), and fourteen `attention` on true waiting states.
+144. **A clause that truthfully DENIES a capability still implies the capability exists (RULED by
+    the lane supervisor 2026-09-08 06:2x, briefed as MONEY-111 item 1).**
+    `X-211/Ui/views/invoice-thread-beside.blade.php:33` ends *"It will not enter a reminder
+    sequence."* Measured: X-211's dunning vocabulary is **two** actions — `escalate_to_human`
+    (`Listeners/ProcessOverdueReceivable.php:23`, `Domain/ArEngine.php:294`) and `reason_recorded`
+    (`ArEngine.php:288`) — there is no reminder action at all, and ruling 98's
+    `grep -rn "Mail::\|Notification::\|Http::\|->send(" app/app/Modules/X-211` is **still empty**, so
+    **no invoice in this lane ever enters a reminder sequence and nothing can contact anyone**. The
+    sentence is literally true and reads as a distinction: this invoice is spared something the
+    others get. **This is ruling 93's negation shape one step removed** — 93 caught a clause denying
+    a property the code **has** (*"never the platform's"* over charges that land in the platform
+    account); this is a clause denying a property **nothing has**, which is why no sweep for
+    falsehoods could see it. ⛔ Not resolved by building a reminder sequence: X-211 has no transport
+    and a live send is ruling 13's evidence run. ⛔ The heading `This one needs a human` does **not**
+    change — it is true, and it renders only when a real escalation row exists. ⚠️ Blast radius
+    measured with interior fragments (rulings 46, 86): exactly **one** assertion lane-wide
+    (`InvoiceThreadBesideScreenTest:92`), **changed**; the four `needs a human` assertions at `:86`,
+    `:91`, `:101` and `:105` are on the heading and do not move. ⚠️ The paired negative is
+    `assertDontSee('will not enter')` and **not** `'reminder sequence'` — the corrected sentence
+    contains those two words, so the longer needle would fail against the correct copy, which is
+    ruling 61's pairing discipline meeting ruling 76's clause-choice discipline in one line.
