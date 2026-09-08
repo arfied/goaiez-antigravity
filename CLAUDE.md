@@ -1870,3 +1870,53 @@ an open row genuinely has 0 minutes *so far*, which is true rather than wrong.
 it finds no open one (a stray `completed` mints a zero-length entry — the very outcome the design
 prevents, arriving through the fix); and closing **every** open entry for the person rather than the one
 for that `job_id`.
+
+## ⛔⛔ Trap added 2026-09-08 16:2x — a brief that pre-declares *N* WRONG FIXES owes *N* MUTATIONS
+
+The ruling directly above named **two** wrong fixes. PB-133's brief then specified **one** mutation
+(`closeJobWindow` returns `null` unconditionally). It ran clean and reddened exactly the one test
+predicted — which also proved, per PB-129, that the new test duplicated nothing.
+
+⛔ **But that mutation cannot touch the regression arm, because the regression arm asserts `null`.** The
+brief called that arm *"the one the wave exists to protect"* and then handed it a mutation that makes
+it pass **more easily**. Its real mutation is wrong fix #1, and it was never run.
+
+⭐⭐ **Working that through found the actual hole, and it is wrong fix #2.** Delete
+`->where('job_id', $jobId)` from `TimesheetComputeAction.php:71` and trace all four X-168 tests: the
+defect arm has one open entry so it is still found; both legs of the regression arm have no open entry
+so both still return `null`; the anchor test never calls the method. **Every one stays green.** The
+predicate deciding **which technician's window gets stamped** — the clause the brief itself flagged as
+dangerous — is asserted by nothing.
+
+⛔ **Ruled a NOTE, not a `BLOCK` and not the coder's shortfall.** The code is *correct*: the filter is
+there and is right. Nothing was weakened, no assertion deleted, no CHECK changed. The coder built what
+was specified and ran the mutation it was given. **Twelfth consecutive wave whose only shortfall traced
+to the brief.**
+
+⭐ **The generalisation: a pre-declared wrong fix is a claim that one specific line-level change is
+dangerous. Declaring it and never mutating it is asserting a risk and then not measuring it.** Count
+the hazards a brief names, count the mutations it specifies, and require either equality or an explicit
+sentence saying which hazard is being left unproven and why.
+
+⛔ **Distinct from the PB-125 insertion reconciliation, and the distinction is the useful part.** That
+one compares a **diff** to a brief, so it structurally cannot see what the brief failed to ask for
+(PB-129's hole). This one compares a brief's **mutation budget** to the brief's **own** hazard list —
+**both numbers are written in the same document before the wave starts**, so it is checkable at
+briefing time, costs nothing, and has already been wrong once.
+
+⭐ Consequence, applied as PB-134: **pin the unpinned clause before wiring a producer to it.** Same
+reasoning that made the close path a precondition — *never wire a producer to a seam whose defining
+predicate no test can falsify*. The listener moved from PB-134 to PB-135 to buy that.
+
+## ⚠️ Trap added 2026-09-08 16:2x — "phpstan passed" is not evidence about nullable flow
+
+Measured while clearing a PB-133 candidate: `closeJobWindow:88` does `Timesheet::find($entry->timesheet_id)`
+— a `?Timesheet` — and passes it straight into `updateTotalHoursAndDispatch(Timesheet $timesheet)` at
+`:94`. **phpstan returned `{"result":"passed","errors":0}`** on that call, so this checkout's Larastan
+level does not check nullable-argument flow.
+
+⛔ The finding itself is **latent + no wrong value = RECORD** and is not work: `timesheet_id` is a
+foreign key and the only writer of `TimesheetEntry` is `recordJobWindow`, which creates the parent
+first, so no defined input reaches it. ⭐ **The durable half is the instrument's limit** — a green
+phpstan in this repo says nothing about a nullable reaching a non-nullable parameter, and a future
+review must not quote it as though it did.
