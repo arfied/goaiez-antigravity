@@ -155,9 +155,14 @@ final class FormCaptureAction
 
     /**
      * A payload value that is blank or whitespace was not given (R245, 2026-09-05).
+     * A value which is not a scalar was not given either.
      */
     private function given(mixed $value): mixed
     {
+        if (! is_scalar($value)) {
+            return null;
+        }
+
         return is_string($value) && trim($value) === '' ? null : $value;
     }
 }

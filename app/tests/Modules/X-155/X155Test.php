@@ -1487,4 +1487,69 @@ class X155Test extends TestCase
         $this->assertSame($resA['person_id'], $resD['person_id'], 'four submissions on one phone must resolve to one contact');
         $this->assertNotNull($resA['person_id']);
     }
+
+    public function test_an_array_phone_is_not_a_contact_detail_and_the_submission_is_captured(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Array Phone Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Array Phone Form',
+            'slug' => 'array-phone-form',
+            'steps' => [],
+            'schema' => [],
+        ]);
+
+        $res = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'Alice',
+                'phone' => ['+15550001111'],
+            ]
+        );
+
+        $this->assertEquals('captured', $res['status']);
+
+        $submission = FormSubmission::find($res['submission_id']);
+        $this->assertNotNull($submission);
+        $this->assertEquals(['+15550001111'], $submission->payload['phone']);
+
+        $person = Person::find($submission->person_id);
+        $this->assertNotNull($person);
+        $this->assertNull($person->phone);
+    }
+
+    public function test_an_array_phone_on_a_spam_submission_is_still_stored_and_flagged(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Array Phone Spam Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Array Phone Spam Form',
+            'slug' => 'array-phone-spam-form',
+            'steps' => [],
+            'schema' => [],
+            'honeypot_field' => 'website_url',
+        ]);
+
+        $res = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'website_url' => 'http://spam.ru',
+                'phone' => ['+15550002222'],
+            ],
+            ipAddress: '194.55.22.1'
+        );
+
+        $this->assertEquals('rejected', $res['status']);
+        $this->assertEquals('honeypot_triggered', $res['reason']);
+
+        $submission = FormSubmission::find($res['submission_id']);
+        $this->assertNotNull($submission);
+        $this->assertTrue($submission->is_spam);
+    }
 }
