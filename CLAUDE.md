@@ -4024,6 +4024,67 @@ Watch for: <the trap that applies, by name>
   ⛔ Do not re-brief the signature removal, the delegation, the seam, the live-path test or the ledger
   row. Then wave 132 takes the live list, `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **6** rows
   at tick 242, tick-227 membership — re-run and never inherited. Stub pile across the thirteen: **10**.
+- ⚠️⚠️ **A screen can pass a real `Livewire::test()` with real data and still be unreachable with data in
+  production — the discriminator is who writes the component's INPUT property, and a test is allowed to
+  write it.** Wave 131 built `PoolInventory::render():19`'s `->groupBy('area_code')`, proved it with a
+  complete two-mutation pair, and closed tick 242's dead-column finding. Measured at tick 243, the screen
+  still shows **"Pool empty."** on both of its routes: `#[Locked] public int $businessId = 0;` with **no
+  `mount()`**, `grep -rn "businessId" app/app/Modules/X-188` returning no writer,
+  `grep -rn "PoolInventory\|pool-inventory\|x-188::" app/app` outside the module **empty** so no parent
+  blade passes one, and `routes.generated.php:12,20` mounting the component bare. **The test is the only
+  caller in existence that supplies one.** This is the tick-212 built-but-unwired shape reached through a
+  *property* rather than a method, and the tick-204 radius rule is what hides it: *"radius 1 is forced
+  when only one test can reach the code"* and *"nothing in production can reach it"* are the same
+  measurement. ⭐ It is a module-wide convention, not one wave's slip — `YourNumberCard.php:14` and
+  `ParkList.php:14` are identical — so **grade the docblock, not the build**: `X188Test.php:113`'s
+  *"asserting on the Livewire screen proves the capability is actually delivered to the tenant"* is a
+  delivery claim in the one record that outlives every `REPORT.md`. **The one command before crediting
+  any screen test is `grep` for a writer of the property the test passes in.**
+- ⚠️⚠️ **A clause in a brief that names what is FORBIDDEN is answerable by whatever sits adjacent to it,
+  and sixteen outings of the artifact question now say so — switch to a POSITIVE requirement.** Wave 128
+  answered it with a reporting convention; I added *"not a reporting convention where both are right"*;
+  wave 131 answered it with a reporting convention again, with that clause in the brief verbatim, and
+  said so itself (*"technically 'wrong' … when a fluent chain fails"* — `"line":115` is the declaration
+  line). Every fix since wave 112 has closed one escape and opened the next, which is the right
+  direction and is why the question is kept; but the accumulated wording is now all prohibitions. **Ask
+  for the artifact's FIELD, the value that field holds, and the value your own text holds for the same
+  field.** A field-and-two-values answer cannot be satisfied by a convention, because a convention
+  produces one value and no second one to name.
+- ⭐ **Byte-identity between two per-wave artifacts convicts only when the two names stand for two
+  RUNS.** `w131-baseline.log` and `w131-pest-raw-green.log` are byte-identical (1508 bytes,
+  `duration_ms 108818`, same mtime to the millisecond) because one file was deliberately copied to two
+  names — not the wave-88b/95/105 race, where the tell is two *runs* sharing a millisecond. The residual
+  defect is the wave-112 one: a name asserting a gate log holding a raw object, so the baseline gate's
+  §1–§6 are simply not on disk and `ls scratch/` shows a wave keeping artifacts it does not have.
+- ⭐ **A two-assertion test's complete proof is a `−1 · −0` pair, and it is the cheapest complete form
+  there is.** Wave 131: green `8389`; M1 (the module's `groupBy` key) → `8388`, A1 fails on its own
+  terms and A2 is unreached; M2 (the blade's `{{ $n->phone_number }}`) → `8389`, A1 executes and passes
+  and A2 fails on its own terms. The largest subtraction is `−1` on two assertions ⇒ A1 is the first
+  covered ⇒ nothing forgotten (tick-214 coverage rule). ⭐ Both messages carried the **module's own
+  rendered output** — `Area Code: assigned` and `<li>9 (assigned)</li>` — so the tick-200 exception held
+  for a third and fourth time and the `SITE:` field was corroboration rather than the only evidence.
+- **Suite baseline, measured by this column at tick 243 on tip `c8508dc1`, clean tree — `tests 1940 ·
+  passed 1937 · assertions 8389 · failed 1 · errors 2 · duration_ms 109417 · incomplete 3 · risky 1`,**
+  the standing three by **identity** (`X01Test::test_g2_76_unified_inbox_header`, a `TRACK 1 ACTION`,
+  plus the two `TwelveJourneysTest` harness errors). Against tick 242's `8388`: `+1`, exactly one
+  `assertEquals` replaced by two `assertSee`s. Four runs of this surface gave four distinct
+  `duration_ms` — `108818 · 112647 · 110693 · 109417`.
+- **Backlog at tick 243 — wave 132 is `PoolInventory`'s tenant wire and `G18-10`'s missing negative;
+  one screen, no second module.** RULED. The capability is *"**the tenant's own** registered numbers by
+  area code"* and wave 131 proved only its second half: the grouping is built and mutation-proven, *the
+  tenant's own* is unasserted, and no production path hands the screen a tenant (NOTE above). In lane
+  (`OWNER.md` 2026-09-07 09:5x item 2), real production entry point, no vendor, no boundary crossed —
+  `Tenancy` is a root service, so `BoundaryStage`'s text is not engaged (the `PixelKeys` precedent,
+  tick 232). ⛔ `YourNumberCard` and `ParkList` share the shape and are **not** in this wave (ticks 218,
+  220, 221, 222, 223 — a pair handed over as one instruction comes back as one shape). ⛔ No
+  `UNRESOLVED`, no `markTestIncomplete`. ⛔ The three house `mount()` shapes — `X-122/Ui/ActionLog.php:27`
+  (`Tenancy::idOrFail()`), `X-105/Ui/PipelineBoard.php:26` (`Tenancy::id() ?: 0` then `abort(403)`) and
+  `X-110/Ui/Today.php:28` (an argument with `Tenancy::id()` as fallback) — go over as raw output with
+  the conclusion withheld. ⚠️ The wave-97/tick-200 hazard is live: `PoolInventoryScreenTest.php:23,34`
+  call `Livewire::test(PoolInventory::class)` with **no** `businessId`, so a new tenant requirement can
+  redden them, and the fix is never to edit a standing test. ⛔ Wave 131's two mutations are spent.
+  Then wave 133 takes the live list, `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **6** rows at
+  tick 243, tick-227 membership — re-run and never inherited. Stub pile across the thirteen: **10**.
 
 ## Style
 
