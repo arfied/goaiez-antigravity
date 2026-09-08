@@ -3563,6 +3563,89 @@ Watch for: <the trap that applies, by name>
   `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **6** rows at tick 236, membership unchanged since
   tick 227. Re-run it; never inherit it.
 
+- ⚠️⚠️ **A mutation is CODE, and the tree it lands in has guards — before endorsing one you have not
+  run, read the STATEMENT it inserts and ask whether it can execute where it lands.** Tick 236 endorsed
+  wave 127's Mut 7 in the words *"the assertion reads B, and Mut 7 writes the row to B, so it reddens on
+  its own terms and needs no change"*, on the rule I wrote in the same block (*a per-mutation account is
+  a claim about an assertion's subject; the price is the two lines the assertion is written on*). **The
+  two lines were not the price. The mutation's own line was.** Measured at tick 237: Mut 5 and Mut 7 both
+  insert a query against the tenant-scoped `App\Models\Business` **between**
+  `ChatStartController.php:18` (`Tenancy::forgetAll()`) and `:26` (`Tenancy::set(…)`), so each throws
+  `TenantNotResolved` at `TenantScope.php:45` before it can write anything — and each still reddens its
+  test, on the *earlier* `assertStatus` line, at radius 1, with a message that looks like a clean proof.
+  ⛔ So five of the seven assertions in `ChatDoorTest` are proven and **B1 (`:52`) and C2 (`:74`) are
+  not** — the two absence assertions on an unauthenticated public door that writes into an RLS tenant
+  table. Under Mut 5, B1 executed and **passed**: a true wave-90 survivor. This is neither the wave-81
+  shape (a throw inside the code under test) nor the wave-91 shape (a mutation in the test body) — it is
+  a **mutation that cannot execute at its own site**, and the tells this file already has all read green
+  on it. ⭐ The coder disclosed it against my explicit instruction to change nothing, which is the shape
+  thirty waves have asked for; credit that loudly.
+- ⭐ **When every assertion in a file has a DISTINCT failure message, the message names the failing
+  assertion and the `assertions` subtraction is corroboration, not evidence.** Wave 127 lost six of seven
+  raw objects to `pest-raw-last.log`'s shared name and declined the field honestly; derived from the
+  messages alone at tick 237 the seven subtractions are `−2 · −1 · −0 · −0 · −0 · −1 · −1`, and the one
+  surviving object (`8383 → 8382`) matches its derivation exactly. ⛔ Do not generalise past a file whose
+  messages are distinct — Mut 6 and Mut 7 already print the identical `[201] but received …` line, and
+  two `assertStatus(201)` calls in one test collapse the method outright.
+- ⚠️ **The "standing red set" is not a constant — two of its members flap on box concurrency, and the
+  right comparator is the wave's OWN baseline run, never a number recorded a day earlier.** Wave 127's
+  green is `tests 1938 · passed 1935 · assertions 8383 · failed 1 · errors 2`, three reds by identity:
+  `X01Test::test_g2_76_unified_inbox_header` (the inherited noun lint, `TRACK 1 ACTION`) and the two
+  `TwelveJourneysTest` harness errors. Tick 232 recorded `1933 · failed 1 · errors 4 · assertions 8376`
+  and called it *"the standing five by identity"* — it was three standing reds plus two flappers. Muts 3
+  and 4 each carry a fourth red, `a_deliberately_corrupted_backup_fails_the_restore — SQLSTATE[42501]
+  … permission denied to terminate process`, in **two of eight** otherwise identical runs; no controller
+  mutation can cause a `pg_terminate_backend` refusal and this lane's ledger already rules it concurrency
+  (`REVIEWS.md:900`, `:1613`, `:19580`; owner ruling 12). ⛔ **Those two runs are radius 1, not 2** — grade
+  a wide radius by *what* broke the sibling (wave 87). REV-216's identity method stands; treating the
+  *set* as constant is what was wrong.
+- ⚠️ **`coder-bin/git`'s restore guard refuses the narrow form and admits the loose one.** Measured at
+  tick 237: `:78` refuses any `checkout|restore` whose argv contains `--`, `:79` refuses one with `$# > 2`
+  — so `git restore <one-path>` (two tokens) **passes with no flag** while `git restore -- <one-path>`,
+  the explicit shape the owner's `--allow-restore` ruling is built around, is refused. Wave 127 reverted
+  seven mutations through the hole without knowing it. ⛔ **RULED at tick 237: this lane's mutation
+  harness reverts with `git apply -R scratch/mut-<n>.patch`** — guard-independent, same verb as the
+  forward apply, and a successful reverse-apply is itself proof the tree is exactly back. Filed as
+  `TRACK 1 ACTION 2`; naming a hole is how it gets closed, so stop depending on it first.
+- ⚠️ **A `GATE:` field can stitch two real runs together and describe neither.** Wave 127's read
+  `{"tool":"pint","result":"passed"}` (from `final-gate.log`, clean tree, whose own verdict is
+  **`gates green.`**) followed by `⛔ a gate failed above.` (from a `--tests` run, red on the standing
+  three). Both halves real output; the pair is not a verdict on anything. Wave 99c's defect with the
+  halves swapped. **Ask for the object and the verdict line from the SAME run, by name.**
+- ⭐ **`bin/supervise.sh --tests` is the only lock probe and it is a CHEAP one — 9.5 minutes, measured.**
+  Wave 127 waited `09:00:50 → 09:10:21` and got real numbers. Ticks 234 and 235 held the lane on a `ps`
+  line that cannot see a `flock` (tick 236), and two briefs of mine declined a suite on it. `TRACK 1
+  ACTION 1` is narrowed to hygiene: `bin/supervise.sh:293`'s wait message names the lock file and no
+  holder. **The lock was never the blocker; the diagnosis was.**
+- ⚠️ **A wave's own tooling belongs in `scratch/`, and a `.py` at the repo ROOT is a wave that stepped
+  outside it.** Wave 127's `patch_report.py` (repo root, untracked, mtime equal to `REPORT.md`'s to the
+  second) is the script that rewrote answer 6 into the sentence *"`git status --porcelain` is empty"* —
+  self-refuting, and the one piece of litter a `git add -A` would have carried, since `scratch/` is
+  gitignored and the root is not.
+- **OWNER RULINGS 2026-09-07 09:5x, applied at tick 237.** (i) `kill` now refuses a cross-checkout target
+  — this lane RULED the same at tick 215. (ii) `--allow-restore` exists but **this lane's launcher cannot
+  pass it** (`launch-coder.sh:34` takes only `--coder`, `--allow-merge`, `--allow-harness`); brief no
+  restore. (iii) **#10 module annotations WIN over the plan, permanently** — record the divergence, never
+  reconcile it; this retires REV-227's `G16-21` `Owner:` tension. (iv) **#11 X-221/222/223's 37 capability
+  rows are WITHDRAWN**; none is in the thirteen. (v) ⭐ **#2 J1 and J2 are BUILD items and Track 1 assigns
+  them to this lane, with X-118 and X-188 for the duration** — and they are **two of the three reds in
+  this lane's own suite**. The three defects the owner names are all app code: signup fabricates
+  `+1512555 0xxx`; `NumberPoolManager::assignLiveNumber()` scopes the pool lookup
+  `where('business_id', $businessId)` to the tenant being created, so it can never draw; and signup writes
+  `number_pool` while the harness reads `phone_numbers`. Buying real numbers is deferred. ⛔ **Do not open
+  `--allow-harness` for it** — the defects are outside `JourneyHarness.php`, and tick 215 RULED the flag is
+  opened for the run that needs it and never as a standing flag.
+- **Backlog at tick 237 — wave 128 finishes the ChatDoor mutation set, wave 129 opens J1/J2.** RULED.
+  **128 is evidence only, no production code and no change to any assertion**: `mv patch_report.py
+  scratch/`; a harness that reverse-applies, copies `pest-raw-last.log` to a per-run name **only after
+  `supervise.sh` has exited**, `--check`s every patch up front and ends on a clean tree; and two
+  mutations that make `ChatDoorTest.php:52` and `:74` fail **on their own messages**. ⛔ **Muts 1, 2, 3, 4
+  and 6 are spent — never re-brief them** (tick 191). The requirement went over as a *property* and the
+  four measurements as raw output with the conclusion withheld (tick 214, now 4-for-4). **129 is J1/J2**,
+  and it is a measurement wave first: which of the three named defects is real on this tree, and whether
+  any of it reaches the harness. The live proposal list stays `grep -rn "BUILD PROPOSAL:"
+  app/tests/Modules/` — re-run, never inherited.
+
 ## Style
 
 Terse and factual. Cite rules and traps by name — "that is the One Rule",
