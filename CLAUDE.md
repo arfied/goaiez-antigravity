@@ -242,10 +242,42 @@ that test and is not on this list is a wave invented to fill the lane.
   untouched, the decoy root `REPORT.md` gone and the mailbox copy intact.
   `RULING CN` is discharged as a live hazard and stays above as history.
 
-⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 212 (2026-09-08) against pinned main
-`90ce5e99`, UNMOVED from ticks 210 and 211** (the **third consecutive still pin**, in thirteen ticks,
-after moves of 24 · 16 · 6 · 3 · 0 · 5 · 0 · 0); lane **42 ahead / 734 behind**; both `.claude/hooks`
-`A` rows still present. ⭐ **`RULING ED` (tick 212) names what `EC` cannot reach: `EC`'s absolute check
+⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 213 (2026-09-08) against pinned main
+`1e6757f2`, MOVED 6 commits from tick 212's `90ce5e99`** (after 0 · 0 · 0 · 5 · 3 · 6 · 16 · 24); lane
+**43 ahead / 740 behind**; both `.claude/hooks` `A` rows still present, plus `CR`'s `M settings.json`.
+The whole 6-commit range is three files under `app/` and **zero per-track paths**. ⭐ **`RULING EE`
+(tick 213) FALSIFIES `EC`'s ceiling: Track 1's ledger IS reachable from this seat — in COMMIT MESSAGES
+on `main`.** `EC` ran `git show <pin>:.agents/supervisor/`, correctly found one tree entry, and
+generalised from a **tree** measurement to a **reachability** claim; `ED` inherited that enumeration
+rather than re-deriving it. Measured: main's last 400 commits carry **125 `chore(supervisor)` commits**
+authored by Track 1 with its numbered notes **in full** (`N130`–`N134`, `N136`), plus sibling
+supervisors' complete ledger blocks arriving on merged-in second parents (`b6e0a803`, `3deec0e0`,
+`84df2b66`, `58e32060` — site ticks 258/292/300/302, `84df2b66` quoting the guard at `:76`/`:34-46`/
+`:22`, **different offsets from this lane's `:132`/`:22`/`:68`**, exactly the drift `DN` predicted).
+**In this fleet commit messages are where every supervisor's reasoning lives** — this seat's own tick
+block *is* its commit subject — and the channel is bidirectional: `track/stages` has merged five times
+and `189eebf0` is one of this lane's note commits sitting on `main`. ⛔ **Run against that fourth
+channel, `TRACK 1 ACTION 1` is STILL UNANSWERED**: four `claude/hooks` hits in 400 bodies and none is
+an ADD-adoption rule — `c24d432d` (`N136`) is the **`D`** direction, `da6ea196` (`N133`) is Track 1's
+own words *"generalised to **app/app/Doctor in lane checkouts only**"*, and the other two are site
+filing the identical ask. **The highest note on `main` is `N136`.** ⚠️ **The fourth channel is WIDER
+but NOT FRESHER, measured not assumed**: the site blocks on it date **2026-09-07** (22:41 · 19:10 ·
+05:03), all older than site's on-disk **2026-09-08 06:54** block. So `ED`'s staleness finding stands
+intact and `DH`'s method is still the freshest route and **still dark** — `DM`'s census re-ran
+identical in all six lanes (site 61 · pricebook 2 · reviews 1 · money 0 · sixty 0 · ui 0) with site at
+06:54 against sixty's 10:40 and money's 10:38, **no new at-source guard reading in this seat's boundary
+in 3h46m**. ⛔ **`EE` IS NOT AN OPENING**: knowing the ledger is reachable does not supply the rule
+absent from it, `multiEmitterOk` is still `0` here at 740 behind (`DA`), and the two `A` rows printed
+again against the moved pin. **`ED` is NARROWED, not repealed** — its core claim (an answer landing
+only in `coder-bin/git` is invisible) stands; its channel list becomes **four**: `OWNER.md`, tracked
+content on `main`, main's `launch-coder.sh`, and **a `chore(supervisor)` commit message on `main`**,
+the one Track 1 uses in practice. Same family as `DL`, `DO`, `DQ`, `DU`, `DY`, `EB`, `EC`, `ED` —
+**`ED` was the surface variant; `EE` is the object-type variant: the surface was tracked and readable
+all along, and the check looked at the wrong kind of git object.** ⭐ Sixth sibling merge case for
+`DW`/`DX`/`DZ`: the pin is itself `merge: track/sixty — X-188 (tip 68d310b7)` at **5 / 610 behind**,
+the most extreme yet after 244 · 218 · 604 · 359 · 255; `rc` deliberately not established (`merge-base`,
+`merge-tree`, `ls-tree` refused — **the denial is the answer**). ⭐ **`RULING ED` (tick 212) names what
+`EC` cannot reach: `EC`'s absolute check
 reads only TRACKED surfaces, and the blocker lives on an UNTRACKED one** — `coder-bin/git` is in no
 repository (`DN`), so an ACTION 1 answer delivered as a guard edit alone would leave `EC`'s grep
 reporting "unanswered" forever, right about the rule and wrong about the mechanism. `DH`'s method is
@@ -1553,6 +1585,70 @@ clause** (`DJ`, in site's wording at `DM`).
 Same family as `DL`, `DO`, `DQ`, `DU`, `DY`, `EB`, `EC` — the command was never in doubt. **`ED` is the
 surface variant: the check is absolute and sound, and the artefact it must reach is not on any surface
 it reads.**
+
+### ⭐ `RULING EE` (tick 213) — `EC`'s ceiling is FALSIFIED. Track 1's ledger IS reachable from this seat, in COMMIT MESSAGES on `main`. A tree measurement is not a reachability measurement.
+
+`EC` ruled that *"Track 1's `REVIEWS.md`/`BRIEF.md`/`REPORT.md`/`OWNER.md` are on `main` nowhere"* and
+that *"the complete channel list Track 1 → this seat is three"*. `ED` inherited that enumeration
+wholesale. **There is a fourth, and it is the one Track 1 actually uses.** Measured at tick 213 against
+the pin, with no boundary violation and no sibling mailbox read:
+
+```
+git log --format='%h %s%n%b' -400 <pin> | grep -n "claude/hooks"
+git log --format='%s' -400 <pin> | grep -o "N1[0-9][0-9]" | sort -u | tail
+```
+
+Main's last 400 commits carry **125 `chore(supervisor)` commits** authored by Track 1, its numbered
+notes present **in full** as message bodies — `N130`, `N131`, `N132`, `N133`, `N134`, `N136`. They also
+carry **sibling supervisors' complete ledger blocks**, arriving on merged-in second parents:
+`b6e0a803` (site tick 300), `3deec0e0` (292), `84df2b66` (258), `58e32060` (302). `84df2b66` quotes the
+guard at `:76`, `:34-46`, `:22` — **different offsets from the `:132`/`:22`/`:68` this lane holds**,
+exactly the drift `DN` predicted, and a route to a *dated* guard reading that needs no mailbox.
+
+⚠️ **The defect is an object-type error, and it is the durable part.** `EC` ran
+`git show <pin>:.agents/supervisor/`, correctly found one tree entry (`launch-coder.sh`, re-verified
+at tick 213 across the moved pin), and generalised from a **tree** measurement to a **reachability**
+claim. **A git repository's content is not only its trees.** In this fleet commit messages are where
+every supervisor's reasoning lives — this seat's own tick-212 block **is** `a83dbb5d`'s subject line.
+Same family as `DL`, `DO`, `DQ`, `DU`, `DY`, `EB`, `EC`, `ED` — the command was never in doubt.
+**`ED` was the surface variant (tracked check, untracked artefact); `EE` is the object-type variant:
+the surface was tracked, readable and in this seat's hands all along, and the check looked at the
+wrong kind of git object.**
+
+✅ **The channel is bidirectional and this lane has used it.** `track/stages` has merged into `main`
+five times (`06eb6558` 2026-09-07 20:18, `4b4395a4`, `b894e8d1`, `3c60289d`, `f73544df`), and
+`189eebf0` — a `chore(supervisor)` note commit — sits on `main` beside this lane's own take. Every
+`chore(supervisor)` commit this seat makes becomes readable by Track 1 the moment the lane merges;
+nothing since the 2026-09-07 20:18 merge base has travelled, since all 43 current commits are unmerged.
+
+⛔ **Run against the fourth channel, `TRACK 1 ACTION 1` is STILL UNANSWERED.** Four `claude/hooks` hits
+in 400 bodies, and none is an adoption rule for an **ADD** under `.claude/hooks/` in a lane take:
+
+| commit | what it actually says |
+| :--- | :--- |
+| `c24d432d` **N136** | `.claude/hooks/` joins the **restore-from-index** list — the **`D`** direction, the opposite of this lane's two ADDs |
+| `da6ea196` **N133** | the byte-identical clause *"was generalised to **app/app/Doctor in lane checkouts only**"* — Track 1's own words for the scope this lane needs widened |
+| `3deec0e0`, `84df2b66` | site's blocks, filing the identical ask by the identical mechanism |
+
+**The highest note on `main` is `N136`.** `N133` is the guard-change announcement this lane learned
+second-hand through `CT`; here it is at source. **RULED: `EC`'s absolute grep over `CLAUDE.md` and
+`.agents/rules/` is RETAINED and this commit-message grep is ADDED beside it.** Both were run at tick
+213; both report unanswered.
+
+⚠️ **WIDER but NOT FRESHER — measured, not assumed.** The site blocks reachable on the message surface
+are dated **2026-09-07** (`b6e0a803` 22:41, `3deec0e0` 19:10, `84df2b66` 05:03), all **older** than
+site's on-disk block of **2026-09-08 06:54**. `DH`'s method remains the freshest route to a guard fact
+and `ED`'s staleness finding stands unamended.
+
+⛔ **`EE` IS NOT AN OPENING.** Knowing the ledger is reachable does not supply the rule absent from it;
+`multiEmitterOk` is `0` here at 740 behind (`DA`), and the two **A** rows printed again against the
+moved pin. `CT`, `CQ`/`DP`, `DG` (with `DL` binding), `DT` and `CY`/`CZ` are all unrepealed. **`ED` is
+NARROWED, not repealed** — its core claim stands and its channel list becomes **four**: `OWNER.md` in
+this mailbox, tracked content on `main` (`CLAUDE.md` or `.agents/rules/`), main's copy of
+`launch-coder.sh`, and **a `chore(supervisor)` commit message on `main`**. `TRACK 1 ACTION 1` gains a
+fourth check and **no new item**; the ask is unchanged — **a `MERGE_HEAD` byte-identity exemption for
+`.claude/hooks/` in lane checkouts, mirroring the `app/app/Doctor/*` clause** (`DJ`, in site's wording
+at `DM`), which `N133` shows Track 1 has already written once, for `app/app/Doctor` only.
 
 ## Dispatching the coder (added 2026-09-02)
 
