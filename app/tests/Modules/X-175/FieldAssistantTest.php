@@ -2,10 +2,13 @@
 
 namespace Tests\Modules\X175;
 
+use App\Modules\X163\Domain\PricebookEngine;
+use App\Modules\X163\Events\PriceRefusalFlagged;
 use App\Modules\X163\Models\PriceBookItem;
 use App\Modules\X175\Domain\FieldAssistantEngine;
 use App\Modules\X175\Models\FieldSuggestion;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
 class FieldAssistantTest extends TestCase
@@ -173,5 +176,126 @@ class FieldAssistantTest extends TestCase
         $this->assertSame(false, $resultProcedure['is_unconfirmed_price']);
         $this->assertArrayHasKey('response', $resultProcedure);
         $this->assertSame($verifiedAnswer, $resultProcedure['response']);
+    }
+
+    public function test_staff_asking_unconfirmed_price_is_refused_without_incrementing_count_or_dispatching_event(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Staff Refusal Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $serviceName = 'Water Heater Install';
+
+        $item = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => $serviceName,
+            'price_cents' => 120000,
+            'is_sample' => false,
+            'is_confirmed' => false,
+            'tax_rate_pct' => 0.0,
+            'refusal_count' => 0,
+        ]);
+
+        $engine = new FieldAssistantEngine;
+
+        Event::fake();
+
+        $result = $engine->ask(
+            businessId: $biz->id,
+            jobId: 101,
+            techPersonId: 202,
+            queryText: $serviceName,
+            isSamplePrice: false
+        );
+
+        $this->assertArrayHasKey('status', $result);
+        $this->assertSame('price_refusal_flagged', $result['status']);
+        $this->assertArrayHasKey('is_unconfirmed_price', $result);
+        $this->assertSame(true, $result['is_unconfirmed_price']);
+
+        $this->assertArrayHasKey('suggestion_id', $result);
+        $savedSuggestion = FieldSuggestion::where('business_id', $biz->id)->find($result['suggestion_id']);
+        $this->assertSame(true, (bool) $savedSuggestion->is_unconfirmed_price);
+
+        $item->refresh();
+        $this->assertSame(0, $item->refusal_count);
+        Event::assertNotDispatched(PriceRefusalFlagged::class);
+    }
+
+    public function test_staff_asking_sample_price_is_refused_without_incrementing_count_or_dispatching_event(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Staff Sample Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $serviceName = 'Furnace Tune Up';
+
+        $item = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => $serviceName,
+            'price_cents' => 9900,
+            'is_sample' => true,
+            'is_confirmed' => true,
+            'tax_rate_pct' => 0.0,
+            'refusal_count' => 0,
+        ]);
+
+        $engine = new FieldAssistantEngine;
+
+        Event::fake();
+
+        $result = $engine->ask(
+            businessId: $biz->id,
+            jobId: 101,
+            techPersonId: 202,
+            queryText: $serviceName,
+            isSamplePrice: false
+        );
+
+        $this->assertArrayHasKey('status', $result);
+        $this->assertSame('price_refusal_flagged', $result['status']);
+        $this->assertArrayHasKey('is_unconfirmed_price', $result);
+        $this->assertSame(true, $result['is_unconfirmed_price']);
+
+        $this->assertArrayHasKey('suggestion_id', $result);
+        $savedSuggestion = FieldSuggestion::where('business_id', $biz->id)->find($result['suggestion_id']);
+        $this->assertSame(true, (bool) $savedSuggestion->is_unconfirmed_price);
+
+        $item->refresh();
+        $this->assertSame(0, $item->refusal_count);
+        Event::assertNotDispatched(PriceRefusalFlagged::class);
+    }
+
+    public function test_customer_lookup_increments_count_and_dispatches_event(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Customer Lookup Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $serviceName = 'AC Recharge';
+
+        $item = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => $serviceName,
+            'price_cents' => 15000,
+            'is_sample' => false,
+            'is_confirmed' => false,
+            'tax_rate_pct' => 0.0,
+            'refusal_count' => 0,
+        ]);
+
+        $engine = new PricebookEngine;
+
+        Event::fake();
+
+        $result = $engine->lookup(
+            businessId: $biz->id,
+            serviceName: $serviceName,
+            channel: 'customer'
+        );
+
+        $this->assertArrayHasKey('status', $result);
+        $this->assertSame('refused', $result['status']);
+
+        $item->refresh();
+        $this->assertSame(1, $item->refusal_count);
+        Event::assertDispatched(PriceRefusalFlagged::class);
     }
 }

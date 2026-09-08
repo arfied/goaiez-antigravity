@@ -51,7 +51,7 @@ final class FieldAssistantEngine
             ];
         }
 
-        $lookup = app(PriceLookupAction::class)->handle($businessId, $queryText);
+        $lookup = app(PriceLookupAction::class)->handle($businessId, $queryText, 'staff');
 
         if (isset($lookup['status']) && $lookup['status'] === 'quoted') {
             $responseText = $lookup['service_name'].' is '.$lookup['formatted_price'].' from the pricebook';
