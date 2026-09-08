@@ -13731,3 +13731,482 @@ its shell was still running while it queued on the box-wide lock, which distingu
 265's fourth state (*died without its trap*, which writes nothing to `gate-runs.tsv` and is
 byte-identical there to a live queued gate). Every other measurement in the block was taken during the
 wait, and §7 was read last.
+
+## ⛔ A SEAM MUTATION REMOVES EXACTLY THE INPUT THE CLAIM IS ABOUT — a broader one satisfies the claim's own assertion by COLLATERAL ABSENCE, and still produces a convincing red (tick 309)
+
+Three rules already govern falsifiers: tick 245 the **polarity** (an absence assertion is falsified by
+making the feature unconditional), tick 267 the **site** (a mutation at a point two assertions share
+cannot distinguish them), tick 248 **reading the result** (an ordered test reports only its first
+failure). All three presume the mutation removes the right thing. SITE-181's did not.
+
+The ruling's claim was *"the endpoint carries the AGE SIGNAL to the gate."* My brief's mutation was
+
+```php
+payload: $request->only(['first_name', 'email']),
+```
+
+which drops `date_of_birth` **and `phone`** — and `phone` is the field the test's first substantive
+assertion keys on (`Person::where('phone', '+15550008181')->count()`). So under the mutation the capture
+proceeds, a `Person` **is** written, and that assertion still reads **0**, because the contact it would
+have matched carries no phone. It **passed**, the run advanced, and the red came from the *next*
+assertion (the `FormSubmission` count).
+
+⛔ **So the clause P-148 is actually about — a minor's CONTACT ROW — was never falsified**, in the wave
+whose whole subject was that clause. The minimal mutation is `$request->except(['date_of_birth', 'dob',
+'age'])` — measured at `FormCaptureAction:136` and `:140`, those are the three keys `isUnderEighteen`
+reads and there are no others.
+
+⭐ **The law, and it is the mutation-side twin of tick 267.** 267 governs a falsifier's *site*; this
+governs its **breadth**: **a seam mutation removes exactly the input the claim names and nothing else.**
+A mutation that removes more can satisfy the claim's own assertions by **collateral absence** — and it
+does not look broken, because it still produces a red, at a later assertion, with a coherent message and
+a reconcilable assertion count. Nothing in the report, the message, the count, the tree or any
+re-reading of the transcript says which assertion was *proven* and which was merely *survived*; only
+comparing the mutation's breadth against the claim's subject does, and that comparison is made once, in
+the brief.
+
+⚠️ **And it is tick 306's law read from the other side.** 306: *when a test asserts that something did
+NOT happen, check the FIXTURE makes it possible for it to happen.* Here the **mutation** removed the
+possibility. Same defect, two different levers, and the fixture half is the one anybody thinks to check.
+
+Twenty-eighth of the imprecise-brief family (208 the *evidence request*, 227 the *branch condition*, 235
+an *unread mechanism*, 236 a *presumed direction*, 237 an *existence question about an output*, 238 a
+*filing sentence*, 244 a *consequence inside a measurement*, 245 a *falsifier's polarity*, 247 an *output
+without its command*, 249 a *pass condition of "identical"*, 250 a *ruling's reasoning*, 254 *two
+selectors for one subject*, 262 a *one-directional stop*, 265 an *incomplete answer set*, 271 *two
+correct instructions composing wrong*, 274 the *wrong instrument*, 275 a *named delimiter*, 276 an
+*enumeration disagreeing with its summary*, 280 a *quoting defect*, 283 a *prohibition*, 286 a *stop
+condition's scope*, 292 the brief's *internal coordinate system*, 293 a *ledger digest*, 297 a *recalled
+ground value*, 301 *what goes in the ground-value list*, 302 a ground value's *grade*, 304 *which of a
+brief's two claims the stop protects*) — and the first turned on a **mutation's breadth**.
+
+⚠️ The three-branch enumeration was also short by the branch that fired: *RED at assertion #1* · *GREEN*
+· *NEITHER / an error* has no room for **RED at a different assertion**. The wave rounded it to
+"NEITHER", named the real cause in one sentence, and proceeded — tick 265's `OTHER — name it and say why
+none of the above fits` working through a branch that was not labelled that way.
+
+⚠️ Corollary for evidence requests: **say "assertion index WITHIN THE METHOD".** SITE-181's report said
+"#2" counting only the two zero-row assertions, where the method's own index is #3. Both numberings are
+natural, neither is wrong on its face, and the ambiguity costs a reviewer a re-derivation.
+
+## ⛔ A MULTI-FAILURE Δ CAN MIX ASSERTION FAILURES AND THROWS — and a thrown member contributes ONE LESS than an assertion failure at the same position (tick 309)
+
+Tick 291 gave the falsifier delta a closed form, tick 293 generalised it to a **sum over failing
+methods**, tick 292 ruled that a falsifier whose red is a **thrown error** has no assertion arithmetic.
+Tick 309 is the first Δ that needs all three at once, and 292's rule composes rather than exempts.
+
+SITE-181's mutation reddened **four** methods: green `assertions 250`, red **237**, Δ = **13**,
+`passed 45` of 49. Reconstructed in the supervisor seat from the file's own structure:
+
+| method | asserts | fires | contributes |
+| :-- | --: | :-- | --: |
+| `:1695 …posts_to_an_address_that_captures` | 9 | `:1759 assertNotNull($person)` — `phone` dropped, #5 | 4 |
+| `:1779 …honeypot_is_refused…` | 6 | `website_url` dropped ⇒ captured ⇒ `:1829 assertStatus(422)`, #2 | 4 |
+| `:1910 …array_valued_field…` | 5 | ⛔ **THROWS** at `:1965` — `$submission->payload['phone']` | **3** |
+| `:2142` the new test | 5 | `:2196 FormSubmission count`, #3 | 2 |
+
+4 + 4 + 3 + 2 = 13 ✓ · four failing = 49 − 45 ✓ · every quoted message is its method's first failure ✓.
+
+⛔ **The array member contributes `assertions − index of the last COMPLETED assertion`, not `assertions −
+index of the failing one`.** `assertSame(['+15559990001'], $submission->payload['phone'])` evaluates its
+**argument** before the assert call is entered, so the `ErrorException` fires with `assertSame` never
+having incremented the counter — where an assertion *failure* increments first and then fails (291). So
+a thrown member at position *k* contributes `n − (k−1)`, one more than an assertion failure at *k*.
+
+⚠️ A tick applying 291's form uniformly across four methods lands on **12** against a reported **13** and
+calls a correct transcript broken. 292 is right that a thrown red has no *index*; it still has a
+*contribution*, and the two facts read as contradictory until the increment order is stated.
+
+## ⛔ MAIN HAS REVIVED A CHECK THAT WAS MEASURING NOTHING — this lane's `boundary 6` is a DISABLED check's output, and nine of its imports are in the revived population (tick 309)
+
+`origin/main` gained `a42079bd fix(doctor): revive BoundaryStage's cross-module import check — owner
+ruling 2026-09-07, reserved question 6`. Read at source rather than inferred from its subject:
+
+```
+moduleOf()  '#^app/Modules/([A-Za-z0-9_]+)/#'   →   '#^(?:app/)?Modules/([A-Za-z0-9_-]+)/#' + strip '-'
+imports()   returns [module]                    →   returns [module, kind]
+run()       flags every cross-module use        →   `continue`s on kind ∈ {Events, Actions, Domain}
+```
+
+Its own comment: *"THIS RETURNED NULL FOR ALMOST EVERY MODULE, AND THE CROSS-MODULE IMPORT CHECK IS
+GUARDED ON `$module !== null` — so that check silently scanned nothing at all … Measured 2026-09-07:
+**81** cross-module `use` statements existed and the stage reported **0**. It was reported as a DEAD
+check and ruled for removal; it was BROKEN."* Two independent faults — a character class with no hyphen
+against directories named `X-102`, and an `^app/` anchor against Finder-relative paths that never carry
+the prefix.
+
+⭐ **Confirmed against this tree's live doctor**: `boundary 6` is `Enums/AiModel.php` hardcoding two
+model strings plus three `match()` default arms in C-Mail and C-Sms — **zero** cross-module import
+violations, in a tree full of them. **The count this lane has quoted in every block since tick 216 is a
+disabled check's output**, which is the a-lint-that-matches-nothing shape inside a sealed checker.
+
+Applying the revived rules by hand over the seven owned modules, **nine** imports enter the population:
+
+| file | import | crosses a LANE? |
+| :-- | :-- | :-- |
+| `X-157/Actions/EdgeDeployAction.php:8` · `:9` | `X103\Models\Page` · `PageVersion` | ✅ no — X-103 is ours (ruling 19) |
+| `X-176/Actions/SeoRenderAction.php:7` · `InternalLinkRenderAction.php:7` | `X103\Models\Page` | ✅ no |
+| `X-157/Actions/EdgeDeployAction.php:11` | `X155\Models\FormDefinition` | ✅ no — X-155 is ours |
+| `X-157/Actions/EdgeDeployAction.php:10` | `X108\Models\Appointment` | ⛔ **yes** — SITE-113, G8-15 |
+| `X-157/Actions/EdgeDeployAction.php:16` | `X163\Models\PriceBookItem` | ⛔ **yes** — SITE-121, G8-14 |
+| `X-102/ChatCaptureAction.php:10` · `X-155/FormCaptureAction.php:7` | `X121\Models\Person` | ⛔ **yes** — Track 1's spine |
+
+⛔ **Two of the nine are seams this lane's own CREDITED capabilities specify.** Tracker `:458`'s ⑤ for
+G8-15 is literally *"`Event` schema from X-108's calendar"*; G8-14's is the product schema from the
+pricebook. Two more are the **house pattern** tick 279 measured — `X121\Models\Person` written directly
+by seven modules across four lanes. Four cross a *module* boundary and not a *lane* one.
+
+⛔ **RULED: no refactor wave; the branch is *cannot work here* (224), the door shut rather than the room
+empty.** The check **cannot run in this tree** — main's range still ADDS two `.claude/hooks` files and
+`coder-bin/git:106` refuses any staged `.claude/` with no exemption (re-read at source; `:100-105`'s
+`GOAIEZ_MERGE_OK` clears `HARNESS` only) — so a wave built against it would have **no falsifier**, which
+is the one thing this lane requires. And a violation's colour is a property of a TREE (253).
+
+✅ **What IS runnable, and it is the pre-work worth doing before the merge lands the count:** `Domain\`
+and `Actions\` are **exempt**, so the remedy may be an import swap rather than the projection the
+check's comment names. Grounded at tick 309, to be *measured* by the wave (198, 199): X-121 exposes
+`EntityReadAction`, X-163 `PriceLookupAction`, X-108 `AvailabilityRequestAction` and no read action
+naming booked appointments; and the four X-103 imports may be closable through `X103\Domain\SiteEngine`,
+which is exempt by kind. Whether any of them **returns what the publish path reads** is the measurement,
+and it is what decides between a one-line swap and tick 212's *when every available fix for a red line
+is a regression, the line is the check's defect and the remedy is a filing*.
+
+⚠️ **The generalisation worth more than the instance: a stage count is only as meaningful as the check
+that produced it, and a broken check reports a small number rather than an error.** This lane has spent
+ninety ticks treating `boundary 6` as a measurement of its own code. It was a measurement of two enums
+and three `match` arms, and nothing in the number, the gate, the SUM check or the stamp equality could
+say so — only reading the stage's source could, and only once someone else had read it first.
+
+## ⛔ TWO ASSERTIONS IN ONE METHOD NEED TWO MUTATIONS OF DIFFERENT BREADTHS — one falsifier can only ever prove ONE of them (tick 310)
+
+Tick 309 measured that a **broad** mutation (`$request->only([...])`) satisfied assertion #2 by collateral
+absence, so P-148's contact-row clause went unfalsified while the `FormSubmission` clause was proven; it
+ruled the mutation-side law — *a seam mutation removes EXACTLY the input the claim names*. SITE-182 re-ran
+it with `$request->except(['date_of_birth', 'dob', 'age'])` and the red moved to assertion **#2**, the
+`Person` count, exactly as predicted.
+
+⭐ **The composition is the durable half, and neither run alone could produce it.** An ordered test reports
+only its **first** failure (248), so **one mutation can falsify at most one assertion in one method** —
+every assertion after the first failure is left *reasoned, not measured* (270), no matter how correct the
+mutation is. Two clauses in one method therefore require **two mutations of different breadths**, and the
+two runs compose: 309's broad one proved the `FormSubmission` half, 310's minimal one proves the `Person`
+half, and **both halves of P-148 at the endpoint are now measured**.
+
+⛔ So *"the falsifier passed"* is a claim about **one** assertion, never about the test. When a wave's
+ruling has two clauses in one method, either write two mutations, or say which clause is measured and
+which is reasoned — and do not let a later tick read the green as covering both. ⚠️ And the breadth is
+read off the **consumer's key list**, never inferred from what a whitelist implies: SITE-182's item 1
+opened `FormCaptureAction:134-154` and confirmed `isUnderEighteen` reads exactly `age`, `date_of_birth`,
+`dob` before the mutation was written.
+
+## ⛔ A QUESTION ABOUT A SEAM'S *EXISTENCE* ERASES AN OWNERSHIP SPLIT — five of the nine flagged imports target modules THIS LANE OWNS (tick 310)
+
+Tick 309 ruled no refactor wave against the revived `BoundaryStage` and set SITE-182's item C to measure
+*"whether the sanctioned seam EXISTS"* for the five cross-module `Models` imports. The wave answered
+**No** for all five and every row was verified at source in this seat:
+
+| target | candidate, signature measured | returns what the publish path reads? |
+| :-- | :-- | :--: |
+| X-103 | `Domain\SiteEngine` — `publish` · `forkSite` · `proposeOptimization` · `resolveShortLink` | ⛔ no — write-shaped plus a link resolver |
+| X-163 | `PriceLookupAction`/`PriceRangeAction::handle(int, string $serviceName, …)` | ⛔ no — by name, not a catalog |
+| X-108 | `AvailabilityRequestAction::handle(int, string $date, bool)` | ⛔ no — available slots, not booked appointments |
+| X-121 | `EntityReadAction::handle(string $table, int $id, int $businessId): ?array` | ⛔ no — by id, no phone search |
+| X-155 | `FormValidateAction`/`FormCaptureAction` | ⛔ no — validators, not readers |
+
+⛔ **True, and it flattens a 5/4 split that decides the remedy.** Tick 237's second question is not *does
+the surface exist* but ***is the construction site this lane's***:
+
+- **X-103 ×4** (`EdgeDeployAction:8 :9`, `InternalLinkRenderAction:7`, `SeoRenderAction:7`) and
+  **X-155 ×1** (`EdgeDeployAction:11`) target **this lane's own modules** (rulings 19 and 5). For those,
+  "no existing seam" is a **build item inside this lane's column** — a read method on
+  `X103\Domain\SiteEngine` is exempt **by kind** and closes four sites one line each.
+- **X-108, X-163, X-121 ×2** cross a lane and are genuinely another lane's or a filing.
+
+**Five of nine are closable by this lane alone; four are not.** Same family as tick 236 (*"where does X
+come from?" presumes a READER*) and 237 (*never ask whether a generator's OUTPUT SURFACE exists*),
+reaching a question about a **seam's owner** — and the wave could not have escaped it, because item C's
+own words were *"does that seam return what the publish path reads"* and it answered exactly that.
+
+⛔ **RULED: tick 309's ruling STANDS — no refactor wave, branch *cannot work here* (224).** Knowing the
+remedy is available for five does not make it **measurable** here: the revived check cannot run in this
+tree, so a refactor would have **no falsifier**, which is the one thing this lane requires of a wave. The
+split is **recorded so the answer is prepared when the count arrives with the merge**, which was item C's
+whole purpose; it is not a licence to build against a check nobody here can run.
+
+Twenty-ninth of the imprecise-brief family (208, 227, 235, 236, 237, 238, 244, 245, 247, 249, 250, 254,
+262, 265, 271, 274, 275, 276, 280, 283, 286, 292, 293, 297, 301, 302, 304, 309) and the first turned on a
+question's **subject being existence where the operative question is ownership**.
+
+⚠️ The **exempt** population is what makes the exemption real rather than theoretical: six cross-module
+imports in this lane already take the sanctioned form — `X-157/ModuleServiceProvider:8-10` (`X103\Events`,
+`X137\Actions`, `X155\Actions`), `X-157/EdgeDeployAction:17-20` (`X176\Actions` ×4), and three
+`X110\Domain\PixelEngine` imports in X-102 and X-155. Nine sites out of roughly sixty, not a lane-wide
+posture.
+
+## ⛔ SITE-183 — the form endpoint's THIRD refusal arm, and the fixture that makes it unreachable (ruled at tick 310)
+
+`FormCaptureAction:56-59` carries the policy in its own comment — *"G3-64 / G13-05: a SPAM rejection is
+stored and flagged, never discarded … **An incomplete step is not spam and is not stored**"* — so the
+published form endpoint has **three** refusal arms with **three different write behaviours**:
+
+| reason | returns at | writes | route-level test |
+| :-- | :-- | :-- | :-- |
+| `under_18` | `:28`, before the validator and before any write | nothing | ✅ SITE-181 |
+| spam | `:66-83`, inside the transaction | a **flagged** `FormSubmission` + a `Person` | ✅ SITE-178 |
+| **`incomplete_step`** | `:57-63`, after the validator, before the transaction | **nothing** | ⛔ **none** |
+
+⛔ **And it is unreachable by every existing route-level fixture.** All **seven** form definitions in
+`X157Test.php` declare `'steps' => []` (`:1720 :1804 :1866 :1887 :1935 :1997 :2167`), so
+`FormValidateAction:51`'s `foreach ($steps as $step)` iterates nothing and the required-field branch never
+runs through the endpoint. `incomplete_step` is asserted **three times, all in `X155Test.php`, all at the
+action level** (`:152 :787 :813`). Tick 306's law read from the fixture side: *a test asserting something
+did not happen must leave it POSSIBLE for it to happen* — here **six waves of endpoint tests** made it
+impossible, one `'steps' => []` at a time, and nothing in any of them says so.
+
+**The claim, and why it is not a second carrier** (240): the `422` mapping is one line discharged twice
+and `incomplete_step` is discharged three times at the action. What is carried **nowhere** is that
+**`$request->all()` carries the tenant's required-field ANSWERS to the validator**. Narrow that forwarding
+— the ordinary hardening of a public endpoint that accepts an arbitrary array — and every submission to a
+multi-step form 422s while every X-155 test stays green.
+
+⭐ **The assertion ORDER inverts SITE-181's, and for a measured reason.** Tick 308 ruled the assertion
+placed first is the one the falsifier proves. The **refusal** half cannot prove this seam — over-refusal
+is what a narrowed payload produces anyway, so a `422` would still fire if the route forwarded nothing.
+The **satisfied** half is what proves it. So the `201` assertions go **first**.
+
+**Two falsifiers, each proving a different half, both states NEVER COMMITTED** (so tick 287's question
+answers NO, the two-state form is sound and no four-state sequence is required): **F1**
+`payload: $request->except(['project_type'])` at `:94` ⇒ the satisfied POST's 201 becomes 422; **F2**
+`response()->json(['status' => $result['status']], …)` at `:98` ⇒ the `missing`/`step` assertions fail.
+Per tick 309 each removes **exactly** the input its own claim names.
+
+⛔ Refused, each of which would pass every gate: asserting only the status code (the already-carried half,
+dropping both the `missing`/`step` contract and the write behaviour); constructing the URL instead of
+reading the served `action` (303); asserting the refusal half alone (it cannot fail under a narrowed
+payload, so it proves nothing about the seam); any production change (277/295 — the arm already declares
+the policy); any new `G##-##` literal (240); and folding in tick 307's under-18-before-boundary ordering
+note (a second claim — 215).
+
+## ⚠️ Instrument notes, tick 310
+
+- ✅ **The cold witness's EQUALITY branch, with all three qualifications MEASURED**: `grep -c 'foreach'`
+  **0** (280), and the prose filter **READ, never counted** (297) — its three `//` hits on `X157Test.php`
+  are `:1524` (prose) plus `:1838` `http://spam-link.ru` and `:2093`
+  `https://video.example.com/drain.mp4`, **both real assertions whose string literals contain a double
+  slash** — so `251 − 1 = 250` = the measured green total exactly. Third consecutive confirmation of tick
+  306's finding, and the false-positive count is still **2**, both manufactured by this lane's own
+  route-level axis.
+- ✅ **The cross-lane DEPENDENCY query fired and is clean** (240 — it exists to be read, never to be
+  quiet). Pricebook's new commit is `X-163/Actions/PriceRangeAction.php`, **outside** the scoped
+  `Models`/`Database` directories, so the query stayed silent **correctly** while the paired `--stat`
+  printed the commit. The pairing is the measurement: the stat says a sibling wrote in X-163, the scoped
+  query says it was not in the part we read, and neither alone answers it.
+- ⚠️ **The shared-state deletion trigger, decided by tick 173's test and not by the count**: money and
+  stages both reported deletions, and the owned-id count against **each branch's own bound** reads
+  `origin/main` **14** · `stages` **41** · `money` **16** · `pricebook` **14**. **No branch is below
+  main's 14**, so nothing of this lane's was dropped; stages' eight deletions are its own stage-count
+  lines being refreshed. ⛔ Never "does it differ from HEAD" — HEAD reads **176**.
+- ⛔ **`sed` on `/home/goaiez/agents/coder-bin/git` is REFUSED** (*"may only edit files in the allowed
+  working directories"*), even read-only. ✅ The `Read` tool on the same absolute path is accepted and is
+  how `:95-119` was re-measured this tick — the same asymmetry tick 217 recorded, now confirmed for `sed`
+  as well as `grep`.
+- ⚠️ **The one-writer set turned over COMPLETELY inside the tick**: one pid at review time (reviews'),
+  **two** at dispatch time (sixty's and money's), no member surviving. Tick 230 measured the growing
+  direction and 296 the shrinking one; a complete turnover is the same rule with neither endpoint
+  predicting the other, which is why 196's *re-run it in the same breath as the launch* is not an
+  optimisation.
+
+## ⛔ AN INTERMITTENT POPULATION ENUMERATED BY **NAME** IS INCOMPLETE BY CONSTRUCTION — a third name arrived carrying an already-known CAUSE, and subtracting the recorded names still leaves the comparison broken (tick 311)
+
+Tick 278 ruled the sound §7 comparison is the error **SET minus the members already known to be
+intermittent**, never the `errors` integer; tick 298 corrected it to a **two-member** population — J8's
+`a_deliberately_corrupted_backup_fails_the_restore` (Postgres `SQLSTATE[42501] permission denied to
+terminate process`) and `cancel_is_one_tap_with_nothing_in_between` (Authorize.Net sandbox `E00040`) —
+and ruled *"a block states the population it subtracted."* Sixth disagreement on one sha in fourteen
+ticks (298, 299, 301, 303, 307, 311), and the first the rule cannot close:
+
+```
+mine   errors 2   a_missed_call_becomes_a_consented_text_back · two_fields_at_signup…   (sixty)
+wave   errors 3   …the same two, plus a_completed_job_asks_for_a_review_once_inside_the_cadence
+                  UNRESOLVED — Sandbox refused subscription: Authorize.Net request failed: E00040
+```
+
+Both reconcile (`2008+1+2 = 2007+1+3 = 2011`, tick 226). Measured in the ledger: **`E00040` appears six
+times and every prior appearance is on `cancel_is_one_tap…`.** This is the first time that cause has
+landed on `a_completed_job…` — a different journey, in a different lane.
+
+⛔ **So subtracting the two recorded NAMES leaves 2 against 3 and the comparison still looks broken** —
+the exact failure mode tick 278 wrote the rule to prevent, arriving through the one door the rule left
+open. One vendor sandbox refuses whichever subscription-touching journey happens to run; **the name it
+lands on is not a property of the population.**
+
+✅ **RULED (tick 311): the intermittent population is keyed by CAUSE, and a block names the CAUSE it
+subtracted.** Two causes stand — **Authorize.Net sandbox `E00040`** (currently reaching
+`cancel_is_one_tap…` and `a_completed_job…`) and **Postgres `SQLSTATE[42501]`** (J8). A cause is a
+property of the environment; a name is a property of which fixture reached it first. ⛔ The cause of
+neither is measured and no block names one (227, 230, 249); both are external vendor or environment
+conditions in other lanes' columns.
+
+Same family as tick 224 (*the denominator's members are not alike*) and tick 189 (*a count that
+aggregates opposite verdicts is not a reading*), on the axis neither used: **a set enumerated by an
+attribute its members do not own.**
+
+## ⛔ THE `origin/main` TAKE IS BLOCKED BY **SEVEN** PATHS, NOT TWO — and this lane's ask has been the wrong shape for 82 ticks (tick 311)
+
+Fifth firing of tick 215's law (*before recording a problem as having no remedy, read a sibling lane's
+supervisor commits*), after pricebook's `app/phpunit.xml` split (215), the box-wide pest lock (216), the
+shared guard's harness clause (217) and money's ruling-60 precedent (222). Stages' mid-tick tip
+`d2acd440` is `RULING CP corrects CO — the main take is blocked by six files not two`. **Measured here
+rather than adopted** (223 — the lanes' per-track sets differ):
+
+```
+git diff --name-only HEAD...origin/main -- .claude/ app/app/Doctor/
+  .claude/hooks/drive_hook.py          app/app/Doctor/Stages/BoundaryStage.php
+  .claude/hooks/no-piped-gate-tool.py  app/app/Doctor/Stages/ContractStage.php
+  .claude/settings.json                app/app/Doctor/Stages/TestAnchorStage.php
+                                       app/app/Doctor/seals.json
+```
+
+`coder-bin/git:106` read in full at source (278 — *a guard's stated scope is not its implemented scope;
+read the condition, never the comment*). Its regex is
+`…|\.claude/|…|app/app/Doctor/|'"$HARNESS"'.*seals\.json$|…`, and **`$HARNESS` is interpolated as its own
+alternative between them**, so it can only ever clear `app/tests/Journeys/JourneyHarness\.php$`.
+**`app/app/Doctor/` and `.*seals\.json$` are refused unconditionally** — `:95`'s `--allow-harness` and
+`:100-105`'s `GOAIEZ_MERGE_OK` byte-identity clause both touch `$HARNESS` alone.
+
+⛔ **The half that changes the ask.** Ticks 229, 292, 300, 309 and 310 each measured the blocker with
+`git diff --name-status HEAD origin/main -- .claude` → "two ADDs", and filed the TRACK 1 ACTION as
+*"exempt `.claude/` under `GOAIEZ_MERGE_OK=1`."* **That ask is insufficient by construction**: granting
+it in full leaves the take refused on four `app/app/Doctor/` paths — and those four **are the owner's
+rulings 4/5/6 fixes**, the fourteen of this lane's own violations tick 300 measured as *"answered,
+executed, and one merge away"*, plus tick 309's revived `BoundaryStage`. So `git checkout HEAD -- <them>`,
+the charter's own restore step, **is a withdrawal of the entire point of the take, not a resolution.**
+
+⚠️ **The lane's own instrument is what hid it.** Five ticks ran a query scoped to `.claude` and answered
+*"is `.claude` the blocker?"* — correctly, five times — while the question is *"what does `:106`
+refuse?"* Statement of this section's law on the surface it had not reached: **a query scoped to the file
+you last found the blocker in measures that file, not the blocker.** Re-check with the guard's regex as
+the scope, never a filename, and conclude the take is open only if it prints nothing.
+
+✅ **Two things that do NOT transfer from stages, which is why 223 exists.** ① **`app/phpunit.xml` is
+untouched by main's range in this lane** — `git diff --name-status HEAD...origin/main -- app/phpunit.xml`
+prints **nothing**, so the quadrant stays ours ❌ / main ❌ (215) and the uncommitted working-tree pin
+survives a take. Stages is exposed there and this lane is not. ② Stages counts twelve files needing a
+decision; this lane's set is smaller. **Adopting the count would have been wrong in both directions;
+adopting the method is what paid.**
+
+⚠️ **A bare `git merge` never invokes the commit shim** (stages' `RULING CQ`, confirmed at source):
+`:109-117` checks `GOAIEZ_MERGE_OK` and `--rebase` and then `exec`s the real git, so a conflict-free
+merge creates its commit **inside one git process** and `:106`'s never-list is not consulted. Tick 212
+measured the *consequence* (a merge auto-committed and three per-track files landed in a commit nobody
+could amend) and ruled `--no-commit` mandatory; the **mechanism** is now named, and it is why a merge
+wave dispatched bare is a hazard rather than a refusal.
+
+⛔ **RULED: the take stays DEFERRED and no merge wave is briefed** — unchanged from 229/292/300/309/310
+and now for a stronger reason. Per 224 the branch is **cannot work here**; the door is shut, not the room
+empty. TRACK 1 ACTION re-filed with the corrected scope — **a materially better ask than 82 ticks of the
+wrong one** (217).
+
+## ⚠️ THE TIMING NONCE'S STRENGTH IS CARRIED BY THE **LONG** STAGES (tick 311)
+
+The report's doctor pair passes every check and is the least discriminating yet measured: **one of seven
+positions differs** (`boundary 131/130`) while `citation 1246/1246` and `schema 459/459` — the two stages
+with many distinguishable values — agree to the millisecond. Tick 249's rule is *a byte-identical block
+is one run pasted twice*, and this pair is **not** byte-identical, so it passes as written; tick 250
+already ruled a short stage has few distinguishable values.
+
+⛔ What neither says is the converse: **the nonce's evidential weight lives in the positions with many
+distinguishable values, so a pair whose only difference is a 3-digit stage carries almost none of it.**
+Not a mark against a wave — timings are what they are, and tick 297's report had `citation 1250/1250`
+repeating and was accepted. It is tick 305's law arriving from the other side: the **intrinsic** checks —
+SUM, `ok`-prefix, byte-identity — cannot distinguish a measurement from a well-formed reconstruction, and
+here they were nearly satisfied by a pair with one differing digit. **What settles it is the extrinsic
+stamp equality plus this seat's own live run**, which is why 305 requires every evidence request to carry
+one.
+
+## ⛔ THE DIGEST'S **TIP TABLE** DECAYS EXACTLY LIKE ITS CENSUS NUMBERS — and a stale tip MANUFACTURES a bound movement (tick 311)
+
+Tick 301 ruled *read `REVIEWS.md` for a census's previous value, never this file's digest*, after a tick
+carried a ruling without its numbers and nearly opened a finding on a five-tick-stale half 3. Tick 311
+opened by comparing the tip table against **this file's** tick-309 digest (`main 30316573`) and recorded
+`origin/main` as having moved. `REVIEWS.md:80896` — **tick 310's own record** — reads `main 90e4fcca`.
+It had not moved.
+
+⛔ **The tip table is the worse case, and the asymmetry is the point.** A stale census *number* produces a
+delta that reads wrong and invites a re-run; a stale *tip* produces a **bound movement that did not
+happen**, and a bound movement is the ledger's own explanation for a partition emptying (191, 225) — so
+it manufactures the attribution that would close a finding rather than open one. Nothing followed here,
+because a miss and a hit both end in running the census in full, which is what tick 177's cache rule
+already requires. **Record the tips in the block and read them from the block.**
+
+## ⛔ SITE-184 — `$field` reaches `array_key_exists` UNGUARDED, on the loop SITE-183 made reachable yesterday (tick 311)
+
+```php
+FormValidateAction.php
+:49   $steps = (new FormAdaptiveStepsAction)->handle($form, $payload);   // container + members guarded
+:54   if (! is_array($required) || $required === []) { continue; }        // the CONTAINER is guarded
+:60   foreach ($required as $field) {
+:61       if (! array_key_exists($field, $payload) || $payload[$field] === null || $payload[$field] === '') {
+:62           $missing[] = $field;
+```
+
+`$required` is guarded; **its MEMBERS are not.** `steps` is a tenant-authored `jsonb` column cast
+`'array'`, so `required: [["nested"], "project_type"]` puts an **array** into `$field`, which reaches
+`array_key_exists`, the subscript at `:61`, and the `missing` list the visitor is shown at `:72`. The
+route's only `try/catch` (`FormCaptureAction:142-148`) catches `\Exception`, and a `TypeError` is an
+`\Error`.
+
+⭐ **The reachability is one wave old.** Every `required` fixture in the tree holds plain strings, and
+until SITE-183 **no route-level fixture reached the loop at all** — all seven form definitions in
+`X157Test.php` declared `'steps' => []` (tick 310's own finding). The published endpoint began
+exercising this loop yesterday.
+
+⛔ **The PHP semantics are the WAVE's measurement, never this seat's** — `php -r` is refused here (284),
+and that discipline is what made SITE-157's `empty("0")` and SITE-163's `Carbon::parse('   ')`
+measurements rather than readings (290, 291). ✅ **The second instrument is free**: the falsifier's
+**state 1** — the new test against the unmutated tree — constrains the same fact behaviourally, so the
+transcript never stands alone.
+
+✅ **The remedy is the module's own, two lines up.** `:54` already decides what this module does with
+malformed step configuration: **skip it, do not enforce it, do not refuse the visitor.** Skipping a
+malformed *member* is strictly narrower than skipping the whole `required` array, so the fix decides
+nothing new — tick 277/295's discriminator, **enforcing an existing invariant rather than inventing a
+policy**. And it holds under **either** measurement outcome: if the call throws, the endpoint stops
+500-ing; if it does not, the array stops reaching the visitor's `missing` list. **That is what makes it a
+ruling and not a prediction** (304).
+
+⛔ Four alternatives refused, each of which would pass every gate: **treating a malformed member as
+missing** (refuses a visitor for a tenant's config error, inverting the posture tick 300 measured, and
+puts an array in the response body); **skipping the whole step** (wider than `:54`, and silently disables
+enforcement of the valid sibling — the danger a too-broad fix carries here); **validating on write**
+(`grep -rn 'FormDefinition::(create|updateOrCreate|firstOrCreate|insert)' app/app` returns **nothing** —
+no production writer, every fixture bypasses one, so tick 246's `pages.title` ruling applies unchanged
+and the agreement must live in the reader); **relaxing any test that reddens** (234, 242).
+
+⚠️ **Bounded** (230): the wave makes the reader survive a malformed step configuration, whoever writes
+it. It does **not** claim production holds one today.
+
+✅ **`array_key_exists` swept across all seven owned modules — two sites, one live**, and the
+disconfirming member is what makes the closure re-checkable (280): `SchemaRenderAction:223` is
+`array_key_exists('price', $item)`, a **literal** key over a structure the action itself built and
+reachable only from its single caller.
+
+## ✅ Two hypotheses that DIED AT SOURCE (tick 311)
+
+Recorded because this ledger otherwise keeps only the hypotheses that survive, and because both were
+reversed by **opening a file while writing the brief** rather than by re-reading any queue.
+
+1. ⛔ *"The published form endpoint leaks internal identifiers."* **The measurement is right**:
+   `FormCaptureAction:126-129` returns `submission_id` and `person_id` and `ModuleServiceProvider:98`
+   returns the **whole** `$result`, so an anonymous 201 carries X-121's global `person_id` and the spam
+   422 carries `submission_id`. **Refused anyway**: no clause in `GOAIEZ-MASTER-PLAN.md` governs
+   identifier exposure on a published endpoint, so refusing to return them is **inventing a policy**,
+   which ticks 295, 300 and 303 each refused for this module in turn — and the module's recorded posture
+   (300) is *capture and normalise, never refuse*. That the DNI route returns no ids is a **pattern, not
+   an invariant**. Per 224: **cannot work here**, and the day a clause exists the measurement is already
+   made.
+2. ⛔ *"`form_definitions.steps` is an unswept tenant-authored JSON container, like `content_blocks`."*
+   The *container* is guarded twice over: `FormAdaptiveStepsAction::handle` opens
+   `is_array($form->steps) ? $form->steps : []` and `continue`s on `! is_array($step)`, and its
+   `$comparable` closure guards the `(string)` casts against non-scalars — tick 297/298's cast hazard
+   already closed, in a file nobody briefed for it. Per 224: **already done here.**
