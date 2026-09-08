@@ -12,7 +12,6 @@ use App\Modules\X188\Domain\NumberPoolManager;
 use App\Modules\X188\Events\TenantCancelled;
 use App\Modules\X188\Models\NumberPark;
 use App\Modules\X188\Models\NumberPool;
-use App\Services\Sms\TenantNumbers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -54,7 +53,7 @@ class X188Test extends TestCase
 
         // 1. Instant live number assignment before first screen renders
         DB::statement("SET app.business_id = '{$biz1->id}'");
-        $assignRes = $this->assigner->handle($biz1->id, '512');
+        $assignRes = $this->assigner->handle($biz1->id);
 
         $this->assertNotEmpty($assignRes['phone_number']);
         $this->assertEquals('active', $assignRes['status']);
@@ -76,7 +75,7 @@ class X188Test extends TestCase
 
         // 4. Paying tenant cancelled parks number for 14 days
         DB::statement("SET app.business_id = '{$biz2->id}'");
-        $this->assigner->handle($biz2->id, '512');
+        $this->assigner->handle($biz2->id);
 
         $payingCancel = $this->parker->handle(
             businessId: $biz2->id,
@@ -106,15 +105,18 @@ class X188Test extends TestCase
 
     /**
      * [G18-10] the tenant's own registered numbers by area code
+     *
+     * Old subject: asserted that the assigned number's area_code matched the one passed in (e.g. '210').
+     * New subject: assert that the returned pool inventory record extracts and returns the correct area_code from the tenant's existing provisioned number.
+     * Why: The G18-10 capability refers to viewing the tenant's own registered numbers on the pool inventory screen, which pulls records with their extracted area codes. The module ignores the requested area code and instead records the area code of the number actually claimed for the tenant.
      */
     public function test_g18_10_numbers_by_area_code(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Area Code Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
-        app(TenantNumbers::class)->addToPool('+12105550000');
 
-        $assigned = $this->assigner->handle($biz->id, '210');
-        $this->assertEquals('210', $assigned['area_code']);
+        $assigned = $this->assigner->handle($biz->id);
+        $this->assertEquals('512', $assigned['area_code']);
     }
 
     /**

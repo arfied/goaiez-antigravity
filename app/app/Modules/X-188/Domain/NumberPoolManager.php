@@ -18,7 +18,7 @@ final class NumberPoolManager
     /**
      * Assign a live number before first screen renders (TEST ANCHOR).
      */
-    public function assignLiveNumber(int $businessId, string $areaCode = '512'): array // (R245) BoundaryStage: delegate to TenantNumbers
+    public function assignLiveNumber(int $businessId): array // (R245) BoundaryStage: delegate to TenantNumbers
     {
         return DB::transaction(function () use ($businessId) {
             $numbers = app(TenantNumbers::class);

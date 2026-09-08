@@ -2015,6 +2015,10 @@
   {
    "at": "2026-09-07T05:39:30",
    "note": "capability: The G16-21 id in the X102Test docblock falsely satisfies the capability checker because testedIds scans file contents for the ID string without verifying if it is asserted in code."
+  },
+  {
+   "at": "2026-09-08T05:47:41",
+   "note": "BoundaryStage BoundaryStage: correct test_g18_10 to assert the provisioned number's extracted area code (512) and remove dead $areaCode parameter from assignLiveNumber, as G18-10 is about pool inventory view and not assignment by area code."
   }
  ]
 }

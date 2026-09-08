@@ -44,7 +44,7 @@ final class OnboardingStartAction
             Tenancy::set($biz->id);
 
             // 2. Assign Live Number from Pool
-            $numberRes = $this->assigner->handle($biz->id, '512');
+            $numberRes = $this->assigner->handle($biz->id);
             $liveNumber = $numberRes['phone_number'];
 
             // 3. Create Onboarding Run with exactly 2 asked fields

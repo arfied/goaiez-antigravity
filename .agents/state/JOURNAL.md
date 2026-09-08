@@ -885,3 +885,4 @@
 - `2026-09-08T04:47:51` (R245) X-188 — BoundaryStage: assignLiveNumber returns unassigned array instead of throwing on bootstrap empty pool
 - `2026-09-08T05:17:51` (R245) X-188 — BoundaryStage: OnboardingStartAction skips TenantProvisioned and AgentLive dispatch when the assigned number is null (bootstrap empty pool path)
 - `2026-09-08T05:17:56` (R245) X-188 — BoundaryStage: X188Test test_g18_10 asserts on a pre-populated shared pool number since claimForTenant does not take an area code and G18-10 capability refers to pool inventory screen
+- `2026-09-08T05:47:41` note: BoundaryStage BoundaryStage: correct test_g18_10 to assert the provisioned number's extracted area code (512) and remove dead $areaCode parameter from assignLiveNumber, as G18-10 is about pool inventory view and not assignment by area code.
