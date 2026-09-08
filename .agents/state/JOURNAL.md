@@ -1301,3 +1301,6 @@ Therefore, adding a row to the tracker could move only the capability count.
 - `2026-09-08T00:20:18` UNRESOLVED capability X-117 - G1-73: missing customer-accepted milestone column on Order or OrderLine
 - `2026-09-08T00:20:18` UNRESOLVED capability X-117 - G1-81: missing gift or credit model
 - `2026-09-08T00:20:18` UNRESOLVED capability X-117 - G17-31: missing currency column on Sellable, Cart, or Order
+- `2026-09-08T00:49:14` UNRESOLVED capability X-210 - G1-69: the only cancel path is X210Engine::cancelAction(bool $hasInterstitial), a boolean oracle that takes the clause as its argument; missing is a cancel path that derives the presence of an interstitial from the rendered UI
+- `2026-09-08T00:49:14` UNRESOLVED capability X-210 - G6-38: the only cancel path is X210Engine::cancelAction(bool $hasInterstitial), a boolean oracle that takes the clause as its argument; missing is a cancel path that derives the presence of an interstitial from the rendered UI
+- `2026-09-08T00:49:48` (R245) X-210 — CE — when a clause names a refusal, the test must reach it through a path that derives the condition from stored state, never one that accepts the condition as a boolean argument; a method whose parameter is the clause's own subject restates the clause instead of enforcing it.

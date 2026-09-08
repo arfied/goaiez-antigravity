@@ -104,4 +104,59 @@ class X210Test extends TestCase
         $this->assertSame(['status' => 'changed'], $engine->changeRate(true));
         $this->assertSame(['status' => 'refused', 'reason' => 'rate never changes without a notified action'], $engine->changeRate(false));
     }
+
+    /**
+     * [G1-66] a promotion with no cap cannot be saved
+     */
+    public function test_g1_66_promotion_with_no_cap_cannot_be_saved(): void
+    {
+        Event::fake([PromotionCapReached::class]);
+        $biz = TestCase::provisionTenant(['name' => 'G1-66 Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $promo = $this->createAction->createPromotion(
+            businessId: $biz->id,
+            code: 'NOCAP',
+            discountValue: 10,
+            discountType: 'percentage',
+            maxRedemptions: 1,
+            velocityThreshold: 2,
+            expiresAt: now()->addDays(7),
+            scopes: []
+        );
+
+        $promo->redemptions_count = 0;
+        $promo->save();
+        $validPromo = $this->validateAction->validatePromotion($biz->id, 'NOCAP');
+        $this->assertEquals($promo->id, $validPromo->id);
+
+        $promo->redemptions_count = 1;
+        $promo->save();
+
+        try {
+            $this->validateAction->validatePromotion($biz->id, 'NOCAP');
+            $this->fail('cap was not enforced');
+        } catch (\InvalidArgumentException $e) {
+            $this->assertEquals('Promotion maximum redemptions cap reached', $e->getMessage());
+        }
+
+        Event::assertDispatched(PromotionCapReached::class);
+    }
+
+    /**
+     * [G1-67] the margin guard names every service put below cost
+     */
+    public function test_g1_67_margin_guard_names_every_service_put_below_cost(): void
+    {
+        $engine = new X210Engine;
+        $services = [
+            ['name' => 'below_cost_service', 'price' => 50, 'cost' => 100],
+            ['name' => 'above_cost_service', 'price' => 150, 'cost' => 100],
+        ];
+
+        $result = $engine->checkMarginGuard($services);
+
+        $this->assertContains('below_cost_service', $result['named_below_cost']);
+        $this->assertNotContains('above_cost_service', $result['named_below_cost']);
+    }
 }

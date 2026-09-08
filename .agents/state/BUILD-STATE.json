@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-08T00:20:18",
+ "updated": "2026-09-08T00:49:48",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -2956,6 +2956,18 @@
      "stage": "capability",
      "why": "The \u2464 is 'P-001 \u00b7 T468 \u2014 two packages, and everything we ship, as we ship it, at the price you joined at. There is no locked tier to show a padlock for'. 'grep -rniE \"(tier|package|padlock)\" app/app/Modules/X-210/' only returns capabilities.php:25. The module is about promotions and contains no tier or padlock logic.",
      "at": "2026-09-06T05:42:49"
+    },
+    {
+     "module": "X-210",
+     "stage": "capability",
+     "why": "G1-69: the only cancel path is X210Engine::cancelAction(bool $hasInterstitial), a boolean oracle that takes the clause as its argument; missing is a cancel path that derives the presence of an interstitial from the rendered UI",
+     "at": "2026-09-08T00:49:14"
+    },
+    {
+     "module": "X-210",
+     "stage": "capability",
+     "why": "G6-38: the only cancel path is X210Engine::cancelAction(bool $hasInterstitial), a boolean oracle that takes the clause as its argument; missing is a cancel path that derives the presence of an interstitial from the rendered UI",
+     "at": "2026-09-08T00:49:14"
     }
    ]
   },
@@ -5011,6 +5023,18 @@
    "stage": "capability",
    "why": "G17-31: missing currency column on Sellable, Cart, or Order",
    "at": "2026-09-08T00:20:18"
+  },
+  {
+   "module": "X-210",
+   "stage": "capability",
+   "why": "G1-69: the only cancel path is X210Engine::cancelAction(bool $hasInterstitial), a boolean oracle that takes the clause as its argument; missing is a cancel path that derives the presence of an interstitial from the rendered UI",
+   "at": "2026-09-08T00:49:14"
+  },
+  {
+   "module": "X-210",
+   "stage": "capability",
+   "why": "G6-38: the only cancel path is X210Engine::cancelAction(bool $hasInterstitial), a boolean oracle that takes the clause as its argument; missing is a cancel path that derives the presence of an interstitial from the rendered UI",
+   "at": "2026-09-08T00:49:14"
   }
  ],
  "decisions": [
@@ -5336,6 +5360,12 @@
    "module": "X-167",
    "chose": "(R245) RULING CC: a mutation proves the first assertion that fires and not the clause, so when a test carries two assertions the mutation must be chosen so the discriminating one fails first, or a second mutation is required.",
    "at": "2026-09-08T00:18:26",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-210",
+   "chose": "CE \u2014 when a clause names a refusal, the test must reach it through a path that derives the condition from stored state, never one that accepts the condition as a boolean argument; a method whose parameter is the clause's own subject restates the clause instead of enforcing it.",
+   "at": "2026-09-08T00:49:48",
    "ruling": "R245"
   }
  ],
