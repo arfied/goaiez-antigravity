@@ -1776,6 +1776,68 @@ class X157Test extends TestCase
             'a rolled back site still accepted a submission');
     }
 
+    public function test_the_published_form_accepts_an_array_valued_field_without_a_server_error(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, [
+                ['type' => 'chat'],
+                ['type' => 'form_capture'],
+                ['type' => 'dni'],
+            ]);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Contact',
+            'slug' => 'contact',
+            'steps' => [],
+            'schema' => [],
+        ]);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        $pageResp = $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}");
+        $pageResp->assertStatus(200);
+
+        $html = (string) $pageResp->getContent();
+        preg_match('/<form class="form-capture-x155"[^>]*action="([^"]+)"/', $html, $m);
+
+        $post = $this->post($m[1], [
+            'first_name' => 'Rae',
+            'phone' => ['+15559990001'],
+        ]);
+        $post->assertStatus(201);
+
+        $submission = FormSubmission::where('business_id', $biz->id)
+            ->where('form_definition_id', $form->id)
+            ->firstOrFail();
+
+        $this->assertSame(['+15559990001'], $submission->payload['phone']);
+
+        $person = Person::findOrFail($submission->person_id);
+        $this->assertNull($person->phone);
+        $this->assertSame('Rae', $person->first_name);
+    }
+
     public function test_a_lapsed_certificate_stops_the_published_form_from_accepting_a_submission(): void
     {
         Storage::fake('local');
