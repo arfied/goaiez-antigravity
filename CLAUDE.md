@@ -4438,3 +4438,33 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     70), which is why it outlived every X-199 screen wave, so the item **adds** a method seeding a
     draft — the existing `InvoicesScreenTest` seeds none and cannot see the defect (ruling 68) —
     while `Receipt not available`'s two assertions are untouched.
+192. **Ruling 188's DIAGNOSIS is right and its REMEDY is false: `cd app && …` inside a single Bash
+    call DOES move the session, and a wrong working directory does not refuse — it ANSWERS (RULED by
+    the lane supervisor 2026-09-08 15:5x, measured live this tick).** Ruling 188 correctly traced the
+    `REVIEWS.md` write refusals to the session's cwd leaving the worktree root against
+    `.claude/settings.json`'s **relative** allow-patterns, and then prescribed *"run tools as
+    `cd app && …` inside a single Bash call, which does not move the session"* — the very form its own
+    diagnosis had just identified as the cause. Measured: `cd app && ./vendor/bin/pint --test …`
+    moved the primary working directory to `app/` and the harness announced it; a subshell
+    `( cd app && … )` is refused outright (*"Contains subshell"*) and `bash -c 'cd app && …'` requires
+    approval, so **neither escape is available to an unattended tick**. **RULED: a supervisor tick
+    runs NO `cd` at all.** Anything needing `app/` as its cwd is the coder's (briefed) or the gate's
+    (`bash bin/supervise.sh`, which cds inside its own process and cannot move the session). If a tick
+    does move, the very next call is a bare `cd /home/goaiez/agents/grs-antig-money`, and the
+    harness's own environment-update line is the proof — cheaper than ruling 188's `pwd`.
+    ⚠️ **The second half is the dangerous one and is a new failure shape.** With cwd at `app/`, this
+    brief's dictated root-relative sweep resolved to `app/app/app/…`, exited **2** with eight
+    `No such file or directory` warnings, and printed **zero** lines where the true answer is **five**.
+    A tick reading only the line count would have recorded a five-member population as *"measured
+    clean and STRUCK"* under rulings 95/100/111 — the discipline that exists to stop a wave with
+    nothing in it, inverted into deleting a wave that had something in it. **A zero-line sweep is
+    checked against its exit code and its warnings before it is read as an absence**, and this is
+    rulings 83/136/145/179's family a sixth time: the cheap signal moves for a reason unrelated to the
+    fact it stands for. ⚠️ **A brief that dictates a sweep has dictated the DIRECTORY it runs in** —
+    the ruling 66/75/82/92/94/106/118/147/153/175/183/189 family's eighteenth instrument — so every
+    dictated sweep names its working directory and says what a zero-line result means. Both of
+    MONEY-124's sweeps were run by the supervisor before dispatch (nine lines and five, exactly their
+    tables); one of the two failed on cwd alone, which is how this was found. ⚠️ Measured in the same
+    pass and recorded so it is not re-derived: `pint` **does** accept a `.blade.php` path and returns
+    `{"tool":"pint","result":"passed"}`, so ruling 189's path list covers blades and a blade in a
+    commit is linted, not skipped.
