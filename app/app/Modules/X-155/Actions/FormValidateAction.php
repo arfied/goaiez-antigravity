@@ -58,6 +58,11 @@ final class FormValidateAction
             $missing = [];
 
             foreach ($required as $field) {
+                // a member that is not a valid array key is not a field name, so it is skipped exactly as a malformed required is at :54
+                if (! is_string($field) && ! is_int($field)) {
+                    continue;
+                }
+
                 if (! array_key_exists($field, $payload) || $payload[$field] === null || $payload[$field] === '') {
                     $missing[] = $field;
                 }

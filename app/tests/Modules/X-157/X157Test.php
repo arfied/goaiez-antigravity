@@ -2268,4 +2268,71 @@ class X157Test extends TestCase
         $this->assertSame(1, $postB->json('step'));
         $this->assertSame(1, FormSubmission::where('business_id', $biz->id)->where('form_definition_id', $form->id)->count());
     }
+
+    public function test_the_published_form_skips_a_malformed_required_field_and_still_enforces_its_siblings(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, [
+                ['type' => 'chat'],
+                ['type' => 'form_capture'],
+                ['type' => 'dni'],
+            ]);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Contact',
+            'slug' => 'contact',
+            'steps' => [
+                ['step' => 1, 'required' => [['nested'], 'project_type']],
+            ],
+            'schema' => [],
+        ]);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        $pageResp = $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}");
+        $pageResp->assertStatus(200);
+
+        $html = (string) $pageResp->getContent();
+        preg_match('/<form class="form-capture-x155"[^>]*action="([^"]+)"/', $html, $m);
+
+        $postB = $this->post($m[1], [
+            'first_name' => 'John',
+            'phone' => '+15550008182',
+        ]);
+
+        $postB->assertStatus(422);
+        $this->assertSame(['project_type'], $postB->json('missing'));
+        $this->assertSame('incomplete_step', $postB->json('reason'));
+
+        $postA = $this->post($m[1], [
+            'first_name' => 'John',
+            'phone' => '+15550008182',
+            'project_type' => 'roofing',
+        ]);
+
+        $postA->assertStatus(201);
+        $this->assertSame('captured', $postA->json('status'));
+        $this->assertSame(1, FormSubmission::where('business_id', $biz->id)->where('form_definition_id', $form->id)->count());
+    }
 }
