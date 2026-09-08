@@ -152,4 +152,17 @@ class InvoiceThreadBesideScreenTest extends TestCase
             ->assertDontSee('THE OLDEST MESSAGE IN THIS THREAD')
             ->assertSee('The 50 most recent messages are shown');
     }
+
+    public function test_the_thread_screen_says_no_invoice_is_open_and_what_that_waits_on(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        Livewire::actingAs($owner)->test(InvoiceThreadBeside::class)
+            ->assertOk()
+            ->assertSee('Nothing in this checkout raises one from a completed job')
+            ->assertDontSee('Every issued invoice is paid');
+    }
 }

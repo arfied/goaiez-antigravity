@@ -16,7 +16,7 @@
     </div>
 
     @if(! $invoice)
-        <x-ui.empty-state heading="Nothing unpaid.">Every issued invoice is paid.</x-ui.empty-state>
+        <x-ui.empty-state heading="Nothing unpaid.">No invoice is open for this account. Nothing in this checkout raises one from a completed job, so this screen fills when the job hand-off is built.</x-ui.empty-state>
     @else
         @if($invoices->count() > 1)
             <ul class="flex flex-wrap gap-2 mb-4">
