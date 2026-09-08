@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-08T05:25:53",
+ "updated": "2026-09-08T05:53:04",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -2409,6 +2409,12 @@
    "module": "X-157",
    "chose": "The published form endpoint has three refusal arms with three different write behaviours and only two were asserted at the route level: an under-18 signal returns before the validator and writes nothing, a spam rejection is stored and flagged inside the transaction, and an incomplete step returns after the validator and is not stored at all. The third had no route-level test and was unreachable by every existing route fixture, because all seven form definitions in the serving module tests declare an empty steps array, so the required-field loop never ran through the endpoint and the three incomplete-step assertions in the module tests all call the action directly. The distinct claim is not the status mapping, already carried twice, nor the reason string, already carried three times, but that the route forwarding carries the tenant required-field answers to the validator: narrowing that forwarding, the ordinary hardening of a public endpoint that accepts an arbitrary array, would make every submission to a multi-step form refuse as incomplete while every module test stayed green. The satisfied post is asserted before the refusal because an ordered test reports only its first failure and the refusal half cannot prove the seam, over-refusal being what a narrowed payload produces anyway. The test also asserts the missing field list and the step number, which reach the visitor only through the route JSON, and that the refused post wrote no row. No production change: the arm already declares the policy and the test enforces an existing invariant rather than inventing one. Refused deliberately: asserting only the status code, which is the already-carried half; constructing the endpoint address from the identifiers instead of reading the advertised form action out of the served page; asserting the refusal half alone, which cannot fail under a narrowed payload and so proves nothing about the seam; any production change; and any new capability id literal, which would create a second carrier for a clause discharged elsewhere.",
    "at": "2026-09-08T05:25:53",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-155",
+   "chose": "The multi-step validator guards the required container and not its members: a required list that is not an array is skipped and the step is not enforced, but a member of that list went straight to array_key_exists as a payload key, and steps is a tenant-authored jsonb column cast to array, so a non-scalar member reached a key position, the payload subscript, and the missing list the visitor is shown. The loop was unreachable through the published endpoint until the previous wave, because every form definition in the serving module tests declared an empty steps array. A member that is not a valid array key is not a field name, so it is skipped exactly as a malformed required list already is two lines above, which enforces an invariant the module already declares rather than inventing one, and holds whether the unguarded call threw or merely let an array into the response. Refused deliberately: treating a malformed member as missing, which refuses a visitor for a tenant configuration error and puts an array into the response body; skipping the whole step, which is wider than the existing container guard and silently stops enforcing the valid sibling; validating on write, since the form definition table has no production writer and every fixture bypasses one so the agreement has to live in the reader; and relaxing any assertion that reddens.",
+   "at": "2026-09-08T05:53:04",
    "ruling": "R245"
   }
  ],
