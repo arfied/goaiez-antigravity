@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-08T10:22:54",
+ "updated": "2026-09-08T10:51:08",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2305,6 +2305,18 @@
    "module": "X-173",
    "chose": "inferCategory keeps its two-parameter signature and main's test adapts \u2014 the module winning over the caller",
    "at": "2026-09-08T10:22:54",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-199",
+   "chose": "money's five owner-layout screens open at h2 because the account layout emits the page h1 as sr-only and the blades kept theirs when the merge adopted the layout attribute",
+   "at": "2026-09-08T10:51:08",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-211",
+   "chose": "the offline-payment refusal is asserted on money's own UnreferencedPaymentException and message because the module wins over an adapted test",
+   "at": "2026-09-08T10:51:08",
    "ruling": "R245"
   }
  ]

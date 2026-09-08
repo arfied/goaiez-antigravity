@@ -705,3 +705,5 @@
 - `2026-09-08T08:56:13` (R245) X-198 — the payments cell on the same-account screen is one string built in the component rather than a blade loop because livewire wraps every foreach and if in block marker comments, so an assertSee needle that begins outside the loop and ends inside it can never match - the last reconciliation cell two lines down already had this shape and stayed green throughout
 - `2026-09-08T10:22:42` (R245) X-211 — money's packageForCollections keeps its ?int $packagedByUserId and main's boolean is not adopted — a caller-supplied flag certifies itself while a principal id varies and is auditable
 - `2026-09-08T10:22:54` (R245) X-173 — inferCategory keeps its two-parameter signature and main's test adapts — the module winning over the caller
+- `2026-09-08T10:51:08` (R245) X-199 — money's five owner-layout screens open at h2 because the account layout emits the page h1 as sr-only and the blades kept theirs when the merge adopted the layout attribute
+- `2026-09-08T10:51:08` (R245) X-211 — the offline-payment refusal is asserted on money's own UnreferencedPaymentException and message because the module wins over an adapted test
