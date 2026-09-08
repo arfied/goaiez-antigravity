@@ -14,6 +14,7 @@ use App\Modules\X199\Domain\InvoiceEngine;
 use App\Modules\X199\Events\InvoiceIssued;
 use App\Modules\X199\Events\InvoiceOverdue;
 use App\Modules\X199\Events\InvoicePaid;
+use App\Modules\X199\Models\CreditTerm;
 use App\Modules\X199\Models\Invoice;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -234,7 +235,7 @@ class X199Test extends TestCase
             'last_name' => 'Terms',
         ]);
 
-        \App\Modules\X199\Models\CreditTerm::create([
+        CreditTerm::create([
             'business_id' => $biz->id,
             'customer_id' => $customer1->id,
             'terms_type' => 'net_60',
