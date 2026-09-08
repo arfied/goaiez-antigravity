@@ -115,7 +115,8 @@ class CollectionsPackagePreviewScreenTest extends TestCase
         Livewire::actingAs($owner)->test(CollectionsPackagePreview::class)
             ->assertSee('Packaged')
             ->assertSee('INV-A1')
-            ->assertSee("sent to O'Brien & Sons")
+            ->assertSee("recorded as sent to O'Brien & Sons")
+            ->assertSee('nothing was sent from here')
             ->call('package', 999999)
             ->assertSee("isn't in this account");
     }
