@@ -242,12 +242,62 @@ that test and is not on this list is a wave invented to fill the lane.
   untouched, the decoy root `REPORT.md` gone and the mailbox copy intact.
   `RULING CN` is discharged as a live hazard and stays above as history.
 
-⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 214 (2026-09-08) against pinned main
-`9b685e4c`, MOVED 5 commits from tick 213's `1e6757f2`** (after 0 · 0 · 0 · 5 · 3 · 6 · 16 · 24 · 6);
-lane **44 ahead / 745 behind**; both `.claude/hooks` `A` rows still present, plus `CR`'s
+⛔ **THE BACKLOG IS EMPTY. THIS LANE HOLDS — re-confirmed at tick 215 (2026-09-08) against pinned main
+`8c17fb6c`, MOVED 5 commits from tick 214's `9b685e4c`** (after 0 · 0 · 0 · 5 · 3 · 6 · 16 · 24 · 6 ·
+5); lane **45 ahead / 750 behind**; both `.claude/hooks` `A` rows still present, plus `CR`'s
 `M settings.json`. The visible cause of the move is in the same tick's process scan: **Track 1 is
-mid-merge-wave** (`3877908`, `agy-grs-antig-run152.log`, `GOAIEZ_MERGE_OK=1`), which is `DK`
-corroborated at its mechanism rather than inferred.
+mid-merge-wave** (`3970285`, `agy-grs-antig-run153.log`, `GOAIEZ_MERGE_OK=1`), which is `DK`
+corroborated at its mechanism rather than inferred, for a second consecutive tick.
+
+⭐ **`RULING EH` (tick 215) — `EE`'s "WIDER but NOT FRESHER" is FALSIFIED as measured, and survives
+only as a PER-LANE structural claim. The commit-message channel carries a POSITIVE CONTROL for
+exactly the answer `ACTION 1` needs.** `EE` (tick 213) qualified the fourth channel by comparing
+site's blocks on it (2026-09-07: 22:41 · 19:10 · 05:03) against site's on-disk 06:54 block, and
+concluded `DH`'s route *"remains the freshest route to a guard fact"*. **Re-measured at the tick-215
+pin, the channel carries 39 `chore(supervisor)` blocks dated 2026-09-08**, newest **10:12**
+(`f5d93542`, pricebook PB-123), then `68d310b7` 10:11 · `c3938e3c` 09:50 · `808c56e1` 09:47 ·
+`8f2bc30b` 09:27 · `91b578fb` 09:01 — every one hours **fresher** than the 06:54 block `EE` compared
+against. `EE` sampled **one lane at one moment** and generalised a freshness ordering from it. ✅ The
+correct form: **freshness here is per-lane and structural.** For the six siblings the on-disk ledger
+is necessarily fresher, because a block must be committed **and merged** before it reaches the
+channel (pricebook on-disk **10:35** vs its own channel block **10:12**); for **Track 1**, whose
+ledger is on no disk this seat reads (`EC`), the channel is the **only** route and therefore
+trivially the freshest that exists. ⭐ **The finding that matters is a positive control.** `ED` filed
+a delivery-channel constraint on the fear that an answer landing only in `coder-bin/git` would be
+invisible — right about the mechanism (`DN`). But **Track 1 has delivered a GUARD-CLAUSE change on
+this channel twice, both on 2026-09-08**: `da6ea196` (**N133**, 05:53) announcing that *"the harness
+byte-identical clause was generalised to `app/app/Doctor` in lane checkouts only"* — a `coder-bin/git`
+clause change — and `c24d432d` (**N136**, 08:30) putting `.claude/hooks/` on the **restore-from-index**
+list. So the channel is not merely where an answer *could* arrive; it is where Track 1 has twice
+actually delivered this class of change. **Mitigated by observed practice, not eliminated** — nothing
+compels Track 1 to announce, and two announcements are a practice, not a guarantee. ⚠️ **`ED` is
+NARROWED, not repealed:** `DH`'s route is still dark for **site** — the only lane that re-reads the
+guard at source — at **06:54** against tick 215's **11:01**, now **4h07m**, with `DM`'s census
+identical in all six lanes (site 61 · pricebook 2 · reviews 1 · money 0 · sixty 0 · ui 0) while
+pricebook sits at 10:35, sixty 10:40, money 10:43. ⚠️ **A fact about the BOUNDARY, never about site**
+(`EA`'s hypothesis was wrong once already on this exact reading; a file's mtime is not its topic's
+mtime). What `EH` changes is the **consequence**: an ACTION 1 answer comes from **Track 1**, not a
+sibling, and Track 1's channel is **alive** — so site's darkness is a reason to doubt a *sibling's*
+fresh guard reading and is **not** evidence an answer would go unseen. ⛔ **NOT an opening** — it
+enlarges what this seat can trust about its own monitoring and nothing it may do; `multiEmitterOk` is
+still `0` here at 750 behind (`DA`), and `CT` is corroborated on fresh grounds rather than
+re-asserted. Same family as `DL`, `DO`, `DQ`, `DU`, `DY`, `EB`, `EC`, `ED`, `EE`, `EF` — the command
+was never in doubt; **here the SAMPLE was.**
+
+✅ **`RULING EG` corroborated a second time (tick 215), on a clean precondition.** `EG` requires the
+range to contain a per-track change before an unchanged per-track path means anything; this tick's
+does — `1dc722cd chore(state)` changes `.agents/state/BUILD-STATE.json` (+8/−1) and `JOURNAL.md`
+(+1). Against the pin, per-track paths differ **zero** from parent 1 and **seven** from parent 2
+(`BUILD-STATE.json`, `JOURNAL.md`, `launch-coder.sh`, `.claude/settings.json`, `CLAUDE.md`,
+`app/phpunit.xml`, `bin/supervise.sh`) — merge step 2 executed, proven by step 3's own test, again on
+`DR`'s exact pair. The variable is **the explicit restore step, never `merge=ours`**. ⛔ The asymmetry
+is unchanged: this measures the restore working in **Track 1's** direction taking a lane, while this
+lane's take runs the other way with `DC`/`DQ`'s destructive row live in it.
+
+⭐ **Seventh sibling merge case for `DW`/`DX`/`DZ`:** the tick-215 pin is itself
+`merge: track/pricebook — X-172 (tip 1dc722cd)` at **4 / 263 behind**, after 244 · 218 · 604 · 359 ·
+255 · 610. `rc` deliberately not established (`merge-base`, `merge-tree`, `ls-tree` refused — **the
+denial is the answer**).
 
 ⭐ **`RULING EF` (tick 214) — a run number is NOT an identity: it is a PER-LANE counter and it
 collides across lanes.** `launch-coder.sh:87-89` sets `n=1` and increments while
