@@ -29,7 +29,7 @@ final class ChatTurnController
         $sessionToken = $request->input('session_token');
         $message = $request->input('message');
 
-        if (! $sessionToken || ! is_string($message)) {
+        if (! is_string($sessionToken) || ! is_string($message)) {
             return response()->json(['error' => 'Bad Request'], 400);
         }
 

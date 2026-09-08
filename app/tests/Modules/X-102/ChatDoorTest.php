@@ -105,4 +105,31 @@ class ChatDoorTest extends TestCase
         $this->assertEquals('Hello from visitor', $turn->message);
         $this->assertEquals('visitor', $turn->author_type);
     }
+
+    public function test_key_for_business_a_and_session_for_business_b_returns_404(): void
+    {
+        $bizA = TestCase::provisionTenant(['name' => 'Business A', 'currency' => 'USD']);
+        Tenancy::set((int) $bizA->id);
+        $keyA = app(PixelKeys::class)->ensureFor($bizA);
+
+        $bizB = TestCase::provisionTenant(['name' => 'Business B', 'currency' => 'USD']);
+        Tenancy::set((int) $bizB->id);
+        ChatSession::create([
+            'business_id' => $bizB->id,
+            'session_token' => 'sess_biz_b',
+            'status' => 'active',
+            'rage_clicks_count' => 0,
+            'is_ai_capped' => false,
+        ]);
+
+        Tenancy::forgetAll();
+
+        $response = $this->postJson("/api/chat/{$keyA}/turn", [
+            'session_token' => 'sess_biz_b',
+            'message' => 'Hello',
+        ]);
+
+        $response->assertStatus(404);
+        $response->assertJson(['error' => 'Session not found']);
+    }
 }
