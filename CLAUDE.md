@@ -3371,3 +3371,116 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     signature — the live dispatcher at `GatewayEngine:112` passes `amountCents` and ruling 102
     measured why `invoiceId` is never passed, so both defaults are unreachable today (ruling 96
     governs) and they become a wave the day a second dispatcher exists.
+149. **Ruling 147's enumeration WORKED, and that is recorded rather than assumed (measured
+    2026-09-08 08:0x on MONEY-112's run 133).** Ruling 147 diagnosed MONEY-111's two-field
+    `REPORT.md` as a brief that detailed two fields of a fixed-shape document and got those two,
+    and required every brief to enumerate the report's fields **by name**. MONEY-112's Step 6 named
+    all six in a table and the report carries all six — `COMMITS`, `DONE`, `UNRESOLVED`, `REFUSED`,
+    `RAW`, `GATE`. **The enumeration was the fix; 147 does not need re-cutting.** ⚠️ Ruling 121(a)
+    held for a second wave running in the same report: the gate could not run (another suite held
+    `/home/goaiez/tmp/pest.lock`) and the coder wrote `GATE: NOT RUN — <the gate file's last line>`
+    and **no number**, so run 126's transcribed-floor defect has not recurred. ⚠️ The generalisable
+    half is cheap and worth keeping: **a fix to a paperwork rule is itself a claim, and the tick
+    after it says whether it held** — otherwise the rule accumulates unmeasured, exactly as ruling
+    64 says an inherited follow-up does.
+150. **The merge gate is HALF open, and half is closed (measured 2026-09-08 08:0x against
+    `origin/main` = `888cabae`).** `OWNER.md`'s 06:0x §3 conditions this lane's merge on *reviews
+    and pricebook having landed*. Measured with ruling 145's instrument — `git log --merges
+    --format="%h %ad %s" --date=iso origin/main`, read for **dates**, never for the presence of a
+    lane name: **pricebook has landed** (`888cabae` 2026-09-08 06:54:18, *wave 137*), **reviews has
+    not** (`cb2a8aa3` 2026-09-06 11:18:13, older than `57b8f881` — the state money already
+    carries). One of two. **The gate stays CLOSED and `--allow-merge` is not passed.** ⚠️ This is
+    the first tick on which either half has moved, so the next tick **re-measures rather than
+    inheriting the answer**: reviews is precisely the lane money contends `X117Test.php` with,
+    which is why §3 sequenced money behind it. ⚠️ Ruling 145's warning stands and is now
+    half-demonstrated: the lane names appear in the merge list either way, and only the date
+    separates a spent merge from the one being waited on.
+151. **Five carried backlog sweeps are measured CLEAN and STRUCK (measured 2026-09-08 08:0x;
+    rulings 64, 95, 100, 111, 114, 120, 132, 142).** (1) **The `Console/`-against-the-schedule
+    sweep does not generalise.** Ruling 80 found `CheckDeadlinesCommand` implemented, tested and in
+    no schedule and called it a new shape; `grep -rn "x199:mark-due\|x211:detect-overdue"` shows
+    **both** of this lane's commands scheduled in their own module providers
+    (`X-199/ModuleServiceProvider.php:48`, `X-211/ModuleServiceProvider.php:56`, each
+    `->daily()->withoutOverlapping(180)` inside `runningInConsole()` → `booted()`), with
+    `tests/Feature/Architecture/SchedulingTest.php:115-116` an architecture lint asserting both
+    windows. **So `ArOverdue` — one of this lane's two live seams (ruling 148) — does fire in
+    production**, its listener registered at `X-211/ModuleServiceProvider.php:35-38` and its
+    dispatcher scheduled at `:56`. `disputes:check-deadlines` stays the sole unscheduled one and
+    lives outside every module tree, a TRACK 1 ACTION under ruling 80. (2) **The `UNRESOLVED`
+    population** is 13 lines over 7 modules; X-103, X-121 and X-126 are other lanes', and all ten
+    naming this lane's modules are already-ruled and unbuildable here — X-211's three capability
+    lines (Track 2's kit; the frozen-plan ⑤ cells, ruling 29), the four `doctor` lines for
+    `InvoiceDue`/`LimitExceeded`/`cart.checkout` (rulings 29, 32, 69 — a NAME truncated out of a
+    generated manifest by the backtick at `GOAIEZ-MASTER-PLAN.md:26670`), and C-Billing's two `ui`
+    lines (rulings 88, 90). ⚠️ Recorded, not briefed: §3's line 44 (*"engine lacks the
+    term/threshold refusals — N-033, G1-61, G1-71"*) is contradicted by line 45 (*"the refusals
+    themselves are built and tested in X-211's engine — measured MONEY-51"*); both are `state.py
+    unresolved` records, the second supersedes the first, and the first is stale text rather than a
+    code defect. (3) **All eight modules** have a `routes.generated.php` and **all eight** providers
+    `loadRoutesFrom` it — ruling 64's defect recurs nowhere. (4) **Ruling 20's definition of done**
+    holds lane-wide: **24** screens, every one with a screen test containing `assertOk()`, across 48
+    files. (5) **No lane screen bypasses the tenant scope** —
+    `grep -rn "DB::table\|withoutGlobalScope\|DB::select"` over the eight modules returns six lines,
+    all migrations, an advisory lock, an evidence insert and the two console commands that iterate
+    businesses before acting as each; and `grep -rL "abort_unless"` over the eight `Ui/` trees
+    returns only blades and two traits, so **every one of the 24 components carries
+    `abort_unless(auth()->check() && Tenancy::check(), 403)`**. ⛔ None of the five is to be
+    re-raised.
+152. **The `??` sweep finds ONE screen, and reading around the hit found two more defects the
+    screen's three previous waves could not have seen (RULED by the lane supervisor 2026-09-08
+    08:0x, briefed as MONEY-113).** Ruling 88 found a null-coalescing fallback incidentally and the
+    population was never enumerated; `grep -rn "??"` over the eight `Ui/views` trees returns **15
+    lines**, **14 clean**. The one hit is `X-198/Ui/views/same-account.blade.php:33`, and rulings
+    93, 122 and 132 had all swept that card's **prose** and its **pill** without ever reading its
+    **figures**.
+    **(a) `:33` — the reference falls back to a string this app minted, unlabelled.**
+    `{{ $p->gateway_charge_id ?? $p->idempotency_key }}` renders bare under *"Not attached to any
+    account"*, so an owner with no gateway charge id is shown an **idempotency key this app
+    generated** in the one place a gateway-issued reference belongs, indistinguishable from a real
+    `ch_…`. Ruling 49's prohibition — *never substitute an id this app minted for the vendor-issued
+    one* — arriving in a screen rather than an artifact. ⚠️ **The fallback arm is the reachable
+    one:** `capture()` refuses without a connection (`GatewayEngine.php:89`), so the only writer of
+    a **detached** payment is `X-198/Console/EvidencePaymentLinkCommand.php:36`, which passes no
+    `merchant_connection_id` and no charge id at all. **RULED: each arm is labelled for what it
+    is** — a gateway charge id named as one, and the fallback saying plainly there is no gateway
+    charge and the reference shown is ours. ⛔ Not by dropping the fallback (the owner needs a
+    handle on the row the Attach button acts on), ⛔ not by printing `$p->id`, also app-minted.
+    **(b) `:18` — a total summed across currencies, printed with no currency.**
+    `SameAccount.php:70`'s `sum('amount_cents')` discards `payments.currency`, a **real column**
+    (`2026_08_30_000030:32`) written per row and already honoured by `charge()` and, since ruling
+    37, by `PaymentLinkAction` — so a tenant taking GBP and USD reads one number that is neither.
+    **This is ruling 37 one level up:** 37 stopped a *method default* overriding the row's currency;
+    here the row's currency is discarded by an aggregate. **RULED: the total is grouped by
+    `currency`, one line per currency carrying its own code; the count stays a single count.**
+    ⛔ Not by taking the first row's currency for the whole sum (ruling 37's *"a second place for
+    the truth to disagree"*, mislabelling every other row), ⛔ not by a hardcoded `$` — ruling 87's
+    exact defect in `Credits.php:50`.
+    **(c) `:19` — `0 payouts · 0.00` is a measured zero over a table nothing imports into.**
+    Ruling 51 measured that `payouts` has no writer and `PayoutReconcileAction` no caller outside
+    tests, and ruling 50(a) made the two reconciliation screens say so; `:19` was passed over by
+    both and renders in the **non-empty connections** arm — the arm every tenant with a recorded
+    merchant account sees — as *your gateway sent you no money* rather than *no payout has ever been
+    imported*. The screen's true sentence at `:9` renders only in the **other** arm, so the two
+    never co-render and this is not a duplication. ⚠️ `payouts` carries **no currency column at
+    all**, so none can be printed there truthfully — recorded as the reason, not invented.
+    **RULED: at `payouts_count === 0` the cell names what has not happened and what it waits on
+    (ruling 21); above zero it keeps count and total unchanged.** ⛔ Not by building payout
+    ingestion — a live vendor call under ruling 13, its own wave (ruling 51).
+    ⚠️ **Blast radius, measured with interior fragments (rulings 46, 86): four assertions, all in
+    `SameAccountScreenTest.php`, none deleted** — `:49` `'2 payments · 75.00'` and `:61`
+    `'3 payments · 100.00'` are **CHANGED** to carry the currency, because as substrings they would
+    otherwise stay green against the new per-currency line and pass for the wrong reason (ruling
+    61); `:56` **`'idem_loose'` is KEPT and the label clause is asserted beside it** — it is the
+    assertion that certifies the fiction, green precisely because the unlabelled key is on the page
+    (ruling 43's shape), so it is joined rather than replaced; and `:50` `'1 payouts · 50.00'` is
+    **UNCHANGED**, because (c) preserves the above-zero rendering exactly and only the zero branch
+    moves. ⚠️ **Correction, recorded rather than dropped:** the MONEY-112 verdict block in
+    `REVIEWS.md` called all four *changed*; three is the measured number, and this line stands. ⚠️ **All five `Payment::create` fixtures in that file seed
+    `'currency' => 'USD'`**, so no existing test can see (b) — ruling 41 part 2 / ruling 99's
+    fixture-omission trap, and ruling 37's own closing words (*"wrong only for the tenant who is not
+    American, which is the one no fixture in this lane carries"*) still true of this screen a
+    hundred rulings later. The proof for (b) is a **new** method seeding a non-USD payment (ruling
+    68). ⚠️ The generalisable half: **a sweep hit is a coordinate, not a boundary** — the `??` found
+    one line and reading the forty lines around it found two more defects of a different class, and
+    the three previous waves on this exact file each swept a *file type* or a *string population*
+    and stopped there (ruling 97's lesson, arriving from the other direction).
