@@ -1317,3 +1317,16 @@ Therefore, adding a row to the tracker could move only the capability count.
 - `2026-09-08T04:45:41` stage capability = 358
 - `2026-09-08T04:45:41` stage anchor = 137
 - `2026-09-08T04:45:41` stage journey = 5
+- `2026-09-08T13:42:17` (R245) X-210 — margin guard test now asserts the refusal names every below-cost service, per main's checkMarginGuard
+- `2026-09-08T14:06:06` RESOLVED contract X-190 - multiEmitterOk exemption for approval.requested arrived on main and is committed here in 5d89dc84 at app/app/Doctor/Stages/ContractStage.php:575 (was: approval.requested correctly emitted by multiple modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.)
+- `2026-09-08T14:06:10` RESOLVED contract X-205 - multiEmitterOk exemption for approval.requested arrived on main and is committed here in 5d89dc84 at app/app/Doctor/Stages/ContractStage.php:575 (was: approval.requested correctly emitted by multiple proposing modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.)
+- `2026-09-08T14:06:15` RESOLVED contract X-217 - multiEmitterOk exemption for send.requested arrived on main and is committed here in 5d89dc84 at app/app/Doctor/Stages/ContractStage.php:575 (was: send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.)
+- `2026-09-08T14:06:21` RESOLVED contract X-218 - multiEmitterOk exemption for send.requested arrived on main and is committed here in 5d89dc84 at app/app/Doctor/Stages/ContractStage.php:575 (was: send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.)
+- `2026-09-08T14:07:10` stage integrity = 0
+- `2026-09-08T14:07:10` stage boundary = 44
+- `2026-09-08T14:07:10` stage contract = 85
+- `2026-09-08T14:07:10` stage citation = 0
+- `2026-09-08T14:07:10` stage schema = 15
+- `2026-09-08T14:07:10` stage capability = 211
+- `2026-09-08T14:07:10` stage anchor = 128
+- `2026-09-08T14:07:10` stage journey = 4

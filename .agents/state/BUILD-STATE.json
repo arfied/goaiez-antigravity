@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-08T01:38:19",
+ "updated": "2026-09-08T14:06:21",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -15,11 +15,11 @@
    "fails": "COMMIT"
   },
   "boundary": {
-   "violations": 3,
+   "violations": 44,
    "fails": "COMMIT"
   },
   "contract": {
-   "violations": 87,
+   "violations": 85,
    "fails": "COMMIT"
   },
   "citation": {
@@ -31,15 +31,15 @@
    "fails": "MERGE"
   },
   "capability": {
-   "violations": 358,
+   "violations": 211,
    "fails": "MERGE"
   },
   "anchor": {
-   "violations": 137,
+   "violations": 128,
    "fails": "WAVE"
   },
   "journey": {
-   "violations": 5,
+   "violations": 4,
    "fails": "WAVE"
   }
  },
@@ -337,7 +337,7 @@
   },
   "30": {
    "track": "roster",
-   "status": "DONE",
+   "status": "BUILDING",
    "modules": [
     "X-186",
     "X-190",
@@ -348,7 +348,7 @@
   },
   "31": {
    "track": "roster",
-   "status": "DONE",
+   "status": "BUILDING",
    "modules": [
     "X-200",
     "X-205",
@@ -2412,17 +2412,10 @@
    "unresolved": []
   },
   "X-190": {
-   "status": "UNRESOLVED",
+   "status": "BUILDING",
    "wave": 30,
    "intent": "GROW",
-   "unresolved": [
-    {
-     "module": "X-190",
-     "stage": "contract",
-     "why": "approval.requested correctly emitted by multiple modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
-     "at": "2026-09-03T13:48:24"
-    }
-   ]
+   "unresolved": []
   },
   "X-191": {
    "status": "UNRESOLVED",
@@ -2895,17 +2888,10 @@
    "unresolved": []
   },
   "X-205": {
-   "status": "DONE",
+   "status": "BUILDING",
    "wave": 31,
    "intent": "GROW",
-   "unresolved": [
-    {
-     "module": "X-205",
-     "stage": "contract",
-     "why": "approval.requested correctly emitted by multiple proposing modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
-     "at": "2026-09-03T13:56:38"
-    }
-   ]
+   "unresolved": []
   },
   "X-206": {
    "status": "UNRESOLVED",
@@ -3032,30 +3018,16 @@
    "unresolved": []
   },
   "X-217": {
-   "status": "DONE",
+   "status": "BUILDING",
    "wave": 31,
    "intent": "GROW",
-   "unresolved": [
-    {
-     "module": "X-217",
-     "stage": "contract",
-     "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
-     "at": "2026-09-03T14:00:33"
-    }
-   ]
+   "unresolved": []
   },
   "X-218": {
-   "status": "DONE",
+   "status": "BUILDING",
    "wave": 31,
    "intent": "GROW",
-   "unresolved": [
-    {
-     "module": "X-218",
-     "stage": "contract",
-     "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
-     "at": "2026-09-03T14:01:55"
-    }
-   ]
+   "unresolved": []
   },
   "X-219": {
    "status": "DONE",
@@ -3175,30 +3147,6 @@
    "stage": "contract",
    "why": "send.requested correctly emitted by multiple modules per R231, but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
    "at": "2026-09-03T13:47:25"
-  },
-  {
-   "module": "X-190",
-   "stage": "contract",
-   "why": "approval.requested correctly emitted by multiple modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
-   "at": "2026-09-03T13:48:24"
-  },
-  {
-   "module": "X-205",
-   "stage": "contract",
-   "why": "approval.requested correctly emitted by multiple proposing modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
-   "at": "2026-09-03T13:56:38"
-  },
-  {
-   "module": "X-217",
-   "stage": "contract",
-   "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
-   "at": "2026-09-03T14:00:33"
-  },
-  {
-   "module": "X-218",
-   "stage": "contract",
-   "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
-   "at": "2026-09-03T14:01:55"
   },
   {
    "module": "X-193",
@@ -5427,6 +5375,12 @@
    "chose": "CE \u2014 when a clause names a refusal, the test must reach it through a path that derives the condition from stored state, never one that accepts the condition as a boolean argument; a method whose parameter is the clause's own subject restates the clause instead of enforcing it.",
    "at": "2026-09-08T00:49:48",
    "ruling": "R245"
+  },
+  {
+   "module": "X-210",
+   "chose": "margin guard test now asserts the refusal names every below-cost service, per main's checkMarginGuard",
+   "at": "2026-09-08T13:42:17",
+   "ruling": "R245"
   }
  ],
  "notes": [
@@ -5779,6 +5733,36 @@
   {
    "at": "2026-09-06T21:35:00",
    "note": "MEASUREMENT not a filing. Regeneration census over the 9 modules: X-116 X-132 X-134 X-142 X-154 X-175 X-82 are unregenerable (manifest \u228b plan), dropping tokens and changing under regeneration. X-123 and X-204 are reproducible (manifest == plan) because ModuleScaffoldCommand's field() takes only the longest regex hit, discarding the shorter 'none' string. The ledger cross-check holds: remove-the-sentinel adds exactly 10 violations across the 7 modules at ContractStage.php:429 (X-175 has no 'none'; X-82's actions are caught by :423). Dropping field.ask from X-175 (+1) and rate.set from X-82 (+1) under regeneration yields the 12 total violations in provided actions."
+  }
+ ],
+ "resolved": [
+  {
+   "module": "X-190",
+   "stage": "contract",
+   "was": "approval.requested correctly emitted by multiple modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
+   "why": "multiEmitterOk exemption for approval.requested arrived on main and is committed here in 5d89dc84 at app/app/Doctor/Stages/ContractStage.php:575",
+   "at": "2026-09-08T14:06:06"
+  },
+  {
+   "module": "X-205",
+   "stage": "contract",
+   "was": "approval.requested correctly emitted by multiple proposing modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
+   "why": "multiEmitterOk exemption for approval.requested arrived on main and is committed here in 5d89dc84 at app/app/Doctor/Stages/ContractStage.php:575",
+   "at": "2026-09-08T14:06:10"
+  },
+  {
+   "module": "X-217",
+   "stage": "contract",
+   "was": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+   "why": "multiEmitterOk exemption for send.requested arrived on main and is committed here in 5d89dc84 at app/app/Doctor/Stages/ContractStage.php:575",
+   "at": "2026-09-08T14:06:15"
+  },
+  {
+   "module": "X-218",
+   "stage": "contract",
+   "was": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+   "why": "multiEmitterOk exemption for send.requested arrived on main and is committed here in 5d89dc84 at app/app/Doctor/Stages/ContractStage.php:575",
+   "at": "2026-09-08T14:06:21"
   }
  ]
 }
