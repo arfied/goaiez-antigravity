@@ -135,7 +135,9 @@ final class PricebookEngine
             'callout_fee_cents' => $callout->callout_fee_cents,
             'formatted_fee' => $formattedFee,
             'deducted_if_proceeding' => $callout->deducted_if_proceeding,
-            'quote_response' => "To come out and diagnose the issue, our callout fee is {$formattedFee}, which is deducted from your total if you proceed with the work.",
+            'quote_response' => $callout->deducted_if_proceeding
+                ? "To come out and diagnose the issue, our callout fee is {$formattedFee}, which is deducted from your total if you proceed with the work."
+                : "To come out and diagnose the issue, our callout fee is {$formattedFee}.",
             'explanation_text' => $callout->explanation_text ?? $deductText,
         ];
     }

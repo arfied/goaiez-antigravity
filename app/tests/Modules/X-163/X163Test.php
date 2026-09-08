@@ -121,6 +121,27 @@ class X163Test extends TestCase
         $this->assertStringContainsString('deducted', $calloutRes['quote_response']);
     }
 
+    public function test_callout_deducted_flag_controls_agent_response(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Callout Deduct Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $callout = CalloutFee::create([
+            'business_id' => $biz->id,
+            'callout_fee_cents' => 9900,
+            'deducted_if_proceeding' => false,
+        ]);
+
+        $resFalse = $this->engine->lookupCallout($biz->id);
+        $this->assertStringContainsString('$99.00', $resFalse['quote_response']);
+        $this->assertStringNotContainsString('deducted', $resFalse['quote_response']);
+
+        $callout->update(['deducted_if_proceeding' => true]);
+        $resTrue = $this->engine->lookupCallout($biz->id);
+        $this->assertStringContainsString('$99.00', $resTrue['quote_response']);
+        $this->assertStringContainsString('deducted', $resTrue['quote_response']);
+    }
+
     /**
      * [G17-18] a rate per pricebook (§145.4 — no nexus, no jurisdiction math)
      */
