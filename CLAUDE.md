@@ -573,6 +573,38 @@ refuses a write there.** Never write another lane's `BRIEF.md`, `REVIEWS.md`, `R
 file under a sibling mailbox — read them and nothing more. Do **not** probe this: writing into a
 sibling mailbox to confirm the deny is gone *is* the harm.
 
+### ⛔ `RULING CY` (tick 195) — the take has a SECOND blocker: its six-file restore is gated by `GOAIEZ_RESTORE_OK`, which this lane's launcher cannot set
+
+**Adds to `RULING CP`/`CR`; changes neither's verdict.** `RULING CO` recorded that this lane has no
+`--allow-restore` and read that as the mere absence of a flag. It is more than that: **the shared
+guard has a restore gate, and a sibling launcher sets it explicitly.** Measured at tick 195 from
+`pgrep -a -P 1 -f agy` output alone — no boundary violation, no reading of `coder-bin/git`
+(`RULING CT` stands). Track 1's live `run137` exports **three** gate variables:
+
+```
+export GOAIEZ_MERGE_OK=1; export GOAIEZ_HARNESS_OK=0; export GOAIEZ_RESTORE_OK=0; …
+```
+
+This lane's `launch-coder.sh` exports **one**: `:22-23` takes only `--coder` and `--allow-merge` and
+refuses any other argument by name; `:57`/`:59` export `GOAIEZ_MERGE_OK` and nothing else.
+
+**Why it matters:** `RULING CP`'s plan for the day the take opens is `--no-ff --no-commit`, then
+**restore six paths to `HEAD`** (`CR`'s list). If the guard gates `git checkout HEAD -- <path>` on
+`GOAIEZ_RESTORE_OK=1` — and a sibling setting it to `0` is strong evidence it reads it — then **step
+2 of the take is unsatisfiable in this lane by construction**, independently of the seven rows. That
+is the `RULING CL` shape exactly: a brief item that cannot be satisfied whatever it says, burning a
+run. **Check this before briefing the take, not after.**
+
+⚠️ **The sibling trio is not `RULING CX`'s trio.** `CX` observed `GOAIEZ_PUSH_OK`, `GOAIEZ_MERGE_OK`,
+`GOAIEZ_HARNESS_OK`; `run137` carries `MERGE`, `HARNESS`, `RESTORE`; `pricebook`'s `run116` exports
+**none**. Launcher revisions differ per lane and are still diverging — never infer this lane's
+capabilities from a sibling's command line; read `launch-coder.sh`.
+
+**RULED by the lane supervisor: filed as an observation to TRACK 1 ACTION 1, not fixed here, because
+adding `--allow-restore` would hand every future run a capability it has never had** — the same
+reasoning `RULING CL` used to refuse `--allow-push`. The launcher is this seat's file, so the edit is
+inside its column; the judgement that it should not be made is the ruling.
+
 ## Dispatching the coder (added 2026-09-02)
 
 When the user has enabled the settings rule for
