@@ -4,26 +4,27 @@ declare(strict_types=1);
 
 namespace App\Modules\X188\Domain;
 
-use App\Exceptions\NumberPoolExhausted;
+use App\Modules\X188\Events\TenantCancelled;
+use App\Modules\X188\Models\BrandRegistration;
 use App\Modules\X188\Models\NumberAssignment;
 use App\Modules\X188\Models\NumberPark;
 use App\Modules\X188\Models\NumberPool;
-use App\Services\Sms\TenantNumbers;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 
 final class NumberPoolManager
 {
     /**
-     * @throws NumberPoolExhausted
+     * Assign a live number before first screen renders (TEST ANCHOR).
      */
-    public function assignLiveNumber(int $businessId, string $areaCode = '512') // (R245) BoundaryStage: delegate to TenantNumbers: array
+        public function assignLiveNumber(int $businessId, string $areaCode = '512'): array // (R245) BoundaryStage: delegate to TenantNumbers
     {
         return DB::transaction(function () use ($businessId) {
-            $numbers = app(TenantNumbers::class);
+            $numbers = app(\App\Services\Sms\TenantNumbers::class);
             $assigned = $numbers->claimForTenant($businessId);
 
             if ($assigned === null) {
-                throw NumberPoolExhausted::noFreeNumber(0);
+                throw \App\Exceptions\NumberPoolExhausted::noFreeNumber(0);
             }
 
             $poolNumber = NumberPool::create([
@@ -50,47 +51,3 @@ final class NumberPoolManager
         });
     }
 
-    public function migrateToDedicatedBrand(int $businessId, string $brandName, string $tcrId): array
-    {
-        return DB::transaction(function () use ($businessId) {
-            $poolNumber = NumberPool::where('business_id', $businessId)
-                ->where('status', 'assigned')
-                ->firstOrFail();
-
-            return [
-                'phone_number' => $poolNumber->phone_number,
-                'status' => 'active',
-                'in_flight_traffic_preserved' => true,
-            ];
-        });
-    }
-
-    public function releaseOrParkNumber(int $businessId, bool $isPayingTenant, int $usageCount): array
-    {
-        return DB::transaction(function () use ($businessId, $isPayingTenant, $usageCount) {
-            $poolNumber = NumberPool::where('business_id', $businessId)
-                ->where('status', 'assigned')
-                ->first();
-
-            if (! $poolNumber) {
-                return ['action' => 'none'];
-            }
-
-            if (! $isPayingTenant && $usageCount === 0) {
-                $poolNumber->update(['status' => 'available', 'business_id' => null]);
-
-                return ['action' => 'released_immediately', 'park_days' => 0];
-            }
-
-            $poolNumber->update(['status' => 'parked']);
-
-            NumberPark::create([
-                'business_id' => $businessId,
-                'phone_number_id' => $poolNumber->id,
-                'park_until' => now()->addDays(14),
-            ]);
-
-            return ['action' => 'parked_14_days', 'park_days' => 14];
-        });
-    }
-}
