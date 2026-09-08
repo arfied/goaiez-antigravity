@@ -373,4 +373,41 @@ class X167Test extends TestCase
         $this->assertNotNull($storageStock, 'Storage stock should exist');
         $this->assertEquals(3.0, (float) $storageStock->quantity, 'The per-location query returns only that location\'s row and quantity.');
     }
+
+    public function test_no_purchase_order_is_created_automatically_at_the_reorder_point(): void
+    {
+        Event::fake([InventoryConsumed::class, ReorderTriggered::class, StockLow::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Inventory & Stock Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $van = StockLocation::create([
+            'business_id' => $biz->id,
+            'name' => 'Service Van 04',
+            'type' => 'van',
+        ]);
+
+        $spool = StockItem::create([
+            'business_id' => $biz->id,
+            'location_id' => $van->id,
+            'sku' => 'COPPER-10M-SPOOL-TEST',
+            'barcode' => '784920192834',
+            'name' => '3/8" Copper Refrigerant Line',
+            'quantity' => 10.0,
+            'unit' => 'm',
+            'reorder_point' => 3.0,
+        ]);
+
+        // Consume below reorder_point (3.0)
+        $this->adjustAction->handle(
+            businessId: $biz->id,
+            stockItemId: $spool->id,
+            quantityDelta: 8.0,
+            isCancellation: false
+        );
+
+        Event::assertDispatched(StockLow::class);
+        Event::assertDispatched(ReorderTriggered::class);
+        $this->assertSame(0, PurchaseOrder::where('business_id', $biz->id)->count(), 'Nothing proposes a restock automatically; the Reorders blade must not claim otherwise.');
+    }
 }
