@@ -1329,6 +1329,81 @@ wave rather than pushed, **not because the delta is small or large but because t
 rewrites 100 lines of a file the gate measures.** Publishing a diff you have already ruled must be undone
 costs more than one wave of push debt.
 
+## ⭐ Trap added 2026-09-08 11:4x — `--numstat` against the REVERTED-FROM sha is a one-command proof of byte-identity
+
+PB-126 reverted `X163Test.php` to `dbb93cc9^` and re-appended three test methods. The brief pre-declared
+three numbers — `git diff --numstat dbb93cc9^` printing `74 0`, `actingAs` 5, `test_` methods 59 — and
+all three printed. ⭐ **But none of them proves what the brief actually demanded**, which was that the
+three re-appended methods be **byte-identical**; a count check passes just as happily on 74 lines that
+were quietly "improved" while being restored.
+
+⭐ **The measurement that does prove it runs against the sha you reverted FROM, not the one you reverted
+TO:**
+
+```
+git diff --numstat dbb93cc9 -- app/tests/Modules/X-163/X163Test.php   →   0   100
+```
+
+**Zero on the insertion side.** The file is `dbb93cc9`'s copy minus 100 lines and nothing else, so no
+byte of the retained content can differ. ⭐ **The generalisation: to prove "X plus a known deletion",
+diff against X and require the insertion count to be zero** — reading the hunks is unnecessary and a
+count against the *other* parent is not equivalent. Use it on every revert.
+
+⚠️ Companion check, and it stayed cheap: `git show <sha> | grep '^-' | sort | uniq -c` classified all
+100 deletions into exactly two line shapes in one command. **A deletion ledger by shape is stronger than
+a deletion count and costs the same.**
+
+## ⭐⭐ Trap added 2026-09-08 11:4x — a wave that STOPS WHERE THE BRIEF TOLD IT TO STOP is complete, and grading it otherwise is expensive
+
+PB-126's sweep found **two** qualifying components. The brief said, in those words, *"If more than one
+qualifies, fix the one in X-163 first and record the others — one component per wave."* The coder fixed
+one and recorded the other.
+
+⚠️ **The reviewer's instinct on a wave that fixed one of two defects is to grade it half-done. That
+instinct is wrong, and the cost is not cosmetic:** grading a scope-respecting wave as a shortfall trains
+the coder to exceed its scope next time, which is precisely how two entangled fixes land in one
+component — the failure this file already records under the `FieldAssistantEngine` channel entanglement.
+
+⭐ Same principle as the PB-121 STOP condition, generalised: **a brief that pre-declares where to stop
+has made stopping a reportable outcome, and the reviewer must then honour it.** ⛔ A pre-declared stop
+that fires and is then graded as a shortfall destroys the only cheap signal this arrangement produces.
+
+⭐ **The corollary that made PB-126 a bare `PASS` rather than the thirteenth consecutive
+`PASS-WITH-NOTES`: a reviewer who never grades a clean wave clean has a one-value scale.** If you catch
+yourself hunting for a note to justify the familiar verdict, that is the tell.
+
+## ⭐ Trap added 2026-09-08 11:4x — a component-state sweep must key on the QUERY, not on the method name
+
+The PB-126 sweep asked, of thirteen components: is this `public array $` keyed by a row id, and does any
+path remove the row that key points at? ⭐ **The whole result turns on one distinction that a
+name-keyed sweep would get wrong.**
+
+`confirm()` **is** a removal path in `ConfirmationScreen` and `DailyPricingDigest` — both `render()`
+queries filter `is_confirmed = false`, so confirming drops the row out of the next render. `confirmItem()`
+is **not** one in `Pricebook`, which lists every item, so there the key **must survive** and unsetting it
+would wipe the owner's value on a row still on screen.
+
+⚠️ Three components, one method name, opposite correct answers. A sweep keyed on `confirm|delete|remove`
+would have produced a false positive on `Pricebook` and briefed a wrong fix. ⭐ **The generalisation:
+"does this path remove the row" is a question about the component's QUERY, never about what the method is
+called.** Verify the query before grading any successor sweep of this family.
+
+## ⚠️ Trap added 2026-09-08 11:4x — count your OWN commits in the push debt
+
+PB-125's tick recorded *"`dbb93cc9..da7e8510` is gated and not pushed. Debt 2."* The true figure was
+**3** — it counted the two coder commits and silently omitted **its own `chore(supervisor)`**, which sat
+unpushed in exactly the same range.
+
+⚠️ Harmless only because the ancestry trap already requires reading `git log --oneline
+origin/track/<x>..<sha>` **in full** before any push, and that read surfaced all seven. ⭐ **But the two
+rules are in tension in a way worth naming: a supervisor commit is never a safe CARRIER for an ungated
+commit below it, and it is also never INVISIBLE in the count above it.** The tick that writes the debt
+figure is the one commit it is most likely to forget, because it is written after the figure.
+
+⭐ Standing consequence, unchanged and now explained: **push the gated tip, never HEAD.** The tick's own
+verdict commit is written after the gate, is therefore ungated, and rides the *following* wave's push —
+which is why a healthy range routinely contains two prior `chore(supervisor)` commits.
+
 ## ⛔ Trap added 2026-09-08 11:1x — the coder can write `REPORT.md` to the repo root, and only the both-paths check saves the tick
 
 ```
