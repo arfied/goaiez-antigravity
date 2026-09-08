@@ -13249,3 +13249,128 @@ at all, which is the **louder** and therefore safer failure. ⛔ `wc -l` on
 `/home/goaiez/tmp/gate-runs.tsv` is refused (a path outside the checkout); `Read` with **both** `offset`
 and `limit` remains the only accepted route (257, 262), and a `Read` past the end reports the true line
 count in its warning, which is the cheapest way to find the tail.
+
+## ⛔ A HEURISTIC FILTER WHOSE FALSE POSITIVES ARE DRAWN FROM THE CONTENT OF THE WORK DEGRADES AS THE WORK PROCEEDS — the cold witness's prose filter now over-counts by TWO, and this wave wrote one of them (tick 306)
+
+Tick 279 introduced `grep -c 'assert' <file>` as the falsifier arithmetic's cold witness; 280 qualified
+it (equality only for a loop-free file); 285 qualified it again after a prose line inflated the count and
+prescribed subtracting the prose occurrences; 297 found the prescribed subtraction —
+`grep -n 'assert' <file> | grep -c '//'` — is **itself** a description-based selector that over-counts,
+because a real assertion's **string literal** can contain `//`, and ruled it **READ, never COUNTED**.
+Measured at tick 306 on `X157Test.php` after SITE-178:
+
+```
+grep -c 'assert'                      243
+grep -n 'assert' | grep '//'            3      ⛔ the filter's answer
+  :1524  // the refusal; the four assertions below are the claim, not the exception   ← prose ✅
+  :1838  $this->assertSame('http://spam-link.ru', $submission->payload['website_url']) ← REAL, added THIS WAVE
+  :2024  $this->assertSame('https://video.example.com/drain.mp4', …)                   ← REAL, pre-existing
+```
+
+Read: prose = **1**, witness = 243 − 1 = **242** = the derived green total exactly (238 red + 6 − 2 per
+291). **Counted**, the witness reads 240, lands two short of green on 280's *lower-bound* branch, and
+sends a tick hunting a framework call registering extra assertions (290's `assertRedirect`) that this
+file does not contain.
+
+⭐ **The new half is the TREND, not the instance.** Tick 297 measured **one** false positive; there are
+now **two**, and the second was written **by the wave running under the rule** — a route-level test
+asserting on an advertised URL. This lane's entire current axis is route-level seam coverage (300, 303,
+SITE-175, SITE-178, SITE-179), and every such test asserts on an address, so **the filter's
+false-positive population is drawn from precisely the work the lane is producing** and grows
+monotonically with it.
+
+⛔ **The general form:** a heuristic whose error rate is *independent* of the work can be left standing as
+a known approximation and re-checked occasionally. One whose errors are **manufactured by the work** gets
+worse exactly where it is used most, so it must be read rather than counted from the first firing — and
+its justification is empirical, not stylistic. When qualifying an instrument, ask **where its false
+positives come from**: if the answer is "the artefacts this lane is about to produce more of", the
+qualification is not a caveat but a replacement.
+
+## ✅ TWO CANDIDATE WAVES DIED AT SOURCE, and the second was ALREADY ASSERTED — 210's law firing PRE-EMPTIVELY for the third time (tick 306)
+
+Recorded because this ledger otherwise keeps only the hypotheses that survive (262 and 303 were the first
+two pre-emptive firings), and because both were reversed by **opening a file while writing the brief**
+rather than by re-reading any queue.
+
+1. ⛔ *"`X-157/ModuleServiceProvider:52`'s `abort_if($html === null, 404)` is a DEAD DEFENCE —
+   `Storage::get()` throws on a missing file, so the live gap is a 500 or an empty 200."* The shape is
+   this lane's own (280's dead default, 281's dead defence hiding its gap, 297's guard that must evaluate
+   to decide), and it is **false here**: `app/config/filesystems.php:37` declares the local disk
+   `'throw' => false`, so `FilesystemAdapter::get()` returns **null** and the guard is live and correct.
+   Per 224: **cannot work here** — the door is shut.
+2. ⛔ *"…and nothing asserts that arm at the route level."* Also false, and the sharper one:
+   `X157Test.php:930-938` deploys, asserts the page 200, **deletes the stored artifact**, asserts
+   `Storage::disk('local')->exists(…)` is false, re-GETs and asserts **404**. Per 224: **already done
+   here** — the room is empty, not the door shut, and recording *which* branch fired is what stops the
+   next tick rediscovering it as backlog.
+
+⚠️ Note the order in which they fell: the config read killed the *mechanism* and the grep killed the
+*gap*, and either alone would have left a brief that was half right — a wave built on (1) alone would
+have "fixed" a live guard; one built on (2) alone would have added a second carrier for a discharged
+clause (240). **Two commands, one wave saved.**
+
+## ⛔ THREE COPIES OF ONE SOURCE LINE ARE THREE SEPARATE ASSERTIONS — a route arm is not a second carrier just because its text appears elsewhere (tick 306)
+
+`grep -c "status !== 'deployed'" app/app/Modules/X-157/ModuleServiceProvider.php` returns **3** — the
+identical `abort_if($deployment->status !== 'deployed', 404)` at `:46` (page), `:62` (dni) and `:87`
+(form). Two are asserted at the route level and one is not, and the obvious objection to closing the
+third is tick 240's *a second carrier obscures which method discharges the clause*.
+
+⛔ **240 does not apply, and the discriminator is what deleting the line does.** Three separate `abort_if`
+calls in three separate route closures: delete the DNI one and the page and form assertions stay green.
+A second **carrier** is two tests proving one line; this is one test per line. **The unit is the CALL
+SITE, never the source text** — a rule about duplicated coverage that keys on the string would leave every
+copied guard in the tree permanently unassertable.
+
+⭐ **And the failure mode decided the test's shape.** `CallAttributeAction::allocateFromPool` **creates a
+`CallToken` row** (`:54`, `:109`, `:143`) and takes a number out of the available pool (`:36-43` computes
+`$availableNumbers` as the pool minus active tokens), so with `:62` gone a **rolled-back or undeployed**
+site — one the page route 404s and nobody can reach — still consumes a scarce pool number and writes an
+attribution row, against the tracker's ⛔ *"never a reused token"* (`:173`, `:456`). So the test asserts
+**both halves, 404 and zero `CallToken` rows**, exactly as SITE-178 asserted the storage half rather than
+the status alone. **When an unasserted arm has a side effect, the side effect is the assertion; the status
+code is the cheaper half.**
+
+## The response-arm census across all three published endpoints (measured at tick 306)
+
+Read from `X-157/ModuleServiceProvider.php:41-99` and every status assertion under
+`app/tests/Modules/X-157/`. After SITE-179 this axis is CLOSED, and a closed axis is a result worth
+recording or it is re-derived three ticks later.
+
+| endpoint | arm | asserted at |
+| :-- | :-- | :-- |
+| `GET /sites/{b}/{h}` | 200 | `:174 :600 :636` and many |
+| | 404 unknown hash / cross-tenant (`firstOrFail`) | `:565` |
+| | 404 not deployed | `:393 :416 :942` |
+| | 404 no valid SSL | `:649 :695`, `SslDerivedTest:49` |
+| | 404 artifact missing | `:938` |
+| `GET …/dni` | 200 | `DniRouteTest:56 :81 :89` |
+| | **404 not deployed** | ⛔ nothing → **SITE-179** |
+| | 404 no valid SSL | `DniRouteTest:103` |
+| | 409 ×2 | `:110 :117` (SITE-166, SITE-168) |
+| `POST …/forms/{f}` | 201 | ×3, incl. `:1756` |
+| | 422 | `:1826` (SITE-178) |
+| | 404 not deployed | `:1767-1776` |
+| | 404 no valid SSL | SITE-169 |
+
+⚠️ `DniRouteTest`'s `setUp` writes `'status' => 'deployed'` at `:41` and **no test flips it** — the file
+was read in full, not grepped, because a grep for `deployed` cannot distinguish a fixture that sets it
+from a test that changes it. And the fixture value for the new test is `'rolled_back'`, which
+`EdgeRollbackAction:20,47` and `EdgeDeployAction:87,99` actually write; inventing a third status string
+would assert a state the module never produces.
+
+## ✅ Tick 305's EXTRINSIC check fired on the very next wave, on its healthy branch (tick 306)
+
+Tick 305 ruled that every evidence request carries at least one check comparing the artefact to the
+**tree**, and that for doctor it is the build stamp **stated as an equality with a stop** — after a block
+that passed the SUM, was internally perfect and carried a stamp of `20260907.1` that no run in this tree
+produces. SITE-178's item 2 ran `head -1`, ran `grep -n runtime_build .agents/state/BUILD-STATE.json`, and
+**stated the equality**: both `20260829-0647`.
+
+All four doctor checks now pass together for the first time — stamp-equality (305, extrinsic) · SUM
+`0+6+87+93+15+455+137+4 = 797` in both blocks and in this seat's live run (285, intrinsic) · `ok` only on
+`integrity … clean` while every counted stage prints `FAIL` (292, intrinsic) · **six of seven** timings
+differing so the pair is provably two runs (249, intrinsic; 250's short-stage caveat did not have to be
+reached). ⛔ The standing rule is unchanged and is why five classes of defective block cost notes rather
+than dispatches: **this seat never accepts a doctor block from a report** (§3 is recorded not measured,
+196; the red list is re-measured live before any brief, 210).
