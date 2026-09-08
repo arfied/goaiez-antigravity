@@ -1587,3 +1587,48 @@ ruling either way** — the grep for a missing transition is decisive-looking an
    the automatic path **does not exist** — consuming below the reorder point creates zero
    `PurchaseOrder` rows — because that is what goes red the day someone wires the listener without
    revisiting the sentence. **Fix the claim, then pin the absence.**
+
+## ⛔⛔ Trap added 2026-09-08 14:2x — A MUTATION THAT REDDENS MORE TESTS THAN THE BRIEF NAMED, and the blind spot in the reconciliation instrument
+
+The pinned-absence test briefed one section above **already existed.**
+`test_no_purchase_order_is_created_automatically_at_the_reorder_point` is a near-exact duplicate of
+`test_g6_48_a_low_stock_alert_never_places_an_order` (`X167Test.php:202`) — same
+`Event::fake([InventoryConsumed, ReorderTriggered, StockLow])`, same tenant, same `Service Van 04`, same
+`quantity 10.0` / `reorder_point 3.0`, same `adjustAction->handle(quantityDelta: 8.0)`, **same three
+assertions.** In 37 lines the only novelty is a named message.
+
+⭐⭐ **The tell was free, and the coder's report handed it over:**
+
+```
+Failed asserting that 1 is identical to 0. (For test_g6_48_a_low_stock_alert_never_places_an_order)
+Nothing proposes a restock automatically; the Reorders blade must not claim otherwise.
+Failed asserting that 1 is identical to 0. (For test_no_purchase_order_is_created_automatically_at_the_reorder_point)
+```
+
+**The brief named one test. The mutation reddened two.**
+
+⛔⛔ **The generalisation, and it is a real hole in an instrument this file trusts: the PB-125 insertion
+reconciliation compares the diff to the BRIEF, so it structurally cannot see that the brief asked for
+something the file already had.** Every count was exact *because the wrong thing was pre-declared* —
+`37`, insertions-only, `9 → 10`. ⭐ **A reconciliation against your own pre-declaration can never
+falsify the pre-declaration.**
+
+⭐ **The closing check costs nothing and the reviewer already has it: before briefing a new test, ask
+what the pre-declared mutation would ALSO redden.** The mutation is pre-declared in the same brief.
+⭐ Handed to the coder as a standing duty too — a mutation that reddens an unbriefed test is the cheapest
+duplicate-detector either side has.
+
+⚠️ **Ruled a note, not a `BLOCK` and not the coder's shortfall.** Nothing was weakened (three `-` lines,
+all pre-declared; zero in the file that gained a method; no production code). The coder built exactly
+what was specified and even chose the *better* model — briefed to copy
+`test_reorder_trigger_and_clamp():153`, it copied `test_g6_48`, the nearest neighbour, which is **why**
+the duplication came out exact. ⛔ Grading that as a shortfall is the PB-126 mistake.
+⛔ **And not a bare `PASS`:** by this lane's own bar — *what one-line mutation makes this red? none →
+padding* — a test whose only mutation already reddens its neighbour is padding with a longer name.
+**PB-126's corollary runs both ways: the scale is only worth having if a real note is recorded as one.**
+
+⭐ **Consolidation shape, ruled and worth reusing: keep the CONTRACT-CITED test and fold the message onto
+it.** `test_g6_48` carries `[G6-48]`; deleting a cited test to keep an uncited duplicate is the
+checker-satisfied-by-comment failure inverted. ⛔ And the deletion must be **pre-declared in the verdict
+block that briefs it**, with the surviving test's RED — carrying the named message — demanded as proof
+the guard outlived the deletion.
