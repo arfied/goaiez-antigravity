@@ -66,7 +66,7 @@ final class AccountingSyncEngine
             'status' => 'resolved',
             'conflict_id' => $conflict->id,
             'assigned_category' => $conflict->assigned_category,
-            'message' => sprintf('%s now posts to %s.', $conflict->transaction_ref, $resolutionAccount),
+            'message' => sprintf('%s is recorded against %s. Nothing was posted: no ledger is connected in this checkout yet.', $conflict->transaction_ref, $resolutionAccount),
         ];
     }
 
@@ -107,7 +107,7 @@ final class AccountingSyncEngine
         return [
             'status' => 'mapped',
             'mapping_id' => $mapping->id,
-            'message' => sprintf('%s now posts to %s · %s.', $internalCategory, $remoteGlAccountId, $remoteGlAccountName),
+            'message' => sprintf('%s is mapped to %s · %s. Nothing was posted: no ledger is connected in this checkout yet.', $internalCategory, $remoteGlAccountId, $remoteGlAccountName),
         ];
     }
 

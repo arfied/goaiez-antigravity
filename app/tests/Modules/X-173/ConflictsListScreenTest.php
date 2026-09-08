@@ -69,7 +69,9 @@ class ConflictsListScreenTest extends TestCase
 
         $screen->set("resolutions.$id102", 'Job Revenue')
             ->call('resolve', $id102)
-            ->assertSee('now posts to Job Revenue')
+            ->assertSee('is recorded against Job Revenue')
+            ->assertSee('Nothing was posted')
+            ->assertDontSee('now posts to')
             ->assertSee('Resolved by a person');
 
         $row102 = AccountingSyncConflict::find($id102);
