@@ -104,4 +104,21 @@ class SameAccountScreenTest extends TestCase
             ->assertSee('no payout has ever been imported')
             ->assertDontSee('payouts wait on the same import');
     }
+
+    public function test_the_same_account_screen_offers_to_check_for_payouts_and_never_to_pull_them(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $connA = MerchantConnection::create(['business_id' => $biz->id, 'gateway_name' => 'stripe', 'merchant_account_id' => 'acct_A1', 'is_connected' => true]);
+
+        Livewire::actingAs($owner)->test(SameAccount::class)
+            ->assertOk()
+            ->assertSee('Check stripe for payouts')
+            ->assertDontSee('Pull payouts')
+            ->call('pull', $connA->id)
+            ->assertSee('nothing was pulled and nothing changed');
+    }
 }

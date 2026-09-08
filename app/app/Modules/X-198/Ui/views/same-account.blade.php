@@ -19,7 +19,7 @@
 <div><dt>Payouts</dt><dd>{{ $conn->payouts_count }} payouts · {{ number_format($conn->payouts_cents / 100, 2) }}</dd></div>
 <div><dt>Last reconciliation</dt><dd>{{ $conn->last_reconciliation }}</dd></div>
 </dl>
-<x-ui.button size="default" variant="secondary" wire:click="pull({{ $conn->id }})" wire:loading.attr="disabled" wire:target="pull({{ $conn->id }})">Pull payouts from {{ $conn->gateway_name }}</x-ui.button>
+<x-ui.button size="default" variant="secondary" wire:click="pull({{ $conn->id }})" wire:loading.attr="disabled" wire:target="pull({{ $conn->id }})">Check {{ $conn->gateway_name }} for payouts</x-ui.button>
 </li>
 @endforeach
 </ul>
