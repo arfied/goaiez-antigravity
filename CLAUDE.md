@@ -4253,6 +4253,100 @@ Watch for: <the trap that applies, by name>
   `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **6** rows at tick 245, tick-227 membership; stub
   pile across the thirteen **10**. Re-run both; never inherit them.
 
+- ⚠️⚠️ **The leak has reached artifact PATHS, and a `PATCH:` field is where it destroys evidence rather than
+  merely wasting a line.** Wave 134's two `MUTATION` blocks read `PATCH: scratch/mut-1.patch` /
+  `mut-2.patch`; **neither file has ever existed.** `w134-gate.log` §1 shows the wave's real patches as
+  `?? patch-doc.diff · ?? patch-mut-1.diff · ?? patch.diff` at the repo **root**, all three deleted before
+  the tick, and `scratch/run-mutations.sh` sits untouched at wave 133's mtime writing `w133-*` names, so it
+  was not reused either. The field's two paths are **the filenames my own brief printed** when it said
+  *"reuse `scratch/run-mutations.sh`'s form"* and pasted that script. Ninth recurrence of the tick-171 leak
+  after the arithmetic (74), the expected sentence (79), the triage table (93), the prose paragraph (97b),
+  the report template (102), the published baseline (103), the runnable command (103b) and the decline
+  placeholder (107) — and the first where what came back was a **path**. ⛔ It cost nothing only because
+  three independent site proofs survived; tick 214 RULED the mutation artifacts on disk are the house form
+  precisely because they are what makes a wave dying without a report gradeable, and this wave destroyed
+  them. **Ask for the patch paths as `ls -la` output, never as a field** — a field is answerable from
+  memory and an `ls` is not.
+- ⚠️⚠️ **Moving a tenant scope out of the application layer and into RLS is a real strengthening that puts
+  the isolation permanently beyond this suite's reach — so the trade is sound and the COMMENT becomes the
+  only record that it was made.** Wave 134 deleted `YourNumberCard`'s dead `#[Locked] public int
+  $businessId = 0` (always zero in production ⇒ the card rendered `No active number assigned.` forever) and
+  replaced its filtered query with a bare `NumberAssignment::where('status','active')->first()`. It is
+  safe — `2026_08_30_000015_create_x188_number_tables.php:77-90` `ENABLE`s **and** `FORCE`s RLS with
+  `tenant_isolation` on all four X-188 tables, and `ResolveTenant` in the `web` group sets the tenant, so
+  with none set the predicate is `business_id = NULL` and the failure direction is a blank card, never
+  another tenant's number. ⛔ **RULED at tick 246: the RLS-only shape stands** — with `FORCE` on, an
+  application-level filter is unprovable **in either direction** by any component test (the same
+  measurement that made tick 244 forbid an absence assertion here), so adding one back is redundancy no
+  test can grade and re-opening a green mutation-proven wave for it is manufacturing a wave. ⚠️ What is
+  owed is one comment **in the file**: the ledger row disclosed the reliance honestly, but a reader meeting
+  an unscoped query on a tenant-owned table has to find a migration in another directory to learn it is not
+  a leak. **When a wave relocates a guard into a layer the suite cannot see, the file must say where the
+  guard went.**
+- ⚠️ **A module can end a wave with more tenant-resolution shapes than it has conventions — size the
+  population with one command before calling any of them the odd one out.** X-188's four Ui components now
+  run three: `PoolInventory` (wave 132) `#[Locked]` + `mount()` with a `Tenancy::id()` fallback + an
+  explicit filter; `YourNumberCard` (wave 134) no property, no `mount()`, RLS only; `ParkList`
+  `#[Locked] $businessId = 0` with **no** `mount()`, i.e. the defect wave 134 just fixed on its sibling,
+  still rendering `No numbers in 14-day parking.` on both routes; and `PernumberComplaintBoard`, a bare
+  `render()` with no query at all. Both shipped shapes are safe, so this is a convention question and not a
+  defect — but `grep -n "businessId\|mount(\|Tenancy::" app/app/Modules/X-188/Ui/*.php` returns exactly two
+  files and is what makes the next brief a measurement instead of a sample (the tick-187 per-id rule
+  applied to components).
+- ⚠️ **`state.py note` will take a class name as its stage and echo it into the text — brief the stage by
+  its lowercase name.** `JOURNAL.md` now carries three rows reading `note: BoundaryStage …`; the eight are
+  `integrity · boundary · contract · citation · schema · capability · anchor · journey` and `BoundaryStage`
+  is none of them. The ledger is append-only so every one of them stands. My brief said *"under the stage
+  name you judge correct"*, which is the licence — **name `boundary`.** Pair it with the standing tick-93
+  count rule (*run it once per id, and check the diff for the row count*), which held again this wave.
+- ✅✅ **The tick-245 `DELTAS` ruling was honoured completely on its first outing, and it is what retires the
+  free-text contradiction question for good.** Wave 134's `MUTATION` blocks each carried
+  `assertions · passed · failed · errors` **together**, `MOVED` naming every test that moved, `NETTED OUT`,
+  and `RUN: whole-suite` — eight numbers, all exact against the raw objects. It also proved the ruling's
+  necessity: **both mutations returned `assertions 8391 → 8391`**, because every test in that file holds
+  exactly one assertion and a failing assertion is still counted, so the subtraction this lane's whole
+  method rests on carried **no information at all** and `passed 1939 → 1938` / `1939 → 1937` did the entire
+  discrimination. **Ask for the four deltas on every mutation, not the one.**
+- ✅✅ **Three independent site proofs, none of them the disclosed field — and the second is free on any
+  render assertion.** Wave 134's M1 and M2: (i) §1 of each mutation gate log pins the **file**
+  (`M …/views/your-number-card.blade.php`, `M …/Ui/YourNumberCard.php` — neither a test body, which closes
+  the tick-185 hazard on an artifact rather than on the coder's word); (ii) each failure message carries
+  the **module's own rendered output** — `…text-green-600\">Active` under the blade mutation, with the
+  number absent from a 97 KB render, and `…text-green-600\">wrong` under the component mutation — the
+  tick-200 exception holding for a fifth and sixth time; (iii) the disclosed `SITE:` then agreed with both,
+  **exact, no offset**, because pint touched neither file (the tick-211 rule: an offset is a fact about
+  which file pint reformatted, not about honesty). The `SITE:` field is now the corroboration and no longer
+  the evidence.
+- ⭐ **A test SPLIT has a unique arithmetic signature — `+1 test, +0 assertions` — and it is the cheapest
+  way to confirm a two-commit wave did what its messages say.** Wave 134 reconciled in three steps against
+  tick 245's `1940 · 8389`: `d2dcd428` → `1941 · 8391` (+1 test, +2 assertions: one new test holding two),
+  then `651b65a9 "isolate component and view assertions"` → `1942 · 8391` (+1 test, **+0** assertions).
+  No other diff shape produces that pair. Read alongside the tick-242 flat-count tell (a red→green flip
+  with `assertions` unchanged names a one-assertion test) — the assertions field is at its most useful
+  where it does **not** move.
+- **Suite baseline, measured by this column at tick 246 on tip `026c76cc`, clean tree — `tests 1942 ·
+  passed 1939 · assertions 8391 · duration_ms 109887 · failed 1 · errors 2 · incomplete 3 · risky 1`,** the
+  standing three by **identity** (`X01Test::test_g2_76_unified_inbox_header`, a `TRACK 1 ACTION`, plus the
+  two `TwelveJourneysTest` harness errors), §2 `none`, §2b `all parse`, §6 pint `passed` / phpstan `0`,
+  stamp `20260829-0647` = `runtime_build`. `duration_ms` distinct from the wave's `110028`, which is what
+  says it is my run and not a copy. Quoted here because `cp` in **and out of** `scratch/` is refused to this
+  column (ticks 216, 218).
+- **Backlog at tick 246 — wave 135 is `ParkList`'s tenant wire and X-188's convention, plus the comment
+  wave 134 owes.** RULED. `ParkList` is the last of the module's four components still rendering its empty
+  branch unconditionally in production; it is in lane (`OWNER.md` 2026-09-07 09:5x item 2), single-module,
+  needs no vendor and no credentials, and crosses no boundary — `Tenancy` is a root service, so
+  `BoundaryStage`'s text is not engaged (the `PixelKeys` precedent, tick 232). ⛔ **Two items, not one**:
+  the comment is a correction and the wire is a build, and ticks 218–223 all measured that a pair handed
+  over as one instruction comes back as one shape. ⛔ No absence assertion — `number_parks` is
+  `ENABLE`+`FORCE` RLS like its three siblings, so one is unfalsifiable (tick 244); ⛔ no `UNRESOLVED`
+  (X-188 owns the table, the model, the route, the component and the view) and no `markTestIncomplete`;
+  ⛔ no numbers published to a mutating wave (tick 208). ⚠️ X-188's four capabilities (`G10-02 · G18-10 ·
+  G18-11 · G19-14`) name **no** screen, so the wave moves no doctor count — say so, or it gets graded on a
+  number that cannot move (tick 171). ⚠️ The wave-97/tick-200 hazard is low and checked:
+  `ParkListScreenTest` holds two tests asserting `assertOk()` only. The live proposal list stays
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **6** rows at tick 246, tick-227 membership; stub pile
+  across the thirteen **10**. Re-run both; never inherit them.
+
 ## Style
 
 Terse and factual. Cite rules and traps by name — "that is the One Rule",
