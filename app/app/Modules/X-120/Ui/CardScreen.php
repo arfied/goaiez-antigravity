@@ -34,6 +34,7 @@ class CardScreen extends Component
 
     public function makeDefault(int $cardId, CardRotateAction $action): void
     {
+        $this->forgetCardFields();
         $this->error = null;
         $this->success = null;
 
@@ -48,6 +49,7 @@ class CardScreen extends Component
 
     public function addCard(): void
     {
+        $this->forgetCardFields();
         $this->adding = true;
         $this->waiting = null;
         $this->error = null;
@@ -73,7 +75,7 @@ class CardScreen extends Component
         } catch (CardExpiredException|CardNumberInvalidException $e) {
             $this->error = $e->getMessage();
         } finally {
-            $this->number = '';
+            $this->forgetCardFields();
         }
     }
 
@@ -94,5 +96,13 @@ class CardScreen extends Component
             'cards' => $cards,
             'expiringCards' => $expiringCards,
         ]);
+    }
+
+    public function forgetCardFields(): void
+    {
+        $this->number = '';
+        $this->expMonth = '';
+        $this->expYear = '';
+        $this->name = '';
     }
 }
