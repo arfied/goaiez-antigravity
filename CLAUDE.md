@@ -5565,3 +5565,52 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     (ruling 100) before the `\Throwable` tail can render them.
     ⚠️ `'Dispute deadline has passed'` (`:88`) is TRUE and asserted at `X201Test:62`; terse, no
     remedy, ruling 76's PASS-WITH-NOTES grade, **not** widened into this wave.
+228. **A refusal message states what the METHOD did, never what the SYSTEM did — and this lane's
+    entire operator-facing surface is ONE log line, which names none of the money it failed on
+    (RULED by the lane supervisor 2026-09-09, on MONEY-141's `47fcc23b`; briefed as MONEY-142).**
+    Two halves of one seam, found by asking ruling 36's question of the sentences MONEY-141 itself
+    authored.
+    **(a) One of the two new "nothing happened" clauses is FALSE, and its identical twin three
+    methods above is TRUE.** `StripeGatewayClient::createPaymentLink():73` says *"…so no link was
+    made."* and that is right: `PaymentLinkAction` calls the client at `:26` and persists at `:29`,
+    so a throw leaves no row. `charge():35` says *"…so nothing was recorded."* and that is wrong:
+    its only caller, `GatewayEngine::capture():124-139`, catches `\RuntimeException`, **writes a
+    `Payment` with `status = 'failed'`** and rethrows — the durable record of the attempt, which
+    `:96-101`'s idempotency query then reads. Two sentences of the same shape in one file, one true
+    and one false, and **the fact each asserts lives in a different file**, so neither `php -l`,
+    `pint`, `phpstan` nor any test can tell them apart. **RULED: `charge()`'s becomes "…so the
+    charge could not be confirmed."** — true at the client and true whatever a caller records.
+    ⛔ Not by changing `capture()`'s catch: the `failed` row is load-bearing. ⛔ `createPaymentLink`'s
+    twin stays **byte-identical** — a wave that "harmonises" the pair breaks the good one (ruling
+    47's companion).
+    **(b) 264 PHP files, 39 refusals, 24 screens, 11 commands — and ONE `Log::` call.** Measured
+    across the eight modules: `Log::` = **1** (`X-199/Domain/InvoiceEngine.php:104`), `report(` = 0,
+    `activity(` = 0, `AuditService` = 0; the only other `Log` hits are that file's import, a blade
+    button label and an `ArEngine` docblock. That line is
+    `Log::warning('Gateway capture failed: '.$e->getMessage(), ['exception' => $e])` and it carries
+    **no `business_id`, no `invoice_id`, no `customer_id`, no `amount_cents`** — while the
+    `OverflowCharge` row written eight lines below (`:109-118`) carries all four. **Ruling 51's shape
+    at the operator surface: the durable record has the context and the readable one does not.**
+    **RULED: the context array names the four**, every one already in scope at that line. ⛔ Not a
+    second log line and ⛔ **never an `AuditService` write** — `AuditService::record()` calls
+    `Tenancy::idOrFail()` (standing field note) and `audit_log` is decision 272's write-only table,
+    so minting an audit surface to give an operator something to read is ruling 59.
+    ⭐ **CORRECTION to ruling 227, recorded rather than dropped.** 227 held that all 39 `throw new`
+    sites are owner copy. `charge()`'s are not: `PaymentLinkAction` does not catch (which is what
+    makes the **link** messages owner copy, and MONEY-141 fixed those correctly), but `charge()`'s
+    only reachable caller is `InvoiceEngine:103`, which **catches `\Exception` and logs**. So the two
+    `charge()` sentences were rewritten for an owner who never sees them — the rewrite is still
+    right, because a log carrying Stripe's raw JSON envelope is its own defect, but the premise was
+    one caller wide of the mark. **A census of who THROWS is not a census of who READS.**
+    ⚠️ **Why neither half could be seen:** `Log` is faked by nothing in this lane — the operator
+    surface is the one surface with **no gate at all**, ruling 70 a register past ruling 225's
+    console strings — and `charge()`'s no-id branch is rendered by no fixture, since every
+    `Http::fake` in the lane returns a body carrying an `id`. ⚠️ The existing pest test
+    `InvoiceEngineTest:170` *('the no-gateway case')* **already executes line 104** — `capture():110`
+    throws `\InvalidArgumentException`, which is a `\LogicException` and therefore passes capture's
+    own `\RuntimeException` catch untouched — so item (b)'s proof **extends** that test with
+    `Log::spy()` rather than adding a method (the idiom exists at `X-206/X206Test.php:132`).
+    ⚠️ The test for (a) uses `try`/`catch` and not `expectExceptionMessage`: PHPUnit checks the
+    latter after the method returns, so the `failed`-row assertion — the one that pins the sentence's
+    truth and stops the pair drifting apart again — would never execute (ruling 101's
+    positive-and-negative-in-one-place, defeated by an assertion style).
