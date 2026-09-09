@@ -1625,7 +1625,34 @@ dispatched — executed by the supervisor itself**, `bin/supervise.sh` being thi
 ⛔ **Not a wave and no count moved** — §5 identical in all eight across `.gateT241.txt` and
 `.gateT241b.txt`. It sets no `fail=1`: a trigger, never a verdict.
 
-⛔ **The backlog is EMPTY at tick 245 and this tick writes a HOLD — the FOURTH consecutive tick with no
+⛔ **The backlog is EMPTY at tick 246 and this tick writes a HOLD — the FIFTH consecutive tick with no
+instrument change, and the FIRST since tick 236 with NO NEW LETTERED RULING.** Nothing moved: `main`
+is unmoved (pin `e8d3d155`, identical to tick 245's), the tree is unmoved, the admission census's
+input is unmoved, and **every number in tick 245's block reproduces at the pin**. ⭐ **That backward
+audit is a positive control for `RULING FX(i)`, deliberately NOT lettered**: `FX(i)` exists because a
+ledger has no coder to falsify it, ticks 244–245 applied it going forward, and tick 246 is the first
+to run the previous block's full number set *backwards* — §5's eight, §1 `77`, `416`, drift `4 0`,
+`bar` **14 / 13**, **13** merges since `a5042da2`, `grep -c "track/stages"` → `0`, `18bbde18` not an
+ancestor (rc `1`), `N142`, census input empty, `capability 207` — **all reproduce**. The one figure
+that moved is the ahead-count, **22 → 23**, on **our own tick-245 commit**. ⚠️ **A clean audit is the
+shape of `FX` working, not a discovery**; `RULING FW` bars dressing it as one, and tick 244 set the
+precedent for a precision without a letter. Lane **23 ahead / 13 behind** first-parent (**23 / 101**
+by ancestor count, `RULING EK`); merge base `7a75f289` unmoved; ours-since-base in `app/` is
+`app/phpunit.xml` alone. ⛔ **The take is OPEN, UNNECESSARY and REFUSED for a NINTH tick** — `DD`'s
+two-row re-check prints nothing, the `Doctor`/`JourneyHarness`/`seals.json` diff against our base is
+**empty**, so this lane's checker **is** main's current checker byte-identical, `RULING EQ`'s void
+condition is not reached, and a take could refresh nothing at a cost of **101** ancestor commits.
+⭐ **The admission census was NOT re-run and the reason is a measurement taken first**:
+`git diff --stat 10e804ea HEAD -- app/` is **empty**, corroborated by `capability` reading **207**
+unchanged. §1 read from the count line per `FY` at **77**, corroborated independently, supervisor
+directory contributing **0** — and **`FY`'s census now spans EIGHT consecutive gates**
+(`.gateT239`…`.gateT246`, all `77`). §3 == §5 for a **tenth** consecutive tick and still a LEDGER.
+Drift membership re-derived by `comm` **on sorted input** (the unsorted form warns and cannot be
+trusted): `1a` · `1b` · `2d` **NOT adoptable** (`RULING FS`, re-refused without re-testing the
+boundary), `2f` · `2g` offered upstream. §2e/§2f/§2g printed `HEAD is not a merge` for a **seventh**
+gate — `FW`'s clause (ii) printing itself.
+
+⛔ **The backlog was EMPTY at tick 245 and that tick wrote a HOLD — the FOURTH consecutive tick with no
 instrument change**, and the first where a real, live, measured instrument defect was found and the
 repair **still** ruled out — `RULING FY`, whose subject is §1 of this seat's own gate. `wc -l
 bin/supervise.sh` is **416**, re-measured per `RULING FX(ii)`. ⭐ **`main` MOVED**: pin `0ce60089` →
