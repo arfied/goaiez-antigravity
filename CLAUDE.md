@@ -344,6 +344,55 @@ the first where the defective instrument is **the ledger's own arithmetic about 
 about this seat's filing to Track 1, one about this seat's own script, neither about the tree, and
 both in the block that ruled on this seat's discipline.
 
+### ⛔⛔ `RULING GA` (tick 311) — `RULING FZ` made a streak DERIVABLE by command over the ledger. The command matches `MAIN (MOVED|DID NOT MOVE): pin <sha>`, and a tick that inserts a QUALIFIER before the colon is silently dropped from the census. Tick 310 did exactly that, for the best of reasons.
+
+`FZ` ruled that a streak is **derived in the same tick by a command over the ledger** and never
+carried, and ticks 303–310 obeyed it. **The derivation has a hole, and a tick falls into it precisely
+when it is being careful.** Tick 310 ran under `RULING DK` — `origin/main` moved mid-tick — so it
+refused to write a bare *"MAIN DID NOT MOVE"* that would be false at write time, and wrote instead:
+
+```
+26: MAIN DID NOT MOVE AT PIN TIME: pin 58e8ad89, the SIXTH CONSECUTIVE unmoved tick at it, …
+```
+
+**Three words inserted between the verb and the colon, added to make the claim MORE accurate, and the
+standing regex no longer matches it.**
+
+```
+git log --format='%B' -9  HEAD | grep -oE "MAIN (MOVED|DID NOT MOVE): pin [0-9a-f]+"        →  8 rows, tick 310 ABSENT
+git log --format='%B' -10 HEAD | grep -oE "MAIN (MOVED|DID NOT MOVE)[^:]*: pin [0-9a-f]+"   → 10 rows, tick 310 PRESENT
+```
+
+⛔ **The harm is a permanent off-by-one and it fails in the safe-looking direction.** Had `main` not
+moved at tick 311, the old reader would have found **five** unmoved markers at `58e8ad89` and written
+*"SIXTH consecutive"* where the truth is **seventh** — and because incrementing is the only operation
+ever performed on a tally (`FZ`'s own point), the error would never be corrected. ⚠️ **A loose
+presence check hides it**: `grep -c "MAIN MOVED\|MAIN DID NOT MOVE"` over the same nine messages
+returns **8 of 8** and reads as a complete record. Tick 311 ran that loose form first and drew the
+**wrong** conclusion from it — that the marker was missing entirely — correcting it only with the
+anchored, pin-bearing form. That is `RULING FH`'s hazard in a new place: a loose literal returning a
+plausible count.
+
+✅ **The repair is the READER'S, not the record's — `RULING FY`'s shape.** The ledger is complete,
+honest and *better* than the regex; nothing about tick 310's block needs changing. **Standing
+correction, two clauses.** **(i)** The derivation tolerates a qualifier: match
+`MAIN (MOVED|DID NOT MOVE)[^:]*: pin [0-9a-f]+`, never the bare-colon form. **(ii)** A marker keeps
+its `: pin <sha>` shape and any qualifier goes **after** the pin, never between the verb and the
+colon — so the clauses converge rather than depending on each other. ⚠️ The repaired form drops a
+`MOVED` row's `to <sha>` tail; harmless, because the destination is the next tick's pin and is read
+there.
+
+⭐ **Both arms proven on this lane's own history** (`RULING FU`'s standard): the repaired reader
+recovers tick 310 and **vindicates its "SIXTH CONSECUTIVE" claim**, which the old reader would have
+contradicted. ⭐ **Applied to itself in the tick that wrote it** (`RULING FQ`'s standard).
+
+⚠️ Twenty-first member of the
+`EU`/`EV`/`EW`/`EX`/`EZ`/`FE`/`FF`/`FH`/`FI`/`FJ`/`FN`/`FP`/`FQ`/`FS`/`FT`/`FU`/`FV`/`FW`/`FX`/`FY`/`FZ`
+family, and the first where **the record was refined for correctness and the reader was left
+unrefined, so precision in the ledger destroyed derivability.** `FY` refused an instrument fix because
+the instrument was right and the reading wrong; **`GA` is that inverted at the source — the writer
+improved and the reader did not follow.**
+
 ### ⛔⛔ `RULING FZ` (tick 252) — `RULING FX(i)` says paste every count from a command run against the pinned sha. A STREAK IS NOT A FACT ABOUT A SHA, so no pin-anchored command can produce one and `FX(i)` is not merely unapplied to a tally — it is INAPPLICABLE IN PRINCIPLE. Two of tick 251's tallies are wrong, by two different arithmetic faults.
 
 `FX(i)` exists because a REVIEWS block has no coder to falsify it. **It has a hole, and the hole is the
@@ -1685,7 +1734,72 @@ dispatched — executed by the supervisor itself**, `bin/supervise.sh` being thi
 ⛔ **Not a wave and no count moved** — §5 identical in all eight across `.gateT241.txt` and
 `.gateT241b.txt`. It sets no `fail=1`: a trigger, never a verdict.
 
-⛔ **The backlog is EMPTY at tick 310 and this tick writes a HOLD — the SIXTY-NINTH consecutive tick
+⛔ **The backlog is EMPTY at tick 311 and this tick writes a HOLD — the SEVENTIETH consecutive tick
+with no instrument change, and the streak of ticks with no new lettered ruling ENDS AT FIFTY-EIGHT**
+(`git rev-list --count 8e178993..HEAD` → **69** prior since tick 241's instrument commit;
+`git rev-list --count 2808da7d..HEAD` → **58** since tick 252 lettered `FZ`), because tick 311 letters
+**`RULING GA`** — the ledger derivation `FZ` prescribes is blind to a marker made **more precise**.
+Every ordinal here **derived in this tick** and none carried; the §3 == §5 run and the take-refusal
+count are **deliberately not asserted**, having no derivation. ⭐ **`main` MOVED — pin `58e8ad89` →
+`ae420332`, TWO first-parent commits of which one is a merge, so this is the FIRST moved tick after an
+unmoved one and there is NO consecutive-moved streak to claim** — derived with `GA`'s **repaired**
+reader over the ledger's own markers, spanning back to tick 304's `MAIN MOVED` (the resetting event)
+and finding **six** unmoved at `58e8ad89` (ticks 305–310) before it. ⚠️ **The two commits are NOT new
+movement: tick 310 measured this exact pair mid-tick under `RULING DK` and named both** —
+`f2807da8` *"backup sources (BYPASSRLS role), …"* (07:15:17) and `ae420332` `merge: track/pricebook —
+X-162Test` (07:16:22) — so the pin-to-pin delta **reproduces an event already on the record**, and
+every figure tick 310 took at the moved ref reproduces **by identity**: behind **53 / 270**, merge
+count **45**. The **+2 first-parent / +4 ancestor** delta is the **MIXED** signature against tick 256's
+`+7 / +7`; **read the shape, never the number** (`RULING EK`). Lane **88 ahead / 53 behind**
+first-parent (**88 / 270** by ancestor count), the ahead-count moving 87 → 88 on **our own tick-310
+commit**; merge base `7a75f289` unmoved; ours-since-base in `app/` is `app/phpunit.xml` alone, so this
+lane still authors no `app/**` byte and `boundary 55` · `contract 85` · `capability 207` ·
+`anchor 128` · `schema 16` remain **main's numbers** (`RULING FO`). ⛔ **The take is OPEN, UNNECESSARY
+and REFUSED** — `DD`'s two-row re-check prints nothing and the `Doctor`/`JourneyHarness`/`seals.json`
+diff against our base is **empty**, so this lane's checker **is** main's current checker
+byte-identical, `RULING EQ`'s void condition is not reached, and a take could refresh nothing at a
+cost of **270** ancestor commits. ⭐ **The admission census was NOT re-run and the reason is a
+measurement taken first**: `git diff --stat 10e804ea HEAD -- app/` is **empty**, corroborated by
+`capability` reading **207** unchanged. §1 read from the count line per `FY` at `:47` as a **single
+line** at **77**, corroborated independently, supervisor directory contributing **0**; `FY`'s census
+spans **SEVENTY-THREE** consecutive gates (`.gateT239`…`.gateT311`, all `77`, derived in three calls
+of 24 · 25 · 24 with every filename attached, never a glob). §3 == §5 and still a LEDGER; §5's own
+arithmetic control holds (`494`, read positionally). `wc -l bin/supervise.sh` **416** and drift `4 0`,
+both re-measured per `FX(ii)`; `bar` sections **14 / 13** on the same extraction, membership re-derived
+by `comm` on sorted input and unchanged (`1a` · `1b` · `2d` **NOT adoptable**, `RULING FS`, re-refused
+**without** re-testing the boundary; `2f` · `2g` offered upstream). §2e/§2f/§2g printed `HEAD is not a
+merge` for a **SEVENTIETH** gate (T242…T311, all `3`, derived in three calls of 23 · 24 · 23, anchored
+with filenames explicit, T241 **measured at `2`** as `FZ(b)`'s pre-adoption gate). **TRACK 1
+ACTION 10** at the pin: **45** first-parent merges since `a5042da2` (44 → 45 on the one merge), **0**
+naming `track/stages`, `18bbde18` still not an ancestor (rc **1**). ⚠️ **A precision recorded and
+deliberately NOT lettered — §5's row dump TRUNCATES, and this tick nearly read the truncation as a
+measurement.** `f2807da8` names the BYPASSRLS role, which is `RULING FD` / OWNER ACTION H territory, and
+`grep -n "goaiez_backup" .gateT311.txt` prints **nothing** — but §5 prints **no schema rows at all**
+in this gate (`grep -c "has no RLS"` → `0`, `grep -c "csat_score"` → `0`), so **absence from the
+printed rows is not absence from the violation set.** `schema` reads **16 unchanged**, no fall
+occurred, the 16th row's identity is **not measured this tick**, and it is deliberately not chased —
+the remedy is `ALTER ROLE … NOBYPASSRLS`, reserved to the owner. `RULING FY` already rules the axis
+(read the count, never the printed rows); what is new is that **§5 truncates at a different place than
+§1 and §7**, silently and with no overflow line. ⭐ **Further precisions, NOT lettered** (`FW` bars
+dressing a clean audit as a discovery): tick 311's backward audit under `FX(i)` is **clean** and, at
+tick 310's write-time figures, its **stronger by-identity form**, the only movers being the ahead-count
+on our own commit and the two censuses each growing by one gate, with **no ordinal asserted for the
+audit itself**; ⚠️ **a PERMISSION PROMPT is not a hook refusal and this tick met one** — a `grep -oE`
+with a `.{0,80}` context window, gating a **single sub-command** where a hook refuses a **compound
+wholesale**, **not retried verbatim** (the message was written to disk and read back), which is
+`RULING FI`'s discriminator of the invocation **form** and never the capability; ✅ **no hook refusal
+fired at all this tick**, recorded because a refused hook is partial work and not a no-op;
+✅ **`RULING ES`/`FJ` did NOT fire, by construction rather than luck — no `cd` was issued at all**,
+both censuses running with all seventy-three / seventy filenames attached, which is `FJ`'s own control;
+⚠️ **`RULING FH` fired live** — the loose marker count returning `8 of 8` is what nearly closed `GA` in
+the wrong direction; ⚠️ **a liveness scan is a DATED reading and the TWO scans AGREED**, both finding
+the same two coders (a relative-`logs/` `run174` of another lane, proven not ours by **re-verifying**
+that this checkout has no such directory, `RULING CX`, and `pricebook run152`), **neither** containing
+this lane, recorded with **no forecast attached** per `RULING EJ`; and ✅ **`RULING DK` did NOT fire** —
+`origin/main` re-read unchanged at `ae420332` at write time. ⚠️ `HEAD` is **60 ahead** of
+`origin/track/stages`; notes-only commits ride the next gated-sha push.
+
+⛔ **The backlog was EMPTY at tick 310 and that tick wrote a HOLD — the SIXTY-NINTH consecutive tick
 with no instrument change and the FIFTY-EIGHTH CONSECUTIVE with no new lettered ruling**, every
 ordinal here **derived in this tick** per `RULING FZ` and none carried (`git rev-list --count
 8e178993..HEAD` → **68** prior since tick 241's instrument commit, corroborated by `git log -3 --
