@@ -225,4 +225,8 @@ class ThreadScreenTest extends TestCase
             Livewire::test(Thread::class, ['customer' => $secondCustomer])->assertDontSee('Secret message for first customer.');
         });
     }
+
+    /**
+     * BUILD PROPOSAL: X-01 Ui/Thread.php and test fixtures conflate customer.id and people.id in LeadScore queries; must query and seed by person_id. Owner: X-01
+     */
 }
