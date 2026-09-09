@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X176\Actions;
 
-use App\Modules\X103\Models\Page;
+use App\Modules\X103\Actions\PageReadAction;
 
 final class InternalLinkRenderAction
 {
@@ -13,10 +13,7 @@ final class InternalLinkRenderAction
      */
     public function handle(int $businessId): string
     {
-        $pages = Page::where('business_id', $businessId)
-            ->where('is_published', true)
-            ->orderBy('slug', 'asc')
-            ->get();
+        $pages = app(PageReadAction::class)->publishedFor($businessId);
 
         if ($pages->isEmpty()) {
             return '';
