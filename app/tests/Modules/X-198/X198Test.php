@@ -182,13 +182,13 @@ class X198Test extends TestCase
 
         $this->connectAction->handle($biz->id, 'stripe', 'acct_x');
 
-        $this->app->instance(StripeGatewayClient::class, new class
-        {
-            public function charge(int $amountCents, string $source, string $currency = 'USD'): string
-            {
-                throw new \RuntimeException('Stripe charge failed: card_declined');
-            }
-        });
+        // A double never reaches the HTTP boundary, so it cannot see a header. The real client and
+        // a faked transport are the only way this test can observe what the gateway was told.
+        Http::fake([
+            'api.stripe.com/*' => Http::sequence()
+                ->push(['error' => ['message' => 'Your card was declined.']], 402)
+                ->push(['id' => 'ch_stub_money60_00000000000'], 200),
+        ]);
 
         $idempotencyKey = 'idem_retry_1';
 
@@ -198,14 +198,6 @@ class X198Test extends TestCase
             // Expected
         }
 
-        $this->app->instance(StripeGatewayClient::class, new class
-        {
-            public function charge(int $amountCents, string $source, string $currency = 'USD'): string
-            {
-                return 'ch_stub_money60_00000000000';
-            }
-        });
-
         $payment = $this->captureAction->handle($biz->id, 3000, 'tok_success', $idempotencyKey);
 
         $this->assertEquals('ch_stub_money60_00000000000', $payment->gateway_charge_id);
@@ -213,6 +205,15 @@ class X198Test extends TestCase
 
         $count = Payment::where('business_id', $biz->id)->count();
         $this->assertEquals(2, $count, 'Expected two rows: one failed and one charged.');
+
+        // The declined attempt and the retry must not carry the same key, or the provider suppresses
+        // the retry and the customer's second card can never be charged.
+        Http::assertSent(function ($request) use ($biz) {
+            return $request->hasHeader('Idempotency-Key', 'x198-charge-'.$biz->id.'-idem_retry_1-0');
+        });
+        Http::assertSent(function ($request) use ($biz) {
+            return $request->hasHeader('Idempotency-Key', 'x198-charge-'.$biz->id.'-idem_retry_1-1');
+        });
     }
 
     public function test_a_successful_charge_is_captured_not_pending(): void
@@ -555,5 +556,55 @@ class X198Test extends TestCase
         // The loser hands back the winner's row: one link for this payment, and it is the racer's.
         $this->assertSame('cs_test_racer', $link->provider_link_id);
         $this->assertSame(1, PaymentLink::where('business_id', $biz->id)->where('payment_id', $payment->id)->count());
+    }
+
+    public function test_a_capture_sends_the_gateway_an_idempotency_key_namespaced_by_business(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'IdemHeader', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->connectAction->handle($biz->id, 'stripe', 'acct_idem_header');
+
+        Http::fake([
+            'api.stripe.com/*' => Http::response(['id' => 'ch_idem_header_00000000000'], 200),
+        ]);
+
+        app(GatewayEngine::class)->capture($biz->id, 4500, 'tok_visa', 'idem_header_1', 'USD');
+
+        // The key carries the business because every charge posts with the platform secret and no
+        // Stripe-Account (R093), so all tenants share one idempotency namespace at the provider.
+        Http::assertSent(function ($request) use ($biz) {
+            return $request->url() === 'https://api.stripe.com/v1/charges'
+                && $request->hasHeader('Idempotency-Key', 'x198-charge-'.$biz->id.'-idem_header_1-0');
+        });
+    }
+
+    public function test_a_pay_link_sends_the_gateway_an_idempotency_key_namespaced_by_business(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'PayLinkIdem', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $payment = Payment::create([
+            'business_id' => $biz->id,
+            'amount_cents' => 2500,
+            'payment_token' => 'tok_pay_idem',
+            'idempotency_key' => 'idem_pay_idem',
+            'status' => 'failed',
+        ]);
+
+        Http::fake([
+            'api.stripe.com/*' => Http::response([
+                'id' => 'cs_test_idem',
+                'url' => 'https://checkout.stripe.com/c/pay/cs_test_idem',
+            ], 200),
+        ]);
+
+        (new PaymentLinkAction)->handle($biz->id, $payment->id, 'Payment for declined transaction');
+
+        // The pair (business, payment) IS the idempotency, so the provider gets the same pair.
+        Http::assertSent(function ($request) use ($biz, $payment) {
+            return $request->url() === 'https://api.stripe.com/v1/checkout/sessions'
+                && $request->hasHeader('Idempotency-Key', 'x198-paylink-'.$biz->id.'-'.$payment->id);
+        });
     }
 }
