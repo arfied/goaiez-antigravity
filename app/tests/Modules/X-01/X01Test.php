@@ -572,6 +572,11 @@ class X01Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Inbox Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
+        $convUpdated = null;
+        Event::listen(ConversationUpdated::class, function ($event) use (&$convUpdated) {
+            $convUpdated = $event;
+        });
+
         Event::dispatch(new ChatLeadCaptured(
             businessId: $biz->id,
             leadId: 99,
@@ -585,5 +590,8 @@ class X01Test extends TestCase
             'channel' => 'chat',
             'status' => 'open',
         ]);
+
+        $this->assertNotNull($convUpdated, 'ConversationUpdated event should have been dispatched');
+        $this->assertEquals('Hello chat', $convUpdated->messageSnippet, 'That conversation carries the visitor message');
     }
 }
