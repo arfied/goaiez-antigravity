@@ -88,7 +88,10 @@ final class DisputeDefenseEngine
             throw new \Exception('Dispute deadline has passed');
         }
 
-        $types = DisputeEvidence::where('dispute_id', $disputeId)->pluck('evidence_type')->toArray();
+        $types = DisputeEvidence::where('business_id', $businessId)
+            ->where('dispute_id', $disputeId)
+            ->pluck('evidence_type')
+            ->toArray();
 
         if ($dispute->reason === 'fraudulent') {
             $required = ['call_log', 'transcript', 'delivery_receipt', 'consent_record'];

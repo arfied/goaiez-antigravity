@@ -56,11 +56,12 @@ final class DetectOverdueReceivablesCommand extends Command
 
         foreach ($businesses as $business) {
             $dispatched += Tenancy::actingAs((int) $business->id, function () use ($business) {
-                $overdueInvoices = app(InvoiceReader::class)->overdueIssued();
+                $overdueInvoices = app(InvoiceReader::class)->overdueIssued((int) $business->id);
 
                 $localDispatched = 0;
                 foreach ($overdueInvoices as $invoice) {
-                    $alreadyChased = ArDunningAction::where('invoice_id', $invoice->id)
+                    $alreadyChased = ArDunningAction::where('business_id', (int) $business->id)
+                        ->where('invoice_id', $invoice->id)
                         ->where('action', 'escalate_to_human')
                         ->exists();
 
