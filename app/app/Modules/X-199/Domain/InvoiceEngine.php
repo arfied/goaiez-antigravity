@@ -101,7 +101,13 @@ final class InvoiceEngine
                         $gatewayChargeId = $payment->gateway_charge_id;
                         $status = $gatewayChargeId !== null ? 'charged' : 'refused';
                     } catch (\Exception $e) {
-                        Log::warning('Gateway capture failed: '.$e->getMessage(), ['exception' => $e]);
+                        Log::warning('Gateway capture failed: '.$e->getMessage(), [
+                            'business_id' => $businessId,
+                            'customer_id' => $customerId,
+                            'invoice_id' => $invoice->id,
+                            'amount_cents' => $overflowAmount,
+                            'exception' => $e,
+                        ]);
                         $status = 'refused';
                     }
                 }
