@@ -57,7 +57,7 @@
                             <option value="biweekly">Every two weeks</option>
                             <option value="weekly">Weekly</option>
                         </select>
-                        <span class="tabular-nums text-sm text-ink-2">about {{ number_format($inv->preview_cents / 100, 2) }} each</span>
+                        <span class="tabular-nums text-sm text-ink-2">{{ $inv->preview_line }}</span>
                         <x-ui.submit target="offerPlan({{ $inv->id }})" busy="Offering…">Offer plan</x-ui.submit>
                     </form>
                 </li>

@@ -81,8 +81,12 @@ class PaymentplanBuilder extends Component
 
         foreach ($invoices as $inv) {
             $inv->balance_cents = $inv->total_cents - $inv->paid_cents;
-            $count = max(2, (int) ($this->installments[$inv->id] ?? 3));
-            $inv->preview_cents = (int) ceil($inv->balance_cents / $count);
+            $typed = (int) ($this->installments[$inv->id] ?? 3);
+            if ($typed < 2) {
+                $inv->preview_line = 'a plan is at least two payments';
+            } else {
+                $inv->preview_line = 'about '.number_format((int) ceil($inv->balance_cents / $typed) / 100, 2).' each';
+            }
         }
 
         $numbers = app(InvoiceReader::class)->numbersById($bizId, $planned);
