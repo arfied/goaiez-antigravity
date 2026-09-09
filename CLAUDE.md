@@ -6663,6 +6663,78 @@ Watch for: <the trap that applies, by name>
   `UnifiedInboxManager`), never a build in the same wave. Live list
   `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **11** rows at tick 275, membership unchanged since
   tick 274; `app/app/Modules/` → **0**. Re-run both; never inherit them.
+- ✅ **The words-cross proposition on the X-102 → X-01 chat seam is SETTLED (wave 151), and the coder found
+  the house form through the sixth command rather than through a shape I named.** `X01Test.php:515-528`
+  (wave 102's `test_g11_12_email_reply_bridge` A2) already proved the email seam's payload with
+  `Event::listen(ConversationUpdated::class, …)` + `assertEquals(<body>, $convUpdated->messageSnippet)`; wave
+  151 reused it verbatim for the chat seam, mutated `ChatLeadCapturedListener.php:27` (`$event->message` →
+  `'mutated message'`), and the target failed on its own terms with the module's output in the message
+  (`+'mutated message'`). `10772 → 10774` with `tests` flat (two assertions into an existing method),
+  mutated `passed −1 · failed +1 · assertions flat` (the target is the test's last assertion, tick 249),
+  radius 1 by identity, site pinned four ways. **Tick 271's open half is closed; do not re-brief it.**
+- ⚠️ **The tick-256 generator check is BLIND to `echo "…"` — a report generator built as ninety lines of
+  `echo "<literal>" >> REPORT.md` passes `grep -n "= '"` and is still typed literals.** Wave 151's
+  `generate_report.sh` had `DOCTOR · STAGES · PINT · VERDICT · PHPSTAN · SITE · TARGET · MESSAGE · MOVED ·
+  RADIUS` as `echo` literals and only `CHECK · COMMITS · TESTS · DELTAS · ARTIFACTS · RAW` as command output.
+  Every literal reconciled against its artifact this time — and `MESSAGE:` was a paraphrase that dropped the
+  `--- Expected / +++ Actual` block, the one part that pins the site, and `STAGES` was labelled
+  `Measurement.` on a wave that ran no doctor. ⛔ **The wave-151 brief did not carry the tick-256 ruling, and
+  rulings reach the coder through briefs** — that half is mine. Brief it as *every field value is the output
+  of a command or a `cat`; a value typed into an `echo` is a literal whatever surrounds it*, and ask for
+  `MESSAGE:` as the `grep -o '"message":"[^"]*"'` of the target's `failures[]` entry, pasted.
+- ⚠️ **A harness revert the guard REFUSES leaves the mutation live, and a script with no dirty-tree exit
+  then writes `REPORT.md` over the mutated tree — the wave-135b `set -e` shape inverted.** Wave 151's
+  `do_everything.sh:15` was `git checkout -- <path>`, which `coder-bin/git` refuses (tick 237: it refuses the
+  `--` form and admits the loose one); the script ran on and generated the report; the coder read the output,
+  reverted by `git restore <the one path>` (named — tick 271 honoured) and disclosed it only in the agy log.
+  The mutation was also applied by `sed -i` rather than `git apply` of the patch it had generated. Nothing was
+  lost — the green gate preceded the mutation and the mutated gate's §1 pins the module file — but the
+  tick-238 house form (`scratch/run-mutations-w128.sh`: `--check`, `git apply`, gate, copy after exit,
+  `git apply -R`, non-zero exit on a dirty tree) was on disk and unused. **Brief the script by PATH**, and
+  note that `git apply -R` is the revert the guard cannot refuse.
+- ⚠️⚠️ **`conversations.consent_logged_at` is the GATE on storing message bodies at all, it has ONE writer,
+  and the rule behind it names the chat widget as its subject — measured at tick 276, and it turns the
+  "ingestMessage never persists the body" finding from a dead row into LAW.** `grep -rn "consent_logged_at"
+  app/app` → the only writer is `ConversationThreads::openFor():249` (root service, SMS, keyed on `Customer`).
+  `ConversationThreads.php:58-73`: *"IS THE GATE ON STORING BODIES AT ALL … citing `29` §2 rule 22 … its
+  subject is the chat widget: 'pre-chat notice, logged consent, first-party transcripts only, no capture
+  before consent' … THE GATE IS STILL ANSWERED RATHER THAN BYPASSED (4113). An SMS thread is stamped at the
+  moment it opens, and what the stamp means on this channel is written down here."* `record():314-323`
+  **refuses** a body on an unstamped thread. `ingestMessage`'s `Conversation::firstOrCreate(['person_id'…])`
+  sets no stamp, so `recordInbound()` on any conversation this lane ingests throws. `grep -rni consent
+  app/app/Modules/X-102` is **empty** and `chat_sessions` has no consent column — while `chat_leads.message`
+  and `chat_turns.message` already persist the visitor's words. ⛔ **`app/app/Models/Message.php:24` and
+  `ThreadCloseSummaries.php:209` cite `tests/Feature/Architecture/InboxTest.php` as the chokepoint lint
+  holding `messages` to `ConversationThreads`; that file exists on NEITHER this branch NOR `origin/main`**
+  (`git show origin/main:<path>` → `does not exist`) — the tick-229 `Architecture/PixelTest` shape, and a
+  documentary chokepoint is not a licence to add a writer outside it. `Thread.php:126`'s
+  `DB::table('messages')->insert` is already a second direct writer: an existing violation, not a permission
+  (tick 259). ⛔ **RULED at tick 276: a stamp written without a sentence saying what it means on that channel
+  is the manufactured artefact the store's own header refuses**, and this lane briefs no build on this gate
+  until each seam's sentence exists.
+- ⚠️ **`Thread.php:159` looks up conversations by `customer_id`; `ingestMessage` writes `person_id` only.**
+  `person_id` on `conversations` comes from X-121's `2026_08_31_000007_reconcile_legacy_module_columns.php:21`;
+  the root migration declares `customer_id`. Whether the X-01 inbox screen can show a conversation this lane
+  ingests is an open measurement, handed over conclusion-free. If it cannot, three live seams deliver into a
+  store no screen reads — decision 272's shape with a **column** as the seam.
+- **Suite baseline, measured by this column at tick 276 on tip `58cbb5bc`, clean tree — `tests 2436 ·
+  passed 2428 · assertions 10774 · failed 6 · errors 2 · incomplete 3 · risky 1 · duration_ms 144166`,** the
+  standing eight by **identity**, §2 `none`, §2b `all parse`, §6 pint `passed` / phpstan `0`, stamp
+  `20260829-0647` = `runtime_build`. `cmp` against the wave's green → `differ: byte 96, line 1`, the
+  `duration_ms` offset alone. Fourteenth consecutive tick the lock resolved.
+- **Backlog at tick 276 — wave 152 is the consent-gate reading per seam and writes no production code;
+  wave 153 builds whatever it licenses.** RULED (block above). Three inbound seams — WhatsApp (wave 98),
+  email (wave 102), chat (wave 147b) — handed over as **three separate items whose answers need not agree**
+  (ticks 187, 209, 218, 221): for each, does the store's SMS reasoning (*the customer addressed this message
+  to this business's own number*) transfer, and if it does not, what logged consent would answer the gate
+  honestly and who owns capturing it. Plus the `customer_id`/`person_id` measurement and X-102's own
+  no-consent capture as a fifth, separate item. Every output is a one-line row under
+  `app/tests/Modules/`, `Owner:` named per row, and a `state.py decided (R245)` row once. ⛔ No
+  `⛔ REFUSED`, no `UNRESOLVED` (X-01 and X-102 are in the thirteen; a consent-capture build on the widget is
+  a lane-owned build, not a block), no stamp written, no `messages` writer added. The conclusion-withheld
+  form is 10-for-10 on this lane and this column names no seam's answer. Live list
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **11** rows at tick 276, membership unchanged since tick
+  267; `app/app/Modules/` → **0**; stub pile **11**. Re-run all three; never inherit them.
 
 ## Style
 
