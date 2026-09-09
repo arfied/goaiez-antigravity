@@ -488,4 +488,32 @@ class X198Test extends TestCase
                 && $event->gatewayChargeId === 'ch_mock_announced';
         });
     }
+
+    public function test_a_charge_the_gateway_never_confirmed_says_so_and_leaves_a_failed_row(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Unconfirmed Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->connectAction->handle($biz->id, 'stripe', 'acct_unconfirmed');
+
+        // 200, and no `id` anywhere in the body: the gateway took the request and confirmed nothing.
+        Http::fake([
+            'api.stripe.com/*' => Http::response(['object' => 'charge', 'status' => 'pending'], 200),
+        ]);
+
+        $caught = null;
+
+        try {
+            app(GatewayEngine::class)->capture($biz->id, 4200, 'tok_visa', 'idem_no_charge_id');
+        } catch (\RuntimeException $e) {
+            $caught = $e;
+        }
+
+        $this->assertNotNull($caught, 'capture must refuse a response that carries no charge id');
+        $this->assertStringContainsString('sent back no charge id, so the charge could not be confirmed', $caught->getMessage());
+        $this->assertStringNotContainsString('nothing was recorded', $caught->getMessage());
+
+        // The sentence is only true because of this row, so the two are asserted together.
+        $this->assertSame(1, Payment::where('business_id', $biz->id)->where('status', 'failed')->count());
+    }
 }
