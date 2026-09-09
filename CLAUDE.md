@@ -6943,6 +6943,88 @@ Watch for: <the trap that applies, by name>
   list `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **15** rows at tick 279, membership unchanged since
   tick 278; `app/app/Modules/` → **0**; stub pile across the thirteen **11**. Re-run all three; never inherit
   them.
+- ⚠️⚠️ **A census grep must return the SANCTIONED writer, or it is not a census — and the one-command
+  self-test is to look for the known-good writer in its own output.** My wave-154 brief handed over
+  `grep -rn "DB::table('messages')\|Message::create\|->messages()->create"` to establish who writes `messages`
+  outside `ConversationThreads`. It does **not** return `ConversationThreads.php`, whose write is
+  `Message::query()->create([` at `:333` — the one writer the whole rule exists to bless. Widened to
+  `messages')->insert\|messages')->insertGetId\|Message::query()->create\|new Message(\|Message::create` the
+  census is **eight** files, three of them unseen by mine (`C-Sms/SmsSendAction:85` → `outreach_messages`,
+  `Services/Sms/InboundMessages:958` → `inbound_messages`, `Services/Support/SupportDesk:461` →
+  `support_messages`). ⭐ The conclusion survived — `X-01/Ui/Thread.php:158` really is the only production
+  violator — but it survived by luck, not by the evidence. This is tick 269 (*a pasted output is evidence only
+  when the glob is the one that was run*) pointed at the **brief**: an under-inclusive grep is a claim about
+  its own completeness, and authoring one is how a false absence gets written by this column rather than by
+  the coder. **Before handing over a "who does X" grep, run it and confirm the thing you already know does X
+  appears in it.**
+- ⭐⭐ **The false positives in that same grep were discriminated correctly, and the method is the one to keep:
+  three `Services/Messaging/*` hits are `OutreachMessage::create(...)`, matched because that substring
+  contains `Message::create`, and they write `outreach_messages`.** Wave 154 re-derived per file, named the
+  mechanism, and said so in the field where the tension lived. A wrong `BLOCK` costs a wave and a wrong
+  *finding* costs a durable record; **spend the per-row check on the hits you would accept as well as the ones
+  you would refuse** (the wave-72 rule), and note that a table name embedded in a model name is a standing
+  generator of this shape.
+- ⭐ **An id-less `BUILD PROPOSAL` can be the CORRECT row — check both whether an apt id exists and whether
+  attaching it would lie.** Wave 154's `LeadScore` row carries no capability id, and X-01 declares three that
+  look apt (`G19-08` ghost-risk, `G2-32`/`G2-38` lead_scores). Tick 118 says ask for the id in the line; tick
+  269 says check the id exists before grading its absence; **tick 274 is what governs here — borrowing an
+  existing id for a new finding is a claim that THAT id's own capability is unbuilt**, and `G19-08` is built
+  and tested. The honest row is id-less, and the two rules are not in tension once the third is applied.
+- ⚠️ **A docblock that discloses a fixture can still leave the LOAD-BEARING half unsaid, and the durable
+  record is where that costs.** Wave 154 corrected `ThreadScreenTest.php:154` to *"proves that the Thread
+  screen displays an ingested message manually inserted into the messages table"* — the fixture disclosure
+  tick 278 demanded, and accurate about the insert. But **the message was not ingested; the conversation
+  was** (`ingestMessage` persists no body, tick 275), and what the one `assertSee` actually proves is that
+  `Thread` **reaches an ingest-created conversation through `resolvePersonId()`**. `REPORT.md` is overwritten
+  every wave and a docblock is not. **Ask a docblock to name the PATH it proves, not the artefact it
+  displays** — the sentence a reader meets six weeks out is the whole point of writing one.
+- ⚠️ **A `BUILD PROPOSAL` in a class-trailing docblock attached to no declaration parses, greps and pints
+  clean — and is one refactor from being deleted as stray.** Wave 154's row is the last thing in
+  `ThreadScreenTest`'s class body, before `}`. Nothing is lost today; every other row on the board sits in the
+  docblock of the method whose subject it is. Cosmetic, and folded into the next wave that opens the file
+  rather than briefed on its own (tick 191).
+- ✅ **Five brief-side wordings held at once, and every one of them had failed at least twice before the
+  sentence changed.** `STAGES:` quoted §3 byte-exact **and labelled itself a carry-over in words** (filed as
+  §4's integrity line at waves 96 and 115, invented at wave 120) — second consecutive wave to pre-empt the
+  hazard rather than walk into it. `GATE:` gave pint's object **alone** with phpstan on its own line, the
+  tick-172 merge this column made itself now structurally impossible, plus a self-checking `grep -c`.
+  `TESTS:` ran `head -1` and `grep -c` as **separate** commands with both outputs pasted, closing the
+  tick-238 missing-path zero and the tick-263 mangled pipe together. `ARTIFACTS:` was two `stat` lines exact
+  to the nanosecond. One gate, at the end, on a clean tree at the tip (tick 262). **When a defect repeats,
+  suspect the sentence before the coder** — 16-for-16 on this lane.
+- **Suite baseline, tick 280 on tip `7eccc0e8`, clean tree — `tests 2438 · passed 2430 · assertions 10776 ·
+  failed 6 · errors 2 · incomplete 3 · risky 1 · duration_ms 143393`,** the standing **eight** by identity
+  (six artifact-missing under `app/storage/app/evidence/**`, all out of lane, plus the two
+  `TwelveJourneysTest` real-transport errors). Headline four identical to tick 279's on a distinct
+  `duration_ms` — all a docblock-only diff may produce. My own plain `bash bin/supervise.sh`: `gates green.`,
+  §6 pint `passed` / phpstan `0`, §2 `none`, seals match, stamp `20260829-0647` = `runtime_build`. **I ran no
+  second suite and say so** (tick 277). ⚠️ §1 also reads `vs origin/main: behind 77, ahead 15` — main has
+  moved since the wave-148 merge; not a blocker this tick, and the tick-272 rule applies to the next merge
+  (`git rev-list --left-right --count origin/main...HEAD` first — an ahead-count of 0 makes `merge=ours`
+  decorative and the per-track restore the whole wave).
+- **Backlog at tick 280 — wave 155 is the `LeadScore` key, and it is a BUILD.** RULED, re-derived this tick
+  (tick 235): `lead_scores.person_id` is `->constrained('people')`
+  (`2026_08_30_000017_create_x01_inbox_tables.php:40`), `Ui/Thread.php:46` is
+  `LeadScore::where('person_id', $personId ?: $this->customer->id)`, and wave 153b made `$personId === null`
+  a **defined** state rather than an accident — so the `?:` arm reads a `people` key with a `customers` id by
+  design rather than by luck. It is the row wave 154 put on the board, lane-owned, single-module, on a routed
+  live path, no vendor and no credentials. ⚠️ **The suite is blind to it BY CONSTRUCTION and that is the
+  hazard to brief**: `X01Test.php:440,446`, `PersonTest.php:35` and `CustomersListTest.php:32` all seed
+  `person_id` with a **Customer** id, so every existing lead-score test passes only because the two id spaces
+  coincide in a fresh database — the wave-129b shape (*a standing assertion load-bearing on the defect*) with
+  four seed sites. ⛔ **The shape is the coder's** — whether the `?:` arm goes, becomes a refusal, or is right
+  for a reason I have not seen; the conclusion-withheld form is **13-for-13** and has corrected this column
+  four times on this module's seams (ticks 259, 260, 261, and wave 147b's `object` parameter my brief never
+  questioned). ⛔ **A fixture that encodes the defect under test and a standing assertion are not the same
+  thing, and the answer may differ per file** (ticks 187, 209, 218, 221), so the four seed sites go over
+  individually and the standing ⛔ holds: never edit a standing assertion to accommodate a change. ⛔ No
+  `⛔ REFUSED`, no `UNRESOLVED` (X-01 is in the thirteen, nothing external is missing), and **no numbers
+  published** — a mutating wave produces its own green-then-red pair (tick 208). ⛔ `TRACK 1 ACTION 1` is
+  filed and is not a blocker: `tests/Feature/Architecture/InboxTest.php`, cited by `Models/Message.php:24`
+  and `ThreadCloseSummaries.php:209`, exists on **neither** this branch nor `origin/main` — the tick-229
+  `Architecture/PixelTest` shape a second time, and writing the lint is a CHECK change, never a coder task.
+  Live list `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **16** rows at tick 280 (15 + wave 154's);
+  `app/app/Modules/` → **0**; stub pile across the thirteen **11**. Re-run all three; never inherit them.
 
 ## Style
 
