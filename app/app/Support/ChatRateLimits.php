@@ -37,6 +37,12 @@ final class ChatRateLimits
      */
     public const int TURN_PER_MINUTE = 60;
 
+    /**
+     * CAPTURE LIMIT IS 5 PER MINUTE. A real user typically submits their contact details
+     * once per chat session. Five allows for immediate resubmissions (e.g., correcting
+     * a typo) or network retries, while capping the damage from a tight loop to five
+     * pairs of chat_leads and Person rows per minute per attacking address.
+     */
     public const int CAPTURE_PER_MINUTE = 5;
 
     public static function register(): void
