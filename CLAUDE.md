@@ -5614,3 +5614,62 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     latter after the method returns, so the `failed`-row assertion — the one that pins the sentence's
     truth and stops the pair drifting apart again — would never execute (ruling 101's
     positive-and-negative-in-one-place, defeated by an assertion style).
+229. **The pay-link idempotency ruling 36 promised is a check-then-act that loses the race to its own
+    unique index, and the loser's Stripe payment page is orphaned while the owner is told none was
+    made (RULED by the lane supervisor 2026-09-09, briefed as MONEY-143).** The catch census —
+    88 `catch (` blocks over the eight modules, 31 of them `\Throwable` tails — asks of each block
+    *what class does it catch, and is what it does the thing a reader of that class needs?* One
+    seam fails, and it fails at both ends of one button press.
+    **(a) `X-198/Actions/PaymentLinkAction::handle()` is check-then-act across a live vendor call.**
+    `:17-23` reads `PaymentLink::where(business_id)->where(payment_id)->first()` and returns it;
+    `:26` creates a **real Stripe Checkout Session**; `:28` is a plain `PaymentLink::create`, and
+    `2026_09_06_100000_create_x198_payment_links_table.php:23` is
+    `$table->unique(['business_id','payment_id'])`. So two presses of **Make a pay link** on one
+    decline — a double click, or two tabs — both pass the pre-check, **both call Stripe**, and the
+    second `create` dies `SQLSTATE[23505]`. Ruling 36 built that unique pair as the idempotency and
+    required the test to assert the client's **call count**; `X198Test:345`'s
+    `test_a_second_pay_link_request_reuses_the_first` asserts exactly that and is green, because a
+    single-threaded test never leaves the pre-check's window. ⭐ **The app's own idempotency
+    guarantee is what fires**, and the cost is a live payment page at a payment provider with **no
+    row in this app** — invisible to `render()`, which reads links back off the table (ruling 36),
+    and unreachable by anything here. **RULED: `:28` becomes `PaymentLink::firstOrCreate([business_id,
+    payment_id], [provider_link_id, url])`.** `Builder::firstOrCreate:732-739` delegates to
+    `createOrFirst`, which catches `UniqueConstraintViolationException` and re-queries — so the
+    loser returns the **winner's** row and the owner gets a working link. ⛔ Not by an advisory lock
+    in `InvoiceNumber::next()`'s shape: that holds a DB transaction open across a live HTTP call to
+    Stripe. ⛔ Not by dropping the `:17-23` pre-check, which would call Stripe on every press.
+    ⛔ The orphaned session is **not** expired — a second live vendor call in a failure path is
+    ruling 13's evidence run — it is recorded `UNRESOLVED`.
+    **(b) `X-199/Ui/Declines.php:32`'s prefix is the THIRD statement of the same act in one panel,
+    and the only one that asserts an outcome.** `declines.blade.php:23` heads the panel
+    *"We couldn't make that pay link"* (ruling 93's own shape, naming the act) and every message
+    the tail can now render is a self-contained sentence naming its own act — MONEY-141's
+    `'The gateway would not open a payment page: <Stripe's own error.message>'` and
+    `'…sent back no payment page, so no link was made.'`. Stacked, an owner reads *"We couldn't make
+    that pay link" / "The pay link was not made: The gateway would not open a payment page: Your card
+    was declined."* And the prefix is the one clause the catch **cannot know**: with (a) fixed the
+    remaining `\Throwable` members are the client's, but the block guards the persist too, so a
+    write failure after a successful session would have it assert the opposite of the truth — ruling
+    228's *a message states what the METHOD did, never what the SYSTEM did*, one register up,
+    because the surviving act is at a payment provider. **RULED: the prefix goes; `$this->error` is
+    the exception's own sentence**, the shape the domain-specific catches in this lane already use.
+    ⚠️ Blast radius measured with interior fragments (rulings 46, 86, 146): **ZERO** — no test
+    anywhere asserts `'The pay link was not made'`, and `DeclinesScreenTest:105`'s `charge()` stub is
+    the capture path, not this one — which is ruling 70 again and why the prefix outlived every
+    X-199 screen wave. Both items therefore **add** methods (ruling 68).
+    ⭐ **Item (b)'s proof uses `Http::fake` with the REAL client, never a stub throwing the sentence**
+    — a double that returns the message under test is ruling 41 part 2, and the point is that the
+    client mints it. Item (a)'s proof commits the racing row **inside the `Http::fake` closure**,
+    which runs at the HTTP boundary — precisely between the pre-check and the persist — so the race
+    is reproduced deterministically with no concurrency; under the mutation (`firstOrCreate` back to
+    `create`) it errors `SQLSTATE[23505]`.
+    ⚠️ **The other 86 catch blocks are measured and STRUCK.** The lane's convention is a chain —
+    a domain class, then `ModelNotFoundException` for the tenancy sentence, then a `\Throwable` tail
+    — and it holds. Four doors catch narrowly with no tail and every one is safe by construction:
+    `SameAccount::pull()` (a `findOrFail` and a `sprintf`), `Declines::settleUpLater()`
+    (`DeferDeclineAction` is `firstOrCreate`), `CardScreen::makeDefault()` (a `findOrFail` and a mass
+    update) and `CardScreen::present()`, whose two caught classes cover **all five** of
+    `CardPresentAction`'s refusals. `GatewayEngine:122/:124` catch by class, so no wording can move
+    control flow. ⛔ Not to be re-raised. ⚠️ Ruling 206 had already fixed the only two doors that
+    could reach a framework message (`SQLSTATE[22001]` from an owner-typed string), which is why
+    this census found one seam rather than a population.
