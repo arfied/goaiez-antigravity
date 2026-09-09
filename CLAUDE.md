@@ -4093,6 +4093,148 @@ other lines; the clause described code that does not exist. ⭐ Same standing ru
 **a `file:line` is produced by `grep -n` and COPIED from what it prints.** A clause that reads like a grep
 result and was not one is the most convincing kind of wrong.
 
+## ⛔⛔ Trap added 2026-09-09 14:3x — a pre-declared RED'S TEXT is a claim about ASSERTION ORDER in a test that DOES NOT YET EXIST
+
+PB-159 pre-declared four wrong fixes and four mutations (PB-133's budget rule, honoured). **Two of the four
+pre-declared RED *texts* were wrong, both for the same mechanical reason.**
+
+| | I pre-declared | actual RED |
+| :--- | :--- | :--- |
+| W1 | `1 is identical to 0` (the `EtaPrediction` count) | `ETA minutes must be null` / `Failed asserting that 25 is null.` |
+| W4 | `X162Test:77`, `null` vs `20` | `X162Test:66`, `Failed asserting that false is true.` |
+
+**PHPUnit stops at the first failing assertion.** `assertNull($res['eta_minutes'])` sits three lines above the
+count; the `notification_sent` arm sits above the eta arm. Both predictions named a *real* assertion that the
+mutation *does* falsify — just not the one that fires first.
+
+⭐⭐ **The generalisation, and it is a new position in a family this file records twice: PB-138 said *ask what
+else could print that RED*; PB-144 said *check the mutation can reach the code that throws*. This says the
+brief CANNOT KNOW the RED's text at all, because the coder writes the test after reading the brief.** ⭐ **A
+brief may pre-declare the SUBJECT of a RED and must require the coder to quote whatever it gets.**
+
+⛔⛔ **And the reason this matters far more than a wrong string: pre-declaring the text hands the coder a
+cheaper route to "success" than measuring — reorder the new test's assertions until the RED matches.** PB-159's
+coder **refused exactly that** and said so in `REFUSED`. ⚠️ By PB-120's vocabulary that is not a `REFUSED` (no
+brief item was left undone) — ⛔ **but grading a volunteered disclosure on a vocabulary technicality is the
+PB-137 mistake.** Record it, do not grade it. **Thirty-third consecutive wave whose only shortfall traced to
+the brief.**
+
+## ⭐⭐ Trap added 2026-09-09 14:3x — the gate log EMBEDS `git log`, so this lane's own verdict prose answers a grep for the floor line
+
+PB-159's `RAW` cited `pb159-gate-1.log:52`; the verdict line is `:148`. **The quoted text was byte-identical** —
+PB-146's third position (*claims correctly, cites wrongly*), the most dangerous of the four because it is the
+only one that **looks** verified.
+
+⭐ **The new half explains why this lane produces that error specifically.** `supervise.sh` prints `git log` at
+`:48–52`, and this lane's `chore(supervisor)` commit messages **quote floor lines verbatim**. So:
+
+```
+grep -n "tests 21" <gate log>   →  my own PB-156/157/158 verdict prose  +  the real verdict at :148
+```
+
+It returned 4 KB of my own writing three times in one tick. ⭐⭐ **The anchored form is
+`grep -n '· result failed · rc' <log>`** — no prose line carries that suffix — **or `sed -n '140,157p'`.**
+⛔ Never grep a gate log for a bare floor-number pattern. Standing for both sides, and strictly better than the
+instrument PB-146 installed.
+
+## ⭐⭐ Trap added 2026-09-09 14:3x — `gate-runs.tsv` records the per-tool rc of a MUTATION gate, which is the first independent proof a mutation was applied
+
+PB-159's W4 gate (pid `358000`) shows **`phpstan` rc 1**; W1/W2/W3 and the wave gate all show rc 0. W4's wrong
+fix was *"ignore the argument"* — deliberately broken code, so a red tool inside that window is **expected and
+is not a defect.**
+
+⭐⭐ **But it is evidence this lane has never had: until now, "I applied the mutation" rested on the report's
+word plus a pest delta. A tool going red inside a mutation window is written by the GATE, not by the run being
+graded, and it can only happen if the mutated tree was really on disk.** Read every mutation gate's tool rows,
+not just its pest row.
+
+⚠️ The companion note is small and is PB-157's rule one field over: `PHPSTAN VERDICT` read *"passed, errors 0"*,
+true of the **wave** gate and silent about W4. ⭐ **A verdict field over a wave with five gates must NAME THE
+GATE** — a field is defined by the command that produced the artifact, never by the section it sits in.
+
+## ⛔⛔ Trap added 2026-09-09 14:3x — ASK WHAT YOUR FIX UN-WIRES, and PB-159 un-wired a customer-facing sentence two modules away
+
+PB-137 established *never wire a producer to a seam whose counterpart cannot complete the state*. **The inverse
+had never been asked, and asking it once found a live customer-facing defect.**
+
+PB-159 correctly stopped `TechEnRouteAction` fabricating a 25-minute ETA. Two greps after ruling it:
+
+```
+grep -rn "eta_predictions" app/app --include=*.php | grep -v Migrations
+  X-162/Actions/TechEnRouteAction.php:33   ← now writes ONLY what a caller supplied; the board supplies none
+  X-162/Actions/EtaUpdateAction.php:26     ← TEST-ONLY (PB-143)
+  X-172/Ui/CustomerfacingPortal.php:109    ⛔ THE CUSTOMER PORTAL — and it is OURS
+```
+
+**After PB-159, `eta_predictions` has ZERO production writers.** And the portal's guard keys on the wrong thing:
+
+```php
+CustomerfacingPortal.php:108  if ($assignment->status === 'en_route') { $isJobEnRoute = true;   ← the STATUS
+:115                              if ($eta) { $jobEtaMinutes = $eta->eta_minutes; }             ← row-dependent
+blade :31   @if($isJobEnRoute)                                        ← guards on the STATUS
+blade :33       Your technician is en route, {{ $jobEtaMinutes }} minutes out   ← null renders EMPTY
+```
+
+⚠️⚠️ **The customer reads `Your technician is en route,  minutes out`.** A sentence with a hole in it, on the
+customer-facing surface, reachable the moment a technician taps the board.
+
+⭐⭐ **The discriminator is this lane's own and it lands again: X-162's blade guards on the PREDICTION
+(`@if(pred)`) and is honest; X-172's guards on the STATUS and is not. Two blades, one sentence, opposite
+guards — the entire difference is WHICH VARIABLE THE `@if` KEYS ON.** Read the consumer's guard before ruling
+either way (PB-127).
+
+⭐ **PB-115's method names why nothing caught it:** all four existing seedings —
+`CustomerfacingPortalTest:68` (`'47 minutes out'`), `:115` (`'15 minutes out'`), `DispatchBoardTest:70`, `:146`
+— **seed a prediction first.** The row-absent arm has never been rendered by any test, **and it is now the only
+arm reachable in production.**
+
+⛔ **This does NOT reopen PB-159** — X-162 must not fabricate; X-172 is a separate module whose consumer was
+never adjusted. Before the fix the customer read a fabrication; after it, a broken sentence. **Neither is
+acceptable and the repair belongs in the portal.** ⭐⭐ **The standing question, cheap and now mandatory: after
+any wave that stops a value being written, grep every reader of that table and ask what their surfaces now
+say.**
+
+## ⛔ Ruling — 2026-09-09 14:3x — split the sentence, KEEP the en-route notice, and the obvious tightening is the trap
+
+**RULED (PB-160): the `@if($isJobEnRoute)` block stays; the sentence branches on the ETA.** With a prediction,
+*"…en route, N minutes out"*; without one, *"Your technician is en route."* — the technician really is on the
+way, which is true, useful and free. **Say the part you know, omit the part nobody gave you** (ruling 33 ·
+PB-128).
+
+⛔⛔ **The pre-declared wrong fix that reads as correct: `@if($isJobEnRoute && $jobEtaMinutes !== null)`.** It
+collapses the whole block, so the customer is told *"Your job is booked and confirmed."* **while the technician
+is actually driving to them** — a false statement in the other direction that withholds true information.
+**EIGHTH incarnation in this lane of *stricter is always safe* being false**, and the first where the stricter
+version's harm is *withholding* rather than *inventing*.
+
+⛔ Two lesser wrong fixes, also pre-declared: `{{ $jobEtaMinutes ?? '?' }}` (still claims an ETA), and restoring
+a default anywhere (PB-159 in reverse). **Three wrong fixes ⟹ three mutations.**
+
+## ⭐ Recorded 2026-09-09 14:3x — three candidates measured and CLOSED before briefing, with both halves
+
+Recorded so no future tick re-derives them. ⭐ **The instrument moved rather than widened** — three clean
+measurements in one tick is the moment this file warns about.
+
+1. **`is_guess` is a hardcoded `false` with one reader** (`EtaQueryAction:29`; `X162Test:76` asserts it). ⭐⭐
+   **PB-159 is what MADE it honest** — before, the row branch carried a fabricated 25 and the flag said
+   `false`; now every row that exists carries a number a human gave, so the flag is true **by construction**.
+   ⛔ **latent + no wrong value = RECORD.** ⚠️ It goes stale the day anyone computes an ETA, and its only
+   reader asserts the constant — but the anchor says *"never a guess"*, so the absence is permanent and correct
+   and **T2 (PB-159) already pins it**.
+2. **`Pricebook::confirmItem()`'s missing refusal capture is FIXED.** `:158-162` sets `$this->refusals[$id]`,
+   `:42` declares the property, `pricebook.blade.php:99`/`:121` read it. **All three confirm callers now
+   agree.** ⭐ This is PB-142's lesson paying off: *a recorded finding is a measurement with an expiry date, and
+   nothing in this lane re-measures one* — re-measured, and discharged.
+3. ⛔⛔ **A CLEARANCE whose CONCLUSION survives and whose STATED MECHANISM is FALSE.** The `is_sample` near-miss
+   above clears `ConfirmationScreen`'s list/count divergence *because* **"every writer in X-163 makes the two
+   columns exact complements"**. `RecordPriceGapFromRefusal:47-48` writes `is_confirmed => false` **AND**
+   `is_sample => false` — **both false, not complements.** The verdict still holds (no writer produces
+   `is_sample=true AND is_confirmed=true`, so the two numbers still agree) — **but on a different reason than
+   the one written down.** ⭐⭐ **A new member of the clearance-scope family, and the nastiest: the next tick
+   re-deriving from the stated mechanism concludes things that are false** — e.g. *"a row is never both
+   non-sample and unconfirmed"*, which is exactly what every gap row is. ⭐ **When you clear something, state
+   the mechanism as a measurement with its population, not as a universal about "every writer."**
+
 ## ⭐ Recorded 2026-09-09 13:4x — item 2 of PB-158 answered from the board, with one CLAUSE sharpened
 
 `priceBookVersion` has no truthful source: `location_books` has **no writer** in `app/app` (the only references
