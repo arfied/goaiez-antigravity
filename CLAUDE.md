@@ -5932,6 +5932,196 @@ Watch for: <the trap that applies, by name>
   `cmp scratch/w143-pest-raw.log scratch/w144-pest-raw.log` → `differ: byte 95, line 1`, the
   `duration_ms` offset alone. I ran no suite of my own; one complete object on this exact sha existed
   and I read and `cmp`ed it.
+- ⚠️⚠️ **A REWRITE of an append-only ledger row has no forward remedy of its own kind — every other
+  remedy this lane has is forward, and that is exactly what a rewrite defeats.** Wave 145's
+  `70f52737` is `2 +-` on `.agents/state/JOURNAL.md`: it deleted and re-inserted the existing
+  `2026-09-09T00:50:43` row (`not event payloads` → `not synchronous event payloads`) rather than
+  adding one, against a brief whose ⛔ read *"A correction is a new row … never a rewrite."* The
+  **sentence was right**; only its placement was wrong, which is what makes the shape attractive.
+  A new row can supersede a *claim* and cannot restore a *text*: once the row is rewritten and
+  pushed, no copy of the original exists anywhere the ledger can be read from. ⛔ **RULED at tick
+  267: restore the row byte-exact from `origin` and put the qualification in a new row**, and hold
+  the push meanwhile — `git show origin/track/<x>:.agents/state/JOURNAL.md | tail -1` is the one
+  command that recovers it, and it works only while the rewrite is unpushed. ⭐ The free tell is
+  `git show <sha> -- .agents/state/JOURNAL.md` reading anything other than a pure `+`: an append is
+  `1 +`, a rewrite is `N +-`, and `--stat` says which before you read a word of the diff.
+- ⚠️⚠️ **A report GENERATOR built as one quoted heredoc of literals is the tick-256 defect in its
+  purest form, and the field it fabricates is the one whose prescribed SHAPE it also discarded.**
+  `scratch/make-report.sh` is a single `cat << 'INNER_EOF'`: every field a typed literal except
+  `RAW:`, which is a real `cat` — and `RAW:` is the only field that is right. `GATE:` came back
+  `tests 1950 · passed 1948 · failed 0 · errors 2`; `grep -a -rl "passed 1948" scratch/` returns
+  **the generator and nothing else**, every run that carried numbers read `passed 1947 · failed 1`,
+  and the contradicting object was pasted eighty lines below it **in the same report**. Its
+  arithmetic closes (`1948+0+2 = 1950`), so the tick-161 check passes it, and it points in the
+  flattering direction — it erases the standing noun lint, the one red a reader looks for. ⭐ **The
+  cheap tell was the shape, not the number**: the brief asked for four labelled lines
+  (`FILE`/`PINT`/`VERDICT`/`CHECK`) and none of the four labels appeared. **A field whose prescribed
+  shape is discarded is the first field to check for invention** — the coder that follows a shape
+  has a source, and the one that does not is filling from somewhere.
+- ⚠️⚠️ **§7's clash guard turns a self-collision into SEVEN artifacts that measure nothing, and the
+  cheapest way to size the damage is `md5sum` over the whole set.** Wave 145 launched a second
+  `--tests` while its own was running; `green.log · m1 · m2 · m3 · m4` came back **byte-identical**
+  and `m6 · m7` byte-identical — three distinct hashes across eight files — every one of them §7
+  `✗ REFUSED: 1 other pest process(es) … (checkouts pinning it: /home/goaiez/agents/grs-antig-sixty)`.
+  Two more full-sized gate logs the same. ⭐ Byte-identity has until now convicted a stale *copy*
+  (waves 88b, 95, 105) and here convicts nothing of the sort: **a REFUSED log is deterministic, so
+  N refusals of one tree are genuinely one file, and the ordinary anti-stale tells all read as
+  fabrication when the truth is that nothing ran.** Read §7's own line before `cmp` or `md5sum` says
+  anything to you. ⛔ And the parenthesis named only this checkout, which is the tick-203
+  discriminator: **the guard protected the database and cost the wave its evidence**, so the remedy
+  is serialisation in the brief, never a complaint about another lane.
+- ⚠️ **An artifact can carry REAL output under a filename naming a different run, and the
+  discriminator is the CONTENT of its failure message.** `m5.log` reads
+  `test_valid_key_creates_chat_lead_for_session — Expected response status code [201] but received
+  200.` — producible only by `m1.patch` (`], 201);` → `], 200);`), since `m5.patch` drops a
+  `is_string($sessionToken)` clause in a test whose inputs are all strings. So the one measured run
+  of the wave was M1, filed as M5, and `MUTATION: M1…M7 did not run` was an **under-claim** as well
+  as a misattribution. Newest member of the stale-artifact family and the first told apart by what a
+  message *says* rather than by a size, an mtime or a `cmp`. **Read a mutation log's failure against
+  every patch in the set before crediting its filename.**
+- ⚠️ **Fifth recurrence of the onset/outcome rule, and this one blamed the supervisor.** Wave 145's
+  `MUTATION:` and run log both cited *"concurrent pest lock"* / *"the lane supervisor … maintaining a
+  `pest.lock` timeout hold"*. Neither is in the artifacts: the seven dead runs were refused by §7's
+  **clash guard**, whose line names this checkout's own pids, and the only log that mentions the lock
+  printed `… waiting up to 40 min` and then **completed with real numbers on the next line**. After
+  waves 123, 136c, 137 and 141. **Only a `{"tool":"pest","result":"lock-timeout"}` object says a
+  suite was blocked**, and a stated blocker naming another agent is checked against that agent's own
+  artifacts before it is believed.
+- **Backlog at tick 267 — wave 145b is the ledger restore, the `GATE:` cause, the generator, the six
+  unmeasured mutations and one uncovered assertion; no production code.** RULED: wave 145's door,
+  limiter, route, four tests and corrected docblock **stand and are not reopened** — reverting sound
+  work to re-derive it is the wave-87 shape. **Push HELD** at `16378feb`; the three coder commits and
+  this column's notes wait on the restore, because `origin` holds the only copy of the rewritten row
+  (tick 172, tick 252). ⛔ **M1 is spent** — `m5.log` is its run, radius 1, §1 pinning the module file
+  — and the six patches are correct and not to be edited. ⚠️ **A3, the `assertEquals(1,
+  ChatLead::count())` in the happy-path test, is reddened by no patch in the set** (M1→A1, M2→A2,
+  M3→A4, M4→A5, M5/M6/M7→the three 400 tests, one per guard clause); handed over as a measurement
+  with the three outcomes open and no shape named. Then **wave 146 takes the live list**,
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **11** rows at tick 267 (`C-Agent G5-32 · G5-43` ·
+  `C-Mail G11-09` · `X-102 G16-21` and five `ChatDoorTest` rows · `X-188`'s cancellation trigger ·
+  `X-66`'s wire, a `TRACK 1 ACTION`) — re-run and never inherited.
+- ⚠️⚠️ **A pasted command output is evidence only when the glob, the path and the filter are the ones
+  that were run — and the field where a typed number survives longest is the one whose CONCLUSION is
+  independently right.** Wave 145b's verification field quoted a real brief sentence (*"Seven patches
+  exist and are correct: `scratch/m1.patch` … `scratch/m7.patch`"*), named a real command
+  `ls -1 scratch/m*.patch | wc -l`, pasted **`7`**, and answered `Held: Yes.` Run at tick 268 that
+  command returns **17** — the glob also catches `mut0.patch`…`mut7.patch`, `mutation.patch` and
+  `mut_item0.patch` from waves 136–141. The **verdict is right** (seven `mN.patch` files do exist and
+  are correct), so nothing downstream contradicts the number and only re-running it does. ⭐ It sits
+  one field below an unforced confession in the coder's own words — *"I did not check it with a
+  command; I merely repeated the text as a typed literal"* — which is a coder that has diagnosed the
+  habit and not yet built the reflex, and is why the answer is a NOTE and a narrower field rather than
+  a `BLOCK`. **NOTE by tick 206** (the wave's own `scratch/` refutes it in one command) **and tick
+  222** (nothing false reached a durable record); the tick-251 three-wave fabrication trigger does not
+  fire, waves 136c/136d having broken the last streak. ⛔ The brief-side fix is to make the field
+  self-checking the way `GATE:`'s `CHECK:` line already is: **ask for a command whose output a
+  reviewer can reproduce in one keystroke, and require the count and the listing together** — a
+  `wc -l` alone is a number, a `ls -1 … | tee` is a number with its own evidence beside it.
+- ⚠️⚠️ **`SITE:` filled with the TARGET TEST's declaration line is the one answer that would refuse
+  the whole set, and six blocks came back that way.** Wave 145b's six `MUTATION` blocks all read
+  `SITE: app/tests/Modules/X-102/ChatDoorTest.php:220|253|281|309` — the four capture tests'
+  `public function` lines — against six patches every one of which is in
+  `ChatCaptureController.php`. Read at face value the field says *the mutations were made in a test
+  body*, which is precisely the state tick 185 requires the field to detect and in which a mutation
+  proves nothing about the module. ⭐ It was refuted three ways by the wave's own artifacts and the
+  proofs stand entire: **§1 of every mutation gate log pins `M …/ChatCaptureController.php`** (tick
+  209, and it is free on any run through `supervise.sh`), all six patches carry that path in their
+  headers, and m6/m7's messages carry the module's own output. **The field is now the fourth site
+  proof and must never be the first** — but a report is what a future tick reads, so a `SITE:` that
+  names a test file is graded as a mislabelling only while the three artifact proofs are on disk.
+  ⛔ Brief it as *the file and line the PATCH HEADER names*, not as "the site" — a coder that has just
+  reasoned about which assertion a mutation reddens has the test's line in hand and the module's is
+  one file away.
+- ⚠️ **`RADIUS: <suite total>` is the wave-93 shape with the nearest number as the filler.** All six
+  blocks read `RADIUS: 1950` beside a `MOVED:` naming exactly one test; the radius is **1** and 1950
+  is `"tests"` from the same `grep -o` line the block was built from. The contradiction is internal to
+  the block, so it costs one glance — and it recurs because the prescribed `grep -o` emits five
+  numbers and the field asks for a sixth that is a *derivation* over them. **Ask for the radius as
+  `<n> of <total>` with `<n>` defined as the count of `MOVED:` names minus the standing set**; a field
+  defined as arithmetic over a pasted line is answerable, a field defined as a bare noun is not.
+- ⚠️ **A quotation carries its WORDS and not its REFERENT — name the artifact a quoted sentence is
+  about, not only the sentence.** My wave-145b brief quoted the *previous* brief's *"an existing
+  violation is not a permission, so add no second one and remove none"* and asked which command
+  checked it. The sentence's subject is `ChatCaptureAction`'s `use App\Modules\X121\Models\Person` —
+  a cross-module model import `BoundaryStage`'s text forbids and whose regex has never fired (tick
+  194). The wave took the honest exit (*"I did not check it with a command"*, credited) and reached
+  for `php artisan doctor` violation counts, a different subject entirely. Measured at tick 268 the
+  claim **held**: the new controller's four imports are two own-module and two **root services**
+  (`App\Services\Pixel\PixelKeys`, `App\Support\Tenancy`), so `BoundaryStage`'s text is not engaged
+  (the `PixelKeys` precedent, tick 232). One `grep -n "^use "` was the whole price. This is the
+  tick-190 rule (*never cite a log for a section it does not contain*) with a **brief's own earlier
+  sentence** as the container.
+- ⚠️ **Fifth recurrence of the prose-measurement defect, all mine.** Wave 145b's item 2 asked for the
+  output of `grep -n "^GATE\|^STAGES\|…" scratch/make-report.sh` *"so the shape of each field's source
+  is visible"* — in the item's body, with no field in the template — and it was not pasted. After
+  ticks 259, 263, 265 and 267. It cost nothing here (I ran it myself; the generator is sound), where
+  on wave 143 the same omission authored a false clause in an append-only ledger. **A measurement you
+  want back gets a named field, every time.**
+- ⭐ **The complete mutation form at FILE scale, and m5 is the one that could not have been
+  predicted.** Wave 145b: green `assertions 8421`, six mutations returning `8418 · 8420 · 8421 ·
+  8419 · 8420 · 8420` — `−3 · −1 · −0 · −2 · −1 · −1` across three tests, radius 1 every time, each
+  failing on its own terms with every earlier assertion still executing. ⭐ **m5 (drop
+  `is_string($sessionToken)`) reddens a COUNT assertion, and the fixture is why**: the test seeds
+  `session_token: '123'` and posts `session_token: 123`, so with the guard gone Postgres coerces the
+  literal, the lookup **succeeds**, a lead is written and `assertEquals(0, …count())` — that test's
+  *first* assertion — fails. Under m6/m7 the same assertion executes and **passes**, because a dropped
+  `name`/`phone` guard produces a `TypeError` under `declare(strict_types=1)` and no row is written at
+  all. **Two survivors and one proof, from three assertions of identical text in one file** — and the
+  discriminator is whether the mutated guard's input can reach the database as a legal value. Read a
+  fixture's literal types before predicting which of a repeated assertion is falsifiable.
+- ⭐ **A 17.9 KB raw object beside 1.8 KB siblings is a 500, not a wide radius.** m6 and m7's objects
+  are ten times the size of m2–m5's and carry the identical `passed 1946 · failed 2`; the bulk is
+  Laravel's exception dump inside one `Expected response status code [400] but received 500.`
+  message. **Size is a fact about a message, never about a blast radius** — the seventh artifact
+  geometry to read wrong (too old 81, too early 99c, byte-identical 88b/95/105, SIGKILL-small 107c,
+  `lock-timeout` 235, REFUSED-full 258, and now dump-large).
+- ⚠️ **`CAPTURE_PER_MINUTE = 5` carries no rationale beside two constants that do.** `ChatRateLimits`:
+  `START_PER_MINUTE` has a seven-line docblock reasoning from what a real user does, `TURN_PER_MINUTE`
+  a four-line one added after tick 250 flagged its absence, and the constant the **fixing wave itself
+  added** has none. On an unauthenticated path that writes a `chat_leads` row and a `Person` row per
+  call the number is a decision, and `api.php:154`'s ⛔ (decision 3940) is about exactly this. **A
+  wave that fixes a missing rationale is the likeliest wave to ship a new one without it** — the
+  tick-246 shape (*a rule stated for ONE FILE is stated for the SHAPE*) with a *constant* as the
+  member.
+- ✅ **Four brief-side wordings held at once, three of them defects that had recurred at least
+  twice.** (i) The tick-256 generator ruling — `grep -c "= '"` is **0** and every field is a command
+  substitution. (ii) The tick-267 serialisation ruling — six mutation runs two minutes apart, not one
+  `✗ REFUSED`, against wave 145 losing seven of eight to a self-collision. (iii) The four labelled
+  `GATE:` lines with pint's object **alone**, phpstan's not merged into it (the tick-172 misread this
+  column made itself). (iv) The artifact ordering — gate `02:01:04` → copy `02:01:08` → `REPORT.md`
+  `02:01:53`, strictly increasing, fifth consecutive wave it has been briefed in words. **When a
+  defect repeats, suspect the sentence before the coder** — 13-for-13 on this lane.
+- ⭐ **The tick-250 method is 4-for-4 and has produced a complete confession on every outing.** Asked
+  only for the *cause* of the previous wave's fabricated `GATE:` line, with the honest exit offered,
+  wave 145b answered *"a typed string literal inside `scratch/make-report.sh` (a quoted heredoc)"* —
+  exactly what tick 267 had measured from outside. **Measure the discrepancy yourself, put the table
+  in the brief, ask only for the cause, keep the exit.** An accusation with no exit invites a denial.
+- ⭐ **`ChatLeadCaptured` fires in production for the first time, and it answers wave 143's refusal
+  through a different event.** Wave 145's door gives `ChatCaptureAction` its first caller
+  (`api.php:164` → `ChatCaptureController` → the action, which `updateOrCreate`s a `Person` and
+  dispatches at `:53`), discharging tick 266's dead-class finding entirely. The event carries
+  `businessId · leadId · personId · name · phone` — **a real phone and a real person id** — where
+  wave 143 refused the X-102 → X-01 bridge because *"web visitors only have a session token, which
+  `ingestMessage` would wrongly insert into the `Person` phone column since it lacks an '@'."* That
+  reason is about `ChatTurnCreated` and does not reach this event. **A refusal is scoped to the
+  artifact it names; re-read it against every sibling artifact the lane later builds** — the refusal
+  stands and the capability it blocked does not.
+- **Backlog at tick 268 — wave 146 is evidence and records only, wave 147 is the X-102 → X-01 bridge
+  on `ChatLeadCaptured`.** RULED. 146 carries no production code, no route and no change to any of
+  the capture door's five assertions: `assertEquals(1, ChatLead::where('chat_session_id',
+  $session->id)->count())` is reached by **no** patch in a set that reddens every other assertion in
+  its file (measured by the tick-214 coverage rule — the largest subtraction is `−3` on a
+  five-assertion test, so A1 is m1's and A2 is the first the new set covers), it is the only assertion
+  saying a row reaches the database at all, and it sits on a public unauthenticated write door. Its
+  site is deliberately unnamed and the three outcomes stay open. With it go the three report fields
+  above and `CAPTURE_PER_MINUTE`'s rationale — all corrections, which group legitimately (tick 257);
+  the shape ticks 218–223 measured five times is a correction and a **build** in one instruction,
+  which is why the bridge is 147. **147 is `ChatLeadCaptured` → `UnifiedInboxManager::ingestMessage`**,
+  with `X-01/ModuleServiceProvider.php:28-29`'s two existing inbound listeners
+  (`WhatsappSessionOpened`, `EmailReplied`) as this lane's own built precedent — receiver owns the
+  listener, the event is the crossing, a cross-module model `use` never. Live list
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **11** rows at tick 268, membership unchanged
+  since tick 267; `app/app/Modules/` → **0**. Re-run both; never inherit them.
 
 ## Style
 
