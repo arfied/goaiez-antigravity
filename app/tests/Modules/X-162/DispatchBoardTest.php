@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X162;
 
+use App\Enums\UserRole;
 use App\Models\User;
 use App\Modules\X162\Models\DispatchAssignment;
 use App\Modules\X162\Models\EtaPrediction;
@@ -160,5 +161,16 @@ class DispatchBoardTest extends TestCase
             DispatchAssignment::where('business_id', $biz->id)->count(),
             'An owner on an empty board cannot cause a DispatchAssignment to exist.'
         );
+    }
+
+    public function test_staff_is_forbidden(): void
+    {
+        $user = User::factory()->create();
+        $user->role = UserRole::Staff;
+        $user->save();
+        TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
+
+        Livewire::actingAs($user)->test(DispatchBoard::class)->assertForbidden();
     }
 }

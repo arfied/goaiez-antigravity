@@ -157,4 +157,15 @@ class MembersTest extends TestCase
 
         $this->actingAs($owner)->get(route('x-165.members'))->assertOk()->assertSee('444.44');
     }
+
+    public function test_staff_is_forbidden(): void
+    {
+        $user = User::factory()->create();
+        $user->role = UserRole::Staff;
+        $user->save();
+        TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
+
+        Livewire::actingAs($user)->test(Members::class)->assertForbidden();
+    }
 }

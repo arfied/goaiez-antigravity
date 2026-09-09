@@ -199,6 +199,6 @@ class RateRegistryViewTest extends TestCase
         Tenancy::setUser($user->id);
 
         Livewire::actingAs($user)->test(RateRegistryView::class)->assertForbidden();
-        $this->assertTrue(true, 'Staff role should be forbidden on Rate Registry');
+
     }
 }
