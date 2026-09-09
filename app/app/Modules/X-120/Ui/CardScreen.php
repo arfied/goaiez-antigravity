@@ -81,7 +81,7 @@ class CardScreen extends Component
     {
         abort_unless(auth()->check() && Tenancy::check(), 403);
 
-        $cards = CardToken::where('business_id', Tenancy::idOrFail())->get();
+        $cards = CardToken::where('business_id', Tenancy::idOrFail())->orderBy('id')->get();
         $now = now();
 
         $expiringCards = $cards->filter(function ($card) use ($now) {
