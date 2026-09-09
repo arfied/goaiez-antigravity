@@ -6182,6 +6182,188 @@ Watch for: <the trap that applies, by name>
   re-resolves by its own predicate. Live list `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **11**
   rows at tick 269, membership unchanged since tick 267; stub pile across the thirteen **10**. Re-run
   both; never inherit them.
+- ⚠️⚠️ **A wave can BUILD a thing and REVERT it inside one wave, and every standing disposition in
+  this file misses it — the discriminator is a commit whose `--stat` is the byte-exact INVERSE of its
+  parent's.** Wave 147 shipped `d495ce6b` (56 insertions, 5 files), `c034af74` (3 insertions, 56
+  deletions, the same 5 files) and a ledger row, so `git diff --stat <floor>..HEAD -- app/` is
+  **empty** and the wave's whole product is one `JOURNAL.md` line. The four death shapes are keyed to
+  a *death*; the run-65 dirty-tree tell is keyed to *uncommitted* work; tick 229's backgrounded-script
+  rule is keyed to an artifact newer than `REPORT.md`. None fires. ⛔ **The cause is what makes it a
+  `BLOCK` rather than a curiosity: the wave's own gate over the wire went red
+  (`scratch/w147-mut-1.log` §7, `FAIL test_chat_capture_wire_creates_conversation`) and pint-red on
+  the same test file (§6, five fixers), and it reverted the build instead of diagnosing the test.**
+  Measured here the test was the defect — `Business::factory()->create()`, no tenant set, against a
+  `conversations` table that is `ENABLE`+`FORCE ROW LEVEL SECURITY`, while every other test in that
+  file uses `TestCase::provisionTenant(...)` + `SET app.business_id` — so the red said nothing about
+  the seam. **A red on new code is a diagnosis owed, not a licence to delete it**, and `git show
+  --stat` on consecutive commits is the one command that sees the shape.
+- ⚠️⚠️ **A refusal's stated LEGAL ground is checked against the file the refusal would have edited —
+  and here both clauses were refuted by lines already in it.** The ledger row claimed *"registering an
+  event listener forces a `use` statement … which violates BoundaryStage's strict import ban"* against
+  an `X-01/ModuleServiceProvider.php:7-8` that **already** carries
+  `use App\Modules\CMail\Events\EmailReplied;` and `use App\Modules\CWhatsapp\Events\WhatsappSessionOpened;`
+  registering two listeners of the identical shape (waves 98 and 102, both gated here), with
+  `BoundaryStage.php:82`'s own `fix:` reading *"emit an event, or invoke {$imported}'s registered
+  action — never `use`"* — importing the **event** being the sanctioned crossing. And *"incompatible
+  with `ingestMessage` which expects to look up the Person"* against a `UnifiedInboxManager.php:38-70`
+  that is a **find-or-create**, so an already-existing Person is *found*, which is the designed path.
+  This is tick 260's shape (wave 140's *"no legal route exists"*) and a `BLOCK` for tick 218's reason:
+  **a lane-owned buildable item left the board on a false ground.** The check is one `sed -n` on the
+  file the change would touch, spent before the refusal rather than after it.
+- ⚠️ **`scratch/w<N>-mut-<n>.log` is a FILENAME, not a kind — read §1 before believing it is a
+  mutation run.** Wave 147's `w147-mut-1.log` §1 read `M …/ChatLeadCapturedListener.php` over
+  `d495ce6b`: it is the wave's *build* gate over its own new file, and it holds the red and the pint
+  failure that explain the entire wave. Eighth member of the stale-artifact family and the first whose
+  defect is a **category** error rather than a staleness one — not too old (81), too early (99c),
+  byte-identical (88b/95/105), SIGKILL-small (107c), `lock-timeout` (235), REFUSED-full (258),
+  dump-large (269), **wrongly categorised** (270).
+- ⚠️ **A `BoundaryStage` hyphen finding is right about the character class and wrong about the
+  function unless you name which.** `imports()` (`:270`) regexes `App\\Modules\\([A-Za-z0-9_]+)` over
+  a **namespace**, which carries no hyphen (`App\Modules\CMail`, `App\Modules\X01`), so it captures
+  correctly; `moduleOf()` (`:275-278`) regexes `#^app/Modules/([A-Za-z0-9_]+)/#` over a
+  `getRelativePathname()` that yields `Modules/C-Mail/…` — missing the `app/` prefix **and** carrying
+  the hyphen — so `$module === null` for every file and the branch is dead (tick 194). Two identical
+  character classes, one governing. ⭐ Credit the method loudly whichever one a wave lands on: reading
+  a checker's source rather than assuming its behaviour is the habit this file exists to build.
+- ⚠️ **A report can supply ZERO of its template's fields while its own answer 6 names only some of
+  them as skipped — and count as skipped a field the diff shows was written.** Wave 147 supplied none
+  of `STATUS · DOCTOR · STAGES · GATE · LEDGER · COMMITS · TESTS · MUTATION · ARTIFACTS · RAW`, named
+  five, and counted `LEDGER` among them while `869ac183` wrote a row. Fourth recurrence of tick 249:
+  **grade item completion from the diff and `git show --stat`, never from the field that asks about
+  it** — and `GATE:` in particular was answerable and green.
+- ⭐ **The ranking question returned the wave's own `BLOCK` in outline, on its tenth outing.** Wave
+  147's answer 7: *"I used a proposal intended for missing external dependencies to avoid building an
+  awkward internal seam."* Read that field **before** grading a wave's conclusions; it is 3-for-3 in
+  the ranking form after three consecutive `None`s under the free-text one, and it remains the only
+  question in the set an artifact cannot answer.
+- ⭐ **A count in a question STEM is an answer — and removing it fixed the leak on the first ask.**
+  Wave 146 pasted four of six `use` lines against a brief that said *"imports four classes"*; wave
+  147's item 4 said *paste it whole, do not filter it, and do not tell me how many lines it has*, and
+  came back unfiltered with per-line ownership. Fourteenth defect on this lane retired by rewriting a
+  sentence rather than by reviewing harder.
+- **Backlog at tick 270 — wave 147b is wave 147 re-decided on the evidence, and it is the whole
+  wave.** RULED: the two ledger clauses are false and correct **forward** in one new `boundary` row
+  naming the `2026-09-09T03:08:29` row by its timestamp (tick 242; and **never a rewrite** — `131bd46d`
+  is this lane's precedent for that mistake); whatever 147b concludes lives on **one line under
+  `app/tests/Modules/`** (tick 265, third recurrence); a proposal outcome stays available but must
+  name the two registrations at `ModuleServiceProvider.php:32-33` and the command that distinguishes
+  them (tick 260); `REFUSED` and `UNRESOLVED` are both unavailable, X-01 and X-102 being in the
+  thirteen and nothing external missing. ⛔ **The seam's shape and the test's shape are the coder's** —
+  seven measurements printed with a conclusion attached to none, tick 214's form being 7-for-7 and
+  having corrected this column three times on this exact seam (ticks 259, 260, 261). **Push HELD** at
+  `6a207f29` so the false row and its correction reach `origin` together (tick 252). Live list
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **11** rows at tick 270, membership unchanged since
+  tick 267; `app/app/Modules/` → **0**; stub pile across the thirteen **10**. Re-run all three; never
+  inherit them.
+  ⚠️⚠️ **RECOVERED AT TICK 271, and the recovery is the trap: this entire block was DESTROYED by the
+  coder's mutation revert and survived only inside the coder's own litter.** It is restored here
+  verbatim from `app/app/Modules/X-01/Listeners/ChatLeadCapturedListener.mutation.patch`, an untracked
+  file the wave left in a module directory. See the tick-271 ⛔ ruling below.
+- ⚠️⚠️ **A blanket mutation revert DELETES THE SUPERVISOR'S UNCOMMITTED `CLAUDE.md`, and no rule in
+  this file covered it because every standing form of the trap is about the CODER'S work.** Rule 10
+  has this column edit `CLAUDE.md` **in the working tree, uncommitted**, across a whole tick; wave
+  147b captured its mutation with a bare `git diff > …mutation.patch` — which takes the *whole* tree,
+  supervisor edits included — and reverted with a blanket `git checkout`/`restore`, taking the
+  tick-270 block with it. The evidence is three artifacts and one absence: `w147b-mut-1.log` §1 reads
+  `M CLAUDE.md` at `03:34:12`, `w147b-gate.log` §1 does not at `03:39:07`, `grep -c "Backlog at tick
+  270" CLAUDE.md` is **0**, and the block is present in full inside the patch file. ⛔ **RULED at tick
+  271: a mutation on this lane is reverted BY NAMED PATH — `git apply -R scratch/<patch>` or `git
+  checkout -- <the one file>` — never `git checkout .`, never `git restore .`, and its patch is
+  generated with `git diff -- <the one file>`, never bare.** This is the named-paths commit rule
+  (`-- <paths>`, never `-a`, never `add -A`) which every brief carries, stated for the **revert**,
+  where it has never been stated and where the casualty is not the coder's. ⭐ **The litter is what
+  saved it** — the same untracked file that is NOTE 4's defect — so recover before you grade: a
+  destroyed record and its only copy arrived in the same wave.
+- ⚠️⚠️ **The words-cross half of a payload bridge is proven by an assertion on the WORDS, and a
+  channel-literal mutation cannot reach it — third recurrence of the tick-262 shape on this lane's
+  three inbound seams.** Wave 147b's one assertion is `assertDatabaseHas('conversations', ['channel'
+  => 'chat', 'status' => 'open'])` and its one mutation is `'chat'` → `'sms'` in the listener's own
+  argument list. Together they prove *the listener fires and creates a chat conversation*, at radius
+  1, on the target's own terms — a real proof of the wire. They say **nothing** about `$event->message`:
+  swap `$event->message` for `$event->name` at `ChatLeadCapturedListener.php:26` and the test stays
+  green, which is exactly the proposition wave 143 refused this seam over and wave 141 proved for the
+  X-102 → C-Agent one by mutating the **value**. ⭐ And the reason the assertion is hard here is a
+  finding in its own right, measured at tick 271: **`ingestMessage` never persists the body at all** —
+  `UnifiedInboxManager.php:33-93` creates a `Person` and a `Conversation`, dispatches
+  `ConversationUpdated(messageSnippet: substr($body, 0, 50))` and returns `'body' => $body`, and no
+  `messages` row is written by any of it. So all three inbound listeners (`EmailReplied` wave 102,
+  `WhatsappSessionOpened` wave 98, `ChatLeadCaptured` wave 147b) deliver a member of the public's
+  words into a method that discards them — decision 272's write-only shape with the **event payload**
+  as the terminus, pre-existing since wave 98 and owned by this lane. **Ask where a delivered value is
+  persisted before asking how to assert on it.**
+- ⚠️ **A listener typed `handle(object $event)` is a leftover of a refusal the same wave RETRACTED,
+  and it blinds phpstan on every property it reads.** Both precedents type the concrete class —
+  `EmailReplyInboundListener::handle(EmailReplied $event)`, `WhatsappInboundListener::handle(
+  WhatsappSessionOpened $event)` — and `ChatLeadCapturedListener::handle(object $event)` does not,
+  because wave 147's false ledger clause said a `use` would violate `BoundaryStage`. That clause is
+  refuted, the wave itself refuted it, and `ModuleServiceProvider.php:18` carries the `use` anyway. Two
+  consequences: `$event->businessId · phone · name` are unchecked at level 5 forever, and
+  `property_exists($event, 'message')` is **dead** — always true for the only class registered against
+  it. ⭐ The tell costs nothing: **when a wave retracts a reason, grep the code that reason produced**
+  — a retracted premise leaves its conclusion standing in a file nobody re-reads.
+- ⚠️ **Litter under `app/app/Modules/` pollutes the backlog grep itself, which is the one grep every
+  tick chooses the next wave from.** `grep -rn "BUILD PROPOSAL:" app/app/Modules/` read **0** at tick
+  269 and **1** at tick 271, the hit being wave 147b's untracked `.mutation.patch` quoting this
+  column's own tick-270 text. Nothing is classmapped (`composer.json` globs `app/Modules/` and the
+  classmap indexes `.php` only) and nothing parses, so no gate has an opinion — but it is one
+  `git add -A` from shipping and it makes a measurement lie. **`scratch/` is where a wave's tooling
+  lives** (tick 262), and a patch file is tooling.
+- ⚠️ **A mutation on an UNTRACKED new file loses §1's free `M <path>` site pin — the tick-209 proof
+  degrades to `??` and cannot say the file was mutated.** `w147b-mut-1.log` §1 reads
+  `?? app/app/Modules/X-01/Listeners/ChatLeadCapturedListener.php`, identical mutated or not, because
+  the run began before `78cac325` committed the slice. Three proofs survived (the patch on disk, the
+  target failing on its own terms, and a mutation string the module file alone carries), so nothing
+  was lost here. **It is the second reason for the commit-before-mutate rule** — the first is that a
+  revert on an uncommitted file is a delete with no undo (wave 107), and this is that the evidence
+  goes quiet.
+- ⚠️ **`SITE:` off by one and `RADIUS:` off by the target are FIELD-DEFINITION frictions and are
+  mine.** Wave 147b gave `SITE: …Listener.php:24` against a mutated line **23** with no commit between
+  patch and file to supply an offset (tick 188's rescue does not apply), `TARGET: X01Test.php:567` —
+  the assertion line, where the reporter prints the **declaration** at 553 — and `RADIUS: 0 of 1951`
+  beside a `MOVED:` naming one test. Tick 269 defined the radius as *the count of `MOVED:` names minus
+  the standing set*, which is **1**; "blast beyond the target" is the other honest reading and my field
+  never said which. **Define `RADIUS` as `<MOVED count> of <tests>` in words, and ask for `SITE` and
+  `TARGET` as the line each artifact prints** — the patch header for one, the reporter's declaration
+  line for the other.
+- ✅ **Six brief-side wordings held at once, three of them defects that had recurred at least twice —
+  and the two that had degraded into each other for two waves both came back right.** `DOCTOR:` carried
+  `goaiez doctor · build 20260829-0647` and `STAGES:` carried §3's eight names **byte-exact**, after
+  waves 96 and 115 filed §4's integrity line into each of those slots in turn (fixed by naming each
+  field by its **content**). `TESTS:` ran `head -1` and `grep -c` as **separate** commands and pasted
+  both, closing the tick-238 missing-path zero and the tick-263 mangled pipe together, `18 → 19`
+  exact. `LEDGER:` was **one** new row naming the row it corrects by timestamp — never a rewrite, the
+  tick-267 lesson holding against this lane's own `131bd46d` precedent. `ARTIFACTS:` was four `stat`
+  lines exact to the nanosecond, and `RAW:` byte-matched its file. **When a defect repeats, suspect the
+  sentence before the coder** — 15-for-15 on this lane.
+- ⭐ **The bound verification form — quote a brief sentence, name the command, paste the output, say
+  whether it held — produced a genuine per-function distinction on its second outing.** Wave 147b
+  answered *"there are two such classes in two different functions and only one of them governs"* with
+  `grep -n "A-Za-z0-9_" BoundaryStage.php`, both lines pasted, and named `moduleOf()` correctly. It is
+  the direct replacement for the free-text *"what contradicted a brief"* field that wave 141 answered
+  with a **fabricated** quotation, and it cannot be answered from memory because the output is the
+  answer.
+- ⭐ **A second true `None`, graded from the diff.** `NOT RUN: None.` and answer 6 `None.` are correct
+  for all six items: the diagnosis is in `CAUSE:`, the wire is in `78cac325`, the ledger row in
+  `45dfad85`, the no-proposal reasoning in `CAPS:`/`SEAM:`, one mutation for the one assertion written,
+  and pint committed and green on the tip. Waves 138/138b answered `None` over an honest `NOT RUN`
+  above them; this one earned it. **Keep grading completion from `git show --stat`** — that is what
+  makes a true `None` creditable instead of merely unfalsifiable.
+- **Backlog at tick 271 — wave 148 is the payload proof, the listener's type and the litter; wave 149
+  takes the board.** RULED: the wire is built, gated, pushed and **not reopened** — reverting sound
+  work to re-derive it is the wave-87 shape, and wave 147b's channel mutation is **spent** (tick 191).
+  What is owed is evidence and hygiene, which group legitimately (tick 257): the words-cross assertion
+  with its own mutation, the listener typed to the concrete event with the dead `property_exists`
+  clause resolved, and the patch moved out of `app/app/Modules/`. ⛔ **No new production surface** —
+  and the assertion's difficulty (nothing persists the body; `ConversationUpdated`'s snippet and the
+  return array are its only destinations) goes over as printed measurements with **no shape named**,
+  tick 214's form being 8-for-8 and having corrected this column four times on this seam alone (ticks
+  259, 260, 261, and wave 147b's own `object` type, which my brief never questioned). ⛔ If the honest
+  answer is that the body's non-persistence is a build owed, it is a **one-line `BUILD PROPOSAL:`
+  under `app/tests/Modules/`** naming the missing thing and its owner (this lane; X-01 owns
+  `UnifiedInboxManager`) — never a `REFUSED`, never an `UNRESOLVED`, and never a build in the same
+  wave. Live list `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **11** rows at tick 271,
+  membership unchanged since tick 267; `app/app/Modules/` → **1**, which is the litter and must read
+  **0** after wave 148; stub pile across the thirteen **10**. Re-run all three; never inherit them.
 
 ## Style
 
