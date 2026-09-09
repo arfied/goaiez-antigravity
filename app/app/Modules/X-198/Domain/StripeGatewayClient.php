@@ -31,7 +31,7 @@ final class StripeGatewayClient
 
         $id = $response->json('id');
         if (! is_string($id)) {
-            throw new RuntimeException('The gateway accepted the charge request but sent back no charge id, so nothing was recorded.');
+            throw new RuntimeException('The gateway accepted the charge request but sent back no charge id, so the charge could not be confirmed.');
         }
 
         return $id;

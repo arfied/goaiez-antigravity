@@ -18,6 +18,7 @@ use App\Modules\X199\Models\OverflowCharge;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\Process\Process;
 
 test('it issues invoice in integer minor units', function () {
@@ -169,6 +170,7 @@ test('no installments are allowed by schema', function () {
 
 test('the no-gateway case', function () {
     Event::fake([LimitExceeded::class, OverflowCharged::class, OverflowReversed::class]);
+    Log::spy();
 
     $business = Business::factory()->create();
     $customer = Person::create(['business_id' => $business->id]);
@@ -200,6 +202,14 @@ test('the no-gateway case', function () {
         $charge = OverflowCharge::where('invoice_id', $result['invoice']->id)->where('charge_type', 'overflow_charged')->first();
         expect($charge)->not->toBeNull();
         expect($charge->status)->toBe('refused');
+
+        Log::shouldHaveReceived('warning')->withArgs(function (string $message, array $context) use ($business, $customer, $result) {
+            return str_starts_with($message, 'Gateway capture failed: ')
+                && ($context['business_id'] ?? null) === (int) $business->id
+                && ($context['customer_id'] ?? null) === (int) $customer->id
+                && ($context['invoice_id'] ?? null) === (int) $result['invoice']->id
+                && ($context['amount_cents'] ?? null) === 50000;
+        });
     });
 });
 
