@@ -2133,6 +2133,10 @@
   {
    "at": "2026-09-09T10:23:30",
    "note": "boundary The 2026-09-09T10:05:05 row incorrectly stated the stage runs 'four independent rules' and failed to provide the true cross-module import count. BoundaryStage declares 8 independent rules, 3 of which produced the 55 violations. The actual cross-module import count is 52."
+  },
+  {
+   "at": "2026-09-09T16:40:18",
+   "note": "boundary The row at 2026-09-09T13:47:44 was incomplete as it described the current code state rather than the decision. The actual conclusion across the three seams is that for WhatsApp and Email, the addressing sentence answers the consent gate directly, while Chat requires a pre-chat notice before capture to comply with rule 22."
   }
  ]
 }
