@@ -344,6 +344,49 @@ the first where the defective instrument is **the ledger's own arithmetic about 
 about this seat's filing to Track 1, one about this seat's own script, neither about the tree, and
 both in the block that ruled on this seat's discipline.
 
+### ⛔⛔ `RULING FY` (tick 245) — `bin/supervise.sh:110` is `git status --short | head -40`. §1's LISTING is a display constant and §1's COUNT is on the next line; two ticks read the CAP as the MEASUREMENT. The repair belongs to the READER, and no instrument byte changes.
+
+`RULING FX` ruled that every count in a REVIEWS block is pasted from a command run against the pinned
+sha **in the same tick**, because the ledger has no coder to falsify it. Applied to §1, two more
+figures do not reproduce — and both have one cause, legible in one line of this seat's own script:
+
+```
+bin/supervise.sh:110   git status --short | head -40                              ← LISTING, capped
+bin/supervise.sh:111   echo "  $(git status --short | wc -l) uncommitted path(s)" ← COUNT, true
+```
+
+```
+sed -n '7,54p' .gateT245.txt | grep -c '^??'   →  40    ← rows PRINTED (the cap)
+grep -oE "^  [0-9]+ uncommitted path" …        →  77    ← rows COUNTED (the truth)
+git status --porcelain -uall | grep -c '^??'   →  77    ← corroborated independently
+```
+
+⭐ **§1 has read `77` in SEVEN CONSECUTIVE GATES** (`.gateT239`…`.gateT245`, re-run per file with the
+filename attached, so it is a census). Against that, this page carried *"39 untracked paths"* and tick
+244's block wrote *"forty"*. ⚠️ **Neither is a measurement — both are the `head -40` cap**, and a tick
+counting printed rows reads **40 forever** whatever the true number is. ⭐ **The membership was right
+both times and only the counts were wrong** (`FX`'s signature): all 77 sit at repo root, every one a
+`.gate*.txt`/`.sha*.txt`, and the supervisor directory contributes **0**.
+
+✅ **RULED: NO instrument change, and the tempting answer is the wrong one.** `RULING FQ` repaired
+**§7**'s truncation and `RULING FW` cites that fix as meeting both its clauses; §1 truncates at the
+same constant in the same file, and clause (ii) is satisfied *more* strongly here (77 against a cap of
+40, on the live tree, having already cost two ledger entries). An overflow line would pass `FQ`'s own
+test. ⛔ **Refused anyway, because §7 and §1 are not the same defect: §7 left its sixth row
+UNMEASURED with no reconciliation in the file, and §1 prints the correct number one line below the
+cap.** Nothing is unmeasured and the instrument is not wrong — two ticks read `:110` where `:111` was
+the answer. `RULING FS` is the precedent (leave it alone and say why) and `RULING FW`'s cadence holds
+a **fourth** tick; `wc -l bin/supervise.sh` is **416**, unchanged since tick 242.
+
+✅ **Standing correction, one clause, replacing the instrument fix: a §1 figure is read from the
+`N uncommitted path(s)` line and NEVER by counting the rows above it.** Same for any future capped
+list in this gate.
+
+⚠️ Nineteenth member of the `EU`/`EV`/`EW`/`EX`/`EZ`/`FE`/`FF`/`FH`/`FI`/`FJ`/`FN`/`FP`/`FQ`/`FS`/`FT`/`FU`/`FV`/`FW`/`FX`
+family, and the first where the instrument is **CORRECT, the reading was wrong, and the repair belongs
+to the reader** — `FS` refused a fix because taking it *was* the harm; **`FY` refuses one because there
+is nothing to fix.**
+
 ### ⛔ `RULING FP` (tick 236) — `journey` is the SECOND stage that is not a function of the tree, and it is ARTIFACT-derived. A count fell because the PREVIOUS wave's test run wrote an untracked file.
 
 `RULING FB`/`FD` established that `schema` is joint on the tree **and the PostgreSQL server**, so a
@@ -1582,7 +1625,26 @@ dispatched — executed by the supervisor itself**, `bin/supervise.sh` being thi
 ⛔ **Not a wave and no count moved** — §5 identical in all eight across `.gateT241.txt` and
 `.gateT241b.txt`. It sets no `fail=1`: a trigger, never a verdict.
 
-⛔ **The backlog is EMPTY at tick 244 and this tick writes a HOLD — the THIRD consecutive tick with no
+⛔ **The backlog is EMPTY at tick 245 and this tick writes a HOLD — the FOURTH consecutive tick with no
+instrument change**, and the first where a real, live, measured instrument defect was found and the
+repair **still** ruled out — `RULING FY`, whose subject is §1 of this seat's own gate. `wc -l
+bin/supervise.sh` is **416**, re-measured per `RULING FX(ii)`. ⭐ **`main` MOVED**: pin `0ce60089` →
+**`e8d3d155`**, **+1 first-parent** (`track/money` X-173), **not ours**; lane **22 ahead / 13 behind**
+first-parent (**22 / 101** by ancestor count, `RULING EK`), the ahead-count moving 21 → 22 on **our
+own** tick-244 commit; merge base `7a75f289` unmoved; `18bbde18` still not an ancestor (rc **1**) after
+**13** first-parent merges since the revert, `grep -c "track/stages"` over that range → **0**.
+`TRACK 1 ACTION 1` re-run **absolutely** (`RULING EC`): the `.agents/rules/` grep prints nothing and
+the note ceiling is still **`N142`** across five further sibling merges. ⛔ **The take is OPEN,
+UNNECESSARY and REFUSED for an eighth tick**: `DD`'s two-row re-check prints nothing and the
+`Doctor`/`JourneyHarness`/`seals.json` diff against our base is **empty**, so this lane's checker **is**
+main's current checker byte-identical, `RULING EQ`'s void condition is not reached, and a take could
+refresh nothing at a cost of **101** ancestor commits. ⭐ **The admission census was NOT re-run and the
+reason is a measurement taken first**: `git diff --stat 10e804ea HEAD -- app/` is **empty**, so its
+one-code-change shelf life is unspent — corroborated by `capability` reading **207** unchanged.
+⭐ **`FX`'s `14 / 13` `bar`-section figure reproduces a third time** on the same extraction, with
+membership unchanged (`1a` · `1b` · `2d` **NOT adoptable**, `RULING FS`; `2f` · `2g` offered upstream).
+
+⛔ **The backlog was EMPTY at tick 244 and that tick wrote a HOLD — the THIRD consecutive tick with no
 instrument change.** `wc -l bin/supervise.sh` is **416**, unchanged from ticks 242 and 243, re-measured
 per `RULING FX(ii)` and not carried from prose. ⭐ **`main` DID NOT MOVE** — pin `0ce60089`, identical
 to tick 243's — so `TRACK 1 ACTION 1`'s absolute grep and the **`N142`** note ceiling are unchanged **by
@@ -1816,8 +1878,10 @@ is any lane-authored content.
 
 ⚠️ **`rm` is refused to this seat**, so a tick's scratch files are **named in the block, never deleted** —
 `RULING CN`'s "delete debris" is the coder's capability (S-183 was a wave). Harmless: §1 does not count
-`.agents/supervisor/`, measured at tick 241 (39 untracked paths reported, all at repo root). Never
-`.gitignore` them.
+`.agents/supervisor/` — re-measured at tick 245, `git status --porcelain -uall | grep -c '^?? .agents/supervisor/'`
+is **`0`**. ⛔ **The "39 untracked paths" written here was NOT §1's count — see `RULING FY`.** §1 is
+**77** and has been in seven consecutive gates; `bin/supervise.sh:110` caps the *listing* at
+`head -40`, so a tick counting printed rows reads the constant forever. Never `.gitignore` them.
 
 
 
