@@ -14,7 +14,7 @@ final class StripeGatewayClient
     {
         $secret = config('credentials.stripe_secret');
         if (empty($secret)) {
-            throw new GatewayNotConfiguredException('Missing stripe_secret');
+            throw new GatewayNotConfiguredException('No payment gateway credential is configured in this checkout, so nothing was sent to the gateway.');
         }
 
         $response = Http::withToken($secret)
@@ -41,7 +41,7 @@ final class StripeGatewayClient
     {
         $secret = config('credentials.stripe_secret');
         if (empty($secret)) {
-            throw new GatewayNotConfiguredException('Missing stripe_secret');
+            throw new GatewayNotConfiguredException('No payment gateway credential is configured in this checkout, so nothing was sent to the gateway.');
         }
 
         $response = Http::withToken($secret)

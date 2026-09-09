@@ -371,4 +371,34 @@ class DeclinesScreenTest extends TestCase
 
         Carbon::setTestNow();
     }
+
+    public function test_a_pay_link_with_no_gateway_credential_names_the_dependency_and_never_the_config_key(): void
+    {
+        $base = now()->startOfWeek()->addDays(3)->setTime(10, 0);
+        Carbon::setTestNow($base);
+
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $payment = Payment::create([
+            'business_id' => $biz->id,
+            'amount_cents' => 15000,
+            'currency' => 'USD',
+            'payment_token' => 'tok_nocred_1',
+            'idempotency_key' => 'idem_nocred_1',
+            'status' => 'failed',
+            'created_at' => $base,
+        ]);
+
+        config()->set('credentials.stripe_secret', null);
+
+        Livewire::actingAs($owner)->test(Declines::class)
+            ->call('sendPayLink', $payment->id)
+            ->assertSee('No payment gateway credential is configured in this checkout')
+            ->assertDontSee('stripe_secret');
+
+        Carbon::setTestNow();
+    }
 }
