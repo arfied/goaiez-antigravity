@@ -1,7 +1,7 @@
 <div>
     <h1>Payment plan</h1>
 
-    <p class="text-base text-ink-2">Up to {{ $terms->max_installments }} payments over {{ $terms->max_term_days }} days is a schedule. Beyond that it is credit, and it routes to a financing partner.</p>
+    <p class="text-base text-ink-2">Up to {{ $terms->max_installments }} payments over {{ $terms->max_term_days }} days is a schedule. Beyond that it is credit, and it routes to a financing partner. That limit is the standing default, not an account setting: nothing in this checkout changes it yet.</p>
 
     @if($error)
         <x-ui.error-panel heading="We couldn't offer that plan">

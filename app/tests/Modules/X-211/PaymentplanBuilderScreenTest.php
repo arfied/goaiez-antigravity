@@ -66,6 +66,7 @@ class PaymentplanBuilderScreenTest extends TestCase
         $screen = Livewire::actingAs($owner)->test(PaymentplanBuilder::class)
             ->assertOk()
             ->assertSee('Up to 3 payments over 90 days')
+            ->assertSee('the standing default, not an account setting')
             ->assertSee('INV-A1')
             ->assertDontSee('INV-A2')
             ->assertDontSee('INV-B1')
