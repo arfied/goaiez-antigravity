@@ -8,6 +8,7 @@ use App\Modules\X199\Domain\InvoiceReader;
 use App\Modules\X211\Actions\ArApplyLateFeeAction;
 use App\Modules\X211\Actions\ArLogOfflinePaymentAction;
 use App\Modules\X211\Actions\ArSetLateFeeTermAction;
+use App\Modules\X211\Domain\FeeAtCapException;
 use App\Modules\X211\Domain\FeeWithoutTermException;
 use App\Modules\X211\Domain\UnreferencedPaymentException;
 use App\Modules\X211\Models\ArDunningAction;
@@ -76,7 +77,7 @@ class AgeingByReason extends Component
             $res = $action->handle($businessId, $invoiceId, $fee);
             $this->success = sprintf('Late fee of %s applied to %s.', number_format($res['applied_fee_cents'] / 100, 2), $invoice->invoice_number);
             unset($this->feeCents[$invoiceId]);
-        } catch (FeeWithoutTermException $e) {
+        } catch (FeeWithoutTermException|FeeAtCapException $e) {
             $this->refused = $e->getMessage();
         } catch (ModelNotFoundException) {
             $this->error = "That invoice isn't in this account any more.";

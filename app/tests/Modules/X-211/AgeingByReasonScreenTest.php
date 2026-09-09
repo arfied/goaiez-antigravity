@@ -181,8 +181,9 @@ class AgeingByReasonScreenTest extends TestCase
             ->assertSee('Enter the late fee in cents')
             ->set('feeCents.'.$inv->id, 2500)
             ->call('applyLateFee', $inv->id)
-            ->assertSee('No late-fee term in the agreement')
+            ->assertSee('Late fee not applied')
             ->assertSee('a fee with no matching term is refused')
+            ->assertSee('Write the term below, then apply the fee again.')
             ->assertDontSee('late fee 25.00');
 
         $this->assertSame(0, ReceivableState::where('business_id', $biz->id)->where('invoice_id', $inv->id)->count());
@@ -260,5 +261,43 @@ class AgeingByReasonScreenTest extends TestCase
             ->assertSee('No invoice is past its terms')
             ->assertSee('and a draft is never issued')
             ->assertDontSee('Every issued invoice is inside its terms');
+    }
+
+    public function test_the_ageing_screen_refuses_a_late_fee_once_the_invoice_is_at_the_term_ceiling(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'Late', 'last_name' => 'Payer']);
+        $inv = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-F2',
+            'total_cents' => 100000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(20),
+        ]);
+
+        $screen = Livewire::actingAs($owner)->test(AgeingByReason::class)
+            ->assertOk()
+            ->set('term.percent', 10)
+            ->set('term.cap', 2000)
+            ->call('saveTerm')
+            ->set('feeCents.'.$inv->id, 1500)
+            ->call('applyLateFee', $inv->id)
+            ->set('feeCents.'.$inv->id, 1500)
+            ->call('applyLateFee', $inv->id)
+            ->assertSee('late fee 20.00');
+
+        $screen->set('feeCents.'.$inv->id, 1500)
+            ->call('applyLateFee', $inv->id)
+            ->assertSee('Late fee not applied')
+            ->assertSee('is already at the term ceiling of 20.00')
+            ->assertDontSee('late fee 35.00');
+
+        $this->assertSame(2000, (int) ReceivableState::where('business_id', $biz->id)->where('invoice_id', $inv->id)->value('late_fee_cents'));
     }
 }

@@ -13,6 +13,7 @@ use App\Modules\X211\Actions\ArLogOfflinePaymentAction;
 use App\Modules\X211\Actions\ArOfferPlanAction;
 use App\Modules\X211\Actions\ArPackageForCollectionsAction;
 use App\Modules\X211\Domain\ArEngine;
+use App\Modules\X211\Domain\FeeAtCapException;
 use App\Modules\X211\Domain\FeeWithoutTermException;
 use App\Modules\X211\Domain\NoResolutionAttemptException;
 use App\Modules\X211\Domain\PlanPastThresholdException;
@@ -411,5 +412,44 @@ class X211Test extends TestCase
         $this->expectExceptionMessage('a fee with no matching term is refused. Nothing was applied.');
 
         $this->engine->applyLateFee($biz->id, $invoice->id, 7500);
+    }
+
+    public function test_the_late_fee_cap_is_a_ceiling_on_the_invoice_not_on_each_application(): void
+    {
+        Event::fake([ArFeeApplied::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Cap Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'Cap', 'last_name' => 'Ceiling']);
+        $invoice = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-AR-301',
+            'total_cents' => 100000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(20)->toDateString(),
+        ]);
+
+        ArPlanTerm::create(['business_id' => $biz->id, 'late_fee_percent' => 10, 'late_fee_cap_cents' => 2000]);
+
+        $res1 = $this->lateFeeAction->handle($biz->id, $invoice->id, 1500);
+        $this->assertSame(1500, $res1['applied_fee_cents']);
+        $this->assertSame(1500, $res1['total_late_fee_cents']);
+
+        $res2 = $this->lateFeeAction->handle($biz->id, $invoice->id, 1500);
+        $this->assertSame(500, $res2['applied_fee_cents']);
+        $this->assertSame(2000, $res2['total_late_fee_cents']);
+
+        try {
+            $this->lateFeeAction->handle($biz->id, $invoice->id, 1500);
+            $this->fail('a fee above the cap was applied');
+        } catch (FeeAtCapException $e) {
+            $this->assertStringContainsString('is already at the term ceiling of 20.00', $e->getMessage());
+        }
+
+        $this->assertSame(2000, (int) ReceivableState::where('business_id', $biz->id)->where('invoice_id', $invoice->id)->value('late_fee_cents'));
+        Event::assertDispatchedTimes(ArFeeApplied::class, 2);
     }
 }
