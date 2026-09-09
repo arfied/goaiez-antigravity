@@ -56,14 +56,39 @@ RAW       : <doctor output for anything not fixed>
   `PASS` or `PASS-WITH-NOTES`** — unless `BRIEF.md`'s `push:` line says `free`.
   Commits stay local until then. Pushing early is the one thing here that
   cannot be reviewed back.
-- **Push step (Track 1, added 2026-09-03 — the owner automated pushes).** The
-  FIRST thing every run does, before reading the task: if `BRIEF.md`'s `push:`
-  line reads `YES — <from>..<to>`, run `git push origin main` and confirm the
-  output names exactly that range (or a prefix of it ending at `<to>`). Quote
-  the `<from>..<to>  main -> main` line in `REPORT.md` under `PUSHED`. If the
-  push is refused or the range differs, STOP and report — never `--force`,
-  never push a tip newer than `<to>`. If the line reads `NO` or `⛔`, push
-  nothing. A run that is only a push (`KICKOFF` says so) ends right after it.
+- ⛔ **The coder never pushes — OWNER RULING 2026-09-05 14:0x (`OWNER.md`).**
+  This supersedes the 2026-09-03 push step, which had the coder run
+  `git push origin main` off `BRIEF.md`'s `push:` line. The owner runs no git by
+  hand any more and the **supervisor** now runs every push for this lane, by
+  explicit ref on a sha it has gated and recorded in `REVIEWS.md`. On the coder
+  side there is nothing left to do: the launcher exports `GOAIEZ_PUSH_OK=0` on
+  every run, `BRIEF.md`'s `push:` line reads `CLOSED`, and `REPORT.md` records
+  `PUSHED : none — push CLOSED`. A run that pushes anyway is a `BLOCK` on the
+  wave even if the range is right.
+  ⚠️ **Restored 2026-09-09 (REV-121).** The 09:54 fast-forward to `origin/main`
+  overwrote this file — `.agents/rules/10-supervisor.md` is `merge=ours`, and a
+  fast-forward never consults the driver — and put the superseded 2026-09-03
+  push step back in this bullet's place for six hours. A coder reading its own
+  contract in that window was told to run `git push origin main`.
+- ⛔ **The coder merges only on an opened gate — owner-approved 2026-09-05
+  13:2x.** A merge writes files with no `git commit`, so the guard's never-list
+  check never sees it: a merge from `origin/main` can move `app/phpunit.xml`,
+  `seals.json`, `app/app/Doctor/**`, `CLAUDE.md` or the mailbox and nothing
+  refuses. Run 39 is the near miss — our side had not touched `phpunit.xml`
+  since the base, so git reported **no conflict at all**, and only a
+  hand-written brief step caught it. `coder-bin/git` therefore refuses
+  `merge`/`pull`/`cherry-pick`/`revert` unless `GOAIEZ_MERGE_OK=1`, and only
+  `launch-coder.sh` sets it, from **`--allow-merge` at dispatch** — never from
+  `BRIEF.md`, for the same reason the push gate is not derived from it (the
+  supervisor rewrites that file every tick). **Supervisor: when the brief's item
+  is a merge, dispatch with `bash .agents/supervisor/launch-coder.sh
+  --allow-merge` and say so in the `REVIEWS.md` block; otherwise launch bare.**
+  A `REFUSED by coder guard: git merge …` in a report means the gate was left
+  shut — that is the supervisor's miss, not the coder's, and the fix is to
+  relaunch with the flag.
+  ⚠️ **Also restored 2026-09-09 (REV-121) — and read what it says.** This bullet
+  names `app/phpunit.xml` as the exact file a merge moves with nothing refusing.
+  It was deleted by a fast-forward, which moved `app/phpunit.xml`.
 - ⛔⛔ **The coder guard is never bypassed.** `git` in a coder run is
   `/home/goaiez/agents/coder-bin/git`. Calling `/usr/bin/git`, `command git`,
   `env PATH=… git`, or any other route around it is a BLOCK on the wave even
@@ -82,6 +107,16 @@ RAW       : <doctor output for anything not fixed>
   reason. The supervisor can be wrong; the seal cannot.
 - **Paste raw output.** Stage lines, `grep -c` counts, the doctor build stamp.
   Every wrong turn in this programme came from acting on a paraphrase.
+- **A ruling given verbatim in `BRIEF.md` is recorded verbatim.** When the brief
+  hands you the exact words of a decision, `state.py decided` gets those words,
+  not a summary of them. `REPORT.md`'s `DECIDED` field is
+  `tail -n 1 .agents/state/JOURNAL.md` **pasted whole** — never `state.py`'s
+  stdout, which prints a confirmation rather than the line that landed. A
+  `DECIDED` line that does not begin with the brief's text is a `BLOCK`: it
+  means the journal and the ruling have already diverged, and the journal is
+  what the next reader has. (Recorded 2026-09-05 under the 08:0x opening; three
+  runs had already complied by brief alone. Deleted by the 2026-09-09 09:54
+  fast-forward, restored 2026-09-09 as REV-121.)
 
 ## ⛔ ADDED 2026-09-02 — THE SUPERVISOR'S WORKING TREE
 

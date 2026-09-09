@@ -256,3 +256,109 @@ silently repoint them. An already-set `DB_DATABASE` still wins, so a brief can
 override it without editing a tracked file. §7's clash guard was pointed at the same
 effective value: it **serialises** suites sharing a database and never **separates**
 them, so it was never a substitute for this.
+
+## REV-121 — REV-119 §A was ruled and never executed. All eight paths were hit.
+
+⚠️ **§A ORDERED THE EIGHT PER-TRACK PATHS ENUMERATED AND DIFFED. ONLY ONE OF THE EIGHT
+EVER WAS (2026-09-09, run 116 tick — my defect, the same defect §A was written about).**
+REV-119 §A caught that the 09:54 fast-forward had overwritten `CLAUDE.md`, restored that
+one file from `18161a02`, and wrote the rule: *"a fast-forward is a write to every
+per-track path, and the eight are enumerated and diffed BEFORE it, not adopted by a
+sentence."* Then the tick moved on. The command §A itself specifies was never run. Run
+here for the first time, six hours and four gates later:
+
+```
+$ git diff --stat 18161a02 HEAD -- app/phpunit.xml CLAUDE.md bin/supervise.sh \
+    .claude/settings.json .agents/rules/10-supervisor.md \
+    .agents/supervisor/launch-coder.sh \
+    .agents/state/BUILD-STATE.json .agents/state/JOURNAL.md
+ .agents/rules/10-supervisor.md     |   42 +-
+ .agents/state/BUILD-STATE.json     | 2006 +++---------------------------------
+ .agents/state/JOURNAL.md           |  720 +++++--------
+ .agents/supervisor/launch-coder.sh |  234 ++---
+ .claude/settings.json              |   23 +-
+ CLAUDE.md                          |  101 +-
+ app/phpunit.xml                    |    2 +-
+ bin/supervise.sh                   |  722 +++++++------
+```
+
+**Eight of eight.** The authoritative list is `.gitattributes` — every line is
+`<path> merge=ours`, and `merge=ours` is precisely the driver a fast-forward does not
+consult. Judged one at a time, which is what §A asked for and what turns a diff into a
+decision:
+
+| path | verdict |
+| :--- | :--- |
+| `bin/supervise.sh` | **ADOPT** — §A wanted it by name and argued it; §E's per-lane DB survived inside it, proved live by the `effective (§7)` line in every gate log since |
+| `.claude/settings.json` | **ADOPT** — this is the clean file Track 1 pushed on 09-08 with the eight `grs-antig-*` deny rules stripped |
+| `.agents/supervisor/launch-coder.sh` | **ADOPT** — main's is strictly better: it adds `--allow-restore`, `timeout -k 60 3h`, and the `Merge gate **OPEN` refusal needle. ⭐ REV-120 told this lane its launcher *"cannot pass `--allow-restore` yet"*; that was already false when written — the fast-forward had delivered it |
+| `CLAUDE.md` | **RESTORED** by REV-119 §A at `37da73f6` |
+| `.agents/rules/10-supervisor.md` | ⛔ **RESTORED at REV-121** — see below |
+| `app/phpunit.xml` | ⛔ **RESTORE** — see below |
+| `.agents/state/BUILD-STATE.json` | ⛔ **NOT a whole-file swap** — see below |
+| `.agents/state/JOURNAL.md` | ⛔ same |
+
+⛔ **§1. THE FAST-FORWARD DELETED THREE RULES FROM THE CODER'S OWN CONTRACT, AND ONE OF
+THEM WAS THE ANTI-PUSH RULE.** `.agents/rules/10-supervisor.md` lost, in two hunks:
+the ⛔ *"The coder never pushes — OWNER RULING 2026-09-05 14:0x"* bullet, replaced in
+place by **the superseded 2026-09-03 step it exists to supersede** — the one that reads
+*"run `git push origin main`"*; the ⛔ *"The coder merges only on an opened gate"* bullet;
+and *"A ruling given verbatim in `BRIEF.md` is recorded verbatim."* All three restored
+2026-09-09. **This is the One Rule violated by a mechanism that produces no commit to
+review** — a deleted refusal is the textbook `BLOCK`, and here nothing was blocked
+because nothing was committed. Defence in depth held (`GOAIEZ_PUSH_OK=0` from the
+launcher, `push: CLOSED` in every brief), which is the only reason a coder reading
+`git push origin main` in its contract did not act on it.
+
+⭐ And the deleted merge bullet **names `app/phpunit.xml`** as the exact file a merge
+moves with nothing refusing. It was deleted by a fast-forward that moved
+`app/phpunit.xml`. The rule described its own deletion.
+
+⛔ **§2. `app/phpunit.xml` — the lane's test database was rolled back to main's.**
+`18161a02` read `goaiez_antig_reviews_test`; `HEAD` reads `goaiez_antig_test`. Track 1
+found it at 11:01 by measuring from `main`, after main's wave-223 gate was **REFUSED**
+because two checkouts pinned one database and `RefreshesTenantDatabase` runs
+`migrate:fresh`. ⚠️ **Why four of this lane's own gates printed the corruption and
+nobody read it:** §0 prints both lines, and §E's derived line sits directly under the
+wrong one —
+
+```
+  app/phpunit.xml  DB_DATABASE=goaiez_antig_test          <- the defect, printed every run
+  effective (§7)   DB_DATABASE=goaiez_antig_reviews_test  <- read as the answer
+```
+
+§E made this lane's own suite correct, which is what made the damage invisible *here*
+and left it visible only from `main`. **A mitigation that hides its own fault is worse
+than no mitigation.** Restore from `18161a02`, not from a remembered value.
+
+⛔ **§3. THE BUILD LEDGER WAS ROLLED BACK THREE DAYS AND LOST 86 RECORDED DECISIONS —
+AND RESTORING IT IS *NOT* A WHOLE-FILE SWAP.**
+
+```
+                        18161a02 (lane)        HEAD (= origin/main's)
+  "updated"             2026-09-08T08:11:27    2026-09-05T17:11:31
+  "ruling": "R245"      98                     12
+  "roster"              124                    127
+  JOURNAL.md            986 lines              786 lines
+```
+
+`plan_sha256`, `runtime_build` and `seal_digest` are identical in both, so this is not a
+plan move — it is main's ledger sitting where the lane's belongs. `merge=ours` on these
+two paths is the statement that **each lane's ledger is its own document and main never
+absorbs one**; that is why `origin/main` also reads 12. Everything `state.py` has written
+since 09:54 — `25c3c445`'s eight stage counts, run 115's two stage lines, run 116's two
+`decided` lines — went into the wrong container.
+
+⛔ **But `roster` is 124 on the lane side and 127 on main's, and the lane number is the
+older one.** So a `git checkout 18161a02 -- .agents/state/` would restore 86 decisions
+**and** revert the roster, which is Track 1's number, not this lane's. That is REV-119
+§A's own defect — *a blanket verb applied to a stated list* — pointed the other way, and
+this seat is not committing it twice in one file. **RULED: the lane ledger is
+authoritative on `decisions` and `notes`; `roster` and module status are Track 1's. The
+reconciliation is filed, not executed, and nothing is restored by whole file.**
+
+**The general form, and it is the one worth keeping:** REV-119 §A was *correct*, was
+*written down*, and still did not happen, because a ruling and its execution were in the
+same tick and only the ruling had a check on it. **A ruling whose execution is not itself
+an item is a ruling that did not run.** Every §A-shaped finding from here carries the
+command into the next `BRIEF.md` as a numbered item with an output to quote.
