@@ -5502,3 +5502,66 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     the fabricated hex named nothing.** Sixteen of the forty characters were real; a fabrication
     that had collided with a real object would have pushed the wrong tree to the lane Track 1
     merges from, with no error at all.
+227. **Every exception message in this lane is owner-facing, none had ever been swept for truth, and
+    three of the thirty-nine hand an owner a vendor's raw JSON, a config key or a column's own
+    tokens (RULED by the lane supervisor 2026-09-09, briefed as MONEY-141).** Ruling 97 swept the
+    lane's `$this->success`/`$this->waiting` assignments and ruling 100 its ~140 `$error` ones;
+    both read strings a component **writes**. An exception message is a string a component
+    **renders**, and it had never been read. **The premise is measured, not assumed:** `grep -rn
+    "catch (\Throwable" ` over the eight `Ui/` trees returns **21 catch blocks that render
+    `$e->getMessage()` verbatim**, plus eleven narrower catches that render it bare — so the whole
+    `throw new` population, **39 sites**, is owner copy. Three are wrong, all in money's own
+    modules, and **all three are asserted by nothing** (ruling 70), which is why they outlived every
+    string sweep this lane has run.
+    **(a) `X-198/Domain/StripeGatewayClient` hands the owner Stripe's raw response body** — `:28`
+    `'Stripe charge failed: '.$response->body()`, `:33` and `:73` `'Invalid response from Stripe: '`
+    + the body, `:66` `'Stripe checkout session failed: '` + the body. The owner-reachable path is
+    **measured**: `X-199/Ui/Declines::sendPayLink():29` → `PaymentLinkAction::handle()`, which
+    **does not catch** (`:26`), → `createPaymentLink()`; `Declines.php:32`'s tail prepends *"The pay
+    link was not made: "*. So a refused pay link prints Stripe's JSON error envelope on the declines
+    screen, under a button whose purpose is to collect real money. ⭐ **Why four green tests could
+    not see it:** every test that reaches this seam **stubs its own** `\RuntimeException('Stripe
+    charge failed: card_declined')` (`X198Test:158,:189,:300`, `DeclinesScreenTest:105`) — a
+    35-character fiction where the real thing is a JSON object of several hundred bytes. **That is
+    ruling 41 part 2 exactly** (*a test double returns a value of the real thing's shape AND size*),
+    one artefact over: there a 44-character URL stub against a 422-character Stripe URL, here a stub
+    **exception message**. Four assertions certify a sentence the tests invented.
+    **RULED: each message is a sentence carrying Stripe's own `error.message` where the body has
+    one, and the HTTP status where it does not — never the body.** ⛔ Not by swallowing the vendor's
+    text (`GatewayEngine:124` catches `\RuntimeException` **by class**, so the wording cannot move
+    control flow, and the gateway's own sentence is the one fact the owner needs); ⛔ not by
+    changing the exception class.
+    **(b) `:16` and `:43` name a config key to an owner** — `GatewayNotConfiguredException('Missing
+    stripe_secret')`, reaching the same screen as *"The pay link was not made: Missing
+    stripe_secret"*. Ruling 96's family (`§141.5`) and ruling 124's (`OWNER ACTION nn`), in an
+    exception rather than a blade. Blast radius **zero**: `X198Test:273,:432` assert
+    `assertInstanceOf`, never the message. **RULED: it names the missing dependency in owner words.**
+    **(c) `X-201/Domain/DisputeDefenseEngine:101` prints four `evidence_type` column tokens** —
+    `'missing: '.implode(', ', $missing)`, rendered by `DisputeQueue:61`/`DisputeCard:61` as *"We
+    could not submit that dispute: missing: call_log, transcript, delivery_receipt,
+    consent_record"*: a lowercase fragment, no sentence, no remedy, in the schema's own vocabulary.
+    **Ruling 90's display-map shape**, which this lane already solved once for `meter_type`, and
+    ruling 185's *the map lives on the model that owns the column* (`CreditTerm::TERMS_DAYS`).
+    ⚠️ **The branch is reachable and ungated:** ruling 221 measured `reason === 'fraudulent'` is
+    both the column default and the parameter default, so it is the arm every dispute takes — and
+    `DisputeQueueScreenTest`'s only submit fixture is `unrecognized_transaction` (`:47`), so the
+    completeness branch is **rendered by no test at all**. ⛔ Not resolved by deleting the refusal:
+    it is the evidence-completeness CHECK ruling 54 composed and ruling 62 made reachable.
+    ⚠️ **Fixed rather than recorded, on ruling 204's precedent** — `disputes` has no production
+    writer (ruling 79) and neither did the three tables ruling 204 fixed, but the branch **is**
+    renderable and the wave gates it, so a mutation can redden it and ruling 96 does not govern.
+    ⚠️ **Table B, measured true and struck:** X-120's five `CardPresentAction` refusals (each ends
+    *"nothing was stored"*), X-199's two `InvalidTermsException`, X-117's `SoldOutException` (names
+    the sellable, the stock and the cart), X-211's nine (`FeeWithoutTermException` carries ruling
+    221's guidance and `FeeAtCapException` is that wave's own work), X-198's
+    `NothingToReviewException` and `PaymentAlreadyLandedException`, X-201's
+    `DisputeNotCompiledException` and `DisputeNoteAction:25`. ⚠️ Four are true **and unreachable to
+    an owner**, so ruling 96 governs and they are recorded: `InvoiceNumber:15` (a programmer guard —
+    it fires only when the method is called outside a transaction), `DisputeDefenseEngine:116`
+    (`'Invalid outcome'` — `DisputeOutcomeAction:16` refuses first with a better sentence),
+    `GatewayEngine:90` (`capture()`'s only non-evidence caller is `InvoiceEngine:95`;
+    `PaymentCaptureAction` has none), and C-Billing's three `REFUSAL:` prefixes, which are **Track
+    1's** by ruling 5 and are caught by a `\DomainException` handler that writes its own honest copy
+    (ruling 100) before the `\Throwable` tail can render them.
+    ⚠️ `'Dispute deadline has passed'` (`:88`) is TRUE and asserted at `X201Test:62`; terse, no
+    remedy, ruling 76's PASS-WITH-NOTES grade, **not** widened into this wave.
