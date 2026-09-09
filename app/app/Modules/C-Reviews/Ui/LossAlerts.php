@@ -164,6 +164,9 @@ class LossAlerts extends Component
 
             $alerts = $breachedTickets->concat($lowRatingRequests)->concat($lowCsatRequests)
                 ->sortByDesc('risk_level')
+                ->unique(function ($item) {
+                    return $item->alert_type . '-' . $item->id;
+                })
                 ->values();
         } else {
             $alerts = collect([

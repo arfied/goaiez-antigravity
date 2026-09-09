@@ -262,6 +262,30 @@ class CReviewsTest extends TestCase
         $this->assertNotNull($ticket2->resolved_at, 'Row had resolved_at before the call and retains it');
     }
 
+    public function test_loss_alerts_does_not_double_count_reopened_and_breached_ticket(): void
+    {
+        $biz = self::provisionTenant(['name' => 'Loss Alerts Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $r = $this->syncAction->handle($biz->id, 'google', 1, 'Terrible experience');
+        $this->ticketAction->handle($biz->id, $r->id);
+        
+        $ticketId = \App\Modules\X181\Models\QaTicket::where('review_request_id', $r->id)->first()->id;
+        $ticket = \App\Modules\X181\Models\QaTicket::find($ticketId);
+        $ticket->update([
+            'status' => 'open',
+            'sla_due_at' => now()->subDays(1),
+            'reopened_at' => now()->subHours(2),
+        ]);
+
+        $component = \Livewire\Livewire::test(\App\Modules\CReviews\Ui\LossAlerts::class)
+            ->assertOk();
+
+        $alerts = $component->viewData('alerts');
+        $ticketAlerts = $alerts->filter(fn ($a) => $a->alert_type === 'ticket' && $a->id === $ticketId);
+        $this->assertCount(1, $ticketAlerts, 'Alert collection should contain the ticket id exactly once');
+    }
+
     /**
      * [G20-06] named in the header
      * ⛔ REFUSED: surveyed Actions, Database, Events, Listeners, Models, Ui and found no implementation.
