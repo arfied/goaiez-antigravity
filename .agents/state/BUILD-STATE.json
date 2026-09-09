@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-09T17:02:08",
+ "updated": "2026-09-09T18:24:19",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -15,7 +15,7 @@
    "fails": "COMMIT"
   },
   "boundary": {
-   "violations": 52,
+   "violations": 50,
    "fails": "COMMIT"
   },
   "contract": {
@@ -1454,6 +1454,12 @@
    "module": "X-181",
    "chose": "The X-181 resolution screen rendered a CSAT score pill from review_requests.csat_score, a column dropped on 2026-09-09, so the pill could only ever render for the hardcoded sample fixture that a green test asserted against; the score is not stored anywhere and the screen now reports only that CSAT was requested, from qa_tickets.csat_requested_at.",
    "at": "2026-09-09T17:02:08",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Reviews",
+   "chose": "Undoing a value a merge COMMITTED is a content operation, not a ref operation: git checkout -- <path> restores from the index, which after a merge already holds the incoming value, so the restore gate is a silent no-op on it. Repair with git show <good-sha>:<path> > <path>, verified by an empty git diff <good-sha> HEAD -- <path> (R245)",
+   "at": "2026-09-09T18:24:19",
    "ruling": "R245"
   }
  ],

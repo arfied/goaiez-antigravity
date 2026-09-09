@@ -793,3 +793,5 @@
 - `2026-09-09T16:37:40` (R245) X-103 — A classmap is static, so a merge that adds a file under app/Modules/ leaves app/vendor/composer/autoload_classmap.php describing a tree that no longer exists; composer dump-autoload runs after any such merge and before any gate, and gate numbers measured before it are void.
 - `2026-09-09T17:02:08` (R245) X-181 — The X-181 resolution screen rendered a CSAT score pill from review_requests.csat_score, a column dropped on 2026-09-09, so the pill could only ever render for the hardcoded sample fixture that a green test asserted against; the score is not stored anywhere and the screen now reports only that CSAT was requested, from qa_tickets.csat_requested_at.
 - `2026-09-09T17:25:53` stage boundary = 52
+- `2026-09-09T18:24:14` stage boundary = 50
+- `2026-09-09T18:24:19` (R245) C-Reviews — Undoing a value a merge COMMITTED is a content operation, not a ref operation: git checkout -- <path> restores from the index, which after a merge already holds the incoming value, so the restore gate is a silent no-op on it. Repair with git show <good-sha>:<path> > <path>, verified by an empty git diff <good-sha> HEAD -- <path> (R245)
