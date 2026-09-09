@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Modules\X211;
 
 use App\Models\Business;
+use App\Modules\X199\Domain\InvoiceReader;
 use App\Modules\X199\Models\Invoice;
 use App\Modules\X211\Domain\ArEngine;
 use App\Modules\X211\Events\ArOverdue;
@@ -182,5 +183,41 @@ final class DetectOverdueReceivablesCommandTest extends TestCase
         Event::assertDispatched(ArOverdue::class, function ($e) use ($silenceId) {
             return $e->invoiceId === $silenceId;
         }); // Silence invoice should be chased
+    }
+
+    public function test_the_overdue_reader_is_asked_for_one_business_and_returns_only_its_issued_overdue_invoices(): void
+    {
+        Tenancy::forgetAll();
+        $business = Business::factory()->create();
+
+        Tenancy::actingAs((int) $business->id, function () use ($business) {
+            Invoice::create([
+                'business_id' => $business->id,
+                'invoice_number' => 'INV-READER-OVERDUE',
+                'status' => 'issued',
+                'due_date' => now()->subDays(7),
+            ]);
+            Invoice::create([
+                'business_id' => $business->id,
+                'invoice_number' => 'INV-READER-PAID',
+                'status' => 'paid',
+                'due_date' => now()->subDays(7),
+            ]);
+            Invoice::create([
+                'business_id' => $business->id,
+                'invoice_number' => 'INV-READER-FUTURE',
+                'status' => 'issued',
+                'due_date' => now()->addDays(7),
+            ]);
+
+            $numbers = app(InvoiceReader::class)
+                ->overdueIssued((int) $business->id)
+                ->pluck('invoice_number')
+                ->all();
+
+            $this->assertSame(['INV-READER-OVERDUE'], $numbers);
+        });
+
+        Tenancy::forgetAll();
     }
 }
