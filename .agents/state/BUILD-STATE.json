@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-09T08:05:55",
+ "updated": "2026-09-09T09:24:38",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -543,10 +543,17 @@
    "unresolved": []
   },
   "X-119": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 1,
    "intent": "INFORM",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-119",
+     "stage": "X-119 exposes no path to retract a taught price fact; a price. fact outlives the pricebook row that taught it (X-163 deleteItem:165).",
+     "why": "",
+     "at": "2026-09-09T09:24:24"
+    }
+   ]
   },
   "X-120": {
    "status": "DONE",
@@ -1435,6 +1442,12 @@
    "stage": "TESTS",
    "why": "grep for warehouse|shipment|shipping_label|freight matches Database/migrations/2026_08_30_000076_create_x167_inventory_tables.php:19",
    "at": "2026-09-08T09:07:33"
+  },
+  {
+   "module": "X-119",
+   "stage": "X-119 exposes no path to retract a taught price fact; a price. fact outlives the pricebook row that taught it (X-163 deleteItem:165).",
+   "why": "",
+   "at": "2026-09-09T09:24:24"
   }
  ],
  "decisions": [
@@ -1928,6 +1941,12 @@
    "module": "X-171",
    "chose": "R245: JobStateAction scopes the work_orders person_id read to the acting tenant. A cross-tenant read on a wired production path is a defect regardless of what capabilities.php declares; RLS sits beneath the application scope. Ruled by the lane supervisor, PB-153.",
    "at": "2026-09-09T08:05:55",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-163",
+   "chose": "an (R245) contract note that X-163 teaches on confirm and has no retraction seam, so a deleted item's fact persists, and that the retraction is X-119's to expose.",
+   "at": "2026-09-09T09:24:38",
    "ruling": "R245"
   }
  ],
