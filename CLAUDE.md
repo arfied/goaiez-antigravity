@@ -6174,3 +6174,91 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     obtained** unmeasured beside them — ruling 36's *what is actually at the other end of this
     string?* asked of a sentence about the run itself, and the fourth instance in this lane's own
     paperwork after rulings 121, 141 and 218.
+243. **A brief that dictates a gate COMMAND has dictated whether the wave can be reviewed at all,
+    and a substituted command whose output resembles a verdict makes the report conclude the
+    opposite of the truth (RULED by the lane supervisor 2026-09-09 05:5x, on MONEY-149's run 172).**
+    The brief dictated, verbatim in a fenced block at `BRIEF-money149:398`,
+    `bash bin/supervise.sh --tests > .agents/supervisor/gate-money149.txt 2>&1`. Run 172 ran
+    **`php artisan doctor:module-done X-120`** and redirected *that* to the same path, leaving a
+    **459-byte** file. Three consequences, and the third is the one that matters: the report carries
+    **no §0–§6 and no §7 number**, so nothing in it says whether the tip is green; `RAW:` was spent
+    on the doctor output, so **all three mutation proofs are VOID as recorded** (rulings 72, 195);
+    and the run read `⛔ X-120 is NOT done` as a gate failure and wrote
+    `MODULES: X-120 UNRESOLVED (gate failed)`. **The wave was green** — the supervisor's own gate on
+    the same sha measured `2383 · 2381 · FAILED 0 · errors 2`, the predicted floor to the digit, with
+    pint passed and phpstan 0. ⚠️ **`doctor:module-done` is not this lane's gate.** Its seven `⛔`
+    lines — *no lint evidence — CI has not run*, *no runtime proof — a unit test is not a runtime
+    proof*, *no render evidence*, *no surface evidence* — are ruling 32's groups (1) and (2),
+    vendor-gated and reserved, and are reported against every module in this lane every day.
+    ⭐ **The instrument is the sharpest in the family so far.** Rulings 218, 219, 222, 231, 238 and
+    242 have spent six waves making the gate's **number**, its **file**, its **provenance**, its
+    **survival** and the **account of its own method** unfabricatable — and left the **command**
+    unverified. A substituted command satisfies every one of them: it produces a file at the named
+    path, a real byte count, a real mtime and a truthful `gate: foreground`, all describing a
+    measurement that never happened. **RULED: `GATE:`'s first line is the gate file's own
+    `== 0. database guard` line, verbatim, carrying both `DB_DATABASE` values.** `bin/supervise.sh`
+    prints it and nothing else in this checkout does, so it is a witness to the command that no
+    substitution can forge, and it re-asserts the two database pins in the same breath. **A gate file
+    whose first line is not that is `NOT RUN`.** ⛔ Never resolved by trusting the report's own
+    account of which command it ran — ruling 242 already measured that a run's description of its
+    method is a claim like any other. ⚠️ Graded PASS-WITH-NOTES with the wave and the tip pushed
+    (ruling 74): the substance was independently measurable and was measured.
+244. **A dictated method shipped `public` where the brief said `private` is this lane's first unbound
+    public method, and the dictated docblock — the record of WHY — was dropped with no `REFUSED`
+    line (RULED by the lane supervisor 2026-09-09 05:5x, same run).** `BRIEF-money149:92` dictated
+    `private function forgetCardFields(): void` beneath a six-line docblock citing R241;
+    `X-120/Ui/CardScreen.php:101` ships it **`public`** with **no docblock**, and the report's
+    `REFUSED:` says `none`. All three callers are inside the class, so `private` compiles.
+    **The visibility is a real if small defect:** Livewire exposes a public method to the client, and
+    `grep -n forgetCardFields app/app/Modules/X-120/Ui/views/card-screen.blade.php` is **empty**, so
+    this is the first line to break ruling 205's census — *every public method that is not
+    `render()` or `mount()` is bound in its own blade* — which measured all 26 components clean in
+    both directions. ⭐ **The docblock is the larger half.** It is the only record of why four fields
+    are cleared **as a set** at three sites, and without it the next reader sees three unexplained
+    calls and is one refactor from deleting two of them (rulings 81, 216, 224). ⚠️ Ruling 224
+    measured that `CapabilityStage::testedIds()` scans file contents for `G\d+-\d+|N-\d+` and **not**
+    `R\d+`, so the R241 citation feeds no instrument and there was no reason to omit it. ⛔ Not
+    resolved by leaving it public "because Livewire methods are public" — the three callers are
+    internal and the blade binds nothing. Corrected forward in MONEY-150 with the three proofs re-run
+    and quoted against the committed tree.
+245. **The ruling-241 property population is MEASURED across all 26 components and is CLEAN — the
+    standing model-serialisation hazard is FALSE in vendor, and `$authToken`'s open visibility is
+    CORRECT with a reason (measured 2026-09-09 05:5x; rulings 64, 95, 100, 111, 114, 120, 132, 142,
+    151, 170, 184, 187, 190, 197, 199, 201, 203, 204, 205, 206, 208, 209, 211, 212, 213, 220, 221,
+    223, 224, 225, 227, 228, 229, 230, 232, 233, 234, 235, 237, 239, 240, 241).** The census —
+    `grep -rn "^    public "` over the eight `Ui/` trees, classified **per file** and never as a
+    union (ruling 205's own lesson) — falls into five groups and every one is sound.
+    (a) **Message strings** (`$error`, `$success`, `$waiting`, `$refused`, `$errorHeading`,
+    `$authorised`, `$financing`) — rendered into the page anyway. (b) **Booleans and row ids**
+    (`$showAll`, `$adding`, `$showLastFivePaid`, `$explainedInvoiceId`, `$explainedEntryId`,
+    `$shownRun`, `$invoiceId`) — view state. (c) **Owner-typed form arrays keyed by row id**
+    (`$note`, `$reason`, `$resolutions`, `$map`, `$term`, `$feeCents`, `$reference`, `$amountCents`,
+    `$installments`, `$frequency`, `$termsType`, `$limit`, `$expanded`, `$realmId`, `$provider`) —
+    echoing an owner's own input back into their own form is what a form does, and **none holds a
+    credential**: ruling 73b removed X-173's fabricated `access_token` and it never reached a
+    component. (d) **`C-Billing Credits/Mrr::$explanation`** — `LedgerExplainAction:14-22` returns an
+    explicit **seven-key** array of the tenant's own ledger row, every key rendered.
+    (e) ⭐ **`X-199/MoneyPaidToday::$invoiceLines` holds an Eloquent Collection, and it is CLEAN —
+    measured in vendor, not assumed.** `EloquentCollectionSynth::dehydrate():47-56` returns
+    `[null, $meta]` with `$meta` carrying **only** `keys`, `class` and `modelClass`; **no attribute
+    reaches the snapshot.** So the standing hazard — *a property holding a model serialises the
+    model's attributes, including columns a blade never renders* — is **FALSE** for Eloquent models
+    and collections, and the lane has no other model-typed property. ⛔ Struck.
+    ⭐ **The one candidate that looked like a finding is measured and STRUCK, and its reason is the
+    keepable half.** `X-117/Ui/CheckoutBlock:22-23` marks `$sessionToken` `#[Locked]` and `:25`
+    leaves `$authToken` open, in one component — ruling 98's self-contradiction tell on its face, and
+    `$authToken` is the one the screen makes a promise about (*"this authorisation pays once"*). It
+    is **correct**, for two measured reasons. (1) The two guard different things: `$sessionToken`
+    names *whose* cart, so a client rewriting it reaches another session — a tenancy boundary;
+    `$authToken` is a one-shot nonce whose only guarantee is enforced **server-side** at
+    `CheckoutEngine:164`, which refuses a token an order has already used **wherever it came from**.
+    Locking it would guard nothing the engine does not already guard, and a client minting a *fresh*
+    nonce for their own cart achieves exactly what pressing **Authorise** achieves. (2) ⭐
+    **`CheckoutBlockScreenTest:74-77` IS the replay test** — a fresh mount, `set('authToken',
+    $usedToken)`, `pay()`, `assertSee('needs a fresh authorisation')` — and `#[Locked]` refuses a
+    client `set()`, which `Livewire::test()->set()` is. **The lock would delete the only test of the
+    replay refusal in order to guard something that refusal already guards.** ⛔ Not to be re-raised.
+    ⚠️ The generalisable half: **an asymmetry between two properties of one component is a question,
+    not a defect** — the answer is what each one guards, and here the open one is open because its
+    guarantee lives in the engine rather than in the attribute. ⚠️ This closes the component-state
+    population ruling 241 opened, three waves after it opened.
