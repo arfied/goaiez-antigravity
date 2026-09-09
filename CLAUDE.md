@@ -6991,3 +6991,80 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     whole measurement — ruling 192's zero-line sweep hazard with the sign reversed, and rulings
     83/136/145/179/188's family a seventh time. **Check what the shell actually ran, not what you sent
     it.**
+270. **An evidence command that calls the SIGNUP path permanently consumes a dedicated phone number
+    out of a nine-number platform pool; all five of this lane's do it on every run, the pool is now
+    empty, and no path returns one — so ruling 39's mandatory sequence is unrunnable for every
+    evidence artifact this lane owns (RULED by the lane supervisor 2026-09-09, on MONEY-158's item 3;
+    briefed as MONEY-159).** `TenantProvisioner::provision(User $user): Business` is the
+    **registration** path and creates a **new** business per call with no per-user reuse; at `:257` it
+    calls `$this->numbers->claimForTenant($business->id)` under a docblock naming this exact failure —
+    *"⛔ IT MAY REFUSE THE WHOLE REGISTRATION. `claimForTenant()` throws `NumberPoolExhausted` when the
+    pool is in use and empty, which rolls this transaction back exactly the way an integrity failure
+    does."* `grep -rn "provisioner->provision" app/app/Modules` returns **five** call sites and every
+    one is an evidence command of this lane — `X-117/EvidenceCheckoutCommand:36`,
+    `X-198/EvidenceChargeCommand:32`, `X-198/EvidencePaymentLinkCommand:32`,
+    `X-199/EvidenceInvoiceCommand:42`, `X-211/EvidenceRecoveryCommand:43`. Nine numbers, five
+    commands, one number per run: MONEY-158's item 3 refused with *"all 9 assignable number(s) already
+    belong to a tenant"*, and the artifact dated 2026-09-06 proves the same command succeeded before.
+    ⛔ **There is no path back.** `numbers:return-parked` recovers only *parked* numbers — its own
+    docblock: *"`releaseFromTenant()` parks a **departed** tenant's number … this is the only thing
+    that ever takes one back out"* — and an evidence tenant never departs. The pool is not low, it is
+    **closed**. ⭐ **The consequence is larger than the wave that found it:**
+    `git ls-files app/storage/app/evidence/` is empty (rulings 39, 187), so all five artifacts live on
+    one disk, outside git, asserted by tests that `$this->fail('Artifact missing…')` without them —
+    and **none can now be rebuilt**, `evidence/j9/charge.json` included, which carries
+    `ch_3UCgYZFXLB0i1zXl0NCv569q`, **the lane's only genuinely vendor-issued `artifact_id`** (rulings
+    173, 178) and its sole honest runtime proof. ⛔ **`sms:load-number-pool` is not this lane's act:**
+    its argument is documented as *"One or more E.164 numbers **this platform holds**"*, over a
+    docblock calling a number belonging to somebody else *"the worst kind of wrong"* — a number is a
+    vendor resource and a fabricated one written into a pool whose contract is *numbers we hold* is
+    ruling 43's fiction with the loader's docblock as the CHECK. **→ OWNER ACTION.**
+    ⛔ **And the obvious reuse fix is a no-op that looks like one**, measured rather than assumed:
+    `$user->ownedBusinesses()` reads `businesses`, which is RLS'd on its own id (`Business.php:138`),
+    and `User.php:88`'s own comment says a tenant-less read *"returns nothing rather than everything,
+    which is the correct failure"* — so a reuse lookup **before** `Tenancy::set` silently returns null
+    and the command provisions again. Ruling 193's mechanism, arriving in the fix instead of in a
+    test. **RULED: the command is GIVEN the tenant rather than discovering it** — an optional
+    `--business=` on `x117:evidence-checkout`, provisioning only when it is absent, and the artifact
+    records its own `business_id` so every later run has the id with no scoped read and no number.
+    That is X-117's own file (money's, ruling 20) and it removes an unnecessary consumption rather
+    than minting machinery (ruling 59 does not bite). ⚠️ The mechanism is dictated **unexecuted**, so
+    it goes in item 1 behind a stop-clause and the run reports what it observed (rulings 193, 256).
+    ⛔ The other four commands are **recorded, not changed**: one command establishes the shape and is
+    proven by a real CLI run, which is what ruling 39 requires. ⚠️ `sellables.sku` is `->index()` and
+    not unique (`2026_08_30_000029:19`), so a reused tenant takes a second `Sellable::create` without
+    a constraint violation — measured before dictating (ruling 106).
+
+271. **A brief that dictates a `state.py decided` text has dictated a claim about items that may not
+    land, so the text names only what the DECISION is — never which strings changed (RULED by the lane
+    supervisor 2026-09-09, on MONEY-158's `c69194d5`).** The dictated text enumerated three strings as
+    having dropped their rule-id pointers; item 3 came back `UNRESOLVED` and was reverted, so
+    `JOURNAL.md` and `BUILD-STATE.json` now assert a change that is measurably not in the tree — and
+    the artifact on disk still reads `parked behind a contract by ruling 20`. The decision itself is
+    correct and unaffected; what was wrong is that the brief wrote the **inventory** into the
+    **decision**, at a moment when the inventory was a forecast. ⛔ Not resolved by writing the decided
+    line last (an item can fail after it) and ⛔ not by omitting the decision, which is the `(R245)`
+    contract record. **RULED: a dictated decided text states the rule and its reason and enumerates
+    nothing; where a wave wants the inventory recorded it goes in a `state.py note` written after the
+    items** — the field that may legitimately describe what happened. The correction is a **new note**,
+    never an edit: `state.py` owns `BUILD-STATE.json` and a hand edit there is a BLOCK, and
+    `JOURNAL.md` is append-only. ⚠️ This is the ruling 66/75/…/254 family a **twenty-ninth** time with
+    a new instrument, and it is the only member whose falsehood is **append-only** — every other can be
+    corrected by a later edit; this one can only be corrected by a second line beside it. Per the
+    standing precedent the miss is the supervisor's and MONEY-159 carries its own two dispatches.
+
+272. **The owner's merge condition (3) does not fire on a routine per-wave push, and the MERGE-BASE is
+    what measures it (RULED by the lane supervisor 2026-09-09).** `OWNER.md`'s 09:02 rule merges
+    `origin/main` at the start of a wave when *"(3) you are about to push a slice for Track 1 to
+    merge"*, and its very next sentence is *"Otherwise keep building — do not merge on every tick."*
+    Ruling 26c makes this lane push **every** gated tip, so reading (3) as *any push* fires it every
+    tick and contradicts the sentence beside it. **RULED: (3) is measured against
+    `git merge-base HEAD origin/main` — it fires when this lane's push is the first since Track 1 last
+    merged this lane AND carries a wave's substantive work, not when the base already IS a recent
+    money tip.** Measured this tick (ruling 269 — in the tick that states it, never inherited):
+    `origin/main` `15f21600`, **merge-base `83caa6f5`** = money's own last pushed tip, so Track 1
+    merged this lane four commits ago; **68 behind** so (1) ✗;
+    `git diff --stat 83caa6f5 origin/main -- app/app/Doctor coder-bin .claude/hooks` **empty** so
+    (2) ✗; the four commits ahead are two one-line string removals, a supervisor note and a state line
+    so (3) ✗. **Merge gate CLOSED.** ⚠️ ⛔ Never inherit this answer from an addendum table — rulings
+    145 and 269 both fired on exactly that, and the merge-base moves every time Track 1 merges.
