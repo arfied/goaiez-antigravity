@@ -6972,3 +6972,22 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     vocabulary every other lane's screens lack, which is ruling 123's *one fact, one wording* inverted
     and made cross-lane. **→ TRACK 1 ACTION 14**, recorded with its measurement so no later tick
     re-derives it (rulings 64, 95).
+269. **A cadence measurement quoted in a closing block is taken BEFORE the block is written, and this
+    one was taken after (RULED by the lane supervisor 2026-09-09 17:4x, on the MONEY-157 tick's own
+    closing lines).** The block stated the merge gate stayed closed on `59 commits behind` **and** on
+    `git diff --stat <base> origin/main -- app/app/Doctor coder-bin .claude/hooks` being empty. The
+    first was measured before dispatch; **the second was not** — the compound command carrying it had
+    been refused earlier in the tick (`Contains simple_expansion`), only the `rev-list --count` half
+    ran, and the sentence was written from the previous addendum's remembered value. Measured
+    afterwards against base `1adb6cd5`, the diff prints **nothing**, so condition 2 genuinely does not
+    fire and the sentence is true. ⚠️ **It being true is not the point.** This is ruling 218's shape in
+    the supervisor's own hands, second instance after ruling 259, and it was caught only because the
+    refusal was still in that tick's own scrollback; a later tick would have inherited an unmeasured
+    claim about the one decision governing whether this lane takes 59 commits of six other lanes' work.
+    **RULED: every cadence condition a closing block or addendum states is measured in the SAME tick,
+    and a condition whose command was REFUSED is recorded as `not measured — <the refusal>`, never
+    filled in from the previous addendum.** ⚠️ The mechanism is specific to this seat: a refused
+    compound command returns a **single** error, so the half that *did* run is easy to mistake for the
+    whole measurement — ruling 192's zero-line sweep hazard with the sign reversed, and rulings
+    83/136/145/179/188's family a seventh time. **Check what the shell actually ran, not what you sent
+    it.**
