@@ -27,7 +27,7 @@
    "fails": "COMMIT"
   },
   "schema": {
-   "violations": 16,
+   "violations": 14,
    "fails": "MERGE"
   },
   "capability": {
@@ -39,7 +39,7 @@
    "fails": "WAVE"
   },
   "journey": {
-   "violations": 3,
+   "violations": 2,
    "fails": "WAVE"
   }
  },

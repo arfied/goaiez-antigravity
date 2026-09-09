@@ -784,3 +784,5 @@
 - `2026-09-09T09:22:48` stage capability = 207
 - `2026-09-09T09:22:48` stage anchor = 128
 - `2026-09-09T09:22:48` stage journey = 3
+- `2026-09-09T10:06:34` stage schema = 14
+- `2026-09-09T10:06:39` stage journey = 2
