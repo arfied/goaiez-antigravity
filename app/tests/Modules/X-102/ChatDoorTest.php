@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Modules\X102;
 
 use App\Models\Business;
+use App\Modules\CAgent\Models\AgentTurn;
 use App\Modules\X102\Models\ChatSession;
 use App\Modules\X102\Models\ChatTurn;
 use App\Services\Pixel\PixelKeys;
@@ -104,6 +105,9 @@ class ChatDoorTest extends TestCase
         $turn = ChatTurn::first();
         $this->assertEquals('Hello from visitor', $turn->message);
         $this->assertEquals('visitor', $turn->author_type);
+
+        // The wire to C-Agent is synchronous and works on the live path
+        $this->assertEquals(1, AgentTurn::where('business_id', $biz->id)->count());
     }
 
     public function test_key_for_business_a_and_session_for_business_b_returns_404(): void

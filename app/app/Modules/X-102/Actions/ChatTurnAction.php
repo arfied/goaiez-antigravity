@@ -24,6 +24,8 @@ final class ChatTurnAction
             turnId: $turn->id,
         ));
 
+        app('App\Modules\CAgent\Actions\AgentAnswerAction')->handle($businessId, $message);
+
         return $turn;
     }
 }
