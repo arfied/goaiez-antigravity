@@ -1685,8 +1685,42 @@ dispatched — executed by the supervisor itself**, `bin/supervise.sh` being thi
 ⛔ **Not a wave and no count moved** — §5 identical in all eight across `.gateT241.txt` and
 `.gateT241b.txt`. It sets no `fail=1`: a trigger, never a verdict.
 
-⛔ **The backlog is EMPTY at tick 258 and this tick writes a HOLD — the SEVENTEENTH consecutive tick
-with no instrument change and the SIXTH CONSECUTIVE with no new lettered ruling**, every ordinal here
+⛔ **The backlog is EMPTY at tick 259 and this tick writes a HOLD — the EIGHTEENTH consecutive tick
+with no instrument change and the SEVENTH CONSECUTIVE with no new lettered ruling**, every ordinal
+here **derived in this tick** per `RULING FZ` and none carried; the §3 == §5 run and the take-refusal
+count are **deliberately not asserted**, having no derivation. ⭐ **`main` did NOT move — pin
+`0314d797`, the THIRD consecutive unmoved tick**, derived over the ledger's own MOVED/DID-NOT-MOVE
+markers with the derivation spanning back to tick 256's **MOVED**, which is the reset. Lane **36 ahead
+/ 22 behind** first-parent (**36 / 117** by ancestor count, `RULING EK`), the ahead-count moving
+35 → 36 on **our own tick-258 commit** and both behind-counts unchanged as an unmoved pin requires;
+merge base `7a75f289` unmoved; ours-since-base in `app/` is `app/phpunit.xml` alone, so this lane
+still authors no `app/**` byte and `boundary 55` · `contract 85` · `capability 207` · `anchor 128` ·
+`schema 16` remain **main's numbers** (`RULING FO`). ⛔ **The take is OPEN, UNNECESSARY and REFUSED** —
+`DD`'s two-row re-check prints nothing, the `Doctor`/`JourneyHarness`/`seals.json` diff against our
+base is **empty**, so this lane's checker **is** main's current checker byte-identical, `RULING EQ`'s
+void condition is not reached, and a take could refresh nothing at a cost of **117** ancestor commits.
+⭐ **The admission census was NOT re-run and the reason is a measurement taken first**:
+`git diff --stat 10e804ea HEAD -- app/` is **empty**, corroborated by `capability` reading **207**
+unchanged. §1 read from the count line per `FY` at **77**, corroborated independently, supervisor
+directory contributing **0** — `FY`'s census spans **TWENTY-ONE** consecutive gates (`.gateT239`…
+`.gateT259`, all `77`, derived per file with the filenames attached). §3 == §5 and still a LEDGER;
+§5's own arithmetic control holds (`494`). `wc -l bin/supervise.sh` **416** and drift `4 0`, both
+re-measured per `FX(ii)`; `bar` sections **14 / 13** on the same extraction, membership re-derived by
+`comm` on sorted input and unchanged (`1a` · `1b` · `2d` **NOT adoptable**, `RULING FS`, re-refused
+**without** re-testing the boundary; `2f` · `2g` offered upstream). §2e/§2f/§2g printed `HEAD is not a
+merge` for an **EIGHTEENTH** gate (T242…T259, anchored `^.\[1m== 2g` form, T241 absent as the
+pre-adoption gate per `FZ(b)`). **TRACK 1 ACTION 10** re-measured at the pin: **15** first-parent
+merges since `a5042da2`, **0** naming `track/stages`, `18bbde18` still not an ancestor (rc **1**).
+⭐ **Two precisions recorded and deliberately NOT lettered** (`FW` bars elevating a clean audit): tick
+259's backward audit under `FX(i)` is **clean**, with exactly one mover — the ahead-count on our own
+commit — and **no ordinal asserted for the audit itself**; and ⚠️ **a Track 1 coder is live**
+(`agy-grs-antig-run191.log`) where tick 258 measured none, recorded with **no forecast attached**
+because `RULING EJ` measured across four ticks that a live merge-capable wave predicts nothing about
+`main` in either direction — neither its presence nor its absence. ⚠️ `HEAD` is **8 ahead** of
+`origin/track/stages`; notes-only commits ride the next gated-sha push.
+
+⛔ **The backlog was EMPTY at tick 258 and that tick wrote a HOLD — the SEVENTEENTH consecutive tick
+with no instrument change and the SIXTH CONSECUTIVE with no new lettered ruling**, every ordinal there
 **derived in this tick** per `RULING FZ` and none carried; the §3 == §5 run and the take-refusal count
 are **deliberately not asserted**, having no derivation. ⭐ **`main` did NOT move — pin `0314d797`, the
 SECOND consecutive unmoved tick**, derived over the ledger's own MOVED/DID-NOT-MOVE markers with the
