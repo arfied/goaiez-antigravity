@@ -6715,3 +6715,59 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     before the evidence (ruling 249). ⚠️ Recorded because it corroborates ruling 91's mechanism from
     the other side: there a gate outlived its tick and produced no verdict; here the verdict outlived
     the acts it described.
+260. **A positive control drawn from the EASY class proves only the easy class — MONEY-154's
+    four-row control passed while 52 of its 170 rows were unread, because the dictated instrument
+    swept forty modules and defined no WRITER (RULED by the lane supervisor 2026-09-09 14:0x, on
+    MONEY-154's `48581e10`; briefed as MONEY-155).** Ruling 258 built the census around a control
+    of four rows the supervisor had already measured, and the coder reproduced all four. What the
+    control could not show is what happens on a row the supervisor had **not** measured, and the
+    four were the easy kind — unique names, exact paths handed over. Measured over the report:
+    **38 rows** cite a module outside the lane's eight as writer or reader (every `status` row on ten
+    tables names `C-Whatsapp/…/template-status-card.blade.php:2` as its reader; `ar_dunning_actions.
+    action` names `C-Agent/AgentTeachAction:14`), and **15 rows** cite a `Models/*.php` line — a
+    `$casts` entry or an `$attributes` default — as the writer. The brief's own instrument was
+    `grep -rn -e '<col>' app/app/Modules`, which is **every** module in the tree, and its rule for
+    a shared name was *"read the hit"* — the whole work, called cheap, over a population of ~50.
+    ⚠️ Seven rows are measured **wrong**, and they are MONEY-155's control: `invoices.due_notified_at`
+    is a **phantom** (renamed to `due_detected_at` by `2026_09_08_160000`, which the census lists
+    separately); `invoices_business_id_invoice_number_unique` is an **index**, not a column;
+    `receivable_states.age_days` is **neither**, not written-only — the migration's `default(0)`, the
+    cast, and a test whose body asserts the *event's* `ageDays`, while the four `ReceivableState::
+    firstOrCreate` sites set it nowhere, so every row holds `0`; `offline_payments.amount_cents`
+    (`ArEngine:200`/`:255`) and `overflow_charges.amount_cents` (`InvoiceEngine:111,:123`/`:191,:201`)
+    are **written+read**; `ar_collections_packages.transmitted_at` and `.partner` are **read-only**
+    in production (ruling 130). So `read-only 0` is false and `170` is `168`. **RULED, three
+    standing instruments:** (1) a **writer** is a line that sets the column on the owning model
+    (`create`/`update`/`insert`/`fill`/`forceFill`/`updateOrCreate`, or a `'<col>' =>` inside one);
+    a `$casts` entry is never a writer and `$attributes` is recorded as a **default**; (2) a hit
+    counts only inside the owning module's tree, the lane's other seven trees and
+    `app/tests/Modules/<the eight>`, and the row names the **model the line acts on** — a common
+    name on another module's table is not evidence; (3) ⭐ **a positive control is drawn from the
+    HARD class** — the shared names, the cast-cited columns — or it certifies only the rows that
+    needed no census. Graded PASS-WITH-NOTES and pushed: the commit is correct, the tip is at the
+    floor, the control the brief stated as acceptance passed, and per the standing precedent a
+    dictated sweep dictates its output, so the miss is the supervisor's and MONEY-155 carries its
+    own two dispatches. ⚠️ This is ruling 41 part 2 turned on the ledger's own instrument: a control
+    of the real thing's shape but not its **difficulty** tests nothing about the difficult case.
+261. **The census's measured members yield ZERO buildable fixes on this lane, and every one is
+    recorded with its reverse-merge exposure so MONEY-155 does not re-derive them (measured
+    2026-09-09 14:0x; rulings 64, 95, 257).** `receivable_states.age_days` — default 0 on both
+    lanes, never written, never read; ruling 68 computes age live at six sites; ruling 84's
+    precedent (no migration to drop a column nothing reads). `ar_plan_terms.financing_partner` —
+    the migration says *"null = no partner yet: the builder's waiting state"*, no writer or reader
+    either side, and the blade already names the wait (214); OWNER ACTION 13's family.
+    `receivable_states.escalated_to_user_id` — FK to `users`, nothing writes it either side;
+    `ProcessOverdueReceivable:23` escalates with no principal, and a writer with no reader is
+    decision 272. `sellables.price_item_id` — FK to `price_book_items`, pricebook's seam (rulings 5,
+    117). `last_action`/`last_reason` — ruling 59's choice; **main's `chaseOverdue` writes them**,
+    never dropped. `dispute_outcomes.lost_reason` — `recordOutcome(…, ?string $lostReason = null)`
+    with its sole caller `DisputeQueue::outcome():72` passing three arguments, so the column is
+    **always null** and has no reader on either lane: ruling 43's constant on a column, and an
+    owner input for a column no screen reads is ruling 59. ⭐ **`merchant_connections.
+    merchant_relationship` is written by BOTH lanes and they disagree:** `GatewayEngine:46` is
+    `'sub_merchant'` on money and on `origin/main`, while main's `2026_09_04_204958` backfills and
+    `2026_09_04_204959` default write `'external_gateway'`; the only reader anywhere is
+    `ConnectCardScreenTest:61`. Two constants asserting a processor relationship ruling 93 measured
+    the app does not have, and a money-side edit is two-sided against main's identical line — a
+    real conflict on the reverse merge over a shared vocabulary. **→ TRACK 1 ACTION 13's list.**
+    ⛔ None of these is a wave here; what MONEY-155 may still find is among the 52 unread rows.
