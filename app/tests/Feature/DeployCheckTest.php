@@ -88,3 +88,13 @@ it('deploy-check absent heartbeat shows appropriate failure message', function (
     expect($output)->toContain('NO WORKER HEARTBEAT. Queued jobs are accepted and never run — including the missed-call text-back.')
         ->and($output)->toContain('NO SCHEDULER TICK. 29 scheduled tasks are not firing — token refresh, review reminders, deletions, parked-number release.');
 });
+
+it('deploy-check asserts published pixel bundle reads ok', function () {
+    Cache::put('goaiez:worker:heartbeat', Carbon::now()->timestamp);
+    Cache::put('goaiez:scheduler:heartbeat', Carbon::now()->timestamp);
+    PixelBundleVersion::factory()->create(['sha' => 'abcdef']);
+
+    Artisan::call('app:deploy-check');
+    $output = Artisan::output();
+    expect($output)->toContain('ok   pixel bundle published');
+});
