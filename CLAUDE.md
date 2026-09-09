@@ -3409,3 +3409,131 @@ a reason to exist. ⛔ **Do not grade that as a shortfall**; it is the PB-137 sh
 that discloses more. ⭐ **The fix is one clause in the brief: say at which instant the measurement is
 taken.** Otherwise the report contradicts itself truthfully.
 **Twenty-fifth consecutive wave whose only shortfall traced to the brief.**
+
+## ⛔⛔ Trap added 2026-09-09 07:1x — a "NO CONSUMER" clearance has no expiry date THIS LANE CONTROLS
+
+The clearance-scope family has four prior members — `is_sample` on X-166, the SPENT entry for X-167,
+ruling 8's stale `UNRESOLVED`, PB-147's "eleven" read as a population. **Every one was OUR prose outliving
+OUR measurement.** PB-152 found the first where a **third party** falsified a clearance while every word
+this lane wrote stayed accurate.
+
+PB-135 measured `JobCompleted->personId`, established it is the **CUSTOMER** (read from
+`work_orders.person_id`, not a `User`), and recorded ⭐ *"latent — `closeJobWindow` takes no `personId`,
+so **latent + no wrong value = RECORD**."* **True when written.** Since then **track reviews subscribed
+the same event**: `C-Reviews/Listeners/AskForReviewOnJobCompleted:15-20` hands `$event->personId` into
+`ReviewRequestAction::handle($businessId, $customerId, …)` — an outbound contact to a real person.
+
+⭐⭐ **The generalisation: a clearance that rests on "nothing consumes this" is a claim about the whole
+repo, and in a six-lane repo the other five lanes can falsify it without touching your module.** ⛔ **Re-read
+the CONSUMER LIST of any event a clearance rests on at the moment you rely on it, never at the moment you
+recorded it.** ⭐ The mechanical form: `grep -rn "<EventClass>" app/app/Modules/*/Listeners
+app/app/Modules/*/ModuleServiceProvider.php` — one command, and it is the whole check.
+⚠️ Note what does NOT follow: PB-135's measurement was **correct and remains correct**. The defect is in
+how long a "latent" verdict was allowed to stand unreviewed, not in the verdict.
+
+## ⛔⛔ Trap added 2026-09-09 07:1x — `JobStateAction` reads `work_orders` UNSCOPED, and the taxonomy that says fix it
+
+`JobStateAction.php:31-33` (X-171, **ours**) — `DB::table('work_orders')->where('id', $jobId)
+->value('person_id')`, **no `business_id`** — reached from `StafffacingApp::tap($jobId = null,
+$newState = null):42`, which is **browser-callable, untyped and unvalidated**. Tenant A taps `completed`
+on tenant B's job id → reads B's customer → `JobCompleted(businessId: A, personId: B's customer)` →
+review request filed for B's customer under A. **X-168's `CloseJobWindowOnJobCompleted` is unaffected** —
+it uses `jobId` through PB-137's tenant-scoped guard, which finds nothing.
+
+⭐⭐ **The ruling that matters is the DISCRIMINATOR AGAINST PB-152, and it was measured, not assumed.**
+PB-152 refused to validate inside `JobDispatchAction` because `X162Test:49` seeds bare integers and
+validating **reddens a declared anchor**. The identical objection was checked here and **fails**:
+`X171Test:267`'s `test_live_completion_carries_frozen_instant` calls `updateState(1, 2, 3, 'completed')`
+with no `work_orders` row and asserts **only `occurredAt`**, and `->value()` returns `null` **with and
+without** the filter. ⭐ **Two sibling unvalidated-foreign-key findings, opposite verdicts, and the thing
+that separates them is what the module's anchor ASSERTS — not what it seeds.**
+
+⛔ **And PB-128's declared/undeclared discriminator does NOT govern this.** *Undeclared + unwired = a
+capability* is a rule about **missing features**. A cross-tenant **read on a wired, reachable production
+path** is a defect whatever `capabilities.php` says — this file's own field note puts RLS *beneath* the
+application scope. ⛔ Never reach for PB-128 to defer an isolation bug.
+
+⛔ Two pre-declared wrong fixes: validating in `StafffacingApp::tap()` (`updateState` has other callers —
+the guard belongs **at the read**), and `->firstOrFail()->person_id` (**reddens the anchor** — the fix must
+be a **filter**, never a **failure**). ⭐ The second is PB-153's W2 precisely because it is the mutation
+that proves the fix's *shape* is constrained.
+
+## ⛔⛔ Trap added 2026-09-09 07:1x — a TOTALS COMMAND that matches its own output is not a second measurement
+
+PB-151 ruled that a totals field must carry *"the COMMAND and its PRINTED OUTPUT"*, because a typed total
+had read `46 · 28 · 18` over a table holding `49 · 32 · 17`. ⭐ **The ruling was right and the instrument
+it produced was self-defeating.**
+
+PB-152's brief mandated `grep -c '| VALIDATED |' REPORT.md`. **Once written into the report, that command
+matches its own line** — each totals line contains the pattern it counts. The report printed
+`44 · 19 · 3 · 22`; a re-run gives `44 · 20 · 4 · 23`. ⭐ **The coder was right and the reviewer's re-run
+was wrong**, and the arithmetic is what proves it: `19+3+22 = 44` **is** the row count, `20+4+23 = 47`
+cannot be.
+
+⭐⭐ **The generalisation: a measurement whose observation perturbs its own population is not a second
+measurement.** A typed total is wrong and adds up; a self-matching commanded total is right when taken and
+**does not reproduce** — which is worse, because the next reviewer re-runs it and "catches" a defect that
+is their own. ⭐ **Fix: anchor the pattern so it cannot match the totals block** —
+`grep -c '^| [0-9].*| VALIDATED |'` — **and require the class counts to sum to the row count.** That sum is
+what actually caught this, and it costs nothing.
+
+## ⭐ Trap added 2026-09-09 07:1x — a FOURTH position for artifact-over-prose: cited to a file that did not YET contain the line
+
+PB-123 caught a report that **under-claimed**; PB-144 one that **over-claimed** with a composed shape;
+PB-146 one that **claimed correctly and cited wrongly**. PB-152 adds the fourth: `RAW` cited
+`pb152-gate-3.log:220` — the line is at `:147` **and the file did not yet contain it**, because
+`REPORT.md` was written 06:22:32 and that gate did not finish until **07:03:37**, 37 of those minutes
+spent waiting on `pest.lock`. ⭐ **The numbers were nevertheless correct**: the coder took them from
+`pb152-gate-2.log`, a sibling gate that genuinely completed at 06:21:36 with the identical verdict at the
+identical `:147`.
+
+⭐ Ruled a NOTE — the field was labelled *"Extrapolated since gate is locked"* in the report's own words,
+and ⛔ **grading an honest disclosure as concealment is the PB-137 mistake.** ⚠️ The brief's PB-123 clause
+(*"wait it out and re-read the log's tail"*) was present and unfollowed **for a structural reason: a
+37-minute lock wait outlives the coder's own run window.** ⭐ Fix, standing: the report writes
+`RAW: PENDING — gate <pid> still running` and ⛔ **never attributes a number to a log it has not read.**
+**Borrowing a verdict from a COMPLETED sibling gate is legitimate; citing it as the one still running is
+not** — that single distinction is the whole rule.
+
+## ⛔ Trap added 2026-09-09 07:1x — the per-run log-name rule reached the GATE logs and not the MUTATION logs
+
+PB-146 replaced reused log names with `pbNNN-gate-1/2/3.log` because `>` truncates and a re-run erases the
+prior run's evidence. PB-152 ran **five** pricebook gates (pids `1952664`, `1974263`, `1978895`,
+`1996097`, `2032920`) and **pid `1952664` — a COMPLETED run, pint rc 1, pest rc 2, 06:10:06→06:12:26 — has
+no surviving log at all**, because the next run reused `pb152-w1.red.log`.
+
+⭐ The `GATE RUNS` field also named four entries, spelled `pb152-gate-3.log` **twice**, and never named
+`pb152-gate-2.log` — the entry described as *"gate-3, failed at pint"* is gate-2. ⭐ **Only
+`gate-runs.tsv` knew**, and only by reading every pricebook row by pid.
+
+⚠️ **Third time this lane has fixed a rule in one place and not grepped its own standing instructions for
+the same shape** (after the piped-gate finding and the provenance rule). ⭐ Standing: **every artifact this
+lane writes is numbered per run, mutation logs included**, and `GATE RUNS` is reconciled against the tsv
+**by pid**, never from memory.
+
+## ⭐⭐ Recorded 2026-09-09 07:1x — the browser-supplied FOREIGN KEY matrix, all 44 rows, SPENT
+
+⚠️ **Scope, stated first** (the clearance-scope failure has five prior members): **`public function`s that
+are not `mount()`/`render()` on the lane's TWENTY role-guarded `Ui/` components**, graded on whether a
+client-supplied value reaching a database write **as a foreign key** is tenant-checked. ⛔ Guards
+elsewhere — middleware, policies, other tracks, non-key columns — are **not** measured by this.
+**44 rows · 19 `VALIDATED` · 3 `UNVALIDATED` · 22 `NOT-A-KEY`**, and 19+3+22 = 44 is the check that
+validates the count. ⛔ **SPENT. Do not re-derive, and do not point this question at more rows** — that is
+the frozen-instrument slide.
+
+**The three `UNVALIDATED`, so a future tick reads rows and not a number:**
+
+| # | component | clause |
+| :--- | :--- | :--- |
+| 5 | X-162 `DispatchBoard::reassign():58` → `JobDispatchAction:15` | `create()` with `job_id`/`tech_id` unchecked; `$techId` from `public $techIds` (no `#[Locked]`) bound to a raw `<input type="number">` at `dispatch-board.blade.php:68`. ⛔ **RECORD — pinned by PB-152**, not fixed: validating reddens `X162Test:49`'s anchor, and `work_orders` is X-121's under ruling 8 |
+| 8 | X-171 `StafffacingApp::tap():35` → `JobStateAction:31` | `DB::table('work_orders')->where('id', $jobId)` with no `business_id`, then an unvalidated `job_id` write. ⭐ **FIXED at PB-153** — see the trap above |
+| 17 | X-165 `Plans::startMembership():51` → `MembershipStartAction:16` | `MembershipPlan::where('business_id', …)->findOrFail($planId)` validates the **plan**, then `Membership::create()` writes `'person_id' => $personId` **verbatim** (`:24`); no `where`, no `firstOrFail` |
+
+⛔ **Row 17's CONSEQUENCE IS UNMEASURED** — where `MembershipStarted->personId` goes has not been traced.
+⭐ Saying so is the point: a clearance inherits the scope of its measurement and this one has none yet. It
+is a candidate, subject to its own discriminators (reachability, the anchor, declared-vs-undeclared),
+**not a briefable defect on this evidence.**
+
+⭐ Two structural facts worth keeping from the same sweep: **15 of the 20 components carry `#[Locked]`** on
+their stored tenant id, and ⭐ **X-163's three are safe by construction** — they store no tenant id at all
+and every method re-derives `Tenancy::id()`, which is a stronger position than locking one.
