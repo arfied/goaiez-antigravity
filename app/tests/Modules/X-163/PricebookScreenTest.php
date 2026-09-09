@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X163;
 
+use App\Enums\UserRole;
 use App\Models\User;
 use App\Modules\X163\Domain\PricebookEngine;
 use App\Modules\X163\Models\PriceBookItem;
@@ -295,5 +296,16 @@ class PricebookScreenTest extends TestCase
             ->set('newPriceDollars', 999.00)
             ->call('addItem')
             ->assertDontSee('A business-wide price for this service already exists.');
+    }
+
+    public function test_staff_is_forbidden(): void
+    {
+        $user = User::factory()->create();
+        $user->role = UserRole::Staff;
+        $user->save();
+        TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
+
+        Livewire::actingAs($user)->test(Pricebook::class)->assertForbidden();
     }
 }
