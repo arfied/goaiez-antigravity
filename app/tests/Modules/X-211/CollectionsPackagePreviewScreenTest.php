@@ -155,4 +155,17 @@ class CollectionsPackagePreviewScreenTest extends TestCase
             ->assertSee('INV-ISSUED-1')
             ->assertDontSee('INV-DRAFT-2');
     }
+
+    public function test_the_collections_list_says_why_no_invoice_is_waiting(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+
+        Tenancy::set($biz->id);
+
+        Livewire::actingAs($owner)->test(CollectionsPackagePreview::class)
+            ->assertOk()
+            ->assertSee('Nothing to package.')
+            ->assertSee('so no invoice can go overdue yet');
+    }
 }
