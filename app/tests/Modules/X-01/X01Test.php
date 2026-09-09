@@ -66,7 +66,6 @@ class X01Test extends TestCase
      * a text and an email from the same person render in one thread with one Person id;
      * a takeover reply carries the operator's name and the "Human takeover" label;
      * the P18 test opens Account\Inbox.php and asserts it renders four channel types or the verdict is WRONG
-     * BUILD PROPOSAL: Thread render query — Thread::render() queries customer_id but ingestMessage() writes person_id, so the screen cannot reach ingested rows Owner: X-01
      */
     public function test_anchor_single_person_thread_takeover_labels_and_inbox_channels(): void
     {
