@@ -231,7 +231,7 @@ class CBillingTest extends TestCase
 
     /**
      * [G9-31] MRR saved by the one dunning ladder (§45A)
-     * ⛔ REFUSED: a seam that ignores its parameters and returns a constant is a stub; Ui\Mrr ignores parameters and returns a constant view.
+     * ⛔ REFUSED: surveyed Actions, Database, Domain, Events, Models, Ui and found no seam that ties monthly recurring revenue to the dunning ladder; Ui\Mrr reads the subscription, the meters and this month's ledger entries, and none of them records revenue saved by a chase.
      */
     public function test_g9_31_mrr_saved(): void
     {
