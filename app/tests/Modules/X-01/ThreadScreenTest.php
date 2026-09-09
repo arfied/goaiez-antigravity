@@ -151,6 +151,7 @@ class ThreadScreenTest extends TestCase
         });
     }
 
+    /** @test This test proves that resolvePersonId() returns null and does not leak a random person's thread when the customer carries no identifiers. */
     public function test_thread_screen_displays_ingested_message(): void
     {
         $owner = User::factory()->create(['role' => UserRole::Owner]);
@@ -184,6 +185,44 @@ class ThreadScreenTest extends TestCase
 
             Livewire::test(Thread::class, ['customer' => $customer])
                 ->assertSee('This is an ingested message.');
+        });
+    }
+
+    /** @test This test proves that resolvePersonId() refuses to match when the customer has no identifiers, preventing tenant data leaks between different persons in the same business. */
+    public function test_thread_screen_does_not_leak_messages_when_customer_lacks_identifiers(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        Tenancy::actingAs($biz->id, function () use ($owner, $biz) {
+            Tenancy::setUser($owner->id);
+            
+            $firstCustomer = Customer::factory()->create([
+                'name' => 'First Customer',
+                'phone' => '+15125551111',
+            ]);
+
+            $manager = app(UnifiedInboxManager::class);
+            $res = $manager->ingestMessage(
+                $biz->id,
+                'sms',
+                '+15125551111',
+                'First Customer',
+                'Secret message for first customer.'
+            );
+            DB::table('messages')->insert([
+                'business_id' => $biz->id,
+                'conversation_id' => $res['conversation_id'],
+                'direction' => 'inbound',
+                'sender_type' => 'customer',
+                'sender_id' => '1',
+                'body' => 'Secret message for first customer.',
+                'created_at' => now(),
+            ]);
+
+            $secondCustomer = Customer::factory()->create(['name' => 'Second Customer', 'phone' => null, 'email' => null]);
+            Livewire::test(Thread::class, ['customer' => $secondCustomer])->assertDontSee('Secret message for first customer.');
         });
     }
 }
