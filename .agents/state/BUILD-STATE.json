@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-09T17:38:39",
+ "updated": "2026-09-09T18:01:52",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -510,6 +510,12 @@
      "stage": "capability",
      "why": "no path in X-102 distinguishes a price question from any other; the price source that would ground one is X-119's",
      "at": "2026-09-06T10:42:27"
+    },
+    {
+     "module": "X-102",
+     "stage": "boundary",
+     "why": "X-121 exposes no create path for a Person: EntityWriteAction::handle takes string table, int id, int businessId, so it updates a row that already exists, and EntityReadAction reads by id and not by phone, so ChatCaptureAction:36 calls Person::updateOrCreate keyed on business_id and phone directly and BoundaryStage reports the import. X-121 is the spine and belongs to Track 1 under owner ruling 8, which already ruled this disposition for the same fact when pricebook recorded UNRESOLVED - X-121 exposes no create path and refused the raw insert. The missing dependency is a registered find-or-create-by-phone action on the spine. Twenty-four files across about fifteen modules in every lane import X121 Models directly, so the shape is repo-wide and advisory to Track 1; these two rows are this lane own two files.",
+     "at": "2026-09-09T18:01:52"
     }
    ]
   },
@@ -952,6 +958,12 @@
      "stage": "events",
      "why": "Track 2 Ui/ tenant inbox listener for FormCaptured and missing caller of FormReleaseAction",
      "at": "2026-09-06T08:07:17"
+    },
+    {
+     "module": "X-155",
+     "stage": "boundary",
+     "why": "X-121 exposes no create path for a Person: EntityWriteAction::handle takes string table, int id, int businessId, so it updates a row that already exists, and EntityReadAction reads by id and not by phone, so FormCaptureAction:55 and :96 call Person::firstOrNew keyed on business_id and phone directly and BoundaryStage reports the import. X-121 is the spine and belongs to Track 1 under owner ruling 8, which already ruled this disposition for the same fact when pricebook recorded UNRESOLVED - X-121 exposes no create path and refused the raw insert. The missing dependency is a registered find-or-create-by-phone action on the spine. Twenty-four files across about fifteen modules in every lane import X121 Models directly, so the shape is repo-wide and advisory to Track 1; these two rows are this lane own two files.",
+     "at": "2026-09-09T18:01:47"
     }
    ]
   },
@@ -977,6 +989,18 @@
      "stage": "journey",
      "why": "publishSite():693 reads $version->ssl_installed, a property nothing writes (OWNER ACTION 28)",
      "at": "2026-09-05T19:19:43"
+    },
+    {
+     "module": "X-157",
+     "stage": "boundary",
+     "why": "X-108 exposes no read action returning a business upcoming booked appointments: AppointmentBookAction, AppointmentCancelAction, AvailabilityRequestAction and WaitlistJoinAction are the whole of its registered surface and AvailabilityRequest returns free slots, not booked rows, so EdgeDeployAction:115 reads X108\\Models\\Appointment directly and BoundaryStage reports the import. X-108 is another lane under ruling 5, so the read action is that lane to build. Deleting the read is not available: the Event node it feeds is the asserted clause of G8-15, which is credited. This is the same absent seam already filed as capability X-176 at 2026-09-06T16:31:06, counted once and reported by two stages against two modules.",
+     "at": "2026-09-09T18:01:35"
+    },
+    {
+     "module": "X-157",
+     "stage": "boundary",
+     "why": "X-163 exposes no catalog-shaped read for a business confirmed price book: BookVersionAction, CalloutLookupAction, PriceConfirmAction, PriceLookupAction, PriceQuoteAction and PriceRangeAction are the whole of its registered surface and every one is per-service or per-quote, so EdgeDeployAction:132 reads X163\\Models\\PriceBookItem directly and BoundaryStage reports the import. X-163 is another lane under ruling 5, so the catalog read is that lane to build. Deleting the read is not available: the OfferCatalog node it feeds is the asserted clause of G8-14, which is credited. This is the same absent seam already filed as capability X-176 at 2026-09-06T16:52:20, counted once and reported by two stages against two modules.",
+     "at": "2026-09-09T18:01:40"
     }
    ]
   },
@@ -1970,6 +1994,30 @@
    "stage": "capability",
    "why": "G8-14 needs an offer catalog for a business and X-163 exposes no catalog-shaped read - X-163/Actions/PriceLookupAction.php:13, X-163/Actions/PriceRangeAction.php:11, X-163/Actions/PriceConfirmAction.php:14, and X-163/Actions/PriceQuoteAction.php:15 are all per-service or per-quote, so X-157/Actions/EdgeDeployAction.php:170 has nothing to pass as productOffers and SchemaRenderAction.php:53 stays dead in production",
    "at": "2026-09-06T16:52:20"
+  },
+  {
+   "module": "X-157",
+   "stage": "boundary",
+   "why": "X-108 exposes no read action returning a business upcoming booked appointments: AppointmentBookAction, AppointmentCancelAction, AvailabilityRequestAction and WaitlistJoinAction are the whole of its registered surface and AvailabilityRequest returns free slots, not booked rows, so EdgeDeployAction:115 reads X108\\Models\\Appointment directly and BoundaryStage reports the import. X-108 is another lane under ruling 5, so the read action is that lane to build. Deleting the read is not available: the Event node it feeds is the asserted clause of G8-15, which is credited. This is the same absent seam already filed as capability X-176 at 2026-09-06T16:31:06, counted once and reported by two stages against two modules.",
+   "at": "2026-09-09T18:01:35"
+  },
+  {
+   "module": "X-157",
+   "stage": "boundary",
+   "why": "X-163 exposes no catalog-shaped read for a business confirmed price book: BookVersionAction, CalloutLookupAction, PriceConfirmAction, PriceLookupAction, PriceQuoteAction and PriceRangeAction are the whole of its registered surface and every one is per-service or per-quote, so EdgeDeployAction:132 reads X163\\Models\\PriceBookItem directly and BoundaryStage reports the import. X-163 is another lane under ruling 5, so the catalog read is that lane to build. Deleting the read is not available: the OfferCatalog node it feeds is the asserted clause of G8-14, which is credited. This is the same absent seam already filed as capability X-176 at 2026-09-06T16:52:20, counted once and reported by two stages against two modules.",
+   "at": "2026-09-09T18:01:40"
+  },
+  {
+   "module": "X-155",
+   "stage": "boundary",
+   "why": "X-121 exposes no create path for a Person: EntityWriteAction::handle takes string table, int id, int businessId, so it updates a row that already exists, and EntityReadAction reads by id and not by phone, so FormCaptureAction:55 and :96 call Person::firstOrNew keyed on business_id and phone directly and BoundaryStage reports the import. X-121 is the spine and belongs to Track 1 under owner ruling 8, which already ruled this disposition for the same fact when pricebook recorded UNRESOLVED - X-121 exposes no create path and refused the raw insert. The missing dependency is a registered find-or-create-by-phone action on the spine. Twenty-four files across about fifteen modules in every lane import X121 Models directly, so the shape is repo-wide and advisory to Track 1; these two rows are this lane own two files.",
+   "at": "2026-09-09T18:01:47"
+  },
+  {
+   "module": "X-102",
+   "stage": "boundary",
+   "why": "X-121 exposes no create path for a Person: EntityWriteAction::handle takes string table, int id, int businessId, so it updates a row that already exists, and EntityReadAction reads by id and not by phone, so ChatCaptureAction:36 calls Person::updateOrCreate keyed on business_id and phone directly and BoundaryStage reports the import. X-121 is the spine and belongs to Track 1 under owner ruling 8, which already ruled this disposition for the same fact when pricebook recorded UNRESOLVED - X-121 exposes no create path and refused the raw insert. The missing dependency is a registered find-or-create-by-phone action on the spine. Twenty-four files across about fifteen modules in every lane import X121 Models directly, so the shape is repo-wide and advisory to Track 1; these two rows are this lane own two files.",
+   "at": "2026-09-09T18:01:52"
   }
  ],
  "decisions": [
