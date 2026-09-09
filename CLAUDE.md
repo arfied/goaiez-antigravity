@@ -2414,6 +2414,95 @@ the hand-written one over the generated one.**
 is prose against prose, and what goes red the day someone wires the listener without revisiting the
 sentence is the assertion that `TechEnRoute` creates **zero** rows.
 
+## ⛔⛔ Trap added 2026-09-08 19:5x — a formatter carve-out must name the FORMATTER, not enumerate its EDIT SHAPES
+
+PB-117 killed *"any `-` line in this file is a `BLOCK`"* because a formatter falsifies it, and the fix
+recorded there was *"any `-` line **other than pure whitespace**."* ⭐ **That fix assumed pint only
+touches whitespace. It does not.** PB-141's pre-declared ledger was *"exactly FOUR `-` lines … any other
+than those four, and other than pure whitespace, is a STOP-and-report"* and the wave produced **five** —
+the fifth being pint moving `use App\Modules\X162\Events\TechEnRoute;` from line 15 to line 11 to restore
+alphabetical order. **An import re-sort is not whitespace**, so by the letter of my own pre-declaration
+the coder should have stopped; it correctly treated it as the pint step the brief demanded.
+
+⭐ **The general rule: a carve-out for a tool must name the TOOL** — *"other than a change `pint` itself
+made, committed alone and named as such"* — **because enumerating a formatter's edit shapes is exactly
+the route PB-117 already proved fails.** This is the second narrowing of the same pre-declaration; there
+will not be a third that enumerates.
+
+⚠️ **The companion reporting gap:** `MINUS LINES: 4` was reported truthfully against the item-1 ledger I
+defined, on a wave whose three commits total five. ⭐ **Ask for the deletion ledger BY SHAPE across the
+whole range** (PB-126's stronger form), never a count scoped to one item — the shape ledger here read
+*two blade sentences · two `assertSee` strings · one pint import re-point · zero assertions deleted* and
+could not have been wrong by one.
+
+## ⚠️ Trap added 2026-09-08 19:5x — an artifact whose path the brief does not name lands wherever the coder is standing
+
+PB-141 named `.agents/supervisor/pb141-gate.log` for the gate and got a well-placed artifact; it named
+no path for the item-3 mutation RED and got **`ownhours.red.log` in the repo root**, taking `??` from 21
+to 22. ⛔ Not a finding — untracked, so it cannot reach Track 1, and keeping the RED is *better* than
+discarding it (PB-134: a measure-only claim backed by a deleted scratch file has nothing on disk behind
+it).
+
+⭐ **The generalisation, which is PB-134's rule widened from evidence to everything: every artifact a
+brief asks for gets a path, or it lands by accident.** ⚠️ And the cost is cumulative — the tree now
+carries 22 scratch files and **nothing distinguishes a deliberate one from the litter**, which is
+precisely what makes the next one invisible.
+
+## ⭐⭐ Recorded 2026-09-08 19:5x — X-168 is CLEARED, with the scope stated and the count named
+
+Written scope-first on purpose: this file records two failures (`is_sample` on X-166, the `SPENT` entry
+for X-167) where a clearance's prose dropped its measurement's boundary and a later tick read it wider
+than it was. **Measured across all 13 X-168 components** — 3 `Ui/` classes, 3 blades, 4 `Actions/`, the
+`ModuleServiceProvider` and 2 listeners — **and all 13 are named by the four items below plus PB-140's
+four-hop chain.** ⛔ Falsifiable in one `ls`.
+
+1. ⭐ **The `status` lifecycle is COHERENT.** `TimesheetComputeAction:43` creates `'open'`;
+   `TimesheetApproveAction:14` writes `'approved'` (reached by `ApprovalsView:28`/`:33`);
+   `TimesheetReopenAction:14` writes `'open'` back (reached by `TimesheetsView:35`).
+   `timesheets.blade.php:38` gates Reopen on `status !== 'open'`, so it appears **exactly after
+   approval** — the header claim at `:5` (*"it closes on the rule; the tenant may reopen it"*) is
+   honoured on **both** halves, the close by PB-127's predicate and the reopen by this path.
+2. ⛔ **`'submitted'` is the one unreachable state**, so `ApprovalsView:46`'s first arm is dead code.
+   ⭐ **No timesheet is thereby unreachable for approval** — the second arm (`status='open' AND
+   period_end < today`) catches every one. **latent + no wrong value = RECORD.**
+3. ⛔⛔ **CORRECTION to a prior board entry, and the conflation is the lesson.** It recorded
+   *"`TimesheetSubmitted` and `PeriodReady` have NO listener anywhere"* — true — and was read as meaning
+   they are inert. **Both are DISPATCHED**, at `TimesheetComputeAction:119`/`:120` from
+   `updateTotalHoursAndDispatch`, which **both** `recordJobWindow:73` and `closeJobWindow:107` call. So
+   `TimesheetSubmitted` fires **on every window open and close** — when a technician *arrives*, carrying
+   `$totalHours = 0.0`. Nothing submitted anything. ⭐ Still RECORD: `capabilities.php` declares no
+   submission step (`N-072` is *"arrival, duration and completion on a JOB — not a timesheet"*), so
+   **undeclared-and-unwired is a CAPABILITY**, and `manifest.php:36`'s `'timesheet.submitted'` loses the
+   generated-file tie-break exactly as `consumes: tech.en_route` did. ⚠️ **"No listener" and "not
+   dispatched" are different claims; only the second would have been the finding.**
+4. ⭐ **The now-reachable POPULATED states are honest** — the successor question to PB-141 and the one
+   expected to fail. Both blades render an open entry's `ended_at` as **empty** (`timesheets:55`,
+   `own-hours:52`) and its duration as `0:00`, and `$hours[…]` derives from `total_hours`, which sums
+   only closed entries. **A technician on site six hours reads `0:00` beside a blank end time** — ruling
+   33's accepted position verbatim (*an open row genuinely has 0 minutes so far, which is true rather
+   than wrong*), with the blank end cell as the discriminator against a closed zero-length window.
+
+⛔ **Nothing in X-168 is briefable as a defect on these measurements. That IS the result** — the
+documented failure mode is loosening a criterion until it fires again, so **the instrument moves rather
+than widens.**
+
+## ⭐ Trap added 2026-09-08 19:5x — a THREE-valued vocabulary graded on ONE value loses the other rows for good
+
+PB-132's brief defined `REACHABLE` / `TEST-ONLY` / `NO WRITER`, named only `TEST-ONLY` as graded, and the
+sweep returned **21 / 2 / 3**. ⭐ **`NO WRITER` is strictly stronger** — a table read in production that
+nothing writes *anywhere, not even a test*. **Of the five non-`REACHABLE` rows this file records exactly
+one** (`location_books`, correctly disarmed as undeclared future work). **Four rows were reported
+correctly and are unrecoverable**, because `REPORT.md` is overwritten every wave.
+
+⭐ **The generalisation is sharper than PB-128's "grade every value": the report that carried those rows
+is GONE.** An ungraded row in a durable file can be picked up later; an ungraded row in an overwritten
+mailbox file is destroyed by the next wave. ⛔ **Grade every value of a vocabulary in the same tick the
+report lands, or copy the rows into `REVIEWS.md` — there is no third chance.**
+
+⚠️ The repair (PB-142) is a **scope correction** — re-running an instrument over rows produced and
+discarded — ⛔ **not** a widened criterion, and the brief must say so and carry a STOP condition, or the
+re-run becomes the documented slide from defects to leads.
+
 ## ⚠️ Trap added 2026-09-08 19:3x — an absence claim is only as wide as the pattern that searched for it
 
 PB-140 was asked *"does any other production path write these tables?"* and answered with
