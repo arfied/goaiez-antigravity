@@ -4244,3 +4244,96 @@ clause "no production caller":** `bumpVersion` **has** one — `Ui/Pricebook::bu
 `pricebook.blade.php:141` `wire:click` — inside `@foreach($locations)` over rows nothing creates. **A closed
 loop (PB-143's shape), not an absent caller.** Same verdict, and the sharper clause is what a future tick
 needs when the loop is opened. ⛔ SPENT.
+
+## ⛔⛔ Trap added 2026-09-09 17:4x — a BASE SHA is a MEASUREMENT, and it moves every time you push
+
+PB-160's brief told the coder to build the deletion ledger with `git log -p d7601f1a..HEAD`. **`d7601f1a` was
+the remote tip BEFORE PB-159's push; after it, the tip was `76fae40d`** — a range this supervisor had written
+into its own addendum in the same tick, from the output git printed back at it.
+
+So the ledger spanned **two waves** and returned thirteen `-` lines, including
+`markEnRoute(… int $etaMinutes = 25)` — **PB-159's fix, already reviewed and passed.** ⛔⛔ **And the same
+brief declared `any '-' line in an X-162 file is a BLOCK`. The base sha therefore manufactured, with
+certainty, the exact condition the brief called fatal.** The coder reported the thirteen truthfully and did
+not stop, which was correct; grading that would be the PB-126 mistake twice over.
+
+The true range `6ef3a8e0..c1b6953c` is clean: **ONE** `-` line, and it is the pre-declared blade sentence;
+**ZERO** in any X-162 file.
+
+⭐⭐ **The generalisation, and it is what the two neighbouring rules both missed:** PB-126 gave *diff against
+the sha you reverted FROM*; PB-156 gave *key a deletion STOP on the NET RANGE DIFF, never a single commit*.
+Neither said **re-derive the base from the REMOTE at the moment you write the brief.** A base copied from
+last tick's prose is stale the instant that tick pushed — ⚠️ **and pushing is the normal end of a tick, so
+this is not an edge case, it is the default.**
+
+⭐ **The mechanical form is free, because this lane already runs it: `git log --oneline
+origin/track/<x>..HEAD` is mandatory before every push (the ancestry trap), and the OLDEST LINE'S PARENT IS
+THE BASE.** ⚠️ This is PB-155's overlapping-conditions failure in a new position — a STOP condition and a
+base sha contradicting each other, invisible because neither clause mentions the other and the conflict
+exists only in the git history. ⛔ **Before declaring any `-` line fatal, run the ledger command yourself and
+confirm it returns nothing you have already passed.**
+
+## ⛔⛔ Trap added 2026-09-09 17:4x — nor may a RED's SUBJECT be pre-declared: ASSERTION ORDER is as unknowable as TEXT
+
+PB-159 ruled that a brief cannot know a RED's **text** and must pre-declare only its **subject**. PB-160's
+brief pre-declared the subject and **it was wrong, one wave later, for the identical mechanism.**
+
+```
+predicted subject:  the "no ETA is claimed" arm  → assertDontSee('minutes out')
+actual, all three:  the "true part survives" arm → assertSee('Your technician is en route.')
+```
+
+**PHPUnit stops at the first failing assertion, and the coder — writing the test after reading the brief —
+put `assertSee` first.** ⭐⭐ **So a brief may pre-declare only THAT the test must go red, and must require
+the coder to quote whatever it gets.** ⭐ The coder disclosed the mechanism and its cause unprompted: the
+`@else` sentence ends in a **period** where the ETA sentence has a **comma**, which is the only thing making
+the two arms distinguishable. ⛔ Grading a volunteered disclosure of the reviewer's own error is the PB-137
+mistake.
+
+## ⭐⭐ Trap added 2026-09-09 17:4x — N MUTATIONS AGAINST A TEST WITH M ASSERTIONS PROVE AT MOST THE FIRST
+
+The sharpest consequence of the trap above, and it generalises past PHPUnit. PB-160 specified three mutations
+against a two-assertion test. **All three reddened the same assertion:**
+
+| | mutation | renders | first RED | reached `assertDontSee`? |
+| :--- | :--- | :--- | :--- | :--- |
+| W1 | `&& $jobEtaMinutes !== null` | *"booked and confirmed"* | `assertSee` | ⛔ no — it would have **PASSED** |
+| W2 | `?? '?'` | *"en route, ? minutes out"* | `assertSee` | ⛔ no |
+| W3 | restore a default | *"en route, N minutes out"* | `assertSee` | ⛔ no |
+
+⛔⛔ **So `assertDontSee('minutes out')` — the arm carrying the claim the whole wave exists for, that the
+portal claims no ETA it was never given — is pinned by NOTHING**, by this lane's own bar (*what one-line
+mutation makes this red? none ⟹ padding*).
+
+⭐⭐ **Every mutation that falsifies a rendered sentence falsifies the FIRST assertion about that sentence, so
+no number of mutations can reach the k-th assertion unless one of them leaves assertions 1…k-1 TRUE.**
+⭐ **A mutation budget is therefore counted PER ASSERTION, not per pre-declared wrong fix** — which strictly
+extends PB-133 (*count the hazards a brief names and check you specified a mutation for each*): PB-133 counts
+hazards, this counts arms, and a brief needs both numbers to reconcile.
+
+⭐ The isolating mutation is trivial and nobody specified it: make the `@else` read *"Your technician is en
+route. 0 minutes out"* — then `assertSee` **passes** and `assertDontSee` fires. ⛔ **Ruled a NOTE and repaired
+by one added mutation, NOT by re-opening a correct wave** — the artifact is right and only the evidence for
+one of its two arms is missing.
+
+## ⚠️ Recorded 2026-09-09 17:4x — an instrument's limit, found one wave after installing it
+
+PB-159 discovered that **a tool going red inside a mutation window is written by the GATE, not by the run
+being graded, so it is independent proof the mutation was really on the tree.** ⛔ **It cannot fire for a
+BLADE mutation** — neither pint nor phpstan parses blade content, and all three of PB-160's mutation gates
+read `pint 0 · phpstan 0`.
+
+⭐ The proof there was the pest delta instead: each mutation gate reads `FAILED 2` against a baseline
+`FAILED 1` — **exactly one added failure, and it is the new test.** ⭐ **State an instrument's applicable file
+types when you install it**, or the next tick quotes its silence as evidence.
+
+## ⚠️ Recorded 2026-09-09 17:4x — E00040 is intermittent WITHIN a single wave, which is the strongest evidence yet
+
+`TRACK 1 ACTION (c)`, the Authorize.Net sandbox `E00040`, was **PRESENT in PB-160's W1 gate (16:46) and
+ABSENT from W2, W3 and the wave gate (16:54 onward)** — it came and went inside **nine minutes** of one wave,
+on an unchanged tree.
+
+⭐ This lane has recorded three times that *a run of clean waves is evidence FOR an external diagnosis and
+never evidence the problem has left*. **Intermittency inside one wave is far stronger than intermittency
+across waves**, because it removes every tree-state explanation. ⛔ Its absence from a wave gate is still
+never a fix, and a `errors` count that rises for this reason is named, not chased.
