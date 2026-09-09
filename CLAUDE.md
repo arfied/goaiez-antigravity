@@ -362,3 +362,69 @@ reconciliation is filed, not executed, and nothing is restored by whole file.**
 same tick and only the ruling had a check on it. **A ruling whose execution is not itself
 an item is a ruling that did not run.** Every §A-shaped finding from here carries the
 command into the next `BRIEF.md` as a numbered item with an output to quote.
+
+## REV-126 — `merge=ours` was never the protection this lane thought it had
+
+⚠️ **REV-119 §A AND REV-121 §A BOTH BLAMED THE FAST-FORWARD. THE BYPASS CONDITION IS
+"OUR SIDE DID NOT MOVE THE PATH SINCE THE MERGE BASE", AND AN ORDINARY MERGE SATISFIES IT
+JUST AS WELL (2026-09-09, run 121 tick).** `merge=ours` is a **conflict-resolution driver**.
+Git consults it only when it has to perform a three-way content merge for a path — that is,
+only when **both** sides moved the path since the base. Ours unchanged + theirs moved is not
+a conflict; git takes theirs as a trivial file-level fast-forward and the driver is never
+called. A whole-branch fast-forward is one instance of this, not the mechanism.
+
+⭐ **The correct diagnosis was already in `.agents/rules/10-supervisor.md`, written 2026-09-05
+and restored by REV-121's own hand:** *"Run 39 is the near miss — our side had not touched
+`phpunit.xml` since the base, so git reported no conflict at all."* REV-121 restored that
+sentence and then, in the same file, kept describing the defect as a fast-forward. **A
+correct statement present in the tree and not read back is the failure mode this project
+keeps paying for**, and this is its fourth instance (REV-119 §A, REV-121 §A, REV-125 §13,
+here).
+
+⛔ **And the round trip makes the bypass the NORMAL case, not the exotic one.** Once Track 1
+merges this lane into `main`, the merge base advances to a lane commit that already contains
+the lane's copy of every per-track path. From then on the lane reads *unchanged* on all eight
+and only `main` moves — so the lane silently adopts `main`'s. Measured this tick, base
+`e3aea7ff` (this lane's own pushed commit):
+
+```
+$ bash bin/supervise.sh          # §2f
+  base e3aea7ff  ours HEAD  theirs origin/main (8c7ed0d8)
+  merge.ours.driver=true
+     ⛔ app/phpunit.xml                  OURS UNCHANGED, THEIRS MOVED   1 +/1 -
+     ⛔ CLAUDE.md                        OURS UNCHANGED, THEIRS MOVED   895 +/241 -
+     ⛔ bin/supervise.sh                 OURS UNCHANGED, THEIRS MOVED   2 +/30 -
+     ⛔ .agents/rules/10-supervisor.md   OURS UNCHANGED, THEIRS MOVED   8 +/43 -
+     ✓ .claude/settings.json · .agents/supervisor/launch-coder.sh   theirs unchanged
+     ✓ .agents/state/BUILD-STATE.json · .agents/state/JOURNAL.md    both moved, driver FIRES
+  ⛔ 4 of 8 per-track path(s) would be silently overwritten by a merge from origin/main.
+```
+
+**Four of eight**, and the four are the worst four: `app/phpunit.xml` (main still pins
+`goaiez_antig_test` — six other lanes' test databases, REV-121 §2), `bin/supervise.sh` (main's
+copy **deletes** REV-119 §E's per-lane database block entirely), `.agents/rules/10-supervisor.md`
+(main still carries the pre-REV-121 text, so **the anti-push rule is still deleted on `main`**
+and its replacement still says `git push origin main`), and `CLAUDE.md` (Track 1's file, REV-119
+§A's original catastrophe).
+
+**RULED: the enumeration is now a CHECK, not a ruling.** `supervise.sh` §2f measures every
+`merge=ours` line in `.gitattributes` on every run, classifies each into the three arms, and
+sets `fail=1` on any bypass. All three arms were observed firing in its first run, which is the
+instrument standard. ⭐ **The list is read from `.gitattributes` and never restated in the
+script** — REV-119 §A's defect was a stated list generalised by a sentence, so the fix must not
+reintroduce a second copy of the list.
+
+⛔ **RULED: a merge wave naming one of the four is NOT fully delegable, and this is a hard
+division.** `--allow-restore` refuses `CLAUDE.md`, `bin/supervise.sh`, `.agents/rules/**` and
+`.claude/**` by design (restoring one discards the supervisor's uncommitted notes — run 27). So
+the coder **cannot** repair three of the four. **The supervisor moves those paths on our side
+BEFORE dispatching** — which makes both sides changed, fires the driver, and protects them
+through the merge — **and the coder restores only `app/phpunit.xml`, which it is permitted to
+touch.** Done that way this tick: §2f, this section and the rule-10 correction are the move,
+and they are protection and record in one commit rather than a trick.
+
+⚠️ **`bin/supervise.sh`'s per-path verdict is good only for the sha it was measured against.**
+REV-121's table said **ADOPT** for `bin/supervise.sh` on the correct ground that main's copy then
+carried §E. Main's copy no longer does. A verdict on a per-track path is a function of
+`(our sha, their sha)` and must be re-derived at every merge, which is precisely why §2f prints
+the two shas it used on the same line as its answer.

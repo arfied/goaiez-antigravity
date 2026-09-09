@@ -325,6 +325,70 @@ else
   fi
 fi
 
+bar "2f. per-track paths a merge would take from THEIRS silently  (merge=ours cannot fire)"
+# ⛔⛔ REV-126 (2026-09-09). REV-119 §A ruled that "a fast-forward is a write to every
+# per-track path", and blamed the fast-forward. THAT DIAGNOSIS WAS TOO NARROW and the
+# narrowness is why run 122 was about to repeat run 114 through an ordinary merge.
+#
+# `merge=ours` is a CONFLICT-RESOLUTION driver. Git consults it only when it performs a
+# three-way content merge for the path — i.e. only when BOTH sides moved the path since the
+# merge base. When our side has NOT moved it and theirs has, there is no conflict to
+# resolve: git takes theirs as a trivial file-level fast-forward and the driver is never
+# called. A `.gitattributes` full of `merge=ours` is silent in exactly that case.
+#
+# ⭐ And the round trip makes that case the NORMAL one, not the exotic one: once Track 1
+#   merges this lane into main, the merge base advances to a lane commit that contains the
+#   lane's own copy of every per-track path. From then on the lane looks unchanged on all of
+#   them and only main moves — so the lane silently adopts main's. `merge=ours` protects
+#   whichever side is "ours" at merge time; it cannot protect a path across a
+#   lane→main→lane round trip. Measured 2026-09-09: base e3aea7ff (this lane's own commit),
+#   four of eight paths in the bypass state, including app/phpunit.xml (six lanes' test
+#   databases) and .agents/rules/10-supervisor.md (the anti-push rule, REV-121 §1).
+#
+# ⭐⭐ The list is READ FROM .gitattributes, never restated here. REV-119 §A's own defect was
+#    a stated list generalised by a sentence; REV-121 §A repeated it. The authoritative
+#    statement of "per-track" is the `merge=ours` lines, so this check derives from them and
+#    a path added there is covered the same run, with no edit to this file.
+#
+# No fetch: `origin/main` is read as the LOCAL remote-tracking ref. The gate never fetches
+# (root-owned FETCH_HEAD, CLAUDE.md) — refreshing it is the caller's step.
+if ! git rev-parse -q --verify origin/main >/dev/null 2>&1; then
+  echo "  no local origin/main ref — nothing to compare (refresh with: git fetch --no-write-fetch-head origin)"
+elif [ ! -f "$ROOT/.gitattributes" ]; then
+  echo "  ⚠ no .gitattributes — the per-track list has no authoritative statement"
+else
+  ptbase=$(git merge-base HEAD origin/main 2>/dev/null || true)
+  echo "  base $(git rev-parse --short "$ptbase")  ours HEAD  theirs origin/main ($(git rev-parse --short origin/main))"
+  echo "  merge.ours.driver=$(git config --get merge.ours.driver || echo '⛔ UNSET — the driver never runs at all')"
+  pt_n=0; pt_bypass=0
+  while read -r pt_path pt_attr; do
+    case "$pt_attr" in merge=ours) ;; *) continue;; esac
+    [ -n "$pt_path" ] || continue
+    pt_n=$((pt_n+1))
+    pt_ours=$(git diff --name-only "$ptbase" HEAD -- "$pt_path" 2>/dev/null)
+    pt_theirs=$(git diff --name-only "$ptbase" origin/main -- "$pt_path" 2>/dev/null)
+    if [ -z "$pt_theirs" ]; then
+      echo "     ✓ $pt_path — theirs unchanged since base; nothing incoming to take"
+    elif [ -n "$pt_ours" ]; then
+      echo "     ✓ $pt_path — both sides moved; the merge=ours driver FIRES and keeps ours"
+    else
+      pt_bypass=$((pt_bypass+1))
+      echo "     ⛔ $pt_path — OURS UNCHANGED, THEIRS MOVED: a merge takes THEIRS with no conflict and no driver"
+      echo "        $(git diff --shortstat "$ptbase" origin/main -- "$pt_path")"
+      echo "        inspect: git diff HEAD origin/main -- $pt_path"
+    fi
+  done < "$ROOT/.gitattributes"
+  if [ "$pt_bypass" -gt 0 ]; then
+    echo "  ⛔ $pt_bypass of $pt_n per-track path(s) would be silently overwritten by a merge from origin/main."
+    echo "     A merge wave must restore each one AFTER the merge, or move it on our side BEFORE the merge."
+    echo "     ⚠ --allow-restore REFUSES CLAUDE.md, bin/supervise.sh, .agents/rules/** and .claude/** —"
+    echo "       a bypass on one of those is the SUPERVISOR's to repair, and the coder cannot do it."
+    fail=1
+  else
+    echo "  $pt_n per-track path(s) checked · none in the bypass state ✓"
+  fi
+fi
+
 bar "3. build state"
 python3 "$ROOT/bin/state.py" status 2>&1 | head -30 | sed 's/^/  /'
 python3 "$ROOT/bin/state.py" next 2>&1 | head -20 | sed 's/^/  /'

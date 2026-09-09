@@ -89,6 +89,35 @@ RAW       : <doctor output for anything not fixed>
   ⚠️ **Also restored 2026-09-09 (REV-121) — and read what it says.** This bullet
   names `app/phpunit.xml` as the exact file a merge moves with nothing refusing.
   It was deleted by a fast-forward, which moved `app/phpunit.xml`.
+  ⛔⛔ **CORRECTED 2026-09-09 (REV-126). The bypass condition is not "a
+  fast-forward" — it is "our side did not move the path since the merge base",
+  and this bullet has said so since 2026-09-05.** Read the Run 39 sentence eight
+  lines up: *"our side had not touched `phpunit.xml` since the base, so git
+  reported no conflict at all."* That is the whole mechanism. `merge=ours` is a
+  **conflict-resolution driver**; git consults it only when it must do a
+  three-way content merge, i.e. only when **both** sides moved the path. Ours
+  unchanged + theirs moved = no conflict = the driver never runs = theirs is
+  taken silently. A fast-forward is merely one case of it. REV-119 §A blamed the
+  fast-forward, REV-121 §A repeated that framing, and run 122 was one dispatch
+  away from repeating run 114 through an ordinary merge — the correct diagnosis
+  was in this file the entire time and was not read back.
+  ⭐ **And the round trip makes the bypass the normal case.** Once Track 1 merges
+  this lane into `main`, the merge base becomes a lane commit that already
+  contains the lane's copy of every per-track path. After that the lane reads
+  unchanged on all of them and only `main` moves, so the lane silently adopts
+  `main`'s. **`merge=ours` protects whichever side is "ours" at merge time; it
+  cannot protect a path across a lane→main→lane round trip.**
+  ⭐⭐ **`supervise.sh` §2f now measures this every run** — the list read from
+  `.gitattributes`, never restated — so it is a check rather than a ruling
+  somebody must remember. Measured 2026-09-09 on base `e3aea7ff`: **four of
+  eight** in the bypass state, including `app/phpunit.xml` and this file.
+  ⚠️ **A bypass on `CLAUDE.md`, `bin/supervise.sh`, `.agents/rules/**` or
+  `.claude/**` is the SUPERVISOR's to repair and the coder CANNOT do it** —
+  `--allow-restore` refuses exactly those paths by design (restoring one would
+  discard the supervisor's uncommitted notes, run 27). So a merge wave whose §2f
+  names one of them is not fully delegable: the supervisor moves those paths on
+  our side **before** dispatching, which makes the driver fire, and the coder
+  restores only what it is permitted to touch.
 - ⛔⛔ **The coder guard is never bypassed.** `git` in a coder run is
   `/home/goaiez/agents/coder-bin/git`. Calling `/usr/bin/git`, `command git`,
   `env PATH=… git`, or any other route around it is a BLOCK on the wave even
