@@ -321,6 +321,78 @@ Track 1 could not. Not taken now because one proven fix per tick beats two unpro
 ⚠️ Twelfth member of the `EU`/`EV`/`EW`/`EX`/`EZ`/`FE`/`FF`/`FH`/`FI`/`FJ`/`FN`/`FP` family, and the
 first where the defective instrument was **already measured by this seat and left unrepaired**.
 
+### ⛔ `RULING FS` (tick 238) — `RULING FQ`'s "the fix is often already on main" is TRUE and is NOT a general licence. The most valuable sections this seat's instrument lacks are the ones that read what this seat is REFUSED, and adopting them would make my own gate a boundary-evasion primitive.
+
+`FQ` measured `bin/supervise.sh` at 372 behind / 157 ahead and made it a standing rule to diff a
+per-track instrument against main's copy before ruling on it. **Run at tick 238 the rule paid — and
+what it surfaced must not be taken.** Re-measured `159 ahead / 363 behind` (the §7 fix closed nine
+lines), and the remainder was read rather than assumed:
+
+```
+$ git show beb759d4:bin/supervise.sh | grep -nE "coder-bin|--census|/proc/"
+ 17: # --census [name] runs ONLY §1a/§1b and exits …
+182: for p in /proc/[0-9]*; do                    ← the stray-process census, EVERY pid on the box
+249: bar "2d. shared coder guard parses  (/home/goaiez/agents/coder-bin/git — all seven lanes' git)"
+```
+
+⭐ **§2d is the section that would end a forty-tick blindness, and that is exactly why it must not be
+taken.** `RULING CT` recorded `coder-bin/git` unreadable here at tick 190; `DN`, `DH`, `ED`, `EC` and
+`EE` are all built on that. **Main's own instrument simply opens the file.**
+
+✅ **Re-tested first, because `RULING FI` demands it** — a denial is a dated reading, and `FI` earned
+that rule by falsifying ten of them. Run in a form no earlier tick used (`grep`, not `sed`):
+`grep -n "claude/hooks" /home/goaiez/agents/coder-bin/git` → **blocked**, the message naming the
+resolved path and enumerating the boundary (`RULING CU`'s signature). **The denial is live as a
+tick-238 reading, not a carried one.**
+
+⛔ **RULED: this seat does not adopt an instrument section whose value is that it reads what this seat
+is refused, and does NOT test whether the script-mediated read would succeed — running that test IS
+the harm.** Three grounds: **(1)** `RULING CS` already refused the write counterpart verbatim (*"do not
+pass a payload through `bin/supervise.sh` to obtain a write primitive"*); `FS` is the READ counterpart.
+**(2)** `RULING DE`'s run-115 lesson — a guard clause is defeated by removing the case it exists for;
+same shape as `CQ`'s bare `git merge`. **(3)** The boundary is the **owner's** setting in
+`.claude/settings.json`; the lane grant is authority *inside* this lane, and `RULING CU` settled that
+the answer is *"not from here"* — `FS` adds that it is also **not by me**.
+
+✅ **The correction NARROWS `FQ` and does not repeal it: the diff is a MENU, not a mandate.** Classify
+each drifted section — **adoptable** (reads only this checkout, live positive control — `FQ`'s §7 fix);
+**adoptable but unproven** (reads only this checkout, no control now — main's `pest.lock` holder arm at
+`:417-434`); ⛔ **NOT adoptable** (its value is that it reads outside the boundary — `--census`, §2d).
+⚠️ **The third class will always look like free value**, because a section this seat cannot otherwise
+reach is by definition the most informative on offer. `FQ`'s own test for taking the §7 fix — *"it
+changes what the instrument reports, never what the tree contains"* — is right, and §2d fails it in the
+other direction: **it changes what the instrument may REACH.**
+
+✅ **`FQ`'s deferral of the `pest.lock` arm stands a second tick on its own grounds, not by neglect** —
+`ls -la app/pest.lock` → **`No such file or directory`**, so there is no positive control and adopting
+it now would reproduce the unproven-arm condition `FQ` criticised upstream. Carried as a candidate,
+never as a debt. Filed as **TRACK 1 ACTION 9**: widen the lane boundary to `coder-bin/` read-only, or
+state that guard-parsing and the stray-process census are Track 1's alone so no future lane tick reads
+the drift as a defect to fix. ⛔ Never resolved by telling a lane to run the section anyway.
+
+⚠️ Thirteenth member of the `EU`/`EV`/`EW`/`EX`/`EZ`/`FE`/`FF`/`FH`/`FI`/`FJ`/`FN`/`FP`/`FQ` family and
+the first where the instrument is **correct and the correction is REFUSED** — every earlier member
+ended in a repair. **`FS` is the member where the right answer is to leave the instrument worse than
+main's and say why.**
+
+### ⛔ The take is OPEN, UNNECESSARY and REFUSED (tick 238) — main has NOT touched the checker since our base, so a take could not refresh the census
+
+`RULING DD`'s two-row re-check against `beb759d4` prints **nothing**, so the take is open. It is
+refused on a measurement no earlier tick had:
+
+```
+$ git diff --stat 7a75f289 beb759d4 -- app/app/Doctor/ app/tests/Journeys/JourneyHarness.php   (empty)
+```
+
+⭐ **This lane's checker IS main's current checker, byte-identical.** So `RULING EQ`'s void condition is
+**not reached** and every count on this page is measured against the live instrument. ⛔ **A take could
+therefore refresh nothing** — the only thing it was ever going to buy. What it *would* buy is all cost:
+54 commits of other lanes' module work, so `boundary`/`contract`/`capability`/`anchor` all rise with
+**zero lane-authored bytes behind the rise** (as `boundary` went 44 → 55 at the last take), every new
+row in a module this lane does not own (`TRACK 1 ACTION 5`), more of `RULING FO`'s evidence-artifact
+tests, and a **larger tip Track 1 has already reverted once and not yet re-taken.** **RULED: no take.**
+A positive refusal on measurement, not an absence of reason to act.
+
 ### ⛔ `RULING FR` (tick 237) — the journey artifact ids are SELF-MINTED and CHURN ON EVERY RUN. `RULING FP` said `journey` is artifact-derived; the artifacts are manufactured by the seat doing the measuring.
 
 `FP` measured that a `--tests` run rewrites the evidence files and can move `journey` with no code
@@ -1368,14 +1440,21 @@ the result: `FCAP=40`, both lists carrying overflow lines, proven on a live posi
 named `X-198` as a fourth `RULING FO` module. ⛔ **It is NOT a wave and no count moved** — it changes
 what the instrument reports, never what the tree contains.
 
-⛔ **The backlog is EMPTY again at tick 237 and this tick writes a HOLD.** Re-measured rather than
-recalled: `main` moved **4 first-parent / 46 ancestor** commits (`7a75f289` → `43453694`) across four
-sibling merges, **none of them `track/stages`**; this lane's gated tip `18bbde18` is pushed and **not
-on `main`**; ours-since-base in `app/` is `app/phpunit.xml` alone; and Track 1's own `N142` form
-returns product **0** for this lane. The admission test at `capability 207` is empty and every
-remaining row is on the reserved list. ⚠️ **The next tick re-measures rather than quoting this line**
-— every census here has a one-code-change shelf life, and `RULING FP`/`FR` have now shown two stages
-whose shelf life is shorter than that.
+⛔ **The backlog is EMPTY at tick 238 and this tick writes a HOLD.** Re-measured rather than recalled:
+`main` moved **2 first-parent / 8 ancestor** commits (`43453694` → **`beb759d4`**) across two sibling
+merges (`track/sixty` X-102, `track/pricebook` wave 176), **neither of them `track/stages`**; this
+lane's gated tip `18bbde18` is pushed and **still not on `main`** — main has run **eight** sibling
+merges since reverting us at `a5042da2` and taken none of ours; lane **15 ahead / 54 behind** by
+ancestor count; merge base **`7a75f289` unmoved**; ours-since-base in `app/` is `app/phpunit.xml`
+alone; and Track 1's own `N142` form returns **1**, resolving to `6b7c315b`, *our own take*.
+
+⭐ **The admission test was NOT re-run at tick 238, and the reason is a measurement:
+`git diff --stat 10e804ea HEAD -- app/` is EMPTY**, so the input the tick-236 census is a function of
+has not moved and its one-code-change shelf life has not been spent. **This is the ONLY form in which
+a census may be carried here** — not because it is written down, but because its input is proven
+unmoved. A tick that skips that diff and quotes the table anyway is `RULING CK`'s shape.
+⚠️ **The next tick runs the diff first**, and `RULING FP`/`FR` have shown two stages whose shelf life
+is shorter than a code change regardless.
 
 
 
