@@ -6436,6 +6436,93 @@ Watch for: <the trap that applies, by name>
   `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **11** rows at tick 272; `app/app/Modules/` →
   **1**, the litter, which must read **0**; stub pile across the thirteen **10**. Re-run all three
   after the merge; never inherit them.
+- ⚠️⚠️ **A test that asserts a file exists under `app/storage/**` measures THIS WORKING COPY and never
+  the code — and a merge can import six of them at once, three needing real money.** Post-merge the
+  suite went `failed 1 → 6`, and every new one reads *"Failed asserting that file
+  …/app/storage/app/evidence/<M>/<x>.json exists"* or *"Artifact missing. You must run php artisan
+  x198:evidence-charge first."* Measured at tick 273: `app/storage/app/.gitignore` is `*` with only
+  `private/`, `public/` and `.gitignore` excepted, and **`git ls-files app/storage/app/evidence/` is
+  empty** — no evidence artifact is tracked and none can be, so any checkout that has not run the
+  generating command fails them. `X-117 · X-198 ×2 · X-199 · X-211` plus one `TwelveJourneysTest`, and
+  **not one of those four modules is in the thirteen**; `GatewayEngineTest.php:12-13,26` wants a
+  `gateway_charge_id` starting `ch_` of length 27 and a `https://checkout.stripe.com` URL over 400
+  characters, which is the reserved list. This is the tick-157 journey-evidence rule (*the `journey`
+  stage counts untracked files, so a merge can never move it*) generalised off journeys onto **module**
+  tests. ⛔ **A red §7 has never held the push on this lane and must not start**: what holds a push is a
+  red **§6**, and every wave since tick 240 was pushed carrying `failed 1 · errors 2`. Grade the reds by
+  **identity**, name the ones that are artifact-shaped, and file them rather than chasing them.
+- ⭐⭐ **A permanently-red inherited lint can be resolved by FREEZING its violators, and that is not the
+  deleted-assertion rung — the four tells are all in the file.** This lane's oldest red,
+  `test_g2_76_unified_inbox_header`, went green at the merge and it was **not** stubbed: `95be31f3
+  test(X-01): freeze the four inherited core tables in the twelve-noun lint` (another lane, arriving via
+  `b19810cd`) split the lint into its own method — `test_no_table_outside_the_twelve_nouns_holds_a_
+  message_thread_or_contact`, `X01Test.php:261` — which still globs both migration roots, still refuses
+  any table ending `_messages|_conversations|_threads|_contacts`, and asserts `array_diff($violators,
+  $baseline)` is empty against exactly the four tick 214 measured as shared-root tables owned by no
+  module. The four tells: **the rule still fires on every NEW violator**, the exemption is enumerated
+  rather than the glob narrowed, the comment names the base sha and the open `TRACK 1 ACTION`, and a
+  ⛔ *"do not add a fifth name here"* stops the baseline growing. Contrast the ladder's top rung
+  (wave 107, deleting your own red assertion to go green): **freezing names what is exempt, deleting
+  hides it.** ✅ `TRACK 1 ACTION` closed at tick 273 by re-checking it against the tree rather than
+  restating it (tick 199) — and reverting it would have deleted another lane's check work, which is the
+  tick-216 discriminator.
+- ⚠️⚠️ **A merge restores `BUILD-STATE.json` from OUR pre-merge HEAD, so every one of §3's eight stage
+  counts is a pre-merge number on a post-merge tree — and one of them is now known-false by 49.** The
+  per-track restore is correct and is what saves the ledger; its by-product is that `STAGES` is a
+  carry-over in the strongest possible sense (ticks 171, 217). At tick 273 §3 read `boundary 6` while
+  the wave's own `doctor --stage=boundary` returned **55**, because main's `@boundary-fix-2026-09-08`
+  turned a check on that had never run. Main also changed `ContractStage` and `TestAnchorStage`, so
+  `contract 87` and `anchor 138` are equally suspect. ⛔ **The first wave after any merge refreshes the
+  eight from a live `--full-doctor` via `state.py stage <name> <n>`** (`bin/state.py:217-218`, which
+  sets `stages[name].violations` and journals it; main's own `2f008dd0 chore(state): refresh all eight
+  BUILD-STATE stage counts from a live full-doctor run` is the precedent). Until it does, no delta on
+  this lane means anything, and `php artisan doctor` is outside this column's allow list — the signal
+  that the measurement is the coder's.
+- ⚠️ **A stage TOTAL and a count of ONE OF ITS RULES are different numbers, and a ledger row that
+  conflates them cannot be withdrawn.** Wave 148's `2026-09-09T09:44:33` row says *"revealing 55
+  cross-module imports"*; `REPORT.md` one line below says *"unmasked **49** cross-module imports"*, and
+  55 is the whole `boundary` stage — `6` pre-merge rows, **none of which can be a cross-module import**
+  because that check had never run (tick 194). The permanent record therefore overstates by six and
+  mislabels the kind. NOTE and not `BLOCK` (tick 206: the wave's own report refutes it in one line and
+  the arithmetic closes), and it corrects **forward** only. **Ask which rule of a stage a number counts
+  before writing it into an append-only row.**
+- ⚠️ **Measure a brief's git-position table AFTER this column's own commit, immediately before
+  `launch-coder.sh`.** Tick 272 measured `0 ahead of origin/main`, then committed `f8bfd8bd` — correctly,
+  since a merge brief's restore is `git show HEAD:CLAUDE.md` and an uncommitted tick block dies to its
+  own restore instruction — and handed over the pre-commit number. The wave found `1394	1` and said so.
+  ⭐ **The coder's reading refined the tick-272 ruling rather than refuting it, and it verified out
+  exactly**: `git merge-base f8bfd8bd cbdba9cd` is `2e049b9a`, and `git diff --stat 2e049b9a f8bfd8bd --
+  <the eight per-track paths>` is **`CLAUDE.md | 72 ++++` and nothing else** — so `merge=ours` was
+  exercised for `CLAUDE.md` alone and the other **seven** were taken on git's trivial fast-path with no
+  conflict and no output. The restore is what recovered all eight either way. **Tick 228's rule is
+  *commit before dispatch*; its missing half is *measure after the commit*.**
+- ⚠️ **`COMMITS:` has no useful floor on a merge wave — `git log origin/track/<x>..HEAD` is the whole
+  merged history.** Wave 148's field is 1084 lines. The merge form of tick 199c's rule is
+  `git log --oneline --no-merges <pre-merge HEAD>..HEAD`, which was two lines.
+- ⭐ **`supervise.sh` §2 now prints the merge-parent discriminator itself** — `✓ arrived unchanged from
+  the merge parent (identical to HEAD^2, not touched)`, one line per forbidden path, then `none touched`.
+  Tick 199's `git diff --cached MERGE_HEAD -- <path>` is in the script, so a merge wave no longer has to
+  choose between a false `BLOCK` and a blind pass. Read the ✓ lines; they are the evidence.
+- **Backlog at tick 273 — wave 149 is the post-merge measurement and the ledger correction; wave 150 is
+  tick 271's payload proof.** RULED, and the reason is re-derived rather than inherited (tick 235). Tick
+  216's reason for a measurement wave after a big merge — *a first red would be unattributable* — does
+  **not** hold here: the six new reds are artifact-missing on out-of-lane modules with unmistakable names
+  and the two errors are the standing pair, so a new red in `X01Test` would be unambiguous by identity.
+  Nor does the wave-108 verdict-loss risk: measured at tick 273 by me, the proposal list is **11** with
+  membership unchanged and the stub pile **11** (the extra being the `G2-76` stub the noun lint split off
+  from), so nothing was lost. **The reason that does hold is different and is enough:
+  `BUILD-STATE.json` states `boundary 6` on a tree the wave itself measured at 55**, that file is what
+  every future tick's `STAGES` reads, and an append-only ledger row mislabels the number. Building on
+  top means the next wave's `STAGES` is a carry-over of a known-false figure. So 149 is a
+  `--full-doctor` with its **untruncated** log kept separately (tick 190 — §5 truncates and yields only
+  the `N violation(s).` total), the eight refreshed with `state.py stage`, the row corrected forward
+  naming the `2026-09-09T09:44:33` row by its timestamp (tick 242, and **never a rewrite** — `131bd46d`
+  is this lane's precedent for that mistake), and the boundary rows filtered to the thirteen. ⛔ No
+  production code, no test, no assertion, no mutation. **Wave 150** is the words-cross assertion and its
+  value-family mutation on `ChatLeadCapturedListener`, plus the `handle(object $event)` type and its
+  dead `property_exists` — carried entire from tick 271, not cancelled. Live list
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **11** rows at tick 273; `app/app/Modules/` → **0**;
+  stub pile across the thirteen **11**. Re-run all three; never inherit them.
 
 ## Style
 
