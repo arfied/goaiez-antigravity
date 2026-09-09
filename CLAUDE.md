@@ -477,3 +477,65 @@ and the belief was wrong. REV-126's complaint that the `LAUNCHED` line never pri
 still true and is now the lesser finding: a flag whose read-back is missing matters less than a flag
 that cannot do the job. **A gate is opened by the wave that uses it, and by nothing else** — the
 converse of N103, which this file already states for `--allow-merge`.
+
+## REV-128 — `app/phpunit.xml` is committable by neither column, and a permission was read out of a silence
+
+⚠️ **THE CODER GUARD REFUSES `git commit … -- app/phpunit.xml` AND NO LAUNCHER FLAG OPENS IT; THE
+SUPERVISOR IS BARRED FROM `app/**` BY ITS ROLE TABLE. SO THE ONE FILE EVERY LANE IS REQUIRED TO DIVERGE
+ON IS COMMITTABLE BY NOBODY (2026-09-09, run 123).** The refusal reads
+`REFUSED by coder guard: a never-list or supervisor path is staged: app/phpunit.xml`, and
+`launch-coder.sh:24-27` takes exactly `--allow-merge`, `--allow-harness` and `--allow-restore`.
+
+⛔ **The defect is mine and it is REV-126's closing sentence:** *"the coder restores only
+`app/phpunit.xml`, which it is permitted to touch."* That read `--allow-restore`'s **exclusion** list
+(`:26` — *".agents/supervisor, .agents/rules, .claude, CLAUDE.md, bin/supervise.sh, bin/state.py, any
+.env"*), correctly observed `app/phpunit.xml` is absent from it, and inferred a **commit** permission
+the clause says nothing about. Two different lists; the second property derived from the first.
+
+**RULED: a permission is proved by the clause that GRANTS it, never by the absence of a clause that
+forbids it.** Any brief item depending on the coder being *able* to run a command cites the granting
+clause by `file:line`, or the item carries a second mechanism needing no permission at all.
+
+⭐ **`--allow-harness` is the proof this is a gap and not a design.** `JourneyHarness.php` is also on
+the never-list and got a flag whose own comment says *"opens the ABILITY TO COMMIT"*. `app/phpunit.xml`
+is the other never-list path that legitimately has to move — once per lane, forever — and never got one.
+
+⭐ **New sub-species of this project's recurring failure.** REV-119 §A, REV-121 §A, REV-125 §13,
+REV-126 and REV-127 §1 are all *a correct statement in the tree, never read back*. REV-127 §1 and this
+one are *a correct statement read carefully and answered for the wrong question* — I read
+`launch-coder.sh:26` while writing both briefs it broke.
+
+⚠️ **§2. `supervise.sh` §0 READS THE WORKING TREE, SO BOTH ITS DB LINES CAN BE GREEN WHILE `HEAD` IS
+WRONG.** `:99` greps `$APP/phpunit.xml` on disk. With the repair uncommitted, §0 prints
+
+```
+  app/phpunit.xml  DB_DATABASE=goaiez_antig_reviews_test   <- the WORKING TREE, not HEAD
+  effective (§7)   DB_DATABASE=goaiez_antig_reviews_test
+```
+
+and `HEAD` still pins `goaiez_antig_test`. REV-121 §2's shape returning **inverted**: there the
+mitigation hid the fault, here the *display* does, one line higher. **The only proof is an empty
+`git diff <good-sha> HEAD -- app/phpunit.xml`** — against `HEAD`, not the working tree.
+
+⛔⛔ **And while the repair is uncommitted, `git checkout -- app/phpunit.xml` is the most destructive
+command on the board**: it discards the fix, re-points the lane at `goaiez_antig_test`, and
+`RefreshesTenantDatabase`'s `migrate:fresh` then drops six other lanes' test databases. Only
+`git restore --staged app/phpunit.xml` is safe, and only to unstage.
+
+⭐ **Two measured mechanisms make the uncommitted state survivable, and both were checked, not
+remembered:** `app/phpunit.xml` carries no `force` attribute, so PHPUnit will not overwrite an
+already-set variable and REV-119 §E's export at `:127`/`:452` genuinely wins; and §7's clash guard
+greps the siblings' **working tree** (`:461`), so a repaired-on-disk file advertises correctly to the
+other six lanes.
+
+⭐ **The root, and it is one root under five findings.** REV-119 §E, REV-121 §2, REV-126, REV-127 and
+this section all exist because `main`'s `app/phpunit.xml` pins `DB_DATABASE` for all seven lanes while
+being a `merge=ours` path. If main's copy simply dropped that env line and every lane derived the name
+— which `bin/supervise.sh:127` already does, and has done correctly for five waves *without* a correct
+committed `phpunit.xml` — the whole class would have no surface left. **Filed as a TRACK 1 ACTION;
+it is Track 1's file to change.**
+
+⚠️ **A merge does not disturb the uncommitted repair while `app/phpunit.xml` is in §2f's
+`theirs unchanged` arm** — git carries the dirty file through untouched. That is what lets a lane keep
+merging with the divergence uncommitted, and it is a property of `(our sha, their sha)`, so it is
+re-derived at every merge and never assumed.
