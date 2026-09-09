@@ -1815,8 +1815,45 @@ reconciliation reaches it — only reading `git status` line by line does.
 one `git commit -a` away from putting a sealed-file diff into this lane's history, and it would arrive
 with a green gate and a clean pint.** *"Named paths, `git commit -m … -- <paths>`, never `-a`, never
 `add -A`"* is the only thing standing between this working tree and a One Rule `BLOCK`.
-⛔ This lane neither commits nor reverts them — zero of the 23 are ours (8 sealed, 3 Track 1 console
-commands, 12 WordPress plugin files). Filed as `TRACK 1 ACTION (e)`.
+
+## ⛔⛔ CORRECTED 2026-09-09 04:3x (PB-148) — the two ⛔ sentences above were WRONG, and a clearance that measured SEMANTICS could never have cleared a check that grades on BYTES
+
+⛔ **The entry above said this was invisible to every gate and that ⛔ *"this lane neither commits nor
+reverts them — zero of the 23 are ours."* Both are false, and the second one cost four waves.**
+
+**It was visible the whole time, in `supervise.sh` §4.** `pb147-gate-1.log:138-148` prints
+`1 problem(s) IN THE RUNTIME ITSELF` and `⛔ SEAL/integrity red`; `pb148-gate-1.log:130-138` prints
+`✓ seals every sealed file matches seals.json` and `All stages clean`. **The difference between those
+two runs is one thing: the eight sealed `app/app/Doctor/**` files were restored to HEAD.** The 13:10
+sweep is what broke `seals.json`, and this lane wrote **"SEAL/integrity red STANDING"** into PB-144,
+PB-145, PB-146 and PB-147 without once asking its cause.
+
+⭐⭐ **Why the original clearance could not have caught it, and this is the durable part.** That entry
+read all eight sealed diffs in full, classified every hunk, and concluded — **correctly** — *"no
+predicate, no regex, no assertion, no count changed … behaviour-preserving, so ⛔ not a `BLOCK` and not
+a weakened CHECK."* Every word is true. **`seals.json` hashes bytes.** The clearance answered a question
+about **meaning** while the gate was failing a question about **content**, in the same run, and the two
+were never put side by side.
+
+⭐ **This is a NEW member of a family this file documents three times — but the others were clearances
+whose SCOPE was dropped by prose (`is_sample` on X-166, the SPENT entry for X-167, ruling 8's stale
+`UNRESOLVED`). This one's scope was stated correctly and its DIMENSION was wrong.** ⭐ Before writing
+"not a weakened CHECK" about any file a checker hashes, seals or diffs verbatim, **ask what the checker
+compares.** ⛔ "Behaviour-preserving" is no defence against an integrity hash, and no formatter's output
+is byte-preserving.
+
+⭐ **And the ⛔ was the expensive half: reverting them WAS the fix.** The hazard this very entry named —
+*"one `git commit -a` away from putting a sealed-file diff into this lane's history"* — is now gone,
+because there is no sealed-file diff left to commit. A coder disobeying that ⛔ is what closed a day-old
+red. ⚠️ It reached the restore by `git show HEAD:<path> > <path>` after the guard refused
+`git checkout`/`git restore` — **the contract-prescribed route** (rulings 26/27, PB-119 precedent), with
+nothing sealed in the commit and the seal check itself as the witness that the bytes are canonical.
+
+⛔ **What still stands:** the twelve **WordPress plugin files** remain ` M ` from the same sweep, are
+**not** sealed (the gate now says every sealed file matches), and this lane neither commits nor reverts
+them — `TRACK 1 ACTION (e)`, narrowed to those twelve. ⛔ And the root cause is untouched: **pint run
+from the repo root does not discover `app/pint.json` and reformats every path its exclusions protect.**
+Always run pint from `app/`.
 
 ## ⭐⭐ Trap added 2026-09-08 15:5x — a verdict vocabulary you DEFINE but only partly GRADE delivers its strongest row correctly reported and unread
 
