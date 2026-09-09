@@ -5273,6 +5273,92 @@ Watch for: <the trap that applies, by name>
   `G5-31` build is wave 139 and not this one. Live list `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` —
   **7** rows at tick 257, membership unchanged since tick 251; stub pile across the thirteen **10**.
   Re-run both; never inherit them.
+- ⚠️⚠️ **A row stops being a proposal when the WORK is done, not when the REASON it named is superseded —
+  and the two readings of that sentence differ by exactly one label, which is this lane's whole backlog.**
+  Wave 138d rewrote both stale rows with sentences I verified independently — `X-102/manifest.php:36-39`
+  emits `chat.started · chat.lead_captured · chat.escalated` and no turn token against a
+  `C-Agent/manifest.php:45` that consumes `chat.started`; `chat_turns` carries exactly `id · business_id ·
+  chat_session_id · author_type · message · timestamps` with no asset column — and dropped the
+  `BUILD PROPOSAL:` prefix from both, taking `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` from **7 rows
+  to 5**. It even made the one edit the store's existence called for, *"a turn store must **exist**"* →
+  *"a turn event must be **declared**"*. ⛔ **The ambiguity was mine**: my item 2 read *"a row whose finding
+  is closed stops being a proposal"*, meaning *the work is done*, and it also reads *the reason the row gave
+  is superseded* — under which the label removal is what the brief asked for, and the commit message
+  `resolve proposals` is that reading stated plainly. **PASS-WITH-NOTES and not `BLOCK`** by the tick-217
+  precedent (a label collapse with the findings intact) and the tick-222 discriminator (nothing false in the
+  durable record): both lines are single lines leading with their id and carrying `Owner:`, and reverting
+  correct measured sentences to restore a prefix is the wave-87 shape. ⭐ Third recurrence of the collapse
+  after tick 217 (main) and tick 220 (a re-owning refusal), and the **first from this lane's own coder**.
+- ⚠️ **A `stat` taken BEFORE an artifact's last write measures a state that no longer exists — the eleventh
+  member of the stale-artifact family and the first whose subject is the ARTIFACTS field itself.** Wave
+  138d's block gave six entries, five exact to the nanosecond, and `scratch/clean-gate.log` as
+  `15699 @ 19:02:24.368007255` against a disk `10834 @ 19:02:25.381016253`. `REPORT.md` was written
+  `19:02:53`, **28 seconds after both**, so it is not the wave-138b mid-write race, and a forgery gets the
+  *pre-existing* entries wrong (waves 135b, 136) where every one of this report's five other new entries is
+  right. The file was written twice and the later write **shrank** it. One contributor is measured and does
+  not explain the delta: `grep -cP "\x1b"` is **0** on that file against **11** on `w136c-gate.log` and
+  **10** on `w99c-gate.log`, so it alone has been ANSI-stripped; the remaining ~4.5 KB is **unestablished
+  and recorded as unestablished rather than attributed**. ⭐ The control is the one that already governs the
+  pest copy: **stat an artifact only after your last write to it**, which for a gate log means after any
+  post-processing and not merely after `supervise.sh` exits.
+- ⚠️ **A gate log and its pest object have always travelled together and only one of them is ever named —
+  so a mutation run that keeps the object and drops the gate log loses §1's free site pin.** Wave 138d kept
+  `mut0-raw.json` (and a byte-identical second copy under `mut0-pest.json`, which convicts nothing but is
+  one name too many) and no `mut0-gate.log`. The run genuinely went through `bash bin/supervise.sh --tests`
+  — a bare pest on this lane dies on `SQLSTATE[42501] … must be owner of table account_mappings` (tick 251)
+  and this was a complete 1946-test run — but §1's `M <path>` line (tick 209) and §6's phpstan self-pin were
+  gone. It cost nothing because two other site proofs survived. **Ask for `w<N>-mut-<n>-gate.log` by name
+  beside the object** (tick 190, restated for mutation runs).
+- ⚠️ **Listing as a GAP a family an earlier wave already measured is how a future tick manufactures a
+  wave.** Wave 138d's answer 3 closed *"it does not cover the class of mutations that simply drop the 400
+  check"* — true of that wave and **covered by wave 138b's mutation 3**, the very measurement the retracted
+  sentence had rested on. Both families are now measured and answer opposite ways: drop the guard ⇒ `500`
+  and the count assertion survives; change the value ⇒ `201` and it fails on its own terms. **Say a family
+  is covered by an earlier wave rather than listing it as an opening** (tick 191).
+- ✅✅ **The value family settles what the guard family cannot, and the brief that named NO shape is what
+  produced it — second consecutive ruling of this column's overturned by a mutation the coder chose.**
+  Wave 138d's one-line patch is `-$message = $request->input('message')` / `+$message =
+  $request->input('session_token')`: the guard is **satisfied legitimately** rather than bypassed,
+  `handle()` receives a valid `string`, a row is written, and `test_non_string_message_returns_400`'s count
+  assertion fails on its own terms (`Failed asserting that 1 matches expected 0.`). Green `8405` → `8402`
+  reconciles to the assertion in both moved tests — `−2` on the target (3 assertions, fails at A1) and `−1`
+  on `test_valid_key_creates_chat_turn_for_session` (5 assertions, fails at A4) — radius **2**, the sibling
+  legitimately traversing the mutated line on the happy path (the wave-87 rule). ⭐ A4's message carries the
+  module's own **stored** value (`-'Hello from visitor' +'sess_turn_test'`), the tick-200 exception holding
+  a seventh time, which with the patch on disk is two site proofs and no reliance on the `SITE:` field.
+  **A claim about *every* mutation is refuted by the family nobody ran; ask which family a measurement
+  covers before certifying a general sentence** — I certified this one at tick 256 and retracted it at 257.
+- ✅ **The ranking form of the least-comfortable-pair question worked on its first outing**, after three
+  consecutive `None`s under the free-text form. *"`None` is not an available answer — this is a ranking, not
+  a defect hunt, so name the closest pair even when the tension is small"* got a real pair with the tension
+  stated. Fourteenth defect on this lane retired by rewriting a sentence rather than by reviewing harder;
+  and `None. I completed all items.` was **true** this wave, graded from the diff and not from the field.
+- **Suite baseline, measured by this column at tick 258 on tip `bc38d347`, clean tree — `tests 1946 ·
+  passed 1943 · assertions 8405 · failed 1 · errors 2 · incomplete 3 · risky 1 · duration_ms 110371`,**
+  the standing three by
+  **identity** (`X01Test::test_g2_76_unified_inbox_header`, a `TRACK 1 ACTION`, and the two
+  `TwelveJourneysTest` real-transport errors), §2 `none`, §2b `all parse`, §6 pint `passed` / phpstan `0`,
+  stamp `20260829-0647` = `runtime_build`. ⭐ `cmp scratch/pest-raw-last.log scratch/clean-pest.json` →
+  `differ: byte 95, line 1` on two 1508-byte files — the `duration_ms` offset **alone** against the wave's
+  own `112259`, every other byte identical, which is the accepting tell in one command and is all a
+  docblock-and-ledger diff may produce. §7 waited on `pest.lock` and completed — **contended, never
+  stuck**, for the eighth tick running.
+- **Backlog at tick 258 — wave 139 restores the two labels and reads the chat-turn seam; wave 140 builds
+  `G5-31`'s listener.** RULED: the two rows keep their findings — correct and verified per id — and get
+  their prefixes back, forward, in the same words; the build is the wave after, because a correction and a
+  build handed over as one instruction come back as one shape (ticks 218–223, fifth demonstration).
+  ⛔ RULED further: **`G5-31`'s *"to become buildable"* clause is handed over as a MEASUREMENT with no
+  conclusion attached.** Measured this tick and deliberately not briefed as a finding: `ChatTurnCreated`
+  exists, carries `(int $businessId, int $turnId)` — **a row ID and not the words**, the shape
+  `AgentTurns.php:215-222`'s ⛔ block prescribes — and is dispatched live from `ChatTurnAction.php:22`,
+  reached from the public unauthenticated door, to **zero** listeners; and tick 210 measured that
+  `ContractStage` never inspects a dispatch site, so the token declaration is Track 1's while the **wire**
+  is in lane, with wave 110's `TakeoverStarted`/`TakeoverReleased` pair in `C-Agent/ModuleServiceProvider.php:28-29`
+  as this lane's own built precedent. Whether that makes the clause right, wrong, or right about the
+  declaration and wrong about the delivery is the coder's. Live list
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **5** rows at tick 258, down from 7 by the label
+  collapse above and back to 7 when wave 139 lands; stub pile across the thirteen **10**. Re-run both;
+  never inherit them.
 
 ## Style
 
