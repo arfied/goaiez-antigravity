@@ -29,6 +29,7 @@ final class JobStateAction
 
         if ($newState === 'completed') {
             $personId = DB::table('work_orders')
+                ->where('business_id', $businessId)
                 ->where('id', $jobId)
                 ->value('person_id');
             Event::dispatch(new JobCompleted($businessId, $jobId, $techId, $personId, Carbon::now()));
