@@ -797,7 +797,82 @@ deliberately — `.gate226.txt`, `.gate229.txt`, `.gate230.txt` and `.gate220-co
 name** in this file as the evidence for specific findings, and deleting them destroys the ledger's own
 citations.
 
-## ⭐⭐ THE LANE CONTAINS `main` — merge base IS main's tip (tick 321), and `RULING FO` holds in its strongest form
+### ⛔⛔ `RULING GH` (tick 322) — a gate certifies a SHA, and in a coder-executed merge wave this seat's own commit lands INSIDE the run, so the wave's gate does not cover the tip this seat pushes. `RULING EO` binds a seat that cannot see the state it is conditioned on.
+
+`RULING GG` established that this seat writes the brief and then commits its own notes minutes later, and
+fixed the **floors** a moving `HEAD` invalidates. **It did not reach what that commit does to the PUSH
+GATE.** Measured on STAGES-235 from four artefacts on disk:
+
+```
+10:52:06   KICKOFF written, STAGES-235 dispatched
+10:53:02   b5473856  the coder's merge commit
+10:53:24   .gateS235w.txt closes        ← the gate the wave is judged by
+10:55:12   ed01c9eb  THIS SEAT commits tick 321's notes   ← inside the coder's live run
+10:55:32   REPORT.md written
+```
+
+⛔ **The wave's own §2 is the direct evidence** and no earlier tick quoted it: `.gateS235w.txt:56` reads
+`ℹ supervisor working notes (uncommitted — leave them alone): CLAUDE.md`, while `.gateT322.txt` §2 —
+run after `ed01c9eb` — carries **no such line**. The tree the wave certified held this seat's
+uncommitted notes; 108 seconds later they became a commit on top of it.
+
+**(a) The certification arm.** The mailbox rule is *"Pushes only a sha it has gated and recorded in
+REVIEWS."* `.gateS235w.txt` certifies **`b5473856`**, not the tip `ed01c9eb`. So the standing practice
+— *"notes-only commits ride the next gated-sha push"*, on this page for seventy ticks — means **every
+push carries supervisor commits no wave gate ever saw.** It has been safe only because the pushing
+tick's session-start `supervise.sh` gates `HEAD`; **that reason was never stated, and a tick skipping
+the gate would push an uncertified tree while naming a gate file.**
+
+**(b) The `RULING EO` arm.** `EO` was written when **this seat** staged the merge and could see
+`MERGE_HEAD`. Here the merge is the **coder's**, the window belongs to another process, and this seat
+commits on its own schedule: tick 321 missed the `fatal: cannot do a partial commit during a merge`
+window by **2m10s**. ⚠️ The failure is **loud, not silent** — git refuses a partial commit outright — so
+the cost is a burnt commit, not corruption. **`EO` is not repealed; it is unenforceable as written,
+because it conditions this seat on a state it never checks.**
+
+✅ **Standing correction, two clauses, NO instrument byte** (`RULING FY`'s precedent — the gate printed
+the right thing about the right sha; the seat read it as being about a different one).
+**(i) A push names the SHA and the block names the gate file that certified THAT sha.** Where the tip
+differs from the wave's gated sha, this seat pushes the wave's sha, or gates the tip itself in the same
+tick and says so — and where the difference is a `chore(supervisor)` commit touching no `app/` byte, it
+**states the diff as the reason §5 carries across**, never as an assumption.
+**(ii) Before this seat commits, it checks for a live merge and a live coder** —
+`ls "$(git rev-parse --git-dir)/MERGE_HEAD"` and `pgrep -a -P 1 -f agy`. ⚠️ **The REFUSING arm is
+UNPROVEN and declared so** (`RULING FV`'s precedent); the **permissive** arm replays correctly on the
+live event — at 10:55:12 `MERGE_HEAD` was already gone (`RULING FU`'s standard).
+
+⭐ **Applied to itself in the tick that wrote it** (`RULING FQ`): tick 322 ran both checks and pushed
+`ed01c9eb` naming `.gateT322.txt` as its certificate, with `git diff --stat b5473856 ed01c9eb` →
+**`CLAUDE.md | 112 +`, one file, no `app/` byte** as the stated reason §5 carries across.
+
+⚠️ Twenty-eighth member of the family, and the first where the defective instrument is **the
+relationship between a gate and a sha** — not the floor's command (`EU`), coverage (`EV`), value
+(`EZ`), sequence (`FN`), grammar (`GF`) or moment (`GG`), but **which commit the certificate is a
+certificate OF.**
+
+## ⭐⭐ THE LANE CONTAINS `main` — merge base IS main's own commit (tick 322), and `RULING FO` holds in its strongest form
+
+```
+git merge-base HEAD 55275492                  →  57781d59      ← MAIN'S OWN COMMIT
+git diff --stat b5473856 57781d59 -- app/     →  app/phpunit.xml | 2 +-   and nothing else
+git diff --stat 9aa5924e b5473856 -- app/     →  HeadingSeamTest.php | 50 +/3 -   and nothing else
+```
+
+⭐ **The owner-ordered second take LANDED and is PUSHED — `b5473856` (tick 322), tip `ed01c9eb`
+(`9aa5924e..ed01c9eb`).** STAGES-235 was a clean **PASS**: every floor met, the restore step ran and
+correctly found nothing (⭐ **the first take here with `RULING DC`'s destructive `DB_DATABASE` row absent
+from the range**), and `§2e`/`§2f`/`§2g` printed **✓** on their second consecutive merge — with
+`RULING FM`'s void condition **not** reached, the base `cbdba9cd` being a main commit, so `EP`'s
+ours-since-base test is valid and returns `app/phpunit.xml` alone. ⭐ **The merged-wrong-lint trap is
+closed by measurement**: the one `app/` file the take brought lives in `tests/Feature/Architecture/`
+and is **byte-identical to main's blob**, so nothing was resolved by hand. ✅ **§3 is STILL TRUE without
+a refresh wave — the first time it has survived a merge** (`.gateT322.txt` §3 == `.gateS235w.txt` §5);
+still a LEDGER, cite §5. ⛔ **The owner's drift rule does NOT fire at tick 322 and all three conditions
+were measured**: (1) 4 behind at the pin / 18 at the moved ref — FALSE; (2) no `Doctor`/`hooks`/harness
+change since our last merge — FALSE; (3) this tick starts **no wave**, and the rule is conditioned on a
+wave beginning.
+
+### The superseded tick-321 measurement, kept as history
 
 ```
 git merge-base HEAD cbdba9cd          →  cbdba9cd          ← main's own tip
@@ -2282,7 +2357,34 @@ dispatched — executed by the supervisor itself**, `bin/supervise.sh` being thi
 ⛔ **Not a wave and no count moved** — §5 identical in all eight across `.gateT241.txt` and
 `.gateT241b.txt`. It sets no `fail=1`: a trigger, never a verdict.
 
-⛔ **The backlog is EMPTY at tick 318 and this tick writes a HOLD — the SEVENTY-SEVENTH consecutive tick
+✅ **S-197 — the owner-ordered SECOND take (condition 3). COMPLETE at tick 322** (STAGES-235, **PASS**).
+Merge `b5473856` clean and conflict-free, the restore step ran and found nothing, per-track proof empty,
+DB pin intact, ours-since-base `app/phpunit.xml` alone, `§2e`/`§2f`/`§2g` all **✓**, §5 `497` with the
+eight summing to it exactly, pint `passed`, phpstan `0`, and §1 back to **77** after item 1 deleted
+`generate_report.py`. Tip `ed01c9eb` pushed (`9aa5924e..ed01c9eb`), certified per `RULING GH(i)`.
+
+⛔ **The backlog is EMPTY again at tick 322 and that tick wrote a HOLD — the EIGHTY-FIRST consecutive
+tick with no instrument change, and the FOURTH CONSECUTIVE lettering tick** (319 `GE` · 320 `GF` ·
+321 `GG` · 322 `GH`), the lettering streak derived with `RULING GD(i)`'s paired reader plus `GD`'s
+first-match rule and reset at tick 318's `letters none`, the instrument ordinal derived by **distinct
+authoring tick** per `RULING GB(ii)` (**80** prior since tick 241's `8e178993`). ⛔⛔ **`RULING DK` fired
+live** — pin `55275492` → `42aacea9` at write time, **+1 first-parent / +14 ancestor / +1 merge**, the
+MERGE signature (`RULING EK`); the pin governed and every figure was run against the literal sha, with
+the take re-check, the checker diff and ACTION 1's grep **re-run at the moved ref** and printing nothing
+at either. ⭐ **The admission census was NOT re-run and the reason is a measurement taken first**:
+`git diff --stat 6240383f HEAD -- app/app/Modules/` is **empty**, corroborated by `capability` reading
+**207** unchanged — the take brought one `app/` file and it is a test, not a `capabilities.php`.
+⚠️ **`RULING FY`'s §1 census is no longer a run of identical values and the excursion is this seat's own
+`GG(ii)` positive control**: over all **95** `.gateT*.txt` files, **89 read `77`** and **six read `78`**
+— `.gateT237` (outside the window), the four `b` intra-tick gates, and ⭐ **`.gateT321.txt`**, which ran
+while `generate_report.py` was still on disk; `.gateT322.txt` is back to **77**. ⚠️ **`RULING FH` fired
+live on this seat's own §2e/§2f/§2g census** (`grep -c "HEAD is not a merge"` returns 4–8 per gate,
+rising with tick number, against an anchored **3**), so that ordinal is **OMITTED rather than guessed**
+per `RULING FZ`'s derive-it-or-omit-it. **TRACK 1 ACTION 10** at the pin: **49** first-parent merges
+since `a5042da2` (**50** at the moved ref), **0** naming `track/stages`, `18bbde18` still not an ancestor
+(rc **1**).
+
+⛔ **The backlog was EMPTY at tick 318 and that tick wrote a HOLD — the SEVENTY-SEVENTH consecutive tick
 with no instrument change, and it LETTERS NONE for a SECOND CONSECUTIVE tick** (317 · 318), derived with
 `GD(i)`'s paired reader plus `GD`'s first-match rule read over `%s` with line numbers: tick 317
 first-matches `letters none`, tick 316's addendum `RULING GD lettered` and its block `RULING GC lettered`
