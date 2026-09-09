@@ -7227,3 +7227,85 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     `merchant_connected` stays true; and `sellables.sku` is `->index()` and not unique, so the second
     `Sellable::create` cannot collide. **The one key that can go wrong is `payments_written`**, which is
     why the tenant is chosen for `payments = 0` and never merely for existing.
+277. **The empty pool as INSTRUMENT worked, and ruling 270's blocker is measured resolved for X-117 —
+    a successful no-flag run is positive proof a fallback branch executed, with no mutation and no test
+    (RULED by the lane supervisor 2026-09-09 18:5x, on MONEY-160's `8d31ccc6`).** Ruling 270 measured
+    that all five of this lane's evidence commands call `TenantProvisioner::provision()`, which spends a
+    dedicated number out of a nine-number platform pool with no route back, and that the pool is now
+    **closed** — so ruling 39's mandatory sequence (run the command, read the artifact, then write the
+    assertion) was unrunnable for every artifact this lane owns. Ruling 276 re-cut the wave around the
+    closure rather than waiting on it: the tenant is **given**, and the proof that the given-tenant
+    branch works is a second run with **no flag**, because the empty pool guarantees the provision path
+    refuses. Measured: Run A `--business=18` wrote `order_id: 6`; Run B, **no flag**, wrote
+    `order_id: 7` against the same `business_id: 18`. The only route from no flag to success is reading
+    `business_id` back out of the artifact, so the fallback branch **executed**, and a
+    `NumberPoolExhausted` there would have been a disproof rather than a vendor excuse. ⭐ **The
+    generalisable half is the design move, not the fix:** a hard external limit was turned from the
+    blocker into the discriminator, so the proof needs no mutation, no test and no double, and it cannot
+    pass for the wrong reason (ruling 61's family) because the failing branch is *guaranteed* to fail.
+    Where a wave adds a fallback for an exhausted resource, **the exhaustion is the control.**
+    ⚠️ Item 1 chose tenant 18 by measurement and not by convenience — the only id in the surveyed set
+    carrying **both** `payments = 0` and an evidence `Sellable` — and `payments_written` stayed `0` in
+    the artifact, which is the one key that could have gone silently wrong (ruling 276's stated failure
+    mode) and the reason the tenant is chosen rather than taken. ⚠️ ⭐ **Ruling 267's item 3 has finally
+    landed:** the artifact's `waiting_on` now reaches disk **without** its `ruling 20` pointer, after
+    refusing under MONEY-158 (pool exhausted) and being carried by MONEY-159 — an internal ledger
+    reference persisted into a derived artifact, which ruling 267 measured is the durable member of that
+    family. ⚠️ Two paperwork rules are recorded as **held on their first and next outing**, per ruling
+    149's discipline that a fix to a paperwork rule is itself a claim: ruling 274's `log:` field carries
+    the run log's first two lines **verbatim** with no foreground/background classification, and ruling
+    238's second read matched the file on disk **to the nanosecond** (`bytes 10563, mtime
+    2026-09-09 18:28:23.725964979`). The gate also ran **after** the wave's last commit (18:28:23 against
+    18:23:20), which is ruling 42's inverse hazard measured clean rather than assumed.
+
+278. **The stated MONEY-161 hazard is measured NOT a hazard, the real difference is a `$user` two lines
+    from the artifact, and the four remaining evidence commands SPLIT on whether they call a vendor
+    (RULED by the lane supervisor 2026-09-09 18:5x, briefed as MONEY-161; ruling 64's discipline applied
+    to this ledger's own forecast).** The carried gate on MONEY-161 read *"X-199's and X-211's artifacts
+    assert an `INV-` sequence and a non-repeating number, so a reused tenant already holds invoices —
+    re-measure those two before the edit; ⛔ do not assume X-117's clean result transfers."* The warning
+    was right and its **stated reason is false**. Measured: `X-199/Domain/InvoiceNumber::next():34` is
+    `'INV-'.str_pad((string) $nextNumber, 6, '0', STR_PAD_LEFT)`, so a reused tenant's second invoice is
+    `INV-000002`, which matches `X199RuntimeProofTest:20`'s and `X211RuntimeProofTest:23`'s
+    `/^INV-[0-9]{6}$/` exactly as `INV-000001` does — the sequence is **safe on reuse to six digits**.
+    Three sibling hazards were measured away with it: the deliberate duplicate insert at
+    `EvidenceInvoiceCommand:70` runs at CLI where `DB::transactionLevel()` is 0, so its `QueryException`
+    aborts no enclosing transaction and ruling 163's `25P02` cascade cannot fire; `people.phone`
+    (`X-121/…000001:34`) is a plain nullable string with **no unique constraint**, so a second run's
+    duplicate `Person` is harmless — which matters because item 3's binary proof (ruling 277) *is* a
+    second run; and `offerPlan`'s threshold read falls back to `max_installments = 3` against a command
+    offering exactly 3, because ruling 216 removed the only `ArPlanTerm` write from that path and the
+    surviving writer is the owner's late-fee door, which no evidence command calls.
+    ⭐ **The genuine difference is one variable.** `X-211/Console/EvidenceRecoveryCommand:70` passes
+    `$user->id` to `packageForCollections()` as the **principal** — ruling 161's own reasoning for why
+    money's `?int $packagedByUserId` won over main's caller-supplied boolean — and `$user` is resolved
+    at `:42` **only** as the argument to `provision()`. X-117's given-tenant shape moves that resolution
+    inside the `$businessId === 0` branch, so transplanting it verbatim leaves `$user` **undefined** on
+    the reuse path. X-199 has no such dependency (`$user` feeds `provision()` and nothing else), so it
+    *is* a clean three-part transfer and X-211 is not. **RULED: X-211 keeps a `User::first()` reachable
+    outside the provision branch**, and the brief names that difference rather than shipping one shape
+    twice. ⚠️ It is the *shape* of the carried warning that generalises: a forecast hazard is an
+    inherited follow-up (ruling 64) and decays the same way, and this one would have been "confirmed" by
+    a coder who read the regex and never read line 70 — **the danger of a correctly-flagged file with a
+    wrongly-stated reason is that measuring the stated reason clears the file.**
+    **RULED, the split.** MONEY-161 takes the **two non-vendor** commands — `x199:evidence-invoice` and
+    `x211:evidence-recovery` — which rulings 169 and 173 stripped of their Stripe captures, so both are
+    always-runnable with **no credential dependency and no `UNRESOLVED` path** (ruling 48(3)), and each
+    is proven by its own ruling-39 run plus ruling 277's no-flag control. The **two X-198** commands go
+    to MONEY-162, because both reach a live provider — `EvidenceChargeCommand:37` captures with Stripe's
+    own `tok_visa` and `EvidencePaymentLinkCommand:45` calls `PaymentLinkAction`, which posts a real
+    Checkout Session — and because `EvidenceChargeCommand` owns `evidence/j9/charge.json`, carrying
+    `ch_3UCgYZFXLB0i1zXl0NCv569q`, **the lane's only genuinely vendor-issued `artifact_id`** (rulings
+    173, 178) and its sole honest runtime proof, read by J9 at `TwelveJourneysTest:487` and by
+    `GatewayEngineTest:4`. ⛔ Fanning an unproven shape across four commands, two of them at a payment
+    provider, is the unvalidated fan-out this lane keeps paying for; ⛔ and ruling 173's fallback binds
+    MONEY-162 absolutely — if the provider refuses, the outcome is `UNRESOLVED` with the error
+    **quoted**, the old artifact left in place and no test change committed, which is a
+    PASS-WITH-NOTES and never a BLOCK (ruling 39).
+    ⚠️ **One tenant per command, never a shared one**, and the reason is measured rather than cautious:
+    each artifact records its own `business_id` and is therefore self-describing, and both
+    `payments_written` keys are real `Payment::…->count()` reads (ruling 48(2)), so two commands sharing
+    a tenant would couple three artifacts' honesty to each other's run order. ⚠️ The tenant is chosen
+    for `payments = 0` and re-measured in the wave rather than inherited from MONEY-160's survey —
+    `recordPayment` writes no payment row (ruling 107) so neither command dirties its own count, but the
+    survey is a day-old measurement of a live database (ruling 269).
