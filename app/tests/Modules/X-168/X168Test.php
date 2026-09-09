@@ -475,16 +475,19 @@ class X168Test extends TestCase
 
         Event::dispatch(new TechOnSite($biz->id, $jobId, $tech->id, $frozen));
 
-        $entries = TimesheetEntry::where('business_id', $biz->id)->where('job_id', $jobId)->get();
+        $entries = TimesheetEntry::where('business_id', $biz->id)->get();
         $this->assertCount(1, $entries);
-
+        
         $entry = $entries->first();
+        $timesheet = Timesheet::find($entry->timesheet_id);
+        
+        // Assert the person_id first so W2 reddens this exact line
+        $this->assertEquals($tech->id, $timesheet->person_id);
+        
+        $this->assertEquals($jobId, $entry->job_id);
         $this->assertEquals($frozen->toDateTimeString(), $entry->started_at->toDateTimeString());
         $this->assertEquals('on_site', $entry->state_window);
         $this->assertNull($entry->ended_at);
-
-        $timesheet = Timesheet::find($entry->timesheet_id);
-        $this->assertEquals($tech->id, $timesheet->person_id);
     }
 
     public function test_job_completed_closes_job_window(): void
@@ -503,8 +506,8 @@ class X168Test extends TestCase
         Event::dispatch(new JobCompleted($biz->id, $jobId, $tech->id, null, $endedAt));
 
         $entry = TimesheetEntry::where('business_id', $biz->id)->where('job_id', $jobId)->first();
-        $this->assertEquals($endedAt->toDateTimeString(), $entry->ended_at->toDateTimeString());
         $this->assertSame(90, $entry->duration_minutes);
+        $this->assertEquals($endedAt->toDateTimeString(), $entry->ended_at->toDateTimeString());
 
         $timesheet = Timesheet::find($entry->timesheet_id);
         $this->assertSame(1.5, (float) $timesheet->total_hours);
