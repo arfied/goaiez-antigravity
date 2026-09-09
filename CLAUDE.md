@@ -1582,7 +1582,31 @@ dispatched — executed by the supervisor itself**, `bin/supervise.sh` being thi
 ⛔ **Not a wave and no count moved** — §5 identical in all eight across `.gateT241.txt` and
 `.gateT241b.txt`. It sets no `fail=1`: a trigger, never a verdict.
 
-⛔ **The backlog is EMPTY at tick 243 and this tick writes a HOLD — the SECOND consecutive tick with no
+⛔ **The backlog is EMPTY at tick 244 and this tick writes a HOLD — the THIRD consecutive tick with no
+instrument change.** `wc -l bin/supervise.sh` is **416**, unchanged from ticks 242 and 243, re-measured
+per `RULING FX(ii)` and not carried from prose. ⭐ **`main` DID NOT MOVE** — pin `0ce60089`, identical
+to tick 243's — so `TRACK 1 ACTION 1`'s absolute grep and the **`N142`** note ceiling are unchanged **by
+identity rather than by carry**; lane **21 ahead / 12 behind** first-parent (**21 / 96** by ancestor
+count, `RULING EK`), the ahead-count moving 20 → 21 on **our own** tick-243 commit and nothing else;
+merge base `7a75f289` unmoved; `18bbde18` still not an ancestor (rc **1**) after **12** first-parent
+merges since the revert, `grep -c "track/stages"` over that range → **0**. ⛔ **The take is OPEN,
+UNNECESSARY and REFUSED for a seventh tick**: `DD`'s two-row re-check prints nothing and the
+`Doctor`/`JourneyHarness`/`seals.json` diff against our base is **empty**, so this lane's checker **is**
+main's current checker byte-identical, `RULING EQ`'s void condition is not reached, and a take could
+refresh nothing at a cost of **96** ancestor commits. ⭐ **The admission census was NOT re-run and the
+reason is a measurement taken first**: `git diff --stat 10e804ea HEAD -- app/` is **empty**, so its
+one-code-change shelf life is unspent — corroborated from the other side by `capability` reading **207**
+unchanged. ⚠️ **A precision on `RULING FX(ii)`, deliberately NOT lettered** (`FW` refuses this seat's
+appetite for elevating small findings; `FS` is the precedent for changing nothing and saying why):
+`grep -cE '^bar "'` returns **14 main / 13 ours** — `FX`'s form, which counts `bar "verdict"` at `:410`
+— while `grep -oE '^bar "[0-9a-z]+\.'` returns **13 / 12**, numbered sections only. **`FX`'s numbers are
+right; a re-run satisfies `FX(ii)` only when it is the SAME extraction**, since a differently-shaped
+command is a new measurement and not a check on the old one. Membership re-derived unchanged: `1a` ·
+`1b` · `2d` main-has-we-lack (**NOT adoptable**, `RULING FS`, re-refused **without re-testing the
+boundary** because running that test *is* the harm) and `2f` · `2g` we-have-main-lacks (`ACTIONS
+11`/`12`, still not taken).
+
+⛔ **The backlog was EMPTY at tick 243 and that tick wrote a HOLD — the SECOND consecutive tick with no
 instrument change, which is `RULING FW`'s cadence holding rather than being restated.** `wc -l
 bin/supervise.sh` is **416**, unchanged from tick 242, re-measured per `RULING FX(ii)` and not carried.
 Re-measured at the new pin: main moved `58b0e8ee` → **`0ce60089`**, **+2 first-parent**
