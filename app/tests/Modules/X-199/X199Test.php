@@ -73,7 +73,7 @@ class X199Test extends TestCase
         ]);
 
         Http::fake([
-            'api.stripe.com/*' => Http::response(['id' => 'ch_mock_123'], 200),
+            'api.stripe.com/*' => Http::response(['id' => 'ch_mock_123', 'status' => 'succeeded'], 200),
         ]);
 
         // Set net-30 credit limit to $1,000.00 (100,000 cents)

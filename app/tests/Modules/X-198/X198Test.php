@@ -187,7 +187,7 @@ class X198Test extends TestCase
         Http::fake([
             'api.stripe.com/*' => Http::sequence()
                 ->push(['error' => ['message' => 'Your card was declined.']], 402)
-                ->push(['id' => 'ch_stub_money60_00000000000'], 200),
+                ->push(['id' => 'ch_stub_money60_00000000000', 'status' => 'succeeded'], 200),
         ]);
 
         $idempotencyKey = 'idem_retry_1';
@@ -225,9 +225,9 @@ class X198Test extends TestCase
 
         $this->app->instance(StripeGatewayClient::class, new class
         {
-            public function charge(int $amountCents, string $source, string $currency = 'USD'): string
+            public function charge(int $amountCents, string $source, string $currency = 'USD'): array
             {
-                return 'ch_stub_money61_00000000000';
+                return ['id' => 'ch_stub_money61_00000000000', 'status' => 'succeeded'];
             }
         });
 
@@ -477,7 +477,7 @@ class X198Test extends TestCase
         $this->connectAction->handle($biz->id, 'stripe', 'acct_tenant_stripe_123');
 
         Http::fake([
-            'api.stripe.com/*' => Http::response(['id' => 'ch_mock_announced'], 200),
+            'api.stripe.com/*' => Http::response(['id' => 'ch_mock_announced', 'status' => 'succeeded'], 200),
         ]);
 
         $payment = app(GatewayEngine::class)->capture($biz->id, 7500, 'tok_visa', 'idem_stripe_announce');
@@ -566,7 +566,7 @@ class X198Test extends TestCase
         $this->connectAction->handle($biz->id, 'stripe', 'acct_idem_header');
 
         Http::fake([
-            'api.stripe.com/*' => Http::response(['id' => 'ch_idem_header_00000000000'], 200),
+            'api.stripe.com/*' => Http::response(['id' => 'ch_idem_header_00000000000', 'status' => 'succeeded'], 200),
         ]);
 
         app(GatewayEngine::class)->capture($biz->id, 4500, 'tok_visa', 'idem_header_1');
@@ -587,7 +587,7 @@ class X198Test extends TestCase
         $this->connectAction->handle($biz->id, 'stripe', 'acct_x');
 
         Http::fake([
-            'api.stripe.com/*' => Http::response(['id' => 'ch_test_gbp_00000000000'], 200),
+            'api.stripe.com/*' => Http::response(['id' => 'ch_test_gbp_00000000000', 'status' => 'succeeded'], 200),
         ]);
 
         app(GatewayEngine::class)->capture($biz->id, 4500, 'tok_visa', 'idem_currency_1');
@@ -660,5 +660,29 @@ class X198Test extends TestCase
             return str_contains($request->body(), 'Northwind')
                 && ! str_contains($request->body(), 'declined');
         });
+    }
+
+    public function test_a_charge_the_gateway_has_not_settled_is_not_recorded_as_captured(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Pending', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->connectAction->handle($biz->id, 'stripe', 'acct_pending');
+
+        // A real charge object exists at the provider and has not settled. Reading only the id
+        // records this as captured (R235).
+        Http::fake([
+            'api.stripe.com/*' => Http::response(['id' => 'ch_pending_0000000000000', 'status' => 'pending'], 200),
+        ]);
+
+        $payment = app(GatewayEngine::class)->capture($biz->id, 6100, 'tok_visa', 'idem_pending_1');
+
+        $this->assertSame('awaiting_processor', $payment->status);
+
+        // The id is kept: a charge object does exist there, and it is the honest handle on it.
+        $this->assertSame('ch_pending_0000000000000', $payment->gateway_charge_id);
+
+        // An event named Captured must not fire for money that was not captured (R101, R236).
+        Event::assertNotDispatched(PaymentCaptured::class);
     }
 }

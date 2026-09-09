@@ -123,9 +123,9 @@ class DeclinesScreenTest extends TestCase
 
         $this->app->instance(StripeGatewayClient::class, new class
         {
-            public function charge(int $amountCents, string $source, string $currency = 'USD'): string
+            public function charge(int $amountCents, string $source, string $currency = 'USD'): array
             {
-                return 'ch_success_recovery00000000';
+                return ['id' => 'ch_success_recovery00000000', 'status' => 'succeeded'];
             }
         });
         $captureAction->handle($biz->id, 1000, $token, 'idem_2');
