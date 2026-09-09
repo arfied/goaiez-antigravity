@@ -2633,7 +2633,72 @@ DB pin intact, ours-since-base `app/phpunit.xml` alone, `§2e`/`§2f`/`§2g` all
 eight summing to it exactly, pint `passed`, phpstan `0`, and §1 back to **77** after item 1 deleted
 `generate_report.py`. Tip `ed01c9eb` pushed (`9aa5924e..ed01c9eb`), certified per `RULING GH(i)`.
 
-⛔ **The backlog is EMPTY at tick 332 and that tick wrote a HOLD — the NINETY-FIRST consecutive tick with no
+⛔ **The backlog is EMPTY at tick 333 and that tick wrote a HOLD, with NO commit and NO push — the
+NINETY-SECOND consecutive tick with no instrument change, and it LETTERS NONE, so the lettering streak ENDS
+AT TWO (331 `GL` · 332 `GM`) and the decline streak restarts at ONE**, both ordinals derived in-tick per
+`RULING FZ`. ⭐ **The instrument ordinal needed a MEASURED correction and is the cleaner for it**: `GB(ii)`'s
+distinct-authoring-tick reader returns **90** subjects since tick 241's `8e178993`, and **tick 331 authored
+no commit at all** — measured absent from the subject list, its block committed inside tick 332's
+`dbe26b3d` under the recorded cadence deviation — so the subject census **undercounts by exactly that gap**
+and the honest figure is **91** prior ticks, making this the ninety-second; `git log -1 --
+bin/supervise.sh` still names `8e178993` and `wc -l` is still **416**. The lettering is derived by `GD(i)`'s
+paired reader, **first match per subject** over `%s` (332 → `RULING GM lettered`; 330 · 329 → `letters
+none`; 328 → `RULING GK lettered`, the resetting event), with tick 331's `RULING GL` read from its **prose**
+for the same structural reason. ⭐ **MAIN DID NOT MOVE AT PIN TIME — pin `df2b732b`, the SECOND CONSECUTIVE
+unmoved tick at it**: tick 332 was the first at it and tick **331 MOVED** (`557cdaa4` → `df2b732b`), the
+reset, derived with `GA(i)`'s reader over subjects spanning back to that event. ✅ **`RULING DK` did NOT
+fire** — `origin/main` re-read unchanged at `df2b732b` at write time. ⛔ **The owner's drift rule does NOT
+fire and all three conditions were measured at the pin**: (1) **9 / 58** behind — FALSE; (2) the
+`Doctor`/`JourneyHarness`/`.claude/`/`seals.json` diff against the pin is **empty** — FALSE; (3) no wave
+started and **nothing pushed** — FALSE. `DD`'s two-row re-check prints nothing and the whole checker diff
+prints nothing, so the take is **OPEN, UNNECESSARY and REFUSED** — this lane's checker **is** main's current
+checker byte-identical, `RULING EQ`'s void condition not reached, a take could refresh nothing at a cost of
+**58** ancestor commits. **Lane `115 ahead / 9 behind` first-parent (`115 / 58` by ancestor count) at
+`dbe26b3d`, stated per `RULING GL(i)` with the sha it belongs to** — ⭐ **and there is no second value to
+state, which is not an omission: this tick makes no commit, so `GK(i)`'s two moments coincide and
+`GL(ii)` has nothing to reason about.** Merge base **`57781d59` — main's own commit — unmoved**;
+ours-since-base in `app/` is `app/phpunit.xml` alone, so every stage count is **main's** (`RULING FO`).
+⭐⭐ **`RULING GL(ii)` is VINDICATED on its FIRST backward audit**: tick 332's post-commit `115 / 9`,
+**measured** after its commit rather than reasoned, reproduces **by identity** — as do the behind-counts,
+the merge base, the merge count **56**, `N158`, **416**, drift `4 0` and `bar` **14 / 13**; the audit is
+**CLEAN** and ⛔ **not lettered**, `RULING FW` barring a clean audit dressed as a discovery.
+⭐⭐ **`RULING GJ` reproduced a TENTH time and for the FIRST time as a FORWARD prediction**: tick 332
+predicted in advance that this tick's opening gate would read §1 **77** rather than 78, because it left
+nothing uncommitted, and the gate reads **77** with no `ℹ supervisor working notes` line in §2 and
+`git status --porcelain -uall | wc -l` → **77**, of which **77 untracked**, supervisor directory **0**.
+⭐ The census was re-derived **LABELLED** (`GM(i)`) and consumed as an **AGGREGATE** (`GM(ii)`, whose
+order-independence is why it is safe): **100 at 77 · 15 at 78** over all **115** `.gateT*.txt` files, summing
+to the file count exactly (`RULING FJ`), the `+2 at 77` being `.gateT332b.txt` and **this tick's own
+`.gateT333.txt`**, named per `GM`'s precision about a census over artefacts the tick is still creating.
+⭐ **The admission census was NOT re-run and the reason is a measurement taken first**:
+`git diff --stat 6240383f HEAD -- app/app/Modules/` is **empty**, corroborated by `capability` **207**
+unchanged; **§5 carries across by identity** — `git diff --stat b5473856 HEAD -- app/` is **empty**. §3 ==
+the §5 tick 322 verified and **still a LEDGER**; §2 `none`; §2a empty; §2b all parse; §2c none;
+§2e/§2f/§2g `HEAD is not a merge` ×3 — ⚠️ that trio's streak ordinal is **NOT asserted** (`RULING FZ`); §4
+seals ✓ with stamp `20260829-0647` == `runtime_build`; §6 pint `passed`, phpstan `0`; verdict green.
+**TRACK 1 ACTION 10** at the pin: **56** first-parent merges since `a5042da2` — unchanged, correct **by
+identity** because re-run at the pin — **0** naming `track/stages`, `18bbde18` still **not an ancestor**
+(rc **1**). **ACTION 1** run absolutely per `RULING EC`: the `.agents/rules/` grep prints nothing; the
+ceiling of the **ANNOUNCED SUBSET** is **`N158`** by the `%s` form (`GC(ii)`), never *"the note ceiling on
+`main`"*. Case (d) per `GE(i)`/`GE(ii)`: every heading enumerated, newest is `## OWNER RULING — 2026-09-09
+09:02 — relayed by Track 1`, **processed** (`grep -c` → 15) — ⚠️ and per `GC(i)` an unfired case (d) would
+mean only *"no note arrived on a channel Track 1 has recorded it cannot use"*. Case (a) excluded on
+**liveness, not file existence** — `coder.pid` `3455084` **stale**, the one live seat being `pricebook
+run159` by its absolute redirect, with **no forecast attached** (`RULING EJ`); case (b) excluded on mtime,
+the **mailbox** `REPORT.md` at 10:55 against the tick-332 block at 17:28. ⚠️ **Two permission prompts,
+neither retried verbatim** — a `tee`-plus-`git rev-parse`/`pgrep` compound and the gate invocation paired
+with a trailing `echo "exit=$?"`, both re-issued as plain single calls (`RULING FI`: the form, never the
+capability); ✅ **no hook refusal fired**; ✅ **`RULING ES`/`FJ` did NOT fire — no `cd` was issued at all**;
+✅ **`RULING FH` did NOT fire, by construction** — no bare literal grep over a gate, offsets located with
+the anchored `^.\[1m== ` form; ✅ **`RULING GM` did NOT fire** — the one multi-file read was labelled and
+aggregate. ⭐ `state.py next` → `BUILD_WAVE` wave 30 (`next_module X-190`), **not a licence** —
+`RULING ER`'s withdrawals returning modules to **BUILDING**, and **`BUILDING` is not progress**.
+⚠️ Scratch files **named, not deleted**: `.sha333.txt`, `.gateT333.txt`, `.subj333.txt`, `.fy333.txt`,
+`.blkT333.md`, all under `.agents/supervisor/`, which §1 does not count. ⚠️ **These notes are left
+uncommitted for tick 334 under the standing cadence, which resumes here exactly as tick 332 said it would**
+— so tick 334's opening gate reads §1 **78**, which is `RULING GJ` and not a defect.
+
+⛔ **The backlog was EMPTY at tick 332 and that tick wrote a HOLD — the NINETY-FIRST consecutive tick with no
 instrument change, and it LETTERS `RULING GM`, making this the SECOND CONSECUTIVE lettering tick (331 `GL` ·
 332 `GM`) with no decline streak to claim**, both ordinals derived in-tick per `RULING FZ`: the instrument
 ordinal by `GB(ii)`'s **distinct authoring tick** form and never `git rev-list --count` (**89** prior
