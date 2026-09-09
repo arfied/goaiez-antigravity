@@ -13,6 +13,7 @@ use App\Modules\X199\Models\DeclineDeferral;
 use App\Modules\X199\Ui\Declines;
 use App\Support\Tenancy;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -325,6 +326,48 @@ class DeclinesScreenTest extends TestCase
         Livewire::actingAs($owner)->test(Declines::class)
             ->assertSee('Make a pay link')
             ->assertDontSee('Send pay link');
+
+        Carbon::setTestNow();
+    }
+
+    public function test_a_refused_pay_link_gives_the_owner_the_gateway_sentence_and_never_its_json(): void
+    {
+        $base = now()->startOfWeek()->addDays(3)->setTime(10, 0);
+        Carbon::setTestNow($base);
+
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $payment = Payment::create([
+            'business_id' => $biz->id,
+            'amount_cents' => 15000,
+            'currency' => 'USD',
+            'payment_token' => 'tok_refused_1',
+            'idempotency_key' => 'idem_refused_1',
+            'status' => 'failed',
+            'created_at' => $base,
+        ]);
+
+        config()->set('credentials.stripe_secret', 'sk_test_brief');
+
+        Http::fake([
+            'api.stripe.com/*' => Http::response([
+                'error' => [
+                    'message' => 'The amount must be at least 50 cents.',
+                    'type' => 'invalid_request_error',
+                    'code' => 'amount_too_small',
+                    'doc_url' => 'https://stripe.com/docs/error-codes/amount-too-small',
+                ],
+            ], 400),
+        ]);
+
+        Livewire::actingAs($owner)->test(Declines::class)
+            ->call('sendPayLink', $payment->id)
+            ->assertSee('The gateway would not open a payment page: The amount must be at least 50 cents.')
+            ->assertDontSee('invalid_request_error')
+            ->assertDontSee('doc_url');
 
         Carbon::setTestNow();
     }
