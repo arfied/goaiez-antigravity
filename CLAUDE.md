@@ -1962,9 +1962,103 @@ dispatched — executed by the supervisor itself**, `bin/supervise.sh` being thi
 ⛔ **Not a wave and no count moved** — §5 identical in all eight across `.gateT241.txt` and
 `.gateT241b.txt`. It sets no `fail=1`: a trigger, never a verdict.
 
-⛔ **The backlog is EMPTY at tick 316 and this tick writes a HOLD — the SEVENTY-FIFTH consecutive tick
-with no instrument change, and the streak of ticks with no new lettered ruling ENDS AT THREE** (313 · 314 ·
-315), because this tick letters **`RULING GC`** and **`RULING GD`**; both ordinals are **derived in this
+⛔ **The backlog is EMPTY at tick 317 and this tick writes a HOLD — the SEVENTY-SIXTH consecutive tick
+with no instrument change, and it LETTERS NONE**, so there is no lettering streak to claim: tick 316
+lettered `GC` and `GD`, making this the **first** decline since, derived with `GD(i)`'s paired reader plus
+`GD`'s first-match rule read over `%s` with line numbers (tick 316's block → `RULING GC lettered`; its
+addendum → `RULING GD lettered`; 315 and 314 → no match, decline by absence; 313 → `letters none`; 312 →
+`RULING GB lettered`), and `GD(ii)`'s convention held on both tick-316 subjects with the announcement ahead
+of every quotation. The instrument ordinal is **derived in this tick** per `RULING FZ` and not carried —
+`git log --format='%s' 8e178993..HEAD | grep -oE "^chore\(supervisor\): tick [0-9]+" | sort -u | wc -l` →
+**75** prior distinct authoring ticks (`GB(ii)`'s distinct-tick form, **never** `git rev-list --count`),
+corroborated by `git log -3 -- bin/supervise.sh` naming tick 241's `8e178993`. The §3 == §5 run and the
+take-refusal count are **deliberately not asserted**, having no derivation.
+
+⭐⭐ **`main` MOVED — pin `ae420332` → `67078919` — and THE MOVE IS AN EVENT TICK 316 ALREADY RECORDED.**
+The unmoved streak at `ae420332` **ENDS AT FIVE** (312 · 313 · 314 · 315 · 316), derived with `GA(i)`'s
+repaired reader over commit **subjects**, anchored to the subject's start per `GB(i)` and deduped by
+distinct authoring tick per `GA(iii)`/`GB(ii)`, spanning back to tick 311's **MOVED** — so this is the
+**first** moved tick after unmoved ones and there is **no consecutive-moved streak**. ⭐ The anchored
+prefix achieves the dedupe **structurally**, tick 316's addendum subject (`tick 316 addendum, same tick,
+fix-forward — …`) not matching, which is tick 313's recorded precision reproducing. ⚠️ Tick 310 remains
+absent from the subject census, `GA`'s own recorded finding and not a new one. ⛔ **The two commits in the
+range are exactly the pair tick 316 named mid-tick under `RULING DK`** — `2eee0eef`
+`merge: track/pricebook — X-171` (08:20:08) and `67078919` `chore(supervisor): N151 … N152 … N153`
+(08:41:01) — and **every figure tick 316 took at the moved ref reproduces BY IDENTITY**: behind
+**55 / 276**, merge count **46**. The **+2 first-parent / +6 ancestor / +1 merge** delta is the **MIXED**
+signature against tick 256's `+7 / +7`; **read the shape, never the number** (`RULING EK`). Tick 311's
+shape recurring, recorded so no later tick reads one event as two.
+
+Lane **97 ahead / 55 behind** first-parent (**97 / 276** by ancestor count), the ahead-count moving
+95 → 97 on **tick 316's own two commits**; merge base `7a75f289` unmoved; ours-since-base in `app/` is
+`app/phpunit.xml` alone, so this lane still authors no `app/**` byte and `boundary 55` · `contract 85` ·
+`capability 207` · `anchor 128` · `schema 16` remain **main's numbers** (`RULING FO`). ⛔ **The take is
+OPEN, UNNECESSARY and REFUSED** — `DD`'s two-row re-check prints nothing and the
+`Doctor`/`JourneyHarness`/`seals.json` diff against our base is **empty**, so this lane's checker **is**
+main's current checker byte-identical, `RULING EQ`'s void condition is not reached, and a take could
+refresh nothing at a cost of **276** ancestor commits. ⭐ **The admission census was NOT re-run and the
+reason is a measurement taken first**: `git diff --stat 10e804ea HEAD -- app/` is **empty**, corroborated
+by `capability` reading **207** unchanged. §1 read from the count line per `FY` at `:47` as a **single
+line** at **77**, corroborated independently by `git status --porcelain -uall`, supervisor directory
+contributing **0**; `FY`'s census spans **SEVENTY-NINE** consecutive gates (`.gateT239`…`.gateT317`, all
+`77`, derived in three calls of 27 · 26 · 26 with every filename attached, never a glob). §3 == §5 and
+still a LEDGER; §5's own arithmetic control holds (`494`, read positionally). `wc -l bin/supervise.sh`
+**416** and drift `4 0`, both re-measured per `FX(ii)`; **both `bar` extractions were run** — `grep -cE
+'^bar "'` → **14 / 13** (`FX`'s form) and `grep -coE '^bar "[0-9a-z]+\.'` → **13 / 12** (tick 244's
+recorded precision) — with membership re-derived by `comm` on sorted input and unchanged (`1a` · `1b` ·
+`2d` **NOT adoptable**, `RULING FS`, re-refused **without** re-testing the boundary; `2f` · `2g` offered
+upstream). §2e/§2f/§2g printed `HEAD is not a merge` for a **SEVENTY-SIXTH** gate (T242…T317, all `3`,
+derived in three calls of 25 · 25 · 26, anchored with filenames explicit, T241 **measured at `2`** as
+`FZ(b)`'s pre-adoption gate). **TRACK 1 ACTION 10** at the pin: **46** first-parent merges since
+`a5042da2` (45 → 46 on main's one merge), **0** naming `track/stages`, `18bbde18` still not an ancestor
+(rc **1**). **ACTION 1** re-run **absolutely** per `RULING EC`: the `.agents/rules/` grep prints nothing;
+its ceiling figure is stated per `GC(ii)` as **N153 by the `%s` subject form**, the ceiling of the
+**announced subset** and never of Track 1's ledger.
+
+⭐ **Precisions recorded and deliberately NOT lettered** (`FW` bars dressing a clean audit as a
+discovery): tick 317's backward audit under `FX(i)` is **clean** and, against tick 316's *moved-ref*
+figures, its **stronger by-identity form** — behind `55 / 276` and the merge count `46` reproducing
+exactly, with `77`, `416`, drift `4 0` and `bar` `14/13` and `13/12` all reproducing and the only movers
+being the ahead-count on tick 316's two commits and the two censuses each growing by one gate, and **no
+ordinal asserted for the audit itself**; ⚠️ **`GD(i)` carries a residual hazard this tick could NOT
+falsify and it is recorded rather than lettered** — the convention template `RULING <XX> lettered` is
+itself a match for `GD(i)`'s pattern, so a **declining** tick that quoted the convention *before* writing
+`letters none` would read as a letter of a ruling named "XX", and `GD`'s first-match rule closes it only
+if a decline's announcement precedes every quotation, which `GD(ii)` states for the letter case and
+leaves implicit for the decline case; ⛔ **no historical event produces the failure** (tick 316's addendum
+has `RULING XX lettered` as its **second** match, behind a real announcement), so `RULING FU`'s standard
+is **not met** and lettering a hypothetical is the invented-finding shape — **the discipline is simply to
+write `letters none` in the subject's leading segment, which this tick does**; ✅ **`RULING FH` did NOT
+fire, by construction rather than luck** — no bare literal grep was run over a gate at all, section
+offsets located with the anchored `^.\[1m== ` form and every figure then read positionally or with an
+anchored pattern; ⚠️ **but a POSITIONAL `sed` RANGE hit §1's commit-log dump and returned 38.7 KB**, the
+count read correctly out of it and then **re-read at `:47` exactly**, which is tick 305's standing
+correction **not applied at first use** and the **third** tick where a correction about this seat's own
+reading discipline was applied on the re-run rather than the first attempt (306 · 314 · 317);
+⚠️ **`RULING FY`'s census was first issued as `grep -cE` and returned PRESENCE (`1` per file) where the
+census needs the VALUE**, re-issued as `grep -oE` — **tick 314's recorded error reproduced exactly** —
+caught because the filenames were attached and 27 identical `:1` rows are not a census, **no figure
+harmed**, and not lettered because the remedy is the rule that already exists (`RULING FS`'s precedent);
+✅ **`RULING ES`/`FJ` did NOT fire, by construction rather than luck — no `cd` was issued at all**, every
+census running on absolute paths with all seventy-nine / seventy-six filenames attached, which is `FJ`'s
+own control; ✅ **no hook refusal fired and no permission prompt was met**, recorded because a refused
+hook is partial work and not a no-op; ⚠️ **the TWO liveness scans DISAGREED** — the case-(a) scan found
+**two** coders and the write-time scan **one**, Track 1's `run222` having ended mid-tick, **neither**
+containing this lane, the relative-`logs/` `run174` proven not ours by **re-verifying** that this checkout
+has no such directory (`RULING CX`), recorded with **no forecast attached** per `RULING EJ` and their run
+numbers naming nothing on their own (`RULING EF`); ✅ **`RULING DK` did NOT fire** — `origin/main` re-read
+unchanged at `67078919` at write time, the honest counterpart to its firing at ticks 310 and 316; and
+⭐ **`state.py next` returns `BUILD_WAVE` wave 30 (`next_module` `X-190`), which is NOT a licence** — it
+is the standing consequence of `RULING ER`'s six withdrawals returning modules to **BUILDING**, and
+**`BUILDING` is not progress**. ⚠️ `HEAD` is **69 ahead** of `origin/track/stages`; notes-only commits
+ride the next gated-sha push. ⚠️ This tick's scratch files are **named, not deleted** (`rm` is refused to
+this seat): `.gateT317.txt`, `.sha317.txt`, `.subj317.txt`, `.tk317.txt`, `.mainsup317.txt`,
+`.mainbar317.txt`, `.oursbar317.txt`, `.blkT317.md`, all under `.agents/supervisor/`, which §1 does not
+count.
+
+⛔ **The backlog was EMPTY at tick 316 and that tick wrote a HOLD — the SEVENTY-FIFTH consecutive tick
+with no instrument change, and the streak of ticks with no new lettered ruling ENDED AT THREE** (313 · 314 ·
+315), because that tick lettered **`RULING GC`** and **`RULING GD`**; both ordinals were **derived in that
 tick** per `RULING FZ` and neither carried — `git log --format='%s' 8e178993..HEAD | grep -oE
 "^chore\(supervisor\): tick [0-9]+" | sort -u | wc -l` → **74** prior distinct authoring ticks over **76**
 rows (`RULING GB(ii)`'s distinct-tick form, **never** `git rev-list --count`, whose row form would have
