@@ -18,6 +18,11 @@ class ChatDoorTest extends TestCase
 {
     use RefreshDatabase;
 
+    /**
+     * BUILD PROPOSAL: X-102's ChatTurnAction calls C-Agent unconditionally; it should only call if the author is 'visitor'. Owner: X-102
+     * BUILD PROPOSAL: G5-37 — Track 1 must map chat_session_id to C-Agent's conversation_id so HUMAN_TAKEOVER_LATCH works. Owner: Track 1
+     * BUILD PROPOSAL: X-102's ChatTurnAction defaults the turn number to 1; it should compute and pass the real turn number. Owner: X-102
+     */
     public function test_valid_key_creates_chat_session_for_right_business(): void
     {
         // Prove that providing the correct PixelKey yields a session belonging to that business.
@@ -108,6 +113,8 @@ class ChatDoorTest extends TestCase
 
         // The wire to C-Agent is synchronous and works on the live path
         $this->assertEquals(1, AgentTurn::where('business_id', $biz->id)->count());
+        $agentTurn = AgentTurn::first();
+        $this->assertEquals('Hello from visitor', $agentTurn->user_message);
     }
 
     public function test_key_for_business_a_and_session_for_business_b_returns_404(): void
