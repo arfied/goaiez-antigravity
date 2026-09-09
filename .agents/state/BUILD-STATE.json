@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-09T02:25:51",
+ "updated": "2026-09-09T02:42:18",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2485,6 +2485,12 @@
    "module": "X-198",
    "chose": "An exception message is owner copy in this lane, because twenty-one Ui catch blocks render it verbatim: the gateway client now states the gateway's own sentence instead of its raw response body, names the missing credential instead of its config key, and X-201's fraud defence names the evidence it still needs in owner words instead of four column tokens.",
    "at": "2026-09-09T02:25:51",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-198",
+   "chose": "A refusal message states what the method did, never what the system did: the gateway client no longer claims nothing was recorded when its caller records a failed payment row and rethrows, and X-199's single log line \u2014 the whole of this lane's operator-facing surface across 264 files \u2014 now names the business, customer, invoice and amount it failed on.",
+   "at": "2026-09-09T02:42:18",
    "ruling": "R245"
   }
  ]
