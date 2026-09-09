@@ -94,11 +94,11 @@ class CheckoutCaptureSeamTest extends TestCase
         {
             public int $calls = 0;
 
-            public function charge(int $amountCents, string $source, string $currency = 'USD'): string
+            public function charge(int $amountCents, string $source, string $currency = 'USD'): array
             {
                 $this->calls++;
 
-                return 'ch_stub_money5812345678901';
+                return ['id' => 'ch_stub_money5812345678901', 'status' => 'succeeded'];
             }
         };
         $this->app->instance(StripeGatewayClient::class, $client);

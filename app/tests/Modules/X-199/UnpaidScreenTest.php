@@ -117,7 +117,7 @@ class UnpaidScreenTest extends TestCase
         ]);
 
         Http::fake([
-            'api.stripe.com/*' => Http::response(['id' => 'ch_mock_123'], 200),
+            'api.stripe.com/*' => Http::response(['id' => 'ch_mock_123', 'status' => 'succeeded'], 200),
         ]);
 
         app(TermsSetAction::class)->handle($biz->id, $customer->id, 'net_30', 50000, 'tok_visa');

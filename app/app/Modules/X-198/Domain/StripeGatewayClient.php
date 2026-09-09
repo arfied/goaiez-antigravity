@@ -15,8 +15,9 @@ final class StripeGatewayClient
      * request returns the FIRST charge instead of making a second one. It must already be
      * namespaced by business: every charge here posts with the PLATFORM secret and no
      * `Stripe-Account` (R093), so all tenants share one idempotency namespace at the provider.
+     * Returns an array carrying the charge 'id' and its 'status'.
      */
-    public function charge(int $amountCents, string $source, string $currency, string $idempotencyKey): string
+    public function charge(int $amountCents, string $source, string $currency, string $idempotencyKey): array
     {
         $secret = config('credentials.stripe_secret');
         if (empty($secret)) {
@@ -41,7 +42,13 @@ final class StripeGatewayClient
             throw new RuntimeException('The gateway accepted the charge request but sent back no charge id, so the charge could not be confirmed.');
         }
 
-        return $id;
+        // The gateway's own settlement word, not the presence of an id. A charge it has taken but
+        // not settled comes back 200 with a real id and 'pending', and reading only the id records
+        // that as captured (R235). A response carrying no status has confirmed nothing, and is
+        // never read as success.
+        $status = $response->json('status');
+
+        return ['id' => $id, 'status' => is_string($status) ? $status : 'unconfirmed'];
     }
 
     /**
