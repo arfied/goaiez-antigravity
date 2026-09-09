@@ -1670,6 +1670,10 @@
   {
    "at": "2026-09-09T16:45:48",
    "note": "Dead-column sweep (MONEY-156): 17 of 128 column names have no writer anywhere in app/app - age_days, deadline_at, due_notified_at, escalated_to_user_id, financing_partner, fulfilment_type, gateway_payout_id, included_minutes, invoices_business_id_invoice_number_unique, last_action, last_reason, max_installments, max_term_days, meter_type, partner, price_item_id, transmitted_at. Corrected from MONEY-155: ar_plan_terms.max_installments, max_term_days and payouts.payout_date are read-only, not written (their only writer was a $casts or $attributes entry); trial_limits.rate_cents_per_min is written by X-210/Domain/X210Engine.php:51, outside this lane's eight trees."
+  },
+  {
+   "at": "2026-09-09T18:02:12",
+   "note": "X-117 Correction to MONEY-158's decided line: the X-117 checkout artifact's waiting_on value did NOT drop its rule-id pointer in that wave. Item 3 refused with NumberPoolExhausted and was reverted, so only the two runtime-proof refusal strings changed. MONEY-159 carries the artifact half."
   }
  ],
  "decisions": [
