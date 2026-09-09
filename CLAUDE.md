@@ -2808,3 +2808,72 @@ correctly graded them `WIRED` anyway.
 enumerating, and enumerating is what fails.** Say *"a `wire:` binding, a route or a console command"*.
 ⚠️ **Third time in this lane an enumeration has itself been the error** — PB-117's formatter edit-shapes,
 PB-142's call syntaxes, this. ⛔ There will not be a fourth that enumerates.
+
+## ⛔⛔ Trap added 2026-09-09 00:2x — a CLAUSE that answers ONE conjunct of a TWO-conjunct verdict is a constant with respect to the other
+
+PB-145's brief defined `RESOLVES` as *"the target method exists **and** its effect reaches something — a
+write, a query change, a listener, a real route."* **Forty-plus rows came back with the clause
+`"<method> exists and has a body"`** — the first conjunct alone.
+
+⛔ **And "exists and has a body" is precisely what a `DEAD-EVENT` method is.** `openPricebook()` — the
+row the whole wave existed for — existed and had a body. **So the clause the sweep ran on cannot
+discriminate between the two verdicts the sweep was built to separate**, and it would have graded the
+defect `RESOLVES` had the defect not been pre-measured into the brief.
+
+⭐ **The column was nevertheless CORRECT, and the two greps that establish it are the reusable part** —
+both non-`RESOLVES` classes close across all ten modules in one command each:
+
+```
+grep -rn 'dispatch(' <ten Ui dirs> | grep -v 'Event::'   → ONE: X-171/Ui/StafffacingApp.php:149
+grep -rnE '<a [^>]*href=' <ten views dirs>               → ONE: X-172/…/customerfacing-portal.blade.php:60
+```
+
+⭐⭐ **The generalisation, and it is a NEW form of a failure this file records twice: when a verdict's
+definition is a CONJUNCTION, the clause must carry evidence for EVERY conjunct.** PB-128's twenty-two
+identical clauses *restated the verdict*; this one answers **a different and easier question than the
+verdict asks**, which is far harder to see because it reads like evidence. ⚠️ Such a clause is right
+exactly as often as the reviewer's own pre-measurement was — here, by luck, always.
+
+⛔ **And the discipline that follows: a weak clause on a column you have independently verified is an
+INSTRUMENT FIX, not a wave.** Re-grading `RESOLVES` after both alternative classes are closed could only
+re-derive PB-143's CHAIN instrument under a new name, which is the documented slide from defects to
+leads. ⭐ The fix lives in the next brief's wording: **the clause names the EFFECT — the write, the query
+change, the listener, the route — never the method's existence.**
+
+## ⭐⭐ Trap added 2026-09-09 00:2x — `gate-runs.tsv` structurally cannot corroborate a PRE-GATE pint red
+
+PB-144 created the `PINT VERDICT` field precisely so a red already fixed could not be silently omitted,
+and PB-145 filled it on the first ask — *"1 red fixed in commit `6cc08f4d`, then green in gate."* Going to
+`gate-runs.tsv` to corroborate it found **no pricebook `pint` row with a non-zero rc anywhere between the
+previous wave's gate and this one**; the only row is `23:56:31 rc 0`.
+
+⭐ **The tsv is not contradicting the report — it cannot see the event.** `supervise.sh` writes one row
+per tool **it** runs, and the red was the **hand-run `./vendor/bin/pint --test` from `app/`** that this
+lane's own brief mandates as the last step *before* the gate, exactly so a pint fix lands as its own
+commit instead of inside a window. **A hand-run pint writes no row.**
+
+⭐⭐ **So `PINT VERDICT` is the ONLY witness a pre-gate pint red has, not the redundant cross-check it
+looked like.** ⛔ Never read a clean tsv as evidence against a report that names one.
+⚠️ The shape is the durable half: **an instrument was built, and then a DIFFERENT instrument was reached
+for to check it, without first asking whether the second one is wired to the event at all.** Same error
+as quoting a green phpstan about nullable flow — ⭐ before using instrument B to audit instrument A, ask
+what B actually records.
+
+## ⭐ Trap added 2026-09-09 00:2x — a prohibition that has failed twice becomes a MEASURED FIELD
+
+PB-141 recorded that an artifact whose path a brief does not name lands wherever the coder is standing,
+and widened the rule to *"every artifact gets a path."* PB-145's brief then said, in those words,
+*"⛔ leave nothing in the repo root"* — and the wave left **nine** scratch scripts there, `??` going
+**22 → 31**.
+
+⛔ Not a `BLOCK` and ⛔ not the coder's shortfall to grade: the files are untracked so they cannot reach
+Track 1, nothing was committed or weakened, and **all nine were disclosed by name, unprompted**.
+Penalising that disclosure is the documented PB-137 mistake.
+
+⭐ **But the ⛔ sentence has now failed twice, so it stops being a sentence.** From PB-146 the report
+carries `SCRATCH BEFORE` and `SCRATCH AFTER` — `git status --porcelain | grep -c '^??'` at both ends —
+and they must be **equal**, with every difference named. ⭐⭐ **The generalisation: when a prohibition
+fails a second time, the fix is not to restate it more firmly but to convert it into a number the report
+must reconcile.** A prohibition is checked by the reviewer's memory; a field is checked by arithmetic.
+⚠️ The cost of leaving it prose is cumulative and already visible — 31 untracked files, and **nothing
+distinguishes a deliberate artifact from litter**, which is what makes the next one invisible.
