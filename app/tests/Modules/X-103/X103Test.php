@@ -14,6 +14,7 @@ use App\Modules\X103\Domain\SiteEngine;
 use App\Modules\X103\Events\ApprovalRequested;
 use App\Modules\X103\Events\PagePublished;
 use App\Modules\X103\Events\SitePublished;
+use App\Modules\X103\Models\Funnel;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
 use App\Modules\X199\Models\Invoice;
@@ -64,7 +65,7 @@ class X103Test extends TestCase
         $this->assertEquals('tpl_hvac_pro_v3', $fork->forked_template_id);
         $this->assertNotNull($fork->fork_commit_hash);
 
-        // 2. A published page and its Facts' invalidation share one commit id (G9-04 site law)
+        // 2. A published page and its Facts' invalidation share one commit id (the site law's shared-commit half)
         $page = $this->pageAction->handle($biz->id, 'home', 'Homepage', false);
         $pubRes = $this->publishAction->handle($biz->id, $page->id, ['hero' => 'Top HVAC Services']);
 
@@ -105,7 +106,7 @@ class X103Test extends TestCase
     }
 
     /**
-     * [G6-11], [G7-16], [G16-07], [G19-07] Short Linker, Device Routing, Custom Slug, Click Cap & Expiry
+     * [G6-11], [G7-16] Short Linker, Device Routing, Custom Slug
      */
     public function test_short_linker_device_routing_and_caps(): void
     {
@@ -130,6 +131,80 @@ class X103Test extends TestCase
         $this->assertEquals('/promo/desktop', $desktopRoute['destination_url']);
     }
 
+    /** [G16-07] (R245) an expiring short link (P-072) */
+    public function test_g16_07_an_expired_short_link_is_refused(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Linker Expiry Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $slug1 = 'expired-promo';
+        $this->funnelAction->handle(
+            businessId: $biz->id,
+            name: 'Expired Funnel',
+            steps: [['url' => '/promo']],
+            shortSlug: $slug1,
+            deviceRouting: [],
+            clickCap: null,
+            expiresAt: Carbon::now()->subDays(1)
+        );
+
+        $res1 = $this->engine->resolveShortLink($biz->id, $slug1);
+        $this->assertSame('expired', $res1['status']);
+        $this->assertArrayNotHasKey('destination_url', $res1);
+
+        $slug2 = 'future-promo';
+        $this->funnelAction->handle(
+            businessId: $biz->id,
+            name: 'Future Funnel',
+            steps: [['url' => '/promo']],
+            shortSlug: $slug2,
+            deviceRouting: [],
+            clickCap: null,
+            expiresAt: Carbon::now()->addDays(7)
+        );
+
+        $res2 = $this->engine->resolveShortLink($biz->id, $slug2);
+        $this->assertSame('routed', $res2['status']);
+        $this->assertArrayHasKey('destination_url', $res2);
+    }
+
+    /** [G19-07] (R245) expiring and click-capped short links */
+    public function test_g19_07_a_capped_short_link_is_refused(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Linker Cap Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $slug = 'capped-promo';
+        $this->funnelAction->handle(
+            businessId: $biz->id,
+            name: 'Capped Funnel',
+            steps: [['url' => '/promo']],
+            shortSlug: $slug,
+            deviceRouting: [],
+            clickCap: 3,
+            expiresAt: null
+        );
+
+        $res1 = $this->engine->resolveShortLink($biz->id, $slug);
+        $this->assertSame('routed', $res1['status']);
+        $this->assertSame(1, $res1['clicks_count']);
+
+        $res2 = $this->engine->resolveShortLink($biz->id, $slug);
+        $this->assertSame('routed', $res2['status']);
+        $this->assertSame(2, $res2['clicks_count']);
+
+        $res3 = $this->engine->resolveShortLink($biz->id, $slug);
+        $this->assertSame('routed', $res3['status']);
+        $this->assertSame(3, $res3['clicks_count']);
+
+        $res4 = $this->engine->resolveShortLink($biz->id, $slug);
+        $this->assertSame('capped', $res4['status']);
+        $this->assertArrayNotHasKey('destination_url', $res4);
+
+        $funnel = Funnel::where('business_id', $biz->id)->where('short_slug', $slug)->first();
+        $this->assertSame(3, $funnel->clicks_count);
+    }
+
     public function test_g9_04_every_built_page_version_carries_the_pixel(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Pixel Tenant']);
@@ -142,7 +217,11 @@ class X103Test extends TestCase
         $this->assertTrue($version->pixel_installed);
     }
 
-    /** (R245) */
+    /**
+     * [G9-04] (R245) the full-stack site law — the pixel is on every site by construction:
+     * a version published with no blocks supplied carries all six required types and all
+     * four installed flags.
+     */
     public function test_g9_04_a_published_version_carries_the_three_site_law_flags(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Law Tenant']);

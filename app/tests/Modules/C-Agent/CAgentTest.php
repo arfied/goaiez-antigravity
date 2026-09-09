@@ -20,6 +20,8 @@ use App\Modules\CAgent\Models\AgentRefusal;
 use App\Modules\CAgent\Models\AgentTurn;
 use App\Modules\X01\Events\TakeoverReleased;
 use App\Modules\X01\Events\TakeoverStarted;
+use App\Modules\X163\Models\CalloutFee;
+use App\Modules\X163\Models\PriceBookItem;
 use App\Services\Agent\AgentComposer;
 use App\Services\Agent\AgentSkills;
 use App\Support\Tenancy;
@@ -459,6 +461,7 @@ class CAgentTest extends TestCase
         $turn = AgentTurn::where('business_id', $biz->id)->orderBy('id', 'desc')->first();
         $this->assertNotNull($turn);
         $this->assertEquals('NO_FACT', $turn->refusal_code);
+
         $this->assertEquals(0, AiCall::where('business_id', $biz->id)->count());
     }
 
@@ -512,5 +515,305 @@ class CAgentTest extends TestCase
         $this->assertNull($turn->refusal_code);
         $this->assertStringContainsString('$18,500.00', $turn->agent_reply);
         $this->assertEquals(0, AiCall::where('business_id', $biz->id)->count());
+    }
+
+    public function test_price_word_boundary_prevents_substring_match(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Drain Biz', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        $this->teach->handle($biz->id, 'price.drain-unblock', '1850000');
+
+        $conversation = Conversation::factory()->create(['business_id' => $biz->id]);
+        $message = Message::factory()->create([
+            'business_id' => $biz->id,
+            'conversation_id' => $conversation->id,
+            'direction' => 'inbound',
+            'body' => 'Can you unblock the drainage ditch? price',
+        ]);
+
+        $job = new AnswerAgentTurnJob($biz->id, null, $conversation->id, $message->id, 'occ');
+        $job->handle();
+
+        $turn = AgentTurn::where('business_id', $biz->id)->orderBy('id', 'desc')->first();
+        $this->assertNotNull($turn);
+
+        $this->assertStringNotContainsString('18,500', $turn->agent_reply, 'Quoted $18,500.00 for drainage despite missing boundary');
+        $this->assertEquals('NO_FACT', $turn->refusal_code);
+    }
+
+    public function test_price_word_boundary_still_matches_exact_words(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Drain Biz', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        $this->teach->handle($biz->id, 'price.drain-unblock', '1850000');
+
+        $conversation = Conversation::factory()->create(['business_id' => $biz->id]);
+        $message = Message::factory()->create([
+            'business_id' => $biz->id,
+            'conversation_id' => $conversation->id,
+            'direction' => 'inbound',
+            'body' => 'how much to unblock a drain?',
+        ]);
+
+        $job = new AnswerAgentTurnJob($biz->id, null, $conversation->id, $message->id, 'occ');
+        $job->handle();
+
+        $turn = AgentTurn::where('business_id', $biz->id)->orderBy('id', 'desc')->first();
+        $this->assertNotNull($turn);
+        $this->assertNull($turn->refusal_code);
+        $this->assertStringContainsString('$18,500.00', $turn->agent_reply);
+    }
+
+    public function test_price_empty_slug_guard(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Drain Biz', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        $this->teach->handle($biz->id, 'price.', '99900');
+
+        $conversation = Conversation::factory()->create(['business_id' => $biz->id]);
+        $message = Message::factory()->create([
+            'business_id' => $biz->id,
+            'conversation_id' => $conversation->id,
+            'direction' => 'inbound',
+            'body' => 'how much is a totally different service?',
+        ]);
+
+        $job = new AnswerAgentTurnJob($biz->id, null, $conversation->id, $message->id, 'occ');
+        $job->handle();
+
+        $turn = AgentTurn::where('business_id', $biz->id)->orderBy('id', 'desc')->first();
+        $this->assertNotNull($turn);
+        $this->assertStringNotContainsString('999', $turn->agent_reply, 'Quoted the empty-slug fact for an unrelated service');
+        $this->assertEquals('NO_FACT', $turn->refusal_code);
+    }
+
+    public function test_pricebook_answers(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Pricebook Answer', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'drain-unblock',
+            'price_cents' => 1850000,
+            'is_confirmed' => true,
+            'is_sample' => false,
+        ]);
+
+        $res = $this->answer->handle($biz->id, 'how much to unblock a drain?');
+
+        $this->assertEquals('answered', $res['status']);
+        $this->assertStringContainsString('$18,500.00', $res['reply']);
+
+        $turn = AgentTurn::where('business_id', $biz->id)->orderBy('id', 'desc')->first();
+        $this->assertNull($turn->refusal_code);
+    }
+
+    public function test_pricebook_refusal_path(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Pricebook Refusal', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'drain-unblock',
+            'price_cents' => 1850000,
+            'is_confirmed' => false,
+            'is_sample' => false,
+        ]);
+
+        $res = $this->answer->handle($biz->id, 'how much to unblock a drain?');
+
+        $this->assertEquals('handoff', $res['status']);
+        $this->assertStringNotContainsString('18,500', $res['reply']);
+        $this->assertStringNotContainsString('$', $res['reply']);
+
+        $turn = AgentTurn::where('business_id', $biz->id)->orderBy('id', 'desc')->first();
+        $this->assertEquals('UNCONFIRMED', $turn->refusal_code);
+    }
+
+    public function test_pricebook_precedence(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Pricebook Precedence', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'drain-unblock',
+            'price_cents' => 1850000,
+            'is_confirmed' => true,
+            'is_sample' => false,
+        ]);
+
+        $this->teach->handle($biz->id, 'price.drain-unblock', '999900');
+
+        $res = $this->answer->handle($biz->id, 'how much to unblock a drain?');
+
+        $this->assertEquals('answered', $res['status']);
+        $this->assertStringContainsString('$18,500.00', $res['reply']);
+        $this->assertStringNotContainsString('9,999', $res['reply']);
+
+        $turn = AgentTurn::where('business_id', $biz->id)->orderBy('id', 'desc')->first();
+        $this->assertNull($turn->refusal_code);
+    }
+
+    public function test_callout_fee_answered(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Callout Answer', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        CalloutFee::create([
+            'business_id' => $biz->id,
+            'callout_fee_cents' => 8500,
+            'deducted_if_proceeding' => true,
+        ]);
+
+        $res = $this->answer->handle($biz->id, 'how much to come out?');
+
+        $this->assertEquals('answered', $res['status']);
+        $this->assertStringContainsString('$85.00', $res['reply']);
+        $this->assertStringContainsString('deducted', $res['reply']);
+
+        $turn = AgentTurn::where('business_id', $biz->id)->orderBy('id', 'desc')->first();
+        $this->assertNull($turn->refusal_code);
+    }
+
+    public function test_callout_fee_refusal_path(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Callout Refusal', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        $res = $this->answer->handle($biz->id, 'how much to come out?');
+
+        $this->assertEquals('handoff', $res['status']);
+        $this->assertEquals('NO_FACT', $res['refusal_code']);
+        $this->assertStringNotContainsString('$', $res['reply']);
+
+        $turn = AgentTurn::where('business_id', $biz->id)->orderBy('id', 'desc')->first();
+        $this->assertEquals('NO_FACT', $turn->refusal_code);
+    }
+
+    public function test_callout_trigger_does_not_swallow_price_questions(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Callout Swallow', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'drain-unblock',
+            'price_cents' => 1850000,
+            'is_confirmed' => true,
+            'is_sample' => false,
+        ]);
+
+        CalloutFee::create([
+            'business_id' => $biz->id,
+            'callout_fee_cents' => 8500,
+            'deducted_if_proceeding' => true,
+        ]);
+
+        $res = $this->answer->handle($biz->id, 'how much to unblock a drain?');
+
+        $this->assertEquals('answered', $res['status']);
+        $this->assertStringContainsString('$18,500.00', $res['reply']);
+        $this->assertStringNotContainsString('85.00', $res['reply']);
+    }
+
+    public function test_sample_row_refuses_and_never_quotes_the_fact(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Sample Refusal', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'drain-unblock',
+            'price_cents' => 1850000,
+            'is_confirmed' => true,
+            'is_sample' => true,
+        ]);
+
+        $this->teach->handle($biz->id, 'price.drain-unblock', '999900');
+
+        $res = $this->answer->handle($biz->id, 'how much to unblock a drain?');
+
+        $this->assertStringNotContainsString('$', $res['reply']);
+        $this->assertStringNotContainsString('9,999', $res['reply']);
+        $this->assertStringNotContainsString('18,500', $res['reply']);
+        $this->assertStringNotContainsString('9999', $res['reply']);
+        $this->assertEquals('handoff', $res['status']);
+        $this->assertEquals('SAMPLE_STATE_REFUSED', $res['refusal_code']);
+    }
+
+    public function test_unconfirmed_row_refuses_and_never_quotes_the_fact(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Unconfirmed Refusal', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'drain-unblock',
+            'price_cents' => 1850000,
+            'is_confirmed' => false,
+            'is_sample' => false,
+        ]);
+
+        $this->teach->handle($biz->id, 'price.drain-unblock', '999900');
+
+        $res = $this->answer->handle($biz->id, 'how much to unblock a drain?');
+
+        $this->assertEquals('handoff', $res['status']);
+        $this->assertEquals('UNCONFIRMED', $res['refusal_code']);
+        $this->assertStringNotContainsString('$', $res['reply']);
+        $this->assertStringNotContainsString('9,999', $res['reply']);
+        $this->assertStringNotContainsString('18,500', $res['reply']);
+        $this->assertStringNotContainsString('9999', $res['reply']);
+    }
+
+    public function test_no_pricebook_row_still_falls_back_to_facts(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Fallback Refusal', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        $this->teach->handle($biz->id, 'price.drain-unblock', '999900');
+
+        $res = $this->answer->handle($biz->id, 'how much to unblock a drain?');
+
+        $this->assertEquals('answered', $res['status']);
+        $this->assertStringContainsString('$9,999.00', $res['reply']);
+    }
+
+    public function test_agent_answers_with_service_name_when_available(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Agent Name Biz', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Oil Change',
+            'price_cents' => 4900,
+            'is_sample' => false,
+            'is_confirmed' => true,
+        ]);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Brake Pad Replacement',
+            'price_cents' => 24900,
+            'is_sample' => false,
+            'is_confirmed' => true,
+        ]);
+
+        $resShort = $this->answer->handle($biz->id, 'how much is an Oil Change?');
+        $this->assertEquals('answered', $resShort['status']);
+        $this->assertStringContainsString('Oil Change', $resShort['reply']);
+        $this->assertStringContainsString('$49.00', $resShort['reply']);
+
+        $resLong = $this->answer->handle($biz->id, 'how much is a Brake Pad Replacement?');
+        $this->assertEquals('answered', $resLong['status']);
+        $this->assertStringContainsString('Brake Pad Replacement', $resLong['reply']);
+        $this->assertStringContainsString('$249.00', $resLong['reply']);
     }
 }

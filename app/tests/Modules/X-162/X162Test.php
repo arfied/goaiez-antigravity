@@ -102,4 +102,21 @@ class X162Test extends TestCase
         $route = $this->routeAction->handle($biz->id, 42, [101, 102, 103], 12.8);
         $this->assertEquals(12.8, $route->total_distance_km);
     }
+
+    public function test_job_dispatch_performs_no_referential_validation(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Unvalidated Dispatch Tenant', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        // ids that exist in no table at all
+        $assignment = (new JobDispatchAction)->handle($biz->id, 987654321, 987654322);
+
+        $this->assertEquals(987654321, $assignment->job_id, 'job_id is written verbatim: X-162 validates no dispatch target.');
+        $this->assertEquals(987654322, $assignment->tech_id, 'tech_id is written verbatim: X-162 validates no dispatch target.');
+        $this->assertDatabaseHas('dispatch_assignments', [
+            'business_id' => $biz->id,
+            'job_id' => 987654321,
+            'tech_id' => 987654322,
+        ]);
+    }
 }

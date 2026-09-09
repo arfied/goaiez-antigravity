@@ -8,7 +8,6 @@ final class ArPackaged
 {
     public function __construct(
         public readonly int $businessId,
-        public readonly int $invoiceId,
-        public readonly string $collectionsBundleUrl
+        public readonly int $invoiceId
     ) {}
 }

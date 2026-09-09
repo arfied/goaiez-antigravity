@@ -154,4 +154,37 @@ class MarginByJobTest extends TestCase
         $this->actingAs($user);
         $this->get(route('x-166.margin-by-job'))->assertOk()->assertSee('811.23');
     }
+
+    public function test_3c_sample_job_is_visible_on_per_job_screen(): void
+    {
+        $user = User::factory()->create();
+        $user->role = UserRole::Owner;
+        $user->save();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        JobCost::create([
+            'business_id' => $biz->id,
+            'job_id' => 105,
+            'price_book_version' => 'v1',
+            'tech_id' => 70,
+            'service_type' => 'diagnostic',
+            'source' => 'direct',
+            'revenue_cents' => 99999,
+            'total_cost_cents' => 1000,
+            'labor_cost_cents' => 500,
+            'materials_cost_cents' => 500,
+            'overhead_cost_cents' => 0,
+            'gross_margin_cents' => 98999,
+            'gross_margin_pct' => 99.0,
+            'is_sample' => true,
+        ]);
+
+        $component = Livewire::actingAs($user)->test(MarginByJob::class);
+        $html = $component->html();
+
+        $this->assertStringContainsString('999.99', $html, 'The per-job screen must still list a sample job');
+        $this->assertStringContainsString('<span>Sample</span>', $html, 'The per-job screen must show the sample pill');
+    }
 }

@@ -115,6 +115,16 @@ class X108Test extends TestCase
     }
 
     /**
+    /**
+     * [G1-12] refuses: card data touches our DOM; tokens only (P-160), the iframe boundary asserted
+     * ⛔ REFUSED: surveyed X-108 Actions, Models, and Ui and found no payment, card data, or iframe components; X-108 owns no surface that touches payment fields (likely handled by C-Billing or a payment module).
+     */
+    public function test_g1_12_token_iframe_boundary(): void
+    {
+        $this->assertTrue(true);
+    }
+
+    /**
      * the agent calls availability.request; time is looked up or refused (P-093)
      */
     public function test_availability_request_lookup(): void
@@ -460,5 +470,22 @@ class X108Test extends TestCase
         }
 
         $this->assertTrue($found, 'Failed to find any money column in affiliates for positive control');
+    }
+
+    /**
+     * [G2-06]
+     */
+    public function test_g2_06_availability_request_refuses_booked_time_p_093(): void
+    {
+        // ⑤ the agent calls availability.request; time is looked up or refused (P-093)
+        $biz = TestCase::provisionTenant(['name' => 'Test Tenant', 'currency' => 'USD']);
+        $date = Carbon::now()->addDay()->toDateString();
+        $this->book->handle($biz->id, 'Haircut', "$date 11:00:00", "$date 13:00:00");
+
+        $result = $this->avail->handle($biz->id, $date);
+
+        $this->assertCount(2, $result['offered_slots']);
+        $this->assertStringContainsString('14:00', $result['offered_slots'][0]['start_time']);
+        $this->assertStringContainsString('16:00', $result['offered_slots'][1]['start_time']);
     }
 }

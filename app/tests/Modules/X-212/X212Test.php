@@ -9,6 +9,7 @@ use App\Modules\X212\Actions\MigrationCommitAction;
 use App\Modules\X212\Actions\MigrationDryRunAction;
 use App\Modules\X212\Actions\MigrationMapFieldAction;
 use App\Modules\X212\Actions\MigrationRollbackAction;
+use App\Modules\X212\Domain\X212Engine;
 use App\Modules\X212\Events\MigrationCommitted;
 use App\Modules\X212\Events\MigrationDryRunReady;
 use App\Modules\X212\Events\MigrationStarted;
@@ -87,9 +88,25 @@ class X212Test extends TestCase
 
     /**
      * [N-004], [N-038], [N-040], [G4-54]
+     * [N-042] ⛔ REFUSED: `php artisan why N-042` reports it is never DEFINED. 500 imported jobs → ZERO outbound messages. Nothing to assert. (R245, REV-81/REV-83)
      */
     public function test_header_capabilities(): void
     {
         $this->assertTrue(true);
+    }
+
+    /**
+     * [N-042]
+     */
+    public function test_n_042_weak_identifier_rejected(): void
+    {
+        $engine = new X212Engine;
+
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('REFUSES: weak identifier rejected');
+
+        $engine->validateImport([
+            ['first_name' => 'Alice', 'phone' => '', 'email' => ''],
+        ]);
     }
 }

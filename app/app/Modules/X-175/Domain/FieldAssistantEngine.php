@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X175\Domain;
 
+use App\Modules\X163\Actions\PriceLookupAction;
 use App\Modules\X175\Events\AssistantSuggested;
 use App\Modules\X175\Events\UpsellPrompted;
 use App\Modules\X175\Models\FieldSuggestion;
@@ -11,6 +12,8 @@ use Illuminate\Support\Facades\Event;
 
 final class FieldAssistantEngine
 {
+    private const MATCHED_ROW_REFUSALS = ['SAMPLE_STATE_REFUSED', 'UNCONFIRMED'];
+
     /**
      * Answers an on-site field question.
      * 1. No output routed to customer channel (TEST ANCHOR).
@@ -48,7 +51,18 @@ final class FieldAssistantEngine
             ];
         }
 
-        $responseText = $verifiedAnswer ?? "Verified procedure for: {$queryText}";
+        $lookup = app(PriceLookupAction::class)->handle($businessId, $queryText, 'staff');
+
+        if (isset($lookup['status']) && $lookup['status'] === 'quoted') {
+            $responseText = $lookup['service_name'].' is '.$lookup['formatted_price'].' from the pricebook';
+            $isUnconfirmedPrice = false;
+        } elseif ($this->isPriceShaped($queryText) || (isset($lookup['refusal_code']) && in_array($lookup['refusal_code'], self::MATCHED_ROW_REFUSALS, true))) {
+            $responseText = "I'd need to confirm that price";
+            $isUnconfirmedPrice = true;
+        } else {
+            $responseText = $verifiedAnswer ?? "Verified procedure for: {$queryText}";
+            $isUnconfirmedPrice = false;
+        }
 
         $suggestion = FieldSuggestion::create([
             'business_id' => $businessId,
@@ -56,18 +70,26 @@ final class FieldAssistantEngine
             'tech_person_id' => $techPersonId,
             'query_text' => $queryText,
             'response_text' => $responseText,
-            'is_unconfirmed_price' => false,
+            'is_unconfirmed_price' => $isUnconfirmedPrice,
             'is_upsell' => false,
         ]);
 
         Event::dispatch(new AssistantSuggested($businessId, $suggestion->id, $responseText));
 
         return [
-            'status' => 'answered',
+            'status' => $isUnconfirmedPrice ? 'price_refusal_flagged' : 'answered',
             'suggestion_id' => $suggestion->id,
             'response' => $responseText,
-            'is_unconfirmed_price' => false,
+            'is_unconfirmed_price' => $isUnconfirmedPrice,
         ];
+    }
+
+    /**
+     * Determines if a query is asking for a price. R245
+     */
+    private function isPriceShaped(string $queryText): bool
+    {
+        return preg_match('/price|cost|how much|charge|quote/i', $queryText) === 1;
     }
 
     /**

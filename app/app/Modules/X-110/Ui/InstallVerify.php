@@ -21,9 +21,6 @@ class InstallVerify extends Component
     public int $businessId = 0;
 
     #[Locked]
-    public bool $isSample = false;
-
-    #[Locked]
     public string $servedDomain = 'cdn.external-tracker.com';
 
     #[Locked]

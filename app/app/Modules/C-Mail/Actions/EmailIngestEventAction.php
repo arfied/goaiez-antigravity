@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\CMail\Actions;
 
+use App\Enums\MailEventType;
 use App\Modules\CMail\Events\EmailBounced;
 use App\Modules\CMail\Events\EmailComplained;
 use App\Modules\CMail\Events\EmailReplied;
@@ -38,15 +39,20 @@ final class EmailIngestEventAction
             'payload' => $payload,
         ]);
 
-        if (in_array($eventType, ['complained', 'bounced'], true)) {
+        $type = MailEventType::tryFrom($eventType);
+        if ($type === null) {
+            return;
+        }
+
+        if (in_array($type, [MailEventType::Complained, MailEventType::Bounced], true)) {
             $domain = (new EmailHaltSeedAction)->handle($businessId, $mailDomainId);
         }
 
-        match ($eventType) {
-            'bounced', 'spam-trap' => Event::dispatch(new EmailBounced($businessId, $mailDomainId, $recipientEmail, $eventType)),
-            'complained' => Event::dispatch(new EmailComplained($businessId, $mailDomainId, $domain->complaint_rate)),
-            'replied' => Event::dispatch(new EmailReplied($businessId, $mailDomainId, $recipientEmail, $subject, $payload['sender_name'] ?? '', $payload['body'] ?? '')),
-            default => null,
+        match ($type) {
+            MailEventType::Bounced, MailEventType::SpamTrap => Event::dispatch(new EmailBounced($businessId, $mailDomainId, $recipientEmail, $eventType)),
+            MailEventType::Complained => Event::dispatch(new EmailComplained($businessId, $mailDomainId, $domain->complaint_rate)),
+            MailEventType::Replied => Event::dispatch(new EmailReplied($businessId, $mailDomainId, $recipientEmail, $subject, $payload['sender_name'] ?? '', $payload['body'] ?? '')),
+            MailEventType::Sent, MailEventType::Queued, MailEventType::Unsubscribed => null,
         };
     }
 }

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X163;
 
+use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X163\Domain\PricebookEngine;
 use App\Modules\X163\Models\PriceBookItem;
 use App\Modules\X163\Ui\Pricebook;
 use App\Support\Tenancy;
@@ -88,5 +90,244 @@ class PricebookScreenTest extends TestCase
 
         $this->actingAs($owner);
         $this->get(route('x-163.pricebook'))->assertOk()->assertSee('942.25');
+    }
+
+    public function test_inline_edit_unconfirms_a_confirmed_row(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        $row = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Confirm Test 1',
+            'price_cents' => 10000,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'confirmed_at' => now()->subDay(),
+            'tax_rate_pct' => 0.0,
+        ]);
+
+        Livewire::actingAs($owner)
+            ->test(Pricebook::class)
+            ->set('inlinePrices.'.$row->id, 200.00)
+            ->call('updatePrice', $row->id);
+
+        $reloaded = $row->fresh();
+        $this->assertFalse($reloaded->is_confirmed);
+        $this->assertNull($reloaded->confirmed_at);
+    }
+
+    public function test_inline_edit_with_the_same_amount_leaves_confirmation_alone(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        $row = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Confirm Test 2',
+            'price_cents' => 30000,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'confirmed_at' => now()->subDay(),
+            'tax_rate_pct' => 0.0,
+        ]);
+
+        Livewire::actingAs($owner)
+            ->test(Pricebook::class)
+            ->set('inlinePrices.'.$row->id, 300.00)
+            ->call('updatePrice', $row->id);
+
+        $reloaded = $row->fresh();
+        $this->assertTrue($reloaded->is_confirmed);
+        $this->assertEquals($row->confirmed_at, $reloaded->confirmed_at);
+    }
+
+    public function test_an_edited_price_is_no_longer_quoted_to_a_customer(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        $row = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Confirm Test 3',
+            'price_cents' => 40000,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'confirmed_at' => now()->subDay(),
+            'tax_rate_pct' => 0.0,
+        ]);
+
+        Livewire::actingAs($owner)
+            ->test(Pricebook::class)
+            ->set('inlinePrices.'.$row->id, 500.00)
+            ->call('updatePrice', $row->id);
+
+        $engine = app(PricebookEngine::class);
+        $result = $engine->lookup($biz->id, 'Confirm Test 3', 'customer');
+
+        $this->assertEquals('refused', $result['status']);
+    }
+
+    public function test_add_item_refuses_a_duplicate_service_name(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Drain Clean',
+            'price_cents' => 12500,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'confirmed_at' => now()->subDay(),
+            'tax_rate_pct' => 0.0,
+        ]);
+
+        Livewire::actingAs($owner)
+            ->test(Pricebook::class)
+            ->set('newServiceName', 'Drain Clean')
+            ->set('newPriceDollars', 999.00)
+            ->call('addItem')
+            ->assertHasErrors('newServiceName');
+
+        $this->assertEquals(1, PriceBookItem::where('service_name', 'Drain Clean')->count());
+    }
+
+    public function test_add_item_allows_different_service_name_on_same_business(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Drain Clean',
+            'price_cents' => 12500,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'confirmed_at' => now()->subDay(),
+            'tax_rate_pct' => 0.0,
+        ]);
+
+        Livewire::actingAs($owner)
+            ->test(Pricebook::class)
+            ->set('newServiceName', 'Another Service')
+            ->set('newPriceDollars', 999.00)
+            ->call('addItem');
+
+        $this->assertEquals(2, PriceBookItem::where('business_id', $biz->id)->count());
+    }
+
+    public function test_add_item_refusal_preserves_quoted_price_for_customer(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        $existing = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Drain Clean',
+            'price_cents' => 12500,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'confirmed_at' => now()->subDay(),
+            'tax_rate_pct' => 0.0,
+        ]);
+
+        Livewire::actingAs($owner)
+            ->test(Pricebook::class)
+            ->set('newServiceName', 'Drain Clean')
+            ->set('newPriceDollars', 999.00)
+            ->call('addItem');
+
+        $engine = app(PricebookEngine::class);
+        $result = $engine->lookup($biz->id, 'Drain Clean', 'customer');
+
+        $this->assertEquals($existing->fresh()->price_cents, $result['price_cents']);
+    }
+
+    public function test_duplicate_service_refusal_is_rendered_on_the_screen(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Drain Clean',
+            'price_cents' => 12500,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'confirmed_at' => now()->subDay(),
+            'tax_rate_pct' => 0.0,
+        ]);
+
+        Livewire::actingAs($owner)
+            ->test(Pricebook::class)
+            ->set('newServiceName', 'Drain Clean')
+            ->set('newPriceDollars', 999.00)
+            ->call('addItem')
+            ->assertSee('A business-wide price for this service already exists.');
+    }
+
+    public function test_add_item_success_does_not_render_refusal_message(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Drain Clean',
+            'price_cents' => 12500,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'confirmed_at' => now()->subDay(),
+            'tax_rate_pct' => 0.0,
+        ]);
+
+        Livewire::actingAs($owner)
+            ->test(Pricebook::class)
+            ->set('newServiceName', 'Another Service')
+            ->set('newPriceDollars', 999.00)
+            ->call('addItem')
+            ->assertDontSee('A business-wide price for this service already exists.');
+    }
+
+    public function test_staff_is_forbidden(): void
+    {
+        $user = User::factory()->create();
+        $user->role = UserRole::Staff;
+        $user->save();
+        TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
+
+        Livewire::actingAs($user)->test(Pricebook::class)->assertForbidden();
+    }
+
+    public function test_manager_is_admitted(): void
+    {
+        $user = User::factory()->create();
+        $user->role = UserRole::Manager;
+        $user->save();
+        TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
+
+        Livewire::actingAs($user)->test(Pricebook::class)->assertOk();
+    }
+
+    public function test_super_admin_is_admitted(): void
+    {
+        $user = User::factory()->create();
+        $user->role = UserRole::SuperAdmin;
+        $user->save();
+        TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
+
+        Livewire::actingAs($user)->test(Pricebook::class)->assertOk();
     }
 }

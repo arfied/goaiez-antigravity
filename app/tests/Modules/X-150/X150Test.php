@@ -85,6 +85,27 @@ class X150Test extends TestCase
 
     /**
      * [N-150-01], [N-150-02]
+     * [N-050] ⛔ REFUSED: `php artisan why N-050` reports it is never DEFINED, and its ⑤ in
+     *   capabilities.php is boilerplate identical across every N row and across modules —
+     *   it names other modules entirely. Nothing to assert. (R245, REV-80/REV-81)
+     * [N-051] ⛔ REFUSED: `php artisan why N-051` reports it is never DEFINED, and its ⑤ in
+     *   capabilities.php is boilerplate identical across every N row and across modules —
+     *   it names other modules entirely. Nothing to assert. (R245, REV-80/REV-81)
+     * [N-054] ⛔ REFUSED: `php artisan why N-054` reports it is never DEFINED, and its ⑤ in
+     *   capabilities.php is boilerplate identical across every N row and across modules —
+     *   it names other modules entirely. Nothing to assert. (R245, REV-80/REV-81)
+     * [N-056] ⛔ REFUSED: `php artisan why N-056` reports it is never DEFINED, and its ⑤ in
+     *   capabilities.php is boilerplate identical across every N row and across modules —
+     *   it names other modules entirely. Nothing to assert. (R245, REV-80/REV-81)
+     * [N-057] ⛔ REFUSED: `php artisan why N-057` reports it is never DEFINED, and its ⑤ in
+     *   capabilities.php is boilerplate identical across every N row and across modules —
+     *   it names other modules entirely. Nothing to assert. (R245, REV-80/REV-81)
+     * [N-058] ⛔ REFUSED: `php artisan why N-058` reports it is never DEFINED, and its ⑤ in
+     *   capabilities.php is boilerplate identical across every N row and across modules —
+     *   it names other modules entirely. Nothing to assert. (R245, REV-80/REV-81)
+     * [N-060] ⛔ REFUSED: `php artisan why N-060` reports it is never DEFINED, and its ⑤ in
+     *   capabilities.php is boilerplate identical across every N row and across modules —
+     *   it names other modules entirely. Nothing to assert. (R245, REV-80/REV-81)
      */
     public function test_n_150_capabilities(): void
     {

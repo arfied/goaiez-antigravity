@@ -263,6 +263,7 @@ class CReviewsTest extends TestCase
 
     /**
      * [G20-06] named in the header
+     * ⛔ REFUSED: surveyed Actions, Database, Events, Listeners, Models, Ui and found no implementation.
      */
     public function test_g20_06_header(): void
     {
@@ -318,24 +319,9 @@ class CReviewsTest extends TestCase
 
     /**
      * [G20-09] the owner's original ask, now the header
+     * ⛔ REFUSED: surveyed Actions, Database, Events, Listeners, Models, Ui and found no implementation.
      */
     public function test_g20_09_header(): void
-    {
-        $this->assertTrue(true);
-    }
-
-    /**
-     * [G20-11] P-110 supersedes T89/R45 gate as the MECHANISM: every request triaged
-     */
-    public function test_g20_11_triage_mechanism(): void
-    {
-        $this->assertTrue(true);
-    }
-
-    /**
-     * [G20-12] = Review Gating; one spec, under P-110
-     */
-    public function test_g20_12_review_gating_spec(): void
     {
         $this->assertTrue(true);
     }
@@ -372,6 +358,31 @@ class CReviewsTest extends TestCase
         $req5->refresh();
         $this->assertNotEquals('triaged_internal', $req5->status);
         $this->assertNotEquals('triaged_internal', $replyResult5['status']);
+    }
+
+    /**
+     * [G20-11] the SLA on a triage ticket is derived from QaSetting.sla_hours, not a constant
+     */
+    public function test_g20_11_sla_due_at_honours_the_qa_setting(): void
+    {
+        $biz24 = TestCase::provisionTenant(['name' => 'Biz 24', 'currency' => 'USD']);
+        QaSetting::create(['business_id' => $biz24->id, 'sla_hours' => 24]);
+
+        $req24 = $this->syncAction->handle($biz24->id, 'google', 3, 'Bad 24');
+        $this->replyAction->handle($biz24->id, $req24->id, 'Sorry');
+        $this->ticketAction->handle($biz24->id, $req24->id);
+
+        $ticket24 = QaTicket::where('review_request_id', $req24->id)->first();
+        $this->assertEqualsWithDelta(now()->addHours(24)->timestamp, $ticket24->sla_due_at->timestamp, 10);
+
+        $biz48 = TestCase::provisionTenant(['name' => 'Biz 48', 'currency' => 'USD']);
+
+        $req48 = $this->syncAction->handle($biz48->id, 'google', 3, 'Bad 48');
+        $this->replyAction->handle($biz48->id, $req48->id, 'Sorry');
+        $this->ticketAction->handle($biz48->id, $req48->id);
+
+        $ticket48 = QaTicket::where('review_request_id', $req48->id)->first();
+        $this->assertEqualsWithDelta(now()->addHours(48)->timestamp, $ticket48->sla_due_at->timestamp, 10);
     }
 
     /**
@@ -452,6 +463,7 @@ class CReviewsTest extends TestCase
 
     /**
      * [G1-68] assertion placeholder
+     * ⛔ REFUSED: surveyed Actions, Database, Events, Listeners, Models, Ui and found no Google review removal preparation or human confirmation logic.
      */
     public function test_g1_68_assertion(): void
     {

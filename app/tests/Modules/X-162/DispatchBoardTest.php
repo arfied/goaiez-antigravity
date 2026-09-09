@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X162;
 
+use App\Enums\UserRole;
 use App\Models\User;
 use App\Modules\X162\Models\DispatchAssignment;
 use App\Modules\X162\Models\EtaPrediction;
@@ -135,7 +136,52 @@ class DispatchBoardTest extends TestCase
             'notification_sent_at' => Carbon::now(),
         ]);
 
+        $pred = EtaPrediction::where('job_id', $jobId)->first();
+
         $this->actingAs($owner);
-        $this->get(route('x-162.dispatch-board'))->assertOk()->assertSee('718');
+        $this->get(route('x-162.dispatch-board'))
+            ->assertOk()
+            ->assertSee("en route, {$pred->eta_minutes} minutes out");
+    }
+
+    public function test_empty_board_cannot_create_assignment(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        Livewire::actingAs($owner)
+            ->test(DispatchBoard::class)
+            ->assertOk()
+            ->assertSee('Dispatching a technician is not yet available from this screen.')
+            ->assertDontSee('Go to Jobs');
+
+        $this->assertSame(
+            0,
+            DispatchAssignment::where('business_id', $biz->id)->count(),
+            'An owner on an empty board cannot cause a DispatchAssignment to exist.'
+        );
+    }
+
+    public function test_staff_is_forbidden(): void
+    {
+        $user = User::factory()->create();
+        $user->role = UserRole::Staff;
+        $user->save();
+        TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
+
+        Livewire::actingAs($user)->test(DispatchBoard::class)->assertForbidden();
+    }
+
+    public function test_manager_is_admitted(): void
+    {
+        $user = User::factory()->create();
+        $user->role = UserRole::Manager;
+        $user->save();
+        TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
+
+        Livewire::actingAs($user)->test(DispatchBoard::class)->assertOk();
     }
 }

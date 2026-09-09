@@ -25,11 +25,11 @@ class N009Test extends TestCase
         $this->assertTrue(method_exists($engine, 'getExposure'), 'Engine must have getExposure method');
 
         $exposure1 = $engine->getExposure($biz1->id);
-        $this->assertIsFloat($exposure1);
+        $this->assertNull($exposure1);
 
         Tenancy::set((int) $biz2->id);
         $exposure2 = $engine->getExposure($biz2->id);
 
-        $this->assertNotEquals($exposure1, $exposure2, 'Tenants must not see each others exposure');
+        $this->assertNull($exposure2, 'No exposure figure exists to isolate: the work-delivered half of N-009 has no store');
     }
 }

@@ -31,7 +31,7 @@ class OwnHoursTest extends TestCase
         Tenancy::setUser($user->id);
 
         Livewire::actingAs($user)->test(OwnHoursView::class)
-            ->assertSee('No hours yet. Your hours start when you go en route on a job.');
+            ->assertSee('No hours yet. Your hours start when you arrive on site at a job.');
     }
 
     public function test_shows_own_sheets_only(): void
@@ -123,5 +123,16 @@ class OwnHoursTest extends TestCase
             ->get(route('x-168.own-hours'))
             ->assertOk()
             ->assertSee('9:15');
+    }
+
+    public function test_super_admin_is_admitted(): void
+    {
+        $user = User::factory()->create();
+        $user->role = UserRole::SuperAdmin;
+        $user->save();
+        TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
+
+        Livewire::actingAs($user)->test(OwnHoursView::class)->assertOk();
     }
 }

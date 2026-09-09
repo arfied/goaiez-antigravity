@@ -46,10 +46,7 @@ final class SmsSendAction
             ];
         }
 
-        $purposeEnum = match ($messageClass) {
-            'marketing' => OutreachPurpose::Marketing,
-            default => OutreachPurpose::Transactional,
-        };
+        $purposeEnum = OutreachPurpose::tryFrom($messageClass) ?? OutreachPurpose::Transactional;
 
         $decision = app(ConsentService::class)->decide($customer, OutreachChannel::Sms, $purposeEnum);
 

@@ -188,9 +188,9 @@ class CBillingTest extends TestCase
         $debit = $this->debitAction->handle($biz->id, 1000, 'debit_1', 'Debit $0.10');
         $this->assertEquals(4000, $debit->balance_after_hundredths_cents);
 
-        $event = new LedgerPeriodClosed($biz->id, 4000, '2026-09-30');
-        $this->assertEquals(4000, $event->closingBalanceHundredthsCents);
-        $this->assertObjectNotHasProperty('events', $event, 'Gateway receives period totals, never per-event usage');
+        $event = new LedgerPeriodClosed($biz->id, $debit->balance_after_hundredths_cents, '2026-09-30');
+        $this->assertEquals($debit->balance_after_hundredths_cents, $event->closingBalanceHundredthsCents);
+        $this->assertEquals(['businessId', 'closingBalanceHundredthsCents', 'periodEnd'], array_keys(get_object_vars($event)));
     }
 
     /**
@@ -231,7 +231,7 @@ class CBillingTest extends TestCase
 
     /**
      * [G9-31] MRR saved by the one dunning ladder (§45A)
-     * ⛔ REFUSED: a seam that ignores its parameters and returns a constant is a stub; Ui\Mrr ignores parameters and returns a constant view.
+     * ⛔ REFUSED: surveyed Actions, Database, Domain, Events, Models, Ui and found no seam that ties monthly recurring revenue to the dunning ladder; Ui\Mrr reads the subscription, the meters and this month's ledger entries, and none of them records revenue saved by a chase.
      */
     public function test_g9_31_mrr_saved(): void
     {

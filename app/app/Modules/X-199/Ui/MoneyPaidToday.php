@@ -5,51 +5,56 @@ declare(strict_types=1);
 namespace App\Modules\X199\Ui;
 
 use App\Modules\X199\Models\Invoice;
+use App\Modules\X199\Models\InvoiceLine;
 use App\Support\Tenancy;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Livewire\Attributes\Layout;
-use Livewire\Attributes\Locked;
 use Livewire\Component;
 
-/**
- * Money Paid Today
- * Derives paid today from invoices updated today with status 'paid' or 'offline_recorded', summing paid_cents.
- */
 #[Layout('components.account.layout', ['heading' => 'Happened Today'])]
 class MoneyPaidToday extends Component
 {
-    #[Locked]
-    public int $businessId = 0;
+    public ?int $explainedInvoiceId = null;
 
-    #[Locked]
-    public bool $isSample = false;
+    public ?string $error = null;
 
-    #[Locked]
-    public ?string $loadError = null;
+    public $invoiceLines = [];
 
-    public function mount(int $businessId = 0)
+    public function explain(int $invoiceId): void
     {
-        $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
+        $this->error = null;
+        try {
+            $invoice = Invoice::where('business_id', Tenancy::idOrFail())
+                ->where('status', 'paid')
+                ->where('paid_at', '>=', now()->startOfDay())
+                ->findOrFail($invoiceId);
+
+            $this->explainedInvoiceId = $invoice->id;
+            $this->invoiceLines = InvoiceLine::where('business_id', Tenancy::idOrFail())
+                ->where('invoice_id', $invoice->id)
+                ->get();
+        } catch (ModelNotFoundException) {
+            $this->error = "That invoice isn't in this account any more.";
+        } catch (\Throwable $e) {
+            $this->error = 'Error explaining invoice: '.$e->getMessage();
+        }
     }
 
     public function render()
     {
-        if ($this->businessId === 0) {
-            return view('x-199::money-paid-today', [
-                'total' => 0,
-                'invoices' => collect(),
-            ]);
-        }
+        abort_unless(auth()->check() && Tenancy::check(), 403);
 
-        $invoices = Invoice::where('business_id', $this->businessId)
-            ->whereIn('status', ['paid', 'offline_recorded'])
-            ->whereDate('updated_at', now()->toDateString())
+        $invoices = Invoice::where('business_id', Tenancy::id())
+            ->where('status', 'paid')
+            ->where('paid_at', '>=', now()->startOfDay())
+            ->orderByDesc('paid_at')
             ->get();
 
-        $totalCents = $invoices->sum('paid_cents');
+        $totalCents = $invoices->sum('total_cents');
 
         return view('x-199::money-paid-today', [
-            'total' => $totalCents,
             'invoices' => $invoices,
+            'totalCents' => $totalCents,
         ]);
     }
 }

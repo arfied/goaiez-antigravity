@@ -16,5 +16,6 @@ class ReconciliationRun extends Model
         'expected_cents' => 'integer',
         'actual_cents' => 'integer',
         'discrepancy_cents' => 'integer',
+        'reviewed_at' => 'datetime',
     ];
 }

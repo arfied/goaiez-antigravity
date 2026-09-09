@@ -13,6 +13,7 @@ use App\Modules\X117\Models\Order;
 use App\Modules\X117\Models\OrderLine;
 use App\Modules\X117\Models\Sellable;
 use App\Modules\X121\Models\Person;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -73,7 +74,7 @@ class X117Test extends TestCase
                 customerId: $customer->id
             );
 
-            if ($res['status'] === 'paid') {
+            if ($res['status'] === 'pending_payment') {
                 $paidCount++;
             } elseif ($res['status'] === 'sold_out') {
                 $soldOutCount++;
@@ -190,6 +191,23 @@ class X117Test extends TestCase
         $this->assertSame(15, (int) $cart15->expires_at->diffInMinutes($cart30->expires_at));
     }
 
+    public function test_an_order_row_written_without_a_status_is_pending_payment(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Default Status Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $id = DB::table('orders')->insertGetId([
+            'business_id' => $biz->id,
+            'order_number' => 'ORD-TEST-123',
+            'total_cents' => 1000,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $order = DB::table('orders')->find($id);
+        $this->assertEquals('pending_payment', $order->status);
+    }
+
     /** [G18-29] */
     public function test_g18_29_lifecycle_stops_at_money(): void
     {
@@ -212,14 +230,14 @@ class X117Test extends TestCase
             freshAuthToken: 'auth_tok_'.uniqid()
         );
 
-        $this->assertEquals('paid', $res['status']);
+        $this->assertEquals('pending_payment', $res['status']);
 
         $order = Order::findOrFail($res['order_id']);
-        $this->assertEquals('paid', $order->status);
+        $this->assertEquals('pending_payment', $order->status);
 
         $orderLine = OrderLine::where('order_id', $order->id)->firstOrFail();
 
-        $this->assertContains($order->status, ['paid', 'cancelled', 'sold_out']);
+        $this->assertContains($order->status, ['paid', 'cancelled', 'sold_out', 'pending_payment']);
 
         $this->cancelAction->handle($biz->id, $order->id);
         $order->refresh();
@@ -274,5 +292,39 @@ class X117Test extends TestCase
                 $content
             );
         }
+    }
+
+    /**
+     * [G1-75] a pricing STRUCTURE, not a promotion; the price is looked up or REFUSED (P-092)
+     */
+    public function test_g1_75_price_is_looked_up_or_refused(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Price Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $sellable = Sellable::create([
+            'business_id' => $biz->id,
+            'name' => 'Consultation',
+            'sku' => 'CON-PRICE',
+            'inventory_quantity' => 10,
+            'unit_price_cents' => 5000,
+        ]);
+
+        // (i) Assert the total equals the stored unit_price_cents, ignoring caller input
+        $cart = $this->cartAction->handle(
+            businessId: $biz->id,
+            sessionToken: 'sess_price_1',
+            items: [['sellable_id' => $sellable->id, 'quantity' => 2, 'unit_price_cents' => 1000]]
+        );
+
+        $this->assertEquals(10000, $cart->total_cents, 'Total must equal stored price * qty (5000 * 2), ignoring input price');
+
+        // (ii) Assert an unknown sellable is refused with ModelNotFoundException
+        $this->expectException(ModelNotFoundException::class);
+        $this->cartAction->handle(
+            businessId: $biz->id,
+            sessionToken: 'sess_price_2',
+            items: [['sellable_id' => 9999, 'quantity' => 1]]
+        );
     }
 }

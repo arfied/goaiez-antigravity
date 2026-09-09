@@ -22,6 +22,10 @@ final class ChatCaptureAction
         ?string $message = null,
         string $formType = 'live_chat'
     ): ChatLead {
+        if (trim($phone) === '') {
+            throw new \DomainException('NO_CONTACT_METHOD_ON_CAPTURE');
+        }
+
         return DB::transaction(function () use ($businessId, $sessionId, $name, $phone, $email, $message, $formType) {
             $session = ChatSession::where('business_id', $businessId)->findOrFail($sessionId);
 

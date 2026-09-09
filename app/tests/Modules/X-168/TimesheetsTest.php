@@ -42,7 +42,7 @@ class TimesheetsTest extends TestCase
         Tenancy::setUser($user->id);
 
         Livewire::actingAs($user)->test(TimesheetsView::class)
-            ->assertSee('No timesheets yet. Hours appear when a technician goes en route.');
+            ->assertSee('No timesheets yet. Hours appear when a technician arrives on site.');
     }
 
     public function test_seeded_sheet_shows_name_hours_and_no_sample_pill(): void
