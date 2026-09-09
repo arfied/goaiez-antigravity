@@ -16012,3 +16012,503 @@ model; dropping the ordering while moving the query; relaxing any assertion that
 
 Per tick 293 this entry states the **ruling and the falsifier and no prediction**; the outcome is written by
 the next tick's block, after the measurement.
+
+## ⛔ AN UNFILLED PLACEHOLDER IN AN APPEND-ONLY FILE IS SILENT — grep the composed block before appending it (tick 322)
+
+Tick 242 introduced compose-by-placeholder deliberately: draft the block with the blocked section left open and
+fill it at the close, so an interrupted tick leaves a **gated wave with a stated gap** rather than an ungated
+commit. Tick 257 made the census's closing line mandatory-blank for the same reason. Both are right, and
+neither says what happens when the fill is missed.
+
+Found by accident at tick 322, because this tick's own `__DISPATCH__` fill collided:
+`grep -n '__DISPATCH__' REVIEWS.md` returns **three** hits and `:78539` is **tick 301's block**, appended as
+`**Dispatch:** __DISPATCH__` and never filled. The dispatch was real — SITE-174 ran and tick 302 reviewed it —
+so only the record is missing; but the charter's rule is that a dispatch is real only when the `LAUNCHED` line
+is pasted into the block that announces it, and tick 316 ruled that **a brief with a block behind it but no
+`LAUNCHED` line is a draft**. Read literally, tick 301's block announces a dispatch it does not evidence.
+
+⭐ **`REVIEWS.md` is 85,000 lines, nothing reads it end to end, and a token meant to be replaced is
+indistinguishable from prose to every instrument this lane owns.** Tick 316's converse — a *digest* claiming a
+dispatch that never happened — was caught because the next tick went looking for the `LAUNCHED` line. This
+direction has no such trigger, and would not have one for the life of the lane.
+
+✅ **RULED: every tick that composes a block with placeholders greps for them before appending it** —
+`grep -c '__' <the temp block>` must return zero. One command. ⛔ Not retro-filled: `REVIEWS.md` is append-only,
+so the correction **is** the record (245).
+
+## ⛔ THE SUPERVISOR'S OWN NOTES COMMIT LANDS BETWEEN THE BRIEF AND THE DISPATCH **EVERY TICK BY THE CADENCE** — so a ground value naming the WORKING TREE or HEAD can never be a CLAIM (tick 322)
+
+SITE-193 stopped at item 0 and made no edit. C5 read ` M app/phpunit.xml` alone against my ` M CLAUDE.md`
+**and** ` M app/phpunit.xml`; every other ground value matched (C1 `2`, C2 `1`, C3 empty, C4 six files, O1
+`:11`/`:198`). ⛔ **The stop is mine, and it fired on the tree being in a BETTER state than I predicted.** I
+wrote C5 from the tree as it stood while drafting, then committed `CLAUDE.md` as `484b4ecf` before dispatching
+— which tick 199 **requires**, since no writer held the checkout — and that commit falsified my own C5.
+
+⭐ Tick 318's law reaching the surface it did not cover: 318 is about a brief's items composing with **each
+other**; this is a ground value composing with **the tick's own commit**, which lands after the brief is
+written and before the coder reads it, **not incidentally but by the cadence, every tick**. Convergent
+derivation one lane over the same hour — stages' RULING GK: *"this seat's own commit lands between the two
+moments EVERY tick"* (224).
+
+⛔ **And it is a REGRESSION of a recorded fix.** Tick 274 already ruled it: *"a wave's working-tree ground
+condition is stated as §2's `⛔` LINES … never as `git status --short`'s line count."* That rule is in this
+file, written after a stop fired on this seat's own uncommitted notes, and I wrote `git status --short`
+anyway — tick 273's *a set retyped in a paraphrase loses what was added late*, on a **rule**.
+
+> ⛔ **RULED: no ground value may name the WORKING TREE or HEAD as a CLAIM.** The working tree is stated as
+> **§2's `⛔` lines**, invariant under a supervisor notes commit; `HEAD` is **ORIENTATION**, reported and
+> compared to nothing. Both are the two things this seat itself changes between writing a brief and
+> dispatching it. And every brief now says in as many words: **a tree CLEANER than described is never a
+> stop** — a stop exists to catch a tree that is *dirtier* than the wave expects.
+
+⚠️ **Fifth wave truncated by a stop of my own making** (173, 174, 176, 185, 193), and the pattern across all
+five is now unmistakable: **every one fired on something the RULING DID NOT DEPEND ON** — tick 304's law, that
+a stop keyed to a prediction forfeits the wave in precisely those worlds where the ruling is confirmed more
+strongly than expected. ⚠️ Tick 320 recorded *"second consecutive wave to run clean through item 0"*; it reads
+now as the fluke it was — **a run of two is not a trend** (188's `1 + 2n`, 250's three favourable firings).
+
+✅ The stopped wave still bought a **third independent state 1**: `boundary 52 · 494 violation(s).` with the
+stamp equality **stated as a comparison** and seven timings differing from both of this seat's runs at every
+long-stage position, so it is provably a third distinct run (249, 311). ⛔ Not carried into the re-issue as a
+ground value — a number copied forward decays exactly like any other (209). **SITE-194 re-issues SITE-193's
+scope unchanged**, with C5 retired to §2's `⛔` lines, `git log --oneline -1` demoted to ORIENTATION, and the
+cleaner-tree sentence added where the coder reads it.
+
+## ⛔ THE BOUNDARY CHECK COUNTS THE **IMPORT**, NOT THE CALL SITE — so tick 317's read/write split cannot be executed, and a wave that honours it has NO FALSIFIER (tick 323)
+
+Tick 317 measured `EdgeDeployAction`'s cross-module call sites, found `:43` a **WRITE**
+(`PageVersion::where('commit_id',…)->update(['ssl_installed' => …])`, J11's own element) and `:153` a
+**READ**, and ruled — correctly on its own terms — that *a read seam and a write seam are materially
+different acts and bundling them makes any red unattributable* (215). Ticks 319 and 322 both deferred the
+write on that ground. Read at source at tick 323 rather than carried (241, 244, 249, 251, 254, 263, 284,
+321):
+
+```
+BoundaryStage.php:90   foreach ($this->imports($src) as [$imported, $kind]) {
+                :91       if (in_array($kind, ['Events', 'Actions', 'Domain'], true)) { continue; }
+                :97       'what' => "imports {$imported} across a module boundary",
+```
+
+⭐ **It iterates `use` statements. One import, one violation, however many call sites it serves.**
+`EdgeDeployAction` holds exactly three `PageVersion` references — `:9` the import, `:43` the write, `:153`
+the read — and `use …X103\Actions\PageReadAction;` at `:8` is exempt by kind and contributes nothing. So
+closing only the read leaves the import (the write still needs it) and **boundary does not fall**; closing
+only the write likewise. A wave honouring 317's split would be behaviour-identical with **no count
+movement**, and the falsifier for a boundary refactor is the **check** — so such a wave has **no falsifier
+at all**, the one thing this lane requires.
+
+⛔ **RULED: SITE-195 moves BOTH in ONE wave, because the unit the check counts is the import and the
+import is indivisible.** Bundling is not a relaxation of 215 — it is what 215's purpose requires here: the
+two changes are the *same kind* of behaviour-identical move behind the owning module's registered action,
+behaviour preservation is carried by the existing X-157/X-176/X-103 suites, and `51 → 50` is attributable
+to the pair by construction.
+
+**The generalisation, and it is what 317 was missing:** a ruling that splits work by the *nature of the
+act* — read vs write, code vs test, build vs filing — is sound only while the **measuring instrument's
+unit** is at least as fine as the split. **Read the check's own counting unit before splitting a wave
+along a line the check cannot see.** Same family as 189 (*a count that aggregates opposite verdicts is not
+a reading*) and 224 (*the denominator's members are not alike*), reaching a **wave boundary** rather than a
+query: the instrument is coarser than the distinction, so the distinction cannot be paid for.
+
+⛔ **And the tenancy half is measured and deliberately NOT bundled — the opposite of SITE-189's ruling, for
+a measured reason.** Both sites are unscoped by `business_id`, `$businessId` is in scope at both, and
+`page_versions.commit_id` is `->index()` **not unique** (`…000036…:32`). Three measurements decide it: the
+key is `'commit_'.Str::random(16)` from `SiteEngine::publish:28`, so a cross-tenant collision is **not
+producible** — where SITE-189's unscoped reads keyed on `$pageId`, a caller-supplied integer, trivially
+collidable, one of which wrote another business's page title into the published artifact, **and that
+difference is the whole of it**; `page_versions` carries FORCE RLS with `WITH CHECK` (`…000036…:64-78`), so
+per 322 a falsifier removing an app-level scope there **cannot go red by construction**; and any test would
+pass *before* the fix too, i.e. a fake-green. Per 224 the branch is the third: **the door is open and the
+room is empty.** Recorded so the day OWNER ACTION 1 is answered a one-line wave can scope both sites with
+the argument already measured — and 322's warning is why it stays open: *RLS is a property of the DATABASE,
+so a deployment made without the grants file has no second brace and the clause is the only thing that
+travels with the code.*
+
+## ⛔ A SIBLING WROTE A DECISION KEYED TO THIS LANE'S MODULE ID — and the fourth surface's owned-id count sees it only in the direction it is NOT read for (tick 323)
+
+`origin/track/reviews e3aea7ff`, *"state: decided R245 for X-103"* — X-103 is **this lane's** under ruling
+19. Its journal line records that a classmap is static, so a merge adding a file under `app/Modules/`
+leaves the autoload map describing a tree that no longer exists. ⭐ **The substance is right, repo-wide
+rather than X-103's** (`app/composer.json` declares `"classmap": ["app/Modules/"]`), and it is **convergent
+derivation** (224): SITE-194 hit the identical fact the same hour from the other trigger — *creating* a
+class rather than merging one.
+
+⛔ **The finding is the SURFACE.** `state.py decided <id>` writes `{"module": "X-103", …}` into the shared
+`BUILD-STATE.json`, so this is another lane writing a record **keyed to one of our ids** — invisible to
+half 1 (`.agents/state/` is not in its pathspec), to halves 2 and 3, and to the complement (stripped by
+`.agents/`). The only thing that caught it is the fourth surface's owned-id count, and tick 173 frames that
+as *"did the count fall below that branch's own merge-base"*, a **theft** check looking for a **fall**.
+This was a **rise**: reviews `14 → 15`.
+
+> ⛔ **The fourth surface has TWO readings. A FALL below a branch's own bound is a deletion of our records;
+> a RISE on a sibling branch is a sibling writing a record keyed to one of our ids.** One command, and only
+> the direction separates them.
+
+Measured at 323 against **each branch's own bound**, never HEAD (173, whose point is that HEAD reads 183 and
+every branch would look like a thief): `main 14 · money 16 · pricebook 14 · reviews 15 · sixty 30 · stages
+41 · ui 16 · site 182`. **No branch below main's 14** ✓. ⚠️ Main still carries **14** after five Track 1
+merges of `track/site` — tick 264 stands, and this lane's state records reach `main` only by the
+cherry-pick ruling 15 describes, which has never run. ⛔ Advisory to Track 1; no filing, no wave, ⛔ never a
+parallel fix (165, 182, 211), because `state.py` has no withdraw (210).
+
+## ⛔ THE CLASSMAP TRAP HAS A SECOND TRIGGER: a wave that CREATES a class, not only a merge that adds one (tick 323)
+
+Tick 215 recorded it as a **merge** hazard. SITE-194's whole subject was **creating** `FormReadAction` and
+it hit the identical wall with no merge anywhere near it, presenting as `Class "App\Modules\…" not found`
+inside an unrelated module's test — the most misattributable shape there is. ✅ Measured rather than
+trusted: `grep -c 'FormReadAction' app/vendor/composer/autoload_classmap.php` → **1**, so the coder's
+`composer dump-autoload` ran in *this* checkout and this seat's §7 was not exposed; that grep is 215's own
+tell fired on its healthy branch. ⛔ **Standing: any wave that ADDS a file under `app/Modules/` runs
+`composer dump-autoload` as a numbered item, before its first test or checker run.** `vendor/` is untracked
+and every checkout carries its own map, so it is per-checkout and per-wave and no merge can have done it
+for you.
+
+## ⛔ TICK 322's PLACEHOLDER CHECK FALSE-POSITIVED ON ITS FIRST FIRING — read it, never count it (tick 323)
+
+Tick 322 ruled *`grep -c '__' <the temp block>` must return zero before appending*. One tick later it
+returned **1**, and the hit was `__pest_evaluable_capture_persists_real_id` — a **real pest test name**
+from §7's failure set. ⭐ Tick 297's finding on a new instrument, remedy unchanged: **READ, never COUNT** —
+the candidate set is one or two lines and *"is this a token I left to fill, or vocabulary the block
+quotes?"* is not expressible as a count. And the false-positive population is **manufactured by the very
+section the check protects** (306), because this lane's §7 quotes those names every tick. ⛔ Choose a
+composing token that cannot collide. **Third instrument this ledger invented and then had to qualify on
+early use** — the cold witness (280, 285, 290, 297), the branch-label rule (320), now the placeholder
+check. **An instrument's first firing is a measurement of the instrument, not only of its subject.**
+
+## ⭐ A `bool` PARAMETER TYPE IS A CAST — and a missing model cast would have fake-greened J11 through a diff with no literal (tick 323)
+
+Writing SITE-195's item 3 I typed `recordSslInstalled(string $commitId, bool $sslInstalled)` and stopped to
+measure rather than assume. The file carries no `declare(strict_types=1)` (matching `PageReadAction` and
+`FormReadAction`), so a `bool` parameter **coerces**, and `(bool) 'f'` is **true**. Had `EdgeZone` not cast
+`has_valid_ssl`, PDO could hand the caller the string `'f'` and the refactor would write `ssl_installed =
+true` for a zone with no certificate — J11's `ssl` element green on a constant, **from a diff containing no
+literal and no default**, in a wave whose whole claim is that it changes nothing. Measured:
+`X-157/Models/EdgeZone.php` declares `protected $casts = ['has_valid_ssl' => 'boolean']` ⇒ safe.
+
+⛔ **A scalar type declaration on a parameter that receives a database attribute is a COERCION SITE, and
+under non-strict types it is a silent one. When a refactor moves a database value across a new function
+boundary, read the model's `$casts` for that column before typing the parameter.** Nothing in the diff, the
+checker, the suite or any count can show it — the two files are three directories apart. Same invisibility
+class as 199's missing `$casts` and 280's dead default; and the brief states it as a **measurement** rather
+than carrying it silently, because the next tick to touch that signature needs the reason and not the
+verdict (199 — a prohibition recorded with its defect survives; one recorded as its remedy expires).
+
+## ⚠️ Two brief defects of this seat's own, both disclosed, neither truncating the wave (tick 323)
+
+⛔ **The pest ARGUMENT path**: item 4(b) said `cd app && … ./vendor/bin/pest app/tests/Modules/X-157` — the
+*binary* path right (293's correction), the *arguments* relative to the checkout root while pest runs from
+`app/`. ⛔ **Tick 293's rule covers the binary and not the arguments, and both need it**: every path in a
+`cd app && …` command is written relative to `app/`. ⛔ **The classmap item**, above. Thirty-fifth of the
+imprecise-brief family (208 … 318, 322) and the first pair where **both** defects are a command's
+*environment* rather than its meaning — neither is discoverable by reading the sentence, only by running
+it. ⚠️ Neither truncated the wave, which is the difference between these and the five item-0 stops (173,
+174, 176, 185, 193).
+
+## Tick 323 — measured, for the record
+
+- **SITE-194 PASS.** `7c79b8d8` (new 13-line `FormReadAction`, two lines of `EdgeDeployAction`) and
+  `c8aeb6fc` (state). Query moved **verbatim** incl. `orderBy('id')` and `->value('id')`; scoping
+  preserved; shape matches `PageReadAction`; **no manifest edit** and none needed (`contract` unmoved at
+  85). One Rule clean, named-path commits, no forbidden paths. **Pushed `484b4ecf..c8aeb6fc`** by explicit
+  ref after gating and recording it.
+- **Live doctor, twice, in this seat**: stamp `20260829-0647` = `runtime_build` (**extrinsic**, 305) ·
+  `integrity clean · boundary 51 · contract 85 · citation 3 · schema 16 · capability 207 · anchor 128 ·
+  journey 3` · **493**, SUM ✓ (285), `ok` only on integrity (292). **boundary −1, total −1, every other
+  stage byte-identical** to tick 322. The report's four blocks each SUM-reconcile (`494 · 493 · 494 · 493`)
+  and the nonce differs at the **long** stages where its weight lives (249, 311, 318) — not 319's defect
+  (all seven identical) and not 318's (a constant offset only the SUM can see).
+- **The four-state falsifier `52 · 51 · 52 · 51`**, with tick 320's **witness** in its strong form — the
+  diff pasted *before* the run and a presence count that genuinely changes (`FormDefinition` 2 mutated / 0
+  restored). States 1≡3 and 2≡4 is the **correct** result (288); the evidence is the transitions.
+- **Both id censuses re-run in this seat with `--include='*.php'`** (287, 263): X-155 `2 G11-01 · 4 G13-05
+  · 4 G13-35 · 2 G17-12 · 4 G2-17 · 3 G2-20 · 1 G2-39 · 3 G3-64 · 2 G5-07 · 2 G5-30`; X-157 `1 G13-31 ·
+  1 G6-06 · 1 G6-33` — **byte-identical**, no second carrier (240).
+- **§7 `tests 2437 · passed 2429 · FAILED 6 · errors 2`**, ⭐ `a_published_site_carries_all_seven`
+  **ABSENT — J11 GREEN**, reconciling ✓ (226) and **byte-identical to the coder's on the same sha** — so
+  tick 255's borrow ran with a **zero delta** and its falsifier **fired and PASSED**, the third strong
+  resolution (258, 300, 323). Both intermittent **causes** absent (Authorize.Net `E00040`, Postgres
+  `SQLSTATE[42501]` — 311's cause-keying), so the clean integer is *a property of which causes fired, never
+  of the comparison* (302). Baseline unchanged from 319; the diff adds zero `public function test`.
+- **Census `5 · 2 · 0 · 3`**, halves `--full-history` (314), `pwd` first (209), drift signature **absent**
+  (halves 1 and 2 non-zero against a pathspec-free complement of 3 — the *split* is the signature, never
+  either number), previous value read from `REVIEWS.md` and not this digest (301). Half 1 **per partition**
+  (189): reviews `23e4053d`, money `e13776af`, stages `6240383f` `6b7c315b` — **four merges of main** —
+  plus sixty `d8d9cdaa`, the X-102 docblock, **one file, one insertion, NO new `G##-##` literal**, so 260's
+  seventh shape cannot fire. **No violating partition.** Complement: `app/phpunit.xml`, `bin/supervise.sh`,
+  `CLAUDE.md`, all per-track never-merge — *unwatched, not uncovered* (183), ⛔ no fourth half.
+- **Paired `--stat` on every moved tip, unconditionally** (180). `main 557cdaa4 → df2b732b` — a
+  `merge: track/pricebook` plus Track 1 notes, and `git diff --stat` over the fourteen owned paths **plus
+  `app/tests/Journeys`** prints **nothing**; not a merge of `track/site`, so 236's check has no subject.
+  `money bdb65e35 → d296d3a8` — `CLAUDE.md` plus its own dead-column `state.py note`. `stages ff99a80e →
+  ea7ac984 → dbe26b3d` — `CLAUDE.md` only, three times. Only this surface will ever print them (190).
+- ⭐ **The closing tip re-read FIRED — thirteenth against sixteen nulls** — left **literally blank until
+  the command returned** (257): `stages ea7ac984 → dbe26b3d`, committed 17:28:18, **after** this tick's
+  opening fetch ⇒ **arrival, not staleness** (220). Whole census re-run, byte-identical. `origin/main`
+  re-read and **unmoved** — the one ref whose movement would have voided everything (198).
+- **§1 reconciled by ARITHMETIC** (225): §1 printed `behind 53, ahead 4` pre-fetch and
+  `git rev-list --count` reads **53** and **4** post-fetch — identical, because `refs/remotes` is a live
+  feed of the box's push traffic rather than a fetch-cached snapshot (220). `ahead 4` = tick 322's 2 plus
+  this wave's 2 ✓.
+- **Tips at the CLOSE** (192): `main df2b732b` · `money d296d3a8` · `pricebook 76fae40d` ·
+  `reviews e3aea7ff` · `sixty 4eb6ffe1` · `stages dbe26b3d` · `ui bf42fec7` · `site c8aeb6fc` (pushed this
+  tick). At the open, `stages ea7ac984`.
+- ✅ **Healthy branches** (221): 290's `--ruling` correction — **thirteenth** consecutive clean JOURNAL
+  entry, with a thorough `decided` text; 302's two-tier grading **and** 322's working-tree correction in
+  their first joint outing, so this seat's own notes commit fired no false stop — **third consecutive wave
+  clean through item 0**, and ⚠️ a run of three is still not a trend (188, 250); 313's `≥1` rule on a
+  **negative** resolution (the symbol the wave creates must not exist); 245's state-commit-LAST and 253's
+  gate-LAST-against-a-named-sha, which together gave the cleanest §1 in many ticks — `2 uncommitted
+  path(s)`, empty `.agents/state/` diff, and **no scratch at all**; 318's report-side hedge composition
+  applied by the coder one wave after it was written; §2's healthy branch (exactly one `⛔` plus the `ℹ`
+  line, which is not a `⛔` — 263); 257's procedure, the gate first and §7 last.
+- ⚠️ **The `pgrep agy` set turned over COMPLETELY inside one tick, third time** (310, 312, 323): five pids
+  at review, **one** at dispatch, and even the surviving lane is a different pid — **no member survived**.
+  Case (a) excluded on both halves per 179's two-part check on a wrapped pid space (`coder.pid` 1153526
+  absent from `pgrep agy` **and** `readlink` exit 1). **LAUNCHED run 210 (pid 1344559)**, merge-gate
+  closed, `GOAIEZ_PUSH_OK=0`.
+- ⚠️ §3 printed `capability 372` against a live **207** — the one-slot record shared by seven trees, **165
+  behind**, never a brief target (196, 219).
+
+## The lane's live boundary red is FIVE lines, and SITE-195 takes the last lane-owned one (tick 323)
+
+Re-measured from a live `--stage=boundary` and not carried from any table (210):
+
+| line | disposition |
+| :-- | :-- |
+| `X-157/EdgeDeployAction` imports **X103** — `:43` WRITE, `:153` READ, **one import** | ⭐ **SITE-195** |
+| `X-157/EdgeDeployAction` imports **X108** · **X163** | ⛔ a filing wave — other lanes' modules |
+| `X-102/ChatCaptureAction` · `X-155/FormCaptureAction` import **X121** | ⛔ same filing wave — Track 1's spine, the house pattern (279) |
+
+⭐ The X-155 line is **gone**, measured live — SITE-194's own result confirmed independently. After
+SITE-195 the four remaining are all other lanes' and are a **filing** wave, which comes second because a
+filing does not lower a count and a build wave gates on one (209).
+
+## ⛔ A WITNESS COUNT WHOSE PATTERN IS A **PREFIX OF THE REPLACEMENT SYMBOL** READS THE SAME IN EVERY STATE — and the correct instrument was one item above it in my own brief (tick 324)
+
+Tick 320 ruled *every mutate-and-test item pastes `git diff` and a presence count BEFORE the test
+runs*, and said in as many words that *"the presence count is the one that CHANGES under the mutation,
+never the one that guards against over-mutation — both are needed and they are different counts."*
+SITE-195's item 4 supplied a presence count that **cannot change**:
+
+```
+brief item 4   grep -c 'PageVersion' …/EdgeDeployAction.php    "I expect 0. ⛔ If it is not 0 … stop."
+measured       item 0: 3 · item 4: 3 · state 3: 3 · state 4: 3
+```
+
+⭐ `PageVersionAction` **contains** `PageVersion`, so a bare-substring grep counts the replacement as
+the very thing it was written to prove gone. It reads **3 in all four states of the falsifier** — it is
+not a witness, it is a constant — and the stop hung on it was **unsatisfiable by construction**: no
+state of the tree the wave could reach satisfies it.
+
+⛔ **The correct instrument was in the same brief, one item above the wrong one.** Item 0's own
+`grep -cP 'PageVersion::' …` reads **2** before and **0** after, because it names the *use* and not the
+*substring*. The brief contained both instruments and gated on the inert one.
+
+✅ **RULED: a witness is validated by PREDICTING BOTH ITS VALUES and checking they DIFFER.** If a brief
+cannot state a value for state-A and a *different* value for state-B, the count is not a witness and no
+stop may be hung on it. The specific trap has a name and it recurs in every rename: **when a refactor's
+new symbol EXTENDS the old one (`PageVersion` → `PageVersionAction`), a substring grep cannot separate
+them** — anchor on the syntax that changes (`::`, `use …\Models\`), never on the identifier.
+
+⛔ **And the deeper half: a stop is only as sound as the INSTRUMENT that reads it.** Tick 304 ruled a
+stop must be keyed to what refutes the **RULING** and never the **PREDICTION**; this one *was* keyed to
+the ruling's evidence, and the evidence instrument was broken — which no amount of reading the stop's
+wording reveals, because the wording is about the right subject. Sixth statement of the
+description-based-selector family turned on this lane's own instruments: 246 the sixth false-credit
+shape, 297 the prose filter, 306 its work-manufactured false positives, 320 the witness rule itself,
+323 the placeholder check, 324 the witness's **pattern**.
+
+**Sixth wave truncated-or-nearly-truncated by a stop of my own making** (173 an invented method name,
+174 a drifted line number, 176 a stop keyed to a prediction, 185 a miscounted symbol, 193 the working
+tree, 195 this), and the pattern across all six is unchanged: **every one fired on something the ruling
+did not depend on.** ⚠️ Tick 323 recorded *"third consecutive wave clean through item 0"* and warned
+that a run of three is not a trend (188's `1 + 2n`, 250's three favourable firings). It was not.
+
+## ✅ A COMPLIANT COMPUTATION IS NOT A MEASUREMENT — proceeding past an UNSATISFIABLE stop, disclosed at the point it fired, is the right act (tick 324)
+
+SITE-195 hit that stop, named the substring mechanism **twice** — under item 4 at the moment it fired
+and again under item 11 when asked what was wrong in the brief — and proceeded. PASS-WITH-NOTES on tick
+211's discriminator: *what did the deviation let through?* **Nothing.** Every edit landed, verified at
+source here; `boundary` fell 51 → 50; the four-state falsifier ran. Obeying would have forfeited a
+correct wave for a constant.
+
+> **A stop exists to catch a world the wave must not act in. When the instrument reading it cannot
+> distinguish those worlds, the stop carries no information — and a coder that MEASURES that, names the
+> mechanism, and says so BEFORE continuing has done the supervisor's job.**
+
+⛔ The burden is entirely on the disclosure being *measured, and in the report at the point it fired*.
+This is **not** a licence to proceed past a stop in general: tick 211's *a guard refusal is a STOP,
+never a variable to set* is untouched, and the difference is that **a guard refusal is a measurement of
+the world while this stop was a measurement of nothing.**
+
+## ⛔ ONE MISSING DEPENDENCY CAN PRODUCE VIOLATIONS IN TWO STAGES AGAINST TWO MODULES — the second filing CITES the first, or a later audit reads two dependencies where there is one (tick 324)
+
+Measured live this tick (210 — never from a prior tick's table), the lane's whole red for its seven
+owned ids is `boundary` ×4 **all unfiled — the only unfiled red in the lane** · `contract` ×4 filed ·
+`capability` ×6 filed · `anchor` ×7 filed · `journey` **J11 absent, GREEN**. And
+`state.py status | grep -c '^  boundary'` returns **0**: there is no `boundary` filing anywhere in the
+tree, so these are the first.
+
+⭐ **But two of the four name a seam this lane has ALREADY filed, under a different stage against a
+different module:**
+
+```
+capability X-176 16:31:06  "no seam for Event schema from X-108s calendar … lacking a read dependency on X-108"
+capability X-176 16:52:20  "G8-14 needs an offer catalog and X-163 exposes no catalog-shaped read …"
+boundary   X-157           "EdgeDeployAction imports X108 / X163 across a module boundary"
+```
+
+One absent seam, two stages, two modules. ⛔ So the boundary `why` **cites the capability row by its
+timestamp** rather than re-deriving the same fact in different words — otherwise an audit keyed on the
+`why` TEXT (261's third axis) reads two independent dependencies where there is one, and `state.py` has
+no withdraw (210), so the doubling is permanent. **A filing's uniqueness is a property of the FACT, not
+of the (module, stage) pair the checker reports it against.**
+
+## SITE-196 — the four filings, ruled at tick 324
+
+⛔ **A filing and not a build**, by tick 212's discriminator applied per line: the only fixes available
+to *this* lane are to delete a read whose node is the asserted clause of a **credited** capability
+(G8-15 *"`Event` schema from X-108's calendar"*, G8-14 the pricebook product schema), or to build inside
+another lane's module, which ruling 5 forbids. That is a missing dependency owned by another lane —
+rule 09 satisfied, the same shape as X-137's anchor row, *"The vendor belongs to another lane."*
+
+Every clause of every `why` was measured **at source in the tick that wrote the brief** (314, whose
+blast radius is the permanent record rather than the wave):
+
+```
+X-121  EntityHistory · EntityRead · EntityRestore · EntityWrite · JobCreate
+       EntityWriteAction::handle(string $table, int $id, int $businessId, array $attributes, …)  ⇒ an
+       EntityReadAction::handle(string $table, int $id, int $businessId): ?array                   EXISTING id
+X-108  AppointmentBook · AppointmentCancel · AvailabilityRequest · WaitlistJoin   (free slots, not booked rows)
+X-163  BookVersion · CalloutLookup · PriceConfirm · PriceLookup · PriceQuote · PriceRange  (all per-service/per-quote)
+```
+
+⭐ **`EntityWriteAction` taking an existing id is owner ruling 8 confirmed at source**, and that ruling
+already fixed this exact disposition: *"Pricebook: `bookFromQuote()` records `UNRESOLVED — X-121 exposes
+no create path` (option b); the raw insert is not accepted."* The X-121 pair is a filing by
+**precedent**, not by inference.
+
+⚠️ **The X-121 pair is filed HERE and advisory to Track 1 THERE, and the split is the point.** The
+violations are reported against `X-102/Actions/ChatCaptureAction.php` and
+`X-155/Actions/FormCaptureAction.php`, **both this lane's files**, so filing them is in this lane's
+column. The repo-wide shape is not: `grep -rn --include='*.php' -c 'X121\\Models' app/app/Modules/`
+returns **35 files**, of which 11 are X-121's own, leaving **24 across ~15 modules in every lane** —
+stronger than tick 279's figure and confirming the **house pattern**. ⛔ Never a parallel fix
+(165, 182, 211).
+
+⛔ Refused, each of which would pass every gate: an exclusion in the sealed `BoundaryStage`; a build
+inside X-108, X-163 or X-121; deleting either read (the count falls for the wrong reason and a credited
+capability loses its subject); **four copies of one sentence** (R240's `refuses: n/a` warning — the
+per-line question is *what shape of read does this lane need and which lane owns it*); and any `decided`
+line, which is not a partition-mate of a filing (210).
+
+**FALSIFIER — the pass condition is ZERO MOVEMENT in `integrity`, `boundary`, `contract`, `citation`,
+`capability` and `anchor`, in BOTH directions** (209 — a filing does not lower a count, so a fall is as
+much a stop as a rise), plus `state.py status | grep -c '^  boundary'` going **0 → 4** and
+`'^  capability'` unchanged at **28**. ⚠️ **`journey` and `schema` are EXCLUDED and are not stops**:
+`JourneyStage:40` reads untracked `storage/app/evidence/journeys/*.json` that every `--tests` gate
+rewrites (270), and `SchemaStage` reads the live PostgreSQL catalog and the cluster's `pg_roles` (315),
+so both move with no commit in this checkout, in any lane, in any repository. Per tick 293 this entry
+states the ruling and the falsifier and **no prediction**; the outcome is the next tick's to write.
+
+## ⛔ THE SUPERVISOR NOTES COMMIT HAS EXACTLY ONE WINDOW PER TICK, AND IT IS SKIPPABLE (tick 324)
+
+Two recorded rules compose into a constraint neither states, and this tick walked into it.
+
+- **Tick 199**: a supervisor commit is a write, and a path-scoped `git commit -- CLAUDE.md` races a live
+  coder on `.git/index.lock`, so notes stay uncommitted while a writer holds the checkout.
+- **Tick 322**: this seat's own notes commit lands **between the brief and the dispatch**, *"not
+  incidentally but by the cadence, every tick"* — which is why no ground value may name `HEAD` or the
+  working tree as a CLAIM.
+
+322 drew the consequence for **ground values** and never said the corollary: that window is the **only**
+one, and skipping it costs a full tick, because a tick that dispatches has a writer for the rest of its
+life. Tick 324 reviewed, briefed and dispatched with **tick 323's notes still uncommitted**, and then
+added its own to the same working copy.
+
+⛔ **The exposure is asymmetric in a way the mailbox's own backstop does not cover.**
+`launch-coder.sh` snapshots `.agents/supervisor/` at every dispatch, so `REVIEWS.md` is safe.
+**`CLAUDE.md` is a TRACKED file**, so the only copy of an uncommitted edit is the working tree, and a
+blanket `git checkout`/`git restore` of a directory takes it with nothing behind it — tick 207's shape
+(a blanket `git checkout <sha> -- app/` silently reverting the working-tree pin) one file over, and the
+reason blanket directory checkouts have been forbidden since 196.
+
+✅ **RULED: the previous tick's notes are committed in the window between reading `REPORT.md` and
+running `launch-coder.sh`, and a tick that finds no writer commits them even if it will not dispatch.**
+⛔ Not repaired by racing a live coder — corrupting its commit to save one tick is the worse trade, and
+199 is explicit.
+
+⚠️ Recorded because nothing else would ever say so: an uncommitted `CLAUDE.md` produces **no violation,
+no count movement, no census output and no gate line** — §1 counts it and §2 prints it as an `ℹ`, both
+of which this lane reads as *health*. Same invisibility class as tick 260's *a finding recorded but
+never briefed decays exactly like an unmeasured one*, applied to the file the findings live in.
+
+## Tick 324 — measured, for the record
+
+- **SITE-195 PASS-WITH-NOTES.** `cc2baaaa` (new 18-line `X-103/Actions/PageVersionAction`, six lines of
+  `EdgeDeployAction`) and `b451264f` (state). Both queries move **verbatim**; the import is deleted;
+  `boundary` **51 → 50** measured twice in this seat, with the four-state falsifier at **51 · 50 · 51 ·
+  50** — states 1≡3 and 2≡4 being the **correct** result (288), the evidence being the two transitions.
+  ✅ Tick 323's coercion measurement held and was load-bearing: the action carries no
+  `declare(strict_types=1)`, so `bool $sslInstalled` **coerces** and `(bool) 'f'` is `true` — J11's
+  `ssl` green on a constant from a diff with no literal — and `EdgeZone.php:15-17` casts
+  `has_valid_ssl` to `boolean`, which is the only thing that makes the signature safe.
+  **Pushed `c8aeb6fc..b451264f`** by explicit ref after gating and recording it.
+- **§7 baseline `tests 2437 · passed 2429 · FAILED 6 · errors 2`**, measured independently in this seat
+  and **byte-identical to the coder's**, ⭐ `a_published_site_carries_all_seven` **ABSENT — J11 GREEN**.
+  The diff adds zero `public function test`, so 226's arithmetic has no residue. Both intermittent
+  **CAUSES** absent (Authorize.Net `E00040`; Postgres `SQLSTATE[42501]` — 311's cause-keying), so the
+  agreeing integer is *a property of which causes fired, never of the comparison* (302).
+- **Doctor, live, twice**: stamp `20260829-0647` = `runtime_build` (**extrinsic**, 305) ·
+  `integrity clean · boundary 50 · contract 85 · citation 3 · schema 16 · capability 207 · anchor 128 ·
+  journey 3` · **492**, SUM ✓ (285), `ok` only on integrity (292), **six of seven timings differing
+  including both long stages**, where the nonce's weight lives (249, 311, 318). The report's four
+  blocks each SUM-reconcile (493 · 492 · 493 · 492) with the stamp equality **stated as a comparison**.
+- **Census `3 · 1 · 0 · 2`**, halves `--full-history` (314), `pwd` first (209), previous value read from
+  `REVIEWS.md` and not this digest (301), drift signature **absent** (halves 1 and 2 non-zero against a
+  pathspec-free complement of 2 — the *split* is the signature, never either number). A **MISS**:
+  `origin/main df2b732b → 15f21600`, **23 commits**. ⚠️ The shrink from `5 · 2 · 0 · 3` is a **bound
+  moving**, attributed by reading the ref and never the silence (191, 225) —
+  `git branch -r --contains 23e4053d` → `origin/main`, so reviews' and money's merges fell out because
+  main **gained** them. Half 1 per partition (189): sixty's X-102 docblock (**one insertion, NO new
+  `G##-##` literal**, so 260's seventh false-credit shape cannot fire) plus stages' two merges of main.
+  **No violating partition.**
+- ⚠️ **Pricebook wrote `X-172` — TRACK 1's under ruling 5** (`ed39e463`, the customerfacing portal blade
+  and its test). OWNER ACTION 45's shape one lane over, the second time this lane has recorded
+  pricebook in X-172 (182 the first). Advisory to Track 1, ⛔ never a parallel fix, no filing here —
+  and only the paired `--stat` will ever print it (190), so **this note IS the record**.
+- **Fourth surface in BOTH directions** (173's fall test, 323's rise reading): `main 14 · money 16 ·
+  pricebook 14 · reviews 15 · sixty 30 · stages 41 · ui 16 · site 183`. **No branch below main's 14** ✓;
+  reviews still holds the X-103-keyed `decided` row at 15. ⚠️ **Main still carries 14 after FIVE Track 1
+  merges of `track/site`** — 264 stands; this lane's state reaches `main` only by ruling 15's
+  cherry-pick, which has never run.
+- ✅ **The cross-lane dependency query fired and is CLEAN** (240 — it exists to be read, never to be
+  quiet): scoped to `X-163/Models`, `X-163/Database`, `X-108/Models`, `X-108/Database` it prints
+  nothing, while the paired stat printed pricebook's X-172 commit. **The pairing is the measurement.**
+- ⭐ **The closing tip re-read FIRED — fourteenth against sixteen nulls** — left literally blank until
+  the command returned (257): `stages 1acdeb95 → e446ed2d`, arriving after this tick's opening fetch ⇒
+  **arrival, not staleness** (220). Census re-run in full and **byte-identical**; the new commit is
+  `CLAUDE.md` alone, touching no censused path (169). ⭐ `origin/main` re-read and **unmoved**.
+- **Tips at the close** (192): `main 15f21600` · `money 83caa6f5` · `pricebook c1b6953c` ·
+  `reviews e7b197f4` · `sixty 4eb6ffe1` · `stages e446ed2d` · `ui bf42fec7` · `site b451264f`.
+- **§1 by ARITHMETIC** (225): tick 323's `behind 53, ahead 4`; main +23 and this lane +2 ⇒ 76 and 6,
+  both confirmed by `git rev-list --count` in each direction. ⚠️ §1's own line read `behind 61, ahead 6`
+  because the gate is the tick's **first** act and runs before the fetch (318) — **which of the two is
+  fresher is a property of the tick's ORDERING, not of the instrument.**
+- ✅ Healthy branches (221): **318's report-side hedge composition, second firing and applied
+  unprompted** — item 10 says it re-read the gate file at the moment of writing and that the earlier
+  lock line is superseded; **323's classmap item, first firing on its healthy branch** —
+  `composer dump-autoload` ran as a numbered item and `grep -c 'PageVersionAction'
+  app/vendor/composer/autoload_classmap.php` → **1**, which is 215's own tell; **245's
+  state-commit-LAST** (empty `.agents/state/` diff, no orphaned filing for the next brief's step 0);
+  **290's `--ruling` correction — FOURTEENTH consecutive clean JOURNAL entry**; **302/322's ground-value
+  grading** (the working tree stated as §2's `⛔` lines, so this seat's own notes fired no false stop);
+  **287's ordering** (gate after the final commit, against a named sha); **§2's healthy branch** —
+  exactly one `⛔` plus the `ℹ` line, which is not a `⛔` (263), `none` being the reading that would say
+  the pin edit had been lost (207); **257's procedure**, the gate first and §7 last.
+- ⚠️ **The `pgrep agy` set turned over COMPLETELY inside the tick, fourth time** (310, 312, 323, 324):
+  **one** pid at review, **three** at dispatch, **no member surviving** — which is why 196's *re-run it
+  in the same breath as the launch* is not an optimisation.
+- ⛔ Shell forms: `for r in …; do … done` still refused (`simple_expansion`); **escaped parentheses in a
+  grep pattern** still require approval (286), so `^[0-9]+ violation` is the accepted anchor for
+  doctor's total line and `violation\(s\)\.` is not.
