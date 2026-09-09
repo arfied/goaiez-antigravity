@@ -2071,6 +2071,10 @@
   {
    "at": "2026-09-08T19:21:49",
    "note": "boundary Restored BUILD PROPOSAL prefixes to G16-21 and G5-31 and updated G5-31 to note that ChatTurnCreated exists but lacks manifest declaration and payload delivery."
+  },
+  {
+   "at": "2026-09-08T19:43:31",
+   "note": "boundary No legal route exists to deliver the chat turn payload from X-102 to C-Agent: the queue law forbids passing words, and BoundaryStage forbids C-Agent from importing X-102 models to read the row ID."
   }
  ]
 }
