@@ -6831,3 +6831,24 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     per 262's false positive). ⚠️ The generalisable half is ruling 95's, one register up: **a
     measurement that has failed twice is not repeated a third time — the failure is decomposed and only
     the half that changes an outcome is re-run.**
+264. **`REPORT.md` is OVERWRITTEN at every wave close, so it is never the delivery vehicle for anything
+    the NEXT wave needs — and MONEY-154's 170-row census is gone (RULED by the lane supervisor
+    2026-09-09, discovered while scoping MONEY-156).** This file's own mailbox table says `REPORT.md` is
+    *"overwritten at every wave close or stop"*, and ruling 258 nonetheless made the column census's
+    `FINDINGS` a `REPORT.md` deliverable *"the list MONEY-156 is written from"*. MONEY-155 overwrote it.
+    The 170-row table, its 116 uncorrected rows and the seven `neither` rows outside the corrected 52
+    are **unrecoverable**: `grep -c 'COLUMN CENSUS' REVIEWS.md` is **0**, and the only surviving copy is
+    MONEY-155's own 52 rows in the current `REPORT.md`, which the next wave will overwrite in turn.
+    ⭐ This is ruling 164's lesson one register up. 164 ruled that *a scratch file is never the delivery
+    vehicle* because it is untracked and outside every gate; `REPORT.md` is tracked and inside the
+    review, and it is **still** not durable, because durability here means *surviving the next wave*,
+    not *surviving the run*. **RULED: a measurement whose consumer is a LATER wave is copied into the
+    verdict block in `REVIEWS.md`** — which is append-only and is the ledger every tick reads — **and
+    `REPORT.md` carries it only as the transcription the reviewing tick reads once.** A brief that names
+    a `REPORT.md` heading as a deliverable also names the `REVIEWS.md` block that will preserve it.
+    ⛔ Not resolved by a file under `.agents/supervisor/` (ruling 47 — untracked, outside every gate,
+    and ruling 141 measured one such preservation silently writing 12 bytes). ⚠️ The cost was real and
+    is why MONEY-156 is re-cut: it can no longer be scoped from the prior wave's table, so it derives
+    its population from the **migrations** — durable ground truth — instead. ⚠️ The generalisable half:
+    **before briefing a measurement, ask which document the ANSWER lives in and how long that document
+    lives**, because the deliverable of a measurement wave is the only thing it produces.
