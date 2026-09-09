@@ -53,14 +53,30 @@ final class ArEngine
             $terms = ArPlanTerm::where('business_id', $businessId)->first();
             if ($terms === null || $terms->late_fee_percent === null) {
                 throw new FeeWithoutTermException(sprintf(
-                    'No late-fee term in the agreement for %s: a fee with no matching term is refused. Nothing was applied.',
+                    'No late-fee term in the agreement for %s: a fee with no matching term is refused. Nothing was applied. Write the term below, then apply the fee again.',
                     $invoice->invoice_number
                 ));
             }
 
             $percentCap = intdiv($invoice->total_cents * $terms->late_fee_percent, 100);
             $maxFee = $terms->late_fee_cap_cents === null ? $percentCap : min($percentCap, $terms->late_fee_cap_cents);
-            $finalFee = min($feeCents, $maxFee);
+
+            // G1-71: the term is a ceiling on the INVOICE, not on one press of the button — the fee
+            // accumulates on the receivable, so what the term still allows is the headroom.
+            // The row is READ here, never created: a refusal writes nothing (M29-C).
+            $alreadyApplied = (int) (ReceivableState::where('business_id', $businessId)
+                ->where('invoice_id', $invoiceId)
+                ->value('late_fee_cents') ?? 0);
+            $headroom = $maxFee - $alreadyApplied;
+            if ($headroom <= 0) {
+                throw new FeeAtCapException(sprintf(
+                    'The late fee on %s is already at the term ceiling of %s: nothing further was applied.',
+                    $invoice->invoice_number,
+                    number_format($maxFee / 100, 2)
+                ));
+            }
+
+            $finalFee = min($feeCents, $headroom);
 
             $state = ReceivableState::firstOrCreate(
                 ['business_id' => $businessId, 'invoice_id' => $invoiceId],
