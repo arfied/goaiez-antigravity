@@ -920,3 +920,4 @@
 - `2026-09-09T10:04:45` stage journey = 3
 - `2026-09-09T10:05:05` note: boundary The 2026-09-09T09:44:33 row incorrectly stated that the merge revealed '55 cross-module imports'. The number 55 is the total count of violations for the entire boundary stage, which runs four independent rules. The cross-module import count is a subset of this total, and conflating the stage total with the count for one specific rule was a mistake.
 - `2026-09-09T10:23:30` note: boundary The 2026-09-09T10:05:05 row incorrectly stated the stage runs 'four independent rules' and failed to provide the true cross-module import count. BoundaryStage declares 8 independent rules, 3 of which produced the 55 violations. The actual cross-module import count is 52.
+- `2026-09-09T13:47:44` (R245) X-01 — boundary: The gate requires consent_logged_at to store message bodies; WhatsApp and Email lack consent capture at opening, while Chat needs pre-chat notice before capture to comply with rule 22

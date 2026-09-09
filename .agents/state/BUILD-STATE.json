@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-09T03:08:29",
+ "updated": "2026-09-09T13:47:44",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1860,6 +1860,12 @@
    "module": "X-01",
    "chose": "Filed BUILD PROPOSAL instead of wiring ChatLeadCaptured. X-01 must provide a Registered Action (e.g. IngestLeadAction) because ChatLeadCaptured is emitted after the Person is already created by X-102, making it incompatible with ingestMessage which expects to look up the Person. Furthermore, registering an event listener forces a 'use' statement (due to pint) which violates BoundaryStage's strict import ban.",
    "at": "2026-09-09T03:08:29",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-01",
+   "chose": "boundary: The gate requires consent_logged_at to store message bodies; WhatsApp and Email lack consent capture at opening, while Chat needs pre-chat notice before capture to comply with rule 22",
+   "at": "2026-09-09T13:47:44",
    "ruling": "R245"
   }
  ],
