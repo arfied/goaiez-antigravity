@@ -70,10 +70,6 @@ class DispatchBoard extends Component
         }
     }
 
-    public function goToJobs()
-    {
-        $this->dispatch('go-to-jobs');
-    }
 
     public function render()
     {

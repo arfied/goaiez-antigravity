@@ -142,4 +142,22 @@ class DispatchBoardTest extends TestCase
             ->assertOk()
             ->assertSee("en route, {$pred->eta_minutes} minutes out");
     }
+    public function test_empty_board_cannot_create_assignment(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        Livewire::actingAs($owner)
+            ->test(DispatchBoard::class)
+            ->assertOk()
+            ->assertSee('Dispatching a technician is not yet available from this screen.')
+            ->assertDontSee('Go to Jobs');
+
+        $this->assertSame(
+            0,
+            DispatchAssignment::where('business_id', $biz->id)->count(),
+            'An owner on an empty board cannot cause a DispatchAssignment to exist.'
+        );
+    }
 }

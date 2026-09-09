@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-08T19:41:26",
+ "updated": "2026-09-08T23:32:30",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1904,6 +1904,12 @@
    "module": "X-168",
    "chose": "R245: X-168 records job time from ARRIVAL (on_site), not from en_route; the two empty states said en route and were wrong. en_route stays unwired because whether travel time is paid is an unstated business rule and total_hours is what the owner approves (ruling 33, capabilities.php:37 N-072 'arrival').",
    "at": "2026-09-08T19:41:26",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-162",
+   "chose": "R245: the dispatch board's empty state no longer names a Jobs screen or offers a Go to Jobs button \u2014 go-to-jobs has no listener and X-121 exposes no Jobs screen. Dispatching a technician from this screen is undeclared in capabilities.php and is week-2 capability work on work_orders, which is X-121's (ruling 8).",
+   "at": "2026-09-08T23:32:30",
    "ruling": "R245"
   }
  ],
