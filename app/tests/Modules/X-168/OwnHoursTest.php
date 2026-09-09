@@ -31,7 +31,7 @@ class OwnHoursTest extends TestCase
         Tenancy::setUser($user->id);
 
         Livewire::actingAs($user)->test(OwnHoursView::class)
-            ->assertSee('No hours yet. Your hours start when you go en route on a job.');
+            ->assertSee('No hours yet. Your hours start when you arrive on site at a job.');
     }
 
     public function test_shows_own_sheets_only(): void

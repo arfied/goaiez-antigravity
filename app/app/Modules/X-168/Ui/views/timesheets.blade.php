@@ -6,7 +6,7 @@
     </header>
 
     @if($timesheets->isEmpty())
-        <x-ui.empty-state>No timesheets yet. Hours appear when a technician goes en route.</x-ui.empty-state>
+        <x-ui.empty-state>No timesheets yet. Hours appear when a technician arrives on site.</x-ui.empty-state>
     @else
         <table>
             <thead>

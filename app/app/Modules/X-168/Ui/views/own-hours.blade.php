@@ -3,7 +3,7 @@
     <h1>Own Hours</h1>
 
     @if($timesheets->isEmpty())
-        <x-ui.empty-state>No hours yet. Your hours start when you go en route on a job.</x-ui.empty-state>
+        <x-ui.empty-state>No hours yet. Your hours start when you arrive on site at a job.</x-ui.empty-state>
     @else
         @foreach($timesheets as $sheet)
             @php
