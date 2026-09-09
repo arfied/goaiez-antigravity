@@ -23,17 +23,17 @@ class SameAccountScreenTest extends TestCase
 
         Tenancy::set($bizB->id);
         $connB = MerchantConnection::create(['business_id' => $bizB->id, 'gateway_name' => 'square', 'merchant_account_id' => 'acct_B9', 'is_connected' => true]);
-        Payment::create(['business_id' => $bizB->id, 'merchant_connection_id' => $connB->id, 'amount_cents' => 9900, 'currency' => 'USD', 'payment_token' => 'sq_tok_b', 'idempotency_key' => 'idem_b', 'status' => 'pending']);
+        Payment::create(['business_id' => $bizB->id, 'merchant_connection_id' => $connB->id, 'amount_cents' => 9900, 'currency' => 'USD', 'payment_token' => 'sq_tok_b', 'idempotency_key' => 'idem_b', 'status' => 'captured']);
 
         $owner = User::findOrFail($biz->owner_user_id);
         Tenancy::set($biz->id);
         Tenancy::setUser($owner->id);
 
         $connA = MerchantConnection::create(['business_id' => $biz->id, 'gateway_name' => 'square', 'merchant_account_id' => 'acct_A1', 'is_connected' => true]);
-        Payment::create(['business_id' => $biz->id, 'merchant_connection_id' => $connA->id, 'amount_cents' => 3000, 'currency' => 'USD', 'payment_token' => 'sq_tok_1', 'idempotency_key' => 'idem_a1', 'status' => 'pending']);
-        Payment::create(['business_id' => $biz->id, 'merchant_connection_id' => $connA->id, 'amount_cents' => 4500, 'currency' => 'USD', 'payment_token' => 'sq_tok_2', 'idempotency_key' => 'idem_a2', 'status' => 'pending']);
+        Payment::create(['business_id' => $biz->id, 'merchant_connection_id' => $connA->id, 'amount_cents' => 3000, 'currency' => 'USD', 'payment_token' => 'sq_tok_1', 'idempotency_key' => 'idem_a1', 'status' => 'captured']);
+        Payment::create(['business_id' => $biz->id, 'merchant_connection_id' => $connA->id, 'amount_cents' => 4500, 'currency' => 'USD', 'payment_token' => 'sq_tok_2', 'idempotency_key' => 'idem_a2', 'status' => 'captured']);
 
-        $loose = Payment::create(['business_id' => $biz->id, 'merchant_connection_id' => null, 'amount_cents' => 2500, 'currency' => 'USD', 'payment_token' => 'sq_tok_loose', 'idempotency_key' => 'idem_loose', 'status' => 'pending']);
+        $loose = Payment::create(['business_id' => $biz->id, 'merchant_connection_id' => null, 'amount_cents' => 2500, 'currency' => 'USD', 'payment_token' => 'sq_tok_loose', 'idempotency_key' => 'idem_loose', 'status' => 'captured']);
 
         $payout = Payout::create(['business_id' => $biz->id, 'merchant_connection_id' => $connA->id, 'gateway_payout_id' => 'po_a_1', 'amount_cents' => 5000, 'status' => 'pending', 'payout_date' => now()->toDateString()]);
         app(PayoutReconcileAction::class)->handle($biz->id, $payout->id, 5000);
@@ -80,7 +80,7 @@ class SameAccountScreenTest extends TestCase
         Tenancy::setUser($owner->id);
 
         $connA = MerchantConnection::create(['business_id' => $biz->id, 'gateway_name' => 'square', 'merchant_account_id' => 'acct_A1', 'is_connected' => true]);
-        Payment::create(['business_id' => $biz->id, 'merchant_connection_id' => null, 'amount_cents' => 2500, 'currency' => 'USD', 'payment_token' => 'sq_tok_loose', 'idempotency_key' => 'idem_loose', 'status' => 'pending']);
+        Payment::create(['business_id' => $biz->id, 'merchant_connection_id' => null, 'amount_cents' => 2500, 'currency' => 'USD', 'payment_token' => 'sq_tok_loose', 'idempotency_key' => 'idem_loose', 'status' => 'captured']);
         Payment::create(['business_id' => $biz->id, 'merchant_connection_id' => null, 'amount_cents' => 1200, 'currency' => 'USD', 'payment_token' => 'sq_tok_ch', 'idempotency_key' => 'idem_ch', 'gateway_charge_id' => 'ch_3TESTdetached00000000001', 'status' => 'captured']);
 
         Livewire::actingAs($owner)->test(SameAccount::class)
@@ -135,13 +135,34 @@ class SameAccountScreenTest extends TestCase
         Tenancy::setUser($owner->id);
 
         $connA = MerchantConnection::create(['business_id' => $biz->id, 'gateway_name' => 'square', 'merchant_account_id' => 'acct_A1', 'is_connected' => true]);
-        Payment::create(['business_id' => $biz->id, 'merchant_connection_id' => $connA->id, 'amount_cents' => 3000, 'currency' => 'USD', 'payment_token' => 'sq_tok_1', 'idempotency_key' => 'idem_1', 'status' => 'pending']);
-        Payment::create(['business_id' => $biz->id, 'merchant_connection_id' => $connA->id, 'amount_cents' => 4500, 'currency' => 'USD', 'payment_token' => 'sq_tok_2', 'idempotency_key' => 'idem_2', 'status' => 'pending']);
-        Payment::create(['business_id' => $biz->id, 'merchant_connection_id' => $connA->id, 'amount_cents' => 4500, 'currency' => 'GBP', 'payment_token' => 'sq_tok_3', 'idempotency_key' => 'idem_3', 'status' => 'pending']);
+        Payment::create(['business_id' => $biz->id, 'merchant_connection_id' => $connA->id, 'amount_cents' => 3000, 'currency' => 'USD', 'payment_token' => 'sq_tok_1', 'idempotency_key' => 'idem_1', 'status' => 'captured']);
+        Payment::create(['business_id' => $biz->id, 'merchant_connection_id' => $connA->id, 'amount_cents' => 4500, 'currency' => 'USD', 'payment_token' => 'sq_tok_2', 'idempotency_key' => 'idem_2', 'status' => 'captured']);
+        Payment::create(['business_id' => $biz->id, 'merchant_connection_id' => $connA->id, 'amount_cents' => 4500, 'currency' => 'GBP', 'payment_token' => 'sq_tok_3', 'idempotency_key' => 'idem_3', 'status' => 'captured']);
 
         Livewire::actingAs($owner)->test(SameAccount::class)
             ->assertOk()
             ->assertSee('3 payments · 45.00 GBP · 75.00 USD')
             ->assertDontSee('120.00');
+    }
+
+    public function test_the_same_account_total_leaves_out_a_declined_attempt_and_keeps_an_unsettled_one(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+
+        $connA = MerchantConnection::create(['business_id' => $biz->id, 'gateway_name' => 'stripe', 'merchant_account_id' => 'acct_a', 'is_connected' => true]);
+
+        Payment::create(['business_id' => $biz->id, 'merchant_connection_id' => $connA->id, 'amount_cents' => 3000, 'currency' => 'USD', 'payment_token' => 'tok_1', 'idempotency_key' => 'idem_ok', 'status' => 'captured']);
+        // The gateway holds this one and has not settled it (R235). It is recorded.
+        Payment::create(['business_id' => $biz->id, 'merchant_connection_id' => $connA->id, 'amount_cents' => 4500, 'currency' => 'USD', 'payment_token' => 'tok_2', 'idempotency_key' => 'idem_pend', 'status' => 'awaiting_processor']);
+        // A declined attempt. No money moved, so it is in no total (GatewayEngine:153).
+        Payment::create(['business_id' => $biz->id, 'merchant_connection_id' => $connA->id, 'amount_cents' => 9900, 'currency' => 'USD', 'payment_token' => 'tok_3', 'idempotency_key' => 'idem_fail', 'status' => 'failed']);
+
+        Livewire::actingAs($owner)->test(SameAccount::class)
+            ->assertOk()
+            ->assertSee('2 payments · 75.00 USD')
+            ->assertDontSee('99.00')
+            ->assertDontSee('3 payments');
     }
 }

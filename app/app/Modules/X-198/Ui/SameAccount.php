@@ -62,7 +62,10 @@ class SameAccount extends Component
         $businessId = Tenancy::idOrFail();
 
         $connections = MerchantConnection::where('business_id', $businessId)->orderBy('id')->get();
-        $payments = Payment::where('business_id', $businessId)->orderByDesc('id')->get();
+        // A declined attempt leaves a durable 'failed' row (GatewayEngine:153) and no money moved,
+        // so it is not a payment recorded anywhere (R239). awaiting_processor stays in: the label
+        // says recorded, not settled, and the gateway does hold it.
+        $payments = Payment::where('business_id', $businessId)->where('status', '!=', 'failed')->orderByDesc('id')->get();
         $payouts = Payout::where('business_id', $businessId)->get();
         $runs = ReconciliationRun::where('business_id', $businessId)->orderByDesc('id')->get();
 
