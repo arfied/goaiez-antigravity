@@ -3957,3 +3957,82 @@ the reviewer**, which is how PB-156's risen `errors 2 → 3` was caught: `a_comp
 erroring on `Authorize.Net E00040`, external, TRACK 1 ACTION (c), absent for two waves and back again.
 ⚠️ **PB-135's companion rule for the third time: a run of clean waves is evidence FOR the diagnosis, never
 evidence the problem has left.**
+
+## ⛔⛔ Trap added 2026-09-09 11:0x — AN UNWIRED WRITER CAN BE BLOCKED BY AN ARGUMENT, NOT BY A CALLER, and every reachability instrument this lane has spent asks only about callers
+
+PB-132 asked *does a production path WRITE this table*; PB-142 corrected it to *what human action REACHES
+the writer*; PB-143 tabled the answer and recorded seven `TEST-ONLY` entry points as **week-2 build work**
+under ruling 24. ⭐⭐ **All three ask about the CALLER. None asks whether the writer's PARAMETERS have a
+truthful source** — and on the row this lane was closest to briefing, that is the blocker.
+
+`X-166/Actions/JobCostAction::handle()` is complete, tested, tenant-scoped, dispatches two events, and takes
+`int $revenueCents` from its caller. `X-166/capabilities.php:25` declares
+
+```
+'N-048' => 'a margin figure is NEVER computed from invoiced revenue — only from COLLECTED (§201)'
+```
+
+and the grep for a collected figure returns **X-07 `Forecast.collected_cents` · X-111's MRR ids · X-170
+`Scorecard.revenue_collected_cents`** — ⛔ **three modules, none of them this lane's.** X-166 has no
+`collected` column and no payment reader. So a cost-entry control must either read an **invoice** (a direct
+`N-048` violation) or take an owner's typed number with no provenance — **either way a wrong number on the
+owner's margin report, which is the goal-path failure this lane exists to prevent.**
+
+⭐⭐ **The generalisation, and it is a genuinely new question rather than an old one on more rows:
+"can a human reach this code" and "if they reached it, could they supply truthful arguments" are different
+measurements, and a `TEST-ONLY` grading answers only the first.** ⛔ An action can be correct, complete and
+still unbuildable. ⭐ **The discriminator that decides each argument is POLICY vs MEASUREMENT:** a defaulted
+*policy* (`thresholdDeltaMinutes = 10`, `policy = 'rollover'`) is a choice someone is entitled to make; a
+defaulted *measurement* is a fabricated fact. `X-162 RouteOptimiseAction`'s `float $totalDistanceKm = 14.5`
+and `EtaUpdateAction`'s `int $newEtaMinutes` are measurements the lane has no instrument for — **the owner's
+"no hand-written rows" rule (ruling 24) in parameter form.**
+
+⛔ **RULED: X-166 is NOT briefable as a build wave** — `UNRESOLVED — X-166's revenue seam requires a
+COLLECTED figure and no module in this lane exposes one` (rule 09: a missing **dependency**, ruling 8's
+shape), filed as `TRACK 1 ACTION (j)`. ⭐ The near-miss is the lesson: the brief was half-drafted on the
+premise *"`JobCostAction` is a complete writer that just needs a caller"*, and **measuring the premise before
+writing it down is what killed it** — the direct repair of PB-156's headline, applied one wave later.
+
+## ⛔⛔ Trap added 2026-09-09 11:0x — a CONFIRMED claim's CONSEQUENCE is a separate measurement, and a report that measures correctly can still conclude wider
+
+PB-157 confirmed a claim from this lane's own board that had never been verified end to end: confirm → inline
+edit → re-confirm leaves **two valid `facts` rows for one key** (measured `1` then `2`, `value=1000` and
+`value=2000`, both `is_valid=1`). `PriceConfirmAction`'s only guard is `price_cents <= 0`,
+`FactResolver::teach():93` `insertGetId`s unconditionally, and the `facts` migration
+(`X-121/…create_x121_noun_tables.php:137-146`) carries **no unique index on `(business_id, key)`**.
+
+⛔ **The board's claim had a second clause — *"the agent reads them unordered and may speak the older
+price"* — and that clause is FALSE as written.** `AgentAnswerAction:234` is `if (isset($quoteResult['amount']))`
+and the facts branch is its `else`; `:201` has already returned on `SAMPLE_STATE_REFUSED`/`UNCONFIRMED`. **The
+facts branch is reachable only on `NO_FACT`** — i.e. only once the pricebook row is **deleted**, which is
+TRACK 1 ACTION (i)'s path. ⭐ So the duplicate opens no new hole; it makes (i) **worse**: on the delete path
+the agent speaks **the OLDEST of N stale rows**, so every correction the owner ever made is outranked by their
+first confirm.
+
+⭐⭐ **The generalisation: confirming a claim's MECHANISM is not confirming its CONSEQUENCE.** The report
+answered five scoped questions correctly and then wrote *"100% true exactly as you described it"* — one clause
+wider than anything it measured, on the half nobody had asked it to measure. ⛔ **Not graded against the coder:
+the reconciliation is the reviewer's** (PB-123, PB-135), and penalising a volunteered sentence in the one field
+that asks for candour is the PB-137 mistake. ⭐ **The fix is in the question: ask answer 7 to separate what was
+MEASURED from what was CONCLUDED**, so an overreach announces itself instead of riding along.
+
+⛔ **No in-lane work, measured rather than assumed:** an `is_confirmed` guard in `PriceConfirmAction` would not
+prevent the sequence, because the inline edit unconfirms the row first — the second confirm is legitimate. The
+defect is an insert that should be an upsert, in X-119, read-not-rebuild under ruling 24. ⛔ **And no pinned
+absence** (PB-128 ruling 3): the absence is a defect, not a permanent correct state, so a pin asserts the bug
+as contract — PB-153's X-165 row-17 ruling.
+
+## ⚠️ Trap added 2026-09-09 11:0x — a field that says "EVERY log" must be defined by the COMMAND, not by the section of the brief it sits in
+
+`gate-runs.tsv` shows **two** pricebook gate invocations for PB-157 — pid `3209490` (10:09:39→10:37:35, item
+1's full-suite mutation run) and pid `3367144` (10:40:17→10:47:00, the wave gate). `GATE RUNS` named one.
+⭐ **The coder's reading is defensible and nothing was concealed:** my brief described item 1's log under item
+1 and put `GATE RUNS` under the "Gate" heading, and `pb157-w1-full.log` has its own report section. But item 1
+runs `bash bin/supervise.sh --tests`, so **it IS a gate and it writes gate rows.**
+
+⭐ **The rule: define the field by what produces the artifact — "every invocation of `bin/supervise.sh`, with
+its pid and its log" — never by where the field appears in the document.** ⚠️ Companion from the same wave, and
+it is PB-135's rule widened: **reconcile EVERY four-number line a wave produces, not just the gate's.** The
+mutation run read `FAILED 4` and the report named three reddened tests without saying the fourth was the
+standing baseline; the arithmetic is recoverable and I recovered it from the log, but I had only ever demanded
+reconciliation for the gate.
