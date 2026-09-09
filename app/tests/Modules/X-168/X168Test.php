@@ -477,13 +477,13 @@ class X168Test extends TestCase
 
         $entries = TimesheetEntry::where('business_id', $biz->id)->get();
         $this->assertCount(1, $entries);
-        
+
         $entry = $entries->first();
         $timesheet = Timesheet::find($entry->timesheet_id);
-        
+
         // Assert the person_id first so W2 reddens this exact line
         $this->assertEquals($tech->id, $timesheet->person_id);
-        
+
         $this->assertEquals($jobId, $entry->job_id);
         $this->assertEquals($frozen->toDateTimeString(), $entry->started_at->toDateTimeString());
         $this->assertEquals('on_site', $entry->state_window);
