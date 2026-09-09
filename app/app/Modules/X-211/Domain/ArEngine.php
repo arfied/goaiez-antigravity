@@ -126,7 +126,7 @@ final class ArEngine
 
             // G1-61 / G1-70 / N-033: past the threshold this is credit, not a schedule — it routes to a
             // financing partner and we never hold the paper. The throw is before the first write.
-            $terms = ArPlanTerm::firstOrCreate(['business_id' => $businessId]);
+            $terms = ArPlanTerm::where('business_id', $businessId)->first() ?? new ArPlanTerm;
             $termDays = $installmentsCount * $daysPer;
             if ($installmentsCount > $terms->max_installments || $termDays > $terms->max_term_days) {
                 throw new PlanPastThresholdException(sprintf(

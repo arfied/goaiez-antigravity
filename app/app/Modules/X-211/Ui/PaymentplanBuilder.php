@@ -72,7 +72,7 @@ class PaymentplanBuilder extends Component
         abort_unless(auth()->check() && Tenancy::check(), 403);
         $bizId = Tenancy::idOrFail();
 
-        $terms = ArPlanTerm::firstOrCreate(['business_id' => $bizId]);
+        $terms = ArPlanTerm::where('business_id', $bizId)->first() ?? new ArPlanTerm;
 
         $plans = PaymentPlan::where('business_id', $bizId)->latest('id')->get();
         $planned = $plans->pluck('invoice_id')->all();
