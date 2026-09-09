@@ -2327,3 +2327,105 @@ with no wrong value on any defined input. **latent + no wrong value = RECORD.**
 it. ⚠️ A future tick will re-find the unscoped query — it needs the ruling, not the finding. ⛔ And do
 not read this as "unscoped queries are fine here": it is safe because a `#[Locked]` property pins the
 only variable, and that reasoning does not transfer to any query whose filter comes from user input.
+
+## ⭐⭐ Trap added 2026-09-08 19:3x — an MTIME proves which DIRECTORY a formatter ran from, and no git instrument can
+
+PB-140's brief demanded pint be run from `app/` — `app/pint.json` excludes `app/Doctor` and `notPath`s
+three console commands, and **those exclusions are the only thing protecting the sealed path from
+formatter churn** — then asked the coder to confirm with `git show --numstat HEAD`.
+
+⛔ **That confirms only the COMMIT.** It cannot see what pint rewrote in the *working tree*, and
+⛔ `git status --porcelain` cannot help either, because the 23 files at risk are **already ` M `** from
+the 13:10 wrong-directory sweep: a second rewrite of an already-modified file changes nothing git will
+show you. The instrument that works is the **mtime**:
+
+```
+app/app/Console/Commands/DoctorCommand.php   09-08_13:10:02   ← untouched
+app/app/Doctor/Stages/ContractStage.php      09-08_13:10:03   ← untouched
+plugins/wordpress/uninstall.php              09-08_13:10:04   ← untouched
+app/tests/Modules/X-168/X168Test.php         09-08_19:19:32   ← this wave, the only file pint touched
+```
+
+⭐ All three excluded groups still carry the original sweep's timestamps — **positive proof
+`app/pint.json` was discovered and honoured.** ⭐ **The generalisation: when the thing you need to prove
+is that a tool did NOT touch a path, and that path is already dirty, every content-based instrument is
+blind and the timestamp is the only witness.** Put this check in every brief that runs a formatter,
+codegen or migration near a protected path.
+
+## ⛔ Trap added 2026-09-08 19:3x — the push-debt figure is READ, never counted, and it is lost from BOTH ends
+
+PB-125 recorded that a tick omits **its own** `chore(supervisor)` commit from the debt, because the
+figure is written before the commit is. PB-140 found the converse and it is worse: PB-139's block wrote
+*"Debt is 4"* naming the coder's three plus its own new one, and **dropped `3bdf1a1a` — PB-138's
+verdict commit**, which PB-138's own block had correctly recorded as *"Debt is 1 and it is my own
+`3bdf1a1a`."* The true figure was 5.
+
+⭐ **The mechanism: a supervisor commit is written AFTER its own gate, so it never belongs to the wave
+it describes and has to be carried by hand into the next wave's count.** Anything carried by hand
+across a wave boundary is dropped eventually.
+
+⭐ **The fix is to stop counting and start reading: `git log --oneline origin/track/<x>..<sha>` IS the
+debt figure.** That read is already mandatory before every push for the ancestry trap, so the correct
+number is always already on screen — ⛔ **never quote a debt number derived any other way.** Harmless
+twice now, and only because the mandatory read caught it both times.
+
+## ⛔⛔ Trap added 2026-09-08 19:3x — a screen's CLAIMS are only live once its data path is reachable, so re-read them the wave it becomes reachable
+
+PB-132 found X-168's three screens read tables **nothing in production wrote**; PB-139 wired the
+writer; PB-140 confirmed the chain hop by hop. ⭐ **The wave that makes a screen reachable is the wave
+its prose becomes a promise**, and re-applying a sentence-audit to it is a **scope correction**, ⛔ not
+the loosened criterion this file warns about.
+
+Applied immediately, it found the widest member yet of this lane's *sentence-the-code-does-not-honour*
+family — and **two** screens carry it:
+
+```
+own-hours.blade.php:6   "No hours yet. Your hours start when you go EN ROUTE on a job."
+timesheets.blade.php:9  "No timesheets yet. Hours appear when a technician goes EN ROUTE."
+```
+
+⛔ **Nothing starts on `en_route`.** `ModuleServiceProvider:29-30` subscribes `TechOnSite` and
+`JobCompleted` only; `TechEnRoute` is real and dispatched on the real bus
+(`X-162/Actions/TechEnRouteAction.php:40`) with no subscriber in X-168.
+⭐ **PB-128's discriminator settles it, as it has every time: read the consumer's QUERY.**
+`ApprovalsView` was CLEARED by that test because it *synthesises* the claimed state in a `WHERE`;
+`OwnHoursView::render():36` and `TimesheetsView:42` synthesise **nothing** — a `Timesheet` exists only
+if `recordJobWindow` made one, and only the `on_site` listener calls it.
+
+⚠️⚠️ **A claim about money, not wording.** The technician reads that their hours start when they set
+off, and is in fact paid from arrival. And like PB-128's Reorders screen the falsehood is
+**self-concealing** — the empty state accounts for the emptiness by asserting the mechanism that would
+have filled it.
+
+**RULED: fix the SENTENCE, never the listener.** `capabilities.php:37` (`N-072`) reads *"**arrival**,
+duration and completion on a JOB"* — arrival is `on_site` — and ruling 33 already decided that whether
+travel time is paid is a business rule nobody has stated, with `total_hours` being what the owner
+approves and eventually pays. ⛔ **Fourth incarnation in this lane of *richer is always safe* being
+false**, and the second where the answer is the sentence.
+
+⚠️ **The tie-break, recorded so nobody re-derives it:** `X-168/manifest.php:41` declares
+`consumes: 'tech.en_route'`, which under PB-132's
+*declared-and-unwired ⟹ defect* rule argues for wiring. ⛔ **It loses.** `manifest.php` is a
+**generated** file whose regeneration path is Track 1's (PB-122's `'none'`-sentinel near-miss), and the
+discriminator names **`capabilities.php`** as the authority. ⭐ **When two declarations disagree, prefer
+the hand-written one over the generated one.**
+
+⭐ **And the deliverable is the PINNED ABSENCE, not the prose** (PB-128 ruling 3): a corrected sentence
+is prose against prose, and what goes red the day someone wires the listener without revisiting the
+sentence is the assertion that `TechEnRoute` creates **zero** rows.
+
+## ⚠️ Trap added 2026-09-08 19:3x — an absence claim is only as wide as the pattern that searched for it
+
+PB-140 was asked *"does any other production path write these tables?"* and answered with
+`grep -rniE "(TimesheetEntry|Timesheet|timesheets|timesheet_entries)(::|->)(create|firstOrCreate|insert|update|save)"`.
+⛔ **That anchors on the MODEL NAME, so it cannot match `DB::table('timesheet_entries')->insert(...)`
+or a relation write `$timesheet->entries()->create(...)`** — both write the table and neither puts a
+model name adjacent to the verb.
+
+**The conclusion survived** — re-run as
+`grep -rnE "DB::table\(['\"](timesheets|timesheet_entries)|->entries\(\)->|->timesheets\(\)->" app/app`
+→ **zero hits.** ⭐ But the instrument was narrower than the claim it was asked to support, which is
+PB-135's *ask for the id SPACE, never the field NAME* in a new field. ⭐ **When a brief asks whether
+anything else writes X, name the TABLE rather than the model, and require both the ORM and the
+query-builder forms.** ⚠️ A grep that returns nothing is not evidence until you know what it could not
+have matched.
