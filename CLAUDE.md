@@ -5753,3 +5753,81 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     written as "and nothing else" is a rule about one field that silently governs every other**, and
     this is the ruling 128/210 family — moving or forbidding one item without naming what stays is
     how a field goes empty.
+232. **An idempotency key derived from a row minted inside the charge's own transaction repeats
+    where a repeat is wrong and never repeats where a repeat is right (RULED by the lane supervisor
+    2026-09-09, on MONEY-144's `7c2dd354`; briefed as MONEY-145).** Ruling 230 correctly found that
+    this lane sends the gateway no `Idempotency-Key`, and MONEY-144 shipped the header namespaced by
+    business exactly as ruling 93 requires. **The value is wrong, and it is wrong in two opposite
+    directions at once.** The key is `x198-charge-{businessId}-{idempotencyKey}`, and
+    `$idempotencyKey` comes from the caller; measured, the lane has **one** production caller —
+    `X-199/Domain/InvoiceEngine.php:99`, passing `'overflow_'.$invoice->id.'_'.$overflowAmount` —
+    and `PaymentCaptureAction` has **none** (`grep -rn "PaymentCaptureAction" app/app` returns only
+    its own declaration, confirming ruling 227's Table B).
+    **(a) It always repeats where a repeat is wrong.** `X198Test:178` is named
+    `test_a_retry_after_a_decline_is_not_short_circuited_by_idempotency`; it passes the **same**
+    `'idem_retry_1'` twice with a different card (`tok_decline`, then `tok_success`) and asserts two
+    rows and a captured charge. `capture()`'s pre-check excludes `failed` (`:81`) precisely so the
+    second attempt reaches the gateway — and after MONEY-144 it reaches it carrying the **declined
+    attempt's key**, asking the provider to suppress the one request the app means to make. ⚠️ The
+    exact provider response is vendor behaviour this seat cannot verify — a replayed cached decline,
+    or a refusal that the key was reused with different parameters — but **there is no third
+    behaviour in which the same key with a different `source` produces a fresh independent charge**,
+    so the retry is defeated either way. That is the argument's robust half, and it needs no vendor
+    doc.
+    **(b) It never repeats where a repeat is right.** `issueInvoice()` wraps `capture()` in
+    `DB::transaction` (`InvoiceEngine:33`), so the charge runs inside it as a savepoint. A rollback
+    after Stripe charged loses the local row while the money moved; re-issuing mints a **new
+    `$invoice->id`** and therefore a new key, so the provider cannot dedupe the second charge —
+    **the double charge ruling 230 set out to prevent, defeated by the key it introduced.**
+    ⭐ **This is ruling 51's principle at the OUTBOUND boundary.** 51 ruled that a figure compared
+    against the gateway's must come from the row the gateway wrote; the same holds of a key sent to
+    it. An idempotency key must be **stable across retries of one intent and distinct across
+    different intents**, and an id minted inside the charge's own transaction is neither.
+    **RULED: the key carries the count of prior `failed` rows for `(business_id, idempotency_key)`**
+    — a query `capture()` already runs in its own pre-check, in the same transaction, so the value
+    comes from the row the app itself writes. Two concurrent first attempts both read `0`, send one
+    key and are deduped (230's benefit preserved); a retry after a recorded decline reads `1`, sends
+    a fresh key and charges. ⛔ **No unique index and no migration** — ruling 230's reasons are
+    unchanged and re-measured: `X198Test:178` pins `count === 2`, and `QueryException extends
+    RuntimeException`, so a `23505` inside `capture()`'s transaction would be caught at
+    `GatewayEngine:124` and write a **`failed`** row for a charge Stripe actually took.
+    ⛔ **The pay link keeps its key, and the asymmetry is measured rather than assumed:** capture has
+    a **durable failure record** — the `failed` row — that both proves retries are expected and
+    supplies the discriminator, and the pay link has **neither**, because `PaymentLinkAction` does
+    not catch and no row is written when `createPaymentLink` throws. Minting a failure record to make
+    a key vary is ruling 59. MONEY-143's `firstOrCreate` already guarantees one row and the pre-check
+    returns an existing link without calling Stripe, so the header's live benefit — collapsing a
+    concurrent double-press into one session — stands, and the retry-after-failure replay is recorded
+    `UNRESOLVED`. So is (b): a stable cross-retry intent id does not exist in this lane, and minting
+    one is a cross-module API change of the shape ruling 102 already recorded.
+    ⚠️ **Correction to this tick's own first reading, recorded rather than dropped.** The production
+    path was first read as *permanently sealed* — a given invoice's overflow uncollectable on any
+    card for ever. **Wrong:** invoice ids are unique per issuance, so `overflow_{id}_{amount}` does
+    not recur in production today and (a) is **latent**, on the contract the test names rather than
+    on a live path. The correction decided the grade, and (b) — the sharper half — became visible
+    only once (a) was measured away.
+    ⚠️ **Why nothing could see it.** `X198Test:178` binds `new class {}` doubles in **both** arms; a
+    double never reaches the HTTP boundary, so no header is sent and no provider-side idempotency can
+    occur. The test is green, stays green, and is now green **for the wrong reason** — ruling 41
+    part 2 and ruling 61's family, on the one test whose name states the contract this wave inverted.
+    Ruling 46 required the brief to grep every test asserting the path being changed; MONEY-144's
+    Table B listed `X198Test:178` **only** as a double to leave byte-identical and never read what
+    its name asserts. **So the wave's own proof must convert that test to `Http::fake` + two
+    `Http::assertSent` keys** — a double can never gate a header.
+    ⚠️ **Why BLOCK rather than PASS-WITH-NOTES, with the gate green.** The supervisor's own gate
+    reproduced `2374 · 2372 · FAILED 0 · errors 2` — §1–§6 green, doctor all stages clean — so the
+    BLOCK rests on no gate at all. Ruling 74 protects a correct tip against a defect **smaller than
+    the thing withheld**, and that does not reach here: the tip *is* the header and the defect *is*
+    the header's value, the same size, in the wave's own subject. Neither the benefit nor the harm is
+    live, so holding costs a latent benefit for one wave while pushing hands Track 1 a **new** latent
+    defect on an explicitly named contract. **Introducing a new hazard is worse than deferring the
+    removal of an old one by one wave.**
+    ⚠️ The miss is the supervisor's — the brief dictated both key formats verbatim
+    (`BRIEF-money144.md:147`, `:258`) and the coder transcribed them faithfully — so per the
+    46/49/50/62/66/75/82/86/94/104/106/113/116/146/153/167/175/183/189/193/195/198/200/215/217
+    precedent MONEY-145 carries its own two dispatches and MONEY-144's cap is untouched. It is the
+    ruling 66/75/82/92/94/106/118/147/153/175/183/189/192/193/195/198/200/202/204/207/210/215/217/
+    218/219/222/225/226/228/229/231 family a **twenty-sixth** time, with the thirty-ninth instrument:
+    **a brief that dictates the VALUE of a field sent to an external system has dictated that
+    system's behaviour** — and alone in the family, the outcome it dictates happens at a party **no
+    gate in this checkout can observe**, which is why a green gate is exactly what it looks like.
