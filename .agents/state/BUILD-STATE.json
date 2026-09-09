@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-09T16:37:40",
+ "updated": "2026-09-09T17:02:08",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -15,7 +15,7 @@
    "fails": "COMMIT"
   },
   "boundary": {
-   "violations": 53,
+   "violations": 52,
    "fails": "COMMIT"
   },
   "contract": {
@@ -1448,6 +1448,12 @@
    "module": "X-103",
    "chose": "A classmap is static, so a merge that adds a file under app/Modules/ leaves app/vendor/composer/autoload_classmap.php describing a tree that no longer exists; composer dump-autoload runs after any such merge and before any gate, and gate numbers measured before it are void.",
    "at": "2026-09-09T16:37:40",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-181",
+   "chose": "The X-181 resolution screen rendered a CSAT score pill from review_requests.csat_score, a column dropped on 2026-09-09, so the pill could only ever render for the hardcoded sample fixture that a green test asserted against; the score is not stored anywhere and the screen now reports only that CSAT was requested, from qa_tickets.csat_requested_at.",
+   "at": "2026-09-09T17:02:08",
    "ruling": "R245"
   }
  ],
