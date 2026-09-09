@@ -204,4 +204,47 @@ class CheckoutBlockScreenTest extends TestCase
             ->assertDontSee('ORD-LIST01')
             ->assertSee('The 10 most recent orders are shown');
     }
+
+    public function test_a_cart_line_that_left_the_catalogue_is_named_and_the_total_still_covers_it(): void
+    {
+        $biz = self::provisionTenant();
+        Tenancy::set($biz->id);
+
+        $filter = Sellable::create(['business_id' => $biz->id, 'name' => 'Limited filter', 'sku' => 'FLT-1', 'inventory_quantity' => 1, 'unit_price_cents' => 4500, 'fulfilment_type' => 'physical']);
+        $boiler = Sellable::create(['business_id' => $biz->id, 'name' => 'Boiler service', 'sku' => 'BOI-1', 'inventory_quantity' => 10, 'unit_price_cents' => 12000, 'fulfilment_type' => 'service']);
+
+        $addAction = new CartAddAction;
+        $addAction->handle($biz->id, 'sess_gone', $filter->id);
+        $addAction->handle($biz->id, 'sess_gone', $boiler->id);
+
+        $this->assertSame(16500, Cart::where('business_id', $biz->id)->where('session_token', 'sess_gone')->first()->total_cents);
+
+        $boiler->delete();
+
+        Livewire::test(CheckoutBlock::class, ['sessionToken' => 'sess_gone'])
+            ->assertOk()
+            ->assertSee('Limited filter')
+            ->assertDontSee('Boiler service')
+            ->assertSee('Lines not shown: 1')
+            ->assertSee('cannot be')
+            ->assertSee('listed, and the total below still includes it')
+            ->assertSee('165.00');
+    }
+
+    public function test_a_cart_whose_every_line_left_the_catalogue_still_says_there_is_something_to_pay(): void
+    {
+        $biz = self::provisionTenant();
+        Tenancy::set($biz->id);
+
+        $only = Sellable::create(['business_id' => $biz->id, 'name' => 'Only item', 'sku' => 'ONLY-1', 'inventory_quantity' => 3, 'unit_price_cents' => 2500, 'fulfilment_type' => 'service']);
+
+        (new CartAddAction)->handle($biz->id, 'sess_allgone', $only->id);
+        $only->delete();
+
+        Livewire::test(CheckoutBlock::class, ['sessionToken' => 'sess_allgone'])
+            ->assertOk()
+            ->assertDontSee('Nothing to pay for yet.')
+            ->assertSee('Lines not shown: 1')
+            ->assertSee('25.00');
+    }
 }

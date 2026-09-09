@@ -103,12 +103,15 @@ class CheckoutBlock extends Component
         $expired = $cart !== null && $cart->expires_at->isPast();
 
         $lines = [];
+        $unlistedCount = 0;
         if ($cart !== null && ! $expired) {
             foreach ($cart->items as $item) {
-                $s = Sellable::find((int) $item['sellable_id']);
+                $s = Sellable::where('business_id', $businessId)->find((int) $item['sellable_id']);
                 if ($s !== null) {
                     $qty = (int) ($item['quantity'] ?? 1);
                     $lines[] = ['sellable' => $s, 'quantity' => $qty, 'subtotal_cents' => $qty * $s->unit_price_cents];
+                } else {
+                    $unlistedCount++;
                 }
             }
         }
@@ -123,6 +126,7 @@ class CheckoutBlock extends Component
             'cart' => $cart,
             'expired' => $expired,
             'lines' => $lines,
+            'unlistedCount' => $unlistedCount,
             'orders' => $orders,
             'ordersTruncated' => $ordersTruncated,
         ]);
