@@ -5831,3 +5831,75 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     **a brief that dictates the VALUE of a field sent to an external system has dictated that
     system's behaviour** — and alone in the family, the outcome it dictates happens at a party **no
     gate in this checkout can observe**, which is why a green gate is exactly what it looks like.
+233. **The outbound-request BODY census is measured — two call sites, eleven fields — and the one
+    string this lane sends to a CUSTOMER is a constant that names nobody (RULED by the lane
+    supervisor 2026-09-09, briefed as MONEY-146).** Ruling 230 opened the outbound-request
+    population and MONEY-144/145 asserted its **headers**; nobody had read the **bodies**. The
+    population is small and now fully enumerated: `grep -rn "Http::"` over the lane's eight modules
+    returns **exactly two lines**, `StripeGatewayClient:26` and `:59`, and between them they send
+    eleven fields. Nine are sound — `amount`/`unit_amount` from the caller's own figure and written
+    to the row it creates, `line_items[0].currency` and `quantity`, `mode`, the `Idempotency-Key`
+    (rulings 230, 232), the bearer token, and `success_url => config('app.url')`, which is ruling
+    38's deliberate parking and ⛔ stays struck. Two are wrong.
+    **(a) `product_data.name` is the literal `'Payment for declined transaction'`, and it is the one
+    string in this lane a CUSTOMER reads.** `X-199/Ui/Declines::sendPayLink():28` passes it into
+    `PaymentLinkAction`, which forwards it to `createPaymentLink()`, which posts it as the Stripe
+    Checkout line item — so it is rendered by the **provider**, on the page where a customer is
+    asked for real money. It is the same string for every tenant, every payment and every amount
+    (ruling 43's *does it even vary?*, answered **no**), it is the app's internal vocabulary rather
+    than the customer's (rulings 89, 96, 124's family), and — the sharp half — **it names no
+    business**, so the page says only that some unnamed party wants money for a transaction that
+    was declined. ⭐ **Every string sweep this lane has run (50, 63, 89, 96, 97, 122, 124, 134, 137,
+    142, 199, 203, 225, 227, 228) read what a screen RENDERS or what a console PRINTS. This one is
+    rendered by a third party, which is why it survived all of them.**
+    **RULED: the description is built in `PaymentLinkAction` from the rows it already loads, and the
+    `$description` parameter is REMOVED** — ruling 37's discipline verbatim (*the row already knows;
+    a caller-supplied value is a second place for the truth to disagree*), and the caller here is a
+    **screen**, which cannot know more about a payment than the action that loads it. The line names
+    the business and what is being paid: `$business->name.' - card payment'`. ⛔ Not by naming the
+    invoice — `payments` carries no invoice column and ruling 102 already recorded that seam
+    `UNRESOLVED`; ⛔ not by minting a customer-facing reference; ⛔ not by keeping the word
+    *declined*, which is this app's view of the event and not the customer's.
+    **(b) `charge()` sends a currency that came from a method DEFAULT, at the lane's ONE production
+    capture.** `GatewayEngine::capture()`'s signature ends `string $currency = 'USD'`, and
+    `X-199/InvoiceEngine:92-97` — measured, the only production caller — passes **no** currency, so
+    the overflow charge posts `currency=usd` for every tenant **and** writes `payments.currency`
+    `'USD'`, so ruling 51's *read it back off the row* cannot rescue it: the row is wrong from the
+    same default. ⭐ **`businesses.currency` is a real `char(3)` column**
+    (`2026_07_30_072149_create_businesses_table.php:40`) under a migration comment reading *"an
+    amount without its currency is not a money value"*. **RULED: `capture()` reads
+    `Business::findOrFail($businessId)->currency` and the `$currency` parameter GOES**, from
+    `capture()` and from `PaymentCaptureAction` with it — ruling 37's *"⛔ the currency is never
+    added as a parameter: the row already knows"*, on the one method that had it as a parameter.
+    ⚠️ **Blast radius is one line**, measured: `grep` over `app/app` and `app/tests` finds exactly
+    **one** call site passing a fifth argument — `X198Test:572`, added by MONEY-144 — and the read
+    is safe under the ambient tenant because `TestCase::provisionTenant` ends in `Tenancy::set()`
+    and every X-198 capture test provisions exactly **one** tenant (the file's only two-tenant
+    method, `:381`, is a pay-link test). ⛔ Never `withoutGlobalScopes()`: RLS sits beneath the
+    application scope, so it hides nothing and helps nothing, and a `ModelNotFoundException` at the
+    boundary is ruling 66's own reasoning — loud beats silently wrong.
+    ⚠️ **Blast radius for BOTH items is ZERO existing assertions** — `'Payment for declined
+    transaction'` appears at four call sites and every one **passes** it, none asserts it; and no
+    test in the lane asserts a request **body** at all. That is ruling 70 again, and it is why both
+    items **add** methods (ruling 68). ⚠️ The proofs assert on `$request->body()`, so the fixture
+    business is named with a single word: `asForm()` encodes through `http_build_query`, which turns
+    a space into `+`, and a needle carrying a space would fail against a correct implementation
+    (ruling 82's family, one encoder over).
+234. **`credit_terms.card_on_file_token` has no production writer, so the overflow charge — X-199's
+    §46A headline capability and the lane's only production path to a gateway — is unreachable
+    (measured 2026-09-09; recorded, not briefed).** `TermsSetAction::handle()`'s fifth parameter
+    `?string $cardOnFileToken = null` is the column's only writer (`:38`), and its one production
+    caller, `X-199/Ui/Credits::setTerms():48`, passes **four** arguments. `InvoiceEngine:47` writes
+    the column `null` on creation. So `$cardToken` at `:87` is always null, `:92`'s
+    `if ($cardToken !== null)` never opens, and no charge is ever attempted — decision 272 / ruling
+    51's shape on the most consequential path in the lane. ⛔ **Not a wave, and not briefed**: the
+    missing dependency is a tokenisation surface, which ruling 119 measured is also why
+    `card_tokens` has no writer, ruling 45 traced to a browser-side Stripe Elements door, and ruling
+    20 parks behind a contract. Minting a token door in X-199 to arm its own branch is ruling 59.
+    ⚠️ It is recorded rather than struck because it **grades** ruling 233(b): that defect is latent
+    in production and live only in the six `InvoiceEngineTest` fixtures that seed
+    `'card_on_file_token' => 'tok_visa'` — and it is still **fixed rather than recorded**, on ruling
+    204's precedent, because the branch is driven by existing tests and a mutation can redden it.
+    ⚠️ `unpaid.blade.php:61`'s *"covered by the card on file"* and `Credits`' overflow copy are
+    already recorded at ruling 76's grade (ruling 132); this measurement is the reason why, and does
+    not re-open them.
