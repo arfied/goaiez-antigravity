@@ -15,7 +15,7 @@
    "fails": "COMMIT"
   },
   "boundary": {
-   "violations": 55,
+   "violations": 53,
    "fails": "COMMIT"
   },
   "contract": {
