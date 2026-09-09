@@ -1625,7 +1625,29 @@ dispatched — executed by the supervisor itself**, `bin/supervise.sh` being thi
 ⛔ **Not a wave and no count moved** — §5 identical in all eight across `.gateT241.txt` and
 `.gateT241b.txt`. It sets no `fail=1`: a trigger, never a verdict.
 
-⛔ **The backlog is EMPTY at tick 246 and this tick writes a HOLD — the FIFTH consecutive tick with no
+⛔ **The backlog is EMPTY at tick 247 and this tick writes a HOLD — the SIXTH consecutive tick with no
+instrument change and the SECOND with NO NEW LETTERED RULING.** ⭐ **`main` MOVED**: pin `e8d3d155` →
+**`ba671263`**, **+1 first-parent** (`track/money` wave 186), **not ours**; lane **24 ahead / 14
+behind** first-parent (**24 / 105** by ancestor count, `RULING EK`), the ahead-count moving 23 → 24 on
+**our own** tick-246 commit; merge base `7a75f289` unmoved; ours-since-base in `app/` is
+`app/phpunit.xml` alone. ⛔ **The take is OPEN, UNNECESSARY and REFUSED for a TENTH tick** — `DD`'s
+two-row re-check prints nothing, the `Doctor`/`JourneyHarness` diff against our base is **empty**, so
+this lane's checker **is** main's current checker byte-identical, `RULING EQ`'s void condition is not
+reached, and a take could refresh nothing at a cost of **105** ancestor commits. ⭐ **The admission
+census was NOT re-run and the reason is a measurement taken first**: `git diff --stat 10e804ea HEAD --
+app/` is **empty**, corroborated by `capability` reading **207** unchanged. §1 read from the count line
+per `FY` at **77**, corroborated independently, supervisor directory contributing **0** — `FY`'s census
+now spans **NINE** consecutive gates (`.gateT239`…`.gateT247`). §3 == §5 for an **eleventh** tick and
+still a LEDGER. `wc -l bin/supervise.sh` **416** and drift `4 0`, both re-measured per `FX(ii)`; bar
+sections **14 / 13** on the same extraction, membership unchanged (`1a` · `1b` · `2d` **NOT adoptable**,
+`RULING FS`; `2f` · `2g` offered upstream). §2e/§2f/§2g printed `HEAD is not a merge` for an **eighth**
+gate — `FW`'s clause (ii) printing itself. ⭐ **A precision recorded and deliberately NOT lettered**
+(`FW` bars elevating a clean audit; tick 244 is the precedent): §5 prints its own arithmetic control —
+`494 violation(s)` against `0+55+85+0+16+207+128+3 = 494` — which is `RULING FJ`'s row-count control
+already built into the instrument. **TRACK 1 ACTION 10** re-measured at the pin: **14** first-parent
+merges since `a5042da2`, **0** naming `track/stages`, `18bbde18` still not an ancestor (rc **1**).
+
+⛔ **The backlog was EMPTY at tick 246 and that tick wrote a HOLD — the FIFTH consecutive tick with no
 instrument change, and the FIRST since tick 236 with NO NEW LETTERED RULING.** Nothing moved: `main`
 is unmoved (pin `e8d3d155`, identical to tick 245's), the tree is unmoved, the admission census's
 input is unmoved, and **every number in tick 245's block reproduces at the pin**. ⭐ **That backward
