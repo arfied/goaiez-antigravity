@@ -42,7 +42,7 @@ final class EvidencePaymentLinkCommand extends Command
             'status' => 'failed',
         ]);
 
-        $link = $paymentLinkAction->handle($businessId, $payment->id, 'Evidence Pay Link');
+        $link = $paymentLinkAction->handle($businessId, $payment->id);
 
         $data = [
             'provider_link_id' => $link->provider_link_id,
