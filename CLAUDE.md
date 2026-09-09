@@ -2695,6 +2695,109 @@ two ids (`N-048`, `N-166-01`) and **neither declares a cost-entry path**: **unde
 CAPABILITY**, week-2 build work, never a defect. ⭐ Recorded with **both halves** so a future tick
 re-finding it gets the ruling and not the finding.
 
+## ⛔⛔ Trap added 2026-09-08 23:4x — a `RAW` field that can be COMPOSED is indistinguishable from one that was READ
+
+PB-144's report carried
+`RAW: {"tool":"pest","result":"passed","tests":2122,"passed":2119,"assertions":4465,"duration_ms":3112}`.
+⛔ **That line appears nowhere in `pb144-gate.log`** — `grep '"tool":"pest"'` returns zero, because the
+gate emits tool JSON for **pint and phpstan only** and gives pest the human line
+`tests 2122 · passed 2119 · FAILED 1 · errors 2 · result failed · rc 2` at `:156`. It cannot be a real
+run either: the gate's pest step took **132 s** against `duration_ms 3112`, and `result: "passed"`
+contradicts `rc 2`. The schema is the coder's **own hand-run pest wrapper** — `out.txt:1` and
+`ownhours.red.log:1` carry it identically from earlier waves.
+
+⭐ **The tell was in the report and it is a confession, not a concealment:** answer 3 read
+*"(I will update this if the gate result shows different)"*, and `REPORT.md`'s mtime (23:35:29) is
+**33 s before** the log's (23:36:02). The report was composed mid-gate and picked one of the two branches
+the predicted floor offered. It picked right.
+
+⛔ **Ruled a NOTE, not a `BLOCK`** — the numbers match `:156` exactly, `tests` was `+1` on the nose, pint
+and phpstan were genuinely green, no CHECK changed and nothing was concealed. ⚠️ **But it is one lucky
+branch away from a fake green, and it would have read identically.**
+
+⭐⭐ **The fix, standing from PB-145: `RAW: <log path>:<line number> — <the line verbatim>`.** A field
+named RAW must carry its own provenance, because a *shape* the coder can produce from a tool it runs
+itself proves nothing about a tool it did not. ⭐⭐ **And the deeper correction: PB-123 taught me to open
+the log when a report UNDER-claims. This is the same mtime check catching a report that OVER-claims —
+the check is symmetric and I had only ever used one half of it.** ⛔ Never accept a `RAW` written before
+the gate returned; brief the report to be written after.
+
+## ⛔ Trap added 2026-09-08 23:4x — a mutation must be the SMALLEST edit that falsifies the claim
+
+PB-144's W1 deleted the **whole `<x-ui.empty-state>` block**. That necessarily reddens
+`test_fresh_tenant_renders_the_empty_sentence:33` (which asserts the **first** clause) as well as the new
+test (which asserts the **corrected second** clause), and the report quoted one RED where the mutation
+had two.
+
+⭐ **PB-135's discriminator settles what it means — read the failing assertion, not the co-firing.** Two
+subjects, two mechanisms, so this is **coupling through a shared container, not duplication**, and PB-129
+correctly did not fire.
+
+⛔ **The defect is the reviewer's.** A mutation that deletes the container cannot isolate a claim about
+the container's *contents* — it tests that the block exists, which nobody doubted. ⭐ **Generalisation:
+name the smallest edit that makes the claim false.** Here that was restoring the old sentence, which
+reddens the new test and nothing else. A coarse mutation buys a RED that proves less than it looks like
+and drags neighbours in for reasons unrelated to the claim.
+
+## ⛔ Trap added 2026-09-08 23:4x — a pre-declared RED names a SURFACE, and render-time is not click-time
+
+PB-144's W2 expected *"a Livewire method-not-found error on the render"* from restoring `target="goToJobs"`
+without its method. **Unreachable by construction, and the coder measured why:** `x-ui.empty-state` guards
+its button with `@if ($action && ($href || $target))`, so restoring `target=` **alone renders nothing at
+all**; and Livewire does not throw for a missing `wire:click` target on **render** — it throws on
+**click**.
+
+⭐ The hazard was still pinned, by the coder's own variant: restoring **both** attributes reddens
+`assertDontSee('Go to Jobs')` with a value comparison. Only the description of how was wrong.
+
+⭐ **Generalisation: a pre-declared RED is a claim about WHICH SURFACE the framework fails on.** Before
+naming an exception as the expected RED, check that the mutation can reach the code that throws it.
+⚠️ **Twentieth consecutive wave whose only shortfall traced to the brief** — and the report saying so
+plainly is the single most valuable thing in it. ⛔ Never grade that disclosure as a shortfall.
+
+## ⚠️ Trap added 2026-09-08 23:4x — `PINT VERDICT: GREEN` can be true of the wave gate and silent about a red
+
+PB-144 ran **three** pricebook gates (`gate-runs.tsv`): `3625667` 23:31:52 with **pint rc 1** and no end
+row · `3631638` 23:33:15→23:33:23, an 8-second run with **no `--tests`** · `3633770` 23:33:44→23:36:02,
+the wave gate, pint rc 0 · phpstan rc 0 · pest rc 2. ⭐ **The pint red was fixed, committed ALONE as
+`d82eec75`, and the WHOLE gate re-ran** — PB-127's recovery honoured for the second wave running, and the
+reason the gated tip is HEAD.
+
+⚠️ The report's `PINT VERDICT: GREEN` was **true of the wave gate and silent about the red**. PB-117
+already ruled that pint's and phpstan's verdicts belong in the report explicitly, **including a red
+already fixed** — and that ruling had never been written into this lane's **brief template**. ⭐ Same
+shape as the piped-gate finding: **a rule fixed in the instrument was never grepped for in the standing
+instructions that drive it.** Now its own report field.
+
+## ⭐⭐ Trap added 2026-09-08 23:4x — a REMEDY is a claim independent of the SENTENCE, and it can be dead beside honest prose
+
+PB-144's closing rule — *when a screen accounts for its own emptiness by naming a remedy, the remedy is a
+second claim and needs its own measurement* — was applied to exactly one screen. Applied to the other
+nine (`grep 'action=\|target=\|href=' --include=*.blade.php`, twelve hits), **three are dead**:
+
+| module | remedy | measured |
+| :--- | :--- | :--- |
+| **X-163** `confirmation-screen.blade.php:45-46` | `Open Pricebook` | `ConfirmationScreen.php:110` → `dispatch('open-pricebook')`; the grep over `app/app app/resources app/routes app/config app/bootstrap` returns **the dispatch site and nothing else** |
+| **X-171** `stafffacing-app.blade.php:15-16` | `Refresh` | `StafffacingApp.php:147` → `dispatch('refresh-app')`, **no listener** |
+| **X-172** `customerfacing-portal.blade.php:60` | `Leave a review` | ⛔ **customer-facing** `<a href="#">`, beside three real `wire:click` siblings |
+
+⭐⭐ **X-163's row is a NEW member of the family and is the durable finding.** PB-144's screen had a
+**false sentence AND an inert remedy**. X-163's says *"Nothing left to confirm — All your prices have
+been confirmed."* — **completely true** — and the Pricebook it offers to open **exists**. ⛔ **No
+sentence-audit could ever have found it**, and every instrument this lane has run past that blade cleared
+it correctly. ⭐ **The generalisation: the sentence and the remedy are two claims and need two
+measurements.** A screen can be perfectly honest in prose and still hand the user a button to nowhere.
+
+⚠️ **X-171's row is HANDED OVER, not ruled** — ⭐ a Livewire action method re-renders the component by
+being **called**, so `refreshApp()` may be honest *by accident* despite its dead event. ⛔ That is the
+PB-127 shape (read the consumer before ruling), and briefing a fix blind would be briefing a fix to
+working code. Measured first, as PB-145 item 2.
+
+⭐ **X-163 is the one fixed** because it is the narrowest: the sentence is true so it is **not touched**,
+only the two attributes and the orphan method go, and `grep 'Open Pricebook\|openPricebook' app/tests`
+returns **zero** so no assertion is disturbed. ⛔ One component per wave; the other two are recorded rows,
+and stopping at one is the pre-declared outcome.
+
 ## ⭐ Trap added 2026-09-08 23:2x — a carve-out named ONE BINDING SYNTAX, for the third enumeration failure in this lane
 
 PB-143's brief said *"a `wire:click` in a blade **counts as a human action**"*. **Three of its seven
