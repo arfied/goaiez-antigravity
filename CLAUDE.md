@@ -5359,6 +5359,79 @@ Watch for: <the trap that applies, by name>
   `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **5** rows at tick 258, down from 7 by the label
   collapse above and back to 7 when wave 139 lands; stub pile across the thirteen **10**. Re-run both;
   never inherit them.
+- ⚠️⚠️ **A row ID crossing a module boundary is a DELIVERY only if the receiver may query the table it
+  indexes — the queue law and the boundary law are two independent constraints, and satisfying the first
+  says nothing about the second.** I had `ChatTurnCreated(businessId, turnId)` down as a sanctioned
+  delivery: a row id and not the words, so `AgentTurns.php:215-222`'s ⛔ block is satisfied, and
+  `AgentAnswerAction::handle(int, string $userMessage, …)` takes it **synchronously**, so no queue is
+  crossed. Wave 139's answer 3 refused that and is right, verified per claim at tick 259:
+  `X-102/manifest.php:31-35` `provides` is `chat.start · chat.capture · chat.escalate` — **three write
+  actions and no turn read**, so nothing exposes a turn's text — and a C-Agent listener reading the row
+  needs `use App\Modules\X102\Models\ChatTurn`, which is exactly what `BoundaryStage.php:74-75`'s ⛔
+  forbids (*"Cross-module change is an EVENT or a REGISTERED ACTION — never a `use`"*), the stage's text
+  being the whole law since it has never fired (tick 194). ⭐ **The wave-110 precedent says the same thing
+  read properly**: `TakeoverStartedListener` imports X-01's **event** and writes C-Agent's **own**
+  `TakeoverLatch` — a precedent for the crossing and **against** the read. An event carrying a row id into
+  a module that may not read that row delivers **nothing**: the writerless-value trap with the reader
+  *forbidden* rather than absent. ⛔ This column had the false presence drafted and the brief is what
+  stopped it — the `ChatTurnCreated` body, the wave-110 provider lines and eight commands handed over with
+  **no conclusion attached to any of them**, and the words *"I am ruling on neither."* **That form is now
+  6-for-6** (ticks 188, 214, 236, 253, 258, 259) and has corrected this column twice in three waves.
+- ⚠️ **The tree's PRACTICE and `BoundaryStage`'s TEXT diverge on cross-module model imports, so a
+  law-correct conclusion can be contradicted by this lane's own shipped code — hand the divergence over as
+  a fact with a ⛔ attached, never as a precedent.** Measured at tick 259:
+  `X-102/Actions/ChatCaptureAction.php:10` and `X-01/Domain/UnifiedInboxManager.php:17` both
+  `use App\Modules\X121\Models\Person`; `X-102/Actions/ChatStartAction.php:9` and
+  `ChatContextRefreshAction.php:8` both `use App\Modules\X110\Domain\PixelEngine`. Four cross-module class
+  imports, two of them **models**, two in this lane's own modules, none reported — the tick-194 silent
+  stage. **An existing violation is not a permission**; never widen, weaken or defend a lint you do not
+  have. The coder needs the measurement so its reasoning is about the law rather than about an imagined
+  enforcement, and needs the ⛔ so the measurement is not read as a licence.
+- ⚠️ **A row's FINAL clause can be refuted by the row's own MIDDLE clause, and the final clause is the one
+  a future tick reads as the blocker.** `CAgentTest.php:172` closes *"To become buildable, the existing
+  `ChatTurnCreated` event must be declared"* — naming a Track 1 token as **sufficient** — over a middle
+  clause reading *"the delivery of the turn payload remains unaccounted for"*, which the same wave's answer
+  3 shows survives declaration entire. A tick reading `grep -rn "BUILD PROPOSAL:"` sees
+  unbuildable-pending-Track-1 where the real blocker is lane-owned. ⭐ Not a `BLOCK` (tick-222
+  discriminator: the finding survives the clause being fixed), and **the coder named the tension itself in
+  answer 5** — the ranking form of the least-comfortable-pair question, **2-for-2** after three consecutive
+  `None`s. **Read a proposal's clauses against each other before reading any of them against the tree.**
+- ⚠️ **Name the pest object by per-wave path in EVERY brief — this column names the gate log and forgets
+  the object, and the very next supervisor gate destroys it.** Wave 139's `ARTIFACTS` listed two files, one
+  being the shared `scratch/pest-raw-last.log` (waves 88b, 95, 105, 111, 122). My `RAW:` field asked for
+  *"the object your own gate wrote this wave, `cat`ed from its file"* and never asked for a copy, so nothing
+  the coder did was wrong — and tick 259's own `--tests` overwrote it forty minutes later. Tick 190 wrote
+  the rule and this column has now lapsed on it twice. **The conditional wording has held four waves
+  running; the naming half is what keeps failing.**
+- **Backlog at tick 259 — wave 140 is the X-102 ↔ C-Agent turn seam, it is a BUILD, and the ROUTE is the
+  coder's.** RULED. It is the highest-value row and **the only one on a live production path**:
+  `ChatTurnAction` is reached from `ChatTurnController`, the unauthenticated public door waves 122–136
+  built, with real HTTP tests — while `G16-21`'s carousel has no customer-facing surface (both X-102 routes
+  sit behind `auth`, tick 228), `G5-43` has no profile store and no reader (tick 227), `G11-09` needs the
+  unbuilt scoring model (tick 200), `X-188`'s row has no tenant-cancellation surface (tick 249) and X-66's
+  is a `TRACK 1 ACTION`. Two backlog rows name this seam. Both modules are in the thirteen.
+  ⛔ **I name no route** — wave 138d overturned a claim I certified and wave 139 one I was about to write,
+  consecutively, on this file. The measurements go over printed and conclusion-free:
+  `C-Agent/manifest.php:31-36` (`provides` carries **`agent.answer`**, a declared registered action;
+  `consumes` carries `chat.started`), `ChatTurnAction::handle()`'s signature (it holds `string $message`
+  **in hand, synchronously, at dispatch time**), `AgentAnswerAction::handle()`'s signature, the two ⛔
+  blocks, and the four imports above. ⚠️ **Tick 221's listener ruling is re-derived and its ground has
+  moved**: it chose the listener because C-Agent declares `consumes: chat.started` and *"a declaration this
+  lane declines to implement is a `TRACK 1 ACTION`"* — that reason survives, but `chat.started` carries no
+  turn text on either route, so the declared consumption is unsatisfiable whichever way the wire runs, and
+  the choice is between two routes to a capability the declared token cannot serve (tick 235). ⛔ The build
+  and the label are **two numbered items with different outputs** — wave 110 built a wire and restored that
+  row's proposal line in the same commit, and ticks 218–223 measured the shape five times. ⛔ No
+  `⛔ REFUSED` (both in the thirteen), no `UNRESOLVED` (nothing external is missing), no `manifest.php`
+  hand-edit. Live list `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **7** rows at tick 259
+  (`C-Agent 3 · C-Mail 1 · X-102 1 · X-188 1 · X-66 1`); stub pile across the thirteen **10**. Re-run both;
+  never inherit them.
+- **Suite baseline, measured by this column at tick 259 on tip `fee88ea7`, clean tree — `tests 1946 ·
+  passed 1943 · assertions 8405 · failed 1 · errors 2 · incomplete 3 · risky 1 · duration_ms 111645`,** the
+  standing three by **identity**, §2 `none`, §2a `empty`, §2b `all parse`, §6 pint `passed` / phpstan `0`,
+  stamp `20260829-0647` = `runtime_build`. Identical in every headline field to ticks 257 and 258 and to
+  the wave's own `111917`, on a fourth distinct `duration_ms` — all a docblock-and-ledger diff may produce.
+  ⭐ §7 waited on `pest.lock` and completed for the **ninth** consecutive tick: contended, never stuck.
 
 ## Style
 
