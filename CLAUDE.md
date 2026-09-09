@@ -375,13 +375,14 @@ the first where the instrument is **correct and the correction is REFUSED** — 
 ended in a repair. **`FS` is the member where the right answer is to leave the instrument worse than
 main's and say why.**
 
-### ⛔ The take is OPEN, UNNECESSARY and REFUSED (tick 238) — main has NOT touched the checker since our base, so a take could not refresh the census
+### ⛔ The take is OPEN, UNNECESSARY and REFUSED (ticks 238, 239, 240) — main has NOT touched the checker since our base, so a take could not refresh the census
 
-`RULING DD`'s two-row re-check against `beb759d4` prints **nothing**, so the take is open. It is
-refused on a measurement no earlier tick had:
+`RULING DD`'s two-row re-check prints **nothing**, so the take is open. It is refused on a measurement
+no earlier tick had, **re-run at each new pin rather than carried** (tick 240, pin `c3ab0a6f`):
 
 ```
-$ git diff --stat 7a75f289 beb759d4 -- app/app/Doctor/ app/tests/Journeys/JourneyHarness.php   (empty)
+$ git diff --name-status HEAD...c3ab0a6f -- .claude/                                            (empty)
+$ git diff --stat 7a75f289 c3ab0a6f -- app/app/Doctor/ app/tests/Journeys/JourneyHarness.php    (empty)
 ```
 
 ⭐ **This lane's checker IS main's current checker, byte-identical.** So `RULING EQ`'s void condition is
@@ -1444,19 +1445,30 @@ what the instrument reports, never what the tree contains.
 itself**, `bin/supervise.sh` being this seat's own file (`RULING FI`). `RULING FT` has the result: the
 mechanical detector for `RULING DL`/`FM`'s loss class is now in this seat's gate, proven on a positive
 control that is **this lane's own take**. ⛔ **Not a wave and no count moved** — §5 is identical across
-`.gateT239.txt` and `.gateT239b.txt`.
+`.gateT239.txt` and `.gateT239b.txt`. ⛔ **ITS CLAIM IS FALSIFIED BY `RULING FU` (tick 240): `§2e`
+detects `DL`'s direction and CANNOT detect `FM`'s** — it prints ✓ on `6b7c315b` itself. The adoption
+stands and is correct; the *gap* S-193 was thought to close stayed open one more tick, and S-194 closes
+it.
 
-⛔ **The backlog is EMPTY at tick 239 and this tick writes a HOLD.** Re-measured rather than recalled:
-`main` moved **1 first-parent / 15 ancestor** commits (`beb759d4` → **`d2a81ee0`**) on one sibling
-merge (`track/money` empty states), **not `track/stages`**; this lane's gated tip `18bbde18` is pushed
-and **still not on `main`** — main has run **nine** first-parent merges since reverting us at
-`a5042da2` and taken **none** of ours (`grep -c "track/stages"` over that range → `0`); lane **16
-ahead / 7 behind** first-parent and **16 / 69** by ancestor count (`RULING EK`); merge base
+✅ **S-194 — the `§2f` detector for `RULING FM`'s loss class. COMPLETE at tick 240, and NOT dispatched
+— executed by the supervisor itself**, `bin/supervise.sh` being this seat's own file (`RULING FI`).
+`RULING FU` has the result: a name-level (never count-level) comparison of parent 1 against the merge
+result, both test styles, proven on `6b7c315b` (**exactly** `FM`'s two tests, zero noise across a
+487-commit merge) and calibrated on `5d89dc84` (**9**, one proven benign by `RULING EP`). ⛔ **Not a
+wave and no count moved** — §5 is identical in all eight numbers across `.gateT240.txt` and
+`.gateT240b.txt`. It sets no `fail=1`: a trigger, never a verdict.
+
+⛔ **The backlog is EMPTY at tick 240 and this tick writes a HOLD.** Re-measured rather than recalled:
+`main` moved **1 first-parent / 4 ancestor** commits (`d2a81ee0` → **`c3ab0a6f`**) on one sibling
+merge (`track/pricebook` X-171), **not `track/stages`**; this lane's gated tip `18bbde18` is pushed
+and **still not on `main`** — main has run **eight** first-parent merges since reverting us at
+`a5042da2` and taken **none** of ours (`grep -c "track/stages"` over that range → `0`); lane **17
+ahead / 8 behind** first-parent and **17 / 73** by ancestor count (`RULING EK`); merge base
 **`7a75f289` unmoved**; ours-since-base in `app/` is `app/phpunit.xml` alone. Filed as
 **TRACK 1 ACTION 10** — a measurement, not a grievance: nothing is blocked behind that merge, since
 this lane authors no `app/**` byte.
 
-⭐ **The admission test was NOT re-run at ticks 238 or 239, and the reason is a measurement:
+⭐ **The admission test was NOT re-run at ticks 238, 239 or 240, and the reason is a measurement:
 `git diff --stat 10e804ea HEAD -- app/` is EMPTY**, so the input the tick-236 census is a function of
 has not moved and its one-code-change shelf life has not been spent. **This is the ONLY form in which
 a census may be carried here** — not because it is written down, but because its input is proven
@@ -1513,6 +1525,64 @@ grep -oE '^bar "[^"]*"' bin/supervise.sh
 ⚠️ Fourteenth member of the `EU`/`EV`/`EW`/`EX`/`EZ`/`FE`/`FF`/`FH`/`FI`/`FJ`/`FN`/`FP`/`FQ`/`FS`
 family, and the first where the defective instrument is a **ruling's own classification** rather than a
 command, a floor, a shell state or a sequence.
+
+### ⛔⛔ `RULING FU` (tick 240) — `§2e` is oriented in the OPPOSITE DIRECTION from the loss `RULING FT` adopted it to detect. It prints **✓** on `6b7c315b`, the merge that executed `RULING FM`. This seat had no detector for its own loss class while believing it had one.
+
+`FT` adopted `§2e` one tick ago and called it *"the mechanical detector for `RULING DL`/`FM`'s loss
+class … the one loss class this lane has actually suffered — `a5042da2` deleted our two X-211 tests
+and `6b7c315b` took the deletion."* **`FT`'s own sentence contains the contradiction**: it describes a
+detector for *"a merge that silently **drops** the INCOMING side's change"* and names as its instance a
+merge that ***took*** the deletion. **Taking is not dropping — they are inverse events**, and `§2e`
+detects only the first.
+
+Measured on this lane's own history, on `FM`'s exact merge and its exact path:
+
+```
+git diff --name-status 6b3e7d63 7a75f289 -- …/X-211/X211Test.php   →  M     (precondition FIRES)
+git diff --name-only  6b7c315b 7a75f289 -- …/X-211/X211Test.php   →  (empty) ⇒ §2e's ✓ arm
+git show 6b3e7d63:…/X211Test.php | grep -c "…test_g1_61_past_the_threshold"  →  1   (ours)
+git show 6b7c315b:…/X211Test.php | grep -c "…test_g1_61_past_the_threshold"  →  0   (LOST)
+```
+
+⛔ **`§2e` reports `harness identical to the incoming side ✓` on the merge that deleted our two
+tests**, because the merge *did* take the incoming side — the behaviour `§2e` exists to reward. It is
+additionally scoped to **one hard-coded path**, `JourneyHarness.php`, and `FM`'s loss was
+`X211Test.php`. **`§2e` is the detector for `DL`'s direction and for nothing else; `FT` bundled `DL`
+and `FM` and they are opposites.**
+
+✅ **REPAIRED the same tick as `§2f`** — `RULING FQ`'s own standard, which binds hardest here: `FQ`
+convicted `FO` of *measuring* a defect in this seat's instrument and *filing it as a footnote instead
+of repairing it*, and leaving `FU` unrepaired would be that error knowingly.
+
+⭐ **The test is NAME-level, never count-level, and the control proves why.** On `6b7c315b` parent 1
+held **6** methods in that file and the result holds **10** — main added tests in the same merge that
+deleted ours, so every count comparison reads healthy. Extraction covers both styles in this tree
+(**1376** `public function test_` + **389** pest `test(`/`it(` = **1765** names at `HEAD`):
+
+```
+git grep -h -oE "public function test_[A-Za-z0-9_]+|^(test|it)\('[^']*'" <rev> -- app/tests/ | sort -u
+comm -23 <parent 1 names> <result names>
+```
+
+✅ **Both arms proven on this lane's own history, not a borrowed control.** `6b7c315b` returns
+**exactly the two tests `FM` names and nothing else** — zero noise across a **487-commit** merge. The
+tick-221 take `5d89dc84` returns **9**, of which `test_g7_47_rate_never_changes_without_notified_action`
+is **proven benign by `RULING EP`** (main renamed it to `…_cohort_rate_…`; base content the other side
+rewrote, never ours).
+
+⛔ **That calibration is why `§2f` sets no `fail=1`.** It can only **over**-report, so it is a
+**TRIGGER and never a verdict** — `N137`'s rule in its mirror form (*an instrument that can only
+under-report is safe as a trigger and unsafe as a finding*). Its output names `EP` and `FM` so the
+reader knows which way to resolve a candidate. ⚠️ **Do not "fix" a noisy `§2f` by narrowing it**; that
+is `RULING DE`'s run-115 shape — defeating a clause by removing the case it exists for.
+
+⚠️ Fifteenth member of the `EU`/`EV`/`EW`/`EX`/`EZ`/`FE`/`FF`/`FH`/`FI`/`FJ`/`FN`/`FP`/`FQ`/`FS`/`FT`
+family, and the first about an instrument's **DIRECTION**. `FT` was a ruling's classification of
+sections; **`FU` is a ruling's claim about what an adopted section MEASURES** — the section was correct,
+byte-identical to main's, and adopted for a purpose it cannot serve. ✅ **Standing correction: when this
+seat adopts an instrument section to close a named gap, it REPLAYS that section by hand on the exact
+historical event the gap is named for, and reports the arm that fires.** `FT` replayed `6b7c315b` and
+read the ✓ as the section working; the ✓ *was* the section working, on a different question.
 
 
 

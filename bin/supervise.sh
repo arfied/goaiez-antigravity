@@ -189,6 +189,41 @@ else
   fi
 fi
 
+bar "2f. a merge that took THEIR deletion of a lane-authored test  (parent 1 vs the result)"
+# RULING FU, tick 240. §2e above detects a merge that DROPS the incoming side's change
+# (RULING DL's direction). RULING FM's loss is the INVERSE: a merge that TAKES the incoming
+# side's deletion of our own work. Measured on this lane's own history, §2e prints ✓ on
+# 6b7c315b — the very merge that executed FM — because the merge did take the incoming side,
+# which is what §2e is built to reward. §2e is also scoped to one hard-coded path
+# (JourneyHarness.php), and FM's loss was app/tests/Modules/X-211/X211Test.php. So this seat
+# had NO detector for FM's loss class while believing §2e was one.
+# The test is name-level, never count-level: on 6b7c315b parent 1 held 6 methods in that file
+# and the result holds 10, because main added tests in the same merge that deleted ours.
+# ⚠️ This can only OVER-report, so it is a TRIGGER and never a verdict — it does not set
+# fail=1. RULING EP's provenance case lands here legitimately: a name on our side and absent
+# from the result may be base content the OTHER side rewrote and never ours.
+# Arms proven at tick 240, both on this lane's own history: 6b7c315b returns exactly the two
+# tests FM names and nothing else (signal, zero noise across a 487-commit merge); the tick-221
+# take 5d89dc84 returns 9, of which test_g7_47_rate_never_changes_without_notified_action is
+# proven benign by RULING EP (main renamed it) — the calibration for why this is not a gate.
+# The not-a-merge arm is what this seat's HEAD exercises today.
+if [ -z "$p2" ]; then
+  echo "  HEAD is not a merge — nothing to compare"
+else
+  tnames() {
+    git grep -h -oE "public function test_[A-Za-z0-9_]+|^(test|it)\('[^']*'" "$1" -- app/tests/ 2>/dev/null | sort -u
+  }
+  lost=$(comm -23 <(tnames 'HEAD^1') <(tnames HEAD))
+  if [ -z "$lost" ]; then
+    echo "  no test name on parent 1 is missing from the result ✓"
+  else
+    echo "  ⚠️ $(printf '%s\n' "$lost" | grep -c .) name(s) on parent 1 are ABSENT from the merge result — READ THESE, they are candidates not failures:"
+    printf '%s\n' "$lost" | sed 's/^/     /'
+    echo "     RULING EP: a name that was never ours (base content the other side rewrote) lands here legitimately."
+    echo "     RULING FM: if git merge-base HEAD^1 HEAD^2 is a commit THIS lane authored, read every one as ours."
+  fi
+fi
+
 bar "3. build state"
 python3 "$ROOT/bin/state.py" status 2>&1 | head -30 | sed 's/^/  /'
 python3 "$ROOT/bin/state.py" next 2>&1 | head -20 | sed 's/^/  /'
