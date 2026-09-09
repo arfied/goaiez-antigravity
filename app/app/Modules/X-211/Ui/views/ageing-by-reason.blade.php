@@ -12,8 +12,8 @@
     @endif
 
     @if($refused)
-        <x-ui.attention-card state="attention" heading="No late-fee term in the agreement">
-            {{ $refused }} Write the term below, then apply the fee again.
+        <x-ui.attention-card state="attention" heading="Late fee not applied">
+            {{ $refused }}
         </x-ui.attention-card>
     @endif
 
