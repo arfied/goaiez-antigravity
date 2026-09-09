@@ -290,4 +290,34 @@ class CardScreenTest extends TestCase
             ->assertSet('expYear', '')
             ->assertSet('name', '');
     }
+
+    public function test_make_default_forgets_partially_typed_fields(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $card = CardToken::create([
+            'business_id' => $biz->id,
+            'gateway_payment_method_id' => 'tok_9',
+            'gateway_customer_id' => 'cus_9',
+            'brand' => 'Visa',
+            'last_four' => '9999',
+            'exp_month' => 12,
+            'exp_year' => now()->year + 1,
+            'is_default' => false,
+        ]);
+
+        Livewire::actingAs($owner)->test(CardScreen::class)
+            ->set('number', '1234123412341234')
+            ->set('expMonth', '11')
+            ->set('expYear', '2029')
+            ->set('name', 'Incomplete Name')
+            ->call('makeDefault', $card->id)
+            ->assertDontSee('1234123412341234')
+            ->assertSet('expMonth', '')
+            ->assertSet('expYear', '')
+            ->assertSet('name', '');
+    }
 }

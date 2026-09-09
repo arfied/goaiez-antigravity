@@ -34,6 +34,7 @@ class CardScreen extends Component
 
     public function makeDefault(int $cardId, CardRotateAction $action): void
     {
+        $this->forgetCardFields();
         $this->error = null;
         $this->success = null;
 
