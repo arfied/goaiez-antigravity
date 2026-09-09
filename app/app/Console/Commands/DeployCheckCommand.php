@@ -226,7 +226,7 @@ final class DeployCheckCommand extends Command
         $this->record(
             'number stock',
             $ok,
-            $ok ? "{$free} unassigned number(s)" : 'NO NUMBERS — a provisioned tenant has no from-address and cannot send.'
+            $ok ? "{$free} unassigned number(s)" : 'NO NUMBERS — run sms:load-number-pool to register stock, or numbers:return-parked to recycle.'
         );
     }
 
