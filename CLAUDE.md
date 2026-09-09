@@ -5799,6 +5799,76 @@ Watch for: <the trap that applies, by name>
   distinguishes itself from — tick 260 is what that clause exists to prevent. Live list
   `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **9** rows at tick 264; stub pile across the
   thirteen **10**. Re-run both; never inherit them.
+- ⚠️⚠️ **A false clause attached to a correct conclusion is graded by whether the conclusion
+  survives WITHOUT it — that is the whole `BLOCK`/correction discriminator, and it is cheaper than
+  any argument about the clause.** Wave 143 refused the X-102 → X-01 bridge for two reasons. The
+  first is exact and decisive: `ingestMessage`'s first act is `str_contains($identifier, '@')` and
+  its `else` arm writes `'phone' => $identifier`, so an anonymous session token corrupts
+  `Person.phone`. The second — *"ChatTurnCreated lacks message text which cannot be safely added
+  without violating AgentTurns law"* — is refuted by the **two listeners the same answer named as
+  precedents**: `EmailReplied` and `WhatsappSessionOpened` both carry `public readonly string $body`,
+  both listeners are `final class` with **no `implements ShouldQueue`**, and `AgentTurns.php:215-222`'s
+  own stated reason is `jobs.payload`/`failed_jobs.payload` serialisation, i.e. a **job**. ⭐ Wave
+  140's *"no legal route exists"* was a `BLOCK` because it was **load-bearing** — a route existed and
+  the row took a buildable item off the board. This one is **superfluous**: with the text on the
+  event, X-01 still cannot make a `Person` for an anonymous visitor, so the conclusion stands entire
+  on reason 1. ⛔ It still corrects forward in both records, because a future tick reading it would
+  refuse the reuse of wave 102's own shipped pattern.
+- ⚠️ **Fourth recurrence of the prose-measurement defect, and this one AUTHORED the false clause
+  above.** The wave-143 brief said *"the artifact that answers it is the listener class declaration,
+  so paste it"* — in item 2's prose, with **no field in the template** — and it was never pasted,
+  while the wave filed a durable conclusion on that question anyway. The three earlier recurrences
+  cost a narrow grounding; this one cost a false sentence in an append-only ledger. **A measurement
+  you want back gets a named field, every time.**
+- ⚠️ **The placement rule recurred one wave after it was written.** Tick 262: *a brief may not
+  license a PLACEMENT when the placement decides visibility.* The wave-143 brief said only *"a
+  `BUILD PROPOSAL:` and no code"*, and both new rows went into `app/app/Modules/…/ChatTurnAction.php`
+  — `grep -rn "BUILD PROPOSAL:" app/tests/Modules/ | wc -l` unchanged at 9, the same grep over
+  `app/app/Modules/` returning 2. **RULED at tick 265: a row this lane is expected to act on lives on
+  a line under `app/tests/Modules/`.** ⭐ The coder's own answer 6 named the defect in full, unprompted
+  — the ranking form of the least-comfortable-pair question finding a wave's principal defect on its
+  ninth outing.
+- ⚠️ **A generalisation question can be answered with the INSTANCE dressed as the shape.** Asked for
+  the general rule behind *a correction that removes a false clause must say which clauses it is
+  keeping*, wave 143 gave *"a BUILD PROPOSAL must include an explicit `Owner:`"* — true, and about
+  `Owner:` fields. The leak's inverse: a leaked literal gets the answer copied back; a
+  generalisation question gets the instance restated. **Ask for a rule that would still be true of a
+  wave that touched none of this wave's artifacts.**
+- ⭐ **`ChatCaptureAction` has NO production caller — measured at tick 265, and it is what names the
+  next wave.** `grep -rn "ChatCaptureAction" app/app app/tests --include=*.php` returns its own
+  declaration and three lines of `X102Test.php`: no route, controller, job, listener or command. So
+  `ChatLeadCaptured(businessId, leadId, personId, name, phone)` — the one X-102 event carrying a
+  phone — **never fires in production**, and the "capture the lead first, then you have an
+  identifier" route is unavailable too. The tick-184/212/225/228 dead-class shape at action scale,
+  and it closes wave 143's refusal in the accepting direction: the missing thing is a **door**, and
+  this lane built the other two.
+- **Backlog at tick 265 — wave 144 is two record corrections, wave 145 is X-102's chat lead-capture
+  door.** RULED. 144 carries no production code, no test, no assertion and no mutation: the words
+  clause corrected forward in both records with the four artifacts printed and no sentence of mine
+  attached (tick 214, 7-for-7), and the two rows made reachable from the backlog grep. Grouping two
+  *record* corrections is the tick-257 precedent; the defect ticks 218–223 measured five times is a
+  correction and a **build** in one instruction, which is why the door is 145. **Push HELD** —
+  `6eab76f5 · 3ec741d6` are unpushed with only this column's own `67a61c6e` behind them, so the
+  correcting row ships in the same push as the row it corrects (tick 252). **145 is the third
+  unauthenticated route** beside `/chat/{key}/start` and `/chat/{key}/turn`, reaching
+  `ChatCaptureAction::handle()`, which `updateOrCreate`s a `Person` on `(business_id, phone)` and
+  dispatches `ChatLeadCaptured` — single-module, in lane, live path, no vendor, and the measured
+  prerequisite of the bridge wave 143 refused. ⚠️ Hazards: `chat_leads` is `ENABLE`+`FORCE ROW LEVEL
+  SECURITY`; `ChatCaptureAction` already `use`s `App\Modules\X121\Models\Person`, an existing
+  cross-module model import `BoundaryStage`'s text forbids and its regex cannot see — **an existing
+  violation is not a permission**; and `ChatRateLimits` carries a reasoned constant per door against
+  `api.php:154`'s ⛔ on inline limiters. Live list `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` —
+  **9** rows at tick 265, membership unchanged since tick 264, plus **2** off the board in
+  `app/app/Modules/`; stub pile **10**. Re-run both; never inherit them.
+- **Suite at tick 265 on tip `3ec741d6`, read from the wave's own artifacts rather than its paste —
+  `tests 1946 · passed 1943 · assertions 8407 · failed 1 · errors 2 · incomplete 3 · risky 1 ·
+  duration_ms 108839`,** the standing three by **identity**, §1 `0 uncommitted`, §2 `none`, §2b `all
+  parse`, §6 pint `passed` / phpstan `0`, stamp `20260829-0647` = `runtime_build`. ⭐
+  `cmp scratch/w142-pest-raw.log scratch/w143-pest-raw.log` → `differ: byte 95, line 1` on two
+  1508-byte files — the `duration_ms` offset alone, which is all a comments-and-ledger diff may
+  produce. **I ran no suite of my own**: two complete objects on this exact sha existed and I read
+  both. State when you decline to re-measure and why — the tick-197 corollary is keyed to a MISSING
+  measurement, not to one the column did not perform itself.
 
 ## Style
 
