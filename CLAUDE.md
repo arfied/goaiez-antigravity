@@ -6343,3 +6343,166 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     own behaviour must offer a category the run can honestly reach** — a binary the harness can
     override from underneath is not one, and the honest answer is the observation plus who caused
     it.
+248. **`AGY_EXIT=124` exactly three hours after dispatch is the LAUNCHER's own wall clock — not a
+    quota death, not an external kill — and a gate parked on the shared lock can spend the whole of
+    it (RULED by the lane supervisor 2026-09-09, on run 174).** Ruling 30 reads a run log for
+    `Individual quota reached` and ruling 40 for a 0-byte log with the pid gone. Run 174's log is
+    **neither**: three lines — *"root agent idle; waiting for 3 background task(s)"*, *"error:
+    interrupted"*, `AGY_EXIT=124` — at **09:09**, dispatched **06:09**. `launch-coder.sh:144` wraps
+    agy in `timeout -k 60 3h`, so **the three-hour span IS the diagnosis**; `--print-timeout 8h`
+    never bound. **RULED: a run log ending `AGY_EXIT=124` whose elapsed time matches the launcher's
+    own `3h` is a wall-clock reap. It spends no dispatch** (rulings 40, 60b, 71, 94's family — the
+    coder was structurally prevented from finishing, it did not fail), **and the tick measures what
+    it committed rather than briefing a retry.** ⭐ **The generalisable half is where the three
+    hours went.** Run 174 committed everything and wrote `REPORT.md` at **06:24**, then sat
+    **2h45m** on `/home/goaiez/tmp/pest.lock` — and its pest, once it finally acquired the lock,
+    itself hit `timeout 1800` and produced **zero bytes**. So the run's entire budget bought no §7
+    and cost it ruling 238's read-back, which is the one step it could not reach. ⚠️ The two budgets
+    do **not** overlap and the script is not at fault: `flock -w 2400` blocks and returns *before*
+    `timeout 1800 ./vendor/bin/pest` starts (`bin/supervise.sh:221`, `:231`). The cause is box
+    contention, so ⛔ neither number is to be "fixed". **RULED, and it is a brief-design rule: a
+    brief orders the run so the REVIEWABLE DELIVERABLE exists before the gate is started** — every
+    `REPORT.md` field except `GATE` is written first, and `GATE` is filled from ruling 238's second
+    read afterwards. A reap then costs the gate line and nothing else. ⚠️ Ruling 218(2)'s
+    prohibition is untouched: the run still **blocks** on its own gate, and a report composed before
+    the gate exits is still the defect.
+249. **A number in `TICK-ADDENDUM.md` is checked against the brief it summarises (RULED by the lane
+    supervisor 2026-09-09, on MONEY-151's review).** The addendum told the next tick that `SWEEP:`
+    would print **eleven** lines. `BRIEF-money151.md`'s own two tables are Table A (`:135`, `:149`,
+    `:318`, `:337`) and Table B (`:63`, `:88`, `:89`, `:116`, `:121`, `:123`, `:125`, `:133`,
+    `:226`) — **four plus nine is thirteen**. The coder's sweep printed **thirteen**, every one in a
+    table, and proceeded, which is exactly ruling 118's stop-clause and ruling 128's precedent.
+    **The brief was right and the addendum was wrong**, and the reviewing tick — reading the
+    addendum first, as it is told to — opened the review looking for a two-line overrun that did not
+    exist. ⚠️ The addendum is the one document a tick reads before the evidence, so a number in it
+    is load-bearing in a way a number in prose is not. **RULED: every count the addendum states is
+    re-derived from the brief's own tables before the addendum ships**, exactly as ruling 92 requires
+    of a floor, ruling 200 of a proof count and ruling 217 of a sweep-table row count. This is that
+    family reaching the **summary** rather than the spec — and it is the more dangerous position,
+    because the summary outlives the brief in the next tick's attention.
+250. **The owner's merge cadence is adopted, and ⭐⭐ the CLEANER the merge base, the more completely
+    `merge=ours` is disarmed (RULED by the lane supervisor 2026-09-09, applying `OWNER.md`'s
+    2026-09-09 09:02 section; briefed as MONEY-152).** The owner's rule: merge `origin/main` at the
+    **start** of a wave when (1) more than 100 commits behind, (2) main changed `app/app/Doctor`,
+    `coder-bin` or `.claude/hooks` since the last merge, or (3) a slice is about to be pushed for
+    Track 1 — otherwise keep building, and **never mid-slice**. Measured against `origin/main` =
+    `cbdba9cd`: base **`e2202e3f`** (*this lane's own supervisor commit* — Track 1 has merged money up
+    to there), **192 behind, 2 ahead**, so (1) fires; (2) does **not** — the diff over all three paths
+    is empty. This supersedes rulings 18/22/23/25/31's refusals with a cadence, and ruling 52's
+    two-party sequence is unchanged: the coder merges `--no-ff --no-commit` and **stops**, the
+    supervisor commits.
+    ⭐⭐ **The finding is the inversion.** `.gitattributes` marks eight paths `merge=ours` and
+    `merge.ours.driver` is `true` here, and ruling 27 recorded Track 1's caveat that **a driver runs
+    only when BOTH sides changed the file**. Because the base **is** money's own tip, money has
+    changed only **three** files since it — so **every** per-track path is one-sided main-only and
+    **the driver fires on none of them**: `app/phpunit.xml` (2 lines, → `goaiez_antig_test`),
+    `CLAUDE.md` (7035 — money's 581 KB against main's 83 KB, this lane's whole ledger),
+    `bin/supervise.sh` (490), `launch-coder.sh` (184), `.claude/settings.json` (23). Ruling 179 found
+    four such paths with **two** of them two-sided and therefore protected; here **all five are
+    exposed**. **A clean merge is not a safe merge — it is the *least* safe one for per-track files,
+    and being listed in `.gitattributes` is exactly the false comfort.** ⚠️ `app/phpunit.xml` is the
+    sharpest: `supervise.sh` §0 exits 2 only on *production*, and `goaiez_antig_test` is not
+    production, so **no gate in this checkout catches it**. ⛔ The restore is never skipped because
+    the file is in `.gitattributes`. ⚠️ Two paths **are** two-sided and the driver correctly keeps
+    money's copies: `.agents/state/BUILD-STATE.json` and `JOURNAL.md`. ⚠️ ⛔ **`php -l` on none of
+    the five** — all are XML, JSON, Markdown or shell, and ruling 183's `error_log` hazard applies;
+    the proofs are `git diff --cached HEAD` printing nothing, a `grep` for the pin, `wc -c`, and
+    `bash -n` for the two scripts. ⚠️ All four ruling-58 shapes plus the harness and the
+    `Feature/Architecture/` pins are **measured empty** on this merge, and there are **zero file
+    deletions**, so the brief tells the coder not to look and carries ruling 53's default clause for
+    anything it did not name.
+251. **The supervisor's step-0 commit does not merely let the merge START — it ARMS the `merge=ours`
+    driver on the lane's largest per-track file, and the exposed set is FOUR paths, not five (RULED by
+    the lane supervisor 2026-09-09 09:3x, correcting ruling 250's own count before it was briefed;
+    measured against `origin/main` = `cbdba9cd`, base `e2202e3f`, **192 behind, 2 ahead**).** Ruling 52
+    established that the supervisor commits its own dirty files first because a merge *cannot start*
+    while a file main also changes is dirty — reason (1) of rulings 22/23/25. That is true and it is
+    the smaller half. `git diff --stat e2202e3f HEAD` on money's side is **three files**
+    (`.agents/state/BUILD-STATE.json`, `JOURNAL.md`, `CardScreenTest.php`), so ruling 250 measured all
+    five per-track paths as one-sided main-only and the driver firing on none. **But `CLAUDE.md` was
+    one-sided only because rulings 248–250 were sitting UNCOMMITTED.** Committing them makes money's
+    side non-empty since the base, `CLAUDE.md` becomes **two-sided**, and ⭐ the driver therefore
+    **fires on it** — taking money's 581 KB ledger whole against main's 83 KB copy with no conflict and
+    no marker. So the step-0 commit converts this lane's largest and most irreplaceable per-track file
+    from *exposed and hand-restored* to *protected by the driver*, and the set the brief must restore
+    by hand drops to **four**: `app/phpunit.xml`, `bin/supervise.sh`,
+    `.agents/supervisor/launch-coder.sh`, `.claude/settings.json`. ⚠️ **A tick that commits its notes
+    thinking only of reason (1) is right for a smaller reason than the real one**, and the difference
+    is not cosmetic: a hand restore is a step a run can be reaped in the middle of (ruling 248), while
+    a driver resolution cannot be skipped, mis-typed or forgotten. ⛔ **This is never generalised into
+    "commit something to arm the driver":** the driver fires on a file *both sides changed*, so it is
+    armed only by a change this lane genuinely made and would have committed anyway — manufacturing a
+    diff to arm it would be writing a fiction into the ledger to satisfy a merge tool, which is ruling
+    43's shape aimed at git. ⚠️ The four that stay exposed are exactly the four ruling 179 named, and
+    its ranking holds: `app/phpunit.xml` is the sharpest because `supervise.sh` §0 exits 2 only on
+    *production* and `goaiez_antig_test` is not production, so **no gate here catches the swap** —
+    and `bin/supervise.sh` is second precisely because **the instrument that would notice is itself in
+    the exposed set**, while `launch-coder.sh` is third because main's copy has no `--check`,
+    `--allow-merge` or `--coder claude`, so losing it disables the next tick's liveness check and its
+    ability to dispatch a merge at all. ⭐ The generalisable half is ruling 250's inverted once more:
+    **sidedness is a property of the WORKING TREE at merge time, not of the branch's history**, so it
+    is measured after step 0 and never before it.
+252. **A guard refusal recorded without the CONTEXT that produces it decays into a false prohibition,
+    and this ledger carried one for three days — into a brief, where it would have replaced the exact
+    command the guard was opened for (RULED by the lane supervisor 2026-09-09 09:5x, caught before
+    dispatch by reading `coder-bin/git` rather than the ledger's summary of it).** The standing
+    TRACK 1 ACTION line reads *"`coder-bin/git` refuses `git checkout` on paths, so every mutation
+    proof here is a hand restore with no undo"* — ruling 71's finding, true when written and **still
+    true of a mutation proof**. MONEY-152's brief was drafted from it and told the coder
+    ⛔ *"never `git checkout HEAD -- <path>`"*, substituting
+    `git show HEAD:<path> > <path> && git add <path>` for the four per-track restores. Measured:
+    `coder-bin/git:23-46` **admits exactly that command**, and was narrowed to admit it on 2026-09-06
+    14:3x with the comment *"the blanket refusal made CLAUDE.md's own merge procedure unrunnable —
+    step 2 IS `git checkout HEAD -- <per-track path>`, and without it a gated merge can only be
+    committed with the other lane's `app/phpunit.xml` (its test database) and `.agents/state/**`
+    inside it."* The opening is conjunctive and narrow — `GOAIEZ_MERGE_OK=1`, `MERGE_HEAD` present,
+    tree-ish **literally** `HEAD`, a `--`, and every path after it an **existing regular file**, never
+    a directory and never an option — which is what makes run 27's blanket clobber impossible by
+    construction rather than by trust. ⭐ **So one sentence is true in one context and false in
+    another, and the ledger carried it with no qualifier.** The distinguishing condition is
+    `MERGE_HEAD`: outside a merge the refusal is total, inside a supervisor-gated merge it is open for
+    `HEAD` and named files. **RULED: a ledger line recording a guard refusal names the condition under
+    which it fires**, and a brief that forbids a command re-reads the guard rather than the line.
+    ⛔ The substitute is not merely unnecessary, it is worse: `git checkout HEAD -- …` updates index
+    and worktree **atomically** and validates its own form, so a mistake yields a `REFUSED` line;
+    `git show > file && git add` re-implements that in two steps, leaves a window where the worktree
+    is restored and the index is not, and has no validation at all — on the four files whose silent
+    loss ruling 179 measured **no gate in this checkout can detect**. ⚠️ Two further clauses were
+    measured in the same read and are recorded so no tick re-derives them: `:131-145` admits
+    `app/app/Doctor/*` and `.claude/hooks/*` into a merge commit **only** when the staged blob is
+    byte-identical to `MERGE_HEAD`'s — the owner's own 09:02 sentence — and **lane checkouts only**,
+    because in `grs-antig` `MERGE_HEAD` is a lane and the clause would let a lane smuggle a checker
+    change onto `main`; and `:123-126` states that `.claude/settings.json` is deliberately **excluded**
+    from that exemption, *"because the `.claude/settings.json` rows are M rows and ARE restorable via
+    :34-46"* — i.e. the guard's own authors expect this lane to restore it with the very command the
+    ledger had forbidden. ⚠️ The generalisable half is ruling 64's, aimed at a **prohibition** rather
+    than a follow-up: an inherited *"never do X"* decays exactly like an inherited *"X is broken"*, and
+    it decays in the more expensive direction, because a stale follow-up wastes a wave while a stale
+    prohibition routes a wave around a safe path onto an unvalidated one.
+253. **Two consecutive `rc=124` kills on one sha, by two different actors, are ONE fact about the box
+    and none about the sha — and the answer is a NARROW measurement folded into the next brief, never
+    a third gate (RULED by the lane supervisor 2026-09-09 10:4x, on `746f60cb`).** Ruling 67 made a
+    killed §7 VOID and forbade re-running it *in the same tick*; ruling 74 made the `rc ≥ 124` line
+    mechanical. Neither says what to do when the **next** actor's gate dies identically. Measured
+    here: the coder's gate died `TIMEOUT … ZERO BYTES · rc=124` at 06:59 and the supervisor's died the
+    same way at ~10:41, each after waiting the full 40-minute `flock` window on
+    `/home/goaiez/tmp/pest.lock` — **70 minutes of this tick and 2h45m of run 174 spent on a number
+    neither ever obtained** (ruling 248). ⛔ **A third gate is refused**: the contention that killed
+    two is still there, and a third kill would teach exactly what the second did. ⭐ **RULED: the
+    response is to stop gating that sha and carry a FILTERED measurement of the wave's own diff into
+    the next brief** — here `./vendor/bin/pest tests/Modules/X-120`, seconds rather than 1800, run
+    *before* the next wave touches anything, which is ruling 42's own advice (*narrow it — `--filter`
+    anything and the real exception appears immediately*) applied to scheduling instead of debugging.
+    ⚠️ **The measurement must be attributable, which is why it goes FIRST in the next brief.** This
+    tick's next wave is the `origin/main` merge; a filtered run taken after it could not distinguish a
+    MONEY-151 regression from a merge artefact, and folding an unmeasured slice into a 192-commit
+    merge and then reading the post-merge number as if it said something about the slice is ruling
+    125's shape — **an unmeasured red is a debt, and a debt attributed to the wrong wave is worse than
+    an open one.** ⚠️ ⛔ **The debt is never absorbed into a floor**: the floor stays where it was last
+    *measured* (`2383 · 2381 · FAILED 0 · errors 2`, on `adcda398`), and no number is written for a
+    sha whose suite never ran (rulings 121, 218). ⚠️ The push decision is unchanged by any of this and
+    is ruling 67's own division: a void §7 does not **authorise** a push, and §1–§6 stand on their
+    own — red there forbids it (ruling 34), green there leaves it to the wave's evidence, which for a
+    four-line diff whose every touched test has a quoted green filtered run is stronger than the
+    suite number would have been. ⚠️ A hand-run filtered pest carries the `DB_DATABASE=` prefix
+    (owner ruling 3) and runs alone in this checkout (ruling 42).
