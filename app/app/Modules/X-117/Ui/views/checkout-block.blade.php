@@ -42,7 +42,7 @@
 
     <h2>Orders</h2>
     @if(count($orders) === 0)
-        <x-ui.empty-state heading="No orders yet." />
+        <x-ui.empty-state heading="No orders yet.">An order appears here when a cart is checked out. Nothing in this checkout writes the catalogue a cart is built from, so no order can be placed yet.</x-ui.empty-state>
     @else
         @if($ordersTruncated)
             <p class="text-sm text-ink-2">The 10 most recent orders are shown. Older orders are not on this page.</p>

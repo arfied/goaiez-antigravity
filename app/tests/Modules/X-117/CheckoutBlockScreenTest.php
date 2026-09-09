@@ -46,7 +46,8 @@ class CheckoutBlockScreenTest extends TestCase
             ->assertSee('This cart expires at')
             ->assertSee('nothing is held for you until the order is placed')
             ->assertSee('stock comes off the moment the order is placed, not when it is paid')
-            ->assertSee('No orders yet');
+            ->assertSee('No orders yet')
+            ->assertSee('so no order can be placed yet');
 
         $screen->call('pay')
             ->assertSee('This order needs a fresh authorisation')
