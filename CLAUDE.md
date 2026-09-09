@@ -539,3 +539,54 @@ it is Track 1's file to change.**
 `theirs unchanged` arm** — git carries the dirty file through untouched. That is what lets a lane keep
 merging with the divergence uncommitted, and it is a property of `(our sha, their sha)`, so it is
 re-derived at every merge and never assumed.
+
+## REV-129 — an `UNRESOLVED` is a claim with an expiry, and nothing in this project re-reads one
+
+⚠️ **RULE 09 SAYS AN `UNRESOLVED` NAMES A MISSING DEPENDENCY. IT DOES NOT SAY THE DEPENDENCY CAN LAND
+AFTERWARDS — AND WHEN IT DOES, THE ROW DOES NOT MOVE, BECAUSE WHAT WOULD CLEAR IT IS ANOTHER LANE'S
+COMMIT (2026-09-09, run 124 tick).** `C-Reviews` / `tests` has read *"ReviewRequested event lacks
+messageClass so the module cannot express the send class (marketing) without a legacy change"* since
+`2026-09-04T07:55:55`. Measured today, three greps:
+
+```
+$ grep -n messageClass app/app/Modules/C-Reviews/Events/ReviewRequested.php
+  16:        public readonly string $messageClass      # added 2026-09-05, per the file's own docblock
+$ grep -n MESSAGE_CLASS app/app/Modules/C-Reviews/Actions/ReviewRequestAction.php
+  18:    private const MESSAGE_CLASS = 'marketing';
+$ grep -n messageClass app/tests/Modules/C-Reviews/CReviewsTest.php
+  441 · 562   # two passing assertions, one named test_review_requested_carries_marketing_class_…
+```
+
+The field, its writer and two passing assertions all landed **the day after** the row was filed. For
+five days `python3 bin/state.py next` — step 3 of this file's own session-start list — has told this
+lane and every reader of the board that C-Reviews is blocked on something present and tested.
+
+⭐ **The shape is already recorded on another lane under a different name.** The money lane's rulings
+256-259: *"`payments.invoice_id` has existed since 2026-09-04 and rulings 102/169/173 recorded the
+opposite (a fifth merge-damage shape: schema lands, writer does not)."* Same defect, same week, same
+date. Nobody generalised it to the `unresolved` array — the one place the project stores these claims
+in a machine-readable list. Sixth instance of this file's standing shape, **a correct statement present
+in the tree and not read back** (REV-119 §A, REV-121 §A, REV-125 §13, REV-126, REV-127 §1, here), and
+the first where the *incorrect* statement is in the ledger rather than in a note.
+
+**RULED: an `UNRESOLVED` row is re-read against the tree before it is cited as a reason not to build,
+and a row whose named dependency now exists is `state.py resolve`d with the `file:line` that discharges
+it.** `bin/state.py:9-10` provides the verb and its own comment says it *"never marks work done"*, so
+it is exactly scoped. ⛔ Only a discharged row is resolved — a `STANDS` or `SEALED` row is an honest
+record and removing one loses a reason not to build.
+
+⚠️ **§2. A COUNT THAT *FALLS* WITH NO CAUSE NAMED IS THE COUNT-DID-NOT-FALL RULE SEEN FROM ITS BLIND
+SIDE.** Run 124 recorded `boundary 52 → 50` correctly and said only that it changed. From the report
+alone a fix and a checker that stopped looking are indistinguishable. The cause was real and external —
+`7c79b8d8 refactor(X-155): expose a registered read action … and call it from X-157`, an **incoming**
+site-lane commit that removed the cross-module read the stage counts. **RULED: a `state.py stage` line
+for a count that MOVED carries one sentence naming what moved it, in either direction.** This lane
+merges four other lanes' work, so most of its stage movement originates outside its own diff and is
+invisible in `git log -p` of its own commits.
+
+⚠️ **§3. THE GATED SHA AND THE PUSHED SHA CANNOT BE THE SAME COMMIT, BY CONSTRUCTION.** REV-119 §D
+orders the gate before the stage measurement and the measurement before the `state.py` commit — so the
+last commit of any wave is always after the last gate. Run 124: gate at `18:23:34` on `5245ef6b`,
+`6836443a` committed at `18:24:19`. **RULED: a push whose range ends past the gated sha is admissible
+when `git diff <gated sha> <pushed sha>` touches nothing outside `.agents/state/**`, and that diffstat
+goes in the `REVIEWS.md` block.** Anything else waits for a gate.
