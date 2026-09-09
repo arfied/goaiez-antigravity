@@ -44,7 +44,12 @@ final class StripeGatewayClient
         return $id;
     }
 
-    public function createPaymentLink(int $amountCents, string $description, string $currency = 'USD'): array
+    /**
+     * ⭐ $idempotencyKey is sent as the gateway's own `Idempotency-Key` header, so a second press
+     * returns the FIRST checkout session instead of opening a second one nobody can reach. It must
+     * already be namespaced by business, for the reason charge() gives above (R093).
+     */
+    public function createPaymentLink(int $amountCents, string $description, string $currency, string $idempotencyKey): array
     {
         $secret = config('credentials.stripe_secret');
         if (empty($secret)) {
@@ -52,6 +57,7 @@ final class StripeGatewayClient
         }
 
         $response = Http::withToken($secret)
+            ->withHeaders(['Idempotency-Key' => $idempotencyKey])
             ->asForm()
             ->post('https://api.stripe.com/v1/checkout/sessions', [
                 'mode' => 'payment',

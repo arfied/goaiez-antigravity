@@ -577,4 +577,33 @@ class X198Test extends TestCase
                 && $request->hasHeader('Idempotency-Key', 'x198-charge-'.$biz->id.'-idem_header_1');
         });
     }
+
+    public function test_a_pay_link_sends_the_gateway_an_idempotency_key_namespaced_by_business(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'PayLinkIdem', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $payment = Payment::create([
+            'business_id' => $biz->id,
+            'amount_cents' => 2500,
+            'payment_token' => 'tok_pay_idem',
+            'idempotency_key' => 'idem_pay_idem',
+            'status' => 'failed',
+        ]);
+
+        Http::fake([
+            'api.stripe.com/*' => Http::response([
+                'id' => 'cs_test_idem',
+                'url' => 'https://checkout.stripe.com/c/pay/cs_test_idem',
+            ], 200),
+        ]);
+
+        (new PaymentLinkAction)->handle($biz->id, $payment->id, 'Payment for declined transaction');
+
+        // The pair (business, payment) IS the idempotency, so the provider gets the same pair.
+        Http::assertSent(function ($request) use ($biz, $payment) {
+            return $request->url() === 'https://api.stripe.com/v1/checkout/sessions'
+                && $request->hasHeader('Idempotency-Key', 'x198-paylink-'.$biz->id.'-'.$payment->id);
+        });
+    }
 }

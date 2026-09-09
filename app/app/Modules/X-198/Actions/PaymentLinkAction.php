@@ -23,7 +23,12 @@ final class PaymentLinkAction
         }
 
         $client = app(StripeGatewayClient::class);
-        $result = $client->createPaymentLink($payment->amount_cents, $description, $payment->currency);
+        $result = $client->createPaymentLink(
+            $payment->amount_cents,
+            $description,
+            $payment->currency,
+            'x198-paylink-'.$businessId.'-'.$paymentId
+        );
 
         // The unique (business_id, payment_id) pair is the idempotency (R036). Two presses of the
         // same button both clear the pre-check above and both call the gateway; the loser must hand
