@@ -1685,7 +1685,45 @@ dispatched — executed by the supervisor itself**, `bin/supervise.sh` being thi
 ⛔ **Not a wave and no count moved** — §5 identical in all eight across `.gateT241.txt` and
 `.gateT241b.txt`. It sets no `fail=1`: a trigger, never a verdict.
 
-⛔ **The backlog is EMPTY at tick 256 and this tick writes a HOLD — the FIFTEENTH consecutive tick with
+⛔ **The backlog is EMPTY at tick 257 and this tick writes a HOLD — the SIXTEENTH consecutive tick with
+no instrument change and the FIFTH CONSECUTIVE with no new lettered ruling**, every ordinal here
+**derived in this tick** per `RULING FZ` and none carried; the §3 == §5 run and the take-refusal count
+are **deliberately not asserted**, having no derivation. ⭐ **`main` did NOT move — pin `0314d797`, and
+this is the FIRST unmoved tick at that pin, NOT a continuation**: derived over the ledger's own
+MOVED/DID-NOT-MOVE markers, tick 256 **MOVED** and is the reset, so no "consecutive" is claimed. ⚠️
+**That is `RULING FZ(a)` declining to recur** — tick 251 incremented a streak across the very event
+that resets it, in the block after the one recording the reset; the derivation here deliberately spans
+back far enough to include the resetting event. Lane **34 ahead / 22 behind** first-parent (**34 / 117**
+by ancestor count, `RULING EK`), the ahead-count moving 33 → 34 on **our own tick-256 commit** and the
+behind-counts unchanged as an unmoved pin requires; merge base `7a75f289` unmoved; ours-since-base in
+`app/` is `app/phpunit.xml` alone, so this lane still authors no `app/**` byte and `boundary 55` ·
+`contract 85` · `capability 207` · `anchor 128` · `schema 16` remain **main's numbers** (`RULING FO`).
+⛔ **The take is OPEN, UNNECESSARY and REFUSED** — `DD`'s two-row re-check prints nothing, the
+`Doctor`/`JourneyHarness`/`seals.json` diff against our base is **empty**, so this lane's checker **is**
+main's current checker byte-identical, `RULING EQ`'s void condition is not reached, and a take could
+refresh nothing at a cost of **117** ancestor commits. ⭐ **The admission census was NOT re-run and the
+reason is a measurement taken first**: `git diff --stat 10e804ea HEAD -- app/` is **empty**,
+corroborated by `capability` reading **207** unchanged. §1 read from the count line per `FY` at **77**,
+corroborated independently, supervisor directory contributing **0** — `FY`'s census spans **NINETEEN**
+consecutive gates (`.gateT239`…`.gateT257`, all `77`, derived per file this tick). §3 == §5 and still a
+LEDGER; §5's own arithmetic control holds (`494`). `wc -l bin/supervise.sh` **416** and drift `4 0`,
+both re-measured per `FX(ii)`; `bar` sections **14 / 13** on the same extraction, membership re-derived
+by `comm` on sorted input and unchanged (`1a` · `1b` · `2d` **NOT adoptable**, `RULING FS`, re-refused
+**without** re-testing the boundary; `2f` · `2g` offered upstream). §2e/§2f/§2g printed `HEAD is not a
+merge` for a **SIXTEENTH** gate (T242…T257, anchored `^.\[1m== 2g` form, T241 absent as the
+pre-adoption gate per `FZ(b)`). **TRACK 1 ACTION 10** re-measured at the pin: **15** first-parent merges
+since `a5042da2`, **0** naming `track/stages`, `18bbde18` still not an ancestor (rc **1**). ⭐ **Two
+precisions recorded and deliberately NOT lettered** (`FW` bars elevating a clean audit): tick 257's
+backward audit under `FX(i)` is **clean** — its first run at a pin that moved into place one tick
+earlier — with exactly one mover, the ahead-count on our own commit, and **no ordinal asserted for the
+audit itself**; and **the merge count staying at 15 across a pin that moved LAST tick is correct**,
+because main's seven tick-256 commits were direct commits rather than merges — a tick reasoning "main
+moved recently, so the merge count must have" would manufacture a discrepancy out of a sound number,
+`RULING EK` having given the divergence and never the converse. ⚠️ **No Track 1 coder is live this
+tick** (three coders, none ours); `RULING EJ` binds either way. ⚠️ `HEAD` is **6 ahead** of
+`origin/track/stages`; notes-only commits ride the next gated-sha push.
+
+⛔ **The backlog was EMPTY at tick 256 and that tick wrote a HOLD — the FIFTEENTH consecutive tick with
 no instrument change and the FOURTH CONSECUTIVE with no new lettered ruling**, every ordinal here
 **derived in this tick** per `RULING FZ` and none carried; the §3 == §5 run and the take-refusal count
 are **deliberately not asserted**, having no derivation. ⭐ **`main` MOVED, in a shape this page has not
