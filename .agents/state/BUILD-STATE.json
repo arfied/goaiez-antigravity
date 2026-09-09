@@ -23,7 +23,7 @@
    "fails": "COMMIT"
   },
   "citation": {
-   "violations": 0,
+   "violations": 3,
    "fails": "COMMIT"
   },
   "schema": {
@@ -5719,6 +5719,14 @@
   {
    "at": "2026-09-08T18:31:13",
    "note": "RULING FO: X-117/X-199/X-211 RuntimeProofTest assert on untracked storage/app/evidence artifacts, so they are red in every checkout but the minting lane; six section 7 failures inherited from main at 6b7c315b, not lane-authored, filed to TRACK 1"
+  },
+  {
+   "at": "2026-09-09T10:29:39",
+   "note": "citation left 0 for the first time: 3 rows, all X-198 (R036 PaymentLinkAction.php:40, R037 GatewayEngine.php:76, R093 StripeGatewayClient.php:17), inherited through the 2026-09-09 merge of origin/main cbdba9cd. This lane authors no app/ byte (ours-since-base is app/phpunit.xml alone), so they are money's to resolve. Filed as TRACK 1 ACTION 14. Never fixed here."
+  },
+  {
+   "at": "2026-09-09T10:29:39",
+   "note": "\u00a77 finished with tests 2436 \u00b7 passed 2428 \u00b7 FAILED 6 \u00b7 errors 2. Six failures are RULING FO evidence-artifact tests (X-117, X-198, X-199, X-211) not owned by this lane, and the two errors are 'JOURNEY HARNESS NOT IMPLEMENTED' which are not evidence-artifact tests."
   }
  ],
  "history": [
