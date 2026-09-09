@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-09T09:57:35",
+ "updated": "2026-09-09T11:11:44",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -2433,6 +2433,12 @@
    "module": "X-103",
    "chose": "X-103 exposes PageReadAction as its registered read surface for pages, and X-176 SeoRenderAction and InternalLinkRenderAction read through it instead of importing X103\\Models\\Page directly. BoundaryStage:91 exempts imports whose kind is Events, Actions or Domain and :98 names the registered action as the remedy, so this closes two of the nine cross-module Models imports the revived stage reports for this lane and boundary falls 55 to 53. The queries are moved verbatim including orderBy(slug,asc), which is SITE-129 determinism and not optional. REFUSED: bundling EdgeDeployAction, whose :43 is a cross-module WRITE on the ssl_installed derivation that is J11 own element; adding an exclusion to the sealed BoundaryStage; a new test, because a behaviour-identical refactor needs no assertion and a second carrier obscures which method discharges a clause; fixing one renderer only, which is the copied-shape error that made these two diverge at tick 246.",
    "at": "2026-09-09T09:57:35",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-157",
+   "chose": "EdgeDeployAction read X-103 pages at three lines, two of them Page::find with no business_id scope and one of them scoped, four lines apart in the same block with businessId in scope for all three. All three now go through X-103 PageReadAction, whose findForBusiness scopes, so the unscoped reads are scoped and the X103\\Models\\Page import is deleted and boundary falls 53 to 52. The exposure of the two unscoped reads differed and only one is falsifiable: the llms.txt read at :295 wrote another business page title and slug straight into the published artifact with nothing downstream, while the breadcrumb read at :212 was absorbed by the scoped ancestry query beside it. It is bounded: EdgeDeployAction has one production caller and SiteEngine publish scopes its page lookup with findOrFail, so the unscoped read was not reachable in production, and the invariant belongs in the reader because the reader publishes whoever calls it. The ancestry query moved verbatim including the trim both slash from slug normalisation, which is SITE-160 and not optional. REFUSED: presenting the scoping as a behaviour-identical refactor, which is how a tenancy change ships with no test; bundling PageVersion, whose :43 is a cross-module WRITE on the ssl_installed derivation that is J11 own element; bundling FormDefinition, a third model and a third claim; adding an exclusion to the sealed BoundaryStage; a new capability id literal.",
+   "at": "2026-09-09T11:11:44",
    "ruling": "R245"
   }
  ],
