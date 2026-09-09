@@ -6050,3 +6050,127 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     filter changed a figure it was not meant to touch. ⚠️ Ruling 153 binds the needles: each is a
     single component-computed `{{ $conn->payments_line }}`, so no needle spans a Livewire
     `<!--[if BLOCK]-->` boundary and all three stay assertable as written.
+240. **A same-session racer cannot reproduce `capture()`'s race, and after MONEY-144/145 the harm
+    that race does is a DOUBLE COUNT on the money figure, not a double charge (RULED by the lane
+    supervisor 2026-09-09 05:1x; the deferred unique-index wave re-measured a third time).**
+    Rulings 230 and 232 deferred a partial unique index on
+    `(business_id, idempotency_key) WHERE status <> 'failed'` twice, with reasons. Re-measured now,
+    three things have changed and one of them is decisive.
+    **(a) The harm is smaller and lands somewhere new.** `GatewayEngine::capture():83-86` is
+    check-then-act across a live HTTP call, so two concurrent captures on one key both read null and
+    both charge — but MONEY-144's `Idempotency-Key` header means Stripe returns **the same charge
+    object** to both, so **the money moves once**. What lands twice is the local row: two `Payment`
+    rows carrying the **same `gateway_charge_id`**, both `captured`, `PaymentCaptured` dispatched
+    **twice** for one charge (ruling 101's family), and `SameAccount`'s per-currency total — the
+    figure MONEY-148 has just made honest (ruling 239) — summing that charge twice. **A ledger
+    double-count on a money screen, not a double charge.**
+    **(b) The index predicate must EQUAL the pre-check predicate. RULED: `status <> 'failed'`, so an
+    `awaiting_processor` row DOES block a retry.** `capture()`'s pre-check already returns such a row,
+    so an index narrower than the pre-check would admit a row the code would have short-circuited —
+    ruling 37's *second place for the truth to disagree*, in the schema. It is therefore a pure
+    enforcement of intent and changes no behaviour on any reachable path.
+    **(c) ⭐ The decisive new measurement: the proof needs a SECOND CONNECTION.** Ruling 229 proved the
+    pay-link race by committing the racing row inside the `Http::fake` closure, which runs at the HTTP
+    boundary — between the pre-check and the persist. **That shape cannot be transplanted here**,
+    because `capture()`'s whole body is inside `DB::transaction` (`:81`), so a racer inserted on the
+    same connection is inside that transaction: the `23505` rolls the savepoint back and takes the
+    racer with it, leaving the re-read nothing to find. And no row can be seeded *before* the call,
+    because by (b) the index predicate and the pre-check predicate are identical, so any row the index
+    would catch the pre-check would have returned. The violation is unreachable in-process without a
+    genuinely independent session. ⚠️ `app/config/database.php` defines **one** pgsql connection, and a
+    second would need its own `SET app.business_id` for RLS.
+    **(d) The catch order is load-bearing and must ship with the index.**
+    `UniqueConstraintViolationException extends QueryException extends PDOException extends
+    RuntimeException` (verified: `PostgresConnection.php:78` maps `'23505'`,
+    `Connection.php:853-855` selects the class), so a `23505` reaching `capture()`'s
+    `catch (\RuntimeException)` at `:147` writes a **`failed`** row for a charge Stripe actually took —
+    ruling 230's named hazard. The new clause sits **above** it. ⭐ And the re-read must happen
+    **outside** `DB::transaction`, because in Postgres a failed statement aborts the enclosing
+    transaction and every later query in it dies `25P02` — **ruling 163's own mechanism**, arriving in
+    production code rather than in a test. ⛔ Not `Payment::firstOrCreate(['business_id',
+    'idempotency_key'])`: its first lookup is unfiltered by status, so it would return a `failed` row
+    and break `X198Test:178`'s `count === 2`.
+    **Measured clean, so the index itself is safe to add:** `TestCase::provisionTenant` calls
+    `TenantProvisioner::provision()` with a fresh `User::factory()->create()` on **every** call, so no
+    two test methods share a business and the `name` argument is cosmetic — the lane's repeated keys
+    (`idem_loose` at `SameAccountScreenTest:36`/`:83`, `idemp1` at `DeclinesScreenTest:46`/`:156`,
+    `idem_pay_1` at `:278`/`:321`) are all on different tenants. ⛔ **A new migration, never an edit to
+    `2026_08_30_000030`** (ruling 41 part 3); `$table->unique()` cannot express a partial index, so it
+    is a raw `DB::statement` in the shape `2026_09_06_000002_x198_payments_default_awaiting_processor.php`
+    already establishes. ⚠️ The wave is **held, not struck**: the finding is real and now sharper, and
+    what is missing is a decided proof shape, which is exactly what ruling 64 says an inherited
+    follow-up must have before it becomes a brief item.
+241. **A public Livewire property is rendered into the page as `wire:snapshot`, and X-120's card form
+    clears the PAN in one of the three methods that can hold it and the expiry and the name in none
+    (RULED by the lane supervisor 2026-09-09 05:1x, briefed as MONEY-149).** Every string sweep this
+    lane has run — prose, pills, buttons, headings, word-bearing attributes, `$error`, `$success`,
+    empty states, console output, exception messages, the log surface, outbound request headers,
+    bodies and responses — read a value the app **renders** or **sends**. **A component's public
+    properties are rendered too, and nobody had ever asked what is in them.** Measured:
+    `HandleComponents.php:76` writes `'wire:snapshot' => $snapshot` and
+    `SupportTesting/ComponentState.php:65` extracts it from between `wire:snapshot="` and `"` in the
+    rendered HTML — so a public property's **value** is in the page, in the DOM, and is round-tripped
+    on every request. Livewire signs the snapshot; it does not encrypt it.
+    `X-120/Ui/CardScreen.php` declares `public string $number` (`:21`), `$expMonth` (`:23`),
+    `$expYear` (`:25`) and `$name` (`:27`), bound by `card-screen.blade.php:52,:54,:55,:57`'s
+    `wire:model` — deferred in Livewire 3, so the dirty values are flushed with the **next commit of
+    any kind** (`livewire.esm.js`: `updates: message.updates` travels beside `calls`). Three methods
+    can therefore hold a PAN and **exactly one clears it**: `present():77`'s `finally` sets
+    `$this->number = ''`, while `makeDefault():35-47` and `addCard():49-55` clear neither it nor
+    anything else. So an owner who types a card number and then presses **Make Default** on an
+    existing card has the full PAN written back into the page HTML. ⭐ And `$expMonth`, `$expYear` and
+    `$name` are cleared by **nothing at all** — not even by `present()` — so the expiry and the
+    cardholder name persist in the snapshot for the life of the page. **P-196 is "PAN + expiry + name,
+    CVV never": all three of the elements it names.**
+    ⭐ **The self-contradiction tell is the screen's own copy** (ruling 98): `card-screen.blade.php:51`
+    reads *"The number reaches this app **once** so it can be checked, is never stored…"*, and *once*
+    is the word that is false — it reaches the app again on every subsequent interaction and is echoed
+    back each time. Ruling 70 corrected the *first* clause of that sentence and could not see this,
+    because it read the sentence and not the component's state.
+    **RULED: the four card fields are cleared as a SET, at the boundary of every action the component
+    exposes** — `present()`'s `finally` clears all four, and `makeDefault()` and `addCard()` clear all
+    four on entry. That is the smallest change that makes `:51` true, and it is ruling 216's better
+    direction: the code moves to meet the sentence. ⛔ Not `#[Locked]`, which prevents client-side
+    tampering and not serialisation — the value still round-trips. ⛔ Not `wire:model.live`/`.blur`,
+    which sends the PAN **more** often. ⛔ Not browser-side tokenisation, which is X-120's parked
+    dependency (rulings 20, 45, 70, 119) and a live vendor call under ruling 13. ⛔ Not by deleting the
+    form or its door (ruling 119). ⛔ **The `:51` sentence is not reworded.**
+    ⚠️ **Why the existing test could not see it, and it is the sharpest instance of ruling 68 yet:**
+    `CardScreenTest:96`'s `test_card_door_takes_number_expiry_and_name_stores_nothing_and_never_shows_the_number_again`
+    asserts `assertDontSee('4242424242424242')` at `:133` and `:149` — **after `present()`**, the one
+    method that clears it. The test proves the property that holds and is structurally blind to the two
+    methods that do not.
+    ⚠️ **Blast radius, measured with interior fragments (rulings 46, 86): ZERO.** The chain at
+    `:136-139` sets no `name` and relies on `:129`'s, but its number `4242424242424241` fails
+    `CardPresentAction`'s **first** guard (Luhn) and the name check is guard four, never reached — so
+    clearing `name` in the `finally` cannot redden it; `:141-145` sets all four; and `:147`'s
+    `assertSee('A Plumber')` matches `$this->waiting`, built before the `finally` runs. Both items
+    therefore **add** methods (rulings 68, 70).
+    ⭐ **The instrument is `assertSet`, paired with `assertDontSee` only where the needle is safe.**
+    `assertSet('number', '')` measures the mechanism; `assertDontSee('<the PAN>')` measures the
+    consequence an owner is exposed to, and the two together are ruling 101's positive-and-negative in
+    one place. ⛔ **`assertDontSee` is refused for the expiry and the name** — an `expYear` is a
+    four-digit token and a card list already renders years, which is ruling 61's bare-digit defect, and
+    the cardholder **name** is legitimately on the page inside `$this->waiting`, so a needle asserting
+    its absence would fail against a correct implementation (ruling 82's family). Those two are
+    asserted with `assertSet` alone.
+242. **A report field that describes the run's own METHOD is a claim like any other, and this one
+    contradicted the log (RULED by the lane supervisor 2026-09-09 05:1x, on MONEY-148's run 171).**
+    `REPORT.md`'s DONE said *"The gate was executed in the foreground. I verified the exit sequence,
+    ran a second read…"* while `agy-run171.log:1-2` — the first two lines of the run's own log —
+    read *"waiting for 1 background task(s)"* and *"I am waiting for the gate test command to finish
+    executing in the background."* Ruling 218(2) forbids the coder a background gate and ruling 238
+    exists because of what one did to MONEY-147's transcription. ⚠️ **Nothing false reached the
+    report**: the read-back was performed and `bytes 9039, 05:05:44.334851636` reconciles exactly
+    with the file on disk, which is precisely the property ruling 238's second read was written to
+    guarantee — so the defect is the account of the method, not the measurement. Graded a **note**,
+    never a BLOCK: withholding a tip that landed on its predicted floor to the digit over a
+    self-description is ruling 74's error, and it is the grade rulings 76, 121, 128, 133, 147, 195,
+    198, 210, 222 and 231 already set for paperwork. **RULED: a brief that requires a procedural step
+    requires the report to state what it OBSERVED, not what it intended** — for the gate step, the
+    literal `gate: foreground` or `gate: background`, checkable against the run log's first two lines
+    in one read. ⚠️ The generalisable half: this lane has spent rulings 218, 219, 222, 231 and 238
+    making the gate's **numbers** unfabricatable and left the field describing **how they were
+    obtained** unmeasured beside them — ruling 36's *what is actually at the other end of this
+    string?* asked of a sentence about the run itself, and the fourth instance in this lane's own
+    paperwork after rulings 121, 141 and 218.
