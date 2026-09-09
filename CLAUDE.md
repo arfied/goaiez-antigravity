@@ -395,6 +395,17 @@ UPPERCASE-bounded qualifier**: `git log --format='%s' | grep -oE "MAIN (MOVED|DI
 pin [0-9a-f]+"`. `%s` is **one line per commit**, so a block quoting a marker while discussing it
 cannot inflate the census, and `[A-Z ]*` cannot span prose where `[^:]*` does. **(ii) WRITE the marker
 in the SUBJECT**, keeping its `: pin <sha>` shape, any qualifier in **uppercase before the colon**.
+
+⛔ **(iii), measured after (i) and (ii) landed: the derivation is PER COMMIT, and a tick may make more
+than one.** Tick 311 made **two** supervisor commits — the block and this correction — and the
+corrected reader returns **11 rows over 12 subjects** with `MAIN MOVED: pin 58e8ad89` **twice**, both
+of them tick 311. Harmless here, because a `MOVED` row is a reset either way; **not harmless for an
+unmoved streak**, where two commits at one pin would inflate the next tick's count by one — `FZ`'s
+off-by-one arriving through a door `FZ` and `GA(i)` both leave open. ✅ **A streak counts DISTINCT
+TICKS, never rows: read `tick <N>` from the same subject line and dedupe on it.** The subject already
+carries it (`chore(supervisor): tick <N> HOLD — MAIN …`), so no convention changes — only the reader
+must not treat a row as a tick.
+
 ⚠️ **Tick 310's `AT PIN TIME` wording was GOOD and is not the fault — its only fault was LOCATION**,
 the marker living in the body alone. This ruling's first draft blamed the qualifier and told future
 ticks to move it after the pin; that was wrong, and unnecessary. ⚠️ The form drops a `MOVED` row's
