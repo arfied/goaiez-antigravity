@@ -3757,3 +3757,116 @@ PB-154's report filled it with *"Equal (no scratch files left behind)."* ⭐ **P
 template: the `REPORT.md` field list **named** the field and never restated that it takes **two numbers**.
 ⭐ **The generalisation: a prohibition converted into a number reverts to a prohibition the moment the brief
 stops asking for the number.** Demand the arithmetic in the same breath as the field name, every wave.
+
+## ⛔⛔ Trap added 2026-09-09 09:0x — a brief that PRE-SUPPLIES THE HOP LIST scopes the search to those hops, and a chain is broken by what comes BEFORE the first hop you name
+
+PB-155's brief handed the coder a chain to verify — *"`updatePrice()` writes → the `facts` row is not
+touched → `AgentAnswerAction:243` selects it → `:251` matches → `:316-319` speaks the amount"* — and then
+asked for *"the one thing that would break the chain if it existed"*, listing as a candidate **"a
+confirmation check inside `AgentAnswerAction`'s facts branch."** The report answered `INTACT`. **It is
+BROKEN**, and the break is a confirmation check that is **not inside the facts branch — it is above it and
+returns:**
+
+```
+AgentAnswerAction:201  if (isset($quoteResult['refusal_code'])
+                           && in_array($quoteResult['refusal_code'], ['SAMPLE_STATE_REFUSED','UNCONFIRMED'])) {
+:216                       $turn = AgentTurn::create([... 'status' => 'handoff' ...]);
+:226                       return [...];      ← the facts branch at :242 is NEVER REACHED
+```
+
+`updatePrice()` sets `is_confirmed = false` (`Ui/Pricebook.php:140`) → `PriceQuoteAction` misses
+`$confirmedItems`, matches `$allItems`, returns `['refusal_code' => 'UNCONFIRMED']` (`:139-142`) → `:201`
+catches it **by name** and hands off. ⭐ **The briefed scenario — owner edits $100→$150, agent still quotes
+$100 — is FALSE.** The customer hears *"I do not have verified pricing on file for this service."*
+
+⭐⭐ **The generalisation: naming the right KIND of break in the wrong REGION is worse than naming none** —
+it actively steers the search away from the line that matters. ⭐ **Trace a chain from its ENTRY POINT,
+never from the middle**, and when a brief supplies hops, require the coder to read **what precedes the
+first one**.
+
+⚠️ **PB-127's shape for the second time** — a decisive-looking absence (nothing retracts the fact) that the
+consumer's own control flow already honours — and this file's own rule *"read the consumer's query before
+ruling anything a defect"* is what the reviewer failed to apply **to the reviewer's own draft**. ⛔ Not the
+coder's shortfall: every line it quoted was quoted correctly; it verified what it was told to verify.
+⭐ **A negative result retires a finding before it costs a fix, and that is worth more than the wave.**
+
+## ⛔ Trap added 2026-09-09 09:0x — "does one EXIST" answered as "is one TRIGGERED BY X", the seventh instrument with one disease
+
+PB-155 item 2 q1 asked *"Does X-119 expose anything that INVALIDATES a fact — sets `is_valid = false`,
+deletes a fact, or supersedes one?"* The report answered *"No retraction path was found **that is triggered
+by `updatePrice()`**."* ⛔ **Different question, and the honest answer to the one asked is YES:**
+
+```
+X-119/Domain/FactResolver.php:125  public function invalidatePageFacts(int $businessId, string $pageKey): string
+:132   ->where('key','like',"{$pageKey}%")->where('is_valid',true)
+:140   ->update(['is_valid' => false, ...])       ← a real, key-PREFIX-scoped retraction
+```
+
+⭐ The report's **own** Q3 list names `FactResolver.php:140` and never identifies it as X-119's invalidation
+method. It is `(TEST ANCHOR)`-marked, page-named, and has exactly one caller (`X119Test.php:77`).
+
+⭐⭐ **PB-145's disease in a seventh instrument** — a clause answering an easier question than the verdict
+asks. ⚠️ And it **matters**: it changes the cross-lane ask from *"build a retraction"* to *"generalise the
+one that already exists"*. ⭐ **When a question is "does X exist", the answer may not be scoped by a
+trigger, a caller, or a reachability claim** — existence and reachability are two measurements, and a
+report that fuses them has answered neither.
+
+## ⛔⛔ Trap added 2026-09-09 09:0x — TWO CONDITIONS on ONE measured quantity with OVERLAPPING RANGES
+
+PB-155's item 1 carried both of these, four lines apart:
+
+- *"**STOP condition** … if you find more than **5**, stop, report all of them, and **do nothing else**."*
+- *"If the count differs from **3** at all, say so plainly and **keep going**."*
+
+**The measurement came back 7. Both antecedents fire and they command opposite things.** The coder kept
+going and delivered the wave. ⛔ **Not a shortfall** — grading it as one is the PB-126 mistake.
+
+⭐⭐ **The generalisation: two conditions keyed on the same measured quantity must have DISJOINT ranges, or
+the coder is choosing between your instructions rather than following them.** This is PB-128's
+blanket-plus-exception failure moved from a **table** onto a **numeric range**, where it is far harder to
+see — each clause reads perfectly alone, and nothing in either mentions the other. ⭐ **Lay every STOP
+condition out as a table of disjoint triggers and read the ranges for overlap before dispatching.**
+
+## ⛔⛔ RULED 2026-09-09 09:0x — a taught `price.` fact OUTLIVES the row that taught it; the EDIT path is safe and the DELETE path is not
+
+⭐ Recorded with both halves, because the next tick will re-find the stale fact and needs the ruling.
+
+**Safe (measured):** `updatePrice()` unconfirms → `PriceQuoteAction` returns `UNCONFIRMED` → `:201` hands
+off before the grounded copy is read. **The stale fact is unreachable while the row exists.**
+
+**Not safe (measured):**
+
+```
+Ui/Pricebook::deleteItem():165   PriceBookItem::where(...)->delete();   dispatches NOTHING
+pricebook.blade.php:123          wire:click="deleteItem(...)"           a real, reachable control
+FactResolver::teach():93         insertGetId — UNCONDITIONAL, no updateOrCreate
+```
+
+Confirm → the fact is taught `is_valid = true` → **delete the row** → `PriceQuoteAction` returns `NO_FACT` →
+`NO_FACT` is **not** in `:201`'s list → falls through → `isset($quoteResult['amount'])` is false → **the
+facts branch runs** and the agent speaks the deleted service's price. ⚠️ **A quote with no pricebook line
+goes out — this lane's goal sentence failing.** ⭐ And because `teach()` inserts unconditionally,
+confirm→edit→re-confirm leaves **two** valid rows, and the unordered `get()` at `:242` speaks whichever
+comes first.
+
+⛔ **RULED `UNRESOLVED`, not a fix.** The seam is a retraction of `facts.is_valid`, which is **X-119's**, and
+ruling 24 makes X-119 a consumer this lane may **read, not rebuild**. X-119's `Actions/` are `FactConfirm`,
+`FactLookup`, `FactTeach`, `KnowledgeIngestSync` — **no retraction action exists.** A missing **dependency**,
+not an unmade decision: rule 09, ruling 8's shape exactly. Filed as `TRACK 1 ACTION (i)`.
+⛔ **And no pinned absence.** PB-128 ruling 3 makes a pin the deliverable when the absence is **permanent
+and correct**; this absence is a **customer-facing defect**, and pinning it asserts the bug as contract —
+the same ruling PB-153 gave X-165 row 17. **RECORD, and build nothing.**
+⛔ **Two in-lane near-fixes are pre-declared WRONG:** calling `invalidatePageFacts()` from X-163 repurposes a
+page-scoped `(TEST ANCHOR)` method for prices, and dispatching a new `PriceBookItemDeleted` with no consumer
+is an event PB-154's own map would grade `NO-CONSUMER` — **a lead, not a fix.**
+
+⭐ **What IS buildable in-lane, and the measurement that separates it from padding:** `grep -n "updatePrice"
+app/tests/Modules/X-163/` returns **nothing** — the owner's inline price edit has **zero test callers** —
+and `CAgentTest:625-636`, which does assert the `UNCONFIRMED` handoff, **seeds `is_confirmed => false`
+directly** and never goes through the owner's control. ⭐⭐ **PB-115's method applied to a CONTROL rather
+than a column: the untested arm of a wired production control is the one that keeps a stale price away from
+a customer.** Briefed as PB-156.
+
+⚠️ **Counter-intuitive and worth keeping:** the old pre-declared wrong fix (dispatching `PricebookUpdated`
+from `updatePrice()`) is **invisible to the agent-side test**, because `:201` hands off either way. **Only
+an assertion on the `facts` table catches it** — which is why PB-156 has two arms rather than one.
