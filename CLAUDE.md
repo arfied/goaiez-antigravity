@@ -428,3 +428,52 @@ REV-121's table said **ADOPT** for `bin/supervise.sh` on the correct ground that
 carried §E. Main's copy no longer does. A verdict on a per-track path is a function of
 `(our sha, their sha)` and must be re-derived at every merge, which is precisely why §2f prints
 the two shas it used on the same line as its answer.
+
+## REV-127 — the restore gate cannot undo a merge, and the sentence saying so was in the file I was quoting
+
+⚠️ **RUN 122'S ITEM 3 WAS `git checkout e7b197f4 -- app/phpunit.xml` AND NO GATE SETTING COULD HAVE
+EXECUTED IT (2026-09-09, my defect).** REV-126 correctly identified `app/phpunit.xml` as the one
+per-track path the coder had to repair after the merge, correctly ordered that repair ahead of every
+test run, and then named a command with two independent faults:
+
+⛔ **§1. The sha put the command outside the gate's scope.** `launch-coder.sh:26` defines
+`--allow-restore` as permitting *"`git checkout|restore -- <existing file paths>` and **NOTHING else:
+no directory, no option**"*. A sha before `--` is a third form the clause never admitted. The gate was
+**open** and the guard refused anyway:
+
+```
+REFUSED by coder guard: git checkout on paths is forbidden.
+```
+
+I read that line while writing the brief — it is the comment on the flag I was passing. Fifth instance
+of the shape this project keeps paying for: **a correct statement present in the tree and not read
+back** (REV-119 §A, REV-121 §A, REV-125 §13, REV-126, here).
+
+⛔⛔ **§2. AND THE PERMITTED FORM IS A NO-OP ON THE DEFECT THE GATE EXISTS FOR.** `git checkout --
+<path>` restores from the **index**. A merge *commits* the paths it moves, so index = `HEAD` = the
+value being repaired. Stripping the sha would have produced a silent success that changed nothing —
+worse than the refusal, because the refusal is legible.
+
+⛔ **RULED: `--allow-restore` is retired from this lane's merge repairs. Undoing a COMMITTED value is
+a content operation, not a ref operation**, and content needs no gate:
+
+```
+git show <good-sha>:<path> > <path>
+```
+
+a read plus a shell redirect. Verified by `git diff <good-sha> HEAD -- <path>` printing **nothing**
+after the commit — which proves byte-identity to the last good copy rather than checking one line.
+⚠️ **And after that edit, `git checkout -- <path>` DISCARDS the fix rather than applying it.** The
+gate must be closed on a repair wave, and the brief must say why.
+
+⭐ **The generalisation, and it is the durable half:** *a brief item whose single command has no
+stated fallback can stop the whole wave.* Item 3 was correctly first — that ordering is the only
+reason nothing ran against `goaiez_antig_test` and six lanes' test databases survived — but "ordered
+first" and "single point of failure" are one property seen from two sides. **Every ⛔⛔ item from here
+carries a second mechanism**, named in the brief, so a refusal costs an item and not a run.
+
+⭐ **The gate should not have been opened at all.** It was opened on a belief about the mechanism,
+and the belief was wrong. REV-126's complaint that the `LAUNCHED` line never prints `restore-gate` is
+still true and is now the lesser finding: a flag whose read-back is missing matters less than a flag
+that cannot do the job. **A gate is opened by the wave that uses it, and by nothing else** — the
+converse of N103, which this file already states for `--allow-merge`.
