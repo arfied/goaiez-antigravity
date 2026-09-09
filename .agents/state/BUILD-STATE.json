@@ -2119,6 +2119,10 @@
   {
    "at": "2026-09-09T09:44:33",
    "note": "boundary merged origin/main. main's boundary-fix-2026-09-08 makes BoundaryStage correctly match hyphens in module paths and exempts Events/Actions/Domain, revealing 55 cross-module imports (including pre-existing Models imports now correctly measured as violations)."
+  },
+  {
+   "at": "2026-09-09T10:05:05",
+   "note": "boundary The 2026-09-09T09:44:33 row incorrectly stated that the merge revealed '55 cross-module imports'. The number 55 is the total count of violations for the entire boundary stage, which runs four independent rules. The cross-module import count is a subset of this total, and conflating the stage total with the count for one specific rule was a mistake."
   }
  ]
 }
