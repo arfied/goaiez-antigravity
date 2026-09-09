@@ -20,7 +20,7 @@ class EdgeDeployTenancyTest extends TestCase
     public function test_a_page_from_another_business_is_not_read_into_the_published_artifact(): void
     {
         Storage::fake('local');
-        
+
         $a = self::provisionTenant([
             'name' => 'Local Tenant A',
         ]);
