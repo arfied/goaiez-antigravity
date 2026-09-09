@@ -293,6 +293,7 @@ class X171Test extends TestCase
             return $event->occurredAt === null;
         });
     }
+
     public function test_defect_arm_cannot_read_cross_tenant_person_id(): void
     {
         Event::fake([JobCompleted::class]);
@@ -315,6 +316,7 @@ class X171Test extends TestCase
 
         Event::assertDispatched(JobCompleted::class, function ($e) {
             $this->assertNull($e->personId, 'Tenant A must not read Tenant B person_id');
+
             return true;
         });
     }
@@ -340,6 +342,7 @@ class X171Test extends TestCase
 
         Event::assertDispatched(JobCompleted::class, function ($e) use ($personId) {
             $this->assertSame($personId, $e->personId, 'Tenant A must read its own person_id');
+
             return true;
         });
     }
