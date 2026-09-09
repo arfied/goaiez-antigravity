@@ -92,7 +92,12 @@ final class GatewayEngine
 
                 $gatewayChargeId = null;
                 if ($connection->gateway_name === 'stripe') {
-                    $gatewayChargeId = app(StripeGatewayClient::class)->charge($amountCents, $paymentToken, $currency);
+                    $gatewayChargeId = app(StripeGatewayClient::class)->charge(
+                        $amountCents,
+                        $paymentToken,
+                        $currency,
+                        'x198-charge-'.$businessId.'-'.$idempotencyKey
+                    );
                 }
 
                 $status = $gatewayChargeId !== null ? 'captured' : 'awaiting_processor';

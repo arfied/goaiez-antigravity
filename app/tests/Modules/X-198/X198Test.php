@@ -556,4 +556,25 @@ class X198Test extends TestCase
         $this->assertSame('cs_test_racer', $link->provider_link_id);
         $this->assertSame(1, PaymentLink::where('business_id', $biz->id)->where('payment_id', $payment->id)->count());
     }
+
+    public function test_a_capture_sends_the_gateway_an_idempotency_key_namespaced_by_business(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'IdemHeader', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->connectAction->handle($biz->id, 'stripe', 'acct_idem_header');
+
+        Http::fake([
+            'api.stripe.com/*' => Http::response(['id' => 'ch_idem_header_00000000000'], 200),
+        ]);
+
+        app(GatewayEngine::class)->capture($biz->id, 4500, 'tok_visa', 'idem_header_1', 'USD');
+
+        // The key carries the business because every charge posts with the platform secret and no
+        // Stripe-Account (R093), so all tenants share one idempotency namespace at the provider.
+        Http::assertSent(function ($request) use ($biz) {
+            return $request->url() === 'https://api.stripe.com/v1/charges'
+                && $request->hasHeader('Idempotency-Key', 'x198-charge-'.$biz->id.'-idem_header_1');
+        });
+    }
 }

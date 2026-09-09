@@ -10,7 +10,13 @@ use RuntimeException;
 
 final class StripeGatewayClient
 {
-    public function charge(int $amountCents, string $source, string $currency = 'USD'): string
+    /**
+     * ⭐ $idempotencyKey is sent to the gateway as its own `Idempotency-Key` header, so a repeated
+     * request returns the FIRST charge instead of making a second one. It must already be
+     * namespaced by business: every charge here posts with the PLATFORM secret and no
+     * `Stripe-Account` (R093), so all tenants share one idempotency namespace at the provider.
+     */
+    public function charge(int $amountCents, string $source, string $currency, string $idempotencyKey): string
     {
         $secret = config('credentials.stripe_secret');
         if (empty($secret)) {
@@ -18,6 +24,7 @@ final class StripeGatewayClient
         }
 
         $response = Http::withToken($secret)
+            ->withHeaders(['Idempotency-Key' => $idempotencyKey])
             ->asForm()
             ->post('https://api.stripe.com/v1/charges', [
                 'amount' => $amountCents,
