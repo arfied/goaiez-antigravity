@@ -2250,3 +2250,80 @@ already requires reading `git log --oneline origin/track/<x>..<sha>` in full bef
 verdict block whose range is wrong by one is exactly what a later tick reconstructs the history from.
 ⭐ Companion to PB-125's *count your own commits in the push debt*: the supervisor commit is the one
 most easily lost at **both** ends of the range.
+
+## ⛔⛔ Trap added 2026-09-08 19:1x — AN ORDERED LIST OF STEPS SILENTLY ASSUMES NOTHING IS APPENDED TO IT
+
+PB-124 established the brief order *pint → fix → tests → mutations → `state.py decided` + commit →
+gate*, and it held for four waves. PB-139 **followed it** and still shipped a pint-red tip: the coder
+ran pint clean, then made a further, entirely legitimate commit (`eb25898b`, an assertion reorder), and
+the gate then ran on the post-reorder tree. `pb139-gate.log:152` — `{"tool":"pint","result":"fail",…
+"no_whitespace_in_blank_line"}` — three `+        ` blank lines introduced by that last commit.
+
+⭐ **The fix is a terminal re-check, not a re-ordering: whatever else happens, the LAST thing before the
+gate is pint.** An ordered list answers *"in what sequence"* and is silent on *"and nothing after"*.
+⚠️ Note the shape, because it is the general one: **the order was not violated and the outcome it exists
+to produce did not happen.** A procedure specified as a sequence needs a closing invariant
+(`git status --porcelain` clean **and** `pint --test` green **immediately** before the gate), or every
+legitimate late addition walks straight through it.
+**Eighteenth consecutive wave whose only shortfall traced to the brief.**
+
+## ⛔ Ruling — 2026-09-08 19:1x — a push is held on a RED GATE TOOL, and that is not the PB-124 exception
+
+PB-139's range `7a30ffa0..712b74b2` was gated with the tip **as HEAD** (all three commits 13 s before
+the window, one gate, PB-117 and PB-124 both clear) — and the gate's verdict was `⛔ a gate failed
+above`, rc 1, on **pint**.
+
+⛔⛔ **RULED: held.** The distinction that makes this different from PB-124's *"post-gate commit verified
+inert field by field"* exception is **whose red it is**:
+
+- `pest rc 2` is the **known floor** — Track 2's `test_g2_76_unified_inbox_header` plus sixty's two
+  Infobip journeys. Accepted every wave, named every wave, not ours.
+- `pint rc 1` is **new, ours, inside this lane's column, and fixable in one command.**
+
+⭐ This lane's rule is *push only a sha you have gated*; a sha whose gate printed `⛔ a gate failed
+above` on **our own** tool has been gated **red**, and publishing it puts a style violation into the
+history Track 1 merges. ⛔ **Do not discharge this by arguing the delta is whitespace** — that is
+PB-117's forbidden argument, and the whole value of "gate the whole range, not the tip" is that it is
+not re-litigated per commit. ⚠️ **And count your own commit in the debt: 4, not 3** (PB-125).
+
+## ⭐⭐ Trap added 2026-09-08 19:1x — a fixture FILTER promoted to an explicit ASSERTION reads as a removed narrowing
+
+PB-139's `eb25898b` deleted `->where('job_id', $jobId)` from a test's fixture query — the exact shape a
+reviewer counting `-` lines grades as a weakened test. **It is a correction, and the assertion count
+went 5 → 6:**
+
+```
+-  $entries = TimesheetEntry::where('business_id', $biz->id)->where('job_id', $jobId)->get();
++  $entries = TimesheetEntry::where('business_id', $biz->id)->get();
++  $this->assertEquals($jobId, $entry->job_id);        ← the constraint, now EXPLICIT
+```
+
+⭐⭐ **And the REASON is the previous wave's note, applied by the coder unprompted.** Under the old
+shape the swap mutation reddened `assertCount(1, $entries)` with `0 is not 1` — producible by
+*anything* that stops the listener. Under the new shape it reddens
+`assertEquals($tech->id, $timesheet->person_id)` with `1001 matches expected 2234` — producible **only**
+by the swap. That is PB-138's note 1 exactly: *a mutation's RED is evidence only if that mutation and
+nothing else could produce it.*
+
+⭐ **The generalisation: a constraint can move from the FIXTURE to the ASSERTION, and that direction is
+always a strengthening** — the fixture-filter version fails by finding nothing, which is a RED that
+names no subject; the assertion version fails on a value comparison that does. ⛔ Never grade the
+deletion without reading what replaced it, and ⭐ when a coder makes an unbriefed change of this shape,
+check whether it is last wave's note being applied before calling it churn.
+
+## ⭐ Recorded 2026-09-08 19:1x — `OwnHoursView`'s unscoped query, and `#[Locked]` is the discriminator
+
+`OwnHoursView::render():36` queries `Timesheet::where('person_id', $this->personId)` with **no
+`business_id` filter** — alone among the module's five queries (`TimesheetsView:42`, `ApprovalsView:44`,
+`recordJobWindow:45`, `closeJobWindow:78` all scope it). A decisive-looking absence in a tenant app.
+
+⛔ **Disarmed two lines up:** `#[Locked] public int $personId` with `mount():25`
+`$this->personId = auth()->id()`. ⭐ **`#[Locked]` is the guard** — the property cannot be tampered with
+from the browser, so no user reaches another person's rows. The only consequence is that a staff member
+belonging to two businesses sees both businesses' *own* hours in one list, which is a design question
+with no wrong value on any defined input. **latent + no wrong value = RECORD.**
+
+⭐ Recorded with **both halves**, per the clearance-scope rule: the finding and the thing that killed
+it. ⚠️ A future tick will re-find the unscoped query — it needs the ruling, not the finding. ⛔ And do
+not read this as "unscoped queries are fine here": it is safe because a `#[Locked]` property pins the
+only variable, and that reasoning does not transfer to any query whose filter comes from user input.
