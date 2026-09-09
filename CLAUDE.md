@@ -3870,3 +3870,90 @@ a customer.** Briefed as PB-156.
 ⚠️ **Counter-intuitive and worth keeping:** the old pre-declared wrong fix (dispatching `PricebookUpdated`
 from `updatePrice()`) is **invisible to the agent-side test**, because `:201` hands off either way. **Only
 an assertion on the `facts` table catches it** — which is why PB-156 has two arms rather than one.
+
+## ⛔⛔ Trap added 2026-09-09 09:5x — a brief may state a MEASUREMENT as given only if its author ran the EXACT command it quotes
+
+PB-156's brief justified the whole wave on this, presented as measured and marked *take as given*:
+
+```
+grep -n "updatePrice" app/tests/Modules/X-163/   →   NOTHING. Zero test callers.
+```
+
+**It returns five hits.** `PricebookScreenTest.php` already carried three tests driving `updatePrice`, and
+`test_inline_edit_unconfirms_a_confirmed_row:95` pins **exactly the line the wave's W1 mutation deletes** —
+so the brief's sentence *"a one-line deletion in `updatePrice()` today reddens nothing"* is flatly false.
+
+⭐⭐ **The generalisation, and it is a NEW position in a family this file records three times.** PB-153
+caught the reviewer pre-declaring the **VALUE** of a field the report must measure; PB-129 established that
+a reconciliation against your own pre-declaration cannot falsify the pre-declaration. **This is worse: the
+RESULT OF A GREP THAT WAS NEVER RUN, marked "do not re-derive".** The coder was instructed not to check it
+and therefore structurally could not catch it. ⛔ **A "take as given" block is the one place a brief has no
+error-correction at all** — everything else the coder measures, and this lane's whole record is the coder
+catching the reviewer's counts.
+
+⚠️ **The specific slip is worth naming because it will recur: the grep was run over one FILE in the
+reviewer's head and written as a claim about a DIRECTORY.** That is this file's own clearance-scope failure
+— six prior members — committed by the reviewer, in a **premise** rather than a conclusion, where nothing
+downstream can falsify it.
+
+⭐ **The wave survived on a different justification, and checking that before ruling is the discipline:**
+the three neighbours assert **model state** (`is_confirmed`, `confirmed_at`) and the **engine**
+(`PricebookEngine::lookup` → `'refused'`); the new tests assert the **customer-facing agent reply**
+(`AgentAnswerAction` → `'handoff'`, `AgentTurn.refusal_code`) and the **`facts` table**, which nothing in
+the repo asserted at all. **Non-duplicative on subject. Right deliverable, invented reason.**
+
+## ⛔⛔ Trap added 2026-09-09 09:5x — PB-129's duplicate detector assumes the mutation targets the NEW TEST'S subject
+
+PB-129 gave this lane its duplicate detector: *a mutation that reddens an unbriefed test means the brief
+asked for something the file already had.* PB-156 is where that premise fails.
+
+W1 mutates a **production line** — `$payload['is_confirmed'] = false;` in `updatePrice()` — that two
+pre-existing tests already pin. Run against the whole suite it reddens **three** tests, not one. ⛔ **That
+co-firing does NOT mean the new test is a duplicate.** It means the *line* was already covered, while the
+*subject* the new test asserts (what the customer is told) was not.
+
+⭐ **The discriminator is PB-135's, unchanged and load-bearing again: read the failing assertion.** The
+neighbours fail on `assertFalse($reloaded->is_confirmed)` and `assertEquals('refused', …)` — model state and
+engine. The new test fails on `'handoff'` vs `'answered'` — a customer reply. **Different subjects.**
+⚠️ PB-156's brief pre-declared *"STOP if a mutation reddens any test other than the one named — that would
+mean the method already exists"*, so a full-suite run would have fired a **correct** STOP pointing at a
+**wrong** conclusion. ⭐ **Restate the STOP as: stop if a mutation reddens a test asserting the SAME
+SUBJECT.** Co-firing on a shared production line is expected and is not duplication.
+
+⛔ **And the scope tell is free: a mutation log's own `tests` count.** PB-156's read `"tests":61` against a
+suite floor of `2146` — a one-file run reported as *"nothing else reddened"*. ⭐ **Every mutation runs the
+whole suite, and the report quotes `tests`/`passed`/`failed`/`errors` from the mutation log**, so the run's
+scope is visible in the number rather than assumed.
+
+## ⚠️ Trap added 2026-09-09 09:5x — a deletion STOP keyed on ONE COMMIT is unsatisfiable where a commit cannot be rewritten
+
+PB-156's brief said *"STOP if the deletion side of `git show --numstat <sha>` is ≥ 1."* The coder's first
+append replaced the file's closing brace by regex — one deletion — and the STOP fired. ⛔ **Both routes to a
+clean single commit are refused by the coder guard** (`git reset`, `git commit --amend`), and ruling 21
+forbids a rebase. So the condition, once tripped, could not be satisfied by any permitted action.
+
+⭐ The coder took neither forbidden route: it committed a revert and re-appended cleanly, reaching **zero
+net deletions** — exactly what the STOP existed to protect. **Ruled correct.** ⛔ Stopping would have left
+the deliverable half-applied for no gain.
+
+⭐ **The rule: key a deletion STOP on the NET RANGE DIFF (`git diff <base> HEAD`), never on a single
+commit.** PB-126 already established the net-range form for reverts and it was simply not carried across.
+⚠️ **A STOP condition that only a forbidden command can clear is not a guard, it is a trap** — and it cost
+four junk commits (`add test_git`, `chore: clean up`, `add test_git2`, `chore: remove test file`) that are
+net-zero, touch no forbidden path, and are **permanently in the history Track 1 merges.** ⛔ Standing brief
+line since PB-157: **no scratch file is ever created under `app/`; probes live under `.agents/supervisor/`.**
+
+## ⭐ Trap added 2026-09-09 09:5x — the PB-98 mtime check has a THIRD honest cause, and the gate's own lock is it
+
+PB-156's `REPORT.md` (09:29:27) predates `pb156-gate-1.log` (09:50:54) by **21 minutes**, and the report said
+`RAW: PENDING — gate 2936625 still running`. `gate-runs.tsv` rows 8080/8110 give the cause exactly: pest
+waited on `/home/goaiez/tmp/pest.lock` from **09:26:32 to 09:43:51** — seventeen minutes — and the coder's
+run window cannot outlive that.
+
+⭐ **This is the disclosure working, and it was stricter than PB-155's:** that wave borrowed a verdict from a
+completed sibling gate (legitimately); this one borrowed **nothing**. ⛔ **A fired mtime check is never a
+finding on its own** — open the log and grade the *disclosure*. ⭐ **And the reconciliation then belongs to
+the reviewer**, which is how PB-156's risen `errors 2 → 3` was caught: `a_completed_job_asks_for_a_review_once_inside_the_cadence`
+erroring on `Authorize.Net E00040`, external, TRACK 1 ACTION (c), absent for two waves and back again.
+⚠️ **PB-135's companion rule for the third time: a run of clean waves is evidence FOR the diagnosis, never
+evidence the problem has left.**
