@@ -136,4 +136,20 @@ class PaymentplanBuilderScreenTest extends TestCase
             ->assertSee('INV-UNPAID-1')
             ->assertDontSee('INV-PAID-1');
     }
+
+    public function test_rendering_the_plan_builder_writes_no_plan_term_row(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $this->assertSame(0, ArPlanTerm::where('business_id', $biz->id)->count());
+
+        Livewire::actingAs($owner)->test(PaymentplanBuilder::class)
+            ->assertOk()
+            ->assertSee('Up to 3 payments over 90 days');
+
+        $this->assertSame(0, ArPlanTerm::where('business_id', $biz->id)->count());
+    }
 }
