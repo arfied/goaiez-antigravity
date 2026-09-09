@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-09T03:14:44",
+ "updated": "2026-09-09T08:05:55",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1922,6 +1922,12 @@
    "module": "X-172",
    "chose": "R245: the customer portal no longer offers a Leave a review link \u2014 it was a bare href=# that went nowhere, and a review destination is undeclared in X-172's capabilities.php and belongs to the reviews track. The three real portal actions are unchanged; only the dead remedy was removed.",
    "at": "2026-09-09T03:14:44",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-171",
+   "chose": "R245: JobStateAction scopes the work_orders person_id read to the acting tenant. A cross-tenant read on a wired production path is a defect regardless of what capabilities.php declares; RLS sits beneath the application scope. Ruled by the lane supervisor, PB-153.",
+   "at": "2026-09-09T08:05:55",
    "ruling": "R245"
   }
  ],
