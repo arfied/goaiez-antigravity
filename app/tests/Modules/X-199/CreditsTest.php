@@ -63,7 +63,7 @@ class CreditsTest extends TestCase
         Livewire::test(Credits::class)
             ->assertSee('Nobody is on terms yet.')
             ->assertSee('A commercial customer gets terms')
-            ->assertSee('appear here the moment they do');
+            ->assertSee('so no terms row is created yet');
     }
 
     public function test_route_renders_credits(): void

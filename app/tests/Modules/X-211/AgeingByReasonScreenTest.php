@@ -247,4 +247,18 @@ class AgeingByReasonScreenTest extends TestCase
             ->assertSee('nobody has recorded why this invoice is unpaid')
             ->assertDontSee('R211');
     }
+
+    public function test_the_ageing_screen_says_nothing_is_past_its_terms_and_what_that_waits_on(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        Livewire::actingAs($owner)->test(AgeingByReason::class)
+            ->assertOk()
+            ->assertSee('No invoice is past its terms')
+            ->assertSee('and a draft is never issued')
+            ->assertDontSee('Every issued invoice is inside its terms');
+    }
 }

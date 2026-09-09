@@ -163,6 +163,7 @@ class InvoiceThreadBesideScreenTest extends TestCase
         Livewire::actingAs($owner)->test(InvoiceThreadBeside::class)
             ->assertOk()
             ->assertSee('Nothing in this checkout raises one from a completed job')
+            ->assertSee('and a draft is never issued')
             ->assertDontSee('Every issued invoice is paid');
     }
 }

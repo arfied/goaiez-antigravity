@@ -55,7 +55,8 @@ class MoneyPaidTodayTest extends TestCase
         Livewire::actingAs($owner)->test(MoneyPaidToday::class, ['businessId' => $biz->id])
             ->assertViewHas('totalCents', 0)
             ->assertSee('0.00')
-            ->assertSee('No paid invoices today.');
+            ->assertSee('No paid invoices today.')
+            ->assertSee('so nothing reaches this screen yet');
 
         Carbon::setTestNow();
     }

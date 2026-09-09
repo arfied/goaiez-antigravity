@@ -118,7 +118,8 @@ class DeclinesTest extends TestCase
         Payment::where('business_id', $biz->id)->delete();
         Livewire::actingAs($owner)->test(Declines::class, ['businessId' => $biz->id])
             ->assertViewHas('declinesCount', 0)
-            ->assertSee('You have no declined payments to review.');
+            ->assertSee('You have no declined payments to review.')
+            ->assertSee('nothing in this checkout charges a card on file yet');
 
         Carbon::setTestNow();
     }

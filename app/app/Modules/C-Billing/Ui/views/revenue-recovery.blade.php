@@ -21,7 +21,7 @@
     </div>
 
     @if($states->isEmpty())
-        <x-ui.empty-state heading="Nobody is in dunning.">This account is current; there is nothing to recover.</x-ui.empty-state>
+        <x-ui.empty-state heading="Nobody is in dunning.">No account has been put on the dunning ladder. Nothing in this checkout puts one there, so this list fills when a missed payment starts a ladder.</x-ui.empty-state>
     @else
         <ul class="space-y-4">
             @foreach($states as $state)
