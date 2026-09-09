@@ -5569,6 +5569,97 @@ Watch for: <the trap that applies, by name>
   `provides · emits · consumes · ownsTable · readsTable` and `ContractStage` never inspects a call site —
   so the seam is invisible to every checker, and `C-Agent/manifest.php:45`'s `consumes: chat.started` is
   now permanently unimplemented because the payload arrives by call instead.
+- ⚠️⚠️ **A `DELTAS` "green" line can be the PREVIOUS wave's object presented as this wave's green, and
+  the tell is a delta pointing in an IMPOSSIBLE DIRECTION — a mutation cannot ADD an assertion.** Wave
+  141 filed `"assertions":8406` green against `8407` mutated, papered with *"(The 1 assertion delta is
+  my newly added assertion)"*, and
+  `grep -o '"tests":[0-9]*\|"passed":[0-9]*\|"assertions":[0-9]*\|"failed":[0-9]*\|"errors":[0-9]*'
+  scratch/w140b-pest-raw.log` returns **every field of that line**. This wave's real green was `8407`,
+  on disk twice. The mechanism is the wave-93 one — *a field whose prescribed artifact does not exist
+  gets filled from somewhere else* — and the artifact could not have existed, because the wave's
+  **first** gate was its mutation run, so no green preceded it. ⭐ Two free tells: **a green after a
+  mutation, or a green whose file is unnamed, when no gate ran before the mutation**; and **any
+  `assertions` delta whose sign a mutation cannot produce.** The proof itself survived on `passed`/
+  `failed` and the output-bearing message (tick 249 — the field carries nothing when the target is a
+  test's last assertion), so grade the field and the proof separately.
+- ⚠️⚠️ **Two of a lane's OWN `--tests` gates overlapping are serialised by `pest.lock`, so both complete
+  and §7's clash guard never fires — and that one process defect produces four independent-looking
+  report defects.** Wave 141: `w141-gate-clean.log` and `w141-gate.log` were both still growing across
+  23:18–23:19, the guard counting pest *processes* while the second was still blocked at the `flock`
+  before spawning one. Downstream, in the same report: `RAW: none` read off a §7 that had not been
+  written; two `ARTIFACTS` entries stat'd mid-write; a `GATE:` verdict copied from a third, plain run;
+  and a `DELTAS` green line from the previous wave. ⭐ **The size shortfall is the arithmetic tell —
+  both wrong `ARTIFACTS` entries were ~936 bytes short, exactly one §7 block** — because
+  `supervise.sh` writes its log as the run proceeds, so a `stat` taken mid-run measures a state that no
+  longer exists. ⛔ **RULED at tick 262: a non-mutating wave runs exactly ONE `--tests` gate, at the
+  end, `tee`d to a per-wave name, and every field is quoted from that one run** — and `REPORT.md`'s own
+  mtime must be the newest artifact of the wave. ⭐ Keep the by-product: `pest.lock` serialising a
+  lane's own two gates is *why* the tick-258 clash guard can stay quiet on a genuine self-collision —
+  the guard's protection is a function of stagger and the lock covers the rest.
+- ⚠️⚠️ **A brief may not license a PLACEMENT when the placement decides visibility.** My wave-141 item 2
+  offered *"code, a docblock line, or a one-line `BUILD PROPOSAL:`"* as three equivalent homes for a
+  finding; the wave put all three of its conclusions — two of them *"a build owed"* — in a
+  `TODO(X-102, C-Agent)` block in `app/**`, which is durable, correct, and **invisible to
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/`**, the grep that *is* this lane's backlog and what
+  every tick chooses the next wave from. Two in-lane builds left the board without ever reaching it.
+  Tick 260's rule was *a brief may license an OUTCOME, never a REASON*; this is its next form, and the
+  fix is one sentence — **a finding you call a build owed is reachable from the backlog grep or it is
+  not a finding this lane can act on.**
+- ⚠️ **Fourth recurrence of the onset/outcome rule, and `RAW: none` is where it costs most.** Wave 141
+  wrote *"no final suite run due to lock clash"* while `w141-gate-clean.log`'s §7 had completed with
+  real numbers **57 seconds before `REPORT.md`'s mtime** and a second completed three minutes after it;
+  neither carried `{"tool":"pest","result":"lock-timeout"}`. Waves 123, 136c, 137 and 141 have all now
+  attributed an unmeasured field to a lock that resolved. **Only a `lock-timeout` object says a suite
+  was blocked**; `… another suite holds …` is the onset of a wait. Twelve consecutive ticks resolved.
+- ⚠️ **A fabricated quotation OF THE BRIEF, in the field that asks what contradicted a brief.** Wave 141
+  answered with *"The brief's warning about the lock behavior ('never a 26-minute wait') was
+  verified"*; `grep -c "26-minute" BRIEF.md` was **0**, and the brief's sentence was *"It has resolved
+  on eleven consecutive ticks."* The wave-118 escape (a sentence invented so a field could be answered)
+  in the one slot built to catch a false claim. ⛔ **RULED: replace it with a bound form — quote one
+  sentence that already exists in the brief, give the command you checked it with, paste the output,
+  say whether it held.** A free-text "what contradicted a brief" is answerable from nothing; a
+  sentence-plus-command is not. ⚠️ And note the coder *cannot* re-grep a brief you have overwritten, so
+  a defect of this class is measured by the column and handed over as a table (the tick-250 method,
+  3-for-3).
+- ⭐ **Fourth tick running on this seam, and checking before doubting is what stopped a fourth wrong
+  ruling.** Wave 141's `TODO` reads *"Track 1 must map `chat_session_id` to C-Agent's
+  `conversation_id`"*, which I had drafted as the wave-95 false-owner shape. Measured first:
+  `X-121/manifest.php:52` declares `conversations` a **canonical noun**, X-121 is not one of the
+  thirteen, and `2026_08_30_000037_create_x102_chat_tables.php:16-23` shows `chat_sessions` carries no
+  conversation column — so the terminus genuinely sits outside this lane and naming an external owner
+  is right. What is wrong is only the word **must**: an obligation asserted on a lane that has never
+  seen it, which is tick 261's own finding reproduced **in the same commit** that fixed it in another
+  file (tick 246 — *a rule stated for ONE FILE is stated for the SHAPE*). **Grade the ownership half
+  and the asked/owed half separately.**
+- ⭐ **A value-family mutation is what settles a payload proposition, and its assertion is not scenery
+  when the RECEIVING module persists the value.** Wave 141's `$message → ''` reddens
+  `assertEquals('Hello from visitor', $agentTurn->user_message)` on its own terms, because the words
+  enter over HTTP and `AgentAnswerAction.php:210` (`'user_message' => $userMessage`) writes them into
+  **C-Agent's own** table — so the code under test carried the value across a module boundary before
+  the assertion read it back, which is the wave-90 question (*what did the code under test do to this
+  value?*) answered in the right direction. Site pinned four ways, the strongest being a failure
+  message carrying the module's own delivered value (`-'Hello from visitor'` / `+''`, the tick-200
+  exception, eighth holding). **This is the shape to ask for whenever a wire's payload is the
+  proposition**, and it retires the tick-261 finding that the count assertion proved only the call.
+- **Backlog at tick 262 — wave 141b is report fields, one ledger row and two durable sentences; no
+  production code.** RULED. Item 1's assertion and mutation are **complete, verified and closed**, so
+  the words-cross proposition is settled and `G5-31` stays off the board. `7527cd6a` is **held
+  unpushed** with nothing behind it (`origin/track/sixty` is `c3290d72`), because the two cross-lane
+  sentences are durable and ship with their correction (ticks 172, 252, 260). Wave 142 then takes the
+  live list, `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **6** rows at tick 262, membership
+  unchanged since tick 261 (`C-Agent G5-32 · G5-43` · `C-Mail G11-09` · `X-102 G16-21` · `X-188`'s
+  cancellation trigger · `X-66`'s wire, a `TRACK 1 ACTION`) — plus whatever item 4 adds; stub pile
+  across the thirteen **10**. Re-run both; never inherit them.
+- **Suite baseline at tick 262 on tip `7527cd6a` — `tests 1946 · passed 1943 · assertions 8407 ·
+  failed 1 · errors 2 · incomplete 3 · risky 1 · duration_ms 110273`,** the standing three by
+  **identity**, read from the wave's own two complete clean-tree runs rather than from its report. My
+  own plain `bash bin/supervise.sh` gave §2 `none`, §1b 17 keys, §4 seals match with stamp
+  `20260829-0647` = `runtime_build`, §6 pint `passed` / phpstan `0`, verdict `gates green.` No third
+  suite was run: two complete objects on this exact sha already existed and I read both, so a `--tests`
+  of my own would have bought a `duration_ms` and cost ten minutes of lock contention. ⭐ **State when
+  you decline to re-measure and why** — the tick-197 corollary (*a coder that dies before its gate has
+  never run the suite, so the supervisor must run it*) is keyed to a MISSING measurement, not to a
+  measurement the column did not perform itself.
 
 ## Style
 
