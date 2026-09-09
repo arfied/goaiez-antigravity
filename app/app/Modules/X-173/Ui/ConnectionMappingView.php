@@ -61,7 +61,7 @@ class ConnectionMappingView extends Component
         $businessId = Tenancy::idOrFail();
 
         $connections = AccountingConnection::where('business_id', $businessId)->orderBy('id')->get();
-        $mappings = AccountMapping::where('business_id', $businessId)->get()->groupBy('connection_id');
+        $mappings = AccountMapping::where('business_id', $businessId)->orderBy('id')->get()->groupBy('connection_id');
 
         return view('x-173::connection-mapping', [
             'connections' => $connections,

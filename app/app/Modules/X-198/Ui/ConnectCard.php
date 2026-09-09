@@ -64,7 +64,7 @@ class ConnectCard extends Component
     {
         abort_unless(auth()->check() && Tenancy::check(), 403);
 
-        $connections = MerchantConnection::where('business_id', Tenancy::idOrFail())->get();
+        $connections = MerchantConnection::where('business_id', Tenancy::idOrFail())->orderBy('id')->get();
 
         return view('x-198::connect-card', [
             'connections' => $connections,

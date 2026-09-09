@@ -124,4 +124,25 @@ class ConnectionMappingScreenTest extends TestCase
 
         $this->assertSame(0, AccountMapping::where('business_id', $biz->id)->count());
     }
+
+    public function test_the_mappings_list_holds_its_order_when_a_row_is_rewritten(): void
+    {
+        $bizId = self::provisionTenant()->id;
+        Tenancy::set($bizId);
+
+        $connectAction = app(AccountingConnectAction::class);
+        $mapAction = app(AccountingMapAction::class);
+
+        $conn = $connectAction->connect($bizId, 'quickbooks', 'realm_qb_123', 'oauth_token_fixture');
+        $connId = $conn->id;
+
+        $mapAction->mapAccount($bizId, $connId, 'Revenue', 'gl_1', 'Remote 1');
+        $mapAction->mapAccount($bizId, $connId, 'Materials', 'gl_2', 'Remote 2');
+        $mapAction->mapAccount($bizId, $connId, 'Subcontractors', 'gl_3', 'Remote 3');
+
+        $mapAction->mapAccount($bizId, $connId, 'Revenue', 'gl_9999', 'Ledger Income');
+
+        Livewire::test(ConnectionMappingView::class)
+            ->assertSeeInOrder(['Revenue', 'Materials', 'Subcontractors']);
+    }
 }
