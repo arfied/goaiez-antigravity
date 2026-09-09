@@ -224,6 +224,51 @@ else
   fi
 fi
 
+bar "2g. a merge that took THEIR deletion of a lane-authored FILE  (parent 1 vs the result, path level)"
+# RULING FV, tick 241. §2f above is NAME-level and scoped to app/tests/, so it detects RULING FM's
+# loss class ONLY when the lost thing is a test METHOD. FM's class is not confined to tests: a FILE
+# this lane authored, merged upstream and reverted there, returns through a take as a conflict-free
+# deletion with no marker and no index row — and §2f is silent on it, because no test name moved.
+# That is the same "believed coverage vs actual coverage" error RULING FU convicted §2e of one tick
+# earlier, one level down: §2f is correct for what it measures and was read as covering FM's class.
+# The ownership rule is RULING EP's, COMPUTED here rather than left to the reader as prose (which is
+# what §2f does): a deleted path is OURS only if OUR SIDE ADDED IT SINCE THE MERGE BASE. A path that
+# was base content the other side legitimately deleted is EP's class and is benign.
+# ⚠️ Like §2f this can only OVER-report, so it is a TRIGGER and never a verdict — it sets no fail=1.
+# Arms proven at tick 241 by hand replay on this lane's own history (RULING FU's standing
+# correction), on the exact historical events the gap is named for:
+#   6b7c315b → 2 deleted paths (X-120/Domain/VaultEngine.php, X-211/Listeners/ChaseOverdueInvoice.php)
+#   5d89dc84 → 1 deleted path (X-137/Domain/X137Engine.php)
+# all three classified BENIGN, zero false candidates across a 487- and a 757-commit merge. The
+# ownership predicate is non-vacuous: on 5d89dc84 our side had added exactly one app/ path since base
+# (app/app/Enums/MailEventType.php) and the merge KEPT it.
+# ⛔ The ⚠️ OURS arm is UNPROVEN here, because this lane has authored no app/ byte since its base. It
+# is proven only that the predicate computes and separates. Never read a clean §2g as evidence that
+# the ⚠️ arm fires.
+if [ -z "$p2" ]; then
+  echo "  HEAD is not a merge — nothing to compare"
+else
+  gone=$(git diff --diff-filter=D --name-only 'HEAD^1' HEAD -- app/ 2>/dev/null)
+  if [ -z "$gone" ]; then
+    echo "  no path under app/ on parent 1 is missing from the result ✓"
+  else
+    base=$(git merge-base 'HEAD^1' "$p2" 2>/dev/null)
+    added=$(git diff --diff-filter=A --name-only "$base" 'HEAD^1' -- app/ 2>/dev/null)
+    ours=$(printf '%s\n' "$gone" | while IFS= read -r g; do
+             [ -n "$g" ] && printf '%s\n' "$added" | grep -Fxq -- "$g" && printf '%s\n' "$g"
+           done)
+    ngone=$(printf '%s\n' "$gone" | grep -c .)
+    nours=$(printf '%s\n' "$ours" | grep -c .)
+    if [ "$nours" -eq 0 ]; then
+      echo "  $ngone deleted path(s), none authored by this lane since $(git rev-parse --short "$base") — RULING EP's class, benign ✓"
+    else
+      echo "  ⚠️ $nours path(s) THIS LANE ADDED since the merge base are ABSENT from the result — RULING FM at FILE level, read these:"
+      printf '%s\n' "$ours" | sed 's/^/     /'
+      echo "     ($((ngone - nours)) further deleted path(s) were base content the other side removed — RULING EP, benign.)"
+    fi
+  fi
+fi
+
 bar "3. build state"
 python3 "$ROOT/bin/state.py" status 2>&1 | head -30 | sed 's/^/  /'
 python3 "$ROOT/bin/state.py" next 2>&1 | head -20 | sed 's/^/  /'

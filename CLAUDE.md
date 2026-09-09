@@ -1458,7 +1458,21 @@ result, both test styles, proven on `6b7c315b` (**exactly** `FM`'s two tests, ze
 wave and no count moved** — §5 is identical in all eight numbers across `.gateT240.txt` and
 `.gateT240b.txt`. It sets no `fail=1`: a trigger, never a verdict.
 
-⛔ **The backlog is EMPTY at tick 240 and this tick writes a HOLD.** Re-measured rather than recalled:
+✅ **S-195 — the `§2g` detector for `RULING FM`'s loss class at FILE level. COMPLETE at tick 241, and NOT
+dispatched — executed by the supervisor itself**, `bin/supervise.sh` being this seat's own file
+(`RULING FI`). `RULING FV` has the result: `§2f` is name-level over `app/tests/` and covers only half of
+`FM`'s class; `§2g` adds the path-level half with `RULING EP`'s ownership rule **computed**, proven on
+`6b7c315b` (2 rows) and `5d89dc84` (1 row), **zero false candidates**, ⚠️ arm declared **unproven**.
+⛔ **Not a wave and no count moved** — §5 identical in all eight across `.gateT241.txt` and
+`.gateT241b.txt`. It sets no `fail=1`: a trigger, never a verdict.
+
+⛔ **The backlog is EMPTY at tick 241 and this tick writes a HOLD.** Re-measured: **main did not move at
+all** — pin `c3ab0a6f`, identical to tick 240's, so `TRACK 1 ACTION 1`'s absolute grep and the note
+ceiling are unchanged **by identity** rather than by carry; lane **18 ahead / 8 behind** first-parent
+(**18 / 73** by ancestor count, `RULING EK`); merge base `7a75f289` unmoved; `18bbde18` still not an
+ancestor after eight sibling merges. The superseded tick-240 text follows.
+
+⛔ **The backlog was EMPTY at tick 240 and that tick wrote a HOLD.** Re-measured rather than recalled:
 `main` moved **1 first-parent / 4 ancestor** commits (`d2a81ee0` → **`c3ab0a6f`**) on one sibling
 merge (`track/pricebook` X-171), **not `track/stages`**; this lane's gated tip `18bbde18` is pushed
 and **still not on `main`** — main has run **eight** first-parent merges since reverting us at
@@ -1583,6 +1597,55 @@ byte-identical to main's, and adopted for a purpose it cannot serve. ✅ **Stand
 seat adopts an instrument section to close a named gap, it REPLAYS that section by hand on the exact
 historical event the gap is named for, and reports the arm that fires.** `FT` replayed `6b7c315b` and
 read the ✓ as the section working; the ✓ *was* the section working, on a different question.
+
+### ⛔ `RULING FV` (tick 241) — `§2f` is NAME-level and scoped to `app/tests/`, so it covers ONE HALF of `RULING FM`'s loss class. `§2g` adopted for the FILE case, with `RULING EP`'s ownership rule COMPUTED.
+
+`FU` adopted `§2f` one tick ago as the detector for `FM`'s loss and proved both arms. **Its subject is
+`git grep … -- app/tests/` over test NAMES.** So a **file** this lane authored, merged upstream and
+reverted there, comes back through a take as a conflict-free deletion with no marker and no index row,
+and `§2f` is **silent** — no test name moved. ⚠️ **`FU`'s own conviction one level down**: `FU` found
+`§2e` correct for what it measures and read as covering `FM`; `FV` finds `§2f` correct for what it
+measures and read as covering `FM`'s class **entire**. Two consecutive ticks, same error, on the two
+sections adopted to fix it.
+
+⭐ **The complement is viable by measurement.** Replayed by hand on the exact historical events — paths
+on parent 1 absent from the result, under `app/`: `6b7c315b` → **2** (`X-120/Domain/VaultEngine.php`,
+`X-211/Listeners/ChaseOverdueInvoice.php`), `5d89dc84` → **1** (`X-137/Domain/X137Engine.php`). Two rows
+across a 487-commit merge and one across a 757-commit merge.
+
+✅ **Ownership is `RULING EP`'s rule, COMPUTED where `§2f` leaves it to the reader as prose**: a deleted
+path is ours only if **our side added it since the merge base**. Empty for all three rows — **zero false
+candidates**. ⚠️ **The discriminator that does NOT work is "who deleted it"** — all three were deleted by
+the incoming side, and in `FM`'s own event the deletion is on the incoming side too. Only
+ours-since-base separates the classes.
+
+⭐ **The predicate is non-vacuous**: on `5d89dc84` our side had added exactly one `app/` path since base
+(`app/app/Enums/MailEventType.php`) and the merge **kept** it. ⛔ **The ⚠️ OURS arm is UNPROVEN here** —
+this lane has authored no `app/**` byte since its base, so no positive control exists; proven only that
+the predicate computes and separates. **Never read a clean `§2g` as evidence its ⚠️ arm fires.**
+⛔ **`§2g` sets no `fail=1`** — it can only over-report, so it is a **TRIGGER, never a verdict**; never
+narrow it when noisy (`RULING DE`'s run-115 shape).
+
+⭐ **Considered and REFUSED the same tick: rewriting `§2f`'s one bash-only line.** `bin/supervise.sh:216`
+is the file's **only** process substitution and sits in the block that has never executed. The POSIX
+rewrite was built and tested — it returns *exactly* tick 240's controls. **Not taken:** the shebang is
+`#!/usr/bin/env bash` and the invocation is `bash bin/supervise.sh`, so the dependency is satisfied by
+construction, while the only rewrite available trades it for a writable temp location — and this box's
+PHPStan trap is the standing proof `/tmp` here is not reliable. **Replacing a satisfied dependency with
+an unsatisfied one is not a repair.** Recorded because a later tick will find the outlier and reach for
+it.
+
+⚠️ Sixteenth member of the `EU`/`EV`/`EW`/`EX`/`EZ`/`FE`/`FF`/`FH`/`FI`/`FJ`/`FN`/`FP`/`FQ`/`FS`/`FT`/`FU`
+family, and the first where the defective instrument is **the repair the previous member shipped**.
+✅ **Standing correction: when this seat adopts a detector for a named loss class, it states the
+detector's SUBJECT — what object it examines — beside the class, and asks whether the class can be
+realised in an object of another kind.** `§2e`'s subject is one path; `§2f`'s is test names; `FM`'s class
+is any lane-authored content.
+
+⚠️ **`rm` is refused to this seat**, so a tick's scratch files are **named in the block, never deleted** —
+`RULING CN`'s "delete debris" is the coder's capability (S-183 was a wave). Harmless: §1 does not count
+`.agents/supervisor/`, measured at tick 241 (39 untracked paths reported, all at repo root). Never
+`.gitignore` them.
 
 
 
