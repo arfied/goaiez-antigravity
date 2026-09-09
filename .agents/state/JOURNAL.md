@@ -867,3 +867,4 @@
 - `2026-09-09T09:24:24` UNRESOLVED X-119 exposes no path to retract a taught price fact; a price. fact outlives the pricebook row that taught it (X-163 deleteItem:165). X-119 - 
 - `2026-09-09T09:24:38` (R245) X-163 — an (R245) contract note that X-163 teaches on confirm and has no retraction seam, so a deleted item's fact persists, and that the retraction is X-119's to expose.
 - `2026-09-09T13:43:35` (R245) X-162 — R245: markEnRoute takes ?int etaMinutes; with none given it records no EtaPrediction and no notification, never a default (PB-159, lane supervisor ruling)
+- `2026-09-09T16:46:30` (R245) X-172 — R245: the portal states the technician is en route without an ETA when none was recorded; it never renders an empty minutes figure and never withholds a true en-route state (PB-160, lane supervisor ruling)
