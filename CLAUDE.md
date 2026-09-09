@@ -1685,7 +1685,50 @@ dispatched — executed by the supervisor itself**, `bin/supervise.sh` being thi
 ⛔ **Not a wave and no count moved** — §5 identical in all eight across `.gateT241.txt` and
 `.gateT241b.txt`. It sets no `fail=1`: a trigger, never a verdict.
 
-⛔ **The backlog is EMPTY at tick 274 and this tick writes a HOLD — the THIRTY-THIRD consecutive tick
+⛔ **The backlog is EMPTY at tick 275 and this tick writes a HOLD — the THIRTY-FOURTH consecutive tick
+with no instrument change and the TWENTY-THIRD CONSECUTIVE with no new lettered ruling**, every
+ordinal here **derived in this tick** per `RULING FZ` and none carried; the §3 == §5 run and the
+take-refusal count are **deliberately not asserted**, having no derivation. ⭐ **`main` did NOT move —
+pin `6219d650`, and this is the FIRST unmoved tick at it, NOT a continuation**: derived over the
+ledger's own MOVED/DID-NOT-MOVE markers read from commit **subjects**, tick 274 **MOVED** and is the
+reset, so no "consecutive" is claimed and the derivation deliberately spans back far enough to include
+the resetting event (`RULING FZ(a)`). Lane **52 ahead / 30 behind** first-parent (**52 / 165** by
+ancestor count, `RULING EK`), the ahead-count moving 51 → 52 on **our own tick-274 commit** and both
+behind-counts unchanged as an unmoved pin requires; merge base `7a75f289` unmoved; ours-since-base in
+`app/` is `app/phpunit.xml` alone, so this lane still authors no `app/**` byte and `boundary 55` ·
+`contract 85` · `capability 207` · `anchor 128` · `schema 16` remain **main's numbers** (`RULING FO`).
+⛔ **The take is OPEN, UNNECESSARY and REFUSED** — `DD`'s two-row re-check prints nothing and the
+`Doctor`/`JourneyHarness`/`seals.json` diff against our base is **empty**, so this lane's checker
+**is** main's current checker byte-identical, `RULING EQ`'s void condition is not reached, and a take
+could refresh nothing at a cost of **165** ancestor commits. ⭐ **The admission census was NOT re-run
+and the reason is a measurement taken first**: `git diff --stat 10e804ea HEAD -- app/` is **empty**,
+corroborated by `capability` reading **207** unchanged. §1 read from the count line per `FY` at **77**,
+corroborated independently, supervisor directory contributing **0** — `FY`'s census spans
+**THIRTY-SEVEN** consecutive gates (`.gateT239`…`.gateT275`, all `77`, derived per file with the
+filenames attached). §3 == §5 and still a LEDGER; §5's own arithmetic control holds (`494`).
+`wc -l bin/supervise.sh` **416** and drift `4 0`, both re-measured per `FX(ii)`; `bar` sections
+**14 / 13** on the same extraction, membership re-derived by `comm` on sorted input and unchanged
+(`1a` · `1b` · `2d` **NOT adoptable**, `RULING FS`, re-refused **without** re-testing the boundary;
+`2f` · `2g` offered upstream). §2e/§2f/§2g printed `HEAD is not a merge` for a **THIRTY-FOURTH** gate
+(T242…T275, anchored `^.\[1m== 2g` form, T241 absent as the pre-adoption gate per `FZ(b)`).
+**TRACK 1 ACTION 10** re-measured at the pin: **23** first-parent merges since `a5042da2` — unchanged,
+as an unmoved pin requires and correct **by identity** because re-run at the pin — **0** naming
+`track/stages`, `18bbde18` still not an ancestor (rc **1**). ⭐ **Precisions recorded and deliberately
+NOT lettered** (`FW` bars elevating a clean audit): tick 275's backward audit under `FX(i)` is
+**clean**, with exactly one mover — the ahead-count on our own commit — and **no ordinal asserted for
+the audit itself**; ⚠️ **`RULING ES`/`FJ` fired live and was caught in the same tick** — a `cd` into
+`.agents/supervisor/` for the §1 census moved the session's primary working directory, restored with an
+**absolute** `cd` before any write, the census unharmed **by construction rather than by luck** because
+all thirty-seven filenames were attached, so a wrong-depth run would have printed *fewer files* rather
+than a plausible number; ⚠️ **a refused hook is partial work, not a no-op, and it fired THREE times** —
+a pin-write paired with `tee`, a `comm` census paired with two `sed` filters, and an ACTION 1 grep
+paired with a trailing `echo "rc=$?"`, each refused **wholesale** so the other half did not run either,
+and all three re-issued as separate calls; and ⚠️ **`RULING FH` fired live**, a literal alternation
+returning ~40 KB of this seat's own quoted prose out of §1's commit log. ⚠️ **No Track 1 coder is
+live** this tick, as at tick 274, recorded with **no forecast attached** per `RULING EJ`. ⚠️ `HEAD` is
+**24 ahead** of `origin/track/stages`; notes-only commits ride the next gated-sha push.
+
+⛔ **The backlog was EMPTY at tick 274 and that tick wrote a HOLD — the THIRTY-THIRD consecutive tick
 with no instrument change and the TWENTY-SECOND CONSECUTIVE with no new lettered ruling**, every
 ordinal here **derived in this tick** per `RULING FZ` and none carried; the §3 == §5 run and the
 take-refusal count are **deliberately not asserted**, having no derivation. ⭐ **`main` MOVED — pin
