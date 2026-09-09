@@ -790,3 +790,4 @@
 - `2026-09-09T10:57:20` (R245) C-Reviews — QaReport keys on status = 'triaged_internal'
 - `2026-09-09T11:27:23` (R245) C-Reviews — LossAlerts deduplicates alerts by entity ID, prioritizing the highest risk level, so an SLA breached and reopened ticket will only show as an SLA breach (R245)
 - `2026-09-09T14:05:49` stage boundary = 53
+- `2026-09-09T16:37:40` (R245) X-103 — A classmap is static, so a merge that adds a file under app/Modules/ leaves app/vendor/composer/autoload_classmap.php describing a tree that no longer exists; composer dump-autoload runs after any such merge and before any gate, and gate numbers measured before it are void.
