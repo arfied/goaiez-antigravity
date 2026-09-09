@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-09T13:40:44",
+ "updated": "2026-09-09T17:10:06",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2553,6 +2553,12 @@
    "module": "X-198",
    "chose": "payments.invoice_id has existed since 2026-09-04 (b64df05f) and has no writer and no reader here: rulings 102, 169 and 173 each recorded that the column did not exist and used it as J9's blocker. The column stays as it is - main's engine writes it, so a money-side dropColumn would arrive on Track 1's reverse merge as a drop of a column main fills. J9 stays UNRESOLVED with its reason corrected: money's capture() takes no invoice id, and the listener that would consume one marks an invoice paid off an event.",
    "at": "2026-09-09T13:40:44",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-199",
+   "chose": "J9's blocker is the unconnected invoice-payment seam, not a missing column: payments.invoice_id, PaymentCaptured::invoiceId and RecordPaymentOnCapture all exist, capture() takes no invoice id, and the listener is registered by nothing because it would mark an invoice paid off an event. The stale reason is corrected in J9's comment and in X-199's runtime-proof refusal; nothing is wired and nothing is dropped.",
+   "at": "2026-09-09T17:10:06",
    "ruling": "R245"
   }
  ]
