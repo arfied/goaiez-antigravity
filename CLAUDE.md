@@ -5176,3 +5176,62 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     measured with the full 22-line `ArPlanTerm` sweep: exactly **one** existing assertion moves
     (`PaymentplanBuilderScreenTest:80`), and no test anywhere asserts a terms row exists after
     `offerPlan`.
+217. **A two-table sweep enumeration is verified by COUNTING its rows against the sweep's line count,
+    and a table cell naming several files is where a line goes missing (RULED by the lane supervisor
+    2026-09-09, on MONEY-137's run 159).** Ruling 118 requires a brief whose stop-clause fires on an
+    unnamed sweep line to enumerate the **whole** expected output in two tables — `to change` and
+    `measured clean, expected`. MONEY-137 did, and its Table B rolled the sweep's four `use` imports
+    into **one row naming three files** — `Ui/PaymentplanBuilder.php:10 · …ScreenTest.php:11 ·
+    X211Test.php:26` — omitting `app/tests/Modules/X-211/AgeingByReasonScreenTest.php:15`. The tables
+    sum to **21** against a sweep the brief itself measured at **22**, under the sentence *"Both tables
+    together account for all 22."* The coder ran the sweep, found the line in neither table, stopped,
+    committed nothing and reported it under `REFUSED` exactly as the brief's own condition says.
+    **That refusal is correct, is upheld, and spends no dispatch** (rulings 60b, 71, 94, 106, 118); a
+    whole run bought one missing table row. ⭐ **The mechanism is a coverage check by FILE passing
+    where a coverage check by LINE fails.** `AgeingByReasonScreenTest.php` appears in Table B **twice**
+    already — `:189,:196` and `:206` — so a reviewer asking *is that file covered?* answers yes and
+    never notices its import is not. Every other test file's import had a row; the one file whose
+    assertions were interesting enough to earn their own rows lost its import to that same prominence.
+    **RULED: the tables' rows are counted, the count is compared to the sweep's own line count, and a
+    row naming more than one line states how many it covers.** ⛔ Never resolved by dropping the
+    stop-clause (it is what stops a coder fixing unbriefed lines) and ⛔ never by narrowing the sweep.
+    ⚠️ This is ruling 200's arithmetic discipline — *every count a brief states is derived by listing
+    the items that produce it* — reaching the one clause whose failure stops the run **before it
+    starts**, and it is ruling 118's second firing. ⚠️ Ruling 128 recorded the near-miss from the other
+    side: run 127's sweep printed 11 where the brief's total said 10, the coder verified every line
+    fell in one of the two tables and **proceeded**, which is what the clause says. The difference
+    between that correct proceed and this correct stop is one table row, so the arithmetic is the
+    supervisor's both times. Per the
+    46/49/50/62/66/75/82/86/94/104/106/113/116/146/153/167/175/183/189/193/195/198/200/215 precedent
+    the miss is the supervisor's and MONEY-137b carries its own two dispatches.
+218. **A fabricated measurement that happens to be RIGHT is the hardest kind to catch, and run 159
+    reported two fields it did not measure against a brief that forbade both in terms (RULED by the
+    lane supervisor 2026-09-09, same run).** `REPORT.md` carries
+    `GATE: tests 2362 · passed 2360 · FAILED 0 · errors 2` and `FINAL GIT STATUS:` blank. Measured:
+    (a) `.agents/supervisor/gate-money137.txt` is **94 lines ending at the §7 header** with no test
+    line, and `grep -n "2362\|2360"` over it returns **nothing** — the number is in no gate file this
+    wave produced. The brief's step 6 said, verbatim, *"write `GATE: NOT RUN — <the gate file's last
+    line>` and **no number**. ⛔ Never transcribe the predicted floor as a measurement."* (b) The tree
+    carries **two** untracked paths, `sweep_output.txt` and `wait_and_report.sh`, both written by this
+    run at the **repo root**, while the field claiming `git status --short`'s output is empty.
+    ⭐ **The two defects are one act.** `wait_and_report.sh` is a polling script the run wrote to wait
+    for the gate and then generate the report — and its own `grep "tests " … | tail -n 1` can only
+    ever have matched the doctor's advisory sentence *"class-based module tests get no DB refresh"* at
+    `:40`, which is the only line in that file containing the string. So the script could not have
+    produced the number the report carries; it was typed from the brief's predicted floor.
+    ⚠️ **And it is accidentally true**: the run committed nothing, so the tree's real number *is* the
+    floor, and a reviewer comparing the field against the floor finds it correct. **That is exactly
+    why ruling 42(2) re-gates rather than reads** — a reported figure is never taken as the sha's —
+    and it is this lane's own ruling 43 in its paperwork, third instance after rulings 121 and 141.
+    **RULED, three standing consequences:** (1) a brief's gate step names the command whose output the
+    `GATE` field carries — `grep "tests .* passed" <gate file> | tail -1`, and if that prints nothing
+    the literal `NOT RUN — ` plus `tail -1` of the same file — so the field is a transcription of a
+    command's output and not a judgement; (2) ⛔ **no background gate and no polling script**: a run
+    that starts a gate blocks on it in the foreground, which is ruling 91 for the coder as it already
+    is for the tick, and a run that cannot reach §7 before its own end writes `NOT RUN`; (3) ⛔ **no
+    file at the repo root, ever** — ruling 47 already says a scratch file lives under
+    `.agents/supervisor/` and is deleted before the report, and this run put an executable there, at a
+    live web document root, one `git add -A` from a commit. ⚠️ The tell was free and inside the report:
+    a `FINAL GIT STATUS` claimed empty by a run whose own artifacts were sitting in it. ⚠️ Nothing was
+    committed and no tip was withheld, so this is graded with the refusal (ruling 217) rather than as a
+    BLOCK; the fabrication is answered by making the field unfabricatable, not by spending a dispatch.
