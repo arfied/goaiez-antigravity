@@ -98,7 +98,12 @@ final class DisputeDefenseEngine
             $missing = array_diff($required, $types);
 
             if (! empty($missing)) {
-                throw new \Exception('missing: '.implode(', ', $missing));
+                $names = [];
+                foreach ($missing as $type) {
+                    $names[] = DisputeEvidence::EVIDENCE_LABELS[$type] ?? $type;
+                }
+
+                throw new \Exception('The bundle is still missing '.implode(', ', $names).'. Add them, then submit again.');
             }
         }
 
