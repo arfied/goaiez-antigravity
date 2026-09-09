@@ -2877,3 +2877,115 @@ fails a second time, the fix is not to restate it more firmly but to convert it 
 must reconcile.** A prohibition is checked by the reviewer's memory; a field is checked by arithmetic.
 ⚠️ The cost of leaving it prose is cumulative and already visible — 31 untracked files, and **nothing
 distinguishes a deliberate artifact from litter**, which is what makes the next one invisible.
+
+⭐ **It held on its first outing** — PB-146 reported `31 → 31` and `git status --porcelain | grep -c '^??'`
+independently returned 31. **A prohibition that had failed twice as a sentence succeeded immediately as a
+number.** ⛔ Do not revert it to prose.
+
+## ⛔⛔ Trap added 2026-09-09 03:3x — a PROVENANCE POINTER nobody dereferences is decoration, and a WRONG one is worse than none
+
+PB-144 created the `RAW: <path>:<line> — <the line verbatim>` field because a report had **composed** a
+pest JSON that appeared nowhere in any log. PB-145 filled it correctly. PB-146 filled it like this:
+
+```
+REPORT.md:18         RAW: .agents/supervisor/pb146-gate.log:22 —   tests 2124 · passed 2121 · FAILED 1 · errors 2 · result failed · rc 2
+pb146-gate.log:22     M plugins/wordpress/includes/class-goaiez-indexnow.php
+pb146-gate.log:156    tests 2124 · passed 2121 · FAILED 1 · errors 2 · result failed · rc 2
+```
+
+**The quoted text is real and byte-perfect. The pointer is wrong by 134 lines.** Ruled a **NOTE** — the
+line exists, every number reconciles, nothing was concealed or composed.
+
+⭐⭐ **The generalisation, and it is the third position of a check this file had only ever used in two:
+PB-123 opened the log because a report UNDER-claimed; PB-144 because one OVER-claimed; this is a report
+that claims CORRECTLY and CITES WRONGLY.** A false pointer is the most dangerous of the three because it
+is the only one that *looks* verified — had the reviewer taken `:22` on trust, the "verification" would
+have been of a line about a WordPress plugin file. ⭐ **The check is one command and is now standing:
+`grep -n "tests 21" <the gate log>` and require the printed number to equal the one in `RAW`.**
+⭐ Coder-side: **get the number from `grep -n` and copy what it prints** — never count, never estimate.
+
+## ⛔⛔ Trap added 2026-09-09 03:3x — `>` TRUNCATES, so a re-run gate ERASES the evidence that the first one ran
+
+PB-138 replaced `bash bin/supervise.sh --tests | tee pbNNN-gate.log` with `> pbNNN-gate.log`, correctly —
+a pipeline's status is its last command's, so teeing throws the gate's rc away. ⛔ **Nobody asked what `>`
+does to a second run of the same wave.** PB-146, from `gate-runs.tsv`:
+
+```
+gate 805084   03:15:30 → 03:18:26   rc 1    pint rc 0 · phpstan rc 0 · pest 03:17:30 → 03:18:26  rc 143   ← SIGTERM (128+15)
+gate 824972   03:18:44 → 03:20:57   rc 1    pint rc 0 · phpstan rc 0 · pest 03:18:50 → 03:20:57  rc 2     ← the wave gate
+```
+
+⭐ The coder re-ran the **whole** gate 18 s later, which is PB-127's recovery honoured for the third wave
+running and exactly right. ⛔ **But the second run truncated the first's log, so a pest killed mid-suite
+left NO on-disk artifact at all** — the tsv was the only witness that a first gate had ever existed, and
+the report (which named one pint run where the gate itself had run two) was the only other source.
+
+⭐ **Fix, standing from PB-147: a re-run gate keeps every log under its own name (`pbNNN-gate-1.log`,
+`pbNNN-gate-2.log`, …), and the report carries a `GATE RUNS` field naming each log and why it was
+re-run.** ⚠️ Reviewer's half, which PB-127 stated and this wave needed again: **read every pricebook row
+backward past the previous wave's end, never just the last pair.** ⛔ A mid-suite SIGTERM and a clean
+single gate are indistinguishable from the report alone.
+
+⭐ **And the shape worth keeping: a rule I made standing myself (`>` not `| tee`) created a second-order
+defect nobody grepped for.** Same family as the piped-gate finding — when you fix a defect in an
+instrument, ask what the fix itself now destroys.
+
+## ⭐ Recorded 2026-09-09 03:3x — the READ-side sweep (decision 272's original direction) fired ONCE and was DISARMED, with both halves
+
+PB-146 ran the inverse of PB-132/PB-142: **for every table this lane WRITES, what production path READS
+it?** **21 tables · 19 `READ-IN-PRODUCTION` · 1 `TEST-ONLY-READ` · 1 `NO READER`.** Both non-production
+rows were re-measured by the reviewer rather than taken on the column's word, and **both are capabilities,
+not defects:**
+
+- **`price_book_versions` — `NO READER` HOLDS.** The only non-model, non-migration reference in `app/app`
+  is the `create` at `PricebookEngine.php:159`; X-164's `$newPriceBookVersion` is an `int` parameter on
+  another module's action, not a read. ⛔ `grep -niE 'version' app/app/Modules/X-163/capabilities.php` →
+  **ZERO**. Undeclared + unwired = **CAPABILITY**.
+- **`portal_views` — the verdict `TEST-ONLY-READ` holds; the CLAUSE was FALSE.** The report claimed the
+  grep *"returns `PortalActionHandler.php:22` and nothing else"*; it returns **eleven** hits and **two**
+  writers, and the missed one is the production-reachable one — `PortalViewAction.php:32`, called from
+  `CustomerfacingPortal.php:27` in `mount()`. ⛔ `grep -nE 'view|View|seen|audit|track'` over X-172's
+  `capabilities.php` → **ZERO**. Also a **CAPABILITY**.
+
+⚠️ **PB-142's shape verbatim: a pattern matching reads and writes alike hands the reader a list to
+classify, and the classification is where it fails.** ⭐ Two rows small enough to re-measure, one clause
+false — which is the whole argument for re-measuring a graded column whenever it is small enough to.
+⛔ **SPENT. Do not re-derive.**
+
+## ⛔⛔ Trap added 2026-09-09 03:3x — a rubric that grades by DIRECTORY cannot see REACHABILITY, and the coder caught it
+
+PB-146's item-3 rubric defined `READ-IN-PRODUCTION` as *"a non-test path reads it"*. The coder graded
+`Allowance` and `RateVersion` that way and then wrote, unprompted, that both readers —
+`AllowanceLookupAction:22`, `RateLookupAction:20` — *"are orphaned … exclusively called from
+`app/tests/`"*. ⭐ **Correct, and already corroborated by this lane's own PB-143 table**, which grades
+`AllowanceLookupAction` `TEST-ONLY`.
+
+⭐⭐ **This is PB-142's CHAIN lesson arriving on the READ side: "a reader exists" is one hop short of "a
+human can reach the reader", exactly as "a writer exists" was one hop short of "a human can reach the
+writer".** The rubric keyed the verdict on the reader's **path**, a property that cannot express
+reachability at all — the same failure as PB-145's clause answering an easier question than the verdict
+asked. **Third consecutive wave in which a reviewer's disclosure rule needed narrowing after being
+satisfied literally.**
+
+⛔ **And no re-grade was briefed**, for PB-145's reason: the chain question is already answered for these
+rows by PB-143's recorded table, so re-running it would re-derive a spent instrument under a new name.
+**The correction lives in the next rubric's wording, not in a wave.**
+
+## ⭐ Trap added 2026-09-09 03:3x — a vocabulary that cannot express a row forces the grader into the nearest WRONG value
+
+Drafting PB-147's tenant-scope sweep, the first vocabulary was three-valued — `SCOPED` / `PINNED` /
+`UNPINNED`. Measuring the hard half before briefing (PB-145's discipline) killed it:
+`grep -rLE 'business_id'` over the ten `Ui/` directories returns three PHP classes, and two of them —
+`X-175/Ui/ByDesign.php` and `X-175/Ui/CustomerfacingNone.php` — are **four-line static shells that run no
+query at all.** Neither is `SCOPED`, `PINNED` or `UNPINNED`; a three-value grader must file them under
+the nearest wrong one.
+
+⭐ **The generalisation: PB-132's destroyed-rows failure has a drafting-stage twin.** There a defined
+value went ungraded and its rows were lost; here an *undefined* value would have forced its rows into a
+class that misdescribes them — and `NO QUERY` misfiled as `SCOPED` is a clean sweep that quietly counts
+two non-measurements as evidence. ⭐ **Enumerate the vocabulary against the actual population before
+briefing it, not against the question.**
+
+⛔ Recorded with it: **X-175's two shells are NOT a finding.** They are declarations that the module has
+no data surface, not screens that failed to load one — briefing them would be fixing working code, which
+is PB-127's mistake.
