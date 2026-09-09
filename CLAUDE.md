@@ -5673,3 +5673,76 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     control flow. ⛔ Not to be re-raised. ⚠️ Ruling 206 had already fixed the only two doors that
     could reach a framework message (`SQLSTATE[22001]` from an owner-typed string), which is why
     this census found one seam rather than a population.
+230. **This lane has never asserted what it SENDS to the payment provider, and the `Idempotency-Key`
+    Stripe exists to honour is not sent — while `payments.idempotency_key` is `->index()` and not
+    unique, so the whole idempotency guarantee is a `->first()` with nothing behind it (RULED by the
+    lane supervisor 2026-09-09, briefed as MONEY-144).** Ruling 229 fixed one read-then-write window
+    that a unique index closed badly; the check-then-act census it opened found the same shape one
+    method over with **nothing** closing it at all. Measured: (1)
+    `2026_08_30_000030_create_x198_gateway_tables.php:34` is
+    `$table->string('idempotency_key')->index()` — **not unique**; (2)
+    `GatewayEngine::capture():78-85` reads by that key (excluding `failed`), returns if found, else
+    charges and creates; (3) `StripeGatewayClient::charge():20-26` posts to `/v1/charges` with **no
+    `Idempotency-Key` header** — `grep -rn "Idempotency" app/app/Modules/X-198 X-199 X-117` returns
+    exactly one line and it is a **comment**. So two concurrent captures under one key both read null
+    (neither sees the other's uncommitted insert), **both charge the customer**, and two rows land
+    with no error anywhere. ⭐ **The rest of this app got it right and wrote down why:**
+    `automation_runs` and `message_cost_entries` carry **unique** idempotency keys, and
+    `AutopilotJob:201,:457`, `SendOptInConfirmationJob:80` and `AutomationRunRetention:51` each carry
+    a docblock stating that the unique index is what stops the second run. Ruling 98's
+    self-contradiction tell **across lanes**, on the one table where the consequence is real money —
+    and `GatewayEngine:77`'s comment *"Idempotency check: duplicated ref charges once (G17-04,
+    G1-23)"* asserts at a capability id a guarantee neither layer provides.
+    **RULED: `charge()` and `createPaymentLink()` send Stripe the `Idempotency-Key` header.** That is
+    the half that stops the money moving twice, it is what the key is named for, and Stripe returns
+    the *same* charge or session for a repeated key rather than making a second.
+    ⭐⭐ **The key sent is namespaced by business, and that is not decoration.** Ruling 93 measured
+    that every charge here posts with the **platform's** secret and no `Stripe-Account`, so all
+    tenants share one Stripe account and therefore one idempotency namespace: a bare `idem_retry_1`
+    from two businesses would collide **at the provider** and hand tenant B tenant A's charge. So the
+    header is `x198-charge-{businessId}-{key}` and `x198-paylink-{businessId}-{paymentId}`.
+    ⭐ **Item 2 closes MONEY-143's own `UNRESOLVED`:** ruling 229 recorded an orphaned Checkout
+    Session as the residue of the pay-link race, and with the header the losing press gets the **same
+    session** back, so no orphan is created.
+    ⛔ **The unique index is NOT this wave, and the reason is measured.** `capture()`'s pre-check
+    excludes `failed`, and `X198Test:178`
+    (`test_a_retry_after_a_decline_is_not_short_circuited_by_idempotency`) pins that a retry after a
+    decline writes a **second** row under the same key, asserting `count === 2` — a plain
+    `unique(business_id, idempotency_key)` would refuse it. ⭐ And worse: `QueryException extends
+    PDOException extends RuntimeException`, so a `23505` raised inside `capture()`'s transaction
+    would be caught by `:124`'s `catch (\RuntimeException)` and write a **`failed`** row for a charge
+    Stripe actually took — ruling 228's *a message states what the METHOD did, never what the SYSTEM
+    did*, with real money. A partial index plus a re-read is its own wave with its own proof.
+    ⛔ Not resolved by a lock held across the HTTP call — ruling 229 refused exactly that.
+    ⚠️ **Why nothing could see it: the lane has ELEVEN `Http::fake` call sites and ZERO
+    `Http::assertSent`.** Every ruling from 36 to 229 asked what is at the other end of a string this
+    app *renders*; **nobody has ever asserted what is in a request it MAKES.** That is the new
+    population, and this is its first finding.
+    ⚠️ Blast radius, measured: `charge()` has **one** production caller (`GatewayEngine:95`) and
+    eight doubles; `createPaymentLink()` one (`PaymentLinkAction:26`) and four. **All twelve doubles
+    are `new class {}` bound through `$this->app->instance(...)` — duck-typed, NOT subclasses** — so
+    a surplus argument is inert (ruling 167) and ⛔ none is touched; the arity drift is recorded, not
+    churned (ruling 47's companion). No test in the lane asserts an HTTP request shape, so **zero**
+    existing assertions move and both items **add** methods (rulings 68, 70). The key becomes a
+    **required** parameter and `currency` loses its default, because a default is exactly where an
+    unsent key would hide silently (rulings 37, 66) and each method's single production caller
+    already passes currency explicitly.
+231. **Rulings 121(a) and 219 collide on a lock-blocked gate, and 121(a)'s "nothing else" throws away
+    the section the push turns on (RULED by the lane supervisor 2026-09-09, on MONEY-143's
+    `REPORT.md`).** Ruling 121(a) requires `GATE: NOT RUN — <the gate file's last line>` **and no
+    number, and nothing else**, after a run transcribed a predicted floor as a measurement. Ruling
+    219 requires `GATE:` to carry the test line **and §6's two `{"tool":…}` objects**, after a run
+    reported a genuine number from a file that did not exist. MONEY-143's gate was lock-blocked, the
+    coder took 121(a) exactly as written — and `gate-money143.txt` **exists, is 8212 B, and its
+    §1–§6 are green**: `0 uncommitted path(s)`, `pint passed`, `phpstan errors 0`. All of it was
+    discarded by *"nothing else"*, and §6 is the section ruling 34 turns the push on. **RULED: when
+    a gate is lock-blocked, `GATE:` carries §1–§6 exactly as the file prints them, plus the literal
+    `§7 NOT RUN — <the file's last line>`.** ⛔ Never a §7 number that was not printed — 121's
+    fabrication prohibition is untouched, and it is the *number* that was forbidden, never the
+    sections. ⚠️ The two rulings were written five waves apart against opposite failures and had
+    never met in one report; the collision is the supervisor's and it is graded a **note**, because
+    §1–§6 were measured green here in full and withholding a tip that landed on its predicted floor
+    to the digit over a paperwork field is ruling 74's error. ⚠️ The generalisable half: **a rule
+    written as "and nothing else" is a rule about one field that silently governs every other**, and
+    this is the ruling 128/210 family — moving or forbidding one item without naming what stays is
+    how a field goes empty.
