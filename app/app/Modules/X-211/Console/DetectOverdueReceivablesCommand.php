@@ -23,20 +23,23 @@ final class DetectOverdueReceivablesCommand extends Command
     public function handle(): int
     {
         $dispatched = 0;
+        $parked = 0;
 
         User::query()
             ->select('id')
             ->orderBy('id')
-            ->chunkById(200, function (Collection $users) use (&$dispatched): void {
+            ->chunkById(200, function (Collection $users) use (&$dispatched, &$parked): void {
                 foreach ($users as $user) {
-                    $dispatched += $this->dispatchForOwner((int) $user->getKey());
+                    $dispatched += $this->dispatchForOwner((int) $user->getKey(), $parked);
                 }
             });
 
         Tenancy::forgetAll();
 
-        if ($dispatched === 0) {
+        if ($dispatched === 0 && $parked === 0) {
             $this->info('No overdue invoices found to chase.');
+        } elseif ($dispatched === 0) {
+            $this->info("{$parked} overdue invoice(s) found; every one is already with a human, so none was dispatched.");
         } else {
             $this->info("Dispatched ArOverdue for {$dispatched} invoice(s).");
         }
@@ -44,7 +47,7 @@ final class DetectOverdueReceivablesCommand extends Command
         return self::SUCCESS;
     }
 
-    private function dispatchForOwner(int $userId): int
+    private function dispatchForOwner(int $userId, int &$parked): int
     {
         Tenancy::setUser($userId);
 
@@ -55,7 +58,7 @@ final class DetectOverdueReceivablesCommand extends Command
         $dispatched = 0;
 
         foreach ($businesses as $business) {
-            $dispatched += Tenancy::actingAs((int) $business->id, function () use ($business) {
+            $dispatched += Tenancy::actingAs((int) $business->id, function () use ($business, &$parked) {
                 $overdueInvoices = app(InvoiceReader::class)->overdueIssued((int) $business->id);
 
                 $localDispatched = 0;
@@ -71,6 +74,8 @@ final class DetectOverdueReceivablesCommand extends Command
                         $localDispatched++;
                     }
                 }
+
+                $parked += $overdueInvoices->count() - $localDispatched;
 
                 return $localDispatched;
             });
