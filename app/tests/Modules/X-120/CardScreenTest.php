@@ -320,4 +320,23 @@ class CardScreenTest extends TestCase
             ->assertSet('expYear', '')
             ->assertSet('name', '');
     }
+
+    public function test_add_card_forgets_partially_typed_fields(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        Livewire::actingAs($owner)->test(CardScreen::class)
+            ->set('number', '1234123412341234')
+            ->set('expMonth', '11')
+            ->set('expYear', '2029')
+            ->set('name', 'Incomplete Name')
+            ->call('addCard')
+            ->assertDontSee('1234123412341234')
+            ->assertSet('expMonth', '')
+            ->assertSet('expYear', '')
+            ->assertSet('name', '');
+    }
 }

@@ -49,6 +49,7 @@ class CardScreen extends Component
 
     public function addCard(): void
     {
+        $this->forgetCardFields();
         $this->adding = true;
         $this->waiting = null;
         $this->error = null;
