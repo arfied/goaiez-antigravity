@@ -6602,6 +6602,67 @@ Watch for: <the trap that applies, by name>
   `app/app/Modules/` → **0**, so tick 271's litter finding is **discharged** (`find app/app/Modules -name
   "*.patch" -o -name "*.orig"` is empty). Stub pile across the thirteen **11**. Re-run all three; never
   inherit them.
+- ⚠️ **The conflation a wave exists to FIX survives in its own summary field, because a summary
+  paraphrases the work while the corrected row is written from the artifact.** Wave 150's whole
+  deliverable was a ledger row disambiguating a stage total from one rule's subset; its `STATUS:` field
+  then read *"the real cross-module import count of 52 **out of 8 declared rules**"* — 52 being
+  violations and 8 being rules, the exact category error the wave existed to correct. The committed row
+  is right and exact on all four numbers (8 declared · 3 fired · 55 total · 52 cross-module, re-derived
+  independently: `grep -c "'what' =>"` → 8, `grep -c "across a module boundary"` → 52, and 52+2+1 = 55
+  closing on the nose), so this is `REPORT.md` only, which is overwritten. Third recurrence of the
+  tick-244/246 shape (*a wave that fixes a defect is the likeliest to ship a new instance of it*) and the
+  first confined to a file that does not survive. ⭐ **A paraphrase of a number is where a category error
+  re-enters after the row itself is correct** — so when a wave's deliverable is a corrected sentence, ask
+  `STATUS:` to **quote the committed row**, never to describe it. A quotation cannot re-conflate what the
+  row disambiguated.
+- ⚠️ **A condensed paste is honest and unverifiable at once, and the BRIEF is what forces the choice
+  between a wall of text and an ellipsis.** Wave 150 named a real command and pasted *"condensed for
+  space, total 55 lines"* — two rows and a `...` — against a question saying *paste that command's
+  output*. Nothing is concealed, because the condensation is disclosed; but tick 269's rule is that a
+  pasted output is evidence only when it is the output that was run, and a 2-of-55 paste cannot be
+  checked for the count it claims. It cost nothing only because I had re-derived every figure by an
+  independent route first, which is stronger than checking their pipeline (tick 268). ⭐ **When an output
+  may be long, ask for `| wc -l` beside the paste**: the count becomes checkable without the body, and
+  the coder is not put to a choice between flooding a report and offering an ellipsis a reviewer cannot
+  grade.
+- ✅ **`BoundaryStage` EXEMPTS `Events`, `Actions` and `Domain` by name (`:91`), so a listener importing
+  the event class it binds to costs no row — re-read from source at tick 275, not carried.** The stage's
+  own ⭐ comment is the reasoning: *"an `Events\` import IS the compliance, not the breach — a Laravel
+  listener must name the event class to bind to it, and flagging it punishes the exact pattern this stage
+  demands."* `Models\` stays flagged and is not a seam. This is what makes the house listener shape —
+  `use <Module>\Events\<Event>` + `handle(<Event> $event)`, now uniform across all three of X-01's
+  inbound listeners — free of boundary cost, and it ratifies every seam ruling this lane made at ticks
+  209/217/219/221 and waves 98, 102, 110, 147b.
+- **Suite baseline, measured at tick 275 on tip `eb44620d` — `tests 2436 · passed 2428 · assertions
+  10772 · failed 6 · errors 2 · incomplete 3 · risky 1 · duration_ms 148409`,** §1 `?? error_log` (inert:
+  untracked, no PHP, not under `app/`, not classmapped, read by no test), §2 `none`, §2b `all parse`, §6
+  pint `passed` / phpstan `0`, stamp `20260829-0647` = `runtime_build`. ⚠️ **The standing red set is now
+  EIGHT, not three** — six artifact-missing under `app/storage/app/evidence/**` (`X-117`, `X-198` ×2,
+  `X-199`, `X-211`, and `TwelveJourneysTest::a_real_gateway_charge_id_exists…`, all outside the thirteen,
+  three wanting real money) plus the two standing `TwelveJourneysTest` real-transport errors; the old
+  noun lint left the set when another lane froze its violators (tick 273). Tick 237's rule stands: **the
+  standing set is not a constant, so grade by identity and re-record it after every merge.**
+  `cmp` against wave 148's object → `differ: byte 94, line 1`, the `duration_ms` offset alone on equal
+  2436-test runs.
+- **Backlog at tick 275 — wave 151 is the payload proof on the X-102 → X-01 chat seam, and it is the
+  whole wave.** RULED, re-derived this tick (tick 235). `ChatLeadCapturedListener` hands
+  `$event->message` to `ingestMessage(...)` as `string $body` and **nothing persists it**:
+  `UnifiedInboxManager.php:80` dispatches `ConversationUpdated(messageSnippet: substr($body, 0, 50))` —
+  three hits, all X-01, **zero listeners** — and `:87-92` returns `'body' => $body` to a listener that
+  discards it; no `messages` row is written by any of it. Wave 147b's `X01Test.php:570` asserts
+  `channel => 'chat'` and its mutation moved that literal, so the **wire** is proven and the **words**
+  are not — swap `$event->message` for `$event->name` at `ChatLeadCapturedListener.php:26` and the suite
+  stays green, which is the proposition wave 143 refused this seam over and wave 141 proved for the
+  X-102 → C-Agent seam by mutating the **value**. ⛔ **No assertion and no mutation is named by this
+  column** — tick 214's conclusion-withheld form is 9-for-9 and has corrected me four times on these two
+  seams alone (ticks 259, 260, 261, and wave 147b's `object` parameter my brief never questioned) — and a
+  conclusion of *"no assertion is possible"* must name the two precedents it distinguishes itself from
+  (tick 260). ⛔ `⛔ REFUSED` and `UNRESOLVED` are both unavailable: X-01 and X-102 are in the thirteen
+  and nothing external is missing; a build owed is a **one-line `BUILD PROPOSAL:` under
+  `app/tests/Modules/`** naming the missing thing and its owner (this lane; X-01 owns
+  `UnifiedInboxManager`), never a build in the same wave. Live list
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **11** rows at tick 275, membership unchanged since
+  tick 274; `app/app/Modules/` → **0**. Re-run both; never inherit them.
 
 ## Style
 
