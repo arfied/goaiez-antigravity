@@ -37,6 +37,8 @@ final class ChatRateLimits
      */
     public const int TURN_PER_MINUTE = 60;
 
+    public const int CAPTURE_PER_MINUTE = 5;
+
     public static function register(): void
     {
         RateLimiter::for('chat-start', fn (Request $request): Limit => Limit::perMinute(self::START_PER_MINUTE)
@@ -47,6 +49,13 @@ final class ChatRateLimits
             )));
 
         RateLimiter::for('chat-turn', fn (Request $request): Limit => Limit::perMinute(self::TURN_PER_MINUTE)
+            ->by(self::chatKey($request))
+            ->response(fn (): Response => response()->json(
+                ['message' => 'Too many requests.'],
+                Response::HTTP_TOO_MANY_REQUESTS,
+            )));
+
+        RateLimiter::for('chat-capture', fn (Request $request): Limit => Limit::perMinute(self::CAPTURE_PER_MINUTE)
             ->by(self::chatKey($request))
             ->response(fn (): Response => response()->json(
                 ['message' => 'Too many requests.'],

@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\PlaceSuggestionController;
 use App\Http\Controllers\Api\PublicAuditController;
 use App\Http\Controllers\Api\WidgetReviewController;
 use App\Http\Middleware\ResolveWidget;
+use App\Modules\X102\Http\Controllers\ChatCaptureController;
 use App\Modules\X102\Http\Controllers\ChatStartController;
 use App\Modules\X102\Http\Controllers\ChatTurnController;
 use Illuminate\Support\Facades\Route;
@@ -159,6 +160,10 @@ Route::post('/chat/{key}/start', ChatStartController::class)
 Route::post('/chat/{key}/turn', ChatTurnController::class)
     ->middleware('throttle:chat-turn')
     ->name('api.chat.turn');
+
+Route::post('/chat/{key}/capture', ChatCaptureController::class)
+    ->middleware('throttle:chat-capture')
+    ->name('api.chat.capture');
 
 Route::middleware('auth:sanctum')->group(function (): void {
     /*
