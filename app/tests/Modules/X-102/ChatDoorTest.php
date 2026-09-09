@@ -6,6 +6,7 @@ namespace Tests\Modules\X102;
 
 use App\Models\Business;
 use App\Modules\CAgent\Models\AgentTurn;
+use App\Modules\X102\Models\ChatLead;
 use App\Modules\X102\Models\ChatSession;
 use App\Modules\X102\Models\ChatTurn;
 use App\Services\Pixel\PixelKeys;
@@ -211,6 +212,123 @@ class ChatDoorTest extends TestCase
         // Assert the database first, so a bypass fails here rather than on the status code.
         Tenancy::set((int) $biz->id);
         $this->assertEquals(0, ChatTurn::where('chat_session_id', $session->id)->count());
+
+        $response->assertStatus(400);
+        $response->assertJson(['error' => 'Bad Request']);
+    }
+
+    public function test_valid_key_creates_chat_lead_for_session(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Lead Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+        $key = app(PixelKeys::class)->ensureFor($biz);
+
+        $session = ChatSession::create([
+            'business_id' => $biz->id,
+            'session_token' => 'sess_lead_test',
+            'status' => 'active',
+            'rage_clicks_count' => 0,
+            'is_ai_capped' => false,
+        ]);
+        Tenancy::forgetAll();
+
+        $response = $this->postJson("/api/chat/{$key}/capture", [
+            'session_token' => 'sess_lead_test',
+            'name' => 'John Doe',
+            'phone' => '1234567890',
+            'email' => 'john@example.com',
+            'message' => 'Hello',
+        ]);
+
+        $response->assertStatus(201);
+        $response->assertJsonStructure(['id']);
+
+        Tenancy::set((int) $biz->id);
+        $this->assertEquals(1, ChatLead::where('chat_session_id', $session->id)->count());
+        $lead = ChatLead::first();
+        $this->assertEquals('John Doe', $lead->name);
+        $this->assertEquals('1234567890', $lead->phone);
+    }
+
+    public function test_non_string_capture_session_token_returns_400(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Lead Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+        $key = app(PixelKeys::class)->ensureFor($biz);
+
+        $session = ChatSession::create([
+            'business_id' => $biz->id,
+            'session_token' => '123',
+            'status' => 'active',
+            'rage_clicks_count' => 0,
+            'is_ai_capped' => false,
+        ]);
+        Tenancy::forgetAll();
+
+        $response = $this->postJson("/api/chat/{$key}/capture", [
+            'session_token' => 123,
+            'name' => 'John Doe',
+            'phone' => '1234567890',
+        ]);
+
+        Tenancy::set((int) $biz->id);
+        $this->assertEquals(0, ChatLead::where('chat_session_id', $session->id)->count());
+
+        $response->assertStatus(400);
+        $response->assertJson(['error' => 'Bad Request']);
+    }
+
+    public function test_non_string_capture_name_returns_400(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Lead Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+        $key = app(PixelKeys::class)->ensureFor($biz);
+
+        $session = ChatSession::create([
+            'business_id' => $biz->id,
+            'session_token' => 'sess_lead_test',
+            'status' => 'active',
+            'rage_clicks_count' => 0,
+            'is_ai_capped' => false,
+        ]);
+        Tenancy::forgetAll();
+
+        $response = $this->postJson("/api/chat/{$key}/capture", [
+            'session_token' => 'sess_lead_test',
+            'name' => 123,
+            'phone' => '1234567890',
+        ]);
+
+        Tenancy::set((int) $biz->id);
+        $this->assertEquals(0, ChatLead::where('chat_session_id', $session->id)->count());
+
+        $response->assertStatus(400);
+        $response->assertJson(['error' => 'Bad Request']);
+    }
+
+    public function test_non_string_capture_phone_returns_400(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Lead Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+        $key = app(PixelKeys::class)->ensureFor($biz);
+
+        $session = ChatSession::create([
+            'business_id' => $biz->id,
+            'session_token' => 'sess_lead_test',
+            'status' => 'active',
+            'rage_clicks_count' => 0,
+            'is_ai_capped' => false,
+        ]);
+        Tenancy::forgetAll();
+
+        $response = $this->postJson("/api/chat/{$key}/capture", [
+            'session_token' => 'sess_lead_test',
+            'name' => 'John Doe',
+            'phone' => 1234567890,
+        ]);
+
+        Tenancy::set((int) $biz->id);
+        $this->assertEquals(0, ChatLead::where('chat_session_id', $session->id)->count());
 
         $response->assertStatus(400);
         $response->assertJson(['error' => 'Bad Request']);
