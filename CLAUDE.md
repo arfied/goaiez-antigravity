@@ -3169,3 +3169,83 @@ the same move that made `SCRATCH BEFORE`/`AFTER` work where the prose prohibitio
 ⛔ Ruled **not** a shortfall and **not** a `BLOCK`: seven pure test appends to seven distinct files
 touching zero production code cannot entangle, which is the whole reason one-component-per-wave was
 overridden for this shape at PB-148.
+
+## ⛔⛔ Trap added 2026-09-09 05:2x — PB-129's duplicate detector reads `failed` and CANNOT SEE `errors`
+
+Every *"nothing else reddened"* verdict this lane has ever written was computed from a mutation log's
+**`failures`** array. PB-150's own artifacts show the two counts are independent channels, same tree,
+same suite, five minutes apart:
+
+```
+pb150-w1.red.log   "failed":2   "errors":4    ← +2 Authorize.Net E00040, external
+pb150-w2.red.log   "failed":2   "errors":2
+pb150-gate-1.log                 errors 2
+```
+
+⭐ **The durable half: a mutation that made some other test ERROR rather than FAIL — a null dereference,
+a missing binding, a container resolution that now throws — leaves `failed` unchanged, and the detector
+reports "nothing else reddened" and is WRONG.** ⛔ From PB-151 every mutation reconciliation reads
+**both** counts against the un-mutated baseline and names the cause of each difference.
+
+⚠️ Same shape as PB-135's *quoting the floor line is not reconciling it*, one field over. ⭐ And note
+what it took to see it: **a wave where the two numbers happened to disagree for a reason that did not
+matter.** An instrument's blind spot is invisible for exactly as long as the thing it cannot see stays
+at zero — ⛔ so do not read a long clean run as evidence the channel is being watched.
+
+## ⛔⛔ Trap added 2026-09-09 05:2x — "eleven" was a SCOPED measurement that six waves read as the population, and it falsified the previous wave's headline note
+
+PB-147 enumerated **eleven** role-guarded screens. PB-148/149/150 then reasoned about "all eleven
+guards", and my PB-149 block wrote *"`SuperAdmin` is admitted by `Pricebook` **ALONE**"*. Measured
+2026-09-09 with one grep over all ten module `Ui/` directories: **the lane has TWENTY role guards, and
+FIVE of them name `SuperAdmin`.**
+
+⭐ **This is the clearance-scope failure for the FOURTH time in this file** — after `is_sample` on
+X-166, the SPENT entry for X-167, and ruling 8's stale `UNRESOLVED`. ⚠️ **And it is the first one that
+falsified a NOTE rather than a clearance:** PB-150's NOTE 1 said *all eleven guards name `Manager`* and
+treated four rows as the frozen-instrument residue. **The residue is thirteen guards**, because the
+population was never eleven.
+
+⭐ **The fix is one clause in the prose: write the scope INTO the count.** *"Eleven, of a population I
+did not enumerate"* is a different claim from *"eleven"*, and only the first one degrades safely when a
+later tick reads it. ⛔ A bare cardinality in this file will be read as exhaustive by me, weeks later.
+
+⭐ **The tell that reopened it was mechanical and is reusable, exactly as the X-166 component count was:
+grep the whole population fresh before reasoning about "all N of them", and compare N.** One command.
+
+⭐ **The population, measured and now written down so it is not re-derived:** twenty `hasRole(` guards —
+X-163 `ConfirmationScreen:26` `Pricebook:48` `DailyPricingDigest:23` · X-162 `Map:22`
+`DispatchBoard:28` · X-165 `Plans:29` `Members:23` · X-166 `BySource:23` `ByTech:24` `MarginByJob:22`
+`ByService:23` · X-167 `Reorders:23` `StockByVan:24` · X-168 `TimesheetsView:26` `ApprovalsView:24`
+`OwnHoursView:23` · X-171 `SyncFailureRate:22` `StafffacingApp:37` · X-82 `RateRegistryView:27` ·
+X-175 `StafffacingAssistantPanel:25`. ⚠️ **Scope of this count: `hasRole(` in `app/app/Modules/*/Ui/`
+across the lane's ten modules only.** Guards elsewhere — middleware, policies, other tracks — are
+**not** measured by it.
+
+## ⛔ Ruling — 2026-09-09 05:2x — an unexercised guard member is pinned only where the ADMISSION is not itself in question
+
+Three cells failed the per-member matrix: `SuperAdmin` on `X-163/Ui/Pricebook.php:48`, `SuperAdmin` on
+`X-168/Ui/OwnHoursView.php:23`, and **`OpsAdmin` on `X-82/Ui/RateRegistryView.php:27`** — the last
+seeded **zero times in the entire `app/tests/` tree, in any track**.
+
+**RULED: pin the two `SuperAdmin` cells; MEASURE the `OpsAdmin` cell and pin nothing.**
+`UserRole.php:88/146` documents `OpsAdmin` as *"Operations admin"*, `:254` gives it
+`ImpersonationMode::View`, and `:170/:193/:213` group it with `BillingAdmin`/`SupportLead` — **platform
+staff, not tenant staff** — while `RateRegistryView::setRate():31` carries **no guard of its own**, so an
+admitted `OpsAdmin` writes a tenant's rates.
+
+⭐⭐ **The generalisation, and it is the converse of a rule this lane already has: PB-149 ruled that
+asserting a role a guard REFUSES asserts the opposite of the contract. Asserting an admission that ought
+to be a REFUSAL is exactly as wrong, and it is harder to notice — the test goes GREEN.** ⛔ A pinned
+admit arm is a test a later design decision has to **delete**, and this file already treats a deleted
+assertion as the shape it distrusts most.
+
+⭐ **The discriminator, and it is why `Manager` was pinned without hesitation on the same day:** the enum
+documents `Manager` as *"Day-to-day operation"* and it appears **31 times in production `app/app/`** — a
+tenant role, unambiguously admitted on purpose. `OpsAdmin` has no such evidence either way. ⛔ **Where
+the contract is unambiguous, pin it; where the admission is itself a live design question, measure it
+and rule next wave.** ⚠️ ⛔ Do not read this as licence to defer any inconvenient cell — the test is
+whether a **documented** reading of the role settles it, not whether the reviewer feels uncertain.
+
+⛔ **Recorded, not briefed: `Manager` is unexercised on THIRTEEN of the twenty guards** (every one
+outside PB-150's seven). It is the same question PB-150 already answered, on more rows — the documented
+frozen-instrument slide — so it is written down here with its count rather than turned into a wave.
