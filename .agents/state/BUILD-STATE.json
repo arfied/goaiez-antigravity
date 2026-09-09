@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-08T23:32:30",
+ "updated": "2026-09-08T23:55:57",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1910,6 +1910,12 @@
    "module": "X-162",
    "chose": "R245: the dispatch board's empty state no longer names a Jobs screen or offers a Go to Jobs button \u2014 go-to-jobs has no listener and X-121 exposes no Jobs screen. Dispatching a technician from this screen is undeclared in capabilities.php and is week-2 capability work on work_orders, which is X-121's (ruling 8).",
    "at": "2026-09-08T23:32:30",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-163",
+   "chose": "R245: the confirmation screen's empty state no longer offers an Open Pricebook button \u2014 open-pricebook has no listener and navigating between Livewire screens is undeclared in capabilities.php. The heading and sentence are unchanged because they are true; only the remedy was dead.",
+   "at": "2026-09-08T23:55:57",
    "ruling": "R245"
   }
  ],
