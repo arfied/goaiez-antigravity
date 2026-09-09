@@ -20,7 +20,7 @@ final class RuntimeProofCommand extends Command
             return self::FAILURE;
         }
 
-        $this->error('X-211 has no runtime proof: a recovery cannot reach a gateway charge id, because payments carries no plan column (see ruling 102). No artifact was written.');
+        $this->error('X-211 has no runtime proof: a recovery cannot reach a gateway charge id, because payments carries no plan column. No artifact was written.');
 
         return self::FAILURE;
     }
