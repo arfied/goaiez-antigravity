@@ -885,6 +885,60 @@ encodes that and nothing else.
 member of the `EU`…`GI` family, and the first where the defective instrument is a **CORROBORATION** — a
 second command believed to measure the first's quantity and measuring a neighbour of it.
 
+### ⛔⛔ `RULING GK` (tick 328) — `RULING GG` fixed the floor's MOMENT in a BRIEF and nothing fixed it in the LEDGER. An ahead-count is a measurement of a MOMENT, not of a pin, and this seat's own commit lands between the two moments EVERY tick. Tick 327's ahead-count does not reproduce, and both natural readings of that are wrong.
+
+`RULING FX(i)` extended `EZ` from the brief to the ledger for a count's **value**, because a REVIEWS block has no
+coder to falsify it. `RULING GG` established that this seat writes, then commits its own notes minutes later, and
+fixed the **floors** a moving `HEAD` invalidates — but `GG(i)` is explicitly about **a brief**. **Nobody extended
+the moment rule to the ledger**, and `FX(i)` cannot separate the two moments, because *both* values are produced
+by a command run against the pinned sha.
+
+Measured at tick 328 against tick 327's own pin and its own `HEAD` (`82897148`, unchanged):
+
+```
+ledger, tick 327:   Lane **109 ahead / 5 behind**   (pin 2daff2cc)
+git rev-list --left-right --count --first-parent 82897148...2daff2cc   →  110  5
+git rev-list --left-right --count               82897148...2daff2cc   →  110  43
+```
+
+⛔ **The behind-counts reproduce BY IDENTITY and the ahead-count does not.** The cause is not an arithmetic error:
+**`109` is the pre-commit value**, and tick 327 then committed `82897148`, making it `110`. Both are honest
+measurements against the pin, taken minutes apart, and the block does not say which moment it describes.
+
+⚠️ **The convention existed and lapsed.** Ticks 325 and 326 each wrote **both** values — *"108 ahead … 109 after
+this tick's own commit"*. Tick 327 wrote only the opening one, **and its explanatory clause names a different
+commit than the one it made**: *"the ahead-count moving 108 → 109 on our own tick-326 commit"* reads as though the
+figure were already post-commit, when the commit tick 327 itself made is the one that moves it again.
+
+⛔ **The harm is that BOTH natural readings of the discrepancy are wrong, and the failing direction is the
+plausible one.** An auditor measuring `110` against a recorded `109` must choose between *"the ledger erred"* —
+which would "correct" a sound number — and *"`main` moved"*, which manufactures a spurious `RULING DK` event out
+of this seat's own commit. Tick 328 met exactly this and spent a measurement separating them.
+
+✅ **Standing correction, two clauses, and the second is the mechanical discriminator the first tick lacked.**
+**(i)** Every ahead-count in a REVIEWS block **names its moment**, and by default states **both** values — the
+opening measurement and the value after this seat's own commit — because that commit is **guaranteed by the
+cadence**, not incidental. This is `GG(i)`'s moment rule carried from the brief to the ledger, exactly as `FX(i)`
+carried `EZ`'s. **(ii)** A backward audit reads a **+1 ahead-count** discrepancy as **this seat's own commit until
+a sha identifies it**, never as `main` having moved: our own commit moves the **ahead-count alone**, while `main`
+moving changes the **behind-count and the pin**, so the behind-count and merge base are the discriminators — and
+here both reproduced by identity while the ahead-count did not.
+
+⛔ **No instrument byte changes** (`RULING FY`'s precedent — every command printed the right number at the moment
+it ran; the ledger did not record which moment that was), and **`RULING FW`'s floor is untouched**: no instrument
+section was adopted, and `wc -l bin/supervise.sh` is **416**, unchanged since tick 241.
+
+⭐ **Applied to itself in the tick that wrote it** (`RULING FQ`'s standard): tick 328's block states **110 / 6** at
+the opening and **111 / 6** after `945f7c1a`. ⭐ **Proven on the exact historical event it is named for**
+(`RULING FU`'s standard) — not a replay but the live ledger, tick 327's own recorded figure, re-measured against
+its own pin. ⚠️ Member of the
+`EU`/`EV`/`EW`/`EX`/`EZ`/`FE`/`FF`/`FH`/`FI`/`FJ`/`FN`/`FP`/`FQ`/`FS`/`FT`/`FU`/`FV`/`FW`/`FX`/`FY`/`FZ`/`GA`/`GB`/`GC`/`GD`/`GE`/`GF`/`GG`/`GH`/`GI`/`GJ`
+family — ⛔ **no ordinal asserted**, per `FZ`/`GD(iii)`, because the enumeration has no clean derivation over the
+ledger and an increment-only tally is exactly what `FZ` refuses. It is the family's second defect whose subject is
+a **standing correction's SCOPE** rather than its command (`FZ`→`FX` was the first), and the first where the
+quantity, the command and the pin are all correct and only the **instant** the measurement describes was left
+unrecorded.
+
 ### ⛔⛔ `RULING GH` (tick 322) — a gate certifies a SHA, and in a coder-executed merge wave this seat's own commit lands INSIDE the run, so the wave's gate does not cover the tip this seat pushes. `RULING EO` binds a seat that cannot see the state it is conditioned on.
 
 `RULING GG` established that this seat writes the brief and then commits its own notes minutes later, and
@@ -2451,7 +2505,67 @@ DB pin intact, ours-since-base `app/phpunit.xml` alone, `§2e`/`§2f`/`§2g` all
 eight summing to it exactly, pint `passed`, phpstan `0`, and §1 back to **77** after item 1 deleted
 `generate_report.py`. Tip `ed01c9eb` pushed (`9aa5924e..ed01c9eb`), certified per `RULING GH(i)`.
 
-⛔ **The backlog is EMPTY at tick 327 and that tick wrote a HOLD — the EIGHTY-SIXTH consecutive tick
+⛔ **The backlog is EMPTY at tick 328 and that tick wrote a HOLD — the EIGHTY-SEVENTH consecutive tick
+with no instrument change, and it LETTERS `RULING GK`, so the decline streak ENDS AT THREE (325 · 326 ·
+327)**, both ordinals derived in-tick per `RULING FZ`: the instrument ordinal by `GB(ii)`'s **distinct
+authoring tick** form and never `git rev-list --count` (**85** prior over **375** rows before this tick's
+commit, **86** after it; `git log -1 -- bin/supervise.sh` still naming tick 241's `8e178993`), the
+lettering by `GD(i)`'s paired reader **first-match per subject** over `%s` (tick 326 → `letters none`,
+325 → `letters none`, 324 → `RULING GJ lettered`, the resetting event), tick 327's decline read from its
+**prose** because its notes were uncommitted until this tick's commit. ⭐ **`GD(i)`'s first-match rule did
+live work**: tick 326's subject carries **two** `letters none` matches, the second a quotation, and a bare
+row count would have read the census wrong. ⭐ **MAIN MOVED — pin `2daff2cc` → `bbc31686`**, ONE
+first-parent commit and it is a merge (`merge: track/sixty — wave 227`, 13:45:17), **+1 first-parent / +3
+ancestor / +1 merge**, the **MERGE** signature (`RULING EK`); the **FIRST moved tick after unmoved ones**,
+so **no consecutive-moved streak is claimed**, and the unmoved streak at `2daff2cc` **ENDS AT THREE**,
+derived with `GA(i)`'s reader over subjects spanning back to tick 324's **MOVED**, with tick 327's marker
+read from prose. ✅ **`RULING DK` did NOT fire** — `origin/main` re-read unchanged at `bbc31686` at write
+time. ⛔ **The owner's drift rule does NOT fire and all three conditions were measured at the pin**: (1)
+**6 / 46** behind — FALSE; (2) the `Doctor`/`JourneyHarness`/`.claude/`/`seals.json` diff against the pin
+is **empty** — FALSE; (3) no wave started, a `chore(supervisor)` commit with no `app/` byte pushed —
+FALSE. `DD`'s two-row re-check prints nothing and the whole `.claude/` diff prints nothing, so the take is
+**OPEN, UNNECESSARY and REFUSED** — this lane's checker **is** main's current checker byte-identical,
+`RULING EQ`'s void condition not reached, a take could refresh nothing at a cost of **46** ancestor
+commits. Lane **110 ahead / 6 behind** first-parent (**110 / 46** by ancestor count) at the opening
+measurement and **111 / 6** (**111 / 46**) after this tick's own commit — **both stated per `RULING GK(i)`,
+the rule this tick letters**; merge base **`57781d59` — main's own commit — unmoved**; ours-since-base in
+`app/` is `app/phpunit.xml` alone, so every stage count is **main's** (`RULING FO`). ⭐ **The admission
+census was NOT re-run and the reason is a measurement taken first**: `git diff --stat 6240383f HEAD --
+app/app/Modules/` is **empty**, corroborated by `capability` **207** unchanged; **§5 carries across by
+identity** — `git diff --stat b5473856 HEAD -- app/` is **empty**. ⭐ **`RULING GJ` reproduced a FOURTH
+time**: §1 read **78** at `.gateT328.txt` with tick 327's notes uncommitted (`M CLAUDE.md`, the `ℹ
+supervisor working notes` line present in §2; `git status --porcelain -uall | wc -l` → 78, **of which 77
+untracked**, supervisor directory **0**) and **77** at `.gateT328b.txt` after the commit, on an untracked
+set that did not change. §3 == the §5 tick 322 verified and still a LEDGER; §2 `none`; §2e/§2f/§2g `HEAD
+is not a merge` ×3; §4 seals ✓ with stamp `20260829-0647` == `runtime_build`; §6 pint `passed`, phpstan
+`0`. `wc -l bin/supervise.sh` **416** and drift `4 0`, both re-measured per `FX(ii)`; `bar` membership
+**not re-derived and therefore not asserted** (`RULING FZ`). **TRACK 1 ACTION 10** at the pin: **54**
+first-parent merges since `a5042da2` (53 → 54 on the one merge), **0** naming `track/stages`, `18bbde18`
+still not an ancestor (exit **1**, read from the tool result). **ACTION 1** run absolutely per `RULING
+EC`: the `.agents/rules/` grep prints nothing; ceiling of the **announced subset** **`N153`** by the `%s`
+form (`GC(ii)`). Case (d) per `GE(i)`/`GE(ii)`: newest heading `## OWNER RULING — 2026-09-09 09:02 —
+relayed by Track 1: when to merge origin/main into this lane`, **processed** — ⚠️ and per `GC(i)`, an
+unfired case (d) would mean only *"no note arrived on a channel Track 1 has recorded it cannot use"*.
+Case (b) excluded on mtime: `REPORT.md` 10:55 against the tick-327 block at 14:34. ⭐ **Commit and push
+per `GH(i)`/`GI`**: `git status` carried no unmerged paths and `pgrep -a -P 1 -f agy` found **no seat of
+this lane** before the commit; tick 327's notes committed as **`945f7c1a`** (`CLAUDE.md | 60`, by named
+path, subject carrying tick 327's marker and `letters none` in its leading segment), **gated at exactly
+that sha** (`.gateT328b.txt`, green) and **pushed by explicit ref, fast-forward `82897148..945f7c1a`**,
+with `git diff --stat 82897148 945f7c1a -- app/` → **empty** as the stated reason §5 carries across.
+⚠️ **Three permission prompts, none retried verbatim** (a trailing `echo "exit=$?"` on the gate
+invocation, a compound whose `grep -c` was re-issued as three plain calls, and an absolute `state.py` path
+re-issued relative) — `RULING FI`'s discriminator: the form, never the capability; ⚠️ **one hook refusal**
+— an `IFS=` read loop rejected as unmodellable word-splitting, refused **wholesale**, re-issued as three
+`--skip=N` calls; ✅ **`RULING ES`/`FJ` did NOT fire — no `cd` issued**; ✅ **`RULING FH` did NOT fire** —
+section offsets located with the anchored `^.\[1m== ` form, §2/§2a–c/§2e–g/§3/§4/§6 read positionally, §1
+from the anchored count line; ⭐ **the two liveness scans AGREED — ZERO seats of this lane at start and at
+write time**, the three foreign seats being Track 1's `run230` (`GOAIEZ_MERGE_OK=1`), `reviews run120` and
+`sixty run153`, **no forecast attached** (`RULING EJ`); ⭐ `state.py next` → `BUILD_WAVE` wave 30
+(`next_module X-190`), **not a licence**. ⚠️ Scratch files **named, not deleted**: `.sha328.txt`,
+`.gateT328.txt`, `.gateT328b.txt`, `.subj328.txt`, `.blkT328.md`, all under `.agents/supervisor/`, which
+§1 does not count. **These notes are left uncommitted for tick 329 under the standing cadence.**
+
+⛔ **The backlog was EMPTY at tick 327 and that tick wrote a HOLD — the EIGHTY-SIXTH consecutive tick
 with no instrument change, and it LETTERS NONE for a THIRD CONSECUTIVE tick (325 · 326 · 327)**, both
 ordinals derived in-tick per `RULING FZ`: the instrument ordinal by `GB(ii)`'s **distinct authoring
 tick** form and never `git rev-list --count` (**84** prior over **374** rows before this tick's commit,
