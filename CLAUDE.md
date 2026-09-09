@@ -228,6 +228,64 @@ tick 235 with `RULING FI`'s form and `RULING FJ`'s row-count control (`grep -cE 
 only the import class moved. **A rise with no lane-authored byte behind it is not a regression** — but
 say the arithmetic out loud, which STAGES-231's report did not.
 
+### ⛔⛔ `RULING FW` (tick 242) — the S-182 admission test CANNOT REFUSE AN INSTRUMENT WAVE, and four of the last five ticks walked through it. This seat grew its own gate by 45% in five ticks while ruling, in the same blocks, that the event three of its new sections inspect will not occur.
+
+`RULING ET` suspended *"say the lane is exhausted rather than invent a wave to fill it"* and replaced it with
+the **admission test** — for the **coder's** column. **Nothing was ever written for the SUPERVISOR's.** The
+door used instead is the S-182 shape: *no test, no assertion, no `app/**` edit, **cannot move a count**,
+mechanical falsifier.* ⛔ **An instrument change passes that trivially and WITHOUT BOUND**, because *"cannot
+move a count"* is the **defining property** of an instrument, not a constraint on one. S-182 was a **ledger**
+wave — finite deliverable, countable falsifier. An instrument has neither.
+
+```
+wc -l bin/supervise.sh                        416
+git show 10e804ea:bin/supervise.sh | wc -l    286     (tick 236)
+git diff --name-only 7a75f289 HEAD -- app/    app/phpunit.xml   ← the DB pin, and nothing else
+```
+
+**+130 lines, +45%, in five ticks, every byte self-authored, over a span in which the lane authored no
+`app/**` byte at all.**
+
+⛔ **Three of the added sections take a MERGE as their subject and were adopted in the same blocks that
+refused one.** `§2e` (S-193, tick 239), `§2f` (S-194, tick 240), `§2g` (S-195, tick 241) — and ticks 238–241
+each wrote *"THE TAKE IS OPEN, UNNECESSARY AND REFUSED"* **verbatim in the same commit message** that
+announced the adoption. `git rev-list --min-parents=2 --count 7a75f289..HEAD` is **1** of 19, and HEAD has
+**one parent**, so all three print `HEAD is not a merge — nothing to compare` in every gate since adoption and
+will for as long as the refusal holds.
+
+⚠️ **`CLAUDE.md`'s own warning turned on the seat that enforces it** — *"seven of the twelve `RULING C*`
+false-credit shapes were written by a wave that existed to keep the lane busy."* Every one was refused **for
+the coder**; four were run **by the supervisor** in five ticks, through a door with no floor in it.
+
+✅ **Standing correction, written as a FLOOR because `RULING EV` requires floors: an instrument section is
+admitted only when BOTH hold.** **(i)** `RULING FU`'s replay proves its **DIRECTION** on the exact historical
+event it is named for. **(ii)** the class it detects is **REACHABLE IN THIS LANE'S CURRENT OPERATING STATE** —
+it can fire on the live tree, not only on a replayed rev. ⭐ `RULING FQ`'s `§7` fix met **both** (live suite,
+six `✗ FAILURE` lines where there were five, naming `X-198`). `§2e`/`§2f`/`§2g` meet **(i)** and fail
+**(ii)**. **Clause (ii) is what every one of the last three adoptions would have failed, and no tick had a
+test that could ask.**
+
+⛔ **NOT a repeal and NOT a reason to remove the three** — they are correct for what they measure, cost one
+`git rev-list` each, and are exactly what a take needs on the day one happens; narrowing or deleting a clause
+to quiet it is `RULING DE`'s run-115 shape (`FV`'s own point). **They stay.** What changes is the **cadence**:
+**no further instrument section is adopted while the take stands refused.**
+
+⭐ **Applied to itself in the tick that wrote it, which is `RULING FQ`'s standard: tick 242 made NO instrument
+edit — the first tick since 236 that did not.** `RULING FS` is the precedent for a correction whose right
+answer is to leave the instrument alone and say why; **`FW` is the first where the thing left alone is this
+seat's own appetite.**
+
+⚠️ Seventeenth member of the `EU`/`EV`/`EW`/`EX`/`EZ`/`FE`/`FF`/`FH`/`FI`/`FJ`/`FN`/`FP`/`FQ`/`FS`/`FT`/`FU`/`FV`
+family, and the first where the defective instrument is neither a command, a floor, a classification, a
+direction nor a subject, but **THE SEAT'S OWN CADENCE.**
+
+⭐ **A precision on `FQ`'s drift number, measured at tick 242:**
+`git rev-list --left-right --count HEAD...<pin> -- bin/supervise.sh` → **`4  0`**. **Main has made ZERO
+commits touching that file since our merge base**, so `FQ`'s *"372 lines behind"* is a **frozen historical
+divergence, not a lag that grows** — a per-track file diverged long before `7a75f289`. `FQ`'s rule stands;
+what it does not imply is urgency, and four ticks read a large "behind" as though it were accumulating.
+⚠️ `RULING EK`'s shape in a third place: a count read correctly and taken for a rate.
+
 ### ⛔ `RULING FP` (tick 236) — `journey` is the SECOND stage that is not a function of the tree, and it is ARTIFACT-derived. A count fell because the PREVIOUS wave's test run wrote an untracked file.
 
 `RULING FB`/`FD` established that `schema` is joint on the tree **and the PostgreSQL server**, so a
@@ -1466,7 +1524,17 @@ dispatched — executed by the supervisor itself**, `bin/supervise.sh` being thi
 ⛔ **Not a wave and no count moved** — §5 identical in all eight across `.gateT241.txt` and
 `.gateT241b.txt`. It sets no `fail=1`: a trigger, never a verdict.
 
-⛔ **The backlog is EMPTY at tick 241 and this tick writes a HOLD.** Re-measured: **main did not move at
+⛔ **The backlog is EMPTY at tick 242 and this tick writes a HOLD — with NO instrument change, which is
+`RULING FW`'s remedy applied to itself.** Re-measured at the new pin rather than carried: main moved
+`c3ab0a6f` → **`58b0e8ee`**, **+2 first-parent** (`track/money` empty states, `track/pricebook` X-168),
+**neither ours**; lane **19 ahead / 10 behind** first-parent (**19 / 84** by ancestor count, `RULING EK`);
+merge base `7a75f289` unmoved; `18bbde18` still not an ancestor after **twelve** first-parent merges since
+the revert, `grep -c "track/stages"` over that range → **0**. `TRACK 1 ACTION 1` re-run **absolutely**
+(`RULING EC`): the `.agents/rules/` grep prints nothing and the note ceiling is still **`N142`** — Track 1
+published no note across two sibling merges. ⛔ **`RULING FW` now floors what this seat may admit into its
+OWN column**, so a future tick does not read an empty lane backlog as licence to grow the gate.
+
+⛔ **The backlog was EMPTY at tick 241 and that tick wrote a HOLD.** Re-measured: **main did not move at
 all** — pin `c3ab0a6f`, identical to tick 240's, so `TRACK 1 ACTION 1`'s absolute grep and the note
 ceiling are unchanged **by identity** rather than by carry; lane **18 ahead / 8 behind** first-parent
 (**18 / 73** by ancestor count, `RULING EK`); merge base `7a75f289` unmoved; `18bbde18` still not an
