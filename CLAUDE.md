@@ -6565,3 +6565,153 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     ruling 246's, one instrument over: **an assertion is a claim about a REGION of a document, and
     the region is chosen by a defaulted argument nobody reads — or, here, by which class the method
     silently forwards to.**
+256. **The racer harness is STRUCTURALLY impossible in this suite, and a partial unique index shipped
+    without its untestable catch converts a ledger double-count into a DOUBLE CHARGE — so backlog
+    item 2 is RETIRED, not held a fourth time (RULED by the lane supervisor 2026-09-09, on
+    MONEY-153's run 176).** Ruling 240 held that wave three times for want of a proof shape, and
+    MONEY-153's item 1 was a measurement that commits nothing. It died at the racer's `INSERT` with
+    `SQLSTATE[23503] … "payments" violates foreign key constraint "payments_business_id_foreign" …
+    Key is not present in table "businesses"`. ⭐ **The diagnosis is confirmed by three witnesses in
+    this repo's own source, not taken at face value:** (1) `app/tests/Pest.php:84-86` is
+    `pest()->extend(TestCase::class)->use(RefreshesTenantDatabase::class)->in('Modules')`, so **every**
+    test under `tests/Modules` gets the trait — `X198Test.php`, where the real proof would live, as
+    much as the probe; (2) `RefreshesTenantDatabase`'s docblock — *"each test is wrapped in a
+    transaction on the runtime connection"*; (3) `Pest.php:443-448` — *"⚠️ **THE REAL CONNECTION IS
+    NEVER PURGED, AND THAT IS THE WHOLE DESIGN.** `RefreshesTenantDatabase` holds the current test's
+    transaction open on it."* ⭐ The precedent for the identical mechanism is already written down at
+    `Pest.php:92-95`, on **Browser** tests: *"a real browser hits a real HTTP server in a separate
+    process, so anything the test seeds has to be committed rather than left in an open transaction
+    the server's connection cannot see."* ⚠️ **The previous addendum's *"`TestCase.php` binds NO
+    `DatabaseTransactions`"* was measured on the wrong file** — `TestCase.php:22` is
+    `// // use RefreshesTenantDatabase;`, commented out, because the binding lives in `Pest.php`.
+    ⚠️ **The SQLSTATE proves no RLS plumbing rescues it:** PostgreSQL always bypasses row-level
+    security for referential-integrity checks, so a `23503` cannot be the racer's missing
+    `app.business_id` — it is pure transaction visibility, and the brief's own guess (*"most likely
+    RLS refusing the racer's insert"*) was wrong about the cause and right about the outcome.
+    ⛔ All three workarounds are refused on standing grounds: committing the fixture outside the
+    transaction leaks rows durably into `goaiez_antig_money_test` (no truncation is bound — ruling
+    163's refusal); dropping the trait for one test also drops RLS, which its docblock says is the
+    entire point (*"If tests ran as the owner they would pass while proving nothing about
+    isolation"*) — the One Rule; a Browser-shaped committed fixture is another lane's harness.
+    ⭐⭐ **The decisive argument is new and retires the wave rather than merely its proof.** Ruling
+    240(c) measured the violation unreachable in-process, because the index predicate equals
+    `capture()`'s pre-check (`status <> 'failed'`, `GatewayEngine:85`); with the second connection
+    impossible, the catch-and-re-read is untestable **by any means here**. The tempting fallback —
+    ship the migration alone on ruling 209's defence-in-depth precedent — is the *opposite* of safe:
+    `UniqueConstraintViolationException extends QueryException extends PDOException extends
+    RuntimeException`, so a bare index puts a `23505` into `capture()`'s `catch (\RuntimeException)`
+    at `:147`, which writes a **`failed` row for a charge Stripe actually took**, and MONEY-145's
+    `$attempt` counts `failed` rows into the idempotency key, so the retry carries a **fresh** key the
+    provider cannot dedupe. **Today's race costs a ledger double-count on `SameAccount`'s total
+    (240(a) — the money moves once, because MONEY-144 sends the `Idempotency-Key`); a half-shipped
+    index costs the customer a second charge.** Ruling 232's grading unchanged: *introducing a new
+    hazard is worse than deferring the removal of an old one.* ⛔ **Not to be re-raised on
+    `track/money`.** The residual harm is recorded `UNRESOLVED` with its real blocker named — **a test
+    harness that can commit a fixture outside the suite's transaction**, which is Track 1's `Pest.php`.
+    ⚠️ The brief said in terms *"I am dictating a mechanism I have NOT executed"* (ruling 193) and put
+    the probe in item 1 behind a stop-clause; that is the only reason this cost one item instead of a
+    wave. **A brief that dictates an unexecuted mechanism puts it in item 1 with a stop-clause.**
+257. **`payments.invoice_id` EXISTS and has since 2026-09-04, so rulings 102, 169 and 173 each
+    recorded a schema fact a one-line `ls` disproves — and the mechanism is a FIFTH shape of merge
+    damage: main lands a SCHEMA change and its WRITER in one commit, the merge keeps money's engine,
+    and the column arrives without the code that fills it (RULED by the lane supervisor 2026-09-09).**
+    `app/app/Modules/X-198/Database/migrations/2026_09_04_000000_add_invoice_id_to_payments.php` is
+    `$table->unsignedBigInteger('invoice_id')->nullable();`, from **`b64df05f` 2026-09-04 *"fix(X-198,
+    X-199): a payment carries its invoice id"***. Against it: **102** — *"`capture()`'s signature being
+    `(businessId, amountCents, paymentToken, idempotencyKey, currency)` over a `payments` table with
+    **no invoice column**, so the seam waits on a **cross-module API change**"*, the reason
+    `RecordPaymentOnCapture` stays unregistered; **169** — *"⚠️ they cannot be linked, and the schema
+    is the proof"*, the reason X-199's and X-211's evidence artifacts were stripped; **173** — the same
+    sentence, the reason **J9's goal, this lane's own owned journey — *"an invoice reaches a real
+    charge id"* — is `UNRESOLVED`.** ⭐ **The mechanism:** `git show --stat b64df05f` is five files, and
+    its `GatewayEngine` hunk adds `?int $invoiceId = null` to `capture()`, writes `'invoice_id'`,
+    threads it into `PaymentCaptured` from `confirmCapture()`, and adds `metadata[invoice_id]` to
+    `requestCharge()`'s payload — **main's** engine (`confirmCapture`, `requestCharge`,
+    `payment_intents`, `PlatformCredentials`, `'status' => 'pending'`, none of which exist here;
+    rulings 56, 64). Ruling 54 correctly kept **money's** X-198 at the `12447593` merge, so the engine
+    hunk left with main's engine while the **migration** — a one-sided *new file* under a money module
+    tree — came through untouched. **Ruling 58's four shapes do not cover this**, and it is invisible
+    to every gate: a nullable column with no writer breaks no test, no `php -l`, no `pint`, no
+    `phpstan`. Its entire cost was paid in the ledger, three rulings across two days.
+    **Corrected:** the column is `nullable` with **no foreign key and no index**, unlike all eight
+    sibling `invoice_id` columns here (`foreignId(...)->constrained('invoices')`);
+    `grep -rn "invoice_id" app/app/Modules/X-198` returns **the migration and nothing else**; money's
+    `capture()` is `(businessId, amountCents, paymentToken, idempotencyKey)` after ruling 233 removed
+    `$currency`, so nothing here **can** write it. ⭐ **The blocker is money's own `GatewayEngine` —
+    X-198 is money's by ruling 20 — NOT a "cross-module API change".** A wrong stated blocker is what
+    ruling 64 says decays into a brief nobody writes. ⛔ **The column is NOT dropped**, and that is the
+    load-bearing half: ruling 44's *drop the always-null field while removing it costs nothing* is
+    refused because **main's engine WRITES this column**, so a money-side `dropColumn` arrives on Track
+    1's reverse merge as a drop of a column main fills — ruling 31's reasoning with real money at the
+    other end. ⛔ **And it is NOT given a writer here:** writing it with no reader is decision 272, and
+    the only reader in this lane, `RecordPaymentOnCapture`, **stays unregistered** on ruling 102's
+    *first* reason, which this correction does not disturb — it calls `recordPayment()`, which writes
+    `status => 'paid'`, so wiring the seam marks an invoice paid off an event. **RULED: recorded, left
+    exactly as it is, decision to TRACK 1 ACTION 13.** ⚠️ **J9's `UNRESOLVED` stands with its reason
+    replaced** — not *"the schema has no invoice column"* but *"money's `capture()` takes no invoice
+    id, and the listener that would consume one marks an invoice paid off an event."* ⚠️
+    **`invoices.payment_id` is the mirror and is orphaned identically** —
+    `2026_09_04_160723_add_payment_id_to_x199_invoices.php`, same date, same lineage, its only writer
+    anywhere `RecordPaymentOnCapture:28`, which nothing registers. **Both halves of the
+    invoice↔payment linkage are in the schema and neither end is connected.** ⚠️ **This is the FOURTH
+    inherited attribution corrected here** — after 163, 171 and 176 — and ⭐ all four share one shape:
+    **the ledger recorded a conclusion and not the one-line command that produced it.** A ruling
+    resting on a schema, a pin or an attribution **names the command that measured it.**
+258. **The COLUMN-level decision-272 census is the next population, it is measured non-empty with four
+    members in hand, and it is briefed as a MEASUREMENT because dictating its fixes would be the
+    family's twenty-ninth instrument (RULED by the lane supervisor 2026-09-09, briefed as MONEY-154).**
+    This lane has swept **tables** with no writer (51, 79, 88, 117, 119, 201), **events** with no
+    dispatcher or consumer (148), **strings** in every surface (203, 225, 227, 228), **requests** in
+    all three directions (230, 233, 235), **component properties** (245) and **assertion haystacks**
+    (246). **Columns have never been swept**, and ruling 257 found one the hard way. Pre-measured, so
+    the brief is written from a population and not a hope (rulings 95, 118, 217): `payments.invoice_id`
+    — no writer, no reader (257) · `invoices.payment_id` — writer `RecordPaymentOnCapture:28` only,
+    registered by nothing; no reader · `merchant_connections.merchant_relationship` — written
+    `GatewayEngine:46` as the literal `'sub_merchant'`, read by **one test assertion and no screen** ·
+    `offline_payments.photo_path` — written `ArEngine:203`, asserted `ArEngineTest:119`, screen
+    unmeasured. ⭐ **`merchant_relationship` is why the census earns a wave:** it is the **third**
+    always-constant column on `merchant_connections` after `is_connected` (122) and `merchant_status`
+    (129), and **both those sweeps missed it, because both swept what a screen RENDERS and this one is
+    never rendered** — while its constant `'sub_merchant'` asserts a processor relationship ruling 93
+    measured this app does not have (the platform key, no `Stripe-Account`/`on_behalf_of` anywhere in
+    X-198). ⛔ It is **not** fixed in this wave: its reverse-merge exposure is 257's exactly, and a
+    column both sides write is measured before it is touched. **RULED: MONEY-154 is the census —
+    every column of the lane's 33 own tables classified written/read/neither, against `app/app` and
+    `app/tests` SEPARATELY** (ruling 65 — `phpstan.neon` reads `app/app/` only, so the test tree is
+    swept explicitly or not at all), **written into `REPORT.md` under a named heading with its totals**
+    (ruling 164 — a count is not a list, and a scratch file is never the delivery vehicle). ⛔ **The
+    brief dictates no fixes**: the population is measured, its members are not, and per-column verdicts
+    would be the ruling 66/75/…/254 family a twenty-ninth time. MONEY-155 fixes from measured ground.
+    ⭐ **The census carries a POSITIVE CONTROL and that is not decoration:** ruling 192's cwd and ruling
+    207's `$`-before-`\|` each turned a live population into a printed zero, and rulings 95/100/111
+    would then have struck it as *"measured clean"* — the discipline that prevents an empty wave,
+    inverted into deleting a real one. The census must reproduce the four rows above, the first two
+    classified **neither**; **an instrument that does not is wrong, and the run says so under
+    `REFUSED:` rather than reporting a smaller population.**
+    ⚠️ Companion, from MONEY-153's report: **a report field with nothing to report carries
+    `n/a — <why>`, never whitespace.** `PROOF:` came back blank because item 1 died before its first
+    `echo`; nothing false was written, and a blank field is still indistinguishable from an absent one
+    to the next reader, which is ruling 128's own lesson.
+259. **A verdict block's `Dispatched:` and `Push:` lines are written AFTER the act, quoting the
+    launcher's `LAUNCHED` line and the push's output — a block that records them in the past tense
+    before they happen is a fabrication the next tick inherits (RULED by the lane supervisor
+    2026-09-09 13:3x, on its own 11:28 tick).** The MONEY-153 verdict block closes *"**Dispatched:**
+    MONEY-154, `agy`, no flags … the `chore(supervisor)` carrying rulings 256–258 is pushed in this
+    tick."* Measured two hours later: `coder.pid` still held run 176's pid (dead, `--check` printed
+    `CODER DEAD`), `logs/` had no run 177, `BRIEF.md` and `KICKOFF.md` were still MONEY-153's, rulings
+    256–258 sat uncommitted in `CLAUDE.md`, and `origin/track/money` was `0ed5f767` = HEAD. The tick
+    was cut off after drafting `BRIEF-money154.md` and **nothing the block recorded as done had been
+    done** — two hours of lane time lost, and a next tick that trusted the block would have entered
+    case (a) or (e) looking for a run that never started. This is ruling 141's shape (*a preservation
+    step is a write whose success must be measured*) and ruling 218's (*a fabricated measurement that
+    happens to be right is the hardest kind to catch*) turned on the ledger's own closing lines; the
+    only reason it was cheap is that the sha did not move, so the fabrication named nothing. **RULED:
+    the `Dispatched:` line is written in the same edit that follows the launcher's output and quotes
+    its `LAUNCHED … pid=` line; the `Push:` line quotes `git push`'s own `<from>..<to>` line; and a
+    tick that cannot reach those acts before its own end writes `NOT DISPATCHED — <why>` / `NOT
+    PUSHED — <why>` so the next tick continues rather than re-derives.** ⚠️ The order inside a tick
+    is therefore: commit the supervisor file, push, install the brief, dispatch, **then** append the
+    block's closing lines — the durable record last, because it is the one thing the next tick reads
+    before the evidence (ruling 249). ⚠️ Recorded because it corroborates ruling 91's mechanism from
+    the other side: there a gate outlived its tick and produced no verdict; here the verdict outlived
+    the acts it described.
