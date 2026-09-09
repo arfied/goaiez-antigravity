@@ -6506,3 +6506,62 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     four-line diff whose every touched test has a quoted green filtered run is stronger than the
     suite number would have been. ⚠️ A hand-run filtered pest carries the `DB_DATABASE=` prefix
     (owner ruling 3) and runs alone in this checkout (ruling 42).
+254. **A merge sweep is a claim about what MAIN brought, so it is measured from the BASE — a
+    tip-to-tip `git diff HEAD MERGE_HEAD` reports this lane's own unmerged work as an incursion, and
+    MONEY-152's stop-clause fired on money's own file (RULED by the lane supervisor 2026-09-09, on
+    MONEY-152's run 175).** The brief's item 5 dictated
+    `git diff --name-status HEAD MERGE_HEAD -- <money's eight module and eight test trees>` and said
+    *"the second must print nothing … if it prints anything at all, stop and report it under
+    `REFUSED:` with the merge still staged."* It printed **`M
+    app/tests/Modules/X-120/CardScreenTest.php`** and the coder stopped and reported it, exactly as
+    the brief's own condition says. **The refusal is correct and is upheld, and it spends no
+    dispatch** (rulings 60b, 71, 94, 106, 118). **The instrument was pointed the wrong way.**
+    `HEAD..MERGE_HEAD` is the difference between two *tips*, so it reports every asymmetry —
+    including everything **money** has that main has not. Measured: `git diff --name-status
+    e2202e3f HEAD -- app/` is **exactly one file**, that same `CardScreenTest.php`, MONEY-151's own
+    work (`eb1aa387`), which main has never seen because Track 1 has not merged money since the base;
+    `git diff --name-status e2202e3f cbdba9cd -- <the same sixteen trees>` is **empty**, so ruling
+    58's shapes (1) and (2) genuinely **cannot fire**, exactly as the brief claimed; and
+    `git diff --cached HEAD --name-only -- app/tests/Modules/X-120 app/app/Modules/X-120` is
+    **empty**, so MONEY-151's work survives the merge untouched. ⭐ **This is ruling 126's shape
+    recurring, and 126 is the ledger entry that should have prevented it** — *"`git diff
+    <main-at-base> <lane-tip>` reports a one-sided addition on the other side as a deletion"* — yet
+    the next merge brief reached for the tip-to-tip form anyway, because it is the shorter command
+    and it *looks* like it answers the question. **RULED: every merge sweep in this lane is measured
+    from the merge base — `git diff --name-status <merge-base> <MERGE_HEAD> -- <paths>` for what main
+    brought, and `git diff --cached HEAD -- <paths>` for what the merge actually stages into this
+    tree — and a tip-to-tip `HEAD MERGE_HEAD` diff is never a stop-clause instrument**, because its
+    output grows with this lane's own unpushed work and therefore fires more often the more this lane
+    has done. ⛔ Never resolved by exempting the file that fired, which would hide a real incursion
+    the next time; ⛔ never by dropping the stop-clause (ruling 118 — it is what stops a coder
+    resolving unbriefed paths). ⚠️ **It cost nothing this once, and that is luck rather than design:**
+    the stop-clause sat at item 5, the last substantive step, so items 6 and 7 ran anyway and the
+    report arrived with all twelve fields, both `RAW` lines and the merge correctly staged. **Had the
+    same defect sat at item 1 it would have cost the whole run**, which is precisely what ruling 217's
+    did. ⚠️ Per the standing precedent the miss is the supervisor's, so MONEY-153 carries its own two
+    dispatches and MONEY-152's cap is untouched. It is the ruling 66/75/82/92/94/106/118/147/153/175/
+    183/189/192/193/195/198/200/202/204/207/210/215/217/218/219/222/225/226/228/229/231/232/233/235/
+    237/238/241/242/243/244/246/247/252 family a **twenty-seventh** time, with the fifty-fourth
+    instrument: **a brief that dictates a diff has dictated its DIRECTION, and a direction that
+    includes this lane's own work makes a stop-clause fire on success.**
+255. **`assertSeeInOrder` is NOT a Livewire assertion — it forwards to a raw `TestResponse` and
+    therefore searches the FULL payload including `wire:snapshot`, while every `assertSee` beside it
+    in the same chain searches the stripped markup; measured across all six call sites, none is
+    defective (measured 2026-09-09; rulings 64, 95, 100, 111, 246).** Ruling 246 established that
+    `assertSee`/`assertDontSee` default `$stripInitialData = true` and delete the snapshot before
+    searching. `Livewire\Features\SupportTesting\Testable` defines no `assertSeeInOrder`; `__call`
+    (`Testable.php:411-419`) forwards it to `$this->lastState->getResponse()->assertSeeInOrder(...)`,
+    `Illuminate\Testing\TestResponse:744`, which searches `getContent()` whole. **So a single
+    Livewire chain routinely uses two different haystacks**, and nothing in either signature says so.
+    ⚠️ **No site in this lane is defective, and the proof is already in the ledger:** the three
+    ordering assertions MONEY-132 added for ruling 204's unordered lists — X-120 `1111/2222/3333`,
+    X-198 `acct_one/two/three`, X-173 `Revenue/Materials/Subcontractors` — each **reddened** under
+    ruling 204's reversal mutation with its RED *render order* verified in the verdict block, which
+    is positive proof the needles are in the rendered markup and **not** in the payload; the other
+    three (`InvoicesScreenTest:66`, `CreditsScreenTest:83`, `:86`) assert model data and labels that
+    no public property holds, and ruling 245 measured that a property holding an Eloquent model or
+    collection dehydrates to `[null, $meta]` with no attributes at all. **Recorded as a latent hazard
+    (ruling 96), struck as a wave (ruling 95).** ⛔ Not to be re-raised. ⚠️ The general lesson is
+    ruling 246's, one instrument over: **an assertion is a claim about a REGION of a document, and
+    the region is chosen by a defaulted argument nobody reads — or, here, by which class the method
+    silently forwards to.**
