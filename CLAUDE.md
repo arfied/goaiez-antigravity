@@ -6852,3 +6852,75 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     its population from the **migrations** — durable ground truth — instead. ⚠️ The generalisable half:
     **before briefing a measurement, ask which document the ANSWER lives in and how long that document
     lives**, because the deliverable of a measurement wave is the only thing it produces.
+265. **A population derived from migrations is a claim about a SCHEMA, not about a directory — so it is
+    reduced by every rename and drop and filtered of index names — and two of MONEY-156's three
+    defective rows were ruling 260's own corrections, returned intact by the third attempt (RULED by
+    the lane supervisor 2026-09-09 17:0x, on MONEY-156's `d49622f4`).** Ruling 264 re-cut the census
+    onto the migrations because `REPORT.md` is overwritten and the prior table was lost. That is the
+    right ground and it is **not the schema**: a migration directory is an append-only log of
+    *statements*, so `CREATE`, `RENAME` and `DROP` all leave a name behind and only the fold of all
+    three says which columns exist. Measured on the delivered table: `invoices.due_notified_at` is a
+    **phantom** — `2026_09_08_160000:13` is `renameColumn('due_notified_at','due_detected_at')`, and the
+    census lists `due_detected_at` separately, so one column was counted twice under two names — and
+    `invoices_business_id_invoice_number_unique` is an **index name** (`2026_09_06_030000:12`'s
+    `$table->unique([...], '<name>')`), which the instrument read as a column and then reported as
+    reader-less while `EvidenceInvoiceCommand:84,:85` and `X199RuntimeProofTest:23` name it. ⭐ **Both
+    were measured and written down by ruling 260, and neither reached the third attempt's instrument.**
+    So the totals are `126 columns · written 111 · dead 15`, not `128 · 111 · 17`. **RULED: a
+    migration-derived population applies renames and drops before it is counted, and excludes the
+    second argument of `unique()`/`index()`/`dropUnique()`; and a brief re-cutting an instrument
+    enumerates the corrections the ledger already holds against it, by ruling number, in the brief.**
+    ⚠️ The third defect is different in kind and is not charged: `disputes.deadline_at` was called
+    `neither` with `n/a` readers when `DisputeDefenseEngine:87` guards on it and
+    `dispute-card.blade.php:26,:27` renders it — ruling 262(b)'s "read the hit" not running on one row
+    of seventeen, where the other eight `n/a` rows were independently confirmed empty. Its **dead**
+    half stands (nothing writes it) and ruling 80 already governs it, so no wave was lost. ⚠️ The
+    generalisable half is ruling 64's, aimed at an **instrument** rather than at a follow-up or a
+    prohibition (252): **a correction to a measuring instrument decays exactly like a stale
+    measurement, and it decays silently, because the instrument's next run reproduces the original
+    error with a fresh date on it.** ⛔ The column census is CLOSED — all fifteen real dead columns are
+    already governed by rulings 51, 59, 80, 88, 117, 130, 214, 216, 261 and 263, so it yields **zero**
+    buildable fixes, confirming ruling 261 for the third consecutive time. Not to be run a fourth time.
+266. **J9's own comment and X-199's operator refusal both state the schema fact ruling 257 disproved,
+    while X-211's identical-shaped twin states one that is TRUE (RULED by the lane supervisor
+    2026-09-09 17:0x, briefed as MONEY-157).** Ruling 257 measured that `payments.invoice_id` **exists**
+    — `2026_09_04_000000_add_invoice_id_to_payments.php:12`, nullable, no FK, no index — and replaced
+    ruling 102's stated blocker with the real one: *money's `capture()` takes no invoice id, and the
+    listener that would consume one marks an invoice paid off an event.* **Nothing wrote that
+    correction into the tree**, and the superseded reason is sitting in two places, one of them this
+    lane's own owned journey. (a) `TwelveJourneysTest.php:503-506` — J9's comment reads *"capture()
+    takes (businessId, amountCents, paymentToken, idempotencyKey, **currency**) over a payments table
+    with **no invoice column**"*: **two** falsehoods, since ruling 233 removed `$currency` and the real
+    signature is four parameters (`GatewayEngine.php:69-74`), and the column exists. `:506`'s *"that
+    schema gap"* refers back to it and moves with it. (b) `X-199/Console/RuntimeProofCommand.php:23` —
+    the operator-facing refusal *"because payments carries no invoice column (see ruling 102)"*, which
+    is ruling 225's ungated console surface carrying ruling 100's own question — *is that actually why
+    it refused?* — answered **no**. ⭐ (c) **`X-211/Console/RuntimeProofCommand.php:23`'s *"because
+    payments carries no plan column"* is measured TRUE** — the only column that migration adds is
+    `invoice_id` — so it is **byte-identical Table B**, and this is ruling 228(a) exactly: two
+    sentences of the same shape in two files, one true and one false, where a wave that "harmonises"
+    the pair breaks the good one. **RULED: each false clause states the real blocker in ruling 257's
+    own words, and the citation is DROPPED rather than renumbered** — a new `R###` must resolve under
+    `php artisan why` and 64 unresolvable citations already exist, while ruling 224 measured
+    `CapabilityStage::testedIds()` scans only `G\d+-\d+|N-\d+`, so `ruling 102` feeds no instrument and
+    costs nothing to remove. ⛔ **J9's method name is NOT changed** — it is accurate as written, and
+    ruling 178 measured the rename has four readers (`RuntimeProofCommand`'s needle, `junit.xml`,
+    `runtime-proof.json`, and `JourneyStage:24`'s slug, which ruling 177 freezes). ⛔
+    `assertArrayNotHasKey('invoice_status', $artifact)` is not touched: it is TRUE (ruling 173 removed
+    the key) and it is an assertion (rulings 39, 46). ⛔ Nothing is wired — ruling 257's *recorded, left
+    exactly as it is* stands, the column is not dropped (main writes it; reverse-merge exposure) and
+    `RecordPaymentOnCapture` stays unregistered on ruling 102's **first** reason, which this correction
+    does not disturb. ⚠️ **The proof for (b) is a CLI run with its output quoted, never a test** —
+    ruling 49 already ruled that for this exact command, whose first guard is `runningUnitTests()` →
+    FAILURE, so any in-suite test passes for the wrong reason; and (a) is a **comment**, which nothing
+    reads and no mutation can redden (rulings 70, 81), so none is asked for. ⚠️ **Measured before
+    briefing, and it retires a standing assumption: `coder-bin/git:83` is
+    `HARNESS='app/tests/Journeys/JourneyHarness\.php$|'` — the commit refusal is keyed to that ONE
+    FILE, not to `app/tests/Journeys/`.** So `TwelveJourneysTest.php` is committable with **no
+    `--allow-harness`**, and a tick that inferred the directory from rulings 60 and 74 would either
+    pass a flag ruling 74 forbids as standing, or route the wave around the file for nothing.
+    ⚠️ The sweep is **8 lines, 3 to change and 5 measured clean** (ruling 118's two tables, counted per
+    ruling 217): Table B is X-211's true twin, `X-117/Console/RuntimeProofCommand.php:24` (ruling 49's
+    own honest refusal), `TwelveJourneysTest.php:502` (true — the artifact does carry no invoice
+    status), and two Track 1 files this lane may not edit, `ModuleDoneCommand.php:159` and
+    `Doctor/Stages/TestAnchorStage.php:60`.
