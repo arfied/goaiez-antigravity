@@ -132,7 +132,7 @@ class CardScreenTest extends TestCase
             ->assertSee('1111')
             ->assertDontSee('4242424242424242')
             ->assertSee('1111')
-            ->assertDontSee('4242 4242 4242 4242')
+            ->assertDontSeeHtml('4242 4242 4242 4242')
             ->set('number', '4242424242424241')
             ->set('expMonth', '12')
             ->set('expYear', (string) (now()->year + 2))
@@ -146,7 +146,7 @@ class CardScreenTest extends TestCase
             ->assertSee('Waiting on Stripe tokenisation: the visa ending 4242')
             ->assertSee('A Plumber')
             ->assertSee('1111')
-            ->assertDontSee('4242424242424242');
+            ->assertDontSeeHtml('4242424242424242');
 
         $this->assertSame(
             0,
@@ -315,7 +315,7 @@ class CardScreenTest extends TestCase
             ->set('expYear', '2029')
             ->set('name', 'Incomplete Name')
             ->call('makeDefault', $card->id)
-            ->assertDontSee('1234123412341234')
+            ->assertDontSeeHtml('1234123412341234')
             ->assertSet('expMonth', '')
             ->assertSet('expYear', '')
             ->assertSet('name', '');
@@ -334,7 +334,7 @@ class CardScreenTest extends TestCase
             ->set('expYear', '2029')
             ->set('name', 'Incomplete Name')
             ->call('addCard')
-            ->assertDontSee('1234123412341234')
+            ->assertDontSeeHtml('1234123412341234')
             ->assertSet('expMonth', '')
             ->assertSet('expYear', '')
             ->assertSet('name', '');
