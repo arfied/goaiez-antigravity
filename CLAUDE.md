@@ -3108,3 +3108,64 @@ the test green."*
 would be buying a green test with a CHECK change. ⛔ And the role must be one the guard actually refuses
 — **`Staff`**, never `Manager`/`OpsAdmin`, which are *allowed* and would assert the opposite of the
 contract.
+
+## ⭐⭐ Trap added 2026-09-09 05:0x — PB-115 on a role list has an ADMIT side, and three consecutive waves pinned only the REFUSAL
+
+The entry directly above transferred PB-115's method to a role list and named the untested arm as **the
+refusal**. PB-147 found it, PB-148 proved the shape, PB-149 applied it to seven screens. ⭐ **All three
+waves asked only "does the guard refuse the right people?"** Measured lane-wide at PB-149's review:
+
+```
+UserRole::Owner  87 seedings · UserRole::Staff 28 · UserRole::SuperAdmin 11 · UserRole::Manager  0
+```
+
+**`UserRole::Manager` is created by ZERO tests anywhere under `app/tests/Modules/` — in any track** (its
+only four appearances in the whole test tree are under `app/tests/Feature/`). And **all eleven of this
+lane's `mount()` guards name it.** `User::hasRole(UserRole ...$roles)` is **variadic**, so removing one
+role is a one-token edit that compiles, passes phpstan and passes pint. ⛔ **Delete `UserRole::Manager`
+from all eleven guards and the entire lane stays green** — while every manager in every tenant silently
+loses eleven screens, including price confirmation, the dispatch board and timesheet approvals.
+
+⭐ **It is a real contract, and that discriminator was measured BEFORE briefing:** `UserRole::Manager`
+appears **31 times in production `app/app/`** and the enum documents it as *"Day-to-day operation,
+including automation settings."* ⛔ Had it been dead in production too, pinning it would have been
+pinning a fiction — check that first, every time.
+
+⭐⭐ **The generalisation: a `hasRole(A, B, C)` call is a SET, and a wrong-role arm proves the COMPLEMENT
+is refused while proving NOTHING about any individual member.** A guard-clause member no test exercises
+is padding **inside the guard**, by this lane's own bar — *what one-line mutation makes this red? none ⟹
+padding.*
+
+⚠️⚠️ **And the shape is why three waves missed it, which is the durable half: each wave's instrument was
+the previous wave's instrument pointed at MORE ROWS.** The population grew 1 → 7 and the question never
+did. ⭐ That is the documented slide's quieter cousin — not a criterion **loosened** until it fires, a
+criterion **frozen** while the row count does the work of looking like progress. ⛔ When a wave is the
+last wave with a bigger population, ask what question has not been asked of even one row.
+
+⭐ Ruled at PB-150 as a **coverage** defect exactly like PB-148's: the guards are correct, so ⛔ a `-`
+line in any `mount()` is a `BLOCK`, the assertion is a bare `assertOk()` (the claim is *the guard admits
+a manager*, not *the screen renders correctly*), and the mutation deletes **one argument**, never the
+clause — deleting the clause also reddens the `test_staff_is_forbidden` arm and isolates nothing.
+⭐ **And the test must be shown GREEN un-mutated first:** `Expected 200 but received 403` is producible
+by the mutation *and* by a tenancy setup that never ran, so the green is the only thing that tells them
+apart.
+
+## ⭐ Trap added 2026-09-09 05:0x — a size guard keyed on a PROPERTY is a SELECTION rule and bounds nothing
+
+PB-149's 1c read *"If more than six screens survive, write tests for the ones whose component has a
+write path."* Eleven survived; the property selector returned **seven**. ⭐ The coder answered the rule
+exactly as written and the wave came out one larger than the guard existed to permit.
+
+⚠️ **PB-143's fix removed the cap along with the defect.** That ruling correctly killed *"the first
+six"* — a positional selector applied to a filtered result silently returns the unfiltered head — and
+replaced it with a property. **But a property selector has no cardinality at all**, so "more than six ⟹
+select by property" *reads* like a bound and is not one.
+
+⭐ **The fix, standing: a size guard names the property AND pre-declares the expected count, and a count
+that differs is a STOP-and-report.** Then the bound is checkable by arithmetic before the wave starts —
+the same move that made `SCRATCH BEFORE`/`AFTER` work where the prose prohibition had failed twice.
+⛔ Never leave a bound to be noticed by the reviewer afterwards.
+
+⛔ Ruled **not** a shortfall and **not** a `BLOCK`: seven pure test appends to seven distinct files
+touching zero production code cannot entangle, which is the whole reason one-component-per-wave was
+overridden for this shape at PB-148.
