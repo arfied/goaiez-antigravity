@@ -5731,6 +5731,74 @@ Watch for: <the trap that applies, by name>
   defect exactly (build the wire, restore the row's proposal line in the same commit). Live list
   `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **9** rows at tick 263, the tick-262 six plus the
   three new X-102 rows; stub pile across the thirteen **10**. Re-run both; never inherit them.
+- ⚠️⚠️ **A correction that removes a false clause must say which clauses it is KEEPING — deleting a
+  whole sentence is cheaper than editing one, and the half that was measured RIGHT goes with it.**
+  Wave 142 fixed `ChatDoorTest.php:23` correctly on both halves it was asked about — the borrowed
+  `G5-37` came off (that id is `CLOSED` four lines from a row the same wave's parent edited) and the
+  unasked `Track 1 **must** map` obligation came off with it. It also dropped `Owner:` entirely, and
+  tick 262 had measured that half in these words: *"naming an external owner is right. What is wrong
+  is only the word **must**."* The precedent the brief named as the model —
+  `ChatTurnAction.php:29`, *"This is a build owed **by Track 1**: mapping … is required, but it has
+  not been asked for yet"* — still carries the owner two files over; the wave copied that sentence's
+  second clause and dropped its first. Eight of nine board rows name an owner and the ninth names it
+  in prose, so `grep -rn "BUILD PROPOSAL:"` — which **is** this lane's backlog — now prints a
+  required build with nobody attached. ⭐ **NOTE and not `BLOCK` on the tick-263 discriminator**: the
+  row is *incomplete*, not false; a docblock corrects forward by rewriting itself where the
+  append-only ledger and a commit message cannot; and **nothing left the board**, which is the
+  direction separating this from the tick-218 `BLOCK`.
+- ⚠️⚠️ **`git diff HEAD~1 HEAD` cited as the check on "everything this wave wrote" covers ONE commit,
+  and on any wave that ends with a `chore(state):` ledger commit it is the wrong one every time.**
+  Wave 142's answer 4 named it as the command proving its new `ChatDoorTest.php` text asserts no
+  unasked obligation; run at tick 264 it prints `.agents/state/BUILD-STATE.json` and
+  `.agents/state/JOURNAL.md` and nothing else, because the test change was one commit earlier. The
+  **conclusion was right** and only the citation failed, which is what keeps it a note. This is tick
+  190 (*never cite a log for a section it does not contain*) with a **commit range** as the
+  container, and the ledger commit is always last, so `HEAD~1` is always the wrong floor.
+  **Ask for a range by its floor sha, never by `HEAD~n`.**
+- ⚠️ **A measurement named in a brief's PROSE with no field asking for its output is answered by not
+  running it — third recurrence, and the second in consecutive ticks.** Wave 142's item 0b handed
+  over X-102's six capabilities in full and added *"`grep -n "'G"
+  app/app/Modules/C-Agent/capabilities.php` is the other one and I have not run it for you."* It was
+  never run; `REPORT.md` and the append-only ledger both ground *"the rows correctly lack ids"* on
+  **X-102's six alone**. Measured at tick 264 the conclusion survives — C-Agent declares **21**
+  capabilities and none covers the author-type guard or the turn number — so the row is narrowly
+  grounded rather than false. ⭐ The same grep produced the fact nobody on this lane had in front of
+  them: **`C-Agent/capabilities.php:46` is `'G5-33' => 'ONE Conversation across channels is why it
+  works (X-121)'`**, the subject of the very row that wave rewrote, with `grep -rn "G5-33"` returning
+  that declaration and `CAgentTest.php:188` and nothing else. **Every measurement you want back gets
+  a line in the report template** (tick 263, restated because the brief that recorded it broke it).
+- ⚠️ **`test_g5_33_single_conversation_model` is `green by construction` and is NOT the next wave —
+  measured at tick 264 and recorded so a later tick does not manufacture one.**
+  `CAgentTest.php:190-197` calls `AgentAnswerAction::handle()` twice with `conversationId: 100` and
+  asserts `assertNotEquals($t1['turn_id'], $t2['turn_id'])`: two inserts always produce distinct ids,
+  so no change to the module short of deleting the insert can redden it. ⛔ **And the obvious
+  strengthening is the wave-90 defect I authored** — asserting the two turns share `conversation_id`
+  round-trips the test's own argument, because C-Agent stores whatever conversation id it is handed.
+  *"ONE Conversation across channels"* is a property of the **callers**, and the web-chat caller
+  passes none at all, which is what makes it a build finding and not a test wave.
+- **Backlog at tick 264 — wave 143 is the X-102 → X-01 web-chat bridge, and both ChatDoor guard rows
+  are RULED off the queue.** ⛔ **Reversing tick 263's ruling, reason re-derived not inherited (tick
+  235):** `grep -rn "author_type\|authorType" app/app app/tests --include=*.php` gives the migration
+  default, `ChatTurnController.php:45`'s **hardcoded** `authorType: 'visitor'`, the action's
+  parameter, its insert, its own TODO and one assertion — one production caller that can never pass
+  anything else, so an author-type guard is unreachable the day it is written (the tick-212/225/228
+  built-but-unwired shape, in prospect). `grep -rn "turn_number"` gives **six writers and no reader
+  anywhere**, so computing the real turn number writes a correct value into decision 272's
+  write-only column. Both rows are real defects, both stay on the board, neither is worth a wave.
+  **The bridge is**: `X-01/ModuleServiceProvider.php:28-29` already registers two inbound listeners
+  — `WhatsappSessionOpened` (wave 98) and `EmailReplied` (wave 102) — each calling
+  `UnifiedInboxManager::ingestMessage(businessId, channel, identifier, senderName, body)`, both
+  mutation-proven by this lane, both crossing by **event** with no model `use`; `ChatTurnCreated` is
+  dispatched live from `ChatTurnAction.php:22` on the public unauthenticated door to **zero**
+  listeners and is **three references, all X-102**, so widening it is in-lane by the exact wave-102 /
+  tick-204 measurement. Both modules are in the thirteen and it is the only live-path row on the
+  board. ⚠️ Its difficulty is handed over as a measurement and not solved here: `ingestMessage`
+  finds-or-creates a `Person` by an email-or-phone identifier and a web-chat visitor is anonymous,
+  while `ChatLeadCaptured(businessId, leadId, personId, name, phone)` is a second live X-102 event
+  that carries both. ⛔ A conclusion of *"no legal route"* must name the two precedents it
+  distinguishes itself from — tick 260 is what that clause exists to prevent. Live list
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **9** rows at tick 264; stub pile across the
+  thirteen **10**. Re-run both; never inherit them.
 
 ## Style
 
