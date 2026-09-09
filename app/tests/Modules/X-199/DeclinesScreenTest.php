@@ -401,4 +401,36 @@ class DeclinesScreenTest extends TestCase
 
         Carbon::setTestNow();
     }
+
+    public function test_the_pay_link_refusal_carries_the_gateways_own_sentence_and_no_second_claim(): void
+    {
+        $base = now()->startOfWeek()->addDays(3)->setTime(10, 0);
+        Carbon::setTestNow($base);
+
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $payment = Payment::create([
+            'business_id' => $biz->id,
+            'amount_cents' => 15000,
+            'currency' => 'USD',
+            'payment_token' => 'tok_refused_link',
+            'idempotency_key' => 'idem_refused_link',
+            'status' => 'failed',
+            'created_at' => $base,
+        ]);
+
+        Http::fake([
+            'api.stripe.com/*' => Http::response(['error' => ['message' => 'Your card was declined.']], 402),
+        ]);
+
+        Livewire::actingAs($owner)->test(Declines::class)
+            ->call('sendPayLink', $payment->id)
+            ->assertSee('The gateway would not open a payment page: Your card was declined.')
+            ->assertDontSee('The pay link was not made');
+
+        Carbon::setTestNow();
+    }
 }
