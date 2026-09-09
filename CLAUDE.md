@@ -5476,3 +5476,29 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     82's collateral). ⚠️ No blade is mutated, so ruling 202's `view:clear` is deliberately **not**
     asked for: a procedural step required where it cannot bite is a step the next reviewer must
     re-derive.
+226. **A full sha in a push argument is MEASURED, never typed — the supervisor fabricated one this
+    tick and the remote refused it (RULED by the lane supervisor 2026-09-09, on its own push of
+    `8e2d362d`).** Ruling 26 requires the push to name an explicit ref rather than a branch head.
+    Holding `git log --oneline`'s **abbreviated** `8e2d362d`, this supervisor expanded it to a
+    40-character sha by typing the remaining hex, and pushed
+    `8e2d362d0f5b1c2b4bfb50fcd0e5c0e1b2f39a5e:track/money`. Git refused —
+    *"You cannot update a remote ref that points at a non-commit object … without using the
+    `--force` option"* — because the object does not exist. **This lane's own defect class, in the
+    supervisor's own hands:** ruling 36's *what is actually at the other end of this string?* and
+    ruling 141's *`Write` returning without error proves a file exists, never that it holds what was
+    intended*, asked of a push argument instead of a screen or a scratch file. It is the third
+    instance in the paperwork after ruling 121's transcribed floor and ruling 141's 12-byte
+    placeholder.
+    ⭐ **The dangerous half is the error message, not the mistake.** Git reports a fabricated sha as
+    **`(needs force)`** — the one hint that, followed, would be ruling 26's explicit prohibition and
+    ruling 24's *never `--force`*, on a lane whose only remote is the tip Track 1 merges from. A
+    supervisor reading the hint rather than the sentence beneath it would reach for the one flag
+    this lane forbids, to fix a problem `--force` cannot fix. **RULED: every sha in a `git push`
+    argument comes from `git rev-parse <ref>` in the same tick, pasted, never expanded by hand; and
+    a push that returns `needs force` is read as a WRONG OBJECT until `git cat-file -e <sha>`
+    proves otherwise.** ⛔ `--force` is never the response to that message.
+    ⚠️ It cost nothing here — the refusal is total, no ref moved, and the correct sha was in git's
+    own output — which is exactly why it is written down: **the failure was loud this once because
+    the fabricated hex named nothing.** Sixteen of the forty characters were real; a fabrication
+    that had collided with a real object would have pushed the wrong tree to the lane Track 1
+    merges from, with no error at all.
