@@ -851,6 +851,40 @@ may never read** — not its text (`EZ`), coverage (`EV`), direction (`FU`), gra
 (`GG`) or subject (`GH`), but **the SURFACE it points at**. ⭐ Like `GE`, it was **born unrunnable**:
 the boundary that refuses it predates `GH` by every tick on this page.
 
+### ⛔ `RULING GJ` (tick 324) — §1 counts uncommitted PATHS, tracked modifications included; the standing "independent corroboration" counts UNTRACKED paths only. They agreed for ninety gates because the cadence runs the gate in the one window where this seat's notes are committed.
+
+`RULING FY` ruled that §1 is read from the `N uncommitted path(s)` line, and every tick since 245 has
+"corroborated independently" with `git status --porcelain -uall | grep -c '^??'`. Measured at tick 324
+on one tree, two gates, one commit between them:
+
+```
+bin/supervise.sh:111   echo "  $(git status --short | wc -l) uncommitted path(s)"   ← counts ?? AND M rows
+.gateT324.txt:47       78 uncommitted path(s)     (CLAUDE.md modified: tick 323's notes, uncommitted)
+git status --porcelain -uall | grep -c '^??'   →  77   ← the "corroboration", untracked only
+git status --short | wc -l                      →  78   ← the gate's own quantity
+.gateT324b.txt:47      77 uncommitted path(s)     (after `git commit -- CLAUDE.md`; untracked set unchanged)
+```
+
+⛔ **The corroboration measures a different quantity from the line it corroborates**, and the two
+coincide only when this seat has no tracked modification — the window after the notes commit and
+before new notes are written, which is exactly where the cadence since tick 320 has run the gate
+(`3ee1c496` committed 11:12:14; `.gateT323.txt` written 11:20:49 with no `ℹ` notes line). **Ninety
+gates at 77 is therefore partly a fact about the gate's MOMENT in the tick** — `RULING GG`'s shape
+applied to this seat's own census. A tick running the session-start gate *before* its commit reads a
+one-row excursion the standing corroboration cannot explain, and both natural readings are wrong:
+*hidden debris porcelain missed* (none exists) or *the census broke* (it did not).
+
+✅ **Standing correction, two clauses, no instrument byte** (`RULING FY`'s precedent — `:111` is right,
+the reader's companion command was not). **(i)** §1's independent corroboration is
+**`git status --porcelain -uall | wc -l`** — the same quantity by a different command — with the
+untracked-only figure reported **beside** it as *"of which N untracked"*, never as the corroboration.
+**(ii)** A §1 figure names whether this seat's notes were committed when the gate ran; the 77/78 pair
+encodes that and nothing else.
+
+⭐ **Proven on the live event** (`RULING FU`) and ⭐ **applied to itself** (`RULING FQ`). ⚠️ Thirtieth
+member of the `EU`…`GI` family, and the first where the defective instrument is a **CORROBORATION** — a
+second command believed to measure the first's quantity and measuring a neighbour of it.
+
 ### ⛔⛔ `RULING GH` (tick 322) — a gate certifies a SHA, and in a coder-executed merge wave this seat's own commit lands INSIDE the run, so the wave's gate does not cover the tip this seat pushes. `RULING EO` binds a seat that cannot see the state it is conditioned on.
 
 `RULING GG` established that this seat writes the brief and then commits its own notes minutes later, and
@@ -2417,7 +2451,69 @@ DB pin intact, ours-since-base `app/phpunit.xml` alone, `§2e`/`§2f`/`§2g` all
 eight summing to it exactly, pint `passed`, phpstan `0`, and §1 back to **77** after item 1 deleted
 `generate_report.py`. Tip `ed01c9eb` pushed (`9aa5924e..ed01c9eb`), certified per `RULING GH(i)`.
 
-⛔ **The backlog is EMPTY at tick 323 and that tick wrote a HOLD — the EIGHTY-SECOND consecutive tick
+⛔ **The backlog is EMPTY at tick 324 and that tick wrote a HOLD — the EIGHTY-THIRD consecutive tick
+with no instrument change, and the SIXTH CONSECUTIVE lettering tick** (319 `GE` · 320 `GF` · 321 `GG` ·
+322 `GH` · 323 `GI` · 324 `GJ`), the lettering streak derived with `GD(i)`'s paired reader read
+line-numbered over the last fourteen subjects (first match per subject, by eye) plus tick 323's `GI`
+from the ledger, since under the standing cadence tick 323's notes became a subject only in this tick's
+commit; the instrument ordinal derived by **distinct authoring tick** per `GB(ii)` — **82** prior after
+this tick's commit, `git log -1 -- bin/supervise.sh` still naming tick 241's `8e178993`. ⭐ **`main`
+MOVED** — pin `5754bfb1` → **`2daff2cc`**, **+2 first-parent / +25 ancestor / +2 merges**
+(`merge: track/sixty — wave 225` 11:23:50, `merge: track/reviews — wave 226` 11:36:43), the MERGE
+signature (`RULING EK`); the **FOURTH consecutive MOVED tick** (321 · 322 · 323 · 324), reset at tick
+320's `DID NOT MOVE AT PIN TIME`, tick 323's marker read from `REVIEWS.md` (`grep -c "MAIN MOVED: pin
+42aacea9"` → 1) because its subject did not exist until this tick. ✅ **`RULING DK` did NOT fire** —
+`origin/main` re-read unchanged at `2daff2cc` at write time. ⛔ **The owner's drift rule does NOT fire
+and all three conditions were measured at the pin**: (1) **5 / 43** behind — FALSE; (2) the
+`Doctor`/`JourneyHarness`/`.claude/`/`seals.json` diff against the pin is **empty** — FALSE; (3) this
+tick starts **no wave** and pushes a `chore(supervisor)` commit with no `app/` byte — FALSE. `DD`'s
+two-row re-check prints nothing. Lane **106 ahead / 5 behind** first-parent (**106 / 43** by ancestor
+count) at the opening measurement, **107** ahead after this tick's own commit; merge base
+**`57781d59` — main's own commit — unmoved**; ours-since-base in `app/` is `app/phpunit.xml` alone, so
+this lane still authors no `app/**` byte and every stage count is **main's** (`RULING FO`).
+⚠️ **`app/` is no longer byte-identical to main's**: main moved **14** files (+169/−30) in the two
+merges, none authored here — C-Reviews actions/UI, **two migrations dropping `csat_score` from
+`review_requests` and `qa_tickets`** (⭐ **`RULING BS`'s owner call, executed on `main`** — at the next
+take `schema`'s two `BS` rows leave the set server-side, so the next take brief floors `schema` as a
+range reaching **14**, `RULING FB`/`FD`/`GF(iii)`; precision, not lettered, nothing to do here), X-01,
+X-103, X-176 actions, three test files, and the per-track `app/phpunit.xml` pin. ⭐ **The admission
+census was NOT re-run and the reason is a measurement taken first**: `git diff --stat 6240383f HEAD --
+app/app/Modules/` is **empty**, corroborated by `capability` reading **207** unchanged; and **§5 carries
+across by identity** — `git diff --stat b5473856 HEAD -- app/` is **empty**, so `.gateS235w.txt` §5
+measured this tree. **§1 read 78 at `.gateT324.txt` and 77 at `.gateT324b.txt`** on an untracked set
+that did not change — `git status --porcelain -uall | grep -c '^??'` **77** before and after, supervisor
+directory **0**, the difference being `M CLAUDE.md`, this seat's own uncommitted tick-323 notes —
+**`RULING GJ`**; `FY`'s census spans **98** supervisor gates, **90 at 77**, the exceptions by name
+`.gateT237` (outside the window), the five intra-tick `b` gates `239b`–`242b`, `.gateT321`
+(`GG(ii)`'s control, an untracked file) and **`.gateT324`** (a tracked modification — same number,
+different cause). §3 == the §5 tick 322 verified and still a LEDGER; §2 `none`; §2e/§2f/§2g `HEAD is
+not a merge` ×3; §4 seals ✓ with stamp `20260829-0647` == `runtime_build`; §6 pint `passed`, phpstan
+`0`. `wc -l bin/supervise.sh` **416** and drift `4 0`, both re-measured per `FX(ii)`; `bar` sections
+**14 / 13** (`FX`'s form), membership **not re-derived and therefore not asserted** (`RULING FZ`).
+**TRACK 1 ACTION 10** at the pin: **53** first-parent merges since `a5042da2`, **0** naming
+`track/stages`, `18bbde18` still not an ancestor (rc **1**). **ACTION 1** run absolutely per
+`RULING EC`: the `.agents/rules/` grep prints nothing; ceiling of the **announced subset** **`N153`** by
+the `%s` form (`GC(ii)`). Case (d) per `GE(i)`/`GE(ii)`: newest heading `## OWNER RULING — 2026-09-09
+09:02 — relayed by Track 1: when to merge origin/main into this lane`, **processed**. ⭐ **Commit and
+push per `GH(i)`/`GI`**: `git status` carried no unmerged paths and `pgrep -a -P 1 -f agy` found no
+lane seat before the commit; tick 323's notes committed as **`b20de6aa`** (`CLAUDE.md | 141`, subject
+carrying tick 323's marker and `RULING GI lettered` in its leading segment), **gated at exactly that
+sha** (`.gateT324b.txt`, green) and **pushed by explicit ref, fast-forward `3ee1c496..b20de6aa`**, with
+`git diff --stat 3ee1c496 b20de6aa -- app/` → **0 lines** as the stated reason §5 carries across.
+⚠️ **One hook refusal** (a compound carrying `$(…)`, refused wholesale as `command_substitution`,
+nothing ran, re-issued as separate calls); ⚠️ **two permission prompts**, neither retried verbatim (a
+`head; git check-ignore` compound and a `sort -s -t: -k1,1n -u` — the ignore question settled by
+inference from the 78 = 77 + 1 arithmetic with `REVIEWS.md` already appended, the census read by eye);
+✅ **`RULING ES`/`FJ` did NOT fire — no `cd` issued**; ✅ **`RULING FH` did NOT fire** — anchored
+section offsets, positional reads over §2/§3/§4/§6 only, §1 from the anchored count line; ⚠️ **the two
+liveness scans DISAGREED** — none at tick start, one relative-`logs/` `run177` seat of another lane at
+write time (this checkout has no `.agents/supervisor/logs/`, `RULING CX`), **no forecast attached**
+(`RULING EJ`); ⭐ `state.py next` → `BUILD_WAVE` wave 30 (`next_module X-190`), **not a licence**.
+⚠️ This tick's scratch files are **named, not deleted** (`rm` is refused to this seat): `.sha324.txt`,
+`.gateT324.txt`, `.gateT324b.txt`, `.subj324.txt`, `.blkT324.md`, all under `.agents/supervisor/`,
+which §1 does not count. **These notes are left uncommitted for tick 325 under the standing cadence.**
+
+⛔ **The backlog was EMPTY at tick 323 and that tick wrote a HOLD — the EIGHTY-SECOND consecutive tick
 with no instrument change, and the FIFTH CONSECUTIVE lettering tick** (319 `GE` · 320 `GF` ·
 321 `GG` · 322 `GH` · 323 `GI`), derived with `RULING GD(i)`'s paired reader plus `GD`'s first-match
 rule and reset at tick 318's `letters none`; the instrument ordinal derived by **distinct authoring
