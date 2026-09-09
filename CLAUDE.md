@@ -5903,3 +5903,66 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     ⚠️ `unpaid.blade.php:61`'s *"covered by the card on file"* and `Credits`' overflow copy are
     already recorded at ruling 76's grade (ruling 132); this measurement is the reason why, and does
     not re-open them.
+235. **`capture()` writes `captured` off the PRESENCE of a charge id, having never read the field the
+    gateway uses to say whether it captured — and no charge fixture in this lane has ever carried
+    that field (RULED by the lane supervisor 2026-09-09, briefed as MONEY-147 items 1, 2 and 4).**
+    Ruling 230 opened the outbound-request population and asked what this app *sends*; MONEY-144/145
+    asserted its headers and MONEY-146 its bodies. **Nobody had asked what it reads back.** Measured:
+    `X-198/Domain/StripeGatewayClient::charge():39` reads `id` and **nothing else**, and
+    `Domain/GatewayEngine:118` is
+    `$status = $gatewayChargeId !== null ? 'captured' : 'awaiting_processor'`. A Stripe charge object
+    always carries `status` — `succeeded`, `pending` or `failed` — and a charge taken by an
+    asynchronous payment method comes back **HTTP 200 with a real `id` and `status: pending`**. This
+    lane records that as captured. ⭐ **It is ruling 99's shape one module over with the sign
+    reversed:** 99 stopped X-199 deriving `charged` from *the absence of an exception*; this derives
+    `captured` from *the presence of an id*. ⭐ **The witness is the test that comes closest and walks
+    past it** — `X198Test:493`'s `test_a_charge_the_gateway_never_confirmed_says_so_and_leaves_a_failed_row`
+    fakes `['object' => 'charge', 'status' => 'pending']`, **a pending charge**, and the only reason
+    the code refuses it is the **absent `id`**; with an id present the lane would have written
+    `captured` and announced it.
+    **RULED: `charge()` returns `['id' => string, 'status' => string]`**, the status being
+    `$response->json('status')` where that is a string and the literal `'unconfirmed'` where it is
+    not; `capture()` writes `captured` **only** on `succeeded` and `awaiting_processor` otherwise.
+    ⛔ **A missing `status` is never read as success** — that is the "derive it from the absence of
+    information" this wave exists to delete, and it is why the eleven fixtures gain the field rather
+    than the code gaining a lenient default. ⛔ **`charge()` does NOT throw on a non-`succeeded`
+    status:** a throw is caught at `GatewayEngine:141` and writes a **`failed`** row, which for a
+    pending charge is false in the opposite direction *and* increments MONEY-145's `$attempt`, so the
+    retry would carry a fresh idempotency key and **charge the customer a second time** — the exact
+    double charge ruling 230 set out to prevent. ⛔ **No fourth status is minted:**
+    `awaiting_processor` already means *the gateway has it and this app cannot say it settled*, which
+    is ruling 99's own reasoning for refusing a third one, and ruling 132 measured it has no
+    production reader to disturb. ⛔ No migration.
+    ⚠️ **Why nothing could see it, measured:** eleven `Http::fake` charge fixtures across five files
+    (`UnpaidScreenTest:120` · `X198Test:188,:480,:569,:590` · `X199Test:76` ·
+    `InvoiceEngineTest:67,:135,:278,:382` · `CreditsScreenTest:123`) and **not one has ever carried a
+    `status`** — ruling 41 part 2 exactly (*a double returns a value of the real thing's shape AND
+    size*), which is why the two branches have been identical since the module existed. **The
+    fixtures are half the wave**, and ⭐ **no existing assertion moves**: the two
+    `assertEquals('captured', …)` at `X198Test:204`/`:237` stay green because their fixtures now say
+    what a real successful charge says. ⚠️ Of the **seven** `charge()` doubles only **three** return
+    (`X198Test:228`, `DeclinesScreenTest:126`, `CheckoutCaptureSeamTest:97`); ⛔ **the four that throw
+    keep `: string` byte-identical** — inert (ruling 167), and ruling 230 already recorded the
+    doubles' arity drift as not to be churned (ruling 47's companion).
+
+236. **The ruling-235 fix creates two new fictions unless the event guard and X-199's derivation move
+    with it, and neither may wait for a later wave (RULED by the lane supervisor 2026-09-09, briefed
+    as MONEY-147 items 2.3 and 3).** (a) `GatewayEngine:131` dispatches `PaymentCaptured` on
+    `$payment->gateway_charge_id !== null` — ruling 101's own guard, correct while an id meant
+    capture and **wrong the moment it does not**, since a pending charge has one. The guard moves to
+    `$payment->status === 'captured'`; ruling 101's reasoning is unchanged (*an event that fires for
+    a non-event propagates the fiction to every listener that ever registers*), and its population is
+    still three lines in one file — `X198Test:76`'s `assertNotDispatched` and `:487`'s
+    `assertDispatched`, both green after the change because neither fixture is pending.
+    (b) `X-199/Domain/InvoiceEngine:107` is `$status = $gatewayChargeId !== null ? 'charged' :
+    'refused';`, so **ruling 99's own fix rests on a value X-198 never verified** and a pending charge
+    would propagate a false `charged` onto the two screens that read `OverflowCharge`. It moves to
+    `$payment->status === 'captured'`. ⛔ `refused` stays the losing value — ruling 99's explicit
+    choice, and true of an unprocessed overflow — and `reference_id` keeps the gateway's id, the
+    honest handle on an attempt that has not settled. ⚠️ **Shipping either half in a later wave is
+    refused:** ruling 46 forbids a wave that leaves the suite red or a fiction newly created, and each
+    of these is one line. ⚠️ The generalisable half: **a wave that narrows the meaning of a value owns
+    every guard that was reading the OLD meaning** — rulings 46/49/50 taught this lane to sweep for
+    readers of a value being *changed*, and ruling 107 for readers whose correctness depended on a
+    state that could not arise; this is the third member — readers whose correctness depended on two
+    conditions being **equivalent**, which they were until this wave separated them.
