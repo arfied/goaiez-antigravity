@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use App\Services\Mail\MailQuota;
+use App\Services\Pixel\PixelDelivery;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -87,11 +88,13 @@ final class DeployCheckCommand extends Command
         if (is_numeric($last)) {
             $last = Carbon::createFromTimestamp($last);
         }
+
         if (! $last instanceof \DateTimeInterface) {
             $this->record('worker running', false, 'heartbeat unreadable ('.get_debug_type($last).')');
 
             return;
         }
+
         $age = (int) $last->diffInSeconds(now(), absolute: true);
         $ok = $age < 120;
 
@@ -110,11 +113,13 @@ final class DeployCheckCommand extends Command
         if (is_numeric($last)) {
             $last = Carbon::createFromTimestamp($last);
         }
+
         if (! $last instanceof \DateTimeInterface) {
             $this->record('scheduler running', false, 'heartbeat unreadable ('.get_debug_type($last).')');
 
             return;
         }
+
         $age = (int) $last->diffInSeconds(now(), absolute: true);
         $ok = $age < 120;
 
@@ -199,13 +204,14 @@ final class DeployCheckCommand extends Command
      */
     private function pixelBundleIsPublished(): void
     {
-        $ok = is_file(public_path('build/p.js')) || is_file(public_path('p.js'));
-
-        $this->record(
-            'pixel bundle published',
-            $ok,
-            $ok ? 'p.js present' : '/p.js SERVES NOTHING — run `npm run build && php artisan doctor --stage=schema`.'
-        );
+        try {
+            $version = app(PixelDelivery::class)->choose();
+            $this->record('pixel bundle published', true, 'ok '.$version->sha);
+        } catch (\RuntimeException $e) {
+            $this->record('pixel bundle published', false, $e->getMessage());
+        } catch (\Throwable $e) {
+            $this->record('pixel bundle published', false, get_debug_type($e));
+        }
     }
 
     private function numberStockExists(): void
