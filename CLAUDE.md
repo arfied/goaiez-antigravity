@@ -5020,3 +5020,100 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     **twenty-third** time, with the twenty-sixth instrument: a brief that dictates a **procedural
     step** has dictated whether that step is auditable. **Detail is read as the spec and everything
     unstated is the coder's guess.**
+211. **The `$casts` census is CLOSED, both halves, and there is no wave in it (measured 2026-09-08
+    20:5x; rulings 64, 95, 100, 111, 114, 120, 132, 142, 151, 170, 184, 187, 190, 197, 199, 201,
+    203, 204, 205, 206, 208, 209).** The carried half was *"the five uncast models and the boolean
+    columns a blade renders as a pill"*. (a) The five — `X-173/AccountMapping`,
+    `X-198/PaymentLink`, `X-199/DeclineDeferral`, `X-201/DisputeEvidence`, `X-211/ArDunningAction`
+    — carry between them **only** `foreignId`, `string`, `text` and `timestamps()`, and Laravel
+    auto-casts `created_at`/`updated_at`, so there is nothing for a `$casts` entry to do. (b) The
+    lane's boolean population is **nine columns** — `card_tokens.is_default`, `.alert_sent`,
+    `accounting_connections.is_active`, `accounting_sync_conflicts.flagged_for_review`,
+    `merchant_connections.is_connected`, `dispute_outcomes.commission_clawback_triggered`,
+    `dunning_states.ai_enabled`, `.phone_answering`, `.voicemail_only` — and **all nine are declared
+    `'boolean'`** in their model's `$casts`. So the hazard the census existed to find — an uncast
+    Postgres boolean reaching a blade, where `'f'` is a truthy non-empty string and
+    `@if($row->flag)` is therefore **always** true — does not exist here. ⛔ Not to be re-raised.
+    ⚠️ The instrument lesson, ruling 207's a second time: `grep -rn "protected \$casts"` in a
+    **double-quoted** shell string returned **zero** against a population of 27, and the tell was
+    free — an `ls` of the same eight `Models/` directories one command earlier had printed 32 files.
+    Single-quoted `-e 'protected \$casts'` returns the 27. **A zero is corroborated against an
+    independent count of the population, never trusted.**
+212. **The RLS census is measured for the first time and is CLEAN across all 33 of the lane's tables
+    (measured 2026-09-08 20:5x).** Ruling 209's premise is that isolation in these eight modules
+    rests on an explicit `where('business_id', …)` per query **plus RLS beneath**, and the ledger
+    had only ever recorded RLS on the four modules a wave happened to touch. Swept properly:
+    `Schema::create(` over the eight modules returns **33** tables and every one is covered — the
+    eight `foreach ($tables as $table)` loops name exactly the tables their own file creates (X-117
+    4, X-173 4, X-198 4, X-120 1, X-199 4, X-201 3, X-211 3, C-Billing 4 = 27) and the remaining six
+    carry their own statements (`ar_dunning_actions`, `ar_plan_terms`, `ar_collections_packages`,
+    `payment_links`, `decline_deferrals`, `dispute_audits`). All 33 are **`ENABLE`d AND `FORCE`d**,
+    and all 15 policies are the byte-identical `tenant_isolation` carrying **both** `USING` and
+    `WITH CHECK` on `business_id = nullif(current_setting('app.business_id', true), '')::bigint`, so
+    a write for another tenant is refused as surely as a read is. ⚠️ Keep the finding rather than
+    merely striking the sweep: **this is what makes MONEY-135's three fixes defence-in-depth rather
+    than live leaks**, and it is why that wave correctly shipped no isolation assertion — an
+    application-layer test claiming to block a cross-tenant read would pass for the wrong reason
+    (ruling 61). ⛔ Not to be re-raised.
+213. **The money-arithmetic sweep over the lane's engines returns four sites and no defect, and the
+    two hedges are recorded so they are not re-raised (measured 2026-09-08 20:5x).**
+    `grep -e 'intdiv' -e 'round(' -e 'floor(' -e 'ceil(' -e ' / '` over the eight modules' `Domain/`
+    trees returns four live computations. (a) `ArEngine:61`'s
+    `intdiv($invoice->total_cents * $terms->late_fee_percent, 100)` **floors**, so the percentage cap
+    can never exceed the stated percent, and `:62`'s `min($percentCap, $terms->late_fee_cap_cents)`
+    is ruling 111's own worked example of the shape done right. (b) `AccountingSyncEngine:134`'s
+    `$conflictsCount / $seen` is guarded `$seen === 0 ? null : …`. (c) `CheckoutEngine:309`'s
+    `quantity * unit_price_cents` is integer throughout. (d) `ArEngine:139`'s
+    `(int) ceil($remaining / $installmentsCount)` **over**-collects by at most `n − 1` cents — a
+    $100.00 debt over three payments is `3 × 33.34 = 100.02`. Graded ruling 76's PASS-WITH-NOTES and
+    **recorded, not briefed**, for three measured reasons: the blade hedges it
+    (`paymentplan-builder.blade.php:60` reads *"**about** … each"*), it prints the balance owed on
+    the line above (`:51`) rather than a plan total, and the model carries **one flat**
+    `installment_amount_cents` with no per-instalment rows, so an exact schedule is not expressible
+    without a schema change. ⛔ `ceil` is not switched to `intdiv`: under-collecting a debt is worse
+    than over-collecting it by two cents, and the direction was chosen. ⚠️ `PaymentplanBuilder:85`
+    duplicates the engine's formula for its preview; the two **agree today** and are recorded as
+    ruling 37's *second place for the truth to disagree*, to be watched if either moves.
+214. **A `firstOrCreate` in `render()` manufactures an owner decision, and the threshold it
+    provisions is a setting nobody can set (RULED by the lane supervisor 2026-09-08 20:5x, briefed
+    as MONEY-136).** Three findings on one screen, found by asking ruling 36's question of a
+    *policy* rather than of a value.
+    **(a) `X-211/Ui/PaymentplanBuilder::render():75` is `ArPlanTerm::firstOrCreate(['business_id' =>
+    $bizId])` — a read path that writes a row.** Ruling 208 settled the principle in this lane one
+    wave ago (*a read path does not mutate the cart*), and its own sibling screen reads the same
+    table the other way: `AgeingByReason:129` is `ArPlanTerm::where('business_id', $bizId)->first()`,
+    ruling 98's self-contradiction tell inside one module. ⭐ **The write buys nothing measurable:**
+    `ArPlanTerm.php:16-17` already declares `protected $attributes = ['max_installments' => 3,
+    'max_term_days' => 90]`, so an unsaved `new ArPlanTerm()` renders identically. What it costs is
+    **provenance**. The create migration's own comment states P-193 — *"the threshold is a ROW, never
+    a literal in the engine … the owner's own number replaces it (OWNER ACTION 13)"* — so the row
+    exists precisely to distinguish *the owner chose this* from *nobody has chosen*, and a row
+    written by **rendering a page** makes those two indistinguishable for ever. Ruling 43's *does it
+    even vary?* asked of a value's origin instead of its content.
+    **(b) `paymentplan-builder.blade.php:4` states that constant to the owner as this account's
+    policy** — *"Up to 3 payments over 90 days is a schedule. Beyond that it is credit, and it routes
+    to a financing partner."* Measured: `grep -rn "max_installments\|max_term_days" app/app app/tests`
+    returns the migration, the model, `ArEngine:131`'s refusal, `:134`'s message and this line —
+    **no writer anywhere, no door, no action**. So the sentence presents as a setting a number that
+    has never varied and that no owner can change. The limit and the refusal are **real** and stay;
+    what is missing is that it is not yet theirs.
+    **(c) `render():84`'s `max(2, …)` preview clamp answers a question the door refuses.**
+    `offerPlan():38` refuses `$count < 2` with *"A plan is at least two payments."*, while the live
+    preview clamps to 2 and prints *"about £X each"* — so an owner typing `1` reads a figure computed
+    from an input they did not give, then presses the button and is refused. Ruling 94's family (a
+    screen that answers with the wrong branch), and ruling 36's question of a figure: *what is at the
+    other end of this number?* — a different input than the one shown.
+    ⛔ **Not resolved by building a threshold door**: `max_installments`/`max_term_days` are
+    OWNER ACTION 13's number, and minting a setting screen so a sentence comes true is ruling 59.
+    ⛔ Not by deleting the sentence (the limit is enforced at `:131`) and ⛔ not by removing the
+    preview (an owner filling a form is owed one). ⛔ `ArEngine::offerPlan():129`'s own
+    `firstOrCreate` is **recorded, not changed**: it is a **write** path inside the transaction that
+    records a plan, and editing it would be a second change with no owner-visible consequence
+    (ruling 47's companion — a file is edited only for the reason the brief names).
+    ⚠️ Blast radius measured with interior fragments (rulings 46, 86): exactly **one** assertion
+    lane-wide, `PaymentplanBuilderScreenTest:68`'s `assertSee('Up to 3 payments over 90 days')`,
+    **changed** and never deleted; the `firstOrCreate` and the preview are asserted by **nothing**
+    (ruling 70), which is why all three outlived every X-211 wave, so items (a) and (c) **add**
+    methods (ruling 68). ⚠️ That file is **class-style with 2 methods**; `grep -c "test("` returns 3
+    there and is **wrong** — `latest(` contains `test(`. The census pattern is
+    `grep -c "function test_"`, and ruling 86's instrument gains that exclusion.
