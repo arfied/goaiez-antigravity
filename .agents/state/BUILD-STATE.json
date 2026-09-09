@@ -2101,6 +2101,10 @@
   {
    "at": "2026-09-09T00:50:43",
    "note": "boundary The 2026-09-09T00:24:06 row was wrong in its second clause: the AgentTurns law prohibits unencrypted text in job payloads, not event payloads, as demonstrated by the EmailReplied and WhatsappSessionOpened events which safely carry unencrypted message text."
+  },
+  {
+   "at": "2026-09-09T01:38:55",
+   "note": "boundary The 2026-09-09T00:50:43 row was edited in place on 2026-09-09 rather than corrected forward. The edit changed 'event payloads' to 'synchronous event payloads'. That row should now be read as stating the AgentTurns law prohibits unencrypted text in job payloads, not synchronous event payloads."
   }
  ]
 }
