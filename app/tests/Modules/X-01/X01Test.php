@@ -437,13 +437,15 @@ class X01Test extends TestCase
         $admin = User::factory()->create();
         $biz = TestCase::provisionTenant(['name' => 'Ghost Biz']);
         $customer = Customer::factory()->create(['business_id' => $biz->id, 'name' => 'Ghosty']);
-        LeadScore::create(['business_id' => $biz->id, 'person_id' => $customer->id, 'lead_rating' => 10, 'grade' => 'F', 'confidence' => 0.9, 'signals' => []]);
+        $person = \App\Modules\X121\Models\Person::create(['business_id' => $biz->id, 'first_name' => 'Ghosty', 'email' => $customer->email, 'phone' => $customer->phone]);
+        LeadScore::create(['business_id' => $biz->id, 'person_id' => $person->id, 'lead_rating' => 10, 'grade' => 'F', 'confidence' => 0.9, 'signals' => []]);
         $response = Livewire::actingAs($admin)->test(Thread::class, ['customer' => $customer]);
         $response->assertSee('Ghost Risk', false);
 
         // Negative case
         $customer2 = Customer::factory()->create(['business_id' => $biz->id, 'name' => 'Goody']);
-        LeadScore::create(['business_id' => $biz->id, 'person_id' => $customer2->id, 'lead_rating' => 90, 'grade' => 'A', 'confidence' => 0.9, 'signals' => []]);
+        $person2 = \App\Modules\X121\Models\Person::create(['business_id' => $biz->id, 'first_name' => 'Goody', 'email' => $customer2->email, 'phone' => $customer2->phone]);
+        LeadScore::create(['business_id' => $biz->id, 'person_id' => $person2->id, 'lead_rating' => 90, 'grade' => 'A', 'confidence' => 0.9, 'signals' => []]);
         $response2 = Livewire::actingAs($admin)->test(Thread::class, ['customer' => $customer2]);
         $response2->assertDontSee('Ghost Risk', false);
     }
