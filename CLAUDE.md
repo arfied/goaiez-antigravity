@@ -296,8 +296,70 @@ merge. Week 2 is scoped **one wave at a time**; it is not a single wave.
 | **UI-66** | **(1) `count($untrackedOpeners)` replaced by the sorted SET itself — a count cannot see a SWAP, and `foreach` leaving as `isset` arrives keeps it at `2` forever. ⛔ The count pin is REPLACED, not kept beside it: a count entailed by a set corroborates nothing (05:0x). (2) that pin's message is FALSE about what a red means — see the 09:4x ruling: a block opener weakens `conditionalHeadings` only if it creates MUTUALLY EXCLUSIVE ARMS, and the one member it found cannot. Restated to the criterion, ⛔ with no Blade keyword named as a current member. (3) the LINE-GRANULARITY blind spot gets a number: `:50` tests the heading BEFORE `:53–56` update the depth, so a heading sharing a line with its own `@if` is judged at depth 0. ONE new `expect()`, pinned; my reading is `0` of 19 and a different number is a FINDING. ⛔ No new `test(`, no blade, no new file, floor stays `1730`; `expect(` `9 → 10`. ⛔⛤ The sum is NOT asserted — eleventh wave** | **run 113 `BLOCK` — all three items landed character for character and both pins re-derived by me; the block is the REPORT, not the code. See the 10:0x ruling** |
 | **UI-66b** | **the repair wave, ⛔ ZERO `app/**` diff. (1) the `2026-09-07T09:49:13 (R245)` row committed — it is in the working tree and in NO commit, and `.agents/state/` is outside the supervisor's column, which is the whole reason this wave exists. (2) the five untracked `.txt` files quoted then deleted, three of them above `app/`. (3) ONE gate, through `bin/supervise.sh`, §7 pasted verbatim in whichever of its three shapes it prints. (4) `REPORT.md` in rule 10's TEN fields, read off disk. ⛔ `HeadingSeamTest.php` is not opened; floor stays `1730`** | closed, pushed `8683fb8e` — run 114 `PASS-WITH-NOTES`, six notes; items 0 and 1 exactly, item 2 not done at all |
 | **UI-67** | **`HeadingSeamTest` is named for a population of 44 and walks 19 — the fraction gets a number. ONE new `expect()` INSIDE the existing `test(`: components declaring `#[Layout('components.account.layout'` that the file's own `glob(base_path('app/Modules/*/Ui/*.php'))` does NOT reach, as the DIFFERENCE OF TWO DERIVED SETS. ⛔ Zero component names, zero view paths, zero directories beyond the roots the file already uses — name `app/Livewire/Account` in the code and it is an exclusion list with a plus sign. My reading is `25`; a different number is a FINDING. ⛔⛔ The message says a red is a POPULATION moving and that NEITHER direction is by itself a defect. ⛔ No new `test(`, no blade, no new file, floor stays `1730`; `expect(` `10 → 11`. ⛔⛤ The sum is NOT asserted — twelfth wave** | closed, pushed `373c6d41` — run 115 `PASS-WITH-NOTES`, three notes, **all three report-shape and none of them the code** |
-| **UI-69** | **⛔ THE MERGE. `origin/main` into `track/ui`, on the owner's 2026-09-09 ruling — 2298 behind, and main changed the sealed Doctor checkers, so this lane's gates are measuring with old instruments. ⛔⛔ NOT a code wave: no production code, no new test, no assertion, no mutation. The substance is the EIGHT per-track files that arrive from main SILENTLY — above all `app/phpunit.xml`, whose copy on main pins `goaiez_antig_test`, TRACK 1's database. Merge · restore · `composer dump-autoload` · gate · report** | **in flight — run 117 dispatched with `--allow-merge`** |
+| **UI-69** | **⛔ THE MERGE. `origin/main` into `track/ui`, on the owner's 2026-09-09 ruling — 2298 behind, and main changed the sealed Doctor checkers, so this lane's gates are measuring with old instruments. ⛔⛔ NOT a code wave: no production code, no new test, no assertion, no mutation. The substance is the SEVEN per-track files that arrive from main SILENTLY — above all `app/phpunit.xml`, whose copy on main pins `goaiez_antig_test`, TRACK 1's database. Merge · restore · `composer dump-autoload` · gate · report** | **run 117 stopped at item 1 on a precondition of MINE that could not be met; in flight — run 118 dispatched with `--allow-merge`** |
 | **UI-68** | **the 25 stop being merely COUNTED. TWO new `expect()` INSIDE the existing `test(`, measuring the unwalked set alongside — all eleven existing pins untouched, the glob still NOT widened. (1) `$unwalkedSeam`, unwalked components declaring a `heading` key; my reading is `0`. (2) `$unwalkedSkips`, one FAIL-CLOSED counter: no resolvable `view('…')` literal, OR no `<h[1-6]` at all, OR a first heading at the wrong level for the component's own shape; my reading is `0`, and its message names all three causes in order. ⛔ Both pins are COMPLEMENTS — `$unwalkedOwn = 25` beside `$unwalked = 25` is run 104's `built = 257` and is refused. ⛔ `$unwalked` becomes a genuine SET DIFFERENCE and its pin does NOT move. ⛔ Zero component names, zero view paths, zero new directory literals; the file's own `#[Layout]`, `heading`, `view('…')` + `View::exists()` and first-heading derivations are reused verbatim in shape. ⛔ No new `test(`, no blade, no component, no new file, floor stays `1730`; `expect(` `11 → 13`. ⛔⛤ The sum is NOT asserted — thirteenth wave** | **in flight — run 116 dispatched** |
+
+### ⛔⛔ RULED 2026-09-09 09:4x — A MERGE BRIEF'S PRECONDITION IS THE MERGE BASE AND NOTHING ELSE. Run 117, and it was MINE.
+
+Run 117 stopped at item 1: `git rev-list --count origin/main..HEAD` printed **`4`** where my brief said
+`3`, and `git rev-parse HEAD` printed `0087da51` where it said `563c74d1`. The coder named the command,
+quoted what it printed, and touched nothing — ⭐ the first `stopped:` line in this lane's history to
+satisfy the 03:0x rule on its first attempt.
+
+⛔ **`CLAUDE.md` itself is why it could not be met.** *"Merge step 0 — committing the supervisor notes —
+is yours, not the coder's."* So on **every** merge wave a supervisor commit lands between the sha I
+measure and the sha the coder reads. I measured the pre-commit values, wrote them in as a hard stop,
+and then made the commit that falsified both. **A stop condition my own procedure is required to break
+is a scheduled failure, not a guard.**
+
+⭐ **And nothing the conflict set depends on had moved.** MEASURED: `git merge-base HEAD origin/main` →
+`373c6d41`, exactly as predicted; `git rev-list --count HEAD..origin/main` → `2298`, also as predicted.
+**The ahead-count is a PROXY. The merge base is the thing itself.**
+
+> ⛔ **RULED: a merge brief stops on `git merge-base HEAD origin/main` and on nothing else.** Our own
+> tip is written as *"whatever `git rev-parse HEAD` prints"*, pasted for the record and compared to
+> nothing. Twenty-seventh of the hand-derived-claim family and a new sub-shape: not a claim that was
+> false when written, but one **whose author was scheduled to falsify it.**
+
+### ⛔⛔ MEASURED 2026-09-09 09:4x — the merge's real split is FIVE conflicts and SEVEN silent, and `merge=ours` fires on NOTHING
+
+```
+git diff --name-only 373c6d41 HEAD   → .agents/state/BUILD-STATE.json · .agents/state/JOURNAL.md
+                                       .agents/supervisor/launch-coder.sh · CLAUDE.md
+                                       app/tests/Feature/Architecture/HeadingSeamTest.php
+git diff --name-only 373c6d41 origin/main -- <those five>          → all five
+git diff --name-only 373c6d41 HEAD -- ':/.claude' ':/bin' ':/app/phpunit.xml'   → (empty)
+```
+
+⛔ **`launch-coder.sh` moved into the conflict set because REV-116 edited it, in the same tick that
+listed it as silent** — a measurement taken before an edit is not a measurement of the tree after it.
+⛔ **`HeadingSeamTest.php` is a both-sides file**: main's copy differs from the base by exactly one line,
+`$conditionalHeadings` `8 → 10`, and carries **11** `expect(` against our **13**, so the resolution is
+*keep both*. ⭐ Since our only `app/**` change since the base is that file, the post-merge population is
+**main's**, so main's pin values were measured on the tree we are adopting; the two whose values are
+unknown are the two we appended.
+
+⛔⛔ **`.gitattributes` does not exist in this lane.** `cat` → no such file; `git config --get
+merge.ours.driver` → `true`; `git show origin/main:.gitattributes` → eight `merge=ours` paths,
+`app/phpunit.xml` among them. **The driver is configured and the mapping is absent, and the merge is
+what adds the mapping.** Main's protection arrives with the merge instead of applying to it, in every
+lane that has not merged since it was written. **The restores are the whole of the protection.**
+
+⛔ **`bin/supervise.sh` is restored to ours, measured:** `git show origin/main:bin/supervise.sh | grep -n
+goaiez_antig` returns **one** line, `PROD_DB="goaiez_antig"`; ours returns five, including
+`LANE_DB="goaiez_antig_ui"` and `LANE_TEST_DB="goaiez_antig_ui_test"`. **Adopt main's gate script and
+the merge deletes §0 — the detector — and plants the `goaiez_antig_test` pin it detects, in one
+commit.** ✅ Adopted whole from main instead: `bin/state.py` (`+36/−0`, one new `resolve` subcommand,
+journal format untouched), both `.claude/hooks/*.py` (`+177/−0`, absent here entirely), `.gitattributes`,
+the sealed Doctor paths and the harness.
+
+⚠️ **The hooks arrive registered by nothing.** `grep -n hooks .claude/settings.json` → nothing, while
+main's copy registers `no-piped-gate-tool.py` under `PreToolUse` — and our `settings.json` must be
+restored, because main's is Track 1's seat (it grants `Edit(bin/state.py)`, which ours denies).
+**RULED: adopt the hooks, restore the settings, record the gap as a `state.py decided` line this wave,
+and register them in UI-70** — a merge wave does not also change this seat's permissions, and a guard
+file whose presence reads as protection is the detector-that-only-prints-`none` family with its sign
+flipped.
 
 ### ⛔⛔ RULED 2026-09-09 09:5x — FOUR STANDING RULES OUT OF REV-116
 
