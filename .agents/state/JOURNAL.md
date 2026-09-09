@@ -910,3 +910,11 @@
 - `2026-09-09T03:08:29` (R245) X-01 — Filed BUILD PROPOSAL instead of wiring ChatLeadCaptured. X-01 must provide a Registered Action (e.g. IngestLeadAction) because ChatLeadCaptured is emitted after the Person is already created by X-102, making it incompatible with ingestMessage which expects to look up the Person. Furthermore, registering an event listener forces a 'use' statement (due to pint) which violates BoundaryStage's strict import ban.
 - `2026-09-09T03:32:45` note: boundary The 2026-09-09T03:08:29 row was wrong in both clauses: UnifiedInboxManager::ingestMessage correctly looks up existing Persons via find-or-create rather than requiring them to be missing, and BoundaryStage's moduleOf regex ([A-Za-z0-9_]+) misses hyphens, meaning X-01 is ignored by the boundary check entirely.
 - `2026-09-09T09:44:33` note: boundary merged origin/main. main's boundary-fix-2026-09-08 makes BoundaryStage correctly match hyphens in module paths and exempts Events/Actions/Domain, revealing 55 cross-module imports (including pre-existing Models imports now correctly measured as violations).
+- `2026-09-09T10:04:45` stage integrity = 0
+- `2026-09-09T10:04:45` stage boundary = 55
+- `2026-09-09T10:04:45` stage contract = 85
+- `2026-09-09T10:04:45` stage citation = 3
+- `2026-09-09T10:04:45` stage schema = 16
+- `2026-09-09T10:04:45` stage capability = 207
+- `2026-09-09T10:04:45` stage anchor = 128
+- `2026-09-09T10:04:45` stage journey = 3

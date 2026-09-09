@@ -15,31 +15,31 @@
    "fails": "COMMIT"
   },
   "boundary": {
-   "violations": 6,
+   "violations": 55,
    "fails": "COMMIT"
   },
   "contract": {
-   "violations": 87,
+   "violations": 85,
    "fails": "COMMIT"
   },
   "citation": {
-   "violations": 94,
+   "violations": 3,
    "fails": "COMMIT"
   },
   "schema": {
-   "violations": 15,
+   "violations": 16,
    "fails": "MERGE"
   },
   "capability": {
-   "violations": 393,
+   "violations": 207,
    "fails": "MERGE"
   },
   "anchor": {
-   "violations": 138,
+   "violations": 128,
    "fails": "WAVE"
   },
   "journey": {
-   "violations": 6,
+   "violations": 3,
    "fails": "WAVE"
   }
  },
