@@ -87,8 +87,13 @@ final class DeployCheckCommand extends Command
         if (is_numeric($last)) {
             $last = Carbon::createFromTimestamp($last);
         }
-        $age = $last === null ? null : now()->diffInSeconds($last);
-        $ok = $age !== null && $age < 120;
+        if (! $last instanceof \DateTimeInterface) {
+            $this->record('worker running', false, 'heartbeat unreadable ('.get_debug_type($last).')');
+
+            return;
+        }
+        $age = (int) $last->diffInSeconds(now(), absolute: true);
+        $ok = $age < 120;
 
         $this->record(
             'worker running',
@@ -105,8 +110,13 @@ final class DeployCheckCommand extends Command
         if (is_numeric($last)) {
             $last = Carbon::createFromTimestamp($last);
         }
-        $age = $last === null ? null : now()->diffInSeconds($last);
-        $ok = $age !== null && $age < 120;
+        if (! $last instanceof \DateTimeInterface) {
+            $this->record('scheduler running', false, 'heartbeat unreadable ('.get_debug_type($last).')');
+
+            return;
+        }
+        $age = (int) $last->diffInSeconds(now(), absolute: true);
+        $ok = $age < 120;
 
         $this->record(
             'scheduler running',
