@@ -866,3 +866,4 @@
 - `2026-09-09T08:05:55` (R245) X-171 — R245: JobStateAction scopes the work_orders person_id read to the acting tenant. A cross-tenant read on a wired production path is a defect regardless of what capabilities.php declares; RLS sits beneath the application scope. Ruled by the lane supervisor, PB-153.
 - `2026-09-09T09:24:24` UNRESOLVED X-119 exposes no path to retract a taught price fact; a price. fact outlives the pricebook row that taught it (X-163 deleteItem:165). X-119 - 
 - `2026-09-09T09:24:38` (R245) X-163 — an (R245) contract note that X-163 teaches on confirm and has no retraction seam, so a deleted item's fact persists, and that the retraction is X-119's to expose.
+- `2026-09-09T13:43:35` (R245) X-162 — R245: markEnRoute takes ?int etaMinutes; with none given it records no EtaPrediction and no notification, never a default (PB-159, lane supervisor ruling)

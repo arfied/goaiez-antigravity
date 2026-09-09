@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-09T09:24:38",
+ "updated": "2026-09-09T13:43:35",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1947,6 +1947,12 @@
    "module": "X-163",
    "chose": "an (R245) contract note that X-163 teaches on confirm and has no retraction seam, so a deleted item's fact persists, and that the retraction is X-119's to expose.",
    "at": "2026-09-09T09:24:38",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-162",
+   "chose": "R245: markEnRoute takes ?int etaMinutes; with none given it records no EtaPrediction and no notification, never a default (PB-159, lane supervisor ruling)",
+   "at": "2026-09-09T13:43:35",
    "ruling": "R245"
   }
  ],
