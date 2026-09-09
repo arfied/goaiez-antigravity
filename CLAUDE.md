@@ -5412,3 +5412,67 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     corrected sentence introduces a new one.** ⛔ No machinery is built to make a refused capability
     true (ruling 59) and nothing under `app/app/Doctor/**` is touched. ⚠️ Twenty of the twenty-three
     are measured true and go in Table B with a reason each (rulings 118, 217).
+225. **The console-output census is measured — 34 lines, 11 commands, four modules — and the one
+    false line reports a quantity the code does not measure (RULED by the lane supervisor
+    2026-09-09, briefed as MONEY-140).** Ruling 203 closed the owner-facing **screen** string sweeps
+    and ruling 224 the **test-record** sweep; the lane's third string surface had never been read at
+    all — the output an operator sees on a console or in a cron log, **the one surface with no
+    blade, no `assertSee` and no gate**. Only X-117, X-198, X-199 and X-211 have a `Console/`
+    directory; X-120, X-173, X-201 and C-Billing have none, so a sweep naming all eight exits 2 with
+    warnings and its zero lines mean nothing (ruling 192). Summed by `grep -rc` and not by hand
+    (ruling 209): `12+2+2+2+2+2+4+2+2+2+2 = 34`. **Thirty-three are true** — nine identical
+    `runningUnitTests()` guard lines stating exactly what the guard enforces, eleven X-198
+    `RuntimeProofCommand` diagnostics each naming the file or key just checked (including `:99`,
+    whose needle `a_real_gateway_charge_id_exists_and_no_invoice_is_tied_to_it` was re-measured and
+    **resolves**, so ruling 178's rename chain landed and ruling 172's stale-name shape does not
+    recur), three honest refusals (rulings 49, 172), three true `EvidenceInvoiceCommand`
+    diagnostics, three bare printed values making no claim, and the honest sibling's two.
+    **The finding is `X-211/Console/DetectOverdueReceivablesCommand.php:39`.**
+    `$this->info('No overdue invoices found to chase.')` fires on `$dispatched === 0`, and
+    `$dispatched` counts only invoices that passed `:63-66`'s `$alreadyChased` guard — so an account
+    holding **five overdue invoices, every one already escalated to a human**, is reported as having
+    none. `$dispatched` is *newly dispatched*; the sentence claims *found*. **Ruling 107's shape —
+    the label names a quantity the code does not measure** — with ruling 36's question aimed at a
+    count. It matters because of *which* invoices are erased: an invoice parked at
+    `escalate_to_human` is not resolved, it is J12's own subject (*chased by reason, resolution
+    first*) with the escalation being the **unresolved** state, so the operator asking *is this
+    ledger clean?* is told the opposite of the truth.
+    ⭐ **The self-contradiction tell (ruling 98) is the sibling command.**
+    `X-199/Console/MarkInvoicesDueCommand` is the same shape, the same three branches and nearly the
+    same words, and is **honest by construction** because its idempotence filter is in the **query**
+    (`:60`'s `whereNull('due_detected_at')`) rather than in the loop: the set it iterates *is* the
+    set to mark, so *found* and *dispatched* are one quantity and its zero branch cannot lie. Two
+    sibling commands, one filter four lines apart, and only one can print a false zero.
+    **RULED: the zero branch distinguishes the two states it conflates**, by counting what the loop
+    already iterates (`$parked`, one `->count()` on a collection in hand). ⛔ Not by rewording to
+    *"No NEW overdue invoices"* — true, cheap, and it still tells the operator nothing about the
+    parked invoices, which is the fact the line exists to convey. ⛔ Not by moving the filter into
+    the query to match X-199: the guard reads `ar_dunning_actions`, a **different table** from the
+    one iterated, so the two shapes are not interchangeable. ⛔ Not by touching either query or the
+    guard — `DetectOverdueReceivablesCommandTest:81` is the guard's proof — and ⛔ the `:41` string
+    stays byte-identical, being TRUE (ruling 47's companion); that it could now also name `$parked`
+    is recorded at ruling 76's grade, not widened into the wave.
+    ⚠️ **The defect is already executed by an existing green test.**
+    `DetectOverdueReceivablesCommandTest:77` runs the command a second time against a business whose
+    single overdue invoice is already escalated — the exact case — and the output is never asserted.
+    That is ruling 70 at its sharpest, and it is why 34 lines survived every sweep this lane has
+    run: **`Artisan::call` returns an exit code, so a console string is the one thing here that can
+    be exercised and unread in the same breath.** Blast radius measured with interior fragments
+    (rulings 46, 86): **ZERO** — no test in the lane asserts any console string and there is no
+    `expectsOutput` anywhere in the eight modules — so the wave **adds** a method (ruling 68).
+    ⭐ **Two design constraints were measured before dictating, and both inverted the obvious
+    answer.** (a) The empty branch keeps its string **byte-identical**: it is true where it fires,
+    so changing it would owe a second test for a branch that did not change. (b) The new test opens
+    with a **first** `Artisan::call` that looks redundant and is the only thing making it
+    order-robust — the class extends `Tests\TestCase` with **no `DatabaseTransactions`**, X-103's
+    standing `UNRESOLVED` records that class-based module tests get no DB refresh, and the file's
+    first test `Event::fake`s `ArOverdue`, so it leaves an overdue invoice **unchased** for every
+    later test in the process. Without that first sweep clearing the leftovers, `$dispatched` is
+    non-zero and the parked branch is unreachable — green in one test order and red in another,
+    which is 556–558's failure. For the same reason the needle carries **no leading count**.
+    ⭐ **The mutation is dictated as a single-condition flip, never a restoration of the parent
+    code**, because the parent's string differs from the new empty-branch string and would redden
+    the control as well as the subject — a mutation that reddens both distinguishes nothing (ruling
+    82's collateral). ⚠️ No blade is mutated, so ruling 202's `view:clear` is deliberately **not**
+    asked for: a procedural step required where it cannot bite is a step the next reviewer must
+    re-derive.
