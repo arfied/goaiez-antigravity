@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-08T20:43:02",
+ "updated": "2026-09-08T21:10:03",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2449,6 +2449,12 @@
    "module": "X-199",
    "chose": "The overdue reader takes the business it reads for, and the chase and dispute-evidence reads carry their own business_id.",
    "at": "2026-09-08T20:43:02",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-211",
+   "chose": "The plan builder reads its threshold row instead of creating one, says the limit is a standing default rather than an account setting, and refuses to preview a split the offer door would refuse.",
+   "at": "2026-09-08T21:10:03",
    "ruling": "R245"
   }
  ]
