@@ -797,6 +797,60 @@ deliberately — `.gate226.txt`, `.gate229.txt`, `.gate230.txt` and `.gate220-co
 name** in this file as the evidence for specific findings, and deleting them destroys the ledger's own
 citations.
 
+### ⛔⛔ `RULING GI` (tick 323) — `RULING GH(ii)`'s live-merge check is UNRUNNABLE IN THIS LANE BY CONSTRUCTION. A worktree's git dir lives in the ORIGINAL checkout, outside this seat's boundary, so the one command written to protect this seat's commit is refused every tick, forever.
+
+`GH(ii)` reads: *"Before this seat commits, it checks for a live merge and a live coder —
+`ls "$(git rev-parse --git-dir)/MERGE_HEAD"` and `pgrep -a -P 1 -f agy`."* **Tick 323 is the first
+tick to run it, and the first half does not run:**
+
+```
+$ git rev-parse --git-dir
+/home/goaiez/agents/grs-antig/.git/worktrees/grs-antig-stages
+$ ls /home/goaiez/agents/grs-antig/.git/worktrees/grs-antig-stages/MERGE_HEAD
+ls in '…/MERGE_HEAD' was blocked. For security, Claude Code may only list files in the
+allowed working directories for this session: '/home/goaiez/agents/grs-antig-stages', …
+```
+
+⛔ **Not transient, and not about `MERGE_HEAD`.** `RULING CV` measured that this checkout is a **git
+worktree, not a clone** — `git rev-parse --git-common-dir` is `/home/goaiez/agents/grs-antig/.git` —
+so **every** worktree's git dir is a subdirectory of Track 1's checkout, the one directory outside
+this seat's boundary that the boundary message itself enumerates. A filesystem read of anything under
+`.git` is refused **by construction, in this lane and in all six siblings**, and no re-test can change
+it. That is `RULING CL`'s shape — an instruction unsatisfiable by construction — turned on this seat's
+own procedure.
+
+⚠️ **The harm is exactly what `GH(ii)` exists to prevent.** `GH` measured that this seat's commit can
+land **inside** a coder's live merge run, tick 321 having missed git's `fatal: cannot do a partial
+commit during a merge` window by **2m10s**. A tick obeying `GH(ii)` as written meets a refusal, and
+both readings are wrong: *"no `MERGE_HEAD`, safe to commit"* — a **false negative on the one state the
+check exists to detect** — or a permanent block. ⛔ **The failing direction is the safe-looking one**,
+`RULING GA`'s hazard in a second place.
+
+✅ **The repair is the COMMAND'S, and no instrument byte changes** (`RULING FY`'s precedent — the
+check's purpose is right, its surface is not). Measured this tick: `ls <git-dir>/MERGE_HEAD` ⛔
+**blocked by construction** · `git rev-parse -q --verify MERGE_HEAD` ⚠️ **permission prompt**, not
+retried verbatim · **`git status`** ✅ **ran and answers it**, carrying neither *"You have unmerged
+paths"* nor *"All conflicts fixed but you are still merging"*. ⭐ **`RULING FI`'s discriminator in a
+new place: the FORM, never the capability** — the seat is not refused knowledge of its own merge
+state, only a filesystem read outside the boundary, while the porcelain reporting the same state was
+already being run this tick for §1's independent corroboration.
+
+✅ **Standing correction, one clause, replacing `GH(ii)`'s first half and leaving its second intact:
+this seat's live-merge check is `git status`, read for the absence of *"unmerged paths"* / *"still
+merging"*, and NEVER a filesystem read under `.git`.** The live-coder half, `pgrep -a -P 1 -f agy`,
+is unaffected. ⚠️ **`GH(ii)`'s refusing arm remains UNPROVEN and is re-declared so** (`RULING FV`):
+no merge was in progress, so only the permissive arm replayed; what is proven is that the replacement
+runs where the original cannot run at all.
+
+⭐ **Applied to itself in the tick that wrote it** (`RULING FQ`) and ⭐ **proven on the exact event it
+is named for** (`RULING FU`) — the first live execution of the rule, on the tick after it was written.
+⚠️ Twenty-ninth member of the family, the **sixth** whose defective instrument is a standing
+correction's own machinery (`FF`→`EW`, `FH`→`FF`, `GA`→`FZ`, `GB`→`GA`, `GD`→`FZ`, `GE`→`FL`,
+`GI`→`GH`), and the first where the defect is that **the prescribed command reads a surface this seat
+may never read** — not its text (`EZ`), coverage (`EV`), direction (`FU`), grammar (`GF`), moment
+(`GG`) or subject (`GH`), but **the SURFACE it points at**. ⭐ Like `GE`, it was **born unrunnable**:
+the boundary that refuses it predates `GH` by every tick on this page.
+
 ### ⛔⛔ `RULING GH` (tick 322) — a gate certifies a SHA, and in a coder-executed merge wave this seat's own commit lands INSIDE the run, so the wave's gate does not cover the tip this seat pushes. `RULING EO` binds a seat that cannot see the state it is conditioned on.
 
 `RULING GG` established that this seat writes the brief and then commits its own notes minutes later, and
@@ -2363,7 +2417,92 @@ DB pin intact, ours-since-base `app/phpunit.xml` alone, `§2e`/`§2f`/`§2g` all
 eight summing to it exactly, pint `passed`, phpstan `0`, and §1 back to **77** after item 1 deleted
 `generate_report.py`. Tip `ed01c9eb` pushed (`9aa5924e..ed01c9eb`), certified per `RULING GH(i)`.
 
-⛔ **The backlog is EMPTY again at tick 322 and that tick wrote a HOLD — the EIGHTY-FIRST consecutive
+⛔ **The backlog is EMPTY at tick 323 and that tick wrote a HOLD — the EIGHTY-SECOND consecutive tick
+with no instrument change, and the FIFTH CONSECUTIVE lettering tick** (319 `GE` · 320 `GF` ·
+321 `GG` · 322 `GH` · 323 `GI`), derived with `RULING GD(i)`'s paired reader plus `GD`'s first-match
+rule and reset at tick 318's `letters none`; the instrument ordinal derived by **distinct authoring
+tick** per `RULING GB(ii)` — **81** prior ticks over **371** commits since tick 241's `8e178993`,
+⭐ where the row form would have written *THREE HUNDRED AND SEVENTY-SECOND*, `GB(ii)`'s hazard at its
+largest yet now the range contains main's 280-commit take. ⛔⛔ **`RULING DK` FIRED LIVE** — pin
+`42aacea9` → `5754bfb1` at write time, ONE first-parent commit and it is a merge
+(`merge: track/site — ui`, 11:07:24), **+1 first-parent / +5 ancestor / +1 merge**, the MERGE
+signature (`RULING EK`); the pin governed and every figure was run against the literal sha, with the
+take re-check, the checker diff and ACTION 1's grep **re-run at the moved ref** and printing nothing
+at either. ⭐ **The owner's drift rule does NOT fire and all three conditions were measured at BOTH
+refs**: (1) **2 / 18** behind at the pin, **3 / 23** at the moved ref — FALSE; (2) the
+`Doctor`/`JourneyHarness`/`.claude/` diffs are **empty** — FALSE; (3) this tick starts **no wave** and
+the sha it pushes is a `chore(supervisor)` notes commit carrying no `app/` byte — FALSE. Lane
+**106 ahead / 2 behind** first-parent (**106 / 18** by ancestor count), the ahead-count moving
+105 → 106 on **our own tick-322 commit**; merge base **`57781d59` — main's own commit — unmoved**;
+ours-since-base in `app/` is `app/phpunit.xml` alone, so this lane still authors no `app/**` byte and
+`boundary 55` · `contract 85` · `capability 207` · `anchor 128` · `schema 16` · `citation 3` remain
+**main's numbers** (`RULING FO`). ⭐ **The admission census was NOT re-run and the reason is a
+measurement taken first**: `git diff --stat 6240383f HEAD -- app/app/Modules/` is **empty**, so
+neither input moved, corroborated by `capability` reading **207** unchanged — ⚠️ stated exactly, the
+all-`app/` diff is **not** empty (`HeadingSeamTest.php`, the one file the tick-322 take brought), but
+a test under `app/tests/` is neither a `capabilities.php` nor a flagged row. §1 read from the count
+line per `FY` at `:47` as a **single line** at **77**, corroborated independently by
+`git status --porcelain -uall`, supervisor directory contributing **0**; `FY`'s census now spans
+**NINETY** gate files at `77` of **96**, the six exceptions being exactly tick 322's recorded set
+(`.gateT237` outside the window, the four `b` intra-tick gates, and `.gateT321`, `RULING GG(ii)`'s own
+positive control). §3 == §5 and still a LEDGER; `wc -l bin/supervise.sh` **416** and drift `4 0`, both
+re-measured per `FX(ii)`; **both `bar` extractions were run** — **14 / 13** and **13 / 12** — with
+membership re-derived by `comm` on sorted input and unchanged (`1a` · `1b` · `2d` **NOT adoptable**,
+`RULING FS`, re-refused **without** re-testing the boundary; `2f` · `2g` offered upstream).
+**TRACK 1 ACTION 10** at the pin: **50** first-parent merges since `a5042da2` (**51** at the moved
+ref), **0** naming `track/stages`, `18bbde18` still not an ancestor (rc **1**). **ACTION 1** re-run
+**absolutely** at both refs per `RULING EC`: the `.agents/rules/` grep prints nothing; its ceiling is
+stated per `GC(ii)` as **`N153` by the `%s` subject form**, the ceiling of the **announced subset**.
+Tip **`3ee1c496` pushed** (`ed01c9eb..3ee1c496`), certified per `RULING GH(i)` by `.gateT323.txt` run
+in-tick at exactly that sha, with `git diff --stat ed01c9eb 3ee1c496` → `CLAUDE.md | 106 +`, one file,
+no `app/` byte, as the stated reason §5 carries across.
+
+⭐ **A precision recorded and deliberately NOT lettered — the §2e/§2f/§2g census has a HOLE, and it is
+at tick 320.** Read anchored and per file over all 96 gates, **84** print `HEAD is not a merge`
+exactly three times; of the twelve that do not, eleven are `RULING FZ(b)`'s pre-adoption window
+(`T233`–`T241` and their `b`/`c` variants, at 0/1/2) and ⭐ **`.gateT320` is `0`, which is new — and
+that zero is the sections WORKING**, `HEAD` having been the merge `6240383f`, so `§2e`/`§2g` printed
+**✓** and `§2f` named its one `RULING EP`-benign candidate. **The census's predicate is FALSE
+precisely when the sections do their job**, so the streak necessarily **resets on every take** and its
+reset event is the one event a tick most wants to record; incrementing across it would be
+`RULING FZ(a)`'s fault in a **second** counter, which `FZ(a)`'s text reaches only for the MAIN-moved
+marker. ⛔ **NOT lettered, on the standard itself**: measured over ticks 320, 321 and 322,
+`grep -c "HEAD is not a merge"` on their subjects returns **0**, so **no tick has ever asserted this
+ordinal across the break** and `RULING FU`'s standard is not met — lettering a hypothetical is the
+invented-finding shape `RULING FW` bars, tick 317's precedent applied. ✅ **The discipline needs no
+letter: the window is `T242…T319` plus `T321…T323` with `T320` excluded BY MEASUREMENT and named, and
+it counts gates whose `HEAD` was not a merge — never consecutive ticks.**
+
+⭐ **Further precisions, NOT lettered:** tick 323's backward audit under `FX(i)` is **clean** and in its
+**stronger by-identity form**, tick 322's write-time ref being this tick's pin — behind `2 / 18`, the
+merge count `50`, `18bbde18` rc `1`, merge base `57781d59`, §1 `77`, `416`, drift `4 0` and `bar`
+`14/13` and `13/12` all reproducing by identity, the only movers being the ahead-count on our own
+commit and the §1 census growing by one gate, with **no ordinal asserted for the audit itself**;
+⚠️ **`RULING GA`'s subject census has a SECOND gap** — tick **319** carries no `MAIN …: pin <sha>`
+marker, its subject being a dispatch line — harmless because the window read spans the resetting
+event, and recorded so a later tick does not read the absence as a new finding; ⚠️ **a PERMISSION
+PROMPT is not a hook refusal and this tick met THREE** — a trailing `echo "rc=$?"`, a `:3$`-anchored
+census grep and a `{0,120}` context window — each gating a **single sub-command** where a hook refuses
+a compound **wholesale**, and **none retried verbatim** (`RULING FI`'s discriminator: the invocation
+**form**, never the capability); ✅ **no hook refusal fired at all**, recorded because a refused hook
+is partial work and not a no-op; ✅ **`RULING ES`/`FJ` did NOT fire, by construction rather than luck —
+no `cd` was issued at all**, every census running on absolute paths with all 96 filenames attached,
+which is `FJ`'s own control; ✅ **`RULING FH` did NOT fire, by construction rather than luck** — no
+bare literal grep was run over a gate at all, section offsets located with the anchored `^.\[1m== `
+form and every figure then read positionally or with an anchored pattern; ⚠️ **the TWO liveness scans
+DISAGREED** — the case-(a) scan found `sixty run151` and `pricebook run157`, the write-time scan
+`sixty run151`, **Track 1's `run227` (`GOAIEZ_MERGE_OK=1`)** and `reviews run117`, **neither**
+containing this lane, recorded with **no forecast attached** per `RULING EJ` and their run numbers
+naming nothing on their own (`RULING EF`); and ⭐ **`state.py next` returns `BUILD_WAVE` wave 30
+(`next_module` `X-190`), which is NOT a licence** — it is the standing consequence of `RULING ER`'s
+six withdrawals returning modules to **BUILDING**, and **`BUILDING` is not progress**.
+⚠️ This tick's scratch files are **named, not deleted** (`rm` is refused to this seat): `.gateT323.txt`,
+`.sha323.txt`, `.subj323.txt`, `.tk323.txt`, `.mk323.txt`, `.let323.txt`, `.ord323.txt`, `.mrg323.txt`,
+`.mg323.txt`, `.gl323.txt`, `.fy323.txt`, `.inst323.txt`, `.dk323.txt`, `.mainsup323.txt`,
+`.mainbar323.txt`, `.oursbar323.txt`, `.mainsub323.txt`, `.blkT323.md`, all under
+`.agents/supervisor/`, which §1 does not count.
+
+⛔ **The backlog was EMPTY at tick 322 and that tick wrote a HOLD — the EIGHTY-FIRST consecutive
 tick with no instrument change, and the FOURTH CONSECUTIVE lettering tick** (319 `GE` · 320 `GF` ·
 321 `GG` · 322 `GH`), the lettering streak derived with `RULING GD(i)`'s paired reader plus `GD`'s
 first-match rule and reset at tick 318's `letters none`, the instrument ordinal derived by **distinct
