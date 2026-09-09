@@ -142,6 +142,7 @@ class DispatchBoardTest extends TestCase
             ->assertOk()
             ->assertSee("en route, {$pred->eta_minutes} minutes out");
     }
+
     public function test_empty_board_cannot_create_assignment(): void
     {
         $owner = User::factory()->create();

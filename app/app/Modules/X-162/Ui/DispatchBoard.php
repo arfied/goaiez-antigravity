@@ -70,7 +70,6 @@ class DispatchBoard extends Component
         }
     }
 
-
     public function render()
     {
         $businessId = Tenancy::id();
