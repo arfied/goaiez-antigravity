@@ -151,7 +151,7 @@ class ThreadScreenTest extends TestCase
         });
     }
 
-    /** @test This test proves that resolvePersonId() returns null and does not leak a random person's thread when the customer carries no identifiers. */
+    /** @test This test proves that the Thread screen displays an ingested message manually inserted into the messages table. */
     public function test_thread_screen_displays_ingested_message(): void
     {
         $owner = User::factory()->create(['role' => UserRole::Owner]);
