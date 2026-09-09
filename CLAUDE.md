@@ -6771,3 +6771,63 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     the app does not have, and a money-side edit is two-sided against main's identical line — a
     real conflict on the reverse merge over a shared vocabulary. **→ TRACK 1 ACTION 13's list.**
     ⛔ None of these is a wave here; what MONEY-155 may still find is among the 52 unread rows.
+262. **A census row carries TWO claims and they need TWO different instruments — a "written" verdict is
+    measured by the writer FORM, and a "dead" verdict at the WIDEST scope — and ruling 260 gave one
+    instrument to both, so MONEY-154 and MONEY-155 failed in opposite directions (RULED by the lane
+    supervisor 2026-09-09, on MONEY-155's `ffcaf6e2`).** Ruling 260(1) *defined* a writer in prose —
+    *"a line that sets the column on the owning model … a `$casts` entry is never a writer"* — and the
+    brief then dictated a `grep` that cannot apply it. **A grep cannot tell `'status' => 'offered'`
+    inside `PaymentPlan::create` from `$d->status === 'won'` in a blade**, and three briefs have now
+    assumed it can. Measured on this report: `dispute-card.blade.php:17` is a **read** and is listed as
+    a **writer** of `disputes.status`, `invoices.status` *and* `payments.status`; `ArEngine.php:163`
+    writes `payment_plans.status` and is listed as a writer of the same three; rows 31/34 and 33/35
+    carry byte-identical writer lists for different tables. ⭐ **And ruling 260(2)'s scope narrowing,
+    which correctly fixed the evidence (zero foreign-module citations this run), makes a DEADNESS claim
+    unsound:** `trial_limits.rate_cents_per_min` is called *neither* and is written in production by
+    `X-210/Domain/X210Engine.php:51`, outside the lane's eight trees. **Evidence is a claim about this
+    lane; deadness is a claim about the whole tree.** So: **(a)** a `written` verdict is measured by
+    **form**, in **two** shapes — mass assign `'<col>' =>` and **property assign** `->col =` / `+=` /
+    `-=` — over the eight trees **excluding `Models/` and `Database/`**; **(b)** a `read-only`/`neither`
+    verdict is measured over **`app/app` whole**, and every hit the widening adds is **read** to confirm
+    it acts on the owning model. ⚠️ The property-assign half is not optional and is recorded before it
+    is briefed: `BillingLedgerEngine:96,:103,:104` write `topups_today_cents` and `last_topup_date` as
+    `$limit->topups_today_cents += $amountCents`, which the `'<col>' =>` form misses entirely.
+    ⚠️ And the widening has its own false positives, measured: `card_tokens.brand` looked written+read
+    at wide scope (`CardPresentAction:52` / `CardScreen.php:69`) and is **not** — both act on
+    `handle()`'s **return array**, which ruling 119 measured persists nothing — so the census's
+    `written-only` stands. **That is why (b) ends in "read the hit" and not in a count.** ⚠️ This is the
+    ruling 66/75/82/92/94/106/118/147/153/175/183/189/192/193/195/198/200/215/217/254 family a
+    **twenty-eighth** time, with the fifty-fifth instrument: **a brief that dictates a sweep has
+    dictated which of two opposite errors it makes**, and a definition stated in prose beside a grep
+    that cannot express it is a definition that will not be applied.
+263. **The census is NOT run a third time; only the direction that HIDES is swept, and the
+    wrongly-written class is already CLOSED (RULED by the lane supervisor 2026-09-09; briefed as
+    MONEY-156).** A polluted writer list on a `written+read` row costs **nothing**, because no wave in
+    this lane is ever written from a `written+read` row — ruling 258 made `FINDINGS` the deliverable and
+    `FINDINGS` is drawn only from `written-only`, `read-only` and `neither`. What costs is a verdict
+    that **conceals** a defect, and ruling 262 names its two causes. ⭐ **The wrongly-written class is
+    bounded and the supervisor swept it whole this tick**: a column can only be wrongly-called-written
+    by a cast if its name appears in a `Models/` file, so the population is the **55** column names in
+    the eight modules' `Models/` trees; against the excluded-path form, **42 have a real mass-assign
+    writer and 13 do not**, and of those 13 exactly **three** are called *written* —
+    `ar_plan_terms.max_installments` and `max_term_days` (only hits are `ArPlanTerm.php:16`/`:17`
+    `$attributes` and `:21`/`:22` `$casts`; migration `:20-21` is `->default()`) and
+    `payouts.payout_date` (`Payout.php:17` is `$casts`; `ReconciliationDiscrepancies.php:65` is
+    `$run->payout_date = $payout?->payout_date?->toDateString()`, an in-memory property on the view's
+    run object **reading** the column). All three are **read-only**. ⭐ **`max_installments`/
+    `max_term_days` confirm ruling 214(b) by measurement** — the threshold nobody can set — and
+    MONEY-136's `paymentplan-builder.blade.php:4` already says so to the owner in terms; `payout_date`
+    joins ruling 51's payouts-has-no-writer family. ⛔ **None is a wave**: rulings 214, 216 and 51
+    already govern all three, and OWNER ACTION 13's threshold is reserved. **So MONEY-156 is the
+    wrongly-DEAD sweep alone** — the 17 `read-only`/`neither` rows re-measured at `app/app` scope per
+    262(b), each added hit read — which produces the final `FINDINGS` and **closes** the census.
+    ⚠️ Measured at wide scope this tick and **confirmed**, so MONEY-156 inherits them rather than
+    re-deriving them: `sellables.sku` (written-only, `EvidenceCheckoutCommand:43`),
+    `receivable_states.age_days` (neither — migration default + cast only, app-wide),
+    `offline_payments.notes` (neither — migration only), `orders.customer_id` (written-only,
+    `CheckoutEngine:81,:207`, no reader anywhere), `sync_runs.status` (written-only —
+    `SyncErrorRateView:27` and `AccountingSyncEngine:139` read `records_synced`/`conflicts_count` and
+    never `status`), `trial_limits.included_minutes` (neither) and `card_tokens.brand` (written-only,
+    per 262's false positive). ⚠️ The generalisable half is ruling 95's, one register up: **a
+    measurement that has failed twice is not repeated a third time — the failure is decomposed and only
+    the half that changes an outcome is re-run.**
