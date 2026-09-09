@@ -52,8 +52,12 @@ class Thread extends Component
     {
         return Person::where('business_id', $this->customer->business_id)
             ->where(function ($q) {
-                if ($this->customer->email) $q->where('email', $this->customer->email);
-                if ($this->customer->phone) $q->orWhere('phone', $this->customer->phone);
+                if ($this->customer->email) {
+                    $q->where('email', $this->customer->email);
+                }
+                if ($this->customer->phone) {
+                    $q->orWhere('phone', $this->customer->phone);
+                }
             })
             ->value('id');
     }
@@ -75,7 +79,9 @@ class Thread extends Component
             $personId = $this->resolvePersonId();
             $conversationIds = Conversation::where(function ($q) use ($personId) {
                 $q->where('customer_id', $this->customer->id);
-                if ($personId) $q->orWhere('person_id', $personId);
+                if ($personId) {
+                    $q->orWhere('person_id', $personId);
+                }
             })->pluck('id');
             $latches = TakeoverLatch::whereIn('conversation_id', $conversationIds)
                 ->where('is_active', true)
@@ -123,9 +129,11 @@ class Thread extends Component
         try {
             $personId = $this->resolvePersonId();
             $conversation = Conversation::where(function ($q) use ($personId) {
-                    $q->where('customer_id', $this->customer->id);
-                    if ($personId) $q->orWhere('person_id', $personId);
-                })
+                $q->where('customer_id', $this->customer->id);
+                if ($personId) {
+                    $q->orWhere('person_id', $personId);
+                }
+            })
                 ->orderBy('created_at', 'desc')
                 ->first();
 
@@ -179,7 +187,9 @@ class Thread extends Component
             $personId = $this->resolvePersonId();
             $conversationIds = Conversation::where(function ($q) use ($personId) {
                 $q->where('customer_id', $this->customer->id);
-                if ($personId) $q->orWhere('person_id', $personId);
+                if ($personId) {
+                    $q->orWhere('person_id', $personId);
+                }
             })->pluck('id');
 
             $messages = DB::table('messages')

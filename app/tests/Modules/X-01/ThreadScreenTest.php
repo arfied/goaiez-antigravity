@@ -172,7 +172,7 @@ class ThreadScreenTest extends TestCase
                 'Ingest Customer',
                 'This is an ingested message.'
             );
-            \Illuminate\Support\Facades\DB::table('messages')->insert([
+            DB::table('messages')->insert([
                 'business_id' => $biz->id,
                 'conversation_id' => $res['conversation_id'],
                 'direction' => 'inbound',
