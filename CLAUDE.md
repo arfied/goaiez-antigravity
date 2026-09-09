@@ -956,3 +956,47 @@ Rulings, and the first is cheap enough that there is no excuse:
 - **A tick that discovers a live coder mid-review abandons its own conclusions as a DRAFT** (N112's rule,
   from the other side): the verdict is already in the ledger, written by a seat that measured the same tree.
   Do not append a competing one. Record the *concurrency*, which the other seat could not see, and stop.
+
+⚠️ **AN EDIT TO THE SHARED GUARD CANNOT BE PROVED BY A POSITIVE CONTROL, SO PROVE IT BY THE md5 (N151,
+2026-09-09).** Track 1 extended `coder-bin/git`'s byte-identity clause to `.claude/hooks/` this tick. Every
+other instrument in this file gets a positive control — but the control for "does §2d catch a broken guard"
+is *breaking the guard*, and that file is on all seven lanes' PATH and **does not fail closed**: a syntax
+error in it breaks `git` everywhere at once, for every lane, including the seats that would have to fix it.
+This is the 2026-09-06 probe rule at its sharpest — *test a guard with an input that is SAFE WHEN THE GUARD
+IS ABSENT* — and here **no such input exists**, because the dangerous case and the demonstrative case are
+the same act. So the conclusive evidence is not a fired detector, it is §2d's own line moving:
+`parses · 148 lines · md5 812ac07b9754` → `parses · 162 lines · md5 6b5869205c2f`. **The changed md5 is what
+rules**, because it proves §2d read *the new bytes* rather than reporting a cached or stale result — the one
+failure mode that would make a green `parses` meaningless. Ruling: **edit the guard, then re-run the full
+gate and quote both md5s in REVIEWS; a `parses` line whose md5 did not move is not a verification of
+anything.** Corollary, and it is N131's ruling 3 in a place where it is load-bearing rather than tidy: run
+the gate **before** the edit too, or there is no first md5 to compare against and the second is a number with
+no baseline (§2e's rule, for the fourth time).
+
+⚠️ **THE OWNER.md RELAY IS REFUSED TO THIS SEAT AND IS THE THIRD MEASURED INSTANCE (N152, 2026-09-09).**
+`TICK-ADDENDUM.md` §2 says a lane's `OWNER.md` is *"the one place you write outside this checkout"*, and the
+session grants those seven directories as working directories — **and the permission classifier still refuses
+the write.** N114 already recorded two refusals of sibling-lane writes and called the refusal correct; this
+is the same wall on the one path the addendum sanctions, so the addendum and the classifier are **two sources
+of truth about one capability**, which is the drifted-refusal-message shape yet again. Do not conclude the
+relay was delivered because the addendum says it may be: **`ls -l` the target and `grep` the needle after
+every attempt** — this tick's refusal was confirmed a true no-op that way (mtime unchanged, needle `0`).
+Until a seat exists that can write it, a Track 1 answer to a lane is written to
+`.agents/supervisor/OUTBOX-<lane>.md` **in this checkout**, announced in REVIEWS as **UNDELIVERED**, and
+carried until delivered. ⛔ **An answer parked in an outbox is not an answer**; a lane blocked on a Track 1
+ruling stays blocked, and the fact that the work behind the ruling is already done makes that *easier* to
+forget, not harder.
+
+⚠️ **THE NOTE-NUMBER CEILING LIVES IN `REVIEWS.md`, NOT IN THIS FILE, AND CHECKING THIS FILE GIVES A CLEAN
+ANSWER THAT IS WRONG BY TEN (N153, 2026-09-09).** The two notes above were first written as N141/N142 on a
+measurement of `CLAUDE.md`, whose committed ceiling really is **N140** — a true number about the wrong
+artefact. The ledger's ceiling is **N150**, and N141–N150 are all in use there; only some notes are ever
+promoted into this file, so its ceiling is a *subset's* maximum and lags by however many stayed in the
+ledger. Caught by reading a lane's passing remark (site's *"the note ceiling on `main` is still N142"*)
+against my own `0`, which is **N116's rule firing exactly as written** — *before believing a `0`, ask which
+tree could have held a `1`* — and it is the same rule as N115's `STAGES` line: **a cheap local reading that
+is honest about itself is still the wrong instrument when the quantity is owned elsewhere.** Ruling:
+`grep -o 'N[0-9]\{3\}' .agents/supervisor/REVIEWS.md | sort -u | tail`, on the **ledger**, is the only
+derivation of the next free number; a `CLAUDE.md` reading may never be used for it. And note the near-miss
+shape — a collision would not have errored anywhere, it would have produced two findings sharing a number,
+which is the N137/N138 concurrency defect arrived at by a second, entirely solo route.
