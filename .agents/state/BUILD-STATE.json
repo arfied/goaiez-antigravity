@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-09T11:11:44",
+ "updated": "2026-09-09T17:10:06",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -2439,6 +2439,12 @@
    "module": "X-157",
    "chose": "EdgeDeployAction read X-103 pages at three lines, two of them Page::find with no business_id scope and one of them scoped, four lines apart in the same block with businessId in scope for all three. All three now go through X-103 PageReadAction, whose findForBusiness scopes, so the unscoped reads are scoped and the X103\\Models\\Page import is deleted and boundary falls 53 to 52. The exposure of the two unscoped reads differed and only one is falsifiable: the llms.txt read at :295 wrote another business page title and slug straight into the published artifact with nothing downstream, while the breadcrumb read at :212 was absorbed by the scoped ancestry query beside it. It is bounded: EdgeDeployAction has one production caller and SiteEngine publish scopes its page lookup with findOrFail, so the unscoped read was not reachable in production, and the invariant belongs in the reader because the reader publishes whoever calls it. The ancestry query moved verbatim including the trim both slash from slug normalisation, which is SITE-160 and not optional. REFUSED: presenting the scoping as a behaviour-identical refactor, which is how a tenancy change ships with no test; bundling PageVersion, whose :43 is a cross-module WRITE on the ssl_installed derivation that is J11 own element; bundling FormDefinition, a third model and a third claim; adding an exclusion to the sealed BoundaryStage; a new capability id literal.",
    "at": "2026-09-09T11:11:44",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-155",
+   "chose": "X-155 exposes FormReadAction as its registered read surface for form definitions, and X-157 EdgeDeployAction calls firstIdForBusiness instead of importing X155 Models FormDefinition directly. BoundaryStage exempts imports whose kind is Events, Actions or Domain and its own fix text names the registered action as the remedy, so this closes the last cross-module model read whose target module this lane also owns and boundary falls 52 to 51. Nothing changes behaviour: the call site was already scoped by business id, so this is a boundary closure and not a tenancy fix. The query moves verbatim including the ordering by id, which is determinism and not optional, because form definitions carry no active column so the lowest id is the only available policy for which form a published site posts to and dropping the ordering would make the published form target vary across identical inputs with nothing in this lane able to catch it. The action returns the id rather than the model because the one caller reads exactly the id. REFUSED: an exclusion in the sealed BoundaryStage; bundling PageVersion, whose write at line 43 is the ssl installed derivation that is J11 own element; bundling the X108 and X163 imports, which are other lanes and are a filing not a build; a state.py unresolved, which would name a dependency this lane holds; editing a generated manifest to clear a violation never raised; and a new capability id literal.",
+   "at": "2026-09-09T17:10:06",
    "ruling": "R245"
   }
  ],
