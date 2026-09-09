@@ -551,7 +551,7 @@ class X198Test extends TestCase
             ], 200);
         });
 
-        $link = (new PaymentLinkAction)->handle($biz->id, $payment->id, 'Payment for declined transaction');
+        $link = (new PaymentLinkAction)->handle($biz->id, $payment->id);
 
         // The loser hands back the winner's row: one link for this payment, and it is the racer's.
         $this->assertSame('cs_test_racer', $link->provider_link_id);
@@ -569,7 +569,7 @@ class X198Test extends TestCase
             'api.stripe.com/*' => Http::response(['id' => 'ch_idem_header_00000000000'], 200),
         ]);
 
-        app(GatewayEngine::class)->capture($biz->id, 4500, 'tok_visa', 'idem_header_1', 'USD');
+        app(GatewayEngine::class)->capture($biz->id, 4500, 'tok_visa', 'idem_header_1');
 
         // The key carries the business because every charge posts with the platform secret and no
         // Stripe-Account (R093), so all tenants share one idempotency namespace at the provider.
@@ -577,6 +577,29 @@ class X198Test extends TestCase
             return $request->url() === 'https://api.stripe.com/v1/charges'
                 && $request->hasHeader('Idempotency-Key', 'x198-charge-'.$biz->id.'-idem_header_1-0');
         });
+    }
+
+    public function test_a_capture_carries_the_tenants_declared_currency(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Sterling', 'currency' => 'GBP']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->connectAction->handle($biz->id, 'stripe', 'acct_x');
+
+        Http::fake([
+            'api.stripe.com/*' => Http::response(['id' => 'ch_test_gbp_00000000000'], 200),
+        ]);
+
+        app(GatewayEngine::class)->capture($biz->id, 4500, 'tok_visa', 'idem_currency_1');
+
+        // What the gateway was told. A USD default here collects a British customer's money in
+        // dollars, and the row would agree with the request because both came from the default.
+        Http::assertSent(function ($request) {
+            return str_contains($request->body(), 'currency=gbp');
+        });
+
+        $payment = Payment::where('business_id', $biz->id)->firstOrFail();
+        $this->assertSame('GBP', $payment->currency);
     }
 
     public function test_a_pay_link_sends_the_gateway_an_idempotency_key_namespaced_by_business(): void
@@ -599,12 +622,43 @@ class X198Test extends TestCase
             ], 200),
         ]);
 
-        (new PaymentLinkAction)->handle($biz->id, $payment->id, 'Payment for declined transaction');
+        (new PaymentLinkAction)->handle($biz->id, $payment->id);
 
         // The pair (business, payment) IS the idempotency, so the provider gets the same pair.
         Http::assertSent(function ($request) use ($biz, $payment) {
             return $request->url() === 'https://api.stripe.com/v1/checkout/sessions'
                 && $request->hasHeader('Idempotency-Key', 'x198-paylink-'.$biz->id.'-'.$payment->id);
+        });
+    }
+
+    public function test_a_pay_link_names_the_business_the_customer_is_paying(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Northwind', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $payment = Payment::create([
+            'business_id' => $biz->id,
+            'amount_cents' => 2500,
+            'currency' => 'USD',
+            'payment_token' => 'tok_failed',
+            'idempotency_key' => 'idem_desc_1',
+            'status' => 'failed',
+        ]);
+
+        Http::fake([
+            'api.stripe.com/*' => Http::response([
+                'id' => 'cs_test_desc_1',
+                'url' => 'https://checkout.stripe.com/c/pay/cs_test_desc_1',
+            ], 200),
+        ]);
+
+        (new PaymentLinkAction)->handle($biz->id, $payment->id);
+
+        // The line item is rendered to the customer by the gateway, not by this app, so the only
+        // way to see it is to read what was sent.
+        Http::assertSent(function ($request) {
+            return str_contains($request->body(), 'Northwind')
+                && ! str_contains($request->body(), 'declined');
         });
     }
 }

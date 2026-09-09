@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X198\Domain;
 
+use App\Models\Business;
 use App\Modules\X198\Events\MerchantApplied;
 use App\Modules\X198\Events\PaymentCaptured;
 use App\Modules\X198\Events\PayoutReconciled;
@@ -69,9 +70,13 @@ final class GatewayEngine
         int $businessId,
         int $amountCents,
         string $paymentToken,
-        string $idempotencyKey,
-        string $currency = 'USD'
+        string $idempotencyKey
     ): Payment {
+        // The tenant's own declared currency, read from the row that holds it. A caller-supplied
+        // currency is a second place for the truth to disagree (R037), and the lane's one
+        // production capture supplied none at all, so every charge went out in dollars.
+        $currency = Business::findOrFail($businessId)->currency;
+
         try {
             return DB::transaction(function () use ($businessId, $amountCents, $paymentToken, $idempotencyKey, $currency) {
                 // Idempotency check: duplicated ref charges once (G17-04, G1-23)
