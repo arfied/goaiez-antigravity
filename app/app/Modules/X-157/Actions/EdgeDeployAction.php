@@ -8,7 +8,7 @@ use App\Models\Business;
 use App\Modules\X103\Actions\PageReadAction;
 use App\Modules\X103\Models\PageVersion;
 use App\Modules\X108\Models\Appointment;
-use App\Modules\X155\Models\FormDefinition;
+use App\Modules\X155\Actions\FormReadAction;
 use App\Modules\X157\Events\DeployCompleted;
 use App\Modules\X157\Events\DeployRolledBack;
 use App\Modules\X157\Models\Deployment;
@@ -195,7 +195,7 @@ final class EdgeDeployAction
                         $html .= "<div class=\"chat-widget-container\"></div>\n";
                     }
                     if ($hasForm) {
-                        $formId = FormDefinition::where('business_id', $businessId)->orderBy('id')->value('id');
+                        $formId = app(FormReadAction::class)->firstIdForBusiness($businessId);
                         $action = $formId === null
                             ? ''
                             : " method=\"post\" action=\"/sites/{$businessId}/{$deployHash}/forms/{$formId}\"";
