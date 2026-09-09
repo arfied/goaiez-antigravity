@@ -43,11 +43,14 @@ class AccountingTest extends TestCase
     }
 
     /**
-     * [N-063]
+     * [N-063] AccountingEngine::handleConflict returns UNKNOWN whatever it is handed, and the class
+     * has no production caller, so this asserts the constant and not the capability. The module's
+     * own refusal for this id, with its measurement, is in X173Test.
      */
     public function test_n_063_sync_conflict_goes_unknown_not_stale(): void
     {
         $engine = new AccountingEngine;
         $this->assertSame('UNKNOWN', $engine->handleConflict('some_state'));
+        $this->assertSame('UNKNOWN', $engine->handleConflict('STALE'));
     }
 }
