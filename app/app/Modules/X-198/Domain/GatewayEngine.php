@@ -91,12 +91,22 @@ final class GatewayEngine
                 }
 
                 $gatewayChargeId = null;
+                // A deliberate retry after a recorded decline must reach the gateway, so it must
+                // not carry the declined attempt's key. The pre-check above excludes 'failed', so
+                // the count of failed rows for this pair is exactly the attempt number: two
+                // concurrent first attempts both read 0 and are deduped at the provider, while a
+                // retry after a decline reads 1 and charges.
+                $attempt = Payment::where('business_id', $businessId)
+                    ->where('idempotency_key', $idempotencyKey)
+                    ->where('status', 'failed')
+                    ->count();
+
                 if ($connection->gateway_name === 'stripe') {
                     $gatewayChargeId = app(StripeGatewayClient::class)->charge(
                         $amountCents,
                         $paymentToken,
                         $currency,
-                        'x198-charge-'.$businessId.'-'.$idempotencyKey
+                        'x198-charge-'.$businessId.'-'.$idempotencyKey.'-'.$attempt
                     );
                 }
 
