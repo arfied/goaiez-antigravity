@@ -6877,6 +6877,72 @@ Watch for: <the trap that applies, by name>
   `2436 · 2428 · 10774`: **`+1 · +1 · +1`** — exactly one new **one-assertion** test, green, and no other diff
   shape gives that triple. ⚠️ That arithmetic is also what makes the report's *"no earlier assertions failed"*
   **true and vacuous**: the test holds exactly one assertion, so there were none to fail.
+- ⚠️⚠️ **A docblock added to the WRONG METHOD is a false claim in the durable record, and the tell is that its
+  sentence is exactly right about the method next to it.** Wave 153b was asked to docblock
+  `ThreadScreenTest::test_thread_screen_displays_ingested_message` (`:154`) and wrote *"This test proves that
+  `resolvePersonId()` returns null and does not leak a random person's thread when the customer carries no
+  identifiers"* over it — a method whose whole body is `assertSee('This is an ingested message.')`, a
+  **positive** display claim whose body is hand-inserted as a fixture because `ingestMessage` persists nothing.
+  It denies nothing and returns null for nobody. The *other* test, forty lines below, carries the same sentence
+  correctly. ⭐ **The check is one subtraction and needs no tree: read a docblock against its own method's
+  assertions, not against the wave's subject** — a wave that has just proved one proposition will describe the
+  method under its cursor with that proposition. **PASS-WITH-NOTES, not `BLOCK`**, on three discriminators
+  already in this file: nothing false reached the ledger or a commit message (tick 222); a docblock corrects
+  forward by rewriting itself where those two cannot (tick 263); and nothing left the board — the proposal grep
+  read **15** before and after, which is the direction separating this from the wave-95/tick-218 `BLOCK`.
+- ⭐⭐ **The strongest mutation available for a guard is one that REINSTATES the defect the guard removed, not one
+  that bypasses the guard.** Wave 153b replaced its new `return null;` with the exact expression the guard
+  exists to prevent (`Person::where('business_id', …)->value('id')`), so the mutated tree *is* the pre-fix tree
+  and the assertion is graded against the real historical behaviour rather than against a hypothetical. Radius
+  1, `passed −1 · failed +1`, `assertions` flat (the target is its test's only assertion — tick 249, where the
+  field carrying nothing is itself the tell), and the failure message carried the component's own rendered HTML
+  with the leaked body in it (the tick-200 exception, ninth holding). **Ask a guard's mutation to restore the
+  defect; a bypass proves the guard is reached and a reinstatement proves the assertion catches the thing.**
+- ⭐ **`lead_scores.person_id` is `->constrained('people')`, so `$personId ?: $this->customer->id` reads a
+  PEOPLE key with a CUSTOMERS id — and the suite conflates the two spaces, so nothing can see it.**
+  `2026_08_30_000017_create_x01_inbox_tables.php:40` is the FK; `Thread.php:46` is the fallback;
+  `X01Test.php:440,446` create `LeadScore` rows with `'person_id' => $customer->id`, which is why every test
+  passes over it. Pre-existing (the whole expression was `$this->customer->id` before wave 153) and **improved**
+  by preferring a real person id, so it is not a regression — but the new guard makes the fallback's null branch
+  a defined state rather than an accident. ⚠️ Whether the two id spaces are reconciled anywhere is **unmeasured
+  and deliberately not concluded here**; `2026_08_31_000007_reconcile_legacy_module_columns.php` is where a
+  reading starts. **Grep an FK's `constrained()` target before reading a column called `*_id` as an id you have
+  in hand.**
+- ⚠️ **A `stat` taken into a report DRAFT is stale by the time the report is assembled — the tick-275 rule with
+  a skeleton file as the mechanism.** Wave 153b's `PATCH`/`ARTIFACTS` gave `mutation.patch` as `356 bytes @
+  17:48:54` against a disk `596 @ 17:49:03`, because `scratch/REPORT-draft.md` (17:49:34) is a field skeleton
+  filled as the wave went and the patch was regenerated nine seconds after that field was written. Five other
+  `ARTIFACTS` entries were exact to the nanosecond, which is what separates a stale measurement from an
+  invention (a forgery gets the *pre-existing* entries wrong — waves 135b, 136). **When a report is assembled
+  from a draft, re-run `stat` at assembly time**; a field collected early is a field about a tree that has moved.
+- ⭐ **Two of this column's own hand-derivations were wrong at tick 279 and the report was right both times.**
+  I counted `return null;` at `Thread.php:53` and was about to file `SITE: 54` as off by one (`grep -n` says
+  **54**), and I doubted the `Builder.php:2149` citation without reading it (it is exactly
+  `if (count($query->wheres)) {`, the line the whole finding rests on). **Re-derive under the command that would
+  make a number right before calling it wrong** — the wave-72 rule, spent on my own reading rather than on the
+  coder's, which is the only reason neither reached the block as a note.
+- **Suite baseline, measured at tick 279 on tip `18caf899`, clean tree — `tests 2438 · passed 2430 ·
+  assertions 10776 · failed 6 · errors 2 · incomplete 3 · risky 1 · duration_ms 144387`,** the standing eight by
+  **identity**, §2 `none`, §2a empty, §2b `all parse`, §6 pint `passed` / phpstan `0`, §4 seals match, stamp
+  `20260829-0647` = `runtime_build`. Against tick 278's `2437 · 2429 · 10775`: **`+1 · +1 · +1`** — one new
+  one-assertion test, green. Read from the wave's own three objects (`145505 · 147761 · 144387`, all distinct)
+  rather than re-measured: **state when you decline to re-measure and why** (tick 197's corollary is keyed to a
+  MISSING measurement, never to one the column chose not to repeat), and a fourth suite here buys a
+  `duration_ms` and costs ten minutes of a contended lock.
+- **Backlog at tick 279 — wave 154 is corrections and readings only, wave 155 builds whatever it establishes.**
+  RULED. Wave 153b's guard, assertion, mutation and litter clearance **stand and are not reopened** — reverting
+  sound work to re-derive it is the wave-87 shape, and the mutation is **spent** (tick 191). 154's four items
+  are one shape and none of them writes production code: (i) the `:154` docblock corrected to what **its own**
+  assertions prove; (ii) `tests/Feature/Architecture/InboxTest.php` — the chokepoint lint `Message.php:24` and
+  `ThreadCloseSummaries.php:209` both cite by name and which exists on **neither** this branch nor
+  `origin/main`, upstream of two of wave 152's five backlog rows, output at most a one-line `BUILD PROPOSAL:` or
+  a `TRACK 1 ACTION`; (iii) `Thread.php:46`'s cross-id-space fallback as a **reading with the conclusion
+  withheld** (the form is 12-for-12 and has corrected this column four times on this module's seams), output a
+  one-line row under `app/tests/Modules/` naming the missing thing and its owner; (iv) the four report fields.
+  ⛔ No `⛔ REFUSED` and no `UNRESOLVED` — X-01 is one of the thirteen and nothing external is missing. Live
+  list `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **15** rows at tick 279, membership unchanged since
+  tick 278; `app/app/Modules/` → **0**; stub pile across the thirteen **11**. Re-run all three; never inherit
+  them.
 
 ## Style
 
