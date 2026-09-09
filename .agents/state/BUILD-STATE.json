@@ -1674,6 +1674,10 @@
   {
    "at": "2026-09-09T18:02:12",
    "note": "X-117 Correction to MONEY-158's decided line: the X-117 checkout artifact's waiting_on value did NOT drop its rule-id pointer in that wave. Item 3 refused with NumberPoolExhausted and was reverted, so only the two runtime-proof refusal strings changed. MONEY-159 carries the artifact half."
+  },
+  {
+   "at": "2026-09-09T18:23:14",
+   "note": "X-117 The checkout evidence artifact was regenerated through the given-tenant path with no number spent: --business supplied an existing tenant, and a second run with no flag succeeded by reading business_id back out of the artifact, which the empty number pool makes positive proof that the fallback branch ran. The waiting_on value now reaches the file without its rule-id pointer."
   }
  ],
  "decisions": [
