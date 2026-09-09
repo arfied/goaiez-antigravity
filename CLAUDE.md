@@ -4836,3 +4836,57 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     **two** trait files — `C-Billing/Ui/ReadsAgreedMonthly.php` (whose 3443/3444 citations ruling 124
     measured are correctly placed, a docblock being the right home for a citation) and
     `C-Billing/Ui/LabelsMeters.php` (ruling 90's own work) — and both are honest. ⛔ Not to be re-raised.
+205. **The `wire:` reachability census is measured CLEAN in BOTH directions and is STRUCK, and the
+    instrument had to include `target=` (measured 2026-09-08 19:5x; rulings 64, 95, 100, 111, 114, 120,
+    132, 142, 151, 170, 184, 187, 190, 197, 199, 201, 203, 204).** Carried as the leading MONEY-133
+    candidate — *a `public function` on a Livewire component with no `wire:` binding in its blade is a
+    door an owner can never open, and a `wire:click` naming a method that does not exist is a button
+    that silently does nothing* — and neither half survives contact. Over the lane's **26 `Ui/`
+    components** and their blades: **direction 1**, every public method that is not `render()` or
+    `mount()` is bound in its **own** blade; **direction 2**, all 39 bound names resolve on the
+    component whose blade binds them. ⚠️ **Two properties of the instrument are the keepable half.**
+    (a) A sweep for `wire:click`/`wire:submit` alone reports **nine** false orphans — `showPaid`
+    (X-199 `unpaid`), `addCard` (X-120) and seven others — because the kit reaches them through
+    `<x-ui.empty-state action="…" target="…">` and `<x-ui.submit target="…">`, which is ruling 95's own
+    recorded shape and is why `target="` belongs in the pattern. (b) A **union of names** across the
+    lane passes `explain`, `advance`, `topup` and `connect` without checking either of the two
+    components each lives on, so the census is run **per file** or it is not run. ⛔ Not to be
+    re-raised.
+206. **X-173's two doors are the lane's only inputs whose refusal path cannot answer the owner, and the
+    fix is a refusal at the layer that already owns refusals — never `validate()` (RULED by the lane
+    supervisor 2026-09-08 19:5x, briefed as MONEY-133).** The `$rules`/validation census returns
+    **zero** `validate(`, `$rules`, `Validator::` or `Rule::` across all 26 components, against **21**
+    `wire:model` inputs on eight screens. **That absence is not itself the defect:** this lane refuses
+    by hand in the method and produces the `$error` strings every honest-copy ruling from 50 to 203 has
+    swept — `AgeingByReason::saveTerm:43` bounds a percent to 1–100, `:48` the cap, `applyLateFee:69`
+    and `logPayment:94,:101` a missing reference and a non-positive amount — and **19 of the 21 inputs
+    end in a `catch (\Throwable)` tail** that turns a database refusal into a sentence an owner reads.
+    Two do not, and both are X-173: `Ui/ConnectionMappingView::mapAccount:53` and
+    `Ui/ConflictsListView::resolve:37` catch `ModelNotFoundException` **only**, while writing
+    owner-typed strings to `varchar(255)` columns (`internal_category`, `remote_gl_account_id`,
+    `remote_gl_account_name` at `Database/migrations/2026_08_30_000092…:31-33`; `assigned_category` at
+    `:57`). `AccountingSyncEngine::mapAccount:79` refuses **empty** and `resolveConflict:45` refuses
+    empty and `uncategorised`; **neither refuses too long**, so a 256-character name reaches Postgres,
+    throws `SQLSTATE[22001] … value too long for type character varying(255)`, and leaves the owner an
+    exception instead of an answer. **That is ruling 41 at the input end** — 41 measured a 422-character
+    Stripe URL against a `varchar(255)`, and this is the same column arithmetic with the owner holding
+    the keyboard — and it is ruling 94's family. **RULED: each engine method gains a length refusal in
+    the same shape and vocabulary as its own existing empty refusal, naming the limit, and each
+    component gains the `\Throwable` tail the other nineteen doors already have.** ⛔ Never widen the
+    column: ruling 41 part 3 forbids editing that migration, and a new migration to widen a
+    GL-account-name column nothing has overflowed is churn against a genuinely bounded name. ⛔ **Never
+    `validate()` or `$rules`** — Livewire's validation messages are a **second refusal vocabulary**,
+    rendered by a mechanism no sweep in this lane reads, which is ruling 37's *"a second place for the
+    truth to disagree"* aimed at the one surface twenty rulings have spent their time making honest.
+    ⛔ Never the `\Throwable` tail alone: it would print `SQLSTATE[22001]` to an owner, which is ruling
+    100's *"is that actually why it refused?"* ⚠️ **Why this is a fix and not a ruling-96 recording:**
+    X-173's `connect()` door cannot succeed (ruling 73a), so neither door is reachable in production —
+    but ruling 204 settled that precedent three commits earlier on three empty-forever tables, because
+    the branch **is** rendered and **is** driven by existing fixtures, so a mutation can redden it
+    (ruling 130). ⚠️ **The proof design is self-verifying and is the transferable half:** with the
+    tail wired, deleting the engine guard makes the test a **FAILURE** (an `assertSee` mismatch); with
+    the tail missing it is an **ERROR** carrying `SQLSTATE[22001]`. **The shape of the mutated result
+    proves both halves of the item at once**, which is why the brief tells the coder to read the shape
+    before the text. ⚠️ Measured in the same pass and recorded rather than briefed (ruling 76's grade):
+    `X-120/Ui/CardScreen.php` also lacks a `\Throwable` tail, and is clean because `present()` persists
+    **nothing** (ruling 119) — no column, no `22001` path.
