@@ -250,7 +250,7 @@ class X102Test extends TestCase
     }
 
     /**
-     * G16-21 (R245) — Carousels require items and asset paths, but X-102's chat message store lacks columns to provide them. Owner: X-102 to build, Track 1 to declare (manifest)
+     * BUILD PROPOSAL: G16-21 (R245) — Carousels require items and asset paths, but X-102's chat message store lacks columns to provide them. Owner: X-102 to build, Track 1 to declare (manifest)
      */
     public function test_g16_21_chat_carousels(): void
     {
