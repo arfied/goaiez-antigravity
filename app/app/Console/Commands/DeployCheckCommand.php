@@ -89,6 +89,12 @@ final class DeployCheckCommand extends Command
             $last = Carbon::createFromTimestamp($last);
         }
 
+        if ($last === null) {
+            $this->record('worker running', false, 'NO WORKER HEARTBEAT. Queued jobs are accepted and never run — including the missed-call text-back.');
+
+            return;
+        }
+
         if (! $last instanceof \DateTimeInterface) {
             $this->record('worker running', false, 'heartbeat unreadable ('.get_debug_type($last).')');
 
@@ -113,6 +119,12 @@ final class DeployCheckCommand extends Command
         $last = cache()->get('goaiez:scheduler:heartbeat');
         if (is_numeric($last)) {
             $last = Carbon::createFromTimestamp($last);
+        }
+
+        if ($last === null) {
+            $this->record('scheduler running', false, 'NO SCHEDULER TICK. 29 scheduled tasks are not firing — token refresh, review reminders, deletions, parked-number release.');
+
+            return;
         }
 
         if (! $last instanceof \DateTimeInterface) {

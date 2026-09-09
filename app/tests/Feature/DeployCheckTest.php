@@ -72,8 +72,19 @@ it('deploy-check handles DateTimeInterface in heartbeat correctly', function () 
     Cache::put('goaiez:scheduler:heartbeat', new \DateTimeImmutable('-30 seconds'));
     PixelBundleVersion::factory()->create(['sha' => 'abcdef']);
 
-    Artisan::call('app:deploy-check');
+    $exitCode = Artisan::call('app:deploy-check');
     $output = Artisan::output();
     expect($output)->toContain('ok   worker running')
         ->and($output)->toContain('ok   scheduler running');
+});
+
+it('deploy-check absent heartbeat shows appropriate failure message', function () {
+    Cache::forget('goaiez:worker:heartbeat');
+    Cache::forget('goaiez:scheduler:heartbeat');
+    PixelBundleVersion::factory()->create(['sha' => 'abcdef']);
+
+    $exitCode = Artisan::call('app:deploy-check');
+    $output = Artisan::output();
+    expect($output)->toContain('NO WORKER HEARTBEAT. Queued jobs are accepted and never run — including the missed-call text-back.')
+        ->and($output)->toContain('NO SCHEDULER TICK. 29 scheduled tasks are not firing — token refresh, review reminders, deletions, parked-number release.');
 });
