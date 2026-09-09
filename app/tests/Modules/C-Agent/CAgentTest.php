@@ -168,7 +168,7 @@ class CAgentTest extends TestCase
     }
 
     /**
-     * [G5-31] X-102 invokes AgentAnswerAction synchronously via string name. Words do not ride a queue, and no use statement is needed. Track 1 will update manifest. Owner: track/sixty
+     * [G5-31] X-102 invokes AgentAnswerAction synchronously via string name. Words do not ride a queue, and no use statement is needed. TRACK 1 ACTION 1: remove consumes: chat.started from C-Agent/manifest.php since payload arrives by call instead. Owner: track/sixty
      */
     public function test_g5_31_web_chat_door(): void
     {
