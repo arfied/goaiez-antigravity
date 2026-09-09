@@ -2087,6 +2087,10 @@
   {
    "at": "2026-09-09T00:05:06",
    "note": "boundary ChatDoorTest BUILD PROPOSALS: 1) Removed closed id G5-37 from the conversation id gap and removed the unasked 'Track 1 must map' obligation, replacing it with the approved 'required but not asked for' language. 2) The rows for unconditional C-Agent calls and defaulting turn number to 1 correctly lack ids because none of X-102's six capabilities cover them."
+  },
+  {
+   "at": "2026-09-09T00:24:06",
+   "note": "boundary Web chat cannot route to X-01 ingestMessage because anonymous session tokens are not emails or phones, and ingestMessage hardcodes that branch, corrupting the Person phone column. Additionally, ChatTurnCreated lacks message text which cannot be safely added without violating AgentTurns law against unencrypted text in event payloads."
   }
  ]
 }
