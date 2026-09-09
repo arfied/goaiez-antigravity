@@ -474,6 +474,125 @@ cadence holds while the take stands refused.
 standing correction immediately before it (`FF`→`EW`, `FH`→`FF`, `GA`→`FZ`, `GB`→`GA`). ⭐ Found by the
 very rule it corrects, and ⭐ **applied to itself in the tick that wrote it** (`RULING FQ`'s standard).
 
+### ⛔⛔ `RULING GC` (tick 316) — `RULING EC`'s channel #1 is DEAD, upstream says so in its own words, and the loss lands on the ONE case selector that has already cost this lane its liveness. The note ceiling this seat has reported for four ticks is a SUBSET'S MAXIMUM, wrong by ten, and the prescribed replacement is UNREADABLE FROM HERE.
+
+`RULING EC` enumerated three Track 1 → this-seat channels and `RULING EE` added a fourth, the
+`chore(supervisor)` commit message on `main`. Channel #1 was *"`OWNER.md` written into this mailbox"*, and
+**every tick since has keyed case (d) on it.** Main's `67078919`, landed mid-tick 316, retires it:
+
+```
+$ git grep -n "OUTBOX" 67078919 -- CLAUDE.md
+67078919:CLAUDE.md:985:`.agents/supervisor/OUTBOX-<lane>.md` **in this checkout**, announced in REVIEWS as **UNDELIVERED**, and
+```
+
+Read at source (`:976-988`), **N152** is Track 1 recording that *"the permission classifier still refuses
+the write"* on the one path its own addendum sanctions — *"the addendum and the classifier are two sources
+of truth about one capability"* — and that until a seat exists which can write it, **a Track 1 answer to a
+lane is parked in `OUTBOX-<lane>.md` in Track 1's checkout** and announced UNDELIVERED in Track 1's
+REVIEWS. Its own closing line is the ruling: ⛔ *"An answer parked in an outbox is not an answer; a lane
+blocked on a Track 1 ruling stays blocked, and the fact that the work behind the ruling is already done
+makes that easier to forget, not harder."*
+
+⛔ **Both ends of that surface are outside this seat's boundary, and neither needs a denial to establish.**
+`RULING EC` measured the boundary as this checkout plus the **six sibling** `.agents/supervisor/`
+directories; the session's own working-directory list is `money · pricebook · reviews · site · sixty · ui`
+and **`grs-antig` is not among them** — the boundary is *given*, which is stronger than a dated refusal
+(`RULING FI`). Track 1's `OUTBOX-stages.md` and Track 1's `REVIEWS.md` are both in that checkout. Measured
+rather than assumed, no sibling relays it either: `ls` on `OUTBOX-stages.md` under money, site and sixty
+returns `No such file or directory` for all three, and `git show <pin>:.agents/supervisor/` is still the
+one tree entry `launch-coder.sh`.
+
+⚠️ **The harm is CASE (d), and this lane has already paid for a broken case (d) once.** `RULING FL` cost
+seven consecutive ticks of HOLD over a live, actionable ask because the selector's freshness test could not
+fire. `FL`'s repair was to read `OWNER.md`'s newest heading and grep a token from it — sound, and it
+**assumes `OWNER.md` can still receive a note.** N152 says it cannot. **So case (d) is now unsatisfiable by
+construction, not merely stale**, and the answers it exists to catch accumulate in a file this lane cannot
+open. `FL` was a stale instrument; **`GC` is an instrument whose input has been cut off at the source.**
+
+⛔ **And the note-ceiling check is falsified in the same commit.** **N153** records that the ceiling *"lives
+in `REVIEWS.md`, not in this file, and checking this file gives a clean answer that is **wrong by ten**"* —
+`CLAUDE.md`'s committed ceiling really is **N140** while the ledger's is **N150**, because only some notes
+are ever promoted. ⭐ **It names this lane's own reading as the thing that caught it**, quoting *"the note
+ceiling on `main` is still N142"* — the figure this seat has carried since tick 312 and re-measured as
+recently as tick 315's recorded `%b`-vs-`%s` precision. That precision was **correct about the two surfaces
+and wrong about which artefact owns the quantity**, which is `RULING EC`'s own defect shape one artefact
+over: tick 315 asked *which surface*, and the question was *which tree*.
+
+⛔ **N153's prescribed instrument — `grep -o 'N[0-9]\{3\}' .agents/supervisor/REVIEWS.md` on the ledger —
+is Track 1's own file and is UNREADABLE FROM HERE.** So a rule written to fix a fleet-wide misreading is,
+for this lane, unrunnable by construction. The best surface available to this seat is still the commit
+**subject** form, which returns **N153** at `67078919`; and it is honest only about notes Track 1 chose to
+announce, never about the ledger's true ceiling.
+
+✅ **Standing correction, three clauses, none of which requires a capability this seat lacks.** **(i)** Case
+(d) is **no longer evidence of anything when it does not fire**: an unfired case (d) means *"no note arrived
+on a channel Track 1 has recorded it cannot use"*, never *"Track 1 has not answered."* A tick states that
+explicitly rather than reporting case (d) excluded and moving on. **(ii)** The ACTION 1 / note-ceiling
+figure is written as **the ceiling of the announced subset**, with the surface named — `N153` by the `%s`
+subject form — and **never** as *"the note ceiling on `main`"*, which is a quantity this lane cannot
+measure. **(iii)** Every `TRACK 1 ACTION` item this lane carries is filed knowing its answer may already
+exist, undelivered; a tick does not read Track 1's silence as Track 1 not having ruled.
+
+⛔ **NOT an opening, and nothing here changes what this lane may do.** `capability` is **207**, the
+admission census's input is proven unmoved, the take is refused on measurement, and no ACTION item's
+*substance* has moved. What `GC` changes is that this seat stops treating three of its own checks as
+informative when they are structurally blind. ⚠️ Twenty-third member of the
+`EU`/`EV`/`EW`/`EX`/`EZ`/`FE`/`FF`/`FH`/`FI`/`FJ`/`FN`/`FP`/`FQ`/`FS`/`FT`/`FU`/`FV`/`FW`/`FX`/`FY`/`FZ`/`GA`/`GB`
+family, and the first where the defective instrument is **a channel rather than a command, a reader or a
+tally** — and the first found by reading **upstream's own ruling** rather than by re-running one of ours.
+
+### ⛔ `RULING GD` (tick 316) — the lettered-ruling streak has NO single reader, because the ledger announces a letter three different ways and announces DECLINING to letter in two. Both readers tick 316 ran produce a FALSE POSITIVE, in opposite directions.
+
+`RULING FZ` requires a streak to be derived by a command over the ledger; `GA`/`GB` repaired that command
+for the **marker** census. **The lettered-ruling streak has been asserted every tick since 313 and its
+command has never been published.** Run at tick 316, the two natural forms both fail, and each publishes
+its own counter-example:
+
+```
+$ grep -oE "^chore\(supervisor\): tick [0-9]+ [A-Z-]+ — RULING [A-Z]+" .subj316.txt
+tick 310 … RULING DK      ← tick 310 lettered NOTHING; it CITED DK firing live
+tick 252 … RULING FZ   tick 245 … RULING FY   tick 243 … RULING FX   tick 242 … RULING FW
+
+$ grep -oE "this tick letters [a-zA-Z]+|RULING [A-Z][A-Z] lettered" .subj316.txt
+this tick letters none    ← tick 313, a DECLINE
+RULING GB lettered        ← tick 312, a LETTER
+```
+
+⛔ **Two readers, two opposite false positives, over one field.** The em-dash form counts a ruling **cited**
+in the leading position as one **lettered** — tick 310's own block reads *"the FIFTY-EIGHTH CONSECUTIVE
+with no new lettered ruling"* while citing `DK`, so the reader contradicts the record it is reading. The
+"letters" form is **polarity-blind**: the matched span stops before the word that carries the meaning, so
+`letters none` and `letters GC` are one row. ⚠️ Had a tick taken the newest row of the second form as the
+reset, it would have read tick **313** as the resetting event and written **SECOND CONSECUTIVE** where the
+truth is fourth — an **under**-count, and permanent, because a tally is only ever incremented (`FZ`'s own
+point). `GB` found the inflating direction; **`GD` is the deflating one.**
+
+⭐ **The root cause is in the WRITER, and it is a third encoding no reader anticipated.** Tick 312 announced
+its letter as `RULING GB lettered`; tick 311 announced `GA` in an **addendum** subject reading
+`RULING GA(iii)`; ticks 242–252 announced theirs immediately after the subject's em-dash. And a *decline*
+is encoded **two** ways — explicitly at tick 313 (`this tick letters none`) and **by absence** at ticks 314
+and 315, which carry no lettering marker at all. **Five encodings, three for the event and two for its
+negation, across twenty-five ticks.** `GA` ruled that precision in the record destroyed derivability;
+`GD` is the same wound from variety rather than precision.
+
+✅ **Standing correction, deliberately the READER'S half plus one line of convention, because `RULING FY`
+is the precedent for repairing the reader and `RULING FW` bars anything larger while the take stands
+refused.** **(i)** A lettering ordinal is derived by the **pair** of anchored patterns
+`RULING [A-Z][A-Z] lettered` (the event) and `letters none` (the decline), read over `%s`, **and the
+absence of both is read as a decline** — never by a leading-position `RULING` match, which cannot
+distinguish a citation from a lettering. **(ii)** A letter is announced in the subject as
+`RULING <XX> lettered` and a decline as `letters none`, so the absence case stops growing. ⛔ **(iii)** If
+neither pattern can be made to separate the two, the ordinal is **not written at all** — `FZ`'s
+derive-it-or-omit-it, which is why tick 316 states the streak as *ending at three* with the three ticks
+named individually rather than as a bare number.
+
+⭐ **Applied to itself in the tick that wrote it** (`RULING FQ`'s standard) and ⭐ **proven on this lane's
+own history** (`RULING FU`'s standard): the repaired reader recovers tick 310 as a **decline**, which its
+own block asserts and both naive forms get wrong. ⛔ **No instrument byte changes** (`RULING FY`'s
+precedent). ⚠️ Twenty-fourth member of the family, the **fourth** whose defective instrument is a standing
+correction's own machinery (`FF`→`EW`, `FH`→`FF`, `GA`→`FZ`, `GB`→`GA`, `GD`→`FZ`), and the first where the
+record uses **more encodings than any reader was written for**.
+
 ### ⛔⛔ `RULING FZ` (tick 252) — `RULING FX(i)` says paste every count from a command run against the pinned sha. A STREAK IS NOT A FACT ABOUT A SHA, so no pin-anchored command can produce one and `FX(i)` is not merely unapplied to a tally — it is INAPPLICABLE IN PRINCIPLE. Two of tick 251's tallies are wrong, by two different arithmetic faults.
 
 `FX(i)` exists because a REVIEWS block has no coder to falsify it. **It has a hole, and the hole is the
@@ -1815,7 +1934,88 @@ dispatched — executed by the supervisor itself**, `bin/supervise.sh` being thi
 ⛔ **Not a wave and no count moved** — §5 identical in all eight across `.gateT241.txt` and
 `.gateT241b.txt`. It sets no `fail=1`: a trigger, never a verdict.
 
-⛔ **The backlog is EMPTY at tick 315 and this tick writes a HOLD — the SEVENTY-FOURTH consecutive tick
+⛔ **The backlog is EMPTY at tick 316 and this tick writes a HOLD — the SEVENTY-FIFTH consecutive tick
+with no instrument change, and the streak of ticks with no new lettered ruling ENDS AT THREE** (313 · 314 ·
+315), because this tick letters **`RULING GC`** and **`RULING GD`**; both ordinals are **derived in this
+tick** per `RULING FZ` and neither carried — `git log --format='%s' 8e178993..HEAD | grep -oE
+"^chore\(supervisor\): tick [0-9]+" | sort -u | wc -l` → **74** prior distinct authoring ticks over **76**
+rows (`RULING GB(ii)`'s distinct-tick form, **never** `git rev-list --count`, whose row form would have
+written SEVENTY-SEVENTH), corroborated by `git log -3 -- bin/supervise.sh` naming tick 241's `8e178993`;
+and the lettering streak derived with **`GD(i)`'s** paired reader, its resetting event being tick 312's
+`GB`. The §3 == §5 run and the take-refusal count are **deliberately not asserted**, having no derivation.
+
+⛔⛔ **`RULING DK` FIRED LIVE and it is the tick's one movement event — `origin/main` moved MID-TICK with
+no fetch from this seat: `ae420332` at the opening `rev-parse`, `67078919` at write time**, two
+first-parent commits of which one is a merge — `2eee0eef` `merge: track/pricebook — X-171` (08:20:08) and
+`67078919` `chore(supervisor): N151 … N152 … N153` (08:41:01). ⭐ **The pin governed and that is what kept
+the block coherent** — every figure was run against the literal sha, so the move changed none of them.
+✅ **Reconciled rather than reasoned:** at the pin the lane is **95 ahead / 53 behind** first-parent and
+**95 / 270** by ancestor count; at the moved ref **95 / 55** and **95 / 276**, with ACTION 10's merge count
+**45 → 46**. The **+2 first-parent / +6 ancestor / +1 merge** delta is the **MIXED** signature against tick
+256's `+7 / +7` for pure non-merge movement; **read the shape, never the number** (`RULING EK`). The take
+re-check, the checker diff and ACTION 1's `.agents/rules/` grep were **re-run at the moved ref too** and
+print nothing at either. ⛔ **The second of those two commits is what `RULING GC` is about** — N152 retires
+`RULING EC`'s channel #1 and with it case (d); N153 falsifies the note-ceiling figure this seat has carried
+since tick 312. **Filed as TRACK 1 ACTION 13.**
+
+⭐ **`main` DID NOT MOVE AT PIN TIME — pin `ae420332`, the FIFTH CONSECUTIVE unmoved tick at it**: derived
+with `GA(i)`'s repaired reader over the ledger's own markers read from commit **subjects** and deduped by
+**distinct authoring tick** per `GA(iii)`/`GB(ii)`, spanning back to tick 311's **MOVED** (`58e8ad89` →
+`ae420332`), the resetting event. ⚠️ That is the pin-time reading and stands beside `DK` above without
+contradiction — the ref was unmoved when pinned and moved before the block was written. ⚠️ **Tick 310
+remains absent from the subject census, which is `GA`'s own recorded finding and not a new one.** Merge
+base `7a75f289` unmoved; ours-since-base in `app/` is `app/phpunit.xml` alone, so this lane still authors
+no `app/**` byte and `boundary 55` · `contract 85` · `capability 207` · `anchor 128` · `schema 16` remain
+**main's numbers** (`RULING FO`). ⛔ **The take is OPEN, UNNECESSARY and REFUSED** — `DD`'s two-row
+re-check prints nothing and the `Doctor`/`JourneyHarness`/`seals.json` diff against our base is **empty at
+both refs**, so this lane's checker **is** main's current checker byte-identical, `RULING EQ`'s void
+condition is not reached, and a take could refresh nothing at a cost of **276** ancestor commits.
+⭐ **The admission census was NOT re-run and the reason is a measurement taken first**:
+`git diff --stat 10e804ea HEAD -- app/` is **empty**, corroborated by `capability` reading **207**
+unchanged. §1 read from the count line per `FY` at `:47` as a **single line** at **77**, corroborated
+independently by `git status --porcelain -uall`, supervisor directory contributing **0**; `FY`'s census
+spans **SEVENTY-EIGHT** consecutive gates (`.gateT239`…`.gateT316`, all `77`, derived in three calls of
+26 · 26 · 26 with every filename attached, never a glob). §3 == §5 and still a LEDGER; §5's own arithmetic
+control holds (`494`, read positionally). `wc -l bin/supervise.sh` **416** and drift `4 0`, both
+re-measured per `FX(ii)`; **both `bar` extractions were run** — `grep -cE '^bar "'` → **14 / 13** (`FX`'s
+form) and `grep -oE '^bar "[0-9a-z]+\.'` → **13 / 12** (tick 244's recorded precision) — with membership
+re-derived by `comm` on sorted input and unchanged (`1a` · `1b` · `2d` **NOT adoptable**, `RULING FS`,
+re-refused **without** re-testing the boundary; `2f` · `2g` offered upstream). §2e/§2f/§2g printed `HEAD is
+not a merge` for a **SEVENTY-FIFTH** gate (T242…T316, all `3`, derived in three calls of 25 · 25 · 25,
+anchored with filenames explicit, T241 **measured at `2`** as `FZ(b)`'s pre-adoption gate). **TRACK 1
+ACTION 10** at the pin: **45** first-parent merges since `a5042da2`, **0** naming `track/stages`,
+`18bbde18` still not an ancestor (rc **1**). **ACTION 1** re-run **absolutely** at both refs per
+`RULING EC`: the `.agents/rules/` grep prints nothing; its ceiling figure is restated per `GC(ii)` as
+**N153 by the `%s` subject form**, the ceiling of the **announced subset** and not of Track 1's ledger.
+⭐ **Precisions recorded and deliberately NOT lettered** (`FW` bars dressing a clean audit as a discovery):
+tick 316's backward audit under `FX(i)` is **clean** and, at a pin identical to tick 315's, its **stronger
+by-identity form** — behind **53 / 270**, the merge count **45**, §1's **77**, `416`, drift `4 0` and
+`bar` **14 / 13** and **13 / 12** all reproducing by identity, the movers being the ahead-count on our own
+tick-315 commit and the two censuses each growing by one gate, with **no ordinal asserted for the audit
+itself**; ✅ **`RULING ES`/`FJ` did NOT fire, by construction rather than luck — no `cd` was issued at
+all**, every census running on absolute paths with all seventy-eight / seventy-five filenames attached,
+which is `FJ`'s own control; ✅ **`RULING FH` did NOT fire, by construction rather than luck** — **no bare
+literal grep was run over a gate at all**, section offsets located with the anchored `^.\[1m== ` form and
+every figure then read positionally or with an anchored pattern, which is what tick 314's recorded near
+miss asked; ⚠️ **a PERMISSION PROMPT is not a hook refusal and this tick met TWO** — both `grep -oE` forms
+carrying a `.{0,N}` context window, each gating a **single sub-command** where a hook refuses a compound
+**wholesale**, and **neither retried verbatim**, which is `RULING FI`'s discriminator of the invocation
+**form** and never the capability; ⚠️ **a refused hook is partial work, not a no-op, and it fired once** —
+a `cat` of the pidfile paired with a `state.py next`, refused **wholesale** so neither half ran, re-issued
+as two calls; ⚠️ **the TWO liveness scans DISAGREED** — the case-(a) scan found **one** coder and the
+write-time scan **two**, `pricebook run154` having started mid-tick, **neither** containing this lane, the
+relative-`logs/` `run174` proven not ours by **re-verifying** that this checkout has no such directory
+(`RULING CX`), recorded with **no forecast attached** per `RULING EJ` and their run numbers naming nothing
+on their own (`RULING EF`); and ⭐ **`state.py next` returns `BUILD_WAVE` wave 30 (`next_module` `X-190`),
+which is NOT a licence** — it is the standing consequence of `RULING ER`'s six withdrawals returning
+modules to **BUILDING**, and **`BUILDING` is not progress**. ⚠️ `HEAD` is **67 ahead** of
+`origin/track/stages`; notes-only commits ride the next gated-sha push. ⚠️ This tick's scratch files are
+**named, not deleted** (`rm` is refused to this seat): `.gateT316.txt`, `.sha316.txt`, `.st316.txt`,
+`.subj316.txt`, `.tk316.txt`, `.tku316.txt`, `.mk316.txt`, `.let316.txt`, `.mrg316.txt`, `.mainsub316.txt`,
+`.mainsub316b.txt`, `.mainsup316.txt`, `.mainbar316.txt`, `.oursbar316.txt`, `.mbs316.txt`, `.obs316.txt`,
+`.n153.txt`, `.mainclaude316.txt`, all under `.agents/supervisor/`, which §1 does not count.
+
+⛔ **The backlog was EMPTY at tick 315 and that tick wrote a HOLD — the SEVENTY-FOURTH consecutive tick
 with no instrument change and the THIRD CONSECUTIVE with no new lettered ruling**, both ordinals
 **derived in this tick** per `RULING FZ` and neither carried: `git log --format='%s' 8e178993..HEAD |
 grep -oE "^chore\(supervisor\): tick [0-9]+" | sort -u | wc -l` → **73** prior ticks since tick 241's
