@@ -77,7 +77,7 @@ class PaymentplanBuilderScreenTest extends TestCase
             ->assertSee('waits on a financing partner');
 
         $this->assertSame(0, PaymentPlan::where('business_id', $biz->id)->count());
-        $this->assertSame(1, ArPlanTerm::where('business_id', $biz->id)->count());
+        $this->assertSame(0, ArPlanTerm::where('business_id', $biz->id)->count(), 'a refused plan offer created the terms row');
         Event::assertNotDispatched(ArPlanAccepted::class);
 
         $screen->set('installments.'.$inv1->id, 3)
@@ -93,6 +93,7 @@ class PaymentplanBuilderScreenTest extends TestCase
         $this->assertSame(30000, $plan->installment_amount_cents);
         $this->assertSame('payment_plan', ReceivableState::where('business_id', $biz->id)->where('invoice_id', $inv1->id)->value('status'));
         Event::assertDispatched(ArPlanAccepted::class);
+        $this->assertSame(0, ArPlanTerm::where('business_id', $biz->id)->count(), 'a successful plan offer created a threshold row nobody set');
 
         Livewire::actingAs($owner)->test(PaymentplanBuilder::class)
             ->assertSee('Nothing to split')
