@@ -120,4 +120,27 @@ class ConflictsListScreenTest extends TestCase
             ->assertSee('Record the account')
             ->assertDontSee('Post to this account');
     }
+
+    public function test_a_resolution_account_longer_than_the_ledger_column_is_refused_and_the_conflict_stays_open(): void
+    {
+        $bizId = self::provisionTenant()->id;
+        Tenancy::set($bizId);
+
+        $conn = app(AccountingConnectAction::class)->connect($bizId, 'quickbooks', 'realm_qb_long');
+        app(AccountingSyncAction::class)->syncTransactions($bizId, $conn->id, [
+            ['ref' => 'inv_tx_long', 'description' => 'desc', 'confidence' => 0.40, 'category' => 'guess'],
+        ]);
+
+        $conflictId = AccountingSyncConflict::where('business_id', $bizId)->where('transaction_ref', 'inv_tx_long')->first()->id;
+
+        Livewire::test(ConflictsListView::class)
+            ->set("resolutions.{$conflictId}", str_repeat('b', 256))
+            ->call('resolve', $conflictId)
+            ->assertSee('longer than 255 characters')
+            ->assertDontSee('is recorded against');
+
+        $row = AccountingSyncConflict::find($conflictId);
+        $this->assertSame('open', $row->status);
+        $this->assertSame('uncategorised', $row->assigned_category);
+    }
 }
