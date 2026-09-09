@@ -730,3 +730,4 @@
 - `2026-09-08T20:22:49` (R245) X-117 — Scoped cart line lookups and added a notice for lines missing from the catalogue so the total adds up.
 - `2026-09-08T20:43:02` (R245) X-199 — The overdue reader takes the business it reads for, and the chase and dispute-evidence reads carry their own business_id.
 - `2026-09-08T21:10:03` (R245) X-211 — The plan builder reads its threshold row instead of creating one, says the limit is a standing default rather than an account setting, and refuses to preview a split the offer door would refuse.
+- `2026-09-09T00:37:42` (R245) X-211 — A threshold lookup never writes the row it reads: both the plan builder's render and the engine's refusal comparison read ar_plan_terms or fall back to the model default, so the row exists only when the owner's late-fee door wrote it.
