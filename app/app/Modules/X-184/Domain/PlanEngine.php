@@ -20,4 +20,16 @@ final class PlanEngine
     {
         return $isFatigued;
     }
+
+    /**
+     * (R245)
+     */
+    public function autoRefreshAllowed(bool $isFatigued, int $monthlyTraffic, int $floor): bool
+    {
+        if (! $isFatigued) {
+            return false;
+        }
+
+        return $monthlyTraffic < $floor;
+    }
 }

@@ -10,7 +10,7 @@
             When a flow runs, its history and status will appear here.
         </x-ui.empty-state>
     @else
-        <h3>Flow Execution Runs</h3>
+        <h2>Flow Execution Runs</h2>
         <div class="space-y-4 mt-4">
             @foreach ($runs as $run)
                 <div class="border p-4 rounded" wire:key="run-{{ $run->id }}">

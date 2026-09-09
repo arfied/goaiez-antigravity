@@ -10,8 +10,8 @@ final class PayoutReconcileAction
 {
     public function __construct(private readonly GatewayEngine $engine) {}
 
-    public function handle(int $businessId, int $payoutId, int $expectedCents, int $actualCents): array
+    public function handle(int $businessId, int $payoutId, int $expectedCents): array
     {
-        return $this->engine->reconcilePayout($businessId, $payoutId, $expectedCents, $actualCents);
+        return $this->engine->reconcilePayout($businessId, $payoutId, $expectedCents);
     }
 }

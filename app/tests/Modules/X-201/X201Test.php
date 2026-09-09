@@ -50,6 +50,12 @@ class X201Test extends TestCase
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $dispute = $this->recordAction->handle($biz->id, 999, 50000, 'unrecognized');
+
+        $evidenceBundle = [
+            ['type' => 'invoice', 'content' => 'Invoice #999'],
+        ];
+        $this->compileAction->handle($biz->id, $dispute->id, $evidenceBundle);
+
         $dispute->update(['deadline_at' => Carbon::now()->subDay()]);
 
         $this->expectException(\Exception::class);

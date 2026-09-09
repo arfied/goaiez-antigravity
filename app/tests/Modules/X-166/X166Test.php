@@ -8,6 +8,7 @@ use App\Modules\X166\Actions\JobCostAction;
 use App\Modules\X166\Actions\MarginReportAction;
 use App\Modules\X166\Events\JobCosted;
 use App\Modules\X166\Events\MarginBelowThreshold;
+use App\Modules\X166\Models\JobCost;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -86,6 +87,7 @@ class X166Test extends TestCase
 
     /**
      * [N-166-01] no refusal declared
+     * [N-048] ⛔ REFUSED: `php artisan why N-048` reports it is never DEFINED. a margin figure is NEVER computed from invoiced revenue. Nothing to assert. (R245, REV-81/REV-83)
      */
     public function test_n_166_01_no_refusal(): void
     {
@@ -124,5 +126,148 @@ class X166Test extends TestCase
         // and does not appear carrying any margin figure.
         $this->assertArrayNotHasKey($emptyJobId, $jobsWithMargins);
         $this->assertCount(1, $jobsWithMargins);
+    }
+
+    /** [N-048] */
+    public function test_n_048_a_margin_never_reads_an_invoiced_source(): void
+    {
+        $path = base_path('app/Modules/X-166');
+        $pattern = '(invoice|amount_due|receivable|invoiced|balance_due)';
+        $grepCommand = sprintf('grep -rniE %s %s', escapeshellarg($pattern), escapeshellarg($path));
+        $output = shell_exec($grepCommand);
+
+        // The capabilities.php filter is load-bearing here because the assertion
+        // prose in the generated capabilities.php contains the word "invoiced".
+        $lines = array_filter(explode("\n", $output ?? ''), function ($line) {
+            return ! empty($line) && ! str_contains($line, 'capabilities.php') && ! str_contains($line, 'manifest.php');
+        });
+
+        $this->assertEmpty($lines, 'No path under app/Modules/X-166/ reads an invoiced source.');
+    }
+
+    /** [N-048] */
+    public function test_n_048_margin_is_the_collected_figure_not_the_invoiced_one(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Collected Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $invoicedCents = 100000;
+        $collectedCents = 60000;
+
+        $cost = $this->costAction->handle(
+            businessId: $biz->id,
+            jobId: 777,
+            priceBookVersion: 'v2.1',
+            laborCostCents: 20000,
+            materialsCostCents: 10000,
+            overheadCostCents: 10000,
+            revenueCents: $collectedCents, // only 60000 ever enters
+            techId: 44,
+            serviceType: 'repair',
+            source: 'direct'
+        );
+
+        $this->assertEquals(40000, $cost->total_cost_cents);
+        $this->assertEquals(20000, $cost->gross_margin_cents, 'Margin is derived from the 60000 collected figure, not 60000 produced from 100000 invoiced figure minus 40000 costs');
+        $this->assertEquals(33.33, $cost->gross_margin_pct);
+
+        $report = $this->reportAction->handle($biz->id, 'job');
+        $row = (array) collect($report)->firstWhere('job_id', 777);
+        $this->assertNotEmpty($row);
+
+        $this->assertEquals(60000, $row['revenue_cents']);
+        $this->assertFalse(in_array(100000, $row, true), 'No value in the row equals the invoiced amount of 100000');
+    }
+
+    public function test_3a_tech(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Tech Sample Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        JobCost::create([
+            'business_id' => $biz->id,
+            'job_id' => 101,
+            'price_book_version' => 'v1',
+            'tech_id' => 50,
+            'service_type' => 'install',
+            'source' => 'direct',
+            'revenue_cents' => 1500,
+            'total_cost_cents' => 500,
+            'labor_cost_cents' => 250,
+            'materials_cost_cents' => 250,
+            'overhead_cost_cents' => 0,
+            'gross_margin_cents' => 1000,
+            'gross_margin_pct' => 66.6,
+            'is_sample' => false,
+        ]);
+
+        JobCost::create([
+            'business_id' => $biz->id,
+            'job_id' => 102,
+            'price_book_version' => 'v1',
+            'tech_id' => 50,
+            'service_type' => 'install',
+            'source' => 'direct',
+            'revenue_cents' => 3000,
+            'total_cost_cents' => 1000,
+            'labor_cost_cents' => 500,
+            'materials_cost_cents' => 500,
+            'overhead_cost_cents' => 0,
+            'gross_margin_cents' => 2000,
+            'gross_margin_pct' => 66.6,
+            'is_sample' => true,
+        ]);
+
+        $report = $this->reportAction->handle($biz->id, 'tech');
+
+        $this->assertCount(1, $report, 'Margin report by tech should return one row');
+        $this->assertArrayHasKey(0, $report, 'Margin report array missing index 0');
+        $this->assertEquals(1500, $report[0]['total_revenue'], 'Margin report by tech should only sum non-sample jobs');
+    }
+
+    public function test_3b_service(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Service Sample Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        JobCost::create([
+            'business_id' => $biz->id,
+            'job_id' => 103,
+            'price_book_version' => 'v1',
+            'tech_id' => 60,
+            'service_type' => 'maintenance',
+            'source' => 'direct',
+            'revenue_cents' => 2500,
+            'total_cost_cents' => 500,
+            'labor_cost_cents' => 250,
+            'materials_cost_cents' => 250,
+            'overhead_cost_cents' => 0,
+            'gross_margin_cents' => 2000,
+            'gross_margin_pct' => 80.0,
+            'is_sample' => false,
+        ]);
+
+        JobCost::create([
+            'business_id' => $biz->id,
+            'job_id' => 104,
+            'price_book_version' => 'v1',
+            'tech_id' => 60,
+            'service_type' => 'maintenance',
+            'source' => 'direct',
+            'revenue_cents' => 4000,
+            'total_cost_cents' => 1000,
+            'labor_cost_cents' => 500,
+            'materials_cost_cents' => 500,
+            'overhead_cost_cents' => 0,
+            'gross_margin_cents' => 3000,
+            'gross_margin_pct' => 75.0,
+            'is_sample' => true,
+        ]);
+
+        $report = $this->reportAction->handle($biz->id, 'service');
+
+        $this->assertCount(1, $report, 'Margin report by service should return one row');
+        $this->assertArrayHasKey(0, $report, 'Margin report array missing index 0');
+        $this->assertEquals(2500, $report[0]['total_revenue'], 'Margin report by service should only sum non-sample jobs');
     }
 }

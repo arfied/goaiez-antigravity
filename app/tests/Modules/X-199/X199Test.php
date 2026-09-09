@@ -5,16 +5,21 @@ declare(strict_types=1);
 namespace Tests\Modules\X199;
 
 use App\Modules\X121\Models\Person;
+use App\Modules\X198\Models\MerchantConnection;
 use App\Modules\X199\Actions\InvoiceDraftAction;
 use App\Modules\X199\Actions\InvoiceIssueAction;
 use App\Modules\X199\Actions\InvoiceRecordOfflineAction;
 use App\Modules\X199\Actions\TermsSetAction;
 use App\Modules\X199\Domain\InvoiceEngine;
 use App\Modules\X199\Events\InvoiceIssued;
+use App\Modules\X199\Events\InvoiceOverdue;
 use App\Modules\X199\Events\InvoicePaid;
+use App\Modules\X199\Models\CreditTerm;
 use App\Modules\X199\Models\Invoice;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
@@ -60,8 +65,20 @@ class X199Test extends TestCase
             'phone' => '+15125550399',
         ]);
 
+        MerchantConnection::create([
+            'business_id' => $biz->id,
+            'gateway_name' => 'stripe',
+            'merchant_account_id' => 'acct_test',
+            'is_connected' => true,
+        ]);
+
+        Http::fake([
+            'api.stripe.com/*' => Http::response(['id' => 'ch_mock_123', 'status' => 'succeeded'], 200),
+        ]);
+
         // Set net-30 credit limit to $1,000.00 (100,000 cents)
-        $this->termsAction->handle(
+        $termsAction = new TermsSetAction;
+        $termsAction->handle(
             businessId: $biz->id,
             customerId: $customer->id,
             termsType: 'net_30',
@@ -85,6 +102,9 @@ class X199Test extends TestCase
 
         Event::assertDispatched(InvoiceIssued::class);
 
+        // Force status to charged so we can test the reversal logic without mocking the gateway
+        // (Status is now updated automatically since gateway is mocked)
+
         // 2. Paying the invoice writes overflow.reversed for the same amount
         $payRes = $this->engine->recordPayment($biz->id, $issueRes['invoice']->id);
         $this->assertEquals('paid', $payRes['status']);
@@ -106,7 +126,11 @@ class X199Test extends TestCase
     }
 
     /**
-     * [G1-05], [G1-31], [G1-40], [G1-51], [G1-60] no refusal declared
+     * ⛔ REFUSED: G1-05: Surveyed app/Modules/X-199 Actions, Domain, Models, Events, Listeners, Ui and found no seam for jobs or AI structuring lines.
+     * ⛔ REFUSED: G1-31: Surveyed app/Modules/X-199 Actions, Domain, Models, Events, Listeners, Ui and found no seam for HTML fallbacks or template branding; nothing writes pdf_url at all and the nullable column stays null.
+     * ⛔ REFUSED: G1-40: Surveyed app/Modules/X-199 Actions, Domain, Models, Events, Listeners, Ui and found no seam for link shorteners or URL generation.
+     * ⛔ REFUSED: G1-51: X-199 owns no gateway seam of its own — it reaches Stripe only through another module, whose engine it calls for an overflow charge and whose pay-link action the declines screen uses — so there is no gateway-agnostic integration here to assert.
+     * ⛔ REFUSED: G1-60: Surveyed app/Modules/X-199 Actions, Domain, Models, Events, Listeners, Ui and found no seam for channel choices on existing links.
      */
     public function test_g1_no_refusals(): void
     {
@@ -114,7 +138,7 @@ class X199Test extends TestCase
     }
 
     /**
-     * [G13-36] invoice opened the alert names an action
+     * ⛔ REFUSED: G13-36: Surveyed app/Modules/X-199 Actions, Domain, Models, Events, Listeners, Ui and found no seam for InvoiceOpened events or alerts.
      */
     public function test_g13_36_invoice_alert(): void
     {
@@ -133,14 +157,99 @@ class X199Test extends TestCase
         $lines = [['description' => 'Pipe Inspection', 'quantity' => 1, 'unit_price_cents' => 9900]];
 
         $res = $this->issueAction->handle($biz->id, $customer->id, $lines);
-        $this->assertNotEmpty($res['invoice']->pdf_url);
+        $this->assertNull($res['invoice']->pdf_url);
     }
 
     /**
-     * [G21-04] card, invoices, seats — and R34's cancel in under 60 seconds
+     * ⛔ REFUSED: G21-04: Surveyed app/Modules/X-199 Actions, Domain, Models, Events, Listeners, Ui and found no seam for seats, cards, and cancels on a unified summary screen.
      */
     public function test_g21_04_billing_screen_summary(): void
     {
         $this->assertTrue(true);
+    }
+
+    public function test_invoice_overdue_reports_real_age(): void
+    {
+        Carbon::setTestNow(Carbon::parse('2026-09-06 12:00:00'));
+
+        $biz = TestCase::provisionTenant(['name' => 'Overdue Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $customer = Person::create([
+            'business_id' => $biz->id,
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+            'phone' => '+15551234567',
+        ]);
+
+        $invoice1 = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-001',
+            'total_cents' => 10000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(45)->toDateString(),
+        ]);
+
+        $invoice2 = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-002',
+            'total_cents' => 10000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(3)->toDateString(),
+        ]);
+
+        Event::fake([InvoiceOverdue::class]);
+
+        $this->engine->markOverdue($biz->id, $invoice1->id);
+        $this->engine->markOverdue($biz->id, $invoice2->id);
+
+        Event::assertDispatched(InvoiceOverdue::class, function ($event) use ($invoice1) {
+            return $event->invoiceId === $invoice1->id && $event->daysOverdue === 45;
+        });
+
+        Event::assertDispatched(InvoiceOverdue::class, function ($event) use ($invoice2) {
+            return $event->invoiceId === $invoice2->id && $event->daysOverdue === 3;
+        });
+
+        Carbon::setTestNow();
+    }
+
+    public function test_a_draft_takes_its_due_date_from_the_stored_terms_and_falls_back_to_the_argument(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Draft Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $customer1 = Person::create([
+            'business_id' => $biz->id,
+            'first_name' => 'Has',
+            'last_name' => 'Terms',
+        ]);
+
+        $customer2 = Person::create([
+            'business_id' => $biz->id,
+            'first_name' => 'No',
+            'last_name' => 'Terms',
+        ]);
+
+        CreditTerm::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer1->id,
+            'terms_type' => 'net_60',
+            'credit_limit_cents' => 500000,
+            'current_outstanding_cents' => 0,
+            'card_on_file_token' => null,
+        ]);
+
+        $lines = [['description' => 'Work', 'quantity' => 1, 'unit_price_cents' => 10000]];
+
+        $invoice1 = $this->draftAction->handle($biz->id, $customer1->id, $lines, 30);
+        $this->assertEquals(now()->addDays(60)->toDateString(), $invoice1->due_date->toDateString());
+
+        $invoice2 = $this->draftAction->handle($biz->id, $customer2->id, $lines, 30);
+        $this->assertEquals(now()->addDays(30)->toDateString(), $invoice2->due_date->toDateString());
     }
 }

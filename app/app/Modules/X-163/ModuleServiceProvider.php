@@ -4,9 +4,14 @@ declare(strict_types=1);
 
 namespace App\Modules\X163;
 
+use App\Modules\CAgent\Events\AgentRefused;
+use App\Modules\X163\Events\PriceRefusalFlagged;
+use App\Modules\X163\Listeners\RecordPriceGap;
+use App\Modules\X163\Listeners\RecordPriceGapFromRefusal;
 use App\Modules\X163\Ui\ConfirmationScreen;
 use App\Modules\X163\Ui\DailyPricingDigest;
 use App\Modules\X163\Ui\Pricebook;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 
@@ -19,6 +24,16 @@ final class ModuleServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Event::listen(
+            AgentRefused::class,
+            RecordPriceGap::class,
+        );
+
+        Event::listen(
+            PriceRefusalFlagged::class,
+            RecordPriceGapFromRefusal::class,
+        );
+
         $this->loadRoutesFrom(__DIR__.'/routes.generated.php');
 
         $this->loadMigrationsFrom(__DIR__.'/Database/migrations');

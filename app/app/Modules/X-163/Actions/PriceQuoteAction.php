@@ -16,34 +16,74 @@ final class PriceQuoteAction
     {
         $normalizedQuestion = Str::lower($question);
 
-        $items = PriceBookItem::where('business_id', $businessId)
+        $confirmedItems = PriceBookItem::where('business_id', $businessId)
             ->where('is_confirmed', true)
             ->where('is_sample', false)
+            ->orderByRaw('LENGTH(service_name) DESC')
             ->get();
 
-        foreach ($items as $item) {
-            $sku = Str::lower($item->service_name);
-            $skuWords = explode('-', $sku);
+        if ($match = $this->findMatch($confirmedItems, $normalizedQuestion)) {
+            return [
+                'amount' => $match->price_cents,
+                'service_name' => $match->service_name,
+            ];
+        }
 
-            $matchesAll = true;
-            foreach ($skuWords as $word) {
-                if (! str_contains($normalizedQuestion, $word)) {
-                    $matchesAll = false;
-                    break;
-                }
-            }
+        $allItems = PriceBookItem::where('business_id', $businessId)
+            ->orderByRaw('LENGTH(service_name) DESC')
+            ->get();
 
-            // If the SKU or all its words appear in the question
-            if (str_contains($normalizedQuestion, $sku) || $matchesAll) {
+        if ($match = $this->findMatch($allItems, $normalizedQuestion)) {
+            if ($match->is_sample === true) {
                 return [
-                    'amount' => $item->price_cents,
+                    'refusal_code' => 'SAMPLE_STATE_REFUSED',
+                    'reason' => 'Sample prices must NEVER be returned to any customer channel',
                 ];
             }
+
+            return [
+                'refusal_code' => 'UNCONFIRMED',
+                'reason' => 'Unconfirmed prices must NEVER be returned to any customer channel',
+            ];
         }
 
         return [
             'refusal_code' => 'NO_FACT',
             'reason' => 'No price quote available for the given intent',
         ];
+    }
+
+    private function findMatch(iterable $items, string $normalizedQuestion): ?PriceBookItem
+    {
+        foreach ($items as $item) {
+            $sku = Str::lower($item->service_name);
+            $skuWords = explode('-', $sku);
+
+            $matchesAll = true;
+            $hasNonEmptyWord = false;
+            foreach ($skuWords as $word) {
+                if ($word === '') {
+                    continue;
+                }
+                $hasNonEmptyWord = true;
+                if (preg_match('/\b'.preg_quote($word, '/').'\b/', $normalizedQuestion) !== 1) {
+                    $matchesAll = false;
+                    break;
+                }
+            }
+
+            if (! $hasNonEmptyWord) {
+                continue;
+            }
+
+            // If the SKU or all its words appear in the question
+            $skuMatches = preg_match('/\b'.preg_quote($sku, '/').'\b/', $normalizedQuestion) === 1;
+
+            if ($skuMatches || $matchesAll) {
+                return $item;
+            }
+        }
+
+        return null;
     }
 }

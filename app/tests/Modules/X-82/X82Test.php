@@ -127,4 +127,61 @@ class X82Test extends TestCase
     {
         $this->assertTrue(class_exists(X82Engine::class));
     }
+
+    public function test_rate_lookup_refuses_sample_rates_instead_of_quoting(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Sample Test Biz', 'currency' => 'USD']);
+        $tenant = TestCase::provisionTenant(['name' => 'Sample Test Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        // 1. Non-sample rate (Positive Control)
+        $realRate = $this->setAction->setRate($biz->id, 'real_rate', 10000);
+        $realGlobal = $this->lookupAction->lookup($biz->id, 'real_rate');
+
+        $this->assertEquals(10000, $realGlobal['amount_cents']);
+        $this->assertEquals('$100.00', $realGlobal['amount_formatted']);
+
+        $this->setAction->lockGrandfathered($biz->id, $realRate->id, $tenant->id, 10000, 1);
+        $realGrandfathered = $this->lookupAction->lookup($biz->id, 'real_rate', $tenant->id);
+
+        $this->assertEquals(10000, $realGrandfathered['amount_cents']);
+        $this->assertEquals('$100.00', $realGrandfathered['amount_formatted']);
+
+        // 2. Sample rate
+        $sampleRate = $this->setAction->setRate($biz->id, 'sample_rate', 20000);
+        $sampleRate->update(['is_sample' => true]);
+
+        $sampleGlobal = $this->lookupAction->lookup($biz->id, 'sample_rate');
+        $this->assertEquals('SAMPLE_STATE_REFUSED', $sampleGlobal['refusal_code']);
+        $this->assertArrayNotHasKey('amount_cents', $sampleGlobal);
+        $this->assertArrayNotHasKey('amount_formatted', $sampleGlobal);
+
+        $this->setAction->lockGrandfathered($biz->id, $sampleRate->id, $tenant->id, 20000, 1);
+        $sampleGrandfathered = $this->lookupAction->lookup($biz->id, 'sample_rate', $tenant->id);
+
+        $this->assertEquals('SAMPLE_STATE_REFUSED', $sampleGrandfathered['refusal_code']);
+        $this->assertArrayNotHasKey('amount_cents', $sampleGrandfathered);
+        $this->assertArrayNotHasKey('amount_formatted', $sampleGrandfathered);
+    }
+
+    public function test_rate_lookup_refuses_inactive_rate_instead_of_quoting(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Inactive Test Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $rate = $this->setAction->setRate($biz->id, 'inactive_rate', 15000);
+
+        // 1. Active rate (Positive Control)
+        $activeGlobal = $this->lookupAction->lookup($biz->id, 'inactive_rate');
+        $this->assertEquals(15000, $activeGlobal['amount_cents']);
+        $this->assertEquals('$150.00', $activeGlobal['amount_formatted']);
+
+        // 2. Inactive rate
+        $rate->update(['is_active' => false]);
+
+        $inactiveGlobal = $this->lookupAction->lookup($biz->id, 'inactive_rate');
+        $this->assertEquals('INACTIVE_RATE_REFUSED', $inactiveGlobal['refusal_code']);
+        $this->assertArrayNotHasKey('amount_cents', $inactiveGlobal);
+        $this->assertArrayNotHasKey('amount_formatted', $inactiveGlobal);
+    }
 }

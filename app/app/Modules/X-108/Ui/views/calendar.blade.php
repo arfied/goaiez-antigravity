@@ -1,7 +1,7 @@
 <div>
     <div class="p-4 space-y-6">
         <div class="flex items-center justify-between">
-            <h3 class="text-xl font-bold text-ink">Calendar</h3>
+            <h2 class="text-xl font-bold text-ink">Calendar</h2>
             
             <div class="flex gap-2">
                 <x-ui.button wire:click="setMode('day')" :variant="$mode === 'day' ? 'primary' : 'default'">Day</x-ui.button>
@@ -37,7 +37,7 @@
                     <div class="space-y-6">
                         @foreach ($appointments as $date => $apts)
                             <div>
-                                <h4 class="text-lg font-medium text-ink mb-3">{{ \Carbon\Carbon::parse($date)->format('l, F j') }}</h4>
+                                <h3 class="text-lg font-medium text-ink mb-3">{{ \Carbon\Carbon::parse($date)->format('l, F j') }}</h3>
                                 <x-ui.row-list>
                                     @foreach ($apts as $apt)
                                         @include('x-108::partials.appointment-row', ['apt' => $apt])
@@ -50,9 +50,9 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         @foreach ($appointments as $resourceId => $apts)
                             <div class="border border-rule rounded-[--radius-panel] bg-card p-4">
-                                <h4 class="font-semibold text-ink mb-3">
+                                <h3 class="font-semibold text-ink mb-3">
                                     {{ $resourceId ? ($resources[$resourceId]->name ?? 'Unknown') : 'Unassigned' }}
-                                </h4>
+                                </h3>
                                 <div class="space-y-3">
                                     @foreach ($apts as $apt)
                                         <div class="border border-rule rounded p-3 text-sm">

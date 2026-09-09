@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Modules\X120;
 
 use App\Modules\X120\Actions\CardExpiringScanAction;
+use App\Modules\X120\Actions\CardPresentAction;
 use App\Modules\X120\Actions\CardRotateAction;
 use App\Modules\X120\Actions\CardStoreAction;
 use App\Modules\X120\Events\CardExpiring;
@@ -103,5 +104,22 @@ class X120Test extends TestCase
     public function test_card_capabilities(): void
     {
         $this->assertTrue(true);
+    }
+
+    public function test_card_present_action_derives_brand(): void
+    {
+        $action = new CardPresentAction;
+
+        $visa = $action->handle('4242424242424242', 12, 2030, 'Test User');
+        $this->assertEquals('visa', $visa['brand']);
+
+        $mastercard = $action->handle('5555555555554444', 12, 2030, 'Test User');
+        $this->assertEquals('mastercard', $mastercard['brand']);
+
+        $amex = $action->handle('378282246310005', 12, 2030, 'Test User');
+        $this->assertEquals('amex', $amex['brand']);
+
+        $discover = $action->handle('6011111111111117', 12, 2030, 'Test User');
+        $this->assertEquals('card', $discover['brand']);
     }
 }

@@ -13,9 +13,11 @@
             <x-ui.empty-state 
                 heading="Link Expired"
                 icon="!">
-                This portal link has expired. A fresh link was sent to your email or phone.
+                This portal link had expired and has been refreshed. You can continue below.
             </x-ui.empty-state>
-        @elseif($link && $link->is_active)
+        @endif
+
+        @if($link && $link->is_active)
             <div class="bg-paper rounded-xl border border-rule p-6 mb-8">
                 @if($link->is_sample)
                     <div class="mb-4">
@@ -55,9 +57,6 @@
                     <button wire:click="requestFollowUp" class="h-12 bg-paper border border-rule text-ink rounded font-medium hover:bg-surface">
                         Book a follow-up
                     </button>
-                    <a href="#" class="h-12 flex items-center justify-center bg-paper border border-rule text-ink rounded font-medium hover:bg-surface">
-                        Leave a review
-                    </a>
                 </div>
             </div>
         @else

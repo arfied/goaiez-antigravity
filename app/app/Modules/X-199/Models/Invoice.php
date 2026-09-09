@@ -16,5 +16,6 @@ class Invoice extends Model
         'total_cents' => 'integer',
         'paid_cents' => 'integer',
         'due_date' => 'date',
+        'paid_at' => 'datetime',
     ];
 }

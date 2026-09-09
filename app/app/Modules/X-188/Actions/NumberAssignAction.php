@@ -10,8 +10,8 @@ final class NumberAssignAction
 {
     public function __construct(private readonly NumberPoolManager $manager) {}
 
-    public function handle(int $businessId, string $areaCode = '512'): array
+    public function handle(int $businessId): array
     {
-        return $this->manager->assignLiveNumber($businessId, $areaCode);
+        return $this->manager->assignLiveNumber($businessId);
     }
 }

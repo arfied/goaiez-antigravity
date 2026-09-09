@@ -11,6 +11,7 @@ use App\Modules\X171\Events\TechOnSite;
 use App\Modules\X171\Models\DeviceSyncConflict;
 use App\Modules\X171\Ui\StafffacingApp;
 use App\Support\Tenancy;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Livewire\Livewire;
@@ -31,8 +32,8 @@ class StafffacingAppTest extends TestCase
 
         $jobId = DB::table('work_orders')->insertGetId([
             'business_id' => $biz->id,
-            'title' => 'Test Tech Job 149.99',
-            'scheduled_at' => now(),
+            'title' => 'Test Tech Job',
+            'scheduled_at' => Carbon::today()->setTime(14, 38),
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -49,7 +50,7 @@ class StafffacingAppTest extends TestCase
         $this->actingAs($user)
             ->get(route('x-171.stafffacing-app.admin'))
             ->assertOk()
-            ->assertSee('149.99');
+            ->assertSee('Scheduled: 2:38 PM');
     }
 
     public function test_staff_with_nothing_today_sees_empty_sentence(): void
