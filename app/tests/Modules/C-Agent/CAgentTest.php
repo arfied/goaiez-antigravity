@@ -168,8 +168,7 @@ class CAgentTest extends TestCase
     }
 
     /**
-     * [G5-31] the web-chat door is X-102's
-     * BUILD PROPOSAL: G5-31 — C-Agent can do nothing with the chat.started event as it stands. X-102 now has a per-turn message store, but it does not declare a turn event in its manifest. AgentAnswerAction requires a user message, and the law requires passing a row ID rather than words across queues. Thus, the delivery of the turn payload remains unaccounted for, and the declared consumption is unsatisfiable. Declaring the event alone would not make the declared consumption truly satisfiable, as the payload delivery remains fundamentally unaccounted for until X-102 provides a cross-module Action or C-Agent is permitted to read the row. Owner: Track 1 (manifest declaration)
+     * [G5-31] X-102 invokes AgentAnswerAction synchronously via string name. Words do not ride a queue, and no use statement is needed. Track 1 will update manifest. Owner: track/sixty
      */
     public function test_g5_31_web_chat_door(): void
     {
