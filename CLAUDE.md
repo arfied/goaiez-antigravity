@@ -6262,3 +6262,84 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     not a defect** — the answer is what each one guards, and here the open one is open because its
     guarantee lives in the engine rather than in the attribute. ⚠️ This closes the component-state
     population ruling 241 opened, three waves after it opened.
+246. **`assertDontSee` STRIPS `wire:snapshot` before searching, so the card number was asserted
+    absent from the one region it could ever be in — and the same test uses the searching
+    instrument for CVV three lines above (RULED by the lane supervisor 2026-09-09 06:0x, measured
+    while reviewing MONEY-150's own proofs; briefed as MONEY-151).** Ruling 241 established that a
+    public property's value is rendered into the page as `wire:snapshot`
+    (`HandleComponents.php:76`), signed and **not** encrypted, and that X-120's card form left the
+    PAN, the expiry and the name in it. Its instrument was *"`assertSet` measures the mechanism;
+    `assertDontSee('<the PAN>')` measures the consequence an owner is exposed to."* **The second
+    half is false as implemented, and vendor says so:** `MakesAssertions.php:29` is
+    `assertDontSee($values, $escape = true, $stripInitialData = true)`, which reaches
+    `ComponentState::getHtml(true):63-68` —
+    `$removeMe = str($html)->betweenFirst('wire:snapshot="', '"'); $html = str_replace($removeMe,
+    '', $html);` — so **the entire snapshot payload is deleted before the search**. And
+    `card-screen.blade.php:52` is a bare `<input type="text" wire:model="number" …>` with **no
+    `value=` and no `{{ $number }}`**, so the card number's only possible location in the response
+    is precisely the region the assertion throws away. **Four needles in `CardScreenTest` cannot
+    fail whether the field was cleared or not:** `:135`, `:149`, `:318`, `:337`.
+    ⭐ **MONEY-150's own report is the disproof and it was already in this ledger's hands.** The
+    addendum predicted proofs B and C would redden on `assertDontSee('1234123412341234')`, *"their
+    first check"*. They did not: with `forgetCardFields()` removed from `makeDefault()` and
+    `addCard()`, so `$this->number` still held the PAN, that assertion **passed** and the RED came
+    from the `assertSet('expMonth','')` on the line below.
+    ⭐ **The self-contradiction tell is three lines away** — the shortest distance this lane has
+    found in a test (ruling 98). `CardScreenTest:121,:123,:125` are `assertDontSeeHtml('cvv')`,
+    `('cvc')`, `('CVV')`, and `assertDontSeeHtml` (`:72-82`) calls `$this->html()` with the
+    **default `$stripInitialData = false`** — it searches the payload. **One chained assertion
+    searches the snapshot for CVV and refuses to search it for the PAN**, inside
+    `test_card_door_takes_number_expiry_and_name_stores_nothing_and_never_shows_the_number_again`
+    — ruling 50(b)'s shape, a method name promising the strongest guarantee in this lane over an
+    assertion that cannot check it.
+    **RULED: the four payload needles become `assertDontSeeHtml`** — the instrument the same test
+    already uses, so the file ends with one vocabulary rather than two (ruling 123). Escaping is a
+    **measured** no-op: `assertDontSeeHtml` does not run `e()`, and digits and spaces are untouched
+    by `htmlspecialchars`, by `json_encode` and by the `wire:snapshot` attribute encoding, so the
+    needle matches the payload literally (ruling 82 checked, not assumed).
+    ⛔ **Not `assertDontSee($pan, false)`** — that clears `$escape` and leaves `$stripInitialData`
+    **true**, so the snapshot is still stripped and the assertion stays vacuous: **the change that
+    looks like the fix and is not one.** ⛔ Not the three-argument form, which leaves two stripping
+    modes in one file for a reader to reconcile. ⛔ Not a needle for the expiry or the name —
+    ruling 241's two refusals were re-measured and hold (an `expYear` is a four-digit token, ruling
+    61; the cardholder name is legitimately on the page inside `$this->waiting`, ruling 82's
+    family). ⛔ No needle is deleted (the One Rule).
+    ⚠️ **The population is measured and it is X-120 alone.** The lane has **166** `assertDontSee(`
+    and **4** `assertDontSeeHtml(` across the eight modules' test trees. The hazard bites only
+    where a needle's sole possible haystack is the snapshot — a value `set()` into a public
+    property that no blade echoes — and cross-referencing every `->set(` in the lane against every
+    `assertDontSee` returns **`CardScreenTest` and nothing else**: every other `set()` is followed
+    by an `assertSee` of the resulting message or a model assertion, never by an `assertDontSee` of
+    the value set. Every other needle in the 166 targets blade output — prose, an amount, an
+    invoice number, another tenant's column — where the stripped haystack is exactly the right one
+    and the assertion is live. ⛔ **The rest of the population is not a wave** and is struck with
+    this measurement (rulings 95, 100, 111).
+    ⚠️ **`:133` is trivially true under either instrument and is left alone**: `:126` sets the
+    **spaced** `'4242 4242 4242 4242'`, so the unspaced needle names a string that property never
+    held. `:135` carries that fact and is the one fixed. ⛔ Not deleted (39), ⛔ not changed (47's
+    companion).
+    ⚠️ **The generalisable half, a new member of the ruling 36 family.** Every sweep this lane has
+    run asked *what is at the other end of the string this app renders, prints, throws, logs or
+    sends* — and every one read the **needle**. This one is about the **haystack**: an assertion is
+    a claim about a region of a document, and an instrument that quietly narrows that region makes
+    the claim true by construction. ⭐ **A negative assertion is only as strong as the haystack it
+    searches, and the haystack is a defaulted argument nobody reads.**
+247. **Foreground versus background is not always the coder's choice, so the gate field records
+    what was OBSERVED including the harness's role (RULED by the lane supervisor 2026-09-09 06:0x,
+    on MONEY-150's run 173; refining ruling 242).** `REPORT.md` read `gate: foreground` while
+    `agy-run173.log:2` read *"…in the foreground (**it was sent to background because of timeout**,
+    but I will wait for it to finish)"*. The field states an intent the log contradicts, which is
+    ruling 242's shape a second time — but the remedy is not to re-fire 242. **What ruling 218(2)
+    forbids is a run that does not BLOCK on its own gate**: a polling script, a fabricated number,
+    a report composed before the gate exits. This run did none of those — it waited for the
+    completion notification, performed ruling 238's second read, and wrote a byte count and mtime
+    matching the file to the nanosecond. The substance the rule protects was delivered in full and
+    only the word is wrong. **RULED: the field records the observation with the harness's role
+    named** — `foreground (harness backgrounded on --print-timeout; waited for completion)` — and
+    every brief that asks for the field says so. ⚠️ Graded a **note**, never a BLOCK: withholding a
+    gated tip that landed on its predicted floor to the digit, over a self-description, is ruling
+    74's error and the grade rulings 76, 121, 128, 133, 147, 195, 198, 210, 222, 231 and 242
+    already set for paperwork. ⚠️ The generalisable half: **a rule that asks a run to classify its
+    own behaviour must offer a category the run can honestly reach** — a binary the harness can
+    override from underneath is not one, and the honest answer is the observation plus who caused
+    it.
