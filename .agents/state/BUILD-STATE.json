@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-09T03:41:21",
+ "updated": "2026-09-09T04:16:04",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2509,6 +2509,12 @@
    "module": "X-198",
    "chose": "A capture's idempotency key carries the number of prior failed attempts for that pair, so two concurrent first attempts are deduped at the gateway while a deliberate retry after a decline gets a fresh key and is actually charged. The pay link keeps its key: it has no durable failure record to count, and its unique row already makes the retry safe locally.",
    "at": "2026-09-09T03:41:21",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-198",
+   "chose": "A pay link's Checkout line item is built from the business and payment rows the action already loads, so the customer sees who is being paid instead of one constant sentence naming nobody, and a capture reads the tenant's declared currency from the businesses row instead of a method default that charged every tenant in dollars.",
+   "at": "2026-09-09T04:16:04",
    "ruling": "R245"
   }
  ]
