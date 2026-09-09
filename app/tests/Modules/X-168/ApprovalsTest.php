@@ -173,4 +173,15 @@ class ApprovalsTest extends TestCase
 
         Livewire::actingAs($user)->test(ApprovalsView::class)->assertForbidden();
     }
+
+    public function test_manager_is_admitted(): void
+    {
+        $user = User::factory()->create();
+        $user->role = UserRole::Manager;
+        $user->save();
+        TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
+
+        Livewire::actingAs($user)->test(ApprovalsView::class)->assertOk();
+    }
 }
