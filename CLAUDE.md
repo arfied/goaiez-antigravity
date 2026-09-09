@@ -4954,3 +4954,62 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     two scheduled ones carry ruling 151(1)'s architecture lint pinning both windows, the four
     `runtime-proof` commands are rulings 49/172's honest refusals, and the five `evidence-*` were
     swept by rulings 48/169/173/187. There is no wave in it.
+209. **The WIDENED per-query tenancy sweep is measured — the lane has 78 `::where(` call sites outside
+    `Ui/` and exactly THREE omit `business_id`, each with a scoped sibling in its own file or module;
+    and the sharpest of the three is a missing PARAMETER, not a missing clause (RULED by the lane
+    supervisor 2026-09-08 20:5x, briefed as MONEY-135).** Ruling 208's sweep used
+    `::find( ::findOrFail( ::first( ::all(` and found `CheckoutBlock:108`; it could not see a
+    `Model::where('<not business_id>', …)->get()`, which is the shape that returns a *list* rather
+    than a row. Ruling 151(5) measured the 24 components by the wrong instrument — it read the
+    component, not its queries — so `Domain/`, `Actions/`, `Listeners/` and `Console/` were genuinely
+    unswept. Re-run across all eight modules, the population is **78** and the three members are:
+    **(a) `X-199/Domain/InvoiceReader::overdueIssued():22-27`** — `Invoice::where('due_date', '<',
+    …)->where('status','issued')->get()`, and it takes **no `$businessId` parameter at all**, alone
+    among the reader's **eleven** methods, every other one of which is `…ForBusiness(int
+    $businessId)`. Its one caller is `X-211/Console/DetectOverdueReceivablesCommand:59`, inside
+    `Tenancy::actingAs` — **J12's chase chain and one of the lane's two live seams** (rulings 59, 148).
+    **(b) `DetectOverdueReceivablesCommand:63`** — `ArDunningAction::where('invoice_id', $invoice->id)
+    ->where('action','escalate_to_human')->exists()`, the idempotence guard for the whole chase,
+    against `X-211/Domain/ArEngine.php:217`'s **identical query with the scope**
+    (`ArDunningAction::where('business_id', $businessId)->where('invoice_id', $invoiceId)`).
+    **(c) `X-201/Domain/DisputeDefenseEngine.php:91`** — `DisputeEvidence::where('dispute_id',
+    $disputeId)->pluck('evidence_type')`, feeding ruling 54's evidence-completeness refusal inside
+    `submit()`, **ten lines below** `:81`'s scoped `Dispute::where('business_id', $businessId)
+    ->findOrFail($disputeId)` in the same method, and against four scoped `DisputeEvidence` siblings
+    (`DisputeCard:34,:71`, `DisputeQueue:92`). Ruling 98's self-contradiction tell three times, with a
+    direct witness each time — the same instrument that found ruling 208.
+    ⚠️ **Graded honestly: all three are defence-in-depth, not live leaks.** `invoices`,
+    `ar_dunning_actions` and `dispute_evidence` are each `ENABLE`d **and** `FORCE`d for RLS
+    (`X-199/…000026:73-74`, `X-211/…2026_09_02_150000:23-24`, `X-201/…000053:53-54`) and all three
+    call sites run under `Tenancy::actingAs` or a live component, so today the rows are already
+    scoped beneath the application. ⛔ **Therefore NONE of the three can be proven by mutation** —
+    both variants return the same rows — which is MONEY-134 item 1's accepted standard verbatim:
+    the `where` ships with no proof, its coverage being that an existing test executes the line.
+    ⭐ **What makes this a wave rather than ruling 96's recording is (a)'s signature.** A method whose
+    correctness depends entirely on an ambient value its signature does not mention is ruling 193's
+    hazard as a permanent property rather than a one-off: `Tenancy::forget()`'s own docblock records
+    that *"an RLS policy comparing business_id against an empty setting matches nothing"*, so a caller
+    that reaches `overdueIssued()` without a tenant — a queued job, a console path after
+    `forgetAll()`, which **this very command calls at `:35`** — gets **zero overdue invoices and no
+    error**, and J12's chase silently does not run. Giving it `int $businessId` makes that call a
+    **TypeError at the boundary** instead of a silent zero, which is ruling 66's own reasoning, and
+    **that** half is provable. ⛔ The signature change is not resolved by a runtime guard inside the
+    method (a second refusal vocabulary, ruling 206) and ⛔ not by leaving the parameter optional,
+    which reintroduces the silent zero for every caller that omits it.
+210. **A brief that requires a cache clear names the FIELD that records it (RULED by the lane
+    supervisor 2026-09-08 20:5x, on MONEY-134's `7df443df`).** Ruling 202 made `php artisan
+    view:clear` mandatory around any mutation proof that mutates a blade, because `filemtime` is an
+    integer second and a restore landing in the same second as a compile makes the stale compiled
+    view win **permanently**. MONEY-134's brief required the command in two places and its report
+    table named no field for it, so the wave ran, the gate came back clean at the floor, and
+    `REPORT.md` records nothing either way — the reviewer has the *outcome* and not the *act*.
+    That is **ruling 128's shape**: moving or adding an instruction without naming the field it is
+    recorded in is how a field goes empty, and the instruction to *do* was explicit while the
+    instruction to *record* was assumed. **RULED: where a brief's proof mutates a blade, the `GATE`
+    field carries `view:clear: ran` beside the §7 line.** ⚠️ It is graded PASS-WITH-NOTES and never a
+    BLOCK — withholding a gated tip that landed on its predicted floor to the digit over a paperwork
+    field is ruling 74's error, and the grade rulings 76, 121, 128, 133, 147, 195 and 198 already set.
+    ⚠️ The ruling 66/75/82/92/94/106/118/147/153/175/183/189/192/193/195/198/200/202/204/207 family a
+    **twenty-third** time, with the twenty-sixth instrument: a brief that dictates a **procedural
+    step** has dictated whether that step is auditable. **Detail is read as the spec and everything
+    unstated is the coder's guess.**
