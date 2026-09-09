@@ -664,6 +664,8 @@ class X198Test extends TestCase
 
     public function test_a_charge_the_gateway_has_not_settled_is_not_recorded_as_captured(): void
     {
+        Event::fake([PaymentCaptured::class]);
+
         $biz = TestCase::provisionTenant(['name' => 'Pending', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
