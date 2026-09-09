@@ -2166,3 +2166,87 @@ wired, so it is **latent + no wrong value = RECORD**. ⛔ Not work, and ⛔ not 
 ⚠️ **But it becomes live the instant a listener subscribes `en_route`**, and `X-162/Actions/TechEnRouteAction.php:28`
 is a real producer sitting there. ⛔ PB-139 subscribes **`on_site` only** (ruling 33: whether travel
 time is paid is a business rule nobody has stated), and re-reads this paragraph before it does.
+
+## ⛔⛔ Ruling 34 — 2026-09-08 18:5x — the same `null` means two different things on either side of a seam, and the split goes at the CALL SITE
+
+PB-138 gave `JobCompleted` a nullable `occurredAt` so the offline replay could say *"I do not know when
+this happened"* instead of inventing a time. Measured one wave later, before briefing the listener:
+
+```
+TimesheetComputeAction.php:91      $endedAt = $endedAt ?? Carbon::now();
+```
+
+⭐⭐ **`closeJobWindow`'s `null` means "the caller did not specify — use now". The event's `null` means
+"the caller knows it does not know". They are the same value.** So the obvious listener —
+`closeJobWindow($e->businessId, $e->jobId, $e->occurredAt)` — hands the second meaning to a seam that
+reads the first and **stamps the sync moment on every replayed completion**: `duration_minutes` →
+`total_hours` → the owner's approval screen.
+
+⭐ **Third incarnation of PB-120's overloaded-parameter shape, and the sharpest: the overload is not
+inside one module, it is ACROSS THE SEAM BETWEEN TWO, so neither side reads wrong on its own.** ⛔ That
+is why the previous two incarnations were caught by reading one file and this one was not — it is only
+visible with the producer's declaration and the consumer's default on screen at the same time.
+
+**RULED: the split happens at the CALL SITE, not in the signature.** `closeJobWindow`'s `?? now()`
+default is **correct for its own contract** and is untouched — a caller who omits the argument does mean
+"now". The listener is the only place that knows which event it received, so a `JobCompleted` with
+`occurredAt === null` **does not call `closeJobWindow` at all.**
+
+⛔ **The counter-hazard is accepted, not waved.** A refused close leaves that window open at
+`duration_minutes = 0` and, for a replayed completion, **nothing will ever close it** — the replay is
+the only completion signal that job will get. Ruled acceptable because `total_hours` is what the owner
+approves and eventually pays: **inventing a duration is inventing money**, and an open row is *true so
+far* while a window closed eight hours after the work ended is false and looks exactly like a real one.
+⭐ Same judgement as PB-128's Reorders screen — **a wrong number that looks like data is worse than a
+visible gap.**
+
+⭐ **And there is no third option, measured so nobody re-derives it:** `device_sync_queue`
+(`…000061_create_x171_sync_tables.php:15-25`) carries only `business_id`, `client_mutation_id`,
+`device_id`, `action_name`, `payload` (jsonb), `version`, `status` and Laravel `timestamps()` — **every
+time on that row is written at replay.** The payload's only keys read anywhere are `job_id` and
+`tech_id` (`ReplayOfflineSyncAction:84`, `:86`). **There is no truthful end time in this checkout**,
+which is what makes the refusal honest rather than lazy.
+
+⚠️ **The argument-order trap that rides alongside it, recorded because phpstan cannot see it:**
+`recordJobWindow(int $businessId, int $personId, ?int $jobId, …)` puts **`$personId` second and `$jobId`
+third**, and `TechOnSite(businessId, jobId, techId, occurredAt)` presents them in the **opposite**
+order. Both are `int`. A listener written left-to-right off the event files a technician's hours under
+a job id read as a person id. ⭐ **Named arguments are the guard**, and the swap is PB-139's W2.
+
+## ⭐⭐ Trap added 2026-09-08 18:5x — a mutation's RED is evidence only if that mutation and nothing else could produce it
+
+PB-138's W2 — pass `Carbon::now()` at the replay's dispatch site — reddened its test with
+**`The expected [App\Modules\X171\Events\JobCompleted] event was not dispatched.`** The coder quoted it
+faithfully; it is the only message Laravel produces. ⛔ **And it proves less than it looks like.**
+
+`Event::assertDispatched($class, $callback)` prints that identical string in **two** situations: the
+event never fired at all, **and** it fired but no instance satisfied the callback. So the RED cannot
+distinguish *"`occurredAt` came back as `now()` instead of `null`"* — the defect the test exists for —
+from *"the replay path broke entirely"*. Compare W1's RED on the same wave,
+`Call to a member function equalTo() on null`, which **only** a null `occurredAt` can produce.
+
+⭐ **The generalisation: when a brief pre-declares a mutation, ask what ELSE could print the RED you are
+expecting.** A value comparison (`ended_at` non-null where null was asserted, `duration_minutes` of `0`
+where `90` was asserted) is producible by the mutation and by little else; a **callback mismatch** is
+producible by anything upstream that stops the call. ⭐ **Fix: when the expected RED is a callback
+mismatch, require a positive `assertDispatchedTimes($class, 1)` arm beside it** so "dispatched with the
+wrong payload" and "not dispatched" print different failures. PB-139 avoids the shape entirely — all
+three of its REDs are value comparisons.
+
+⚠️ Same family as PB-135's *the discriminator is the failing assertion, not the test name*: there the
+failing assertion was decisive, here it is real and still **under-determined**. **Reading the assertion
+is necessary and not sufficient; ask what else could have written it.**
+
+## ⚠️ Trap added 2026-09-08 18:5x — the exclusive end of a push range is the LAST PUSHED sha, never the oldest sha you are pushing
+
+The PB-138 verdict block first wrote *"Push — `9b66758c..7a30ffa0`, three commits"*. `9b66758c` was the
+**oldest of the three**, so that range names **two** and silently drops my own supervisor commit from
+the range it claims to describe. The remote's previous tip was `04934d60`; the honest notation is
+`04934d60..7a30ffa0`, and `git push` printed exactly that back.
+
+⭐ **The check is free and it is the push's own output:** read the `<old>..<new>` git prints and require
+it to match the range written in the verdict block. ⚠️ It matters more than it reads — the ancestry trap
+already requires reading `git log --oneline origin/track/<x>..<sha>` in full before pushing, and a
+verdict block whose range is wrong by one is exactly what a later tick reconstructs the history from.
+⭐ Companion to PB-125's *count your own commits in the push debt*: the supervisor commit is the one
+most easily lost at **both** ends of the range.
