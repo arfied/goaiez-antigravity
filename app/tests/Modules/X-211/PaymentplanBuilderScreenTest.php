@@ -66,6 +66,7 @@ class PaymentplanBuilderScreenTest extends TestCase
         $screen = Livewire::actingAs($owner)->test(PaymentplanBuilder::class)
             ->assertOk()
             ->assertSee('Up to 3 payments over 90 days')
+            ->assertSee('the standing default, not an account setting')
             ->assertSee('INV-A1')
             ->assertDontSee('INV-A2')
             ->assertDontSee('INV-B1')
@@ -135,5 +136,32 @@ class PaymentplanBuilderScreenTest extends TestCase
             ->assertOk()
             ->assertSee('INV-UNPAID-1')
             ->assertDontSee('INV-PAID-1');
+    }
+
+    public function test_the_preview_refuses_a_split_below_two_payments(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'Split', 'last_name' => 'Preview']);
+
+        $inv = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-PREVIEW-1',
+            'total_cents' => 10000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(10),
+        ]);
+
+        Livewire::actingAs($owner)->test(PaymentplanBuilder::class)
+            ->set('installments.'.$inv->id, 3)
+            ->assertSee('about 33.34 each')
+            ->set('installments.'.$inv->id, 1)
+            ->assertSee('a plan is at least two payments')
+            ->assertDontSee('about 50.00 each');
     }
 }

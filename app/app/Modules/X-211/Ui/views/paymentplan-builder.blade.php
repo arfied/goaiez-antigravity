@@ -1,7 +1,7 @@
 <div>
     <h1>Payment plan</h1>
 
-    <p class="text-base text-ink-2">Up to {{ $terms->max_installments }} payments over {{ $terms->max_term_days }} days is a schedule. Beyond that it is credit, and it routes to a financing partner.</p>
+    <p class="text-base text-ink-2">Up to {{ $terms->max_installments }} payments over {{ $terms->max_term_days }} days is a schedule. Beyond that it is credit, and it routes to a financing partner. That limit is the standing default, not an account setting: nothing in this checkout changes it yet.</p>
 
     @if($error)
         <x-ui.error-panel heading="We couldn't offer that plan">
@@ -57,7 +57,7 @@
                             <option value="biweekly">Every two weeks</option>
                             <option value="weekly">Weekly</option>
                         </select>
-                        <span class="tabular-nums text-sm text-ink-2">about {{ number_format($inv->preview_cents / 100, 2) }} each</span>
+                        <span class="tabular-nums text-sm text-ink-2">{{ $inv->preview_line }}</span>
                         <x-ui.submit target="offerPlan({{ $inv->id }})" busy="Offering…">Offer plan</x-ui.submit>
                     </form>
                 </li>
