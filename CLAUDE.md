@@ -5966,3 +5966,87 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     readers of a value being *changed*, and ruling 107 for readers whose correctness depended on a
     state that could not arise; this is the third member — readers whose correctness depended on two
     conditions being **equivalent**, which they were until this wave separated them.
+237. **A wave that narrows a value's meaning owns the owner-facing COPY keyed on it, not only the
+    guards — and `refused` now means three things where `Credits.php:96` says one (RULED by the lane
+    supervisor 2026-09-09 04:5x, on MONEY-147's `761dda80`; briefed as MONEY-148 item 1).** Ruling
+    236 required the two **guards** reading the old meaning of a charge id to move with it, and both
+    did. It stopped at the guards. Measured now, `OverflowCharge.status = 'refused'` covers **three**
+    facts after this wave: no card on file (`InvoiceEngine:89` — nothing was attempted), the gateway
+    threw (`:114` — the card genuinely did not absorb it), and, **new**, the gateway took it and has
+    not settled (`:105`, with a real `ch_` id written to `reference_id`).
+    `X-199/Ui/Credits.php:96` renders *"the card did not absorb it and the invoice still stands"* for
+    all three, and it is **false** for the third: the card absorbed it and only the settlement is
+    outstanding. ⭐ **The row already carries the discriminator** — `reference_id` is the gateway's
+    own word (ruling 51) — so the arm splits on `reference_id !== null` and the pending case says the
+    gateway has it and has not settled. ⛔ **Not by minting a fourth status:** ruling 99 refused a
+    third one and ruling 235 kept `awaiting_processor` for precisely this meaning; ⛔ not by touching
+    `InvoiceEngine`'s derivation, which is ruling 236's own ruled outcome; ⛔ not by deleting the
+    sentence, which is true of the two arms it was written for.
+    ⚠️ **Graded PASS-WITH-NOTES and PUSHED rather than BLOCKED, and the reasoning is the DIRECTION of
+    the error.** Ruling 232 blocked a wave whose defect was its own subject and the same size as its
+    benefit; that does not hold here. Before this wave a pending charge was announced
+    `PaymentCaptured` and written `charged`, rendering *"covered by the card on file; service never
+    stopped"* — money claimed as taken when it had not settled. After it the same charge reads *"the
+    card did not absorb it"*. **Both are false, and the new one under-claims about money where the old
+    one over-claimed** — the direction rulings 99 and 235 have consistently ruled for — so the tip is
+    a strict improvement and the residue is a follow-up, not a new hazard handed to Track 1. It is
+    latent in production twice over besides: ruling 234 measured that
+    `credit_terms.card_on_file_token` has no production writer, so the overflow charge never runs,
+    and the arm needs an asynchronous Stripe payment method to reach at all.
+    ⚠️ Blast radius measured with interior fragments (rulings 46, 86, 146): `CreditsScreenTest:58` and
+    `:146` both stay green because the **existing sentence is kept for the null-reference arm**, and
+    the third arm is rendered by no test (ruling 70), so the item **adds** a method (ruling 68).
+    ⚠️ Measured clean in the same sweep and recorded so it is not re-raised: `Unpaid.php:88` filters
+    `->where('status', 'charged')`, so a pending overflow correctly gets **no** *"covered by the card
+    on file"* pill — that half needed nothing. ⚠️ The generalisable half is ruling 236's own, one
+    register out: **the readers of a narrowed value are its guards, its tests AND its prose**, and
+    prose is the one this lane has now missed at three different levels (rulings 50, 70, 236).
+238. **A `GATE:` transcription is READ BACK after the gate exits, and bytes + mtime are what makes a
+    stale read detectable (RULED by the lane supervisor 2026-09-09 04:5x, same review).** Ruling 219
+    made `GATE:` a transcription of a named file; ruling 222 required the report to state that file's
+    byte count and mtime beside it, *"provenance checkable with `wc -c` rather than argued"*; ruling
+    231 said a lock-blocked §7 is written `§7 NOT RUN — <the file's last line>` with no number.
+    MONEY-147 obeyed all three **at 04:37**, while its own backgrounded gate was still parked on
+    `/home/goaiez/tmp/pest.lock`, and never read the file again. By 04:41 that file carried
+    `tests 2378 · passed 2376 · FAILED 0 · errors 2` — the predicted floor to the digit — and the
+    report says `§7 NOT RUN`. ⭐ **Ruling 222's instrument worked exactly as designed:** the report's
+    own `bytes 8423, 04:37:00` against the file's **8994 B at 04:41** announces the staleness without
+    anyone arguing about it. **RULED: the run's gate step ends by re-reading the named file after the
+    gate process has exited, and the bytes and mtime written into `GATE:` are from that second read.**
+    ⛔ Ruling 218's fabrication prohibition is untouched — a number is transcribed or it is not
+    written — and ⛔ ruling 231's `NOT RUN` form stands for a gate that genuinely never produced one.
+    ⚠️ The cause was the **backgrounded** gate the brief forbade (ruling 218(2)); this makes the
+    read-back the rule rather than re-litigating the backgrounding, because a foreground gate can be
+    transcribed early too. ⚠️ **This is the inverse of ruling 218 and the cheaper direction** — an
+    *under*-report, loud, costing a reviewer one `tail`, where 218's over-report was accidentally
+    true and cost a reviewer nothing only because ruling 42(2) re-gates regardless. Both come from the
+    same act: treating a file that is still being written as a measurement.
+239. **`SameAccount` sums declined attempts into a money total and calls it "Payments recorded", and
+    every fixture it has ever had seeds a status no production code writes (RULED by the lane
+    supervisor 2026-09-09 04:5x, briefed as MONEY-148 item 2).**
+    `X-198/Ui/SameAccount.php:65` reads `Payment::where('business_id', …)->orderByDesc('id')->get()`
+    with **no status filter**, and `:70-78` groups by currency and sums `amount_cents` into
+    `$conn->payments_line`, rendered at `same-account.blade.php:18` under `<dt>Payments recorded</dt>`.
+    `capture()`'s `catch (\RuntimeException)` at `:151-160` writes a durable `failed` row for a
+    **declined** attempt where no money moved (ruling 228 measured that row is load-bearing and must
+    stay), so the figure adds amounts that exist nowhere. **Ruling 107's shape — the label names a
+    quantity the code does not measure — on a money figure**, and ruling 99's family.
+    ⚠️ **Why nothing can see it, and it is ruling 41 part 2 again:** **every** `Payment` fixture in
+    `SameAccountScreenTest` (`:26`, `:33`, `:34`, `:36`, `:83`, `:138`, `:139`, `:140`) seeds
+    `'status' => 'pending'` — a value **no production code writes**. The whole vocabulary is
+    `captured` / `awaiting_processor` / `failed` (`GatewayEngine:126`, `:153`; measured app-wide, the
+    only other `Payment` writer is `EvidencePaymentLinkCommand:36`). A fixture written to the *screen*
+    rather than to the real thing's shape, and **not one carries `failed`**.
+    **RULED: the count and the total both exclude `failed`**, one number with one meaning (rulings
+    107, 152b). ⛔ **`awaiting_processor` STAYS in** — the label says *recorded*, not *settled*, and
+    the gateway does hold it, which is ruling 235's own word for that state. ⛔ Not by relabelling to
+    *"attempts"*: this screen's subject is where the money lands (ruling 93), and an attempt that took
+    nothing is not a payment recorded anywhere. ⛔ Not by dropping the row — ruling 228 measured the
+    `failed` row is the app's only durable record of a decline and MONEY-145's `$attempt` counts it.
+    ⚠️ **The proof is that three numbers do NOT move.** The fixtures move onto the real vocabulary and
+    gain a `failed` row, and `SameAccountScreenTest:49`, `:62` and `:144`'s needles
+    (`'2 payments · 75.00 USD'`, `'3 payments · 100.00 USD'`,
+    `'3 payments · 45.00 GBP · 75.00 USD'`) must be **unchanged** — a needle that moved would mean the
+    filter changed a figure it was not meant to touch. ⚠️ Ruling 153 binds the needles: each is a
+    single component-computed `{{ $conn->payments_line }}`, so no needle spans a Livewire
+    `<!--[if BLOCK]-->` boundary and all three stay assertable as written.
