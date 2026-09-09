@@ -6924,3 +6924,51 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     own honest refusal), `TwelveJourneysTest.php:502` (true — the artifact does carry no invoice
     status), and two Track 1 files this lane may not edit, `ModuleDoneCommand.php:159` and
     `Doctor/Stages/TestAnchorStage.php:60`.
+267. **A ruling that corrects a REASON leaves the tree's copy of the old reason standing, and this
+    lane's CITATION surface has never been swept — ruling 124 cleaned `Ui/` and never reached
+    `Console/` (RULED by the lane supervisor 2026-09-09 17:4x, briefed as MONEY-158).** MONEY-157
+    corrected the two strings ruling 257 falsified. Sweeping the whole population —
+    `grep -rnE "ruling [0-9]+|see ruling" app/app app/tests`, **16 lines** — shows the residue is not
+    one of stale *reasons* but of the **surface**: ruling 124 swept internal rule ids out of owner copy
+    across the eight `Ui/` trees, and ruling 225 swept console output for *truth* and not for ids, so
+    `Console/` was read by neither. Four operator-facing strings carry one:
+    `X-117/Console/RuntimeProofCommand.php:25` (`(ruling 45)`) and `:28` (`by ruling 20`),
+    `X-211/Console/RuntimeProofCommand.php:23` (`(see ruling 102)`), and ⭐
+    `X-117/Console/EvidenceCheckoutCommand.php:60`, where `by ruling 20` is **persisted into an
+    evidence artifact** (`storage/app/evidence/X-117/checkout.json`). ⭐ **The fourth is the sharpest
+    and it is ruling 49/50(c)'s class** — a derived artifact outlives the source it came from, so an
+    internal ledger reference written into that file has a durability the three console strings do not,
+    and it points at a supervisor ledger no reader outside this checkout can resolve.
+    **RULED: the citation goes and the CLAIM stays byte-identical.** All four sentences are measured
+    **true** — X-117's *"nothing in this flow reaches a payment provider"* (ruling 45) and *"waiting on
+    a browser-side Stripe Elements surface"* (rulings 20, 45, 119), X-211's *"payments carries no plan
+    column"* (ruling 266) — so only the parenthetical id is removed and no factual clause moves.
+    ⚠️ **This REFINES ruling 266 rather than reversing it, and the distinction is the point:** 266 froze
+    X-211 to protect its *claim* against ruling 228(a)'s harmonising hazard, and it dropped
+    `(see ruling 102)` from the X-199 twin **in the same breath** without asking whether the twin's copy
+    carried it too — rulings 113/116/123's sibling shape, aimed at a citation instead of a sentence.
+    ⛔ X-211 is **not** widened to name the seam the way X-199's now does; that is the harmonisation
+    228(a) forbids. ⚠️ Blast radius measured with interior fragments (rulings 46, 86): **ZERO** — no
+    test asserts any of the four, `CheckoutBlockScreenTest:54,:59,:129` assert the **screen's**
+    card-entry copy (a different string on a different surface), and `waiting_on` has exactly **one**
+    occurrence in `app/app app/tests`, its own write, so it is read by nothing (ruling 70) — which is
+    why an internal id survived in it. ⛔ The proofs are **CLI runs with their output quoted** (rulings
+    13, 49), never tests: `RuntimeProofCommand`'s first guard is `runningUnitTests()` → FAILURE, so any
+    in-suite test passes for the wrong reason (ruling 45's trap). ⚠️ The artifact regeneration was
+    measured safe before briefing: `X117RuntimeProofTest` asserts `order_status`, `payments_written`,
+    `merchant_connected` and `running_unit_tests` and **not** `waiting_on`, and ruling 187 re-confirmed
+    the command makes no vendor call after MONEY-73 — but ruling 39's sequence still binds absolutely
+    (run the command FIRST, read the artifact, then report, in ONE commit).
+268. **The day boundary is UTC for every tenant, there is no column to disagree with, and it is a
+    TRACK 1 ACTION (measured 2026-09-09 17:4x; recorded, NOT briefed).** Ruling 233 found a real column
+    (`businesses.currency`) that a money path ignored; asked of *time*, the answer inverts.
+    `config/app.php:68` is `'timezone' => 'UTC'` and `businesses` has **no timezone column at all**, so
+    this lane's twelve day-boundary reads — `MoneyPaidToday:29,:49`, `Declines:60`, `Mrr:75`,
+    `InvoiceReader:61,:71` and six day counts — are all UTC, and *"Paid Today"* and *"Declines this
+    week"* name a UTC window for an owner who may not keep one. ⛔ **Not a wave here, for three measured
+    reasons:** there is no stored truth for the code to contradict, so this is neither ruling 233's nor
+    ruling 98's shape but a product gap; minting a tenant timezone is ruling 59 on a table that is
+    **Track 1's** (ruling 5); and labelling only money's screens `(UTC)` would give this lane a
+    vocabulary every other lane's screens lack, which is ruling 123's *one fact, one wording* inverted
+    and made cross-lane. **→ TRACK 1 ACTION 14**, recorded with its measurement so no later tick
+    re-derives it (rulings 64, 95).
