@@ -286,6 +286,64 @@ divergence, not a lag that grows** — a per-track file diverged long before `7a
 what it does not imply is urgency, and four ticks read a large "behind" as though it were accumulating.
 ⚠️ `RULING EK`'s shape in a third place: a count read correctly and taken for a rate.
 
+### ⛔⛔ `RULING FX` (tick 243) — TWO of tick 242's numbers do not reproduce, and NEITHER is about the tree. `RULING EZ` governs a number written into a BRIEF; nothing governed a number written into a REVIEWS BLOCK, where there is no coder to falsify it.
+
+`RULING EZ` made it standing practice to run a floor's exact command before writing it into a brief,
+and every member of the family since has been about an instrument a brief names. **A REVIEWS block is
+not a brief: nobody runs its commands, so a wrong number in it is never falsified and is quoted
+forward by the next tick as this page's own measurement.** Re-run at tick 243 against the pinned sha,
+tick 242 emitted two figures its own named commands do not produce — and the two fail for **different
+reasons**, which is why one rule does not cover both.
+
+**(a) `TRACK 1 ACTION 10`'s merge count — `RULING DK`'s hazard, executed inside a tick that recorded
+`DK` firing live in its own gate.** Tick 242 wrote *"twelve first-parent merges on main since your
+revert `a5042da2`"* under pin `58b0e8ee`:
+
+```
+git rev-list --count --first-parent --min-parents=2 a5042da2..58b0e8ee   →  10     ← its own pin
+git rev-list --count --first-parent --min-parents=2 a5042da2..0ce60089   →  12     ← THIS tick's pin
+0ce60089  2026-09-08 20:02:24   merge: track/money — X-120, X-173, X-198
+```
+
+Tick 242's block was written at **20:07**. **`12` is the count at the ref as it stood then, not at the
+sha the block pinned** — so the pin and the number describe two different `main`s. ⚠️ The tick had
+already caught `DK` moving the ref between its own two gates and said so; it pinned correctly, ran
+most measurements against the pin, and let one figure through on the live ref anyway. **A pin protects
+only the commands actually pointed at it.**
+
+**(b) The instrument-drift enumeration — and NO moving ref can explain this one.** Tick 242 wrote
+*"main 16 `bar` sections and this seat 15."* Measured now: **14 and 13**, on a file proven not to have
+moved in either direction:
+
+```
+git diff --stat 58b0e8ee 0ce60089 -- bin/supervise.sh                    →  (empty)
+git rev-list --left-right --count HEAD...0ce60089 -- bin/supervise.sh    →  4  0
+```
+
+Main's copy is byte-identical to what tick 242 read, and **main has still made zero commits touching
+that file since our base** (`FW`'s precision, re-measured). So (b) is `EZ`'s plain defect — a count
+reasoned rather than run — committed about **this seat's own script**, one tick after `FW` ruled on
+this seat's own cadence.
+
+⭐ **Both blocks named the right MEMBERSHIP and only the counts were wrong**, which is exactly why
+nothing reddened: the drifted set is still `1a` · `1b` · `2d` main-has-we-lack (all **NOT adoptable**,
+`RULING FS`) and `2f` · `2g` we-have-main-lacks (offered upstream, `ACTIONS 11`/`12`), re-derived by
+`comm` this tick; and the ACTION 10 *claim* — no `track/stages` merge since the revert — is true at
+every sha in the window. **A wrong count beside a right set is the hardest kind to catch**, because
+the sentence reads correct and the number is decoration until a later tick quotes it.
+
+✅ **Standing correction, two clauses.** **(i)** Every count in a REVIEWS block is pasted from a
+command run **against the pinned sha in the same tick** — `RULING EZ` extended from the brief to the
+ledger, because the ledger has no coder to falsify it. **(ii)** A count about a file **this seat
+owns** is re-run at write time and never carried from the previous block's prose; `FW`'s `416`-line
+figure was re-measured here and is right, `242`'s section counts were carried and are not.
+
+⚠️ Eighteenth member of the
+`EU`/`EV`/`EW`/`EX`/`EZ`/`FE`/`FF`/`FH`/`FI`/`FJ`/`FN`/`FP`/`FQ`/`FS`/`FT`/`FU`/`FV`/`FW` family, and
+the first where the defective instrument is **the ledger's own arithmetic about itself** — one number
+about this seat's filing to Track 1, one about this seat's own script, neither about the tree, and
+both in the block that ruled on this seat's discipline.
+
 ### ⛔ `RULING FP` (tick 236) — `journey` is the SECOND stage that is not a function of the tree, and it is ARTIFACT-derived. A count fell because the PREVIOUS wave's test run wrote an untracked file.
 
 `RULING FB`/`FD` established that `schema` is joint on the tree **and the PostgreSQL server**, so a
@@ -1524,8 +1582,30 @@ dispatched — executed by the supervisor itself**, `bin/supervise.sh` being thi
 ⛔ **Not a wave and no count moved** — §5 identical in all eight across `.gateT241.txt` and
 `.gateT241b.txt`. It sets no `fail=1`: a trigger, never a verdict.
 
-⛔ **The backlog is EMPTY at tick 242 and this tick writes a HOLD — with NO instrument change, which is
-`RULING FW`'s remedy applied to itself.** Re-measured at the new pin rather than carried: main moved
+⛔ **The backlog is EMPTY at tick 243 and this tick writes a HOLD — the SECOND consecutive tick with no
+instrument change, which is `RULING FW`'s cadence holding rather than being restated.** `wc -l
+bin/supervise.sh` is **416**, unchanged from tick 242, re-measured per `RULING FX(ii)` and not carried.
+Re-measured at the new pin: main moved `58b0e8ee` → **`0ce60089`**, **+2 first-parent**
+(`track/sixty` wave 183, `track/money` X-120/X-173/X-198), **neither ours**; lane **20 ahead / 12
+behind** first-parent (**20 / 96** by ancestor count, `RULING EK`); merge base `7a75f289` unmoved;
+`18bbde18` still not an ancestor (`merge-base --is-ancestor` → rc **1**) after **12** first-parent
+merges since the revert, `grep -c "track/stages"` over that range → **0**. `TRACK 1 ACTION 1` re-run
+**absolutely** (`RULING EC`): the `.agents/rules/` grep prints nothing and the note ceiling is still
+**`N142`** — Track 1 has published no note across **four** further sibling merges. ⛔ **The take is
+OPEN, UNNECESSARY and REFUSED for a sixth tick**: `DD`'s two-row re-check prints nothing and
+`git diff --stat 7a75f289 0ce60089 -- app/app/Doctor/ …/JourneyHarness.php` is **empty**, so this
+lane's checker **is** main's current checker byte-identical, `RULING EQ`'s void condition is not
+reached, a take could refresh nothing, and its cost is now **96** ancestor commits of other lanes'
+module work with zero lane-authored bytes behind any rise. ⭐ **The admission census was NOT re-run and
+the reason is a measurement taken first**: `git diff --stat 10e804ea HEAD -- app/` is **empty**, so its
+one-code-change shelf life is unspent — corroborated from the other side by `capability` reading
+**207** unchanged.
+
+⛔ **The backlog was EMPTY at tick 242 and that tick wrote a HOLD — with NO instrument change, which is
+`RULING FW`'s remedy applied to itself.** ⚠️ **Two of its numbers do not reproduce — see `RULING FX`**:
+the merge count was measured off the live ref rather than its own pin (**10** at `58b0e8ee`, not 12),
+and its `bar`-section enumeration read **16 / 15** where the unmoved files give **14 / 13**. The
+memberships it named are correct. Re-measured at the new pin rather than carried: main moved
 `c3ab0a6f` → **`58b0e8ee`**, **+2 first-parent** (`track/money` empty states, `track/pricebook` X-168),
 **neither ours**; lane **19 ahead / 10 behind** first-parent (**19 / 84** by ancestor count, `RULING EK`);
 merge base `7a75f289` unmoved; `18bbde18` still not an ancestor after **twelve** first-parent merges since
