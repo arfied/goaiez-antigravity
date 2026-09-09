@@ -50,6 +50,10 @@ class Thread extends Component
 
     private function resolvePersonId(): ?int
     {
+        if (! $this->customer->email && ! $this->customer->phone) {
+            return null;
+        }
+
         return Person::where('business_id', $this->customer->business_id)
             ->where(function ($q) {
                 if ($this->customer->email) {
