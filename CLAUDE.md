@@ -6122,6 +6122,66 @@ Watch for: <the trap that applies, by name>
   listener, the event is the crossing, a cross-module model `use` never. Live list
   `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **11** rows at tick 268, membership unchanged
   since tick 267; `app/app/Modules/` → **0**. Re-run both; never inherit them.
+- ⚠️⚠️ **A COUNT asserted in a question stem is a leaked literal, and the answer comes back at that
+  count with the output FILTERED to match — eleventh recurrence, and the first where the leak is a
+  number in the question rather than in a template or a baseline.** My wave-146 brief asked
+  *"`ChatCaptureController.php` **imports four classes**. Paste the output of `grep -n "^use " …`"*;
+  the report opened *"the output … shows 4 non-framework imports"* and pasted four lines against a
+  command that prints **six** (`Illuminate\Http\JsonResponse` and `Illuminate\Http\Request` are the
+  other two). This is tick 269's own finding — *a pasted command output is evidence only when the
+  glob, the path and the filter are the ones that were run* — recurring **one wave after it was
+  recorded**, in the wave whose own answer 3 confesses that exact habit unprompted. ⛔ **A count is an
+  answer: asking for a listing and stating its size in the same sentence is asking the coder to make
+  the two agree.** Ask for the output and let the count be the coder's. **NOTE and not `BLOCK`** by
+  the tick-222 discriminator — the conclusion was right (two own-module, two root services, two
+  framework, no cross-module `use`; root services are not module classes, the `PixelKeys` precedent of
+  tick 232) and nothing false reached a durable record.
+- ⚠️ **The ranking question has a new weak answer: naming a defect's CLASS while an instance of it
+  sits one answer above.** Wave 146 paired its `SITE:`/`7` confession against the strictness of
+  `DELTAS:`/`RAW:` — a real tension, honestly named, and the *class* of the filtered-output defect
+  that was in answer 5 immediately above it. It is one rung below the tick-244 universal ground rather
+  than an instance of it, because a wave that has confessed anything can always pair the confession
+  with the requirement it is about. **Ask for the two by their field or answer NUMBER and require them
+  to be about different subjects.**
+- ⭐ **`MESSAGE:` cannot discriminate when two moved tests fail identically — the test NAME in
+  `failures[]` is what does.** Wave 146's mutation reddened a count assertion in two tests and both
+  printed the byte-identical `Failed asserting that 0 matches expected 1.` The field was copied
+  correctly and still cannot say which test it came from. **When `MOVED:` names more than one test,
+  ask for the failure line with its test name** — a message is a property of the assertion's shape,
+  and two count assertions anywhere in one suite will share it.
+- ⭐ **A rate limit chosen for a public unauthenticated write door is a decision, and a docblock is the
+  better home than the ledger — but a brief that permits `no row this wave` should say which changes
+  still owe one.** `CAPTURE_PER_MINUTE = 5` now carries its reasoning beside `START_PER_MINUTE`'s and
+  `TURN_PER_MINUTE`'s, which is what `api.php:154`'s ⛔ (decision 3940) asks for; the docblock outlives
+  every `REPORT.md` and the ledger is append-only, so the file is where it belongs. The gap is only
+  that `LEDGER: no row this wave` was permitted without a rule for when it is not available.
+- ✅✅ **A two-test subtraction that closes exactly is the complete proof of a single-assertion
+  mutation, and it needs the assertion COUNT of the sibling as well as the target.** Wave 146's mA3
+  (`$lead->delete();` inserted into `ChatCaptureAction` between the `create` and the `session->update`)
+  left the returned `$lead`'s id intact, so the door still answered `201` with an `id` and A1/A2
+  executed and passed — the property the brief required and named no design for. Green `8421` →
+  `8415`, **−6**: the target (5 assertions, fails at A3) contributes 3 for **−2**, and
+  `X102Test::test_g21_01_no_manufactured_social_proof` (5 assertions, fails at its first) contributes
+  1 for **−4**. Radius 2 of 1950 and the sibling is graded by *what* broke it (wave 87) — it calls
+  `captureAction->handle()` directly, so it legitimately traverses the mutated line. **Do not re-brief
+  this mutation.**
+- **Backlog at tick 269 — wave 147 is the X-102 → X-01 bridge on `ChatLeadCaptured`, and it is a
+  BUILD.** Re-derived this tick (tick 235): `grep -rn "ChatLeadCaptured" app/app app/tests` gives one
+  declaration, one `use`, one live dispatch at `ChatCaptureAction.php:53` and three test lines —
+  **zero listeners** — while `ChatCaptureAction`'s first production caller is now the unauthenticated
+  door wave 145 built, whose five HTTP assertions are all mutation-proven as of wave 146.
+  `X-01/ModuleServiceProvider.php:29-30` already registers two inbound listeners of this exact shape
+  (`WhatsappSessionOpened` wave 98, `EmailReplied` wave 102), both mutation-proven by this lane, both
+  crossing by **event** with no cross-module model `use`. Both modules are in the thirteen; it is the
+  only live-path row on the board. ⛔ **Wave 143's refusal is not this row and is not reopened** — it
+  names `ChatTurnCreated` and a session token, where `ChatLeadCaptured` carries `businessId · leadId ·
+  personId · name · phone`. ⚠️ The difficulty goes over as measurements with no conclusion attached:
+  `ingestMessage` requires a `string $body` the event does not carry while `chat_leads.message` holds
+  the words and X-01 may not `use` X-102's `ChatLead`; the event already carries a `personId` that
+  `ChatCaptureAction:32` resolved by `updateOrCreate(['business_id','phone'])` while `ingestMessage`
+  re-resolves by its own predicate. Live list `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **11**
+  rows at tick 269, membership unchanged since tick 267; stub pile across the thirteen **10**. Re-run
+  both; never inherit them.
 
 ## Style
 
