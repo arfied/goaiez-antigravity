@@ -5718,9 +5718,16 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     `Http::assertSent`.** Every ruling from 36 to 229 asked what is at the other end of a string this
     app *renders*; **nobody has ever asserted what is in a request it MAKES.** That is the new
     population, and this is its first finding.
-    ⚠️ Blast radius, measured: `charge()` has **one** production caller (`GatewayEngine:95`) and
-    eight doubles; `createPaymentLink()` one (`PaymentLinkAction:26`) and four. **All twelve doubles
-    are `new class {}` bound through `$this->app->instance(...)` — duck-typed, NOT subclasses** — so
+    ⚠️ Blast radius, measured: `grep -rn "\->charge(\|\->createPaymentLink(" app/app app/tests`
+    returns **exactly two call sites app-wide** — `GatewayEngine:95` and `PaymentLinkAction:26` — and
+    the definition sweep returns **15 lines: 2 real definitions and 13 doubles**, nine of `charge()`
+    and four of `createPaymentLink()`. ⚠️ **Correction, recorded rather than dropped:** this ruling's
+    first draft said *twelve*, from a grep scoped to `app/app/Modules/X-198` and `X-199` alone; the
+    thirteenth is `app/tests/Modules/X-117/CheckoutBlockScreenTest.php:114`, and the miss is ruling
+    225's own lesson — **a sweep's module list decides its output** — caught only because the
+    ruling-118 table for the brief was measured over `app/app app/tests` whole. **All thirteen doubles
+    are `new class {}` bound through `$this->app->instance(...)` — duck-typed, NOT subclasses**
+    (`grep -c "extends StripeGatewayClient"` is **0**) — so
     a surplus argument is inert (ruling 167) and ⛔ none is touched; the arity drift is recorded, not
     churned (ruling 47's companion). No test in the lane asserts an HTTP request shape, so **zero**
     existing assertions move and both items **add** methods (rulings 68, 70). The key becomes a
