@@ -150,6 +150,45 @@ bar "2c. debug debris in app code (dump/dd/var_dump)"
 dbg=$(grep -rnE '\b(dump|dd|var_dump)\(' "$APP/app" --include='*.php' 2>/dev/null | grep -vE ':[0-9]+:\s*(\*|//)' | grep -v '@allow-dump' | head -5)
 if [ -n "$dbg" ]; then printf '%s\n' "$dbg" | sed 's/^/  ⛔ /'; fail=1; else echo "  none"; fi
 
+bar "2e. a merge that REVERTED a lane's check  (harness vs the incoming side)"
+# Adopted from main's copy at d2a81ee0, tick 239, unmodified. RULING FS's ADOPTABLE class:
+# it reads only this checkout, crosses no boundary, and changes what the instrument reports
+# and never what the tree contains. §2 above measures the last commit against OUR HEAD, so
+# it is structurally blind to the one thing a merge can do wrong: silently DROP the incoming
+# side's change to a forbidden path. That is RULING DL's loss class and RULING FM's — the
+# baseline is wrong, not the check. For a merge, the harness's baseline is the SECOND PARENT.
+# The shared guard already encodes the intent (a gated merge may carry the harness ONLY when
+# the staged blob is byte-identical to MERGE_HEAD's — "take the incoming side whole"), so
+# this section only reports what that clause is there to enforce.
+# ⚠️ The clause has a PRECONDITION, and main's first version omitted it: "take the incoming
+# side whole" only has meaning when the incoming side CHANGED the harness. The baseline for
+# "did the incoming side change it" is the MERGE BASE; the baseline for "did the merge take
+# it" is the second parent.
+# Arms proven at tick 239: the ✓ arm and its precondition FIRE on this lane's own take
+# 6b7c315b (incoming 7a75f289 changed the harness vs base 6b3e7d63, and the result is
+# identical to the incoming side) — a live positive control on this lane's own history, not
+# a borrowed one. The ⛔ arm is proven on main's c1849a75 and is UNPROVEN here; the
+# not-a-merge arm is what this seat's HEAD exercises today.
+p2=$(git rev-parse -q --verify 'HEAD^2' 2>/dev/null || true)
+if [ -z "$p2" ]; then
+  echo "  HEAD is not a merge — nothing to compare"
+else
+  mb=$(git merge-base HEAD^1 "$p2" 2>/dev/null || true)
+  inc=$(git diff --name-only "$mb" "$p2" -- app/tests/Journeys/JourneyHarness.php 2>/dev/null)
+  if [ -z "$inc" ]; then
+    echo "  incoming side never touched the harness (vs merge base $(git rev-parse --short "$mb")) — nothing to take ✓"
+  else
+    drop=$(git diff --name-only HEAD "$p2" -- app/tests/Journeys/JourneyHarness.php 2>/dev/null)
+    if [ -n "$drop" ]; then
+      echo "  ⛔ the merge did NOT take the incoming harness — $(git diff --shortstat HEAD "$p2" -- app/tests/Journeys/JourneyHarness.php)"
+      echo "     inspect: git diff HEAD $p2 -- app/tests/Journeys/JourneyHarness.php"
+      fail=1
+    else
+      echo "  harness identical to the incoming side ✓"
+    fi
+  fi
+fi
+
 bar "3. build state"
 python3 "$ROOT/bin/state.py" status 2>&1 | head -30 | sed 's/^/  /'
 python3 "$ROOT/bin/state.py" next 2>&1 | head -20 | sed 's/^/  /'

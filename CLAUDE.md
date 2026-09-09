@@ -1440,21 +1440,79 @@ the result: `FCAP=40`, both lists carrying overflow lines, proven on a live posi
 named `X-198` as a fourth `RULING FO` module. ⛔ **It is NOT a wave and no count moved** — it changes
 what the instrument reports, never what the tree contains.
 
-⛔ **The backlog is EMPTY at tick 238 and this tick writes a HOLD.** Re-measured rather than recalled:
-`main` moved **2 first-parent / 8 ancestor** commits (`43453694` → **`beb759d4`**) across two sibling
-merges (`track/sixty` X-102, `track/pricebook` wave 176), **neither of them `track/stages`**; this
-lane's gated tip `18bbde18` is pushed and **still not on `main`** — main has run **eight** sibling
-merges since reverting us at `a5042da2` and taken none of ours; lane **15 ahead / 54 behind** by
-ancestor count; merge base **`7a75f289` unmoved**; ours-since-base in `app/` is `app/phpunit.xml`
-alone; and Track 1's own `N142` form returns **1**, resolving to `6b7c315b`, *our own take*.
+✅ **S-193 — the `§2e` adoption. COMPLETE at tick 239, and NOT dispatched — executed by the supervisor
+itself**, `bin/supervise.sh` being this seat's own file (`RULING FI`). `RULING FT` has the result: the
+mechanical detector for `RULING DL`/`FM`'s loss class is now in this seat's gate, proven on a positive
+control that is **this lane's own take**. ⛔ **Not a wave and no count moved** — §5 is identical across
+`.gateT239.txt` and `.gateT239b.txt`.
 
-⭐ **The admission test was NOT re-run at tick 238, and the reason is a measurement:
+⛔ **The backlog is EMPTY at tick 239 and this tick writes a HOLD.** Re-measured rather than recalled:
+`main` moved **1 first-parent / 15 ancestor** commits (`beb759d4` → **`d2a81ee0`**) on one sibling
+merge (`track/money` empty states), **not `track/stages`**; this lane's gated tip `18bbde18` is pushed
+and **still not on `main`** — main has run **nine** first-parent merges since reverting us at
+`a5042da2` and taken **none** of ours (`grep -c "track/stages"` over that range → `0`); lane **16
+ahead / 7 behind** first-parent and **16 / 69** by ancestor count (`RULING EK`); merge base
+**`7a75f289` unmoved**; ours-since-base in `app/` is `app/phpunit.xml` alone. Filed as
+**TRACK 1 ACTION 10** — a measurement, not a grievance: nothing is blocked behind that merge, since
+this lane authors no `app/**` byte.
+
+⭐ **The admission test was NOT re-run at ticks 238 or 239, and the reason is a measurement:
 `git diff --stat 10e804ea HEAD -- app/` is EMPTY**, so the input the tick-236 census is a function of
 has not moved and its one-code-change shelf life has not been spent. **This is the ONLY form in which
 a census may be carried here** — not because it is written down, but because its input is proven
 unmoved. A tick that skips that diff and quotes the table anyway is `RULING CK`'s shape.
 ⚠️ **The next tick runs the diff first**, and `RULING FP`/`FR` have shown two stages whose shelf life
 is shorter than a code change regardless.
+
+### ⭐ `RULING FT` (tick 239) — `RULING FS`'s three-class menu is a CLASSIFICATION, and a classification is a CENSUS. It named members of two classes and never enumerated the third, so the section this seat most needed sat in the one class the ruling did not list.
+
+`FQ` made it standing practice to diff a per-track instrument against main's copy; `FS` sorted what
+that surfaces into **adoptable** / **adoptable but unproven** / **not adoptable**, refused the third on
+principle, and left the first with exactly one member — `FQ`'s own §7 fix, already taken. **Neither
+tick enumerated the sections.** Run at tick 239, the enumeration is complete and small: main carries
+**14** `bar` sections, this seat **11**, and the three it lacks are `1a`, `1b`, `2d`.
+
+⭐ **One of the three was ADOPTABLE and no tick had looked.** `§2e — a merge that REVERTED a lane's
+check (harness vs the incoming side)` is the mechanical detector for `RULING DL`/`FM`: **§2 measures
+the last commit against OUR HEAD**, so it is structurally blind to a merge that silently drops the
+**incoming** side's change to a forbidden path. That is the one loss class this lane has actually
+suffered — `a5042da2` deleted our two X-211 tests and `6b7c315b` took the deletion with no conflict and
+no index row — and fourteen instrument rulings had left this seat with no detector for it.
+
+✅ **ADOPTED, on a positive control that is this lane's own take** — strictly better than the control
+`FS` deferred `pest.lock` for. Replayed by hand on `6b7c315b` (parents `17d393b0`/`7a75f289`, base
+`6b3e7d63`): incoming vs base on `JourneyHarness.php` is **NON-empty**, so the precondition arm is
+**exercised, not short-circuited** (main's own first version omitted that precondition and mis-fired),
+and result vs incoming is **empty** → the `harness identical to the incoming side ✓` arm. **✓ and
+precondition PROVEN here; the ⛔ arm proven on main's `c1849a75` and UNPROVEN here.** `FQ`'s own test
+is the falsifier and it passes: §5 identical in all eight numbers before and after, §2 still `none`,
+pint `passed`, phpstan `0`. Drift closed **363 → 342** lines behind.
+
+⛔ **`1b` and `2d` re-refused on `FS`'s ground, unchanged. `1a` is a case `FS` never saw and is refused
+too, for a reason worth keeping distinct**: `coder process (progress, not existence)` reads only *this
+lane's own* `coder.pid`, `/proc/<pid>` and *this lane's own* `/home/goaiez/tmp/agy-grs-antig-stages-run*.log`
+— it crosses no other lane and no other account. It is still refused because those paths are refused to
+this seat and `FS`'s ground is that this seat does not build itself a **script-mediated read primitive**
+around the owner's boundary. ⚠️ **Do not flatten `1a` into `2d`'s class**: `FS`'s harm is reading
+*outside* the lane, and `1a`'s artifacts sit outside the checkout only because the launcher this seat
+owns puts them there. The remedy is in this seat's column (`launch-coder.sh:48`, and `RULING CX`
+measured a sibling already redirecting to a relative `logs/`) and is **carried as a named candidate,
+not taken** — there is no live coder so no positive control, and `:87-89` auto-numbers by scanning the
+old path, so moving the destination alone breaks run-number continuity. **A dispatch is unrecallable
+(`RULING CL`); the launcher is not changed in the tick it is thought of.**
+
+✅ **Standing correction — `RULING FG` applied to an instrument diff instead of a stage census: when
+this seat diffs a per-track instrument against main's copy, it ENUMERATES every drifted section into
+`FS`'s three classes and says which class each is in**, never only the sections it has a verdict about:
+
+```
+git show <pin>:bin/supervise.sh | grep -oE '^bar "[^"]*"'
+grep -oE '^bar "[^"]*"' bin/supervise.sh
+```
+
+⚠️ Fourteenth member of the `EU`/`EV`/`EW`/`EX`/`EZ`/`FE`/`FF`/`FH`/`FI`/`FJ`/`FN`/`FP`/`FQ`/`FS`
+family, and the first where the defective instrument is a **ruling's own classification** rather than a
+command, a floor, a shell state or a sequence.
 
 
 
