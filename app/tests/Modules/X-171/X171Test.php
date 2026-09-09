@@ -256,4 +256,41 @@ class X171Test extends TestCase
 
         Carbon::setTestNow();
     }
+
+    public function test_live_completion_carries_frozen_instant(): void
+    {
+        Event::fake([JobCompleted::class]);
+        $frozen = Carbon::parse('2025-01-01 10:00:00');
+        Carbon::setTestNow($frozen);
+
+        $action = new JobStateAction;
+        $action->updateState(1, 2, 3, 'completed');
+
+        Event::assertDispatched(JobCompleted::class, function ($event) use ($frozen) {
+            return $event->occurredAt->equalTo($frozen);
+        });
+
+        Carbon::setTestNow();
+    }
+
+    public function test_replay_carries_null_and_says_so(): void
+    {
+        Event::fake([JobCompleted::class]);
+        $biz = TestCase::provisionTenant(['name' => 'Mobile Field Tech Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->syncAction->replayMutation(
+            businessId: $biz->id,
+            clientMutationId: 'mut_comp_1',
+            deviceId: 'dev_1',
+            actionName: 'job.completed',
+            payload: ['job_id' => 1, 'tech_id' => 2],
+            clientVersion: 1,
+            currentServerVersion: 1
+        );
+
+        Event::assertDispatched(JobCompleted::class, function ($event) {
+            return $event->occurredAt === null;
+        });
+    }
 }
