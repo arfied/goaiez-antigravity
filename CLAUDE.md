@@ -5869,6 +5869,69 @@ Watch for: <the trap that applies, by name>
   produce. **I ran no suite of my own**: two complete objects on this exact sha existed and I read
   both. State when you decline to re-measure and why — the tick-197 corollary is keyed to a MISSING
   measurement, not to one the column did not perform itself.
+- ⚠️⚠️ **A wave's numbered answers can be MORE PRECISE than the row it wrote, and the row is what
+  survives — grade a generalisation against the DOCBLOCK, not against the tree.** Wave 144 correctly
+  established that `AgentTurns.php:215-222`'s ⛔ `THE ROW ID, NEVER THE WORDS` block does not reach a
+  synchronously-consumed event: `EmailReplyInboundListener` and `WhatsappInboundListener` are both
+  `final class` with **no `implements ShouldQueue`**, so nothing serialises and the block's own stated
+  reason (`jobs.payload`, and after three attempts `failed_jobs.payload`, neither carrying RLS nor
+  reached by erasure) cannot apply. Its answer 5 named the operative property exactly — *"a restriction
+  on data formats in one specific transport mechanism … does not inherently apply to … synchronous
+  event dispatches"*. **Neither permanent record carries that qualifier**: `ChatDoorTest.php:26` and
+  the `2026-09-09T00:50:43` ledger row both read *"job payloads, not event payloads"*, and an event
+  consumed by a `ShouldQueue` listener is wrapped in `CallQueuedListener` and serialised whole into
+  `jobs.payload` — so what makes words on an event safe is **how it is consumed**, not that it is an
+  event. Measured at tick 266: `grep -rl "implements ShouldQueue" app/app/Modules --include=*.php` is
+  **0**, so nothing is wrong today, and **16** such classes exist in `app/app` (all jobs plus one
+  command), so the mechanism is available and in house use. `REPORT.md` is overwritten every wave; a
+  docblock and an append-only ledger are not, so the loose sentence is the one a future wave reads as
+  a licence. ⭐ The check costs nothing and is the reverse of every other reading order in this file:
+  **read the wave's generalisation field first, then diff it against the row the wave committed** — a
+  gap between them is the finding, and it points in the direction the durable record loses.
+- ⚠️ **A field asking for a QUOTATION cannot be answered when the ground is an ABSENCE — ask for the
+  artifact and a yes/no over it.** Second recurrence of the tick-197b shape, both mine: there I worded
+  a field as *"quote the §7 line that shows it gone"* and §7 cannot print an absence; here `LISTENERS:`
+  asked for *"the sentence from your own paste that decided it"* when what decides it is
+  `final class EmailReplyInboundListener` **not** carrying `implements ShouldQueue`. The wave pasted
+  both classes in full, correctly, and then quoted the `ingestMessage(…)` call — adjacent evidence, not
+  the discriminator. Nothing was hidden and the outcome taken was right; the field had no answerable
+  form. **Ask *paste the declaration, then answer: does it implement X?*** — a yes/no over a pasted
+  artifact carries an absence and a quotation never can.
+- ⚠️ **A two-clause sentence checked with a one-clause command comes back `held exactly` — the wave-88
+  per-clause rule inside the VERIFICATION question.** Wave 144's answer 8 quoted
+  *"`ChatTurnController.php:45` hardcodes `authorType: 'visitor'` **and is the only production
+  caller**"* and ran `grep -rn "'visitor'" <that one file>`, which reaches the first clause and cannot
+  see the second. Re-derived at tick 266 the sentence holds — `grep -rn "ChatTurnAction" app/app
+  app/tests` gives the controller's `use` and `__invoke` signature, the action's own declaration and
+  two docblock rows, and no other caller — but the wave did not establish it. **One command per
+  clause, or put a single-clause sentence in the brief to be checked.**
+- **Backlog at tick 266 — wave 145 is X-102's chat lead-capture door.** RULED, re-derived this tick:
+  `grep -rn "ChatCaptureAction" app/app app/tests` gives its own declaration and three lines of
+  `X102Test.php` — **no route, controller, job, listener or command** — so `ChatLeadCaptured` never
+  fires in production and the action is the tick-184/212/225/228 dead-class shape at action scale.
+  Single-module, in lane, on the live path waves 122–136 built, no vendor and no credentials, and it
+  is the measured prerequisite of the X-01 bridge wave 143 refused: `ingestMessage`'s `else` arm writes
+  `'phone' => $identifier`, exactly right for a visitor who has given a phone and exactly wrong for a
+  session token. ⚠️ Hazards go over as printed measurements with no conclusion attached:
+  `ChatCaptureAction::handle()` takes an `int $sessionId` while the door holds only a session **token**
+  (`ChatTurnController:35` is the house lookup); `chat_leads` is `ENABLE`+`FORCE ROW LEVEL SECURITY`
+  with a `WITH CHECK`, so an absence assertion is falsifiable only if the tenant it reads under is the
+  one the write would land under (tick 254); lines 18–26 of both existing controllers are the
+  no-tenant window where four mutation designs have died; `ChatCaptureAction` already `use`s
+  `App\Modules\X121\Models\Person` — **an existing violation is not a permission**; and
+  `ChatRateLimits` carries `START_PER_MINUTE = 5` and `TURN_PER_MINUTE = 60` with a reasoned paragraph
+  each, against `api.php:154`'s ⛔ on inline limiters. Live list
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **11** rows at tick 266 (the tick-265 nine plus the
+  two wave 144 made reachable), `app/app/Modules/` → **0**; stub pile across the thirteen **10**.
+  Re-run both; never inherit them.
+- **Suite baseline, measured on tip `f9231547`, clean tree — `tests 1946 · passed 1943 ·
+  assertions 8407 · failed 1 · errors 2 · incomplete 3 · risky 1 · duration_ms 109610`,** the standing
+  three by **identity**, §1 `0 uncommitted`, §2 `none`, §2a `empty`, §2b `all parse`, §6 pint `passed`
+  / phpstan `0`, stamp `20260829-0647` = `runtime_build`. `assertions 8407` identical to ticks 261 and
+  265 — all a comments-and-ledger diff may produce — and
+  `cmp scratch/w143-pest-raw.log scratch/w144-pest-raw.log` → `differ: byte 95, line 1`, the
+  `duration_ms` offset alone. I ran no suite of my own; one complete object on this exact sha existed
+  and I read and `cmp`ed it.
 
 ## Style
 
