@@ -4890,3 +4890,67 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     before the text. ⚠️ Measured in the same pass and recorded rather than briefed (ruling 76's grade):
     `X-120/Ui/CardScreen.php` also lacks a `\Throwable` tail, and is clean because `present()` persists
     **nothing** (ruling 119) — no column, no `22001` path.
+207. **A `grep` pattern with `$` before `\|` is an END ANCHOR, so the census that "found nothing" had
+    never run — and the population was 32 (RULED by the lane supervisor 2026-09-08 20:2x, measured in
+    the supervisor's own hands).** The `$guarded`/`$fillable` census this tick opened with was
+    `grep -rn "protected \$guarded\|protected \$fillable" <eight modules>`. It printed **zero lines**
+    and the population is **thirty-two**. In a double-quoted shell string `\$` becomes `$`, and in a
+    POSIX basic regular expression a `$` immediately before `\|` is the **end-of-line anchor**, so the
+    pattern asked for a line ending in `protected ` — which nothing is. The fix is
+    `grep -e 'protected \$guarded' -e 'protected \$fillable'` — separate `-e` patterns, single quotes
+    — and the tell was free: the same tick's `ls` of the eight `Models/` directories had already
+    printed 32 files, so a zero-line answer contradicted a measurement one command old.
+    **RULED: a sweep whose result is zero is checked against an independent count of the population
+    before it is read as an absence** — its exit code, its warnings (ruling 192) and, where one
+    exists, a directory listing of the thing being swept. ⛔ A zero-line grep is never reported as
+    "measured clean and STRUCK" on its own evidence. ⚠️ This is ruling 192's hazard with a different
+    metacharacter, and the consequence would have been the exact inversion 192 named: rulings
+    95/100/111 exist to stop a wave with nothing in it, and here they would have **struck a 32-member
+    population that had never been read**. Rulings 83/136/145/179/188's lesson again — **the cheap
+    signal moves for reasons unrelated to the fact it stands for** — so a zero is corroborated, never
+    trusted.
+208. **The lane's 32 models are `$guarded = []` with NO tenancy trait, so every scope is written by
+    hand — and `CheckoutBlock:108` is the one hand that did not write it (RULED by the lane supervisor
+    2026-09-08 20:2x, briefed as MONEY-134).** The census, re-run correctly: **all 32** of this lane's
+    models carry `protected $guarded = []` and **not one** uses `App\Concerns\BelongsToTenant`, which
+    30-odd `App\Models\*` classes do. So ruling 65's sharp edge — a `$guarded = ['id','business_id']`
+    that **silently drops** a `business_id` a caller passes, leaving a fixture on the right tenant by
+    luck — is **measured absent from this lane**, and its inverse with it: no trait means no ambient
+    value to override, so nothing is silently admitted either. **That census half is STRUCK.** What it
+    establishes is the **premise** of the finding: with no trait and no global scope, isolation in
+    these eight modules rests entirely on an explicit `where('business_id', …)` on every query, plus
+    RLS beneath. Ruling 151(5) measured that for the 24 `Ui/` components **by the wrong instrument** —
+    it checked for `abort_unless`, `DB::table` and `withoutGlobalScope`, which reads the *component*
+    and not its *queries*. Swept per query, the lane has **one** unscoped model lookup:
+    `X-117/Ui/CheckoutBlock.php:108`'s `Sellable::find((int) $item['sellable_id'])` (the only other
+    hits are five `User::first()` in evidence commands — bootstrap, not tenant data). **It is the odd
+    one out of eleven**: `grep -rn "Sellable::" app/app/Modules/X-117` returns eleven lookups and the
+    other ten — `CartBlock:40,:59,:81`, `CheckoutEngine:27,:53,:132,:184,:257,:308` — all read
+    `Sellable::where('business_id', $businessId)`; and it is the odd one out **inside its own method**,
+    since `render()` scopes `Cart` at `:102` and `Order` at `:116` and the line between them does not.
+    Ruling 98's self-contradiction tell, with ten sibling witnesses. ⚠️ **The finding is larger than
+    the missing `where`.** `:109`'s `if ($s !== null)` turns a lookup that returns nothing into a
+    **silently dropped cart line**, and the drop is invisible because of where the total comes from:
+    `checkout-block.blade.php:30-33` builds the visible line list from `$lines`, while `:37`'s
+    `Total:` and `:40`'s **`Pay {amount}` button** both render `$cart->total_cents` — the **persisted
+    column** the engine wrote from every line (`CheckoutEngine:35,:84,:115,:210,:250,:314`). So an
+    unresolvable line disappears from the list and stays in the total, and the checkout screen shows a
+    customer a set of lines that does not add up to the sum on the button they are about to press.
+    ⚠️ It is reachable **without any tenancy question at all** — a sellable deleted after it was added
+    to a cart returns null from a correctly scoped query too — so the two halves are independent and
+    both are this lane's. ⛔ The missing `where` is not the whole fix and ⛔ the `!== null` branch is
+    not deleted: a cart genuinely can hold an id that no longer resolves, and ruling 194 governs — **a
+    list a screen cuts says that it is cut**. ⛔ Not resolved by recomputing the total from `$lines`:
+    the persisted `total_cents` is what the engine charges and what `pay()` acts on, so making the
+    display disagree with the charge in the *other* direction is the same defect mirrored. ⛔ Not by
+    dropping the line from the cart on render — a read path does not mutate the cart. The outcome is
+    the scope, plus a notice naming what is missing, with the total left alone and stated as covering
+    the unlisted line. ⚠️ **Blast radius, measured with interior fragments (rulings 46, 86): ZERO** —
+    `CheckoutBlockScreenTest` seeds `total_cents => 1000` at `:183` and `:197`, asserts nothing about
+    the line list against the total, and no test in the lane renders a cart holding an unresolvable id
+    — so the items **add** methods (rulings 68, 70). ⚠️ **Measured CLEAN and STRUCK in the same tick,
+    do not re-raise** (rulings 64, 95, 100, 111): the **`Console/` census** — 11 commands over four
+    modules, `grep -e "Command::class"` over the four providers shows **all eleven registered**, the
+    two scheduled ones carry ruling 151(1)'s architecture lint pinning both windows, the four
+    `runtime-proof` commands are rulings 49/172's honest refusals, and the five `evidence-*` were
+    swept by rulings 48/169/173/187. There is no wave in it.
