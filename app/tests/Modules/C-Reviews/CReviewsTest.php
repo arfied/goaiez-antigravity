@@ -246,7 +246,7 @@ class CReviewsTest extends TestCase
 
         $this->assertEquals('open', $ticket->status);
         $this->assertNotNull($ticket->reopened_at);
-        $this->assertEquals('open', $ticket->status);
+        $this->assertNotNull($ticket->resolved_at, 'Row had resolved_at before the call and retains it');
 
         // test 5 leaves it resolved
         $r2 = $this->syncAction->handle($biz->id, 'google', 1, 'Bad again');
@@ -259,7 +259,7 @@ class CReviewsTest extends TestCase
 
         $this->assertEquals('resolved', $ticket2->status);
         $this->assertNull($ticket2->reopened_at);
-        $this->assertEquals('resolved', $ticket2->status);
+        $this->assertNotNull($ticket2->resolved_at, 'Row had resolved_at before the call and retains it');
     }
 
     /**
@@ -287,7 +287,7 @@ class CReviewsTest extends TestCase
         $this->assertEquals('LOW_CSAT_TRIAGE', $resRefused['refusal_code']);
         $req = ReviewRequest::latest()->first();
         $this->assertEquals('triaged_internal', $req->status);
-        $this->assertEquals('triaged_internal', $req->status);
+        $this->assertNull($req->rating, 'Rating is currently not saved by requestAction');
         $ticket = QaTicket::where('review_request_id', $req->id)->first();
         $this->assertNotNull($ticket);
         // Score 8 -> sent
