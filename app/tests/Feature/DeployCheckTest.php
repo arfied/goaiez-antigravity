@@ -68,8 +68,8 @@ it('deploy-check pixel probe fails when missing', function () {
 });
 
 it('deploy-check handles DateTimeInterface in heartbeat correctly', function () {
-    Cache::put('goaiez:worker:heartbeat', new \DateTimeImmutable('-30 seconds'));
-    Cache::put('goaiez:scheduler:heartbeat', new \DateTimeImmutable('-30 seconds'));
+    Cache::put('goaiez:worker:heartbeat', new DateTimeImmutable('-30 seconds'));
+    Cache::put('goaiez:scheduler:heartbeat', new DateTimeImmutable('-30 seconds'));
     PixelBundleVersion::factory()->create(['sha' => 'abcdef']);
 
     $exitCode = Artisan::call('app:deploy-check');
