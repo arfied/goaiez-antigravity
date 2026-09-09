@@ -15696,3 +15696,319 @@ decides whether RLS *can* be a cause in this suite, and it also settles tick 308
 - **Tick 287's ordering held on the coder's side**: pest `13:44:08 → 13:46:34` rc 2, `REPORT.md` 13:46:51.
   Tick 259's column rule, seventeenth firing — five `grs-antig-site` gates in twenty minutes, mine `241425`
   (`gate-start 13:50:39`, alive by `readlink`).
+
+## ⛔ A POSITIVE CONTROL IN ANOTHER TEST FILE PROVES THE **CODE PATH** IS REACHABLE; ONLY A STRUCTURALLY IDENTICAL FIXTURE PROVES **THIS FIXTURE** REACHES IT (tick 321)
+
+Tick 306 rules that when a test asserts something did **not** happen, the fixture must make it possible for it
+to happen — otherwise the assertion is satisfied by an unrelated refusal upstream and the green proves nothing.
+`EdgeDeployTenancyTest` asserts an **absence** and carries **no positive control**, so SITE-191's GREEN had a
+second explanation no re-reading of the report could exclude: the fixture may never reach the write at all.
+I was one command from briefing a control wave for it.
+
+It is settled at source, and the reading is worth more than the outcome:
+
+```
+EdgeDeployAction:292   $page = app(PageReadAction::class)->findForBusiness($businessId, $pageId);
+              :293     if ($page) {
+              :295-300     $llmsTxtContent = app(LlmsTxtRenderAction::class)->handle(...)   ← UNCONDITIONAL
+              :301         Storage::disk('local')->put("sites/{$deployHash}.llms.txt", ...) ← UNCONDITIONAL
+LlmsTxtRenderAction:14-31   returns "# {businessName}\n## {title}\nPath: /{slug}\n" AT MINIMUM
+```
+
+⭐ **`$page` is the SOLE determinant.** The renderer cannot return empty — it opens with three header lines
+built from arguments the test supplies non-empty — and the `put` is unconditional given `$page`, so even a
+null `$version` (empty `$contentBlocks`) still writes the artifact. There is no second way for that assertion
+to be satisfied.
+
+And the corroborating instrument is what makes it a measurement rather than a reading of one file (180 — the
+pairing is the result): `LlmsTxtTest.php:25 test_llms_txt_is_generated_on_deploy` is **arg-for-arg identical**
+to the tenancy fixture — `provisionTenant` → `Tenancy::set` → `Page::create` →
+`PageVersion::create(page_id, commit_id, content_blocks:[text])` → `EdgeProvisionAction` →
+`EdgeDeployAction(businessId, edgeZoneId, pageId, commitId, businessName)` — and asserts the artifact
+**exists**. The two differ in exactly one variable: whose page `pageId` names.
+
+⛔ **The general form.** Tick 306's law is about the **fixture**, never the code path in general, so *"a
+positive test exists somewhere"* is normally **no answer at all** — and reaching for it is the easy way to
+talk yourself out of a real gap. It is an answer only when the two fixtures are structurally identical, and
+only after comparing them line by line; at that point building a second control is a duplicate carrier (240)
+and the correct verdict is **already done here** (224 — the room is empty, not the door shut). Fifth
+pre-emptive firing of tick 210's *before briefing a wave that produces X, grep for X* (262, 303, 306, 308,
+321), and the first where what already existed was a **fixture** rather than a record or a line of code.
+
+## ⛔ A CONTRADICTION BETWEEN TWO OF THE LANE'S OWN MEASUREMENTS IS RESOLVED BY RE-MEASURING THE **OLDER** ONE FIRST (tick 321)
+
+SITE-191 probed the role and witnessed its mutation, so three of the four cheapest explanations for its GREEN
+are gone and the fourth was excluded at source:
+
+- ⛔ *"the mutation was never in the file"* — the diff is pasted **before** the run and the changed-count reads
+  `Page:: 1`. Tick 320's witness rule, first outing.
+- ⛔ *"the suite connects as a superuser or a `BYPASSRLS` role"* — `goaiez_app`, `rolsuper=false`,
+  `rolbypassrls=false`.
+- ⛔ *"`Page` carries a Laravel global scope, so the mutation was a no-op"* — the strongest candidate, because
+  `Tenancy`'s own docblock (`:17`) says *"the global scope on every tenant-owned model reads id()"*, and it
+  would have explained the divergence for free. **Both models read in full: neither has one** — plain `Model`,
+  `$guarded = []`, casts only, no trait, no `booted()`.
+- ⛔ *"the two policies differ"* — `…000036_create_x103_site_tables.php:64-75` and
+  `…000038_create_x155_form_tables.php:42-54` are the same `ENABLE` + `FORCE` + `CREATE POLICY tenant_isolation
+  … USING (business_id = nullif(current_setting('app.business_id', true), '')::bigint)` block.
+
+So two of this lane's measurements disagree on one database, one connection, one role, two byte-identical
+policies, neither model scoped: tick 308 saw a cross-tenant read on `form_definitions` **succeed** (201);
+tick 321 saw one on `pages` **refused**. ⛔ The cause is not measured and no block names one (227, 230, 249).
+
+⭐ **RULED: re-measure the older half before anything goes upstream.** Tick 321's half is current and
+witnessed; tick 308's is **thirteen ticks old**, taken on a tree **1426 commits behind**, with **no witness**
+(tick 320's rule did not exist yet), and its conclusion was an **inference** — *"`findOrFail` would have
+thrown … it answered 201"* — not a probe of anything. This ledger has stated *re-measure a standing claim
+before building on it* a dozen times for **records** (196, 207, 210, 211, 241, 244, 249, 251, 254, 256) and
+never once for a **contradiction**; the older half is by construction the one whose premises have had time to
+decay, and it is the cheaper outcome to discover, because if `form_definitions` now refuses too **there is no
+contradiction at all** and the escalation would have been against a ghost.
+
+⛔ And SITE-192 puts the **catalog census** before the re-run, because a migration is what was *intended* and
+`pg_policies` is what *is* — the distinction tick 315 drew for the `schema` stage, applied to the policies
+themselves.
+
+## ⛔ `pg_policies` IS PER-**DATABASE**; `pg_roles` IS PER-**CLUSTER**. The same command shape answers a scoped question and an unscoped one, and nothing in either says which (tick 321)
+
+`app/phpunit.xml:33-35` overrides exactly three env values — `DB_CONNECTION`, `DB_DATABASE`
+(`goaiez_antig_site_test`) and `DB_URL` — and **not `DB_USERNAME`. Two consequences running in opposite
+directions:**
+
+- ✅ **SITE-191's role probe STANDS.** `current_user`, `rolsuper` and `rolbypassrls` come from `pg_roles`,
+  which is **cluster-wide**, and the connecting role comes from `.env` for both databases. A bare
+  `php artisan tinker` measured the right role even though it opened the wrong database.
+- ⛔ **A policy census run the same way would NOT.** `pg_class.relrowsecurity`, `relforcerowsecurity` and
+  `pg_policies` are **per-database**, and a bare tinker reads `.env`'s `DB_DATABASE` = `goaiez_antig_site`,
+  the **dev** database, while every falsifier in this lane runs against `goaiez_antig_site_test`.
+
+⭐ **The remedy is the pin AND the projection: `DB_DATABASE=goaiez_antig_site_test` makes the measurement
+right, and `current_database()` in the SELECT makes it CHECKABLE** — which is the half a pin alone does not
+buy. Tick 253's law (*an evidence section is a measurement of a TREE, and the report must name which*) on a
+**database** instead of a tree, same remedy: the artefact carries the field that identifies its own subject.
+
+⛔ **Before running a catalog query, ask whether the catalog is per-cluster or per-database.** `pg_roles`,
+`pg_database`, `pg_authid` are the former; `pg_class`, `pg_policies`, `pg_tables`, `information_schema.*` the
+latter. ⚠️ This bounds tick 315's finding more exactly than that tick could: `SchemaStage` reads
+`information_schema.columns` (per-database) **and** `pg_roles` (per-cluster), so `schema` moves both with this
+lane's own test database and with a role change **anywhere in the cluster** — two independent inputs, neither
+visible to `git status`, the tip table or the reflog. ⚠️ `app/.env` is **denied to this seat** (the
+`DB_USERNAME` grep was refused outright), which is the signal it is the coder's job and why the override set
+is stated from `phpunit.xml`'s side. Ninth firing of *read the file before the brief names what is in it*
+(241, 244, 249, 251, 254, 268 ×2, 284, 321) — and this one was found while writing item 1, not by any query.
+
+## ⚠️ OWNER ACTION 1 amended — the suite's role is now MEASURED, and it is not the explanation for anything (tick 321)
+
+Tick 315 filed `role goaiez_backup: has BYPASSRLS` off the live `schema` stage and recorded that *"which role
+the suite connects as … is NOT observable from this seat."* Measured: `[{"current_user":"goaiez_app",
+"rolsuper":false,"rolbypassrls":false}]`. `runtime/goaiez-grants.sql:41-46` declares `goaiez_app` must be
+`NO BYPASSRLS. EVER.` and the probe confirms it is neither superuser nor bypassing, so **`goaiez_backup`'s
+grant does not reach the test suite and this lane's tenancy measurements are not contaminated by it.** ⛔ It
+stays open — a database role is reserved, and the second half (whether the grants file has ever run against
+`goaiez_antig_site_test`) is still not observable here. ⚠️ Nothing in this amendment says the `goaiez_backup`
+grant is correct, only that it explains nothing this lane has measured.
+
+## ⚠️ Sixty's X-102 partition reopened a THIRD time — and the id census, not the diffstat, is what decides whether it matters (tick 321)
+
+The closing tip re-read fired on four sibling refs (**twelfth firing against sixteen nulls**) and half 1 grew
+3 → 4 with `d8d9cdaa origin/track/sixty docs(x-102): add build proposal for chat capture consent tension`.
+X-102 is this lane's under ruling 5 and tick 195 records Track 1 ruling that **sixty opens no further wave in
+either** X-102 or X-137 — so tick 260's fifth partition reading applies: *a partition that reopens after a
+ruling closed it is read on its merits, as if the ruling did not exist.*
+
+Measured before it was characterised (185): **one file, one insertion**, prose appended to an **existing**
+docblock that already carried `[G2-57]`. ⭐ **It adds NO new `G##-##` literal, and that is the check that
+decides it**: tick 260's seventh false-credit shape is that any prose bearing a bare id under
+`tests/Modules/{id}` is a credit *whatever the prose says*, so a BUILD PROPOSAL naming a **new** id would
+silently clear a violation in this lane's own column. This one cannot. **A one-line docblock addition is
+exactly the shape where the diffstat and the id census give different answers, and only the census answers the
+question.**
+
+⛔ Advisory to Track 1; no filing, no wave, ⛔ never a parallel fix (165, 182, 211, 260) — the file is sixty's
+on its own branch and this lane's copy is untouched, so Track 1 gets no textual conflict from our side.
+
+## SITE-192 — ruled at tick 321
+
+A measurement wave that **writes nothing**: the catalog census pinned to `goaiez_antig_site_test` with
+`current_database()` in both projections, then tick 308's falsifier re-run with the witness diff and the
+bare-`findOrFail` count pasted **before** the test. Four branches — RED · GREEN · a throw · **OTHER** — and
+⛔ **none is a stop**, because both outcomes are informative and the only stop is an empty witness diff.
+⛔ **The branch labels name the OUTCOME only** (320 — a label that names its cause makes the coder assert the
+cause by reporting the outcome, which is how SITE-191's one interpretive sentence got written).
+
+⚠️ The mutation restores no committed state — the unscoped form has never been committed and the test runs
+green on the untouched tree — so tick 287's question answers **NO**, the two-state form is sound, and the
+brief says in as many words **not** to manufacture a four-state sequence. ⛔ `FormCaptureAction`'s
+**sixteen-space** lookup is excluded: it is the spam branch, off a clean payload's path, so a mutation there
+cannot be isolated through the artifact (267). The twelve-space anchor is a **stop on 0 and on 2**, because it
+is the line the wave edits and N > 1 makes the edit point ambiguous (313's carve-out).
+
+Per tick 293 this entry states the ruling and the falsifier and **no prediction**; the outcome is written by
+the next tick's block, after the measurement.
+
+## ⛔ WHEN TWO MEASUREMENTS OF ONE CLAIM DISAGREE, ENUMERATE THE INPUTS AND DIFF EACH ACROSS THE TWO
+MEASUREMENT TIMES — when they are byte-identical the defect is in the APPARATUS, and the enumeration is the
+only thing that says so (tick 322)
+
+Tick 321 ruled *re-measure the OLDER half of a contradiction first*, because its premises have had time to
+decay and because **if it now agrees there is no contradiction at all and the escalation would have been
+against a ghost**. SITE-192 re-ran tick 308's falsifier **with tick 320's witness**, and it agreed:
+`form_definitions` refuses the cross-tenant read with the application-level scope removed, exactly as `pages`
+did at 321. Diff pasted before the run, `FormDefinition::findOrFail` count `1`/`1`, `assertions 3` reconciling
+against the test's three assertions (`assertStatus(200)` · `assertStatus(404)` · `assertSame(0, $count)`) so
+all three ran and passed.
+
+⭐ **The stronger half is what this tick measured rather than what the wave did.** Five commands, all cheap,
+and every one of them excludes a mechanism:
+
+| input | measured | verdict |
+| :-- | :-- | :-- |
+| the test | `git log -S '<method name>'` → **one commit**, `d4153cc5` 2026-09-08 01:11:35 | never changed since tick 308 reviewed it |
+| `X-155/Models/FormDefinition.php` | `--since=2026-09-06` → nothing | unchanged; tick 307 read it: no global scope, no trait, no `booted()` |
+| `app/app/Support/Tenancy.php` | `--since=2026-09-06` → nothing | the enforcement path is byte-identical |
+| `X-157/ModuleServiceProvider.php`'s `Tenancy::set` | `:43 :59 :86`, `d11ba16b..ec2aba51` → nothing | unchanged |
+| the RLS migration | `--follow` → `e737094c` **2026-08-31 03:14:33** | **eight days BEFORE tick 308** |
+| the role | tick 321 — `goaiez_app`, `rolsuper=false`, `rolbypassrls=false` | not a bypass |
+| the policy in the TEST database | item 1, `current_database()` in the SELECT | present, forced, identical on both tables |
+
+**Two runs of identical code, an identical fixture, an identical policy and an identical role, thirteen ticks
+apart, gave opposite results.** ⛔ The cause is **not measured and no block names one** (227, 230, 249 — and
+tick 209 is this seat committing that error itself). Exactly two candidates survive and **neither is a property
+of the code**: (a) tick 308's mutation was never in the file — no witness rule existed then, tick 320 invented
+it *because* SITE-190 had this exact gap; (b) the test database's policy was not applied then — migrations run
+on demand, unmeasurable retrospectively.
+
+> ⛔ **When two measurements disagree, the first thing to measure is whether the INPUTS differ. Enumerate them
+> and diff each across the two measurement times. Byte-identical inputs ⇒ the defect is in the apparatus, never
+> in the world.**
+
+Composes tick 252's *the record is the likelier defect than the world* with 321's *re-measure the older half*,
+and gives them a procedure instead of a preference. Every prior "two of our measurements disagree" this ledger
+resolved was a code or a bound difference — a moved bound (191, 225), a history-simplification re-route (314),
+a stale tip (311), a drifted shell (209, 285). **This is the first that cannot be, and only the enumeration
+shows it.** ⚠️ Not proof: the first two **witnessed** runs both contradict the single **unwitnessed** one,
+which is evidence about which candidate is live and is not a measurement of it.
+
+## ⛔ TICK 308's CONCLUSION IS RETRACTED — and the retraction makes a whole CLASS of this lane's falsifiers unable to go red BY CONSTRUCTION (tick 322)
+
+Tick 308 concluded *"in this checkout's test database the application-level scoping clauses are the sole
+enforcement of that boundary that has been demonstrated"*, and inverted SITE-180's value on it. **Retracted.**
+Something beneath the application scope refuses the read, on **two** tables, witnessed. The charter's standing
+line — *RLS sits beneath the application scope* — is confirmed, not contradicted.
+
+⚠️ **The attribution is a chain and only its last link is unprobed.** Measured: the refusal (behaviour, twice,
+witnessed); RLS enabled and **forced** with `tenant_isolation` on both tables in `goaiez_antig_site_test`;
+`goaiez_app` with neither `rolsuper` nor `rolbypassrls`; no Laravel global scope on either model. **Not**
+measured: a direct probe that the policy is the filter. RLS is the only measured mechanism that could produce
+the refusal; that it did is an inference, and the block says so.
+
+⭐ **The consequence, both halves** (230 — say which, or the next tick inherits the stronger claim):
+
+- ✅ the boundary has a second brace, so the lane's app-level clauses are defence in depth;
+- ⛔ **and therefore every falsifier in this lane that removes an application-level `where('business_id', …)`
+  CANNOT go red.** SITE-180's could not, SITE-189's could not, SITE-192's could not — **three waves discovered
+  it one table at a time, each reading the GREEN as a surprise.**
+
+> ⛔ **Before briefing a falsifier that removes an application-level guard, ask whether a LOWER LAYER enforces
+> the same invariant. If it does, the mutation cannot redden and the falsifier measures nothing.**
+
+Not tick 270's *unproven, not proven* (an assertion an ordered run did not reach): this is a falsifier that
+cannot reach red **by construction**, and its GREEN is indistinguishable from a mutation never applied — which
+is exactly why tick 320's witness is what makes such a run readable at all. ⛔ **Not a reason to remove an
+app-level clause**: RLS's enforcement is a property of the **database**, so a deployment made without
+`runtime/goaiez-grants.sql` has no second brace and the clause is the only thing that travels with the code.
+What changes is that its load-bearingness is not demonstrable at that seam.
+
+⚠️ **OWNER ACTION 1 amended a second time** (315 measured the role, 322 the enforcement). Still open — a
+database role is reserved, and whether the grants file has run against `goaiez_antig_site_test` is not
+observable here — but tick 308's sentence is withdrawn and the `goaiez_backup` grant explains nothing this
+lane has measured.
+
+## Tick 322 — measured, for the record
+
+- ✅ **Tick 236's MISSING-not-CONFLICTING check, Track 1's FOURTH merge of this lane, FOURTH clean result.**
+  `origin/main 557cdaa4`, second parent **`cfb0e888`** read off `rev-parse ^2` and never off the subject (222).
+  `git grep` on the ref: `deploy_hash` 2 · `EdgeProvisionAction` 2 (J11's whole green) · `findForBusiness` 2 ·
+  `PageReadAction` present · `destination_url` 2 · `is_scalar` 2 · `trim((string) $configured)` 1 · the
+  cross-tenant test 1. Ten waves' signature lines all survive. ⛔ Not substitutable by a stat, which cannot
+  separate *main is ahead* from *the merge dropped it*.
+- **Census `4 · 2 · 0 · 3`**, a MISS (`origin/main` moved 47 commits), halves with `--full-history` (314),
+  `pwd` first (209), drift signature **absent** (three pathspec halves non-zero against a pathspec-free
+  complement — the *split* is the signature, never either number). Half 1 per partition (189): sixty's
+  `d8d9cdaa` X-102 docblock — **one file, one insertion, NO new `G##-##` literal**, so tick 260's seventh
+  false-credit shape cannot fire — plus three merges **of main** (money `e13776af`, stages `6240383f`
+  `6b7c315b`). **No violating partition.** Complement: `app/phpunit.xml`, `bin/supervise.sh`, `CLAUDE.md`, all
+  per-track never-merge — *unwatched, not uncovered* (183), ⛔ no fourth half.
+- ⚠️ **`origin/main` gained 47 commits and half 1 did NOT shrink** — coherent, because the three merge commits
+  are stages' and money's **own**, merges *of* an older main, so main containing `cbdba9cd`/`7a75f289` does not
+  contain them. A tick reading a large bound move as necessarily draining a partition would have attributed a
+  shrink that did not happen (191's converse).
+- ⚠️ **The previous census value was read from `REVIEWS.md`, not from this file** (301): tick 321's census line
+  recorded `3 · 2 · 0` and its narrative separately recorded the growth to 4 after its closing tip re-read
+  fired, so half 1 is **unchanged at 4**. Reading the census line alone manufactures a growth.
+- **Doctor**, live twice: stamp `20260829-0647` = `runtime_build` (**extrinsic**, 305) ·
+  `boundary 52 · contract 85 · citation 3 · schema 16 · capability 207 · anchor 128 · journey 3` · **494**,
+  SUM ✓ (285), `ok` only on `integrity … clean` (292), **byte-identical to tick 320** — expected on a
+  write-nothing wave and a second confirmation of it.
+- **Write-nothing discipline, seventh firing** (273, 275, 286, 301, 302, 321, 322): `git diff --stat HEAD --
+  .agents/state/` empty and HEAD unmoved ⇒ no stage count and no id census can have moved, which is stronger
+  than a doctor run and needs none.
+- ⚠️ **The wave's §7 listed five `✗ FAILURE` lines against a reported `FAILED 6`.** Tick 317 recorded the same
+  five names for the same six, so it is the gate's own display and not a wave defect. Recorded so a later tick
+  does not read the shortfall as a dropped member.
+- ⛔ **`grep -c 'trim((string) $configured)'` was REFUSED** — a `$` anywhere in a grep pattern, even
+  single-quoted (305). The PCRE hex form `grep -cP 'trim\(\(string\) \x24configured\)'` is accepted, and it is
+  why every symbol claim in SITE-193's brief is written that way: **a ground value this seat cannot execute is
+  a recollection wearing a command** (313).
+- ✅ Healthy branches (221): tick 320's witness rule and its branch-label correction, **first outing on the
+  claim they were invented for**; tick 318's report-side hedge composition, one wave after it was written;
+  tick 313's `≥1` rule and 302's two-tier grading (all seven CLAIMS matched, four ORIENTATION values reported,
+  nothing stopped — **second consecutive wave to run clean through item 0** after five were truncated by a stop
+  of my own making); tick 321's per-cluster/per-database distinction, load-bearing, since item 1 carried the
+  pin **and** `current_database()`; §2's healthy branch (exactly one `⛔` plus the `ℹ` line, which is not a
+  `⛔` — 263); tick 258's decidable wait with 257's procedure (gate first, everything else during it, §7 last).
+
+## SITE-193 — the last lane-owned cross-module MODEL READ (ruled at tick 322)
+
+Live `--stage=boundary` names **six** lines for this lane's seven modules, measured this tick and not carried
+from tick 317's table (210):
+
+| line | disposition |
+| :-- | :-- |
+| `X-157/EdgeDeployAction` imports **X155** — `FormDefinition` at `:198` | ⭐ **SITE-193** |
+| `X-157/EdgeDeployAction` imports **X103** — `PageVersion` at `:43` (**WRITE**) and `:153` | ⛔ its own wave (317: a write seam is a materially different act, and `:43` is J11's `ssl_installed` derivation) |
+| `X-157/EdgeDeployAction` imports **X108** · **X163** · `X-102` and `X-155` import **X121** | ⛔ a filing wave — other lanes' modules |
+
+⛔ **A filing is not available for the X155 line, and that is what makes it a build.** Rule 09 wants a *missing
+dependency*; X-155 is this lane's own module, so a `why` naming it would name a dependency this lane holds —
+tick 227/230's *a `why` that names a PRESENT module is a build item in disguise*.
+
+**RULED: X-155 gains `FormReadAction::firstIdForBusiness(int $businessId): ?int` and `EdgeDeployAction:198`
+calls it.** The precedent is this lane's own and two waves old — `X-103/Actions/PageReadAction`, read at source
+this tick, three named methods, **no manifest edit** by either SITE-188 or SITE-189. ⛔ **The query moves
+VERBATIM including `orderBy('id')`**: `form_definitions` carries no `is_active` column (303), so the lowest id
+is the only available policy for which form a published site posts to, and dropping the ordering makes the
+published form's target vary across identical inputs with nothing in this lane able to catch it — SITE-128's
+finding, and the same clause SITE-188 preserved for `orderBy('slug','asc')` and SITE-189 for
+`trim(both '/' from slug)`. ⛔ It returns the **id**, not the model: the one caller reads exactly the id.
+
+⭐ **The falsifier is the CHECK, not a test**, and that is what makes this dispatchable where tick 309's
+boundary wave was not: an import swap is behaviour-identical by construction, so a behavioural falsifier proves
+nothing because both states pass. `boundary` **52 → 51**, reverting restores **52**, and states 1 and 3 reading
+the same number is the **correct** result (288) — the evidence is the transitions. Behaviour preservation is
+carried by the existing X-157 suite, which extracts the published form's `action` out of the served document.
+⛔ Therefore **no new test and no new `G##-##` literal** (240), and **no manifest edit** (237).
+
+⚠️ **Not a lint-dodge, by tick 212's discriminator**: X-155 owns `form_definitions`, `BoundaryStage:98`'s own
+fix text names the registered action as the remedy, `:91` exempts `Events|Actions|Domain`, and the new action
+gets a **production caller immediately** — unlike `PageCreateAction`, which tick 246 measured at zero with
+every fixture bypassing it. ⚠️ **Bounded** (230): a boundary closure and **not** a tenancy fix — `:198` is
+already scoped, which is why this is the pure refactor and SITE-189, whose two reads were unscoped, was not.
+
+⛔ Six alternatives refused, each of which would pass every gate: an exclusion in the sealed `BoundaryStage`;
+bundling `PageVersion`; bundling the four cross-lane imports (a filing does not lower a count and a build wave
+gates on one, so the pass condition would have two halves moving in opposite directions — 209); returning the
+model; dropping the ordering while moving the query; relaxing any assertion that reddens.
+
+Per tick 293 this entry states the **ruling and the falsifier and no prediction**; the outcome is written by
+the next tick's block, after the measurement.
