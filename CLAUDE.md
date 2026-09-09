@@ -3628,3 +3628,132 @@ absence is **permanent**; here the declared end state is validated, so a pin is 
 **delete** — PB-132 already ruled exactly this way on the X-168 window, and this file distrusts a deleted
 assertion more than a missing one. **RECORD, and build nothing.** ⭐ Recorded with both halves so the next
 tick that re-finds the row gets the ruling, not the finding.
+
+## ⛔⛔ Trap added 2026-09-09 08:5x — a SINGLE-VALUED verdict applied to a SET, inside the very instrument built to stop clearance rot
+
+PB-154 built the cross-lane consumer map so a future tick could re-check every *"nothing consumes this"*
+clearance — the failure PB-152 found when another lane subscribed `JobCompleted` and falsified a clearance
+whose every word stayed accurate. ⭐ **The map's rubric reproduced that failure inside itself.**
+
+The four verdicts were `NOT-DISPATCHED` / `NO-CONSUMER` / `IN-LANE` / `CROSS-LANE`, with `CROSS-LANE`
+defined as *"at least one consumer outside those ten."* **`JobCompleted` has TWO consumers:**
+
+```
+C-Reviews/Listeners/AskForReviewOnJobCompleted.php:12   ← the row names this one
+X-168/Listeners/CloseJobWindowOnJobCompleted.php:13     ← the row names NEITHER of these
+X-168/ModuleServiceProvider.php:30  Event::listen(JobCompleted::class, CloseJobWindowOnJobCompleted::class)
+```
+
+⭐ **The verdict is CORRECT and the rubric is what is wrong.** `IN-LANE` and `CROSS-LANE` are written as
+mutually exclusive labels on a row whose **consumer set can contain both**, and this row is genuinely both.
+One slot, two consumers, and **the label that wins hides the other — which here is OURS.**
+
+⚠️ **The consequence is exact:** if C-Reviews ever unsubscribes, a tick reading this row concludes
+`JobCompleted` has no consumer **while X-168's listener is still live.** A map that under-reports a
+consumer set is the clearance rot it was built to catch.
+
+⭐⭐ **The generalisation, and it is the SIXTH instrument in this lane with one disease: a verdict
+vocabulary must be able to express the shape of its population.** PB-145 answered one conjunct of two ·
+PB-146 keyed on directory where it meant reachability · PB-147 let a fragment speak for the whole · PB-152
+matched its own output · **and this applies ONE label to a SET.** ⭐ **Fix: when the answer is a set, the
+column is a LIST and the label is a property of each ENTRY, not of the row.**
+
+⛔ **Fixed as an INSTRUMENT, not a wave** (PB-145): the complete consumer set was enumerated by the
+reviewer, so re-dispatching the map would re-derive a spent instrument.
+
+## ⭐⭐ Recorded 2026-09-09 08:5x — the CONSUMER MAP, all 32 events, SPENT, with the correction folded in
+
+⚠️ **Scope, stated first** (the clearance-scope family has six prior members): the **32 event classes under
+`app/app/Modules/<id>/Events/` for this lane's ten modules**, graded on who consumes them anywhere in
+`app/app`. ⛔ Consumers outside `app/app`, and events other lanes emit, are **not** measured by this.
+
+**Population verified twice** — by `ls` over the ten directories and by the report's own table:
+X-162 4 · X-163 4 · X-165 4 · X-166 2 · X-167 4 · X-168 2 · X-171 6 · X-172 2 · X-175 2 · X-82 2 = **32**.
+**`32 = 2 NOT-DISPATCHED + 26 NO-CONSUMER + 2 IN-LANE + 2 CROSS-LANE`**, and the sum reconciling to the row
+count is the check that validates it.
+
+⭐ **The whole consumer set is FOUR registrations in `app/app`** — established by the *inverse* instrument
+(enumerate every `Listeners/` class and `ModuleServiceProvider` registration, then ask which of the 32 they
+name), which is how the missing row above was found:
+
+| event | consumers, as a LIST |
+| :--- | :--- |
+| `PriceRefusalFlagged` | X-163 `RecordPriceGapFromRefusal:17` — in-lane |
+| `TechOnSite` | X-168 `OpenJobWindowOnTechOnSite:13` — in-lane |
+| `PricebookUpdated` | X-119 `ModuleServiceProvider:38` — **cross-lane** |
+| `JobCompleted` | C-Reviews `AskForReviewOnJobCompleted:12` — **cross-lane** · X-168 `CloseJobWindowOnJobCompleted:13` — **in-lane** |
+
+⭐ **All five recorded clearances re-verified `STILL TRUE`** — `TimesheetSubmitted`, `PeriodReady`
+(`TimesheetComputeAction:119`/`:120`), `StockLow`, `ReorderTriggered` (`InventoryEngine:35`/`:36`),
+`TechEnRoute` (`TechEnRouteAction:40`). ⭐ `MemberCalled` and `VisitRolled` return **only their own class
+file — not even a `use` line**, so `NOT-DISPATCHED` is exact; `X-165/capabilities.php` declares nothing
+about calls or rollovers, so **undeclared + unwired = CAPABILITY**, ⛔ not work.
+
+⛔ **SPENT. Do not re-derive, and do not point this question at more rows.**
+
+⭐⭐ **The map's own limit, which is a deliverable and not throat-clearing: a NAME search cannot see a
+consumer bound to a value by BEHAVIOUR.** `TwelveJourneysTest::a_completed_job_asks_for_a_review_once_inside_the_cadence`
+asserts a *count of review requests*, names neither `JobCompleted` nor `personId`, and is invisible to
+every grep here — it was found only by PB-153's mutate-the-emission instrument. ⛔ Quote that limit
+whenever the map is quoted, and ⛔ do not turn the mutation instrument into a 32-suite-run sweep.
+
+## ⭐⭐ Recorded 2026-09-09 08:5x — the CROSS-LANE PAYLOAD CONTRACT, both rows, measured field by field and CLEAR
+
+The map's real product is that it **bounds a population nobody could previously enumerate: exactly two
+events leave this lane.** Both measured by the reviewer, because TRACK 1 ACTION (h) turns on them.
+
+- **`PricebookUpdated` → X-119** (`ModuleServiceProvider:38-46`) teaches fact `'price.'.Str::slug($serviceName)`
+  = `(string) $priceCents`. ⭐ **The cents contract survives to the customer:** `C-Agent/AgentAnswerAction:316-319`
+  reads it, `is_numeric` → `(int)` → `'$'.number_format($amount / 100, 2)` — **divided exactly once.**
+  Producer emits cents, consumer speaks dollars, no double-divide and no dollars-as-cents.
+- **`JobCompleted` → C-Reviews.** `ReviewRequestAction:112` resolves `Person::find($customerId)` — **the
+  `people` table**, exactly what `X-171/JobStateAction` reads it from (`work_orders.person_id`).
+  ⭐ **PB-135's two-`person_id`s hazard does NOT fire here** — the producer means a customer and the
+  consumer resolves a customer — and PB-153 closed the tenant leak at the producer.
+
+⛔ **SPENT. Do not re-derive.** ⭐ Both halves recorded so a future tick re-finding either seam gets the
+ruling and not the finding.
+
+## ⛔⛔ Trap added 2026-09-09 08:5x — a consumer's invariant maintained by ONE OF TWO producers, and the fix that defeats the refusal it protects
+
+Found by measuring the `PricebookUpdated` contract above. **`PricebookUpdated` has exactly ONE dispatch
+site — `PriceConfirmAction:33`. `price_cents` has TWO production writers in X-163's own UI:**
+
+```
+Ui/Pricebook::addItem():106      PriceBookItem::create([... 'price_cents' => ...])   ← dispatches NOTHING
+Ui/Pricebook::updatePrice():143  $query->update(['price_cents' => $newCents, ...])   ← dispatches NOTHING
+```
+
+`updatePrice()` is the owner's **inline price edit**, `wire:model`-bound on a routed, role-guarded screen.
+⭐ `:138-142` correctly sets `is_confirmed = false` when the amount changes, so `PricebookEngine:93` stops
+quoting the row. ⛔ **But nothing retracts the fact already taught.** The `facts` row keeps the OLD cents
+with `is_valid = true`, and `AgentAnswerAction:243-245` selects on exactly `is_valid = true`.
+
+⚠️⚠️ **Owner confirms $100 → fact taught → owner inline-edits to $150 → the pricebook refuses to quote the
+now-unconfirmed row → and the agent quotes the customer $100 from a stale copy the pricebook no longer
+stands behind.** The lane's goal sentence — *a quote comes from the pricebook or does not come at all* —
+failing through a **copy** of the pricebook rather than through the pricebook.
+
+⛔⛔ **The obvious one-line fix is the WRONG fix, pre-declared so no wave walks into it.** Dispatching
+`PricebookUpdated` from `updatePrice()` **teaches the NEW price as a groundable fact while the row is
+unconfirmed** — handing the agent exactly the price `PricebookEngine:93` exists to refuse. **Seventh
+incarnation in this lane of *richer/stricter is always safe* being false.** The seam is a **retraction**
+(`is_valid = false`), not an update, and whether X-119 exposes one is **unmeasured** — the honest outcome
+may be `UNRESOLVED — X-119 exposes no retract path` under rule 09, ruling 8's shape exactly.
+
+⚠️ **The discriminator is live and is PB-155's whole question.** `X-163/capabilities.php` declares nothing
+about facts, grounding or the agent (measured: the only hits are P-210 docblock prose), which under PB-128
+reads *undeclared + unwired = CAPABILITY*. ⛔ **But PB-153 ruled that discriminator governs MISSING
+FEATURES**, and this path is **not missing — it is wired end to end and carries a wrong value to a customer
+on a defined input.** ⛔ Do not settle it from either rule alone; PB-155 measures it.
+
+## ⚠️ Trap added 2026-09-09 08:5x — a rule whose whole value is ARITHMETIC must be demanded as arithmetic every time
+
+PB-145 converted *"leave nothing in the repo root"* from a prohibition into two integers —
+`SCRATCH BEFORE` / `SCRATCH AFTER` — after it had failed **twice** as prose, and it held immediately.
+PB-154's report filled it with *"Equal (no scratch files left behind)."* ⭐ **Prose wearing a field's name.**
+
+⛔ Harmless only because the reviewer counted independently (**35 = 35**). ⭐ The cause is the reviewer's
+template: the `REPORT.md` field list **named** the field and never restated that it takes **two numbers**.
+⭐ **The generalisation: a prohibition converted into a number reverts to a prohibition the moment the brief
+stops asking for the number.** Demand the arithmetic in the same breath as the field name, every wave.
