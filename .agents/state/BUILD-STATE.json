@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-08T18:48:33",
+ "updated": "2026-09-08T19:12:30",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2419,6 +2419,12 @@
    "module": "X-199",
    "chose": "an empty state that is true but names no dependency still leaves the owner without the one fact they need, so the paid list says no invoice has been paid, the paid-today screen keeps its promise and adds the dependency, the declines screen says a decline is written when a charge on a card on file is refused and that nothing here charges one, and the credit-terms screen stops promising that terms appear the moment a first invoice raises them; nothing in production raises an invoice, the overflow card is never armed because the terms screen can only edit an existing row and never passes a token, and no writer, transition, door or query is built to make any sentence true",
    "at": "2026-09-08T18:48:33",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-211",
+   "chose": "an empty state that is true and names no dependency leaves the owner without the one fact they need, so the collections list now says no invoice can go overdue because nothing raises one, and the storefront's orders list now says no order can be placed because nothing writes the catalogue a cart is built from; the storefront door works and only the catalogue is missing, so the two screens name different dependencies, and no writer, importer, transition or door is built to make either sentence true",
+   "at": "2026-09-08T19:12:30",
    "ruling": "R245"
   }
  ]
