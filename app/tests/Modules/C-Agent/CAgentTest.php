@@ -171,7 +171,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-31] the web-chat door is X-102's
-     * BUILD PROPOSAL: G5-31 — C-Agent can do nothing with the chat.started event as it stands. X-102 lacks a per-turn message store (it owns only chat_sessions and chat_leads) and chat.started carries no turn row ID. AgentAnswerAction requires a user message, and the law requires passing a row ID rather than words across queues. Thus, the delivery of the turn payload remains unaccounted for, and the declared consumption is unsatisfiable as declared. To become buildable, a turn store and a turn event carrying a row ID must exist. Owner: X-102 and Track 1 (manifest declaration)
+     * BUILD PROPOSAL: G5-31 — C-Agent can do nothing with the chat.started event as it stands. X-102 now has a per-turn message store, but it does not declare a turn event in its manifest. AgentAnswerAction requires a user message, and the law requires passing a row ID rather than words across queues. Thus, the delivery of the turn payload remains unaccounted for, and the declared consumption is unsatisfiable. To become buildable, the existing ChatTurnCreated event must be declared. Owner: X-102 and Track 1 (manifest declaration)
      */
     public function test_g5_31_web_chat_door(): void
     {

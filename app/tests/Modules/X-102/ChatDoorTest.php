@@ -169,9 +169,10 @@ class ChatDoorTest extends TestCase
     }
 
     /**
-     * The count assertion cannot fail on its own terms (cannot be reddened by a controller mutation)
-     * because ChatTurnAction::handle() enforces strict types. A bypassed 400 check results in a
-     * TypeError (500) before any row can be inserted.
+     * Established wave 138d: the general claim that the count assertion cannot fail on its own
+     * terms is false. A controller mutation replacing the message input with the session token
+     * bypasses both the 400 check and handle()'s strict type check, allowing a row to be
+     * inserted and reddening the count assertion.
      */
     public function test_non_string_message_returns_400(): void
     {
