@@ -26,6 +26,7 @@ use App\Modules\X181\Models\QaTicket;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Schema;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -639,14 +640,12 @@ class CReviewsTest extends TestCase
         $this->assertEquals('sent', $res['status']);
     }
 
-
     /**
      * Test that csat_score is not present on review_requests and qa_tickets tables.
      */
     public function test_csat_score_column_is_dropped(): void
     {
-        $this->assertFalse(\Illuminate\Support\Facades\Schema::hasColumn('review_requests', 'csat_score'));
-        $this->assertFalse(\Illuminate\Support\Facades\Schema::hasColumn('qa_tickets', 'csat_score'));
+        $this->assertFalse(Schema::hasColumn('review_requests', 'csat_score'));
+        $this->assertFalse(Schema::hasColumn('qa_tickets', 'csat_score'));
     }
-
 }
