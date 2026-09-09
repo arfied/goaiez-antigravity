@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-08T19:05:04",
+ "updated": "2026-09-08T19:41:26",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1898,6 +1898,12 @@
    "module": "X-168",
    "chose": "a JobCompleted with no occurredAt does not close a job window: closeJobWindow's null argument means 'the caller did not specify, use now' while the event's null means 'the caller knows it does not know', so the listener refuses rather than pass one meaning to a seam that reads the other and stamp the sync moment on every replayed completion",
    "at": "2026-09-08T19:05:04",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-168",
+   "chose": "R245: X-168 records job time from ARRIVAL (on_site), not from en_route; the two empty states said en route and were wrong. en_route stays unwired because whether travel time is paid is an unstated business rule and total_hours is what the owner approves (ruling 33, capabilities.php:37 N-072 'arrival').",
+   "at": "2026-09-08T19:41:26",
    "ruling": "R245"
   }
  ],
