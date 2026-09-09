@@ -12,6 +12,7 @@ use App\Modules\X168\Events\TimesheetSubmitted;
 use App\Modules\X168\Models\Timesheet;
 use App\Modules\X168\Models\TimesheetEntry;
 use App\Modules\X171\Events\JobCompleted;
+use App\Modules\X162\Events\TechEnRoute;
 use App\Modules\X171\Events\TechOnSite;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -533,5 +534,21 @@ class X168Test extends TestCase
 
         $timesheet = Timesheet::find($entry->timesheet_id);
         $this->assertSame(0.0, (float) $timesheet->total_hours);
+    }
+
+    public function test_a_tech_going_en_route_creates_no_timesheet_and_no_entry(): void
+    {
+        $biz = TestCase::provisionTenant();
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $tech = User::factory()->create();
+        $jobId = 1004; // safe unused ID
+
+        Event::dispatch(new TechEnRoute(
+            businessId: $biz->id, jobId: $jobId, techId: $tech->id, etaMinutes: 25,
+        ));
+
+        $this->assertSame(0, TimesheetEntry::where('business_id', $biz->id)->count(), 'en route does not create a timesheet entry');
+        $this->assertSame(0, Timesheet::where('business_id', $biz->id)->count(), 'en route does not create a timesheet');
     }
 }
