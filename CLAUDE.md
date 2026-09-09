@@ -344,6 +344,66 @@ the first where the defective instrument is **the ledger's own arithmetic about 
 about this seat's filing to Track 1, one about this seat's own script, neither about the tree, and
 both in the block that ruled on this seat's discipline.
 
+### ⛔⛔ `RULING FZ` (tick 252) — `RULING FX(i)` says paste every count from a command run against the pinned sha. A STREAK IS NOT A FACT ABOUT A SHA, so no pin-anchored command can produce one and `FX(i)` is not merely unapplied to a tally — it is INAPPLICABLE IN PRINCIPLE. Two of tick 251's tallies are wrong, by two different arithmetic faults.
+
+`FX(i)` exists because a REVIEWS block has no coder to falsify it. **It has a hole, and the hole is the
+class of figure this page writes most often.** Every ordinal here — *"a THIRD consecutive tick"*, *"a
+TWELFTH gate"*, *"a FIFTEENTH tick"* — is a **tally over previous blocks**, and there is no sha to point
+a command at. So a tally is the one figure a tick can only **copy and increment**, which is `FX(ii)`'s
+carrying defect with no available cure. Run backwards at tick 252, **two** of tick 251's fail:
+
+**(a) A counter that did not RESET on the event it counts.** Tick 251 wrote *"main DID NOT MOVE for a
+**THIRD** consecutive tick."* Derived from the ledger rather than re-read from it:
+
+```
+$ git log --format='%h %s' -8 HEAD | grep -oE "MAIN MOVED: pin [0-9a-f]+ to [0-9a-f]+|MAIN DID NOT MOVE: pin [0-9a-f]+"
+tick 251  MAIN DID NOT MOVE: pin 7dc495bd
+tick 250  MAIN MOVED: pin ba671263 to 7dc495bd     ← THE RESET
+tick 249  MAIN DID NOT MOVE: pin ba671263          (2nd)
+tick 248  MAIN DID NOT MOVE: pin ba671263          (1st)
+```
+
+248 first, 249 second, **250 moved**, so 251 is the **FIRST** at the new pin. ⚠️ **The counter was
+incremented across the very event it counts, by the block immediately after the one that recorded the
+reset — in this seat's own commit message.** The same fault reached its backward-audit line
+(*"the THIRD CONSECUTIVE at an unmoved pin"* — also first).
+
+**(b) A tally counting from the wrong end of an adoption.** Tick 251 wrote *"§2e/§2f/§2g printed `HEAD
+is not a merge` for a **TWELFTH** gate."* `§2g` was adopted at tick 241 (`RULING FV`), and the adoption
+tick's own gate is the **pre**-adoption one — `grep -L "== 2g"` over T241…T252 returns
+`.gateT241.txt` and nothing else. All three coexist only from `.gateT242.txt`, so tick 251's tally is
+**TENTH**, not twelfth — **off by two**, having counted the adoption tick's pre-adoption gate.
+
+⭐ **`FX`'s signature, twice: the MEMBERSHIP is right and only the ordinals are wrong.** A wrong ordinal
+beside a right claim is the hardest kind to catch — and unlike every earlier member, **incrementing is
+the only operation ever performed on it, so the error is permanent and grows by one per tick.**
+
+✅ **Standing correction, narrowing `FX(i)` rather than replacing it: a streak or tally is DERIVED IN THE
+SAME TICK by a command over the LEDGER — `git log` over prior blocks, or `grep -l` over the gate files
+themselves — and never carried from the previous block's prose. If no such command exists, the ordinal
+is not written at all.** `FX(i)`'s *"run it against the pinned sha"* stands for every figure about the
+tree; for a figure about **this seat's own history** the ledger is the only admissible source, and the
+derivation must span far enough back to include the **event that resets the count**.
+
+⭐ **Applied to itself in the tick that wrote it (`RULING FQ`'s standard).** Derived at tick 252: main
+unmoved **SECOND** consecutive · no instrument change **ELEVENTH** consecutive (`git log -3 --
+bin/supervise.sh` → last touched tick 241, `8e178993`) · `FY`'s §1 census **FOURTEEN** gates all `77`
+(`grep -h -oE` over T239…T252) · §2e/§2f/§2g **ELEVENTH** gate (T242…T252). ⛔ **The §3 == §5 and
+take-refusal ordinals are NOT asserted** — they are carried tallies with no derivation, and `FZ`'s rule
+is derive it or omit it.
+
+⛔ **No instrument byte changes.** `RULING FY` is the precedent: nothing is wrong with
+`bin/supervise.sh` and the repair belongs to the **reader**; `RULING FW`'s cadence holds an eleventh
+tick.
+
+⚠️ Twentieth member of the `EU`/`EV`/`EW`/`EX`/`EZ`/`FE`/`FF`/`FH`/`FI`/`FJ`/`FN`/`FP`/`FQ`/`FS`/`FT`/`FU`/`FV`/`FW`/`FX`/`FY`
+family, and the first where the defective instrument is **a standing correction's SCOPE** — `FF` and
+`FH` each corrected the correction before them on its *command*; **`FZ` finds `FX(i)` sound and
+structurally unable to reach a whole class of figure it was written to govern.** ⭐ Found by the
+backward audit `FX(i)` itself mandates: ticks 244/246/248/249/250/251 ran it clean and recorded a
+precision without a letter (`RULING FW` bars dressing a clean audit as a discovery); **this audit is
+not clean, so it is lettered.**
+
 ### ⛔⛔ `RULING FY` (tick 245) — `bin/supervise.sh:110` is `git status --short | head -40`. §1's LISTING is a display constant and §1's COUNT is on the next line; two ticks read the CAP as the MEASUREMENT. The repair belongs to the READER, and no instrument byte changes.
 
 `RULING FX` ruled that every count in a REVIEWS block is pasted from a command run against the pinned
@@ -1625,9 +1685,39 @@ dispatched — executed by the supervisor itself**, `bin/supervise.sh` being thi
 ⛔ **Not a wave and no count moved** — §5 identical in all eight across `.gateT241.txt` and
 `.gateT241b.txt`. It sets no `fail=1`: a trigger, never a verdict.
 
-⛔ **The backlog is EMPTY at tick 251 and this tick writes a HOLD — the TENTH consecutive tick with no
-instrument change and the SIXTH with NO NEW LETTERED RULING.** ⭐ **`main` DID NOT MOVE for a THIRD
-consecutive tick** — pin **`7dc495bd`**, identical to tick 250's — so `TRACK 1 ACTION 1`'s absolute grep
+⛔ **The backlog is EMPTY at tick 252 and this tick writes a HOLD — the ELEVENTH consecutive tick with no
+instrument change**, and the streak of ticks with no new lettered ruling **ENDS at six** (246–251):
+tick 252 letters **`RULING FZ`**, because the backward audit `RULING FX(i)` mandates came back **not
+clean** for the first time and `RULING FQ` forbids footnoting a defect this seat measures in its own
+record. ⭐ **`main` did not move — pin `7dc495bd`, SECOND consecutive unmoved tick** (251, 252; derived
+from the ledger per `FZ`, not carried) — so `TRACK 1 ACTION 1`'s absolute grep and the **`N142`** note
+ceiling are unchanged **by identity rather than by carry**, both re-run anyway; lane **29 ahead / 15
+behind** first-parent (**29 / 110** by ancestor count, `RULING EK`), the ahead-count moving 28 → 29 on
+**our own tick-251 commit** and nothing else; merge base `7a75f289` unmoved; ours-since-base in `app/` is
+`app/phpunit.xml` alone, so this lane still authors no `app/**` byte and `boundary 55` · `contract 85` ·
+`capability 207` · `anchor 128` · `schema 16` remain **main's numbers** (`RULING FO`). ⛔ **The take is
+OPEN, UNNECESSARY and REFUSED** — `DD`'s two-row re-check prints nothing, the
+`Doctor`/`JourneyHarness` diff against our base is **empty**, so this lane's checker **is** main's
+current checker byte-identical, `RULING EQ`'s void condition is not reached, and a take could refresh
+nothing at a cost of **110** ancestor commits. ⭐ **The admission census was NOT re-run and the reason is
+a measurement taken first**: `git diff --stat 10e804ea HEAD -- app/` is **empty**, corroborated by
+`capability` reading **207** unchanged. §1 read from the count line per `FY` at **77**, corroborated
+independently, supervisor directory contributing **0** — `FY`'s census spans **FOURTEEN** consecutive
+gates (`.gateT239`…`.gateT252`, all `77`, derived per file this tick). §3 == §5 and still a LEDGER;
+§5's own arithmetic control holds (`494`). `wc -l bin/supervise.sh` **416** and drift `4 0`, both
+re-measured per `FX(ii)`; `bar` sections **14 / 13** on the same extraction, membership unchanged (`1a` ·
+`1b` · `2d` **NOT adoptable**, `RULING FS`; `2f` · `2g` offered upstream). §2e/§2f/§2g printed `HEAD is
+not a merge` for an **ELEVENTH** gate (T242…T252, derived — ⛔ **tick 251's "twelfth" was wrong, see
+`RULING FZ(b)`**). **TRACK 1 ACTION 10** re-measured at the pin: **15** first-parent merges since
+`a5042da2` — unchanged, as an unmoved pin requires — **0** naming `track/stages`, `18bbde18` still not
+an ancestor (rc **1**).
+
+⛔ **The backlog was EMPTY at tick 251 and that tick wrote a HOLD.** ⚠️ **TWO of its tallies are
+FALSIFIED by `RULING FZ` and are struck: its "THIRD consecutive tick" of main not moving is the FIRST
+(tick 250 moved and reset the count), and its "TWELFTH gate" for §2e/§2f/§2g is the TENTH.** The
+memberships it named are correct and nothing else in it is disturbed. ~~the TENTH consecutive tick with no
+instrument change and the SIXTH with NO NEW LETTERED RULING.~~ ⭐ ~~**`main` DID NOT MOVE for a THIRD
+consecutive tick**~~ — pin **`7dc495bd`**, identical to tick 250's — so `TRACK 1 ACTION 1`'s absolute grep
 and the **`N142`** note ceiling are unchanged **by identity rather than by carry** (both re-run anyway);
 lane **28 ahead / 15 behind** first-parent (**28 / 110** by ancestor count, `RULING EK`), the ahead-count
 moving 27 → 28 on **our own tick-250 commit** and nothing else; merge base `7a75f289` unmoved;
