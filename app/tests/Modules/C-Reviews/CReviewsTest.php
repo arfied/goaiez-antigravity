@@ -18,6 +18,7 @@ use App\Modules\CReviews\Events\ReviewRequested;
 use App\Modules\CReviews\Models\QaSetting;
 use App\Modules\CReviews\Models\ReviewReply;
 use App\Modules\CReviews\Models\ReviewRequest;
+use App\Modules\CReviews\Ui\LossAlerts;
 use App\Modules\CReviews\Ui\ReviewsQaRequests;
 use App\Modules\CSms\Events\SendRequested;
 use App\Modules\X121\Models\Person;
@@ -269,16 +270,16 @@ class CReviewsTest extends TestCase
 
         $r = $this->syncAction->handle($biz->id, 'google', 1, 'Terrible experience');
         $this->ticketAction->handle($biz->id, $r->id);
-        
-        $ticketId = \App\Modules\X181\Models\QaTicket::where('review_request_id', $r->id)->first()->id;
-        $ticket = \App\Modules\X181\Models\QaTicket::find($ticketId);
+
+        $ticketId = QaTicket::where('review_request_id', $r->id)->first()->id;
+        $ticket = QaTicket::find($ticketId);
         $ticket->update([
             'status' => 'open',
             'sla_due_at' => now()->subDays(1),
             'reopened_at' => now()->subHours(2),
         ]);
 
-        $component = \Livewire\Livewire::test(\App\Modules\CReviews\Ui\LossAlerts::class)
+        $component = Livewire::test(LossAlerts::class)
             ->assertOk();
 
         $alerts = $component->viewData('alerts');
