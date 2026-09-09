@@ -6523,6 +6523,85 @@ Watch for: <the trap that applies, by name>
   dead `property_exists` — carried entire from tick 271, not cancelled. Live list
   `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **11** rows at tick 273; `app/app/Modules/` → **0**;
   stub pile across the thirteen **11**. Re-run all three; never inherit them.
+- ⚠️⚠️ **A `state.py` write made AFTER the last gate is unwitnessed by construction — §1 cannot report a
+  file that was still clean when it ran, so the wave-86 orphan can ship past a green gate and a truthful
+  report.** Wave 149's `8696f3c5` named `.agents/state/JOURNAL.md` alone (`--numstat` `1 0`) while
+  `state.py note`'s matching `BUILD-STATE.json` row sat uncommitted; its gate ran at `10:04:17` and the
+  `note` at `10:05:05`, so §1 read `1 uncommitted path(s)` — `error_log` alone — and **no gate on this
+  lane ever saw it.** `REPORT.md` was honest, `NOT RUN: none` was true, and every artifact reconciled.
+  ⭐ The only thing that catches it is the tick-229 rule (*`git diff` is owed on every wave, including the
+  ones that exit `0`*), and the reviewer's own `git status --porcelain` is where it fires. ⛔ **Not a
+  `BLOCK` while nothing has reached `origin`** — the disposition is tick 252's: hold the range so the row
+  and the line ship in one push, which costs one `git add`. Wave 86's shipped, and that is the whole
+  difference. **Generalise the brief-side half: every instruction that runs `state.py note`/`decided`/
+  `unresolved` says *commit BOTH state files in the same named-path commit*, and a wave whose last act is
+  a `state.py` call owes a `git status --porcelain` after it.**
+- ⚠️⚠️ **A forward correction that removes a wrong number without supplying the right one leaves the
+  question open in the permanent record — and the correcting row is the likeliest place to ship a NEW
+  wrong number.** Wave 149's `10:05:05` row correctly retired *"55 cross-module imports"* (measured: 55
+  is the whole `boundary` stage, of which **52** are `across a module boundary` and 3 are two
+  `hardcodes the model string` plus one `match() carries a default arm`) — and then said the stage
+  *"runs four independent rules"*. `grep -n "'what' =>" app/app/Doctor/Stages/BoundaryStage.php` returns
+  **eight**, all inside `run()`, of which **three** fired; `four` is neither, and answer 1 named that very
+  file as what it read. The row is append-only. This is ticks 244/246 (*a wave that fixes a defect is the
+  likeliest wave to ship a new instance of it*) with a **ledger row correcting a number** as the carrier,
+  and it is `PASS-WITH-NOTES` on my own tick-273 precedent for the identical family. **Two requirements
+  on any correcting row: name the row it corrects by timestamp AND leave a reader able to learn the true
+  figure.** The first was met; the second is what a bare retraction always misses.
+- ⭐ **A stage TOTAL, a count of ONE of its rules, and the number of rules DECLARED are three different
+  numbers, and `boundary` is where they diverge most.** Measured at tick 274: declared **8**, fired **3**,
+  rows **55**, cross-module subset **52**. Tick 273 recorded the first two-way confusion; the three-way
+  form is the one to check, because a row can be corrected off the total and onto a rule count that is
+  still wrong. `grep -n "'what' =>" <the stage file>` is the whole price of the declared count.
+- ✅✅ **The sum of `BUILD-STATE.json`'s eight stage rows EQUALLING doctor's own `N violation(s).` total is
+  the complete proof that a refresh is honest — and it is the first time this lane has had both ends
+  measured.** Wave 149: `0 + 55 + 85 + 3 + 16 + 207 + 128 + 3 = 497`, against a `w149-doctor-raw.log`
+  whose own total line reads `497 violation(s).` Tick 217's rule was that a carry-over on the **left**
+  of a delta is as unmeasured as one on the right (`739 → 806`, a sum of stale rows against a measured
+  total); its accepting form is this — **when both ends come from the same untruncated run, the sum is a
+  checksum**, and it costs one addition. ⭐ The other half of the wave's honesty was free too: eight
+  `JOURNAL.md` rows, one per stage, values matching the ledger, **both state files in the one commit**.
+- ⭐ **A report that LABELS its own carry-over has pre-empted the hazard, and that is worth crediting
+  louder than a correct number.** Wave 149's `STAGES:` field quoted §3 and appended *"this is the
+  pre-item-1 line, as the gate ran before item 1"* — the tick-171/190 defect disclosed rather than walked
+  into, first time on this lane. The field it replaces has been filed as §4's integrity line twice (waves
+  96, 115) and invented once (wave 120). **Ask for a field to say whether it is a measurement or a
+  carry-over**, and a correct carry-over stops being a defect.
+- ⭐ **`bin/supervise.sh:251` is `run_tool doctor 30 php artisan doctor` with NO `|| fail=1`** — unlike
+  `:245`, `:246`, `:255`, `:256`, which all carry one. So **§5's `--full-doctor` total can be any number
+  at all and the verdict still reads `gates green.`** Consistent with the standing note that doctor exits
+  non-zero on any red stage by design and CI gates only `integrity` and `journey`, but worth having as a
+  line number: a `gates green.` verdict says nothing whatever about §5, exactly as §4's *"All stages
+  clean"* says nothing about the other seven (tick 152/153). Established by wave 149's ranking answer
+  from source, not by me.
+- ⚠️ **A `grep … -A <n>` over doctor output covers `n/2` violations, because every row is a `·` line plus
+  a `fix:` line.** Wave 149's answer 3 used `-A 55` on a 55-violation stage and got **28** rows. It was
+  sufficient for the claim it was asked to establish (all three non-import rows fall inside the window)
+  and would have been wrong for any count. **Grade such a command against the claim it is attached to,
+  not against the section it appears to cover** — and when a count is wanted, the range is `2n`.
+- **Backlog at tick 274 — wave 150 is three CORRECTIONS, wave 151 is tick 271's payload proof.** RULED,
+  and the split is the tick-257 ruling applied to itself: a correction and a **build** handed over as one
+  instruction come back as one shape (ticks 218, 220, 221, 222, 223), while corrections group
+  legitimately. 150 carries the orphaned `BUILD-STATE.json` row committed (**this is what holds the
+  push**), the rule-count row corrected forward with the measurement handed over conclusion-free, and
+  `ChatLeadCapturedListener`'s `handle(object $event)` narrowed with its dead `property_exists` resolved.
+  ⛔ **That last item is a CORRECTION, not a build, and the reason is on the record:** the loose type is
+  the residue of wave 147's ledger clause (*"registering an event listener forces a `use` … which
+  violates BoundaryStage's strict import ban"*) which **wave 147b itself refuted** and which
+  `X-01/ModuleServiceProvider.php:18` already contradicts by carrying the `use`; measured at tick 274,
+  `ChatLeadCaptured` declares `?string $message = null` as its sixth promoted property, so
+  `property_exists($event, 'message')` is **always true** for the only class registered against that
+  listener, and `object` blinds phpstan at level 5 on all five properties the body reads. Tick 271's own
+  rule: *when a wave retracts a reason, grep the code that reason produced.* ⛔ It goes **before** the
+  payload assertion, not with it — typing the parameter is what gives phpstan real checking on
+  `$event->message`, and asserting on a value first and typing it afterwards is the same ordering mistake
+  reversed. **Wave 151** is the words-cross assertion and its value-family mutation, carried entire from
+  tick 271; its difficulty is unchanged and is handed over as measurements — `ingestMessage` **never
+  persists the body**, whose only destinations are `ConversationUpdated`'s `messageSnippet` and the
+  return array. Live list `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **11** rows at tick 274;
+  `app/app/Modules/` → **0**, so tick 271's litter finding is **discharged** (`find app/app/Modules -name
+  "*.patch" -o -name "*.orig"` is empty). Stub pile across the thirteen **11**. Re-run all three; never
+  inherit them.
 
 ## Style
 
