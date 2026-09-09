@@ -6801,6 +6801,82 @@ Watch for: <the trap that applies, by name>
   `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **16** rows at tick 277 (the tick-267 eleven plus wave
   152's five); `app/app/Modules/` → **0**; stub pile across the thirteen **11**. Re-run all three; never
   inherit them.
+- ⚠️⚠️ **A conditional `where(function(){})` whose every branch is optional MATCHES EVERYTHING when no branch
+  fires — `addNestedWhereQuery` appends the nested clause only `if (count($query->wheres))`, so an empty
+  closure adds NOTHING rather than adding nothing-matches.** Wave 153's `Thread::resolvePersonId()` is
+  `Person::where('business_id', X)->where(fn => if(email) …; if(phone) …orWhere)->value('id')` against a
+  `customers` table whose `email` and `phone` are both `nullable()`
+  (`2026_07_30_081919_create_customers_table.php:34-35`, and the two unique indexes are per-business, which in
+  Postgres do not constrain NULLs at all). With both null the query degrades to *the first Person row of the
+  business*, and `render():187`, `sendReply():129` and `releaseTakeover():79` each `orWhere('person_id', …)`
+  that arbitrary id into an identity query — so a contactless customer's `/admin` thread renders **another
+  person's messages**, `sendReply` posts into another person's conversation, and the ghost-risk grade
+  (`:45`, `$personId ?: $this->customer->id`) is read off them too. Same-tenant, so RLS sits beneath it and
+  cannot help. ⭐ **The house documents the guard in the file holding the identical lookup**:
+  `CustomerImports.php:345-354` is the same OR-closure and is reached only past `:289-293`'s
+  `if ($email === null && $phone === null) { continue; }` — **the wave copied the lookup and not the guard.**
+  ⚠️ **The suite is blind BY CONSTRUCTION**: `CustomerFactory.php:29-30` sets both fields on every row, so no
+  test can create the customer that triggers it, and pint/phpstan/2437-green all pass over it. **When a wave
+  adds a conditional query builder, ask what it returns when NO condition fires** — the answer is never "no
+  rows", and one `grep -n -A8 addNestedWhereQuery` in `vendor` settles it.
+- ⚠️⚠️ **A per-wave filename and a correct copy ORDER still produce a wrongly-named object — the missing control
+  is a CONTENT check, and it costs one `grep`.** Wave 153 copied `pest-raw-last.log` to
+  `w153-pest-raw-green.log` after `supervise.sh` returned; the gate it returned from had been abandoned at
+  §7's `pest.lock` wait line (**no verdict, no numbers** — its section list runs `0 1 1b 2 2a 2b 3 4 6 7`),
+  so it had written no object, and the copy took the newest thing there — **the wave's own MUTATION run**
+  (`"failed":7`, its own new test in `failures[]`). The genuine green then landed in `pest-raw-last.log` at
+  17:27, **thirteen minutes after `REPORT.md`**. Twelfth member of the stale-artifact family and the first
+  where the captured object is *this wave's own mutation* rather than a previous wave's run. ⛔ **The control
+  is `grep -o '"failed":[0-9]*'` on the file you just copied** — a green object and a mutated object of one
+  tree differ there by construction, where `duration_ms`, size, mtime and `cmp` all read innocent. Brief the
+  content check, not another sentence about ordering; ordering was already briefed and already honoured.
+- ⚠️ **A report can be TRUTHFUL and supply none of its template — and the four fields it omits are the ones
+  that would have caught its own wave.** Wave 153's `REPORT.md` is 33 lines with **zero** of twelve fields and
+  six numbered headings matching none of the brief's six questions; every factual claim in it verifies
+  (mutation site, failure line, `failed 7` vs `6`, the proposal removal). But `GATE:`, `RAW:`, `DELTAS:` and
+  `ARTIFACTS:` are a gate log quotation, a `cat` of the final object, a `grep -o` against green **and** mutated
+  *each naming its file*, and a `stat` of what the wave wrote — **any one of them run honestly prints
+  `"failed":7` under the name `-green`.** The template is the measurement, not the paperwork; say so when a
+  wave skips it, and grade item completion from the diff (`NOT RUN:` was absent — sixth recurrence).
+- ⚠️ **`.orig` under `app/` is the free tell that `patch` ran where `git apply` was briefed.** Wave 153's
+  `scratch/mutation.patch` carries `--- app/app/Modules/…` with no `a/`/`b/` prefix, which `git apply` would
+  refuse at its default `-p1`; `app/app/Modules/X-01/Ui/Thread.php.orig` is what `patch` left. Measured, it
+  cost nothing — not `.php`, so not classmapped, not globbed by `CapabilityStage`, pint green over it, and
+  `grep -rn "BUILD PROPOSAL:" app/app/Modules/` is **0** — but `patch` absorbs a wrong hunk offset silently on
+  stderr where `git apply` refuses outright (tick 262), and a stale copy of a live module file is one
+  `git add -A` from shipping. `find app/app -name "*.orig" -o -name "*.rej"` is the check.
+- ⚠️ **A test whose NAME claims an end-to-end path owes a docblock when half the path is a fixture.**
+  `ThreadScreenTest::test_thread_screen_displays_ingested_message` calls `ingestMessage(...)` and then
+  hand-inserts its own `messages` row — **correct and necessary**, since `ingestMessage` persists no body at
+  all (tick 275), so the assertion is genuinely about the conversation lookup key. It carries no docblock, so
+  a reader six weeks out meets what reads as an ingest→screen proof and is not one. `REPORT.md` is overwritten
+  every wave; the test file is not. ⚠️ It is also a **third** direct writer of `messages` outside
+  `ConversationThreads`, after `Thread.php:126` — on a table whose chokepoint lint
+  (`tests/Feature/Architecture/InboxTest.php`) exists on **neither this branch nor `origin/main`**. A fixture
+  is not a production writer; a documentary chokepoint is still not a licence.
+- **Backlog at tick 278 — wave 153b is the missing guard and four records; no new production surface.** RULED
+  (blocks above). The render key, the mutation, the ledger correction and the proposal removal all **stand and
+  are not reopened** — reverting sound work to re-derive it is the wave-87 shape, and the mutation is **spent**
+  (tick 191). ⛔ **The push is HELD** at `4eb6ffe1` with four coder commits and this column's notes behind it
+  (tick 172), because a gated sha is this column saying the sha is fit to ship and a same-tenant identity leak
+  on a routed `/admin` screen is not. ⛔ **RULED: `resolvePersonId()` must refuse rather than match when the
+  Customer carries neither identifier — and the SHAPE is the coder's**, as is whether the three call sites
+  should consult it at all when it refuses; `Builder.php:2147-2156`, the migration, the factory and both
+  `CustomerImports.php` blocks go over printed with a conclusion attached to none (the form is **12-for-12**
+  and has corrected this column four times on this module's seams). ⚠️ Any absence assertion it produces is
+  graded by tick 254 — **not who wrote the row and not whether the table is `FORCE` RLS'd, but whether the
+  tenant the assertion reads under is the one the denied row would land under** — and the question goes over
+  undecided. Live list `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **15** rows at tick 278 (16 minus the
+  Thread render row wave 153 correctly closed); `app/app/Modules/` → **0**; stub pile across the thirteen
+  **11**. Re-run all three; never inherit them.
+- **Suite baseline, measured at tick 278 on tip `c47a22e4`, clean but for two untracked paths — `tests 2437 ·
+  passed 2429 · assertions 10775 · failed 6 · errors 2 · incomplete 3 · risky 1 · duration_ms 144161`,** the
+  standing eight by **identity**, read from `scratch/pest-raw-last.log` (17:27:20) since the wave's own
+  per-wave copy is the mutated object. My own plain `bash bin/supervise.sh` gave `gates green.`, §2 `none`, §4
+  seals matching, §6 pint `passed` / phpstan `0`, stamp `20260829-0647` = `runtime_build`. Against tick 277's
+  `2436 · 2428 · 10774`: **`+1 · +1 · +1`** — exactly one new **one-assertion** test, green, and no other diff
+  shape gives that triple. ⚠️ That arithmetic is also what makes the report's *"no earlier assertions failed"*
+  **true and vacuous**: the test holds exactly one assertion, so there were none to fail.
 
 ## Style
 
