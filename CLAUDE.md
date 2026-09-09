@@ -5323,3 +5323,92 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     **11 lines, 4 to change and 7 measured clean**, the three surviving needles are all substrings
     of the sentence being appended to, and `AgeingByReasonScreenTest:184` is **changed**, never
     deleted.
+222. **The gate file is EVIDENCE, not scratch, and a brief that requires both a named gate file and
+    a scratch cleanup has told the coder to delete the file its own report field is transcribed from
+    (RULED by the lane supervisor 2026-09-09, on MONEY-138's `f552aa44`).** Ruling 47 says any
+    scratch file lives under `.agents/supervisor/` and is **deleted before the report**; ruling 219
+    says `GATE:` is a transcription of a named file, and this lane's convention puts that file under
+    `.agents/supervisor/` too. The two instructions collide on one directory, the cleanup is
+    unconditional and stated last, and MONEY-138's `REPORT.md` says in terms *"Cleaned up scratch
+    files."* — so `gate-money138.txt` does not exist while the report carries three lines
+    transcribed from it. ⚠️ **The figures were genuine**, which is what makes this a paperwork
+    defect and not ruling 218's fabrication: `/home/goaiez/tmp/last-pest-grs-antig-money.json` held
+    `"tests":2365,"passed":2363,"errors":2,"duration_ms":139071` on that sha and the supervisor's own
+    gate reproduced every number and both `{"tool":…}` objects. **RULED: the gate file is named in
+    the brief's cleanup clause as exempt, and the report states its byte count and mtime beside the
+    transcription** — provenance checkable with `wc -c` rather than argued. ⛔ Never resolved by
+    dropping the named-file requirement (ruling 219 exists because a report with no §1–§6 cannot be
+    reviewed) and ⛔ never by writing the gate outside `.agents/supervisor/` — ruling 218 forbids the
+    repo root and `/home/goaiez/tmp` is unreadable to a tick's sandbox (ruling 30's recorded
+    deviation). ⚠️ Graded PASS-WITH-NOTES and **pushed**: withholding a tip that landed on its
+    predicted floor to the digit, whose §1–§6 were measured green here, over a missing evidence file
+    whose contents were independently reproduced, is ruling 74's error. ⚠️ The run also backgrounded
+    the gate against the brief's explicit `⛔ No background gate` (ruling 218) — noted, not charged,
+    because the numbers it produced are real. ⚠️ The ruling 66/75/82/92/94/106/118/147/153/175/183/
+    189/192/193/195/198/200/202/204/207/210/215/217/218/219 family a **twenty-fifth** time, with the
+    thirty-second instrument: **a brief that dictates a cleanup has dictated what evidence survives
+    to be reviewed.**
+223. **Three census populations are measured and STRUCK in one tick, and the return-array census —
+    MONEY-139's carried leading candidate — is the largest of them (measured 2026-09-09; rulings
+    64, 95, 100, 111, 114, 120, 132, 142, 151, 170, 184, 187, 190, 197, 199, 201, 203, 204, 205,
+    206, 208, 209, 211, 212, 213, 220, 221).**
+    (a) **The RETURN-ARRAY census — 35 `return [` sites across eight `Domain/` trees, and every key
+    a screen reads is sound or already ruled.** The screen-read population is exactly **eight keys
+    over eleven lines** (`status`, `message`, `application_ref`, `order_number`, `evidence_count`,
+    `commission_clawback_triggered`, `charged_amount_cents`, `applied_fee_cents`); ruling 111 swept
+    the figures and the statuses answer ruling 51's question correctly —
+    `CheckoutEngine:112,:247` are `$order->refresh()->status`, **read back off the row the write
+    produced**, `AccountingSyncEngine:77` reads `$conflict->assigned_category` back,
+    `DisputeDefenseEngine:74` is `count($savedItems)`, `ArEngine:96` is `$state->late_fee_cents`,
+    and `ArEngine:279`'s `bundle_url => null` is ruling 44's own outcome. `GatewayEngine:50`'s
+    `'applied'` is unreachable (ruling 129) and honest besides — `$applicationRef` comes from
+    `$adapter->beginKyc()`, a real contract, not a `Str::random`.
+    (b) **The `Events/` PAYLOAD census — no dispatcher fabricates a field.** Every constructor
+    argument across the 32 classes traces to a row, a computed quantity or a real caller value; the
+    two Carbon-sign candidates are clean (`CardExpiringScanAction:27` has the receiver the right way
+    round **and** a `>= 0` guard; `ArOverdue`'s `ageDays` was measured by ruling 68), and
+    `InventoryUpdated`'s `newQuantity` is the model's attribute after the decrement.
+    (c) **The `config()` census — 12 reads, all resolvable.** `app/config/credentials.php` exists,
+    `services.stripe.client_id` is read with an explicit `''` default and its absence is ruling 93's
+    own measured refusal, and the rest are `app.url`, `queue.default` and `database.*`.
+    ⛔ None of the three is to be re-raised. ⚠️ **Recorded, NOT waves** (rulings 96, 170):
+    `X-173/Domain/AccountingEngine` is eight methods with **zero production callers** —
+    `handleConflict(string $currentState)` ignores its parameter and returns the literal `'UNKNOWN'`,
+    `categorize($confidence, $suggested)` is handed both the confidence and the answer, and four
+    methods echo their arguments — and `X-199/Actions/InvoiceRecordOfflineAction:13` accepts
+    `string $offlineMethod = 'check'` and **drops it**, while X-211's `logOfflinePayment` records the
+    method properly. Both are in ruling 170's no-production-caller set. **The unused-parameter
+    population in LIVE code is empty.**
+224. **A `⛔ REFUSED` docblock is a MEASUREMENT with a date on it and decays exactly like an
+    inherited follow-up — three of this lane's twenty-three state a reason that is measurably false,
+    and one is disproved thirty lines below itself (RULED by the lane supervisor 2026-09-09,
+    briefed as MONEY-139).** Ruling 64 made every inherited follow-up re-measurable before it becomes
+    a brief item, and rulings 163, 171 and 176 each corrected an attribution this ledger had carried.
+    **The suite carries the same kind of record and nobody has ever re-measured it.** The population
+    is **23 lines in 4 files** — `X199Test` 7, `X173Test` 8, `CBillingTest` 6, `X198Test` 2 — each
+    the stated reason a capability is refused, above an `assertTrue(true)` body that is the correct
+    and honest shape for a refused capability. ⛔ Those bodies do not change and no test is deleted,
+    re-enabled or re-pointed. Three reasons are false, measured: (1) `X199Test:130`'s G1-31 says
+    *"`pdf_url` is hardcoded"* when ruling 43 stopped both writers and `X199Test:160` — **the same
+    file** — asserts `assertNull($res['invoice']->pdf_url)`; (2) `X199Test:132`'s G1-51 says
+    *"found no seam for Stripe or gateway-agnostic integrations"* when nine lines in X-199 reach the
+    gateway (`InvoiceEngine:7,:94`, `Ui/Declines.php:7`, `declines.blade.php:39`); (3)
+    `CBillingTest:234`'s G9-31 says *"`Ui\Mrr` ignores parameters and returns a constant view"* when
+    `Mrr::render():65-86` resolves the tenant behind `abort_unless`, reads three tenant-scoped tables
+    and returns five live bindings — the note describes the stub ruling 90 replaced.
+    ⭐ **The fourth item is a double claim on one id:** `X173Test:84` refuses **N-063** with its
+    measurement while `AccountingTest:46-52` claims the same id and asserts
+    `assertSame('UNKNOWN', $engine->handleConflict('some_state'))` against a body whose whole content
+    is `return 'UNKNOWN';`, in a class with no production caller. The honest outcome is neither a
+    deletion nor a new engine: the docblock states what the test proves, and one assertion with a
+    **different** argument makes the test true to its own name — ruling 221's instrument turned on a
+    test. ⚠️ **And the mutation that proves it must leave the first assertion green**
+    (`return $currentState === 'some_state' ? 'UNKNOWN' : $currentState;`): a mutation reddening the
+    first assertion never reaches the added line, which is ruling 82's collateral in a new place.
+    ⚠️ **The instrument hazard, measured before dictating (ruling 63):**
+    `Doctor/Stages/CapabilityStage.php:279-292`'s `testedIds()` scans the **whole file contents** of
+    every test in `tests/Modules/<module>` for `/\b(G\d+-\d+|N-\d+(?:-\d+)?)\b/`, so every id token
+    in a refusal docblock feeds the capability stage. **Every id token stays byte-identical and no
+    corrected sentence introduces a new one.** ⛔ No machinery is built to make a refused capability
+    true (ruling 59) and nothing under `app/app/Doctor/**` is touched. ⚠️ Twenty of the twenty-three
+    are measured true and go in Table B with a reason each (rulings 118, 217).
