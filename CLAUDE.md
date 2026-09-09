@@ -2989,3 +2989,85 @@ briefing it, not against the question.**
 ⛔ Recorded with it: **X-175's two shells are NOT a finding.** They are declarations that the module has
 no data surface, not screens that failed to load one — briefing them would be fixing working code, which
 is PB-127's mistake.
+
+## ⛔⛔ Trap added 2026-09-09 04:0x — a verdict about a FRAGMENT cannot carry a claim about the WHOLE, and `UNPINNED` is the worst place to learn it
+
+PB-147's tenant-scope sweep returned two `UNPINNED` rows out of 23 components / 64 queries. **Both
+verdicts are correct about the query and both are disarmed by a line the clause never mentions.**
+
+- **`X-82/Ui/RateRegistryView`.** The clause said *"`Tenancy::id()` is in `mount()` but is **not on the
+  path** of the query `Rate::find($rateId)`."* ⛔ **False.** `:57` is the query and **`:58` is
+  `if (! $rate || $rate->business_id !== $this->businessId) { return; }`** — the `#[Locked] businessId`
+  (which *is* `Tenancy::id()`, `mount():28`) compared **before `$rate` is used for anything**.
+  `setInlineRate(int $rateId)` is a browser-callable Livewire method, the textbook IDOR shape, **and it
+  is guarded.**
+- **`X-172/Ui/CustomerfacingPortal`.** The clause omits why the row is safe *by construction*: the token
+  **is** the credential (`PortalLinkAction:30`, `Str::random(40)`), the caller is an unauthenticated
+  customer so there is no tenant to scope to, and **all four derived queries are pinned to
+  `$link->business_id`** (`:86 :96 :104 :110`).
+
+⭐⭐ **The generalisation, and it is the FOURTH instrument in a row with the same disease.** PB-145's
+clause answered **one conjunct** of a two-conjunct verdict; PB-146's rubric keyed on **directory** where
+it meant **reachability**; this one keys on **the query** where the question is **the component**.
+⚠️ Each time the column came out right and the clause could not have told you so — the column was right
+because the reviewer pre-measured, **not** because the instrument works. ⭐ **Ask of any rubric: is the
+property it keys on capable of expressing the question it is asked?** ⛔ And a rubric that grades
+fragments must carry a "what guards it downstream?" column, or its highest-stakes verdict is the one a
+reader will act on wrongly.
+
+## ⭐ Recorded 2026-09-09 04:0x — two `PINNED` rows, one clause shape, and NOT the same chain
+
+`DispatchBoard:86`'s `$jobIds` is `$assignments->pluck('job_id')` off
+`DispatchAssignment::where('business_id', …)` at `:78` — **a genuine query-derived chain.** `Map:39`'s
+`$jobIds` comes from **`$route->stop_order`, a stored jsonb array** (`:31-37`) — **not derived from a
+query at all**, so the pin is only as good as whatever wrote the column.
+
+⛔ **Not work:** `RouteOptimiseAction` is `TEST-ONLY` by PB-143's table, so nothing in production writes
+`stop_order`. **latent + no wrong value = RECORD**, with both halves, so a future tick re-finding the
+unscoped `whereIn` gets the ruling and not the finding. ⭐ The durable half: **`PINNED` via a derived
+collection must name the DERIVATION, not the `#[Locked]` root** — two rows can share a clause shape and
+differ in the only thing that matters.
+
+## ⭐⭐ Recorded 2026-09-09 04:0x — FOUR dimensions cleared in one tick, with the counts, and that IS the result
+
+Scope-first, per the twice-recorded clearance-scope failure. ⛔ Falsifiable in one `ls` or one `grep`.
+
+| dimension | population | outcome |
+| :--- | :--- | :--- |
+| tenant scope of every `Ui/` query | **23** components, **64** queries | 2 `NO QUERY` · 10 `SCOPED` · 9 `PINNED` · 2 `UNPINNED`, both disarmed above |
+| `mount()` role guard **present** | 23 | **21/21** with a data surface guarded; 2 are X-175's shells; the portal is correctly public |
+| a **real GET** beside `Livewire::test()` | 23 `Screens/*ScreenTest.php` | ⭐ **already universal** |
+| the guard's **guest** refusal arm | owner-only screens | **universal** — `Livewire::test(X)->assertForbidden()`, no `actingAs` |
+
+⭐ The third row deserves its own sentence: this file's field notes carry *"`Livewire::test()` never
+renders the layout — every `/admin` screen 500'd on `main` for as long as the admin shell existed"* and
+*"any new screen needs one real `GET` asserting `assertOk()`."* **Measured: the prescription is already
+implemented on all 23, by Track 1's `surfaces:generate`**, which emits `$this->get(route(…))->assertOk()`
+**and** `Livewire::test(…)->assertOk()` in the same method. ⛔ **SPENT — do not re-derive.**
+
+⛔ **Four clean dimensions in one tick is precisely the moment this file warns about** — the temptation is
+to loosen a criterion until something fires. ⭐ **The instrument moved instead**, and the fourth row is
+what it moved onto.
+
+## ⭐⭐ Trap added 2026-09-09 04:0x — PB-115 arrives on AUTHORISATION, and the untested arm is the REFUSAL
+
+The guest arm is universal; the **wrong-role** arm — an authenticated user holding a role the guard is
+supposed to refuse — exists on only five screens (`MapTest:34`, `MarginByJobTest:35`,
+`StockByVanTest:39`, `TimesheetsTest:33`, `ReordersTest`). **`X-82/Ui/RateRegistryView` has none.**
+
+Every authenticated seeding in `RateRegistryTest.php` (`:25 :37 :62 :88 :137 :158 :175`) and
+`Screens/RateRegistryViewScreenTest.php` (`:17 :28`) is `UserRole::Owner` or `UserRole::SuperAdmin` —
+**both ALLOWED by `mount():27`.** ⭐⭐ **So the whole `hasRole(Owner, Manager, SuperAdmin, OpsAdmin)`
+clause can be deleted and every X-82 test stays green.** By this lane's own bar — *what one-line mutation
+makes this red? none ⟹ padding* — **the guard is pinned by nothing**, on the lane's only
+`OpsAdmin`-admitting screen, which also **writes**.
+
+⭐ **The generalisation: PB-115's method — *grep every test seeding of a boolean; if they all pass the
+same value, that column has one untested arm* — transfers to a ROLE LIST, where the untested arm is the
+refusal.** ⚠️ And it is exactly the failure this file's own field note names: *"widening its gate leaves
+the test green."*
+
+⛔ **The fix is a TEST, never the guard.** `mount():27` is correct; a `-` line in `RateRegistryView.php`
+would be buying a green test with a CHECK change. ⛔ And the role must be one the guard actually refuses
+— **`Staff`**, never `Manager`/`OpsAdmin`, which are *allowed* and would assert the opposite of the
+contract.
