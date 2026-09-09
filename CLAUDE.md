@@ -14761,3 +14761,437 @@ N > 1 **is** a stop, because a second occurrence makes the insertion point ambig
 - ⚠️ **Doctor unchanged, all four checks passing together for the tenth consecutive tick**: the
   **extrinsic** stamp equality (305), the SUM `797` (285), the `ok`-prefix (292), and four of seven
   timings differing **including both long stages**, where the nonce's weight lives (249, 311).
+
+## ⭐ THE TAKE IS OPEN — an ask filed BY MECHANISM came back GRANTED AND NARROWED, and the narrowing used the asker's own measurement (tick 315)
+
+Tick 217 ruled *a refusal recorded by its message is a complaint; a refusal recorded by its mechanism is
+an ask*, and it has fired five times as a **reading** rule — pricebook's `app/phpunit.xml` split (215),
+the box-wide pest lock (216), the shared guard's harness clause (217), money's ruling 60 (222), the
+take's true blocking set (312). Tick 315 is the first time the ask itself came **back**, and it came
+back **granted and smaller than asked**. `coder-bin/git:136`, verified at source rather than read off
+the message (196):
+
+```
+          app/app/Doctor/*|.claude/hooks/*)
+```
+
+⭐ **The mechanism of the narrowing is the finding.** My tick-312 ask carried the quadrant table — which
+rows are **M** and which are **A**, and that the M rows are restorable via `:34-46`. Track 1 read that
+table and cut the opening from `.claude/` to `.claude/hooks/` **using my own measurement as the
+argument**: the sub-case with no route out is the A rows and only those, so the `.claude/settings.json`
+rows need no exemption and stay inside the per-track restore procedure. **A complaint carries no
+partition, so a grantor can only grant it whole or refuse it whole. An ask that carries its own
+measurement lets the grantor make it SMALLER — and smaller is strictly better, because every byte of an
+opening is a byte of the One Rule.** File asks with the partition attached, not out of manners but
+because it is the only form that can be improved.
+
+✅ Two properties verified **by construction** rather than trusted, because *"the test passes
+necessarily"* is itself a claim: for a path only `MERGE_HEAD` carries the merged index takes
+`MERGE_HEAD`'s blob, so `:137-138`'s `:$p` == `MERGE_HEAD:$p` holds necessarily for the two A rows —
+this lane adopts main's hooks whole and **cannot edit them**; a **locally modified** hook still refuses
+(the blobs differ); a **deleted** hook has no index blob so `-n` fails and it stays refused. `:22`'s
+`git rm` refusal and `:68`'s `--allow-restore` refusal still name `.claude/*` by name, unchanged.
+
+⚠️ **The guard is in no repository**, so it changes with no commit anywhere and no census can report it.
+Re-read it at source every tick that depends on it (218).
+
+## ⛔ THE BLOCKING SET IS A PROPERTY OF (THE PIN) × (THE GUARD), AND BOTH MOVE INDEPENDENTLY (tick 315)
+
+Re-measured at this lane's own pin per Track 1's explicit instruction, never carried. Merge base
+`44038729` — **this lane's own pushed tip, so main already contains everything published through
+SITE-185**; `origin/main` `67078919`, `behind 1419 / ahead 3`, `merge.ours.driver` = `true`.
+
+| path | ours | main | driver | in `bad`? |
+| :-- | :--: | :--: | :--: | :-- |
+| `CLAUDE.md` · `.agents/state/BUILD-STATE.json` · `.agents/state/JOURNAL.md` | ✅ M | ✅ M | **fires** | ✅ no — ours wins, index == HEAD |
+| `app/app/Doctor/{Boundary,Contract,TestAnchor}Stage.php` · `seals.json` | ❌ | ✅ M | — | ✅ cleared by `:136`'s Doctor arm |
+| `.claude/hooks/drive_hook.py` · `no-piped-gate-tool.py` | ❌ | ✅ **A** | — | ✅ **cleared by the NEW arm** — was irremovable |
+| `app/tests/Journeys/JourneyHarness.php` | ❌ | ✅ M | — | ✅ cleared by `:100-105` |
+| `.agents/supervisor/launch-coder.sh` · `.claude/settings.json` · `bin/supervise.sh` | ❌ | ✅ M | — | ⛔ **blocks — all three RESTORABLE via `:34-46`** |
+| `app/tests/Journeys/TwelveJourneysTest.php` | ❌ | ✅ M | — | ✅ not on the never-list; taken |
+| `app/phpunit.xml` · `.agents/rules/10-supervisor.md` | ❌ | ❌ | — | ✅ untouched — **the working-tree pin survives** |
+
+⛔ **The durable half is that this set is not a property of the take.** Ticks 229–310 measured "two ADDs"
+with a query scoped to `.claude`; tick 311 corrected the *scope* to the guard's own regex and found
+seven; tick 312 refined to three blocking plus two irremovable; tick 315 measures **three blocking and
+zero irremovable** — at a pin 1419 commits further on, against a guard edited in between. **Neither
+input is stable and neither implies the other.** Re-measure the quadrant at the pin **and** re-read the
+guard at source, every time; a blocking set carried forward is wrong in a way that reads as measured,
+and the guard is the half that changes with no commit anywhere to notice.
+
+⚠️ **`origin/main` moved AGAIN inside the tick** (`ae420332 → 67078919`, a supervisor-notes commit plus
+X-171), and the quadrant re-measured **identical** — fourteen rows, same M/A split. Recorded because a
+null re-measurement is the result that makes the rule cheap: the check costs one command and the day it
+differs is the day a carried set would have been wrong.
+
+## ⛔ A DOCTOR STAGE THAT READS THE LIVE DATABASE IS NOT A FUNCTION OF THE TREE AT ALL — the fourth input class (tick 315)
+
+`schema` moved **15 → 16**, total 797 → 798, with the prior value read from **`REVIEWS.md`** and not
+from this file's digest (301) — `schema 15` is recorded at REVIEWS `:78418 :78667 :79098 :80575 :80815
+:81413`, six blocks, unmoved for eleven ticks.
+
+⛔ **Unreachable from the wave's diff, measured at the stage's own source rather than argued.**
+`SchemaStage` reads `DB::select` on `information_schema.columns` (`:66 :80 :203`), on `pg_roles`
+(`:171 :173`) and a table list (`:43`); plus `base_path('database/migrations')` via `Finder` (`:100`)
+and `glob` (`:220-225`). SITE-186's whole diff is one `abort_if` in a route closure, one test method and
+two state files, and `git diff --name-only 8f9bfbb1..HEAD -- app/database/migrations app/app/Modules/*/Database`
+prints **nothing** — **the wave changed neither input**. No member names this lane's column: twelve are
+`tenant-owned table has no RLS` on `opt_outs · suppression_lifts · tenant_deletion_requests ·
+support_queue_entries · data_requests · gbp_*`×3 `· places_api_calls · voice_usage_events ·
+zernio_account_days · operator_alerts`, two are `csat_score` ranking columns, one is
+`database/migrations: this deploy contains a SWITCH and a CONTRACT together`, one is
+`role goaiez_backup: has BYPASSRLS`. X-137's tables are `call_tokens · dni_pool_numbers ·
+dni_pool_settings · short_links · link_clicks`; none appears.
+
+⛔ **The cause is not measured and no block names one** (227, 230, 249 — and 209 is this seat committing
+that error itself). **Which member is new is also not measured**: the count was recorded, the
+enumeration was not, so the set has sixteen members and which one arrived is unknown.
+
+⭐ **The general finding.** Tick 217 ruled doctor cacheable on a provably unchanged tree, on the ground
+that *"doctor is a pure function of the tree it reads"*; tick 270 carved out **`journey`**, which reads
+untracked `storage/app/evidence/journeys/*.json` that every `--tests` gate rewrites. There is a **third**
+kind and it is worse than either: **`schema` reads the live PostgreSQL catalog, so it can move with no
+commit in this checkout, in any lane, in any repository — and `git status`, the tip table and the reflog
+are all blind to it.** A stage count is a function of *(the tracked tree) × (the untracked working
+artifacts) × (the database)*, and only the first has an instrument.
+
+⛔ **RULED: a doctor-unchanged pass condition excludes `journey` AND `schema`**, or takes both readings
+inside one gate. Every brief since tick 209 has carried a stop keyed to "no stage moved"; against
+`schema` that stop can fire on a sibling's migration run a day earlier, forfeiting a wave for something
+no seat in this lane can see. Fourth statement of the family that began at 196 (*§3's counts are
+RECORDED, not measured*): 196 the record, 209 the decay, 270 the untracked input, 315 **the input
+outside the repository**.
+
+## ⛔ CASE SELECTION PICKS WHAT A TICK MUST DO FIRST, NEVER WHAT IT MAY DO ONLY (tick 315)
+
+`OWNER.md` (09-09 08:35) is newer than the last block (09-08 06:54) so **case (d) fires and beats
+(a)–(c)** — *and* `073dd0a4`/`7e2a1844` had been sitting on the branch ungated and unpushed for a day.
+Tick 197 rules **gate the commit, not the mailbox**; tick 272's third residue case (**a report ABSENT**,
+not misfiled — no `REPORT.md` at the checkout root, and the mailbox copy is the previous wave's) puts
+the verdict on **the artefact and this seat's own gate alone**. Doing (d) *instead of* the review would
+have left a landed commit ungated for a second day.
+
+⛔ **The ordering rule allocates precedence among mutually exclusive readings of one MAILBOX; it says
+nothing about an artefact the mailbox does not describe.** Tick 256 gave the fall-through for a state
+the list does not cover; this is its converse — a state **two** cases cover at once. **Case selection is
+not a budget.**
+
+⚠️ **Track 1's N133, and it did not fire here only by luck.** The relay itself records that a case (d)
+keyed on **mtime** would not have found it, because the message is older than the first block this lane
+writes on waking. It worked because the lane slept a full day and the relay landed inside the gap; a
+block written between the relay and the tick would have parked it **silently**. ⭐ Stated generally: **a
+mailbox test keyed on an mtime comparison between two files with independent writers has a race whose
+loser is silent.** A token test on the newest OWNER heading has no such race. ⛔ **Not adopted** — the
+precondition (that every heading carries a greppable identifier) is unmeasured in this lane, and
+adopting a sibling's mechanism without measuring the precondition is tick 223's error. Offered upstream.
+
+## ⛔ THE ACCEPTING BOUND IS THE SHA THE BRANCH MERGED, NEVER `origin/main` (tick 315)
+
+Half 1 and half 2's sole surviving member is the same commit and it is a **merge** — `6b7c315b
+origin/track/stages`, *"merge: origin/main (7a75f289)"*. Tick 217: a merge prints no files under
+`--name-only`, so the surface that flagged it cannot explain it, and main's content arriving on a branch
+that lacked it is byte-identical in the output to a resolution that dropped our column.
+
+⛔ Taking the accepting-bound diff against `origin/main` printed **seven X-102 files at −275 deletions**,
+which reads as stages having deleted this lane's column and is nothing of the sort: stages merged
+`7a75f289` and `origin/main` is now **1419 commits further on**, so those "deletions" are main's *later*
+X-102 additions that stages simply predates. **That is tick 147's staleness trap wearing tick 217's
+accepting direction** — and 217's own words (*"for a branch that has just merged main, main's content is
+contained by construction"*) are true only of **the main it merged**. The bound is read off the merge's
+own subject line, and the measurement that decides it is:
+
+```
+git log --no-merges 7a75f289..origin/track/stages -- <the fourteen paths>   →  (nothing)
+```
+
+**Stages' own commits write nothing in this lane's column. No violating partition on any surface.**
+
+⚠️ Tick 314's `--full-history` ruling fired for the first time and the census read **1 · 1 · 0 · 2**
+against tick 314's `6 · 13 · 7 · 12`. Attributed to the **bound** (191) and to main **delivering** (225):
+`44038729` is the merge base, so main now contains everything this lane published through SITE-185.
+Complement's two members are `bin/supervise.sh` and `CLAUDE.md`, both per-track never-merge files —
+*unwatched, not uncovered* (183). ⛔ No fourth half.
+
+## ✅ The prose filter's candidates were 100% FALSE POSITIVES — the purest firing of tick 306 yet (tick 315)
+
+Tick 279 introduced `grep -c 'assert'` as the falsifier arithmetic's cold witness; 280 qualified it
+(equality only for a loop-free file); 285 prescribed subtracting prose occurrences; 297 found the
+prescribed subtraction is **itself** a description-based selector that over-counts, because a real
+assertion's string literal can contain `//`, and ruled it **READ, never COUNTED**; 306 measured that its
+false-positive population is **manufactured by this lane's own route-level axis** and grows with it.
+
+On `X137Test.php`: `foreach` **0**, `grep -c 'assert'` **52**, and `grep -n 'assert' | grep '//'` returns
+**two** candidates — `:227` and `:241`, **both `assertRedirect('https://example.com/dest')`** — with
+**zero** prose occurrences. Witness = 52 − **0** = 52, the equality branch. ⛔ Counted, the filter
+subtracts 2 and lands at 50, putting a tick on 280's lower-bound branch hunting for loops or framework
+arity this file does not contain. **First firing where the filter's candidates are entirely false
+positives**, on a file whose only `//` occurrences are the URLs the lane's own endpoint axis produces.
+
+## SITE-186 — PASS, gated on the artefact alone (tick 315)
+
+`X-137/ModuleServiceProvider.php:46`, four lines:
+`abort_if(trim((string) $shortLink->destination_url) === '', 404);` — after the `firstOrFail()` and
+**before** `LinkClick::create` and `Event::dispatch(new LinkClicked(...))`. The content-string predicate
+(303's remedy table), the endpoint's own established 404 rather than a new status, and the refusal
+*before* the side effect. Exactly tick 314's ruling.
+
+✅ **Assertion order is tick 308's**, and it is what makes the falsifier worth anything: zero-`LinkClick`
+first, `assertNotDispatched` second, `assertNotFound` **last**, so the falsifier proves the compliance
+half and the 404 — already carried at `:223` and `:252` — is the one left *reasoned, not measured* (270).
+An ordered test reports only its first failure (248), so the ordering **is** the choice of what gets
+proven.
+
+✅ **The falsifier reconciles three ways, reconstructed here rather than read — there is no report.** The
+`JOURNAL` quotes `tests: 1, passed: 0, assertions: 1, line: 284`. The method carries **3** assertions and
+fails at **#1** ⇒ green − red = 3 − 1 = 2 ✓ (291); the quoted message is #1's own ✓ (248); and ⭐
+`line: 284` **equals the method's declaration line in the committed tree** — tick 298's free tree-witness,
+which for a mutation of a committed line is the whole claim that the red state measured the tree the
+commit holds.
+
+✅ **No second carrier** (240): the X-137 id census re-run in this seat with `--include='*.php'` (287) is
+byte-identical to tick 314's; the new method carries no `G##-##` literal. ✅ **The fixture reaches the
+guard for the right reason** (306) — it passes `'   '`, whitespace and not the empty string, so the test
+discriminates `trim(…) === ''` from a bare `=== ''`.
+
+⭐ **§7 `tests 2014 · passed 2011 · FAILED 1 · errors 2`** (reconciling ✓, 226), **`a_published_site_carries_all_seven`
+ABSENT — J11 GREEN**, +1 test / +1 passed on tick 314's baseline with the FAILED and error **sets**
+byte-identical. Both intermittent **causes** absent (Authorize.Net `E00040`, Postgres `SQLSTATE[42501]` —
+311's cause-keying), so the integers are clean, ⛔ *a property of which causes fired, never of the
+comparison* (302). **Baseline is now `2014 · 2011 · FAILED 1 · errors 2`.** Pushed `44038729..7e2a1844`.
+
+## SITE-187 — the take, ruled at tick 315
+
+⛔ **A merge is a wave; never dispatch one carrying its own new code** (215) — at 1419 commits a red
+would be unattributable between the merge and any build. The brief lands `origin/main` and stops.
+**Dispatched with `--allow-merge`**, which is the only thing that sets `GOAIEZ_MERGE_OK=1` and is what
+arms `:131-145`'s byte-identity loop as well as `:156`'s merge permission; dispatching bare burns the
+run on a certain refusal and is unrecallable.
+
+Four items whose omission would each cost the wave, every one measured this tick:
+
+- ⛔ **`--no-commit`**, because a bare merge that resolves cleanly commits **inside one git process** so
+  the commit shim never runs (212's damage, 311's mechanism). It is what creates the restore window.
+- ⛔ **`composer dump-autoload` before the first post-merge gate** — the merge adds **95** class files
+  and the classmap trap presents as `Class "App\Modules\…" not found` inside an unrelated module's test
+  (215).
+- ⛔ **The restore names three paths and only three**, one file per argument, never a directory:
+  `.agents/supervisor/launch-coder.sh`, `.claude/settings.json`, `bin/supervise.sh`. Restoring
+  `app/app/Doctor/**`, `seals.json`, the hooks or the harness **withdraws the point of the take**.
+- ⛔ **Tick 236's MISSING-not-CONFLICTING check is IN the merge, not after it**, and no census surface
+  can substitute for it — half 2's `^origin/main` bound means a line deleted by main's own merge commit
+  never prints.
+
+✅ **The harness is safe and it was measured BEFORE committing to the wave**, because tick 256's law
+(*"take MERGE_HEAD's side whole" is correct when Track 1 merges site and silently wrong in reverse*) is
+the reason it had to be: main's harness diff is **four hunks ending at line 595** while `publishSite`
+sits at **`:684`**, outside every one — main's changes are `ReceivableState → ArDunningAction` and
+rewrites of `payInvoice`/`makeOverdue`/`lastDunningAction`, **money's** methods under ruling 6. SITE-112's
+real-`GET` J11 conversion survives byte-identical. ⚠️ A pre-measurement of the incoming diff is **not** a
+substitute for reading the merged tree for what is absent, and the brief says so.
+
+⚠️ **A doctor RISE after the merge is EXPECTED and is not a stop.** Tick 309 measured this checkout's
+`boundary 6` as a **disabled check's output**; main's `a42079bd` revives `BoundaryStage`, and tick 310
+measured nine of this lane's imports entering the revived population, five targeting modules **this lane
+owns**. **The merge's doctor is a NEW BASELINE, not a comparison** — the stop is a *failure to run*,
+never a rise.
+
+⛔ Refused, each of which would pass every gate: bundling any new code (215); a blanket
+`git checkout HEAD -- app/app/Doctor` (a directory — refused by `:41`, run 27's shape); restoring
+`app/phpunit.xml` (ours ❌ / main ❌, so a no-op that trains the next wave to restore reflexively);
+**adopting the sibling pattern where the coder merges and the supervisor commits** — pricebook's ruling
+27 and money's ruling 60 each cover **one named file**, a merge commit is **pathless** and carries
+everything, so helping this seat to another lane's ruling to get past a guard aimed at it is "patch the
+thing that is refusing you" one step removed (213, 215, 222); and weakening any check that reddens.
+
+## ⚠️ OWNER ACTION — `role goaiez_backup: has BYPASSRLS` (tick 315)
+
+Reported by the live `schema` stage in this checkout. A database role is reserved. Recorded rather than
+escalated, with the two measurements that make it worth the owner's eye and the one that is missing:
+
+- `runtime/goaiez-grants.sql:41-46` declares **`NO BYPASSRLS. EVER.`** for `goaiez_app` and
+  `goaiez_owner`. `goaiez_backup` is a third role and the file's intent for it is not measured here.
+- ⭐ It composes with **tick 308**, this lane's only measurement of RLS actually firing: under SITE-180's
+  falsifier the two application-level `->where('business_id', …)` clauses were removed and the
+  cross-tenant read **succeeded (201)** where an enforcing policy would have made `findOrFail` throw and
+  returned the 404 the test asserts. So **in this checkout's test database the application-level scoping
+  clauses are the sole enforcement of that boundary that has been demonstrated** — and the charter's
+  standing line (*"RLS sits beneath the application scope"*) invites every reader to treat an app-level
+  tenancy test as belt-and-braces when on this measurement it is the only brace.
+- ⛔ **Which role the suite connects as, and whether `goaiez-grants.sql` has ever run against
+  `goaiez_antig_site_test`, are NOT observable from this seat.** No claim is made about either and no
+  wave is briefed against it; it blocks nothing.
+
+## ⛔ BEING MERGED INTO `main` IS WHAT DISABLES `merge=ours` AGAINST `main` — all eight declared paths fall into the dangerous quadrant AT ONCE, and two of them are outside the guard (tick 316)
+
+Tick 211 ruled *`merge=ours` is a CONFLICT resolver, not a protection: a driver only runs on a hunk
+**both** sides changed, so a per-track file that only `main` changed is taken in full silence — no
+driver, no conflict, no line in the merge output.* Ticks 215, 225, 228 and 312 each built the two-sided
+quadrant to find which paths sit in that cell, and each measured a small set. Tick 316 measures the
+degenerate case, and it is not a bigger set — it is **every** declared path:
+
+```
+git merge-base HEAD origin/main   →  7e2a1844   ==  HEAD
+git merge-base --is-ancestor HEAD origin/main   →  HEAD IS AN ANCESTOR
+```
+
+`origin/main` is `cbdba9cd`, *"merge: track/site — X-137 blank short-link destination refusal"*, whose
+**second parent is this lane's own tip**. So Track 1 merging us moved the merge base **onto HEAD**, our
+side's diff against base is **empty on every path**, and `merge.ours.driver` — configured, `true`,
+verified this tick — **cannot fire anywhere**. `.gitattributes` declares it for eight paths and protects
+**none** of them.
+
+⭐ **The protection is strongest when the lane is diverged and evaporates exactly when the lane is up to
+date.** Every prior quadrant reading in this ledger was taken at a base where our side had moved, so the
+both-sides cell was populated and `CLAUDE.md`, `BUILD-STATE.json` and `JOURNAL.md` always read *"driver
+fires → ours wins"*. Tick 315 measured exactly that, correctly, at base `44038729` — and it was
+**invalidated four minutes later by a Track 1 merge**, not by anything this lane did.
+
+⛔ **RULED: a merge quadrant is re-measured at the CURRENT base every tick that briefs a merge, and the
+first thing to check is whether `main` now CONTAINS us** — because that single fact empties the
+protective cell wholesale. A quadrant carried from the previous tick is wrong in a way that reads as
+measured, and this is the one input that can change with no commit in this checkout at all.
+
+### ⛔ …and `.agents/state/**` is the half nothing refuses
+
+The four never-list rows **block loudly** — the coder gets `REFUSED by coder guard` and stops.
+`coder-bin/git:146`'s regex is `^(\.agents/(supervisor|rules|workflows|skills)/|CLAUDE\.md$|\.claude/|
+bin/supervise\.sh$|app/phpunit\.xml$|app/app/Doctor/|<HARNESS>|.*seals\.json$|source/|runtime/|
+bin/state\.py$|.*/\.env)` — and **`state` is not in that alternation.** So the two state files are taken
+in **silence**, and they are the ones carrying this lane's whole record:
+
+| file | ours | main's | lost by a silent take |
+| :-- | --: | --: | --: |
+| `.agents/state/BUILD-STATE.json` | **180** owned-id occurrences | 14 | **166** |
+| `.agents/state/JOURNAL.md` | **197** | 45 | **152** |
+
+That is every supersession note, every corrected `why`, every R245 decision this lane has recorded across
+a hundred ticks — and per tick 264 main's copy has **never** carried them (two Track 1 merges of
+`track/site` delivered zero, because the file is per-track and reaches main by cherry-pick under ruling
+15, which has never run). So main's copy is not stale-ours; it is **not-ours**, and taking it back is a
+pure deletion. ⚠️ Note `JOURNAL.md` is append-only by design and main's is **shorter** (778 lines against
+926) — a shorter append-only file is the tell, and it is the only one available, because the merge prints
+no line for it.
+
+⛔ **The general form, and it is the run-27 clobber's shape arriving through a merge rather than a
+checkout: the guard's never-list and the `merge=ours` list are DIFFERENT SETS, and a path in the second
+but not the first is protected by a driver that a fast-forward-shaped merge switches off.** Six of the
+eight are in both; **`.agents/state/BUILD-STATE.json` and `JOURNAL.md` are in `.gitattributes` and not in
+the guard.** Read both lists against each other before any merge, and restore the difference by hand.
+
+### The take's full disposition, measured at the current base
+
+| path | never-list? | after merge | action |
+| :-- | :-- | :-- | :-- |
+| `CLAUDE.md` · `bin/supervise.sh` · `.agents/supervisor/launch-coder.sh` · `.claude/settings.json` | ✅ blocks loudly | main's | **RESTORE** |
+| `.agents/state/BUILD-STATE.json` · `.agents/state/JOURNAL.md` | ⛔ **absent from the regex** | main's, **silently** | **RESTORE** |
+| `app/app/Doctor/Stages/{Boundary,Contract,TestAnchor}Stage.php` · `seals.json` | cleared by `:131-145` | main's | **ADOPT** |
+| `.claude/hooks/drive_hook.py` · `no-piped-gate-tool.py` | cleared by `:136`'s new arm | main's | **ADOPT** |
+| `app/tests/Journeys/JourneyHarness.php` | cleared by `:100-105` | main's | **ADOPT — verified safe** |
+| `app/tests/Journeys/TwelveJourneysTest.php` | not listed | main's | **ADOPT** |
+| `app/phpunit.xml` · `.agents/rules/10-supervisor.md` | — | **absent from main's range** | untouched — the working-tree pin survives |
+
+✅ **The harness adoption was measured BEFORE the wave was committed to**, because tick 256's law is that
+*"take `MERGE_HEAD`'s side whole" is correct when Track 1 merges site and silently WRONG in reverse* —
+and here `MERGE_HEAD` is `main`. `git grep` on the ref: `deploy_hash` at `:707` and `:713` (SITE-112's
+real `GET /sites/{business}/{deploy_hash}` with the 200/404 SSL pair) and `EdgeProvisionAction` **×2**
+(SITE-111's provisioning, the hunk Track 1's *first* merge dropped at tick 236). Main's harness
+**contains** our work, so taking it whole is safe — measured on the ref, never inferred from the
+direction.
+
+## ⛔ THE SUPERVISOR'S OWN UNCOMMITTED NOTES BLOCK A MERGE OF `main` — the notes commit is step 0 of every merge tick, not housekeeping (tick 316)
+
+`git merge` refuses to start when a file it must write is locally modified. Main changes `CLAUDE.md`
+**always** — Track 1's supervisor writes its own notes to the same tracked file, which is OWNER ACTION
+37's shape — and this seat leaves `CLAUDE.md` modified by design (tick 199: a path-scoped commit races a
+live coder's `.git/index.lock`). So the two rules compose into a hard precondition:
+
+⛔ **A merge wave cannot be dispatched while this seat's notes are uncommitted.** Committing them is not
+tidiness; it is the first step, and it is only available because tick 199's condition is absent — no
+writer holds the checkout. ⚠️ The corollary is the useful half: **a merge wave and a live coder are
+mutually exclusive for a second, independent reason** beyond one-writer, and a tick that finds a coder
+alive cannot brief a merge no matter what the mailbox says.
+
+## ⛔ TICK 315 RULED SITE-187 AND NEVER DISPATCHED — the digest recorded a dispatch that has no `LAUNCHED` line (tick 316)
+
+The charter: *a dispatch is real only when `launch-coder.sh` printed `LAUNCHED`, and that line is pasted
+into the REVIEWS block that announces it.* Measured: the newest `LAUNCHED` in `REVIEWS.md` is **run 201
+(pid 2718333)**, which is SITE-186's — `merge-gate=closed`, dispatched at tick 314. `BRIEF.md` (08:51) and
+`KICKOFF.md` (08:52) hold SITE-187; tick 315's REVIEWS block ends with its OWNER/TRACK 1 ACTION sections
+and **contains no `LAUNCHED` line**; `CLAUDE.md`'s digest says *"**Dispatched with `--allow-merge`**"*.
+
+⛔ **The block did not claim it. The DIGEST did.** That is tick 293's law — *a ledger digest of a ruling
+is a paraphrase, and the digest is the copy that survives* — reaching a **dispatch** rather than a
+prediction, and it is the worse subject: a paraphrased prediction misleads the next reader about a
+measurement, where a paraphrased dispatch tells the next tick that a wave is *running* and invites case
+(a) to park the track. Tick 234's law (*a brief found in the mailbox with no REVIEWS block behind it is a
+DRAFT*) has a converse and this is it: **a brief with a block behind it but no `LAUNCHED` line is also a
+draft**, and only the launcher's own output separates the two.
+
+✅ **The recovery cost nothing** because the brief's substance was re-measured rather than inherited — and
+re-measuring is what found that its quadrant had been invalidated by Track 1's merge four minutes after it
+was written. ⛔ **Never dispatch a carried brief; re-measure its ground values and rewrite it.**
+
+## ✅ Tick 236's MISSING-not-CONFLICTING check RUN on Track 1's SECOND merge of this lane, and it PASSED (tick 316)
+
+Tick 236 wrote the law after Track 1's *first* merge of `track/site` dropped `publishSite()`'s three-line
+`EdgeProvisionAction` hunk and `a9e6a25f` restored it within the hour by luck — and no census surface can
+report that class of loss, because half 2's `^origin/main` bound means a line deleted by main's own merge
+commit never prints. Run this tick on `cbdba9cd`:
+
+```
+git grep -n  'deploy_hash'         origin/main -- app/tests/Journeys/JourneyHarness.php   → :707 :713
+git grep -c  'EdgeProvisionAction' origin/main -- app/tests/Journeys/JourneyHarness.php   → 2
+git grep -c -e destination_url -e is_scalar -e website_url -e visitorSessionToken origin/main
+        -- X-137/ModuleServiceProvider.php X-157/ModuleServiceProvider.php
+           X-155/Actions/{FormCaptureAction,FormValidateAction}.php                       → 2 · 1 · 2 · 1
+```
+
+Every signature line of the last five waves survives on main. **Second firing, second clean result.**
+
+⚠️ **And the reason the check is not substitutable by a diff**: `git diff --stat origin/main HEAD` over the
+fourteen owned paths prints **33 files, 742 deletions**, which reads as catastrophic and is main being 1426
+ahead. The direction that answers tick 236's question is a **`git grep` on the ref for the specific line**,
+not a stat — tick 163's discipline, and the stat cannot separate *"main is ahead"* from *"the merge dropped
+it"* in either direction.
+
+## ⚠️ §1's cross-witness is the STALER one whenever the gate is the tick's FIRST act (tick 316)
+
+Tick 218 ruled *§1's `behind N` is computed from the same shared ref and is the FRESHER of the two; when it
+disagrees with the tick's own tip table, re-read `for-each-ref`.* Tick 257 then ruled *start the gate as the
+tick's FIRST act* so a queued §7 outlives the wait. **The two compose into a stale §1**: the gate runs before
+the tick's `git fetch`, so §1 reads whatever `refs/remotes` held at launch.
+
+Measured: §1 printed `behind 1425, ahead 3` while a post-fetch `git rev-list --count` reads **`behind 1426,
+ahead 0`**. Reconciled by arithmetic (225, never *"both moved so they agree"*): main gained one commit
+(`cbdba9cd`) and absorbed our three, so 1425 + 1 = **1426** ✓ and 3 − 3 = **0** ✓.
+
+⛔ **Which of the two is fresher is a property of the tick's ORDERING, not of the instrument.** Do the
+subtraction, and attribute the difference to the fetch rather than to a mid-tick arrival — the reflog
+separates them, and here `origin/main@{08:52:36}` predates this tick entirely.
+
+## ⚠️ Instrument and standing checks, tick 316
+
+- ✅ **All four doctor checks together, eleventh consecutive tick**: the **extrinsic** stamp equality
+  `20260829-0647` = `runtime_build` (305), the SUM `0+6+87+93+16+455+137+4 = 798` = the printed total (285),
+  `ok` only on `integrity … clean` (292). **No stage moved** — `schema 16` holds at tick 315's value, and
+  per tick 315 `schema` reads the live PostgreSQL catalog so it is not a function of this tree at all.
+- ⚠️ **`boundary 6` is still a DISABLED check's output here** (309) — two `Enums/AiModel.php` model strings
+  and three C-Mail/C-Sms `match()` default arms, **zero** cross-module imports. Main's `a42079bd` revives
+  `BoundaryStage`, so the take will land a **rise**, and tick 315's ruling stands: **the merge's doctor is a
+  NEW BASELINE, not a comparison; the stop is a failure to RUN, never a rise.**
+- ✅ **Census 1 · 1 · 0 · 2, byte-identical to tick 315**, halves 1–3 with `--full-history` (314). Half 1's
+  and half 2's single member is `6b7c315b`, stages merging `origin/main (7a75f289)` — a **merge commit**, so
+  the surface that flagged it cannot explain it (217). Re-measured at its **accepting bound, the sha the
+  branch merged** and never `origin/main`: `git log --no-merges 7a75f289..origin/track/stages -- <the
+  sixteen paths>` prints **nothing**. No violating partition on any surface. The complement's two members
+  are `bin/supervise.sh` and `CLAUDE.md`, both per-track never-merge — *unwatched, not uncovered* (183).
+- ✅ **Case (a) excluded on LIVENESS, both halves** (179 — the pid space has wrapped, so the number alone
+  decides nothing): `coder.pid` holds **2718333**, `readlink /proc/2718333/cwd` **exits 1**, and `pgrep agy`
+  prints **nothing at all**. No writer anywhere on the box.
+- ✅ **§2 printed exactly one `⛔`** plus the `ℹ supervisor working notes` line, which is not a `⛔` (263) —
+  tick 207's **healthy** branch; `none` is the reading that would say the working-tree pin had been lost.
+- ⚠️ **§7 `tests 2014 · passed 2011 · FAILED 1 · errors 2`**, reconciling ✓ (226), ⭐
+  `a_published_site_carries_all_seven` **ABSENT — J11 green**, byte-identical to tick 315 on an unchanged
+  tree, which is the expected result. **Both intermittent CAUSES absent** (Authorize.Net `E00040`, Postgres
+  `SQLSTATE[42501]` — 311's cause-keying), so the integers are clean — *a property of which causes fired,
+  never of the comparison* (302).
