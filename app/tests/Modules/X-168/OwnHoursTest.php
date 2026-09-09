@@ -124,4 +124,15 @@ class OwnHoursTest extends TestCase
             ->assertOk()
             ->assertSee('9:15');
     }
+
+    public function test_super_admin_is_admitted(): void
+    {
+        $user = User::factory()->create();
+        $user->role = UserRole::SuperAdmin;
+        $user->save();
+        TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
+
+        Livewire::actingAs($user)->test(OwnHoursView::class)->assertOk();
+    }
 }
