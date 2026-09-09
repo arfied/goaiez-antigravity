@@ -918,3 +918,4 @@
 - `2026-09-09T10:04:45` stage capability = 207
 - `2026-09-09T10:04:45` stage anchor = 128
 - `2026-09-09T10:04:45` stage journey = 3
+- `2026-09-09T10:05:05` note: boundary The 2026-09-09T09:44:33 row incorrectly stated that the merge revealed '55 cross-module imports'. The number 55 is the total count of violations for the entire boundary stage, which runs four independent rules. The cross-module import count is a subset of this total, and conflating the stage total with the count for one specific rule was a mistake.
