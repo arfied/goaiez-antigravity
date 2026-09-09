@@ -16512,3 +16512,169 @@ never briefed decays exactly like an unmeasured one*, applied to the file the fi
 - ⛔ Shell forms: `for r in …; do … done` still refused (`simple_expansion`); **escaped parentheses in a
   grep pattern** still require approval (286), so `^[0-9]+ violation` is the accepted anchor for
   doctor's total line and `violation\(s\)\.` is not.
+
+## ⛔ A CITATION TO A RECORD IS A GROUND VALUE, AND A RECORD'S **LIVENESS** IS PART OF ITS VALUE — a timestamp that RESOLVES is not a timestamp that STANDS (tick 325)
+
+Tick 324 ruled that when one missing dependency produces violations in two stages against two modules, the
+second filing must **cite the first by its timestamp** rather than re-derive the same fact in different words,
+*"or an audit keyed on the `why` TEXT (261's third axis) reads two independent dependencies where there is
+one."* SITE-196 cited exactly the two timestamps I supplied. **Both resolve. Both are closed:**
+
+```
+843  16:31:06  UNRESOLVED capability X-176 — no seam for Event schema from X-108s calendar …
+849  18:00:55  note: G8-15 is BUILT, superseding the filing of 16:31:06 — X-108 is fully built and
+                  ⛔ the gap was a missing SEAM, not a missing DEPENDENCY (rule 09)
+846  16:52:20  UNRESOLVED capability X-176 — G8-14 needs an offer catalog …
+883  05:52:12  note: G8-14 is BUILT and credited, superseding the filing of 16:52:20 — line 129 queries
+                  PriceBookItem, line 269 passes productOffers, line 305 renders the offers-x176 block
+889  06:49:10  note: the 16:31:06 row is G8-15 and "was already superseded by the note of 18:00:55"
+```
+
+⭐ **And the relationship is the OPPOSITE of what the citation asserts.** It is not one fact counted once and
+reported by two stages. It is a **cause and its consequence**: the capability was blocked because X-157 had no
+way to get appointments or offers into the schema; **SITE-113 and SITE-121 unblocked it by importing the model
+directly**, superseding both filings on the explicit ground that the gap was a *seam* and not a *dependency*;
+and **that import is the boundary violation**. The capability filing was closed **by the act that opened the
+boundary one.**
+
+> ⛔ **RULED: every citation a brief supplies is greppped TWICE in the tick that writes the brief — once for its
+> own timestamp, and once for a supersession NAMING it.**
+>
+> Tick 301 made every **symbol** a brief names resolve with a `grep`; tick 313 made the load-bearing half `≥ 1`,
+> stopping on zero and reporting on N > 1. A **record** citation has a third state neither rule has room for:
+> **present and retracted.** `grep -n '<timestamp>' .agents/state/JOURNAL.md` returns a hit for a superseded row
+> exactly as for a live one, so resolution is satisfied and liveness is never tested. **The second grep is the
+> one that was skipped**, and it is one command.
+
+⛔ **The defect is MINE, and its provenance is the aggravating half**: I recalled both timestamps from ticks 260
+and 263 — **tables whose entire subject is supersessions** — without grepping the JOURNAL. Tick 297's law
+verbatim: *a ground value about a file is measured with a `grep` in the tick that writes the brief, never
+recalled, and especially not from this ledger, because a number written here reads as measured forever.*
+
+⚠️ **The filings themselves STAND, and that had to be measured rather than assumed**, because a defective
+citation invites throwing out the row it sits in. Rule 09 asks whether the thing the `why` names exists, and the
+boundary `why` names *"X-108 exposes no read action returning a business's upcoming booked appointments"* — a
+claim about a **registered surface**, measured true (X-108's whole `Actions/` is four actions, none returning
+booked rows), and a **different claim** from the retracted capability `why`, which said the module was absent.
+Tick 212's discriminator then decides it and both available fixes are regressions: deleting the read deletes the
+asserted clause of a **credited** capability, and building inside X-108 or X-163 is another lane's column under
+ruling 5. **One subordinate clause in two of four rows is wrong; four dispositions are right.**
+
+Thirty-sixth of the imprecise-brief family (208, 227, 235, 236, 237, 238, 244, 245, 247, 249, 250, 254, 262,
+265, 271, 274, 275, 276, 280, 283, 286, 292, 293, 297, 301, 302, 304, 309, 310, 313, 314, 318, 322, 323, 324)
+and the first turned on a **citation's liveness** — the one property of a record that its own resolution cannot
+carry.
+
+## ⛔ …AND THE SAME DEFECT FIRED A SECOND TIME IN THE SAME TICK, CAUGHT ONLY BY RUNNING THE COMMAND (tick 325)
+
+SITE-197's brief was drafted with C4 reading *"`grep -n '18:00:55\|05:52:12'` — I measured **two lines**."*
+Run before dispatch, it returns **seven**: both times-of-day collide with unrelated entries made in the same
+second, one of them an `(R245)` decision line. Rewritten to grep the **supersession sentence itself** —
+`'superseding the UNRESOLVED capability filing of 2026-09-06T16:31:06'` — which returns **1** and **1**,
+measured.
+
+⭐ **Two firings of one defect in one tick, and the second was caught only because the brief's own commands were
+executed rather than read.** Tick 272's law, fourth firing: *anchor on a substring you have SEEN in the output,
+never on a separator or a fragment inferred from one.* And running it found a **third** entry the finding did
+not have — `06:49:10`, a findability note (263's fourth axis) confirming the `16:31:06` row is G8-15 and was
+already superseded — which corroborates the supersession by an independent route and is in the brief as
+**explicitly not a stop**, so the wave does not read it as one.
+
+⛔ **The general rule: RUN every command a brief contains, in the tick that writes it.** Not to check the
+prediction — to check the **command**. A ground value can be wrong because the number is wrong (297) or because
+the *query* is wrong (272), and only execution separates them.
+
+## ⭐ The lane's ENTIRE red is now FILED on every stage, for the first time (tick 325)
+
+Measured from a live doctor in this seat, never from a prior tick's table (210): `contract` ×4 (X-110 ×3,
+X-137 ×1) · `capability` ×6 (X-103 ×2, X-176 ×4) · `anchor` ×7 · **`boundary` ×4 — SITE-196, the last unfiled
+red anywhere in this column** · `journey` **J11 ABSENT, GREEN**. Every one is a sealed-stage defect, a vendor
+credential, or another lane's construction site.
+
+⚠️ **A guessed violation-line anchor is a FALSE SILENCE, third firing** (223 the leading-space `^FAIL`, 272 the
+`·`-vs-colon separator): `grep -E '· *X-(157|110|…)[ :]'` over a live doctor returns the `contract`,
+`capability` and `anchor` lines and **silently omits all four `boundary` lines**, because a boundary violation
+carries the **path** form (`Modules/X-157/Actions/EdgeDeployAction.php: imports X108 across a module
+boundary`) and not the `· X-nnn` form. **A red list assembled from one anchor has measured one anchor.**
+
+## Tick 325 — measured, for the record
+
+- **SITE-196 PASS-WITH-NOTES.** `18fd58ee`, `.agents/state/` only, +53 −1, named-path commit, One Rule clean.
+  **Zero movement in every gated stage**, measured live twice here — `boundary 50 · contract 85 · citation 3 ·
+  schema 16 · capability 207 · anchor 128 · journey 3` · **492** — which is a filing wave's whole pass condition
+  (209). `state.py status` `boundary` **0 → 4**, `capability` unchanged at **28**, **no `decided` line** (the
+  newest `(R245)` is 17:38:39, SITE-195's; the two are a partition, not a pair — 210).
+- **Every citation in the permanent record verified at source** (314): `EdgeDeployAction:115` `:132`,
+  `FormCaptureAction:55` `:96`, `ChatCaptureAction:36` — five line numbers, five exact; and the three claimed
+  registered surfaces are the whole of each `Actions/` directory (X-108 four, X-163 six, X-121 five). ✅ Four
+  distinct sentences, not four copies of one (R240).
+- ✅ **Tick 236's check, Track 1's SIXTH merge of this lane, SIXTH clean result.** `origin/main 15f21600 →
+  40820994`; second parent read with `rev-parse ^2` and **never off the subject** (222) — **`c8aeb6fc`**.
+  `git grep` on the ref, because a stat cannot separate *main is ahead* from *the merge dropped it* (163):
+  `deploy_hash 2 · EdgeProvisionAction 2 · FormReadAction 2 · findForBusiness 2 · destination_url 2 ·
+  is_scalar 2`. ⚠️ `PageVersionAction` (SITE-195) is **absent and not lost** — `cc2baaaa` and after post-date
+  the second parent, so **unmerged, not dropped** (258: read the second parent before calling anything missing).
+- **Census `3 · 1 · 0 · 2`, byte-identical to tick 324**, halves `--full-history` (314), `pwd` first (209),
+  previous value read from `REVIEWS.md:85941` and not this digest (301), drift signature **absent** (halves 1
+  and 2 non-zero against a pathspec-free complement of 2 — the *split* is the signature, never either number).
+  Half 1 **per partition** (189): sixty `d8d9cdaa` (the X-102 docblock, **one insertion, NO new `G##-##`
+  literal**, so 260's seventh false-credit shape cannot fire) plus stages' two **merges of main**. **No
+  violating partition.** Complement: `bin/supervise.sh`, `CLAUDE.md`, per-track never-merge — *unwatched, not
+  uncovered* (183), ⛔ no fourth half. **Cross-lane dependency query CLEAN**, and the pairing is the measurement
+  (240): the paired stat printed money's and sixty's commits while the scoped query stayed silent.
+- ⚠️ **Paired `--stat`, the only surface that will ever print these** (190), so this note **IS** the record:
+  money `67775fa5` — `X-117` and `X-211` runtime-proof commands, **money's own**; **sixty `9a313f57` —
+  `X-01/Ui/Thread.php` +46 and a new `X-01/ThreadScreenTest.php` +75, where X-01 is STAGES' under ruling 5's
+  catch-all and `Ui/` is Track 2's** — OWNER ACTION 45's shape, two lanes over, advisory to Track 1, ⛔ never a
+  parallel fix; stages `7636d614` and `aff77ace` — `CLAUDE.md` alone.
+- **Fourth surface, both directions** (173's fall test, 323's rise reading), against each branch's own bound and
+  never HEAD: `main 14 · money 16 · pricebook 14 · reviews 15 · sixty 30 · stages 41 · ui 16 · site 184`. **No
+  branch below main's 14** ✓. ⚠️ **Main still carries 14 after SIX merges of `track/site`** — 264 stands.
+- ⭐ **Closing tip re-read FIRED — fifteenth against sixteen nulls** — left **literally blank until the command
+  returned** (257): `stages 7636d614 → aff77ace`, pushed after this tick's opening fetch ⇒ **arrival, not
+  staleness** (220). Paired stat run unconditionally: `CLAUDE.md` alone, touching no censused path (169).
+  ⭐ **`origin/main` re-read and UNMOVED** — the one ref that excludes in all four surfaces at once (198). Half 1
+  re-run and byte-identical.
+- **§7 baseline `tests 2437 · passed 2429 · FAILED 6 · errors 2`**, reconciling ✓ (226), ⭐
+  `a_published_site_carries_all_seven` **ABSENT — J11 GREEN**, and **byte-identical to the coder's on the same
+  sha** — so tick 255's borrow ran with a **zero delta** and its falsifier **fired and PASSED**, the fourth
+  strong resolution (258, 300, 323, 325). Both intermittent **CAUSES** absent (Authorize.Net `E00040`, Postgres
+  `SQLSTATE[42501]` — 311's cause-keying), so the agreeing integer is *a property of which causes fired, never
+  of the comparison* (302).
+- ✅ **All four doctor checks together**: the **extrinsic** stamp equality stated as a comparison (305), the SUM
+  `0+50+85+3+16+207+128+3 = 492` in both report blocks and both of mine (285), `ok` only on `integrity … clean`
+  (292), six of seven timings differing **including all three long stages**, where the nonce's weight lives
+  (249, 311, 318).
+- ✅ **§1 by ARITHMETIC** (225): §1 printed `behind 77, ahead 3` and post-fetch `rev-list --count` reads **77**
+  and **4**. `behind` unchanged because `refs/remotes` is a live feed of the box's push traffic, not a
+  fetch-cached snapshot (220) — main's merge arrived 17:52:30, eighteen minutes before the gate started. ⭐ And
+  4 is exactly the commits after the merge's second parent.
+- ✅ **Tick 324's notes-commit window, first firing on its healthy branch**: tick 324's `CLAUDE.md` was
+  uncommitted with no writer holding the checkout, so it was committed as `1e32564c` **between reading
+  `REPORT.md` and running `launch-coder.sh`**. **Pushed `b451264f..1e32564c`** by explicit ref after gating and
+  recording it, the notes-commit delta being `CLAUDE.md` alone — provably an input pest, pint, phpstan and
+  doctor all do not read (255's condition 2).
+- ✅ Healthy branches (221): **290's `--ruling` correction, FIFTEENTH consecutive clean JOURNAL entry**; **318's
+  report-side hedge composition, THIRD firing and applied unprompted**; **302's grading with 322's working-tree
+  correction**, so this seat's own notes commit fired no false stop — **fourth consecutive wave clean through
+  item 0**, and ⚠️ a run of four is still not a trend (188, 250); **259's column rule, SIXTEENTH firing** — two
+  `grs-antig-site` gates four minutes apart, the coder's `gate-end` rc 1 and mine `gate-start` with no terminal
+  row, separated only by `readlink` on the pid `gate-start` handed me (258, 265's fourth state); **257's
+  procedure**, the gate first and §7 last; **§2's healthy branch**, exactly one `⛔` (207).
+- ⚠️ **The `pgrep agy` set turned over COMPLETELY inside the tick, FIFTH time** (310, 312, 323, 324, 325):
+  **three** pids at review, **one** at dispatch, **no member surviving** — which is why 196's *re-run it in the
+  same breath as the launch* is not an optimisation.
+- ⛔ **Shell forms measured this tick**: a shell **function definition** is refused outright (`Contains
+  function_definition`); a `git log` whose argument list is split across **backslash-continued lines** and piped
+  is refused as *"multiple operations"* while the identical command **on one line** is accepted; and `Read` on
+  `/home/goaiez/tmp/gate-runs.tsv` past the end reports the true line count in its warning, which is the
+  cheapest way to find the tail (262 — it needs **both** `offset` and `limit`).
+
+**Tips at the close** (192): `main 40820994` · `money 67775fa5` · `pricebook c1b6953c` · `reviews e7b197f4` ·
+`sixty 9a313f57` · `stages aff77ace` · `ui bf42fec7` · `site 1e32564c`.
+
+**SITE-197 dispatched** — `LAUNCHED run 212 (pid 1688373)`, merge-gate closed, `GOAIEZ_PUSH_OK=0`. One
+`state.py note` correcting the citation clause in both X-157 boundary rows and recording the cause-and-
+consequence relationship; **no re-file, no `resolve`, no `decided` line**, because `state.py` has no withdraw
+and a second row about one fact compounds rather than corrects (210). Per tick 293 this entry states the
+**ruling and the falsifier and no prediction**; the outcome is the next tick's to write.
