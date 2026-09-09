@@ -15195,3 +15195,163 @@ separates them, and here `origin/main@{08:52:36}` predates this tick entirely.
   tree, which is the expected result. **Both intermittent CAUSES absent** (Authorize.Net `E00040`, Postgres
   `SQLSTATE[42501]` — 311's cause-keying), so the integers are clean — *a property of which causes fired,
   never of the comparison* (302).
+
+## ⭐ THE TAKE LANDED — and a 1426-commit merge is settled by TWO commands answering OPPOSITE questions (tick 317)
+
+`5237a2ef merge: origin/main (cbdba9cd)`, 438 files, +23847 −1509. The charter's step-3 proof and its
+converse, and **only the pair proves the resolution** — either alone is satisfied by a merge that took
+everything from one side:
+
+```
+git diff HEAD~1 HEAD --stat -- <the six per-track paths + .agents/state/>          → (nothing)  ours kept
+git diff --stat cbdba9cd HEAD -- app/app/Doctor/ .claude/hooks/ …JourneyHarness…   → (nothing)  main adopted
+```
+
+⭐ **Tick 316's silent-take hazard did NOT fire, and it is the one that most needed checking.** That tick
+measured `.agents/state/BUILD-STATE.json` and `JOURNAL.md` as sitting in `.gitattributes`'s `merge=ours`
+list and **outside** `coder-bin/git:146`'s never-list regex, so they would be taken with no refusal, no
+conflict and no line in the merge output — deleting 166 and 152 owned-id records. Measured live:
+**BUILD-STATE 180 · JOURNAL 197 / 926 lines**, ours not main's 14 / 45. It held because the brief named
+them, which is the whole value of tick 316 having read the two lists **against each other** rather than
+reading either one.
+
+⚠️ **The One Rule was measured, not waived.** `app/app/Doctor/**` and `seals.json` changed — a BLOCK on its
+face — and are byte-identical to `cbdba9cd`, i.e. the owner's rulings 4/5/6 fixes adopted whole through the
+clause that exists for it (`coder-bin/git:131-145`). ⛔ **A CHECK changing because this lane took main's
+owner-ruled version whole is the sanctioned path; a CHECK changing by a line this lane wrote is the BLOCK** —
+and the discriminator is the byte-identity diff, one command, not a judgement about intent.
+
+✅ Tick 236's MISSING-not-CONFLICTING check, **second firing, second clean result**: `JourneyHarness.php:707`
+`:713`, `EdgeProvisionAction` ×2, `destination_url` 2, `is_scalar` 2, `website_url` 1, `visitorSessionToken`
+1 — every signature line of the last six waves survives on the merged tree. It is not substitutable by a
+diff: `git diff --stat origin/main HEAD` over the owned paths prints 33 files and 742 deletions, and a stat
+cannot separate *main is ahead* from *the merge dropped it*.
+
+## ⛔ A DEFERRAL'S PREMISE CAN BE FALSIFIED BY AN EVENT ON ANOTHER BRANCH — and nothing but a deliberate re-read will ever say so (tick 317)
+
+Tick 309 ruled *no refactor wave against the revived `BoundaryStage`* on **one** stated ground: *"the check
+cannot run in this tree, so a wave built against it would have NO FALSIFIER, which is the one thing this lane
+requires."* The take landed the check. The premise is now false, and **the deferral had no expiry, no
+violation, no count movement and no census surface** — a deferred item is invisible to every instrument this
+lane owns.
+
+Live doctor in this seat: `integrity clean · boundary 55 · contract 85 · citation 3 · schema 16 ·
+capability 207 · anchor 128 · journey 3` · **497** (SUM reconciles, 285; `ok` only on integrity, 292; stamp
+equality stated, 305). `boundary` **6 → 55**, and tick 309 had measured the 6 as a **disabled check's
+output**. It flags **exactly the nine imports tick 310 predicted**, with tick 310's 5/4 ownership split
+intact — which is what that tick recorded them for: *"so the answer is prepared when the count arrives with
+the merge."*
+
+⛔ **This is tick 260's law reaching a DEFERRAL rather than a stale record**: *a finding recorded but never
+briefed decays exactly like an unmeasured one.* A deferral additionally carries a **premise**, and a premise
+about the environment can be falsified by a sibling's commit. **When a deferral names its blocking premise,
+the tick that removes the blocker must re-read it — and the only thing that can trigger that re-read is the
+ledger, because no count moves when a premise becomes false.**
+
+## ⛔ THE FIVE LANE-OWNED IMPORTS SPLIT AGAIN, AND THE LINE IS A WRITE (tick 317)
+
+Tick 310 stopped at *"five closable by this lane alone"*. Measuring what each reads splits them further:
+
+```
+X-176/InternalLinkRenderAction:16   Page::where('business_id',…)->where('is_published',true)   READ
+X-176/SeoRenderAction:13            Page::where('business_id',…)->find($pageId)                READ
+X-157/EdgeDeployAction:43           PageVersion::where('commit_id',…)->update([...])           ⛔ WRITE
+X-157/EdgeDeployAction:153 :198 :212 :223 :295                                     five more reads
+```
+
+⛔ `:43` is a cross-module **write**, and it is the `ssl_installed` derivation — **J11's `ssl` element, the
+lane's entire goal.** A read seam is a query the owning module can express; a write seam is a command whose
+transactional and ordering semantics belong to the writer, so the two are materially different acts and
+bundling them makes any red unattributable (215). **RULED: SITE-188 is the X-176 pair only**; X-157's five
+are a later wave with their own falsifier.
+
+⭐ **The falsifier for a boundary refactor is the CHECK, not a test** — and that is the whole reason this
+wave is dispatchable where tick 309's was not. An import swap is behaviour-identical by construction, so a
+*behavioural* falsifier proves nothing: both states pass. What falsifies it is `boundary` **55 → 53** and
+reverting restoring **55** — tick 287's four-state sequence run against `doctor` instead of `pest`, with
+behaviour-preservation carried by the existing tests. ⛔ Therefore the wave adds **no new test and no new
+`G##-##` literal**: a behaviour-identical refactor needs no new assertion, and a second carrier only obscures
+which method discharges a clause (240).
+
+⚠️ Not a lint-dodge, by tick 212's discriminator (*when every available fix is a regression, the line is the
+check's defect and the remedy is a filing*): X-103 owns `pages`, `BoundaryStage:98`'s own fix text says
+*"invoke {imported}'s registered action"*, `:91` exempts `Events|Actions|Domain`, and the new action gets
+**two production callers immediately** — unlike `PageCreateAction`, which tick 246 measured at zero. ✅ The
+**disconfirming member** proving the exemption is real rather than read off a comment:
+`EdgeDeployAction:17-20` imports **four** `X176\Actions\*` and is flagged **zero** times.
+
+⛔ **The cross-lane four are a FILING and the reason differs per pair.** X-121 ×2 is the **house pattern**
+(tick 279 measured seven modules across four lanes writing `X121\Models\Person` directly) on Track 1's spine
+under ruling 8 — advisory, never a parallel fix. X-108 and X-163 are tick 212's shape exactly: this lane's
+**credited** capabilities specify those seams in their own ⑤ (G8-15 *"`Event` schema from X-108's calendar"*,
+G8-14 the pricebook product schema), tick 310 measured that no existing action on either returns what the
+publish path reads, building inside another lane's module is out of scope, and deleting the read breaks a
+credited capability ⇒ an `UNRESOLVED` naming a real missing dependency owned by another lane. ⛔ **A separate
+wave** — a filing does not lower a count and a build wave gates on one (209), so mixing gives the pass
+condition two halves that move in opposite directions.
+
+## ⛔ A RULING'S APPROVAL, ITS EXECUTION AND ITS EFFECT ARE THREE DIFFERENT FACTS (tick 317)
+
+Tick 271 recorded owner rulings 4/5/6 as **APPROVED and NOT EXECUTABLE**; tick 300 measured them **executed**
+on main and wrote that *"#5 alone would clear all seven of this lane's `anchor` entries."* The take landed
+them. `anchor` in this lane's column: **still seven, all `no runtime proof`.**
+
+⛔ Only the third fact is confirmable by a count, and the first two are what get recorded, because they
+arrive as messages. Tick 191's corollary — *an OWNER ACTION opened off half 1 is never closed off half 1
+going quiet* — generalised: **a record opened against a defect is never closed by a decision about it, nor by
+that decision's execution; only by measuring the defect again.** Not re-filed: all seven already carry a
+correct `UNRESOLVED` (210's audit).
+
+✅ What DID move, measured from the live doctor rather than the total: X-103's `approval.requested has 5
+emitters` **cleared** (ruling 4's multi-emitter exemption working), and `X-102 G16-21` and `X-155 G13-05`
+cleared — G16-21 by sixty's BUILD PROPOSAL docblock arriving with main, which is tick 260's **seventh
+false-credit shape now inherited into this lane's own column** and reviewed as ours per tick 195. Live red:
+`contract` ×4 · `capability` ×6 · `anchor` ×7 · `boundary` ×9, every one filed except the nine.
+
+## ⚠️ §7 IS A NEW BASELINE, AND THE ATTRIBUTION IS A ZERO-LINE DIFF (tick 317)
+
+`tests 2436 · passed 2428 · FAILED 6 · errors 2`, reconciling ✓ (226), ⭐
+**`a_published_site_carries_all_seven` ABSENT — J11 GREEN across a 1426-commit merge.**
+
+⛔ Tick 216's *"the only sound baseline is this checkout's own previous gate"* does not survive a take of this
+size — 438 files, +23847 lines — **and that is not a licence to skip the attribution.** What is available is
+tick 267's reachability discriminator, and it is decisive:
+`git diff --stat d11ba16b 5237a2ef -- <the five owned module dirs + four test dirs>` prints **nothing**. The
+merge changed **zero lines of this lane's own module code**, so every red is main's own content or an
+environment condition. The six are `X-117` checkout, two `__pest_evaluable_*` (X-198), `X-199` invoice,
+`X-211` recovery — all **runtime-proof / evidence** tests in money's and Track 1's columns, the same class as
+sixty's two journey errors. ⛔ The cause of each is **not measured and no block names one** (227, 230, 249).
+
+⚠️ **The new baseline is `2436 · 2428 · FAILED 6 · errors 2`**, with the intermittent population still keyed
+by **CAUSE** (311 — Authorize.Net `E00040`, Postgres `SQLSTATE[42501]`), neither of which fired.
+⚠️ `test_g2_76_unified_inbox_header` — stages' X-01 test, stable in this lane's failure set for twenty ticks
+— is **gone**, fixed on main.
+
+## Census and instruments, tick 317
+
+- **1 · 1 · 0 · 3.** Halves with `--full-history` (314); `pwd` first (209); tick 285's drift signature
+  **absent** — three pathspec halves `1 · 1 · 0` against a pathspec-free complement of `3`, and the *split*
+  is the signature, never either number.
+- **Half 1 and half 2's single member is the same commit and it is a MERGE** — `6b7c315b`, stages merging
+  `origin/main (7a75f289)`. Measured on the **accepting bound, the sha the branch merged** (315), never
+  `origin/main`, which is 1426 commits further on and would report main's own later additions as stages'
+  deletions: `git log --no-merges 7a75f289..origin/track/stages -- <the fourteen paths>` → **nothing**. No
+  violating partition on any surface.
+- ⚠️ **The complement grew 2 → 3** with `app/tests/Feature/Architecture/HeadingSeamTest.php`. Read as a
+  membership delta (244) and **verified at source** rather than cited, because tick 262 records that a new
+  architecture lint is the one kind of complement growth that is not inert: `:18` globs
+  `app/Modules/*/Ui/*.php`, `:21` `continue`s on anything lacking `#[Layout('components.account.layout'`.
+  This lane renders from `Actions/`, never Livewire account screens ⇒ **no owned module can enter its
+  population**. *Unwatched, not uncovered* (183) — ⛔ no fourth half.
+- **Tips** (192): `main cbdba9cd` · `money e2202e3f` · `pricebook 26ffb1c6` · `reviews 18161a02` ·
+  `sixty f8bfd8bd` · `stages 15e17c86` · `ui 0087da51` · `site 5237a2ef` (pushed this tick).
+- ✅ **Case (a) excluded on BOTH halves** (179): `coder.pid` 2884447 `readlink` **empty**, and `pgrep agy`'s
+  three pids resolve to `…-pricebook`, `…-sixty`, `…/grs-antig` — all siblings.
+- ⚠️ **The loud drift detector fired TWICE** (251), both times from `cd app && php artisan doctor`, the only
+  accepted artisan form here, and the reset was issued in its own call each time. **Per call, never per
+  tick** (285) — and a tick that has already reset once is exactly the tick that feels no need to reset again.
+- ⚠️ **The `push:` line arms a capability; only a NUMBERED ITEM spends it** (252, with 210 as the malformed
+  converse — two opposite failure modes, both silent, neither catchable by reading the header). This seat
+  pushed `5237a2ef` by explicit ref itself, which needs no coder and costs one command.
+- ⚠️ `git log --format= --name-only … | sort -u | grep -v -E '…' | grep -v '^$'` — the **second** `grep -v`
+  in a pipe is refused (213). Drop it; blank lines sort to the top and are read past.
