@@ -6364,6 +6364,78 @@ Watch for: <the trap that applies, by name>
   wave. Live list `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **11** rows at tick 271,
   membership unchanged since tick 267; `app/app/Modules/` → **1**, which is the litter and must read
   **0** after wave 148; stub pile across the thirteen **10**. Re-run all three; never inherit them.
+- ⚠️⚠️ **When this lane is 0 AHEAD of `origin/main`, `merge=ours` protects NOTHING — the merge base IS
+  our head, so every per-track file is taken from main on git's trivial fast-path with no conflict, no
+  driver and no output.** Measured at tick 272: `git merge-base HEAD origin/main` returned **HEAD
+  itself**, `git rev-list --left-right --count origin/main...HEAD` was `1394  0`, and **all eight**
+  `.gitattributes` `merge=ours` paths differed from main — `CLAUDE.md` by 7129 lines,
+  `bin/supervise.sh` by 559, `.agents/state/JOURNAL.md` by 155 (ours 911 lines to `2026-09-09T03:32`,
+  main's **778** to `2026-09-06T23:16` — **not a superset**, so a take destroys waves 120–147b of an
+  append-only ledger), `app/phpunit.xml` by the database pin. Tick 199 already records that a
+  `merge=ours` driver runs *only when both sides changed the file*; what tick 272 adds is the
+  **condition that makes that true of every file at once** — and it is the normal state of a lane
+  Track 1 has just merged. ⛔ **Before any merge, run `git rev-list --left-right --count
+  origin/main...HEAD`: an ahead-count of 0 means the per-track restore is the whole wave and
+  `.gitattributes` is decorative.** ⭐ The three-deep belt is on record and the middle link names the
+  incident: `bin/supervise.sh:97-102` says *"A merge of origin/main put `goaiez_antig_test` — TRACK
+  1's — back on this checkout on 2026-09-05, and a suite run from here wiped Track 1's schema … 32
+  spurious errors"*, and it points at **`.agents/supervisor/pin-check.sh`, gitignored and therefore
+  surviving a merge that overwrites `supervise.sh` itself**. Restore `phpunit.xml`; restore
+  `supervise.sh`, whose `OWN_TEST_DB` catches a missed `phpunit.xml`; `pin-check.sh` catches a missed
+  `supervise.sh`. ⛔ And **commit this column's `CLAUDE.md` BEFORE dispatching a merge wave** — rule 10
+  has it edited uncommitted, and `git show HEAD:CLAUDE.md > CLAUDE.md` restores whatever was last
+  committed, so an uncommitted tick block is destroyed by its own restore instruction. That is tick
+  271's blanket-revert casualty arriving through the merge instead of through a mutation.
+- ⚠️⚠️ **`BoundaryStage`'s cross-module check is FIXED as of main's `@boundary-fix-2026-09-08` — tick
+  194's "it has never run" is RETIRED, and the lane inherits eleven real violations the day it
+  merges.** The owner's fix drops the impossible `^app/` anchor **and** strips the directory's hyphen
+  so `X-102` compares against the namespace `X102`; `imports()` now yields `[module, kind]` and
+  **exempts `Events`, `Actions`, `Domain`** — the seams the rule's own comment names — flagging
+  `Models` and bare imports. Its comment: *"Measured 2026-09-07: 81 cross-module `use` statements
+  existed and the stage reported 0. It was reported as a DEAD check and ruled for removal; **it was
+  BROKEN**."* ⭐ It **ratifies every seam ruling this lane made** (ticks 209/217/219/221; waves 98,
+  102, 110, 147b): an `Events\` import is the compliance, so the listener shape is correct by
+  construction. ⚠️ And it makes eleven pre-existing `Models` imports inside the thirteen visible —
+  `X-01` × 6 and `X-102` × 1 on `X121\Models\Person`, `C-Sms` × 2 on `X204\Models\Suppression`, `X-66`
+  × 2 on `X188\Models\{NumberAssignment,NumberPool}`. ⛔ **None is a merge item and none is removed by
+  deleting an import**: the remedy the stage names is *"a projection fed by events"*, a build, and two
+  counterparties (`X-121`, `X-204`) are outside the thirteen. A `boundary` rise here is the honest
+  direction with a checker that started working as its cause (waves 84/85 — grade a delta by the diff
+  that caused it, never by its sign). Filed as `TRACK 1 ACTION 2` at tick 272.
+- ⚠️ **The tick-149 reading of `.claude/settings.json` is STALE — re-measure the diff before citing
+  it.** That note says the only difference is that sixty allows three grants main lacks (`ps -p`,
+  `ps -o`, `kill -0`). Measured at tick 272, main's copy **also** moves
+  `Edit(bin/state.py)`/`Write(bin/state.py)` from `deny` into `allow` and adds
+  `Edit(//home/goaiez/agents/coder-bin/git)` — `state.py` **owns** `BUILD-STATE.json` (a hand edit
+  there is a standing `BLOCK`) and `coder-bin/git` is the **shared cross-lane coder guard**. Taking
+  main's copy would grant this column two powers its own contract forbids. ⭐ The one thing genuinely
+  lost by restoring ours is main's `hooks.PreToolUse` wiring of `.claude/hooks/no-piped-gate-tool.py`
+  — a script `git ls-files .claude/` shows is **tracked and byte-identical on both sides**, i.e.
+  present here and unwired. `settings.json` is the owner's file: this column may commit it and not
+  edit it (tick 199), so wiring it is a `TRACK 1 ACTION`, never a fix of mine.
+- ⚠️ **A merge instruction can name a path the tree does not have — `ls -d` it even when the owner
+  wrote it.** The 2026-09-09 procedure says *adopt main's `app/app/Doctor/**` and `.claude/hooks/**`
+  whole*; `git diff --name-status HEAD origin/main -- .claude/` is **`M .claude/settings.json` and
+  nothing else**, so there is no `.claude/hooks` change to adopt and all four of the owner's "checker/
+  hook files" are under `app/app/Doctor`. The `.agents/plan/` shape with an **owner ruling** as the
+  container (after tick 158's missing directory, tick 190's absent log section and tick 239's `sed`
+  range) — it cost nothing only because the answer was zero.
+- **Backlog at tick 272 — wave 148 is the `origin/main` merge and nothing else; wave 149 is tick
+  271's payload proof.** RULED by the owner (2026-09-09 09:02) and applied: conditions (1) *more than
+  100 behind* — **1394** — and (2) *main changed `app/app/Doctor`* — four files, all sealed owner
+  edits with fresh `seals.json` digests — both hold, so the merge goes at the START of a wave and
+  never mid-slice. Dispatched with **`--allow-merge`**; `--allow-harness` stays closed (tick 215).
+  ⛔ The wave writes **no production code, no test and no assertion**: it merges, restores the eight
+  per-track paths, adopts `app/app/Doctor/**` + `seals.json` + `JourneyHarness.php` whole, gates, and
+  pushes. Pre-merge baseline for the owner's before/after: **behind 1394 · ahead 0** at `2e049b9a`,
+  suite `tests 1951 · passed 1948 · assertions 8422 · failed 1 · errors 2 · duration_ms 111211`, the
+  standing three by **identity**. ⛔ Post-merge the suite grows by main's tests, so **counts prove
+  nothing and failure IDENTITY is the proof** (tick 216). **Wave 149** is the words-cross assertion
+  and its value-family mutation, the listener's concrete type and its dead `property_exists`, and the
+  `.mutation.patch` litter — carried entire, not cancelled. Live list
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **11** rows at tick 272; `app/app/Modules/` →
+  **1**, the litter, which must read **0**; stub pile across the thirteen **10**. Re-run all three
+  after the merge; never inherit them.
 
 ## Style
 
