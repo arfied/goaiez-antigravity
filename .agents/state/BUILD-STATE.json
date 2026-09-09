@@ -2083,6 +2083,10 @@
   {
    "at": "2026-09-08T23:45:25",
    "note": "boundary Established the payload assertion using value family mutation, confirming words cross module boundary to C-Agent, and mutation 1 is spent."
+  },
+  {
+   "at": "2026-09-09T00:05:06",
+   "note": "boundary ChatDoorTest BUILD PROPOSALS: 1) Removed closed id G5-37 from the conversation id gap and removed the unasked 'Track 1 must map' obligation, replacing it with the approved 'required but not asked for' language. 2) The rows for unconditional C-Agent calls and defaulting turn number to 1 correctly lack ids because none of X-102's six capabilities cover them."
   }
  ]
 }
