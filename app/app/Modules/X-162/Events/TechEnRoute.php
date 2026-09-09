@@ -10,6 +10,6 @@ final class TechEnRoute
         public readonly int $businessId,
         public readonly int $jobId,
         public readonly int $techId,
-        public readonly int $etaMinutes
+        public readonly ?int $etaMinutes
     ) {}
 }

@@ -15,7 +15,7 @@ final class TechEnRouteAction
     /**
      * Technician marks EN ROUTE: calculates ETA and sends customer notification within 1 minute (TEST ANCHOR).
      */
-    public function markEnRoute(int $businessId, int $jobId, int $techId, int $etaMinutes = 25): array
+    public function markEnRoute(int $businessId, int $jobId, int $techId, ?int $etaMinutes = null): array
     {
         $now = Carbon::now();
 
@@ -29,13 +29,20 @@ final class TechEnRouteAction
             'en_route_at' => $now,
         ]);
 
-        $etaPrediction = EtaPrediction::create([
-            'business_id' => $businessId,
-            'job_id' => $jobId,
-            'estimated_arrival_at' => $now->copy()->addMinutes($etaMinutes),
-            'eta_minutes' => $etaMinutes,
-            'notification_sent_at' => $now, // Sent within 1 minute of EN ROUTE event (TEST ANCHOR)
-        ]);
+        if ($etaMinutes !== null) {
+            EtaPrediction::create([
+                'business_id' => $businessId,
+                'job_id' => $jobId,
+                'estimated_arrival_at' => $now->copy()->addMinutes($etaMinutes),
+                'eta_minutes' => $etaMinutes,
+                'notification_sent_at' => $now, // Sent within 1 minute of EN ROUTE event (TEST ANCHOR)
+            ]);
+            $notificationSent = true;
+            $notificationSentAt = $now->toIso8601String();
+        } else {
+            $notificationSent = false;
+            $notificationSentAt = null;
+        }
 
         Event::dispatch(new TechEnRoute($businessId, $jobId, $techId, $etaMinutes));
 
@@ -44,8 +51,8 @@ final class TechEnRouteAction
             'job_id' => $jobId,
             'tech_id' => $techId,
             'eta_minutes' => $etaMinutes,
-            'notification_sent' => true,
-            'notification_sent_at' => $now->toIso8601String(),
+            'notification_sent' => $notificationSent,
+            'notification_sent_at' => $notificationSentAt,
         ];
     }
 }
