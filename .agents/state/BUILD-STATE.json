@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-09T17:10:06",
+ "updated": "2026-09-09T17:38:39",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -2445,6 +2445,12 @@
    "module": "X-155",
    "chose": "X-155 exposes FormReadAction as its registered read surface for form definitions, and X-157 EdgeDeployAction calls firstIdForBusiness instead of importing X155 Models FormDefinition directly. BoundaryStage exempts imports whose kind is Events, Actions or Domain and its own fix text names the registered action as the remedy, so this closes the last cross-module model read whose target module this lane also owns and boundary falls 52 to 51. Nothing changes behaviour: the call site was already scoped by business id, so this is a boundary closure and not a tenancy fix. The query moves verbatim including the ordering by id, which is determinism and not optional, because form definitions carry no active column so the lowest id is the only available policy for which form a published site posts to and dropping the ordering would make the published form target vary across identical inputs with nothing in this lane able to catch it. The action returns the id rather than the model because the one caller reads exactly the id. REFUSED: an exclusion in the sealed BoundaryStage; bundling PageVersion, whose write at line 43 is the ssl installed derivation that is J11 own element; bundling the X108 and X163 imports, which are other lanes and are a filing not a build; a state.py unresolved, which would name a dependency this lane holds; editing a generated manifest to clear a violation never raised; and a new capability id literal.",
    "at": "2026-09-09T17:10:06",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-103",
+   "chose": "X-103 exposes PageVersionAction as its registered surface for page versions, and X-157 EdgeDeployAction calls forCommit and recordSslInstalled instead of importing X103 Models PageVersion directly. BoundaryStage iterates use statements and exempts the Events, Actions and Domain kinds, so one import is one violation however many call sites it serves: the read at line 153 and the write at line 43 had to move together, because closing either alone leaves the import and the count does not fall, and a boundary refactor whose falsifier is the checker would then have no falsifier at all. Both queries move verbatim. The tenancy question was decided separately and against scoping: the commit id is a sixteen character random token minted in SiteEngine publish, so a cross tenant collision is not producible; page versions carries forced row level security with a with check clause, so a falsifier removing an application level scope on that table cannot go red; and a test asserting that another business version is not read would pass before the fix too. That is recorded rather than built, so the day the grants question is answered a one line wave can scope both sites with the argument already measured. REFUSED: emitting an event instead of invoking the registered action, which moves a write that lives inside the deploy transaction and on which the site journey depends into a listener with its own ordering semantics; splitting the read and the write into two waves, which is what the import count makes impossible; fully qualifying the model inline to dodge the use scan, which is a lint dodge that leaves the seam where it was; an exclusion in the sealed BoundaryStage; a new capability id literal; and relaxing any assertion that reddens.",
+   "at": "2026-09-09T17:38:39",
    "ruling": "R245"
   }
  ],
