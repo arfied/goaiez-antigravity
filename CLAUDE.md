@@ -3537,3 +3537,94 @@ is a candidate, subject to its own discriminators (reachability, the anchor, dec
 ⭐ Two structural facts worth keeping from the same sweep: **15 of the 20 components carry `#[Locked]`** on
 their stored tenant id, and ⭐ **X-163's three are safe by construction** — they store no tenant id at all
 and every method re-derives `Tenancy::id()`, which is a stronger position than locking one.
+
+## ⭐⭐ Trap added 2026-09-09 08:2x — MUTATE THE EMISSION AND READ THE WHOLE SUITE: the only instrument this lane has that finds a consumer bound by BEHAVIOUR
+
+PB-153's W3 (`->where('business_id', 0)` on `JobStateAction`'s `person_id` read) reddened its briefed
+regression arm **and** `TwelveJourneysTest::a_completed_job_asks_for_a_review_once_inside_the_cadence` —
+*"A completed job must ask ONCE … Failed asserting that actual size 0 matches expected size 1."*
+
+⭐⭐ **No search this lane has ever run could have found that consumer.** The journey asserts a **count of
+review requests**. It never names `personId`, never names `JobCompleted`, and lives in a file this lane does
+not own. Every consumer-finding method on record here — grep the event class, grep `Listeners/`, read
+`ModuleServiceProvider` — is a **name** search, and this consumer is bound to the value by **behaviour**.
+
+⭐ **The instrument: to enumerate the true consumers of a value your module emits, mutate the emission and
+read the WHOLE suite's delta.** The suite enumerates them for you, across lane boundaries, with no grep and
+no ownership knowledge.
+
+⚠️ It is the **positive** form of PB-152's finding that a no-consumer clearance has no expiry date this lane
+controls — and the first method here that can **falsify** such a clearance rather than merely distrust it.
+⭐ Note also what it retro-validated: PB-153's fix could have been wrong in the **over-reaching** direction
+(filtering so hard no legitimate `personId` survives), and **a journey in another lane would have caught
+it.** The regression arm was not the only guard.
+
+⛔ **The cost bounds it.** Each mutation is a full suite run. ⛔ Do not turn it into a sweep of every emitted
+value — that is 32 suite runs and the documented slide from defects to leads. Use it on the value a wave is
+already touching; the static name-based map (PB-154) is the cheap first pass, and ⭐ **its own limit is that
+it cannot see this class of consumer at all** — say so whenever the map is quoted.
+
+## ⛔⛔ Trap added 2026-09-09 08:2x — a brief that pre-declares the VALUE of a field it asks the report to MEASURE has stopped asking a question
+
+PB-153's brief specified the deletion ledger as *"Expected: **exactly one**, the `->value('person_id')` line
+replaced by the filtered form."* ⛔ **That deletion was impossible.** The fix inserts
+`->where('business_id', $businessId)` **above** the existing filter; `->value('person_id')` is untouched;
+`git show --numstat` reads `1  0`. The measured answer is **ZERO `-` lines** across the whole range.
+
+**And `MINUS LINES` echoed the brief's sentence back** — *"exactly one, the `->value('person_id')` line
+replaced by the filtered form, plus empty line removals by pint"* — when the pint commit is `3  0` and
+removed nothing either. **Both halves of the field are fiction, and both fictions are the reviewer's.**
+
+⭐⭐ **The third and sharpest member of a family already recorded twice.** PB-125's insertion reconciliation
+compares a diff to the brief; PB-129 found that a reconciliation against your own pre-declaration cannot
+falsify the pre-declaration; **this one shows a pre-declaration can be flatly IMPOSSIBLE and still be
+reported as observed.** The field's entire job is to catch a weakened assertion, and on this wave it
+reported a thing that could not have occurred.
+
+⭐ **Fix, standing: pre-declare the SHAPE of the answer and the COMMAND that produces it, never the value.**
+`MINUS LINES` is the PB-126 deletion ledger by shape —
+`git log -p <range> | grep '^-' | grep -v '^---' | sort | uniq -c` — pasted as literal output. ⭐ An
+expected count may be stated as a **STOP condition** (*"if it is not zero, stop and report"*), which is
+falsifiable and puts the burden on measurement; ⛔ never as the field's content.
+
+⚠️ Harmless only because the reviewer verified zero `-` lines independently. ⛔ Not the coder's shortfall —
+**twenty-seventh consecutive wave whose only shortfall traced to the brief.**
+
+## ⚠️ Trap added 2026-09-09 08:2x — `GATE RUNS` got its COUNT right and its PID wrong, one wave after the count was fixed
+
+PB-152's note made `GATE RUNS` name every log and its gate pid. PB-153 named **one** gate and **one** log,
+correctly — and gave pid `2284920`, where `gate-runs.tsv` records the pricebook gate as pid **`2412000`**,
+`07:58:57 → 08:05:45`. ⭐ `2284920` **cannot** be a gate pid: it falls between `2262140` (07:24) and
+`2301801` (07:30), a process that had exited half an hour before the gate started.
+
+⭐ **Only the tsv knows, and only by reading pricebook rows BY PID** — which is why the reconciliation is
+always against the tsv and never against the report's own field. ⭐ Standing: **the pid is COPIED from the
+tsv row, not recalled** — the same correction PB-146 made to `RAW` and PB-152 made to `file:line` clauses.
+⚠️ **Fourth time this lane has fixed a provenance rule for one field and not carried it to the next.**
+
+## ⛔⛔ Ruling — 2026-09-09 08:2x — three sibling unvalidated-FK rows, two RECORDED and one FIXED, and the discriminator is NOT "is the key validated"
+
+The FK matrix's three `UNVALIDATED` rows are now all ruled, and the rule that separates them is the durable
+part: ⭐⭐ **does the unvalidated value LEAVE THE TENANT?**
+
+- **Row 8 — FIXED (PB-153).** A cross-tenant **READ** whose result was handed to another lane's outbound
+  customer contact. A defect regardless of `capabilities.php`; this file's own field note puts RLS beneath
+  the application scope. ⛔ **Never reach for PB-128's declared/undeclared rule to defer an isolation bug.**
+- **Rows 5 and 17 — RECORDED.** A **WRITE** of a value only ever echoed back, as an integer, to the tenant
+  that typed it. ⛔ **Never promote a data-integrity gap to an isolation bug because it shares a shape.**
+
+⭐ **Row 17's consequence is now MEASURED** — the boundary PB-152 correctly refused to guess at. Four
+measurements, so nobody re-derives them: (1) **`MembershipStarted` has ZERO consumers** — the only
+references in `app/app` are the dispatch site and the class file, so PB-153's escalation is absent;
+(2) `memberships.person_id`'s only readers are `members.blade.php:26`, which renders the **raw integer**
+with no join or name resolution, and `PrioritySchedulingAction:17,22`, which filters on a value supplied by
+its own caller — **nothing resolves a person, so nothing leaks**; (3) `people` is **X-121's** and *is*
+tenant-scoped (`2026_08_30_000001_create_x121_noun_tables.php:30`), so the validating seam is X-121's under
+**ruling 8**, exactly as `work_orders` was for row 5; (4) `X-165/capabilities.php` declares nothing about
+validating a membership's person — **undeclared**.
+
+⛔ **And row 17 gets NO pinned absence either.** PB-128 ruling 3 makes a pin the deliverable when the
+absence is **permanent**; here the declared end state is validated, so a pin is a test a later wave must
+**delete** — PB-132 already ruled exactly this way on the X-168 window, and this file distrusts a deleted
+assertion more than a missing one. **RECORD, and build nothing.** ⭐ Recorded with both halves so the next
+tick that re-finds the row gets the ruling, not the finding.
