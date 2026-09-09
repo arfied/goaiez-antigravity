@@ -145,4 +145,24 @@ class ConnectionMappingScreenTest extends TestCase
         Livewire::test(ConnectionMappingView::class)
             ->assertSeeInOrder(['Revenue', 'Materials', 'Subcontractors']);
     }
+
+    public function test_a_mapping_field_longer_than_the_ledger_column_is_refused_and_nothing_is_saved(): void
+    {
+        $bizId = self::provisionTenant()->id;
+        Tenancy::set($bizId);
+
+        $conn = app(AccountingConnectAction::class)->connect($bizId, 'quickbooks', 'realm_qb_long', 'oauth_token_fixture');
+
+        $tooLong = str_repeat('a', 256);
+
+        Livewire::test(ConnectionMappingView::class)
+            ->set("map.{$conn->id}.category", $tooLong)
+            ->set("map.{$conn->id}.glId", 'gl_1')
+            ->set("map.{$conn->id}.glName", 'Ledger Income')
+            ->call('mapAccount', $conn->id)
+            ->assertSee('255 characters or fewer')
+            ->assertDontSee('is recorded against');
+
+        $this->assertSame(0, AccountMapping::where('business_id', $bizId)->count());
+    }
 }

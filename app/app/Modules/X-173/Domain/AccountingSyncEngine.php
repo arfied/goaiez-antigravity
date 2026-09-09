@@ -13,6 +13,8 @@ final class AccountingSyncEngine
 {
     private const CONFIDENCE_THRESHOLD = 0.85;
 
+    private const MAX_LEDGER_FIELD = 255;
+
     /**
      * Returns the caller's suggested category when the caller's confidence clears the threshold.
      * Category below confidence threshold posts to 'uncategorised' with review flag, NEVER to a guessed code (TEST ANCHOR & G1-03).
@@ -49,6 +51,13 @@ final class AccountingSyncEngine
             ];
         }
 
+        if (mb_strlen($resolutionAccount) > self::MAX_LEDGER_FIELD) {
+            return [
+                'status' => 'refused',
+                'message' => sprintf('The account name for %s is longer than 255 characters, which is more than the ledger column can hold. Nothing changed.', $ref),
+            ];
+        }
+
         if ($conflict->status === 'resolved') {
             return [
                 'status' => 'refused',
@@ -80,6 +89,13 @@ final class AccountingSyncEngine
             return [
                 'status' => 'refused',
                 'message' => 'A mapping needs the category, the ledger account id and its name; nothing was saved.',
+            ];
+        }
+
+        if (mb_strlen($internalCategory) > self::MAX_LEDGER_FIELD || mb_strlen($remoteGlAccountId) > self::MAX_LEDGER_FIELD || mb_strlen($remoteGlAccountName) > self::MAX_LEDGER_FIELD) {
+            return [
+                'status' => 'refused',
+                'message' => 'A mapping needs the category, the ledger account id and its name to be 255 characters or fewer; nothing was saved.',
             ];
         }
 
