@@ -4779,3 +4779,60 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     untracked file is ruling 74's error. ⚠️ Distinguish from the three prior attributions — ruling 42/77's
     concurrency (`42501`, `relation … does not exist`), ruling 67/74's kill (`rc ≥ 124`), ruling 85's
     vendor refusal — by the tell: **the failure message renders content that is not in the sha.**
+203. **Ruling 199's 28-state empty-state population is CLOSED, and the last two took DIFFERENT
+    dependency clauses (RULED by the lane supervisor 2026-09-08 19:0x, briefed as MONEY-131; PASSED and
+    pushed at `5856fc26`).** The final two members were `X-211 collections-package-preview.blade.php:42`
+    and `X-117 checkout-block.blade.php:45` — the lane's **only** bodyless empty state. Neither was
+    false, so this was ruling 76's PASS-WITH-NOTES grade and the fix was 50(a)'s *name the dependency*
+    half alone. ⚠️ **The load-bearing half is that the two clauses are not the same clause.** X-211 takes
+    the lane's existing invoice clause byte-identical (ruling 198) plus *"so no invoice can go overdue
+    yet"*, because `$candidates` is `InvoiceReader::openOverdueForBusiness()` and nothing raises an
+    invoice. X-117 takes a **catalogue** clause — *"Nothing in this checkout writes the catalogue a cart
+    is built from, so no order can be placed yet"* — because its storefront **door works** and only the
+    catalogue is missing: `grep -rn "Sellable::create\|::firstOrCreate\|::updateOrCreate\|new Sellable"
+    app/app app/database` returns **one** line, `EvidenceCheckoutCommand.php:40`, and `buildCart()`
+    `findOrFail`s a `Sellable`, so no catalogue ⇒ no cart ⇒ no order. **Copying the invoice clause onto
+    X-117 would have been false**, which is ruling 123's *one fact, one wording per module* meeting
+    ruling 198's *a dictated dependency clause has dictated whether the screen names the whole wait*.
+    ⭐ **This closes the last of the owner-facing STRING sweeps.** Prose, pills, buttons, headings,
+    word-bearing attributes, `$error`, `$success`, empty states, lists, counts and dates are all measured
+    and struck. ⛔ Not to be re-read; the next wave is a new population.
+204. **A list an owner reads has a defined ORDER, and ruling 194 asked the second question without ever
+    asking the first (RULED by the lane supervisor 2026-09-08 19:3x, briefed as MONEY-132).** Ruling 194
+    asked of a rendered list *"is this the whole list, and if not, which end was thrown away?"* and swept
+    the three `limit(` lines. The prior question — **is there an order at all?** — had never been asked.
+    Swept now: the lane's **42 `->get()` calls** in `Ui/` yield **three** that feed a rendered `@foreach`
+    and carry **no `ORDER BY`** — `X-120/Ui/CardScreen.php:84`, `X-198/Ui/ConnectCard.php:67`,
+    `X-173/Ui/ConnectionMappingView.php:64`. Postgres returns an unordered read in heap order and an
+    `UPDATE` moves a row within it, so the list can reshuffle with nothing added and nothing removed —
+    and **the rewrite is in each screen's own hand**: `AccountingSyncEngine::mapAccount():94` is
+    `AccountMapping::updateOrCreate`, `CardScreen::makeDefault()` → `rotateDefault()` rewrites
+    `is_default`, and the `Apply` button rewrites `merchant_status`. ⚠️ **Two of the three contradict a
+    sibling query, which is how we know the lane already knew better** — `X-198/Ui/SameAccount.php:64`
+    orders the **same table in the same module** by `id`, and `ConnectionMappingView.php:63` orders by
+    `id` on the line **directly above** the one that does not. Ruling 98's self-contradiction tell, at one
+    line's distance. **RULED: `->orderBy('id')` on all three**, the clause both siblings already use.
+    ⛔ Not `is_default` first on the card list — a UX choice no ruling asks for, and it would make
+    `makeDefault` visibly jump a row, which is a change in behaviour rather than the removal of a
+    nondeterminism. ⛔ Not a window or a paginator: ruling 194 already measured that cutting these lists
+    would be a defect and the kit has no paginator (Track 2's, ruling 21). ⛔ Not a writer for any of the
+    three tables (ruling 59). ⚠️ **All three tables are empty for every real tenant today** (rulings 119,
+    93/129, 73a) and this is still a **fix, not a ruling-96 recording**, because each list *is* rendered
+    and *is* gated by an existing test, so a mutation can redden it — ruling 130's precedent, where a
+    branch a test drives is fixed rather than recorded. ⭐⭐ **The mutation for an ordering clause is a
+    REVERSAL, never a deletion.** Deleting `->orderBy('id')` leaves Postgres *free* to return heap order,
+    which will often still match insertion order, so the test can stay **green with the mutation
+    applied** — ruling 82's collateral, and a proof that cannot fail is not a proof. `->orderByDesc('id')`
+    reverses deterministically and proves the assertion is load-bearing on the ordering clause itself.
+    ⚠️ Blast radius measured with interior fragments (rulings 46, 86): the lane has **three**
+    `assertSeeInOrder` call sites (`X-199/InvoicesScreenTest:66`, `C-Billing/CreditsScreenTest:83,:86`)
+    and **none** touches these three lists, so all three items **add** methods (rulings 68, 70).
+    ⚠️ **Correction to ruling 194, recorded rather than dropped:** it stated *"no test in the lane uses
+    `assertSeeInOrder`"*. Three do. Its conclusion — zero blast radius for the lists it was fixing — was
+    right, but the reason was wrong, which is ruling 190(b)'s shape: **the right answer for the wrong
+    reason is the one a later sweep inherits and is defeated by.**
+    ⚠️ Measured in the same pass and **STRUCK with its measurement** (rulings 95, 100): **the `Ui/`
+    docblock sweep is empty.** The lane's 24 `Ui/` components carry **nine** docblock prose lines in
+    **two** trait files — `C-Billing/Ui/ReadsAgreedMonthly.php` (whose 3443/3444 citations ruling 124
+    measured are correctly placed, a docblock being the right home for a citation) and
+    `C-Billing/Ui/LabelsMeters.php` (ruling 90's own work) — and both are honest. ⛔ Not to be re-raised.
