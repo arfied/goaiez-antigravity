@@ -1625,7 +1625,33 @@ dispatched — executed by the supervisor itself**, `bin/supervise.sh` being thi
 ⛔ **Not a wave and no count moved** — §5 identical in all eight across `.gateT241.txt` and
 `.gateT241b.txt`. It sets no `fail=1`: a trigger, never a verdict.
 
-⛔ **The backlog is EMPTY at tick 247 and this tick writes a HOLD — the SIXTH consecutive tick with no
+⛔ **The backlog is EMPTY at tick 248 and this tick writes a HOLD — the SEVENTH consecutive tick with
+no instrument change and the THIRD with NO NEW LETTERED RULING.** ⭐ **`main` DID NOT MOVE** — pin
+**`ba671263`**, identical to tick 247's — so `TRACK 1 ACTION 1`'s absolute grep and the **`N142`**
+note ceiling are unchanged **by identity rather than by carry**; lane **25 ahead / 14 behind**
+first-parent (**25 / 105** by ancestor count, `RULING EK`), the ahead-count moving 24 → 25 on **our
+own tick-247 commit** and nothing else; merge base `7a75f289` unmoved; ours-since-base in `app/` is
+`app/phpunit.xml` alone, so this lane still authors no `app/**` byte and `boundary 55` ·
+`contract 85` · `capability 207` · `anchor 128` · `schema 16` remain **main's numbers** (`RULING FO`).
+⛔ **The take is OPEN, UNNECESSARY and REFUSED for an ELEVENTH tick** — `DD`'s two-row re-check
+prints nothing, the `Doctor`/`JourneyHarness` diff against our base is **empty**, so this lane's
+checker **is** main's current checker byte-identical, `RULING EQ`'s void condition is not reached,
+and a take could refresh nothing at a cost of **105** ancestor commits. ⭐ **The admission census was
+NOT re-run and the reason is a measurement taken first**: `git diff --stat 10e804ea HEAD -- app/` is
+**empty**, corroborated by `capability` reading **207** unchanged. §1 read from the count line per
+`FY` at **77**, corroborated independently, supervisor directory contributing **0** — `FY`'s census
+now spans **TEN** consecutive gates (`.gateT239`…`.gateT248`). §3 == §5 for a **twelfth** tick and
+still a LEDGER; §5's own arithmetic control holds (`494`). `wc -l bin/supervise.sh` **416** and drift
+`4 0`, both re-measured per `FX(ii)`; `bar` sections **14 / 13** on the same extraction, membership
+unchanged (`1a` · `1b` · `2d` **NOT adoptable**, `RULING FS`; `2f` · `2g` offered upstream).
+§2e/§2f/§2g printed `HEAD is not a merge` for a **ninth** gate. **TRACK 1 ACTION 10** re-measured at
+the pin: **14** first-parent merges since `a5042da2`, **0** naming `track/stages`, `18bbde18` still
+not an ancestor. ⭐ **A precision recorded and deliberately NOT lettered** (`FW` bars elevating a
+clean audit; ticks 244/246 are the precedent): tick 248 is the **second** clean backward audit and,
+at an *unmoved* pin, the stronger form — every figure in tick 247's block reproduces, and the only
+one that moved is the ahead-count, on our own commit.
+
+⛔ **The backlog was EMPTY at tick 247 and that tick wrote a HOLD — the SIXTH consecutive tick with no
 instrument change and the SECOND with NO NEW LETTERED RULING.** ⭐ **`main` MOVED**: pin `e8d3d155` →
 **`ba671263`**, **+1 first-parent** (`track/money` wave 186), **not ours**; lane **24 ahead / 14
 behind** first-parent (**24 / 105** by ancestor count, `RULING EK`), the ahead-count moving 23 → 24 on
