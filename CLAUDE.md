@@ -5484,6 +5484,91 @@ Watch for: <the trap that applies, by name>
   corrected **forward**, naming that row by its timestamp (tick 242). Live list
   `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **7** rows at tick 260, membership unchanged since tick
   251; stub pile across the thirteen **10**. Re-run both; never inherit them.
+- ⚠️⚠️ **The tick-177 rule runs in the REFUSING direction too — read the source behind a `fix:` before
+  turning a route down, not only before briefing one.** That rule reads *a doctor `fix:` line is a
+  suggestion from a checker that cannot see the law … especially when following it would WIDEN
+  something.* Wave 140b wired X-102 → C-Agent with
+  `app('App\Modules\CAgent\Actions\AgentAnswerAction')->handle(...)` — the class named by **string
+  literal** — and its own answer 7 disclosed that this *"completely bypasses the boundary check"*. I had
+  it drafted as `green by construction` applied to `BoundaryStage`: code shaped to be invisible to a
+  checker, with the docblock recording the evasion as the design, and three measurements supported it —
+  `grep -rn "app('App\\Modules…"` over `app/app` returns **one hit, its own**, and both existing callers
+  of that same action use `use` + `app(AgentAnswerAction::class)` (`app/app/Jobs/AnswerAgentTurnJob.php:334`,
+  `X163Test.php:232`). The fourth measurement reversed all three: **`BoundaryStage.php:82`'s own `fix:` is
+  `"emit an event, or invoke {$imported}'s registered action — never \`use\`"`** — a registered action,
+  invoked, without a `use` — and `grep -rn "class ActionRegistry" app/app` is **empty** with `agent.answer`
+  appearing only in `C-Agent/manifest.php:32`, so **no registry exists and naming the class is the only
+  mechanism there is.** ⛔ RULED at tick 261: the string literal stands. Keep the residual fact and never
+  let it grow into a permission — it is a runtime-only dependency on a public unauthenticated path, so a
+  rename breaks it at request time and no gate would say so. Third consecutive tick on this seam where a
+  conclusion of mine was wrong and the conclusion-free hand-over (tick 214, now **7-for-7**) is what saved
+  it: tick 259 a false presence, tick 260 a licensed false absence, tick 261 a refusal I nearly ruled.
+- ⚠️⚠️ **A mutation can be clean, radius 1 and on its own terms, and still prove the WRONG PROPOSITION —
+  ask what an assertion can falsify, never whether it can fail.** Wave 140b's seam asserted
+  `assertEquals(1, AgentTurn::where('business_id', $biz->id)->count())` and mutated by commenting the wire
+  out: `passed −1 · failed +1`, `assertions` correctly **flat** (the target is its test's last assertion,
+  tick 249), message on its own terms. It proves *the call happens*. Measured against
+  `AgentAnswerAction::handle()`, the final `else` writes an `AgentTurn` for **any** string, so the
+  assertion is green whether the visitor's words cross or `''` does — and *the words cross* is the exact
+  proposition the `19:43:31` row denied, the one the wave's own accounting overturned, and the one `G5-31`
+  left the backlog on. ⭐ The tell is free and needs no artifact: **name the assertion's proposition and
+  ask which inputs make it false.** This is the wave-86 rung with the *subject* wrong rather than the
+  mutation, and it is why a proof of the wrong thing reads exactly like a proof.
+- ⚠️ **A claim about ANOTHER LANE'S future is the tick-250 defect with the worst possible subject.**
+  `CAgentTest.php:171` ends *"Track 1 will update manifest."* Nobody had asked Track 1 for anything; the
+  coder cannot file a cross-lane item and this column had not. A permanent docblock therefore asserts an
+  accepted commitment by a lane that has never seen it. **Write it as what was ASKED, and file the
+  `TRACK 1 ACTION` in the same tick** — otherwise the sentence is only true if another lane happens to
+  agree.
+- ⚠️ **A wave that changes how a value is DELIVERED owes a pass over every durable sentence describing the
+  old delivery — the falsifier is rarely the sentence's author.** `X-102/Models/ChatTurn.php:9-12` reads
+  *"READER: C-Agent (via AgentAnswerAction) will read this table … (readers unbuilt)"*, written by wave 136
+  and true when written. Wave 140b's wire hands `AgentAnswerAction` the message **directly**, so C-Agent
+  does not read `chat_turns` and now never needs to — and a future tick greps for a reader that will never
+  exist. `git log -S` on the value's name is the sweep; the cost of skipping it is the writerless-value
+  trap arriving through a *comment* instead of a column.
+- ⚠️ **`patch` absorbs a wrong hunk offset silently where `git apply` REFUSES, and that is what makes a
+  disclosed `SITE:` wrong.** Wave 140b reported `SITE: …/ChatTurnAction.php:22` against a committed file
+  reading **27**, its patch's own `@@ -19,7 +19,7 @@` off by the same 5, and **no commit between the patch
+  (20:05:47) and the file (committed 20:05:28)** — so the tick-188 offset rescue does not apply and the
+  patch was not generated by `diff` against the file it was applied to. The tell that explains it is
+  `?? …/ChatTurnAction.php.orig` in §1 of the later gate logs: `patch` fits a hunk by context and reports
+  the offset **on stderr only**. ⭐ Three site proofs survived it — §1's `M <module file>` pin (never a test
+  body), the on-its-own-terms failure, and the patch on disk — so it is a form defect and not a fabrication
+  (tick 206). **Brief `git apply` / `git apply -R` and read `SITE:` out of the committed file**; a `.orig`
+  in `scratch/` or the tree is the free tell that `patch` was used instead.
+- ⚠️ **Grade a new wire's IGNORED inputs, not only the one it passes.** Wave 140b's
+  `ChatTurnAction::handle(int, int, string $authorType, string $message)` forwards `$businessId` and
+  `$message` and nothing else. Measured: `$authorType` reaches the wire unread (harmless only because
+  `ChatTurnController:44` hardcodes `'visitor'` and nothing else calls the action — one caller from an
+  agent answering itself, the tick-256 dead-parameter shape); `$conversationId` is never passed, so
+  `AgentAnswerAction`'s **first** branch — the `HUMAN_TAKEOVER_LATCH` refusal this lane built and
+  mutation-proved at wave 110 — is **unreachable on the web-chat path**, not bypassed but unkeyed, since
+  `chat_sessions` has no conversation; and `turnNumber` is always 1 against a column with no unique index.
+  None of it is a regression and none of it was recorded anywhere. **A guard that exists and cannot be
+  reached from a new path is a finding the new path owes a sentence.**
+- **Suite baseline, measured by this column at tick 261 on tip `cce04878`, clean tree — `tests 1946 ·
+  passed 1943 · assertions 8406 · failed 1 · errors 2 · incomplete 3 · risky 1 · duration_ms 110116`,** the
+  standing three by **identity**, §1 `0 uncommitted`, §2 `none`, §2b `all parse`, §6 pint `passed` /
+  phpstan `0`, stamp `20260829-0647` = `runtime_build`. Against tick 259/260's `8405`: **`assertions +1`
+  with `tests` flat** — one assertion added to an existing method and nothing else, the only diff shape
+  that gives that pair (tick 246). Three runs, three distinct `duration_ms` (`109966 · 111892 · 110116`).
+  §7 waited on `pest.lock` and completed for the **eleventh** consecutive tick: contended, never stuck.
+- **Backlog at tick 261 — wave 141 is the payload proof and the two outrun sentences; no new production
+  surface.** RULED. The seam is built, pushed and correct; what is owed is the assertion that fails when
+  the words do **not** cross, its mutation, the three unread inputs disposed of, and the two durable
+  sentences corrected forward. ⛔ The string-literal route, the accounting, the `19:43:31` correction row
+  and mutation 1 are all **spent and not reopened** — re-briefing proven work is the wave-87 shape. The
+  assertion and the mutation are handed over as four measurements with **no shape named**, after this
+  column was corrected on this seam three ticks running. Live list
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **6** rows at tick 261, `G5-31` retired because the
+  work is done (`C-Agent G5-32 · G5-43` · `C-Mail G11-09` · `X-102 G16-21` · `X-188`'s cancellation
+  trigger · `X-66`'s wire, a `TRACK 1 ACTION`); stub pile across the thirteen **10** (`C-Agent 7 ·
+  C-Mail 1 · X-66 1 · X-194 1`). Re-run both; never inherit them. **`TRACK 1 ACTION 1` is new**: the
+  manifest has no field expressing *"this module calls that module's action"* — `ManifestReader` exposes
+  `provides · emits · consumes · ownsTable · readsTable` and `ContractStage` never inspects a call site —
+  so the seam is invisible to every checker, and `C-Agent/manifest.php:45`'s `consumes: chat.started` is
+  now permanently unimplemented because the payload arrives by call instead.
 
 ## Style
 
