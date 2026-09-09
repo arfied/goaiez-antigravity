@@ -737,6 +737,118 @@ coverage (`EV`), its value (`EZ`) or its position in the sequence (`FN`), but **
 in it**. ⛔ **And the first in the family found in a wave this seat's own brief commissioned and whose
 substance was correct**; every earlier member was found by re-measurement on a HOLD.
 
+### ⛔⛔ `RULING GG` (tick 321) — a floor can be measured correctly and be falsified by the PROCEDURE THAT SURROUNDS IT. Three of STAGES-234's floors were killed by THIS SEAT'S OWN COMMIT, made after the brief was written; and a wave's final §1 is structurally blind to whatever the reporting step creates.
+
+`RULING EZ` made it practice to **run** a floor's command before writing it. `RULING FN` fixed floors
+broken by the **wave's** internal ordering. `RULING GF` fixed a floor with no reporting verb. **All three
+were obeyed and three floors still failed, for a reason none of them covers: this seat writes the brief
+and then, minutes later, makes its own commit.**
+
+```
+BRIEF.md mtime                          2026-09-09 09:50:30
+8d3705dc chore(supervisor): tick 320    2026-09-09 09:53:47      ← 3m17s LATER
+git rev-list --count 6240383f..8d3705dc → 1
+```
+
+| floor as written | what the wave measured | why |
+| :--- | :--- | :--- |
+| `git rev-parse HEAD` → **`6240383f…`** | **`8d3705dc…`** | this seat's own tick-320 commit |
+| ahead-count → **`101  0`** | **`102  0`** | the same one commit |
+| *"`HEAD` is still the merge, so §2e/§2f/§2g **will fire again**"* | **`HEAD is not a merge`**, ×3 | the same one commit moved `HEAD` **off** the merge |
+
+⛔ **All three are one event, and it is not an accident of one tick — it happens EVERY tick.** The brief
+is written before the supervisor commits its own notes, so **any floor naming `HEAD`, an ahead/behind
+count, or whether `HEAD` is a merge is a prediction about a tree this seat is about to change**, wrong by
+exactly one commit unless the tick makes none.
+
+⭐ **The second arm, the same shape at the other end of the wave.** §1 is measured by the wave's **final**
+gate; `REPORT.md` is written after it, by construction. `generate_report.py` — a coder helper created at
+**10:31:22**, 86 seconds after the last gate closed at **10:29:56** — proves it live: the wave honestly
+reported §1 **77** and **78** was the truth (`.gateT321.txt:47`, corroborated by
+`git status --porcelain -uall`). **A §1 floor read from the wave's own final gate is unfalsifiable for
+the one class of debris the wave is most likely to produce — its own.**
+
+✅ **Standing correction, two clauses.** **(i)** A brief **never floors `HEAD`, an ahead/behind count, or
+"is `HEAD` a merge"** at a value read before this seat's own commit — it **asks for the value with a
+reporting verb and no expectation**, which is `GF(i)`'s verb rule applied to a quantity whose expectation
+cannot be known at write time. **(ii)** A **§1 figure is asked for as the LAST action of the wave, after
+`REPORT.md` is written** (`git status --porcelain -uall | grep -c '^??'`); a §1 read from the final gate
+is reported as *"§1 at gate time"* and never as *"the tree is clean"*.
+
+⭐ **Applied to itself in the tick that wrote it** (`RULING FQ`'s standard) and ⭐ **proven on the exact
+event it is named for** (`RULING FU`'s standard) — the live wave, both arms, with the 77-vs-78 control
+measured from two gates on one tree. ⛔ **No instrument byte changes** (`RULING FY`'s precedent — the gate
+printed the right number at the moment it ran; the brief asked at the wrong moment). ⚠️ Twenty-seventh
+member of the family, and the first where the defective instrument is **the floor's MOMENT** — not its
+command (`EU`), coverage (`EV`), value (`EZ`), position in the wave (`FN`) or grammar (`GF`), but **the
+instant at which a correct measurement was taken relative to a change the procedure itself guarantees.**
+
+⭐ **A precision recorded and NOT lettered: `REPORT.md` was 663 KB in 227 lines, and the cause is
+`RULING GB(i)` in a third artefact.** `generate_report.py` opens with `git log --oneline
+origin/main..HEAD`, and **in this lane `--oneline` is not one line per commit** — this seat's *subjects*
+are multi-KB ledger prose, so lines 4–106 are ~650 KB of this page reprinted into the mailbox. `FH` is §1
+reprinting messages into a **gate**; `GB` is the subject census inflating; **this is the same mechanism
+inflating a REPORT.** Open `REPORT.md` by **offset**, never whole. ⚠️ **A second precision: a mid-tick
+`RULING DK` move can land a commit whose own timestamp PREDATES the tick's opening pin read** —
+`57781d59` is dated 09:32:19 yet the ref read `cbdba9cd` at 10:3x and `57781d59` at write time. **A
+commit's date is not the ref-move time**; never reconcile a `DK` move by comparing timestamps.
+⛔ **A third: the ~77 root `.gate*.txt`/`.sha*.txt` files are NOT debris to sweep.** S-183 kept them
+deliberately — `.gate226.txt`, `.gate229.txt`, `.gate230.txt` and `.gate220-coder.txt` are cited **by
+name** in this file as the evidence for specific findings, and deleting them destroys the ledger's own
+citations.
+
+## ⭐⭐ THE LANE CONTAINS `main` — merge base IS main's tip (tick 321), and `RULING FO` holds in its strongest form
+
+```
+git merge-base HEAD cbdba9cd          →  cbdba9cd          ← main's own tip
+git rev-list --left-right --count HEAD...cbdba9cd   →  103  0
+git diff --stat HEAD cbdba9cd -- app/ →  app/phpunit.xml | 2 +-    and nothing else
+```
+
+⛔ **So `boundary 55` · `contract 85` · `capability 207` · `anchor 128` · `schema 16` · `citation 3` are
+MAIN'S NUMBERS measured by main's checker on a tree byte-identical to main's**, and no wave in this lane
+can move any of them. `9aa5924e` is gated and pushed (`6240383f..9aa5924e`).
+
+⭐ **`citation 3` is CONFIRMED by `php artisan why`, not merely by the checker.** `R036` / `R037` / `R093`
+each return **`REFUSED — … mentioned 0 time(s) but never DEFINED`** — the test this file's own review
+checklist prescribes. All three sit in `Modules/X-198/` (`PaymentLinkAction.php:40`,
+`GatewayEngine.php:76`, `StripeGatewayClient.php:17`), money's module. **TRACK 1 ACTION 14. Never fixed
+here.** ⚠️ §3's ledger now reads `citation 3` and is **true**, refreshed at tick 321 from `.gateS234v.txt`
+§5 with `grep -c '"violations": null'` → `0` and §3 == §5 in the same file — the **sixth** time it has
+been written true (183, 225, 231, 236, 320's aftermath, 321). **Still a LEDGER; cite §5.**
+
+⭐ **`RULING GF`'s mandatory total line WORKED on its first wave:** §5 printed `497 violation(s)` and the
+eight sum to 497 exactly. It is the control STAGES-233 omitted and whose absence hid `GF`'s miss.
+
+### ⭐ The owner's drift rule fired on condition (3) — the second take is ORDERED (tick 321)
+
+`main` moved mid-tick (`RULING DK`: pin `cbdba9cd` → `57781d59`, `merge: track/ui — architecture`), and
+the owner's rule fires on *"you are about to push a slice for Track 1 to merge"* — this tick pushed
+`9aa5924e` to `track/stages`. **(1) and (2) are FALSE and both were measured**: 4 behind by ancestor
+count (`+1 first-parent / +4 ancestor`, the MERGE signature, `RULING EK`), and
+`git diff --name-status HEAD...57781d59 -- app/app/Doctor/ …/JourneyHarness.php .claude/hooks/ seals.json`
+prints **nothing**, so `RULING EQ`'s void condition is **not** reached.
+
+⭐ **It is the cheapest take this lane has ever measured, every hazard checked rather than assumed:** the
+whole range is **one** `app/` file (`tests/Feature/Architecture/HeadingSeamTest.php`, +50/−3); **no
+per-track rows at all**; ⭐ **`app/phpunit.xml` is NOT in the range** — the first take here where
+`RULING DC`'s destructive `DB_DATABASE` row is absent, because our base **is** main's tip and Track 1
+restores per-track paths on its own merges (`RULING EG`). **The restore step stays item 3 regardless, and
+the proof stays `git diff HEAD~1 HEAD -- <per-track>` printing nothing, never item 3's silence.** No
+`app/app/Modules/` rows, no lockfiles, no `app/resources/` — **no `composer dump-autoload`, no
+`composer install`, no `npm run build`.** Dispatched as **STAGES-235** (run 213), merge gate **OPEN**.
+
+### ⭐ TRACK 1 ACTION 15 (tick 321) — the re-merge condition is now satisfiable, and it is satisfied
+
+`RULING FO` showed *"once your tip measures green"* is unsatisfiable **by construction** for any lane,
+because main ships evidence-artifact tests red in every checkout but the minting one. **The stronger
+claim now available is an identity, not a promise:** this lane's `app/` is byte-identical to main's but
+for the per-track DB pin; the eight stage counts **are** main's; and §7's six failures are **exactly**
+main's own `X-117`/`X-198`/`X-199`/`X-211` evidence-artifact tests (`tests 2436 · passed 2428 · FAILED 6 ·
+errors 2`, the two errors being the OWNER-blocked journey-harness refusals). **There is nothing in this
+lane that can fail on `main` which does not already fail on `main`.** `18bbde18` is still not an ancestor
+(rc **1**) after **47** first-parent merges since `a5042da2`, **0** of which name `track/stages`.
+
 ### History — the owner ruling that ordered it (tick 319)
 
 ⭐ **`OWNER.md:691`, `## OWNER RULING — 2026-09-09 09:02 — relayed by Track 1`, quoted exactly:**
