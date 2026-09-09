@@ -586,12 +586,40 @@ neither pattern can be made to separate the two, the ordinal is **not written at
 derive-it-or-omit-it, which is why tick 316 states the streak as *ending at three* with the three ticks
 named individually rather than as a bare number.
 
+⛔⛔ **`GD(i)`'s FIRST FORM WAS DEFECTIVE AND WAS CORRECTED IN THE SAME TICK, BY MEASUREMENT — exactly as
+`GA`'s first repair was.** Run against the tick-316 commit that defines it, the paired reader returns
+**EIGHT** rows where the truth is **two**:
+
+```
+$ git log --format='%s' -1 HEAD | grep -oE "RULING [A-Z][A-Z] lettered|letters none"
+RULING GC lettered · RULING GD lettered      ← the two real announcements
+letters none · RULING GB lettered            ← QUOTED: the resetting event and the decline encoding
+RULING XX lettered · letters none  (×2)      ← QUOTED: the convention, in the act of defining it
+```
+
+**The subject that defines the patterns necessarily contains them.** That is `RULING FH`'s mechanism one
+surface over — `FH` is §1 reprinting commit messages into a gate, `GB` is the subject read directly, and
+**`GD` is a subject quoting its own regex** — and it is `GB(i)`'s point in its sharpest form: the
+protection comes from the pattern's **specificity**, and a pattern a ruling must quote to define is by
+construction not specific. ⚠️ `GA(i)`'s marker escapes this only because it carries a **sha**; a lettering
+marker has no such payload.
+
+✅ **The corrected rule, measured on the commit above: a subject's lettering state is its FIRST match, and
+the ordinal counts DISTINCT AUTHORING TICKS** (`GA(iii)`/`GB(ii)`, now load-bearing *within* a tick as well
+as across ticks). The first match here is `RULING GC lettered`, which is right; every later row is a
+quotation, and `GD(ii)`'s convention guarantees the announcement precedes any quotation because it sits in
+the subject's leading segment beside `GA(ii)`'s `MAIN …: pin <sha>` marker. ⛔ **Never read a bare row
+count over this pattern** — it is inflated by exactly the ticks that rule on it, which is `FH`'s
+compounding, and the inflation is largest in the tick a later reader most needs to classify.
+
 ⭐ **Applied to itself in the tick that wrote it** (`RULING FQ`'s standard) and ⭐ **proven on this lane's
 own history** (`RULING FU`'s standard): the repaired reader recovers tick 310 as a **decline**, which its
-own block asserts and both naive forms get wrong. ⛔ **No instrument byte changes** (`RULING FY`'s
-precedent). ⚠️ Twenty-fourth member of the family, the **fourth** whose defective instrument is a standing
-correction's own machinery (`FF`→`EW`, `FH`→`FF`, `GA`→`FZ`, `GB`→`GA`, `GD`→`FZ`), and the first where the
-record uses **more encodings than any reader was written for**.
+own block asserts and both naive forms get wrong, and classifies tick 316 as a **letter** on its first row
+where the row count says eight. ⛔ **No instrument byte changes** (`RULING FY`'s precedent). ⚠️
+Twenty-fourth member of the family, the **fourth** whose defective instrument is a standing correction's
+own machinery (`FF`→`EW`, `FH`→`FF`, `GA`→`FZ`, `GB`→`GA`, `GD`→`FZ`), the first where the record uses
+**more encodings than any reader was written for**, and — like `GA` — **the first form of its own repair
+was falsified by the commit that published it.**
 
 ### ⛔⛔ `RULING FZ` (tick 252) — `RULING FX(i)` says paste every count from a command run against the pinned sha. A STREAK IS NOT A FACT ABOUT A SHA, so no pin-anchored command can produce one and `FX(i)` is not merely unapplied to a tally — it is INAPPLICABLE IN PRINCIPLE. Two of tick 251's tallies are wrong, by two different arithmetic faults.
 
