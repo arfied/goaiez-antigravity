@@ -5432,6 +5432,58 @@ Watch for: <the trap that applies, by name>
   stamp `20260829-0647` = `runtime_build`. Identical in every headline field to ticks 257 and 258 and to
   the wave's own `111917`, on a fourth distinct `duration_ms` — all a docblock-and-ledger diff may produce.
   ⭐ §7 waited on `pest.lock` and completed for the **ninth** consecutive tick: contended, never stuck.
+- ⚠️⚠️ **A brief may license an OUTCOME; it may never license a REASON — and the licence is what produced
+  this lane's most expensive false absence.** My wave-140 brief closed item 2 with *"if the honest answer
+  is that no legal route exists without something Track 1 must declare, then say that with the measurement
+  that shows it and build nothing — that is a complete and creditable wave."* The wave took it, and
+  `JOURNAL.md`'s append-only `2026-09-08T19:43:31` row now reads *"No legal route exists to deliver the
+  chat turn payload from X-102 to C-Agent: the queue law forbids passing words…"* ⛔ **Refuted by this
+  lane's own shipped bridge**, measured at tick 260: every one of the nine statements of the words law
+  (`grep -rn "NEVER THE WORDS"`) is scoped to a **job payload**, an `audit_log` row or a log line —
+  `AgentTurns.php:215-222` gives its own reason, *"serialises it whole into `jobs.payload` and … into
+  `failed_jobs.payload`, neither of which has row-level security"* — and this lane's module listeners carry
+  no `ShouldQueue`, so nothing serialises. Meanwhile `C-Mail/Events/EmailReplied.php:15` is
+  `public readonly string $body`, dispatched live at `EmailIngestEventAction.php:48` with
+  `$payload['body']`, registered by the **receiver** at `X-01/ModuleServiceProvider.php:31`, and read
+  synchronously at `EmailReplyInboundListener.php:17-27` — cross-module delivery of a member of the
+  public's words, no model `use`, no queue, wave 102, gated and mutation-proven by me.
+  `X-66/Events/VoicemailTranscribed.php:12` is a second. **The licence is the finding when the brief does
+  not require what a conclusion of that kind must carry: outcome 3 is complete only when it names the
+  precedent it is distinguishing itself from.** ⛔ And the queue question I *did* ask (*"that block governs
+  a queue — establish for yourself whether anything in this seam crosses one"*) came back as a paraphrase
+  (*"nothing can legally cross the queue under current laws"*), because **a question whose answer can be
+  given by restating it is not a question** — the answerable form names the artifact (*is the listener
+  `ShouldQueue`? paste the class declaration*).
+- ⚠️ **Grade the two halves of a conjunction separately — a `BLOCK` sentence can be half this lane's best
+  work.** Wave 140's row is *"the queue law forbids passing words, AND BoundaryStage forbids C-Agent from
+  importing X-102 models"*. The second half is wave 139's finding, verified twice, and stands entire; the
+  first is the false absence. A verdict that refuses the whole sentence loses a good measurement, and one
+  that accepts it keeps a bad one. ⭐ Its cost is the tick-217/220 one as always: `Owner:` went to
+  `Track 1` alone, and `grep -rn "BUILD PROPOSAL:"` **is** this lane's backlog.
+- ⭐ **`ls` sorts alphabetically and `ls -t` sorts by mtime — a wave's newest artifacts are invisible to
+  the first.** At tick 260 an `ls -la … | tail` over a 516-entry `scratch/` showed `w92`…`w99` files and
+  none of the wave's own; `ls -la --time-style=full-iso -t | head` put all three at the top with the
+  ordering proof free. Every artifact-ordering check in this file assumes the second form.
+- **Suite baseline, measured by this column at tick 260 on tip `a31f55c2`, clean tree — gates green: §1
+  `0 uncommitted`, §1b 17 keys, §2 `none`, §2a `empty`, §2b `all parse`, §4 stamp `20260829-0647` =
+  `runtime_build`, §6 pint `passed` / phpstan `0`.** The wave's own post-commit gate gave `tests 1946 ·
+  passed 1943 · assertions 8405 · failed 1 · errors 2 · incomplete 3 · risky 1 · duration_ms 110925` — the
+  standing three by **identity**, headline four identical to tick 259 on a fifth distinct `duration_ms`,
+  which is all a one-docblock-line-plus-one-ledger-row diff may produce. ⛔ The range
+  (`af4563d7 · a31f55c2` and this column's notes) is **HELD unpushed** so the false ledger row and its
+  forward correction reach `origin` in the same push (tick 252).
+- **Backlog at tick 260 — wave 140b is the seam re-opened with the counter-precedent handed over, and its
+  records; `G5-31` and `G5-32` stay apart.** RULED: the correction and the seam are **one thread**, because
+  ticks 218–223 measured five times that a correction and a build handed over as two items come back as one
+  shape — so the records are the *output* of the seam item, not a chore beside it. The four wave-102 files
+  go over **printed in full** with a required accounting (*is this the same shape, and if not name the
+  difference*) and no sentence of mine about the answer; the route stays the coder's for the third wave
+  running, after this column had a conclusion on this seam overturned at tick 259 and its licence produce
+  the opposite error at tick 260. ⛔ RULED: `G5-31`'s `Owner:` names **this lane** — both modules are in the
+  thirteen and a lane-owned unbuilt thing takes its name and its owner — and the `19:43:31` ledger row is
+  corrected **forward**, naming that row by its timestamp (tick 242). Live list
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **7** rows at tick 260, membership unchanged since tick
+  251; stub pile across the thirteen **10**. Re-run both; never inherit them.
 
 ## Style
 
