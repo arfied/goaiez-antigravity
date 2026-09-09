@@ -4036,3 +4036,69 @@ it is PB-135's rule widened: **reconcile EVERY four-number line a wave produces,
 mutation run read `FAILED 4` and the report named three reddened tests without saying the fourth was the
 standing baseline; the arithmetic is recoverable and I recovered it from the log, but I had only ever demanded
 reconciliation for the gate.
+
+## ⛔⛔ Trap added 2026-09-09 13:4x — a VALUE whose clause the POPULATION'S OWN SELECTION RULE makes unreachable, and the tell is a column that graded ZERO
+
+PB-158's census defined four per-argument verdicts and required `OWNER-TYPED`'s clause to name *"which
+**existing** screen or control they would type it on."* The population was the seven writers PB-143 graded
+`TEST-ONLY` — **by definition, writers no production control reaches.** So the literal reading could never be
+satisfied, and every fact a human could honestly state — what the owner paid for labour, the units a
+technician used, the ETA the technician just gave — fell to `NO SOURCE`. **`OWNER-TYPED 0 of 27`**, and
+`NO SOURCE 13` — **exactly the STOP threshold**, so item 2 was skipped, correctly.
+
+⭐ **Tenth instrument with the same disease, and a new position in it:** PB-147 found a vocabulary with no value
+for a row; this is a vocabulary whose value *exists* and whose clause **conjoins with the population's
+selection rule** to forbid it. Neither the value's definition nor the selection rule reads wrong on its own.
+⭐ **The tell is mechanical and free: a defined value that grades ZERO across a whole population is not a clean
+result, it is the instrument reporting that it cannot express something.** Ask, before briefing, whether each
+value could be assigned to *at least one* row under the population's defining property.
+
+⚠️ And the reviewer's near-miss is the useful half: the re-grade landed on exactly the count the reviewer had
+predicted, which is PB-129's *reconciliation against its own pre-declaration* in the other chair. **The check
+that keeps a re-grade honest is that every row names a PERSON who could state the value** — a claim the coder
+can falsify — never that the total matches.
+
+## ⭐⭐ Trap added 2026-09-09 13:4x — the POLICY-vs-MEASUREMENT question pointed at WIRED code found a fabricated number on its first row
+
+PB-158's census asked of seven *unwired* writers whether each defaulted parameter is a **policy** (a threshold,
+a mode — a choice someone may make) or a **measurement** (a fact about the world). Asked of the lane's **wired**
+actions — one grep over every numeric-defaulted parameter outside `Ui/`, four rows — it fired immediately:
+
+```
+X-162/Actions/TechEnRouteAction.php:18   markEnRoute(int $businessId, int $jobId, int $techId, int $etaMinutes = 25)
+X-162/Ui/DispatchBoard.php:39            $action->markEnRoute($businessId, $jobId, $techId);    ← no ETA passed
+```
+
+Every production "Mark en route" click records **25 minutes** as fact: an `EtaPrediction` row, the event
+payload, *"en route, 25 minutes out"* on the board, and `EtaQueryAction:31`'s *"…with an ETA of 25 minutes."*
+carrying **`'is_guess' => false`** beside the anchor comment *"never a guess."* ⭐ **A defaulted measurement on
+a wired path is the owner's "no hand-written rows" rule in parameter form**, and `DispatchBoardTest:104-106`
+asserted the fabricated row into existence — PB-128 ruling 2's shape, corrected not weakened, pre-declared.
+
+⭐ **The generalisation: the sweep for defaulted parameters is one grep and classifies in minutes; run it on
+WIRED actions before unwired ones**, because a fabricated default on a reachable path is a live wrong value
+while the same default on a `TEST-ONLY` writer is a record. **RULED (PB-159): record the absence** —
+`?int $etaMinutes = null`, no row, no stamp, event carries `null` — by PB-138's construction-site rule (two
+sites, one with no truthful value), ruling 33 (never invent) and PB-128 (a wrong number that looks like data is
+worse than a gap). ⛔ The pre-declared wrong fixes: passing `25` from the board (moves the fabrication), a row
+with `eta_minutes 0` (spoken as *"0 minutes"*), and ignoring the argument (kills the explicit path the anchor
+asserts at `X162Test:77`).
+
+## ⚠️ Trap added 2026-09-09 13:4x — a `file:line` clause that is INVENTED, not merely off
+
+PB-146's third position was a report that *claims correctly and cites wrongly*; PB-152's seven clauses pointed
+past EOF. PB-158 adds the sharper form: `"DispatchBoard.php:83 produces $assignments->pluck('tech_id')"` — line
+83 is `->get();`, and **`pluck('tech_id')` appears nowhere in the file.** The verdict was defensible from two
+other lines; the clause described code that does not exist. ⭐ Same standing rule, now with its strongest case:
+**a `file:line` is produced by `grep -n` and COPIED from what it prints.** A clause that reads like a grep
+result and was not one is the most convincing kind of wrong.
+
+## ⭐ Recorded 2026-09-09 13:4x — item 2 of PB-158 answered from the board, with one CLAUSE sharpened
+
+`priceBookVersion` has no truthful source: `location_books` has **no writer** in `app/app` (the only references
+outside model/migration/manifest are reads at `PricebookEngine:153` and `Ui/Pricebook:202`);
+`price_book_versions` has **one** writer, `PricebookEngine::bumpVersion():159`. ⭐ **Correction to PB-157's
+clause "no production caller":** `bumpVersion` **has** one — `Ui/Pricebook::bumpVersion():182` ←
+`pricebook.blade.php:141` `wire:click` — inside `@foreach($locations)` over rows nothing creates. **A closed
+loop (PB-143's shape), not an absent caller.** Same verdict, and the sharper clause is what a future tick
+needs when the loop is opened. ⛔ SPENT.
