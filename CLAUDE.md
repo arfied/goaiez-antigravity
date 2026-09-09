@@ -6695,8 +6695,11 @@ Watch for: <the trap that applies, by name>
 - ⚠️⚠️ **`conversations.consent_logged_at` is the GATE on storing message bodies at all, it has ONE writer,
   and the rule behind it names the chat widget as its subject — measured at tick 276, and it turns the
   "ingestMessage never persists the body" finding from a dead row into LAW.** `grep -rn "consent_logged_at"
-  app/app` → the only writer is `ConversationThreads::openFor():249` (root service, SMS, keyed on `Customer`).
-  `ConversationThreads.php:58-73`: *"IS THE GATE ON STORING BODIES AT ALL … citing `29` §2 rule 22 … its
+  app/app` → the only writer is `openFor():249` in **`app/app/Services/Conversations/ConversationThreads.php`**
+  (root service, SMS-shaped, keyed on `Customer` — ⚠️ the path is `Services/Conversations/`, **not**
+  `Services/Sms/`; tick 277 inferred the latter from this parenthetical and got `sed: can't read`, which is the
+  `.agents/plan/` shape with a *descriptor* as the liar. Write the full path, never the class name plus a hint).
+  `ConversationThreads.php:56-72`: *"IS THE GATE ON STORING BODIES AT ALL … citing `29` §2 rule 22 … its
   subject is the chat widget: 'pre-chat notice, logged consent, first-party transcripts only, no capture
   before consent' … THE GATE IS STILL ANSWERED RATHER THAN BYPASSED (4113). An SMS thread is stamped at the
   moment it opens, and what the stamp means on this channel is written down here."* `record():314-323`
@@ -6735,6 +6738,69 @@ Watch for: <the trap that applies, by name>
   form is 10-for-10 on this lane and this column names no seam's answer. Live list
   `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **11** rows at tick 276, membership unchanged since tick
   267; `app/app/Modules/` → **0**; stub pile **11**. Re-run all three; never inherit them.
+- ⚠️⚠️ **A wave's DOCBLOCK rows can be more precise than the LEDGER row that summarises them, and the ledger is
+  the more durable of the two — so read the rows against the row, and correct the ledger forward.** Wave 152's
+  five per-seam rows say the store's own addressing sentence **answers** the consent gate for WhatsApp and
+  Email and that only chat needs a pre-chat notice; its one `state.py decided` row says *"WhatsApp and Email
+  **lack consent capture at opening**"* — true as a statement of current state (nothing stamps today) and, read
+  as the decision out of an append-only ledger, the inverse of the finding for two of three seams. A tick
+  reading the ledger alone would brief a consent-capture build on the two channels that do not need one. This
+  is tick 275's NOTE 1 (numbered answers more precise than the row) with the **docblocks** in the answers'
+  place, which is why that rule is worth having in both directions: **whichever record is the terser one is
+  where a distinction is lost.** NOT a `BLOCK` by the tick-273 discriminator — nothing false, and the
+  conclusion survives the clause being fixed.
+- ⭐ **The store publishes the SENTENCE a stamp needs, and it transfers by channel rather than wholesale —
+  measured at tick 277 and the tick-276 stamp condition is DISCHARGED for two seams of three.**
+  `app/app/Services/Conversations/ConversationThreads.php:56-72` gives the SMS meaning as *"the customer
+  addressed this message to this business's own number"* and its ground as *"CIPA's hazard is capture the
+  parties did not know about; a person texting a business's published number knows exactly who they are
+  writing to."* ⭐ **Each channel's transfer has its own artifact and neither is a deduction**: `EmailReplied`
+  carries `mailDomainId`, a `MailDomain` the business owns, so *"this business's own email address"* is in the
+  event's own payload; and `WhatsappEngine::recordInbound()`'s docblock is *"Inbound message opens/extends
+  24-hour conversational window"*, the WhatsApp Business API rule that a customer messaging the business opens
+  the window. Chat does **not** transfer, by the header's own words — rule 22's subject **is** the chat widget.
+  **Ask for the artifact, not the reasoning: a fact from the tree is a line you can `sed -n`.**
+- ⚠️ **`conversations` carries TWO foreign keys to two different tables, and the X-01 thread screen reads the
+  one no ingested row sets.** `customer_id` → `customers` (root
+  `2026_07_30_111419_create_conversations_table.php:25`); `person_id` → `people` (X-121's
+  `2026_08_30_000001` / `2026_08_31_000007`). `Ui/Thread.php` binds `?Customer $customer` and reads
+  `customer_id` at `:63`, `:108`, `:159`, while `ingestMessage` writes `firstOrCreate(['person_id' => …])` and
+  no `customer_id` at all — so all three inbound seams (WhatsApp wave 98, email wave 102, chat wave 147b)
+  deliver into rows that screen cannot reach. ⚠️ **It is `Thread`'s defect and not the inbox's**:
+  `Ui/Person.php:43` and `Ui/CustomersList.php:52` both query `person_id`, so an ingested conversation *is*
+  reachable from the person detail and the customer list. Tick 188's rule was *grep the capability's noun*;
+  its mirror is **grep the SIBLINGS before writing a scope clause**, because a row saying *"the screen cannot
+  reach ingested rows"* reads in the backlog grep as *"the inbox cannot"*, and the measurement makes the fix
+  smaller than the row implies.
+- **Suite baseline at tick 277 on tip `8fd255dc` — unchanged from tick 276 and deliberately NOT re-measured.**
+  The wave's own gate ran **after** its last commit over a tracked tree byte-identical to the sha and returned
+  `tests 2436 · passed 2428 · assertions 10774 · failed 6 · errors 2 · incomplete 3 · risky 1 ·
+  duration_ms 144460` — headline four identical to tick 276's on a **distinct** `duration_ms` (`144166`),
+  which is the accepting tell and all a docblock-and-ledger diff may produce; the eight reds are the standing
+  set by **identity**. My own plain `bash bin/supervise.sh` gave `gates green.`, §6 pint `passed` / phpstan
+  `0`, §2 `none`, §2b `all parse`, seals matching, stamp `20260829-0647` = `runtime_build`. **State when you
+  decline to re-measure and why** — the tick-197 corollary is keyed to a MISSING measurement, never to one the
+  column chose not to repeat, and a second suite here buys a `duration_ms` and costs ten minutes of lock.
+- **Backlog at tick 277 — wave 153 is the `Thread` render key, and it is a BUILD.** RULED: of the five rows
+  wave 152 put on the board it is the only one that is single-module, in lane, on a **routed** live path, and
+  needs no vendor, no credentials, no new table and no consent question — and it is **upstream of the other
+  four**, since three inbound seams deliver into a store the thread view cannot read, so any body-storage work
+  is invisible until it lands. The rest are sequenced behind it and the reasons are measured, not inherited:
+  the two stamp rows must write a `messages` row through `ConversationThreads::recordInbound()`, whose
+  chokepoint lint both citing docblocks name and which **exists on neither this branch nor `origin/main`**
+  (tick 276); the two chat rows need a customer-facing consent surface on a widget whose blade is four lines
+  and whose routes are both behind `auth` (tick 228). ⛔ **This column names no shape** — whether `Thread`
+  should read `person_id`, accept a `Person`, or resolve one to the other is the coder's to establish and to
+  argue, the two models being genuinely different tables; the conclusion-withheld form is **11-for-11** and has
+  corrected this column four times on these seams alone (ticks 259, 260, 261, and wave 147b's `object`
+  parameter my brief never questioned). ⛔ No `⛔ REFUSED` and no `UNRESOLVED` (X-01 is one of the thirteen and
+  nothing external is missing); a build owed is a one-line `BUILD PROPOSAL:` under `app/tests/Modules/` naming
+  the missing thing and its owner, never a build in the same wave. ⚠️ The wave-97/tick-200 hazard is live —
+  `app/tests/Modules/X-01/ThreadScreenTest.php` is the real-`GET` screen test this file requires of every
+  `/admin` screen, and the fix is never to edit a standing test. Live list
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **16** rows at tick 277 (the tick-267 eleven plus wave
+  152's five); `app/app/Modules/` → **0**; stub pile across the thirteen **11**. Re-run all three; never
+  inherit them.
 
 ## Style
 
