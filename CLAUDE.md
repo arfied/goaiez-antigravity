@@ -15355,3 +15355,288 @@ by **CAUSE** (311 — Authorize.Net `E00040`, Postgres `SQLSTATE[42501]`), neith
   pushed `5237a2ef` by explicit ref itself, which needs no coder and costs one command.
 - ⚠️ `git log --format= --name-only … | sort -u | grep -v -E '…' | grep -v '^$'` — the **second** `grep -v`
   in a pipe is refused (213). Drop it; blank lines sort to the top and are read past.
+
+## ⛔ A CONSTANT OFFSET CANCELS IN EVERY *PAIRWISE* CHECK — the SUM is the only one that reads a block against ITSELF, and the offset CORROBORATED the pass condition (tick 318)
+
+Five classes of doctor-evidence defect were catalogued and each was answered by adding a check — 275 an
+unreproducible stage attribution, 284 a byte-identical timed pair, 285 a `clean` line contradicting its own
+total, 292 an `ok` prefix over a non-zero count, 305 an internally-perfect block describing a checker this
+tree does not have. SITE-188's pair supplies a sixth, and it is the first that could only ever be caught by
+**one** of the four checks a brief now demands:
+
+| | stage lines sum to | printed | Δ |
+| :-- | --: | --: | --: |
+| report, state 1 (boundary 55) | **497** | 495 | **−2** |
+| report, state 2 (boundary 53) | **495** | 493 | **−2** |
+| **mine, live, twice** (boundary 53) | **495** | **495** | **0** |
+
+Tick 317's independent run read 55 → 497 and both of mine today read 53 → 495, so the footer equals the
+stage sum on this tree at two different values. The report's **stage lines are correct**; its **printed
+totals are not**, each by the same 2.
+
+⭐ **Every other check in the set is structurally blind to it, because an error common to both terms
+survives every comparison.** The pass condition is a **delta** — and the totals fall 495 → 493, *a fall of
+exactly 2*, which is precisely what the brief demanded, so the defect **corroborates** the thing it should
+have contradicted. The timing nonce is **pairwise**. The `ok`-prefix and stamp checks never read the total.
+**The SUM is the only check that compares a single block to itself on the quantity in question**, and it is
+the only one that fired.
+
+Tick 305 built the **intrinsic vs extrinsic** axis. This is a second axis and neither implies the other:
+**pairwise vs single-block.** Same law as tick 181 (*an unchanged count proves no NET loss*) and tick 189
+(*a count that aggregates opposite verdicts is not a reading*), reaching a **before/after evidence pair** —
+the one artefact a brief asks for *because* it is a pair, and therefore the one place a common-mode error is
+most at home. ⛔ Cause **not measured, and no block names one** (227, 230, 249). ⚠️ It cost a note and not a
+dispatch for the standing reason: **this seat never accepts a doctor block from a report** (196, 210) — the
+verdict rested on two live runs here, and had it leaned on those blocks it would have leaned on nothing.
+
+## ⛔ A REPORT'S "NOT GATED" IS A CLAIM WITH AN EVALUATION TIME — the coder-side half of a composition this ledger has only ever written for itself (tick 318)
+
+`gate-runs.tsv` rows 8184-8185: SITE-188's gate is pid **3107146**, `gate-start` **09:55:07** (nine seconds
+after its own commit), and its **pest ran 10:28:33 → 10:32:50, rc 2, completing**. `REPORT.md`'s mtime is
+**09:59:01**. So the report quoted the gate file's state at 09:59 — `… another suite holds pest.lock —
+waiting up to 40 min` — wrote *"this wave has not been gated on the lane's goal"*, and never went back. The
+sentence was **true when written and false 33 minutes later**, and the brief's item 6 had said in as many
+words *"do not write the report until it returns."* Third firing of tick 287's ordering rule.
+
+⭐ **The half that is new: ticks 231/242/245/250 built the hedge-composition for THIS SEAT's blocks and it
+was never stated for a REPORT.** *Append with the blocked section named unmeasured (242); then **re-check at
+the moment you write** (231).* This seat re-reads its gate before appending because the rule exists in its
+own charter; a coder writes its report once and stops, so the rule only reaches it **through the brief**.
+Every brief now carries: re-read the gate file at the moment you write the report, and if it has completed
+since, quote the completed result and say the earlier line is superseded. ⚠️ Note the asymmetry that makes
+this the quieter failure: an unresolved hedge **understates** the evidence, so nothing downstream
+contradicts it and the next tick inherits a wave recorded as ungated when it was gated.
+
+## ⛔ A BRANCH THAT HAS MERGED `main` TWICE HAS TWO ACCEPTING BOUNDS, AND THE OLDER ONE REPORTS *OUR OWN* MERGED WORK AS THE SIBLING'S (tick 318)
+
+Tick 217 ruled a merge commit prints no files under `--name-only`, so the surface that flagged it cannot
+explain it; tick 315 ruled the accepting bound is **the sha the branch merged**, never `origin/main`. Both
+are right for a branch that has merged main **once**. Half 1's four members this tick are all merges of
+main, and stages appears **twice** — `6b7c315b` at `7a75f289` and `6240383f` at `cbdba9cd`. Measured both
+ways:
+
+```
+git log --no-merges cbdba9cd..origin/track/stages -- <the fourteen paths>   →  nothing
+git log --no-merges 7a75f289..origin/track/stages -- <the fourteen paths>   →  18 commits
+```
+
+⛔ The eighteen are **main's content arriving in stages**, confirmed with `git branch -r --contains` on two
+of them — both list `origin/main` **and `origin/track/site`**, and one is **`073dd0a4`, this lane's own
+SITE-186**. So tick 315's rule needs its second clause: **the bound is the branch's MOST RECENT merge of
+main, never the bound of whichever merge commit happened to appear in half 1's output.** Reading each
+member's own bound — the natural thing to do, since half 1 hands you the member — reproduces tick 147's
+staleness trap from **inside** tick 217's accepting direction, and reports this lane's own merged work back
+to it as a sibling writing in its column.
+
+## ⚠️ A BRIEF'S ITEMS COMPOSE — item 10 predicted a tree item 9 had made impossible (tick 318)
+
+SITE-188's item 9 ran `state.py decided`, which writes `.agents/state/BUILD-STATE.json` and `JOURNAL.md`;
+item 10 then required `git status --short` to read *"` M app/phpunit.xml` and nothing else."* Unsatisfiable
+by construction. The coder reported the true three paths and did **not** try to make the prediction come
+true, which is the right call — but the brief also **omitted the state commit** tick 245 ruled must be *the
+LAST numbered step of the wave that makes the decision*, so the note was orphaned and became the next
+brief's step 0, which is the standing item 245 exists to abolish.
+
+⛔ **An item that predicts the tree's state must account for every earlier item's writes.** Item 10 was
+written from the pre-item-9 world. Thirty-second of the imprecise-brief family (208, 227, 235, 236, 237,
+238, 244, 245, 247, 249, 250, 254, 262, 265, 271, 274, 275, 276, 280, 283, 286, 292, 293, 297, 301, 302,
+304, 309, 310, 313, 314) and the first turned on **items being written in isolation when they compose** —
+each one correct against the tree as it stood when that item was drafted.
+
+⚠️ Second, smaller and structural: SITE-188's brief opened *"this seat pushed `5237a2ef` **and the tick-317
+notes**"* while `origin/track/site` was `5237a2ef` and the notes commit `6d83b73a` was unpushed. The notes
+are committed at the **end** of a tick, after the push, so **a push range recorded in a block can never
+include that block's own notes commit.** Same structural fact as tick 297's ground value falsified by this
+seat's own notes commit, one surface over. Both went with tick 318's push.
+
+## ⚠️ The nonce carried almost none of its weight, with a control — 311's second firing (tick 318)
+
+| | boundary | contract | citation | schema | capability | anchor | journey |
+| :-- | --: | --: | --: | --: | --: | --: | --: |
+| report state 1 | 136 | 35 | 1160 | 461 | 25 | 250 | 0 |
+| report state 2 | **141** | 35 | 1160 | 461 | 25 | 250 | 0 |
+| **mine, run 1** | 140 | 35 | 1166 | 478 | 26 | 269 | 0 |
+| **mine, run 2** | **139** | 35 | **1163** | **476** | **25** | **303** | 0 |
+
+The report's pair differs at **one** of seven positions and it is `boundary`, the stage the wave changed;
+`citation 1160/1160` and `schema 461/461` — the two positions with many distinguishable values — agree to
+the millisecond. Mine differ at **five**, both long stages included. The pair passes tick 249 **as written**
+and carries almost none of its evidential weight, which is tick 311's finding measured a second time with
+tick 284's control fired beside it. ⛔ Do not read a passing nonce as strong evidence without looking at
+**which** positions moved.
+
+## ✅ Standing checks on their healthy branches, and two firings worth keeping (tick 318)
+
+- ⭐ **Tick 259's column rule, FIFTEENTH firing and load-bearing again.** Three `grs-antig-site` gates in one
+  20-minute window and only the pid separates them: **3107146** (the wave's, `gate-end` rc 1 at 10:32:50),
+  **3339753** (a third, `gate-start` 10:34:16 → `gate-end` 10:44:56 — whose is **not measured and is not
+  named**), **3446753** (mine). Filtering by the **checkout** column reads a different gate as your own.
+- ✅ The box-wide lock visibly serialising **eight** lanes in a clean FIFO handoff, each starting exactly
+  when the last ended: reviews 10:32:50→10:35:27 · pricebook →10:37:35 · grs-antig →10:40:00 · sixty
+  →10:42:29 · site(3339753) →10:44:56 · pricebook →10:47:00 · money →10:49:25 · grs-antig →10:51:52 ·
+  **site (mine) →10:54:20**, queued 1 m 22 s. Tick 216's adoption.
+- ⭐ **The closing tip re-read FIRED — eleventh against sixteen nulls — and `origin/main` was one of the
+  two.** Left literally blank until the command returned (257). `main 57781d59 → 55275492` arriving
+  **10:58:07** and `pricebook 1f44233f → b20fee4c` at **10:56:16**, both **after** this tick's opening fetch
+  ⇒ **arrival, not staleness** (220). Main excludes in all four surfaces at once (198), so the whole census
+  was void and was re-run in full; it reproduced byte-identical (4 · 3 · 1 · 4).
+- ⚠️ **The complement grew 2 → 4 and both new members are DELETIONS** — `app/test_git.php`,
+  `app/test_git2.php`, pricebook's own add-then-delete scratch, read with `--name-status` before being
+  characterised (250). Neither exists on any branch. Reading the growth as *"a sibling has started writing
+  in two new places"* would open a finding against a lane for cleaning up after itself.
+- ✅ Tick 173's shared-state test against **each branch's own bound**, never against HEAD:
+  `main 14 · money 16 · pricebook 14 · reviews 14 · sixty 30 · stages 41 · ui 16` — **no branch below main's
+  14**. And `origin/track/site` reads **180** = HEAD, so tick 316's silent-take hazard is confirmed still
+  not fired and the 180 are on the remote. ⚠️ Main still carries **14**: tick 264 stands, three Track 1
+  merges of `track/site` have delivered **zero** of this lane's state records.
+- ⚠️ **Convergent derivation of tick 311's cause-keying, from pricebook's own block** (224 — note it when it
+  happens): it records `a_completed_job_asks_for_a_review_once_inside_the_cadence` erroring on
+  **Authorize.Net `E00040`** and calls it *"external and TRACK 1 ACTION"* — one of this lane's two
+  intermittent **causes**, on the exact journey name tick 311 measured it moving to, reached independently.
+- ✅ Tick 290's `--ruling` correction — **twelfth** consecutive clean JOURNAL entry. Tick 257's procedure
+  paid again (gate first, everything else during the wait, §7 last). §2 printed **exactly one `⛔`** — tick
+  207's healthy branch. §1 reconciled by **arithmetic** (225): `cbdba9cd..57781d59` = 4 = behind ✓, ahead 4
+  = `d11ba16b` + `5237a2ef` + `6d83b73a` + `06f44b2f` ✓.
+
+⚠️ **§7 baseline `tests 2436 · passed 2428 · FAILED 6 · errors 2`**, measured independently on `06f44b2f`,
+byte-identical to tick 317 **including the failure and error SETS**, ⭐ `a_published_site_carries_all_seven`
+**ABSENT — J11 GREEN**. The diff adds **zero** `public function test`, so tick 226's arithmetic has no
+residue — and ⭐ **that unchanged set IS the behaviour-preservation proof**: the ~40 X-176/X-157 tests are
+the entire falsifier for an import swap, and none moved. ⚠️ §3 printed `capability 372` against a live
+**207** — the one-slot record shared by seven trees, **165 behind**, never a brief target (196, 219).
+
+## SITE-189 — ruled at tick 318: X-157 reads X-103's pages only through `PageReadAction`, and that action scopes by business
+
+Measured at source this tick, never carried (241, 244, 249, 251, 254, 263). `EdgeDeployAction` has **six**
+cross-module model call sites and they are not alike:
+
+| line | model | shape |
+| :-- | :-- | :-- |
+| `:43` | `PageVersion` | ⛔ **WRITE** — `->update(['ssl_installed' => $zone->has_valid_ssl])`, the J11 derivation |
+| `:153` | `PageVersion` | READ |
+| `:198` | `FormDefinition` | READ — X-155's, ours |
+| `:212` | `Page` | READ — `Page::find($pageId)` ⛔ **UNSCOPED** |
+| `:223` | `Page` | READ — `where('business_id', $businessId)` … `whereIn(DB::raw(…))` — **scoped** |
+| `:295` | `Page` | READ — `Page::find($pageId)` ⛔ **UNSCOPED** |
+
+⭐ **`:212` and `:223` are four lines apart, in the same `if` block, with `$businessId` in scope for both —
+one scoped, one not.** `:295` is the live one: `$page->title` and `$page->slug` go straight into the
+published `sites/{deployHash}.llms.txt` with nothing downstream. `:212`'s damage is absorbed **by accident**
+— `:223`'s scoped ancestry query cannot resolve a cross-tenant page's ancestors, so `$usable` goes false and
+the trail is dropped. **Two unscoped reads, different exposure, and the difference is invisible from either
+line.**
+
+⚠️ **Bounded, and the bound was measured before the wave was ruled** (230): `EdgeDeployAction` has **one**
+production caller, `X-157/ModuleServiceProvider:117`, whose `$pageId` comes from `SitePublished`, and
+`SiteEngine::publish:26` is `Page::where('business_id', $businessId)->findOrFail($pageId)`. **The upstream
+scopes, so the unscoped read is not reachable in production today** — tick 224's third branch, *the door is
+open and the room is empty*. The wave claims *the reader enforces the invariant whoever calls it*, never
+*production is exposed*. Tick 277's precedent exactly.
+
+⭐ **Enforcing an existing invariant, not inventing a policy** (277/295): `SiteEngine:26` already declares
+that a page belongs to its business, `EdgeDeployAction:223` already applies it four lines from `:212`,
+`findForBusiness` already implements it, and `LlmsTxtTest:67` already **asserts** the outcome the fix
+produces (no page ⇒ no `llms.txt`). A cross-tenant page now behaves exactly like a nonexistent one. ⚠️ And
+it is tick 278's law one layer up — *a guard inherits its soundness from something weaker than it reads* —
+here **a reader inheriting its tenancy from its caller, when the caller is not the only caller it can have.**
+
+**TWO claims, TWO separable falsifiers, which is what makes this one wave rather than two**: the tenancy
+claim is a behaviour change falsified by a **test**; the boundary claim is behaviour-identical and falsified
+by the **check** (`boundary 53 → 52`). Splitting would mean touching `:212` and `:295` twice.
+
+⛔ **`PageVersion` is EXCLUDED and its import stays**, so boundary falls by exactly **1**: `:43` is a
+cross-module **write** on J11's own element and tick 317 ruled a read seam and a write seam materially
+different acts. ⛔ `FormDefinition` excluded too — a third model, a third claim (215).
+
+⛔ Refused, each of which would pass every gate: **presenting the scoping as a behaviour-identical
+refactor** — that is how a tenancy change ships with no test; **rewriting `:223`'s query while moving it** —
+it is already scoped and already correct, and its `trim(both '/' from slug)` is SITE-160's normalisation
+whose loss silently drops a page's whole subtree; **an exclusion in the sealed `BoundaryStage`**; **a new
+`G##-##` literal** (240); **bundling `PageVersion` or `FormDefinition`** (215, 317).
+
+⚠️ Measured for the brief so it is not discovered as a fatal: `DB::` is used **twice** in
+`EdgeDeployAction` — `:38`'s transaction, which stays, and `:225`'s raw slug expression, which moves — so
+`use Illuminate\Support\Facades\DB;` must be **added to `PageReadAction`** and **kept** in
+`EdgeDeployAction`.
+
+⭐ **The falsifier doubles as evidence for an open OWNER ACTION, and both outcomes are informative.** Tick
+308 measured that in this checkout's test database the application-level scoping clauses are *the sole
+enforcement demonstrated* for `form_definitions`; tick 315 filed `role goaiez_backup: has BYPASSRLS` and
+recorded that which role the suite connects as is not observable from this seat. Item 6's mutation asks the
+same question of `pages`: a **RED** confirms tick 308's finding on a second table, a **GREEN** means RLS is
+enforcing here and is new information. Per ticks 268/304 the brief names **three** branches and **none is a
+stop**.
+
+⚠️ **`:212` gets no falsifier, deliberately** (270, 282): its observable effect is absorbed by `:223`, so a
+mutation there cannot be isolated through the artifact. It is changed for consistency, because leaving one
+of two adjacent reads unscoped is the tick-246 divergence rebuilt inside one method. The brief asks the wave
+to **measure** whether an independent fixture exists rather than to manufacture a red — a claim that cannot
+be falsified is a design property to STATE, never an omission to paper over.
+
+⚠️ Per tick 293 this entry states the **ruling and the falsifier and no prediction**; the outcome is written
+by the next tick's block, after the measurement.
+
+## ⛔ A MUTATION INSTRUCTION MUST RESOLVE IN THE POST-EDIT TREE — item 6's "revert to `Page::find`" fataled because item 3 had deleted the import, and the tenancy claim went UNMEASURED (tick 319)
+
+Tick 318 ruled *an item that predicts the tree's state must account for every earlier item's writes*, on an
+item that predicted `git status`. Tick 319 is the same law on a **mutation**, and the cost is the wave's
+whole subject. SITE-189's item 3 deleted `use App\Modules\X103\Models\Page;`; item 6 then said *"revert
+`:295` alone to `Page::find($pageId)`"*. In the post-item-3 tree the bare symbol `Page` resolves to the
+**current namespace**, `App\Modules\X157\Actions\Page`, which does not exist:
+
+```
+Error  Class "App\Modules\X157\Actions\Page" not found     assertions 0 · line 20
+```
+
+The coder took the NEITHER branch, named the mechanism correctly, restored, and proceeded — exactly as
+instructed. So the fix is committed, its **boundary** half is proven (53 → 52, twice, in this seat), and its
+**tenancy** half — the reason the wave existed — is measured by no run. A green test proves the fix does
+not break; nothing proves it is load-bearing.
+
+⛔ **The correct site is the fully-qualified `\App\Modules\X103\Models\Page::find($pageId)`**, which
+reintroduces no `use` statement and therefore moves exactly one claim (267's siting law). Thirty-third of
+the imprecise-brief family and the first where the defect is a **symbol resolution inside a mutation**
+rather than inside a ground value (301, 313). ⚠️ The same wave carried the same law in the opposite
+direction: item 4's pint list was enumerated **before** item 5 created the test file, so §6 went red on a
+whitespace-only line and the push was held (208). **Pint runs on the files the wave touched, enumerated at
+the END of the wave.**
+
+## ⛔ THE TIMING NONCE IS A PROPERTY OF THE TIMINGS, NOT OF THE BLOCK (tick 319)
+
+SITE-189's doctor pair passed the SUM (495, 494), the stamp equality and the `ok`-prefix, and was not
+byte-identical — the boundary count and the total differ. **All seven timing positions agree to the
+millisecond**, including the three long stages (`citation 1167`, `schema 495`, `anchor 317`) where the
+nonce's whole weight lives (311, 318). The coder's own other runs read `boundary 142 · 140 · 141`, so its
+doctor varies between runs. Cause not measured, not named (227, 230, 249). ⛔ Tick 249's rule as written —
+*a byte-identical pair is one run pasted twice* — does not fire on a pair whose only difference is the
+count under test. **RULED: a pair identical at every timing position is one run whatever its counts say**,
+and every brief says so in those words. Verdict unaffected: the fall is measured between two of this seat's
+own live runs, which is why the report's blocks have never been load-bearing (196, 210).
+
+## Tick 319 — measured, for the record
+
+- **Tick 236's check, third Track 1 merge of this lane, third clean result.** `5754bfb1`'s second parent is
+  `06f44b2f`, our remote tip; every signature line of the last eight waves is on `origin/main` by `git grep`.
+  Its subject says *"merge: track/site — ui"* — a subject is not its content (222); the parent sha was read.
+- **Census `3 · 2 · 0 · 2`** (halves `--full-history`), all shrinks from tick 318's `4 · 3 · 1 · 4` attributed
+  to `main` gaining four lanes' merges (191). ⛔ The first run read `0 · 0 · 0` against a complement of `2` —
+  tick 285's drift signature, the shell having drifted on the doctor call — and the loud grep warning fired
+  in the same batch. Reset per call; re-run from the root.
+- **Shared state**: no branch below main's **14**; `origin/track/site` 180, HEAD 182. Main still carries 14
+  after four merges of this lane (264).
+- **§7 baseline `tests 2437 · passed 2429 · FAILED 6 · errors 2`**, J11 green, sets unchanged; both
+  intermittent causes absent.
+- ⛔ `grep -nP '[ \t]\Z'` is a **false silence** on a whitespace-only line under ugrep; the possessive
+  `grep -nP '^[ \t]++(?!\S)'` finds it. A multi-range `git log --stat` returns 230 KB — pipe it to `grep -c`.
+- The pid space wrapped again (78433, 105830 after 3.8 M) — tick 179's two-part liveness check stands.
+
+## SITE-190 — ruled at tick 319: pint the one file, then falsifier A at the CORRECT site
+
+A defect my own brief caused is a new item with its own two dispatches; SITE-189 spent none. The wave
+changes one whitespace line and measures one thing. ⛔ No new test, no new `G##-##` literal, no `state.py`
+write — a fix run and a measurement, nothing else (215). Falsifier A's three branches (RED at assertion #2 ⇒
+the app-level scope is the sole enforcement on `pages`, tick 308's finding on a second table · GREEN ⇒
+row-level security refuses the cross-tenant read here, new information · a throw ⇒ class, message, `line`)
+are all report-and-proceed; the only stop is a red in this lane's own test directories, which a
+whitespace change cannot produce and which would therefore be the finding. Per tick 293 this entry states
+the ruling and the falsifier and no prediction.
