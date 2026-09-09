@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-09T04:16:04",
+ "updated": "2026-09-09T04:36:48",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2515,6 +2515,12 @@
    "module": "X-198",
    "chose": "A pay link's Checkout line item is built from the business and payment rows the action already loads, so the customer sees who is being paid instead of one constant sentence naming nobody, and a capture reads the tenant's declared currency from the businesses row instead of a method default that charged every tenant in dollars.",
    "at": "2026-09-09T04:16:04",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-198",
+   "chose": "a capture records the gateway's own settlement word instead of the mere presence of a charge id, so a charge Stripe has taken but not settled is not announced as captured",
+   "at": "2026-09-09T04:36:48",
    "ruling": "R245"
   }
  ]
