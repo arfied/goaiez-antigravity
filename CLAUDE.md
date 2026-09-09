@@ -15640,3 +15640,59 @@ row-level security refuses the cross-tenant read here, new information · a thro
 are all report-and-proceed; the only stop is a red in this lane's own test directories, which a
 whitespace change cannot produce and which would therefore be the finding. Per tick 293 this entry states
 the ruling and the falsifier and no prediction.
+
+## ⛔ A FALSIFIER'S OUTCOME NEEDS A WITNESS THAT THE MUTATION WAS IN THE FILE — the check the brief asked for reads the SAME under both (tick 320)
+
+SITE-190 ran falsifier A at the correct site and it came back **GREEN**. The brief's only check under the
+mutation was C1 — the count of `use App\Modules\X103\Models\Page;` lines — which must be **0** to keep the
+mutation off the boundary claim. It reads **0 whether or not the edit was applied.** The count that witnesses
+the mutation's presence is `grep -c -E 'Page::'` (**0** unmutated, **1** mutated), and it was asked for only
+**after** the restore, where it reads 0 either way. So nothing in the report distinguishes *"RLS refused the
+read"* from *"the mutated line was never in the file when pest ran"*.
+
+⛔ **And the second explanation is the likelier one, by a measurement this lane already holds.** `pages` and
+`form_definitions` carry byte-identical `FORCE ROW LEVEL SECURITY` / `tenant_isolation` policies
+(`…000036_create_x103_site_tables.php:64-75`, `…000038_create_x155_form_tables.php:42-52`), in one database,
+reached through one connection. Tick 308 measured the `form_definitions` policy **not** refusing a
+cross-tenant read under the same tenancy state (the mutated route answered 201). A superuser or
+`BYPASSRLS` role bypasses both or neither. So a GREEN on `pages` contradicts a measured fact unless the
+mutation was absent — and the report cannot say. Tick 252's law, on a report rather than the ledger: **the
+record is the likelier defect than the world.**
+
+⚠️ **The cause sentence in the report was MINE.** The brief's GREEN branch read *"row-level security is
+already refusing the cross-tenant read … say it plainly, it is new information"*, so the coder quoted the
+label. Tick 244's law (*a consequence stated inside a measurement carries the measurement's authority*) on a
+**branch label**: an outcome label that names its cause makes the coder assert the cause by reporting the
+outcome. ⛔ **A branch label names the OUTCOME only; the cause is a separate item that MEASURES it.**
+
+**RULED (tick 320): every mutate-and-test item pastes `git diff -- <file>` and a presence count BEFORE the
+test runs**, and a wave stops if the diff is empty. The presence count is the one that changes under the
+mutation, never the one that guards against over-mutation — both are needed and they are different counts.
+Thirty-fourth of the imprecise-brief family and the third consecutive wave whose falsifier for the **same
+claim** my brief spoiled (189 a symbol that could not resolve, 190 no witness and a cause in the label). The
+role probe — one `SELECT current_user, rolsuper, rolbypassrls` through tinker, write-nothing — is what
+decides whether RLS *can* be a cause in this suite, and it also settles tick 308's finding either way.
+
+## Tick 320 — measured, for the record
+
+- **Census `3 · 2 · 0 · 2`**, byte-identical to tick 319, halves with `--full-history` (314); the three
+  half-1 members are merges of main (money `e13776af`; stages `6240383f`, `6b7c315b`). A MISS — pricebook
+  and sixty tips moved — and the paired stats are `CLAUDE.md` alone for pricebook, `CLAUDE.md` plus
+  `app/tests/Modules/X-01/X01Test.php` for sixty (X-01 is stages' under ruling 5's catch-all — advisory,
+  never a parallel fix). Dependency query (240) clean. Shared state: no branch below main's **14**; site
+  180, HEAD 182.
+- ⛔ **The drift signature fired again, exactly as tick 285 describes**: after `cd app && php artisan
+  doctor` the three pathspec halves read `0 · 0 · 0` against a pathspec-free complement of `2`, the loud
+  detector fired on the next `grep`, and every pathspec query in that batch was void. Reset in its own call
+  and re-run. The reset is **per call**; a second doctor call in the same tick drifts again.
+- **Doctor**, live, stamp `20260829-0647` = `runtime_build`: `boundary 52 · contract 85 · citation 3 ·
+  schema 16 · capability 207 · anchor 128 · journey 3` · **494**, SUM ✓, `ok` only on integrity; **no gated
+  stage moved** from tick 319. The report's block reproduces all seven counts and its stamp equality was
+  stated as a comparison (305).
+- **Cold witness on its equality branch**: `assert` **2**, `foreach` **0**, no prose hit ⇒ 2 = the reported
+  `assertions 2`.
+- **§1 by arithmetic**: `behind 43 · ahead 5` = tick 319's `43 · 3` + `7eca3362` + `cfb0e888`; main unmoved
+  at `2daff2cc`.
+- **Tick 287's ordering held on the coder's side**: pest `13:44:08 → 13:46:34` rc 2, `REPORT.md` 13:46:51.
+  Tick 259's column rule, seventeenth firing — five `grs-antig-site` gates in twenty minutes, mine `241425`
+  (`gate-start 13:50:39`, alive by `readlink`).
