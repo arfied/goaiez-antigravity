@@ -228,4 +228,17 @@ class ConfirmationScreenTest extends TestCase
         $this->assertArrayNotHasKey($item1->id, $component->get('prices'), 'Key must be unset for confirmed item');
         $this->assertArrayHasKey($item2->id, $component->get('prices'), 'Key must be retained for unconfirmed item');
     }
+
+    public function test_empty_state_offers_no_remedy(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        Livewire::actingAs($owner)
+            ->test(ConfirmationScreen::class)
+            ->assertOk()
+            ->assertSee('All your prices have been confirmed.')
+            ->assertDontSee('Open Pricebook');
+    }
 }
