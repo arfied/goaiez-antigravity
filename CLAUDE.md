@@ -621,7 +621,123 @@ own machinery (`FF`→`EW`, `FH`→`FF`, `GA`→`FZ`, `GB`→`GA`, `GD`→`FZ`),
 **more encodings than any reader was written for**, and — like `GA` — **the first form of its own repair
 was falsified by the commit that published it.**
 
-## ⭐⭐ THE OWNER HAS ORDERED THE MERGE (tick 319) — `RULING GE`, and the take is NO LONGER REFUSED
+## ⭐⭐ THE MERGE LANDED AND IS PUSHED — `6240383f` (tick 320). The lane is **0 BEHIND `origin/main`** for the first time on this page.
+
+`6240383f merge: origin/main (cbdba9cd) — owner drift rule, 280 behind`, parents `3283294d` (ours) and
+`cbdba9cd`. **114 files changed, 2953 insertions(+), 187 deletions(-)** in `app/`, 60 under
+`app/app/Modules/`. `git rev-list --left-right --count HEAD...cbdba9cd` → **`101  0`**. Pushed by explicit
+ref, fast-forward: `15e17c86..6240383f`. The owner's condition (1) is **discharged**; `RULING GE`'s dispatch
+is complete and ticks 238–318's *"OPEN, UNNECESSARY and REFUSED"* formula is **retired, not repealed** — it
+was correct on its own measurement and the owner supplied a different predicate.
+
+⭐⭐ **THE FACT THAT GOVERNS EVERY NUMBER BELOW, re-measured at tick 320:**
+
+```
+git diff --stat HEAD cbdba9cd -- app/                                        →  app/phpunit.xml | 2 +-
+git diff --stat HEAD^1 HEAD -- app/app/Doctor/ …/JourneyHarness.php          →  (empty)
+git diff --stat HEAD^1 HEAD -- .agents/ CLAUDE.md .claude/ bin/ phpunit.xml  →  (empty)
+```
+
+**The merged `app/` tree is BYTE-IDENTICAL to main's but for the per-track `DB_DATABASE` pin** —
+`RULING DC`'s restore in its fourth live execution. ✅ **The One Rule is not reached and `RULING EQ`'s void
+condition is STILL not reached**: the merge moved no checker byte, so the eight counts are directly
+comparable across it. `RULING FO` therefore holds in its strongest form — **`boundary 55` · `contract 85` ·
+`capability 207` · `anchor 128` · `schema 16` · and now `citation 3` are MAIN'S NUMBERS**, measured by main's
+checker on main's tree, and no wave in this lane can move any of them.
+
+⛔ **`citation` LEFT 0 FOR THE FIRST TIME and it is inherited.** Three rows, all in **`X-198` — money's
+module**, `RULING FQ`'s fourth `RULING FO` module: `PaymentLinkAction.php:40` cites **R036**,
+`GatewayEngine.php:76` cites **R037**, `StripeGatewayClient.php:17` cites **R093**, none of which appears
+anywhere in the package. This lane's ours-since-base in `app/` is `app/phpunit.xml` alone, so it cannot have
+authored them. **Filed as TRACK 1 ACTION 14, routed to money. Never fixed here.** ⚠️ §3's ledger still reads
+`citation 0` and is **wrong by three** — `RULING CK` structural for the fifth time. **Cite §5, never §3.**
+
+⭐ **`§2e`/`§2f`/`§2g` did real work for the first time**, `HEAD` finally being a merge. `§2e` and `§2g`
+printed ✓; `§2f` named one candidate, resolved as `RULING EP`-benign by measurement (below). **The event
+`RULING FW` said would not occur has occurred, and the three sections `FW` refused to delete did exactly
+what they were adopted to do.** ⚠️ **`FW`'s cadence rider — *"no further instrument section is adopted while
+the take stands refused"* — has LAPSED BY ITS OWN TERMS.** Its **floor** is untouched and binds unchanged:
+clause (i) `RULING FU`'s replay on the exact historical event, clause (ii) the class is reachable in this
+lane's current operating state. **That is not an opening**, and no instrument byte changed at tick 320.
+
+⭐ **THE ADMISSION CENSUS WAS RE-RUN because its shelf life was SPENT** — every tick since 236 skipped it on
+`git diff --stat 10e804ea HEAD -- app/` being empty, and that diff is now 114 files. Re-derived at tick 320
+with `RULING EX`'s completeness proof intact — **127** `capabilities.php` × 2 header ⑤ = 254, total ⑤ **301**,
+`301 − 254 = 47`, extraction returns **exactly 47** pairs — and intersected against the **200** distinct
+flagged pairs across the 207 rows, **exactly three modules survive and all three are closed by standing
+rulings**: `X-117` G1-73/G17-31/G1-81 (`RULING CM`), `X-158` G16-32 (§257.4 deferred), `X-212` G4-54
+(`RULING CB`). ⭐ **The negatives are MECHANICALLY confirmed** — a single anchored `grep -cE` over the live
+flagged dump returns **`0`** for `X-211`, `X-173`, `C-Reviews`, `X-195`, `G1-75`, `G15-31`, `G15-28`,
+`G1-83`, `G15-32`, so STAGES-231's close of `X-211` **holds across the merge** and `C-Mail`'s `G15-31` is
+still `RULING CF`'s canonical empty intersection. **The admission test is EMPTY against a tree that moved
+114 `app/` files.** ⛔ Shelf life is one code change; never carry this table forward.
+
+✅ **`§2f`'s candidate is `RULING EP`-BENIGN and needs nothing.** `it('deploy-check does not crash when
+worker heartbeat is present'`: `git merge-base HEAD^1 HEAD^2` → `7a75f289`, a **main** commit, so
+`RULING FM`'s "read every one as ours" clause is **not reached**; the name lives in
+`app/tests/Feature/DeployCheckTest.php` **at the base**; main **rewrote** that file into eight richer
+assertions. **Nothing of this lane's was lost because it has authored nothing in `app/tests/` to lose.**
+`§2g` printed ✓ at path level independently. ⛔ **Never narrow `§2f` because it named a candidate** — it is a
+trigger, never a verdict, and it can only over-report by design.
+
+### ⛔⛔ `RULING GF` (tick 320) — SIX of eight `§5` floors carried a reporting VERB. `citation` carried none, because its expected value was `0`. The one floor written as a bare constant is the one that was answered by TRANSCRIPTION — and it is the one the wave falsified.
+
+`RULING EZ` made it standing practice to **run** a floor's exact command before writing it into a brief, and
+this seat did: `citation` **was** `0` on the pre-merge tree. `RULING EV` requires a floor for every section
+the wave's edits can move, and one was written. **Both rules were obeyed and the floor still failed, for a
+reason neither covers.** Measured on this seat's own brief, `BRIEF.md:137-148`:
+
+| floor | the instruction attached to it |
+| :--- | :--- |
+| `integrity` **0** | *"a rise is a **BLOCK**; stop and report"* |
+| **`citation` 0.** | ⛔ **nothing. A bare value and a full stop.** |
+| `schema` | *"15, 16 or 17. Never an exact number … **Report which, and paste the row list**"* |
+| `journey` | *"**report the number and name each slug**"* |
+| `boundary` `contract` `capability` `anchor` | *"**Report before → after for each and state the arithmetic**"* |
+
+⛔ **The report came back as a MIRROR of that list** — four `before → after (+0)` deltas for the four that
+asked for deltas, three slugs named for `journey`, the row-list caveat for `schema`, and **this seat's own
+constant** for the one floor that asked for nothing. The coder's own gate reads
+`FAIL citation 1170ms 3 violation(s)` at `.gateS233w.txt:156`. **Satisfying `citation 0.` required no
+measurement at all, because there was no verb in it to perform** — and a coder that meets every stated floor
+has done what was asked (`RULING EV`'s converse).
+
+⭐ **The arithmetic control catches it in one subtraction, and the report omitted that line.** The brief said
+*"report all eight, and the `N violation(s)` total line, which is their own arithmetic control"*; the report
+gave the eight and dropped the total. **The gate prints `497` and the report's own eight sum to `494`.**
+**The one omitted line is exactly the line that would have caught the one wrong number.**
+
+⚠️ **The deeper half: the floor was CORRECT WHEN WRITTEN and falsified by the very event the wave existed to
+perform.** A 280-commit merge is precisely the operation that moves a stage off clean, and this seat floored
+that stage as a constant **inside the brief for that merge**. **`RULING FH`'s shape one artefact over** —
+`FH` is an instrument correct when measured and invalidated **by the act of recording it**; `GF` is a floor
+correct when measured and invalidated **by the act the brief commissions**. A floor is a prediction about the
+tree *after* the wave; this one was a measurement of the tree *before* it.
+
+✅ **Standing correction, three clauses.** **(i)** **Every `§5` floor carries a reporting verb** — *report the
+number*, *name the rows*, *state the arithmetic*. **A floor is never a bare value, and `0` least of all**,
+because a zero is the value a reporter is most likely to satisfy from the brief rather than from the gate.
+**(ii)** **The `N violation(s)` total line is MANDATORY in every report quoting `§5`**, and a review **adds
+the eight and compares** before reading any of them — it is the gate's own arithmetic control
+(`RULING FJ`'s row-count control, already built into the instrument), one line, and decisive. **(iii)** **In
+a brief for a wave that takes another tree, NO stage is floored at its current value without a stated range
+or a "report which"** — the wave's whole purpose is to import counts this lane did not author, so
+`RULING FB`/`FD`'s range treatment of `schema` generalises to all eight for a take.
+
+⭐ **Applied to itself in the tick that wrote it** (`RULING FQ`'s standard): STAGES-234's brief carries a verb
+on all eight floors, mandates the total line, and floors `citation` at **3 — report the number and name each
+module, file and id**. ⭐ **Proven on the exact historical event it is named for** (`RULING FU`'s standard) —
+not a replay: the live wave, and the miss it produced. ⛔ **No instrument byte changes** (`RULING FY`'s
+precedent — the gate printed the right number; the brief asked the wrong question).
+
+⚠️ Twenty-sixth member of the
+`EU`/`EV`/`EW`/`EX`/`EZ`/`FE`/`FF`/`FH`/`FI`/`FJ`/`FN`/`FP`/`FQ`/`FS`/`FT`/`FU`/`FV`/`FW`/`FX`/`FY`/`FZ`/`GA`/`GB`/`GC`/`GD`/`GE`
+family, and the first where the defective instrument is **a floor's GRAMMAR** — not its command (`EU`), its
+coverage (`EV`), its value (`EZ`) or its position in the sequence (`FN`), but **the absence of an imperative
+in it**. ⛔ **And the first in the family found in a wave this seat's own brief commissioned and whose
+substance was correct**; every earlier member was found by re-measurement on a HOLD.
+
+### History — the owner ruling that ordered it (tick 319)
 
 ⭐ **`OWNER.md:691`, `## OWNER RULING — 2026-09-09 09:02 — relayed by Track 1`, quoted exactly:**
 
