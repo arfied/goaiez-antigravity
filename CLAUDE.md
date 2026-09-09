@@ -4954,15 +4954,22 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     two scheduled ones carry ruling 151(1)'s architecture lint pinning both windows, the four
     `runtime-proof` commands are rulings 49/172's honest refusals, and the five `evidence-*` were
     swept by rulings 48/169/173/187. There is no wave in it.
-209. **The WIDENED per-query tenancy sweep is measured — the lane has 78 `::where(` call sites outside
-    `Ui/` and exactly THREE omit `business_id`, each with a scoped sibling in its own file or module;
+209. **The WIDENED per-query tenancy sweep is measured — the lane has 152 `::where(` call sites, 75 of
+    them outside `Ui/`, and exactly THREE omit `business_id`, each with a scoped sibling in its own
+    file or module;
     and the sharpest of the three is a missing PARAMETER, not a missing clause (RULED by the lane
     supervisor 2026-09-08 20:5x, briefed as MONEY-135).** Ruling 208's sweep used
     `::find( ::findOrFail( ::first( ::all(` and found `CheckoutBlock:108`; it could not see a
     `Model::where('<not business_id>', …)->get()`, which is the shape that returns a *list* rather
     than a row. Ruling 151(5) measured the 24 components by the wrong instrument — it read the
     component, not its queries — so `Domain/`, `Actions/`, `Listeners/` and `Console/` were genuinely
-    unswept. Re-run across all eight modules, the population is **78** and the three members are:
+    unswept. Re-run across all eight modules, the population is **152 lines — 75 outside `Ui/`, 77
+    inside** (`grep -c ""` on the captured sweep, and `grep -vc "/Ui/"` for the split; ⚠️ the first
+    draft of this ruling and of MONEY-135's brief both stated a hand-summed **78** and **99**, from
+    adding up `grep -rc` output by eye. Both were wrong before either shipped, and the correction is
+    recorded rather than dropped: **a per-file count is summed by a tool, never by the supervisor**,
+    which is ruling 92/200's arithmetic discipline meeting ruling 207's corroborate-the-sweep rule.)
+    The three members are:
     **(a) `X-199/Domain/InvoiceReader::overdueIssued():22-27`** — `Invoice::where('due_date', '<',
     …)->where('status','issued')->get()`, and it takes **no `$businessId` parameter at all**, alone
     among the reader's **eleven** methods, every other one of which is `…ForBusiness(int
