@@ -5660,6 +5660,77 @@ Watch for: <the trap that applies, by name>
   you decline to re-measure and why** — the tick-197 corollary (*a coder that dies before its gate has
   never run the suite, so the supervisor must run it*) is keyed to a MISSING measurement, not to a
   measurement the column did not perform itself.
+- ⚠️⚠️ **Borrowing an existing capability id for a NEW finding is a claim that THAT id's own capability
+  is unbuilt — so there is a second grep after the one that finds the id, and here the contradicting
+  verdict sat four lines from a row the same commit edited.** Wave 141b filed
+  `BUILD PROPOSAL: G5-37 — … map chat_session_id to C-Agent's conversation_id …` at
+  `ChatDoorTest.php:23`, against a `C-Agent/capabilities.php:49` reading `'the takeover latch is
+  X-01\'s (R21)'` and a `CAgentTest.php:203` reading `CLOSED: G5-37 — the C-Agent side wire … was built
+  in f7bd376b` — this lane's own ruling at ticks 218/219, in one of the three files that commit
+  touched. So the durable record says one id is both `CLOSED` and an open proposal, and
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — which **is** this lane's backlog — carries a row for
+  finished work, which is the tick-191 manufacture-a-wave hazard. ⭐ **No stage consequence, measured
+  rather than assumed**: `CapabilityStage::testedIds` globs `tests/Modules/{module}/*.php` and X-102
+  declares `G2-57 · G8-36 · G13-15 · G13-37 · G16-21 · G21-01`, so `G5-37` in X-102's directory
+  intersects nothing. ⭐ **PASS-WITH-NOTES and not `BLOCK`, on a discriminator worth stating in general:
+  a docblock corrects forward by REWRITING ITSELF, where the two records this lane holds a push for
+  cannot** — the ledger is append-only and a commit message has no forward correction at all (tick 252).
+  Check which kind of record a false sentence landed in before deciding whether to hold the push. And it
+  is not the tick-218 shape, which was a `BLOCK` because a lane-owned item **left** the board; a real
+  item arriving under a wrong label is visible and cheap, and the direction is what separates them.
+- ⚠️⚠️ **A correction binds the text the wave WRITES, not only the text it inherits — every recorded
+  instance of this defect is a wave that fixed the old occurrence and authored a new one minutes
+  later.** Wave 141b fixed `ChatTurnAction.php:29`'s *"Track 1 **must** map …"* well, and wrote the same
+  clause verbatim into the new `ChatDoorTest.php:23` in the **same commit** — second consecutive wave of
+  fix-here-reproduce-there, third wave running for that sentence. ⛔ **My brief named two file paths.**
+  Tick 246's rule is *a rule stated for ONE FILE is stated for the SHAPE*; this is its sharper form, and
+  it is the half that makes the fix worth anything: **say that the ban travels to anything the wave
+  writes this wave**, and ask what was checked and with what command.
+- ⚠️ **A field asking a file to report its OWN final size is self-referentially impossible, and no coder
+  can ever answer it.** My `ARTIFACTS:` field asked for `stat -c '%s %y %n'` on the two `scratch/`
+  artifacts **and on `REPORT.md` itself**; the two `scratch/` entries came back exact to the nanosecond
+  and the third was `9265 @ 23:49:13.870` against a disk `9480 @ 23:49:20.341`, because writing the
+  `stat` output into the report changes the report. Newest member of the stale-artifact family and the
+  only one whose staleness is a **theorem** rather than a race. The property wanted — *`REPORT.md`'s
+  mtime is the newest artifact of the wave* — is a **reviewer's** check costing one `ls -t`. **Ask for
+  `stat` on the artifacts only.**
+- ⚠️ **A question buried in a PROCESS item has no slot in the template, so it is answered by doing the
+  thing and saying nothing.** Item 0 said *"keep whichever you judge worth keeping and say which"*; the
+  judgement was made correctly (`mutation.patch` deleted, `w141-mut-1.patch` moved to `scratch/` with
+  its mtime intact) and appears in no field and no numbered answer, because none asks for it. **A
+  question worth an answer goes in the template or in the numbered list** — the wave-137 blank-field
+  lesson with the blank in the brief rather than in the report.
+- ⚠️ **A restatement can turn an OBSERVATION into a question ABOUT the observation, and only the filed
+  text shows it.** `TRACK 1 ACTION 1` reads *"`consumes: chat.started` **remains** declared and
+  unimplemented, now permanently"* — a measured fact, followed by an ask about what to do with it;
+  `CAgentTest.php:171` came back *"and **whether** `consumes: chat.started` remains declared and
+  unimplemented"*, asking another lane whether a thing this lane measured is so. A wording note and not
+  a finding — it is an inquiry and prescribes no remedy, which was the point — but a docblock is the
+  durable record, so diff a restatement against the filed text word by word.
+- **Suite baseline, measured by this column at tick 263 on tip `904bea2e`, clean tree — `tests 1946 ·
+  passed 1943 · assertions 8407 · failed 1 · errors 2 · incomplete 3 · risky 1 · duration_ms 110323`,**
+  the standing three by **identity**, §2 `none`, §2b `all parse`, §1b 17 keys, §6 pint `passed` /
+  phpstan `0`, stamp `20260829-0647` = `runtime_build`. ⭐ `cmp scratch/pest-raw-last.log
+  scratch/w141b-pest-raw.log` → `differ: byte 94, line 1` on two 1508-byte files — the `duration_ms`
+  offset **alone**, which is all a docblock-and-ledger diff may produce. §7 waited on `pest.lock` and
+  completed for the **thirteenth** consecutive tick: contended, never stuck. ⚠️ Ordering lapse, mine:
+  tick 201's ⭐ says measure every field before opening `REPORT.md`, and I read it while establishing
+  the tick case. Nothing was seeded — every finding is a command I ran and two contradict the report —
+  but the star exists because sequence is cheaper than discipline.
+- **Backlog at tick 263 — wave 142 is record corrections only, three rows handed over PER ROW; wave 143
+  is the author-type guard.** RULED. `904bea2e` is **pushed** — tick 262's hold is discharged rather
+  than inherited (tick 235), its stated reason being that the two cross-lane sentences ship with their
+  correction, and they did. Wave 142 writes no production code, no test, no assertion and no mutation:
+  `ChatDoorTest.php:22-24`'s three new rows go over as **three separate items whose answers need not
+  agree** (ticks 187, 209, 218, 221 — a set handed over as one instruction is treated as one shape, and
+  NOTE 1 above is that failure with a group the coder formed itself), with the `G5-37` grep, X-102's six
+  capability texts and the whole `turn_number` grep printed and **no id named by this column**. ⛔ The
+  correction and the next build are **not** the same wave: `ChatDoorTest.php:22`'s author-type guard is
+  the strongest next build on the board — single-module, in lane, on the live public door, provable in
+  both polarities — and pairing it with a wave that rewrites `ChatDoorTest.php:22-24` is the wave-110
+  defect exactly (build the wire, restore the row's proposal line in the same commit). Live list
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **9** rows at tick 263, the tick-262 six plus the
+  three new X-102 rows; stub pile across the thirteen **10**. Re-run both; never inherit them.
 
 ## Style
 
