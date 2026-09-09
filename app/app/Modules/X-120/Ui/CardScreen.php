@@ -98,7 +98,15 @@ class CardScreen extends Component
         ]);
     }
 
-    public function forgetCardFields(): void
+    /**
+     * Cardholder data lives in public properties, and Livewire renders those into the page as
+     * wire:snapshot on every response. So the number, the expiry and the name are forgotten as a
+     * set at the boundary of every action this screen exposes, not only the one that checks them:
+     * otherwise a number typed here and left behind by an unrelated click is echoed back into the
+     * page for the rest of the session, and the form's promise that the number reaches this app
+     * once is false. P-196 names all three. (R241)
+     */
+    private function forgetCardFields(): void
     {
         $this->number = '';
         $this->expMonth = '';
