@@ -150,4 +150,40 @@ class ThreadScreenTest extends TestCase
             $manager->replyWithTakeover($conversation->business_id, $conversation->id, 'another reply');
         });
     }
+
+    public function test_thread_screen_displays_ingested_message(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        Tenancy::actingAs($biz->id, function () use ($owner, $biz) {
+            Tenancy::setUser($owner->id);
+            $customer = Customer::factory()->create([
+                'name' => 'Ingest Customer',
+                'phone' => '+15125559999',
+            ]);
+
+            $manager = app(UnifiedInboxManager::class);
+            $res = $manager->ingestMessage(
+                $biz->id,
+                'sms',
+                '+15125559999',
+                'Ingest Customer',
+                'This is an ingested message.'
+            );
+            \Illuminate\Support\Facades\DB::table('messages')->insert([
+                'business_id' => $biz->id,
+                'conversation_id' => $res['conversation_id'],
+                'direction' => 'inbound',
+                'sender_type' => 'customer',
+                'sender_id' => '1',
+                'body' => 'This is an ingested message.',
+                'created_at' => now(),
+            ]);
+
+            Livewire::test(Thread::class, ['customer' => $customer])
+                ->assertSee('This is an ingested message.');
+        });
+    }
 }
