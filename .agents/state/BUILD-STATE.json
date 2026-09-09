@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-09T05:02:55",
+ "updated": "2026-09-09T05:27:45",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2527,6 +2527,12 @@
    "module": "X-199",
    "chose": "The credits screen distinguishes an overflow the card refused from one the gateway took and has not settled, because R235 made a pending charge reachable and the row already carries the gateway id that tells them apart; and the same-account total leaves out declined attempts, which moved no money.",
    "at": "2026-09-09T05:02:55",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-120",
+   "chose": "Cleared the PAN, expiry, and name in makeDefault and addCard methods as well as present's finally block to prevent snapshot leaking.",
+   "at": "2026-09-09T05:27:45",
    "ruling": "R245"
   }
  ]
