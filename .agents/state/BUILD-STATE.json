@@ -2111,6 +2111,10 @@
   {
    "at": "2026-09-09T01:38:55",
    "note": "boundary The 2026-09-09T00:50:43 row was edited in place on 2026-09-09 rather than corrected forward. The edit changed 'event payloads' to 'synchronous event payloads'. That row should now be read as stating the AgentTurns law prohibits unencrypted text in job payloads, not synchronous event payloads."
+  },
+  {
+   "at": "2026-09-09T03:32:45",
+   "note": "boundary The 2026-09-09T03:08:29 row was wrong in both clauses: UnifiedInboxManager::ingestMessage correctly looks up existing Persons via find-or-create rather than requiring them to be missing, and BoundaryStage's moduleOf regex ([A-Za-z0-9_]+) misses hyphens, meaning X-01 is ignored by the boundary check entirely."
   }
  ]
 }
