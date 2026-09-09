@@ -1685,9 +1685,83 @@ dispatched — executed by the supervisor itself**, `bin/supervise.sh` being thi
 ⛔ **Not a wave and no count moved** — §5 identical in all eight across `.gateT241.txt` and
 `.gateT241b.txt`. It sets no `fail=1`: a trigger, never a verdict.
 
-⛔ **The backlog is EMPTY at tick 309 and this tick writes a HOLD — the SIXTY-EIGHTH consecutive
-tick with no instrument change and the FIFTY-SEVENTH CONSECUTIVE with no new lettered ruling**, every
+⛔ **The backlog is EMPTY at tick 310 and this tick writes a HOLD — the SIXTY-NINTH consecutive tick
+with no instrument change and the FIFTY-EIGHTH CONSECUTIVE with no new lettered ruling**, every
 ordinal here **derived in this tick** per `RULING FZ` and none carried (`git rev-list --count
+8e178993..HEAD` → **68** prior since tick 241's instrument commit, corroborated by `git log -3 --
+bin/supervise.sh` naming `8e178993` as the last; `git rev-list --count 2808da7d..HEAD` → **57**
+since tick 252 lettered `FZ`); the §3 == §5 run and the take-refusal count are **deliberately not
+asserted**, having no derivation.
+
+⛔⛔ **`RULING DK` FIRED LIVE and it is the tick's one substantive event — `origin/main` moved
+MID-TICK with no fetch from this seat: `58e8ad89` at the opening `rev-parse`, `ae420332` at write
+time**, TWO first-parent commits — `f2807da8` *"chore(deploy): backup sources (BYPASSRLS role), …"*
+(07:15:17) and `ae420332` `merge: track/pricebook — X-162Test` (07:16:22). ⭐ **The pin governed and
+that is what kept the block coherent** — every figure was run against the literal sha, so the move
+changed none of them. ⭐ **And unlike tick 297 no live-ref number leaked into the gate**: an anchored
+search for a branch-position line in `.gateT310.txt` returns **nothing**, so there is no gate figure
+to mistake for a correction to the pinned one. ✅ **Reconciled rather than reasoned:** at the pin the
+lane is **51 / 266** behind with **44** merges since `a5042da2`; at the moved ref **53 / 270** and
+**45**. The **+2 first-parent / +4 ancestor / +1 merge** delta is the **MIXED** signature — two
+first-parent commits of which one is a merge — against tick 256's `+7 / +7` for pure non-merge
+movement and `+1 / +N` for a single merge; **read the shape, never the number** (`RULING EK`). The
+take re-check and the checker diff were **re-run at the moved ref too** and print nothing at either.
+⚠️ **Recorded, not acted on:** `f2807da8` names *"backup sources (BYPASSRLS role)"*, the territory of
+**`RULING FD`** / **OWNER ACTION H** (`schema`'s 16th row is `role goaiez_backup: has BYPASSRLS`).
+Whether it bears on that row is **not measured and deliberately not chased** — the remedy is
+`ALTER ROLE … NOBYPASSRLS`, a database operation reserved to the owner. If it does, this lane will
+see a `schema` fall **it did not author** (`RULING FD`'s cross-lane clause); nothing is claimed here.
+
+⭐ **`main` did NOT move AT PIN TIME — pin `58e8ad89`, the SIXTH CONSECUTIVE unmoved tick at it**:
+derived over the ledger's own MOVED/DID-NOT-MOVE markers read from commit **subjects**, spanning back
+to tick 304's **MOVED** (`2990f300` → `58e8ad89`), the resetting event (`RULING FZ(a)`). ⚠️ That is
+the pin-time reading and stands beside `DK` above without contradiction — the ref was unmoved when
+pinned and moved before the block was written. Lane **87 ahead / 51 behind** first-parent (**87 /
+266** by ancestor count, `RULING EK`), the ahead-count moving 86 → 87 on **our own tick-309 commit**
+and both behind-counts unchanged as an unmoved pin requires; merge base `7a75f289` unmoved;
+ours-since-base in `app/` is `app/phpunit.xml` alone, so this lane still authors no `app/**` byte and
+`boundary 55` · `contract 85` · `capability 207` · `anchor 128` · `schema 16` remain **main's
+numbers** (`RULING FO`). ⛔ **The take is OPEN, UNNECESSARY and REFUSED** — `DD`'s two-row re-check
+prints nothing and the `Doctor`/`JourneyHarness`/`seals.json` diff against our base is **empty**, so
+this lane's checker **is** main's current checker byte-identical, `RULING EQ`'s void condition is not
+reached, and a take could refresh nothing at a cost of **266** ancestor commits. ⭐ **The admission
+census was NOT re-run and the reason is a measurement taken first**: `git diff --stat 10e804ea HEAD
+-- app/` is **empty**, corroborated by `capability` reading **207** unchanged. §1 read from the count
+line per `FY` at **77** — at `:47` as a **single line**, never a range around it — corroborated
+independently, supervisor directory contributing **0**; `FY`'s census spans **SEVENTY-TWO**
+consecutive gates (`.gateT239`…`.gateT310`, all `77`, derived in three calls of 24 · 24 · 24 with
+every filename attached, never a glob). §3 == §5 and still a LEDGER; §5's own arithmetic control
+holds (`494`, read positionally). `wc -l bin/supervise.sh` **416** and drift `4 0`, both re-measured
+per `FX(ii)`; `bar` sections **14 / 13** on the same extraction, membership re-derived by `comm` on
+sorted input and unchanged (`1a` · `1b` · `2d` **NOT adoptable**, `RULING FS`, re-refused **without**
+re-testing the boundary; `2f` · `2g` offered upstream). §2e/§2f/§2g printed `HEAD is not a merge` for
+a **SIXTY-NINTH** gate (T242…T310, all `3`, derived in three calls of 24 · 23 · 23, anchored with
+filenames explicit, T241 **measured at `2`** as `FZ(b)`'s pre-adoption gate). **TRACK 1 ACTION 10**
+at the pin: **44** first-parent merges since `a5042da2` — unchanged, correct **by identity** because
+re-run at the pin — **0** naming `track/stages`, `18bbde18` still not an ancestor (rc **1**).
+⭐ **Precisions recorded and deliberately NOT lettered** (`FW` bars elevating a clean audit): tick
+310's backward audit under `FX(i)` is **clean** and, at a pin identical to tick 309's own, its
+**stronger by-identity form** — behind **51 / 266**, the merge count **44**, §1's **77**, `416`,
+drift `4 0` and `bar` **14 / 13** all reproducing by identity, the single mover being the ahead-count
+on our own commit and the two censuses each growing by exactly one gate, and **no ordinal asserted
+for the audit itself**; ⚠️ **a PERMISSION PROMPT is not a hook refusal and this tick met TWO** — a
+merge-census compound and a trailing `echo "rc=$?"`, each gating a **single sub-command** where a
+hook refuses a **compound wholesale**, and **neither was retried verbatim**, which is `RULING FI`'s
+discriminator of the invocation **form** and never the capability; ✅ **no hook refusal fired at all
+this tick**, recorded because a refused hook is partial work and not a no-op; ✅ **`RULING ES`/`FJ`
+did NOT fire, by construction rather than luck — no `cd` was issued at all**, both censuses running
+with all seventy-two / sixty-nine filenames attached and the first chunk's exact 24 rows confirming
+the depth before any figure was written, which is `FJ`'s own control; ✅ **`RULING FH` did NOT fire,
+by construction rather than luck** — no bare literal grep was run over a gate at all, every reading
+anchored or positional; and ⚠️ **a liveness scan is a DATED reading and the TWO scans in this tick
+AGREED**, both finding the same two coders (a relative-`logs/` `run174` of another lane proven not
+ours by **re-verifying** that this checkout has no such directory, `RULING CX`, and `pricebook
+run152`), **neither** containing this lane, recorded with **no forecast attached** per `RULING EJ`.
+⚠️ `HEAD` is **59 ahead** of `origin/track/stages`; notes-only commits ride the next gated-sha push.
+
+⛔ **The backlog was EMPTY at tick 309 and that tick wrote a HOLD — the SIXTY-EIGHTH consecutive
+tick with no instrument change and the FIFTY-SEVENTH CONSECUTIVE with no new lettered ruling**, every
+ordinal there **derived in that tick** per `RULING FZ` and none carried (`git rev-list --count
 8e178993..HEAD` → **67** prior since tick 241's instrument commit, corroborated by `git log -3 --
 bin/supervise.sh` naming `8e178993` as the last; `git rev-list --count 2808da7d..HEAD` → **56**
 since tick 252 lettered `FZ`); the §3 == §5 run and the take-refusal count are **deliberately not
