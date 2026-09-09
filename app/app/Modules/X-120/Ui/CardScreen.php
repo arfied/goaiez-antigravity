@@ -73,7 +73,7 @@ class CardScreen extends Component
         } catch (CardExpiredException|CardNumberInvalidException $e) {
             $this->error = $e->getMessage();
         } finally {
-            $this->number = '';
+            $this->forgetCardFields();
         }
     }
 
@@ -94,5 +94,13 @@ class CardScreen extends Component
             'cards' => $cards,
             'expiringCards' => $expiringCards,
         ]);
+    }
+
+    public function forgetCardFields(): void
+    {
+        $this->number = '';
+        $this->expMonth = '';
+        $this->expYear = '';
+        $this->name = '';
     }
 }

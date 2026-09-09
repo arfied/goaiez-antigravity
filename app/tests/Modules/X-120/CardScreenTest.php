@@ -271,4 +271,23 @@ class CardScreenTest extends TestCase
         Livewire::actingAs($owner)->test(CardScreen::class)
             ->assertSeeInOrder(['1111', '2222', '3333']);
     }
+
+    public function test_present_clears_the_four_fields_after_submission(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        Livewire::actingAs($owner)->test(CardScreen::class)
+            ->set('number', '4242424242424242')
+            ->set('expMonth', '12')
+            ->set('expYear', '2028')
+            ->set('name', 'John Doe')
+            ->call('present')
+            ->assertSet('number', '')
+            ->assertSet('expMonth', '')
+            ->assertSet('expYear', '')
+            ->assertSet('name', '');
+    }
 }
