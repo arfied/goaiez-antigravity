@@ -621,6 +621,98 @@ own machinery (`FF`→`EW`, `FH`→`FF`, `GA`→`FZ`, `GB`→`GA`, `GD`→`FZ`),
 **more encodings than any reader was written for**, and — like `GA` — **the first form of its own repair
 was falsified by the commit that published it.**
 
+## ⭐⭐ THE OWNER HAS ORDERED THE MERGE (tick 319) — `RULING GE`, and the take is NO LONGER REFUSED
+
+⭐ **`OWNER.md:691`, `## OWNER RULING — 2026-09-09 09:02 — relayed by Track 1`, quoted exactly:**
+
+> **Rule (owner, 2026-09-09):** merge `origin/main` into `track/stages` at the START of a wave when any of
+> these is true: (1) you are more than 100 commits behind `origin/main`; (2) main changed
+> `app/app/Doctor`, `coder-bin`, or `.claude/hooks` since your last merge; (3) you are about to push a
+> slice for Track 1 to merge. Otherwise keep building — do not merge on every tick. Never mid-slice.
+
+⛔ **Condition (1) is TRUE at 280 and this seat's standing refusal is SUPERSEDED.** Ticks 238–318 each
+refused the take as *"OPEN, UNNECESSARY and REFUSED"* on a measurement that was correct and remains
+correct — the checker is byte-identical, so a take refreshes nothing. **The owner has now supplied a
+different predicate.** *"More than 100 commits behind"* is a threshold about **drift**, not about the
+checker, and no measurement this seat made ever addressed it. My refusal was a lane-supervisor judgement
+inside my own column; an owner ruling relayed through the reserved-list channel outranks it. **RULED: the
+merge is ordered, dispatched this tick as STAGES-233.**
+
+⚠️ **Condition (2) is FALSE and is recorded so no later tick reads the merge as a checker refresh** —
+`git diff --stat 7a75f289 cbdba9cd -- app/app/Doctor/ app/tests/Journeys/JourneyHarness.php` is **empty**
+and `git diff --name-status HEAD...cbdba9cd -- .claude/` prints nothing. `RULING EQ`'s void condition is
+still not reached. **This merge is taken on DRIFT alone.**
+
+### ⛔⛔ `RULING GE` (tick 319) — `RULING FL` replaced a broken case-(d) instrument with a NARROWER one, and the replacement was BORN BLIND: it matches two heading literals where `OWNER.md` already used four. It missed a live owner ruling today, and `RULING GC(i)` had just removed the alarm that would have caught the silence.
+
+`FL` is this ledger's most expensive finding — seven consecutive ticks of HOLD over a live, actionable ask,
+because case (d)'s freshness test was an **mtime comparison** that could never fire again. Its repair was
+to *"read `OWNER.md`'s newest `## ` heading and grep a token from it"*, implemented as:
+
+```
+grep -n "^## TRACK 1 — \|^## OWNER — " .agents/supervisor/OWNER.md | tail -3
+```
+
+⛔ **Run at tick 319 that grep returns the two 2026-09-08 `TRACK 1` headings and NOTHING ELSE, while the
+file's newest heading is `## OWNER RULING — 2026-09-09 09:02`** — an owner ruling ordering this lane to
+merge. `^## OWNER — ` requires `OWNER — `; the text is `OWNER RULING — `. **The prose said "newest `## `
+heading" and the command said "one of these two literals", and eighty-five ticks used the command.**
+
+⭐ **It was born blind, and that is measurable rather than inferred.** `FL` was written at tick 234 on
+2026-09-08. `OWNER.md:590` has carried `## OWNER RULINGS — 2026-09-07 09:5x — relayed by Track 1` since
+the day before. **A heading form the grep cannot match was already in the file when the grep was
+written.** Enumerated this tick, `grep -n "^## \|^# "` returns **eight** headings and `FL`'s form catches
+**two**:
+
+```
+ 49 · 140 · 184  # DELEGATION — …          ⛔ missed
+ 93              ## DELEGATION — ruling 47  ⛔ missed
+590              ## OWNER RULINGS — …       ⛔ missed  (predates FL)
+663 · 678        ## TRACK 1 — …             ✅ caught
+691              ## OWNER RULING — …        ⛔ missed  (TODAY'S, and actionable)
+```
+
+⚠️ **What saved this tick is a check `FL` itself retired.** `OWNER.md`'s mtime had moved to 09:02, and
+mtime is precisely what `FL` ruled *"is never the test"*. `FL` is right — mtime is unsound as a **test**,
+since it fires on any touch and stops firing forever once `REVIEWS.md` overtakes it. But it remains a
+sound **prompt to look**, and this tick looked only because of it. ✅ **A retired instrument's output is
+not evidence, and noticing it is not a violation of the rule that retired it.**
+
+⛔⛔ **The compounding hazard, and it is the reason this is lettered rather than noted: `RULING GC(i)`,
+three ticks old, would have RATIONALISED the miss.** `GC(i)` ruled — correctly — that an unfired case (d)
+*"is no longer evidence of anything"*, because N152 records Track 1 cannot write this mailbox. So the
+honest tick-319 report of a silent case (d) reads *"case (d) did not fire, and per `GC(i)` that means
+nothing"* — **a true sentence, a sound citation, and a live owner ruling sitting unread in the file it
+describes.** `GC` removed the alarm that a silent channel should raise; `FL`'s narrow grep produced the
+silence; neither is wrong and together they are blind. ⚠️ **`GC(i)` is NOT repealed** — it is exactly
+right about a channel Track 1 has recorded it cannot use — but it is now paired with `GE(i)` so that
+"nothing arrived" is a **measurement over every heading**, never the output of a two-literal grep.
+
+✅ **Standing correction, three clauses, and the repair is the READER'S — `RULING FY`'s precedent, no
+instrument byte changes.** **(i)** Case (d)'s test enumerates **every** heading —
+`grep -n "^#\+ " .agents/supervisor/OWNER.md | tail -5` — and greps a token from the newest against
+`REVIEWS.md`; **never a list of heading literals**, which is a closed set over a record whose encodings
+are open. **(ii)** A tick reports case (d) as *"newest heading `<the actual text>`, processed/unprocessed"*
+— **naming the heading it read**, so a later tick can see which encoding was matched rather than trusting
+that a grep returned nothing. **(iii)** `GC(i)`'s *"an unfired case (d) is evidence of nothing"* applies
+only once **(i)** has been run; a silent two-literal grep is not an unfired case (d), it is an unasked
+question.
+
+⭐ **Applied to itself in the tick that wrote it** (`RULING FQ`'s standard): tick 319 ran `(i)`, found the
+note, and is dispatching on it. ⭐ **Proven on the exact historical event it is named for** (`RULING FU`'s
+standard) — not a replay, but the live event, today. ⭐ **Clause (ii)'s value is proven in the same
+breath**: `FL`'s grep returning two rows looks identical whether the newest heading is processed or
+unmatchable, and only naming the text distinguishes them.
+
+⚠️ Twenty-fifth member of the
+`EU`/`EV`/`EW`/`EX`/`EZ`/`FE`/`FF`/`FH`/`FI`/`FJ`/`FN`/`FP`/`FQ`/`FS`/`FT`/`FU`/`FV`/`FW`/`FX`/`FY`/`FZ`/`GA`/`GB`/`GC`/`GD`
+family, the **fifth** whose defective instrument is a standing correction's own machinery (`FF`→`EW`,
+`FH`→`FF`, `GA`→`FZ`, `GB`→`GA`, `GD`→`FZ`, `GE`→`FL`), and the first where **the correction was narrower
+than the record on the day it was written** — `GD` found a reader outgrown by a record that changed;
+`GE` finds one that never covered the record it was written against. ⛔ **And the first in the family to
+cost the lane something before being caught**: `FL`'s seven HOLD ticks and this tick's near-miss are the
+same instrument failing twice, in two different ways, at the same job.
+
 ### ⛔⛔ `RULING FZ` (tick 252) — `RULING FX(i)` says paste every count from a command run against the pinned sha. A STREAK IS NOT A FACT ABOUT A SHA, so no pin-anchored command can produce one and `FX(i)` is not merely unapplied to a tally — it is INAPPLICABLE IN PRINCIPLE. Two of tick 251's tallies are wrong, by two different arithmetic faults.
 
 `FX(i)` exists because a REVIEWS block has no coder to falsify it. **It has a hole, and the hole is the
