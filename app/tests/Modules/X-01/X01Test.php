@@ -548,23 +548,4 @@ class X01Test extends TestCase
         $this->expectException(TakeoverNotLatchedRefused::class);
         $this->manager->replyWithTakeover($biz->id, $c->id, 'anything');
     }
-
-    public function test_chat_capture_wire_creates_conversation(): void
-    {
-        $biz = \App\Models\Business::factory()->create();
-        
-        \Illuminate\Support\Facades\Event::dispatch(new \App\Modules\X102\Events\ChatLeadCaptured(
-            businessId: $biz->id,
-            leadId: 99,
-            personId: 999,
-            name: 'Chat User',
-            phone: '+15550000000',
-            message: 'Hello chat'
-        ));
-
-        $this->assertDatabaseHas('conversations', [
-            'channel' => 'chat',
-            'status' => 'open'
-        ]);
-    }
 }

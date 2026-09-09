@@ -6,7 +6,6 @@ namespace App\Modules\X01;
 
 use App\Modules\CMail\Events\EmailReplied;
 use App\Modules\CWhatsapp\Events\WhatsappSessionOpened;
-use App\Modules\X01\Listeners\ChatLeadCapturedListener;
 use App\Modules\X01\Listeners\EmailReplyInboundListener;
 use App\Modules\X01\Listeners\WhatsappInboundListener;
 use App\Modules\X01\Ui\Account\Inbox as AccountInbox;
@@ -15,7 +14,6 @@ use App\Modules\X01\Ui\History;
 use App\Modules\X01\Ui\PaymentRisk;
 use App\Modules\X01\Ui\Person as PersonComponent;
 use App\Modules\X01\Ui\Thread;
-use App\Modules\X102\Events\ChatLeadCaptured;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
@@ -31,7 +29,6 @@ final class ModuleServiceProvider extends ServiceProvider
     {
         Event::listen(WhatsappSessionOpened::class, WhatsappInboundListener::class);
         Event::listen(EmailReplied::class, EmailReplyInboundListener::class);
-        Event::listen(ChatLeadCaptured::class, ChatLeadCapturedListener::class);
         $this->loadRoutesFrom(__DIR__.'/routes.generated.php');
 
         $this->loadMigrationsFrom(__DIR__.'/Database/migrations');

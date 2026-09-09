@@ -11,7 +11,6 @@ final class ChatLeadCaptured
         public readonly int $leadId,
         public readonly int $personId,
         public readonly string $name,
-        public readonly string $phone,
-        public readonly ?string $message = null
+        public readonly string $phone
     ) {}
 }
