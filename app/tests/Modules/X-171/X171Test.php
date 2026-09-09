@@ -11,6 +11,7 @@ use App\Modules\X171\Events\SyncConflict;
 use App\Modules\X171\Events\TechOnSite;
 use App\Modules\X171\Models\DeviceSyncConflict;
 use App\Modules\X171\Models\DeviceSyncQueue;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -238,5 +239,111 @@ class X171Test extends TestCase
 
         Event::assertDispatchedTimes(JobCompleted::class, 1);
         $this->assertEquals(4, $emittedTotal);
+    }
+
+    public function test_tech_on_site_occurred_at_is_frozen_instant(): void
+    {
+        Event::fake([TechOnSite::class]);
+        $frozen = Carbon::parse('2025-01-01 10:00:00');
+        Carbon::setTestNow($frozen);
+
+        $action = new JobStateAction;
+        $action->updateState(1, 2, 3, 'on_site');
+
+        Event::assertDispatched(TechOnSite::class, function ($event) use ($frozen) {
+            return $event->occurredAt->equalTo($frozen);
+        });
+
+        Carbon::setTestNow();
+    }
+
+    public function test_live_completion_carries_frozen_instant(): void
+    {
+        Event::fake([JobCompleted::class]);
+        $frozen = Carbon::parse('2025-01-01 10:00:00');
+        Carbon::setTestNow($frozen);
+
+        $action = new JobStateAction;
+        $action->updateState(1, 2, 3, 'completed');
+
+        Event::assertDispatched(JobCompleted::class, function ($event) use ($frozen) {
+            return $event->occurredAt->equalTo($frozen);
+        });
+
+        Carbon::setTestNow();
+    }
+
+    public function test_replay_carries_null_and_says_so(): void
+    {
+        Event::fake([JobCompleted::class]);
+        $biz = TestCase::provisionTenant(['name' => 'Mobile Field Tech Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->syncAction->replayMutation(
+            businessId: $biz->id,
+            clientMutationId: 'mut_comp_1',
+            deviceId: 'dev_1',
+            actionName: 'job.completed',
+            payload: ['job_id' => 1, 'tech_id' => 2],
+            clientVersion: 1,
+            currentServerVersion: 1
+        );
+
+        Event::assertDispatched(JobCompleted::class, function ($event) {
+            return $event->occurredAt === null;
+        });
+    }
+
+    public function test_defect_arm_cannot_read_cross_tenant_person_id(): void
+    {
+        Event::fake([JobCompleted::class]);
+        $bizA = TestCase::provisionTenant(['name' => 'Tenant A', 'currency' => 'USD']);
+        $bizB = TestCase::provisionTenant(['name' => 'Tenant B', 'currency' => 'USD']);
+
+        $personId = DB::table('people')->insertGetId(['business_id' => $bizB->id]);
+
+        $jobIdOwnedByB = DB::table('work_orders')->insertGetId([
+            'business_id' => $bizB->id,
+            'title' => 'Cross-tenant tap',
+            'scheduled_at' => '2025-01-01 10:00:00',
+            'created_at' => '2025-01-01 09:00:00',
+            'updated_at' => '2025-01-01 09:00:00',
+            'person_id' => $personId,
+        ]);
+
+        $action = new JobStateAction;
+        $action->updateState($bizA->id, $jobIdOwnedByB, 3, 'completed');
+
+        Event::assertDispatched(JobCompleted::class, function ($e) {
+            $this->assertNull($e->personId, 'Tenant A must not read Tenant B person_id');
+
+            return true;
+        });
+    }
+
+    public function test_regression_arm_reads_own_person_id(): void
+    {
+        Event::fake([JobCompleted::class]);
+        $bizA = TestCase::provisionTenant(['name' => 'Tenant A', 'currency' => 'USD']);
+
+        $personId = DB::table('people')->insertGetId(['business_id' => $bizA->id]);
+
+        $ownJobId = DB::table('work_orders')->insertGetId([
+            'business_id' => $bizA->id,
+            'title' => 'Own tap',
+            'scheduled_at' => '2025-01-01 10:00:00',
+            'created_at' => '2025-01-01 09:00:00',
+            'updated_at' => '2025-01-01 09:00:00',
+            'person_id' => $personId,
+        ]);
+
+        $action = new JobStateAction;
+        $action->updateState($bizA->id, $ownJobId, 3, 'completed');
+
+        Event::assertDispatched(JobCompleted::class, function ($e) use ($personId) {
+            $this->assertSame($personId, $e->personId, 'Tenant A must read its own person_id');
+
+            return true;
+        });
     }
 }

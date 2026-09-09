@@ -107,11 +107,6 @@ class ConfirmationScreen extends Component
         unset($this->refusals[$itemId]);
     }
 
-    public function openPricebook()
-    {
-        $this->dispatch('open-pricebook');
-    }
-
     public function render()
     {
         $businessId = Tenancy::id();

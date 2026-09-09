@@ -12,10 +12,8 @@
         @if($assignments->isEmpty())
             <x-ui.empty-state 
                 heading="No dispatch assignments today"
-                action="Go to Jobs"
-                target="goToJobs"
                 icon="✓">
-                There are no jobs assigned for today. Go to Jobs to schedule and dispatch a technician.
+                There are no jobs assigned for today. Dispatching a technician is not yet available from this screen.
             </x-ui.empty-state>
         @else
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">

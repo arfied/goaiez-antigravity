@@ -59,7 +59,8 @@ final class ChatCaptureAction
                 leadId: $lead->id,
                 personId: $person->id,
                 name: $name,
-                phone: $phone
+                phone: $phone,
+                message: $message
             ));
 
             return $lead;

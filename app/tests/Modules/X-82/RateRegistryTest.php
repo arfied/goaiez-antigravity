@@ -189,4 +189,16 @@ class RateRegistryViewTest extends TestCase
             ->assertOk()
             ->assertSee('$687.43');
     }
+
+    public function test_staff_is_forbidden(): void
+    {
+        $user = User::factory()->create();
+        $user->role = UserRole::Staff;
+        $user->save();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
+
+        Livewire::actingAs($user)->test(RateRegistryView::class)->assertForbidden();
+
+    }
 }

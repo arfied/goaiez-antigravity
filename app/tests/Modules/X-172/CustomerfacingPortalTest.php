@@ -288,4 +288,51 @@ class CustomerfacingPortalTest extends TestCase
         $countAfter = PortalLink::count();
         $this->assertSame($countBefore, $countAfter, 'a 404 must never mint a portal link');
     }
+
+    public function test_review_button_is_absent(): void
+    {
+        $biz = TestCase::provisionTenant(['owner_user_id' => User::factory()->create()->id]);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $jobId = DB::table('work_orders')->insertGetId([
+            'business_id' => $biz->id,
+            'title' => 'Fix Sink',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DB::table('dispatch_assignments')->insert([
+            'business_id' => $biz->id,
+            'job_id' => $jobId,
+            'tech_id' => 1,
+            'status' => 'en_route',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DB::table('eta_predictions')->insert([
+            'business_id' => $biz->id,
+            'job_id' => $jobId,
+            'eta_minutes' => 15,
+            'estimated_arrival_at' => now()->addMinutes(15),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $token = 'valid_job_tok_'.uniqid();
+        $link = PortalLink::create([
+            'business_id' => $biz->id,
+            'resource_type' => 'job',
+            'resource_id' => $jobId,
+            'token' => $token,
+            'expires_at' => now()->addHours(24),
+            'is_active' => true,
+            'is_sample' => true,
+        ]);
+
+        Livewire::test(CustomerfacingPortal::class, ['token' => $token])
+            ->assertOk()
+            ->assertSee('Approve')
+            ->assertDontSee('Leave a review');
+    }
 }
