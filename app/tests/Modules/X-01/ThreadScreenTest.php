@@ -197,7 +197,7 @@ class ThreadScreenTest extends TestCase
 
         Tenancy::actingAs($biz->id, function () use ($owner, $biz) {
             Tenancy::setUser($owner->id);
-            
+
             $firstCustomer = Customer::factory()->create([
                 'name' => 'First Customer',
                 'phone' => '+15125551111',
