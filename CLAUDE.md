@@ -3249,3 +3249,163 @@ whether a **documented** reading of the role settles it, not whether the reviewe
 ⛔ **Recorded, not briefed: `Manager` is unexercised on THIRTEEN of the twenty guards** (every one
 outside PB-150's seven). It is the same question PB-150 already answered, on more rows — the documented
 frozen-instrument slide — so it is written down here with its count rather than turned into a wave.
+
+## ⛔⛔ Trap added 2026-09-09 05:5x — a TOTALS field that adds up perfectly is a second measurement, not a summary
+
+PB-151's `MATRIX TOTALS` read *"46 cells total · 28 EXERCISED · 18 UNEXERCISED"*. Measured with three
+`grep -c` over the report's own table: **49 · 32 · 17.** Every one of the 49 rows was correct; the three
+numbers summarising them were not.
+
+⭐⭐ **`28 + 18 = 46` is what makes it dangerous.** A totals line that fails to add up announces itself; one
+that adds up perfectly to the wrong number reads as verified. ⚠️ This is PB-127's rule — *a clean sweep's
+count is its only auditable part* — arriving at its own limit: **the count WAS the auditable part and the
+count was the thing that was wrong.**
+
+⭐ **The generalisation, standing from PB-152: a totals field is not a report of the table, it is a SECOND
+measurement of the same population, and two measurements are only evidence when they are taken by
+different means.** ⛔ Never let a totals line be typed. **Require the command and its printed output**
+beside the number — `grep -c '| EXERCISED |' REPORT.md` — exactly as PB-146 made `RAW` carry its
+provenance. ⭐ The independent cross-check that caught it costs nothing and is worth doing every time the
+brief supplies a role/member column: **derive the expected cardinality from the brief's own table before
+reading the report's.** Fourteen 2-member guards + `Pricebook` 3 + `OwnHoursView` 4 + `SyncFailureRate` 3
++ `StafffacingApp` 4 + `RateRegistryView` 4 + `StafffacingAssistantPanel` 3 = **49**, computable at
+briefing time.
+
+## ⛔ Trap added 2026-09-09 05:5x — a provenance rule fixed for ONE field, and the seven clauses that pointed past EOF
+
+PB-146 required `RAW` to carry `<log>:<line> — <line verbatim>` after a report cited a real line at the
+wrong number. **That correction was never generalised to the other field that carries pointers.**
+PB-151's `MATRIX` supplied 32 clauses and **eight do not resolve** — seven of them past the end of their
+own file, and all seven are the `Manager` cells, i.e. exactly the tests PB-150 had written:
+
+```
+ConfirmationScreenTest.php  cited 277  real 257  (267 lines)
+PricebookScreenTest.php     cited 334  real 312  (333 lines)
+DailyPricingDigestTest.php  cited 394  real 371  (381 lines)
+DispatchBoardTest.php       cited 192  real 177  (187 lines)
+PlansTest.php               cited 186  real 170  (180 lines)
+MembersTest.php             cited 187  real 172  (182 lines)
+ApprovalsTest.php           cited 192  real 177  (187 lines)
+```
+
+The eighth is a different failure and worth its own line: `X163Test.php:301` was cited for
+`Pricebook`/`Owner` and is `test_pricebook_list_filters_samples()`, **a different test seeding no role**;
+the real evidence is `test_no_fake_rows_written_on_mount` at `:286` / `:291` / `:294`.
+
+⭐ **All eight VERDICTS were correct.** That is PB-146's third position again — a report that
+under-claims sends you to the log, one that over-claims sends you to the log, and one that **claims
+correctly and cites wrongly is the most dangerous, because it is the only one that looks verified.**
+
+⭐ **Standing from PB-152: a `file:line` clause is produced by `grep -n` and COPIED from what it
+prints** — never counted, never estimated, never carried over from a pre-edit reading of the file.
+⚠️ And note the shape of the twenty-four that were fine: off by one or two, landing on a closing brace or
+the assertion after the one that matters. ⛔ **Resolvable is not the bar** — the seven byte-exact
+`ScreenTest.php:23` cites on `Livewire::test(<Component>::class)->assertOk()` are what a clause is for.
+⛔ Second time this lane has fixed a provenance rule in one place and not grepped its own standing
+instructions for the same shape (after the piped-gate finding).
+
+## ⭐ Recorded 2026-09-09 05:5x — the per-member guard matrix, ALL 49 CELLS, with the scope written into the count
+
+⛔ **SPENT. Do not re-derive, and do not point this question at more rows** — that is the frozen-instrument
+slide PB-150's own note named. Written here because `REPORT.md` is overwritten at the next dispatch and
+this lane has already lost four graded rows that way (PB-132).
+
+⚠️ **Scope, stated first:** `hasRole(` guards in `app/app/Modules/*/Ui/` across the lane's ten modules
+only — the twenty enumerated in the PB-150 block. Guards in middleware, policies or other tracks are
+**not** measured by this. Population **49 cells** = 20 guards × their own role-set sizes. **32
+`EXERCISED` · 17 `UNEXERCISED`**, measured by `grep -c` over the report's table, not by its totals line.
+
+**The seventeen `UNEXERCISED`, so a future tick reads the rows and not a number:**
+
+| role | cells |
+| :--- | :--- |
+| **`Manager` (13)** | X-162 `Map` · X-166 `BySource` `ByTech` `MarginByJob` `ByService` · X-167 `Reorders` `StockByVan` · X-168 `TimesheetsView` `OwnHoursView` · X-171 `SyncFailureRate` `StafffacingApp` · X-82 `RateRegistryView` · X-175 `StafffacingAssistantPanel` |
+| **`Owner` (1)** | X-171 `StafffacingApp` |
+| **`SuperAdmin` (2)** | X-163 `Pricebook` · X-168 `OwnHoursView` — ⭐ **both CLOSED by PB-151** |
+| **`OpsAdmin` (1)** | X-82 `RateRegistryView` — ruled RECORD, below |
+
+⭐ **A fact nothing had recorded, measured by PB-151 and worth keeping:** `SuperAdmin` does **NOT** need
+`->withSecondFactor()` to reach a Livewire component here. Both new tests passed un-mutated with a plain
+factory, even though every pre-existing `SuperAdmin` test in X-82 and X-171 calls it. ⛔ Do not add it
+pre-emptively to a new test on the assumption that it is required.
+
+## ⭐ Ruling — 2026-09-09 05:5x — `OpsAdmin` on `RateRegistryView` is RECORDED, and the enum answers the design question the previous wave deferred
+
+PB-150 deferred this cell pending three measurements. All three came back and each was re-verified:
+
+1. `UserRole.php:84-88` files `OpsAdmin` under `// ── Internal staff … Ours, not a tenant's.` **None of
+   these belongs to a business**, and `:193` returns `true` from `isPlatformStaff()`.
+2. `RateRegistryView::setRate():32` carries **no authorisation of its own** and writes through
+   `RateSetAction` on `$this->businessId`.
+3. `grep -rn 'OpsAdmin' app/app` → **12 hits**: ten in the enum, one in `SupportTicketPolicy:91`, and
+   `RateRegistryView.php:27` itself. **No production path creates an `OpsAdmin` user.**
+
+So a role the enum says belongs to no business is admitted to a tenant-scoped screen whose only control
+writes, while `:254` gives that same role `ImpersonationMode::View` — read-only impersonation.
+⛔ **And it is still not work:** the role cannot be instantiated in production, so there is no wrong value
+on any defined input. **latent + no wrong value = RECORD.** ⚠️ Recorded with **both halves** so the next
+tick that re-finds the cell gets the ruling, not the finding.
+
+## ⭐⭐ Trap added 2026-09-09 05:5x — three waves asked WHO MAY REACH the screen; nobody asked WHAT AN ADMITTED USER MAY SAY
+
+The successor instrument after the role-guard dimension closed, and it is a **different question**, not
+the same one on more rows. PB-147 graded the tenant scope of every `Ui/` **render query** — 23
+components, 64 queries. It never graded the **action methods**: the browser-callable mutators that take
+an id straight from the client.
+
+Measured before briefing, and it fired on the first component without `#[Locked]`:
+
+- **15 of the lane's 20 guarded components carry `#[Locked]`.** The five that do not are X-163's three
+  (`ConfirmationScreen`, `Pricebook`, `DailyPricingDigest`), X-162 `DispatchBoard`, X-171
+  `StafffacingApp`.
+- ⭐ **X-163's three are safe BY CONSTRUCTION and this is the useful half of the clearance:** they store
+  no tenant id at all. Every action method re-derives `$businessId = Tenancy::id()` and filters —
+  `deleteItem():165` is `PriceBookItem::where('business_id', $businessId)->where('id', $id)->delete()`.
+  **There is nothing to lock, which is a stronger position than locking it.**
+- ⛔ **`DispatchBoard` is not.** `reassign(int $jobId):58` reads `$techId` from `$this->techIds[$jobId]`
+  — a `public $techIds = []` with no `#[Locked]`, bound at `dispatch-board.blade.php:68` to a raw
+  `<input type="number">` — and hands both integers to `JobDispatchAction::handle()`, which
+  **`create()`s the row with no validation of either**. The migration
+  (`…000059_create_x162_dispatch_tables.php:18-19`) declares `job_id` and `tech_id` as
+  `unsignedBigInteger(...)->index()` with **no `constrained()`**, while `business_id` on the line above
+  is `foreignId(...)->constrained('businesses')`. **No referential integrity at either layer.**
+- ⭐ **`TechEnRouteAction::markEnRoute():22-25` is the CONTRAST that makes it rulable** — it
+  `firstOrFail()`s on `(business_id, job_id, tech_id)`, so a forged id fails there. **Two sibling actions
+  on one screen, opposite answers.**
+
+⛔ **Latent**, because PB-143's closed loop means no human reaches `reassign` in production — the only
+creator of a `DispatchAssignment` is the control that renders once one exists. ⭐ **Which is exactly why
+it is pinned now rather than after someone wires the dispatch form.**
+
+⛔⛔ **RULED: the fix is NOT in `JobDispatchAction`, and no production code changes**, on three
+measurements rather than on caution:
+
+1. `X162Test.php:49`, the module's **TEST ANCHOR**, seeds `$jobId = 1001; $techId = 42;` as bare integers
+   with no `work_orders` and no `User` row. Validating inside the action reddens a **declared anchor**,
+   and "fix the anchor" is a CHECK change. **Sixth incarnation in this lane of *stricter is always safe*
+   being false.**
+2. `X-162/capabilities.php` declares nothing about validating a dispatch target — `G2-71` is about the
+   EN ROUTE state. **Undeclared + unwired = a CAPABILITY** (PB-128's discriminator), never a defect.
+3. The seam that would validate `job_id` is `work_orders`, which is **X-121's** under ruling 8.
+
+⛔ **And `#[Locked] $techIds` is the OTHER wrong fix**: that property is the `wire:model` target of the
+only control on the screen, so locking it breaks the feature rather than guarding it. ⭐ **A property
+that must be browser-writable cannot be protected by locking it — the guard has to be on what the value
+is USED FOR.**
+
+⭐ **The deliverable is the PINNED ABSENCE** (PB-128 ruling 3): the assertion that the module performs no
+referential validation is what goes RED the day someone adds it without revisiting the anchor, and what a
+later wave deletes **deliberately** when the dispatch control is built.
+
+## ⚠️ Trap added 2026-09-09 05:5x — a MEASURE item and a FIX item in one wave share a population, and the brief must name the INSTANT
+
+PB-151's item 1 was *measure only* and item 2 pinned two of the cells item 1 grades. **The brief never
+said whether the matrix reports the PRE-wave or POST-wave state**, so the report graded
+`Pricebook`/`SuperAdmin` and `OwnHoursView`/`SuperAdmin` `UNEXERCISED` in the same document whose
+`COMMITS` section lands the tests making them `EXERCISED`.
+
+⭐ Both readings are defensible and the coder took the pre-wave one — the reading under which item 2 has
+a reason to exist. ⛔ **Do not grade that as a shortfall**; it is the PB-137 shape, and it is the reading
+that discloses more. ⭐ **The fix is one clause in the brief: say at which instant the measurement is
+taken.** Otherwise the report contradicts itself truthfully.
+**Twenty-fifth consecutive wave whose only shortfall traced to the brief.**
