@@ -1815,9 +1815,74 @@ dispatched — executed by the supervisor itself**, `bin/supervise.sh` being thi
 ⛔ **Not a wave and no count moved** — §5 identical in all eight across `.gateT241.txt` and
 `.gateT241b.txt`. It sets no `fail=1`: a trigger, never a verdict.
 
-⛔ **The backlog is EMPTY at tick 312 and this tick writes a HOLD — the SEVENTY-FIRST consecutive tick
-with no instrument change, and NO lettered-ruling streak is claimed because tick 311 lettered `GA` and
-this tick letters `GB`.** ⛔ **The instrument ordinal is derived by DISTINCT AUTHORING TICK, not by
+⛔ **The backlog is EMPTY at tick 313 and this tick writes a HOLD — the SEVENTY-SECOND consecutive tick
+with no instrument change, and NO lettered-ruling streak is claimed because tick 312 lettered `GB` one
+tick ago and this tick letters none, its backward audit being CLEAN and `RULING FW` barring a clean
+audit dressed as a discovery.** ⛔ **The instrument ordinal is derived by DISTINCT AUTHORING TICK per
+`RULING GB(ii)`, never by `git rev-list --count`** — `git log --format='%s' 8e178993..HEAD | grep -oE
+"^chore\(supervisor\): tick [0-9]+" | sort -u | wc -l` → **71** prior ticks since tick 241's instrument
+commit, corroborated by `git log -3 -- bin/supervise.sh` naming `8e178993` as the last. Every other
+ordinal here **derived in this tick** and none carried; the §3 == §5 run and the take-refusal count are
+**deliberately not asserted**, having no derivation. ⭐ **`main` did NOT move — pin `ae420332`, the
+SECOND CONSECUTIVE unmoved tick at it**: derived with `GA(i)`'s repaired reader over the ledger's own
+markers read from commit **subjects**, spanning back to tick 311's **MOVED** (`58e8ad89` → `ae420332`),
+the resetting event. ⭐ **A precision on `GA(iii)`, measured: the tighter anchored form `tick [0-9]+
+[A-Z-]+ — MAIN (MOVED|DID NOT MOVE)[A-Z ]*: pin [0-9a-f]+` achieves the distinct-tick dedupe
+STRUCTURALLY**, because tick 311's two addenda carry `tick 311 addendum, same tick, fix-forward — MAIN
+MOVED` and their subject prefix does not match — so the reader returns **one row per tick** with no
+separate dedupe pass. ⚠️ **Tick 310 remains absent from the subject census, which is `GA`'s own recorded
+finding and not a new one** — its marker lives in the body alone. Lane **92 ahead / 53 behind**
+first-parent (**92 / 270** by ancestor count, `RULING EK`), the ahead-count moving 91 → 92 on **our own
+tick-312 commit** and both behind-counts unchanged as an unmoved pin requires; merge base `7a75f289`
+unmoved; ours-since-base in `app/` is `app/phpunit.xml` alone, so this lane still authors no `app/**`
+byte and `boundary 55` · `contract 85` · `capability 207` · `anchor 128` · `schema 16` remain **main's
+numbers** (`RULING FO`). ⛔ **The take is OPEN, UNNECESSARY and REFUSED** — `DD`'s two-row re-check
+prints nothing and the `Doctor`/`JourneyHarness`/`seals.json` diff against our base is **empty**, so
+this lane's checker **is** main's current checker byte-identical, `RULING EQ`'s void condition is not
+reached, and a take could refresh nothing at a cost of **270** ancestor commits. ⭐ **The admission
+census was NOT re-run and the reason is a measurement taken first**: `git diff --stat 10e804ea HEAD --
+app/` is **empty**, corroborated by `capability` reading **207** unchanged. §1 read from the count line
+per `FY` at `:47` as a **single line** at **77**, corroborated independently, supervisor directory
+contributing **0**; `FY`'s census spans **SEVENTY-FIVE** consecutive gates (`.gateT239`…`.gateT313`,
+all `77`, derived in three calls of 25 · 25 · 25 with every filename attached, never a glob). §3 == §5
+and still a LEDGER; §5's own arithmetic control holds (`494`, read positionally). `wc -l
+bin/supervise.sh` **416** and drift `4 0`, both re-measured per `FX(ii)`; `bar` sections **14 / 13** on
+the same extraction, membership re-derived by `comm` on sorted input and unchanged (`1a` · `1b` · `2d`
+**NOT adoptable**, `RULING FS`, re-refused **without** re-testing the boundary; `2f` · `2g` offered
+upstream). §2e/§2f/§2g printed `HEAD is not a merge` for a **SEVENTY-SECOND** gate (T242…T313, all `3`,
+derived in three calls of 24 · 24 · 24, anchored with filenames explicit, T241 **measured at `2`** as
+`FZ(b)`'s pre-adoption gate). **TRACK 1 ACTION 10** at the pin: **45** first-parent merges since
+`a5042da2` — unchanged, correct **by identity** because re-run at the pin — **0** naming
+`track/stages`, `18bbde18` still not an ancestor (rc **1**). **ACTION 1** re-run **absolutely** per
+`RULING EC`: the `.agents/rules/` grep prints nothing and the note ceiling on `main` is still `N142`.
+⭐ **Precisions recorded and deliberately NOT lettered** (`FW` bars dressing a clean audit as a
+discovery): tick 313's backward audit under `FX(i)` is **clean** and, at a pin identical to tick 312's,
+its **stronger by-identity form** — behind **53 / 270**, the merge count **45**, §1's **77**, `416`,
+drift `4 0` and `bar` **14 / 13** all reproducing by identity, the movers being the ahead-count on our
+own commit and the two censuses each growing by one gate, with **no ordinal asserted for the audit
+itself**; ⚠️ **`RULING ES`/`FJ` FIRED LIVE and was caught in the same tick** — the §1 census's first
+chunk was issued as `cd …/.agents/supervisor && grep …`, moving the session's primary working
+directory, restored with an **absolute** `cd` **before any write**, the remaining two chunks then run
+on absolute paths, and ⭐ **the census unharmed by construction rather than luck** because all
+seventy-five filenames were attached, so a wrong-depth run would have printed *fewer files* rather than
+a plausible number, which is `FJ`'s own control; ⚠️ **a PERMISSION PROMPT is not a hook refusal and this
+tick met TWO** — both `bar`-section extractions written as `grep -oE … | sed …`, each gating a **single
+sub-command** where a hook refuses a **compound wholesale**, and **neither retried verbatim** (re-issued
+as a single `grep -oE '^bar "[0-9a-z]+\.'` with no `sed` at all), which is `RULING FI`'s discriminator
+of the invocation **form** and never the capability; ✅ **no hook refusal fired at all this tick**,
+recorded because a refused hook is partial work and not a no-op; ✅ **`RULING FH` did NOT fire, by
+construction rather than luck** — no bare literal grep was run over a gate at all, section offsets
+located with the anchored `^.\[1m== ` form and every figure then read positionally (`:47`, `:78`,
+`:151-158`, `:183`) or with an anchored pattern; ⭐ **the TWO liveness scans AGREED**, both finding
+exactly one coder (a relative-`logs/` `run174` of another lane, proven not ours by **re-verifying**
+that this checkout has no such directory, `RULING CX`), **not** containing this lane, recorded with
+**no forecast attached** per `RULING EJ`, tick 312's `pricebook run152` having ended between ticks; and
+✅ **`RULING DK` did NOT fire** — `origin/main` re-read unchanged at `ae420332` at write time. ⚠️ `HEAD`
+is **64 ahead** of `origin/track/stages`; notes-only commits ride the next gated-sha push.
+
+⛔ **The backlog was EMPTY at tick 312 and that tick wrote a HOLD — the SEVENTY-FIRST consecutive tick
+with no instrument change, and NO lettered-ruling streak was claimed because tick 311 lettered `GA` and
+that tick lettered `GB`.** ⛔ **The instrument ordinal is derived by DISTINCT AUTHORING TICK, not by
 `git rev-list --count`** — `git log --format='%s' 8e178993..HEAD | grep -oE "^chore\(supervisor\): tick
 [0-9]+" | sort -u | wc -l` → **70** prior ticks over **72** commits, tick 311 having made three; the row
 form would have written SEVENTY-THIRD, and that is **`RULING GB`**, lettered this tick after the
