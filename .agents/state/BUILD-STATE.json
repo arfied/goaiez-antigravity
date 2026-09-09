@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-08T19:12:30",
+ "updated": "2026-09-08T19:35:04",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2425,6 +2425,12 @@
    "module": "X-211",
    "chose": "an empty state that is true and names no dependency leaves the owner without the one fact they need, so the collections list now says no invoice can go overdue because nothing raises one, and the storefront's orders list now says no order can be placed because nothing writes the catalogue a cart is built from; the storefront door works and only the catalogue is missing, so the two screens name different dependencies, and no writer, importer, transition or door is built to make either sentence true",
    "at": "2026-09-08T19:12:30",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-173",
+   "chose": "a list an owner reads has a defined order, so the card list, the recorded gateways list and the account mappings list are read with an explicit id ordering instead of an unordered get, because an unordered read is returned in heap order and each of these three screens carries a button that rewrites a row in the list it is rendering, so the list could reshuffle with nothing added and nothing removed; two of the three already had an ordered sibling query, one in the same module and one on the line directly above, and no window, paginator, writer or ordering vocabulary is introduced",
+   "at": "2026-09-08T19:35:04",
    "ruling": "R245"
   }
  ]
