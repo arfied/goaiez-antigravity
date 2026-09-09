@@ -28,6 +28,7 @@ use App\Modules\X01\Models\TakeoverLatch;
 use App\Modules\X01\Ui\Account\Inbox as AccountInbox;
 use App\Modules\X01\Ui\CustomersList;
 use App\Modules\X01\Ui\Thread;
+use App\Modules\X102\Events\ChatLeadCaptured;
 use App\Modules\X121\Models\Person;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -547,5 +548,25 @@ class X01Test extends TestCase
         // 3. That the release is consulted by something other than the method that wrote it.
         $this->expectException(TakeoverNotLatchedRefused::class);
         $this->manager->replyWithTakeover($biz->id, $c->id, 'anything');
+    }
+
+    public function test_chat_capture_wire_creates_conversation(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Inbox Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        Event::dispatch(new ChatLeadCaptured(
+            businessId: $biz->id,
+            leadId: 99,
+            personId: 999,
+            name: 'Chat User',
+            phone: '+15550000000',
+            message: 'Hello chat',
+        ));
+
+        $this->assertDatabaseHas('conversations', [
+            'channel' => 'chat',
+            'status' => 'open',
+        ]);
     }
 }
