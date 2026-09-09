@@ -335,4 +335,41 @@ class CustomerfacingPortalTest extends TestCase
             ->assertSee('Approve')
             ->assertDontSee('Leave a review');
     }
+
+    public function test_en_route_without_eta_prediction_shows_no_minutes(): void
+    {
+        $biz = TestCase::provisionTenant(['owner_user_id' => User::factory()->create()->id]);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $jobId = DB::table('work_orders')->insertGetId([
+            'business_id' => $biz->id,
+            'title' => 'Test Job No ETA',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DB::table('dispatch_assignments')->insert([
+            'business_id' => $biz->id,
+            'job_id' => $jobId,
+            'tech_id' => 1,
+            'status' => 'en_route',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $token = 'no_eta_tok_'.uniqid();
+        PortalLink::create([
+            'business_id' => $biz->id,
+            'resource_type' => 'job',
+            'resource_id' => $jobId,
+            'token' => $token,
+            'expires_at' => now()->addHours(24),
+            'is_active' => true,
+        ]);
+
+        Livewire::test(CustomerfacingPortal::class, ['token' => $token])
+            ->assertOk()
+            ->assertSee('Your technician is en route.')
+            ->assertDontSee('minutes out');
+    }
 }
