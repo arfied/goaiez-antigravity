@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X01\Listeners;
 
 use App\Modules\X01\Domain\UnifiedInboxManager;
+use App\Modules\X102\Events\ChatLeadCaptured;
 
 final class ChatLeadCapturedListener
 {
@@ -12,9 +13,9 @@ final class ChatLeadCapturedListener
         private readonly UnifiedInboxManager $inboxManager
     ) {}
 
-    public function handle(object $event): void
+    public function handle(ChatLeadCaptured $event): void
     {
-        if (! property_exists($event, 'message') || $event->message === null || $event->message === '') {
+        if ($event->message === null || $event->message === '') {
             return;
         }
 
