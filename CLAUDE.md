@@ -7309,3 +7309,79 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     for `payments = 0` and re-measured in the wave rather than inherited from MONEY-160's survey —
     `recordPayment` writes no payment row (ruling 107) so neither command dirties its own count, but the
     survey is a day-old measurement of a live database (ruling 269).
+279. **A `withoutGlobalScopes()` read on `businesses` outside a tenant returns ZERO ROWS SILENTLY —
+    ruling 273 named BOTH halves of the working shape and MONEY-161's brief shipped one, so the probe
+    removed the LOUD layer and kept the SILENT one (RULED by the lane supervisor 2026-09-09, on
+    MONEY-161's run 184).** Ruling 273 measured the shape as
+    `Business::withoutGlobalScopes()->where('owner_user_id', $userId)` **inside
+    `Tenancy::setUser($userId)`**; MONEY-161's item 1 dictated
+    `Business::withoutGlobalScopes()->orderBy('id')->pluck('id')` under a bare `php artisan tinker` —
+    the first half without the second. It printed **nothing**, the run applied the brief's own
+    stop-clause, committed nothing, stopped, and reported *"the `businesses` table is completely
+    empty"*. **It is not empty.** ⭐ **Four independent witnesses:** MONEY-160's artifact, written 25
+    minutes earlier, records `"business_id": 18` and `"database": "goaiez_antig_money"`
+    (`app/storage/app/evidence/X-117/checkout.json`); `2026_07_30_072149_create_businesses_table.php:119-120`
+    is `ENABLE` **and** `FORCE ROW LEVEL SECURITY`; both policies key on session settings a bare
+    tinker never sets — `tenant_isolation` on `app.business_id` (`:143-145`) and the permissive
+    `owner_lookup` on `app.user_id` (`2026_07_31_090000:36-38`); and this lane's own
+    `X-211/Console/DetectOverdueReceivablesCommand.php:52-55` ships the two-part shape in production.
+    ⭐⭐ **The mechanism is documented as intentional in that migration's own comment (`:127-137`):**
+    *"undefined → NULL → matches nothing … nullif(x, '') maps both empty states to NULL before the
+    cast, which is what makes this **fail-closed rather than fail-loud**."* So `businesses` has two
+    layers with **opposite** failure modes — the application scope throws (`TenantScope::apply()` →
+    `Tenancy::idOrFail()`, ruling 273) and RLS beneath returns nothing — and `withoutGlobalScopes()`
+    removes **precisely the loud one**. The exception is not an obstacle to be cleared on the way to
+    the query; it is the only thing that says a tenant is missing. **RULED: any read of `businesses`
+    outside a tenant carries BOTH halves — `Tenancy::setUser($userId)` and
+    `withoutGlobalScopes()->where('owner_user_id', $userId)` — and a brief that dictates one names the
+    other.** ⛔ Not `DB::table('businesses')`: same RLS, same silence, and it drops the model besides.
+    ⛔ Not `Tenancy::actingAsUser()` — ruling 273 measured `AccountDirectory:317` holds it to that one
+    class, and `setUser` is the documented route this lane already ships. ⚠️ This is ruling 265's
+    lesson — **a correction to a measuring instrument decays exactly like a stale measurement, and it
+    decays silently** — arriving **two ticks** after 273 wrote it, in a brief written by the supervisor
+    that wrote it, with half of 273's own answer transcribed and half dropped. ⚠️ Per the standing
+    precedent the miss is the supervisor's, so MONEY-161b carries its own two dispatches and
+    MONEY-161's cap is untouched; the coder's stop was correct under the brief's own condition and
+    **spends no dispatch** (rulings 60b, 71, 94, 106, 118, 217, 254). ⭐ It cost nothing beyond the
+    run: refusing to provision protected the last of the pool, which was the one irreversible act
+    available to that wave.
+
+280. **A stop-clause that fires on an UNDER-count fires on a broken instrument and reads as a
+    FINDING; one that fires on an OVER-count cannot (RULED by the lane supervisor 2026-09-09, same
+    run).** Ruling 118's stop-clause fires when a sweep prints a line **neither table names** — an
+    over-count — and it has fired twice (118, 217), each time on a real omission, because a *broken*
+    sweep printing nothing simply does not trigger it. MONEY-161's fired on the opposite: *"if fewer
+    than two distinct non-18 tenants have `payments=0`, commit nothing … and stop."* A sweep that
+    cannot see its population satisfies that condition **perfectly**, and the stop is then
+    indistinguishable from a decisive negative result — `REPORT.md` says `Count: 0` and the run log
+    says *"the `businesses` table is completely empty"*, both faithful, both wrong. ⭐ **The asymmetry
+    is the ruling: an over-count stop-clause is self-validating and an under-count stop-clause is not,
+    so only the second needs a positive control.** ⚠️ Rulings 95/100/111 are what make it expensive:
+    this lane **strikes** a population that measures empty, so an uncontrolled false zero does not
+    merely stop a wave — it is one tick from striking a **live** population as measured-clean, which
+    is rulings 192's and 207's named inversion arriving through a stop-clause instead of through a
+    grep. **RULED: a stop-clause conditioned on finding fewer than N carries a positive control drawn
+    from the hard class (ruling 258) — here the sweep must print `18`, whose existence is
+    independently witnessed by X-117's artifact — and a run whose sweep omits the control reports
+    `REFUSED` with the raw output rather than a smaller population.** ⛔ Never resolved by dropping the
+    stop-clause: it is what stopped a run provisioning a tenant out of an empty pool.
+
+281. **`payments_written` is asserted by NO test for X-199 or X-211, so the one-tenant-per-command
+    rule rests on the artifact's honesty and not on a red suite — and both runtime-proof tests are
+    measured safe on a reused tenant (measured 2026-09-09; correcting a carried forecast).** The
+    18:4x addendum stated *"`payments_written` must be `0` in both artifacts"* as though a test
+    enforced it. Measured, `grep -rn "payments_written" app/tests` returns **one** line —
+    `X117RuntimeProofTest:19` — and neither `X199RuntimeProofTest` nor `X211RuntimeProofTest`
+    mentions the key. **The requirement stands, on its real reason:** the key is written as a live
+    `Payment::…->count()` (ruling 48(2)), so a tenant carrying another command's payments prints a
+    number that says nothing about the artifact it sits in, which is rulings 48/169/173's
+    two-unrelated-facts-as-one-flow defect. ⭐ **What changes is the stop-clause's cost.** No test
+    breaks if a command is deferred, so a shortage of qualifying tenants no longer forces the wave to
+    stop dead: **RULED — with exactly one qualifying tenant, ship `x199:evidence-invoice` (ruling
+    278's clean transfer) and carry `x211:evidence-recovery`, whose `$user` subtlety makes it the one
+    to prove separately; with none, stop.** ⚠️ Measured in the same pass and recorded so no brief
+    re-derives it: **every** assertion in both runtime-proof tests is safe on a reused tenant —
+    X-199's `/^INV-[0-9]{6}$/` (ruling 278), `invoice_status`, `paid_at`, `duplicate_refused_by`,
+    `queue_driver`, `running_unit_tests`; X-211's `plan_id > 0`, `installment_amount_cents`, the same
+    regex, `reason` ∈ `ArEngine::REASONS`, `refused_without_resolution`. Nothing in either depends on
+    a fresh tenant.
