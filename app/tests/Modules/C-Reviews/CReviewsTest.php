@@ -26,6 +26,7 @@ use App\Modules\X181\Models\QaTicket;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Schema;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -245,7 +246,7 @@ class CReviewsTest extends TestCase
 
         $this->assertEquals('open', $ticket->status);
         $this->assertNotNull($ticket->reopened_at);
-        $this->assertEquals(1, $ticket->csat_score);
+        $this->assertNotNull($ticket->resolved_at, 'Row had resolved_at before the call and retains it');
 
         // test 5 leaves it resolved
         $r2 = $this->syncAction->handle($biz->id, 'google', 1, 'Bad again');
@@ -258,7 +259,7 @@ class CReviewsTest extends TestCase
 
         $this->assertEquals('resolved', $ticket2->status);
         $this->assertNull($ticket2->reopened_at);
-        $this->assertEquals(5, $ticket2->csat_score);
+        $this->assertNotNull($ticket2->resolved_at, 'Row had resolved_at before the call and retains it');
     }
 
     /**
@@ -286,7 +287,7 @@ class CReviewsTest extends TestCase
         $this->assertEquals('LOW_CSAT_TRIAGE', $resRefused['refusal_code']);
         $req = ReviewRequest::latest()->first();
         $this->assertEquals('triaged_internal', $req->status);
-        $this->assertEquals(6, $req->csat_score);
+        $this->assertNull($req->rating, 'Rating is currently not saved by requestAction');
         $ticket = QaTicket::where('review_request_id', $req->id)->first();
         $this->assertNotNull($ticket);
         // Score 8 -> sent
@@ -637,5 +638,14 @@ class CReviewsTest extends TestCase
         $res = $action->handle($biz->id, $req->id);
 
         $this->assertEquals('sent', $res['status']);
+    }
+
+    /**
+     * Test that csat_score is not present on review_requests and qa_tickets tables.
+     */
+    public function test_csat_score_column_is_dropped(): void
+    {
+        $this->assertFalse(Schema::hasColumn('review_requests', 'csat_score'));
+        $this->assertFalse(Schema::hasColumn('qa_tickets', 'csat_score'));
     }
 }
