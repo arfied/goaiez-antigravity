@@ -95,6 +95,7 @@ final class DeployCheckCommand extends Command
             return;
         }
 
+        $last = Carbon::instance($last);
         $age = (int) $last->diffInSeconds(now(), absolute: true);
         $ok = $age < 120;
 
@@ -120,6 +121,7 @@ final class DeployCheckCommand extends Command
             return;
         }
 
+        $last = Carbon::instance($last);
         $age = (int) $last->diffInSeconds(now(), absolute: true);
         $ok = $age < 120;
 

@@ -66,3 +66,14 @@ it('deploy-check pixel probe fails when missing', function () {
     expect($output)->toContain('FAIL pixel bundle published')
         ->and($output)->toContain('pixel:publish');
 });
+
+it('deploy-check handles DateTimeInterface in heartbeat correctly', function () {
+    Cache::put('goaiez:worker:heartbeat', new \DateTimeImmutable('-30 seconds'));
+    Cache::put('goaiez:scheduler:heartbeat', new \DateTimeImmutable('-30 seconds'));
+    PixelBundleVersion::factory()->create(['sha' => 'abcdef']);
+
+    Artisan::call('app:deploy-check');
+    $output = Artisan::output();
+    expect($output)->toContain('ok   worker running')
+        ->and($output)->toContain('ok   scheduler running');
+});
