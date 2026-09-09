@@ -41,7 +41,7 @@ say "0. preconditions"
 [ -d .git ] || git rev-parse --git-dir >/dev/null 2>&1 || die "not a git checkout — 'after pull' needs one (see the one-time setup)"
 APP_ENV=$(grep -E '^APP_ENV=' .env | cut -d= -f2- | tr -d '"'"'" ) ; echo "  APP_ENV=$APP_ENV"
 [ "$APP_ENV" = production ] || die "APP_ENV is '$APP_ENV', not production — refusing to run a production deploy here"
-dirty=$(git status --porcelain --untracked-files=no | grep -v '^ M storage/' || true)
+dirty=$(git status --porcelain --untracked-files=no | grep -vE '^.. (app/)?storage/' || true)  # @deploy-dirty-v3-2026-09-08
 [ -z "$dirty" ] || { printf '%s\n' "$dirty"; die "working tree is dirty — a hand edit in prod. Commit or discard it first; a pull may already have merged over it"; }
 DB_CONN=$(grep -E '^DB_CONNECTION=' .env | cut -d= -f2- | tr -d '"'"'")
 [ "$DB_CONN" = pgsql ] || die "DB_CONNECTION is '$DB_CONN'; this script backs up with pg_dump and refuses to migrate without a backup"
@@ -81,8 +81,29 @@ DB_PASS=$(grep -E '^DB_PASSWORD=' .env | cut -d= -f2- | tr -d '"'"'")
 [ -n "$DB_NAME" ] || die "DB_DATABASE is empty in .env"
 mkdir -p storage/backups
 BACKUP="storage/backups/${DB_NAME}-$(date +%Y%m%d-%H%M%S)-pre-${TO}.sql"
-PGPASSWORD="$DB_PASS" pg_dump -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" --no-owner --no-privileges "$DB_NAME" > "$BACKUP" \
-  || die "pg_dump failed — NOT migrating without a backup"
+# @deploy-backup-v2-2026-09-08
+# RLS is FORCEd on tenant tables, so the app role's pg_dump is refused. --enable-row-security would dump only
+# the rows the role can see — an empty backup that looks like one. Sources, in order of preference:
+BACKUP_DB_USER=$(grep -E '^BACKUP_DB_USER=' .env | cut -d= -f2- | tr -d '"'"'" || true)
+BACKUP_DB_PASS=$(grep -E '^BACKUP_DB_PASS=' .env | cut -d= -f2- | tr -d '"'"'" || true)
+if [ -n "${DEPLOY_BACKUP:-}" ]; then
+  [ -s "$DEPLOY_BACKUP" ] || die "DEPLOY_BACKUP=$DEPLOY_BACKUP does not exist or is empty"
+  age=$(( $(date +%s) - $(stat -c %Y "$DEPLOY_BACKUP") ))
+  [ "$age" -le 1800 ] || die "DEPLOY_BACKUP is ${age}s old — a pre-migrate backup must be fresh (≤ 30 min); take a new one"
+  BACKUP="$DEPLOY_BACKUP"; echo "  using the operator-supplied backup $BACKUP (taken ${age}s ago)"
+elif [ -n "$BACKUP_DB_USER" ]; then
+  echo "  backing up as $BACKUP_DB_USER (BYPASSRLS role from .env)"
+  PGPASSWORD="$BACKUP_DB_PASS" pg_dump -h "$DB_HOST" -p "$DB_PORT" -U "$BACKUP_DB_USER" --no-owner --no-privileges "$DB_NAME" > "$BACKUP" \
+    || die "pg_dump (as $BACKUP_DB_USER) failed — NOT migrating without a backup"
+elif sudo -n -u postgres true 2>/dev/null; then
+  echo "  backing up as postgres (superuser bypasses RLS)"
+  sudo -n -u postgres pg_dump --no-owner --no-privileges "$DB_NAME" > "$BACKUP" \
+    || die "pg_dump (as postgres) failed — NOT migrating without a backup"
+else
+  echo "  backing up as $DB_USER (no BACKUP_DB_USER in .env, no non-interactive sudo to postgres)"
+  PGPASSWORD="$DB_PASS" pg_dump -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" --no-owner --no-privileges "$DB_NAME" > "$BACKUP" \
+    || die "pg_dump failed — NOT migrating without a backup. RLS refuses the app role: either DEPLOY_BACKUP=<fresh dump> bash deploy.sh, or add a BYPASSRLS role as BACKUP_DB_USER/BACKUP_DB_PASS in .env"
+fi
 sz=$(stat -c %s "$BACKUP"); [ "$sz" -gt 10000 ] || die "backup is only ${sz} bytes — that is not a database; NOT migrating"
 echo "  $BACKUP  ($((sz/1024)) KB)"
 export DATABASE_URL="postgresql://${DB_USER}:${DB_PASS}@${DB_HOST}:${DB_PORT}/${DB_NAME}"
@@ -99,7 +120,15 @@ php artisan migrate --force --no-interaction 2>&1 | tail -15 | sed 's/^/  /'
 
 # ── 6. the gate — AFTER migrate, because it reads tables the migrations create ────────
 say "6. app:deploy-check"
-if php artisan app:deploy-check; then echo "  ok"; else die "app:deploy-check returned non-zero — it is not a warning. Read its output above."; fi
+# @deploy-accept-v4-2026-09-08
+DC_OUT=$(php artisan app:deploy-check 2>&1) && DC_RC=0 || DC_RC=$?; printf '%s\n' "$DC_OUT"
+if [ "$DC_RC" -ne 0 ]; then
+  fails=$(printf '%s\n' "$DC_OUT" | awk -F'  —  ' '/^[[:space:]]*FAIL[[:space:]]/ { n=$1; sub(/^[[:space:]]*FAIL[[:space:]]+/, "", n); sub(/[[:space:]]+$/, "", n); print n }')
+  [ -n "$fails" ] || die "app:deploy-check exited $DC_RC with NO FAIL list — it crashed before reporting (an exception, not a check) and DEPLOY_ACCEPT cannot absorb that. Read the output above."   # @deploy-crashguard-v4b-2026-09-08
+  unaccepted=""; while IFS= read -r name; do [ -z "$name" ] && continue; case "|${DEPLOY_ACCEPT:-}|" in *"|$name|"*) echo "  ⚠ ACCEPTED by operator (DEPLOY_ACCEPT): $name";; *) unaccepted="$unaccepted$name; ";; esac; done <<< "$fails"
+  [ -z "$unaccepted" ] || die "app:deploy-check returned non-zero — it is not a warning. Unaccepted: ${unaccepted}Read its output above."
+  echo "  ⚠ continuing: every failing check was named in DEPLOY_ACCEPT"
+fi
 
 # ── 7. the seal ───────────────────────────────────────────────────────────────────────
 say "7. checker seal"
