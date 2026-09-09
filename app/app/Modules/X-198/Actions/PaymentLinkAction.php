@@ -25,11 +25,18 @@ final class PaymentLinkAction
         $client = app(StripeGatewayClient::class);
         $result = $client->createPaymentLink($payment->amount_cents, $description, $payment->currency);
 
-        return PaymentLink::create([
-            'business_id' => $businessId,
-            'payment_id' => $paymentId,
-            'provider_link_id' => $result['id'],
-            'url' => $result['url'],
-        ]);
+        // The unique (business_id, payment_id) pair is the idempotency (R036). Two presses of the
+        // same button both clear the pre-check above and both call the gateway; the loser must hand
+        // back the winner's row rather than die on the index.
+        return PaymentLink::firstOrCreate(
+            [
+                'business_id' => $businessId,
+                'payment_id' => $paymentId,
+            ],
+            [
+                'provider_link_id' => $result['id'],
+                'url' => $result['url'],
+            ]
+        );
     }
 }

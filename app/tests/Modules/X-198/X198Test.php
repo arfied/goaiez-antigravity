@@ -516,4 +516,44 @@ class X198Test extends TestCase
         // The sentence is only true because of this row, so the two are asserted together.
         $this->assertSame(1, Payment::where('business_id', $biz->id)->where('status', 'failed')->count());
     }
+
+    public function test_a_pay_link_race_hands_back_the_row_that_won_and_makes_no_second_row(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'PayLinkRace', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $payment = Payment::create([
+            'business_id' => $biz->id,
+            'amount_cents' => 1500,
+            'payment_token' => 'tok_pay_race',
+            'idempotency_key' => 'idem_pay_race',
+            'status' => 'failed',
+        ]);
+
+        // A second press of the same button wins the race while the gateway is answering ours:
+        // this closure runs between the pre-check and the persist.
+        Http::fake(function () use ($biz, $payment) {
+            PaymentLink::firstOrCreate(
+                [
+                    'business_id' => $biz->id,
+                    'payment_id' => $payment->id,
+                ],
+                [
+                    'provider_link_id' => 'cs_test_racer',
+                    'url' => 'https://checkout.stripe.com/c/pay/cs_test_racer',
+                ]
+            );
+
+            return Http::response([
+                'id' => 'cs_test_ours',
+                'url' => 'https://checkout.stripe.com/c/pay/cs_test_ours',
+            ], 200);
+        });
+
+        $link = (new PaymentLinkAction)->handle($biz->id, $payment->id, 'Payment for declined transaction');
+
+        // The loser hands back the winner's row: one link for this payment, and it is the racer's.
+        $this->assertSame('cs_test_racer', $link->provider_link_id);
+        $this->assertSame(1, PaymentLink::where('business_id', $biz->id)->where('payment_id', $payment->id)->count());
+    }
 }
