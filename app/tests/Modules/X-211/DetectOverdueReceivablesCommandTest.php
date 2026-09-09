@@ -220,4 +220,40 @@ final class DetectOverdueReceivablesCommandTest extends TestCase
 
         Tenancy::forgetAll();
     }
+
+    public function test_the_second_sweep_says_every_overdue_invoice_is_already_with_a_human(): void
+    {
+        Tenancy::forgetAll();
+
+        $business = Business::factory()->create();
+
+        Tenancy::actingAs((int) $business->id, function () use ($business) {
+            Invoice::create([
+                'business_id' => $business->id,
+                'invoice_number' => 'INV-PARKED-1',
+                'status' => 'issued',
+                'due_date' => now()->subDays(5),
+            ]);
+        });
+
+        Tenancy::forgetAll();
+
+        // Sync so the listener writes the escalate_to_human row inside the first sweep.
+        config(['queue.default' => 'sync']);
+
+        // The first sweep chases everything overdue, so the second finds nothing to dispatch.
+        Artisan::call('x211:detect-overdue');
+
+        Tenancy::actingAs((int) $business->id, function () use ($business) {
+            $this->assertCount(1, ArDunningAction::where('business_id', $business->id)
+                ->where('action', 'escalate_to_human')
+                ->get());
+        });
+
+        Artisan::call('x211:detect-overdue');
+        $output = Artisan::output();
+
+        $this->assertStringContainsString('overdue invoice(s) found; every one is already with a human, so none was dispatched', $output);
+        $this->assertStringNotContainsString('No overdue invoices found to chase', $output);
+    }
 }
