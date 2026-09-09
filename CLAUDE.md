@@ -2503,6 +2503,77 @@ report lands, or copy the rows into `REVIEWS.md` — there is no third chance.**
 discarded — ⛔ **not** a widened criterion, and the brief must say so and carry a STOP condition, or the
 re-run becomes the documented slide from defects to leads.
 
+## ⭐⭐ Trap added 2026-09-08 23:0x — an UNRESOLVED is a measurement with an expiry date, and NOTHING in this lane re-measures one
+
+Ruling 8 (2026-09-02) recorded *"X-121 exposes no create path"*, and ruling 23 named it as **one of J3's
+two remaining legs**. PB-142 measured it by accident, six days later, while grading something else:
+
+```
+X-121/Actions/JobCreateAction.php:44   $id = DB::table('work_orders')->insertGetId($data);
+tests/Journeys/JourneyHarness.php:408  $action = new JobCreateAction;   ← ALREADY CALLED, with priceCents
+```
+
+⛔ **The create path exists, is tenant-guarded, takes `priceCents`, dispatches `JobCreated`, and
+`bookFromQuote()` already uses it.** The blocker was discharged by a Track 1 merge and J3 has been green
+in the gate the whole time. **The board carried it as open for six days.**
+
+⭐⭐ **The generalisation, and it is the third member of a family this file already documents twice: a
+CLEARANCE inherits the scope of its measurement (`is_sample` on X-166), a SPENT entry does too (X-167's
+contract gap), and an `UNRESOLVED` is the same object — a measurement whose prose outlives its truth.**
+⚠️ It is the **most dangerous** of the three, because a clearance only stops you re-checking something
+that was fine, while an `UNRESOLVED` is treated as **permission to stop looking at something that was
+not**. ⛔ **Re-read every open blocker at the moment you brief around it, never at the moment you
+recorded it** — PB-137's *"a brief's own forward-declaration is not evidence"*, raised from one wave to
+six days.
+
+⭐ The tell is that **no instrument in this lane would ever have found it**: every one asks what is
+*wrong*, and none asks whether a recorded *blocker* is still true. ⛔ And note what does NOT follow —
+ruling 8's other half stands, the raw insert is still not accepted, X-121 is still Track 1's, and this
+lane still writes no `work_orders`. **A discharged dependency is not a licence.**
+
+## ⛔⛔ Trap added 2026-09-08 23:0x — there is a THIRD write shape, and two successive narrowings of the same instrument both missed it
+
+PB-140 note 2 caught that a grep anchored on a **model name** cannot see `DB::table(…)->insert`, and the
+instrument was narrowed to **two** mandated forms: model-anchored and query-builder. PB-142 ran both and
+graded `stock_items` `TEST-ONLY`. It has a production writer:
+
+```php
+$item = StockItem::where(…)->findOrFail($stockItemId);   // the model name is HERE
+$item->update(['quantity' => $newQty]);                  // the WRITE is here, on a VARIABLE
+```
+
+⛔ **Neither mandated form can match that line, and it is the commonest Eloquent write in this repo**
+(`InventoryEngine:30`, reached from `StockAdjustAction:19`). ⭐ **The fix is to stop enumerating call
+syntaxes: anchor on the model class or the table name and READ EVERY HIT IN THE FILE.** Enumerating
+syntaxes is the same failure as PB-117's enumerating a formatter's edit shapes — ⚠️ **second narrowing
+of this instrument in two waves, and the second time the enumeration was the thing that was wrong.**
+
+⚠️ The companion failure on the same wave was **not** an instrument gap and must not be excused as one:
+the mandated query-builder pattern matched `JobCreateAction:44` **exactly**, returned eight hits, and
+the report still said *"the grep returned zero"*. ⭐ **A pattern that matches reads and writes alike
+hands the reader a list to classify, and the classification is where it fails** — so demand the hit
+count alongside the verdict, never the verdict alone.
+
+## ⭐⭐ Trap added 2026-09-08 23:0x — write-side reachability is a CHAIN, and "name the writer" stops one hop short
+
+PB-132 and PB-142 both asked *"does a production path write this table?"*. Two rows from PB-142 show the
+question was always one hop short, and they are the same defect wearing two faces:
+
+- `JobCreateAction` — a **fully-formed, tenant-guarded production writer that nothing calls.**
+- `InventoryEngine::consumeStock` — a **production writer that can only ever `update` a row nothing
+  creates.**
+
+⭐ Both answer *"a writer exists"*, and in neither case does the screen have data in production. ⛔ The
+sweep is not what discharged PB-132's X-168 finding — **PB-140's hand-walk of the four-hop chain was**
+(`StafffacingApp:49 → JobStateAction:21 → OpenJobWindowOnTechOnSite:16 → TimesheetComputeAction:61`).
+
+⭐ **The successor question is therefore "what human action REACHES this writer?", graded
+`WIRED` / `TEST-ONLY` / `UNCALLED`.** ⚠️ It is a **different question**, not the same question with a
+looser criterion — which is what keeps it on the right side of the documented slide from defects to
+leads. ⛔ And the discriminator still governs the outcome: **declared + unwired = a defect; undeclared +
+unwired = a capability**, with `capabilities.php` authoritative and generated `manifest.php` losing the
+tie-break.
+
 ## ⚠️ Trap added 2026-09-08 19:3x — an absence claim is only as wide as the pattern that searched for it
 
 PB-140 was asked *"does any other production path write these tables?"* and answered with
