@@ -36,6 +36,8 @@ class ConflictsListView extends Component
             }
         } catch (ModelNotFoundException $e) {
             $this->error = "That conflict isn't in this account.";
+        } catch (\Throwable $e) {
+            $this->error = 'We could not record that account: '.$e->getMessage();
         }
     }
 

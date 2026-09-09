@@ -52,6 +52,8 @@ class ConnectionMappingView extends Component
             }
         } catch (ModelNotFoundException $e) {
             $this->error = "That ledger connection isn't in this account.";
+        } catch (\Throwable $e) {
+            $this->error = 'We could not save that mapping: '.$e->getMessage();
         }
     }
 
