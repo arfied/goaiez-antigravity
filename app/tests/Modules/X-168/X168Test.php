@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X168;
 
+use App\Models\User;
 use App\Modules\X168\Actions\TimesheetApproveAction;
 use App\Modules\X168\Actions\TimesheetComputeAction;
 use App\Modules\X168\Events\PeriodReady;
 use App\Modules\X168\Events\TimesheetSubmitted;
 use App\Modules\X168\Models\Timesheet;
 use App\Modules\X168\Models\TimesheetEntry;
+use App\Modules\X171\Events\JobCompleted;
+use App\Modules\X171\Events\TechOnSite;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -458,5 +461,74 @@ class X168Test extends TestCase
 
         $this->assertEquals(0.75, (float) $timesheet1->total_hours);
         $this->assertEquals(0.75, (float) $timesheet2->total_hours);
+    }
+
+    public function test_tech_on_site_opens_job_window(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'TechOnSite Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $frozen = Carbon::parse('2026-09-08 10:00:00');
+        Carbon::setTestNow($frozen);
+        $tech = User::factory()->create();
+        $jobId = 1001;
+
+        Event::dispatch(new TechOnSite($biz->id, $jobId, $tech->id, $frozen));
+
+        $entries = TimesheetEntry::where('business_id', $biz->id)->where('job_id', $jobId)->get();
+        $this->assertCount(1, $entries);
+
+        $entry = $entries->first();
+        $this->assertEquals($frozen->toDateTimeString(), $entry->started_at->toDateTimeString());
+        $this->assertEquals('on_site', $entry->state_window);
+        $this->assertNull($entry->ended_at);
+
+        $timesheet = Timesheet::find($entry->timesheet_id);
+        $this->assertEquals($tech->id, $timesheet->person_id);
+    }
+
+    public function test_job_completed_closes_job_window(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'JobCompleted Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $frozen = Carbon::parse('2026-09-08 10:00:00');
+        Carbon::setTestNow($frozen);
+        $tech = User::factory()->create();
+        $jobId = 1002;
+
+        Event::dispatch(new TechOnSite($biz->id, $jobId, $tech->id, $frozen));
+
+        $endedAt = $frozen->copy()->addMinutes(90);
+        Event::dispatch(new JobCompleted($biz->id, $jobId, $tech->id, null, $endedAt));
+
+        $entry = TimesheetEntry::where('business_id', $biz->id)->where('job_id', $jobId)->first();
+        $this->assertEquals($endedAt->toDateTimeString(), $entry->ended_at->toDateTimeString());
+        $this->assertSame(90, $entry->duration_minutes);
+
+        $timesheet = Timesheet::find($entry->timesheet_id);
+        $this->assertSame(1.5, (float) $timesheet->total_hours);
+    }
+
+    public function test_replayed_job_completed_closes_nothing(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Replayed JobCompleted Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $frozen = Carbon::parse('2026-09-08 10:00:00');
+        Carbon::setTestNow($frozen);
+        $tech = User::factory()->create();
+        $jobId = 1003;
+
+        Event::dispatch(new TechOnSite($biz->id, $jobId, $tech->id, $frozen));
+
+        Event::dispatch(new JobCompleted($biz->id, $jobId, $tech->id, null));
+
+        $entry = TimesheetEntry::where('business_id', $biz->id)->where('job_id', $jobId)->first();
+        $this->assertNull($entry->ended_at);
+        $this->assertSame(0, $entry->duration_minutes);
+
+        $timesheet = Timesheet::find($entry->timesheet_id);
+        $this->assertSame(0.0, (float) $timesheet->total_hours);
     }
 }
