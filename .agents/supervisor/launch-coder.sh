@@ -48,6 +48,22 @@ MODE=launch
 # not touch JourneyHarness.php, dispatch without it.
 ALLOW_HARNESS=0
 
+# ── `--allow-merge` (owner ruling 2026-09-09 09:02, relayed in OWNER.md:467).
+#
+# The shared guard `coder-bin/git` refuses `git merge` unless GOAIEZ_MERGE_OK=1,
+# which ONLY this flag sets, and only for one run. It was added to the guard on
+# 2026-09-05 13:27 and to `origin/main`'s copy of THIS file the same day; this
+# lane never received it, because receiving it requires the merge it gates.
+# Ported from `git show origin/main:.agents/supervisor/launch-coder.sh` at
+# REV-116 rather than invented here — the semantics, the export and the KICKOFF
+# cross-check below are main's, line for line.
+#
+# ⚠️ Per-run only. A merge wave is the one wave where per-track files —
+# `CLAUDE.md`, `bin/`, `.claude/` and above all `app/phpunit.xml`'s database pin
+# — arrive from main SILENTLY, with no conflict and no marker (REV-116). Pass it
+# when the brief actually merges and never as a default.
+ALLOW_MERGE=0
+
 # Owner ruling 2026-09-06 03:5x, ui item 4 ("a shorter --print-timeout / log-based
 # liveness in launch-coder.sh: yours, do it").
 #
@@ -71,6 +87,7 @@ while [ $# -gt 0 ]; do
   case "$1" in
     --status) MODE=status; shift ;;
     --allow-harness) ALLOW_HARNESS=1; shift ;;
+    --allow-merge) ALLOW_MERGE=1; shift ;;
     --coder)
       [ $# -ge 2 ] || { echo "REFUSED: --coder needs a value (agy|claude)"; exit 1; }
       case "$2" in
@@ -78,7 +95,7 @@ while [ $# -gt 0 ]; do
         *) echo "REFUSED: --coder takes agy|claude (got '$2')"; exit 1 ;;
       esac
       shift 2 ;;
-    *) echo "REFUSED: unknown argument '$1' (only --coder agy|claude, --status, --allow-harness)"; exit 1 ;;
+    *) echo "REFUSED: unknown argument '$1' (only --coder agy|claude, --status, --allow-harness, --allow-merge)"; exit 1 ;;
   esac
 done
 
@@ -276,6 +293,21 @@ echo "push gate: GOAIEZ_PUSH_OK=$PUSH_OK  <-  ${PUSHLINE:-<no push: line in BRIE
 # wrong. Default 0 — the flag is per-run and never standing.
 export GOAIEZ_HARNESS_OK="$ALLOW_HARNESS"
 echo "harness gate: GOAIEZ_HARNESS_OK=$ALLOW_HARNESS  <-  $([ "$ALLOW_HARNESS" = 1 ] && echo '--allow-harness (QUOTE THE HARNESS DIFF IN REVIEWS.md)' || echo 'not passed')"
+
+# The merge gate, same placement and same reasoning as the harness gate above.
+export GOAIEZ_MERGE_OK="$ALLOW_MERGE"
+echo "merge gate: GOAIEZ_MERGE_OK=$ALLOW_MERGE  <-  $([ "$ALLOW_MERGE" = 1 ] && echo '--allow-merge (QUOTE THE BEFORE/AFTER BEHIND COUNT IN REVIEWS.md)' || echo 'not passed')"
+
+# main's cross-check, ported with the flag: a KICKOFF that PROMISES the coder an
+# open merge gate, dispatched without the flag, is the N103 defect — the run
+# exports GOAIEZ_MERGE_OK=0, the shared guard refuses the one thing the wave
+# exists to do, and kill is outside the supervisor's column, so it is
+# unrecallable. Refuse before launching rather than after.
+if grep -q 'Merge gate \*\*OPEN' .agents/supervisor/KICKOFF.md 2>/dev/null && [ "$ALLOW_MERGE" != 1 ]; then
+  echo "REFUSED: KICKOFF.md declares 'Merge gate **OPEN' but --allow-merge was not passed."
+  echo "         The run would export GOAIEZ_MERGE_OK=0 and the shared guard would refuse the merge."
+  exit 1
+fi
 
 # One run-number sequence across BOTH coders, so a claude run can never reuse an
 # agy run's number and the REVIEWS ledger stays readable as one history.

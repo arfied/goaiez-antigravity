@@ -296,7 +296,37 @@ merge. Week 2 is scoped **one wave at a time**; it is not a single wave.
 | **UI-66** | **(1) `count($untrackedOpeners)` replaced by the sorted SET itself — a count cannot see a SWAP, and `foreach` leaving as `isset` arrives keeps it at `2` forever. ⛔ The count pin is REPLACED, not kept beside it: a count entailed by a set corroborates nothing (05:0x). (2) that pin's message is FALSE about what a red means — see the 09:4x ruling: a block opener weakens `conditionalHeadings` only if it creates MUTUALLY EXCLUSIVE ARMS, and the one member it found cannot. Restated to the criterion, ⛔ with no Blade keyword named as a current member. (3) the LINE-GRANULARITY blind spot gets a number: `:50` tests the heading BEFORE `:53–56` update the depth, so a heading sharing a line with its own `@if` is judged at depth 0. ONE new `expect()`, pinned; my reading is `0` of 19 and a different number is a FINDING. ⛔ No new `test(`, no blade, no new file, floor stays `1730`; `expect(` `9 → 10`. ⛔⛤ The sum is NOT asserted — eleventh wave** | **run 113 `BLOCK` — all three items landed character for character and both pins re-derived by me; the block is the REPORT, not the code. See the 10:0x ruling** |
 | **UI-66b** | **the repair wave, ⛔ ZERO `app/**` diff. (1) the `2026-09-07T09:49:13 (R245)` row committed — it is in the working tree and in NO commit, and `.agents/state/` is outside the supervisor's column, which is the whole reason this wave exists. (2) the five untracked `.txt` files quoted then deleted, three of them above `app/`. (3) ONE gate, through `bin/supervise.sh`, §7 pasted verbatim in whichever of its three shapes it prints. (4) `REPORT.md` in rule 10's TEN fields, read off disk. ⛔ `HeadingSeamTest.php` is not opened; floor stays `1730`** | closed, pushed `8683fb8e` — run 114 `PASS-WITH-NOTES`, six notes; items 0 and 1 exactly, item 2 not done at all |
 | **UI-67** | **`HeadingSeamTest` is named for a population of 44 and walks 19 — the fraction gets a number. ONE new `expect()` INSIDE the existing `test(`: components declaring `#[Layout('components.account.layout'` that the file's own `glob(base_path('app/Modules/*/Ui/*.php'))` does NOT reach, as the DIFFERENCE OF TWO DERIVED SETS. ⛔ Zero component names, zero view paths, zero directories beyond the roots the file already uses — name `app/Livewire/Account` in the code and it is an exclusion list with a plus sign. My reading is `25`; a different number is a FINDING. ⛔⛔ The message says a red is a POPULATION moving and that NEITHER direction is by itself a defect. ⛔ No new `test(`, no blade, no new file, floor stays `1730`; `expect(` `10 → 11`. ⛔⛤ The sum is NOT asserted — twelfth wave** | closed, pushed `373c6d41` — run 115 `PASS-WITH-NOTES`, three notes, **all three report-shape and none of them the code** |
+| **UI-69** | **⛔ THE MERGE. `origin/main` into `track/ui`, on the owner's 2026-09-09 ruling — 2298 behind, and main changed the sealed Doctor checkers, so this lane's gates are measuring with old instruments. ⛔⛔ NOT a code wave: no production code, no new test, no assertion, no mutation. The substance is the EIGHT per-track files that arrive from main SILENTLY — above all `app/phpunit.xml`, whose copy on main pins `goaiez_antig_test`, TRACK 1's database. Merge · restore · `composer dump-autoload` · gate · report** | **in flight — run 117 dispatched with `--allow-merge`** |
 | **UI-68** | **the 25 stop being merely COUNTED. TWO new `expect()` INSIDE the existing `test(`, measuring the unwalked set alongside — all eleven existing pins untouched, the glob still NOT widened. (1) `$unwalkedSeam`, unwalked components declaring a `heading` key; my reading is `0`. (2) `$unwalkedSkips`, one FAIL-CLOSED counter: no resolvable `view('…')` literal, OR no `<h[1-6]` at all, OR a first heading at the wrong level for the component's own shape; my reading is `0`, and its message names all three causes in order. ⛔ Both pins are COMPLEMENTS — `$unwalkedOwn = 25` beside `$unwalked = 25` is run 104's `built = 257` and is refused. ⛔ `$unwalked` becomes a genuine SET DIFFERENCE and its pin does NOT move. ⛔ Zero component names, zero view paths, zero new directory literals; the file's own `#[Layout]`, `heading`, `view('…')` + `View::exists()` and first-heading derivations are reused verbatim in shape. ⛔ No new `test(`, no blade, no component, no new file, floor stays `1730`; `expect(` `11 → 13`. ⛔⛤ The sum is NOT asserted — thirteenth wave** | **in flight — run 116 dispatched** |
+
+### ⛔⛔ RULED 2026-09-09 09:5x — FOUR STANDING RULES OUT OF REV-116
+
+1. ⛔ **`--ruling R245` IS NOT A FLAG AND COMES OUT OF EVERY BRIEF.** `bin/state.py:169` is
+   `mid, what = a[0], " ".join(a[1:])` — every remaining argv token becomes the decision text — and
+   `:173` hardcodes `{"…", "ruling": "R245"}`. Main's copy is identical at `:209`. My 03:5x
+   flag-ordering diagnosis was **wrong**: the coder put the flag before the string exactly as
+   instructed and it was swallowed at the *front* instead of the end. `state.py decided <id> <text>`
+   already stamps `R245` by itself. Two `JOURNAL.md` rows are polluted on my instruction, append-only,
+   not to be repaired.
+2. ⛔ **A `REPORT.md` at the REPOSITORY ROOT is not a report.** Rule 10:11 makes it a mailbox file,
+   `.agents/supervisor/REPORT.md`. Run 116 wrote a root copy and left the mailbox holding run 115's,
+   which is **older** than the last `REVIEWS.md` block — so the wave read as never having reported.
+   Every brief carries `track/sixty`'s sentence verbatim: *"Write `.agents/supervisor/REPORT.md` —
+   that exact path, not the repo root."*
+3. ⛔ **Every `git` pathspec in the supervisor seat is `:/`-rooted.** A pathspec that matches no file
+   **exits 0 and prints nothing**, which is indistinguishable from "no difference" — strictly worse
+   than 21:3x's non-zero grep. A `cd app` in an unrelated command moved this seat's cwd and produced
+   two false empty readings that would have pinned the lane to Track 1's database. ⚠️ **And the
+   sandbox scopes writes to the cwd subtree** — a drifted cwd silently refuses appends to
+   `REVIEWS.md`. `cd` back to the repo root before writing anything.
+4. ⛔ **`schema` and `journey` REPORT THE ENVIRONMENT, NOT THE SHA.** `schema` read **16** where the
+   coder read 15 on the identical tree: twelve of its violations are `tenant-owned table has no RLS`
+   and one is `role goaiez_backup: has BYPASSRLS` — facts about the live `goaiez_antig_ui` database
+   and a postgres role shared across the box. This is the 09:4x `journey` ruling one stage over.
+   **The standing baseline is the SIX code-derived stages — `integrity 0 · boundary 6 · contract 87 ·
+   citation 94 · capability 399 · anchor 138` — and `schema`/`journey` are read with their cause
+   beside them, never as proof that a range moved no stage.** ⚠️ Expect all six to move at the UI-69
+   merge: main changed three of the checkers.
 
 ### ⛔⛔ MEASURED 2026-09-08 03:0x — `HeadingSeamTest` IS NAMED FOR A POPULATION OF 44 AND WALKS 19
 
@@ -2243,11 +2273,20 @@ exist. ⛔ **`<x-surface.sample-state>` is not proof of anything** — a screen 
 carrying that banner is an open item, and `x-110-tag-version-per`, which has no query
 at all, is `UNRESOLVED` rather than done.
 
-⛔ **Taking `origin/main` is never a coder item on this track.** The coder guard
+⚠️⚠️ **SUPERSEDED 2026-09-09 09:5x — the paragraph below is kept for its reasoning and its
+conclusion is now WRONG.** It predates `--allow-merge`, which the shared guard gained on
+2026-09-05 13:27. **Taking `origin/main` IS a coder item on this track now**, dispatched with
+`bash .agents/supervisor/launch-coder.sh --allow-merge` and a `KICKOFF.md` declaring
+`Merge gate **OPEN`. Two reasons, both measured: the owner's 2026-09-09 procedure says the merge
+runs *"through `coder-bin/git`"*, which is the coder's guard; and a 2298-commit merge resolves its
+conflicts under `app/**`, which this seat may not touch. The supervisor's job is the **restores and
+the gate**, not the merge. See REV-116.
+
+⛔ ~~**Taking `origin/main` is never a coder item on this track.** The coder guard
 refuses it by design — the merge stages `JourneyHarness.php`, a CHECK. The
 supervisor takes main with the owner's `GIT_GUARD_BYPASS=1`, resolves supervisor
 files **ours**, and forces `app/phpunit.xml` back to `goaiez_antig_ui_test` before
-the close.
+the close.~~ — the last clause survives as a standing requirement of every merge wave.
 
 ## Style
 
