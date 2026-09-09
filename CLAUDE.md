@@ -1000,3 +1000,19 @@ is honest about itself is still the wrong instrument when the quantity is owned 
 derivation of the next free number; a `CLAUDE.md` reading may never be used for it. And note the near-miss
 shape — a collision would not have errored anywhere, it would have produced two findings sharing a number,
 which is the N137/N138 concurrency defect arrived at by a second, entirely solo route.
+
+⚠️ **THE KILL LOG RECORDS A `kill -0` LIVENESS PROBE AS A KILL, AND THE PROBE IS THE GATE'S OWN (N158, 2026-09-09,
+waves 227–228).** `bin/supervise.sh` §1a probes `coder.pid` with `kill -0`; `coder-bin/kill` skips `-*` arguments when it
+walks its targets and writes the row under the verb `kill`, so every coder gate that runs while its own coder is alive
+leaves `<gate pid> kill <coder wrapper pid>` in `/home/goaiez/tmp/kill-log.tsv` at the second the gate opened. The wave-227
+report quoted that row as a kill; the wrapper lived eight more minutes and wrote the report. Rows of this shape exist for
+every prior run (09-08 13:55, 14:07, 16:06, 16:46). **Read it as: target = the pid in `coder.pid`, timestamp = the gate's
+own start ⇒ probe.** The fix (log `-0` under `probe`, never refuse it) is the shared shim's and the classifier refused this
+seat's write — `TRACK 1 ACTION (owner)`, the patch is described in the wave-227 PASS block. Until then every merge brief's
+item 6 carries the caveat verbatim.
+Two more from the same afternoon. **(a) N157, promoted from the 16:30 tick:** re-measure the ledger tail, `origin/main`
+AND `coder.pid` immediately before any append, push or dispatch — the race now spans an irreversible push, not only a
+ledger write. **(b) The attended guard has a gap the size of an account pause.** The main tick skips when the mailbox was
+touched in the last 30 minutes; a seat paused by a usage limit touches nothing, so a tick opened case (b) on a wave this
+seat had already gated, and only N140's tail re-read stopped a second verdict. When a seat is paused mid-wave, the first
+thing it does on return is the N157 triple before touching the mailbox — that is what happened here, and it held.
