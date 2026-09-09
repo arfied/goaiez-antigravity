@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-09T17:10:06",
+ "updated": "2026-09-09T17:39:38",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2559,6 +2559,12 @@
    "module": "X-199",
    "chose": "J9's blocker is the unconnected invoice-payment seam, not a missing column: payments.invoice_id, PaymentCaptured::invoiceId and RecordPaymentOnCapture all exist, capture() takes no invoice id, and the listener is registered by nothing because it would mark an invoice paid off an event. The stale reason is corrected in J9's comment and in X-199's runtime-proof refusal; nothing is wired and nothing is dropped.",
    "at": "2026-09-09T17:10:06",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-117",
+   "chose": "An operator-facing string carries no internal rule id: X-117's and X-211's runtime-proof refusals and the X-117 checkout artifact's waiting_on value dropped their (ruling NN) pointers. Every factual claim in the four strings is measured true and stays byte-identical; only the pointer to a ledger no reader outside this checkout can resolve is removed.",
+   "at": "2026-09-09T17:39:38",
    "ruling": "R245"
   }
  ]
