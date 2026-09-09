@@ -106,6 +106,31 @@ for db in "$env_db" "$xml_db"; do
 done
 [ -z "$env_db" ] && echo "  ⚠ .env has no DB_DATABASE — anything reading config would use the framework default"
 
+# ⛔⛔ PER-LANE TEST DATABASE (REV-119, 2026-09-09). Re-ported after run 114's
+#     fast-forward took Track 1's copy of this file whole and dropped this lane's
+#     version of §7. `main`'s app/phpunit.xml pins goaiez_antig_test for EVERY
+#     lane, and app/phpunit.xml is a never-merge path — so after the fast-forward
+#     nothing at all was left holding the separation. RefreshesTenantDatabase runs
+#     migrate:fresh, which DROPS every table first, so one bare `--tests` from any
+#     of the seven checkouts destroys the test database of the other six.
+#
+# ⭐ §7's clash guard below does not substitute for this. It SERIALISES suites that
+#   share a database; it never SEPARATES them. Serialising seven lanes onto one
+#   database makes the destruction orderly, not absent.
+#
+# ⭐⭐ Derived, and an already-exported DB_DATABASE WINS — a derived default is the
+#    one value a brief must be able to override without editing a tracked file.
+#    NOT exported globally on purpose: §4's doctor and its schema stage read the
+#    LIVE database, and exporting here would silently repoint them off .env's
+#    goaiez_antig_reviews. The value is applied at the pest call in §7 and nowhere
+#    else, which is the only place whose blast radius is the suite.
+lane_db=${DB_DATABASE:-goaiez_antig_$(basename "$ROOT" | sed 's/^grs-antig-*//')_test}
+[ "$lane_db" = "goaiez_antig__test" ] && lane_db=goaiez_antig_test
+echo "  effective (§7)   DB_DATABASE=$lane_db"
+if [ "$lane_db" = "$PROD_DB" ]; then
+  echo "  ⛔ the effective test database is PRODUCTION. Stop. Nothing below may run."; exit 2
+fi
+
 bar "1. working tree"
 git status --short | head -40
 echo "  $(git status --short | wc -l) uncommitted path(s)"
@@ -360,7 +385,10 @@ run_tool pint    ./vendor/bin/pint --test
 run_tool phpstan ./vendor/bin/phpstan analyse --memory-limit=1G --no-progress
 
 if [ $want_tests -eq 1 ]; then
-  bar "7. test suite  (phpunit.xml → $xml_db)"
+  bar "7. test suite  (effective DB_DATABASE → $lane_db; phpunit.xml pins $xml_db)"
+  # REV-119: the clash guard must ask about the database pest will REALLY use, not
+  # the one phpunit.xml pins — otherwise it scans siblings for a name nobody runs on.
+  xml_db="$lane_db"
   # Refuse while another pest runs on THIS database from any checkout whose
   # phpunit.xml pins it (2026-09-05 07:1x: the sixty checkout wiped the schema
   # under a Track 1 gate — 32 spurious "relation does not exist" errors).
@@ -446,7 +474,7 @@ fi
 if [ $want_tests -eq 1 ]; then
   # timeout: a hung suite is a red line, never a 26-minute wait (ruling 2026-09-05 07:0x)
   pest_started=$(date -Is)
-  ptmp=$(mktemp "${TMPDIR:-/tmp}/pest-XXXXXX"); timeout 1800 ./vendor/bin/pest > "$ptmp" 2>&1 & pjob=$!; pest_pid=$(pgrep -P "$pjob" 2>/dev/null | head -1); pest_pid=${pest_pid:-$pjob}; wait "$pjob"; rc=$?; out=$(cat "$ptmp"); rm -f "$ptmp"
+  ptmp=$(mktemp "${TMPDIR:-/tmp}/pest-XXXXXX"); DB_DATABASE="$lane_db" timeout 1800 ./vendor/bin/pest > "$ptmp" 2>&1 & pjob=$!; pest_pid=$(pgrep -P "$pjob" 2>/dev/null | head -1); pest_pid=${pest_pid:-$pjob}; wait "$pjob"; rc=$?; out=$(cat "$ptmp"); rm -f "$ptmp"
   log_gate pest "$pest_started" "$rc" "${pest_pid:--}"
   [ "${lock_held:-0}" -eq 1 ] && flock -u 9 2>/dev/null
   if [ $rc -eq 124 ]; then

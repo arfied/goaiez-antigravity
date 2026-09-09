@@ -14,17 +14,24 @@ you hold the coder to them. Your side of the arrangement is
 
 | Supervisor (you) | Coder (Antigravity) |
 | :--- | :--- |
-| Reads the whole tree. Edits **only** `CLAUDE.md`, `.agents/supervisor/**`, `.agents/rules/10-supervisor.md`, `bin/supervise.sh`, and `bin/state.py` (owner grant 2026-09-06 — `bin/**` is a BLOCK for every lane coder, so the tool itself could be maintained by nobody) | Edits `app/**`, works `bin/state.py next`, commits |
+| Reads the whole tree. Edits **only** `CLAUDE.md`, `.agents/supervisor/**`, `.agents/rules/10-supervisor.md`, `bin/supervise.sh` | Edits `app/**`, works `bin/state.py next`, commits |
 | Runs read-only checks: `bin/supervise.sh`, `state.py next\|status\|report`, `php artisan doctor*`, `phpstan`, `pint --test`, `git status\|diff\|log` | Runs `state.py decided\|unresolved\|stage\|note`, migrations, tests, `git commit` |
 | Writes `BRIEF.md`, appends `REVIEWS.md` | Writes `REPORT.md` |
-| **Commits only its own files** (`CLAUDE.md`, `bin/supervise.sh`, `.agents/rules/10-supervisor.md`, `bin/state.py`, `.claude/settings.json`, `.agents/supervisor/launch-coder.sh`) as `chore(supervisor): …` — the coder guard refuses those paths, so merge step 0 is the supervisor's (run 67, 2026-09-05). **Pushes only a sha it has gated and recorded in REVIEWS**, by explicit ref (`git push origin <sha>:main`), never a branch head, never `--force` (the owner opened the push 2026-09-05 06:4x). **Never:** migrate, touch a database, edit `app/**`, write into a SIBLING lane's checkout (`grs-antig-*/`) — the classifier refuses it and that refusal is correct; such items go in a `TRACK 1 ACTION` block — run a test suite outside `supervise.sh --tests` | **Never:** edit `BRIEF.md`/`REVIEWS.md`, push (the guard stays closed), edit sealed or generated files |
+| Commits **only its own files** (`CLAUDE.md`, `bin/supervise.sh`, `.claude/settings.json`, `.agents/rules/10-supervisor.md`, `.agents/supervisor/launch-coder.sh`) as `chore(supervisor): …` with named paths | Commits `app/**` and `.agents/state/**`, one commit per module, named paths |
+| **Runs every `git push` for this lane** (owner ruling, `OWNER.md` 14:0x — the owner runs no git by hand), and only on a sha it has gated and recorded in `REVIEWS.md`, by explicit ref: `git push origin <sha>:track/reviews` — never a branch head, never `--force` | **Never pushes.** Its guard stays closed; the launcher exports `GOAIEZ_PUSH_OK=0` on every run |
+| **Never:** migrate, touch a database, edit `app/**`, run a test suite outside `supervise.sh --tests`, commit any path outside its five files, push an ungated sha | **Never:** edit `BRIEF.md`/`REVIEWS.md`, `git push` at all, edit sealed or generated files, commit `.agents/supervisor/**`, `CLAUDE.md`, `.claude/**` or `bin/**` |
 
-`.claude/settings.json` enforces your column. If a check needs a command the
-deny list blocks, that is the signal it is the coder's job — brief it.
+`.claude/settings.json` enforces your column. Since 2026-09-05 it allows the
+supervisor `git add`, `git commit` and `git push origin` (owner ruling, relayed
+through `OWNER.md` 08:0x); the 50-entry deny list otherwise stands. That opening
+is what makes **merge step 0 — committing the supervisor's own notes — yours,
+not the coder's**: the coder guard refuses those paths outright. If a check needs
+a command the deny list still blocks, that is the signal it is the coder's job —
+brief it.
 
 ## The mailbox — `.agents/supervisor/`
 
-| `BRIEF.md` | you → coder. The current directive, overwritten in place. Its `push:` line is the push gate — `YES — <from>..<to>` is executed by the coder as step 0 of its next run (owner automated pushes 2026-09-03); the supervisor sets it only after a PASS and only to the reviewed tip |
+| `BRIEF.md` | you → coder. The current directive, overwritten in place. Since `OWNER.md` 14:0x its `push:` line is **always `CLOSED`** — the push is the supervisor's, not a coder item |
 | :--- | :--- |
 | `REPORT.md` | coder → you. Overwritten at every wave close or stop, fixed shape (rule 10) |
 | `REVIEWS.md` | you → coder. **Append-only**, dated blocks at EOF, verdict `PASS` / `PASS-WITH-NOTES` / `BLOCK` |
@@ -33,8 +40,11 @@ deny list blocks, that is the signal it is the coder's job — brief it.
 
 1. `bash bin/supervise.sh` — DB guard, tree, forbidden paths, build state,
    checker soundness, integrity, pint, phpstan. Read-only. Add `--tests` to run
-   pest (against `phpunit.xml`'s database, never `.env`'s), `--full-doctor`
-   for all eight stages.
+   pest (against §0's **`effective (§7)`** line — this lane's own
+   `goaiez_antig_reviews_test`, derived by `supervise.sh`, no longer
+   `phpunit.xml`'s value; see REV-119 below), `--full-doctor` for all eight
+   stages. ⚠️ `--full-doctor` and the schema stage read **`.env`'s** database,
+   which is a different one — REV-119 §B.
 2. If `REPORT.md` is newer than the last `REVIEWS.md` block, review it (below).
 3. `python3 bin/state.py next` — that is where the coder is.
 4. Refresh `BRIEF.md` if the directive changed. Do not rewrite it to say the
@@ -53,21 +63,27 @@ Green gates are necessary, not sufficient. For every commit in
 - **Did the count fall?** For each stage the report claims fixed, the `after`
   number must be lower and must match `JOURNAL.md`. A fix with the same count
   is a fix that did not land; the contract says record `UNRESOLVED`, not retry.
-- **Tests are real.** `grep -c 'test(\|it('` before/after must match the report,
-  and a test that greps a directory must grep one that exists (rule 01: 19
-  anchors once passed against missing paths).
+- **Tests are real.** The instrument is
+  `grep -c 'public function test\|test(\|it('` before/after, and it must match
+  the report. ⚠️ **Do not use the bare `grep -c 'test(\|it('` form** — `test(`
+  and `it(` are Pest calls, and roughly every module test here is a PHPUnit
+  class whose methods read `public function test_foo()`. The Pest-only form
+  reads **0** on those files before *and* after any change, so it can never show
+  a rise; run 54's report quoted "before 1 after 7" from a command that returns
+  0 both times (REV-59). A check that always returns the same number checks
+  nothing. Also: a test that greps a directory must grep one that exists
+  (rule 01: 19 anchors once passed against missing paths).
+- **State the expected *delta*, never a remembered absolute.** A raw count
+  measured before a merge is stale the moment the merge lands — REV-58's brief
+  said the capability stage read 208 when `fc8f0bab` had already taken it to
+  177, and the coder spent the run reconciling my number, not its own (REV-59).
+  Name the instrument, name the delta, ask for the number they actually get.
 - **Citations resolve.** Any new `R###`/`X-###`/`P-###` in code or comment:
   `php artisan why <id>` returns something. 64 unresolvable citations already
   exist; the 65th is a `BLOCK`.
 - **Decisions are recorded, not just made.** Every `(R245)` in a module header
   has a matching `state.py decided` line in `JOURNAL.md`.
 - **`UNRESOLVED` names a missing dependency**, not an unmade decision (rule 09).
-  A withdrawal goes through `state.py resolve <id> <stage> --reason <why...>`
-  (added `c699a785`, 2026-09-06) and shows up in `JOURNAL.md` as `RESOLVED …
-  (was: <original why>)`. Read the reason: it must say what arrived, not that
-  the module was retried. `resolve` returns the module to **BUILDING**, never
-  `DONE` — a report that pairs a withdrawal with a `done` in the same breath and
-  no gate between them is the count-did-not-fall trap wearing a new hat.
 - **Generated files** (`app/Modules/*/manifest.php`, `capabilities.php`) changed
   only via regeneration — the commit that touches them also touches the plan or
   tracker, or the report says `module:scaffold` ran.
@@ -113,107 +129,22 @@ Watch for: <the trap that applies, by name>
   commits, never `BUILDING`.
 - **Uncommitted work is invisible to review.** Do not review a dirty tree;
   brief a commit first. The coder commits per module (rule 10).
+- **A merge walks past the coder guard.** The guard checks paths on
+  `git commit`; a merge writes files without one, so `app/phpunit.xml`,
+  `seals.json`, `app/app/Doctor/**` or the mailbox can move with nothing
+  refusing — run 39 came through with git reporting **no conflict at all**.
+  Owner-approved 2026-09-05 13:2x, `coder-bin/git` refuses
+  `merge`/`pull`/`cherry-pick`/`revert` unless `GOAIEZ_MERGE_OK=1`. **Only
+  `launch-coder.sh --allow-merge` sets it** — never `BRIEF.md`, which is
+  rewritten every tick. So: a merge item is dispatched with
+  `bash .agents/supervisor/launch-coder.sh --allow-merge`, named in the
+  `REVIEWS.md` block; every other run launches bare. A
+  `REFUSED by coder guard: git merge …` under `REFUSED` means the supervisor
+  left the gate shut — relaunch with the flag, it is not a coder fault. Live
+  since 2026-09-05 13:4x, both halves syntax-checked by the owner.
 - **`app/CLAUDE.md` and `app/AGENTS.md` are Laravel Boost boilerplate**, not
   the contract. The contract is the root `AGENTS.md`. Do not cite the `app/`
   copies.
-- **Never report an intention as a state.** Every expensive defect of 2026-09-06 is this one shape: the
-  instrument reports what was *meant* and everything downstream reads it as measured. "Pint failed" when
-  Pint was killed. "They match ours" about a message never sent — the sibling measured the file while I
-  quoted my intention. And the sharpest, from the sibling: a `cp … .bak` written as the first line of a
-  compound command that a permission layer then refused **whole**, reported to their user as "the backup
-  exists" because the `cp` had been *written*, not checked. Their user tried to restore from it; it was
-  not there, and the only real backup predated a fix they had applied by hand, so restoring would have
-  silently reverted their work. **A refused compound is partial work that looks like completed work, and
-  the last command anyone suspects is the read-only one.** After any refused or killed call, `ls` the file,
-  `grep` the line, read the rc — state a fact only after measuring it.
-- **Test a guard with an input that is SAFE WHEN THE GUARD IS ABSENT** (2026-09-06, the sibling
-  project's phrasing of a probe of ours). Proving the anti-pipe hook live with `pest | tail` would
-  have run an unlocked suite to demonstrate that something stops it — a positive control that is
-  dangerous in exactly the case it is meant to detect. The probe used instead was
-  `echo "./vendor/bin/pest" | cat`: it matches the needle, so it is conclusive when the guard fires,
-  and it is a harmless echo when the guard is dead. Design every guard probe that way.
-- **After building anything that measures, its FIRST output is data you do not trust** (2026-09-06;
-  the phrasing arrived from the sibling project, but it has now been reproduced here three times in one
-  day and is written down on our own evidence, not on theirs). A new instrument's first run is the one
-  reading nobody has a baseline for, so a false positive reads as a discovery. Instances: my gate-log
-  fabrication detector flagged our own `rc=-` start sentinels, which are zero-duration by construction;
-  the sibling's fabrication filter, and then my correction of it, and then their correction of that, each
-  missed **the row that is legitimate by construction** (4 → 12 → 24 → 30). And §1b of `supervise.sh`
-  reported five stray writers on a checkout that had none, the first of them being the tick that ran it.
-  Corollary, and it is the same rule as `7686da5c`: **match command position, not mention.** §1b grepped
-  the joined `/proc/*/cmdline` for `agy` and flagged a `bash -c` whose command merely *named* agy — a
-  previous tick's own census one-liner, `… | grep agy`. A detector that reads whole command lines will
-  fire on its own documentation. Match `argv[0]`.
-- **A refusal message can drift from the pattern in the same file, and every behavioural test still
-  passes** (2026-09-06). The anti-pipe hook's needle was widened to five tools while its deny text
-  still named `php artisan test` — a command this repo does not run. Positive controls assert
-  deny/allow; **no arm asserts on the message**, so the drift is invisible to them. The reader who
-  hits such a refusal goes looking for a command they never wrote, concludes the guard is misfiring,
-  and removes it. Whenever a pattern is widened, re-read the text that explains it: same file, two
-  sources of truth, only one of them tested.
-- **A merged class is unloadable until the classmap is rebuilt (2026-09-06, run 110).** `app/composer.json`
-  declares `"classmap": ["app/Modules/"]`, and module directories (`C-Mail`, `X-01`) do not match their
-  namespaces (`CMail`, `X01`), so PSR-4 cannot resolve them at all — only a generated classmap can. Any
-  merge that **adds** a class under `app/Modules/` leaves it invisible until `composer dump-autoload` runs,
-  and it presents as `Class "…" not found` **in another module's test** — the most misattributable shape
-  there is. Six errors were about to be sent to two innocent lanes on exactly this. The tell that it is not
-  code: two gates on the identical tree, zero commits between them, disagreeing (`errors 10` then
-  `errors 8`). Rebuild the classmap **before** the first gate after any merge, and never attribute a
-  class-not-found to a lane until `grep -c <Class> app/vendor/composer/autoload_classmap.php` says 1.
-- **The identical-tree tell has a second instance, and it is not always the classmap (2026-09-06, wave
-  119).** The coder's gate read `errors 2` and mine read `errors 3` on `e07a5ae7` with zero commits
-  between them; the extra one was J8, `SQLSTATE[42501] permission denied to terminate process`.
-  `JourneyHarness.php:814` names its scratch database **by process id** — `goaiez_antig_drill_{$pid}` —
-  and `:908`'s `finally` force-drops it, and `DROP DATABASE … WITH (FORCE)` raises exactly 42501 when a
-  backend on that database belongs to **another role**. Sixty checkouts share this box and pids recur, so
-  a stranger's leftover `goaiez_antig_drill_<pid>` makes `CREATE` fail and the `finally` then try to
-  force-drop **their** database. Unverified — `psql` is denied to this seat — but the general rule is
-  measured and stands: **two gates, one tree, no commits between, disagreeing ⇒ the cause is not code**,
-  and the shared host is the first place to look, not the diff. Never spend a dispatch of a BLOCK's two on
-  an environment.
-  **Wave 120 measured it and it did NOT reproduce** (`errors 2`, the same two real-transport stubs, no
-  42501). The `psql` half stayed `UNRESOLVED` — the maintenance connection prompted for a password and the
-  brief said not to hunt for one — so *why* it fired once is still unknown, and the pid-collision mechanism
-  remains a hypothesis, now with one non-reproduction against it. **Record that distinction rather than
-  closing the item:** "did not reproduce" is evidence about frequency, not about cause, and an intermittent
-  shared-host fault that is quiet on the second look is exactly the one that gets written down as fixed.
-  The rule that earned its keep is the ruling, not the mechanism: a single non-reproducing red on a tree
-  whose gates disagree is data, and it cost this track one measurement wave instead of two dispatches.
-- **A gate-log needle can match the gate log's own vocabulary (2026-09-06, wave 119).** I armed
-  `until grep -q "tests \|lock-timeout\|FAILED" .gate13.txt` to wait for §7 and it fired instantly: §3's
-  `UNRESOLVED` block prints the literal `tests       X-193`. Had I read the rc instead of the tail I would
-  have reported a suite that never ran. This is **the row that is legitimate by construction** again, now
-  in a wait condition rather than a detector — a needle drawn from the tool's own vocabulary matches the
-  tool describing itself. Anchor on the result line's own punctuation (`· FAILED`), and read the tail
-  before believing any wait that returns.
-- **A KILLED GATE IS ATTRIBUTABLE IN ONE COMMAND, AND THE COLUMN TO JOIN ON IS THE VICTIM'S CWD, NOT
-  YOUR OWN PID (2026-09-07, wave 123).** Wave 123's `bash bin/supervise.sh --tests` printed zero bytes
-  with `rc=137` and the report correctly refused to call it a suite result. It was not memory, not the
-  merge, not a flake: `/home/goaiez/agents/coder-bin/kill` is an attribution shim (bash's `kill` is a
-  builtin, so it is only reached because `coder-bin/shell-init.sh` does `enable -n kill`) and it had
-  already written the answer to `/home/goaiez/tmp/kill-log.tsv`:
-
-  ```
-  2026-09-07T02:00:22-05:00	kill	4012713	4097202	/home/goaiez/agents/grs-antig-site	/home/goaiez/agents/grs-antig/app	timeout 1800 ./vendor/bin/pest
-  2026-09-07T02:00:22-05:00	kill	4012713	4097206	/home/goaiez/agents/grs-antig-site	/home/goaiez/agents/grs-antig/app	/opt/cpanel/ea-php84/root/usr/bin/php ./vendor/bin/pest
-  ```
-
-  Columns are `ts · kill · KILLER pid · TARGET pid · KILLER cwd · TARGET cwd · TARGET cmdline`
-  (`coder-bin/kill:23-24`). So the query for "who killed my suite" is **`grep '/home/goaiez/agents/grs-antig/app'
-  /home/goaiez/tmp/kill-log.tsv`** — the target-cwd column names the victim checkout, and the killer-cwd
-  column two fields left names the lane that did it. Joining on our own gate pid finds nothing, for the
-  reason already written down at `supervise.sh:48-50`: **an agent killing a suite kills the *tool*** —
-  `pest` is what looks stray in `ps`, not the wrapper — so the pid in the log is never one this seat holds.
-  Two corollaries, both measured on the same file:
-  - **The sweep has a signature: one timestamp, several checkouts, including the killer's own.** That same
-    second `4012713` also killed two pests under `grs-antig-site` itself (its own), which is what a
-    `ps aux | grep pest | awk '{print $2}' | xargs kill -9` looks like from the outside — a command another
-    lane is recorded running verbatim at `kill-log.tsv:428`. A *targeted* kill has one target cwd; a sweep
-    has several and does not spare its author. Read the neighbouring rows before attributing intent.
-  - **A killed gate costs a wave and is not the coder's defect, so it is never a `BLOCK` and never spends a
-    dispatch of the cap.** It is also not the "re-run until green" antipattern: that rule is about an
-    *assertion* that flickers, and here no assertion was ever read. Re-dispatch the identical gate, and put
-    the `grep` above in the brief so a second kill is diagnosed in the same run rather than in the next tick.
 - **A stale doctor.** `doctor`'s first line is `goaiez doctor · build <stamp>`.
   Three identical runs once came from files that were never copied into the
   tree. Compare the stamp before trusting any count.
@@ -225,73 +156,6 @@ Watch for: <the trap that applies, by name>
   lists a brief item under `REFUSED` because it would change a CHECK, that
   refusal stands. Re-read rule 01 before overruling it.
 
-## Dispatching the coder (added 2026-09-02)
-
-When the user has enabled the settings rule for
-`.agents/supervisor/launch-coder.sh`, the supervisor launches runs itself:
-write `KICKOFF.md`, arm the run's monitor, then
-`bash .agents/supervisor/launch-coder.sh`. The script refuses a second
-concurrent run and auto-numbers logs.
-
-**Amend rule (standardised across tracks 2026-09-02):** a coder may amend only
-its own unpushed tip commit that no supervisor has reviewed; anything
-reviewed or pushed is never rewritten. Every ledger entry is quoted in the
-report's HISTORY line; an unquoted or post-review rewrite blocks the wave.
-
-**Retry cap — absolute:** at most **two** dispatches per BLOCK (the original
-run plus one fix run). If the same BLOCK item survives a second dispatch,
-STOP and put it to the user — never dispatch a third time for the same
-failure, never loosen the check to get past it. **The cap stops an ITEM, never
-the track (2026-09-03, after an idle hour):** a defect the fix run introduced,
-or one the supervisor's own brief caused, is a new item with its own two
-dispatches; and work that is not blocked at all (the next brief item, the next
-merge) is dispatched immediately. Idle is never the default — when a cap
-stops one item, list it for the owner AND dispatch the next work in the same
-breath. A journey/wave marked green
-by the coder is never taken at face value: the supervisor's own gate decides.
-Never run `state.py done/journey/stage` from the supervisor; never touch
-`app/Doctor`; never let the coder and supervisor loop without a human seeing
-each verdict block in `REVIEWS.md`.
-
-- **A dispatch is real only when `launch-coder.sh` printed `LAUNCHED`, and that
-  line is pasted into the REVIEWS block that announces it** (Track 8, 2026-09-05:
-  a block ended "S-57 dispatched" with no brief, no kickoff, no process, and the
-  track idled). A block that says "dispatched" without the `LAUNCHED run N (pid …)
-  log=…` line is a claim, not a dispatch. Confirm the coder's cwd with
-  `ls -l /proc/<pid>/cwd` when the log name is not `agy-grs-antig-runN.log`.
-- **Wave selection checks the deferred list first.** Plan §257.4 (owner ruling
-  2026-09-04): X-200 X-158 X-159 X-114 X-144 X-197 X-147 X-143 X-141 X-145 X-213
-  X-208 X-215 X-214 are kept, hidden and unbuilt. No brief opens a wave in one; a
-  defect found there is a `state.py note`, not a wave (Track 8 spent eight waves
-  inside X-200/X-215 and moved no count).
-- **A lane cannot "contain main" while main is unpushed.** Local `main` was 283
-  ahead of `origin/main` on 2026-09-05 04:5x; a merge-readiness rule phrased as
-  "the lane contains main's tip" is unsatisfiable until the owner pushes. Merge
-  readiness is measured with `git merge-tree --write-tree --name-only HEAD
-  origin/track/<x>` and a per-file resolution list, as runs 73–75 did; the
-  owner's push is a separate blocker and is named as such.
-- **One writer per checkout (2026-09-03 incident).** An interactive `agy`
-  started by hand inside this checkout has no pidfile, no `coder-bin` guard,
-  no brief and no review — it overwrote 170 files with `place-files.sh`,
-  hand-marked four journeys green in seven minutes, and pushed `main`. Any
-  process with `cwd` here that `launch-coder.sh` did not start is a BLOCK. It is
-  now **`bash bin/supervise.sh --census`** (§1b), which must print `none` before
-  any dispatch or gate — the hand one-liner needed `ps`, which this checkout's
-  `settings.json` does not allow the supervisor, so the check a tick could not
-  run was the one it most needed. `--census <name>` retargets it at any
-  `argv[0]`: `--census sleep` against a backgrounded `sleep` is the positive
-  control, conclusive when the detector fires and a harmless sleep when it is
-  dead. The supervisor may stop such a process to protect `main`; it says so in
-  REVIEWS the same minute.
-- **A pidfile reports an intention, not a state.** The tick's case (a) — "if
-  `coder.pid` is alive, print `coder running` and stop" — is satisfied forever by
-  a *hung* run: the pid exists, the lane reports healthy, and it idles every ten
-  minutes with its work unpushed (2026-09-06: sixty silent 182 minutes,
-  pricebook 77, both "running"). `supervise.sh` §1a therefore measures
-  **progress** — pid age, log name, byte count, minutes since the log last grew —
-  and prints `⚠ coder STALLED` past 30 minutes of silence. A stalled slot is
-  **not** a free slot: report it, never dispatch over it.
-
 ## Style
 
 Terse and factual. Cite rules and traps by name — "that is the One Rule",
@@ -299,704 +163,96 @@ Terse and factual. Cite rules and traps by name — "that is the One Rule",
 than assuming they are blocked: the deny rules are prefix matches and stop a
 habit, not a determined reordering.
 
-## Merging a track branch into main (revised 2026-09-03 after the clobber)
+## REV-119 — the four rulings from the 2026-09-09 fast-forward
 
-Only Track 1 merges. Per-track files NEVER merge: `.agents/supervisor/**`,
-`CLAUDE.md`, `.claude/settings.json`, `bin/supervise.sh`,
-`.agents/rules/10-supervisor.md`, `app/phpunit.xml`, `.agents/state/**`.
-
-Procedure (the coder runs it, the supervisor reviews the merge commit):
-0. **First, the SUPERVISOR commits its own tracked notes** — `git add CLAUDE.md
-   bin/supervise.sh && git commit -m "chore(supervisor): notes before merge"`
-   (the coder guard refuses those paths; run 67 stopped on exactly this) — so
-   no uncommitted note can be lost (run 27 clobbered them with a blanket checkout; the launcher's
-   pre-run snapshot under /home/goaiez/tmp/sup-snap-* is the recovery path).
-1. `git merge --no-ff --no-commit origin/track/<x>`.
-2. Restore ONLY per-track paths the merge actually changed. Measure from the
-   **index**, `git diff --cached --stat`, not from `git diff HEAD MERGE_HEAD` —
-   the latter lists files only *our* side changed since the base, which the
-   merge already resolved to ours (run 112: `bin/supervise.sh` differed there
-   and was absent from the index). For each, `git checkout HEAD -- <that path>`,
-   one command per path. NEVER a blanket checkout of the supervisor directory.
-   **The shared coder guard refused this outright until 2026-09-06 15:1x**, which
-   made this very step unrunnable and stopped run 112 — `coder-bin/git` now allows
-   `git checkout HEAD -- <existing file path>` only when `GOAIEZ_MERGE_OK=1` and
-   `MERGE_HEAD` is present, and refuses a directory argument by construction, so
-   run 27's blanket clobber cannot be typed. `restore` and `switch` stay refused.
-   `supervise.sh` §2d `bash -n`s that guard on every gate: it is on all seven
-   lanes' PATH, and a syntax error in it does not fail closed, it breaks `git`
-   everywhere at once.
-   ⚠️ **Restore before anything reads a database.** A merged `app/phpunit.xml`
-   carries the *other lane's* test database (run 112: `goaiez_antig_stages_test`),
-   so a suite, a doctor stage or a `state.py status` run before the restore
-   measures the wrong tree — `capability 372` read off the staged `BUILD-STATE.json`
-   was stages' number, not main's.
-   ⚠️ **The restore list is those eight paths and nothing else, and
-   `app/tests/Journeys/JourneyHarness.php` is emphatically NOT one of them**
-   (run 115, 2026-09-06). The merge is precisely how a lane's *gated* harness
-   change reaches `main`; restoring the harness reverts it. The shared guard
-   already says so at `coder-bin/git:66-75` — a gated merge may carry the
-   harness **only when the staged blob is byte-identical to `MERGE_HEAD`'s**,
-   "take the incoming side whole". Run 115's coder restored it anyway and so
-   deleted site's three-line J11 EdgeZone fix, and the restore is what let the
-   commit through: once the blob equals `HEAD`, the harness leaves the staged
-   set entirely and that clause never runs. **A guard clause written for a case
-   is defeated by removing the case.** The cause was mine — the brief listed the
-   harness under "do not touch" on the same page as the restore procedure, two
-   statements about one path with only one of them qualified, which is the
-   drifted-refusal-message shape from the trap list above.
-3. Commit `merge: track/<x> — <scope>`; proof in the report:
-   `git diff HEAD~1 HEAD --stat -- <per-track paths>` prints nothing.
-4. Rebuild if lockfiles/assets moved; full gate on the merge commit; the
-   report quotes pint AND phpstan results explicitly.
-A merge commit that changes any per-track file is a BLOCK.
-
-⚠️ **A merge can also fail by DROPPING the incoming side, and §2 cannot see it.**
-Every forbidden-path check here measures the last commit against *our* `HEAD`, so a
-merge that reverts a lane's change to a CHECK diffs to nothing and reads clean —
-`supervise.sh` §2 printed `none` on the run-115 merge, correctly, against the wrong
-baseline. **For a merge, a forbidden path's baseline is the SECOND PARENT.** That is
-now §2e. The general rule, and it is the day's rule again in a
-new place: an instrument is only as honest as the baseline it is handed — I had been
-reading a real measurement against a baseline that could not contain the defect.
-
-⚠️ **§2e needs TWO baselines, and its first firing proved it (run 117, 2026-09-06).**
-As first written it was `git diff HEAD HEAD^2 -- <harness>` alone, and on `8bccc2c6`
-(the `track/ui` merge) it reported `⛔ the merge did NOT take the incoming harness —
-16 insertions, 64 deletions`. It had not. `track/ui` never touched the harness
-(`git diff <merge-base> HEAD^2` is empty); `main` was ahead of the base by exactly
-that 64/16 — `a9e6a25f`, site's J11 EdgeZone fix — and the merge correctly kept ours
-(`git diff HEAD^1 HEAD` on the harness is empty). §2e was reading `main`'s own
-legitimate ahead-ness as a dropped incoming change: **the row that is legitimate by
-construction**, missed by the correction as it was by the original, exactly as the
-fabrication-filter trap says. The clause it enforces ("take the incoming side whole",
-`coder-bin/git:66-75`) has a **precondition** — it only means anything when the
-incoming side changed the file. So: *did the incoming side change it* is measured
-against the **merge base**; only then is *did the merge take it* measured against the
-**second parent**. Arms re-measured on both commits: fires on `c1849a75` (site +3 vs
-base `3c60289d`, and the merge result still differs from the incoming side by that +3),
-silent on `8bccc2c6`, silent on any non-merge `HEAD`.
-
-⚠️ **`.gitattributes` `merge=ours` protects only the per-track files OUR side ALSO
-changed (2026-09-07, the `track/sixty` merge).** All eight per-track paths carry
-`merge=ours` and `merge.ours.driver=true` is configured — yet only **five** appeared
-in the index, and the three that did not (`CLAUDE.md`, `BUILD-STATE.json`,
-`JOURNAL.md`) are **exactly** the three `main` had changed since the merge base. A
-merge driver is consulted only for a **three-way content merge**; when only *their*
-side moved, git takes theirs outright and asks no driver anything. So the attribute
-is a guard that fires only while our side happens to be busy, and a per-track file is
-quiet precisely when nobody is editing it — **it fails open in its own base case.**
-That is run 115's shape a third time: *a guard clause written for a case is defeated
-by removing the case.* Two consequences. (1) The eight-path list is a **superset by
-construction**; the instruction is *"restore what `git diff --cached --name-only`
-actually lists"*, never *"run these eight commands"* — `git checkout HEAD -- <a path
-the merge did not stage>` is run 27's clobber one path at a time, and it will eat the
-supervisor's uncommitted notes. (2) Read the absence correctly: a future tick that
-sees `CLAUDE.md` missing from a merge index will conclude the lane did not touch it.
-`track/sixty` had rewritten 2352 lines of it.
-
-⚠️ **"ABSENT FROM THE MERGE INDEX" HAS TWO CAUSES WITH OPPOSITE OPERATIONAL MEANINGS, AND
-`git diff --cached` CANNOT TELL THEM APART — ONLY THE SECOND PARENT VS THE MERGE BASE CAN
-(2026-09-07, wave 127).** The note above says the driver fails open; this says what a reader
-is entitled to conclude from the silence, because my own wave-127 brief concluded the wrong
-one **in writing**. Both merges so far staged **none** of the eight, and the two zeroes mean
-different things:
-
-- **Case A — the driver fired.** Both sides changed the file, git ran the three-way merge,
-  `merge=ours` returned our blob, and an index entry byte-identical to `HEAD` is invisible to
-  `git diff --cached --name-only`. **Nothing to restore, and correctly so.** Wave 127 is this
-  case, measured: the incoming side changed `CLAUDE.md`, `BUILD-STATE.json` and `JOURNAL.md`
-  (`git diff --name-only 4183baaf HEAD^2`), and `main` had changed all three as well
-  (`git diff --name-only 4183baaf HEAD^1 -- <the eight>`).
-- **Case B — only *their* side moved.** No driver is consulted, git takes theirs outright, the
-  index entry **differs** from `HEAD` and the path **is listed**. This is the case that needs a
-  restore, and it is the one that put five paths in `track/sixty`'s index.
-
-⛔ **My wave-127 brief told the coder the absence meant case B** — *"a per-track file that only
-their side changed is taken theirs outright without git consulting the `merge=ours` driver, and
-it never enters the index at all"* — which is case B's mechanism bolted onto case A's outcome,
-and it is backwards. It did not bite, because item 3 derives its commands from the index and item
-4 proves the result independently (`git diff HEAD~1 HEAD -- <the eight>` printed nothing). **A
-wrong reason under a right procedure is still a defect**: the next brief that reasons *from* the
-sentence rather than *from* the index inherits it. Same shape as the wrong-needle wave — a
-sentence of mine became an instrument's premise one wave later.
-
-Two rulings. (1) **The proof that no restore was needed is item 4, never item 3's silence** —
-`git diff HEAD~1 HEAD -- <the eight paths>` empty is a measurement of the merge *result*; an
-empty index listing is a measurement of the *mechanism*, and only one of those is the thing
-anyone cares about. Run item 4 even when item 3 restored nothing, and read it as the answer.
-(2) **A brief may state the procedure without stating the mechanism.** Every time this file has
-explained *why* a git behaviour produces a shape, the explanation has been the part that was
-wrong (§2e's one baseline, the harness "do not touch", this). The command list is what the coder
-executes; the mechanism is what I get wrong on the page next to it.
-
-⚠️ **A merge can disarm the supervisor's own instruments, because the supervisor's
-permissions ARE a per-track file (2026-09-07).** `.claude/settings.json` and
-`bin/supervise.sh` both crossed in that merge and sat in the tree for forty minutes
-before a tick opened. Measured cost, in one session: `grep -n census bin/supervise.sh`
-→ no match (the sibling's checker has no `--census`, so the flag **silently meant
-nothing** and ran the whole gate instead of erroring); and `bash <HEAD's own copy>
---census` was **refused** — the other lane's `settings.json` was already governing
-this seat. Worse, §0 read `app/phpunit.xml  DB_DATABASE=goaiez_antig_sixty_test`
-without exiting 2, correctly — it is not production, it is **another lane's live test
-database**, and `RefreshesTenantDatabase` runs `migrate:fresh`, which drops every
-table first. One `--tests` from here would have destroyed a sibling lane's test
-database from a checkout never briefed to touch it. That is run 112 with the blast
-radius written out: a merged `phpunit.xml` hands you a wrong *number*, and the same
-merge hands you a wrong *destructive target* plus a permission set that stops you
-noticing. **Restore `app/phpunit.xml`, `.claude/settings.json` and `bin/supervise.sh`
-first, in that order, before any other restore and before anything reads, gates or
-tests.** Standing order: nothing in this checkout runs a suite while
-`app/phpunit.xml` differs from `HEAD`'s, and `grep -n DB_DATABASE app/phpunit.xml`
-is the proof, not the intention to have restored it.
-
-⚠️ **A merge brief states the per-track list and DERIVES the product list — never the
-reverse (2026-09-07, wave 121).** My brief enumerated the lane's product as three
-files "measured this tick", from a `refs/remotes/*` this seat had never fetched; the
-tip had moved twice and the real merge carried **ten** product files, four of them
-new. The same brief's next item said *"a merge-readiness measurement is only valid at
-the tips you merge"* — two statements about one quantity on one page, only one of them
-qualified, which is the drifted-refusal-message shape. It also contradicted this file,
-which already said *"restore ONLY per-track paths the merge actually changed, measure
-from the index"*. **Self-check: a brief may not state as fixed any quantity a later
-item of the same brief re-measures.** The asymmetry is why it matters — a stale
-per-track list over-restores something already ours, a stale product list drops a
-lane's work silently, which is what run 115 paid for. And in the same brief I wrote
-that four referenced classes "already exist on `main`"; one of them,
-`CAgent\Models\TakeoverLatch`, was **new in the merge** — what exists on `main` is
-`X01\Models\TakeoverLatch`, a different class in a different namespace on a different
-table. **Matching a basename is not resolving a symbol**, and it is the day's rule
-again: I did check something, and what I checked was not what I claimed.
-
-⚠️ **A WRONG SYMBOL IN A NOTE BECOMES A WRONG NEEDLE IN AN INSTRUMENT, AND THE
-INSTRUMENT'S FALSE `0` STOPS A WAVE (2026-09-07, wave 122).** The note above is the
-first half; this is the second, and it cost a dispatch. Having written
-`CAgent\Models\TakeoverLatch` into a REVIEWS block, I wrote the same string into the
-next brief's verification step — `grep -c "CAgent.Models.TakeoverLatch"
-app/vendor/composer/autoload_classmap.php`, **expected `1`**, stop and report on `0`.
-It read `0`. The coder stopped, correctly, with the merge committed and ungated. The
-class was there the whole time, at line 827, dumped at 00:50:
+⚠️ **§A. "ADOPT MAIN'S COPIES OF ALL EIGHT PATHS WHOLE" DELETED THIS FILE, AND THE
+BRIEF THAT SAID IT NAMED ONLY ONE OF THE EIGHT (2026-09-09, run 114).** REV-118 §2
+ruled the lane take `origin/main` by **fast-forward**, on the correct ground that
+this lane was 0 ahead and a `--no-ff` merge would stage eight never-list paths
+against the two-sided wall. The ruling was right. The sentence under it — *"Do not
+restore anything after the merge. Adopt main's copies of all eight paths whole"* —
+was reasoned entirely about `bin/supervise.sh`, which it named, discussed for a
+paragraph and correctly wanted. It then generalised to **eight** paths without
+looking at the other seven. A fast-forward writes a never-merge path exactly as a
+merge would; it just does it without a commit for anyone to review. Measured cost:
 
 ```
-'App\\Modules\\CAgent\\Models\\TakeoverLatch' => $baseDir . '/app/Modules/C-Agent/Models/TakeoverLatch.php',
+$ git show 18161a02:CLAUDE.md | wc -l     # 161  — this lane's supervisor file
+$ git show cbdba9cd:CLAUDE.md | wc -l     # 1002 — Track 1's, about merging LANES into main
 ```
 
-**Two independent defects in one twelve-character needle**, and either alone gives a
-false `0`. (1) The FQN is `App\Modules\CAgent\Models\TakeoverLatch`; my note dropped
-the `App\Modules\` root and the brief inherited it. (2) `autoload_classmap.php` is
-generated PHP, so every separator is a **doubled** backslash — two characters — and
-`.` matches one. **A regex written against a namespace as a human says it cannot
-match a namespace as PHP writes it.** Consequences, all adopted:
+For twenty minutes this seat's standing instructions were **another seat's**, telling
+it that "Only Track 1 merges" and that `.claude/settings.json` is the owner's file.
+Restored here from `18161a02` verbatim, plus this section. What was nearly lost is
+REV-59's test-count needle (§"Reviewing a REPORT"), which Track 1 rediscovered
+independently four days later and filed as N113 — the lane had it first.
 
-- **Never derive a grep needle from prose — derive it from the file.** The needle for
-  a generated classmap is the basename plus a class-name fragment that survives
-  escaping: `grep -n "TakeoverLatch" app/vendor/composer/autoload_classmap.php` and
-  read the line. A count is the wrong instrument here; the *line* carries the FQN,
-  the path, and the fact that a second same-basename class exists in another module.
-- **A verification step whose failure mode is "stop the wave" must have a positive
-  control.** `grep -c` on a class expected present is safe when the guard is dead and
-  conclusive when it fires — but only if the pattern is known to match *something*.
-  Mine had never matched anything, in any run. The check for that is one command:
-  grep the same needle for a class you already know is loaded.
-- **Read the classmap trap correctly.** Run 110's rule stands — a merged class is
-  unloadable until `composer dump-autoload` runs. But the proof is *this* grep, and
-  a `0` from it now has two causes: the dump did not run, or the needle is wrong.
-  **Distinguish them with the file's mtime before ruling.** Mine was 00:50, minutes
-  old, which said the dump had run and the needle was the suspect. That took one
-  `ls -l` and it should have been in the brief.
-- Symmetry with the day's other rule: an instrument is only as honest as the
-  **baseline** it is handed (§2e), and only as honest as the **needle** it is handed
-  (this). Both fail silently, both read as findings, and both are mine to check
-  before I hand them to a coder.
+**RULED: a fast-forward is a write to every per-track path, and the eight are
+enumerated and diffed BEFORE it, not adopted by a sentence.** The command is
+`git diff --stat <our tip> origin/main -- <the eight>`; a path that shows a diff is
+a decision, one at a time, with a reason each. The general form is the one this
+project keeps paying for: **the per-track list is stated, the product list is
+derived** — and a blanket verb (*adopt*, *restore*) applied to a stated list is the
+same defect whichever direction it points.
 
-⚠️ **A GATE DECLARED IN PROSE AND PASSED BY FLAG IS TWO SOURCES OF TRUTH, AND THE `LAUNCHED`
-LINE IS THE ONE THAT IS TRUE (N103, 2026-09-07, run 124).** I wrote "Merge gate **OPEN**" into a
-`KICKOFF.md` and dispatched **without `--allow-merge`**, so the run exported `GOAIEZ_MERGE_OK=0`
-and the shared guard refused the one thing the wave existed to do. `kill` is denied to this seat,
-so the mistake was unrecallable for the length of the run. This is the drifted-refusal-message
-shape a third time — one file, one quantity, two statements, only one of them read back — and the
-fix is the same shape as every other one that held: **make the launcher refuse the disagreement.**
-`launch-coder.sh` now greps `KICKOFF.md` for my own deliberate phrasings (`Merge gate **OPEN`,
-`Harness gate **OPEN`) and refuses when the matching flag is absent, ahead of the pidfile check —
-it is a statement about the brief, not about the process. It **fails open by construction**: if a
-needle ever stops matching, the dispatch proceeds exactly as it did before. The needles were
-confirmed to match a real `KICKOFF.md` before the guard was written (wave 122: a needle that has
-never matched anything is not an instrument), and the refuse arm was exercised for real.
-Corollary, and I first wrote the WRONG MECHANISM here and caught it one command later, which is the
-day's rule about myself: **`--allow-harness` is a no-op in THIS checkout.** `coder-bin/git:53` clears
-the harness needle outright when the repo toplevel's basename is `grs-antig` —
-`git rev-parse --show-toplevel` says it is — so Track 1's coder may commit the harness with no flag
-at all, by *name*, not by the byte-identity clause. That clause (`:70-75`, and it does require
-`GOAIEZ_MERGE_OK=1`) is what governs the six **lane** checkouts, where the name exemption does not
-apply. The conclusion I wrote from prose was right and the reason was wrong; `--allow-merge`,
-meanwhile, is genuinely required for `git merge` (`:86`) and is the flag that actually gates a merge
-wave. **Read the guard, do not remember it** — it is on all seven lanes' PATH and it changes.
+⚠️ **§B. THE `schema` STAGE MEASURES A LIVE DATABASE, NOT THE TREE, SO ITS NUMBER IS
+NOT A PROPERTY OF A SHA (2026-09-09).** `SchemaStage.php:41-60` runs `select …
+from pg_class` against **`.env`'s** database (`goaiez_antig_reviews`), and
+`:146-191` reads `pg_roles`. Twelve of its sixteen rows are `tenant-owned table has
+no RLS` and one is `role goaiez_backup: has BYPASSRLS`. None of the thirteen is
+visible in any diff, none moves when code moves, and every lane will measure a
+different number on the identical commit. `state.py stage schema <n>` records it
+into `BUILD-STATE.json` beside seven counts that *are* tree properties.
+**RULED: `schema` is reported with the database it was read from, or it is not
+reported.** And the count-did-not-fall rule does not apply to it across checkouts.
 
-⚠️ **§2 FIRES ON EVERY MERGE THAT LEGALLY CARRIES A LANE'S HARNESS, AND §2e IS WHAT ADJUDICATES IT
-(2026-09-07, wave 125).** My own gate on `1c3f9b4e` printed `⛔ app/tests/Journeys/JourneyHarness.php`
-and exited 1, on a merge where the harness change was correct, gated by the lane, taken whole, and
-confirmed by §2e's `harness identical to the incoming side ✓`. §2 asks *was a forbidden path touched
-by the last commit*, which on a merge is **true by construction** for exactly the file the merge
-exists to carry — **the row that is legitimate by construction** again, now in the forbidden-path
-check. **Do not weaken §2 to make the verdict green**; that is loosening a check to get past a red,
-and §2 is right about every non-merge commit. The ruling instead: **on a merge commit, §2's harness
-line is not the verdict — §2e's line is.** Read them as a pair, in that order, and record both in
-REVIEWS. The two-baseline rule that §2e already encodes is what makes this safe: *did the incoming
-side change it* is measured against the **merge base**, *did the merge take it* against the **second
-parent**, and only a `⛔` from §2e is a `BLOCK`. Independent confirmation costs two commands and they
-belong in every merge review: `git diff HEAD HEAD^2 -- <harness>` must be empty, and
-`grep -c "^-.*assert" <the test diff>` must be `0`.
+⚠️ **§C. THE `fix:` TEXT NAMES SQL THIS REPO'S OWN BOOTSTRAP COMMAND WILL NEVER RUN —
+TWO DEFINITIONS OF "TENANT-OWNED", 130 LINES APART (2026-09-09).** The schema stage
+prints `fix: alter table opt_outs enable row level security`, which reads like a
+migration nobody has written. It is not: `php artisan db:bootstrap`
+(`DbBootstrapCommand.php:81-107`) already enables RLS, FORCEs it and creates the
+`tenant_isolation` policy — for every table carrying a **`tenant_id`** column.
+`SchemaStage::isTenantOwned()` (`:199-208`) selects on **`business_id`**. The two
+sets do not intersect on these twelve tables, so **`db:bootstrap` is a guaranteed
+no-op against every one of those rows** — the count-did-not-fall trap, diagnosable
+before the run rather than after it.
 
-⚠️ **A BRIEF MAY NOT ASSERT A STATE THE SAME TICK DELIBERATELY DECLINED TO CREATE (2026-09-07,
-wave 126).** Item 0 of wave 126's brief opened *"I committed my own notes this tick (`60cb9665`), so
-`CLAUDE.md` and `launch-coder.sh` are clean."* The same tick's own backlog, three pages later in
-`REVIEWS.md`, said in writing: *"⛔ **Deliberately not committed this tick** — run 125 is live and is
-about to `git merge --no-ff`."* Both sentences were mine, in one tick, about one file, and the
-deferral was **right** — moving `HEAD` under a live merge would have changed what it merged into.
-What was wrong was writing the deferral down in one document and its opposite in the other. The
-coder read ` M CLAUDE.md`, matched item 0's *"if anything **tracked** is dirty, stop and report"*,
-and stopped at item 0 with zero commits. **That is the correct behaviour and it is the only reason
-this cost one wave and nothing else.** Three rulings, and the first is the general one:
+⭐ And the tables' own migrations disagree with the checker in writing:
+`create_opt_outs_table.php:24` says *"NOT TENANT-OWNED, AND NO RLS. A platform-scoped
+row has no `business_id`…"*, `create_operator_alerts_table.php:32` says
+*"`business_id` forces a policy admitting NULL…"*, and
+`create_zernio_account_days_table.php:31` says its `business_id` is *"an ordinary
+integer with no foreign key"*. A **nullable** `business_id` is what
+`isTenantOwned()` cannot see and what the migration authors were writing about.
+**RULED: no RLS row is "fixed" until the table is classified against its own creating
+migration.** ⛔ And the classification is the only move available here: the
+definition lives in `SchemaStage.php`, which is a CHECK — changing it is the One
+Rule, whatever the evidence. Classify, file, and let the owner rule.
 
-- **An item that gates on a state must MEASURE it, never recite it.** Item 0's *command* was already
-  right (`git status --short`, stop if tracked-dirty). What broke it was the prose above the command
-  predicting the answer. **A gate that carries its own expected answer is not a gate** — it is the
-  drifted-refusal-message shape (§ above) for the fourth time this week, and the fourth time it was
-  two statements about one quantity with only one of them measured.
-- **A deferred supervisor commit is a debt that falls due BEFORE the next dispatch, not after it.**
-  Deferring past a live run is correct; carrying the deferral past the *next* dispatch turns a
-  three-line note into a dirty tree that stops a merge wave. Order is: coder dead → commit → push →
-  brief → dispatch. Never brief first.
-- **A stop is not a `BLOCK` and does not spend a dispatch.** No assertion was read, no work was
-  attempted, no defect of the coder's exists. Re-issue the identical wave; the item is the
-  supervisor's, per the run-123 killed-gate ruling.
+⚠️ **§D. THE `journey` COUNT CHANGES WHILE THE GATE RUNS, SO MEASURING STAGES BEFORE
+`--tests` RECORDS A NUMBER THE WAVE ITSELF INVALIDATES (2026-09-09, my defect).**
+REV-118's brief ordered items 3 (measure eight stages) → 4 (record them) → 5 (gate).
+The stage dumps and the `state.py stage` commit landed at `09:22:48` with
+`journey 3`; the suite finished at `09:30:44` writing
+`evidence/journeys/dunning-by-reason.json` with `"artifact_id": 50`, which cleared
+the third row. Measured on the same tree at `09:4x`: **`journey 2`**. So
+`BUILD-STATE.json` records `3` and the tree reads `2`, and neither is wrong — the
+`journey` stage is a function of `app/storage/app/evidence/journeys/*.json`, which
+the suite **writes**.
+**RULED: in any wave that runs `--tests`, the gate comes BEFORE the stage
+measurement, and the stage measurement before the `state.py stage` commit.** Same
+family as §B: a stage whose input is not the tree cannot be recorded against a sha
+until everything that writes that input has finished.
 
-⚠️ **THIS FILE ITSELF CARRIED TWO MERGE PROCEDURES, AND THE STALE ONE TOLD THE CODER TO RUN A
-COMMAND THE SHARED GUARD REFUSES (2026-09-07, found while committing the note above).** A duplicate
-`## Style` + `## Merging a track branch into main (added 2026-09-02)` stanza sat at EOF, superseded
-since 2026-09-03 by the revised section above and never deleted. It contradicted the live procedure
-on the two points this track has actually paid for: it said to restore *"`git checkout main -- <each
-per-track path above>`"* — the eight-path list run verbatim, which is run 27's clobber one path at a
-time and which the `.gitattributes` superset note forbids in as many words — and it named `main` as
-the treeish, which `coder-bin/git` refuses outright (only `git checkout HEAD -- <path>` is allowed,
-and only under `GOAIEZ_MERGE_OK=1`). A coder who scrolled to EOF for the procedure would have issued
-a refused command mid-merge, with a half-staged index. **Deleted.** The rule: *a superseded
-procedure is not harmless documentation, it is a second source of truth that outranks the first for
-any reader who reaches it first* — and EOF is where readers land. When a section is revised in
-place, delete the original in the same commit; `grep -n '^## '` for duplicate headings is the check,
-and it is one command.
-
-⚠️ **A BORROWED MEASUREMENT MUST CARRY THE INSTRUMENT THAT TOOK IT; A NUMBER LAUNDERED THROUGH THE
-SUPERVISOR BECOMES A FALSE SECOND WITNESS (N111, 2026-09-07, found reviewing wave 127).** Wave 128's
-brief quoted, under item 6, *"The baseline, measured by **my own** gate on `8727aff4` this tick:
-`tests 1980 · FAILED 1 · errors 2`"*. That gate is `.gate-t128.txt` and it **ends at line 111** on
-`… another suite holds /home/goaiez/tmp/pest.lock — waiting up to 40 min` — it has **no §7 at all**.
-The only place those three numbers exist is the coder's own §7, quoted back to me in `REPORT.md`.
-The numbers were right; the attribution was not, and the attribution is the whole value. Standing
-order 4 tells the coder *"your measurement beats any number of mine"*, which means something only
-while mine is a **second instrument**; handing the coder its own number back under my label makes
-one measurement look like two and puts the disagreement that standing order 4 exists to surface
-permanently out of reach — the check cannot fire, by construction. This is the §2e / wrong-needle
-family in its third form: an instrument is only as honest as the **baseline** it is handed (§2e),
-the **needle** it is handed (wave 122), and now the **attribution** it is handed. Rule: **a baseline
-in a brief names the file it came from** — `.gate-tN.txt` §7, or `REPORT.md`'s §6 quote — and the
-phrase "my own gate" is permitted only after `grep -c "Tests:\|· FAILED" <that file>` is non-zero.
-A borrow is legitimate (the killed-gate precedent, run 123); a borrow *presented as independent* is
-not.
-**RECURRED IN A SHARPER FORM, 2026-09-08, wave 155 — the named file did not exist at all.** That brief's
-baseline read *"my own `gate-t157.txt` on `881f9bc9`: `tests 2192 · passed 2190 · FAILED 0 · errors 2`"*.
-There is no `.gate-t157.txt` in the mailbox and there never was; the number lives in `.gate-w154.txt` and
-`.gate-w152.txt`, and the **`w` prefix is the file the brief tells the CODER to write** — `t` is this
-seat's own. So the check above (`grep -c` inside that file) never even got the chance to fire, because the
-argument was a filename nobody could open. **Ruling: the check is `ls -l <that file>` FIRST, then the
-`grep`** — existence before content, in that order, and a `w`-prefixed file may never be introduced with
-the words "my own". The number happened to be right and was corroborated by two independent coder gates,
-which is exactly what makes this shape survive: *a false attribution attached to a true number leaves no
-symptom at all until someone goes looking for the file.*
-
-⚠️ **A VERDICT ANNOUNCED IN A BRIEF THAT THE LEDGER DOES NOT CONTAIN IS N103 IN THE MAILBOX (N112,
-2026-09-07).** Tick 128 wrote *"**Wave 127 is a `PASS`**"* as the fourth line of `BRIEF.md` at 06:27,
-committed its notes at 06:30, and ended — appending **nothing** to `REVIEWS.md` and dispatching
-nothing. For the next forty minutes the mailbox held a brief asserting a verdict beside an
-append-only ledger that had never recorded one, and rule 10 sends the coder to *the last block of
-`REVIEWS.md`* at session start, which was still **wave 126's**. Two documents about one verdict and
-the authoritative one was empty. The push gate is the sharp edge: `push:` is set only after a PASS,
-so a brief carrying a PASS with no block behind it can open a push against a verdict no ledger
-records. Two rulings. (1) **Append the REVIEWS block BEFORE writing the brief that cites it** — the
-brief may quote the ledger, never precede it. That is N108's ordering (`commit → push → brief →
-dispatch`) extended one step earlier: `review → REVIEWS → commit → push → brief → dispatch`. (2) **A
-tick that wrote `BRIEF.md`/`KICKOFF.md` and stopped has left the mailbox AHEAD of the ledger, and
-the next tick must read that brief as a DRAFT, not as a dispatched directive.** The tell is exact
-and costs one `ls`: `REVIEWS.md` older than `BRIEF.md`, with `coder.pid` measured `DEAD` and no
-`LAUNCHED` line for it anywhere in `REVIEWS.md`. Adopt such a draft only after re-measuring every
-quantity it states — this tick adopted wave 128's and found N111 inside it.
-
-⚠️ **RULE 10'S OWN TEST NEEDLE IS A PEST NEEDLE, AND THIS REPO'S MERGES CARRY PHPUNIT METHOD-STYLE
-TESTS (N113, 2026-09-07).** Reviewing the wave-127 merge I ran the contract's own check —
-`grep -c 'test(\|it('` (`.agents/rules/10-supervisor.md`, and CLAUDE.md §"Reviewing a REPORT") —
-against the merge's test diff and got **0 added tests**, on a diff that adds **three**
-(`test_f8_nav_collision_refuses_non_root`, `test_f9_nav_collision_refuses_root`,
-`test_f10_collision_consistency`). `app/tests/Modules/X-176/InternalLinkGraphTest.php` is a PHPUnit
-class — `public function test_…`, not one `test(` closure in it. Had I ruled from that `0` I would
-have reported a merge that adds no tests while it adds three and moves the suite 1977 → 1980. The
-needles that work here are `^\+ *public function test_` (**4**) and `^- *public function test_`
-(**1**), net **+3** — and **the arithmetic is the check, not either count**, because a **rename**
-appears as one `+` and one `−` and nets to zero. Wave 127 contained exactly one: 
-`test_falsifier_cap_does_not_truncate_at_20_pages` → `test_a_two_deep_page_renders_when_everything_fits`,
-body byte-identical (a 7-line context hunk with a single `-`/`+` pair), `grep -c "^-.*assert"` = **0**,
-and a sibling falsifier `test_falsifier_cap_preserves_ancestor_closure_on_dom` still present — so the
-One Rule is satisfied and the rename is an over-claiming name corrected, not a check removed. Rulings:
-**derive the needle from the file, never from the contract** (wave 122's rule, now with the contract
-itself as the wrong source — the needle was right for Pest and this repo is mixed), and **a
-test-count check is sound only when added − deleted reconciles with the suite total**; either number
-alone cannot tell a rename from a deletion.
-
-⚠️ **`.claude/settings.json` WAS IN THE ROLE TABLE AS "THE OWNER'S FILE" AND IN TWO OTHER PLACES IN THIS
-SAME FILE AS MINE (N114, 2026-09-07).** The role table said *"**Never:** … edit `.claude/settings.json`
-(the owner's file)"*; the unattended tick prompt says *"Commit ONLY your own supervisor files (`CLAUDE.md`,
-`bin/supervise.sh`, `.claude/settings.json`, …)"*; and the merge section below says *"the supervisor's
-permissions ARE a per-track file"* and lists it among the eight that never merge. Three statements about
-one path, two of them agreeing against the one a new seat reads first. **Corrected in the table**, which
-is the fifth instance of the drifted-refusal-message shape and the first where the stale sentence sat in
-the role table rather than in a trap. The check is one command and it belongs in any tick that edits this
-file: `grep -n '\.claude/settings\.json' CLAUDE.md` and read every hit, not the first.
-The real boundary, measured the same tick: **a sibling lane's checkout is what this seat may not write.**
-Two attempts to add a wall-clock bound to `grs-antig-{site,money,reviews,stages}/.agents/supervisor/
-launch-coder.sh` — once with `sed -i`, once with the editor — were both refused by the permission
-classifier, and the refusal is right: one writer per checkout, and a lane's launcher is that lane's.
-Cross-lane fixes go in a `TRACK 1 ACTION` block with the exact command, never applied from here. And
-**both refusals were confirmed to be true no-ops** (`grep -c 'timeout -k'` still `0` in all four) — the
-refused-compound rule says the read-only confirmation is the command nobody suspects.
-
-⚠️ **THE GATE'S `STAGES` LINE IS A MEMORY, NOT AN INSTRUMENT, AND IT WAS 82 LOW (N115, 2026-09-07).**
-`supervise.sh` §3 printed `capability 372` on `126595b6`; `php artisan doctor` on the identical tree
-measured **454**. Both are honest: `bin/state.py:227-232` prints `STAGES` straight out of
-`BUILD-STATE.json`'s `stages[*].violations`, which is whatever a coder last wrote with `state.py stage`.
-The seven `?`s beside it are the tell nobody reads — `integrity ? · boundary ? · contract ? · citation ? ·
-schema ? · capability 372 · anchor ? · journey ?` looks like a stage report and is one stale ledger entry
-formatted next to seven blanks. This is what actually happened in wave 121, where `capability 372` off a
-staged `BUILD-STATE.json` was called "the other lane's number": right conclusion, wrong reason — it was
-nobody's live number.
-**RULED: any count a verdict turns on is read from `php artisan doctor`, never from the `STAGES` line.**
-`doctor*` is already in this seat's column and costs about two seconds; it is the only way the
-`CLAUDE.md` instruction *"did the count fall?"* can fire at all. Measured on `126595b6`:
-`integrity 0 clean · boundary 6 · contract 87 · citation 93 · schema 15 · capability 454 · anchor 13 ·
-journey 2`. Keep the `STAGES` line for exactly one purpose — comparing what the coder **recorded**
-against what doctor **measures**, which is how the drift was found.
-
-⚠️ **A MERGED LANE'S `(R245)` CANNOT HAVE ITS `decided` LINE ON `main`, BY CONSTRUCTION — CHECK THE LANE'S
-LEDGER AT THE MERGED TIP (N116, 2026-09-07).** The `track/sixty` merge brought a docblock citing `(R245)`
-into `app/tests/Modules/X-102/X102Test.php`, and `grep -c 'G16-21' .agents/state/JOURNAL.md` on `main` is
-**0** — which the rule *"every `(R245)` in a module header has a matching `state.py decided` line in
-`JOURNAL.md`"* reads as a defect. It is not one. `.agents/state/**` is a per-track path that **never
-merges**, so the ledger that records a lane's decision is precisely the file the merge procedure forbids
-carrying. The line exists at `track/sixty:.agents/state/JOURNAL.md:879`, and reading it there is the check.
-**Run on `main` this check returns 0 on every merge this track will ever do, and would manufacture a
-`BLOCK` each time.** Same family as §2e's baseline and wave 122's needle: the instrument was sound and the
-baseline was the one thing that could not contain the answer — that is now three of them, and the general
-form is *before believing a `0`, ask which tree could have held a `1`.*
-Carried from the same ledger (`:880`, the lane's own finding): the `G16-21` id in a docblock **falsely
-satisfies the capability checker**, because `testedIds` scans file contents for the id string without
-checking that anything asserts on it. It moved no number here — the id was already in the file via the
-method name `test_g16_21_chat_carousels` — but it is why `capability` is the stage least worth trusting.
-
-⚠️ **A PARKED CODER THAT HAS ALREADY WRITTEN ITS `REPORT.md` STOPS A WHOLE LANE, AND THE FIX IS THE
-LAUNCHER'S WALL-CLOCK BOUND — NOT A FIFTH DETECTOR (N117, 2026-09-07).** `track/reviews` was stopped from
-01:05 to at least 08:2x: its coder started `00:57:06`, wrote `REPORT.md` at **01:05**, then burned **20
-seconds of CPU in 7h19m** while holding `coder.pid`, so that lane's tick took case (a) *"coder running →
-stop"* every ten minutes and a finished wave went unreviewed for seven hours. `pricebook`'s launcher
-already carries the fix **and the identical post-mortem** (*"run 54 finished its wave, wrote `REPORT.md` at
-04:42, and then sat alive indefinitely parked on a `tail -f` it never reaped"*), and
-`supervisor-tick.sh:113-119` says in capitals **"STOP TUNING THE DETECTOR"** — four wordings of that
-liveness detector each produced a false positive within minutes; the bound has produced none. `site`,
-`money`, `reviews` and `stages` still lack it. One token before the agy path, exactly as pricebook has it:
-`timeout -k 60 3h /home/goaiez/.local/bin/agy --print …`. It is a `TRACK 1 ACTION`, not this seat's edit —
-see N114.
-The corollary worth keeping: **`REPORT.md` newer than `coder.pid` is the one signal that separates
-"finished and parked" from "waiting on the model"**, because rule 10 writes the report at wave close or
-stop. That is a fact about the contract, not another CPU heuristic — but it diagnoses, it does not free the
-slot, and only the bound frees the slot.
-
-⚠️ **A DIRECTION RULE IS FALSE FOR A PARTITIONED PIN; THE IDENTITY IS THE CHECK (N120, 2026-09-07).**
-Wave 131's brief said, globally, *"measured HIGHER than the pin → STOP, an upward pin is a regression
-papered over"*, and the same brief predicted *"`$built` should land on 35"*. Both mine, one page apart.
-The coder followed the rule over the prediction, refused the re-pin and filed `UNRESOLVED` with the
-measured number — **correct under the instruction it had.** The instruction was wrong: `$built` is one
-bucket of a partition, so `$unbuilt` falling 224→220 (four routes built out) *forces* `$built` 31→35.
-The assertion's own message already said so — *"If it went UP … or an unbuilt route was built out"*.
-**RULED: a partitioned pin is gated on the identity, never the direction** —
-`$unbuilt + $built + $unresolved == $withoutLayout` and
-`$withLayout + $withoutLayout == count($invisible)`. If the sums hold the pin follows; if they do not,
-no pin is safe to touch. A standalone pin with no identity behind it keeps the direction rule. The
-general form, after N118 named the wrong assertion and this named the wrong direction: **an arithmetic
-identity over the whole population cannot drift the way a remembered rule about one member can.**
-
-⚠️ **`grep -c '^-.*assert'` COUNTED 6 ON A RANGE THAT DELETES NO ASSERTION (N121, 2026-09-07).** The One
-Rule check over `8555a0b7..efe5ce04` reported six removed assertions. All six were the identical
-strengthening — `->assertOk();` on one line rewritten as a chain over four, gaining
-`assertSee('Your account')` and `assertDontSee('Internal Platform Console')`, which is the
-`Livewire::test()`-never-renders-the-layout trap being closed in six screen tests. **A reformat produces
-a `-` line indistinguishable from a deletion.** Ruling from the count would have blocked a merge that
-strengthens six tests. This is *the row that is legitimate by construction* inside the One Rule check —
-the last instrument where it had not yet appeared. **RULED: a `-.*assert` count is a POINTER, never a
-verdict** — the check is `added − removed` reconciled against the suite total, plus **reading every `-`
-line the grep names** (six took one command). Same relationship as `STAGES` to `doctor` (N115) and the
-`--census` needle to `argv[0]`: an instrument that can only over-report is safe as a trigger and unsafe
-as a finding.
-
-⚠️ **A MERGE BRIEF'S CLASSMAP ITEM IS UNCONDITIONAL, BECAUSE ITS TRIGGER IS MEASURED BY THE CODER AND
-NOT PREDICTED BY ME (N122, 2026-09-07).** The `track/sixty` merge added
-`app/app/Modules/X-102/Http/Controllers/ChatStartController.php` and pointed `routes/api.php` at it. The
-gate came back **`tests 1989 · passed 10 · FAILED 0 · errors 1979`**, every one
-`Invalid route action: [App\Modules\X102\Http\Controllers\ChatStartController]`. That is run 110's
-classmap trap: `app/composer.json` declares `"classmap": ["app/Modules/"]`, module directories (`X-102`)
-do not match namespaces (`X102`), so **PSR-4 cannot resolve them and only a generated classmap can.**
-The four measurements that settle it, and the mtime is the one that makes it conclusive rather than
-suspected (wave 122's rule): `grep -c ChatStartController <classmap>` → **0**; classmap mtime **16 h
-stale** ⇒ the dump did not run; `grep -c SchemaRenderAction` → **1** ⇒ the needle is sound;
-`grep -c dump-autoload BRIEF.md` → **0**.
-**The cause was mine.** Wave 129's brief carried the item verbatim; I dropped it when rewriting the
-brief for the merge waves, and **wave 133 had zero `A` rows so the omission cost nothing for exactly one
-wave.** That is the failure mode to name: *a brief item that only matters in a case which has not yet
-occurred is deleted without consequence, and is missing when the case arrives.* `app/vendor` is
-gitignored, so the fix commits nothing and the merge commit stands — `errors 1979 → errors 2` on a
-rebuild that changed nothing tracked.
-
-⚠️ **A REVERSED DIFF RETURNS A PLAUSIBLE NUMBER WITH THE WRONG SIGN, AND THAT INVERTS THE MORAL READING
-OF THE EVIDENCE (N123, 2026-09-07).** My conflict-data brief asked for
-`git diff --stat <lane-tip> <merge-base>` — backwards. `git diff A B` reports what it takes to turn A
-*into* B, so it describes **undoing** the lane's work and reports every insertion as a deletion. Proved
-both ways on one file: `CAgentTest.php | 271 deletions(-)` as briefed, `271 insertions(+)` correct.
-**I reported the reversed reading to the owner in prose**, describing pricebook as *"theirs deletes 431
-lines"* when pricebook **adds 271 lines of tests**.
-Why this outranks the wrong-needle (wave 122) and wrong-baseline (§2e) defects it belongs with: **a
-wrong needle returns a false ZERO, which reads as "nothing here" and invites a second look; a reversed
-diff returns a well-formed number of the right magnitude with the wrong sign.** Nothing about it looks
-broken, and under the One Rule it turns *"this lane built a lot"* into *"this lane is deleting your
-checks"* — which is precisely what a `BLOCK` exists to catch, so the instrument fails in the direction
-that manufactures a false BLOCK against a lane's best work.
-**RULED:** a diff asking *what did a side DO* is always `git diff <merge-base> <that side's tip>`, base
-first. The free check that it is the right way round: **a side that only added files must report `-0`.**
-Use `--numstat`, not `--shortstat` — the latter fuses the file count to the insertion count and produced
-an unreadable table on the re-measurement, caught only by running it a third way.
-
-⚠️ **AN "ALREADY APPLIED" SENTINEL THAT CAN MATCH UNRELATED TEXT SKIPS THE EDIT AND REPORTS SUCCESS
-(N131, 2026-09-08).** My apply-script's idempotency check was `new_text.splitlines()[0] in source`, and
-for one edit that first line was `    /**` — present throughout the file. It printed `ALREADY APPLIED`,
-skipped that edit, and applied the other two, leaving a checker that parses, runs, and does nothing:
-`imports()` returned strings while the rewritten loop destructured pairs. **"The count did not move" is
-what a correctly-applied, correctly-scoped fix ALSO produces**, which is why I nearly filed a no-op as a
-result. Three rulings: **(1)** a sentinel is a string that exists nowhere else — a marker phrase, never a
-syntactic fragment; **(2)** a multi-part edit to one file is ONE atomic write or it is not an edit —
-independent replacements that can each silently no-op produce a half-applied file whose halves disagree;
-**(3)** verify the edit landed BEFORE measuring its effect — `grep` for the marker precedes every count.
-And the asymmetry: **this seat can edit a sealed checker but cannot roll one back** — `app/**` writes
-are refused here and the owner's scripts work because the owner runs them. Do not begin an edit that
-only the owner can finish undoing without saying so first.
-
-⚠️ **A VERIFIED EDIT WITH ZERO EFFECT IS DIAGNOSTIC; AN UNVERIFIED ONE IS NOTHING (2026-09-08, ruling
-6 delivered).** The second attempt at the boundary fix applied verifiably — three markers, `php -l`, four
-structural checks — and the count did not move. Under N131 that combination *means* something: a
-further defect, not a failed edit. One command (print what `getRelativePathname()` returns) found it.
-**The cross-module check had THREE independent faults, each alone sufficient to disable it:** the regex
-was anchored `#^app/Modules/#` while the Finder-relative paths arrive as `Modules/X-102/…` with no
-prefix (the disabling one — visible in the stage's own `· Modules/C-Mail/…` messages the whole time);
-the character class excluded the hyphen; and the directory form `X-102` was compared to `imports()`'s
-namespace form `X102`. I had diagnosed the second and third with a `php -r` demonstration and called
-them *the* bug — **a demonstration that a regex behaves as claimed says nothing about whether it is
-handed the input you assumed.** Result: `boundary 6 → 46`, 40 `Models\` reach-ins across 33 files
-that had been invisible for as long as the check existed, matching an independent classification to the
-digit (81 − 41 seams). Ruling 6 was going to *remove* the check on exactly the evidence its silence
-produced. **A check that reports zero forever is indistinguishable from a clean codebase, and nobody
-has reason to look.**
-
-⚠️ **A VERIFICATION INSTRUMENT NEEDS A POSITIVE CONTROL TOO (N132, 2026-09-08).** `boundary-fix3`'s
-verify step printed `optional app/ prefix : 0 (expect 1)` on an edit that was correct — line 329 carried
-the regex, confirmed by exact string count. The grep was malformed by shell escaping. Had the count
-*also* not moved I would have chased a phantom. This is the `/**` sentinel one layer up: a check that
-returns the wrong answer about its own subject. Every needle in this ledger gets a positive control;
-the checks that check the checks are not exempt.
-
-⚠️ **`pest.lock` SERIALISES SUITES BY DATABASE, AND NOTHING SERIALISES A SUITE AGAINST A MERGE IN ITS
-OWN CHECKOUT (N130, found by the unattended tick 2026-09-08 03:1x).** The tick's gate read the right
-numbers and it refused to cite them, because the merge committed 49 seconds before the gate finished
-writing — for its last minute the suite was reading `app/**` while a merge was written into it. A
-larger merge would present as a phantom `Class not found` in a suite nobody would think to distrust.
-Standing: **nothing writes into a checkout while its suite is reading it**, including this seat's own
-`CLAUDE.md` edits, and a gate's §7 attributes to a sha only if the gate STARTED after that sha landed
-and no writer existed for the duration.
-
-⚠️ **A RELAY DELIVERED TO A LANE THAT CANNOT TICK IS PARKED, NOT DELIVERED (N133, 2026-09-08).** Case (d)
-fires only if `OWNER.md` is newer than the lane's last REVIEWS block. A message written while the lane is
-dead (weekly limit) is older than the first block the lane writes when it wakes, and is never read. Fix:
-`touch` it after the lane's first post-outage block — under an idle coder, or queued behind a bounded
-waiter, because a touch under a live coder makes the next tick rewrite `BRIEF.md` mid-run. **And a
-strict needle for "did they read it" returns a false zero** — ticks paraphrase; money named the relay's
-heading verbatim and reviews wrote a whole block about it while `grep -c '<heading>'` read 0. Loosen the
-needle before concluding anything from a zero; three times this week in three costumes.
-
-⚠️ **A SEALED-CHECKER COMMIT ON `main` MADE EVERY LANE'S MERGE OF `main` UNCOMMITTABLE (2026-09-08).**
-`coder-bin/git`'s never-list refuses a commit that stages `app/app/Doctor/**`, and a lane merging a
-`main` that carries owner-ruled checker edits MUST stage them. reviews found it, one command short of a
-gated merge, and named the fix: the harness byte-identical clause. Applied — a Doctor path is admitted
-in a `GOAIEZ_MERGE_OK=1` merge only when the staged blob equals `MERGE_HEAD`'s (adopt `main`'s checker
-whole, never edit one), **lane checkouts only**: in `grs-antig`, `MERGE_HEAD` is a lane and the clause
-would let a lane smuggle a checker change onto `main`. **Any change to a never-list path on `main`
-needs its merge-adoption rule written in the same act**, or it blocks every lane.
-
-⚠️ **`.claude/settings.json` MERGES, AND A DENY GLOB THAT MATCHES EVERY CHECKOUT BUT YOUR OWN IS INVISIBLE
-FROM WHERE YOU SIT (2026-09-08).** `126595b6`'s eight denies on `//home/goaiez/agents/grs-antig-*/…`
-reached pricebook whole (the `merge=ours` fail-open on a one-sided change) and, from inside
-`grs-antig-pricebook`, matched its OWN mailbox — Bash redirects included — while matching nothing in
-`grs-antig`. pricebook diagnosed it and correctly refused to force a write past the approval gate.
-**Seat-specific denies live in `.claude/settings.local.json`** (gitignored, cannot merge); the tracked
-file carries only what is true in every checkout. And a lane's merge of `main` will re-import the
-tracked file whenever only `main` has moved it — the per-track restore step exists for exactly this.
-
-⚠️ **THE SIX LANES ARE GIT WORKTREES OF THIS REPO, AND `settings.local.json` IS SHARED THROUGH THE
-COMMON DIR (N134, 2026-09-08).** Every lane's `.git` is a file pointing at
-`/home/goaiez/agents/grs-antig/.git/worktrees/<lane>`, and Claude Code resolves project-local settings
-via `git rev-parse --git-common-dir` — so Track 1's gitignored `.claude/settings.local.json` is loaded by
-every lane session and its denies are **enforced** there (three denial lines in two lanes' 06:00 logs).
-My 05:50 fix for the settings-leak moved the eight `grs-antig-*` denies out of the tracked file into the
-local one and thereby locked two more lanes out of their own mailboxes. **Deleted outright**: there is
-no per-checkout settings surface a worktree does not see, and no per-account one while all seven lanes
-share account 1. The protection they duplicated lives in the tick prompt (lanes are answered only via
-`OWNER.md`) and held for two days before the denies existed. Rule: **a fix that moves a problem from one
-shared surface to another has not measured which surfaces are shared** — before placing anything
-"per-lane", run `git rev-parse --git-common-dir`. These seven checkouts share the object store, the
-worktree table, the account, and the local settings; they do not share only branches.
-
-⚠️ **A LANE'S MERGE RESOLUTION CAN DELETE A SUPERVISOR FILE THAT NEITHER SIDE MEANT TO TOUCH, AND THE
-THREE-WAY MERGE CARRIES THE DELETION ONTO `main` (N136, 2026-09-08, wave 140).** `track/reviews`' own
-`merge: origin/main into track/reviews` resolved `.claude/hooks/drive_hook.py` and
-`.claude/hooks/no-piped-gate-tool.py` as deleted; `main` had not touched them; base-has / ours-unchanged /
-theirs-deleted takes the deletion, and my brief said in as many words that `.claude/hooks/*.py` are "not
-restored". The unattended tick measured it mid-wave (`.block139.txt`) and the coder restored both from
-`HEAD`. **RULED: `.claude/hooks/` is a supervisor path; in a merge, every `D` the index lists under
-`.claude/` is restored from `HEAD`**, and the general form is the run-115 shape inverted — the harness rule
-("take the incoming side whole") is right for a CHECK the lane built and wrong for a GUARD the lane lost.
-Measure which with `git diff --name-status <merge-base> HEAD^2 -- .claude/`: a `D` there is a loss.
-
-⚠️ **§7 PRINTED FIVE FAILURE NAMES OUT OF TEN AND SAID NOTHING ABOUT THE OTHER FIVE, WHILE THE BRIEF'S
-STOP CONDITION WAS A QUESTION ABOUT THAT LIST (N137, 2026-09-08, wave 155).** `bin/supervise.sh:440` read
-`for f in (d.get("failures") or [])[:5]` — and eight lines below it the **errors** loop ended
-`n=len(...); if n>5: print("   … %d more")`. So one list truncated **loudly** and the other **silently**,
-in the same twelve lines, and the silent one was the one the wave was graded on: my brief's only STOP
-conditions were *"a `FAILED` name not in that list"*, `errors` above 4, and `Class … not found`. The gate
-read `tests 2328 · passed 2316 · FAILED 10 · errors 2` and named five. The coder hit the STOP correctly on
-two unexpected names — and neither of us could know whether the five it could not see contained a third,
-or contained `test_n_037_fee_with_no_term_refused`, which the brief **expected** and which is not among the
-five printed. **A red gate under this printer could not distinguish "the four known pins plus one" from
-"the four known pins plus six new breakages".**
-Fixed: both lists cap at 40, both carry their own overflow line, and a `FAILURE` now prints its message the
-way an error already did — the message is what tells a pin (`Failed asserting that 10 matches expected 8`)
-from a breakage, and it cost a whole extra wave not to have it. Three rulings.
-- **The instrument family, stated generally at last.** §2e's baseline, wave 122's needle, N111's
-  attribution, N123's sign, N121's `-.*assert` count, N115's `STAGES` line — and now a **cap**. Six names
-  for one shape: *an instrument that can only under-report is safe as a trigger and unsafe as a finding.*
-  When a brief's STOP condition is a question about a list, the list must be **complete or self-declaring**;
-  a truncation with no overflow line is a lie of omission that reads as a full answer.
-- **Asymmetric handling of two sibling lists is the tell, and it is greppable.** The errors loop knew to
-  announce its cap. The failures loop, four lines away, did not. Whenever two lists are formatted by
-  adjacent code, diff their treatment — the one written second usually got the care.
-- **A STOP condition may only ask a question the instrument can answer.** Before writing *"a name not in
-  this list"* into a brief, confirm the tool prints every name. That check is `grep -n '\[:' bin/supervise.sh`
-  and it is one command.
-
-**Numbering note.** A second supervisor seat found this same defect in the same minutes and recorded it in
-`REVIEWS.md` as **N138**, while the fix committed into `bin/supervise.sh` (`46c3fd9e`) carries **N137** in its
-own comment. One finding, two numbers, because two seats wrote at once. Read the text, not the number; the
-next free number after this pair is N139, used below. See the concurrency ruling at N140.
-
-⚠️ **A MERGE WAVE MUST CAPTURE `doctor` COUNTS BEFORE IT MERGES, BECAUSE AFTER THE MERGE THE BASELINE IS
-UNREACHABLE FROM THIS SEAT (N139, 2026-09-08).** Reviewing `4d08de18` I measured
-`boundary 57 · contract 85 · citation 0 · schema 15 · capability 208 · anchor 4 · journey 1` and then could
-not answer the one question `CLAUDE.md` asks of every review — *did the count fall?* — because the
-pre-merge reading on `881f9bc9` was never taken and this seat may not check out a tree to take it now. The
-merge is not reversible into a measurement. Same family as §2e and N111: **an instrument is only as honest
-as the baseline it is handed, and a baseline that is only obtainable before an irreversible step must be
-written into the brief as a numbered item ahead of that step.** Every merge brief from now on reads
-`php artisan doctor` into `.agents/supervisor/.doctor-pre-wN.txt` as the item **before** `git merge`, and
-quotes both readings in the report. N115 still governs *which* number: `doctor`, never the `STAGES` line —
-which on this same tree recited `capability 372` against a measured **208**, 164 stale.
-
-⚠️ **"ONE WRITER PER CHECKOUT" HAS ALWAYS MEANT ONE *CODER*; TWO SUPERVISOR SEATS RAN THIS CHECKOUT
-SIMULTANEOUSLY AND NEITHER INSTRUMENT COULD SEE THE OTHER (N140, 2026-09-08, tick during wave 155/156).**
-This tick opened at 13:00:20, measured `coder.pid 4097207 DEAD`, `REPORT.md` (11:33) newer than the last
-`REVIEWS.md` block (11:28), and correctly entered case (b). While it reviewed, **another supervisor session
-was reviewing the same report**: at 13:0x it appended the wave-155 `PASS-WITH-NOTES`, committed
-`46c3fd9e` — *carrying this tick's own uncommitted `bin/supervise.sh` edit under its message*, which it
-noticed and wrote down — rewrote `BRIEF.md`/`KICKOFF.md` at 13:06:10 and dispatched **run 156 (pid 230825)**
-at 13:06:15. This tick discovered it only because it read `tail` of `REVIEWS.md` before appending, and the
-tail had grown by three blocks since the `ls -l` six minutes earlier.
-**Every existing guard missed it, and each for a principled reason.** §1a measures `coder.pid`, which was
-honestly DEAD — the other seat had not launched yet. §1b (`--census`) matches `argv[0]` of **`agy`**, the
-coder binary; a supervisor seat is not `agy`, so the one-writer census is blind to supervisors **by
-construction** — the row that is legitimate by construction, now in the census itself. `launch-coder.sh`
-refuses a second *coder*, not a second *supervisor*. And the mailbox `ls -l` that opens every tick is a
-**point measurement of a file another process may append to seconds later**, which is the pidfile trap
-(*"a pidfile reports an intention, not a state"*) transposed onto `REVIEWS.md`.
-**The near-miss is the whole lesson.** Had this tick followed the prompt to its end it would have appended a
-*second* verdict block for wave 155 and dispatched a *second* run 156 over a live coder — two agy processes
-in one checkout, which is the 2026-09-03 incident that `launch-coder.sh`, the pidfile and `--census` all
-exist to prevent, arriving by the one door none of them watches. What actually stopped it was **reading the
-ledger's tail immediately before appending to it**, and nothing else.
-Rulings, and the first is cheap enough that there is no excuse:
-- **`tail -5 REVIEWS.md` immediately before every append, and compare against the tail you read at tick
-  open.** An append-only ledger that grew underneath you means another seat is live: stop, write nothing,
-  dispatch nothing. This is the only check that fired.
-- **Re-measure `coder.pid` immediately before `launch-coder.sh`, never once at tick open.** The gap between
-  a tick's opening census and its dispatch is minutes, and a whole review fits inside it — as one just did.
-- **A dirty tree left by the other seat is the sharp edge.** This tick's uncommitted `CLAUDE.md` sat against
-  a live run 156 whose item 0 reads *"anything tracked dirty → STOP and report"*. The N108 order
-  (`review → REVIEWS → commit → push → brief → dispatch`) assumes one writer; under two, an uncommitted
-  supervisor note becomes **the other seat's wave-126 stop**. Commit supervisor notes the moment they are
-  written, or do not write them.
-- **A tick that discovers a live coder mid-review abandons its own conclusions as a DRAFT** (N112's rule,
-  from the other side): the verdict is already in the ledger, written by a seat that measured the same tree.
-  Do not append a competing one. Record the *concurrency*, which the other seat could not see, and stop.
-
-⚠️ **AN EDIT TO THE SHARED GUARD CANNOT BE PROVED BY A POSITIVE CONTROL, SO PROVE IT BY THE md5 (N151,
-2026-09-09).** Track 1 extended `coder-bin/git`'s byte-identity clause to `.claude/hooks/` this tick. Every
-other instrument in this file gets a positive control — but the control for "does §2d catch a broken guard"
-is *breaking the guard*, and that file is on all seven lanes' PATH and **does not fail closed**: a syntax
-error in it breaks `git` everywhere at once, for every lane, including the seats that would have to fix it.
-This is the 2026-09-06 probe rule at its sharpest — *test a guard with an input that is SAFE WHEN THE GUARD
-IS ABSENT* — and here **no such input exists**, because the dangerous case and the demonstrative case are
-the same act. So the conclusive evidence is not a fired detector, it is §2d's own line moving:
-`parses · 148 lines · md5 812ac07b9754` → `parses · 162 lines · md5 6b5869205c2f`. **The changed md5 is what
-rules**, because it proves §2d read *the new bytes* rather than reporting a cached or stale result — the one
-failure mode that would make a green `parses` meaningless. Ruling: **edit the guard, then re-run the full
-gate and quote both md5s in REVIEWS; a `parses` line whose md5 did not move is not a verification of
-anything.** Corollary, and it is N131's ruling 3 in a place where it is load-bearing rather than tidy: run
-the gate **before** the edit too, or there is no first md5 to compare against and the second is a number with
-no baseline (§2e's rule, for the fourth time).
-
-⚠️ **THE OWNER.md RELAY IS REFUSED TO THIS SEAT AND IS THE THIRD MEASURED INSTANCE (N152, 2026-09-09).**
-`TICK-ADDENDUM.md` §2 says a lane's `OWNER.md` is *"the one place you write outside this checkout"*, and the
-session grants those seven directories as working directories — **and the permission classifier still refuses
-the write.** N114 already recorded two refusals of sibling-lane writes and called the refusal correct; this
-is the same wall on the one path the addendum sanctions, so the addendum and the classifier are **two sources
-of truth about one capability**, which is the drifted-refusal-message shape yet again. Do not conclude the
-relay was delivered because the addendum says it may be: **`ls -l` the target and `grep` the needle after
-every attempt** — this tick's refusal was confirmed a true no-op that way (mtime unchanged, needle `0`).
-Until a seat exists that can write it, a Track 1 answer to a lane is written to
-`.agents/supervisor/OUTBOX-<lane>.md` **in this checkout**, announced in REVIEWS as **UNDELIVERED**, and
-carried until delivered. ⛔ **An answer parked in an outbox is not an answer**; a lane blocked on a Track 1
-ruling stays blocked, and the fact that the work behind the ruling is already done makes that *easier* to
-forget, not harder.
-
-⚠️ **THE NOTE-NUMBER CEILING LIVES IN `REVIEWS.md`, NOT IN THIS FILE, AND CHECKING THIS FILE GIVES A CLEAN
-ANSWER THAT IS WRONG BY TEN (N153, 2026-09-09).** The two notes above were first written as N141/N142 on a
-measurement of `CLAUDE.md`, whose committed ceiling really is **N140** — a true number about the wrong
-artefact. The ledger's ceiling is **N150**, and N141–N150 are all in use there; only some notes are ever
-promoted into this file, so its ceiling is a *subset's* maximum and lags by however many stayed in the
-ledger. Caught by reading a lane's passing remark (site's *"the note ceiling on `main` is still N142"*)
-against my own `0`, which is **N116's rule firing exactly as written** — *before believing a `0`, ask which
-tree could have held a `1`* — and it is the same rule as N115's `STAGES` line: **a cheap local reading that
-is honest about itself is still the wrong instrument when the quantity is owned elsewhere.** Ruling:
-`grep -o 'N[0-9]\{3\}' .agents/supervisor/REVIEWS.md | sort -u | tail`, on the **ledger**, is the only
-derivation of the next free number; a `CLAUDE.md` reading may never be used for it. And note the near-miss
-shape — a collision would not have errored anywhere, it would have produced two findings sharing a number,
-which is the N137/N138 concurrency defect arrived at by a second, entirely solo route.
+⚠️ **§E. `bin/supervise.sh` now derives this lane's test database (REV-119).** After
+run 114 nothing at all separated the seven checkouts' suites: `main`'s
+`app/phpunit.xml` pins `goaiez_antig_test` for every lane and is a never-merge path,
+and Track 1's `supervise.sh` carries no per-lane export. `RefreshesTenantDatabase`
+runs `migrate:fresh`, so one bare `--tests` from any lane drops the other six lanes'
+tables. §0 now prints `effective (§7) DB_DATABASE=goaiez_antig_reviews_test` and §7
+applies it **at the pest call only** — not exported globally, because §4's doctor and
+the schema stage of §B read the live `.env` database and a global export would
+silently repoint them. An already-set `DB_DATABASE` still wins, so a brief can
+override it without editing a tracked file. §7's clash guard was pointed at the same
+effective value: it **serialises** suites sharing a database and never **separates**
+them, so it was never a substitute for this.
