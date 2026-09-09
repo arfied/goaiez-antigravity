@@ -7068,3 +7068,25 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     (2) ✗; the four commits ahead are two one-line string removals, a supervisor note and a state line
     so (3) ✗. **Merge gate CLOSED.** ⚠️ ⛔ Never inherit this answer from an addendum table — rulings
     145 and 269 both fired on exactly that, and the merge-base moves every time Track 1 merges.
+
+    ⚠️ **CORRECTION to ruling 270, made in the same tick and recorded rather than dropped (rulings 59,
+    152, 190, 204).** 270 said the reuse lookup *"silently returns null"* and stopped at RLS. The
+    mechanism is one level down and it has a supported route. `businesses` carries a **second
+    permissive** policy, `owner_lookup` (`2026_07_31_090000_add_owner_lookup_policy_to_businesses.php:36`),
+    `FOR SELECT USING (owner_user_id = nullif(current_setting('app.user_id', true), '')::bigint)`, whose
+    own docblock reads *"with `app.user_id` set and no tenant established, a user sees exactly the
+    businesses they own — and nothing else. Permissive policies are OR'd, so it widens SELECT only."*
+    And `Tenancy::setUser(int)` / `Tenancy::actingAsUser(int, callable)` (`Tenancy.php:109`, `:212`)
+    are the API that establishes it. So `$user->ownedBusinesses()` returns null **only because a
+    console command establishes no `app.user_id`** — 270's conclusion holds for the command as written,
+    and its stated reason was one policy short. ⭐ The practical consequence is that the **discovery is
+    cheap after all**: `Tenancy::actingAsUser($user->id, fn () => $user->ownedBusinesses()->pluck('id'))`
+    lists this lane's evidence tenants with no tenant established and no number spent, and each
+    candidate's `Payment` count is then readable under `Tenancy::actingAs($id, …)`.
+    ⛔ **It does NOT become the fix.** All five evidence commands take `User::first()`, so one user owns
+    every evidence tenant, and a blind `->first()`/`->min('id')` reuse could land on
+    `EvidenceChargeCommand`'s tenant — which **has** `Payment` rows — silently breaking
+    `X117RuntimeProofTest`'s `payments_written === 0` in the direction that looks like a passing test
+    (ruling 61's family). **RULED unchanged: the command is GIVEN the tenant** — `--business=`, plus
+    `business_id` recorded in its own artifact so the choice is made once and then durable — and the
+    one-off discovery is a **measurement item**, not machinery inside the command (ruling 59).
