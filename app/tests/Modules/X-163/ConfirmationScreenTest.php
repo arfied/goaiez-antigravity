@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X163;
 
+use App\Enums\UserRole;
 use App\Models\User;
 use App\Modules\X163\Models\PriceBookItem;
 use App\Modules\X163\Ui\ConfirmationScreen;
@@ -227,5 +228,40 @@ class ConfirmationScreenTest extends TestCase
 
         $this->assertArrayNotHasKey($item1->id, $component->get('prices'), 'Key must be unset for confirmed item');
         $this->assertArrayHasKey($item2->id, $component->get('prices'), 'Key must be retained for unconfirmed item');
+    }
+
+    public function test_empty_state_offers_no_remedy(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        Livewire::actingAs($owner)
+            ->test(ConfirmationScreen::class)
+            ->assertOk()
+            ->assertSee('All your prices have been confirmed.')
+            ->assertDontSee('Open Pricebook');
+    }
+
+    public function test_staff_is_forbidden(): void
+    {
+        $user = User::factory()->create();
+        $user->role = UserRole::Staff;
+        $user->save();
+        TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
+
+        Livewire::actingAs($user)->test(ConfirmationScreen::class)->assertForbidden();
+    }
+
+    public function test_manager_is_admitted(): void
+    {
+        $user = User::factory()->create();
+        $user->role = UserRole::Manager;
+        $user->save();
+        TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
+
+        Livewire::actingAs($user)->test(ConfirmationScreen::class)->assertOk();
     }
 }

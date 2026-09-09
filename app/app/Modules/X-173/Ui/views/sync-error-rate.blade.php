@@ -9,6 +9,7 @@
         <x-ui.empty-state heading="No sync has run yet.">Nothing syncs on a schedule: a run happens only when a connected ledger is synced, and connecting waits on QuickBooks, Xero or Sage OAuth credentials that do not exist in this checkout.</x-ui.empty-state>
     @else
         <p>This ledger: {{ $seen }} lines seen · {{ $conflicts }} conflicts · {{ $overall === null ? 'nothing synced yet' : round($overall * 100).'% conflicts' }}</p>
+        <p>Nothing is posted to a ledger from here: these lines were categorised inside this app only.</p>
         
         <ul>
             @foreach($runs as $run)
@@ -17,7 +18,7 @@
                 @endphp
                 <li>
                     <span>{{ $run->created_at->format('Y-m-d H:i') }}</span>,
-                    <span>{{ $run->records_synced }} lines posted</span>,
+                    <span>{{ $run->records_synced }} lines categorised</span>,
                     <span>{{ $run->conflicts_count }} conflicts</span>,
                     
                     @if($rate === null)

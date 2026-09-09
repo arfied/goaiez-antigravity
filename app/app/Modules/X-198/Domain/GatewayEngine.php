@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X198\Domain;
 
+use App\Models\Business;
 use App\Modules\X198\Events\MerchantApplied;
 use App\Modules\X198\Events\PaymentCaptured;
 use App\Modules\X198\Events\PayoutReconciled;
@@ -69,9 +70,13 @@ final class GatewayEngine
         int $businessId,
         int $amountCents,
         string $paymentToken,
-        string $idempotencyKey,
-        string $currency = 'USD'
+        string $idempotencyKey
     ): Payment {
+        // The tenant's own declared currency, read from the row that holds it. A caller-supplied
+        // currency is a second place for the truth to disagree (R037), and the lane's one
+        // production capture supplied none at all, so every charge went out in dollars.
+        $currency = Business::findOrFail($businessId)->currency;
+
         try {
             return DB::transaction(function () use ($businessId, $amountCents, $paymentToken, $idempotencyKey, $currency) {
                 // Idempotency check: duplicated ref charges once (G17-04, G1-23)
@@ -91,11 +96,32 @@ final class GatewayEngine
                 }
 
                 $gatewayChargeId = null;
+                $gatewayStatus = null;
+                // A deliberate retry after a recorded decline must reach the gateway, so it must
+                // not carry the declined attempt's key. The pre-check above excludes 'failed', so
+                // the count of failed rows for this pair is exactly the attempt number: two
+                // concurrent first attempts both read 0 and are deduped at the provider, while a
+                // retry after a decline reads 1 and charges.
+                $attempt = Payment::where('business_id', $businessId)
+                    ->where('idempotency_key', $idempotencyKey)
+                    ->where('status', 'failed')
+                    ->count();
+
                 if ($connection->gateway_name === 'stripe') {
-                    $gatewayChargeId = app(StripeGatewayClient::class)->charge($amountCents, $paymentToken, $currency);
+                    $result = app(StripeGatewayClient::class)->charge(
+                        $amountCents,
+                        $paymentToken,
+                        $currency,
+                        'x198-charge-'.$businessId.'-'.$idempotencyKey.'-'.$attempt
+                    );
+                    $gatewayChargeId = $result['id'];
+                    $gatewayStatus = $result['status'];
                 }
 
-                $status = $gatewayChargeId !== null ? 'captured' : 'awaiting_processor';
+                // The gateway's word, never the presence of an id (R235). A charge it took but has
+                // not settled arrives with a real id and 'pending', and awaiting_processor is
+                // already this column's name for "the gateway has it and we cannot say it settled".
+                $status = $gatewayStatus === 'succeeded' ? 'captured' : 'awaiting_processor';
 
                 $payment = Payment::create([
                     'business_id' => $businessId,
@@ -108,7 +134,7 @@ final class GatewayEngine
                     'status' => $status,
                 ]);
 
-                if ($payment->gateway_charge_id !== null) {
+                if ($payment->status === 'captured') {
                     Event::dispatch(new PaymentCaptured(
                         businessId: $businessId,
                         paymentId: $payment->id,

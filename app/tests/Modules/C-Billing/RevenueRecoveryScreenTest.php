@@ -118,4 +118,18 @@ class RevenueRecoveryScreenTest extends TestCase
             ->assertSee('no agreed price recorded on the row')
             ->assertDontSee('3443');
     }
+
+    public function test_the_recovery_screen_says_nobody_has_been_put_on_the_ladder_and_what_that_waits_on(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        Livewire::actingAs($owner)->test(RevenueRecovery::class)
+            ->assertOk()
+            ->assertSee('Nothing in this checkout puts one there')
+            ->assertDontSee('This account is current');
+    }
 }

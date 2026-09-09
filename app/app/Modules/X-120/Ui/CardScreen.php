@@ -34,6 +34,7 @@ class CardScreen extends Component
 
     public function makeDefault(int $cardId, CardRotateAction $action): void
     {
+        $this->forgetCardFields();
         $this->error = null;
         $this->success = null;
 
@@ -48,6 +49,7 @@ class CardScreen extends Component
 
     public function addCard(): void
     {
+        $this->forgetCardFields();
         $this->adding = true;
         $this->waiting = null;
         $this->error = null;
@@ -73,7 +75,7 @@ class CardScreen extends Component
         } catch (CardExpiredException|CardNumberInvalidException $e) {
             $this->error = $e->getMessage();
         } finally {
-            $this->number = '';
+            $this->forgetCardFields();
         }
     }
 
@@ -81,7 +83,7 @@ class CardScreen extends Component
     {
         abort_unless(auth()->check() && Tenancy::check(), 403);
 
-        $cards = CardToken::where('business_id', Tenancy::idOrFail())->get();
+        $cards = CardToken::where('business_id', Tenancy::idOrFail())->orderBy('id')->get();
         $now = now();
 
         $expiringCards = $cards->filter(function ($card) use ($now) {
@@ -94,5 +96,21 @@ class CardScreen extends Component
             'cards' => $cards,
             'expiringCards' => $expiringCards,
         ]);
+    }
+
+    /**
+     * Cardholder data lives in public properties, and Livewire renders those into the page as
+     * wire:snapshot on every response. So the number, the expiry and the name are forgotten as a
+     * set at the boundary of every action this screen exposes, not only the one that checks them:
+     * otherwise a number typed here and left behind by an unrelated click is echoed back into the
+     * page for the rest of the session, and the form's promise that the number reaches this app
+     * once is false. P-196 names all three. (R241)
+     */
+    private function forgetCardFields(): void
+    {
+        $this->number = '';
+        $this->expMonth = '';
+        $this->expYear = '';
+        $this->name = '';
     }
 }

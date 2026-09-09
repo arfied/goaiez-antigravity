@@ -23,7 +23,7 @@
     <h2>To pay</h2>
     @if($expired)
         <x-ui.attention-card state="attention" heading="This cart expired">Nothing was charged and no stock moved.</x-ui.attention-card>
-    @elseif(count($lines) === 0)
+    @elseif(count($lines) === 0 && $unlistedCount === 0)
         <x-ui.empty-state heading="Nothing to pay for yet.">Add something in the cart block. The cart itself lasts 15 minutes; nothing is held for you until the order is placed here.</x-ui.empty-state>
     @else
         <ul>
@@ -34,6 +34,12 @@
                 </li>
             @endforeach
         </ul>
+        @if($unlistedCount > 0)
+            <x-ui.attention-card state="attention" heading="Not every line is shown">
+                Lines not shown: {{ $unlistedCount }}. An item that has left the catalogue cannot be
+                listed, and the total below still includes it.
+            </x-ui.attention-card>
+        @endif
         <p class="tabular-nums">Total: {{ number_format($cart->total_cents / 100, 2) }}</p>
         <p>This cart expires at {{ $cart->expires_at->format('H:i:s') }} — nothing is held for you until the order is placed.</p>
         <x-ui.button size="default" wire:click="authorise">Authorise this charge</x-ui.button>
@@ -42,8 +48,11 @@
 
     <h2>Orders</h2>
     @if(count($orders) === 0)
-        <x-ui.empty-state heading="No orders yet." />
+        <x-ui.empty-state heading="No orders yet.">An order appears here when a cart is checked out. Nothing in this checkout writes the catalogue a cart is built from, so no order can be placed yet.</x-ui.empty-state>
     @else
+        @if($ordersTruncated)
+            <p class="text-sm text-ink-2">The 10 most recent orders are shown. Older orders are not on this page.</p>
+        @endif
         <ul>
             @foreach($orders as $o)
                 <li>

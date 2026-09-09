@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X117;
 
+use App\Models\User;
 use App\Modules\X117\Actions\CartAddAction;
 use App\Modules\X117\Models\Cart;
 use App\Modules\X117\Models\Order;
@@ -45,7 +46,8 @@ class CheckoutBlockScreenTest extends TestCase
             ->assertSee('This cart expires at')
             ->assertSee('nothing is held for you until the order is placed')
             ->assertSee('stock comes off the moment the order is placed, not when it is paid')
-            ->assertSee('No orders yet');
+            ->assertSee('No orders yet')
+            ->assertSee('so no order can be placed yet');
 
         $screen->call('pay')
             ->assertSee('This order needs a fresh authorisation')
@@ -162,5 +164,87 @@ class CheckoutBlockScreenTest extends TestCase
             ->assertSee('Nothing authorised yet')
             ->assertSee('Nothing was authorised at any gateway')
             ->assertDontSee('Authorised at');
+    }
+
+    public function test_the_orders_list_says_when_older_orders_are_not_shown(): void
+    {
+        $biz = self::provisionTenant();
+        Tenancy::set($biz->id);
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::setUser($owner->id);
+
+        for ($i = 1; $i <= 10; $i++) {
+            $num = str_pad((string) $i, 2, '0', STR_PAD_LEFT);
+            Order::create([
+                'business_id' => $biz->id,
+                'customer_id' => null,
+                'order_number' => 'ORD-LIST'.$num,
+                'status' => 'pending_payment',
+                'total_cents' => 1000,
+                'auth_token' => 'auth_token_'.$i,
+            ]);
+        }
+
+        Livewire::actingAs($owner)->test(CheckoutBlock::class)
+            ->assertOk()
+            ->assertDontSee('The 10 most recent orders are shown');
+
+        Order::create([
+            'business_id' => $biz->id,
+            'customer_id' => null,
+            'order_number' => 'ORD-LIST11',
+            'status' => 'pending_payment',
+            'total_cents' => 1000,
+            'auth_token' => 'auth_token_11',
+        ]);
+
+        Livewire::actingAs($owner)->test(CheckoutBlock::class)
+            ->assertOk()
+            ->assertSee('ORD-LIST11')
+            ->assertDontSee('ORD-LIST01')
+            ->assertSee('The 10 most recent orders are shown');
+    }
+
+    public function test_a_cart_line_that_left_the_catalogue_is_named_and_the_total_still_covers_it(): void
+    {
+        $biz = self::provisionTenant();
+        Tenancy::set($biz->id);
+
+        $filter = Sellable::create(['business_id' => $biz->id, 'name' => 'Limited filter', 'sku' => 'FLT-1', 'inventory_quantity' => 1, 'unit_price_cents' => 4500, 'fulfilment_type' => 'physical']);
+        $boiler = Sellable::create(['business_id' => $biz->id, 'name' => 'Boiler service', 'sku' => 'BOI-1', 'inventory_quantity' => 10, 'unit_price_cents' => 12000, 'fulfilment_type' => 'service']);
+
+        $addAction = new CartAddAction;
+        $addAction->handle($biz->id, 'sess_gone', $filter->id);
+        $addAction->handle($biz->id, 'sess_gone', $boiler->id);
+
+        $this->assertSame(16500, Cart::where('business_id', $biz->id)->where('session_token', 'sess_gone')->first()->total_cents);
+
+        $boiler->delete();
+
+        Livewire::test(CheckoutBlock::class, ['sessionToken' => 'sess_gone'])
+            ->assertOk()
+            ->assertSee('Limited filter')
+            ->assertDontSee('Boiler service')
+            ->assertSee('Lines not shown: 1')
+            ->assertSee('cannot be')
+            ->assertSee('listed, and the total below still includes it')
+            ->assertSee('165.00');
+    }
+
+    public function test_a_cart_whose_every_line_left_the_catalogue_still_says_there_is_something_to_pay(): void
+    {
+        $biz = self::provisionTenant();
+        Tenancy::set($biz->id);
+
+        $only = Sellable::create(['business_id' => $biz->id, 'name' => 'Only item', 'sku' => 'ONLY-1', 'inventory_quantity' => 3, 'unit_price_cents' => 2500, 'fulfilment_type' => 'service']);
+
+        (new CartAddAction)->handle($biz->id, 'sess_allgone', $only->id);
+        $only->delete();
+
+        Livewire::test(CheckoutBlock::class, ['sessionToken' => 'sess_allgone'])
+            ->assertOk()
+            ->assertDontSee('Nothing to pay for yet.')
+            ->assertSee('Lines not shown: 1')
+            ->assertSee('25.00');
     }
 }

@@ -13,6 +13,7 @@ use App\Modules\X199\Models\DeclineDeferral;
 use App\Modules\X199\Ui\Declines;
 use App\Support\Tenancy;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -122,9 +123,9 @@ class DeclinesScreenTest extends TestCase
 
         $this->app->instance(StripeGatewayClient::class, new class
         {
-            public function charge(int $amountCents, string $source, string $currency = 'USD'): string
+            public function charge(int $amountCents, string $source, string $currency = 'USD'): array
             {
-                return 'ch_success_recovery00000000';
+                return ['id' => 'ch_success_recovery00000000', 'status' => 'succeeded'];
             }
         });
         $captureAction->handle($biz->id, 1000, $token, 'idem_2');
@@ -325,6 +326,110 @@ class DeclinesScreenTest extends TestCase
         Livewire::actingAs($owner)->test(Declines::class)
             ->assertSee('Make a pay link')
             ->assertDontSee('Send pay link');
+
+        Carbon::setTestNow();
+    }
+
+    public function test_a_refused_pay_link_gives_the_owner_the_gateway_sentence_and_never_its_json(): void
+    {
+        $base = now()->startOfWeek()->addDays(3)->setTime(10, 0);
+        Carbon::setTestNow($base);
+
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $payment = Payment::create([
+            'business_id' => $biz->id,
+            'amount_cents' => 15000,
+            'currency' => 'USD',
+            'payment_token' => 'tok_refused_1',
+            'idempotency_key' => 'idem_refused_1',
+            'status' => 'failed',
+            'created_at' => $base,
+        ]);
+
+        config()->set('credentials.stripe_secret', 'sk_test_brief');
+
+        Http::fake([
+            'api.stripe.com/*' => Http::response([
+                'error' => [
+                    'message' => 'The amount must be at least 50 cents.',
+                    'type' => 'invalid_request_error',
+                    'code' => 'amount_too_small',
+                    'doc_url' => 'https://stripe.com/docs/error-codes/amount-too-small',
+                ],
+            ], 400),
+        ]);
+
+        Livewire::actingAs($owner)->test(Declines::class)
+            ->call('sendPayLink', $payment->id)
+            ->assertSee('The gateway would not open a payment page: The amount must be at least 50 cents.')
+            ->assertDontSee('invalid_request_error')
+            ->assertDontSee('doc_url');
+
+        Carbon::setTestNow();
+    }
+
+    public function test_a_pay_link_with_no_gateway_credential_names_the_dependency_and_never_the_config_key(): void
+    {
+        $base = now()->startOfWeek()->addDays(3)->setTime(10, 0);
+        Carbon::setTestNow($base);
+
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $payment = Payment::create([
+            'business_id' => $biz->id,
+            'amount_cents' => 15000,
+            'currency' => 'USD',
+            'payment_token' => 'tok_nocred_1',
+            'idempotency_key' => 'idem_nocred_1',
+            'status' => 'failed',
+            'created_at' => $base,
+        ]);
+
+        config()->set('credentials.stripe_secret', null);
+
+        Livewire::actingAs($owner)->test(Declines::class)
+            ->call('sendPayLink', $payment->id)
+            ->assertSee('No payment gateway credential is configured in this checkout')
+            ->assertDontSee('stripe_secret');
+
+        Carbon::setTestNow();
+    }
+
+    public function test_the_pay_link_refusal_carries_the_gateways_own_sentence_and_no_second_claim(): void
+    {
+        $base = now()->startOfWeek()->addDays(3)->setTime(10, 0);
+        Carbon::setTestNow($base);
+
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $payment = Payment::create([
+            'business_id' => $biz->id,
+            'amount_cents' => 15000,
+            'currency' => 'USD',
+            'payment_token' => 'tok_refused_link',
+            'idempotency_key' => 'idem_refused_link',
+            'status' => 'failed',
+            'created_at' => $base,
+        ]);
+
+        Http::fake([
+            'api.stripe.com/*' => Http::response(['error' => ['message' => 'Your card was declined.']], 402),
+        ]);
+
+        Livewire::actingAs($owner)->test(Declines::class)
+            ->call('sendPayLink', $payment->id)
+            ->assertSee('The gateway would not open a payment page: Your card was declined.')
+            ->assertDontSee('The pay link was not made');
 
         Carbon::setTestNow();
     }

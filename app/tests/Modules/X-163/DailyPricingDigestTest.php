@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X163;
 
+use App\Enums\UserRole;
 use App\Models\User;
 use App\Modules\CAgent\Events\AgentRefused;
 use App\Modules\X163\Domain\PricebookEngine;
@@ -354,5 +355,27 @@ class DailyPricingDigestTest extends TestCase
 
         $prices = array_filter($component->get('prices'), fn ($p) => $p == 125.0);
         $this->assertArrayHasKey($item2->id, $prices, 'Regression arm collateral wipe');
+    }
+
+    public function test_staff_is_forbidden(): void
+    {
+        $user = User::factory()->create();
+        $user->role = UserRole::Staff;
+        $user->save();
+        TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
+
+        Livewire::actingAs($user)->test(DailyPricingDigest::class)->assertForbidden();
+    }
+
+    public function test_manager_is_admitted(): void
+    {
+        $user = User::factory()->create();
+        $user->role = UserRole::Manager;
+        $user->save();
+        TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
+
+        Livewire::actingAs($user)->test(DailyPricingDigest::class)->assertOk();
     }
 }

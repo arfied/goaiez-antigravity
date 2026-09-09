@@ -26,7 +26,7 @@
             @if($declines->isEmpty())
                 <div wire:loading.remove>
                     <x-ui.empty-state :heading="$showAll ? 'No declines at all.' : 'No declines this week.'" :action="$showAll ? 'Show this week only' : 'Show all'" target="toggleShowAll">
-                        You have no declined payments to review.
+                        You have no declined payments to review. A decline is written when a charge on a card on file is refused, and nothing in this checkout charges a card on file yet.
                     </x-ui.empty-state>
                 </div>
             @else

@@ -181,4 +181,38 @@ class ConnectCardScreenTest extends TestCase
             ->assertDontSee('Connect Gateway')
             ->assertDontSee('Manage your connections');
     }
+
+    public function test_the_recorded_gateways_list_holds_its_order_when_a_row_is_rewritten(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $first = MerchantConnection::create([
+            'business_id' => $biz->id,
+            'gateway_name' => 'stripe',
+            'merchant_account_id' => 'acct_one',
+            'is_connected' => true,
+        ]);
+
+        MerchantConnection::create([
+            'business_id' => $biz->id,
+            'gateway_name' => 'stripe',
+            'merchant_account_id' => 'acct_two',
+            'is_connected' => true,
+        ]);
+
+        MerchantConnection::create([
+            'business_id' => $biz->id,
+            'gateway_name' => 'stripe',
+            'merchant_account_id' => 'acct_three',
+            'is_connected' => true,
+        ]);
+
+        $first->update(['gateway_name' => 'square']);
+
+        Livewire::actingAs($owner)->test(ConnectCard::class)
+            ->assertSeeInOrder(['acct_one', 'acct_two', 'acct_three']);
+    }
 }

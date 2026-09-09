@@ -182,13 +182,13 @@ class X198Test extends TestCase
 
         $this->connectAction->handle($biz->id, 'stripe', 'acct_x');
 
-        $this->app->instance(StripeGatewayClient::class, new class
-        {
-            public function charge(int $amountCents, string $source, string $currency = 'USD'): string
-            {
-                throw new \RuntimeException('Stripe charge failed: card_declined');
-            }
-        });
+        // A double never reaches the HTTP boundary, so it cannot see a header. The real client and
+        // a faked transport are the only way this test can observe what the gateway was told.
+        Http::fake([
+            'api.stripe.com/*' => Http::sequence()
+                ->push(['error' => ['message' => 'Your card was declined.']], 402)
+                ->push(['id' => 'ch_stub_money60_00000000000', 'status' => 'succeeded'], 200),
+        ]);
 
         $idempotencyKey = 'idem_retry_1';
 
@@ -198,14 +198,6 @@ class X198Test extends TestCase
             // Expected
         }
 
-        $this->app->instance(StripeGatewayClient::class, new class
-        {
-            public function charge(int $amountCents, string $source, string $currency = 'USD'): string
-            {
-                return 'ch_stub_money60_00000000000';
-            }
-        });
-
         $payment = $this->captureAction->handle($biz->id, 3000, 'tok_success', $idempotencyKey);
 
         $this->assertEquals('ch_stub_money60_00000000000', $payment->gateway_charge_id);
@@ -213,6 +205,15 @@ class X198Test extends TestCase
 
         $count = Payment::where('business_id', $biz->id)->count();
         $this->assertEquals(2, $count, 'Expected two rows: one failed and one charged.');
+
+        // The declined attempt and the retry must not carry the same key, or the provider suppresses
+        // the retry and the customer's second card can never be charged.
+        Http::assertSent(function ($request) use ($biz) {
+            return $request->hasHeader('Idempotency-Key', 'x198-charge-'.$biz->id.'-idem_retry_1-0');
+        });
+        Http::assertSent(function ($request) use ($biz) {
+            return $request->hasHeader('Idempotency-Key', 'x198-charge-'.$biz->id.'-idem_retry_1-1');
+        });
     }
 
     public function test_a_successful_charge_is_captured_not_pending(): void
@@ -224,9 +225,9 @@ class X198Test extends TestCase
 
         $this->app->instance(StripeGatewayClient::class, new class
         {
-            public function charge(int $amountCents, string $source, string $currency = 'USD'): string
+            public function charge(int $amountCents, string $source, string $currency = 'USD'): array
             {
-                return 'ch_stub_money61_00000000000';
+                return ['id' => 'ch_stub_money61_00000000000', 'status' => 'succeeded'];
             }
         });
 
@@ -476,7 +477,7 @@ class X198Test extends TestCase
         $this->connectAction->handle($biz->id, 'stripe', 'acct_tenant_stripe_123');
 
         Http::fake([
-            'api.stripe.com/*' => Http::response(['id' => 'ch_mock_announced'], 200),
+            'api.stripe.com/*' => Http::response(['id' => 'ch_mock_announced', 'status' => 'succeeded'], 200),
         ]);
 
         $payment = app(GatewayEngine::class)->capture($biz->id, 7500, 'tok_visa', 'idem_stripe_announce');
@@ -487,5 +488,203 @@ class X198Test extends TestCase
             return $event->paymentId === $payment->id
                 && $event->gatewayChargeId === 'ch_mock_announced';
         });
+    }
+
+    public function test_a_charge_the_gateway_never_confirmed_says_so_and_leaves_a_failed_row(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Unconfirmed Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->connectAction->handle($biz->id, 'stripe', 'acct_unconfirmed');
+
+        // 200, and no `id` anywhere in the body: the gateway took the request and confirmed nothing.
+        Http::fake([
+            'api.stripe.com/*' => Http::response(['object' => 'charge', 'status' => 'pending'], 200),
+        ]);
+
+        $caught = null;
+
+        try {
+            app(GatewayEngine::class)->capture($biz->id, 4200, 'tok_visa', 'idem_no_charge_id');
+        } catch (\RuntimeException $e) {
+            $caught = $e;
+        }
+
+        $this->assertNotNull($caught, 'capture must refuse a response that carries no charge id');
+        $this->assertStringContainsString('sent back no charge id, so the charge could not be confirmed', $caught->getMessage());
+        $this->assertStringNotContainsString('nothing was recorded', $caught->getMessage());
+
+        // The sentence is only true because of this row, so the two are asserted together.
+        $this->assertSame(1, Payment::where('business_id', $biz->id)->where('status', 'failed')->count());
+    }
+
+    public function test_a_pay_link_race_hands_back_the_row_that_won_and_makes_no_second_row(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'PayLinkRace', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $payment = Payment::create([
+            'business_id' => $biz->id,
+            'amount_cents' => 1500,
+            'payment_token' => 'tok_pay_race',
+            'idempotency_key' => 'idem_pay_race',
+            'status' => 'failed',
+        ]);
+
+        // A second press of the same button wins the race while the gateway is answering ours:
+        // this closure runs between the pre-check and the persist.
+        Http::fake(function () use ($biz, $payment) {
+            PaymentLink::firstOrCreate(
+                [
+                    'business_id' => $biz->id,
+                    'payment_id' => $payment->id,
+                ],
+                [
+                    'provider_link_id' => 'cs_test_racer',
+                    'url' => 'https://checkout.stripe.com/c/pay/cs_test_racer',
+                ]
+            );
+
+            return Http::response([
+                'id' => 'cs_test_ours',
+                'url' => 'https://checkout.stripe.com/c/pay/cs_test_ours',
+            ], 200);
+        });
+
+        $link = (new PaymentLinkAction)->handle($biz->id, $payment->id);
+
+        // The loser hands back the winner's row: one link for this payment, and it is the racer's.
+        $this->assertSame('cs_test_racer', $link->provider_link_id);
+        $this->assertSame(1, PaymentLink::where('business_id', $biz->id)->where('payment_id', $payment->id)->count());
+    }
+
+    public function test_a_capture_sends_the_gateway_an_idempotency_key_namespaced_by_business(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'IdemHeader', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->connectAction->handle($biz->id, 'stripe', 'acct_idem_header');
+
+        Http::fake([
+            'api.stripe.com/*' => Http::response(['id' => 'ch_idem_header_00000000000', 'status' => 'succeeded'], 200),
+        ]);
+
+        app(GatewayEngine::class)->capture($biz->id, 4500, 'tok_visa', 'idem_header_1');
+
+        // The key carries the business because every charge posts with the platform secret and no
+        // Stripe-Account (R093), so all tenants share one idempotency namespace at the provider.
+        Http::assertSent(function ($request) use ($biz) {
+            return $request->url() === 'https://api.stripe.com/v1/charges'
+                && $request->hasHeader('Idempotency-Key', 'x198-charge-'.$biz->id.'-idem_header_1-0');
+        });
+    }
+
+    public function test_a_capture_carries_the_tenants_declared_currency(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Sterling', 'currency' => 'GBP']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->connectAction->handle($biz->id, 'stripe', 'acct_x');
+
+        Http::fake([
+            'api.stripe.com/*' => Http::response(['id' => 'ch_test_gbp_00000000000', 'status' => 'succeeded'], 200),
+        ]);
+
+        app(GatewayEngine::class)->capture($biz->id, 4500, 'tok_visa', 'idem_currency_1');
+
+        // What the gateway was told. A USD default here collects a British customer's money in
+        // dollars, and the row would agree with the request because both came from the default.
+        Http::assertSent(function ($request) {
+            return str_contains($request->body(), 'currency=gbp');
+        });
+
+        $payment = Payment::where('business_id', $biz->id)->firstOrFail();
+        $this->assertSame('GBP', $payment->currency);
+    }
+
+    public function test_a_pay_link_sends_the_gateway_an_idempotency_key_namespaced_by_business(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'PayLinkIdem', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $payment = Payment::create([
+            'business_id' => $biz->id,
+            'amount_cents' => 2500,
+            'payment_token' => 'tok_pay_idem',
+            'idempotency_key' => 'idem_pay_idem',
+            'status' => 'failed',
+        ]);
+
+        Http::fake([
+            'api.stripe.com/*' => Http::response([
+                'id' => 'cs_test_idem',
+                'url' => 'https://checkout.stripe.com/c/pay/cs_test_idem',
+            ], 200),
+        ]);
+
+        (new PaymentLinkAction)->handle($biz->id, $payment->id);
+
+        // The pair (business, payment) IS the idempotency, so the provider gets the same pair.
+        Http::assertSent(function ($request) use ($biz, $payment) {
+            return $request->url() === 'https://api.stripe.com/v1/checkout/sessions'
+                && $request->hasHeader('Idempotency-Key', 'x198-paylink-'.$biz->id.'-'.$payment->id);
+        });
+    }
+
+    public function test_a_pay_link_names_the_business_the_customer_is_paying(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Northwind', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $payment = Payment::create([
+            'business_id' => $biz->id,
+            'amount_cents' => 2500,
+            'currency' => 'USD',
+            'payment_token' => 'tok_failed',
+            'idempotency_key' => 'idem_desc_1',
+            'status' => 'failed',
+        ]);
+
+        Http::fake([
+            'api.stripe.com/*' => Http::response([
+                'id' => 'cs_test_desc_1',
+                'url' => 'https://checkout.stripe.com/c/pay/cs_test_desc_1',
+            ], 200),
+        ]);
+
+        (new PaymentLinkAction)->handle($biz->id, $payment->id);
+
+        // The line item is rendered to the customer by the gateway, not by this app, so the only
+        // way to see it is to read what was sent.
+        Http::assertSent(function ($request) {
+            return str_contains($request->body(), 'Northwind')
+                && ! str_contains($request->body(), 'declined');
+        });
+    }
+
+    public function test_a_charge_the_gateway_has_not_settled_is_not_recorded_as_captured(): void
+    {
+        Event::fake([PaymentCaptured::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Pending', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->connectAction->handle($biz->id, 'stripe', 'acct_pending');
+
+        // A real charge object exists at the provider and has not settled. Reading only the id
+        // records this as captured (R235).
+        Http::fake([
+            'api.stripe.com/*' => Http::response(['id' => 'ch_pending_0000000000000', 'status' => 'pending'], 200),
+        ]);
+
+        $payment = app(GatewayEngine::class)->capture($biz->id, 6100, 'tok_visa', 'idem_pending_1');
+
+        $this->assertSame('awaiting_processor', $payment->status);
+
+        // The id is kept: a charge object does exist there, and it is the honest handle on it.
+        $this->assertSame('ch_pending_0000000000000', $payment->gateway_charge_id);
+
+        // An event named Captured must not fire for money that was not captured (R101, R236).
+        Event::assertNotDispatched(PaymentCaptured::class);
     }
 }

@@ -88,14 +88,22 @@ final class DisputeDefenseEngine
             throw new \Exception('Dispute deadline has passed');
         }
 
-        $types = DisputeEvidence::where('dispute_id', $disputeId)->pluck('evidence_type')->toArray();
+        $types = DisputeEvidence::where('business_id', $businessId)
+            ->where('dispute_id', $disputeId)
+            ->pluck('evidence_type')
+            ->toArray();
 
         if ($dispute->reason === 'fraudulent') {
             $required = ['call_log', 'transcript', 'delivery_receipt', 'consent_record'];
             $missing = array_diff($required, $types);
 
             if (! empty($missing)) {
-                throw new \Exception('missing: '.implode(', ', $missing));
+                $names = [];
+                foreach ($missing as $type) {
+                    $names[] = DisputeEvidence::EVIDENCE_LABELS[$type] ?? $type;
+                }
+
+                throw new \Exception('The bundle is still missing '.implode(', ', $names).'. Add them, then submit again.');
             }
         }
 

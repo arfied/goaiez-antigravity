@@ -6,6 +6,7 @@ namespace App\Modules\X171\Actions;
 
 use App\Modules\X171\Events\JobCompleted;
 use App\Modules\X171\Events\TechOnSite;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 
@@ -17,7 +18,7 @@ final class JobStateAction
     public function updateState(int $businessId, int $jobId, int $techId, string $newState, int $tapCount = 1): array
     {
         if ($newState === 'on_site') {
-            Event::dispatch(new TechOnSite($businessId, $jobId, $techId));
+            Event::dispatch(new TechOnSite($businessId, $jobId, $techId, Carbon::now()));
 
             return [
                 'status' => 'on_site',
@@ -28,9 +29,10 @@ final class JobStateAction
 
         if ($newState === 'completed') {
             $personId = DB::table('work_orders')
+                ->where('business_id', $businessId)
                 ->where('id', $jobId)
                 ->value('person_id');
-            Event::dispatch(new JobCompleted($businessId, $jobId, $techId, $personId));
+            Event::dispatch(new JobCompleted($businessId, $jobId, $techId, $personId, Carbon::now()));
 
             return [
                 'status' => 'completed',

@@ -42,8 +42,6 @@
         @if($items->isEmpty())
             <x-ui.empty-state 
                 heading="Nothing left to confirm"
-                action="Open Pricebook"
-                target="openPricebook"
                 icon="✓">
                 All your prices have been confirmed.
             </x-ui.empty-state>

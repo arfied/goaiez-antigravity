@@ -225,4 +225,118 @@ class CardScreenTest extends TestCase
             ->assertSee('Keeping one waits on Stripe tokenisation')
             ->assertDontSee('Please add a card');
     }
+
+    public function test_the_card_list_holds_its_order_when_a_row_is_rewritten(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $first = CardToken::create([
+            'business_id' => $biz->id,
+            'gateway_payment_method_id' => 'tok_1',
+            'gateway_customer_id' => 'cus_1',
+            'brand' => 'Visa',
+            'last_four' => '1111',
+            'exp_month' => 12,
+            'exp_year' => now()->year + 1,
+            'is_default' => false,
+        ]);
+
+        CardToken::create([
+            'business_id' => $biz->id,
+            'gateway_payment_method_id' => 'tok_2',
+            'gateway_customer_id' => 'cus_2',
+            'brand' => 'Visa',
+            'last_four' => '2222',
+            'exp_month' => 12,
+            'exp_year' => now()->year + 1,
+            'is_default' => false,
+        ]);
+
+        CardToken::create([
+            'business_id' => $biz->id,
+            'gateway_payment_method_id' => 'tok_3',
+            'gateway_customer_id' => 'cus_3',
+            'brand' => 'Visa',
+            'last_four' => '3333',
+            'exp_month' => 12,
+            'exp_year' => now()->year + 1,
+            'is_default' => false,
+        ]);
+
+        $first->update(['brand' => 'MasterCard']);
+
+        Livewire::actingAs($owner)->test(CardScreen::class)
+            ->assertSeeInOrder(['1111', '2222', '3333']);
+    }
+
+    public function test_present_clears_the_four_fields_after_submission(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        Livewire::actingAs($owner)->test(CardScreen::class)
+            ->set('number', '4242424242424242')
+            ->set('expMonth', '12')
+            ->set('expYear', '2028')
+            ->set('name', 'John Doe')
+            ->call('present')
+            ->assertSet('number', '')
+            ->assertSet('expMonth', '')
+            ->assertSet('expYear', '')
+            ->assertSet('name', '');
+    }
+
+    public function test_make_default_forgets_partially_typed_fields(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $card = CardToken::create([
+            'business_id' => $biz->id,
+            'gateway_payment_method_id' => 'tok_9',
+            'gateway_customer_id' => 'cus_9',
+            'brand' => 'Visa',
+            'last_four' => '9999',
+            'exp_month' => 12,
+            'exp_year' => now()->year + 1,
+            'is_default' => false,
+        ]);
+
+        Livewire::actingAs($owner)->test(CardScreen::class)
+            ->set('number', '1234123412341234')
+            ->set('expMonth', '11')
+            ->set('expYear', '2029')
+            ->set('name', 'Incomplete Name')
+            ->call('makeDefault', $card->id)
+            ->assertDontSee('1234123412341234')
+            ->assertSet('expMonth', '')
+            ->assertSet('expYear', '')
+            ->assertSet('name', '');
+    }
+
+    public function test_add_card_forgets_partially_typed_fields(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        Livewire::actingAs($owner)->test(CardScreen::class)
+            ->set('number', '1234123412341234')
+            ->set('expMonth', '11')
+            ->set('expYear', '2029')
+            ->set('name', 'Incomplete Name')
+            ->call('addCard')
+            ->assertDontSee('1234123412341234')
+            ->assertSet('expMonth', '')
+            ->assertSet('expYear', '')
+            ->assertSet('name', '');
+    }
 }

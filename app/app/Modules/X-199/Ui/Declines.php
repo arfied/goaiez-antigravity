@@ -25,11 +25,11 @@ class Declines extends Component
     {
         $this->error = null;
         try {
-            $action->handle(Tenancy::idOrFail(), $paymentId, 'Payment for declined transaction');
+            $action->handle(Tenancy::idOrFail(), $paymentId);
         } catch (ModelNotFoundException) {
             $this->error = "That attempt isn't in this account any more — reload the list.";
         } catch (\Throwable $e) {
-            $this->error = 'The pay link was not made: '.$e->getMessage();
+            $this->error = $e->getMessage();
         }
     }
 

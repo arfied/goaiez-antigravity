@@ -43,6 +43,10 @@ final class ModuleServiceProvider extends ServiceProvider
                 ->where('short_code', $code)
                 ->firstOrFail();
 
+            // A link whose destination is blank cannot be followed, so it is not a click: refuse it with the
+            // 404 this route already answers for a link that does not resolve, before anything is recorded.
+            abort_if(trim((string) $shortLink->destination_url) === '', 404);
+
             LinkClick::create([
                 'business_id' => $businessId,
                 'short_link_id' => $shortLink->id,

@@ -12,8 +12,8 @@
     @endif
 
     @if($refused)
-        <x-ui.attention-card state="attention" heading="No late-fee term in the agreement">
-            {{ $refused }} Write the term below, then apply the fee again.
+        <x-ui.attention-card state="attention" heading="Late fee not applied">
+            {{ $refused }}
         </x-ui.attention-card>
     @endif
 
@@ -36,7 +36,7 @@
     </section>
 
     @if(empty($groups))
-        <x-ui.empty-state heading="Nothing is overdue.">Every issued invoice is inside its terms.</x-ui.empty-state>
+        <x-ui.empty-state heading="Nothing is overdue.">No invoice is past its terms. Nothing in this checkout raises one from a completed job, and a draft is never issued, so nothing reaches this screen yet.</x-ui.empty-state>
     @else
         @foreach($groups as $reason => $invoices)
             <div class="mb-8">

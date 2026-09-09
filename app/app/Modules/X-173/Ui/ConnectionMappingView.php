@@ -52,6 +52,8 @@ class ConnectionMappingView extends Component
             }
         } catch (ModelNotFoundException $e) {
             $this->error = "That ledger connection isn't in this account.";
+        } catch (\Throwable $e) {
+            $this->error = 'We could not save that mapping: '.$e->getMessage();
         }
     }
 
@@ -61,7 +63,7 @@ class ConnectionMappingView extends Component
         $businessId = Tenancy::idOrFail();
 
         $connections = AccountingConnection::where('business_id', $businessId)->orderBy('id')->get();
-        $mappings = AccountMapping::where('business_id', $businessId)->get()->groupBy('connection_id');
+        $mappings = AccountMapping::where('business_id', $businessId)->orderBy('id')->get()->groupBy('connection_id');
 
         return view('x-173::connection-mapping', [
             'connections' => $connections,

@@ -73,7 +73,7 @@ class X199Test extends TestCase
         ]);
 
         Http::fake([
-            'api.stripe.com/*' => Http::response(['id' => 'ch_mock_123'], 200),
+            'api.stripe.com/*' => Http::response(['id' => 'ch_mock_123', 'status' => 'succeeded'], 200),
         ]);
 
         // Set net-30 credit limit to $1,000.00 (100,000 cents)
@@ -127,9 +127,9 @@ class X199Test extends TestCase
 
     /**
      * ⛔ REFUSED: G1-05: Surveyed app/Modules/X-199 Actions, Domain, Models, Events, Listeners, Ui and found no seam for jobs or AI structuring lines.
-     * ⛔ REFUSED: G1-31: Surveyed app/Modules/X-199 Actions, Domain, Models, Events, Listeners, Ui and found no seam for HTML fallbacks or template branding; pdf_url is hardcoded.
+     * ⛔ REFUSED: G1-31: Surveyed app/Modules/X-199 Actions, Domain, Models, Events, Listeners, Ui and found no seam for HTML fallbacks or template branding; nothing writes pdf_url at all and the nullable column stays null.
      * ⛔ REFUSED: G1-40: Surveyed app/Modules/X-199 Actions, Domain, Models, Events, Listeners, Ui and found no seam for link shorteners or URL generation.
-     * ⛔ REFUSED: G1-51: Surveyed app/Modules/X-199 Actions, Domain, Models, Events, Listeners, Ui and found no seam for Stripe or gateway-agnostic integrations.
+     * ⛔ REFUSED: G1-51: X-199 owns no gateway seam of its own — it reaches Stripe only through another module, whose engine it calls for an overflow charge and whose pay-link action the declines screen uses — so there is no gateway-agnostic integration here to assert.
      * ⛔ REFUSED: G1-60: Surveyed app/Modules/X-199 Actions, Domain, Models, Events, Listeners, Ui and found no seam for channel choices on existing links.
      */
     public function test_g1_no_refusals(): void

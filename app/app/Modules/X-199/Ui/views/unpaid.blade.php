@@ -28,13 +28,13 @@
             @if($invoices->isEmpty() && !$showLastFivePaid)
                 <div wire:loading.remove>
                     <x-ui.empty-state heading="Nothing unpaid." action="View the last 5 paid" target="showPaid">
-                        You have no outstanding invoices.
+                        You have no outstanding invoices. Nothing in this checkout raises one from a completed job, and a draft is never issued, so nothing reaches this list yet.
                     </x-ui.empty-state>
                 </div>
             @elseif($invoices->isEmpty() && $showLastFivePaid)
                 <div wire:loading.remove>
                     <x-ui.empty-state heading="No paid invoices yet.">
-                        You haven't received any payments yet.
+                        No invoice has been paid. Nothing in this checkout raises one from a completed job, and a draft is never issued, so nothing reaches this list yet.
                     </x-ui.empty-state>
                 </div>
             @else

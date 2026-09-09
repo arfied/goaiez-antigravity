@@ -120,7 +120,7 @@ class CreditsScreenTest extends TestCase
         ]);
 
         Http::fake([
-            'api.stripe.com/*' => Http::response(['id' => 'ch_mock_123'], 200),
+            'api.stripe.com/*' => Http::response(['id' => 'ch_mock_123', 'status' => 'succeeded'], 200),
         ]);
 
         app(TermsSetAction::class)->handle($biz->id, $ada->id, 'net_30', 50000, 'tok_visa');
@@ -144,5 +144,45 @@ class CreditsScreenTest extends TestCase
             ->assertSee('Ada Lovelace')
             ->assertSee('covered by the card on file; service never stopped')
             ->assertDontSee('the card did not absorb it and the invoice still stands');
+    }
+
+    public function test_credits_says_a_pending_overflow_is_at_the_gateway_not_refused_by_the_card(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $ada = Person::create(['business_id' => $biz->id, 'first_name' => 'Ada', 'last_name' => 'Lovelace']);
+
+        MerchantConnection::create([
+            'business_id' => $biz->id,
+            'gateway_name' => 'stripe',
+            'merchant_account_id' => 'acct_test',
+            'is_connected' => true,
+        ]);
+
+        // A real charge object exists at the provider and has not settled (R235), so the row is
+        // 'refused' with a real gateway id on it.
+        Http::fake([
+            'api.stripe.com/*' => Http::response(['id' => 'ch_pending_credits_0000000', 'status' => 'pending'], 200),
+        ]);
+
+        app(TermsSetAction::class)->handle($biz->id, $ada->id, 'net_30', 50000, 'tok_visa');
+
+        app(InvoiceEngine::class)->issueInvoice(
+            $biz->id,
+            $ada->id,
+            [['description' => 'Fence, 40 metres', 'quantity' => 1, 'unit_price_cents' => 60000]],
+            'net_30'
+        );
+
+        Livewire::actingAs($owner)->test(Credits::class)
+            ->assertOk()
+            ->assertSee('Ada Lovelace')
+            ->assertSee('the gateway took it and has not settled it yet')
+            ->assertDontSee('the card did not absorb it')
+            ->assertDontSee('covered by the card on file');
     }
 }

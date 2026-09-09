@@ -21,7 +21,7 @@
             @if($invoices->isEmpty())
                 <div wire:loading.remove>
                     <x-ui.empty-state icon="○" heading="No paid invoices today.">
-                        When invoices are paid today, they will appear here.
+                        When invoices are paid today, they will appear here. Nothing in this checkout raises one from a completed job, and a draft is never issued, so nothing reaches this screen yet.
                     </x-ui.empty-state>
                 </div>
             @else

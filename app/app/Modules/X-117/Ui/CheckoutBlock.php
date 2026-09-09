@@ -17,6 +17,8 @@ use Livewire\Component;
 
 class CheckoutBlock extends Component
 {
+    private const ORDER_WINDOW = 10;
+
     #[Locked]
     public string $sessionToken = '';
 
@@ -101,23 +103,32 @@ class CheckoutBlock extends Component
         $expired = $cart !== null && $cart->expires_at->isPast();
 
         $lines = [];
+        $unlistedCount = 0;
         if ($cart !== null && ! $expired) {
             foreach ($cart->items as $item) {
-                $s = Sellable::find((int) $item['sellable_id']);
+                $s = Sellable::where('business_id', $businessId)->find((int) $item['sellable_id']);
                 if ($s !== null) {
                     $qty = (int) ($item['quantity'] ?? 1);
                     $lines[] = ['sellable' => $s, 'quantity' => $qty, 'subtotal_cents' => $qty * $s->unit_price_cents];
+                } else {
+                    $unlistedCount++;
                 }
             }
         }
 
-        $orders = Order::where('business_id', $businessId)->orderByDesc('id')->limit(10)->get();
+        $orders = Order::where('business_id', $businessId)->orderByDesc('id')->limit(self::ORDER_WINDOW + 1)->get();
+
+        // One row past the window is the overflow probe: no second query, no count().
+        $ordersTruncated = $orders->count() > self::ORDER_WINDOW;
+        $orders = $orders->take(self::ORDER_WINDOW)->values();
 
         return view('x-117::checkout-block', [
             'cart' => $cart,
             'expired' => $expired,
             'lines' => $lines,
+            'unlistedCount' => $unlistedCount,
             'orders' => $orders,
+            'ordersTruncated' => $ordersTruncated,
         ]);
     }
 }

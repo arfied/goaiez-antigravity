@@ -39,7 +39,7 @@
     @endif
 
     @if($candidates->isEmpty())
-        <x-ui.empty-state heading="Nothing to package.">No overdue invoice is waiting on collections.</x-ui.empty-state>
+        <x-ui.empty-state heading="Nothing to package.">No overdue invoice is waiting on collections. Nothing in this checkout raises one from a completed job, and a draft is never issued, so no invoice can go overdue yet.</x-ui.empty-state>
     @else
         <h2>Overdue, not yet packaged</h2>
         <ul class="space-y-4">

@@ -66,6 +66,7 @@ class PaymentplanBuilderScreenTest extends TestCase
         $screen = Livewire::actingAs($owner)->test(PaymentplanBuilder::class)
             ->assertOk()
             ->assertSee('Up to 3 payments over 90 days')
+            ->assertSee('the standing default, not an account setting')
             ->assertSee('INV-A1')
             ->assertDontSee('INV-A2')
             ->assertDontSee('INV-B1')
@@ -76,7 +77,7 @@ class PaymentplanBuilderScreenTest extends TestCase
             ->assertSee('waits on a financing partner');
 
         $this->assertSame(0, PaymentPlan::where('business_id', $biz->id)->count());
-        $this->assertSame(1, ArPlanTerm::where('business_id', $biz->id)->count());
+        $this->assertSame(0, ArPlanTerm::where('business_id', $biz->id)->count(), 'a refused plan offer created the terms row');
         Event::assertNotDispatched(ArPlanAccepted::class);
 
         $screen->set('installments.'.$inv1->id, 3)
@@ -92,9 +93,12 @@ class PaymentplanBuilderScreenTest extends TestCase
         $this->assertSame(30000, $plan->installment_amount_cents);
         $this->assertSame('payment_plan', ReceivableState::where('business_id', $biz->id)->where('invoice_id', $inv1->id)->value('status'));
         Event::assertDispatched(ArPlanAccepted::class);
+        $this->assertSame(0, ArPlanTerm::where('business_id', $biz->id)->count(), 'a successful plan offer created a threshold row nobody set');
 
         Livewire::actingAs($owner)->test(PaymentplanBuilder::class)
             ->assertSee('Nothing to split')
+            ->assertSee('and a draft is never issued')
+            ->assertDontSee('Every open invoice is paid or already on a plan')
             ->set('installments.999999', 3)
             ->call('offerPlan', 999999)
             ->assertSee("isn't in this account");
@@ -133,5 +137,48 @@ class PaymentplanBuilderScreenTest extends TestCase
             ->assertOk()
             ->assertSee('INV-UNPAID-1')
             ->assertDontSee('INV-PAID-1');
+    }
+
+    public function test_the_preview_refuses_a_split_below_two_payments(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'Split', 'last_name' => 'Preview']);
+
+        $inv = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-PREVIEW-1',
+            'total_cents' => 10000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(10),
+        ]);
+
+        Livewire::actingAs($owner)->test(PaymentplanBuilder::class)
+            ->set('installments.'.$inv->id, 3)
+            ->assertSee('about 33.34 each')
+            ->set('installments.'.$inv->id, 1)
+            ->assertSee('a plan is at least two payments')
+            ->assertDontSee('about 50.00 each');
+    }
+
+    public function test_rendering_the_plan_builder_writes_no_plan_term_row(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $this->assertSame(0, ArPlanTerm::where('business_id', $biz->id)->count());
+
+        Livewire::actingAs($owner)->test(PaymentplanBuilder::class)
+            ->assertOk()
+            ->assertSee('Up to 3 payments over 90 days');
+
+        $this->assertSame(0, ArPlanTerm::where('business_id', $biz->id)->count());
     }
 }

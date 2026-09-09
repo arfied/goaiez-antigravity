@@ -19,9 +19,10 @@ final class InvoiceReader
         return Invoice::where('business_id', $businessId)->findOrFail($invoiceId);
     }
 
-    public function overdueIssued(): Collection
+    public function overdueIssued(int $businessId): Collection
     {
-        return Invoice::where('due_date', '<', now()->toDateString())
+        return Invoice::where('business_id', $businessId)
+            ->where('due_date', '<', now()->toDateString())
             ->where('status', 'issued')
             ->get();
     }

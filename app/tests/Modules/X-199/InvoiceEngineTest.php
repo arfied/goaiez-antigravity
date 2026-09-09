@@ -18,6 +18,7 @@ use App\Modules\X199\Models\OverflowCharge;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\Process\Process;
 
 test('it issues invoice in integer minor units', function () {
@@ -63,7 +64,7 @@ test('the overflow rule — card absorbs limit overflow and payment reverses it'
 
         // Fake the gateway at HTTP client because StripeGatewayClient and GatewayEngine are marked final
         Http::fake([
-            'api.stripe.com/*' => Http::response(['id' => 'ch_mock_123'], 200),
+            'api.stripe.com/*' => Http::response(['id' => 'ch_mock_123', 'status' => 'succeeded'], 200),
         ]);
 
         $engine = app(InvoiceEngine::class);
@@ -131,7 +132,7 @@ test('a reversal the gateway never performed carries no reference id', function 
         ]);
 
         Http::fake([
-            'api.stripe.com/*' => Http::response(['id' => 'ch_mock_123'], 200),
+            'api.stripe.com/*' => Http::response(['id' => 'ch_mock_123', 'status' => 'succeeded'], 200),
         ]);
 
         $engine = app(InvoiceEngine::class);
@@ -169,6 +170,7 @@ test('no installments are allowed by schema', function () {
 
 test('the no-gateway case', function () {
     Event::fake([LimitExceeded::class, OverflowCharged::class, OverflowReversed::class]);
+    Log::spy();
 
     $business = Business::factory()->create();
     $customer = Person::create(['business_id' => $business->id]);
@@ -200,6 +202,14 @@ test('the no-gateway case', function () {
         $charge = OverflowCharge::where('invoice_id', $result['invoice']->id)->where('charge_type', 'overflow_charged')->first();
         expect($charge)->not->toBeNull();
         expect($charge->status)->toBe('refused');
+
+        Log::shouldHaveReceived('warning')->withArgs(function (string $message, array $context) use ($business, $customer, $result) {
+            return str_starts_with($message, 'Gateway capture failed: ')
+                && ($context['business_id'] ?? null) === (int) $business->id
+                && ($context['customer_id'] ?? null) === (int) $customer->id
+                && ($context['invoice_id'] ?? null) === (int) $result['invoice']->id
+                && ($context['amount_cents'] ?? null) === 50000;
+        });
     });
 });
 
@@ -265,7 +275,7 @@ test('the idempotency case: one Payment for two attempts at the same charge', fu
         ]);
 
         Http::fake([
-            'api.stripe.com/*' => Http::response(['id' => 'ch_mock_123'], 200),
+            'api.stripe.com/*' => Http::response(['id' => 'ch_mock_123', 'status' => 'succeeded'], 200),
         ]);
 
         $gatewayEngine = app(GatewayEngine::class);
@@ -369,7 +379,7 @@ test('a partial payment leaves the invoice unpaid, chased and unreversed', funct
 
         // Fake the gateway at HTTP client because StripeGatewayClient and GatewayEngine are marked final
         Http::fake([
-            'api.stripe.com/*' => Http::response(['id' => 'ch_mock_123'], 200),
+            'api.stripe.com/*' => Http::response(['id' => 'ch_mock_123', 'status' => 'succeeded'], 200),
         ]);
 
         $engine = app(InvoiceEngine::class);
@@ -482,4 +492,46 @@ test('the due date comes from the stored terms row and not the caller', function
     );
 
     expect($result['invoice']->due_date->toDateString())->toBe(now()->addDays(60)->toDateString());
+});
+
+test('a pending overflow charge is refused, not charged', function () {
+    $business = Business::factory()->create();
+    $customer = Person::create(['business_id' => $business->id]);
+
+    Tenancy::actingAs((int) $business->id, function () use ($business, $customer) {
+        MerchantConnection::create([
+            'business_id' => $business->id,
+            'gateway_name' => 'stripe',
+            'merchant_account_id' => 'acct_test',
+            'is_connected' => true,
+        ]);
+
+        CreditTerm::create([
+            'business_id' => $business->id,
+            'customer_id' => $customer->id,
+            'terms_type' => 'net_30',
+            'credit_limit_cents' => 500000,
+            'current_outstanding_cents' => 400000,
+            'card_on_file_token' => 'tok_visa',
+        ]);
+
+        Http::fake([
+            'api.stripe.com/*' => Http::response(['id' => 'ch_pending_x199_000000000', 'status' => 'pending'], 200),
+        ]);
+
+        $engine = app(InvoiceEngine::class);
+
+        $result = $engine->issueInvoice(
+            $business->id,
+            $customer->id,
+            [['description' => 'Big Service', 'quantity' => 1, 'unit_price_cents' => 150000]],
+            'net_30'
+        );
+        $invoice = $result['invoice'];
+
+        $overflow = OverflowCharge::where('invoice_id', $invoice->id)->first();
+
+        expect($overflow->status)->toBe('refused');
+        expect($overflow->reference_id)->toBe('ch_pending_x199_000000000');
+    });
 });

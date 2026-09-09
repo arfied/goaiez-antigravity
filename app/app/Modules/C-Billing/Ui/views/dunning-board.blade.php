@@ -16,7 +16,7 @@
 
         <div wire:loading.remove class="mt-8 flow-root">
             @if($states->isEmpty())
-                <x-ui.empty-state heading="No account is in dunning — nothing to chase.">Declines live on the Money screen.</x-ui.empty-state>
+                <x-ui.empty-state heading="No account is in dunning — nothing to chase.">Nothing in this checkout puts an account on the dunning ladder, so this board fills when a missed payment starts one. Declines live on the Money screen.</x-ui.empty-state>
             @else
                 <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
                     <table class="min-w-full divide-y divide-gray-300">

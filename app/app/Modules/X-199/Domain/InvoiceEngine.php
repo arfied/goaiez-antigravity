@@ -99,9 +99,18 @@ final class InvoiceEngine
                             idempotencyKey: 'overflow_'.$invoice->id.'_'.$overflowAmount
                         );
                         $gatewayChargeId = $payment->gateway_charge_id;
-                        $status = $gatewayChargeId !== null ? 'charged' : 'refused';
+                        // The payment row's own status, which is the gateway's word (R235/R236).
+                        // A pending charge has an id, so deriving from the id writes 'charged' for
+                        // money that has not settled.
+                        $status = $payment->status === 'captured' ? 'charged' : 'refused';
                     } catch (\Exception $e) {
-                        Log::warning('Gateway capture failed: '.$e->getMessage(), ['exception' => $e]);
+                        Log::warning('Gateway capture failed: '.$e->getMessage(), [
+                            'business_id' => $businessId,
+                            'customer_id' => $customerId,
+                            'invoice_id' => $invoice->id,
+                            'amount_cents' => $overflowAmount,
+                            'exception' => $e,
+                        ]);
                         $status = 'refused';
                     }
                 }

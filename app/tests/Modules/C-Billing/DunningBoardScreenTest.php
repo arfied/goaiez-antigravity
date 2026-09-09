@@ -67,4 +67,18 @@ class DunningBoardScreenTest extends TestCase
             ->call('advance', 999999)
             ->assertSee("isn't in this account");
     }
+
+    public function test_the_dunning_board_says_nothing_puts_an_account_on_the_ladder(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        Livewire::actingAs($owner)->test(DunningBoard::class)
+            ->assertOk()
+            ->assertSee('Nothing in this checkout puts an account on the dunning ladder')
+            ->assertSee('Declines live on the Money screen');
+    }
 }

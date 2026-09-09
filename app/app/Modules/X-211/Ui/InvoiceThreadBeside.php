@@ -17,6 +17,8 @@ use Livewire\Component;
 
 class InvoiceThreadBeside extends Component
 {
+    private const THREAD_WINDOW = 50;
+
     public ?int $invoiceId = null;
 
     public array $reason = [];
@@ -76,6 +78,7 @@ class InvoiceThreadBeside extends Component
         $actions = collect();
         $customer = null;
         $escalation = null;
+        $threadTruncated = false;
 
         if ($invoice) {
             $invoice->balance_cents = $invoice->total_cents - $invoice->paid_cents;
@@ -87,10 +90,14 @@ class InvoiceThreadBeside extends Component
                 $conversationIds = Conversation::where('business_id', $bizId)->where('person_id', $customer->id)->pluck('id');
                 $messages = Message::where('business_id', $bizId)
                     ->whereIn('conversation_id', $conversationIds)
-                    ->orderBy('created_at')
-                    ->orderBy('id')
-                    ->limit(50)
+                    ->orderByDesc('created_at')
+                    ->orderByDesc('id')
+                    ->limit(self::THREAD_WINDOW + 1)
                     ->get();
+
+                // One row past the window is the overflow probe: no second query, no count().
+                $threadTruncated = $messages->count() > self::THREAD_WINDOW;
+                $messages = $messages->take(self::THREAD_WINDOW)->reverse()->values();
             }
 
             $actions = ArDunningAction::where('business_id', $bizId)->where('invoice_id', $invoice->id)->latest('id')->get();
@@ -103,6 +110,7 @@ class InvoiceThreadBeside extends Component
             'lines' => $lines,
             'customer' => $customer,
             'messages' => $messages,
+            'threadTruncated' => $threadTruncated,
             'actions' => $actions,
             'escalation' => $escalation,
             'reasons' => ArEngine::REASONS,
