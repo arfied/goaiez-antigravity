@@ -374,13 +374,31 @@ anchored, pin-bearing form. That is `RULING FH`'s hazard in a new place: a loose
 plausible count.
 
 ✅ **The repair is the READER'S, not the record's — `RULING FY`'s shape.** The ledger is complete,
-honest and *better* than the regex; nothing about tick 310's block needs changing. **Standing
-correction, two clauses.** **(i)** The derivation tolerates a qualifier: match
-`MAIN (MOVED|DID NOT MOVE)[^:]*: pin [0-9a-f]+`, never the bare-colon form. **(ii)** A marker keeps
-its `: pin <sha>` shape and any qualifier goes **after** the pin, never between the verb and the
-colon — so the clauses converge rather than depending on each other. ⚠️ The repaired form drops a
-`MOVED` row's `to <sha>` tail; harmless, because the destination is the next tick's pin and is read
-there.
+honest and *better* than the regex; nothing about tick 310's block needs changing.
+
+⛔⛔ **GA's FIRST repair was itself defective and was corrected in the same tick, by measurement.**
+The form first written here was `MAIN (MOVED|DID NOT MOVE)[^:]*: pin [0-9a-f]+` read over
+`git log --format='%B'`. **Both halves are wrong, and the block defining them published the
+counter-example** — `RULING FH`'s exact mechanism, one level up:
+
+```
+%B  with [^:]*   → 11 rows: [^:]* SPANS PROSE, matching across
+                   "MAIN DID NOT MOVE that would be false … and wrote MAIN DID NOT MOVE AT PIN TIME: pin …"
+%B  with [A-Z ]* → 11 rows: prose gone, but the marker tick 311 QUOTES while explaining GA is counted
+                   a SECOND time — %B flattens N messages into ONE stream
+%s  with [A-Z ]* →  9 rows over 10 subjects: EXACTLY ONE PER TICK, zero prose,
+                   the single absence being tick 310 itself
+```
+
+✅ **Standing correction as measured — two clauses that converge.** **(i) READ the SUBJECT with an
+UPPERCASE-bounded qualifier**: `git log --format='%s' | grep -oE "MAIN (MOVED|DID NOT MOVE)[A-Z ]*:
+pin [0-9a-f]+"`. `%s` is **one line per commit**, so a block quoting a marker while discussing it
+cannot inflate the census, and `[A-Z ]*` cannot span prose where `[^:]*` does. **(ii) WRITE the marker
+in the SUBJECT**, keeping its `: pin <sha>` shape, any qualifier in **uppercase before the colon**.
+⚠️ **Tick 310's `AT PIN TIME` wording was GOOD and is not the fault — its only fault was LOCATION**,
+the marker living in the body alone. This ruling's first draft blamed the qualifier and told future
+ticks to move it after the pin; that was wrong, and unnecessary. ⚠️ The form drops a `MOVED` row's
+`to <sha>` tail; harmless, because the destination is the next tick's pin and is read there.
 
 ⭐ **Both arms proven on this lane's own history** (`RULING FU`'s standard): the repaired reader
 recovers tick 310 and **vindicates its "SIXTH CONSECUTIVE" claim**, which the old reader would have
