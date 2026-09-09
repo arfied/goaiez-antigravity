@@ -2589,3 +2589,119 @@ PB-135's *ask for the id SPACE, never the field NAME* in a new field. ⭐ **When
 anything else writes X, name the TABLE rather than the model, and require both the ORM and the
 query-builder forms.** ⚠️ A grep that returns nothing is not evidence until you know what it could not
 have matched.
+
+## ⛔⛔ Trap added 2026-09-08 23:2x — a `wire:` binding inside a `@foreach` is only as reachable as the QUERY THAT FEEDS THE LOOP
+
+PB-142's instrument stopped at *"does a writer exist"*; PB-143's stopped at *"does a control call it"*.
+**Both stop one hop short of "can a human ever reach the control."** ⭐ **`WIRED` is a claim about a code
+path, not about whether the button renders** — and I made this error myself at the top of the tick that
+found it, grading `JobDispatchAction` `WIRED` off `DispatchBoard:65` before reading the enclosing loop.
+
+`dispatch-board.blade.php:72` carries `wire:click="reassign(…)"` → `DispatchBoard:65` →
+`JobDispatchAction:15`, **the only creator of a `DispatchAssignment` anywhere in `app/app`.** That line
+sits **inside** `@foreach($assignments->where('status', $colStatus) …)` at `:27`, and `render():83` feeds
+`$assignments` from `DispatchAssignment` itself. **The only control that can create the first row renders
+only once a row exists.** ⛔ PB-128's discriminator settles it as always — `render():83` filters on a date
+and **synthesises nothing**, unlike `ApprovalsView`, which manufactures its claimed state in a `WHERE` and
+was correctly CLEARED.
+
+⭐ **The check is mechanical: walk the loops outward until you reach a control at top level, or you have
+found a closed loop.** ⭐ **The same shape, measured and CLEAR, so nobody re-derives it:** X-165's per-row
+`renew`/`remind` sit in a loop over `memberships`, which `startMembership` creates from
+`plans.blade.php:46` — inside a loop over `membership_plans`, which `proposePlan` creates from
+**`plans.blade.php:7`, a top-level form outside every loop.** **That chain bottoms out. X-162's does not.**
+
+⚠️ Two sibling starvations recorded in passing, both **undeclared ⟹ CAPABILITY, ⛔ not work:**
+`StockLocation` has **no writer at all** in `app/app` (one read, `StockByVan:50`), and `StockItem` has
+**no `create` in any of the three write shapes** — only two `findOrFail` in `InventoryEngine` and one in
+`StockByVan`. X-167's van screen is starved two levels deep, and its `proposeRestock` button (graded
+`WIRED`, correctly) is unreachable for exactly this reason.
+
+## ⭐⭐ Trap added 2026-09-08 23:2x — the screen's own EMPTY STATE stopped a wrong wave, and then turned out to be the defect
+
+PB-144 was half-briefed as *"build a top-level dispatch form on the board"* — the obvious repair for the
+closed loop above. ⛔ **`dispatch-board.blade.php:12-19` killed it:** the empty state reads *"There are no
+jobs assigned for today. **Go to Jobs to schedule and dispatch a technician.**"* with
+`action="Go to Jobs" target="goToJobs"`. **That is PB-127's `PeriodReady` near-miss exactly** — a
+decisive-looking absence the surface appears to account for — and reading it forced the two measurements
+that settle the wave:
+
+- `DispatchBoard:75` dispatches `go-to-jobs`. `grep -rn 'go-to-jobs' app/app app/resources` returns
+  **the dispatch site and nothing else. No listener.**
+- **There is no Jobs screen.** `app/app/Modules/X-121/Ui/` is `EntityHistoryViewer.php` and
+  `WhenX111Renders.php`. That is all of it.
+
+⭐⭐ **So it is the widest member yet of the sentence-the-code-does-not-honour family**
+(`deducted_if_proceeding` → *"a fresh link was sent"* → *"a restock is proposed"* → *"hours start en
+route"*), and the **strongest, because it is the first with BOTH halves: the sentence is false AND the
+remedy it offers is inert.** ⭐ **The generalisation: when a screen accounts for its own emptiness by
+naming a remedy, the remedy is a second claim and needs its own measurement.** Reading the sentence and
+stopping is how PB-127 nearly briefed a fix to working code; reading the sentence and then chasing its
+*remedy* is what found a real one.
+
+**RULED: fix the sentence, delete the dead remedy, ⛔ build no dispatch control** — undeclared in
+`capabilities.php` (⟹ a **capability**, week-2), and a real form writes `work_orders`, which is X-121's
+and ruling 8 stands. **Fifth incarnation here of *richer is always safe* being false, and the third where
+the answer is the sentence.** ⭐ The load-bearing deliverable is the **pinned absence** (PB-128 ruling 3);
+`DispatchBoardTest.php:33` asserts only the **first** clause, which survives the fix untouched.
+
+## ⛔⛔ Trap added 2026-09-08 23:2x — a STOP condition must name its rows by the PROPERTY that triggered it, never by POSITION
+
+PB-143's brief: *"If more than 8 writing methods come back `TEST-ONLY` or `UNCALLED`, stop enumerating,
+report the counts and **the first 8 rows**."* The coder reported the first 8 rows **of the item-1
+table** — 7 `WIRED`, 1 `TEST-ONLY`. **The 9 unwired rows the stop condition exists to surface were named
+nowhere.**
+
+⭐ **The coder's reading is the defensible one** and grading it a shortfall would be the PB-126 mistake:
+*"the first 8 rows"* has an obvious antecedent — the table it had just been told to build — and it is not
+the filtered subset I meant. ⭐⭐ **The generalisation: a positional selector applied to a filtered result
+silently returns the unfiltered head.** Say *"the 8 rows that triggered the stop"*, never *"the first 8"*.
+
+⚠️ **This is PB-141's destroyed-rows failure repeating ONE WAVE after the rule against it was written** —
+that rule said *grade every value of the vocabulary*, and the very next brief then asked for the rows by
+a selector that could not see the vocabulary at all. ⛔ A rule about an instrument's **output** does not
+protect you from a defect in how the brief **selects** from that output.
+
+⚠️ Companion, same cause: the report's answer to *"is anything inconsistent?"* was **"No inconsistencies"**
+while its `TEST-ONLY: 9` and its own one-row table plainly disagreed. **A self-consistency question is
+worth exactly as much as a rejection clause that restates the verdict** — it is answered "no" every time
+unless the brief **names the two specific numbers that must reconcile.**
+
+## ⭐ Recorded 2026-09-08 23:2x — the lane's unwired writer entry points, named so they are not lost a third time
+
+Recovered by the reviewer in three greps after PB-143 reported the count without the rows. ⭐ Unlike
+PB-142's contradicted count, **this one HOLDS**. Written here because `REPORT.md` is overwritten every
+wave and this is the third time this lane has nearly lost a row set.
+
+| entry point | only callers | verdict |
+| :--- | :--- | :--- |
+| `X-162 EtaUpdateAction` | `X162Test.php:31`/`:40` | `TEST-ONLY` |
+| `X-162 RouteOptimiseAction` | `MapTest.php:72`/`:114`/`:135`, `X162Test.php:38` | `TEST-ONLY` |
+| `X-166 JobCostAction` | five X-166 test files | `TEST-ONLY` |
+| `X-167 PoGenerateAction` | `X167Test.php:32`/`:40` | `TEST-ONLY` |
+| `X-167 StockAdjustAction` | `X167Test.php:38`, `StockByVanTest.php:82` | `TEST-ONLY` |
+| `X-175 FieldSuggestAction` | `X175Test.php:25`/`:32` | `TEST-ONLY` |
+| `X-82 AllowanceLookupAction::grant` | the one row PB-143 reported | `TEST-ONLY` |
+
+⭐ Genuinely `WIRED` and verified: `ReorderProposeAction` ← `StockByVan.php:32`; `FieldAskAction` ←
+`StafffacingAssistantPanel.php:36`. ⭐ `StockAdjustAction` being `TEST-ONLY` **independently confirms**
+PB-142's note 4: `InventoryEngine::consumeStock` has no production caller.
+
+⛔ **`JobCostAction` is the sharpest row and it is NOT briefable.** All four X-166 margin screens
+(`MarginByJob:37`, `ByTech:44`, `BySource:40`, `ByService:40`) **and** `MarginReportAction:13` read
+`job_costs`; the only writer is `JobCostAction:30`, test-only. **X-166's entire surface is empty in
+production** — PB-132's X-168 finding in a second module. ⛔ But `X-166/capabilities.php` declares exactly
+two ids (`N-048`, `N-166-01`) and **neither declares a cost-entry path**: **undeclared + unwired = a
+CAPABILITY**, week-2 build work, never a defect. ⭐ Recorded with **both halves** so a future tick
+re-finding it gets the ruling and not the finding.
+
+## ⭐ Trap added 2026-09-08 23:2x — a carve-out named ONE BINDING SYNTAX, for the third enumeration failure in this lane
+
+PB-143's brief said *"a `wire:click` in a blade **counts as a human action**"*. **Three of its seven
+`WIRED` hops are `wire:submit`** (`plans.blade.php:7`/`:46`, `rate-registry.blade.php:7`). The coder
+correctly graded them `WIRED` anyway.
+
+⭐ Exactly PB-141 note 1's shape one field over: **naming one syntax when you mean the category is
+enumerating, and enumerating is what fails.** Say *"a `wire:` binding, a route or a console command"*.
+⚠️ **Third time in this lane an enumeration has itself been the error** — PB-117's formatter edit-shapes,
+PB-142's call syntaxes, this. ⛔ There will not be a fourth that enumerates.
