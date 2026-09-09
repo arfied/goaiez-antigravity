@@ -5117,3 +5117,62 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     methods (ruling 68). ⚠️ That file is **class-style with 2 methods**; `grep -c "test("` returns 3
     there and is **wrong** — `latest(` contains `test(`. The census pattern is
     `grep -c "function test_"`, and ruling 86's instrument gains that exclusion.
+215. **A write that precedes a throw inside `DB::transaction` does not survive it, so an assertion
+    that a refused act wrote a row can only be green because something ELSE wrote it — and MONEY-136's
+    brief made that assertion its stop-clause (RULED by the lane supervisor 2026-09-09, on MONEY-136's
+    `6b05c747`; briefed as MONEY-137).** Ruling 214 removed `ArPlanTerm::firstOrCreate(...)` from
+    `PaymentplanBuilder::render()` and the brief added a guard: *"`PaymentplanBuilderScreenTest:79`'s
+    `assertSame(1, ArPlanTerm::…->count())` must still be green — `call('offerPlan')` reaches the
+    engine's `firstOrCreate`. A red there means you changed `ArEngine` — revert and report REFUSED."*
+    The coder removed the write, saw the red, reverted and reported. **The clause was false and the
+    refusal is upheld** (the ruling 60(b)/71/94/106/118 precedent — it spends no dispatch). Measured:
+    the call at that point passes **12** installments, so `ArEngine::offerPlan()` writes at `:129` and
+    **throws** `PlanPastThresholdException` at `:132`, inside `DB::transaction(...)`, which **rolls
+    the write back** (a savepoint under `DatabaseTransactions`). On the refused path the engine
+    persists nothing, so the assertion was green **only** because `render()` created the row: ruling
+    43's shape exactly — *the assertion that certifies the fiction, green precisely because the
+    fabrication is there*. ⭐ **The lane already asserted the opposite three times, for the same table,
+    in the same module** — `AgeingByReasonScreenTest:189` and `:196` after a refused late fee and a
+    refused term, and `X211Test:144` carrying the message `'a refused fee created the terms row'`.
+    `PaymentplanBuilderScreenTest:80` is the odd one out, and ruling 98's self-contradiction tell had
+    three direct witnesses the brief walked past. **RULED: `:80` is INVERTED and kept** with a message
+    mirroring `X211Test:144`'s, ⛔ never deleted (rulings 39, 46), **and a second assertion is added
+    after the SUCCESSFUL offer**, because inverting a negative without replacing its positive is how a
+    check quietly stops checking (ruling 101) — that added line is the only thing that would catch a
+    re-introduction of the engine's write. ⚠️ The instrument, and it is the family's twenty-fourth: **a
+    brief that dictates a STOP-CLAUSE on an existing assertion has dictated whether the wave can
+    finish**, and this clause's premise was a **transaction boundary the brief never read**. Before
+    pinning an existing assertion as a guard, measure *why* it is green — an assertion whose greenness
+    depends on the defect being present will stop the wave that removes it. Per the
+    46/49/50/62/66/75/82/86/94/104/106/113/116/146/153/167/175/183/189/193/195/198/200 precedent the
+    miss is the supervisor's and MONEY-137 carries its own two dispatches.
+216. **`ArEngine:129` is a threshold LOOKUP, not a write path — ruling 214's recording is overturned,
+    and removing the write makes the file's own comment TRUE (RULED by the lane supervisor
+    2026-09-09, briefed as MONEY-137 item 2).** Ruling 214 recorded `ArEngine.php:129`'s
+    `ArPlanTerm::firstOrCreate` as *"a write path inside the transaction that records a plan … editing
+    it would be a second change with no owner-visible consequence"* and left it. Re-measured under
+    ruling 64's discipline — the third inherited attribution this lane has had to correct, after
+    rulings 163 and 176 — it is a **lookup for the refusal comparison at `:131`**, the same
+    read-that-writes as `render():75` one file over, and the two are one defect the ledger split on a
+    mis-measurement. **RULED: both become `ArPlanTerm::where('business_id', …)->first() ?? new
+    ArPlanTerm`**, the shape `AgeingByReason:129` has had all along. Three reasons it is one wave:
+    (1) fixing only `render()` leaves a **refused** offer writing nothing while a **successful** offer
+    writes a threshold row nobody set, and the new assertion would then have to pin that inconsistency
+    — writing a fiction into the suite is worse than not testing it; (2) ⭐ the comment at `:127-128`
+    ends *"The throw is before the first write."*, which is **false today** because `firstOrCreate` is
+    a write preceding the throw — so removing it **makes the comment true**, and ⛔ the comment stays
+    byte-identical: the code moves to meet it, which is ruling 81's docblock family resolved in the
+    better direction; (3) behaviour is unchanged and measured —
+    `ar_plan_terms.max_installments` defaults to **3** and `max_term_days` to **90**
+    (`2026_09_04_170000…:20-21`) and `ArPlanTerm::$attributes:15-18` carries the same pair, so the
+    fallback yields identical numbers with or without a row. ⭐ **The table keeps a real writer**, which
+    is what makes this safe rather than decision 272's shape: `setLateFeeTerm():99`'s
+    `ArPlanTerm::updateOrCreate(...)` — the owner's late-fee door, reached from
+    `AgeingByReason::saveTerm` — is untouched, so after this wave the row exists **only** when an owner
+    set something, which is the provenance P-193 and OWNER ACTION 13 exist to preserve. The **absence**
+    of a row is the honest state and the model's `$attributes` supply the standing default the blade
+    now correctly describes. ⛔ Not by moving the guard outside the transaction, ⛔ not by deleting the
+    threshold comparison, ⛔ not by minting a threshold-setting door (ruling 59). ⚠️ Blast radius
+    measured with the full 22-line `ArPlanTerm` sweep: exactly **one** existing assertion moves
+    (`PaymentplanBuilderScreenTest:80`), and no test anywhere asserts a terms row exists after
+    `offerPlan`.
