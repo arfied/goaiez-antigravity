@@ -901,3 +901,4 @@
 - `2026-09-08T19:21:49` note: boundary Restored BUILD PROPOSAL prefixes to G16-21 and G5-31 and updated G5-31 to note that ChatTurnCreated exists but lacks manifest declaration and payload delivery.
 - `2026-09-08T19:43:31` note: boundary No legal route exists to deliver the chat turn payload from X-102 to C-Agent: the queue law forbids passing words, and BoundaryStage forbids C-Agent from importing X-102 models to read the row ID.
 - `2026-09-08T20:05:14` note: boundary The 2026-09-08T19:43:31 row was wrong to claim no legal route exists: a synchronous call to a registered action via string name passes words without riding a queue payload and without a use statement.
+- `2026-09-08T23:45:25` note: boundary Established the payload assertion using value family mutation, confirming words cross module boundary to C-Agent, and mutation 1 is spent.
