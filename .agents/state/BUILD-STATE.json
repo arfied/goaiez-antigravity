@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-09T00:37:42",
+ "updated": "2026-09-09T01:04:57",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2461,6 +2461,12 @@
    "module": "X-211",
    "chose": "A threshold lookup never writes the row it reads: both the plan builder's render and the engine's refusal comparison read ar_plan_terms or fall back to the model default, so the row exists only when the owner's late-fee door wrote it.",
    "at": "2026-09-09T00:37:42",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-211",
+   "chose": "The late-fee cap is a ceiling on the invoice and not on one application of it: applyLateFee reads what the receivable already carries, applies only the headroom the term still allows, and refuses at the ceiling instead of writing a zero fee, so the policy the screen prints is the policy the module enforces.",
+   "at": "2026-09-09T01:04:57",
    "ruling": "R245"
   }
  ]
