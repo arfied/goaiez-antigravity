@@ -5235,3 +5235,91 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     a `FINAL GIT STATUS` claimed empty by a run whose own artifacts were sitting in it. ⚠️ Nothing was
     committed and no tip was withheld, so this is graded with the refusal (ruling 217) rather than as a
     BLOCK; the fabrication is answered by making the field unfabricatable, not by spending a dispatch.
+219. **A `GATE:` field is a transcription of a NAMED file, and a run whose gate is not redirected
+    to that file has no §1–§6 at all (RULED by the lane supervisor 2026-09-09, on MONEY-137b's
+    `ca6f78cb`).** Ruling 218 made the field a transcription rather than a judgement; MONEY-137b
+    shows the other half. `REPORT.md` carried `tests 2363 · passed 2361 · FAILED 0 · errors 2`
+    while `.agents/supervisor/gate-money137b.txt` — the file step 6 named — **does not exist**.
+    ⚠️ **This time the number was genuine**: `/home/goaiez/tmp/last-pest-grs-antig-money.json`
+    holds `"tests":2363,"passed":2361,"errors":2,"duration_ms":137842` against this wave's tree
+    (MONEY-136's floor was 2362) and the supervisor's own gate reproduced it exactly. So the
+    defect is not the figure, it is that **with no file the report carried §7 and nothing about
+    the tree, the forbidden paths, `php -l`, `pint` or `phpstan`** — and §6 is the section ruling
+    34 turns the push on. A wave can be correct in every measured respect and still hand the next
+    tick a verdict it cannot check. **RULED: `GATE:` carries TWO lines — the `grep`ped test line
+    and §6's two `{"tool":…}` objects, both from the same named file — and a report that cannot
+    name the file writes `NOT RUN` with no number.** ⛔ Never a number from
+    `/home/goaiez/tmp/last-pest-*.json`: it is overwritten by every gate in the checkout, it
+    carries no §6, and reading it as the coder's source is rulings 83/136/145/179/188's family —
+    a cheap signal that moves for reasons unrelated to the fact it stands for. It is the
+    **supervisor's** corroboration instrument (ruling 174) and it is what proved the figure here;
+    it is never the coder's. ⚠️ Graded **PASS, not PASS-WITH-NOTES**: §1–§6 were unrecorded in the
+    coder's paperwork and measured here in full, and every one was green — withholding over that
+    is ruling 74's error.
+220. **The transaction-boundary census is MEASURED and STRUCK (measured 2026-09-09; rulings 64, 95,
+    100, 111, 114, 120, 132, 142, 151, 170, 184, 187, 190, 197, 199, 201, 203, 204, 205, 206, 208,
+    209, 211, 212, 213).** Ruling 215 turned on a write that does not survive its own throw and
+    asked how many others this lane has. The population is **21 `DB::transaction(` closures** across
+    five `Domain/` trees, and after MONEY-137b removed `ArEngine:129`'s `firstOrCreate` exactly
+    **one** has a write before a throw: `C-Billing/BillingLedgerEngine::topup():88`'s
+    `TrialLimit::create` ahead of `:100`'s `REFUSAL: Daily top-up ceiling exceeded`. Its rollback is
+    **correct** — a refused top-up should leave no ledger row — and **no test certifies otherwise**:
+    all three ceiling tests (`CreditsScreenTest:140`, `MrrScreenTest:106`, `CBillingTest:121`) seed
+    the `TrialLimit` explicitly first, so none reaches the create-then-throw path at all. Every
+    other refusal in the lane throws before its first write (`applyLateFee` :55 → :65, `offerPlan`
+    :119/:124/:132 → :141, `logOfflinePayment` :178 → :181, `packageForCollections` :222 → :245,
+    `capture` :90 → :100, `attachPayment` :226 → :232, `debit` :27/:32 → :35), and
+    `setLateFeeTerm`'s and `recordReason`'s guards sit outside the transaction entirely. ⛔ Not a
+    wave and not to be re-raised: C-Billing `Domain/` is Track 1's by ruling 5 and there is nothing
+    to fix. ⚠️ Ruling 95's lesson a fifth time — **a sweep proposed by a ruling is a claim, and one
+    that comes back empty is struck with its measurement written down**, or the next tick re-derives
+    it under time pressure.
+221. **The single-value fixture census returns ONE live finding, and it is a money bound: the
+    late-fee cap bounds each PRESS of the button, not the invoice (RULED by the lane supervisor
+    2026-09-09, briefed as MONEY-138).** The census enumerated every identity comparison on a model
+    property in the eight modules' `Domain/` trees — **11 lines** — asking of each how many distinct
+    values its fixtures seed (ruling 68's shape). **Eight are already two-sided, seven of them
+    because a prior ruling widened the fixture**: `gateway_name === 'stripe'` (99),
+    `gateway_charge_id !== null` (101), `status !== 'compiled'` (62), `run->status !==
+    'discrepancy_logged'` and `reviewed_at !== null` (both driven by
+    `ReconciliationDiscrepanciesScreenTest:71,:74`), `conflict->status === 'resolved'`
+    (`ConflictsListScreenTest:84`), and the null-cap arm of `late_fee_cap_cents === null` by
+    `X211Test:148-151`'s *"write one with no cap and the same call applies 5 % of the total"*.
+    `InvoiceEngine:217`'s `status !== 'issued'` sits inside the caller-less `markOverdue` (rulings
+    69, 96). `DisputeDefenseEngine:96`'s `reason === 'fraudulent'` is **recorded, not briefed**: the
+    column defaults to `'fraudulent'`, the method parameter defaults to `'fraudulent'`, all six
+    writers pass it explicitly and `disputes` has no production writer at all (ruling 79), so the
+    `else` arm — a dispute submitted with **no** evidence-completeness requirement — is unreachable
+    and ruling 96 governs. ⚠️ Worth keeping as a shape: there the **condition** is the fiction
+    rather than the branch, which is ruling 43's *does it even vary?* asked of a guard.
+    **The finding is `ArEngine::applyLateFee():61-63`.** `$maxFee` is computed from the invoice
+    total and the term's cap and bounds `$finalFee` alone, while `:71` writes
+    `late_fee_cents + $finalFee` — an **accumulation** — and
+    `ageing-by-reason.blade.php:65-67` gives the owner a per-invoice form they may submit as often
+    as they like. Three presses on a $1,000 invoice under a *10%, capped at 20.00* term write
+    **$60**, while `:27`'s policy pill still reads *"10% of the invoice, capped at 20.00"* and
+    `:58` renders *"late fee 60.00"* **eight lines below it**. ⭐ Ruling 98's self-contradiction
+    tell at its cheapest yet — two pills on one screen — and invisible to every gate because **all
+    four** `applyLateFee` call sites in the lane (`X211Test:86`, `:150`, `:413`,
+    `AgeingByReasonScreenTest:212`) apply a fee **once**: ruling 68's *a test that cannot see the
+    defect is not the test that proves the fix*, on the single branch this census was built to find.
+    **RULED: the cap is a ceiling on the INVOICE.** `applyLateFee` reads the receivable's existing
+    `late_fee_cents` **before** writing anything, applies only the headroom the term still allows,
+    and at zero headroom **refuses** in the module's own vocabulary — `FeeAtCapException`, the shape
+    `FeeWithoutTermException` already establishes in `Domain/` — rather than writing a zero fee and
+    dispatching `ArFeeApplied` for it (rulings 87, 101). ⛔ **The copy does not move**: *"capped at
+    20.00"* becomes TRUE as written, which is ruling 216's better direction — the code moves to meet
+    the sentence. ⛔ The read is a `->value(…) ?? 0` in `AgeingByReason:138`'s own idiom, **never** a
+    `firstOrCreate`: ruling 215 is one wave old and a refusal writes nothing (M29-C). ⛔ No existing
+    arithmetic assertion moves — measured, not assumed: every current fixture's first application
+    has full headroom, so all four keep their exact numbers — and the proof is therefore a **new**
+    test. ⚠️ **The honesty consequence is inseparable and ships in the same wave.** The `$refused`
+    panel at `blade:14-17` is headed *"No late-fee term in the agreement"* over a hardcoded tail
+    *"Write the term below, then apply the fee again."* — both correct for the only refusal that
+    existed and both **false** for a cap refusal, where the term is written and applying again does
+    nothing. The heading names the **act** (ruling 93) and the tail moves verbatim into
+    `FeeWithoutTermException`'s own message, so each refusal carries its own remedy and no guidance
+    is lost. ⚠️ Blast radius measured with interior fragments (rulings 46, 86, 146): the sweep is
+    **11 lines, 4 to change and 7 measured clean**, the three surviving needles are all substrings
+    of the sentence being appended to, and `AgeingByReasonScreenTest:184` is **changed**, never
+    deleted.
