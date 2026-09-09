@@ -11,35 +11,35 @@
  "bootstrap_done": true,
  "stages": {
   "integrity": {
-   "violations": null,
+   "violations": 0,
    "fails": "COMMIT"
   },
   "boundary": {
-   "violations": null,
+   "violations": 55,
    "fails": "COMMIT"
   },
   "contract": {
-   "violations": null,
+   "violations": 85,
    "fails": "COMMIT"
   },
   "citation": {
-   "violations": null,
+   "violations": 3,
    "fails": "COMMIT"
   },
   "schema": {
-   "violations": null,
+   "violations": 16,
    "fails": "MERGE"
   },
   "capability": {
-   "violations": 372,
+   "violations": 207,
    "fails": "MERGE"
   },
   "anchor": {
-   "violations": null,
+   "violations": 128,
    "fails": "WAVE"
   },
   "journey": {
-   "violations": null,
+   "violations": 3,
    "fails": "WAVE"
   }
  },
