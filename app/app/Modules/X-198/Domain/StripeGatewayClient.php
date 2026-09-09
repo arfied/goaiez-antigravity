@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X198\Domain;
 
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use RuntimeException;
 
@@ -13,7 +14,7 @@ final class StripeGatewayClient
     {
         $secret = config('credentials.stripe_secret');
         if (empty($secret)) {
-            throw new GatewayNotConfiguredException('Missing stripe_secret');
+            throw new GatewayNotConfiguredException('No payment gateway credential is configured in this checkout, so nothing was sent to the gateway.');
         }
 
         $response = Http::withToken($secret)
@@ -25,12 +26,12 @@ final class StripeGatewayClient
             ]);
 
         if ($response->failed()) {
-            throw new RuntimeException('Stripe charge failed: '.$response->body());
+            throw new RuntimeException($this->refusal('The gateway refused the charge', $response));
         }
 
         $id = $response->json('id');
         if (! is_string($id)) {
-            throw new RuntimeException('Invalid response from Stripe: '.$response->body());
+            throw new RuntimeException('The gateway accepted the charge request but sent back no charge id, so nothing was recorded.');
         }
 
         return $id;
@@ -40,7 +41,7 @@ final class StripeGatewayClient
     {
         $secret = config('credentials.stripe_secret');
         if (empty($secret)) {
-            throw new GatewayNotConfiguredException('Missing stripe_secret');
+            throw new GatewayNotConfiguredException('No payment gateway credential is configured in this checkout, so nothing was sent to the gateway.');
         }
 
         $response = Http::withToken($secret)
@@ -63,16 +64,31 @@ final class StripeGatewayClient
             ]);
 
         if ($response->failed()) {
-            throw new RuntimeException('Stripe checkout session failed: '.$response->body());
+            throw new RuntimeException($this->refusal('The gateway would not open a payment page', $response));
         }
 
         $id = $response->json('id');
         $url = $response->json('url');
 
         if (! is_string($id) || ! is_string($url)) {
-            throw new RuntimeException('Invalid response from Stripe: '.$response->body());
+            throw new RuntimeException('The gateway accepted the request but sent back no payment page, so no link was made.');
         }
 
         return ['id' => $id, 'url' => $url];
+    }
+
+    /**
+     * The gateway's own sentence where it sent one, and its status where it did not.
+     * ⛔ Never the raw response body: an owner reads this string on the declines screen.
+     */
+    private function refusal(string $act, Response $response): string
+    {
+        $message = $response->json('error.message');
+
+        if (is_string($message) && $message !== '') {
+            return $act.': '.$message;
+        }
+
+        return $act.': the gateway answered '.$response->status().' and gave no reason.';
     }
 }

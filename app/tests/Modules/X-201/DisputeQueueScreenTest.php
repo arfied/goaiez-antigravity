@@ -103,4 +103,26 @@ class DisputeQueueScreenTest extends TestCase
             ->assertSee('Seal the defence')
             ->assertDontSee('Submit the defence');
     }
+
+    public function test_a_fraud_defence_names_the_evidence_it_still_needs_in_owner_words(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $dispute = app(DisputeRecordAction::class)->handle($biz->id, 905, 42000);
+
+        $this->assertSame('fraudulent', $dispute->reason);
+
+        Livewire::actingAs($owner)->test(DisputeQueue::class)
+            ->set('note.'.$dispute->id, 'Tech was on site and the customer signed')
+            ->call('compile', $dispute->id)
+            ->call('submit', $dispute->id)
+            ->assertSee('The bundle is still missing the call log, the call transcript, the delivery receipt, the consent record. Add them, then submit again.')
+            ->assertDontSee('call_log')
+            ->assertDontSee('consent_record');
+
+        $this->assertSame('compiled', $dispute->fresh()->status);
+    }
 }
