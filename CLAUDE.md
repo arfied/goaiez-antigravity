@@ -7090,3 +7090,140 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     (ruling 61's family). **RULED unchanged: the command is GIVEN the tenant** — `--business=`, plus
     `business_id` recorded in its own artifact so the choice is made once and then durable — and the
     one-off discovery is a **measurement item**, not machinery inside the command (ruling 59).
+273. **A tenant-less read on `Business` throws at the APPLICATION scope before any SQL is sent, so the
+    `owner_lookup` RLS policy is never consulted — ruling 272's correction measured one layer and
+    dictated a query that carries the other, and the working shape was in this lane's own production
+    code all along (RULED by the lane supervisor 2026-09-09, on MONEY-159's item 1).** Ruling 270
+    recorded that `$user->ownedBusinesses()` returns null with no tenant and blamed RLS; ruling 272
+    corrected the blame to *"a console command sets no `app.user_id`"*, measured the `owner_lookup`
+    policy and `Tenancy::actingAsUser()`, and concluded *"the discovery is cheap after all"*. MONEY-159
+    ran it and it threw **`TenantNotResolved`**. Measured: `Business` uses `App\Concerns\IsTenantRoot`,
+    whose `bootIsTenantRoot():32-34` is `static::addGlobalScope(new TenantScope)`, and
+    `App\Scopes\TenantScope::apply():44-45` compares `$model->qualifyColumn($model->tenantKeyName())`
+    against **`Tenancy::idOrFail()`** — which throws while the query is still being *built*, so
+    Postgres is never asked and no policy, permissive or otherwise, can matter. ⭐ **This is this lane's
+    standing field note read forwards, and nobody has ever read it that way.** The note —
+    *RLS sits beneath the application scope, so `withoutGlobalScopes()` does not help* — is always
+    quoted to mean *you cannot escape RLS*; the same sentence says the application scope fires
+    **first**, so a plan justified by a policy alone is unexecutable whatever the policy says.
+    **RULED: the working shape is `Business::withoutGlobalScopes()->where('owner_user_id', $userId)`
+    inside `Tenancy::setUser($userId)`** — `withoutGlobalScopes()` removes the `idOrFail()` throw and
+    `owner_lookup` then does the real scoping beneath, which is the note read in both directions at
+    once. ⭐ **It is available to this lane and needs no new caller:**
+    `X-211/Console/DetectOverdueReceivablesCommand.php:51-55` already ships exactly that, in money's
+    own module, passing the gate today, and `Tenancy::setUser` is called five times in
+    `C-Billing/RevenueRecoveryScreenTest` besides. ⛔ **`Tenancy::actingAsUser()` is NOT the route
+    here:** `AccountDirectory:490` uses it (and needs `withoutGlobalScopes()` anyway), and `:317`
+    records that it is held to that one class by a lint, warning in terms that a second caller *"is
+    reasonable on its own diff and does not read as a security change"* — the exact diff this lane
+    would be writing. ⚠️ **Measured and recorded rather than treated as licence: that lint does not
+    exist in this tree.** `grep -rln actingAsUser app/tests` is **empty** and
+    `tests/Feature/Architecture/` holds seven files, none of them `StaffTest`. The docblock is the
+    module owner's stated intent and stands on its own; the absent CHECK is another lane's to write.
+    **→ TRACK 1 ACTION 15.** ⚠️ The generalisable half, and it is the third measurement of one fact
+    (270 wrong reason, 272 wrong conclusion, 273 measured): **a correction that measures one layer is
+    not a correction.** A claim that a read will work names every layer between the call and the row —
+    the relation, the model's global scopes, the connection, the policy — or it is a hypothesis with a
+    citation attached.
+
+274. **A field asking a run to classify its own method returns an intent, so it stops being a
+    classification and becomes a transcription (RULED by the lane supervisor 2026-09-09, on
+    MONEY-159's `gate: foreground`; superseding rulings 242 and 247's remedies).** Ruling 242 found a
+    `REPORT.md` claiming a foreground gate against a log saying background, and ruled that the field
+    must state what was **observed**. Ruling 247 found it again, decided the category was
+    unreachable — *"a binary the harness can override from underneath is not one"* — and offered an
+    honest compound category (`foreground (harness backgrounded on --print-timeout; waited for
+    completion)`). MONEY-159's brief asked for that form and got the bare word `foreground`, while
+    `agy-run182.log:2-3` says *"I have started the background gate check"* and *"I am leaving it in
+    the background"*. **Three waves, three remedies aimed at the wording, three intents.** ⭐ Every
+    other gate field in this ledger was fixed the same way and none of them has recurred: ruling 218
+    made the §7 number a transcription of a named command's output, 219 made `GATE:` a transcription
+    of a named file, 238 made its bytes and mtime a transcription of a second read, 243 made its first
+    line a transcription of the guard line no other command emits. **RULED: `GATE:`'s last field
+    carries the run log's own first two lines, verbatim, under `log:`** — a run cannot mis-summarise a
+    quotation, and the reviewer gets the same two lines it would have read anyway. ⛔ The category is
+    not asked for again in any form. ⚠️ Ruling 218(2)'s prohibition is untouched and is about
+    **behaviour**, not vocabulary: a run still blocks on its own gate, and a report composed before
+    the gate exits is still the defect. Here it did block, and 238's second read caught what 242's
+    wording could not.
+
+275. **The per-screen authorization population is measured for the first time — 24 components, two
+    guard shapes — and X-173's three are RECORDED rather than fixed, because nothing in that module
+    reads `auth()` at all (RULED by the lane supervisor 2026-09-09; ruling 100's breadcrumb followed
+    to the end).** Ruling 151(5) reported all 24 components carrying
+    `abort_unless(auth()->check() && Tenancy::check(), 403)`; it measured the *presence* of a guard
+    and not its *content*. Measured per component: **19** carry that clause and **5** carry
+    `abort_unless(Tenancy::check(), 403)` alone — X-117's `CartBlock:78` and `CheckoutBlock:99`, and
+    X-173's `ConnectionMappingView:62`, `SyncErrorRateView:24` and `ConflictsListView:46`.
+    ⭐ **X-117's two are correct by design and X-173's three are accidental, and no grep can tell them
+    apart:** a cart and a checkout block are the **customer**-facing storefront, where requiring an
+    authenticated owner would break the screen on purpose, while X-173's three are owner screens with
+    an owner's connect door. That is ruling 228(a)'s shape applied to a **guard** rather than a
+    sentence — two identical omissions, one true and one false, with the fact that separates them
+    living in a different file. **RULED: recorded, not fixed**, on three measurements. (1)
+    `grep -rn "auth()" app/app/Modules/X-173` returns **nothing** — the module has no `auth()`
+    reference anywhere, so no behaviour whatever differs between an authenticated and an
+    unauthenticated mount, and there is no `auth()->id()` written to a row (which is what would have
+    made it live). (2) The generated route carries `['web','auth','tenant.role']`, and
+    `Http/Middleware/TenantRole:13` is `abort_unless(auth()->user()?->hasRole(UserRole::Owner,
+    UserRole::Manager), 403)`, so an unauthenticated request never reaches the component and a
+    Livewire snapshot cannot be obtained without passing it. (3) ⚠️ The blast radius is the decider:
+    **not one `Livewire::actingAs` exists anywhere in X-173's tests** — all twelve mounts across the
+    three screen test files are a bare `Livewire::test()` after `provisionTenant()` — so the clause
+    would redden about a dozen existing assertions to guard a path the module cannot distinguish. That
+    is ruling 84's blast-radius refusal, not ruling 209's one-line defence-in-depth, where **zero**
+    assertions moved. ⛔ Not to be re-raised as a defect. ⚠️ **Recorded as the residue, at ruling 76's
+    grade:** those twelve mounts exercise three owner screens in a state production cannot produce,
+    and the day X-173 acquires its first `auth()` reference they become the wrong fixtures — so a wave
+    that adds one owns them. ⚠️ Measured in the same pass and struck: **no money screen checks a role,
+    and none should** — the role gate is `tenant.role` on the generated route, which is Track 1's
+    (ruling 20), and Owner-or-Manager for a money screen is a settled product answer, not a lane
+    defect. Ruling 100's `CollectionsPackagePreview:32` recording stands unchanged.
+
+276. **Four backlog sweeps are measured and STRUCK, and MONEY-160 is RE-CUT: the empty number pool
+    stops being only a blocker and becomes the INSTRUMENT that proves the fix (RULED by the lane
+    supervisor 2026-09-09; rulings 64, 95, 100, 111).** Every carried candidate was measured before it
+    could become a brief item and three of the four are empty.
+    **(a) `ShouldQueue` — CLEAN, and it is the shape done right.** The lane has exactly **one** queued
+    listener, `X-211/Listeners/ProcessOverdueReceivable implements ShouldQueue`, on one of its two
+    live seams (ruling 148). It wraps its entire body in
+    `Tenancy::actingAs((int) $event->businessId, …)`, so it depends on no ambient tenant; `ArOverdue`
+    is three readonly **ints** with no `SerializesModels`, so a queued dispatch re-resolves no model in
+    a worker with no tenant — ruling 193's hazard absent by construction. And it is **already proven**:
+    `phpunit.xml:37` pins `QUEUE_CONNECTION=database`, so the listener genuinely queues in the suite,
+    and `X-211/ArOverdueQueueTest` dispatches, calls `Tenancy::forgetAll()`, asserts
+    `Tenancy::id()` is null, drains with `queue:work --stop-when-empty` and only then asserts the
+    action — plus a second method for idempotence across duplicate events. ⛔ Struck.
+    **(b) Bare foreign-key columns — the house convention, not a family.** Ruling 257 noticed
+    `payments.invoice_id` has no FK and no index unlike eight sibling `invoice_id` columns; measured
+    tree-wide, a bare `unsignedBigInteger` for a **cross-module** id is what a dozen other lanes'
+    migrations do, so the column matches the convention rather than departing from it. The absent index
+    is real and unfixable here: ruling 41 part 3 forbids editing that migration, and a **new** one to
+    index a column ruling 257 measured has no writer and no reader is churn. ⛔ Struck.
+    **(c) Migration-comment claims — structurally unfixable, so a recording by construction.** Ruling
+    41 part 3 forbids editing a migration, and a new migration is a schema statement rather than a
+    place to correct another's prose, so ruling 96 governs whatever the sweep would find. ⛔ Not a
+    wave. ⚠️ Worth keeping: this ledger has *relied* on migration comments as evidence of intent at
+    least six times (rulings 43, 51, 80, 88, 130, 214), so a false one misleads exactly the reader who
+    trusts it — a `state.py note` is the remedy if one is ever found incidentally.
+    **(d) The `Actions/` inert-delegate set** was pre-decided a recording by ruling 223(c). ⛔ Struck.
+    ⭐ **The re-cut.** The previous tick gated MONEY-160 — the same three edits on the other four
+    evidence commands — behind *"only once MONEY-159's item 3 has actually succeeded, because the shape
+    is unproven until an artifact has been written through it."* Re-measured under ruling 64: item 3
+    refused, so the artifact-record fallback **has still never executed**, and fanning an unproven
+    shape out to four commands — two of whose artifacts assert an `INV-` sequence and a non-repeating
+    number against a tenant that already holds invoices (rulings 169, 172) — is the unvalidated fan-out
+    this lane keeps paying for. **The gate stays closed.** But ruling 273 reopens the wave from the
+    other end: the tenant can be discovered after all, so `--business=<id>` runs the command **without
+    provisioning**, and ruling 39's sequence completes with no number spent. **RULED: MONEY-160 is the
+    X-117 evidence run itself.** ⭐ **And the empty pool is what makes the proof deterministic:** a
+    second run with **no flag** can only succeed by reading `business_id` back out of the artifact,
+    because the provision path is guaranteed to refuse — so a successful bare run is positive proof the
+    fallback branch executed, with no mutation and no test. ⚠️ Every property the reuse depends on was
+    measured before briefing (ruling 46): `X117RuntimeProofTest:18-21` asserts **four** keys and
+    `order_id` is **not** among them, so a reused tenant's higher order id is safe;
+    `GatewayEngine::connect():58-63` is a bare `updateOrCreate` on `(business_id, gateway_name)` with no
+    guard — ruling 129's refusal is on `applyForSubMerchant`, which the command never calls — so
+    `merchant_connected` stays true; and `sellables.sku` is `->index()` and not unique, so the second
+    `Sellable::create` cannot collide. **The one key that can go wrong is `payments_written`**, which is
+    why the tenant is chosen for `payments = 0` and never merely for existing.
