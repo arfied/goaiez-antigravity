@@ -168,7 +168,7 @@ class CAgentTest extends TestCase
     }
 
     /**
-     * [G5-31] X-102 invokes AgentAnswerAction synchronously via string name. Words do not ride a queue, and no use statement is needed. TRACK 1 ACTION 1: remove consumes: chat.started from C-Agent/manifest.php since payload arrives by call instead. Owner: track/sixty
+     * [G5-31] X-102 invokes AgentAnswerAction synchronously via string name. Words do not ride a queue, and no use statement is needed. TRACK 1 ACTION 1: whether a caller-side declaration should exist, and whether consumes: chat.started remains declared and unimplemented, now permanently, since the payload reaches C-Agent by call rather than by that token. Owner: track/sixty
      */
     public function test_g5_31_web_chat_door(): void
     {
