@@ -2505,7 +2505,83 @@ DB pin intact, ours-since-base `app/phpunit.xml` alone, `§2e`/`§2f`/`§2g` all
 eight summing to it exactly, pint `passed`, phpstan `0`, and §1 back to **77** after item 1 deleted
 `generate_report.py`. Tip `ed01c9eb` pushed (`9aa5924e..ed01c9eb`), certified per `RULING GH(i)`.
 
-⛔ **The backlog is EMPTY at tick 329 and that tick wrote a HOLD — the EIGHTY-EIGHTH consecutive tick
+⛔ **The backlog is EMPTY at tick 330 and that tick wrote a HOLD — the EIGHTY-NINTH consecutive tick
+with no instrument change, and it LETTERS NONE for a SECOND CONSECUTIVE tick (329 · 330)**, both
+ordinals derived in-tick per `RULING FZ`: the instrument ordinal by `GB(ii)`'s **distinct authoring
+tick** form and never `git rev-list --count` (**87** prior before this tick's commit, **88** after
+it; `git log -1 -- bin/supervise.sh` still naming tick 241's `8e178993`), the lettering by `GD(i)`'s
+paired reader **first-match per subject** over `%s` (tick 328 → `RULING GK lettered`, the resetting
+event; 327 · 326 · 325 → `letters none`; 324 → `RULING GJ lettered`), tick 329's decline read from
+its **prose** because its notes were uncommitted until this tick's commit. ⭐ **`GD(i)`'s first-match
+rule did live work again**: the flattened reader returns **four** `letters none` rows across **three**
+declining subjects — tick 326's carries two — so a bare row count reads the census wrong.
+⭐ **MAIN DID NOT MOVE AT PIN TIME — pin `557cdaa4`, and this is the FIRST unmoved tick at it, NOT a
+continuation**: tick 329 **MOVED** (`bbc31686` → `557cdaa4`) and is the reset (`RULING FZ(a)`),
+derived with `GA(i)`'s reader over subjects spanning back to that event. ✅ **`RULING DK` did NOT
+fire** — `origin/main` re-read unchanged at `557cdaa4` at write time. ⛔ **The owner's drift rule does
+NOT fire and all three conditions were measured at the pin**: (1) **7 / 52** behind — FALSE; (2) the
+`Doctor`/`JourneyHarness`/`.claude/`/`seals.json` diff against the pin is **empty** — FALSE; (3) no
+wave started, a `chore(supervisor)` commit with no `app/` byte pushed — FALSE. `DD`'s two-row
+re-check prints nothing and the whole checker diff prints nothing, so the take is **OPEN,
+UNNECESSARY and REFUSED** — this lane's checker **is** main's current checker byte-identical,
+`RULING EQ`'s void condition not reached, a take could refresh nothing at a cost of **52** ancestor
+commits. Lane **112 ahead / 7 behind** first-parent (**112 / 52** by ancestor count) at `ef27c4e5`,
+stated per `RULING GK(i)` — **112 / 7 was ALREADY the post-commit value at the opening measurement**,
+because tick 329 left its own notes uncommitted and this tick committed them, so the two moments this
+tick spans are tick 329's opening **111** and this tick's **112**; merge base **`57781d59` — main's
+own commit — unmoved**; ours-since-base in `app/` is `app/phpunit.xml` alone, so every stage count is
+**main's** (`RULING FO`). ⭐⭐ **`RULING GK` is VINDICATED a SECOND time and that audit is CLEAN in its
+strongest by-identity form**: tick 329 stated **111 / 7** at its opening and **112 / 7** after its own
+commit, and re-measured against tick 329's own pin and its own unchanged `HEAD` the answer is
+**`112  7`** — the **post-commit** value, reproducing **by identity**. Had tick 329 written only its
+opening figure this tick would have met `GK`'s exact fork; `GK(ii)`'s discriminator is confirmed in
+the same breath, the **behind-count and merge base reproducing by identity** while the ahead-count was
+the only quantity that could have moved. Merge count **55**, `N153`, **416**, drift `4 0` and §1's
+78/77 pair all reproduce. ⛔ **Not lettered** — `RULING FW` bars dressing a clean audit as a
+discovery. ⭐ **The admission census was NOT re-run and the reason is a measurement taken first**:
+`git diff --stat 6240383f HEAD -- app/app/Modules/` is **empty**, corroborated by `capability` **207**
+unchanged; **§5 carries across by identity** — `git diff --stat b5473856 HEAD -- app/` is **empty**.
+⭐ **`RULING GJ` reproduced a SIXTH time**: §1 read **78** at `.gateT330.txt` with tick 329's notes
+uncommitted (`M CLAUDE.md`, the `ℹ supervisor working notes` line present in §2; `git status
+--porcelain -uall | wc -l` → 78, **of which 77 untracked**, supervisor directory **0**) and **77** at
+`.gateT330b.txt` after the commit, on an untracked set that did not change — ⭐ **and the census was
+re-derived this tick over all 109 `.gateT*.txt` files: 96 at 77 · 13 at 78**, which `GJ` explains.
+§3 == the §5 tick 322 verified and still a LEDGER; §2 `none` (the supervisor-notes line correctly
+absent from the `b` gate); §2a empty; §2b all parse; §2c none; §2e/§2f/§2g `HEAD is not a merge` ×3 —
+⚠️ **that trio's streak ordinal is NOT asserted** (`RULING FZ`), only that **98** of the 109
+supervisor gates carry a `§2g` header at all; §4 seals ✓ with stamp `20260829-0647` ==
+`runtime_build`; §6 pint `passed`, phpstan `0`. `wc -l bin/supervise.sh` **416** and drift `4 0`, both
+re-measured per `FX(ii)`; `bar` membership **not re-derived and therefore not asserted**
+(`RULING FZ`). **TRACK 1 ACTION 10** at the pin: **55** first-parent merges since `a5042da2` —
+unchanged, correct **by identity** because re-run at the pin — **0** naming `track/stages`,
+`18bbde18` still not an ancestor (exit **1**, read from the tool result). **ACTION 1** run absolutely
+per `RULING EC`: the `.agents/rules/` grep prints nothing; ceiling of the **announced subset**
+**`N153`** by the `%s` form (`GC(ii)`). Case (d) per `GE(i)`/`GE(ii)`: newest heading `## OWNER RULING
+— 2026-09-09 09:02 — relayed by Track 1: when to merge origin/main into this lane`, **processed**
+(`grep -c` → 12) — ⚠️ and per `GC(i)`, an unfired case (d) would mean only *"no note arrived on a
+channel Track 1 has recorded it cannot use"*. Case (b) excluded on mtime: `REPORT.md` 10:55 against
+the tick-329 block at 16:54. ⭐ **Commit and push per `GH(i)`/`GI`**: `git status` carried no unmerged
+paths and `pgrep -a -P 1 -f agy | grep -c grs-antig-stages` → **0** before the commit; tick 329's
+notes committed as **`ef27c4e5`** (`CLAUDE.md`, by named path, subject carrying tick 329's marker and
+`letters none` in its leading segment), **gated at exactly that sha** (`.gateT330b.txt`, green) and
+**pushed by explicit ref, fast-forward `ff99a80e..ef27c4e5`**, with `git diff --stat ff99a80e
+ef27c4e5 -- app/` → **empty** as the stated reason §5 carries across. ⚠️ **Two permission prompts,
+neither retried verbatim** — a `cd`-plus-relative-`sed` compound, re-issued on absolute paths, and a
+trailing `echo "rc=$?"`, the exit code read from the tool result instead (`RULING FI`'s
+discriminator: the form, never the capability); ✅ **no hook refusal fired**; ✅ **`RULING ES`/`FJ` did
+NOT fire — the one `cd` attempted was itself GATED by the prompt**, so the working directory never
+moved; ✅ **`RULING FH` did NOT fire, by construction rather than luck** — no bare literal grep was run
+over a gate at all, section offsets located with the anchored `^.\[1m== ` form and every figure read
+positionally or anchored; ⚠️ **the two liveness scans DISAGREED** — the case-(a) scan named `sixty
+run153` and `pricebook run159` with a third process whose redirect `pgrep` truncated, the write-time
+scan named those two plus `reviews run121`, **neither containing this lane**, **no forecast attached**
+(`RULING EJ`); ⚠️ `coder.pid` is present and **stale** — a liveness test, never a file-existence test;
+⭐ `state.py next` → `BUILD_WAVE` wave 30 (`next_module X-190`), **not a licence**. ⚠️ Scratch files
+**named, not deleted**: `.sha330.txt`, `.gateT330.txt`, `.gateT330b.txt`, `.subj330.txt`,
+`.ps330.txt`, `.msg330.txt`, `.blkT330.md`, all under `.agents/supervisor/`, which §1 does not count.
+**These notes are left uncommitted for tick 331 under the standing cadence.**
+
+⛔ **The backlog was EMPTY at tick 329 and that tick wrote a HOLD — the EIGHTY-EIGHTH consecutive tick
 with no instrument change, and it LETTERS NONE, so the decline streak restarts at ONE**, tick 328
 having lettered `RULING GK`; both ordinals derived in-tick per `RULING FZ`: the instrument ordinal by
 `GB(ii)`'s **distinct authoring tick** form and never `git rev-list --count` (**86** prior before this
