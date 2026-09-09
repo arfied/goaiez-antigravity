@@ -4337,3 +4337,105 @@ on an unchanged tree.
 never evidence the problem has left*. **Intermittency inside one wave is far stronger than intermittency
 across waves**, because it removes every tree-state explanation. ⛔ Its absence from a wave gate is still
 never a fix, and a `errors` count that rises for this reason is named, not chased.
+
+## ⛔⛔ Trap added 2026-09-09 18:2x — a UNIVERSALLY-QUANTIFIED verdict cannot fire, and it was the one the wave turned on
+
+PB-161 asked whether this lane's pinned absences are actually pinned — the question PB-160 raised when all three
+of its mutations reddened the same assertion and `assertDontSee('minutes out')` was left proven by nothing. The
+rubric defined
+
+```
+SHADOWED = "EVERY one-line production change that falsifies this assertion also falsifies an EARLIER one"
+```
+
+and it returned **0 of 50**. ⭐⭐ **It could not have returned anything else: that is a universal quantifier over
+an unbounded space, and for any assertion about rendered output a blade append always exists.** The coder wrote
+the mechanism into answer 8 unprompted — *"none of the 18 UI assertions are shadowed, because blade templates
+inherently support decoupled additions, allowing the absence to be independently reached."*
+
+⛔ **And the instrument answered a different question than the wave's motivation.** PB-160's finding was *"the
+mutations we CHOOSE all hit the first assertion"*; the rubric asked *"does a change EXIST that reaches the later
+one"*. The second is nearly always YES, so the interesting answer was unreachable by construction.
+
+⭐ **Thirteenth instrument in this lane with the same disease, and the tell was free:** PB-158 already taught
+*ask whether each value could be assigned to at least one row before briefing it.* It was asked of the escape
+value and **not of `SHADOWED` — the one value the whole wave turned on.** ⭐⭐ **The fix generalises past this
+rubric: BOUND THE QUANTIFIER. Grade a NAMED change, then ask whether THAT change falsifies an earlier
+assertion.** An existential claim about all possible edits is not measurable; a claim about one named edit is.
+
+## ⛔⛔ Trap added 2026-09-09 18:2x — a FREE ESCAPE VALUE becomes a "too hard" bucket, not a "doesn't fit" bucket
+
+The same rubric offered `UNCLASSIFIED` with the invitation *"⭐ this is a finding about MY vocabulary, not about
+the row — reporting one is a good outcome."* It took **15 of 50** — every non-UI row (`assertNull`,
+`assertDatabaseMissing`, `assertEmpty`) — all fifteen carrying a **byte-identical**, non-falsifiable clause:
+*"checks a computed state rather than UI text; does not map cleanly without tracing the entire computation
+graph."* PB-128's twenty-two-identical-clauses shape, verbatim.
+
+⛔⛔ **The rows fit the graded value, and three samples proved it in one line each:** `X168Test:123`
+`assertNull($entry->ended_at)` ← add `'ended_at' => $startedAt` to `recordJobWindow`'s create payload, leaving
+`:122 assertNotNull` TRUE · `X168Test:178` `assertNull($result2)` ← ruling 33's own pre-declared wrong fix ·
+and the decisive one, `X162Test:139` `assertNull($res['eta_minutes'])` ← restore `int $etaMinutes = 25`, **which
+IS PB-159's W1 mutation, whose actual RED this file already records** (*"ETA minutes must be null / Failed
+asserting that 25 is null"*). ⭐ **A row was graded "does not map cleanly" when its answer was two waves old and
+written in `CLAUDE.md`.**
+
+⭐ The mechanism: the rubric said *"a one-line change to production code"* and the coder's clause narrowed it to
+a *"production **UI** change"*, because its method was a blade append — UI-only. **So the escape absorbed every
+row it lacked a METHOD for, not every row the vocabulary could not EXPRESS.**
+
+⭐⭐ **The generalisation, and it is the inverse of PB-158: there the vocabulary FORBADE a value and rows piled
+into the nearest wrong one; here it PERMITTED a costless escape and rows piled into that.** ⛔ **An escape hatch
+must demand the same falsifiable clause as every other value, and must state what was tried** — otherwise it is
+the cheapest cell on the sheet. ⚠️ ⛔ **And it is still not the coder's shortfall:** the brief said in terms that
+reporting one was a good outcome, and penalising a pre-declared escape is PB-121/126 and trains the next run to
+force rows into the nearest wrong value instead.
+
+## ⛔⛔ Trap added 2026-09-09 18:2x — the verbatim RED had NO ARTIFACT for three waves, because the mandated instrument does not print one
+
+This lane requires every mutation's RED quoted verbatim. PB-161's report quoted one faithfully —
+`Failed asserting that '<div wire:key=…' does not contain "minutes out"` — and **the string is in no file on
+disk:**
+
+```
+grep -c 'Failed asserting'  pb161-w4.log                                → 0
+grep -c 'Failed asserting'  pb160-w1/w2/w3.log  pb159-w1/w4.log         → 0 0 0 0 0
+```
+
+⭐⭐ **`supervise.sh` prints `✗ FAILURE <testname>` and no assertion detail at all, so the instrument the brief
+mandated cannot emit the evidence the brief demanded.** Three waves were graded on prose alone — **including
+PB-160's headline note, *"all three mutations reddened the SAME assertion"*, which is a claim about WHICH
+ASSERTION FIRED and rests on nothing.** It was correct (re-derived structurally: a mutation that only *appends*
+cannot falsify an `assertSee`), but correct by luck about the coder rather than by evidence.
+
+⭐ **A FIFTH position in the artifact-over-prose family:** PB-123 UNDER-claims · PB-144 OVER-claims with a
+composed shape · PB-146 claims correctly and CITES wrongly · PB-152 cites a file that did not YET contain the
+line · **PB-161 quotes a REAL line no artifact contains.** ⭐ Only `grep -c 'Failed asserting' <the log>` catches
+the fifth; the mtime check and the pointer dereference are both silent on it.
+
+⭐⭐ **The generalisation: when you require a disclosure, name the command that PRODUCES it. A requirement whose
+evidence no mandated instrument emits is satisfiable only by trust** — which is the one thing this lane's whole
+arrangement exists to avoid. ⭐ **The fix is TWO artifacts with their roles stated: the full-suite GATE for the
+four-number delta (only it can prove "nothing else reddened" — PB-150's both-channels rule, PB-156's
+`tests`-count tell), and a `--filter` red log for the assertion's IDENTITY (only it carries the text;
+`pb106-agent.red.log` and `pb110-sample.red.log` are the shape).** ⛔ A filtered run can never prove the delta,
+and ⚠️ a hand-run pest carries `DB_DATABASE=goaiez_antig_pricebook_test` (ruling 3).
+
+⚠️ **The shape is one this file has now recorded four times: a rule fixed in one place and never grepped for in
+the standing instructions that drive it** — after the piped-gate finding, the provenance rule, and the per-run
+log-name rule. ⛔ When you fix a defect in an instrument, grep your own briefs for the same shape before closing
+it.
+
+## ⚠️ Trap added 2026-09-09 18:2x — a `REACHABLE` clause that names the wrong blade reddens nothing
+
+Twelve of PB-161's eighteen `REACHABLE` clauses named **the first blade in the module's `Ui/views/` directory**
+rather than the view the component under test actually returns — `DailyPricingDigest` (→
+`x-163::daily-pricing-digest`) cited `confirmation-screen`, `Map` cited `dispatch-board`, `TimesheetsView` and
+`OwnHoursView` both cited `approvals`, `StafffacingAssistantPanel` cited `by-design`.
+
+⚠️ **That is the verdict's entire content.** `REACHABLE` asserts *"here is the one-line change that reddens
+this"*, and appending a string to a blade the component never renders **reddens nothing** — so twelve rows were
+unsupported by their own clause. ⭐ The verdicts are probably right (the correct blade works by the same method),
+which makes it PB-146's third position *at scale, on a systematically derivable pattern*.
+⭐ **The check is one command per row and it is the one to demand: `grep -n "view(" <the component>`.**
+⭐ **RULED an instrument fix rather than a wave** (PB-145) — but the correction records that only five bindings
+were verified, **not all twelve renders**, because a clearance inherits the scope of its measurement.
