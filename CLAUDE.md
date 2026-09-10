@@ -7954,6 +7954,92 @@ Watch for: <the trap that applies, by name>
   missing); ⛔ never edit a standing assertion; ⛔ no numbers published to a mutating wave (tick 208). Live
   list `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **16** rows at tick 292; `app/app/Modules/` →
   **0**; stub pile across the thirteen **11**. Re-run all three; never inherit them.
+- ⚠️⚠️ **The leak has reached a field's DERIVATION INSTRUCTION, which is the one place a brief has to
+  put words — so the rule is not "print no values" but "print no value the derivation could
+  produce".** My wave-163 `PROVES` slot read *"derived from MOVED-COUNT, as you did last wave. **A
+  survival is a finding and is reported as one.**"*; the report returned `PROVES : The test survived.`
+  over a block whose own `MOVED-COUNT: 2` sits one line above it, whose `DELTAS` reads
+  `passed 2438 → 2436 · failed 6 → 8` two lines above, and whose `MESSAGE` — three lines above — **is
+  that target's own failure**. Three fields in one block refute it, and `Q5B` shows the coder
+  reasoning from the leaked word (*"PROVES requires us to establish a survival"*) rather than from the
+  census. **Twelfth recurrence** after the arithmetic (74), sentence (79), table (93), paragraph
+  (97b), template (102), baseline (103), runnable command (103b), decline placeholder (107), artifact
+  path (134), scope (135) and a count in a question stem (146). ⛔ **RULED at tick 293: `derived from
+  <FIELD>` is the whole instruction. A clause explaining what one possible outcome would mean is a
+  prediction, and it is the outcome you get.** ⭐ Its verdict half is worth as much: this is the
+  **deflating** direction and ticks 290/291 were the inflating one, which is why those were `BLOCK`s
+  and this a NOTE — an inflated `PROVES` claims a proof that does not exist and reaches the docblock;
+  a deflated one denies a proof that does. **When a wave under-claims, the reviewer records the proof
+  in `REVIEWS.md`** (tick 262), or the next tick re-briefs proven work — the wave-87 shape.
+- ⚠️⚠️ **A `head -1` on a census makes the block name the WRONG TEST while the count beside it stays
+  right — and the two fields then disagree one line apart.** Wave 163's `MOVED-MINUS-STANDING` is the
+  correct two-stage pipeline with `| head -1` on the end, so it printed the **sibling**
+  (`test_non_string_capture_phone_returns_400`) and the wave's own target is invisible in it; `TARGET`
+  is the same defect over the object's file/line pairs and reads `"line":310`, the sibling's
+  declaration, where the target is declared at **382**. `MOVED-COUNT: 2` and `MESSAGE` name the target
+  correctly. Second occurrence after wave 160, with the brief carrying `unfiltered, no head, no tail`
+  in those words. ⛔ **RULED: `MOVED-MINUS-STANDING` and `MOVED-COUNT` are ONE pipeline written once**,
+  the count being `| wc -l` of that same command — another clause has now failed twice, so per tick
+  245 the field is rewritten rather than clause-patched.
+- ⭐⭐ **A mutation's failure STACK TRACE pins the PATH, where a rendered-output message pins only the
+  SITE — and it can corroborate a wave's finding from a source the coder did not author.** Wave 163's
+  `MESSAGE` carries `TypeError: ChatCaptureAction::handle(): Argument #4 ($phone) must be of type
+  string, null given, called in …ChatCaptureController.php on line 46`, which says by itself that
+  `$phone` arrived as **null**, and its trace names frame **#31 `ConvertEmptyStringsToNull`** and frame
+  **#34 `TrimStrings`** — the wave's entire middleware thesis, printed by PHP. **Ask whether a failure
+  message carries a trace before deciding the `SITE:` field is your only evidence** (the tick-200
+  exception, one level out); and note the corollary for the tick-290 ladder rung — a mutation that
+  reddens *through* the middleware is how you tell an assertion the module satisfies from one the
+  framework satisfies.
+- ⚠️ **Third recurrence of the floor rule, and the tell is that ONE field in a template names a sha and
+  its neighbour names a description.** Wave 163's `TESTS : 11 → 13` resolved
+  `git log --oneline origin/main..HEAD | tail -n 1` — the oldest commit ahead of `main`, nine commits
+  back through three waves and three of this column's own. The true numbers are `12 → 13`: one test
+  added. Both commands ran, both outputs are real, only the floor is wrong. I named a **sha** for
+  `COMMITS` in the same template and a **description** (*"your first commit"*) for `TESTS`. **Name a
+  range's floor as a sha, never as a description** (tick 199c).
+- ⚠️⚠️ **A backlog row goes stale by being BUILT, and the per-id sweep this file demands for the stub
+  pile has NEVER been run on the proposal list — two of sixteen rows describe work this column itself
+  gated five ticks earlier.** `X01Test.php:512` (*"WhatsApp inbound body — stamp `consent_logged_at`"*)
+  and `:540` (*"Email inbound body — …"*) both stand against a `UnifiedInboxManager.php:83-88` reading
+  `if (in_array($channel, ['whatsapp','email'])) { if (! $convo->hasLoggedConsent()) {
+  $convo->consent_logged_at = now(); … }`, shipped by wave 158 and gated at tick 285. `grep -rn "BUILD
+  PROPOSAL:" app/tests/Modules/` **is** this lane's backlog and is the record every tick chooses the
+  next wave from, so a discharged debt written as open is how a future tick manufactures a wave (tick
+  191) — and here the mechanism is not a stale *note* in this file but a stale *row* in the tree, which
+  no `REPORT.md` overwrite and no ledger append can correct. **Audit the proposal list per row on the
+  tick that first has a reason to open it**, and thereafter re-derive any row you are about to brief
+  rather than inheriting its text.
+- ⚠️ **A row whose own text says nothing is owed is not a `BUILD PROPOSAL:` — and a brief that says
+  "correct it forward" has not said what happens to the LABEL.** Wave 163's corrected row is right in
+  every clause (*"…making the 500 unreachable over HTTP"*) and keeps the prefix, so the count held at
+  **16** and the board now carries a row a future tick reads as work. The house form exists and this
+  lane wrote it twice — `CAgentTest.php:205` and `:390` are `CLOSED: <id> — <what> was built in
+  <sha>.` **A correction item names the label as well as the sentence**, and the finding surviving the
+  label being fixed is what keeps it a note rather than a `BLOCK` (tick 222).
+- ⚠️ **Third recurrence of the equal-by-construction escape, and a `MUTATION` block cites TWO objects,
+  which is what makes the field ambiguous.** Wave 163's Q6 compared `"tests":2446` in the green object
+  against `"tests":2446` in `REPORT.md` — but `tests` is the one field a mutation cannot move and
+  `REPORT.md`'s copy comes from the **mutated** `RAW`, so the two sides agree whatever was copied,
+  against a brief carrying the ⛔ verbatim. **The answerable form is the same field of the same file**
+  — `assertions` out of the green object against `DELTAS GREEN`'s copy of it, where a wrong copy shows
+  immediately. ⭐ The coder's instinct was right and aimed at the wrong field: it used `[0-9]\+` on
+  `REPORT.md` specifically to avoid matching the pasted generator source.
+- **Backlog at tick 293 — wave 164 is the BACKLOG AUDIT, per row, and it writes no production code.**
+  RULED (block above), re-derived this tick and not inherited (tick 235). ⛔ **This column names no
+  verdict for any row**: each goes over with its own text and the commands, and the answers need not
+  agree — a sixteen-row list is the largest group this lane has, and ticks 187, 209, 218, 221 and 281
+  all measured what happens when a group is handed over as one shape. ⛔ **The three build candidates
+  were measured this tick and are all shut, which is the other half of the ruling**: `ChatDoorTest.php:24`'s
+  `authorType` guard is unreachable, since `grep -rn "authorType\|author_type" app/app` gives the
+  migration default, the action's parameter, its insert, its own TODO and **`ChatTurnController.php:45`'s
+  hardcoded `authorType: 'visitor'`** — one production caller that can never pass anything else (tick
+  264, re-measured); `:26`'s real turn number writes a correct value into a column with six writers and
+  no reader (decision 272's shape); and `X-102 G16-21` needs asset columns `chat_turns` does not have.
+  ⛔ No `⛔ REFUSED` and no `UNRESOLVED` for any in-lane row; ⛔ never edit a standing assertion; ⛔
+  wave 163's mutation is **spent**. Live list `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **16**
+  rows at tick 293; `app/app/Modules/` → **0**; stub pile across the thirteen **11**. Re-run all three;
+  never inherit them.
 
 ## Style
 
