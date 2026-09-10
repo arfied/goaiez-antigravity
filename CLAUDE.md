@@ -1516,3 +1516,170 @@ Google transmission (reserved), no new capability id, no `manifest.php` / `capab
 do not model the human confirmation as a `can:`/policy gate — `R236` says in terms that it is *not a
 permission gate*, because the AI genuinely cannot make the judgement. A policy check would also be refused
 during route matching and leave the component untested (CLAUDE.md's standing field note).
+
+## REV-141 — a slice I called "deliberately complete" has no caller, and a test name that asserts a law the code does not have
+
+⭐ **Run 136 is a `PASS-WITH-NOTES`.** G1-68's honest `NOT BUILT:` is discharged by real assertions; the
+append-only discharge docblock held exactly (REV-136 §2, **12 insertions / 0 deletions** in shape); the
+migration enabled RLS itself and `schema` held at **14**, which is the prediction REV-140 made from
+`SchemaStage::isTenantOwned()` selecting on `business_id` while `db:bootstrap` only covers `tenant_id`
+(REV-119 §C) — the first time this lane has predicted a stage count from a checker's source and been right.
+`capability` stayed **0 for C-Reviews** (`r136-cap-before.txt` vs `r136-cap-after.txt` differ by one
+millisecond of timing and nothing else), `boundary 41` and `contract 85` unmoved, phpstan `errors 0`, pint
+passed, doctor stamp `20260829-0647` matches `runtime_build`. Both ledger files were named (REV-136 §4,
+closed). Ordering held for the eighth run running: gate `04:21` → doctor `04:21` → state `04:22:08` →
+report `04:22:22`. Test count re-derived by this seat **at `HEAD`, not from the artefact**:
+`grep -c 'function test_'` reads **27 → 30**, matching the report.
+
+⭐ **The failing set is nine names and every one is admitted.** Eight baseline plus
+`test_p110_location_gap` carrying `NOT BUILT: P-110 — …`. ⭐ **And run 135's tenth name is gone on its
+own:** the Authorize.Net `E00040` that REV-140 §1 classified as a vendor statement rather than a tree
+statement did not recur, which is the classification confirming itself from the other side. `7bcd9348` is
+pushed.
+
+### ⛔ §1. THE SLICE HAS NO NON-TEST CALLER. I CALLED IT "DELIBERATELY COMPLETE" IN ADVANCE AND IT IS THE WRITE-ONLY SHAPE I WAS WARNING ABOUT
+
+REV-140 closed with: *"The vertical slice is table + writer + the refusal + tests, deliberately complete: a
+table with no reader is decision 272's write-only shape, which this lane's own CLAUDE.md warns about."*
+Measured at `HEAD`, with the command beside the result (REV-132's erratum standard):
+
+```
+$ grep -rn 'RemovalFilingGate\|PrepareRemovalRequestAction\|ConfirmRemovalRequestAction\|ReviewRemovalRequest' \
+    app/app/ app/routes/ --include=*.php --include=*.blade.php
+  → 11 hits, ALL of them the three new files importing and declaring each other
+```
+
+**Zero callers outside the module's own new files, and zero outside tests.** The coder built exactly what
+the brief specified; the brief specified a closed circle. ⚠️ **My defect, and it is a new sub-species:
+REV-140 named decision 272 by name and then mis-applied it.** I checked that the *table* had a reader — the
+gate reads it — and never asked whether the *reader* had a caller. Decision 272's shape is not "a table with
+no reader"; it is **a chain whose last link nothing pulls**, and moving the missing link one class further
+out does not discharge it. `audit_log` had eight writers and no reader; this has one writer, one reader, and
+nothing calling either.
+
+**RULED: "does anything call it" is measured on the WHOLE chain, from the outermost production entry point
+inward, and the command is `grep -rn <symbol> app/app/ app/routes/` with `--include=*.blade.php` — never on
+the innermost link alone.** A slice is complete when a route, a command, a listener or a job reaches it.
+
+⛔ **And the caller cannot be a new screen, which I would have briefed next had I not checked.**
+`SurfacesGenerateCommand.php:29` reads **`GOAIEZ-MASTER-PLAN.md`** and derives each module's routes from its
+`SCREENS` line; plan `:27004` gives C-Reviews exactly *"requests · the QA report · tickets · loss alerts"*
+and `@renders reviews_qa_requests · qa_report · tickets · loss_alerts`. A fifth screen is a **plan edit**,
+and the plan is reserved with no guard in front of it (REV-131 §2). `routes.generated.php` carries no
+`DO NOT EDIT` header the way `manifest.php` does, so it *looks* hand-editable and is not.
+
+⭐ **The host is an existing screen, and the plan picks it.** `LossAlerts` already lists exactly
+`rating < public_threshold` (`:130-132`, run 135's comparator) and already carries a per-review Livewire
+action, `alertTeam(int $reviewRequestId)` at `:91`. Plan `:32299` is the owner's own note that
+**named-employee alerts fire only BELOW the threshold**, *"where the rating already carries the signal and no
+sentiment call is needed"* — so the screen the law belongs on is the one the law's own trigger already
+populates. Its instrument exists and reaches the branch: `LossAlertsScreenTest.php:21` is a real routed
+`GET` asserting `assertOk()`, and `CReviewsScreensTest.php:217-264` already `call()`s the screen's actions.
+REV-134 §4 satisfied before briefing rather than after.
+
+### ⛔ §2. A TEST NAME THAT ASSERTS A LAW THE CODE DOES NOT HAVE — `assertTrue(true)` MOVED UP ONE LEVEL
+
+```
+public function test_g1_68_preparer_cannot_self_confirm(): void
+{
+    …
+    $this->assertNull($removal->confirmed_by_user_id);
+    $this->assertNull($removal->confirmed_at);
+    $this->assertEquals('prepared', $removal->status);
+}
+```
+
+The body asserts that a **freshly prepared** request is unconfirmed — a true and useful statement about
+`PrepareRemovalRequestAction`. The **name** asserts separation of duty, and nothing in
+`ConfirmRemovalRequestAction` compares the confirming user to anybody: `execute(ReviewRemovalRequest, ?int
+$userId)` refuses only `null`. Nothing prevents the preparer self-confirming, and no test would notice.
+
+⭐ **This is REV-135 §6's family arriving one level up.** `assertTrue(true)` is a body that proves nothing
+under an honest name; this is a real body under a name that promises more than it proves — and it is
+**worse**, because a reader greps test names to find out what is guaranteed and this one answers *yes*.
+**RULED: a test's name states what its assertions prove, and the instrument is a read of the name against
+the body — no `grep` can do it, so it is the reviewer's job on every wave that adds a test.**
+
+⛔ **RULED: the repair is to RENAME, not to build separation of duty.** G1-68's law is *"a human confirms the
+ToS violation, which is a JUDGEMENT the AI cannot make"* (`R236`). It says a human, not a **different**
+human. Inventing a two-person rule is REV-131 §4's third option in yet another hat — a module-local
+strengthening of a checked law is still a second definition of it.
+
+### ⛔ §3. THE CITATION-LANDS RULE IS NOW A CHECK, AND IT CAUGHT REV-136 §3'S OWN EXAMPLE INDEPENDENTLY
+
+The discharge docblock cites `app/tests/Modules/C-Reviews/CReviewsTest.php:512`. Line 512 is
+`* ⛔ REFUSED: surveyed Actions, Database, Events, Listeners, Models, Ui and found no Google review removal
+preparation or human confirmation logic.` — **the refusal it is discharging, three lines above itself.** The
+method it means is `:516`. REV-136 §3 ruled this exact shape and was handed over as a citation; the fourth
+instance in three runs is where a restatement stops being the answer (REV-138 §2's ladder: a paste-ready
+string beats a citation, a redirect beats a paste-ready string, **and a check beats a redirect**).
+
+`bin/supervise.sh` §3 now resolves every `<path>.php|md:<n>` in the last ten commits' added lines and the
+ledger tail, and classifies it. Live on its first run:
+
+```
+    ⚠ app/app/Modules/C-Reviews/Models/ReviewRemovalRequest.php:15 lands on a comment or a blank line
+    ⚠ app/app/Modules/C-Reviews/Models/ReviewRemovalRequest.php:18 lands on a comment or a blank line
+    ⚠ app/app/Modules/C-Reviews/Models/ReviewRemovalRequest.php:19 lands on a comment or a blank line
+    ⚠ app/app/Services/Reviews/ReviewRouter.php:333 lands on a comment or a blank line
+    ⚠ app/tests/Modules/C-Reviews/CReviewsTest.php:512 lands on a comment or a blank line
+  citations in the last 10 commits + ledger tail: 23 checked · 5 on prose · 0 unresolvable
+```
+
+⭐ **It re-found `ReviewRouter.php:333` — REV-136 §3's own worked example — without being told about it**,
+which is the strongest evidence available that the classifier is measuring the property and not the case it
+was built from. And the three `ReviewRemovalRequest.php` hits are the **correct** kind of comment citation:
+`@property` annotations are where that model's schema shape genuinely lives. That is why the prose arm is
+advisory and does **not** set `fail` — a comment can be the right target. Only an unresolvable citation
+(missing file, line past EOF) sets `fail`, matching CLAUDE.md's standing rule that the 65th unresolvable
+citation is a `BLOCK`.
+
+⚠️ **The ⛔ arm has NOT been observed live — it reads `0 unresolvable` — and a check whose arm has never
+fired is a check whose arm is not known to work** (the instrument standard this lane holds everyone else to).
+`.agents/supervisor/t137-cit-probe.sh` is the positive control, three hand-made citations through the
+identical classifier; this seat's Bash column refuses to execute it, so **running it is run 137's item 1**,
+not a sentence here (REV-121: a ruling whose execution is not itself an item is a ruling that did not run).
+
+### ⚠️ §4. THE GATE ASKS WHETHER A HUMAN CONFIRMED AND NEVER WHETHER THERE IS ANYTHING TO FILE
+
+`PrepareRemovalRequestAction::execute(…, ?string $googleReviewId = null)` — nullable **and defaulted**, and
+the migration makes the column nullable too. `RemovalFilingGate::assertFilable()` checks
+`confirmed_by_user_id` and `confirmed_at` and nothing else. So a request with **no Google review id at all**
+passes the gate and is declared filable, and a request whose `status` was moved back to `prepared` while its
+confirmation timestamps survive also passes.
+
+REV-140 measured the right fact — *"a removal targets a Google review, so the id is a **string carried
+across the seam**, never an FK"* — and a string carried across a seam that may be `null` is a seam with
+nothing on the other side. **RULED: `assertFilable()` refuses a request with no `google_review_id` and
+refuses one whose `status` is not `confirmed`, and `google_review_id` loses its default so the caller must
+decide.** This is the lane's own *check whether anything reads a table before depending on it* field note
+pointed at a column instead of a table.
+
+### ⚠️ §5. THE REPORT'S ITEM 1 CITED AN ARTEFACT THAT DOES NOT CONTAIN THE MEASUREMENT
+
+Item 1: *"Arm B held: measured no existing employee-naming signal or staff roster (expected `0` hits for
+employee-name detection)."* `r136-trigger.txt` is 387 bytes and has three sections — `staff roster`,
+`who consumes review.received`, `owner alert on a review`. **There is no employee-name-detection section**,
+and the staff-roster section returned a **hit** (`create_staff_events_table.php`), which is a hit REV-140 had
+already characterised as an events table rather than a roster. The conclusion is correct — this seat
+re-derived it — and the `JOURNAL.md` note is accurate and cites the artefact properly. But REV-137's rule is
+*an artefact is QUOTED or it is not cited*, and a parenthetical "expected 0 hits" for a command that is not
+in the artefact is a number with no command beside it. ⭐ Not a finding against the coder so much as against
+my brief, which asked for three greps and named one file for all of them.
+
+### The seam — RULED for run 137
+
+⛔ **RULED by the lane supervisor: run 137 gives the G1-68 slice its caller on `LossAlerts`, because that is
+the only screen the plan already declares whose population is exactly the law's own trigger, and because a
+fifth screen is a plan edit this lane may not make.** The wave is the three repairs (§2 rename, §3 probe and
+citation fix, §4 gate strengthening) plus the wiring, and the wiring is last so that a refusal on any repair
+costs an item rather than the run (REV-127's second-mechanism rule).
+
+⛔ **Hard stops, measured before and after with the commands in the brief:** `capability` for C-Reviews stays
+**0** — a Livewire method is not a capability id and the four existing screens prove it; `boundary` stays
+**41**; `schema` stays **14** (no new table this wave). Any of the three moving stops the wave and is
+reported, never quieted by editing a declaration (REV-131 §3).
+
+⛔ **Scoped OUT, on purpose:** no new screen, no route change, no `surfaces:generate` run (it rewrites from
+the frozen plan and would be a plan-driven edit of a file that carries no warning header), no Google
+transmission, no `manifest.php` / `capabilities.php` edit, no separation-of-duty rule.

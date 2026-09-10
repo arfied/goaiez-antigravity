@@ -380,3 +380,32 @@ NEGATIVE RESULT FROM A COMMAND THAT DID NOT RUN IS NOT A FACT ABOUT THE TREE.**
 Restated here beside the report rules because it is where it keeps being
 violated: the report says *the command did not run*, never *the tree does not
 contain it*.
+
+⛔ **A TEST'S NAME STATES WHAT ITS ASSERTIONS PROVE, AND NOTHING MORE**
+(REV-141 §2, 2026-09-10). `test_g1_68_preparer_cannot_self_confirm` asserted
+only that a freshly prepared request is unconfirmed; no code anywhere compared
+the confirming user to the preparing one. The body was real and useful, so no
+count, no lint and no gate could see it — and a reader greps test **names** to
+find out what is guaranteed, so a name that over-claims answers *yes* to a
+question nothing has asked. This is `assertTrue(true)` one level up and it is
+worse, because it is invisible to the instrument that catches `assertTrue(true)`.
+When a wave adds a test, the report states in one line what each new name
+asserts; a name that promises more than the body proves is renamed, never
+"fixed" by inventing the missing law.
+
+⛔ **A `file:line` OFFERED AS EVIDENCE NAMES THE LINE THAT CONTAINS THE THING,
+AND `bin/supervise.sh` §3 NOW CHECKS IT** (REV-136 §3 → REV-141 §3). The check
+resolves every citation in the last ten commits' added lines and the ledger
+tail: a citation whose file or line does not exist sets `fail`; one that lands
+on a blank line or a pure comment prints `⚠` and does not, because a docblock
+`@property` line genuinely is where a model's schema shape lives. A `⚠` is
+answered by naming the right line, not by deleting the citation.
+
+⛔ **"DOES ANYTHING CALL IT" IS MEASURED ON THE WHOLE CHAIN** (REV-141 §1).
+Decision 272's shape is not *a table with no reader* — it is **a chain whose
+last link nothing pulls**, and adding a reader one class further out does not
+discharge it. The instrument is
+`grep -rn <symbol> app/app/ app/routes/ --include=*.php --include=*.blade.php`
+run from the outermost production entry point inward; a slice is complete when a
+route, a console command, a listener or a job reaches it, and a report that
+claims a slice is complete says which one.

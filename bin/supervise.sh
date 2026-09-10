@@ -495,6 +495,71 @@ if [ -n "$_doc" ]; then
   fi
 fi
 
+# ⭐ A `file:line` OFFERED AS EVIDENCE IS THE LINE THAT CONTAINS THE THING, AND
+#   A LINE OF PROSE IS NOT THAT LINE (REV-136 §3, REV-141 §3).
+#
+# This lane keeps shipping citations that RESOLVE and still point at nothing.
+# Measured, three runs:
+#
+#   REV-136 §3  create_review_destinations_table.php:31  → `Schema::create(...)`
+#               ReviewDestinationSetting.php:40          → `final class …`
+#               ReviewRouter.php:333                     → prose inside a docblock
+#   REV-141 §3  CReviewsTest.php:512                     → `* ⛔ REFUSED: surveyed …`
+#                                                          — a discharge citing the
+#                                                          refusal it discharges
+#
+# Every one is the first grep hit in its file, not the line that settles the claim,
+# and every one survived review only because the reviewer re-derived it by hand.
+# `php artisan why` cannot help: it resolves module ids, not file offsets, and the
+# citation stage counts a citation as good the moment the FILE exists.
+#
+# ⭐ The rung above a restatement is a check (REV-138 §2's ladder). What is
+#   mechanically decidable is not "does this line prove the claim" but the weaker
+#   property that catches all four above: a line that is BLANK or is pure comment
+#   (`*`, `//`, `#`) carries no code, so it cannot be the line that contains the
+#   thing. That is an advisory ⚠ and does not set fail — a comment CAN be the right
+#   target when the claim is about a declaration in a docblock (the property
+#   annotations on ReviewRemovalRequest are exactly that, and are cited correctly).
+#
+# ⛔ A citation whose line does not EXIST is different in kind and does set fail:
+#   this repo already carries 64 unresolvable citations and CLAUDE.md's standing
+#   rule is that the 65th is a BLOCK.
+#
+# Scope is derived, never stated (REV-119 §A): the added lines of the last ten
+# commits plus the tail of the ledger, which is where discharges and (R245) lines
+# are written. Self-reference is handled the way REV-138 §1 ruled — this block's
+# own output range is blanked, not its filename excluded.
+_cit_n=0; _cit_prose=0; _cit_dead=0
+_cit_raw=$( { git -C "$ROOT" log -10 -p --format='' 2>/dev/null | grep '^+' || true
+              tail -60 "$ROOT/.agents/state/JOURNAL.md" 2>/dev/null || true
+            } | grep -oE '(app|bin|tests|database)/[A-Za-z0-9._/-]+\.(php|md):[0-9]+' | sort -u | head -60 )
+for c in $_cit_raw; do
+  _cf=${c%:*}; _cl=${c##*:}
+  [ -f "$ROOT/$_cf" ] || { _cf="app/$_cf"; }
+  _cit_n=$((_cit_n + 1))
+  if [ ! -f "$ROOT/$_cf" ]; then
+    _cit_dead=$((_cit_dead + 1)); fail=1
+    printf '    ⛔ %s — no such file; the citation cannot resolve\n' "$c"; continue
+  fi
+  _tot=$(wc -l < "$ROOT/$_cf")
+  if [ "$_cl" -lt 1 ] || [ "$_cl" -gt "$_tot" ]; then
+    _cit_dead=$((_cit_dead + 1)); fail=1
+    printf '    ⛔ %s — file has %s lines; the citation points past the end\n' "$c" "$_tot"; continue
+  fi
+  _txt=$(sed -n "${_cl}p" "$ROOT/$_cf")
+  case $(printf '%s' "$_txt" | sed 's/^[[:space:]]*//') in
+    ''|'*'*|'/*'*|'//'*|'#'*)
+      _cit_prose=$((_cit_prose + 1))
+      printf '    ⚠ %s lands on a comment or a blank line\n' "$c"
+      printf '       %s\n' "$(printf '%s' "$_txt" | sed 's/^[[:space:]]*//' | cut -c1-90)" ;;
+  esac
+done
+if [ "$_cit_n" -gt 0 ]; then
+  printf '  citations in the last 10 commits + ledger tail: %s checked · %s on prose · %s unresolvable\n' \
+         "$_cit_n" "$_cit_prose" "$_cit_dead"
+  [ "$_cit_prose" -gt 0 ] && echo "       a citation offered as evidence names the line that CONTAINS the thing (REV-136 §3)"
+fi
+
 if [ ! -f "$APP/artisan" ]; then echo; echo "no app/artisan — nothing more to check"; exit $fail; fi
 cd "$APP" || exit 1
 [ -d /home/goaiez/tmp ] && export TMPDIR=/home/goaiez/tmp
