@@ -838,3 +838,4 @@
 - `2026-09-10T13:17:36` note: run 145: Arm B on the single-process fork — wait_event_type Lock / wait_event transactionid; merger probe ARM1 failed/4, ARM2 incomplete/3, ARM3 passed/4; four-suite union 2463/2443/7/13
 - `2026-09-10T13:49:03` note: run 146: proved merger fix works (implicit in supervise.sh); added google_review_id validation to PrepareRemovalRequestAction and reseated tests
 - `2026-09-10T14:18:19` note: run 147: tests 2463 -> 2465; schema read restored to 14 violations after connection slot exhaustion
+- `2026-09-10T14:39:09` note: run 148: tests 2465 -> 2466, FAILED 7 unchanged, errors 13 -> 14; test_loss_alerts_confirm_removal_refuses_cross_tenant went red as expected.
