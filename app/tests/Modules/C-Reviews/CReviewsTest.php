@@ -970,7 +970,6 @@ class CReviewsTest extends TestCase
             ->assertViewHas('publicCount', 1)
             ->assertViewHas('internalCount', 0);
 
-        \DB::statement("SET app.business_id = '".$biz1->id."'");
         QaSetting::updateOrCreate(
             ['business_id' => $biz->id],
             ['min_public_stars' => 5]
