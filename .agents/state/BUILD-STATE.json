@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-10T03:33:08",
+ "updated": "2026-09-10T04:22:08",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1345,6 +1345,12 @@
    "chose": "P-110: the gated set is rating < public_threshold, not <=. LossAlerts used <=, so at the default of 4 a 4-star review was PUBLIC by ReviewsQaRequests and QaReport and a LOSS ALERT by LossAlerts at the same time. Plan :592 and :28765 both state 1-3 gated at a default of 4. Comparator, alert_reason string and loss-alerts.blade.php:26 prose all moved to <. LossAlerts.php:131, ReviewsQaRequests.php:216/259, QaReport.php:111",
    "at": "2026-09-10T03:33:08",
    "ruling": "R245"
+  },
+  {
+   "module": "C-Reviews",
+   "chose": "G1-68: a review-removal request is PREPARED by the automation and is filable only after a human confirms the ToS violation. R236 - the confirmation is a recorded judgement (user id + timestamp), never a permission gate, because the AI cannot decide maliciousness. Filing itself is X-177's GBP half and is not granted. app/app/Modules/C-Reviews/Domain/RemovalFilingGate.php:13, app/app/Modules/C-Reviews/Models/ReviewRemovalRequest.php:15, app/app/Modules/C-Reviews/Models/ReviewRemovalRequest.php:18, app/app/Modules/C-Reviews/Models/ReviewRemovalRequest.php:19, app/app/Modules/C-Reviews/Actions/PrepareRemovalRequestAction.php:18, app/app/Modules/C-Reviews/Actions/PrepareRemovalRequestAction.php:22, app/app/Modules/C-Reviews/Actions/ConfirmRemovalRequestAction.php:20, app/app/Modules/C-Reviews/Actions/ConfirmRemovalRequestAction.php:21",
+   "at": "2026-09-10T04:22:08",
+   "ruling": "R245"
   }
  ],
  "notes": [
@@ -1431,6 +1437,10 @@
   {
    "at": "2026-09-10T02:54:30",
    "note": "OPEN QUESTION for the next reviews wave: LossAlerts.php:132 uses rating <= public_threshold while ReviewsQaRequests.php:214/216 and QaReport.php:115/126 use < and >=. At the default of 4, a 4-star review is PUBLIC by two screens and a LOSS ALERT by the third. loss-alerts.blade.php:26 documents the <= in words; GOAIEZ-MASTER-PLAN.md:592 and :28765 say 1-3 gated and 4-5 ungated. Not resolved in run 134 \u2014 the refactor was comparator-neutral by design."
+  },
+  {
+   "at": "2026-09-10T04:22:08",
+   "note": "G1-68 automatic origination is UNRESOLVED: no employee-naming signal and no staff roster exist (r136-trigger.txt). Plan :33731 asserts SS199's alert already fires; it does not in this tree. Run 137 item."
   }
  ],
  "resolved": [
