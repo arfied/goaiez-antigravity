@@ -11009,3 +11009,73 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     PREDICATE beside the count (298), and one defined by enumeration is re-run from the predicate the
     first time a new member of the same class is met — which is how `label=` surfaced here: not from a
     sweep, but from a mutation-proof render that happened to contain one.
+372. **⭐⭐ Every error panel in this lane offers "Try again" and pressing it does nothing — and the
+    repo's own lint has read that exact attribute and blessed the default, so it is TRACK 1's (RULED by
+    the lane supervisor 2026-09-10 15:0x; filed TRACK 1 ACTION 20).** The census:
+    `grep -rn "x-ui.error-panel" app/app/Modules --include=*.blade.php` filtered to the eight ids →
+    **21 panels on 21 of the lane's 24 screens** (C-Billing 4 · X-199 5 · X-211 4 · X-198 3 · X-201 2 ·
+    X-117 2 · X-173 2 · X-120 1). `app/resources/views/components/ui/error-panel.blade.php:1-5` declares
+    `'retry' => '$refresh'` and `'retryLabel' => 'Try again'`, and `:56-60` renders them
+    **unconditionally** as `<button wire:click="{{ $retry }}">{{ $retryLabel }}</button>`; a `retry` sweep
+    over the lane returns **ZERO**, so all 21 take both defaults. ⭐ **And all 21 render an error set by an
+    ACTION, never by a read**: the lane has **140** `$this->error = ` assignments across its 23 `Ui/`
+    components and `grep -rn -A 40 "public function render"` filtered to the lane returns **no assignment
+    at all** (its two hits are `errorRate`, a method name, and a view name — read per 262(b)). `$error` is
+    `public ?string`, so it survives the round trip. `$refresh` re-renders, does not re-run the failed
+    action and does not clear the property — **the owner presses "Try again", the identical red panel is
+    still there, and nothing was retried.** Rulings 119(b)/134/349's family on the one button an owner
+    presses on their worst visit, and worse than any of them because it produces **no visible change at
+    all**, so they cannot tell it from a hung screen. ⭐⭐ **Positive control fires in BOTH directions
+    outside the lane** (324's bar): other lanes pass `retry="load"` against a real `public function load()`
+    (`X-125/Ui/Runs.php:29`, `X-124/Ui/TodaysRecommendationStrip.php:22`, `C-Ai/Ui/ModelBoard.php:22`,
+    `X-194/Ui/{SavedViewsList:21,AnyViewIt:29}`) and others pass `retry="$refresh"` **explicitly** on
+    panels headed *"We couldn't LOAD …"*, where a refresh genuinely re-runs the read; the `dismiss()`
+    shape exists too (`X-110/Ui/Cooling.php:33`). ⛔⛔ **Not money's to fix, measured from the CHECK's own
+    text — ruling 326's shape a third time, at maximum force.** `app/tests/Support/ScreenStates.php:125`
+    is `ARM_ERROR_PANEL_REFRESH = "Livewire's own $refresh"` beside `:127`'s `ARM_ERROR_PANEL_KNOWN_METHOD`,
+    and `errorPanelsOfferingRetry():578-608` accepts **both**. Three narrowings put money outside it:
+    `views():139-143` scans **`resources/views/livewire` only**, so the lane's `Ui/views` are outside the
+    population; `:565` records that **a panel with no `retry` attribute is skipped**, which is all 21; and
+    the docblock states the position in terms — *"`$refresh` is Livewire's own and always resolves"*, the
+    lint asking **does the retry target resolve** and never **does the retry retry**. ⭐⭐⭐ **And `:571-575`
+    is the sentence Track 1 needs:** *"at the time of writing it is 1 — the deliberate fixture … which
+    exists **because every real panel in the application takes the default**"* — so this is the house's
+    universal shape, measured application-wide by the house's own CHECK, and the lint built to catch a
+    renamed retry is checking one synthetic file. ⛔ Three routes closed: the label is the **component's**
+    default and `resources/views` is Track 2's (5, 21); a money-only `retry="dismissError"` +
+    `retryLabel="Dismiss"` (which would satisfy the lint's *other* blessed arm) makes money the one lane in
+    twelve whose panels say *Dismiss* — ruling 123 violated at application scale, and 228(a) inverted,
+    since the pair is not one-good-one-bad but twelve lanes identical; and overruling
+    `ARM_ERROR_PANEL_REFRESH` is a lane re-ruling a CHECK (63, 166, 176, 181). ⚠️ Blast radius, measured
+    for the day someone does fix it (46, 86, 146): **exactly ONE assertion lane-wide**,
+    `app/tests/Modules/X-120/CardScreenTest.php:74`'s `assertSee('Try again')`; `Try again` and `Dismiss`
+    appear nowhere in X-211's module or test trees, so the needles are unambiguous wherever it lands.
+
+373. **⭐⭐ A census scoped to the lane's own FILES cannot see a value the lane's screens RENDER, and the
+    kit-DEFAULT population is 21 members in one class and ZERO in five others (RULED by the lane
+    supervisor 2026-09-10 15:0x).** Every string census this lane has run — prose, pills, buttons,
+    headings, word-bearing attributes, `$error`, `$success`, empty states, console output, exception
+    messages, request bodies, assertion messages, test names, `label=` — swept **files money owns**.
+    `retryLabel="Try again"` and `retry="$refresh"` are rendered on **21 money screens** and appear in **no
+    money file**: they are `@props` defaults in another lane's component. ⭐ **A value a screen renders may
+    live in no file the lane owns**, and no sweep of `app/app/Modules` can ever see it. That is ruling 371
+    one level further out — the **predicate** was right (*any attribute whose value is rendered to an
+    owner*, 137) and the **file set** was wrong — and it is the same family as 265 (instrument), 298
+    (scope), 310 (scanner list) and 338 (axis): the fifth axis on which a census here has silently closed
+    short. **So the population is stated as a predicate and measured whole: every `@props` DEFAULT in
+    `app/resources/views/components/ui/` whose value reaches an owner's eyes, against the lane's usages.**
+    `error-panel`'s `retry`/`retryLabel` → **21**, ruling 372, TRACK 1 ACTION 20 · `status-pill`'s
+    `label ??= $signal->label()` (`Running`/`Needs a look`/`Needs action`/`Not checked`) → **0**, all 43
+    pill lines pass a label (129–132, 371) · `gauge`'s `label='Overall'` → **0**, the lane renders no
+    gauge at all · `empty-state`'s `icon='○'` → decoration, no claim · `skeleton`'s `label` is **required
+    with no default**, all 22 measured true (371) · `button`'s `variant`/`size`/`type`,
+    `attention-card`'s `state`/`heading=null` and `row`'s `action`/`href` → behavioural or null, not words
+    (137's own split). ⛔ **Not to be re-raised.** ⭐ Ruling 327's outcome shape a **fifth** time: *a
+    population measured NON-EMPTY that yields ZERO buildable fixes is a legitimate result and is the more
+    useful of the two to write down*, because an empty census tells a later tick *nothing is there* while a
+    classified one tells it *what is there and why each member stays*. ⚠️ **The instrument, quoted (300),
+    so any lane can re-run it:** `grep -rn -A 10 "@props" app/resources/views/components/ui/` for the
+    defaults, then per default a `grep -rn --include=*.blade.php` for the prop name over
+    `app/app/Modules` filtered to the lane's ids — **a zero there means every usage passes it explicitly,
+    which is the SAFE answer**, and a non-zero means nothing until the component's body is read to see
+    whether the default is rendered (207, 294 — a zero is corroborated, never trusted).
