@@ -11711,3 +11711,133 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     has stated yet**, not from re-running a member list. Rulings 383 and 384 are both that: 383 is 229's
     negative and 384 is 349's other input path, and **neither existed as a phrase in this ledger until
     the tick that measured it.**
+386. **⭐⭐ Ruling 205 asked whether a bound name RESOLVES and ruling 349 whether a guard is PRESENT — nobody
+    had asked whether the guard's TARGET names the act it guards; the population is 39 and every one
+    matches, with the control firing three different ways outside the lane (measured by the lane
+    supervisor 2026-09-10 17:5x; rulings 64, 95, 100, 111, 294, 324, 327, 340).** Ruling 349 fixed the
+    four write buttons lacking `wire:loading.attr="disabled"` and measured that `<x-ui.submit>` implements
+    the pair by construction (`submit.blade.php:29-30`). **A guard whose `wire:target` names the wrong act
+    is present, resolves under ruling 205's census, and never fires** — ruling 61's
+    *passes-for-the-wrong-reason* relocated from an assertion into an attribute, and invisible to both
+    prior sweeps because 205 took a **union of names** and 349 asked only whether the attribute existed.
+    **Instrument, quoted (ruling 300):** `grep -rn -e "wire:target" app/app/Modules --include=*.blade.php`
+    filtered to the eight ids → **26**; and `grep -rn -e "wire:submit" -e "x-ui.submit"` over the same root
+    and filter → **13 form pairs**. ⭐ **All 26 buttons match by construction** — `wire:click` and
+    `wire:target` are written on **one line**, same method, same arguments — and **all 13 forms match
+    byte-for-byte** across the gap, `wire:submit="X"` against `<x-ui.submit target="X">`.
+    ⭐⭐ **The form half is where the axis lives and is why it was worth measuring: the two halves of a
+    form's pair sit on DIFFERENT LINES**, two to eight apart, often with inputs between them, so they can
+    drift where a button's cannot. ⭐ **Positive control fires three ways** (324's bar):
+    `X-01/Ui/views/thread.blade.php:78` is a `<form wire:submit="sendReply">` with **no `<x-ui.submit>` at
+    all**; `X-118/Ui/views/day-one-signup.blade.php:41` pairs `wire:submit.prevent="startSignup"` with its
+    `wire:target` **44 lines away** at `:85`, demonstrating the drift distance is real; and
+    `C-Reviews/Ui/views/tickets.blade.php:86` carries `target="resolve"` against
+    `wire:click="resolve({{ $t->id }}, …)"` — **a pair whose two halves measurably differ**. ⛔ **Money
+    proposes no edit on any of the three and asserts no defect** (ruling 5): a bare `wire:target="resolve"`
+    matches any call to `resolve` in Livewire, so the third may be perfectly correct; the control's only
+    job is to show the instrument distinguishes an identical pair from a non-identical one, and it does.
+    ⛔ Not to be re-raised. ⭐ **The generalisable half is a new sub-axis of ruling 340's family, which has
+    now paid twenty-one times: 340 asks *where is a guard NEEDED*, 384 asks *by which INPUT PATH is the act
+    reached* — and 386 asks *does the guard's PARAMETER name the act*.** A guard is a claim of two parts,
+    its presence and its subject, and every census of guards in this ledger before now measured the first.
+
+387. **⭐⭐ Ruling 361 measured a MESSAGE's lifetime across a component's OTHER methods; the unstated
+    complement is an INPUT's lifetime across its OWN method's failure path — ten members, every one the
+    last statement inside its `try`, and a defect here destroys the typing the refusal tells the owner to
+    fix (RULED by the lane supervisor 2026-09-10 17:5x).** An owner fills a per-row form, presses the
+    button, and the engine refuses. If the component's input reset runs **before** the seam call, or
+    **outside** the `try`, the form comes back **empty** — so the refusal names a value the owner can no
+    longer see and must retype from memory. ⭐ **That is ruling 363's family one register further in:** 363
+    ruled that *a refusal names a remedy the owner can reach on the screen they are standing on*, and this
+    asks whether the screen still HOLDS the thing the remedy refers to. It is unreachable by every prior
+    census — 361 read the message properties, 364 read a literal argument, 365 an omitted one, 344 a
+    client-supplied one — because it is a question about **statement order inside a `try`**, which no sweep
+    of values can see.
+    **Instruments, quoted (ruling 300), with the second added only after the first's zero was
+    corroborated:** `grep -rn -A 3 -e "unset(" app/app/Modules --include=*.php` filtered to `/Ui/` and the
+    eight ids → **9**; and `grep -rnF -e "] = '';" -e " = [];" -e "] = null;"` over the same root and
+    filters → the **tenth**, `X-211/Ui/AgeingByReason.php`'s `$this->term = []` in `saveTerm()`.
+    **All ten are the LAST statement inside their `try`, immediately above the first `catch`** —
+    `ConflictsListView` · `ConnectionMappingView` (both **stricter still**, inside a success-branch `if`) ·
+    `X-199/Credits` · `DisputeCard` · `DisputeQueue` · `InvoiceThreadBeside` · `PaymentplanBuilder` ·
+    `AgeingByReason` ×3. So a throw jumps past every one of them and the owner's typing survives.
+    ⭐ **And the local-guard half is clean too, which completes the picture rather than merely adding to
+    it:** `saveTerm`'s two early returns (`'Enter a late-fee percent between 1 and 100.'`, `'The cap is an
+    amount in cents, or blank for none.'`) and `applyLateFee`'s (`'Enter the late fee in cents.'`) all
+    `return` **before** the `try` and clear nothing — so input survives on the validation path as well as
+    on the seam-throw path. ⭐ **Positive control fires and discriminates** (324's bar):
+    `X-163/Ui/Pricebook.php:169` and `ConfirmationScreen.php:106` clear inputs on a `delete()` path with
+    **no try/catch at all**, and `X-163/Ui/DailyPricingDigest.php:58` and `ConfirmationScreen.php:97` clear
+    inside the `else` arm of a refusal check — **three placements, none of them money's one**. ⛔ Money
+    proposes no edit on any and asserts no defect (ruling 5); several may have no throwing seam. ⛔ Not to
+    be re-raised.
+    ⭐⭐ **The instrument lesson is the durable half, and it is the zero trap's THIRD metacharacter.**
+    The assignment sweep was first run **without `-F`** and returned **ZERO**; the identical pattern list
+    with `-F` returns **25 lines**. **Measured:** same patterns, same root, same filters, `-F` the only
+    difference. **Reasoning (ruling 378 — cite the command for a measurement, the reasoning for a
+    judgement):** ` = [];` in a basic regular expression opens a bracket expression at `[` that the `;`
+    never closes. ⚠️ Rulings 95/100/111 **strike** a population that measures empty, so an uncorroborated
+    false zero is one tick from deleting a live one — here it would have hidden the **tenth** member of
+    this very population. **RULED: a grep pattern carrying `[`, `]`, `.`, `*` or `\` is run with `-F`, or
+    its zero is not a zero.** Third member after ruling 207's `$`-before-`\|` end anchor and ruling 381's
+    case sensitivity, and the sharpest, because `-F` changes nothing about a pattern that happens to
+    contain no metacharacter — so **adding `-F` costs nothing and its absence is invisible**.
+
+388. **⭐⭐ THIRD consecutive HOLD, and it is a RESULT: five more populations at ruling 324's bar this
+    tick, twenty-two across four ticks, ZERO buildable (RULED by the lane supervisor 2026-09-10 17:5x).**
+    Ruling 325 requires the tick to say so plainly rather than manufacture a wave, and ruling 323 forbids
+    inheriting the previous tick's answer, so everything was re-measured here. **The cadence, measured in
+    THIS tick** (owner `OWNER.md` 09-09 09:02; rulings 269, 272): `git rev-list --count HEAD..origin/main`
+    = **38**, not > 100 ✗ · `git diff --stat b7b52dc6 origin/main -- app/app/Doctor coder-bin
+    .claude/hooks` **empty** ✗ · `git merge-base HEAD origin/main` = **`b7b52dc6`, unmoved** with seven
+    money pushes since ✗. **Merge gate CLOSED**, `--allow-merge` not passed. `OWNER.md` judged by its
+    **heading list** and never its mtime (136) — newest still `## OWNER RULING — 2026-09-09 09:02`.
+    **The three further populations, each measured, controlled and STRUCK** (rulings 95, 100, 111, 327's
+    outcome shape a **tenth** time — *a population measured non-empty that yields zero buildable fixes is
+    the more useful of the two results to write down*):
+    **(a) A blade indexing a component-built MAP by a row id — 3 members, zero defective.** A map keyed by
+    row id and a loop over rows are two collections, and a key the loop has and the map lacks is a silent
+    `null`. `grep -rn -e "->id]" -e "id\] ??" app/app/Modules --include=*.blade.php` filtered to the eight
+    ids → `sync-error-rate.blade.php:17` `$rates[$run->id]` and `:29` `$rateLabels[$run->id]`, **both
+    unguarded and both safe by construction** — `SyncErrorRateView::render()` populates both maps in a
+    single `foreach ($runs as $run)` over **the same collection** the blade loops, so every key in the loop
+    is a key in the map; and `paymentplan-builder.blade.php:31`, which **does** cross collections
+    (`$numbers[$plan->invoice_id]`, keyed off `InvoiceReader`'s numbers against a loop over plans) and
+    carries `?? ('#'.$plan->invoice_id)`. ⭐ Control fires **and discriminates**: X-01's `$leadScores` /
+    `$latestConversations` and X-163's `$refusals` are `isset()`-guarded while
+    `X-162/Ui/views/map.blade.php:12,:23`'s `$distance[$route->id]` and `$stops[$route->id]` are bare.
+    ⛔ Money proposes no edit and asserts no defect on those (ruling 5) — their components were not read.
+    **(b) A VIEW-STATE id property whose row leaves the collection — 5 scalar holders, zero defective.**
+    Ruling 245 measured what a component HOLDS and 344 what it is HANDED; neither asked what happens to a
+    retained id when its row stops being rendered. `grep -rn -e "public ?int" -e "public array"` filtered
+    to `/Ui/` and the eight ids → the scalars are `C-Billing/Credits` and `Mrr`'s `$explainedEntryId`,
+    `X-173/SyncErrorRateView`'s `$shownRun`, `X-199/MoneyPaidToday`'s `$explainedInvoiceId` and
+    `X-211/InvoiceThreadBeside`'s `$invoiceId`. **Three are read only INSIDE their own `@foreach`** —
+    `money-paid-today.blade.php:41`, `credits.blade.php:85` and `mrr.blade.php:82` are each
+    `@if($id === $row->id …)` **inside** the loop, so a stale id matches nothing and the panel vanishes,
+    which is the correct behaviour rather than merely a safe one; `$shownRun` feeds a tenant-scoped
+    `where('sync_run_id', …)` that returns an empty collection; and `$invoiceId` is ruling 337's own
+    `firstWhere(…) ?? first()`. The array members are input maps whose stale keys are never read.
+    ⚠️ Recorded at ruling 76's grade: `mrr.blade.php:83` reads `$explanation['description'] ?? ''` where
+    `credits.blade.php:89` reads it unguarded — ruling 379 measured `LedgerExplainAction` returns an
+    explicit seven-key array, so **both are correct** and 228(a) forbids harmonising a pair where both
+    members are honest. Same shape as the already-recorded `Credits.php:52` / `Mrr.php:54` asymmetry.
+    **(c) TIMER and lifecycle `wire:` directives — ZERO.** A `wire:poll` re-runs `render()` on a clock,
+    which interacts with everything rulings 347 and 361 measured about state between renders, and a
+    `wire:init` defers the first read. `grep -rn -e "wire:poll" -e "wire:init" -e "wire:offline"
+    -e "wire:navigate" -e "wire:dirty" -e "wire:replace"` filtered to the eight ids → **nothing**;
+    ⭐ control fires on `X-01/Ui/views/thread.blade.php:3`'s `wire:poll.10s` and **six** `wire:init="load"`
+    across X-125, C-Ai, X-124 ×2 and X-194 ×2 — which also corroborates ruling 372's own control, since
+    those are exactly the components that pass `retry="load"` against a real `load()`.
+    ⛔ None of the three is to be re-raised.
+    ⭐⭐ **Ruling 385's warning restated, because it is the thing most likely to be misread after
+    twenty-two clean censuses: this is NOT a reason to stop censusing.** It is what a lane looks like after
+    rulings 36–387 have been applied. **The next finding will come from a PREDICATE nobody has stated yet,
+    never from re-running a member list** — and 386 and 387 are both exactly that, neither existing as a
+    phrase in this ledger until the tick that measured it. ⛔ Briefing an empty wave to avoid an idle tick
+    is what rulings 95, 100 and 111 exist to prevent, and it is worse than idling: it spends a dispatch,
+    puts a coder into `app/**` with no measured defect, and every edit is churn a later reviewer must
+    re-derive (47's companion). **The four lift conditions are checked, never inferred** — a new dated
+    `OWNER.md` section (case d) · a cadence condition on a moved `origin/main`, all three measured in the
+    acting tick · a Track 1 answer to ACTION 13, 14, 15, 16, 18, 19, 20, 21 or 22 · a population at 324's
+    bar, **measured non-empty AND buildable**. ⛔ *Sounds plausible* is not a population.
