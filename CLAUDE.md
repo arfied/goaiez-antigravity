@@ -7757,3 +7757,68 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     measuring instruments, and all three share one shape: **the ledger recorded a coordinate and not
     the command that finds it.** ⚠️ It cost nothing this once only because the token is unique in the
     file; a brief dictating an edit *at* `:40` would have edited the wrong line silently.
+294. **A census corroborates its COUNT against a deliberately looser instrument, not only its zero —
+    and a plausible non-zero count is the more dangerous failure, because nothing in this ledger's
+    discipline stops it (RULED by the lane supervisor 2026-09-09 22:5x, caught in the supervisor's own
+    hands before dispatch).** Rulings 207 and 280 both concern a **zero**: 207 after a `$`-before-`\|`
+    end-anchor turned a 32-member population into a printed zero, 280 after an under-count stop-clause
+    fired on a broken instrument and read as a decisive negative. Both fire loudly, because rulings
+    95/100/111 make a zero trigger scrutiny — this lane **strikes** a population that measures empty, so
+    a false zero is one tick from striking a live one. **A count that is merely SMALLER THAN THE TRUTH
+    triggers nothing.** It looks like a completed census, it is written into a verdict block, and the
+    next tick inherits it (ruling 64). Measured this tick: the capability-refusal census's first
+    instrument was `grep -rn "refuses" <the eight capabilities.php>` and it returned 30 lines; the
+    corroboration was a deliberately looser `grep -ric "refus"` **per file**, whose counts **exceeded**
+    the first one's, and five genuine refusal cells were worded differently and invisible to the first
+    grep — X-117's `G1-75` (*"the price is looked up or REFUSED"*), X-211's `N-033` and `N-037` (*"a fee
+    with no matching TERM is refused"*), `G1-71` (*"is REFUSED (P-092)"*) and `G1-74` (*"an unreconciled
+    logged payment is REFUSED"*). The **answer** did not move — all five have named tests — but the
+    census would have been recorded as covering 23 cells when it covers **28**. **RULED: a census states
+    its population size beside the output of a second, looser instrument**, and where the two disagree
+    the looser one is the population and the narrower one is a filter. ⚠️ The looser instrument is
+    chosen to over-match on purpose: case-insensitive, stem-truncated, per-file counts rather than a
+    line list, so its excess is visible as a **number** without reading anything. ⚠️ This is the ruling
+    83/136/145/179/188/192/207/265 family — *the cheap signal moves for reasons unrelated to the fact it
+    stands for* — with the sign that had never been recorded: not an absence read as a fact, but a
+    **partial presence read as a whole**.
+295. **A `refuses:` capability cell is satisfied by a test that NAMES its id, and ⭐ an id token
+    ANYWHERE in a module's test file marks that capability tested whether or not anything asserts it
+    (RULED by the lane supervisor 2026-09-09 22:5x, briefed as MONEY-165).** Owner ruling 15 makes a
+    capability cell carrying a refusal without a matching `state.py decided` line **and** a named test
+    or refusal code a merge blocker on every track; ruling 224 swept the `⛔ REFUSED` docblocks in
+    **tests** and said in terms that it never read the **cells**. Measured: **28 refusal cells** across
+    the lane's eight modules, **27** with their id named in their own module's test tree, and **one**
+    without — `C-Billing/capabilities.php:100`'s **`G1-80`**, *"refuses: C-Billing; Stripe/Authorize.Net
+    metered billing sync"*, for which `grep -rn "G1-80" app/app app/tests` returns **that line and
+    nothing else**. **RULED: it takes the shape its 27 siblings have** — ruling 224's `⛔ REFUSED`
+    docblock over `assertTrue(true)`, *"the correct and honest shape for a refused capability"* — **with
+    a MEASURED reason**, since 224 found three of twenty-three reasons measurably false: C-Billing has
+    no gateway client at all (ruling 87), `meters` has no production writer (ruling 88), and the lane's
+    only Authorize.Net string is the cell itself (ruling 190). ⛔ **The cell is not edited** — generated,
+    harvested from the frozen plan (rulings 29, 32), and an annotation edited to make a check pass is
+    §298's exact prohibition. ⛔ **No machinery is built** (ruling 59): a metered-billing sync is a live
+    vendor integration (ruling 13) and C-Billing `Domain/` is Track 1's (ruling 5).
+    ⭐⭐ **The hazard of the sanctioned shape, never written down until now.**
+    `Doctor/Stages/CapabilityStage::testedIds()` is
+    `preg_match_all('/\b(G\d+-\d+|N-\d+(?:-\d+)?)\b/', $f->getContents(), $m)` over every file in
+    `tests/Modules/<module>` — **file contents**, not method names and not an annotation grammar. So a
+    docblock that helpfully lists "related" ids satisfies the stage for **every id it names**, silently
+    and with no assertion behind any of them. The lane's existing grouped docblocks (`[G1-13] &
+    [G1-14]`, `[G1-33], [G1-42], [G1-49], [G1-59], [G4-39]`) are legitimate because those tests genuinely
+    cover the group and stay byte-identical; **a wave closing one cell introduces exactly one new id
+    token and no other.** ⚠️ This is the inverse of ruling 63's *instrument string in prose inflates the
+    count*: there honest copy fed an instrument and raised a number; here a helpful docblock would feed
+    an instrument and **lower** one, which is the direction nobody checks.
+296. **This seat cannot run `php artisan doctor` at any invocation it has tried, so every doctor number
+    in this lane is the CODER's measurement (measured 2026-09-09 22:5x).** `CLAUDE.md`'s role table
+    lists `php artisan doctor*` among the supervisor's read-only checks. Measured this tick:
+    `php app/artisan doctor 2>&1 | grep …` is refused as a pipe, and `php app/artisan doctor > <file>`
+    is refused outright. So a doctor count cannot be measured from here, and ruling 92 — *every number a
+    brief states is the supervisor's to have measured* — means a brief may **not predict one**. **RULED:
+    a doctor line is a measurement ITEM with no predicted value** (rulings 160, 164 — named field, named
+    heading, the whole list and not a count), **and its result is copied into the next verdict block**,
+    because `REPORT.md` is overwritten and does not survive the next wave (ruling 264). ⚠️ Recorded
+    rather than papered over, per ruling 252's lesson one register out: **a ledger line recording what a
+    role MAY do decays exactly like one recording what a guard refuses**, and the gap between the stated
+    column and the executable column is discovered only by trying. ⚠️ ⛔ Not resolved by asking the
+    coder to predict it either — that is the same unmeasured number with a different author.
