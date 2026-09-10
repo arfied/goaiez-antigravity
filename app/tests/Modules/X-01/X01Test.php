@@ -450,6 +450,9 @@ class X01Test extends TestCase
         $response2->assertDontSee('Ghost Risk', false);
     }
 
+    /**
+     * BUILD PROPOSAL: X-01 — cannot construct overlapping ID fixture between Customer and Person without a generator capability to force determinism. Owner: Track 1
+     */
     public function test_g19_08_ghost_risk_flag_without_person(): void
     {
         $admin = User::factory()->create();
