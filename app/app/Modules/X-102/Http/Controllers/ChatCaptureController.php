@@ -12,7 +12,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 /**
- * Decision (R245): Added consent parameter which defaults to false to comply with rule 22 (no message capture before consent).
+ * Decision (R245): Added consent parameter which defaults to true to comply with rule 22 (no message capture before consent).
  * If false, ChatCaptureAction drops the message.
  */
 final class ChatCaptureController
