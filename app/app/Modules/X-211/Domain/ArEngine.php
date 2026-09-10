@@ -131,6 +131,16 @@ final class ArEngine
         return DB::transaction(function () use ($businessId, $invoiceId, $installmentsCount, $frequency) {
             $invoice = app(InvoiceReader::class)->forBusiness($businessId, $invoiceId);
 
+            $existing = PaymentPlan::where('business_id', $businessId)
+                ->where('invoice_id', $invoiceId)
+                ->first();
+            if ($existing !== null) {
+                throw new PlanAlreadyOfferedException(sprintf(
+                    '%s is already on a plan: %d %s payments. Nothing was stored.',
+                    $invoice->invoice_number, $existing->installments_count, $existing->frequency
+                ));
+            }
+
             if ($installmentsCount < 2) {
                 throw new \InvalidArgumentException('A plan is at least two payments.');
             }
@@ -229,6 +239,15 @@ final class ArEngine
     {
         return DB::transaction(function () use ($businessId, $invoiceId, $packagedByUserId) {
             $invoice = app(InvoiceReader::class)->forBusiness($businessId, $invoiceId);
+
+            $priorPackage = ArCollectionsPackage::where('business_id', $businessId)
+                ->where('invoice_id', $invoiceId)
+                ->exists();
+            if ($priorPackage) {
+                throw new AlreadyPackagedException(
+                    "{$invoice->invoice_number} has already been packaged for collections. Nothing was packaged."
+                );
+            }
 
             $attempted = ArDunningAction::where('business_id', $businessId)->where('invoice_id', $invoiceId)->exists()
                 || PaymentPlan::where('business_id', $businessId)->where('invoice_id', $invoiceId)->exists()
