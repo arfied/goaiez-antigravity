@@ -12316,3 +12316,67 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     which is ruling 200's own discipline and ruling 371's family a **fifth** time inside this ledger's own
     censuses (375c, 376, 383, 394c). ⭐ **Every count a ruling states is derived by listing the items that
     produce it, and the list is printed beside the number.**
+398. **⭐⭐ A bare `Event::fake()` is not a wider `Event::fake([...])` — it is a different KIND of thing, because it disables the application's own machinery and not only the events a test asserts on; the brief dictated one above a `provisionTenant()` and the wave shipped a RED test (RULED by the lane supervisor 2026-09-10 19:5x, on MONEY-192's `f8ad1e7b`; briefed as MONEY-193).** Ruling 396's substance landed **exactly as ruled** — `X-201/Domain/DisputeDefenseEngine.php:129-135` refuses `['won','lost']` **after** the `findOrFail` and **before** the first write (rulings 330, 332), `DisputeAlreadyOutcomedException` is a `final class … extends \DomainException` in the module's own `Domain/` namespace beside its four siblings, its message names the invoice and the state and ends *"Nothing was recorded."* in the lane's own idiom, and the surface is the brief's five committable paths and nothing else. **The test that proves it errors.**
+    `X201Test.php:148` is `Event::fake();` — **bare** — three lines above
+    `TestCase::provisionTenant(…)`, and the test dies
+    `SQLSTATE[42501] … new row violates row-level security policy for table "locations"` on the insert
+    `TenantProvisioner::provision()` makes at `:228`. `TestCase::provisionTenant:177` sets `Tenancy` only
+    at the **END**, after `provision()` returns, so the tenant that satisfies the `locations` `WITH CHECK`
+    policy during provisioning is established inside `provision()` — and a bare `Event::fake()` swallows
+    it. §7 is `tests 2508 · passed 2501 · FAILED 2 · errors 5` against a floor of `errors 2`, and the
+    extra members are the two Authorize.Net `E00040` (85, attributed away) **plus this lane's own test**.
+    ⭐⭐ **The discriminator is in the same file, seventy-four lines up, and it is green today.**
+    `X201Test.php:74` is `Event::fake([DisputeOpened::class, EvidenceCompiled::class, DisputeLost::class])`
+    and `:76` is `TestCase::provisionTenant(…)` — **a selective fake whose list already contains
+    `DisputeLost::class`, followed by a provision, passing in the full suite.** So the corrected form is
+    not a hypothesis: `Event::fake([DisputeLost::class])` + `provisionTenant` is **measured green in this
+    very file**, which is as close to executed as this seat can get without running pest (ruling 193's bar
+    met by a control rather than by a guess). And the lane had already settled it by convention — of the
+    lane's **20** `Event::fake` call sites **19 are selective**, and the single other bare one,
+    `X-199/MarkInvoicesDueTest.php:13`, is bare **only because it provisions nothing**: it builds its
+    tenant with `Business::factory()` and creates no `Location`. **The bare form is safe exactly where no
+    tenant is provisioned, and this wave put one where a tenant is.**
+    **RULED: the line becomes `Event::fake([DisputeLost::class]);` and nothing else moves.** The list is
+    exactly what the test's own final assertion needs — `Event::assertNotDispatched(DisputeLost::class)` —
+    and the two events that then fire for real are measured **inert**: `grep -rn -e "DisputeOpened" -e
+    "DisputeResolved" app/app` returns their own declarations and their two dispatch sites and **no
+    consumer anywhere** (ruling 148's dead-at-one-end family, ruling 355's own measurement of
+    `ProposeClawbackOnDisputeLost` unchanged). ⛔ Not by moving the bare fake below `provisionTenant`,
+    which would leave the outlier form in a file whose sibling establishes the convention (123, one fact
+    one wording per module); ⛔ not by adjusting the assertion to match the error, which is what the
+    brief's own stop-clause forbade and what the coder correctly refused; ⛔ not by touching the engine,
+    the exception or the guard, every one of which is right.
+    ⭐ **The coder's `REFUSED:` is CORRECT, is upheld, and spends no dispatch** (rulings 60b, 71, 94, 106,
+    118, 217, 254, 313): the brief said in terms *"⛔ If you see any other message, the mutation did not
+    do what this brief says: report it under `REFUSED:` rather than adjusting the test to match"*, and the
+    run reported it, quoted both the mutated and the reverted failure, and diagnosed the cause itself.
+    ⚠️ Committing the red test was **structurally forced by the brief's own ordering** — item 4 commits and
+    item 5 proves — so the run could not have discovered the failure before the commit, and `amend` and
+    `reset` are outside its guard.
+    ⚠️ **Graded BLOCK and the push is HELD, on ruling 165's precedent and for one wave only.** Ruling 74
+    protects a correct tip against a defect **smaller than the thing withheld**, and that does not reach
+    here: ruling 46 is directly on point — *the contract's outcomes are a green gate or `UNRESOLVED`; a red
+    suite is neither, it is red in this checkout and in every checkout that takes the merge, and ruling 26
+    forbids pushing it* — and ruling 321's licence does not apply either, because that one turns on the red
+    being one **Track 1 authored** and this one is money's own. ⭐ **The escape clause is binding and is
+    written down now so the next tick does not re-litigate it: if MONEY-193 leaves the test red, the
+    following tick PUSHES ANYWAY and names the residue in its verdict block** — ruling 26c's reasoning is
+    the stronger one at that point, and a week of correct work is not withheld indefinitely against one
+    line.
+    ⚠️ Per the 46/49/50/62/66/75/82/86/94/104/106/113/116/146/153/167/175/183/189/193/195/198/200/215/217/
+    254 precedent the miss is the supervisor's — `BRIEF.md:163` dictated `Event::fake();` **verbatim** —
+    so **MONEY-193 carries its own two dispatches and MONEY-192's cap is untouched.**
+    ⭐⭐ **The generalisable half is ruling 193's axis with the lever moved from a production call to a
+    TEST DOUBLE.** 193 ruled that *a brief that dictates an assertion has dictated the ambient state that
+    assertion runs in*, and its instance was `Tenancy::forgetAll()` clearing the caller's tenant. A bare
+    `Event::fake()` is the same hazard from the test's own side: it reads as a narrower version of the
+    selective form and it is not one — **the selective form disables the events you name, and the bare form
+    disables the application, so every fixture that runs after it is running in a different app.** So: **a
+    brief that dictates a test double states which of the app's own machinery the double disables, and
+    checks that against the fixtures the same brief dictates.** ⚠️ And the cheap tell was free and in the
+    file: **the brief wrote a test into `X201Test.php` without reading the sibling it was about to sit
+    beside** — rulings 113/116/123's *the wave swept the file it was in* with the sign reversed, and the
+    thirty-fourth member of the ruling 66/75/82/92/94/106/118/147/153/175/183/189/192/193/195/198/200/202/
+    204/207/210/215/217/218/219/222/225/226/228/229/231/232/233/235/237/238/241/242/243/244/246/247/252/
+    254/271/284/287/293/299/300/308/314/331/336/341 dictation family. **Detail is read as the spec and
+    everything unstated is the coder's guess.**
