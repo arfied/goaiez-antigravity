@@ -1016,3 +1016,19 @@ ledger write. **(b) The attended guard has a gap the size of an account pause.**
 touched in the last 30 minutes; a seat paused by a usage limit touches nothing, so a tick opened case (b) on a wave this
 seat had already gated, and only N140's tail re-read stopped a second verdict. When a seat is paused mid-wave, the first
 thing it does on return is the N157 triple before touching the mailbox — that is what happened here, and it held.
+
+⚠️ **N130'S STANDING ORDER IS STATED OVER "THE CHECKOUT" AND ITS MECHANISM IS OVER `app/**` — AS WRITTEN, EVERY
+GATE VIOLATES IT BY CONSTRUCTION (N159, 2026-09-09, tick 281).** N130 reads *"nothing writes into a checkout while
+its suite is reading it, including this seat's own `CLAUDE.md` edits"*. But `supervise.sh --tests` writes its own
+output into `.agents/supervisor/.gate-*.txt` **for the whole duration of the run it is measuring**, and every merge
+brief this track has ever written orders exactly that. So the broad form condemns the instrument that enforces it —
+*the row that is legitimate by construction*, now inside N130 itself, which is the seventh instrument in this file
+to carry one. The mechanism is narrow and is the part that is true: a suite reads `app/**`, `app/phpunit.xml` and
+the generated classmap, and a merge landing in those bytes mid-run presents as a phantom `Class not found` in a
+suite nobody would think to distrust. Nothing in `.agents/supervisor/` is read by a running suite.
+**RULED: the standing order is over `app/**`, `app/phpunit.xml` and `app/vendor/composer/*` — a mailbox write during
+a gate is safe and is not a caveat.** ⛔ And the discipline that survives is the reporting one, not the prohibition:
+**a gate's §7 attributes to a sha only if the gate STARTED after that sha landed, and the block SAYS what this seat
+wrote during the run** rather than asserting the broad form it did not keep. This tick wrote two scratch files into
+the mailbox while its gate waited on `pest.lock`; saying so costs one line, and it is the difference between a
+measured claim and N103's "declared in prose, contradicted by the act".
