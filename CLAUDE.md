@@ -8520,3 +8520,127 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     `app/tests/Support/architecture_helpers.php` (`:3577`, `:4338`, `:5547`) are structural — a
     `DefaultsRegistry` presence filter, an AST parse, and a scan for method-call tokens
     (`->recordFailure(`, `->recordSuccess(`, `->recordRun(`, `$this->increment(`) — never business prose.
+317. **⭐⭐ An `error_log` at the repo root is not `php -l`'s tell — it is ANY PHP CLI process in this
+    checkout logging an error, and ruling 313's escalation clause was saved by being a CONJUNCTION
+    (RULED by the lane supervisor 2026-09-10 03:5x, on MONEY-172's run 197).** Ruling 183 measured
+    `php -l app/phpunit.xml` writing `./error_log` and named it *"the tell"*; ruling 313 sharpened that
+    to *"`error_log` at the repo root is `php -l`'s only tell"* and made the artifact's presence, plus a
+    silent `REFUSED:`, the trigger for escalating a departure into an item. §1 of `gate-money172.txt`
+    carries `?? error_log` again — and the cause is **different**. Run 197's `REFUSED:` names it
+    unprompted: a pest run during a mutation proof against a `LabelsDunningAction` trait the classmap did
+    not yet carry, i.e. a **PHP fatal**, not a lint. Both write the same file for the same reason —
+    ruling 183 measured that php CLI on this box logs to `./error_log` — so the artifact is produced by
+    any PHP process in this checkout that logs an error at all. **RULED: `?? error_log` in §1 says a PHP
+    process logged an error; it does NOT say which command, and a tick that reads it as a lint against an
+    explicit `⛔` is attributing an act.** The only thing that names the cause is the run's own
+    `REFUSED:` line, which is what ruling 313 exists to obtain.
+    ⭐ **The design lesson is the keepable half, and it generalises past this artifact.** Ruling 313's
+    escalation clause fires on *§1 carries the artifact* **AND** *`REFUSED:` is silent*. Only the first
+    half fired here, so nothing escalated — and the second half is precisely the one that carries the
+    cause. **An escalation clause keyed on an ARTIFACT PLUS A CONFESSION is safe; one keyed on the
+    artifact alone charges the wrong act the first time the artifact has a second producer.** A clause
+    written as *"`error_log` in §1 is a `⛔` violation"* would have charged run 197 with a lint it did not
+    run, which is the wrong-attribution class rulings 163, 171, 176 and 257 keep correcting — and it
+    would have been the fifth. ⚠️ This is ruling 289's family an **eighth** time (a value, a line number,
+    an instrument, a prohibition, a census scope, an id, an assertion — and now a **tell**): a ledger line
+    that says *"X is the tell for Y"* is a claim that X has ONE producer, and that claim decays like any
+    other. ⛔ Ruling 183's prohibition on `php -l` over a non-PHP file is untouched and both its reasons
+    stand — an untracked file muddying §1, and a vacuous "pass" on a file with no `<?php` tag.
+
+318. **⭐⭐ A wave that adds a NEW class under `app/app/Modules/` owes `composer dump-autoload -d app`
+    before its first pest run, and the failure shape is `Trait … not found` inside the wave's OWN new
+    test (RULED by the lane supervisor 2026-09-10 03:5x, measured from `app/composer.json` after run
+    197's `REFUSED:` reported it).** Measured rather than taken at face value: `app/composer.json`'s
+    `autoload` is `psr-4: {"App\\": "app/", …}` **plus** `classmap: ["app/Modules/"]`, and the module
+    directory names do not match the namespaces — `app/Modules/X-211/Ui/LabelsDunningAction.php` against
+    `App\Modules\X211\Ui\LabelsDunningAction` — so **PSR-4 cannot resolve a module class and the classmap
+    is the only route**. `grep -n "dump-autoload" bin/supervise.sh` is **empty**, so the gate does not
+    rebuild it either. `grep -c LabelsDunningAction app/vendor/composer/autoload_classmap.php` is **1**
+    only because run 197 rebuilt it after the fatal. ⭐ **Ruling 52 recorded this as a POST-MERGE rule**
+    — *"main adds new module classes, which `app/composer.json` classmaps, so every one is unloadable
+    until the classmap is rebuilt"* — and it is not a merge rule at all: it is a **new-file-in-a-
+    classmapped-directory** rule, and this lane has never carried it for an ordinary wave. **RULED: every
+    brief whose items create a new class, trait, interface or enum under `app/app/Modules/` carries
+    `composer dump-autoload -d app` as the step immediately after that file is written, before any
+    `--filter`ed pest run and before the gate.** ⚠️ **The failure shape is the dangerous half.** Ruling
+    52 recorded it as `Class … not found` **inside another lane's test**, *"the most misattributable
+    shape there is"*; the ordinary-wave form is worse in a different way — it lands inside the wave's
+    **own new test**, where it reads exactly like the new test being wrong, so the tempting repair is to
+    weaken the assertion. Run 197 diagnosed it correctly, rebuilt, and said so under `REFUSED:`.
+    ⚠️ ⛔ **`composer` is refused to this seat** (ruling 296's family — a stated column is not an
+    executable one), so this is briefed and never measured here: the brief asks for the command's own
+    output line, and the proof it worked is the wave's own filtered pest run going green.
+
+319. **The `<th>`/`<dt>` heading census is MEASURED at 33 lines across the eight modules' blades and is
+    STRUCK with its measurement (measured 2026-09-10 03:5x; rulings 64, 95, 100, 111, 294, 298).**
+    Ruling 107 (`Total Received Today`), ruling 123 (`AI Credits Balance`), ruling 239 (`Payments
+    recorded`) and ruling 316 (`Next Step`) are four findings of one shape — **a column or figure HEADING
+    naming a quantity the code does not compute** — and every one was found incidentally, by a wave
+    aimed at something else. The population had never been enumerated. Enumerated now
+    (`grep -rnoE "<(th|dt)[^>]*>[A-Za-z][^<]*"` over the eight modules' blades): **33 lines**, and **every
+    one is already governed or measured sound** — X-199's `Unpaid Invoices`/`Unpaid Value`/`Days
+    Overdue`/`Outstanding` (rulings 107, 68, 108), `Recovered` (114), `Total value of invoices settled
+    today` (107's own fix), `Limit`/`Outstanding`/`Overflow` (real columns; `$term->overflow` is a
+    **sentence** derived at `Credits.php:94-103`, carrying ruling 237's three-way split) · X-198's
+    `Expected`/`Actual`/`Discrepancy`/`Reason` (108) and `Payments recorded`/`Payouts`/`Last
+    reconciliation` (239, 152(c)) · C-Billing's `Credit balance` (123's own fix),
+    `Type`/`Amount`/`Balance After` (real ledger columns), `Day in Cycle` and `Next step (planned)`
+    (316's own fix) · X-199's `Number`/`Customer`/`Status`/`Due Date`/`Total`/`Paid` (108 praised the
+    Total/Paid split explicitly). ⛔ Not to be re-raised.
+    ⚠️ **One member is recorded at ruling 76's grade and deliberately NOT briefed:**
+    `C-Billing/revenue-recovery.blade.php:35`'s `<dt>At risk</dt>` sits over `$monthly['cents']`, the
+    account's **agreed monthly price** — a figure that varies, is read from the row, and is immediately
+    qualified by its own `<dd>` (*"… a month"*), so nothing false is asserted; what the label adds is a
+    risk assessment the code does not perform. True-but-imprecise, one word, no fiction. ⛔ A wave for it
+    would be churn.
+    ⭐ The generalisable half is why the census was worth running even though it came back empty:
+    **four rulings of one shape, all found incidentally, is the signature of an unenumerated
+    population** — and the honest outcome of enumerating one is as often a strike as a wave (rulings 95,
+    100, 111). ⚠️ Measured in the same pass and struck with it: the **`wire:model` → write** seam, the
+    only other unswept candidate. All **19** bound property names across **nine** components are
+    accounted for, and every one of those nine has been swept by a prior ruling — `AgeingByReason` (111,
+    221), `PaymentplanBuilder` (214), `X-199 Credits` (234), `ConnectionMappingView` (73, 206),
+    `ConflictsListView` (206), `DisputeCard`/`DisputeQueue` (227), `InvoiceThreadBeside` (MONEY-172),
+    `CardScreen` (241). ⛔ Not a population.
+
+320. **⭐⭐ The `origin/main` merge is OPEN on cadence condition (1) — 113 behind — and its shape is the
+    CLEANEST this lane has ever measured: all four of ruling 58's damage shapes are empty and `source/`
+    is untouched on both sides (RULED by the lane supervisor 2026-09-10 03:5x; measured against
+    `origin/main` = `3ec2a6aa`, merge-base `899b856d`, money 11 ahead / main 113 ahead).** The owner's
+    09:02 cadence, measured in this tick and never inherited (rulings 269, 272): **(1) 113 > 100 —
+    FIRES**; (2) `git diff --stat 899b856d origin/main -- app/app/Doctor coder-bin .claude/hooks` is
+    **empty** ✗; (3) the base **is** this lane's own tip and there have been pushes since ✗. One of three
+    is enough. Ruling 52's two-party sequence is unchanged and ruling 285's measurement holds that the
+    supervisor may attempt a **pathless** `git commit --no-edit`, because after the driver and the
+    restores every guarded path's stage-0 blob equals `HEAD`'s and none appears in `coder-bin/git`'s
+    `git diff --cached --name-only` input.
+    **The shape, measured whole — 33 paths, and ruling 58's four damage shapes are ALL EMPTY:**
+    (1) main adds no test in money's eight test trees; (2) main touches **no file** in money's eight
+    module trees; (3) `git diff --diff-filter=D --name-only 899b856d origin/main` is **empty** — zero
+    deletions in 113 commits, so the deleted-class shape cannot fire; (4) no generated route tests.
+    `app/tests/Journeys` is **untouched**, so the **harness gate stays CLOSED** and `--allow-harness` is
+    not passed (ruling 74: never a standing flag). The 26 non-per-track paths are the **reviews** and
+    **site** lanes' alone — C-Reviews, X-01, X-102, X-181 — all `M` or `A`, and they take
+    `origin/main`'s side whole by the One Rule (ruling 286: a **rule** with a measured exception list,
+    never a closed set, because the ref moves between measurement and merge).
+    ⭐⭐ **Sidedness, and it is where the only real risk lives.** `merge.ours.driver` is `true` and
+    `.gitattributes` is **in the working tree** carrying all eight paths, so ruling 27's caveat is
+    satisfied and the driver can fire — **but only on a path BOTH sides changed.** Measured:
+    **two-sided, driver keeps money's copy** — `CLAUDE.md` (money +211 since the base, main −9006),
+    `.agents/state/BUILD-STATE.json`, `.agents/state/JOURNAL.md`; **one-sided main-only, EXPOSED, the
+    driver cannot fire and each must be hand-restored** — `app/phpunit.xml` (2 lines → Track 1's
+    `goaiez_antig_test`), `bin/supervise.sh` (490), `.agents/supervisor/launch-coder.sh` (184),
+    `.claude/settings.json` (23). Exactly ruling 179/251's four, with 179's ranking unchanged:
+    `app/phpunit.xml` is sharpest because `supervise.sh` §0 exits 2 only on *production* and
+    `goaiez_antig_test` is not production, so **no gate in this checkout catches the swap**, and
+    `bin/supervise.sh` is second because the instrument that would notice is itself in the exposed set.
+    ⛔ The restore is never skipped because a path is listed in `.gitattributes` — that listing is the
+    false comfort ruling 250 named. ⭐ `.agents/rules/10-supervisor.md` and `source/` are untouched on
+    **both** sides, so ruling 31's historically decisive one-sided `source/` hunk **does not exist in
+    this merge**. ⚠️ ⛔ **`php -l` on none of the four** (ruling 183, ruling 317's other half): all are
+    XML, JSON, Markdown or shell. The checks that read them are `git diff --cached HEAD -- <them>`
+    printing nothing, a `grep` for the pin, and `wc -c`. ⚠️ **No floor is predicted** (ruling 157): 113
+    commits of two other lanes' tests arrive at once and no arithmetic available before the merge
+    produces the count. ⚠️ ⭐ **Ruling 318 binds this merge twice over** — main adds `ReviewRequestRead
+    Action.php` and `QaTicketReadAction.php` under the classmapped `app/app/Modules/`, which is ruling
+    52's original instance and is now the measured general rule.
