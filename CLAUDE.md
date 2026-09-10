@@ -9306,3 +9306,77 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     284/287/293/299/300/308/314/331 family a **thirty-second** time, and it is ruling 300's amendment
     (*"a ledger line that establishes an instrument quotes the invocation"*) recurring one tool over,
     ten waves later, in a lane that had already written 300 down.
+337. **⭐⭐ A tie in a `Domain/` reader can decide WHICH ROW IS SHOWN AT ALL, not merely the order —
+    and a defect in a reader with four consumers is proven at the READER, never at four screens
+    (RULED by the lane supervisor 2026-09-10 06:3x, briefed as MONEY-177).** Ruling 333 fixed X-199's
+    three `created_at` lists, ruling 335 its two remaining `Ui/` queries and measured a nine-member
+    remainder. The four sharpest sit in one file: `X-199/Domain/InvoiceReader`'s `openForBusiness`,
+    `openUnpaidForBusiness`, `openOverdueForBusiness` and `unpaidOverdueForBusiness`, each
+    `orderBy('due_date')` with no tiebreak over a `$table->date('due_date')` column — **no time
+    component, so two invoices due the same day are byte-identical in the ordering column** and the
+    tie is guaranteed by the column's type rather than manufactured by a frozen clock (ruling 335).
+    ⭐ **The ruling-98 tell is inside the file:** `:34` (`linesForInvoice`) and `:87` (`linesFor`) order
+    by **`id`** — the author reached for it in exactly the two methods with no domain key to reach for,
+    and never once as a **tiebreak** behind one.
+    **The consumers are measured, not inherited** (ruling 323) — `grep -rn` over `app/app app/tests`
+    returns exactly four production callers, one per X-211 screen:
+    `InvoiceThreadBeside.php:74` ← `openForBusiness` · `PaymentplanBuilder.php:80` ←
+    `openUnpaidForBusiness` · `CollectionsPackagePreview.php:58` ← `openOverdueForBusiness` ·
+    `AgeingByReason.php:132` ← `unpaidOverdueForBusiness`; plus three test call sites that read the
+    collection directly and render nothing.
+    ⭐⭐ **The headline is that one of the four is not a reshuffle.**
+    `X-211/Ui/InvoiceThreadBeside.php:76` is
+    `$invoices->firstWhere('id', $this->invoiceId) ?? $invoices->first()`, so on a fresh mount — the
+    state every owner arrives in — **which invoice the entire screen opens on is undefined**, and the
+    thread, the lines, the balance, the reason form and the dunning actions all follow that choice.
+    That is ruling 194's *which end was thrown away* one level up, and it is sharper than
+    `Unpaid.php`'s `limit(5)`, because there a tie decided which row was dropped from a list and here
+    it decides which row the screen is **about**. The other three are ordinary reshuffles:
+    `AgeingByReason` groups by reason (`$groups[$inv->reason][]` then `ksort`), so the group order is
+    fixed and only the **within-group** order is the reader's.
+    **RULED: all four take `->orderBy('id')`, ASCENDING** — ruling 335's direction rule, a tiebreak
+    running the same way as the clause it breaks, and all four `orderBy('due_date')` calls are
+    ascending by default.
+    ⭐⭐ **RULED on the PROOF SHAPE, and this is the generalisable half: the four fixes are proven by
+    four tests against `InvoiceReader` itself, asserting `pluck('invoice_number')`, NOT by four
+    `assertSeeInOrder` tests on four X-211 screens.** Three measured reasons, in ascending order of
+    force. (1) **Cost** — four screens means four fixtures, and `AgeingByReason` and
+    `CollectionsPackagePreview` require `ReceivableState` and `ArDunningAction` rows before they render
+    anything, so most of the wave would be scaffolding unrelated to the defect. (2) ⭐ **Ruling 255's
+    hazard is removed rather than re-measured** — `assertSeeInOrder` is **not** a Livewire assertion:
+    it forwards to `TestResponse` and searches the **full payload including `wire:snapshot`**, so each
+    screen would need its own measurement of which public properties can satisfy a needle, and
+    `PaymentplanBuilder` holds `$installments` and `$frequency` **keyed by invoice id**, which is the
+    one shape where an id-shaped needle could pass on the payload. A reader assertion has no haystack
+    but the collection. (3) ⭐⭐ **A reader test proves the CONTRACT and a screen test proves one
+    screen** — the defect is in the reader's return order, so a reader test also covers the fifth
+    consumer nobody has written yet, which is exactly the consumer a screen test cannot cover.
+    ⛔ **The one thing a reader assertion cannot express is `InvoiceThreadBeside`'s selection**, so
+    that consequence gets **one** `Livewire::test` assertion on the rendered invoice number, and after
+    this wave nothing else in the lane would pin that the screen opens on a deterministic invoice
+    (ruling 70's logic applied to behaviour rather than to prose; ruling 101's *inverting without
+    replacing the positive is how a check stops checking*, in its general form).
+    ⭐ **It needs no fifth mutation:** reversing `openForBusiness`'s tiebreak reddens the reader test
+    **and** the selection test, so one mutation carries two RED lines — which is *stronger* than two
+    mutations, because it demonstrates that one line governs both consequences. **Four mutations, five
+    RED lines**, each quoted with its test's name and its assertion's message (rulings 72, 195, 314),
+    each followed by a green re-run (ruling 82's collateral).
+    ⛔ **Every mutation is a REVERSAL — `->orderBy('id')` → `->orderByDesc('id')` — never a deletion**
+    (rulings 204, 333): deleting an ordering clause leaves Postgres *free* to return heap order, which
+    will often still match insertion order, so the test can stay **green with the mutation applied**,
+    and a proof that cannot fail is not a proof. ⛔ No migration and no unique index: `due_date` is not
+    unique by nature and never can be. ⛔ The four screens are **not touched** (ruling 47's companion),
+    and neither is `Declines.php:81`, whose tie ruling 333 measured unobservable (ruling 96).
+    ⚠️ **The filters are measured so the fixtures are not guessed** (ruling 193):
+    `openForBusiness` is `whereNotIn('status', ['paid','draft'])` alone · `openUnpaidForBusiness` adds
+    `whereColumn('paid_cents','<','total_cents')` and `whereNotIn('id', $excludeIds)` ·
+    `openOverdueForBusiness` adds `whereDate('due_date','<',today())` and the same exclusion ·
+    `unpaidOverdueForBusiness` is `where('status','!=','paid')` plus `whereDate('due_date','<',today())`
+    — ⚠️ note it does **not** exclude `draft`, which is a real difference from its three siblings and
+    is recorded rather than changed (ruling 47's companion; `draft` is excluded from every other reader
+    and ruling 191 already governs that state).
+    ⚠️ Blast radius measured with interior fragments (rulings 46, 86, 146): the three non-rendering
+    call sites — `InvoiceEngineTest.php:429`, `:468` and `ArEngineTest.php:175` — assert **counts and
+    membership**, never order, so **zero** existing assertions move and all five methods are **added**
+    (rulings 68, 70). ⚠️ Ruling 293: each of the four is found by its **token**, never by the line
+    numbers quoted here — MONEY-175 already shifted one of `Unpaid.php`'s by inserting a line above it.
