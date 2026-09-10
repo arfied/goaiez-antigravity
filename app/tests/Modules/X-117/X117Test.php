@@ -327,4 +327,40 @@ class X117Test extends TestCase
             items: [['sellable_id' => 9999, 'quantity' => 1]]
         );
     }
+
+    /**
+     * [G6-02] A post-charge upsell on a card already on file would charge a second time on the
+     * authorisation that paid the first order. checkoutCart() refuses that: an authorisation is a
+     * one-shot nonce, and the guard is the SECOND check in the method, before the cart is even
+     * read. The second cart below is therefore load-bearing — with no cart the method would refuse
+     * for a different reason and this test would pass for the wrong one.
+     */
+    public function test_g6_02_an_authorisation_pays_once_and_a_second_charge_on_it_is_refused(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Upsell Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $sellable = Sellable::create([
+            'business_id' => $biz->id,
+            'name' => 'Filter',
+            'sku' => 'FIL-1',
+            'inventory_quantity' => 5,
+            'unit_price_cents' => 2500,
+        ]);
+
+        $token = 'auth_'.uniqid();
+
+        $this->cartAction->handle($biz->id, 'sess_upsell', [['sellable_id' => $sellable->id, 'quantity' => 1]], 15);
+        $first = $this->engine->checkoutCart($biz->id, 'sess_upsell', $token, null);
+        $this->assertSame('pending_payment', $first['status']);
+
+        $this->cartAction->handle($biz->id, 'sess_upsell', [['sellable_id' => $sellable->id, 'quantity' => 1]], 15);
+        $second = $this->engine->checkoutCart($biz->id, 'sess_upsell', $token, null);
+
+        $this->assertSame('refused', $second['status']);
+        $this->assertSame('AUTH_USED', $second['refusal_code']);
+        $this->assertStringContainsString('an authorisation pays once and this one already has', $second['message']);
+        $this->assertSame(1, Order::where('business_id', $biz->id)->count());
+        $this->assertSame(4, $sellable->fresh()->inventory_quantity);
+    }
 }

@@ -74,7 +74,7 @@ class CheckoutBlockScreenTest extends TestCase
         $screen = Livewire::test(CheckoutBlock::class, ['sessionToken' => 'sess_1']);
         $screen->set('authToken', $token)
             ->call('pay')
-            ->assertSee('needs a fresh authorisation');
+            ->assertSee('an authorisation pays once and this one already has');
 
         $this->assertSame(8, $boiler->fresh()->inventory_quantity);
         $this->assertSame(1, Order::where('business_id', $biz->id)->count());
