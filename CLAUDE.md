@@ -12380,3 +12380,110 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     204/207/210/215/217/218/219/222/225/226/228/229/231/232/233/235/237/238/241/242/243/244/246/247/252/
     254/271/284/287/293/299/300/308/314/331/336/341 dictation family. **Detail is read as the spec and
     everything unstated is the coder's guess.**
+399. **⭐⭐ The `::fake()` family census is MEASURED and CLOSED — and ruling 398's bare-vs-selective
+    distinction DOES NOT TRANSFER to `Http::fake`, because every form of it intercepts every outbound call
+    in the process: the array selects which requests get a SPECIFIED response, not which are faked (measured
+    by the lane supervisor 2026-09-10 20:0x; rulings 64, 95, 100, 111, 207, 294, 324, 327, 340).** Ruling 398
+    named this axis — *a test double is an ambient-state lever, and its bare form is not a wider version of
+    its selective form* — after a bare `Event::fake()` above a `provisionTenant()` swallowed the tenant the
+    `locations` `WITH CHECK` policy needs and shipped a red test. Its own instruction was to sweep the rest of
+    the family. **Instrument, quoted (ruling 300), in the standing one-root-plus-filter form:**
+    `grep -rn -e "::fake" app/tests/Modules --include=*.php` filtered to the eight ids, then split by whether
+    the call carries an argument, then **each bare one read for what runs after it** (262(b)).
+    **`Event::fake` — 31 sites, and after MONEY-193 it is 30 SELECTIVE and ONE bare.** The one bare is
+    `X-199/MarkInvoicesDueTest.php:13`, measured **safe** by ruling 398 for a stated mechanism: it provisions
+    nothing, building its tenant with `Business::factory()` and creating no `Location`, so there is no
+    provisioning insert for a swallowed tenant to fail. ⭐ **The bare form is safe exactly where no tenant is
+    provisioned**, which is 398's own conclusion re-measured on the whole population rather than on the two
+    members that prompted it.
+    **`Http::fake` — 20 sites, EVERY ONE carrying an argument: 19 arrays and ONE closure.** ⭐⭐ **And that
+    count is not the reassurance it looks like.** In Laravel a `Http::fake` of ANY form makes faking global for
+    the process; an array's keys choose which requests get a **specified** response, and a request matching no
+    key receives an **empty 200** rather than reaching the wire. So `Http::fake([...])` is not the analogue of
+    `Event::fake([...])`: the selective `Event::fake` genuinely leaves unnamed events dispatching for real,
+    where a selective `Http::fake` leaves unnamed URLs intercepted and silently answered. **The bare/selective
+    axis 398 established is a property of `Event::fake` and must not be carried across the family by analogy.**
+    **The harm is nonetheless bounded at TWO, measured rather than assumed** (ruling 323 — re-measured this
+    tick, not inherited from ruling 233): `grep -rn -e "Http::" app/app/Modules` filtered to the eight ids
+    returns **exactly two lines**, `X-198/Domain/StripeGatewayClient.php:27` and `:66` — so the only outbound
+    calls this lane's code can make are the charge and the checkout-session posts, and every fake array that
+    reaches either names it. ⭐ And an unnamed URL's empty 200 would be **loud** rather than silent here:
+    `createPaymentLink()` reads `json('url')` and throws ruling 228's *"sent back no payment page"* on a null,
+    and `charge()` reads `id` and `status` (235). ⛔ **The one closure form is ruling 229's own designed proof**
+    — `X198Test.php:536`, which commits the racing `PaymentLink` at the HTTP boundary between the pre-check and
+    the persist and then returns an **explicit** response, so nothing falls through it. Read rather than
+    counted (152, 262(b)).
+    **The other five family members are ZERO in the lane** — `Queue::fake`, `Bus::fake`,
+    `Notification::fake`, `Mail::fake`, `Storage::fake` and `Http::preventStrayRequests` return **nothing**
+    across the eight test trees. ⭐⭐ **The positive control fires at 126 lines tree-wide and lands on ANOTHER
+    LANE'S OWN RULE TEXT** (ruling 326's shape, third instance):
+    `app/tests/Feature/GbpGrantRevocationsAdminTest.php:527` reads *"⚠️ `Http::preventStrayRequests()` WITH NO
+    FAKE IS THE ASSERTION HERE"*, and `app/tests/Pest.php:168-172` records that `Notification::fake()` and
+    `Mail::fake()` *"intercept above"* the mail transport. **So the instrument demonstrably locates every
+    member of the family in this tree, deliberately used, with its reasoning written down — and money uses
+    none of them.** ⛔ Money proposes no edit on any of those (ruling 5).
+    ⛔ **ZERO buildable, and `preventStrayRequests` is deliberately NOT adopted.** Adding it to the lane's 20
+    fake sites would be test-hardening with no measured defect behind it — the stray-request population is
+    bounded at two production call sites, both named — and ruling 327's precedent governs: *a population
+    measured NON-EMPTY that yields ZERO buildable fixes is a legitimate result and is the more useful of the
+    two to write down*, because an empty census tells a later tick *nothing is there* while a classified one
+    tells it **what is there and why each member stays**. ⛔ Not to be re-raised. **Eleventh instance of that
+    outcome shape.**
+
+400. **⭐⭐ A two-tenant test cannot silently assert the wrong tenant, because RLS fails CLOSED in BOTH
+    DIRECTIONS — the candidate is STRUCK with its mechanism, and it is ruling 392(c)'s lesson a second time
+    (measured by the lane supervisor 2026-09-10 20:0x).** Ruling 398's axis has a sibling nobody had stated:
+    `TestCase::provisionTenant` **ends in `Tenancy::set()`** (398's own measurement), so in a test that
+    provisions two tenants the ambient tenant — and with it the `app.business_id` session setting the RLS
+    policies compare against — is left pointing at the **second**. The hypothesis was that an isolation
+    assertion written after the switch could pass for the wrong reason (ruling 61's family), and the lane's
+    population is large: `grep -rc -e "provisionTenant" app/tests/Modules` filtered to the eight ids returns
+    **82 files**, twenty-odd of them with counts high enough to hold a two-tenant method.
+    ⭐⭐ **It is not a hazard, and the reason is ruling 212's own measurement pointed at a test instead of at
+    production.** All 33 of the lane's tables are `ENABLE`d **and** `FORCE`d with the byte-identical
+    `tenant_isolation` policy carrying **both** `USING` and `WITH CHECK`. So both halves of the shape fail
+    loudly: seeding tenant B's rows while the ambient tenant is A is **REFUSED** by `WITH CHECK`
+    (`SQLSTATE[42501]` — the very error ruling 398 was diagnosed from), and rendering a screen as A while the
+    ambient tenant is B renders **B's** rows, so an `assertSee` of A's value **FAILS**. There is no third
+    arrangement in which the wrong tenant is read and the assertion still holds. ⛔ **STRUCK, not to be
+    re-raised**, and ⛔ no wave: there is nothing to fix and nothing to harden — a test asserting that RLS
+    refuses is asserting a constant (43's corollary) and ruling 212 already measured the policy on all 33.
+    ⭐ **This is ruling 392(c)'s sharpest lesson a second time: a hypothesis built on TRUE measurements can
+    still be false.** `provisionTenant` does end in `Tenancy::set()`, the ambient tenant is left on the
+    second, and the population is large — three true facts — and the conclusion does not follow, because a
+    fourth measurement the hypothesis never made (which direction RLS fails in) decides it. **The cost of
+    checking was two greps already in this ledger.** ⛔ *Sounds plausible* is not a population.
+
+401. **⭐⭐ Ruling 391's route (iii) was the ONLY route available this tick and it carried the review —
+    upgrading it from "a route that worked once" to the standing answer for a mutation-proof wave with a free
+    lock (RULED by the lane supervisor 2026-09-10 20:0x, on MONEY-193's `a34f43c2`).** Ruling 291 forces a
+    supervisor re-gate on any wave that ran a mutation proof; 357 measured that its condition is a **PROXY**
+    for *a second pest in this checkout concurrently with the gate*, and 288/357/391 give three ways to
+    measure the mechanism instead of re-running the suite. MONEY-193 **did** run a mutation proof, so (ii) is
+    unavailable, and `gate-money193.txt` carries **no** `another suite holds /home/goaiez/tmp/pest.lock`
+    line, so (i) is unavailable. **Route (iii) fired exactly:** the previous tick's addendum predicted, by
+    listing and before the run, `tests 2508 · passed 2504 · FAILED 2 · errors 2` on the branch where the
+    `E00040` pair does not appear, and §7 measured **`tests 2508 · passed 2504 · FAILED 2 · errors 2`**.
+    ⭐ 42's mechanism drops the schema under a running suite and therefore **cascades** errors; it cannot
+    coincidentally reproduce an independently-derived arithmetic prediction on both counts. All four of
+    288/357's statements are made: 42's tell **absent** (no `relation … does not exist`, and `errors` did not
+    rise); the gate file read **raw** to its end by the supervisor (42(2)); §1's `0 uncommitted path(s)`
+    against this seat's own empty `git status --short --untracked-files=all` **and** empty
+    `git diff --stat HEAD -- app/` (34, 71, both directions); and the **ordering** — commit `17:38:19` against
+    the gate file's `17:41:28`, so the gate ran after the wave's last commit, 42's *inverse* hazard measured
+    clean. ⚠️ The cost of the alternative was measured, never assumed (348): `pgrep -a -f "vendor/bin/pest"`
+    returned five hits, **three of them track sixty's kickoff and my own bash command quoting the string**
+    (322 — **read the hit**) and one genuine holder, `1075154 timeout 1800 ./vendor/bin/pest`, making a
+    re-gate up to 40 minutes of `flock` with ruling 91's abandoned-gate precedent and 253's double-kill
+    behind it. ⛔ Route (iii) is open only where the floor was **derived before the run**, and ⛔ never where
+    §7 never ran at all — that is ruling 348's case and carries a **debt** into the next brief.
+    ⭐ **Four paperwork rulings held on their second or third outing and it is recorded per ruling 149's
+    discipline** (*a fix to a paperwork rule is itself a claim, and the tick after it says whether it held*):
+    **362**'s collapsed `GATE:` — the coder transcribed **no number at all**, so 42(2)'s *never take a
+    reported figure as the sha's* is satisfied **by construction** and every §7 digit in the verdict block is
+    the supervisor's own raw read, with nothing left for a composer script to fabricate; **367**'s
+    `(clean — no output)` sentinel, arriving correctly for the second time; **314**'s both-halves RED line,
+    the test's **name** and the assertion's **message** both verbatim and matching the brief's predicted
+    `A second outcome on an already-outcomed dispute must be refused.` to the character, each side of it a
+    GREEN run (82); and **366(b)/367**'s `SWEEP:` as the **baseline**, its two lines showing `:148` still
+    `Event::fake();` before the edit with `:74` byte-identical as the positive control.
