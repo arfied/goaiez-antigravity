@@ -8751,6 +8751,83 @@ Watch for: <the trap that applies, by name>
   +5 assertions` against tick 301 — one new five-assertion test and no other diff shape gives that triple.
   Re-run every grep; never inherit one.
 
+- ⚠️⚠️ **A PROSE field can assert a SECOND mutation's result while every block-shaped field carries only one —
+  and the ARTIFACT SET, not the report, is the tell.** Wave 170's `STATUS` closed *"the second is falsified by
+  the fact that passing a non-whitespace string from the controller reddens the assertion"*, and the agy log
+  said it in the past tense; that is `scratch/w170-mut-1.patch`, on disk, with **no `-applied`, `-gate` or
+  `-raw` log beside it**, where the wave's real mutation (mut-3) has all three. The `MUTATION` block itself is
+  honest — one block, every field command output — so the unrun result was stated in the one place no field
+  shape forces evidence behind it. ⚠️ **Unverifiable by this column and recorded as unverifiable rather than
+  as invented** (tick 268): the deduction is sound, a background task's log may hold it, and
+  `/home/goaiez/.gemini/antigravity-cli/brain` is outside this column's Bash sandbox with no command here able
+  to discover a run uuid for the `Read` route (tick 254). NOTE and not `BLOCK` because the docblock rests on
+  mut-3 alone (tick 222). ⛔ **The check is `ls scratch/w<N>-mut-*`: a patch with no `-applied`, `-gate` and
+  `-raw` beside it did not run through the ruled harness whatever any sentence says** — brief a `PATCHES`
+  field that `stat`s every patch the wave generated beside the artifacts each one produced.
+- ⚠️⚠️ **A parenthetical PROHIBITION is not a command — a printed command came back byte-exact and a described
+  field carrying `(unfiltered — no head, no tail)` came back as a different pipeline, four lines apart in one
+  template.** Wave 170's `GREEN`/`MUTATED` were specified with the full `grep -o` alternation printed and were
+  exact; `MOVED` was specified as *"the two-stage census, unfiltered, no head, no tail"* and came back as a
+  `diff -u` of the two objects' **numeric fields**, so `MOVED-COUNT: 10` counts diff lines and the report holds
+  **no census of which tests moved at all**; `MESSAGE` came back with `| head -1` against the same
+  parenthetical. Fifth mis-derivation of the radius family after wave 93, tick 285, wave 159b and wave 163, and
+  tick 302's own ruling (*print the command, never describe the fields*) applied to one field of a template and
+  not to its neighbours — by me, in the brief that recorded it. **RULED: `MOVED` is the pipeline printed in
+  full and `MOVED-COUNT` is `| wc -l` of that same printed pipeline** (tick 245 — rewrite, never clause-patch).
+- ⚠️ **A delta names a POSITION only against the target's own assertion COUNT, so the count is a required
+  field.** Wave 170 subtracted correctly (`10805 → 10804`) and read *"the **first** assertion failed,
+  preventing its **second**"* of a test holding **three** — where `−1` can only be a failure at the second with
+  the third unreached, a first-assertion failure being `−2`. The arithmetic and the conclusion were right and
+  only the mapping was off by one; that mapping is the whole of what this lane reads a subtraction for (ticks
+  249, 279, 288). **Ask for the moved test's assertion count from a command, or the division is done from
+  memory.**
+- ⚠️ **A runner's own stdout log ending MID-SCRIPT beside NEWER artifacts means the script died and a human
+  finished the wave.** `scratch/runner.sh:6` was `bash bin/supervise.sh --tests > <log> 2>&1` with no
+  `|| true` under `set -e`, and a gate over this suite always exits non-zero on the standing eight, so wave
+  170's runner aborted at its first gate: `runner.log` is two lines at `17:16:45` while the applied proof
+  (`17:19:44`), the mutation gate (`17:22:23`) and a second clean gate (`17:25:50`) all exist. Nothing was lost
+  — the coder carried on by hand and the final green is a **post-revert** clean-tree gate, better than the
+  runner's ordering — but this is the tick-283 mechanism recurring with its ruled `|| true` fix not carried
+  into the brief. **Read the runner log before crediting a runner's ordering.**
+- ⚠️ **The final gate PRECEDED the tip commit again, and the TEMPLATE is what made it visible.** Wave 170's
+  `GATE.MTIME 17:25:50` against `GATE.TIP 17:27:06`: the gate certifies `d2ff4f18`, not `02a448a6`. Harmless
+  and measured — the tip adds two `.agents/state/` files and no PHP — but `NOT RUN : none` is untrue of the
+  pint item's *ordering* for the second wave running (tick 295, and the **tenth** recurrence of grading
+  completion from the field that asks about it). ⭐ **Credit the template: putting `MTIME` and `TIP` on
+  adjacent lines turns a wall-clock ordering claim into two values a reviewer compares without opening
+  anything. Keep every field that reduces an ordering claim to two adjacent values.**
+- ✅✅ **`ChatDoorTest.php:416` is settled: the two layers are INDEPENDENTLY SUFFICIENT, so no single-layer
+  mutation can move it and the test cannot speak to the middleware — mut-3 is SPENT, never re-brief it.**
+  Wave 170 replaced `ChatCaptureController.php:58`'s `message: is_string($message) ? $message : null` with
+  `message: "   "`, a raw whitespace string reaching the action as if `TrimStrings`/`ConvertEmptyStringsToNull`
+  had not run; the target **survived** and `ChatCaptureAction.php:35` is what nulled it. Green
+  `2450 · 2442 · 10805 · failed 6 · errors 2`, mutated `2450 · 2441 · 10804 · failed 7 · errors 2` — `−1` on
+  `test_capture_keeps_message_when_consent_provided`'s three assertions (fails at its second, third
+  unreached), radius **1**, the sibling honest by the wave-87 rule, and four site proofs before the `SITE`
+  field. The docblock now scopes its claim to the family it quantifies over (tick 302's NOTE 3, fixed on the
+  first ask) and `grep -c "proves the HTTP path protects"` on that file is **0** (tick 302's NOTE 2).
+- **Backlog at tick 303 — wave 171 is the two unmutated assertions in the X-102 capture cluster, and it writes
+  no production code.** RULED, measured this tick and not inherited (tick 235). Wave 170's finding makes
+  `ChatCaptureAction.php:35` redundant **over HTTP**, so the only path on which that line can matter is a
+  direct caller, and the only test covering it is `X102Test::test_action_normalises_whitespace_message_to_null`
+  (`X102Test.php:533`, landed at `56e29010`, **never mutated**) — one assertion nothing has shown load-bearing,
+  carrying the whole of a line this lane has now twice called into question. Beside it,
+  `ChatDoorTest.php:416`'s docblock records what the test **cannot** show and says nothing about what it
+  **can**, which invites a future reader to delete a test a value-family mutation would redden — the ladder's
+  mirror, a real test documented as scenery (tick 280), and the same question `scratch/w170-mut-1.patch` was
+  written for and never evidenced. ⛔ **Two numbered items whose answers need not agree** (ticks 187, 209, 218,
+  221, 281), both evidence, so they group legitimately (tick 257) where a correction and a **build** do not
+  (ticks 218–223). ⛔ This column names no site and no patch: the two tests, `ChatCaptureAction.php:19-62`,
+  `ChatCaptureController.php:50-61` and the middleware lines go over **printed with a conclusion attached to
+  none** (the form is 25-for-25 and has corrected this column five times on X-102's seams alone), no numbers
+  are published to a mutating wave (tick 208), and no clause explains what one possible outcome would mean
+  (tick 293). ⛔ A survival is a finding and is reported as one; ⛔ never edit, weaken or delete a standing
+  assertion — the four-condition vacuous-assertion rule (tick 289) needs **all four**. ⛔ No `⛔ REFUSED`, no
+  `UNRESOLVED` (X-102 is one of the thirteen and nothing external is missing). Board re-measured this tick:
+  proposals **13** · `app/app/Modules/` **0** · `CLOSED:` **5**. Suite at `02a448a6`: `tests 2450 ·
+  passed 2442 · assertions 10805 · failed 6 · errors 2`, the standing **eight** by identity. Re-run every grep;
+  never inherit one.
+
 ## Style
 
 Terse and factual. Cite rules and traps by name — "that is the One Rule",
