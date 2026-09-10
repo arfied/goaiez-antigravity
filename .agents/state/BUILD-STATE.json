@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-09T21:52:24",
+ "updated": "2026-09-09T22:25:45",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -2505,6 +2505,12 @@
    "module": "X-102",
    "chose": "The chat start route normalises a non-string pixel_session_token to null rather than passing it to a ?string parameter under strict_types, which was a TypeError at parameter binding and a 500 on a public endpoint. The remedy cannot go in the action: the type declaration rejects the value before the first line runs. It uses the shape this module already declares for an optional string in ChatCaptureController, and null is the substitute the parameter default and the pageContext ternary had already chosen, so the fix decides nothing new. Refused: casting to string (array-to-string is itself an Error, which moves the 500); widening the parameter to mixed; returning 400 (the module proceeds when the token is absent, so refusing a whole chat start over an unusable optional analytics token would mint a public behaviour nothing asserts); guarding inside the action; a database constraint.",
    "at": "2026-09-09T21:52:24",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-102",
+   "chose": "ChatDoorTest used Laravel stock RefreshDatabase, the only file in app/tests/Modules to do so. The project ships Tests\\Concerns\\RefreshesTenantDatabase precisely because stock cannot work here: stock runs migrate:fresh on the default connection, which is the deliberately non-owner runtime role, so the DDL is refused with SQLSTATE 42501 must be owner of table. The file passed in the full suite only because RefreshDatabase guards its migration on the process-global RefreshDatabaseState migrated flag, so a sibling test using the project trait had already migrated; run alone the file was 11 tests, 0 passed, 11 errors. The greens belonged to another test and not to this file. The swap decides nothing new: four sibling files in this lane already declare the project trait, and both its docblock and tests/Pest.php name stock as unusable in this project. Refused: DatabaseTransactions, which silently changes the isolation model the file asked for; an exclusion or a skip; deleting any of the eleven; and editing Pest.php or the Concerns trait, which are shared and whose behaviour no site wave decides.",
+   "at": "2026-09-09T22:25:45",
    "ruling": "R245"
   }
  ],
