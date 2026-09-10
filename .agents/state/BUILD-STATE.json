@@ -1413,6 +1413,14 @@
   {
    "at": "2026-09-10T01:15:18",
    "note": "P-110 seam: Arm B, location is not resolvable. Run 134 item: add location_id to review_requests and backfill, then gate ReviewRequestAction on ReviewGating."
+  },
+  {
+   "at": "2026-09-10T02:53:25",
+   "note": "P-110 SUPERSEDES the run-134 location_id item: invite_threshold gates WHETHER TO ASK, on a rating captured before the invite (ReviewGating.php:230); C-Reviews invites first and the rating arrives after, so a location_id column on review_requests would have had no non-test writer. The half C-Reviews owns is public_threshold = qa_settings.min_public_stars (create_c_reviews_tables.php:46), marked satisfied for C-Reviews at GOAIEZ-MASTER-PLAN.md:19909."
+  },
+  {
+   "at": "2026-09-10T02:53:39",
+   "note": "(R245) public_threshold is read through one module-owned reader, Domain/PublicThreshold, replacing three per-screen literal-4 fallbacks (LossAlerts.php:120, ReviewsQaRequests.php:65, QaReport.php:105). P-193 names public_threshold among the values it governs and two of the three readers could disagree with the row."
   }
  ],
  "resolved": [
