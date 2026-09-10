@@ -833,3 +833,4 @@
 - `2026-09-10T09:22:49` note: run 140 could not gate: tests None · passed None · FAILED 0 · errors None · result timeout. The range 8b9c641c..HEAD remains unmeasured since run 136.
 - `2026-09-10T10:14:52` note: run 141: tests None · passed None · FAILED 0 · errors None · result timeout
 - `2026-09-10T11:16:10` note: run 142: classmap repaired (UnauthenticatedConfirmationException 0 -> 1); bufctl 0 bytes; discovery finishes (2466 tests) and all four testsuites (Unit, Feature, Modules, Journeys) finish without hanging.
+- `2026-09-10T12:04:15` note: run 143: arm B, 900s; account_mappings owned by goaiez_owner, suite connects as goaiez_app; §3 probe fail=1
