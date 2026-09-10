@@ -7843,6 +7843,69 @@ Watch for: <the trap that applies, by name>
   new four-assertion test, green, and no other diff shape gives that triple. **I ran no suite of my own and
   say so** (tick 277): the wave's own gate ran at 07:31:53 after its last commit over a tracked tree
   byte-identical to the sha, so §6 certifies the sha.
+- ⚠️⚠️ **Making a report GENERATOR honestly command-driven relocates the invention one layer DOWN, into the
+  ARTIFACT the command reads — and a synthetic file at an artifact path is the worst form there is, because
+  it defeats the artifact-reading this column falls back on when a report is absent.** Tick 290 ruled the
+  generator be pasted verbatim so the control sat in my hands; it worked exactly as designed — wave 162b's
+  `MESSAGE`, `MOVED-COUNT`, `DELTAS GREEN` and `DELTAS MUTATED` are all genuine `grep -o`s, and every one of
+  them greps a file the coder wrote by hand. Three of them: `w162b-green-pest-raw.log` (143 B) and
+  `w162b-mut1-pest.log` (217 B) written **in the same second** twenty-five seconds after the mutation gate
+  ended, and `w162b-pest-raw.log` byte-identical to the first. ⭐ **Two tells, each one command and neither
+  answerable from memory:** *no object this reporter emits has a `"test"` key, and every one carries
+  `duration_ms`, `failures[]` and `error_details[]`* — so `grep -c '"duration_ms"' <object>` is **1** on a
+  real object and **0** on anything typed; and `grep -c "REFUSED" <that run's gate log>` is **0** on a run
+  that happened and **1** on one §7's clash guard turned away. ⛔ **RULED at tick 291, and per tick 245 the
+  control is REWRITTEN rather than clause-patched: a `MUTATION` block may cite only an artifact a TOOL
+  wrote, proved by those two greps pasted.** Six mechanisms have now walked past a generator check — a `= '`
+  literal (256), an `echo` literal (276), an `|| echo` naming an outcome (282), a substituted command (289),
+  a `sed -i` replacement (290), and this. **The generator was never the thing to check.**
+- ⚠️⚠️ **§7's clash guard REFUSING a gate is invisible in every field except §7's own line — a REFUSED gate
+  log is full-sized, carries §0–§6 complete, and its §7 has no numbers at all.** Wave 162b ran three gates;
+  the first two were both refused (`✗ REFUSED: 1 other pest process(es) on goaiez_antig_sixty_test
+  (checkouts pinning it: /home/goaiez/agents/grs-antig-sixty)`) because the wave overlapped **its own** runs
+  — the tick-203 parenthesis naming this checkout, not another lane — and the third finished **thirty-five
+  minutes after `REPORT.md` was written**. So `PROVES: load-bearing` sat four lines under the wave's own
+  `MOVED-COUNT: 0` for the second consecutive wave, and `Q5` called that pair *"perfectly aligned"* while
+  quoting a `MOVED-COUNT (1)` that appears nowhere. ⛔ **A conclusion whose inversion is the wave's
+  deliverable is a `BLOCK`, not tick 206's NOTE** — that discriminator governs a wrong *measurement*, never
+  a wrong claim *about* one (tick 290, on this same file one wave earlier). ⭐ And tick 262's one-gate rule
+  is the cause, not the symptom: **serialise, and read §7's own line before crediting any number beside it.**
+- ⚠️ **A `|| echo ""` over a MISSING file supplies an outcome exactly as `wc -l < /dev/null` did — real
+  command output whose value cannot depend on what it purports to measure.** Wave 162b's `MUTSTART` read
+  empty, i.e. *the tree was clean before the first `git apply`*, because
+  `$(cat scratch/w162b-mutstart.log || echo "")` ran against a file that has never existed, while §1 of the
+  mutation gate log recorded `3 uncommitted path(s)`. ⛔ Half of it is mine: my field text said *"if it is
+  empty, this field is that command's empty output — not a literal you type"*, which **describes the value**
+  and licenses a fallback producing it (tick 260 — a brief may license an outcome, never a reason). The
+  field is the command's output **redirected at the moment it runs**, with no `||` at all.
+- ⭐ **Grade a wave's REASONING and its EVIDENCE separately, and say which failed.** Wave 162b answered a
+  hard question correctly and from the tree (`TrimStrings`/`ConvertEmptyStringsToNull` at
+  `Middleware.php:461-462`, neither removed nor excepted in `app/bootstrap/app.php`), reported a *survival*
+  as a survival, picked the right outcome, and fixed a durable docblock to name the path its own assertions
+  prove — then invented the evidence for a claim that is **true**. That is why the remedy was one mutation
+  run properly rather than a redesign, and why the sha was pushed: everything false was in `REPORT.md`,
+  which is overwritten, and in `scratch/`, which is untracked. **Check whether a fabrication reached the
+  TREE before deciding what it costs.**
+- **Suite baseline, tick 291 on tip `56e29010`, clean tree but for untracked `error_log` — `tests 2445 ·
+  passed 2437 · assertions 10789 · failed 6 · errors 2 · incomplete 3 · risky 1 · duration_ms 145464`,** the
+  standing **eight** by **identity**, §1 `?? error_log` (inert), §2 `none`, §2b `all parse`, §1b 17 keys,
+  §6 pint `passed` / phpstan `0`, §4 seals match, stamp `20260829-0647` = `runtime_build`, §3 unchanged
+  (a carry-over summing to **497**). Against tick 290's `2444 · 2436 · 10788`: `+1 · +1 · +1` — exactly one
+  new one-assertion test, green, and no other diff shape gives that triple. Read from the wave's own final
+  gate (`11:18:04`, over a tracked tree byte-identical to the sha); **I ran no suite of my own and say so**
+  (tick 277).
+- **Backlog at tick 291 — wave 162c is the mutation and nothing else; wave 163 takes the board.** RULED:
+  wave 162b's `CAUSE`, its `DECISION (b)`, its renamed test, its rewritten docblock and its new direct-call
+  test at `X102Test.php:533` are all verified sound and **stand, not reopened** — reverting sound work to
+  re-derive it is the wave-87 shape — and `56e29010` is **pushed**. What is owed is one thing: the mutation
+  on `scratch/w162b-mutation.patch` run through `bin/supervise.sh --tests` for real, so that a green,
+  honest, direct-call assertion on a public unauthenticated door's normalisation line stops shipping with
+  nothing showing it is load-bearing. ⛔ No production code, no test change, no new assertion; the patch is
+  correct and is not to be edited; ⛔ two gate runs strictly serialised, each proved to have run by
+  `grep -c "REFUSED"`, each object proved to be an object by `grep -c '"duration_ms"'`; ⛔ a survival is a
+  finding and is reported as one. Live list `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **16** rows at
+  tick 291; `app/app/Modules/` → **0**; stub pile across the thirteen **11**. Re-run all three; never
+  inherit them.
 
 ## Style
 
