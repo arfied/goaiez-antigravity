@@ -29,7 +29,7 @@
                         <x-ui.status-pill state="attention" :label="round($rate * 100).'% conflicts'" />
                     @endif
                     
-                    <x-ui.button size="default" wire:click="show({{ $run->id }})" wire:loading.attr="disabled" wire:target="show({{ $run->id }})">Show its conflicts</x-ui.button>
+                    <x-ui.button size="default" wire:click="show({{ $run->id }})">Show its conflicts</x-ui.button>
                     
                     @if($shownRun === $run->id)
                         @if(count($shownConflicts) > 0)

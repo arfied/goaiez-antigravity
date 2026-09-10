@@ -46,7 +46,7 @@
                                     </td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ $invoice->due_date }}</td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-900 text-right tabular-nums">
-                                        <x-ui.button size="default" variant="quiet" class="!px-0" wire:click="toggleExpanded({{ $invoice->id }})" wire:loading.attr="disabled" wire:target="toggleExpanded({{ $invoice->id }})">
+                                        <x-ui.button size="default" variant="quiet" class="!px-0" wire:click="toggleExpanded({{ $invoice->id }})">
                                             {{ number_format($invoice->total_cents / 100, 2) }}
                                         </x-ui.button>
                                     </td>

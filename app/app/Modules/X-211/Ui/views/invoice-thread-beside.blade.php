@@ -22,7 +22,7 @@
             <ul class="flex flex-wrap gap-2 mb-4">
                 @foreach($invoices as $other)
                     <li>
-                        <x-ui.button wire:click="pick({{ $other->id }})" wire:loading.attr="disabled" wire:target="pick({{ $other->id }})" variant="{{ $other->id === $invoice->id ? 'secondary' : 'quiet' }}" size="default">{{ $other->invoice_number }}</x-ui.button>
+                        <x-ui.button wire:click="pick({{ $other->id }})" variant="{{ $other->id === $invoice->id ? 'secondary' : 'quiet' }}" size="default">{{ $other->invoice_number }}</x-ui.button>
                     </li>
                 @endforeach
             </ul>
