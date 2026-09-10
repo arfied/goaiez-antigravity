@@ -97,7 +97,7 @@ class AgeingByReasonScreenTest extends TestCase
             ->assertDontSee('INV-A3')
             ->assertDontSee('INV-B1')
             ->call('logPayment', $inv1->id)
-            ->assertSee('reference number or a photo')
+            ->assertSee('This screen cannot take a photo yet')
             ->set('reference.'.$inv1->id, 'CHK-123')
             ->call('logPayment', $inv1->id)
             ->assertSee('Enter the amount that was paid');

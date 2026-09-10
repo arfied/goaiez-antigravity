@@ -94,7 +94,7 @@ class AgeingByReason extends Component
         $businessId = Tenancy::idOrFail();
 
         if (empty($this->reference[$invoiceId])) {
-            $this->error = 'We need a reference number or a photo.';
+            $this->error = 'We need the reference number. This screen cannot take a photo yet, so a reference is the only way to log this payment.';
 
             return;
         }
