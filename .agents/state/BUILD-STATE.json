@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-10T13:34:30",
+ "updated": "2026-09-10T13:54:05",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1742,6 +1742,10 @@
   {
    "at": "2026-09-10T13:34:30",
    "note": "MONEY-187: the omitted-argument census over the lane's Actions and Domain methods returns eight defaulted parameters and one finding; the other seven are supplied, already recorded or clock seams"
+  },
+  {
+   "at": "2026-09-10T13:54:09",
+   "note": "MONEY-188: the select-whitelist census returns five members in the lane and four were already guarded; the connect door was the one without, and its realm id input had exactly one occurrence in the component - its own declaration"
   }
  ],
  "decisions": [
@@ -2745,6 +2749,12 @@
    "module": "X-199",
    "chose": "A payment recorded with no amount named is the invoice's outstanding balance, never its full total recordPayment defaulted to total_cents and both screens omit the argument, so every press of Record payment closed the invoice at full value and added the whole total again to anything already part-paid, while Unpaid.php:100 computes the correct balance one cell away",
    "at": "2026-09-10T13:34:30",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-173",
+   "chose": "A screen refuses a value it cannot use and says so about a value it cannot keep the connect door interpolated an unwhitelisted client-supplied provider into a dependency sentence and discarded the company id the owner typed without saying so, while the column, its writer and its rendered reader all exist",
+   "at": "2026-09-10T13:54:05",
    "ruling": "R245"
   }
  ]
