@@ -33,7 +33,7 @@ final class ChatCaptureController
         $message = $request->input('message');
         $formType = $request->input('form_type', 'live_chat');
 
-        if (! is_string($sessionToken) || ! is_string($name) || ! is_string($phone)) {
+        if (! is_string($sessionToken) || ! is_string($name) || ! is_string($phone) || trim($phone) === '') {
             return response()->json(['error' => 'Bad Request'], 400);
         }
 
