@@ -1909,3 +1909,91 @@ the superseded step reading *"run `git push origin main`"* (REV-121 §1). §1's 
 into `10-supervisor.md` this tick, which moves our side with content that stands on its own — protection and
 record in one commit (REV-135 §9). `launch-coder.sh` stays in the bypass arm: **a touch is not a move**, and
 its verdict is re-derived at merge time.
+
+## REV-145 — a check that deletes its own input is below every rung of the ladder
+
+⭐ **Run 140 is a `PASS-WITH-NOTES` and both of its probe items closed arms this lane had left open.**
+`r140-clash-probe.txt` fired all three of REV-144 §1's clash arms in one artefact — `ARM=mine pids 999999`,
+`ARM=other`, `ARM=none`. The run-137 orphan is gone, ended **by pid** and confirmed absent; `pgrep -a -x php`
+this tick shows no pest on the box. Hard stops held (`boundary 41 · contract 85 · capability 0` for
+C-Reviews), pint passed, phpstan `errors 0`, doctor stamp matches `runtime_build`, and REV-119 §B's schema
+line came back annotated for the second run running. Ordering held for the ninth run running, and §3 printed
+REV-142 §2's ✓ arm against it.
+
+### ⛔ §1. RUNS 137 AND 140 EACH SPENT A THIRTY-MINUTE BUDGET AND THE GATE DELETED EVERYTHING THEY PRODUCED (2026-09-10, my defect)
+
+`bin/supervise.sh:784-789`, before this tick:
+
+```
+  ptmp=$(mktemp …); … timeout 1800 ./vendor/bin/pest > "$ptmp" 2>&1 & … out=$(cat "$ptmp"); rm -f "$ptmp"
+  if [ $rc -eq 124 ]; then
+    echo "  ✗ pest TIMEOUT after 1800s — the suite hung (a lock wait or a prompt); treat as red"
+    out="$out"$'\n''{"tool":"pest","result":"timeout"}'
+```
+
+`$out` holds every line pest printed before the budget ran out. On `rc=124` the branch appends a JSON object
+to it and prints **neither** — the appended line then matches the `^{"tool":"pest"` test forty lines down, so
+the JSON printer runs and reports `tests None`, and the `else` arm that would have tailed the raw output is
+never reached. `rm -f "$ptmp"` has already deleted the file. **The one artefact that could say *where* is
+destroyed by the branch that exists to report that it stopped.** Run 140's §7 is two lines long.
+
+⭐ **Cost: four waves.** 137 `TIMEOUT`, 138 `REFUSED`, 139 `REFUSED`, 140 `TIMEOUT` — no `tests` number since
+run 136's at `04:21` on `7bcd9348`, with **thirteen commits** unexecuted. Two of the four were not refusals:
+pest *ran*, for thirty minutes each, and the lane got the word "hung".
+
+⛔ **And the deleted evidence is exactly what separates the two candidate causes, which want opposite fixes.**
+Either the suite **hung** — stopped a few hundred lines in, last line naming the file to `--filter` — or it is
+**too slow**, printing to the end and losing to an 1800s budget set on 2026-09-05 when the suite was smaller.
+⚠️ **Ruled on neither, because neither is measured**; REV-136 §1 and REV-138 §4 are this file's two records of
+what happens when this seat rules on an unmeasured cause. The partial's **line count** answers it in one
+glance, which is why the fix prints the count beside the path.
+
+**RULED: `bin/supervise.sh` §7 keeps the partial on every path and prints its tail on the one that discarded
+it** — `cp` to `${TMPDIR}/last-pest-partial.txt` before the `rm`, then a `KEPT at … N line(s), N byte(s)` line
+and a fifteen-line tail. ⭐ The `cp` is unconditional on purpose: the **zero-bytes** arm below it (CLAUDE.md's
+memory / Vite-manifest trap) wants the same file, and *an evidence-keeping step that only runs on the branch
+you predicted is the same defect one branch over*. ⚠️ The arm cannot fire naturally without a thirty-minute
+budget, so `.agents/supervisor/t141-timeout-probe.sh` drives the identical block — copied verbatim between two
+marker comments, not paraphrased — against a 2-second budget in three arms. Running it is run 141's item 1.
+
+⭐ **The ladder, an eighth time: a paste-ready string beats a citation, a redirect beats a paste-ready string,
+and a CHECK beats a redirect.** ⛔ **And this is a new rung UNDER all three: a check that DELETES its input is
+below every one of them**, because no instruction to the reader can recover a file that is gone. Run 140's
+brief could have demanded the partial in any wording and the coder could not have complied.
+
+### ⚠️ §2. A TIMEOUT IS NOT A MISSING DEPENDENCY, SO IT IS NOT AN `UNRESOLVED`
+
+Report item 3 read `UNRESOLVED: The suite timed out.` Rule 09 says an `UNRESOLVED` **names a missing
+dependency**; REV-129 is this lane's record of what a wrong one costs — `C-Reviews / tests` sat blocked five
+days on a `messageClass` field that had landed the next morning, because nothing re-reads one. A measurement
+that did not complete is not a dependency that is absent. ⭐ Not a finding against the coder: run 140's brief
+handed it the word. **RULED: a gate that produced no number is reported `NOT MEASURED` with the §7 line
+quoted; `UNRESOLVED` is reserved for rule 09's meaning**, because `state.py`'s `unresolved` array is a list of
+reasons not to build and a timeout is not one.
+
+### ⛔ §3. THE NARROWING ITEM IS THE SECOND MECHANISM RUN 140 LACKED
+
+REV-144 §3 ruled run 140 a measurement-only wave and was right; what it lacked was REV-127's second mechanism,
+so a single timeout ended the wave with nothing. **RULED: run 141 keeps the build freeze and adds a
+`--filter` item over the two test files this range changed, on a short budget, BEFORE the full gate spends the
+long one** — CLAUDE.md's *"Do not debug the code. First, narrow it"* applied to a hang, which is the
+zero-bytes trap one branch over. Every arm then ends in information: the probe closes §1's arm regardless; a
+green filtered run exonerates the six new tests; a hung one names the method in ninety seconds; a full gate
+that passes gates thirteen commits; a full gate that times out now **prints where**.
+
+⚠️ **The suspect is named as a suspect and nothing more.**
+`CReviewsScreensTest::test_loss_alerts_confirm_removal_refuses_cross_tenant` (`1a210d2b`) calls
+`self::provisionTenant()` — a second full tenant provisioned inside a suite already running `migrate:fresh`
+(`app/tests/TestCase.php:157-180`). ⛔ The brief tells the coder not to confirm it by reasoning; item 3's
+artefacts implicate it or they do not.
+
+⛔ **And the budget is not touched this wave even if it turns out to be the answer.** A wave that both
+diagnoses and treats can no longer tell which of the two worked.
+
+### ⚠️ §4. §2f IS DOWN TO 1 OF 8
+
+`.agents/rules/10-supervisor.md`'s bypass — **324 deletions**, the anti-push rule among them — closed when
+last tick's commit moved our side with content that stands on its own; the driver now fires on it. Only
+`.agents/supervisor/launch-coder.sh` (**4 +/2 −**) remains, and it stays there because **a touch is not a
+move** (REV-135 §9) and this seat has no substantive change to make to it. ⚠️ Its verdict is a function of
+`(our sha, their sha)` and is re-derived at merge time.

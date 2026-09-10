@@ -781,11 +781,27 @@ fi
 if [ $want_tests -eq 1 ]; then
   # timeout: a hung suite is a red line, never a 26-minute wait (ruling 2026-09-05 07:0x)
   pest_started=$(date -Is)
-  ptmp=$(mktemp "${TMPDIR:-/tmp}/pest-XXXXXX"); DB_DATABASE="$lane_db" timeout 1800 ./vendor/bin/pest > "$ptmp" 2>&1 & pjob=$!; pest_pid=$(pgrep -P "$pjob" 2>/dev/null | head -1); pest_pid=${pest_pid:-$pjob}; wait "$pjob"; rc=$?; out=$(cat "$ptmp"); rm -f "$ptmp"
+  ptmp=$(mktemp "${TMPDIR:-/tmp}/pest-XXXXXX"); DB_DATABASE="$lane_db" timeout 1800 ./vendor/bin/pest > "$ptmp" 2>&1 & pjob=$!; pest_pid=$(pgrep -P "$pjob" 2>/dev/null | head -1); pest_pid=${pest_pid:-$pjob}; wait "$pjob"; rc=$?; out=$(cat "$ptmp")
+  # ⛔ A TIMED-OUT SUITE DELETED ITS OWN ONLY EVIDENCE (REV-145, 2026-09-10).
+  # rc 124 took the two-line branch below and `rm -f "$ptmp"` threw away everything
+  # pest had printed in the thirty minutes before the budget ran out. Runs 137 and
+  # 140 each spent a full budget and produced no fact about WHERE it stopped, so
+  # four consecutive waves closed with nothing to act on but the word "hung".
+  # The partial is not a nicety: its LAST LINE names the file pest was in, and its
+  # LINE COUNT separates the only two candidate causes outright — a suite still
+  # printing near the end is too SLOW for the budget, a suite stopped a few hundred
+  # lines in is HUNG, and those two want opposite fixes. Kept on every path (the
+  # zero-bytes arm below wants it too), printed on the one that discarded it.
+  pest_partial=${TMPDIR:-/tmp}/last-pest-partial.txt
+  cp "$ptmp" "$pest_partial" 2>/dev/null || true
+  rm -f "$ptmp"
   log_gate pest "$pest_started" "$rc" "${pest_pid:--}"
   [ "${lock_held:-0}" -eq 1 ] && flock -u 9 2>/dev/null
   if [ $rc -eq 124 ]; then
     echo "  ✗ pest TIMEOUT after 1800s — the suite hung (a lock wait or a prompt); treat as red"
+    echo "     partial output KEPT at $pest_partial — $(wc -l < "$pest_partial" 2>/dev/null || echo 0) line(s), $(wc -c < "$pest_partial" 2>/dev/null || echo 0) byte(s)"
+    echo "     a near-complete partial means the budget is too small; a short one means it HUNG, and the last line names where:"
+    tail -15 "$pest_partial" 2>/dev/null | sed 's/^/       /'
     out="$out"$'\n''{"tool":"pest","result":"timeout"}'
   elif [ -z "$out" ]; then
     # 2026-09-05 07:2x: a gate printed a blank §7 and an empty last-pest.json.
