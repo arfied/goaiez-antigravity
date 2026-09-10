@@ -7606,3 +7606,83 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     259): **before requiring a field, ask what is at the other end of the string the run is asked to
     copy — and whether it exists YET.** A source that comes into being only after the writer has
     finished is not a source.
+288. **Ruling 42(2)'s re-gate is satisfied by MEASUREMENT rather than by RE-EXECUTION when the wave
+    commits nothing and runs no mutation proof — and the verdict block says which of the two it did
+    (RULED by the lane supervisor 2026-09-09 22:0x, on MONEY-162b's `ef347b0e`).** Ruling 42(2) reads
+    *"a reported `errors`/`passed` figure is never taken as the sha's — the supervisor re-gates and its
+    numbers go in the verdict block"*, and it has been the reason two waves' figures were caught. It was
+    ruled after a run whose §D mutation proof ran alongside its §E gate in one wave, dropping the schema
+    under the first pest — **that is its mechanism, and this wave has none of it**: `PROOF: n/a`,
+    `COMMITS: n/a`, one suite started, and §7's own line records that it **waited on**
+    `/home/goaiez/tmp/pest.lock` rather than racing it, which is the scheduling guard ruling 74 added.
+    Its named tell is measured absent too — errors did not rise (2 before the merge, 2 after) and
+    neither member is `relation … does not exist`. What replaces the re-run is that the numbers were
+    **measured, not reported**: the supervisor read the gate file raw — its unforgeable `== 0. database
+    guard` first line (243), its two §6 objects, its §7 line — and corroborated it against
+    `/home/goaiez/tmp/last-pest-grs-antig-money.json`, which `bin/supervise.sh:233` writes and every
+    gate in *this checkout* overwrites, so it is this gate's own object and not a stale one (ruling 83's
+    family). ⚠️ The cost of the alternative was measured, not asserted: `pgrep -a -f pest` showed
+    `2662911 timeout 1800 env DB_DATABASE=goaiez_antig_site_test ./vendor/bin/pest` live, so the shared
+    lock was held and a re-gate was up to 40 minutes of `flock` wait — ruling 91's abandoned-gate shape
+    and ruling 253's double-kill. ⛔ **This is never a licence to skip a re-gate on a wave that commits
+    code**: there the tree the coder gated and the tree at the tip can differ, which is rulings 34's,
+    42's own inverse and 71's whole subject, and the re-gate is the only thing that closes it.
+    ⚠️ The generalisable half: **a rule written as "re-run X" is a rule about the PROPERTY X
+    establishes**, and where the property can be established more cheaply and more directly, the rule is
+    satisfied — but only if the tick writes down which route it took, because a verdict block that reads
+    the same either way is one a later tick cannot audit.
+289. **⭐⭐ This ledger cited a DEAD charge id for four rulings, and ruling 178's own wave is what
+    killed it (RULED by the lane supervisor 2026-09-09 22:0x).** Rulings 173, 178 and 282, and every
+    addendum since, name **`ch_3UCgYZFXLB0i1zXl0NCv569q`** as *"the lane's only genuinely vendor-issued
+    `artifact_id`"*. Measured this tick, `grep -rn "ch_3U" app/storage/app/evidence/` returns **three**
+    lines and **not one of them is that id** — `j9/charge.json:3`, `X-198/runtime-proof.json:2` and
+    `journeys/invoice-to-paid.json:3` all carry **`ch_3UDU3tFXLB0i1zXl2GQYuna8`**. ⭐ **The chain is
+    CONSISTENT and healthy**, which is what makes this a ledger defect rather than a tree defect: all
+    three agree, `charge.json` is dated `2026-09-08 13:48` and `runtime-proof.json` `2026-09-08 14:15`,
+    which is MONEY-119's own regeneration window under ruling 178. **So ruling 178's rename wave
+    re-minted the charge and the ledger went on quoting the id it had replaced**, through rulings 282,
+    283 and three addenda. ⚠️ **The SUBSTANCE of every one of those rulings is untouched and none is
+    reopened.** Ruling 282's copy-first requirement stands entire: the id is different, and it is still
+    the lane's only vendor-issued `artifact_id`, still unre-mintable in the sense that matters, still
+    read by J9 (`TwelveJourneysTest:485-508`) and `GatewayEngineTest:4-14`, still feeding
+    `TestAnchorStage`. Only the quoted string was stale. **RULED: a ledger line that cites a VALUE cites
+    the command that reads it, beside it.** This is ruling 257's family — *"the ledger recorded a
+    conclusion and not the one-line command that produced it"* — for the **fifth** time (163, 171, 176,
+    257, 289), and the first where the value was invalidated **by the wave that wrote it down**. ⭐ A
+    value copied forward from ruling to ruling acquires the appearance of a measurement and has none of
+    its properties: a `grep` beside it decays **loudly**, and a quoted string decays **silently**.
+    ⚠️ Recorded in the same pass, a correction to this tick's own inherited addendum: **ruling 283's
+    rename is ONE key, not two.** The addendum said *"X-198's `payments_written` → `tenant_payments_total`"*
+    in the plural; measured, `EvidencePaymentLinkCommand` has **no such key at all** (its payload is
+    `provider_link_id`, `url`, `currency`, `amount_cents`, `payment_id`, `database`,
+    `running_unit_tests`, `created_at`, `command`), and the key exists only at
+    `EvidenceChargeCommand:40`. A plural would have sent a wave looking for a line that is not there.
+290. **The two X-198 evidence commands are NOT symmetric, and a command's CODE change is separable from
+    its ARTIFACT regeneration (RULED by the lane supervisor 2026-09-09 22:0x, briefed as MONEY-163).**
+    Ruling 278 split the vendor half out of MONEY-162 on the principle that *"fanning an unproven shape
+    across four commands, two of them at a payment provider, is the unvalidated fan-out this lane keeps
+    paying for."* Measured now, the two survivors differ from each other more than they differ from the
+    three already converted. **`x198:evidence-payment-link`** writes `evidence/x198/payment-link.json`,
+    which is read by `GatewayEngineTest:17-29` and **by nothing else** — no derived artifact, no doctor
+    stage — and it is freely **re-mintable**: `:36` creates a fresh `failed` `Payment` each run, so
+    `PaymentLinkAction`'s ruling-229 `firstOrCreate` on `(business_id, payment_id)` sees a fresh pair
+    and mints a fresh Checkout Session, and any valid `cs_`/URL satisfies the same four assertions.
+    **`x198:evidence-charge`** writes `evidence/j9/charge.json`, which is read by `GatewayEngineTest:3-15`
+    **and by J9**, and which feeds **two** derived artifacts — `X-198/runtime-proof.json` and
+    `journeys/invoice-to-paid.json` — plus `TestAnchorStage`; regenerating it forces a four-step chain
+    (charge → J9 → `junit.xml` → `x198:runtime-proof`), and `RuntimeProofCommand:59` refuses unless
+    `invoice-to-paid.json`'s `artifact_id` **equals** `charge.json`'s new id, which is ruling 178's
+    *"the ORDER is the risk"* with two more moving parts than 178 had. **RULED: the pay-link command is
+    changed AND run, with ruling 277's binary control; the charge command gets the CODE CHANGE ONLY.**
+    ⭐ The separation is available because **ruling 39's sequence binds a wave that writes an ASSERTION
+    about an artifact**, and this wave writes none — `GatewayEngineTest` already exists and is green.
+    ⭐ And shipping the unrun option is not idle: without it the charge command can only call
+    `provision()` and die on the empty pool, so the option is what makes the regeneration wave possible
+    at all, while carrying no regression risk — the no-flag, no-record path still provisions, exactly as
+    today. ⛔ **Ruling 283's rename does NOT ship with it**, and that is 283 honoured rather than
+    overridden: it requires the rename *"in the same commit as the regenerated artifact"*, so the rename
+    and the run travel together as one unit into the next wave. ⚠️ The generalisable half: **an evidence
+    command has two deliverables — a code path and an artifact — and their risks are unrelated.** The
+    code path's risk is a shape already proven three times; the artifact's risk is a live vendor call
+    whose failure can be silent, whose readers may be derived files no gate names, and whose loss has no
+    route back. A wave that treats them as one unit prices the cheap half at the expensive half's rate.
