@@ -22,10 +22,10 @@ final class RuntimeProofCommand extends Command
 
         $this->error(
             "X-117 has no runtime proof to write: after the checkout listener stopped calling\n".
-            "the gateway (ruling 45) nothing in this flow reaches a payment provider, so there\n".
+            "the gateway, nothing in this flow reaches a payment provider, so there\n".
             "is no vendor-issued artifact id to capture. Waiting on a browser-side Stripe\n".
             "Elements / publishable-key card-entry surface (X-120 CardVault's, parked behind a\n".
-            'contract by ruling 20).'
+            'contract).'
         );
 
         return self::FAILURE;

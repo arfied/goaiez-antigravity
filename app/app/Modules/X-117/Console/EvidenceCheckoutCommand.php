@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\File;
 
 final class EvidenceCheckoutCommand extends Command
 {
-    protected $signature = 'x117:evidence-checkout';
+    protected $signature = 'x117:evidence-checkout {--business= : Reuse this tenant instead of provisioning a new one}';
 
     protected $description = 'Evidence a real checkout outside the suite';
 
@@ -32,10 +32,30 @@ final class EvidenceCheckoutCommand extends Command
             return self::FAILURE;
         }
 
-        $user = User::first() ?? User::factory()->create();
-        $tenant = $provisioner->provision($user);
-        Tenancy::set($tenant->id);
-        $businessId = $tenant->id;
+        // ⚠️ **`provision()` IS THE SIGNUP PATH AND IT SPENDS A PHONE NUMBER.**
+        // It mints a new business on every call and claims a dedicated number out
+        // of the platform pool, which nothing returns unless the tenant departs.
+        // Five evidence commands called it on every run and the nine-number pool
+        // is now empty, so this artifact could not be regenerated at all. The
+        // tenant is therefore GIVEN — by --business, else by this artifact's own
+        // record of the last one — and provisioned only when there is no other.
+        $businessId = (int) ($this->option('business') ?: 0);
+
+        if ($businessId === 0) {
+            $previous = storage_path('app/evidence/X-117/checkout.json');
+
+            if (File::exists($previous)) {
+                $decoded = json_decode(File::get($previous), true);
+                $businessId = is_array($decoded) ? (int) ($decoded['business_id'] ?? 0) : 0;
+            }
+        }
+
+        if ($businessId === 0) {
+            $user = User::first() ?? User::factory()->create();
+            $businessId = $provisioner->provision($user)->id;
+        }
+
+        Tenancy::set($businessId);
 
         $sellable = Sellable::create([
             'business_id' => $businessId,
@@ -54,10 +74,11 @@ final class EvidenceCheckoutCommand extends Command
 
         $data = [
             'order_id' => $checkoutRes['order_id'],
+            'business_id' => $businessId,
             'order_status' => $checkoutRes['status'],
             'merchant_connected' => MerchantConnection::where('business_id', $businessId)->where('is_connected', true)->exists(),
             'payments_written' => Payment::where('business_id', $businessId)->count(),
-            'waiting_on' => 'a browser-side Stripe Elements / publishable-key card-entry surface (X-120 CardVault\'s, parked behind a contract by ruling 20)',
+            'waiting_on' => 'a browser-side Stripe Elements / publishable-key card-entry surface (X-120 CardVault\'s, parked behind a contract)',
             'amount_cents' => 4500,
             'queue_driver' => config('queue.default'),
             'database' => config('database.connections.'.config('database.default').'.database', 'goaiez_antig_money'),
