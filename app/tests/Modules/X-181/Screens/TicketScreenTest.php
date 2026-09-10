@@ -6,9 +6,9 @@ namespace Tests\Modules\X181\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X181\Ui\Ticket;
-use App\Modules\X181\Models\QaTicket;
 use App\Modules\CReviews\Models\ReviewRequest;
+use App\Modules\X181\Models\QaTicket;
+use App\Modules\X181\Ui\Ticket;
 use Livewire\Livewire;
 use Tests\TestCase;
 
