@@ -627,6 +627,56 @@ if [ -n "$_gl" ] && [ -f "$_rp" ]; then
   fi
 fi
 
+# ⛔ REPORT.md CARRIES RULE 10's HEADER, OR THE WAVE IS INVISIBLE TO EVERY READER
+#   THAT IS NOT THIS TICK (REV-155 §2, 2026-09-10).
+#
+# Run 150's report was fifteen lines: one line per brief item, in order, and NOT
+# ONE header field. No STATUS, no COMMITS, no TESTS, no DOCTOR, no RAW. Every
+# claim in it was true and every artefact it cited was quoted — and the reviewer
+# still had to re-derive the whole wave from `git log`, the gate log and the
+# doctor dump, which is precisely the work the report exists to save.
+#
+# ⭐ It was the SUPERVISOR's defect: run 150's brief item 9 specified "one line
+#   per brief item, in order, 1 through 9" and a 150-line ceiling, and said
+#   nothing about the header — so the brief read as a complete specification of
+#   the report and the coder complied with it exactly. Same shape as REV-134 §2
+#   (the one artefact whose path was left implicit is the one that landed in the
+#   wrong directory) and REV-142 §1 (a brief that names a parameter and never
+#   asks where it comes from). A brief that specifies part of an artefact reads
+#   as specifying all of it.
+#
+# ⭐ THE FIELD LIST IS DERIVED FROM `.agents/rules/10-supervisor.md`, NEVER
+#   RESTATED HERE. REV-119 §A's defect is a stated list where a derived one
+#   belonged, and REV-126's §2f fix set the standard: read the list from the file
+#   that owns it, so the check cannot drift from the contract it enforces. If
+#   rule 10's shape block changes, this check follows it with no edit.
+#
+# ⚠ The neighbouring property this does NOT cover (REV-146 §1's standard): it
+#   asserts each field is PRESENT, never that its value is measured. `TESTS: none`
+#   on a wave that ran a suite passes here — REV-146 §5 is the ruling for that,
+#   and it is a judgement a grep cannot make.
+_r10="$ROOT/.agents/rules/10-supervisor.md"
+if [ -f "$_rp" ] && [ -f "$_r10" ]; then
+  _fields=$(grep -oE '^[A-Z]{3,10} *:' "$_r10" | tr -d ' :' | sort -u)
+  if [ -n "$_fields" ]; then
+    _miss=""; _have=0; _n=0
+    for _f in $_fields; do
+      _n=$((_n + 1))
+      if grep -qE "^ *$_f *:" "$_rp"; then _have=$((_have + 1)); else _miss="$_miss $_f"; fi
+    done
+    if [ -n "$_miss" ]; then
+      fail=1
+      printf '    ⛔ REPORT.md is missing %d of %d rule-10 header field(s):%s\n' \
+        "$((_n - _have))" "$_n" "$_miss"
+      echo "       a report with no header is one wave's item list — the next reader has no"
+      echo "       STATUS, no COMMITS, no TESTS and no DOCTOR stamp, and must re-derive the"
+      echo "       wave from the tree, which is the work the report exists to save (REV-155 §2)"
+    else
+      printf '    ✓ REPORT.md carries all %d rule-10 header fields\n' "$_n"
+    fi
+  fi
+fi
+
 # ⛔ A WAVE ARTEFACT THAT RECORDS A SHELL ERROR INSTEAD OF A MEASUREMENT (REV-137 §1).
 #
 # Run 132's `.agents/supervisor/r132-doctor.txt` was 40 bytes and read
