@@ -151,7 +151,7 @@ class ThreadScreenTest extends TestCase
         });
     }
 
-    /** @test This test proves that the Thread screen displays an ingested message manually inserted into the messages table. */
+    /** @test This test proves that the Thread screen displays an ingested message manually inserted into the messages table, confirming resolvePersonId() successfully bridges the customer to its person_id conversations. */
     public function test_thread_screen_displays_ingested_message(): void
     {
         $owner = User::factory()->create(['role' => UserRole::Owner]);
@@ -225,8 +225,4 @@ class ThreadScreenTest extends TestCase
             Livewire::test(Thread::class, ['customer' => $secondCustomer])->assertDontSee('Secret message for first customer.');
         });
     }
-
-    /**
-     * BUILD PROPOSAL: X-01 Ui/Thread.php and test fixtures conflate customer.id and people.id in LeadScore queries; must query and seed by person_id. Owner: X-01
-     */
 }

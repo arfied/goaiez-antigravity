@@ -33,7 +33,7 @@ final class ChatTurnController
             return response()->json(['error' => 'Bad Request'], 400);
         }
 
-        $session = ChatSession::where('session_token', $sessionToken)->first();
+        $session = ChatSession::where('session_token', $sessionToken)->where('business_id', $businessId)->first();
 
         if (! $session) {
             return response()->json(['error' => 'Session not found'], 404);

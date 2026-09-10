@@ -15,7 +15,7 @@ final class ChatLeadCapturedListener
 
     public function handle(ChatLeadCaptured $event): void
     {
-        if ($event->message === null || $event->message === '') {
+        if ($event->message === null || trim($event->message) === '') {
             return;
         }
 

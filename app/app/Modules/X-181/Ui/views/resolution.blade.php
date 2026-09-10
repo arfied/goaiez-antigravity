@@ -27,8 +27,8 @@
                             @endif
                         @endif
 
-                        @if ($ticket->review && $ticket->review->csat_score)
-                            <x-ui.status-pill state="unknown" label="CSAT {{ $ticket->review->csat_score }}/10" />
+                        @if ($ticket->csat_requested_at)
+                            <x-ui.status-pill state="unknown" label="Awaiting CSAT" />
                         @endif
                     </div>
 

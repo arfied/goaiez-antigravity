@@ -11,13 +11,13 @@ use App\Modules\X102\Models\ChatSession;
 use App\Modules\X102\Models\ChatTurn;
 use App\Services\Pixel\PixelKeys;
 use App\Support\Tenancy;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
+use Tests\Concerns\RefreshesTenantDatabase;
 use Tests\TestCase;
 
 class ChatDoorTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshesTenantDatabase;
 
     /**
      * BUILD PROPOSAL: X-102's ChatTurnAction calls C-Agent unconditionally; it should only call if the author is 'visitor'. Owner: X-102
@@ -120,6 +120,14 @@ class ChatDoorTest extends TestCase
         $this->assertEquals('Hello from visitor', $agentTurn->user_message);
     }
 
+    /**
+     * Asserts that a session belonging to another business is not reachable through this route.
+     * This is an outcome invariant: it is green with and without the controller's
+     * ->where('business_id', $businessId) clause, because row-level security enforces
+     * the same filter one layer down. It is therefore not a sentinel for that clause,
+     * and the clause's liveness was proven separately by corrupting it (scoping to
+     * the wrong business id), which reddens the same-tenant tests instead.
+     */
     public function test_key_for_business_a_and_session_for_business_b_returns_404(): void
     {
         $bizA = TestCase::provisionTenant(['name' => 'Business A', 'currency' => 'USD']);
@@ -332,5 +340,66 @@ class ChatDoorTest extends TestCase
 
         $response->assertStatus(400);
         $response->assertJson(['error' => 'Bad Request']);
+    }
+
+    public function test_blank_capture_phone_returns_400(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Lead Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+        $key = app(PixelKeys::class)->ensureFor($biz);
+        Tenancy::forgetAll();
+
+        $startResponse = $this->postJson("/api/chat/{$key}/start");
+        $sessionToken = $startResponse->json('session_token');
+
+        $response = $this->postJson("/api/chat/{$key}/capture", [
+            'session_token' => $sessionToken,
+            'name' => 'John Doe',
+            'phone' => '   ',
+        ]);
+
+        $response->assertStatus(400);
+        $response->assertJson(['error' => 'Bad Request']);
+
+        Tenancy::set((int) $biz->id);
+        $this->assertSame(0, ChatLead::where('business_id', $biz->id)->count());
+    }
+
+    /**
+     * Asserts that a session belonging to another business is not reachable through this route.
+     * This is an outcome invariant: it is green with and without the controller's
+     * ->where('business_id', $businessId) clause, because row-level security enforces
+     * the same filter one layer down. It is therefore not a sentinel for that clause,
+     * and the clause's liveness was proven separately by corrupting it (scoping to
+     * the wrong business id), which reddens the same-tenant tests instead.
+     */
+    public function test_capture_scopes_session_lookup_by_business_id(): void
+    {
+        $bizA = TestCase::provisionTenant(['name' => 'Business A', 'currency' => 'USD']);
+        Tenancy::set((int) $bizA->id);
+        $keyA = app(PixelKeys::class)->ensureFor($bizA);
+
+        $bizB = TestCase::provisionTenant(['name' => 'Business B', 'currency' => 'USD']);
+        Tenancy::set((int) $bizB->id);
+        ChatSession::create([
+            'business_id' => $bizB->id,
+            'session_token' => 'sess_biz_b_capture',
+            'status' => 'active',
+            'rage_clicks_count' => 0,
+            'is_ai_capped' => false,
+        ]);
+
+        Tenancy::forgetAll();
+
+        $response = $this->postJson("/api/chat/{$keyA}/capture", [
+            'session_token' => 'sess_biz_b_capture',
+            'name' => 'John Doe',
+            'phone' => '1234567890',
+            'email' => 'john@example.com',
+            'message' => 'Hello',
+        ]);
+
+        $response->assertStatus(404);
+        $response->assertJson(['error' => 'Session not found']);
     }
 }
