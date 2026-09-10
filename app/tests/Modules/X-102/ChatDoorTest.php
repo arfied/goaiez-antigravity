@@ -406,6 +406,7 @@ class ChatDoorTest extends TestCase
         $response->assertStatus(400);
         $response->assertJson(['error' => 'Bad Request']);
     }
+
     public function test_capture_drops_message_when_consent_absent(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Lead Tenant', 'currency' => 'USD']);
