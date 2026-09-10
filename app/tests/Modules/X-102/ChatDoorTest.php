@@ -356,4 +356,61 @@ class ChatDoorTest extends TestCase
         Tenancy::set((int) $biz->id);
         $this->assertSame(0, ChatLead::where('business_id', $biz->id)->count());
     }
+
+    public function test_turn_scopes_session_lookup_by_business_id(): void
+    {
+        $bizA = TestCase::provisionTenant(['name' => 'Business A', 'currency' => 'USD']);
+        Tenancy::set((int) $bizA->id);
+        $keyA = app(PixelKeys::class)->ensureFor($bizA);
+
+        $bizB = TestCase::provisionTenant(['name' => 'Business B', 'currency' => 'USD']);
+        Tenancy::set((int) $bizB->id);
+        ChatSession::create([
+            'business_id' => $bizB->id,
+            'session_token' => 'sess_biz_b_turn',
+            'status' => 'active',
+            'rage_clicks_count' => 0,
+            'is_ai_capped' => false,
+        ]);
+
+        Tenancy::forgetAll();
+
+        $response = $this->postJson("/api/chat/{$keyA}/turn", [
+            'session_token' => 'sess_biz_b_turn',
+            'message' => 'Hello',
+        ]);
+
+        $response->assertStatus(404);
+        $response->assertJson(['error' => 'Session not found']);
+    }
+
+    public function test_capture_scopes_session_lookup_by_business_id(): void
+    {
+        $bizA = TestCase::provisionTenant(['name' => 'Business A', 'currency' => 'USD']);
+        Tenancy::set((int) $bizA->id);
+        $keyA = app(PixelKeys::class)->ensureFor($bizA);
+
+        $bizB = TestCase::provisionTenant(['name' => 'Business B', 'currency' => 'USD']);
+        Tenancy::set((int) $bizB->id);
+        ChatSession::create([
+            'business_id' => $bizB->id,
+            'session_token' => 'sess_biz_b_capture',
+            'status' => 'active',
+            'rage_clicks_count' => 0,
+            'is_ai_capped' => false,
+        ]);
+
+        Tenancy::forgetAll();
+
+        $response = $this->postJson("/api/chat/{$keyA}/capture", [
+            'session_token' => 'sess_biz_b_capture',
+            'name' => 'John Doe',
+            'phone' => '1234567890',
+            'email' => 'john@example.com',
+            'message' => 'Hello',
+        ]);
+
+        $response->assertStatus(404);
+        $response->assertJson(['error' => 'Session not found']);
+    }
 }
