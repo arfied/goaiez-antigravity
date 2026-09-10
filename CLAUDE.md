@@ -11950,3 +11950,123 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     `e()`, so an apostrophe in a needle would match (82's safe case, as ruling 84 measured for twenty
     `"isn't in this account"` needles); the dictated needles nonetheless carry **none**, and the paired
     `assertDontSee('update your cards')` is apostrophe-free by construction.
+391. **⭐⭐ A §7 that lands EXACTLY on a floor derived by listing BEFORE the run is itself a measurement
+    that ruling 42's mechanism did not fire — a THIRD route to satisfy ruling 291, beside ruling 357's
+    lock line (RULED by the lane supervisor 2026-09-10 18:5x, on MONEY-190's `fc9403c7`).** Ruling 291
+    forces a supervisor re-gate on any wave that ran a mutation proof; ruling 357 then measured that
+    291's condition is a **PROXY** for *a second pest in this checkout concurrently with the gate*, and
+    that a §7 line reading `… another suite holds /home/goaiez/tmp/pest.lock — waiting up to 40 min` is a
+    direct measurement it did not happen. MONEY-190 ran **two** proofs and its §7 carries **no lock
+    line**, so 357's route was unavailable — and a re-gate was not free, measured rather than assumed
+    (348): `pgrep -a -f "vendor/bin/pest"` returned `752356 timeout 1800 ./vendor/bin/pest`, a genuine
+    holder (322 — read the hit), making a re-gate up to 40 minutes of `flock` with ruling 91's
+    abandoned-gate precedent and 253's double-kill behind it. ⭐⭐ **RULED: the exact-floor match is the
+    third route.** 42's mechanism drops the schema under a running suite and therefore produces a
+    **cascade of extra errors**; it cannot coincidentally reproduce an independently-derived arithmetic
+    prediction **on both counts**. Here `gate-money189.txt:96` was read at source this tick (`2503 ·
+    2499`, never inherited — 323), the wave's two items each add one method by listing (92, 200), and §7
+    measured **`2505 · 2501 · FAILED 2 · errors 2`** — exact. ⛔ **The route is open only with all four
+    of 288/357's statements made explicitly**, and they were: 42's tell absent (`errors` did not rise
+    and neither member is `relation … does not exist`); the gate file read **raw** (42(2)); §1's `0
+    uncommitted path(s)` against this seat's own empty `git status` and empty `git diff --stat HEAD --
+    app/` (34, 71, both directions); and the commit/gate **ordering** measured — commits `16:23:25`,
+    `16:24:23`, `16:24:30`, gate written `16:27:20`, which is ruling 42's *inverse* hazard (a gate run
+    before the wave's last commit describes a sha that was never reviewed) measured clean.
+    ⛔ **Never a licence where the floor was NOT derived before the run**, and ⛔ never where §7 never
+    ran — that is ruling 348's case, which carries a **debt** into the next brief as a filtered
+    measurement run FIRST. ⚠️ The generalisable half is ruling 288's a fourth time: **a rule written as
+    "re-run X" is a rule about the PROPERTY X establishes**, and a prediction made before a run and met
+    exactly by it is a stronger statement about that run's integrity than a second run would be — a
+    re-gate would only produce a number, where the match produces a number **and** the fact that it was
+    foreseeable.
+    ⭐ **Two paperwork rules held on their first outing and it is recorded, per ruling 149's discipline
+    (*a fix to a paperwork rule is itself a claim, and the tick after it says whether it held*).**
+    (a) **Ruling 362** collapsed `GATE:` to the gate file's PATH and deleted `FINAL GIT STATUS:`, on the
+    reasoning that eight hardening rulings had made the field worth forging. Its first outing made
+    42(2)'s *never take a reported figure as the sha's* satisfied **by construction**: the coder
+    transcribed **no number at all**, so there was no reported figure to take, and every §7 digit in the
+    verdict block is the supervisor's own raw read. **The fields a composer script had any reason to
+    fabricate are the fields that no longer exist.** (b) **Ruling 367**'s `(clean — no output)` sentinel
+    arrived correctly on its first outing — 367 existed because 366's restored `TREE:` came back blank
+    and 362 had already measured that a blank field cannot distinguish *the tree was clean* from *the run
+    forgot*. ⭐ And ruling 361's **first application to a property being CREATED** held: `$errorHeading`
+    is cleared in all three of `present()`, `makeDefault()` **and `addCard()`**, including the one with
+    no catch, which is the one a coder skips.
+
+392. **⭐⭐ FOURTH consecutive HOLD, and the near-miss is the finding: a DEFAULT placed at the READ is
+    invisible to a census that scans DECLARATIONS, and I nearly briefed a wave on its absence (measured
+    by the lane supervisor 2026-09-10 18:5x; rulings 64, 95, 100, 111, 294, 324, 327, 340).** Three
+    populations were measured at ruling 324's bar this tick and all three are zero-buildable. ⚠️ None
+    returned a zero, so the zero trap (207, 381, 387) had nothing to corroborate; each instrument fired
+    and, more usefully, each **discriminated** within the lane.
+    **(a) The input-clear ABSENCE — ruling 340's negative on ruling 387, 23 members, CLEAN.** 387
+    measured WHERE a clear is placed (all ten the last statement inside their `try`, so an owner's typing
+    survives a refusal); nobody had measured **where a clear is ABSENT**, which is the success-side
+    hazard — a form whose inputs survive their own submission, so a second press resubmits them. Measured
+    against the lane's **23** `wire:model` bindings: nine `unset(` sites plus `$this->term = []` plus
+    X-120's `forgetCardFields()` cover every one, except X-173's `provider` and `realmId` — **and those
+    are correct**, because ruling 73a measured `connect()` refuses **by design** and has no success path
+    to clear on, so 387's own rule (input survives a refusal) is what governs them. ⛔ Struck.
+    **(b) A `<select>` is a claim of TWO parts — the OPTIONS offered and the VALUES accepted (ruling
+    386's shape on a menu) — 5 members, CLEAN.** Ruling 368 measured the whitelists (does the component
+    refuse an unlisted value); the complement is whether the rendered menu and the accepted vocabulary
+    **agree**, since an option the whitelist refuses is a door that refuses its own menu (94's family)
+    and an accepted value with no option is invisible. `provider` ↔ `AccountingConnection::PROVIDERS`
+    (369's own fix) · `paymentMethod` ↔ `OfflinePayment::METHODS` (364's) · `termsType` ↔
+    `TermsSetAction::TYPES`, whose four keys are **byte-identical** to `Credits::LABELS`' and to
+    `CreditTerm::TERMS_DAYS`' · `reason` ↔ `ArEngine::REASONS`, generated from the same const the guard
+    reads · `frequency` ↔ the engine's day-map. ⭐ **The instrument discriminated rather than merely
+    firing**: `invoice-thread-beside.blade.php:79`'s `<option value="">Pick a reason</option>` **is** an
+    option the whitelist refuses, and reading the hit (262(b)) shows the refusal is honest and its remedy
+    reachable on that screen — *"Pick one of the reasons."* (363). ⛔ Struck.
+    **(c) ⭐⭐ A `<select>`'s INITIAL value against the state its guard refuses — 5 members, CLEAN on
+    THREE distinct patterns, and this is where the tick nearly went wrong.** The hypothesis was that
+    `frequency` is the one select with neither a default nor a placeholder, so an owner who touches
+    nothing would see the browser's first option (`Monthly`) selected, press **Offer plan**, and be
+    refused with *"Pick monthly, every two weeks, or weekly."* — a refusal naming a choice the screen
+    already displays. It was formed from two measured facts: `public array $frequency = []` carries no
+    initialiser, and the menu has no `value=""` option. **Both facts are true and the conclusion is
+    false.** `PaymentplanBuilder.php:36` is `$frequency = (string) ($this->frequency[$invoiceId] ??
+    'monthly');` — the default lives **at the read**, byte-identical in shape to MONEY-186's `?? 'check'`
+    at `AgeingByReason.php:112`, and `'monthly'` is `payment_plans.frequency`'s own column default
+    (`2026_08_30_000027:34`), exactly as `'check'` is `offline_payments.payment_method`'s. The refusal at
+    `:44` is therefore unreachable from the screen and is the whitelist against a client-supplied value
+    (344), which is what its sibling at `:113` is. The other three are right by their own routes —
+    `termsType` by `@selected` **plus** a `?? $term->terms_type` read (368b), `reason` by an explicit
+    empty placeholder matching its empty property, `provider` by 369's whitelist. ⛔ Struck.
+    ⭐⭐ **The generalisable half, and it is ruling 328's a third time with the ownership inverted: a
+    DEFAULT AT THE READ is invisible to a census that scans DECLARATIONS.** 328 recorded that *a prior
+    wave's fix is invisible to the census that would otherwise find its absence*; here the guard is not a
+    prior wave's at all but the original author's, placed four lines into a method where no property
+    sweep can see it. **A census of initialisation reads the METHOD, never the declaration** — and the
+    tell that a declaration-scan is about to mislead is a property whose type permits an empty state
+    (`array`, `?string`) beside a guard that refuses one.
+    ⚠️ **Recorded and deliberately NOT briefed (rulings 76, 96, 193, 327).** The `frequency` vocabulary
+    exists in **three** places — `PaymentplanBuilder.php:44`'s literal, `ArEngine.php:148`'s day-map, and
+    the blade's three options — and the terms vocabulary in three: `Credits::LABELS`,
+    `TermsSetAction::TYPES`, `CreditTerm::TERMS_DAYS`. **All six agree today.** ⛔ Neither is a wave, and
+    the reason is a precedent that cuts the other way: ruling 213 met the identical shape in the identical
+    component (`PaymentplanBuilder:85` duplicating the engine's instalment formula) and **recorded** it —
+    *"the two agree today and are recorded as ruling 37's second place for the truth to disagree, to be
+    watched if either moves."* ⭐ And the const-on-the-model shape rulings 185, 364 and 369 established is
+    **not a standard this lane owes every vocabulary**: in all three the const was the **MECHANISM** of
+    fixing a real defect (a caller-supplied value overriding the row; a hardcoded literal; an absent
+    whitelist), never the defect itself. X-211's frequency has a whitelist, matching options and no
+    constant-value defect, so there is nothing to fix. **An absent const looks like a gap only where its
+    absence causes one** — the inverse of 328, where a present guard hides one.
+    ⚠️ The cadence was measured in THIS tick and never inherited (269, 272, 323): `git rev-list --count
+    HEAD..origin/main` = **38**, not > 100 ✗ · `git diff --stat b7b52dc6 origin/main -- app/app/Doctor
+    coder-bin .claude/hooks` **empty** ✗ · merge-base **`b7b52dc6`, unmoved**, with ten money pushes
+    since ✗. **Merge gate CLOSED**, `--allow-merge` not passed. `OWNER.md` judged by its heading list
+    (136), newest still `## OWNER RULING — 2026-09-09 09:02`, consumed as ruling 272.
+    ⭐ **Ruling 385's warning restated, because after twenty-five zero-buildable censuses it is the thing
+    most likely to be misread: this is NOT a reason to stop censusing.** It is what a lane looks like
+    after rulings 36–391 have been applied. ⛔ Briefing an empty wave to avoid an idle tick is what
+    rulings 95, 100 and 111 exist to prevent, and it is worse than idling: it spends a dispatch, puts a
+    coder into `app/**` with no measured defect, and every edit is churn a later reviewer must re-derive
+    (47's companion). **The four lift conditions are CHECKED, never inferred** — a new dated `OWNER.md`
+    section (case d, which beats everything) · a cadence condition on a moved `origin/main`, all three
+    measured in the acting tick · a Track 1 answer to ACTION 13, 14, 15, 16, 18, 19, 20, 21 or 22 · a
+    population at 324's bar, **measured non-empty AND buildable**. ⛔ *Sounds plausible* is not a
+    population — and (c) is this ledger's sharpest instance of why: a hypothesis built on two true
+    measurements can still be false, and the cost of checking it was one `sed`.
