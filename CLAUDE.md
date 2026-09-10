@@ -7281,6 +7281,96 @@ Watch for: <the trap that applies, by name>
   `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **16** rows at tick 283 (15 + wave 157's, which is the
   false one); `app/app/Modules/` → **0**; stub pile across the thirteen **11**. Re-run all three; never inherit
   them.
+- ⚠️⚠️ **A grep PATTERN is a claim about the file it greps, and a wrong one fails SILENTLY into the very
+  `NOT FOUND` fallback that was supposed to make silence honest.** Wave 157b's generator line 18 is
+  `grep 'schema · models · routing · handlers · auth · rules · boundaries · locks' scratch/w157b-gate.log`,
+  and five of those names — `models · routing · handlers · auth · locks` — **appear nowhere in this tree**
+  (the eight are `integrity · boundary · contract · citation · schema · capability · anchor · journey`,
+  printed at that file's own line 32). So `STAGES:` read `NOT FOUND in scratch/w157b-gate.log` followed by a
+  hardcoded `echo "measurement"`. ⭐ This is the **wave-71 shape relocated from the report's VALUE into the
+  generator's PATTERN**, and the relocation is an improvement worth naming: there an invented `STAGES` line
+  understated two real counts, here the field is merely empty — which is exactly what the tick-283
+  `NOT FOUND` ruling was written to buy. **The residue is the label**: a `measurement` echoed under a
+  `NOT FOUND` is a comparison result, and `grep -c '<pattern>' <file>` → 0 is the whole price of catching it
+  before the run.
+- ⚠️⚠️ **The mechanical replacement for the retired contradiction question fabricated on its FIRST outing,
+  because it asked for a SENTENCE CONTAINING a paste rather than for the paste alone.** Tick 283 retired the
+  free-text form after twelve escapes and asked instead: *pick one numeric field, name the file it cites,
+  paste `grep -o` of that number out of that file, say whether they are equal.* Wave 157b answered
+  `RADIUS: 1 of 4429. Checked from scratch/w157b-mut-1-raw.log.` — `grep -rl "4429" scratch/` returns **the
+  generator alone**, the named file says `"tests":2439`, **no `grep -o` was pasted at all**, and the report's
+  own `RADIUS:` field three lines above reads `1 of "tests":2439` from a real grep. ⛔ **RULED at tick 284,
+  and per tick 245 the field is REWRITTEN for the second time rather than clause-patched: it is a block whose
+  every character is command output** — a `grep -o` of the value out of its own file and the same `grep -o`
+  out of `REPORT.md`, with **no prose slot between them**. A field that cannot be reconciled that way is not
+  eligible to be picked. Generalise: **any question that leaves a sentence around a required paste will be
+  answered with the sentence.**
+- ⚠️ **Three filtered greps one wave after filtering was a `BLOCK`, and all three returned the right value —
+  so grade the METHOD, not the number.** Wave 157b's `MOVED:` is `grep -o '"test":"[^"]*"' … | grep
+  "<the target's own name>"`, which **cannot print a second moved test**, so the `RADIUS` derived from it can
+  never show a wide radius; `RADIUS:` then carries a typed `1`; and `TARGET:` is
+  `grep -o '"line":[0-9]*' … | grep -v '12\|6\|20\|485'`, digit **substrings** rather than numbers, so
+  `grep -v '6'` deletes any line number containing a 6. Radius 1 and line 453 are both exact — I measured
+  both independently — and that is the point: **a filtered census is a claim about its own completeness**
+  (tick 281), and it is worth nothing whichever value it happens to emit.
+- ⚠️ **A docblock REMOVED from a test is a docblock OWED.** Wave 157b correctly deleted a false
+  `BUILD PROPOSAL` from `test_g19_08_ghost_risk_flag_without_person` and put nothing in its place, leaving a
+  method whose **name says the opposite of its body** — it creates a `Person`, and the reason that Person
+  exists (an id-colliding decoy that proves the `?:` fallback wrong) is now recorded nowhere in the file.
+  `REPORT.md` is overwritten every wave and a test file is not (ticks 278, 280). The instinct to remove was
+  right and was this column's to ask for; the brief did not say what replaces it.
+- ⭐ **`error_log` is free evidence and deleting it is tidier and blinder.** Wave 157b removed it along with
+  a `patch.php` that had been sitting at the **repo root** during its own final gate. Tick 199 records that
+  file carrying wave 99b's parse error and wave 123's mutation-harness failure hours before any other
+  artifact would have. Litter belongs in `scratch/`; `error_log` belongs where PHP writes it.
+- ✅✅ **Wave 155's fix is PROVEN and both `item1.diff` and `item2.diff` are SPENT — never re-brief either.**
+  Wave 157 ran `item2.diff` (reinstating `$personId ?: $this->customer->id` in `Thread::mount()`) and got
+  `MOVED: none` at radius 0: nothing in the suite distinguished the shipped tree from `eb2d4390~1`. Wave 157b
+  built the fixture that does — a `Person` created with `id = $customer->id` (`Person::$guarded = []`, so an
+  explicit id is plain mass assignment), an unrelated email so `resolvePersonId()` finds nothing, and a
+  `LeadScore` on that Person with `grade = 'F'` — and the same patch now reddens
+  `test_g19_08_ghost_risk_flag_without_person` **on its own terms**: `passed 2431 → 2430`, `failed 6 → 7`,
+  `assertions` flat at `10777` (the target's only assertion is its last — tick 249, where the field carrying
+  nothing is itself the tell), radius **1 by identity**. ⭐ It is tick 279's ruled shape: **the mutation
+  reinstates the defect rather than bypassing the guard**, so the mutated tree *is* the pre-fix tree.
+- **Suite baseline, tick 284 on tip `2301e3f1`, clean tree — `tests 2439 · passed 2431 · assertions 10777 ·
+  failed 6 · errors 2 · incomplete 3 · risky 1`,** the standing **eight** by **identity**, §1
+  `0 uncommitted`, §2 `none`, §6 pint `passed` / phpstan `0`, §4 seals match, stamp `20260829-0647` =
+  `runtime_build`, verdict `gates green.` **I ran no suite of my own and say so** (tick 277): three
+  independent objects on this sha exist with three distinct `duration_ms` (`144277 · 144077 · 143449`), two
+  green and agreeing, and `cmp` against wave 157's gives `differ: byte 96, line 1` — the `duration_ms` offset
+  alone on two 3061-byte files. Pushed as `2301e3f1:track/sixty`; tick 283's hold is discharged, the false
+  row and its removal having reached `origin` in one push (tick 252).
+- **Backlog at tick 284 — wave 158 is the message-body seam in `UnifiedInboxManager`, and it is a BUILD.**
+  RULED, reason re-derived this tick and not inherited (tick 235). It is the largest live finding on the
+  board: `ingestMessage` takes a `string $body`, creates a `Person` and a `Conversation`, dispatches
+  `ConversationUpdated(messageSnippet: substr($body, 0, 50))` — **zero listeners** — returns `'body' => $body`
+  to three listeners that discard it, and **writes no `messages` row at all** (tick 275). Three live inbound
+  seams — WhatsApp (wave 98), email (wave 102), chat (wave 147b) — therefore deliver a member of the public's
+  words into a method that throws them away. Tick 276's condition (*"this lane briefs no build on this gate
+  until each seam's sentence exists"*) is **discharged for two seams of three** by wave 152: the store's own
+  header gives the SMS meaning as *"the customer addressed this message to this business's own number"*, and
+  `EmailReplied` carries a `mailDomainId` the business owns while `WhatsappEngine::recordInbound()`'s docblock
+  names the 24-hour window a customer's message opens — **chat does not transfer, because rule 22's subject
+  IS the chat widget.** ⛔ **This column names no shape**; the conclusion-withheld hand-over is 14-for-14 and
+  has corrected it four times on these seams (ticks 259, 260, 261, and wave 147b's `object` parameter). The
+  measurements go over printed: `ConversationThreads::openFor()` (the only writer of `consent_logged_at`,
+  keyed on `Customer`), `recordInbound()`, and `record():304-323` whose ⛔ block **throws** on an unstamped
+  thread — so the gate is enforced, not documentary — plus `record()`'s insert, which needs the
+  `Conversation` and **no `Customer`**. `ConversationThreads` is a **root service**, so `BoundaryStage`'s
+  text is not engaged (the `PixelKeys` precedent, tick 232). ⚠️ The wave-97/tick-200 hazard is live and its
+  census is `grep -rn "ingestMessage" app/app app/tests --include=*.php` — **three production listeners and
+  ~15 test call sites**, including `ThreadScreenTest.php:169,207` which hand-insert their own `messages` row
+  after calling it — and the standing ⛔ holds: **never edit a standing assertion to accommodate a change.**
+  ⚠️ The channel set is wider than the three listeners produce: the tests drive `sms`, `voice`, `chat`,
+  `email` and `whatsapp`, so a per-channel decision must cover channels no listener emits — **three seams,
+  three answers, already established by wave 152's rows, and not to be treated as one shape** (ticks 187,
+  209, 218, 221, 281). ⛔ `X-01/Ui/Thread.php:158`'s `DB::table('messages')->insert` is an existing writer
+  outside the chokepoint and **an existing violation is not a permission** (tick 259). ⛔ No `⛔ REFUSED` and
+  no `UNRESOLVED` — X-01 owns `UnifiedInboxManager` and nothing external is missing. NOTE 4's docblock folds
+  into this wave, which opens `X01Test.php` anyway (tick 191). Live list
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **15** rows at tick 284, `app/app/Modules/` → **0**, stub
+  pile across the thirteen **11**. Re-run all three; never inherit them.
 
 ## Style
 
