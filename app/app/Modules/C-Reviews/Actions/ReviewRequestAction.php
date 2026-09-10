@@ -63,7 +63,6 @@ final class ReviewRequestAction
                 'platform' => $platform,
                 'status' => 'triaged_internal',
                 'gbp_suspended' => false,
-                'csat_score' => $csatScore,
             ]);
 
             app(QaTicketAction::class)->handle($businessId, $req->id);
@@ -106,7 +105,6 @@ final class ReviewRequestAction
             'platform' => $platform,
             'status' => 'sent',
             'gbp_suspended' => false,
-            'csat_score' => $csatScore,
         ]);
 
         $person = Person::find($customerId);

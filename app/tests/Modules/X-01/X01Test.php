@@ -475,6 +475,7 @@ class X01Test extends TestCase
      * [G19-22] positive half: every channel lands on ONE Conversation.
      * (R245) listener returns early when the inbound WhatsApp message body is empty
      * Asserts against UnifiedInboxManager::ingestMessage() on real data.
+     * BUILD PROPOSAL: WhatsApp inbound body — stamp consent_logged_at because the customer addressed this message to this business's own WhatsApp number Owner: X-01
      */
     public function test_g19_22_single_conversation_identity(): void
     {
@@ -501,6 +502,9 @@ class X01Test extends TestCase
         $this->assertEquals(1, Conversation::where('person_id', $res1['person_id'])->count(), 'Conversation::count() for that person must be 1');
     }
 
+    /**
+     * BUILD PROPOSAL: Email inbound body — stamp consent_logged_at because the customer addressed this message to this business's own email address Owner: X-01
+     */
     public function test_g11_12_email_reply_bridge(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Email Reply Bridge Biz', 'currency' => 'USD']);
@@ -567,10 +571,18 @@ class X01Test extends TestCase
         $this->manager->replyWithTakeover($biz->id, $c->id, 'anything');
     }
 
+    /**
+     * BUILD PROPOSAL: Chat inbound body — pre-chat notice and logged consent on the chat widget Owner: X-102
+     */
     public function test_chat_capture_wire_creates_conversation(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Inbox Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $convUpdated = null;
+        Event::listen(ConversationUpdated::class, function ($event) use (&$convUpdated) {
+            $convUpdated = $event;
+        });
 
         Event::dispatch(new ChatLeadCaptured(
             businessId: $biz->id,
@@ -585,5 +597,8 @@ class X01Test extends TestCase
             'channel' => 'chat',
             'status' => 'open',
         ]);
+
+        $this->assertNotNull($convUpdated, 'ConversationUpdated event should have been dispatched');
+        $this->assertEquals('Hello chat', $convUpdated->messageSnippet, 'That conversation carries the visitor message');
     }
 }
