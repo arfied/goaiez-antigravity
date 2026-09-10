@@ -806,3 +806,7 @@
 - `2026-09-09T21:38:37` RESOLVED contract X-218 - app/app/Doctor/Stages/ContractStage.php:575 (30316573 on 2026-09-07) (was: send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.)
 - `2026-09-09T21:38:37` RESOLVED contract C-Reviews - app/app/Doctor/Stages/ContractStage.php:575 (30316573 on 2026-09-07) (was: send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.)
 - `2026-09-09T22:16:42` note: REV-131: b05f42d7 reverted whole to 10856a82 — five declarations deleted (qa.ticket, X-118 win.first, C-Sms R245, X-196 R245, X-155 G13-05 truncated), master plan corrupted at :32501, phpstan 0->4, five new failing tests. C-Reviews stays wave 8's remaining module.
+- `2026-09-09T22:54:33` stage boundary = 50
+- `2026-09-09T22:54:39` (R245) C-Reviews — C-Reviews reaches qa_tickets through a registered X-181 action that returns QaTicket or a Collection of them. --ruling R245
+- `2026-09-09T23:10:25` stage boundary = 45
+- `2026-09-09T23:10:30` note: REV-133 F2: 22:54:33's `stage boundary = 50` recorded supervise.sh §3's echo of BUILD-STATE.json, not a measurement. The tree fell to 45 when 5f5cdecb removed C-Reviews's five X-181 Models\ imports. Corrected against a live doctor run.

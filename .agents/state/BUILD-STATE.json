@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-09T21:38:37",
+ "updated": "2026-09-09T22:54:39",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -15,7 +15,7 @@
    "fails": "COMMIT"
   },
   "boundary": {
-   "violations": 50,
+   "violations": 45,
    "fails": "COMMIT"
   },
   "contract": {
@@ -1333,6 +1333,12 @@
    "chose": "Undoing a value a merge COMMITTED is a content operation, not a ref operation: git checkout -- <path> restores from the index, which after a merge already holds the incoming value, so the restore gate is a silent no-op on it. Repair with git show <good-sha>:<path> > <path>, verified by an empty git diff <good-sha> HEAD -- <path> (R245)",
    "at": "2026-09-09T18:24:19",
    "ruling": "R245"
+  },
+  {
+   "module": "C-Reviews",
+   "chose": "C-Reviews reaches qa_tickets through a registered X-181 action that returns QaTicket or a Collection of them. --ruling R245",
+   "at": "2026-09-09T22:54:39",
+   "ruling": "R245"
   }
  ],
  "notes": [
@@ -1375,6 +1381,10 @@
   {
    "at": "2026-09-09T22:16:42",
    "note": "REV-131: b05f42d7 reverted whole to 10856a82 \u2014 five declarations deleted (qa.ticket, X-118 win.first, C-Sms R245, X-196 R245, X-155 G13-05 truncated), master plan corrupted at :32501, phpstan 0->4, five new failing tests. C-Reviews stays wave 8's remaining module."
+  },
+  {
+   "at": "2026-09-09T23:10:30",
+   "note": "REV-133 F2: 22:54:33's `stage boundary = 50` recorded supervise.sh \u00a73's echo of BUILD-STATE.json, not a measurement. The tree fell to 45 when 5f5cdecb removed C-Reviews's five X-181 Models\\ imports. Corrected against a live doctor run."
   }
  ],
  "resolved": [
