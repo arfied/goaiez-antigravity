@@ -1409,6 +1409,10 @@
   {
    "at": "2026-09-10T00:58:25",
    "note": "seam measured: C-Reviews does not consult invite_threshold (0 hits). The legacy surface provides ReviewGating, ReviewInvites, and DestinationSettings (18 public methods). BoundaryStage imports check explicitly ignores App\\\\Services\\\\..., and 19 modules already read legacy services."
+  },
+  {
+   "at": "2026-09-10T01:15:18",
+   "note": "P-110 seam: Arm B, location is not resolvable. Run 134 item: add location_id to review_requests and backfill, then gate ReviewRequestAction on ReviewGating."
   }
  ],
  "resolved": [
