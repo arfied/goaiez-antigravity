@@ -90,7 +90,11 @@ final class UnifiedInboxManager
                 try {
                     app(ConversationThreads::class)->recordInbound($convo, $body);
                 } catch (\InvalidArgumentException $e) {
-                    // A thread that has not been cleared to store message content does not store one, dropping it instead.
+                    if (str_contains($e->getMessage(), 'cleared to store message content')) {
+                        // A thread that has not been cleared to store message content does not store one, dropping it instead.
+                    } else {
+                        throw $e;
+                    }
                 }
 
                 return $convo;
