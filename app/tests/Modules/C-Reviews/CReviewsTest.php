@@ -681,6 +681,48 @@ class CReviewsTest extends TestCase
         $this->assertEquals('prepared', $removal->status);
     }
 
+    public function test_g1_68_prepare_refuses_an_unknown_google_review_id(): void
+    {
+        $biz = self::provisionTenant(['name' => 'G168 Test Biz']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $req = ReviewRequest::create([
+            'business_id' => $biz->id,
+            'platform' => 'google',
+            'rating' => 1,
+        ]);
+
+        $preparer = new PrepareRemovalRequestAction;
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Google review ID does not belong to this business.');
+
+        $preparer->execute($biz->id, $req->id, 'tos_ground_example', 'Prepared Body', 'g_does_not_exist');
+    }
+
+    public function test_g1_68_prepare_refuses_another_businesss_google_review_id(): void
+    {
+        $biz = self::provisionTenant(['name' => 'G168 Test Biz']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $req = ReviewRequest::create([
+            'business_id' => $biz->id,
+            'platform' => 'google',
+            'rating' => 1,
+        ]);
+
+        $otherBiz = self::provisionTenant(['name' => 'Other Biz']);
+        $locId = Location::firstOrCreate(['business_id' => $otherBiz->id, 'name' => 'Main2'])->id;
+        Review::create(['business_id' => $otherBiz->id, 'location_id' => $locId, 'source' => ReviewSource::Google, 'google_review_id' => 'g_other', 'status' => ReviewStatus::Approved, 'rating' => 1]);
+
+        $preparer = new PrepareRemovalRequestAction;
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Google review ID does not belong to this business.');
+
+        $preparer->execute($biz->id, $req->id, 'tos_ground_example', 'Prepared Body', 'g_other');
+    }
+
     /**
      * Measured in r133-fork.txt:
      * - app/app/Modules/C-Reviews/Database/migrations/2026_08_30_000022_create_c_reviews_tables.php:19-29 (no location column)
