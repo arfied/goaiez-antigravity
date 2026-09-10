@@ -120,6 +120,14 @@ class ChatDoorTest extends TestCase
         $this->assertEquals('Hello from visitor', $agentTurn->user_message);
     }
 
+    /**
+     * Asserts that a session belonging to another business is not reachable through this route.
+     * This is an outcome invariant: it is green with and without the controller's
+     * ->where('business_id', $businessId) clause, because row-level security enforces
+     * the same filter one layer down. It is therefore not a sentinel for that clause,
+     * and the clause's liveness was proven separately by corrupting it (scoping to
+     * the wrong business id), which reddens the same-tenant tests instead.
+     */
     public function test_key_for_business_a_and_session_for_business_b_returns_404(): void
     {
         $bizA = TestCase::provisionTenant(['name' => 'Business A', 'currency' => 'USD']);
@@ -357,33 +365,14 @@ class ChatDoorTest extends TestCase
         $this->assertSame(0, ChatLead::where('business_id', $biz->id)->count());
     }
 
-    public function test_turn_scopes_session_lookup_by_business_id(): void
-    {
-        $bizA = TestCase::provisionTenant(['name' => 'Business A', 'currency' => 'USD']);
-        Tenancy::set((int) $bizA->id);
-        $keyA = app(PixelKeys::class)->ensureFor($bizA);
-
-        $bizB = TestCase::provisionTenant(['name' => 'Business B', 'currency' => 'USD']);
-        Tenancy::set((int) $bizB->id);
-        ChatSession::create([
-            'business_id' => $bizB->id,
-            'session_token' => 'sess_biz_b_turn',
-            'status' => 'active',
-            'rage_clicks_count' => 0,
-            'is_ai_capped' => false,
-        ]);
-
-        Tenancy::forgetAll();
-
-        $response = $this->postJson("/api/chat/{$keyA}/turn", [
-            'session_token' => 'sess_biz_b_turn',
-            'message' => 'Hello',
-        ]);
-
-        $response->assertStatus(404);
-        $response->assertJson(['error' => 'Session not found']);
-    }
-
+    /**
+     * Asserts that a session belonging to another business is not reachable through this route.
+     * This is an outcome invariant: it is green with and without the controller's
+     * ->where('business_id', $businessId) clause, because row-level security enforces
+     * the same filter one layer down. It is therefore not a sentinel for that clause,
+     * and the clause's liveness was proven separately by corrupting it (scoping to
+     * the wrong business id), which reddens the same-tenant tests instead.
+     */
     public function test_capture_scopes_session_lookup_by_business_id(): void
     {
         $bizA = TestCase::provisionTenant(['name' => 'Business A', 'currency' => 'USD']);
