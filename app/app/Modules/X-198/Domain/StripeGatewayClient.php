@@ -44,7 +44,7 @@ final class StripeGatewayClient
 
         // The gateway's own settlement word, not the presence of an id. A charge it has taken but
         // not settled comes back 200 with a real id and 'pending', and reading only the id records
-        // that as captured (R235). A response carrying no status has confirmed nothing, and is
+        // that as captured. A response carrying no status has confirmed nothing, and is
         // never read as success.
         $status = $response->json('status');
 

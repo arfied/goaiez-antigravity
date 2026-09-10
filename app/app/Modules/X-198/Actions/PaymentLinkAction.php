@@ -24,8 +24,8 @@ final class PaymentLinkAction
         }
 
         // The customer reads this on the gateway's own Checkout page, so it must say who is being
-        // paid. It was a constant naming no business and using this app's word for the event
-        // (R233). Naming the invoice waits on a payments-to-invoice link, which does not exist.
+        // paid. It was a constant naming no business and using this app's word for the event.
+        // Naming the invoice waits on a payments-to-invoice link, which does not exist.
         $business = Business::findOrFail($businessId);
         $description = $business->name.' - card payment';
 

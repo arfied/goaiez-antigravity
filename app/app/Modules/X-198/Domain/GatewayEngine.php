@@ -118,7 +118,7 @@ final class GatewayEngine
                     $gatewayStatus = $result['status'];
                 }
 
-                // The gateway's word, never the presence of an id (R235). A charge it took but has
+                // The gateway's word, never the presence of an id. A charge it took but has
                 // not settled arrives with a real id and 'pending', and awaiting_processor is
                 // already this column's name for "the gateway has it and we cannot say it settled".
                 $status = $gatewayStatus === 'succeeded' ? 'captured' : 'awaiting_processor';

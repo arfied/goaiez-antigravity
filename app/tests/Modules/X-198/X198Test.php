@@ -672,7 +672,7 @@ class X198Test extends TestCase
         $this->connectAction->handle($biz->id, 'stripe', 'acct_pending');
 
         // A real charge object exists at the provider and has not settled. Reading only the id
-        // records this as captured (R235).
+        // records this as captured.
         Http::fake([
             'api.stripe.com/*' => Http::response(['id' => 'ch_pending_0000000000000', 'status' => 'pending'], 200),
         ]);
@@ -684,7 +684,7 @@ class X198Test extends TestCase
         // The id is kept: a charge object does exist there, and it is the honest handle on it.
         $this->assertSame('ch_pending_0000000000000', $payment->gateway_charge_id);
 
-        // An event named Captured must not fire for money that was not captured (R101, R236).
+        // An event named Captured must not fire for money that was not captured.
         Event::assertNotDispatched(PaymentCaptured::class);
     }
 }

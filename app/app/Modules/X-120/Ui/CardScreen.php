@@ -104,7 +104,7 @@ class CardScreen extends Component
      * set at the boundary of every action this screen exposes, not only the one that checks them:
      * otherwise a number typed here and left behind by an unrelated click is echoed back into the
      * page for the rest of the session, and the form's promise that the number reaches this app
-     * once is false. P-196 names all three. (R241)
+     * once is false. P-196 names all three.
      */
     private function forgetCardFields(): void
     {

@@ -154,7 +154,7 @@ class SameAccountScreenTest extends TestCase
         $connA = MerchantConnection::create(['business_id' => $biz->id, 'gateway_name' => 'stripe', 'merchant_account_id' => 'acct_a', 'is_connected' => true]);
 
         Payment::create(['business_id' => $biz->id, 'merchant_connection_id' => $connA->id, 'amount_cents' => 3000, 'currency' => 'USD', 'payment_token' => 'tok_1', 'idempotency_key' => 'idem_ok', 'status' => 'captured']);
-        // The gateway holds this one and has not settled it (R235). It is recorded.
+        // The gateway holds this one and has not settled it. It is recorded.
         Payment::create(['business_id' => $biz->id, 'merchant_connection_id' => $connA->id, 'amount_cents' => 4500, 'currency' => 'USD', 'payment_token' => 'tok_2', 'idempotency_key' => 'idem_pend', 'status' => 'awaiting_processor']);
         // A declined attempt. No money moved, so it is in no total (GatewayEngine:153).
         Payment::create(['business_id' => $biz->id, 'merchant_connection_id' => $connA->id, 'amount_cents' => 9900, 'currency' => 'USD', 'payment_token' => 'tok_3', 'idempotency_key' => 'idem_fail', 'status' => 'failed']);
