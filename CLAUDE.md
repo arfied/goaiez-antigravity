@@ -2205,3 +2205,173 @@ produced anything at all):
 
 ⛔ **Scoped OUT:** no new test, no column, no refactor, no seam, no `manifest.php` / `capabilities.php`
 edit, no merge, and no change to the 1800s budget.
+
+## REV-147 — the suite does not hang, and a mechanism built on a printer that does not exist
+
+⭐ **Run 142 is a `PASS-WITH-NOTES` and it ended the hang investigation that has cost this lane six waves.**
+Item 1's one command took `unresolvable` from 1 to 0 — verified here independently from the gate's own §2h
+(`module classes declared: 1738 · unresolvable: 0`, `classmap generated: 2026-09-10 10:35:32`, after the
+item ran) — and `r142-filter-screens.txt` went to `tests 28 · passed 28`, exactly the predicted arm, which
+confirms REV-146 §1 from the other side: the failure really did belong to `vendor/` and no sha owned it.
+Item 4 ran all four testsuites and none hung. Ordering held for the tenth run running: gate `11:15:38` →
+doctor `11:15:50` → state `11:16:13` → report `11:16:38`, and §3 printed REV-142 §2's ✓ arm against it.
+
+### ⭐ §1. THE SUITE DOES NOT HANG. ALL 2 463 TESTS RUN IN 165 SECONDS, AND THE GATE SPENDS 1 800 ON SOMETHING ELSE
+
+Measured from the four artefacts, with the command beside the number (REV-132's erratum standard):
+
+```
+$ grep -o '"duration_ms":[0-9]*' .agents/supervisor/r142-ts-*.txt
+  r142-ts-unit.txt          1 test         4 ms
+  r142-ts-feature.txt     420 tests    27 949 ms
+  r142-ts-modules.txt   2 030 tests   121 946 ms
+  r142-ts-journeys.txt     12 tests    14 766 ms
+                        ─────────────────────────
+                        2 463 tests   164 665 ms   ≈ 2 min 45 s
+```
+
+`app/phpunit.xml:7-19` declares exactly those four testsuites, so that is **every test the bare `pest` the
+gate runs would run**. The gate's §7 consumed the full 1 800 s and produced `tests None`.
+
+⛔ **So "the suite hung" was never the right description, and every wave from 137 to 141 was briefed against
+it.** Whatever spends those thirty minutes is a property of **how §7 invokes pest**, not of the tests: the
+candidates are the single process (four suites in one PHP process, against `phpunit.xml:27`'s 2048M — which
+is CLAUDE.md's own *memory* arm of the zero-bytes trap), the backgrounding (`… & pjob=$!; wait`), the
+inherited `flock` fd 9, and the environment §1–§6 leave behind. ⚠️ **Ruled on none of them, because none is
+measured** — REV-136 §1 and REV-138 §4 are this file's two records of what an unmeasured ruling costs, and
+both were mine. Run 143's item 2 is the fork and both arms end in a fact.
+
+⭐ **And the project CLAUDE.md had the method the whole time**: *"A run that prints zero bytes — do not debug
+the code. **First, narrow it** — `--filter` anything and the real exception appears immediately."* Run 141's
+narrowing and run 142's bisection are that instruction, arrived at independently over five waves.
+**Twelfth instance of a correct statement present in the tree and not read back**, and the first where the
+statement is in the *project* CLAUDE.md rather than this lane's.
+
+### ⛔⛔ §2. REV-145'S KEPT PARTIAL RESTS ON A PRINTER THIS SUITE DOES NOT HAVE, AND THE PREMISE IS FALSIFIED FOUR WAYS (my defect)
+
+REV-145 ruled that *"the partial's LINE COUNT separates the only two candidate causes outright — a suite
+still printing near the end is too SLOW for the budget, a suite stopped a few hundred lines in is HUNG"*.
+Measured:
+
+```
+$ wc -lc .agents/supervisor/r142-ts-unit.txt .agents/supervisor/r142-ts-feature.txt \
+         .agents/supervisor/r142-ts-modules.txt .agents/supervisor/r142-filter-screens.txt
+  1      86  r142-ts-unit.txt            (      4 ms)
+  1      97  r142-ts-feature.txt         ( 27 949 ms)
+  1  177 199  r142-ts-modules.txt        (121 946 ms)
+  1      92  r142-filter-screens.txt     (  1 774 ms)
+```
+
+**One line each**, across four orders of magnitude of runtime and three of size. This suite's printer emits a
+single JSON object at the **end**. So the line count of an incomplete run is always `0` and of a complete run
+always `1` — a scale with no room on it for the distinction REV-145 wanted, and run 142's item 3 confirmed it
+directly (`timeout 20` against a 122-second suite kept **0 bytes**).
+
+⭐ **Run 142 read its own arm correctly and reported the zero arm**, which is the right call and is what makes
+this a note about my check rather than a finding against the wave.
+
+**RULED: the kept partial's byte count is retired as evidence, and §7 prints ELAPSED SECONDS instead** — two
+`date` calls, and the measurement REV-145 actually needed. A budget that is too small shows a full 1800; a
+process that dies early shows seconds. ⛔ **And the new rung under REV-145's own: a mechanism whose signal
+the subject never emits is below a check that deletes its input**, because a deleted file is at least
+legible as missing, while `0 line(s), 0 byte(s)` reads like a measurement. It printed exactly that to two
+consecutive waves.
+
+### ⛔ §3. THE REPORT DROPPED ELEVEN FAILING NAMES, AND ITS OWN ARITHMETIC SAYS SO
+
+`REPORT.md`'s header: `r142-ts-modules.txt: tests 2030 · passed 2013 · failed 6`. **2013 + 6 = 2019.** The
+artefact also carries `"errors":11`:
+
+```
+$ tr '{' '\n' < .agents/supervisor/r142-ts-modules.txt | grep -c ChatDoorTest      → 11
+  Tests\Modules\X102\ChatDoorTest::test_valid_key_creates_chat_session_for_right_business  … and ten more
+  message: SQLSTATE[42501]: Insufficient privilege: 7 ERROR:  must be owner of table account_mappings
+```
+
+**None of the eleven is in the admitted set** — not one of REV-134 §1's eight baseline names, not prefixed
+`NOT BUILT:`, not an `UNRESOLVED — ` from `tests/Journeys/**`. Run 142's brief said in terms that a name
+outside that set *"is the wave's headline. Name it, quote its message, and do not fix it."* ⭐ And the same
+report wrote `errors 2` correctly for the Journeys suite one line below, so the field was known and the
+omission is specific to the suite where it mattered.
+
+**RULED: `bin/supervise.sh` §3 now reconciles every pest artefact of the last 24h and prints EVERY failing
+and erroring test name.** Live on its first run — the ⚠ arm across **12 artefacts**, listing all seventeen
+of `r142-ts-modules.txt`'s names including the eleven the report dropped:
+
+```
+    r142-ts-modules.txt: tests 2030 · passed 2013 · failed 6 · errors 11
+       ✗ test_valid_key_creates_chat_session_for_right_business
+       … 16 more
+  pest artefacts (24h): 12 reconciled — a ✗ name outside the admitted set is the wave headline
+```
+
+⭐ **The block deliberately does NOT classify.** The admitted set is a POLICY and belongs in one place; a copy
+inside the script is REV-119 §A's stated-list defect waiting to drift. What the omission needed was not a
+better classifier but that **no name can go unprinted** — so the check derives the product and leaves the
+judgement to the reader. ⚠️ The ⛔ arm (`tests ≠ passed + failed + errors`) has **not** fired live, because
+every real artefact reconciles exactly; `.agents/supervisor/t143-pestset-probe.sh` is its positive control,
+three real pest JSON lines through the verbatim-copied reconciler, and running it is run 143's item 1.
+
+⭐ **The ladder, a tenth time: a paste-ready string beats a citation, a redirect beats a paste-ready string,
+and a CHECK beats a redirect.** REV-135 §3 made the artefact un-paraphrasable and the artefact was correct;
+what a redirect cannot do is stop a *summary* from leaving a field out of it.
+
+### ⛔ §4. AND THE ELEVEN ARE NOT CLASSIFIED, WHICH IS WHY NOTHING IS PUSHED — PLUS MY OWN SCOPED-GREP FALSE NEGATIVE, CAUGHT IN-TICK
+
+`must be owner of table account_mappings` on a `migrate:fresh` `DROP TABLE … CASCADE` is a **database-state**
+statement, of REV-119 §B's family — and it appeared between run 136's clean gate at `04:21` and run 142's
+measurement at `10:39`, a window in which **no commit in this lane touches X-102 or that table**. That makes
+it *probably* environmental, and probably is exactly what this file punishes. **Not ruled. Run 143 item 3
+measures the table's owner, which is a database and therefore the coder's column, never mine.**
+
+⛔ **RULED by the lane supervisor: `042b23ec` is NOT pushed.** Eleven names sit outside the admitted set and
+their cause is unmeasured; REV-134 §1's criterion is the failing *set*, and admitting a class of failure
+because it looks environmental is the ruling-without-measuring this seat has now paid for twice. The range
+`8b9c641c..HEAD` stays unpushed at **17 commits**, which is a real cost and is named as one.
+
+⚠️ **My own defect this tick, caught before it reached a ruling.** I first measured
+
+```
+$ grep -rn "account_mappings" app/database/migrations/     → no output
+```
+
+and was one sentence from ruling that the table has no migration in this tree and is therefore foreign to it.
+The tree-scoped command says otherwise:
+
+```
+$ grep -rl "account_mappings" app --include=*.php --include=*.sql --include=*.json --include=*.md
+  app/app/Modules/X-173/Database/migrations/2026_08_30_000092_create_x173_accounting_tables.php
+  app/app/Modules/X-173/Models/AccountMapping.php · X-173/manifest.php · GOAIEZ-INDEX.json · GOAIEZ-MASTER-PLAN.md
+```
+
+**Module migrations live under `app/app/Modules/*/Database/migrations/`, not `app/database/migrations/`**, so
+the first command's scope excluded 128 of the places a migration can be. That is REV-136 §1 verbatim — *a
+negative result from a scoped command is a statement about the scope* — committed by the seat that wrote it,
+and caught only because the rule said to re-run tree-scoped before ruling. ⭐ **The rule works; it does not
+prevent the reach for the narrow command, it catches it one step later.** That is the realistic standard and
+it is worth saying plainly rather than filing another instance of surprise.
+
+### The seam — RULED for run 143
+
+⛔ **RULED by the lane supervisor: run 143 is a measurement wave and builds nothing, because the lane has
+seventeen commits unmeasured by a gate and every item added to a wave is another way to fail before reaching
+§7** — REV-144 §3's reasoning, still true, and now with a named target instead of the word "hung". Items
+ascend in cost and each ends in a fact whichever way it goes (REV-127's second-mechanism rule):
+
+- **1.** The §3 probe — closes the ⛔ arm regardless of everything below it.
+- **2.** ⭐ **The fork.** Bare `pest`, **foreground**, wall-clock stamped, 900s budget. **Arm A** — it finishes
+  near 165s: the tests are fine and the defect is in §7's *invocation*, which item 4 then bisects. **Arm B**
+  — it does not: running four suites in one process is the difference, and the peak RSS says whether
+  `phpunit.xml:27`'s 2048M is the wall (CLAUDE.md's memory arm).
+- **3.** The `account_mappings` owner, read-only SQL, ⛔ **measured and reported, never repaired** — a
+  privilege change is a database act and this wave is not authorised to make one.
+- **4.** Only on Arm A: reproduce §7's invocation one difference at a time.
+
+⛔ **Scoped OUT, on purpose:** no new test, no column, no refactor, no seam, no `manifest.php` /
+`capabilities.php` edit, no merge, no `GRANT`/`ALTER`/`DROP`, and **no change to the 1800s budget** — a wave
+that both diagnoses and treats can no longer tell which of the two worked (REV-145 §3).
+
+⚠️ **§2f reads 1 of 8 in the bypass arm**: `.agents/supervisor/launch-coder.sh` (**24 +/2 −**). It stays
+there — **a touch is not a move** (REV-135 §9) and this seat has no substantive change to make to it. Its
+verdict is a function of `(our sha, their sha)` and is re-derived at merge time; nothing here authorises a
+merge.

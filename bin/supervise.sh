@@ -609,6 +609,61 @@ if [ "$_art_n" -gt 0 ]; then
   [ "$_art_bad" -gt 0 ] && echo "       a redirect whose command did not run is not a measurement — the report must not cite it"
 fi
 
+# ⛔ EVERY FAILING AND ERRORING TEST NAME IN EVERY PEST ARTEFACT, PRINTED HERE SO A
+#   REPORT CANNOT OMIT ONE (REV-147 §1).
+#
+# Run 142's report read `r142-ts-modules.txt: tests 2030 · passed 2013 · failed 6`.
+# Every number in it is true and the line is still wrong: the artefact also carries
+# `"errors":11`, eleven X-102 ChatDoorTest entries reading
+# `SQLSTATE[42501]: Insufficient privilege: 7 ERROR: must be owner of table
+# account_mappings`, none of them in the admitted set. The brief had said in terms
+# that a name outside that set "is the wave's headline". ⭐ The line contains the
+# evidence of its own omission — 2013 + 6 ≠ 2030 — and the same report correctly
+# wrote `errors 2` for the Journeys suite one line below, so the field was known.
+#
+# ⭐ THIS BLOCK DELIBERATELY DOES NOT CLASSIFY. The admitted set (REV-134 §1's eight
+#   baseline names, plus `NOT BUILT:`, plus `UNRESOLVED — ` from tests/Journeys/**)
+#   is a POLICY and belongs in one place, not copied into a script that would then
+#   drift from it — that is REV-119 §A's stated-list defect. What the omission
+#   needed was not a better classifier but that no name can go unprinted, so this
+#   derives the PRODUCT (which tests failed) and leaves the judgement to the reader.
+#
+# Arms: ⚠ any artefact with failed+errors > 0 lists every name (advisory, no fail —
+# an admitted failure is the normal state of this lane). ⛔ + fail=1 when the
+# arithmetic does not close, i.e. tests ≠ passed + failed + errors, because that is
+# a breakdown with a name hiding in the remainder.
+_pest_seen=0
+# ⚠ `.md` is excluded, and it is a CATEGORY rather than a filename (REV-138 §1's
+#   constraint): a pest redirect target in this mailbox is always `.txt` or `.log`,
+#   while `.md` is prose — a brief, a note, a REVIEWS draft — which can QUOTE a pest
+#   JSON line and then fail to parse as one. `rev142-block.md` did exactly that and
+#   produced a permanent ⚠, which is the failure mode of a warning that never clears.
+for p in $(find "$ROOT/.agents/supervisor" -maxdepth 1 -name 'r*-*' -type f ! -name '*.md' -mmin -1440 2>/dev/null | sort); do
+  grep -q '^{"tool":"pest"' "$p" 2>/dev/null || continue
+  _pest_seen=$((_pest_seen + 1))
+  grep -h '^{"tool":"pest"' "$p" | tail -1 | PEST_ART="${p##*/}" python3 -c '
+import json, os, sys
+name = os.environ["PEST_ART"]
+try:
+    d = json.loads(sys.stdin.read())
+except Exception:
+    print("    ⚠ %s: not parseable as a pest JSON line" % name); sys.exit(0)
+t  = d.get("tests"); pa = d.get("passed")
+f  = d.get("failed", 0) or 0; er = d.get("errors", 0) or 0
+if t is None or pa is None:
+    print("    ⚠ %s: result %s — no tests/passed to reconcile" % (name, d.get("result"))); sys.exit(0)
+print("    %s: tests %s · passed %s · failed %s · errors %s" % (name, t, pa, f, er))
+names = [e.get("test", "?").split("::")[-1] for e in (d.get("failures") or []) + (d.get("error_details") or [])]
+for n in sorted(set(names)):
+    print("       ✗ %s" % n)
+gap = t - pa - f - er
+if gap:
+    print("    ⛔ %s: %s + %s + %s does not reach %s — %s test(s) unaccounted for" % (name, pa, f, er, t, gap))
+    sys.exit(3)
+' 2>/dev/null || fail=1
+done
+[ "$_pest_seen" -gt 0 ] && printf '  pest artefacts (24h): %s reconciled — a ✗ name outside the admitted set is the wave headline\n' "$_pest_seen"
+
 # ⭐ `schema` IS REPORTED WITH THE DATABASE IT WAS READ FROM, OR IT IS NOT REPORTED
 #   (REV-119 §B) — AND THAT INSTRUCTION IS NOW EMITTED RATHER THAN RESTATED.
 #
@@ -865,29 +920,51 @@ if [ $want_tests -eq 1 ]; then
 fi
 if [ $want_tests -eq 1 ]; then
   # timeout: a hung suite is a red line, never a 26-minute wait (ruling 2026-09-05 07:0x)
-  pest_started=$(date -Is)
+  pest_started=$(date -Is); pest_t0=$(date +%s)
   ptmp=$(mktemp "${TMPDIR:-/tmp}/pest-XXXXXX"); DB_DATABASE="$lane_db" timeout 1800 ./vendor/bin/pest > "$ptmp" 2>&1 & pjob=$!; pest_pid=$(pgrep -P "$pjob" 2>/dev/null | head -1); pest_pid=${pest_pid:-$pjob}; wait "$pjob"; rc=$?; out=$(cat "$ptmp")
-  # ⛔ A TIMED-OUT SUITE DELETED ITS OWN ONLY EVIDENCE (REV-145, 2026-09-10).
-  # rc 124 took the two-line branch below and `rm -f "$ptmp"` threw away everything
-  # pest had printed in the thirty minutes before the budget ran out. Runs 137 and
-  # 140 each spent a full budget and produced no fact about WHERE it stopped, so
-  # four consecutive waves closed with nothing to act on but the word "hung".
-  # The partial is not a nicety: its LAST LINE names the file pest was in, and its
-  # LINE COUNT separates the only two candidate causes outright — a suite still
-  # printing near the end is too SLOW for the budget, a suite stopped a few hundred
-  # lines in is HUNG, and those two want opposite fixes. Kept on every path (the
-  # zero-bytes arm below wants it too), printed on the one that discarded it.
+  pest_elapsed=$(( $(date +%s) - pest_t0 ))
+  # ⛔⛔ REV-147: THE KEPT PARTIAL CANNOT DIAGNOSE ANYTHING, BECAUSE THIS SUITE'S
+  #   PRINTER EMITS EXACTLY ONE LINE AND EMITS IT AT THE END.
+  #
+  # REV-145 kept the partial on the reasoning that "its LINE COUNT separates the
+  # only two candidate causes outright — a suite still printing near the end is
+  # too SLOW for the budget, a suite stopped a few hundred lines in is HUNG".
+  # That premise is false here and run 142 measured it four ways:
+  #
+  #   r142-ts-unit.txt        1 line     86 B      4 ms
+  #   r142-ts-feature.txt     1 line     97 B     27 949 ms
+  #   r142-ts-modules.txt     1 line    177 199 B 121 946 ms
+  #   r142-filter-screens.txt 1 line     92 B      1 774 ms
+  #
+  # One line each, over four orders of magnitude of runtime and three of size.
+  # So the line count of an INCOMPLETE run is always 0 and of a complete run is
+  # always 1 — a scale with no room on it for the distinction REV-145 wanted.
+  # Run 142's item 3 confirmed it directly: `timeout 20` against the Modules
+  # suite (a 122-second run) kept 0 bytes.
+  #
+  # ⭐ The measurement that DOES separate the two is ELAPSED TIME, and it costs
+  #   two `date` calls. A budget that is too small shows a full 1800s; a suite
+  #   that dies early shows seconds. That is what this should have printed all
+  #   along, and REV-145's defect was reaching for a richer signal (the last
+  #   line names the file!) that this printer does not produce.
+  #
+  # The partial is still kept: it costs one `cp`, the zero-bytes arm below reads
+  # it, and a future printer change would make it informative again. What is
+  # retired is the CLAIM that its line count means something.
   pest_partial=${TMPDIR:-/tmp}/last-pest-partial.txt
   cp "$ptmp" "$pest_partial" 2>/dev/null || true
   rm -f "$ptmp"
   log_gate pest "$pest_started" "$rc" "${pest_pid:--}"
   [ "${lock_held:-0}" -eq 1 ] && flock -u 9 2>/dev/null
   if [ $rc -eq 124 ]; then
-    echo "  ✗ pest TIMEOUT after 1800s — the suite hung (a lock wait or a prompt); treat as red"
-    echo "     partial output KEPT at $pest_partial — $(wc -l < "$pest_partial" 2>/dev/null || echo 0) line(s), $(wc -c < "$pest_partial" 2>/dev/null || echo 0) byte(s)"
-    echo "     a near-complete partial means the budget is too small; a short one means it HUNG, and the last line names where:"
-    tail -15 "$pest_partial" 2>/dev/null | sed 's/^/       /'
-    out="$out"$'\n''{"tool":"pest","result":"timeout"}'
+    echo "  ✗ pest TIMEOUT after 1800s — killed by the budget; treat as red, and NOT as 'the suite hung'"
+    echo "     elapsed ${pest_elapsed}s under the lock (the lock WAIT is not counted here — it is above)"
+    echo "     partial KEPT at $pest_partial — $(wc -c < "$pest_partial" 2>/dev/null || echo 0) byte(s)"
+    echo "     ⚠ REV-147: this printer emits ONE line, at the END, so an incomplete run keeps 0 bytes"
+    echo "       whatever it did. The byte count is NOT evidence of where it stopped. Diagnose by"
+    echo "       elapsed time above, and by --testsuite bisection: run 142 measured Unit 4ms ·"
+    echo "       Feature 27.9s · Modules 121.9s · Journeys 14.8s = 165s for all 2463 tests."
+    out="$out"$'\n''{"tool":"pest","result":"timeout","elapsed_s":'"$pest_elapsed"'}'
   elif [ -z "$out" ]; then
     # 2026-09-05 07:2x: a gate printed a blank §7 and an empty last-pest.json.
     # Zero bytes is never a result: rc 137/143 = killed from outside (a
