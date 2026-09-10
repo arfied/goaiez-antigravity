@@ -9461,3 +9461,72 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     the totality of the query that filled it**, so a PHP sort over a query with a partial ordering is
     partial twice over and neither sweep can see the other half — which is why this census had to run
     after 337 rather than beside it.
+340. **⭐⭐ Ruling 324 enumerated where `?->` IS used; the complementary population — a NULLABLE column
+    dereferenced WITHOUT a guard — was never enumerated, and it measures CLEAN with both live-looking
+    candidates already guarded by earlier waves (measured by the lane supervisor 2026-09-10 07:5x;
+    rulings 64, 95, 100, 111, 192, 207, 294, 324).** Ruling 324 swept the lane's four `?->` renders and
+    struck them. That census answered *where is a guard used*; the dangerous question is *where is a
+    guard NEEDED* — `$row->col->format()` / `->isPast()` / `->toDateString()` / `->diffForHumans()` on a
+    nullable column, which is a live 500 (`Call to a member function format() on null`) on a screen a
+    real tenant opens, and which **no gate can see**: `phpstan` at level 5 reads a `?Carbon` cast as
+    satisfying `Carbon`, `pint` and `php -l` never resolve a type, and no fixture in this lane seeds a
+    null date. **Instrument, quoted (ruling 300):**
+    `grep -rn -e '>format' -e '>isPast' -e '>toDateString' -e '>diffForHumans' app/app/Modules`
+    ⚠️ the `(` is **omitted** from each pattern — this seat refuses a grep carrying one, and a refused
+    grep returns ONE error, so a pattern that "found nothing" may never have run (ruling 269).
+    ⭐ **Positive control fires** (ruling 324's bar): ~100 lines tree-wide across a dozen lanes, so a
+    small answer inside this lane is a measurement and not a broken pattern (rulings 192, 207).
+    **Every member and its verdict:** `X-201/dispute-card.blade.php:27`'s `$d->deadline_at->format` is
+    **nullable with no writer at all** (ruling 265) and is **GUARDED** by `:26`'s `@if` with an `@else`
+    naming the dependency — **ruling 80's own fix, still holding**; `C-Billing/mrr.blade.php:33`'s
+    `$sub->current_period_end->toDateString` is nullable (`2026_07_30_080943:47`) and **GUARDED** by
+    `:32`; `X-198/ReconciliationDiscrepancies.php:71`'s `$run->reviewed_at` is nullable
+    (`2026_09_04_203000:14`) and **GUARDED** by `:66`'s `=== null ? null :`;
+    `X-199/money-paid-today.blade.php:33`'s `$invoice->paid_at` is nullable but **SAFE BY THE QUERY** —
+    `MoneyPaidToday.php:48-49` is `where('status','paid')->where('paid_at','>=',…)` and SQL excludes
+    NULL from any `>=`, with ruling 103 writing `paid_at` only on the `paid` branch so the invariant
+    holds from both ends; `carts.expires_at` (`2026_08_30_000029:35`) and `invoices.due_date`
+    (`2026_08_30_000026:36`) are **NOT NULL**, so X-117's four and X-211's five bare dereferences are
+    safe by the schema; and every `created_at` is `timestamps()`. ⛔ **STRUCK, not to be re-raised.**
+    ⚠️ **The one ruling-98 tell in it is BENIGN and is recorded so a later tick does not read it as a
+    finding:** X-199 guards `due_date` twice (`Unpaid.php:96`, `unpaid.blade.php:65`) while X-211
+    dereferences the same NOT-NULL column five times bare — one module wears a belt the column does not
+    require. ⛔ Neither side is a defect and ⛔ neither is to be harmonised: ruling 228(a) is explicit
+    that a wave which harmonises a pair breaks the good one, and ruling 47's companion forbids editing a
+    file for a reason no brief names. ⭐ **The generalisable half, and it is why an empty census still
+    earns its tick: a census of "where a guard IS used" is not a census of "where a guard is NEEDED".**
+    The two share an instrument and answer opposite questions, and the second is always the dangerous
+    one. **Any earlier census phrased as *where X is used* owes the same re-run in the negative** — which
+    is rulings 265/298's *a definition drawn from the members already known is a filter wearing a
+    census's name*, aimed at the PREDICATE rather than at the scope or the axis.
+341. **⭐⭐ A brief may not prohibit a SCHEDULING VERB the run cannot control, and ruling 313's
+    `REFUSED:` clause cannot fire on one (RULED by the lane supervisor 2026-09-10 07:5x, on MONEY-178's
+    run 203).** `BRIEF-money178.md:208` reads *"Run it in the **foreground** and block on it. ⛔ No
+    background gate, ⛔ no polling script"*, and `:262` carries ruling 313's clause — `REFUSED:` is
+    *"every departure from this brief … and any command this brief forbade that you ran anyway"*. Run
+    203's log line 2 is *"I am running the gate check in the background"* and its `REFUSED:` reads
+    `n/a — none`. Read literally that is ruling 313's exact shape, one wave after 313 was written.
+    ⭐⭐ **It is not, and charging it would be the fifth wrong attribution in this ledger** (after 163,
+    171, 176, 257). **Ruling 247 already measured the category unreachable:** the harness backgrounds a
+    long call from underneath on `--print-timeout` — run 203's log line 1 is *"waiting for 2 background
+    task(s) (bounded by --print-timeout)"* — and ruling 274 then retired asking a run to classify its own
+    scheduling **"in any form"**, on the reasoning that *a run cannot mis-summarise a quotation* but can
+    always mis-summarise a decision it did not make. So the brief carried a ⛔ on a **verb** together with
+    a clause requiring every ⛔ departure to be confessed, and the two can both be satisfied only by a run
+    that knows whether it chose — which 247 measured it does not. ⭐ **And the property ruling 218(2)
+    exists to protect was delivered in full:** 218(2) is about **behaviour** — a run blocks on its own
+    gate, never polls, never composes the report before the gate exits — and run 203 blocked (log lines
+    2–3), wrote no polling script (all three tree readings clean, ruling 331), and produced a provenance
+    line reproducing the final gate file to the **nanosecond**, which is only possible from a post-exit
+    read (ruling 238). **RULED: a brief's gate step states the BEHAVIOUR and never the verb** — *block on
+    the gate in this run; ⛔ never a polling script; ⛔ never write `GATE:` before the gate process has
+    exited; take the byte count and mtime from ONE `ls` after it exits* — and `REFUSED:` is not asked to
+    report foreground-versus-background. ⛔ Ruling 218(2)'s prohibitions on **polling** and on composing
+    early are untouched and are the half with teeth. ⚠️ This is **ruling 317's lesson a second time**: an
+    escalation clause keyed on something with more than one producer charges the wrong act the first time
+    the second producer appears — there an `error_log` written by any PHP process, here a scheduling
+    decision the harness can make. ⚠️ And it is the ruling 66/75/…/336 dictation family a **thirty-third**
+    time with a new instrument: **a brief that dictates a PROHIBITION has dictated what its own confession
+    field must report, so a prohibition on something outside the run's control manufactures either a false
+    `REFUSED:` line or a false clean one.** The miss is the supervisor's; the wave is graded on its
+    substance.
