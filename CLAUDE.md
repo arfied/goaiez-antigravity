@@ -3150,3 +3150,123 @@ commit in the same wave.** Admitting it because the reason is known is the rulin
 punished twice (REV-136 §1, REV-138 §4), both times mine. ⛔ Three commits held for **one** wave, against runs
 137–145's twenty-one held for eight; the repair is one test method, so the push is the next tick's rather than
 a hostage.
+
+## REV-154 — a byte count is not a provenance, and two candidate waves died to a grep
+
+⭐ **Run 149 is a `PASS`, the lane's first clean one in fourteen runs, and `fba01793..6cf0f760` is pushed —
+7 commits.** `tests 2466 · passed 2446 · FAILED 7 · errors 13` against a predicted `tests` unchanged,
+`FAILED 7` unchanged, `errors 14 → 13` — exact. The failing set is the admitted twenty and nothing else.
+Hard stops held against the coder's own live dump (`boundary 41 · contract 85 · citation 3 · schema 14 ·
+capability 207 · anchor 128 · journey 2`; C-Reviews at **0** boundary, **0** capability, **0** citation),
+stamp `20260829-0647` matching `runtime_build`, `0 unresolvable` citations, §2g and §2h both ✓. Ordering held
+for the fourteenth run running. Three rulings closed on their first restatement: the ledger note named the
+CAUSE, REV-153 §2's echo check printed its ✓ arm (`4 checked · 4 carry a command echo · 0 do not`), and the
+report quoted `schema 466ms` from its **own** dump rather than the gate's stale `457ms` from
+`r148-doctor.txt` — REV-152 §1's discriminator working from both sides.
+
+### ⛔ §1. REV-153 §2 WAS WRONG — PINT IN THIS TREE EMITS JSON, SO 33 BYTES IS A CLEAN `pint --test` (my defect)
+
+REV-153 §2 held that `r147-pint.txt` and `r148-pint.txt` were `run_tool`'s shape rather than
+`(cd app && ./vendor/bin/pint --test)`'s, "which prints a progress table and cannot be 33 bytes over 1 738
+module classes". Measured:
+
+```
+$ head -20 .agents/supervisor/r131-pint.txt
+  {"tool":"pint","result":"fail","files":[{"path":"tests\/Modules\/C-Reviews\/CReviewsTest.php",
+   "fixers":["fully_qualified_strict_types"]}]}{"tool":"pint","result":"passed"}
+$ head -8 .agents/supervisor/r111-pint-root.txt
+  {"tool":"pint","result":"fail","files":[ … 24 paths with their fixer lists … ]}
+```
+
+**There is no table.** Pint's output here is one JSON object — the file list on failure,
+`{"tool":"pint","result":"passed"}` on success. Both artefacts were genuine.
+
+⛔ **And the real discriminator was on disk, in the file I was accusing, saying the opposite.** `run_tool`
+(`bin/supervise.sh:959`) pipes through `sed 's/^/  /'`, so a gate line carries **two leading spaces** —
+`r149-gate.log:241` does, `r148-pint.txt` does not. **Fourteenth instance of this lane's standing shape, a
+correct statement present in the tree and not read back**, and the third where the statement is in an
+artefact I had open (REV-132's erratum, REV-137 §2, here).
+
+⭐ **The durable half: I inferred a PROVENANCE from a BYTE COUNT.** The evidence was the *absence* of a
+distinguishing feature — no table, therefore not pint — where I had never measured what the feature looks
+like. **RULED: a finding whose evidence is that something is MISSING is a hypothesis until the thing's
+presence has been observed somewhere.** REV-136 §1 ruled the scoped-negative half (*a negative result from a
+scoped command is a statement about the scope*); this is the same defect with no command behind it at all,
+which REV-132's erratum already covers — **a number with no command beside it is a memory**, and a byte count
+I did not produce is exactly that.
+
+⭐ **The check outlives the finding that motivated it, and is better justified now.** §3's `$ <command>`
+requirement was the right remedy for the wrong reason: the reason I could not tell whether `r148-pint.txt`
+came from pint or from the gate is **precisely** that a redirect cannot say which command filled it. ⚠️ Its
+stated gap (REV-146 §1's standard) is now the live one: **it checks that a command is named, never that the
+named command is the one that ran.**
+
+⭐ **And the coder-facing half, which is the part worth repeating in every brief: when a brief says an
+artefact "must look like X" and the coder's does not, the coder says so in `REPORT.md` rather than changing
+the command to match my description.** A supervisor's description of an output shape is a claim like any
+other.
+
+### ⛔ §2. `RemovalFilingGate` HAS NO PRODUCTION CALLER, AND A RESERVED LAST LINK IS NOT DECISION 272's SHAPE
+
+```
+$ grep -rn 'RemovalFilingGate\|assertFilable' app/app/ app/routes/ --include=*.php --include=*.blade.php
+  → its own declaration and nothing else
+$ grep -rn 'RemovalFilingGate\|assertFilable' app/tests/
+  CReviewsTest.php → 5 call sites
+```
+
+**Zero production callers, five test callers.** REV-141 §1 ruled the chain is measured *"from the outermost
+production entry point inward"*; run 137 then wired `PrepareRemovalRequestAction` and
+`ConfirmRemovalRequestAction` to `LossAlerts` and **never re-measured the Domain class they were built
+around**. Both Actions have callers; the gate does not.
+
+⭐ **It is not a defect, and that is the finding.** The gate guards *filing*; filing is X-177's GBP half
+(`gbp.post · gbp.answer · gbp.sync_hours · gbp.state`) and the GBP API grant is not granted. Decision 272's
+shape is *a chain whose last link nothing pulls*; **a chain whose last link is RESERVED is a different thing
+and wants a different treatment.** ⛔ The wrong repair is to invent a filer, a job or a console command so
+the class has a caller — that manufactures the autonomous path to a removal filing that G1-68's own test
+anchor forbids. ⛔ Deleting it is worse: it is the codification of the law.
+
+**RULED: a reserved last link is RECORDED where it lives — a docblock naming the reserved dependency — not
+wired and not removed.** An unrecorded reserved boundary reads as dead code to every later reader, and this
+seat rediscovered this one as a suspected defect fourteen runs after building it.
+
+### ⭐ §3. TWO CANDIDATE WAVES WERE FALSIFIED BY THE TREE INSIDE THE TICK THAT FORMED THEM
+
+Both mine, both plausible, both dead before they reached a brief:
+
+- **"G1-68's test anchor is unbuilt."** `grep -n 'function test_g1_68' app/tests/Modules/C-Reviews/CReviewsTest.php`
+  returns **eight** methods, and `test_g1_68_assertion` is already prepare → gate →
+  `expectException(RemovalNotConfirmedException)` — the anchor, built.
+- **"REV-152 §4 was never executed."** It was, at `CReviewsTest.php:714`, in run 147. Only
+  `CReviewsScreensTest.php:356` lacks the assertion, where the refusal is an explicit `where('business_id', …)`
+  rather than RLS.
+
+⭐ **`$guarded = []` on `ReviewRemovalRequest` is measured and deliberately NOT briefed.** All five models in
+C-Reviews and X-181 carry it, so tightening this one is a module-local divergence from the house pattern —
+REV-131 §4's *third option* in a mass-assignment hat. Today no production code writes `status => 'confirmed'`
+outside `ConfirmRemovalRequestAction`; nothing prevents a future wave adding one, and that is stated rather
+than repaired.
+
+**RULED: when this seat cannot answer "what does the module still owe" from the tree, the answer is the
+instrument the tree already has — `php artisan doctor:module-done <module>` (`.agents/workflows/wave.md:52`)
+— and it is briefed as a FORK with its arms stated, not as a conclusion.** This seat's Bash column refuses
+that command, which is this file's own signal that it is the coder's job.
+
+### ⚠️ §4. A PREDICTION THAT A NUMBER WILL NOT MOVE CANNOT BE VERIFIED BY ONE MEASUREMENT
+
+`r149-counts.txt` is a single `29` written after the edit; the report claimed *"29 before and 29 after"*. The
+claim is true — this seat checked `git show 2d12b6b1~1:… | grep -c 'function test_'` → `29` — and the brief
+asked for exactly one redirect. **RULED: a count predicted to hold is measured against `HEAD~1` and the
+working tree in the same artefact, not by running one command once.** Two numbers in the file, or the
+"before" is a memory.
+
+### ⚠️ Standing, unchanged
+
+`app/phpunit.xml` is still committable by neither column (REV-128); ⛔ `git checkout -- app/phpunit.xml`
+remains the most destructive command on this board. §2f reads **1 of 8** in the bypass arm —
+`.agents/supervisor/launch-coder.sh`, now **24 +/2 −**, unchanged for eight ticks; a touch is not a move
+(REV-135 §9), its verdict is a function of `(our sha, their sha)` and is re-derived at merge time. The
+missing `post-rewrite` hook (§2a) is standing. **TRACK 1 ACTION, unchanged:** the `app/tests/TestCase.php`
+self-deadlock and its box-wide connection-slot exhaustion (REV-150 §1, REV-151 §1/§3), `C-Reviews, X-118:
+'win.first' has 2 emitters`, and the `X-102/ChatDoorTest` wrong-trait repair (REV-149 §1).
