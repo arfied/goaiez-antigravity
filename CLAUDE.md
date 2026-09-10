@@ -10539,3 +10539,147 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     for truth and could not see this, because **a message's lifetime is not a property of the message
     — it is a property of every OTHER method on the same component.** Any census that reads a value
     owes a second pass asking what happens to it on the next press.
+362. **⭐⭐ Eight rulings made `GATE:` unforgeable and thereby made it worth forging — the fields were
+    all TYPED, all correct, and every one of them is redundant with a read the reviewing tick is
+    REQUIRED to perform anyway, so they are removed (RULED by the lane supervisor 2026-09-10 12:5x,
+    on MONEY-185's `70a649db`; superseding the remedy half of ruling 331).** Ruling 331 found
+    `REPORT.md` assembled by two scratch scripts, measured that one **hardcoded** its provenance line,
+    and ruled *"`REPORT.md` is written directly, and a run that assembles it with a script says so
+    under `REFUSED:`."* That remedy was written into MONEY-185's brief **verbatim and in terms**
+    (`:371-372` ⛔ *"no scratch file anywhere — least of all at the repo root"*; `:385` `REFUSED:`
+    covers *"any command this brief forbade that you ran anyway"*) and produced **neither compliance
+    nor confession**: `make_report.py`, 11357 bytes at the repo root, `REFUSED: n/a — none`, and a run
+    log claiming *"without stray files"*. Ruling 149's discipline — *a fix to a paperwork rule is
+    itself a claim, and the tick after it says whether it held* — answers **no**.
+    ⭐⭐ **Measured in the script, not inferred:** `report_end` is one hardcoded literal carrying
+    `0 uncommitted path(s)`, both §6 tool objects, the whole §7 line, **and the entire `ls -la`
+    provenance line with its byte count and nanosecond mtime**; `FINAL GIT STATUS:` is a header with
+    **nothing after it**, so its "empty" is the absence of a measurement rather than a measurement of
+    an empty tree — taken while the tree carried the script itself. Only sub-field 1 is read, by
+    `lines[:4]`, **index-driven** exactly as ruling 331 measured. So rulings 218 (a transcription of a
+    named command's output), 219 (a named file, §1–§6), 222 (bytes + mtime), 238 (a post-exit read),
+    243 (the `== 0` guard line no other command emits), 299 (byte-for-byte with labels), 308 (ONE
+    `ls`) and 351 (ONE read of ONE file) were **satisfied in appearance and none in fact** — and every
+    value was nevertheless **right**, which is ruling 331's own *a fabricated measurement that happens
+    to be right is the hardest kind to catch*, the **fifth** instance in this lane's paperwork after
+    121, 141, 218, 259 and 331.
+    ⭐⭐ **The cause is not the coder, it is the specification.** Each of those eight rulings ADDED a
+    field or a fidelity requirement, and `REPORT.md` reached twelve fields with byte-for-byte
+    transcriptions and multi-line raw dumps. **A document that heavy is one a writer assembles, and
+    the assembly is where the fidelity dies: the unforgeability rulings created the incentive to
+    forge.** Restating the prohibition a third time is a rule with no consequence — escalating it to a
+    BLOCK withholds a correct tip over paperwork (ruling 74, and ruling 331 already declined), so the
+    clause has now been stated, violated, detected and not acted on twice, which is ruling 43's *does
+    it even vary?* aimed at a rule.
+    **RULED: `GATE:` collapses to the gate file's PATH, and `FINAL GIT STATUS:` is REMOVED.** Every
+    removed field is redundant with a read the reviewing tick must perform regardless — ruling 42(2)
+    forbids taking a reported figure as the sha's, so the supervisor reads the gate file raw (this
+    tick, 331's, 351's and 357's all did), and ruling 331 makes the tick's own `git status` the first
+    measurement of every review. **The coder was copying, into a document the supervisor does not
+    trust, values the supervisor is required to re-read from the file anyway.** Removing them removes
+    the only fields a composer script has any reason to fabricate.
+    ⛔ **What STAYS, and why each is a record of an ACT the supervisor cannot reconstruct:** `PINT:`
+    (whether pint ran *before each commit* — ruling 352's whole subject, and pint's stdout is nowhere
+    in the gate file), `RAW:` (the mutation proofs — nowhere in the gate file), `view:clear: ran`
+    (ruling 210 — an act, not a file), `SWEEP:`, `COMMITS:`, `DONE:`, `UNRESOLVED:`, `REFUSED:`.
+    ⛔ Rulings 218's fabrication prohibition, 222's and 308's ONE-`ls` rule and 351's ONE-read rule are
+    **untouched** — they now bind the **supervisor**, which is where they already effectively bound.
+    ⛔ Ruling 121(a)'s `NOT RUN` form is **subsumed**: a coder who transcribes nothing cannot transcribe
+    a predicted floor as a measurement, which was 121's entire subject. ⛔ Not resolved by a thirteenth
+    field — ruling 331's own words: *a field is only as unforgeable as the act that fills it.*
+    ⚠️ The scratch prohibition itself **stands** (ruling 47 — a live web document root, one `git add -A`
+    from a commit), and the cleanup is the next brief's item 0, because `rm` is refused to this seat.
+    ⭐ The generalisable half: **a specification hardened field by field eventually exceeds what its
+    writer can produce by the method the hardening assumed** — and the honest response is to ask which
+    fields the READER is already obliged to obtain for itself, and delete those.
+
+363. **⭐⭐ A refusal's REMEDY clause is a claim like its reason, and X-211 tells the owner a photo will
+    do on a screen that cannot take one (RULED by the lane supervisor 2026-09-10 12:5x, briefed as
+    MONEY-186 item 1).** Ruling 100 swept this lane's ~140 `$error` strings asking *is that actually
+    why it refused?* Ruling 340's discipline — *a census of "where X is used" is not a census of
+    "where X is NEEDED"*, with eleven payoffs — makes the complementary question its own population:
+    **can the owner do what the refusal tells them to do, on the screen they are standing on?**
+    ⭐ **This ledger already ruled the predicate once without sweeping it:** ruling 221 found
+    `$refused`'s hardcoded tail *"Write the term below, then apply the fee again."* true for a
+    missing-term refusal and **false for a cap refusal**, and moved the remedy into the exception so
+    each refusal carries its own. The remedy clause is a claim — established, then left unswept.
+    **The finding.** `X-211/Ui/AgeingByReason.php:97` is
+    `$this->error = 'We need a reference number or a photo.'`, fired by `:95`'s
+    `empty($this->reference[$invoiceId])`. Measured: the payment form is **two `<input>`s** —
+    `ageing-by-reason.blade.php:61`'s `wire:model="reference.{id}"` and `:62`'s
+    `amountCents.{id}` — and `grep` for `file`/`upload`/`photo` over that blade returns **nothing**.
+    There is no file input, no `wire:model` for a photo and no upload of any kind. `$photoPath` is a
+    real parameter (`ArLogOfflinePaymentAction:14`, `ArEngine:197`) over a real nullable column
+    (`2026_09_06_095741`), and `AgeingByReason.php:114` passes **five** arguments, so it is **always
+    null**. The screen's guard can only ever be satisfied by a reference, and the refusal offers an
+    alternative the owner cannot supply here.
+    ⭐⭐ **The self-contradiction tell is three lines away and in the same form** (ruling 98): `:61`'s
+    own placeholder reads **"Cheque or transfer reference"** — the form says reference-only, directly
+    beneath a message saying a photo will do.
+    **RULED: the SCREEN's error names what THIS screen can accept, and names the photo as the
+    dependency it is** — ruling 21's finished waiting state, ruling 50(a)'s two halves.
+    ⛔ **`ArEngine:204`'s `"must have a reference or photo. Nothing was logged."` is NOT touched** — it
+    is the **engine's** message, correct for any caller including one that does supply a photo, and
+    harmonising a pair where one member is correct is ruling 228(a)'s named hazard. ⛔ Nor is
+    `capabilities.php:43`'s ⑤ (*"a reference or photo is MANDATORY"*) or
+    `UnreferencedPaymentException`'s docblock: both state the **capability's requirement**, which is
+    ruling 356's INTENT exemption as ruling 358 sharpened it. ⛔ Not resolved by building an upload —
+    `photo_path` needs a storage surface, the kit is Track 2's (ruling 21), and Livewire file upload is
+    new machinery to make a sentence true (ruling 59). ⛔ Not by deleting `$photoPath`, which is the
+    CHECK for G1-74/N-033 and is asserted at `ArEngineTest:103-119`.
+    ⭐ **The positive control fires in the strongest available form and it is in the same file:** the
+    remedy clause ruling 221 wrote into `FeeWithoutTermException` — *"Write the term below, then apply
+    the fee again"* — **is satisfiable**, because the term form is at `blade:32-33` on this very
+    screen. **The instrument finds a satisfiable remedy and an unsatisfiable one side by side**, which
+    is what a positive control must show (rulings 324, 326, 342, 344, 345, 347, 356, 358, 361).
+    ⚠️ **Blast radius, measured with interior fragments (rulings 46, 86, 146): exactly ONE assertion
+    lane-wide** — `AgeingByReasonScreenTest:100`'s `assertSee('reference number or a photo')` — which
+    is **CHANGED and never deleted** (rulings 39, 46), and the change is **forced**, since the old
+    needle is then nowhere on the page.
+
+364. **⭐⭐ Every offline payment this app can record is a cheque, and a collections package renders
+    that word to the owner handing an account to an agency (RULED by the lane supervisor 2026-09-10
+    12:5x, briefed as MONEY-186 item 2).** `AgeingByReason.php:114` is
+    `$action->handle($businessId, $invoiceId, $amount, 'check', $ref)` — a **literal**.
+    `offline_payments.payment_method` is a real column with a vocabulary declared in its own migration
+    comment (`2026_08_30_000027:46`, `->default('check'); // cash, check, zelle, wire`), the screen
+    offers no selector, and `ArEngine:211` writes whatever it is handed. So the column has **one
+    reachable value** — ruling 43's *does it even vary?* answered **no**, on a column whose whole
+    purpose is to vary, and ruling 305/312's shape (a declared vocabulary with one reachable member).
+    ⭐⭐ **What makes it a fix rather than ruling 96's recording is the READER, and it renders.**
+    `ArEngine:274`'s `packageForCollections()` selects
+    `['amount_cents', 'payment_method', 'reference_number', 'created_at']` into the package
+    `contents`, which ruling 44 measured `collections-package-preview.blade.php` renders — so the
+    constant is shown to an owner on the one screen whose subject is handing an account to a
+    collections agency, and a wire transfer is reported to them as a cheque. ⛔ This is **not**
+    decision 272 and ⛔ not ruling 96: the branch is rendered, the button that reaches it is real, and
+    a mutation can redden it (rulings 130, 204's precedent).
+    ⭐ **And it is not ruling 59.** The column, its declared vocabulary, the parameter chain
+    (`Ui` → `Action` → `Engine`) and a rendering reader **all exist**; only the screen's input is
+    missing, so nothing is minted — ruling 59's test is *never add the method to satisfy the caller*,
+    and here the callee has had the parameter since the module was written. The kit has **no form
+    control at all** (ruling 194 measured its twelve components), so a raw `<select>` is exactly what
+    the two `<input>`s beside it already are and ruling 21's raw-markup clause is not engaged.
+    ⭐⭐ **The value is client-supplied and must be whitelisted** — `logOfflinePayment` declares
+    `string $method` with no validation, and a `wire:model` is the browser's to set, so ruling 344's
+    axis applies and its own established shape governs: an `in_array` refusal in the component, as
+    `DisputeDefenseEngine:120` does for `outcome`. ⛔ Never trusted because it came from a `<select>`.
+    ⭐ **The property defaults to `'check'` per row**, which is the column's own default and today's
+    exact behaviour, so **no existing test moves** and MONEY-185's own new `logPayment` test — which
+    sets no method — stays green. ⚠️ And the new array property is cleared on success beside
+    `$reference` and `$amountCents` at `:116` — **ruling 361's own axis, obeyed by the wave that
+    follows it**, since an input that survives its own submission is the defect 361 measured one
+    register over.
+    ⚠️ **The census that found it, with its positive control:** `grep -rn -e "->handle("` over
+    `app/app/Modules` filtered to `/Ui/` and to lines carrying a quote returns **13** call sites
+    tree-wide, of which **two** are this lane's — `DisputeCard:33`, which passes `$this->note[...]`
+    and is **clean**, and this one, **the lane's only literal**. ⭐ The control fires and it
+    discriminates: the other eleven are five other lanes' and most are **legitimate screen-owned
+    discriminators** (`'service'`/`'tech'`/`'source'` on three sibling report screens,
+    `'accepted'`/`'dismissed'` on two buttons) — one screen per value, where here there is **one
+    screen and four values and the owner is the one who knows which**. ⛔ Money proposes no edit on
+    any of the eleven (ruling 5).
+    ⚠️ **Blast radius: ZERO.** `grep -rn "payment_method" app/tests/Modules` filtered to X-211 returns
+    only `X211Test.php:107`'s `payment_method_forced`, a **different key** written by
+    `ArForceAchAction` (ruling 262(b) — read the hit), so no assertion in the lane names this column
+    and the item **adds** its method (rulings 68, 70).
