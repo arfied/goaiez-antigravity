@@ -90,6 +90,7 @@ class AgeingByReason extends Component
     {
         $this->error = null;
         $this->success = null;
+        $this->refused = null;
         $businessId = Tenancy::idOrFail();
 
         if (empty($this->reference[$invoiceId])) {

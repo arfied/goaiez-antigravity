@@ -339,4 +339,34 @@ class AgeingByReasonScreenTest extends TestCase
             ->assertSeeHtml('wire:key="ageing-inv-'.$inv1->id.'"')
             ->assertSeeHtml('wire:key="ageing-inv-'.$inv2->id.'"');
     }
+
+    public function test_a_logged_payment_does_not_leave_a_stale_late_fee_refusal_on_the_screen(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'Stale', 'last_name' => 'Panel']);
+        $inv = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-S1',
+            'total_cents' => 10000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(20),
+        ]);
+
+        Livewire::actingAs($owner)->test(AgeingByReason::class)
+            ->assertOk()
+            ->set('feeCents.'.$inv->id, 2500)
+            ->call('applyLateFee', $inv->id)
+            ->assertSee('Late fee not applied')
+            ->set('reference.'.$inv->id, 'CHK-77')
+            ->set('amountCents.'.$inv->id, 10000)
+            ->call('logPayment', $inv->id)
+            ->assertSee('Payment logged')
+            ->assertDontSee('Late fee not applied');
+    }
 }
