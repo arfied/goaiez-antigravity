@@ -11159,3 +11159,74 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     to a wave's: a count recorded against a loose string outlives the tick that took it, and the next reader
     inherits the number without the predicate. **A census records the PREDICATE it measured, in the ruling,
     beside the count.**
+376. **⭐⭐ Ruling 375(a) declared the file-set axis CLOSED on a MEMBER LIST — `<x-…>` — one tick after
+    ruling 371 ruled that a census listing its members instead of stating its predicate closes silently;
+    re-run on the predicate the conclusion HOLDS, and the instrument fires on NINE members across six
+    other lanes (measured by the lane supervisor 2026-09-10 15:5x; rulings 64, 95, 100, 111, 262(b), 294,
+    324, 327, 340, 371, 375).** Ruling 373 opened the file-set axis — *a value a screen renders may live
+    in no file the lane owns* — and ruling 375(a) closed it with
+    `grep -rno "<x-[a-z0-9.-]*"`, concluding *"the complete set of foreign files rendering on money
+    screens is the UI kit and `surface/sample-state`, nothing else."* **`<x-` is one of five ways a Blade
+    template renders another file.** The predicate is *anything a money blade renders that money does not
+    own*, and `@include`, `@each`, `@component`, `@livewire` and `<livewire:` are all outside the
+    instrument that closed it. Re-run on the predicate —
+    `grep -rn -e "@include" -e "@each" -e "@component" -e "@livewire" -e "<livewire:" app/app/Modules
+    --include=*.blade.php` — the tree returns **nine members across six other lanes** and **money returns
+    ZERO**: X-108's two `@include('x-108::partials.appointment-row')`, X-118's `<livewire:x-118.prospect-signup>`,
+    and **five lanes nesting X-124's `<livewire:x-124.chat-dock-every>`** into their own screens
+    (X-162, X-163 ×3, X-171, X-172). ⭐⭐ **That is the strongest positive control this axis could have
+    had: both mechanisms exist in this tree, one of them nests ANOTHER LANE'S LIVEWIRE COMPONENT — a
+    whole second component's state, queries and prose rendered inside a screen — and money uses neither.**
+    ⛔ Money proposes no edit on any of the nine (ruling 5). **375(a)'s conclusion stands, on the right
+    predicate: the complete foreign-file set for this lane is the UI kit (373, TRACK 1 ACTION 20) and
+    `surface/sample-state` (370, TRACK 1 ACTION 19).** ⛔ Not to be re-raised.
+    ⭐ **The generalisable half is ruling 371's, and this is the SECOND consecutive tick it has been found
+    in this ledger's own census rather than in a wave's** — 375(c) caught it in ruling 151(4)'s recorded
+    `assertOk()` count, and this catches it in 375(a) itself, written **in the same tick as 375(c)**.
+    **A census closes an axis only when its instrument expresses the axis's PREDICATE**, and the tell is
+    a census whose method is quotable as a pattern (`<x-`) rather than as a sentence. ⚠️ The cost of the
+    defect here was nil and the cost of the re-run was one command; the cost of NOT re-running it would
+    have been a closed axis with five unswept mechanisms behind it, and a later tick reading *"the file-set
+    axis is CLOSED"* would never have looked again.
+    ⚠️ **Three further populations measured in the same tick, non-empty, ZERO buildable, all STRUCK**
+    (ruling 327's outcome shape a **seventh** time — *a population measured non-empty that yields zero
+    buildable fixes is the more useful of the two to write down*).
+    **(a) SERIALIZATION boundaries — 13 members, and the lane cannot leak a column through one.** Five are
+    `json_encode` in the evidence commands, already governed (48, 169, 172, 173, 187). Of the eight
+    `->toArray()` sites, **every one either names its columns explicitly or plucks a single scalar**:
+    `InvoiceReader.php:36` `get(['description','quantity','subtotal_cents'])`, `ArEngine.php:274,:276`
+    `get(['amount_cents','payment_method','reference_number','created_at'])` and
+    `get(['action','reason','created_at'])` — ruling 364's own collections-package `contents` —
+    `DisputeDefenseEngine.php:94` `pluck('evidence_type')` **carrying ruling 209's own
+    `where('business_id', $businessId)` fix, still in place**, and three `pluck('id')`/`pluck('invoice_id')`
+    arrays of ints. ⭐ **Positive control fires on the DANGEROUS shape**: the same instrument over `app/app`
+    outside `Modules/` returns twelve whole-object calls — `$baseline->toArray()`, `$event->toArray()`,
+    `$finding->toArray()` — so it demonstrably locates a bare model or DTO serialization and money has none.
+    ⛔ Money proposes no edit on those (ruling 5). **This matters beyond the strike:** money's 32 models are
+    `$guarded = []` with **no `$hidden`, no `$appends` and no relations** (ruling 324), so a single
+    `$model->toArray()` would serialize every column of a money row — and the reason none can is that the
+    lane's convention is an explicit column list at the query, not a guard on the model.
+    **(b) String TRUNCATION and PADDING — 3 members, all deliberate.** This is ruling 360's axis
+    (*rendering as distinct from arithmetic*) asked of strings rather than numbers, and it comes back
+    clean: `CardPresentAction.php:53`'s `substr($digits, -4)` **is P-196's own point** (last four, PAN
+    never), and `InvoiceNumber.php:29`'s `substr($lastInvoice->invoice_number, 4)` and `:35`'s
+    `str_pad(…, 6, '0', STR_PAD_LEFT)` are a self-consistent pair in one file — the parse offset matches
+    the `INV-` prefix the pad writes, and `str_pad` does not truncate, so the sequence stays correct past
+    six digits (ruling 278 measured the six-digit form safe on a reused tenant). **No owner-facing string
+    in this lane is silently shortened.**
+    **(c) RAW colour signals outside the pill component — 1 member, honest.** Rulings 122, 129, 143, 309
+    and 312 swept `:state=` and `:label=`; a raw Tailwind colour class is the same *signal* claim outside
+    the kit. `grep -rn -e "@class" -e "text-red" -e "text-green" -e "bg-red" -e "bg-green" -e "text-amber"`
+    over the eight ids returns **one line** — `X-120/card-screen.blade.php:12`'s
+    `<p class="text-green-600 mb-4">{{ $success }}</p>` — and green over a success message is **true**.
+    ⚠️ Measured beside it and recorded rather than briefed: the lane's 18 `$success` renders are **15 bare
+    `<p>`, one `<x-ui.attention-card state="ok" heading="Top-up recorded">`** (ruling 87's own honest
+    heading, deliberate), and two carrying classes — X-120's raw palette `text-green-600` against X-198's
+    design-token `text-ink-2`. ⛔ **Not a wave**: nothing is false, nothing measurable says a bare `<p>` is
+    right, harmonising a set where members are honest is ruling 228(a)'s named hazard, and a raw palette
+    colour where a token exists is Track 2's kit question (rulings 5, 21). Ruling 76's grade.
+    ⚠️ **The zero in (c) was corroborated before it was trusted, and the corroboration mattered**: the
+    first `$success` census returned **zero** because a `\$` inside a double-quoted grep pattern does not
+    match — the exact seat trap the addendum records — and re-running it as `-e "success }}"` returned
+    **eighteen**. ⭐ **A census that returns zero is re-run with the `$` removed from the pattern before it
+    is believed** (rulings 207, 294).
