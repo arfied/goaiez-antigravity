@@ -9789,3 +9789,98 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     tells it *what is there and why each member stays*. → recorded on TRACK 1 ACTION 13's list as the
     scale half, alongside `orders.order_number`'s absent uniqueness, since a paginator and a bounded
     aggregate are both cross-lane.
+347. **⭐⭐ NOT ONE of this lane's 24 blades carries a `wire:key`, across ~45 loops, while 33 files
+    elsewhere in this tree do — and where an unkeyed loop holds a per-row `<input>` on a list its own
+    button REMOVES FROM or REORDERS, the value an owner typed against one invoice is morphed onto
+    another (RULED by the lane supervisor 2026-09-10 09:1x, briefed as MONEY-179).** Ruling 325 named
+    *a population this ledger has not yet enumerated* as the one HOLD-lift condition a tick can reach
+    alone, at ruling 324's bar: measured non-empty, instrument corroborated **with a positive control**,
+    members listed. Four consecutive ticks found none. This one is non-empty, buildable and provable.
+    **The mechanism, and it is the reason no gate in this checkout can see it.** Livewire 3 morphs the
+    DOM; with no `wire:key` on a loop's root element it matches old children to new **by position**.
+    Everything a screen renders from the server survives that correctly — the text, the pill, the
+    button's own `wire:click` id — because all of it is regenerated in the new HTML. What does **not**
+    survive is **DOM state the HTML never carries**: an `<input>`/`<select>` value the owner typed but
+    has not yet submitted, its focus, its cursor. So a row leaving the list, or moving within it, shifts
+    every row after it by one and the typed value lands on its neighbour. ⭐⭐ **That is the scoping
+    axis and it is measured, not assumed: an unkeyed loop is harmless where every rendered value comes
+    from the server, and harmful exactly where the DOM holds state the HTML does not** — which is why
+    this wave touches the loops carrying form controls and **no** button-only loop.
+    ⭐ **`Livewire::test` asserts server-rendered HTML and never morphs a DOM**, so the defect is
+    invisible to every one of the lane's 24 screen tests, to `pint`, to `phpstan` and to `php -l`.
+    **The census.** `grep -rc --include=*.blade.php -e '@foreach' -e '@forelse' <the eight `Ui/` trees>`
+    → **24 blades, ~45 loop directives**; `grep -rn -e 'wire:key'` over the same → **ZERO**.
+    ⭐ **The positive control fires hard** (rulings 324, 326, 342, 344, 345): the same instrument over
+    `app/app/Modules` and `app/resources/views` returns **33 files** — `X-125/runs.blade.php:16`
+    `wire:key="run-{{ $run->id }}"`, `X-194/saved-views-list.blade.php:16`, `X-163`'s three,
+    `components/admin/table.blade.php:66` — so the tree demonstrably uses the attribute and money
+    demonstrably does not. ⛔ **Money rules nothing on those and proposes no edit** (ruling 5).
+    **The buildable subset is FOUR loops, and the discriminator is the QUERY, read line by line
+    (ruling 262(b)).** A loop whose membership **and** order are stable maps DOM to row correctly under
+    positional morphing and needs no key. (a) `X-211/ageing-by-reason.blade.php:45` — three per-row
+    inputs (`reference`, `amountCents`, `feeCents`); `logPayment` in full makes the invoice `paid`
+    (ruling 103) and `InvoiceReader::unpaidOverdueForBusiness` excludes `paid`, so **the row leaves**.
+    (b) `X-211/paymentplan-builder.blade.php:44` — `installments` (`.live`) and `frequency`; ruling 330
+    measured `render()`'s exclusion list explicitly, so `offerPlan` **removes the row**. (c)
+    `X-173/conflicts-list.blade.php:20` — `resolutions.{id}`; `ConflictsListView:50` is
+    `orderByRaw("case when status = 'open' then 0 else 1 end")`, so `resolve()` **moves the row from
+    the open block to the resolved block — a REORDER, the sharpest kind, because the row is still on
+    the page and the owner's typed account name lands on a visibly different ledger line.** (d)
+    `X-201/dispute-queue.blade.php:12` — `note.{id}`; `DisputeQueue:91` is
+    `whereNotIn('status', ['won', 'lost'])`, so `outcome()` **removes the row**.
+    ⚠️ **(d) was nearly misclassified and the correction is ruling 338's axis lesson inside this
+    measurement:** X-201's two screens look alike and their queries differ by one clause —
+    `DisputeCard:70` has **no** status filter and is therefore stable, `DisputeQueue:91` has one and is
+    not. **Read the hit; never classify a pair by resemblance.**
+    ⛔ **STRUCK with their measurements, never to be re-raised** (rulings 95, 100, 111): every
+    button-only loop, on the DOM-state axis above; `X-199/credits.blade.php:24` — `orderBy('id')` and
+    `setTerms()` `findOrFail`s a term already in the list, so no insert is reachable from that screen
+    and membership is stable; `X-173/connection-mapping.blade.php:24` — connections `orderBy('id')`
+    (ruling 204's own fix) and `mapAccount` writes an `AccountMapping`, never a connection;
+    `X-201/dispute-card.blade.php` — no status filter, `orderByDesc('id')`, and ruling 79 measured
+    `disputes` has no production writer, so nothing on that screen creates or deletes a row.
+    ⛔ **The four `X-120/card-screen.blade.php` inputs, `X-211/ageing-by-reason.blade.php:32,:33`,
+    `X-173/connection-mapping.blade.php:54,:59` and `X-211/invoice-thread-beside.blade.php:78` are not
+    in a loop at all**; ruling 241 governs the card fields.
+    ⭐⭐ **RULED: the key goes on the INNER loop only, and the outer group loop of
+    `ageing-by-reason` is RECORDED rather than keyed.** The `<li>` is the element that holds the DOM
+    state, invoice ids are unique across groups so the key is component-unique, and the group `<div>`
+    holds no state of its own. Whether an unkeyed ancestor degrades a keyed descendant's matching back
+    to positional is **Livewire-internal behaviour this seat has not measured**, and ruling 193 is
+    explicit: record a mechanism you have not executed, never dictate it. ⛔ Not resolved by keying the
+    group on `$reason`, which is a human **label** with spaces (`ArEngine::REASONS`' values, plus
+    `'No reason recorded yet'`) — a key is not the place for owner prose.
+    **The key's SHAPE follows the tree's own convention** (ruling 123, one fact one wording): a prefix
+    plus the row's own id, with `wire:key` written **last** on the element, as
+    `X-125/runs.blade.php:16` and `X-194/saved-views-list.blade.php:16` both write it. ⛔ Never
+    `$loop->index`, which is the positional matching this ruling exists to replace.
+    ⭐ **The instrument is `assertSeeHtml`, and the file itself already establishes it:**
+    `PaymentplanBuilderScreenTest:73` and `AgeingByReasonScreenTest:94,:179` already assert
+    `assertSeeHtml('wire:submit="…"')`. ⛔ **Never `assertSee`** — the needle carries a `"`, which `e()`
+    turns into `&quot;`, so it could never match raw blade output (ruling 82's family). ⚠️ Ruling 246's
+    haystack question, measured rather than assumed: `assertSeeHtml` does **not** strip
+    `wire:snapshot`, and the payload is JSON with `&quot;`-escaped quotes, so a needle carrying a raw
+    `"` cannot be satisfied by the snapshot and names the rendered attribute alone.
+    ⚠️ **Blast radius, measured with interior fragments (rulings 46, 86, 146): ZERO.** No
+    `assertDontSee` in the four test files names `ageing-inv-`, `plan-inv-`, `conflict-` or
+    `dispute-`, and adding an attribute cannot break an assertion on text. All four items therefore
+    **add** methods (rulings 68, 70) — no existing test can see the defect, because none asserts a key
+    that does not exist. All four files are class-style (`grep -c "public function test_"` = 6, 5, 4,
+    and the queue's own count), so ruling 86's pest-style census hazard does not apply.
+    ⚠️ **Three files carry the byte-identical `<li class="border rounded p-4 shadow bg-white">`** —
+    ageing, paymentplan and dispute-queue — each unique **within its own file**, so the edit is
+    per-file and a cross-file replace is wrong (ruling 293: pair a line with the token that finds it).
+    ⚠️ **Ruling 202 binds absolutely: the proof mutates a BLADE**, so `php artisan view:clear` runs
+    between the revert and the restore and again before the gate, and the `GATE:` field carries
+    `view:clear: ran` (ruling 210). A compiled view whose integer `filemtime` beats its source's is
+    served **for ever**, and a mutation proof on a blade is what manufactures that condition.
+    ⚠️ ⛔ **No `php -l` on a blade** (rulings 183, 317) and ⛔ **no `composer dump-autoload`** — this
+    wave creates no class, trait, interface or enum under the classmapped `app/app/Modules/`, so ruling
+    318 does not fire and a step required where it cannot bite is one the next reviewer must re-derive
+    (ruling 225).
+    ⭐ **The generalisable half, and it is a new member of the ruling 36 family:** every census this
+    lane has run asked what is at the other end of a string the app **renders, prints, throws, logs or
+    sends**, and each read a value the server produces. This one asks what happens to the state the
+    server never sees. **A screen is not only what it renders — it is also what the browser holds
+    between two renders, and nothing in this checkout can measure that but the markup that instructs
+    the browser to keep it.**
