@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Modules\CReviews;
 
+use App\Enums\ReviewSource;
+use App\Enums\ReviewStatus;
 use App\Models\Business;
+use App\Models\Review;
 use App\Models\User;
 use App\Modules\CReviews\Actions\PrepareRemovalRequestAction;
 use App\Modules\CReviews\Actions\QaTicketAction;
@@ -276,6 +279,7 @@ class CReviewsScreensTest extends TestCase
     public function test_loss_alerts_prepares_removal(): void
     {
         $req = ReviewRequest::create(['business_id' => $this->bizId, 'rating' => 1]);
+        Review::create(['business_id' => $this->bizId, 'source' => ReviewSource::Google, 'google_review_id' => 'g_123', 'status' => ReviewStatus::Approved]);
 
         Livewire::test(LossAlerts::class, ['businessId' => $this->bizId])
             ->call('prepareRemoval', $req->id, 'fake_reviews', 'This is a fake review.', 'g_123')
@@ -292,6 +296,7 @@ class CReviewsScreensTest extends TestCase
     public function test_loss_alerts_confirms_removal(): void
     {
         $req = ReviewRequest::create(['business_id' => $this->bizId, 'rating' => 1]);
+        Review::create(['business_id' => $this->bizId, 'source' => ReviewSource::Google, 'google_review_id' => 'g_123', 'status' => ReviewStatus::Approved]);
         $preparer = new PrepareRemovalRequestAction;
         $removal = $preparer->execute($this->bizId, $req->id, 'fake_reviews', 'This is a fake review.', 'g_123');
 
@@ -312,6 +317,7 @@ class CReviewsScreensTest extends TestCase
     public function test_loss_alerts_confirm_removal_refuses_unauthenticated(): void
     {
         $req = ReviewRequest::create(['business_id' => $this->bizId, 'rating' => 1]);
+        Review::create(['business_id' => $this->bizId, 'source' => ReviewSource::Google, 'google_review_id' => 'g_123', 'status' => ReviewStatus::Approved]);
         $preparer = new PrepareRemovalRequestAction;
         $removal = $preparer->execute($this->bizId, $req->id, 'fake_reviews', 'This is a fake review.', 'g_123');
 
@@ -328,6 +334,7 @@ class CReviewsScreensTest extends TestCase
     public function test_loss_alerts_shows_removal_requests(): void
     {
         $req = ReviewRequest::create(['business_id' => $this->bizId, 'rating' => 1]);
+        Review::create(['business_id' => $this->bizId, 'source' => ReviewSource::Google, 'google_review_id' => 'g_123', 'status' => ReviewStatus::Approved]);
         $preparer = new PrepareRemovalRequestAction;
         $preparer->execute($this->bizId, $req->id, 'fake_reviews', 'This is a fake review.', 'g_123');
 
@@ -341,6 +348,7 @@ class CReviewsScreensTest extends TestCase
     {
         $otherBiz = self::provisionTenant(['name' => 'Other Biz']);
         $req = ReviewRequest::create(['business_id' => $otherBiz->id, 'rating' => 1]);
+        Review::create(['business_id' => $otherBiz->id, 'source' => ReviewSource::Google, 'google_review_id' => 'g_123', 'status' => ReviewStatus::Approved]);
         $preparer = new PrepareRemovalRequestAction;
         $removal = $preparer->execute($otherBiz->id, $req->id, 'fake_reviews', 'This is a fake review.', 'g_123');
 
