@@ -77,7 +77,6 @@ class Ticket extends Component
             ];
             $review = (object) [
                 'rating' => 2,
-                'csat_score' => null,
             ];
         } elseif ($this->ticketId > 0) {
             $ticket = QaTicket::where('business_id', $this->businessId)
