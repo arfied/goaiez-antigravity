@@ -3061,3 +3061,92 @@ dropped" from "RLS caught it"** — both produce the same red. It still detects 
 a note and not a finding; but its passing depends on session state it never asserts. **RULED: a cross-tenant
 test asserts the tenant context it is relying on**, one line, so a future change to `provisionTenant` cannot
 silently move what the test is measuring.
+
+## REV-153 — a test was asserting the leak, and an artefact that cannot say which command filled it
+
+⭐ **Run 148 is a `PASS-WITH-NOTES`, and its hard stop caught something better than the wave that contained
+it.** The four blanket catches are gone, the catch list was derived by grep rather than stated by me
+(`r148-throws.txt`), the red-then-green pair on the new test is exact, every hard stop held from the coder's
+own doctor dump, and REV-152 §1's labelled arm fired live and correctly — which closes the arm that ruling
+left open. Ordering held for the thirteenth run running.
+
+### ⛔ §1. A PASSING TEST WAS PINNING THE DISCLOSURE DEFECT IN PLACE, AND ITS RED IS THE WAVE'S BEST RESULT
+
+Narrowing `LossAlerts`'s catches reddened exactly one existing test, which item 2d had pre-authorised as *the
+wave working*. What it actually caught is stronger. Measured at `HEAD`, with the command beside the result:
+
+```
+$ sed -n '353,373p' app/tests/Modules/C-Reviews/CReviewsScreensTest.php
+  Livewire::test(LossAlerts::class, ['businessId' => $this->bizId])
+      ->call('confirmRemoval', $removal->id)
+      ->assertSee('No query results for model');       ← the assertion
+$ grep -n 'findOrFail' app/app/Modules/C-Reviews/Ui/LossAlerts.php
+  162:  $removal = ReviewRemovalRequest::where('business_id', $this->businessId)->findOrFail($removalId);
+```
+
+**The test asserted that the internal exception text reaches the tenant's browser.** It did not merely fail to
+catch the leak; it required it. ⛔ **This lane's oldest trap in its most expensive form yet** — the same shape
+has now been hit in a lint that matched nothing, a route-gated component, a `#[Locked]` branch, an
+`assertTrue(true)` body, a production guard with no test (REV-151 §1), and here **in an assertion**. A green
+suite was enforcing the defect.
+
+⭐ **RULED: when a wave's change reddens an existing test, the review states WHY that test was green before,
+not only that its red was expected.** Run 148's report and its `JOURNAL.md` note both say *"as expected"* — an
+expectation, not a cause (REV-129 §2 wants the cause). "Expected" and "the test was wrong in a way worth
+recording" render identically, and the second is the finding.
+
+⛔ **RULED: the repair is the assertion, and it is not a weakening.** A cross-tenant `findOrFail` now
+propagates `ModelNotFoundException`, which Laravel's handler renders as a **404** — a refusal that discloses
+nothing, correct on the accusation path. The test keeps its name, proves the refusal by catching the escape,
+and keeps its post-condition that the other tenant's row stays `prepared`. ⛔ **The third option stays refused
+in its newest clothes:** do not mint a domain exception for "not yours" so the narrowed catch can render it —
+that is REV-131 §4's *keep the read and strip the type off it* pointed at a message, and it puts the leak back
+one class over.
+
+### ⛔ §2. AN ARTEFACT IS THE REDIRECT OF A NAMED COMMAND, OR IT IS A MEMORY — NOW A CHECK
+
+`r147-pint.txt` and `r148-pint.txt` are both 33 bytes reading `{"tool":"pint","result":"passed"}` — `run_tool`'s
+shape from `bin/supervise.sh` §6, not `(cd app && ./vendor/bin/pint --test)`'s, which prints a progress table
+and cannot be 33 bytes over 1 738 module classes. Both claims are **true** and nothing was concealed; what is
+missing is the property REV-132's erratum ruled — *a number with no command beside it is a memory*. Handed
+over as a ruling (REV-152 §3) and then as an explicit `Verify:` line, missed both times.
+
+**RULED: `bin/supervise.sh` §3 requires every wave artefact to open with `$ <the command that filled it>`, and
+the form is `{ echo '$ <cmd>'; <cmd>; } > .agents/supervisor/rN-x.txt 2>&1`.** The subject is the **newest run
+number's** artefacts, never the last 24h — an older artefact must not be retro-flagged forever — and
+`*-gate.log` is excluded because this script writes it. Its ⛔ arm was observed live on all seven of run 148's
+artefacts before the ruling was written; run 149 observes the ✓ arm by complying, so it needs no probe.
+
+⚠️ **The check sets `fail=1` and that is deliberately not a sha revocation.** A missing echo is a **record**
+defect, not a tree defect, and REV-134 §1's criterion — *what* failed — already draws that line. The script
+prints the distinction in its own output rather than leaving it in this file, because a reader of a red gate
+reads the gate.
+
+⚠️ **The neighbouring property it does NOT cover** (REV-146 §1's standard): it checks that a command is
+*named*, never that the named command is the one that ran. A wrong echo over a right artefact reads clean.
+The alternative — a per-tool output-shape table — is REV-119 §A's stated list waiting to drift, so the gap is
+accepted rather than closed badly.
+
+⭐ **The ladder, an eleventh time: a paste-ready string beats a citation, a redirect beats a paste-ready
+string, and a CHECK beats a redirect** — and the reason this rung existed at all is that a redirect is exactly
+the form that cannot say *which* command filled it.
+
+### ⚠️ §3. A `git commit -- <paths>` COMMAND IS SAFE ONLY TO THE DEGREE THE BRIEF'S LIST IS COMPLETE
+
+Item 3b named a test and not its file; item 5 then handed over a test commit naming only
+`CReviewsScreensTest.php`. The test lives in `CReviewsTest.php`, and the coder found it and extended the list
+itself, so `e4a62544` carries both files. **RULED: a brief that hands over a named-path commit names every
+path its own items touch, and an item naming a test names the file it is in.** REV-136 §4 is the same
+omission seen from the other side — there a brief named one of two ledger files and the wave lost half its
+writes. Here it cost nothing only because the coder read past me.
+
+### ⛔ §4. THE PUSH CRITERION IS THE SET, AND A TEST THIS LANE REDDENED IS NOT IN IT
+
+Run 148's gate read `tests 2466 · passed 2445 · FAILED 7 · errors 14` — the admitted twenty plus
+`test_loss_alerts_confirm_removal_refuses_cross_tenant`. **RULED: that name is not admissible and the range is
+held, because all three admitted classes exist to separate a statement about the VENDOR or the ENVIRONMENT
+from a statement about this tree, and this one is a test in this lane's own module reddened by this lane's own
+commit in the same wave.** Admitting it because the reason is known is the ruling-without-a-rule this file has
+punished twice (REV-136 §1, REV-138 §4), both times mine. ⛔ Three commits held for **one** wave, against runs
+137–145's twenty-one held for eight; the repair is one test method, so the push is the next tick's rather than
+a hostage.

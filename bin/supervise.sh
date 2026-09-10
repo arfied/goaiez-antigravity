@@ -685,6 +685,55 @@ if [ "$_art_n" -gt 0 ]; then
   [ "$_art_bad" -gt 0 ] && echo "       a redirect whose command did not run is not a measurement — the report must not cite it"
 fi
 
+# ⛔ AN ARTEFACT IS THE REDIRECT OF A NAMED COMMAND, OR IT IS A MEMORY (REV-153 §2).
+#
+# r147-pint.txt and r148-pint.txt are both 33 bytes reading
+# `{"tool":"pint","result":"passed"}` — that is `run_tool`'s shape from §6 of THIS
+# script, not the output of `(cd app && ./vendor/bin/pint --test)`, which both
+# briefs named and which prints a progress table and a summary. Both claims were
+# TRUE and nothing was concealed; what is missing is the property REV-132's erratum
+# ruled — a number with no command beside it is a memory. Restating the instruction
+# a second time did not fix it (REV-138 §2's ladder: a paste-ready string beats a
+# citation, a redirect beats a paste-ready string, and a CHECK beats a redirect),
+# and a redirect is exactly the rung that cannot say WHICH command filled it.
+#
+# So the artefact format carries its own provenance: the first line is `$ <command>`.
+# The subject is the NEWEST RUN NUMBER's artefacts, not the last 24h — the convention
+# starts at run 149 and an older artefact must not be retro-flagged forever.
+#
+# ⚠ The neighbouring property this does NOT cover (REV-146 §1): it checks that a
+#   command is NAMED, never that the named command is the one that ran. A wrong echo
+#   over a right artefact reads clean. That gap is deliberate — the alternative is a
+#   per-tool output-shape table, which is REV-119 §A's stated list waiting to drift.
+_pv_run=$(find "$ROOT/.agents/supervisor" -maxdepth 1 -name 'r[0-9]*-*' -type f -printf '%f\n' 2>/dev/null \
+          | sed -n 's/^r\([0-9][0-9]*\)-.*/\1/p' | sort -n | tail -1)
+if [ -n "$_pv_run" ]; then
+  _pv_n=0; _pv_bad=0
+  for p in $(find "$ROOT/.agents/supervisor" -maxdepth 1 -name "r${_pv_run}-*" -type f 2>/dev/null | sort); do
+    case "${p##*/}" in *-gate.log) continue ;; esac
+    _pv_n=$((_pv_n + 1))
+    _pv_first=$(grep -m1 -v '^[[:space:]]*$' "$p" 2>/dev/null || true)
+    case "$_pv_first" in
+      '$ '*) ;;
+      *)
+        _pv_bad=$((_pv_bad + 1)); fail=1
+        printf '    ⛔ %s opens with no `$ ` command echo: %s\n' \
+          "${p##*/}" "$(printf '%s' "$_pv_first" | cut -c1-60)"
+        ;;
+    esac
+  done
+  if [ "$_pv_n" -gt 0 ]; then
+    printf '  run %s artefacts: %s checked · %s carry a command echo · %s do not\n' \
+      "$_pv_run" "$_pv_n" "$((_pv_n - _pv_bad))" "$_pv_bad"
+    if [ "$_pv_bad" -gt 0 ]; then
+      echo "       a number with no command beside it is a memory (REV-132 erratum)."
+      echo "       Write artefacts as: { echo '\$ <cmd>'; <cmd>; } > .agents/supervisor/rN-x.txt 2>&1"
+      echo "       ⚠ this is a record defect, not a tree defect — it fails the gate and does"
+      echo "         NOT revoke the sha by itself (REV-134 §1: the criterion is WHAT failed)."
+    fi
+  fi
+fi
+
 # ⛔ EVERY FAILING AND ERRORING TEST NAME IN EVERY PEST ARTEFACT, PRINTED HERE SO A
 #   REPORT CANNOT OMIT ONE (REV-147 §1).
 #
