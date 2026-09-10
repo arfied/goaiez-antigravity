@@ -58,6 +58,7 @@ final class ChatCaptureAction
                 'email' => $email,
                 'message' => $message,
                 'form_type' => $formType,
+                // (R245) schema: added consent_logged_at to chat_leads table to log capture consent
                 'consent_logged_at' => $consent ? now() : null,
             ]);
 
@@ -76,4 +77,3 @@ final class ChatCaptureAction
         });
     }
 }
-// (R245) schema: added consent_logged_at to chat_leads table to log capture consent
