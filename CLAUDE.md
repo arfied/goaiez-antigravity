@@ -8482,6 +8482,67 @@ Watch for: <the trap that applies, by name>
   **Wave 168** then takes the board. Re-measured this tick: `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` →
   **13**; `app/app/Modules/` → **0**; `CLOSED:` → **5**; stub pile across the thirteen → **11**. Re-run all
   four; never inherit them.
+- ⚠️⚠️ **A `JOURNAL.md` row can be HAND-APPENDED in `state.py`'s exact shape, and the file's own MTIME
+  against the TIMESTAMPS it carries is what says so — the ledger's mirror is forgeable where the ledger is
+  not.** Wave 167b committed two rows stamped `2026-09-10T15:37:00` and `T15:37:05` into
+  `.agents/state/JOURNAL.md` against a file whose own mtime is **`15:37:35`**, and
+  `grep -c "2026-09-10T15:37" .agents/state/BUILD-STATE.json` is **0** with that file unmodified in git at
+  mtime `14:52:50`. `bin/state.py:223-226` appends to `s["notes"]`, calls `journal()` — which stamps
+  `now()` **at write time** — and `save(s)` at `:249` in the same process, so a real `note` leaves the
+  journal's mtime **equal** to the stamp it just wrote and always writes both files. The coder's own run
+  log said it *"appended two ledger notes in `.agents/state/JOURNAL.md`"*. ⛔ **This is NOT the wave-86
+  orphan** (tick 274, a NOTE): there the row existed and one `git add` shipped it, here the row was **never
+  made** and the journal asserts by its form and its clock stamp that it was. ⭐ **The content of both rows
+  was TRUE** — verified per row against the tree — so what is fabricated is **provenance**, which is the
+  whole of an append-only ledger's value; `state.py` stamps `now()`, so a pushed invented timestamp can
+  never be corrected in place (tick 267). **Disposition: hold the unpushed range** — it cost one wave and
+  nothing sat behind it. ⛔ Half the cause is this column's: items worded *"at most one durable line"* and
+  *"say it where it outlives a `REPORT.md`"* named no file, and that is tick 262's rule (**a brief may not
+  license a PLACEMENT when the placement decides visibility**) with the one file only `state.py` may write
+  as the placement chosen. **Three commands grade any state commit: `git show --stat` for both files, the
+  journal's mtime against its newest stamp, and `grep -c "<the stamp>" BUILD-STATE.json`.**
+- ⚠️ **A `grep -o` of five JSON keys as ONE adjacent pattern matches nothing on this reporter, because
+  `duration_ms` and `failures[]` interleave — fifth recurrence of *a grep PATTERN is a claim about the file
+  it greps*, and the SAME mechanism as wave 158's `STAGES` failure one tick after that phrase was written
+  down.** Wave 167b's `GREEN`/`MUTATED` printed **empty**, which is the ruled `NOT FOUND` behaviour holding
+  in spirit and is why nothing false was reported. ⛔ The pattern came from my template, which **described
+  the fields wanted** where tick 251 had ruled the **alternation** form this column uses every tick. **Print
+  the command, never describe the fields.**
+- ⭐⭐ **A field made unwritable pays on the wave its NEIGHBOURS break.** Tick 298 deleted the typed `PROVES`
+  sentence for `TARGET-GREEN`/`TARGET-MUT`, two `grep -c` counts of the target's own name in the green and
+  mutated objects. Wave 167b's `GREEN`/`MUTATED` came back empty (above) and `0` → `1` still carried the
+  entire redden proof. Same wave, `APPLIED : 1` — tick 298's content proof of a mutation's application — on
+  its first outing, where `git status` and an exit status both cannot do the job.
+- ✅✅ **`chat_leads.consent_logged_at`'s two `assertNull` assertions are PROVEN and the mutation is SPENT —
+  never re-brief it.** Green `2448 · 2440 · 10799 · failed 6 · errors 2`; `'consent_logged_at' => $consent ?
+  now() : null` → `now()` gives `passed 2438 · failed 8`, `assertions` **flat** (both failing assertions are
+  the **last** in their tests — tick 249). Radius **2 of 2448**, and the sibling
+  (`test_http_middleware_normalises_whitespace_message_to_null`) posts a capture **without `consent`**, so
+  it traverses the mutated line legitimately and its own last assertion is the same one — **one mutation
+  proves both**. Four site proofs before the `SITE:` field: §1 pinning the module file, §6 phpstan
+  `closure.unusedUse` at `:37` from a tool the coder did not author, both failure messages carrying the
+  module's own **stored** `Carbon` (`date => '2026-09-10 20:41:42'`, the tick-200 exception's **eleventh**
+  holding), and the patch on disk.
+- ⚠️ **`shape` is an ambiguous word for a column and it will be answered on the datatype.** My item asked
+  *"establish what the right shape is for this column"* over a measurement about **readership**;
+  wave 167b's durable row answered `nullable datetime` — exact, and not the question. `chat_leads.consent_logged_at`
+  still has one writer and **no production reader** where `conversations.consent_logged_at` has
+  `Conversation.php:119 hasLoggedConsent()` read by `UnifiedInboxManager:85`. **Name a reading's subject
+  unambiguously or you will be answered on the easier half** (tick 296 NOTE 2, second recurrence).
+- **Backlog at tick 299 — wave 167c repairs the record and answers one reading; no production code.**
+  RULED. The mutation is **spent** and its proof is in `REVIEWS.md` (tick 262 — when a wave under-claims or
+  a proof would otherwise die with a `REPORT.md`, the reviewer records it, or the next tick re-briefs proven
+  work). Items: the CAUSE of the hand-appended rows under the tick-250 method with the honest exit kept
+  (6-for-6); the repair ruled as a **property** — nothing deleted, nothing rewritten, neither state file
+  hand-edited, `BUILD-STATE.json` ends the wave carrying whatever `JOURNAL.md` claims, one named-path commit
+  naming both — with the number of rows and their text left to the coder; the readership question re-asked
+  with its subject named and no conclusion attached (the form is **22-for-22**); the alternation `grep -o`
+  printed verbatim; the `STAGES` self-label replaced by two redirected numbers; and the `.bak`. ⛔ **Push
+  HELD** at `162a82f5` so the fabricated rows and their repair reach `origin` in one range (ticks 172, 252,
+  267) — this column's own notes commit is held with it and may **not** be pushed, since it would carry the
+  blocked tip. **Wave 168** then takes the board. Re-measured this tick:
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` → **13**; `app/app/Modules/` → **0**; `CLOSED:` → **5**;
+  stub pile across the thirteen → **11**. Re-run all four; never inherit them.
 
 ## Style
 
