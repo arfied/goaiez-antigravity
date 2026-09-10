@@ -686,4 +686,21 @@ class X01Test extends TestCase
             'body' => 'Body Untenanted',
         ]);
     }
+
+    public function test_empty_message_throws(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Empty Msg Biz', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('An empty message is not a message');
+
+        $this->manager->ingestMessage(
+            businessId: $biz->id,
+            channel: 'whatsapp',
+            identifier: '+15125550999',
+            senderName: 'Webhook User',
+            body: '   '
+        );
+    }
 }
