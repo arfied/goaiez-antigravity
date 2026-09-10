@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-10T17:45:52",
+ "updated": "2026-09-10T18:13:34",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1932,6 +1932,12 @@
    "module": "X-102",
    "chose": "boundary test_http_middleware_normalises_whitespace_message_to_null_when_consented is falsifiable for the controller parameter mapping R245",
    "at": "2026-09-10T17:45:52",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-102",
+   "chose": "boundary X102Test.php:531 is false because there are no direct callers bypassing the HTTP middleware; ChatDoorTest.php:383 is true as the action's trim logic is redundant on the only existing path. R245",
+   "at": "2026-09-10T18:13:34",
    "ruling": "R245"
   }
  ],
