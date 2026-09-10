@@ -8309,3 +8309,105 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     a filter wearing a census's name** — and it is the second correction in two ticks to a measurement
     of a *measuring instrument*, which is the class that decays most silently, because the instrument's
     next run reproduces the original error with a fresh date on it.
+311. **⭐⭐ Ruling 47's tell is a LAGGING indicator that a competent run erases, and the gate file's §1
+    is the only contemporaneous witness (RULED by the lane supervisor 2026-09-10 02:3x, on MONEY-170's
+    `00c5849c`).** Ruling 47 forbade a coder editing PHP through a generated patch script and forbade a
+    scratch file at the repo root, and named the tell: *"a commit message naming a **syntax** or **hex**
+    problem in a file the wave was only meant to add a line to — a direct edit does not produce those"*,
+    with ruling 133 adding the milder form, two commits sharing one message. **Neither fired on this
+    wave, and the wave did it anyway.** §1 of `gate-money170.txt`, the gate having run at 01:26 and the
+    cleanup after it, lists **seven** untracked paths — `patch_mrr.py`, `patch_credits.py`,
+    `patch_creditstest.py`, `fix_tail.py`, `fix_test.py`, `error_log`, `app/test_out.txt` — six of them
+    at the **repo root**, which is a live web document root. Against that, the three commit messages are
+    clean, distinct and honest, `FINAL GIT STATUS:` is empty **and true**, and this seat's own
+    `git status --short --untracked-files=all` is empty. **A reviewer reading only the report and the
+    run log would find nothing.**
+    ⭐ **The reason the tell did not fire is that the run caught its own damage.** The previous tick
+    observed `MrrScreenTest.php` at 01:18 carrying the new method appended **after the class's closing
+    brace** — a parse error, ruling 55's stray-brace shape, produced by a script rewriting a region
+    rather than inserting a method; `fix_tail.py` and `fix_test.py` are the repair. It was fixed before
+    any commit, so no message names a brace, `php -l` passes on all six touched files and the tip
+    parses. **Ruling 47's documented cost — *"three commits and a pint pass to add one line"* — was paid
+    INSIDE the run, and paying it there makes it invisible to every durable artifact.**
+    ⚠️ **`error_log` is ruling 183's own tell and is diagnosable from the same list**: `php -l` on a
+    non-PHP file writes a parse error there, and this wave mutated two **blades**, so its presence says
+    a blade was linted — a second fact §1 carries and no other artifact does.
+    ⚠️ **The measurable cost in the tip is one line**, and it is ruling 47's companion:
+    `MrrScreenTest.php:105` lost a blank line inside an existing anchor the brief named for nothing —
+    *an anchor test is edited only for the reason the brief names*. Inside the authorised surface,
+    cosmetic, and under ruling 133 not withheld over.
+    **RULED: every review reads the gate file's §1 untracked list for scratch at the repo root, and a
+    clean `FINAL GIT STATUS:` does not clear it** — the two describe **different instants**, §1
+    contemporaneous with the work and `FINAL GIT STATUS:` taken after the cleanup, and only the first
+    can see the method. ⛔ Ruling 47's commit-message tell is not retired but it is **demoted**: it
+    detects the runs that *failed* to clean up after themselves, which is the smaller half.
+    ⚠️ Graded PASS-WITH-NOTES and pushed — withholding a tip that is correct in every measured respect
+    and lands on its predicted floor to the digit, over a method whose damage the run itself repaired,
+    is ruling 74's error.
+
+312. **`orders.status` renders a snake_case token for the state EVERY real order is in, and its signal
+    is keyed on the one value the code cannot produce (RULED by the lane supervisor 2026-09-10 02:3x,
+    briefed as MONEY-171).** Ruling 306's vocabulary census, third pass, over the seven non-C-Billing
+    modules: `grep -rn -e ':label=' <the seven>` returns **23** lines, five rendering a column raw, four
+    struck and one a finding. `X-117/Ui/views/checkout-block.blade.php:61` is
+    `<x-ui.status-pill :state="$o->status === 'paid' ? 'ok' : 'attention'" :label="$o->status" />`.
+    ⭐⭐ **The vocabulary is already written down in a migration this lane authored, and the blade beside
+    it contradicts it.** `2026_09_06_000001_x117_orders_default_pending_payment.php:11-17` reads
+    *"`pending_payment`: `CheckoutEngine::checkout()` :83 and `checkoutCart()` :209 … `sold_out` and
+    `refused` are **envelope-only and never reach the row** … this file supersedes the
+    `// paid, cancelled, sold_out` comment"*. Measured: **written** = `pending_payment` (`:83`, `:209`)
+    and `cancelled` (`:128`, `:141`); `paid` is written by **nothing** and is unreachable, ruling 45
+    having emptied the only listener that could promote an order, which `CheckoutEngine.php:148-151`'s
+    own docblock records; `sold_out` is an envelope key at `:60`/`:191` and never the row.
+    **(a)** Every real order therefore renders **`pending_payment`** — ruling 305's finding on a third
+    screen after the dunning board's `ai_off_voicemail_only` and the MRR screen's `pending_checkout`,
+    with the property that makes it worst: the token is not an edge case, it is the state the screen is
+    in every time anyone opens it. **(b)** `:state=` is keyed on the unreachable `paid`, so it is a
+    **constant `attention`** across both values the column can hold — ruling 43's *does it even vary?*
+    answered no, ruling 305(3)'s shape — and a **cancelled** order, closed and needing nothing, carries
+    the same attention signal as one awaiting payment.
+    **RULED: one trait `App\Modules\X117\Ui\LabelsOrderStatus` in the established shape**
+    (`LabelsMeters` · `LabelsSubscription` · `SignalsLedgerEntry` — a trait, `use`d, passed in from
+    `render()`, read as `$map[$key] ?? …`), with `orderStatusLabels()` mapping
+    `pending_payment → placed, not paid` · `cancelled → cancelled` · `paid → paid` (fallback
+    `?? $o->status`) and `orderStatusPillStates()` mapping `pending_payment → attention` ·
+    `cancelled → unknown` · `paid → ok` (fallback `?? 'unknown'`).
+    ⛔ **`sold_out` is NOT mapped** — the migration states it never reaches the row, and a map carrying a
+    value the column cannot hold is a fiction inside the instrument built to remove one, the inverse of
+    ruling 305's `grace`/`terminated`. ⛔ `paid` **is** mapped, deliberately: it is a legitimate column
+    value the day ruling 45's tokenisation dependency lands, where `sold_out` is by construction an
+    envelope key. ⛔ `CheckoutEngine` is not touched, no migration moves, and
+    `checkout-block.blade.php:62`'s `@if($o->status === 'paid' || …)` keeps its dead `paid` disjunct —
+    a guard, not a label, and ruling 96 governs an unreachable string.
+    ⚠️ **Blast radius, measured with interior fragments (rulings 46, 86, 146): ZERO rendered
+    assertions.** Every `pending_payment` in `app/tests/Modules/X-117` is a model assertion, an envelope
+    assertion, a fixture or an artifact key (`CheckoutBlockScreenTest:135,:182,:196`,
+    `X117Test:194,:208,:233,:236,:240,:355,:403`, `X117RuntimeProofTest:18`) and not one asserts the
+    page — ruling 70 again, and why a raw token survived every X-117 wave. Both items **add** methods.
+    ⚠️ **Ruling 82 measured, not assumed:** `pending_payment` reaches the rendered page **only** through
+    this label — its two other occurrences are PHP comparisons (`CheckoutBlock.php:68`, `blade:62`) and
+    `CheckoutBlock.php:69`'s waiting string reads *"Pending — order %s…"* without the token — so
+    `assertSee('placed, not paid')` pairs with `assertDontSee('pending_payment')` and the raw token is
+    not a substring of its label (ruling 61).
+    ⚠️ ⭐ **The signal half's proof is a MEASUREMENT this seat has NOT run** (rulings 193, 256), and it
+    is MONEY-170 item 2.5's situation exactly. `App\Enums\SignalState::Unknown->backgroundClass()` is
+    **`bg-paper`**, not a `bg-unknown-bg`, so the positive needle is useless — `bg-paper` is a page
+    background. The instrument is `assertDontSeeHtml('bg-attention-bg')` on a page whose only order is
+    **cancelled**, which fails under the mutation and passes under the fix; whether anything else on
+    that page carries that class is unmeasured. **If it does, the correct outcome is `REFUSED` with the
+    other source named, the state map shipped anyway, and item 1 unaffected.**
+    ⚠️ ⛔ **`SignalState::from($state)` throws on an unknown value** (`status-pill.blade.php:9`), so both
+    fallbacks must resolve to real cases: `?? 'unknown'` is safe (`SignalState::Unknown` exists and
+    `checkout-block.blade.php:18` already uses it), and the label fallback `?? $o->status` is a string
+    that is never passed to `from()`.
+    ⚠️ **The other four census members are measured CLEAN and STRUCK** (rulings 95, 100, 111):
+    `X-173/conflicts-list.blade.php:25` (`open`/`resolved`, ordinary words) ·
+    `X-201/dispute-queue.blade.php:17` and `dispute-card.blade.php:17` (`opened`, `compiled`, `won`,
+    `lost` are ordinary words and `submitted` was mapped by ruling 131) ·
+    `X-211/paymentplan-builder.blade.php:33` (`offered`, ruling 98's own corrected value) ·
+    `X-199/invoices.blade.php:45` (`draft`, `issued`, `due`, `paid` are ordinary words). ⭐ X-199's one
+    snake_case value, **`offline_recorded`, is written by NOTHING** — `grep -rn` over `app/app/Modules`
+    and `app/tests/Modules` returns the 08-30 migration comment declaring it and
+    `invoices.blade.php:61`'s `@elseif(in_array(...))` disjunct, and no writer anywhere — which is
+    decision 272 on a **value**, ruling 305's `grace`/`terminated` shape, **recorded on TRACK 1 ACTION
+    13's list, never mapped and never edited**. ⛔ None of the four is to be re-raised.
