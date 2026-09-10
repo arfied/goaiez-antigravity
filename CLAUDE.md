@@ -7385,3 +7385,153 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     `queue_driver`, `running_unit_tests`; X-211's `plan_id > 0`, `installment_amount_cents`, the same
     regex, `reason` ∈ `ArEngine::REASONS`, `refused_without_resolution`. Nothing in either depends on
     a fresh tenant.
+282. **Ruling 39's "the old artifact left in place" is guaranteed only against a THROW — a success
+    whose VALUE fails the reader's assertion overwrites the artifact, and `evidence/j9/charge.json`
+    carries the lane's only genuinely vendor-issued `artifact_id` (RULED by the lane supervisor
+    2026-09-09 19:1x, pre-ruling MONEY-163's vendor evidence run).** Ruling 39 set this lane's
+    evidence-wave fallback: *"if the provider refused, the outcome is `UNRESOLVED` with the quoted
+    provider error and no artifact and no test committed."* Measured against the two X-198 commands,
+    the protection is structural for exactly one failure mode and absent for the other.
+    **(a) A throw is safe by construction.** `EvidenceChargeCommand:37` is
+    `$payment = $gatewayEngine->capture(…)` and `File::put` is nine lines later, so a Stripe refusal
+    propagates out of `capture()` — which catches `\RuntimeException`, writes a `failed` `Payment` row
+    and **rethrows** (ruling 228) — and the command dies before writing. The old artifact survives
+    untouched. Same shape at `EvidencePaymentLinkCommand:45`, where `PaymentLinkAction` does not catch
+    (ruling 229) and `createPaymentLink()` throws when the response carries no `url` (ruling 228).
+    ⭐ **(b) A SUCCESS whose value fails the reader is not covered, and it is reachable.** Ruling 235
+    made `capture()` write `awaiting_processor` — not a throw, a normal return — whenever Stripe
+    answers `200` with `status: pending`, or with no `status` at all (`'unconfirmed'`). The command
+    then writes `payment_status: "awaiting_processor"` into `charge.json`, and
+    `GatewayEngineTest.php:14` is `expect($artifact['payment_status'])->toBe('captured')`. So the
+    suite goes red **and the honest artifact is already gone** — `File::put` has happened, ruling 39's
+    "left in place" never engages, and there is no route back: the previous charge id
+    `ch_3UCgYZFXLB0i1zXl0NCv569q` cannot be re-minted, it is read by **J9**
+    (`TwelveJourneysTest:485-508`) and by `GatewayEngineTest:4-14`, and it is the one file in this lane
+    that satisfies `TestAnchorStage`'s vendor-issued `artifact_id` (rulings 173, 178). ⛔ Deleting it
+    is never the fallback (ruling 173) and ⛔ a hand-written replacement is a BLOCK (ruling 39).
+    **RULED: every evidence wave in this lane copies the artifact it is about to overwrite BEFORE the
+    run — `cp <artifact> <artifact>.pre-<wave>` — and restores it if the new one does not satisfy the
+    assertions its readers make.** The copy lives beside the artifact, which is untracked and
+    gitignored (ruling 39), so it commits nothing and is deleted once the new artifact is accepted.
+    ⛔ Not resolved by loosening `GatewayEngineTest`'s assertion to admit `awaiting_processor` — that
+    is editing a CHECK to survive a vendor answer, the One Rule, and ruling 235 made the two statuses
+    distinct precisely so the difference would be visible. ⛔ Not by writing the artifact to a
+    temporary path and moving it on success: the command decides success by returning, and the value
+    the reader refuses is one a successful return can carry. ⚠️ The probability is low —
+    `tok_visa` is Stripe's always-succeeds test token — and that is exactly why it is worth writing
+    down: the cost is a permanently red J9 and the loss of this lane's only honest runtime proof, the
+    remedy is one `cp`, and the asymmetry between those two decides it. ⚠️ The generalisable half is
+    ruling 141's, one register out: **ruling 39 protects the artifact against the failure it was
+    written about, and a wave must ask which failures the protection does NOT cover** — here the
+    uncovered one is the *successful* call, which no fallback clause in this ledger had considered.
+
+283. **`payments_written` states what the RUN did and counts what the TENANT holds, and the two were
+    the same number only while every evidence tenant was fresh — the given-tenant change is what
+    separated them (RULED by the lane supervisor 2026-09-09 19:1x, briefed as MONEY-163 item 2).**
+    Ruling 48(2) minted this key for X-117 as the honest replacement for a self-certifying
+    `gateway_call_made: false` literal: *"the artifact records `payments_written` as a real
+    `Payment::…->count()`, because a boolean that certifies itself is ruling 43's fiction in miniature
+    while a count moves if the code changes."* That reasoning is sound and the key is kept. What has
+    changed is its **arithmetic**. `EvidenceChargeCommand:39` is
+    `Payment::where('business_id', $businessId)->count()` **after** the capture, so on a freshly
+    provisioned tenant it is `1` and reads as *this run wrote one payment*; on a reused tenant it is
+    `1, 2, 3 …` across runs and reads as *this run wrote three payments*. **Ruling 107's shape exactly
+    — the label names a quantity the code does not measure — and ruling 236's lesson about which
+    readers a wave owns**: the correctness of this key depended on a state that could not arise (a
+    tenant with prior payments), and MONEY-161b/163's given-tenant fallback makes that state the
+    normal one. It never bit on X-117, X-199 or X-211 because the value there is `0` in both readings
+    and ruling 278 measured `recordPayment` writes no `Payment` row. **RULED: on the two X-198
+    commands the key is `tenant_payments_total`** — the label states the quantity the code computes
+    (rulings 107, 123, 239) — and it stays a real `->count()`. ⛔ Not scoped to the new row
+    (`->where('id', $payment->id)->count()` is `1` by construction, which is ruling 48(2)'s
+    self-certifying literal wearing a query) and ⛔ not dropped, which would leave the artifact with
+    no measured count at all. ⚠️ **Blast radius: ZERO, measured** — ruling 281 measured
+    `grep -rn "payments_written" app/tests` is **one** line, `X117RuntimeProofTest:19`, X-117's own,
+    and neither `GatewayEngineTest` nor J9 names the key; ⛔ **X-117's, X-199's and X-211's copies are
+    NOT renamed**, because there the name is true, `X117RuntimeProofTest:19` asserts it, and
+    harmonising a pair where one member is correct is ruling 228(a)'s named hazard. ⚠️ The rename must
+    ship in the **same commit** as the regenerated artifact (ruling 39's sequence), because a renamed
+    key and an artifact still carrying the old one is ruling 49's deleted-key-with-a-live-reader in
+    miniature.
+
+284. **A transcription field nested in a block whose every other member comes from ONE file is filled
+    from that file — ruling 274's wording is right and its POSITION defeated it (RULED by the lane
+    supervisor 2026-09-09 19:1x, on MONEY-161b's `GATE:` field).** Rulings 242 and 247 twice found a
+    report claiming a foreground gate against a log saying background, and each aimed a remedy at the
+    **wording**. Ruling 274 stopped doing that — *"a run cannot mis-summarise a quotation"* — and
+    replaced the category with a transcription: `GATE:`'s last field carries the run log's own first
+    two lines. It held twice and failed on its third outing. MONEY-161b's brief said it exactly right
+    (`BRIEF.md:383`, *"the run log's **first two lines, verbatim**, with no foreground/background
+    classification"*) and the report's `5. log:` carries the **gate file's**
+    `== 0. database guard` line. ⭐ **The cause is placement, not comprehension:** `log:` was item 5
+    of five sub-fields inside `GATE:`, and items 1–4 all transcribe the gate file, so the run
+    continued transcribing the file the block is about. **RULED: the run log leaves `GATE:` and
+    becomes its own top-level `LOG:` field, and the brief names the file by PATH** —
+    `LOG: <the first two lines of .agents/supervisor/logs/agy-run<N>.log, verbatim>` — because a
+    transcription field is only as unforgeable as its named source, and a source named in prose two
+    hundred lines above the field it governs is not named at the field. ⛔ The classification is not
+    asked for again in any form (274), and ⛔ ruling 218(2)'s prohibition is untouched: it is about
+    **behaviour** — a run blocks on its own gate — not about vocabulary, and here it did block.
+    ⚠️ This is rulings 128/231's family (a rule about one field silently governing its neighbours)
+    meeting the ruling 66/75/…/271 dictation family: **detail is read as the spec, and a field's
+    NEIGHBOURS are detail.** ⚠️ Graded a note and the tip pushed: no measurement was false, ruling
+    238's second read matched to the nanosecond, and withholding on that evidence is ruling 74's
+    error.
+
+285. **The `origin/main` merge fires on cadence condition (3), it is the cleanest this lane has ever
+    measured, and ⭐ ruling 52's two-party sequence is NOT needed for it — because the coder guard
+    reads index-against-HEAD, and a path restored to HEAD's blob is invisible to it (RULED by the
+    lane supervisor 2026-09-09 19:1x, measured against `origin/main` = `af72fe7f`, merge-base
+    `83caa6f5`, main 95 ahead, money 4).** The cadence, measured in this tick and never inherited
+    (ruling 269): (1) 95 < 100 ✗; (2) `git diff --stat 83caa6f5 origin/main -- app/app/Doctor
+    coder-bin .claude/hooks` **empty** ✗; (3) **fires** — the merge-base is unmoved, so this tick's
+    push is the first since Track 1 last merged this lane, and it carries three module command edits.
+    **The shape, measured whole — 33 files, and all four of ruling 58's damage shapes are EMPTY:**
+    (1) main adds no test in money's eight test trees; (2) main touches **no file** in money's eight
+    module trees; (3) `git diff --diff-filter=D` over the whole range is **empty** — zero deletions,
+    so ruling 58's deleted-class shape cannot fire; (4) no generated route tests. `app/tests/Journeys`
+    is untouched, so the **harness gate stays closed** and `--allow-harness` is not passed (ruling 74:
+    never a standing flag). The 26 non-per-track paths are other lanes' — C-Reviews, X-01, X-102,
+    X-103, X-155, X-157, X-162, X-163, X-172, X-176 — including two `csat_score` drop migrations whose
+    exposure to this lane is measured **nil** (`grep -rln csat_score` over money's eight module and
+    eight test trees returns nothing) and one CHECK, `HeadingSeamTest.php` (+50/−3), which is ruling
+    176/181's family: money has never modified that file, so it is one-sided, main's copy wins with no
+    conflict, and any pin that moves afterwards is **main's pin against money's tree** — ⛔ recorded
+    and re-pinned by Track 1, never edited here (the One Rule).
+    ⭐⭐ **The sidedness, and why it inverts ruling 52.** `merge.ours.driver` is `true` and
+    `.gitattributes` marks eight paths `merge=ours`, but ruling 27's caveat governs: a driver fires
+    only where **both** sides changed the file. Two-sided and therefore driver-protected:
+    `CLAUDE.md`, `.agents/state/BUILD-STATE.json`, `.agents/state/JOURNAL.md`. **One-sided main-only
+    and therefore EXPOSED — the driver cannot fire and each must be hand-restored:**
+    `app/phpunit.xml` (2 lines → Track 1's `goaiez_antig_test`), `bin/supervise.sh` (490),
+    `.agents/supervisor/launch-coder.sh` (184), `.claude/settings.json` (23). Exactly ruling 179/251's
+    four, with 179's ranking unchanged — `app/phpunit.xml` is sharpest because `supervise.sh` §0 exits
+    2 only on *production* and `goaiez_antig_test` is not production, so **no gate here catches the
+    swap**; `bin/supervise.sh` is second because the instrument that would notice is itself in the
+    exposed set. **Now the new measurement.** `coder-bin/git:82` builds its refusal input as
+    `git diff --cached --name-only` — index against **HEAD** — and `:146` greps that for `CLAUDE.md$`,
+    `.claude/`, `bin/supervise\.sh$`, `app/phpunit\.xml$` and `.agents/supervisor/`. After the driver
+    takes money's side on the three two-sided paths and `git checkout HEAD -- <the four>` restores the
+    exposed ones, **every guarded path's stage-0 blob equals HEAD's and none appears in that diff at
+    all** — so a **pathless** `git commit --no-edit` passes the guard, and rulings 52/60's
+    supervisor-commits-what-the-coder-staged workaround is unnecessary here. ⭐ That matters for
+    safety, not convenience: it closes the merge inside one run instead of leaving it staged across a
+    tick boundary, which is the state ruling 60 warns has **no second copy** and ruling 248 measured a
+    wall-clock reap can land in the middle of. ⚠️ **It is briefed as an attempt, not an assumption:**
+    if the guard refuses, the coder stops with the merge **STAGED** and reports, and the supervisor
+    commits it next tick — a graceful degradation to ruling 52's proven sequence rather than a lost
+    run. ⛔ `git merge --abort` is forbidden whatever happens (ruling 53; it destroyed this lane's
+    ledger once, 2026-09-04 13:07), and ruling 53's **default clause** binds: an uncovered conflicting
+    path is reported with the merge still staged, never aborted and never guessed.
+    ⚠️ ⛔ **`php -l` is NOT run in this merge** — every hand-resolved path is XML, JSON, Markdown or
+    shell, and ruling 183 measured that `php -l` on a non-PHP file writes a parse error to an
+    untracked `error_log` at the repo root (muddying §1, the instrument rulings 34 and 71 turn on) and
+    is **vacuous** on a shell script, which has no `<?php` tag and therefore always "passes". The
+    checks that actually read these four are `git diff --cached HEAD -- <them>` printing nothing,
+    `grep -n DB_DATABASE app/phpunit.xml`, `bash -n` on the two scripts and `wc -c` on all four.
+    ⚠️ **No floor is predicted** (ruling 157): 95 commits of other lanes' tests arrive at once and no
+    arithmetic available before the merge produces the count, so the gate measures it and the verdict
+    block records it as the new baseline. ⚠️ `composer dump-autoload -d app` is mandatory before the
+    gate (ruling 52) — main adds three new `Actions/` classes under `app/app/Modules/`, which
+    `app/composer.json` classmaps, and the failure shape is `Class … not found` **inside another
+    lane's test**, the most misattributable there is.
