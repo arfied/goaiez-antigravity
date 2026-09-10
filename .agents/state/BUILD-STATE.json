@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-10T04:22:08",
+ "updated": "2026-09-10T08:10:22",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1351,6 +1351,12 @@
    "chose": "G1-68: a review-removal request is PREPARED by the automation and is filable only after a human confirms the ToS violation. R236 - the confirmation is a recorded judgement (user id + timestamp), never a permission gate, because the AI cannot decide maliciousness. Filing itself is X-177's GBP half and is not granted. app/app/Modules/C-Reviews/Domain/RemovalFilingGate.php:13, app/app/Modules/C-Reviews/Models/ReviewRemovalRequest.php:15, app/app/Modules/C-Reviews/Models/ReviewRemovalRequest.php:18, app/app/Modules/C-Reviews/Models/ReviewRemovalRequest.php:19, app/app/Modules/C-Reviews/Actions/PrepareRemovalRequestAction.php:18, app/app/Modules/C-Reviews/Actions/PrepareRemovalRequestAction.php:22, app/app/Modules/C-Reviews/Actions/ConfirmRemovalRequestAction.php:20, app/app/Modules/C-Reviews/Actions/ConfirmRemovalRequestAction.php:21",
    "at": "2026-09-10T04:22:08",
    "ruling": "R245"
+  },
+  {
+   "module": "C-Reviews",
+   "chose": "the confirming user is the authenticated session user, read inside the component; a caller-supplied id was the previous shape and is refused. (app/app/Modules/C-Reviews/Ui/LossAlerts.php:134)",
+   "at": "2026-09-10T08:10:22",
+   "ruling": "R245"
   }
  ],
  "notes": [
@@ -1445,6 +1451,10 @@
   {
    "at": "2026-09-10T05:26:11",
    "note": "LossAlerts screen provides the caller for the G1-68 review removal slice."
+  },
+  {
+   "at": "2026-09-10T08:01:50",
+   "note": "after R235 the automation prepares and a human confirms. This screen has a human doing both, because origination is honestly UNRESOLVED \u2014 run 136 measured no employee-naming signal and no staff roster (r136-trigger.txt)."
   }
  ],
  "resolved": [
