@@ -1491,6 +1491,10 @@
   {
    "at": "2026-09-10T13:49:03",
    "note": "run 146: proved merger fix works (implicit in supervise.sh); added google_review_id validation to PrepareRemovalRequestAction and reseated tests"
+  },
+  {
+   "at": "2026-09-10T14:18:19",
+   "note": "run 147: tests 2463 -> 2465; schema read restored to 14 violations after connection slot exhaustion"
   }
  ],
  "resolved": [
