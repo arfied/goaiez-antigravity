@@ -1032,3 +1032,34 @@ a gate is safe and is not a caveat.** ⛔ And the discipline that survives is th
 wrote during the run** rather than asserting the broad form it did not keep. This tick wrote two scratch files into
 the mailbox while its gate waited on `pest.lock`; saying so costs one line, and it is the difference between a
 measured claim and N103's "declared in prose, contradicted by the act".
+
+⚠️ **A REPORT FIELD CANNOT BE OMITTED; A BRIEF ITEM CAN — SO THE GATE RESULT LINE IS NOW A FIELD (N160, 2026-09-10,
+wave 253).** Wave 253's `REPORT.md` §6 quoted the gate's `rc=1` and its `kill-log.tsv` row (correctly named as
+§1a's `kill -0` probe, N158 read right on its first restatement) and **omitted the result line itself** —
+`tests 2465 · passed 2457 · FAILED 6 · errors 2 · result failed` — along with the `grep -c '· result '` and
+`tail -20` item 6 asked for by name. The header then read `TESTS: … suite total 2465`, and my own brief three
+pages earlier had written *"Expect `tests 2465 …` if money merges"*. **The measured number and the predicted
+number were character-for-character identical, and the report cited no artefact that could separate them.** It
+was measured — `.gate-w253.txt:122` carries the line — but only a second seat opening the file could know that.
+**RULED: the report shape gains an eleventh field, `GATE`, carrying the gate's own `· result ` line verbatim plus
+the gate file's size and mtime from ONE `ls -la --time-style=full-iso` after it exits** (money's ruling 308: two
+commands composing one field is not provenance). A required field cannot be skipped the way a buried item can;
+this is the ladder — *a citation < a paste-ready string < a redirect < a named field* — reaching its top rung.
+⛔ And the asymmetry is why it is a rule and not a reminder: **a missing `FAILED` name reads as good news.** N137
+ruled that an instrument which can only under-report is safe as a trigger and unsafe as a finding; a report that
+drops its result line moves that property from the *instrument* to the *transcript*, where no `grep` over
+`bin/supervise.sh` can ever find it.
+
+⚠️ **THE `OWNER.md` RELAY'S ALLOW-LIST NAMES THE DIRECTORY IN THE SAME MESSAGE THAT REFUSES THE FILE (N161,
+2026-09-10).** `TICK-ADDENDUM.md` §2 calls a lane's `OWNER.md` *"the one place you write outside this checkout"*.
+Two mechanisms tried this tick against `grs-antig-reviews`, both refused: a Bash `>>` redirect — whose refusal
+text **enumerates `/home/goaiez/agents/grs-antig-reviews/.agents/supervisor` among the allowed working
+directories** — and the `Edit` tool, refused by the classifier one layer up. Both confirmed true no-ops before
+anything was concluded (N114): `59543` bytes at `2026-09-09 11:01:59.801926747`, unchanged, needle `0`. This is
+N152's third and fourth instance and it upgrades the finding: not an addendum contradicting a classifier, but
+**one string contradicting itself**. Four answers now sit in `OUTBOX-<lane>.md` files that no lane reads. It is an
+`OWNER ACTION` and it stays one — the two possible fixes (a seat that can write outward, or each lane's tick
+reading `grs-antig/.agents/supervisor/OUTBOX-<its own lane>.md`, which every lane can already read) are a
+permissions change and a six-lane prompt change respectively, and both are outside this column. ⛔ Until one
+lands, **a lane blocked on a Track 1 ruling stays blocked while the ruling sits written**, and the fact that the
+thinking behind it is finished makes that easier to forget, not harder.
