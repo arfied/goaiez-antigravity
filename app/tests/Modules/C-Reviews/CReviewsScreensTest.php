@@ -23,6 +23,7 @@ use App\Modules\X153\Models\Alert;
 use App\Modules\X181\Models\QaTicket;
 use App\Support\Tenancy;
 use Carbon\Carbon;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
@@ -369,6 +370,21 @@ class CReviewsScreensTest extends TestCase
         Tenancy::set($otherBiz->id);
         $removal->refresh();
         $this->assertEquals('prepared', $removal->status);
+    }
+
+    public function test_loss_alerts_prepare_removal_does_not_render_a_database_error_to_the_tenant(): void
+    {
+        $biz = Business::find($this->bizId);
+        $user = User::find($biz->owner_user_id);
+
+        $locId = Location::firstOrCreate(['business_id' => $this->bizId, 'name' => 'Main'])->id;
+        Review::create(['business_id' => $this->bizId, 'location_id' => $locId, 'source' => ReviewSource::Google, 'google_review_id' => 'g_known_id', 'status' => ReviewStatus::Approved, 'rating' => 1]);
+
+        $this->expectException(QueryException::class);
+
+        Livewire::actingAs($user);
+        Livewire::test(LossAlerts::class, ['businessId' => $this->bizId])
+            ->call('prepareRemoval', 999999, 'tos_ground_example', 'Body', 'g_known_id');
     }
 
     public function test_reviews_qa_requests_route_renders(): void

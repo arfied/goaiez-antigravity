@@ -712,6 +712,7 @@ class CReviewsTest extends TestCase
         ]);
 
         $otherBiz = self::provisionTenant(['name' => 'Other Biz']);
+        $this->assertEquals((string) $otherBiz->id, \DB::selectOne("select current_setting('app.business_id', true) as v")->v);
         $locId = Location::firstOrCreate(['business_id' => $otherBiz->id, 'name' => 'Main2'])->id;
         Review::create(['business_id' => $otherBiz->id, 'location_id' => $locId, 'source' => ReviewSource::Google, 'google_review_id' => 'g_other', 'status' => ReviewStatus::Approved, 'rating' => 1]);
 
