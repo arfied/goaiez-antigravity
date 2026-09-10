@@ -90,7 +90,7 @@ final class InfobipInboundController extends Controller
             }
 
             $id = $message['messageId'] ?? null;
-            $from = $message['from'] ?? null;
+            $from = $message['from'] ?? $message['sender'] ?? null;
 
             // ⚠️ A MESSAGE WITH NO SENDER OR NO ID IS SKIPPED RATHER THAN
             // FAILING THE BATCH, and the choice is deliberate: one unreadable
@@ -114,8 +114,13 @@ final class InfobipInboundController extends Controller
             // ⚠️ **THE SMS KEYS STILL WIN WHEN THEY ARE THERE.** `cleanText` is
             // the carrier's own keyword-stripped body and is the better input;
             // the fallback is reached only when neither key exists, which is
-            // exactly the MMS envelope.
+            // exactly the MMS envelope. (The MO subscription shape is tested
+            // below as another fallback. The same fallback in InfobipDeliveryController
+            // is NOT in scope here.)
             $text = $message['cleanText'] ?? $message['text'] ?? null;
+            if (! is_string($text) && isset($message['content'][0]) && is_array($message['content'][0]) && (!isset($message['content'][0]['type']) || $message['content'][0]['type'] === 'TEXT')) {
+                $text = $message['content'][0]['cleanText'] ?? $message['content'][0]['text'] ?? null;
+            }
             $text = is_string($text) ? $text : InboundMediaPayload::text($message);
 
             $receivedAt = $message['receivedAt'] ?? null;
@@ -132,7 +137,7 @@ final class InfobipInboundController extends Controller
             // is the shared Lane A pool number; resolving it to a business and
             // narrowing the carrier STOP to that tenant is refused at the write
             // site (1582), not weighed here.
-            $to = $message['to'] ?? null;
+            $to = $message['to'] ?? $message['destination'] ?? null;
 
             // ⚠️ **THE CARRIER'S OWN PART COUNT, WHICH IS THE ONLY HONEST SOURCE
             // FOR IT** (4923). `SmsMoReport.smsCount` — *"The number of parts
