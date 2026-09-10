@@ -25,6 +25,11 @@ class ChatDoorTest extends TestCase
      * BUILD PROPOSAL: X-102's ChatTurnAction defaults the turn number to 1; it should compute and pass the real turn number. Owner: X-102
      * BUILD PROPOSAL: X-01 cannot listen to ChatTurnCreated and use ingestMessage because web visitors only have a session token, which ingestMessage would wrongly insert into the Person phone column since it lacks an '@'. Owner: X-01
      * BUILD PROPOSAL: ChatTurnCreated carries no message text, but could safely do so because the AgentTurns law prohibits unencrypted text in job payloads, not synchronous event payloads (EmailReplied safely carries text). Owner: X-102
+     * MEASURED 2026-09-10 (site lane): FALSE — the premise does not hold at source: no caller can supply an author type other than 'visitor' today (app/app/Modules/X-102/Http/Controllers/ChatTurnController.php:45).
+     * MEASURED 2026-09-10 (site lane): TRUE AND NOT OURS — X-102 holds no conversation column to pass, so Track 1 must mint the mapping (app/app/Modules/X-102/Actions/ChatTurnAction.php:29).
+     * MEASURED 2026-09-10 (site lane): TRUE BUT THE OUTPUT HAS NO CONSUMER — no file in the tree reads the turn_number column (app/app/Modules/C-Agent/Models/AgentTurn.php:26).
+     * MEASURED 2026-09-10 (site lane): TRUE AND NOT OURS — the claim holds about the phone column, but UnifiedInboxManager belongs to X-01 (app/app/Modules/X-01/Domain/UnifiedInboxManager.php:35).
+     * MEASURED 2026-09-10 (site lane): FALSE — the premise does not hold at source: the AgentTurns law does not prohibit unencrypted text but notes the payload carries a row id, and the event has zero listeners anyway (app/app/Services/Agent/AgentTurns.php:184).
      */
     public function test_valid_key_creates_chat_session_for_right_business(): void
     {
