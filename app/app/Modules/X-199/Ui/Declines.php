@@ -21,9 +21,12 @@ class Declines extends Component
 
     public ?string $error = null;
 
+    public ?string $errorHeading = null;
+
     public function sendPayLink(int $paymentId, PaymentLinkAction $action): void
     {
         $this->error = null;
+        $this->errorHeading = 'Could not make that pay link';
         try {
             $action->handle(Tenancy::idOrFail(), $paymentId);
         } catch (ModelNotFoundException) {
@@ -36,6 +39,7 @@ class Declines extends Component
     public function settleUpLater(int $paymentId, DeferDeclineAction $action): void
     {
         $this->error = null;
+        $this->errorHeading = 'Could not set that aside';
         try {
             $action->handle(Tenancy::idOrFail(), $paymentId);
         } catch (ModelNotFoundException) {
