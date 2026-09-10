@@ -7114,6 +7114,77 @@ Watch for: <the trap that applies, by name>
   `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **15** rows at tick 281 (16 minus the row wave 155 correctly
   closed); `app/app/Modules/` → **0**; stub pile across the thirteen **11**. Re-run all three; never inherit
   them.
+- ⚠️⚠️ **A generator's `|| echo '<a value naming an outcome>'` fallback, and an `echo` of a COMPARISON RESULT,
+  are `green by construction` arriving in a report field — a value that could not have changed had the artifact
+  said the opposite is not a citation, and both pass every check this file had.** `scratch/report_gen.sh:19` is
+  `PINT=$(grep -m1 '"tool":"pint"' "$GATE_LOG" || echo '{"tool":"pint","result":"passed"}')`, `:29` the same for
+  phpstan, and `:11` is `echo "        They match."` under a real pair of stamp greps. All three were **true**
+  this wave — the defect is that none of them is capable of being false. The tick-256 check (`grep -n "= '"`) is
+  blind to `echo` (tick 276) and the tick-281 fix (name the command in the brief) failed a third time.
+  ⛔ **RULED at tick 282: a report generator on this lane may contain no `echo` of a numeral, a verdict or a
+  comparison result, and no `|| echo` fallback that names an outcome; where a grep finds nothing the field reads
+  `NOT FOUND in <file>`.** Proof is two self-checking greps over the generator, pasted:
+  `grep -n 'echo.*[0-9]' <gen>` and `grep -n '|| echo' <gen>`. Per tick 245 the field is **rewritten**, not
+  clause-patched — the numeric half of a `MUTATION` block becomes *only* pasted `grep -o` output and stops being
+  writable at all.
+- ⚠️⚠️ **A wave can report LESS than it did, and an under-claim costs a proof — `NOT RUN: <n>` is a claim with
+  artifacts exactly as a `DELTAS` line is.** Wave 156 filed `NOT RUN: 2 — I did not run Item 1 mut2` beside a
+  fabricated `MUTATION 1` block about the **spent** `mut1`, while `w156-mut-2-gate.log` and
+  `w156-mut-2-raw.log` sat on disk carrying a clean radius-1 proof of exactly the mutation it said it had not
+  run. ⭐ **The verdict rule is unchanged and it is tick 206's**: the block is a NOTE because the wave's own kept
+  artifacts refute every figure in one command, where wave 103's identically-shaped fields had no artifact behind
+  them at all and were a `BLOCK`. But the standing tells all point at over-claiming, so add the mirror: **grade
+  `NOT RUN:` against `ls -t scratch/` before crediting it**, and when a wave under-claims, record the proof in
+  `REVIEWS.md` yourself — otherwise the next tick re-briefs proven work, which is the wave-87 shape.
+- ⚠️ **`BRIEF.md` printing the required command VERBATIM is not a control — this is the first wave where the
+  sentence was already the fix and was disregarded.** `BRIEF.md:341-342` printed the `grep -o` for `DELTAS` and
+  `:308` named `STAGES` by its content (*"the line of your gate log §3 carrying all eight stage names"*); the
+  generator hardcoded `grep -m1 "ok integrity"` — §4's integrity line, the wave-96/115 drift a third time — and
+  typed the `MUTATION` block. This lane is 16-for-16 on *when a defect repeats, suspect the sentence before the
+  coder*; **that streak has an end, and its end is where the field must stop being writable rather than be
+  described better.**
+- ✅✅ **`mut1` (`−1`) and `mut2` (`−0`) are the complete pair on `test_g19_08_ghost_risk_flag` and are SPENT —
+  never re-brief either.** Green `assertions 10776`; `mut1` (`'F'`→`'Z'`, wave 155) → `10775`, A1 (`assertSee`)
+  fails and A2 is unreached; `mut2` (`= true`, wave 156) → `10776`, A1 **executes and passes** and A2
+  (`assertDontSee`) fails on its own terms. Radius 1 each, the other seven reds being the standing eight by
+  identity. Site pinned three ways with no reliance on any report field — §1's `M …/Ui/Thread.php`, the patch on
+  disk, and a failure message carrying the component's own rendered HTML. **This discharges the tick-279 debt**,
+  and it is recorded here because the wave that produced it said it had not.
+- ⚠️ **A test that reaches a new branch is not evidence for the change that added the branch — ask what it
+  CREATES, not which arm it takes.** `test_g19_08_ghost_risk_flag_without_person` (wave 156) is the first thing
+  in the suite to reach `Thread::mount()`'s `else` arm, is real and passes — and it creates **no `LeadScore` row
+  at all**, so under a reinstated `$personId ?: $this->customer->id` the fallback query returns null,
+  `null === 'F'` is false, and its `assertDontSee` survives. ⭐ The coder disclosed the gap itself, against its
+  own interest (*"They are not the same proposition"*), which is the shape thirty waves have asked for. The
+  distinguishing arrangement needs a `LeadScore` row whose `person_id` equals the customer's id — and whether
+  that is constructible at all is the open half of the FK finding below.
+- ⭐ **`people` is `ENABLE`+`FORCE ROW LEVEL SECURITY`, and a Postgres FK check is an RI trigger that BYPASSES
+  RLS — so `Person::count()` returning 0 is compatible with the FK finding a row.** Measured at tick 282 from
+  `X-121/…/2026_08_30_000001_create_x121_noun_tables.php:190-201`. Wave 156 used it to explain why
+  `LeadScore::create(['person_id' => $customer->id])` succeeded before wave 155: the test database is claimed to
+  carry ~96 orphaned **committed** `people` rows invisible to every application query, and `customers_id_seq`
+  used to land inside their id range. ⚠️ **This column could reproduce none of the psql figures** —
+  `pg_class.reltuples`, `last_value`, `is_deferrable`, `session_replication_role` are all outside its allow list
+  — so the **mechanism** is verified and the **count** is not, and the two must not be blurred (tick 268). ⛔ If
+  the count is real the suite is not hermetic and every green in this lane's history rests on hidden committed
+  state; that is in lane (`goaiez_antig_sixty_test` is ours) and is deliberately **not** paired with a test wave.
+- **Backlog at tick 282 — wave 157 is evidence and report fields only; the next build waits on it.** RULED
+  (blocks above). The tip `5c8b904a` is gated and pushed (`tests 2439 · passed 2431 · assertions 10777`, the
+  standing eight by identity), wave 155's fix is proven at the `if ($personId)` arm, and what is open is two
+  unlike propositions that must be **two numbered items**: whether the new `else`-arm test is load-bearing under
+  any mutation, and whether anything now distinguishes the shipped tree from `eb2d4390~1` — the mutation last
+  wave's item 2 question 3 named and nobody ran. ⛔ Both go over as **properties with no shape named** (the
+  conclusion-withheld form is 13-for-13 and has corrected this column four times on this module's seams), and
+  ⛔ *running that mutation, finding it survives, and leaving it unsaid* remains unavailable. With them: the
+  `NOT RUN`/`MUTATION` discrepancy answered by **cause** under the tick-250 method (4-for-4, a full confession
+  every time, and it needs its honest exit kept), the generator ruled above, `STAGES:` from §3, the backlog
+  census with its listing, and **one gate at the end that runs its `pest.lock` wait to its own end**. ⛔ No
+  production code, no `⛔ REFUSED`, no `UNRESOLVED` (X-01 is one of the thirteen and nothing external is
+  missing), no numbers published (tick 208), and never edit a standing assertion. `TRACK 1 ACTION 1` stands and
+  is not a blocker: `tests/Feature/Architecture/InboxTest.php`, cited by `Models/Message.php:24` and
+  `ThreadCloseSummaries.php:209`, exists on **neither** this branch nor `origin/main`. Live list
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **15** rows at tick 282, membership unchanged since tick
+  278; `app/app/Modules/` → **0**; stub pile across the thirteen **11**. Re-run all three; never inherit them.
 
 ## Style
 
