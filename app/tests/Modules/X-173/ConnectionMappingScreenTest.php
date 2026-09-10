@@ -165,4 +165,29 @@ class ConnectionMappingScreenTest extends TestCase
 
         $this->assertSame(0, AccountMapping::where('business_id', $bizId)->count());
     }
+
+    public function test_connect_states_realm_id_discarded()
+    {
+        $bizId = self::provisionTenant()->id;
+        Tenancy::set($bizId);
+
+        $screen = Livewire::test(ConnectionMappingView::class)
+            ->set('realmId', 'realm_qb_typed_by_owner')
+            ->call('connect')
+            ->assertSee('The company id was not stored');
+
+        $this->assertSame(0, AccountingConnection::where('business_id', $bizId)->count());
+    }
+
+    public function test_connect_refuses_unsupported_provider()
+    {
+        $bizId = self::provisionTenant()->id;
+        Tenancy::set($bizId);
+
+        Livewire::test(ConnectionMappingView::class)
+            ->set('provider', 'ledgerbeans')
+            ->call('connect')
+            ->assertSee('Choose a ledger this app connects to')
+            ->assertDontSee('Waiting on');
+    }
 }

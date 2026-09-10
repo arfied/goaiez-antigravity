@@ -13,6 +13,7 @@ use App\Modules\X211\Domain\FeeWithoutTermException;
 use App\Modules\X211\Domain\UnreferencedPaymentException;
 use App\Modules\X211\Models\ArDunningAction;
 use App\Modules\X211\Models\ArPlanTerm;
+use App\Modules\X211\Models\OfflinePayment;
 use App\Modules\X211\Models\ReceivableState;
 use App\Support\Tenancy;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -23,6 +24,8 @@ class AgeingByReason extends Component
     public array $reference = [];
 
     public array $amountCents = [];
+
+    public array $paymentMethod = [];
 
     public array $term = [];
 
@@ -90,10 +93,11 @@ class AgeingByReason extends Component
     {
         $this->error = null;
         $this->success = null;
+        $this->refused = null;
         $businessId = Tenancy::idOrFail();
 
         if (empty($this->reference[$invoiceId])) {
-            $this->error = 'We need a reference number or a photo.';
+            $this->error = 'We need the reference number. This screen cannot take a photo yet, so a reference is the only way to log this payment.';
 
             return;
         }
@@ -105,14 +109,21 @@ class AgeingByReason extends Component
             return;
         }
 
+        $method = (string) ($this->paymentMethod[$invoiceId] ?? 'check');
+        if (! in_array($method, OfflinePayment::METHODS, true)) {
+            $this->error = 'Choose how the payment arrived: cash, cheque, Zelle or wire.';
+
+            return;
+        }
+
         try {
             $ref = $this->reference[$invoiceId];
 
             app(InvoiceReader::class)->forBusiness($businessId, $invoiceId);
 
-            $action->handle($businessId, $invoiceId, $amount, 'check', $ref);
+            $action->handle($businessId, $invoiceId, $amount, $method, $ref);
             $this->success = 'Payment logged.';
-            unset($this->reference[$invoiceId], $this->amountCents[$invoiceId]);
+            unset($this->reference[$invoiceId], $this->amountCents[$invoiceId], $this->paymentMethod[$invoiceId]);
         } catch (UnreferencedPaymentException $e) {
             $this->refused = $e->getMessage();
         } catch (ModelNotFoundException) {

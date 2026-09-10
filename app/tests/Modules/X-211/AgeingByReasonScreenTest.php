@@ -97,7 +97,7 @@ class AgeingByReasonScreenTest extends TestCase
             ->assertDontSee('INV-A3')
             ->assertDontSee('INV-B1')
             ->call('logPayment', $inv1->id)
-            ->assertSee('reference number or a photo')
+            ->assertSee('This screen cannot take a photo yet')
             ->set('reference.'.$inv1->id, 'CHK-123')
             ->call('logPayment', $inv1->id)
             ->assertSee('Enter the amount that was paid');
@@ -338,5 +338,94 @@ class AgeingByReasonScreenTest extends TestCase
             ->assertOk()
             ->assertSeeHtml('wire:key="ageing-inv-'.$inv1->id.'"')
             ->assertSeeHtml('wire:key="ageing-inv-'.$inv2->id.'"');
+    }
+
+    public function test_a_logged_payment_does_not_leave_a_stale_late_fee_refusal_on_the_screen(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'Stale', 'last_name' => 'Panel']);
+        $inv = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-S1',
+            'total_cents' => 10000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(20),
+        ]);
+
+        Livewire::actingAs($owner)->test(AgeingByReason::class)
+            ->assertOk()
+            ->set('feeCents.'.$inv->id, 2500)
+            ->call('applyLateFee', $inv->id)
+            ->assertSee('Late fee not applied')
+            ->set('reference.'.$inv->id, 'CHK-77')
+            ->set('amountCents.'.$inv->id, 10000)
+            ->call('logPayment', $inv->id)
+            ->assertSee('Payment logged')
+            ->assertDontSee('Late fee not applied');
+    }
+
+    public function test_a_logged_payment_records_the_method_the_owner_chose(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'Wire', 'last_name' => 'Payer']);
+        $inv = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-M1',
+            'total_cents' => 10000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(20),
+        ]);
+
+        Livewire::actingAs($owner)->test(AgeingByReason::class)
+            ->assertOk()
+            ->set('reference.'.$inv->id, 'WIRE-88')
+            ->set('amountCents.'.$inv->id, 10000)
+            ->set('paymentMethod.'.$inv->id, 'wire')
+            ->call('logPayment', $inv->id)
+            ->assertSee('Payment logged');
+
+        $payment = OfflinePayment::where('business_id', $biz->id)->firstOrFail();
+        $this->assertSame('wire', $payment->payment_method);
+    }
+
+    public function test_a_payment_method_outside_the_column_vocabulary_is_refused_and_writes_nothing(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'Bogus', 'last_name' => 'Method']);
+        $inv = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-M2',
+            'total_cents' => 10000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(20),
+        ]);
+
+        Livewire::actingAs($owner)->test(AgeingByReason::class)
+            ->assertOk()
+            ->set('reference.'.$inv->id, 'REF-99')
+            ->set('amountCents.'.$inv->id, 10000)
+            ->set('paymentMethod.'.$inv->id, 'bitcoin')
+            ->call('logPayment', $inv->id)
+            ->assertSee('Choose how the payment arrived');
+
+        $this->assertSame(0, OfflinePayment::where('business_id', $biz->id)->count());
     }
 }

@@ -37,6 +37,7 @@ class CardScreen extends Component
         $this->forgetCardFields();
         $this->error = null;
         $this->success = null;
+        $this->waiting = null;
 
         try {
             $card = CardToken::where('business_id', Tenancy::idOrFail())->findOrFail($cardId);

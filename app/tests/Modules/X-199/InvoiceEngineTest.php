@@ -535,3 +535,33 @@ test('a pending overflow charge is refused, not charged', function () {
         expect($overflow->reference_id)->toBe('ch_pending_x199_000000000');
     });
 });
+
+test('recording a payment with no amount records the balance and never overpays', function () {
+    Event::fake([InvoicePaid::class, OverflowReversed::class]);
+
+    $business = Business::factory()->create();
+    $customer = Person::create(['business_id' => $business->id]);
+
+    Tenancy::actingAs((int) $business->id, function () use ($business, $customer) {
+        $engine = app(InvoiceEngine::class);
+
+        $result = $engine->issueInvoice(
+            $business->id,
+            $customer->id,
+            [['description' => 'Test', 'quantity' => 1, 'unit_price_cents' => 10000]],
+            'net_30'
+        );
+        $invoice = $result['invoice'];
+
+        $engine->recordPayment($business->id, $invoice->id, 3000);
+
+        $invoice->refresh();
+        expect($invoice->paid_cents)->toBe(3000);
+
+        $engine->recordPayment($business->id, $invoice->id);
+
+        $invoice->refresh();
+        expect($invoice->paid_cents)->toBe(10000);
+        expect($invoice->status)->toBe('paid');
+    });
+});
