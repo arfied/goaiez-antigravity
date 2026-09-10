@@ -450,6 +450,16 @@ class X01Test extends TestCase
         $response2->assertDontSee('Ghost Risk', false);
     }
 
+    public function test_g19_08_ghost_risk_flag_without_person(): void
+    {
+        $admin = User::factory()->create();
+        $biz = TestCase::provisionTenant(['name' => 'Ghost Biz']);
+        $customer = Customer::factory()->create(['business_id' => $biz->id, 'name' => 'Ghosty']);
+
+        $response = Livewire::actingAs($admin)->test(Thread::class, ['customer' => $customer]);
+        $response->assertDontSee('Ghost Risk', false);
+    }
+
     /**
      * [G19-15] the thread updates without a refresh
      */
