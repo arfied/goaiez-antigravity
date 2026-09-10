@@ -450,7 +450,7 @@ class X01Test extends TestCase
         $response2->assertDontSee('Ghost Risk', false);
     }
 
-        public function test_g19_08_ghost_risk_flag_without_person(): void
+    public function test_g19_08_ghost_risk_flag_without_person(): void
     {
         $admin = User::factory()->create();
         $biz = TestCase::provisionTenant(['name' => 'Ghost Biz']);
