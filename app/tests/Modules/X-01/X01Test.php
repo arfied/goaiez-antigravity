@@ -688,7 +688,6 @@ class X01Test extends TestCase
     }
 
     /**
-     * BUILD PROPOSAL: door-level whitespace gap — validate and refuse empty chat bodies at the door before emitting an event. Owner: X-102
      */
     public function test_chat_lead_captured_listener_ignores_whitespace_message(): void
     {
