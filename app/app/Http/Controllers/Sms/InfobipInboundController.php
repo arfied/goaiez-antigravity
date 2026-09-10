@@ -118,7 +118,7 @@ final class InfobipInboundController extends Controller
             // below as another fallback. The same fallback in InfobipDeliveryController
             // is NOT in scope here.)
             $text = $message['cleanText'] ?? $message['text'] ?? null;
-            if (! is_string($text) && isset($message['content'][0]) && is_array($message['content'][0]) && (!isset($message['content'][0]['type']) || $message['content'][0]['type'] === 'TEXT')) {
+            if (! is_string($text) && isset($message['content'][0]) && is_array($message['content'][0]) && (! isset($message['content'][0]['type']) || $message['content'][0]['type'] === 'TEXT')) {
                 $text = $message['content'][0]['cleanText'] ?? $message['content'][0]['text'] ?? null;
             }
             $text = is_string($text) ? $text : InboundMediaPayload::text($message);
