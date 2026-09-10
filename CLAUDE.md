@@ -9204,3 +9204,105 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     MONEY-175's item 5 is a two-command **positive control on this table** rather than a census, because
     an uncorroborated census is one tick from rulings 95/100/111 striking a live population (rulings 192,
     207, 294).
+334. **⭐⭐ Ruling 33 states TWO requirements and they are redundant with each other — the FREEZE
+    through the render is the load-bearing one and the derived timestamp is defence-in-depth against a
+    later edit removing it, so a literal date with the clock frozen is SAFE and is still refused as a
+    copy-source (RULED by the lane supervisor 2026-09-10 06:1x, on MONEY-175's
+    `DeclinesScreenTest:437`).** Ruling 33 requires that a test seeding rows against a
+    `startOfWeek()`/`startOfDay()` filter *"derives its timestamps from `now()->startOfWeek()` **and**
+    keeps the clock frozen through the render"*, and closes *"a literal date … is refused at review."*
+    MONEY-175's declines test seeds from the literal `Carbon::parse('2026-09-09 10:00:00')` while its
+    two siblings, written in the same wave, derive from `now()->startOfWeek()->addDays(3)`. **Measured,
+    the literal is safe**: the clock is frozen at the top and cleared as the method's last line, so
+    `Declines.php:60`'s `now()->startOfWeek()` is computed from the *same frozen instant* — Monday
+    2026-09-07 against rows stamped Wednesday 2026-09-09 — and the relation holds deterministically
+    whatever the real date. ⭐ **So the two halves are not two protections, they are one protection and
+    a spare.** MONEY-63's bomb (ruling 33's origin) was a literal seeded and then *the clock cleared
+    before the render*: the failure was always the **missing freeze**, and derive-alone is in fact the
+    weaker half — with no `setTestNow` at all, `now()->startOfWeek()` in the fixture and `startOfWeek()`
+    in the component can still straddle a week boundary if the test executes across Sunday midnight.
+    **RULED, and ruling 33 is UNCHANGED in force:** a reviewer meeting a literal date **with the clock
+    frozen through the read** records it and does not BLOCK, because the defect 33 exists to catch is
+    measurably absent; a literal **without** the freeze is the bomb and is still refused; and the
+    derived form stays **mandatory in every brief**, because it is what survives a later edit moving or
+    removing the `setTestNow` — which is precisely the edit MONEY-63 made. ⚠️ **The reason it is
+    nonetheless corrected forward, as a named item in MONEY-176 rather than left at ruling 96's
+    recording grade: it sits in the file ruling 33 was written about, so it is the nearest copy-source
+    for the exact bomb.** A future test cloned from its neighbour inherits the literal, and if the
+    cloner also moves the clear — as MONEY-63 did — the bomb is back with no ruling-33 tell in the diff.
+    ⚠️ The generalisable half: **a rule stating two requirements owes a statement of which one carries
+    the load**, or a reviewer meeting a half-compliant instance cannot tell a safe departure from a
+    defect, and will either BLOCK a correct tip or wave through a broken one. This ledger has now
+    written three rules of that shape (33, 39, 121) and only this one has been decomposed.
+
+335. **⭐⭐ `due_date` is a DATE column, so the tie there is GUARANTEED rather than incidental — a
+    stronger case than the three MONEY-175 fixed, which needed a frozen clock to produce one — and
+    `InvoiceReader` reaches for `orderBy('id')` in the two methods that have no domain key and omits it
+    from the four that do (RULED by the lane supervisor 2026-09-10 06:1x, briefed as MONEY-176).**
+    Ruling 333 fixed X-199's three `created_at` lists and measured an eleven-member remainder. The two
+    that complete X-199 are its sharpest, and for opposite reasons.
+    **(a) `X-199/Ui/Unpaid.php:63` — `orderBy('due_date', 'asc')` on the lane's main receivables
+    list.** `2026_08_30_000026_create_x199_invoice_tables.php:36` is **`$table->date('due_date')`** and
+    `Invoice.php:18` casts it `'date'` — no time component exists — so two invoices due the same day are
+    **byte-identical in the ordering column**. Ruling 333's three needed ruling 33's frozen clock to
+    manufacture a tie; this one is the ordinary state of any business that issues two invoices on the
+    same terms on the same day, and it needs no clock control in the test at all. ⚠️ The branch carries
+    **no `limit()`**, so unlike `Unpaid.php:58` the tie reshuffles the page rather than deciding which
+    row is dropped — smaller harm, larger frequency.
+    **(b) `X-199/Ui/MoneyPaidToday.php:50` — `orderByDesc('paid_at')` under a
+    `paid_at >= now()->startOfDay()` filter.** This is ruling 333's own mechanism verbatim, one filter
+    over: ruling 107's existing test freezes the clock and seeds `'paid_at' => $base`, so every row
+    already shares one timestamp in the only fixture the screen has.
+    ⭐ **The self-contradiction tell is inside `InvoiceReader` itself** (ruling 98): `:34`
+    (`linesForInvoice`) and `:87` (`numbersById`) order by **`id`**, and `:43`, `:53`, `:63`, `:72` —
+    `openForBusiness`, `openUnpaidForBusiness`, `openOverdueForBusiness`, `unpaidOverdueForBusiness` —
+    order by `due_date` alone. The author reached for `id` in exactly the two methods where there was no
+    domain key to reach for, and never once as a **tiebreak** behind one. One file, two idioms, and the
+    four that feed rendered screens are the four without it. ⛔ Those four are **not** this wave: they
+    feed four different X-211 screens (`InvoiceThreadBeside`, `PaymentplanBuilder`,
+    `CollectionsPackagePreview`, `AgeingByReason`) and therefore cost four proofs, which is the whole
+    cost of a wave (the one-line changes are not). They are MONEY-177.
+    **RULED, and the DIRECTION is part of the ruling:** a tiebreak runs the same way as the clause it
+    breaks — `paid_at DESC` takes `->orderByDesc('id')` (newest first, then newest-created), and
+    `due_date ASC` takes **`->orderBy('id')`** (oldest due first, then oldest raised). ⚠️ That is why
+    MONEY-176's two lines do not match each other, and why they do not both match MONEY-175's three; a
+    reviewer meeting an ascending `orderBy('id')` after three descending ones should read it as the
+    clause it sits behind and not as an inconsistency. ⛔ No migration and no unique index: `due_date`
+    is not unique by nature and never can be, and `paid_at` collides legitimately.
+    ⚠️ Blast radius measured with the whole `assertSeeInOrder` population (rulings 46, 86, 146): the
+    tree carries **19** such call sites, of which the lane's own are MONEY-175's three,
+    `InvoicesScreenTest:67` (ruling 333 measured it safe — `$inv1` is forced an hour earlier),
+    `CreditsScreenTest:84,:88`, `CardScreenTest:272`, `ConnectionMappingScreenTest:146` and
+    `ConnectCardScreenTest:216` (ruling 204's trio). **NOT ONE is over `MoneyPaidToday` or `Unpaid`'s
+    unpaid branch**, so zero assertions move and both items **add** methods (rulings 68, 70).
+    ⚠️ Ruling 255 measured, not assumed: `MoneyPaidToday`'s public properties are
+    `$explainedInvoiceId`, `$error` and `$invoiceLines` — the last empty on a fresh mount, and ruling
+    245 measured an Eloquent collection dehydrating to `[null, $meta]` with no attributes — so no needle
+    can be satisfied by the `wire:snapshot` payload that `assertSeeInOrder` alone searches.
+
+336. **⭐⭐ `./vendor/bin/pest` and `./vendor/bin/pint` DO NOT EXIST at this checkout's root, the
+    standing instruction in every brief since ruling 75 has been wrong as a literal, and every coder
+    has silently corrected it until this one reported it (RULED by the lane supervisor 2026-09-10
+    06:1x, on MONEY-175's `REFUSED:`).** Measured: `ls -d /home/goaiez/agents/grs-antig-money/vendor`
+    is *"No such file or directory"* and the binaries are at `app/vendor/bin/`. Ruling 75 requires
+    every brief to say *"`./vendor/bin/pint <touched paths>` before each commit"*, ruling 189 repeats
+    the form, and ruling 34 quotes `bin/supervise.sh` §6 running *"`./vendor/bin/pint --test` **from
+    `app/`**"* — the `from app/` is doing all the work and no brief has ever carried it. Run 200 ran
+    `cd app && ./vendor/bin/pest`, got the right answer, and wrote both substitutions into `REFUSED:`.
+    ⭐ **RULED: the coder's report is correct, spends no dispatch, and the defect is the brief's**
+    (rulings 60b, 71, 94, 106, 118, 217, 254). **The working invocations, recorded so no brief
+    re-derives them: `cd app && ./vendor/bin/pest …` and `cd app && ./vendor/bin/pint <paths relative
+    to `app/`>`** — the `cd` is the coder's to run, never this seat's (ruling 192).
+    ⚠️ **The generalisable half is the one worth keeping, and it is new: an instruction that every
+    executor has silently corrected is a latent defect, not a working instruction.** It looks like it
+    works because the population of executors has so far all been competent at the same repair; it
+    surfaces the day one is not, and it surfaces as *the lint did not run* — which is invisible, because
+    a lint that never ran and a lint that passed produce the same silence. That is ruling 61's
+    passes-for-the-wrong-reason applied to a **command** rather than an assertion, and the only reason
+    it was ever visible here is ruling 313, which made `REFUSED:` cover *every* departure and not only
+    what a guard stopped. **313 has now paid for itself twice in two waves.**
+    ⚠️ This is the ruling 66/75/82/92/94/106/118/147/153/175/183/189/192/193/195/198/200/202/204/207/
+    210/215/217/218/219/222/225/226/228/229/231/232/233/235/237/238/241/242/243/244/246/247/252/254/271/
+    284/287/293/299/300/308/314/331 family a **thirty-second** time, and it is ruling 300's amendment
+    (*"a ledger line that establishes an instrument quotes the invocation"*) recurring one tool over,
+    ten waves later, in a lane that had already written 300 down.
