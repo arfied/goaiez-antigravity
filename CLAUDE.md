@@ -989,3 +989,119 @@ deleted on `main`**). Per REV-126 the supervisor moves those on our side *before
 must be real work rather than a touch. Both were moved this tick with content that stands on its own — §4's
 root-mailbox check and §3's redirect rule — which is protection and record in one commit. ⚠️ **The verdict is
 good only for `(our sha, their sha)`** and is re-derived at every merge; nothing here authorises a merge.
+
+## REV-136 — a negative result from a scoped command is a statement about the scope
+
+⭐ **Run 131 is a `PASS-WITH-NOTES`, and the best line in it is one I did not ask for.** The brief's closing
+sentence was *"the most useful thing you can write is that one of the three is already built under a different
+name — go looking for it properly."* Two of the three came back **`DISCHARGED`**, and the third came back
+`STANDS` with a reason. `assertTrue(true)` is at **0** in `app/tests/Modules/C-Reviews/CReviewsTest.php`
+(`r131-counts.txt`, `3 → 0`), the failing set is the eight baseline names plus exactly one `NOT BUILT:` line,
+phpstan is `errors 0`, and the ordering held for the fifth run running: gate `00:30:20` → doctor `00:30:34` →
+state commit `00:31:05` → `REPORT.md` `00:31:35`. `d2a7734e` is pushed.
+
+⭐ **REV-135 §7's amended floor fired correctly on its first use.** The gate reads
+`tests 2450 · passed 2441 · FAILED 7 · errors 2` against run 130's `passed 2442 · FAILED 6` — nine `✗` lines,
+eight of them the untouched baseline and the ninth `test_g1_68_assertion` carrying
+`NOT BUILT: G1-68 — no Google review removal preparation or human confirmation logic found.` A `grep` for the
+literal prefix separates the declared gap from a regression, which is the whole property REV-134 §1 protected.
+The report also names the cause of the one-count move (REV-129 §2) without being asked twice.
+
+⛔ **§1. "C-REVIEWS'S HEADLINE LAW IS UNBUILT" (REV-135 §5) IS WRONG, AND THE GREP THAT PRODUCED IT IS PRINTED
+DIRECTLY ABOVE IT. P-110 IS BUILT — IN THE LEGACY APP, WHICH THE COMMAND DID NOT LOOK AT (2026-09-10, my
+defect).** REV-135 §5 ruled the next build wave from this:
+
+```
+$ grep -rn 'public_threshold\|solicitation_policy\|review_destinations' app/app/Modules/C-Reviews/ app/app/Modules/X-181/
+  (no output)
+```
+
+Two module directories. The coder's item-1 survey widened the scope, as briefed, and the same names are
+everywhere outside them. Re-measured this tick, tree-scoped, with the command beside the number:
+
+```
+$ grep -rln 'ReviewDestinationSetting\|invite_threshold' app/app/
+  app/app/Services/Destinations/DestinationSettings.php · Services/Destinations/ReviewInvites.php
+  app/app/Services/Reviews/ReviewGating.php · Services/Reviews/ReviewRouter.php
+  app/app/Models/ReviewDestinationSetting.php · Models/AutopilotSettings.php · Models/PlatformSetting.php
+  app/app/Enums/ReviewDestination.php · Enums/ReviewReofferTrigger.php · Enums/InviteAttemptStatus.php
+  app/app/Livewire/Account/Credit.php · Services/Agent/ReviewAskBridge.php   … 17 files
+$ grep -rn 'invite_threshold' app/database/migrations/
+  create_review_destinations_table.php:47  smallInteger('invite_threshold')
+  :68  CHECK (destination <> 'trustpilot' OR invite_threshold = 0)
+  :76  CHECK (invite_threshold BETWEEN 0 AND 5)
+```
+
+The roster exists with its scale constraint, its Trustpilot rule and its enabled-has-a-link rule; the gating
+service, the invite service, the router, two Livewire screens (`Setup/ReviewRules`, `Admin/ReviewQueue`), four
+console commands and three jobs all read it. **What is unbuilt is not the law — it is the module's reach to
+it.** `app/app/Modules/C-Reviews/` holds six thin Actions, no `Domain/`, and touches none of the above.
+
+⭐ **That inverts the next wave and shrinks it.** REV-135 §5 briefed a greenfield build needing migrations.
+The real work is a **seam**: what, if anything, should C-Reviews call, and does its own send path honour
+`invite_threshold` today. Smaller, better defined, and it needs no migration — so it is not blocked on the one
+thing I said it was blocked on.
+
+**RULED: a ruling that something DOES NOT EXIST is produced by a command whose scope is the whole tree, and
+the scope is printed beside the result. A negative result from a scoped command is a statement about the
+scope, not about the tree.** REV-132's erratum ruled the positive half of this — *"any count of code sites
+that enters a brief or a ruling is produced by a command whose scope is the tree"* — and I violated it four
+sections later in the same file, in the direction it did not literally name. **Eighth instance**, and the
+first where the defect is an *absence* rather than a count. ⭐ The saving grace is structural and worth
+keeping: the brief told the coder to *widen* the survey rather than to confirm my three field names, so the
+wave corrected its own supervisor. **A brief that hands over a hypothesis instead of a conclusion is how a
+scoped grep gets caught.**
+
+⛔ **§2. I FROZE THREE DOCBLOCKS AND TWO OF THEM WERE FALSE BY THE END OF THE SAME WAVE (my defect).** The
+brief said, as a hard limit: *"Leave the three docblocks exactly as they are. They record the original survey.
+You change one line per test."* The coder complied exactly. So `CReviewsTest.php` now reads
+
+```
+/**
+ * [G20-06] named in the header
+ * ⛔ REFUSED: surveyed Actions, Database, Events, Listeners, Models, Ui and found no implementation.
+ */
+public function test_g20_06_header(): void
+{
+    $this->assertTrue(Schema::hasTable('review_destinations'));
+    …
+```
+
+— a refusal docblock over a body asserting the implementation exists, while `JOURNAL.md` records
+`DISCHARGED`. `grep -c REFUSED` is **3** and `grep -c 'assertTrue(true)'` is **0**. The instruction was
+correct when written and false by the time the wave closed, and the coder had no licence to fix it.
+
+**RULED: a refusal docblock is APPEND-ONLY. The discharge is written beneath the original refusal with its
+date and `file:line`, never in place of it** — the original survey is the record of what was true then, and
+the discharge is the record of what re-reading found. Deleting the refusal loses REV-129's whole point;
+leaving it alone lies to the next reader. Same shape as `docs/DECISIONS.md` being append-only, one file down.
+
+⚠️ **§3. THE DISCHARGING CITATIONS DO NOT LAND ON WHAT THEY NAME.** `REPORT.md` cites
+`create_review_destinations_table.php:31` for `invite_threshold` (`:31` is `Schema::create(...)`; the column
+is `:47`), `ReviewDestinationSetting.php:40` for a per-destination policy (`:40` is `final class …`), and
+`ReviewRouter.php:333` for the fix-then-ask loop (`:333` is prose inside a docblock). Every one is the **first
+grep hit in the file**, not the line that settles the claim. The substance is real — I opened all three — and
+that is exactly why this is a note: the citations survived review only because the reviewer re-derived them.
+
+**RULED: a `file:line` offered as discharging a refusal is the line that CONTAINS the thing, and the reviewer
+opens it.** REV-129 asked for *"the `file:line` that discharges it"*; a file-plus-arbitrary-line is a file
+citation wearing a line number, and this lane already carries 64 unresolvable citations from the same habit.
+
+⛔ **§4. THE `state.py` COMMIT NAMED ONE OF THE LEDGER'S TWO FILES, SO THE LEDGER AND THE JOURNAL DISAGREE AT
+`HEAD`.** `d2a7734e` is `.agents/state/JOURNAL.md | 3 +++` and nothing else; the three matching `note` rows
+`state.py` wrote into `.agents/state/BUILD-STATE.json` are still `M` in the working tree. The brief said
+*"Commit the state changes, named paths"* — named-paths is right and is the standing rule, and the coder named
+the file it had watched change. **RULED: a brief that asks for a `state.py` commit names BOTH
+`.agents/state/JOURNAL.md` and `.agents/state/BUILD-STATE.json` in the command it hands over.** ⚠️ And the
+supervisor cannot repair this one: `.agents/state/**` is the coder's column, so it carries into the next wave
+as a numbered item. Not a `BLOCK` — nothing is lost, the writes are on disk and `state.py` authored them.
+
+⚠️ **§5. THE ONE NUMBER THAT PROVES THE WAVE IS IN AN ARTEFACT AND NOT IN THE REPORT.**
+`r131-counts.txt` reads `28 / 3 / 28 / 0` — tests before, `assertTrue(true)` before, tests after,
+`assertTrue(true)` after. **`3 → 0` is the wave**, and `REPORT.md` names the file under "Artefacts Created"
+without ever quoting it. REV-135 §3's redirect rule is why the number exists at all and is why this is a note
+rather than a finding — *the artefact cannot be paraphrased, and it was not*. ⭐ The ladder holds and gains a
+rung: a redirect beats a paste-ready string, **and a redirect whose expected value the brief states in advance
+beats a bare redirect**, because then the report has a number to agree or disagree with. `r131-pint.txt` is
+this run's positive control for the same rule — it caught a real first-pass failure
+(`fully_qualified_strict_types`) and then a pass, which no summary would have shown.
