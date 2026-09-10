@@ -67,7 +67,7 @@
                     @endforeach
                 </div>
                 <div class="mt-6">
-                    <x-ui.button size="default" variant="quiet" wire:click="toggleShowAll">
+                    <x-ui.button size="default" variant="quiet" wire:click="toggleShowAll" wire:loading.attr="disabled" wire:target="toggleShowAll">
                         {{ $showAll ? 'Show this week only' : 'Show all' }}
                     </x-ui.button>
                 </div>

@@ -421,4 +421,50 @@ class X117Test extends TestCase
             );
         }
     }
+
+    public function test_an_order_already_cancelled_is_refused_and_its_stock_is_not_returned_twice(): void
+    {
+        $engine = new \App\Modules\X117\Domain\CheckoutEngine();
+        $biz = TestCase::provisionTenant(['name' => 'Cancel Test', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $businessId = $biz->id;
+
+        $order = \App\Modules\X117\Models\Order::create([
+            'business_id' => $businessId,
+            'customer_id' => null,
+            'order_number' => 'ORD-TEST',
+            'status' => 'pending_payment',
+            'total_cents' => 1500,
+            'auth_token' => 'auth_token',
+        ]);
+
+        $sellable = \App\Modules\X117\Models\Sellable::create([
+            'business_id' => $businessId,
+            'name' => 'Item',
+            'sku' => 'ITEM-01',
+            'unit_price_cents' => 1500,
+            'inventory_quantity' => 10,
+        ]);
+
+        \App\Modules\X117\Models\OrderLine::create([
+            'business_id' => $businessId,
+            'order_id' => $order->id,
+            'sellable_id' => $sellable->id,
+            'quantity' => 1,
+            'subtotal_cents' => 1500,
+        ]);
+
+        $engine->cancelOrder($businessId, $order->id);
+
+        $sellable->refresh();
+        $this->assertSame(11, $sellable->inventory_quantity);
+
+        try {
+            $engine->cancelOrder($businessId, $order->id);
+            $this->fail('A second cancel was accepted: cancelOrder has no status guard.');
+        } catch (\App\Modules\X117\Domain\OrderNotCancellableException $e) {
+            $sellable->refresh();
+            $this->assertSame(11, $sellable->inventory_quantity);
+        }
+    }
 }
