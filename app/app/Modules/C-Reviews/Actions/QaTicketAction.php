@@ -7,7 +7,6 @@ namespace App\Modules\CReviews\Actions;
 use App\Modules\CReviews\Events\CsatRequested;
 use App\Modules\CReviews\Models\QaSetting;
 use App\Modules\CReviews\Models\ReviewRequest;
-use App\Modules\X181\Models\QaTicket;
 use Illuminate\Support\Facades\DB;
 
 final class QaTicketAction
@@ -21,16 +20,14 @@ final class QaTicketAction
             $setting = QaSetting::where('business_id', $businessId)->first();
             $slaHours = $setting ? ((int) $setting->sla_hours) : 48;
 
-            $ticket = QaTicket::create([
-                'business_id' => $businessId,
-                'person_id' => $req->customer_id,
-                'review_request_id' => $req->id,
-                'subject' => 'Low review rating triage',
-                'description' => 'Review rating was '.$req->rating.' stars.',
-                'status' => 'open',
-                'arrived_at' => now(),
-                'sla_due_at' => now()->addHours((int) $slaHours),
-            ]);
+            $ticket = app(\App\Modules\X181\Actions\QaTicketCreateAction::class)->handle(
+                businessId: $businessId,
+                personId: $req->customer_id,
+                subject: 'Low review rating triage',
+                description: 'Review rating was '.$req->rating.' stars.',
+                reviewRequestId: $req->id,
+                slaHours: (int) $slaHours
+            );
 
             return [
                 'review_request_id' => $req->id,
@@ -42,14 +39,11 @@ final class QaTicketAction
 
     public function resolve(int $businessId, int $ticketId): void
     {
-        $ticket = QaTicket::where('business_id', $businessId)->findOrFail($ticketId);
+        $ticket = DB::table('qa_tickets')->where('business_id', $businessId)->where('id', $ticketId)->first();
+        if (!$ticket) throw new \Exception("Not found");
 
         if ($ticket->status !== 'resolved') {
-            $ticket->update([
-                'status' => 'resolved',
-                'resolved_at' => now(),
-                'csat_requested_at' => now(),
-            ]);
+            app(\App\Modules\X181\Actions\QaTicketResolveAction::class)->handle($businessId, $ticketId, 'Resolved');
 
             CsatRequested::dispatch(
                 $businessId,
@@ -61,14 +55,12 @@ final class QaTicketAction
 
     public function receiveCsat(int $businessId, int $ticketId, int $score): void
     {
-        $ticket = QaTicket::where('business_id', $businessId)->findOrFail($ticketId);
+        $ticket = DB::table('qa_tickets')->where('business_id', $businessId)->where('id', $ticketId)->first();
+        if (!$ticket) throw new \Exception("Not found");
 
         // TEST ANCHOR: receiving a CSAT of 1 on a resolved ticket sets it back to open and marks reopened_at
         if ($score === 1 && $ticket->status === 'resolved') {
-            $ticket->update([
-                'status' => 'open',
-                'reopened_at' => now(),
-            ]);
+            app(\App\Modules\X181\Actions\QaTicketReopenAction::class)->handle($businessId, $ticketId, 'Reopened due to low CSAT');
         }
     }
 }

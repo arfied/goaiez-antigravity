@@ -21,25 +21,25 @@ declare(strict_types=1);
  * carries no refusal, and a ⑤ that only restates the ① protects nothing.
  */
 return [
-    // status:
+    // status: SPECCED
     'N-050' => '**no `Fact` → no skill, every action, no bypass · the gate runs BEFORE the model sees the tool · X-128 IS gate 6 and fails the build on an event with no origin · the waterfall stops at the first VALID SHAPE, never the first 200 · the optimiser\'s candidate set is the registry FILTERED BY THE GATE and can never widen it**',
 
-    // status:
+    // status: SPECCED
     'N-051' => '**no `Fact` → no skill, every action, no bypass · the gate runs BEFORE the model sees the tool · X-128 IS gate 6 and fails the build on an event with no origin · the waterfall stops at the first VALID SHAPE, never the first 200 · the optimiser\'s candidate set is the registry FILTERED BY THE GATE and can never widen it**',
 
-    // status:
+    // status: SPECCED
     'N-054' => '**no `Fact` → no skill, every action, no bypass · the gate runs BEFORE the model sees the tool · X-128 IS gate 6 and fails the build on an event with no origin · the waterfall stops at the first VALID SHAPE, never the first 200 · the optimiser\'s candidate set is the registry FILTERED BY THE GATE and can never widen it**',
 
-    // status:
+    // status: SPECCED
     'N-056' => 'it stops at the first VALID SHAPE, never the first 200 · a provider that returns a wrong shape is DEMOTED, not retried · cost order is a config row',
 
-    // status:
+    // status: SPECCED
     'N-057' => '**no `Fact` → no skill, every action, no bypass · the gate runs BEFORE the model sees the tool · X-128 IS gate 6 and fails the build on an event with no origin · the waterfall stops at the first VALID SHAPE, never the first 200 · the optimiser\'s candidate set is the registry FILTERED BY THE GATE and can never widen it**',
 
-    // status:
+    // status: SPECCED
     'N-058' => 'it stops at the first VALID SHAPE, never the first 200 · a provider that returns a wrong shape is DEMOTED, not retried · cost order is a config row',
 
-    // status:
+    // status: SPECCED
     'N-060' => '**no `Fact` → no skill, every action, no bypass · the gate runs BEFORE the model sees the tool · X-128 IS gate 6 and fails the build on an event with no origin · the waterfall stops at the first VALID SHAPE, never the first 200 · the optimiser\'s candidate set is the registry FILTERED BY THE GATE and can never widen it**',
 
     // status: SPECCED

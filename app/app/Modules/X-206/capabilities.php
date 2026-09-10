@@ -24,10 +24,10 @@ return [
     // status:
     'N-043' => 'A CREDENTIAL IS NEVER RETURNED IN PLAINTEXT TO ANY CALLER — including its owner, including an admin, including the AI. A reveal is a named, time-boxed, logged ACTION with a UI, never a return value',
 
-    // status:
+    // status: SPECCED
     'N-044' => 'a credential is scoped by OWNERSHIP — a tenant\'s key is unreachable from another tenant\'s seat, asserted cross-tenant',
 
-    // status:
+    // status: SPECCED
     'N-045' => 'no credential appears in a log, a trace, an APM payload or a crash dump (P-196\'s exhaust rule, applied to keys)',
 
     // status: SPECCED

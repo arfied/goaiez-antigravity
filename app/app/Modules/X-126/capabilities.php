@@ -24,22 +24,22 @@ return [
     // status:
     'N-049' => 'NO Fact → NO SKILL, on EVERY action, with no bypass path · a refusal always carries one of P-060\'s codes · a rate ceiling is a config ROW, never a literal ·  the gate is evaluated BEFORE the model sees the tool, not after',
 
-    // status:
+    // status: SPECCED
     'N-050' => '**no `Fact` → no skill, every action, no bypass · the gate runs BEFORE the model sees the tool · X-128 IS gate 6 and fails the build on an event with no origin · the waterfall stops at the first VALID SHAPE, never the first 200 · the optimiser\'s candidate set is the registry FILTERED BY THE GATE and can never widen it**',
 
-    // status:
+    // status: SPECCED
     'N-051' => '**no `Fact` → no skill, every action, no bypass · the gate runs BEFORE the model sees the tool · X-128 IS gate 6 and fails the build on an event with no origin · the waterfall stops at the first VALID SHAPE, never the first 200 · the optimiser\'s candidate set is the registry FILTERED BY THE GATE and can never widen it**',
 
-    // status:
+    // status: SPECCED
     'N-052' => 'NO Fact → NO SKILL, on EVERY action, with no bypass path · a refusal always carries one of P-060\'s codes · a rate ceiling is a config ROW, never a literal ·  the gate is evaluated BEFORE the model sees the tool, not after',
 
-    // status:
+    // status: SPECCED
     'N-054' => '**no `Fact` → no skill, every action, no bypass · the gate runs BEFORE the model sees the tool · X-128 IS gate 6 and fails the build on an event with no origin · the waterfall stops at the first VALID SHAPE, never the first 200 · the optimiser\'s candidate set is the registry FILTERED BY THE GATE and can never widen it**',
 
-    // status:
+    // status: SPECCED
     'N-057' => '**no `Fact` → no skill, every action, no bypass · the gate runs BEFORE the model sees the tool · X-128 IS gate 6 and fails the build on an event with no origin · the waterfall stops at the first VALID SHAPE, never the first 200 · the optimiser\'s candidate set is the registry FILTERED BY THE GATE and can never widen it**',
 
-    // status:
+    // status: SPECCED
     'N-060' => '**no `Fact` → no skill, every action, no bypass · the gate runs BEFORE the model sees the tool · X-128 IS gate 6 and fails the build on an event with no origin · the waterfall stops at the first VALID SHAPE, never the first 200 · the optimiser\'s candidate set is the registry FILTERED BY THE GATE and can never widen it**',
 
     // status: SPECCED

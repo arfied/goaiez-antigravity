@@ -40,16 +40,14 @@ return [
         'legal.retention.proposed',
     ],
     'consumes' => [
-        'consent.decided (X-204)',
+        'consent.decided',
     ],
 
     // ⛔ P-163 — @owns_table may not name one of X-121's canonical nouns.
     'owns_table' => [
         'legal_requests',
         'policy_pages',
-        'retention_rules. Must not touch X-204 decisions',
-        'any sender',
-        'X-121 history rows.',
+        'retention_rules',
     ],
     'reads_table' => [],
 

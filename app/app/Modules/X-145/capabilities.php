@@ -21,25 +21,25 @@ declare(strict_types=1);
  * carries no refusal, and a ⑤ that only restates the ① protects nothing.
  */
 return [
-    // status:
+    // status: SPECCED
     'N-050' => '**no `Fact` → no skill, every action, no bypass · the gate runs BEFORE the model sees the tool · X-128 IS gate 6 and fails the build on an event with no origin · the waterfall stops at the first VALID SHAPE, never the first 200 · the optimiser\'s candidate set is the registry FILTERED BY THE GATE and can never widen it**',
 
-    // status:
+    // status: SPECCED
     'N-051' => '**no `Fact` → no skill, every action, no bypass · the gate runs BEFORE the model sees the tool · X-128 IS gate 6 and fails the build on an event with no origin · the waterfall stops at the first VALID SHAPE, never the first 200 · the optimiser\'s candidate set is the registry FILTERED BY THE GATE and can never widen it**',
 
-    // status:
+    // status: SPECCED
     'N-054' => '**no `Fact` → no skill, every action, no bypass · the gate runs BEFORE the model sees the tool · X-128 IS gate 6 and fails the build on an event with no origin · the waterfall stops at the first VALID SHAPE, never the first 200 · the optimiser\'s candidate set is the registry FILTERED BY THE GATE and can never widen it**',
 
-    // status:
+    // status: SPECCED
     'N-057' => '**no `Fact` → no skill, every action, no bypass · the gate runs BEFORE the model sees the tool · X-128 IS gate 6 and fails the build on an event with no origin · the waterfall stops at the first VALID SHAPE, never the first 200 · the optimiser\'s candidate set is the registry FILTERED BY THE GATE and can never widen it**',
 
-    // status:
+    // status: SPECCED
     'N-059' => 'the candidate set is the action registry FILTERED BY THE GATE — never the raw registry ·  it optimises within permitted actions and can never widen them · an outcome is a LedgerEntry, never a model\'s opinion',
 
-    // status:
+    // status: SPECCED
     'N-060' => '**no `Fact` → no skill, every action, no bypass · the gate runs BEFORE the model sees the tool · X-128 IS gate 6 and fails the build on an event with no origin · the waterfall stops at the first VALID SHAPE, never the first 200 · the optimiser\'s candidate set is the registry FILTERED BY THE GATE and can never widen it**',
 
-    // status:
+    // status: SPECCED
     'N-061' => 'the candidate set is the action registry FILTERED BY THE GATE — never the raw registry ·  it optimises within permitted actions and can never widen them · an outcome is a LedgerEntry, never a model\'s opinion',
 
     // status: SPECCED

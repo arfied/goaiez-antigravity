@@ -21,7 +21,7 @@ declare(strict_types=1);
  * carries no refusal, and a ⑤ that only restates the ① protects nothing.
  */
 return [
-    // status:
+    // status: SPECCED
     'N-048' => 'a margin figure is NEVER computed from invoiced revenue — only from COLLECTED (§201)',
 
     // status: SPECCED
