@@ -293,7 +293,9 @@ class CReviewsTest extends TestCase
      */
     public function test_g20_06_header(): void
     {
-        $this->assertTrue(true);
+        $this->assertTrue(\Illuminate\Support\Facades\Schema::hasTable('review_destinations'));
+        $this->assertTrue(\Illuminate\Support\Facades\Schema::hasColumn('review_destinations', 'invite_threshold'));
+        $this->assertTrue(\Illuminate\Support\Facades\Schema::hasColumn('review_destinations', 'enabled'));
     }
 
     /**
@@ -349,7 +351,9 @@ class CReviewsTest extends TestCase
      */
     public function test_g20_09_header(): void
     {
-        $this->assertTrue(true);
+        $this->assertTrue(\Illuminate\Support\Facades\Schema::hasTable('triage_conversations'));
+        $this->assertTrue(\Illuminate\Support\Facades\Schema::hasColumn('triage_conversations', 'fix_then_ask_offered_at'));
+        $this->assertTrue(\Illuminate\Support\Facades\Schema::hasColumn('triage_conversations', 'resolved_at'));
     }
 
     /**
@@ -493,7 +497,7 @@ class CReviewsTest extends TestCase
      */
     public function test_g1_68_assertion(): void
     {
-        $this->assertTrue(true);
+        $this->fail('NOT BUILT: G1-68 — no Google review removal preparation or human confirmation logic found.');
     }
 
     public function test_job_completed_creates_review_request(): void
