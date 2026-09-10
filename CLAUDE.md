@@ -8792,3 +8792,111 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     with its instrument corroborated and its members listed — never when it merely sounds
     plausible. That bar is what has kept this lane's last thirty waves free of invented work, and it
     is the bar a HOLD is held to as well.
+326. **⭐⭐ Two fresh censuses are measured CLEAN with positive controls that FIRE, and the sharper of
+    the two lands on the checker's own rule text — which is a stronger strike than an empty grep
+    (measured by the lane supervisor 2026-09-10 04:3x; rulings 64, 95, 100, 111, 207, 294, 324).**
+    Ruling 325 named "a population this ledger has not enumerated" as the one HOLD-lift condition a
+    tick can reach alone, and set ruling 324's bar: measured non-empty, instrument corroborated
+    **including a positive control**, members listed. Two candidates were put to that bar this tick and
+    both come back empty.
+    **(a) `env()` outside `config/` — ZERO in the lane, and the rule is ENFORCED.** `CLAUDE.md`'s own
+    opening records that production runs with its **config cached**, and a cached config makes every
+    `env()` call outside `config/` return **`null`** — silently, at runtime, in production only, which
+    is the failure profile no test in any checkout can reach. `grep -rn --include=*.php -e "env("` over
+    the lane's eight module trees returns **nothing**. ⭐ The positive control is the finding:
+    the same instrument over `app/app` whole returns exactly one line —
+    `app/app/Doctor/Stages/BoundaryStage.php:134`, `'what' => 'calls env() outside config/'` — so the
+    instrument demonstrably fires, **and what it fires on is the CHECKER declaring this a violation it
+    already scans for.** The lane is closed twice over: clean today, and gated against regression by a
+    stage this lane may not edit. The one credential read in the lane is
+    `config('credentials.stripe_secret')` (`StripeGatewayClient`), which is the correct form.
+    **(b) `{!! !!}` unescaped Blade output — ZERO in the lane.** Money's screens render partner names
+    (`O'Brien & Sons`), owner-typed GL account names and categories (ruling 206), invoice numbers and
+    references; an unescaped echo of any of them is stored XSS on a screen whose subject is money.
+    `grep -rn --include=*.blade.php -e "{!!"` over the eight module trees returns **nothing**. The
+    positive control over `app/resources/views` returns **five** lines, three of them real
+    (`two-factor-setup.blade.php:106`'s QR SVG, `review-card.blade.php:74`'s signature SVG,
+    `feedback/show.blade.php:166`'s SMS preview) and ⭐ **two of them prose in the same files explaining
+    the rule** — *"⛔ `{!! !!}` BECAUSE IT IS MARKUP THIS APPLICATION BUILT, NOT BECAUSE …"* — which is
+    ruling 63's instrument-string-in-prose hazard appearing in a **positive control** rather than in a
+    count, and is harmless here because the control only had to fire.
+    ⛔ Neither is to be re-raised. ⭐ **The generalisable half: when a census's positive control lands on
+    a CHECKER'S OWN RULE TEXT, the strike is stronger than the zero that prompted it** — an empty grep
+    says *no instance today*, and a checker enforcing the same predicate says *no instance tomorrow
+    either*. A tick that finds one should record which stage enforces it, so a later tick reaching for
+    the same population is told it is gated and not merely clean.
+
+327. **⭐⭐ The string-minting census is measured NON-EMPTY — five members, all classified, ZERO
+    buildable in this lane — and the one real finding is blocked by exactly the harness limitation
+    ruling 256 measured (RULED by the lane supervisor 2026-09-10 04:3x).** Ruling 36's question —
+    *what is actually at the other end of the string this screen prints?* — has been asked of prose,
+    pills, buttons, headings, attributes, `$error`, `$success`, empty states, console output, exception
+    messages, the log surface, outbound request headers, bodies and responses, columns, events,
+    component properties and assertion haystacks. **It had never been asked of the PRIMITIVES that mint
+    a string**, which is the mechanical way to enumerate the family, and rulings 36, 44, 45 and 73b each
+    found a member of it incidentally — four findings of one shape, which is ruling 319's signature of
+    an unenumerated population. Enumerated now:
+    `grep -rn --include=*.php -e "Str::random" -e "uniqid" -e "random_bytes" -e "bin2hex" -e "Str::uuid" -e "mt_rand"`
+    over the eight module trees returns **five** lines, and the looser corroboration
+    (`grep -rniE "random|uniqid|uuid|shuffle|str_shuffle" … -c`, per-file counts) returns the **same
+    five** — so ruling 294's under-count does not apply.
+
+    | # | site | verdict |
+    | :--- | :--- | :--- |
+    | 1–2 | `X-117/Domain/CheckoutEngine.php:82`, `:208` — `'ORD-'.strtoupper(Str::random(6))` | ⭐ **the finding**; recorded, blocked, **TRACK 1 ACTION 13** |
+    | 3 | `X-117/Ui/CheckoutBlock.php:49` — `'auth_'.Str::random(20)` | ⛔ **STRUCK** — ruling 45's one-shot nonce, a real double-charge guard, its copy governed by rulings 100 and 143 |
+    | 4 | `X-173/Actions/AccountingSyncAction.php:48` — `'tx_'.bin2hex(random_bytes(4))` | recorded under **ruling 96** |
+    | 5 | `C-Billing/Domain/BillingLedgerEngine.php:114` — `'topup_'.uniqid()` | ⛔ out of lane — C-Billing `Domain/` is Track 1's (ruling 5) |
+
+    ⭐ **The finding is ruling 98's self-contradiction tell across two modules of one lane.**
+    `X-199` guards its human-facing document number with everything: `InvoiceNumber::next()` **refuses
+    outside a transaction** (`InvoiceNumberOutsideTransactionException`, *"the per-business lock is
+    released at commit"*), takes `pg_advisory_xact_lock(199, $businessId)`, re-reads the maximum under
+    `lockForUpdate()` (ruling 190), and `invoices` carries a **dedicated** migration
+    `2026_09_06_030000_add_unique_invoice_number_per_business.php` adding
+    `unique(['business_id','invoice_number'])`, whose refusal `InvoiceNumberTest` proves (ruling 163).
+    `X-117` mints the same class of artifact — a document number an owner and a **customer** quote at
+    each other — from **six random characters** onto
+    `$table->string('order_number')->index()`, **not unique**. The lane decided a document number needs
+    a uniqueness guarantee, wrote a migration for it, and stopped at the module it was in — rulings
+    113/116/123's sibling shape, a **seventh** time.
+    ⚠️ **The arithmetic is worse than it reads, and the `strtoupper` is why.** `Str::random` draws from
+    **62** symbols (`base64_encode` of `random_bytes`, stripped of `/`, `+`, `=`), and `strtoupper`
+    collapses that to **36** *non-uniformly* — a digit keeps weight `1/62` while a letter gains `2/62`
+    — so the effective alphabet is ≈**33.7**, not 36, and the space is ≈**1.5 × 10⁹** rather than
+    2.2 × 10⁹. A birthday collision passes even odds at roughly **38,000** orders. **The uppercasing is
+    the part nobody would notice**, and it costs a third of the space it looks like it has.
+    ⛔ **Not briefed, and the blocker is measured rather than cautious.** `checkoutCart()` and
+    `checkout()` are **bare `DB::transaction` closures with no `catch` anywhere in the file**, so a
+    `23505` from a new unique index propagates out of the engine and a duplicate that is cosmetic today
+    becomes a **failed checkout** — and `QueryException extends PDOException extends RuntimeException`,
+    which is the same class collision ruling 240 traced through `capture()`. The catch-and-retry that
+    would fix it **cannot be proven in this suite**: ruling 256 measured `app/tests/Pest.php:84-86`
+    binding `RefreshesTenantDatabase` to **every** test under `tests/Modules`, holding one transaction
+    open on the runtime connection, so a racing row cannot be committed from a second connection and the
+    violation is unreachable in-process. **That is the identical wave ruling 256 retired for
+    `payments.idempotency_key`, and it is retired here for the identical reason:** shipping the index
+    alone converts a cheap defect into an expensive one, and *introducing a new hazard is worse than
+    deferring the removal of an old one* (ruling 232). ⚠️ The harm is bounded and measured:
+    `grep -rn -e "order_number" app/app` returns **ten** lines and **not one is a lookup** — no
+    `where('order_number', …)` exists anywhere — so a collision shows two orders under one handle on
+    `checkout-block.blade.php:59` and in `CheckoutBlock.php:69`/`:71`'s two messages, and breaks no
+    query. ⛔ Not resolved by lengthening the token either: that asserts a constant rather than a
+    behaviour, and a longer random string is still a guarantee nothing enforces.
+    ⚠️ **Member 4 is ruling 96's, measured on both halves.** `AccountingSyncAction:48` mints
+    `'tx_'.bin2hex(random_bytes(4))` **only when the caller omits `ref`**, and persists it as
+    `transaction_ref` — which **is** owner-facing, rendered at `conflicts-list.blade.php:22` and
+    `sync-error-rate.blade.php:38` and carried into two `AccountingSyncEngine` messages (`:64`, `:78`)
+    as a reference an owner would try to look up in their ledger. That is ruling 43/44's fabrication
+    shape on a live rendering path — **and the branch is reachable by nothing**: ruling 81 measured
+    `syncTransactions` has no production caller (re-confirmed this tick — all sixteen call sites are
+    tests), and **every one of those fixtures passes `'ref' =>`** (6 + 8 + 3 = 17 occurrences across the
+    three files). No test can render it and no mutation can redden it, so the edit is ungated churn and
+    ruling 96 governs. ⛔ Adding a fixture that omits `ref` in order to make the fix gateable is
+    manufacturing reachability to justify a wave — and the caller that would ever arrive is a real
+    ledger import supplying real refs, so the fallback exists for a caller shape that cannot occur.
+    ⭐ **The generalisable half, and it is this census's whole value: a population measured NON-EMPTY
+    that yields ZERO buildable fixes is as legitimate a result as an empty one** (rulings 261, 263, a
+    third time) — and it is the more useful of the two to write down, because an empty census tells a
+    later tick *nothing is there* while a classified one tells it *what is there and why each member
+    stays*. ⛔ Not to be re-raised.
