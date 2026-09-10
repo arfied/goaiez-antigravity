@@ -730,3 +730,39 @@ explicit `['businessId' => …]` that the route cannot supply. That is CLAUDE.md
 the component"* — sitting unexercised on a module that has now regressed twice at render time.
 **RULED: run 128 adds one real `GET` per screen asserting `assertOk()`.** If a route mount cannot
 resolve `businessId`, that is a genuine finding and is reported, not patched by passing the parameter.
+
+### ⛔ REV-132 ERRATUM, same tick — the seam block above measured six imports and there are eight
+
+The grep printed in "The seam — RULED for run 128" was run against **three hand-picked files**, not the
+directory, and it reported six `Models\` imports in four files. The directory grep reads **eight in six**:
+
+```
+$ grep -rn 'Models\\' app/app/Modules/C-Reviews/ --include=*.php | grep ':use ' | grep -v CReviews
+  Actions/QaTicketAction.php:10      X181\Models\QaTicket
+  Ui/LossAlerts.php:11               X181\Models\QaTicket
+  Ui/QaReport.php:12                 X181\Models\QaTicket
+  Ui/Tickets.php:10                  X181\Models\QaTicket      ← missed
+  Ui/ReviewsQaRequests.php:13        X181\Models\QaTicket      ← missed
+  Actions/ReviewRequestAction.php:10 X121\Models\Person
+  Ui/Tickets.php:8                   X121\Models\Person
+  Ui/ReviewsQaRequests.php:12        X121\Models\Person
+```
+
+Eight is also what `r124-boundary.txt` lists for C-Reviews, which I had open in the same tick and did
+not reconcile against my own grep. **Run 128's `boundary` delta is −5, not −3**, and `Ui/Tickets.php`
+and `Ui/ReviewsQaRequests.php` import **both** modules — so they are half in run 128 and half in run
+129, and the brief's original *"do not touch `Ui/Tickets.php` this run"* was wrong and is corrected.
+
+⭐ **The lesson is not "grep the directory".** It is that this is the same defect as REV-119 §A — a
+**stated** list where a **derived** one belonged — committed by the seat that wrote the rule, four
+sections after writing it, in the same file. REV-121 §3 and REV-131 §5 both rest on the general form
+*"the per-track list is stated, the product list is derived"*; a file list produced by naming files is
+a stated list. **RULED: any count of code sites that enters a brief or a ruling is produced by a
+command whose scope is the tree, and the command is printed beside the number.** A number with no
+command beside it is a memory, and this lane has now paid for that eight times.
+
+⚠️ And the near-miss is the instructive part: `r124-boundary.txt` had the right answer on disk, open in
+this tick, unread. Seventh instance of **a correct statement present in the tree and not read back**
+(REV-119 §A, REV-121 §A, REV-125 §13, REV-126, REV-127 §1, REV-129, here). The brief now tells the
+coder to re-measure and says explicitly that I got it wrong — a stated number the reader is told to
+distrust is worth more than a stated number.
