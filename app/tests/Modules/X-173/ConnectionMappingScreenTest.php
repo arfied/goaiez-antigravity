@@ -178,4 +178,16 @@ class ConnectionMappingScreenTest extends TestCase
 
         $this->assertSame(0, AccountingConnection::where('business_id', $bizId)->count());
     }
+
+    public function test_connect_refuses_unsupported_provider()
+    {
+        $bizId = self::provisionTenant()->id;
+        Tenancy::set($bizId);
+
+        Livewire::test(ConnectionMappingView::class)
+            ->set('provider', 'ledgerbeans')
+            ->call('connect')
+            ->assertSee('Choose a ledger this app connects to')
+            ->assertDontSee('Waiting on');
+    }
 }

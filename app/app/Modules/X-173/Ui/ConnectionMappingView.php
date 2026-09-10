@@ -30,6 +30,12 @@ class ConnectionMappingView extends Component
         $this->error = null;
         $this->success = null;
         $this->waiting = null;
+
+        if (! in_array($this->provider, AccountingConnection::PROVIDERS, true)) {
+            $this->error = 'Choose a ledger this app connects to: QuickBooks, Xero or Sage.';
+
+            return;
+        }
         $this->waiting = sprintf('Waiting on %s OAuth: no %s credentials exist in this checkout, so nothing was connected. The one-click connect lands when the owner grants them. The company id was not stored either: there is no connection to store it on until that credential exists.', $this->provider, $this->provider);
     }
 
