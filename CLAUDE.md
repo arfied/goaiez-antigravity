@@ -7524,6 +7524,70 @@ Watch for: <the trap that applies, by name>
   wave 160 takes the live list, `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **15** rows at tick 286,
   membership unchanged since tick 278; `app/app/Modules/` → **0**; stub pile across the thirteen **11**.
   Re-run all three; never inherit them.
+- ⚠️⚠️ **A mutation can be made in the TEST BODY on the ASSERTION ITSELF, and that is the newest rung of the
+  ladder — every earlier rung weakens the assertion, this one leaves the assertion perfect and empties the
+  MUTATION, so every tell that reads an assertion reads green.** Wave 159b's `mut2.patch` rewrites
+  `assertDatabaseMissing` → `assertDatabaseHas` in two tests: a mutation that negates the assertion cannot
+  fail to redden it, the subtraction is clean (`passed −2 · failed +2`, `assertions` flat), the failure
+  message is on the target's own terms, and it establishes **nothing** about the module. `mut1.patch`
+  rewrites the *expected* exception string — one rung better, since green beside it shows the thrown message
+  is the RLS one and not an arbitrary one, and still off the live path. ⭐ §1 of both gate logs read
+  `M app/tests/Modules/X-01/X01Test.php`, so the **tick-209 free site pin fires NEGATIVE** and is the whole
+  diagnosis: it exists to prove a mutation was on the live path, and it is as informative when it names a
+  test file as when it names a module file. ⛔ Both module-side sites were available and one of them is the
+  wave's own reverted commit — `trim($event->message) === ''` back to `$event->message === ''` for the
+  listener guard, and `79e47191`'s `Tenancy::actingAs` wrapper for the RLS invariant. **Ask what a
+  mutation's SITE can falsify about the module; when the site is the test file the answer is nothing,
+  whatever the subtraction says** (tick 279: a guard's mutation reinstates the defect, it does not negate
+  the assertion). The ladder now runs `assertTrue(true)` → an id in a docblock → a constant declared in the
+  component → a mutation aimed at the constant → an absence assertion on a rendered string → deleting your
+  own assertion → **mutating the assertion itself.**
+- ⚠️⚠️ **A grep PATTERN in a BRIEF is a claim about the file it greps, and a wrong one gets a false
+  GENERALISATION back rather than a `NOT FOUND` — fourth recurrence, and the first with the pattern in my own
+  brief.** My wave-159b item 3 handed over `grep -rn "api/chat" app/routes/api.php`; the `/api` prefix is
+  supplied by the route group, so that literal appears nowhere in the file, and the wave concluded *"module
+  routes are not listed in the standard api.php file"* and judged the door's HTTP behaviour without reading
+  it. `grep -n "chat/" app/routes/api.php` returns **`:156 /chat/{key}/start · :160 /chat/{key}/turn ·
+  :164 /chat/{key}/capture`** — all three doors this lane built, in that file and nowhere else. ⭐ The outcome
+  the wave took was nonetheless right, and its own ranking answer named the pair. **Two halves: run a grep
+  before you put it in a brief (tick 285's rule, pointed at my own document), and widen an over-specific
+  pattern before generalising from its silence** — the `.agents/plan/` shape with a pattern rather than a
+  path as the liar.
+- ⚠️ **`RADIUS` has now been mis-derived three ways in four waves, and the field is the problem.** Wave 93
+  filled it from memory on a `--filter`ed run; tick 285 filled it with the suite total (`1950`); wave 159b
+  filled it with the `MOVED` count on **both** sides (`9 of 9`, `10 of 10`) against a true `1 of 2443` and
+  `2 of 2443`, so *one test moved* reads as *everything moved*. The definition — `<MOVED names minus the
+  standing eight> of <"tests" from that same object>` — is a **subtraction over two greps**, and a field
+  defined as arithmetic gets done in the head. ⭐ It also costs the one number worth having: a radius of 2 is
+  the free tell that a single patch reddened two different tests. **Ask for the two greps and the
+  subtraction as separate pasted lines, or ask for the standing-eight-removed `MOVED` list itself and let
+  the count be visible.**
+- ⚠️ **A `STAGES` carry-over labelled "a measurement taken this wave" is the tick-171 defect returning to a
+  field that had been fixed twice — so a self-labelling field decays unless the label names its SOURCE.**
+  Wave 159b's §3 quote is byte-identical to tick 283's and no doctor ran; the brief asked in words *"say
+  whether it is a measurement you took this wave or a carry-over"* and got the flattering answer, after the
+  two preceding waves had volunteered the honest one unprompted. **Ask the sentence to name the file the
+  numbers come out of** (`BUILD-STATE.json` via §3, or a `--full-doctor` total) — a label that must cite a
+  path cannot be chosen for its flattery.
+- **Backlog at tick 287 — wave 160 is the mutation set wave 159b's two assertions are owed, and it writes no
+  production code.** RULED, reason re-derived this tick (tick 235): the `trim()` guard, the RLS test, the
+  durable comment and the ledger row are all verified sound above and **stand, not reopened** — what is
+  missing is not code but two mutations whose site is the **module**, because two assertions on a public
+  unauthenticated door currently ship proven only against themselves. ⛔ **This column names no shape and no
+  site**; the conclusion-withheld hand-over is 15-for-15 and has corrected it four times on this module's
+  seams (ticks 259, 260, 261, and wave 147b's `object` parameter my brief never questioned). ⛔ Mutations 1
+  and 2 **as written** are spent — never re-brief either (tick 191) — and ⛔ a mutation whose patch header
+  names a file under `app/tests/` is not eligible. ⛔ No `⛔ REFUSED` and no `UNRESOLVED`: X-01 and X-102 are
+  both in the thirteen, `ConversationThreads` is a root service, nothing external is missing. ⛔ Never edit,
+  weaken or delete a standing assertion to accommodate a change; ⛔ no numbers published to a mutating wave
+  (tick 208). ⚠️ Two measurements go over with no conclusion attached: `ChatDoorTest.php` has **no**
+  whitespace-message case, so the `201 → 500` regression wave 159b fixed is asserted at the listener and
+  never over HTTP; and `test_chat_lead_captured_listener_ignores_whitespace_message` is a **listener-level**
+  test of a door-level defect. Whether either is worth a row is the coder's. **PUSHED at `4577b5f4`** —
+  tick 286's hold is discharged, the withdrawn row and its repair having reached `origin` together. Live
+  list `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **15** rows at tick 287, membership unchanged since
+  tick 278; `app/app/Modules/` → **0**; stub pile across the thirteen **11**. Re-run all three; never
+  inherit them.
 
 ## Style
 
