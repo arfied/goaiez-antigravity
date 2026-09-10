@@ -830,3 +830,4 @@
 - `2026-09-10T08:10:22` (R245) C-Reviews — the confirming user is the authenticated session user, read inside the component; a caller-supplied id was the previous shape and is refused. (app/app/Modules/C-Reviews/Ui/LossAlerts.php:134)
 - `2026-09-10T08:29:36` note: correction to the 2026-09-10T08:10:22 R245 line: the confirming-user read and its refusal are at app/app/Modules/C-Reviews/Ui/LossAlerts.php:168, not :134. A citation names the line that CONTAINS the thing (REV-136 SS3).
 - `2026-09-10T08:29:46` note: G1-68 automatic origination has NO id source in this tree: a ReviewRequest row on the LossAlerts screen has no path to the matching legacy reviews.google_review_id (r138-fork.txt, run 138 Arm B). The operator supplies it by hand until X-177's GBP half is granted.
+- `2026-09-10T09:22:49` note: run 140 could not gate: tests None · passed None · FAILED 0 · errors None · result timeout. The range 8b9c641c..HEAD remains unmeasured since run 136.
