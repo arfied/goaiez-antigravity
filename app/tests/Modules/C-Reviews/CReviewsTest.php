@@ -573,7 +573,6 @@ class CReviewsTest extends TestCase
             'name' => 'Test User',
             'email' => 'testuser@example.com',
             'password' => 'secret',
-            'business_id' => $biz->id,
         ]);
 
         $preparer = new PrepareRemovalRequestAction;
