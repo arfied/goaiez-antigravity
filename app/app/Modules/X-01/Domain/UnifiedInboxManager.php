@@ -77,7 +77,7 @@ final class UnifiedInboxManager
                     ['channel' => $channel, 'status' => 'open']
                 );
 
-                if (in_array($channel, ['email'])) {
+                if (in_array($channel, ['whatsapp', 'email'])) {
                     if (! $convo->hasLoggedConsent()) {
                         $convo->consent_logged_at = now();
                         $convo->save();
