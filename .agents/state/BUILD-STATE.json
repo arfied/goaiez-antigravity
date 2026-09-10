@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-10T06:24:22",
+ "updated": "2026-09-10T06:55:08",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1718,6 +1718,10 @@
   {
    "at": "2026-09-10T06:24:26",
    "note": "MONEY-176: X-199's paid-today list takes orderByDesc('id') behind paid_at and its unpaid list takes orderBy('id') behind due_date, which completes X-199. The declines ordering test derives its base from now()->startOfWeek() rather than a literal date. InvoiceReader's four due_date methods feed four X-211 screens and are not this wave."
+  },
+  {
+   "at": "2026-09-10T06:55:08",
+   "note": "MONEY-177: InvoiceReader's openForBusiness, openUnpaidForBusiness, openOverdueForBusiness and unpaidOverdueForBusiness each take orderBy('id') behind orderBy('due_date'), proven by four assertions on the returned collection. InvoiceThreadBeside's fresh mount falls back to the collection's first row, so which invoice the screen opens on was undefined; that is now pinned by an amount assertion on the selected invoice."
   }
  ],
  "decisions": [
@@ -2679,6 +2683,12 @@
    "module": "X-199",
    "chose": "A tiebreak runs the same way as the clause it breaks: a list ordered ascending takes orderBy('id') and one ordered descending takes orderByDesc('id'). A DATE column ties by nature, since it carries no time component, so two invoices due the same day are identical in the ordering column and the render order is undefined without an id behind it.",
    "at": "2026-09-10T06:24:22",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-199",
+   "chose": "A Domain reader that hands a collection to a screen owns its order: InvoiceReader's four due_date reads carry an ascending id tiebreak, because due_date is a DATE column with no time component and two invoices due the same day are identical in the ordering column. The proof lives on the reader rather than on the four screens that read it, because the contract is the return order and a reader assertion also covers a consumer nobody has written yet.",
+   "at": "2026-09-10T06:55:08",
    "ruling": "R245"
   }
  ]
