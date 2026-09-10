@@ -754,3 +754,4 @@
 - `2026-09-09T18:59:56` note: MONEY-161b: x199:evidence-invoice and x211:evidence-recovery take --business, else their own artifact's recorded business_id, and provision only when there is neither; both artifacts regenerated through the given-tenant path
 - `2026-09-09T22:11:54` note: X-198's two evidence commands take a given tenant; the pay-link artifact is regenerated through it and the charge command's run is deferred
 - `2026-09-09T22:32:56` note: X-198's charge evidence artifact was regenerated through the given-tenant path with no number spent, and its payment count now names the tenant's rows rather than the run's
+- `2026-09-09T22:53:58` (R245) C-Billing — G1-80's metered billing sync is refused on measurement: C-Billing imports no gateway client and writes no meter row, so there is no usage to meter and nothing to sync it to, and the refusal is now named by a test in the module's own test tree

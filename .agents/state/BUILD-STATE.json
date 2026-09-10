@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-09T17:39:38",
+ "updated": "2026-09-09T22:53:58",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2585,6 +2585,12 @@
    "module": "X-117",
    "chose": "An operator-facing string carries no internal rule id: X-117's and X-211's runtime-proof refusals and the X-117 checkout artifact's waiting_on value dropped their (ruling NN) pointers. Every factual claim in the four strings is measured true and stays byte-identical; only the pointer to a ledger no reader outside this checkout can resolve is removed.",
    "at": "2026-09-09T17:39:38",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Billing",
+   "chose": "G1-80's metered billing sync is refused on measurement: C-Billing imports no gateway client and writes no meter row, so there is no usage to meter and nothing to sync it to, and the refusal is now named by a test in the module's own test tree",
+   "at": "2026-09-09T22:53:58",
    "ruling": "R245"
   }
  ]
