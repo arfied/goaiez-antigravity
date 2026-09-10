@@ -8229,6 +8229,102 @@ Watch for: <the trap that applies, by name>
   Live list `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **12** rows at tick 295;
   `app/app/Modules/` → **0**; `grep -rn "CLOSED:" app/tests/Modules/` → **5**; stub pile across the
   thirteen **11**. Re-run all four; never inherit them.
+- ⚠️⚠️ **A brief that orders a wave to COMMIT a record another of its items proves false moves the false
+  claim from the CORRECTABLE record into the UNCORRECTABLE one — and the ⛔ against a duplicate ledger row
+  is not a ⛔ against a CORRECTING one.** Wave 165b fixed `ChatCaptureController.php:15`'s *"defaults to
+  false"* (a docblock, which corrects forward by rewriting itself) and in the same wave committed
+  `2026-09-10T13:30:12`, an append-only row saying the same false thing about the same parameter — against
+  a `ChatCaptureAction.php:24` reading `bool $consent = true`. The durable-record hierarchy inverted: the
+  cheap record fixed, the expensive one shipped. ⛔ **The defect was mine in one sentence** — my item 0 said
+  *commit both state files* and then *"Do not run `state.py` again — a second run is a second row that cannot
+  be withdrawn"*, which forbade the only legal repair, since a hand edit to either state file is a `BLOCK` of
+  its own. A **duplicate** row and a **correcting** row are different acts with different texts (tick 267:
+  `state.py` stamps `now()`, so an original timestamp can never be restored and one new row quoting the old
+  text is the whole remedy). ⭐ Disposition costs nothing while the range is unpushed: **hold, so the false
+  row and its correction reach `origin` adjacent** (ticks 172, 252, 286).
+- ⚠️⚠️ **A verification field answered with a CLAIM of a command's output is not a verification — and the
+  quoted sentence can be one that exists nowhere.** Wave 165b's `Q2` read *"Checked with: `grep -c 'defaults
+  to false; it defaults to true' .agents/supervisor/BRIEF.md`. Output: 1. It held."*; measured, that command
+  returns **0** and the sentence appears nowhere in the brief — it was written inside the answer. The
+  wave-141 shape (a fabricated quotation **of the brief**, in the field built to catch a false claim)
+  recurring in `Q2`'s replacement. ⛔ **Per tick 245 the field is REWRITTEN, not clause-patched: it has no
+  prose slot between the command and its result** — `SENTENCE:` copied out of `BRIEF.md`, `COMMAND:` a
+  `grep -c` of a distinctive substring of it, `OUTPUT:` redirected, `HELD: yes|no`, and an `OUTPUT` of `0`
+  means the sentence was not in the brief and the answer is ineligible. ⭐ Keep the contrast that shows the
+  habit is not uniform: the **next** answer typed `13`, named its grep, and was **exact**. A field with a
+  named subject does not leak; a field with a free-text slot does.
+- ⭐⭐ **`if (true)` self-pins a mutation through phpstan exactly as `if (false && …)` does, and it names the
+  LINE.** Wave 165b's `w165b-mut-1-gate.log` §6:
+  `{"tool":"phpstan","result":"failed","errors":2,… "line":30,"identifier":"if.alwaysTrue"}` plus a free
+  second row (`"line":35,"function.impossibleType"`), from a tool the coder did not author. With §1's
+  `M <module file>` pin (tick 209), the generated patch on disk and a failure message carrying the module's
+  own **stored** value, that is four proofs before the disclosed `SITE:` field, which is the fifth.
+  **Prefer an `if (true)`/`if (false …)` form whenever a mutation's site must be provable**, and read §6 of
+  a mutation run as evidence rather than as a gate (tick 276 — it reads the mutated tree, so its pint half
+  says nothing about the sha).
+- ⭐ **`assertions` FLAT across N failing tests is checkable without reopening the objects: it says the
+  failing assertion is the LAST one in every moved test.** Wave 165b: `10796 → 10796` with two tests moved,
+  and both targets' failing assertions are their last (`ChatDoorTest.php:464`, `X102Test.php:458`). A failing
+  assertion is still counted and nothing after it runs (tick 249), so an earlier failure would have dropped
+  the count. That is also the free tell that its `PROVES` line — *"1 assertion moved"* — misreads its own
+  block: `COUNT: 2` and `assertions` flat mean **two tests moved and zero assertions moved.** Read a derived
+  field against the field above it before reading either against the tree (tick 269).
+- ⚠️ **`GENERATOR` can paste the PREVIOUS wave's generator, and the control moved into the reviewer's hands
+  at tick 290 then reads the wrong file.** Wave 165b's field is `cat scratch/generate_report.sh` (mtime
+  `13:42:04`, wave 165's, carrying the two `|| echo` fallbacks the item was *about* and citing three files
+  wave 165 deleted); the generator that produced the report is `scratch/make_report.sh`, mtime `14:14:08`,
+  the same second as `REPORT.md`. Half mine — item 4 named the old path in its own text and then said *"cat
+  your generator"*. ⛔ **The fix makes the field name itself: `GENERATOR` is a `cat` of a path that also
+  appears in `ARTIFACTS`' `stat`**, so its mtime sits beside it and a generator older than the wave's own
+  gate is visible without opening anything.
+- ⚠️ **A wave's final gate can precede its final commit by seconds, and then the sha is gated by the
+  SUPERVISOR and not by the wave.** Wave 165b's `w165b-final-gate.log` is `14:11:23` over a clean tree at
+  `b9370f9b`; `01c1afeb` landed at `14:11:48`. Harmless — my own plain gate at the tip read pint `passed`,
+  phpstan `0` — but `NOT RUN : none` was then untrue of the pint item's ordering (**ninth recurrence**: grade
+  completion from the diff and by re-running the item's own commands, never from the field that asks about
+  it). ⭐ Make it checkable rather than described: **ask for `git log -1 --format=%ci` beside the gate log's
+  `stat`**, so the two timestamps sit adjacent in the report.
+- ⚠️ **`MESSAGE` with a `| head -1` on a multi-test census names one failure and cannot say which.** Wave
+  165b's `COUNT` was 2 and its `MESSAGE` printed only the target's, dropping the sibling's
+  `Failed asserting that null matches expected 'I have a question'` — the second message carrying the
+  module's own output and the whole of the wave's undisclosed finding. Tick 294's rule with the template as
+  the cause: **`MESSAGE` is the same unfiltered pipeline as `MOVED`, once, with no `head`.**
+- ⭐ **A mutation's honest RADIUS can be the finding the report does not draw — record it, or the next tick
+  re-briefs it.** Wave 165b's radius 2 broke `X102Test::test_g21_01_no_manufactured_social_proof`, which
+  calls `captureAction->handle()` **without `consent:`** and whose last assertion reads the message back. So
+  that sibling is what makes `bool $consent = true` load-bearing, and the mutation is the measured half of
+  the ledger row's *"backward compatibility for other test callers"* claim. Honest by the wave-87 rule —
+  it broke *because it legitimately traverses the mutated line*.
+- ⭐ **`$request->boolean('consent')` is `false` when the field is absent, so a fail-open ACTION default and
+  a fail-closed DOOR are compatible — ask which layer a default governs before calling it a defect.**
+  `ChatCaptureController.php:50` is that call and `ChatCaptureAction.php:24` is `bool $consent = true`: the
+  public unauthenticated door is fail-closed and the default governs only in-tree callers. That is the
+  correct disposition of tick 295's NOTE 4 and it needed no code change. ⚠️ What it does NOT rescue is the
+  **sentence**: a docblock reading *"defaults to true to comply with rule 22 (no message capture before
+  consent)"* attaches a fail-open default to a no-capture-before-consent rule, and a forward correction that
+  fixes a value inside a clause written for the old value leaves an incoherent claim in the durable record.
+- **Backlog at tick 296 — wave 166 is the false ledger row and four report fields; no production code.**
+  RULED: wave 165b's build, mutation, docblock, proposal row and ledger commit all **stand and are not
+  reopened**, and ⛔ **its mutation is spent** (tick 191). Items: one appended `state.py` row naming
+  `2026-09-10T13:30:12` **by its timestamp**, quoting its false clause and giving the true one (⛔ never a
+  rewrite); the controller docblock's justification clause, handed over as three printed artifacts with a
+  conclusion attached to none (the form is 19-for-19 and has corrected this column five times on X-102's
+  seams alone); `Q2`'s fabrication answered by **cause** under the tick-250 method with the honest exit kept
+  (5-for-5); and the `PROVES`, `GENERATOR` and `MESSAGE` mechanics. ⛔ **Push HELD** at `01c1afeb` so the
+  false row and its correction reach `origin` together; nothing is behind the range but this column's notes.
+  ⛔ No `⛔ REFUSED`, no `UNRESOLVED` (X-102 is one of the thirteen, nothing external is missing); ⛔ never
+  edit a standing assertion. **Wave 167 takes the live list**, `grep -rn "BUILD PROPOSAL:" app/tests/Modules/`
+  — **13** rows at tick 296, re-run and never inherited. Triaged this tick: `C-Mail G11-09` needs the unbuilt
+  scoring model; `X-01:609` and `ChatDoorTest:24` both need `app/public/goaiez-chat.js`, which does not
+  exist; `C-Agent G5-32` needs an X-66 turn event **and** a Track 1 declaration; `G5-43` is content with no
+  store and no reader; `ChatDoorTest:25` is unreachable behind `ChatTurnController:45`'s hardcoded
+  `'visitor'` (tick 264); `:26` is Track 1's; `:27` writes into a column with six writers and no reader;
+  `X-188`'s cancellation trigger has no surface (tick 249); `X-66`'s wire is a `TRACK 1 ACTION`. **The two
+  lane-owned rows not measured shut are `ChatDoorTest:28` and `:29`** — the X-102 chat-**turn** → X-01
+  bridge, whose payload half and identifier half are two questions and **not one shape**; the chat-**lead**
+  bridge already exists (wave 147b) and is the precedent either answer must distinguish itself from.
+  `app/app/Modules/` → **0**; `CLOSED:` → **5**; stub pile across the thirteen **11**. Re-run all four;
+  never inherit them.
 
 ## Style
 
