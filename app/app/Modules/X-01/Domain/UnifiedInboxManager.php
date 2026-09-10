@@ -20,6 +20,9 @@ use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 
+/**
+ * (R245) Boundary: recordInbound is called inside Tenancy::actingAs to preserve tenant context for un-tenanted callers.
+ */
 final class UnifiedInboxManager
 {
     /**
@@ -71,7 +74,7 @@ final class UnifiedInboxManager
             }
 
             // Find or create Conversation for this Person
-            $conversation = Tenancy::actingAs($businessId, function () use ($person, $channel) {
+            $conversation = Tenancy::actingAs($businessId, function () use ($person, $channel, $body) {
                 $convo = Conversation::firstOrCreate(
                     ['person_id' => $person->id],
                     ['channel' => $channel, 'status' => 'open']
@@ -84,6 +87,12 @@ final class UnifiedInboxManager
                     }
                 }
 
+                try {
+                    app(ConversationThreads::class)->recordInbound($convo, $body);
+                } catch (\InvalidArgumentException $e) {
+                    // A thread that has not been cleared to store message content does not store one, dropping it instead.
+                }
+
                 return $convo;
             });
 
@@ -93,12 +102,6 @@ final class UnifiedInboxManager
                 channel: $channel,
                 messageSnippet: substr($body, 0, 50)
             ));
-
-            try {
-                app(ConversationThreads::class)->recordInbound($conversation, $body);
-            } catch (\InvalidArgumentException $e) {
-                // A thread that has not been cleared to store message content does not store one, dropping it instead.
-            }
 
             return [
                 'person_id' => $person->id,

@@ -666,4 +666,23 @@ class X01Test extends TestCase
             'body' => 'Body Chat',
         ]);
     }
+
+    public function test_ingest_message_from_untenanted_context(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Untenanted Biz', 'currency' => 'USD']);
+        \App\Support\Tenancy::forgetAll();
+
+        $res = $this->manager->ingestMessage(
+            businessId: $biz->id,
+            channel: 'whatsapp',
+            identifier: '+15125550999',
+            senderName: 'Webhook User',
+            body: 'Body Untenanted'
+        );
+
+        $this->assertDatabaseHas('messages', [
+            'conversation_id' => $res['conversation_id'],
+            'body' => 'Body Untenanted',
+        ]);
+    }
 }
