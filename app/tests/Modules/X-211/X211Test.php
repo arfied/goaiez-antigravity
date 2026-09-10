@@ -12,6 +12,7 @@ use App\Modules\X211\Actions\ArForceAchAction;
 use App\Modules\X211\Actions\ArLogOfflinePaymentAction;
 use App\Modules\X211\Actions\ArOfferPlanAction;
 use App\Modules\X211\Actions\ArPackageForCollectionsAction;
+use App\Modules\X211\Domain\AlreadyPackagedException;
 use App\Modules\X211\Domain\ArEngine;
 use App\Modules\X211\Domain\FeeAtCapException;
 use App\Modules\X211\Domain\FeeWithoutTermException;
@@ -451,5 +452,41 @@ class X211Test extends TestCase
 
         $this->assertSame(2000, (int) ReceivableState::where('business_id', $biz->id)->where('invoice_id', $invoice->id)->value('late_fee_cents'));
         Event::assertDispatchedTimes(ArFeeApplied::class, 2);
+    }
+
+    public function test_a_second_collections_package_on_one_invoice_is_refused_and_writes_nothing(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'AR Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $user = User::factory()->create();
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'Overdue', 'last_name' => 'Client']);
+        $invoice = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-AR-103',
+            'total_cents' => 60000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(15)->toDateString(),
+        ]);
+
+        ArDunningAction::create([
+            'business_id' => $biz->id,
+            'invoice_id' => $invoice->id,
+            'action' => 'escalate_to_human',
+            'reason' => 'Silence',
+        ]);
+
+        $this->engine->packageForCollections($biz->id, $invoice->id, $user->id);
+
+        try {
+            $this->engine->packageForCollections($biz->id, $invoice->id, $user->id);
+            $this->fail('A second package was not refused.');
+        } catch (AlreadyPackagedException $e) {
+            $this->assertStringContainsString('has already been packaged for collections', $e->getMessage());
+        }
+
+        $this->assertSame(1, ArCollectionsPackage::where('business_id', $biz->id)->where('invoice_id', $invoice->id)->count());
     }
 }
