@@ -60,6 +60,39 @@ final class InfobipInboundController extends Controller
         // any reformatting invalidates it — so nothing may parse this request
         // until it has been shown to be genuine.
         if (! $verifier->verify($request)) {
+            $sigHeader = config('services.infobip.signature_header');
+            $possible = array_filter(['X-Hub-Signature', 'X-Signature', $sigHeader, 'X-Ib-Exchange-Req-Signature', 'X-Ib-Exchange-Req-Timestamp']);
+            $present = [];
+            foreach ($possible as $h) {
+                if ($request->hasHeader($h)) {
+                    $present[] = (string) $h;
+                }
+            }
+            $present = array_values(array_unique($present));
+
+            $sigValue = is_string($sigHeader) ? $request->header($sigHeader, '') : '';
+            $sigValue = is_string($sigValue) ? $sigValue : '';
+
+            $results = $request->input('results');
+            $messageIds = [];
+            if (is_array($results)) {
+                foreach (array_slice($results, 0, 5) as $m) {
+                    if (is_array($m) && isset($m['messageId']) && is_string($m['messageId'])) {
+                        $messageIds[] = $m['messageId'];
+                    }
+                }
+            }
+
+            \Illuminate\Support\Facades\Log::warning('Infobip inbound refused: signature did not verify', [
+                'signature_headers_present' => $present,
+                'signature_len' => strlen($sigValue),
+                'signature_prefix' => $sigValue !== '' ? substr($sigValue, 0, 7) : null,
+                'body_sha256' => hash('sha256', $request->getContent()),
+                'content_length' => $request->header('Content-Length'),
+                'message_ids' => $messageIds,
+                'user_agent' => $request->header('User-Agent'),
+            ]);
+
             // ⚠️ **COUNTED (T176 P23), AND THIS IS THE ENDPOINT WHERE THE
             // SILENCE IS A COMPLIANCE PROBLEM.** An unconfigured signing key
             // refuses every genuine delivery, which means every STOP arriving
