@@ -695,12 +695,11 @@ class X01Test extends TestCase
         $listener = app(ChatLeadCapturedListener::class);
         $event = new ChatLeadCaptured(
             businessId: $biz->id,
-            sessionId: 'session_123',
+            leadId: 1,
+            personId: 1,
             name: 'Whitespace User',
             phone: '+15125550202',
-            email: null,
             message: '   ',
-            formType: 'chat'
         );
 
         // Before the fix, this would call ingestMessage and throw InvalidArgumentException
