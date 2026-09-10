@@ -450,3 +450,62 @@ both the risk of a regression and the difficulty of attributing one. When a lane
 has an unmeasured range, the next brief builds **nothing** — no test, no column,
 no refactor, no seam — because every added item is another way to fail before
 reaching §7, and the wave's entire value is the number.
+
+## REV-149 — a count is taken by matching the row, and a gate that never produces a number is broken, not strict
+
+⛔ **A COUNT TAKEN FROM A TOOL'S OUTPUT IS TAKEN BY MATCHING THE ROW, NEVER BY
+`wc -l`.** Run 142 recorded the suite as **2 466 tests** into `JOURNAL.md`. It is
+**2 463**; the three are `--list-tests`' banner:
+
+```
+$ grep -c '^ - '  .agents/supervisor/r142-list.txt    → 2463
+$ grep -vn '^ - ' .agents/supervisor/r142-list.txt
+  1:PHPUnit 12.5.33 by Sebastian Bergmann and contributors.
+  2:
+  3:Available tests:
+```
+
+Every tool in this repo prints a banner, so `wc -l` on any of their output is
+wrong by the height of it, and `grep -c` with the row's own prefix costs the same
+keystrokes. ⭐ **It was load-bearing without anybody noticing:** REV-148 §4
+admitted the four-testsuite union as this lane's gate number on the ground that
+`app/phpunit.xml` declares no fifth suite — an argument from a file. Had 2 466
+been real there would have been three tests in no suite, and the number the lane
+pushes on would have missed them. The tool's own count now agrees with the union
+to the test.
+
+⛔ **A GATE THAT HAS PRODUCED NO NUMBER FOR EIGHT WAVES IS BROKEN, NOT STRICT,
+AND REPAIRING THE INSTRUMENT IS THE SUPERVISOR'S COLUMN.** Runs 137–144 each paid
+a thirty-minute budget and each came back `TIMEOUT` or `REFUSED`; three of them
+then measured by hand exactly what §7 exists to measure. The rule above — *a wave
+that cannot reach its gate is the next wave's only job* — is right and stands,
+and it says nothing about what to do when the gate itself is the fault. **When
+three consecutive waves reach the gate and the gate returns nothing, the subject
+of the next wave is the gate.** ⛔ And the repair still obeys REV-145 §3: the
+diagnosis of *why* the old invocation hung stays a separate command in the
+coder's column, so the two can still be told apart.
+
+⛔ **A CHECK THAT REPLACES ONE MEASUREMENT WITH SEVERAL NAMES WHAT THE NEW FORM
+CANNOT SEE, IN THE SCRIPT AND NOT ONLY IN THE NOTE.** §7 now runs four processes;
+four processes cannot show **cross-suite interference** — a test that fails only
+when another suite ran first in the same process is invisible to it, and that is
+precisely the property the old single-process hang is about. The limit is written
+where the number is printed, because the reader of a stage line is usually
+reading `BUILD-STATE.json` and not a review from four hours ago.
+
+⛔ **A BRIEF ITEM THAT NAMES AN EXTERNAL TOOL SAYS HOW TO CHECK IT IS THERE, AND
+GIVES THE FALLBACK IN THE SAME ITEM.** REV-148 §2 briefed `/usr/bin/time -v` on
+the strength of run 143's artefact carrying that *format* — which a python script
+had produced. Reasoning from the shape of an artefact to the existence of a tool
+cost run 144 its whole item 4. ⭐ The better move is an item that needs no
+external tool: `/proc/<pid>/stat` fields 14 and 15 are `utime` and `stime`, which
+is the same busy-or-blocked reading with nothing to install.
+
+⛔ **AND A REDIRECT TARGET IN AN ITEM THAT RUNS FROM `app/` IS WRITTEN
+`../.agents/supervisor/…`, OR THE ITEM IS WRAPPED `(cd app && …)` SO THE REDIRECT
+STAYS OUTSIDE THE SUBSHELL.** Run 144's fallback died on
+`bash: line 2: ../.agents/supervisor/r144-cpu.txt: No such file or directory` —
+repo-relative, which REV-134 §2 required, and still wrong because the working
+directory was not the repo. Same family as REV-135 §8, where one `cd app`
+silently revoked the supervisor's own `Edit` permissions and the error named
+neither the cause nor the cwd.

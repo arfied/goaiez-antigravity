@@ -2539,3 +2539,140 @@ tell which of the two worked (REV-145 §3).
 ⚠️ **§2f still reads 1 of 8 in the bypass arm**: `.agents/supervisor/launch-coder.sh` (**24 +/2 −**),
 unchanged. It stays — a touch is not a move (REV-135 §9). Its verdict is re-derived at merge time; nothing
 here authorises a merge.
+
+## REV-149 — the eleven were one wrong trait, and the gate is four processes from now on
+
+⭐ **Run 144 is a `PASS-WITH-NOTES` and it ended two things at once: the six-wave `account_mappings`
+question and the eight-wave gate stall.** `8b9c641c..0871efb2` is **pushed — 21 commits**, the first push
+since `04:41`. Both remaining `supervise.sh` arms fired live and green — §2g's ✓ (`no untracked PHP under
+app/ ✓`) and §2h's ✓ (`declared: 1738 · unresolvable: 0`). `schema` came back annotated with its database
+for the third run running, doctor stamp matches `runtime_build`, pint `passed`, phpstan `errors 0`, both
+ledger files named.
+
+### ⭐ §1. THE ELEVEN X-102 ERRORS ARE ONE FILE USING THE WRONG TRAIT — THE ONLY MODULE TEST IN THE TREE THAT DOES
+
+REV-147 §4 refused to rule them environmental and was right to. Run 144 measured the ownership in the
+**right** database this time (REV-148 §1's rule, `DB_DATABASE` on every form including the fallback):
+
+```
+$ cat .agents/supervisor/r144-owner-test.txt
+  account_mappings   tableowner  goaiez_owner
+  histogram          goaiez_owner  495              ← all 495 tables, one role
+  db goaiez_antig_reviews_test · current_user goaiez_app · session_user goaiez_app
+```
+
+`goaiez_app` owns none of the 495. The tree names the rest, command beside each result:
+
+```
+$ grep -rn 'RefreshDatabase' app/tests/Modules/X-102/ChatDoorTest.php
+  14: use Illuminate\Foundation\Testing\RefreshDatabase;      20:     use RefreshDatabase;
+$ grep -rlc 'use RefreshDatabase;' app/tests/Modules/ --include=*.php
+  app/tests/Modules/X-102/ChatDoorTest.php                    ← the ONLY one
+$ grep -n -A12 "'pgsql_migrate'" app/config/database.php
+  109:  'username' => env('DB_MIGRATE_USERNAME', 'goaiez_owner'),
+```
+
+`RefreshesTenantDatabase:14` says it in its own docblock — *"Laravel's own `RefreshDatabase` runs
+`migrate:fresh` on the **default** connection"* — which is why it migrates on `pgsql_migrate` instead.
+`ChatDoorTest` uses the plain trait, its `migrate:fresh` runs as `goaiez_app`, and it dies on the first
+`DROP TABLE` it reaches. `account_mappings` sorts first in the whole database (`_` = 0x5F precedes `i`, so
+it precedes `accounting_connections`), which is the only reason one table's name is on all eleven messages.
+**The table is incidental; the connection is the defect.** Filed as a `TRACK 1 ACTION` with the one-line
+repair — `app/tests/Modules/X-102/**` is not this lane's path.
+
+⛔ **And the near-miss is the part to keep.** The first candidate was X-173's
+`create_x173_accounting_tables.php:64-78`, whose `ALTER TABLE … ENABLE ROW LEVEL SECURITY` loop needs
+ownership and names `account_mappings` in its list. It is refuted **by its own source**: the loop covers
+`['accounting_connections', 'account_mappings', 'sync_runs', 'accounting_sync_conflicts']` and all four
+carry `business_id` (`:17`, `:29`, `:41`, `:53`), so the guard admits all four and `accounting_connections`
+would fail *first*. The error names the second. ⭐ Reading the file the hypothesis was about is what killed
+the hypothesis, one sentence before it became a ruling — REV-136 §1 and REV-138 §4 are this lane's two
+records of what an unmeasured ruling costs, and both were mine.
+
+### ⭐ §2. THE ADMITTED SET GAINS A FOURTH CLASS, AND THE DISTINCTION IS "TRACED", NOT "LOOKS ENVIRONMENTAL"
+
+**RULED: a `SQLSTATE[42501]` privilege error, in a test file OUTSIDE this lane's modules, whose mechanism
+is traced to a named `file:line`, where no commit in the pushed range touches the owning module.** All four
+conditions are mechanical; `git diff --stat origin/track/reviews..HEAD -- app/app/Modules/X-102
+app/app/Modules/X-173 app/tests/Modules/X-102` is empty. ⛔ **What is still refused is REV-147 §4's
+"probably environmental"** — an untraced `42501` revokes the sha, and so does a `42501` in one of *this*
+lane's test files, which would be a real defect wearing the same SQLSTATE.
+
+### ⛔ §3. THE LEDGER SAYS THE SUITE IS 2 466 TESTS AND IT IS 2 463. THE THREE ARE A BANNER
+
+```
+$ grep -c '^ - '  .agents/supervisor/r142-list.txt    → 2463
+$ grep -vn '^ - ' .agents/supervisor/r142-list.txt
+  1:PHPUnit 12.5.33 by Sebastian Bergmann and contributors.   2:(blank)   3:Available tests:
+```
+
+`wc -l` is 2466. Run 142's `JOURNAL.md` note recorded that as the test count. ⭐ **It was load-bearing and
+nobody noticed:** REV-148 §4 admitted the four-suite union as this lane's gate number on the argument that
+`app/phpunit.xml` declares no fifth suite — an argument from a file. If 2466 were real there would be three
+tests in no testsuite and the union would miss them. It is not real; `1 + 420 + 2030 + 12 = 2463` matches
+the tool exactly. **RULED: a count from a tool's output is taken by matching the ROW, never by `wc -l`** —
+every tool here prints a banner, and `grep -c` with the row's own prefix costs the same keystrokes.
+
+### ⛔ §4. `bin/supervise.sh` §7 IS FOUR PROCESSES NOW
+
+Run 144 item 3's fork came back **Arm B**, arms stated in advance:
+
+```
+  four SEPARATE processes, one per testsuite        157s, all four finish   (12:22:16 → 12:24:53)
+  ONE process, --testsuite=Unit,Feature,Modules,Journeys   KILLED at 400s   (12:25:30 → 12:32:10)
+```
+
+Load `1.42–2.68` across both windows, so REV-148 §5's shared-box confound is excluded by the measurement it
+asked for. Runs 137–144 produced **no** §7 number at all. **RULED: §7 runs the four testsuites as four
+processes and merges their JSON, because the four-suite form is proved to cover every test (§3) and proved
+to finish, and a gate that has produced nothing for eight waves is not a strict gate — it is a broken one.**
+
+⛔ **Not a fix for the hang and it does not claim to be** (REV-145 §3). The single-process invocation stays
+undiagnosed and stays under measurement as a standalone command in the coder's column; run 145 item 3 asks
+`pg_stat_activity` whether it is **working or blocked**, which is what item 4 was meant to answer and could
+not. ⛔ **The limit is written into the script, not only here** (REV-146 §1): **four processes cannot show
+cross-suite interference** — a test that fails only when another suite ran first in the same process is
+invisible to this gate, and that is exactly the property the hang is about.
+
+⭐ Two properties were built in for reasons already paid for: a `124` no longer overwrites the merged line
+with a bare `result: timeout` (one killed suite of four would discard three measured ones — REV-145 §1's
+shape one level up), and the four raw per-suite outputs are copied to `${TMPDIR}/last-pest-suites/` before
+the temp directory goes.
+
+⚠️ **`.agents/supervisor/t145-pestmerge-probe.sh` has NOT been run** — this seat's Bash column refuses it,
+so **running it is run 145's item 1** (REV-121). ⭐ It extracts the merger from `bin/supervise.sh` **at run
+time** with `sed -n "/<<'PYMERGE'/,/^PYMERGE$/p"` instead of copying it, so it cannot drift: REV-146 §3
+ruled a control substituting a stand-in for the subject validates the harness, and a copied heredoc is that
+defect one step milder. Its three arms are fed run 144's real artefacts.
+
+### ⚠️ §5. A TOOL THAT IS NOT ON THIS BOX, AND A PATH THAT RESOLVED AGAINST `app/`
+
+Item 4 came back `NOT MEASURED` with both refusals quoted, which is REV-148 §2 satisfied first try. Both
+failures are mine. `/usr/bin/time -v` **does not exist here** — REV-148 §2 named it on the strength of run
+143's `r143-rss.txt` carrying that *format*, which a python script had produced; I reasoned from the shape
+of an artefact to the existence of a tool. **RULED: a brief naming an external tool states how the coder
+checks it is there, and gives the fallback in the same item.** And the fallback died on
+`bash: line 2: ../.agents/supervisor/r144-cpu.txt: No such file or directory` — a repo-relative redirect in
+a command whose cwd was `app/`. REV-134 §2 required repo-relative and in full; that is not enough from
+`app/`. Same family as REV-135 §8, where one `cd app` silently revoked this seat's own Edit permissions.
+**RULED: a redirect target in an item that runs from `app/` is written `../.agents/supervisor/…`
+explicitly, or the item is wrapped `(cd app && …)` so the redirect stays outside the subshell.**
+
+### The seam — RULED for run 145
+
+⛔ **RULED by the lane supervisor: run 145 proves the new gate and finishes the diagnosis, and builds
+nothing** — the lane just pushed 21 commits so the pressure that made a build wave tempting is gone, and a
+wave that changes code while its own gate is being proved cannot tell which of the two moved a number.
+Items ascend in cost and each ends in a fact: **1.** the merger probe; **2.** the four suites by hand into
+named artefacts, which is the wave's number whether or not §7 works (REV-127's second mechanism); **3.**
+the single-process fork with `pg_stat_activity` at ~200 s — `state=active` with no `wait_event` means slow,
+a `Lock`/`Client` `wait_event_type` means blocked and the row names what on; **4.** `supervise.sh --tests`,
+the new §7's first live run, which item 2 makes safe to fail.
+
+⛔ **Scoped OUT:** no new test, no column, no refactor, no seam, no `manifest.php` / `capabilities.php`
+edit, no merge, no `GRANT`/`ALTER`/`DROP`/`CREATE`/`migrate`, nothing under `app/tests/Modules/X-102/**`,
+and no repair of anything this wave finds.
+
+⚠️ **§2f still reads 1 of 8 in the bypass arm**: `.agents/supervisor/launch-coder.sh` (**24 +/2 −**),
+unchanged for four ticks. It stays — a touch is not a move (REV-135 §9). Re-derived at merge time; nothing
+here authorises a merge.

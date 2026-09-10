@@ -921,8 +921,108 @@ fi
 if [ $want_tests -eq 1 ]; then
   # timeout: a hung suite is a red line, never a 26-minute wait (ruling 2026-09-05 07:0x)
   pest_started=$(date -Is); pest_t0=$(date +%s)
-  ptmp=$(mktemp "${TMPDIR:-/tmp}/pest-XXXXXX"); DB_DATABASE="$lane_db" timeout 1800 ./vendor/bin/pest > "$ptmp" 2>&1 & pjob=$!; pest_pid=$(pgrep -P "$pjob" 2>/dev/null | head -1); pest_pid=${pest_pid:-$pjob}; wait "$pjob"; rc=$?; out=$(cat "$ptmp")
+  # ⛔⛔ REV-149: §7 RUNS THE FOUR TESTSUITES AS FOUR PROCESSES, NOT ONE.
+  #
+  # The single bare `pest` above produced NO number for eight consecutive waves
+  # (runs 137-144: TIMEOUT, REFUSED, REFUSED, TIMEOUT, TIMEOUT, then measured by
+  # hand). Run 144 item 3 settled what the difference is, by a fork whose arms
+  # were stated in advance:
+  #
+  #   four SEPARATE processes, one per testsuite   157 s, all four finish
+  #     (12:22:16 -> 12:24:53, r144-uptime-start/end-item2.txt)
+  #   ONE process, --testsuite=Unit,Feature,Modules,Journeys
+  #     killed at its 400 s budget (12:25:30 -> 12:32:10, Arm B)
+  #
+  # Box load was comparable at both ends (1.42-2.68), so this is not REV-148 §5's
+  # shared-box effect. The single process is the difference, and what it is doing
+  # in there is STILL UNMEASURED — run 145 asks pg_stat_activity whether it is
+  # working or blocked. This change routes the GATE around the defect; it does not
+  # fix it and does not claim to (REV-145 §3: a wave that both diagnoses and treats
+  # can no longer tell which of the two worked — so the diagnosis stays a separate
+  # command in a separate column).
+  #
+  # ⭐ THE COVERAGE ARGUMENT IS MEASURED, NOT CONSTRUCTED. REV-148 §4 admitted the
+  #   four-suite union on the reasoning that app/phpunit.xml declares no fifth
+  #   suite. That is an argument from a file; here is the count from the tool:
+  #
+  #     $ grep -c '^ - ' .agents/supervisor/r142-list.txt      -> 2463   (--list-tests)
+  #     $ Unit 1 + Feature 420 + Modules 2030 + Journeys 12    -> 2463
+  #
+  #   Equal. Every test a bare `pest` discovers is in exactly one of the four.
+  #
+  # ⛔ THE LIMIT, NAMED (REV-146 §1 — this lane's corrections keep landing one axis
+  #   from the defect, so the axis gets said out loud): four processes CANNOT SHOW
+  #   CROSS-SUITE INTERFERENCE. A test that fails only when another suite ran first
+  #   in the same process is invisible to this gate — and that is precisely the
+  #   property the single-process hang is about. This number is a suite result; it
+  #   is not evidence that one process would be green.
+  ptmp=$(mktemp "${TMPDIR:-/tmp}/pest-XXXXXX"); psdir=$(mktemp -d "${TMPDIR:-/tmp}/pestsuites-XXXXXX")
+  ( for _ts in Unit Feature Modules Journeys; do
+      DB_DATABASE="$lane_db" timeout 600 ./vendor/bin/pest --testsuite="$_ts" > "$psdir/$_ts.txt" 2>&1
+      printf '%s %s\n' "$_ts" "$?" >> "$psdir/rc.txt"
+    done ) & pjob=$!; pest_pid=$(pgrep -P "$pjob" 2>/dev/null | head -1); pest_pid=${pest_pid:-$pjob}; wait "$pjob"
+  # rc keeps the old meaning for every branch below: 124 = a budget was hit,
+  # non-zero = a suite was red, 0 = all four green. 124 outranks the rest so the
+  # TIMEOUT arm still fires when any one suite is killed.
+  rc=0
+  while read -r _tsn _tsrc; do
+    [ "$_tsrc" = "124" ] && rc=124
+    [ "$_tsrc" != "0" ] && [ "$rc" = "0" ] && rc="$_tsrc"
+  done < "$psdir/rc.txt" 2>/dev/null
+  PEST_SUITE_DIR="$psdir" python3 - "$psdir/summary.txt" > "$ptmp" <<'PYMERGE'
+import json, os, sys
+d = os.environ['PEST_SUITE_DIR']
+tot = {'tool': 'pest', 'result': 'passed', 'tests': 0, 'passed': 0,
+       'failed': 0, 'errors': 0, 'assertions': 0, 'duration_ms': 0}
+fails, errs, lines, missing = [], [], [], []
+for n in ('Unit', 'Feature', 'Modules', 'Journeys'):
+    try:
+        raw = open(os.path.join(d, n + '.txt')).read().splitlines()
+    except OSError:
+        raw = []
+    obj = None
+    for ln in reversed(raw):
+        if ln.startswith('{"tool":"pest"'):
+            try:
+                obj = json.loads(ln)
+            except ValueError:
+                obj = None
+            break
+    if obj is None:
+        missing.append(n)
+        lines.append('%-9s NO pest JSON LINE — %d byte(s) of output kept' % (n, sum(len(x) + 1 for x in raw)))
+        continue
+    for k in ('tests', 'passed', 'failed', 'errors', 'assertions', 'duration_ms'):
+        tot[k] += int(obj.get(k) or 0)
+    fails.extend(obj.get('failures') or [])
+    errs.extend(obj.get('error_details') or [])
+    lines.append('%-9s tests %-5s passed %-5s failed %-3s errors %-3s %sms' % (
+        n, obj.get('tests'), obj.get('passed'), obj.get('failed', 0),
+        obj.get('errors'), obj.get('duration_ms')))
+tot['failures'] = fails
+tot['error_details'] = errs
+tot['suites'] = 4 - len(missing)
+if missing:
+    tot['result'] = 'incomplete'
+    tot['missing'] = missing
+elif tot['failed'] or tot['errors']:
+    tot['result'] = 'failed'
+open(sys.argv[1], 'w').write('\n'.join(lines) + '\n')
+sys.stdout.write(json.dumps(tot) + '\n')
+PYMERGE
+  out=$(cat "$ptmp")
   pest_elapsed=$(( $(date +%s) - pest_t0 ))
+  echo "  four testsuites, four processes (REV-149) — union is every test --list-tests finds:"
+  [ -s "$psdir/summary.txt" ] && sed 's/^/    /' "$psdir/summary.txt"
+  # ⛔ THE RAW PER-SUITE OUTPUT IS KEPT BEFORE THE DIRECTORY GOES. REV-145 §1 is
+  #   this lane's record of a check that deleted the one artefact that could have
+  #   diagnosed it, and it cost two thirty-minute waves. The merged JSON above is
+  #   a summary; these four files are the evidence, and `missing` names which of
+  #   them to read first.
+  pest_suites=${TMPDIR:-/tmp}/last-pest-suites
+  rm -rf "$pest_suites" 2>/dev/null; cp -r "$psdir" "$pest_suites" 2>/dev/null || true
+  echo "    per-suite raw output KEPT at $pest_suites/"
+  rm -rf "$psdir" 2>/dev/null || true
   # ⛔⛔ REV-147: THE KEPT PARTIAL CANNOT DIAGNOSE ANYTHING, BECAUSE THIS SUITE'S
   #   PRINTER EMITS EXACTLY ONE LINE AND EMITS IT AT THE END.
   #
@@ -957,14 +1057,21 @@ if [ $want_tests -eq 1 ]; then
   log_gate pest "$pest_started" "$rc" "${pest_pid:--}"
   [ "${lock_held:-0}" -eq 1 ] && flock -u 9 2>/dev/null
   if [ $rc -eq 124 ]; then
-    echo "  ✗ pest TIMEOUT after 1800s — killed by the budget; treat as red, and NOT as 'the suite hung'"
-    echo "     elapsed ${pest_elapsed}s under the lock (the lock WAIT is not counted here — it is above)"
-    echo "     partial KEPT at $pest_partial — $(wc -c < "$pest_partial" 2>/dev/null || echo 0) byte(s)"
-    echo "     ⚠ REV-147: this printer emits ONE line, at the END, so an incomplete run keeps 0 bytes"
-    echo "       whatever it did. The byte count is NOT evidence of where it stopped. Diagnose by"
-    echo "       elapsed time above, and by --testsuite bisection: run 142 measured Unit 4ms ·"
-    echo "       Feature 27.9s · Modules 121.9s · Journeys 14.8s = 165s for all 2463 tests."
-    out="$out"$'\n''{"tool":"pest","result":"timeout","elapsed_s":'"$pest_elapsed"'}'
+    # ⛔ REV-149: THE MERGED JSON IS NOT OVERWRITTEN BY THE TIMEOUT NOTICE. Before
+    #   the four-suite split a 124 meant the ONE run died and there was no number
+    #   to keep, so this arm appended a `result: timeout` object and that object
+    #   became tail -1. Now a 124 means ONE OF FOUR was killed and the other three
+    #   have real numbers in the merged line — `missing` names which. Appending
+    #   here would discard three measured suites to report the fourth, which is
+    #   REV-145 §1's shape (a branch that destroys the evidence it exists to
+    #   report) one level up.
+    echo "  ✗ a testsuite hit its 600s budget — treat as red. Elapsed ${pest_elapsed}s for all four"
+    echo "     (the lock WAIT is not counted here — it is above). The suite named in the merged"
+    echo "     line's \"missing\" key is the one that was killed; its raw output is at $pest_suites/."
+    echo "     ⚠ REV-147: this printer emits ONE line, at the END, so a killed suite keeps 0 bytes"
+    echo "       whatever it did. The byte count is NOT evidence of where it stopped. Run 144 measured"
+    echo "       Unit 4ms · Feature 27.9s · Modules 121.9s · Journeys 14.8s = 157s for all 2463 tests,"
+    echo "       so a 600s budget on any one of them is 5x the slowest and a hit is a real finding."
   elif [ -z "$out" ]; then
     # 2026-09-05 07:2x: a gate printed a blank §7 and an empty last-pest.json.
     # Zero bytes is never a result: rc 137/143 = killed from outside (a
@@ -973,6 +1080,15 @@ if [ $want_tests -eq 1 ]; then
     # formatter never ran.
     echo "  ✗ pest printed ZERO BYTES (rc=$rc) — no test ran to completion; not a number, a silence. Re-run; if it repeats, --filter one file to surface the exception"
     out='{"tool":"pest","result":"silent","rc":'"$rc"'}'
+    fail=1
+  fi
+  # REV-149: a suite that produced no JSON line at all is a SILENCE, and the merged
+  # line still carries the other three — so the zero-bytes arm above can no longer
+  # see it (out is never empty now). This is that arm, moved up one level.
+  if printf '%s' "$out" | tail -1 | grep -q '"result":"incomplete"'; then
+    echo "  ✗ a testsuite produced NO pest JSON line — see the per-suite summary above and"
+    echo "     $pest_suites/. That is CLAUDE.md's zero-bytes trap: memory, or a missing Vite"
+    echo "     manifest (confirm npm run build). Narrow it with --filter before debugging code."
     fail=1
   fi
   printf '%s' "$out" | tail -1 > /home/goaiez/tmp/last-pest.json
