@@ -333,4 +333,42 @@ class ChatDoorTest extends TestCase
         $response->assertStatus(400);
         $response->assertJson(['error' => 'Bad Request']);
     }
+
+    /**
+     * Decision: A whitespace message is normalised to null.
+     * Reasoning: A detail that is blank or whitespace was not given (R245). Normalising to null ensures
+     * we don't pass an empty string down to the event listeners like ChatLeadCapturedListener which expects
+     * a meaningful message or null, preventing downstream rollbacks of valid lead captures.
+     */
+    public function test_whitespace_message_is_normalised_to_null(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Lead Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+        $key = app(PixelKeys::class)->ensureFor($biz);
+
+        $session = ChatSession::create([
+            'business_id' => $biz->id,
+            'session_token' => 'sess_lead_test',
+            'status' => 'active',
+            'rage_clicks_count' => 0,
+            'is_ai_capped' => false,
+        ]);
+        Tenancy::forgetAll();
+
+        $response = $this->postJson("/api/chat/{$key}/capture", [
+            'session_token' => 'sess_lead_test',
+            'name' => 'John Doe',
+            'phone' => '1234567890',
+            'email' => 'john@example.com',
+            'message' => "   \n\t ",
+        ]);
+
+        $response->assertStatus(201);
+        $response->assertJsonStructure(['id']);
+
+        Tenancy::set((int) $biz->id);
+        $this->assertEquals(1, ChatLead::where('chat_session_id', $session->id)->count());
+        $lead = ChatLead::first();
+        $this->assertNull($lead->message);
+    }
 }

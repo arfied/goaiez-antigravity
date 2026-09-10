@@ -26,6 +26,9 @@ final class ChatCaptureAction
             throw new \DomainException('NO_CONTACT_METHOD_ON_CAPTURE');
         }
 
+        // A detail that is blank or whitespace was not given (R245, 2026-09-05).
+        $message = is_string($message) && trim($message) === '' ? null : $message;
+
         return DB::transaction(function () use ($businessId, $sessionId, $name, $phone, $email, $message, $formType) {
             $session = ChatSession::where('business_id', $businessId)->findOrFail($sessionId);
 
