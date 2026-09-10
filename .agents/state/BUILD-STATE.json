@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-10T00:47:45",
+ "updated": "2026-09-10T01:21:56",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1698,6 +1698,10 @@
   {
    "at": "2026-09-10T00:47:49",
    "note": "C-Billing dunning_states declares six statuses and the engine writes three; grace and terminated are written by nothing and read by nothing, and the migration that declares them is not this lane's to edit, so they are recorded rather than built."
+  },
+  {
+   "at": "2026-09-10T01:22:01",
+   "note": "C-Billing credit_ledger_entries declares four entry types and the engine writes three; refund is written by nothing and read by nothing, and the migration that declares it is not this lane's to edit. credits.blade.php prints the raw type topup while the panel above it is headed Top-up recorded, and that split is recorded rather than fixed because wire:click=topup is on the same page, so the negative half of the pairing could not pass."
   }
  ],
  "decisions": [
@@ -2623,6 +2627,12 @@
    "module": "C-Billing",
    "chose": "A screen that renders a status column shows the ladder stage in the owner's words and never the schema's token, and its signal is derived from the values the engine actually writes: a ternary keyed on a value no code writes is a constant wearing a condition, and a fixture that seeds that value makes the only assertion of the pill certify a state production cannot reach.",
    "at": "2026-09-10T00:47:45",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Billing",
+   "chose": "A screen shows an enumerated column in the owner's words and never the schema's backing string, and its signal is derived from the column that carries the meaning: an amount stored as an unsigned magnitude cannot answer which way the money went, and a ternary on its sign returns one answer for every row production writes.",
+   "at": "2026-09-10T01:21:56",
    "ruling": "R245"
   }
  ]
