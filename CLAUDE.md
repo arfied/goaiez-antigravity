@@ -766,3 +766,60 @@ this tick, unread. Seventh instance of **a correct statement present in the tree
 (REV-119 §A, REV-121 §A, REV-125 §13, REV-126, REV-127 §1, REV-129, here). The brief now tells the
 coder to re-measure and says explicitly that I got it wrong — a stated number the reader is told to
 distrust is worth more than a stated number.
+
+## REV-134 — the eight-name floor is a push criterion, and a brief's paths are written out or they drift
+
+⛔ **§1. A RED `== verdict` IS NOT AUTOMATICALLY AN UNPUSHABLE SHA, AND THE DISTINCTION IS THE FAILING *SET*,
+NOT THE COUNT (2026-09-09, run 129).** `r129-gate.log` ends `⛔ a gate failed above.` with §7 the only red
+section, and its eight `✗` names are exactly REV-132's floor: six money-lane evidence artifacts
+(`evidence/X-117/checkout.json`, `evidence/X-199/invoice.json`, `evidence/X-211/recovery.json`, and X-198's
+`capture_persists_real_id` / `pay_link_returns_real_url` / `a_real_gateway_charge_id_exists`, all minted by
+`php artisan x198:evidence-*`, a command this lane does not own and must not run) and two journey-harness
+refusals demanding a **real Infobip/telephony transport** whose credentials are on the reserved list.
+
+**RULED: a `--tests` run whose failing set is exactly the eight baseline names is a GATED-GREEN sha for push
+purposes, because none of the eight is a function of this lane's tree and no wave in this lane can move any
+of them without a reserved-list credential.** ⛔ **A ninth name revokes it outright** — the ruling is on the
+*set*, and the set is quoted in full in every report that leans on it. ⚠️ **The converse is the case this
+replaces:** REV-133 held `4f5d44f6` unpushable because its gate failed, and that was right — it failed on
+**pint**, a real regression in this lane's own diff. *A gate failed* is not a criterion; *what* failed is.
+
+⛔ **§2. EVERY PATH A BRIEF NAMES IS WRITTEN REPO-RELATIVE AND IN FULL, INCLUDING THE REPORT'S (my defect).**
+Run 129's brief gave an explicit `.agents/supervisor/` path to every artefact it named —
+`> .agents/supervisor/r129-gate.log` — except one. Item 5's entire text was *"### 5. `REPORT.md` last"*. The
+single artefact whose path was left implicit is the single artefact that landed in the wrong directory: run
+129's report went to the repo **root**, untracked, while `.agents/supervisor/REPORT.md` still held run 128's.
+
+⚠️ **The damage is silent and compounding.** `supervise.sh` §3's `mailbox:` block reads the mailbox copy, and
+this seat's own session-start step 2 — *"if `REPORT.md` is newer than the last `REVIEWS.md` block"* —
+resolves against it. A gate would have advertised run 128's report as current indefinitely, and the tick that
+found run 129 found it only because the tick's own instructions point at the root. **No exception for a file
+whose location "everyone knows"** — the mailbox is precisely what a fresh coder session does not know.
+
+⭐ **§3. C-Reviews reached ZERO boundary violations, and the instrument that made the refactor safe was
+bought one run early.** `4f5d44f6`'s four routed `GET`s were written for run 128's X-181 seam; they are what
+covered run 129's X-121 seam, because `Ui/Tickets.php` and `Ui/ReviewsQaRequests.php` changed in both. That
+is the REV-132 erratum's split paying for itself: *"the split is what keeps the verification single."*
+
+⛔ **§4. THE MIRROR SEAM, AND THE RULE THAT AN INSTRUMENT MUST REACH THE CHANGED LINE.** One import survives
+in the other direction — `X-181/Ui/Ticket.php:7` `use App\Modules\CReviews\Models\ReviewRequest;`, used once
+at `:87`. Both modules are wave 8's, so C-Reviews grows a registered `ReviewRequestReadAction` returning
+`?ReviewRequest` and X-181 calls it. The cast question was measured before ruling — `ReviewRequest::$casts`
+is `rating => integer`, `gbp_suspended => boolean`, no Carbon, and the blade reads only `$review->rating`
+(`X-181/Ui/views/ticket.blade.php:33-34`) — so an `?array` would work and is **still refused**, because the
+typed return costs nothing. REV-131 §4's third option, *keep the read and strip the type off it*, stays
+refused wherever a typed alternative is free.
+
+⚠️ **But `TicketScreenTest.php:21` is a real routed `GET` that passes and proves nothing about that line.**
+It mounts with no `ticketId`, so `$this->ticketId > 0` is false and the branch never executes. And a routed
+`GET` *cannot* reach it: `public int $ticketId = 0` is `#[Locked]` and is not a route or query parameter.
+**RULED: a seam refactor is briefed only behind a test that enters the changed branch, and building that
+test is the wave's FIRST item with a hard stop attached** — if the branch cannot be entered, the wave stops
+there and reports it rather than refactoring blind. This is the merged-wrong-lint trap in test form: a test
+that cannot reach the code is green by construction, exactly like a lint that matches nothing.
+
+⚠️ **§5. `schema` WAS REPORTED WITHOUT ITS DATABASE FOR THE SECOND CONSECUTIVE RUN**, after the brief quoted
+REV-119 §B at it by name and told it *"you got this right last run"*. Harmless only because the count did not
+move. A ⛔ that is restated and re-violated is a sign the instruction needs a **paste-ready string**, not
+another citation — run 130's brief gives the literal line to emit,
+`FAIL schema <ms> 14 violation(s)   (read from goaiez_antig_reviews, per app/.env)`.
