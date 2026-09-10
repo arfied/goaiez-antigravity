@@ -372,6 +372,7 @@ class ChatDoorTest extends TestCase
         $this->assertEquals(1, ChatLead::where('chat_session_id', $session->id)->count());
         $lead = ChatLead::first();
         $this->assertNull($lead->message);
+        $this->assertNull($lead->consent_logged_at);
     }
 
     /**
@@ -434,6 +435,7 @@ class ChatDoorTest extends TestCase
         Tenancy::set((int) $biz->id);
         $lead = ChatLead::where('chat_session_id', $session->id)->first();
         $this->assertNull($lead->message);
+        $this->assertNull($lead->consent_logged_at);
     }
 
     public function test_capture_keeps_message_when_consent_provided(): void
@@ -463,5 +465,6 @@ class ChatDoorTest extends TestCase
         Tenancy::set((int) $biz->id);
         $lead = ChatLead::where('chat_session_id', $session->id)->first();
         $this->assertEquals('Hello', $lead->message);
+        $this->assertNotNull($lead->consent_logged_at);
     }
 }

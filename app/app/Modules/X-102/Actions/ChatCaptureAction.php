@@ -34,7 +34,7 @@ final class ChatCaptureAction
         // A detail that is blank or whitespace was not given (R245, 2026-09-05).
         $message = is_string($message) && trim($message) === '' ? null : $message;
 
-        return DB::transaction(function () use ($businessId, $sessionId, $name, $phone, $email, $message, $formType) {
+        return DB::transaction(function () use ($businessId, $sessionId, $name, $phone, $email, $message, $formType, $consent) {
             $session = ChatSession::where('business_id', $businessId)->findOrFail($sessionId);
 
             // 1. Form submission creates the Person (TEST ANCHOR)
@@ -58,6 +58,7 @@ final class ChatCaptureAction
                 'email' => $email,
                 'message' => $message,
                 'form_type' => $formType,
+                'consent_logged_at' => $consent ? now() : null,
             ]);
 
             $session->update(['status' => 'lead_captured']);
