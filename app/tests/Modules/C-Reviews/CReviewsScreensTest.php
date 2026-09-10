@@ -354,6 +354,7 @@ class CReviewsScreensTest extends TestCase
     public function test_loss_alerts_confirm_removal_refuses_cross_tenant(): void
     {
         $otherBiz = self::provisionTenant(['name' => 'Other Biz']);
+        $this->assertEquals((string) $otherBiz->id, \DB::selectOne("select current_setting('app.business_id', true) as v")->v);
         $req = ReviewRequest::create(['business_id' => $otherBiz->id, 'rating' => 1]);
         $locId2 = Location::firstOrCreate(['business_id' => $otherBiz->id, 'name' => 'Main2'])->id;
         Review::create(['business_id' => $otherBiz->id, 'location_id' => $locId2, 'source' => ReviewSource::Google, 'google_review_id' => 'g_123', 'status' => ReviewStatus::Approved, 'rating' => 1]);
