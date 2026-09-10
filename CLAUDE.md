@@ -11079,3 +11079,83 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     `app/app/Modules` filtered to the lane's ids — **a zero there means every usage passes it explicitly,
     which is the SAFE answer**, and a non-zero means nothing until the component's body is read to see
     whether the default is rendered (207, 294 — a zero is corroborated, never trusted).
+374. **⭐⭐ `components/layouts/app.blade.php` is the TENANT shell — one line from `agency`, and that line is
+    the NAV MENU — so ruling 171's stated premise ("falling through to the staff console") is measurably
+    wrong, and the odd screens out are the three ruling 171 converted (RULED by the lane supervisor
+    2026-09-10 15:3x; filed TRACK 1 ACTION 21).** Ruling 373 opened the file-set axis — *a value a screen
+    renders may live in no file the lane owns* — and its first re-run is the SHELL each money screen wears,
+    which is decided by a PHP attribute in money's own component and rendered by a Track 2 blade. Measured:
+    **24 components, 8 carrying `#[Layout]`** — X-199's five on `components.account.layout` with an explicit
+    `heading` (ruling 155), X-198's three on `components.layouts.agency` (ruling 171) — **and 16 carrying
+    none**, which under Livewire's default (there is no `app/config/livewire.php`) is
+    `components.layouts.app`.
+    ⭐⭐ **The decisive measurement is a two-file `diff`, and nobody had ever run it.** `agency.blade.php`
+    and `app.blade.php` are **both 6220 bytes** and differ on **exactly one line, `:50`** —
+    `@foreach (config('surfaces.generated.agency', []) …)` against
+    `@foreach (config('surfaces.generated.tenant', []) …)`. **The entire delta is which navigation menu the
+    owner sees.** So `layouts.app` is not a staff console at all; it is the byte-identical shell wearing the
+    **tenant** menu, and `layouts.tech` (1452 bytes) is the different one.
+    ⭐ **And the surfaces config settles which is right.** `app/config/surfaces.generated.php` opens
+    `'tenant'` at `:6`, `'agency'` at `:427`, `'tech'` at `:448`; money's screens are registered under
+    **tenant** (`x-199.declines:22`, `c-billing.mrr:112`, `x-211.ageing-by-reason:126`, and X-198's three at
+    `:121-123`). So the 16 with no attribute render the tenant nav for tenant surfaces and are **correct**.
+    **X-198's three are the odd ones out**: registered in the tenant menu like the other twenty-one, they
+    render the **agency** menu — an owner who reaches `x-198.same-account` from the tenant menu lands on a
+    page whose sidebar has been replaced and has no link back to where they came from. Ruling 98's tell,
+    across shells.
+    ⛔ **It is NOT reverted here, and the reason is that main's position is coherent.** X-198's three are
+    *also* registered under `agency` at `:437-439` — the same route names in two menus — main added the
+    attribute in `de435ba2`, and ruling 171 measured that restoring it moved `OwnerNavTest`'s `$withLayout`
+    10 → **13** and `$withoutLayout` 258 → **255**, i.e. **main authored the pins expecting it present**. The
+    surfaces config, the attribute and the pin all agree with each other. A `#[Layout]` is a property of the
+    COMPONENT and a menu registration is a property of the ROUTE, so a route in two menus can only ever wear
+    one shell — **that is a cross-lane design question, not a lane defect**, and the config, both shells and
+    the pin are Track 1's and Track 2's (ruling 5). ⛔ Reverting would also redden two pins in a
+    `Feature/Architecture/` file money may not edit (rulings 166, 176, 181 — money is one-sided on those and
+    main's copies win at every merge).
+    ⚠️ **The correction is the durable half and it is the SEVENTH inherited attribution this ledger has had
+    to make** (163, 171, 176, 257, 289, 355 — and now 171 itself). Ruling 171 wrote *"the three screens fall
+    through to the staff console"* by **quoting `OwnerNavTest:324`'s pin message** rather than by reading
+    `app.blade.php`. The pin's wording is approximate; the file is not. ⭐ **A CHECK's failure message is a
+    hint, never a measurement** — it is written to be read at the moment a count moves, by someone who has
+    not yet looked, and this lane has now built a ruling on one. Cite the command (289, 293, 300, 355).
+    ⚠️ ⛔ **`$withoutLayout`'s message is a count-and-record instrument, not a blessing** — *"If it went
+    DOWN, one was converted, or built out"* — so converting the 16 would be *legal* and would simply require
+    Track 1 to re-pin (ruling 370's `$illegal` shape). It is nonetheless **refused**: money's own lane
+    already wears three shells, nothing measurable says which is right for X-117's storefront or X-120's
+    vault, and ruling 162 measured that adopting `account.layout` moves the page `<h1>` into the shell and
+    reddens `HeadingSeamTest`'s `$skips` for every blade still emitting one — sixteen demotions to buy a
+    consistency nobody has asked for.
+
+375. **⭐⭐ Three more populations measured with fired positive controls and ZERO buildable — and one of
+    them corroborates a prior census on the PREDICATE it should have used (measured by the lane supervisor
+    2026-09-10 15:3x; rulings 64, 95, 100, 111, 294, 324, 327, 340, 371).**
+    **(a) Foreign components rendered by money blades — the whole of ruling 373's file-set axis, and it is
+    two classes.** `grep -rno "<x-[a-z0-9.-]*" app/app/Modules --include=*.blade.php`, filtered to the eight
+    ids and with `x-ui.` excluded, returns **exactly ten lines and one component name**:
+    `<x-surface.sample-state`, which is ruling 370's own ten. ⭐ The instrument fires (it found the ten) and
+    finds nothing else, so **the complete set of files outside this lane that render on money screens is the
+    UI kit (373, TRACK 1 ACTION 20) and `surface/sample-state` (370, TRACK 1 ACTION 19)** — both already
+    filed. ⛔ Not to be re-raised.
+    **(b) The `sr-only <h1>` heading strings — five members, all TRUE.** Ruling 162 measured
+    `components/account/layout.blade.php:51-52` emitting `<h1 class="sr-only">{{ $heading }}</h1>`, so the
+    `heading` key of X-199's five `#[Layout]` attributes is owner-facing to a screen-reader user, in money's
+    own files, in a **fifth** heading location after `<th>`/`<dt>` (319), `heading=` (142), `label=` (371)
+    and the pill (122). Read one by one (262(b)): *Payment Declines & Exceptions* · *Customer Invoices* ·
+    *Unpaid Invoices* · *Credit Balances & Terms* · *Happened Today* — each names its screen's actual
+    subject, and the two vaguest carry no claim a figure could contradict. ⛔ Struck.
+    **(c) ⭐⭐ The standing field note re-run on the right predicate: all 24 screens have a REAL GET.** The
+    note is *"`Livewire::test()` never renders the layout … any new screen needs one real `GET` asserting
+    `assertOk()`"*, and ruling 151(4) recorded *"24 screens, every one with a screen test containing
+    `assertOk()`"* — **a count of a string that `Livewire::test(...)->assertOk()` also satisfies**, which is
+    ruling 371's defect exactly (a census that counts its members instead of stating its predicate).
+    Re-measured on the predicate — `grep -rn "this->get(route(" app/tests/Modules` filtered to the eight ids
+    — returns **34 call sites across 26 files, covering all 24 screens**. So the trap is measured absent,
+    and every one of the 16 layout-less screens is proven to render its shell end to end. ⛔ Struck, and
+    151(4) is corrected in place rather than dropped (ruling 355).
+    ⭐ **The generalisable half is ruling 327's outcome shape a SIXTH time** — *a population measured
+    non-empty that yields zero buildable fixes is a legitimate result and is the more useful of the two to
+    write down* — and (c) is ruling 371's lesson applied to **this ledger's own prior census** rather than
+    to a wave's: a count recorded against a loose string outlives the tick that took it, and the next reader
+    inherits the number without the predicate. **A census records the PREDICATE it measured, in the ruling,
+    beside the count.**
