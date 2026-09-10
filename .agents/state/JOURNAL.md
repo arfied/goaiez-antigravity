@@ -935,3 +935,4 @@
 - `2026-09-10T16:24:27` (R245) X-102 — contract Flipped ChatCaptureAction consent parameter to default to false, requiring explicit opt-in for consent records, and passed consent explicitly to the two tests that assert on the resulting message retention.
 - `2026-09-10T16:53:19` (R245) X-102 — boundary Created consented test to properly assert HTTP middleware whitespace normalization R245
 - `2026-09-10T16:53:19` (R245) X-102 — capability Removed logged consent from widget build proposal as the backend portion is built R245
+- `2026-09-10T17:27:02` (R245) X-102 — boundary 2026-09-10T16:53:19 The consented test is unfalsifiable for the HTTP middleware because the action duplicates the trim logic R245
