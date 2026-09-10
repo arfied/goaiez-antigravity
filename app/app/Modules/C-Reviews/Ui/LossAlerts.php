@@ -82,26 +82,21 @@ class LossAlerts extends Component
             return;
         }
         Tenancy::set($this->businessId);
-        try {
-            $action = app(QaTicketResolveAction::class);
-            $action->handle($this->businessId, $ticketId, $notes);
+        $action = app(QaTicketResolveAction::class);
+        $action->handle($this->businessId, $ticketId, $notes);
 
-            $alertAction = app(AlertSendAction::class);
-            $alertAction->handle(
-                businessId: $this->businessId,
-                title: 'Loss Alert: Ticket Resolved',
-                body: "Ticket #{$ticketId} was resolved. Notes: {$notes}",
-                alertClass: 'account'
-            );
+        $alertAction = app(AlertSendAction::class);
+        $alertAction->handle(
+            businessId: $this->businessId,
+            title: 'Loss Alert: Ticket Resolved',
+            body: "Ticket #{$ticketId} was resolved. Notes: {$notes}",
+            alertClass: 'account'
+        );
 
-            $this->noticeType = 'success';
-            $this->actionNotice = '✅ Ticket resolved and team alerted.';
-            $this->resolvingTicketId = null;
-            $this->resolutionNotes = '';
-        } catch (\Exception $e) {
-            $this->noticeType = 'error';
-            $this->actionNotice = '🚫 Error: '.$e->getMessage();
-        }
+        $this->noticeType = 'success';
+        $this->actionNotice = '✅ Ticket resolved and team alerted.';
+        $this->resolvingTicketId = null;
+        $this->resolutionNotes = '';
     }
 
     public function alertTeam(int $reviewRequestId): void
@@ -110,20 +105,15 @@ class LossAlerts extends Component
             return;
         }
         Tenancy::set($this->businessId);
-        try {
-            $alertAction = app(AlertSendAction::class);
-            $alertAction->handle(
-                businessId: $this->businessId,
-                title: 'Loss Alert: High Risk Customer',
-                body: "Review Request #{$reviewRequestId} indicates a high risk of churn.",
-                alertClass: 'account'
-            );
-            $this->noticeType = 'success';
-            $this->actionNotice = '✅ Team alerted.';
-        } catch (\Exception $e) {
-            $this->noticeType = 'error';
-            $this->actionNotice = '🚫 Error: '.$e->getMessage();
-        }
+        $alertAction = app(AlertSendAction::class);
+        $alertAction->handle(
+            businessId: $this->businessId,
+            title: 'Loss Alert: High Risk Customer',
+            body: "Review Request #{$reviewRequestId} indicates a high risk of churn.",
+            alertClass: 'account'
+        );
+        $this->noticeType = 'success';
+        $this->actionNotice = '✅ Team alerted.';
     }
 
     public function startPrepare(int $id): void
@@ -151,7 +141,7 @@ class LossAlerts extends Component
             $this->noticeType = 'success';
             $this->actionNotice = '✅ Removal request prepared.';
             $this->preparingReviewId = null;
-        } catch (\Exception $e) {
+        } catch (\InvalidArgumentException $e) {
             $this->noticeType = 'error';
             $this->actionNotice = '🚫 Error: '.$e->getMessage();
         }
@@ -175,7 +165,7 @@ class LossAlerts extends Component
             $action->execute($removal, $userId);
             $this->noticeType = 'success';
             $this->actionNotice = '✅ Removal request confirmed.';
-        } catch (\Exception $e) {
+        } catch (\InvalidArgumentException|UnauthenticatedConfirmationException $e) {
             $this->noticeType = 'error';
             $this->actionNotice = '🚫 Error: '.$e->getMessage();
         }
