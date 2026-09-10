@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-10T12:25:35",
+ "updated": "2026-09-10T13:03:59",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1734,6 +1734,10 @@
   {
    "at": "2026-09-10T12:25:51",
    "note": "MONEY-185: 23 Ui components, 51 message properties, two methods left a property uncleared; the read/UI-state toggles carry no success to contradict and are measured clean"
+  },
+  {
+   "at": "2026-09-10T13:03:59",
+   "note": "MONEY-186: the X-211 payment form takes the method from a whitelisted select defaulting to check, the vocabulary lives on OfflinePayment as the model that owns the column, and the refusal names the reference this screen can take"
   }
  ],
  "decisions": [
@@ -2725,6 +2729,12 @@
    "module": "X-211",
    "chose": "A message property is cleared by every action on its component, not only by the action that sets it: a success beside a stale refusal is one screen giving two answers AgeingByReason::logPayment left $refused standing from applyLateFee and CardScreen::makeDefault left $waiting standing from present, while both of their siblings cleared every property",
    "at": "2026-09-10T12:25:35",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-211",
+   "chose": "A refusal names a remedy the owner can reach on the screen they are standing on, and the value a screen sends for a column with a declared vocabulary comes from the owner rather than from a literal AgeingByReason offered a photo on a form with no file input and recorded every offline payment as a cheque, while packageForCollections renders that word to the owner handing an account to an agency",
+   "at": "2026-09-10T13:03:59",
    "ruling": "R245"
   }
  ]
