@@ -685,6 +685,30 @@ class X01Test extends TestCase
         );
     }
 
+    public function test_chat_lead_captured_listener_ignores_whitespace_message(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Whitespace Biz', 'currency' => 'USD']);
+        \App\Support\Tenancy::set($biz->id);
+
+        $listener = app(\App\Modules\Listeners\ChatLeadCapturedListener::class);
+        $event = new \App\Modules2\Events\ChatLeadCaptured(
+            businessId: $biz->id,
+            sessionId: 'session_123',
+            name: 'Whitespace User',
+            phone: '+15125550202',
+            email: null,
+            message: '   ',
+            formType: 'chat'
+        );
+
+        // Before the fix, this would call ingestMessage and throw InvalidArgumentException
+        $listener->handle($event);
+
+        $this->assertDatabaseMissing('messages', [
+            'business_id' => $biz->id,
+        ]);
+    }
+
     public function test_empty_message_throws(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Empty Msg Biz', 'currency' => 'USD']);
