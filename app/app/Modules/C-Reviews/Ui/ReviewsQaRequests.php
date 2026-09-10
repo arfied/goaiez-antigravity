@@ -9,6 +9,8 @@ use App\Modules\CReviews\Actions\ReviewReplyAction;
 use App\Modules\CReviews\Actions\ReviewRequestAction;
 use App\Modules\CReviews\Models\QaSetting;
 use App\Modules\CReviews\Models\ReviewRequest;
+use App\Modules\X121\Models\Person;
+use App\Modules\X181\Models\QaTicket;
 use App\Support\Tenancy;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -68,9 +70,9 @@ class ReviewsQaRequests extends Component
         Tenancy::set($this->businessId);
         $setting = QaSetting::where('business_id', $this->businessId)->first();
         if ($setting && ! empty($setting->ticket_recipient_id)) {
-            $person = \Illuminate\Support\Facades\DB::table('people')->find($setting->ticket_recipient_id);
+            $person = Person::find($setting->ticket_recipient_id);
 
-            return $person ? (string) $personName : 'not set';
+            return $person ? $person->name : 'not set';
         }
 
         return 'not set';
@@ -241,13 +243,12 @@ class ReviewsQaRequests extends Component
             $requests = $query->get()->map(function ($req) {
                 $req->customer_name = null;
                 if ($req->customer_id) {
-                    $personName = \Illuminate\Support\Facades\DB::table('people')->where('id', $req->customer_id)->value('name');
-            $personPhone = \Illuminate\Support\Facades\DB::table('people')->where('id', $req->customer_id)->value('phone');
+                    $person = Person::find($req->customer_id);
                     if ($person) {
-                        $req->customer_name = (string) $personName;
+                        $req->customer_name = $person->name;
                     }
                 }
-                $req->ticket = \Illuminate\Support\Facades\DB::table('qa_tickets')->where('review_request_id', $req->id)->first();
+                $req->ticket = QaTicket::where('review_request_id', $req->id)->first();
 
                 return $req;
             });

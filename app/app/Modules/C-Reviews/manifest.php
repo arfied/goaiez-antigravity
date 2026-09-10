@@ -32,6 +32,7 @@ return [
         'review.request',
         'review.reply',
         'review.sync',
+        'qa.ticket',
     ],
     'emits' => [
         'review.requested',

@@ -39,15 +39,17 @@ return [
         'ads.plan.written',
     ],
     'consumes' => [
-        'pixel.event',
-        'signal.detected',
+        'pixel.event (X-110)',
+        'signal.detected (X-136)',
     ],
 
     // ⛔ P-163 — @owns_table may not name one of X-121's canonical nouns.
     'owns_table' => [
         'ad_report_imports',
         'ad_findings',
-        'ad_plans',
+        'ad_plans. Must not touch X-186 sends',
+        'X-110 pixel writes',
+        'any vendor write endpoint.',
     ],
     'reads_table' => [],
 

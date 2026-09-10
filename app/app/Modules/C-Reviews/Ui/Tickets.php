@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Modules\CReviews\Ui;
 
 use App\Modules\CReviews\Models\ReviewRequest;
+use App\Modules\X121\Models\Person;
 use App\Modules\X181\Actions\QaTicketResolveAction;
+use App\Modules\X181\Models\QaTicket;
 use App\Support\Tenancy;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -86,7 +88,7 @@ class Tickets extends Component
 
         $tickets = collect();
         if (! $this->isSample) {
-            $query = \Illuminate\Support\Facades\DB::table('qa_tickets')->where('business_id', $this->businessId);
+            $query = QaTicket::where('business_id', $this->businessId);
 
             if ($this->tab === 'open') {
                 $query->whereIn('status', ['open', 'in_progress'])->orderBy('sla_due_at', 'asc');
@@ -99,9 +101,9 @@ class Tickets extends Component
 
                 $t->customer_name = 'Unknown';
                 if ($t->person_id) {
-                    $person = \Illuminate\Support\Facades\DB::table('people')->find($t->person_id);
+                    $person = Person::find($t->person_id);
                     if ($person) {
-                        $t->customer_name = (string) $personName;
+                        $t->customer_name = $person->name;
                     }
                 }
 
@@ -160,7 +162,7 @@ class Tickets extends Component
             })->values();
         }
 
-        $isEmpty = ! $this->isSample && \Illuminate\Support\Facades\DB::table('qa_tickets')->where('business_id', $this->businessId)->count() === 0;
+        $isEmpty = ! $this->isSample && QaTicket::where('business_id', $this->businessId)->count() === 0;
 
         return view('c-reviews::tickets', [
             'tickets' => $tickets,

@@ -8,6 +8,7 @@ use App\Modules\CReviews\Models\QaSetting;
 use App\Modules\CReviews\Models\ReviewRequest;
 use App\Modules\X153\Actions\AlertSendAction;
 use App\Modules\X181\Actions\QaTicketResolveAction;
+use App\Modules\X181\Models\QaTicket;
 use App\Support\Tenancy;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -118,7 +119,7 @@ class LossAlerts extends Component
             $settings = QaSetting::where('business_id', $this->businessId)->first();
             $minStars = $settings ? $settings->min_public_stars : 4;
 
-            $breachedTickets = \Illuminate\Support\Facades\DB::table('qa_tickets')->where('business_id', $this->businessId)
+            $breachedTickets = QaTicket::where('business_id', $this->businessId)
                 ->whereIn('status', ['open', 'in_progress'])
                 ->whereNotNull('sla_due_at')
                 ->where('sla_due_at', '<=', now())
@@ -150,7 +151,7 @@ class LossAlerts extends Component
                     return $r;
                 });
 
-            $lowCsatRequests = \Illuminate\Support\Facades\DB::table('qa_tickets')->where('business_id', $this->businessId)
+            $lowCsatRequests = QaTicket::where('business_id', $this->businessId)
                 ->whereNotNull('reopened_at')
                 ->get()
                 ->map(function ($t) {
