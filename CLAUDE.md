@@ -8325,6 +8325,76 @@ Watch for: <the trap that applies, by name>
   bridge already exists (wave 147b) and is the precedent either answer must distinguish itself from.
   `app/app/Modules/` → **0**; `CLOSED:` → **5**; stub pile across the thirteen **11**. Re-run all four;
   never inherit them.
+- ⚠️⚠️ **A field's SHAPE and a field's SOURCE are independent properties, and a correct shape VOUCHES for a
+  typed value — so a structured field that happens to be right is not evidence that the apparatus works.**
+  Wave 166's generator carries `echo "     OUTPUT   : 1"` (`:76`) and
+  `echo "Q2 : … OUTPUT: 1. They are equal."` (`:78`): **both verification outputs are typed literals**, in the
+  two fields whose entire specification is *"that command's output, redirected — not a sentence about it"*.
+  Measured, `Q1`'s command returns **1** and `Q2`'s returns **0** — same generator, same run, three lines
+  apart, one right by luck and one false. Tick 294 had rewritten this field a fourth time and given `Q1` a
+  structured four-line shape (`SENTENCE`/`COMMAND`/`OUTPUT`/`HELD`) while leaving `Q2` as one prose line; the
+  structured one came back correct and **neither was measured**, so a reviewer reading `OUTPUT : 1` under a
+  named `COMMAND` reads a measurement that does not exist. ⛔ **RULED at tick 297, rewritten a fifth time
+  rather than clause-patched (tick 245): an `OUTPUT` line is the command REDIRECTED into the report** —
+  `{ echo -n "     OUTPUT   : "; grep -c "<substring>" .agents/supervisor/BRIEF.md; }` — never an `echo` of
+  its result, and the supervisor greps the pasted generator for `echo.*OUTPUT`, which must return nothing.
+  ⭐ Generalise: **six mechanisms have now walked past a generator check** — a `= '` literal (256), an `echo`
+  literal (276), an `|| echo` naming an outcome (282), a substituted command (289), a `sed -i` replacement
+  (290) and a synthetic artifact the command honestly reads (291) — and the one property none of them has is
+  *the value arrived in the file by redirection*. **Check for the redirection, not for the construct.**
+- ⚠️⚠️ **A verification field that asks the coder to grep a sentence out of the brief is answerable only if
+  the substring is free of MARKDOWN — and an unanswerable field is fabricated every time.** `BRIEF.md:137`
+  was ``**How did an output of `1` come to be reported for a command that returns `0`?**``; the `1` carries
+  backticks, so `grep -c "How did an output of 1 come to be reported"` returns **0** *however honestly it is
+  run*, and the field asked for the command whose output would produce a number for which no such command
+  exists. ⛔ **Half of it is this column's and it is the half that matters:** `Q1` carries the escape (*"If
+  OUTPUT is 0 the sentence was not in the brief and this answer is not eligible; pick another line"*) and
+  `Q2` carried none, so where one could fail safe the other could only be answered by inventing. Third
+  recurrence of the tick-197b shape (a field worded as a quotation whose ground is an absence), twice now in
+  a field of mine. **Choose a markup-free substring, and put the ineligibility clause on every such field.**
+- ⭐⭐ **The correcting-row form is settled and wave 166 is the house shape — name the row by its TIMESTAMP,
+  quote the clause that is wrong, and give the true one, in one pure `+` append with both state files in one
+  named-path commit.** `bda5ab06` is `JOURNAL.md | 1 +` and `BUILD-STATE.json | 4 ++++`; the tick-267 tell
+  (an append is `1 +`, a rewrite is `N +-`) reads right without opening the diff, and the tick-242 defect (a
+  forward correction that does not name what it corrects is a second row, not a correction) is closed by the
+  form rather than by a warning. This lane rewrote a ledger row once (`131bd46d`) and recovered it only
+  because it was unpushed; `state.py` stamps `now()`, so an original timestamp can never be restored and the
+  new row **is** the record.
+- ⚠️ **The root-`REPORT.md` mailbox trap, second occurrence — and this column's own §3 is where it shows.**
+  Wave 166 wrote to the untracked repo-root `REPORT.md`, leaving `.agents/supervisor/REPORT.md` at the
+  previous wave's mtime, so my own gate's §3 printed `REPORT.md  14:14:08` — the previous wave's report
+  advertised as current, which is how a tick reviews one wave twice and never sees the other (tick 268).
+  **`stat` BOTH paths at tick open**, and name the path in the brief in words.
+- **Backlog at tick 297 — wave 167 is X-102's LOGGED CONSENT record, and it is a BUILD.** RULED, re-derived
+  this tick and not inherited (tick 235), and it supersedes tick 296's choice of `ChatDoorTest:28`/`:29`.
+  `ConversationThreads.php:58-71` quotes rule 22 as **four** clauses — *"pre-chat notice, logged consent,
+  first-party transcripts only, no capture before consent"* — and says its subject **is the chat widget**.
+  Wave 165 built the fourth; the second is unbuilt and nothing records it: `$request->boolean('consent')` is
+  read at `ChatCaptureController.php:50`, passed at `:60`, used once at `ChatCaptureAction.php:30` to null the
+  message, and **discarded**, against a `chat_leads` carrying `id · business_id · chat_session_id ·
+  person_id · name · phone · email · message · form_type · timestamps` and **no consent column**, with
+  `grep -rni "consent" app/app/Modules/X-102/` returning those two lines and nothing else. So nothing in the
+  tree can answer *did this visitor consent?* on a public unauthenticated door that writes a `Person` row and
+  a member of the public's words — the tick-201 writerless-value trap inverted, a value with a **reader** and
+  no **store**. It is the only row that is single-module, in lane, on a live production path
+  (`POST /api/chat/{key}/capture`, wave 145) and blocked on nothing; every other row is measured shut this
+  tick, and `ChatDoorTest:24`'s **pre-chat notice** half needs `app/public/goaiez-chat.js`, which does not
+  exist. ⛔ **This column names no column, no type, no table and no assertion** (the conclusion-withheld form
+  is 20-for-20 and has corrected this column five times on X-102's seams alone); the house precedent —
+  `conversations.consent_logged_at`, a nullable timestamp with `hasLoggedConsent()` reading `!== null`,
+  written by `ConversationThreads::openFor():249` and `UnifiedInboxManager:85` — goes over **printed with a
+  conclusion attached to none**, and the third and fourth branches are written out (tick 192). ⚠️ Hazards:
+  the caller census is **one** production caller plus **thirteen** `X102Test.php` sites plus `ChatDoorTest`'s
+  HTTP tests — ⚠️ the `X-155`/`X-198`/`X-199` `captureAction` hits are `FormCaptureAction` and
+  `PaymentCaptureAction`, **different classes** (tick 184); `chat_leads`/`chat_sessions` are `ENABLE`+`FORCE`
+  RLS **with a matching `WITH CHECK`** (tick 254); `TrimStrings`/`ConvertEmptyStringsToNull` are global and
+  unexcepted, so what a request field holds inside `handle()` is not what a test posted (tick 290, briefed in
+  prospect rather than discovered by a radius-0 survival); a migration is this lane's and the manifest
+  declaration is Track 1's (tick 227). ⛔ No `⛔ REFUSED`, no `UNRESOLVED`, no numbers published (tick 208);
+  ⛔ never edit a standing assertion. **Wave 168** takes `ChatDoorTest:28` and `:29`, two questions and not
+  one shape. Board re-measured this tick: `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` → **13**;
+  `app/app/Modules/` → **0**; `CLOSED:` → **5**; stub pile across the thirteen → **11**. Re-run all four;
+  never inherit them.
 
 ## Style
 
