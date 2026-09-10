@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Modules\CReviews\Ui;
 
 use App\Modules\CReviews\Models\ReviewRequest;
-use App\Modules\X121\Models\Person;
 use App\Modules\X181\Actions\QaTicketResolveAction;
 use App\Modules\X181\Actions\QaTicketReadAction;
 use App\Support\Tenancy;
@@ -93,9 +92,9 @@ class Tickets extends Component
 
                 $t->customer_name = 'Unknown';
                 if ($t->person_id) {
-                    $person = Person::find($t->person_id);
+                    $person = app(\App\Modules\X121\Actions\EntityReadAction::class)->handle('people', $t->person_id, $this->businessId);
                     if ($person) {
-                        $t->customer_name = $person->name;
+                        $t->customer_name = $person['name'];
                     }
                 }
 

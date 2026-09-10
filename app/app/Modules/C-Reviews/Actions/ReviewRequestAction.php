@@ -7,7 +7,6 @@ namespace App\Modules\CReviews\Actions;
 use App\Modules\CReviews\Events\ReviewRequested;
 use App\Modules\CReviews\Models\ReviewRequest;
 use App\Modules\CSms\Events\SendRequested;
-use App\Modules\X121\Models\Person;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Event;
 
@@ -107,12 +106,12 @@ final class ReviewRequestAction
             'gbp_suspended' => false,
         ]);
 
-        $person = Person::find($customerId);
-        if ($person !== null && ! empty($person->phone)) {
+        $person = app(\App\Modules\X121\Actions\EntityReadAction::class)->handle('people', $customerId, $businessId);
+        if ($person !== null && ! empty($person['phone'])) {
             Event::dispatch(new SendRequested(
                 businessId: $businessId,
                 compositionId: $req->id,
-                recipientPhone: $person->phone,
+                recipientPhone: $person['phone'],
                 messageClass: self::MESSAGE_CLASS,
                 body: $promptTemplate,
                 segmentsCount: 1
