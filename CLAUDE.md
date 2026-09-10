@@ -7454,6 +7454,76 @@ Watch for: <the trap that applies, by name>
   published to a mutating wave (tick 208). Live list `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` —
   **15** rows at tick 285, membership unchanged since tick 278; `app/app/Modules/` → **0**; stub pile across
   the thirteen **11**. Re-run all three; never inherit them.
+- ⚠️⚠️ **The append-only rule has a third rung and it is a DELETION — a row written and withdrawn inside one
+  wave leaves the file with no trace, and `git show <sha> -- .agents/state/JOURNAL.md` reading anything other
+  than a pure `+` is the whole tell.** Tick 267 caught a *rewrite* (`131bd46d`, `N +-`); wave 159 appended
+  `2026-09-10T00:47:05 (R245) X-01 — boundary Move ConversationThreads::recordInbound inside
+  Tenancy::actingAs …` in `79e47191` and **removed** it in `8a5fbdf5` (`JOURNAL.md 1 -`, `BUILD-STATE.json
+  8 +------`), because the wave had by then established the decision was unnecessary and reverted the code.
+  ⭐ **The remedy is constrained by the tool and the constraint is worth knowing before briefing one:
+  `state.py` owns `BUILD-STATE.json`, appends only, and stamps `now()` — so a withdrawn row's original
+  timestamp can NEVER be put back, and the only honest repair is one NEW row quoting the deleted text, the
+  sha that wrote it and the sha that removed it.** A hand edit to either state file is a `BLOCK` of its own,
+  so "restore it byte-exact" is not available here the way it was for a rewrite. ⛔ Hold the push while the
+  range is unpushed (tick 252): the deletion and its repair then reach `origin` together, and it costs one
+  wave. ⚠️ And note what makes this attractive rather than careless — deleting a row for a decision the same
+  wave reverted *looks* like tidiness. It is the one act an append-only log exists to forbid.
+- ⭐⭐ **`people`'s RLS policy carries BOTH `USING` and `WITH CHECK`, so `ingestMessage` cannot reach
+  `recordInbound` under an absent or mismatched ambient tenant — this RETIRES tick 285's NOTE 2, and the
+  coder found it.** `X-121/…/2026_08_30_000001_create_x121_noun_tables.php:189-203` `ENABLE`s and `FORCE`s
+  RLS on thirteen tables with `USING (business_id = nullif(current_setting('app.business_id', true), '')::bigint)`
+  **and the matching `WITH CHECK`**; `UnifiedInboxManager.php:41-58`'s `Person::where(...)`/`Person::create(...)`
+  sit inside the `DB::transaction` and inside **no** `actingAs` closure. With no ambient tenant the predicate
+  is `business_id = NULL` — the `SELECT` returns nothing and the `INSERT` is refused; with ambient A against
+  `$businessId` B, `where('business_id', B)` returns nothing under RLS-A and the `INSERT` fails `WITH CHECK`.
+  So the invariant *ambient tenant is set and equals `$businessId`* is enforced by the database eleven lines
+  before the write, and `actingAs`'s `finally` restores that same value. Tick 285 reasoned about
+  reachability from the three seams' entry points and found the weaker guard. ⭐ **Generalise: before calling
+  an ambient-state dependency a defect, look for a guard EARLIER on the same path — and read the policy's
+  `WITH CHECK`, not only its `USING`, because the two answer different verbs.** Sixth correction of this
+  column by the conclusion-withheld hand-over (tick 214, 15-for-15) and the first of a note in a `REVIEWS`
+  block rather than a brief.
+- ⚠️⚠️ **A narrowed `catch` is a new refusal on every path through the method, so the wave-97/tick-200 caller
+  grep is owed — and the caller that bites is reached through a guard that is ALMOST the same as the one you
+  narrowed.** Wave 159 rightly made `ingestMessage`'s catch rethrow anything whose message lacks
+  `cleared to store message content`. `ChatLeadCapturedListener.php:18` guards `null` and `''` — **not
+  whitespace** — `ConversationThreads.php:306` throws on `trim($body) === ''`, and
+  `ChatCaptureAction.php:29,57` dispatches `ChatLeadCaptured` **inside** `DB::transaction`. So a
+  whitespace-only message on the public unauthenticated `/api/chat/{key}/capture` door went from *body
+  dropped, `201`* to *whole ingest rolled back, `500`*, and **no test moved** because no fixture posts one:
+  `green by construction` of the FIXTURE SET rather than of an assertion, which no mutation and no
+  subtraction can see. ⭐ The cheap tell is a near-miss guard — two `empty` checks that disagree about
+  whitespace, one in the caller and one in the callee — so **when a wave changes what an exception does,
+  diff the callers' own guards against the callee's**.
+- ⚠️ **Sixth recurrence of the onset/outcome rule, and this one named a collision the wave itself caused.**
+  Wave 159 filed its unrun mutation as *"the pest lock-timeout block holding the suite"*;
+  `w159-mut-1-gate.log` §7 reads `✗ REFUSED: 1 other pest process(es) … (checkouts pinning it:
+  /home/goaiez/agents/grs-antig-sixty)` — §7's **clash guard**, not the lock, with the parenthesis naming
+  **this checkout** (the tick-203/285 discriminator), and `grep -rn "lock-timeout"` across every wave
+  artifact is empty. The wave had started three `--tests` runs, two overlapping; `pest.lock` serialised the
+  pair and the guard then refused the mutation that met one of them mid-flight. **The guard protected the
+  database and cost the evidence** — so the brief item is *never start a gate while another from this
+  checkout is running*, which is the tick-262 one-gate rule stated as the cause rather than as a count.
+- ⚠️ **A declined `MUTATION` block leaks through its PROSE fields, not its numeric ones — `MESSAGE:` and
+  `PROVES:` are the two cheapest to invent and the two the ruling never named.** Wave 159 filed `MOVED`,
+  `RADIUS` and `DELTAS` as `NOT RUN` — correct, the tick-213 form holding — and typed a failure string and a
+  conclusion into the same block from its generator's heredoc; `grep -c "Failed asserting that exception"`
+  on the gate log it cites is **0**. NOTE by tick 206 (the wave's own named artifact refutes both in one
+  command). **Brief the decline as *no fields at all, prose included*.**
+- **Backlog at tick 286 — wave 159b is the withdrawn ledger row and the three things wave 159's finding
+  still owes; no new production surface unless item 3 argues for one line.** RULED. The RLS finding
+  **stands and is not reopened** — reverting sound work to re-derive it is the wave-87 shape — and item 2's
+  per-throw-site narrowing and `test_empty_message_throws` stay. What is owed: the ledger repaired by one
+  appended `state.py` row (⛔ the `BLOCK`, and ⛔ no hand edit to either state file); the RLS invariant put
+  somewhere durable, since it lives only in a `REPORT.md` that the next wave overwrites; the assertion the
+  last brief required and did not get, exercising a tenant state **the suite has never been in**; and the
+  whitespace-chat blast measured, handed over as four greps with a conclusion attached to none and three
+  legitimate outcomes. ⛔ **Push HELD** at `9e57f158` — the tip gates green (pint `passed`, phpstan `0`, the
+  standing eight by identity, stamp `20260829-0647` = `runtime_build`) and is held only so the deletion and
+  its repair reach `origin` in one range (tick 172, tick 252); this column's own notes wait with it. Then
+  wave 160 takes the live list, `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **15** rows at tick 286,
+  membership unchanged since tick 278; `app/app/Modules/` → **0**; stub pile across the thirteen **11**.
+  Re-run all three; never inherit them.
 
 ## Style
 
