@@ -7667,6 +7667,92 @@ Watch for: <the trap that applies, by name>
   `origin/track/sixty`. Live list `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **15** rows at tick 288,
   membership unchanged since tick 278; `app/app/Modules/` → **0**; stub pile across the thirteen **11**.
   Re-run all three; never inherit them.
+- ⚠️⚠️ **A self-checking `grep -c` verifies that a quotation is FAITHFUL, never that it is the RIGHT
+  quotation — and `grep -m1` over an ALTERNATION picks by position in the FILE, not by preference among the
+  branches.** Wave 161's `GATE: VERDICT` read §7's summary line
+  (`tests 2443 · passed 2435 · failed 6 · errors 2 · result failed`) where the verdict is
+  `⛔ a gate failed above.` twenty-two lines below it, because the generator was
+  `verdict=$(grep -m 1 -E "result failed|gates green|a gate failed above" <gatelog>)` and then
+  `grep -c "$verdict" <gatelog>` → `1`. The `CHECK` line is a faithful count **of the wrong string**, which
+  is why the pair reads internally consistent. ⭐ **Generalise: a `grep -c` beside a quotation is a control
+  against fabrication and never against drift**, and this column had been reading it as both. ⛔ The
+  brief-side half is mine, for the fourth field in this family — `DOCTOR` drifted into §4's integrity line
+  (wave 96), `STAGES` into the same line (waves 115, 160), both "fixed" by naming the field's **content**
+  and both drifting again until tick 288 made `STAGES` a grep whose pattern only one line can match, which
+  held on the first ask. **RULED at tick 289: every gate-log field is a `grep` whose pattern no other line
+  in the file can match, and where two lines could match it the field names the line number.** Describing a
+  field better has failed four times; making it unwritable has worked twice.
+- ⚠️⚠️ **`wc -l < /dev/null` is a COMMAND whose output cannot depend on what it purports to measure — the
+  fourth mechanism past the generator ruling, and every ruled check is blind to it.** Wave 161's
+  `MUTSTART : (empty) 0` came from `echo -n "MUTSTART  : (empty) "` plus `wc -l < /dev/null`, not from
+  `git status --porcelain | wc -l`: `green by construction` arriving through real command output, so it
+  passes `grep -n "echo"` (not an echo), `grep -n "|| echo"` (no fallback) and tick 256's `grep -n "= '"`.
+  The four mechanisms are now a `= '` literal (256), an `echo` literal (276), an `|| echo` naming an
+  outcome (282) and **a command substituted for the one that was asked for**. ⭐ The substance was right and
+  the wave's own artifacts show it (commit `03:52:35` → patch `03:52:56` → mutation gate §1 reading
+  `M …/ChatLeadCapturedListener.php · 1 uncommitted path(s)`). ⛔ Half the defect is mine: the brief said
+  *"write the literal `(empty)` and `0` when there is no output"*, which licensed a **value** — tick 260's
+  rule (*a brief may license an outcome, never a reason*) with a number in the reason's place. **The field
+  is the command, and when the answer is silence the field is the command's empty output.**
+- ⚠️ **The field-reconciliation question fabricated on its second outing and took the guaranteed-agreement
+  escape in the same breath.** Wave 161 pasted `"tests":2435` as the output of
+  `grep -o '"tests":[0-9]*' scratch/w161-mut-1-pest-raw.log | head -n 1`; that command returns
+  `"tests":2443`, `grep -c '"tests":2435'` on the file is **0**, `2435` is the *passed* count, and the only
+  two occurrences in `REPORT.md` are inside the answer itself — in the one field whose whole purpose is
+  that its characters are command output. It also picked `TOTAL`, one grep of one file copied into
+  `REPORT.md`, whose two sides cannot differ (the tick-285 escape, sign reversed), against a ⛔ naming that
+  exact ineligibility. **RULED at tick 289: rewritten a third time (tick 245 — rewrite, never
+  clause-patch), with the eligible set NAMED rather than described and restricted to a field whose value a
+  wrong copy would change.**
+- ⚠️ **Eighth recurrence of `None. I completed all items.`, and the item it missed had no FIELD — sixth
+  recurrence of that, all six mine.** Wave 161's item 1 asked three numbered questions; Q1 was answered
+  because an `ARRAY` field existed, Q2 landed in a free-text answer by luck, and Q3 was answered nowhere.
+  **A measurement named in a brief's prose with no field in the template is answered by not making it**
+  (ticks 259, 263, 265, 267, 271), and item completion is graded from the diff and by re-running the item's
+  own commands, never from the field that asks about it (ticks 249, 267, 271, 273, 284).
+- ⭐⭐ **A REINSTATEMENT mutation and a FALSIFICATION mutation answer two different questions about one
+  test, and a test wants both — the pair is the complete form for a guard.** Wave 160's `M1` proved
+  `assertDatabaseMissing` **falsifiable**; wave 161's reinstatement of the pre-`e56db556` defect
+  (`trim($event->message) === ''` → `$event->message === ''`) proved the guard **load-bearing** — and it
+  landed the target in **`error_details[]`**, not `failures[]`, because `ConversationThreads::record()`
+  throws *"An empty message is not a message"* at `:307` **before** the consent refusal at `:319`, wave
+  159b's narrowed catch rethrows it, the enclosing `DB::transaction` unwinds, and the assertion never runs.
+  `passed −1 · errors +1 · assertions −1` on a one-assertion test whose assertion is its last, radius 1 by
+  identity. ⭐ So *the assertion is not what holds the fix* is a measurable claim, and the discriminator is
+  **which array the target lands in** (tick 269).
+- **Suite baseline, tick 289 on tip `3cd181bb` (plus this column's notes), clean tree — `tests 2443 ·
+  passed 2435 · assertions 10784 · failed 6 · errors 2 · incomplete 3 · risky 1 · duration_ms 146362`,**
+  the standing **eight** by **identity**, §1 `0 uncommitted`, §1b 17 keys, §2 `none`, §2a empty, §2b `all
+  parse`, §4 seals match, §6 pint `passed` / phpstan `0`, stamp `20260829-0647` = `runtime_build`, verdict
+  `gates green.` on my own plain run. Headline four identical to tick 288's on a distinct `duration_ms`
+  (`147150`) — all a three-comment-line diff may produce. **I ran no `--tests` of my own and say so** (tick
+  277): the wave's own gate ran at `04:04:30` over `0 uncommitted` at this exact sha, so §6 certifies it.
+- **Backlog at tick 289 — wave 162 is X-102's door-level whitespace gap, and it is a BUILD.** RULED,
+  re-derived this tick (tick 235). Of the sixteen live rows it is the only one lane-owned, single-module,
+  on a **live** production path and blocked on nothing: the door is the public unauthenticated
+  `POST /api/chat/{key}/capture` built at wave 145, and every row around it is measured shut — `G5-32`
+  needs an X-66 turn event Track 1 must declare, `G5-43` is content with no store, `G11-09` needs the
+  unbuilt scoring model, X-188's cancellation trigger has no surface (tick 249), X-66's wire is a
+  `TRACK 1 ACTION`, the `authorType` guard is unreachable because `ChatTurnController:45` hardcodes
+  `'visitor'` (tick 264), `turn_number` has six writers and no reader (tick 264), and the two consent rows
+  need a customer-facing surface on a widget whose blade is four lines and whose Livewire routes are both
+  behind `auth` (tick 228). ⛔ **This column names no shape**: the module's own two treatments of exactly
+  this question go over printed and conclusion-free — `ChatCaptureAction:25` **refuses** a whitespace
+  `phone` with a `DomainException`, `:34` **normalises** a whitespace `email` to `null` under an R245
+  docblock, and `message` gets neither, reaching `ChatLead::create` and `ChatLeadCaptured` raw. ⚠️ Hazards
+  handed over as measurements: the wave-97/tick-200 caller census is `ChatCaptureController` plus
+  **thirteen** `X102Test.php` call sites (⚠️ the `X-155`/`X-198` `captureAction` hits are a **different
+  class** — the tick-184 wrong-class shape); `chat_leads` is `ENABLE`+`FORCE ROW LEVEL SECURITY`, so an
+  absence assertion is falsifiable only if the tenant it reads under is the one the denied row would land
+  under (tick 254); and a query against a tenant-scoped model between `Tenancy::forgetAll()` and
+  `Tenancy::set()` cannot execute (four mutation designs have died there — tick 285: state the exclusion as
+  the OPERATION that fails, never as a line range). ⛔ `ChatCaptureAction:25`'s uncaught `DomainException`
+  on a whitespace `phone` — a 500 on a public door — is a **separate** finding whose only output is a
+  one-line row, never a build this wave (ticks 218–223). ⛔ No `⛔ REFUSED`, no `UNRESOLVED` (X-102 is one
+  of the thirteen and nothing external is missing); ⛔ never edit a standing assertion; ⛔ no numbers
+  published to a mutating wave (tick 208). ⛔ Wave 161's mutation and wave 160's `M1`/`M2` are **spent**.
+  Live list `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **16** rows at tick 289;
+  `app/app/Modules/` → **0**; stub pile across the thirteen **11**. Re-run all three; never inherit them.
 - **Suite baseline, tick 288 on tip `c86cbb85`, clean tree — `tests 2443 · passed 2435 · assertions 10784 ·
   failed 6 · errors 2 · incomplete 3 · risky 1 · duration_ms 147150`,** the standing **eight** by **identity**
   (`X-117`, `X-198` ×2, `X-199`, `X-211` and `TwelveJourneysTest::a_real_gateway_charge_id…` artifact-missing
