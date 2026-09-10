@@ -238,7 +238,8 @@ class CReviewsScreensTest extends TestCase
 
         Livewire::test(LossAlerts::class, ['businessId' => $this->bizId])
             ->assertSee('Rating 3 < 4')
-            ->assertSee('Review #'.$req->id);
+            ->assertSee('Review #'.$req->id)
+            ->assertSee('Prepare Removal');
     }
 
     public function test_a_four_star_review_is_not_a_loss_alert_at_the_default_threshold(): void
@@ -292,14 +293,34 @@ class CReviewsScreensTest extends TestCase
         $preparer = new PrepareRemovalRequestAction;
         $removal = $preparer->execute($this->bizId, $req->id, 'fake_reviews', 'This is a fake review.', 'g_123');
 
+        $userId = \Illuminate\Support\Facades\DB::table('users')->insertGetId(['name' => 'Test', 'email' => \Illuminate\Support\Str::random(10).'@example.com', 'password' => 'secret']);
+        $user = User::find($userId);
+
+        Livewire::actingAs($user);
         Livewire::test(LossAlerts::class, ['businessId' => $this->bizId])
-            ->call('confirmRemoval', $removal->id, 999)
+            ->call('confirmRemoval', $removal->id)
             ->assertSee('Removal request confirmed.');
 
         $removal->refresh();
         $this->assertEquals('confirmed', $removal->status);
-        $this->assertEquals(999, $removal->confirmed_by_user_id);
+        $this->assertEquals($userId, $removal->confirmed_by_user_id);
         $this->assertNotNull($removal->confirmed_at);
+    }
+
+    public function test_loss_alerts_confirm_removal_refuses_unauthenticated(): void
+    {
+        $req = ReviewRequest::create(['business_id' => $this->bizId, 'rating' => 1]);
+        $preparer = new PrepareRemovalRequestAction;
+        $removal = $preparer->execute($this->bizId, $req->id, 'fake_reviews', 'This is a fake review.', 'g_123');
+
+        Livewire::test(LossAlerts::class, ['businessId' => $this->bizId])
+            ->call('confirmRemoval', $removal->id)
+            ->assertSee('Unauthenticated confirmation refused.');
+
+        $removal->refresh();
+        $this->assertEquals('prepared', $removal->status);
+        $this->assertNull($removal->confirmed_by_user_id);
+        $this->assertNull($removal->confirmed_at);
     }
 
     public function test_loss_alerts_shows_removal_requests(): void
@@ -321,8 +342,12 @@ class CReviewsScreensTest extends TestCase
         $preparer = new PrepareRemovalRequestAction;
         $removal = $preparer->execute($otherBiz->id, $req->id, 'fake_reviews', 'This is a fake review.', 'g_123');
 
+        $userId = \Illuminate\Support\Facades\DB::table('users')->insertGetId(['name' => 'Test', 'email' => \Illuminate\Support\Str::random(10).'@example.com', 'password' => 'secret']);
+        $user = User::find($userId);
+
+        Livewire::actingAs($user);
         Livewire::test(LossAlerts::class, ['businessId' => $this->bizId])
-            ->call('confirmRemoval', $removal->id, 999)
+            ->call('confirmRemoval', $removal->id)
             ->assertSee('No query results for model');
 
         Tenancy::set($otherBiz->id);

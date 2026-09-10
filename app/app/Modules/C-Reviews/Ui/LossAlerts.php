@@ -28,8 +28,16 @@ class LossAlerts extends Component
     public string $noticeType = 'success';
 
     public ?int $resolvingTicketId = null;
-
+    
     public string $resolutionNotes = '';
+
+    public ?int $preparingReviewId = null;
+
+    public string $prepareTosGround = '';
+
+    public string $prepareBody = '';
+
+    public string $prepareGoogleId = '';
 
     public function mount(): void
     {
@@ -48,6 +56,10 @@ class LossAlerts extends Component
         $this->isSample = ! $this->isSample;
         $this->resolvingTicketId = null;
         $this->resolutionNotes = '';
+        $this->preparingReviewId = null;
+        $this->prepareTosGround = '';
+        $this->prepareBody = '';
+        $this->prepareGoogleId = '';
         $this->actionNotice = null;
     }
 
@@ -113,7 +125,20 @@ class LossAlerts extends Component
         }
     }
 
-    public function prepareRemoval(int $reviewRequestId, string $tosGround, string $preparedBody, ?string $googleReviewId = null): void
+    public function startPrepare(int $id): void
+    {
+        $this->preparingReviewId = $id;
+        $this->prepareTosGround = '';
+        $this->prepareBody = '';
+        $this->prepareGoogleId = '';
+    }
+
+    public function cancelPrepare(): void
+    {
+        $this->preparingReviewId = null;
+    }
+
+    public function prepareRemoval(int $reviewRequestId, string $tosGround, string $preparedBody, string $googleReviewId): void
     {
         if ($this->isSample) {
             return;
@@ -124,19 +149,26 @@ class LossAlerts extends Component
             $action->execute($this->businessId, $reviewRequestId, $tosGround, $preparedBody, $googleReviewId);
             $this->noticeType = 'success';
             $this->actionNotice = '✅ Removal request prepared.';
+            $this->preparingReviewId = null;
         } catch (\Exception $e) {
             $this->noticeType = 'error';
             $this->actionNotice = '🚫 Error: '.$e->getMessage();
         }
     }
 
-    public function confirmRemoval(int $removalId, int $userId): void
+    public function confirmRemoval(int $removalId): void
     {
         if ($this->isSample) {
             return;
         }
         Tenancy::set($this->businessId);
+
         try {
+            $userId = auth()->id();
+            if ($userId === null) {
+                throw new \App\Modules\CReviews\Domain\UnauthenticatedConfirmationException('Unauthenticated confirmation refused.');
+            }
+
             $removal = ReviewRemovalRequest::where('business_id', $this->businessId)->findOrFail($removalId);
             $action = app(ConfirmRemovalRequestAction::class);
             $action->execute($removal, $userId);
