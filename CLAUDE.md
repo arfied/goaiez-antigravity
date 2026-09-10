@@ -8103,3 +8103,114 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     asserted at `<file>:<line>`"* quotes the **assertion's own text**, because a test that drives the
     right branch and asserts a substring shared with two other branches is indistinguishable, in a
     ledger, from one that proves the thing.
+305. **⭐⭐ The dunning ladder prints a snake_case machine token to an owner on TWO screens, and the only
+    test that asserts a dunning pill seeds the column DEFAULT — a value the engine cannot write (RULED
+    by the lane supervisor 2026-09-10 00:3x, briefed as MONEY-169).**
+    `C-Billing/Domain/BillingLedgerEngine::advanceDunning():141-145` writes exactly **three** values —
+    `warning` (day < 10), `banner` (day < 21), `ai_off_voicemail_only` (default) — and two owner-facing
+    screens render that column **raw**: `Ui/views/dunning-board.blade.php:43` and
+    `Ui/views/revenue-recovery.blade.php:31`, both `:label="$state->status"`. So on day 21 — the stage
+    that matters most, where the ladder's own setting is *AI off, voicemail only* — the Status column an
+    owner reads says **`ai_off_voicemail_only`**. Ruling 90's `meter_type` finding, in the module ruling
+    90 was written about, which this lane has already solved twice there (`LabelsMeters`,
+    `mrr.blade.php:60`) and once in X-201 (ruling 131).
+    ⭐ **The `:state=` half is wrong in the same tag** (ruling 143 — a label and its `state=` are one
+    claim of two signals). `dunning-board.blade.php:43` is
+    `$state->status === 'active' ? 'attention' : 'unknown'`, and **`'active'` is written by no code**:
+    it is only the column **default** (`2026_08_30_000025:70`, whose comment declares six values —
+    `active, warning, banner, grace, ai_off_voicemail_only, terminated` — of which the engine writes
+    three), and `advanceDunning()` `create`s then immediately `update`s the status **inside one
+    transaction**, so a row that reached the end of the only production path is never `active`. The
+    `attention` arm is unreachable and **every row the engine can produce renders a grey `unknown`** —
+    ruling 43's *does it even vary?* answered **no**, on the one column saying how far down the ladder
+    an account has fallen.
+    ⭐⭐ **Why no sweep could see it.** `DunningBoardScreenTest:29,:39` seed `'status' => 'active'` and
+    `:58` asserts `assertSee('active')` — **the only assertion of a dunning pill's label anywhere in the
+    lane asserts the one value production cannot produce.** That is ruling 41 part 2 (*a fixture written
+    to the screen rather than to the real thing's shape*) **concealing** a ruling 90 defect and a ruling
+    43 defect at once. Meanwhile `revenue-recovery.blade.php:31`'s pill is asserted by **nothing**
+    (ruling 70) while its fixtures *do* seed the engine's real vocabulary. ⚠️ **Two test files of one
+    module disagree about what a dunning status is** — ruling 98's tell — which is why one screen renders
+    real values ungated and the other a fictional value with an assertion on it. ⭐ And the engine's
+    day-21 value **is** asserted, at `CBillingTest.php:89` and `:226`, so the tree proves what a real
+    ladder produces at the same time as no screen test has ever rendered it.
+    **RULED, in money's own files only:** (1) a display map in **ruling 90's own established shape** — a
+    trait `App\Modules\CBilling\Ui\LabelsDunning` beside `LabelsMeters`, `use`d by both components,
+    passed in as `'dunningLabels' => $this->dunningLabels()`, read as `{{ $map[$k] ?? $k }}`; (2) ⭐ **the
+    map names the ladder STAGE and never the services** — `active → no stage recorded`,
+    `warning → warning stage`, `banner → banner stage`, `ai_off_voicemail_only → final stage`, with
+    `?? $status` as the fallback. ⛔ **Not `AI off, voicemail only`**, however faithful to the token:
+    ruling 110 measured **nothing reads** `ai_enabled`/`phone_answering`/`voicemail_only`, so a pill
+    saying the AI is off is ruling 87's shape — and on `revenue-recovery` it would duplicate `:33`'s
+    *"Ladder setting: … not applied anywhere yet"* **without its caveat**, four lines below it, which is
+    a ruling 98 tell created by the wave that removes one; (3) `dunning-board.blade.php:43`'s `:state=`
+    derives from the real vocabulary (`ai_off_voicemail_only → alert`, `warning`/`banner` → `attention`,
+    else `unknown`) so it stops being a constant — ⛔ **`revenue-recovery.blade.php:31`'s `:state=` stays
+    byte-identical**, deriving from a real varying column and not this finding's subject (ruling 47's
+    companion); (4) `DunningBoardScreenTest`'s fixtures move onto the engine's vocabulary (day 6 →
+    `warning`, day 10 → `banner`; ruling 74) and `:58`'s `assertSee('active')` is **CHANGED**, never
+    deleted (rulings 39, 46) — the change is forced, since `active` is then nowhere on the page; (5) ⭐
+    **the load-bearing proof is a NEW method on each screen test seeding day 21**, because no existing
+    fixture can reach that branch (ruling 68) **and** because it is the only value whose raw token is not
+    a substring of its own label, so it is the only one where `assertDontSee('ai_off_voicemail_only')`
+    can be paired with the positive without failing against a correct implementation (ruling 61 meeting
+    ruling 82's family) — `assertSee('warning stage')` cannot be paired with `assertDontSee('warning')`.
+    ⛔ **`BillingLedgerEngine` is NOT touched** — C-Billing `Domain/` is Track 1's (ruling 5) and its
+    three values are correct. ⛔ **No migration**: `grace` and `terminated` are declared and written by
+    nothing and read by nothing (decision 272 on a *value*), and ruling 41 part 3 forbids editing that
+    file. ⛔ `RevenueRecovery.php:67`'s `->where('status','!=','active')` is untouched — with `active`
+    unwritten it excludes nothing the engine produces and its behaviour is right. ⛔ Nothing is built to
+    give `DunningState` a production writer (ruling 201; a ladder starts from a missed subscription
+    payment, `App\Services\Billing`'s and Track 1's — TRACK 1 ACTION 11).
+    ⚠️ **Fixed rather than recorded, on ruling 204/130's precedent**: the table is empty forever for
+    every real tenant, but the branch **is** rendered and **is** driven by existing fixtures, so a
+    mutation can redden it and ruling 96 does not govern. ⚠️ Blast radius measured with interior
+    fragments (rulings 46, 86, 146): `grep -rn "state->status" app/app/Modules/C-Billing
+    app/tests/Modules/C-Billing` is **four** lines — the two blades, and `CBillingTest.php:89`/`:259`,
+    which assert the **engine's** output on the model and are byte-identical Table B.
+306. **⭐ A pill sweep that asks whether a column has a real WRITER is not a sweep of what the pill
+    PRINTS, and the VOCABULARY is the population neither asked for (RULED by the lane supervisor
+    2026-09-10 00:3x).** Ruling 122 closed with *"a status pill is a sentence of two words and is swept
+    with the prose"*, and rulings 129–132 swept the lane's 43 `status-pill` lines. Ruling 132 struck
+    C-Billing's four with the reason *"`BillingLedgerEngine:154` writes the dunning status per advance"*
+    — **true, and an answer to a different question.** It establishes that the column varies; it says
+    nothing about **which values** the writer produces, whether a fixture seeds one it cannot, or what
+    the label reads like in English. All three of ruling 305's defects were inside a line that sweep had
+    already read and struck. **RULED: the population is the VOCABULARY, not the column.** For any column
+    carrying an enumerated set, the census has three columns — the values **production writes**, the
+    values **fixtures seed**, the values **declared** in a migration comment or an enum — and every
+    disagreement is a finding of a known class: a fixture seeding a value no writer produces is a test
+    green for a state production cannot reach (41 part 2, 99, 235, 239); a declared value nothing writes
+    and nothing reads is decision 272 on a value (44, 148); a guard or ternary keyed on an unwritten
+    value is a constant wearing a condition (43, 122, 129); a written value rendered raw to an owner is
+    the display-map shape (88, 90, 131). ⚠️ **The instrument must be corroborated (ruling 294):**
+    `grep -rnoE "'status' *=> *'[a-z_]+'"` is a **filter**, not a census — it misses
+    `->update(['status' => $status])`, `$m->status = …` and every computed write, which is exactly how
+    `captured`, `paid` and `due` looked fixture-only when they are not — so the looser instrument is a
+    bare grep for each candidate value across the module, and the verdict comes from **reading the hit**
+    (ruling 262(b)). ⚠️ Its first outing, run over the lane's eight modules this tick, produced ruling
+    305 and four recordings.
+307. **⭐⭐ The capability census is CLOSED — refusal cells AND specced cells — and the doctor has stopped
+    being a source of lane work (RULED by the lane supervisor 2026-09-10 00:3x, on MONEY-168's
+    `6591554d`).** Ruling 295 measured the lane's **28 refusal cells**, 27 naming their id in their own
+    module's test tree, and closed the twenty-eighth in MONEY-165. Ruling 298 reopened the census on the
+    axis it had never had — `specced` cells — and named X-117's six; ruling 303 measured all six against
+    the frozen plan and the tree and split them two closable / four vacuous. MONEY-168 closed the two
+    with **real assertions** and left the four red, and the doctor delta confirms it to the line:
+    capability `206 → 204`, overall `488 → 486`, `G6-02` and `G17-31` gone, `G7-10`/`G1-73`/`G1-81`/
+    `G1-82` present. ⛔ **Not to be re-run**, and ⛔ the four are not to be re-raised: they are unbuilt
+    `ENH` features (`G1-73` is the pure vacuous case, its ⑤ constraining a milestone event nothing
+    dispatches) and building one to move a count is ruling 59. ⚠️ **The lane's whole doctor slice is now
+    governed** — 29 findings measured this tick and not one buildable here: 12 cross-module boundary
+    imports · 2 `X-117 @provides … agent_reachable` · 1 `G18-29 the ⑤ names no refusal` · the 4 vacuous
+    cells · 7 `no runtime proof`, of which X-117's, X-199's and X-211's are rulings 49/169/172's **own
+    deliberate outcomes** and the rest are vendor-gated (ruling 32 group 2). ⭐ **A tick reaching for the
+    doctor should expect that and look elsewhere** — which is what ruling 306's census is for.
+    ⚠️ Recorded this tick and **not** waves (rulings 76, 96, 100): `payouts.status`'s declared `pending`
+    has no writer, but ruling 51 measured that table has **no production writer at all**, and payout
+    ingestion is already `UNRESOLVED` · `payments.status`'s declared `refunded`/`chargeback` are ruling
+    148's dead-at-both-ends events seen from the column side · `dunning_states`' `grace`/`terminated`,
+    declared and unwritten and unread · `DunningBoard::getNextStepWords()`'s *"day 21 pause with the
+    phone answering"*, a claim about a future step nothing performs (ruling 110's family, money's own
+    file, but not MONEY-169's reason — ruling 47's companion) · and the two dunning screens' pill colours
+    diverging after MONEY-169, both honest, unifying them a UX judgement rather than a defect.
