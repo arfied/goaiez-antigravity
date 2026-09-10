@@ -20,10 +20,15 @@ final class ChatCaptureAction
         string $phone,
         ?string $email = null,
         ?string $message = null,
-        string $formType = 'live_chat'
+        string $formType = 'live_chat',
+        bool $consent = true
     ): ChatLead {
         if (trim($phone) === '') {
             throw new \DomainException('NO_CONTACT_METHOD_ON_CAPTURE');
+        }
+
+        if (! $consent) {
+            $message = null;
         }
 
         // A detail that is blank or whitespace was not given (R245, 2026-09-05).

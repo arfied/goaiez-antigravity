@@ -406,4 +406,60 @@ class ChatDoorTest extends TestCase
         $response->assertStatus(400);
         $response->assertJson(['error' => 'Bad Request']);
     }
+    public function test_capture_drops_message_when_consent_absent(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Lead Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+        $key = app(PixelKeys::class)->ensureFor($biz);
+
+        $session = ChatSession::create([
+            'business_id' => $biz->id,
+            'session_token' => 'sess_lead_test_noconsent',
+            'status' => 'active',
+            'rage_clicks_count' => 0,
+            'is_ai_capped' => false,
+        ]);
+        Tenancy::forgetAll();
+
+        $response = $this->postJson("/api/chat/{$key}/capture", [
+            'session_token' => 'sess_lead_test_noconsent',
+            'name' => 'John Doe',
+            'phone' => '1234567890',
+            'message' => 'Hello',
+        ]);
+
+        $response->assertStatus(201);
+        Tenancy::set((int) $biz->id);
+        $lead = ChatLead::where('chat_session_id', $session->id)->first();
+        $this->assertNull($lead->message);
+    }
+
+    public function test_capture_keeps_message_when_consent_provided(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Lead Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+        $key = app(PixelKeys::class)->ensureFor($biz);
+
+        $session = ChatSession::create([
+            'business_id' => $biz->id,
+            'session_token' => 'sess_lead_test_consent',
+            'status' => 'active',
+            'rage_clicks_count' => 0,
+            'is_ai_capped' => false,
+        ]);
+        Tenancy::forgetAll();
+
+        $response = $this->postJson("/api/chat/{$key}/capture", [
+            'session_token' => 'sess_lead_test_consent',
+            'name' => 'John Doe',
+            'phone' => '1234567890',
+            'message' => 'Hello',
+            'consent' => true,
+        ]);
+
+        $response->assertStatus(201);
+        Tenancy::set((int) $biz->id);
+        $lead = ChatLead::where('chat_session_id', $session->id)->first();
+        $this->assertEquals('Hello', $lead->message);
+    }
 }

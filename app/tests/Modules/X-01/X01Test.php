@@ -606,7 +606,7 @@ class X01Test extends TestCase
     }
 
     /**
-     * BUILD PROPOSAL: Chat inbound body — pre-chat notice and logged consent on the chat widget Owner: X-102
+     * BUILD PROPOSAL: goaiez-chat.js — the chat widget itself does not exist Owner: X-102
      */
     public function test_chat_capture_wire_creates_conversation(): void
     {
