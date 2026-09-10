@@ -9,7 +9,7 @@ use Illuminate\Support\Carbon;
 
 final class PrepareRemovalRequestAction
 {
-    public function execute(int $businessId, int $reviewRequestId, string $tosGround, string $preparedBody, ?string $googleReviewId = null): ReviewRemovalRequest
+    public function execute(int $businessId, int $reviewRequestId, string $tosGround, string $preparedBody, ?string $googleReviewId): ReviewRemovalRequest
     {
         return ReviewRemovalRequest::create([
             'business_id' => $businessId,
