@@ -60,9 +60,7 @@ class ReviewsQaRequests extends Component
     public function getThreshold(): int
     {
         Tenancy::set($this->businessId);
-        $setting = QaSetting::where('business_id', $this->businessId)->first();
-
-        return $setting ? (int) $setting->min_public_stars : 4;
+        return app(\App\Modules\CReviews\Domain\PublicThreshold::class)->for($this->businessId);
     }
 
     public function getTicketRecipient(): string
