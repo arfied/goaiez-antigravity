@@ -58,7 +58,7 @@ final class EvidenceChargeCommand extends Command
 
         $data = [
             'business_id' => $businessId,
-            'payments_written' => Payment::where('business_id', $businessId)->count(),
+            'tenant_payments_total' => Payment::where('business_id', $businessId)->count(),
             'gateway_charge_id' => $payment->gateway_charge_id,
             'payment_status' => $payment->status,
             'amount_cents' => 12500,

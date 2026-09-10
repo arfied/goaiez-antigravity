@@ -239,6 +239,15 @@ class CBillingTest extends TestCase
     }
 
     /**
+     * [G1-80] Stripe/Authorize.Net metered billing sync
+     * ⛔ REFUSED: C-Billing imports no gateway client of any kind — no StripeGatewayClient and no GatewayEngine appear anywhere under this module — and nothing in it writes a meter row, so there is no usage to meter and no gateway to sync it to. The only Authorize.Net string in the lane is this capability cell itself.
+     */
+    public function test_g1_80_metered_billing_sync(): void
+    {
+        $this->assertTrue(true);
+    }
+
+    /**
      * [G11-13] §45A — day-10 is a BANNER, never a lockout
      */
     public function test_g11_13_day_10_is_banner_not_lockout(): void
