@@ -527,6 +527,8 @@ class CReviewsTest extends TestCase
             'rating' => 1,
         ]);
 
+        $locId = \App\Models\Location::firstOrCreate(['business_id' => $biz->id, 'name' => 'Main'])->id;
+        \App\Models\Review::create(['business_id' => $biz->id, 'location_id' => $locId, 'source' => \App\Enums\ReviewSource::Google, 'google_review_id' => 'google_rev_id', 'status' => \App\Enums\ReviewStatus::Approved, 'rating' => 1]);
         $preparer = new PrepareRemovalRequestAction;
         $removal = $preparer->execute($biz->id, $req->id, 'tos_ground_example', 'Prepared Body', 'google_rev_id');
 
@@ -549,6 +551,8 @@ class CReviewsTest extends TestCase
             'rating' => 1,
         ]);
 
+        $locId = \App\Models\Location::firstOrCreate(['business_id' => $biz->id, 'name' => 'Main'])->id;
+        \App\Models\Review::create(['business_id' => $biz->id, 'location_id' => $locId, 'source' => \App\Enums\ReviewSource::Google, 'google_review_id' => 'google_rev_id', 'status' => \App\Enums\ReviewStatus::Approved, 'rating' => 1]);
         $preparer = new PrepareRemovalRequestAction;
         $removal = $preparer->execute($biz->id, $req->id, 'tos_ground_example', 'Prepared Body', 'google_rev_id');
 
@@ -577,6 +581,8 @@ class CReviewsTest extends TestCase
             'password' => 'secret',
         ]);
 
+        $locId = \App\Models\Location::firstOrCreate(['business_id' => $biz->id, 'name' => 'Main'])->id;
+        \App\Models\Review::create(['business_id' => $biz->id, 'location_id' => $locId, 'source' => \App\Enums\ReviewSource::Google, 'google_review_id' => 'google_rev_id', 'status' => \App\Enums\ReviewStatus::Approved, 'rating' => 1]);
         $preparer = new PrepareRemovalRequestAction;
         $removal = $preparer->execute($biz->id, $req->id, 'tos_ground_example', 'Prepared Body', 'google_rev_id');
 
@@ -602,6 +608,8 @@ class CReviewsTest extends TestCase
             'rating' => 1,
         ]);
 
+        $locId = \App\Models\Location::firstOrCreate(['business_id' => $biz->id, 'name' => 'Main'])->id;
+        \App\Models\Review::create(['business_id' => $biz->id, 'location_id' => $locId, 'source' => \App\Enums\ReviewSource::Google, 'google_review_id' => 'google_rev_id', 'status' => \App\Enums\ReviewStatus::Approved, 'rating' => 1]);
         $preparer = new PrepareRemovalRequestAction;
         $removal = $preparer->execute($biz->id, $req->id, 'tos_ground_example', 'Prepared Body', null);
 
@@ -630,6 +638,8 @@ class CReviewsTest extends TestCase
             'password' => 'secret',
         ]);
 
+        $locId = \App\Models\Location::firstOrCreate(['business_id' => $biz->id, 'name' => 'Main'])->id;
+        \App\Models\Review::create(['business_id' => $biz->id, 'location_id' => $locId, 'source' => \App\Enums\ReviewSource::Google, 'google_review_id' => 'google_rev_id', 'status' => \App\Enums\ReviewStatus::Approved, 'rating' => 1]);
         $preparer = new PrepareRemovalRequestAction;
         $removal = $preparer->execute($biz->id, $req->id, 'tos_ground_example', 'Prepared Body', 'google_rev_id');
 
@@ -657,6 +667,8 @@ class CReviewsTest extends TestCase
             'rating' => 1,
         ]);
 
+        $locId = \App\Models\Location::firstOrCreate(['business_id' => $biz->id, 'name' => 'Main'])->id;
+        \App\Models\Review::create(['business_id' => $biz->id, 'location_id' => $locId, 'source' => \App\Enums\ReviewSource::Google, 'google_review_id' => 'google_rev_id', 'status' => \App\Enums\ReviewStatus::Approved, 'rating' => 1]);
         $preparer = new PrepareRemovalRequestAction;
         $removal = $preparer->execute($biz->id, $req->id, 'tos_ground_example', 'Prepared Body', 'google_rev_id');
 
