@@ -706,22 +706,22 @@ class CReviewsTest extends TestCase
         $biz = self::provisionTenant(['name' => 'Threshold Test Biz']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
 
-        \App\Modules\CReviews\Models\ReviewRequest::create([
+        ReviewRequest::create([
             'business_id' => $biz->id,
             'rating' => 4,
-            'platform' => 'google'
+            'platform' => 'google',
         ]);
 
-        \Livewire\Livewire::test(\App\Modules\CReviews\Ui\ReviewsQaRequests::class, ['businessId' => $biz->id])
+        Livewire::test(ReviewsQaRequests::class, ['businessId' => $biz->id])
             ->assertViewHas('publicCount', 1)
             ->assertViewHas('internalCount', 0);
 
-        \App\Modules\CReviews\Models\QaSetting::updateOrCreate(
+        QaSetting::updateOrCreate(
             ['business_id' => $biz->id],
             ['min_public_stars' => 5]
         );
 
-        \Livewire\Livewire::test(\App\Modules\CReviews\Ui\ReviewsQaRequests::class, ['businessId' => $biz->id])
+        Livewire::test(ReviewsQaRequests::class, ['businessId' => $biz->id])
             ->assertViewHas('publicCount', 0)
             ->assertViewHas('internalCount', 1);
     }

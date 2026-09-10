@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\CReviews\Ui;
 
+use App\Modules\CReviews\Domain\PublicThreshold;
 use App\Modules\CReviews\Models\ReviewRequest;
 use App\Modules\X153\Actions\AlertSendAction;
 use App\Modules\X181\Actions\QaTicketReadAction;
@@ -115,7 +116,7 @@ class LossAlerts extends Component
 
         $alerts = collect();
         if (! $this->isSample) {
-            $minStars = app(\App\Modules\CReviews\Domain\PublicThreshold::class)->for($this->businessId);
+            $minStars = app(PublicThreshold::class)->for($this->businessId);
 
             $breachedTickets = app(QaTicketReadAction::class)->getBreachedSlaTickets($this->businessId)
                 ->map(function ($t) {
