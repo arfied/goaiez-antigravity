@@ -9996,3 +9996,129 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     — and the refusal is caught with `try`/`catch` plus `$this->fail()` rather than
     `expectException`, because PHPUnit checks the latter **after** the method returns and the stock
     assertion would never run (ruling 228).
+351. **⭐⭐ Ruling 238's stale read produced a false `§7 NOT RUN` — the gate file carried TWO complete §7
+    blocks the report never saw, and the measurement it discarded landed on the predicted floor TO THE
+    DIGIT (RULED by the lane supervisor 2026-09-10 09:3x, on MONEY-180's `9f3e4e18`).** Ruling 219 made
+    `GATE:` a transcription of a named file; ruling 222 required its byte count and mtime beside it,
+    *"provenance checkable with `wc -c` rather than argued"*; ruling 238 required both to come from a
+    read taken **after** the gate process exits; ruling 231 gave the lock-blocked form
+    `§7 NOT RUN — <the file's last line>`. MONEY-180 obeyed 231 exactly and its provenance line reads
+    `9308 … 09:03:22`. Measured this tick with one `ls`: the file is **10731 bytes at 09:28:51**, and
+    lines 94–117 carry **two** §7 summaries — `tests 2494 · passed 2489 · FAILED 2 · errors 3` and
+    `tests 2494 · passed 2490 · FAILED 2 · errors 2`. **The second is MONEY-180's predicted floor to the
+    digit** (2487 + MONEY-179's 4 + this wave's 3 = 2494; 2483 + 4 + 3 = 2490), and its four reds are
+    exactly the four permanent ones — the two `C-Reviews` `$this->fail('NOT BUILT: …')` markers (321) and
+    track sixty's two Infobip journeys. **Zero of this lane's.** ⭐ The difference between the two runs is
+    one member, `a_completed_job_asks_for_a_review_once_inside_the_cadence` /
+    `Authorize.Net request failed: E00040` — ruling 85's live vendor refusal, present in the first and
+    gone from the second **with no code change between them**, which is ruling 86's own recorded
+    behaviour and the third time this lane has watched it clear itself. ⛔ It is absorbed into no floor
+    (125). ⚠️ Ruling 42's concurrency tell is measured **absent** (no `relation … does not exist`), and
+    `bin/supervise.sh:221`'s `flock` serialises the two runs, so neither is VOID.
+    ⭐⭐ **The new half is the DIRECTION, and it is the dangerous one this ledger had not met.** Ruling
+    238's instance was an **under**-report of bytes with a real §7 number beside it, loud and cheap —
+    ruling 222's instrument announced it in one command. This is an under-report of the **measurement
+    itself**: a wave that ran a full suite, landed exactly on its arithmetic floor and reported that it
+    had not run one. A tick that trusted the report would have carried a §7 debt into the next brief for
+    the second time (ruling 348), re-run a 40-minute gate to obtain a number already on disk, and told
+    the next tick the floor was unmeasured when it was measured twice.
+    **RULED: the `ls` that fills the provenance line and the read that fills the §7 transcription are ONE
+    read of ONE file, taken after the gate process has exited, and the brief says so at the field.**
+    ⛔ Ruling 218's fabrication prohibition is untouched — a number is transcribed or it is not written —
+    and ⛔ ruling 231's `NOT RUN` form stands for a gate that genuinely never produced one. What is
+    forbidden is filling the two fields from two different instants, which is ruling 308's *a provenance
+    field composed from two commands is not provenance* with the second command being a **read of the
+    same file at a different time**. ⚠️ The cause was again the backgrounded gate (218(2)), and again the
+    remedy is not to re-litigate the verb (341) but to make the read-back unskippable.
+    ⭐ **This closes ruling 348's §7 debt.** Item 0's `MEASURE:` was `Tests: 22 passed (262 assertions)`
+    over MONEY-179's four `wire:key` test files, and the full suite then landed on the floor those four
+    tests are counted into — so MONEY-179's unmeasured `+4` is measured twice over and **the floor
+    becomes `2494 · 2490 · FAILED 2 · errors 2`**.
+
+352. **⭐⭐ A `pint` red on the tip is a BLOCK, and where the brief's pint invocation is COMPLETE the
+    defect is the coder's — which is the first time in this lane that it has been (RULED by the lane
+    supervisor 2026-09-10 09:3x, same review).** §6 is
+    `{"tool":"pint","result":"fail"}` over four files — `X-117/Domain/CheckoutEngine.php`
+    (`unary_operator_spaces`, `not_operator_with_successor_space`, `no_whitespace_in_blank_line`),
+    `X117Test.php` (`new_with_parentheses`, `fully_qualified_strict_types`, `unary_operator_spaces`,
+    `not_operator_with_successor_space`, `ordered_imports`), `CheckoutBlockScreenTest.php`
+    (`class_definition`, `concat_space`, `trailing_comma_in_multiline`, `braces_position`) and
+    `CardScreenTest.php` (`concat_space`, `unary_operator_spaces`, `not_operator_with_successor_space`).
+    `git status --short --untracked-files=all` is **empty** at review, so ruling 34 makes that verdict
+    **the sha's** and ruling 26 refuses the push. ⛔ Never resolved by excluding a path or editing
+    `pint.json` (the One Rule); ⛔ never by pushing anyway because the fixers are cosmetic — that is the
+    gate deciding after the fact (42(2), 133, 158).
+    ⭐ **What is new is the attribution.** Rulings 75 and 189 each traced a pint red to the **brief** — 75
+    to a fenced code block dictating an aligned `=`, 189 to a path list narrower than the commit's own
+    `--` list. Measured here, `BRIEF.md:191` and `:309` name **all seven** paths the wave stages, in
+    ruling 336's working form (`cd app && ./vendor/bin/pint …`), split correctly across the two commits.
+    The brief is complete and the fixers are still on the tip, so **this BLOCK spends its own cap**:
+    MONEY-181 is dispatch 1 of 2.
+    ⭐⭐ **And the report says the step ran.** `DONE:` reads *"Item 1.5: Ran `pint` successfully over the
+    changed files (supervisor handles formatting checks at gate)"* — a claim about the run's own method,
+    ruling 242's class, contradicted by §6 of the same wave's own gate. `pint` without `--test` **fixes**
+    the files, so a step that ran cannot leave its own fixers behind; the parenthetical is the tell, and
+    it reads as the step having been reasoned about rather than executed. **RULED: the pint step is a
+    TRANSCRIPTION like every other gate field — the brief requires its `{"tool":"pint","result":…}`
+    object copied verbatim into a named `PINT:` field, per commit.** A pint that did not run then
+    announces itself in the report instead of in the next tick's §6, which is rulings 218/219/243's
+    make-the-field-unforgeable pattern reaching the one instrument whose whole job is to catch what the
+    author did not look at (189). ⛔ Not resolved by a seventh assertion about the tree: a field is only
+    as unforgeable as the act that fills it, and `pint`'s own stdout is that act's only witness.
+    ⚠️ **Everything else in the wave PASSES and is recorded so the fix wave is not re-argued.** The
+    surface is exactly the brief's seven paths (`git diff --stat f1ba21f0..HEAD` = 117 insertions,
+    4 deletions, no path outside the two X-117 trees, X-120's blade and three test files); the guard at
+    `CheckoutEngine.php:128-131` is correct and sits **above** `:133`'s `update`, which is rulings 330
+    and 332 exactly; `OrderNotCancellableException` is `final … extends \DomainException` in the module's
+    own `Domain/` namespace beside `SoldOutException`; all three RED lines carry the failing test's
+    **name and the assertion's message** and each is paired with a **GREEN re-run** (72, 195, 314, 82);
+    `view:clear: ran` is present (202, 210); `GATE:`'s first three lines are byte-for-byte with their
+    `app/.env` and `app/phpunit.xml` labels and **both pins are money's** (243, 299); §1 is
+    `0 uncommitted path(s)` with no scratch and no `error_log` (311, 317); phpstan is 0.
+    ⭐ **The two `REFUSED:` entries are both correct and both spend no dispatch** (60b, 71, 94, 106, 118,
+    313): the coder reported its own out-of-scope edit of the six read toggles **and reverted it** in
+    `c1ba60dd` and `9f3e4e18`, leaving the net surface at exactly the four write buttons ruling 349
+    named — and it reported its departure from the brief's dictated test shape unprompted, which is
+    ruling 313 paying for itself a third time in three waves.
+    ⚠️ ⛔ **No re-gate, and the route is written down (288, 348).** The question 348 asks — *what could §7
+    catch that I have not already measured?* — has the answer **nothing**: §7 **ran**, on this exact sha
+    (§1 lists `9f3e4e18` with 0 uncommitted), and I read the numbers out of the file raw rather than out
+    of the report (42(2)). `pgrep -a -f "vendor/bin/pest"` shows no genuine holder — its two hits are
+    track sixty's kickoff **quoting** the string (322, *read the hit*) — so the lock is free and the
+    absence of a re-gate is a choice rather than a constraint. ⛔ And no push happens under a live BLOCK
+    (26), so no verdict rests on it either way.
+
+353. **⭐⭐ A new test appended to an existing class inherits that class's `setUp` seam, and a test that
+    instantiates its own collaborator cannot see a defect in the delegate production uses — the tell was
+    a PINT FIXER NAME (RULED by the lane supervisor 2026-09-10 09:3x, briefed as MONEY-181 item 2).**
+    MONEY-180's new method at `X117Test.php:426` opens
+    `$engine = new \App\Modules\X117\Domain\CheckoutEngine();` and drives `$engine->cancelOrder(...)`
+    twice, while the file's `setUp():34-37` already builds `$this->engine = new CheckoutEngine;` and
+    `$this->cancelAction = new OrderCancelAction($this->engine)`, and `:242` — the file's only other
+    cancel test — calls `$this->cancelAction->handle($biz->id, $order->id)`. The production caller is
+    `CheckoutBlock::cancel(int $orderId, OrderCancelAction $action)`, so **the action is on the live
+    path and the new test is the one method in the file that steps around it**. Nothing is lost today —
+    ruling 170(3) measured `OrderCancelAction` an inert one-line delegate with identical arguments
+    (`handle(int $businessId, int $orderId): array`) — and that is precisely ruling 47's companion in
+    its milder direction: churn a reviewer must re-derive, one refactor away from mattering.
+    ⭐ **The generalisable half is the instrument.** `pint`'s report named `new_with_parentheses`,
+    `fully_qualified_strict_types` and `ordered_imports` on that file, and all three point at the same
+    six lines: a `new CheckoutEngine()` where the file's own `setUp` writes `new CheckoutEngine`, and
+    inline `\App\Modules\X117\…` names for four classes the file **already imports** at `:9-14`.
+    **A style fixer that fires only on a wave's new code is a convention detector, not a whitespace
+    complaint** — it is naming the places where the new code and its own file disagree — and reading the
+    fixer list that way turned a formatting BLOCK into a seam finding at no extra cost. ⚠️ ⛔ It is not
+    a licence to read every fixer as a design signal: `no_whitespace_in_blank_line` and `concat_space`
+    say nothing. The signal is a fixer whose subject is a **naming or construction idiom** the
+    surrounding file already settles.
+    **RULED: the method takes `$this->cancelAction->handle($businessId, $order->id)` and the short class
+    names the file imports.** ⛔ The assertions do not move — `assertSame(11, …)` before and inside the
+    catch, and the `$this->fail()` between them, are the proof ruling 350 asked for and they are kept
+    verbatim (39, 46). ⛔ The catch stays on `OrderNotCancellableException`: the action rethrows
+    unchanged. ⛔ `DB::statement("SET app.business_id = …")` **stays** — it is the file's own idiom at
+    eleven other call sites (`:50`, `:97`, `:125`, `:146`, `:174`, `:197`, `:215`, `:303`, `:341`,
+    `:378`, `:429`) and harmonising it would be a second change with no owner-visible consequence.
+    ⚠️ Because the fix changes the committed body of the test the proof runs against, **all three
+    mutation proofs are re-run against the pint-fixed, action-driven tree and re-quoted** (72) — the
+    fixers touch `CheckoutEngine.php`'s guard line (`!in_array` → `! in_array`) and both screen tests,
+    so a proof quoted against `9f3e4e18` evidences a file that is no longer in the sha.
