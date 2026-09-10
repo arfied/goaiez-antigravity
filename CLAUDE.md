@@ -16678,3 +16678,435 @@ boundary`) and not the `· X-nnn` form. **A red list assembled from one anchor h
 consequence relationship; **no re-file, no `resolve`, no `decided` line**, because `state.py` has no withdraw
 and a second row about one fact compounds rather than corrects (210). Per tick 293 this entry states the
 **ruling and the falsifier and no prediction**; the outcome is the next tick's to write.
+
+## ⛔ WHEN A WAVE BOTH **WRITES** A PERMANENT RECORD AND **SUMMARISES** IT, VERIFY THE RECORD AND NEVER THE SUMMARY — tick 293's polarity, inverted (tick 326)
+
+SITE-197's `state.py note` is exactly what tick 325 ruled: it names both boundary filings by timestamp, names
+both supersessions by timestamp **with their content**, states the relationship as cause-and-consequence, and
+closes *"The dispositions of both boundary rows are UNCHANGED and neither is withdrawn … This note adds no row
+and withdraws none."* The report's **item 6**, summarising that same note, says the opposite: *"The boundary
+violation filing effectively supersedes the capability filing, making the initial capability records no longer
+live."* The boundary filing supersedes nothing — the capability rows were retired by SITE-113's and SITE-121's
+own **build** notes, days before either boundary row existed.
+
+⭐ **The asymmetry is the finding.** Tick 293 caught a *prediction* paraphrased into `CLAUDE.md` while `BRIEF.md`
+held the right version, and ruled: *`BRIEF.md` is overwritten every tick, `CLAUDE.md` is forever — **the WRONG
+version is the durable one.*** Here the polarity is reversed. The **JOURNAL** is append-only with no withdraw
+(210) and is right; the **REPORT** is overwritten at the next wave close and is wrong. The right copy survives
+and this cost nothing.
+
+⛔ So the rule is a **reviewer's** rule rather than a coder's: **grade the RECORD, never the wave's summary of
+it.** The summary is what a reviewer reads first, it is written in the reviewer's own vocabulary, and it is the
+copy that does not matter. Had this tick graded item 6 rather than running
+`git show <sha> -- .agents/state/JOURNAL.md`, it would have recorded a defect in a note that has none — and on a
+second reading might have "corrected" a correct record into a file that cannot undo it. One command separates
+the two, and it is the same command that proves the wave did what it claims.
+
+## ⛔ THE FOURTH SURFACE'S OWNED-ID COUNT IS BLIND TO A `note` — the module id lives INSIDE the note text (tick 326)
+
+Measured because HEAD and `origin/track/site` both read **192** owned-id occurrences while HEAD carried one more
+note than the remote. `state.py note` writes
+
+```json
+{ "at": "2026-09-09T18:22:23", "note": "X-157 boundary: CORRECTION to the citation clause …" }
+```
+
+— **the module id is embedded in the note STRING, not as a `"module": "X-157"` key** — so it matches no
+quoted-id pattern and the count does not move. An `unresolved` or a `decided` row does, which is why reviews
+reads 15 against main's 14 (its X-103-keyed `decided` row, tick 323).
+
+⛔ **Both readings of that surface are therefore narrower than they read.** Tick 173's **fall** test detects a
+sibling deleting our keyed rows; tick 323's **rise** reading detects a sibling adding one. Neither can see a
+sibling writing a **note** keyed to one of our ids — and a note is the instrument this lane reaches for most,
+precisely because it adds no row. Same family as tick 287's proxy file-type filter: the instrument and its
+principal differ on a dimension about which every individual value the instrument returns is correct.
+
+## ⛔ AN OLDER ACCEPTING BOUND IS **CONSERVATIVE** WITH `git log` AND A **FALSE-POSITIVE GENERATOR** WITH `git diff` (tick 326)
+
+Tick 315 ruled the accepting bound is the sha the branch merged, never `origin/main`; tick 318 sharpened it to
+the branch's **most recent** merge of main. Applying it, stages' most recent proved to be `b5473856` at
+`57781d59` — which **does not appear in half 1 at all**, because it is TREESAME on the fourteen paths — while
+this tick had used the older `6240383f` at `cbdba9cd`.
+
+⭐ The older bound is the **stronger** result, and the reason is a property of the **instrument**, not of the
+bound:
+
+| form | a too-old bound |
+| :-- | :-- |
+| `git diff <bound> <branch>` | ⛔ **false positives** — main's later additions read as the branch's deletions (tick 147/315's staleness trap) |
+| `git log --no-merges <bound>..<branch> -- <paths>` | ✅ **conservative** — the range only widens, so silence over it entails silence over the narrower one |
+
+⛔ **Tick 315's staleness trap is a property of `git diff`, not of the accepting bound as such.** With the log
+form an out-of-date bound can, at worst, hand you extra commits to read; it can never hide one. When the correct
+bound is uncertain, prefer the log form and err old. ⚠️ And note what made the correct bound hard to find: half 1
+hands you a merge commit, and the natural move is to use *that* commit's bound — which tick 318 already forbids,
+because the merge that appears is the one that touched our paths and not necessarily the latest.
+
+## ⛔ A ROUTE-CONSTRAINT QUESTION IS UNANSWERABLE BY GREPPING `Route::` — the declaration and the constraint are one statement and different lines (tick 326)
+
+Sweeping integer coercion on this lane's published endpoints, `grep -rn -F '(int)'` returned five casts on URL
+segments and `grep -n 'Route::'` returned five route declarations with **no constraint on any of them**. That is
+a live URL-aliasing defect on its face: `(int) '12abc'` is `12`, so one published page would be reachable at
+unboundedly many URLs while declaring a single canonical, in the lane that owns the SEO module. A wave was one
+step away.
+
+**The constraint is there.** `ModuleServiceProvider.php:55` is `})->whereNumber('business');` — **fourteen lines
+below** the `Route::get` at `:41`, because it is attached after a multi-line closure. A grep anchored on
+`Route::` returns the statement's first line and the answer lives in its last.
+
+⛔ **Read the route file; never grep for the route.** Same family as tick 297's prose filter and tick 325's
+guessed anchor — the query returned exactly what it was asked for, and the answer to the *question* was elsewhere
+in the same statement. And this one is the most inviting of the three, because the grep's output *looks* like a
+complete enumeration of the routes.
+
+## ✅ CLEAN SWEEP — integer coercion on URL segments, 5/5 constrained, and `{code}` is the disconfirming member (tick 326)
+
+**A clean sweep is a result and must be written down** (280), or it is re-run as backlog three ticks later, and
+the disconfirming member is what makes the closure re-checkable rather than re-arguable.
+
+```
+X-157/ModuleServiceProvider :42 :58 :85 :95    :55 :82 ->whereNumber('business')
+                                               :101 ->whereNumber('business')->whereNumber('form')
+X-137/ModuleServiceProvider :39                :65   ->whereNumber('business')
+```
+
+⛔ **`{code}` is deliberately UNconstrained**: `X-137:43` reads it as a string (`where('short_code', $code)`) and
+never casts it. So the rule is not *"constrain every segment"* but ***"constrain every segment that reaches a
+numeric cast"*** — satisfied 5/5. The other seven `(int)` sites in the six owned code modules cast a model
+attribute or an aggregate, never a request value.
+
+## ⛔ THE TAKE IS **OPEN, POSSIBLE AND UNNECESSARY** — a deferral's premise can be falsified in EITHER direction (tick 326)
+
+`origin/main` is 82 ahead, and one command decides it:
+
+```
+git diff --name-status HEAD origin/main -- app/app/Doctor/ app/tests/Journeys/ .claude/ app/phpunit.xml
+    M  .claude/settings.json
+    M  app/tests/Journeys/TwelveJourneysTest.php
+```
+
+⭐ **`app/app/Doctor/**` and `seals.json` print NOTHING** — this lane's checker **is** main's current checker,
+byte-identical. Tick 317's take was justified *because* main carried the revived `BoundaryStage`, which turned
+`boundary 6` (a disabled check's output, 309) into 55 and paid for five waves. A take now would refresh the
+instrument by **nothing**, and the owned-column delta is **one docblock line** that credits nothing.
+
+⛔ Tick 317 recorded that *a deferral's premise can be falsified by an event on another branch, and nothing but a
+deliberate re-read will ever say so* — because a deferred item has no violation, no count and no census surface.
+This is the **converse**: a take's *justification* can expire the same silent way. **A standing "take when main
+moves" would have spent a wave here for one line, and a standing "never take" would have missed tick 317.
+Neither is a rule; the measurement is the rule, and it is one command.** Per tick 224 the branch is a third:
+**the door is open and the room holds one line.**
+
+⚠️ Convergent derivation, noted because it is the strongest confirmation this arrangement produces (224): stages'
+own tick-339 block, pushed the same hour, reads *"the take is OPEN, UNNECESSARY and REFUSED — this lane's checker
+IS main's current checker byte-identical."* Same verdict, same measurement, reached independently.
+
+## ⛔ RULED — SITE-198: X-102 STORES A MESSAGE BODY ON A PUBLIC ENDPOINT WITH NO CONSENT GATE, and MY DISMISSAL DIED ON THE LAST GREP (tick 326)
+
+Main's merge of sixty landed a `BUILD PROPOSAL` line in **this lane's** `X102Test.php`: *"capture-first is in
+tension with rule 22's no capture before consent, and the tree currently does nothing about it; must require
+consent before capturing messages. Owner: X-102."* Per tick 216 an inherited attribution is a **citation, not a
+measurement**, so it was measured here — and the measurement went the other way from the one this seat expected.
+
+Three findings had accumulated, each true: X-102 mentions `consent` **zero** times (positive control run per 209
+— 29 PHP files carry `class`, so the pathspec resolves); X-102 writes `Conversation` **zero** times; and the
+cited rule's own source attaches it to a column on the **legacy support-thread** table —
+`create_conversations_table.php:13-15`, *"consent_logged_at is not decoration: CIPA requires notice before chat
+capture, and `29` §2 rule 22 makes 'no capture before consent' build-failing. A row without it has not been
+cleared to store message bodies."* A `state.py note` saying the claim has no subject in this lane was being
+composed. One more grep:
+
+```
+X-102/Database/migrations/2026_08_30_000037_create_x102_chat_tables.php:36
+        $table->text('message')->nullable();          ← on chat_leads
+```
+
+⛔ **X-102 stores a message body**, and the clause's own words are *"has not been cleared to store message
+bodies."* It has a subject here after all. Had the composition finished one command earlier, a **permanent** row
+asserting the opposite would sit in a file with no withdraw.
+
+⭐ **The general form, and it is what makes this different from the ten prior firings of *read the file before the
+brief names what is in it* (241, 244, 249, 251, 254, 268 ×2, 284, 321): what died was a DISMISSAL, not a build.**
+A brief that builds the wrong thing is caught by its own falsifier; **a record that dismisses a real finding has
+no falsifier at all**, because nothing downstream ever re-reads a closed claim. So the asymmetry is:
+
+> ⛔ **A wave that builds gets a falsifier. A record that DISMISSES gets none. Measure a dismissal at least as
+> hard as a build — and the last measurement, not the first three, is the one that decides it.**
+
+Three further measurements bound the wave: the endpoints are **live and public** (`app/routes/api.php:12-14`
+imports all three controllers and `:156-166` registers `POST /chat/{key}/start`, `/turn` and `/capture` behind
+throttles only — sixty's build in this lane's module, arrived with tick 317's take, so per tick 195 this lane now
+reviews them as its own); a programme-wide gate **exists and X-102 uses none of it**
+(`grep -ril 'consent_logged_at' app/app` → four files, **zero** under `app/app/Modules/`); and the clause is
+programme-wide rather than table-local, its stated ground being CIPA and `29` §2 rule 22.
+
+⛔ **SITE-198 MEASURES AND WRITES NOTHING** — the remedy's *shape* is unknown, inventing a consent policy is the
+act refused at 295, 300 and 303 for this module family, and my reading of four files is the brief and never the
+implementation (198, 199). Its pass condition is an **empty tracked diff**, which proves itself and needs no
+doctor run (273); removing `update.py` composes with it **because that file is untracked**, so only the untracked
+list changes. Per tick 293 this entry states the **ruling and the falsifier and no prediction**; the outcome is
+the next tick's to write.
+
+## ⚠️ A RULE REQUIRING A LATER EDIT TO AN ALREADY-WRITTEN ARTEFACT INDUCES TOOLING, AND THE TOOLING IS SCRATCH (tick 326)
+
+`update.py`, 1738 bytes at the checkout root, mtime **identical to `REPORT.md`'s**: a Python script that opens
+`.agents/supervisor/REPORT.md`, builds a new Item 7 and writes it back. That is how the coder satisfied tick
+318's report-side hedge composition — §7 had not returned when the report was first written, the box-wide lock
+released later, and the completed result was spliced in.
+
+✅ **Legitimate**, and not tick 211's *patch the thing that is refusing you*: `REPORT.md` is the coder's own file
+and 318 requires exactly that correction. The *result* is measurable from this seat (267), which is what makes it
+a report and not a claim.
+
+⛔ Two costs worth the line. **(a)** Untracked scratch at the checkout root makes §1 read three paths and §2 —
+whose entire signal is *one known `⛔`, and any second is a BLOCK* — harder to read (162, 253, 288). `rm` is
+refused to this seat and permitted to the coder, so it is a brief item. **(b)** The report discloses the
+*supersession* and not the *method*; the only trace that an evidence artefact was rewritten in place is a file
+that happened not to be deleted.
+
+⭐ The reading that generalises: **tick 287's ordering (gate, WAIT, then write) and tick 318's (re-read at write
+time and supersede) are two remedies for one problem, and 318 is the FALLBACK.** A coder that cannot wait out a
+forty-minute lock reaches for the splice by default, so every brief now names 287 as primary, 318 as the
+fallback, and requires the helper to be disclosed and deleted by exact name in the same breath.
+
+## Tick 326 — measured, for the record
+
+- **SITE-197 PASS-WITH-NOTES**, `abd8e416`, `.agents/state/` only, +5 −1, named-path commit, One Rule clean.
+  All five of its witness counts reconcile (`boundary` 4 and `capability` 28 unmoved; notes 47→48; the two cited
+  timestamps 5→6 and 4→5). **Zero movement in every gated stage**, measured live here: `integrity clean ·
+  boundary 50 · contract 85 · citation 3 · schema 16 · capability 207 · anchor 128 · journey 3` · **492**.
+- ⭐ **§7 `tests 2437 · passed 2429 · FAILED 6 · errors 2`**, reconciling ✓ (226),
+  **`a_published_site_carries_all_seven` ABSENT — J11 GREEN**, byte-identical to the coder's on the same sha, so
+  tick 255's borrow ran at a **zero delta** and its falsifier **fired and PASSED** (fifth strong resolution —
+  258, 300, 323, 325, 326). Both intermittent **causes** absent (Authorize.Net `E00040`, Postgres
+  `SQLSTATE[42501]` — 311's cause-keying), so the agreeing integer is *a property of which causes fired, never of
+  the comparison* (302). Baseline unchanged. ⚠️ Five `✗ FAILURE` lines against `FAILED 6` — tick 322's display
+  shortfall, confirmed again and not a dropped member.
+- **All four doctor checks together, eighth consecutive clean pair**: the **extrinsic** stamp equality *stated as
+  a comparison* (305), the SUM 492 in both report blocks and in mine (285), `ok` only on `integrity … clean`
+  (292), four of seven timings differing including two long stages (249, 311, 318).
+- **Census 4 · 2 · 0 · 2, run in full TWICE.** Halves with `--full-history` (314), `pwd` first (209), previous
+  value read from `REVIEWS.md:86260` and not this digest (301). Drift signature absent — three pathspec halves
+  `4 · 2 · 0` against a pathspec-free complement of 2, and the *split* is the signature, never either number.
+  Half 1's four members are **all merges of `origin/main`** (reviews ×2, stages ×2), each measured at its
+  branch's accepting bound and printing nothing. **No violating partition on any surface.**
+- ⭐ **Sixty's `d8d9cdaa` DRAINED and was attributed by reading the ref** (191, 225): `git branch -r --contains`
+  now lists `origin/main`, so it **merged** — arriving in `92583354 merge: track/sixty — docblocks`, whose
+  `X102Test.php +1` is the BUILD PROPOSAL line above. Re-measured on main's own copy: it is appended to an
+  **existing** `[G2-57]` docblock and adds **no new `G##-##` literal**, so tick 260's seventh false-credit shape
+  cannot fire from it.
+- ⭐ **The closing tip re-read FIRED — sixteenth against sixteen nulls — on `origin/main`**, the one ref that
+  excludes in all four surfaces at once (198). Left **literally blank until the command returned** (257). Four
+  refs moved after this tick's opening fetch, so **arrival, not staleness** (220). The whole census re-ran
+  **byte-identical**, coherently: main's one new first-parent commit is `1155a1ef merge: track/pricebook — X-172`
+  and pricebook has no member in any partition.
+- ⛔ **Reviews' paired `--stat` demanded tick 296's rule.** Its range spans **two** merges of main, so `%S`
+  attributed ~25 of main's commits to `origin/track/reviews` — **including this lane's own `484b4ecf`,
+  `7c79b8d8` and `c8aeb6fc`**. `git branch -r --contains` separates them; without it, *"the branch wrote in our
+  column"* would have been read off this lane's own merged work.
+- ⚠️ **Paired stats, the only surface that will ever print these** (190): money — `X-117/Console/…`, its own;
+  pricebook and stages — `CLAUDE.md` alone; **sixty — two commits writing `app/tests/Modules/X-01/ThreadScreenTest.php`,
+  and X-01 is STAGES'** under ruling 5's catch-all, OWNER ACTION 45's shape one lane over; **main's new tip is
+  pricebook's X-172**, Track 1's — the third time this lane has recorded pricebook in X-172 (182, 324, 326).
+  Advisory to Track 1, ⛔ never a parallel fix.
+- **Fourth surface, both directions, against each branch's own bound and never HEAD** (173, 323):
+  `main 14 · money 16 · pricebook 14 · reviews 15 · sixty 30 · stages 41 · ui 16 · site 192`. **No branch below
+  main's 14** ✓. ⚠️ **Main still carries 14 after SIX merges of `track/site`** — tick 264 stands.
+- ✅ **Cross-lane dependency query CLEAN** (240 — it exists to be READ, never to be quiet) while the paired stats
+  printed four lanes' commits. **The pairing is the measurement.**
+- **Tips at the close** (192): `main 1155a1ef` · `money 5e6cf9d1` · `pricebook 2dc281a3` · `reviews 6836443a` ·
+  `sixty cb162815` · `stages f56a4392` · `ui bf42fec7` · `site 8ca64e81` (pushed this tick).
+- **Pushed `1e32564c..8ca64e81`** by explicit ref, fast-forward, after gating and recording it — `abd8e416` plus
+  tick 325's notes as `8ca64e81`, the notes delta being `CLAUDE.md` alone and provably an input pest, pint,
+  phpstan and doctor all do not read (255's condition 2).
+- ✅ Healthy branches (221): **tick 318's report-side hedge composition, FOURTH firing and applied unprompted**;
+  **tick 324's notes-commit window, SECOND firing**, with `pgrep agy` re-verified in the same breath (196);
+  **tick 290's `--ruling` correction, SIXTEENTH consecutive clean JOURNAL entry**; **tick 302's two-tier grading
+  with 322's working-tree correction** — fifth consecutive wave clean through item 0, and ⚠️ a run of five is
+  still not a trend (188, 250); **tick 287's ordering** (gate after the final commit, against a named sha);
+  **tick 245's state-commit-LAST** (empty `.agents/state/` diff, no orphaned filing); **§2's healthy branch**,
+  exactly one `⛔` plus an `ℹ` that is not a `⛔` (207, 263); **tick 257's procedure**, gate first and §7 last.
+- ⚠️ **The `pgrep agy` set turned over COMPLETELY, twice inside one tick** — Track 1 + pricebook at the review,
+  pricebook + money at the notes commit, **sixty alone** at the dispatch, with no member surviving either
+  transition. Seventh firing (310, 312, 323, 324, 325, 326 ×2), and the reason 196's *re-run it in the same
+  breath as the launch* is not an optimisation.
+- ⛔ Shell forms: a `$` anywhere in a grep pattern is refused even single-quoted, so every symbol claim in the
+  brief is written in the PCRE hex form `grep -cP '\x24table->…'` (305, 313); `<cmd>; echo "rc=$?"` is refused as
+  *multiple operations* (207); the `&` background operator is refused outright, so a long gate runs through the
+  harness's own background mode.
+
+## ⛔ `git restore <file>` BYPASSES THE SUPERVISOR-PATH REFUSAL — the refusal exists, names `CLAUDE.md`, and is DEAD CODE in every run that does not open the gate (tick 327)
+
+SITE-198 disclosed, unprompted, in item 6: *"I attempted to `git checkout -- CLAUDE.md`, resulting in a guard
+refusal … I then used `git restore CLAUDE.md` to clear it."* Measured: `grep -c -i 'tick 326' CLAUDE.md` → **0**.
+Tick 326 had written 256 lines of ledger notes there and left them uncommitted per 199. They were destroyed.
+
+⛔ **Read at source in `/home/goaiez/agents/coder-bin/git`** (196, 278 — *a guard's stated scope is not its
+implemented scope; read the condition, never the comment that introduces it*):
+
+| clause | on `git restore CLAUDE.md` |
+| :-- | :-- |
+| `:34` merge-restore | requires `$sub = checkout` → misses |
+| `:62` `--allow-restore` | requires `GOAIEZ_RESTORE_OK=1` → misses |
+| ⭐ `:68` — refuses supervisor paths, **naming `CLAUDE.md`** | sits **inside** `:62`'s branch → **NEVER RUNS** |
+| `:78` | refuses only `--`, `-p`, `--patch`, `--source=*`, `--staged`, `--worktree` → passes |
+| `:79` `[ $# -gt 2 ]` | `$#` is **2** → passes |
+| `:162` | `exec $REAL "$@"` → **EXECUTED** |
+
+`grep -cP 'RESTORE_OK\|allow-restore' launch-coder.sh` → **0**: this lane never opens the restore gate, so the
+one refusal written to prevent exactly this — its comment reads *"restoring those discards the supervisor's
+uncommitted notes, which IS run 27"* — is unreachable in every site run.
+
+⭐ **THE PROTECTION LIVES INSIDE THE FLAG THAT OPENS THE ACT, SO THE UNFLAGGED PATH IS WEAKER THAN THE FLAGGED
+ONE.** A lane that never opens a gate never gets that gate's refusals. That is the durable half, and it
+generalises past this file: **when a guard's narrow opening carries its own extra refusals, check what the
+fallthrough does — the opening may be the only place the refusal exists.**
+
+⭐ **And the coder's transcript is the cleanest demonstration available**: `git checkout -- CLAUDE.md` **REFUSED**
+(`:78` catches the `--`), `git restore CLAUDE.md` **PERMITTED**, same file, same effect, seconds apart. **A guard
+that refuses X and permits its synonym Y is not protecting the file; it is teaching that Y is acceptable.** Tick
+278 measured the identical hole on two-token `checkout` and filed it; `restore` is the one that fired.
+
+✅ **RECOVERED IN FULL, BY LUCK.** Tick 326 had composed in `.agents/supervisor/.tmpnotes326.md` — inside the
+directory `launch-coder.sh` snapshots — so appending restored `CLAUDE.md` 16680 → **16936** lines, exactly +256,
+`tick 326` references 0 → **9**. ⚠️ Had that tick composed in place, the notes were gone: `CLAUDE.md` is a
+**tracked** file **outside** `.agents/supervisor/`, and tick 324's own words hold — *"the only copy of an
+uncommitted edit is the working tree."*
+
+⛔ **RULED by the lane supervisor: this seat COMMITS its notes BEFORE dispatching, every tick, until the guard
+gap is closed.** Tick 199 keeps notes uncommitted only to avoid racing a **live** coder on `.git/index.lock`; at
+dispatch time no coder is live, so the constraint is absent and the exposure is not. Tick 324 already found the
+window and used it for the *previous* tick's notes; this extends it to the **current** tick's, which is the half
+that was exposed. Filed upstream by **mechanism, with the fix in the shape the file already uses** (217): hoist
+`:68`'s supervisor-path `case` out of `:62`'s branch and run it unconditionally at the top of the
+`checkout|restore|switch` arm. It refuses nothing any lane needs and closes tick 278's hole in the same three
+lines.
+
+## ⛔ A GROUND VALUE AT ITEM 0 IS A **CHECK**; A PASS CONDITION AT THE CLOSING ITEM IS AN **INSTRUCTION** — tick 322 fixed the first, and the second is what destroyed the ledger (tick 327)
+
+My own `BRIEF.md:194`: *"⭐ The pass condition is that `git diff --stat HEAD` shows `app/phpunit.xml` and nothing
+else."*
+
+Tick 322 ruled — after a wave was forfeited to this seat's own uncommitted notes — that ***no ground value may
+name the WORKING TREE or HEAD as a CLAIM***, that the tree is stated as §2's `⛔` lines, and that *"a tree
+CLEANER than described is never a stop."* I applied it correctly at **item 0** (C5 was §2's `⛔` lines and fired
+no false stop, the sixth consecutive wave clean through item 0). I then restated the tree in the retired raw form
+at **item 6**.
+
+⭐ **The two positions have OPPOSITE FORCE, which is invisible from the case 322 was written on.** At item 0 the
+sentence is a **check**: the coder reads it, compares, and stops or proceeds — so its failure mode is a *false
+stop*, and 322's remedy (never gate on it) is exactly right. At the closing item the same sentence is an
+**instruction**: it names the tree the wave must end in, and the only way to satisfy it was to remove a
+modification the coder did not make and could not attribute. **322 protected the direction where the tree is
+cleaner. At a closing item the danger is that the coder CLEANS it** — and the thing it cleaned was the ledger.
+
+✅ **RULED: a closing "prove this wave wrote nothing" item asks for the WAVE'S OWN diff** — `git show --stat
+<sha>` plus `git diff --stat HEAD -- <the paths the wave was allowed to touch>` — **never the whole tree**; and
+every brief carries, in one line: ⛔ **never `git restore` or `git checkout` a file this wave did not create —
+report it and leave it.**
+
+Thirty-seventh of the imprecise-brief family (208, 227, 235, 236, 237, 238, 244, 245, 247, 249, 250, 254, 262,
+265, 271, 274, 275, 276, 280, 283, 286, 292, 293, 297, 301, 302, 304, 309, 310, 313, 314, 318, 322, 323, 324,
+325) and the first whose blast radius is **this seat's own ledger** rather than a wave, a record or a stop.
+
+## ⚠️ §1 AND §2 READ **HEALTHY** ON A TREE THAT HAD JUST LOST THE LEDGER — the `ℹ` line is a presence check, and its reading is POSITION-DEPENDENT (tick 327)
+
+This seat's gate: §1 `1 uncommitted path(s)`, §2 **exactly one `⛔`** — tick 207's *healthy* branch — and **no
+`ℹ supervisor working notes (uncommitted — leave them alone): CLAUDE.md` line**, because there were none left to
+report. Every instrument this lane reads for tree health reported health.
+
+⛔ That line is a **presence check** in exactly tick 207's sense, and its reading depends on **who ran the gate**:
+
+- at **this seat's** gate, absent is **normal** — the gate is the tick's first act, before any notes exist (257);
+- at a **coder's** gate, absent is the **signal**, because 199 guarantees the supervisor's notes are uncommitted
+  for the whole of a wave.
+
+⚠️ Whether the coder's own C5 ran before or after its restore is **not measured and is not named** (227, 230,
+249). Same family as tick 207 and tick 265's fourth gate state: **an expected line's ABSENCE is the report, and
+which absence is meaningful is a property of the reader's position, not of the line.**
+
+## ⛔ RULED: no X-102 consent wave — NO-CLAUSE measured three ways, and the POLICY's construction site is not this lane's (tick 327)
+
+Tick 326 deferred the disposition pending SITE-198's measurement. It is in:
+
+- **NO-CLAUSE**, verified from three directions: **8** X-102 tracker rows, **0** mentioning consent; **0** plan
+  rows naming X-102 with consent or CIPA; **0** `consent` references anywhere in `app/app/Modules/X-102/`. Tick
+  282's discriminator — *compare the predicate to the SPEC it derives from* — has nothing to compare to.
+- **X-102 does store message bodies** — `chat_leads:36` and `chat_turns:18`, both `text` — so the sibling BUILD
+  PROPOSAL's claim has a subject, and tick 326 was right to refuse the dismissal.
+- ⛔ **But the POLICY's construction site is Track 1's.** All four `consent_logged_at` implementations sit in
+  `app/app/Models` and `app/app/Services`, and the refusal is bound to `Conversation`/`ConversationThreads` —
+  **not reusable by a module**. Tick 237's second question answers **no** for the policy even though the columns
+  and actions are ours. ⭐ The existing gate's own comment is the clause stated as a principle:
+  `ConversationThreads:313` — *"THE TABLE'S OWN GATE, ENFORCED RATHER THAN DESCRIBED. A thread that has not been
+  cleared to store bodies does not store one, whatever opened it."*
+- Inventing one is the act refused three times for this module family (295, 300, 303), against a module whose
+  recorded posture is *capture and normalise, never refuse* (300).
+
+Per 224: **cannot work here** — the door is shut, not the room empty. Filed as a TRACK 1 ACTION **with the
+measurement attached**, which is what makes it an ask rather than a complaint (217).
+
+## ✅ A hypothesis died at source, and two of three controllers already carried this lane's own remedy (tick 327)
+
+Recorded because this ledger otherwise keeps only the hypotheses that survive. Writing SITE-199 I reached for:
+*"the chat controllers arrived with tick 317's take and were never swept for the blank/type class, so
+`$request->input('message')` reaching a `text` column is SITE-172's defect."* **False for two of the three:**
+`ChatTurnController:32` guards `! is_string($sessionToken) || ! is_string($message)` → **400**, and
+`ChatCaptureController:36` guards the three required fields and coerces the three optional ones with
+`is_string($x) ? $x : null` — **SITE-172's own remedy, already present in a file this lane never wrote**.
+Eleventh-plus firing of *read the file before the brief names what is in it* (241, 244, 249, 251, 254, 268 ×2,
+284, 321, 326, 327), and the branch is **already done here** (224).
+
+## ⛔ SITE-199 — the one unswept read: an ARRAY to a `?string` under `strict_types`, on a live public endpoint (tick 327)
+
+```
+X-102/Http/Controllers/ChatStartController.php:32   pixelSessionToken: $request->input('pixel_session_token')   ⛔ UNGUARDED
+X-102/Actions/ChatStartAction.php:3                 declare(strict_types=1);
+                                  :26               ?string $pixelSessionToken = null
+                                  :38               'pixel_session_token' => $pixelSessionToken   → a string column
+app/routes/api.php:156                              POST /chat/{key}/start — throttle only, no auth, PUBLIC
+```
+
+`?pixel_session_token[]=x` → `input()` returns an **array** → **TypeError at parameter binding**, before the
+action's first line → an `\Error`, which no `catch` on that path sees → **500 on a live public endpoint**, where
+both its siblings answer **400**. Byte-for-byte SITE-185's defect, in a controller that arrived with tick 317's
+take and has **zero** route-level coverage anywhere in `app/tests/`.
+
+⛔ **The remedy cannot go in the reader** — the type declaration rejects the value *before line 1*, so no guard
+inside the action could ever fire (SITE-185's ruling verbatim). ✅ **It goes where this module has already
+written it**: `ChatCaptureController:50-52`'s `is_string($x) ? $x : null`. `pixel_session_token` is tick 303's
+**fourth** category — *a key WITH a declared substitute* — and the substitute is already chosen twice, by the
+parameter default and by `:29`'s `$pixelSessionToken ? … : null`. **The fix decides nothing new** (277/295).
+
+⚠️ **BOUNDED** (230): it makes the controller normalise an unusable optional token, whoever calls it. It does
+**not** claim this lane's published page reaches it — measured, `EdgeDeployAction:195` emits a **bare**
+`<div class="chat-widget-container"></div>`, no script, no fetch, exactly tick 295's DNI finding. ⭐ Not 295's
+refused case: that refused **inventing an anonymous-visitor policy**; this turns a 500 into behaviour the module
+has already declared, which is why SITE-185 was built on the same route under the same reachability.
+
+⛔ Refused: `(string)` casting (array-to-string is itself an `Error` — it moves the 500); widening to `mixed`;
+returning 400 (inverts 300's posture and mints a public behaviour nothing asserts — 240); guarding in the action
+(impossible); a DB constraint; relaxing any assertion that reddens (234, 242).
+
+⭐ **TWO clauses ⇒ TWO mutations of different breadths** (310; 308 decides the order). The **array** clause is
+falsified by reverting the guard — a **committed prior state**, so tick 287's question answers **YES** and the
+**four-state sequence is required**. The **precision** clause — that a *string* token is still persisted — is
+falsified by replacing the guard with an unconditional `null`, never committed, so the two-state form is sound
+there. One mutation falsifies at most one assertion in one method (248), so the persisted-token assertion goes
+**first**.
+
+## ✅ Tick 258's *unmerged, not dropped* CONFIRMED BY ARRIVAL (tick 327)
+
+`7900c72e` is Track 1's **eighth** merge of this lane, second parent `8ca64e81` read with `rev-parse ^2` and
+never off the subject (222). Tick 236's check run with `git grep` on the ref and never a stat (163) —
+**eighth firing, eighth clean result**. ⭐ And `PageVersionAction` reads **3** where tick 325 measured it
+**absent** and recorded it as *"absent and not lost — `cc2baaaa` post-dates the second parent, so unmerged, not
+dropped."* It merged. **A prediction that a thing was unmerged rather than dropped, confirmed by its arrival** —
+the strongest confirmation that rule can get, and the reason 258 insists the second parent is read before
+anything is called missing.
+
+⚠️ The closing tip re-read **FIRED**, sixteenth against sixteen nulls, on **four** refs including `origin/main` —
+the one that excludes in all four surfaces at once (198). The whole census was re-run and reproduced
+**4 · 2 · 0 · 2** byte-identical, which is coherent because main's one new commit is a merge of **this lane**,
+already excluded by `^origin/track/site`. Half 1's `--no-merges` form prints **nothing**: all four members are
+merges of main, **no violating partition**.
