@@ -338,7 +338,7 @@ class ChatDoorTest extends TestCase
 
     /**
      * This test is unfalsifiable for the middleware's behavior because the lack of consent
-     * drops the message before the trim logic's output can be verified. The next test 
+     * drops the message before the trim logic's output can be verified. The next test
      * proves the HTTP path protects the action from receiving whitespace.
      */
     public function test_http_middleware_normalises_whitespace_message_to_null(): void
@@ -379,8 +379,8 @@ class ChatDoorTest extends TestCase
      * Reasoning: A detail that is blank or whitespace was not given (R245). The framework's global middleware
      * (TrimStrings and ConvertEmptyStringsToNull) trims whitespace and converts empty strings to null before
      * they reach the controller. This test proves the HTTP path protects the action from receiving whitespace.
-     * 
-     * Finding: No mutation in the module can redden this assertion because the framework middleware satisfies 
+     *
+     * Finding: No mutation in the module can redden this assertion because the framework middleware satisfies
      * it before the module's code path is reached.
      */
     public function test_http_middleware_normalises_whitespace_message_to_null_when_consented(): void
