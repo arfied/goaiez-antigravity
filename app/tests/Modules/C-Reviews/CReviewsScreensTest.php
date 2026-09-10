@@ -269,6 +269,66 @@ class CReviewsScreensTest extends TestCase
         $this->assertSame(1, Alert::where('business_id', $this->bizId)->count());
     }
 
+    public function test_loss_alerts_prepares_removal(): void
+    {
+        $req = ReviewRequest::create(['business_id' => $this->bizId, 'rating' => 1]);
+
+        Livewire::test(LossAlerts::class, ['businessId' => $this->bizId])
+            ->call('prepareRemoval', $req->id, 'fake_reviews', 'This is a fake review.', 'g_123')
+            ->assertSee('Removal request prepared.');
+
+        $this->assertDatabaseHas('review_removal_requests', [
+            'business_id' => $this->bizId,
+            'review_request_id' => $req->id,
+            'status' => 'prepared',
+            'tos_ground' => 'fake_reviews',
+        ]);
+    }
+
+    public function test_loss_alerts_confirms_removal(): void
+    {
+        $req = ReviewRequest::create(['business_id' => $this->bizId, 'rating' => 1]);
+        $preparer = new \App\Modules\CReviews\Actions\PrepareRemovalRequestAction;
+        $removal = $preparer->execute($this->bizId, $req->id, 'fake_reviews', 'This is a fake review.', 'g_123');
+
+        Livewire::test(LossAlerts::class, ['businessId' => $this->bizId])
+            ->call('confirmRemoval', $removal->id, 999)
+            ->assertSee('Removal request confirmed.');
+
+        $removal->refresh();
+        $this->assertEquals('confirmed', $removal->status);
+        $this->assertEquals(999, $removal->confirmed_by_user_id);
+        $this->assertNotNull($removal->confirmed_at);
+    }
+
+    public function test_loss_alerts_shows_removal_requests(): void
+    {
+        $req = ReviewRequest::create(['business_id' => $this->bizId, 'rating' => 1]);
+        $preparer = new \App\Modules\CReviews\Actions\PrepareRemovalRequestAction;
+        $preparer->execute($this->bizId, $req->id, 'fake_reviews', 'This is a fake review.', 'g_123');
+
+        Livewire::test(LossAlerts::class, ['businessId' => $this->bizId])
+            ->assertSee('fake_reviews')
+            ->assertSee('prepared')
+            ->assertSee('Removal for Review #'.$req->id);
+    }
+
+    public function test_loss_alerts_confirm_removal_refuses_cross_tenant(): void
+    {
+        $otherBiz = self::provisionTenant(['name' => 'Other Biz']);
+        $req = ReviewRequest::create(['business_id' => $otherBiz->id, 'rating' => 1]);
+        $preparer = new \App\Modules\CReviews\Actions\PrepareRemovalRequestAction;
+        $removal = $preparer->execute($otherBiz->id, $req->id, 'fake_reviews', 'This is a fake review.', 'g_123');
+
+        Livewire::test(LossAlerts::class, ['businessId' => $this->bizId])
+            ->call('confirmRemoval', $removal->id, 999)
+            ->assertSee('No query results for model');
+            
+        \App\Support\Tenancy::set($otherBiz->id);
+        $removal->refresh();
+        $this->assertEquals('prepared', $removal->status);
+    }
+
     public function test_reviews_qa_requests_route_renders(): void
     {
         $biz = Business::find($this->bizId);

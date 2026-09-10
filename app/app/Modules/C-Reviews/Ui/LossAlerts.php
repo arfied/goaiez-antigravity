@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\CReviews\Ui;
 
+use App\Modules\CReviews\Actions\ConfirmRemovalRequestAction;
+use App\Modules\CReviews\Actions\PrepareRemovalRequestAction;
 use App\Modules\CReviews\Domain\PublicThreshold;
+use App\Modules\CReviews\Models\ReviewRemovalRequest;
 use App\Modules\CReviews\Models\ReviewRequest;
 use App\Modules\X153\Actions\AlertSendAction;
 use App\Modules\X181\Actions\QaTicketReadAction;
@@ -110,6 +113,41 @@ class LossAlerts extends Component
         }
     }
 
+    public function prepareRemoval(int $reviewRequestId, string $tosGround, string $preparedBody, ?string $googleReviewId = null): void
+    {
+        if ($this->isSample) {
+            return;
+        }
+        Tenancy::set($this->businessId);
+        try {
+            $action = app(PrepareRemovalRequestAction::class);
+            $action->execute($this->businessId, $reviewRequestId, $tosGround, $preparedBody, $googleReviewId);
+            $this->noticeType = 'success';
+            $this->actionNotice = '✅ Removal request prepared.';
+        } catch (\Exception $e) {
+            $this->noticeType = 'error';
+            $this->actionNotice = '🚫 Error: '.$e->getMessage();
+        }
+    }
+
+    public function confirmRemoval(int $removalId, int $userId): void
+    {
+        if ($this->isSample) {
+            return;
+        }
+        Tenancy::set($this->businessId);
+        try {
+            $removal = ReviewRemovalRequest::where('business_id', $this->businessId)->findOrFail($removalId);
+            $action = app(ConfirmRemovalRequestAction::class);
+            $action->execute($removal, $userId);
+            $this->noticeType = 'success';
+            $this->actionNotice = '✅ Removal request confirmed.';
+        } catch (\Exception $e) {
+            $this->noticeType = 'error';
+            $this->actionNotice = '🚫 Error: '.$e->getMessage();
+        }
+    }
+
     public function render()
     {
         Tenancy::set($this->businessId);
@@ -172,10 +210,12 @@ class LossAlerts extends Component
         }
 
         $isEmpty = ! $this->isSample && $alerts->isEmpty();
+        $removalRequests = $this->isSample ? collect() : ReviewRemovalRequest::where('business_id', $this->businessId)->get();
 
         return view('c-reviews::loss-alerts', [
             'alerts' => $alerts,
             'isEmpty' => $isEmpty,
+            'removalRequests' => $removalRequests,
         ]);
     }
 }
