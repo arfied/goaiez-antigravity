@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-10T13:03:59",
+ "updated": "2026-09-10T13:34:30",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1738,6 +1738,10 @@
   {
    "at": "2026-09-10T13:03:59",
    "note": "MONEY-186: the X-211 payment form takes the method from a whitelisted select defaulting to check, the vocabulary lives on OfflinePayment as the model that owns the column, and the refusal names the reference this screen can take"
+  },
+  {
+   "at": "2026-09-10T13:34:30",
+   "note": "MONEY-187: the omitted-argument census over the lane's Actions and Domain methods returns eight defaulted parameters and one finding; the other seven are supplied, already recorded or clock seams"
   }
  ],
  "decisions": [
@@ -2735,6 +2739,12 @@
    "module": "X-211",
    "chose": "A refusal names a remedy the owner can reach on the screen they are standing on, and the value a screen sends for a column with a declared vocabulary comes from the owner rather than from a literal AgeingByReason offered a photo on a form with no file input and recorded every offline payment as a cheque, while packageForCollections renders that word to the owner handing an account to an agency",
    "at": "2026-09-10T13:03:59",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-199",
+   "chose": "A payment recorded with no amount named is the invoice's outstanding balance, never its full total recordPayment defaulted to total_cents and both screens omit the argument, so every press of Record payment closed the invoice at full value and added the whole total again to anything already part-paid, while Unpaid.php:100 computes the correct balance one cell away",
+   "at": "2026-09-10T13:34:30",
    "ruling": "R245"
   }
  ]
