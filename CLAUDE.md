@@ -17306,3 +17306,321 @@ assume wrongly.
 **Tips at the close**, the next miss's lower bound (192): `main 50470a8f` · `money a8030e14` ·
 `pricebook 74f5b79b` · `reviews a0952875` · `sixty d0439179` · `stages ea356afd` · `ui bf42fec7` ·
 `site ed74566d` (the wave's range pushed this tick).
+
+## ⛔ HALF 1's FIRST VIOLATING PARTITION IS AN ACT AND ITS OWN RETRACTION, ARRIVING IN ONE DELTA — the halves count ACTS, never NET EFFECT, and no half's output can say which (tick 329)
+
+Half 1 grew **2 → 4** and for the first time in many ticks it carries **non-merge** members: `origin/track/reviews`
+`b05f42d7` *"feat(C-Reviews): build module and fix boundary imports"* and `caff8c06` *"revert(C-Reviews): restore
+b05f42d7's 35 paths to their 10856a82 content — REV-131"*. Measured before it was characterised (185), and the
+substance is in this lane's column twice over:
+
+```
+b05f42d7 -- <our fourteen paths>   X-102/capabilities.php · X-110 · X-137 · X-155   +8 −8
+caff8c06 -- <our fourteen paths>   the same four                                    +8 −8
+git diff --stat origin/track/site origin/track/reviews -- <those four>   → (nothing)
+git diff --stat origin/main        origin/track/reviews -- <those four>   → (nothing)
+```
+
+⭐ **NET ZERO.** Reviews' tip is byte-identical to ours *and* to main's on all four. Nothing lands at merge, no
+capability id moves, no refusal is lost. And **both commits will print in half 1 at every tick until `main`
+gains reviews**, because a half is a *standing set* (186) and a revert does not remove the act it retracts.
+
+⛔ **So a partition of N is not N findings, and no reading rule this ledger holds covers it.** 191 attributes a
+**shrink** to a bound; 250 has a file entering the complement by being **deleted**; 260 reads a partition that
+**reopens** after a ruling; 314 has history simplification **re-routing**. None reaches *an act and its own
+retraction arriving together*. The reading:
+
+> **Before opening anything on a half's non-merge partition, diff the sibling's TIP against ours on that
+> partition's own paths. An empty diff means the acts cancelled and nothing lands at merge.**
+
+⭐ **And the converse is the half that matters: the acts still happened, and the census is the ONLY record that
+they did.** A retracted act leaves no trace in any tree, in any count, in any gate, in any stat of the merged
+result. So the disposition is neither *a violation* nor *nothing* — it is **advisory, recorded with its net**,
+because the *pattern* is what Track 1 needs even though this instance was withdrawn. Exact inverse polarity of
+tick 181 (*an unchanged count proves no NET loss, never no loss*): there an unchanged count hid a loss, here a
+non-empty partition hides a zero.
+
+⚠️ **Timing measured, not assumed:** at tick 328 reviews' tip was `a0952875` and **neither** commit was pushed;
+both arrived in this tick's delta. Had the two pushes straddled a tick boundary, tick N would have opened a
+finding on a live +8/−8 rewrite of four of this lane's generated files and tick N+1 would have seen it revert.
+
+## ⛔ A SIBLING'S SCAFFOLD REWROTE FOUR OF THIS LANE'S GENERATED FILES **AND DELETED TWO DECLARED TOKENS FROM THE FROZEN MASTER PLAN** — half 3 and the complement named it in the same tick (tick 329)
+
+The same pair is the whole of half 3's growth (**0 → 2**) and the complement's (**2 → 3**, the new member being
+`app/GOAIEZ-MASTER-PLAN.md`). Tick 182's pairing confirmed a third time — half 3 answers *did a sibling write our
+document*, the complement answers *is there a surface no half watches*, and both printed it.
+
+⛔ `b05f42d7` on the **frozen master plan**, `+12 −9`, measured hunk by hunk:
+
+```
+:26997  C-Reviews  @provides review.request · review.reply · review.sync · qa.ticket   →  … · review.sync
+                                                                    ⛔ `qa.ticket` DELETED
+:27166  X-118      @emits … · ttfm.measured · win.first              →  … · ttfm.measured
+                                                                    ⛔ `win.first` DELETED
+:32498  ## 201.6 THE COUNT · AND THE REGISTER FINDING                   third hunk
+```
+
+⭐ **Deleting a `@provides`/`@emits` token is deleting the SUBJECT of a `contract` violation, which clears the
+violation by removing the thing the check measures** — the One Rule's shape one surface out, on a file the
+charter reserves to the owner ("the frozen master plan text"). ✅ `caff8c06` reverted it; the net against ours
+and against main is **byte-identical**, so nothing lands.
+
+⛔ **Advisory only, and never a parallel fix** (165, 182, 211) — the file is reviews', on reviews' branch, and the
+lane caught it itself. Filed as a **TRACK 1 ACTION** because it is cross-lane and because the *pattern* is
+OWNER ACTION 39 measured live: `CapabilitiesScaffoldCommand` has no module filter, so one lane's `module:scaffold`
+rewrites every roster module's `capabilities.php` — here four of this lane's, in one commit.
+
+## ⛔ HUMAN_TAKEOVER_LATCH IS UNREACHABLE FROM THE WEB CHAT DOOR — an optional argument whose absence silently disables a live safety gate (tick 329)
+
+Main's take landed sixty's chat door in this lane's module, and per tick 195 this lane now reviews X-102 as its
+own. `ChatDoorTest` carries five `BUILD PROPOSAL` docblocks; per tick 216 an inherited attribution is a
+**citation, not a measurement**, so all three "Owner: X-102" claims were measured at source — and the one
+labelled **"Owner: Track 1"** is the severe one.
+
+```
+X-102/Actions/ChatTurnAction.php:32    app(AgentAnswerAction)->handle($businessId, $message);   ⛔ no conversationId
+C-Agent/Actions/AgentAnswerAction.php:22  handle(int $businessId, string $userMessage, ?int $conversationId = null, int $turnNumber = 1)
+                                    :29  if ($conversationId !== null) {          ← the ENTIRE latch block
+                                    :30      $latch = TakeoverLatch::where('business_id', …)->where('conversation_id', …)
+                                    :33      if ($latch && $latch->is_active) → REFUSED HUMAN_TAKEOVER_LATCH
+```
+
+**A human operator takes over a conversation and the AI keeps answering the visitor**, because the one reachable
+path passes `null` and `:29` is false.
+
+⭐ **Not decision 272's write-only shape — the gate is LIVE and written by two lanes**, measured rather than
+assumed: `C-Agent/Listeners/TakeoverStartedListener:14` and `TakeoverReleasedListener:14` both `updateOrCreate`
+it, `X-01/Domain/UnifiedInboxManager:102` writes it, and `X-01/Ui/Thread.php:64,:168` and `Ui/Person.php:52` read
+it. `agent_takeovers.conversation_id` is **NOT NULL** with `unique(['business_id','conversation_id'])`;
+`agent_turns.conversation_id` **is** nullable, which is the only reason X-102's null does not throw.
+
+⛔ **TRACK 1 ACTION, and the dismissal was measured at least as hard as a build** (326): `chat_sessions` carries
+`id · business_id · session_token · visitor_ip · status · rage_clicks_count · is_ai_capped · page_context` and
+**no conversation id**, so X-102 holds nothing to pass. Minting one unilaterally is inventing a **key** two other
+lanes must agree on — the act ruling 8 already refused for pricebook (*"the raw insert is not accepted"*) — and
+C-Agent is sixty's while X-01 is stages'. Tick 237's second question answers **no**, and the docblock's own
+attribution is measured-correct for once.
+
+⚠️ **The other two proposals are measured and are NOT waves**, recorded so the next tick does not rediscover them:
+- *"`$authorType` reaches the wire unread"* — **true and LATENT**. `ChatTurnController:44` passes
+  `authorType: 'visitor'` **hardcoded** and is the action's only caller (`grep` returns the class declaration and
+  that controller). Building the guard would create a defence that cannot fire — tick 280's **dead defence**
+  manufactured rather than found. Per 224: *the door is open and the room is empty.*
+- *"`$turnNumber` defaults to 1"* — **true and write-only**. `turn_number` is written eight times in
+  `AgentAnswerAction`, and its only other occurrences are the model's cast and `@property` docblock: **no reader
+  anywhere**. Computing a correct value for a column nothing reads is decision 272 inverted, the shape this lane
+  refused for `ssl_installed` (146) and `slug_key` (246).
+
+⚠️ Recorded and out of scope: **two `TakeoverLatch` models read one table** — `App\Modules\CAgent\Models\TakeoverLatch`
+and `App\Modules\X01\Models\TakeoverLatch`. C-Agent is sixty's, X-01 is stages'. Advisory to Track 1 at most.
+
+## ⛔ SITE-201 — `is_string` IS NOT NON-BLANK: a blank phone passes the controller's 400 guard and 500s a public endpoint (ruled at tick 329)
+
+```
+X-102/Http/Controllers/ChatCaptureController.php:35   if (! is_string($sessionToken) || ! is_string($name) || ! is_string($phone))  → 400
+                                              :45   $lead = $action->handle(… phone: $phone …)
+                                grep -c 'catch'      → 0
+X-102/Actions/ChatCaptureAction.php:25   if (trim($phone) === '') throw new \DomainException('NO_CONTACT_METHOD_ON_CAPTURE');
+app/routes/api.php:164                   POST /chat/{key}/capture — throttle only, no auth, PUBLIC
+```
+
+`''` and `'   '` **are strings**, so they clear `is_string`, reach SITE-152's own guard, and the
+`\DomainException` meets **no catch on that path** ⇒ **500**, where every sibling arm on that endpoint answers
+**400**, **404** or **201**.
+
+⭐ **Third firing of one chain, each time one layer over, and this is the first that is a BLANK rather than a
+TYPE defect**: SITE-185 (an array to a `string` parameter → `TypeError` → 500), SITE-199 (an array to a
+`?string` → `TypeError` → 500), SITE-201 (a blank past an `is_string` guard → `DomainException` → 500). Tick 327
+swept `ChatTurnController` and `ChatCaptureController` for the **type** class and correctly recorded *already
+done here*; the **blank** class was never asked of them. That is tick 303's law — ⛔ **when a new semantic
+category is invented, re-run the sweeps that predate it** — and here the category is one this lane has held
+since SITE-152 and never turned on these controllers. Stated for general use: **`is_string` is not non-blank**,
+one layer up from tick 278's *NOT NULL is not non-empty*.
+
+**RULED: the controller's required-field guard gains `|| trim($phone) === ''`, LAST in the `||` chain**, because
+the module has already decided that a blank phone is not a contact (`ChatCaptureAction:25`, SITE-152) and the
+endpoint has already declared the refusal (a 400 with `{"error":"Bad Request"}`, asserted three times at
+`ChatDoorTest:277 :305 :333`). The fix **decides nothing new** — tick 277/295's discriminator, *enforcing an
+existing invariant rather than inventing a policy*.
+
+⛔ **The position in the chain is load-bearing and is not style**: `||` short-circuits, so `trim($phone)` must sit
+**after** `is_string($phone)` or an array phone reaches `trim()` and the guard becomes the throw site — tick
+297's *a guard that casts to decide is only as safe as the coercion*, which would re-open SITE-199's defect
+inside the fix for SITE-201.
+
+⛔ **`phone` ONLY, and the three fields are three different categories** (288 — *the uniform application of a
+correct fix is itself a hazard*; 295/303's remedy table): `sessionToken` is a **key** whose blank already yields
+the correct **404** at `:43` — changing it would convert a right answer into a different one; `phone` is a **key
+with no substitute** (it is `Person::updateOrCreate`'s key at `ChatCaptureAction:37`) whose remedy is **refusal**;
+`name` is a **display string** whose blank writes a blank `first_name` with no throw — a real but *different*
+defect with a different remedy (X-155's answer was `'Visitor'`), and bundling it makes any red unattributable
+between the two (215). ⛔ Measured and **reported, not built**.
+
+⛔ Six alternatives refused, each of which would pass every gate: a `try/catch` in the controller (converts one
+defect into a silent class of swallowed ones — 291's precedent); catching `DomainException` and mapping it to 400
+(same, and it silently 400s every future refusal of that action); removing the action's throw (deletes SITE-152's
+credited fix); extending the blank test to `name` or `sessionToken` (above); a new status or message (mints a
+public behaviour nothing asserts — 240).
+
+⚠️ **BOUNDED** (230): the fix makes the controller's guard match the invariant its callee enforces, whoever calls
+it. It does **not** claim this lane's published page reaches the endpoint — `EdgeDeployAction` emits a bare
+`<div class="chat-widget-container"></div>` (327). ⭐ Not tick 295's refused case, which refused *inventing an
+anonymous-visitor policy*: this turns a 500 into behaviour the module has already declared **and already
+asserts**, which is exactly why SITE-199 was built on the sibling route under the same reachability.
+
+⚠️ **FALSIFIER, four states required and the arithmetic does NOT apply.** The new assertion is a
+**presence-of-refusal**, so the falsifier reverts the guard — a **committed prior state**, so tick 287's question
+answers **YES** and the four-state sequence is required with state 1 as its own numbered item (299). Its red is a
+**thrown** `DomainException`, so per 292 the assertion count carries no information and the evidence is the
+exception class, the message and pest's `line` field — which is the **method's declaration line** (268) and
+therefore the free tree-witness that states 1 and 3 measured the same code (298, 300).
+
+⚠️ **WITNESS, inverted** (320 as corrected by 328): this is a revert-mutation, so `git diff` reads **EMPTY** when
+the mutation lands, because reverting returns the file to HEAD. ⛔ **The presence count is the only witness**, and
+per 324 it is validated by predicting **both** values and checking they differ — `1` with the fix, `0` under the
+mutation. Written in the PCRE hex form because a `$` in a grep pattern is refused from this seat (305, 313).
+
+⭐ **ASSERTION ORDER INVERTS SITE-181's, for a measured reason** (308 — the falsifier proves whichever assertion
+comes first): under the mutation the action throws **before** `DB::transaction`, so the zero-`ChatLead` assertion
+is true in both worlds and **cannot** be falsified (322's shape). The **400** is the only falsifiable clause, so
+it goes **first**, and the zero-row half is *reasoned, not measured* (270).
+
+## ✅ Tick 236's MISSING-not-CONFLICTING check — Track 1's TENTH merge of this lane, TENTH clean result (tick 329)
+
+`origin/main 50470a8f → e2054e83 merge: track/site — SITE-199`, second parent read with `rev-parse ^2` and
+**never off the subject** (222): **`9f3bce67`**, this lane's tick-328 notes commit. `git grep` on the ref, never a
+stat (163 — a stat cannot separate *main is ahead* from *the merge dropped it*):
+
+```
+deploy_hash 2 · EdgeProvisionAction 2 · is_string 1 · findForBusiness 2
+PageVersionAction 3 · FormReadAction 2 · destination_url 2
+```
+
+⭐ `RefreshesTenantDatabase` in `ChatDoorTest` is **absent and not lost**: SITE-200's `8d1e1559` post-dates the
+second parent, so **unmerged, not dropped** (258 — read the second parent before calling anything missing). Tick
+327 made that same prediction about `PageVersionAction` and it was **confirmed by arrival** this tick at 3.
+
+## ⚠️ A REPORT COMPOSED BY A SCRIPT HAS TWO POPULATIONS, AND ONLY ONE OF THEM IS A CAPTURE (tick 329)
+
+The untracked `wait_and_report.sh` at the checkout root is how SITE-200 satisfied tick 318's report-side hedge:
+it polls until the gate finishes, reads the gate output from the coder's own CLI task log, and writes the
+**entire** `REPORT.md` from a heredoc. So items 0–11 and 13–14 are **literals typed before the gate ran** and
+item 12's `$GATE_LOG` is the **only** interpolation — and nothing in the artefact distinguishes them.
+
+✅ Legitimate, and not tick 211's *patch the thing that is refusing you*: `REPORT.md` is the coder's own file,
+318 requires exactly that correction, and the result is measurable from this seat (267). ⛔ Two costs:
+
+- ⭐ **A value typed into a heredoc is a TRANSCRIPTION, not a capture — and transcription is what turns a
+  verbatim block into a digest.** My item 8 named the three parts explicitly (*"only the `goaiez doctor · build …`
+  header line, the eight stage lines, and the `N violation(s).` footer"*), which is tick 251's own remedy applied
+  correctly, and it **still** came back as `Run 1 stages: boundary 50, contract 85, …` — no timings, no footer.
+  So the timing nonce (249) and the SUM (285) could not be applied to it at all, and only the **extrinsic** stamp
+  equality survived (305). ⛔ A shape instruction cannot survive a heredoc, because a coder typing one writes what
+  it remembers and the timings are the part nobody remembers. **The mechanical check to name in the brief: the
+  pasted block must carry `ms` on every stage line and the literal `violation(s).` footer; a block without them
+  is a digest and does not discharge the item.**
+- ⚠️ **`pgrep -f bin/supervise.sh` is tick 275's finding** — that pattern matches sibling lanes' coders whose
+  KICKOFF prose quotes the gate script's name, so the wait loop can be satisfied by another lane's process. It
+  worked here; it is a subject-by-description (246, 265) and cannot be relied on.
+- ⚠️ Item 11 said *"Files removed"* and this file survives — **by construction**, because the report-writing
+  helper is created after every other item, so it is outside an enumeration written when the brief was. Tick 318's
+  law reaching an item that names files rather than predicting a tree.
+
+## ⚠️ `git diff --stat HEAD -- <paths>` AFTER a commit is EMPTY BY CONSTRUCTION and proves nothing (tick 329)
+
+My item 13 asked for it as the "this wave wrote nothing more" check, and the coder correctly reported it empty
+and said why. Tick 327 ruled that a closing item asks for **the WAVE'S OWN diff** and never the whole tree; the
+missing half is that the scoped form is also inert once the wave has committed. ⛔ **The closing check is
+`git show --stat <sha>` for what the wave wrote plus `git status --short` for what it left**, and a `git diff`
+against `HEAD` belongs only *before* the commit.
+
+## SITE-200 — PASS-WITH-NOTES (tick 329)
+
+`8d1e1559` (2 lines: the `use` and the trait) and `8de79493` (`.agents/state/` only). Named-path commits, One
+Rule clean — no `app/app/Doctor/`, no `seals.json`, not one assertion touched. Verified at source in this seat,
+not read off the report: the file now declares `use Tests\Concerns\RefreshesTenantDatabase;` at `:15` and
+`use RefreshesTenantDatabase;` at `:20`.
+
+⭐ **The four-state falsifier ran with tick 328's INVERTED witness applied one tick after it was written** — the
+presence count, not the diff, and it discriminated **0** (mutation) from **1** (restored). States: 11 errors →
+11 passed → 11 errors → 11 passed. States 1≡3 and 2≡4 is the **correct** result (288); the evidence is the two
+transitions. Per 292 the red is a thrown error so no assertion arithmetic applies, and the coder said so rather
+than computing a number. ⭐ Pest's `line` field reads **29** in both red states, which `grep -n` confirms is the
+method's declaration line in the committed tree — the free tree-witness (268, 298), and for a mutation restoring
+a committed state that is the whole claim.
+
+✅ Tick 328's predicted consequence carried its refuting instruction and **did not fire**: `RefreshesTenantDatabase::afterRefreshingDatabase()`
+runs `Tenancy::forget()` unconditionally, so the swap adds a per-test tenant reset to eleven tests that previously
+inherited the session's tenancy — and all eleven pass, so no test was passing for the wrong reason on that axis.
+
+**Doctor, live in this seat, twice**: stamp `20260829-0647` = `runtime_build` (**extrinsic**, stated as a
+comparison — 305) · `integrity clean · boundary 50 · contract 85 · citation 3 · schema 16 · capability 207 ·
+anchor 128 · journey 3` · **492**, the SUM reconciling in both (285), `ok` only on `integrity … clean` (292),
+**four of seven timings differing including both long stages** where the nonce's weight lives (249, 311, 318).
+**No stage moved.**
+
+**§7 on the tip `8de79493`, measured independently in this seat**: `tests 2439 · passed 2431 · FAILED 6 ·
+errors 2`, reconciling `2431+6+2 = 2439` ✓ (226), ⭐ `a_published_site_carries_all_seven` **ABSENT — J11 GREEN**,
+and **byte-identical to the coder's** including the failure and error **sets** — so tick 255's borrow ran at a
+**zero delta** and its falsifier **fired and PASSED**, the seventh strong resolution (258, 300, 323, 325, 326,
+328, 329). Against tick 328's baseline: byte-identical, and the diff adds zero `public function test` so 226's
+arithmetic has no residue. Both intermittent **CAUSES** absent (Authorize.Net `E00040`, Postgres
+`SQLSTATE[42501] permission denied to terminate process` — 311's cause-keying), so the agreeing integer is *a
+property of which causes fired, never of the comparison* (302). ⚠️ Five `✗ FAILURE` lines against `FAILED 6` —
+tick 322's display shortfall, confirmed again and not a dropped member.
+
+§0 pin `goaiez_antig_site_test` · §1 `2 uncommitted path(s)` · §2 **exactly one `⛔`** (207's healthy branch;
+`none` is the reading that would say the pin edit had been lost) · §4 seals ✓ · §6 pint passed, phpstan 0.
+⚠️ §2 printed **no** `ℹ supervisor working notes` line, which at **this seat's** gate is normal — the gate is the
+tick's first act and tick 328's notes were already committed. At a **coder's** gate its absence is the signal
+(327): the reading is position-dependent.
+
+## Census and standing checks at tick 329
+
+**Census 4 · 1 · 2 · 3** — a **MISS** (`main`, `money`, `reviews`, `sixty` all moved). Halves with
+`--full-history` (314), `pwd` first (209), previous value read from `REVIEWS.md` and never this file's digest
+(301). Tick 285's drift signature **absent**: the three pathspec halves returned `4 · 1 · 2` against a
+pathspec-free complement of `3`, and the *split* is the signature, never either number.
+
+- **Half 1 — 4**, per partition with `--source`/`%S` (189): **reviews ×2** (the add-then-revert pair above, net
+  zero) and **stages ×2**, both merges *of main*. `--no-merges` reads **2**.
+- **Half 2 — 1** · **Half 3 — 2** (the same reviews pair) · **Complement — 3**:
+  `app/GOAIEZ-MASTER-PLAN.md` (the pair), `bin/supervise.sh` and `CLAUDE.md`, the last two per-track never-merge
+  — *unwatched, not uncovered* (183), ⛔ no fourth half.
+- ⚠️ **Paired `--stat` on every moved tip, unconditionally** (180), and only this surface will ever print these
+  (190) so this note **IS** the record: **main** gained two first-parent merges (`track/site` and `track/sixty`);
+  **money** — `X-198/Console/Evidence*Command.php`, **money's own**; **sixty** —
+  `app/tests/Modules/X-01/X01Test.php` ×2, and **X-01 is STAGES'** under ruling 5's catch-all, OWNER ACTION 45's
+  shape one lane over, advisory to Track 1 and ⛔ never a parallel fix.
+- **Fourth surface, both directions, against each branch's own bound and never HEAD** (173's fall test, 323's
+  rise reading): `main 14 · money 16 · pricebook 14 · reviews 15 · sixty 30 · stages 41 · ui 16 · site 193 ·
+  HEAD 194`. **No branch below main's 14** ✓; reviews still at 15 with its X-103-keyed `decided` row (323).
+  ⚠️ **Main still carries 14 after TEN merges of `track/site`** — tick 264 stands; this lane's state records
+  reach `main` only by ruling 15's cherry-pick, which has never run.
+- ✅ **Cross-lane dependency query CLEAN** (240 — it exists to be READ, never to be quiet) while the paired stats
+  printed three lanes' commits. **The pairing is the measurement.**
+
+✅ **Standing checks on their healthy branches** (221, or a rule that only ever fires on its failing branch reads
+as an unfired precaution): tick 290's `--ruling` correction — **eighteenth** consecutive clean JOURNAL entry;
+tick 302's two-tier grading with 322's working-tree correction, so this seat's own notes fired no false stop —
+**eighth consecutive wave clean through item 0**, and ⚠️ a run of eight is still not a trend (188, 250); tick
+287's ordering (the gate ran against a **named sha** after the final commit, so §6/§7 describe the committed tree
+— 253); tick 245's state-commit-LAST (an empty `.agents/state/` diff, so no orphaned filing for the next brief's
+step 0); tick 318's report-side hedge composition, **sixth** firing and applied unprompted; tick 257's procedure,
+the gate first and §7 last; tick 327's notes-commit-before-dispatch, second firing.
+
+⚠️ **Instrument notes.** The shell drifted into `app/` on **both** doctor calls and was reset in its own call each
+time — **per call, never per tick** (285), and a tick that has already reset once is exactly the tick that feels
+no need to reset again. ⛔ A second `grep -v` in a pipe is still refused (213, 317) — blank lines sort to the top
+of the complement and are read past. ⛔ `for x in …; do … done` is still refused (`simple_expansion`), so the
+tick-236 signature check was issued as one `git grep` per line rather than a loop. ⚠️ The gate exited **1**,
+which is §2's known `⛔ app/phpunit.xml` and **is not a signal** (196).
+
+⚠️ **Case (a) excluded on BOTH halves** (179's two-part check on a wrapped pid space): `coder.pid` **2798460**
+has an empty `readlink` **and** is absent from `pgrep agy`, whose three pids resolve to `…-sixty`, `…-reviews`
+and `…/grs-antig` — all siblings. Case (d) excluded on mtime: `OWNER.md` is 09:02 against the tick-328 block at
+22:23.
+
+**Tips at the close** (192, the next miss's lower bound): `main e2054e83` · `money acd3216e` ·
+`pricebook 74f5b79b` · `reviews 8770a14f` · `sixty a8b05a47` · `stages ea356afd` · `ui bf42fec7` ·
+`site 9f3bce67`.
