@@ -11230,3 +11230,122 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     match — the exact seat trap the addendum records — and re-running it as `-e "success }}"` returned
     **eighteen**. ⭐ **A census that returns zero is re-run with the `$` removed from the pattern before it
     is believed** (rulings 207, 294).
+377. **⭐⭐ The card vault names a JCB card "amex" to the person typing it, because the brand is derived
+    from ONE leading digit — and the test that certifies the map is green on four numbers whose first
+    digit happens to identify them (RULED by the lane supervisor 2026-09-10 16:2x, briefed as
+    MONEY-189).** `X-120/Actions/CardPresentAction.php:44` is
+    `$brand = match ($first) { '4' => 'visa', '5' => 'mastercard', '3' => 'amex', '0','1','2','6','7','8','9' => 'card' }`
+    over `$first = $digits[0]`, and ⭐ **the value is owner-facing prose, not a column**:
+    `X-120/Ui/CardScreen.php:70` interpolates it into `$this->waiting` — *"Waiting on Stripe tokenisation:
+    the **amex** ending 0000 (12/2030, A Plumber) is not stored until Stripe returns a token"* — which
+    `CardScreenTest:146` asserts renders. So the string an owner reads at the moment they hand this app a
+    card number is a brand derived from a single digit. **A leading digit does not identify an issuer.**
+    Measured against the real ranges: `3` is Amex only at **34/37** — **35 is JCB** and **36/38 are Diners
+    Club**, so a JCB card is named after a **different issuer**; and Mastercard has been **2221–2720**
+    since 2016, which the map calls `card`. ⭐ **The two errors are not the same kind and only one is a
+    fiction:** `card` for a 2-series Mastercard is neutral and true (ruling 76's grade on its own), while
+    `amex` for a JCB is ruling 93's **negation shape** — a string that is not absent but *wrong*, and
+    therefore invisible to every sweep that asks *what is at the other end of this string* rather than
+    *is the opposite true*.
+    **RULED: the map tests the prefix that IDENTIFIES the brand and calls everything else `card`** —
+    `4` → visa · `51`–`55` **or** `2221`–`2720` → mastercard · `34`/`37` → amex · else `card`.
+    ⛔ **No new vocabulary is minted**: discover, jcb, diners and unionpay are *more useful* names and
+    also true, and the column has never held one — adding them is a product decision at ruling 76's
+    grade, **recorded, not built** (ruling 59's neighbour: the map exists, only its arms are wrong, so
+    correcting it is not new machinery — it is rulings 90/305/312's display-map shape a fourth time).
+    ⛔ **The Mastercard half ships WITH the Amex half and is not deferred**, because `51`–`55` **plus**
+    `2221`–`2720` is one fact — *what identifies a Mastercard* — and a wave rewriting this expression
+    that wrote only half of it would leave the map asserting **deliberately** that a 2-series card is not
+    a Mastercard, where today it merely inherits that.
+    ⛔ **`:39-42`'s guard is RECORDED and left byte-identical.** `$digits` is `preg_replace('/\D/','',…)`
+    two lines above and the length was already checked, so `$first` is always `'0'`–`'9'`, the
+    `in_array` is always true and that `throw` is **unreachable** — ruling 96 governs (no test can render
+    it, no mutation can redden it, the edit is ungated churn), and ruling 47's companion forbids editing
+    a file for a reason the brief does not name. ⭐ The new arms read **`$first === '4'`** rather than
+    `$digits[0] === '4'` precisely so `$first` stays purposeful and the guard above it acquires no new
+    smell from this wave.
+    ⚠️ **Blast radius, measured with interior fragments (rulings 46, 86, 146): ZERO — and the reason is
+    the finding.** `X120Test.php:109`'s `test_card_present_action_derives_brand` already asserts all four
+    values, and **all four stay green under the corrected map**: `4242…` (`4`), `5555…` (`55`),
+    `378282246310005` (`37`) and `6011111111111117` (no arm → `card`). **Every fixture is a canonical
+    industry test number, and that list contains no JCB and no 2-series Mastercard** — so the method that
+    exists to prove the derivation is structurally blind to the defect and is the test that **certified**
+    it. Ruling 68 exactly, and ruling 41 part 2 / ruling 99's fixture-omission trap with the fixtures
+    drawn from a vendor's own sample list rather than from the real space.
+    ⭐ **RULED on the proof shape: a NEW method, and `:109` stays byte-identical.** Extending it would
+    leave the ledger unable to say which assertions are the proof, and its four are the four the old map
+    got right. Two mutations, one per arm — revert the amex arm to `$first === '3'` (reddens the JCB
+    assertion) and drop the `2221`–`2720` arm (reddens the 2-series assertion) — each with its RED name
+    **and** assertion message verbatim and a GREEN re-run (72, 82, 195, 314). Both assertions are
+    **positive** (ruling 104: a negative over a vocabulary of more than two members cannot distinguish
+    the choice from its alternative), and JCB is asserted **first** so mutation 2's execution reaches the
+    second line (ruling 153's assertion-order half).
+    ⚠️ Both dictated numbers were **Luhn-verified by hand before the brief shipped** — `3530111333300000`
+    sums to 40 and `2223003122003222` to 40 — because a number failing guard 1 errors on the wrong
+    refusal and the proof would evidence nothing (ruling 193: a brief that dictates a mechanism it has
+    not executed says so; here it was executed on paper and the arithmetic is quoted).
+    ⚠️ **Recorded from the same sweep and deliberately NOT briefed** (ruling 76's grade):
+    `CardScreenTest`'s **14** fixtures seed capitalised `'Visa'`/`'MasterCard'` directly onto the model
+    while `CardPresentAction` produces lowercase and the migration default is `'visa'` — ruling 306's
+    fixture-vocabulary mismatch, harmless because ruling 119 measured `card_tokens` has **no production
+    writer at all**, and because `Visa` and `visa` name the same brand truthfully. Nothing false is
+    asserted, so aligning them would be churn; it becomes real the day `CardStoreAction` acquires a
+    caller. ⛔ Not to be re-raised as a falsehood.
+
+378. **⭐⭐ A FLOOR is a derived judgement and cannot be cited to a gate line — the addendum's
+    `errors 2` is CORRECT and `gate-money188.txt:96` says `errors 4`, and a tick that verified the
+    citation would have "corrected" the floor into ruling 125's named hazard (RULED by the lane
+    supervisor 2026-09-10 16:2x).** The inherited addendum carried
+    `floor tests 2502 · passed 2498 · FAILED 2 · errors 2 — MEASURED at gate-money188.txt:96`.
+    Measured this tick, that line reads **`tests 2502 · passed 2496 · FAILED 2 · errors 4`**, and the six
+    reds beneath it are the four permanent (`test_g1_68_assertion`, `test_p110_location_gap`, and track
+    sixty's two Infobip journey-harness errors) **plus the Authorize.Net `E00040` pair**, which ruling 85
+    attributes off the sha by its three legs and ruling 125 forbids absorbing —
+    *"an attribution method, never a floor allowance."* ⭐ **So the floor's SUBSTANCE is right and its
+    CITATION is impossible**: the floor is the permanent set, arrived at by subtracting an attributed
+    fault, and no single gate line can ever print it. A later tick doing exactly what this one did — read
+    the cited line to verify the number — finds a mismatch and must either re-derive the attribution
+    under time pressure or raise the floor to `errors 4`, which is precisely *"a floor that absorbs a
+    fixed fault is too high and hides real regressions"*.
+    **RULED: a floor is written with its DERIVATION and never with a line citation** —
+    `<gate line> minus <the attributed reds, by name and ruling>` — and the same holds of any number this
+    ledger reaches by subtraction. ⚠️ Ruling 289's family a **ninth** time (a value, a line number, an
+    instrument, a prohibition, a census scope, an id, an assertion, a tell, a remedy) and the first where
+    the cited artifact is **real and correct** and the citation is nonetheless unsound, because the number
+    was never in it. **Cite the command for a measurement; cite the reasoning for a judgement.**
+    ⚠️ **The predicted floor for MONEY-189 is `tests 2503 · passed 2499 · FAILED 2 · errors 2`**, derived
+    by listing (rulings 92, 200): item 1 adds exactly one method, and no other item adds any. ⛔ If the
+    gate prints `errors 4` with both extra members carrying `E00040`, that is ruling 85's pair for the
+    **eighth** time and is attributed away, not absorbed.
+    ⚠️ **Five censuses ran in the same tick and all five are STRUCK with their measurements** (rulings 64,
+    95, 100, 111, 294, 324, 327 — *a population measured non-empty that yields zero buildable fixes is
+    the more useful of the two results to write down*).
+    **(a) Refusal ORDER within a method** — rulings 62 and 332 each decided this axis and neither censused
+    it. **Nine multi-refusal methods**, and every one is either already ruled (`submit()` 62,
+    `applyLateFee` 221, `offerPlan` 332, `packageForCollections` 330) or correctly ordered by
+    construction: `StripeGatewayClient`'s two triples check the credential **before** the HTTP call and
+    the response after it; `setLateFeeTerm`'s two guard different parameters; and
+    `packageForCollections`'s already-packaged guard cannot shadow its no-resolution-attempt guard,
+    because a packaged invoice necessarily had an attempt. ⭐ The one dead guard it found is ruling 377's
+    `:39-42`. ⛔ Not to be re-raised.
+    **(b) Model lifecycle hooks and event-skipping writes** — `booted(`, `Observer`, `saveQuietly`,
+    `unguard`, `withoutEvents`, `dispatchesEvents` over the eight ids: **ZERO**, against a control firing
+    on 12+ files in `app/app`. So no write in this lane runs code a call-site census cannot see, which is
+    what makes rulings 209/343/344's per-call-site sweeps complete rather than merely broad.
+    **(c) Enum `from()`/`tryFrom()` coercion** — **ZERO** in money's PHP and blades, against a control
+    firing on 10+ `app/app/Livewire` files. Ruling 312 measured `SignalState::from()` **throws** on an
+    unrecognised value; the only such call in this lane's rendering path is the kit's own
+    `status-pill.blade.php`, which is Track 2's, and 312 already requires every money fallback to resolve
+    to a real case.
+    **(d) Factories and seeders** — the lane's 32 models declare **no `HasFactory`, no factory and no
+    seeder**, against a control firing on 5+ `app/app/Models`. ⭐ Worth keeping as the explanation of a
+    pattern rather than as a strike: **every fixture in this lane is hand-written at its call site**,
+    which is exactly why ruling 41 part 2 keeps landing per-test (99, 235, 239, 305, 309, 377) instead of
+    once — there is no shared generator whose defaults could be wrong, and no shared generator to fix.
+    **(e) `Storage::` and the filesystem** — `Storage::` is **ZERO**; every `File::` hit is an evidence or
+    runtime-proof command already governed (39, 48, 169, 172, 173, 187, 277, 290). ⚠️ Reading around the
+    hits (ruling 152, a **tenth** consecutive tick) measured the five `--business=` artifact fallbacks
+    ruling 277/278 shipped, and **X-211's deliberate divergence is correct**: four commands resolve
+    `$user` inside the provision branch and X-211 resolves it at `:42` outside, which is ruling 278's own
+    ruled fix for `packageForCollections`'s principal — **read the hit** (262(b)) before calling a
+    difference a defect.
