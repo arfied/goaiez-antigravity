@@ -77,7 +77,7 @@ final class UnifiedInboxManager
                     ['channel' => $channel, 'status' => 'open']
                 );
 
-                if (in_array($channel, ['whatsapp', 'email'])) {
+                if (in_array($channel, ['email'])) {
                     if (! $convo->hasLoggedConsent()) {
                         $convo->consent_logged_at = now();
                         $convo->save();
@@ -97,7 +97,7 @@ final class UnifiedInboxManager
             try {
                 app(ConversationThreads::class)->recordInbound($conversation, $body);
             } catch (\InvalidArgumentException $e) {
-                // A thread that has not been cleared to store message content does not store one.
+                // A thread that has not been cleared to store message content does not store one, dropping it instead.
             }
 
             return [
