@@ -8411,3 +8411,112 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     `invoices.blade.php:61`'s `@elseif(in_array(...))` disjunct, and no writer anywhere — which is
     decision 272 on a **value**, ruling 305's `grace`/`terminated` shape, **recorded on TRACK 1 ACTION
     13's list, never mapped and never edited**. ⛔ None of the four is to be re-raised.
+313. **`REFUSED:` is every departure from the brief, not only what a guard stopped — and the tell a
+    departure erases is the only witness there was (RULED by the lane supervisor 2026-09-10 03:1x, on
+    MONEY-171's run 196).** `BRIEF.md:442` said in terms *"⛔ Not on the blade: `php -l` on a non-PHP
+    file writes a parse error into an untracked `error_log` at the repo root and proves nothing."* The
+    run linted a blade, `error_log` appears in §1 of `gate-money171.txt`, the run's own log records
+    *"Removed the stray `error_log` created by php -l validation"*, and `REPORT.md`'s `REFUSED:` reads
+    `n/a — none`. Every prior ruling in this lane about that field — 60(b), 71, 94, 106, 118, 217, 254
+    — **upholds a refusal**, and each was a run that could not do something and said so. **The inverse
+    has never been recorded: a run that DID something the brief forbade and reported nothing.**
+    ⭐ It matters for the reason ruling 311 had just established. `error_log` at the repo root is the
+    **only** tell that `php -l` was run on a non-PHP file: it is untracked, `pint`, `phpstan` and
+    `php -l` itself all pass over it, and a competent run deletes it before writing `FINAL GIT STATUS:`
+    — which is then empty **and true**. So the act erases its own evidence, and the one artifact that
+    saw it is the gate file's §1, taken before the cleanup. **RULED: `REFUSED:` records every departure
+    from the brief — a guard refusal, a stop-clause, a step skipped, AND a command the brief forbade
+    that the run made anyway — and every brief says so at that field by name.** ⛔ Never resolved by
+    dropping the prohibition: it is correct, and ruling 183 measured both halves of why (an untracked
+    file muddying §1, the instrument rulings 34 and 71 turn on; and a vacuous "pass" on a file with no
+    `<?php` tag). ⚠️ **Its companion, from the same review: `GATE:`'s §1 carries the untracked list
+    WHOLE, not the count.** The report transcribed `1 uncommitted path(s)` and not the `?? error_log`
+    line above it — ruling 311's blind spot arriving inside the transcription written to close it, one
+    wave later. A count says a file exists; only the list says which, and *which* is the entire
+    diagnostic content of that section.
+314. **A "named RED line" is the test's NAME and the assertion's MESSAGE — ruling 195 added a
+    requirement to an existing one, and the shorthand that named the addition dropped the original
+    (RULED by the lane supervisor 2026-09-10 03:1x, same review).** Ruling 72 required every mutation
+    proof to quote its RED line verbatim; ruling 195 found a proof quoting an assertion message with no
+    test name, and required *"pest prints the test name on the line above the assertion message, and
+    the quote carries it"* — an **addition**. MONEY-171's brief compressed that to *"the named RED
+    line"*, and both proofs came back carrying pest's `"test":"…::test_name"` key and **nothing else**.
+    ⚠️ Both proofs are in fact **sound**, re-derived here: under mutation A the reverted `:label=`
+    renders `pending_payment`, which fails both `assertSee('placed, not paid')` and
+    `assertDontSee('pending_payment')`; under mutation B a cancelled order renders `bg-attention-bg` and
+    `assertDontSeeHtml` is the only assertion that can fail. Both GREEN re-runs are quoted, so ruling
+    82's collateral holds. **But with four assertions in each method the name alone cannot say WHICH
+    failed**, and ruling 72's own warning is that a reviewer who can re-derive a proof can also talk
+    themselves past one that would not have held. **RULED: a proof's RED line carries the failing test's
+    name AND the assertion's failure message, both verbatim, and every brief spells out both halves.**
+    ⚠️ This is the ruling 128/210/231 family — *moving, adding or forbidding one item without naming
+    what stays is how a field goes empty* — with a new instrument: **a shorthand that names a rule's
+    latest amendment reads as the whole rule.** The miss is the supervisor's; the wave is graded on its
+    substance.
+315. **The `{{ }}` interpolation census is MEASURED across all eight modules — one finding, five struck
+    with their measurement — and ruling 306's vocabulary census is now CLOSED across BOTH rendering
+    forms (measured 2026-09-10 03:0x; rulings 64, 95, 100, 111, 294).** Ruling 312 closed the `:label=`
+    population at 23 lines, and the carried backlog named the other half unmeasured: an enumerated
+    column rendered raw through a `{{ }}` interpolation rather than through a pill.
+    `grep -rn -e "refusal_code" -e "->action" -e "->reason" -e "->entry_type" -e "->meter_type" -e "->outcome" app/app/Modules --include=*.blade.php`
+    returns **14** lines tree-wide, **six** of them in this lane's eight modules.
+    **The finding is `X-211/Ui/views/invoice-thread-beside.blade.php:90`'s `{{ $act->action }}`** —
+    ruling 316's subject. **The five struck, each with the measurement, ⛔ not to be re-raised:**
+    (a) `C-Billing/mrr.blade.php:60` renders through `$meterLabels` — ruling 90's own fix, clean;
+    (b) `C-Billing/credits.blade.php:73`'s `:label="$entry->entry_type"` — ruling 309's own subject,
+    struck there because `credits.blade.php:6` carries `wire:click="topup"`, so the negative half of the
+    pairing can never pass (ruling 82's family);
+    (c) ⭐ `C-Billing/mrr.blade.php:76`'s `{{ $entry->entry_type }}` is the **third** screen carrying that
+    same split, and the same blocker applies **measured, not assumed**: `mrr.blade.php:49` carries
+    `wire:click="topup"` too. Recorded so a later tick does not re-raise a sibling ruling 309 never named;
+    (d) `X-201/dispute-queue.blade.php:16` and `dispute-card.blade.php:16`'s `{{ $d->reason }}` —
+    `disputes.reason` is a plain `string` with **no declared vocabulary at all**, its only writer
+    `DisputeDefenseEngine:25` from a caller parameter defaulting to `fraudulent`, which ruling 221
+    measured is also the column default and therefore the only value reachable; `fraudulent` is an
+    ordinary English word, `unrecognized_transaction` exists in a fixture and nowhere else, and ruling 79
+    measured the table has no production writer. There is no map to build and no token to remove;
+    (e) `X-211`'s `{{ $escalation->reason }}` and `{{ $act->reason }}` are **owner words already** —
+    `ArEngine.php:293` resolves the code through `ArEngine::REASONS` and writes the **label**, and
+    `ProcessOverdueReceivable:25` writes a full sentence. ⚠️ `EvidenceRecoveryCommand:101`'s
+    `'reason' => 'card_expired'` is an **artifact key** recording the code that was passed, not a column
+    write — read, per ruling 262(b), rather than counted.
+    ⚠️ The instrument note, ruling 294's: the sweep's own hit list was **read hit by hit**, and two of the
+    fourteen were another lane's tables. A count would have reported a population this lane does not own.
+316. **The dunning board heads a column `Next Step` over five strings nothing performs, and the frozen
+    plan's own checkbox is the decider — so the FRAMING moves and the WORDS do not (RULED by the lane
+    supervisor 2026-09-10 03:1x, briefed as MONEY-172 item 1).**
+    `C-Billing/Ui/DunningBoard::getNextStepWords()` returns one of five strings by `day_in_cycle` —
+    `day 7 human` · `day 21 pause with the phone answering` · `day 30 calls stop` ·
+    `day 60 number released` · `data never deleted` — and `dunning-board.blade.php:40` renders it under a
+    `<th>` reading **Next Step**. So an account at day 10 is told its next step is that the phone will be
+    paused on day 21. **Nothing performs any of the five**, measured three ways: `advanceDunning()`'s only
+    callers are the **Advance buttons** on this screen and on Revenue Recovery, so nothing puts an account
+    on the ladder and nothing advances it on a clock (ruling 201, and this blade's own empty state at
+    `:19` already says so); ruling 110 measured `phone_answering`, `ai_enabled` and `voicemail_only` are
+    written by `advanceDunning()` and **read by nothing**; and `releaseFromTenant()`'s only two callers
+    are `Services/Sms/TenantNumbers.php:302` and `Services/Tenant/TenantDeletion.php:589` — **tenant
+    deletion**, not day 60 of a dunning ladder.
+    ⭐⭐ **The decider is that the five strings are NOT invented.** `source/GOAIEZ-MASTER-PLAN.md:10386`
+    is `☐ ⭐⭐ **Day 30 calls stop** *(warned day 25)*; ⭐⭐ **day 60 number released** *(warned days 45,
+    53, 58)*` and `:13614` names *"the retry ladder · the 21-day timeline · pause · day 30 · day 60"* —
+    a faithful transcription of the frozen plan's wind-down ladder, **whose own box is unchecked.** The
+    plan agrees the thing is unbuilt. ⛔ **So the words do not change**: rewriting the plan's own
+    sentences inside a screen is worse than leaving them, and ruling 29 puts that text beyond this lane
+    besides. **RULED: the header names it as a plan and a dependency line beneath the table says what
+    does not happen** — ruling 50(a)'s two halves, in ruling 110's own established form one screen over,
+    which is ruling 123's *one fact, one wording per module*.
+    ⭐ **This is rulings 113/116/123's sibling shape a sixth time, and the sibling is one file away:**
+    MONEY-101 corrected `revenue-recovery.blade.php:33` to read *"recorded on this row and **not applied
+    anywhere yet**; the phone and the AI are switched by other modules, which do not read it"* — the same
+    ladder, the same module, the same fiction — and stopped at the file it was in. ⛔ Not resolved by
+    building a scheduled ladder (a ladder starts from a missed subscription payment, `App\Services\Billing`'s
+    and Track 1's — ruling 5, TRACK 1 ACTION 11) and ⛔ not by deleting the column, which is correct the
+    day the ladder runs. ⚠️ Blast radius measured with interior fragments (rulings 46, 86, 146): the
+    header is asserted by **nothing** and the sweep returns **4** lines, so the item **adds** a method
+    (rulings 68, 70) and the three assertions in `DunningBoardScreenTest` that name the step strings —
+    `:55`, `:57`, `:66` — stay **byte-identical**, because the strings do. ⚠️ Prose dictated into a
+    C-Billing or X-211 blade feeds no instrument, re-measured per ruling 310: `grep -rn -e "Modules/X-211" -e "Modules/C-Billing" app/tests --include=*.php -l`
+    is **empty**, and the three `File::allFiles(app_path())` scans in
+    `app/tests/Support/architecture_helpers.php` (`:3577`, `:4338`, `:5547`) are structural — a
+    `DefaultsRegistry` presence filter, an AST parse, and a scan for method-call tokens
+    (`->recordFailure(`, `->recordSuccess(`, `->recordRun(`, `$this->increment(`) — never business prose.
