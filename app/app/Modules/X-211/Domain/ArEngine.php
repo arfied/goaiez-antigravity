@@ -39,6 +39,9 @@ final class ArEngine
     /** N-033: an open RECOVER blocks dunning entirely — these route to a human, immediately. */
     public const NEEDS_HUMAN = ['disputed_line', 'complaint'];
 
+    /** offline_payments.reference_number is varchar(255); a longer reference is refused, never truncated. */
+    private const MAX_REFERENCE = 255;
+
     /**
      * Apply a late fee inside the agreement's term — refused when the agreement names none (G1-71); the percent and the cap are the tenant's row (P-193).
      */
@@ -202,6 +205,10 @@ final class ArEngine
             if (trim((string) $reference) === '' && trim((string) $photoPath) === '') {
                 $invoice = app(InvoiceReader::class)->forBusiness($businessId, $invoiceId);
                 throw new UnreferencedPaymentException("Payment for {$invoice->invoice_number} must have a reference or photo. Nothing was logged.");
+            }
+
+            if (mb_strlen((string) $reference) > self::MAX_REFERENCE) {
+                throw new ReferenceTooLongException('That reference is too long. Keep it to 255 characters or fewer. Nothing was logged.');
             }
 
             $payment = OfflinePayment::create([

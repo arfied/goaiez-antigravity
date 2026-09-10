@@ -428,4 +428,32 @@ class AgeingByReasonScreenTest extends TestCase
 
         $this->assertSame(0, OfflinePayment::where('business_id', $biz->id)->count());
     }
+
+    public function test_a_reference_longer_than_the_column_is_refused_and_nothing_is_logged(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'Long', 'last_name' => 'Ref']);
+        $inv = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-L1',
+            'total_cents' => 10000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(20),
+        ]);
+
+        Livewire::actingAs($owner)->test(AgeingByReason::class)
+            ->set('reference.'.$inv->id, str_repeat('A', 256))
+            ->set('amountCents.'.$inv->id, 10000)
+            ->call('logPayment', $inv->id)
+            ->assertSee('That reference is too long')
+            ->assertSee('Keep it to 255 characters or fewer');
+
+        $this->assertSame(0, OfflinePayment::where('business_id', $biz->id)->count());
+    }
 }
