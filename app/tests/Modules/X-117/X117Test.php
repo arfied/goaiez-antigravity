@@ -40,10 +40,10 @@ class X117Test extends TestCase
 
     /**
      * TEST ANCHOR
-     * 100 concurrent checkouts of a 1-unit item yield exactly one paid order and 99 honest "sold out" responses;
+     * 100 sequential checkouts of a 1-unit item yield exactly one pending_payment order and 99 honest "sold out" responses;
      * grep -rE 'price' app/Modules/X-117/ shows reads only — never a write to a price
      */
-    public function test_anchor_concurrent_checkouts_and_inventory_reservation(): void
+    public function test_anchor_sequential_checkouts_and_inventory_decrement(): void
     {
         Event::fake([InventoryUpdated::class]);
 
