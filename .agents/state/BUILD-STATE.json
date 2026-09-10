@@ -1686,6 +1686,10 @@
   {
    "at": "2026-09-09T22:11:54",
    "note": "X-198's two evidence commands take a given tenant; the pay-link artifact is regenerated through it and the charge command's run is deferred"
+  },
+  {
+   "at": "2026-09-09T22:32:56",
+   "note": "X-198's charge evidence artifact was regenerated through the given-tenant path with no number spent, and its payment count now names the tenant's rows rather than the run's"
   }
  ],
  "decisions": [
