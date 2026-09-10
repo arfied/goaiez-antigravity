@@ -10278,3 +10278,126 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     returns eighteen scanners and **every one targets `app_path()`, `base_path($directory)` or
     `resource_path()`** — `app/app` and `app/resources`. **Not one reads `app/tests`**, so prose dictated
     into a test file feeds no instrument and ruling 63's hazard does not apply.
+357. **⭐⭐ Ruling 291's precondition is a PROXY, and the gate file records the fact it stands for — a §7
+    that WAITED on the shared `flock` cannot have raced the wave's own mutation proof (RULED by the lane
+    supervisor 2026-09-10 10:5x, on MONEY-182's `023198ba`).** Ruling 42 was written after a run whose
+    §D mutation proof ran alongside its §E gate and dropped the schema under the first pest; ruling 291
+    then made "a mutation proof ran" the precondition that forces a supervisor re-gate, and closed
+    ⛔ *"never a licence to skip a re-gate on a wave that ran a mutation proof."* MONEY-182 ran one
+    proof, so 291's letter fires — and the mechanism it stands for is measured **absent, in the gate
+    file itself**. `gate-money182.txt:95` is `… another suite holds /home/goaiez/tmp/pest.lock —
+    waiting up to 40 min (never killing it)`, which is ruling 74's scheduling guard: `bin/supervise.sh`
+    took the shared lock, so §7 was **serialised against every other pest on this box**, the wave's own
+    proof included, and the proof had in any case completed before the gate was started (the run log's
+    own ordering). ⭐ **RULED, refining 291 rather than deviating from it: 291's condition is "a second
+    pest existed in this checkout CONCURRENTLY WITH THE GATE", and a §7 line recording the `flock` wait
+    is a direct measurement that it did not** — so ruling 288's route is open, and the tick states which
+    of the two it took. Here all four statements hold and are written into the verdict block: 42's
+    mechanism structurally absent (the lock line); 42's named tell absent (no `relation … does not
+    exist` — `errors 2`, both the standing Infobip journey-harness errors, and the count did not rise at
+    all); the gate file read **raw** by the supervisor rather than taken from `REPORT.md` (42(2)); and
+    §1 `0 uncommitted path(s)` against this seat's own empty `git status --short --untracked-files=all`
+    and empty `git diff --stat HEAD -- app/` (34, 71, 331). ⚠️ **The cost of the alternative was
+    measured, never assumed** (348): `pgrep -a -f "vendor/bin/pest"` returned five hits, three of them
+    track sixty *quoting* the string in its kickoff (322 — **read the hit**) and **`2980753 timeout 1800
+    ./vendor/bin/pest` a genuine holder**, so a re-gate was up to 40 minutes of `flock` with ruling 91's
+    abandoned-gate precedent (three consecutive ticks, one hour, no verdict) and 253's double-kill
+    behind it. ⛔ **Still never a licence where the lock line is ABSENT from §7** — a gate that acquired
+    the lock instantly while this checkout's own proof was live is 42's case untouched, and there the
+    re-run is the only instrument. ⭐ The generalisable half is ruling 288's a third time: **a rule whose
+    condition is a proxy for a mechanism is satisfied by measuring the mechanism**, and a precondition
+    carried because it happened to be true when the rule was written is ruling 64's decay inside a rule
+    (291's own closing words, turned on 291).
+
+358. **⭐⭐ The test-NAME and docblock population is measured NON-EMPTY — 304 names, and the finding is
+    that two files claim CONCURRENCY over plainly sequential loops, in a suite where ruling 256 measured
+    a concurrent fixture is IMPOSSIBLE (RULED by the lane supervisor 2026-09-10 10:5x, briefed as
+    MONEY-183).** Ruling 356 closed the assertion-**message** population and framed the axis: every
+    census before it read a string an **owner** sees; 356 read the strings a **reviewer** sees — the
+    sentence printed when an assertion fails. **A test's NAME and its docblock are the other two**, and
+    they are read far more often than either (ruling 50(b)'s own words). 50(b) found one incidentally
+    (`test_checkout_reaches_a_real_charge_id`, asserting the opposite), ruling 112 a second
+    (`…_moves_stock_at_paid…`, with its disproof eleven lines below the name) and ruling 161 a third —
+    **three of one shape is ruling 319's signature of an unenumerated population**, and it had never
+    been enumerated.
+    **Instruments, quoted (ruling 300), each one root filtered by a second `grep -e`:**
+    `grep -rn -e "public function test_" app/tests/Modules` → **277**, plus `-e "^test"` for the
+    pest-style files ruling 86 measured return 0 for the first pattern → **27**; **304 names**. Filtered
+    to achievement verbs the ledger has repeatedly measured as fictions
+    (`paid|charge|sends|sent|posts|clawback|recover|routes|reserv|submit|sync|import|transmit|pays|captur`)
+    → **60**, read one by one (262(b)). ⭐ **Corroborated per ruling 294 by a deliberately looser
+    instrument whose count EXCEEDS it:** `-i -e concurren -e parallel -e simultaneous -e race -e "at the
+    same time" -e atomic -e lockForUpdate -e advisory` over the same root → **16**, against the narrow
+    `-e concurrent -e reserv`'s **5**.
+    ⭐⭐ **The positive control fires in the strongest form available** (324, 326, 342, 344, 345, 347):
+    the instrument returned a **TRUE** concurrency claim in production —
+    `X-198/Domain/GatewayEngine.php:103`, *"two concurrent first attempts both read 0 and are deduped at
+    the provider"*, which is rulings 232/240's own measured mechanism and is correct because MONEY-144
+    sends the `Idempotency-Key` — **and** `X198Test.php:521`'s
+    `test_a_pay_link_race_hands_back_the_row_that_won_and_makes_no_second_row`, whose name is honest
+    because ruling 229 designed its proof to commit the racing row **inside the `Http::fake` closure**,
+    at the HTTP boundary between the pre-check and the persist, *"so the race is reproduced
+    deterministically with no concurrency."* **The instrument distinguishes a real race claim from a
+    false one, in both directions, outside the file that prompted it.**
+    **The two members, and both are ruling 113/116/123's sibling shape.**
+    ⭐ **(a) `X-117/X117Test.php:43` and `:46`.** The docblock reads *"100 **concurrent** checkouts of a
+    1-unit item yield exactly one **paid** order"* and the method is
+    `test_anchor_**concurrent**_checkouts_and_inventory_**reservation**`. **Three false clauses over one
+    body**: the loop at `:69` is a plain sequential `for`, and the body's **own comment at `:68` says
+    *"Simulate 100 sequential checkout attempts"***; `:78` and `:85` assert **`pending_payment`**,
+    because ruling 45 left no path to `paid` — the identical adaptation ruling 126 already applied to
+    this very file's assertions and to the anchor at `:75`, leaving the docblock behind; and **nothing
+    is reserved** — ruling 114(a) measured that `addToCart()` never touches `inventory_quantity` and its
+    sold-out guard compares stock against *this* cart's items only, so *"two sessions can each hold the
+    last unit and both read '1 in stock'"*, on which reasoning MONEY-103/114 removed *"Reserved until"*
+    from **two blades** and stopped at the test name.
+    ⭐ **(b) `C-Billing/CBillingTest.php:48` and `:59`.** *"Two **concurrent** debits produce two rows
+    and a correct final balance"*, in a docblock and again in an inline comment, over two plainly
+    sequential `debitAction->handle()` calls at `:60-61` whose assertions (`985000`, `960000`) **depend
+    on them running in order** — a genuinely concurrent pair could not produce those two figures
+    deterministically. It is four lines above the docblock MONEY-182 left standing, in the file
+    MONEY-182 edited.
+    ⭐⭐ **Why it is worth a wave rather than ruling 76's grade: ruling 256 measured that a concurrent
+    fixture is STRUCTURALLY IMPOSSIBLE in this suite** — `app/tests/Pest.php:84-86` binds
+    `RefreshesTenantDatabase` to every test under `tests/Modules`, holding one transaction open on the
+    runtime connection, so a racing row cannot be committed from a second connection — **and rulings
+    240, 256 and 327 each DEFERRED A WAVE for want of exactly that**
+    (`payments.idempotency_key`'s partial unique index, `orders.order_number`'s uniqueness). So a
+    reviewer scanning the method list is told this lane has concurrency coverage it measurably cannot
+    have, in the one area where three separate findings are parked *because* it cannot. **A name that
+    promises the very property three rulings record as unobtainable is the most misleading string a
+    reviewer can meet here.**
+    ⭐ **RULED, and it is the line ruling 356 item 15 needed: a docblock clause describing the TEST'S OWN
+    CONSTRUCTION is a statement about the test — 356's class — while a clause stating the CAPABILITY's
+    requirement is INTENT and stays byte-identical.** No capability in this repo specifies that a test
+    shall be concurrent, so *"100 concurrent"* and *"two concurrent debits"* are construction; *"yield
+    exactly one order and 99 honest sold-out responses"* and *"produce two rows and a correct final
+    balance"* are the requirement and survive. ⛔ **`test_anchor_ledger_no_update_trigger_ATOMIC_debits…`
+    is NOT renamed**: `BillingLedgerEngine::debit()` runs inside `DB::transaction` (220), so each debit
+    genuinely is atomic, and harmonising a pair where one member is correct is ruling 228(a)'s named
+    hazard.
+    ⛔ **Nothing is built and no test is made concurrent** — that is ruling 256's measured blocker and
+    ruling 327's manufacturing-reachability hazard at once. ⛔ **No assertion, subject or expected value
+    moves**, which is what makes the blast radius zero: a name and a docblock are unreachable to every
+    assertion in the tree.
+    ⚠️ **The rename's readers are measured, per rulings 49/172/178** —
+    `grep -rn -e "test_anchor_concurrent_checkouts_and_inventory_reservation" -e "concurrent_checkouts"
+    app/app app/tests app/storage/app/evidence` returns **its own declaration and nothing else**, and
+    `app/storage/app/evidence/X-117/` holds **only `checkout.json`** (ruling 172 deleted the stale
+    junits; 267/277 measured its keys and none is a test name). ⛔ `Doctor/Stages/JourneyStage` reads
+    only `passed` and `artifact_id` and never a method name (177), and `CapabilityStage::testedIds()`
+    regexes file contents for `G\d+-\d+|N-\d+`, which **neither docblock carries and neither replacement
+    introduces** (295).
+    ⚠️ **No mutation proof is possible and none is asked for** (81, 244, 356): nothing reads a name or a
+    docblock and no mutation can redden one, so the evidence is §7 showing the assertions unchanged and
+    still passing plus a filtered pest run per file — and **a wave that STATES why a proof is absent is
+    not a wave missing one.**
+    ⚠️ Ruling 310 re-measured rather than inherited, one tick after 356 did: all eighteen
+    `File::allFiles()` scanners target `app_path()`, `base_path($directory)` or `resource_path()` and
+    **not one reads `app/tests`**, so dictated prose in these two files feeds no instrument (63).
+    ⛔ **Table B, measured clean and STRUCK, never to be re-raised** (95, 100, 111):
+    `GatewayEngine.php:103` (production, TRUE, and the model of a correct concurrency claim) ·
+    `X198Test.php:521,:523,:529,:530,:534,:543,:544,:556,:557` (ruling 229's own honest race proof) ·
+    `X199Test.php:124` (*"invoices are atomic single amounts"* — indivisibility, a true schema claim) ·
+    `InvoiceNumberTest.php:199` (a real `pg_locks` query; ruling 190 measured the advisory lock is
+    genuinely taken) · `CBillingTest.php:51` (the `atomic_debits` method name, TRUE).
