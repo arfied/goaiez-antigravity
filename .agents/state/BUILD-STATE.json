@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-10T01:21:56",
+ "updated": "2026-09-10T02:48:23",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1702,6 +1702,10 @@
   {
    "at": "2026-09-10T01:22:01",
    "note": "C-Billing credit_ledger_entries declares four entry types and the engine writes three; refund is written by nothing and read by nothing, and the migration that declares it is not this lane's to edit. credits.blade.php prints the raw type topup while the panel above it is headed Top-up recorded, and that split is recorded rather than fixed because wire:click=topup is on the same page, so the negative half of the pairing could not pass."
+  },
+  {
+   "at": "2026-09-10T02:48:23",
+   "note": "MONEY-171: orders.status maps to owner words in X-117/Ui/LabelsOrderStatus. sold_out is not mapped because the engine returns it on an envelope and never writes it to the row."
   }
  ],
  "decisions": [
@@ -2633,6 +2637,12 @@
    "module": "C-Billing",
    "chose": "A screen shows an enumerated column in the owner's words and never the schema's backing string, and its signal is derived from the column that carries the meaning: an amount stored as an unsigned magnitude cannot answer which way the money went, and a ternary on its sign returns one answer for every row production writes.",
    "at": "2026-09-10T01:21:56",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-117",
+   "chose": "A screen names an enumerated column in the owner's words, and its signal derives only from values the code can write. The order list rendered the raw token pending_payment, which is the state every real order is in, and its pill state was keyed on paid, which no code writes, so the signal was a constant across both reachable values.",
+   "at": "2026-09-10T02:48:23",
    "ruling": "R245"
   }
  ]
