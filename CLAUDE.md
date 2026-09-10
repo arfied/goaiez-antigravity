@@ -12213,3 +12213,106 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     `@if($card->is_default)` / `@if(!$card->is_default)` pair is a **complement**, so it can drop
     nothing, and `cart-block.blade.php:19`'s `@if($s->inventory_quantity > 0)` is a boolean over an
     integer with `CheckoutEngine:269`'s sold-out refusal behind it (327).
+395. **⭐⭐ A census that reads a LINE RANGE and concludes about a METHOD is a filter wearing a census's
+    name — X-173's `resolveConflict` IS guarded, and ruling 394(a) is CORRECTED (RULED by the lane
+    supervisor 2026-09-10 19:3x).** Ruling 394 left two "measured unguarded" siblings for the next tick
+    to brief, and ruling 64 forbids either becoming a brief item before it is re-measured. Measured this
+    tick, **one of the two is guarded and the ledger's claim about it is false.**
+    `AccountingSyncEngine::resolveConflict()` at **`:61`** is
+    `if ($conflict->status === 'resolved') { return ['status' => 'refused', 'message' => sprintf('%s was
+    already resolved to %s by a person; a resolution is not overwritten silently.', …)]; }` — it reads the
+    status and it refuses. Ruling 394 wrote *"refuses the account **string** … and **never reads**
+    `$conflict->status`"* and cited the range **`:41-52`**, which covers the three account-string refusals
+    and **stops nine lines above the guard**. ⭐⭐ **The range was the claim's own boundary, and the method
+    continued past it.** That is ruling 152's *a sweep hit is a COORDINATE, not a boundary* — eighteenth
+    consecutive tick — meeting ruling 371's *a census that LISTS or COUNTS its members instead of stating
+    its PREDICATE closes silently*, with the filter being a **line range** rather than a member list.
+    **RULED: a ledger line asserting what a method does NOT do is measured over the WHOLE method, and a
+    line range inside such a claim is a citation of where the reader stopped, never a scope.** ⛔ X-173 is
+    **CLEAN**, struck from the next-population list, and not to be re-raised. ⚠️ **NINTH inherited
+    attribution corrected** (163, 171, 176, 257, 289, 355, 374, 383 — and now 394(a)), and all nine share
+    ruling 257's shape: **the ledger recorded a conclusion and not the command that produced it.** Cite the
+    command (289, 293, 300).
+
+396. **⭐⭐ `compile()` refuses a terminal dispute forty lines above `recordOutcome()`, which does not —
+    one class, one state machine, two acts, one check (RULED by the lane supervisor 2026-09-10 19:3x,
+    briefed as MONEY-192).** The other half of ruling 394(a) survives, and the decision 394 recorded as
+    missing — the ALLOWED SET — is measured rather than invented.
+    `X-201/Domain/DisputeDefenseEngine::recordOutcome():118-125` whitelists the **outcome value** at
+    `:120` (ruling 227's measured `in_array`), `findOrFail`s at `:123`, and at `:125` writes
+    `$dispute->update(['status' => $outcome])` **without ever reading the status it overwrites** — so a
+    `won` dispute is re-outcomed `lost` in silence.
+    ⭐⭐ **The self-contradiction tell is in the same class, forty lines up** (ruling 98): `compile():49`
+    is `if (in_array($dispute->status, ['submitted','won','lost'], true))` →
+    `DisputeAlreadySubmittedException('Invoice #%d is already submitted: a submitted bundle is sealed and
+    nothing is added to it.')`. **The module already refuses a terminal dispute for one act and not for
+    the other**, and the refusal idiom — a `final class … extends \DomainException {}` in `X-201/Domain/`,
+    a `sprintf` naming the invoice — is sitting directly above the defect.
+    ⭐ **The allowed set exists and is the module's own**, which is ruling 393's whole safety property
+    (393 was safe only because `InvoiceReader`'s `whereNotIn(['paid','draft'])` already existed):
+    `DisputeQueue.php:91` is `whereNotIn('status', ['won','lost'])`, the queue's own statement of *not yet
+    outcomed*. **RULED: `['won','lost']`.**
+    ⛔ **NOT the blade's `=== 'submitted'`, and that is settled by MEASUREMENT rather than by argument.**
+    `DisputeQueueScreenTest:74` calls `->call('outcome', $open2->id, 'won')` on a dispute created at `:32`
+    and **never compiled or submitted** — status `opened` — and `:75` asserts the queue's **empty state**,
+    i.e. the call succeeded and the row left the list. **An existing, green, deliberate test drives an
+    outcome on an `opened` dispute**, so refusing `opened`/`compiled` would redden it and would be this
+    lane inventing a policy its own screen does not enforce. Ruling 97 also measured X-201 has **no
+    transport**, so `submitted` here means *sealed and recorded*, not *filed with a gateway* — MONEY-95's
+    own correction — and gating an outcome on an internal seal is a policy nobody has asked for.
+    **The harm, measured:** a second outcome (a double press, a stale tab) rewrites a terminal status,
+    writes a **second contradictory `DisputeOutcome` row** on a table whose only two readers are
+    `->first()`/`->firstOrFail()` on `dispute_id` **with no ordering** (`DisputeQueueScreenTest:86`,
+    `X201Test:121`), so which outcome the row set reports becomes undefined — ruling 197/333's totality
+    family arriving through **duplication** rather than through an ordering clause — and dispatches
+    `DisputeLost` a **second** time, flipping `commission_clawback_triggered` (rulings 101, 105).
+    ⚠️ Ruling 355 measured `ProposeClawbackOnDisputeLost` exists and is registered by nothing, **which is
+    exactly the moment removing the possibility costs nothing** (ruling 44's reasoning).
+    ⚠️ Ruling 349 measured the Won/Lost buttons **do** carry `wire:loading.attr="disabled"` +
+    `wire:target`; that is a browser-side courtesy and the server guard is what the write owes — rulings
+    330 and 350 both fixed this shape **after** the button carried its guard, and 330 ruled the proof is
+    **two sequential calls and needs no concurrency**.
+    ⛔ No migration and no unique index (240, 256, 327: `QueryException extends PDOException extends
+    RuntimeException`, so a raw `23505` would reach a `\Throwable` tail and print `SQLSTATE` to an owner).
+    ⛔ **The components are NOT touched** (47's companion): `DisputeQueue::outcome():78` catches
+    `\DomainException` **first** and renders `$e->getMessage()` **bare**, with no prefix to be true or
+    false about — so a named `\DomainException` subclass reaches the owner as its own complete sentence,
+    which is why the message must be one.
+    ⚠️ **Blast radius, measured call site by call site BEFORE the brief shipped (46, 86, 146): ZERO.**
+    All five `recordOutcome` call sites act on a dispute that is `opened`, `compiled` or `submitted` at
+    the moment of the call — `DisputeCardScreenTest:33`, `DisputeQueueScreenTest:34`, `:72`, `:74`,
+    `X201Test:117`, `:137` — **never `won` or `lost`**; and `N010Test:41` passes `'refunded'`, refused by
+    `:120`'s whitelist **before** the `findOrFail`, so it never reaches a guard placed after it. No
+    existing test can see the defect (68) ⇒ the wave **adds** a method (70).
+    ⭐ **Fixed rather than recorded** — rulings 204/130's precedent and 330's directly: `disputes` has no
+    production writer (79), but the act **is** driven by existing fixtures and two sequential calls redden
+    a mutation, so ruling 96 does not govern.
+
+397. **⭐ Ruling 380(c)'s predicate re-run is COMPLETE and the axis is CLOSED — the lane has exactly ONE
+    vocabulary-switching chain and ruling 394 already measured it (measured by the lane supervisor
+    2026-09-10 19:3x; rulings 95, 100, 111).** Ruling 394(c) reopened 380(c) because it had struck its
+    axis on `grep -rn -c "@else"` returning at least one per blade — **a count of a directive's presence,
+    where the predicate is *does every VALUE of the switched vocabulary have an arm*.** Re-run on the
+    predicate **by the supervisor rather than briefed as a census** (ruling 333's precedent — *the
+    supervisor measured the whole of it this tick rather than delegating*):
+    `grep -rn -e "@elseif" app/app/Modules --include=*.blade.php` filtered to the eight ids returns
+    **six lines in five blades**, and five switch on a **boolean or a count**, not a vocabulary —
+    `X-117 checkout-block:26` (`count($lines) === 0 && $unlistedCount === 0`), `cart-block:29`
+    (`empty($lines)`), `X-199 unpaid:34` (`isEmpty() && $showLastFivePaid`), and `X-173
+    sync-error-rate:24-30`, whose chain is `@if($rate === null) / @elseif($conflicts_count === 0) /
+    @else` — **total, no gap**, ruling 360's own `under 1% conflicts` arm being the `@else`.
+    **The one vocabulary chain is `X-199 invoices.blade.php:55-68`**, and ruling 394 already measured it:
+    it drops `overdue` and renders an empty `<td>` while `unpaid.blade.php:79` gives that same invoice the
+    button — **recorded under ruling 96**, because `markOverdue` is caller-less (69), production runs
+    `issued → due` (`MarkInvoicesDueCommand`, scheduled — 151(1)), and no existing fixture renders an
+    overdue invoice on that screen, so adding one is ruling 327's manufacturing reachability.
+    ⛔ **The axis is CLOSED, struck with this measurement, and not to be re-raised**; 380(c)'s entry in
+    the exhausted list now carries the **predicate** rather than the count.
+    ⚠️ Recorded from the same review and **not** charged: ruling 393's stated blast radius said *"all
+    fourteen `recordPayment` call sites"* and MONEY-191's own `SWEEP:` prints **nineteen** (23 lines less
+    two blade `wire:click` lines and two comments); 393's enumerated list held **fifteen** members and it
+    reported fourteen. **The conclusion held and is measured** — §7 landed on the predicted floor to the
+    digit, so no existing assertion moved — but the count was derived by prose rather than by listing,
+    which is ruling 200's own discipline and ruling 371's family a **fifth** time inside this ledger's own
+    censuses (375c, 376, 383, 394c). ⭐ **Every count a ruling states is derived by listing the items that
+    produce it, and the list is printed beside the number.**
