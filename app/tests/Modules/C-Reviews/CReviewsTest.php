@@ -290,6 +290,13 @@ class CReviewsTest extends TestCase
     /**
      * [G20-06] named in the header
      * ⛔ REFUSED: surveyed Actions, Database, Events, Listeners, Models, Ui and found no implementation.
+     * ⭐ DISCHARGED 2026-09-10 (run 131). The refusal above surveyed the MODULE and was true of it.
+     *    The law is built OUTSIDE it, in the legacy app:
+     *    database/migrations/2026_07_31_201816_create_review_destinations_table.php:47
+     *      — smallInteger('invite_threshold'), the per-destination solicitation policy
+     *    …:76 — CHECK (invite_threshold BETWEEN 0 AND 5)
+     *    …:68 — CHECK (destination <> 'trustpilot' OR invite_threshold = 0)
+     *    app/Models/ReviewDestinationSetting.php — the tenant-scoped model over that table
      */
     public function test_g20_06_header(): void
     {
@@ -348,6 +355,11 @@ class CReviewsTest extends TestCase
     /**
      * [G20-09] the owner's original ask, now the header
      * ⛔ REFUSED: surveyed Actions, Database, Events, Listeners, Models, Ui and found no implementation.
+     * ⭐ DISCHARGED 2026-09-10 (run 131). The refusal above surveyed the MODULE and was true of it.
+     *    The fix-then-ask loop is built OUTSIDE it, in the legacy app:
+     *    app/Services/Reviews/ReviewRouter.php:1234 — sets fix_then_ask_offered_at when the check-in goes out
+     *    app/Services/Reviews/ReviewRouter.php:1284 — recordFixThenAskResponse(), the confirmed-fix path
+     *    database/migrations/2026_08_27_135742_add_fix_then_ask_to_triage_conversations_table.php:51
      */
     public function test_g20_09_header(): void
     {
