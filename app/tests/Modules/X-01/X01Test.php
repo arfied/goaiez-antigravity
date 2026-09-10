@@ -30,6 +30,7 @@ use App\Modules\X01\Ui\CustomersList;
 use App\Modules\X01\Ui\Thread;
 use App\Modules\X102\Events\ChatLeadCaptured;
 use App\Modules\X121\Models\Person;
+use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
@@ -670,7 +671,7 @@ class X01Test extends TestCase
     public function test_ingest_message_from_untenanted_context(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Untenanted Biz', 'currency' => 'USD']);
-        \App\Support\Tenancy::forgetAll();
+        Tenancy::forgetAll();
 
         $res = $this->manager->ingestMessage(
             businessId: $biz->id,
