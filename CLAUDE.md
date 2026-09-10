@@ -8900,3 +8900,66 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     third time) — and it is the more useful of the two to write down, because an empty census tells a
     later tick *nothing is there* while a classified one tells it *what is there and why each member
     stays*. ⛔ Not to be re-raised.
+328. **⭐ Ruling 213 swept the lane's `Domain/` arithmetic and the `Ui/` tree was never swept — the
+    `Ui/` half is SEVEN members with ZERO buildable fixes, and the one owner-typed divisor is guarded
+    by a PRIOR wave's own fix (measured by the lane supervisor 2026-09-10 04:5x; rulings 64, 95, 100,
+    111, 294, 298, 324, 327).** Ruling 213 is written as *"the money-arithmetic sweep over the lane's
+    engines"* and its instrument was scoped to `Domain/` in terms. Ruling 298's lesson — **a census
+    states its POPULATION DEFINITION beside its count, and a definition drawn from the members already
+    known is a filter wearing a census's name** — makes that scope a claim, and the claim was never
+    tested against the tree where an owner's own typing reaches arithmetic. Measured now:
+    `grep -rn -e 'intdiv' -e 'ceil(' -e 'floor(' -e 'round(' -e 'fmod'` over the eight modules' `Ui/`
+    trees returns **seven** lines, against a positive control on `X-211/Domain` + `X-199/Domain` that
+    returns **15** for `ArEngine.php` alone — so the instrument demonstrably fires (ruling 324's bar).
+
+    | # | site | verdict |
+    | :--- | :--- | :--- |
+    | 1 | `X-211/Ui/PaymentplanBuilder.php:88` — `ceil($inv->balance_cents / $typed)`, `$typed` from `wire:model` | ⭐ **the only owner-typed divisor in the lane, and it is GUARDED** by `:85`'s `if ($typed < 2)` — ruling 214(c)'s own shipped fix, which is what makes this census empty |
+    | 2 | `X-199/Ui/Credits.php:46` — `(int) round(((float) $typed) * 100)` | clean **three times over**: `credits.blade.php:48` is `type="number" min="0" step="1"`, `TermsSetAction:26` refuses a negative with `InvalidTermsException`, and `:58` catches it — the `(float)` coercion is a belt behind two belts |
+    | 3 | `X-173/Ui/views/conflicts-list.blade.php:23` — `round($c->confidence_rate * 100)` | clean: `2026_08_30_000092:56` is `decimal('confidence_score', 4, 3)` and every writer passes a 0–1 fraction, so the `× 100` is a percentage and not a second one |
+    | 4–5 | `X-173/Ui/views/sync-error-rate.blade.php:11,:29` — `round($rate * 100)` | clean: `AccountingSyncEngine:134`'s ratio is guarded `$seen === 0 ? null : …` (ruling 223) |
+    | 6 | `C-Billing/Ui/RevenueRecovery.php:77` — `intdiv($recoveredHundredths, 100)` | governed — ruling 109 owns that whole tile |
+    | 7 | `C-Billing/Ui/ReadsAgreedMonthly.php:30` — `$yearly ? intdiv($agreed, 12) : $agreed` | ruling 76's grade: truncates ≤ 11 cents on a **display** figure whose own `<dd>` reads *"billed yearly, shown as a twelfth"* — ruling 213's `ceil` precedent, hedged by its own copy |
+
+    ⭐⭐ **Member 1 is the keepable half and it is why this census is worth its tick.** A later tick
+    reading `/ $typed` cold would see an owner-typed divisor reaching `ceil()` in a `render()` with no
+    `catch` — a `DivisionByZeroError` that 500s the page — and brief a guard that **already exists
+    three lines above it**, put there by MONEY-136 under ruling 214(c) for a different reason (an owner
+    typing `1` was shown a figure computed from an input they did not give). **A prior wave's fix is
+    invisible to the census that would otherwise find its absence**, so recording the guard by line is
+    what stops the re-derivation (rulings 289, 293 — cite the command, and pair a line number with the
+    token a `grep -n` would match: `if ($typed < 2)`). ⛔ Not to be re-raised, and ⛔ ruling 213's
+    `Domain/` half is not re-run — this extends its scope, it does not reopen it.
+
+329. **⭐⭐ NOT ONE currency symbol or code is hardcoded anywhere in this lane's screens, ruling 87's
+    hardcoded `$` is measurably GONE, and every unlabelled figure is ruling 170's recorded cross-lane
+    dependency (measured 2026-09-10 04:5x).** Rulings 37, 87, 123, 152(b) and 233 each found a currency
+    defect **incidentally** — a method default overriding a row's currency, a hardcoded `$` for every
+    tenant, a label naming a narrower quantity than the sum, an aggregate discarding `payments.currency`,
+    a `capture()` posting `usd` from a parameter default. **Five findings of one shape is ruling 319's
+    signature of an unenumerated population**, and it had never been enumerated. Measured:
+    `grep -rn --include=*.blade.php -e '£' -e '€' -e '¥' -e 'USD' -e 'GBP' -e 'EUR'` over the eight
+    module trees returns **NOTHING**, and the corroborating `number_format` census returns **62
+    money-rendering LINES across 27 files** (`grep -rn --include=*.php -e 'number_format' <the eight
+    `Ui/` trees> | grep -c ""`, and `-rln | grep -c ""` for the files — summed by a tool and never by
+    hand, ruling 209), read one by one. So the population is real, large, and carries **zero**
+    fabricated labels. ⭐ **Ruling 87's `C-Billing/Ui/Credits.php:50` — *"a hardcoded `$` for every
+    tenant"* — is gone:** `:53` now reads `number_format(…).' of credit added to your balance.'` with no
+    symbol. **The ledger stops carrying it** (ruling 64 — an inherited finding is re-measured before it
+    is repeated, and this is the fifth inherited attribution corrected here after 163, 171, 176, 257).
+    **Exactly THREE sites render a real currency beside a figure, and all three are this lane's own
+    corrections:** `X-198/same-account.blade.php:32` `{{ $p->currency }}` (ruling 152(b)),
+    `X-199/declines.blade.php:38` `{{ $decline->currency }}` (`payments.currency`, ruling 233's family),
+    `C-Billing/mrr.blade.php:43` `{{ $monthly['currency'] }}` (ruling 108). **Everything else is
+    unlabelled for a MEASURED reason and not an oversight:** `invoices`, `orders`, `credit_terms` and
+    `payouts` carry **no currency column at all** — ruling 170 recorded it for `invoices` (*"the fix is a
+    cross-lane dependency and not this lane's wave"*), ruling 152(c) for `payouts` (*"so none can be
+    printed there truthfully"*), and ⭐ for X-117 it is not a gap but a **declared capability**: ruling
+    303 measured `G17-31 Multi-Currency Landed Cost — ONE currency; no conversion path` satisfied *by
+    construction*, with no currency column anywhere in the module and a test pinning the conversion
+    vocabulary out. ⛔ **So an unlabelled figure in this lane is not a defect to be fixed by minting a
+    symbol** — that is ruling 43's fabrication in a currency, and ruling 37's *"the row already knows"*
+    with nothing for the row to know. ⛔ Not to be re-raised. ⚠️ The one live cross-currency hazard the
+    census confirms is already closed: only `payments` and `businesses` carry a currency, only
+    `SameAccount` aggregates `payments`, and it groups by currency (ruling 152(b)) — every other
+    aggregate in the lane sums a table with a single implicit currency.
