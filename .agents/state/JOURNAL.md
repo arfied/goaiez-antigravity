@@ -936,3 +936,4 @@
 - `2026-09-10T16:53:19` (R245) X-102 — boundary Created consented test to properly assert HTTP middleware whitespace normalization R245
 - `2026-09-10T16:53:19` (R245) X-102 — capability Removed logged consent from widget build proposal as the backend portion is built R245
 - `2026-09-10T17:27:02` (R245) X-102 — boundary 2026-09-10T16:53:19 The consented test is unfalsifiable for the HTTP middleware because the action duplicates the trim logic R245
+- `2026-09-10T17:45:52` (R245) X-102 — boundary test_http_middleware_normalises_whitespace_message_to_null_when_consented is falsifiable for the controller parameter mapping R245
