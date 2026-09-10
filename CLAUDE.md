@@ -9380,3 +9380,65 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     membership**, never order, so **zero** existing assertions move and all five methods are **added**
     (rulings 68, 70). ⚠️ Ruling 293: each of the four is found by its **token**, never by the line
     numbers quoted here — MONEY-175 already shifted one of `Unpaid.php`'s by inserting a line above it.
+338. **⭐⭐ An ordering column's tie-candidacy is decided by the WRITER's cardinality, not by the index's
+    uniqueness — so four of ruling 335's five remaining members are STRUCK, and the one that survives is
+    strengthened by the same module rewriting the table it renders (RULED by the lane supervisor
+    2026-09-10 07:0x, briefed as MONEY-178).** Rulings 333, 335 and 337 closed the `created_at`, `paid_at`
+    and `due_date` families and left a five-member remainder, classified in ruling 333's table by the
+    question *is the index unique?* — `meters.meter_type` is `->index()`, not unique;
+    `dunning_states` carries no unique key; `sellables.name` none either. **That is the wrong axis.** An
+    index says what the database will *refuse*; a tie needs two rows to *exist*, and what decides whether
+    they can is the **writer**. Re-measured member by member:
+    **(a)–(b) `dunning_states` — STRUCK, at most ONE row per business.** `grep -rn -e "DunningState::"
+    app/app` returns six lines and exactly one is a writer:
+    `C-Billing/Domain/BillingLedgerEngine.php:133-135`, which is
+    `DunningState::where('business_id', $businessId)->first()` and, **only when that is null**, `create`.
+    Every later call updates that row. So `DunningBoard.php:37`'s `orderBy('day_in_cycle','desc')` and
+    `RevenueRecovery.php:69`'s `orderByDesc('day_in_cycle')` can never have two rows to order on any
+    production path, and a tiebreak behind them would order a single-row result set. ⭐ This is ruling
+    197's own strike criterion — *"`ar_plan_terms.business_id` is `->unique()`, so `first()` reads THE
+    row"* — extended from *unique by constraint* to **unique by writer**, which is the form this lane
+    keeps meeting because so few of its tables have a production writer at all.
+    **(c)–(d) `meters` — STRUCK, ZERO writers app-wide.** `grep -rn "Meter::" app/app` returns **two**
+    lines and both are **reads** — `C-Billing/Ui/Credits.php:68` and `Mrr.php:74` — the module's own
+    screens. (The dozen `ScheduledRunMeter::` hits are a different class in `app/app/Console`, read and
+    discarded per ruling 262(b).) Ruling 88 already measured that nothing writes a `Meter`; the natural
+    key is one row per `(business_id, meter_type)`, so a tie means a **duplicate meter row**, which is a
+    different defect and one nothing in this app can produce. ⛔ Neither `orderBy('meter_type')` moves.
+    **(e) `X-117/Ui/CartBlock.php:81`'s `orderBy('name')` — SURVIVES, and it is the strongest member of
+    the whole census.** Three measurements carry it. (1) `sellables.name` is a plain
+    `$table->string('name')` (`2026_08_30_000029:18`) with **no unique index**, and two catalogue items
+    legitimately share a name — *"Callout"* at two prices is an ordinary catalogue, not a corner case.
+    (2) ⭐⭐ **The module rewrites the table its own screen renders:**
+    `X-117/Domain/CheckoutEngine.php:75` is `$sellable->decrement('inventory_quantity', $quantity)`, so
+    every checkout `UPDATE`s a `sellables` row — which is **ruling 204's exact mechanism**, an update
+    moving a row within heap order, and it means the catalogue can reshuffle among same-named items after
+    a customer buys something. (3) The list **is** rendered and **is** driven by existing fixtures
+    (`CartBlockScreenTest` seeds three sellables and mounts the screen), so a mutation can redden it and
+    ruling 96 does not govern — ruling 204's own precedent, which fixed three tables with no production
+    writer for exactly that reason (`sellables` has one writer and it is an evidence command, ruling 117).
+    **RULED: `->orderBy('id')` ascending behind `orderBy('name')`** (ruling 335's direction rule).
+    ⛔ **No migration and no unique index on `sellables.name`** — a catalogue may hold two items of one
+    name on purpose, so uniqueness would be a refusal the domain does not want, and ruling 41 part 3
+    forbids editing that migration besides. ⛔ The four struck members are **not** fixed to make the
+    census look complete: a tiebreak on a result set the writer guarantees is one row is ungated in
+    meaning even where a fixture can redden it, and shipping one would assert a behaviour no production
+    path can exercise.
+    ⚠️ **The needle is the PRICE, measured rather than chosen.** `cart-block.blade.php:15-17` renders per
+    row `{{ $s->name }}`, `number_format($s->unit_price_cents / 100, 2)` and `{{ $s->fulfilment_type }}`,
+    so two same-named rows are distinguishable **only** by price — which is also the value an owner reads.
+    ⚠️ Ruling 255 measured, not assumed: `assertSeeInOrder` is **not** a Livewire assertion — it forwards
+    to `TestResponse` and searches the full payload **including `wire:snapshot`** — and `CartBlock`'s
+    public properties are `$sessionToken`, `$error`, `$success`, `$waiting`, the last three null on a
+    fresh mount and none of them holding a price, so no needle can be satisfied by the payload.
+    ⚠️ **Blast radius: ZERO** — `grep -rn "assertSeeInOrder" app/tests/Modules/X-117` returns **nothing**,
+    and every one of the module's fifteen `Sellable::create` fixtures uses a distinct name, so no existing
+    test can see the defect (rulings 46, 68, 70, 86) and the item **adds** a method.
+    ⚠️ Recorded from the same measurement and **NOT** briefed (ruling 76's grade): both dunning screens
+    render a `@foreach` table over a query whose writer guarantees at most one row. Nothing is false —
+    a one-row table is a table — and the markup is correct the day a second state can exist. ⛔ Not a wave.
+    ⭐ **The generalisable half, and it is ruling 298's a third time: a census's classification AXIS is a
+    claim like its count and its scope.** Ruling 333 enumerated correctly, corroborated its instrument
+    correctly, and sorted the members on a property of the schema when the deciding property was a
+    property of the code. **A census states the axis it sorted on, so a later tick can re-sort rather than
+    re-enumerate** — which is what happened here, at the cost of four greps instead of a wave.
