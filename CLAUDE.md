@@ -9884,3 +9884,115 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     server never sees. **A screen is not only what it renders — it is also what the browser holds
     between two renders, and nothing in this checkout can measure that but the markup that instructs
     the browser to keep it.**
+348. **⭐⭐ Rulings 91, 231 and 291 collide on a lock-blocked §7, and the collision is resolved by what
+    §7 would have CAUGHT rather than by which rule was written last (RULED by the lane supervisor
+    2026-09-10 09:0x, on MONEY-179's `98bb1fde`).** Ruling 291 requires a re-gate of any wave that ran a
+    mutation proof, because 42's mechanism — a second pest in **this** checkout — genuinely existed.
+    Ruling 91 says a tick that cannot reach §7 *"records the §1–§6 result, **holds the verdict**"*.
+    Ruling 231 met a lock-blocked gate, graded it a note and **pushed**. MONEY-179 is all three at once:
+    four mutation proofs, §7 unreachable, §1–§6 green. Measured — `pgrep -a -f "vendor/bin/pest"` shows
+    pid `2143555 timeout 1800 ./vendor/bin/pest` live in **track sixty's** checkout (⚠️ two of that
+    grep's five hits are sixty's kickoff *quoting* the string, ruling 322 — read the hit), so a re-gate
+    is a 40-minute `flock` block with ruling 91's own abandoned-gate precedent and ruling 253's
+    double-kill behind it. **RULED: the tick asks what §7 could have caught that it has not already
+    measured, and where the answer is nothing, it records the §7 number as a DEBT and pushes.** Here §7
+    could catch exactly two things and both were measured directly: (1) **a reddened standing
+    assertion** — `grep -rn -e 'assertDontSee'` over the four touched files returns **29** needles and
+    not one (`'Invoice #903'`, `'INV-A2'`, `'submitted'`, `'accepted'`, `'§141.5'` …) can be matched by
+    `wire:key="conflict-<id>"`, `dispute-`, `ageing-inv-` or `plan-inv-`, re-measured **in this tick**
+    rather than inherited (ruling 323); (2) **a new test failing** — each of the four proofs' own GREEN
+    re-run *is* a filtered pest run of that test against the committed tree
+    (`{"tool":"pest","result":"passed","tests":1,"passed":1,"assertions":3}` ×4). ⛔ **Never a licence
+    to skip a re-gate whose answer is NOT nothing** — a wave touching a shared reader, a `Domain/`
+    guard or a status vocabulary can redden a test in a file the diff never names, and there the grep
+    cannot substitute. ⚠️ **The debt is carried as ruling 253 carries a killed gate: a FILTERED
+    measurement of the previous wave's own diff, run FIRST in the next brief, before that wave touches
+    anything** — otherwise a red in MONEY-180's gate cannot be attributed between two waves, and ⛔ an
+    unmeasured red attributed to the wrong wave is worse than an open one (125). ⛔ The floor absorbs
+    nothing: it stays `2487 · 2483 · FAILED 2 · errors 2`, the last **measured** number.
+    ⚠️ The generalisable half: **a rule written as "hold the verdict" is a rule about the RISK the
+    missing measurement leaves open**, so it is satisfied when that risk is closed by other means and
+    the tick writes down which — ruling 288's *a rule written as "re-run X" is a rule about the
+    PROPERTY X establishes*, aimed at a verdict instead of at a gate.
+349. **⭐⭐ The UI kit DECLARES the double-send guard in its own docblock, the lane applies it to 24 of
+    its 34 `wire:click` buttons, and the ten without it include every WRITE button on the checkout
+    screen (RULED by the lane supervisor 2026-09-10 09:0x, briefed as MONEY-180 item 2).** Ruling 347
+    opened the axis — *a screen is also what the browser holds between two renders* — and its first
+    census read `wire:key`. Its sibling is the interval between a press and its response, and it had
+    never been enumerated. `app/resources/views/components/ui/submit.blade.php:22` states the contract
+    in terms — *"The **disabled attribute** is what actually stops the double send; the swap is …"* —
+    and `:29-30` implement it as `wire:loading.attr="disabled"` + `wire:target`. ⭐ **That is ruling
+    326's strongest shape, one register over: the census's positive control is the kit's OWN RULE
+    TEXT**, so the finding is not an opinion about double-clicks but a measured departure from a
+    contract this repo wrote down. ⚠️ `<x-ui.button>` carries only `disabled:` **styling**
+    (`button.blade.php:27`) and no `wire:loading` of its own, so a bare `<x-ui.button wire:click="…">`
+    is outside the guard — and `:53`/`:57`'s `$attributes->merge(...)` is what lets the attribute be
+    passed in, which 24 of the lane's buttons already do.
+    **The census: `grep -rn -e 'wire:click' app/app/Modules --include=*.blade.php` filtered to the
+    eight ids → 34 lines; 24 carry `wire:loading.attr="disabled"`, TEN do not.** Of the ten, **six are
+    read or UI-state toggles and are measured harmless** — a second press writes the same property
+    twice: `card-screen:61 addCard`, `sync-error-rate:32 show`, `unpaid:74`/`invoices:49
+    toggleExpanded`, `declines:70 toggleShowAll`, `invoice-thread-beside:25 pick` (⭐ ruling 344
+    measured `pick`'s id is read as `firstWhere(...) ?? first()` over a scoped collection, so a foreign
+    or repeated id selects nothing). ⛔ **STRUCK, not to be re-raised.** **Four are WRITES** —
+    `checkout-block:45 authorise`, `:46 pay`, `:63 cancel`, `card-screen:37 makeDefault` — and three of
+    the four sit on the two screens where this lane moves money and stock.
+    **RULED: the four take the attribute pair the other 24 carry**, in the lane's own wording including
+    the parenthesised argument (`wire:target="cancel({{ $o->id }})"`, the form
+    `same-account:40`'s `attach({{ $p->id }}, {{ $conn->id }})` already establishes) — ruling 123, one
+    fact one wording. ⛔ Not by editing `button.blade.php` to set `wire:loading` for everyone: the kit
+    is Track 2's (ruling 21), and a blanket disable would also disable the six read toggles, which is
+    behaviour nobody asked for. ⛔ Not by removing a button. ⚠️ **Two of the four have nil harm and are
+    included deliberately**: `authorise` only re-mints a component-held nonce and `makeDefault` is
+    idempotent (clear-all-then-set, ruling 343) — but leaving two write buttons unguarded on the same
+    two screens is the ruling-98 inconsistency this finding is about, and a later census would
+    re-raise them. ⭐ This is **not** ruling 327/343's *manufacturing reachability*: nothing is reached,
+    an attribute is added and the assertion is on the markup. ⚠️ **Blast radius ZERO** — no test in the
+    lane asserts a `wire:target`, so both items **add** methods (rulings 68, 70) — and the needle is
+    `assertSeeHtml('wire:target="cancel('.$id.')"')`, unique to its own button and, being raw-`"`,
+    unsatisfiable by the `&quot;`-escaped `wire:snapshot` payload (rulings 82, 246).
+350. **⭐⭐ `cancelOrder()` has NO status guard, so a second cancel increments stock a second time — and
+    the inflated figure defeats the module's own three oversell guards (RULED by the lane supervisor
+    2026-09-10 09:0x, briefed as MONEY-180 item 1).**
+    `X-117/Domain/CheckoutEngine::cancelOrder():124-144` reads the order, sets `status = 'cancelled'`
+    — a no-op on an order already cancelled — and then **unconditionally** loops its lines,
+    `increment('inventory_quantity', $line->quantity)` at `:134` and dispatches `InventoryUpdated` at
+    `:135`. Nothing compares the status first. ⭐⭐ **`inventory_quantity` is the column three separate
+    guards read to refuse an oversell** — `:58` (`checkout()`), `:189` (`checkoutCart()`, under `:186`'s
+    `lockForUpdate`) and `:269` (`addToCart()`) — so an inflated value does not merely misreport stock,
+    it makes the storefront sell items the tenant does not have, through the very lock ruling 327
+    measured is *"the CHECK that stops exactly that"*.
+    ⭐ **It is ruling 330's shape one module over, and 330's own words fit it exactly: the SCREEN states
+    the intent and the WRITE does not enforce it.** `checkout-block.blade.php:62` renders Cancel only
+    `@if($o->status === 'paid' || $o->status === 'pending_payment')` — so the module has written down
+    that a cancelled order is not cancellable — and the engine accepts one anyway. And it is the odd
+    one out of its siblings: `checkoutCart():164` refuses a reused auth token, `capture()` has an
+    idempotency pre-check, `applyLateFee` refuses at the cap (221), and `offerPlan` and
+    `packageForCollections` were given exactly this guard by ruling 330. Ruling 98's tell.
+    **RULED: `cancelOrder()` refuses a status outside `['pending_payment','paid']` BEFORE its first
+    write** (rulings 330, 332 — the guard goes above `:128`'s `update`, not below it), with a dedicated
+    `final class OrderNotCancellableException extends \DomainException {}` in the module's own
+    `Domain/` namespace beside `SoldOutException.php`, its message naming the order and the state it is
+    in and ending *"Nothing was cancelled."* — the sibling idiom (`FeeAtCapException` ends *"Nothing was
+    applied."*). ⛔ `paid` stays in the allowed list: it is unreachable today (ruling 45) and is a
+    legitimate column value the day tokenisation lands, which ruling 312 already decided when it mapped
+    the label. ⛔ `sold_out` is envelope-only and never reaches the row (ruling 312's migration
+    measurement), so the only reachable refusal is `cancelled`. ⛔ **No migration, no unique index and
+    no `firstOrCreate`** — the fix is a comparison, and ruling 240/256/327's reasoning stands
+    (`QueryException extends RuntimeException`, so a raw `23505` would reach a `\Throwable` tail).
+    ⛔ **`CheckoutBlock::cancel()` is NOT touched**: its `\Throwable` tail at `:94` already renders
+    *"We could not cancel that: "* + the message, and that prefix is **true** of this refusal — unlike
+    ruling 229(b)'s, it asserts an outcome the catch can know (ruling 47's companion).
+    ⚠️ **Why nothing could see it, and it is ruling 70 at its sharpest:** `grep -rn -e 'cancelOrder' -e
+    'OrderCancelAction' app/app app/tests` returns **one** test call site — `X117Test.php:242`,
+    cancelling a `pending_payment` order **once** — so the second-call branch is executed by nothing and
+    **zero existing assertions move**; the item **adds** a method (ruling 68).
+    ⚠️ ⭐ **The proof is two SEQUENTIAL calls and needs no concurrency**, which is ruling 330's own
+    settled shape (*"the application guard closes the whole of the MEASURED harm — a second press — and
+    needs only a second sequential CALL to prove"*). ⛔ It is therefore **not** blocked by the Livewire
+    request-queue question ruling 330 item 6 records as unmeasured: the guard is server-side and the
+    test calls the engine. ⚠️ The assertion is on `inventory_quantity` **read back from the row**, not
+    on an exception alone — a row-absence-style assertion passes for the wrong reason (rulings 36, 61)
+    — and the refusal is caught with `try`/`catch` plus `$this->fail()` rather than
+    `expectException`, because PHPUnit checks the latter **after** the method returns and the stock
+    assertion would never run (ruling 228).
