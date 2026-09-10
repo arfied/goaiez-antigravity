@@ -76,4 +76,4 @@ final class ChatCaptureAction
         });
     }
 }
- // (R245) schema: added consent_logged_at to chat_leads table to log capture consent
+// (R245) schema: added consent_logged_at to chat_leads table to log capture consent
