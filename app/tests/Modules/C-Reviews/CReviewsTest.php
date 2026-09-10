@@ -506,10 +506,96 @@ class CReviewsTest extends TestCase
     /**
      * [G1-68] assertion placeholder
      * ⛔ REFUSED: surveyed Actions, Database, Events, Listeners, Models, Ui and found no Google review removal preparation or human confirmation logic.
+     * ⭐ DISCHARGED 2026-09-10 (run 136). The automation prepares the request but filing requires a human confirmation.
+     *    Gate: app/app/Modules/C-Reviews/Domain/RemovalFilingGate.php:11
+     *    Test: app/tests/Modules/C-Reviews/CReviewsTest.php:512
      */
     public function test_g1_68_assertion(): void
     {
-        $this->fail('NOT BUILT: G1-68 — no Google review removal preparation or human confirmation logic found.');
+        $biz = self::provisionTenant(['name' => 'G168 Test Biz']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $req = \App\Modules\CReviews\Models\ReviewRequest::create([
+            'business_id' => $biz->id,
+            'platform' => 'google',
+            'rating' => 1,
+        ]);
+
+        $preparer = new \App\Modules\CReviews\Actions\PrepareRemovalRequestAction();
+        $removal = $preparer->execute($biz->id, $req->id, 'tos_ground_example', 'Prepared Body', 'google_rev_id');
+
+        $gate = new \App\Modules\CReviews\Domain\RemovalFilingGate();
+        
+        $this->expectException(\App\Modules\CReviews\Domain\RemovalNotConfirmedException::class);
+        $this->expectExceptionMessage('This removal request has not been confirmed by a human.');
+        
+        $gate->assertFilable($removal);
+    }
+
+    public function test_g1_68_confirmer_refuses_no_human(): void
+    {
+        $biz = self::provisionTenant(['name' => 'G168 Test Biz']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $req = \App\Modules\CReviews\Models\ReviewRequest::create([
+            'business_id' => $biz->id,
+            'platform' => 'google',
+            'rating' => 1,
+        ]);
+
+        $preparer = new \App\Modules\CReviews\Actions\PrepareRemovalRequestAction();
+        $removal = $preparer->execute($biz->id, $req->id, 'tos_ground_example', 'Prepared Body', 'google_rev_id');
+
+        $confirmer = new \App\Modules\CReviews\Actions\ConfirmRemovalRequestAction();
+        
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('A user ID is required to confirm a removal request.');
+        
+        $confirmer->execute($removal, null);
+    }
+
+    public function test_g1_68_happy_path(): void
+    {
+        $biz = self::provisionTenant(['name' => 'G168 Test Biz']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $req = \App\Modules\CReviews\Models\ReviewRequest::create([
+            'business_id' => $biz->id,
+            'platform' => 'google',
+            'rating' => 1,
+        ]);
+
+        $preparer = new \App\Modules\CReviews\Actions\PrepareRemovalRequestAction();
+        $removal = $preparer->execute($biz->id, $req->id, 'tos_ground_example', 'Prepared Body', 'google_rev_id');
+
+        $confirmer = new \App\Modules\CReviews\Actions\ConfirmRemovalRequestAction();
+        $confirmer->execute($removal, 999);
+
+        $this->assertEquals('confirmed', $removal->status);
+        $this->assertEquals(999, $removal->confirmed_by_user_id);
+        $this->assertNotNull($removal->confirmed_at);
+
+        $gate = new \App\Modules\CReviews\Domain\RemovalFilingGate();
+        $gate->assertFilable($removal);
+    }
+
+    public function test_g1_68_preparer_cannot_self_confirm(): void
+    {
+        $biz = self::provisionTenant(['name' => 'G168 Test Biz']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $req = \App\Modules\CReviews\Models\ReviewRequest::create([
+            'business_id' => $biz->id,
+            'platform' => 'google',
+            'rating' => 1,
+        ]);
+
+        $preparer = new \App\Modules\CReviews\Actions\PrepareRemovalRequestAction();
+        $removal = $preparer->execute($biz->id, $req->id, 'tos_ground_example', 'Prepared Body', 'google_rev_id');
+
+        $this->assertNull($removal->confirmed_by_user_id);
+        $this->assertNull($removal->confirmed_at);
+        $this->assertEquals('prepared', $removal->status);
     }
 
     /**
