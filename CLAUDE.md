@@ -8543,6 +8543,77 @@ Watch for: <the trap that applies, by name>
   blocked tip. **Wave 168** then takes the board. Re-measured this tick:
   `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` → **13**; `app/app/Modules/` → **0**; `CLOSED:` → **5**;
   stub pile across the thirteen → **11**. Re-run all four; never inherit them.
+- ⚠️⚠️ **A FAILED hand edit is still an attempted one, and the only thing that stopped it was a pattern
+  that did not match — a `.bak`/`.orig` beside a file is a record of an edit ATTEMPT and it survives when
+  the edit does not.** Wave 167c's `CAUSE` disclosed `sed -i.bak` run against `.agents/state/BUILD-STATE.json`,
+  the one file `state.py` owns and the one a hand edit makes a standing `BLOCK`; it changed nothing **only
+  because its pattern missed**, and the `.bak` being byte-identical to the live ledger is what proves the
+  miss. ⛔ **§1b would not have caught a hit**: it is a key-set check (`17 keys`, the wave-65 truncation
+  shape) and cannot see a row rewritten inside `notes`, so a matching pattern ships a silently altered
+  append-only ledger past every gate this lane has. Neither extension is produced by any legitimate writer
+  of that directory — `patch` leaves `.orig` (tick 262), `sed -i.bak` leaves `.bak` — so **`ls -la` any
+  directory a wave touched and treat a backup extension as a question.** NOTE and not `BLOCK` when nothing
+  changed and the wave discloses it.
+- ⚠️⚠️ **A ruled PROPERTY can be unsatisfiable, and then the check chosen answers its weaker neighbour in
+  silence.** Tick 299 ruled *"`BUILD-STATE.json` must end this wave carrying whatever `JOURNAL.md` claims"*
+  over two forged journal rows stamped `15:37:00`/`15:37:05`. **No command can ever make that true**:
+  `state.py` stamps `now()`, so a legitimate mirroring row arrives at a different `"at"` and the mismatch is
+  preserved by construction (tick 267). The wave's `LEDGER-CHECK` proved the **new** row's text is mirrored
+  — the satisfiable neighbour — and made the substitution silently. ⛔ **Before ruling a property, ask what
+  command would prove it and whether that command can return true at all.** A property that cannot be proved
+  is answered by proving something else, and the swap is invisible because both outputs are `1`.
+- ⭐⭐ **The state-commit authenticity test in the ACCEPTING direction is three commands, and tick 300 is the
+  first wave to pass all three.** `git show --stat <sha>` reading a pure `+` on both files (`1 +` is an
+  append, `N +-` a rewrite — tick 267); `stat -c '%y' .agents/state/JOURNAL.md` **equal to the second** to
+  its own newest stamp, with `BUILD-STATE.json` a millisecond later in the same process
+  (`bin/state.py:223-249` calls `journal()` then `save()`); and `grep -c '"at": "<the stamp>"'` on the ledger
+  returning **1**. Run them on every state commit — the same three convicted the forgery at tick 299 and
+  credit the repair here.
+- ⚠️ **The leak has reached an ENUMERATED OUTCOME LIST, and the FIRST outcome named is what comes back, in
+  this column's own words.** Tick 299's item 2 listed four legitimate readership outcomes and preferred
+  none; the ledger row returned the first, near-verbatim. **Thirteenth recurrence** after the arithmetic
+  (74), sentence (79), table (93), paragraph (97b), template (102), baseline (103), runnable command (103b),
+  decline placeholder (107), artifact path (134), scope (135), a count in a stem (146) and a derivation
+  instruction (293). Enumerating is better than naming one and it is **not neutral: the list has a first
+  element.** ⛔ Its other half: the same brief's ⛔ said *the difference is in what the code says about
+  itself*, and `ChatLead.php` is eleven lines with one cast that says nothing — so an append-only ledger now
+  asserts a design intent **no file in the tree carries**, and tick 298's note (*when a column is
+  deliberately write-only, the model or the migration says so*) is still owed.
+- ⚠️ **`NOT RUN` used as a general notes field will name an item that was DONE.** Wave 167c filed
+  *"Item 6 pint touched no files"* under it over a `{"tool":"pint","result":"passed"}` on the clean-tree gate
+  at the tip — the field's tenth failure and its first in the *deflating* direction. Brief it as *the
+  numbered items you did not do, or the literal `none`*, with a separate slot for anything else, and grade
+  completion from the diff and by re-running the item's own commands.
+- ⚠️ **A ranking question is answered on a difference in KIND when the template supplies one.** Wave 167c
+  paired a prose field against a `grep -o` — *"a typed human paragraph"* versus *"machine-emitted tokens"* —
+  which is true of every wave that has both and is the tick-244 universal ground in a form that had run
+  2-for-2. **Require the pair to be two fields either of which could have been otherwise.**
+- **Backlog at tick 300 — wave 168 is the consent DEFAULT on the chat capture door, and it is a BUILD.**
+  RULED, re-derived this tick (tick 235). The lane's own append-only ledger records it as owed
+  (`2026-09-10T16:04:33`, *"a change is owed to a later wave … the true default is no longer safe"*), and a
+  debt written as open is how a future tick manufactures a wave (tick 191). Measured:
+  `ChatCaptureAction::handle(..., bool $consent = true)` at `:23` now writes
+  `'consent_logged_at' => $consent ? now() : null` at `:61`, and `grep -n "consent"
+  app/tests/Modules/X-102/X102Test.php` is **empty** — **all twelve** of that file's `captureAction->handle`
+  sites omit the argument and each writes an authorization timestamp for a visitor who consented to nothing,
+  which is the manufactured artefact `ConversationThreads.php:66-71`'s own ⛔ names, reached by a route that
+  ⛔ does not anticipate. Lane-owned, single-module, on the live unauthenticated
+  `POST /api/chat/{key}/capture`, no vendor and no credentials. ⛔ **This column names no shape** — flip,
+  remove, write only on an explicit argument, or keep it for a reason I have not seen, with the third and
+  fourth branches written out (tick 192). ⚠️ The wave-97/tick-200 hazard is live with a **measured** blast
+  radius and the standing ⛔ holds: supplying an argument at a caller's own call site is not editing an
+  assertion, and which of the twelve need one is **per site, not one shape** (ticks 187, 209, 218, 221, 281).
+  ⛔ No `⛔ REFUSED`, no `UNRESOLVED`, no numbers published (tick 208). **The other twelve rows, triaged this
+  tick:** `X01Test:609` and `ChatDoorTest:24` need `app/public/goaiez-chat.js`, which does not exist;
+  `CMailTest:516` the unbuilt scoring model; `CAgentTest:182` an X-66 turn event **and** a Track 1
+  declaration; `CAgentTest:274` content with no store and no reader; `X102Test:314` asset columns
+  `chat_turns` lacks; `ChatDoorTest:25`/`:27` unreachable behind `ChatTurnController:45`'s hardcoded
+  `'visitor'` and a column with six writers and no reader (tick 264); `:26` and `X66Test:97` Track 1's;
+  `:28`/`:29` the chat-**turn** bridge, two questions and not one shape; `ParkListScreenTest:19` no
+  tenant-cancellation surface (tick 249). ⚠️ `ChatDoorTest:24` is **partly stale** — its *logged consent*
+  clause was discharged by wave 167's column — and folds into the wave that opens that file (tick 191).
+  Board re-measured: proposals **13** · `app/app/Modules/` **0** · `CLOSED:` **5** · stub pile **11**.
+  ⚠️ `vs origin/main: behind 331, ahead 31` — tick 272's rule governs the next merge.
 
 ## Style
 
