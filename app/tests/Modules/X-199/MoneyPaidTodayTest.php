@@ -102,6 +102,37 @@ class MoneyPaidTodayTest extends TestCase
             ->assertSee('Total value of invoices settled today')
             ->assertSee('An invoice part-paid earlier counts here in full')
             ->assertDontSee('Total Received Today');
+        Carbon::setTestNow();
+    }
+
+    public function test_the_paid_today_list_is_ordered_when_every_row_shares_one_paid_at(): void
+    {
+        $base = now()->startOfDay()->addHours(10);
+        Carbon::setTestNow($base);
+
+        $biz = TestCase::provisionTenant(['name' => 'Order Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $customer = PersonFactory::new()->create(['business_id' => $biz->id]);
+
+        foreach (['INV-PT-A', 'INV-PT-B', 'INV-PT-C'] as $number) {
+            Invoice::create([
+                'business_id' => $biz->id,
+                'customer_id' => $customer->id,
+                'invoice_number' => $number,
+                'total_cents' => 90000,
+                'paid_cents' => 90000,
+                'status' => 'paid',
+                'paid_at' => $base,
+                'due_date' => $base->copy()->toDateString(),
+            ]);
+        }
+
+        $owner = User::findOrFail($biz->owner_user_id);
+
+        Livewire::actingAs($owner)->test(MoneyPaidToday::class, ['businessId' => $biz->id])
+            ->assertOk()
+            ->assertSeeInOrder(['INV-PT-C', 'INV-PT-B', 'INV-PT-A']);
 
         Carbon::setTestNow();
     }

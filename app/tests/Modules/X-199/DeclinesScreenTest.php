@@ -436,7 +436,7 @@ class DeclinesScreenTest extends TestCase
 
     public function test_the_declines_list_is_ordered_when_every_row_shares_one_timestamp(): void
     {
-        $base = Carbon::parse('2026-09-09 10:00:00');
+        $base = now()->startOfWeek()->addDays(3)->setTime(10, 0);
         Carbon::setTestNow($base);
 
         $biz = self::provisionTenant();

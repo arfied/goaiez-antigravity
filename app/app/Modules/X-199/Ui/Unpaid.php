@@ -61,7 +61,8 @@ class Unpaid extends Component
         } else {
             $query->whereNotIn('status', ['paid', 'draft'])
                 ->whereRaw('paid_cents < total_cents')
-                ->orderBy('due_date', 'asc');
+                ->orderBy('due_date', 'asc')
+                ->orderBy('id');
         }
 
         $invoices = $query->get();
