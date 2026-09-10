@@ -97,6 +97,10 @@ final class UnifiedInboxManager
                 messageSnippet: substr($body, 0, 50)
             ));
 
+            // Safe to call recordInbound (which relies on the ambient tenant without setting it) because
+            // the Person find-or-create above triggers the `people` table's RLS policy (ENABLE + FORCE ROW LEVEL SECURITY
+            // with a matching WITH CHECK in 2026_08_30_000001_create_x121_noun_tables.php:203). If the ambient
+            // tenant is absent or mismatched, the Person write fails before reaching here.
             try {
                 app(ConversationThreads::class)->recordInbound($conversation, $body);
             } catch (\InvalidArgumentException $e) {
