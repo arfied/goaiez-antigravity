@@ -42,6 +42,8 @@ class TicketScreenTest extends TestCase
             'review_request_id' => $review->id,
             'subject' => 'Subject',
             'status' => 'open',
+            'arrived_at' => now(),
+            'sla_due_at' => now()->addHours(2),
         ]);
 
         Livewire::test(Ticket::class, ['ticketId' => $ticket->id])
