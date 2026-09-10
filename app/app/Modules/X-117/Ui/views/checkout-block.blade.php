@@ -58,7 +58,7 @@
                 <li>
                     <span>{{ $o->order_number }}</span>,
                     <span>{{ number_format($o->total_cents / 100, 2) }}</span>
-                    <x-ui.status-pill :state="$o->status === 'paid' ? 'ok' : 'attention'" :label="$o->status" />
+                    <x-ui.status-pill :state="$orderStatusPillStates[$o->status] ?? 'unknown'" :label="$orderStatusLabels[$o->status] ?? $o->status" />
                     @if($o->status === 'paid' || $o->status === 'pending_payment')
                         <x-ui.button size="default" variant="secondary" wire:click="cancel({{ $o->id }})">Cancel</x-ui.button>
                     @endif

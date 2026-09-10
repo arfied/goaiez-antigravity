@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\CBilling;
 
+use App\Enums\SubscriptionStatus;
 use App\Models\Subscription;
 use App\Models\User;
 use App\Modules\CBilling\Domain\BillingLedgerEngine;
@@ -102,7 +103,6 @@ class MrrScreenTest extends TestCase
 
         Tenancy::set($biz->id);
         Tenancy::setUser($owner->id);
-
         TrialLimit::create([
             'business_id' => $biz->id,
             'daily_topup_ceiling_cents' => 5000,
@@ -114,5 +114,22 @@ class MrrScreenTest extends TestCase
             ->call('topup')
             ->call('topup')
             ->assertSee('would pass the daily top-up ceiling on this account');
+    }
+
+    public function test_mrr_names_the_subscription_state_in_the_owners_words_and_never_the_enum_token()
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        Subscription::where('business_id', $biz->id)->firstOrFail()->forceFill([
+            'status' => SubscriptionStatus::PendingCheckout,
+        ])->save();
+
+        Livewire::actingAs($owner)->test(Mrr::class)
+            ->assertOk()
+            ->assertSee('checkout not completed')
+            ->assertDontSee('pending_checkout');
     }
 }
