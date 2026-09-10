@@ -17842,3 +17842,213 @@ reads the live PostgreSQL catalog **and** the cluster-wide `pg_roles` (315).
   same absolute path is accepted (217, 310). ⛔ A `$` in a grep pattern is refused even single-quoted (305); the
   PCRE hex form `grep -nP 'trim\(\x24phone\)'` is accepted. ✅ Tick 322's placeholder check run before appending
   and **read, never counted** (323) — zero hits.
+
+## ⛔ A NAME'S MEANING READ FROM ITS **PROVENANCE** RATHER THAN ITS **TEXT** — tick 330's rename is RETRACTED, and the brief that silently dropped it was right by accident (tick 331)
+
+Tick 330 ruled `ChatDoorTest.php:337 test_blank_capture_phone_returns_400` a *"stale name over a surviving
+body"* and prescribed **rename only**, on two grounds. SITE-202's brief carried a *comment on the guard* the
+ruling never named and **dropped the rename entirely**. Measuring the test at source, both grounds fail.
+
+**① "What is false is its NAME, which claims the controller's blank guard delivers the 400."** The name asserts
+*a blank capture phone returns 400* — a statement about the **endpoint**, which is **TRUE**. It names no guard,
+no clause and no mechanism, and no test name in that file does. ⭐ **I read the name's meaning from what it was
+WRITTEN FOR rather than from what it SAYS**: SITE-201 added it *for* the trim clause, so it read as being
+*about* the clause. This lane's own discriminator answers it directly — *does the name describe what the body
+asserts?* Body: POST `phone => '   '` → 400 + `{"error":"Bad Request"}` + zero `ChatLead`. Name: "blank capture
+phone returns 400." **Match.**
+
+**② "It is exactly what breaks if anyone adds `phone` to `TrimStrings::$except`."** Measured against tick 330's
+own middleware finding, in both configurations:
+
+| | `'   '` arrives as | first true clause | status |
+| :-- | :-- | :-- | --: |
+| today | `null` (TrimStrings → `''` → ConvertEmptyStringsToNull) | `! is_string($phone)` | **400** |
+| `phone` in `$except` | `'   '` | `trim($phone) === ''` | **400** |
+
+> ⭐ **A test green under BOTH configurations does not DETECT the configuration change — it proves the OUTCOME
+> is INVARIANT to it. The two are opposite in what they license: a sentinel's green means "the config has not
+> changed"; an invariant's green means "the outcome holds whatever the config."**
+
+⛔ **The operative half: tick 330 justified KEEPING the guard partly on the ground that this test would notice
+its becoming live, and that ground was transcribed into the permanent record** — the note's refusal list reads
+*"deleting the new test, which is the only thing in the tree that would notice a TrimStrings except list
+change."* The guard is still kept (199's law, and `750eabb9` now writes the reason at the guard itself) and the
+test is still kept (it pins a real endpoint invariant); only the **reason** was wrong.
+
+⛔ **RULED: no third `state.py` note and no rename.** `state.py` has no withdraw (210), this lane wrote a
+correcting note about the same `decided` row in the same tick, a third row compounds rather than corrects, and
+tick 259's discriminator answers it — *does a careful reader of the record alone reach the wrong conclusion?*
+**No**: the conclusion (keep both guards, keep the test) is right, only a subordinate reason is wrong, and the
+sentinel it claims exists is one nothing needs, so **no hazard is hidden**. The correction lives in `CLAUDE.md`,
+which per 293 is the copy that survives.
+
+⚠️ **Note the polarity — it is tick 293's inverse.** There a **prediction** was paraphrased into `CLAUDE.md`
+while `BRIEF.md` held the right version, and 293's law is *the digest is the copy that survives, so the WRONG
+version is the durable one.* Here the **ruling** was wrong in `CLAUDE.md` and the **brief silently dropped it**
+— the ephemeral artefact was right, the durable one wrong, and the cost was zero **only because the omission
+happened to be the correct act**. ⛔ **That is luck, not process.** A brief that silently drops a ruled item is
+a defect whichever way the ruling turns out, and the check is one comparison of the ruling's artefact list
+against the brief's item list, made before dispatch.
+
+## ✅ CLEAN SWEEP — the population tick 330's middleware finding implies is EXACTLY ONE (tick 331)
+
+**A clean sweep is a result and must be written down** (280), or it is re-run as backlog three ticks later —
+and the disconfirming members are what make the closure re-checkable rather than re-arguable. The population is
+*route-level tests posting a blank or whitespace value*, measured in two halves (22 blank fixtures across the
+seven owned test dirs; `postJson` 13/0/0 and `this->post` 12/0/0 across ChatDoorTest / X157Test / X155Test):
+
+| fixtures | route-level? | verdict |
+| :-- | :--: | :-- |
+| `ChatDoorTest.php:350` `'phone' => '   '` | ✅ | ⛔ **the one**, tick 330's, handled |
+| `X155Test.php` ×16 | ❌ — **zero** route calls in that file | ✅ LIVE, action-level |
+| `X157Test.php` ×12 route POSTs | — | ✅ carries **zero** blank fixtures |
+| `X-176` titles/slugs · `X-157` `service_name` · `X-137` `fallback_number` | ❌ database | ✅ LIVE — nothing transforms a column out of Postgres |
+
+⭐ **The X-155 half settles what tick 330 left open.** `given()`'s blank arm is dead *through the HTTP route*
+for exactly SITE-201's reason, and is **genuinely exercised by its sixteen action-level fixtures**, so
+SITE-153's and SITE-172's assertions are real. The two sit either side of tick 273's line — *a test that
+exercises a method nothing calls proves the method, not the clause* — here the method **is** called and the
+**branch** is unreachable from the only production caller, which is the same shape one level in.
+
+## ⛔ REVIEWS CLOSED THE SAME X-121 BOUNDARY LINE — the precedent does NOT transfer, and the house pattern is now measured at SIXTEEN modules (tick 331)
+
+`origin/track/reviews 64f6cab6` routes `Person::find($customerId)` through `EntityReadAction`, closing the
+checker line this lane filed at SITE-196 — so a tick seeing it would copy it. Measured at source rather than
+adopted (223 — **measure a technique's PRECONDITION before copying another lane's**): reviews' use was a
+**READ BY ID**; **every** Person use in this lane's two files is a **create-or-update keyed on
+`['business_id','phone']`** (`X-102:36` `updateOrCreate`; `X-155:54/55/95/96` `new Person` / `firstOrNew`), and
+`EntityReadAction`/`EntityWriteAction` both take an **existing id** (324). ⛔ **Owner ruling 8 already ruled
+this exact disposition** — *"X-121 exposes no create path (option b); the raw insert is not accepted."*
+**Reviews solved a read; this lane needs a create.**
+
+⭐ And the live checker states the house pattern exhaustively for the first time: **`X121` is imported across a
+module boundary by SIXTEEN modules in every lane** — C-Ai, C-Reviews, X-01 (×6), X-10, X-102, X-135, X-143,
+X-155, X-16, X-160, X-186, X-199 (×3), X-211 (×2), X-212. Ticks 279 and 324 estimated it by grep. **SITE-196's
+filing STANDS, strengthened**: a design-level absence of a create path in Track 1's spine, not a defect of this
+lane. ⛔ Advisory to Track 1, never a parallel fix.
+
+## ✅ Tick 326 CONFIRMED — a `note` does not move the fourth surface's owned-id count (tick 331)
+
+Tick 326 measured that `state.py note` embeds the module id **inside the note STRING** rather than as a
+`"module"` key. First confirmation: SITE-202 wrote a note and `HEAD` reads **195**, byte-identical to
+`origin/track/site`'s 195. ⛔ Both readings of that surface are narrower than they read — 173's **fall** test
+and 323's **rise** reading each detect a *keyed row*, and neither can see a sibling writing a **note** keyed to
+one of our ids, which is the instrument this lane reaches for most.
+
+## Tick 331 — measured, for the record
+
+- **SITE-202 PASS-WITH-NOTES**, both notes the supervisor's defects: `750eabb9` (a nine-line comment on
+  `ChatCaptureController`, +9) and `45c3ba5f` (`.agents/state/` only, +5). Named-path commits, One Rule clean.
+  ⭐ The comment is tick 199's law executed — it records the **defect** (the middleware nulls a blank before the
+  guard sees it), names what would make the clause live, and says why deletion is a weakening — **at the line a
+  reader would otherwise misread**, which is better than the rename the ruling asked for.
+- **§7 `tests 2440 · passed 2432 · FAILED 6 · errors 2`** on `45c3ba5f`, reconciling ✓ (226), ⭐
+  `a_published_site_carries_all_seven` **ABSENT — J11 GREEN**, **byte-identical to the coder's** including both
+  sets ⇒ tick 255's borrow ran at a **zero delta** and its falsifier **FIRED and PASSED**, the ninth strong
+  resolution. Diff adds **zero** `public function test`. Both intermittent **CAUSES** absent (Authorize.Net
+  `E00040`; Postgres `SQLSTATE[42501]` — 311's cause-keying), so the agreeing integer is *a property of which
+  causes fired, never of the comparison* (302).
+- **Doctor, live, twice**: `integrity clean · boundary 50 · contract 85 · citation 3 · schema 16 ·
+  capability 207 · anchor 128 · journey 3` · **492**. **No stage moved**, either direction — a note wave's whole
+  pass condition (209). All four checks pass and **tick 330's `ok`-prefix defect is ABSENT**: extrinsic stamp
+  equality *stated as a comparison* (305), SUM 492 in both report blocks and both of mine (285), `ok` only on
+  `integrity … clean` (292), nonce differing at four of seven **including all three long stages** (249, 311,
+  318). Tick 284's control fired beside it — my own two runs differ at four positions on an unchanged tree.
+- **Census `4 · 1 · 2 · 3`** — a MISS (`main 6630dc29 → da5772af`, `money 97486e13 → 632a357c`,
+  `reviews 8770a14f → 6bab3c86`), halves `--full-history` (314), `pwd` first (209), drift signature **absent**
+  (three pathspec halves `4 · 1 · 2` against a pathspec-free complement of `3` — the *split* is the signature,
+  never either number), previous value read from `REVIEWS.md` (301). **Byte-identical to ticks 329/330.**
+  Half 1 per partition (189): **reviews ×2**, the act-and-its-own-retraction pair (329), **re-measured net-zero
+  against reviews' MOVED tip**; **stages ×2**, merges of main. **No violating partition on any surface.**
+- ✅ **Tick 236's check — Track 1's TWELFTH merge of this lane, TWELFTH clean result.** Second parent of
+  `9f2b0ca1` read with `rev-parse ^2`, never off the subject (222) → `2ef39957`. `git grep` on the ref, never a
+  stat (163): `deploy_hash 2 · EdgeProvisionAction 2 · PageVersionAction 3 · FormReadAction 2 ·
+  destination_url 2 · RefreshesTenantDatabase 2`. ⭐ **`RefreshesTenantDatabase` ARRIVED** — tick 329 predicted
+  it *"absent and not lost — unmerged, not dropped"* (258), the second confirmation-by-arrival of that rule
+  after tick 327's `PageVersionAction`.
+- **Fourth surface, both directions** (173, 323), against each branch's own bound and never HEAD: `main 14 ·
+  money 16 · pricebook 14 · reviews 15 · sixty 30 · stages 41 · ui 16 · site 195 · HEAD 195`. **No branch below
+  main's 14** ✓. ⚠️ **Main still carries 14 after TWELVE merges of `track/site`** — 264 stands.
+- **§1 by ARITHMETIC** (225): printed `behind 153, ahead 5`; post-fetch `rev-list --count` reads **153** and
+  **5**, identical, because `refs/remotes` is a live feed of the box's push traffic (220). `ahead 5` =
+  SITE-201's two + tick 330's notes + SITE-202's two ✓.
+- **Closing tip re-read — NULL**, left **literally blank until the command returned** (257). Eighteenth null
+  against seventeen firings. **Tips** (192): `main da5772af` · `money 632a357c` · `pricebook 74f5b79b` ·
+  `reviews 6bab3c86` · `sixty a8b05a47` · `stages ea356afd` · `ui bf42fec7`.
+- ✅ Healthy branches (221): tick 290's `--ruling` correction — **nineteenth** consecutive clean JOURNAL entry;
+  302/322's ground-value grading, so this seat's own notes fired no false stop — **ninth consecutive wave clean
+  through item 0**, and ⚠️ a run of nine is still not a trend (188, 250); 287's ordering (gate after the final
+  commit, against a named sha); 245's state-commit-LAST; 293's pint path; **326's
+  grade-the-RECORD-never-the-summary**, the JOURNAL entry read at source with `git show` rather than graded
+  from the report's summary; 257's procedure, gate first and §7 last.
+- ⚠️ **Case (a) excluded on BOTH halves** (179, on a wrapped pid space): `coder.pid` **3233217** has an empty
+  `readlink` **and** is absent from `pgrep agy`, whose two pids resolve to `…/grs-antig` and `…-reviews`.
+- ⛔ **Shell forms refused this tick**: `readlink /proc/$(cat …)/cwd` — *command_substitution*;
+  `grep -c -F -e '->post' -e '->get'` and any pattern carrying a **parenthesis** (286); `grep -rn -E "'( +|)'"`
+  — ugrep rejects an **empty alternation**, so use two `-e` patterns. ✅ Tick 322's placeholder check run before
+  appending and **READ, never counted** (323).
+
+## ⛔ RULED at tick 331 — SITE-203: THE CHAT DOOR LOOKS A SESSION UP BY TOKEN ALONE, AND RLS IS THE ONLY BRACE
+
+The X-102 door arrived with tick 317's take and per 195 this lane reviews it as its own. Three waves have swept
+it — SITE-199 (type), SITE-200 (`RefreshDatabase`), SITE-201/202 (blank) — and **tenancy has never been asked
+of it.** Measured at source:
+
+```
+ChatTurnController.php:36     ChatSession::where('session_token', $sessionToken)->first();
+ChatCaptureController.php:49  ChatSession::where('session_token', $sessionToken)->first();
+grep -c "where('business_id'"  → 0 and 0
+ChatCaptureController:56-57   businessId: $businessId  ← the PIXEL KEY
+                              sessionId:  $session->id ← a GLOBALLY-scoped token lookup
+routes/api.php:156-166        POST /chat/{key}/turn · /capture — throttle only, no auth, PUBLIC
+…000037…:18                   $table->string('session_token')->unique();
+…000037…:42-51                chat_sessions: ENABLE + FORCE RLS, tenant_isolation
+```
+
+⭐ **The token is one credential and the business is a different one, and nothing joins them.** `session_token`
+is `unique()`, so a global lookup cannot collide *by accident* — it names exactly one session — so the only way
+to reach another tenant's is to **present its token deliberately** on a public unauthenticated endpoint. That
+is an attack shape, not an accident shape, and it is the inverse of tick 323's `page_versions`, whose key was
+`'commit_'.Str::random(16)`, minted internally and never attacker-supplied.
+
+⛔ **The app-level clause is ABSENT, so RLS is the ONLY brace.** Every other public seam in this lane has
+both — `X-157`'s three endpoints (SITE-180/189), `CallAttributeAction`'s seven scoped queries (308),
+`FormValidateAction:20` and `FormCaptureAction:50 :88` (SITE-192).
+
+**RULED: scope both lookups by `business_id`, because tick 322's own closing sentence is the whole argument —
+*"RLS's enforcement is a property of the DATABASE, so a deployment made without `runtime/goaiez-grants.sql` has
+no second brace and the clause is the only thing that travels with the code. What changes is that its
+load-bearingness is not demonstrable at that seam."*** The policy is decided four times over in this lane; the
+fix **decides nothing new** (277/295), and it makes the door agree with its siblings (296's argument verbatim).
+
+⛔ **THE FALSIFIER CANNOT REDDEN, AND THE BRIEF SAYS SO RATHER THAN MANUFACTURING ONE** (322; 282 — *a clause
+that cannot be falsified is a design property to STATE, not an omission to paper over*).
+
+⭐ **What the wave measures instead is the open half of OWNER ACTION 1.** State 1 — the cross-tenant POST
+against the **untouched** tree — asks whether RLS refuses on a **third** table. Three branches, **none a stop**
+(268, 304): **404** ⇒ defence-in-depth and tick 322's attribution gains a third table; **201/200** ⇒ ⛔ RLS is
+**not** refusing here and the fix closes a **live** cross-tenant write; anything else ⇒ report the class, the
+message and pest's `line` field, which is the **method's declaration** line (268) and therefore the free
+tree-witness (298). **The ruling holds under either outcome, which is what makes it a RULING and not a
+prediction** (304).
+
+⭐ **One clause IS falsifiable and it goes FIRST** (308, 248): a **same-tenant control** asserting the door
+still works for its own session — scope to the wrong id and it reddens. So the wave gets a real red transition
+on the fix's *correctness* while its *necessity* stays undemonstrable, and the block must say which is which
+(230; 270).
+
+⛔ Six alternatives refused, each of which would pass every gate: removing the RLS policy to make the falsifier
+redden; asserting RLS itself (reserved, and a test pinning it invents a policy for a shared layer — 295, 300,
+303); guarding inside `ChatCaptureAction` (a reader compensating for its caller, leaving `ChatTurnController`
+exposed — 277, 278); scoping only one controller (241, and the 246 divergence rebuilt inside one module); a new
+status code (the endpoints already answer 404 at `ChatCaptureController:52`; a new one mints a public behaviour
+nothing asserts — 240); any new `G##-##` literal (240).
+
+⚠️ **BOUNDED** (230): the fix makes each controller enforce what its sibling seams already enforce, whoever
+calls it. It does **not** claim production is exposed today — `EdgeDeployAction:195` emits a bare
+`<div class="chat-widget-container"></div>` with no script (327), and RLS is measured enforcing on two sibling
+tables. ⚠️ `ChatStartController` is **out of scope and measured so**: it creates a session rather than looking
+one up. Per 224 the branch is a third — **the door is open and the room is empty.**
+
+Per tick 293 this entry states the **ruling and the falsifier and no prediction**; the outcome is the next
+tick's to write.
