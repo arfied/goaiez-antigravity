@@ -8963,3 +8963,88 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     census confirms is already closed: only `payments` and `businesses` carry a currency, only
     `SameAccount` aggregates `payments`, and it groups by currency (ruling 152(b)) — every other
     aggregate in the lane sums a table with a single implicit currency.
+330. **⭐⭐ Two screens EXCLUDE an invoice once it has a plan or a package, and neither WRITE enforces
+    it — the exclusion list is the intent, the table has no constraint, and a second press is the
+    reachable case (RULED by the lane supervisor 2026-09-10 05:0x, briefed as MONEY-174).** Ruling 319
+    established that four findings of one shape found incidentally is the signature of an unenumerated
+    population. **Repeat-press durability has FIVE** — ruling 35 (a dismissal that lived in a component
+    array), 36 (two clicks, two pay links, the second voiding what the owner already sent), 229 (a
+    check-then-act across a live vendor call), 240 (a capture race), 304 (a replay guard on one of two
+    checkout paths) — and it had never been enumerated. Enumerated now, by the only instrument that can
+    answer it: **the 25 `::create(` sites in the lane's eight `Domain/` and `Actions/` trees**, each
+    traced to the button that reaches it and asked *what does an identical second press do?*
+    ⭐ **Twenty-three are answered, and the answers are the corroboration** (ruling 324's positive
+    control, in the form the population itself supplies): eleven are **unreachable** — `InvoiceDraftAction`
+    (170, 186), `InvoiceEngine`'s four (issueInvoice has no production caller, 170), `ReconciliationRun`
+    (51), `CheckoutEngine:79,:88` (304), `CardStoreAction` (119), `Dispute::create` (79),
+    `AccountingConnectAction` (73a), `AccountingSyncAction`'s two (81); `GatewayEngine`'s three are not
+    button-reached and are ruling 240's own measured subject; and the button-reached remainder is
+    **guarded or legitimately repeatable** — `CheckoutEngine:205` by ruling 45's one-shot nonce
+    (`:164` refuses a token an order has already used), `saveTerm` by `updateOrCreate`, `applyLateFee` by
+    ruling 221's `FeeAtCapException` (*which is itself a repeat-press fix — "the cap bounds each PRESS of
+    the button, not the invoice"*), `pick` by being a read, and X-201's `addEvidence`/`recordOutcome` by
+    ruling 96, since `disputes` has no production writer (79) so no dispute can exist for a button to act
+    on. **Two are neither.**
+    **`ArEngine::offerPlan():157` and `packageForCollections():261` are plain `PaymentPlan::create` and
+    `ArCollectionsPackage::create` with no check for an existing row**, over tables
+    (`2026_08_30_000027_create_x211_ar_tables.php:28-37`) carrying **no unique constraint** on
+    `(business_id, invoice_id)`. ⭐⭐ **And both screens state the intent one method away.**
+    `PaymentplanBuilder::render():77-80` reads every plan, plucks `invoice_id`, and passes it as
+    `openUnpaidForBusiness($bizId, $planned)`'s exclusion list; `CollectionsPackagePreview::render():55-58`
+    is the byte-identical idiom over packages. So a planned invoice **leaves the offerable list** — the
+    third mount in `PaymentplanBuilderScreenTest:98-99` asserts exactly that, *"Nothing to split"* — which
+    means the owner cannot ask for a second plan **deliberately**, and therefore every second call is a
+    double-click or a stale tab and is **always accidental**. The module wrote down that an invoice gets
+    one plan, in the query, and never enforced it in the write.
+    ⭐ **The asymmetry inside `recordReason` is the evidence the module thought about this and stopped
+    one method short:** `:301` creates the `reason_recorded` row with a plain `create` — correct, two
+    reasons over time are two real events — while `:309` writes the escalation with **`firstOrCreate`**,
+    deliberately one per invoice. One engine, two idioms, chosen per meaning; `offerPlan` and
+    `packageForCollections` got the wrong one of the two.
+    **RULED: each refuses before its first write, in the module's own vocabulary** — a dedicated
+    exception class beside `FeeAtCapException`, `FeeWithoutTermException`, `NoResolutionAttemptException`,
+    `PlanPastThresholdException` and `UnreferencedPaymentException`, its message naming the invoice and the
+    existing row and ending *"Nothing was stored."* / *"Nothing was packaged."* like every sibling.
+    ⭐ **The guard idiom is already in both methods:** `offerPlan:145` reads `ArPlanTerm::where(...)->first()`
+    and `packageForCollections:233-235` runs three `exists()` queries; each new guard is that same shape one
+    line further. ⚠️ **Both go before the first write**, preserving `offerPlan:144`'s own comment *"The throw
+    is before the first write"* — which ruling 216 made TRUE by removing a `firstOrCreate`, and which a
+    write-before-throw would falsify a second time.
+    ⛔ **NOT `firstOrCreate`**, and the reason is ruling 36's: a stale tab may carry *different* terms, so
+    silently returning the old plan makes the component print *"Plan recorded on INV-A1: 3 monthly payments"*
+    for a request of four — a lie about an agreement, which is worse than the duplicate. A refusal names what
+    exists and stores nothing.
+    ⛔ **NO migration and NO unique index**, on rulings 240/256/327's measured reasoning re-applied:
+    `UniqueConstraintViolationException extends QueryException extends PDOException extends RuntimeException`,
+    so a raw `23505` would reach `PaymentplanBuilder::offerPlan:65`'s `\Throwable` tail and print
+    `SQLSTATE[23505] …` to an owner — ruling 100's *"is that actually why it refused?"* and ruling 206's
+    refusal to let a framework message be a refusal; ruling 41 part 3 forbids editing that migration; and
+    ruling 256 measured that a racing row cannot be committed from a second connection under
+    `Pest.php:84-86`'s `RefreshesTenantDatabase`, so the index half would ship **unprovable**. ⭐ **The
+    application guard closes the whole of the MEASURED harm — a second press — and needs only a second
+    sequential CALL to prove, which is precisely what rulings 240, 256 and 327 could not obtain.** The
+    residual true-concurrency window stays `UNRESOLVED` against the same harness blocker, on TRACK 1
+    ACTION 13's list beside `orders.order_number`.
+    ⛔ **The components are NOT touched** (ruling 47's companion — a file is edited only for the reason the
+    brief names): both `\Throwable` tails already render *"We could not offer that plan: "* and *"We could
+    not package that: "*, and **both prefixes are TRUE of this refusal**, unlike ruling 229(b)'s, where the
+    prefix asserted an outcome the catch could not know.
+    ⚠️ **Blast radius measured with interior fragments (rulings 46, 86, 146) — ZERO assertions move, and it
+    is measured rather than hoped.** The sweep is **15 lines**. `PaymentplanBuilderScreenTest` calls
+    `offerPlan` on **the same `$inv1->id` twice**, at `:75` and `:85` — which looks fatal and is not: `:75`
+    passes 12 installments and is **REFUSED** by `PlanPastThresholdException`, and `:79` asserts
+    `PaymentPlan::count() === 0`, so **no plan exists when `:85` runs** and the new guard cannot fire.
+    `X211Test:343` and `:361` package **different** invoices. `EvidenceRecoveryCommand:78-79` issues a
+    **fresh** invoice before `:84`, and `:91` packages a second fresh one, so neither evidence run can trip
+    the guard on a reused tenant (ruling 278).
+    ⚠️ Both proofs are **new** methods: no existing test calls either method twice on one invoice, so none
+    can see the defect (ruling 68), and the refusal sentences are asserted by nothing (ruling 70).
+    ⚠️ **Ruling 318 binds this wave** — two new classes under the classmapped `app/app/Modules/`, so
+    `composer dump-autoload -d app` runs before the first filtered pest run, and the failure it prevents
+    lands **inside the wave's own new test**, where it reads as the new test being wrong.
+    ⚠️ **Recorded and deliberately NOT briefed, with its reason** (ruling 327's outcome shape):
+    `ArEngine::logOfflinePayment():197` is also a plain `create` reached from a button, and it is **not** the
+    same finding — two offline payments of one amount are a legitimate domain event, `AgeingByReason::logPayment:115`
+    clears the reference on success, and whether a double-click can carry the same reference twice depends on
+    Livewire request-queue semantics **this seat has not measured**. ⛔ A member whose harm rests on an
+    unmeasured mechanism is recorded, never briefed (ruling 193).
