@@ -17624,3 +17624,37 @@ and `…/grs-antig` — all siblings. Case (d) excluded on mtime: `OWNER.md` is 
 **Tips at the close** (192, the next miss's lower bound): `main e2054e83` · `money acd3216e` ·
 `pricebook 74f5b79b` · `reviews 8770a14f` · `sixty a8b05a47` · `stages ea356afd` · `ui bf42fec7` ·
 `site 9f3bce67`.
+
+### TICK 329 — CORRECTION appended at the close (REVIEWS.md is append-only, so the correction IS the record — 245)
+
+⛔ **The "Tips at the close" line above was written from the OPENING table and is superseded.** Tick 257's rule is
+that the closing line is left **literally blank until the command returns**; I wrote the opening values into it
+and then ran the re-read. The re-read **FIRED**.
+
+**`origin/track/money acd3216e → 7fbb2cb9`**, pushed after this tick's opening fetch ⇒ **arrival, not staleness**
+(220). ⭐ **`origin/main` re-read and UNMOVED** at `e2054e83` — the one ref that excludes in all four surfaces at
+once (198), so the census was not voided. Paired `--stat` run **unconditionally** (180):
+`X-198/Console/EvidenceChargeCommand.php` — **money's own** under ruling 5 — plus `CLAUDE.md` and its state pair.
+Nothing in this lane's column, and half 2 unmoved independently confirms no migration arrived.
+
+All three halves re-run at the moved ref and **byte-identical**: **4 · 1 · 2**.
+
+**Corrected tips at the close** (192, the next miss's lower bound): `main e2054e83` · **`money 7fbb2cb9`** ·
+`pricebook 74f5b79b` · `reviews 8770a14f` · `sixty a8b05a47` · `stages ea356afd` · `ui bf42fec7` ·
+**`site 14ec9a0e`** (this tick's notes, pushed by explicit ref `9f3bce67..14ec9a0e`, fast-forward, the delta
+being `CLAUDE.md` alone and therefore provably an input pest, pint, phpstan and doctor all do not read —
+255's condition 2).
+
+## ⛔ Tick 258's FALSE ZERO fired a second time, and tick 247's rule caught it again (tick 329)
+
+Re-running the three halves at the moved ref I wrote `--format='COMMIT'` with **no placeholder**. Git refused —
+`fatal: invalid --pretty format: COMMIT` — and `grep -c` reported **0** for all three, on the surfaces whose
+expected output *is* a small number and whose zero is this ledger's tooling-fault trigger (209).
+
+✅ It was caught **only** because stderr was not suppressed: the `fatal:` sat beside the `0`. ⛔ **Never
+`2>/dev/null` a query whose silence you intend to read as a finding** — stderr is the channel that separates
+*no results* from *no query*, and suppressing it makes a command that never ran indistinguishable from a
+measurement of nothing. Second firing in this lane (258 was the first), same command shape, same near-miss.
+
+⚠️ And the pairing is what makes it cheap: 247 keeps the evidence of failure, 209 says what to do with a zero.
+Neither is sufficient alone — a suppressed refusal leaves 209 with a zero it cannot attribute.
