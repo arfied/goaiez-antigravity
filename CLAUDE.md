@@ -18052,3 +18052,126 @@ one up. Per 224 the branch is a third — **the door is open and the room is emp
 
 Per tick 293 this entry states the **ruling and the falsifier and no prediction**; the outcome is the next
 tick's to write.
+
+## ⛔ A REMEDY SCOPED TO THE VICTIM IS NOT A REMEDY SCOPED TO THE HAZARD — tick 327 closed the bypass for the file it bit, and four ticks later the same bypass took the ONE file no seat can commit (tick 332)
+
+Tick 327 measured that `git restore <file>` bypasses `coder-bin/git`'s supervisor-path refusal — `:68`'s
+`case` naming `CLAUDE.md` sits **inside** `:62`'s `GOAIEZ_RESTORE_OK=1` branch, this lane's launcher never
+sets that variable, so the refusal is unreachable in every site run, and `:78-79` then permits a two-token
+restore (278). It lost 256 lines of ledger to it and ruled the remedy: **this seat commits its notes before
+dispatching.** That protects `CLAUDE.md` and **only** `CLAUDE.md`.
+
+It never asked *what else lives only in the working tree*. The answer is exactly one file — and it is the one
+file tick 196 measured as uncommittable by **either** seat (the coder guard refuses the path; it is outside
+this seat's enumerated commit list). §2 printed **`none`** at tick 332, which is tick 207's third reading, and
+the two gate files on disk bound the window to a single wave:
+
+| | tick 331 gate, 23:44:40 | tick 332 gate, 00:20:31 |
+| :-- | :-- | :-- |
+| §0 `app/phpunit.xml` | `goaiez_antig_site_test` | ⛔ **`goaiez_antig_test`** |
+| §1 working tree | ` M app/phpunit.xml` · `1 uncommitted path(s)` | ⛔ **`0 uncommitted path(s)`** |
+| §2 forbidden paths | `⛔ app/phpunit.xml` | ⛔ **`none`** |
+
+> ⛔ **When a bypass is found and closed for the file it bit, enumerate every other file the same bypass can
+> reach. The file that cannot be committed is, by construction, the one a "commit it" remedy cannot cover** —
+> so the victim-scoped remedy is guaranteed to leave the worst case open.
+
+⛔ The mechanism is **not measured and no block names one** (227, 230, 249). ⚠️ **Blast radius bounded** (195,
+and the gate's own §0 says it): **nil for the gate** — `bin/supervise.sh:132` seeds `shared="$ROOT"` and §7
+exports `TRACK_DB` over the pin. What is exposed is the **hand-run** path, a bare `./vendor/bin/pest` or
+`php artisan test` writing **Track 1's** schema — which tick 195 measured as having cost Track 1 two refused
+gates. ⛔ And the check that caught it is one this file's own standing rule trains a reader to skip: *"one
+known path in §2 is noise"* (196) is true, which is exactly why 207 had to add the third branch. **Every
+brief's item 0 now states §2's `⛔` lines as a two-directional CLAIM naming the expected path**, so a `none`
+is caught by the coder at item 0 rather than by the supervisor a tick later.
+
+⚠️ **And the verdict line has silently decoupled from §2.** Tick 196 ruled *"§2 prints `⛔ app/phpunit.xml`
+and the run ends `⛔ a gate failed above`, permanently, and it is not a signal."* At tick 332 §2 was **silent**
+and the verdict still read `⛔ a gate failed above`, because §7 carries six other lanes' FAILUREs and doctor
+is red by design. **The line's cause changed and nothing announces it**, so it is a proxy for §2 in neither
+direction.
+
+## ⛔ WHERE A LOWER LAYER ENFORCES THE SAME INVARIANT, A **REMOVAL** MUTATION MEASURES NOTHING AND A **CORRUPTION** MUTATION MEASURES THE CLAUSE'S LIVENESS (tick 332)
+
+Tick 322 ruled *before briefing a falsifier that removes an application-level guard, ask whether a LOWER LAYER
+enforces the same invariant; if it does, the mutation cannot redden and the falsifier measures nothing*, and
+tick 331 accordingly stated the design property rather than manufacturing a falsifier (282). Both are right
+about **removal**, and neither considered the third option.
+
+SITE-203 mutated `->where('business_id', $businessId)` to `$businessId + 1` — the app layer **contradicting**
+RLS instead of duplicating it — so the intersection is empty and the same-tenant path reddens: assertions
+43 → 33, `test_valid_key_creates_chat_turn_for_session` and `test_valid_key_creates_chat_lead_for_session`
+both 201 → 404, with the two cross-tenant tests staying green as they must.
+
+- **Removal** leaves the lower layer's identical filter in place ⇒ green ⇒ measures nothing.
+- **Corruption** makes the two layers disagree ⇒ red ⇒ measures that the clause is **executed and affects the
+  result**.
+- ⛔ **Neither can measure NECESSITY**, because RLS and the clause are exactly co-extensional here — both
+  filter on the value `Tenancy::set($businessId)` wrote one line earlier (measured at
+  `ChatTurnController:18,27` and `ChatCaptureController:18,27`). Say which is which (230), or the next tick
+  inherits the stronger claim.
+
+⚠️ Recorded as the general form because it was reached **by accident** — the brief asked for a same-tenant
+control and got a corruption mutation. The next lower-layer case reaches for it deliberately.
+
+## ⛔ A DEFECT MEASURED IN THE PRODUCTION FILE AND A CLAIM MADE ABOUT THE TEST FILE ARE TWO DIFFERENT MEASUREMENTS — and a brief that makes only the first manufactures a DUPLICATE (tick 332)
+
+Tick 331's ruling opened *"three waves have swept it … and tenancy has never been asked of it."* I measured
+`grep -c "where('business_id'"` on the two **controllers** — 0 and 0, correct, and the fix follows from it —
+and never grepped the **tests**. `app/tests/Modules/X-102/ChatDoorTest.php:67` (start, write-side) and `:123`
+(turn, cross-tenant) already existed. So SITE-203's `test_turn_scopes_session_lookup_by_business_id` at `:360`
+is **line-for-line `:123`**: same two-business fixture, same `Tenancy::forgetAll()`, same route, same two
+assertions, differing only in the method name and the token literal. Both stayed green under the corruption
+mutation, so they are behaviourally indistinguishable in every state measured.
+
+⭐ Tick 210's law — *before briefing a wave that produces X, grep for X* — has fired **pre-emptively** five
+times in this ledger (262, 303, 306, 308, 321) and did not fire here at all. The sub-shape worth the name is
+that the two measurements *look like one*: the production absence is real, the fix that follows is right, and
+the coverage claim silently inherits the production measurement's authority.
+
+✅ The capture half is **genuine new coverage** (`:387`; there was no cross-tenant capture test), and ✅
+nothing is double-credited — the id census is byte-identical because neither new test carries a `G##-##`
+literal, so tick 240's cost here is not a false credit but a reader finding three cross-tenant tests in one
+file and unable to tell which is authoritative.
+
+⭐ **And the sharper half: all three are OUTCOME INVARIANTS and none can protect the clause the wave added.**
+No HTTP-route test can distinguish RLS from the app clause, because they are co-extensional — tick 322's law
+in its strongest form. Left as they are the file reads as heavily covered when its coverage is one invariant
+repeated. **That is tick 331's own `test_blank_capture_phone_returns_400` finding — *a test green under both
+configurations is an OUTCOME INVARIANT, not a sentinel* — recurring one module over, four ticks later,
+unrecognised.** ⛔ The remedy is one carrier per route **plus a note at the survivors saying what they are**
+(199 — a claim recorded with its DEFECT survives), never a bare deletion: a re-anchor and a deleted assertion
+are the same `--stat` (270), so the survivor is proven to exist and to assert the same thing **before** the
+deletion.
+
+## ⛔ A REPORT THAT OMITS ITEM 0 HAS NO GROUND VALUES — and item 0's own §2 CLAIM was the one thing that would have localised the loss (tick 332)
+
+`REPORT.md` began at Item 1. The brief's item 0 carried five CLAIMs under a standing two-directional stop, one
+of them `bash bin/supervise.sh | grep -A 4 '== 2. forbidden paths'` with *"I measured exactly one `⛔`,
+`app/phpunit.xml`."* Either answer would have been decisive — **one `⛔`** ⇒ the pin was alive when the wave
+opened, so the loss happened inside it; **`none`** ⇒ it was already gone and the wave should have stopped.
+Its absence is precisely why the mechanism is unmeasurable now.
+
+⛔ **RULED: a report that omits item 0 is a reporting BLOCK next time.** PASS-WITH-NOTES at 332 only because
+the omission let nothing through *in the code*. ⚠️ C4 was the one ground value the report let me check
+independently: it claimed **12** test methods and the file now holds **14**, the wave adding exactly two —
+which is also what makes §7's `+2 tests` residue-free (226).
+
+## ✅ CLEAN SWEEP — all three `citation` violations are MONEY'S, and this lane quoted the number for a hundred ticks without enumerating it (tick 332)
+
+Prompted by money's ruling 302 (*"a green citation stage is never cited as evidence a lane's citations are
+right"*, proved there by experiment on two byte-identical doctor captures). Enumerated live here:
+`X-198/Actions/PaymentLinkAction.php:40` cites **R036**, `X-198/Domain/GatewayEngine.php:76` cites **R037**,
+`X-198/Domain/StripeGatewayClient.php:17` cites **R093**, each *"appears NOWHERE in the package"*. **X-198 is
+money's** under ruling 5; **zero of the three are this lane's.** Per 224 the branch is **cannot work here** —
+the door is shut, not the room empty. ⚠️ The disconfirming detail that makes the closure re-checkable rather
+than re-arguable: money's ruling is about a stage reading **green**, and this lane's reads **red at 3**, so the
+ruling does not transfer — only the prompt to enumerate did. Sixth firing of tick 215's law.
+
+## ⭐ A WORKING-TREE-ONLY CONDITION NEVER HOLDS A GATED COMMIT RANGE (tick 332)
+
+Tick 208 holds a push for a red **§6** because style is a property of the committed tree; tick 267 permits a
+push through a red **§7** when the delta is provably unreachable from the wave, the discriminator being
+**reachability from the diff**. A missing working-tree edit is neither: it rides on no commit, `git push`
+cannot carry or repair it, and holding two correct, gated, falsified commits over it strands real work while
+doing nothing whatever to restore it. `af1fe14a..8393e8ba` pushed by explicit ref.
