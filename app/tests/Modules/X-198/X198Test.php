@@ -572,7 +572,7 @@ class X198Test extends TestCase
         app(GatewayEngine::class)->capture($biz->id, 4500, 'tok_visa', 'idem_header_1');
 
         // The key carries the business because every charge posts with the platform secret and no
-        // Stripe-Account (R093), so all tenants share one idempotency namespace at the provider.
+        // Stripe-Account, so all tenants share one idempotency namespace at the provider.
         Http::assertSent(function ($request) use ($biz) {
             return $request->url() === 'https://api.stripe.com/v1/charges'
                 && $request->hasHeader('Idempotency-Key', 'x198-charge-'.$biz->id.'-idem_header_1-0');
@@ -672,7 +672,7 @@ class X198Test extends TestCase
         $this->connectAction->handle($biz->id, 'stripe', 'acct_pending');
 
         // A real charge object exists at the provider and has not settled. Reading only the id
-        // records this as captured (R235).
+        // records this as captured.
         Http::fake([
             'api.stripe.com/*' => Http::response(['id' => 'ch_pending_0000000000000', 'status' => 'pending'], 200),
         ]);
@@ -684,7 +684,7 @@ class X198Test extends TestCase
         // The id is kept: a charge object does exist there, and it is the honest handle on it.
         $this->assertSame('ch_pending_0000000000000', $payment->gateway_charge_id);
 
-        // An event named Captured must not fire for money that was not captured (R101, R236).
+        // An event named Captured must not fire for money that was not captured.
         Event::assertNotDispatched(PaymentCaptured::class);
     }
 }

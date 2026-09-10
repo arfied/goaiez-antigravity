@@ -99,7 +99,7 @@ final class InvoiceEngine
                             idempotencyKey: 'overflow_'.$invoice->id.'_'.$overflowAmount
                         );
                         $gatewayChargeId = $payment->gateway_charge_id;
-                        // The payment row's own status, which is the gateway's word (R235/R236).
+                        // The payment row's own status, which is the gateway's word.
                         // A pending charge has an id, so deriving from the id writes 'charged' for
                         // money that has not settled.
                         $status = $payment->status === 'captured' ? 'charged' : 'refused';
