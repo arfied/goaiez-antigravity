@@ -73,7 +73,7 @@ final class GatewayEngine
         string $idempotencyKey
     ): Payment {
         // The tenant's own declared currency, read from the row that holds it. A caller-supplied
-        // currency is a second place for the truth to disagree (R037), and the lane's one
+        // currency is a second place for the truth to disagree, and the lane's one
         // production capture supplied none at all, so every charge went out in dollars.
         $currency = Business::findOrFail($businessId)->currency;
 

@@ -572,7 +572,7 @@ class X198Test extends TestCase
         app(GatewayEngine::class)->capture($biz->id, 4500, 'tok_visa', 'idem_header_1');
 
         // The key carries the business because every charge posts with the platform secret and no
-        // Stripe-Account (R093), so all tenants share one idempotency namespace at the provider.
+        // Stripe-Account, so all tenants share one idempotency namespace at the provider.
         Http::assertSent(function ($request) use ($biz) {
             return $request->url() === 'https://api.stripe.com/v1/charges'
                 && $request->hasHeader('Idempotency-Key', 'x198-charge-'.$biz->id.'-idem_header_1-0');

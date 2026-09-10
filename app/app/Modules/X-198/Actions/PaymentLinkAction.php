@@ -37,7 +37,7 @@ final class PaymentLinkAction
             'x198-paylink-'.$businessId.'-'.$paymentId
         );
 
-        // The unique (business_id, payment_id) pair is the idempotency (R036). Two presses of the
+        // The unique (business_id, payment_id) pair is the idempotency. Two presses of the
         // same button both clear the pre-check above and both call the gateway; the loser must hand
         // back the winner's row rather than die on the index.
         return PaymentLink::firstOrCreate(
