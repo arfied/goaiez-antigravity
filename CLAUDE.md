@@ -12070,3 +12070,146 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     population at 324's bar, **measured non-empty AND buildable**. ⛔ *Sounds plausible* is not a
     population — and (c) is this ledger's sharpest instance of why: a hypothesis built on two true
     measurements can still be false, and the cost of checking it was one `sed`.
+393. **⭐⭐ A conditionally-rendered button is a CLAIM ABOUT A PRECONDITION, and `recordPayment` enforces
+    neither screen's — on a paid invoice it records a payment of ZERO and moves `paid_at` to `now()`,
+    which walks an invoice settled weeks ago into today's takings at its FULL VALUE (RULED by the lane
+    supervisor 2026-09-10 19:2x, briefed as MONEY-191; the finding that lifts four ticks of HOLD).**
+    Rulings 330 and 350 each fixed one instance of a shape they described identically — *the SCREEN
+    states the intent and the WRITE does not enforce it* — and both were the **idempotence** special
+    case (*not already done*). **The general predicate was never stated and the census never run:**
+    a button rendered inside an `@if` is a precondition the blade asserts, ruling 344 measured that a
+    Livewire method argument is **client-supplied** and the rendered value is only a suggestion, and
+    ruling 205 measured only that a bound name RESOLVES. **Instrument, quoted (ruling 300):**
+    `grep -rn -B 6 -e 'wire:click' -e 'wire:submit' app/app/Modules --include=*.blade.php` filtered to
+    the eight ids and then to `-e '@if' -e '@elseif'` → **the state-gated buttons**, each traced to the
+    method it calls and the method **read** (262(b)).
+    ⭐⭐ **The positive control is the strongest this bar has produced, because it is IN THE LANE and it
+    is the same predicate done RIGHT TWICE IN ONE METHOD.** `reconciliation-discrepancies.blade.php:26`
+    renders its button `@if($run->reviewed_label === null)` inside a list of discrepancy runs, and
+    `GatewayEngine::reviewDiscrepancy():222-237` guards **both** — `:226` throws
+    `NothingToReviewException('Nothing to review: that payout balanced to the cent.')` on
+    `status !== 'discrepancy_logged'`, and `:230` returns the run **idempotently** when
+    `reviewed_at !== null`. One guard per rendered condition. ⭐ Seven more are guarded and each by a
+    named prior ruling: `cancelOrder` (350's own fix), `applyForSubMerchant` (129), `submit` (62),
+    `addToCart`'s sold-out refusal (327), `CardRotateAction` (idempotent, 343), `DeferDeclineAction`
+    (`firstOrCreate`, 229), `applyLateFee` (221). **Three are unguarded and one of them is sharp.**
+    **The finding.** `X-199/Ui/views/invoices.blade.php:61` renders **Record payment** only for
+    `in_array($invoice->status, ['issued','due','offline_recorded'])`; `unpaid.blade.php:79` renders it
+    for every row of `InvoiceReader::openUnpaidForBusiness()`, which is
+    `whereNotIn('status', ['paid','draft'])` plus `paid_cents < total_cents`.
+    `X-199/Domain/InvoiceEngine::recordPayment():160-173` enforces **neither**: it `findOrFail`s at
+    `:163` and writes at `:169`.
+    ⭐⭐ **On a `paid` invoice the harm is a MONEY FIGURE, and ruling 365 is what shaped it.** 365 made
+    the amount default the outstanding balance, so `$payAmount = max(0, total − paid)` is **0**,
+    `$newPaid` is unchanged, `$status` stays `'paid'` — and `:172` rewrites **`paid_at => now()`**.
+    `X-199/Ui/MoneyPaidToday.php:28-29` and `:48-49` filter `status = 'paid'` **AND**
+    `paid_at >= now()->startOfDay()`, and ruling 107 measured `:50` sums **`total_cents`** — so an
+    invoice settled in July is moved into *"Total value of invoices settled today"* **at its whole
+    value, for a payment of nothing**. That is ruling 107's own screen, the one this lane spent a wave
+    making honest, falsified from a different module by a button the screen does not render.
+    ⭐ **On a `draft` invoice it flips straight to `paid`.** Ruling 191 measured there is **no
+    `draft → issued` transition anywhere in X-199**, so this is the only way a draft can leave draft —
+    and it leaves as *paid*, carrying an `INV-` number that was allocated and never issued.
+    ⚠️ **Reachability is measured, not hypothetical:** both refused statuses render their own row on
+    `Invoices` (ruling 191 — the screen queries every invoice with no status filter), and each row
+    prints its id in `toggleExpanded({{ $invoice->id }})` on `invoices.blade.php:49`. **The id of a
+    paid invoice is on the page and the method is bound.**
+    ⭐⭐ **RULED: the guard's allowed set is the module's OWN definition of open, never a new literal —
+    `if (in_array($invoice->status, ['paid','draft'], true)) throw new InvoiceNotPayableException(…)`,
+    placed immediately after the `findOrFail` and BEFORE the first write** (rulings 330, 332), which
+    also preserves this lane's convention that *a refusal writes nothing* (`ArEngine:52`'s M29-C).
+    `InvoiceReader:41` and `:49` are `whereNotIn('status', ['paid','draft'])`; that is 37/51's
+    discipline (*the row already knows*) and it is **why the wave is safe**: a literal copy of the
+    blade's three-status list would have refused **`overdue`** and reddened
+    `InvoiceEngineTest.php:459`, which records a partial payment on an invoice `markOverdue()` has just
+    set to `overdue` and asserts it stays there. ⭐ **Ruling 46's blast radius caught that BEFORE the
+    brief shipped, which is the whole point of running it before rather than after.**
+    ⛔ Not `firstOrCreate`-style silence — a refusal names what exists (36's reasoning). ⛔ No migration
+    and no unique index. ⛔ **The two components are NOT touched** (47's companion): `Invoices.php:38-40`
+    and `Unpaid.php:39-41` already carry a `ModelNotFoundException` arm and a `\Throwable` tail
+    rendering *"That payment was not recorded: "* + the message, and **that prefix is TRUE of this
+    refusal** — unlike ruling 229(b)'s, it asserts an outcome the catch **can** know, because the guard
+    is before the first write. ⛔ **The message names no remedy**, deliberately: ruling 363 requires a
+    remedy the owner can reach on the screen they are standing on, and there is none — a paid invoice
+    is already paid, and telling an owner to issue the draft first would name a transition ruling 191
+    measured **does not exist**. It states the fact and ends in the lane's sibling idiom
+    (`FeeAtCapException`'s *"Nothing was applied."*, `OrderNotCancellableException`'s *"Nothing was
+    cancelled."*).
+    ⚠️ **Blast radius, measured call site by call site rather than assumed (46, 86, 146): ZERO.** All
+    **fourteen** `recordPayment` call sites act on an invoice that is `issued` or `overdue` at the
+    moment of the call — `InvoiceEngineTest:98,:151,:257,:412` (issued), `:459` (**overdue**),
+    `:556`→`:561` (ruling 103's partial-then-final pair, still `issued` at the second call because
+    3000 < 10000), `MoneyPaidTodayScreenTest:63`, `MoneyPaidTodayTest:97` (`'status' => 'issued'` with
+    `paid_cents => 10000`), `InvoicesScreenTest:53`, `UnpaidScreenTest:53`, `CreditsScreenTest:86`,
+    `X199Test:109`, `EvidenceInvoiceCommand:85` (issue → record once, so the artifact and
+    `X199RuntimeProofTest` are untouched — ruling 39) and `JourneyHarness:551` (J9's `payInvoice`, whose
+    invoice comes from `issueInvoice`). `InvoiceRecordOfflineAction` and `RecordPaymentOnCapture` have
+    no production caller (170, 102). **No existing assertion moves and no existing test can see the
+    defect** (68), so the wave **adds** methods (70).
+    ⭐⭐ **RULED on the proof, and it is ruling 337's precedent: the test is an ENGINE test, not two
+    screen tests.** The guard is in the engine and two screens call it, so an engine test proves the
+    **contract** and covers the third consumer nobody has written — and it needs no `Livewire::test`,
+    no ruling-255 haystack measurement and no `view:clear` (202). ⛔ **`try`/`catch` + `$this->fail()`,
+    never `expectException`**: ruling 228 measured PHPUnit checks that **after** the method returns, so
+    the `paid_at` assertion would never execute. ⭐ The combination is **measured in-lane** rather than
+    assumed (193): `app/tests/Modules/X-198/GatewayEngineTest.php` appears in **both**
+    `grep -rln -e '^test('` and `grep -rln -e 'this->fail('`, so pest-style + `$this->fail()` is proven
+    in a file this lane owns.
+    ⭐⭐ **The clock MUST move between the two calls or the proof cannot fail.** With both `now()`s in
+    one second `paid_at` is unchanged under the mutation too, and a proof that cannot fail is not a
+    proof (ruling 82's collateral). `Carbon::setTestNow($t1)` for the issue-and-pay, then
+    `$t1->copy()->addDays(30)` for the refused call, cleared as the method's **last** line (ruling 33;
+    ⚠️ `addDays` mutates in place, hence `->copy()`).
+    ⚠️ **Ruling 318 binds**: `InvoiceNotPayableException` is a new class under the classmapped
+    `app/app/Modules/`, so `composer dump-autoload -d app` runs before the first filtered pest run —
+    and the failure it prevents lands **inside the wave's own new test**, where it reads as the new
+    test being wrong. ⚠️ Ruling 310 re-measured this tick rather than inherited: the three
+    `File::allFiles(app_path())` scanners are `architecture_helpers.php:3577,:4338,:5547` and all three
+    are **structural** (a `DefaultsRegistry` presence filter, an AST parse, a scan for method-call
+    tokens), `X136Test`'s two are scoped to their own module, and **no scanner reads `app/tests`** — so
+    dictated prose in `X-199/Domain/` and in `InvoiceEngineTest.php` feeds no instrument (63). ⚠️ No
+    `G##-##` or `N-###` token appears in either new method (295).
+
+394. **⭐⭐ The census's other two unguarded members are RECORDED, and ruling 380(c)'s `@else` sweep is
+    CORRECTED — it counted a directive's PRESENCE where the predicate is whether every VALUE of the
+    switched vocabulary has an arm (measured by the lane supervisor 2026-09-10 19:2x).**
+    **(a) Two siblings are measured unguarded and are NOT briefed** (ruling 193 — *a member whose fix
+    rests on an unmeasured decision is recorded, never briefed*). `X-173/Domain/AccountingSyncEngine::
+    resolveConflict():41-52` refuses the **account string** (empty, `uncategorised`, over-length —
+    ruling 206's own fix) and never reads `$conflict->status`, while `conflicts-list.blade.php:28`
+    renders the form `@if($c->status === 'open')`. `X-201/Domain/DisputeDefenseEngine::
+    recordOutcome():118-125` whitelists the **outcome value** (`:120`, ruling 227's measured
+    `in_array`) and never reads `$dispute->status`, while `dispute-queue.blade.php:33` renders Won/Lost
+    `@if($d->status === 'submitted')`. ⛔ Neither is briefed **because its allowed set is a decision
+    this tick has not measured** — may a `defended` dispute be re-outcomed, and is `resolved` a
+    terminal state or a re-assignable one? — and ruling 393's own safety came entirely from finding the
+    module's **existing** definition of the allowed set (`InvoiceReader`'s `whereNotIn`). ⭐ Neither
+    X-173 nor X-201 has one, so inventing a literal here would be the exact move 393 refused. They are
+    the next tick's population, **half-measured and listed**, which is better than a guess now.
+    **(b) ⭐⭐ `invoices.blade.php:55-68` is the SAME predicate in the OTHER DIRECTION — the screen
+    NARROWER than the write — and it renders an EMPTY `<td>`.** The chain is `@if(paid)` → receipt ·
+    `@elseif(issued|due|offline_recorded)` → the button · `@elseif(draft)` → PDF · `@endif`, so an
+    **`overdue`** invoice matches no arm and its actions cell is blank: no button, no pill, no
+    explanation — while `unpaid.blade.php:79` gives that same invoice the button. Ruling 98's tell, two
+    screens of one module over one button. ⛔ **RECORDED, not fixed, and the reason is ruling 96 rather
+    than ruling 204**: `markOverdue()` is caller-less in production (ruling 69) and production runs
+    `issued → due` (`MarkInvoicesDueCommand`, scheduled — 151(1)), so no real tenant reaches the state;
+    **no existing fixture renders an overdue invoice on that screen**, so 204/130's *the branch IS
+    rendered and IS driven by existing fixtures* does not hold, and adding one would be ruling 327's
+    manufacturing reachability. ⛔ Not to be re-raised as a defect while `markOverdue` has no caller.
+    **(c) ⭐⭐ The correction. Ruling 380(c) swept "`@if` chains with no `@else`" and struck the axis on
+    `grep -rn -c "@else"` returning at least one per blade** — *a count of a directive's presence*,
+    where the predicate that matters is **does every value the chain switches on have an arm**.
+    `invoices.blade.php` has three `@else`s and still drops a status on the floor. **That is ruling
+    371's defect — *a census that LISTS or COUNTS its members instead of stating its PREDICATE is a
+    filter wearing a census's name, and it closes silently* — and it is the FOURTH time it has been
+    found in this ledger's own censuses** after 375(c) (an `assertOk()` string count standing in for
+    real-GET coverage), 376 (`<x-` standing in for *renders a foreign file*) and 383 (a name count
+    standing in for a site count). ⭐ **The re-run on the predicate is the next tick's second candidate,
+    and it is cheap**: for each `@if`/`@elseif` chain over a status or type, list the vocabulary's
+    values (ruling 306's census already has them) and check each has an arm — the tell being a chain
+    whose conditions are `===`/`in_array` against a vocabulary rather than a boolean.
+    ⚠️ Recorded from the same sweep and deliberately not briefed: `card-screen.blade.php:32/:36`'s
+    `@if($card->is_default)` / `@if(!$card->is_default)` pair is a **complement**, so it can drop
+    nothing, and `cart-block.blade.php:19`'s `@if($s->inventory_quantity > 0)` is a boolean over an
+    integer with `CheckoutEngine:269`'s sold-out refusal behind it (327).
