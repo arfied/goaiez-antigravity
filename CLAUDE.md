@@ -9530,3 +9530,72 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     field must report, so a prohibition on something outside the run's control manufactures either a false
     `REFUSED:` line or a false clean one.** The miss is the supervisor's; the wave is graded on its
     substance.
+342. **⭐⭐ Three fresh populations are measured CLEAN with fired positive controls — the lane has NO
+    Livewire component-event seam, NO screen that mints a URL, and NO screen state outside a row — and
+    the third is ruling 340's "re-run in the negative" applied to the authorization census, which ruling
+    275 measured at the COMPONENT level only (measured by the lane supervisor 2026-09-10 08:0x; rulings
+    64, 95, 100, 111, 192, 207, 294, 324, 325, 340).** Ruling 325 named *a population this ledger has
+    not yet enumerated* as the one HOLD-lift condition a tick can reach alone, and set the bar at ruling
+    324's: measured non-empty, instrument corroborated **with a positive control**, members listed.
+    Three candidates were put to that bar this tick and all three come back empty.
+    **(a) The Livewire COMPONENT-EVENT seam — zero dispatches, zero listeners, and the second half is
+    zero APP-WIDE.** Ruling 148 censused the lane's 32 `Events/` classes against their dispatchers and
+    consumers and found five dead at both ends; that is the **domain** event layer. A Livewire
+    component event — `$this->dispatch('name')` against `#[On('name')]` — is a different seam with the
+    same failure mode: a button that appears to act on another component and reaches nothing, which is
+    decision 272 one layer up. Instruments, quoted (ruling 300):
+    `grep -rn --include=*.php -e '>dispatch' app/app/Modules` filtered to the lane's eight ids returns
+    **three** lines and **not one is a Livewire dispatch** — `X-171/Ui/StafffacingApp.php:149` is
+    another lane's module (ruling 5), and `X-199/Console/MarkInvoicesDueCommand.php:31` and
+    `X-211/Console/DetectOverdueReceivablesCommand.php:33` are the local `$dispatched` counter ruling
+    225 already governs. The looser `-e 'dispatch'` over the eight `Ui/` trees returns **nothing at
+    all**. ⭐ **Positive control FIRES**: the same narrow instrument over `app/app/Livewire` returns
+    three (`Knowledge.php:99`, `AssistantAnswers.php:118`, `ImportCustomers.php:115`, each
+    `dispatch('upload:errored', …)->self()`). ⭐⭐ **And the listener half is zero across the WHOLE
+    tree**: `grep -rn --include=*.php -e '#\[On' app/app` returns **nothing**, against a proven family
+    control — `grep -rln -e 'Livewire.Attributes' app/app` returns 8+ files (`Inbox`, `Texting`,
+    `Calls`, `Locations`, `PixelInstall`, …), so the app demonstrably uses Livewire attributes and
+    demonstrably has no `#[On]`. The three `app/app/Livewire` dispatches are therefore **browser-only**
+    events consumed by Alpine, not a PHP seam. ⛔ Not a wave and ⛔ **never resolved by minting a
+    listener** — that is ruling 59 inverted at the component layer.
+    **(b) URL minting in a screen — zero calls, and all eight hits are PROSE.**
+    `grep -rn --include=*.php --include=*.blade.php -e 'redirect' -e '>route' -e ' route'
+    app/app/Modules` filtered to the eight `Ui/` trees returns **eight** lines, every one an
+    owner-facing sentence containing *redirect* / *routed* / *routes* as an English word —
+    `ConnectCard.php:60` and `connect-card.blade.php:12` (*"the Stripe Connect redirect … is not built
+    in this checkout yet"*, ruling 93's own fix), `connect-card.blade.php:22` and
+    `same-account.blade.php:3,:9,:15` (*"which no charge is routed to yet"*, ruling 93 again),
+    `X-211/Ui/LabelsDunningAction.php:14` (a docblock) and `paymentplan-builder.blade.php:4` (*"it
+    routes to a financing partner"*, ruling 214's own text). **There is no `redirect()`, no `route()`
+    helper and no `url()` in any of this lane's 26 components or their blades.** ⭐ Positive control
+    fires: `grep -rln` over `app/app/Modules` whole returns 20+ files. ⭐ **This CONFIRMS rulings 20
+    and 38 structurally rather than by argument**: routing is generated on Track 1, and ruling 38's
+    `success_url = config('app.url')` is the lane's ONLY minted URL because there is nothing else that
+    could mint one. ⛔ Not to be re-raised, and ⛔ a future `route()` in a money screen is a
+    hand-written route by another name (ruling 20).
+    **(c) Blade authorization and out-of-row screen state — zero, and this is the NEGATIVE of ruling
+    275.** Ruling 275 censused the 24 components' `abort_unless` guards and settled X-117's two and
+    X-173's three; that answers *where a guard IS*. The dangerous complement is *where a guard hides a
+    door* — a `@can`/`@cannot` in a blade against a policy that does not exist returns **false** from
+    the Gate and renders nothing, for ever, with no error: ruling 94's silent-door shape with no button
+    at all, and ruling 43's *does it even vary?* answered by the framework. The sibling question on the
+    same instrument is out-of-row state — a component holding workflow state in the **session** or the
+    **cache** rather than in a row, which is ruling 35's `$hiddenRows` finding relocated one layer over
+    and would survive a remount, so ruling 35's own *"assert a fresh `Livewire::test` mount"* could not
+    see it. `grep -rn --include=*.php --include=*.blade.php -e '@can' -e '@cannot' -e 'Gate::'
+    -e 'Cache::' -e 'Session::' -e 'session' app/app/Modules`, filtered to the eight ids and with
+    X-117's legitimate `sessionToken`/`session_token` excluded, returns **four** lines and every one is
+    a **docblock or a vendor URL** — `CheckoutEngine.php:147` (*"the session's cart"*),
+    `CardScreen.php:106` (ruling 244's own docblock), and `StripeGatewayClient.php:56,:69`
+    (`/v1/checkout/sessions`). ⭐ Positive control fires: the same instrument over `app/app` and
+    `app/resources/views` returns 12+ files. **So no money screen hides a door behind a policy, and no
+    money screen holds a workflow decision anywhere but a row** — which is ruling 35's conclusion
+    (*"a button that says the owner dealt with something writes a row"*) established as a property of
+    the whole lane rather than of one screen.
+    ⛔ **None of the three is to be re-raised.** ⚠️ **The generalisable half is (c)'s provenance:**
+    ruling 340 ruled that *a census of "where a guard IS used" is not a census of "where a guard is
+    NEEDED"*, and named the nullsafe pair as its instance; (c) is that lesson applied to the
+    **authorization** census, and it found its complement by asking the same instrument the opposite
+    question. ⭐ **Every entry on the exhausted list phrased as *where X is used* still owes that
+    re-run**, and the cheapest way to run one is exactly this: the same grep, the opposite predicate,
+    the same positive control.
