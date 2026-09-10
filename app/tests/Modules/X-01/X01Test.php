@@ -687,8 +687,6 @@ class X01Test extends TestCase
         );
     }
 
-    /**
-     */
     public function test_chat_lead_captured_listener_ignores_whitespace_message(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Whitespace Biz', 'currency' => 'USD']);
