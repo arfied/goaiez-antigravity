@@ -333,4 +333,27 @@ class ChatDoorTest extends TestCase
         $response->assertStatus(400);
         $response->assertJson(['error' => 'Bad Request']);
     }
+
+    public function test_blank_capture_phone_returns_400(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Lead Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+        $key = app(PixelKeys::class)->ensureFor($biz);
+        Tenancy::forgetAll();
+
+        $startResponse = $this->postJson("/api/chat/{$key}/start");
+        $sessionToken = $startResponse->json('session_token');
+
+        $response = $this->postJson("/api/chat/{$key}/capture", [
+            'session_token' => $sessionToken,
+            'name' => 'John Doe',
+            'phone' => '   ',
+        ]);
+
+        $response->assertStatus(400);
+        $response->assertJson(['error' => 'Bad Request']);
+
+        Tenancy::set((int) $biz->id);
+        $this->assertSame(0, ChatLead::where('business_id', $biz->id)->count());
+    }
 }
