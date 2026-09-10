@@ -422,6 +422,72 @@ else
   [ "$ut_ref" -gt 0 ] && fail=1
 fi
 
+bar "2h. a module class the AUTOLOADER cannot resolve  (tracked, parseable, unloadable)"
+# ⛔ REV-146, 2026-09-10. Run 141's filtered suite read
+#     Class "App\Modules\CReviews\Domain\UnauthenticatedConfirmationException" not found
+# on a class that IS at HEAD, in the right namespace, at the right path, with the right
+# body — and that §2g reports clean, because §2g asks whether git HAS the file.
+# `app/composer.json` reaches the modules with `"classmap": ["app/Modules/"]` and NO psr-4
+# prefix can (the directory is `C-Reviews`, the namespace segment is `CReviews`), so a
+# class under app/app/Modules is loadable only if `composer dump-autoload` has run SINCE
+# it was written. The classmap was generated 04:44:12 and the class landed at 08:28:59.
+# ⭐ So the suite measured a failure that NO SHA OWNS — a stale build artefact, not a
+# regression, and indistinguishable from one in the output. Same family as REV-119 §B,
+# where `schema` reads a live database rather than the tree.
+# §2g fixed tracked-vs-untracked and left resolvable-vs-unresolvable one axis over, which
+# is this project's standing shape: REV-138 §4 fixed a search's scope and left its
+# vocabulary, REV-140 §4 fixed a grep's timing and left the grep.
+# Arms: ⛔ declared under app/app/Modules, absent from the classmap AND with no psr-4 file;
+# ⚠ no classmap at all (composer install has not run here); ✓ every declared class resolves.
+cm_file="$APP/vendor/composer/autoload_classmap.php"
+if [ ! -f "$cm_file" ]; then
+  echo "  ⚠ $cm_file is absent — composer install has not run in this checkout; not measured"
+else
+  cm_keys=$(mktemp "${TMPDIR:-/tmp}/cmkeys-XXXXXX")
+  sed -n "s/^[[:space:]]*'\([^']*\)'[[:space:]]*=>.*/\1/p" "$cm_file" | sed 's/\\\\/\\/g' | sort -u > "$cm_keys"
+  # ⛔ The namespace is the LAST declaration before the class, not the first. Its first
+  # draft used `sed … | head -1` and reported App\Modules\X170\Events\PackSeeded as
+  # unresolvable; the file declares `namespace App\Modules\X170\Events;` on one line and
+  # `namespace App\Modules\X180\Events;` on the next, and PHP binds the class to the
+  # second. A one-line-per-property grep cannot read a language with scope — this walks
+  # the file the way the parser does and stops at the first top-level declaration.
+  cm_pairs=$(mktemp "${TMPDIR:-/tmp}/cmpairs-XXXXXX")
+  git -C "$ROOT" ls-files -z -- 'app/app/Modules/*.php' 2>/dev/null | xargs -0 -r awk '
+    FNR==1 { ns=""; done=0 }
+    done { next }
+    /^namespace[ \t]+/ { ns=$0; sub(/^namespace[ \t]+/,"",ns); sub(/;.*/,"",ns); gsub(/[ \t\r]/,"",ns); next }
+    /^((final|abstract|readonly)[ \t]+)*(class|interface|trait|enum)[ \t]+[A-Za-z_]/ {
+      cn=$0
+      sub(/^((final|abstract|readonly)[ \t]+)*/,"",cn)
+      sub(/^(class|interface|trait|enum)[ \t]+/,"",cn)
+      sub(/[^A-Za-z0-9_].*/,"",cn)
+      if (ns != "" && cn != "") printf "%s\\%s\t%s\n", ns, cn, FILENAME
+      done=1
+    }' > "$cm_pairs"
+  cm_seen=$(wc -l < "$cm_pairs" | tr -d ' ')
+  cm_miss=0
+  cm_gone=$(mktemp "${TMPDIR:-/tmp}/cmgone-XXXXXX")
+  cut -f1 "$cm_pairs" | sort -u | comm -23 - "$cm_keys" > "$cm_gone"
+  while IFS= read -r m_fq; do
+    [ -n "$m_fq" ] || continue
+    # psr-4 fallback: `App\` => `app/`, so a module whose directory DOES match its
+    # namespace segment is resolvable without the classmap. Not a violation.
+    m_rel=$(printf '%s' "$m_fq" | sed 's/^App\\//; s/\\/\//g')
+    [ -f "$APP/app/$m_rel.php" ] && continue
+    cm_miss=$((cm_miss+1))
+    echo "  ⛔ $m_fq is declared at"
+    grep -F "$m_fq	" "$cm_pairs" | cut -f2 | sed 's/^/       /'
+    echo "     and is in NEITHER the composer classmap NOR a psr-4 path — every run that"
+    echo "     loads it dies with 'Class … not found', and that failure belongs to this"
+    echo "     checkout's vendor/, not to any commit.  Fix: (cd app && composer dump-autoload)"
+  done < "$cm_gone"
+  rm -f "$cm_pairs" "$cm_gone"
+  echo "  module classes declared: $cm_seen · unresolvable: $cm_miss · classmap keys: $(wc -l < "$cm_keys" | tr -d ' ')"
+  echo "  classmap generated: $(date -r "$cm_file" '+%Y-%m-%d %H:%M:%S')"
+  rm -f "$cm_keys"
+  [ "$cm_miss" -gt 0 ] && fail=1
+fi
+
 bar "3. build state"
 python3 "$ROOT/bin/state.py" status 2>&1 | head -30 | sed 's/^/  /'
 python3 "$ROOT/bin/state.py" next 2>&1 | head -20 | sed 's/^/  /'
@@ -522,7 +588,16 @@ fi
 _art_n=0; _art_bad=0
 for p in $(find "$ROOT/.agents/supervisor" -maxdepth 1 -name 'r*-*' -type f -mmin -1440 2>/dev/null | sort); do
   _art_n=$((_art_n + 1))
-  hit=$(sed '/carries a shell\/grep error at line/,/wave artefacts (24h):/s/.*//' "$p" 2>/dev/null \
+  # ⛔ REV-146 §6 — the SAME self-match through a third route. Run 141 wrote a
+  #   `bash -x` gate trace (r141-gate-debug.log, 752 KB) and this loop flagged it at
+  #   line 29960, which is `++ grep -m1 -nE 'command not found|No such file or …'` —
+  #   the trace echoing THIS detector's own pattern. REV-138 §1 blanked the
+  #   detector's OUTPUT range; a `set -x` trace prints the PATTERN, a thousand lines
+  #   earlier, and splitting the literal in source would not help because bash traces
+  #   the expanded argument. A trace line is a command echo, never an error, so
+  #   `^+` lines are blanked too — a real error inside a traced script is written by
+  #   the failing command to stderr and does not carry the `+` prefix, so nothing is lost.
+  hit=$(sed -e '/carries a shell\/grep error at line/,/wave artefacts (24h):/s/.*//' -e '/^++*[[:space:]]/s/.*//' "$p" 2>/dev/null \
         | grep -m1 -nE 'command not found|No such file or directory|Permission denied|: syntax error|Could not open input file' || true)
   [ -n "$hit" ] || continue
   _art_bad=$((_art_bad + 1)); fail=1
@@ -704,10 +779,20 @@ if [ $want_tests -eq 1 ]; then
     # and is fixable HERE — a distinct condition from the shared /home/goaiez/tmp/pest.lock
     # wait below, which really is every lane and ends in {"result":"lock-timeout"}.
     # Runs 137-139 read one as the other and lost three gates to it.
+    # ⛔ REV-146 §4. This arm's FIRST live firing was a false alarm, and its wording was the
+    # dangerous half. Run 141 started a second --tests two minutes into the real gate; the
+    # refusal correctly identified pid 2625841 as this checkout's, then told the reader it
+    # was "a leftover from an earlier wave" and to end it by pid. It was the running gate's
+    # own pest. "From this checkout" is MEASURED; "left over" is a guess about what the
+    # process is for, and acting on it kills the run you are waiting for. So: print what is
+    # known — the pid and when it started — and let the reader decide.
     if [ $mine -gt 0 ]; then
-      echo "  ⛔ $mine of those is THIS checkout's own stray pest (pid$minepids) — not another lane."
-      echo "     This is diagnosable and fixable here: it is a leftover from an earlier wave in"
-      echo "     this same checkout. Wait for it, or have the coder end it BY PID (never pkill -f pest)."
+      echo "  ⛔ $mine of those is THIS checkout's own pest (pid$minepids) — not another lane."
+      for mp in $minepids; do
+        echo "     pid $mp started $(ps -o lstart= -p "$mp" 2>/dev/null | sed 's/^ *//' || echo 'unknown')"
+      done
+      echo "     ⚠ If you started a gate, THIS IS IT — wait for it. Only a pest older than your own"
+      echo "     wave is a stray, and a stray is ended BY PID (never pkill -f pest)."
     else
       echo "  ⚠ none of those is this checkout — another checkout pins $xml_db, which REV-119 §E says"
       echo "     should not happen. Report the checkout name; do not work around it."

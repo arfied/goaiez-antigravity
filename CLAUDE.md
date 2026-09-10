@@ -1997,3 +1997,211 @@ last tick's commit moved our side with content that stands on its own; the drive
 `.agents/supervisor/launch-coder.sh` (**4 +/2 −**) remains, and it stays there because **a touch is not a
 move** (REV-135 §9) and this seat has no substantive change to make to it. ⚠️ Its verdict is a function of
 `(our sha, their sha)` and is re-derived at merge time.
+
+## REV-146 — a failure that no sha owns, and a positive control that replaced the thing under test
+
+⭐ **Run 141 is a `PASS-WITH-NOTES`, and REV-145 §3's second mechanism is the whole reason this lane is not
+still holding the word "hung".** Item 3's narrowing worked exactly as designed: the two test files this
+range changed each ran **on their own in 1.7 seconds**, which is the first measured test result in this lane
+since run 136's gate at `04:21` — five waves and thirteen commits ago. The full gate timed out again, so the
+wave's headline came from the item that existed as a fallback. ⛔ **The lane still has no pushable sha and
+`8b9c641c..HEAD` stays unpushed**, now on better grounds than "the gate failed".
+
+### ⛔ §1. THE SUITE MEASURED A FAILURE THAT NO SHA OWNS, AND NOTHING COULD TELL IT FROM A REGRESSION
+
+`r141-filter-screens.txt` reads, in full:
+
+```
+{"tool":"pest","result":"failed","tests":28,"passed":27,"assertions":79,"duration_ms":1663,"errors":1,
+ "error_details":[{"test":"…CReviewsScreensTest::test_loss_alerts_confirm_removal_refuses_unauthenticated",
+ "line":312,"message":"Class \"App\\Modules\\CReviews\\Domain\\UnauthenticatedConfirmationException\" not found"}]}
+```
+
+That is REV-143's defect verbatim — and REV-143's repair **landed correctly**. Measured here, with the
+command beside each result (REV-132's erratum standard):
+
+```
+$ git cat-file -p HEAD:app/app/Modules/C-Reviews/Domain/UnauthenticatedConfirmationException.php
+  namespace App\Modules\CReviews\Domain;   final class UnauthenticatedConfirmationException extends \DomainException {}
+$ git status --porcelain --untracked-files=all -- app/app/Modules/C-Reviews/     → clean
+$ grep -c 'UnauthenticatedConfirmationException' app/vendor/composer/autoload_classmap.php   → 0
+$ grep -n 'Modules' app/vendor/composer/autoload_psr4.php                                    → no output
+```
+
+The class is at `HEAD`, in the right namespace, at the right path, tracked, committed, parseable, and
+**unloadable**. `app/composer.json:39-41` reaches the modules with `"classmap": ["app/Modules/"]`, and no
+psr-4 prefix can — `App\` maps to `app/`, so psr-4 looks for `app/Modules/CReviews/Domain/…` while the
+directory is `C-Reviews`. So a class under `app/app/Modules` is loadable **only if `composer dump-autoload`
+has run since it was written**, and the arithmetic is decisive:
+
+```
+  classmap generated   2026-09-10 04:44:12
+  ea8ca494 added it    2026-09-10 08:28:59      ← 3h 44m later
+```
+
+⭐ **So the failing test is not a statement about the tree.** A fresh `composer install` regenerates the
+classmap and the class resolves; CI would be green on this exact sha. **This is REV-119 §B's family —
+`schema` measures a live database rather than the tree — arriving in the one instrument this lane trusts
+most.** ⛔ And the output gives the reader nothing to tell them apart: `Class … not found` reads identically
+whether the author forgot the file (REV-143), misspelled the namespace, or simply has a build artefact
+older than their own commit. **A red test whose cause lives in `vendor/` is worse than a red test, because
+it spends the wave that chases it.**
+
+**RULED: `bin/supervise.sh` §2h is the check.** For every class declared in a tracked file under
+`app/app/Modules`, it asserts the class is reachable by the classmap or by a psr-4 path, and prints the
+classmap's generation time beside the count. Live on its first run, the ⛔ arm firing on the real defect:
+
+```
+== 2h. a module class the AUTOLOADER cannot resolve  (tracked, parseable, unloadable)
+  ⛔ App\Modules\CReviews\Domain\UnauthenticatedConfirmationException is declared at
+       app/app/Modules/C-Reviews/Domain/UnauthenticatedConfirmationException.php
+     and is in NEITHER the composer classmap NOR a psr-4 path …  Fix: (cd app && composer dump-autoload)
+  module classes declared: 1738 · unresolvable: 1 · classmap keys: 15283
+  classmap generated: 2026-09-10 04:44:12
+```
+
+⭐ **The ladder, a ninth time: a paste-ready string beats a citation, a redirect beats a paste-ready string,
+and a CHECK beats a redirect.** ⛔ **And §2g is the reason this needed one at all: it fixed
+tracked-vs-untracked and left resolvable-vs-unresolvable exactly one axis over.** That is now three in a
+row on the same axis — REV-138 §4 fixed a failing search's *scope* and left its *vocabulary*, REV-140 §4
+fixed a grep's *timing* and left the *grep*, and REV-143's §2g fixed *trackedness* and left
+*loadability*. **RULED: when a finding is repaired by a new check, the tick states which neighbouring
+property the check does NOT cover**, because this lane's corrections land one axis away often enough that
+the axis is the thing to name.
+
+### ⛔ §2. THE CHECK'S FIRST DRAFT REPORTED A CLASS THAT LOADS FINE, AND THE FILE EXPLAINS WHY IN ITS OWN COMMENT
+
+§2h's first run read `unresolvable: 2`. The second was `App\Modules\X170\Events\PackSeeded` at
+`app/app/Modules/X-180/Events/PackSeeded.php`, and it is a **false positive**:
+
+```
+$ head -8 app/app/Modules/X-180/Events/PackSeeded.php
+  namespace App\Modules\X170\Events; // namespace will be App\Modules\X180\Events
+  namespace App\Modules\X180\Events;
+  final class PackSeeded
+$ grep -n 'PackSeeded' app/vendor/composer/autoload_classmap.php
+  'App\\Modules\\X180\\Events\\PackSeeded' => …/app/Modules/X-180/Events/PackSeeded.php
+```
+
+Two `namespace` declarations; PHP binds the class to the **second**, composer recorded the second, and my
+`sed … | head -1` took the first. ⭐ **Caught because the arm was run before it was trusted, not because
+it was reasoned about** — which is this lane's instrument standard applied to the instrument itself. The
+extraction now walks the file the way the parser does and stops at the first top-level declaration;
+`unresolvable` reads **1** over the same 1738 classes. **RULED: a check that reads source is written against
+the language's scoping, not against one line at a time** — a per-line grep cannot read a construct whose
+meaning depends on what came before it, and this file is the proof that such constructs are in this tree.
+
+### ⛔ §3. REV-145'S POSITIVE CONTROL PROVED THE PLUMBING AND NOT THE SOURCE, AND THAT IS WHY 0 BYTES IS UNREADABLE (my defect)
+
+Item 4's gate timed out with the one thing REV-145 built to prevent:
+
+```
+  ✗ pest TIMEOUT after 1800s — the suite hung (a lock wait or a prompt); treat as red
+     partial output KEPT at /home/goaiez/tmp/last-pest-partial.txt — 0 line(s), 0 byte(s)
+```
+
+REV-145 ruled that the partial's **line count separates the only two candidate causes outright** — a
+near-complete partial means the budget is too small, a short one means it hung. **Zero is not on that
+scale**, and the reason is that `t141-timeout-probe.sh` drove the `rc=124` block with `printf`. Its three
+arms (`kept=3line(s)`, `kept=40line(s)`, `kept=0line(s)`) proved the shell block copies a file before
+deleting it. **They proved nothing about whether a real `./vendor/bin/pest` under `SIGTERM` leaves bytes in
+that file at all**, which is the property the diagnosis rests on.
+
+**RULED: a positive control that substitutes a stand-in for the component under test validates the harness,
+not the subject.** REV-141 §3's classifier probe was sound because it fed *real citations* through the
+*real classifier*; this one swapped the producer. ⛔ **So the 0 bytes is not yet evidence of anything**, and
+this seat is not ruling on the cause — REV-136 §1 and REV-138 §4 are this file's two records of what an
+unmeasured ruling costs, and both were mine. The separating experiment is twenty seconds long and is run
+142's item 2: kill a suite that is *known* to be printing, at a budget far below its runtime, and see
+whether the kept file is empty. ⛔ **The 1800s budget is still not touched** — a wave that both diagnoses
+and treats can no longer tell which of the two worked (REV-145 §3).
+
+### ⚠️ §4. AN UNDECLARED SECOND GATE, AND REV-144 §1'S NEW ARM FIRED FALSE ON ITS FIRST LIVE RUN
+
+`.agents/supervisor/r141-gate-debug.log` — **752 KB, 31 981 lines of `bash -x`** — is in the mailbox,
+is in no brief, and is cited nowhere in `REPORT.md`. It is a second `supervise.sh --tests` started at
+`09:45:34`, **two minutes into the real gate**, and §7 refused it:
+
+```
+  ✗ REFUSED: 1 other pest process(es) on goaiez_antig_reviews_test … — a gate now would be false
+  ⛔ 1 of those is THIS checkout's own stray pest (pid 2625841) — not another lane.
+     This is diagnosable and fixable here: it is a leftover from an earlier wave in
+     this same checkout. Wait for it, or have the coder end it BY PID (never pkill -f pest).
+```
+
+**Pid 2625841 was the running gate's own pest.** REV-144 §1 built that arm one tick ago and its first live
+firing named a healthy suite a leftover; had the coder acted on the sentence it prints, it would have ended
+the very run it was waiting for — and the brief's own hard limit says to end a stray *by pid*, which is
+exactly what would have done the damage. ⭐ **The arm's classification is right and its advice is wrong:
+"from this checkout" and "left over from an earlier wave" are different claims, and only the first is
+measured.** **RULED: §7's `ARM=mine` prints the pid's start time and stops asserting what the process is
+for.** ⛔ **And it gets no probe item, deliberately.** The classifier arm itself was already observed live
+twice — run 140's three-arm probe and run 141's real firing — and what changed this tick is the `printf`
+below it plus a `ps -o lstart=` line. Forcing another live firing costs a whole gate run and a deliberate
+second suite, and a stand-in probe would validate the harness rather than the subject, which is §3's own
+ruling one section up. **RULED: a wording change to a branch whose classifier has already fired live needs
+no new arm observation; the tick says which half changed.** ⚠️ No harm done, and the wave is not marked down for it — but
+**an artefact in the mailbox that no brief asked for and no report cites is invisible work**, and this one
+happened to contain the tick's second-best finding.
+
+### ⚠️ §5. THE REPORT'S HEADER SAYS NOTHING WAS MEASURED AND ITS BODY QUOTES A MEASUREMENT
+
+`REPORT.md` reads `MODULES: C-Reviews NOT MEASURED`, `TESTS: none`, `RAW: none` — while item 3, nine lines
+below, quotes a complete pest result: **28 tests, 27 passed, 79 assertions, 1 error, named**. Both are
+defensible in isolation (the *gate* measured nothing; the *filtered runs* measured plenty) and together
+they are wrong, because `supervise.sh` §3 and the next reader read the header. ⭐ REV-145 §2's `NOT
+MEASURED` ruling is what the header is honouring, and it was written for a wave that had **no** number;
+run 141 had one from a route the ruling did not anticipate. **RULED: the header block describes everything
+the wave measured, whatever produced it; a result from a narrowing item is reported in `TESTS:` with the
+artefact that carries it.** ⛔ And run 141's report never called the error a regression, which was right —
+but it never called it anything, and §1 is what it turned out to be.
+
+### ⛔ §6. THE SELF-MATCHING DETECTOR, A THIRD TIME, THROUGH A ROUTE THE SECOND FIX COULD NOT SEE
+
+REV-138 §1 ruled that *a check that reports by quoting is a check that can match itself*, and blanked the
+artefact-error detector's **own output range** before scanning. §4's undeclared `bash -x` gate walked
+straight past that. `r141-gate-debug.log` was flagged at line 29960, which reads:
+
+```
+++ grep -m1 -nE 'command not found|No such file or directory|Permission denied|: syntax error|…'
+```
+
+— the trace echoing **the detector's own pattern**, a thousand lines above the detector's own output, so
+the blanked range never reached it. ⛔ **And REV-144 §2's idiom does not save it either.**
+`bin/supervise.sh:692` splits its pest needle across two literals (`"bin/pes""t"`) so a script cannot match
+itself; `set -x` traces the **expanded** argument, so splitting the source literal changes nothing in the
+trace.
+
+**RULED: `^+`-prefixed lines are blanked with the output range.** A trace line is a command echo, never an
+error — a real failure inside a traced script is written by the failing command and carries no `+` — so the
+exclusion is exact and blinds the check to nothing. ⛔ **And it is an exclusion by LINE SHAPE, not by
+filename**, which is REV-138 §1's own standing constraint: excluding `*-debug.log` would blind the detector
+to real errors from commands inside the trace, which is the majority of what such a file is for. Verified
+live, both arms in one run: **161 scanned · 2 carrying an error**, down from 3 — the self-match gone,
+`r132-doctor.txt` and `r132-seam.txt` still flagged.
+
+⭐ **The generalisation this seat should have drawn at REV-138 and did not:** the defect is not *the
+detector prints its output into a file it later scans*. It is **the detector's pattern is a string, and any
+file that records what commands ran contains that string**. Output was one carrier; a shell trace is
+another; a brief quoting the pattern would be a third. Naming the carrier fixes one route, and this lane
+has now fixed two of them one at a time.
+
+### The seam — RULED for run 142
+
+⛔ **RULED by the lane supervisor: run 142 is a repair-then-measure wave, and item 1 is
+`composer dump-autoload`, because the lane's one measured failure belongs to `vendor/` and costs one
+command to eliminate.** Everything after it is the hang, in ascending order of cost, each item ending in
+information whatever it returns (REV-127's second-mechanism rule, which is the only reason run 141
+produced anything at all):
+
+- **1.** `composer dump-autoload`, then §2h reads `unresolvable: 0` — its ✓ arm, live, no probe needed.
+- **2.** Re-run the two filtered files. `CReviewsScreensTest` is expected to go **28/28 green**; if it does
+  not, the failure is the tree's after all and that is the wave's headline.
+- **3.** The buffering control (§3): a twenty-second budget against a suite known to print.
+- **4.** `--list-tests`, then the four testsuites one at a time — `Unit`, `Feature`, `Modules`, `Journeys`
+  — which is a bisect whose axis is `app/phpunit.xml:7-19` and whose last arm is the one holding real
+  vendor transports.
+- **5.** The full gate, last, and the wave is a success without it if item 4 names the suite.
+
+⛔ **Scoped OUT:** no new test, no column, no refactor, no seam, no `manifest.php` / `capabilities.php`
+edit, no merge, and no change to the 1800s budget.
