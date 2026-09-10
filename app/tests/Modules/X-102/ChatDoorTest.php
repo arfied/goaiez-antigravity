@@ -20,7 +20,7 @@ class ChatDoorTest extends TestCase
     use RefreshDatabase;
 
     /**
-     * BUILD PROPOSAL: X-102 chat capture throws an unhandled DomainException for an empty phone, which yields a 500 on a public door; it should be caught and returned as a 400. Owner: X-102
+     * BUILD PROPOSAL: X-102 chat capture throws a DomainException for an empty phone internally, but the HTTP middleware's ConvertEmptyStringsToNull coupled with the controller's is_string check yields a 400 Bad Request before the action is reached, making the 500 unreachable over HTTP. Owner: X-102
      * BUILD PROPOSAL: X-102's ChatTurnAction calls C-Agent unconditionally; it should only call if the author is 'visitor'. Owner: X-102
      * BUILD PROPOSAL: mapping chat_session_id to C-Agent's conversation_id so HUMAN_TAKEOVER_LATCH works is required, but it has not been asked for yet. Owner: Track 1
      * BUILD PROPOSAL: X-102's ChatTurnAction defaults the turn number to 1; it should compute and pass the real turn number. Owner: X-102
@@ -371,5 +371,39 @@ class ChatDoorTest extends TestCase
         $this->assertEquals(1, ChatLead::where('chat_session_id', $session->id)->count());
         $lead = ChatLead::first();
         $this->assertNull($lead->message);
+    }
+
+    /**
+     * Decision: The HTTP stack normalises a whitespace phone to null, triggering a 400 before the action.
+     * Reasoning: TrimStrings and ConvertEmptyStringsToNull convert whitespace to null. The controller's
+     * !is_string($phone) check catches this and returns a 400 Bad Request. The DomainException in the action
+     * is therefore unreachable over HTTP.
+     */
+    public function test_whitespace_capture_phone_returns_400(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Lead Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+        $key = app(PixelKeys::class)->ensureFor($biz);
+
+        $session = ChatSession::create([
+            'business_id' => $biz->id,
+            'session_token' => 'sess_lead_test',
+            'status' => 'active',
+            'rage_clicks_count' => 0,
+            'is_ai_capped' => false,
+        ]);
+        Tenancy::forgetAll();
+
+        $response = $this->postJson("/api/chat/{$key}/capture", [
+            'session_token' => 'sess_lead_test',
+            'name' => 'John Doe',
+            'phone' => "   \n\t ",
+        ]);
+
+        Tenancy::set((int) $biz->id);
+        $this->assertEquals(0, ChatLead::where('chat_session_id', $session->id)->count());
+
+        $response->assertStatus(400);
+        $response->assertJson(['error' => 'Bad Request']);
     }
 }
