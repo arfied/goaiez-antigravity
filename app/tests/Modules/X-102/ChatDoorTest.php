@@ -382,6 +382,10 @@ class ChatDoorTest extends TestCase
      * Finding: This test is unfalsifiable for the middleware's behavior because the action carries its own
      * redundant trim logic. A mutation bypassing the middleware still survives because the action nullifies
      * the whitespace anyway.
+     *
+     * It is, however, falsifiable for the controller's parameter mapping: a mutation that bypasses the
+     * controller's mapping by passing a non-whitespace string (like $sessionToken) into the message parameter
+     * reddens this test, establishing that it protects the controller boundary.
      */
     public function test_http_middleware_normalises_whitespace_message_to_null_when_consented(): void
     {
