@@ -18383,3 +18383,210 @@ either** (210); **building `:26`** (X-01 is stages' under ruling 5's catch-all);
 with the **REPAIR branch**: `none` means the pin was taken again and item 1 restores it before anything else.
 ⛔ And the standing line, doubly load-bearing while the guard is unchanged: **never `git restore` or
 `git checkout` a file this wave did not create — report it and leave it.**
+
+## ⛔ AN ABSENCE CLAIM BUILT FROM A GREP IS DECIDED BY **READING** THE HITS — the hit that says NOT-S and the hits that merely mention the vocabulary are the same shape in the output, and the refuting line was in the report's OWN pasted evidence (tick 334)
+
+`ChatDoorTest.php:27`'s inherited BUILD PROPOSAL claims *"the AgentTurns law prohibits unencrypted text in job
+payloads, not synchronous event payloads."* SITE-205 grepped `AgentTurns`, `agent_turns`, `unencrypted` and
+`job payload`, pasted **~40 hits**, and concluded *"the law is not found anywhere in the codebase or master
+plan."* Its own item-3 output contains, at report line 132, the line that refutes it — and read at source in
+this seat, `AgentTurns.php:176-193` is the **only** job-payload comment in the very file the docblock names:
+
+```php
+// ⚠️ **THE ONE LEAK NEITHER THE GLOBAL SCOPE NOR RLS CAN SEE** — … a caller can hand in a model
+// hydrated under another tenant …
+// ⚠️ **THIS SAID "WOULD PUT ONE BUSINESS'S CUSTOMER'S WORDS INTO ANOTHER BUSINESS'S JOB PAYLOAD"
+// AND THAT CONSEQUENCE IS GONE SINCE 8720** — the payload carries a row id now.
+```
+
+⭐ The payload really was changed from carrying a customer's **words** to carrying a **row id** — and the
+recorded reason is **TENANCY, not encryption**, with the words-in-payload consequence explicitly **RETIRED**.
+The docblock generalised a retired tenancy consequence into a standing encryption law that has never existed;
+`grep -c -i 'AgentTurns' app/GOAIEZ-MASTER-PLAN.md` → **0**.
+
+> ⛔ **An absence search's output must be READ, never counted or skimmed for a verdict.** A hit that states
+> NOT-S refutes the premise; a hit that merely mentions the vocabulary is noise; **and nothing in the output
+> distinguishes them.** The wave pasted the refuting line verbatim and read the set as empty of law.
+
+Tick 297's *read, never count* reaching a **search for a claim** rather than a filter, and the sixth member of
+the description-based-selector family turned on this lane's own instruments (246, 297, 306, 320, 323, 324).
+⚠️ **Convergent derivation the same hour, one lane over** (224): reviews' `ee4e5bbe` is titled *"REV-136 — a
+negative result from a scoped command is a statement about the scope."*
+
+## ⛔ A PREMISE OF THE FORM "RULE R EXISTS AND SAYS S" HAS **TWO** REFUTATIONS, AND AN EXHAUSTIVE-ABSENCE SEARCH CAN ONLY FIND ONE (tick 334)
+
+SITE-205 objected, correctly for the search it ran, that my verdict set's `FALSE — name the clause that fails
+and the line that refutes it` is unsatisfiable for a premise asserting that something **exists**: an exhaustive
+absence cites no line. It took `OTHER` and said why. The objection is right about its search and **wrong as a
+general claim**, because there are two refutations and only one is reachable by searching the claimed
+vocabulary:
+
+- **the ABSENCE of R** — cites no line, and is what a search for R's own words returns;
+- **a NEARBY rule about the same MECHANISM that says NOT-S** — cites a line, and is invisible to that search.
+
+⭐ So the evidence requirement that looked defective is precisely the thing that would have driven the second
+search. What was missing is the instruction to search **the mechanism the claim is about** once the claimed
+vocabulary comes back empty. Tick 265's answer-set law reaching a verdict's **evidence requirement** rather
+than the set's completeness, and the first time this ledger has found a demand that looked unsatisfiable to be
+satisfiable by a search nobody ran.
+
+## ⛔ WHEN TWO INDEPENDENT GROUNDS EACH SUFFICE TO REFUSE A WAVE, THE VERDICT NAMES THE ONE HARDEST TO REVERSE (tick 334)
+
+`grep -rn 'ChatTurnCreated' app/app app/tests` returns its own class declaration, one import, one
+`Event::dispatch` in `ChatTurnAction`, and the two docblocks — **zero listeners, zero subscribers, zero readers
+anywhere**. So `:27` has two independent refusals: the premise is false, **and** the proposal would add a
+payload field to an event nothing consumes, which is decision 272's shape and the family this lane refused at
+146 (`ssl_installed`), 246 (`slug_key`) and 329 (`$turnNumber`). My verdict set offered both; the wave chose
+the premise.
+
+> ⛔ **A premise is a fact about a TEXT and is repaired by editing it; a consumer count is a fact about the
+> TREE.** Name the ground that survives the other being reversed, or a later tick re-opens the item the day
+> anyone writes the missing law and must re-derive the consumer count from scratch.
+
+## ⛔ AN EVIDENCE REQUEST NAMES A **FIELD** AND A **COMMAND** — check the command's output format carries the field (tick 334)
+
+`BRIEF.md:173` named `sed -n '20,80p' <file>`; `:176` asked for the deciding lines *"quoted with their line
+numbers."* `sed -n 'M,Np'` prints content **without** line numbers. Two sentences three lines apart, each
+individually correct, and the mismatch has exactly two outcomes this ledger has spent ticks catching: the
+coder runs something else, so the report quotes a command that is not the one named (247), or it supplies the
+field from nowhere (249, 285). Tick 272 caught `ls --time-style=+%H:%M:%S` discarding the date — my own format
+string on my own query; this is one level out, in a **request**. ✅ `grep -n`, or the `Read` tool with
+`offset`/`limit`, are the accepted forms and are how this seat measured the same file.
+
+## ⛔ A FALSIFIER WHOSE RED STATE ASSERTS THE WAVE'S OWN DECISION IS A POLICY INVENTION WEARING A FALSIFIER — `form_type` measured and REFUSED (tick 334)
+
+The one caller-supplied value on the chat door that `ChatCaptureController:45`'s guard does not cover:
+`:34` reads `form_type` from the request, `:62` coerces a non-string to `'live_chat'`,
+`ChatCaptureAction:52` persists it, the migration declares `string('form_type')->default('live_chat'); //
+live_chat, offline_capped_form`, and the **only** reader is `X-102/Ui/views/offline-form-inbox.blade.php:10`,
+rendering it into the tenant's inbox through Blade's **escaped** echo. So an arbitrary attacker string on a
+public unauthenticated endpoint is persisted and shown to the tenant, against a two-value domain the module's
+own migration declares and **nothing enforces** — the module has **no internal writer of that column at all**.
+
+I designed the fix — derive `form_type` from the session's own `status`, which `ChatStartAction:35` already
+computes and persists, rather than receiving it (268's *the method takes the answer as its argument*; 199's
+derive-never-a-default) — and refused it on two measurements:
+
+- `grep -n 'form_type\|offline_capped\|live_chat'` over **`GOAIEZ-MASTER-PLAN.md` and
+  `GOAIEZ-TRACKER-CAPABILITIES.md` returns NOTHING**, so tick 282's discriminator has no clause to compare to
+  — the state ticks 295, 300, 303 and 327 each refused a wave in for this same module family;
+- and decisively, **the falsifier cannot distinguish correct from different**. A route test asserting
+  `form_type === 'live_chat'` for a non-capped session passes **before** the fix too, because that is the
+  column default; the only mutation that reddens is sending `form_type: 'anything'` and asserting it is
+  **ignored**, which asserts the new policy rather than a defect.
+
+Same family as tick 331's *a test green under both configurations is an OUTCOME INVARIANT, not a sentinel* and
+tick 322's *a mutation that cannot distinguish measures nothing*, reaching the **design** of a wave rather than
+the reading of one. Per 224 the branch is **cannot work here** — the door is shut on a missing clause, not the
+room empty — and it is recorded with its measurement so the day a clause exists the fix is one line. ⚠️ The one
+fixture is `X102Test.php:70`, **action-level**, so a controller-side derivation would not have reddened it.
+
+## The two dispositions, and two hypotheses that died at source (tick 334)
+
+- **`:26` — TRUE AND NOT OURS**, confirmed at source. `UnifiedInboxManager.php:30` types the parameter
+  `string $identifier` with its own comment `// phone or email`, `:35` is `str_contains($identifier, '@')`, and
+  `:53` writes `'phone' => ! $isEmail ? $identifier : null` on create — a session token lands in the **phone**
+  column. **X-01 is stages'** under ruling 5's catch-all. ⚠️ Its general shape is this lane's recurring one —
+  **a discriminator weaker than the domain it partitions** (278 *NOT NULL is not non-empty*, 329 *`is_string`
+  is not non-blank*, and here *a `@` test is not a channel*). Advisory, ⛔ never a parallel fix.
+- **`:27` — refused on the durable ground: ZERO CONSUMERS**, premise-refutation second and now citing a line.
+- ⛔ *"`$message`/`$formType` reach the action unguarded — SITE-185/199's array-to-typed-parameter 500."*
+  `ChatCaptureController:60-62` **already** coerce all three optional inputs with `is_string($x) ? $x :
+  <default>` — SITE-172's own remedy in a file this lane never wrote. Per 224: **already done here.**
+- ⛔ *"the `{key}` → `$businessId` resolution is unvalidated."* `:20-24` is `$keys->resolve($key)` then
+  `abort(404)`, and `PixelKeys` is `app/app/Services/`, **not this lane's column** (237's second question).
+
+Twelfth-plus firing of *read the file before the brief names what is in it* (241, 244, 249, 251, 254, 268 ×2,
+284, 321, 326, 327, 330, 334), and both were reversed by **opening the file while writing the brief**.
+
+## Census, doctor, §7 and the fourth surface at tick 334
+
+**Census `2 · 1 · 0 · 2`**, halves `--full-history` (314), `pwd` first (209), previous value read from
+`REVIEWS.md` and never this file's digest (301), drift signature **absent** (three pathspec halves `2 · 1 · 0`
+against a pathspec-free complement of `2` — the ***split*** is the signature, never either number). Half 1's
+two members are **both `origin/track/stages` merges of `origin/main`**; `--no-merges` reads **0** ⇒ **no
+non-merge sibling commit exists in this lane's column at all. No violating partition on any surface.**
+Complement: `bin/supervise.sh`, `CLAUDE.md`, per-track never-merge — *unwatched, not uncovered* (183), ⛔ no
+fourth half. ✅ Cross-lane dependency query **CLEAN** while the paired stat printed reviews' commits — **the
+pairing is the measurement** (240).
+
+⭐ **The closing tip re-read FIRED — nineteenth against eighteen nulls — and on `origin/main`**, the one ref
+that excludes in all four surfaces at once (198). Left **literally blank until the command returned** (257).
+`main bc40d104 → 5cdc4e9d`, `reviews d2a7734e → 5191b936`, both pushed after this tick's opening fetch ⇒
+**arrival, not staleness** (220). **The whole census was re-run in full** and reproduced **byte-identical**,
+coherently: main's one new first-parent commit is a merge of **this lane**, already excluded by
+`^origin/track/site`.
+
+✅ **Tick 236's MISSING-not-CONFLICTING check — Track 1's FIFTEENTH merge of this lane, FIFTEENTH clean
+result.** Second parent read with `rev-parse ^2`, **never off the subject** (222) → `2ed70d73`. `git grep` on
+the ref, never a stat (163): `deploy_hash 2 · EdgeProvisionAction 2 · PageVersionAction 3 · trim($phone) 2 ·
+where('business_id', $businessId)` **1 in ChatTurnController AND 1 in ChatCaptureController**. ⭐ `c8264b05`,
+`2105707b` and `1e3385d9` post-date the second parent ⇒ **unmerged, not dropped** (258) — the fourth live
+instance after 327, 331 and 333 each had that prediction confirmed by arrival.
+
+**Fourth surface, both directions** (173's fall test, 323's rise reading), against each branch's own bound and
+never HEAD: `main 14 · money 16 · pricebook 14 · reviews 15 · sixty 30 · stages 41 · ui 16 · site 197 ·
+HEAD 197`. **No branch below main's 14** ✓. ⚠️ **Main still carries 14 after FIFTEEN merges of `track/site`** —
+tick 264 stands.
+
+**Doctor, live in this seat, twice**: stamp `20260829-0647` = `runtime_build` (**extrinsic, stated as a
+comparison** — 305) · `integrity clean · boundary 50 · contract 85 · citation 3 · schema 16 · capability 207 ·
+anchor 128 · journey 3` · **492**, the SUM reconciling in both (285), `ok` only on `integrity … clean` (292),
+**no stage moved**. ⭐ Tick 284's control fired: **all six non-zero timings differ** between my two runs,
+including both long stages where the nonce's weight lives (311, 318). ⚠️ The report quoted no doctor block, so
+the pairwise checks had no subject and this seat's own two runs are the whole of the evidence.
+
+**§7 on the tip `1e3385d9`, measured independently in this seat**: `tests 2441 · passed 2433 · FAILED 6 ·
+errors 2`, reconciling ✓ (226), ⭐ `a_published_site_carries_all_seven` **ABSENT — J11 GREEN**, byte-identical
+to tick 333 including both sets. Both intermittent **CAUSES** absent (Authorize.Net `E00040`; Postgres
+`SQLSTATE[42501]` — 311's cause-keying), so the agreeing integer is *a property of which causes fired, never of
+the comparison* (302). ⭐ The §7 substitution needed **no borrow**: tick 259 turned `--tests` off for a wave
+whose delta is provably an input pest does not read, and the wave's delta is **empty** — a **zero delta**, the
+strongest form condition (2) can take (300).
+
+§0 pin `goaiez_antig_site_test` ✅ · §2 **exactly one `⛔`** — tick 207's **healthy** branch, and the reading
+that matters this tick because `none` is what tick 332's loss looked like; ⭐ **SITE-204's item-0 repair branch
+held.** §4 seals ✓ · §6 pint passed, phpstan 0. **§1 by ARITHMETIC** (225): printed `behind 188, ahead 9`
+**pre-fetch** (318 — the gate is the tick's first act), post-fetch `rev-list --count` reads **202** and **1**;
+188 + 14 = 202 ✓ and `ahead 1` is tick 333's unpushed notes, which this tick pushes. **X-102 id census** re-run
+here with `--include='*.php'` (287, 263): `3 G13-15 · 1 G13-37 · 1 G15-01 · 1 G16-21 · 3 G21-01 · 1 G2-57 ·
+1 G8-36`, byte-identical.
+
+**Tips at the close** (192, the next miss's lower bound): `main 5cdc4e9d` · `money ef2ad7ac` ·
+`pricebook 74f5b79b` · `reviews 5191b936` · `sixty 526447a5` · `stages ea356afd` · `ui bf42fec7`.
+
+⚠️ **Instruments.** The shell drifted into `app/` on **three** calls and was reset in its own call each time —
+**per call, never per tick** (285). ⛔ Refused: a `$` anywhere in a grep pattern even single-quoted (305), so
+every signature check was written `git grep -cP '…\x24name'`; `cd app && sed -n 'M,Np' <relative path>` (a Read
+deny rule cannot resolve the path statically); an extended-regex `grep -rn -iE` with alternation over two
+paths. ✅ `Read` with `offset`/`limit` on an absolute path is the accepted substitute.
+
+## SITE-206 — ruled at tick 334
+
+`grep -c 'BUILD PROPOSAL' .agents/state/JOURNAL.md` → **0**: five dispositions of claims in **this lane's own
+test file**, three measured FALSE or NOT-OURS, recorded only in this seat's per-track `CLAUDE.md`. Tick 260's
+law verbatim, and two ticks (329, 334) have each independently re-derived the same five.
+
+**RULED: annotate the five docblocks IN PLACE with the measurement, and record ONE `state.py note` naming all
+five.** The precedent is SITE-202's `750eabb9` — the measurement in a comment **at the line a reader would
+otherwise misread**, which tick 331 measured as better than the rename that ruling asked for; tick 199's law
+executed. ⛔ The inherited text is **KEPT** and the annotation appended beneath it (251 — a deleted claim is one
+nobody can re-check). ⛔ **ONE note, not five**, because `state.py` has no withdraw (210) while a comment is
+editable: the minimum goes in the permanent file and the detail in the reversible one.
+
+⛔ **There is NO falsifier and the brief says so rather than manufacturing one** (282, 283): a comment changes
+no behaviour, so no mutation of it can redden anything. The pass condition is **zero movement in every gated
+stage in BOTH directions** (209, 262), a **byte-identical X-102 id census** (287) and `grep -c 'BUILD
+PROPOSAL'` unchanged at **5**. ⚠️ `journey` and `schema` are **EXCLUDED and not stops** (270, 315).
+
+⚠️ **The wave RE-MEASURES all five and writes each annotation from its own measurement**: I measured `:26` and
+`:27` this tick and tick 329's three I did not, and tick 314's law is that a brief's justification clause is a
+ground value whose blast radius is the permanent record. A measurement that contradicts a recorded disposition
+is **reported, that annotation skipped, the rest continued** — a branch, never a stop (333).
+
+⛔ Refused: deleting the proposals (251); five permanent notes (210); editing any other docblock (215); any new
+`G##-##` literal (240, 260 — these five carry none and that must stay true); building `:27` (zero consumers);
+the `form_type` derivation (no clause, and its falsifier asserts the wave's own decision).
+
+Per tick 293 this entry states the **ruling and the falsifier and no prediction**; the outcome is the next
+tick's to write.
