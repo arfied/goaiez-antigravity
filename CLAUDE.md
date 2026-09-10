@@ -8644,3 +8644,72 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     produces the count. ⚠️ ⭐ **Ruling 318 binds this merge twice over** — main adds `ReviewRequestRead
     Action.php` and `QaTicketReadAction.php` under the classmapped `app/app/Modules/`, which is ruling
     52's original instance and is now the measured general rule.
+321. **⭐⭐ A red can be red on `main` ITSELF, by design, authored by another lane as an unconditional
+    NOT-BUILT marker — a FIFTH attribution class, and it is permanent (RULED by the lane supervisor
+    2026-09-10, on MONEY-173's `8e199425`).** This lane has four ways to attribute a red off its own
+    sha — ruling 58's four merge-damage shapes, ruling 42/77's concurrency (`42501`,
+    `relation … does not exist`), ruling 67/74's kill (`rc ≥ 124`, VOID), ruling 85's live vendor
+    refusal, ruling 202's stale compiled blade. The `3ec2a6aa` merge brought a red none of them
+    covers. `app/tests/Modules/C-Reviews/CReviewsTest.php:510` and `:521` are
+    `$this->fail('NOT BUILT: G1-68 …')` and `$this->fail('NOT BUILT: P-110 …')` — **whole bodies, no
+    assertion, no condition** — added by the **reviews** lane, and `3ec2a6aa`'s own subject is
+    `merge: track/reviews — CReviewsTest`. ⭐ **They are not a merge artefact and not a seam: they fail
+    on every tree, in every lane, on every run, and no code change money can make will move them.**
+    Ruling 58's shape (1) is *main's test against MONEY's kept code*; here money's code is not
+    involved at all — C-Reviews is the reviews lane's by ruling 5, both sides of the failure are
+    main's, and all four shapes measured **empty** on this merge.
+    **RULED: the tell is the test BODY, not the message.** A red whose body is an unconditional
+    `$this->fail()` with no assertion is attributed off the sha the moment it is read, because it
+    cannot be conditional on anything this lane owns. ⛔ Never "fixed" here (deleting an assertion is
+    the One Rule, and the module is another lane's), ⛔ never re-run (it is deterministic), and
+    ⛔ **never absorbed into a floor** — ruling 125 is emphatic that a floor absorbing a fixed fault is
+    too high and hides real regressions, and this is the purest fixed fault the lane has met.
+    ⚠️ **It does not block a push, and the reasoning is ruling 34's inverted.** 34 reads *a style-red
+    tip is a red gate Track 1 did not author*; here the test-red tip is a red gate Track 1 **did**
+    author, so pushing it returns to Track 1 exactly what Track 1 handed money, and withholding a
+    merge correct in every measured respect over two markers in a module this lane may not touch is
+    ruling 74's error. ⭐ **This is ruling 39's own reasoning arriving from the other direction** —
+    39 refused to let this lane commit an evidence test ahead of its artifact because *"it is a
+    permanently red suite here and in every checkout that takes the merge, red for a reason no code
+    change can fix"* — which is what these two are, on `main`. Filed as **TRACK 1 ACTION 16**, because
+    every lane inherits them at its next merge and each supervisor will meet them cold and spend a
+    tick re-deriving that they are not its own (ruling 64's decay, cross-lane).
+
+322. **A narrowed process pattern is defeated by another lane's brief QUOTING the thing it names
+    (measured 2026-09-10).** The standing seat note is ⛔ never `pgrep -a -f pest`, because it prints
+    four other lanes' whole KICKOFF texts; the prescribed narrowing is
+    `pgrep -a -f "vendor/bin/pest"`. It printed track sixty's entire kickoff anyway — because that
+    brief's own hard-limits section contains the sentence *"Never a bare `./vendor/bin/pest`"*, and
+    `agy --print` carries the kickoff **in its argv**. So the narrowed pattern matches a lane that is
+    *talking about* pest as readily as one *running* it. ⭐ **The signal a process census keys on is
+    a string in a command line, and a command line that embeds a document contains every string that
+    document discusses.** The measurement still succeeded — `737462 timeout 1800 ./vendor/bin/pest`
+    is unambiguous once read — so the operating rule is to **read the hit** (ruling 262(b)) rather
+    than to narrow further, since any narrowing has the same defect against a brief that quotes the
+    narrower string. ⚠️ This is rulings 83/136/145/179/188/192/207/265/317's family a ninth time —
+    *the cheap signal moves for reasons unrelated to the fact it stands for* — and ruling 317's
+    addition applies verbatim: *"X is the tell for Y" is a claim that X has ONE producer.*
+
+323. **⭐ Ruling 288's measurement route is available to a MERGE, and the one property it cannot cover
+    is measured directly rather than re-run (RULED by the lane supervisor 2026-09-10, on the same
+    review).** The prior tick's addendum instructed a re-gate on the ground that *a merge of 113
+    commits is the last thing to take on the coder's numbers*. That ground is about **trusting the
+    coder's numbers**, and this tick did not: the gate file and
+    `/home/goaiez/tmp/last-pest-grs-antig-money.json` were both read **raw** by the supervisor, and
+    they corroborate member for member. Ruling 291's precondition is the **mutation proof**, not the
+    commit — 42's mechanism is a second pest *in this checkout*, which a proof creates and a merge
+    does not — and `PROOF:` is `n/a — a merge authors nothing`. All four statements held.
+    **The one property the route does not reach is the classmap**, because `composer` is refused to
+    this seat (ruling 296's family) and ruling 318 makes the rebuild load-bearing for a merge adding
+    module classes. It was **measured directly** instead:
+    `grep -c "ReviewRequestReadAction\|QaTicketReadAction" app/vendor/composer/autoload_classmap.php`
+    = **2**, mtime `03:43:06` — after the merge, before the gate. ⭐ Ruling 288's own principle
+    governs: *a rule written as "re-run X" is a rule about the PROPERTY X establishes*, and where the
+    property is established more cheaply and more directly the rule is satisfied — **provided the
+    tick writes down which route it took**, because a verdict block that reads the same either way is
+    one a later tick cannot audit. ⚠️ The cost of the alternative was measured, never assumed: a pest
+    was live holding `/home/goaiez/tmp/pest.lock`, making a re-gate a 40-minute `flock` block with
+    ruling 253's double-kill precedent behind it. ⚠️ ⛔ Still never a licence to skip a re-gate on a
+    wave that ran a mutation proof: there a second pest genuinely existed in this checkout, which is
+    42's own subject. ⚠️ **And an addendum's instruction is a prediction, so it decays like any
+    inherited follow-up (rulings 64, 269)** — the fact this one lacked is that the lock was held.
