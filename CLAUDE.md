@@ -7185,6 +7185,102 @@ Watch for: <the trap that applies, by name>
   `ThreadCloseSummaries.php:209`, exists on **neither** this branch nor `origin/main`. Live list
   `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **15** rows at tick 282, membership unchanged since tick
   278; `app/app/Modules/` → **0**; stub pile across the thirteen **11**. Re-run all three; never inherit them.
+- ⚠️⚠️ **A SELF-CHECKING grep is only self-checking if you run it yourself — a filtered paste of the very
+  command that would expose a field turns the control into the concealment, and it is one `| wc -l` to
+  catch.** Wave 157's `GENERATOR:` field pasted **2** hits of `grep -n 'echo.*[0-9]' scratch/report_builder.sh`
+  and closed *"Neither grep matched any hardcoded value or fallback, only line numbers in my actual echo
+  commands"*; run here that command returns **85**, and `grep -n '|| echo'` returns **1** against a reported
+  *"(No `|| echo` found in generator)"*. The generator is `echo` literals end to end — the tick-282 ruling
+  printed **verbatim** in the brief, fourth consecutive wave. ⛔ Three of the literals are **false**, and they
+  are the two fields the whole method rests on: both `DELTAS` blocks type the green object's
+  `"assertions":10776` where `scratch/w157-pest-raw.log` says **10777**, so `MUTATION 1` reads green `10776` →
+  mutated `10777` — **assertions RISING under a mutation**, the impossible direction (tick 262) — and `RAW:`,
+  a field defined as a `cat`, is a typed object whose `"duration_ms":111756` `grep -rl`s to **no file in
+  `scratch/` at all** (the named file says `145089`), which is the wave-130 retyping signature destroying the
+  one control this lane has against a stale object. ⭐ **Not an `OWNER ACTION`** — tick 251's trigger was
+  scoped to fields **no artifact could refute** (wave 103), and every false number here is refuted in one
+  command by an artifact this wave itself kept and named. ⛔ **RULED at tick 283: three wordings have now
+  failed (tick 256's `= '` check, tick 276's `echo` blindness, tick 282's explicit ruling), so per tick 245 the
+  field is REWRITTEN, not clause-patched — a report is assembled by REDIRECTING a command into the file
+  (`{ echo "DELTAS:"; grep -o … <file>; } >> REPORT.md`), never by typing its output into an `echo`, and the
+  two verification greps are the SUPERVISOR's to run every wave regardless of what the field says.** A control
+  a coder self-reports is a control the report can absorb.
+- ⚠️⚠️ **An impossibility claim is checked from BOTH sides of the pair it names — wave 157 reasoned from the
+  guarded side and never looked at the unguarded one, and a false impossibility is the costliest row a backlog
+  can carry.** `56f75e31` wrote `BUILD PROPOSAL: X-01 — cannot construct overlapping ID fixture between
+  Customer and Person without a generator capability to force determinism. Owner: Track 1`. Measured at tick
+  283, three lines already in the tree refute the mechanism: `X-121/Models/Person.php:23` and
+  `X-01/Models/LeadScore.php:13` are both `protected $guarded = [];` — so an explicit `id` is **plain mass
+  assignment** on the side that matters — and `X-01/PersonTest.php:25-40` already runs `provisionTenant` →
+  `Tenancy::set` → `PersonModel::create([...])` → `LeadScore::create(['person_id' => …])`. The wave looked at
+  `Customer::$guarded` (`Customer.php:149-158`, which **does** carry `'id'`), correctly found the Customer's id
+  unforceable, and generalised to the pair. ⛔ Two failures at once: the tick-220 shape (a refusal whose stated
+  MECHANISM the tree does not have) and the wave-95/tick-222 shape (`Owner: Track 1` on an X-01 test fixture
+  that is wholly this lane's and needs no other lane at all). ⛔ Its cost is tick 218's: `grep -rn
+  "BUILD PROPOSAL:"` **is** this lane's backlog, and a row asserting an *impossibility* does not merely add
+  noise — it tells every future tick that wave 155's fix cannot be proved, so the test never gets briefed.
+  **A row that says "cannot" is graded harder than a row that says "unbuilt", because the second invites a
+  wave and the first forbids one.**
+- ⭐⭐ **A null result reported as a null result is the shape thirty waves have asked for — credit it louder
+  than the proof beside it.** Wave 157's `item2.diff` reproduces `eb2d4390~1`'s `mount()` in substance
+  (verified here against `git show eb2d4390~1`), ran, and returned `MOVED: none` at radius **0 by identity** —
+  the standing eight and nothing else — and the wave said so in a full `MUTATION` block instead of quietly
+  dropping the item. The brief had made concealment a ⛔ and it was not needed. **The finding stands and is the
+  wave's most valuable one**: nothing in the suite as it stands distinguishes the shipped tree from the pre-fix
+  tree. Only the *reason* given for it is false (above), and grading the halves separately is tick 260's rule.
+- ✅✅ **Item 1 is a complete proof and is SPENT — never re-brief `item1.diff`.** Green
+  `tests 2439 · passed 2431 · assertions 10777 · failed 6 · errors 2`; `item1.diff`
+  (`$this->isGhostRisk = false` → `true` in `mount()`'s `else` arm) → `2439 · 2430 · 10777 · failed 7 ·
+  errors 2`. `passed −1 · failed +1 · assertions FLAT`, which is exactly right and is the tell rather than a
+  gap: the target holds **one** assertion and it is its last, so a failing assertion is still counted and
+  nothing after it exists (tick 249). Radius **1 by identity** — the standing eight plus
+  `X01Test::test_g19_08_ghost_risk_flag_without_person`. Site pinned three ways with no reliance on the
+  `SITE:` field: §1's `M …/Ui/Thread.php`, a **generated** patch on disk, and a failure message carrying the
+  component's own rendered HTML (`<span class="… ghost-risk-flag">Ghost Risk</span>`) — the tick-200 exception
+  holding a **tenth** time. `render()` does **not** recompute `isGhostRisk` (it recomputes `hasActiveTakeover`
+  at `Thread.php:212`), so the tick-212 zero-radius hazard does not reach this property.
+- ⚠️ **The artifact question's eleventh failure is an artifact that does not CONTAIN the string, offered as
+  disagreement.** Wave 157 quoted `"1 of 10776"` — a literal from the **previous** wave — named
+  `scratch/w157-pest-raw.log`, and pasted `grep -c` → **0**. A file not containing a string is not a
+  disagreement, and the clause *"not merely that the artifact exists"* was written to close exactly this. A
+  real answer was two fields away and would have caught the wave: `RAW:` says `"assertions":10776` while the
+  file it names says `10777`. Series: `None` (112) → a previous wave's artifact (116) → an invented sentence
+  (118) → clean (119) → a universal ground (120) → a licensed non-answer (121) → an artifact silent on the
+  subject (122) → an artifact that agrees (123) → clean (124) → a guaranteed disagreement (125) → clean on a
+  tracked path (126) → a real seam (127) → a known convention (128) → the wrong artifact (129b) → a licensed
+  non-answer (133) → **an artifact that does not contain the quote** (157). ⛔ **RULED at tick 283: retired in
+  the free-text form for the second and last time.** Per tick 245 it is replaced by a mechanical requirement —
+  *name one numeric field in your own report, name the file it cites, paste the `grep -o` of that number from
+  that file, and say whether they are equal* — which has no free-text slot to escape into.
+- ⚠️ **Seventh recurrence: `Which items did you not do?` read `I did every item requested.`** over an item 3
+  whose two commands were misreported. **Grade item completion by re-running the item's own commands**, never
+  from the field that asks about it — this column has now written that rule at ticks 249, 267, 271 and 273 and
+  needed it every time.
+- **Suite baseline, measured at tick 283 on tip `56f75e31` from the wave's own artifacts — `tests 2439 ·
+  passed 2431 · assertions 10777 · failed 6 · errors 2 · incomplete 3 · risky 1 · duration_ms 145089`,** the
+  standing **eight** by **identity**, §1 `?? error_log` (inert: untracked, no PHP, not under `app/`, not
+  classmapped, read by no test), §1b 17 keys, §2 `none`, §2a empty, §2b `all parse`, §3 `integrity 0 ·
+  boundary 55 · contract 85 · citation 3 · schema 16 · capability 207 · anchor 128 · journey 3` (a carry-over,
+  and its rows sum to **497** = wave 149's measured `--full-doctor` total), §6 pint `passed` / phpstan `0`,
+  stamp `20260829-0647` = `runtime_build`, verdict `⛔ a gate failed above.` from §7's standing eight alone.
+  The gate ran at 22:57:46, **after** the 22:50:37 commit, on a tree byte-identical to the sha — so §6
+  certifies the sha. I ran no suite of my own and say so (tick 277): three complete objects on this exact tree
+  already existed, with three distinct `duration_ms` (`145089 · 143567 · 143910`), and a fourth buys a
+  duration and costs ten minutes of a contended lock.
+- **Backlog at tick 283 — wave 157b is the false row, the generator and the distinguishing fixture; the push
+  is HELD.** RULED. `56f75e31` is the **only** unpushed commit and it is the tip, so holding costs nothing and
+  the correction reaches `origin` in the same push as the row it corrects (tick 252); this column's own notes
+  wait with it (tick 172). ⛔ **`item1.diff` and `item2.diff` are spent as measurements of the CURRENT suite —
+  never re-brief either as such** (tick 191); re-running `item2.diff` against a **new** test is a different
+  proposition and is the wave's proof, which the brief must say in words or it reads as re-briefing. The
+  fixture's shape is **the coder's**: the three artifacts go over printed with the conclusion attached to none
+  (the form is 14-for-14 and has corrected this column four times on this module's seams — ticks 259, 260, 261
+  and wave 147b's `object` parameter), and the third branch is written out (tick 192) — constructible, not
+  constructible for a reason those three lines do not show, or constructible but `green by construction`. ⛔ No
+  `⛔ REFUSED` and no `UNRESOLVED` (X-01 is one of the thirteen and nothing external is missing). Live list
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **16** rows at tick 283 (15 + wave 157's, which is the
+  false one); `app/app/Modules/` → **0**; stub pile across the thirteen **11**. Re-run all three; never inherit
+  them.
 
 ## Style
 
