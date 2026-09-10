@@ -380,8 +380,8 @@ class ChatDoorTest extends TestCase
      * they reach the controller.
      *
      * Finding: This test is unfalsifiable for the middleware's behavior because the action carries its own
-     * redundant trim logic. A mutation bypassing the middleware still survives because the action nullifies
-     * the whitespace anyway.
+     * trim logic, which is redundant on the only existing path. A mutation bypassing the middleware still survives
+     * because the action nullifies the whitespace anyway.
      *
      * It is, however, falsifiable for the controller's parameter mapping: a mutation that bypasses the
      * controller's mapping by passing a non-whitespace string (like $sessionToken) into the message parameter

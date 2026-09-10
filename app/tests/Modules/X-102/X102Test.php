@@ -528,7 +528,7 @@ class X102Test extends TestCase
      * Reasoning: A detail that is blank or whitespace was not given (R245). Normalising to null ensures
      * we don't pass an empty string down to the event listeners like ChatLeadCapturedListener which expects
      * a meaningful message or null, preventing downstream rollbacks of valid lead captures.
-     * BUILD PROPOSAL: direct callers bypassing the HTTP middleware (X-102)
+     * Finding: There are no direct callers bypassing the HTTP middleware.
      */
     public function test_action_normalises_whitespace_message_to_null(): void
     {
