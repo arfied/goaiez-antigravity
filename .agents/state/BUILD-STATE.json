@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-10T00:17:42",
+ "updated": "2026-09-10T00:47:45",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1694,6 +1694,10 @@
   {
    "at": "2026-09-10T00:17:42",
    "note": "X-117 G7-10 bundle allocation, G1-73 milestone billing, G1-81 subscription gifting and G1-82 subscription pausing stay red: all four are unbuilt ENH features, measured \u2014 sellables carries no bundle column and no allocation code, nothing dispatches a milestone event so G1-73's constraint has no subject at all, there is no gift model or issuer_scope, and pause has no code while the meter it would stop belongs to another lane. Building any of them to move a doctor count is machinery for a number."
+  },
+  {
+   "at": "2026-09-10T00:47:49",
+   "note": "C-Billing dunning_states declares six statuses and the engine writes three; grace and terminated are written by nothing and read by nothing, and the migration that declares them is not this lane's to edit, so they are recorded rather than built."
   }
  ],
  "decisions": [
@@ -2613,6 +2617,12 @@
    "module": "X-117",
    "chose": "A specced capability cell is closable when its fifth column constrains a capability this module HAS, and vacuous when it constrains one the module does NOT have: a test written for the second kind is green because it matches nothing, which is the merged-wrong-lint trap, so the cell stays red and is recorded instead. Where the module actively refuses the capability, or satisfies its constraint by construction, the close is a real assertion on the real path and never a placeholder.",
    "at": "2026-09-10T00:17:42",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Billing",
+   "chose": "A screen that renders a status column shows the ladder stage in the owner's words and never the schema's token, and its signal is derived from the values the engine actually writes: a ternary keyed on a value no code writes is a constant wearing a condition, and a fixture that seeds that value makes the only assertion of the pill certify a state production cannot reach.",
+   "at": "2026-09-10T00:47:45",
    "ruling": "R245"
   }
  ]
