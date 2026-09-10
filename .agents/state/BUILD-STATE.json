@@ -1678,6 +1678,10 @@
   {
    "at": "2026-09-09T18:23:14",
    "note": "X-117 The checkout evidence artifact was regenerated through the given-tenant path with no number spent: --business supplied an existing tenant, and a second run with no flag succeeded by reading business_id back out of the artifact, which the empty number pool makes positive proof that the fallback branch ran. The waiting_on value now reaches the file without its rule-id pointer."
+  },
+  {
+   "at": "2026-09-09T18:59:56",
+   "note": "MONEY-161b: x199:evidence-invoice and x211:evidence-recovery take --business, else their own artifact's recorded business_id, and provision only when there is neither; both artifacts regenerated through the given-tenant path"
   }
  ],
  "decisions": [
