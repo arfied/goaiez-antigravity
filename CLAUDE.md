@@ -7906,6 +7906,54 @@ Watch for: <the trap that applies, by name>
   finding and is reported as one. Live list `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **16** rows at
   tick 291; `app/app/Modules/` → **0**; stub pile across the thirteen **11**. Re-run all three; never
   inherit them.
+- ⚠️⚠️ **A control whose PATTERN can appear in the DATA it greps is not a control — and `supervise.sh` §1
+  echoes recent COMMIT SUBJECTS, while this column's subjects are required to name traps, so any grep over
+  a gate log for a trap's own name hits my own prose.** Tick 291 ruled the proof that a gate ran is
+  `grep -c "REFUSED" <gate log>`, *"0 on a run that happened and 1 on one §7's clash guard turned away."*
+  At tick 292 it returned **1 on all three of wave 162c's gate logs, every one of which ran perfectly**:
+  the hit is line 10 of each, inside §1's commit list, and it is `98679abc chore(supervisor): tick 291 — …
+  a REFUSED gate is invisible outside its own §7 line`. **The instrument greps the block that created it.**
+  ⛔ **RULED at tick 292: the gate-ran proof is `grep -c "other pest process" <gate log>`** — the clash
+  guard's own phrase (`✗ REFUSED: N other pest process(es) on <db> (checkouts pinning it: …)`), **0** on all
+  three of that wave's logs and unproducible by a commit subject. Per tick 245 the control is **rewritten,
+  not clause-patched**. Newest member of the `.agents/plan/` silence family after a missing path (158), a
+  binary file (159), an absent log section (190), an inflection (200), letter case (209), a `sed` range
+  (239) and an over-specific pattern (289) — here the **searched corpus** is the liar rather than the query.
+  ⭐ The coder found it: it ran the control, got `1`, refused to file a false `NOT RUN`, read the line and
+  named my commit as the cause. **A coder correcting the reviewer's own ruled instrument is the shape to
+  credit loudest**, and it is why that wave was `PASS-WITH-NOTES`.
+- ⚠️ **When a field's value is a two-part string, the part a coder trims by eye is the part carrying the
+  TOOL's output — name what the field must END with, not only where it comes from.** Wave 162c's `MESSAGE`
+  was specified as a `grep -o` out of the raw object and was typed as
+  `The action itself must normalise a whitespace message to null` — the assertion's **custom description**,
+  i.e. the test's own words — dropping `Failed asserting that '   \n\n\t ' is null.`, which is the
+  **module's output** and the whole of the tick-200 site proof. The field kept the half that proves nothing.
+  NOTE and not `BLOCK` (tick 206): `RAW` was a real `cat` and carried it in full one field below.
+- ⚠️ **§1 and §7 of one gate log describing two trees has a FOURTH writer — the mutation REVERT.**
+  `w162c-gate-green2.log` §1 read `M …/ChatCaptureAction.php` while its §7 came back green by identity,
+  because the run started seconds after the mutation gate closed and the revert landed inside the
+  `pest.lock` window. Benign, and it costs nothing only because a **separate** clean-tree gate at the same
+  sha existed to certify §6. **Never read §6 off a gate whose §1 names the file under mutation** (tick 276),
+  and note the writers are now: a mid-edit save (232), a deliberate commit (267), the coder's own commit
+  landing mid-run, and a revert.
+- **Backlog at tick 292 — wave 163 is `ChatDoorTest.php:23`'s uncaught `DomainException`, and it is a
+  REACHABILITY question before it is a build.** RULED, measured this tick and not inherited (tick 235).
+  `ChatCaptureController:35` guards `! is_string($phone)`, so a whitespace-only string **passes**, and
+  `ChatCaptureAction:25` throws `\DomainException('NO_CONTACT_METHOD_ON_CAPTURE')` uncaught — a **500 on a
+  public unauthenticated door for a client error**, where the module's two sibling doors answer 400. Lane
+  owned (X-102 is one of the thirteen), single-module, on the live path waves 122–145 built, no vendor and
+  no credentials. ⚠️ **The hazard is the newest ladder rung, which has cost this lane two waves in three:**
+  `TrimStrings` and `ConvertEmptyStringsToNull` are global (`Middleware.php:461-462`, and
+  `grep -rn "trim\|TrimStrings\|ConvertEmptyStrings" app/bootstrap/app.php` is **empty**, so nothing is
+  excepted), so **whether `trim($phone) === ''` is reachable through the door is the wave's first question
+  and not its premise** — the tick-290 upstream-satisfaction shape asked in prospect instead of discovered
+  by a radius-0 survival. `ChatDoorTest` has `test_non_string_capture_phone_returns_400` (an integer) and
+  **no whitespace-phone case at all**. ⛔ This column names no shape and no assertion; three outcomes are
+  legitimate and which holds is the coder's to establish and to argue. ⛔ Wave 162c's mutation is **spent**
+  (tick 191); ⛔ no `⛔ REFUSED` and no `UNRESOLVED` (X-102 is in the thirteen, nothing external is
+  missing); ⛔ never edit a standing assertion; ⛔ no numbers published to a mutating wave (tick 208). Live
+  list `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **16** rows at tick 292; `app/app/Modules/` →
+  **0**; stub pile across the thirteen **11**. Re-run all three; never inherit them.
 
 ## Style
 
