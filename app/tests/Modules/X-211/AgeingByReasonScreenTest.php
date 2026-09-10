@@ -300,4 +300,43 @@ class AgeingByReasonScreenTest extends TestCase
 
         $this->assertSame(2000, (int) ReceivableState::where('business_id', $biz->id)->where('invoice_id', $inv->id)->value('late_fee_cents'));
     }
+
+    public function test_ageing_list_keys_each_invoice_row(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $customer = Person::create([
+            'business_id' => $biz->id,
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+        ]);
+
+        $inv1 = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-A1',
+            'total_cents' => 10000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(10),
+        ]);
+
+        $inv2 = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-A2',
+            'total_cents' => 20000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(5),
+        ]);
+
+        Livewire::actingAs($owner)->test(AgeingByReason::class)
+            ->assertOk()
+            ->assertSeeHtml('wire:key="ageing-inv-'.$inv1->id.'"')
+            ->assertSeeHtml('wire:key="ageing-inv-'.$inv2->id.'"');
+    }
 }
