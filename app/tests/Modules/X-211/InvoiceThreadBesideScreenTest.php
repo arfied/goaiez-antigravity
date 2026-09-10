@@ -196,4 +196,39 @@ class InvoiceThreadBesideScreenTest extends TestCase
             ->assertDontSee('escalate_to_human')
             ->assertDontSee('reason_recorded');
     }
+
+    public function test_the_thread_screen_opens_on_a_determined_invoice_when_due_dates_tie(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'John', 'last_name' => 'Doe']);
+
+        $invA = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-TIE-A',
+            'total_cents' => 111100,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->addDays(15),
+        ]);
+
+        $invB = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-TIE-B',
+            'total_cents' => 222200,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => $invA->due_date,
+        ]);
+
+        Livewire::actingAs($owner)->test(InvoiceThreadBeside::class)
+            ->assertOk()
+            ->assertSee('1,111.00')
+            ->assertDontSee('2,222.00');
+    }
 }
