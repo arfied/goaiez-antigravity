@@ -28,6 +28,8 @@ class CardScreen extends Component
 
     public ?string $waiting = null;
 
+    public ?string $errorHeading = null;
+
     public ?string $error = null;
 
     public ?string $success = null;
@@ -35,6 +37,7 @@ class CardScreen extends Component
     public function makeDefault(int $cardId, CardRotateAction $action): void
     {
         $this->forgetCardFields();
+        $this->errorHeading = null;
         $this->error = null;
         $this->success = null;
         $this->waiting = null;
@@ -44,6 +47,7 @@ class CardScreen extends Component
             $action->rotateDefault(Tenancy::idOrFail(), $card->id);
             $this->success = 'Card set as default.';
         } catch (ModelNotFoundException) {
+            $this->errorHeading = 'Could not set the default card';
             $this->error = 'Card not found in this account.';
         }
     }
@@ -53,12 +57,14 @@ class CardScreen extends Component
         $this->forgetCardFields();
         $this->adding = true;
         $this->waiting = null;
+        $this->errorHeading = null;
         $this->error = null;
         $this->success = null;
     }
 
     public function present(CardPresentAction $action): void
     {
+        $this->errorHeading = null;
         $this->error = null;
         $this->success = null;
         $this->waiting = null;
@@ -74,6 +80,7 @@ class CardScreen extends Component
                 $card['name']
             );
         } catch (CardExpiredException|CardNumberInvalidException $e) {
+            $this->errorHeading = 'Could not check that card';
             $this->error = $e->getMessage();
         } finally {
             $this->forgetCardFields();
