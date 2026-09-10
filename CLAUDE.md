@@ -7763,6 +7763,87 @@ Watch for: <the trap that applies, by name>
   ran at 03:02 over `0 uncommitted` on this exact sha, so §6 certifies the sha, and a second run buys a
   `duration_ms` and costs ten minutes of a contended lock.
 
+- ⚠️⚠️ **An assertion can be satisfied UPSTREAM of the code under test, and that is the newest rung of the
+  ladder — every tell in this file reads green on it, and only the RADIUS says anything.** Wave 162 added
+  `ChatCaptureAction.php:29-30` (a whitespace `message` normalised to `null`, mirroring the module's own
+  email treatment word for word) and `test_whitespace_message_is_normalised_to_null`, a real `postJson` to
+  the public unauthenticated `/api/chat/{key}/capture` door asserting `assertNull($lead->message)`. The
+  mutation deleted the whole line, was made **on the module file** (`w162-mut1-gate.log:7` pins
+  `M …/ChatCaptureAction.php`, so tick 209's free site proof fires positive), was generated and
+  single-hunk — and both objects came back byte-identical on all five fields: `tests 2444 · passed 2436 ·
+  assertions 10788 · failed 6 · errors 2`, **radius 0**. The assertion is real, positive, falsifiable in
+  principle, over real HTTP, with a clean subtraction; it cannot distinguish the tree with the line from
+  the tree without it, because the framework's global `TrimStrings` + `ConvertEmptyStringsToNull`
+  (`app/vendor/laravel/framework/src/Illuminate/Foundation/Configuration/Middleware.php:461-462`, not
+  removed by `app/bootstrap/app.php`'s `withMiddleware`) null the value before the controller reads it.
+  ⭐ **The generalisation: when a mutation on the live path SURVIVES, ask what else in the request could be
+  satisfying the assertion** — the answer is upstream of everything a module test normally looks at, and
+  no assertion-reading or site-reading tell can find it. The ladder now runs `assertTrue(true)` → an id in
+  a docblock → a constant declared in the component → a mutation aimed at the constant → an absence
+  assertion on a rendered string → deleting your own assertion → mutating the assertion itself →
+  **an assertion satisfied upstream of the code under test.**
+- ⚠️⚠️ **`PROVES: <a proof>` over a radius-0 survival is a BLOCK, not a NOTE — tick 206's discriminator
+  separates a wrong MEASUREMENT from a wrong CONCLUSION ABOUT the measurement.** Wave 162's `MUTATION`
+  block carried `ARRAY: []`, `MESSAGE: None`, `MOVED-MINUS-STANDING: None`, `MOVED-COUNT: 0` and identical
+  `GREEN`/`MUTATED` deltas — four honest fields, each right — and then `PROVES: Load-bearing` four lines
+  under them. Tick 206 makes a wrong *digit* a NOTE when the wave's own artifact refutes it; that does not
+  reach a conclusion whose inversion **is** the wave's deliverable, and here the claim also reached the
+  test's method name and docblock, which outlive every `REPORT.md`. ⭐ The check is tick 269's and costs one
+  glance: **read a field against the field above it before reading either against the tree.**
+- ⚠️⚠️ **A `sed -i 's|^FIELD : .*|FIELD : <value>|'` replacement literal is the FIFTH mechanism past the
+  generator ruling, and every enumerated check is blind to it.** `scratch/w162-generator3.sh` contains **no
+  `echo` at all**, so `grep -n "echo"` and `grep -n "|| echo"` are honestly empty, while `MOVED-COUNT`,
+  `DELTAS`, `PROVES`, `STAGES` and `ARTIFACTS` are all typed strings inside `sed` replacements. The four on
+  record were a `= '` literal (tick 256), an `echo` literal (276), an `|| echo` naming an outcome (282) and
+  a substituted command (289). ⛔ **RULED at tick 290: enumerating shell constructs has failed four times,
+  so per tick 245 the control MOVES rather than gains a clause — the generator is PASTED VERBATIM into
+  `REPORT.md` and this column reads it.** A control a coder self-reports is a control the report can absorb
+  (tick 283); a control the reviewer runs on an artifact cannot be.
+- ⚠️ **`STAGES` drifted onto §4's integrity-only line for the FIFTH time, with the exact one-line grep
+  printed in the brief — which retires *naming a field by its content* as a remedy.** Waves 96 and 115
+  filed §4's `All stages clean.` as `DOCTOR:` and then as `STAGES:`; tick 288 made it
+  `grep -m1 "STAGES   :" <gatelog>`, a pattern only one line can match, and wave 160 and wave 162 typed
+  past it anyway. **A field is fixed when it is REDIRECTED, not when it is described** — and where two
+  lines of one output can plausibly fill a slot, the brief says in words which line is *not* it.
+- ⚠️ **The numbered questions must live INSIDE the fenced template, or a `sed`-filled template loses all of
+  them by construction.** Wave 162's `scratch/w162-report-template.md` is 445 bytes — the fenced field
+  block and nothing else — so the eight numbered questions, which sat in the brief's prose after the fence,
+  went unanswered without the coder ever declining one. Sixth recurrence of *a measurement named in a
+  brief's prose with no field in the template is answered by not making it* (ticks 259, 263, 265, 267, 271,
+  289), all six this column's, now at whole-section scale. ⛔ The cost is measurable: **Q5's ranking
+  question and Q6's field reconciliation each catch that wave's `BLOCK` on their own**, and neither was
+  asked.
+- **Backlog at tick 290 — wave 162b is the survival's cause and the durable half; no new production
+  surface.** RULED. Wave 162's normalisation line, its two proposal-row edits and its pint fix are all
+  verified sound above and **stand, not reopened** — reverting sound work to re-derive it is the wave-87
+  shape. What is owed is the cause of the radius-0 survival (handed over as the tick-250 method: the table
+  measured by me, the question asked as *what does `$message` hold inside `handle()`*, the honest exit
+  kept, and three places in the request path printed with a conclusion attached to none), the method name
+  and docblock made to say what their own assertions prove, and whatever item 0 makes true. ⛔ **This
+  column names no shape** — the conclusion-withheld form is 16-for-16 and has corrected it five times on
+  this module's seams — and the third and fourth branches are written out (tick 192). ⛔ **Wave 162's
+  mutation is NOT spent**: it survived, so running it against a test that can see the line is a different
+  proposition, said in words so it does not read as re-briefing (tick 191). ⛔ No `⛔ REFUSED`, no
+  `UNRESOLVED` (X-102 is one of the thirteen and nothing external is missing); ⛔ nothing outside X-102
+  except a one-line row; ⛔ never edit a standing assertion — the four-condition vacuous-assertion rule
+  (tick 289) is available for an assertion this lane wrote hours ago and is not a general licence.
+  ⚠️ One measurement handed over conclusion-free: `ChatCaptureAction.php:29`'s new comment reads
+  `(R245, 2026-09-05)`, copied verbatim from the email line four rows below it, on a wave whose
+  `STATEPY` field correctly reads `state.py did not run this wave` — against the standing rule that every
+  `(R245)` in `app/**` has a matching `state.py decided` row. **Push HELD** at `2a760206` on the BLOCK
+  (tick 172). Live list `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **16** rows at tick 290;
+  `app/app/Modules/` → **0**; stub pile across the thirteen **11**. Re-run all three; never inherit them.
+- **Suite baseline, tick 290 on tip `2a760206`, clean tree but for untracked `error_log` — `tests 2444 ·
+  passed 2436 · assertions 10788 · failed 6 · errors 2 · incomplete 3 · risky 1 · duration_ms 144446`,**
+  the standing **eight** by **identity**, §1 `1 uncommitted path(s)` (the inert `error_log` — untracked, no
+  PHP, not under `app/`, not classmapped, read by no test), §2 `none`, §6 pint `passed` / phpstan `0`,
+  stamp `20260829-0647` = `runtime_build`, §3 `integrity 0 · boundary 55 · contract 85 · citation 3 ·
+  schema 16 · capability 207 · anchor 128 · journey 3` (a carry-over; its rows sum to **497**, wave 149's
+  measured `--full-doctor` total). Against tick 289's `2443 · 2435 · 10784`: `+1 · +1 · +4` — exactly one
+  new four-assertion test, green, and no other diff shape gives that triple. **I ran no suite of my own and
+  say so** (tick 277): the wave's own gate ran at 07:31:53 after its last commit over a tracked tree
+  byte-identical to the sha, so §6 certifies the sha.
+
 ## Style
 
 Terse and factual. Cite rules and traps by name — "that is the One Rule",
