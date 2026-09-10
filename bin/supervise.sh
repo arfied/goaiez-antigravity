@@ -36,6 +36,35 @@ CENSUS_NAME=${CENSUS_NAME:-agy}
 bar() { printf '\n\033[1m== %s\033[0m\n' "$*"; }
 fail=0
 
+# ⛔ THIS RUN'S OWN CLOCK (REV-152).
+#
+# Two §3 checks resolve their subject as "the newest r*-… artefact". Both were
+# built and both fired on the WRONG WAVE's file within two ticks of each other:
+#
+#   - the report-order check (REV-142 §2) compares REPORT.md against the newest
+#     r*-gate.log. Inside a gate, the newest gate log is THIS SCRIPT'S OWN OUTPUT,
+#     being written as the comparison runs — so "the report is older" is trivially
+#     true of every correctly-ordered wave, and its ⛔ arm fired on run 147, which
+#     had ordered itself perfectly.
+#   - the schema annotation (REV-138 §2) reads the newest r*-doctor.txt. REV-119 §D
+#     orders the gate BEFORE the stage dump, so inside a gate the current wave's
+#     dump does not exist yet, by construction — it can only ever find the previous
+#     wave's, and it set fail=1 on run 147's gate for run 146's artefact.
+#
+# ⭐ The general form, and it is the one worth keeping: A CHECK THAT RESOLVES ITS
+#   SUBJECT AS "THE NEWEST ARTEFACT" CARRIES AN IMPLICIT CLOCK, and running it
+#   inside the wave it is measuring points that clock either at its own output or
+#   at the wave before. REV-138 §1 ruled the neighbouring case — a check that
+#   reports by quoting can match itself — and this is the same defect with a
+#   timestamp instead of a string.
+#
+# `want_tests` is the discriminator and it is exact: with --tests this script IS
+# the gate, so both subjects are known to belong to another wave and the finding is
+# LABELLED rather than asserted. Bare (tick time) the newest of each really is the
+# last completed wave's, the reader is the supervisor, and both arms stand.
+SV_T0=$(date +%s)
+if [ "$want_tests" = 1 ]; then wave_self=1; else wave_self=0; fi
+
 # SHARED GATE LOG (2026-09-06, shape agreed with the sibling project). One TSV line
 # per tool run, appended at exit, so a death correlates against what else was running
 # in that minute and the next kill is attributable instead of argued about.
@@ -575,7 +604,18 @@ _gl=$(find "$ROOT/.agents/supervisor" -maxdepth 1 -name 'r*-gate.log' -type f -m
       | xargs -r ls -t 2>/dev/null | head -1)
 _rp="$ROOT/.agents/supervisor/REPORT.md"
 if [ -n "$_gl" ] && [ -f "$_rp" ]; then
-  if [ "$_rp" -ot "$_gl" ]; then
+  # ⛔ REV-152: inside a gate, "$_gl" is THIS RUN'S OWN OUTPUT — the log this
+  #   script is being redirected into, touched moments ago. Comparing the report
+  #   against it asks whether the previous wave's report predates a file that did
+  #   not exist until now, which is true of every correctly-ordered wave and was
+  #   printed as a ⛔ against run 147. Labelled here, asserted only at tick time.
+  if [ "$wave_self" = 1 ] && [ "$(date -r "$_gl" '+%s')" -ge "$SV_T0" ]; then
+    printf '    ⚠ %s is THIS run’s own output (touched %s, after this script started %s).\n' \
+      "${_gl##*/}" "$(date -r "$_gl" '+%T')" "$(date -d "@$SV_T0" '+%T')"
+    printf '      REPORT.md %s is the PREVIOUS wave’s — REV-119 §D puts this wave’s report\n' \
+      "$(date -r "$_rp" '+%F %T')"
+    echo "      after this gate, so the order is checked at tick time, not from inside the gate."
+  elif [ "$_rp" -ot "$_gl" ]; then
     fail=1
     printf '    ⛔ REPORT.md %s is OLDER than %s %s\n' \
       "$(date -r "$_rp" '+%F %T')" "${_gl##*/}" "$(date -r "$_gl" '+%F %T')"
@@ -738,13 +778,27 @@ if [ -n "$_doc" ]; then
     # count-did-not-fall rule inverted: the danger is a count that FELL for a
     # reason that is not a fix (REV-129 §2). A summary line cannot show it, so the
     # rows have to be read.
+    # ⛔ REV-152: with --tests this script IS the gate, and REV-119 §D puts the
+    #   stage dump AFTER it — so "$_doc" is the PREVIOUS wave's dump, always, and
+    #   a fail=1 here reddens this gate for an artefact this wave has not written
+    #   yet and is about to supersede. That is what happened to run 147: its gate
+    #   annotated run 146's unmeasured `3` while its own honest `14` landed 23
+    #   seconds later. Labelled inside a gate, asserted at tick time.
     if grep -qE 'could not run|SQLSTATE\[08006\]|cannot read role attributes|connection slots' "$_doc" 2>/dev/null; then
-      fail=1
-      echo '    ⛔ that schema number is NOT MEASURED — the stage could not reach the database:'
+      if [ "$wave_self" = 1 ]; then
+        echo '    ⚠ that schema number is NOT MEASURED — and this dump is the PREVIOUS wave’s:'
+      else
+        fail=1
+        echo '    ⛔ that schema number is NOT MEASURED — the stage could not reach the database:'
+      fi
       grep -m3 -E 'could not run|SQLSTATE\[08006\]|cannot read role attributes|connection slots' "$_doc" 2>/dev/null \
         | sed 's/^[[:space:]]*/       /' | cut -c1-160
       echo '       a stage that could not connect reports FEWER violations, which reads as an'
       echo '       improvement. Do NOT state.py stage it, and do not compare it to the ledger.'
+      if [ "$wave_self" = 1 ]; then
+        echo '       REV-119 §D puts THIS wave’s dump after this gate, so it does not exist yet;'
+        echo '       run your own doctor and annotate from that. Not a gate failure.'
+      fi
     fi
   else
     printf '  ⚠ %s carries no schema line — the stage dump did not reach it\n' "${_doc##*/}"

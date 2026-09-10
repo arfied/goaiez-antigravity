@@ -2918,3 +2918,146 @@ intact.
 by reporting FEWER violations rather than an error** — so any lane running a doctor beside a wedged suite
 records a falsely-improved count. `app/tests/TestCase.php` is on no `merge=ours` list and every other lane's
 §7 still runs a bare single-process `pest`. Not this lane's file to change.
+
+## REV-152 — a check that resolves "the newest artefact" runs on an implicit clock, and both of mine were pointed at the wrong wave
+
+⭐ **Run 147 is a `PASS-WITH-NOTES` and it discharges REV-151's `BLOCK` completely.** The refusal is now
+load-bearing: `r147-mutation.txt` reddens **both** new tests with `if (false)` in place of `if (! $exists)`,
+the Action is byte-identical to `HEAD` after the restore, and the failing set is *exactly* the admitted
+twenty — 8 baseline + 1 `NOT BUILT:` + 11 traced `42501`. The prediction was met to the digit
+(`tests 2463 → 2465`, `FAILED 7` unchanged, `errors 13` unchanged). Hard stops all held from `r147-doctor.txt`
+— `boundary 41 · contract 85 · citation 3 · schema 14 · capability 207 · anchor 128 · journey 2`, C-Reviews at
+**0** boundary and **0** capability — the doctor stamp matches `runtime_build`, and REV-151 §3's probe closed
+its arm first try (`✓ ARMS AS DESIGNED`, `fail` set by arm 1 and arm 3, never arm 2). Ordering held for the
+twelfth run running: gate `14:17:08` → doctor `14:17:31` → state `14:18:25` → report `14:18:38`. `a727fb02`
+is pushed.
+
+### ⛔ §1. BOTH OF THE CHECKS I BUILT LAST TICK FIRED ON THE WRONG WAVE'S FILE, ONE OF THEM AGAINST ITS OWN OUTPUT (my defect)
+
+`r147-gate.log`, from a wave that ordered itself perfectly:
+
+```
+    ⛔ REPORT.md 2026-09-10 13:50:21 is OLDER than r147-gate.log 2026-09-10 14:14:34
+    schema, annotated for the report (REV-119 §B) — from r146-doctor.txt:
+      FAIL schema 78ms 3 violation(s)
+      ⛔ that schema number is NOT MEASURED — the stage could not reach the database
+```
+
+Both ⛔s are false, and each is false for its own reason:
+
+- **The report-order check (REV-142 §2) compared `REPORT.md` against its own output file.** `_gl` resolves to
+  the newest `r*-gate.log`; inside a gate that is **the log this script is being redirected into**, touched
+  seconds earlier. So "the report is older than the newest gate log" is **trivially true of every correctly
+  ordered wave**, because REV-131 §1 requires the report to come *after* the gate. Run 147's report was
+  written at `14:18:38`, comfortably after the gate closed at `14:17:08` — and the same check, run bare at
+  tick time, printed `✓ REPORT.md 14:18:38 is newer than r147-gate.log 14:17:08` on the identical files.
+- **The schema annotation (REV-138 §2) read the previous wave's dump, by construction.** REV-119 §D orders
+  the gate *before* the stage dump, so inside a gate `r147-doctor.txt` **does not exist yet**. `_doc` can only
+  ever find run 146's. It then set `fail=1` on run 147's gate for run 146's artefact — while run 147's own
+  honest `FAIL schema 452ms 14 violation(s)` landed **23 seconds later**.
+
+⭐ **The general form, and it is the durable half: a check that resolves its subject as "the newest artefact"
+carries an IMPLICIT CLOCK, and running it inside the wave it is measuring points that clock either at its own
+output or at the wave before.** REV-138 §1 ruled the neighbouring case — *a check that reports by quoting is a
+check that can match itself* — and this is the same defect with a **timestamp** in place of a string. Two
+independent checks, one root, and neither filename nor glob was the problem this time: REV-151 §2 fixed the
+*location* of the artefacts and left the *clock* one axis over. **Sixth on the axis sub-species** (REV-138 §4
+scope→vocabulary, REV-140 §4 timing→instrument, REV-143 trackedness→loadability, REV-150 §2
+producer→consumers, REV-151 §2 location→clock, here).
+
+⛔ **And REV-151 §2 is now complete from both sides: that check has printed a false `✓` and a false `⛔` within
+two ticks**, the first from a glob that missed and the second from a clock that could not miss. **A check both
+of whose arms have been observed answering wrongly is not a flaky check — it is a check measuring the wrong
+property.**
+
+**RULED: `want_tests` is the discriminator, and it is exact.** With `--tests` this script *is* the gate, so
+both subjects are known to belong to another wave: the finding is **labelled** and sets no `fail`. Bare, at
+tick time, the newest of each really is the last completed wave's, the reader is the supervisor, and both arms
+stand unchanged. Verified live this tick on the asserting side — `✓ REPORT.md … is newer than r147-gate.log`
+and a clean `from r147-doctor.txt` annotation with no ⛔. ⚠️ **The labelled arms have NOT fired live**; they
+need a `--tests` run, so observing them is run 148's item 1 (REV-121: a ruling whose execution is not itself
+an item is a ruling that did not run).
+
+⛔ **The neighbouring property this fix does NOT cover** (REV-146 §1's standard): it distinguishes *inside a
+gate* from *at tick time*. It says nothing about a tick that runs while a coder is mid-wave, where the newest
+gate log is genuinely the current wave's and half-written. §1a's coder census is the check for that, and the
+two are not wired together.
+
+### ⛔ §2. FOUR BLANKET CATCHES ON `LossAlerts` RENDER A DATABASE EXCEPTION'S FULL TEXT INTO THE TENANT'S BROWSER, AND RUN 147'S OWN ARTEFACT CONTAINS THE STRING
+
+REV-142 flagged the shape as a standing note — *"a blanket catch in a Livewire action converts an FK violation
+into a string, so only a red suite can see one"*. Run 147's mutation supplies the missing half: **what
+string**. `r147-mutation.txt`, verbatim:
+
+```
+SQLSTATE[42501]: … new row violates row-level security policy for table "review_removal_requests"
+  (Connection: pgsql, Host: 127.0.0.1, Port: 5432, Database: goaiez_antig_reviews_test,
+   SQL: insert into "review_removal_requests" (…) values (1679, 5, g_other, tos_ground_example, …))
+  at … PrepareRemovalRequestAction.php:26
+```
+
+Measured at `HEAD`, with the command beside the result (REV-132's erratum standard):
+
+```
+$ grep -n 'catch (\\Exception' app/app/Modules/C-Reviews/Ui/LossAlerts.php
+  101 · 123 · 154 · 178      ← resolveAndAlert · alertTeam · prepareRemoval · confirmRemoval
+$ grep -n "actionNotice = '🚫 Error: '" app/app/Modules/C-Reviews/Ui/LossAlerts.php
+  four hits, all `.$e->getMessage()`
+```
+
+**Every one of the four renders `$e->getMessage()` unmodified into `$actionNotice`.** A `QueryException`'s
+message carries the host, the port, the database name, the statement and its bindings. The four screens are
+routed (`web · auth · tenant.role`), so the audience is an authenticated tenant user — which is precisely the
+audience that must not be told the database name.
+
+⭐ **This is not a hypothetical: the string above was produced by this module's own Action, on this lane's own
+tree, and the only reason it reached a test file instead of a browser is that a mutation happened to be
+running.** ⛔ And REV-143 measured the second half already: `\Exception` does **not** catch `Error`, so a
+missing class returns a raw 500 while a database fault is dressed up as pink text — the two failure modes are
+handled in opposite directions, both wrong.
+
+**RULED by the lane supervisor: the catch narrows to the module's own domain exceptions and everything else
+propagates**, because a domain refusal's message is written for a tenant (`Google review ID does not belong to
+this business.`) and nothing else's is. Propagation puts the real exception in the log through Laravel's
+handler, returns the standard error page, and — the part that matters here — **makes a database fault RED in
+the suite instead of green**, which is the house position at `tests/Journeys/TwelveJourneysTest.php:477`: *a
+green suite that proves nothing is worse than a red one that proves something.*
+
+⛔ **The catch list is DERIVED, not stated.** `prepareRemoval` and `confirmRemoval` throw
+`\InvalidArgumentException` and `UnauthenticatedConfirmationException` and this seat has read both. What
+`QaTicketResolveAction` and `AlertSendAction` throw deliberately is **unmeasured**, so run 148's item 2 greps
+them and the list follows the grep. REV-119 §A's defect is a **stated** list where a **derived** one belonged,
+and naming four exception classes from memory here would be that defect in its purest form.
+
+⛔ **The third option stays refused in its newest clothes.** Do not keep the blanket catch and merely shorten
+the message — `report($e)` plus a generic notice keeps the disclosure closed but leaves the fault **green in
+the suite**, which is the whole property REV-142's note was complaining about. And do not add a
+`try`/`catch` around the propagating half to "make the screen nicer": a screen that swallows its own database
+errors is the write-only shape one layer up.
+
+### ⚠️ §3. THE PINT ARTEFACT IS NOT THE OUTPUT OF THE COMMAND THAT WAS BRIEFED
+
+`r147-pint.txt` is 33 bytes and reads `{"tool":"pint","result":"passed"}`. That is `bin/supervise.sh:865`'s
+shape (`run_tool pint ./vendor/bin/pint --test`), not `(cd app && ./vendor/bin/pint --dirty)`'s, which the
+brief asked for and which prints a file list and a `PASS`. Its mtime is `14:14:20`, **14 seconds before the
+gate started**, so it was not copied from this run's gate either. The **claim** is true — the gate's own §6
+reads `{"tool":"pint","result":"passed"}` and phpstan `errors 0` — and nothing is concealed; what is missing
+is the thing REV-132's erratum ruled, **a number with no command beside it is a memory**.
+
+⭐ **And half of it is my brief's fault, in a way worth recording.** `pint --dirty` *fixes* files; the house
+instrument is `pint --test`, which *checks* them. A brief that asks a coder to run a formatter immediately
+before a commit is asking it to modify the tree it is about to commit, and a coder that quietly ran the
+checking form instead made the safer choice. **RULED: a brief naming `pint` names `--test`, never `--dirty`,
+and the artefact is the redirect of that exact command.**
+
+### ⚠️ §4. THE CROSS-TENANT TEST PROVES THE SCOPING CLAUSE, BUT NOT BY THE ROUTE ITS NAME SUGGESTS
+
+`test_g1_68_prepare_refuses_another_businesss_google_review_id` is the right test and it does its job — under
+`if (false)` it goes red, so the clause is load-bearing. ⚠️ But its red is a **`QueryException` from RLS**, not
+a clean assertion failure: `self::provisionTenant()` for the second business re-points the session's
+`app.business_id`, so with the guard disabled the insert is refused by the row-level policy before any
+assertion can speak. **The test therefore cannot distinguish "the `where('business_id', …)` clause was
+dropped" from "RLS caught it"** — both produce the same red. It still detects the defect, which is why this is
+a note and not a finding; but its passing depends on session state it never asserts. **RULED: a cross-tenant
+test asserts the tenant context it is relying on**, one line, so a future change to `provisionTenant` cannot
+silently move what the test is measuring.
