@@ -7996,3 +7996,110 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     found this one is the sweep, not the stage. ⚠️ That is the generalisable half and it is ruling 65's
     a third time: **a red the doctor does not print is not a red that does not exist**, and for
     citations the whole `app/tests` tree is outside its eye.
+302. **⭐⭐ The doctor's `citation` stage was `ok … clean` BEFORE and AFTER fourteen wrong citations were
+    removed — ruling 297's finding is now proved by EXPERIMENT rather than by reading the checker's
+    source (RULED by the lane supervisor 2026-09-10, measured from MONEY-167's own before/after
+    captures).** Ruling 297 established that `CitationStage.php:99` is `$hits = $index[$id] ?? 0;` over
+    the package's `GOAIEZ-*.md` files, so it asks whether an id **exists** and never what it is
+    **about** — and concluded that a citation resolving to the wrong decision is silent while one
+    resolving to nothing is red. That was an argument from source. MONEY-167 turned it into a
+    measurement: it removed **fourteen** `R###` tokens at twelve sites in ten files, every one of them
+    a citation whose id resolves in the package and whose subject is a **different** decision, and the
+    two `php app/artisan doctor` captures are **88285 bytes each, byte-identical**, `488 violation(s)`
+    both, with `ok citation 1164ms clean` before and `ok citation 1165ms clean` after. ⭐ **The stage
+    was green over fourteen wrong citations and is green over none, and it cannot tell the two states
+    apart.** ⛔ So a green `citation` stage is never cited as evidence that this lane's citations are
+    right, in a brief, a report or a verdict block. The instrument that can tell is
+    `grep -rnoE "\bR[0-9]{3}\b" <the lane's module trees>`, then `grep -rn "<id>" source/` on each,
+    **and reading the code's sentence against `source/`'s definition** — which is the cross-lane check
+    already on Track 1's list. ⚠️ Corroborated from the far side in the same review:
+    `grep -rn -e R101 -e R233 -e R237 -e R239 -e R241 app/app app/tests` returns seventeen lines and
+    **every one is outside this lane** — `R233` is genuinely about agency-client grants
+    (`DbBootstrapCommand`, `SchemaStage`) and `R237` genuinely about AI model vendors
+    (`BoundaryStage`, `X-219`), each cited correctly by the lane that owns it. Money's copies of those
+    same numbers meant this ledger's rulings 233 and 237 — a pay-link description and overflow-status
+    copy. **The collision is not hypothetical and it is now on the record twice.** ⚠️ The generalisable
+    half: **where a ruling rests on reading a checker's source, the cheapest confirmation is a wave
+    that changes the thing the checker is supposed to see and measures that it does not move** — and
+    a before/after capture whose byte counts are equal is that measurement in one line.
+
+303. **A `specced` capability cell is closable when its ⑤ constrains a capability the module HAS, and
+    VACUOUS when it constrains one the module does NOT have — closing the second kind is the
+    merged-wrong-lint defect (RULED by the lane supervisor 2026-09-10; the measurement that scopes
+    MONEY-168).** Ruling 298 reopened the capability census as `specced` cells and named X-117's six —
+    `G6-02`, `G7-10`, `G1-73`, `G1-81`, `G1-82`, `G17-31` — requiring each to be measured before any is
+    closed, and forbidding a close by minting an `assertTrue(true)` to move a number. Measured, against
+    `source/GOAIEZ-TRACKER-CAPABILITIES.md` and against X-117's own tree. **All six are `ENH`** —
+    enhancements — and five are `SPECCED`, one (`G1-82`) `CLASSIFIED`; these are future features, not
+    gaps in built work, which is ruling 32's group (1) with a different label.
+
+    | id | plan row | measured in X-117 | verdict |
+    | :--- | :--- | :--- | :--- |
+    | `G6-02` | 1-Click Upsells — *post-charge upsell on the tokenised card (P-160 — tokens only)* | ⭐ **refused, on a live path**: `CheckoutEngine::checkoutCart():163-168` refuses a token an order already used, `refusal_code AUTH_USED`, *"an authorisation pays once and this one already has"*; and `capabilities.php:25,:28` already carry the refusal as `G1-15`/`G1-39` | **CLOSABLE** by a real assertion |
+    | `G17-31` | Multi-Currency Landed Cost — *ONE currency; no conversion path; landed cost is OUT* | ⭐ **satisfied by construction**: `sellables`, `carts`, `orders`, `order_lines` carry **no currency column**, and `grep -rniE "currency\|exchange\|fx_\|convert\|landed"` over the module returns **only** the capability row itself and the word *"landed"* inside one success sentence | **CLOSABLE** by a real assertion |
+    | `G7-10` | Bundling Logic — *bundle allocation on the `Sellable`* | no bundle column, no bundle model, no allocation code | unbuilt |
+    | `G1-73` | Milestone Billing — *fires only on a milestone the CUSTOMER accepted* | no milestone vocabulary anywhere; **nothing fires** | unbuilt, and its ⑤ is **vacuous** |
+    | `G1-81` | Subscription Gifting — *issuer_scope=tenant* | no gift model, no `issuer_scope` | unbuilt |
+    | `G1-82` | Subscription Pausing — *pause STOPS the meter* | no pause; and ruling 88 measured `meters` has no production writer, metering being track sixty's (ruling 5) | unbuilt, out of lane |
+
+    **RULED, and it is the line the census needed:** a ⑤ that constrains a capability the module
+    **has** is satisfiable, provable and closable — `G17-31`'s constrains checkouts, which exist, and
+    `G6-02`'s names an act the module actively refuses. A ⑤ that constrains a capability the module
+    **does not have** is satisfied *vacuously*, and a test closing it is green because it matches
+    nothing — which is this repo's oldest recorded trap, *a merged-wrong lint is green by construction*.
+    `G1-73` is the pure case: *"fires ONLY on a milestone the CUSTOMER accepted"* constrains an event
+    nothing dispatches. ⛔ **So `G7-10`, `G1-73`, `G1-81` and `G1-82` stay RED and are recorded with
+    their measurement**, never closed; building any of them to move a doctor number is ruling 59, and
+    `G1-82`'s meter is another lane's besides. ⛔ And neither closable cell is closed with
+    `assertTrue(true)`: ruling 224's placeholder shape is the sanctioned close only where there is
+    **nothing executable to assert**, which was true of C-Billing's `G1-80` (no gateway client at all)
+    and is false of both of these. ⚠️ **`G17-31`'s instrument is the module's own**, not a new one:
+    `X117Test::test_g18_29_lifecycle_stops_at_money:250-256` already refuses a vocabulary over
+    `array_keys()` of the result, the order and the order line, and the currency assertion is that same
+    instrument aimed at `exchange_rate|fx_rate|conversion_rate|landed_cost`. ⛔ It is **not** aimed at
+    bare `currency`, and the reason is deliberate: rulings 152(b), 170 and 233 all record that an amount
+    without its currency is not a money value, so a future `orders.currency` column is a **fix** and
+    must not redden a test written today. **Pin the conversion path, never the currency column.**
+    ⚠️ ⛔ **No new `R###` token appears in either new test.** The wave immediately after one that removed
+    fourteen wrong citations does not add a fifteenth, and `R204` — real, and correctly carried by the
+    generated `capabilities.php:58` — is not copied into hand-written code (ruling 297).
+    ⚠️ Ruling 295's hazard binds absolutely: each new docblock introduces **exactly one** id token, and
+    ⛔ no "related ids" are listed beside it, because `CapabilityStage::testedIds()` regexes file
+    **contents** and would mark every one of them tested.
+
+304. **X-117 has TWO checkout paths and only ONE is one-shot; `AUTH_USED` is asserted nowhere in the
+    tree; and `CheckoutBlockScreenTest:77` is a partial cover that proves less than ruling 245 read
+    into it (RULED by the lane supervisor 2026-09-10, correcting ruling 245).** Ruling 245 measured
+    `CheckoutBlock::$authToken`'s open visibility as **correct**, on two grounds, and the second was
+    *"`CheckoutBlockScreenTest:74-77` IS the replay test"*. The first ground stands untouched and is
+    the load-bearing one — `CheckoutEngine:164` refuses a token an order has already used **wherever
+    it came from**, so a client rewriting the property gains nothing, and `#[Locked]` would refuse the
+    `set()` that test needs. The second is one clause wide of the mark, measured three ways.
+    **(a) The refusal's code is `AUTH_USED`, not `FRESH_AUTH_REQUIRED`**, and
+    `grep -rn "AUTH_USED" app/app app/tests` returns **exactly one line in the whole tree — its own
+    definition at `CheckoutEngine:166`.** Nothing asserts it.
+    **(b) `:77`'s needle is `assertSee('needs a fresh authorisation')`, and THREE messages contain that
+    substring** — `CheckoutBlock`'s own *"This order needs a fresh authorisation"* (asserted at `:53`),
+    the engine's `:159` *"…tap Authorise first"*, and the engine's `:167` *"…an authorisation pays once
+    and this one already has"*. So the assertion cannot distinguish the replay refusal from the
+    empty-token refusal it already asserted twenty-four lines earlier: **ruling 80's partial cover**, in
+    the one assertion whose whole subject is that an authorisation pays once. ⚠️ The *behaviour* is
+    pinned — `:78-79` assert the stock is unchanged and `Order::count()` is still 1 — so what is missing
+    is the **reason**, and the fix is ruling 76/146's clause discipline: the needle becomes
+    `'an authorisation pays once and this one already has'`, **changed and never deleted** (rulings 39,
+    46).
+    **(c) ⭐ The two paths disagree.** `checkoutCart()` refuses a reused token at `:163`; **`checkout()`
+    — the single-sellable sibling at `:43` — refuses only an empty or `expired_` token at `:64-71` and
+    has no replay guard at all**, while writing `auth_token` to the order at `:85`. One module, two
+    checkout paths, and only one of them honours the promise `CheckoutBlock` makes to the customer.
+    ⛔ **Recorded, not fixed, and the measurement is why:** `CheckoutEngine::checkout()`'s only caller
+    anywhere is `CartCheckoutAction:20`, whose only callers are **four test lines in `X117Test.php`** —
+    **no production caller** (ruling 170(3)'s inert-delegate family). Adding a guard to a path nobody
+    reaches, so that two paths agree about a refusal only one of them can be asked for, is machinery for
+    a number; ruling 216's precedent went the other way, *removing* a divergence rather than
+    duplicating a guard into a dead path. It joins TRACK 1 ACTION 13's list of recorded seams.
+    ⚠️ The generalisable half, and it is ruling 289's family a **eighth** time: **ruling 245 cited a test
+    by line number and by its shape, and never quoted the needle.** A ledger line that says *"X is
+    asserted at `<file>:<line>`"* quotes the **assertion's own text**, because a test that drives the
+    right branch and asserts a substring shared with two other branches is indistinguishable, in a
+    ledger, from one that proves the thing.
