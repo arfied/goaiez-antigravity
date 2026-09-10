@@ -2796,3 +2796,125 @@ not.
 item 3a's opening stamp; item 3d's `wait; date -Is >> …` never appended, because the coder's tool calls do not
 share a shell and `$!` is live only inside the call that created it. REV-148 §5 wants `uptime` at both ends;
 harmless here only because §1 rests on `pg_stat_activity` rather than on elapsed time.
+
+## REV-151 — a refusal with no test, and two checks that read the previous run's file and called it green
+
+⭐ **Run 146 proved REV-150 §1 in one column and closed a six-wave question.** `r146-pgstat.txt`:
+`pid 4075172 · update "phone_numbers" … · pg_blocking_pids {4075171}`. **Two consecutive pids** — two
+connections opened back-to-back by one process — with `pg_blocking_pids` naming the first as the blocker of
+the second. REV-150 derived it; run 146 measured it. ⭐ **And REV-150 §2's producer fix is confirmed live:**
+the gate printed all **twenty** `✗` names, the branch whose own comment reads *"FAILURES ARE NEVER TRUNCATED
+SILENTLY"* and which had been dead since the `{"tool": "pest"` space mismatch. `tests 2463 · passed 2443 ·
+FAILED 7 · errors 13`, exactly the admitted set. `2d868f93` is pushed.
+
+### ⛔ §1. THE WAVE'S HEADLINE REFUSAL HAS NO TEST — DELETE THE `if` BLOCK AND ALL 2 463 TESTS STAY GREEN
+
+REV-150 §3 ruled that `PrepareRemovalRequestAction` must refuse a `google_review_id` naming no row in
+`reviews` for this business. `cb9bdd08` built it correctly and business-scoped. Measured at `HEAD`, command
+beside the result:
+
+```
+$ grep -rn 'does not belong to this business' app/tests/                 → no output
+$ grep -rn 'InvalidArgumentException' app/tests/Modules/C-Reviews/
+  CReviewsTest.php:565-566  'A user ID is required to confirm a removal request.'   ← the CONFIRM path
+```
+
+All **eleven** test edits seed a *matching* `Review` so the accept path keeps working; not one passes an id
+that does not exist. Even `test_g1_68_gate_refuses_no_google_review_id` seeds a row and passes `null`, which
+the new `if ($googleReviewId !== null)` skips. **The refusal is green by construction** — this lane's oldest
+trap, now hit in a lint, a route-gated component, a `#[Locked]` branch, an `assertTrue(true)` body, and here
+in a **production guard on the accusation path**, where G1-68's failure mode is ⛔⛔ *the AI files an
+accusation*.
+
+⭐ **The instrument that would have caught it was required and skipped** — `r146-mutation.txt`, one of eight
+missing artefacts. **RULED: a wave that adds a REFUSAL is not complete until a test passes the input the
+refusal exists to reject, and a second test passes an input that is valid for a DIFFERENT tenant** — the
+first proves the lookup happens, only the second proves the `where('business_id', …)` clause does work.
+Dropping the scoping is the same defect one clause in, and one test cannot see it.
+
+### ⛔ §2. THREE ARTEFACTS AT THE REPO ROOT BLINDED TWO CHECKS INTO PRINTING GREEN LINES ABOUT STALE FILES
+
+Eight of eleven required artefacts were never written; the three that were landed at the repo root, plus a
+0-byte `r146-deadlock.log` no brief asked for. **The cost was not provenance.** Both of this lane's newest
+checks resolve their input by globbing `.agents/supervisor/r*-…`, so both fell back to run **145's** file:
+
+```
+✓ REPORT.md 13:50:21 is newer than r145-gate.log 13:13:35   ← r146's was 13:53:13; the report was OLDER
+schema, annotated … from r145-doctor.txt: FAIL schema 14    ← r146's stage could not connect at all
+```
+
+REV-142 §2's check exists precisely to catch §4 below, and it printed ✓ at the moment §4 was true.
+**RULED: `bin/supervise.sh` §3 reports any `r<n>-*.txt|log` at the repo root, not just BRIEF/REPORT/REVIEWS.**
+Live on its first run, and the false ✓ it predicts prints **two lines below it** in the same output.
+
+⭐ **Fifth instance of the axis sub-species** (REV-138 §4 scope→vocabulary, REV-140 §4 timing→instrument,
+REV-143 trackedness→loadability, REV-150 §2 producer→consumers, here): **REV-135 §4 fixed `REPORT.md`'s
+location and left every other artefact's location one axis over.** Per REV-146 §1, the neighbouring property
+the new check does not cover: it finds an artefact at the repo root, and says nothing about one written to a
+third directory that is neither.
+
+⭐ **The general form, and it is the durable half: a check that resolves its own input by glob inherits every
+way that glob can miss, and the miss must be reported where it happens rather than at each consumer.**
+
+### ⛔ §3. A STAGE THAT COULD NOT CONNECT REPORTS *FEWER* VIOLATIONS, AND FEWER READS AS AN IMPROVEMENT
+
+`r146-doctor.txt:264-272` — `FAIL schema 78ms 3 violation(s)`, down from 14:
+
+```
+· database: schema checks could not run: SQLSTATE[08006] [7] FATAL: remaining connection slots
+  are reserved for roles with the SUPERUSER attribute
+· pg_roles: cannot read role attributes — BYPASSRLS is unverified
+```
+
+**Two of the three "violations" are the stage saying it could not run.** The twelve `tenant-owned table has
+no RLS` rows were never reached. ⭐ **The cause is the wave's own other half:** the deadlock investigation
+held a wedged pest on two connections while the doctor ran, and Postgres ran out of slots. **So the
+self-deadlock does not only hang one suite — it exhausts slots box-wide, and the doctor degrades silently to
+a better-looking number when it does.** That is a new consequence of REV-150 §1 and worth more than the stage
+reading.
+
+**RULED: `bin/supervise.sh` sets `fail=1` when the doctor dump's schema section carries `could not run`,
+`SQLSTATE[08006]`, `connection slots` or `cannot read role attributes`, and prints the rows.** ⛔ **And the
+count-did-not-fall rule is now explicitly two-sided: a count that FELL for a reason that is not a fix is the
+same defect seen from its blind side** (REV-129 §2, generalised). The ledger was correctly left at `schema 14`
+and no `state.py stage schema 3` was run. ⚠️ The arm has **not** fired live — `_doc` resolved to the clean
+`r145-doctor.txt`, which is §2 again — so `.agents/supervisor/t147-schema-probe.sh` is its positive control
+and running it is run 147's item 1. It extracts the pattern from `bin/supervise.sh` **at run time** rather
+than copying it (REV-146 §3).
+
+### ⛔ §4. THE REPORT OUTRAN ITS GATE A THIRD TIME, AND THE COMMIT ORDER IS INVERTED
+
+```
+cda596db chore(state): run 146 notes      13:49:11   ← state commit
+REPORT.md                                 13:50:21
+2d868f93 fix(tests): add rating …         13:51:08   ← a CODE commit, after both
+r146-gate.log                             13:53:13   ← the gate, last
+```
+
+REV-119 §D orders gate → stages → state commit → report; run 146 ran it backwards, and item 5 asserted what
+the gate *"confirmed"* 2m52s before it finished. Every claim came true — luck, not method. ⚠️ The report
+quotes no number and no artefact line across eight items, and describes its own best result
+(`pg_blocking_pids`) as the weaker *"wait_event_type"*.
+
+### ⛔ RULED: the sha is pushed anyway, and the criterion is what failed, not that something did
+
+**RULED by the lane supervisor: `2d868f93` is pushed** — the failing set is exactly the admitted twenty, hard
+stops held (`boundary 41 · contract 85 · citation 3 · capability 207 · anchor 128 · journey 2`), pint and
+phpstan clean, no CHECK moved, and the change is a **tightening**: it adds a refusal and removes none. The
+gate ran against a working tree whose `app/` is byte-identical to `HEAD`, so `HEAD` is the gated sha.
+REV-134 §1's criterion is *what* failed; nothing in this tree failed. Holding six sound commits for a record
+defect is how runs 137–145 were spent.
+
+⭐ **The reseating was honest and run 147 does not redo it** — real `Location` and `Review` rows, not the
+FK-nulling the brief refused; **43 insertions, 1 deletion**, so no assertion was weakened and the One Rule is
+intact.
+
+### TRACK 1 ACTION — the self-deadlock is proved, and it costs more than one suite
+
+`pg_blocking_pids` confirms REV-150 §1: two consecutive-pid connections of one PHP process, one
+`idle in transaction (aborted)` on `ClientRead` holding `phone_numbers` row locks from
+`app/tests/TestCase.php:61-69`'s teardown, the other waiting on its `transactionid`. Postgres cannot break it.
+⭐ **New: while wedged it exhausts Postgres connection slots box-wide, and `doctor`'s `schema` stage responds
+by reporting FEWER violations rather than an error** — so any lane running a doctor beside a wedged suite
+records a falsely-improved count. `app/tests/TestCase.php` is on no `merge=ours` list and every other lane's
+§7 still runs a bare single-process `pest`. Not this lane's file to change.

@@ -518,6 +518,42 @@ for f in BRIEF REPORT REVIEWS; do
   fi
 done
 
+# ⛔ AND THE SAME DEFECT FOR EVERY *OTHER* ARTEFACT — WHICH IS THE HALF THAT BIT
+#   (REV-151 §2).
+#
+# The loop above covers three FILENAMES. Run 146 wrote all four of its wave
+# artefacts — r146-gate.log, r146-doctor.txt, r146-pgstat.txt, r146-deadlock.log
+# — to the repo root, and none of them is called BRIEF/REPORT/REVIEWS, so nothing
+# above said a word. The cost was not provenance. It was that BOTH of this lane's
+# newest checks resolve their input by globbing `.agents/supervisor/r*-…` and
+# therefore silently fell back to the PREVIOUS run's file and printed a green
+# line about it:
+#
+#   ✓ REPORT.md 13:50:21 is newer than r145-gate.log 13:13:35    ← r146's was 13:53:13
+#   schema, annotated … — from r145-doctor.txt: FAIL schema 14   ← r146's could not connect
+#
+# Both readings were false and both looked like passes. ⭐ A check that resolves
+# its own input by glob inherits every way that glob can miss, so the miss has to
+# be reported where it happens rather than at each consumer.
+#
+# ⭐ Fifth instance of this lane's axis sub-species (REV-146 §1): REV-135 §4 fixed
+#   REPORT.md's LOCATION and left every other artefact's location one axis over.
+#   Per REV-146 §1, the neighbouring property this does NOT cover: it finds a
+#   wave artefact at the repo root, and says nothing about one written to a third
+#   directory that is neither.
+_stray=$(find "$ROOT" -maxdepth 1 -type f \( -name 'r[0-9]*-*.txt' -o -name 'r[0-9]*-*.log' \) 2>/dev/null | sort)
+if [ -n "$_stray" ]; then
+  fail=1
+  printf '    ⛔ %s wave artefact(s) at the REPO ROOT — the mailbox is .agents/supervisor/\n' \
+    "$(printf '%s\n' "$_stray" | wc -l | tr -d ' ')"
+  printf '%s\n' "$_stray" | while read -r s; do
+    [ -n "$s" ] || continue
+    printf '       %-28s %s  %6s bytes\n' "${s##*/}" "$(date -r "$s" '+%F %T')" "$(wc -c <"$s" | tr -d ' ')"
+  done
+  echo "       ⚠ every r*-gate.log / r*-doctor.txt consumer below globs the mailbox only,"
+  echo "         so it has just resolved to an OLDER run's file and reported on that"
+fi
+
 # ⛔ A REPORT WRITTEN BEFORE ITS OWN GATE FINISHED (REV-131 §1, REV-142 §2).
 #
 # REV-131 §1 ruled `REPORT.md` the LAST artefact of a wave: written after the gate
@@ -686,6 +722,30 @@ if [ -n "$_doc" ]; then
   if [ -n "$_sch" ]; then
     printf '  schema, annotated for the report (REV-119 §B) — from %s:\n' "${_doc##*/}"
     printf '    %s   (read from %s, per app/.env)\n' "$_sch" "${env_db:-<unset>}"
+    # ⛔ A STAGE THAT COULD NOT CONNECT REPORTS A *LOWER* NUMBER, AND A LOWER
+    #   NUMBER READS AS AN IMPROVEMENT (REV-151 §3).
+    #
+    # Run 146's dump: `FAIL schema 78ms 3 violation(s)`, down from 14 — and two of
+    # the three rows are the stage saying it could not run:
+    #
+    #   · database: schema checks could not run: SQLSTATE[08006] [7] FATAL:
+    #     remaining connection slots are reserved for roles with the SUPERUSER attribute
+    #   · pg_roles: cannot read role attributes — BYPASSRLS is unverified
+    #
+    # Twelve `tenant-owned table has no RLS` rows did not get fixed; they got
+    # skipped, because the stage never reached the tables. ⭐ This is REV-119 §B's
+    # family at its sharpest — a stage whose input is a live database — and the
+    # count-did-not-fall rule inverted: the danger is a count that FELL for a
+    # reason that is not a fix (REV-129 §2). A summary line cannot show it, so the
+    # rows have to be read.
+    if grep -qE 'could not run|SQLSTATE\[08006\]|cannot read role attributes|connection slots' "$_doc" 2>/dev/null; then
+      fail=1
+      echo '    ⛔ that schema number is NOT MEASURED — the stage could not reach the database:'
+      grep -m3 -E 'could not run|SQLSTATE\[08006\]|cannot read role attributes|connection slots' "$_doc" 2>/dev/null \
+        | sed 's/^[[:space:]]*/       /' | cut -c1-160
+      echo '       a stage that could not connect reports FEWER violations, which reads as an'
+      echo '       improvement. Do NOT state.py stage it, and do not compare it to the ledger.'
+    fi
   else
     printf '  ⚠ %s carries no schema line — the stage dump did not reach it\n' "${_doc##*/}"
   fi
