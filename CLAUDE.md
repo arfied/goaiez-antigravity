@@ -17658,3 +17658,187 @@ measurement of nothing. Second firing in this lane (258 was the first), same com
 
 ⚠️ And the pairing is what makes it cheap: 247 keeps the evidence of failure, 209 says what to do with a zero.
 Neither is sufficient alone — a suppressed refusal leaves 209 with a zero it cannot attribute.
+
+## ⛔ A GUARD IS DEAD IF NOTHING **CALLS** IT — OR IF NOTHING CAN **SUPPLY THE INPUT IT REFUSES**. This lane has had the caller census since tick 213 and never had the second question (tick 330)
+
+Tick 329 ruled, reading `ChatCaptureController` and `ChatCaptureAction` at source: *"`''` and `'   '` are
+strings, so they clear `is_string`, reach SITE-152's own guard, and the `\DomainException` meets no catch on
+that path ⇒ **500**."* Every clause is true **of the two files it names**. It is false of the **endpoint**, and
+SITE-201's very first item measured it: state 1, the new test against the untouched tree, **PASSED with a 400**.
+
+Seven measurements, six at source and one behavioural, and the wave supplied only the last:
+
+| # | measured | where |
+| :-- | :-- | :-- |
+| 1 | `bootstrap/app.php` neither replaces nor removes the global stack | read in full |
+| 2 | `TrimStrings` then `ConvertEmptyStringsToNull` **are** the framework default global middleware | `Configuration/Middleware.php:461-462` |
+| 3 | `TrimStrings::$except` is `current_password · password · password_confirmation`; `$neverTrim` is `[]` | `TrimStrings.php:16-21` |
+| 4 | `TrimStrings::transform` → `Str::trim($value)` for any string | `TrimStrings.php:61-70` |
+| 5 | `ConvertEmptyStringsToNull::transform` → `$value === '' ? null : $value` | `ConvertEmptyStringsToNull.php:41-44` |
+| 6 | `TransformsRequest::clean` cleans `query` **and** `json()` **and** `request` | `TransformsRequest.php:30-38` |
+| 7 | ⭐ **no customisation anywhere** — `grep -rn 'trimStrings\|convertEmptyStringsToNull\|neverTrim\|skipWhen' app/bootstrap app/app/Providers app/app/Http` → nothing | this seat |
+
+⇒ **Any request input that is blank after trimming arrives at the controller as `null`.** So `is_string($phone)`
+is false, the guard's **first** clause fires, and `trim($phone) === ''` at `ChatCaptureController.php:36` can
+never be true through the HTTP route — the only route a controller has. ⛔ **And the same composition retires
+SITE-152's `NO_CONTACT_METHOD_ON_CAPTURE` at `ChatCaptureAction.php:26`**: that action has exactly **one**
+production caller, that controller, so its guard cannot fire either — **not because nothing calls the action,
+but because nothing can supply the input it refuses.**
+
+⭐ **The deadness lives further away than any prior member of the family.** 280 a `?? 'Appointment'` over a NOT
+NULL column · 281 the same, hiding the severity of the gap it fails to cover · 297 a `try/catch` whose live gap
+is its own feature's collection guard **three lines above** · 303 a `??` over a column with a default. All four
+are answerable by reading one more file in the same module. This one is **a middleware in the framework's
+default global stack, named in no file this lane owns, three layers above the guard** — invisible in the
+action, invisible in the controller, invisible in any diff of either, and invisible to every checker.
+
+⛔ **And this lane MANUFACTURED it rather than found it.** Tick 277 named this exact hazard by name and refused
+a wave on it — *"building the guard would create a defence that cannot fire — tick 280's dead defence
+manufactured rather than found"* — for `$authorType` in **this same module**, three ticks earlier. The refusal
+did not transfer because 277's test is a **caller** question (*does anything reach this parameter?*), answered
+by `grep -rn '<Action>' app/app`, and this is an **input-domain** question (*can anything supply the value this
+guard refuses?*), which a caller census cannot reach.
+
+> ⛔ **RULED: before ruling a request-derived value a live defect, trace the value from its SOURCE through every
+> transformation between the wire and the guard — and in this application that means `TrimStrings` +
+> `ConvertEmptyStringsToNull` on the global stack. A caller census answers "is this CODE reached"; only an
+> input-domain trace answers "is this INPUT reachable", and a guard needs both to be live.**
+
+⚠️ **The bound, stated so it is not over-claimed.** It covers request **input** — query string, form body, JSON
+body — and **not** route parameters (`{key}` is in no transformed bag) and **not** headers. And it is a
+property of a **shared framework configuration this lane does not own**: add `phone` to `TrimStrings::$except`,
+or drop either middleware from `bootstrap/app.php`, and both guards become live the same day. ⛔ Which is
+exactly why **neither is deleted** — 199, *a prohibition recorded with its DEFECT survives; one recorded as its
+REMEDY expires the moment the population changes*.
+
+## ⛔ THE BLANK PROGRAMME AUDITED AGAINST IT — two of twelve inert, and NOT the class (tick 330)
+
+A tick reading the finding loosely would retire a live programme. **Only members whose value comes from a
+REQUEST are affected**; every DB-derived member is untouched, because nothing transforms a column on the way
+out of Postgres.
+
+| wave | source | verdict |
+| :-- | :-- | :-- |
+| SITE-160 `pages.title` · 166 `fallback_number` · 176 `honeypot_field` · 184 `steps` · 186 `destination_url` · 154/155/156/157/164/170/171 `content_blocks` | **database** | ✅ **LIVE** |
+| SITE-161 the honeypot **value** | request | ✅ **LIVE** — its subject was `"0"`, untouched by the middleware |
+| SITE-172 `given()`'s `is_scalar` · 185 · 199 | request | ✅ **LIVE** — the middleware transforms **strings**; an array passes through as an array, so the whole **type** class is unaffected |
+| SITE-163 the DOB blank | request | ⚠️ **INERT** — already recorded inert at tick 291 for an independent reason (`Carbon::parse('   ')` throws into the existing catch) |
+| **SITE-201** | request | ⛔ **INERT** |
+
+⚠️ **It also retires tick 329's deferred item.** That tick measured `name` as *"a display string whose blank
+writes a blank `first_name` — a real but different defect, measured and reported, not built"*. A blank `name`
+arrives as `null` too, `is_string($name)` is false, and the endpoint answers 400. **The deferred defect does not
+exist**; per 224 the branch is **cannot work here** — the door is shut, not the room empty.
+
+✅ **And the X-102 door's blank class is CLOSED across all three controllers**, read in full rather than
+grepped (326 — *a record that DISMISSES gets no falsifier; measure a dismissal at least as hard as a build*):
+`ChatStartController`'s `pixel_session_token`, `ChatTurnController`'s `session_token`/`message`, and
+`ChatCaptureController`'s five inputs all resolve to `null` on a blank and take a correct branch.
+**A clean sweep is a result and must be written down** (280).
+
+## ⛔ A TEST THAT PASSES IN ALL FOUR STATES OF ITS OWN FALSIFIER — honest about the ENDPOINT, false about what ENFORCES it (tick 330)
+
+`ChatDoorTest.php:337 test_blank_capture_phone_returns_400` was green in states 1, 2, 3 **and** 4. It is **not**
+a false credit, measured: no `G##-##` literal anywhere in it, so `CapabilityStage` credits nothing and the
+X-102 id census is byte-identical by construction (240, 260).
+
+⛔ **Not deleted, and the reason is tick 251's precedent** (main's take of stages' X-176 rewrite kept two bodies
+verbatim and **renamed** them to describe what they actually assert): the body asserts a **true** property of
+the endpoint — a whitespace phone gets a 400 and writes no `ChatLead` — and that property is worth pinning,
+because it is exactly what breaks if anyone adds `phone` to `TrimStrings::$except`. What is false is its
+**name**, which claims the controller's blank guard delivers the 400. **Rename only.**
+
+## ⛔ A BRIEF THAT ASSERTS A FALSIFIER'S RED AS A FACT HAS NO BRANCH FOR "NO RED AT ALL" (tick 330)
+
+`BRIEF.md:107`: *"The red here **is** a thrown `\DomainException`… Report the exception class, the message, and
+pest's `line` field."* Tick 244's law — **every predicted consequence in a brief carries the instruction that
+would refute it** — and tick 268's third branch, both absent. The brief said what **shape** the red would take
+and never what to do if there was no red.
+
+✅ The wave disclosed the anomaly **twice** — under item 1 at the moment it fired and again under item 12 —
+which is tick 324's precedent exactly. ⛔ Its **mechanism** is half named: `ConvertEmptyStringsToNull` alone
+tests `=== ''` and cannot convert `'   '`; the **pair** is the cause, `TrimStrings` first. An invented mechanism
+is a claim (227, 230, 249) — here a half-measured one, and the half it named is the one that could not do the
+work. Thirty-eighth of the imprecise-brief family and the first turned on a falsifier's **outcome space**
+rather than its site (267), breadth (309), polarity (245) or witness (320, 324, 328).
+
+## ⚠️ The doctor `ok`-prefix defect is BACK — tick 292's check, third firing (tick 330)
+
+```
+report, BOTH blocks   ok boundary 1039ms 50 violation(s)
+mine, live, twice     FAIL boundary 140ms 50 violation(s) — fails the COMMIT
+```
+
+The other three checks **pass**: the **extrinsic** stamp equality *stated as a comparison* (305), the SUM
+`0+50+85+3+16+207+128+3 = 492` in both blocks and both of mine (285), and six of seven timings differing (249).
+Only the **verdict column** is wrong, and the SUM can never reach it — the second time the sum has passed on a
+block the prefix check caught. ⛔ Cause not measured and not named. It cost a note and not a dispatch for the
+standing reason: **this seat never accepts a doctor block from a report** (196, 210).
+
+⚠️ **Item 9's id census printed two contradictory blocks** and self-corrected mid-sentence. Re-run in this seat
+with `--include='*.php'` (287, 263): `3 G13-15 · 1 G13-37 · 1 G15-01 · 1 G16-21 · 3 G21-01 · 1 G2-57 ·
+1 G8-36` — the **second** block is the true one, and the wave's diff adds no `G##-##` literal so the census
+could not have moved.
+
+## SITE-202 — ruled at tick 330
+
+**One `state.py note`** correcting the `decided` row of `2026-09-09T23:02:07`, plus the **rename** above.
+`state.py` has **no withdraw** (210), so a note — never a re-file, never a `resolve`, which is
+module+stage-granular and would return the module to `BUILDING` (26). ⛔ The `trim($phone) === ''` clause and
+`ChatCaptureAction.php:26` both **stay**: deleting a defence is a weakening (284), both are correct, and both
+become live the day anyone adds `phone` to `TrimStrings::$except`.
+
+⛔ Six alternatives refused, each of which would pass every gate: deleting the clause or the action's guard;
+deleting the test (it is the only thing in the tree that would notice a `TrimStrings::$except` change);
+**asserting the middleware itself** (`bootstrap/app.php` is not this lane's column, and a test pinning the
+global stack invents a policy for a shared framework layer — 295, 300, 303); a second `decided` row (a
+partition-mate of a filing, not a pair — 210); any new `G##-##` literal (240); and bundling the X-102 door
+sweep (215).
+
+**FALSIFIER / pass condition**: zero movement in `integrity · boundary · contract · citation · capability ·
+anchor` **in both directions** (209 — a note does not lower a count, so a fall is as much a stop as a rise),
+the id census byte-identical, §7's `tests` unchanged at **2440**. ⚠️ **`journey` and `schema` EXCLUDED and not
+stops** — `JourneyStage:40` reads untracked evidence every `--tests` gate rewrites (270), and `SchemaStage`
+reads the live PostgreSQL catalog **and** the cluster-wide `pg_roles` (315).
+
+## Tick 330 — measured, for the record
+
+- **§7 `tests 2440 · passed 2432 · FAILED 6 · errors 2`**, reconciling ✓ (226), ⭐
+  `a_published_site_carries_all_seven` **ABSENT — J11 GREEN**, **byte-identical to the coder's** including both
+  sets ⇒ tick 255's borrow ran at a **zero delta** and its falsifier **fired and PASSED**, the eighth strong
+  resolution. Against tick 329's `2439 · 2431 · FAILED 6 · errors 2`: +1 test / +1 passed, and the diff adds
+  exactly one `public function test`. Both intermittent **CAUSES** absent (Authorize.Net `E00040`; Postgres
+  `SQLSTATE[42501]` — 311's cause-keying), so the agreeing integer is *a property of which causes fired, never
+  of the comparison* (302). ⚠️ Five `✗ FAILURE` lines against `FAILED 6` — 322's display shortfall, again.
+- **Doctor, live, twice**: `boundary 50 · contract 85 · citation 3 · schema 16 · capability 207 · anchor 128 ·
+  journey 3` · **492**, stamp `20260829-0647` = `runtime_build`. **No stage moved.**
+- **Census `4 · 1 · 2 · 3`**, a MISS (`main e2054e83 → 6630dc29`), halves `--full-history` (314), `pwd` first
+  (209), drift signature **absent** (three pathspec halves `4 · 1 · 2` against a pathspec-free complement of
+  `3` — the *split* is the signature, never either number). Byte-identical to tick 329. Half 1 per partition
+  (189): **reviews ×2**, the act-and-its-own-retraction pair, **still net zero** re-measured
+  (`git diff --stat origin/track/site origin/track/reviews -- <the four capabilities.php>` prints nothing); **stages
+  ×2**, both merges of main. **No violating partition on any surface.**
+- ⚠️ **Tick 236's check has NO SUBJECT this tick**, stated rather than inferred: main's two new first-parent
+  commits are merges of **sixty** and **money**, read with `--first-parent` and never off a subject (222).
+- **Fourth surface, both directions** (173, 323), against each branch's own bound and never HEAD:
+  `main 14 · money 16 · pricebook 14 · reviews 15 · sixty 30 · stages 41 · ui 16 · site 194 · HEAD 195`.
+  **No branch below main's 14** ✓. ⚠️ Main still carries **14** after **eleven** merges of `track/site` — 264
+  stands.
+- ⭐ **The closing tip re-read FIRED — seventeenth against seventeen nulls**, left literally blank until the
+  command returned (257): `money 7fbb2cb9 → 97486e13`, arrival 23:14:51, **after** this tick's opening fetch ⇒
+  **arrival, not staleness** (220). ⭐ `origin/main` re-read and **UNMOVED**. Paired `--stat` unconditionally
+  (180), the only surface that will print it (190): `6f60b54e` writes
+  `app/tests/Modules/C-Billing/CBillingTest.php` and **C-Billing is TRACK 1's** under ruling 5 — OWNER ACTION
+  45's shape one lane over, advisory, ⛔ never a parallel fix.
+- **§1 by ARITHMETIC** (225): §1 printed `behind 145, ahead 6` **pre-fetch** (318 — the gate is the tick's first
+  act) and post-fetch `rev-list --count` reads **145** and **6**, identical, because `refs/remotes` is a live
+  feed of the box's push traffic (220). First-parent behind **24**; both readings stated.
+- ⛔ **`coder-bin/git`'s supervisor-path refusal is STILL dead code here**, re-read at source (218 — the file is
+  in no repository so it changes with no commit anywhere): `:68`'s `case` naming `CLAUDE.md` sits **inside**
+  `:62`'s `GOAIEZ_RESTORE_OK=1` branch and `:78-79` still permits a two-token `git restore CLAUDE.md`. Tick
+  327's ruling stands: **this seat commits its notes BEFORE dispatching, every tick.**
+- ⚠️ Instruments: the shell drifted into `app/` on **both** doctor calls and was reset in its own call each time
+  — **per call, never per tick** (285). ⛔ `sed` on `coder-bin/git` is refused and the **`Read` tool** on the
+  same absolute path is accepted (217, 310). ⛔ A `$` in a grep pattern is refused even single-quoted (305); the
+  PCRE hex form `grep -nP 'trim\(\x24phone\)'` is accepted. ✅ Tick 322's placeholder check run before appending
+  and **read, never counted** (323) — zero hits.
