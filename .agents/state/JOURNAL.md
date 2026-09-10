@@ -836,3 +836,4 @@
 - `2026-09-10T12:04:15` note: run 143: arm B, 900s; account_mappings owned by goaiez_owner, suite connects as goaiez_app; §3 probe fail=1
 - `2026-09-10T12:36:20` note: run 144: account_mappings in goaiez_antig_reviews_test owned by goaiez_owner, current_user goaiez_app, histogram 1 role; four-suite union 2463 tests/2443 passed/7 failed/13 errors; named-4 single process Arm B, 400 s; CPU NOT MEASURED
 - `2026-09-10T13:17:36` note: run 145: Arm B on the single-process fork — wait_event_type Lock / wait_event transactionid; merger probe ARM1 failed/4, ARM2 incomplete/3, ARM3 passed/4; four-suite union 2463/2443/7/13
+- `2026-09-10T13:49:03` note: run 146: proved merger fix works (implicit in supervise.sh); added google_review_id validation to PrepareRemovalRequestAction and reseated tests
