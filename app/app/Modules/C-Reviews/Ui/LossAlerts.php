@@ -7,6 +7,7 @@ namespace App\Modules\CReviews\Ui;
 use App\Modules\CReviews\Actions\ConfirmRemovalRequestAction;
 use App\Modules\CReviews\Actions\PrepareRemovalRequestAction;
 use App\Modules\CReviews\Domain\PublicThreshold;
+use App\Modules\CReviews\Domain\UnauthenticatedConfirmationException;
 use App\Modules\CReviews\Models\ReviewRemovalRequest;
 use App\Modules\CReviews\Models\ReviewRequest;
 use App\Modules\X153\Actions\AlertSendAction;
@@ -28,7 +29,7 @@ class LossAlerts extends Component
     public string $noticeType = 'success';
 
     public ?int $resolvingTicketId = null;
-    
+
     public string $resolutionNotes = '';
 
     public ?int $preparingReviewId = null;
@@ -166,7 +167,7 @@ class LossAlerts extends Component
         try {
             $userId = auth()->id();
             if ($userId === null) {
-                throw new \App\Modules\CReviews\Domain\UnauthenticatedConfirmationException('Unauthenticated confirmation refused.');
+                throw new UnauthenticatedConfirmationException('Unauthenticated confirmation refused.');
             }
 
             $removal = ReviewRemovalRequest::where('business_id', $this->businessId)->findOrFail($removalId);

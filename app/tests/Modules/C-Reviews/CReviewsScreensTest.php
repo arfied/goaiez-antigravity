@@ -19,6 +19,8 @@ use App\Modules\X153\Models\Alert;
 use App\Modules\X181\Models\QaTicket;
 use App\Support\Tenancy;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -293,7 +295,7 @@ class CReviewsScreensTest extends TestCase
         $preparer = new PrepareRemovalRequestAction;
         $removal = $preparer->execute($this->bizId, $req->id, 'fake_reviews', 'This is a fake review.', 'g_123');
 
-        $userId = \Illuminate\Support\Facades\DB::table('users')->insertGetId(['name' => 'Test', 'email' => \Illuminate\Support\Str::random(10).'@example.com', 'password' => 'secret']);
+        $userId = DB::table('users')->insertGetId(['name' => 'Test', 'email' => Str::random(10).'@example.com', 'password' => 'secret']);
         $user = User::find($userId);
 
         Livewire::actingAs($user);
@@ -342,7 +344,7 @@ class CReviewsScreensTest extends TestCase
         $preparer = new PrepareRemovalRequestAction;
         $removal = $preparer->execute($otherBiz->id, $req->id, 'fake_reviews', 'This is a fake review.', 'g_123');
 
-        $userId = \Illuminate\Support\Facades\DB::table('users')->insertGetId(['name' => 'Test', 'email' => \Illuminate\Support\Str::random(10).'@example.com', 'password' => 'secret']);
+        $userId = DB::table('users')->insertGetId(['name' => 'Test', 'email' => Str::random(10).'@example.com', 'password' => 'secret']);
         $user = User::find($userId);
 
         Livewire::actingAs($user);
