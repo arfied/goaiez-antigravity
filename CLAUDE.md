@@ -10683,3 +10683,124 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     only `X211Test.php:107`'s `payment_method_forced`, a **different key** written by
     `ArForceAchAction` (ruling 262(b) — read the hit), so no assertion in the lane names this column
     and the item **adds** its method (rulings 68, 70).
+365. **⭐⭐ Ruling 364's census read the literals a `Ui/` call site SENDS; its negative is the arguments a
+    call site OMITS — and both money screens' "Record payment" button records the invoice's FULL TOTAL,
+    over-paying any part-paid invoice, with the correct arithmetic already in the same component one
+    `<td>` away (RULED by the lane supervisor 2026-09-10 13:3x, briefed as MONEY-187).** Ruling 364 fixed
+    a literal `'check'` at a `Ui/` → `Actions/` call site; ruling 340 requires every census phrased as
+    *where X is used* to owe a re-run in the negative, and this is 364's: **an OPTIONAL parameter the only
+    callers never supply, so the callee's default silently governs.** Three findings of that shape are
+    already in this ledger — ruling 185 (`issueInvoice` computed the due date from the caller's
+    `$termsType` instead of the stored `CreditTerm`), ruling 233(b) (`capture()` posted `usd` from a
+    method default at the lane's one production capture), ruling 363 (`$photoPath` always null) — which is
+    ruling 319's signature of an unenumerated population.
+    **Instrument, quoted (ruling 300):** `grep -rn -e "= null," -e "= null)" -e "= true," -e "= true)"
+    -e "= false," -e "= false)" -e "= 0," -e "= 0)" app/app/Modules --include=*.php`, filtered to
+    `/Actions/` + `/Domain/`, to the lane's eight ids and to `function ` → **8 members**, each traced to
+    every caller and **read** (ruling 262(b)). ⭐ **Corroborated by a looser instrument whose count
+    exceeds it** (ruling 294): a bare `grep -rc -e "= null" -e "= true" -e "= false" -e "= 0"` over the
+    four engines returns **29** against the narrow instrument's 8. ⭐⭐ **Positive control FIRES on this
+    lane's own just-closed defect**: the instrument locates `ArLogOfflinePaymentAction:14`'s
+    `string $method = 'check'` — ruling 364's finding, fixed by MONEY-186 minutes earlier — so it
+    demonstrably finds the shape (rulings 324, 326, 342, 344, 345, 347, 356, 358, 361, 363).
+    **The finding is `X-199/Domain/InvoiceEngine::recordPayment(int $businessId, int $invoiceId,
+    ?int $amountCents = null)`**, whose body is `$payAmount = $amountCents ?? $invoice->total_cents;`.
+    Both production callers omit the argument — `X-199/Ui/Invoices.php:36` and `X-199/Ui/Unpaid.php:37`,
+    each `recordPayment(Tenancy::idOrFail(), $invoiceId)` — and each is reached by a **bare button**
+    labelled *Record payment* (`invoices.blade.php:62`, `unpaid.blade.php:79`) with **no amount input
+    anywhere on either screen**. So every press records a payment of the invoice's whole value whatever
+    the customer paid; and because the default is `total_cents` and **not** the balance,
+    `$newPaid = $invoice->paid_cents + $payAmount` **over-pays a part-paid invoice** — 3000 already paid
+    on a 10000 invoice becomes `paid_cents = 13000`, an invoice recorded at 130 %.
+    ⭐⭐ **The self-contradiction tell is one `<td>` away and the correct arithmetic is already written:**
+    `Unpaid.php:100` is `$invoice->outstanding_cents = $invoice->total_cents - $invoice->paid_cents;`,
+    rendered at `unpaid.blade.php:75`, and the button in the next cell sends the total. Ruling 98 at the
+    shortest distance this lane has found in a rendered row.
+    ⭐ **And it makes ruling 103 unreachable from the product.** MONEY-98 spent a wave making
+    `$newPaid >= $invoice->total_cents ? 'paid' : $invoice->status` so a **partial** payment would not
+    close an invoice and would not fall out of J12's chase; the two screens that reach `recordPayment`
+    can only ever send a full one, so the branch that wave exists for cannot be entered by any owner.
+    Ruling 103's own closing words — *"all six existing `recordPayment` call sites pay in full"* — are
+    still true of every call site that omits the argument.
+    **RULED: the default becomes the OUTSTANDING BALANCE —
+    `$payAmount = $amountCents ?? max(0, $invoice->total_cents - $invoice->paid_cents);`** — which is
+    ruling 51/37's discipline verbatim (*the row already knows; a caller-supplied value is a second place
+    for the truth to disagree*) and makes the button mean the figure rendered beside it. ⭐ `max(0, …)` is
+    deliberate defence-in-depth in ruling 209's accepted shape: a negative `$payAmount` would **reduce**
+    `paid_cents`, a payment that un-pays an invoice, which is a worse failure than the one being fixed,
+    and rows written by the defect before this wave can carry `paid_cents > total_cents` today.
+    ⛔ **Not resolved by adding an amount input to the two screens.** That is a product decision and a
+    larger wave — X-211's `AgeingByReason` already has the door (`wire:model="amountCents.{id}"`, its own
+    `'Enter the amount that was paid'` refusal), so the model exists when it is built — and the finding
+    does not require it: after the fix nothing false is written and nothing false is rendered.
+    **Recorded at ruling 76's grade, with the reason, so a later tick does not re-derive it.**
+    ⛔ Not by changing the two components, which correctly delegate. ⛔ The `(TEST ANCHOR)` docblock at
+    `:157-159` stays byte-identical (rulings 47's companion, 105, 244, 356).
+    ⚠️ **Blast radius, measured caller by caller rather than assumed (rulings 46, 86, 146): ZERO.** Every
+    call site that omits the amount does so on an invoice whose `paid_cents` is **0**, where
+    `total_cents − 0 == total_cents` — `InvoiceEngineTest:98,:151,:257`, `MoneyPaidTodayScreenTest:63`
+    (`$invA` freshly issued), `CreditsScreenTest:86`, `X199Test:109`, `InvoicesScreenTest:75` (`$inv2`,
+    `paid_cents => 0` at `:145`) — and every caller that passes an amount is unaffected
+    (`InvoiceRecordOfflineAction:15`, `RecordPaymentOnCapture:29`, `EvidenceInvoiceCommand:85`,
+    `JourneyHarness:551`, and the four explicit test call sites). `UnpaidScreenTest:94` and
+    `InvoicesScreenTest:76` are the `999999` error path. **No existing assertion moves**, so the item
+    **adds** a method (rulings 68, 70) — and `grep -rn "Record payment" app/tests/Modules` returns
+    **nothing**, so no test in the lane has ever asserted that button at all.
+    ⚠️ **The other seven members, measured and STRUCK with their reasons** (rulings 95, 100, 111):
+    `packageForCollections`/`ArPackageForCollectionsAction`'s `?int $packagedByUserId` is **supplied** —
+    `CollectionsPackagePreview:39` passes `(int) $userId` from `auth()->id()` behind its own null guard,
+    which is ruling 161's principal working as ruled; `DisputeOutcomeAction:13` and
+    `DisputeDefenseEngine:118`'s `?string $lostReason` are ruling 261's already-recorded always-null
+    column with no reader on either lane, over a table with no production writer (79);
+    `CardExpiringScanAction:18`'s `?Carbon $currentDate` is a clock seam whose default `now()` is correct
+    in production (68); `ArLogOfflinePaymentAction:14`'s `$photoPath` is ruling 363's recorded
+    unbuildable (no upload surface, no storage, Track 2's kit); and `CheckoutEngine::checkoutCart:157`'s
+    `?int $customerId` is **omitted by `CheckoutBlock::pay():67`**, so `orders.customer_id` is always null
+    from production — which is **ruling 263's already-measured written-only column with no reader
+    anywhere**, on a storefront that is anonymous by construction (275). ⛔ None is a wave.
+
+366. **⭐⭐ Ruling 362 deleted `FINAL GIT STATUS:` and thereby deleted the only field in which an
+    unrestored mutation-proof residue could be REPORTED — the reviewing tick's own `git status` is now
+    the sole instrument for a class ruling 71 created, and a brief that requires a clean tree without
+    naming the field it is reported in gets neither (RULED by the lane supervisor 2026-09-10 13:3x, on
+    MONEY-186's `28b5e8e2`).** Two paperwork defects on one wave, one cause. **(a)** The tree carries
+    `M app/app/Modules/X-211/Ui/AgeingByReason.php` — measured, **two blank-line deletions** left by
+    proof 3.2's hand restore, which is ruling 71's exact residue class (`coder-bin/git` refuses a
+    mutation restore, so every proof here ends in a hand restore with no undo). `REFUSED:` reads
+    `n/a — none` about it, and the brief required `git status --short --untracked-files=all` to print
+    nothing at `:27`. ⭐ **Ruling 313 could not fire**: 313 made `REFUSED:` cover *every* departure, and a
+    run that does not notice its own residue has nothing to confess — the field that would have **shown**
+    it, unasked, was `FINAL GIT STATUS:`, which ruling 362 removed one wave earlier for the excellent
+    reason that run 210 was **typing** it. **RULED: a brief whose items run a mutation proof carries an
+    explicit `TREE:` field — the literal output of `git status --short --untracked-files=all` run as the
+    LAST act before `REPORT.md`** — which is ruling 71(b) restored under its own name, and is **not** a
+    reinstatement of 362's deleted fields, because it records an ACT the supervisor cannot reconstruct
+    from the gate file: §1 is taken minutes earlier and a residue created after it is invisible there.
+    ⚠️ Here §1 and the tick's own `git status` **agree** (`1 uncommitted path(s)`), which is the
+    discrepancy ruling 288 guards against measured absent, and the residue is two blank lines inside a
+    method body — **semantically inert, and `pint` green on both the tree and the sha** (`PINT: 2.7`
+    passed at commit time with the blank lines; §6 passed at gate time without them), so ruling 34's
+    hazard does not fire in either direction and §7 is the sha's.
+    **(b)** `SWEEP:` carries **20** lines where item 0.2's sweep prints **19**: the extra is
+    `Models/OfflinePayment.php:12`, a docblock **item 2.1 created**, so the field holds a POST-edit re-run
+    and not the baseline capture it names. The run log records the baseline correctly at nineteen, and
+    the supervisor re-measured 20 on the tip with the wave's own line as the twentieth, so nothing is
+    concealed — but a field that vouches for an act performed at a specific INSTANT is worthless when it
+    is filled at a different one, which is rulings 238/308/351's finding in the one field they never
+    reached. **RULED: where a wave's own edits will match its own sweep, the brief says so and requires
+    the baseline capture by name** — *"paste item 0.2's output, taken before any edit; a re-run after
+    item 2 prints one more line and is not this field's answer."*
+    ⭐ **The generalisable half, and it is 362's own lesson turned back on itself: deleting a field
+    deletes its failure mode AND its evidence.** 362 was right that eight rulings had hardened `GATE:`
+    into something only a script could produce; what it did not measure is that one of the deleted fields
+    was the only reporter of a defect class **this lane's own mutation-proof discipline manufactures**.
+    **A field is removed by asking not only whether the READER can obtain it, but whether anything else
+    would ever SURFACE what it surfaced.**
+    ⚠️ Graded **PASS-WITH-NOTES and pushed**: the substance is correct in every measured respect, the
+    gate landed on its predicted floor **to the digit** (`tests 2499 · passed 2495 · FAILED 2 · errors 2`)
+    with **zero** of this lane's reds among the four, `pint` and `phpstan` are green, the surface is
+    exactly the brief's, and all three proofs carry name, assertion message and a GREEN re-run.
+    Withholding that over two blank lines and a field's timestamp is ruling 74's error, and it is the
+    grade rulings 76, 121, 128, 133, 147, 195, 198, 210, 222, 231, 242, 247, 299, 308, 311 and 331
+    already set for paperwork. ⚠️ The residue's cleanup is MONEY-187's item 0; `rm` and a path restore are
+    the coder's, not this seat's.
