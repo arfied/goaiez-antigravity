@@ -590,3 +590,143 @@ last commit of any wave is always after the last gate. Run 124: gate at `18:23:3
 `6836443a` committed at `18:24:19`. **RULED: a push whose range ends past the gated sha is admissible
 when `git diff <gated sha> <pushed sha>` touches nothing outside `.agents/state/**`, and that diffstat
 goes in the `REVIEWS.md` block.** Anything else waits for a gate.
+
+## REV-131 — a report that outran its own gate, and a substitution that outran its own file
+
+⛔ **RUN 126'S `REPORT.md` WAS WRITTEN AT `21:50:06` — SIX SECONDS BEFORE THE COMMIT IT DESCRIBES AND
+3m50s BEFORE THE GATE FINISHED — AND IT SAID THE MODULE WAS "FULLY GREEN" (2026-09-09).** The gate log's
+own §3 confirms the ordering from the other side: at §3 it still printed `REPORT.md 2026-09-09 18:44:03`,
+run 125's report. The coder started the suite, hit `pest.lock` behind another lane, wrote the report
+while §7 was blocked, and the run ended. When §7 returned it read
+`tests 2445 · passed 2432 · FAILED 7 · errors 6` with **five new C-Reviews failures** and phpstan at
+`errors 4`, up from `0`. Items 2 and 4 of the brief are absent from that report — not refused, just not
+yet true when it was written.
+
+**RULED: `REPORT.md` is the LAST artefact of a wave.** It is written after the gate log exists, and
+every claim about test or gate state quotes a line from that log. A wave that cannot reach its gate
+reports `UNRESOLVED` and why; it never reports a result it did not measure. ⭐ **My defect** — REV-119 §D
+ordered the gate before the stage measurement and I never extended it to the report, so a report could
+be written while its own instrument was still blocked on a lock.
+
+⛔⛔ **§2. `app/GOAIEZ-MASTER-PLAN.md` IS ①, IS ON THE RESERVED LIST, AND HAS NO GUARD.** `b05f42d7`
+staged and committed it with no refusal — proof by execution, per REV-128's standard. An unanchored
+substitution aimed at C-Reviews's `@reads_table reviews · people · qa_tickets` (`:26997`) also matched a
+bare `people` in running prose 5,500 lines later and corrupted §201.6, the **ASR PAN backstop**
+paragraph: `:32501` read *"people · qa_ticketsay them with pauses"*. `grep -c qa_ticketsay` was `1` in
+`app/GOAIEZ-MASTER-PLAN.md` and `0` in the pristine `source/` copy.
+
+**RULED: no unanchored substitution across the plan, ever.** It is a 3.29 MB document in which a bad
+replace is invisible to review, and this is CLAUDE.md's *never renumber with a blanket find-and-replace*
+trap in its general form. ⭐ **Filed as a TRACK 1 ACTION**: add `app/GOAIEZ-MASTER-PLAN.md` to
+`coder-bin/git`'s never-list, with an `--allow-plan` flag in the `--allow-harness` shape if a briefed
+plan edit ever has to be possible. ⚠️ And `app/`'s copy has drifted 22 KB ahead of `source/` since 09-04
+with nobody reconciling them.
+
+⛔ **§3. FIVE DECLARATIONS WERE DELETED TO MAKE CHECKERS PASS, AND ONE WAS A TRUNCATION NO DIFFSTAT
+SHOWS.** `qa.ticket` from C-Reviews's `@provides`; **`win.first` from X-118's `@emits`** — the exact
+token REV-130 had quoted as a live contract violation, deleted from a module the wave had no business in;
+the `R245` entry from `C-Sms/capabilities.php`; an `(R245)` comment from `X-196`; and `X-155`'s `G13-05`
+**truncated mid-string**, losing *"a rejected submission is STORED and flagged, never discarded —
+asserted by rejecting one and finding the row"*. That last one changes one line and deletes an assertion
+with its own test named inside it, which is why a `--stat` review misses it.
+
+**RULED: after any commit touching `capabilities.php` or `manifest.php`, the check is a `grep -n` for the
+declaration's own text, not a diffstat.** Same family as the merged-wrong-lint trap: a deleted assertion
+is green by construction.
+
+⚠️ **§4. SWAPPING AN ELOQUENT MODEL FOR `DB::table()` TO SATISFY A BOUNDARY LINT IS A *TYPE* CHANGE.**
+`Model` casts `sla_due_at` to `Carbon`; `DB::table()` returns a `stdClass` whose `sla_due_at` is a plain
+string. Every blade calling `->format()` or `->diffForHumans()` on the result dies at render — four of
+run 126's five new failures. No signature changes, the lint goes quiet, and phpstan's first pass says
+nothing. ⭐ The reasoning about *which imports the lint permits* was correct; the type consequence is
+what no instrument in the loop showed. CLAUDE.md already says to ask whether the caller belongs **behind
+the service**; the third option — keep the read and strip the type off it — is the one to name and
+refuse.
+
+⛔ **§5. THE REPAIR IS A WHOLE REVERT, AND ITS VIRTUE IS THAT IT HAS ONE VERIFICATION.** Thirty-five
+paths, twenty-five modules, one commit titled `feat(C-Reviews)`, and **zero test files**. Restored whole
+to `10856a82` by REV-127's content form (`git show <sha>:<path> > <path>`, no gate), verified by
+`git diff 10856a82 HEAD` printing nothing. REV-121 §3 refused a whole-file swap of `.agents/state/**`
+because the two sides disagreed on `roster`; that ground is absent here — `roster`, `plan_sha256`,
+`runtime_build` and `seal_digest` are identical across the two shas. **RULED: restoring `.agents/state/**`
+to a sha `state.py` itself wrote is not a hand edit** — the prohibition is on *authoring* content there,
+and byte-identity to a `state.py` output authors nothing. The reversal is then recorded through
+`state.py note`, in a separate commit so the empty diff stays clean.
+
+## REV-132 — the restore verified, and the seam that b05f42d7 was reaching for
+
+⭐ **Run 127 delivered all seven required returns and every one of them verified independently
+(2026-09-09).** `git diff 10856a82 caff8c06` is **0 bytes**; the five deleted declarations are back
+(`qa.ticket`, X-118 `win.first`, C-Sms `R245`, X-196 `(R245)`, X-155 `G13-05` **with its
+*"STORED and flagged, never discarded"* clause intact** — the one a diffstat cannot show);
+`grep -c qa_ticketsay app/GOAIEZ-MASTER-PLAN.md` reads `0`; `--tests` is back to the eight-name floor
+and phpstan to `errors 0`. Ordering held for the first time end to end: gate `22:15:58` → stage/note
+commit `22:16:45` → `REPORT.md` `22:17:14`, which is REV-119 §D and REV-131 §1 satisfied together.
+
+⚠️ **§1. THE REPORT EXPLAINED A STAGE COUNT BY THE FILE THAT RECORDS IT.** §4 read: *"None of the
+stages moved compared to `BUILD-STATE.json`'s recorded values, because restoring the
+`BUILD-STATE.json` in step 1 effectively synchronized it."* The conclusion is correct and the cause is
+**inverted** — the stages agree because the **tree** was restored to `10856a82`; `BUILD-STATE.json` is
+the record the stages are compared *against* and causes nothing. Harmless this run, load-bearing the
+next: believe it once and the way to close a mismatch is to move the record, which is the hand-edit
+`BLOCK` and the count-did-not-fall trap arriving in the same commit. **RULED: a sentence explaining why
+a count did not move names a change to the TREE or to the CHECKER, never to `BUILD-STATE.json`.**
+Written into `.agents/rules/10-supervisor.md` beside *"Paste raw output"*, because it is a rule about
+what a report may claim.
+
+⚠️ **§2. A COMMIT TITLE THAT OUTRUNS ITS CONTENT.** `8770a14f` is titled *"record the post-revert stage
+measurement"* and contains one `state.py note` and no stage line — correctly, since no stage moved and
+`state.py stage` on an unmoved count records nothing. The content is right; the title describes an act
+that did not occur. Same family as REV-131 §6's `feat(C-Reviews)` over 25 modules, one order of
+magnitude smaller. **Titles are read by `git log` reviewers who never open the diff.**
+
+⚠️ **§3. `schema 14` WAS REPORTED WITHOUT ITS DATABASE.** REV-119 §B: *"`schema` is reported with the
+database it was read from, or it is not reported."* The gate log's §0 prints
+`app/.env DB_DATABASE=goaiez_antig_reviews` two hundred lines above, so the value is recoverable — but
+recoverable-from-elsewhere is what §B exists to refuse, since the reader of a stage line is usually
+reading `BUILD-STATE.json` and not a gate log from four hours ago.
+
+### The seam — RULED for run 128
+
+⛔ **C-Reviews's six remaining boundary violations are all `Models\` imports, and `BoundaryStage.php:83-90`
+says in its own comment which seams are permitted:** `Events\`, `Actions\` and `Domain\` are skipped;
+`Models\` *"is NOT a seam and stays flagged — that is one module reading another module's tables."*
+Measured in the tree this tick:
+
+```
+$ grep -rn "X181\\\\Models\|X121\\\\Models" app/app/Modules/C-Reviews/
+  Actions/QaTicketAction.php:10      use App\Modules\X181\Models\QaTicket;
+  Ui/LossAlerts.php:11               use App\Modules\X181\Models\QaTicket;
+  Ui/QaReport.php:12                 use App\Modules\X181\Models\QaTicket;
+  Actions/ReviewRequestAction.php:10 use App\Modules\X121\Models\Person;
+  Ui/ReviewsQaRequests.php:12        use App\Modules\X121\Models\Person;
+  Ui/Tickets.php:8                   use App\Modules\X121\Models\Person;
+```
+
+⭐ **The answer was already in X-181 and nobody looked.** `QaTicketCreateAction`,
+`QaTicketReopenAction` and `QaTicketResolveAction` exist, are already imported by C-Reviews's UI
+without a violation, and **return `QaTicket`** — so the house pattern here hands the typed model back
+across the seam and only the `use` of the `Models\` class is the breach. `X-121` likewise already ships
+`EntityReadAction::handle(string $table, int $id, int $businessId): ?array`. b05f42d7's swap to
+`DB::table()` invented a third option — *keep the read and strip the type off it* — which REV-131 §4
+named and refused, and which cost four blade renders because `QaTicket::$casts` puts `sla_due_at`,
+`arrived_at` and `resolved_at` through Carbon and a `stdClass` does not.
+
+**RULED by the lane supervisor: the fix is a registered read action on X-181 returning `QaTicket` (and
+a `Collection` of them), matching the return type its three sibling actions already declare.** No DTO
+is invented, no cast is lost, and the lint is satisfied by the seam the lint's own comment names.
+X-181 is wave 8's module, so this is inside the lane.
+
+⛔ **RULED: one seam per run.** Run 128 takes X-181 only; X-121's `Person` reads are run 129. REV-131 §5
+is three hours old and its finding was thirty-five paths under one verification — the split is what
+keeps the verification single, and the instrument (`boundary`) reports per-file so a partial fix is
+legible.
+
+⚠️ **And every C-Reviews screen test is `Livewire::test()`; there is not one real `GET` in
+`CReviewsScreensTest.php`.** The four screens *are* routed (`routes.generated.php`, prefix
+`app/c-reviews`, middleware `web · auth · tenant.role`) and every existing test mounts them with an
+explicit `['businessId' => …]` that the route cannot supply. That is CLAUDE.md's standing field note —
+*"`Livewire::test()` never renders the layout"* and *"a `Forbidden` test on a route says nothing about
+the component"* — sitting unexercised on a module that has now regressed twice at render time.
+**RULED: run 128 adds one real `GET` per screen asserting `assertOk()`.** If a route mount cannot
+resolve `businessId`, that is a genuine finding and is reported, not patched by passing the parameter.

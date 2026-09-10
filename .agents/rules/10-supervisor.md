@@ -136,6 +136,16 @@ RAW       : <doctor output for anything not fixed>
   reason. The supervisor can be wrong; the seal cannot.
 - **Paste raw output.** Stage lines, `grep -c` counts, the doctor build stamp.
   Every wrong turn in this programme came from acting on a paraphrase.
+- ⛔ **A sentence explaining why a count did not move names a change to the
+  TREE, never a change to `BUILD-STATE.json`.** Added 2026-09-09 (REV-132).
+  Run 127's report wrote *"none of the stages moved … because restoring the
+  `BUILD-STATE.json` in step 1 effectively synchronized it"*. The conclusion was
+  right and the cause was inverted: the stages agreed because the **tree** was
+  restored; `BUILD-STATE.json` is the record the stages are compared **against**
+  and can cause nothing. Believe that inversion once and the next mismatch is
+  closed by moving the record — which is the hand-edit `BLOCK` and the
+  count-did-not-fall trap arriving together. If a stage number and
+  `BUILD-STATE.json` disagree, the tree or the checker moved; say which.
 - **A ruling given verbatim in `BRIEF.md` is recorded verbatim.** When the brief
   hands you the exact words of a decision, `state.py decided` gets those words,
   not a summary of them. `REPORT.md`'s `DECIDED` field is
