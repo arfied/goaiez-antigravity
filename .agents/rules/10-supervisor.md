@@ -295,3 +295,50 @@ as they are and note it in `REPORT.md`. A stash of the supervisor's ledger was
 dropped once and the record had to be reconstructed; that is why this rule has
 its own heading. The same applies to history: **never amend or rebase a commit
 that has already been reviewed** — fix forward.
+
+## ⛔ ADDED 2026-09-10 (REV-139) — A QUOTATION HAS A CEILING, A CITATION HAS A TIMESTAMP, AND THE STATE COMMIT IS LAST
+
+⛔ **A QUOTATION IN `REPORT.md` IS THE LINE OR LINES THAT SETTLE THE CLAIM,
+CAPPED AT TWENTY.** Past that the report gives the artefact's **path**, the
+**number**, and the **one line**. Run 134 complied literally with the rule
+directly above this section — *an artefact is quoted, or it is not cited* — by
+`cat`-ing two 41 KB capability dumps into `REPORT.md` between heredocs. The
+result was 970 lines in which the two numbers that mattered (`0` violations for
+C-Reviews, `207` total) sat on lines 867 and 120, and 82 KB of it was other
+lanes' `C-Mail` / `X-01` / `X-222` rows. **A redirect's whole virtue is that the
+reviewer opens the artefact; a report that inlines it destroys that.**
+
+⛔ **A `REPORT.md` OVER 150 LINES IS ITSELF A FINDING.** Not a hard refusal — a
+signal that a claim is being buried rather than made. Say the number, name the
+file, quote the line.
+
+⛔ **A `file:line` IS RE-DERIVED AFTER THE LAST COMMIT OF THE WAVE.** Run 134
+measured its comparators at 02:54 and cited them in a note at 02:54, across a
+pint commit at 03:00 that shifted every line below its hunks. Three of five
+citations then landed on nothing — and the supervisor's own brief had supplied
+the same stale numbers, measured before the wave it authorised. A citation
+measured before a later commit in the same wave is **stale by that commit**.
+Re-run the grep after the final commit, or carry the sha the number was measured
+against. ⭐ Citations that deliberately describe **removed** code are the
+exception and keep their pre-change lines — say so when that is what they are.
+
+⛔ **THE `state.py` COMMIT IS THE LAST COMMIT OF THE WAVE, AFTER THE GATE.**
+REV-119 §D ordered the gate before the stage measurement and the measurement
+before the `state.py stage` commit; it never said the same about `note` and
+`decided`. Run 134 committed state **first**, then wrote its most valuable note
+46 seconds later, and that note — a genuine product defect it had just found —
+was still uncommitted two commits and a gate afterwards. Both ledger files
+carried it consistently, so nothing was lost; the ordering is what stranded it.
+**Commit `.agents/state/BUILD-STATE.json` and `.agents/state/JOURNAL.md`
+together, once, after the gate, naming both paths** (REV-136 §4) — and then
+`REPORT.md` last (REV-131 §1).
+
+⛔ **A BRIEF THAT ASKS FOR A `state.py` VERB HANDS OVER THE LITERAL COMMAND.**
+`bin/state.py:204-207` is `decided <module> <what…>`, and `:209` stamps
+`"ruling": "R245"` **by itself**. A brief that writes *"record it with
+`state.py decided` (R245)"* reads as though `R245` were the first argument; run
+134 passed it as the module id and got `R245 is not on the roster`. The refusal
+was correct and the phrasing caused it. **A brief citing a verb cites the
+granting clause's own argument order by `file:line`** — REV-128's standard (*a
+permission is proved by the clause that grants it*) extended from permission to
+invocation.
