@@ -9700,3 +9700,92 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     is not the same census as one of state.** Ruling 245 measured what a component *holds*, ruling 205
     what it *exposes*; neither could see what it is *handed*. Any component-layer census owes the third
     question.
+345. **⭐⭐ Two fresh censuses are measured CLEAN with fired positive controls — every one of the lane's
+    66 `number_format` renders carries the right precision for the unit it prints, and the lane holds
+    ZERO test-side `assertDatabaseHas`/`Missing`/`Count` (measured by the lane supervisor 2026-09-10
+    08:5x; rulings 64, 95, 100, 111, 207, 294, 324, 326, 342, 344).** Ruling 325 names *a population
+    this ledger has not yet enumerated* as the one HOLD-lift condition a tick can reach alone, at
+    ruling 324's bar: measured non-empty, instrument corroborated **with a positive control**, members
+    listed. Two candidates were put to that bar and both come back clean.
+    **(a) `number_format` PRECISION — 66 members, zero findings, and it is the third question in the
+    money-figure family.** Rulings 213 and 328 asked whether the arithmetic *producing* a figure is
+    sound; ruling 329 asked whether the figure is *labelled* with its currency. Neither asked whether
+    it is *rendered whole* — `number_format($cents / 100)` with the decimals argument omitted defaults
+    to **0** and drops the cents silently, which is a money figure understated on a money screen with
+    nothing for `pint`, `phpstan` or any test to see (every assertion in the lane names a formatted
+    string, so a wrong precision changes the needle rather than failing it). Instrument, quoted
+    (ruling 300): `grep -rn --include=*.php --include=*.blade.php -e 'number_format' app/app/Modules`
+    filtered to the eight ids → **66**. Of those, **60 carry a `cents` value and ALL 60 carry an
+    explicit `, 2` or `, 4`** (`| grep -e 'cents' | grep -c -e ', 2' -e ', 4'` = 60 against a bare
+    `grep -c -e 'cents'` = 60 — the two counts are the corroboration, ruling 294). The remaining **six
+    are read one by one** (ruling 262(b)): two `number_format($meter->units_used)` with **no** decimals
+    argument, which is **correct** — `2026_08_30_000025:45` is `bigInteger('units_used')` cast
+    `'integer'` at `Meter.php:16`, so 0 decimals is the unit's own precision and a `, 2` there would
+    invent two digits a counter does not have; `credits.blade.php:26`'s `$aiBalance / 10000, 4`, which
+    is **exact** — the column is hundredths-of-cents, so one unit is 0.0001 of a currency unit and four
+    decimals is lossless, not decorative; and three `/ 100, 2` on variables whose names carry `Cents`
+    or `Fee` without the literal substring (`$unpaidValueCents`, `$totalCents`, `$maxFee`).
+    ⭐ Positive control FIRES: the same instrument over `app/app` outside `Modules/` returns 12+ lines
+    across `ReconcileZernioAccounts`, `MeterZernioAccounts`, `ShowTableFootprint`, `VerifyPlacesPricing`
+    and others — including `number_format($scaled, 1)` and bare `number_format($value)` forms, so the
+    instrument demonstrably distinguishes a precision argument from its absence.
+    **(b) TEST-SIDE database assertions — ZERO in the lane, and the class is structurally absent.** An
+    `assertDatabaseHas('payments', ['status' => 'captured'])` naming no tenant column passes on ANOTHER
+    tenant's row, which is ruling 61's passes-for-the-wrong-reason in the one assertion an isolation
+    test rests on — and it is the **test-side** analogue of ruling 209's per-query tenancy census, which
+    swept `Domain/`, `Actions/` and `Ui/` and could not see a test. Measured:
+    `grep -rn --include=*.php -e 'assertDatabaseHas' -e 'assertDatabaseMissing' -e 'assertDatabaseCount'
+    app/tests/Modules` filtered to the eight ids returns **nothing**. ⭐ Positive control FIRES hard:
+    `grep -rln` over `app/tests` whole returns 10+ files in **other** lanes' trees (`C-Mail`, `C-Sms`,
+    `X-01`, `X-111`, `X-124`, `X-126`, `X-121`, `Feature/Billing`, `Feature/Advanced`). ⛔ Money rules
+    nothing on those and proposes no edit (ruling 5, ruling 321's discipline) — several may be scoped by
+    `BelongsToTenant`'s global scope, which money's 32 models do not have (ruling 324). The lane asserts
+    through its models and its screens instead, and under `RefreshesTenantDatabase` both routes sit
+    beneath RLS (ruling 212), so there is no unscoped route to close. ⛔ Neither census is to be
+    re-raised. ⭐ The generalisable half is ruling 340's a fourth time, aimed at the money-figure family:
+    **a census of a value's ORIGIN is not a census of its RENDERING**, and (a) is the third distinct
+    question this lane has had to ask of one number after its arithmetic (213, 328) and its label (329).
+
+346. **⭐⭐ The `limit()` census's negative is measured NON-EMPTY — 43 collection reads in the lane's
+    `Ui/`, exactly TWO windowed and both ruling 194's own — and it yields ZERO buildable fixes, because
+    a wave here would CREATE the cut it then has to disclose (RULED by the lane supervisor 2026-09-10
+    08:5x; rulings 194, 228(a), 325, 327, 340).** Ruling 194 swept the lane's three `limit(`/`take(`
+    sites and asked of each *is this the whole list, and if not, which end was thrown away?* Ruling 340
+    requires every entry phrased as *where X is used* to owe a re-run in the negative, and this is
+    194's: **which rendered lists have no window at all?** Instrument, quoted:
+    `grep -rn --include=*.php -e '>get()' app/app/Modules` filtered to the eight `Ui/` trees → **43**.
+    **Exactly two carry a window and both are ruling 194's own fixes** —
+    `X-117/Ui/CheckoutBlock.php:22,:121-125` (`ORDER_WINDOW = 10`, `limit(WINDOW + 1)`, the overflow
+    probe, `take()`) and `X-211/Ui/InvoiceThreadBeside.php:22,:97-102` (`THREAD_WINDOW = 50`, the same
+    shape, its own comment naming the probe). The other 41 are unwindowed, and **most are bounded by
+    nature** — merchant connections, accounting connections, cards on file, `meters` (five types, and
+    ruling 338 measured zero writers app-wide), `dunning_states` (ruling 338: at most one row per
+    business), credit terms, payment plans, collections packages, disputes, sync runs, account mappings.
+    **A minority grows without bound per tenant and renders every row:** `X-198/SameAccount.php:68`
+    (every non-`failed` payment ever taken), `X-199/Invoices.php:51` (every invoice, no status filter —
+    ruling 191), `Unpaid.php:68`, `Declines.php:68` under `toggleShowAll` (the week filter is inside
+    `if (! $this->showAll)`, ruling 114), `C-Billing/Credits.php:74` and `Mrr.php:78` (credit ledger
+    entries), `X-199/Credits.php:75,:81` (overflow charges), and
+    `X-211/InvoiceThreadBeside.php:105` (dunning actions).
+    ⛔ **RULED: recorded, never briefed, and the reason is not cost — it is that the wave would be the
+    inverse of every ruling in this ledger.** (1) **Nothing false is rendered.** Ruling 194's finding
+    was truth-shaped — *a list a screen cuts says that it is cut* — and an uncut list makes no claim it
+    does not keep; the harm here is scale and memory, an axis on which this lane has measured no
+    production data, no reported slowness and no tenant. (2) ⭐⭐ **The fix creates its own disclosure.**
+    Windowing `Invoices` means adding a cut and then adding the notice ruling 194 requires — so the wave
+    manufactures the very condition it exists to disclose, which is ruling 327's *manufacturing
+    reachability* one register out. (3) ⭐ **Harmonising the 41 against the 2 is ruling 228(a)'s named
+    hazard.** The two windows exist for a reason particular to their lists — a conversation thread and
+    an order history rendered in a **side panel** beside a primary subject — not because this lane has a
+    windowing policy, and *a wave that harmonises a pair breaks the good one*. (4) ⛔ **The one member
+    with a genuine correctness flavour is unprovable.** `SameAccount.php:68` loads every payment into
+    PHP to compute ruling 152(b)'s per-currency sums, which a SQL `groupBy` would do bounded — but the
+    behaviour is identical before and after, so **no mutation can redden it** and ruling 82's *a proof
+    that cannot fail is not a proof* refuses it; and the paginator that would resolve the rendering half
+    does not exist in the UI kit, which is Track 2's (ruling 21, ruling 194's own measurement of the
+    twelve components). ⭐ This is ruling 327's outcome shape a third time — **a population measured
+    NON-EMPTY that yields ZERO buildable fixes is a legitimate result and is the more useful of the two
+    to write down**, because an empty census tells a later tick *nothing is there* while a classified one
+    tells it *what is there and why each member stays*. → recorded on TRACK 1 ACTION 13's list as the
+    scale half, alongside `orders.order_number`'s absent uniqueness, since a paginator and a bounded
+    aggregate are both cross-lane.
