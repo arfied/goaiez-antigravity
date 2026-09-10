@@ -438,10 +438,26 @@ done
 # Scoped to the last 24h so yesterday's artefacts age out on their own, and it
 # prints the count it scanned so a clean reading is legible — a check that only
 # ever prints nothing is indistinguishable from a check that is not running.
+#
+# ⛔ AND IT FLAGGED ITS OWN OUTPUT ON ITS SECOND RUN (REV-138 §1). A gate log is
+#   an artefact matching `r*-*`, and this block PRINTS the offending line
+#   verbatim, so run 133's `r133-gate.log:102` carried
+#   `bash: line 1: goaiez: command not found` — quoted from r132-doctor.txt by
+#   this very loop. The count went 2 → 3 for a benign reason, which is the
+#   failure mode of a permanent ⛔: it trains the reader to skip the section that
+#   would show a real one.
+#
+#   The fix is NOT to skip `*-gate.log` — a gate log can carry a real error from
+#   a command inside the gate, and excluding the file would blind the check to
+#   exactly that. Instead the detector's OWN output block is blanked before the
+#   scan: `s/.*//` over the range from its `carries a shell/grep error` line to
+#   its `wave artefacts` footer, which preserves line numbering so the number it
+#   reports stays truthful. Nothing but this loop's output lives in that range.
 _art_n=0; _art_bad=0
 for p in $(find "$ROOT/.agents/supervisor" -maxdepth 1 -name 'r*-*' -type f -mmin -1440 2>/dev/null | sort); do
   _art_n=$((_art_n + 1))
-  hit=$(grep -m1 -nE 'command not found|No such file or directory|Permission denied|: syntax error|Could not open input file' "$p" 2>/dev/null || true)
+  hit=$(sed '/carries a shell\/grep error at line/,/wave artefacts (24h):/s/.*//' "$p" 2>/dev/null \
+        | grep -m1 -nE 'command not found|No such file or directory|Permission denied|: syntax error|Could not open input file' || true)
   [ -n "$hit" ] || continue
   _art_bad=$((_art_bad + 1)); fail=1
   printf '    ⛔ %s carries a shell/grep error at line %s\n' "${p##*/}" "${hit%%:*}"
@@ -450,6 +466,33 @@ done
 if [ "$_art_n" -gt 0 ]; then
   printf '  wave artefacts (24h): %s scanned · %s carrying an error\n' "$_art_n" "$_art_bad"
   [ "$_art_bad" -gt 0 ] && echo "       a redirect whose command did not run is not a measurement — the report must not cite it"
+fi
+
+# ⭐ `schema` IS REPORTED WITH THE DATABASE IT WAS READ FROM, OR IT IS NOT REPORTED
+#   (REV-119 §B) — AND THAT INSTRUCTION IS NOW EMITTED RATHER THAN RESTATED.
+#
+# SchemaStage reads .env's live database, not the tree, so its count is not a
+# property of a sha and every lane measures a different number on the identical
+# commit. The rule has been handed to the coder as a citation (REV-132 §3, missed),
+# as a firmer citation (REV-134 §5, missed), as a paste-ready literal string
+# (REV-135, emitted correctly — the rung that worked) and as that same literal
+# again (REV-138 §2, missed, because "STAGES: none moved" needs no line at all).
+#
+# ⭐ The ladder this lane has now measured four times: a paste-ready string beats a
+#   citation, a redirect beats a paste-ready string, and a CHECK beats a redirect —
+#   because a check cannot be omitted by a report that summarises. The annotated
+#   line is produced here, from the coder's own doctor dump, so the report quotes a
+#   line that already carries the database and cannot paraphrase the annotation
+#   away. A brief fix protects one run; a check protects every run (REV-135 §4).
+_doc=$(find "$ROOT/.agents/supervisor" -maxdepth 1 -name 'r*-doctor.txt' -type f -mmin -1440 2>/dev/null | sort | tail -1)
+if [ -n "$_doc" ]; then
+  _sch=$(grep -m1 -E '(ok|FAIL) schema ' "$_doc" 2>/dev/null | sed 's/^[[:space:]]*//' || true)
+  if [ -n "$_sch" ]; then
+    printf '  schema, annotated for the report (REV-119 §B) — from %s:\n' "${_doc##*/}"
+    printf '    %s   (read from %s, per app/.env)\n' "$_sch" "${env_db:-<unset>}"
+  else
+    printf '  ⚠ %s carries no schema line — the stage dump did not reach it\n' "${_doc##*/}"
+  fi
 fi
 
 if [ ! -f "$APP/artisan" ]; then echo; echo "no app/artisan — nothing more to check"; exit $fail; fi

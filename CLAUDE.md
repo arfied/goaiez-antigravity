@@ -1229,3 +1229,130 @@ locations', do not read `review_destinations` directly from the module. That is 
 strip the type off it* wearing a different hat — the law is per-location because `DestinationSettings` says so
 in a `CHECK` constraint, and a module-local reinterpretation of a checked law is a second definition of the
 same rule, which is §C's defect exactly.
+
+## REV-138 — a check that flagged its own output, and a law that was built under another name
+
+⭐ **Run 133 is a `PASS-WITH-NOTES` and the fork worked exactly as designed.** The brief handed over a
+hypothesis rather than a conclusion and told the coder to falsify it; `r133-fork.txt` settled Arm B on
+measured ground and the report named the three `file:line`s that decided it, all three of which land. The gate
+matched the brief's Arm-B prediction line for line — `tests 2451 · passed 2441 · FAILED 8 · errors 2`, ten
+`✗` lines, eight baseline plus two `NOT BUILT:` — `phpstan errors 0`, `pint passed`, and the doctor dump
+really ran this time (87 322 bytes, correct stamp), which closes REV-137 §1. Both ledger files were named,
+closing REV-136 §4. `44b1324b` is pushed.
+
+⛔ **§1. REV-137'S ARTEFACT-ERROR CHECK FLAGGED ITS OWN OUTPUT ON ITS SECOND RUN.** A gate log is an artefact
+matching `r*-*`, and the check **prints the offending line verbatim**, so the line it printed about
+`r132-doctor.txt` became a hit inside `r133-gate.log` itself. The count went `2 → 3` for a wholly benign
+reason. ⚠️ **A permanent `⛔` is worse than no `⛔`: it trains the reader to skip the section that would show
+a real one.** The fix is **not** to exclude `*-gate.log` — a gate log can carry a real error from a command
+inside the gate, and excluding it would blind the check to exactly that. The detector's own output block is
+blanked before the scan, over the range from its `carries a shell/grep error at line` line to its
+`wave artefacts (24h):` footer, with `s/.*//` so line numbering survives and the reported number stays
+truthful. Verified live: **122 scanned · 2 carrying an error**, the self-reference gone and both real ones
+kept — both arms observed.
+
+⭐ **The general form, and it is new: a check that reports by quoting is a check that can match itself.** Any
+future detector in `supervise.sh` that prints the text it matched excludes its own output range, and the
+exclusion is a range in the output rather than a filename — because a filename exclusion is the thing that
+blinds it.
+
+⛔ **§2. `schema` WAS REPORTED WITHOUT ITS DATABASE FOR THE THIRD TIME, BY OMITTING THE LINE ENTIRELY —
+WHICH IS WHY THE RUNG ABOVE A PASTE-READY STRING IS A CHECK.** REV-119 §B has been handed over as a citation
+(REV-132 §3, missed), a firmer citation (REV-134 §5, missed), a paste-ready literal (REV-135, **emitted
+correctly**) and that same literal again (here, missed). The failure is structural, not careless:
+`STAGES: none moved` is a **true** summary that needs no stage line at all, and an instruction about how to
+*format* a line cannot survive a report that emits none.
+
+**RULED: `bin/supervise.sh` now emits the annotated line itself, from the coder's own doctor dump.** Verified
+live: `FAIL schema 471ms 14 violation(s) — fails the MERGE   (read from goaiez_antig_reviews, per app/.env)`,
+with a `⚠ … carries no schema line` arm for when the dump did not reach the stage — run 132's failure caught
+one level lower. ⭐ **The ladder, now measured four times: a paste-ready string beats a citation, a redirect
+beats a paste-ready string, and a CHECK beats a redirect — because a check cannot be omitted by a report that
+summarises.**
+
+⚠️ **§3. THE TEST-COUNT INSTRUMENT MUST BE NAMED BY THE BRIEF, AND NAMED PER FILE TYPE.** Run 133's report
+chose `grep -c 'function test_'` (25 → 26); REV-59's standard compound form reads 28 → 29 on the same file.
+Both rose by 1, so nothing was wrong — but the coder's form is the **better** instrument here (it does not
+double-count `Livewire::test(`, REV-135 §2's complaint) and would read **0** on a Pest file (REV-59's
+complaint about the other). **RULED: `grep -c 'function test_'` for a PHPUnit module class, REV-59's compound
+form for a Pest or mixed file, and the brief says which** — an instrument the coder picks is an instrument
+the brief cannot predict a delta against, and REV-135 §5 made the predicted value part of the rule.
+
+### ⛔ §4. `public_threshold` IS BUILT — IN THE MODULE, AS `min_public_stars`. TWO CONSECUTIVE RULINGS OF MINE WERE WRONG IN OPPOSITE DIRECTIONS.
+
+REV-135 §5 ruled P-110's headline law unbuilt. REV-136 §1 "corrected" that to *built in the legacy app* and
+inverted the next wave on it. Both are wrong, and the plan's own readiness table settles it:
+
+```
+$ grep -n 'min_public_stars' app/app/Modules/C-Reviews/Database/migrations/2026_08_30_000022_create_c_reviews_tables.php
+  46:  $table->unsignedTinyInteger('min_public_stars')->default(4);
+$ grep -n 'public_threshold' app/GOAIEZ-MASTER-PLAN.md
+  592:   P-110 · `public_threshold` **default 4** … **max 5**
+  19909: ⭐ C-Reviews    needs: public_threshold ✅ · ticket recipient ⛔
+```
+
+`unsignedTinyInteger('min_public_stars')->default(4)` **is** `public_threshold` default 4 under a different
+column name, and the plan marks it **✅ for C-Reviews**.
+
+⭐ **Why both passes missed it, and it is a new sub-species.** REV-135 §5 grepped the **plan's** field names
+across two module directories. REV-136 §1 correctly ruled that a negative result from a scoped command is a
+statement about the scope, widened to the tree — and re-grepped the **legacy** field names. Neither pass ever
+searched for the *concept*, so neither found the module's own column. **REV-136 §1 fixed the SCOPE of a
+failing search and left its VOCABULARY untouched.** Tenth instance of this lane's standing shape, and the
+first where the defect is the search term rather than the search scope.
+
+**RULED: a search for whether a law is built is run against the CONCEPT — the table it would live in and the
+behaviour it would drive — never only against the vocabulary of the document that states it.** A field-name
+grep can prove a name absent; it cannot prove a law unbuilt.
+
+⛔ **§5. AND THE IN-LANE DEFECT THE CORRECTION UNCOVERS: THREE INDEPENDENT COPIES OF THE DEFAULT, ONE PER
+READER, WITH NO SHARED READER AT ALL.**
+
+```
+$ grep -rn "min_public_stars" app/app/Modules/C-Reviews/ --include=*.php
+  Database/migrations/…_create_c_reviews_tables.php:46   ->default(4)     ← the legitimate one
+  Ui/LossAlerts.php:120          $minStars  = $settings ? $settings->min_public_stars : 4;
+  Ui/ReviewsQaRequests.php:65    return      $setting  ? (int) $setting->min_public_stars : 4;
+  Ui/QaReport.php:105            $threshold = 4;   … :108  $threshold = (int) $setting->min_public_stars;
+```
+
+Three screens, three fallbacks, three literal `4`s — and `QaReport.php:182 $internalQa = 4;` is **not** a
+fourth (sample-mode fixture data, checked before ruling). Plan `:683` **P-193, THE NO-HARDCODE LAW** names
+`public_threshold` explicitly among the values it retroactively governs: *"a LAW is a constant, a SETTING is a
+row … `doctor` fails the build on a literal in a business-logic path."* This is REV-119 §C's shape — two
+definitions of one rule, 130 lines apart — arriving as three definitions of one default in one module.
+
+### The seam — RULED for run 134
+
+⛔ **RULED by the lane supervisor: run 134 collapses the three copies into one module-owned reader,
+`app/app/Modules/C-Reviews/Domain/PublicThreshold.php`, because a setting with three code-level defaults
+cannot satisfy P-193's own acceptance test — "change it in admin, observe the behaviour change, with NO
+deploy" — when two of the three readers can disagree with the row.** The directory is measured, not
+stylistic:
+
+- ⛔ **Not an `Actions/` class.** `capabilities.php` and `manifest.php` are **generated** from the frozen
+  plan, which is reserved and has no guard (REV-131 §2), so a new capability id is a plan edit. C-Reviews is
+  at **capability 0** and a wave that raised it off zero would be a regression the brief caused.
+- ⭐ **`Domain\` is a permitted seam by the checker's own comment** — `BoundaryStage.php:83-90` skips
+  `Events\`, `Actions\` and `Domain\`. The module has no `Domain/` today; creating one is the house shape.
+- ⛔ **The capability count is measured before and after, with a hard stop.** If it rises off zero the wave
+  stops and reports it — it never deletes a declaration to make a checker quiet (REV-131 §3).
+
+⛔ **Run 133's `location_id` note is SUPERSEDED, and the supersession is an ITEM, not a sentence** (REV-121:
+a ruling whose execution is not itself an item is a ruling that did not run). `invite_threshold` decides
+**whether to ask at all**, on a star rating captured **before** the invite —
+`ReviewGating.php:230` says so in the checker-adjacent comment `invited iff rating >= invite_threshold`, and
+the legacy flow is the feedback page (`FeedbackPageController:343`). **C-Reviews sends the invite first and
+the rating arrives after** (`rating` is nullable on `review_requests`). So the per-location law is
+inapplicable to this module's flow for a reason that has nothing to do with the missing column, and a
+`location_id` column would have had no non-test writer — decision 272's write-only shape. The half C-Reviews
+owns is `public_threshold`, business-scoped by its own migration.
+
+⛔ **The third option stays refused in its new clothes.** The module has `$csatScore` (0–10); the law is a
+star rating (1–5). **Do not convert between the scales.** A module-local reinterpretation of a checked law is
+a second definition of the same rule.
+
+⚠️ **Standing, unchanged: `X-121\Actions\JobCreateAction::handle()` takes a `?int $locationId = null` that is
+written nowhere** — the identifier occurs once in the file, `$data` has no `location_id` key, and
+`work_orders` has no such column. A dead parameter a future lane will read as a working seam. X-121 is not
+this lane's module: **TRACK 1 ACTION**, filed, not briefed.

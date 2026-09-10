@@ -225,6 +225,66 @@ offending line, and sets `fail=1`. It found both of run 132's on its first run �
 118 scanned, 2 flagged — which is the instrument standard. **A brief fix protects
 one run; a check protects every run** (REV-135 §4).
 
+## ⛔ ADDED 2026-09-10 (REV-138) — A CHECK THAT REPORTS BY QUOTING CAN MATCH ITSELF, AND AN INSTRUMENT IS NAMED BY THE BRIEF
+
+⚠️ **The §3 scanner described directly above flagged its own output on its second
+run.** A gate log is an artefact matching `r*-*`, and the block **prints the
+offending line verbatim**, so the line it printed about `r132-doctor.txt` became
+a hit inside `r133-gate.log` itself. The count read `2 → 3` for a wholly benign
+reason. So the sentence above — *"118 scanned, 2 flagged"* — is the record of the
+first run and not a standing property; read this section with it.
+
+⛔ **A permanent `⛔` is worse than no `⛔`: it trains the reader to skip the
+section that would show a real one.** The fix is **not** to exclude
+`*-gate.log`. A gate log can carry a real error from a command inside the gate,
+and a filename exclusion would blind the check to exactly that. The detector's
+own output **range** is blanked before the scan — from its
+`carries a shell/grep error at line` line to its `wave artefacts (24h):` footer,
+with `s/.*//` so line numbering survives and the reported line number stays
+truthful. Verified live: **122 scanned · 2 carrying an error**, the
+self-reference gone and both real ones kept.
+
+**RULED: any detector here that prints the text it matched excludes its own
+output range — a range in the output, never a filename.**
+
+⛔ **AND `schema` IS NOW EMITTED BY THE GATE RATHER THAN ASKED FOR.** REV-119 §B
+was handed over as a citation (REV-132 §3, missed), a firmer citation
+(REV-134 §5, missed), a paste-ready literal (REV-135, emitted correctly) and that
+same literal again (REV-138, missed). The failure is structural: `STAGES: none
+moved` is a **true** summary that needs no stage line at all, and an instruction
+about how to *format* a line cannot survive a report that emits none.
+`bin/supervise.sh` now prints the annotated line itself, from the coder's own
+doctor dump, with a `⚠ … carries no schema line` arm for when the dump did not
+reach the stage.
+
+⭐ **The ladder, now measured four times: a paste-ready string beats a citation,
+a redirect beats a paste-ready string, and a CHECK beats a redirect — because a
+check cannot be omitted by a report that summarises.**
+
+⛔ **THE TEST-COUNT INSTRUMENT IS NAMED BY THE BRIEF, AND NAMED PER FILE TYPE.**
+
+| file | instrument |
+| :--- | :--- |
+| PHPUnit module class (`public function test_foo()`) | `grep -c 'function test_'` |
+| Pest or mixed file | `grep -c 'public function test\|test(\|it('` (REV-59) |
+
+Run 133's report chose the first form (25 → 26); the compound form reads 28 → 29
+on the same file. **Both rose by 1, so nothing was wrong** — but the compound
+form double-counts `Livewire::test(` (REV-135 §2) and the `function test_` form
+reads **0** on a Pest file (REV-59). An instrument the coder picks is an
+instrument the brief cannot predict a delta against, and REV-135 §5 made the
+predicted value part of the rule.
+
+⛔ **AND A SEARCH FOR WHETHER A LAW IS BUILT RUNS AGAINST THE CONCEPT, NEVER ONLY
+AGAINST THE VOCABULARY OF THE DOCUMENT THAT STATES IT.** REV-135 §5 ruled
+P-110's `public_threshold` unbuilt off a grep of the **plan's** field names.
+REV-136 §1 correctly widened the scope to the tree — and re-grepped the
+**legacy** field names. Neither pass searched for the *concept*, so neither found
+`qa_settings.min_public_stars`, which is `public_threshold` default 4 under
+another column name and which the plan's own readiness table marks ✅. REV-136 §1
+fixed the **scope** of a failing search and left its **vocabulary** untouched.
+**A field-name grep can prove a name absent; it cannot prove a law unbuilt.**
+
 ## ⛔ ADDED 2026-09-02 — THE SUPERVISOR'S WORKING TREE
 
 The supervisor edits `BRIEF.md`, `REVIEWS.md` and its own files **in the
