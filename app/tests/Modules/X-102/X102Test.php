@@ -522,4 +522,32 @@ class X102Test extends TestCase
         $sessionFresh = ChatSession::where('business_id', $biz->id)->find($session->id);
         $this->assertEquals('active', $sessionFresh->status);
     }
+
+    /**
+     * Decision: ChatCaptureAction normalises a whitespace message to null.
+     * Reasoning: A detail that is blank or whitespace was not given (R245). Normalising to null ensures
+     * we don't pass an empty string down to the event listeners like ChatLeadCapturedListener which expects
+     * a meaningful message or null, preventing downstream rollbacks of valid lead captures.
+     * This protects direct calls that bypass the HTTP middleware.
+     */
+    public function test_action_normalises_whitespace_message_to_null(): void
+    {
+        Event::fake([ChatLeadCaptured::class, ChatEscalated::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Direct Action', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $session = $this->startAction->handle($biz->id, '192.168.1.1');
+
+        $lead = $this->captureAction->handle(
+            businessId: $biz->id,
+            sessionId: $session->id,
+            name: 'Direct User',
+            phone: '1234567890',
+            email: 'direct@example.com',
+            message: "   \n\t "
+        );
+
+        $this->assertNull($lead->message, 'The action itself must normalise a whitespace message to null');
+    }
 }

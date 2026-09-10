@@ -336,12 +336,12 @@ class ChatDoorTest extends TestCase
     }
 
     /**
-     * Decision: A whitespace message is normalised to null.
-     * Reasoning: A detail that is blank or whitespace was not given (R245). Normalising to null ensures
-     * we don't pass an empty string down to the event listeners like ChatLeadCapturedListener which expects
-     * a meaningful message or null, preventing downstream rollbacks of valid lead captures.
+     * Decision: The HTTP stack normalises a whitespace message to null.
+     * Reasoning: A detail that is blank or whitespace was not given (R245). The framework's global middleware
+     * (TrimStrings and ConvertEmptyStringsToNull) trims whitespace and converts empty strings to null before
+     * they reach the controller. This test proves the HTTP path protects the action from receiving whitespace.
      */
-    public function test_whitespace_message_is_normalised_to_null(): void
+    public function test_http_middleware_normalises_whitespace_message_to_null(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Lead Tenant', 'currency' => 'USD']);
         Tenancy::set((int) $biz->id);
