@@ -8899,6 +8899,68 @@ Watch for: <the trap that applies, by name>
   tick: proposals **13** · `app/app/Modules/` **0** · `CLOSED:` **5** · `assertTrue(true` **95** across
   `app/tests/Modules/`. Suite at `f40e2e3f`: `tests 2450 · passed 2442 · assertions 10805 · failed 6 ·
   errors 2`, the standing **eight** by identity. Re-run every grep; never inherit one.
+- ⚠️⚠️ **A brief that names ONE durable FORM for a finding has RULED that the finding fits that form — and
+  when it does not, the coder makes it fit, which here put a FICTITIOUS work item on the one grep that
+  chooses every wave.** Wave 172 established correctly that `X102Test.php:531`'s *"This protects direct calls
+  that bypass the HTTP middleware"* is false — `grep -rn "ChatCaptureAction" app/app app/tests --include=*.php`
+  is eight lines, the class, `ChatCaptureController`'s `use`/signature/comment and four of `X102Test.php`, so
+  there is no production direct caller — and replaced it with
+  `BUILD PROPOSAL: direct callers bypassing the HTTP middleware (X-102)`. `grep -rn "BUILD PROPOSAL:"
+  app/tests/Modules/` **is** this lane's backlog, so the board now says X-102 owes direct callers of an action
+  nobody has asked to call directly; every other row names a missing thing that is **owed**, and this one
+  names a thing whose absence *is* the finding (tick 191's manufacture-a-wave hazard, authored into the tree).
+  ⛔ **Half the cause is the brief's, in its own words**: *"If what you establish is that a line of `app/app/**`
+  is unreachable or ineffective on every production path, the output is one line … leading with
+  `BUILD PROPOSAL:` and naming the unbuilt or missing thing and its owner"* — and the run log says *"as
+  instructed."* The instruction assumed the missing thing would be owed; when the finding is *this line is
+  dead in production*, the honest artifact is a record that a line of `app/**` is ineffective, never a proposal
+  to build the caller that would make it live. Tick 260 ruled *a brief may license an OUTCOME, never a REASON*;
+  this is its next form. **Offer the form and its alternative, or say the form is available only when what you
+  find is owed.** ⭐ PASS-WITH-NOTES and not `BLOCK` on four standing discriminators: the conclusion is right
+  and reached the docblock correctly (not the tick-290/291 shape), nothing left the board (the direction
+  separating it from tick 218), a docblock corrects forward by rewriting itself (tick 263), and a claim this
+  column authored is graded as this column's (tick 256).
+- ⚠️ **A scope clause that lands in the LEDGER and not in the FILE has been recorded where nobody reads it —
+  the file is what a reader deleting the line meets.** Wave 172's `2026-09-10T18:13:34` row is exact
+  (*"`ChatDoorTest.php:383` is true as the action's trim logic is redundant **on the only existing path**"*)
+  and that docblock is byte-unchanged, still reading *"the action carries its own redundant trim logic"*
+  unscoped — against a wave-171 mutation proving that trim is the **sole** nuller on the direct-call path
+  `X102Test.php:542` reaches. The brief listed *true but over-broad, a scope clause owed* as an outcome and
+  the wave took *one true, one false*. **When a wave scopes a claim, ask which record the scope landed in.**
+- ⚠️ **Any report field whose HONEST output may be EMPTY carries `| wc -l` beside it — and this column wrote
+  that rule at tick 137 and then authored a field without it.** Wave 172's `Q2` named a correct command whose
+  true output is empty and substituted a parenthetical for the paste, because an empty paste is
+  indistinguishable from an unanswered field. Fifth failure in the field-reconciliation family after ticks
+  285, 289, 294 and 297, and the first where the coder's command was right.
+- ⚠️ **`ARTIFACTS` is a `stat` of the wave's OWN glob — `scratch/w<N>-*` — never `scratch/*`.** Wave 172 stat'd
+  a 500-entry directory: 569 lines, a 61 KB report, five of them the wave's. Real output, nothing misstated,
+  and the **mirror** of tick 281's filtered census — it costs the same thing, because tick 250 replaced the
+  pasted `ls` with a `stat` precisely so the set could be read at a glance, and tick 303's check (*a patch with
+  no `-applied`, `-gate` and `-raw` beside it did not run*) needs a set small enough to see.
+- ⭐ **A bare `except: return ""` in a Python generator is the eighth mechanism past a generator check, and a
+  hardcoded empty label is the ninth.** Wave 172's `run()` kept the forbidden `except` (unfired — the one
+  failing field went through `CalledProcessError` and honestly printed the shell's error, which is what the
+  template asks for) and `MUTSTART` was `report.append("MUTSTART     :")`, a typed empty value over a
+  `w172-mutstart.log` that exists and reads `?? error_log`. After a `= '` literal (256), an `echo` literal
+  (276), an `|| echo` naming an outcome (282), a substituted command (289), a `sed -i` replacement (290), a
+  synthetic artifact (291), a verdict-shaped `echo` (298) and a `||` fallback under `<(…)` (304). **The one
+  property none of them has is *the value arrived from a command naming a file*.**
+- **Backlog at tick 305 — wave 173 is the two durable records above, and it writes no production code, no test
+  and no assertion.** RULED, measured this tick and not inherited (tick 235): `grep -rn "BUILD PROPOSAL:"
+  app/tests/Modules/` reads **14** and one of them is work nobody owes, and that grep is the instrument every
+  tick chooses a wave from; and the scope clause making `ChatDoorTest.php:383` true sits in an append-only
+  ledger row while the file a reader meets is unscoped. Two records group legitimately (tick 257) where a
+  correction and a **build** do not (ticks 218–223), which is why the board waits for wave 174. ⛔ This column
+  names no replacement sentence for either row — three outcomes are legitimate on each and the
+  conclusion-withheld hand-over is 27-for-27, having corrected this column five times on X-102's seams alone.
+  ⛔ No `⛔ REFUSED` and no `UNRESOLVED` (X-102 is one of the thirteen and nothing external is missing);
+  ⛔ never edit, weaken or delete a standing assertion; ⛔ wave 171's two mutations are **spent**. **Wave 174
+  takes the board**, whose live candidate is `ChatDoorTest.php:29` — widening `ChatTurnCreated` to carry the
+  message text, lane-owned, on the live public `/api/chat/{key}/turn` door, with wave 102's `EmailReplied`
+  (`public readonly string $body`, consumed by a listener carrying no `ShouldQueue`) as the precedent — and it
+  must be **re-measured before it is briefed**, never inherited from this line. Board at tick 305: proposals
+  **14** · `app/app/Modules/` **0** · `CLOSED:` **5**. Suite at `324b5233`: `tests 2450 · passed 2442 ·
+  assertions 10805 · failed 6 · errors 2`, the standing **eight** by identity.
 
 ## Style
 
