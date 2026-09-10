@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-09T18:01:52",
+ "updated": "2026-09-09T21:52:24",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -2499,6 +2499,12 @@
    "module": "X-103",
    "chose": "X-103 exposes PageVersionAction as its registered surface for page versions, and X-157 EdgeDeployAction calls forCommit and recordSslInstalled instead of importing X103 Models PageVersion directly. BoundaryStage iterates use statements and exempts the Events, Actions and Domain kinds, so one import is one violation however many call sites it serves: the read at line 153 and the write at line 43 had to move together, because closing either alone leaves the import and the count does not fall, and a boundary refactor whose falsifier is the checker would then have no falsifier at all. Both queries move verbatim. The tenancy question was decided separately and against scoping: the commit id is a sixteen character random token minted in SiteEngine publish, so a cross tenant collision is not producible; page versions carries forced row level security with a with check clause, so a falsifier removing an application level scope on that table cannot go red; and a test asserting that another business version is not read would pass before the fix too. That is recorded rather than built, so the day the grants question is answered a one line wave can scope both sites with the argument already measured. REFUSED: emitting an event instead of invoking the registered action, which moves a write that lives inside the deploy transaction and on which the site journey depends into a listener with its own ordering semantics; splitting the read and the write into two waves, which is what the import count makes impossible; fully qualifying the model inline to dodge the use scan, which is a lint dodge that leaves the seam where it was; an exclusion in the sealed BoundaryStage; a new capability id literal; and relaxing any assertion that reddens.",
    "at": "2026-09-09T17:38:39",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-102",
+   "chose": "The chat start route normalises a non-string pixel_session_token to null rather than passing it to a ?string parameter under strict_types, which was a TypeError at parameter binding and a 500 on a public endpoint. The remedy cannot go in the action: the type declaration rejects the value before the first line runs. It uses the shape this module already declares for an optional string in ChatCaptureController, and null is the substitute the parameter default and the pageContext ternary had already chosen, so the fix decides nothing new. Refused: casting to string (array-to-string is itself an Error, which moves the 500); widening the parameter to mixed; returning 400 (the module proceeds when the token is absent, so refusing a whole chat start over an unusable optional analytics token would mint a public behaviour nothing asserts); guarding inside the action; a database constraint.",
+   "at": "2026-09-09T21:52:24",
    "ruling": "R245"
   }
  ],
