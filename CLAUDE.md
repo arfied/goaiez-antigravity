@@ -11841,3 +11841,112 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     `OWNER.md` section (case d) · a cadence condition on a moved `origin/main`, all three measured in the
     acting tick · a Track 1 answer to ACTION 13, 14, 15, 16, 18, 19, 20, 21 or 22 · a population at 324's
     bar, **measured non-empty AND buildable**. ⛔ *Sounds plausible* is not a population.
+389. **⭐⭐ The card vault asks for a FOUR-digit expiry year, every physical card prints TWO, and the
+    refusal echoes the owner's own input back at them as the reason it is wrong — "That card expired
+    12/30" for a card whose face says 12/30 (RULED by the lane supervisor 2026-09-10 18:2x, briefed as
+    MONEY-190 item 1; the finding that lifts four ticks of HOLD).** Every message census this lane has
+    run asked whether a sentence is TRUE (97, 100, 227, 356), whether its REMEDY is reachable (363), or
+    whether it names an EFFECT the app performs (87, 105, 134, 135). **None asked whether the message
+    and the owner share the NOTATION it is written in.** Measured: `card-screen.blade.php:55` is
+    `placeholder="YYYY"`, `CardScreen.php:67` casts `(int) $this->expYear`, and
+    `CardPresentAction.php:31` is `Carbon::createFromDate($expYear, $expMonth, 1)->endOfMonth()->isPast()`
+    — so an owner copying `12/30` off the card in their hand hands the app **year 30 AD**, which is
+    past, and `:32` refuses with
+    `sprintf('That card expired %02d/%d; an expired card is never stored.', 12, 30)` = ⭐ **"That card
+    expired 12/30"**. The refusal is TRUE under the app's notation and **FALSE under the owner's**, and
+    the owner's is the one printed on the card. It is ruling 100's *is that actually why it refused?*
+    with the reason restated in a form that makes the refusal read as a malfunction, and ruling 98's
+    self-contradiction tell **inside a single sentence**.
+    ⭐⭐ **The hand-typed two-digit path is not an edge case, it is the ONLY path.** `autocomplete=
+    "cc-exp-year"` fills four digits — from a card the browser has already saved — and ruling 119
+    measured `card_tokens` has **no production writer at all**, so the vault is empty for every real
+    tenant and the owner is always typing a first card by hand.
+    **RULED: the four-digit requirement gets its own refusal, ABOVE the `isPast()` check** —
+    `if ($expYear < 1000) throw new CardExpiredException(sprintf('The expiry year needs all four
+    digits, not %d; nothing was stored.', $expYear));` — which echoes the value, names the remedy
+    (ruling 363), guesses nothing, and ends in the module's own sibling idiom (`:26`, `:29`
+    *"; nothing was stored."*). ⭐ The predicate is `< 1000` and not `< 100` **because the message says
+    "all four digits"** and must be true of every value it fires on, three-digit typos included.
+    ⭐ **The ORDER is the ruling** (62, 332): `< 1000` is always also `isPast()`, so placing it second
+    makes it unreachable, and reporting *expired* for a two-digit year answers a question the owner did
+    not ask. ⛔ **Never resolved by NORMALISING `30` → `2030`** — that guesses the owner's intent on the
+    one field deciding whether a card is expired, and a wrong guess stores a card the issuer will
+    decline; a refusal naming the remedy costs one retype and cannot be wrong. ⛔ **No new exception
+    class**: `CardScreen::present():76` catches `CardExpiredException|CardNumberInvalidException` with
+    **no `\Throwable` tail**, and ruling 383 measured that catch safe *because those two classes cover
+    all five refusals* — a sixth class would silently break that property, and the class name is
+    internal where the message is not (47's companion, 214's precedent: a second change with no
+    owner-visible consequence). ⛔ `:32` stays **byte-identical**.
+    ⭐⭐ **The census, and its control is the same predicate done RIGHT.** The population is the lane's
+    **8** interpolating refusal messages (`X-117 CheckoutEngine:275` · `X-120 CardPresentAction:32` ·
+    `X-198 GatewayEngine:252` · `X-201 DisputeDefenseEngine:50` · `X-211 ArEngine:55, :72, :138, :158`),
+    corroborated against a second instrument over the `Ui/` layer returning **22** (294). Six of the
+    seven clean members echo a **ROW** value — a sellable's name, a merchant account id, an invoice
+    number — which no owner typed and no owner can misread. ⭐ **The seventh, `PlanPastThresholdException`
+    (`ArEngine:158`), echoes OWNER-TYPED `$installmentsCount` and `$frequency` and stays intelligible,
+    because it prints the value AND the threshold beside it** — *"12 monthly payments over 360 days …
+    past 3 payments or 90 days"*. **So the instrument separates two members that BOTH echo owner input,
+    on the property that actually decides it**, which is a stronger demonstration than finding the
+    shape elsewhere (363, 365, 377's precedent). Two further in-lane controls: `ConnectionMappingView:39`
+    echoes `$this->provider`, safe because ruling 369 **whitelisted** it one wave ago, and
+    `AgeingByReason:59` echoes `$terms->late_fee_percent` read back **off the row the action returned**
+    (51, 111's own worked example). ⭐ The external control **fires** at 10 members
+    (`X-217/RecruitmentGuard:19`'s *"offered rate ({$offeredBps} bps) exceeds ceiling ({$ceilingBps}
+    bps)"* is the intelligible shape again); ⛔ money proposes no edit on any of them (ruling 5) —
+    several are internal `RuntimeException`s no owner reads.
+    ⚠️ **Blast radius, measured with interior fragments (46, 86, 146): ZERO.**
+    `CardScreenTest.php:131` asserts `'expired 01/2020'` — a **four-digit** year, so it stays on the
+    existing arm and cannot move — and every `expYear` fixture in the lane (`'2020'`, `'2028'`,
+    `'2029'`, `(string)(now()->year + 2)`, `2026`) is four digits, so **no test can see the defect**
+    (68) and the item **adds** a method (70). ⭐ That the fixtures are all four-digit is the finding's
+    own explanation: they were written by someone thinking in `YYYY`, exactly as the code was.
+    ⚠️ The needle `That card expired` is measured **unique** — `card-screen.blade.php:17` is `expires`,
+    a different word — so the paired `assertDontSee` cannot fail against a correct implementation
+    (61, 82). ⚠️ Recorded at ruling 76's grade and **not** briefed: `CardScreen.php:68`'s success
+    message carries the **same** `%02d/%d` notation, and is safe only because the upstream guard refuses
+    everything else — ruling 328's shape (*a prior guard makes a later census's finding invisible*),
+    written down so no later tick re-raises it.
+    ⭐ **The generalisable half is a new member of the ruling 36 family and it is the first to turn on
+    something neither party said aloud: WHAT IS AT THE OTHER END OF THE STRING IS A NOTATION, AND THE
+    APP AND THE OWNER DO NOT SHARE IT.** Ruling 93 found a clause DENYING a property the code has,
+    findable only by asking *is the opposite true*; this is a clause ASSERTING a property the owner's
+    own artifact denies, findable only by asking *in whose units is this written*. **Any message that
+    echoes a value an owner supplied is read back in the owner's notation, not the app's.**
+
+390. **⭐⭐ One error heading heads two different acts on the card screen, and for five of its six
+    messages it names an act — updating a stored card — that this module's every other sentence
+    insists never happens; ruling 93 fixed the identical shape in X-198 and stopped at the file it was
+    in (RULED by the lane supervisor 2026-09-10 18:2x, briefed as MONEY-190 item 2).**
+    `card-screen.blade.php:6` is a **static** `<x-ui.error-panel heading="We couldn't update your
+    cards">`, and `$error` beneath it is set by exactly two methods: `present()`'s catch, relaying the
+    **five** refusals of the card DOOR (number ×2, month, expiry, name), and `makeDefault()`'s one
+    (`'Card not found in this account.'`). ⭐ For the five, nothing was being updated — a number was
+    being **checked**, and `:51` and `:24` promise in terms that the app *"keeps none of them"* and
+    *"is never stored"* — so the heading contradicts the module's own P-196 promise at the moment an
+    owner is refused. That is ruling 93's measured class verbatim (*an error heading names the act that
+    failed, never the screen it failed on*, found when `connect-card`'s `heading="Could not connect"`
+    was heading four messages, two of them merchant-application refusals), and ruling 143's *a heading
+    and its signal are one claim of two parts* one register out.
+    ⭐⭐ **The remedy is already built, in the module ruling 93 fixed.** `X-198/Ui/ConnectCard` carries
+    `public ?string $errorHeading = null`, clears it at the top of each method, sets it per act
+    (`'Could not send the application'` / `'Could not connect'`), and `connect-card.blade.php:3` reads
+    `:heading="$errorHeading ?? 'Could not connect'"`. **RULED: X-120 takes that shape byte-for-byte**
+    — ruling 123, one fact one wording per module — with `'Could not check that card'` on `present()`
+    and `'Could not set the default card'` on `makeDefault()`. ⛔ Not by rewording the static heading
+    to cover both acts, which is the ruling-93 defect with better prose; ⛔ not by splitting the panel
+    (95 measured all 22 screens correctly put it above the branch, and it stays there); ⛔ `error-panel`
+    itself is Track 2's (5, 21) and `{{ $retryLabel }}`'s unretryable *Try again* stays TRACK 1 ACTION
+    20's, untouched.
+    ⚠️ **Ruling 361 binds the new property from birth and is named in the brief rather than left to be
+    inferred: `$errorHeading` is cleared in EVERY method that clears `$error`** — `present():62`,
+    `makeDefault():38` **and `addCard():56`** — or a heading outlives the message it headed, which is
+    361's own finding on this very component's `$waiting`, fixed one wave ago. ⭐ This is the first
+    application of 361 to a property being **created**, and the discipline is cheaper there than
+    anywhere: the sweep is the three methods the wave is already in.
+    ⚠️ **Blast radius: ZERO.** `grep -rn -F -e "update your cards"` over `app/app/Modules` and
+    `app/tests/Modules` returns **one** line, the blade's own — no test asserts the heading (70), which
+    is why it outlived MONEY-80's, MONEY-149's, MONEY-150's and MONEY-189's passes over this file — so
+    the item **adds** a method (68). ⚠️ `error-panel.blade.php:49` renders `{{ $heading }}` through
+    `e()`, so an apostrophe in a needle would match (82's safe case, as ruling 84 measured for twenty
+    `"isn't in this account"` needles); the dictated needles nonetheless carry **none**, and the paired
+    `assertDontSee('update your cards')` is apostrophe-free by construction.
