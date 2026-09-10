@@ -450,6 +450,10 @@ class X01Test extends TestCase
         $response2->assertDontSee('Ghost Risk', false);
     }
 
+    /**
+     * Proves that the thread component does not display the "Ghost Risk" warning for a Customer
+     * when an unrelated Person with the same ID has an 'F' lead grade but is not linked to the Customer.
+     */
     public function test_g19_08_ghost_risk_flag_without_person(): void
     {
         $admin = User::factory()->create();
@@ -627,5 +631,39 @@ class X01Test extends TestCase
 
         $this->assertNotNull($convUpdated, 'ConversationUpdated event should have been dispatched');
         $this->assertEquals('Hello chat', $convUpdated->messageSnippet, 'That conversation carries the visitor message');
+    }
+
+    /**
+     * Proves that UnifiedInboxManager::ingestMessage stamps consent and stores the body for owned channels (whatsapp),
+     * but drops the body without bypassing the gate for channels that lack consent (chat).
+     */
+    public function test_ingest_message_gate_polarity(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Gate Polarity Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $resWa = $this->manager->ingestMessage(
+            businessId: $biz->id,
+            channel: 'whatsapp',
+            identifier: '+15125550200',
+            senderName: 'WA User',
+            body: 'Body WA'
+        );
+        $this->assertDatabaseHas('messages', [
+            'conversation_id' => $resWa['conversation_id'],
+            'body' => 'Body WA',
+        ]);
+
+        $resChat = $this->manager->ingestMessage(
+            businessId: $biz->id,
+            channel: 'chat',
+            identifier: '+15125550300',
+            senderName: 'Chat User',
+            body: 'Body Chat'
+        );
+        $this->assertDatabaseMissing('messages', [
+            'conversation_id' => $resChat['conversation_id'],
+            'body' => 'Body Chat',
+        ]);
     }
 }
