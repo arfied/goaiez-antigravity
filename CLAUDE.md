@@ -7686,3 +7686,74 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     code path's risk is a shape already proven three times; the artifact's risk is a live vendor call
     whose failure can be silent, whose readers may be derived files no gate names, and whose loss has no
     route back. A wave that treats them as one unit prices the cheap half at the expensive half's rate.
+291. **Ruling 288's condition is the MUTATION PROOF, not the commit — the two clauses were doing two
+    different jobs and only one of them is about ruling 42's mechanism (RULED by the lane supervisor
+    2026-09-09 22:2x, applied to MONEY-163's `69e662f9`).** Ruling 288 permitted the re-gate to be
+    satisfied by measurement *"when a wave commits nothing and runs no mutation proof"*, and this tick
+    relied on it for a wave that committed three commits. The restriction does not survive its own
+    reasoning. **42's mechanism is a second pest INSIDE THIS CHECKOUT** — §D's mutation proof running
+    alongside §E's gate, dropping the schema under the first — and it is the **mutation proof** that
+    creates the second pest. Committing code creates none. What committing changes is a **different**
+    question with a **different** instrument: *is §6/§7's verdict the sha's, or the working tree's?*,
+    which rulings 34 and 71 answer with `git diff --stat HEAD -- app/` and §1's uncommitted-path count
+    — not with a second suite. So: **a wave that commits code but runs no mutation proof is inside
+    288's route**, provided the tick states all four measurements — 42's mechanism structurally absent,
+    42's named tell (`relation … does not exist` among a risen `errors`) measured absent,
+    `last-pest-<checkout>.json` corroborating the gate file member by member, and the gate's §1 showing
+    `0 uncommitted path(s)` under the reviewed sha against the supervisor's own empty `git status` and
+    empty `git diff --stat HEAD -- app/`. ⛔ **Never a licence to skip a re-gate on a wave that ran a
+    mutation proof**: there a second pest genuinely existed in this checkout, which is 42's own
+    subject. ⚠️ The cost of re-running is measured, never assumed — `pgrep -a -f pest`, and a live
+    foreign pest holding `/home/goaiez/tmp/pest.lock` makes a re-gate ruling 91's abandoned-gate shape
+    (three consecutive ticks, one hour) or ruling 253's double kill. ⚠️ The generalisable half is
+    288's own, one turn further: **a rule written as "re-run X" is a rule about the PROPERTY X
+    establishes**, so its preconditions are the ones that bear on that property and no others — and a
+    precondition carried because it happened to be true when the rule was written is ruling 64's decay
+    inside a rule instead of inside a follow-up.
+
+292. **J9 REWRITES `invoice-to-paid.json` from `charge.json` on every suite run, so the derived journey
+    stamp self-heals and `junit.xml` is the ONLY fragile link — which inverts ruling 178's stated risk
+    ordering and makes ruling 282's restore-clause the load-bearing protection (measured 2026-09-09
+    22:2x, scoping MONEY-164).** Ruling 178 named *"the ORDER is the risk"* over a four-step
+    regeneration chain, and ruling 169/173's family treats a derived artifact outliving its source as
+    this lane's recurring defect (49, 50(c), 172). Measured now, one of the three derived files is not
+    derived in the dangerous sense at all. `TwelveJourneysTest:485-511` — J9 — reads
+    `evidence/j9/charge.json`, asserts on it, and **ends in
+    `$this->writeEvidence('invoice-to-paid', ['passed' => true, 'artifact_id' =>
+    $artifact['gateway_charge_id'], …])`**, so the stamp takes its id straight from `charge.json` at
+    that instant. ⭐ The proof is a timestamp nobody planted: `invoice-to-paid.json`'s `captured_at` is
+    `2026-09-10T03:18:19+00:00` = **22:18:19 local — run 188's gate**, three seconds before
+    `gate-money163.txt` was written, against a `charge.json` last written 2026-09-08. **Every full
+    suite run rewrites it, harmlessly, from whatever `charge.json` then says.** So `RuntimeProofCommand:59`'s
+    equality guard cannot be left stale by a half-finished chain: the *next* gate repairs it. The file
+    that no suite regenerates is **`evidence/X-198/junit.xml`**, written only by an explicit
+    `--log-junit` invocation — its mtime is 2026-09-08 14:14 across dozens of intervening gates — and
+    `X-198/runtime-proof.json`, written only by the command. ⚠️ **The consequence for a brief is that
+    the chain's fragility is not where 178 put it.** The genuinely unrecoverable step is **step 2, the
+    vendor call**: ruling 282's uncovered case is a Stripe `200` carrying `status: pending`, which
+    ruling 235 makes `capture()` return **normally** as `awaiting_processor`, so `File::put` overwrites
+    `charge.json` and `GatewayEngineTest:15`'s `toBe('captured')` — measured this tick, alongside
+    `:14`'s exact `strlen === 27` — is red for a reason no code change can fix. ⛔ Never loosen either
+    assertion to admit the vendor's answer (the One Rule). **RULED: a regeneration brief's stop-clause
+    is keyed on the artifact's VALUES against its reader's assertions, not on a throw** — restore from
+    the `.pre-<wave>` copy when `payment_status !== 'captured'` or `strlen(gateway_charge_id) !== 27`,
+    exactly as it would on a refusal. ⚠️ Recorded, not briefed: `RuntimeProofCommand:104`'s comment
+    attributes `writeEvidence()` to `JourneyHarness`; it is `TwelveJourneysTest`'s own private method
+    at `:610`. A comment nothing reads, so ruling 96 governs and ruling 47's companion forbids editing
+    a file for a reason a brief did not name.
+
+293. **A cited LINE NUMBER decays exactly like a cited VALUE, and it decays faster (RULED by the lane
+    supervisor 2026-09-09 22:2x).** Ruling 289 established that a ledger line citing a value cites the
+    command that reads it, after this lane quoted a dead charge id through four rulings. The same tick
+    that wrote 289 carried `EvidenceChargeCommand:40` into its addendum as the location of
+    `payments_written`. Measured this tick: it is **`:61`** — MONEY-163's own commit added twenty-one
+    lines above it, in the wave the addendum was written to hand over. ⭐ **A value is invalidated only
+    when someone changes that value; a line number is invalidated by any edit ANYWHERE ABOVE IT**, so
+    the surface that can break it is the whole file rather than one string, and the wave most likely to
+    break it is the wave being briefed. **RULED: a ledger line or brief that names a line number pairs
+    it with the token a `grep -n` would match** — `EvidenceChargeCommand`'s `'payments_written' =>`
+    line, not `:61` — and where an exact line is dictated for an edit, the brief says which token must
+    be on it. ⚠️ This is the third instrument in ruling 289's family after values and (265's)
+    measuring instruments, and all three share one shape: **the ledger recorded a coordinate and not
+    the command that finds it.** ⚠️ It cost nothing this once only because the token is unique in the
+    file; a brief dictating an edit *at* `:40` would have edited the wrong line silently.
