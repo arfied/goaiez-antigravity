@@ -456,6 +456,21 @@ class X01Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Ghost Biz']);
         $customer = Customer::factory()->create(['business_id' => $biz->id, 'name' => 'Ghosty']);
 
+        // Create an unrelated Person that happens to share the Customer's ID.
+        $person = Person::create([
+            'id' => $customer->id,
+            'business_id' => $biz->id,
+            'first_name' => 'Unrelated',
+            'email' => 'unrelated@example.com',
+        ]);
+
+        LeadScore::create([
+            'business_id' => $biz->id,
+            'person_id' => $person->id,
+            'lead_rating' => 10,
+            'grade' => 'F',
+        ]);
+
         $response = Livewire::actingAs($admin)->test(Thread::class, ['customer' => $customer]);
         $response->assertDontSee('Ghost Risk', false);
     }
