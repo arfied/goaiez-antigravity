@@ -7371,6 +7371,89 @@ Watch for: <the trap that applies, by name>
   into this wave, which opens `X01Test.php` anyway (tick 191). Live list
   `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **15** rows at tick 284, `app/app/Modules/` → **0**, stub
   pile across the thirteen **11**. Re-run all three; never inherit them.
+- ⚠️⚠️ **A mutation applied before a named-path commit RIDES INTO that commit, and the tip then carries the
+  mutation looking clean — the commit-before-mutate rule's missing mirror.** Wave 158's `032220ef
+  chore(state): ledger entry …` ships a ledger row, a comment improvement **and mutation 1**
+  (`-['whatsapp','email'] +['email']`, byte-identical to `scratch/mut1.patch`'s hunk), committed at
+  `00:02:12` while mut1's own gate was still running and not undone until `da7149e9` eighteen minutes
+  later. Had the run died in that window, `git status` would have been **clean**, `git log` would have
+  shown a `chore(state)` message, and every liveness tell in this file would have read green over a tip
+  whose production behaviour was the mutation. **The named-paths rule does not help** — the mutated file is
+  one the commit legitimately names. Wave 107's rule exists because a *revert* on an uncommitted file is a
+  delete with no undo; this is the same ordering failing in the other direction, where the *commit* absorbs
+  the mutation. ⛔ **RULED at tick 285: a mutation set runs on a tree with nothing else to commit — every
+  commit the wave intends is made BEFORE the first `git apply`, and no commit is made between the first
+  `git apply` and the last `git apply -R`.** Proof is one command the runner already ends in:
+  `git status --porcelain` empty of `M` lines before the set starts. ⭐ Not a `BLOCK` here — the restore was
+  byte-exact and the message disclosed *"along with code tweak"* rather than concealing.
+- ⚠️⚠️ **A write added to a method that takes `$businessId` EXPLICITLY everywhere else introduces an
+  AMBIENT-tenancy dependency that no test can see, because every test sets the ambient tenant.** Wave 158's
+  `recordInbound` call sits **outside** `ingestMessage`'s `Tenancy::actingAs($businessId, …)` closure, and
+  `ConversationThreads::record()` opens with `refuseForeignThread()` → `Tenancy::idOrFail()`
+  (`Tenancy.php:91-94`). Two failure modes: **no ambient tenant** ⇒ `TenantNotResolved`, which is *not* an
+  `InvalidArgumentException`, so it escapes the new `catch`, propagates out of the enclosing
+  `DB::transaction` and **rolls the whole ingest back**; **ambient ≠ `$businessId`** ⇒ an
+  `InvalidArgumentException` from the isolation guard, **silently swallowed**. This is the `AuditService`
+  field note reached through ambient tenancy instead of a console command, and the antidote is the same
+  one: **demand a test without `Tenancy::actingAs`/`SET app.business_id`.** ⭐ Grade its severity by
+  **reachability, measured**: `grep -rn "WhatsappConnectAction" app/app app/routes` is empty outside its own
+  class, C-Whatsapp routes three Livewire screens and no action, and `EmailIngestEventAction` has **zero**
+  callers — so neither owned-channel seam has a production entry point and the one reachable seam (chat, via
+  the public `/api/chat/{key}/capture` door) sets a matching tenant before dispatch. Neither direction
+  writes under a wrong tenant, which is what makes this a NOTE rather than a held push.
+- ⚠️ **Ask what a `catch` CATCHES, not what its comment says it catches.** Wave 158's
+  `catch (\InvalidArgumentException $e)` is commented for the missing-consent refusal and swallows **four**:
+  an unsaved thread, a foreign tenant, an empty body (*"An empty message is not a message"* — a refusal the
+  store deliberately made loud), and the consent stamp. One `grep -n "throw new InvalidArgumentException"`
+  over the callee is the whole price.
+- ⚠️ **A grep PATTERN is a claim about the file it greps — third recurrence, and the `NOT FOUND` ruling is
+  what keeps it honest instead of fabricated.** Wave 158 lost four report fields to four wrong patterns, each
+  recoverable in one command: `STAGES` grepped `"integrity · boundary · …"` against a line reading
+  `integrity 0 · boundary 55 · …` (**the numbers interleave**); `GATELOG` grepped `'^M.*'` against git
+  porcelain's leading-space ` M `; `TARGET`/`MESSAGE` grepped `'"test":"test_…'` against a reporter that
+  emits the **FQCN** `"test":"Tests\\Modules\\X01\\X01Test::test_…"`. ⭐ **Credit the outcome louder than the
+  defect**: wave 157's identical situation produced typed fabrications and this produced four honest
+  `NOT FOUND in <file>` blanks. `grep -c '<pattern>' <file>` before the run is the fix. ⚠️ `SITE` is the same
+  shape without the honesty — `sed -n '74,78p'` of the current file prints real output, wrong lines; the
+  **patch header** is the answer (tick 284).
+- ⚠️ **The ONE field a generator types as a literal is the field that goes stale — demonstrated inside one
+  wave rather than argued.** Every value in wave 158's `report_builder.sh` is command output except
+  `LEDGER: no row this wave`, and that is the one field the wave's own `032220ef` refutes with a `decided`
+  row in both state files. It is also why `Which items did you not do?` reading `I did every item requested`
+  was **true** this wave, graded from the diff: the `LEDGER` field is what disagrees with it, not the work.
+- ⚠️ **My own ruled generator check is a bad control and this column authored it.** Tick 283 made the proof
+  `grep -n 'echo.*[0-9]' <gen>` and `grep -n '|| echo' <gen>`; run on a compliant wave they return **48** and
+  **22**, because the `|| echo` are all the ruled `NOT FOUND in <file>` fallbacks and the numerals are
+  dominated by **digits inside filenames** (`scratch/w158-mut-1-raw.log`). Exactly one hit was the real
+  defect. **A check whose signal is buried under its own false positives will be ignored or will convict an
+  honest wave** — exclude digits inside quoted paths.
+- ⚠️ **The tick-284 field-reconciliation question is answerable on a half that is EQUAL BY CONSTRUCTION.**
+  Wave 158 picked `FIELD: RADIUS` and reconciled the `of <total>` half — a `grep -o` on both sides, so
+  `2440` against `2440` — leaving the typed `1` unchecked. Same family as the tick-285 *guaranteed
+  disagreement*, inverted into a guaranteed agreement. **Require the picked field to be one whose two sides
+  CAN differ**, and note the `1` was correct because the unfiltered `MOVED` census sits directly above it
+  (tick 281 honoured).
+- **Suite baseline, measured at tick 285 on tip `da7149e9`, clean tree — `tests 2440 · passed 2432 ·
+  assertions 10779 · failed 6 · errors 2 · incomplete 3 · risky 1 · duration_ms 145277`,** the standing
+  **eight** by **identity**, §2 `none`, §4 seals match, §6 pint `passed` / phpstan `0`, stamp
+  `20260829-0647` = `runtime_build`, verdict `gates green.` on my own plain run. Against tick 284's
+  `2439 · 2431 · 10777`: `+1 · +1 · +2` — one new two-assertion test, green. I ran no `--tests` of my own and
+  say so (tick 277): three complete objects on this tree exist with three distinct `duration_ms`.
+- **Backlog at tick 285 — wave 159 is the tenancy of wave 158's new write and the width of its catch; no new
+  production surface.** RULED, reason re-derived this tick and not inherited (tick 235). The build is
+  correct, pushed and mutation-proven; what is open is that the one write it added is the only part of
+  `ingestMessage` that reads ambient tenancy, and no test can distinguish any answer because every caller
+  sets it. ⛔ **This column names no shape** — the conclusion-withheld hand-over is 14-for-14 and has
+  corrected it four times on this module's seams (ticks 259, 260, 261, and wave 147b's `object` parameter my
+  brief never questioned) — and the **third branch is written out** (tick 192): the current shape may be
+  right for a reason I have not seen, and saying so with the measurement that shows it is a complete wave.
+  ⛔ Whatever it concludes, **it owes an assertion that can see it** — a test that also sets the ambient
+  tenant cannot tell the three answers apart. ⛔ Mutations 1 and 2 are **spent** (tick 191); no
+  `⛔ REFUSED` and no `UNRESOLVED` (X-01 owns `UnifiedInboxManager`, `ConversationThreads` is a root service,
+  nothing external is missing); ⛔ never edit a standing assertion to accommodate a change; ⛔ no numbers
+  published to a mutating wave (tick 208). Live list `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` —
+  **15** rows at tick 285, membership unchanged since tick 278; `app/app/Modules/` → **0**; stub pile across
+  the thirteen **11**. Re-run all three; never inherit them.
 
 ## Style
 
