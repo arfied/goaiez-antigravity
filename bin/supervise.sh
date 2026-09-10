@@ -1008,7 +1008,15 @@ if missing:
 elif tot['failed'] or tot['errors']:
     tot['result'] = 'failed'
 open(sys.argv[1], 'w').write('\n'.join(lines) + '\n')
-sys.stdout.write(json.dumps(tot) + '\n')
+# ⛔ THE SEPARATORS ARE LOAD-BEARING, NOT COSMETIC (REV-150 §2, 2026-09-10). Three
+#   consumers grep this line with the literal `^{"tool":"pest"` — :642's §3
+#   reconciler, :1096's summary-and-every-failing-name printer, and whatever reads
+#   /home/goaiez/tmp/last-pest.json. A bare json.dumps() emits `{"tool": "pest"`
+#   WITH A SPACE, which matches none of them: run 145's gate printed 175 KB of raw
+#   JSON and not one ✗ name, because :1096's branch — the one N137 wrote so a
+#   failure could never be truncated silently — never ran. The merged line is a
+#   drop-in for the per-suite line pest itself writes, so it is shaped like it.
+sys.stdout.write(json.dumps(tot, separators=(',', ':')) + '\n')
 PYMERGE
   out=$(cat "$ptmp")
   pest_elapsed=$(( $(date +%s) - pest_t0 ))

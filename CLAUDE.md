@@ -2676,3 +2676,123 @@ and no repair of anything this wave finds.
 ⚠️ **§2f still reads 1 of 8 in the bypass arm**: `.agents/supervisor/launch-coder.sh` (**24 +/2 −**),
 unchanged for four ticks. It stays — a touch is not a move (REV-135 §9). Re-derived at merge time; nothing
 here authorises a merge.
+
+## REV-150 — the hang is a cycle with no arbiter, and a producer I replaced left three consumers behind
+
+⭐ **Run 145 is a `PASS-WITH-NOTES` and it ends the eight-wave push stall. `0871efb2..fe0369d2` is pushed —
+23 commits**, the largest range this lane has ever pushed. The merger probe closed all three arms first try
+(`ARM 2` correctly reporting `incomplete · suites 3 · missing ['Modules']` while keeping the other three's
+counts, which is the property REV-145 §1 was written for). Hard stops held with no code changed —
+`boundary 41 · contract 85 · capability 0` for C-Reviews — `pint passed`, `phpstan errors 0`, doctor stamp
+matches `runtime_build`, `schema` annotated with its database for the fourth run running, §2g's and §2h's ✓
+arms both live, and the ordering held for the eleventh run running.
+
+⭐ **The failing set is exactly the admitted set, counted rather than remembered:**
+
+```
+$ grep -o 'must be owner of table account_mappings' .agents/supervisor/r145-gate.log   → 11
+  failed 7 + errors 13 = 20 = 2463 − 2443
+  = 8 baseline (REV-134 §1) + 1 NOT BUILT: (REV-135 §7) + 11 traced 42501 (REV-149 §2)
+```
+
+### ⭐ §1. THE HANG IS A SELF-DEADLOCK BETWEEN TWO CONNECTIONS OF ONE PROCESS, AND POSTGRES CANNOT BREAK IT
+
+Six waves called it "the suite hangs". `r145-pgstat.txt` says what it is, in three rows of which the report
+quoted one:
+
+```
+[0] 3827332  'idle in transaction (aborted)'  Client/ClientRead   2:45.347
+    update "phone_numbers" … where "e164"::text like $6      ← app/tests/TestCase.php:61-69 tearDown
+[1] 3827334  'active'                          Lock/transactionid  2:45.300
+    update "phone_numbers" … where "id" = $4
+[2] 3837855  — the tinker connection reading pg_stat_activity; the reflection row
+$ cat .agents/supervisor/r145-cpu.txt      → 2758 400  /  2758 400   (60 s apart, flat to the tick)
+```
+
+Row [0]'s statement has already errored, so its transaction is **aborted but still open**, still holding the
+row locks, and `ClientRead` says the server is waiting for the client's next command. Row [1] waits on row
+[0]'s `transactionid`. A single-threaded PHP process holding both connections is blocked inside [1], so it
+will never send [0] the `ROLLBACK`.
+
+⭐ **And the durable statement is about detectors, not about this suite: a deadlock detector only sees the
+waits it arbitrates.** A cycle running client → connection A → server-side lock → connection B → back to the
+client is invisible to it. So the process neither finishes, errors, nor prints — **it is not slow, it is a
+cycle with no arbiter** — which explains the 1800 s budget never sufficing (REV-145), the zero kept bytes
+(REV-147 §2, this printer emits at the end), and why four separate processes finish: a process holding one
+of the two connections cannot wait on itself.
+
+⛔ **Measured and derived kept apart.** Measured: the three rows, the flat counters, one pest process of ours
+alive, and this database being this lane's alone. Derived: that [0] blocks [1], and that both belong to one
+PHP process. `pg_blocking_pids(pid)` proves the first in one column and is briefed, not assumed.
+
+⚠️ **The timing refutes the obvious culprit.** `git log -S"'+1512555%'"` dates that teardown to
+`7e13fbcc 2026-09-04 02:17:01` — six days before run 137's first timeout, with run 136's single-process gate
+green that morning. **The teardown is the lock holder, not the trigger.** The trigger arrived in this lane's
+own G1-68 wave and REV-145 §3 already named the suspect —
+`CReviewsScreensTest::test_loss_alerts_confirm_removal_refuses_cross_tenant` calls `self::provisionTenant()`
+inside a suite already running `migrate:fresh`, and `RefreshesTenantDatabase:105` puts **both** `pgsql` and
+`pgsql_migrate` in every process. ⛔ A suspect and nothing more; a `--filter` settles it.
+
+⛔ **`app/tests/TestCase.php` is shared by all seven lanes and is on no `merge=ours` list, and every other
+lane's §7 runs a bare single-process `pest`. Filed as a `TRACK 1 ACTION`** — as a hypothesis with its
+evidence, not as a claim about their gates. This lane's four-process §7 (REV-149 §4) **avoids** the cycle; it
+does not fix it, and the script says so.
+
+### ⛔ §2. THE GATE PRINTED 175 KB OF RAW JSON AND NOT ONE `✗` NAME — I REPLACED A PRODUCER AND LEFT THREE CONSUMERS POINTED AT THE OLD ONE'S BYTE SHAPE (my defect)
+
+`bin/supervise.sh:1011` emitted `json.dumps(tot)` → `{"tool": "pest", …}` **with a space**; `:1096` guards its
+printer on `grep -q '^{"tool":"pest"'` **without one**.
+
+```
+$ grep -n 'tests 2463\|result failed' .agents/supervisor/r145-gate.log   → no output
+```
+
+⛔ **The dead branch is not the summary line — it is the loop that prints every failing test name**, and its
+own comment says why it exists: *"FAILURES ARE NEVER TRUNCATED SILENTLY (N137, 2026-09-08, wave 155)."* The
+gate REV-147 §3 built a reconciler to keep honest omitted **all twenty** names and handed the reader a blob.
+Three consumers grep that literal: `:642`'s §3 reconciler, `:1096`'s printer, and `/home/goaiez/tmp/last-pest.json`.
+
+**Fixed at the producer** — `json.dumps(tot, separators=(',', ':'))` — because the merged line's job is to be a
+drop-in for the per-suite line pest itself writes, and teaching three greps a second spelling leaves a fourth
+consumer to find later. ⚠️ It is a python change inside a heredoc, so `bash -n` cannot see it and only
+`t145-pestmerge-probe.sh` can; running it is run 146's item 1a.
+
+⭐ **Fourth on the same axis, and this is the sub-species to watch.** REV-138 §4 fixed a search's *scope* and
+left its *vocabulary*; REV-140 §4 fixed a grep's *timing* and left the *grep*; REV-143's §2g fixed
+*trackedness* and left *loadability*; here a **producer** moved and every **consumer** stayed. Per REV-146 §1,
+the neighbouring property this fix does not cover: it matches the three greps that exist today, and nothing in
+the tree asserts the line's shape.
+
+### ⛔ §3. `g_123` IS ACCEPTED AS A GOOGLE REVIEW ID, AND FOUR PASSING TESTS ASSERT THAT IT IS
+
+REV-142 §4 ruled this at run 137 and the gate collapse ate runs 138–145. Measured at `HEAD`:
+
+```
+$ grep -n 'google_review_id' app/app/Modules/C-Reviews/Actions/PrepareRemovalRequestAction.php
+  17:  'google_review_id' => $googleReviewId,        ← stored verbatim, no check
+$ grep -n "'g_123'" app/tests/Modules/C-Reviews/CReviewsScreensTest.php   → 281 · 296 · 316 · 345
+$ grep -n 'prepareGoogleId' app/app/Modules/C-Reviews/Ui/views/loss-alerts.blade.php
+  57:  wire:click="prepareRemoval(…, $wire.prepareGoogleId)"   ← a free-text box
+```
+
+`RemovalFilingGate` refuses an **empty** id (REV-141 §4) and accepts any non-empty string, so a typo or a
+paste from another tenant produces a request it declares filable. **G1-68's failure mode is ⛔⛔ *the AI files
+an accusation*, and a document accusing a reviewer while naming the wrong review is that failure with a
+human's fingerprints on it.** Free text is not synthesis; it is also not verification.
+
+⭐ **The module already declares the read that fixes it.** `manifest.php`'s `reads_table` carries `reviews`;
+the legacy table has `business_id` (`:30`), `google_review_id` (`:35`), an index on it (`:87`) and RLS keyed on
+`business_id` (`:102`). **RULED by the lane supervisor: `PrepareRemovalRequestAction` refuses a
+`google_review_id` that does not name a row in `reviews` for this business** — no new capability id, no plan
+edit, no new table, and REV-137 §3 measured that a `use App\Services\…` never enters the cross-module check.
+
+⛔ **The third option stays refused in its newest clothes.** Do not derive or fabricate an id from the
+`review_requests` row: `create_c_reviews_tables.php:15-24` gives it `business_id · customer_id · rating ·
+review_text · platform · status · gbp_suspended` and no `review_id`, `location_id` or `google_review_id`. That
+absence is what makes a typed id necessary; the answer is to **verify** what is typed, never to invent what is
+not.
+
+⚠️ **§4. AN END STAMP IS TAKEN BY `sleep`, NEVER BY `wait`.** `r145-named4.txt` is 98 bytes and carries only
+item 3a's opening stamp; item 3d's `wait; date -Is >> …` never appended, because the coder's tool calls do not
+share a shell and `$!` is live only inside the call that created it. REV-148 §5 wants `uptime` at both ends;
+harmless here only because §1 rests on `pg_stat_activity` rather than on elapsed time.
