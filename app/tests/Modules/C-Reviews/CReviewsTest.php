@@ -33,6 +33,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -572,7 +573,7 @@ class CReviewsTest extends TestCase
 
         $userId = \DB::table('users')->insertGetId([
             'name' => 'Test User',
-            'email' => \Illuminate\Support\Str::random(10) . '@example.com',
+            'email' => Str::random(10).'@example.com',
             'password' => 'secret',
         ]);
 
@@ -625,7 +626,7 @@ class CReviewsTest extends TestCase
 
         $userId = \DB::table('users')->insertGetId([
             'name' => 'Test User',
-            'email' => \Illuminate\Support\Str::random(10) . '@example.com',
+            'email' => Str::random(10).'@example.com',
             'password' => 'secret',
         ]);
 

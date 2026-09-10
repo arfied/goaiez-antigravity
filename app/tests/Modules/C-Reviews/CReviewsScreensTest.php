@@ -6,6 +6,7 @@ namespace Tests\Modules\CReviews;
 
 use App\Models\Business;
 use App\Models\User;
+use App\Modules\CReviews\Actions\PrepareRemovalRequestAction;
 use App\Modules\CReviews\Actions\QaTicketAction;
 use App\Modules\CReviews\Actions\ReviewSyncAction;
 use App\Modules\CReviews\Models\QaSetting;
@@ -288,7 +289,7 @@ class CReviewsScreensTest extends TestCase
     public function test_loss_alerts_confirms_removal(): void
     {
         $req = ReviewRequest::create(['business_id' => $this->bizId, 'rating' => 1]);
-        $preparer = new \App\Modules\CReviews\Actions\PrepareRemovalRequestAction;
+        $preparer = new PrepareRemovalRequestAction;
         $removal = $preparer->execute($this->bizId, $req->id, 'fake_reviews', 'This is a fake review.', 'g_123');
 
         Livewire::test(LossAlerts::class, ['businessId' => $this->bizId])
@@ -304,7 +305,7 @@ class CReviewsScreensTest extends TestCase
     public function test_loss_alerts_shows_removal_requests(): void
     {
         $req = ReviewRequest::create(['business_id' => $this->bizId, 'rating' => 1]);
-        $preparer = new \App\Modules\CReviews\Actions\PrepareRemovalRequestAction;
+        $preparer = new PrepareRemovalRequestAction;
         $preparer->execute($this->bizId, $req->id, 'fake_reviews', 'This is a fake review.', 'g_123');
 
         Livewire::test(LossAlerts::class, ['businessId' => $this->bizId])
@@ -317,14 +318,14 @@ class CReviewsScreensTest extends TestCase
     {
         $otherBiz = self::provisionTenant(['name' => 'Other Biz']);
         $req = ReviewRequest::create(['business_id' => $otherBiz->id, 'rating' => 1]);
-        $preparer = new \App\Modules\CReviews\Actions\PrepareRemovalRequestAction;
+        $preparer = new PrepareRemovalRequestAction;
         $removal = $preparer->execute($otherBiz->id, $req->id, 'fake_reviews', 'This is a fake review.', 'g_123');
 
         Livewire::test(LossAlerts::class, ['businessId' => $this->bizId])
             ->call('confirmRemoval', $removal->id, 999)
             ->assertSee('No query results for model');
-            
-        \App\Support\Tenancy::set($otherBiz->id);
+
+        Tenancy::set($otherBiz->id);
         $removal->refresh();
         $this->assertEquals('prepared', $removal->status);
     }
