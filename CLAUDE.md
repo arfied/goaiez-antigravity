@@ -11586,3 +11586,128 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     registered under `tenant` alone and carry no admin door, so X-173, X-198 and X-201 are reachable by
     staff and C-Billing, X-117, X-120, X-199 and X-211 are not. Nothing measurable says which is right — it
     is a surface-registration decision, Track 1's, and it is ACTION 21's question one level out.
+383. **⭐⭐ Ruling 229 censused the catch blocks that EXIST; its negative — a seam call with no catch — is
+    47 `Ui/` method sites and 24 `render()` bodies, and both come back CLEAN with the control firing on
+    25+ zero-catch components in six other lanes (measured by the lane supervisor 2026-09-10 17:2x;
+    rulings 64, 95, 100, 111, 294, 324, 327, 340).** Ruling 229 enumerated the lane's 88 `catch (` blocks
+    and asked of each *what class does it catch, and is what it does the thing a reader of that class
+    needs?* Ruling 340's discipline — now with **twenty** payoffs — makes the complement its own
+    population: **which method that can throw has no catch at all?** ⭐⭐ **And the two halves of that
+    question have DIFFERENT consequences, which is why it was worth a tick.** An uncaught throw in an
+    **action** method is one bad press: Livewire returns a 500 for that request, the owner presses again
+    and the screen is still there. An uncaught throw in **`render()`** is a screen that **cannot be
+    opened at all** — no `$error` panel can render, because the render is what failed — and it stays
+    un-openable until the data changes, which on a money screen is the difference between a refused
+    button and a lost surface.
+    **Instrument, quoted (ruling 300):** `grep -rn -e "public function" app/app/Modules --include=*.php`
+    filtered to `/Ui/`, `grep -v -e "function render" -e "function mount"`, then to the eight ids →
+    **47 method sites**; and `grep -rc -e "catch"` over the same root and filters → **23 of the lane's 24
+    components carry at least two**, the twenty-fourth being `X-173/Ui/SyncErrorRateView`, whose only
+    method is `show(int $runId)`, a pure `$this->shownRun` toggle reaching no seam.
+    **Every seam-calling method is covered**, read rather than counted (262(b)): the pattern is a
+    domain-class arm, then `ModelNotFoundException` for the tenancy sentence, then a `\Throwable` tail —
+    `Unpaid::recordPayment` and `Invoices::recordPayment` each carry both arms around
+    `app(InvoiceEngine::class)->recordPayment(…)`; the seven methods with no catch are the read and
+    UI-state toggles ruling 349 already measured harmless (`toggleExpanded` ×2, `showPaid`,
+    `toggleShowAll`, `pick`, `show`, `addCard`) plus `authorise`, `checkout` and the two `connect()`
+    doors, none of which reaches a throwing seam (rulings 73a, 93, 112, 143).
+    **The `render()` half: 24 bodies, and exactly ONE takes an injected engine** —
+    `SyncErrorRateView::render(AccountingSyncEngine $engine)`, against 23 taking nothing. Its
+    `$engine->errorRate()` returns `?float` (ruling 223 measured the `$seen === 0 ? null : …` guard) and
+    ⭐ **both null branches are handled at `:46` and `:67`** — `$rate === null ? 'nothing to sync' : …`
+    and `$overall === null ? 'nothing synced yet' : …` — which matters because
+    `conflictRateLabel(float $rate)` is declared **non-nullable** under `declare(strict_types=1)`, so an
+    unguarded null would be a `TypeError` **inside `render()`**, i.e. the permanent-500 half of this
+    ruling, on a screen with zero synced records. **MONEY-184 got that right** and it is recorded here so
+    no later tick re-derives it. The other render-time seams are X-211's seven `InvoiceReader` list calls
+    and two tenant-scoped queries, all of which return collections and none of which throws;
+    `InvoiceReader::forBusiness`, the one member that does, is called only from **action** methods, every
+    one inside a try. ⛔ Not to be re-raised.
+    ⭐ **Positive control FIRES hard** (324's bar): the same `grep -rc -e "catch" … :0` filter run
+    unscoped returns **25+ `Ui/` components with ZERO catch blocks** across C-Agent, C-Mail, C-Sms,
+    C-Telephony, C-Whatsapp, X-01, X-07, X-08, X-10 and X-102. ⛔ **Money proposes no edit on any of them
+    and asserts no defect** (ruling 5) — several are read-only components with no seam, which is exactly
+    money's own twenty-fourth. The control's only job is to show the instrument locates the shape.
+    ⚠️ **CORRECTION to ruling 344, and it is the EIGHTH inherited attribution this ledger has had to
+    make** (163, 171, 176, 257, 289, 355, 374 — and now 344's own count). 344 recorded *"31 methods
+    across 20 components"*; the site count is **47 across 23**. ⭐⭐ **The gap is exactly the hazard 344
+    itself named one paragraph earlier** — *"a union of names across the lane passes `explain`,
+    `advance`, `topup` and `connect` without checking either of the two components each lives on, so the
+    census is run per file or it is not run"* — and it then reported a **name** count. Its verdict is
+    nevertheless **UPHELD**, measured rather than assumed: the three sites a name-union most plausibly
+    waved through were read this tick and all three scope their client-supplied id —
+    `X-199/MoneyPaidToday::explain` (cleared under the name `explain` on C-Billing's two, and it injects
+    **no** action, so it must scope itself: it does, twice, `Invoice::where('business_id',
+    Tenancy::idOrFail())->…->findOrFail($invoiceId)` and the same on `InvoiceLine`),
+    `C-Billing/DunningBoard::advance` (`DunningState::where('business_id', …)->findOrFail($stateId)`) and
+    `X-199/Invoices::recordPayment` (passes `Tenancy::idOrFail()`). **So 344's measurement was per-file
+    and only its REPORTED FIGURE was a name count** — which is ruling 371's defect landing in the one
+    field a later tick inherits, and the THIRD consecutive tick it has been found in this ledger's own
+    censuses after 375(c) and 376. ⭐ **A census records the count of SITES, and where a name recurs
+    across components it says so beside the number.**
+
+384. **⭐⭐ An act has more than one input path — ruling 349 swept the MOUSE path and nobody had swept the
+    KEYBOARD one; all 13 forms carry `wire:submit` and all 22 `wire:model` bindings sit inside one, both
+    directions clean (measured by the lane supervisor 2026-09-10 17:2x).** Ruling 349 measured the
+    double-send guard on the lane's 34 `wire:click` buttons and fixed the four write buttons that lacked
+    it. **A button is not the only way to fire a Livewire action**: pressing Enter in a text input submits
+    its enclosing form, so a `<form>` without `wire:submit` does a **full page POST** to a URL with no
+    handler — every unsaved field lost, the Livewire component discarded — and an `<input wire:model>`
+    **outside** any form makes Enter do nothing at all, which is ruling 94's silent-door family with no
+    button to press. Neither shape had ever been enumerated.
+    **Both directions, instruments quoted (300):** `grep -rn -e "<form" app/app/Modules
+    --include=*.blade.php` filtered to the eight ids → **13 forms, every one `<form wire:submit="…">`,
+    zero bare**; and `grep -rn -e "wire:model" -e "<form" -e "</form"` over the same root and filter →
+    **22 bindings, and every one falls between a `<form wire:submit>` line and its `</form>`** — X-120's
+    four card fields in `present` (`:50`–`:59`), X-211's six across three forms on `ageing-by-reason`,
+    X-173's three on `mapAccount` and two on `connect`, X-199's two on `setTerms`, X-201's two, X-211's
+    two on `offerPlan` and one on `recordReason`. **Zero orphans in either direction.**
+    ⭐ Positive control fires: the same form instrument unfiltered returns **20+ blades** across
+    C-Reviews, X-01, X-105, X-109, X-118, X-124, X-135, X-16, X-156, X-165 and X-175. ⛔ Money proposes
+    no edit on any of them (ruling 5). ⛔ Not to be re-raised.
+    ⭐⭐ **The generalisable half is the framing, not the result: a census of one INPUT PATH to an act is
+    not a census of the act.** Ruling 349's population was `wire:click`; this one's is `wire:submit` plus
+    the Enter key that reaches it, and the two sets barely overlap — of the lane's 47 action methods, the
+    thirteen reached by a form are reached by a **keyboard** as well as by a pointer, and ruling 349's
+    sweep could not see that path at all. ⚠️ It is ruling 340's *where X is used / where X is NEEDED* with
+    the axis moved from the guard to the **trigger**, and it belongs on the same list: **any census of how
+    an act is invoked owes a pass over every other way it can be invoked.**
+    ⚠️ Recorded at ruling 76's grade and deliberately not briefed: `dispute-queue.blade.php:26-29` and
+    `dispute-card.blade.php:32-35` open their forms at column 0 while every sibling form in the lane is
+    indented to its block. Blade is not read by `pint` for indentation (192) and nothing false is
+    rendered; ⛔ a wave for it would be churn a reviewer must re-derive (47's companion).
+
+385. **⭐⭐ SECOND consecutive HOLD, and it is a RESULT: seven more populations measured at ruling 324's
+    bar this tick, seventeen across three ticks, ZERO buildable (RULED by the lane supervisor 2026-09-10
+    17:2x).** Ruling 325 ruled that *the honest outcome is a HOLD, and the tick says so plainly rather
+    than manufacturing a wave*, and set the one lift condition a tick can reach alone: **a population
+    this ledger has not enumerated, measured non-empty AND buildable**, with its instrument corroborated,
+    a positive control fired, its members listed and any zero re-run with the `$` removed. Ruling 323
+    forbids inheriting the previous tick's answer, so everything was re-measured here.
+    **Measured in THIS tick and closed:** the owner cadence — all three conditions, none firing
+    (`git rev-list --count HEAD..origin/main` = **38**, not > 100 · `git diff --stat b7b52dc6
+    origin/main -- app/app/Doctor coder-bin .claude/hooks` **empty** · merge-base **`b7b52dc6`,
+    unmoved**, with six money pushes since, so this is not the first push since Track 1 last merged the
+    lane); `OWNER.md` by its **heading list** and never its mtime (136), newest still
+    `## OWNER RULING — 2026-09-09 09:02`, consumed as ruling 272; and seven populations — the
+    action-method exception surface, the `render()` exception surface, the `render()` null-branch
+    handling, `<form>` shape, the `wire:model` orphan negative, and ruling 344's site count re-derived on
+    the three names a union would skip (rulings 383, 384).
+    ⛔ **Briefing an empty wave to avoid an idle tick is exactly what rulings 95, 100 and 111 exist to
+    prevent, and it is worse than idling**: it spends a dispatch, puts a coder into `app/**` with no
+    measured defect to fix, and every edit it makes is churn a later reviewer must re-derive (47's
+    companion). ⭐ **The bar is what has kept this lane's last forty waves free of invented work, and a
+    HOLD is held to it too** — ⛔ *sounds plausible* is not a population.
+    ⚠️ **A HOLD is not a stop, and its four lift conditions are CHECKED, never inferred:** (1) a new
+    dated `OWNER.md` section — case (d), which beats everything; (2) a cadence condition firing on a
+    moved `origin/main`, all three re-measured in the tick that acts on them (269, 272) and ⛔ never read
+    off a merge subject line, which can be true and spent (145); (3) a Track 1 answer to ACTION **13**,
+    **14**, **15**, **16**, **18**, **19**, **20**, **21** or **22**; (4) a population at 324's bar.
+    ⭐⭐ **And the shape of the last three ticks is itself worth recording, because a later tick will
+    otherwise read the run of clean censuses as a reason to stop censusing.** Seventeen consecutive
+    zero-buildable results is what a lane looks like **after** rulings 36 through 382 have been applied
+    — every owner-facing string surface, every value's origin and rendering, every guard both ways, every
+    input path — and the correct inference is that the next finding will come from a **predicate nobody
+    has stated yet**, not from re-running a member list. Rulings 383 and 384 are both that: 383 is 229's
+    negative and 384 is 349's other input path, and **neither existed as a phrase in this ledger until
+    the tick that measured it.**
