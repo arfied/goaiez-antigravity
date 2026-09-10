@@ -8713,3 +8713,82 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     wave that ran a mutation proof: there a second pest genuinely existed in this checkout, which is
     42's own subject. ⚠️ **And an addendum's instruction is a prediction, so it decays like any
     inherited follow-up (rulings 64, 269)** — the fact this one lacked is that the lock was held.
+324. **⭐⭐ This lane declares NO Eloquent relations at all — 32 models, zero `belongsTo`/`hasMany`/
+    `hasOne`, validated against a positive control — so an entire family of silent-null defects is
+    structurally absent here; and the nullsafe-render census is four lines, all governed (RULED by
+    the lane supervisor 2026-09-10 04:0x; rulings 64, 95, 100, 111, 207, 294).** Every population
+    this lane has swept since ruling 203 read a **value** — a column (258–265), an event payload
+    (148), a component property (245), a request field (230, 233, 235), a rendered string (203, 312,
+    315), a heading (319). **The relation was never swept**, and it carries a defect class of its
+    own and a sharp one: a `belongsTo` whose foreign key does not match the actual column resolves
+    to **null for every row, for ever**, and a blade rendering `{{ $row->customer->name }}` then
+    prints blank with no error, no test failure and nothing for `phpstan` to resolve — ruling 43's
+    *does it even vary?* answered **no** by a declaration rather than by a constant, and ruling 65's
+    silent class-relocation hazard one layer down. Measured over all eight modules' `Models/` trees:
+    `grep -rn -e "belongsTo(" -e "hasMany(" -e "hasOne(" -e "belongsToMany("` returns **zero**, and
+    the looser corroboration
+    (`grep -rniE "belongsto|hasmany|hasone|morphto|->load\(|with\(\[|::with"` over the whole of all
+    eight module trees) returns **two lines, both `Http::withToken`** in
+    `StripeGatewayClient.php:27,:66`. ⭐ **The zero is corroborated three ways**, per rulings 207 and
+    294 — which exist because a `$`-before-`\|` end-anchor once turned a 32-member population into a
+    printed zero, and rulings 95/100/111 would then have **struck a live population as
+    measured-clean**: (1) an independent count of the population, `ls | grep -c "\.php"` = **32**
+    models, so a zero contradicts nothing; (2) a deliberately looser instrument, case-insensitive
+    and stem-truncated, whose excess is visible as a number; (3) ⭐⭐ **a POSITIVE CONTROL on a tree
+    known to have them** — the same pattern over `app/app/Models` returns
+    `AutomationRun.php:76,:78`'s `@return BelongsTo<Location, $this>` and
+    `public function location(): BelongsTo`, so the instrument demonstrably fires where the thing
+    exists. **A sweep that returns zero has proved nothing until it has been shown to return
+    non-zero somewhere.** ⛔ Not to be re-raised, and ⛔ **not a defect to be fixed**: the lane's
+    idiom is an explicit `where('<fk>', $id)` per query, which rulings 209 and 212 already swept for
+    tenancy and RLS, and adding relations to 32 models so they can be read by nothing is ruling 59
+    with a Laravel accent.
+    ⚠️ **The nullsafe-render census, in the same pass: four lines lane-wide and all four governed.**
+    `mrr.blade.php:30,:31` (`$sub->plan?->value`, `$sub->term?->value`) are ruling 309's own
+    measured-clean Table B, `:36` is ruling 309's own **fix**, and
+    `ageing-by-reason.blade.php:26`'s `@if($terms?->late_fee_percent)` is **correct and varying**:
+    ruling 216 removed `ArEngine:129`'s `firstOrCreate` so `ar_plan_terms` has exactly one surviving
+    writer — `setLateFeeTerm():99`'s `updateOrCreate`, the owner's late-fee door reached from
+    `AgeingByReason::saveTerm` — which means a null `$terms` is the honest *no term set* state and a
+    non-null one carries a real percent (ruling 111's own worked example). ⛔ Struck.
+    ⭐ **The generalisable half is why an empty census is worth its tick.** Four rulings of one shape
+    found incidentally is the signature of an unenumerated population (ruling 319); **zero rulings of
+    a shape is ambiguous between "absent" and "never looked"**, and only a measurement with a
+    positive control tells the two apart. This lane spent rulings 43, 51, 88, 117, 119 and 201
+    finding tables that are empty forever, and had never asked whether a *relation* could be empty
+    forever for a different reason. The answer is that it cannot, here, because there are none —
+    which is a fact about the lane worth writing down once so no later tick re-derives it.
+
+325. **⭐⭐ The lane has run out of measured defects, and that is a RESULT — a HOLD written from
+    measurement is the correct outcome and is not idleness (RULED by the lane supervisor 2026-09-10
+    04:0x).** Case (e) fired cleanly this tick — newest `REVIEWS.md` block a PASS, no coder alive,
+    `BRIEF.md` older than it — and its own instruction is *if the backlog is empty, write a HOLD
+    block and stop*. Ruling 323 forbids inheriting an addendum's conclusion, so the emptiness was
+    **re-measured** rather than assumed: two fresh populations (ruling 324), the cadence (all three
+    conditions ✗, in this tick, per rulings 269 and 272), `OWNER.md` by its **heading list** and not
+    its mtime (ruling 136), and the lane's own stated goal. ⭐ **The goal measurement is the one that
+    settles it.** This track owns **J9** (*an invoice reaches a real charge id*) and **J12** (*an
+    overdue invoice is chased by reason, resolution first*), and neither is red — the gate's five
+    reds are the reviews lane's two unconditional `$this->fail('NOT BUILT: …')` markers (ruling 321),
+    track sixty's two Infobip journeys and ruling 85's Authorize.Net `E00040`, ⛔ none of them
+    money's and ⛔ none absorbed into any floor (ruling 125). **J9's remaining gap is not buildable
+    in this lane**: rulings 102, 257 and 266 measured that money's `capture()` takes no invoice id
+    and that `RecordPaymentOnCapture` — the only class that could consume one — calls
+    `recordPayment()`, which writes `status => 'paid'`, so registering it marks an invoice paid off
+    an event. Both halves of the invoice↔payment linkage are **in the schema** and **neither end is
+    connected**, deliberately, and the decision is TRACK 1 ACTION 13's. ⛔ Minting the API to close
+    it is ruling 56's `requestCharge` mistake — the dependency inverted — and ⛔ minting a writer for
+    a column main also writes is ruling 257's reverse-merge exposure.
+    **RULED: the honest outcome is a HOLD, and the tick says so plainly rather than manufacturing a
+    wave.** ⛔ Briefing an empty wave to avoid an idle tick is precisely what rulings 95, 100 and 111
+    exist to prevent, and it is worse than idling: it spends a dispatch, it puts a coder into
+    `app/**` with no measured defect to fix, and every edit it makes is churn a later reviewer must
+    re-derive (ruling 47's companion). ⚠️ **A HOLD is not a stop.** It is lifted by any of four
+    measured events, each named here so the next tick checks rather than infers: a new dated
+    `OWNER.md` section (case (d), which beats everything); a cadence condition firing on a moved
+    `origin/main`; a Track 1 answer to ACTION 13, 14, 15 or 16; or a population this ledger has not
+    yet enumerated. ⚠️ ⭐ **The fourth is the one a tick can act on alone, and its bar is ruling
+    324's:** a candidate population becomes a wave only when it has been **measured non-empty**,
+    with its instrument corroborated and its members listed — never when it merely sounds
+    plausible. That bar is what has kept this lane's last thirty waves free of invented work, and it
+    is the bar a HOLD is held to as well.
