@@ -293,4 +293,36 @@ class CheckoutBlockScreenTest extends TestCase
             ->assertSee('cancelled')
             ->assertDontSeeHtml('bg-attention-bg');
     }
+
+    public function test_the_checkout_write_buttons_carry_the_double_send_guard(): void
+    {
+        $biz = self::provisionTenant();
+        Tenancy::set($biz->id);
+        $owner = User::findOrFail($biz->owner_user_id);
+
+        $order = Order::create([
+            'business_id' => $biz->id,
+            'customer_id' => null,
+            'order_number' => 'ORD-TEST-GUARD',
+            'status' => 'pending_payment',
+            'total_cents' => 1000,
+            'auth_token' => 'auth_guard',
+        ]);
+
+        $filter = Sellable::create([
+            'business_id' => $biz->id,
+            'name' => 'Limited filter',
+            'sku' => 'FLT-GUARD',
+            'inventory_quantity' => 1,
+            'unit_price_cents' => 4500,
+            'fulfilment_type' => 'physical',
+        ]);
+        (new CartAddAction)->handle($biz->id, 'sess_guard', $filter->id);
+
+        Livewire::actingAs($owner)->test(CheckoutBlock::class, ['sessionToken' => 'sess_guard'])
+            ->assertOk()
+            ->assertSeeHtml('wire:target="cancel('.$order->id.')"')
+            ->assertSeeHtml('wire:target="authorise"')
+            ->assertSeeHtml('wire:target="pay"');
+    }
 }

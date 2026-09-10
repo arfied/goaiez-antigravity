@@ -8,6 +8,7 @@ use App\Modules\X117\Actions\CartBuildAction;
 use App\Modules\X117\Actions\CartCheckoutAction;
 use App\Modules\X117\Actions\OrderCancelAction;
 use App\Modules\X117\Domain\CheckoutEngine;
+use App\Modules\X117\Domain\OrderNotCancellableException;
 use App\Modules\X117\Events\InventoryUpdated;
 use App\Modules\X117\Models\Order;
 use App\Modules\X117\Models\OrderLine;
@@ -419,6 +420,51 @@ class X117Test extends TestCase
                 '/(exchange_rate|fx_rate|conversion_rate|converted_|landed_cost)/i',
                 $name
             );
+        }
+    }
+
+    public function test_an_order_already_cancelled_is_refused_and_its_stock_is_not_returned_twice(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Cancel Test', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $businessId = $biz->id;
+
+        $order = Order::create([
+            'business_id' => $businessId,
+            'customer_id' => null,
+            'order_number' => 'ORD-TEST',
+            'status' => 'pending_payment',
+            'total_cents' => 1500,
+            'auth_token' => 'auth_token',
+        ]);
+
+        $sellable = Sellable::create([
+            'business_id' => $businessId,
+            'name' => 'Item',
+            'sku' => 'ITEM-01',
+            'unit_price_cents' => 1500,
+            'inventory_quantity' => 10,
+        ]);
+
+        OrderLine::create([
+            'business_id' => $businessId,
+            'order_id' => $order->id,
+            'sellable_id' => $sellable->id,
+            'quantity' => 1,
+            'subtotal_cents' => 1500,
+        ]);
+
+        $this->cancelAction->handle($businessId, $order->id);
+
+        $sellable->refresh();
+        $this->assertSame(11, $sellable->inventory_quantity);
+
+        try {
+            $this->cancelAction->handle($businessId, $order->id);
+            $this->fail('A second cancel was accepted: cancelOrder has no status guard.');
+        } catch (OrderNotCancellableException $e) {
+            $sellable->refresh();
+            $this->assertSame(11, $sellable->inventory_quantity);
         }
     }
 }

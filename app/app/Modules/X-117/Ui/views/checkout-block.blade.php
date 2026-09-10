@@ -42,8 +42,8 @@
         @endif
         <p class="tabular-nums">Total: {{ number_format($cart->total_cents / 100, 2) }}</p>
         <p>This cart expires at {{ $cart->expires_at->format('H:i:s') }} — nothing is held for you until the order is placed.</p>
-        <x-ui.button size="default" wire:click="authorise">Authorise this charge</x-ui.button>
-        <x-ui.button size="default" wire:click="pay" :disabled="$authToken === null">Pay {{ number_format($cart->total_cents / 100, 2) }}</x-ui.button>
+        <x-ui.button size="default" wire:click="authorise" wire:loading.attr="disabled" wire:target="authorise">Authorise this charge</x-ui.button>
+        <x-ui.button size="default" wire:click="pay" :disabled="$authToken === null" wire:loading.attr="disabled" wire:target="pay">Pay {{ number_format($cart->total_cents / 100, 2) }}</x-ui.button>
     @endif
 
     <h2>Orders</h2>
@@ -60,7 +60,7 @@
                     <span>{{ number_format($o->total_cents / 100, 2) }}</span>
                     <x-ui.status-pill :state="$orderStatusPillStates[$o->status] ?? 'unknown'" :label="$orderStatusLabels[$o->status] ?? $o->status" />
                     @if($o->status === 'paid' || $o->status === 'pending_payment')
-                        <x-ui.button size="default" variant="secondary" wire:click="cancel({{ $o->id }})">Cancel</x-ui.button>
+                        <x-ui.button size="default" variant="secondary" wire:click="cancel({{ $o->id }})" wire:loading.attr="disabled" wire:target="cancel({{ $o->id }})">Cancel</x-ui.button>
                     @endif
                 </li>
             @endforeach

@@ -339,4 +339,27 @@ class CardScreenTest extends TestCase
             ->assertSet('expYear', '')
             ->assertSet('name', '');
     }
+
+    public function test_the_make_default_button_carries_the_double_send_guard(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $card = CardToken::create([
+            'business_id' => $biz->id,
+            'gateway_payment_method_id' => 'tok_9',
+            'gateway_customer_id' => 'cus_9',
+            'brand' => 'Visa',
+            'last_four' => '9999',
+            'exp_month' => 12,
+            'exp_year' => now()->year + 1,
+            'is_default' => false,
+        ]);
+
+        Livewire::actingAs($owner)->test(CardScreen::class)
+            ->assertOk()
+            ->assertSeeHtml('wire:target="makeDefault('.$card->id.')"');
+    }
 }

@@ -34,7 +34,7 @@
                             @endif
                         </div>
                         @if(!$card->is_default)
-                            <x-ui.button wire:click="makeDefault({{ $card->id }})">Make Default</x-ui.button>
+                            <x-ui.button wire:click="makeDefault({{ $card->id }})" wire:loading.attr="disabled" wire:target="makeDefault({{ $card->id }})">Make Default</x-ui.button>
                         @endif
                     </li>
                 @endforeach
