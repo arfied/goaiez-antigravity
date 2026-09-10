@@ -369,4 +369,63 @@ class AgeingByReasonScreenTest extends TestCase
             ->assertSee('Payment logged')
             ->assertDontSee('Late fee not applied');
     }
+
+    public function test_a_logged_payment_records_the_method_the_owner_chose(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'Wire', 'last_name' => 'Payer']);
+        $inv = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-M1',
+            'total_cents' => 10000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(20),
+        ]);
+
+        Livewire::actingAs($owner)->test(AgeingByReason::class)
+            ->assertOk()
+            ->set('reference.'.$inv->id, 'WIRE-88')
+            ->set('amountCents.'.$inv->id, 10000)
+            ->set('paymentMethod.'.$inv->id, 'wire')
+            ->call('logPayment', $inv->id)
+            ->assertSee('Payment logged');
+
+        $payment = OfflinePayment::where('business_id', $biz->id)->firstOrFail();
+        $this->assertSame('wire', $payment->payment_method);
+    }
+
+    public function test_a_payment_method_outside_the_column_vocabulary_is_refused_and_writes_nothing(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'Bogus', 'last_name' => 'Method']);
+        $inv = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-M2',
+            'total_cents' => 10000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(20),
+        ]);
+
+        Livewire::actingAs($owner)->test(AgeingByReason::class)
+            ->assertOk()
+            ->set('reference.'.$inv->id, 'REF-99')
+            ->set('amountCents.'.$inv->id, 10000)
+            ->set('paymentMethod.'.$inv->id, 'bitcoin')
+            ->call('logPayment', $inv->id)
+            ->assertSee('Choose how the payment arrived');
+
+        $this->assertSame(0, OfflinePayment::where('business_id', $biz->id)->count());
+    }
 }
