@@ -7904,3 +7904,95 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     already known is a filter wearing a census's name.** 294 caught a count five short because the
     instrument matched five spellings of one word; this caught a population six short because the
     word was the wrong axis entirely.
+299. **Ruling 243's §0 witness is a VERBATIM three-line quotation, because a REFORMATTED witness is
+    not a witness — and this one's paraphrase printed Track 1's test database into a money report
+    (RULED by the lane supervisor 2026-09-09 23:3x, on MONEY-166's `2a834abe`).** Ruling 243 made
+    `GATE:`'s first line the gate file's own `== 0. database guard` line *"verbatim, carrying both
+    `DB_DATABASE` values"*, on the reasoning that `bin/supervise.sh` prints it and nothing else in this
+    checkout does, so it is a witness to the command **that no substitution can forge** — and it
+    re-asserts the two database pins in the same breath. MONEY-166's report carries the header line and
+    then, beneath it, `DB_DATABASE: goaiez_antig_test` / `goaiez_antig_money_test`. The file
+    (`gate-money166.txt:1-3`, which survived per ruling 222 and which I read) says
+    `app/.env         DB_DATABASE=goaiez_antig_money` and
+    `app/phpunit.xml  DB_DATABASE=goaiez_antig_money_test`. **The tree is correct** — I measured both
+    pins — and the transcription dropped the header's parenthetical, dropped both file labels, and
+    rendered the dev database `goaiez_antig_money` as **`goaiez_antig_test`**.
+    ⭐⭐ **That string is not a typo, it is the signature of this lane's one silent catastrophe.**
+    Rulings 179, 250, 251 and 285 all measure `app/phpunit.xml` as the sharpest exposed per-track path
+    at every merge, precisely because a lost restore swaps money's pin for **`goaiez_antig_test`** —
+    Track 1's database — and `supervise.sh` §0 exits 2 only on *production*, so **no gate in this
+    checkout catches it.** A report that prints that string, unlabelled, in the one field designed to
+    re-assert the pins, is indistinguishable from the disaster; a later tick reading the report and not
+    the file would either BLOCK a correct tip, or — the worse direction — learn to read
+    `goaiez_antig_test` in a money report without flinching.
+    **RULED: `GATE:` opens with THREE lines copied byte-for-byte from the gate file** — the
+    `== 0. database guard  (production is goaiez_antig — …)` header *with* its parenthetical, and both
+    `app/.env` and `app/phpunit.xml` lines *with* their labels and their `DB_DATABASE=` form — and
+    every brief says "byte-for-byte, including the file labels". ⛔ Never reformatted, never
+    relabelled, never summarised: the labels are what say which pin is which, and the `=` is what says
+    it was copied rather than composed. ⚠️ Graded a **note** and the tip **pushed**: the substance is
+    correct, §1–§6 are green in the file, and withholding a gated tip that landed on its predicted
+    floor to the digit over a transcription is ruling 74's error. ⚠️ The generalisable half is ruling
+    287's, one instrument over: a transcription field is only as unforgeable as the **fidelity** asked
+    of it, and "quote the line" is read as "report the line" unless the brief says byte-for-byte. It is
+    the ruling 66/75/…/284 family a **thirty-first** time.
+
+300. **A ledger line that establishes a MEASUREMENT ITEM records the exact INVOCATION that produced
+    it, and MONEY-166's brief re-derived it from ruling 296's prose and lost a path prefix (RULED by
+    the lane supervisor 2026-09-09 23:3x, same review).** Ruling 296 recorded that this seat cannot run
+    `php artisan doctor` at any invocation it has tried, and made the doctor a coder measurement item
+    with no predicted value. It wrote down the **conclusion** and not the **command**. MONEY-165's
+    brief dictated `php app/artisan doctor > … 2>&1` and it **ran** — that capture is what produced
+    rulings 297 and 298, the two most productive findings this lane has had in a day. MONEY-166's brief
+    dictated `php artisan doctor > … 2>&1`, from the repo root, where `artisan` lives at `app/artisan`;
+    both captures are 35 bytes reading `Could not open input file: artisan`. **The coder ran exactly
+    what it was given, recorded the error verbatim, and did not halt** — which is ruling 296's own
+    `DOCTOR: NOT RUN — <error>` and is correct; the refusal costs no dispatch (rulings 60b, 71, 94,
+    106, 118). ⚠️ **The cost is that the wave's own stated proof was the doctor delta** — *"the three
+    `cites R0xx` lines should leave the X-198 list; that delta is the wave's proof"* — and it was never
+    obtained. The proof survives in a stronger form, measured here rather than argued:
+    `grep -rn -e R036 -e R037 -e R093 app/app app/tests` returns **nothing**, and
+    `CitationStage.php:99` is `$hits = $index[$id] ?? 0;` over ids **found in the code**, so an id that
+    no longer appears cannot be reported at all. **RULED: every ledger line that establishes an
+    instrument quotes the invocation, and a brief re-dictating one copies it from the ruling rather
+    than from memory.** ⛔ Ruling 296's line is amended in place by this one: the working invocation is
+    **`php app/artisan doctor`**, run from the checkout root. ⚠️ This is ruling 265's shape — *a
+    correction to a measuring instrument decays exactly like a stale measurement, and it decays
+    silently* — arriving **one wave** after 296 wrote it, in a brief written by the supervisor that
+    wrote it, and it is the ruling 289 family's seventh instrument after a value, a line number, an
+    instrument, a prohibition, a census scope and an id. Per the standing precedent the miss is the
+    supervisor's, so MONEY-167 carries its own two dispatches and MONEY-166's cap is untouched.
+
+301. **The `R###` population is measured POST-EDIT and it is 33 + 9 tokens, of which only EIGHTEEN are
+    hand-written — thirteen are GENERATED lines carrying the plan's own stamp, and one hand-written
+    member is a fourth unresolvable id the doctor structurally cannot see (measured by the lane
+    supervisor 2026-09-09 23:3x; the shaping measurement for MONEY-167).** MONEY-166's `POPULATION`
+    reports **37** tokens in the eight module trees and **10** across the test trees, and lists
+    `R036 · 1`, `R037 · 1`, `R093 · 3` among them — those are the **pre-edit** numbers, taken before
+    item 1's removals, and 37 − 4 = 33 and 10 − 1 = 9 reconcile them exactly. Re-measured here on the
+    tip with the coder's own instrument, the tree carries **33** and **9**. ⚠️ The list is nevertheless
+    **complete and usable**: the eleven surviving distinct ids — `R101 R190 R204 R211 R233 R235 R236
+    R237 R239 R241 R245` — are exactly the distinct set my post-edit sweep returns, so no id is
+    missing and only the totals and three rows describe a stale tree. ⛔ **Its per-id COUNTS are not
+    usable** and MONEY-167 re-derives them: `R235` is reported `14` and measures **17** (13 in `app/app`,
+    4 in `app/tests`), `R245` is reported `14` and measures **11**.
+    ⭐⭐ **The scoping measurement is the one that matters, and it removes thirteen of the thirty-three
+    before any wave starts.** `R235` sits at `manifest.php:20` in **every module in this tree** — 130-odd
+    of them, across every lane — under a header reading `⛔ GENERATED by module:scaffold … DO NOT EDIT`,
+    so eight of money's tokens are the frozen plan's own stamp reproduced by the generator and are ⛔
+    out of scope twice over (rulings 29, 32, and §298's prohibition on editing a generated file). Five
+    more are in `capabilities.php`, generated the same way (`X-117:52` `R190` ×2, `:58` `R204`;
+    `X-211:34` `R235` + `R211`). Nine are **`R245`**, `state.py`'s contract id, ⛔ never touched.
+    **The candidate set is therefore ELEVEN in `app/app` and SEVEN in `app/tests` — eighteen citations
+    across thirteen files** — and it is listed in this tick's verdict block.
+    ⭐ **Two are measured collisions beyond rulings 297's R237/R239.** `StripeGatewayClient.php:47` and
+    `GatewayEngine.php:121` both cite `(R235)` inside ruling **235**'s own sentence — *"the gateway's
+    own settlement word, not the presence of an id"* — while `source/GOAIEZ-AUDIT-LEDGER.md:2508`
+    defines `R235` as *"EVERY AUTOPILOT SHIPS ON. THE OWNER OVERRULED THE LADDER."* Both sentences state
+    the fact without the id, so ruling 297's remedy applies unchanged: **drop the id, keep the fact.**
+    ⭐⭐ **And `R101` at `X198Test.php:687` is `NOT-IN-SOURCE` — a FOURTH unresolvable citation, red by
+    the checker's own definition, that the doctor can never report**, because `CitationStage` scans
+    `app/app` only (ruling 65). MONEY-166 removed the three the doctor could see; the instrument that
+    found this one is the sweep, not the stage. ⚠️ That is the generalisable half and it is ruling 65's
+    a third time: **a red the doctor does not print is not a red that does not exist**, and for
+    citations the whole `app/tests` tree is outside its eye.
