@@ -10804,3 +10804,104 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     grade rulings 76, 121, 128, 133, 147, 195, 198, 210, 222, 231, 242, 247, 299, 308, 311 and 331
     already set for paperwork. ⚠️ The residue's cleanup is MONEY-187's item 0; `rm` and a path restore are
     the coder's, not this seat's.
+367. **⭐⭐ A field restored from a deleted one inherits the deleted one's MEASURED defects, and ruling
+    366's `TREE:` arrived blank — the one value ruling 362 had already measured is unreadable (RULED by
+    the lane supervisor 2026-09-10 14:0x, on MONEY-187's `REPORT.md`).** Ruling 366 created `TREE:` one
+    wave ago, restoring ruling 71(b) under its own name, because 362's deletion of `FINAL GIT STATUS:`
+    had removed the only field in which a mutation-proof residue could be **reported unasked**. Its spec
+    is *"the literal output of `git status --short --untracked-files=all`"*, the tree was clean, and the
+    run wrote **nothing** — exactly what it was told. ⭐⭐ **And 362 had already measured that this value
+    is unreadable**, in its own words about `make_report.py`: *"`FINAL GIT STATUS:` is a header with
+    nothing after it, so its 'empty' is the absence of a measurement rather than a measurement of an
+    empty tree."* **366 restored the field and did not carry that correction**, so on its first outing
+    the field this lane created to make a residue reportable is in precisely the state 362 flagged as
+    unmeasurable. It cost nothing here — the supervisor's own `git status` is the primary instrument
+    (331) and it was clean — but as written the field cannot distinguish *the tree was clean* from *the
+    run forgot*. **RULED: `TREE:` carries the literal output, and where that output is empty the field
+    carries the sentinel `(clean — no output)`.** ⛔ Never blank, and ⛔ never `n/a`, which would say the
+    measurement did not apply when it did. ⭐ **The generalisable half is ruling 265's aimed at a report
+    FIELD rather than at a grep or a prohibition: a field restored from a deleted one decays exactly like
+    a stale measurement, and it decays silently, because the restoration reproduces the original defect
+    with a fresh ruling number on it.** A ruling that restores a deleted instrument **enumerates the
+    corrections already measured against it, by ruling number** — 265's own requirement of a re-cut
+    sweep. Eighth member of ruling 289's family (a value, a line number, an instrument, a prohibition, a
+    census scope, an id, an assertion, a tell) and the first where the thing that decayed was a
+    **remedy**. ⚠️ Recorded and not charged: MONEY-187's brief predicted the post-edit sweep at **28** and
+    it prints **29** — the new test calls `recordPayment` twice. The field's answer was the **baseline
+    27** and is correct, and the stop-clause is on the baseline, so it cost nothing; it is the ruling
+    92/200/249 family again — **every count a brief states is derived by listing the items that produce
+    it.** ⭐ Ruling 366(b) itself **HELD on its first outing** (149's discipline): MONEY-186 filled
+    `SWEEP:` from a post-edit re-run and MONEY-187 filled it from the baseline.
+
+368. **⭐⭐ The `<select>` whitelist census — 5 members, 4 guarded, and MONEY-186's own fix is the in-lane
+    positive control (measured 2026-09-10 14:0x; rulings 64, 95, 100, 111, 294, 324).** Ruling 364 made a
+    `Ui/` → `Actions/` **literal** a wave and ruling 344 measured that a client-supplied Livewire method
+    **argument** is the browser's to set. Their intersection — **a `wire:model`-bound property whose
+    value reaches a column with a declared vocabulary** — had never been enumerated. Instrument, quoted
+    (300): `grep -rn -e "<select" -e "<textarea" app/app/Modules --include=*.blade.php`, filtered to the
+    lane's eight ids → **5**; unfiltered → **16**, so ⭐ **the positive control fires** with eleven
+    members outside the lane; ⛔ money proposes no edit on any of them (5). `X-211
+    ageing-by-reason:63`'s `paymentMethod` is guarded by `AgeingByReason:113`'s `in_array($method,
+    OfflinePayment::METHODS, true)` — **MONEY-186's own fix, and ruling 365's lesson a second time: when
+    a census's control lands on a defect you have just fixed, the instrument is proven on the hardest
+    available case**; `X-199 credits:43`'s `termsType` by `TermsSetAction:22`'s `in_array` →
+    `InvalidTermsException`; `X-211 invoice-thread-beside:78`'s `reason` by `ArEngine:312-314`'s
+    `self::REASONS[$code] ?? null` → `\InvalidArgumentException`; `X-211 paymentplan-builder:55`'s
+    `frequency` by `offerPlan:149`'s unknown-frequency refusal (332). **`X-173
+    connection-mapping:54`'s `provider` has none** → ruling 369. ⚠️ **Two sibling censuses ran in the same
+    pass and are STRUCK with their measurements** (95, 100, 111). **(a) The money-INPUT unit census** —
+    every census before it swept what a screen *renders* (329's currency labels, 345a's `number_format`
+    precision, 360's `round()` rendering); this asks what it *accepts*. Five money inputs and **all five
+    name their unit in the placeholder**: `credits:48` *"Limit, whole dollars"* (with `Credits.php:46`
+    converting `× 100`), `ageing:32` *"Percent of the invoice"*, `:33` *"Cap in cents"*, `:62` *"Amount in
+    cents"*, `:72` *"Late fee in cents"*. ⭐ The control fires outside the lane — `X-82
+    rate-registry.blade.php:9,:50` bind `newAmountDollars` under a bare placeholder *"Amount"*.
+    ⚠️ **X-199 takes whole dollars and X-211 takes cents** — a real inconsistency and **not a
+    falsehood**, both being labelled: ruling 76's grade, and 228(a) forbids harmonising a pair where both
+    members are honest. **(b) The `@selected` pre-fill census** — only `credits:45` edits an existing row
+    and it correctly carries `@selected($value === $term->terms_type)`. ⛔ Neither is to be re-raised.
+
+369. **⭐⭐ The connect door collects two values it cannot use and its waiting state says so about
+    neither; `provider` is the lane's one unwhitelisted select (RULED by the lane supervisor 2026-09-10
+    14:0x, briefed as MONEY-188).** `X-173/Ui/ConnectionMappingView::connect():28-33` makes **no call**
+    and writes a finished waiting state — ruling 73a measured that shape **correct** and it stays. What
+    sits around it is not. **(a) `$realmId` is read by NOTHING, and the plumbing it would feed is built
+    end to end.** `grep -n -e "realmId" ConnectionMappingView.php` returns **one line — its own
+    declaration at `:18`** — while `accounting_connections.realm_id` is a real column
+    (`2026_08_30_000092:19`), `AccountingConnectAction:14,:20` takes and writes it, and
+    `connection-mapping.blade.php:27` **renders** it, asserted three times
+    (`ConnectionMappingScreenTest:42,:44,:117`). So the screen renders a realm id per connection, offers
+    an input at `:59` labelled *"Company / realm id"*, and **discards what the owner types in silence.**
+    ⭐ This is ruling 363's finding with the sign reversed, one wave later: 363 ruled that *a refusal
+    names a remedy the owner can reach on the screen they are standing on* after X-211 offered a photo on
+    a form with no file input; **here the form has an input the door cannot use, and the message mentions
+    neither.** Same class, same remedy — ruling 21's finished waiting state, ruling 50(a)'s two halves.
+    ⛔ **Not resolved by wiring `connect()` to `AccountingConnectAction`**: 73a measured the door refuses
+    **by design** because no ledger OAuth credential exists here, credentials are the owner's and a live
+    call is ruling 13's evidence run, so building the flow to make a sentence true is ruling 59. ⛔ Not
+    by deleting the input, which is correct the day the credential lands (51, 88's *"the tiles are
+    correct the day metering exists"*). ⛔ The two clauses already in that sentence are **TRUE** and stay
+    byte-identical, so the fix **appends** and every existing needle survives. **(b) `$provider` is
+    interpolated TWICE into that sentence with no whitelist**, alone among five selects (368): a client
+    sets a public property to any string and reads back *"Waiting on FooBar OAuth: no FooBar credentials
+    exist in this checkout"* — a sentence naming a specific dependency for a provider this app has never
+    heard of, which is ruling 43's family in a message. **RULED: a `PROVIDERS` const on
+    `AccountingConnection` — the model that owns the column — and an `in_array` refusal in the
+    component**, which is MONEY-186's own shape to the line (`OfflinePayment::METHODS` +
+    `AgeingByReason:113`) and therefore ruling 123's *one fact, one wording per module*. ⛔ Never
+    `validate()` or `$rules`: a second refusal vocabulary rendered by a mechanism no sweep in this lane
+    reads is ruling 206's explicit refusal. ⚠️ **Fixed rather than recorded** (96, 130, 204's precedent):
+    the branch **is** rendered and **is** driven by an existing fixture —
+    `ConnectionMappingScreenTest:80-84` calls `connect()` and asserts its sentence — so a mutation can
+    redden it. ⚠️ **Blast radius, measured with interior fragments (46, 86, 146): ZERO** — `:82`'s
+    `assertSee('Waiting on xero OAuth')` and `:83`'s `assertSee('The one-click connect lands when the
+    owner grants them')` both survive an **appended** clause byte-identical, and `:80` sets `'xero'`, a
+    **valid** provider, so the whitelist leaves it green. Both items therefore **add** their assertions
+    (68, 70). ⚠️ Recorded from the same measurement and deliberately **NOT** briefed (ruling 193):
+    `Credits.php:46`'s `$this->limit[$termId] ?? ($term->credit_limit_cents / 100)` fallback is
+    unreachable **if** a `wire:model`-bound input sends `''` rather than leaving the key unset, in which
+    case pressing **Set terms** on an untouched row writes a limit of **0**. Whether Livewire sends an
+    untouched bound property is browser behaviour this seat cannot execute, and ruling 330 item 6 set the
+    precedent: **a member whose harm rests on an unmeasured mechanism is recorded, never briefed.** The
+    `<select>` beside it pre-fills correctly (`@selected`, 368b) and the `<input>` does not. → TRACK 1
+    ACTION 13's list.
