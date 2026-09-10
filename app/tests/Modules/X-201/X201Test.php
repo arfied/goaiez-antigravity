@@ -145,7 +145,7 @@ class X201Test extends TestCase
      */
     public function test_a_dispute_is_outcomed_once_and_a_second_outcome_is_refused(): void
     {
-        Event::fake();
+        Event::fake([DisputeLost::class]);
 
         $biz = TestCase::provisionTenant(['name' => 'Dispute Once Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
