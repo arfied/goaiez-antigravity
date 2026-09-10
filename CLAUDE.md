@@ -8214,3 +8214,98 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     phone answering"*, a claim about a future step nothing performs (ruling 110's family, money's own
     file, but not MONEY-169's reason — ruling 47's companion) · and the two dunning screens' pill colours
     diverging after MONEY-169, both honest, unifying them a UX judgement rather than a defect.
+308. **A provenance field composed from TWO commands is not provenance — the reported byte count was
+    smaller than the file AND its timestamp later, which no single stale read can produce (RULED by the
+    lane supervisor 2026-09-10 01:0x, on MONEY-169's `REPORT.md`).** Ruling 222 required the report to
+    state the gate file's byte count and mtime beside the transcription, *"provenance checkable with
+    `wc -c` rather than argued"*; ruling 238 required both to come from a read taken **after** the gate
+    process exits. MONEY-169's field reads `8115 2026-09-10 00:55:12.753896582`. Measured
+    (`ls -la --time-style=full-iso .agents/supervisor/gate-money169.txt`, `wc -c` on the same path):
+    the file is **11933 bytes** with mtime **00:55:11.285793372** — **3818 bytes larger and 1.47
+    seconds earlier**. ⭐ **The two directions are the finding.** A read taken while the gate was still
+    writing gives a **smaller** size and an **earlier** mtime; this one is smaller and **later**, which
+    a single `ls` of that file cannot produce at any instant. So the size and the timestamp came from
+    two different acts — an early `wc -c` and a clock, or a stat of something else — and a field
+    assembled that way vouches for nothing even when both halves look plausible. **RULED: the byte
+    count and the mtime are taken from ONE `ls -la --time-style=full-iso <the gate file>` run after the
+    gate has exited, and the report carries that line's own output.** ⛔ Never `wc -c` and a timestamp
+    from separate commands: two figures that cannot disagree because they were never compared are
+    ruling 43's *does it even vary?* asked of paperwork. ⚠️ Graded a **note**: I read the gate file
+    myself and every transcribed line — the three `== 0` lines byte-for-byte, §1, §2, §6's two objects,
+    §7 — matches the final file exactly, and withholding a gated tip that landed on its predicted floor
+    to the digit over a provenance field is ruling 74's error. ⚠️ ⭐ **Ruling 222's instrument worked
+    exactly as designed for the second time** — the mismatch announced itself in one command and needed
+    no argument — which is the case for keeping the field rather than dropping it.
+309. **The vocabulary census's second pass finds one defect of each known shape on C-Billing's other two
+    pills, and the tree contains the DISPROOF of both in a sibling test file (RULED by the lane
+    supervisor 2026-09-10 01:1x, briefed as MONEY-170).** Ruling 306 made the population the
+    **vocabulary** — the values production *writes*, the values fixtures *seed*, the values a migration
+    comment or enum *declares* — and ruling 305 was its first outing. Run over the module's two
+    remaining `status-pill` lines it returns two findings, and both were invisible to every earlier
+    sweep for the same reason: ruling 132 struck all four of these pills on the **writer's existence**
+    and never asked which values the writer produces.
+    **(a) `mrr.blade.php:36` prints a raw enum backing string to an owner.** `:label=` is
+    `$sub->status?->value`, and `App\Enums\SubscriptionStatus`'s six cases are `pending_checkout`,
+    `trialing`, `active`, `past_due`, `canceled`, `incomplete` (`:101,:112,:115,:118,:121,:129`).
+    ⭐ **`pending_checkout` is the state every provisioned tenant is in** —
+    `TenantProvisioner` calls `Subscriptions::openPendingSignup()` and
+    `Services/Billing/Subscriptions.php:126` writes it — so the raw token is not an edge case, it is the
+    **first** thing a real owner reads on that screen. Ruling 90's display-map shape. ⛔ The `:state=`
+    is measured **correct and varying** and does not move: `SubscriptionStatus::Active` is written at
+    `Subscriptions.php:837`, `:870`, `:927` and `AuthorizeNetWebhooks.php:641`, so unlike ruling 305's
+    board this is not a constant. ⛔ `$sub->plan?->value` and `$sub->term?->value` on the two lines
+    above are **measured clean and struck** — `Plan` is `free|limited|base` and `BillingTerm` is
+    `monthly|annual`, ordinary words — and they are recorded here so a later sweep does not re-raise the
+    siblings on the same row.
+    **(b) `credits.blade.php:73`'s signal is a constant wearing a condition.** `:state=` is
+    `$entry->amount_hundredths_cents < 0 ? 'attention' : 'ok'`, and **that column is never negative in
+    production**: all three writers store an unsigned magnitude with the direction in `entry_type`
+    (`BillingLedgerEngine.php:39-40` `debit`, `:71-72` `grant`, `:111-112` `topup`), and
+    `RevenueRecovery.php:76` sums it with no sign handling. So every real row renders a green `ok` —
+    **including a debit, which is money leaving the account** — and the one thing in the tree that has
+    ever reached the `attention` arm is a hand-seeded fixture. ⭐⭐ **The disproof is one file over:**
+    `MrrScreenTest.php:45` writes a debit through the **real engine**, `$engine->debit($biz->id, 12000,
+    …)`, **positive**, while `CreditsScreenTest.php:50` hand-seeds `-10000` for the same entry type.
+    **Two test files of one module disagree about the sign of a debit, and the one that used the engine
+    got it right** — ruling 305's own tell, recurring in the same module three commits later, and ruling
+    41 part 2 (a double that is not the real thing's shape) concealing a ruling 43 defect exactly as it
+    did there. **RULED: the signal derives from `entry_type`**, which is what the engine writes and what
+    carries the meaning; the fixture moves to a positive amount and `assertSee('-1.0000')` is
+    **changed and paired**, never deleted. ⛔ `BillingLedgerEngine` is Track 1's (ruling 5) and no sign
+    convention moves — the screen moves to match the engine, never the reverse (rulings 59, 161).
+    ⛔ **`entry_type`'s label is NOT mapped in the same wave, and the reason is a needle that could not
+    pass:** `debit` and `grant` are ordinary words, and the one real token — `topup`, against
+    `credits.blade.php:18`'s own heading *"Top-up recorded"*, ruling 123's one-fact-one-wording split —
+    cannot be paired negatively, because `credits.blade.php:6` carries `wire:click="topup"` and
+    `wire:target="topup"`, so `topup` is on the page whatever the label says (ruling 82's family).
+    **A wave that cannot prove its own change does not ship it**, and the split is recorded instead.
+    ⛔ `refund` is declared by the migration comment and written and read by nothing — decision 272 on a
+    value, ruling 305's `grace`/`terminated` shape, recorded and not migrated (ruling 41 part 3).
+    ⚠️ **The census's false positive is worth as much as its findings.**
+    `grep -rn "entry_type"` returns `C-Ai/Domain/AiEngine.php:84` writing `'ai_debit'` — which looks
+    like a fourth writer of a value the migration does not declare and is **not one**: `AiEngine.php:12`
+    imports `App\Modules\X121\Models\LedgerEntry`, a **different table** with `amount_cents` rather than
+    `amount_hundredths_cents`. That is ruling 262(b)'s *"read the hit"* paying for itself and ruling
+    90's two-ledgers-one-name hazard arriving on a **third** pair. A census that had counted the grep
+    would have reported a defect that does not exist.
+310. **Ruling 190's `File::allFiles()` population was FOUR files and is EIGHTEEN scans in a fifth, and
+    its conclusion survives for a better reason than the one it gave (RULED by the lane supervisor
+    2026-09-10 01:1x).** Ruling 63 established that a lint scanning a module directory for a business
+    noun collides with owner-facing prose, and ruling 190 measured the population as *"`X136Test`,
+    `N008Test`, `N010Test`, each scoped to its own module"* plus `X-157/EdgeProvisionRefusalTest.php:12`
+    scanning `base_path('app')`. Re-measured before dictating prose into a C-Billing **PHP** file,
+    `grep -rn "File::allFiles" app/tests` returns those five **and thirteen more in
+    `app/tests/Support/architecture_helpers.php`**, several of them over `app_path()` whole — `:3577`,
+    `:4338`, `:5547` — i.e. every module in the tree, this lane's included. ⚠️ **Ruling 190 never looked
+    in `tests/Support/`**, which is where the lane-wide scanners actually live; the four it named are
+    the ones that happen to sit in `tests/Modules/`. **The conclusion is unchanged and is now measured
+    rather than assumed:** the wide scans are **structural, not prose greps** — `:3577` filters on
+    `str_contains($source, 'DefaultsRegistry')` and then parses an AST, and every `strtolower` in that
+    file is applied to an identifier, a host, a method name or a class alias, never to a sentence — so
+    dictated owner-facing prose in a lane module feeds no instrument. **RULED: a brief that dictates
+    prose into `app/app/**` re-measures this population and names the scan it checked**, because the
+    hazard ruling 63 describes is real and the ledger's map of where it lives has been wrong once.
+    ⚠️ This is rulings 265/298's shape a third time — **a census scoped by the members already known is
+    a filter wearing a census's name** — and it is the second correction in two ticks to a measurement
+    of a *measuring instrument*, which is the class that decays most silently, because the instrument's
+    next run reproduces the original error with a fresh date on it.
