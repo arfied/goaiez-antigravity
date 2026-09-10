@@ -841,3 +841,5 @@
 - `2026-09-10T14:39:09` note: run 148: tests 2465 -> 2466, FAILED 7 unchanged, errors 13 -> 14; test_loss_alerts_confirm_removal_refuses_cross_tenant went red as expected.
 - `2026-09-10T15:01:22` note: run 149: errors 14 -> 13; the test had been asserting the exception text that run 148 stopped rendering.
 - `2026-09-10T15:28:51` note: run 150: Arm B, module C-Reviews is NOT done; nothing moved because this wave changes a docblock and one assertion.
+- `2026-09-10T18:57:59` note: run 151: gate 7 reads the whole-tree doctor exit code so it is not a C-Reviews row; gates 1, 5, and 6 read evidence files with no writer anywhere in the tree; and gate 2's runtime-proof.json needs a real external artifact id.
+- `2026-09-10T18:58:14` note: run 151: FAILED fell by one (7 -> 6) because test_p110_location_gap was replaced; it was superseded by JOURNAL.md:822 and replacement law is at app/app/Modules/C-Reviews/Domain/PublicThreshold.php:14 and app/app/Modules/C-Reviews/Database/migrations/2026_08_30_000022_create_c_reviews_tables.php:46
