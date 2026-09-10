@@ -419,6 +419,39 @@ for f in BRIEF REPORT REVIEWS; do
   fi
 done
 
+# ⛔ A WAVE ARTEFACT THAT RECORDS A SHELL ERROR INSTEAD OF A MEASUREMENT (REV-137 §1).
+#
+# Run 132's `.agents/supervisor/r132-doctor.txt` was 40 bytes and read
+# `bash: line 1: goaiez: command not found`. The stage dump never ran — and
+# REPORT.md, written 41 seconds later, said "All stages clean. No stage moved."
+# and cited that file. A redirect is only an instrument if the command that
+# fills it actually runs; an empty-of-measurement artefact is worse than a
+# missing one, because its existence reads as evidence.
+#
+# ⭐ The same read catches the other half: run 132's r132-seam.txt carried
+#   `grep: app/routes/routes.generated.php: No such file or directory` — the
+#   brief had named a path that does not exist — and the report converted that
+#   error into "the file does not exist", a statement about the tree. A grep
+#   error in an artefact is a REFUSED-shaped event, and the reviewer must see it
+#   without opening every file.
+#
+# Scoped to the last 24h so yesterday's artefacts age out on their own, and it
+# prints the count it scanned so a clean reading is legible — a check that only
+# ever prints nothing is indistinguishable from a check that is not running.
+_art_n=0; _art_bad=0
+for p in $(find "$ROOT/.agents/supervisor" -maxdepth 1 -name 'r*-*' -type f -mmin -1440 2>/dev/null | sort); do
+  _art_n=$((_art_n + 1))
+  hit=$(grep -m1 -nE 'command not found|No such file or directory|Permission denied|: syntax error|Could not open input file' "$p" 2>/dev/null || true)
+  [ -n "$hit" ] || continue
+  _art_bad=$((_art_bad + 1)); fail=1
+  printf '    ⛔ %s carries a shell/grep error at line %s\n' "${p##*/}" "${hit%%:*}"
+  printf '       %s\n' "$(printf '%s' "$hit" | cut -d: -f2- | cut -c1-100)"
+done
+if [ "$_art_n" -gt 0 ]; then
+  printf '  wave artefacts (24h): %s scanned · %s carrying an error\n' "$_art_n" "$_art_bad"
+  [ "$_art_bad" -gt 0 ] && echo "       a redirect whose command did not run is not a measurement — the report must not cite it"
+fi
+
 if [ ! -f "$APP/artisan" ]; then echo; echo "no app/artisan — nothing more to check"; exit $fail; fi
 cd "$APP" || exit 1
 [ -d /home/goaiez/tmp ] && export TMPDIR=/home/goaiez/tmp

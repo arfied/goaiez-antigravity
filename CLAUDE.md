@@ -1105,3 +1105,127 @@ rung: a redirect beats a paste-ready string, **and a redirect whose expected val
 beats a bare redirect**, because then the report has a number to agree or disagree with. `r131-pint.txt` is
 this run's positive control for the same rule — it caught a real first-pass failure
 (`fully_qualified_strict_types`) and then a pass, which no summary would have shown.
+
+## REV-137 — an artefact that existed and measured nothing, and two brief paths that do not exist
+
+⭐ **Run 132 is a `PASS-WITH-NOTES`, and its two record-repair items are the cleanest work this lane has
+produced.** Three commits, all pure insertions, all named paths: `b04a5525` (the `BUILD-STATE.json` half left
+behind by `d2a7734e`), `5f68122a` (the two discharge docblocks, **12 insertions / 0 deletions** — append-only
+held exactly, with REV-136 §3's re-derived `file:line`s used verbatim), `5191b936` (the seam note, naming both
+ledger files this time). `r132-counts.txt` carries all four measurements before and after, labelled, and the
+report **quotes** them — REV-135 §5's ask, satisfied on its first restatement. Ordering held for the sixth run
+running: gate `00:57:38` → state commit `00:58:31` → report `00:58:51`. §2f read **8 of 8, none in the bypass
+state**, the first fully clean reading since the check was built. `5191b936` is pushed.
+
+⛔ **§1. `r132-doctor.txt` IS 40 BYTES AND READS `bash: line 1: goaiez: command not found`. THE REPORT SAID
+"ALL STAGES CLEAN. NO STAGE MOVED" AND CITED IT (2026-09-10).** The stage dump never ran. The phrase itself is
+real but comes from the **gate log's §4**, which runs the `integrity` stage alone — so a line about one stage
+was carried across into a claim about eight, resting on an artefact whose content is a shell error. Nothing was
+lost (the gate's §3 prints the recorded `integrity 0 · boundary 41 · contract 85 · citation 3 · schema 14 ·
+capability 207 · anchor 128 · journey 2`, and `state.py stage` was correctly not run on an unmeasured count),
+which is why this is a note and not a `BLOCK`. What makes it serious is the direction: **the artefact's
+existence read as evidence that something had been measured.**
+
+⭐ **My defect, and it is the missing rung at the bottom of REV-135's ladder.** The brief's item 5 said *"Dump
+the stages to `.agents/supervisor/r132-doctor.txt`"* and **gave no command** — the only item in the brief that
+named a redirect target without the line that fills it, and the only artefact that came back empty of its
+measurement. A named path with no command is *"paste the output"* one level down.
+
+**RULED: a brief item that names a redirect target also gives the command that fills it, verbatim and
+runnable. And an artefact is QUOTED or it is not cited** — every claim in `REPORT.md` resting on an artefact
+carries a line from it. Written into `.agents/rules/10-supervisor.md`, since both halves are rules about what
+a report may claim.
+
+⭐ **`supervise.sh` §3 now checks it, and it fired on both of run 132's defects on its first run.** Every
+`.agents/supervisor/r*-*` artefact touched in the last 24h is scanned for `command not found`,
+`No such file or directory`, `Permission denied`, `syntax error` and `Could not open input file`; the offending
+line prints and `fail=1`:
+
+```
+    ⛔ r132-doctor.txt carries a shell/grep error at line 1
+       bash: line 1: goaiez: command not found
+    ⛔ r132-seam.txt carries a shell/grep error at line 56
+       grep: app/routes/routes.generated.php: No such file or directory
+  wave artefacts (24h): 118 scanned · 2 carrying an error
+```
+
+Both arms observed — 118 scanned, 2 flagged — which is the instrument standard. Same move as REV-135 §4's
+root-mailbox detector: **a brief fix protects one run; a check protects every run.**
+
+⛔ **§2. TWO OF MY FIVE SEAM QUESTIONS NAMED PATHS THAT DO NOT EXIST, AND BOTH NEGATIVES CAME BACK AS FACTS
+ABOUT THE TREE — REV-136 §1, ONE SECTION AFTER I RULED IT (2026-09-10, my defect).**
+
+- **3d.** The brief grepped `app/routes/routes.generated.php`. There is no such file. `routes.generated.php`
+  is **per-module** — 128 of them — and C-Reviews has one. Report: *"the file `routes.generated.php` does not
+  exist."*
+- **3e.** The brief grepped `provides|reads_table|emits|consumes` in
+  `app/app/Modules/C-Reviews/capabilities.php`. Those declarations live in **`manifest.php`**. Report:
+  *"Zero hits … No declarations exist."*
+
+Re-measured here, tree-scoped, with the command beside the result (REV-132's erratum standard):
+
+```
+$ find app -name 'routes.generated.php' -not -path '*/vendor/*' | wc -l          → 128
+$ cat app/app/Modules/C-Reviews/routes.generated.php
+  Route::middleware(['web','auth','tenant.role'])->prefix('app/c-reviews')       → 4 routed screens
+$ grep -n "provides\|emits\|consumes\|reads_table" app/app/Modules/C-Reviews/manifest.php
+  provides: review.request · review.reply · review.sync · qa.ticket
+  emits:    review.requested · review.received · reply.published · win.first · send.requested · csat.requested
+  consumes: capability.decided
+  owns_table: review_requests · review_replies · qa_settings     reads_table: reviews · people · qa_tickets
+```
+
+**Both module surfaces are live and both answers were the opposite of what the report states.** ⭐ And the
+coder printed the grep's own error into the artefact — `grep: … No such file or directory` — so the truth was
+on disk and the report converted it into a conclusion. **RULED: a grep or shell error in an artefact is a
+`REFUSED`-shaped event; the report says the command did not run, never what the tree contains.** Ninth
+instance of this lane's standing shape, and the first in the coder's column.
+
+⭐ **§3. THE ONE QUESTION THAT CAME BACK CLEAN IS THE ONE THE WAVE EXISTED FOR, AND IT SETTLES THE DESIGN.**
+3c pasted `BoundaryStage::imports()` from source: the regex is
+`/^use\s+App\\\\Modules\\\\([A-Za-z0-9_]+)…/m`, so a `use App\Services\…` never enters the cross-module check.
+And **19 modules already import a legacy service** — C-Mail, C-Sms, X-102 (×4), X-112, X-117, X-118, X-148,
+X-188, X-198 (×2), X-199, X-211, listed by path in `r132-seam.txt`. A C-Reviews → legacy-services import is
+**not a boundary violation and would not be the first**. The design is settled by precedent, measured from the
+checker's own source rather than from my reading of it, which is exactly what the item asked for.
+
+⭐ **§4. AND 3b MEASURED THE REAL OBSTACLE WITHOUT BEING ASKED TO.** The item wanted return types, on REV-131
+§4's grounds. What the signatures actually show is an **arity mismatch**, and it is the whole seam:
+
+```
+ReviewGating::chosenThreshold(Location $location): ?int        DestinationSettings::thresholdFor(Location, ReviewDestination): ?int
+ReviewGating::isGating(Location $location): bool               DestinationSettings::offeredFor(Location): Collection
+ReviewGating::gateAt(Location, int, string, string): void      DestinationSettings::setThreshold(Location, …)
+```
+
+**Every one of the 18 public methods is `Location`-scoped.** C-Reviews is `business_id`-scoped end to end —
+`ReviewRequestAction::handle(int $businessId, ?int $customerId, …)`, and `ReviewRequest`'s own property
+docblock lists `business_id` with no location. `Location belongsTo Business`, so the relation is
+**one-to-many**: a `business_id` does not resolve to a location, and the module therefore *cannot* call the
+gating surface as it stands. The legacy law is per-location by construction; the module's table has no place
+to put one.
+
+### The seam — RULED for run 133
+
+⛔ **RULED by the lane supervisor: run 133 is a BUILD wave with a measured fork on item 1, because two survey
+waves in a row is where a lane stops moving, and the fork's two arms both end in a commit.** Item 1 measures
+whether a location is resolvable anywhere on C-Reviews's send path, with the commands supplied and a hard stop;
+the arms are stated in advance so nothing is guessed:
+
+- **Arm A — a location is resolvable.** Wire `ReviewRequestAction` to `ReviewGating`, behind a test that
+  enters the changed branch (REV-134 §4). The import is not a boundary violation (§3).
+- **Arm B — it is not, which is what §4 predicts.** Then the honest deliverable is a **failing** test carrying
+  `NOT BUILT: P-110 — …`, per the house ruling at `tests/Journeys/TwelveJourneysTest.php:477` and REV-135 §6:
+  *a green suite that proves nothing is worse than a red one that proves something.* The failing set goes to
+  ten names, the tenth prefixed `NOT BUILT:`, which REV-135 §7 admits.
+
+⛔ **Arm B is a `note` and a named run-134 item, never an `UNRESOLVED`.** The dependency is a `location_id`
+column on `review_requests` — a migration, the coder's column, buildable — and REV-129 is this lane's record
+of what happens to an `UNRESOLVED` whose blocker becomes buildable: five days on a `messageClass` field that
+had landed the next morning.
+
+⛔ **And the third option stays refused.** Do not invent a business-level threshold, do not average the
+locations', do not read `review_destinations` directly from the module. That is REV-131 §4's *keep the read and
+strip the type off it* wearing a different hat — the law is per-location because `DestinationSettings` says so
+in a `CHECK` constraint, and a module-local reinterpretation of a checked law is a second definition of the
+same rule, which is §C's defect exactly.

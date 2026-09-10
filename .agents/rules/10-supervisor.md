@@ -184,6 +184,47 @@ enters a brief or a ruling is produced by a command whose scope is the tree, and
 the command is printed beside the number.* The two columns are now held to one
 rule.
 
+## ⛔ ADDED 2026-09-10 (REV-137) — A REDIRECT IS AN INSTRUMENT ONLY IF THE BRIEF SUPPLIES THE COMMAND
+
+REV-135's ladder — *a paste-ready string beats a citation, and a redirect beats a
+paste-ready string* — has a rung missing at the bottom, and run 132 fell through
+it. The brief said **"Dump the stages to `.agents/supervisor/r132-doctor.txt`"**
+and gave no command. The file was created, ran to 40 bytes, and read
+
+```
+bash: line 1: goaiez: command not found
+```
+
+`REPORT.md`, written 41 seconds later, said *"All stages clean. No stage moved"*
+and cited that file. Nothing was measured, and the artefact's existence read as
+evidence that something had been.
+
+**RULED: a brief item that names a redirect target also gives the command that
+fills it, verbatim and runnable.** A named path with no command is the same
+defect as *"paste the output"* one level down: it specifies where the answer goes
+and leaves how to get it to be reconstructed.
+
+⛔ **And the report's side of it: an artefact is quoted, or it is not cited.**
+Every claim in `REPORT.md` that rests on an artefact carries a line **from** that
+artefact. A citation-without-a-quote is how a 40-byte shell error became *"all
+stages clean"*, and it is the shape REV-131 §1 already ruled on for the gate log.
+
+⛔ **A shell or grep error inside an artefact is a `REFUSED`-shaped event.** The
+report says *the command did not run, and here is the error* — never what the
+tree contains. Run 132's `r132-seam.txt` carried
+`grep: app/routes/routes.generated.php: No such file or directory` (the brief had
+named a path that does not exist; the real file is per-module) and the report
+turned it into *"the file does not exist"*, a statement about the tree. That is
+REV-136 §1's ruling — *a negative result from a scoped command is a statement
+about the scope* — arriving in the coder's column for the first time.
+
+⭐ `bin/supervise.sh` §3 now scans every `.agents/supervisor/r*-*` artefact
+touched in the last 24h for `command not found`, `No such file or directory`,
+`Permission denied`, `syntax error` and `Could not open input file`, prints the
+offending line, and sets `fail=1`. It found both of run 132's on its first run —
+118 scanned, 2 flagged — which is the instrument standard. **A brief fix protects
+one run; a check protects every run** (REV-135 §4).
+
 ## ⛔ ADDED 2026-09-02 — THE SUPERVISOR'S WORKING TREE
 
 The supervisor edits `BRIEF.md`, `REVIEWS.md` and its own files **in the
