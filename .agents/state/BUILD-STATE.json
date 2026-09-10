@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-09T23:20:45",
+ "updated": "2026-09-09T23:49:33",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2597,6 +2597,12 @@
    "module": "X-198",
    "chose": "A citation names a decision in the frozen package, never a ruling number from this lane's supervisor ledger: the checker resolves an id by existence alone, so a lane number that collides with a real decision passes while pointing at the wrong thing, and one that does not collide is red. Where a comment already states the fact, the id is dropped and the sentence stands.",
    "at": "2026-09-09T23:20:45",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-198",
+   "chose": "R211 is a real package decision and is kept; R101, R233, R235, R236, R237, R239 and R241 were this lane's own supervisor ruling numbers written as package citations, and where the sentence already states the fact the id is dropped. A citation resolving to the wrong decision is silent, because the checker asks whether an id exists and never what it is about, so a green citation stage is not evidence that a citation is right.",
+   "at": "2026-09-09T23:49:33",
    "ruling": "R245"
   }
  ]
