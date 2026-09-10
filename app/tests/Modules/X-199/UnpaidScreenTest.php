@@ -196,4 +196,30 @@ class UnpaidScreenTest extends TestCase
 
         Carbon::setTestNow();
     }
+
+    public function test_the_unpaid_list_is_ordered_when_every_row_shares_one_due_date(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'John', 'last_name' => 'Doe']);
+
+        foreach (['INV-UN-A', 'INV-UN-B', 'INV-UN-C'] as $number) {
+            Invoice::create([
+                'business_id' => $biz->id,
+                'customer_id' => $customer->id,
+                'invoice_number' => $number,
+                'total_cents' => 90000,
+                'paid_cents' => 0,
+                'status' => 'issued',
+                'due_date' => now()->addDays(30),
+            ]);
+        }
+
+        Livewire::actingAs($owner)->test(Unpaid::class)
+            ->assertOk()
+            ->assertSeeInOrder(['INV-UN-A', 'INV-UN-B', 'INV-UN-C']);
+    }
 }
