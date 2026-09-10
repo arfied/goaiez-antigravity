@@ -569,14 +569,21 @@ class CReviewsTest extends TestCase
             'rating' => 1,
         ]);
 
+        $userId = \DB::table('users')->insertGetId([
+            'name' => 'Test User',
+            'email' => 'testuser@example.com',
+            'password' => 'secret',
+            'business_id' => $biz->id,
+        ]);
+
         $preparer = new PrepareRemovalRequestAction;
         $removal = $preparer->execute($biz->id, $req->id, 'tos_ground_example', 'Prepared Body', 'google_rev_id');
 
         $confirmer = new ConfirmRemovalRequestAction;
-        $confirmer->execute($removal, 999);
+        $confirmer->execute($removal, $userId);
 
         $this->assertEquals('confirmed', $removal->status);
-        $this->assertEquals(999, $removal->confirmed_by_user_id);
+        $this->assertEquals($userId, $removal->confirmed_by_user_id);
         $this->assertNotNull($removal->confirmed_at);
 
         $gate = new RemovalFilingGate;
