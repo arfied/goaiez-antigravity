@@ -10401,3 +10401,80 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     `X199Test.php:124` (*"invoices are atomic single amounts"* — indivisibility, a true schema claim) ·
     `InvoiceNumberTest.php:199` (a real `pg_locks` query; ruling 190 measured the advisory lock is
     genuinely taken) · `CBillingTest.php:51` (the `atomic_debits` method name, TRUE).
+359. **⭐⭐ A Blade template is the ONLY PHP in this checkout that NO analyser reads, the lane's `@php`
+    population is TWO and both are clean, and the production-comment census yields ZERO buildable —
+    but reading around one of the hits produced ruling 360 (measured by the lane supervisor
+    2026-09-10 11:5x; rulings 64, 95, 100, 111, 152, 294, 324).** Ruling 325 names *a population this
+    ledger has not enumerated* as the one HOLD-lift condition a tick can reach alone, at ruling 324's
+    bar. Two candidates were put to it. **(a) PHP a gate cannot see.** `app/phpstan.neon:5-6` is
+    `paths: - app/` and does not parse Blade; ruling 153 measured `php -l` is **blind to Blade** —
+    it reported `No syntax errors detected` on a template whose `@foreach` did not compile at all; and
+    ruling 192 measured `pint` merely *formats* a `.blade.php`. So logic inside a template is analysed
+    by **nothing**, which is a real axis and had never been swept.
+    `grep -rn -e "@php" app/app/Modules --include=*.blade.php` filtered to the eight ids returns **two
+    blocks**, both X-173 — `sync-error-rate.blade.php:16-18` (`$rate = $rates[$run->id];`) and
+    `connection-mapping.blade.php:30-32` (`$connMappings = $mappings->get($conn->id, collect());`) —
+    each a **local-variable extraction with no logic, no arithmetic and no claim**. ⭐ Positive control
+    fires: **50** `@php` lines in `app/resources/views`. ⛔ STRUCK, not to be re-raised.
+    **(b) Production comments.** Rulings 223(c) and 204 swept `Actions/`/`Domain/` and `Ui/`
+    **docblocks**; `Console/`, `Listeners/`, `Events/`, `Models/` and **every inline `//`** were
+    unswept. The population is **629** comment lines across the eight trees; filtered to achievement
+    verbs it is **12**, read one by one (ruling 262(b)) — three are `(TEST ANCHOR)` text and are the
+    CHECK, two are ruling 223(c)'s already-struck `G1-03` pair, four in `StripeGatewayClient` are
+    measured TRUE (rulings 93, 230, 235), `GatewayEngine.php:82`'s idempotency comment was ruling 230's
+    complaint and ruling 240 measured MONEY-144's `Idempotency-Key` closed its money half with the
+    residual already recorded, and `TermsSetAction.php:36`'s `§46A` is a **code** comment, which ruling
+    124's Table B settled is *the correct place for a citation*. ⛔ Zero buildable; STRUCK.
+    ⭐ **The generalisable half is ruling 152's, and it is why the tick was not wasted: a sweep hit is a
+    COORDINATE, not a boundary.** The `@php` census returned two clean lines and reading the forty lines
+    around one of them found ruling 360 — a defect of a different class, in a file three prior waves had
+    each swept on a different axis.
+
+360. **⭐⭐ `round()` is not a formatting choice — it is a claim that the digits it drops did not matter,
+    and on the sync-error-rate screen the digits it drops are the one fact the screen exists to report
+    (RULED by the lane supervisor 2026-09-10 11:5x, briefed as MONEY-184).**
+    `X-173/Ui/views/sync-error-rate.blade.php:11` and `:29` render `round($rate * 100).'% conflicts'`.
+    `AccountingSyncEngine::rateOf():130-134` is `$conflictsCount / ($recordsSynced + $conflictsCount)`,
+    guarded `$seen === 0 ? null : …` — **the ORIGIN is sound and was measured sound by ruling 223** —
+    so **one** conflict in 200 lines is `1/201 = 0.4975%`, rounds to **zero**, and the screen prints
+    `0% conflicts` for a run that has one. ⭐ **This is ruling 345(a)'s own closing lesson —
+    *a census of a value's ORIGIN is not a census of its RENDERING*** — arriving on `round()` where 345
+    swept `number_format`, and it is the reason ruling 328's arithmetic census struck these two lines
+    correctly: 328 asked whether the arithmetic was **sound**, which it is.
+    ⭐⭐ **The screen disproves itself three times and one of the three is on the same rendered line.**
+    `:22` prints `{{ $run->conflicts_count }} conflicts` in the **same `<li>`**, so the row reads
+    `… 1 conflicts … [0% conflicts]` — ruling 98's tell at the shortest distance this lane has found in
+    a rendered row. `:26`'s `@elseif($run->conflicts_count === 0)` arm prints the **literal identical
+    string** `0% conflicts` with `state="ok"`, so two arms of one chain produce the same words for
+    opposite facts, separated only by the pill's colour. And `:4` is the screen's own promise —
+    *"a line that could not be placed is a conflict, **never a silent gap**"* — which
+    `SyncErrorRateScreenTest:109` **already asserts**, so the contradiction is not merely present in the
+    file, it is **pinned by the suite**.
+    **RULED: a non-zero conflict rate never renders as `0%`** — where the rounded percentage is zero and
+    the rate is not, the label is `under 1% conflicts`. ⛔ **Not by adding decimals**: `round(…, 1)`
+    merely moves the threshold to one in two thousand and invents a digit the ratio's own precision does
+    not carry (ruling 345(a)'s reasoning — *a `, 2` there would invent two digits a counter does not
+    have*). ⛔ **Not by changing `rateOf()`**, whose guard is correct. ⛔ **Not by touching `:26`'s arm
+    or either `state=`** — `0% conflicts` is TRUE at a zero count and `attention` is right for any
+    non-zero rate (ruling 47's companion, ruling 143). ⛔ **Not `conflicts-list.blade.php:23`**, which is
+    a **confidence** (`decimal(4,3)`) and not a count-derived rate: `0%` for 0.004 is honest, no count on
+    its line contradicts it and no promise is broken. Measured clean, Table B.
+    ⭐ **The label is computed in the component and not in the blade**, which is ruling 359's finding put
+    to work — a blade is analysed by nothing — and it is the shape this lane has already established five
+    times (`LabelsMeters` 90, `LabelsDunning` 305, `LabelsOrderStatus` 312, `LabelsSubscription`,
+    `SignalsLedgerEntry` 309). The method is **`private`**: a public method a blade does not bind is a
+    door nobody can open (ruling 244) and would break ruling 205's census.
+    ⚠️ **Fixed rather than recorded, on ruling 204/130's precedent**: `sync_runs` has no production
+    writer (ruling 81 measured `syncTransactions` has no production caller), but the branch **is**
+    rendered and **is** driven by existing fixtures, so a mutation can redden it and ruling 96 does not
+    govern. ⚠️ **Blast radius, measured with interior fragments (rulings 46, 86, 146): ZERO.** The
+    existing fixtures are 4/1, 1/1, 2/2 and 888/0 — 25%, 100%, 50% and 0%, every non-zero one at or above
+    1% — so no existing assertion moves and **none can see the defect** (ruling 68), which is why the
+    item adds a method. ⚠️ **Two properties of the new fixture were measured before dictating**: exactly
+    **one** run, because `:26`'s arm renders the literal `0% conflicts` for any zero-conflict run and a
+    second run would make the paired `assertDontSee` fail against a **correct** implementation (rulings
+    61, 82); and 200/1 makes the headline sum to the same figure, so **one fixture proves both call
+    sites**. ⚠️ Ruling 255's haystack question measured rather than assumed: the component's only public
+    property is `?int $shownRun`, which cannot hold either string, so neither assertion is satisfiable
+    from the `wire:snapshot` payload. ⚠️ `under 1% conflicts` carries no apostrophe, `<`, `&` or `"`, so
+    escaping cannot bite it from either side (ruling 82).
