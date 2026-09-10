@@ -9442,3 +9442,22 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     correctly, and sorted the members on a property of the schema when the deciding property was a
     property of the code. **A census states the axis it sorted on, so a later tick can re-sort rather than
     re-enumerate** — which is what happened here, at the cost of four greps instead of a wave.
+339. **⭐ The in-PHP sort family — the SQL-ordering census's structural blind spot — is ONE member and it
+    is measured CLEAN, so the order census closes with MONEY-178 (measured by the lane supervisor
+    2026-09-10 07:1x; rulings 64, 95, 100, 111, 294, 324).** Rulings 204, 333, 335, 337 and 338 swept
+    every `orderBy`/`orderByDesc`/`latest`/`oldest` in the lane, and a sweep for SQL ordering cannot see a
+    collection sorted **after** the query — which is a real sibling class, because a PHP sort over a
+    non-unique key has exactly the same tie question and none of the same instruments.
+    `grep -rn -e "->sortBy(" -e "->sortByDesc(" -e "->sort(" -e "usort(" -e "uasort(" -e "ksort(" -e
+    "asort(" -e "array_multisort(" <the eight module trees>` returns **one** line:
+    `X-211/Ui/AgeingByReason.php:153`'s `ksort($groups)`. ⭐ The positive control fires — the same
+    instrument over `app/app` returns **twelve-plus** files (`MapCommand`, `SurfacesGenerateCommand`,
+    `OperatorAlertBoard`, `KnowledgeChunk`…) — so the one is a measurement and not a broken pattern
+    (ruling 324's bar; rulings 207 and 192 are why a zero or a near-zero is never trusted on its own).
+    **The member is CLEAN on both axes:** `$groups` is keyed by **reason**, one group per reason and
+    therefore unique by construction, so `ksort` is total; and the **within-group** order is
+    `InvoiceReader::unpaidOverdueForBusiness()`'s, which MONEY-177 made total one commit earlier. ⛔ Not
+    to be re-raised. ⚠️ Worth keeping as the shape rather than the instance: **a collection sort inherits
+    the totality of the query that filled it**, so a PHP sort over a query with a partial ordering is
+    partial twice over and neither sweep can see the other half — which is why this census had to run
+    after 337 rather than beside it.
