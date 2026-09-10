@@ -13,6 +13,7 @@ use App\Modules\CReviews\Actions\ReviewReplyAction;
 use App\Modules\CReviews\Actions\ReviewRequestAction;
 use App\Modules\CReviews\Actions\ReviewSyncAction;
 use App\Modules\CReviews\Domain\RemovalFilingGate;
+use App\Modules\CReviews\Domain\RemovalNotAddressableException;
 use App\Modules\CReviews\Domain\RemovalNotConfirmedException;
 use App\Modules\CReviews\Events\CsatRequested;
 use App\Modules\CReviews\Events\FirstWin;
@@ -511,8 +512,8 @@ class CReviewsTest extends TestCase
      * [G1-68] assertion placeholder
      * ⛔ REFUSED: surveyed Actions, Database, Events, Listeners, Models, Ui and found no Google review removal preparation or human confirmation logic.
      * ⭐ DISCHARGED 2026-09-10 (run 136). The automation prepares the request but filing requires a human confirmation.
-     *    Gate: app/app/Modules/C-Reviews/Domain/RemovalFilingGate.php:11
-     *    Test: app/tests/Modules/C-Reviews/CReviewsTest.php:512
+     *    Gate: app/app/Modules/C-Reviews/Domain/RemovalFilingGate.php:14
+     *    Test: app/tests/Modules/C-Reviews/CReviewsTest.php:517
      */
     public function test_g1_68_assertion(): void
     {
@@ -571,7 +572,7 @@ class CReviewsTest extends TestCase
 
         $userId = \DB::table('users')->insertGetId([
             'name' => 'Test User',
-            'email' => 'testuser@example.com',
+            'email' => \Illuminate\Support\Str::random(10) . '@example.com',
             'password' => 'secret',
         ]);
 
@@ -589,7 +590,62 @@ class CReviewsTest extends TestCase
         $gate->assertFilable($removal);
     }
 
-    public function test_g1_68_preparer_cannot_self_confirm(): void
+    public function test_g1_68_gate_refuses_no_google_review_id(): void
+    {
+        $biz = self::provisionTenant(['name' => 'G168 Test Biz']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $req = ReviewRequest::create([
+            'business_id' => $biz->id,
+            'platform' => 'google',
+            'rating' => 1,
+        ]);
+
+        $preparer = new PrepareRemovalRequestAction;
+        $removal = $preparer->execute($biz->id, $req->id, 'tos_ground_example', 'Prepared Body', null);
+
+        $gate = new RemovalFilingGate;
+
+        $this->expectException(RemovalNotAddressableException::class);
+        $this->expectExceptionMessage('This removal request lacks a Google review ID.');
+
+        $gate->assertFilable($removal);
+    }
+
+    public function test_g1_68_gate_refuses_unconfirmed_status_but_has_timestamps(): void
+    {
+        $biz = self::provisionTenant(['name' => 'G168 Test Biz']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $req = ReviewRequest::create([
+            'business_id' => $biz->id,
+            'platform' => 'google',
+            'rating' => 1,
+        ]);
+
+        $userId = \DB::table('users')->insertGetId([
+            'name' => 'Test User',
+            'email' => \Illuminate\Support\Str::random(10) . '@example.com',
+            'password' => 'secret',
+        ]);
+
+        $preparer = new PrepareRemovalRequestAction;
+        $removal = $preparer->execute($biz->id, $req->id, 'tos_ground_example', 'Prepared Body', 'google_rev_id');
+
+        $confirmer = new ConfirmRemovalRequestAction;
+        $confirmer->execute($removal, $userId);
+
+        $removal->status = 'prepared';
+
+        $gate = new RemovalFilingGate;
+
+        $this->expectException(RemovalNotAddressableException::class);
+        $this->expectExceptionMessage("This removal request is in status 'prepared', expected 'confirmed'.");
+
+        $gate->assertFilable($removal);
+    }
+
+    public function test_g1_68_a_prepared_request_starts_unconfirmed(): void
     {
         $biz = self::provisionTenant(['name' => 'G168 Test Biz']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
@@ -758,14 +814,15 @@ class CReviewsTest extends TestCase
         ]);
 
         // Satisfy the legacy foreign key
-        $customerId = DB::table('customers')->insertGetId([
+        DB::table('customers')->insert([
+            'id' => $person->id,
             'business_id' => $biz->id,
             'created_at' => now(),
         ]);
 
         ConsentRecord::create([
             'business_id' => $biz->id,
-            'customer_id' => $customerId,
+            'customer_id' => $person->id,
             'channel' => 'sms',
             'state' => 'opted_in',
             'captured_by' => 'platform',
@@ -779,7 +836,7 @@ class CReviewsTest extends TestCase
             'business_id' => $biz->id,
             'platform' => 'google',
             'customer_name' => 'John Doe',
-            'customer_id' => $customerId,
+            'customer_id' => $person->id,
         ]);
 
         $action = new ReviewerContactAction;
