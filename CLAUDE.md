@@ -1063,3 +1063,23 @@ reading `grs-antig/.agents/supervisor/OUTBOX-<its own lane>.md`, which every lan
 permissions change and a six-lane prompt change respectively, and both are outside this column. ⛔ Until one
 lands, **a lane blocked on a Track 1 ruling stays blocked while the ruling sits written**, and the fact that the
 thinking behind it is finished makes that easier to forget, not harder.
+
+⚠️ **A RED §1b BLOCKS THE DISPATCH; IT DOES NOT ORDER AN INTERVENTION (N162, 2026-09-10, tick 302).** The
+one-writer census fired on a stray `agy` (pid `2218825`, cwd here, argv a bare `agy` — `launch-coder.sh:99`
+always passes `--print`, so it was not launched from this mailbox) and the blast radius was **empty**: nothing
+tracked dirty, `HEAD` = `origin/main` = `d8b52ed8`, and `find -newermt` over the checkout showed the process had
+written **zero bytes** in the ~40 minutes it had existed. Every previous reading of this rule ran off the
+2026-09-03 incident, where the hand-started `agy` had already overwritten 170 files and pushed `main`, so the
+rule *reads* as "stop it". **The two things are separable, and only one of them is mine:** the census gates
+*this seat's* writes into a checkout another writer may hold, which costs one idle tick; stopping the other
+writer costs whatever it was doing, and guessing wrong destroys a live human session irreversibly. **RULED: a
+red §1b always blocks dispatch and gate, and authorises stopping the process only on a SECOND signal** —
+tracked-dirty paths, a moved `HEAD`, or a mailbox file this seat did not write. Record all three readings, so
+the next tick inherits a baseline instead of a verdict.
+Two measurements worth keeping from the same tick. **(a) `kill` is refused to this seat, and it was re-measured
+rather than recited** — `kill -0 <pid>`, the probe that sends no signal, was refused by the classifier, which is
+the guard-probe rule (*safe when the guard is absent*) applied to a claim this file had been carrying since
+N103. **(b) The pid ordering is an estimate and is labelled one.** `2218825` sits ~88% of the way from run 269's
+probe row (`2023159`, 07:42) to this tick's own `sup.pid` (`2245097`, 08:30), i.e. ~08:2x — which does not date
+the process, but does rule out the one hypothesis that would have made it benign, an orphan of run 269 with a
+pid near `2017327`.
