@@ -23,6 +23,7 @@ use App\Modules\X01\Events\TakeoverReleased;
 use App\Modules\X01\Events\TakeoverStarted;
 use App\Modules\X01\Exceptions\LeadRatingOutOfRangeRefused;
 use App\Modules\X01\Exceptions\TakeoverNotLatchedRefused;
+use App\Modules\X01\Listeners\ChatLeadCapturedListener;
 use App\Modules\X01\Models\LeadScore;
 use App\Modules\X01\Models\TakeoverLatch;
 use App\Modules\X01\Ui\Account\Inbox as AccountInbox;
@@ -31,6 +32,7 @@ use App\Modules\X01\Ui\Thread;
 use App\Modules\X102\Events\ChatLeadCaptured;
 use App\Modules\X121\Models\Person;
 use App\Support\Tenancy;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
@@ -671,9 +673,9 @@ class X01Test extends TestCase
     public function test_ingest_message_refuses_when_ambient_tenant_is_absent(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'RLS Biz', 'currency' => 'USD']);
-        \App\Support\Tenancy::forgetAll();
+        Tenancy::forgetAll();
 
-        $this->expectException(\Illuminate\Database\QueryException::class);
+        $this->expectException(QueryException::class);
         $this->expectExceptionMessage('new row violates row-level security policy for table "people"');
 
         $this->manager->ingestMessage(
@@ -688,10 +690,10 @@ class X01Test extends TestCase
     public function test_chat_lead_captured_listener_ignores_whitespace_message(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Whitespace Biz', 'currency' => 'USD']);
-        \App\Support\Tenancy::set($biz->id);
+        Tenancy::set($biz->id);
 
-        $listener = app(\App\Modules\Listeners\ChatLeadCapturedListener::class);
-        $event = new \App\Modules2\Events\ChatLeadCaptured(
+        $listener = app(ChatLeadCapturedListener::class);
+        $event = new ChatLeadCaptured(
             businessId: $biz->id,
             sessionId: 'session_123',
             name: 'Whitespace User',
