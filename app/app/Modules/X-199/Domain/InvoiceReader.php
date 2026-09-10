@@ -41,6 +41,7 @@ final class InvoiceReader
         return Invoice::where('business_id', $businessId)
             ->whereNotIn('status', ['paid', 'draft'])
             ->orderBy('due_date')
+            ->orderBy('id')
             ->get();
     }
 
@@ -51,6 +52,7 @@ final class InvoiceReader
             ->whereColumn('paid_cents', '<', 'total_cents')
             ->whereNotIn('id', $excludeIds)
             ->orderBy('due_date')
+            ->orderBy('id')
             ->get();
     }
 
@@ -61,6 +63,7 @@ final class InvoiceReader
             ->whereDate('due_date', '<', today())
             ->whereNotIn('id', $excludeIds)
             ->orderBy('due_date')
+            ->orderBy('id')
             ->get();
     }
 
@@ -70,6 +73,7 @@ final class InvoiceReader
             ->where('status', '!=', 'paid')
             ->whereDate('due_date', '<', today())
             ->orderBy('due_date')
+            ->orderBy('id')
             ->get();
     }
 
