@@ -398,6 +398,26 @@ for f in BRIEF REPORT REVIEWS; do
   p="$ROOT/.agents/supervisor/$f.md"
   [ -f "$p" ] && printf '    %-10s %s  %4s lines\n' "$f.md" "$(date -r "$p" '+%F %T')" "$(wc -l <"$p")"
 done
+# ⛔ A MAILBOX FILE THAT LANDED SOMEWHERE ELSE (REV-134 §3, REV-135 §4).
+#
+# Run 129 wrote REPORT.md to the repo ROOT. The block above reads only the
+# mailbox copy, so it advertised run 128's report as current and would have gone
+# on doing so indefinitely — the tick's own session-start step 2 ("is REPORT.md
+# newer than the last REVIEWS block?") resolves against that same stale path.
+# The damage is silent and it compounds every tick.
+#
+# ⭐ What was missing is the DISPLAY, not the file: a stray copy at the root is
+#   now reported beside the real one, with both timestamps, so no reader can
+#   mistake which is which. Run 130 left one behind — the positive control.
+for f in BRIEF REPORT REVIEWS; do
+  s="$ROOT/$f.md"
+  if [ -f "$s" ]; then
+    fail=1
+    printf '    ⛔ %s at the REPO ROOT %s  %4s lines — the mailbox is .agents/supervisor/%s\n' \
+      "$f.md" "$(date -r "$s" '+%F %T')" "$(wc -l <"$s")" "$f.md"
+    echo "       a mailbox file outside the mailbox is read by nobody and goes stale silently"
+  fi
+done
 
 if [ ! -f "$APP/artisan" ]; then echo; echo "no app/artisan — nothing more to check"; exit $fail; fi
 cd "$APP" || exit 1

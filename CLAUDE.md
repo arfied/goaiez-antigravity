@@ -823,3 +823,169 @@ REV-119 §B at it by name and told it *"you got this right last run"*. Harmless 
 move. A ⛔ that is restated and re-violated is a sign the instruction needs a **paste-ready string**, not
 another citation — run 130's brief gives the literal line to emit,
 `FAIL schema <ms> 14 violation(s)   (read from goaiez_antig_reviews, per app/.env)`.
+
+## REV-135 — the lane's code surface closed, and a restated instruction is a mechanism that is missing
+
+⭐ **Run 130 is a `PASS-WITH-NOTES`, and the paste-ready-string remedy worked on its first try.** REV-134 §5
+predicted that citing REV-119 §B a third time would fail again and handed over the literal line instead. It
+came back exactly right: `FAIL schema 473ms 14 violation(s)   (read from goaiez_antig_reviews, per app/.env)`.
+**N1 is closed after two consecutive violations.** The seam landed, `boundary` fell 42 → 41 as predicted, the
+failing set is exactly the eight-name floor, phpstan is `errors 0`, and the ordering held end to end for the
+fourth run running — gate `00:07` → state commit `00:08:37` → report `00:09:25`. `faca10e0` is pushed.
+
+⭐ **§1. THE MUTATION WAS REAL AND THE REPORT NEVER MENTIONED IT — AND THE SEAM IS PROVED ANYWAY, BY THE
+BLADE.** `.agents/supervisor/r130-mutation.patch` is on disk, 471 bytes, and its content is correct: it
+mutates `$review = ReviewRequest::find(...)` to `$review = null` against index `a143110d`, the pre-seam file.
+So the instrument was built and the mutation was applied. **But item 1 required the failing assertion text
+and the report has no mutation section at all**, so from the report alone a mutation that reddened the test
+and a mutation that was never run are indistinguishable.
+
+⭐ **Verified independently instead of taken on trust, and this is the part worth keeping:** the new test's
+`assertSee('Rating: 4')` is load-bearing *by construction of the blade*, not by the coder's say-so —
+`X-181/Ui/views/ticket.blade.php:33-34` reads `@if ($review && $review->rating) <div>Rating: {{ $review->rating }}</div>`,
+so the string can only appear when the changed line returned a non-null, business-scoped `ReviewRequest`. A
+passing test therefore proves the branch executes. **The mutation was belt-and-braces; the blade is the
+proof.** REV-134 §4's rule — *a seam refactor is briefed only behind a test that enters the changed branch* —
+is satisfied on its merits, which is why this is a note and not a `BLOCK`.
+
+⚠️ **§2. THE INSTRUMENT REV-59 FIXED DOUBLE-COUNTS `Livewire::test(`, SO ITS DELTA IS NOT THE TEST COUNT.**
+Measured, with the command beside the number (REV-132's erratum standard):
+
+```
+$ grep -c 'public function test\|test(\|it(' app/tests/Modules/X-181/Screens/TicketScreenTest.php
+  4                                    # HEAD
+$ git show 6bab3c86:app/tests/Modules/X-181/Screens/TicketScreenTest.php | grep -c 'public function test\|test(\|it('
+  2                                    # before
+```
+
+**+2 for one added test.** The `test(` alternative — there to catch Pest files — also matches every
+`Livewire::test(` call, and this class has one per test method. The count still *rose*, which is all REV-59
+asked of it, so nothing here is wrong; but a brief that predicts "before 1 after 2" on a Livewire screen test
+will be told it read 2 and 4, and that discrepancy is noise, not a finding. **RULED: on a screen test the
+expected delta is `2 × (tests added)`, and the brief says so rather than letting the coder explain it.**
+
+⛔ **§3. THE SAME MEASUREMENT WAS ASKED FOR AND SUMMARISED FOR THE THIRD RUN RUNNING, AND RESTATING IT IS NOT
+THE FIX.** Item 3 required `pint --test`'s file list pasted; the report gives `{"tool":"pint","result":"passed"}`
+from the gate instead. Item 1 required the `grep -c` numbers; they are absent. Item 1 required the mutation's
+failing assertion; absent (§1). That is N2 from REV-134, restated more firmly, violated again — while N1,
+which was given a **literal string to emit**, was fixed immediately.
+
+**RULED: every measurement a brief requires is redirected to a NAMED FILE under `.agents/supervisor/`, and
+`REPORT.md` cites it by path.** `> .agents/supervisor/r131-pint.txt`, not *"paste the output"*. The artefact
+then exists whether or not the report quotes it, and the reviewer reads the real output instead of a retyped
+number. ⭐ **The ladder this lane has now measured three times over: a paste-ready string beats a citation,
+and a redirect beats a paste-ready string** — because a redirect cannot be paraphrased. Written into
+`.agents/rules/10-supervisor.md`, since it is a rule about what a report may claim.
+
+⭐ **§4. `supervise.sh` §3 NOW REPORTS A MAILBOX FILE THAT LANDED AT THE REPO ROOT, AND RUN 129'S IS ITS
+POSITIVE CONTROL.** REV-134 §3 found run 129's `REPORT.md` in the repo root and fixed the *brief* by writing
+the path out in full. That fixed the next run and left the detector missing — §3's `mailbox:` block reads
+only `.agents/supervisor/`, so it would have advertised a stale report indefinitely, and this seat's own
+session-start step 2 resolves against the same path. Added this tick, and it fired on its first run against a
+file that was really there:
+
+```
+    REPORT.md  2026-09-10 00:09:25    76 lines
+    ⛔ REPORT.md at the REPO ROOT 2026-09-09 23:21:13    70 lines — the mailbox is .agents/supervisor/REPORT.md
+```
+
+**A brief fix protects one run; a check protects every run.** Same move as REV-126's §2f, one order of
+magnitude smaller.
+
+⛔ **§5. THE LANE'S CODE SURFACE IS CLOSED, AND EVERYTHING LEFT IS RESERVED OR CROSS-LANE. MEASURED, NOT
+REMEMBERED.** With the mirror seam shut, all three of wave 8's modules were re-measured against a live doctor:
+
+```
+$ php artisan doctor --stage=boundary | grep -i 'c-reviews\|x-181\|x-110'      → nothing
+$ php artisan doctor --stage=capability | grep -i 'c-reviews\|x-181\|x-110'    → nothing
+$ php artisan doctor --stage=citation                                          → 3, all X-198 (money lane)
+$ php artisan doctor --stage=contract | grep -i 'c-reviews\|x-181\|x-110'      → 4
+$ php artisan doctor --stage=anchor | grep -i 'c-reviews\|x-181\|x-110'        → 3 × 'no runtime proof'
+```
+
+**`boundary`, `capability` and `citation` are at ZERO for this lane's modules.** The 41 remaining boundary
+violations belong to X-01, X-121 readers, X-198/X-199 and C-Sms — other lanes'. What is left here:
+
+- **`X-110 @provides pixel.install` / `pixel.events`: "does not declare whether the agent may reach it."**
+  ⛔ **Not brief-able.** `manifest.php` is GENERATED — its own header says so — and `ModuleScaffoldCommand`
+  reads the documented headers out of **`app/GOAIEZ-MASTER-PLAN.md`**, the frozen plan on the reserved list
+  with no guard in front of it (REV-131 §2). `agent_reachable` currently reads `['pixel.verify']`; adding two
+  entries is a **plan edit and a security decision** — silence fails OPEN, per the checker's own comment.
+  **OWNER ACTION.**
+- **`X-110: consumes 'page.loaded' — nothing emits it.`** Either another module grows the emitter (cross-lane)
+  or the plan header drops it (reserved). **OWNER ACTION.**
+- **`C-Reviews, X-118: 'win.first' has 2 emitters`** — already a standing `TRACK 1 ACTION`, unchanged.
+- **3 × `anchor: no runtime proof`** — `TestAnchorStage` demands `evidence/<id>/runtime-proof.json` carrying an
+  artifact id **no code may mint**, off a non-`sync` driver. That is real transports and real credentials, and
+  it is 128 violations project-wide, not this lane's to solve alone. **Reserved.**
+
+⭐ **And the genuine backlog this uncovered, which is neither reserved nor cross-lane.** `state.py next` still
+names C-Reviews as wave 8's remaining module, and **P-110 — the module's own headline law — is not built**:
+
+```
+$ grep -rn 'public_threshold\|solicitation_policy\|review_destinations' app/app/Modules/C-Reviews/ app/app/Modules/X-181/
+  (no output)
+```
+
+Plan `:592` specifies `public_threshold` (default 4, max 5), `fix_then_ask_enabled` firing on `ticket.resolved`,
+and a `review_destinations` roster with a per-destination `solicitation_policy`. **None of the three names
+occurs anywhere in the lane.** That is the next real build wave, and it needs migrations — the coder's column,
+not mine.
+
+⛔ **§6. AND THREE C-REVIEWS TESTS ARE GREEN BY CONSTRUCTION — HONESTLY LABELLED, WHICH IS WHY NOBODY LOOKED.**
+
+```
+$ grep -rn 'assertTrue(true)' app/tests/Modules/C-Reviews/ app/tests/Modules/X-181/ app/tests/Modules/X-110/
+  CReviewsTest.php:296   test_g20_06_header
+  CReviewsTest.php:352   test_g20_09_header
+  CReviewsTest.php:496   test_g1_68_assertion
+```
+
+Each carries a docblock reading *"⛔ REFUSED: surveyed Actions, Database, Events, Listeners, Models, Ui and
+found no implementation."* The refusals are honest. **The `assertTrue(true)` is not** — it makes the test
+*pass*, so a green suite reports `test_g20_06_header` as covered. That is the merged-wrong-lint trap in test
+form, and this lane has now hit that shape in a lint, in a route-gated component, in a `#[Locked]` branch, and
+here.
+
+⭐ **The house has already ruled on the remedy, in the tree, and I read it back before ruling rather than
+after** — `tests/Journeys/TwelveJourneysTest.php:477`, on four tests that were once `markTestIncomplete()`:
+
+> *"⛔⛔ These were markTestIncomplete() and that was the wrong call. A skipped test is invisible in a green
+> run; a FAILING test names what is missing every single time the suite runs … a green suite that proves
+> nothing is worse than a red one that proves something."*
+
+**RULED by the lane supervisor: a refusal test fails loudly with `$this->fail('NOT BUILT: <id> — <what is
+missing>')`, because the tree's own written position refuses both alternatives** — `assertTrue(true)` is the
+false green it condemns and `markTestIncomplete()` is the invisibility it condemns by name.
+
+⚠️ **But every one of those three claims is dated, and REV-129 says an `UNRESOLVED` is a claim with an
+expiry that nothing in this project re-reads.** `C-Reviews / tests` sat blocked for five days on a
+`messageClass` field that had landed the next morning. **So run 131 re-reads all three against the tree
+first**, with the command printed, and only a claim that still stands is converted. A claim that has gone
+false gets real assertions instead — and that outcome is the more valuable one.
+
+⛔ **§7. THE EIGHT-NAME FLOOR IS AMENDED, AND THE MARKER IS MECHANICAL.** REV-134 §1 made "the failing set is
+exactly these eight names" a push criterion and said *"a ninth name revokes it outright"*. §6 deliberately
+adds three. **RULED: the criterion is now the eight baseline names PLUS any test whose failure message begins
+with the literal `NOT BUILT:`.** The prefix is what keeps it mechanical — a `grep` can separate a declared,
+recorded gap from a regression, which is the whole property REV-134 §1 was protecting. ⛔ **A failing name
+that is neither in the eight nor prefixed `NOT BUILT:` still revokes the sha outright.** Expected after run
+131: `FAILED 6 · errors 2` becomes eleven `✗` lines, eight of them unchanged.
+
+⚠️ **§8. `cd app && …` IN A TICK SILENTLY REVOKED THIS SEAT'S OWN EDIT PERMISSIONS.** `.claude/settings.json`
+allows `Edit(bin/supervise.sh)` and `Edit(.agents/rules/10-supervisor.md)` as **relative** paths, and they
+resolve against the session's working directory. One `cd app` earlier in this tick — to run `php artisan
+doctor` — moved that directory, and both edits were refused with a permission error that named neither the
+cause nor the cwd. It reads exactly like an owner having closed the column. **The fix is one `cd` back**;
+the trap is that the symptom points at the settings file and the cause is three commands earlier. ⭐ Same
+family as the root-owned `FETCH_HEAD` trap: *presents as a permissions or config problem and is neither.*
+**RULED: run `php artisan` from the root as `php artisan --working-dir` is unavailable here — use
+`(cd app && …)` in a subshell, or accept the `cd` and change back in the same tick before any Edit.**
+
+⛔ **§9. TWO OF EIGHT PER-TRACK PATHS WERE IN §2f'S BYPASS ARM, AND BOTH WERE MINE.** `bin/supervise.sh`
+(main's copy is **94 deletions** — it removes §2f itself and REV-119 §E's per-lane database block) and
+`.agents/rules/10-supervisor.md` (main still carries the pre-REV-121 text, so **the anti-push rule is still
+deleted on `main`**). Per REV-126 the supervisor moves those on our side *before* a merge wave, and the move
+must be real work rather than a touch. Both were moved this tick with content that stands on its own — §4's
+root-mailbox check and §3's redirect rule — which is protection and record in one commit. ⚠️ **The verdict is
+good only for `(our sha, their sha)`** and is re-derived at every merge; nothing here authorises a merge.

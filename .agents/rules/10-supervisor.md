@@ -157,6 +157,33 @@ RAW       : <doctor output for anything not fixed>
   runs had already complied by brief alone. Deleted by the 2026-09-09 09:54
   fast-forward, restored 2026-09-09 as REV-121.)
 
+## ⛔ ADDED 2026-09-10 (REV-135) — AN ARTEFACT THE BRIEF ASKED FOR IS A FILE, NOT A SENTENCE
+
+Three runs running, the brief asked for a measurement to be **pasted** and got a
+conclusion instead — `pint --test`'s file list twice, the `grep -c` test counts
+once, the mutation's failing assertion text once. Each time the instruction was
+correct, cited by name, and restated more firmly on the next run. Restating it
+again is not the fix.
+
+**RULED: every measurement a brief requires is redirected to a NAMED FILE under
+`.agents/supervisor/`, and `REPORT.md` cites that file by path.** The artefact
+then exists whether or not the report quotes it, and the reviewer can read the
+real output instead of trusting a retyped number. A brief item that says *"paste
+the output"* with no path is an item that will come back as a summary — that is
+this project's own evidence, four times over.
+
+⭐ **The precedent is REV-134 §5 and it worked on the first try.** `schema` was
+reported without its database twice; the third brief stopped citing REV-119 §B
+and handed over the literal line to emit. It came back correct. **A paste-ready
+string beats a citation, and a redirect beats a paste-ready string**, because a
+redirect cannot be paraphrased.
+
+⛔ **A number in `REPORT.md` with no artefact path beside it is a memory.** Same
+standard as REV-132's erratum for the supervisor's own rulings: *any count that
+enters a brief or a ruling is produced by a command whose scope is the tree, and
+the command is printed beside the number.* The two columns are now held to one
+rule.
+
 ## ⛔ ADDED 2026-09-02 — THE SUPERVISOR'S WORKING TREE
 
 The supervisor edits `BRIEF.md`, `REVIEWS.md` and its own files **in the
