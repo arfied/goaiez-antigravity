@@ -56,7 +56,7 @@ class InfobipInboundRefusalLogTest extends TestCase
         $bodySha256 = hash('sha256', (string) $this->body);
 
         Log::spy();
-        
+
         $response = $this->call(
             'POST',
             '/webhooks/infobip/inbound',

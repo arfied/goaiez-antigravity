@@ -12,6 +12,7 @@ use App\Services\Sms\InboundMessages;
 use App\Services\Sms\InfobipWebhookVerifier;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 /**
  * `POST /webhooks/infobip/inbound` — where a customer's STOP arrives.
@@ -83,7 +84,7 @@ final class InfobipInboundController extends Controller
                 }
             }
 
-            \Illuminate\Support\Facades\Log::warning('Infobip inbound refused: signature did not verify', [
+            Log::warning('Infobip inbound refused: signature did not verify', [
                 'signature_headers_present' => $present,
                 'signature_len' => strlen($sigValue),
                 'signature_prefix' => $sigValue !== '' ? substr($sigValue, 0, 7) : null,
