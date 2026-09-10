@@ -20,6 +20,7 @@ class ChatDoorTest extends TestCase
     use RefreshDatabase;
 
     /**
+     * BUILD PROPOSAL: X-102 chat capture throws an unhandled DomainException for an empty phone, which yields a 500 on a public door; it should be caught and returned as a 400. Owner: X-102
      * BUILD PROPOSAL: X-102's ChatTurnAction calls C-Agent unconditionally; it should only call if the author is 'visitor'. Owner: X-102
      * BUILD PROPOSAL: mapping chat_session_id to C-Agent's conversation_id so HUMAN_TAKEOVER_LATCH works is required, but it has not been asked for yet. Owner: Track 1
      * BUILD PROPOSAL: X-102's ChatTurnAction defaults the turn number to 1; it should compute and pass the real turn number. Owner: X-102
