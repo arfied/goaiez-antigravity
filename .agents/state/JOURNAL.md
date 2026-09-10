@@ -817,3 +817,4 @@
 - `2026-09-10T00:30:46` note: G20-06 is DISCHARGED: review_destinations roster exists with an invite_threshold per destination (app/database/migrations/2026_07_31_201816_create_review_destinations_table.php:31, app/app/Models/ReviewDestinationSetting.php:40).
 - `2026-09-10T00:30:46` note: G20-09 is DISCHARGED: reputation engine fix_then_ask loop exists on triage_conversations (app/app/Services/Reviews/ReviewRouter.php:333, app/database/migrations/2026_08_27_135742_add_fix_then_ask_to_triage_conversations_table.php:51).
 - `2026-09-10T00:30:46` note: G1-68 STANDS: Google review removal preparation and human confirmation logic not found in the codebase.
+- `2026-09-10T00:58:25` note: seam measured: C-Reviews does not consult invite_threshold (0 hits). The legacy surface provides ReviewGating, ReviewInvites, and DestinationSettings (18 public methods). BoundaryStage imports check explicitly ignores App\\Services\\..., and 19 modules already read legacy services.

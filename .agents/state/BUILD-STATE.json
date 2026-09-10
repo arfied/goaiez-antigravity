@@ -1405,6 +1405,10 @@
   {
    "at": "2026-09-10T00:30:46",
    "note": "G1-68 STANDS: Google review removal preparation and human confirmation logic not found in the codebase."
+  },
+  {
+   "at": "2026-09-10T00:58:25",
+   "note": "seam measured: C-Reviews does not consult invite_threshold (0 hits). The legacy surface provides ReviewGating, ReviewInvites, and DestinationSettings (18 public methods). BoundaryStage imports check explicitly ignores App\\\\Services\\\\..., and 19 modules already read legacy services."
   }
  ],
  "resolved": [
