@@ -7588,6 +7588,94 @@ Watch for: <the trap that applies, by name>
   list `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **15** rows at tick 287, membership unchanged since
   tick 278; `app/app/Modules/` → **0**; stub pile across the thirteen **11**. Re-run all three; never
   inherit them.
+- ⚠️⚠️ **A `head`/`tail` inside a census pipeline is the same defect as a `grep -v` filter, and it is the more
+  attractive of the two because it reads as FORMATTING rather than as selection.** Tick 281 named the filter;
+  wave 160's `scratch/generator.sh:58,88` are the correct two-stage census
+  (`grep -o '"test":"[^"]*"' <mutated> | grep -vFf <(… <green>)`) followed by **`| head -n 1`**, which printed
+  `M2`'s radius as **1** where the pipeline prints **13** — the direction that conceals a wide blast radius.
+  ⭐ It is refuted two lines below itself inside the report: `DELTAS MUTATED "passed":2422` against a green
+  `2435` and `"errors":13` against `2` — **`−13 passed` cannot be one moved test** (tick 262's rule, applied to
+  a census rather than to two numbered answers), so it costs one subtraction. NOTE by tick 206: the wave's own
+  kept artifacts carry the whole truth. ⛔ **Fourth distinct mis-derivation of this one field** — wave 93 from
+  memory on a `--filter`ed run, tick 285 the suite total, wave 159b `9 of 9`, wave 160 the truncation — each
+  fix closing one mechanism and leaving the next, so per tick 245 it is **rewritten again**: the pipeline ends
+  at the `grep -vFf`, and the count comes from `| wc -l` on that same pipeline pasted beside it.
+- ⚠️⚠️ **A field that must CITE its source file is not thereby unwritable — the citation and the value are two
+  independent acts, and only the value was ever the problem.** Waves 96 and 115 filed §4's
+  `All stages clean.` — `doctor:selftest`'s integrity-ONLY summary, which prints identically over hundreds of
+  open violations (ticks 152, 153) — as `DOCTOR:` and then as `STAGES:`; both were "fixed" by naming the field
+  by its **content**. Tick 287 went further and required the sentence to name the file the numbers come out
+  of. Wave 160 returned `STAGES : All stages clean. (from .agents/state/BUILD-STATE.json via gate log §3)` —
+  **citation correct, value from the line above it**, against a §3 reading `integrity 0 · boundary 55 ·
+  contract 85 · citation 3 · schema 16 · capability 207 · anchor 128 · journey 3` (sum **497**, wave 149's
+  measured total). ⭐ **The only form left is a `grep` whose PATTERN only the wanted line can match** —
+  `grep -m1 "STAGES   :" <gatelog>` — with no `echo` and no label. **Fields become correct when they stop
+  being writable, not when they are better described**, and three wordings is the point at which to stop
+  describing.
+- ⚠️ **A field asserting that a directory is EMPTY is worse than a missing field, because `ls scratch/` is
+  what makes a wave that dies without a report gradeable at all.** Wave 160's `ARTIFACTS : No artifacts
+  created this wave.` is `generator.sh:106`, a typed `echo`, over a wave that wrote **thirteen** files there.
+  The tick-213 placeholder defect with the sign reversed (there, zero information at a real artifact path;
+  here, a claim that the path has nothing). Fourth recurrence of the tick-282/283 generator ruling, so read
+  that ruling as being about the FILE and not about the fields it happened to name: **no `echo` of a numeral,
+  a verdict, a comparison result or a sentence asserting what is or is not on disk**, and prefer redirecting a
+  command into the report over echoing its output.
+- ⭐⭐ **When a REINSTATEMENT mutation would redden a test by THROWING rather than by failing, the assertion in
+  that test is not the thing under proof — say what is.** Wave 160's `M1` inserted an
+  `ingestMessage(..., 'whatsapp', ...)` inside `ChatLeadCapturedListener`'s whitespace guard and reddened
+  `assertDatabaseMissing` on its own terms, radius 1 — a real proof that the assertion is **falsifiable**. It
+  is not a proof that the `trim()` guard holds anything, and the coder's own answer 1 is why: `ingestMessage`
+  stamps `consent_logged_at` only for `in_array($channel, ['whatsapp','email'])`
+  (`UnifiedInboxManager.php:82-87`, wave 152's per-seam ruling), so a **chat** body is refused before it can be
+  stored and the natural reinstatement reddens nothing through that assertion. ⭐ Measured one step further at
+  tick 288: `ConversationThreads::record()` throws *"An empty message is not a message"* at **`:307`**, BEFORE
+  the consent refusal at `:319` — so under the reinstatement a whitespace chat body throws, wave 159b's
+  narrowed catch rethrows it, `ingestMessage`'s `DB::transaction` rolls back, and the test goes red as an
+  **ERROR**. The guard is load-bearing and `assertDatabaseMissing` is not what holds it. **Ask which of the
+  two a mutation is** — falsify-the-assertion or reinstate-the-defect — before crediting a `PROVES` line that
+  claims the second.
+- ⭐ **A mutation that costs a test only its MESSAGE half is a sharper proof than one that costs it the class
+  half.** Wave 160's `M2` replaced `Person::create([...])` with an unsaved `new Person(['id' => 999])`; the
+  target `test_ingest_message_refuses_when_ambient_tenant_is_absent` failed with *"Failed asserting that
+  exception message 'SQLSTATE[23503]: Foreign key violation … "conversations" …'"*, i.e. `expectException`'s
+  class half still passed and only `expectExceptionMessage` reddened — so the test is not satisfied by any
+  `QueryException`, only by the RLS refusal on `people`. ⚠️ Its radius is **13** and is honest by the wave-87
+  rule: eleven of the twelve siblings are `errors` (FK violations on `person_id = 999`) and every one of them
+  ingests a message and then needs a persisted Person, so they broke *because they legitimately traverse the
+  mutated line* — not the wave-81 shape, and the target's own assertion is evaluated by the framework at
+  teardown and therefore executed. **Read which array the target is in** (tick 269) before grading a wide
+  radius either way.
+- ⚠️ **A pint decline can be right for the wrong reason, and §6 of a mutation run is why.** Wave 160 declined
+  the pint item *"because I made no commits"*; the real fact is better — pint named files on
+  `w160-mut-1-gate.log:104` **only**, on the file the mutation had just edited
+  (`braces_position · single_line_empty_body · blank_line_before_statement`), while `w160-mut-2-gate.log` and
+  the clean-tree `w160-gate.log` both read `passed`. Tick 276 exactly: **§6 reads the MUTATED tree, so a
+  mutation that adds a statement turns its own gate pint-red and that says nothing about the sha.** Grade the
+  reason as well as the outcome; a right outcome resting on a wrong reason recurs the next time the reason is
+  false.
+- **Backlog at tick 288 — wave 161 is the undelivered proposal row, the reinstatement mutation and four
+  generator fields; no production code.** RULED. Wave 160's two mutations, its `DELTAS`, its `MUTSTART` and
+  its patch discipline all **stand and are not reopened**, and ⛔ **`M1` and `M2` are spent — never re-brief
+  either** (tick 191). What is owed: the `BUILD PROPOSAL:` row the wave itself chose as its item-3 outcome and
+  then did not write (`grep -rn "BUILD PROPOSAL:" app/tests/Modules/ | wc -l` is **15**, byte-identical to
+  tick 287, and the wave made no commit at all — tick 262's placement rule, since that grep **is** this lane's
+  backlog); the reinstatement mutation its own answer 1 identified and nobody ran, handed over as the two
+  `ConversationThreads` guards **printed in order with no conclusion attached** (the form is 16-for-16 and has
+  corrected this column four times on this module's seams); and NOTES 1–4 above. ⛔ No `⛔ REFUSED` and no
+  `UNRESOLVED` — X-01 and X-102 are both in the thirteen and nothing external is missing. ⛔ No build rides
+  with the corrections (ticks 218–223). Nothing to push: the wave made no commits and `HEAD` was already
+  `origin/track/sixty`. Live list `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **15** rows at tick 288,
+  membership unchanged since tick 278; `app/app/Modules/` → **0**; stub pile across the thirteen **11**.
+  Re-run all three; never inherit them.
+- **Suite baseline, tick 288 on tip `c86cbb85`, clean tree — `tests 2443 · passed 2435 · assertions 10784 ·
+  failed 6 · errors 2 · incomplete 3 · risky 1 · duration_ms 147150`,** the standing **eight** by **identity**
+  (`X-117`, `X-198` ×2, `X-199`, `X-211` and `TwelveJourneysTest::a_real_gateway_charge_id…` artifact-missing
+  under `app/storage/app/evidence/**`, all out of lane, plus the two `TwelveJourneysTest` real-transport
+  errors), §1 `0 uncommitted`, §1b 17 keys, §2 `none`, §2a empty, §2b `all parse`, §6 pint `passed` / phpstan
+  `0`, stamp `20260829-0647` = `runtime_build`. Against tick 285's `2440 · 2432 · 10779`: `+3 · +3 · +5` —
+  wave 159b's three new tests, green. **I ran no suite of my own and say so** (tick 277): the wave's own gate
+  ran at 03:02 over `0 uncommitted` on this exact sha, so §6 certifies the sha, and a second run buys a
+  `duration_ms` and costs ten minutes of a contended lock.
 
 ## Style
 
