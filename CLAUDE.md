@@ -7535,3 +7535,74 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     gate (ruling 52) — main adds three new `Actions/` classes under `app/app/Modules/`, which
     `app/composer.json` classmaps, and the failure shape is `Class … not found` **inside another
     lane's test**, the most misattributable there is.
+286. **A merge brief's expected-staged-set table is enumerated against a MOVING remote, so ruling 118's
+    stop-clause fires on the remote moving rather than on a defect — and for a lane merging a busy
+    `main` that is most merges (RULED by the lane supervisor 2026-09-09 21:5x, observed live in run 186
+    before it reached the clause; first recorded in `REVIEWS.md` because a merge was staged and
+    `git commit -- CLAUDE.md` during a merge is refused by git itself).** Ruling 118 requires a brief
+    whose stop-clause fires on an unnamed sweep line to enumerate the **whole** expected output in two
+    tables, and it has fired correctly twice (118, 217). Ruling 182 requires the reviewing tick to
+    re-measure against `MERGE_HEAD` rather than the briefed sha, *"because a brief that says merge
+    `origin/main` means the ref, and a ref moves."* **Both are right and together they guarantee a
+    stop.** MONEY-162's Table B enumerated the **26** non-per-track paths measured at 19:1x against
+    `origin/main` = `af72fe7f`. The coder fetched twenty minutes later and got `MERGE_HEAD` =
+    **`7900c72e`**, a 34-path range, and staged one path Table B does not name:
+    `app/app/Modules/X-103/Actions/PageVersionAction.php` — measured **`A`dded on main only since the
+    base `83caa6f5`**, in the **site** lane's module tree, with
+    `git diff --name-status 83caa6f5 HEAD -- app/app/Modules/X-103/` **empty**, so money has never
+    touched it. It takes main's side whole by the One Rule, exactly as its sibling `PageReadAction.php`
+    does. The run stopped on a path whose resolution was never in doubt.
+    ⭐ **RULED: a merge brief's Table B is a RULE with a measured exception list, never a closed set.**
+    The rule is *every path under `app/app/Modules/` or `app/tests/Modules/` that is **not** one of this
+    lane's eight module ids takes `origin/main`'s side whole, and a path added on main only is taken
+    whole* — and the enumerated rows are **evidence of what the rule covered at measurement time**, not
+    the boundary of what it may cover. The stop-clause then fires only on a path the **rule** does not
+    reach: anything inside money's eight module or test trees, anything under `app/tests/Journeys/`,
+    `app/app/Doctor/`, `source/`, `.agents/`, `.claude/`, `bin/`, or a **deletion** anywhere. A path
+    matching the rule but absent from the list is resolved by the rule and **reported**, never stopped
+    on. ⛔ Not resolved by dropping the enumeration: the list is what makes a money-tree incursion
+    visible at a glance and it is ruling 118's whole protection. ⛔ Not by dropping the stop-clause,
+    which is what stops a coder resolving unbriefed paths. ⛔ **Not by pinning a sha** —
+    `git merge <the measured sha>` would make the tables exact and merge a **stale** `main`, so the lane
+    would take a tree Track 1 has already moved past and owe a second merge immediately.
+    ⚠️ **The asymmetry sets the balance.** A stop costs one tick and preserves every resolution, because
+    the merge stays staged (ruling 53): run 186's items 1–5 were measurably intact — 27 staged paths and
+    **not one** of the seven per-track paths, `app/phpunit.xml:34` still `goaiez_antig_money_test` — so
+    the driver and the four-file restore both worked and ruling 285's prediction held. A **guess** costs
+    a wave and can ship another lane's test database. So the clause stays; only its **boundary** moves
+    from an enumeration to a rule. ⚠️ This is the ruling 66/75/…/271 dictation family a **thirtieth**
+    time, with a new instrument: **a brief that enumerates a set measured against a moving ref has
+    dictated a stop.** The enumeration is a measurement, and ruling 64's decay applies to it **within
+    the hour** rather than within the day — the shortest-lived measurement this ledger has recorded.
+
+287. **⭐⭐ The `LOG:` field is UNFILLABLE by the coder — `launch-coder.sh` redirects the run's stdout to
+    the log and the wrapper appends `AGY_EXIT=` at EXIT, so the file is empty for the whole of the run
+    that is asked to quote it. It is the SUPERVISOR's field (RULED by the lane supervisor 2026-09-09
+    22:0x, on MONEY-162's honest `LOG: n/a — empty`; correcting ruling 284 and closing the
+    242/247/274/284 sequence).** `launch-coder.sh:144` is
+    `nohup bash -c '… timeout -k 60 3h … agy --print "$(cat KICKOFF.md)" … > "$LOG" 2>&1; echo
+    "AGY_EXIT=$?" >> "$LOG"'`. `agy --print` buffers to that redirect, so **nothing reaches the log
+    until the process ends** — and the run writes `REPORT.md` before it ends, by construction. Run 186
+    read the file, found it empty, and wrote `n/a — empty`: **honest, correct, and the first true answer
+    this field has ever received.** Four attempts, and the mechanism was never the one being fixed:
+    ruling 242 found a claim contradicting the log and demanded the **observation**; 247 judged the
+    foreground/background category unreachable and offered a compound one; 274 retired the category for
+    a **transcription**, reasoning *"a run cannot mis-summarise a quotation"*; 284 found that
+    transcription filled from the gate file and blamed the field's **placement** inside `GATE:`. Ruling
+    284's diagnosis was plausible and is **superseded**: MONEY-161b's coder reached for the gate file
+    because **the source it was told to quote was an empty file**, and a run asked for a quotation it
+    cannot obtain will substitute the nearest thing it has. **RULED: the coder is asked for nothing
+    about the run log.** ⭐ The reviewing tick quotes the log's first two lines into its own verdict
+    block — where it **already reads them**, because rulings 30, 40 and 248 all require reading the run
+    log *before* `REPORT.md* to tell an ordinary exit from a quota death, a kill and a wall-clock reap.
+    The field was asking the one actor who cannot see the file to describe it to the one who must read
+    it anyway. ⚠️ Ruling 284's **general** lesson survives its instance and is worth keeping: *a
+    transcription field nested in a block whose every other member comes from one file will be filled
+    from that file* — it is true, it is the ruling 128/231 family, and it applies to any future nested
+    field; it simply was not what happened here. ⚠️ ⛔ **Ruling 218(2) is untouched:** it governs
+    **behaviour** — a run blocks on its own gate — not paperwork, and it is the reason a run's own
+    account of its method was never worth asking for in the first place. ⚠️ The generalisable half, and
+    it is this lane's own ruling 36 turned on its paperwork for the fifth time (after 121, 141, 218,
+    259): **before requiring a field, ask what is at the other end of the string the run is asked to
+    copy — and whether it exists YET.** A source that comes into being only after the writer has
+    finished is not a source.
