@@ -1769,3 +1769,74 @@ failure G1-68 exists to prevent.
 `constrained('users')`, and `LossAlerts::confirmRemoval`'s blanket `catch (\Exception $e)` renders every
 schema refusal as pink text — **a blanket catch in a Livewire action converts an FK violation into a
 string**, so only a red suite can see one.
+
+## REV-143 — a commit that cannot run, and three instruments that all read the working tree
+
+⛔ **RUN 138 COMMITTED `throw new \App\Modules\CReviews\Domain\UnauthenticatedConfirmationException` AND LEFT
+THE CLASS FILE UNTRACKED (2026-09-10). GIT SAYS IT IN ITS OWN WORDS:**
+
+```
+$ git show HEAD:app/app/Modules/C-Reviews/Domain/UnauthenticatedConfirmationException.php
+  fatal: path '…/UnauthenticatedConfirmationException.php' exists on disk, but not in 'HEAD'
+```
+
+At `990e931e`, `LossAlerts.php:169` raises `Error: Class … not found`. ⚠️ **An `Error` is not an
+`\Exception`, so the method's blanket `catch (\Exception $e)` does not catch it** — the new test fatals on a
+clean checkout and an unauthenticated confirm click returns a 500 instead of the refusal the wave existed to
+add. The blanket catch that REV-142 flagged for converting an FK violation into pink text is, for this class
+of fault, not even a mitigation.
+
+⛔ **The cause is one clause of my own brief.** Item 6 handed over
+`git commit -m "…" -- … app/app/Modules/C-Reviews/Domain …` while item 2 said *"add a sibling in `Domain/`;
+your call"*. **`git commit -- <path>` does not add an untracked file and reports no error** — it commits the
+other named paths and exits 0. Naming a *directory* in that command makes it read as though it will pick up
+what is inside it.
+
+⭐ **And the reason no instrument caught it is the finding, not the miss.** `supervise.sh` §2b's `php -l`
+printed **`all parse`** — a missing class is not a parse error. phpstan printed **`errors 0`**. The wave's own
+re-derivation grep passed. **All three read the WORKING TREE**, where the file is present. REV-140 §4 had
+already ruled on that grep and fixed the wrong half: it ordered the re-derivation *after* `git commit`
+returns, which run 138 obeyed to the second (`r138-callers.txt` `08:02`, commit `08:01:57`), and a
+working-tree grep at `08:02` still cannot see that a file is untracked. **REV-140 §4 fixed the TIMING and
+left the INSTRUMENT** — the same sub-species as REV-138 §4, which fixed a failing search's *scope* and left
+its *vocabulary*. Both times the correction landed one axis away from the defect.
+
+**RULED: the baseline for "did this commit contain X" is `HEAD`, never the working tree —
+`git show <sha>:<path>` or `git status --porcelain --untracked-files=all`, never a `grep` over the checkout.
+And a brief that permits creating a NEW file hands over `git add <file>` by name**, because the named-path
+commit form this lane standardised on cannot pick one up.
+
+⭐ **`bin/supervise.sh` §2g is the check, and its ⛔ arm fired on its first run against the real defect:**
+
+```
+== 2g. a class the COMMITTED tree references whose file git does not have
+  ⛔ app/app/Modules/C-Reviews/Domain/UnauthenticatedConfirmationException.php is UNTRACKED,
+     and HEAD references UnauthenticatedConfirmationException:
+       app/app/Modules/C-Reviews/Ui/LossAlerts.php
+     the committed sha cannot run — git commit -- <path> silently skips an untracked file
+  untracked app PHP: 1 · referenced by HEAD: 1
+```
+
+The reference search is `git grep -l -F <class> HEAD` — against `HEAD` and not the checkout, which is the
+whole point of the section. ⚠️ Its ⚠ arm (untracked but unreferenced; advisory, no `fail`) and its ✓ arm
+(none at all) have not fired. `.agents/supervisor/t139-untracked-probe.sh` is the positive control and copies
+§2g's logic **verbatim** rather than paraphrasing it; running it is run 139's item 1.
+
+⭐ **The ladder, measured a sixth time: a paste-ready string beats a citation, a redirect beats a paste-ready
+string, and a CHECK beats a redirect.**
+
+⚠️ **§2. A `pint` FAILURE IS A REGRESSION IN THIS LANE'S OWN DIFF AND REVOKES THE SHA BY ITSELF** — REV-134
+§1's converse, and what held `4f5d44f6` unpushable at REV-133. Run 138's gate read `"result":"fail"` on both
+files the wave touched. ⭐ **And `fully_qualified_strict_types` on `LossAlerts.php` is §1 wearing a style
+hat** — it is pint objecting to that same inline FQN, so importing the class closes both findings in one
+edit. ⚠️ The preceding commit is `e1be70eb style(C-Reviews): pint formatting fixes`: two consecutive waves
+leaving pint red at gate time and repairing it in the next one. **A wave runs `pint` before it commits.**
+
+⚠️ **§3. A BRIEF PREDICTS A TEST-COUNT DELTA ONLY FOR TESTS IT REQUIRES AS NEW METHODS.** Run 138 read
+`27 → 28` against a predicted `29 or 30`, and the count was **right**: the wave added one method and folded
+the other two required assertions into the existing tests that already establish the state
+(`assertEquals($userId, $removal->confirmed_by_user_id)` into `test_loss_alerts_confirms_removal`,
+`assertSee('Prepare Removal')` into `test_loss_alerts_low_rating_unresolved`). Both are the right shape and
+both are load-bearing. **RULED: an assertion added to an existing method is predicted as an assertion, by
+name, and not counted.** REV-135 §2 fixed this instrument's double-counting and left this half — the
+prediction was made against a requirement that never said which of the three needed its own method.

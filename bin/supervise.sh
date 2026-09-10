@@ -389,6 +389,39 @@ else
   fi
 fi
 
+bar "2g. a class the COMMITTED tree references whose file git does not have"
+# Run 138 committed `throw new \App\Modules\CReviews\Domain\UnauthenticatedConfirmationException`
+# and left the class file UNTRACKED. `git commit -m … -- <paths>` does not add an untracked
+# path and reports no error, so the sha references a class that does not exist in it. Every
+# instrument in the wave was green: §2b's `php -l` parses a missing class fine, phpstan read
+# `errors 0`, and the re-derivation grep passed — because ALL of them read the WORKING TREE,
+# where the file is present. REV-140 §4 fixed the TIMING of that grep ("after git commit
+# returns") and left the tree/commit distinction untouched; this is the instrument half.
+# The baseline is therefore HEAD, never the working tree: `git grep … HEAD`.
+# Arms: ⛔ when a tracked file at HEAD names an untracked file's class; ⚠ when an untracked
+# app PHP file is unreferenced (still invisible to a named-path commit); ✓ when there are none.
+bar_untracked=$(git -C "$ROOT" ls-files --others --exclude-standard -- 'app/*.php' 2>/dev/null)
+if [ -z "$bar_untracked" ]; then
+  echo "  no untracked PHP under app/ ✓"
+else
+  ut_ref=0; ut_n=0
+  for u in $bar_untracked; do
+    ut_n=$((ut_n+1))
+    cls=$(basename "$u" .php)
+    refs=$(git -C "$ROOT" grep -l -F "$cls" HEAD -- 'app/*.php' 2>/dev/null | sed 's/^HEAD://')
+    if [ -n "$refs" ]; then
+      ut_ref=$((ut_ref+1))
+      echo "  ⛔ $u is UNTRACKED, and HEAD references $cls:"
+      printf '%s\n' "$refs" | sed 's/^/       /'
+      echo "     the committed sha cannot run — git commit -- <path> silently skips an untracked file"
+    else
+      echo "  ⚠ $u is untracked and unreferenced at HEAD — a named-path commit will not pick it up"
+    fi
+  done
+  echo "  untracked app PHP: $ut_n · referenced by HEAD: $ut_ref"
+  [ "$ut_ref" -gt 0 ] && fail=1
+fi
+
 bar "3. build state"
 python3 "$ROOT/bin/state.py" status 2>&1 | head -30 | sed 's/^/  /'
 python3 "$ROOT/bin/state.py" next 2>&1 | head -20 | sed 's/^/  /'
