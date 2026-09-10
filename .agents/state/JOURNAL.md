@@ -924,3 +924,4 @@
 - `2026-09-09T16:40:18` note: boundary The row at 2026-09-09T13:47:44 was incomplete as it described the current code state rather than the decision. The actual conclusion across the three seams is that for WhatsApp and Email, the addressing sentence answers the consent gate directly, while Chat requires a pre-chat notice before capture to comply with rule 22.
 - `2026-09-09T18:42:57` (R245) X-01 — Removed fallback to customer.id when retrieving LeadScore in Thread, because people.id and customers.id are distinct ID spaces.
 - `2026-09-10T00:01:58` (R245) X-01 — capability · UnifiedInboxManager::ingestMessage stamps consent and stores bodies for owned channels (whatsapp, email) while dropping them without bypassing the gate for unconsented channels (chat).
+- `2026-09-10T00:51:22` (R245) X-01 — integrity Rethrow invariant-violation InvalidArgumentExceptions in ingestMessage rather than silently swallowing them

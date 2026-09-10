@@ -20,6 +20,9 @@ use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 
+/**
+ * (R245) Integrity: Rethrow invariant-violation InvalidArgumentExceptions in ingestMessage.
+ */
 final class UnifiedInboxManager
 {
     /**
