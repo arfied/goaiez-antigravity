@@ -10,7 +10,7 @@ use App\Modules\CReviews\Actions\ReviewRequestAction;
 use App\Modules\CReviews\Models\QaSetting;
 use App\Modules\CReviews\Models\ReviewRequest;
 use App\Modules\X121\Models\Person;
-use App\Modules\X181\Models\QaTicket;
+use App\Modules\X181\Actions\QaTicketReadAction;
 use App\Support\Tenancy;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -248,7 +248,7 @@ class ReviewsQaRequests extends Component
                         $req->customer_name = $person->name;
                     }
                 }
-                $req->ticket = QaTicket::where('review_request_id', $req->id)->first();
+                $req->ticket = app(\App\Modules\X181\Actions\QaTicketReadAction::class)->findByReviewRequestId($this->businessId, $req->id);
 
                 return $req;
             });
