@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-10T02:48:23",
+ "updated": "2026-09-10T03:19:09",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1706,6 +1706,10 @@
   {
    "at": "2026-09-10T02:48:23",
    "note": "MONEY-171: orders.status maps to owner words in X-117/Ui/LabelsOrderStatus. sold_out is not mapped because the engine returns it on an envelope and never writes it to the row."
+  },
+  {
+   "at": "2026-09-10T03:19:13",
+   "note": "MONEY-172: the dunning board's five next-step strings are unchanged - they are a faithful transcription of the frozen plan's wind-down ladder at GOAIEZ-MASTER-PLAN.md:10386, whose own checkbox is unticked, so the fix is the framing and not the words. X-211's ar_dunning_actions.action maps to owner words in Ui/LabelsDunningAction; there is no pill on that line and no signal map was added."
   }
  ],
  "decisions": [
@@ -2643,6 +2647,12 @@
    "module": "X-117",
    "chose": "A screen names an enumerated column in the owner's words, and its signal derives only from values the code can write. The order list rendered the raw token pending_payment, which is the state every real order is in, and its pill state was keyed on paid, which no code writes, so the signal was a constant across both reachable values.",
    "at": "2026-09-10T02:48:23",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Billing",
+   "chose": "A screen that shows a future step says it is a plan and names what does not perform it, and a screen that shows an enumerated column shows the owner words and never the schema token. The dunning board headed a column Next Step over five strings transcribed from the frozen plan, whose own box is unchecked; nothing puts an account on the ladder, nothing advances it on a clock, and nothing switches a phone, an agent or a number when a day is reached. The invoice thread rendered ar_dunning_actions.action raw beside a reason the engine had already resolved to a label.",
+   "at": "2026-09-10T03:19:09",
    "ruling": "R245"
   }
  ]
