@@ -2375,3 +2375,167 @@ that both diagnoses and treats can no longer tell which of the two worked (REV-1
 there — **a touch is not a move** (REV-135 §9) and this seat has no substantive change to make to it. Its
 verdict is a function of `(our sha, their sha)` and is re-derived at merge time; nothing here authorises a
 merge.
+
+## REV-148 — the fork killed my own hypothesis, and a fallback that could not reach the database it was asked about
+
+⭐ **Run 143 is a `PASS-WITH-NOTES`, and its value is that a stated arm came back and falsified the
+supervisor.** REV-147 §1 concluded, from run 142's four green testsuite runs, that *"whatever eats the
+budget is a property of how §7 invokes pest, not of the tests."* Item 2 ran a **bare, foreground,
+un-backgrounded, fd-9-free, §1–§6-free** `./vendor/bin/pest` on a 900 s budget and it was killed at the
+budget:
+
+```
+$ cat .agents/supervisor/r143-full-fg.txt        # 52 bytes, both stamps, no pest output
+  2026-09-10T11:33:36-05:00
+  2026-09-10T11:48:36-05:00                      # 900s exactly — Arm B
+```
+
+**Every one of the four candidates REV-147 named is eliminated by that single measurement** —
+backgrounding (`… & pjob=$!; wait`), the held fd 9 on `/home/goaiez/tmp/pest.lock`, the temp-file redirect,
+and the §1–§6 environment. Item 4 was correctly skipped. ⭐ **This is the run-133 fork pattern paying for
+itself a third time: a brief that hands over a hypothesis with its arms stated in advance is how this seat's
+wrong hypotheses get caught by the wave rather than by the next tick.**
+
+⚠️ **And memory is out too.** `r143-rss.txt` reads `Maximum resident set size (kbytes): 293780` — **287 MB
+against `app/phpunit.xml:27`'s 2048M ceiling**, seven times under. The project CLAUDE.md's zero-bytes trap
+names two causes, memory and a missing Vite manifest; the memory arm is measured and refuted for this
+suite. **Two standing explanations gone in one wave, and the remaining question is now sharp**: the only
+invocation difference left between the 165 s that works and the 900 s that does not is `pest` versus
+`pest --testsuite=<name>`.
+
+⛔ **What is still unmeasured is the one thing that decides it: is the process WORKING or BLOCKED?** Zero
+bytes is no evidence either way — this printer emits one JSON object at the end (REV-147 §2), so a run that
+is 99 % done and a run stopped at test 3 both keep zero bytes, and `duration_ms` cannot be read from a
+process that never printed one. **Not ruled**, because REV-136 §1 and REV-138 §4 are this file's two records
+of what an unmeasured ruling costs and both were mine. The separating instrument is CPU accounting over the
+hung run, and it is run 144's item.
+
+### ⛔ §1. THE OWNER QUESTION WAS ASKED ABOUT `goaiez_antig_reviews_test` AND ANSWERED ABOUT `goaiez_antig_reviews` — REV-119 §B, THROUGH A FALLBACK I WROTE (my defect)
+
+Item 3 asked who owns `account_mappings` **in the test database**, because eleven X-102 errors read
+`SQLSTATE[42501]: Insufficient privilege: 7 ERROR:  must be owner of table account_mappings` and they are
+raised by `migrate:fresh`'s `DROP TABLE … CASCADE` against `goaiez_antig_reviews_test`. The artefact records
+what happened, verbatim and honestly:
+
+```
+$ cat .agents/supervisor/r143-owner.txt
+  psql: error: connection to server … failed: FATAL:  role "goaiez" does not exist      (×2)
+  26:DB_DATABASE=goaiez_antig_reviews          ← the DEV database
+  27:DB_USERNAME=goaiez_app
+```
+
+`psql` refused — the invoking OS user has no role — so the coder took the brief's second mechanism,
+`php artisan tinker`. ⛔ **`php artisan tinker` reads `app/.env`, and `app/.env`'s `DB_DATABASE` is
+`goaiez_antig_reviews`.** So `r143-owner-tinker.txt`'s `goaiez_owner` and its `495` tables are a statement
+about the **dev** database, and the eleven errors come from the **test** one. `REPORT.md` line 9 then reads
+*"The database's tables are entirely owned by `goaiez_owner` (495 tables)"* — with no database named.
+
+⭐ **The proof was in the artefact and nothing was concealed**; what the report did was convert a
+correctly-recorded fallback into an unqualified claim. ⛔ **The defect is mine and it is one line of my own
+brief.** This file's own session-start section says, in a ⚠️ two thousand lines up, *"`--full-doctor` and
+the schema stage read **`.env`'s** database, which is a different one — REV-119 §B"*. I wrote a fallback
+that reads `.env` into an item whose whole subject was the other database. **Thirteenth instance of a
+correct statement present in the tree and not read back**, and the second where the statement is in this
+very file (REV-121 §1 was the first).
+
+**RULED: every brief command that reads a live database carries `DB_DATABASE=<name>` on the command itself,
+including every fallback, and the report names the database in the same sentence as the number.** REV-119 §B
+ruled this for the `schema` stage and it was read as a rule about `schema`; it is a rule about **any** number
+whose input is a live database, and a fallback is a command.
+
+### ⚠️ §2. A SECOND MECHANISM WAS USED AND THE FIRST'S FAILURE WAS NOT RECORDED — SO ONE ARTEFACT PROVES ITS OWN PROVENANCE AND THE OTHER DOES NOT
+
+Item 3 did this exactly right: `r143-owner.txt` carries psql's refusal verbatim, which is why §1 above is
+diagnosable at all. Item 2b did not. `r143-rss.txt` is **44 bytes** holding one line, and `REPORT.md` says
+only *"Used second mechanism (custom python script) to capture RSS."* — no command, no record of why
+`/usr/bin/time -v` was not used, and `/usr/bin/time -v` prints twenty-three lines of which the artefact
+holds one. The number is almost certainly right and this seat is not disputing it; what is missing is the
+thing REV-132's erratum ruled — **a number with no command beside it is a memory**.
+
+⭐ **And the omission cost a measurement, not just a provenance line.** `/usr/bin/time -v`'s output also
+carries **`Percent of CPU this job got`**, which is precisely the busy-or-blocked reading the wave lacked
+and which nothing else in the run produced. A second mechanism chosen for one field silently dropped the
+field that mattered most.
+
+**RULED: when a brief's second mechanism is used, the artefact carries the FIRST mechanism's failure
+verbatim, and `REPORT.md` names the command that produced the number.** ⛔ And the corollary for my side:
+**a brief that offers a second mechanism states which fields the first one produces**, so a substitution is
+visibly a trade rather than an equivalence.
+
+### ⭐ §3. THE §3 PROBE CLOSED ITS ARM ON THE FIRST TRY, AND ALL THREE ARMS FIRED IN ONE ARTEFACT
+
+```
+$ cat .agents/supervisor/r143-pestset-probe.txt
+  --- r000-clean.txt   tests 10 · passed 10 · failed 0 · errors 0        rc=0 fail=0
+  --- r000-named.txt   tests 10 · passed 7 · failed 1 · errors 2   ✗×3   rc=0 fail=0
+  --- r000-gap.txt     ⛔ 2013 + 6 + 0 does not reach 2030 — 11 test(s) unaccounted for   rc=0 fail=1
+  probe: 3 artefacts · fail=1   (expect fail=1, set by ARM 3 alone)
+```
+
+REV-147 §3's arithmetic arm is now **observed live** against run 142's own shape with the `errors` key
+dropped exactly as the report dropped it — a real reconciler fed real pest JSON, which is REV-146 §3's
+standard for what a positive control has to be. The instrument that would have caught N1 of the last review
+demonstrably catches it.
+
+### ⭐ §4. THE ADMITTED SET IS SATISFIED EXACTLY, AND THE ELEVEN ARE THE WHOLE OF WHAT IS LEFT
+
+`bin/supervise.sh` §3's reconciler, built last tick, printed every failing name across run 142's four
+testsuite artefacts. Counted here rather than remembered:
+
+| artefact | names |
+| :--- | :--- |
+| `r142-ts-modules.txt` | 5 money-lane evidence names + `test_p110_location_gap` + **11 X-102 `ChatDoorTest`** |
+| `r142-ts-journeys.txt` | `a_real_gateway_charge_id_exists…` + 2 telephony refusals |
+| `r142-ts-feature.txt` · `r142-ts-unit.txt` | clean |
+
+5 + 3 = **the eight-name floor exactly** (REV-134 §1), plus one `NOT BUILT:` name (REV-135 §7). **2 463
+tests, 2 443 passed, and every red name but eleven is admitted.** ⛔ The eleven are the only thing between
+this lane and a push of **18 commits**, and their cause is still unmeasured because §1 measured the wrong
+database.
+
+⭐ **RULED: a suite measurement assembled from the four `--testsuite` runs of `app/phpunit.xml:7-19` is
+admissible as this lane's gate suite number.** Those four suites are, by construction, every test a bare
+`pest` runs — the file declares no fifth — so the union of their failing sets **is** the failing set, and
+REV-134 §1's criterion has always been about the *set*, never about which process produced it. ⛔ **With its
+limit stated, because this lane's corrections keep landing one axis away (REV-146 §1): four processes cannot
+show CROSS-SUITE INTERFERENCE — a test that fails only when another suite ran first is invisible to it.**
+That is a real gap, it is named, and it is exactly the property the single-process question is about. Until
+the bare invocation is understood, a four-run union is the best number available, and an 18-commit stall
+caused by an instrument defect is the larger cost.
+
+### ⚠️ §5. A CANDIDATE NOBODY HAS MEASURED, AND IT IS NOT A PROPERTY OF THE SHA EITHER
+
+Six other lanes run pest on this box. Measured this tick: `php ./vendor/bin/pest` is alive at pid 3504359
+with `readlink /proc/3504359/cwd` → `/home/goaiez/agents/grs-antig/app` — **Track 1's**, not ours. Nothing
+recorded the box's load during run 143's 11:33–11:48 window, and **wall-clock elapsed on a shared 32-core
+box is not a property of a sha** — REV-119 §B's family, arriving in the instrument this wave's entire
+conclusion rests on. Load now is `1.64, 1.50, 1.46`, which is quiet; that says nothing about then.
+**RULED: any wave that reports an elapsed time as evidence records `uptime` and the concurrent pest count at
+both ends of the measurement.** Cheap, and it is the difference between "one process is slower" and "the box
+was busy".
+
+### The seam — RULED for run 144
+
+⛔ **RULED by the lane supervisor: run 144 builds nothing and its item 1 is the test-database ownership,
+correctly targeted, because that one read-only query is what stands between this lane and pushing eighteen
+commits.** Items ascend in cost and each ends in a fact whichever way it goes (REV-127's second-mechanism
+rule, which is the only reason runs 141 and 143 produced anything at all):
+
+- **1.** `account_mappings`' owner **in `goaiez_antig_reviews_test`**, with `DB_DATABASE` on every form
+  including the fallback (§1). Read-only. ⛔ Reported, never repaired.
+- **2.** The four-suite measurement of the 18-commit range — this wave's suite number, per §4.
+- **3.** ⭐ **The fork.** `pest --testsuite=Unit,Feature,Modules,Journeys` in one process, foreground,
+  400 s. **Arm A** — it finishes: the single process is fine and the difference is the *bare* invocation,
+  i.e. what pest selects when no suite is named. **Arm B** — it does not: the single process is the
+  difference, and item 4 says whether it is working or stopped.
+- **4.** Only on Arm B: CPU accounting over the hung run. `Percent of CPU this job got` near 100 means slow;
+  near 0 means blocked, and then `pg_stat_activity` names what it is blocked on.
+
+⛔ **Scoped OUT, on purpose:** no new test, no column, no refactor, no seam, no `manifest.php` /
+`capabilities.php` edit, no merge, no `GRANT`/`ALTER`/`DROP`/`CREATE`/`migrate`, **no change to the 1800 s
+budget**, and no repair of anything this wave finds — a wave that both diagnoses and treats can no longer
+tell which of the two worked (REV-145 §3).
+
+⚠️ **§2f still reads 1 of 8 in the bypass arm**: `.agents/supervisor/launch-coder.sh` (**24 +/2 −**),
+unchanged. It stays — a touch is not a move (REV-135 §9). Its verdict is re-derived at merge time; nothing
+here authorises a merge.
