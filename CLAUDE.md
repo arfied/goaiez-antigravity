@@ -8663,6 +8663,93 @@ Watch for: <the trap that applies, by name>
   Board re-measured this tick: proposals **13** · `app/app/Modules/` **0** · `CLOSED:` **5**. Suite at
   `dc420ad1`: `tests 2449 · passed 2441 · assertions 10800 · failed 6 · errors 2`, the standing **eight** by
   identity. Re-run every grep; never inherit one.
+- ⭐⭐ **Grade a test file's changes by its METHOD NAMES, not by its hunks — a rename-plus-add and a weakening
+  render identically in `git diff`.** Wave 169's diff shows `assertNull($lead->consent_logged_at)` becoming
+  `assertNotNull(...)`, which reads as the standing-assertion edit every brief forbids. It is not: the wave
+  **added** a new method carrying the original name, the original post and both original assertions verbatim,
+  and **renamed** the original to `…_when_consented` with a fixture that sets `'consent' => true`, under
+  which `ChatCaptureAction.php:62` writes `now()` and `assertNotNull` is the only correct assertion. Git pairs
+  the two methods by position and shows one modified. **The check is `git show <sha>:<file> | grep -n "public
+  function test"` against the same grep on the tip** — a name that survives with its assertions intact was not
+  weakened, whatever the hunk says. Its mirror is the reason to keep looking: a wave that *renames* a method
+  and keeps the name free for a new one can also quietly move assertions between them, and only the per-method
+  read sees either.
+- ⚠️⚠️ **A sentence-level correction binds what the wave WRITES, not only what it inherited — and naming one
+  occurrence in a brief has scoped the fix to that occurrence.** Wave 169 was sent to settle *"This test proves
+  the HTTP path protects the action from receiving whitespace."*; it left that sentence standing on its own
+  method and **asserted it freshly** in the new method's docblock forty lines above, in the same commit, so
+  `grep -c` on the file went from 1 to **2**. Measured: with `'consent' => true` the consent gate no longer
+  fires, leaving the global `TrimStrings`+`ConvertEmptyStringsToNull` (`Middleware.php:461-462`, nothing
+  excepted in `app/bootstrap/app.php`) and the action's own `:34` trim — and **the middleware always fires, so
+  `:34` can never change the outcome**, which makes the word *proves* wrong about which layer protected
+  anything. Third recurrence of tick 244/246 (*a wave that fixes a defect is the likeliest to ship a new
+  instance of it*), after wave 168's per-site item stopping at its file's edge. ⛔ **The brief-side fix is one
+  clause — the ban travels to anything written this wave — plus a `grep -c` of the sentence as a report field,
+  so the wave checks its own count before it finishes.** PASS-WITH-NOTES on the tick-278 precedent: the
+  finding survives the clause being fixed, a docblock corrects forward by rewriting itself, and nothing left
+  the board.
+- ⚠️ **Ask which mutation FAMILY a "no mutation can redden this" claim quantifies over — the general form is
+  almost never true and the narrow one usually is.** Wave 169's docblock says *"No mutation in the module can
+  redden this assertion"*; `ChatCaptureController.php:58` is `message: is_string($message) ? $message : null`,
+  and a **value-family** mutation there (the family credited at wave 138d and wave 162) substitutes a
+  non-empty string and reddens it at radius ≥ 1 from a site provably in the module. The true claim is
+  narrower: *no mutation of the NORMALISATION can redden it, because the module's own trim is
+  unreachable-as-effective over HTTP.* Graded by tick 286 — the conclusion survives without the clause — so
+  it is a NOTE and the correction is one word.
+- ⚠️⚠️ **`no mutation can redden this` is a reason to RUN the mutation, not a reason to skip it, whenever the
+  two outcomes mean different things.** Wave 169 declined its mutation item on that sentence. That reasoning
+  answers *which mutation reddens this test* and never asks *which mutation discriminates the layer*, and one
+  deletion does both at once here: `X102Test.php:547-549` is a **direct** call to `ChatCaptureAction::handle()`
+  with `message: "   \n\t "` and `consent: true` (wave 168's), so it reaches the action's trim with a real
+  whitespace string where the HTTP test cannot — one patch, two files' worth of evidence, and the run says on
+  its own terms both whether that line is live for direct callers and whether it is what satisfies the HTTP
+  assertion. ⛔ A survival is evidence only when the site is readable in `git diff` rather than reconstructed
+  from a log (ticks 205, 212), which a kept generated patch makes true, so the tick-185 red flag does not
+  reach it.
+- ⚠️⚠️ **`grep -c ""` matches EVERY line, so a self-check built on an empty quotation returns the file's own
+  LENGTH and can never report failure.** Wave 169's `GATE.VERDICT` came back **empty** — the generator's
+  pattern was `grep "Pest\s*.*\s*tests"`, and BRE has no `\s` — and the next field, `grep -c "$(that empty
+  output)"`, counted all 128 lines of the gate log and printed `128` where a reader expects `1`. The tick-289
+  lesson (*a `grep -c` beside a quotation is a control against fabrication and never against drift*) one level
+  down, with an **empty** quotation as the mechanism, and it is a control structurally incapable of failing.
+  ⛔ Half of it is this column's: the template said *"the verdict line, grepped out of that file"* — a
+  description — where tick 289's own ruling was *a `grep` whose pattern no other line can match*. **RULED at
+  tick 302, rewritten rather than clause-patched (tick 245): `VERDICT` is `tail -1 <gatelog>` — a POSITION,
+  not a pattern — and `CHECK` is deleted, because a field with no pattern has nothing to drift onto.** Sixth
+  recurrence of *a grep PATTERN is a claim about the file it greps* after ticks 285, 289, 294 and waves 158
+  and 165. ⭐ Two smaller members of the same family, both mine: `HELD : no` sat directly under its own
+  `OUTPUT : 1` (deleted — an `OUTPUT` number is its own answer, tick 299), and `STATE-COMMIT` hardcoded `HEAD`
+  on a wave whose last commit was the pint fix, so it printed a commit carrying no state files (**name it as
+  `git log -1 --format=%H -- .agents/state/JOURNAL.md`**, a command that finds it).
+- ⚠️ **The tick-283 *artifact that agrees* escape reaches a field that asks whether a SENTENCE is true.** Wave
+  169's `Q2` named a command whose output shows whether a sentence is true and answered with `grep -c "<the
+  sentence>"` on the file the wave had just written that sentence into — output `1`, over a claim the note
+  above shows is over-broad. **Ask for a command whose output would be DIFFERENT if the sentence were false,
+  and rule that the answering artifact may not be one this wave wrote the claim into.**
+- ⚠️ **A clause that leaves a `BUILD PROPOSAL` row into the LEDGER has left the backlog, because no tick reads
+  `JOURNAL.md` as one.** Wave 169 verdicted all three clauses of the widget row identically (*"unbuildable
+  here because the widget does not exist in this tree"*) and removed exactly one — `logged consent`, whose
+  backend half wave 167 built — recording where it went in a ledger row, which is what tick 295 asks for. What
+  is now on no row is the **widget-side capture** of that consent. Measured and deliberately **not briefed**:
+  it blocks on the same absent `app/public/goaiez-chat.js` as `pre-chat notice`, so nothing is actionable
+  either way and a wave for it would be manufactured (tick 191). Recorded so a future tick meets the
+  measurement rather than the gap.
+- **Backlog at tick 302 — wave 170 is the discriminating measurement on the consented door test, and it
+  writes no production code.** RULED (the two notes above), and re-derived this tick rather than inherited
+  (tick 235): both docblocks' *proves* and the wave's own `Finding:` rest on a claim nobody has measured, over
+  a **public unauthenticated door**, and a sentence in a test file outlives every `REPORT.md`. The evidence
+  and the sentence are **one thread** (tick 285), so the docblocks are the *output* of the measurement rather
+  than a second item — not a correction beside a build (ticks 218–223). ⛔ This column names no site, no patch
+  and no expected result; the two methods, `ChatCaptureAction.php:19-62`, `ChatCaptureController.php:50-61`,
+  the middleware lines and `X102Test.php:547-549` go over **printed with a conclusion attached to none** (the
+  form is 24-for-24 and has corrected this column five times on X-102's seams alone), no numbers are published
+  to a mutating wave (tick 208), and no clause explains what one possible outcome would mean (tick 293).
+  ⛔ No `⛔ REFUSED`, no `UNRESOLVED` (X-102 is one of the thirteen, nothing external is missing); ⛔ never
+  edit, weaken or delete a standing assertion. Board re-measured this tick: proposals **13** ·
+  `app/app/Modules/` **0** · `CLOSED:` **5**. Suite at `c9620ad2`: `tests 2450 · passed 2442 ·
+  assertions 10805 · failed 6 · errors 2`, the standing **eight** by identity, `+1 test · +1 passed ·
+  +5 assertions` against tick 301 — one new five-assertion test and no other diff shape gives that triple.
+  Re-run every grep; never inherit one.
 
 ## Style
 
