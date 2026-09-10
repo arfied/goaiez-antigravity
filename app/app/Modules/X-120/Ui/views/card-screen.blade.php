@@ -58,7 +58,7 @@
                 <x-ui.submit target="present" busy="Checking…">Check this card</x-ui.submit>
             </form>
         @else
-            <x-ui.button wire:click="addCard" wire:loading.attr="disabled" wire:target="addCard">Add a card</x-ui.button>
+            <x-ui.button wire:click="addCard">Add a card</x-ui.button>
         @endif
     </div>
 </div>
