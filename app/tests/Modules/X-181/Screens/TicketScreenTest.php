@@ -31,14 +31,17 @@ class TicketScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $review = ReviewRequest::factory()->create([
+        $review = ReviewRequest::create([
             'business_id' => $biz->id,
             'rating' => 4,
+            'platform' => 'google',
         ]);
 
-        $ticket = QaTicket::factory()->create([
+        $ticket = QaTicket::create([
             'business_id' => $biz->id,
             'review_request_id' => $review->id,
+            'subject' => 'Subject',
+            'status' => 'open',
         ]);
 
         Livewire::test(Ticket::class, ['ticketId' => $ticket->id])
