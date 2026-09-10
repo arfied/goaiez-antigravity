@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-10T00:51:22",
+ "updated": "2026-09-10T01:24:51",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1884,6 +1884,12 @@
    "module": "X-01",
    "chose": "integrity Rethrow invariant-violation InvalidArgumentExceptions in ingestMessage rather than silently swallowing them",
    "at": "2026-09-10T00:51:22",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-01",
+   "chose": "boundary Reverted 79e47191 (removed by 8a5fbdf5) which recorded a decision at 2026-09-10T00:47:05 reading 'X-01 \u2014 boundary Move ConversationThreads::recordInbound inside Tenancy::actingAs to preserve the tenant context established for un-tenanted callers like webhooks'. The RLS invariant established: people carries ENABLE + FORCE ROW LEVEL SECURITY with a policy that has both a USING and a matching WITH CHECK, and the Person find-or-create sits in no actingAs closure \u2014 so an absent or mismatched ambient tenant is refused eleven lines before recordInbound is reached.",
+   "at": "2026-09-10T01:24:51",
    "ruling": "R245"
   }
  ],
