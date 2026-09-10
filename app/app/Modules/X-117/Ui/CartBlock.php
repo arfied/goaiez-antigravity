@@ -78,7 +78,7 @@ class CartBlock extends Component
         abort_unless(Tenancy::check(), 403);
         $businessId = Tenancy::idOrFail();
 
-        $sellables = Sellable::where('business_id', $businessId)->orderBy('name')->get();
+        $sellables = Sellable::where('business_id', $businessId)->orderBy('name')->orderBy('id')->get();
         $cart = Cart::where('business_id', $businessId)->where('session_token', $this->sessionToken)->first();
         $expired = $cart !== null && $cart->expires_at->isPast();
 
