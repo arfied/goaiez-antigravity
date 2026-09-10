@@ -10905,3 +10905,107 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     precedent: **a member whose harm rests on an unmeasured mechanism is recorded, never briefed.** The
     `<select>` beside it pre-fills correctly (`@selected`, 368b) and the `<input>` does not. → TRACK 1
     ACTION 13's list.
+370. **⭐⭐ Ten money screens tell every tenant they are "not built yet", one of them in a TRUNCATED
+    fragment of the frozen plan's markdown — and the CHECK that counts this defect names TRACK 1 as
+    the repairer in its own failure message (RULED by the lane supervisor 2026-09-10 14:0x; filed
+    TRACK 1 ACTION 19).** Ruling 152's *a sweep hit is a coordinate, not a boundary* paid for itself a
+    sixth time: MONEY-188's own mutation-proof render carried a sentence at the top of the page that no
+    census in this lane had ever read — `<p>Sample — this screen is planned in … and not built yet</p>`.
+    Measured: `app/resources/views/components/surface/sample-state.blade.php` is three lines,
+    `<p>Sample — this screen is planned in {{ $module }} and not built yet</p>`, **unconditional** —
+    no `@if`, no flag, no sample mode — so it renders to **every tenant on every load**. And
+    `grep -rn "sample-state" app/app/Modules --include=*.blade.php` filtered to the lane's eight ids
+    returns **TEN** call sites: C-Billing 4, X-173 3, X-201 2, X-120 1.
+    ⭐⭐ **What the `module=` attribute actually carries is not a module name.**
+    `X-120/Ui/views/card-screen.blade.php:2` is `module="⭐⭐⭐ **[AMENDED T677"` — a **truncated
+    markdown fragment**, mid-token, with a dangling `**[` — so an owner typing a card number on the
+    vault screen reads *"Sample — this screen is planned in ⭐⭐⭐ **[AMENDED T677 and not built yet"*.
+    That is `ModuleScaffoldCommand`'s field-parser truncation, whose own header ruling 29 records
+    **three** prior instances (`@emits` cut by a stray backtick at `GOAIEZ-MASTER-PLAN.md:26670`,
+    `@agent_reachable`, `ceiling:`); this is the **fourth**. X-201's two carry
+    `module="receives \`chargeback.received\` from X-198 for **any gateway**"` — an internal module id
+    in owner copy, which is the 20:01 R245 prohibition rulings 89, 96 and 124 spent three waves
+    removing from this lane's prose, arriving in a generated attribute. X-173's three read
+    `module="two-way sync to Xero / QuickBooks / Sage"` — prose, not an id, but at least honest words.
+    ⭐ **The "not built yet" half is the larger one.** All ten screens ARE built: every one is routed,
+    gated, renders live model data and carries a real GET test (ruling 151(4) measured 24 screens with
+    `assertOk()`), and this lane has spent rulings 43 through 369 making their every sentence true. The
+    line is a **shell marker** — ruling 54 measured that at the `12447593` merge main's side of money's
+    ten `Ui/` views was *"one generated `<x-surface.sample-state …/>` line each"* against money's 619
+    lines of built work — so it marks a shell that stopped being a shell a hundred waves ago, and
+    ruling 21's `shells remaining: N` can never fall for these ten while it stands.
+    ⛔⛔ **It is not money's to fix, and this is MEASURED rather than argued — the instrument says so.**
+    `app/tests/Feature/Architecture/SampleStateModuleTest.php:3` is
+    `test('every <x-surface.sample-state> names a real module')`, and `:44`'s pin message reads
+    *"219 call sites use a prose description instead of a real module ID (e.g., 'planned in ⭐⭐⭐
+    **IT IS THE WIZARD...'). A red means the number moved: up when the generator emits another, **down
+    when Track 1 repairs them**, and 'lower the number and record it' is the honest response to the
+    second."* So the defect is already **counted (`$illegal` pinned at 210), exemplified with a
+    fragment of exactly money's own worst shape, and assigned.** ⭐ This is ruling 326's strongest form
+    a second time — *when a census's positive control lands on a CHECKER'S OWN RULE TEXT the strike is
+    stronger than the zero that prompted it* — and it goes one step further, because the checker also
+    names the owner of the repair and the honest response.
+    ⛔ **And removing the ten lines is refused by the same CHECK:** `:42` is
+    `expect($total)->toBe(235)`, a count of every call site in `app/app/Modules/**/*.blade.php`, so
+    deleting money's ten drops it to 225 and reddens a CHECK this lane may not edit (the One Rule;
+    rulings 166, 176, 181 — money is one-sided on those files and main's copies win at every merge).
+    ⛔ Editing the attribute in place is refused too, for a different and independent reason: the value
+    is **generated** by Track 1's `surfaces:generate` from the frozen plan (rulings 20, 29), so a hand
+    fix in money's blade is overwritten the next time it runs — churn that does not survive, which is
+    §298's *an annotation asserted to make a check pass* in its most futile form. ⛔ Not by making the
+    component conditional: `resources/views` is Track 2's (rulings 5, 21).
+    **RULED: recorded in full, fixed nowhere in this lane, filed TRACK 1 ACTION 19** with the two
+    sharpest members named — X-120's truncated fragment (the parser defect) and X-201's `X-198` (the id
+    defect) — because the durable fix is in the generator's field parser or the plan's markup and both
+    are Track 1's and the owner's.
+    ⚠️ **The generalisable half is where the sentence was hiding.** Rulings 79 and 89 both met this
+    line and both wrote *"the generated `<x-surface.sample-state>` line at `:2` stays byte-identical"* —
+    correct as an instruction to a wave editing neighbouring prose, and it had the side effect of making
+    every subsequent prose census **skip line 2 of ten blades**. ⭐⭐ **A "do not touch this" note is
+    read by the next census as "do not read this", so a line exempted from EDITING is exempted from
+    MEASUREMENT too** — and this one exempted the single most-read sentence on ten screens, sitting
+    above every empty state, heading, pill and button those censuses did read. **An exemption names what
+    may not be CHANGED; it never excuses not knowing what the line SAYS.**
+
+371. **⭐⭐ Ruling 142's attribute census missed `label=`, its 22 members are measured, and ZERO are
+    buildable — the gap was in the census's own population definition (measured by the lane supervisor
+    2026-09-10 14:0x; rulings 64, 95, 100, 111, 294, 298, 324, 327).** Ruling 137 ruled that **an
+    attribute carrying WORDS belongs with the prose**, and ruling 142 ran the widened sweep —
+    *"30 lines and ZERO findings: 17 `placeholder=` are field hints carrying no claim, 13 `busy=` each
+    name the act their own button names, and there is no `title=`, `alt=` or `aria-label=` anywhere in
+    the lane"* — and STRUCK it. **`label=` is in none of those four buckets and was never counted.**
+    Its members are the `<x-ui.skeleton label="…">` indicators, which state in the present tense what
+    the app is doing while a request is in flight — a claim of exactly the class rulings 87, 97, 105,
+    134 and 135 kept finding elsewhere. Instrument, quoted (ruling 300):
+    `grep -rn 'label="' app/app/Modules --include=*.blade.php`, filtered to the eight ids and with
+    `:label=` and `status-pill` excluded (those are ruling 122/129–132's already-closed dynamic-pill
+    population) → **22 members across 22 screens**.
+    **Every one is measured TRUE**, because each names a read of **this app's own database**, which its
+    component's `render()` genuinely performs: X-199's five (`Reading the invoices…`,
+    `Reading what is still owed…`, `Reading this week's declines…`, `Reading today's payments…`,
+    `Reading the terms…`), C-Billing's four, X-173's three, X-211's four, X-198's two, X-201's two and
+    X-117's two. ⚠️ **Two were read a second time before being struck**, because their verbs are active
+    rather than perceptual and this lane has been caught by exactly that before:
+    `X-211/collections-package-preview.blade.php:23`'s *"Building the bundle…"* — ruling 44 measured
+    *"nothing zips anything"* and dropped the fabricated `bundle_url`, but the **package row** it names
+    is real (`ArCollectionsPackage` with its `contents`, which that blade renders), so the label names
+    the thing that is built and not the zip that is not; and
+    `X-173/connection-mapping.blade.php:18`'s *"Reading the ledger…"* against ruling 81's measurement
+    that `grep -rn 'Http::\|curl' app/app/Modules/X-173` is **empty** — it reads
+    `accounting_connections` and `account_mappings` from this app's own database, which is the ledger
+    *connection* screen's data, and the screen's own header, empty state and waiting sentence all now
+    say plainly that no ledger is connected (rulings 73a, 96, 369). True-but-terse is ruling 76's
+    grade, ⛔ never a wave. ⛔ Not to be re-raised.
+    ⭐ **This is ruling 327's outcome shape a fourth time — a population measured NON-EMPTY that yields
+    ZERO buildable fixes is a legitimate result and is the more useful of the two to write down**,
+    because an empty census tells a later tick *nothing is there* while a classified one tells it *what
+    is there and why each member stays.*
+    ⚠️ **The generalisable half is rulings 265/298's a fourth time, aimed at an attribute list:**
+    ruling 142 defined its population by **enumerating the attribute names it already knew**
+    (`placeholder`, `busy`, `title`, `alt`, `aria-label`) rather than by the predicate ruling 137
+    actually stated — *any attribute whose value is rendered to an owner*. **A census that lists its
+    members instead of stating its predicate is a filter wearing a census's name**, and it closes
+    silently, because the members it never named cannot appear in its own count. A census states the
+    PREDICATE beside the count (298), and one defined by enumeration is re-run from the predicate the
+    first time a new member of the same class is met — which is how `label=` surfaced here: not from a
+    sweep, but from a mutation-proof render that happened to contain one.
