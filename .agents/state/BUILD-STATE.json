@@ -1499,6 +1499,10 @@
   {
    "at": "2026-09-10T14:39:09",
    "note": "run 148: tests 2465 -> 2466, FAILED 7 unchanged, errors 13 -> 14; test_loss_alerts_confirm_removal_refuses_cross_tenant went red as expected."
+  },
+  {
+   "at": "2026-09-10T15:01:22",
+   "note": "run 149: errors 14 -> 13; the test had been asserting the exception text that run 148 stopped rendering."
   }
  ],
  "resolved": [

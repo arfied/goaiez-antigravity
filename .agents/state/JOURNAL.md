@@ -839,3 +839,4 @@
 - `2026-09-10T13:49:03` note: run 146: proved merger fix works (implicit in supervise.sh); added google_review_id validation to PrepareRemovalRequestAction and reseated tests
 - `2026-09-10T14:18:19` note: run 147: tests 2463 -> 2465; schema read restored to 14 violations after connection slot exhaustion
 - `2026-09-10T14:39:09` note: run 148: tests 2465 -> 2466, FAILED 7 unchanged, errors 13 -> 14; test_loss_alerts_confirm_removal_refuses_cross_tenant went red as expected.
+- `2026-09-10T15:01:22` note: run 149: errors 14 -> 13; the test had been asserting the exception text that run 148 stopped rendering.
