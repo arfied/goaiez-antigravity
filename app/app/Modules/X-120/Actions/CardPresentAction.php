@@ -28,6 +28,9 @@ final class CardPresentAction
         if ($expMonth < 1 || $expMonth > 12) {
             throw new CardExpiredException('The expiry month is not a month; nothing was stored.');
         }
+        if ($expYear < 1000) {
+            throw new CardExpiredException(sprintf('The expiry year needs all four digits, not %d; nothing was stored.', $expYear));
+        }
         if (Carbon::createFromDate($expYear, $expMonth, 1)->endOfMonth()->isPast()) {
             throw new CardExpiredException(sprintf('That card expired %02d/%d; an expired card is never stored.', $expMonth, $expYear));
         }
