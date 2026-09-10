@@ -17110,3 +17110,199 @@ the one that excludes in all four surfaces at once (198). The whole census was r
 **4 · 2 · 0 · 2** byte-identical, which is coherent because main's one new commit is a merge of **this lane**,
 already excluded by `^origin/track/site`. Half 1's `--no-merges` form prints **nothing**: all four members are
 merges of main, **no violating partition**.
+
+## ⛔ TICK 320's WITNESS IS **INVERTED** FOR A REVERT-MUTATION — a mutation that RESTORES a committed prior state produces an EMPTY diff *because* it was applied, and my brief hung a STOP on the diff being non-empty (tick 328)
+
+Tick 320 ruled *every mutate-and-test item pastes `git diff -- <file>` and a presence count BEFORE the test
+runs, and a wave stops if the diff is empty*. It was written for a mutation that **adds** something HEAD does
+not have, where an empty diff really does mean the edit never landed. SITE-199's falsifier 1 is the other
+shape — tick 287's case, a mutation that **reverts a committed fix** — and there the arithmetic runs backwards:
+
+| | `git diff -- <file>` | `grep -c 'is_string' <file>` |
+| :-- | :-- | --: |
+| state 2/4 — the fix in place | **non-empty** (uncommitted at the time) or empty (after commit) | **1** |
+| state 3 — the mutation applied | ⛔ **EMPTY**, because reverting returns the file to HEAD | **0** |
+
+So for a revert-mutation the empty diff **is** the witness that the mutation landed, and my stop fired on the
+one state it was supposed to certify. The coder measured it, named the mechanism in one sentence under item 4
+at the moment it fired, and **proceeded** — tick 324's precedent exactly (*a compliant computation is not a
+measurement; proceeding past an unsatisfiable stop, disclosed at the point it fired, is the right act*), and
+nothing was let through: all four states ran and the presence count discriminated all four.
+
+⭐ **The general rule was already written one tick after 320 and I did not apply it.** Tick 324: **a witness is
+validated by PREDICTING BOTH ITS VALUES and checking they DIFFER.** `git diff` across states 2 and 3 of a
+revert-mutation is *empty* and *empty* once the fix is committed, or *non-empty* and *empty* before — neither
+pair is stable, and no brief can state it without knowing whether the fix is committed yet. The presence count
+is stable in both worlds (1 and 0) and was in the same item. ⛔ **`git diff` is a witness only for an ADDITIVE
+mutation. For a revert-mutation the presence count is the ONLY witness, and no stop may be hung on the diff.**
+
+Seventh wave nearly truncated by a stop of my own making (173 an invented method name, 174 a drifted line
+number, 176 a stop keyed to a prediction, 185 a miscounted symbol, 193 the working tree, 195 a substring
+witness that could not change, 199 this) — and the pattern across all seven is unchanged: **every one fired on
+something the ruling did not depend on.** ⚠️ This is the second in three ticks where the defective instrument
+is the **witness** tick 320 introduced, after tick 324 caught its *pattern*; an instrument invented to make a
+falsifier readable has now been qualified twice on early use, which is tick 323's law — **an instrument's
+first firings are a measurement of the instrument, not only of its subject.**
+
+## ⛔ `ChatDoorTest` IS THE ONLY FILE IN THE TREE USING STOCK `RefreshDatabase`, AND ITS ELEVEN GREENS BELONG TO ANOTHER TEST (tick 328)
+
+The report disclosed, under item 12, that it could not use `RefreshDatabase` for its new test because it threw
+`SQLSTATE[42501]`. Measured from **four independent directions**, none of them the report:
+
+1. ⭐ **The project wrote a trait specifically to replace it, and says so twice.**
+   `app/tests/Concerns/RefreshesTenantDatabase.php:14-18` — *"Laravel's own RefreshDatabase runs `migrate:fresh`
+   on the **default** connection. Here the default connection is the runtime role — a deliberately non-owner
+   role that cannot create tables … **So stock RefreshDatabase cannot work in this project**: it would fail on
+   the first CREATE TABLE."* `app/tests/Pest.php:76-79` repeats it and binds the replacement by directory.
+   The trait's `migrateFreshUsing()` passes `'--database' => 'pgsql_migrate'`, the owner role; stock does not.
+2. ⭐ **Vendor source**: `RefreshDatabase.php:83` guards `migrateDatabases()` on the **process-global**
+   `RefreshDatabaseState::$migrated`. So a stock-trait file that runs *after* any `RefreshesTenantDatabase`
+   test skips `migrate:fresh` entirely and merely begins a transaction — and passes.
+3. ⭐ **A live isolation run**, left behind as `app/door_output.txt`: `tests 11, passed 0, **errors 11**`, every
+   one `SQLSTATE[42501]: Insufficient privilege: must be owner of table account_mappings (Connection: pgsql …
+   SQL: drop table … cascade)`. That is DDL on the runtime role, i.e. exactly the failure the docblock names.
+4. **§7**: none of those eleven appears in the failure list, so in the full suite they pass.
+
+⇒ **`ChatDoorTest`'s eleven tests pass only because something else migrated first.** Run the file alone — or
+first in a shard — and all eleven error. `grep -rlc 'Illuminate\Foundation\Testing\RefreshDatabase'
+app/tests/Modules/` returns **exactly one file**, and it is this one; four sibling files in this lane declare
+`RefreshesTenantDatabase` and a dozen more across the tree declare `DatabaseTransactions`.
+
+⭐ **A new member of the fake-green family, and its shape is unlike the seven catalogued.** Those are all *a
+test claiming more than it proves*. This is **a test whose PASS belongs to a different test** — nothing about
+its body, its assertions, its diff or any count is wrong, and the green is a property of the **run's
+composition**. Same invisibility class as tick 306 (*check the fixture makes the asserted-absent thing
+possible*) read one level out: there the fixture could not reach the code, here the file cannot reach its own
+setup without a stranger's help.
+
+⛔ **It is this lane's to fix.** X-102 is ours under ruling 5; the file is sixty's build arrived through tick
+317's take, and tick 195 is explicit — *after that merge this lane reviews X-137/X-102 as its own and opens any
+fix as a site wave*. Half 1's sixty/X-102 partition has **drained into main**, so no sibling is writing there
+and there is no duplicate-cleanup risk (165, 182, 211). → **SITE-200.**
+
+⚠️ **And the fix's own consequence is grounded rather than guessed** (314): `RefreshDatabase::refreshDatabase()`
+calls `afterRefreshingDatabase()` **unconditionally**, outside the `$migrated` guard, and
+`RefreshesTenantDatabase::afterRefreshingDatabase()` runs `Tenancy::forget()`. So the swap adds a per-test
+tenant reset to eleven tests that currently inherit whatever the session holds — which the trait's own docblock
+says is a test that *"would pass for the wrong reason"*. If one reddens, **that is the finding: repair the
+fixture, never revert the trait** (234, 242). Per tick 304 it carries its refuting instruction and **no stop**.
+
+## ⚠️ Twelve untracked scratch files at 22:0x — §1 reads 13 paths and §2's whole signal is *one known `⛔`* (tick 328)
+
+`app/doctor1.txt` `app/doctor2.txt` `app/door_output.txt` `app/pest_output.txt` `…2` `…3` `…4` `…5` `…6` `…7`
+`…8` and a root `gate.txt`. Legitimate working captures, none committed. ⛔ But §1 now prints **13 uncommitted
+paths** and §2's entire reading is *one known `⛔`, and any second is a real BLOCK* (196, 207) — the section
+that reports a forbidden-path violation is the one made hardest to read (162, 253, 288). `rm` is refused to
+this seat and permitted to the coder (261), so it is a numbered item, **by exact name and never a glob** (288).
+
+⭐ One of them earned its keep first: `door_output.txt` **is** state 1 of SITE-200's falsifier, measured and on
+disk before the wave that will need it — which is why the brief quotes it as the state to reproduce rather than
+asking the wave to discover it.
+
+## ✅ Standing checks that fired on their HEALTHY branches (tick 328)
+
+Record them, or a rule that only ever fires on its failing branch reads as an unfired precaution (221).
+
+- **Tick 326's grade-the-RECORD-never-the-summary, first firing since it was written.** The `state.py`
+  JOURNAL entry is thorough and correct — it names the mechanism, the reason the remedy cannot go in the
+  action, and five refusals. ⚠️ Its clause *"the pageContext ternary"* garbles `ChatStartController:29`'s
+  `$pixelSessionToken ? … : null`; ⛔ not re-filed, because `state.py` has no withdraw (210) and by tick 259's
+  discriminator a careful reader of the record alone still reaches the right conclusion.
+- **Tick 290's `--ruling` correction — SEVENTEENTH consecutive clean JOURNAL entry.**
+- **Tick 308's assertion ORDER, applied by the coder without being told twice**: the persisted-token assertion
+  precedes `assertStatus(201)`, so the falsifier proves the clause that matters and the already-carried status
+  code is the half left *reasoned, not measured* (270).
+- **Tick 318's report-side hedge composition, FIFTH firing and applied unprompted** — item 10 says in as many
+  words that the earlier pest-lock line is superseded and quotes the completed §7.
+- **Tick 287's ordering**: the gate ran against a **named sha** after the final commit, so §6/§7 describe the
+  committed tree (253).
+- **Tick 245's state-commit-LAST**: `git diff --stat HEAD -- .agents/state/` is empty, so there is no orphaned
+  filing for the next brief's step 0.
+- **All four doctor checks together** — the **extrinsic** stamp equality *stated as a comparison* (305), the
+  SUM `0+50+85+3+16+207+128+3 = 492` in both report blocks and in both of mine (285), `ok` only on
+  `integrity … clean` (292), and **four of seven timings differing including all three long stages**, where
+  the nonce's weight lives (249, 311, 318).
+- **Tick 302's grading with 322's working-tree correction**: item 0's C5 was §2's `⛔` lines and fired no false
+  stop. ⚠️ Seventh consecutive wave clean through item 0 — and a run of seven is still not a trend (188, 250),
+  which item 4 demonstrated in the same wave.
+
+## ⚠️ The conservative old bound printed EIGHTEEN commits including this lane's own — tick 326's cost, measured (tick 328)
+
+Tick 326 ruled the accepting bound may err old with `git log` because the form is **conservative**: the range
+only widens, so silence over it entails silence over the narrower one. True, and the price is now measured.
+Half 1's two members are stages' merges of main; running the check at the **older** of stages' merge bounds
+(`7a75f289`) printed **eighteen** commits — `5311c6fa feat: add ChatCaptureController and tests`,
+`36d05532 test: guard message type in chat door`, and ⛔ **`073dd0a4`, this lane's own SITE-186**. At stages'
+**most recent** merge of main (`b5473856` at `57781d59`, tick 318's rule) it prints **nothing**.
+
+⛔ So 326's *"at worst, hand you extra commits to read"* understates it in one specific way: the extra commits
+include **your own merged work**, which is the single most misreadable thing that surface can print — a lane
+reading them as a sibling writing in its column would open a finding against a branch for carrying our own
+commits. Err old only when the recent bound is genuinely unknown, and **read `git branch -r --contains` on
+anything the wide bound prints** (296).
+
+## Census, doctor and §7 at tick 328
+
+**Census 2 · 1 · 0 · 2** — a **MISS** (`origin/main 7900c72e → 50470a8f`, `money 393f9221 → a8030e14`), halves
+with `--full-history` (314), `pwd` first (209), previous value read from `REVIEWS.md` and never this digest
+(301). Tick 285's drift signature **absent**: halves 1 and 2 non-zero against a pathspec-free complement of 2,
+and the *split* is the signature, never either number.
+
+⭐ **Half 1 shrank 4 → 2 and half 2 shrank 2 → 1, both attributed to the BOUND by reading the ref** (191, 225):
+main's three new first-parent commits are `merge: track/reviews`, `merge: track/money` and Track 1's notes, so
+every reviews and money member fell out of `^origin/main` — they **merged**, they were not withdrawn. Both
+surviving members are stages' merges of main and **no violating partition exists on any surface**. Complement
+unchanged at `bin/supervise.sh` and `CLAUDE.md`, both per-track never-merge — *unwatched, not uncovered* (183),
+⛔ no fourth half.
+
+⚠️ **Tick 236's MISSING-not-CONFLICTING check has NO SUBJECT this tick** and that is stated rather than left
+to be inferred: none of main's three new first-parent commits is a merge of `track/site`, so there is nothing
+for it to measure. The check is not skipped; its subject is absent.
+
+⚠️ **Paired `--stat` on both moved tips, unconditionally** (180), and only this surface will ever print these
+(190), so this note **IS** the record. **main** — `X-181/Ui` (reviews'), `X-117`/`X-199`/`X-211` Console
+evidence commands (money's), `CLAUDE.md` (Track 1's). **money** — `a8030e14`/`ef347b0e` `CLAUDE.md` and
+`ebf015cf`, its own merge of main. ⛔ Money's stat spans a merge of `main`, so tick 296's rule was applied
+before attributing a line: it lists `7900c72e`, `8ca64e81`, `abd8e416`, `1e32564c`, `18fd58ee` — **this lane's
+own commits** — plus X-01 work that is stages' under ruling 5's catch-all. `git branch -r --contains` separates
+them; without it, *"money wrote in our column"* would have been read off our own merged work. **None of money's
+own three commits touches this lane's paths.**
+
+**Cross-lane dependency query CLEAN** (240 — it exists to be READ, never to be quiet), while the paired stats
+printed two lanes' commits. **The pairing is the measurement.**
+
+**Fourth surface, both directions, against each branch's own bound and never HEAD** (173's fall test, 323's
+rise reading): `main 14 · money 16 · reviews 15 · sixty 30 · stages 41 · site 192` (HEAD **193**, the wave's
+`decided` row). **No branch below main's 14** ✓. ⚠️ **Main still carries 14 after NINE merges of `track/site`**
+— tick 264 stands; this lane's state records reach `main` only by ruling 15's cherry-pick, which has never run.
+
+**Doctor, live in this seat, twice**: stamp `20260829-0647` = `runtime_build` · `integrity clean · boundary 50 ·
+contract 85 · citation 3 · schema 16 · capability 207 · anchor 128 · journey 3` · **492**. **No stage moved.**
+
+**§7 `tests 2439 · passed 2431 · FAILED 6 · errors 2`**, reconciling `2431+6+2 = 2439` ✓ (226), ⭐
+`a_published_site_carries_all_seven` **ABSENT — J11 GREEN**, and **byte-identical to the coder's on the same
+sha** with the FAILED and error **sets** identical — so tick 255's borrow ran at a **zero delta** and its
+falsifier **fired and PASSED**, the sixth strong resolution (258, 300, 323, 325, 326, 328). Against tick 327's
+`2437 · 2429 · FAILED 6 · errors 2`: **+2 tests / +2 passed**, and the diff adds exactly two
+`public function test` and deletes none, so tick 226's arithmetic has no residue. Both intermittent **CAUSES**
+absent (Authorize.Net `E00040`, Postgres `SQLSTATE[42501] permission denied to terminate process` — 311's
+cause-keying), so the agreeing integer is *a property of which causes fired, never of the comparison* (302).
+⚠️ Five `✗ FAILURE` lines against `FAILED 6` — tick 322's display shortfall, confirmed again and not a dropped
+member.
+
+⚠️ **A THIRD `SQLSTATE[42501]` now sits in this lane's evidence, and they are three different privileges.**
+J8's intermittent is *permission denied to terminate process*; tick 328's `ChatDoorTest` is *must be owner of
+table*; and tick 322 measured the RLS refusal that made three of this lane's falsifiers unable to redden. All
+three are the same **class** — `goaiez_app` is deliberately a non-owner, non-superuser, non-BYPASSRLS role
+(tick 321's probe) — and the composition is the finding: **this database is correctly locked down, and the
+lockdown is the cause of one standing intermittent, one order-dependent test file, and one whole family of
+falsifiers that cannot go red.** ⛔ Not a defect to fix; a property to know before writing a falsifier.
+
+**Closing tip re-read — NULL**, left literally blank until the command returned (257). All nine refs identical
+to the opening table; the two movers moved *before* this tick's opening fetch. Seventeenth null against sixteen
+firings — and a null is the common result, which is exactly what makes it cheap to assume and expensive to
+assume wrongly.
+
+**Tips at the close**, the next miss's lower bound (192): `main 50470a8f` · `money a8030e14` ·
+`pricebook 74f5b79b` · `reviews a0952875` · `sixty d0439179` · `stages ea356afd` · `ui bf42fec7` ·
+`site ed74566d` (the wave's range pushed this tick).
