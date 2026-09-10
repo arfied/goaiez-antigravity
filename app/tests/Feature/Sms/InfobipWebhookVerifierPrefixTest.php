@@ -6,10 +6,13 @@ use App\Enums\CredentialEnvironment;
 use App\Services\Config\CredentialStore;
 use App\Services\Sms\InfobipWebhookVerifier;
 use Illuminate\Http\Request;
+use Tests\Concerns\RefreshesTenantDatabase;
 use Tests\TestCase;
 
 class InfobipWebhookVerifierPrefixTest extends TestCase
 {
+    use RefreshesTenantDatabase;
+
     public function test_it_verifies_prefix(): void
     {
         app(CredentialStore::class)->set(

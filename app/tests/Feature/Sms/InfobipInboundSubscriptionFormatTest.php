@@ -5,12 +5,12 @@ namespace Tests\Feature\Sms;
 use App\Enums\CredentialEnvironment;
 use App\Enums\InboundKeyword;
 use App\Services\Config\CredentialStore;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Concerns\RefreshesTenantDatabase;
 use Tests\TestCase;
 
 class InfobipInboundSubscriptionFormatTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshesTenantDatabase;
 
     public function test_it_accepts_mo_subscription_shape_and_classic_shape(): void
     {
