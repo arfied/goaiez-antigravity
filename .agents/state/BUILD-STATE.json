@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-10T08:22:39",
+ "updated": "2026-09-10T11:42:52",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1726,6 +1726,10 @@
   {
    "at": "2026-09-10T07:11:40",
    "note": "MONEY-178: X-117's catalogue takes orderBy('id') behind orderBy('name'). The other four members of the order census are struck: dunning_states has at most one row per business because its only writer is a first()-or-create, and meters has no writer at all. The order census is closed."
+  },
+  {
+   "at": "2026-09-10T11:42:52",
+   "note": "MONEY-184: the sync error rate screen's headline and per-run pill take their label from SyncErrorRateView::conflictRateLabel, which renders under 1% conflicts where the rounded percentage is zero and the rate is not. The conflicts list's confidence percentage is measured clean and unchanged."
   }
  ],
  "decisions": [
@@ -2705,6 +2709,12 @@
    "module": "X-211",
    "chose": "a rendered loop that holds a per-row form control carries wire:key with that row's own id, because Livewire morphs an unkeyed loop by position and a row that leaves or moves carries the owner's typed value onto its neighbour",
    "at": "2026-09-10T08:22:39",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-173",
+   "chose": "A rate above zero never renders as zero percent: round() sends anything under half a percent to zero, so a run with real conflicts printed 0% beside its own non-zero conflict count, and the label is computed in the component rather than in the blade because a blade is the one file in this checkout no analyser reads.",
+   "at": "2026-09-10T11:42:52",
    "ruling": "R245"
   }
  ]
