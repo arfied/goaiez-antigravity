@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Modules\X181\Ui;
 
-use App\Modules\CReviews\Models\ReviewRequest;
 use App\Modules\X181\Actions\QaTicketResolveAction;
 use App\Modules\X181\Models\QaTicket;
 use App\Support\Tenancy;
@@ -84,7 +83,7 @@ class Ticket extends Component
                 ->first();
 
             if ($ticket && $ticket->review_request_id) {
-                $review = ReviewRequest::find($ticket->review_request_id);
+                $review = app(\App\Modules\CReviews\Actions\ReviewRequestReadAction::class)->handle($this->businessId, (int) $ticket->review_request_id);
             }
         }
 
