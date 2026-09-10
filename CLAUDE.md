@@ -10478,3 +10478,64 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     property is `?int $shownRun`, which cannot hold either string, so neither assertion is satisfiable
     from the `wire:snapshot` payload. ⚠️ `under 1% conflicts` carries no apostrophe, `<`, `&` or `"`, so
     escaping cannot bite it from either side (ruling 82).
+361. **⭐⭐ A census of a message's TRUTH is not a census of its LIFETIME — the message-property
+    lifecycle population is 23 components and 51 properties, and TWO methods leave a stale panel
+    standing beside a success, each with its own sibling three lines away doing it correctly (RULED
+    by the lane supervisor 2026-09-10 12:0x, briefed as MONEY-185).** Ruling 97 swept this lane's
+    `$this->success`/`$this->waiting` assignments and ruling 100 its ~140 `$error` ones; both asked
+    *is the sentence true?* Neither asked *is it still true on the NEXT press?* A component that sets
+    a message on one action and does not clear it at the top of another renders **two answers at
+    once** — ruling 98's self-contradiction tell, produced by state the component carries between two
+    renders, which is ruling 347's axis. **Instrument, quoted (ruling 300):**
+    `grep -rn -e "public ?string" app/app/Modules --include=*.php` filtered to `/Ui/` → **84 lines
+    tree-wide**; filtered to the lane's eight ids → **51 properties across 23 components** (`grep
+    -rln` for the component count, summed by a tool and never by hand — ruling 209). ⭐ **Positive
+    control fires** (rulings 324, 326, 342, 344, 345, 347, 356, 358): the same instrument returns the
+    pattern in twenty-one other lanes' components, and ⛔ money proposes no edit on any of them
+    (ruling 5).
+    ⭐ **The lane HAS a convention and it is written in nineteen methods**: every action clears **all**
+    of its component's message properties before it can succeed — `CartBlock`'s three clear
+    error/success/waiting, `CheckoutBlock`'s three clear four each, `ConnectCard`'s two clear
+    errorHeading/error/success, `PaymentplanBuilder`'s clears error/success/financing, and every
+    two-property component in C-Billing, X-173, X-198, X-199, X-201 and X-211 clears both. **Two
+    methods do not.** (a) `X-211/Ui/AgeingByReason::logPayment():91-92` clears `error` and `success`
+    and leaves **`$refused`** — set by `applyLateFee():81` *and by its own `:117`* — so a successful
+    log renders `Payment logged.` beside an attention card headed **`Late fee not applied`**, which
+    ruling 221 worded precisely so an error heading would **name the act that failed** (ruling 93) and
+    which now names an act that is not the one just performed. (b)
+    `X-120/Ui/CardScreen::makeDefault():38-39` clears `error` and `success` and leaves **`$waiting`**,
+    set by `present():67`. ⭐⭐ **(b) is the sharper and it is about money:** `$waiting` says *nothing
+    is stored until Stripe returns a token; the number was not kept* and `$success` says *a stored
+    card was made default* — **the two contradict about whether this app holds a card at all** — and
+    `card-screen.blade.php:46-48` renders `$waiting` **outside** the `@if($cards->isEmpty())` branch,
+    i.e. in the only arm `makeDefault` is reachable from.
+    ⭐⭐ **Both have their siblings, in the same file, doing it correctly** — `applyLateFee():65-67`,
+    `addCard():54-56` and `present():61-63` each clear all three. Ruling 98's tell at the shortest
+    distance a defect can sit: one file, one convention, one method out.
+    **RULED: each method clears the property its siblings clear, in its own file's own order** —
+    `logPayment` gains `$this->refused = null;` after `:92` and `makeDefault` gains `$this->waiting =
+    null;` after `:39`. ⛔ Not by clearing in the blade, ⛔ not by moving a panel, ⛔ not by touching
+    any message string, heading or `state=`, and ⛔ **not `ConnectionMappingView::connect()`**, whose
+    `:30-32` sets `$waiting` **unconditionally** at the end and is therefore its own clear-and-set —
+    measured, not assumed (ruling 262(b), **read the hit**).
+    ⚠️ **Fixed rather than recorded, on rulings 204/130's precedent**: both branches **are** rendered
+    and **are** driven by existing fixtures (`AgeingByReasonScreenTest:184,:297` render `$refused`;
+    `CardScreenTest:146` renders `$waiting`), so a mutation can redden them and ruling 96 does not
+    govern. ⚠️ **Blast radius, measured with interior fragments (rulings 46, 86, 146): ZERO** — no
+    test chains a refused `applyLateFee` into a successful `logPayment` or a `present()` into a
+    `makeDefault`; `AgeingByReasonScreenTest:193-215` reaches its success **through `saveTerm`**,
+    which already clears all three, and `CardScreenTest:294-322` calls `makeDefault` with **no** prior
+    `present()`. Both items therefore **add** methods (rulings 68, 70). ⚠️ **The needles are measured,
+    not chosen**: `grep -rn -e "Late fee not applied" app/app app/tests` returns three lines and
+    exactly **one** renders (`ageing-by-reason.blade.php:15`), and `Waiting on Stripe tokenisation:`
+    is the file's own established `assertDontSee` form at `:89` and `:116` (ruling 123, one fact one
+    wording); neither carries an apostrophe or an `e()`-escaped character (ruling 82).
+    ⚠️ **The read/UI-state toggles are measured CLEAN and STRUCK** (rulings 95, 100, 111, 349):
+    `toggleExpanded` ×2, `showPaid`, `toggleShowAll` and `pick` do not clear `$error`, and **none has
+    a `$success` to contradict** — an error that is still true after a view toggle is still true.
+    ⛔ Not to be re-raised.
+    ⭐ **The generalisable half is ruling 340's an ELEVENTH time:** *a census of "where X is used" is
+    not a census of "where X is NEEDED"*. Rulings 97 and 100 read every message string in this lane
+    for truth and could not see this, because **a message's lifetime is not a property of the message
+    — it is a property of every OTHER method on the same component.** Any census that reads a value
+    owes a second pass asking what happens to it on the next press.
