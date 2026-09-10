@@ -8614,6 +8614,55 @@ Watch for: <the trap that applies, by name>
   clause was discharged by wave 167's column — and folds into the wave that opens that file (tick 191).
   Board re-measured: proposals **13** · `app/app/Modules/` **0** · `CLOSED:` **5** · stub pile **11**.
   ⚠️ `vs origin/main: behind 331, ahead 31` — tick 272's rule governs the next merge.
+- ⚠️⚠️ **A wave can name the upstream-satisfaction rung at one call site and fail to carry it to the
+  IDENTICAL assertion in the next file — and the half that costs is the one over HTTP.** Wave 168 gave
+  `X102Test.php:541` an explicit `consent: true` for exactly the right reason (*"prevented a false positive
+  where lack of consent would drop the message before the trim logic could"*), and left
+  `ChatDoorTest.php:345`'s `test_http_middleware_normalises_whitespace_message_to_null` posting **no
+  `consent` key at all**. `$request->boolean('consent')` is `false` for an absent key,
+  `ChatCaptureAction.php:30-32` nulls the message **before** `:34`'s trim, so `:374`'s
+  `assertNull($lead->message)` cannot fail for any state of the middleware or of the module's own
+  normalisation — while its docblock reads *"This test proves the HTTP path protects the action from
+  receiving whitespace."* Vacuous since wave 165 built the consent gate, so not the wave's defect; durable,
+  because a docblock outlives every `REPORT.md`. ⛔ **Half the cause was the brief's**: item 0 said *"two of
+  the three door tests … neither is yours to touch"* and item 1's per-site list was one file's twelve sites,
+  so **a brief that scopes a per-site item to one file has ruled that the shape stops at that file's edge**
+  (tick 246, with the rule stated in the coder's report rather than in mine). **Hand over the sibling file
+  whenever the shape being reasoned about has a twin in it.**
+- ⚠️ **A generator control must discriminate on `$( )`, not on `echo` — the tick-297 wording is RETIRED.**
+  That ruling made the proof `grep -n 'echo.*OUTPUT' <generator>` returning nothing; on wave 168's honest
+  generator it returns **2**, both `echo "OUTPUT : $(grep -c … <file>)"`, whose values are exactly as
+  uninventable as a redirect. Seven mechanisms have walked past a generator check — a `= '` literal (256),
+  an `echo` literal (276), an `|| echo` naming an outcome (282), a substituted command (289), a `sed -i`
+  replacement (290), a synthetic artifact the command honestly reads (291) and a verdict-shaped `echo`
+  beside a correct number (298) — and the one property none has is **the value arrived by `$( )` or by `>>`
+  from a command naming a file**. ⛔ **RULED at tick 301: the check is an `echo` line containing no `$(` at
+  all.** Tick 292's shape (*a control whose pattern hits its own data, or hits honest constructs, is not a
+  control*), pointed at a control of this column's for the second time.
+- ⭐ **`TARGET-GRN` is `0` for every PASSING test, so the pair reads only as a pair.** A pest object names
+  only the tests that failed, so `0/0` is a survival, `0/1` is a redden and `1/1` is a test that was already
+  red; neither half means anything alone. Wave 168 named the asymmetry itself under the ranking question,
+  which is **4-for-4** in that form after three consecutive `None`s under the free-text one.
+- ⚠️ **A "did anything contradict the brief" question is answerable with `No` by any wave whose brief
+  happened to be right, and is unfalsifiable from the report alone.** The questions that produce findings on
+  this lane ask the coder to reconcile its **own** two numbers. Keep a brief-audit question only where the
+  brief published a measurement the wave re-runs, and hand over the artifact to re-run it against.
+- **Backlog at tick 301 — wave 169 is `ChatDoorTest`'s two records and it writes no production code.**
+  RULED (NOTE 1 above): the vacuity sits on a **public unauthenticated door** and its docblock claims a
+  proof the file cannot give, which is the soil every rung of this lane's ladder grows in; and the wave that
+  opens that file also owes `ChatDoorTest:24`'s clause-by-clause correction (tick 191, tick 295 — a row that
+  changes subject loses whatever the old subject named and the count cannot see it: wave 165 discharged *no
+  capture before consent*, wave 167 discharged *logged consent*, and *pre-chat notice* + *first-party
+  transcripts only* remain, the first needing `app/public/goaiez-chat.js`, which does not exist). ⛔ **Two
+  numbered items whose answers need not agree** (ticks 187, 209, 218, 221, 281), both records, which group
+  legitimately (tick 257) where a correction and a **build** do not (ticks 218–223). ⛔ This column names no
+  shape for item 1 — three outcomes are legitimate and the conclusion-withheld hand-over is **23-for-23**,
+  having corrected this column five times on X-102's seams alone. ⛔ No `⛔ REFUSED`, no `UNRESOLVED`
+  (X-102 is one of the thirteen and nothing external is missing); ⛔ never edit, weaken or delete a standing
+  assertion — the four-condition vacuous-assertion rule (tick 289) needs **all four** conditions, not one.
+  Board re-measured this tick: proposals **13** · `app/app/Modules/` **0** · `CLOSED:` **5**. Suite at
+  `dc420ad1`: `tests 2449 · passed 2441 · assertions 10800 · failed 6 · errors 2`, the standing **eight** by
+  identity. Re-run every grep; never inherit one.
 
 ## Style
 
