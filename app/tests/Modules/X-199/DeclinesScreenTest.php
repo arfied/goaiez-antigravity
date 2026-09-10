@@ -433,4 +433,45 @@ class DeclinesScreenTest extends TestCase
 
         Carbon::setTestNow();
     }
+
+    public function test_the_declines_list_is_ordered_when_every_row_shares_one_timestamp(): void
+    {
+        $base = Carbon::parse('2026-09-09 10:00:00');
+        Carbon::setTestNow($base);
+
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+
+        Payment::create([
+            'business_id' => $biz->id,
+            'amount_cents' => 1111,
+            'currency' => 'USD',
+            'payment_token' => 'tok_ord_a',
+            'idempotency_key' => 'idem_ord_a',
+            'status' => 'failed',
+        ]);
+
+        Payment::create([
+            'business_id' => $biz->id,
+            'amount_cents' => 2222,
+            'currency' => 'USD',
+            'payment_token' => 'tok_ord_b',
+            'idempotency_key' => 'idem_ord_b',
+            'status' => 'failed',
+        ]);
+
+        Payment::create([
+            'business_id' => $biz->id,
+            'amount_cents' => 3333,
+            'currency' => 'USD',
+            'payment_token' => 'tok_ord_c',
+            'idempotency_key' => 'idem_ord_c',
+            'status' => 'failed',
+        ]);
+
+        Livewire::actingAs($owner)->test(Declines::class)->assertOk()->assertSeeInOrder(['33.33', '22.22', '11.11']);
+
+        Carbon::setTestNow();
+    }
 }

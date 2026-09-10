@@ -54,7 +54,8 @@ class Declines extends Component
 
         $query = Payment::where('business_id', Tenancy::id())
             ->where('status', 'failed')
-            ->orderByDesc('created_at');
+            ->orderByDesc('created_at')
+            ->orderByDesc('id');
 
         if (! $this->showAll) {
             $query->where('created_at', '>=', now()->startOfWeek());
