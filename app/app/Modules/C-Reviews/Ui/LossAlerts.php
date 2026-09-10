@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\CReviews\Ui;
 
-use App\Modules\CReviews\Models\QaSetting;
+use App\Modules\CReviews\Domain\PublicThreshold;
 use App\Modules\CReviews\Models\ReviewRequest;
 use App\Modules\X153\Actions\AlertSendAction;
 use App\Modules\X181\Actions\QaTicketReadAction;
@@ -116,8 +116,7 @@ class LossAlerts extends Component
 
         $alerts = collect();
         if (! $this->isSample) {
-            $settings = QaSetting::where('business_id', $this->businessId)->first();
-            $minStars = $settings ? $settings->min_public_stars : 4;
+            $minStars = app(PublicThreshold::class)->for($this->businessId);
 
             $breachedTickets = app(QaTicketReadAction::class)->getBreachedSlaTickets($this->businessId)
                 ->map(function ($t) {

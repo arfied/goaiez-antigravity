@@ -700,4 +700,29 @@ class CReviewsTest extends TestCase
         $this->assertFalse(Schema::hasColumn('review_requests', 'csat_score'));
         $this->assertFalse(Schema::hasColumn('qa_tickets', 'csat_score'));
     }
+
+    public function test_p193_threshold_change_moves_4_star_review_to_internal(): void
+    {
+        $biz = self::provisionTenant(['name' => 'Threshold Test Biz']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        ReviewRequest::create([
+            'business_id' => $biz->id,
+            'rating' => 4,
+            'platform' => 'google',
+        ]);
+
+        Livewire::test(ReviewsQaRequests::class, ['businessId' => $biz->id])
+            ->assertViewHas('publicCount', 1)
+            ->assertViewHas('internalCount', 0);
+
+        QaSetting::updateOrCreate(
+            ['business_id' => $biz->id],
+            ['min_public_stars' => 5]
+        );
+
+        Livewire::test(ReviewsQaRequests::class, ['businessId' => $biz->id])
+            ->assertViewHas('publicCount', 0)
+            ->assertViewHas('internalCount', 1);
+    }
 }
