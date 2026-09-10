@@ -315,13 +315,13 @@ class CheckoutBlockScreenTest extends TestCase
             'sku' => 'FLT-GUARD',
             'inventory_quantity' => 1,
             'unit_price_cents' => 4500,
-            'fulfilment_type' => 'physical'
+            'fulfilment_type' => 'physical',
         ]);
         (new CartAddAction)->handle($biz->id, 'sess_guard', $filter->id);
 
         Livewire::actingAs($owner)->test(CheckoutBlock::class, ['sessionToken' => 'sess_guard'])
             ->assertOk()
-            ->assertSeeHtml('wire:target="cancel(' . $order->id . ')"')
+            ->assertSeeHtml('wire:target="cancel('.$order->id.')"')
             ->assertSeeHtml('wire:target="authorise"')
             ->assertSeeHtml('wire:target="pay"');
     }

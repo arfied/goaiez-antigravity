@@ -360,6 +360,6 @@ class CardScreenTest extends TestCase
 
         Livewire::actingAs($owner)->test(CardScreen::class)
             ->assertOk()
-            ->assertSeeHtml('wire:target="makeDefault(' . $card->id . ')"');
+            ->assertSeeHtml('wire:target="makeDefault('.$card->id.')"');
     }
 }

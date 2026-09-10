@@ -125,11 +125,11 @@ final class CheckoutEngine
     {
         return DB::transaction(function () use ($businessId, $orderId) {
             $order = Order::where('business_id', $businessId)->findOrFail($orderId);
-            
-            if (!in_array($order->status, ['pending_payment', 'paid'], true)) {
+
+            if (! in_array($order->status, ['pending_payment', 'paid'], true)) {
                 throw new OrderNotCancellableException("Order {$order->order_number} is in state {$order->status}. Nothing was cancelled.");
             }
-            
+
             $order->update(['status' => 'cancelled']);
 
             $lines = OrderLine::where('business_id', $businessId)->where('order_id', $order->id)->get();
