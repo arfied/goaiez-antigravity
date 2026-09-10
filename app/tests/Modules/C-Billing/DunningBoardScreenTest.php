@@ -26,7 +26,7 @@ class DunningBoardScreenTest extends TestCase
         $stateA = DunningState::create([
             'business_id' => $biz->id,
             'day_in_cycle' => 6,
-            'status' => 'active',
+            'status' => 'warning',
             'ai_enabled' => true,
             'phone_answering' => true,
             'voicemail_only' => false,
@@ -36,7 +36,7 @@ class DunningBoardScreenTest extends TestCase
         $stateB = DunningState::create([
             'business_id' => $otherBiz->id,
             'day_in_cycle' => 10,
-            'status' => 'active',
+            'status' => 'banner',
             'ai_enabled' => false,
             'phone_answering' => true,
             'voicemail_only' => false,
@@ -55,7 +55,7 @@ class DunningBoardScreenTest extends TestCase
             ->assertSee('day 7 human')
             ->assertDontSee('Day 10')
             ->assertDontSee('day 21 pause')
-            ->assertSee('active')
+            ->assertSee('warning stage')
             ->call('advance', $stateA->id);
 
         $stateA->refresh();
@@ -80,5 +80,29 @@ class DunningBoardScreenTest extends TestCase
             ->assertOk()
             ->assertSee('Nothing in this checkout puts an account on the dunning ladder')
             ->assertSee('Declines live on the Money screen');
+    }
+
+    public function test_dunning_board_names_the_final_stage_and_never_its_raw_token(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        DunningState::create([
+            'business_id' => $biz->id,
+            'day_in_cycle' => 21,
+            'status' => 'ai_off_voicemail_only',
+            'ai_enabled' => false,
+            'phone_answering' => true,
+            'voicemail_only' => true,
+        ]);
+
+        Livewire::actingAs($owner)->test(DunningBoard::class)
+            ->assertOk()
+            ->assertSee('final stage')
+            ->assertDontSee('ai_off_voicemail_only')
+            ->assertSeeHtml('bg-alert-bg');
     }
 }

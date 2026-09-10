@@ -40,7 +40,7 @@
                                         {{ $state->next_step_words }}
                                     </td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                        <x-ui.status-pill :state="$state->status === 'active' ? 'attention' : 'unknown'" :label="$state->status" />
+                                        <x-ui.status-pill :state="$dunningPillStates[$state->status] ?? 'unknown'" :label="$dunningLabels[$state->status] ?? $state->status" />
                                     </td>
                                     <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                                         <x-ui.button size="default" variant="secondary" wire:click="advance({{ $state->id }})" wire:loading.attr="disabled" wire:target="advance({{ $state->id }})">Advance</x-ui.button>
