@@ -18,7 +18,7 @@
     @else
         <ul>
             @foreach($conflicts as $c)
-                <li>
+                <li wire:key="conflict-{{ $c->id }}">
                     <span>{{ $c->transaction_ref }}</span>,
                     <span>{{ round($c->confidence_rate * 100) }}%</span>,
                     <span>{{ $c->assigned_category }}</span>,

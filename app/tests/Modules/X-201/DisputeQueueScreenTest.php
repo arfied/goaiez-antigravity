@@ -125,4 +125,20 @@ class DisputeQueueScreenTest extends TestCase
 
         $this->assertSame('compiled', $dispute->fresh()->status);
     }
+
+    public function test_dispute_queue_keys_each_row(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $open1 = app(DisputeRecordAction::class)->handle($biz->id, 902, 85000, 'unrecognized_transaction');
+        $open2 = app(DisputeRecordAction::class)->handle($biz->id, 904, 1000);
+
+        Livewire::actingAs($owner)->test(DisputeQueue::class)
+            ->assertOk()
+            ->assertSeeHtml('wire:key="dispute-'.$open1->id.'"')
+            ->assertSeeHtml('wire:key="dispute-'.$open2->id.'"');
+    }
 }

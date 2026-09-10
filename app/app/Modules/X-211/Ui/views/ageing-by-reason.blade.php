@@ -43,7 +43,7 @@
                 <h2>{{ $reason }}</h2>
                 <ul class="space-y-4">
                     @foreach($invoices as $inv)
-                        <li class="border rounded p-4 shadow bg-white">
+                        <li class="border rounded p-4 shadow bg-white" wire:key="ageing-inv-{{ $inv->id }}">
                             <div class="flex justify-between items-center mb-4">
                                 <div>
                                     <span class="font-semibold">{{ $inv->invoice_number }}</span>
