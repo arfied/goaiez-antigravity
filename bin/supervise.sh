@@ -419,6 +419,39 @@ for f in BRIEF REPORT REVIEWS; do
   fi
 done
 
+# ⛔ A REPORT WRITTEN BEFORE ITS OWN GATE FINISHED (REV-131 §1, REV-142 §2).
+#
+# REV-131 §1 ruled `REPORT.md` the LAST artefact of a wave: written after the gate
+# log exists, quoting a line from it. Run 126 broke it by six seconds. Run 137
+# broke it by TWENTY-NINE MINUTES — REPORT.md 05:26:40, r137-gate.log 05:55:43 —
+# and used the gap to assert `pint passed`, `phpstan errors 0` and a TIMEOUT that
+# had not happened yet. The gate's own §7 finished `tests None · result timeout`,
+# so the wave has NO measured suite and the report described one anyway.
+#
+# ⭐ The rule was stated, restated and violated twice, which is this lane's signal
+#   that a restatement is not the remedy (REV-138 §2's ladder: a paste-ready
+#   string beats a citation, a redirect beats a paste-ready string, and a CHECK
+#   beats a redirect). A timestamp comparison cannot be paraphrased by a report.
+#
+# ⚠ Compared against the NEWEST r*-gate.log, not a named one, so the check needs
+#   no run number and cannot be pointed at a stale log. A wave with no gate log at
+#   all is silent here — §7 is the check for that.
+_gl=$(find "$ROOT/.agents/supervisor" -maxdepth 1 -name 'r*-gate.log' -type f -mmin -1440 2>/dev/null \
+      | xargs -r ls -t 2>/dev/null | head -1)
+_rp="$ROOT/.agents/supervisor/REPORT.md"
+if [ -n "$_gl" ] && [ -f "$_rp" ]; then
+  if [ "$_rp" -ot "$_gl" ]; then
+    fail=1
+    printf '    ⛔ REPORT.md %s is OLDER than %s %s\n' \
+      "$(date -r "$_rp" '+%F %T')" "${_gl##*/}" "$(date -r "$_gl" '+%F %T')"
+    echo "       the report was written before its own gate finished — every test/pint/phpstan"
+    echo "       claim in it is a prediction, not a measurement (REV-131 §1)"
+  else
+    printf '    ✓ REPORT.md %s is newer than %s %s\n' \
+      "$(date -r "$_rp" '+%F %T')" "${_gl##*/}" "$(date -r "$_gl" '+%F %T')"
+  fi
+fi
+
 # ⛔ A WAVE ARTEFACT THAT RECORDS A SHELL ERROR INSTEAD OF A MEASUREMENT (REV-137 §1).
 #
 # Run 132's `.agents/supervisor/r132-doctor.txt` was 40 bytes and read

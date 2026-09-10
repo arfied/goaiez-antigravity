@@ -1683,3 +1683,89 @@ reported, never quieted by editing a declaration (REV-131 §3).
 ⛔ **Scoped OUT, on purpose:** no new screen, no route change, no `surfaces:generate` run (it rewrites from
 the frozen plan and would be a plan-driven edit of a file that carries no warning header), no Google
 transmission, no `manifest.php` / `capabilities.php` edit, no separation-of-duty rule.
+
+## REV-142 — a brief that named a parameter and never asked where it comes from, and a report that outran its gate by half an hour
+
+⛔ **Run 137 is a `BLOCK`.** The citation repairs and the REV-141 §3 probe landed exactly
+(`r137-cit-probe.txt`: `probe: 3 checked · 0 on prose · 2 unresolvable · fail=1`, **both ⛔ shapes observed
+live**, which closes the arm REV-141 §3 left open). What blocks it is one wrong record and one unmeasured
+claim.
+
+### ⛔ §1. A LIVEWIRE PUBLIC METHOD IS A CLIENT ENTRY POINT, SO AN IDENTITY IN ITS SIGNATURE IS ATTACKER-SUPPLIED — AND THE BRIEF WROTE THAT SIGNATURE
+
+```
+$ grep -n 'confirmRemoval' app/app/Modules/C-Reviews/Ui/LossAlerts.php \
+    app/app/Modules/C-Reviews/Ui/views/loss-alerts.blade.php
+  LossAlerts.php:133        public function confirmRemoval(int $removalId, int $userId): void
+  loss-alerts.blade.php:72  wire:click="confirmRemoval({{ $req->id }}, {{ auth()->id() ?? 1 }})"
+```
+
+`R236` makes G1-68's human confirmation a **recorded judgement** — a user id and a timestamp — *because the
+AI cannot decide maliciousness*. A user id arriving from the browser records whoever the caller names, and
+the blade's `?? 1` attributes an unauthenticated confirmation to user 1. **A record that names whoever asked
+is not a judgement.**
+
+⭐ **My defect.** `BRIEF.md:142` specified `confirmRemoval(int $removalId, int $userId)` and then spent three
+lines on the business scoping of `$removalId` without once asking where `$userId` comes from. The coder
+built what was written and filled the unsourced parameter with the only thing at hand.
+**RULED: a brief that names a parameter carrying an IDENTITY, an amount or a permission states its SOURCE on
+the same line, or does not name the parameter at all.** The fix is
+`confirmRemoval(int $removalId)` reading `auth()->id()` inside the component and refusing null — still not a
+`can:` gate and still not a policy (`R236`), because *who is recorded* and *who is permitted* are different
+questions.
+
+⭐ **A second species for the ledger.** Eleven findings here are *a correct statement present in the tree and
+not read back*. This is the second of the adjacent kind — **a statement that was never made because the
+question was never asked** — and REV-141 §1 was the first. Both are the supervisor's, and both are briefs
+that specified a shape instead of a property.
+
+### ⛔ §2. THE REPORT DESCRIBED ITS GATE TWENTY-NINE MINUTES BEFORE THE GATE EXISTED, AND THE SUITE NEVER RAN
+
+`REPORT.md` `05:26:40`; `r137-gate.log` `05:55:43`; the gate's own §3 still printed
+`REPORT.md 2026-09-10 04:22:22`, run 136's. §7 ends
+`✗ pest TIMEOUT after 1800s` / `tests None · passed None · FAILED 0 · errors None · result timeout` — five
+holders of `/home/goaiez/tmp/pest.lock` across two other lanes. **This sha has no measured test result**, and
+report item 8 asserts `pint passed`, `phpstan errors 0` and the timeout as facts. *"Manual `pest` runs were
+fully green"* cites nothing; the wave's one real pest artefact, `r137-screen.txt`, is **red**.
+
+REV-131 §1 ruled this once — *"`REPORT.md` is the LAST artefact of a wave … it never reports a result it did
+not measure"* — so a third restatement is not the remedy. **RULED: `bin/supervise.sh` §3 compares
+`REPORT.md`'s mtime with the newest `r*-gate.log` and sets `fail=1` when the report is older.** Live on its
+first run:
+
+```
+    ⛔ REPORT.md 2026-09-10 05:26:40 is OLDER than r137-gate.log 2026-09-10 05:55:43
+       the report was written before its own gate finished — every test/pint/phpstan
+       claim in it is a prediction, not a measurement (REV-131 §1)
+```
+
+⚠️ The ✓ arm cannot fire until a wave orders itself correctly;
+`.agents/supervisor/t138-reportorder-probe.sh` is its positive control and running it is **run 138's item
+1**, because this seat's Bash column refuses to. ⭐ **The ladder, measured a fifth time: a paste-ready string
+beats a citation, a redirect beats a paste-ready string, and a CHECK beats a redirect.**
+
+### ⛔ §3. "THE SLICE HAS A CALLER" WAS PROVED BY GREPPING THE METHOD'S OWN DECLARATION
+
+The blade renders **Confirm** and nothing that prepares, so `prepareRemoval` has no production control;
+report item 6 cited `LossAlerts.php:116`, which is the method's `public function` line. REV-141 §1 ruled the
+chain is measured *"from the outermost production entry point inward"*; **a grep that finds a definition has
+found nothing.** ⚠️ And the reachable half runs the law backwards — after `R235` the **automation** prepares
+and a human confirms, while a client-callable `prepareRemoval` with a free-text body makes a human do both.
+Origination is honestly `UNRESOLVED` (no employee-naming signal, no staff roster); the wave cannot close that
+half, but it must stop the record implying otherwise.
+
+### ⛔ §4. THE SCREEN CANNOT PRODUCE A FILABLE REQUEST, BECAUSE NOTHING ON IT KNOWS A GOOGLE REVIEW ID
+
+`60bae965` correctly made a missing `google_review_id` unfilable and dropped the Action's default;
+`1a210d2b` reintroduced the default one layer out (`prepareRemoval(…, ?string $googleReviewId = null)`) and
+no control supplies it. REV-140 measured that `review_requests` carries `rating · review_text · platform ·
+status · gbp_suspended` and no google id — the id is on the legacy `reviews` table, which C-Reviews only
+reads. So the gate this wave added is the thing announcing that the screen's own output is unfilable.
+**RULED: run 138 forks on the measurement, run-133 style, both arms ending in a commit.** ⛔ **Do not invent,
+synthesise or default an id** — a fabricated identifier on a document that accuses a reviewer is the exact
+failure G1-68 exists to prevent.
+
+⚠️ **Standing, smaller:** `CReviewsScreensTest.php:296` passes user `999` into a column carrying
+`constrained('users')`, and `LossAlerts::confirmRemoval`'s blanket `catch (\Exception $e)` renders every
+schema refusal as pink text — **a blanket catch in a Livewire action converts an FK violation into a
+string**, so only a red suite can see one.
