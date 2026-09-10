@@ -7,6 +7,7 @@ namespace Tests\Modules\CReviews;
 use App\Enums\ReviewSource;
 use App\Enums\ReviewStatus;
 use App\Models\Business;
+use App\Models\Location;
 use App\Models\Review;
 use App\Models\User;
 use App\Modules\CReviews\Actions\PrepareRemovalRequestAction;
@@ -279,7 +280,8 @@ class CReviewsScreensTest extends TestCase
     public function test_loss_alerts_prepares_removal(): void
     {
         $req = ReviewRequest::create(['business_id' => $this->bizId, 'rating' => 1]);
-        Review::create(['business_id' => $this->bizId, 'source' => ReviewSource::Google, 'google_review_id' => 'g_123', 'status' => ReviewStatus::Approved]);
+        $locId = Location::firstOrCreate(['business_id' => $this->bizId, 'name' => 'Main'])->id;
+        Review::create(['business_id' => $this->bizId, 'location_id' => $locId, 'source' => ReviewSource::Google, 'google_review_id' => 'g_123', 'status' => ReviewStatus::Approved, 'rating' => 1]);
 
         Livewire::test(LossAlerts::class, ['businessId' => $this->bizId])
             ->call('prepareRemoval', $req->id, 'fake_reviews', 'This is a fake review.', 'g_123')
@@ -296,7 +298,8 @@ class CReviewsScreensTest extends TestCase
     public function test_loss_alerts_confirms_removal(): void
     {
         $req = ReviewRequest::create(['business_id' => $this->bizId, 'rating' => 1]);
-        Review::create(['business_id' => $this->bizId, 'source' => ReviewSource::Google, 'google_review_id' => 'g_123', 'status' => ReviewStatus::Approved]);
+        $locId = Location::firstOrCreate(['business_id' => $this->bizId, 'name' => 'Main'])->id;
+        Review::create(['business_id' => $this->bizId, 'location_id' => $locId, 'source' => ReviewSource::Google, 'google_review_id' => 'g_123', 'status' => ReviewStatus::Approved, 'rating' => 1]);
         $preparer = new PrepareRemovalRequestAction;
         $removal = $preparer->execute($this->bizId, $req->id, 'fake_reviews', 'This is a fake review.', 'g_123');
 
@@ -317,7 +320,8 @@ class CReviewsScreensTest extends TestCase
     public function test_loss_alerts_confirm_removal_refuses_unauthenticated(): void
     {
         $req = ReviewRequest::create(['business_id' => $this->bizId, 'rating' => 1]);
-        Review::create(['business_id' => $this->bizId, 'source' => ReviewSource::Google, 'google_review_id' => 'g_123', 'status' => ReviewStatus::Approved]);
+        $locId = Location::firstOrCreate(['business_id' => $this->bizId, 'name' => 'Main'])->id;
+        Review::create(['business_id' => $this->bizId, 'location_id' => $locId, 'source' => ReviewSource::Google, 'google_review_id' => 'g_123', 'status' => ReviewStatus::Approved, 'rating' => 1]);
         $preparer = new PrepareRemovalRequestAction;
         $removal = $preparer->execute($this->bizId, $req->id, 'fake_reviews', 'This is a fake review.', 'g_123');
 
@@ -334,7 +338,8 @@ class CReviewsScreensTest extends TestCase
     public function test_loss_alerts_shows_removal_requests(): void
     {
         $req = ReviewRequest::create(['business_id' => $this->bizId, 'rating' => 1]);
-        Review::create(['business_id' => $this->bizId, 'source' => ReviewSource::Google, 'google_review_id' => 'g_123', 'status' => ReviewStatus::Approved]);
+        $locId = Location::firstOrCreate(['business_id' => $this->bizId, 'name' => 'Main'])->id;
+        Review::create(['business_id' => $this->bizId, 'location_id' => $locId, 'source' => ReviewSource::Google, 'google_review_id' => 'g_123', 'status' => ReviewStatus::Approved, 'rating' => 1]);
         $preparer = new PrepareRemovalRequestAction;
         $preparer->execute($this->bizId, $req->id, 'fake_reviews', 'This is a fake review.', 'g_123');
 
@@ -348,7 +353,8 @@ class CReviewsScreensTest extends TestCase
     {
         $otherBiz = self::provisionTenant(['name' => 'Other Biz']);
         $req = ReviewRequest::create(['business_id' => $otherBiz->id, 'rating' => 1]);
-        Review::create(['business_id' => $otherBiz->id, 'source' => ReviewSource::Google, 'google_review_id' => 'g_123', 'status' => ReviewStatus::Approved]);
+        $locId2 = Location::firstOrCreate(['business_id' => $otherBiz->id, 'name' => 'Main2'])->id;
+        Review::create(['business_id' => $otherBiz->id, 'location_id' => $locId2, 'source' => ReviewSource::Google, 'google_review_id' => 'g_123', 'status' => ReviewStatus::Approved, 'rating' => 1]);
         $preparer = new PrepareRemovalRequestAction;
         $removal = $preparer->execute($otherBiz->id, $req->id, 'fake_reviews', 'This is a fake review.', 'g_123');
 
