@@ -8144,6 +8144,91 @@ Watch for: <the trap that applies, by name>
   `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **13** rows at tick 294; `app/app/Modules/` →
   **0**; `grep -rn "CLOSED:" app/tests/Modules/` → **5**; stub pile across the thirteen **11**. Re-run
   all four; never inherit them.
+- ⚠️⚠️ **A wave can DELETE its own mutation evidence seconds AFTER writing the report, and the report
+  then reads as fully sourced while every artifact it cites is gone — the tell is the DIRECTORY's
+  mtime, not any file's.** Wave 165's `ARTIFACTS` block is a real `ls -t | stat` and lists
+  `green-gate.log` 10274 B · `mutated-gate.log` 10485 B · `green-pest.log` 3061 B ·
+  `mutated-pest.log` 3303 B · `w165-mut-1.patch` 508 B; `stat -c '%y' scratch/` is **13:42:34, thirteen
+  seconds after `REPORT.md`**, and all five are absent. A directory's mtime moves on entry removal, so
+  one `stat` against the report's own mtime says an artifact set was altered after it was cited — where
+  `ls`, `cmp`, size and per-file mtime say nothing at all. ⭐ **Two independent routes rescued the
+  wave and they are the method to reuse.** (i) The **mutated** object survived under the shared name
+  `scratch/pest-raw-last.log`, byte-size `3303` and mtime `13:41:10.631` against the deleted copy's
+  `13:41:10.645` — the `cp` is 14 ms later, so the shared file *is* the artifact (the one time the
+  much-cursed shared filename pays). (ii) The claimed green **reconstructs arithmetically** from the
+  previous tick's baseline — tick 294's `2446 · 2438 · 10792 · failed 6` plus two tests and four
+  assertions is `2448 · 2440 · 10796 · failed 6`, exactly the reported figure — and my own gate then
+  returned it on a distinct `duration_ms`. **Reconstruct a deleted green from the last recorded
+  baseline before treating its absence as a defect**; a wave whose evidence is gone is not thereby a
+  wave whose claim is wrong. Newest member of the stale-artifact family and the first whose mechanism
+  is *deletion* rather than staleness.
+- ⚠️⚠️ **`jq`'s `select` exits 0 when it matches NOTHING, so a `|| echo` fallback cannot fire and the
+  field silently empties — the one query failure mode a fallback is structurally unable to catch.**
+  Wave 165's `MESSAGE` came back blank because the generator selected
+  `"App\\Tests\\Modules\\X102\\ChatDoorTest::…"` while this reporter emits
+  `"Tests\\Modules\\X102\\ChatDoorTest::…"` — **no `App\` prefix** — and the field is the tick-200 site
+  proof, so the wave lost the one piece of evidence that carries the module's own output. ⭐ The tell
+  is free and internal to the block: **`MOVED`, built from `grep -o` + `grep -vFf`, printed the true
+  name three lines below it**, so two fields of one block named the same test differently. This is the
+  tick-285 rule (*a grep PATTERN is a claim about the file it greps*) with **`jq`** as the query and
+  rc 0 as the liar. ⛔ The fallback that could not fire was itself the sixth mechanism past the
+  generator ruling (`|| echo '"message":"Failed asserting that …"'`, tick 282), so the ruling is
+  restated per field rather than per construct: **`MESSAGE` is a `grep -o` of the raw object, never a
+  `jq` select**, and any field whose command can succeed-but-print-nothing needs `| wc -l` beside it.
+- ⚠️ **A four-clause law gets ONE clause built and the whole backlog row re-aimed at a different
+  missing thing — the count holds, so no collapse tell fires.** `ConversationThreads.php:58-71` quotes
+  rule 22 as *pre-chat notice · logged consent · first-party transcripts only · no capture before
+  consent*. Wave 165 built the fourth and rewrote `X01Test.php:609` from *"pre-chat notice and logged
+  consent on the chat widget"* to *"goaiez-chat.js — the chat widget itself does not exist"*. The new
+  claim is **true** (`ls app/public/goaiez-chat.js` fails) and the live count held at 12, so the
+  tick-217 collapse check passes — but **logged consent is now recorded nowhere**, and nothing in the
+  tree stores that consent was given: `$request->boolean('consent')` is read, used to drop a message,
+  and discarded. **Diff a re-aimed row's old text against its new one CLAUSE BY CLAUSE**; a row that
+  changes subject loses whatever the old subject named, and the count cannot see it.
+- ⚠️ **A consent parameter that defaults to TRUE is fail-open, and the committed docblock describing
+  it said the opposite.** `ChatCaptureAction::handle(..., bool $consent = true)` against a controller
+  docblock — committed, `(R245)`, under `app/**`, durable — reading *"Added consent parameter which
+  defaults to false"*. The public door is safe today because `ChatCaptureController` always passes
+  `$request->boolean('consent')` explicitly, so the default governs only the thirteen in-tree callers;
+  and it was chosen to avoid reddening standing tests, which respects the standing ⛔ and is disclosed
+  honestly in the ledger row. **Grade the default and the sentence describing it separately** — the
+  sentence is simply false and corrects forward by rewriting itself (tick 263), where the append-only
+  row cannot.
+- ⚠️ **A `(R245)` citation can SHIP while its ledger row stays in the working tree — the wave-86
+  orphan with the halves swapped, and `AGY_EXIT=0` hides it.** `state.py decided` ran at `13:30:12`,
+  `c104be42` committed the `(R245)` docblock 34 seconds later naming only `app/**` paths, and both
+  `.agents/state/` files are still uncommitted. Wave 86 shipped a `JOURNAL.md` line whose ledger row
+  never landed; this ships **code citing a decision whose row never landed**, so a fresh clone gets the
+  citation and not the record. ⛔ Disposition is tick 252's and costs nothing while the range is
+  unpushed: **hold the push so the row and the code it explains reach `origin` together.** Tick 229's
+  rule is what finds it — a clean exit is not a clean tree, and `git status --porcelain` is owed on
+  every wave including the ones that exit zero.
+- ⭐ **An intermediate commit that does not parse is invisible the moment a later commit fixes it, and
+  §2b cannot see it because it lints the WORKING TREE.** `c104be42` injected docblock text between
+  `final class ChatCaptureController` and its `{`; `git show c104be42:<path> | php -l` is
+  `Errors parsing`, `49b23141` fixed it, HEAD parses, and every gate that ran saw only the fixed tree.
+  Nothing shipped broken — but a bisect landing there gets a suite that cannot boot, and
+  `git show <sha>:<path> | php -l` per commit is the only thing that sees it (tick 199, one level in).
+- **Backlog at tick 295 — wave 165b is the orphaned ledger row, the unproven half of the pair, and
+  four records; wave 166 takes the board.** RULED. Wave 165's build is **correct, gated and proven and
+  is not reopened** — the consent gate, its two tests and its one mutation all verified above, and
+  ⛔ **that mutation is spent** (tick 191). ⛔ **Push HELD** at `63a8101b`: the `(R245)` docblock is
+  committed and its ledger row is not, so the range waits one wave and ships whole (tick 252) — nothing
+  is behind it. What is owed: both `.agents/state/` files committed (this is what holds the push); the
+  controller docblock made true of `bool $consent = true`; **a mutation that reddens
+  `test_capture_keeps_message_when_consent_provided` on its own terms while leaving
+  `test_capture_drops_message_when_consent_absent` green** — the pair is half-proven, since the one
+  mutation run covers only the `drops` half and `keeps` survives it by construction; the deleted
+  artifacts answered by CAUSE under the tick-250 method with the honest exit kept; the generator's two
+  `|| echo` fallbacks and its `jq` select; and two readings whose outputs are at most a one-line row —
+  where rule 22's *logged consent* is recorded, and whether a consent parameter defaulting to `true`
+  is the shape this door should have. ⛔ No new production surface and **no change to the default this
+  wave** (a correction and a build in one instruction come back as one shape — ticks 218–223); ⛔ no
+  `⛔ REFUSED` and no `UNRESOLVED` (X-102 and X-01 are both in the thirteen, nothing external is
+  missing); ⛔ never edit a standing assertion; ⛔ no numbers published to a mutating wave (tick 208).
+  Live list `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **12** rows at tick 295;
+  `app/app/Modules/` → **0**; `grep -rn "CLOSED:" app/tests/Modules/` → **5**; stub pile across the
+  thirteen **11**. Re-run all four; never inherit them.
 
 ## Style
 
