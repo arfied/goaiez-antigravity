@@ -7822,3 +7822,85 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     role MAY do decays exactly like one recording what a guard refuses**, and the gap between the stated
     column and the executable column is discovered only by trying. ⚠️ ⛔ Not resolved by asking the
     coder to predict it either — that is the same unmeasured number with a different author.
+297. **⭐⭐ This lane has been writing its own SUPERVISOR RULING NUMBERS into code as package
+    decision ids, and the doctor can only see the ones that happened to miss — a citation that
+    resolves to the WRONG decision is silent, where one that resolves to nothing is red (RULED by the
+    lane supervisor 2026-09-09 23:2x, measured from MONEY-165's own doctor capture; briefed as
+    MONEY-166).** Ruling 296 made the doctor a measurement item precisely because this seat cannot run
+    it, and its first outing paid for itself. Filtered to the lane's eight ids,
+    `doctor-money165-after.txt` carries three citation findings, all in **money's own X-198**:
+    `PaymentLinkAction.php:40` cites `R036`, `GatewayEngine.php:76` cites `R037`,
+    `StripeGatewayClient.php:17` cites `R093` — each *"appears NOWHERE in the package"*.
+    ⭐ **They are rulings 36, 37 and 93 of this file, zero-padded to three digits**, and the sentences
+    they sit in are those rulings' own words: `:40` is 36's *"the unique pair IS the idempotency"*,
+    `:76` is 37's *"a second place for the truth to disagree"*, `:17` is 93's *"the platform secret
+    and no `Stripe-Account`"*. ⭐⭐ **And the same act passes undetected wherever the ruling number is
+    already three digits.** `PaymentLinkAction.php:28` cites `R233`, `InvoiceEngine.php:102` `R235`
+    and `R236`, `Credits.php:96` `R237`, `SameAccount.php:66` `R239`, `CardScreen.php:107` `R241` —
+    each in the exact file the ruling of that number is about — and every one is **green**, because
+    `CitationStage.php:99` is `$hits = $index[$id] ?? 0;` over the package's `GOAIEZ-*.md` files and
+    asks only whether an id of that number **exists**, never what it is **about**. Measured:
+    `source/GOAIEZ-THE-64-DECISIONS.md:112` records *"the AI core — **`R237`–`R239` decided and
+    written**"*, and `:98-99` are that decision's open questions about model routing and a cost
+    ceiling under **C-Ai's** budget. So `Credits.php:96` tells a reader that money's overflow-charge
+    copy rests on an AI-model-routing decision. **The three red findings are not the defect; they are
+    the members of it that had no collision to hide behind.**
+    **RULED: the citation is DROPPED and the FACT stays byte-identical** — which is the checker's own
+    remedy, `CitationStage.php:107`: *"state the FACT instead of the id … An id nobody can look up
+    looks authoritative and cannot be checked"* — and it is ruling 266's precedent verbatim, which
+    dropped a `ruling 102` pointer rather than renumbering it, for this exact reason. Every one of the
+    five occurrences sits inside a sentence that stands alone without it, so the edit removes a
+    parenthetical and nothing else. ⛔ **Never renumbered into a free id**: minting a package decision
+    to carry a lane ruling is ruling 43's fiction aimed at the one file the doctor trusts, and ruling
+    29 forbids this lane touching `source/` at all. ⛔ **Never resolved by defining `R036` in the
+    package** (same prohibition, same file). ⛔ **`R245` is NOT in this population and is not touched**
+    — it is `state.py`'s own contract id for a recorded decision, used by every lane. ⛔ Nor are the
+    generated `manifest.php:20` and `capabilities.php` ids, which are harvested from the frozen plan.
+    ⚠️ **The collision half is MEASURED for four ids and briefed as a measurement for the rest**
+    (ruling 258 — a wave whose population is unmeasured measures it and dictates no verdicts): the
+    lane carries **37** `R###` tokens across its eight modules, and which of them are ledger numbers
+    wearing a package id is MONEY-166's item 2, not this ruling's claim.
+    ⚠️ **The instrument reports one hit per id per file** (`CitationStage.php:78-85`, *"a law cited
+    eight times in one class is one problem, not eight"*), which is why `StripeGatewayClient.php`
+    shows `R093` once against two occurrences at `:17` and `:57` — **so the doctor's count is a count
+    of files, never of citations**, and a wave that fixes only the reported lines leaves siblings
+    behind. That is ruling 294's under-count with a documented cause. ⚠️ And `CitationStage` scans
+    `app/app` only, so `X198Test.php:575`'s `R093` is invisible to it — ruling 65's *"the only gate
+    that resolves this does not look at `app/tests`"*, one stage over.
+    ⚠️ The generalisable half is this lane's own ruling 36 asked of a **citation**: *what is actually
+    at the other end of the string this code prints?* — and its answer here is worse than *nothing*,
+    because a wrong answer that passes a checker is indistinguishable from a right one. It is the
+    sixth member of the ruling 289 family (a ledger citing a **value**, a **line number**, an
+    **instrument**, a **prohibition**, a **census scope** — and now an **id**), and the first where
+    the ledger wrote itself into the tree.
+
+298. **A census is scoped as well as counted, and the capability census MONEY-165 closed covered
+    `refuses:` cells alone — six `specced` cells in X-117 were never in its population, and two of
+    them are a measured consequence of this lane's own merge (RULED by the lane supervisor 2026-09-09
+    23:2x).** Ruling 294 required a census to corroborate its **count** against a looser instrument.
+    The same tick's capability-refusal census was corroborated exactly that way, held at 28 cells, and
+    the addendum then recorded the population **CLOSED**. Measured against the doctor,
+    `doctor-money165-after.txt` carries six `· X-117 · G<n>: specced but no test names this id`
+    findings — `G6-02`, `G7-10`, `G1-73`, `G1-81`, `G1-82`, `G17-31` — which the census could not see,
+    because it swept for the word `refus` and these cells do not carry it. **The count was right and
+    the scope was the claim that failed.** ⭐ At least two are traceable to a merge resolution this
+    lane made deliberately: ruling 156 recorded that `origin/main` deleted
+    `test_g6_02_upsell_token` and `test_g7_10_bundle_allocation` — `assertTrue(true)` placeholders —
+    and that money **adopted** those deletions, since *"reverting another lane's improvement to this
+    lane's test file is the One Rule as surely as deleting it is"*. Adopting them was right, and the
+    id tokens left with them, so ruling 166's shape recurs: **a lane that adopts a merge resolution
+    inherits the counter that was counting the losing side.**
+    **RULED: the six are MEASURED before any of them is closed, and nothing is closed by minting an
+    `assertTrue(true)` to move a number.** Ruling 224 measured that three of this lane's twenty-three
+    `⛔ REFUSED` reasons were themselves false, and ruling 295 that an id token anywhere in a module's
+    test file marks that capability tested **with nothing asserting it** — so a `specced` cell is
+    honestly closed only by a test that names the id **and asserts the capability**, or by a measured
+    refusal in ruling 224's shape. ⛔ Which of the six is which is not decidable from the doctor line,
+    and this ruling decides none of them. ⚠️ **RULED: the census population is REOPENED as `specced`
+    cells and re-closed only when that second sweep has run** — the addendum's `CLOSED` is corrected
+    to `refusal cells CLOSED · specced cells OPEN, six members, X-117`.
+    ⚠️ The generalisable half, and it is ruling 294 one turn further: **a census states its
+    POPULATION DEFINITION beside its count, and a definition drawn from the wording of the members
+    already known is a filter wearing a census's name.** 294 caught a count five short because the
+    instrument matched five spellings of one word; this caught a population six short because the
+    word was the wrong axis entirely.
