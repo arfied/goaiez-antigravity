@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-09T18:42:20",
+ "updated": "2026-09-09T21:38:37",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -113,7 +113,7 @@
   },
   "8": {
    "track": "J10 reviews",
-   "status": "DONE",
+   "status": "BUILDING",
    "modules": [
     "C-Reviews",
     "X-181",
@@ -337,7 +337,7 @@
   },
   "30": {
    "track": "roster",
-   "status": "DONE",
+   "status": "BUILDING",
    "modules": [
     "X-186",
     "X-190",
@@ -348,7 +348,7 @@
   },
   "31": {
    "track": "roster",
-   "status": "DONE",
+   "status": "BUILDING",
    "modules": [
     "X-200",
     "X-205",
@@ -384,17 +384,10 @@
    "unresolved": []
   },
   "C-Reviews": {
-   "status": "UNRESOLVED",
+   "status": "BUILDING",
    "wave": 8,
    "intent": "GROW",
-   "unresolved": [
-    {
-     "module": "C-Reviews",
-     "stage": "contract",
-     "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
-     "at": "2026-09-04T08:05:31"
-    }
-   ]
+   "unresolved": []
   },
   "C-Sms": {
    "status": "UNRESOLVED",
@@ -921,12 +914,6 @@
    "unresolved": [
     {
      "module": "X-186",
-     "stage": "contract",
-     "why": "send.requested correctly emitted by multiple modules per R231, but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
-     "at": "2026-09-03T13:47:25"
-    },
-    {
-     "module": "X-186",
      "stage": "capability",
      "why": "no action enrols a person into a campaign",
      "at": "2026-09-04T22:41:56"
@@ -946,17 +933,10 @@
    "unresolved": []
   },
   "X-190": {
-   "status": "UNRESOLVED",
+   "status": "BUILDING",
    "wave": 30,
    "intent": "GROW",
-   "unresolved": [
-    {
-     "module": "X-190",
-     "stage": "contract",
-     "why": "approval.requested correctly emitted by multiple modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
-     "at": "2026-09-03T13:48:24"
-    }
-   ]
+   "unresolved": []
   },
   "X-191": {
    "status": "DONE",
@@ -1043,17 +1023,10 @@
    "unresolved": []
   },
   "X-205": {
-   "status": "DONE",
+   "status": "BUILDING",
    "wave": 31,
    "intent": "GROW",
-   "unresolved": [
-    {
-     "module": "X-205",
-     "stage": "contract",
-     "why": "approval.requested correctly emitted by multiple proposing modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
-     "at": "2026-09-03T13:56:38"
-    }
-   ]
+   "unresolved": []
   },
   "X-206": {
    "status": "DONE",
@@ -1116,30 +1089,16 @@
    "unresolved": []
   },
   "X-217": {
-   "status": "DONE",
+   "status": "BUILDING",
    "wave": 31,
    "intent": "GROW",
-   "unresolved": [
-    {
-     "module": "X-217",
-     "stage": "contract",
-     "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
-     "at": "2026-09-03T14:00:33"
-    }
-   ]
+   "unresolved": []
   },
   "X-218": {
-   "status": "DONE",
+   "status": "BUILDING",
    "wave": 31,
    "intent": "GROW",
-   "unresolved": [
-    {
-     "module": "X-218",
-     "stage": "contract",
-     "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
-     "at": "2026-09-03T14:01:55"
-    }
-   ]
+   "unresolved": []
   },
   "X-219": {
    "status": "DONE",
@@ -1247,42 +1206,6 @@
   }
  },
  "unresolved": [
-  {
-   "module": "X-186",
-   "stage": "contract",
-   "why": "send.requested correctly emitted by multiple modules per R231, but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
-   "at": "2026-09-03T13:47:25"
-  },
-  {
-   "module": "X-190",
-   "stage": "contract",
-   "why": "approval.requested correctly emitted by multiple modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
-   "at": "2026-09-03T13:48:24"
-  },
-  {
-   "module": "X-205",
-   "stage": "contract",
-   "why": "approval.requested correctly emitted by multiple proposing modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
-   "at": "2026-09-03T13:56:38"
-  },
-  {
-   "module": "X-217",
-   "stage": "contract",
-   "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
-   "at": "2026-09-03T14:00:33"
-  },
-  {
-   "module": "X-218",
-   "stage": "contract",
-   "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
-   "at": "2026-09-03T14:01:55"
-  },
-  {
-   "module": "C-Reviews",
-   "stage": "contract",
-   "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
-   "at": "2026-09-04T08:05:31"
-  },
   {
    "module": "X-186",
    "stage": "capability",
@@ -1478,6 +1401,48 @@
    "was": "generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook",
    "why": "app/tests/Modules/X-172/Screens/Fixtures.php:12 and app/tests/Modules/X-172/Screens/CustomerfacingPortalScreenTest.php:24",
    "at": "2026-09-09T18:42:20"
+  },
+  {
+   "module": "X-186",
+   "stage": "contract",
+   "was": "send.requested correctly emitted by multiple modules per R231, but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+   "why": "app/app/Doctor/Stages/ContractStage.php:575 (30316573 on 2026-09-07)",
+   "at": "2026-09-09T21:38:37"
+  },
+  {
+   "module": "X-190",
+   "stage": "contract",
+   "was": "approval.requested correctly emitted by multiple modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
+   "why": "app/app/Doctor/Stages/ContractStage.php:575 (30316573 on 2026-09-07)",
+   "at": "2026-09-09T21:38:37"
+  },
+  {
+   "module": "X-205",
+   "stage": "contract",
+   "was": "approval.requested correctly emitted by multiple proposing modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
+   "why": "app/app/Doctor/Stages/ContractStage.php:575 (30316573 on 2026-09-07)",
+   "at": "2026-09-09T21:38:37"
+  },
+  {
+   "module": "X-217",
+   "stage": "contract",
+   "was": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+   "why": "app/app/Doctor/Stages/ContractStage.php:575 (30316573 on 2026-09-07)",
+   "at": "2026-09-09T21:38:37"
+  },
+  {
+   "module": "X-218",
+   "stage": "contract",
+   "was": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+   "why": "app/app/Doctor/Stages/ContractStage.php:575 (30316573 on 2026-09-07)",
+   "at": "2026-09-09T21:38:37"
+  },
+  {
+   "module": "C-Reviews",
+   "stage": "contract",
+   "was": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+   "why": "app/app/Doctor/Stages/ContractStage.php:575 (30316573 on 2026-09-07)",
+   "at": "2026-09-09T21:38:37"
   }
  ]
 }
