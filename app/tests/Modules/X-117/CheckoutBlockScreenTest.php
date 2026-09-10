@@ -247,4 +247,27 @@ class CheckoutBlockScreenTest extends TestCase
             ->assertSee('Lines not shown: 1')
             ->assertSee('25.00');
     }
+
+    public function test_the_order_list_names_its_status_in_the_owners_words_and_never_the_column_token()
+    {
+        $biz = self::provisionTenant();
+        Tenancy::set($biz->id);
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::setUser($owner->id);
+
+        Order::create([
+            'business_id' => $biz->id,
+            'customer_id' => null,
+            'order_number' => 'ORD-LABEL01',
+            'status' => 'pending_payment',
+            'total_cents' => 1000,
+            'auth_token' => 'auth_label_1',
+        ]);
+
+        Livewire::actingAs($owner)->test(CheckoutBlock::class)
+            ->assertOk()
+            ->assertSee('ORD-LABEL01')
+            ->assertSee('placed, not paid')
+            ->assertDontSee('pending_payment');
+    }
 }

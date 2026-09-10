@@ -17,6 +17,8 @@ use Livewire\Component;
 
 class CheckoutBlock extends Component
 {
+    use LabelsOrderStatus;
+
     private const ORDER_WINDOW = 10;
 
     #[Locked]
@@ -129,6 +131,8 @@ class CheckoutBlock extends Component
             'unlistedCount' => $unlistedCount,
             'orders' => $orders,
             'ordersTruncated' => $ordersTruncated,
+            'orderStatusLabels' => $this->orderStatusLabels(),
+            'orderStatusPillStates' => $this->orderStatusPillStates(),
         ]);
     }
 }
