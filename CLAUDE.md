@@ -12487,3 +12487,117 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     `A second outcome on an already-outcomed dispute must be refused.` to the character, each side of it a
     GREEN run (82); and **366(b)/367**'s `SWEEP:` as the **baseline**, its two lines showing `:148` still
     `Event::fake();` before the edit with `:74` byte-identical as the positive control.
+402. **⭐⭐ The blade→PHP SEAM is four questions and ruling 205 answered only one — arity, property
+    resolution, message-render sites and guard POSITION are all measured and all CLEAN, and the
+    position sweep independently reproduced ruling 275's 19/5 split as a by-product (measured by the
+    lane supervisor 2026-09-10 20:3x; rulings 64, 95, 100, 111, 294, 324, 327, 340, 371).** Ruling 205
+    censused whether a `wire:` bound NAME resolves on its component, in both directions, and struck the
+    axis. **A name that resolves is one of four things a blade asserts about the PHP behind it**, and
+    ruling 371's discipline — *a census that LISTS or COUNTS its members instead of stating its
+    PREDICATE is a filter wearing a census's name* — makes each of the other three its own population.
+    ⭐ Each is ungated by construction: a `Livewire::test()->call('x', $args)` passes its arguments
+    **explicitly** and never reads the blade, and a real GET test only **renders** and never clicks, so
+    a blade that names the wrong arity, the wrong property or an unrendered message is invisible to all
+    24 screen tests, to `pint`, to `phpstan` and to `php -l` (153 measured the last is blind to Blade
+    entirely).
+    **(a) ARITY — 48 call sites against 47 methods, ZERO mismatched.** `grep -rn -e "wire:click" -e
+    "wire:submit" app/app/Modules --include=*.blade.php` filtered to the eight ids → **48**, counted by
+    listing (397: C-Billing 7 · X-120 3 · X-117 6 · X-173 4 · X-198 5 · X-199 9 · X-201 6 · X-211 8);
+    `grep -rn -e "public function"` over the same root filtered to `/Ui/` and minus `render`/`mount` →
+    **47**, which **independently reproduces ruling 383's corrected site count to the digit**. Every
+    call site's positional count matches its method's non-class parameters. ⭐ The mechanism that makes
+    the interleaved signatures safe is measured rather than assumed: Laravel's `BoundMethod` resolves a
+    class-typed parameter from the container and `array_shift`s the positional list for the rest, so
+    `applyForMerchant(MerchantApplyAction $action, int $connectionId)` against
+    `wire:click="applyForMerchant({{ $conn->id }})"` binds correctly **despite** its parameter order
+    being inverted relative to all 46 siblings.
+    **(b) `wire:model` PROPERTY RESOLUTION — 23 bindings, ZERO orphans.** All 23 names resolve to a
+    declared public property, nested paths included (`map.{id}.category` → `public array $map`,
+    `term.percent` → `public array $term`), and `ConnectionMappingView::mapAccount:48-50` was read to
+    confirm it reads that nested path back with `?? ''`. ⚠️ **The count is 23 and rulings 381(c) and 384
+    both state 22** — `ageing-by-reason.blade.php:72`'s `feeCents.{id}` is the twenty-third. **TENTH
+    inherited attribution corrected** (163, 171, 176, 257, 289, 355, 374, 383, 394(a)) and the cheapest
+    yet: both rulings' **conclusions hold on all 23** — `:72` sits inside the `applyLateFee` form opened
+    at `:71` (384) and is a bare `wire:model` (381(c)) — so only the number moved, which is ruling 397's
+    own point (*every count is derived by LISTING the items that produce it*).
+    **(c) MESSAGE-PROPERTY RENDER SITES — ruling 340's negative on rulings 94/95, ZERO unrendered.** 94
+    ruled that *a refusal rendering in one arm of an `@if` is a refusal nobody reads* and 95 measured all
+    22 branch placements; **neither asked whether a declared message property is rendered AT ALL**, which
+    is 94's silent door with no button. Swept on the five distinctive names — every `$waiting` (5
+    components), `$errorHeading` (2), `$refused`, `$financing` and `$authorised` has a render site in its
+    own blade. ⭐ The instrument over-matched onto `declines.blade.php:29`'s prose *"…is refused…"*, and
+    **reading the hit** separated a sentence from a property (262(b)), which is the discrimination a
+    control has to show.
+    **(d) ⭐⭐ GUARD POSITION — ruling 386's axis a third time, and the strongest control in the tick.**
+    386 ruled that *a guard is a claim of two parts, its PRESENCE and its SUBJECT*; 151(5) measured
+    presence and 275 measured subject. **Position is the third**, and it is the one that decides whether a
+    query can run before the 403. `grep -rn -A 3 -e "public function render"` filtered to `/Ui/` and the
+    eight ids: **`abort_unless` is the FIRST statement of all 24 renders**, with no read above it.
+    ⭐ And the same output reproduced ruling 275's split **as a by-product** — 19 components carrying
+    `auth()->check() && Tenancy::check()` and **exactly five** carrying `Tenancy::check()` alone
+    (`X-117/CheckoutBlock`, `X-117/CartBlock`, `X-173/ConflictsListView`, `X-173/ConnectionMappingView`,
+    `X-173/SyncErrorRateView`) — which is 275's measured set to the file, corroborating it four ticks
+    later at no cost. **A census that reproduces a prior ruling's number as a by-product is a positive
+    control on both.** ⛔ None of the four is to be re-raised.
+    ⭐ **Ruling 327's outcome shape a TWELFTH time** — *a population measured non-empty that yields zero
+    buildable fixes is the more useful of the two results to write down*, because an empty census tells a
+    later tick *nothing is there* while a classified one tells it **what is there and why each member
+    stays**. ⚠️ Recorded from the same sweep at ruling 76's grade, so no later tick re-raises them as
+    defects: `SameAccount::pull($connectionId = null)` is the lane's **only** untyped, defaulted Livewire
+    parameter against 46 `int` siblings, and it is **safe by its own first line** — `(int) $connectionId`
+    turns any client value into an integer and `findOrFail(0)` then raises the honest
+    *"That connection isn't in this account any more."*; and `ConnectCard::applyForMerchant`'s inverted
+    parameter order, safe by (a)'s measured container mechanism. ⛔ Neither is harmonised — 228(a) forbids
+    editing a pair where both members are honest, and 47's companion forbids editing a file for a reason
+    no brief names.
+
+403. **⭐⭐ The lane queries tenant-owned data through `Tenancy::id()` at nine sites while the class's own
+    docblock says a caller that intends to do that wants `idOrFail()` — and it is RECORDED, not briefed,
+    because the disproving measurement holds and there is no provable half to carry it (RULED by the lane
+    supervisor 2026-09-10 20:3x).** `grep -rn -e "Tenancy::" app/app/Modules --include=*.php` filtered to
+    the eight ids and minus `idOrFail`/`check`/`use App` returns **nine `Ui/` call sites in four
+    components** — `C-Billing/Credits.php:68,:72` · `C-Billing/DunningBoard.php:36` ·
+    `X-199/MoneyPaidToday.php:47` · `X-199/Declines.php:55,:63,:71,:78,:90` — every one of them the
+    `business_id` argument of a live query, against **twenty** components that resolve
+    `$businessId = Tenancy::idOrFail()` instead. Ruling 98's tell with twenty witnesses.
+    ⭐⭐ **And the rule is not this ledger's opinion — it is the source class's own text**, which is ruling
+    326's strongest shape for the fourth time (after 326's `env()`, 370's `SampleStateModuleTest` pin and
+    372's `ScreenStates` docblock). `app/app/Support/Tenancy.php:70-76` reads *"The current tenant, or null
+    when none is resolved. **Callers that intend to query tenant-owned data want idOrFail() instead.** This
+    exists for the handful of places that legitimately branch on whether a tenant is present — middleware,
+    console commands, health checks."*, and `:84-89` reads *"Fail closed. Never fall back to 'all tenants',
+    never to a default, never return null and let a query run wide. A loud failure in a job is recoverable;
+    **a silently unscoped query is a breach**."*
+    ⭐⭐⭐ **The disproving measurement was taken FIRST (ruling 400) and it holds.** `check()` is
+    `id() !== null` (`:96-99`), and ruling 402(d) measured **in this same tick** that
+    `abort_unless(… Tenancy::check(), 403)` is the FIRST statement of all 24 renders — so at every one of
+    the nine sites a tenant is provably established and `id()` cannot be null. **Three true measurements
+    said this was a defect; the fourth, which the hypothesis had not made, says it is not** — 400's lesson
+    a **third** time after 392(c) and 400 itself, and the cheapest instance yet, because the measurement
+    that disproved it was a by-product of another census in the same tick.
+    ⛔ **RULED: recorded at ruling 76's grade, NOT briefed, and the reasoning is this lane's own precedent
+    rather than a preference.** Under the guard the two accessors are **behaviourally identical**, so ⛔ no
+    mutation can redden the change — ruling 82's *a proof that cannot fail is not a proof* and ruling 96's
+    *an unobservable difference is recorded, never edited, because the edit is ungated churn*. ⭐ Ruling
+    209 is the one precedent that ever overrode 96 for an unprovable tenancy change, and it says exactly
+    why it could: *"⭐ What makes this a wave rather than ruling 96's recording is (a)'s signature …
+    giving it `int $businessId` makes that call a TypeError at the boundary instead of a silent zero …
+    and **that** half is provable."* **209 shipped two unprovable `where` clauses only because a provable
+    item carried them. Here every one of the nine is unprovable and there is no provable half at all**, so
+    96 governs and 209's exemption is measurably unavailable.
+    ⚠️ **The residual difference is a FAILURE MODE, not a fault, and it is written down so a later tick
+    does not re-derive it:** if the `abort_unless` were ever weakened, those four components would render
+    **silently empty** (`where('business_id', null)` matches nothing, and RLS sits beneath it — 212) where
+    the other twenty would throw `TenantNotResolved` loudly. That is fail-silent against fail-loud on the
+    one value deciding whose money is displayed, which is ruling 155's own reason for refusing main's
+    second tenant-resolution path — **and it is unreachable today.**
+    ⭐ **The generalisable half, and it is ruling 328's with the ownership inverted for the second time
+    (392 was the first): a GUARD MAKES A LATER CENSUS'S FINDING INVISIBLE IN BOTH DIRECTIONS** — 328
+    recorded that a prior wave's fix hides the absence a census would otherwise find, and here a guard
+    hides the *presence* of a departure by making it harmless. **So a census that finds a departure from a
+    documented rule asks what makes it safe BEFORE it asks how to fix it**, and where the answer is a
+    guard, the honest output is a recording naming the guard by its token (289, 293) — here
+    `abort_unless(auth()->check() && Tenancy::check(), 403)` as the first statement of `render()`.
+    ⛔ Not to be re-raised as a defect while that guard stands. ⚠️ Should a future wave give any of those
+    four components a provable item in the same file, the nine one-word edits ride along on 209's
+    precedent — that, and not a wave of its own, is how they land.
