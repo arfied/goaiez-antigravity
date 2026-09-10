@@ -512,6 +512,17 @@ class CReviewsTest extends TestCase
         $this->fail('NOT BUILT: G1-68 — no Google review removal preparation or human confirmation logic found.');
     }
 
+    /**
+     * Measured in r133-fork.txt:
+     * - app/app/Modules/C-Reviews/Database/migrations/2026_08_30_000022_create_c_reviews_tables.php:19-29 (no location column)
+     * - app/app/Modules/C-Reviews/Listeners/AskForReviewOnJobCompleted.php:14-23 (no location passed)
+     * - app/app/Models/Business.php:191-193 (Business hasMany Location, so it cannot resolve to one)
+     */
+    public function test_p110_location_gap(): void
+    {
+        $this->fail('NOT BUILT: P-110 — review_requests carries no location, so C-Reviews cannot apply the per-location invite_threshold that ReviewGating and DestinationSettings enforce.');
+    }
+
     public function test_job_completed_creates_review_request(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Review Biz', 'currency' => 'USD']);
