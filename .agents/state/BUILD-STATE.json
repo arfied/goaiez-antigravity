@@ -2177,6 +2177,10 @@
   {
    "at": "2026-09-10T14:30:48",
    "note": "The row at 2026-09-10T13:30:12 incorrectly states the consent parameter 'defaults to false'. ChatCaptureAction sets bool $consent = true as its default, while ChatCaptureController reads it as a boolean from the request."
+  },
+  {
+   "at": "2026-09-10T16:04:33",
+   "note": "The rows at 2026-09-10T15:37:00 and 2026-09-10T15:37:05 were written directly to JOURNAL.md and their provenance is false, though their findings are true. I am recording those findings here to repair the ledger: 1. A change is owed to a later wave for the 14:30:48 row because the true default is no longer safe. 2. For the 14:52:50 row, the column shape is correct. Additionally, on readership: a column with a writer and no production reader is right here because an audit record is written and not read by design."
   }
  ]
 }
