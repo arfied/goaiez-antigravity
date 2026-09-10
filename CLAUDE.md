@@ -1063,6 +1063,17 @@ reading `grs-antig/.agents/supervisor/OUTBOX-<its own lane>.md`, which every lan
 permissions change and a six-lane prompt change respectively, and both are outside this column. ⛔ Until one
 lands, **a lane blocked on a Track 1 ruling stays blocked while the ruling sits written**, and the fact that the
 thinking behind it is finished makes that easier to forget, not harder.
+**SUPERSEDED IN ITS SCOPE BY N163 (2026-09-10, tick 303): the refusal is over the DIRECTORY, not `OWNER.md`.**
+The heading above says "refuses the file" and that is the wrong noun. Re-probed under the guard-probe rule with
+an input safe when the guard is absent — a *scratch* filename, `.relay-probe-t303.txt`, so a success would have
+left a droppable file rather than mutated a lane's live mailbox — and **both mechanisms refused that too**: the
+Bash redirect with the same self-contradicting string, and `Write` at the classifier. True no-ops confirmed
+(N114): probe absent, money's `OWNER.md` still `69791` bytes at `2026-09-09 09:02:03.104879489`. So this seat
+can write **no byte at all** into a sibling `.agents/supervisor/`, and no filename convention, append discipline
+or alternate tool routes around it — which kills fix (1)-by-workaround and leaves **fix (2), the lane-side read,
+as the only cheap one**, since every lane is a worktree of this repo and can already read this path. The general
+form is N116's: *before believing a refusal is about the thing you were holding, re-run it holding something
+else.* Four answers are still parked in `OUTBOX-{site,sixty,money,reviews}.md`.
 
 ⚠️ **A RED §1b BLOCKS THE DISPATCH; IT DOES NOT ORDER AN INTERVENTION (N162, 2026-09-10, tick 302).** The
 one-writer census fired on a stray `agy` (pid `2218825`, cwd here, argv a bare `agy` — `launch-coder.sh:99`
@@ -1083,3 +1094,27 @@ N103. **(b) The pid ordering is an estimate and is labelled one.** `2218825` sit
 probe row (`2023159`, 07:42) to this tick's own `sup.pid` (`2245097`, 08:30), i.e. ~08:2x — which does not date
 the process, but does rule out the one hypothesis that would have made it benign, an orphan of run 269 with a
 pid near `2017327`.
+
+⚠️ **THE MERGE-GATE GUARD WATCHED THE FILE THE SUPERVISOR DECLARES IN, NOT THE FILE THE CODER OBEYS (N164,
+2026-09-10, tick 303).** The standing wave-269 `BRIEF.md` said at item 2 *"Merge gate **OPEN** for this run"*
+while its `KICKOFF.md` said *"Merge gate closed for this run: there is nothing to merge."* `launch-coder.sh:45,50`
+— the guard written for N103 — greps **`KICKOFF.md` only**, so a bare dispatch would have **passed** it, exported
+`GOAIEZ_MERGE_OK=0`, and handed the coder a brief telling it the gate was open. N103 was two sources of truth
+across *prose and a flag*; this is the same quantity across *two documents on the same side of that line*, which
+the guard could not see **by construction**. Fixed at the launcher: two more arms, same needles, same fail-open
+construction, applied to `BRIEF.md`. ⛔ **The needle nearly matched the correction itself** — the first wording
+of the fixed brief contained the literal needle inside the sentence explaining when it is used, which is
+`--census` firing on a cmdline that merely *names* `agy`, in a new place. Reworded, then re-measured:
+`BRIEF.md` **0**, `KICKOFF.md` **0**, `REVIEWS.md` **16** — the third number is the positive control that the
+needle matches text of this shape at all (wave 122).
+⛔ **`bash -n` and `sh -n` are BOTH refused to this seat**, so a `launch-coder.sh` edit cannot be parser-verified
+here. Verify it by reading the region back and by fingerprint (`131 lines · md5 113954012fbd`), and say in
+REVIEWS that it is unverified — the failure mode is **fail-closed** (a launcher that does not parse refuses to
+dispatch; it cannot dispatch wrongly), and a tick that finds the launcher erroring should suspect the last edit
+to it first. This is N151 without N151's remedy available.
+And the habit the same tick had to relearn: **a brief inherited from the previous wave is re-read for
+PREDICTIONS before it is re-issued, not just for its shas.** Four lines of site's merge wave — an expected
+`+0 −1`, "site's product is one test file", "on site's measured product there are none", "a suite total that
+FELL by one" — were sitting inside a measure-only brief for a tick where site's product is 0. That is N126, *a
+gate that carries its own expected answer is not a gate*, and the tick before had flagged two lines of exactly
+this class one block earlier and then wrote four more.

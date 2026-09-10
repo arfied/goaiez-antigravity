@@ -52,6 +52,26 @@ if grep -q 'Harness gate \*\*OPEN' .agents/supervisor/KICKOFF.md && [ "$ALLOW_HA
   echo "         The run would export GOAIEZ_HARNESS_OK=0 and could not commit the merged harness."
   exit 1
 fi
+# N164 (2026-09-10, tick 303): the two arms above read KICKOFF.md ONLY, and the CODER READS
+# BRIEF.md. Tick 303 found the standing wave-269 brief declaring "Merge gate **OPEN** for this
+# run" at item 2 while KICKOFF.md said "Merge gate closed for this run" — a bare dispatch would
+# have passed both arms above, exported GOAIEZ_MERGE_OK=0, and handed the coder a brief telling
+# it the gate was open. That is N103 with the two sources of truth moved one file across, and
+# the guard written for N103 could not see it: it was watching the file the supervisor declares
+# in, not the file the coder obeys. Same needles, same fail-open construction (a brief that says
+# neither is silent; a brief that says "closed" cannot match). Positive control at the time of
+# writing: the needle read 0 in BRIEF.md and KICKOFF.md after tick 303's correction, and 16 in
+# REVIEWS.md — it matches text of this shape, it just does not match a correct mailbox.
+if grep -q 'Merge gate \*\*OPEN' .agents/supervisor/BRIEF.md && [ "$ALLOW_MERGE" = 0 ]; then
+  echo "REFUSED: BRIEF.md declares 'Merge gate **OPEN' but --allow-merge was not passed."
+  echo "         The coder reads BRIEF.md; the run would export GOAIEZ_MERGE_OK=0 and the shared guard would refuse the merge."
+  exit 1
+fi
+if grep -q 'Harness gate \*\*OPEN' .agents/supervisor/BRIEF.md && [ "$ALLOW_HARNESS" = 0 ]; then
+  echo "REFUSED: BRIEF.md declares 'Harness gate **OPEN' but --allow-harness was not passed."
+  echo "         The coder reads BRIEF.md; the run would export GOAIEZ_HARNESS_OK=0 and could not commit the merged harness."
+  exit 1
+fi
 
 PIDFILE=".agents/supervisor/coder.pid"
 if [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
