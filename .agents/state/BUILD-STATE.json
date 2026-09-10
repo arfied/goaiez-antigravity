@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-10T05:32:42",
+ "updated": "2026-09-10T06:24:22",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1714,6 +1714,10 @@
   {
    "at": "2026-09-10T05:32:42",
    "note": "MONEY-175: X-199's declines, invoices and paid lists take an orderByDesc('id') tiebreak. Declines.php:81's orderBy('created_at')->first() is left alone because the blade reads only the recovered row's created_at, which is identical across a tie. The wider population - due_date, paid_at, day_in_cycle, name, meter_type - is measured in this run's ORDER CENSUS and fixed by no wave yet."
+  },
+  {
+   "at": "2026-09-10T06:24:26",
+   "note": "MONEY-176: X-199's paid-today list takes orderByDesc('id') behind paid_at and its unpaid list takes orderBy('id') behind due_date, which completes X-199. The declines ordering test derives its base from now()->startOfWeek() rather than a literal date. InvoiceReader's four due_date methods feed four X-211 screens and are not this wave."
   }
  ],
  "decisions": [
@@ -2669,6 +2673,12 @@
    "module": "X-199",
    "chose": "A rendered list orders on a column that cannot tie, or it carries an id tiebreak. Three X-199 lists ordered by created_at alone, and a test that freezes the clock - which ruling 33 requires on the declines screen - gives every row the same timestamp, so the render order was undefined and the paid list's limit decided which row was dropped arbitrarily.",
    "at": "2026-09-10T05:32:42",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-199",
+   "chose": "A tiebreak runs the same way as the clause it breaks: a list ordered ascending takes orderBy('id') and one ordered descending takes orderByDesc('id'). A DATE column ties by nature, since it carries no time component, so two invoices due the same day are identical in the ordering column and the render order is undefined without an id behind it.",
+   "at": "2026-09-10T06:24:22",
    "ruling": "R245"
   }
  ]
