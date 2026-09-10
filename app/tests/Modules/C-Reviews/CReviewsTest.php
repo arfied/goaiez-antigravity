@@ -16,6 +16,7 @@ use App\Modules\CReviews\Actions\ReviewerContactAction;
 use App\Modules\CReviews\Actions\ReviewReplyAction;
 use App\Modules\CReviews\Actions\ReviewRequestAction;
 use App\Modules\CReviews\Actions\ReviewSyncAction;
+use App\Modules\CReviews\Domain\PublicThreshold;
 use App\Modules\CReviews\Domain\RemovalFilingGate;
 use App\Modules\CReviews\Domain\RemovalNotAddressableException;
 use App\Modules\CReviews\Domain\RemovalNotConfirmedException;
@@ -729,10 +730,50 @@ class CReviewsTest extends TestCase
      * - app/app/Modules/C-Reviews/Database/migrations/2026_08_30_000022_create_c_reviews_tables.php:19-29 (no location column)
      * - app/app/Modules/C-Reviews/Listeners/AskForReviewOnJobCompleted.php:14-23 (no location passed)
      * - app/app/Models/Business.php:191-193 (Business hasMany Location, so it cannot resolve to one)
+     *
+     * 2026-09-10: P-110 SUPERSEDES the run-134 location_id item (JOURNAL.md:822).
+     * The replacement law is business-scoped:
+     * - app/app/Modules/C-Reviews/Domain/PublicThreshold.php:14 (for() method)
+     * - app/app/Modules/C-Reviews/Database/migrations/2026_08_30_000022_create_c_reviews_tables.php:46 (min_public_stars)
      */
-    public function test_p110_location_gap(): void
+    public function test_p110_threshold_is_business_scoped_not_per_location(): void
     {
-        $this->fail('NOT BUILT: P-110 — review_requests carries no location, so C-Reviews cannot apply the per-location invite_threshold that ReviewGating and DestinationSettings enforce.');
+        $biz1 = TestCase::provisionTenant(['name' => 'Review Biz 1', 'currency' => 'USD']);
+        $biz2 = TestCase::provisionTenant(['name' => 'Review Biz 2', 'currency' => 'USD']);
+        $biz3 = TestCase::provisionTenant(['name' => 'Review Biz 3', 'currency' => 'USD']);
+
+        \DB::statement("SET app.business_id = '{$biz1->id}'");
+        QaSetting::updateOrCreate(
+            ['business_id' => $biz1->id],
+            ['min_public_stars' => 3]
+        );
+
+        \DB::statement("SET app.business_id = '{$biz2->id}'");
+        QaSetting::updateOrCreate(
+            ['business_id' => $biz2->id],
+            ['min_public_stars' => 5]
+        );
+
+        $threshold = app(PublicThreshold::class);
+
+        \DB::statement("SET app.business_id = '{$biz1->id}'");
+        $this->assertSame(3, $threshold->for($biz1->id));
+
+        \DB::statement("SET app.business_id = '{$biz2->id}'");
+        $this->assertSame(5, $threshold->for($biz2->id));
+
+        \DB::statement("SET app.business_id = '{$biz3->id}'");
+        $this->assertSame(PublicThreshold::FALLBACK, $threshold->for($biz3->id));
+    }
+
+    public function test_p110_the_module_reaches_no_per_location_gating_surface(): void
+    {
+        $dir = app_path('Modules/C-Reviews');
+        $this->assertDirectoryExists($dir);
+
+        exec("grep -rnE 'ReviewGating|DestinationSettings|invite_threshold' ".escapeshellarg($dir).' 2>/dev/null', $out, $code);
+
+        $this->assertSame([], $out, "Module contains per-location gating references:\n".implode("\n", $out));
     }
 
     public function test_job_completed_creates_review_request(): void
@@ -929,6 +970,7 @@ class CReviewsTest extends TestCase
             ->assertViewHas('publicCount', 1)
             ->assertViewHas('internalCount', 0);
 
+        \DB::statement("SET app.business_id = '".$biz1->id."'");
         QaSetting::updateOrCreate(
             ['business_id' => $biz->id],
             ['min_public_stars' => 5]
