@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-10T00:02:11",
+ "updated": "2026-09-10T00:34:18",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -2523,6 +2523,12 @@
    "module": "X-102",
    "chose": "The chat door scopes its session lookup by business_id in both ChatTurnController and ChatCaptureController. Measured at tick 331: both controllers looked the session up as ChatSession where session_token equals the request value and nothing else, while the businessId passed to the action came from the pixel key, so a public unauthenticated route joined two independent credentials with nothing between them. session_token is unique so a global lookup names exactly one session and cannot collide by accident, which makes presenting another tenant token a deliberate act rather than an accident. chat_sessions carries ENABLE and FORCE ROW LEVEL SECURITY with a tenant_isolation policy, so row level security refuses the cross tenant read one layer beneath the application and the new clause is defence in depth today. It is added anyway because row level security is a property of the database, so a deployment made without runtime goaiez-grants.sql has no second brace and the application clause is the only thing that travels with the code. The policy is already decided four times over in this lane: X-157 three published endpoints, CallAttributeAction every query, FormValidateAction and FormCaptureAction. Consequence for evidence: a falsifier that removes the clause cannot redden because the lower layer enforces the same invariant, so the necessity is not demonstrable at this seam and only the correctness is, by mutating to the wrong business id and watching the same tenant tests redden. Refused: removing the row level security policy to make a falsifier redden; asserting the middleware or the grants file, which are reserved and not this lane column; guarding inside ChatCaptureAction, which leaves ChatTurnController exposed; scoping only one controller; a new status code, since both endpoints already answer 404 for an unresolvable session; and any new capability id literal. ChatStartController is out of scope because it creates a session rather than looking one up.",
    "at": "2026-09-10T00:02:11",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-102",
+   "chose": "The chat door keeps ONE route-level cross-tenant carrier per route: test_key_for_business_a_and_session_for_business_b_returns_404 for turn and test_capture_scopes_session_lookup_by_business_id for capture, with the start route separately covered by test_key_for_business_a_does_not_produce_row_readable_as_business_b. SITE-203 added a line-for-line duplicate of the turn carrier because the wave was briefed from a measurement of the controllers rather than of the test file; the duplicate is deleted and nothing else is. All three carriers are OUTCOME INVARIANTS and not sentinels: both controllers call Tenancy::set(businessId) immediately before the lookup and chat_sessions has FORCE ROW LEVEL SECURITY with a tenant_isolation policy on that same value, so row-level security and the app-level where(business_id) clause are co-extensional and no HTTP-route test can distinguish them. The clause is kept as defence in depth because row-level security is a property of the database and a deployment without the grants file has no second brace. Its liveness was proven by CORRUPTION, scoping to the wrong business id, which reddens the same-tenant tests; a REMOVAL mutation cannot redden and measures nothing.",
+   "at": "2026-09-10T00:34:18",
    "ruling": "R245"
   }
  ],
