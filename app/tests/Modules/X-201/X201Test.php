@@ -116,7 +116,7 @@ class X201Test extends TestCase
         // 4. Lost dispute writes commission.clawed_back for the released commission on that job (TEST ANCHOR)
         $outcomeRes = $this->engine->recordOutcome($biz->id, $dispute->id, 'lost', 'bank_ruled_in_cardholder_favor');
         $this->assertEquals('lost', $outcomeRes['status']);
-        $this->assertTrue($outcomeRes['commission_clawback_triggered'], 'Lost dispute triggers commission clawback');
+        $this->assertTrue($outcomeRes['commission_clawback_triggered'], 'a lost dispute sets the clawback flag; no commission is taken back, because nothing acts on that flag');
 
         $outcomeRecord = DisputeOutcome::where('business_id', $biz->id)->where('dispute_id', $dispute->id)->first();
         $this->assertEquals('lost', $outcomeRecord->outcome);

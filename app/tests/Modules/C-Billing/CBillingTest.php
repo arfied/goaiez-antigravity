@@ -87,9 +87,9 @@ class CBillingTest extends TestCase
 
         $this->assertEquals(21, $state->day_in_cycle);
         $this->assertEquals('ai_off_voicemail_only', $state->status);
-        $this->assertFalse($state->ai_enabled, 'AI must be OFF at day 21');
-        $this->assertTrue($state->phone_answering, 'Phone must KEEP ANSWERING at day 21');
-        $this->assertTrue($state->voicemail_only, 'At day 21 calls route to voicemail only');
+        $this->assertFalse($state->ai_enabled, 'the ladder records AI off at day 21; nothing in this app reads the flag');
+        $this->assertTrue($state->phone_answering, 'the ladder records the phone still answering at day 21; nothing in this app reads the flag');
+        $this->assertTrue($state->voicemail_only, 'the ladder records voicemail-only at day 21; no call is routed by this app');
     }
 
     /**
@@ -159,7 +159,7 @@ class CBillingTest extends TestCase
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $state = $this->dunningAction->handle($biz->id, 25);
-        $this->assertTrue($state->phone_answering, 'Phone must keep answering even during lockout');
+        $this->assertTrue($state->phone_answering, 'the ladder records the phone still answering during lockout; nothing in this app reads the flag');
     }
 
     /**
@@ -257,7 +257,7 @@ class CBillingTest extends TestCase
 
         $state = $this->dunningAction->handle($biz->id, 10);
         $this->assertEquals('banner', $state->status);
-        $this->assertTrue($state->ai_enabled, 'Day 10 is a banner, not a lockout: AI remains enabled');
+        $this->assertTrue($state->ai_enabled, 'day 10 is a banner: the ladder records AI still enabled; nothing in this app reads the flag');
     }
 
     /**
