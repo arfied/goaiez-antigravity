@@ -668,6 +668,23 @@ class X01Test extends TestCase
         ]);
     }
 
+    public function test_ingest_message_refuses_when_ambient_tenant_is_absent(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'RLS Biz', 'currency' => 'USD']);
+        \App\Support\Tenancy::forgetAll();
+
+        $this->expectException(\Illuminate\Database\QueryException::class);
+        $this->expectExceptionMessage('new row violates row-level security policy for table "people"');
+
+        $this->manager->ingestMessage(
+            businessId: $biz->id,
+            channel: 'sms',
+            identifier: '+15125550201',
+            senderName: 'RLS User',
+            body: 'Body RLS'
+        );
+    }
+
     public function test_empty_message_throws(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Empty Msg Biz', 'currency' => 'USD']);
