@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-10T16:24:27",
+ "updated": "2026-09-10T16:53:19",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1908,6 +1908,18 @@
    "module": "X-102",
    "chose": "contract Flipped ChatCaptureAction consent parameter to default to false, requiring explicit opt-in for consent records, and passed consent explicitly to the two tests that assert on the resulting message retention.",
    "at": "2026-09-10T16:24:27",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-102",
+   "chose": "boundary Created consented test to properly assert HTTP middleware whitespace normalization R245",
+   "at": "2026-09-10T16:53:19",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-102",
+   "chose": "capability Removed logged consent from widget build proposal as the backend portion is built R245",
+   "at": "2026-09-10T16:53:19",
    "ruling": "R245"
   }
  ],

@@ -21,7 +21,7 @@ class ChatDoorTest extends TestCase
 
     /**
      * CLOSED: X-102 chat capture — the 400 Bad Request returned by the middleware is correct behavior, making the internal 500 safely unreachable.
-     * BUILD PROPOSAL: pre-chat notice, logged consent, and first-party transcripts only for the chat widget Owner: X-102
+     * BUILD PROPOSAL: pre-chat notice and first-party transcripts only for the chat widget Owner: X-102
      * BUILD PROPOSAL: X-102's ChatTurnAction calls C-Agent unconditionally; it should only call if the author is 'visitor'. Owner: X-102
      * BUILD PROPOSAL: mapping chat_session_id to C-Agent's conversation_id so HUMAN_TAKEOVER_LATCH works is required, but it has not been asked for yet. Owner: Track 1
      * BUILD PROPOSAL: X-102's ChatTurnAction defaults the turn number to 1; it should compute and pass the real turn number. Owner: X-102
@@ -337,10 +337,9 @@ class ChatDoorTest extends TestCase
     }
 
     /**
-     * Decision: The HTTP stack normalises a whitespace message to null.
-     * Reasoning: A detail that is blank or whitespace was not given (R245). The framework's global middleware
-     * (TrimStrings and ConvertEmptyStringsToNull) trims whitespace and converts empty strings to null before
-     * they reach the controller. This test proves the HTTP path protects the action from receiving whitespace.
+     * This test is unfalsifiable for the middleware's behavior because the lack of consent
+     * drops the message before the trim logic's output can be verified. The next test 
+     * proves the HTTP path protects the action from receiving whitespace.
      */
     public function test_http_middleware_normalises_whitespace_message_to_null(): void
     {
@@ -373,6 +372,49 @@ class ChatDoorTest extends TestCase
         $lead = ChatLead::first();
         $this->assertNull($lead->message);
         $this->assertNull($lead->consent_logged_at);
+    }
+
+    /**
+     * Decision: The HTTP stack normalises a whitespace message to null.
+     * Reasoning: A detail that is blank or whitespace was not given (R245). The framework's global middleware
+     * (TrimStrings and ConvertEmptyStringsToNull) trims whitespace and converts empty strings to null before
+     * they reach the controller. This test proves the HTTP path protects the action from receiving whitespace.
+     * 
+     * Finding: No mutation in the module can redden this assertion because the framework middleware satisfies 
+     * it before the module's code path is reached.
+     */
+    public function test_http_middleware_normalises_whitespace_message_to_null_when_consented(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Lead Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+        $key = app(PixelKeys::class)->ensureFor($biz);
+
+        $session = ChatSession::create([
+            'business_id' => $biz->id,
+            'session_token' => 'sess_lead_test',
+            'status' => 'active',
+            'rage_clicks_count' => 0,
+            'is_ai_capped' => false,
+        ]);
+        Tenancy::forgetAll();
+
+        $response = $this->postJson("/api/chat/{$key}/capture", [
+            'session_token' => 'sess_lead_test',
+            'name' => 'John Doe',
+            'phone' => '1234567890',
+            'email' => 'john@example.com',
+            'message' => "   \n\t ",
+            'consent' => true,
+        ]);
+
+        $response->assertStatus(201);
+        $response->assertJsonStructure(['id']);
+
+        Tenancy::set((int) $biz->id);
+        $this->assertEquals(1, ChatLead::where('chat_session_id', $session->id)->count());
+        $lead = ChatLead::first();
+        $this->assertNull($lead->message);
+        $this->assertNotNull($lead->consent_logged_at);
     }
 
     /**
