@@ -128,7 +128,7 @@ class LossAlerts extends Component
                 });
 
             $lowRatingRequests = ReviewRequest::where('business_id', $this->businessId)
-                ->where('rating', '<=', $minStars)
+                ->where('rating', '<', $minStars)
                 ->whereNotNull('rating')
                 ->whereNotExists(function ($query) {
                     $query->select('id')
@@ -139,7 +139,7 @@ class LossAlerts extends Component
                 ->get()
                 ->map(function ($r) use ($minStars) {
                     $r->alert_type = 'review';
-                    $r->alert_reason = "Rating {$r->rating} <= {$minStars} and no resolved ticket";
+                    $r->alert_reason = "Rating {$r->rating} < {$minStars} and no resolved ticket";
                     $r->risk_level = 2;
 
                     return $r;
