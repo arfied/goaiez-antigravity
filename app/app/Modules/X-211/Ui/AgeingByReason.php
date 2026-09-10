@@ -33,6 +33,8 @@ class AgeingByReason extends Component
 
     public ?string $refused = null;
 
+    public ?string $refusedHeading = null;
+
     public ?string $error = null;
 
     public ?string $success = null;
@@ -42,6 +44,7 @@ class AgeingByReason extends Component
         $this->error = null;
         $this->success = null;
         $this->refused = null;
+        $this->refusedHeading = null;
         $percent = (int) ($this->term['percent'] ?? 0);
         $cap = trim((string) ($this->term['cap'] ?? '')) === '' ? null : (int) $this->term['cap'];
         if ($percent < 1 || $percent > 100) {
@@ -68,6 +71,7 @@ class AgeingByReason extends Component
         $this->error = null;
         $this->success = null;
         $this->refused = null;
+        $this->refusedHeading = null;
         $businessId = Tenancy::idOrFail();
         $fee = (int) ($this->feeCents[$invoiceId] ?? 0);
         if ($fee <= 0) {
@@ -81,6 +85,7 @@ class AgeingByReason extends Component
             $this->success = sprintf('Late fee of %s applied to %s.', number_format($res['applied_fee_cents'] / 100, 2), $invoice->invoice_number);
             unset($this->feeCents[$invoiceId]);
         } catch (FeeWithoutTermException|FeeAtCapException $e) {
+            $this->refusedHeading = 'Late fee not applied';
             $this->refused = $e->getMessage();
         } catch (ModelNotFoundException) {
             $this->error = "That invoice isn't in this account any more.";
@@ -94,6 +99,7 @@ class AgeingByReason extends Component
         $this->error = null;
         $this->success = null;
         $this->refused = null;
+        $this->refusedHeading = null;
         $businessId = Tenancy::idOrFail();
 
         if (empty($this->reference[$invoiceId])) {
@@ -125,6 +131,7 @@ class AgeingByReason extends Component
             $this->success = 'Payment logged.';
             unset($this->reference[$invoiceId], $this->amountCents[$invoiceId], $this->paymentMethod[$invoiceId]);
         } catch (UnreferencedPaymentException $e) {
+            $this->refusedHeading = 'Payment not logged';
             $this->refused = $e->getMessage();
         } catch (ModelNotFoundException) {
             $this->error = "That invoice isn't in this account any more.";
