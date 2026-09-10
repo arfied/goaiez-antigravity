@@ -23,6 +23,7 @@ use App\Modules\X01\Events\TakeoverReleased;
 use App\Modules\X01\Events\TakeoverStarted;
 use App\Modules\X01\Exceptions\LeadRatingOutOfRangeRefused;
 use App\Modules\X01\Exceptions\TakeoverNotLatchedRefused;
+use App\Modules\X01\Listeners\ChatLeadCapturedListener;
 use App\Modules\X01\Models\LeadScore;
 use App\Modules\X01\Models\TakeoverLatch;
 use App\Modules\X01\Ui\Account\Inbox as AccountInbox;
@@ -30,6 +31,8 @@ use App\Modules\X01\Ui\CustomersList;
 use App\Modules\X01\Ui\Thread;
 use App\Modules\X102\Events\ChatLeadCaptured;
 use App\Modules\X121\Models\Person;
+use App\Support\Tenancy;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
@@ -665,5 +668,62 @@ class X01Test extends TestCase
             'conversation_id' => $resChat['conversation_id'],
             'body' => 'Body Chat',
         ]);
+    }
+
+    public function test_ingest_message_refuses_when_ambient_tenant_is_absent(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'RLS Biz', 'currency' => 'USD']);
+        Tenancy::forgetAll();
+
+        $this->expectException(QueryException::class);
+        $this->expectExceptionMessage('new row violates row-level security policy for table "people"');
+
+        $this->manager->ingestMessage(
+            businessId: $biz->id,
+            channel: 'sms',
+            identifier: '+15125550201',
+            senderName: 'RLS User',
+            body: 'Body RLS'
+        );
+    }
+
+    public function test_chat_lead_captured_listener_ignores_whitespace_message(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Whitespace Biz', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        $listener = app(ChatLeadCapturedListener::class);
+        $event = new ChatLeadCaptured(
+            businessId: $biz->id,
+            leadId: 1,
+            personId: 1,
+            name: 'Whitespace User',
+            phone: '+15125550202',
+            message: '   ',
+        );
+
+        // Before the fix, this would call ingestMessage and throw InvalidArgumentException
+        $listener->handle($event);
+
+        $this->assertDatabaseMissing('messages', [
+            'business_id' => $biz->id,
+        ]);
+    }
+
+    public function test_empty_message_throws(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Empty Msg Biz', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('An empty message is not a message');
+
+        $this->manager->ingestMessage(
+            businessId: $biz->id,
+            channel: 'whatsapp',
+            identifier: '+15125550999',
+            senderName: 'Webhook User',
+            body: '   '
+        );
     }
 }
