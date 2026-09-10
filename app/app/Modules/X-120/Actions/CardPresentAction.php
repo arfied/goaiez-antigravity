@@ -41,11 +41,15 @@ final class CardPresentAction
             throw new CardNumberInvalidException('That card number does not check out; nothing was stored.');
         }
 
-        $brand = match ($first) {
-            '4' => 'visa',
-            '5' => 'mastercard',
-            '3' => 'amex',
-            '0', '1', '2', '6', '7', '8', '9' => 'card',
+        $two = (int) substr($digits, 0, 2);
+        $four = (int) substr($digits, 0, 4);
+
+        $brand = match (true) {
+            $first === '4' => 'visa',
+            $two >= 51 && $two <= 55 => 'mastercard',
+            $four >= 2221 && $four <= 2720 => 'mastercard',
+            $two === 34 || $two === 37 => 'amex',
+            default => 'card',
         };
 
         return [
