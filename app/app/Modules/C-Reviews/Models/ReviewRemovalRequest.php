@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\CReviews\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
@@ -13,9 +14,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?string $google_review_id
  * @property ?string $tos_ground
  * @property ?string $prepared_body
- * @property ?\Illuminate\Support\Carbon $prepared_at
+ * @property ?Carbon $prepared_at
  * @property ?int $confirmed_by_user_id
- * @property ?\Illuminate\Support\Carbon $confirmed_at
+ * @property ?Carbon $confirmed_at
  * @property string $status
  */
 class ReviewRemovalRequest extends Model

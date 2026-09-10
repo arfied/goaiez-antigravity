@@ -5,11 +5,15 @@ declare(strict_types=1);
 namespace Tests\Modules\CReviews;
 
 use App\Models\ConsentRecord;
+use App\Modules\CReviews\Actions\ConfirmRemovalRequestAction;
+use App\Modules\CReviews\Actions\PrepareRemovalRequestAction;
 use App\Modules\CReviews\Actions\QaTicketAction;
 use App\Modules\CReviews\Actions\ReviewerContactAction;
 use App\Modules\CReviews\Actions\ReviewReplyAction;
 use App\Modules\CReviews\Actions\ReviewRequestAction;
 use App\Modules\CReviews\Actions\ReviewSyncAction;
+use App\Modules\CReviews\Domain\RemovalFilingGate;
+use App\Modules\CReviews\Domain\RemovalNotConfirmedException;
 use App\Modules\CReviews\Events\CsatRequested;
 use App\Modules\CReviews\Events\FirstWin;
 use App\Modules\CReviews\Events\ReplyPublished;
@@ -515,20 +519,20 @@ class CReviewsTest extends TestCase
         $biz = self::provisionTenant(['name' => 'G168 Test Biz']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $req = \App\Modules\CReviews\Models\ReviewRequest::create([
+        $req = ReviewRequest::create([
             'business_id' => $biz->id,
             'platform' => 'google',
             'rating' => 1,
         ]);
 
-        $preparer = new \App\Modules\CReviews\Actions\PrepareRemovalRequestAction();
+        $preparer = new PrepareRemovalRequestAction;
         $removal = $preparer->execute($biz->id, $req->id, 'tos_ground_example', 'Prepared Body', 'google_rev_id');
 
-        $gate = new \App\Modules\CReviews\Domain\RemovalFilingGate();
-        
-        $this->expectException(\App\Modules\CReviews\Domain\RemovalNotConfirmedException::class);
+        $gate = new RemovalFilingGate;
+
+        $this->expectException(RemovalNotConfirmedException::class);
         $this->expectExceptionMessage('This removal request has not been confirmed by a human.');
-        
+
         $gate->assertFilable($removal);
     }
 
@@ -537,20 +541,20 @@ class CReviewsTest extends TestCase
         $biz = self::provisionTenant(['name' => 'G168 Test Biz']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $req = \App\Modules\CReviews\Models\ReviewRequest::create([
+        $req = ReviewRequest::create([
             'business_id' => $biz->id,
             'platform' => 'google',
             'rating' => 1,
         ]);
 
-        $preparer = new \App\Modules\CReviews\Actions\PrepareRemovalRequestAction();
+        $preparer = new PrepareRemovalRequestAction;
         $removal = $preparer->execute($biz->id, $req->id, 'tos_ground_example', 'Prepared Body', 'google_rev_id');
 
-        $confirmer = new \App\Modules\CReviews\Actions\ConfirmRemovalRequestAction();
-        
+        $confirmer = new ConfirmRemovalRequestAction;
+
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('A user ID is required to confirm a removal request.');
-        
+
         $confirmer->execute($removal, null);
     }
 
@@ -559,23 +563,23 @@ class CReviewsTest extends TestCase
         $biz = self::provisionTenant(['name' => 'G168 Test Biz']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $req = \App\Modules\CReviews\Models\ReviewRequest::create([
+        $req = ReviewRequest::create([
             'business_id' => $biz->id,
             'platform' => 'google',
             'rating' => 1,
         ]);
 
-        $preparer = new \App\Modules\CReviews\Actions\PrepareRemovalRequestAction();
+        $preparer = new PrepareRemovalRequestAction;
         $removal = $preparer->execute($biz->id, $req->id, 'tos_ground_example', 'Prepared Body', 'google_rev_id');
 
-        $confirmer = new \App\Modules\CReviews\Actions\ConfirmRemovalRequestAction();
+        $confirmer = new ConfirmRemovalRequestAction;
         $confirmer->execute($removal, 999);
 
         $this->assertEquals('confirmed', $removal->status);
         $this->assertEquals(999, $removal->confirmed_by_user_id);
         $this->assertNotNull($removal->confirmed_at);
 
-        $gate = new \App\Modules\CReviews\Domain\RemovalFilingGate();
+        $gate = new RemovalFilingGate;
         $gate->assertFilable($removal);
     }
 
@@ -584,13 +588,13 @@ class CReviewsTest extends TestCase
         $biz = self::provisionTenant(['name' => 'G168 Test Biz']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $req = \App\Modules\CReviews\Models\ReviewRequest::create([
+        $req = ReviewRequest::create([
             'business_id' => $biz->id,
             'platform' => 'google',
             'rating' => 1,
         ]);
 
-        $preparer = new \App\Modules\CReviews\Actions\PrepareRemovalRequestAction();
+        $preparer = new PrepareRemovalRequestAction;
         $removal = $preparer->execute($biz->id, $req->id, 'tos_ground_example', 'Prepared Body', 'google_rev_id');
 
         $this->assertNull($removal->confirmed_by_user_id);
