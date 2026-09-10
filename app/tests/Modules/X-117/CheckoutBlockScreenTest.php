@@ -270,4 +270,27 @@ class CheckoutBlockScreenTest extends TestCase
             ->assertSee('placed, not paid')
             ->assertDontSee('pending_payment');
     }
+
+    public function test_a_cancelled_order_carries_no_attention_signal()
+    {
+        $biz = self::provisionTenant();
+        Tenancy::set($biz->id);
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::setUser($owner->id);
+
+        Order::create([
+            'business_id' => $biz->id,
+            'customer_id' => null,
+            'order_number' => 'ORD-CANCEL01',
+            'status' => 'cancelled',
+            'total_cents' => 1000,
+            'auth_token' => 'auth_cancel_1',
+        ]);
+
+        Livewire::actingAs($owner)->test(CheckoutBlock::class)
+            ->assertOk()
+            ->assertSee('ORD-CANCEL01')
+            ->assertSee('cancelled')
+            ->assertDontSeeHtml('bg-attention-bg');
+    }
 }
