@@ -1503,6 +1503,10 @@
   {
    "at": "2026-09-10T15:01:22",
    "note": "run 149: errors 14 -> 13; the test had been asserting the exception text that run 148 stopped rendering."
+  },
+  {
+   "at": "2026-09-10T15:28:51",
+   "note": "run 150: Arm B, module C-Reviews is NOT done; nothing moved because this wave changes a docblock and one assertion."
   }
  ],
  "resolved": [
