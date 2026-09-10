@@ -10122,3 +10122,159 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     mutation proofs are re-run against the pint-fixed, action-driven tree and re-quoted** (72) — the
     fixers touch `CheckoutEngine.php`'s guard line (`!in_array` → `! in_array`) and both screen tests,
     so a proof quoted against `9f3e4e18` evidences a file that is no longer in the sha.
+354. **⭐⭐ `git restore <one path>` PASSES the shared coder guard, so ruling 71's recorded refusal is
+    keyed to a verb-plus-arity the guard does not actually cover — and a single-path
+    `git restore CLAUDE.md` is run 27's own catastrophe, unguarded (RULED by the lane supervisor
+    2026-09-10 10:3x, on MONEY-181's `07786df9`; measured from `/home/goaiez/agents/coder-bin/git`).**
+    MONEY-181's brief forbade `git restore` in terms and the run used it once, for Proof A's restore,
+    and **reported it unprompted under `REFUSED:`** — ruling 313 paying for itself a third time in four
+    waves, and the refusal spends no dispatch (60b, 71, 94, 106, 118, 313). The harm here is **nil**,
+    measured: the file was committed, so `git restore <path>` reproduces exactly what the hand restore
+    would, the tree is clean, and Proof A's GREEN re-run passed. **What the report exposed is the
+    guard.** `coder-bin/git:23` opens `checkout|restore|switch`; `:34-46` is the merge-restore opening,
+    `:62-76` the `--allow-restore` opening, and the fallback is `:78-79` —
+    `for a in "$@"; do case "$a" in --|-p|--patch|--source=*|--staged|--worktree) … exit 1;; esac; done`
+    then `if [ "$sub" != "switch" ] && [ $# -gt 2 ]; then … exit 1; fi`. ⭐⭐ **`git restore <path>` is
+    `$# = 2`, carries no `--`, and therefore falls through to `exec`.** The `$# -gt 2` allowance exists
+    for `checkout`'s legitimate branch navigation — `git checkout <branch>` is one argument and must
+    work — and **`restore` has no branch interpretation at all**, so a clause written for one
+    subcommand's semantics leaks in a subcommand with different ones. ⚠️ **The consequence is not
+    theoretical and it is not confined to a mutation proof:** `git restore CLAUDE.md` is also two
+    arguments, and the `--allow-restore` branch's own comment at `:60-61` says supervisor-owned paths
+    *"stay refused even here, because restoring those discards the supervisor's uncommitted notes, which
+    IS run 27"* — that protection lives **only inside the gated branch**, and the ungated fallback has
+    none. ⛔ **Money proposes no edit** (ruling 5 — `coder-bin/git` is the shared guard). → **TRACK 1
+    ACTION 18**, with the two-argument shape and the line numbers named.
+    ⭐ **The generalisable half is ruling 252's, measured rather than argued.** 252 ruled that *a ledger
+    line recording a guard refusal names the condition under which it fires*, after this lane carried a
+    prohibition into a brief that would have replaced the exact command the guard was opened for.
+    Ruling 71's line — *"`coder-bin/git` refuses `git checkout` on paths, so every mutation proof here
+    is a hand restore with no undo"* — is **true of `checkout` with two or more paths and false of a
+    single-path `restore`**, and the difference is one comparison in a shell script that no ledger line
+    had ever quoted. ⛔ The brief's prohibition **stands unchanged**: the discipline is the hand restore,
+    not the guard, and ruling 341 does not apply because a run genuinely controls which verb it types.
+    ⚠️ This is ruling 317's shape a second time — *"X is the tell for Y" is a claim that X has ONE
+    producer* — with the producer being a refusal rather than an artifact.
+
+355. **⭐⭐ CORRECTION to ruling 105: `ProposeClawbackOnDisputeLost` EXISTS, 105's grep result was one
+    class short, and its CONCLUSION survives because the listener is registered by nothing (RULED by
+    the lane supervisor 2026-09-10 10:3x).** Ruling 105 wrote that *"`grep -rn "DisputeLost" app/app
+    app/tests` returns the class declaration, that one dispatch and **nothing else** — no provider
+    registers a listener, and X-170's real `CommissionEngine::clawback()` … is never reached from
+    here."* Re-measured this tick under ruling 64's discipline before it could become a brief item:
+    `app/app/Modules/X-205/Listeners/ProposeClawbackOnDisputeLost.php` **exists**, imports
+    `App\Modules\X201\Events\DisputeLost` and declares `handle(DisputeLost $event): void`. ⭐ **The
+    conclusion is unchanged and is now measured on the right axis:**
+    `grep -rn -e "ProposeClawbackOnDisputeLost" -e "DisputeLost::class" app/app app/tests` returns the
+    class's own declaration, `X201Test.php:73`/`:125`'s `Event::fake`/`assertDispatched`, and
+    `X205Test.php:14,:191`'s `new ProposeClawbackOnDisputeLost($this->clawbackAction)` — **a test that
+    constructs it directly and no provider anywhere**. That is ruling 102's exact shape
+    (`RecordPaymentOnCapture`, registered by nothing, driven only by a test that instantiates it), and
+    ⭐ even if it were registered its own docblock says it *"produces a clawback **PROPOSAL** … moves no
+    money"*. So no commission is taken back, `DisputeQueue.php:75`'s ruling-105 sentence stays true, and
+    ⛔ nothing is registered here — X-205 is not this lane's module (ruling 5) and wiring a consumer to
+    make a sentence true is ruling 59 inverted. ⚠️ **The correction is the sixth inherited attribution
+    this ledger has had to make** (163, 171, 176, 257, 289, 355), and all six share ruling 257's shape:
+    **the ledger recorded a grep's CONCLUSION and not the grep.** 105's sentence would have been safe
+    written as *"no PROVIDER registers a listener"*; written as *"the grep returns nothing else"* it
+    made a claim about a file tree that another lane then changed. ⭐ **A ledger line quoting a sweep's
+    RESULT decays the moment any lane adds a file; a line quoting its CONCLUSION decays only when the
+    fact changes.** State the conclusion, cite the command (289, 293, 300).
+
+356. **⭐⭐ The assertion-MESSAGE population is measured NON-EMPTY — 30 members, SIX defective — and the
+    class is a message asserting an EFFECT the app does not perform, in two files where a prior wave
+    fixed the SCREEN and stopped (RULED by the lane supervisor 2026-09-10 10:3x, briefed as MONEY-182).**
+    Ruling 50(b) ruled that *a test NAME is read far more often than its body* and made a rename a wave;
+    ruling 113 found one false `assertSame` **message** incidentally (`CartBlockScreenTest.php:70`) and
+    briefed it as an item. **The message population itself had never been enumerated**, and two
+    incidental findings of one shape is short of ruling 319's signature only because nobody had counted.
+    **Instruments, quoted (ruling 300), each filtered to the lane's eight ids with the standing
+    one-root-plus-filter idiom:** `grep -rn -e "this->fail(" app/tests/Modules` → **9**, corroborated
+    against `grep -rc` per file (3+1+2+3 = 9, ruling 294); `grep -rn -e "assertTrue(" -e "assertFalse("
+    -e "assertNull(" -e "assertNotNull(" -e "assertCount(" -e "assertGreaterThan(" app/tests/Modules`
+    filtered to lines carrying `, '` or `, "` → **20**; and the equality half,
+    `-e "assertSame(" -e "assertEquals("` filtered to lines carrying **two** quoted strings and a
+    closing `');` → **1**. ⭐ Positive control fires: the same `this->fail(` instrument unfiltered
+    returns `C-Reviews/CReviewsTest.php:510`, ruling 321's own permanent red, so the pattern
+    demonstrably locates the shape outside the lane (rulings 324, 326, 342, 344, 345, 347).
+    **Twenty-four are measured CLEAN and are STRUCK with their reasons** (95, 100, 111): C-Billing's
+    three `'Expected exception'` are uninformative but **not false**, and all three catch the narrow
+    `\DomainException` **and assert the exact refusal message and the write-nothing count**
+    (`CBillingTest.php:135-138`, `:299-302`, `:316-319`) — ruling 76's grade, ⛔ not a wave;
+    `X-198/GatewayEngineTest.php:6,:20`'s *"Artifact missing…"* is ruling 39's own outcome;
+    `X-211/X211Test.php:139,:448,:485` and `X-117/X117Test.php:464` describe exactly the refusal that
+    did not happen; `X198Test.php:74`, `:170`, `:513` are rulings 101/235's own wordings;
+    `ConnectionMappingScreenTest.php:113` is ruling 84's fix, `N009Test.php:25,:33` ruling 66's,
+    `N010Test.php:29` the lint's own statement (63), `X201Test.php:44,:102` and `N011Test.php:43`
+    accurate (84, 80), X-211's three accurate, and `CheckoutEngineSeamTest.php:42` is not a message at
+    all — the `, '` matched `property_exists($e, 'authToken')`, ruling 148's own fix, which is ruling
+    262(b)'s *read the hit* earning its keep inside the census that found it. ⛔ Not to be re-raised.
+    **The six defective members are one class in two groups.**
+    ⭐ **(a) C-Billing's five assert live telephony and AI behaviour that nothing performs.**
+    `CBillingTest.php:90` *"AI must be OFF at day 21"* · `:91` *"Phone must KEEP ANSWERING at day 21"* ·
+    `:92` *"At day 21 calls route to voicemail only"* · `:162` *"Phone must keep answering even during
+    lockout"* · `:260` *"Day 10 is a banner, not a lockout: AI remains enabled"*. **Ruling 110's
+    measurement is re-confirmed this tick rather than inherited (323):**
+    `grep -rn -e "phone_answering" -e "voicemail_only" -e "ai_enabled" app/app` returns **fifteen**
+    lines — the migration's three columns, `BillingLedgerEngine.php:155-157`'s single write, the three
+    casts, `LabelsDunning`'s two status labels, and **one reader, `RevenueRecovery.php:79-81`**, which
+    renders them as the *"Ladder setting"* string ruling 110 itself qualified with *"not applied
+    anywhere yet; the phone and the AI are switched by other modules, which do not read it"*. **No
+    C-Telephony, C-Sms or C-Agent hit exists.** So `:92`'s *calls route* is a present-tense claim about
+    live call routing in the lane that does not own telephony (ruling 5), and the other four assert an
+    achieved service state where the row records only a decision. ⭐⭐ **Rulings 110 and 316 have each
+    fixed this exact fiction once — 110 on `revenue-recovery.blade.php:33`, 316 on the dunning board's
+    `Next Step` header — and BOTH stopped at the blade.** That is rulings 113/116/123's sibling shape a
+    **ninth** time, and the first where the sibling is not a screen at all.
+    ⭐⭐ **(b) `X201Test.php:119` asserts a money movement, and ruling 105 named the gap and stopped.**
+    The message is *"Lost dispute triggers commission clawback"* over
+    `assertTrue($outcomeRes['commission_clawback_triggered'])`; ruling 105 measured that
+    `recordOutcome()` sets a boolean and dispatches `DisputeLost`, that X-170's real
+    `CommissionEngine::clawback()` — which does move a commission row and dispatch
+    `CommissionClawedBack` — is never reached, and (as ruling 355 corrects) that the one class which
+    could consume the event is registered by nothing. Ruling 105 rewrote `DisputeQueue.php:75` to read
+    *"Commission clawback flagged: no commission has been taken back, because nothing acts on that flag
+    yet."* and closed with *"⚠️ The anchor asserts a BOOLEAN, not a movement, which is why it has been
+    green over a sentence about money since the screen existed"* — **naming this message in all but
+    name, and leaving it.**
+    **RULED: the six messages state the FLAG the ladder or the engine wrote, and name that nothing acts
+    on it** — one fact, one wording per module (ruling 123), mirroring `DisputeQueue.php:75`'s own
+    corrected sentence for (b).
+    ⛔ **NOT ONE ASSERTION MOVES.** `assertFalse($state->ai_enabled, …)`, `assertTrue(…)` and their
+    subjects stay byte-identical; only the third argument changes. That is the property that makes this
+    safe: a message is what a reviewer reads **when the assertion fails**, so rewriting it can neither
+    weaken nor strengthen what is checked, and no assertion is deleted (the One Rule, rulings 39, 46).
+    ⛔ **The docblocks do NOT change**, and the line is stated so a later tick does not re-raise them:
+    `CBillingTest.php:78` and `:154` and `X201Test.php:116` state the capability's **INTENT** — what the
+    ladder decides, what P-095 requires, what a lost dispute is specified to write — which is correct as
+    a specification; the assertion messages state it as an **achieved effect in the present tense**,
+    which is the defect. `:154` carries `[G1-19]` and `[G1-28]` and `:116` is marked `(TEST ANCHOR)`, so
+    both are CHECK text besides (rulings 47's companion, 105, 244). Recorded at ruling 76's grade.
+    ⛔ Not resolved by building the enforcement: C-Telephony, C-Sms and C-Agent are track sixty's and
+    X-170 and X-205 are not this lane's (ruling 5), and registering a consumer to make a sentence true
+    is ruling 59 inverted. ⛔ No message carries a `G##-##` or `N-###` token, so
+    `CapabilityStage::testedIds()`, which regexes file **contents**, is unmoved (ruling 295).
+    ⭐⭐ **RULED on the PROOF, and the asymmetry is deliberate rather than an omission.** Item (b) takes
+    a real mutation — `DisputeDefenseEngine.php:130`'s `$clawbackTriggered = true;` → `false`, inside
+    **money's own module**, which reddens `:119` first in its chain and prints the message verbatim.
+    Item (a) takes **none, and none is asked for**: the only lever that can redden those five is
+    `BillingLedgerEngine::advanceDunning()`, and C-Billing `Domain/` is **Track 1's** (ruling 5) — a
+    mutation proof restores by hand with no undo (ruling 71), so mutating another lane's engine to
+    evidence a sentence is a risk out of all proportion to the change. The evidence for (a) is the
+    gate's own §7 showing the five assertions unchanged and still passing. ⚠️ **A wave that states why a
+    proof is absent is not a wave missing a proof** (rulings 81, 244) — and a brief that demanded one
+    here would have manufactured a reason to touch a file this lane does not own, which is ruling 327's
+    manufacturing-reachability hazard pointed at another lane.
+    ⚠️ **Blast radius, measured with interior fragments (rulings 46, 86, 146): ZERO.** An assertion
+    message is unreachable to any assertion — nothing renders it and no `assertSee` can name it — so no
+    existing test moves, and the wave adds **no** method. The predicted floor is therefore **unchanged**
+    (rulings 92, 200, derived by listing: item 1 adds none, item 2 adds none).
+    ⚠️ ⛔ **No `view:clear` and no `composer dump-autoload`, deliberately**: no blade is mutated (202)
+    and no class, trait, interface or enum is created under the classmapped `app/app/Modules/` (318), and
+    a procedural step required where it cannot bite is one the next reviewer must re-derive (225).
+    ⚠️ **`php -l` IS legitimate here** — both files are PHP — which is the first wave in some time where
+    ruling 183's prohibition does not apply, and the brief says so rather than leaving the coder to infer
+    it. ⚠️ **Ruling 310 re-measured rather than inherited:** `grep -rn -e "File::allFiles" app/tests`
+    returns eighteen scanners and **every one targets `app_path()`, `base_path($directory)` or
+    `resource_path()`** — `app/app` and `app/resources`. **Not one reads `app/tests`**, so prose dictated
+    into a test file feeds no instrument and ruling 63's hazard does not apply.
