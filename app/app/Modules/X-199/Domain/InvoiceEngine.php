@@ -161,6 +161,18 @@ final class InvoiceEngine
     {
         return DB::transaction(function () use ($businessId, $invoiceId, $amountCents) {
             $invoice = Invoice::where('business_id', $businessId)->findOrFail($invoiceId);
+
+            // A payment is recorded against an OPEN invoice. `paid` and `draft` are exactly
+            // InvoiceReader's own definition of not-open (:41, :49), never a second literal
+            // list, so an `overdue` invoice stays payable. The throw is before the first write.
+            if (in_array($invoice->status, ['paid', 'draft'], true)) {
+                throw new InvoiceNotPayableException(sprintf(
+                    'Invoice %s is %s: a payment is only recorded against an open invoice. Nothing was recorded.',
+                    $invoice->invoice_number,
+                    $invoice->status
+                ));
+            }
+
             $payAmount = $amountCents ?? max(0, $invoice->total_cents - $invoice->paid_cents);
 
             $newPaid = $invoice->paid_cents + $payAmount;
