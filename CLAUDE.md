@@ -8395,6 +8395,93 @@ Watch for: <the trap that applies, by name>
   one shape. Board re-measured this tick: `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` → **13**;
   `app/app/Modules/` → **0**; `CLOSED:` → **5**; stub pile across the thirteen → **11**. Re-run all four;
   never inherit them.
+- ⚠️⚠️ **An EIGHTH harness mechanism, and it is the first that fails inside `git apply` itself — a patch with
+  no `a/`/`b/` prefixes is refused at `-p1`, the runner walks on, and the gate then measures the UNMUTATED
+  tree and writes a real object.** Wave 167's `w167-mut-1.patch` opened `--- app/app/Modules/…`; `git apply`
+  strips the leading component and looks for `app/Modules/…`, which does not exist, and **line 1 of
+  `w167-mut-1-gate.log`, above §0, is that refusal** — `error: … No such file or directory`. Waves 122–125
+  each lost a set to a silent harness failure (`sed` eating backslashes, a `'` inside `php -r`, argument
+  passing, the lock) and every one of them produced NO artifact; **this one produces a complete, honest,
+  real object of nothing**, so `ISOBJECT`, `RAN`, `MESSAGE`, `MOVED` and the subtraction are all correct and
+  all describe the tree without the mutation. ⛔ **RULED at tick 298: a mutation's application is proved by
+  CONTENT — `grep -c '<the line the patch adds>' <the file>` between the apply and the gate, pasted as an
+  `APPLIED` field.** `git status` cannot do it (§1 read `M …/ChatCaptureAction.php` on that run because of an
+  unrelated **pint fix**, so the tick-209 free site pin could not discriminate) and an exit status cannot,
+  because a runner that swallows it is the failure. ⭐ **Three free tells, all inside the report:** the
+  `SITE` field still carrying its `--- ` diff marker where the generator's `sed 's/^--- a\///'` had nothing
+  to strip, **printed beside a sibling mutation's clean one**; `assertions` under the mutation equalling the
+  pre-wave green plus exactly the wave's own new assertions; and the gate log's first line being an `error:`
+  above §0. ⚠️ `git apply --check` is outside this column's allow list, so that proof is read off the coder's
+  artifact and never reproduced here (tick 268).
+- ⚠️⚠️ **A radius-0 survival is not evidence about an assertion until you have established the mutation
+  REACHED THE TREE — and `PROVES` typed as a literal will claim the proof its own `COUNT: 0` denies.** Wave
+  167's `PROVES` was the same `echo` sentence for both mutations, differing only in a test name, so neither
+  could have changed whatever the runs returned; mutation 2's happened to be true and mutation 1's inverted
+  its own block three lines above it. Third recurrence of the tick-290/291 shape on this module, and a
+  conclusion whose inversion is the wave's deliverable is a `BLOCK`, never tick 206's NOTE. ⛔ Per tick 245
+  the field is **rewritten, not clause-patched: `PROVES` is deleted** and replaced by a pair the coder cannot
+  type — `TARGET-NAME` chosen by the coder, then `grep -c "<TARGET-NAME>"` in the green object and the same
+  `grep -c` in the mutated one, `0/0` a survival and `1/0` a redden, with no sentence to invent. `HELD` goes
+  the same way: an `OUTPUT` number is its own answer. **Seven mechanisms have now walked past a generator
+  check** — a `= '` literal (256), an `echo` literal (276), an `|| echo` naming an outcome (282), a
+  substituted command (289), a `sed -i` replacement (290), a synthetic artifact the command honestly reads
+  (291), and **a verdict-shaped `echo` sitting one line below a correctly redirected number** (298, the
+  tick-297 ruling holding exactly where it was written and the defect moving next door).
+- ⚠️⚠️ **A parameter default that governed a VALUE can start governing a RECORD, and the ruling that cleared
+  it does not travel — re-derive a ruling's ground whenever the thing it ruled about gains a new consequence.**
+  Tick 296 ruled `ChatCaptureAction`'s `bool $consent = true` safe because `ChatCaptureController:50`'s
+  `$request->boolean('consent')` is `false` on an absent key, so the public door is fail-closed and the
+  default governs only in-tree callers. Wave 167 then made that same parameter write
+  `'consent_logged_at' => $consent ? now() : null`, and measured at tick 298 all **twelve**
+  `captureAction->handle` sites in `X102Test.php` omit it (`grep -n "consent"` on that file is empty), so
+  twelve rows now carry a consent timestamp for a visitor who consented to nothing. A kept-or-dropped message
+  is not a legal claim; a null-vs-timestamp column is — and a record stamped from an argument nobody supplied
+  is the manufactured artefact `ConversationThreads.php:66-71` names, reached by a route that ⛔ does not
+  anticipate. Test-only today and durable in the code. ⛔ Not a change to ride with the correction: flipping
+  the default reddens twelve standing callers, which is the wave-97/tick-200 hazard with a measured blast
+  radius (ticks 218–223, five demonstrations).
+- ⚠️ **The writerless-value trap's mirror at COLUMN scale: `chat_leads.consent_logged_at` has one writer and
+  zero readers, and an audit record may be the right shape for exactly that — but nothing in the tree says
+  so.** The `conversations` column it is modelled on has `Conversation.php:119`'s `hasLoggedConsent()`, read
+  by `UnifiedInboxManager:85` and `ConversationThreads`. Decision 272's shape with a legitimate defence, and
+  the defence lives in a `REPORT.md` that the next wave overwrites — so a future tick greps the column, finds
+  one writer and no reader, and manufactures a wave (tick 191). **When a column is deliberately write-only,
+  the model or the migration says so.**
+- ⚠️ **A `(R245)` comment can sit at FILE SCOPE, after the closing brace, and every gate is content.** Wave
+  167's landed at `ChatCaptureAction.php:79`, one line below `}` — it parses (§2b `all parse`), `php artisan
+  why R245` resolves so no `citation` row moves, and the ledger row exists. It is the mirror of wave 165's
+  `c104be42`, which injected docblock text *between* `final class` and its `{` and did **not** parse: legal
+  here, attached to nothing. The two other `(R245)` comments in that same file sit at their sites.
+- ✅ **A module migration under `app/app/Modules/<M>/Database/migrations/` DOES run, and the proof is one
+  grep rather than an assumption.** `X-102/ModuleServiceProvider.php:25` is
+  `loadMigrationsFrom(__DIR__.'/Database/migrations')`. Adding a **column** to a table the module's manifest
+  already declares costs no manifest edit (tick 227), and `SchemaStage` roots its Finder at the shared
+  `database/migrations` so it cannot see a module migration either way. **Grep the provider before crediting
+  or doubting a module migration** — the tick-158/202 classmap lesson with the migrator as the loader.
+- **Suite baseline, tick 298 on tip `38bc9b00`, tracked tree byte-identical to the sha — `tests 2448 ·
+  passed 2440 · assertions 10799 · failed 6 · errors 2 · incomplete 3 · risky 1 · duration_ms 146577`,** the
+  standing **eight** by **identity** (X-117 · X-198 ×2 · X-199 · X-211 · `a_real_gateway_charge_id…`
+  artifact-missing under `app/storage/app/evidence/**`, all out of lane, plus the two `TwelveJourneysTest`
+  real-transport errors). Against tick 297's `2448 · 2440 · 10796`: **`+0 tests · +0 passed · +3
+  assertions`** — three assertions added to existing methods and nothing else, the only diff shape that gives
+  that triple (tick 246). My own plain gate: §1 three untracked inert paths, §1b 17 keys, §2 `none`, §2b `all
+  parse`, §4 seals match, stamp `20260829-0647` = `runtime_build`, §6 pint `passed` / phpstan `0`, verdict
+  `gates green.` **I ran no `--tests` of my own and say so** (tick 277).
+- **Backlog at tick 298 — wave 167b is the mutation that never ran plus two readings; no production code.**
+  RULED. The build stands and is **pushed** (`38bc9b00`), so what is missing is not code: two
+  `assertNull($lead->consent_logged_at)` assertions on a public unauthenticated door ship unproven, and
+  shipping an assertion nothing has shown load-bearing is the soil every rung of this lane's ladder grows in.
+  ⛔ **Mutation 2 is spent — never re-brief it** (tick 191); ⛔ mutation 1 is **not** spent, because it never
+  applied, and the brief says that in words so it does not read as re-briefing. ⛔ The two readings — the
+  default's new consequence and the write-only column — are **separate numbered items whose answers need not
+  agree** (ticks 187, 209, 218, 221, 281), each capped at one durable line, and the conclusion-withheld
+  hand-over is **21-for-21** and has corrected this column five times on X-102's seams alone, so this column
+  names no shape, no default, no column and no verdict for either; the third and fourth branches are written
+  out (tick 192). ⛔ No `⛔ REFUSED`, no `UNRESOLVED` (X-102 is one of the thirteen, nothing external is
+  missing); ⛔ never edit a standing assertion; ⛔ no numbers published to a mutating wave (tick 208).
+  **Wave 168** then takes the board. Re-measured this tick: `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` →
+  **13**; `app/app/Modules/` → **0**; `CLOSED:` → **5**; stub pile across the thirteen → **11**. Re-run all
+  four; never inherit them.
 
 ## Style
 
