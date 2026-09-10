@@ -12,6 +12,7 @@ use App\Modules\X199\Domain\InvoiceEngine;
 use App\Modules\X199\Models\Invoice;
 use App\Modules\X199\Ui\Unpaid;
 use App\Support\Tenancy;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -147,5 +148,52 @@ class UnpaidScreenTest extends TestCase
             ->assertOk()
             ->assertSee('No invoice has been paid')
             ->assertSee('so nothing reaches this list yet');
+    }
+
+    public function test_the_paid_list_is_ordered_when_every_row_shares_one_timestamp(): void
+    {
+        $base = now()->startOfWeek()->addDays(3)->setTime(10, 0);
+        Carbon::setTestNow($base);
+
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'John', 'last_name' => 'Doe']);
+
+        Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-PD-A',
+            'total_cents' => 90000,
+            'paid_cents' => 90000,
+            'status' => 'paid',
+            'due_date' => now()->subDays(10),
+        ]);
+
+        Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-PD-B',
+            'total_cents' => 90000,
+            'paid_cents' => 90000,
+            'status' => 'paid',
+            'due_date' => now()->subDays(10),
+        ]);
+
+        Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-PD-C',
+            'total_cents' => 90000,
+            'paid_cents' => 90000,
+            'status' => 'paid',
+            'due_date' => now()->subDays(10),
+        ]);
+
+        Livewire::actingAs($owner)->test(Unpaid::class)->call('showPaid')->assertSeeInOrder(['INV-PD-C', 'INV-PD-B', 'INV-PD-A']);
+
+        Carbon::setTestNow();
     }
 }

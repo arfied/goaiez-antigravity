@@ -56,6 +56,7 @@ class Unpaid extends Component
         if ($this->showLastFivePaid) {
             $query->where('status', 'paid')
                 ->orderByDesc('created_at')
+                ->orderByDesc('id')
                 ->limit(5);
         } else {
             $query->whereNotIn('status', ['paid', 'draft'])
