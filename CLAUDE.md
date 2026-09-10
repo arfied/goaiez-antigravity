@@ -9599,3 +9599,104 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     question. ⭐ **Every entry on the exhausted list phrased as *where X is used* still owes that
     re-run**, and the cheapest way to run one is exactly this: the same grep, the opposite predicate,
     the same positive control.
+343. **⭐⭐ Ruling 220's census asked *where a transaction IS used*; its negative — a multi-write method
+    with NONE — is FIVE members, every one in a module with no production writer, and the sharpest is
+    a REFUSAL THAT WRITES whose only caller already closes it (measured by the lane supervisor
+    2026-09-10 08:2x; rulings 64, 95, 100, 111, 324, 327, 340).** Ruling 220 enumerated the lane's 21
+    `DB::transaction(` closures and asked, of each, whether a write precedes a throw inside it. Ruling
+    340 then ruled that *a census of "where a guard IS used" is not a census of "where a guard is
+    NEEDED"*, and that every exhausted-list entry phrased that way owes a re-run in the negative. This
+    is 220's. **Two halves, measured separately.**
+    ⭐ **(a) The queued-listener half is CLEAN, and it is clean for a reason worth keeping.** A
+    `dispatch()` inside an open transaction hands a queued listener a row the worker cannot yet see —
+    Laravel's `afterCommit` exists for it, and `grep -rn -e 'afterCommit' -e 'dispatchAfterResponse'`
+    over the eight module trees returns **nothing**. It does not bite here: the lane has exactly **one**
+    queued listener (`X-211/Listeners/ProcessOverdueReceivable implements ShouldQueue`, ruling 276), its
+    event `ArOverdue` is dispatched at `DetectOverdueReceivablesCommand:73` — measured, and there is **no
+    `DB::transaction` anywhere in that command** — and the listener re-establishes its own tenant
+    (`Tenancy::actingAs` at `:18`) and writes only its own `firstOrCreate`. The lane's one live queued
+    seam dispatches outside any transaction.
+    ⭐⭐ **(b) The multi-write half is five sites, and ALL FIVE are in the three modules that have no
+    transaction at all** — `X-120/Actions/CardRotateAction:13,:16` · `X-120/Actions/CardStoreAction:24,:27`
+    · `X-173/Actions/AccountingSyncAction:39,:56,:72` · `X-201/DisputeDefenseEngine::compile():58,:67` ·
+    `::recordOutcome():125,:136`. **Zero buildable**, and the reasoning is measured rather than assumed:
+    `card_tokens` has no production writer (ruling 119), `syncTransactions` no production caller (rulings
+    81, 223), `disputes` no production writer (ruling 79) — so no half-landed state is reachable by any
+    real tenant, and ⛔ **the readers of the one field that could show it are two blade lines**
+    (`card-screen.blade.php:32,:36`, a pill and a button): `grep -rn 'is_default'` over `app/app` returns
+    **no charging path**, so "no default card" is not a money consequence.
+    ⭐⭐ **The sharpest member is `CardRotateAction` and it is ruling 328's shape exactly.** `:13` sets
+    `is_default = false` on **every** card of the tenant, and `:15` **then** runs the
+    `findOrFail` — so a card id that is not this tenant's would wipe the default and *afterwards* refuse,
+    with no transaction to undo it. That is the precise inverse of this lane's stated convention:
+    `ArEngine:52`'s *"a refusal writes nothing (M29-C)"*, `:144`'s *"The throw is before the first
+    write."* which ruling 216 made TRUE by removing a `firstOrCreate` and ruling 330 required a new guard
+    to preserve. Two modules of one lane, opposite orderings — ruling 98's tell. **It is nonetheless NOT
+    briefed, because its only caller closes it:** `X-120/Ui/CardScreen.php:42` runs its **own**
+    tenant-scoped `CardToken::where('business_id', Tenancy::idOrFail())->findOrFail($cardId)` and passes
+    `$card->id`, so `:15`'s `findOrFail` can never throw from the one path that reaches it. ⛔ Writing a
+    test that calls `rotateDefault` with a foreign id — when no caller can — is **manufacturing
+    reachability to justify a wave**, which ruling 327 refused in terms.
+    ⚠️ **Recorded, and this is the transferable half:** ruling 328's lesson pays again — *a prior wave's
+    guard is invisible to the census that would otherwise find its absence*, so a later tick reading
+    `CardRotateAction` cold will re-derive this. The guard is `CardScreen.php:42`, found by its token
+    `CardToken::where('business_id', Tenancy::idOrFail())->findOrFail` and never by its line number
+    (rulings 289, 293). ⛔ Not to be re-raised.
+    ⚠️ **Two measured properties of the lane, worth keeping as positives:** every one of the 26
+    components performs **zero** direct writes — `grep -rn -e '::create' -e '->update' -e '->save' -e
+    '->delete' -e '::updateOrCreate' -e '::firstOrCreate' -e '->increment' -e '->decrement'` over the
+    eight `Ui/` trees returns **one** line and it is a `Carbon::createFromDate` — so every write in the
+    lane goes through an `Actions/` or `Domain/` seam and the transaction question has exactly one place
+    to be answered; and every multi-write method in the **five** transacted modules is wrapped, including
+    the inert `InvoiceDraftAction` (ruling 170), which is what makes X-120's and X-201's omission a
+    departure from the lane's own convention rather than an absence of one.
+    ⚠️ **Cross-lane, recorded and money PROPOSES NO EDIT** (ruling 321's discipline, ruling 5):
+    `X-194/Actions/SetDefaultViewAction.php:13-14` is the same clear-then-set shape and fails **more
+    quietly** — `:14` is a `where('id', $viewId)->update(...)`, which updates zero rows rather than
+    throwing, so a foreign id clears every default and sets none **with no error at all**. → TRACK 1
+    ACTION 17.
+
+344. **⭐⭐ A Livewire method ARGUMENT is client-supplied, ruling 245 swept public PROPERTIES and ruling
+    205 swept whether a method is BOUND — nobody had asked whether the id a button sends is SCOPED. The
+    census is 31 methods across 20 components and it is measured CLEAN, with the strongest positive
+    control this lane has fired (measured 2026-09-10 08:2x).** `wire:click="makeDefault({{ $card->id }})"`
+    puts the argument in the browser's hands: the rendered value is a suggestion and the request carries
+    whatever the client sends. So *"the id came from a row we rendered"* is never a scoping argument, and
+    an unscoped `Model::find($clientId)` in a money component is a cross-tenant read or write with no
+    error and nothing for a gate to see. **Ruling 209 swept `::where(` call sites in `Domain/` and
+    `Actions/` for a missing `business_id`; it never asked where those ids came FROM** — which is ruling
+    340's predicate re-run aimed at the tenancy census.
+    **Instrument, quoted (ruling 300):** `grep -rn --include=*.php -e 'public function' app/app/Modules`
+    filtered to the eight `Ui/` trees and `grep -v -e 'render' -e 'mount'` → **31 methods in 20
+    components**, then each one **read** (ruling 262(b) — a count is not a verdict).
+    **Every member resolves one of three ways, and all three are sound.** (1) **Passed to a
+    tenant-scoped seam** — `recordPayment`, `sendPayLink`, `settleUpLater`, `setTerms`, `offerPlan`,
+    `applyLateFee`, `logPayment`, `recordReason`, `package`, `compile`, `submit`, `approve`, `addNote`,
+    `outcome`, `resolve`, `mapAccount`, `review`, `attach`, `applyForMerchant`, `advance`, `topupNow`,
+    `explain`, `add`, `remove`, `cancel`, `makeDefault`: the component passes `Tenancy::idOrFail()`
+    beside the id and the engine's first act is `Model::where('business_id', $businessId)->findOrFail(…)`.
+    (2) **Stored and then filtered by a scoped render** — `toggleExpanded` (×2) keeps the id in
+    `$expanded`, whose only use is deciding expansion of rows that came from a scoped query; `show`
+    sets `$shownRun` against a scoped `$runs`; `pick` sets `$invoiceId`, which ruling 337 measured is
+    read as `$invoices->firstWhere('id', $this->invoiceId) ?? $invoices->first()` over a scoped
+    collection — so a foreign id **selects nothing and falls back**, never leaks. (3) **Validated against
+    a whitelist** — `outcome`'s second, client-supplied *string* argument is refused by
+    `DisputeDefenseEngine:120`'s `in_array($outcome, ['won','lost','defended','conceded'])`.
+    ⭐ **`GatewayEngine::attachPayment():244-258` is the shape done right and is worth keeping as the
+    model:** it is the lane's only method taking **two** client ids, and it scopes **both**
+    (`Payment::where('business_id',…)->findOrFail`, `MerchantConnection::where('business_id',…)->findOrFail`),
+    refuses before its write, and does it inside a transaction.
+    ⭐⭐ **The positive control fires in the strongest form ruling 326 described.**
+    `grep -rn --include=*.php -e '::find' app/app/Modules | grep -e '/Ui/'`, with `where`-bearing lines
+    filtered out, returns **eight** unscoped component lookups on ids of exactly this shape — in
+    C-Reviews (×2), X-01 (×2), X-177 (×2), X-188 and X-82 — and **not one is money's**. So the
+    instrument demonstrably locates the pattern in this tree and finds none in this lane. ⛔ **That is
+    NOT an assertion that those eight are defects** and money proposes no edit on any of them (ruling 5,
+    ruling 321's discipline): several of those models may carry `BelongsToTenant`'s global scope. It is
+    load-bearing for money precisely because **money's 32 models declare no trait and no relations at
+    all** (ruling 324), so this lane has **no** global scope to fall back on and every one of its 31
+    client ids had to be scoped by hand — and every one is.
+    ⛔ Not to be re-raised. ⚠️ The generalisable half: **an argument is an input, and a census of inputs
+    is not the same census as one of state.** Ruling 245 measured what a component *holds*, ruling 205
+    what it *exposes*; neither could see what it is *handed*. Any component-layer census owes the third
+    question.
