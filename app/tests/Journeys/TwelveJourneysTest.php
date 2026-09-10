@@ -500,10 +500,14 @@ final class TwelveJourneysTest extends TestCase
         $this->assertTrue(str_starts_with($artifact['gateway_charge_id'], 'ch_'), 'Charge id must start with ch_');
         $this->assertFalse($artifact['running_unit_tests'], 'Artifact must not be created under test');
         // ⛔ The artifact carries no invoice status, and that is the finding.
-        //    capture() takes (businessId, amountCents, paymentToken, idempotencyKey,
-        //    currency) over a payments table with no invoice column, so this journey
-        //    can prove a real charge id and cannot prove it paid THIS invoice.
-        //    J9's goal is UNRESOLVED against that schema gap.
+        //    payments.invoice_id EXISTS (2026_09_04_000000_add_invoice_id_to_payments.php),
+        //    and so does PaymentCaptured::$invoiceId and X-199's RecordPaymentOnCapture.
+        //    The seam is declared at three layers and connected at none: capture() takes
+        //    (businessId, amountCents, paymentToken, idempotencyKey) and no invoice id, and
+        //    the listener that would consume one is registered by nothing because it calls
+        //    recordPayment(), which marks an invoice paid off an event. So this journey can
+        //    prove a real charge id and cannot prove it paid THIS invoice.
+        //    J9's goal is UNRESOLVED against that, not against a missing column.
         $this->assertArrayNotHasKey('invoice_status', $artifact);
 
         $this->writeEvidence('invoice-to-paid', [

@@ -124,6 +124,7 @@ class X102Test extends TestCase
 
     /**
      * [G2-57] capture-first; the chat never dead-ends
+     * BUILD PROPOSAL: X-102 chat capture — capture-first is in tension with rule 22's no capture before consent, and the tree currently does nothing about it; must require consent before capturing messages Owner: X-102
      */
     public function test_g2_57_capture_first(): void
     {

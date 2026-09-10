@@ -20,7 +20,7 @@ final class RuntimeProofCommand extends Command
             return self::FAILURE;
         }
 
-        $this->error('X-199 has no runtime proof: an invoice cannot reach a gateway charge id, because payments carries no invoice column (see ruling 102). No artifact was written.');
+        $this->error('X-199 has no runtime proof: an invoice cannot reach a gateway charge id here. The payments.invoice_id column exists, but capture() takes no invoice id and nothing registers the listener that would fill it, so no charge is ever tied to an invoice. No artifact was written.');
 
         return self::FAILURE;
     }

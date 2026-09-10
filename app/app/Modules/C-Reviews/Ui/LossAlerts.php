@@ -151,21 +151,22 @@ class LossAlerts extends Component
                     return $r;
                 });
 
-            $lowCsatRequests = ReviewRequest::where('business_id', $this->businessId)
-                ->where('status', 'resolved')
-                ->whereNotNull('csat_score')
-                ->where('csat_score', '<', 7)
+            $lowCsatRequests = QaTicket::where('business_id', $this->businessId)
+                ->whereNotNull('reopened_at')
                 ->get()
-                ->map(function ($r) {
-                    $r->alert_type = 'review';
-                    $r->alert_reason = "Resolved request with low CSAT score ({$r->csat_score})";
-                    $r->risk_level = 1;
+                ->map(function ($t) {
+                    $t->alert_type = 'ticket';
+                    $t->alert_reason = 'Resolved ticket was reopened due to low CSAT';
+                    $t->risk_level = 1;
 
-                    return $r;
+                    return $t;
                 });
 
             $alerts = $breachedTickets->concat($lowRatingRequests)->concat($lowCsatRequests)
                 ->sortByDesc('risk_level')
+                ->unique(function ($item) {
+                    return $item->alert_type.'-'.$item->id;
+                })
                 ->values();
         } else {
             $alerts = collect([

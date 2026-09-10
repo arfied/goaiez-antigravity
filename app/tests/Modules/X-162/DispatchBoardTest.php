@@ -101,9 +101,11 @@ class DispatchBoardTest extends TestCase
             'status' => 'en_route',
         ]);
 
-        $this->assertDatabaseHas('eta_predictions', [
-            'job_id' => $jobId,
-        ]);
+        $this->assertSame(
+            0,
+            EtaPrediction::where('business_id', $biz->id)->where('job_id', $jobId)->count(),
+            'A Mark-en-route click with no ETA must record no prediction: a number nobody gave is a guess.'
+        );
     }
 
     public function test_seeded_row_reaches_the_page(): void

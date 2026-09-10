@@ -8,6 +8,7 @@ use App\Enums\UserRole;
 use App\Models\User;
 use App\Modules\CAgent\Actions\AgentAnswerAction;
 use App\Modules\CAgent\Events\AgentRefused;
+use App\Modules\CAgent\Models\AgentTurn;
 use App\Modules\X163\Actions\BookVersionAction;
 use App\Modules\X163\Actions\CalloutLookupAction;
 use App\Modules\X163\Actions\PriceConfirmAction;
@@ -25,6 +26,7 @@ use App\Modules\X163\Ui\Pricebook;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -1508,5 +1510,72 @@ class X163Test extends TestCase
         $this->assertSame([], $component->get('refusals'), 'Refusal must be cleared after correction');
         $item->refresh();
         $this->assertTrue($item->is_confirmed, 'Row must be confirmed after correction');
+    }
+
+    public function test_an_inline_price_edit_makes_the_agent_refuse_rather_than_quote()
+    {
+        $biz = TestCase::provisionTenant(['name' => 'PB156 Biz 1', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $this->actingAs($owner);
+
+        $item = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'drain repair multi word',
+            'price_cents' => 15000,
+            'is_sample' => false,
+            'is_confirmed' => true,
+        ]);
+
+        app(PriceConfirmAction::class)->handle($biz->id, $item->id);
+
+        $component = Livewire::test(Pricebook::class);
+        $component->set('inlinePrices.'.$item->id, 200.00);
+        $component->call('updatePrice', $item->id);
+
+        $agent = app(AgentAnswerAction::class);
+        $res = $agent->handle($biz->id, 'How much for a drain repair multi word?');
+
+        $this->assertEquals('handoff', $res['status'], 'status is \'handoff\'');
+        $this->assertStringNotContainsString('$', $res['reply'], 'the reply contains no $');
+        $this->assertStringNotContainsString('150', $res['reply'], 'the reply does not contain the original amount');
+
+        $turn = AgentTurn::latest('id')->first();
+        $this->assertEquals('UNCONFIRMED', $turn->refusal_code, 'the latest AgentTurn\'s refusal_code is \'UNCONFIRMED\'');
+    }
+
+    public function test_an_inline_price_edit_teaches_no_fact()
+    {
+        $biz = TestCase::provisionTenant(['name' => 'PB156 Biz 2', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $this->actingAs($owner);
+
+        $item = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'drain repair multi word two',
+            'price_cents' => 15000,
+            'is_sample' => false,
+            'is_confirmed' => true,
+        ]);
+
+        app(PriceConfirmAction::class)->handle($biz->id, $item->id);
+
+        $key = 'price.'.Str::slug('drain repair multi word two');
+        $countBefore = DB::table('facts')->where('business_id', $biz->id)->where('key', $key)->count();
+
+        $component = Livewire::test(Pricebook::class);
+        $component->set('inlinePrices.'.$item->id, 200.00);
+        $component->call('updatePrice', $item->id);
+
+        $countAfter = DB::table('facts')->where('business_id', $biz->id)->where('key', $key)->count();
+        $this->assertEquals($countBefore, $countAfter, 'the facts count for that key is unchanged');
+
+        $factWithNewAmount = DB::table('facts')
+            ->where('business_id', $biz->id)
+            ->where('key', $key)
+            ->where('value', '20000')
+            ->count();
+        $this->assertEquals(0, $factWithNewAmount, 'no facts row carries the new amount');
     }
 }

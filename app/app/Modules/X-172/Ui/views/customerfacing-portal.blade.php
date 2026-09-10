@@ -30,7 +30,11 @@
                     
                     @if($isJobEnRoute)
                         <div class="bg-surface border border-accent rounded p-4 mb-6">
-                            <p class="font-medium text-accent">Your technician is en route, {{ $jobEtaMinutes }} minutes out</p>
+                            @if($jobEtaMinutes !== null)
+                                <p class="font-medium text-accent">Your technician is en route, {{ $jobEtaMinutes }} minutes out</p>
+                            @else
+                                <p class="font-medium text-accent">Your technician is en route.</p>
+                            @endif
                         </div>
                     @else
                         <p class="text-ink-2 mb-6">Your job is booked and confirmed.</p>

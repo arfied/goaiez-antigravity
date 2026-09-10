@@ -114,7 +114,7 @@ class QaReport extends Component
                 $q->whereNotNull('rating')->where(function ($q) use ($threshold) {
                     $q->where('rating', '<', $threshold)
                         ->orWhere(function ($q) {
-                            $q->whereNotNull('csat_score')->where('csat_score', '<', 7);
+                            $q->where('status', 'triaged_internal');
                         });
                 });
             };
