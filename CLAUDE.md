@@ -11461,3 +11461,128 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     carrying `status: pending` returns **normally** (235), `File::put` overwrites, and
     `GatewayEngineTest:15`'s `toBe('captured')` goes permanently red on the lane's **only** genuinely
     vendor-issued `artifact_id`, with no route back. **Not a wave.**
+381. **⭐⭐ Ruling 342(c)'s out-of-row-state census used a CASE-SENSITIVE `-e 'session'` and could never
+    have matched `#[Session]` — the PHP-ATTRIBUTE population is twelve members with none of the dangerous
+    kinds, and its near-absence is a PRIOR RULING'S OWN CONSEQUENCE (measured by the lane supervisor
+    2026-09-10 16:5x; rulings 64, 95, 100, 111, 294, 324, 327, 340, 371).** Ruling 342(c) swept
+    `@can`/`@cannot`/`Gate::`/`Cache::`/`Session::`/`session` over the eight modules and struck the axis —
+    *no money screen hides a door behind a policy, and no money screen holds a workflow decision anywhere
+    but a row*. **Its instrument is case-sensitive and `#[Session]` carries a capital S**, so a
+    `#[Session] public string $step` would have been invisible to it; and `#[Url]` — a property whose value
+    is in the **query string**, client-supplied at page LOAD rather than at method-call time — is ruling
+    344's axis one step earlier and sits outside both 245's census (what a component HOLDS) and 344's (what
+    it is HANDED). **Instrument, quoted (300):** `grep -rn -e "#\[" app/app/Modules --include=*.php`
+    filtered to `/Ui/` → **12 members**: X-117's two `#[Locked]` (ruling 245's own measured pair —
+    `$sessionToken` locked, `$authToken` deliberately open, because `CheckoutEngine:164` refuses a used
+    token **wherever it came from** and `#[Locked]` would refuse the `set()` that its replay test needs),
+    X-198's three `#[Layout('components.layouts.agency')]` (171) and X-199's five
+    `#[Layout('components.account.layout', …)]` (155). **No `#[Url]`, no `#[Session]`, no `#[Reactive]`, no
+    `#[Computed]`, no `#[Modelable]`, no `#[Renderless]`.** ⭐⭐ **Positive control fires at the largest
+    scale this bar has produced**: the same instrument unfiltered returns **~230 `#[Locked]` across every
+    other lane**, so the tree demonstrably uses the family and money uses two.
+    ⭐ **And the near-absence is a prior ruling's consequence, not an omission — which is the keepable
+    half.** Every other lane locks a `$businessId` property; **money's components have no `$businessId` at
+    all**, because ruling 155 refused main's `mount()`/`$businessId` in terms — *"a second tenant-resolution
+    path beside money's is ruling 37's second place for the truth to disagree, on the one value that decides
+    which tenant's money is displayed"* — so each component resolves `Tenancy::idOrFail()` inside `render()`
+    behind its own `abort_unless`. **The property that would have needed `#[Locked]` was ruled out of
+    existence**, and a later tick reading twelve attributes against another lane's two hundred would
+    otherwise re-derive that as a gap. ⛔ Not to be re-raised.
+    ⚠️ **Three sibling censuses ran in the same pass and all three are STRUCK with their measurements**
+    (ruling 327's outcome shape a **ninth** time — *a population measured non-empty that yields zero
+    buildable fixes is the more useful of the two results to write down*).
+    **(a) ⭐⭐ ENVIRONMENT-CONDITIONAL production code — ZERO, and it is the fact every assertion in this
+    lane rests on.** An `if (app()->environment('testing'))` inside a money engine would make ~2,500
+    assertions green for the wrong reason at the largest possible scale — ruling 45's
+    *passes-for-the-wrong-reason* with no upper bound, and unreachable by every census in the exhausted list
+    because each of those reads a value and this reads the *runtime*.
+    `grep -rn -e "environment" -e "runningUnitTests" -e "isLocal" -e "isProduction"` over
+    `app/app/Modules`, filtered to the eight ids, returns **14 lines and every one is in `Console/`**: nine
+    `if (app()->runningUnitTests())` **first-line guards** — ruling 49's own shape, and the reason an
+    in-suite test of a runtime-proof command passes for the wrong reason — and five
+    `'running_unit_tests' =>` artifact keys (187). **`Ui/`, `Domain/`, `Actions/`, `Listeners/` and
+    `Models/` return NOTHING, and no `app()->environment(…)` exists anywhere in the lane.** ⭐ Control
+    fires: the same instrument over `app/app` outside `Modules/` returns `DeployCheckCommand.php:255`'s
+    `! app()->environment('production')` and `DbBootstrapCommand.php:42`'s `app()->environment() !== 'local'`.
+    **No production path in this lane behaves differently under test.**
+    **(b) ALPINE and client-side state in blades — ZERO.** `x-data` / `x-model` / `x-on:` / `@js` /
+    `x-init` / `Alpine` over the eight `Ui/views` trees returns nothing. This is 342(c)'s axis in the one
+    place 342 did not look: Livewire keeps state on the **server** and Alpine keeps it in the **browser**,
+    so an `x-data` holding a money decision survives no round trip and is invisible to `Livewire::test`,
+    which is ruling 347's *what the browser holds between two renders* one mechanism over. ⭐ Control fires
+    on **nine files** — `X-110/Ui/views/{cooling,install-verify}.blade.php` plus seven under
+    `app/resources/views` — so the instrument demonstrably locates Alpine **inside a module's `Ui/views`**,
+    which is the exact shape money would have had.
+    **(c) `wire:model` MODIFIERS — 22 members, ONE modifier in the whole lane.** Ruling 206 swept these
+    bindings for validation and 319 for the write they reach; **WHEN the value leaves the browser** is a
+    third question, and for X-120 it is P-196's whole subject. Measured: **all four card fields are bare
+    `wire:model`** — deferred, so the PAN travels on submit and not per keystroke, confirming ruling 241's
+    premise on its own instrument rather than on 241's reading — and the lane's single modifier is
+    `paymentplan-builder.blade.php:54`'s `wire:model.live="installments.{id}"`, which is **deliberate**: it
+    is what makes the instalment preview update as the owner types, and ruling 214(c) already ruled that
+    preview's `max(2, …)` clamp while MONEY-136 shipped the `if ($typed < 2)` guard that makes the live
+    branch honest. ⛔ None of the three is to be re-raised.
+
+382. **⭐⭐ Every route group in the lane carries `web` + `auth` — ruling 275's load-bearing premise
+    upgraded from ASSERTED to MEASURED — three modules carry a second `admin/` group, and X-198's three
+    routes are each registered TWICE because ruling 374 measured the cause and stopped at it (measured by
+    the lane supervisor 2026-09-10 16:5x; filed TRACK 1 ACTION 22).** Ruling 151(3) measured that *all
+    eight modules have a `routes.generated.php` and all eight providers `loadRoutesFrom` it* — **presence**
+    — and ruling 340's discipline, now with eighteen payoffs, makes the CONTENTS its own population. Ruling
+    275 then leaned on those contents in a single **asserted** sentence — *"the generated route carries
+    `['web','auth','tenant.role']`"* — measured for X-173 and never swept lane-wide, which is ruling 289's
+    family exactly: a ledger line resting on a fact nobody cited a command for. Instrument:
+    `grep -rn -e "middleware" -e "Route::" app/app/Modules --include=routes.generated.php` filtered to the
+    eight ids → **11 groups, 27 registrations**.
+    **(1) ⭐ The premise HOLDS, measured.** All eight tenant groups are
+    `Route::middleware(['web', 'auth', 'tenant.role'])`. So an unauthenticated request never reaches any of
+    the 24 components, and ruling 275's decision to **record rather than fix** X-117's two and X-173's three
+    `Tenancy::check()`-only guards now rests on a lane-wide measurement rather than on one file.
+    **(2) ⭐⭐ Three modules carry a SECOND route group, and it is not `tenant.role`.** X-173, X-198 and
+    X-201 each mount their own components again under
+    `Route::middleware(['web', 'auth', 'can:'.AdminAccess::GATE])->prefix('admin/x-1NN')` with `.admin`
+    names. **Measured safe three ways**: `auth` is present, so (1)'s premise is unbroken; each component's
+    own `abort_unless(… Tenancy::check(), 403)` refuses an admin with no tenant context and admits one with
+    it, which is what an admin console is for; and `render()` resolves `Tenancy::idOrFail()` beneath RLS
+    (212), so the row set is the impersonated tenant's either way. ⚠️ It nonetheless **widens ruling 275's
+    blast-radius calculation**: X-173's three — the exact three 275 recorded as carrying **no
+    `auth()->check()`** (`ConnectionMappingView:69`, `ConflictsListView:46`, `SyncErrorRateView:36`) — are
+    among the six reachable by this second class of route, and 275's argument for leaving them was measured
+    against **one** group. It survives for the same reason and is now measured against both. ⭐ **And all
+    eight admin doors are TESTED**: `grep -rn -e ".admin" app/tests/Modules | grep -e "route"` returns 156
+    tree-wide and **eight in this lane**, one `->assertOk()` per screen in the generated `Screens/` tests —
+    so ruling 20's *routed, gated, real GET test* holds for the admin mount as 375(c) measured it holds for
+    the tenant mount. **There is no coverage gap to brief.**
+    **(3) ⭐⭐ X-198's three routes are each registered TWICE, and ruling 374 measured the cause without
+    following it.** `X-198/routes.generated.php:12-17` is **six** `Route::get` for three screens —
+    identical URI, identical component, **identical name** — inside one `tenant.role` group. The cause is
+    in `config/surfaces.generated.php`, which carries each of `x-198.connect-card` / `same-account` /
+    `reconciliation-discrepancies` **three times**: `:121-123` under `tenant`, `:437-439` under `agency`
+    (bare names, byte-identical to the tenant block) and `:323-325` under `tech` (the `.admin` names).
+    **The generator maps `tech` to its own `admin/` group and maps `agency` onto the SAME group as
+    `tenant`, so a screen registered under both emits a duplicate line.** X-198 is the only module in this
+    lane registered under two surfaces, which is exactly why it is the only one with duplicated routes.
+    ⭐ Ruling 374 measured that double registration — *"the same route names in two menus"* — and closed on
+    the `#[Layout]` shell question; this is its unmeasured consequence, and it is ruling 152's *a sweep hit
+    is a coordinate, not a boundary* a **twelfth** time.
+    **The harm is measured NIL, and the reason is recorded so no later tick re-derives it.** URL matching
+    takes the first registration and `route()` the last; both are the same URI, the same group and the same
+    component. And ⭐⭐ **every pin in `OwnerNavTest` is immune, because `:262` is
+    `array_values(array_diff(array_unique($tenantRole), $admitted))`** — the collection is deduplicated
+    **by route name** before `$invisible` is counted at `:264` and before `:274`'s loop feeds `$withLayout`
+    / `$withoutLayout` / `$unbuilt` / `$built` / `$unresolved`, whose inner `foreach` also `break`s on the
+    first match. **That `array_unique` is why ruling 171's measurement of `$withLayout` 10 → 13 was
+    right** — three components, three names, counted once each — where a naive reading of six routes
+    predicts 6 and sends a tick hunting a discrepancy that does not exist. Found by its token, never by its
+    line (289, 293).
+    ⛔ **Not money's to fix, on two independent grounds.** `routes.generated.php` is generated by Track 1's
+    `surfaces:generate` (ruling 20 — *never hand-write a route*), so a hand edit is overwritten by the next
+    run, which is ruling 370's own reasoning for the sample-state marker: **churn that does not survive**.
+    And the input is `config/surfaces.generated.php`, another lane's file (5). The durable fix is in the
+    generator's surface→group mapping, or in the double registration itself, and both are Track 1's.
+    → **TRACK 1 ACTION 22**, filed beside ACTION 21, which is the other half of the same double
+    registration.
+    ⚠️ **Recorded at ruling 76's grade and deliberately not briefed:** money's other five modules are
+    registered under `tenant` alone and carry no admin door, so X-173, X-198 and X-201 are reachable by
+    staff and C-Billing, X-117, X-120, X-199 and X-211 are not. Nothing measurable says which is right — it
+    is a surface-registration decision, Track 1's, and it is ACTION 21's question one level out.
