@@ -12615,3 +12615,125 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     ⭐ The new heading **agrees with its body's own closing sentence** (*"Nothing was logged."*), which is ruling 143's *a heading and its body are one claim of two parts*.
     ⚠️ **Blast radius, measured line by line rather than assumed (46, 86, 146): ZERO, and the reason is the finding.** All four `assertSee('Late fee not applied')` sites — `AgeingByReasonScreenTest:184`, `:297`, `:365` and `:370`'s `assertDontSee` — are on the **late-fee** act, where the heading stays byte-identical, and `:365-370` is MONEY-185's own ruling-361 test, which drives a refused `applyLateFee` and then a **successful** `logPayment` and asserts the card is gone. **No test in the lane renders `$refused` from a logPayment REFUSAL**, which is ruling 70 again and exactly why the false heading outlived MONEY-95's, MONEY-185's and MONEY-186's passes over this file — so the item **adds** a method (68).
     ⚠️ **The proof is a PHP mutation, never a blade one, and that is deliberate**: reverting `logPayment`'s `$this->refusedHeading = …` leaves the property null, the blade renders the fallback, and the assertion fails — so the **set** is proven by the mutation and the **read** is proven by the test being green at all, both halves in one method, and ⛔ ruling 202's `view:clear` is not asked for because no blade is mutated (225 — a procedural step required where it cannot bite is one the next reviewer must re-derive). ⚠️ Ruling 153 binds the assertion ORDER: a Livewire chain stops at the first failure, and the mutation reddens **both** the positive and its paired `assertDontSee`, so the positive is written first and the brief predicts its message. ⚠️ The pairing was measured before it was dictated (131): at that render the **only** source of `Late fee not applied` is the heading itself — `grep -rn -F` returns one occurrence in the whole file — so the negative cannot fail against a correct implementation (61, 82). ⚠️ The blade's fallback is **unreachable** once both catches set the heading — ruling 392's own recording, second instance — and it is kept because it is X-198's measured shape and because a null heading would otherwise render `heading=""`.
+406. **⭐⭐ Deleting a forgeable field deletes the HARM OF COMPOSING IT EARLY as well as the harm of
+    fabricating it — ruling 362 answered a scheduling defect it was never written for (RULED by the lane
+    supervisor 2026-09-10 21:5x, on MONEY-194's `6cb5c1bd`).** `REPORT.md`'s mtime is `18:27:38` and
+    `gate-money194.txt`'s is `18:28:52`: **the report was composed before the gate exited**, which is
+    ruling 218(2)'s named forbidden behaviour and the cause ruling 238 traced a stale transcription to.
+    **It cost nothing.** Ruling 362 collapsed `GATE:` to the gate file's **path** and deleted
+    `FINAL GIT STATUS:`, on the reasoning that eight hardening rulings (218, 219, 222, 238, 243, 299, 308,
+    351) had made the field heavy enough to be worth forging — so the report now carries no number, no
+    byte count, no mtime and no transcription, and **there was nothing for an early composition to get
+    wrong.** ⭐ 42(2)'s *never take a reported figure as the sha's* is thereby satisfied **by
+    construction**: the coder transcribed nothing, so every §7 digit in the verdict block is the
+    supervisor's own raw read. ⚠️ 218(2)'s prohibition **stands** and is about **behaviour** — the run
+    blocked on its own gate (`AGY_EXIT=0`, log lines 2–3), wrote no polling script and left no scratch —
+    and ⛔ ruling 341 forbids charging the scheduling **verb**. ⭐ **The generalisable half: when a
+    specification is simplified by asking which fields the READER is obliged to obtain anyway, the
+    simplification removes failure modes beyond the one it targeted**, because a field nobody writes
+    cannot be written wrongly, written early, or written from the wrong instant. **A ruling that deletes
+    a field should be re-read a few waves later for the failure modes it closed silently** — this is the
+    inverse of ruling 366's lesson (*deleting a field deletes its evidence*), and both are true, which is
+    why 366's `TREE:` was restored while 362's `GATE:` fields were not.
+
+407. **⭐⭐ THE ZERO TRAP'S FOURTH MECHANISM IS NOT A METACHARACTER — IT IS AN INSTRUMENT THAT ASSUMES THE
+    LAYOUT OF THE THING IT MEASURES; `grep -B 2` for a heading above a message property returned ZERO
+    over a live 28-member population (RULED by the lane supervisor 2026-09-10 21:5x).** The three
+    recorded mechanisms are `$` inside a quoted pattern (207), CASE (381) and `[` without `-F` (387), and
+    all three are properties of the **pattern**. Running ruling 405's predicate re-run, the instrument was
+    `grep -rn -B 2 -e '{{ $error }}' … | grep -e 'heading='` — *find the heading on a line above the
+    rendered message* — and it printed **ZERO**. The pattern was correct and the population is **28**:
+    nineteen of the lane's message-property renders put the heading and the message **on the same line**
+    (`<x-ui.error-panel heading="…">{{ $error }}</x-ui.error-panel>`), so `-B 2` could never see them.
+    ⚠️ Rulings 95/100/111 **strike** a population that measures empty, so an uncorroborated false zero is
+    one tick from deleting a live one — here it would have struck the population that yielded ruling 408's
+    three findings. **RULED: a zero is corroborated against an independent count of the population
+    (207, 294, 324) AND against the SHAPE the instrument assumed** — a `-B`/`-A` context window, a
+    line-anchored pattern, a per-line grep over something that spans lines, or a range (395) each encode a
+    layout assumption that is a claim like any other. ⭐ The re-run that broke it was one command:
+    `grep -rn -F -e '{{ $error }}' …` with **no context flag at all**, counted, which returned 28 and made
+    the assumption visible. ⭐ **The generalisable half is ruling 371's a SIXTH time inside this ledger's
+    own censuses** (375c, 376, 383, 394(c), 395, 402(b), 404): a census that encodes anything other than
+    its **predicate** — a member list, a count, a line range, and now a **layout** — is a filter wearing a
+    census's name, and it closes silently.
+
+408. **⭐⭐ Ruling 405's predicate re-run is MEASURED: nineteen static headings sit over a message
+    property, THREE name one act over a property set by two or three, and in every one of the three the
+    component's own message text already names the right act one element down (RULED by the lane
+    supervisor 2026-09-10 21:5x, briefed as MONEY-195).** Ruling 390 fixed X-120's
+    `heading="We couldn't update your cards"` heading two acts, ruling 405 fixed X-211's
+    `heading="Late fee not applied"` heading two, and 405 closed by recording that **the rest of the lane
+    was not swept on this predicate**. Swept now.
+    **Instrument, quoted (ruling 300):** `grep -rn -F -e '{{ $error }}' -e '{{ $refused }}' -e
+    '{{ $waiting }}' -e '{{ $financing }}' -e '{{ $authorised }}' app/app/Modules --include=*.blade.php`
+    → **28** render sites, of which **19** carry a `heading=` on the same line and **9** render bare (no
+    heading, therefore no claim, therefore out of the population); then, per component,
+    `grep -n -e 'public function' -e 'this->error = '` and **read** which methods SET the property
+    (262(b)) — never which merely clear it.
+    ⭐⭐ **The control DISCRIMINATES rather than merely firing** (324's bar in its strongest form, as 404's
+    did): the same instrument returns `X-201/dispute-queue.blade.php:5`'s
+    **"We couldn't act on that dispute"** — deliberately act-neutral over a property four acts can set —
+    and `C-Billing/credits.blade.php:14`'s **"That didn't go through"**, beside the three that name one
+    act over several. **It separates a correct multi-act heading from a defective one, which is what a
+    control has to show.**
+    **The three findings, and each has its disproof in its own file:**
+    **(a) `X-117/Ui/views/checkout-block.blade.php:6` — `heading="We couldn't take that payment"`** over
+    `$error`, set by `pay():61,:73,:76` **and by `cancel():93,:95`**. ⭐⭐ `cancel()`'s own tail at `:95`
+    reads `'We could not cancel that: '`, so an owner who cancels an order reads a card headed *we
+    couldn't take that payment* over a body saying *we could not cancel that* — **the component already
+    distinguishes the two acts in its message text and the heading does not** (ruling 98's tell, inside
+    one rendered card). `authorise()` clears `$error` and never sets it, so it contributes no act.
+    **(b) `X-199/Ui/views/declines.blade.php:23` — `heading="We couldn't make that pay link"`** over
+    `$error`, set by `sendPayLink():30,:32` **and by `settleUpLater():42`**. ⭐⭐ **This is ruling 229(b)'s
+    own screen.** 229 removed the prefix `'The pay link was not made: '` from `$this->error` on exactly the
+    reasoning that *the catch cannot know the act*, and left the **heading** asserting it one element up —
+    so a failed deferral reads *we couldn't make that pay link* over *that attempt isn't in this account
+    any more*. **A wave that fixes a claim in the prose owes the same question of the heading above it.**
+    **(c) `X-173/Ui/views/connection-mapping.blade.php:7` — `heading="We couldn't save that mapping"`**
+    over `$error`, set by `mapAccount():55,:61,:63` **and by `connect():35`** — and `:35` is **ruling 369's
+    own provider whitelist refusal, one wave old**, so *"Choose a ledger this app connects to: QuickBooks,
+    Xero or Sage."* renders under a heading naming a mapping save. ⭐ The wave that CREATED the second act's
+    `$error` is the wave 405's predicate would have caught.
+    **RULED: each takes the `$errorHeading` shape this lane has now established three times** — X-198
+    (ruling 93), X-120 (390), X-211 (405): a `public ?string $errorHeading = null;` cleared in **every**
+    method that clears `$error` (ruling 361, binding a property from birth, `authorise()` included though
+    it never sets it), set per act, and read as
+    `:heading="$errorHeading ?? '<the existing static string, byte-identical>'"`.
+    ⭐ **The new headings are in the owner's own BUTTON vocabulary** — *Cancel* → `'Could not cancel that
+    order'`, *Settle up later* → `'Could not set that aside'`, *Connect* → `'Could not connect that
+    ledger'` — because an owner knows the act by the button they pressed (ruling 134's family), and all
+    three are apostrophe-free by construction, matching X-198's `'Could not connect'` and X-211's
+    `'Payment not logged'` (ruling 123, one wording family).
+    ⛔ Not by rewording the static heading to cover every act, which is ruling 390's defect with better
+    prose; ⛔ not by splitting the panel (ruling 95 measured all 22 screens correctly put it above the
+    branch); ⛔ **not by touching the `\Throwable` tails' prefixes** — `CheckoutBlock:76`'s *"We could not
+    take that payment: "* and `ConnectionMappingView:63`'s *"We could not save that mapping: "* are each
+    inside a **per-act** catch, so unlike ruling 229(b)'s they assert an outcome the catch **can** know
+    (ruling 47's companion).
+    ⚠️ **Sixteen are measured CLEAN and are STRUCK with their reasons** (95, 100, 111), ⛔ not to be
+    re-raised: `dunning-board:14` *"advance that case"* (`advance` is the only setter) ·
+    `reconciliation-discrepancies:4` *"mark that run"* (`review` only) · `unpaid:25` and `invoices:14`
+    *"record that payment"* (`recordPayment` only; `toggleExpanded` and `showPaid` set nothing) ·
+    `money-paid-today:18` *"open that invoice"* (`explain` only) · `conflicts-list:7` *"resolve that"*
+    (`resolve` only) · `card-screen:47` *"Waiting on Stripe"* over `$waiting`, set by `present():74` alone
+    (361's own fix cleared it in the other two) · `checkout-block:10` *"Nothing authorised yet"* over
+    `$authorised`, set by `authorise():50` alone · `cart-block:5`, `same-account:5` and
+    `connection-mapping:15` over `$waiting`, one setter each · plus the act-neutral controls above.
+    ⚠️ **Blast radius, measured with interior fragments BEFORE the brief shipped (46, 86, 146): ZERO** —
+    `grep -rn -F` over `app/app app/tests` for the three headings returns **five** lines and **not one is
+    a test**: three blades (Table A) and two PHP tails (Table B). No test in the lane asserts any of the
+    three, which is ruling 70 again and exactly why they outlived every screen wave. All three items
+    therefore **add** methods (68).
+    ⚠️ ⭐ **The sweep's own wording decided its output, and the brief carries the apostrophe-free form.**
+    `grep -F -e "We couldn't take that payment"` returns **3** and `grep -F -e "take that payment"`
+    returns **5** — the blades write `couldn't` and the PHP tails write `could not`, two spellings of one
+    contraction — so the narrow form would have hidden the two tails the brief must name as *do not
+    touch*. Ruling 371's family a seventh time, inside a stop-clause.
+    ⚠️ **The paired negatives were measured, not chosen** (61, 82, 131): on the declines render
+    `assertDontSee('pay link')` would **FAIL against a correct implementation**, because
+    `declines.blade.php:55`'s button label is *"Make a pay link"* and it renders on every row — so the
+    needle is `'make that pay link'`, which the button does not contain. The X-117 and X-173 negatives are
+    safe because their only other occurrence is a tail inside the **other** method, unreachable from the
+    act under test.
+    ⛔ No `view:clear` (202, 225 — the mutations are PHP) and ⛔ no `composer dump-autoload` (318 — no new
+    class).
