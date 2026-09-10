@@ -293,9 +293,9 @@ class CReviewsTest extends TestCase
      */
     public function test_g20_06_header(): void
     {
-        $this->assertTrue(\Illuminate\Support\Facades\Schema::hasTable('review_destinations'));
-        $this->assertTrue(\Illuminate\Support\Facades\Schema::hasColumn('review_destinations', 'invite_threshold'));
-        $this->assertTrue(\Illuminate\Support\Facades\Schema::hasColumn('review_destinations', 'enabled'));
+        $this->assertTrue(Schema::hasTable('review_destinations'));
+        $this->assertTrue(Schema::hasColumn('review_destinations', 'invite_threshold'));
+        $this->assertTrue(Schema::hasColumn('review_destinations', 'enabled'));
     }
 
     /**
@@ -351,9 +351,9 @@ class CReviewsTest extends TestCase
      */
     public function test_g20_09_header(): void
     {
-        $this->assertTrue(\Illuminate\Support\Facades\Schema::hasTable('triage_conversations'));
-        $this->assertTrue(\Illuminate\Support\Facades\Schema::hasColumn('triage_conversations', 'fix_then_ask_offered_at'));
-        $this->assertTrue(\Illuminate\Support\Facades\Schema::hasColumn('triage_conversations', 'resolved_at'));
+        $this->assertTrue(Schema::hasTable('triage_conversations'));
+        $this->assertTrue(Schema::hasColumn('triage_conversations', 'fix_then_ask_offered_at'));
+        $this->assertTrue(Schema::hasColumn('triage_conversations', 'resolved_at'));
     }
 
     /**
