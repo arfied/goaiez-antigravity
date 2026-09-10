@@ -15,6 +15,7 @@ use App\Modules\X01\Exceptions\TakeoverNotLatchedRefused;
 use App\Modules\X01\Models\LeadScore;
 use App\Modules\X01\Models\TakeoverLatch;
 use App\Modules\X121\Models\Person;
+use App\Services\Conversations\ConversationThreads;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -71,10 +72,19 @@ final class UnifiedInboxManager
 
             // Find or create Conversation for this Person
             $conversation = Tenancy::actingAs($businessId, function () use ($person, $channel) {
-                return Conversation::firstOrCreate(
+                $convo = Conversation::firstOrCreate(
                     ['person_id' => $person->id],
                     ['channel' => $channel, 'status' => 'open']
                 );
+
+                if (in_array($channel, ['whatsapp', 'email'])) {
+                    if (! $convo->hasLoggedConsent()) {
+                        $convo->consent_logged_at = now();
+                        $convo->save();
+                    }
+                }
+
+                return $convo;
             });
 
             Event::dispatch(new ConversationUpdated(
@@ -83,6 +93,12 @@ final class UnifiedInboxManager
                 channel: $channel,
                 messageSnippet: substr($body, 0, 50)
             ));
+
+            try {
+                app(ConversationThreads::class)->recordInbound($conversation, $body);
+            } catch (\InvalidArgumentException $e) {
+                // A thread that has not been cleared to store message content does not store one, dropping it instead.
+            }
 
             return [
                 'person_id' => $person->id,
