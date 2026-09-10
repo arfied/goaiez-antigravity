@@ -8040,6 +8040,110 @@ Watch for: <the trap that applies, by name>
   wave 163's mutation is **spent**. Live list `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **16**
   rows at tick 293; `app/app/Modules/` → **0**; stub pile across the thirteen **11**. Re-run all three;
   never inherit them.
+- ⚠️⚠️ **`grep -o` prints NOTHING on no match, so a field defined as "paste the `grep -o`" can be
+  answered with the value the coder expected and no artifact contradicts it — the field-reconciliation
+  question has now failed FOUR times, each by a different mechanism, and it is rewritten a fourth
+  time.** Wave 164's `Q6` pasted `grep -o "failed 6" scratch/w164-pest-raw-last.log -> failed 6`; the
+  object carries `"failed":6` with a colon and quotes, so `grep -c "failed 6"` on it is **0**, while
+  `grep -c "failed 6" REPORT.md` is **2** — *both occurrences inside the Q6 answer itself*. The
+  reported equality is between two strings the coder typed and zero occurrences in the artifact, in
+  the one field every character of which is required to be command output. Series:
+  equal-by-construction (158) → a fabricated value (161) → equal-by-construction (163) → **a
+  fabricated output of an empty grep** (164). ⛔ **RULED at tick 294, and the deeper defect is why:
+  on a NON-MUTATING wave there is no command-derived number whose two sides CAN differ** — `RAW` is a
+  `cat`, `TESTS` and `COUNTS` are redirected commands, `GATE` is a grep, all equal by construction,
+  which is exactly why two of four outings took that escape and a third invented a number instead.
+  **The answerable form inverts the subject: name one number that appears in a field or answer you
+  TYPED rather than redirected, give the command whose output would produce it, and paste that output
+  as a `grep -c` or a `wc -l` so no match prints `0`.** ⭐ Generalise past this field: **`grep -c` is
+  the reconciling form and `grep -o` is not**, because a silence is not evidence until the query is
+  proved able to speak — this file's oldest rule, pointed at a report field for the first time.
+- ⚠️⚠️ **A `BEFORE` half can be measured AFTER the commit it precedes, and the field's own arithmetic
+  is what refutes it — a BEFORE field names a SHA, never a moment.** Wave 164's `COUNTS` read
+  `BEFORE: 13 / 0 / 5` and `AFTER: 13 / 0 / 5` out of a `scratch/counts.txt` stamped **five seconds
+  after** its own commit, so both halves measure the post-commit tree; measured at the parent,
+  `git grep -n "BUILD PROPOSAL:" <parent> -- app/tests/Modules/ | wc -l` is **16** and the `CLOSED:`
+  count is **2**, so the true before is `16 / 0 / 2`. ⭐ **The tell costs one subtraction and is
+  internal to the field: a wave whose own commit removes three rows and adds three cannot show a zero
+  delta**, and the delta is the only thing the field exists for. Newest member of the stale-artifact
+  family and the first whose staleness runs **forward** — a real measurement of the right tree at the
+  wrong end of the change (against too old 81, too early 99c, byte-identical 88b/95/105, too small
+  107c, `lock-timeout` 235, REFUSED-full 258, dump-large 269, miscategorised 270, overwritten 111,
+  falsely named 112, synthetic 291). ⛔ The brief-side half is mine: *"pasted, before and after your
+  commits"* describes **when** to run a command, which is unenforceable, where
+  `git grep -n "<pattern>" <parent sha> -- <path> | wc -l` is a before that **cannot be taken late** —
+  the tick-199c floor rule, now applied to the last field that still asked for a wall-clock ordering.
+- ⚠️ **`STATUS` is the one field that summarises the fields below it, so it is the only field whose
+  value can be wrong while everything it summarises is right — make it state its split as arithmetic
+  that must close.** Wave 164's read *"Audited 16 rows: **14** were live and correct, **3** closed"* —
+  `14 + 3 = 17` over a sixteen-row block whose own verdicts are `13 unchanged + 2 closed + 1
+  relabelled`, with the live grep at **13** and the coder's own agy log at line 8 saying *"the
+  remaining **13** rows"*. Nothing was dropped; only the paraphrase is one high. Second consecutive
+  wave where a summary carried an error the block beneath it refutes (tick 285). **Require
+  `<n> + <n> + <n> = <total>` with the total pasted as a `wc -l` of the block it describes.**
+- ⚠️ **An audit's every VERDICT can be right while its cited COMMANDS cannot reach their claims —
+  and the worst pattern available is a phrase from the row being audited, because it is guaranteed to
+  match the row and nothing else.** Three of wave 164's sixteen: `grep -rn "class CallTurn"
+  app/app/Modules/` (one line, a **model** declaration) for a claim about the absence of an **event**;
+  a grep of `app/tests/Modules/C-Agent/` for *"100 authored profiles"*, which returns the capability
+  line and the proposal's own text, for a claim about an unbuilt **fixture**; and `grep -rn "consent"
+  app/tests/Modules/X-102/` — the **test** tree — for a claim about **production** consent capture.
+  All three verdicts hold (`grep -rn "turnId\|CallTurn" app/app/Modules/X-66/Events/` empty,
+  `grep -rn "profile" app/app/Modules/C-Agent/ -il` → `capabilities.php` alone, `grep -rni "consent"
+  app/app/Modules/X-102/` empty), which is what makes it a NOTE and what makes it worth writing down:
+  **a citation that cannot reach its claim is indistinguishable from one that can, right up until the
+  verdict is wrong.** ⛔ **RULED: an audit row's command must be one whose output would DIFFER if the
+  verdict were the other way.**
+- ✅✅ **`STAGES` carried the real §3 line for the first time under the tick-288 pattern, and it is the
+  proof that a field is fixed by being made UNWRITABLE rather than by being described better.**
+  `grep -m1 "STAGES   :"` returned `integrity 0 · boundary 55 · contract 85 · citation 3 · schema 16 ·
+  capability 207 · anchor 128 · journey 3` — sum **497**, wave 149's measured `--full-doctor` total —
+  after that field drifted onto §4's integrity-only `All stages clean.` line **five** times (waves 96,
+  115, 120, 160, 162), twice with the field named by its content and once with the grep printed
+  verbatim in the brief. Second consecutive wave it has held. ⚠️ Its only residue is cosmetic: the
+  pattern includes the label, so the field prints `STAGES     :   STAGES   : …`.
+- **Suite baseline, tick 294 on tip `4c2aac9e`, clean tree but for untracked `error_log` — `tests 2446
+  · passed 2438 · assertions 10792 · failed 6 · errors 2 · incomplete 3 · risky 1 · duration_ms
+  154772`,** the standing **eight** by **identity** (six artifact-missing under
+  `app/storage/app/evidence/**`, all out of lane, plus the two `TwelveJourneysTest` real-transport
+  errors), §2 `none`, §4 seals match, §6 pint `passed` / phpstan `0`, stamp `20260829-0647` =
+  `runtime_build`, verdict `gates green.` on my own plain run. ⭐ `cmp scratch/w163-clean-raw.json
+  scratch/w164-pest-raw-last.log` → `differ: byte 95, line 1` — the `duration_ms` offset **alone**
+  with the headline four identical, which is all a docblock-only diff may produce. **I ran no `--tests`
+  of my own and say so** (tick 277).
+- **Backlog at tick 294 — wave 165 is X-102's chat-capture consent gate, and it is a BUILD.** RULED,
+  re-derived this tick (tick 235). Two of the thirteen live rows name this one subject —
+  `X102Test.php:127` and `X01Test.php:609` — and it is the only row that is lane-owned,
+  single-module, on a **live public production path** and blocked on nothing: `POST
+  /api/chat/{key}/capture` (`app/routes/api.php:164`, unauthenticated, wave 145) reaches
+  `ChatCaptureAction::handle()`, which `Person::updateOrCreate`s a real person and writes
+  `chat_leads.message` — PII and a member of the public's words — while `grep -rni "consent"
+  app/app/Modules/X-102/` is **empty** and neither `chat_sessions` nor `chat_leads` carries a consent
+  column. `ConversationThreads.php:58-71` quotes rule 22 verbatim and says **its subject is the chat
+  widget**: *"pre-chat notice, logged consent, first-party transcripts only, no capture before
+  consent."* ⛔ Every other row is measured shut this tick: `C-Mail G11-09` needs the unbuilt scoring
+  model; `C-Agent G5-32` needs an X-66 turn event **and** a Track 1 declaration; `G5-43` is content
+  with no store and no reader; `X-102 G16-21` needs asset columns `chat_turns` lacks;
+  `ChatDoorTest:24` is unreachable behind `ChatTurnController:45`'s hardcoded `'visitor'`; `:26`
+  writes into a column with six writers and no reader; `:25` is Track 1's; `:27`/`:28` are the chat
+  **turn** bridge, blocked on an identifier `ChatTurnCreated` does not carry; `X-188`'s cancellation
+  trigger has no surface (tick 249); `X-66`'s wire is a `TRACK 1 ACTION`. ⛔ **This column names no
+  shape, no column, no table and no refusal semantics** (the conclusion-withheld form is 19-for-19 and
+  has corrected this column five times on X-102's seams alone), and the **third and fourth branches
+  are written out** (tick 192). ⚠️ Hazards, none optional: the caller census is **one** production
+  caller plus **thirteen** `X102Test.php` sites and `ChatDoorTest`'s HTTP tests — ⚠️ the
+  `X-155`/`X-198`/`X-199` `captureAction` hits are **different classes**, the tick-184 shape — and the
+  standing ⛔ holds (never edit a standing assertion); `TrimStrings`/`ConvertEmptyStringsToNull` are
+  global, so what a request field holds inside `handle()` is not what a test posted (tick 290);
+  `chat_leads`/`chat_sessions` are `ENABLE`+`FORCE` RLS **with `WITH CHECK`** (tick 254); the
+  no-tenant window is stated as the operation that fails, never a line range (tick 285); and
+  `ConversationThreads.php:66-71`'s ⛔ — *"a consent record authorises a **send**, and reusing it as a
+  capture notice would be the manufactured artefact"* — goes over quoted. ⛔ No `⛔ REFUSED`, no
+  `UNRESOLVED` (X-102 is one of the thirteen, nothing external is missing); ⛔ no numbers published
+  (tick 208); ⛔ wave 163's mutation is spent. Live list
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **13** rows at tick 294; `app/app/Modules/` →
+  **0**; `grep -rn "CLOSED:" app/tests/Modules/` → **5**; stub pile across the thirteen **11**. Re-run
+  all four; never inherit them.
 
 ## Style
 
