@@ -21,7 +21,7 @@ final class ChatCaptureAction
         ?string $email = null,
         ?string $message = null,
         string $formType = 'live_chat',
-        bool $consent = true
+        bool $consent = false
     ): ChatLead {
         if (trim($phone) === '') {
             throw new \DomainException('NO_CONTACT_METHOD_ON_CAPTURE');

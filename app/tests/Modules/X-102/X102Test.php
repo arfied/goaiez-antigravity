@@ -446,7 +446,8 @@ class X102Test extends TestCase
             sessionId: $session->id,
             name: 'Real Visitor',
             phone: '+15551234567',
-            message: 'I have a question'
+            message: 'I have a question',
+            consent: true
         );
 
         $this->assertEquals(1, ChatLead::where('business_id', $biz->id)->count());
@@ -544,9 +545,27 @@ class X102Test extends TestCase
             name: 'Direct User',
             phone: '1234567890',
             email: 'direct@example.com',
-            message: "   \n\t "
+            message: "   \n\t ",
+            consent: true
         );
 
         $this->assertNull($lead->message, 'The action itself must normalise a whitespace message to null');
+    }
+
+    public function test_capture_action_defaults_to_no_consent_record(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'No Consent Default', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $session = $this->startAction->handle($biz->id, '192.168.1.1', false);
+
+        $lead = $this->captureAction->handle(
+            businessId: $biz->id,
+            sessionId: $session->id,
+            name: 'No Consent',
+            phone: '+15550000000'
+        );
+
+        $this->assertNull($lead->consent_logged_at, 'The action must not write a consent record by default');
     }
 }
