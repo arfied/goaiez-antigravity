@@ -363,4 +363,62 @@ class X117Test extends TestCase
         $this->assertSame(1, Order::where('business_id', $biz->id)->count());
         $this->assertSame(4, $sellable->fresh()->inventory_quantity);
     }
+
+    /**
+     * [G17-31] One currency, and no conversion path. Every money value X-117 writes is minor units
+     * of the account's single currency: a cart total is the exact integer sum of its lines with no
+     * factor applied, and neither the result, the order nor its lines carries a rate or a landed
+     * cost. The scan is the shape test_g18_29 already uses on this file's fulfilment vocabulary.
+     * It deliberately does NOT refuse a bare `currency` column — naming the currency of a money
+     * value is a fix, and converting between two is what this capability rules out.
+     */
+    public function test_g17_31_one_currency_with_no_conversion_path(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'One Currency Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $cheap = Sellable::create([
+            'business_id' => $biz->id,
+            'name' => 'Washer',
+            'sku' => 'WSH-1',
+            'inventory_quantity' => 9,
+            'unit_price_cents' => 1500,
+        ]);
+
+        $dear = Sellable::create([
+            'business_id' => $biz->id,
+            'name' => 'Manifold',
+            'sku' => 'MAN-1',
+            'inventory_quantity' => 9,
+            'unit_price_cents' => 2075,
+        ]);
+
+        $this->cartAction->handle($biz->id, 'sess_one_currency', [
+            ['sellable_id' => $cheap->id, 'quantity' => 2],
+            ['sellable_id' => $dear->id, 'quantity' => 3],
+        ], 15);
+
+        $res = $this->engine->checkoutCart($biz->id, 'sess_one_currency', 'auth_'.uniqid(), null);
+
+        $this->assertSame('pending_payment', $res['status']);
+        $this->assertSame(2 * 1500 + 3 * 2075, $res['total_cents']);
+
+        $order = Order::findOrFail($res['order_id']);
+        $this->assertSame(2 * 1500 + 3 * 2075, $order->total_cents);
+
+        $line = OrderLine::where('order_id', $order->id)->firstOrFail();
+
+        $names = array_merge(
+            array_keys($res),
+            array_keys($order->getAttributes()),
+            array_keys($line->getAttributes())
+        );
+
+        foreach ($names as $name) {
+            $this->assertDoesNotMatchRegularExpression(
+                '/(exchange_rate|fx_rate|conversion_rate|converted_|landed_cost)/i',
+                $name
+            );
+        }
+    }
 }
