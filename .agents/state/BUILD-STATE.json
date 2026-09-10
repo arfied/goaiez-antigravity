@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-10T07:11:35",
+ "updated": "2026-09-10T08:22:39",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2699,6 +2699,12 @@
    "module": "X-117",
    "chose": "A list ordered on a column the writer does not keep unique is ordered only in part: sellables.name has no unique index and two catalogue items may share a name on purpose, so the catalogue takes an ascending id tiebreak behind the name. The module's own checkout decrements inventory_quantity on a sellable row, so an update moves that row in heap order and the list can reshuffle among same-named items after a sale.",
    "at": "2026-09-10T07:11:35",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-211",
+   "chose": "a rendered loop that holds a per-row form control carries wire:key with that row's own id, because Livewire morphs an unkeyed loop by position and a row that leaves or moves carries the owner's typed value onto its neighbour",
+   "at": "2026-09-10T08:22:39",
    "ruling": "R245"
   }
  ]
