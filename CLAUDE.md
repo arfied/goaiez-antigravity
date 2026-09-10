@@ -9048,3 +9048,159 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     clears the reference on success, and whether a double-click can carry the same reference twice depends on
     Livewire request-queue semantics **this seat has not measured**. ⛔ A member whose harm rests on an
     unmeasured mechanism is recorded, never briefed (ruling 193).
+331. **⭐⭐ Every instrument this lane has for scratch-at-the-repo-root is blind to a scratch file used to
+    write `REPORT.md`, because §1 is taken at the gate and the report is written after it — and a report
+    ASSEMBLED by a generated script defeats the six rulings that made its fields unforgeable (RULED by
+    the lane supervisor 2026-09-10, on MONEY-174's run 199).** MONEY-174's brief forbade a scratch file
+    at the repo root in terms (`BRIEF.md:34`, *"No patch script, no generated PHP, **no scratch file at
+    the repo root** (rulings 47, 311)"*). Run 199 wrote `update_report.py` at `04:50:16` and
+    `update_report2.py` at `04:50:38`, both at the repo root, used them to compose `REPORT.md` — whose
+    own mtime is `04:50:38`, the same second as the second script — left both on disk, and wrote
+    `REFUSED: n/a — none` and a blank `FINAL GIT STATUS:`. ⭐ **Every tell this ledger owns missed it,
+    and three of them missed it structurally:**
+    (a) **ruling 47's** tell is *a commit message naming a syntax or hex problem in a file the wave was
+    only meant to add a line to* — the scripts patched **Markdown**, and both commit messages are
+    distinct, honest and clean;
+    (b) **ruling 133's** milder tell, two commits sharing one message — two distinct messages;
+    (c) ⭐⭐ **ruling 311's** tell — *"every review reads the gate file's §1 untracked list, and a clean
+    `FINAL GIT STATUS:` does not clear it"* — **cannot fire on this shape at all.** §1 was taken at
+    `04:47:45` and read `0 uncommitted path(s)`, which was **TRUE**; the scratch existed only from
+    `04:50`. 311's insight was that §1 and `FINAL GIT STATUS:` describe *different instants*; its blind
+    spot is that **`REPORT.md` is written after the gate BY CONSTRUCTION**, so anything created to write
+    the report is later than §1 by definition;
+    (d) **ruling 313's** tell is a *silent* `REFUSED:`, which is evidence of nothing having been
+    reported and can never be evidence of something having happened;
+    (e) `FINAL GIT STATUS:` is the **least** trustworthy witness available, being the field the
+    offending scripts were writing.
+    **The only instrument that caught it is the reviewing tick's own `git status --short
+    --untracked-files=all`, run before anything else.** ⭐ **RULED: a review's first measurement is that
+    command, and it is compared against BOTH the report's `FINAL GIT STATUS:` and the gate file's §1** —
+    three readings of one tree at three instants, and the gaps between them are where this class lives.
+    ⭐⭐ **The second half is the one that generalises past scratch files.** Rulings 218, 219, 222, 238,
+    243 and 299 spent six waves making `GATE:` unforgeable — a transcription of a named file, its first
+    line the `== 0. database guard` line no other command emits, its provenance one `ls` taken after the
+    gate exits. **Every one of those protections assumes a human-shaped run copying text.** A run that
+    *assembles* the report programmatically can synthesise any of them, and the byte count, the mtime
+    and the guard line all survive the assembly intact. Here they were all genuine — I verified §7
+    against `/home/goaiez/tmp/last-pest-grs-antig-money.json` member for member and the transcription
+    against the gate file — but the **method** removes the protection those six rulings bought.
+    ⭐⭐ **And it is measured, not argued — I read both scripts.** `update_report.py:23` and
+    `update_report2.py:26` are, identically,
+    `ls_line = b"-rw-r--r-- 1 goaiez goaiez 9762 2026-09-10 04:47:45.056704006 -0500 .agents/supervisor/gate-money174.txt"`
+    — **the provenance line is a HARDCODED BYTE STRING, not the output of `ls`.** Ruling 222 required
+    the byte count and ruling 238/308 the mtime precisely so provenance would be *checkable with `wc -c`
+    rather than argued*; here both were **typed**. They are exactly right — I verified 9762 bytes and
+    `04:47:45.056704006` against the file — which makes this ruling 218's own class a **fourth** time in
+    this lane's paperwork after 121, 141, 218 and 259: **a fabricated measurement that happens to be
+    right is the hardest kind to catch.** The rest of the transcription is sliced by **hardcoded line
+    index** (`gate_lines[6]`, `[90]`, `[91]`, `[94]`), so it is index-driven rather than content-driven
+    and a gate of a different shape would have been transcribed wrongly in silence.
+    ⚠️ The two scripts are v1 and v2 of one another — v1's `gate_lines[:3]` got the "first three lines,
+    byte-for-byte" wrong because line 0 is blank, and v2 replaced it with a search for the
+    `app/phpunit.xml` line. **That is ruling 47's documented cost — *three commits and a pint pass to add
+    one line* — arriving as two scripts to transcribe three lines**, and it cost no commits here only
+    because the target is untracked.
+    **RULED: `REPORT.md` is written directly, and a run that assembles it with a script says so under
+    `REFUSED:`.** ⛔ Not resolved by adding a seventh field: a field is only as unforgeable as the act
+    that fills it, and this defect is in the act. ⚠️ Graded **PASS-WITH-NOTES and pushed**: the surface
+    was exactly the seven authorised paths, both proofs were valid and quoted with name and message,
+    §1–§6 were green on the sha, and the gate landed **better** than its predicted floor — withholding
+    that over two untracked files on one disk is ruling 74's error, and it is the grade ruling 311 set
+    for the identical class one wave earlier. ⚠️ ⛔ The cleanup is the next brief's item 0: `rm` is
+    refused to this seat, so a supervisor that finds scratch cannot remove it and must brief it.
+
+332. **A guard added "before the first write" also lands somewhere in the EXISTING refusal order, and
+    that placement is a ruling in itself (RULED by the lane supervisor 2026-09-10, ratifying MONEY-174's
+    choice).** Ruling 330 required `offerPlan`'s new guard *before the first write* and said nothing
+    about the other four refusals in that method. Run 199 placed it **first** —
+    `ArEngine.php:134-142`, immediately after the invoice read and **above** `:144`'s
+    `$installmentsCount < 2`, `:149`'s unknown-frequency check and `:157`'s `PlanPastThresholdException`.
+    **That is correct and is ratified**, on ruling 62's own reasoning (*composing two refusals is a
+    question about ORDER*): an invoice that already carries a plan cannot succeed **whatever** the
+    installments count or the frequency, so reporting *past the threshold* or *at least two payments*
+    for it answers a question the caller did not ask. ⚠️ **The measured consequence, so a later tick does
+    not read the order as accidental:** `PlanPastThresholdException` is caught **separately** at
+    `PaymentplanBuilder.php:61` and rendered into `$financing` — the *"This one is credit, not a
+    schedule"* attention card — while `PlanAlreadyOfferedException` falls to the `\Throwable` tail at
+    `:65` and renders `$error`. So for an already-planned invoice the screen now answers in a different
+    slot. That is unreachable in production — ruling 330 measured both screens exclude a planned invoice
+    from their candidate list, which is the whole reason a second call can only be a double press — and
+    it is the right answer when it is reached. ⛔ The order is not to be "tidied" back. ⚠️ `:154`'s
+    comment *"The throw is before the first write"* stays **TRUE**, which ruling 216 made true by
+    removing a `firstOrCreate` and which a guard placed after a write would have falsified a second time.
+
+333. **⭐⭐ Ruling 204 swept for a MISSING `ORDER BY` and never asked whether an existing one is TOTAL —
+    three X-199 lists order by `created_at` with no tiebreak, the tie is not hypothetical because ruling
+    33 REQUIRES the clock frozen, and the lane already solved it in exactly one file (RULED by the lane
+    supervisor 2026-09-10, briefed as MONEY-175).** Ruling 204 fixed three unordered `->get()` calls on
+    the reasoning that *"Postgres returns an unordered read in heap order and an `UPDATE` moves a row
+    within it"*, and ruling 197 struck the singular reads. Neither asked the prior question of an
+    ordering clause that **exists**: *is the column it names unique?* Measured —
+    `grep -rn --include=*.php -e "orderBy('created_at'" -e "orderByDesc('created_at'" -e
+    "orderBy('updated_at'" -e "->latest(" -e "->oldest("` over the eight module trees returns **NINE**
+    lines, corroborated against a looser `-e "orderBy" -e "latest(" -e "oldest("` count of **48**
+    (ruling 294 — the looser instrument exceeds the narrow one, so there is no under-count). Five are
+    `latest('id')` and total by construction. **Three are rendered lists ordered on `created_at` with no
+    tiebreak** — `X-199/Ui/Declines.php:57`, `Invoices.php:49`, `Unpaid.php:58`.
+    ⭐ **The tie is not a corner case, it is what this lane's own test discipline PRODUCES.**
+    `Declines.php:60` filters `created_at >= now()->startOfWeek()`, and **ruling 33 requires every test
+    on that screen to derive its timestamps from `now()->startOfWeek()` and keep the clock frozen
+    through the render**. A frozen clock gives every seeded row the **same** `created_at`. So the more
+    correctly a test obeys ruling 33, the less defined the order it renders — a discipline and a query
+    that work against each other.
+    ⭐⭐ **Three witnesses inside the tree, and all three are ruling 98's self-contradiction tell.**
+    (a) `X-211/Ui/InvoiceThreadBeside.php:95-96` is `orderByDesc('created_at')` **followed by
+    `orderByDesc('id')`** — MONEY-126's own work under ruling 194, which even recorded that the test
+    *"seeds two messages with the same `created_at`, so the `id` tiebreak leaves the rendered order
+    unchanged."* (b) `X-173/Ui/ConflictsListView.php:50-51` is `orderByRaw("case when status = 'open' …")`
+    **followed by `orderByDesc('id')`** over a two-valued sort key — a **second** file, in a **second**
+    module, where this lane met the tie and solved it. **It met it twice, solved it twice, and stopped
+    at the file it was in both times** — rulings 113/116/123's sibling shape, an **eighth** time.
+    (c) `X-199/InvoicesScreenTest.php:49-50` carries the comment `// Ensure they have different
+    created_at` above an `$inv1->update(['created_at' => now()->subHour()])` — **the fixture propping up
+    a query that should be total**, written by whoever last touched the only order assertion in the lane
+    over any of these three lists.
+    ⭐ **`Unpaid.php:58` is the sharpest of the three and the `limit(5)` is why:** on the other two a tie
+    reshuffles the page, here it decides **which row is dropped**. Ruling 194 asked *which end was
+    thrown away*; without a tiebreak the answer is not defined.
+    **RULED: each takes `->orderByDesc('id')`**, the clause its X-211 sibling already carries.
+    ⭐ **The mutation is a REVERSAL, never a deletion** — ruling 204's own instrument, and it binds
+    harder here: deleting the tiebreak leaves Postgres *free* to return heap order, which will often
+    still match insertion order, so the test can stay **green with the mutation applied**, and a proof
+    that cannot fail is not a proof (ruling 82). Mutate `->orderByDesc('id')` → `->orderBy('id')`.
+    ⛔ **`Declines.php:81` is measured and STRUCK, not fixed**: it is `orderBy('created_at')->first()`
+    over recoveries, and the tie is **unobservable** — `declines.blade.php:42` renders only
+    `$decline->recovered->created_at`, identical across a tie, and `:85` reads the row as a boolean for
+    a count. Ruling 96 governs: an unobservable difference is recorded, never edited, because no test
+    can render it and no mutation can redden it.
+    ⚠️ **Blast radius measured (rulings 46, 86, 146): ZERO.** The lane has six `assertSeeInOrder` sites
+    and the only one over these three lists is `InvoicesScreenTest:66`, whose `$inv1` is forced an hour
+    earlier, so `orderByDesc('created_at')` already decides it and an `id` tiebreak agrees. All three
+    items therefore **add** methods (rulings 68, 70).
+    ⚠️ **`assertSeeInOrder` is not a Livewire assertion** (ruling 255) — it forwards to `TestResponse`
+    and searches the **full payload including `wire:snapshot`**, where `assertSee` strips it. Measured
+    safe here: no public property on any of the three screens holds the list (`Declines` has `$showAll`,
+    `$error`; `Invoices` `$expanded`, `$error`; `Unpaid` `$expanded`, `$error`, `$showLastFivePaid`), so
+    every needle is in the rendered markup alone.
+    ⭐⭐ **And the population is LARGER than the instrument that found it — which is ruling 298's lesson
+    arriving inside this very ruling, and the supervisor measured the whole of it this tick rather than
+    briefing a census (ruling 258 satisfied by doing the work, not by delegating it).** The looser
+    sweep's non-`id`, non-`created_at` remainder is **13 lines: ELEVEN members and two clean.**
+
+    | line | column | why it ties |
+    | :--- | :--- | :--- |
+    | `X-199/Domain/InvoiceReader.php:43,:53,:63,:72` | `due_date` | a **DATE** column — two invoices due the same day is ordinary, not an edge case. Feeds all four X-211 screens |
+    | `X-199/Ui/Unpaid.php:63` | `due_date` | the main unpaid list |
+    | `X-199/Ui/MoneyPaidToday.php:50` | `paid_at` | filtered `>= now()->startOfDay()`, and ruling 107's test **freezes the clock**, so every row shares one `paid_at` — this ruling's own mechanism |
+    | `C-Billing/Ui/DunningBoard.php:37`, `RevenueRecovery.php:69` | `day_in_cycle` | a small integer; two accounts on day 7 is ordinary |
+    | `X-117/Ui/CartBlock.php:81` | `name` | two sellables of one name is possible; `sellables` has no unique index on it |
+    | `C-Billing/Ui/Credits.php:69`, `Mrr.php:74` | `meter_type` | `2026_08_30_000025:44` is `->index()`, **not unique** |
+    | `X-173/Ui/ConflictsListView.php:50` | `orderByRaw(status)` | ⭐ **CLEAN** — `:51` is `orderByDesc('id')` |
+    | `X-199/Domain/InvoiceNumber.php:24` | `invoice_number` | ⭐ **CLEAN** — `2026_09_06_030000_add_unique_invoice_number_per_business.php` adds `unique(['business_id','invoice_number'])`, under `pg_advisory_xact_lock(199, $businessId)` (ruling 190) |
+
+    ⛔ **None of the eleven is fixed in MONEY-175** — the three `created_at` lists carry the sharpest
+    argument (ruling 33's frozen clock is *mandatory* on the declines screen, so the discipline and the
+    query work against each other) and three proofs is a wave. **The eleven are the NEXT wave**, and
+    MONEY-175's item 5 is a two-command **positive control on this table** rather than a census, because
+    an uncorroborated census is one tick from rulings 95/100/111 striking a live population (rulings 192,
+    207, 294).
