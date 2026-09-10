@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-10T03:19:09",
+ "updated": "2026-09-10T04:43:11",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2653,6 +2653,12 @@
    "module": "C-Billing",
    "chose": "A screen that shows a future step says it is a plan and names what does not perform it, and a screen that shows an enumerated column shows the owner words and never the schema token. The dunning board headed a column Next Step over five strings transcribed from the frozen plan, whose own box is unchecked; nothing puts an account on the ladder, nothing advances it on a clock, and nothing switches a phone, an agent or a number when a day is reached. The invoice thread rendered ar_dunning_actions.action raw beside a reason the engine had already resolved to a label.",
    "at": "2026-09-10T03:19:09",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-211",
+   "chose": "An invoice carries one plan and one collections package: the engine refuses a second before its first write, in the module's own exception vocabulary, rather than recording a second agreement. Both screens already excluded a planned or packaged invoice from their candidate lists, so a second call can only be a double press or a stale page. Not firstOrCreate, because a stale page may carry different terms and returning the old plan would report an agreement the owner did not ask for; and no unique index, because a raw 23505 reaches a Throwable tail as an SQLSTATE an owner reads, and a racing row cannot be committed from a second connection in this suite.",
+   "at": "2026-09-10T04:43:11",
    "ruling": "R245"
   }
  ]
