@@ -11349,3 +11349,115 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     `$user` inside the provision branch and X-211 resolves it at `:42` outside, which is ruling 278's own
     ruled fix for `packageForCollections`'s principal — **read the hit** (262(b)) before calling a
     difference a defect.
+379. **⭐⭐ Ruling 223 enumerated the return arrays and asked whether each key's VALUE is sound; its
+    negative — can the key be ABSENT on a path the component does not branch for — is nine members in
+    the lane, ZERO buildable, and the positive control fires OUTSIDE it on the unguarded shape (measured
+    by the lane supervisor 2026-09-10 15:5x; rulings 64, 95, 100, 111, 207, 294, 324, 327, 340).**
+    A missing array key is a warning and a `null` in PHP 8.4, so the screen renders blank silently — no
+    exception, no red test, and nothing for `pint`, `phpstan` or `php -l` to resolve. **The population is
+    the methods with MORE THAN ONE `return [`**, because a single-return method cannot disagree with
+    itself: `grep -rnc "return \["` over the eight ids gives `X-173/AccountingSyncEngine` **10** ·
+    `X-117/CheckoutEngine` **9** · `X-173/AccountingEngine` 4 (no production caller, 223) ·
+    `X-198/GatewayEngine` 4 · `X-198/StripeGatewayClient` 2 · `X-201/DisputeDefenseEngine` 2 ·
+    `X-211/ArEngine` 2 · `X-199/InvoiceEngine` 2. ⭐⭐ **And the shape genuinely exists here** — ruling
+    312 measured `CheckoutEngine`'s `sold_out` and `refused` are *"envelope-only and never reach the
+    row"*, and `checkoutCart()` returns **five** shapes: three `refused` + `refusal_code` + `message`,
+    one `sold_out` + `message` (**no `refusal_code`**), one success carrying
+    `status`/`order_id`/`order_number`/`total_cents` (**no `message`**).
+    **All nine money read sites are SOUND, three of them only because of a `??`:**
+    `CheckoutBlock:68,:70` reads `status`, which all five shapes carry; `:69,:71` read `order_number`
+    **only** on the `paid`/`pending_payment` branches, i.e. the two success shapes, both of which carry
+    it; `:73` is `$r['message'] ?? 'Payment failed.'`, and it is the guard that matters because the
+    `sold_out` and `refused` shapes are the ones that reach it. `ConflictsListView:31-34` and
+    `ConnectionMappingView:54-57` read `status` then `message` unguarded, and `resolveConflict()`'s and
+    `mapAccount()`'s **four shapes each carry BOTH** — ⚠️ the second is a **bare `else`**, so any
+    non-`refused` status reads `message`, safe only because every shape has it. `ConnectCard:31,:34`
+    read `status` (present on every path), `:33` is `?? 'Refused'`, and `:35`'s `application_ref` is on
+    the `applied` branch ruling 129 measured **unreachable** in production. `C-Billing Credits:52,:53`
+    read `status` and `charged_amount_cents` off `topup()`, which has **one** `return [` and throws
+    otherwise. `Mrr:54` and `RevenueRecovery:32` are `?? null`. `DisputeQueue:39,:74` and
+    `AgeingByReason:81` are single-return methods (223, 105, 111).
+    ⭐⭐ **The positive control fires, outside the lane, on the dangerous shape** (324's bar):
+    `C-Reviews/Ui/ReviewsQaRequests.php:108` and `:177` read `$res['refusal_code']` **and**
+    `$res['message']` **unguarded** inside a refusal branch while `:134` guards `message` — one file, two
+    idioms — and `X-109/Ui/ManualQueue.php:68` reads `$result['message']` unguarded. ⛔ **Money proposes
+    no edit on any of them** (ruling 5) and asserts no defect: several may be single-return methods, and
+    the point is only that the instrument locates the unguarded read. ⛔ Not to be re-raised.
+    ⚠️ **Two inconsistencies recorded at ruling 76's grade and deliberately NOT briefed**:
+    `Credits.php:52`'s unguarded `$result['status']` against its two siblings' `?? null` — three
+    screens, one module, one engine call, two idioms, **all three correct** — and
+    `ConnectionMappingView:56`'s bare `else` against `ConflictsListView:33`'s `elseif`. **Ruling 228(a)
+    forbids harmonising a pair where both members are honest**, and the edit would be churn a reviewer
+    must re-derive (47's companion).
+    ⚠️ **The zero trap fired and was caught.** `grep -rno "\$res\['[a-z_]*'\]"` returned **ZERO**; the
+    looser `grep -rno "res\['[a-z_]*'\]"` returned one and the key-name form returned forty-plus. ⭐ A
+    zero was re-run with the `$` removed before it was believed — and it had to be, because rulings
+    95/100/111 would otherwise have STRUCK a live nine-member population as measured-clean (207, 294,
+    376).
+
+380. **⭐⭐ Four more censuses STRUCK with fired positive controls, and the lane's ENTIRE cross-module
+    surface is one class — `X121\Models\Person`, 21 readers, SIXTEEN of them invisible to phpstan
+    (measured by the lane supervisor 2026-09-10 15:5x).** Ruling 327's outcome shape an **eighth** time:
+    *a population measured non-empty that yields zero buildable fixes is a legitimate result and is the
+    more useful of the two to write down*, because an empty census tells a later tick *nothing is there*
+    while a classified one tells it *what is there and why each member stays*.
+    **(a) `luhn()` is CORRECT** — reading around ruling 377's own hit (ruling 152, an **eleventh**
+    consecutive tick: *a sweep hit is a coordinate, not a boundary*). `CardPresentAction.php:65-82` walks
+    right-to-left from `strlen-1`, doubles every second digit, subtracts 9 above 9, returns
+    `$sum % 10 === 0`. Textbook, and it guards the one door in this lane that touches a PAN. ⛔ Struck.
+    **(b) DATE-FORMAT strings — nine members, and NOT ONE is `d/m` vs `m/d` ambiguous.** This is 340's
+    negative on ruling 324: 324 asked *is a guard needed on this date*, and nobody had asked *what does
+    the format string SAY*. An `m/d/Y` for a non-American tenant would be ruling 233's currency finding
+    one column over, and ruling 268 already measured the day boundary is **UTC for every tenant** with no
+    timezone column (ACTION 14). Measured: X-117's three `H:i:s` (time-only, 15-minute cart), X-173's
+    `Y-m-d H:i`, X-199's `g:i A` / `M j, Y` / `M j, Y g:i A`, X-201's `j M Y`. ⭐ **Every date in this
+    lane carries a MONTH NAME**, so none can be read in two orders. ⛔ Struck. ⚠️ Recorded at 76's grade:
+    X-199's American `M j, Y` against X-201's British `j M Y`, **both unambiguous** (228(a) again); and
+    `declines.blade.php:42`'s recovery pill `M j, g:i A` with **no year**, four lines below `:38`'s
+    `M j, Y g:i A` **on the same card**, so the anchor year is in front of the reader and a recovery is
+    necessarily after its decline. Terse, not false.
+    **(c) An `@if` chain with no `@else`** — a screen that renders nothing at all. `grep -rn -c "@else"`
+    over the eight `Ui/views` trees returns **all 24 blades with at least one**, which with ruling 199's
+    28-empty-state census and ruling 95's 22-branch sweep closes the arms. ⛔ Struck.
+    **(d) REGEX patterns — the lane has TWO and both are correct.** A wrong character class is silent in
+    both directions. `CardPresentAction.php:24`'s `preg_replace('/\D/', '', $number) ?? ''` (the `??`
+    handling the null-on-error return) and `EvidenceInvoiceCommand.php:79`'s
+    `preg_match('/^INV-[0-9]{6}$/', …)`, anchored at both ends and matching ruling 278's measured
+    six-digit form. ⭐ Positive control fires hard: the same instrument over `app/app` returns 20+ files
+    and 80+ occurrences (`CapabilitiesScaffold` 14, `BoundaryStage` 11, `ContractStage` 10,
+    `CitationStage` 8). ⛔ Struck.
+    **(e) ⭐⭐ CROSS-MODULE imports — FIVE in production and every one is the same class.**
+    `grep -rn "^use App\\Modules\\" app/app/Modules`, filtered to the eight ids and with the lane's own
+    eight namespaces excluded, returns **five lines and one class**: `App\Modules\X121\Models\Person`, at
+    `X-199/Ui/Credits.php:7`, `X-199/Ui/Invoices.php:7`, `X-199/Console/EvidenceInvoiceCommand.php:8`,
+    `X-211/Ui/InvoiceThreadBeside.php:9` and `X-211/Console/EvidenceRecoveryCommand.php:8`. **Money's
+    entire cross-module surface is the customer model**, which is X-121, the spine (owner ruling 8).
+    Measured sound: `app/app/Models/Person.php` **does not exist**, so there is no two-classes-one-name
+    hazard (ruling 90's two ledgers, ruling 309's `AiEngine` false positive) and the import points at the
+    only `Person` in the tree.
+    ⭐⭐ **The exposure is nonetheless recorded, because it is EXACTLY ruling 65's silent shape.** Ruling
+    65: when main deleted `X-121/Models/{Conversation,Message}` and relocated them to `App\Models\`,
+    `X-211/Ui/InvoiceThreadBeside.php` was corrected and
+    `tests/Modules/X-211/InvoiceThreadBesideScreenTest.php:8` was **not**, because `app/phpstan.neon:5-6`
+    is `paths: - app/` = `app/app/` and **`app/tests/` is outside it**. `Person` is the survivor of that
+    same relocation. Measured now, `grep -rn "Modules.X121" app/tests/Modules` filtered to the eight ids
+    returns **SIXTEEN test files**. **So this lane has 21 readers of one foreign class and 16 of them sit
+    outside the only gate that resolves a class across two files.** ⛔ **Not a wave and not a defect** —
+    nothing is broken, the class exists, the suite is green, and a test asserting that a class exists
+    asserts a constant (43's corollary) and is ungated churn. It is a **watch item whose trigger is a
+    `main` merge**, written down for ruling 328's reason — *a prior measurement is invisible to the
+    census that would otherwise find its absence* — so that the next tick does not re-derive it after a
+    merge, in exactly the hour when a misattribution is most expensive (163, 171, 176, 257, 289, 355,
+    374). ⚠️ **The doctor reports "12 cross-module boundary imports" against this lane** (ruling 307) and
+    the `use App\Modules\` measurement is **five**; the two count different things, this seat cannot run
+    `php app/artisan doctor` (296, 300) to reconcile them, and ⭐ **ruling 374 governs the reading — a
+    CHECK's count is a HINT, never a measurement.** Neither number is to be cited as the other.
+    ⚠️ **Measured MOOT in the same pass, so no tick re-opens it:** ruling 290 sequenced
+    `x198:evidence-charge`'s artifact regeneration as its own wave, and **ruling 283's rename has already
+    landed** — `EvidenceChargeCommand.php:61` is `'tenant_payments_total' => Payment::…->count()` and
+    `:17` carries `--business=`. Nothing reads that key from `evidence/j9/charge.json` (281 measured
+    `grep -rn "payments_written" app/tests` is **one** line, X-117's own). ⛔ So regenerating it would be
+    a live Stripe call for a cosmetic key nobody reads, against ruling 282's measured downside: a `200`
+    carrying `status: pending` returns **normally** (235), `File::put` overwrites, and
+    `GatewayEngineTest:15`'s `toBe('captured')` goes permanently red on the lane's **only** genuinely
+    vendor-issued `artifact_id`, with no route back. **Not a wave.**
