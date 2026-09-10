@@ -47,6 +47,7 @@ class Invoices extends Component
 
         $invoices = Invoice::where('business_id', Tenancy::idOrFail())
             ->orderByDesc('created_at')
+            ->orderByDesc('id')
             ->get();
 
         $invoiceIds = $invoices->pluck('id')->toArray();
