@@ -1682,6 +1682,10 @@
   {
    "at": "2026-09-09T18:59:56",
    "note": "MONEY-161b: x199:evidence-invoice and x211:evidence-recovery take --business, else their own artifact's recorded business_id, and provision only when there is neither; both artifacts regenerated through the given-tenant path"
+  },
+  {
+   "at": "2026-09-09T22:11:54",
+   "note": "X-198's two evidence commands take a given tenant; the pay-link artifact is regenerated through it and the charge command's run is deferred"
   }
  ],
  "decisions": [
