@@ -411,4 +411,22 @@ class CardScreenTest extends TestCase
             ->assertSee('The expiry year needs all four digits, not 30')
             ->assertDontSee('That card expired');
     }
+
+    public function test_the_error_heading_names_the_act_that_failed(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        Livewire::actingAs($owner)->test(CardScreen::class)
+            ->call('addCard')
+            ->set('number', '4242424242424241')
+            ->set('expMonth', '12')
+            ->set('expYear', (string) (now()->year + 2))
+            ->set('name', 'A Plumber')
+            ->call('present')
+            ->assertSee('Could not check that card')
+            ->assertDontSee('update your cards');
+    }
 }

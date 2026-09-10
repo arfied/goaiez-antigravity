@@ -3,7 +3,7 @@
     <h1 class="text-xl font-semibold mb-4">Payment Methods</h1>
 
     @if($error)
-        <x-ui.error-panel heading="We couldn't update your cards">
+        <x-ui.error-panel :heading="$errorHeading ?? 'Could not update your cards'">
             {{ $error }}
         </x-ui.error-panel>
     @endif
