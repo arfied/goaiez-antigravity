@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-10T04:43:11",
+ "updated": "2026-09-10T05:32:42",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1710,6 +1710,10 @@
   {
    "at": "2026-09-10T03:19:13",
    "note": "MONEY-172: the dunning board's five next-step strings are unchanged - they are a faithful transcription of the frozen plan's wind-down ladder at GOAIEZ-MASTER-PLAN.md:10386, whose own checkbox is unticked, so the fix is the framing and not the words. X-211's ar_dunning_actions.action maps to owner words in Ui/LabelsDunningAction; there is no pill on that line and no signal map was added."
+  },
+  {
+   "at": "2026-09-10T05:32:42",
+   "note": "MONEY-175: X-199's declines, invoices and paid lists take an orderByDesc('id') tiebreak. Declines.php:81's orderBy('created_at')->first() is left alone because the blade reads only the recovered row's created_at, which is identical across a tie. The wider population - due_date, paid_at, day_in_cycle, name, meter_type - is measured in this run's ORDER CENSUS and fixed by no wave yet."
   }
  ],
  "decisions": [
@@ -2659,6 +2663,12 @@
    "module": "X-211",
    "chose": "An invoice carries one plan and one collections package: the engine refuses a second before its first write, in the module's own exception vocabulary, rather than recording a second agreement. Both screens already excluded a planned or packaged invoice from their candidate lists, so a second call can only be a double press or a stale page. Not firstOrCreate, because a stale page may carry different terms and returning the old plan would report an agreement the owner did not ask for; and no unique index, because a raw 23505 reaches a Throwable tail as an SQLSTATE an owner reads, and a racing row cannot be committed from a second connection in this suite.",
    "at": "2026-09-10T04:43:11",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-199",
+   "chose": "A rendered list orders on a column that cannot tie, or it carries an id tiebreak. Three X-199 lists ordered by created_at alone, and a test that freezes the clock - which ruling 33 requires on the declines screen - gives every row the same timestamp, so the render order was undefined and the paid list's limit decided which row was dropped arbitrarily.",
+   "at": "2026-09-10T05:32:42",
    "ruling": "R245"
   }
  ]
