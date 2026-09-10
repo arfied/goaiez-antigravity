@@ -11,13 +11,13 @@ use App\Modules\X102\Models\ChatSession;
 use App\Modules\X102\Models\ChatTurn;
 use App\Services\Pixel\PixelKeys;
 use App\Support\Tenancy;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
+use Tests\Concerns\RefreshesTenantDatabase;
 use Tests\TestCase;
 
 class ChatDoorTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshesTenantDatabase;
 
     /**
      * BUILD PROPOSAL: X-102's ChatTurnAction calls C-Agent unconditionally; it should only call if the author is 'visitor'. Owner: X-102
