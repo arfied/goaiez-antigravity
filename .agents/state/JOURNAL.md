@@ -812,3 +812,5 @@
 - `2026-09-09T23:10:30` note: REV-133 F2: 22:54:33's `stage boundary = 50` recorded supervise.sh §3's echo of BUILD-STATE.json, not a measurement. The tree fell to 45 when 5f5cdecb removed C-Reviews's five X-181 Models\ imports. Corrected against a live doctor run.
 - `2026-09-09T23:20:11` stage boundary = 42
 - `2026-09-09T23:20:15` note: Boundary fell to 42 when three cross-module X121\Models\Person imports were removed from C-Reviews and replaced with calls to X-121's registered EntityReadAction.
+- `2026-09-10T00:08:21` stage boundary = 41
+- `2026-09-10T00:08:29` note: Boundary fell to 41 when X-181's direct import of C-Reviews\Models\ReviewRequest was replaced with a call to the new ReviewRequestReadAction.

@@ -15,7 +15,7 @@
    "fails": "COMMIT"
   },
   "boundary": {
-   "violations": 42,
+   "violations": 41,
    "fails": "COMMIT"
   },
   "contract": {
@@ -1389,6 +1389,10 @@
   {
    "at": "2026-09-09T23:20:15",
    "note": "Boundary fell to 42 when three cross-module X121\\Models\\Person imports were removed from C-Reviews and replaced with calls to X-121's registered EntityReadAction."
+  },
+  {
+   "at": "2026-09-10T00:08:29",
+   "note": "Boundary fell to 41 when X-181's direct import of C-Reviews\\Models\\ReviewRequest was replaced with a call to the new ReviewRequestReadAction."
   }
  ],
  "resolved": [
