@@ -23,6 +23,7 @@ use App\Modules\X153\Models\Alert;
 use App\Modules\X181\Models\QaTicket;
 use App\Support\Tenancy;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -363,9 +364,13 @@ class CReviewsScreensTest extends TestCase
         $user = User::find($userId);
 
         Livewire::actingAs($user);
-        Livewire::test(LossAlerts::class, ['businessId' => $this->bizId])
-            ->call('confirmRemoval', $removal->id)
-            ->assertSee('No query results for model');
+        try {
+            Livewire::test(LossAlerts::class, ['businessId' => $this->bizId])
+                ->call('confirmRemoval', $removal->id);
+            $this->fail('confirmRemoval accepted another business\'s removal request.');
+        } catch (ModelNotFoundException $e) {
+            // the refusal: the id is not visible to this business, so there is nothing to confirm
+        }
 
         Tenancy::set($otherBiz->id);
         $removal->refresh();
