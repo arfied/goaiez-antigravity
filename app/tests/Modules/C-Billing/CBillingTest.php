@@ -45,7 +45,7 @@ class CBillingTest extends TestCase
     /**
      * TEST ANCHOR
      * credit_ledger_entries has no UPDATE path — asserted by a database trigger test;
-     * two concurrent debits produce two rows and a correct final balance;
+     * two sequential debits produce two rows and a correct final balance;
      * a tenant at day 21 has AI off and the number still answering via voicemail
      */
     public function test_anchor_ledger_no_update_trigger_atomic_debits_and_day_21_dunning(): void
@@ -56,7 +56,7 @@ class CBillingTest extends TestCase
         // Initial balance $100.00 = 1,000,000 hundredths of a cent
         $this->grantAction->handle($biz->id, 1000000, 'setup', 'Setup grant');
 
-        // 1. Two concurrent debits produce two rows and a correct final balance
+        // 1. Two sequential debits produce two rows and a correct final balance
         $entry1 = $this->debitAction->handle($biz->id, 15000, 'ref_1', 'Debit 1 ($1.50)');
         $entry2 = $this->debitAction->handle($biz->id, 25000, 'ref_2', 'Debit 2 ($2.50)');
 
