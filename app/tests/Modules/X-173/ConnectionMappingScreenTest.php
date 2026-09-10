@@ -190,4 +190,16 @@ class ConnectionMappingScreenTest extends TestCase
             ->assertSee('Choose a ledger this app connects to')
             ->assertDontSee('Waiting on');
     }
+
+    public function test_a_refused_connect_names_the_connect_and_not_the_mapping(): void
+    {
+        $biz = self::provisionTenant();
+        Tenancy::set($biz->id);
+
+        Livewire::test(ConnectionMappingView::class)
+            ->set('provider', 'netsuite')
+            ->call('connect')
+            ->assertSee('Could not connect that ledger')
+            ->assertDontSee('save that mapping');
+    }
 }
