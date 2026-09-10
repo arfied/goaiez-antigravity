@@ -105,4 +105,28 @@ class DunningBoardScreenTest extends TestCase
             ->assertDontSee('ai_off_voicemail_only')
             ->assertSeeHtml('bg-alert-bg');
     }
+
+    public function test_the_dunning_board_calls_its_next_step_a_plan_and_says_nothing_performs_it(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        DunningState::create([
+            'business_id' => $biz->id,
+            'day_in_cycle' => 10,
+            'status' => 'banner',
+            'ai_enabled' => false,
+            'phone_answering' => true,
+            'voicemail_only' => false,
+        ]);
+
+        Livewire::actingAs($owner)->test(DunningBoard::class)
+            ->assertOk()
+            ->assertSee('Next step (planned)')
+            ->assertSee('day 21 pause with the phone answering')
+            ->assertSee('nothing in this checkout switches a phone, an agent or a number when a day is reached');
+    }
 }

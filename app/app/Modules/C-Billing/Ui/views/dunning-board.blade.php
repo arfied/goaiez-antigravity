@@ -23,7 +23,7 @@
                         <thead class="bg-gray-50">
                             <tr>
                                 <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Day in Cycle</th>
-                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Next Step</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Next step (planned)</th>
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Status</th>
                                 <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
                                     <span class="sr-only">Actions</span>
@@ -50,6 +50,7 @@
                         </tbody>
                     </table>
                 </div>
+                <p class="mt-3 text-sm text-ink-2">No step on this ladder runs by itself: Advance is a button, and nothing in this checkout switches a phone, an agent or a number when a day is reached.</p>
             @endif
         </div>
     </div>
