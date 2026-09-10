@@ -789,3 +789,4 @@
 - `2026-09-10T13:54:09` note: MONEY-188: the select-whitelist census returns five members in the lane and four were already guarded; the connect door was the one without, and its realm id input had exactly one occurrence in the component - its own declaration
 - `2026-09-10T16:24:26` (R245) X-120 — the expiry refusal names the four-digit requirement instead of echoing a two-digit year back as expired, because a message that echoes an owner's value is read in the owner's notation and not the app's
 - `2026-09-10T17:03:45` (R245) X-199 — a payment is only recorded against an open invoice; paid and draft are refused before the first write, using InvoiceReader's own definition of open rather than a second literal list
+- `2026-09-10T17:24:18` (R245) X-201 — A dispute is outcomed once: won and lost are refused before the first write, using DisputeQueue's own definition of not-yet-outcomed rather than a second literal list

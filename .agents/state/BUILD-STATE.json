@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-10T17:03:45",
+ "updated": "2026-09-10T17:24:18",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2767,6 +2767,12 @@
    "module": "X-199",
    "chose": "a payment is only recorded against an open invoice; paid and draft are refused before the first write, using InvoiceReader's own definition of open rather than a second literal list",
    "at": "2026-09-10T17:03:45",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-201",
+   "chose": "A dispute is outcomed once: won and lost are refused before the first write, using DisputeQueue's own definition of not-yet-outcomed rather than a second literal list",
+   "at": "2026-09-10T17:24:18",
    "ruling": "R245"
   }
  ]
