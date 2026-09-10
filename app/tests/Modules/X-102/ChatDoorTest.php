@@ -20,7 +20,7 @@ class ChatDoorTest extends TestCase
     use RefreshDatabase;
 
     /**
-     * BUILD PROPOSAL: X-102 chat capture throws a DomainException for an empty phone internally, but the HTTP middleware's ConvertEmptyStringsToNull coupled with the controller's is_string check yields a 400 Bad Request before the action is reached, making the 500 unreachable over HTTP. Owner: X-102
+     * CLOSED: X-102 chat capture — the 400 Bad Request returned by the middleware is correct behavior, making the internal 500 safely unreachable.
      * BUILD PROPOSAL: X-102's ChatTurnAction calls C-Agent unconditionally; it should only call if the author is 'visitor'. Owner: X-102
      * BUILD PROPOSAL: mapping chat_session_id to C-Agent's conversation_id so HUMAN_TAKEOVER_LATCH works is required, but it has not been asked for yet. Owner: Track 1
      * BUILD PROPOSAL: X-102's ChatTurnAction defaults the turn number to 1; it should compute and pass the real turn number. Owner: X-102
