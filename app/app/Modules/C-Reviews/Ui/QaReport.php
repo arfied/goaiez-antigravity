@@ -8,8 +8,8 @@ use App\Modules\CReviews\Actions\QaTicketAction;
 use App\Modules\CReviews\Models\QaSetting;
 use App\Modules\CReviews\Models\ReviewReply;
 use App\Modules\CReviews\Models\ReviewRequest;
+use App\Modules\X181\Actions\QaTicketReadAction;
 use App\Modules\X181\Actions\QaTicketResolveAction;
-use App\Modules\X181\Models\QaTicket;
 use App\Support\Tenancy;
 use Carbon\Carbon;
 use Livewire\Attributes\Locked;
@@ -130,9 +130,9 @@ class QaReport extends Component
             $repliesPublished = (clone $repliesQuery)->where('status', 'published')->count();
             $repliesDrafted = (clone $repliesQuery)->where('status', 'draft')->count();
 
-            $ticketsQuery = QaTicket::where('business_id', $this->businessId)->where('created_at', '>=', $since)->where('status', 'open');
-            $openTicketsSla = (clone $ticketsQuery)->where('sla_due_at', '>', Carbon::now())->count();
-            $breachedTickets = (clone $ticketsQuery)->where('sla_due_at', '<=', Carbon::now())->count();
+            $action = app(QaTicketReadAction::class);
+            $openTicketsSla = $action->countOpenTicketsSince($this->businessId, $since, false);
+            $breachedTickets = $action->countOpenTicketsSince($this->businessId, $since, true);
 
             if ($this->drilldown === 'requests_sent') {
                 $drilldownRows = (clone $reqsQuery)->get();
@@ -153,15 +153,15 @@ class QaReport extends Component
                 $drilldownRows = (clone $repliesQuery)->where('status', 'draft')->get();
             }
             if ($this->drilldown === 'open_tickets_sla') {
-                $drilldownRows = (clone $ticketsQuery)->where('sla_due_at', '>', Carbon::now())->get();
+                $drilldownRows = $action->getOpenTicketsSince($this->businessId, $since, false);
             }
             if ($this->drilldown === 'breached_tickets') {
-                $drilldownRows = (clone $ticketsQuery)->where('sla_due_at', '<=', Carbon::now())->get();
+                $drilldownRows = $action->getOpenTicketsSince($this->businessId, $since, true);
             }
 
             if (in_array($this->drilldown, ['requests_sent', 'reviews_received', 'public_path', 'internal_qa'])) {
                 foreach ($drilldownRows as $row) {
-                    $row->ticket = QaTicket::where('review_request_id', $row->id)->first();
+                    $row->ticket = $action->findByReviewRequestId($this->businessId, $row->id);
                     $row->is_request = true;
                 }
             }
