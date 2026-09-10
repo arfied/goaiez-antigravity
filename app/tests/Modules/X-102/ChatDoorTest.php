@@ -21,6 +21,7 @@ class ChatDoorTest extends TestCase
 
     /**
      * CLOSED: X-102 chat capture — the 400 Bad Request returned by the middleware is correct behavior, making the internal 500 safely unreachable.
+     * BUILD PROPOSAL: pre-chat notice, logged consent, and first-party transcripts only for the chat widget Owner: X-102
      * BUILD PROPOSAL: X-102's ChatTurnAction calls C-Agent unconditionally; it should only call if the author is 'visitor'. Owner: X-102
      * BUILD PROPOSAL: mapping chat_session_id to C-Agent's conversation_id so HUMAN_TAKEOVER_LATCH works is required, but it has not been asked for yet. Owner: Track 1
      * BUILD PROPOSAL: X-102's ChatTurnAction defaults the turn number to 1; it should compute and pass the real turn number. Owner: X-102
