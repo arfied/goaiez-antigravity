@@ -3,7 +3,7 @@
     <p>The card itself is tokenised by Stripe on the card screen and the money is captured by the gateway; until those contracts land, this block records the authorisation and the order, and stock comes off the moment the order is placed, not when it is paid.</p>
 
     @if($error)
-        <x-ui.error-panel heading="We couldn't take that payment">{{ $error }}</x-ui.error-panel>
+        <x-ui.error-panel :heading="$errorHeading ?? 'Could not take that payment'">{{ $error }}</x-ui.error-panel>
     @endif
     
     @if($authorised)

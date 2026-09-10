@@ -28,6 +28,8 @@ class CheckoutBlock extends Component
 
     public ?string $error = null;
 
+    public ?string $errorHeading = null;
+
     public ?string $success = null;
 
     public ?string $authorised = null;
@@ -42,6 +44,7 @@ class CheckoutBlock extends Component
     public function authorise(): void
     {
         $this->error = null;
+        $this->errorHeading = null;
         $this->success = null;
         $this->authorised = null;
         $this->waiting = null;
@@ -53,6 +56,7 @@ class CheckoutBlock extends Component
     public function pay(CartPayAction $action): void
     {
         $this->error = null;
+        $this->errorHeading = 'Could not take that payment';
         $this->success = null;
         $this->authorised = null;
         $this->waiting = null;
@@ -82,6 +86,7 @@ class CheckoutBlock extends Component
     public function cancel(int $orderId, OrderCancelAction $action): void
     {
         $this->error = null;
+        $this->errorHeading = 'Could not cancel that order';
         $this->success = null;
         $this->authorised = null;
         $this->waiting = null;
