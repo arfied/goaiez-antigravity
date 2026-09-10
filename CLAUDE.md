@@ -1356,3 +1356,163 @@ a second definition of the same rule.
 written nowhere** — the identifier occurs once in the file, `$data` has no `location_id` key, and
 `work_orders` has no such column. A dead parameter a future lane will read as a working seam. X-121 is not
 this lane's module: **TRACK 1 ACTION**, filed, not briefed.
+
+## REV-140 — the failing set has three classes, not two, and G1-68 is the lane's last in-lane law
+
+⭐ **Run 135 is a `PASS-WITH-NOTES` and the cleanest wave this lane has produced.** The `<=` → `<` comparator,
+its rendered `alert_reason` string and `loss-alerts.blade.php:26`'s prose all moved together, so REV-139's
+*second definition of one rule* is closed. `grep -c "'<='"` reads **0** across the three screens; all four
+DECIDED-line citations land at `HEAD`, re-derived by this seat. `R245` went `19 → 20`, so REV-139 N2's
+literal-command remedy worked first try. Ordering held end to end for the seventh run running: red `03:22:34`
+→ fix `03:23:05` → gate `03:32:19` → doctor `03:32:43` → state `03:33:14` → report `03:34:01`. `d60a5b4a` is
+pushed.
+
+⭐ **The red artefact is the best instrument this lane has built, and it cost nothing.** `r135-red.txt`
+renders the defect as the tenant would have seen it — `Rating 4 &lt;= 4 and no resolved ticket` on a 4★
+review at threshold 4 — so the test was its own mutation and no patch was needed. **A test whose red output
+shows the bug to a human beats a test that merely goes red.**
+
+### ⛔ §1. THE PUSH FLOOR HAS THREE CLASSES, AND THE `FAILED`/`errors` SPLIT IS ALREADY THE SEPARATOR
+
+Run 135's gate read `tests 2453 · passed 2442 · FAILED 8 · errors 3` — an **eleventh** `✗`:
+
+```
+ ✗ cancel_is_one_tap_with_nothing_in_between
+   UNRESOLVED — Sandbox refused subscription: Authorize.Net request failed: E00040
+```
+
+Traced, not assumed: `TwelveJourneysTest.php:385` → `walkCancelFlow()` → `JourneyHarness.php:757` posts to
+**`https://apitest.authorize.net/xml/v1/request.api`**, and the message is that call's `catch`. `E00040` is
+Authorize.Net's *record not found*, and the gate's own §7 shows five other lanes' suites holding `pest.lock`
+concurrently, two of them money's — several lanes against one shared vendor account. This lane's diff was a
+comparator, a blade string and one screens test.
+
+**RULED: the criterion is the eight baseline names, PLUS any test whose failure message begins `NOT BUILT:`,
+PLUS any `errors` entry whose message begins `UNRESOLVED — ` thrown from `tests/Journeys/**` against a real
+transport or vendor sandbox.** ⛔ **A `FAILED` name that is neither in the eight nor prefixed `NOT BUILT:`
+still revokes the sha outright** — the amendment touches only `errors`. The separator needs no new
+instrument because the gate already prints it: **an assertion failure is a statement about this tree; a
+harness `RuntimeException` carrying a vendor's own error code is a statement about the vendor.** The admitted
+set is quoted in full by any report leaning on it, and vendor errors are named, never summarised.
+
+⭐ Cross-checked before ruling: Track 1's live wave-257 kickoff names this same test and code as *"the shared
+Authorize.Net sandbox flapping … neither is yours to fix; report them."* Two seats, opposite ends of the
+tree, same reading.
+
+### ⚠️ §2. A REPORT SECTION THAT IS ABSENT AND AN ITEM THAT WAS SKIPPED RENDER IDENTICALLY
+
+Run 135's report carried sections 1, 4, 6, 7, 8 of nine items. Items 2, 3 and 5 had none — and **all three
+had landed perfectly**, verified here from `git show 4256a492` and from `git status --untracked-files=all`.
+**RULED: `REPORT.md` carries one line per brief item, in order; an item with nothing to add says
+`item N — done, nothing to add` rather than being dropped.** ⭐ The 150-line ceiling from REV-139 N4 is what
+compressed the report and it **stands** — a 53-line report with three gaps beats a 970-line one that inlines
+another lane's capability dump. The per-item line is what makes the ceiling safe.
+
+### ⚠️ §3. NEVER PREDICT A BARE `passed` ABSOLUTE
+
+The brief predicted `passed 2442 → 2443`. `tests +1` was right; `passed` stood still because an unrelated
+vendor flap moved a passing test into `errors`. **RULED: a brief predicts the identity and the deltas —
+`tests +1`, `FAILED` unchanged, `errors` unchanged or named as vendor-flapped — never a bare `passed`
+absolute.** REV-119 §B's family: a number whose input is not the tree cannot be predicted from the tree.
+
+### ⚠️ §4. THE RE-DERIVATION RUNS AFTER `git commit` RETURNS
+
+`r135-comparators-after.txt` is `03:22:59`; the commit it was meant to follow is `03:23:05`. Harmless —
+verified, the commit moved no line — but REV-139 N1 exists so it *cannot* matter. **A grep of the working
+tree is not a grep of a commit.** The brief numbers it as an item after the commit, not beside it.
+
+### ⭐ §5. G1-68 IS BUILDABLE NOW, AND THE PLAN SPLITS IT EXACTLY ALONG THE RESERVED BOUNDARY
+
+`test_g1_68_assertion` has been an honest `NOT BUILT:` since REV-135 §6. Measured this tick with the command
+beside each result (REV-132's erratum standard):
+
+```
+$ grep -n 'G1-68' app/GOAIEZ-MASTER-PLAN.md                    → 0 hits  (the ID is not in the plan)
+$ (cd app && php artisan why G1-68)                            → "No module with the exact id 'G1-68'"
+$ grep -rln 'G1-68' app/ --include=*.php --include=*.md        → C-Reviews/capabilities.php · GOAIEZ-TRACKER-CAPABILITIES.md
+```
+
+⛔ **So `why` is the WRONG instrument for a `G###-##`** — it resolves modules. A G-id lives in
+`capabilities.php` and `GOAIEZ-TRACKER-CAPABILITIES.md`, and the plan carries its *prose* without its id.
+Three separate places, and only the tracker row names the owner.
+
+**The law, from `GOAIEZ-TRACKER-CAPABILITIES.md:1102` and plan `:33684` / `:33731` / `:34471`:**
+
+| | |
+| :--- | :--- |
+| owner | **`C-Reviews` + `X-177`** |
+| what | *a GOOGLE REVIEW REMOVAL request — for a review that violates platform ToS by naming an employee maliciously* |
+| posture | ⛔ ~~L1 FOREVER~~ **STRUCK by `R235`** — **the automation RUNS and prepares the request**; a human confirms the ToS violation, which is a JUDGEMENT the AI cannot make (`R236`: not a permission gate) |
+| failure mode | ⛔⛔ **the AI files an accusation** |
+| test anchor | ⛔ *`doctor` asserts no autonomous path to a removal filing* (plan `:34471`) |
+
+⛔ **The boundary is X-177, and X-177 is pure GBP.** Its manifest declares `provides gbp.post · gbp.answer ·
+gbp.sync_hours · gbp.state`, `emits gbp.suspended · gbp.reinstated · zernio.webhook`, `owns_table
+gbp_connections · gbp_posts · gbp_state_log`. **So transmission to Google is X-177's half and needs the
+un-granted GBP API — reserved. Preparation and the human confirmation are C-Reviews' half and need nothing.**
+Plan `:33676` names the original wording, *"the system automatically files a removal dispute via the GBP
+API"*, which is exactly the half that is fenced.
+
+⭐ **The near-miss, measured and excluded by the law's own words.** A concept search finds a complete dispute
+module — **X-201**, with `DisputeCompileAction`, `DisputeSubmitAction`, `DisputeDefenseEngine`, a `disputes`
+table and `dispute_audits`. G1-68's first sentence is *"a GOOGLE REVIEW REMOVAL, **not a chargeback**"* and
+§216.1's table is titled **THE FIVE THAT WERE MIS-GROUPED** — the plan is explicitly warning against wiring
+C-Reviews into X-201. **Do not reuse it.** This is REV-138 §4's rule paying off in the useful direction:
+searching the concept found the adjacent implementation, and the law distinguished them.
+
+⭐⭐ **And the trigger is the comparator run 135 just fixed.** Plan `:32299` is the owner's own
+least-confident note, and it resolves the question in advance:
+
+> *"**Naming an employee is the one I am unsure about** — it is the right trigger when the review is an
+> accusation and the wrong one when it is praise ("Dave was fantastic"), and distinguishing those two
+> requires reading sentiment, which is exactly the thing I have been refusing to let decide anything.*
+> ⭐⭐ *So: named-employee alerts fire only **BELOW the threshold**, where the rating already carries the
+> signal and no sentiment call is needed."*
+
+**Below the threshold is `rating < public_threshold`.** Run 135's `<=` defect sat directly upstream of this:
+at the default of 4, every 4★ review would have been eligible for a removal accusation. **The comparator wave
+and the G1-68 wave are one thread**, which is why 136 follows 135 rather than something else.
+
+⚠️ **What is NOT groundable, measured before briefing:** there is **no staff roster** to match a name against
+— `grep` over `app/database/migrations/` and `app/app/Models/` finds only `staff_events` /
+`StaffEventRecord`, an events table, not a roster of employee names. And no employee-name detection exists
+anywhere (`names_employee|employee_named|mentions_employee` → 0 files). Plan `:33731` asserts §199's alert
+*"already fires a push in minutes"*; that claim is **not** verified in this tree. **So the automatic trigger
+is a measured fork in run 136's item 1, not an assumption** — the run-133 pattern, which is the only thing
+that has reliably caught this seat's wrong hypotheses.
+
+⭐ **The data facts that decide the migration, all measured:**
+
+- `review_requests` (C-Reviews-owned) carries `rating` · `review_text` · `platform` · `status` ·
+  **`gbp_suspended`** — no removal fields. `create_c_reviews_tables.php:15-24`.
+- the legacy `reviews` table carries **`google_review_id`** and `moderation_flags` —
+  `create_reviews_table.php:35`/`:60` — and C-Reviews only **reads** it (`reads_table: reviews · people ·
+  qa_tickets`). A removal targets a Google review, so the id is a **string carried across the seam**, never
+  an FK.
+- ⛔ **A new `business_id` table with no RLS RAISES `schema` 14 → 15.** `SchemaStage::isTenantOwned()`
+  selects on `business_id` and `db:bootstrap` only covers `tenant_id` (REV-119 §C), so the migration must
+  enable RLS itself. The house pattern is
+  `X-201/Database/migrations/2026_09_04_072930_add_rls_to_dispute_audits_table.php` — `FORCE ROW LEVEL
+  SECURITY` + `DROP POLICY IF EXISTS tenant_isolation` + `CREATE POLICY tenant_isolation`. C-Reviews' three
+  existing tables are **absent** from the 14, so they already have it.
+- ⭐ **No checker requires a new table to appear in `@owns_table`.** `ContractStage.php:150-172` checks only
+  P-163 — that `owns_table` does not claim one of X-121's canonical nouns. So the table needs **no
+  `manifest.php` edit**, which matters because `manifest.php` and `capabilities.php` are GENERATED from the
+  frozen plan (REV-131 §2) and a new capability id would be a plan edit. **G1-68 already exists in
+  `capabilities.php:67`, so implementing it mints no new id and `capability` must stay 0 for C-Reviews.**
+- ⭐ `Domain/` is the right home for the refusal: `state.py next` says add one only for *"a state machine
+  with legal transitions"*, and prepared → human-confirmed → filable is exactly that. `Domain\` is also a
+  permitted boundary seam by `BoundaryStage.php:83-90`, and the module already has `Domain/PublicThreshold`.
+
+⛔ **RULED by the lane supervisor: run 136 builds C-Reviews' half of G1-68 — the prepared removal request and
+the human-confirmation gate — because the plan states its test anchor as "no autonomous path to a removal
+filing", which is assertable entirely inside this lane, while transmission is X-177's GBP half and is not
+granted.** The vertical slice is table + writer + the refusal + tests, deliberately complete: a table with no
+reader is decision 272's write-only shape, which this lane's own CLAUDE.md warns about.
+
+⛔ **Scoped OUT of run 136, on purpose:** no UI screen (a screen needs its own routed `GET`, REV-134 §3), no
+Google transmission (reserved), no new capability id, no `manifest.php` / `capabilities.php` edit, no X-201.
+⛔ **And the third option stays refused in its newest clothes:** do not let the AI decide maliciousness, and
+do not model the human confirmation as a `can:`/policy gate — `R236` says in terms that it is *not a
+permission gate*, because the AI genuinely cannot make the judgement. A policy check would also be refused
+during route matching and leave the component untested (CLAUDE.md's standing field note).

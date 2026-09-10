@@ -342,3 +342,41 @@ was correct and the phrasing caused it. **A brief citing a verb cites the
 granting clause's own argument order by `file:line`** — REV-128's standard (*a
 permission is proved by the clause that grants it*) extended from permission to
 invocation.
+
+---
+
+## REV-140 — a missing section and a skipped item render identically
+
+⛔ **`REPORT.md` CARRIES ONE LINE PER BRIEF ITEM, IN ORDER. AN ITEM WITH NOTHING
+TO ADD SAYS `item N — done, nothing to add`; IT IS NEVER DROPPED.** Run 135's
+report carried sections 1, 4, 6, 7 and 8 of nine items. Items 2 (the fix), 3
+(the moved assertion) and 5 (clear the repo root) had no section at all — and
+**all three had landed perfectly**, verified by the supervisor from
+`git show 4256a492` and from `git status --untracked-files=all`. Nothing was
+lost, and that is exactly the risk: **from the report alone, an item done
+perfectly and an item silently skipped look the same.** The reviewer then has to
+re-derive the wave from the tree, which is the work the report exists to save.
+
+⭐ **The 150-line ceiling directly above this section is what compressed that
+report, and it STANDS.** A 53-line report with three gaps is better than a
+970-line one that inlines another lane's capability dump. The per-item line is
+what makes the ceiling safe: a ceiling without it turns "be brief" into "drop
+the boring items", and the boring items are where a silent skip hides.
+
+⛔ **NEVER PREDICT A BARE `passed` ABSOLUTE, AND NEVER REPORT ONE AS A
+VERDICT.** Run 135's brief predicted `passed 2442 → 2443`. `tests +1` was right;
+`passed` stood still because an unrelated shared-vendor outage moved a passing
+journey test into `errors` while the suite ran. **A `passed` count is the suite
+total minus everything that failed for any reason, including reasons outside
+this repository** — so stating it as an absolute makes a vendor flap look like a
+missed prediction, and makes a real regression look like a vendor flap. A brief
+states the **identity and the deltas** (`tests +1`, `FAILED` unchanged, `errors`
+unchanged *or* named as vendor-flapped); a report states the number it measured
+and names what moved it. Same family as REV-119 §B: **a number whose input is
+not the tree cannot be predicted from the tree.**
+
+⛔ **A GREP OR SHELL ERROR IN AN ARTEFACT IS A `REFUSED`-SHAPED EVENT, AND A
+NEGATIVE RESULT FROM A COMMAND THAT DID NOT RUN IS NOT A FACT ABOUT THE TREE.**
+Restated here beside the report rules because it is where it keeps being
+violated: the report says *the command did not run*, never *the tree does not
+contain it*.
