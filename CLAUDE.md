@@ -1840,3 +1840,72 @@ the other two required assertions into the existing tests that already establish
 both are load-bearing. **RULED: an assertion added to an existing method is predicted as an assertion, by
 name, and not counted.** REV-135 §2 fixed this instrument's double-counting and left this half — the
 prediction was made against a requirement that never said which of the three needed its own method.
+
+## REV-144 — the lock and the clash guard are two mechanisms, and I briefed one as the other
+
+⭐ **Run 139 is a `PASS-WITH-NOTES`.** Both of REV-143's blocks are repaired, and each was verified against
+`HEAD` rather than the working tree — the entire finding. `pint` went `fixed` → `passed` **before** the
+commit, the first wave in three not to leave it for its successor. ⭐ **All three arms of §2g fired live in
+one artefact** (`r139-untracked-probe.txt`): ⛔ untracked-and-referenced `fail=1`, ⚠ untracked-and-unreferenced
+`fail=0`, ✓ none-at-all `fail=0`. And **REV-142 §2's ✓ arm fired on its own**, against a real correctly-ordered
+wave rather than a probe — `✓ REPORT.md 08:30:59 is newer than r139-gate.log 08:30:08` — so
+`t138-reportorder-probe.sh` is **retired unrun**: a positive control exists to answer a question, and a live
+run answered it better.
+
+⛔ **§1. `/home/goaiez/tmp/pest.lock` AND §7's CLASH GUARD ARE DIFFERENT MECHANISMS WITH DIFFERENT BLAME, AND
+MY BRIEF TOLD THE CODER TO TREAT BOTH AS SOMEBODY ELSE'S FAULT (2026-09-10, my defect).** Run 139's item 6
+read *"If §7 comes back `result timeout` **or** `REFUSED: N other pest process(es)` … several lanes hold
+`/home/goaiez/tmp/pest.lock` at once. It is not your fault."* One sentence, two conditions, one explanation —
+true of only the first. Read from the script (`bin/supervise.sh:683-701` vs `:717-760`): the **lock** is one
+file for the whole box and ends in `{"result":"lock-timeout"}` after 40 minutes; the **clash guard** scans
+only checkouts whose `app/phpunit.xml` *pins* the effective database and ends immediately in
+`{"result":"refused-shared-db"}`. ⛔ **And after REV-119 §E that list is this checkout alone** — the gate log
+says so:
+
+```
+✗ pest pid 2143559 running on goaiez_antig_reviews_test from /home/goaiez/agents/grs-antig-reviews/app
+✗ REFUSED: 1 other pest process(es) … (checkouts pinning it: /home/goaiez/agents/grs-antig-reviews)
+```
+
+The clashing checkout **is this checkout**. A `refused-shared-db` here always names our own stray pest, is
+diagnosable here and is fixable here; the brief told the coder the opposite and a wave that could have waited
+ten minutes reported an external blocker that did not exist. ⭐ **The word that carried it is `other`** —
+accurate about processes, misleading about lanes. **RULED: `bin/supervise.sh` §7 now prints which case it is
+and the pid.** ⚠️ Neither new arm has fired live; the positive control is run 140's item 1. ⭐ **The ladder, a
+seventh time: a paste-ready string beats a citation, a redirect beats a paste-ready string, and a CHECK beats
+a redirect** — a brief sentence about how to *read* a refusal is one rung below the refusal printing its own
+answer.
+
+⛔ **§2. A RUN-137 ORPHAN WHOSE WAIT CONDITION MATCHES ITSELF, ALIVE TWO AND A HALF HOURS, WAITING TO RUN A
+GATE IT CAN NEVER REACH.** `pgrep -a -f pest` returns
+`1171019 bash -c while pgrep -f "pest" > /dev/null; do sleep 10; done; bash bin/supervise.sh --tests > …/r137-gate.log`.
+Its own `bash -c` argument contains `pest`; `pgrep` excludes itself and **not its parent**; the condition is
+permanently true. ⭐ **The idiom that avoids it is in the file the waiter was about to call** —
+`bin/supervise.sh:692` splits its needle across two string literals (`"bin/pes""t"`) precisely so the check
+cannot match its own script, which is REV-138 §1's rule already applied. **Eleventh instance of this lane's
+standing shape — a correct statement present in the tree and not read back** — and the first where the
+statement is a *shell idiom* rather than prose, which is why re-reading the rules would not have surfaced it.
+**RULED: no hand-rolled wait loop for the gate, ever**; §7 already waits 40 minutes on the lock by itself, and
+an outer waiter outlives its wave and writes into a previous run's artefact. ⛔ Ending a stray suite is done
+**by pid** — never `pkill -f pest`, which matches the same string that trapped the waiter.
+
+⛔ **§3. ELEVEN COMMITS AND THREE CONSECUTIVE WAVES WITH NO MEASURED SUITE.**
+`git log --oneline --no-merges origin/track/reviews..HEAD | wc -l` → **11**. Runs 137 (`TIMEOUT`), 138
+(`REFUSED`) and 139 (`REFUSED`) all closed without a `tests` number; the last green §7 was run 136's at
+`04:21` on `7bcd9348`. The citation fixes, the test rename, the `google_review_id` gate, the whole
+prepare/confirm screen wiring, the identity repair and the exception class **have never been executed**.
+⚠️ And `test_loss_alerts_confirm_removal_refuses_unauthenticated` has by construction never run against a
+`HEAD` containing the class it needs; it asserts the *rendered notice*, and `UnauthenticatedConfirmationException
+extends \DomainException … extends \Exception`, so `confirmRemoval`'s blanket catch is what renders it — the
+test is coherent, but it would pass identically against a bare `\RuntimeException` with that message. **The
+dedicated class is load-bearing for no assertion in the tree.** A note; the fix is an assertion, not a
+redesign. **RULED: run 140 builds nothing** — no test, no column, no refactor, no seam. A lane that cannot
+gate cannot push, and every added item is another way to fail before reaching §7.
+
+⚠️ **§4. §2f READS 2 OF 8 IN THE BYPASS ARM AND THE WORSE ONE IS 324 DELETIONS OF THIS LANE'S CONTRACT.**
+`.agents/rules/10-supervisor.md` (**8 +/324 −**) and `.agents/supervisor/launch-coder.sh` (**4 +/2 −**) read
+`OURS UNCHANGED, THEIRS MOVED`. Main still carries the pre-REV-121 text whose anti-push bullet is replaced by
+the superseded step reading *"run `git push origin main`"* (REV-121 §1). §1's and §2's rulings were written
+into `10-supervisor.md` this tick, which moves our side with content that stands on its own — protection and
+record in one commit (REV-135 §9). `launch-coder.sh` stays in the bypass arm: **a touch is not a move**, and
+its verdict is re-derived at merge time.

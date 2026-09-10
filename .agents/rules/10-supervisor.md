@@ -409,3 +409,44 @@ discharge it. The instrument is
 run from the outermost production entry point inward; a slice is complete when a
 route, a console command, a listener or a job reaches it, and a report that
 claims a slice is complete says which one.
+
+## REV-144 — a refusal names whose fault it is, and no wave rolls its own wait
+
+⛔ **THE SHARED LOCK AND §7's CLASH GUARD ARE DIFFERENT MECHANISMS WITH
+DIFFERENT BLAME, AND A REPORT SAYS WHICH ONE REFUSED IT** (2026-09-10).
+`/home/goaiez/tmp/pest.lock` is one file for the whole box; a wait on it covers
+every checkout plus a sibling project, runs 40 minutes and ends in
+`{"tool":"pest","result":"lock-timeout"}`. **That one is genuinely external.**
+§7's clash guard (`bin/supervise.sh:683-701`) is a different thing: it scans
+only checkouts whose `app/phpunit.xml` *pins* the effective database, and after
+REV-119 §E gave this lane `goaiez_antig_reviews_test` that list is **this
+checkout alone**. So a `{"result":"refused-shared-db"}` here names **our own
+stray pest**, is diagnosable here and is fixable here. Runs 137, 138 and 139 all
+closed with no `tests` number and all three reported it as another lane's doing,
+because the brief said so and the message says *"N other pest process(es)"* —
+accurate about processes, misleading about lanes. §7 now prints which case it is
+and the pid. **A report quotes the `result` string, never a paraphrase of it.**
+
+⛔ **NO HAND-ROLLED WAIT LOOP FOR THE GATE, EVER.** `bin/supervise.sh` §7
+already waits up to 40 minutes on the lock by itself (`:717-760`). A wave that
+wraps the gate in its own `while pgrep …; do sleep; done` duplicates a mechanism
+that exists, outlives the wave that made it, and writes into a previous run's
+artefact. Run 137 left one alive for two and a half hours; its own `bash -c`
+argument contained the string `pest`, `pgrep` excludes only itself and not its
+parent, so the condition was permanently true and the gate it existed to run
+could never start. ⭐ **The idiom that avoids exactly this is in the file that
+waiter was about to call** — `:692` splits its needle across two string literals
+(`"bin/pes""t"`) so the check cannot match its own script, which is REV-138 §1's
+rule already applied. **If §7 refuses, the wave reports the refusal and the next
+wave re-runs the gate.** Ending a stray suite is done **by pid**, never
+`pkill -f pest` — that pattern matches the same string that trapped the waiter
+and would take a live suite in another lane with it.
+
+⛔ **A WAVE THAT CANNOT REACH ITS GATE IS THE NEXT WAVE'S ONLY JOB.** Three
+consecutive unmeasured waves left eleven commits between `origin/track/reviews`
+and `HEAD`, none of them ever executed, including two repairs that only a suite
+can confirm. **Unmeasured work compounds silently**: every gate-less wave adds
+both the risk of a regression and the difficulty of attributing one. When a lane
+has an unmeasured range, the next brief builds **nothing** — no test, no column,
+no refactor, no seam — because every added item is another way to fail before
+reaching §7, and the wave's entire value is the number.

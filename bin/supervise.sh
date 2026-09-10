@@ -687,15 +687,31 @@ if [ $want_tests -eq 1 ]; then
   for co in /home/goaiez/agents/grs-antig*; do
     grep -q "DB_DATABASE\" value=\"$xml_db\"" "$co/app/phpunit.xml" 2>/dev/null && shared="$shared $co"
   done
-  clash=0
+  clash=0; mine=0; minepids=""
   for p in $(pgrep -x php); do
     if tr '\0' ' ' < /proc/$p/cmdline 2>/dev/null | grep -q "bin/pes""t"; then
       c=$(readlink /proc/$p/cwd 2>/dev/null)
-      for co in $shared; do case "$c" in "$co"/*) clash=$((clash+1)); echo "  ✗ pest pid $p running on $xml_db from $c";; esac; done
+      for co in $shared; do case "$c" in "$co"/*) clash=$((clash+1)); echo "  ✗ pest pid $p running on $xml_db from $c";
+        case "$c" in "$PWD"/*|"$PWD") mine=$((mine+1)); minepids="$minepids $p";; esac;;
+      esac; done
     fi
   done
   if [ $clash -gt 0 ]; then
     echo "  ✗ REFUSED: $clash other pest process(es) on $xml_db (checkouts pinning it:$shared) — a gate now would be false"
+    # REV-144 §1. The word "other" reads as ANOTHER LANE, and after REV-119 §E it usually
+    # cannot be: $shared is every checkout whose phpunit.xml PINS $xml_db, and this lane's
+    # database is pinned by this checkout alone. So the refusal names our own stray pest
+    # and is fixable HERE — a distinct condition from the shared /home/goaiez/tmp/pest.lock
+    # wait below, which really is every lane and ends in {"result":"lock-timeout"}.
+    # Runs 137-139 read one as the other and lost three gates to it.
+    if [ $mine -gt 0 ]; then
+      echo "  ⛔ $mine of those is THIS checkout's own stray pest (pid$minepids) — not another lane."
+      echo "     This is diagnosable and fixable here: it is a leftover from an earlier wave in"
+      echo "     this same checkout. Wait for it, or have the coder end it BY PID (never pkill -f pest)."
+    else
+      echo "  ⚠ none of those is this checkout — another checkout pins $xml_db, which REV-119 §E says"
+      echo "     should not happen. Report the checkout name; do not work around it."
+    fi
     echo '{"tool":"pest","result":"refused-shared-db"}' > /home/goaiez/tmp/last-pest.json
     fail=1; want_tests=0
   fi
