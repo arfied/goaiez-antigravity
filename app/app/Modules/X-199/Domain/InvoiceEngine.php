@@ -161,7 +161,7 @@ final class InvoiceEngine
     {
         return DB::transaction(function () use ($businessId, $invoiceId, $amountCents) {
             $invoice = Invoice::where('business_id', $businessId)->findOrFail($invoiceId);
-            $payAmount = $amountCents ?? $invoice->total_cents;
+            $payAmount = $amountCents ?? max(0, $invoice->total_cents - $invoice->paid_cents);
 
             $newPaid = $invoice->paid_cents + $payAmount;
             $status = $newPaid >= $invoice->total_cents ? 'paid' : $invoice->status;
