@@ -12,7 +12,7 @@
     @endif
 
     @if($refused)
-        <x-ui.attention-card state="attention" heading="Late fee not applied">
+        <x-ui.attention-card state="attention" :heading="$refusedHeading ?? 'Late fee not applied'">
             {{ $refused }}
         </x-ui.attention-card>
     @endif

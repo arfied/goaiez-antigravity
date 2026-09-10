@@ -456,4 +456,33 @@ class AgeingByReasonScreenTest extends TestCase
 
         $this->assertSame(0, OfflinePayment::where('business_id', $biz->id)->count());
     }
+
+    public function test_a_refused_payment_names_the_payment_and_not_the_late_fee(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'Space', 'last_name' => 'Case']);
+        $inv = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-W1',
+            'total_cents' => 10000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(20),
+        ]);
+
+        Livewire::actingAs($owner)->test(AgeingByReason::class)
+            ->set('reference.'.$inv->id, '   ')
+            ->set('amountCents.'.$inv->id, 10000)
+            ->call('logPayment', $inv->id)
+            ->assertSee('Payment not logged')
+            ->assertSee('Nothing was logged')
+            ->assertDontSee('Late fee not applied');
+
+        $this->assertSame(0, OfflinePayment::where('business_id', $biz->id)->count());
+    }
 }
