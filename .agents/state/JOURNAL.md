@@ -834,3 +834,4 @@
 - `2026-09-10T10:14:52` note: run 141: tests None · passed None · FAILED 0 · errors None · result timeout
 - `2026-09-10T11:16:10` note: run 142: classmap repaired (UnauthenticatedConfirmationException 0 -> 1); bufctl 0 bytes; discovery finishes (2466 tests) and all four testsuites (Unit, Feature, Modules, Journeys) finish without hanging.
 - `2026-09-10T12:04:15` note: run 143: arm B, 900s; account_mappings owned by goaiez_owner, suite connects as goaiez_app; §3 probe fail=1
+- `2026-09-10T12:36:20` note: run 144: account_mappings in goaiez_antig_reviews_test owned by goaiez_owner, current_user goaiez_app, histogram 1 role; four-suite union 2463 tests/2443 passed/7 failed/13 errors; named-4 single process Arm B, 400 s; CPU NOT MEASURED
