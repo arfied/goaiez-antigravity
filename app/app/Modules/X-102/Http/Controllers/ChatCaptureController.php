@@ -10,10 +10,12 @@ use App\Services\Pixel\PixelKeys;
 use App\Support\Tenancy;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-
-final class ChatCaptureController
+/**
  * Decision (R245): Added consent parameter which defaults to false to comply with rule 22 (no message capture before consent).
  * If false, ChatCaptureAction drops the message.
+ */
+
+final class ChatCaptureController
 {
     public function __invoke(Request $request, string $key, PixelKeys $keys, ChatCaptureAction $action): JsonResponse
     {
