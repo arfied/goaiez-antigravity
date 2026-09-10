@@ -8827,6 +8827,78 @@ Watch for: <the trap that applies, by name>
   proposals **13** · `app/app/Modules/` **0** · `CLOSED:` **5**. Suite at `02a448a6`: `tests 2450 ·
   passed 2442 · assertions 10805 · failed 6 · errors 2`, the standing **eight** by identity. Re-run every grep;
   never inherit one.
+- ⚠️⚠️ **A report field built on `<(…)` dies under `sh` and its `||` fallback then reports the FLATTERING
+  outcome — and a broken census does not stay in its own field, it propagates into every derivation
+  downstream of it.** Wave 171's two `MOVED`/`MOVED-COUNT` fields read `none`/`0` (a *survival*) on a wave
+  whose own `ITEM1`/`ITEM2`/`STATUS` correctly said both targets reddened; the true census is **1** and **2**.
+  The cause is one line: `grep -vFf <(…)` inside `subprocess.check_output(cmd, shell=True)`, and `/bin/sh`
+  has no process substitution, so the command dies and `|| echo none` supplies the value. `Q4` then divided
+  a `−2` inside one five-assertion test and offered two candidate positions, where the `−2` spans **two**
+  tests at −1 each. ⭐ The tell is one subtraction and is internal to the block: **`passed 2442 → 2441` with
+  `failed 6 → 7` cannot be zero moved tests** (tick 262). ⛔ **RULED at tick 304, rewritten and not
+  clause-patched (tick 245): no report field on this lane uses `<(…)`, and no field carries a `||` fallback
+  of any kind** — the census is two plain files and a `grep -vFf`. **A field whose command cannot run must
+  print nothing: an empty field is a question and a `0` is an answer.** Eighth mechanism past a generator
+  check, after a `= '` literal (256), an `echo` literal (276), an `|| echo` naming an outcome (282), a
+  substituted command (289), a `sed -i` replacement (290), a synthetic artifact (291) and a verdict-shaped
+  `echo` beside a correct number (298). ⭐ Its verdict half: this is the **deflating** direction, so it is a
+  NOTE and not the tick-290/291 `BLOCK` — an inflated conclusion claims a proof that does not exist and
+  reaches the docblock, a deflated census denies one that does — **and when a wave under-claims the reviewer
+  records the proof in `REVIEWS.md`** (tick 262), or the next tick re-briefs proven work.
+- ⚠️⚠️ **A `[^\"]*` bracket expression excludes BACKSLASH as well as quote, so a `MESSAGE` field silently
+  skips any failure whose text contains an escape and names the next one instead.** Wave 171's mut-1
+  `MESSAGE` reads an **X-198 standing red** on a wave whose target failed; the prescribed command
+  (`grep -o '"message":"[^"]*"' <obj> | head -1`) returns the target's message in full, and the generator's
+  shell-escaped copy does not, because that target's message carries `'   \n\n\t '`. mut-2's survived only
+  because its text happens to contain no escape. **Same command shape, two files, one right and one wrong is
+  the tell that the command is not doing what the field says.** Newest member of the *a grep PATTERN is a
+  claim about the file it greps* family (ticks 285, 289, 294; waves 158, 165, 169), with a **character
+  class** as the liar.
+- ⚠️ **A `grep -c … || echo 0` field cannot report "no match" distinguishably — it prints `0` twice.** Wave
+  171's `TARGET-GRN`, `RAN` and `MUT-RAN` all came back as two lines, and `TARGET-ASRT` came back `0` then
+  `1`/`5` from its fallback — the `5` being the assertion count **my own brief had printed** two items above
+  it. Both values were right and neither was a measurement. Take a divisor as
+  `sed -n '<start>,<end>p' <file> | grep -c 'assert'` with the two line numbers the coder chose.
+- ⚠️ **A `PATCHES` field that filters out `-applied|-gate|-raw` has deleted the only thing it was created
+  for.** Tick 303 wrote that field in these words — *"a patch with no `-applied`, `-gate` and `-raw` beside
+  it did not run, and this field is where that is visible"* — and wave 171's generator greps those four
+  strings away. The tick-281 filtered-census defect landing in the one field written against it. `stat` the
+  glob whole.
+- ✅✅ **Both X-102 capture assertions are PROVEN and their mutations are SPENT (wave 171) — never re-brief
+  either.** Green `2450 · 2442 · 10805 · failed 6 · errors 2`. **mut-1** (`ChatCaptureAction.php:35`'s trim
+  deleted) → `passed 2441 · failed 7 · assertions **10805**`, radius **1** on
+  `X102Test::test_action_normalises_whitespace_message_to_null` — flat `assertions` is the tell, not a gap,
+  because that test holds one assertion and it is its last (tick 249). **mut-2**
+  (`ChatCaptureController.php:58`'s `message:` mapping → `$sessionToken`) → `passed 2440 · failed 8 ·
+  assertions 10803`, radius **2** reconciling exactly (target 5 assertions failing at its 4th, −1; sibling
+  `ChatDoorTest.php:487` 3 assertions failing at its 2nd, −1), the sibling honest by the wave-87 rule. Four
+  site proofs each and none of them a report field: §1 of both gate logs pinning a **module** file, both
+  patches on disk, both `-applied.log` content greps reading `1`, and three failure messages carrying the
+  module's own **stored** value (the tick-200 exception's **twelfth** holding).
+- ⚠️ **`ChatDoorTest.php:383` calls the action's trim "redundant" and wave 171 measured otherwise in the same
+  wave.** mut-1 shows that trim is the **sole** nuller on the direct-call path, so an unqualified "redundant"
+  in a durable docblock invites a reader to delete a line this lane proved load-bearing. Accurate scoped to
+  the HTTP path and wrong unscoped — the tick-302 shape recurring on the **neighbouring sentence of the same
+  docblock**. NOTE and not `BLOCK` (tick 278): the finding survives the word being fixed, a docblock corrects
+  forward by rewriting itself, and nothing left the board.
+- **Backlog at tick 304 — wave 172 is the two production-path claims in the X-102 capture docblocks, and it
+  writes no production code.** RULED, measured this tick and not inherited (tick 235):
+  `grep -rn "ChatCaptureAction" app/app app/tests --include=*.php` returns its own declaration,
+  `ChatCaptureController`'s `use` / signature / comment, and four lines of `X102Test.php` — and both files
+  carry a durable sentence about a production path (`X102Test.php:531` *"This protects direct calls that
+  bypass the HTTP middleware"*; `ChatDoorTest.php:383`'s "redundant"). A test file outlives every
+  `REPORT.md`, so a sentence in one is graded like a ledger row. ⛔ **This column names no conclusion**: the
+  census, both docblocks and `ChatCaptureAction.php:19-62` go over **printed with a conclusion attached to
+  none** (the form is 26-for-26 and has corrected this column five times on X-102's seams alone), with the
+  third and fourth branches written out (tick 192). ⛔ No production code and no assertion change — if what
+  the census establishes is that a line of `app/**` is unreachable in production, the output is **one line**
+  under `app/tests/Modules/` leading with `BUILD PROPOSAL:` and naming the unbuilt thing and its owner, never
+  a change to `app/app/**` this wave and never a build riding with a correction (ticks 218–223). ⛔ No
+  `⛔ REFUSED`, no `UNRESOLVED` (X-102 is one of the thirteen and nothing external is missing); ⛔ never edit,
+  weaken or delete a standing assertion; ⛔ wave 171's two mutations are **spent**. Board re-measured this
+  tick: proposals **13** · `app/app/Modules/` **0** · `CLOSED:` **5** · `assertTrue(true` **95** across
+  `app/tests/Modules/`. Suite at `f40e2e3f`: `tests 2450 · passed 2442 · assertions 10805 · failed 6 ·
+  errors 2`, the standing **eight** by identity. Re-run every grep; never inherit one.
 
 ## Style
 
