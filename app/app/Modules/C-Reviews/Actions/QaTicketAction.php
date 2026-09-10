@@ -7,8 +7,8 @@ namespace App\Modules\CReviews\Actions;
 use App\Modules\CReviews\Events\CsatRequested;
 use App\Modules\CReviews\Models\QaSetting;
 use App\Modules\CReviews\Models\ReviewRequest;
-use App\Modules\X181\Actions\QaTicketReadAction;
 use App\Modules\X181\Actions\QaTicketCreateAction;
+use App\Modules\X181\Actions\QaTicketReadAction;
 use Illuminate\Support\Facades\DB;
 
 final class QaTicketAction
