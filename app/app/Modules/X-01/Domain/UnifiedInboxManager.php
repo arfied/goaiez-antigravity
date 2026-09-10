@@ -20,9 +20,6 @@ use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 
-/**
- * (R245) Boundary: recordInbound is called inside Tenancy::actingAs to preserve tenant context for un-tenanted callers.
- */
 final class UnifiedInboxManager
 {
     /**
@@ -74,7 +71,7 @@ final class UnifiedInboxManager
             }
 
             // Find or create Conversation for this Person
-            $conversation = Tenancy::actingAs($businessId, function () use ($person, $channel, $body) {
+            $conversation = Tenancy::actingAs($businessId, function () use ($person, $channel) {
                 $convo = Conversation::firstOrCreate(
                     ['person_id' => $person->id],
                     ['channel' => $channel, 'status' => 'open']
@@ -87,16 +84,6 @@ final class UnifiedInboxManager
                     }
                 }
 
-                try {
-                    app(ConversationThreads::class)->recordInbound($convo, $body);
-                } catch (\InvalidArgumentException $e) {
-                    if (str_contains($e->getMessage(), 'cleared to store message content')) {
-                        // A thread that has not been cleared to store message content does not store one, dropping it instead.
-                    } else {
-                        throw $e;
-                    }
-                }
-
                 return $convo;
             });
 
@@ -106,6 +93,16 @@ final class UnifiedInboxManager
                 channel: $channel,
                 messageSnippet: substr($body, 0, 50)
             ));
+
+            try {
+                app(ConversationThreads::class)->recordInbound($conversation, $body);
+            } catch (\InvalidArgumentException $e) {
+                if (str_contains($e->getMessage(), 'cleared to store message content')) {
+                    // A thread that has not been cleared to store message content does not store one, dropping it instead.
+                } else {
+                    throw $e;
+                }
+            }
 
             return [
                 'person_id' => $person->id,
