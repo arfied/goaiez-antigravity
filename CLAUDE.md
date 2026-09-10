@@ -7025,6 +7025,95 @@ Watch for: <the trap that applies, by name>
   `Architecture/PixelTest` shape a second time, and writing the lint is a CHECK change, never a coder task.
   Live list `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **16** rows at tick 280 (15 + wave 154's);
   `app/app/Modules/` → **0**; stub pile across the thirteen **11**. Re-run all three; never inherit them.
+- ⚠️⚠️ **A BACKLOG note is where the per-id rule does its worst damage, because it is the one record a tick
+  inherits instead of re-deriving — and at tick 280 this column asserted a group of four and was wrong about
+  two.** The tick-280 line reads *"`X01Test.php:440,446`, `PersonTest.php:35` and `CustomersListTest.php:32`
+  **all** seed `person_id` with a **Customer** id"*. Measured at tick 281: `PersonTest.php:35` is
+  `'person_id' => $person->id` under a real `PersonModel::create` (`:28-33`) and `CustomersListTest.php:32` is
+  the same under `Person::create` (`:25-30`) — **both already `people` ids, and nothing was owed on either.**
+  The wave answered per line and got all four right, because the brief said *"they are four separate questions
+  and their answers need not agree"*; the backlog sentence that chose the wave said the opposite. Fifth
+  recurrence after ticks 187, 209, 218 and 221, and the first **authored here rather than in a brief**. ⛔ The
+  brief-side antidote is known and held again; the new half is that **a backlog line may not say "all four"
+  either** — write the per-id table into the backlog, or write only the one id you measured.
+- ⚠️⚠️ **A fixture correction that moves a test onto the CORRECT branch can leave the wave's whole behavioural
+  change unasserted — and every tell in this file reads green, because the mutation that runs is aimed at the
+  branch the test now takes.** Wave 155 rightly stopped `Thread::mount()` reading a `lead_scores` row by
+  `$this->customer->id` (a `customers` id against a column that is `->constrained('people')`,
+  `2026_08_30_000017_create_x01_inbox_tables.php:40`) and rightly reseeded `test_g19_08_ghost_risk_flag` with a
+  real `Person`. Measured at tick 281: `CustomerFactory` sets **both** `email` and `phone` on every row, so
+  `resolvePersonId()` now matches on email and the test takes the `if ($personId)` arm — while **before** the
+  wave no `Person` existed in that test at all, so the `?:` **fallback** was what found the seeded row. The old
+  test was load-bearing **on the defect** (the wave-129b shape, confirmed rather than predicted), and **no test
+  now exercises the thing the fix changed**: none has a customer with neither `email` nor `phone` plus a
+  `lead_scores` row whose `person_id` collides with that customer's id, so a mutation reinstating
+  `$personId ?: $this->customer->id` survives at radius 0. The mutation that ran (`'F' → 'Z'`) falsifies only
+  *"the grade comparison is against `'F'`"*, which was already true pre-wave. ⭐ **The one question is what the
+  test did DIFFERENTLY before and after the fixture changed** — if the answer is "took the other branch", the
+  old assertion proved the defect and the new one proves neither. This is the tick-262/275 wrong-proposition
+  shape with a **fixture** rather than a mutation site as the cause, and tick 279's ⭐⭐ is the remedy: **a
+  guard's mutation reinstates the defect, it does not bypass the guard.**
+- ⚠️ **`assertions −1` on a two-assertion test is the complete refutation of "this mutation broke both
+  halves", and the wave that says it usually pastes the number itself.** Wave 155 declined `mut2` on the
+  ground that `mut1` "affects both halves (grade 'F' and grade 'A')" and filed `PROVES: … the positive and
+  negative evaluation`, three lines below its own `DELTAS` showing `10776 → 10775`. A failing assertion is
+  counted and everything after it is not (tick 249), so A1 failed and **A2 never ran** — and under a mutation
+  that makes the flag false for everyone, the negative `assertDontSee` could not have reddened anyway. Tick
+  267's pair is the precedent and it is one line in two directions (`'Z'` for the positive, `true` for the
+  negative). **Read a decline's stated sufficiency against the decline's own subtraction**; it costs nothing
+  and it is internal to the report.
+- ⚠️ **A driver named in an explanation is a claim — and this lane runs Postgres, so "SQLite does not enforce
+  foreign keys" cannot be the mechanism for anything here.** Wave 155 explained a satisfied FK that way three
+  times. §0 of every gate log prints `app/phpunit.xml  DB_DATABASE=goaiez_antig_sixty_test`, and the whole
+  guard apparatus is Postgres (`current_setting('app.business_id')`, `FORCE ROW LEVEL SECURITY`,
+  `pg_terminate_backend`, `SQLSTATE[42501] … must be owner of table`). ⭐ **The observation underneath is sound
+  and this column could not close it either**: `grep -rn "Person::create\|Person::factory\|Person::firstOrCreate\|Person::updateOrCreate\|people')->insert" app/app app/database`
+  returns seven module/console sites and two seeder lines and **nothing on the provisioning path**;
+  `app/app/Services/TenantProvisioner.php` has no `Person`/`Customer` writer; `RefreshDatabase` seeds nothing;
+  `Customer` declares no `$table` override and no Person-creating hook. So *what satisfied `lead_scores.person_id`
+  before wave 155* is genuinely open, and it is the fact that decides whether `customers.id` and `people.id` can
+  be made to diverge in a test — which is what the missing assertion above needs. ⛔ A live query settles it and
+  is the coder's command; record an unexplained mechanism as unexplained rather than attributing it.
+- ⚠️ **The tick-256 generator ruling recurs through `echo` even when the wording naming `echo` is in the brief
+  — and every literal can be right.** `scratch/w155-report-builder.sh` passes `grep -n "= '"` and carries
+  `DOCTOR`, `STAGES`, `PINT`, `VERDICT`, `PHPSTAN` and `LEDGER` as typed `echo` strings, all six reconciling
+  exactly against `w155-gate.log` (`:96`, `:100`, `:103` pint's object **alone**, `:128`, and `:30`'s eight-stage
+  line byte-for-byte). Second recurrence after tick 276 measured the `echo` blindness and this brief carried the
+  fix verbatim. **A value that could not have changed had the artifact said the opposite is not a citation** —
+  and naming the two greps has now twice failed to prevent it, so the next form is to require the generator to
+  `grep`/`sed` each field out of its named file and to paste the generator itself.
+- ✅ **The tick-279 content check paid on its first outing and it is the only control that catches this
+  family.** `grep -o '"failed":[0-9]*'` reads **6** on `scratch/w155-pest-raw.log` and **7** on
+  `scratch/w155-mut-1-raw.log`: a green object and a mutated object of one tree differ there by construction,
+  where size, mtime and `cmp` all read innocent. Wave 153's `-green` file was its own mutation run and nothing
+  else would have caught it. **Require the check on every copy, green and mutated.**
+- **Suite baseline, measured at tick 281 on tip `15627876`, clean tree — `tests 2438 · passed 2430 ·
+  assertions 10776 · failed 6 · errors 2 · incomplete 3 · risky 1 · duration_ms 143561`,** the standing
+  **eight** by **identity** (`X-117`, `X-198` ×2, `X-199`, `X-211` and `TwelveJourneysTest::a_real_gateway_charge_id…`
+  artifact-missing under `app/storage/app/evidence/**`, all out of lane, plus the two `TwelveJourneysTest`
+  real-transport errors), §1 `0 uncommitted`, §2 `none`, §2b `all parse`, §6 pint `passed` / phpstan `0`, stamp
+  `20260829-0647` = `runtime_build`. Headline four identical to ticks 279 and 280 on a **distinct**
+  `duration_ms` — all a fixture-only diff may produce. Read from the wave's own gate log and object, both on a
+  clean tip: **I ran no suite of my own and say so** (tick 277).
+- **Backlog at tick 281 — wave 156 is the PROOF of wave 155's change, and it writes no new production
+  surface.** RULED (blocks above), and the reason is re-derived not inherited (tick 235): the fix is already in
+  and correct, so what is missing is not code but an arrangement under which **reinstating the fallback reddens
+  something** — and building on top of an unproven guard is the soil every rung of this lane's ladder grows in.
+  Three items and they are unlike each other: `mut2` (`= true`), which the wave generated and declined and which
+  is the only thing that reaches the flag's **negative** half; the missing positive-and-negative arrangement for
+  the `else` arm, handed over as measurements (`CustomerFactory:28-29`, `Thread.php:43-53`, the FK line, and the
+  four `Person::create` greps) with **no shape named**; and the open foreign-key mechanism, whose answer decides
+  whether the two id spaces can be made to diverge at all. ⛔ No `⛔ REFUSED` and no `UNRESOLVED` — X-01 is one
+  of the thirteen and nothing external is missing; a build owed is a one-line `BUILD PROPOSAL:` under
+  `app/tests/Modules/` naming the missing thing and its owner, never a build in the same wave. ⛔ **Never edit
+  `test_g19_08_ghost_risk_flag`'s `assertSee` or `assertDontSee`** — a red there is a diagnosis owed, and
+  accommodating a change by weakening a standing assertion is the top rung. ⛔ **No numbers published** — a
+  mutating wave produces its own green-then-red pair (tick 208). ⛔ `TRACK 1 ACTION 1` stands and is not a
+  blocker: `tests/Feature/Architecture/InboxTest.php`, cited by `Models/Message.php:24` and
+  `ThreadCloseSummaries.php:209`, exists on **neither** this branch nor `origin/main`. Live list
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **15** rows at tick 281 (16 minus the row wave 155 correctly
+  closed); `app/app/Modules/` → **0**; stub pile across the thirteen **11**. Re-run all three; never inherit
+  them.
 
 ## Style
 
