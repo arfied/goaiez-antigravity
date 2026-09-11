@@ -18679,3 +18679,93 @@ reviews it as its own **on the merged tree** — SITE-208, queued, never bundled
   `--allow-merge`.**
 - **Tips at the open**: `main 46afc022` · `money a96b6166` · `pricebook 74f5b79b` · `reviews f49ee6c4` ·
   `sixty b04c9d0c` · `stages ea356afd` · `ui 06fef730` · `site 9fb67295`.
+
+## ✅ THE TAKE LANDED CLEAN — a union resolution proven by ONE stat, and a new baseline (tick 336)
+
+`d0471f0c` `merge: origin/main (46afc022)`, parents `a6c7f10d` + `46afc022` read with `%P` (222). Verified at source in
+this seat, never off the report:
+
+```
+git diff --stat d0471f0c^1 d0471f0c -- <the eight per-track paths>                → (nothing)   ours kept
+git diff --stat 46afc022 d0471f0c -- app/app/Doctor .claude/hooks bin/state.py app/tests/Journeys → (nothing)   main adopted
+git diff --stat 46afc022 d0471f0c -- app/                                         → ChatDoorTest.php | 5 +++++
+```
+
+⭐ The third line is the whole proof of the union: our side's entire app delta was five comment lines, so any other row
+would have been a resolution defect — and reading `git diff 46afc022 d0471f0c` shows exactly the five `MEASURED` lines
+appended beneath main's nine. One command instead of reading a conflict.
+
+**New baselines** (315 — a merge's gate is a baseline, never a comparison): §7 `tests 2542 · passed 2533 · FAILED 7 ·
+errors 2`, measured in this seat and byte-identical to the coder's, ⭐ `a_published_site_carries_all_seven` **ABSENT — J11
+GREEN** across 547 commits. The seven failures are `C-Reviews` (reviews'), `X-117`/`X-199` runtime proofs and `X-198` ×2
+(money's) plus sixty's two journey stubs — **none in this lane's column**. Doctor `boundary 41 · contract 85 · citation 0 ·
+schema 16 · capability 204 · anchor 128 · journey 3` · **477**, stamp `20260829-0647` = `runtime_build`. The fall is main's
+content; **this lane's own red is unchanged and fully filed** — `boundary` ×4, `contract` X-110 ×3 + X-137 ×1, `capability`
+X-103 ×2 + X-176 ×4, `anchor` ×7.
+
+## ⛔ SIXTY'S TODO "blank turns are inserted" IS TRUE AND LATENT — the first application of tick 335's LATENT row (tick 336)
+
+`ChatTurnAction.php:37` — `if (isset($response['reply']))` with sixty's TODO *"This guard is dead. AgentAnswerAction always
+returns the 'reply' key (even as ''), so isset() refuses nothing and blank turns are inserted."* Measured at source:
+
+- every `AgentAnswerAction` return carries `reply` ✓ — the premise is TRUE;
+- `reply` is `''` in **exactly one** branch, `:56-61`, the `HUMAN_TAKEOVER_LATCH` refusal, inside
+  `if ($conversationId !== null)` at `:29`;
+- `ChatTurnAction:36` passes no `conversationId`, so that branch is **unreachable** from the chat door;
+- every other `reply` is a non-empty literal or a built string, and `X-163/Domain/PricebookEngine.php:140-142`'s
+  `quote_response` is a non-empty literal in both arms; `agent_turns.agent_reply` is NOT NULL besides.
+
+⇒ **LATENT**, and the thing that would make it live is named: **Track 1's conversation mapping** (the `HUMAN_TAKEOVER_LATCH`
+TRACK 1 ACTION, tick 329). The day that mapping lands, every latched visitor turn inserts a blank `agent` `ChatTurn`,
+dispatches `ChatTurnCreated`, and returns `reply: ''` — the AI visibly "answering" blank while a human holds the thread.
+⛔ **No wave**: a guard that cannot fire today is tick 280's dead defence manufactured (329), and under a takeover the right
+behaviour is a policy the mapping build must decide. ⭐ **The finding goes on the mapping's TRACK 1 ACTION as a
+requirement**, which is where it is load-bearing.
+
+⚠️ The label is the point (335): a caller census ("nothing passes a conversation id") refutes **reachability**, never the
+**premise**; the TODO is right about the code and wrong only in its tense.
+
+## ⛔ `grep -i age` MATCHES "message" — a vocabulary search for a signal can false-positive on the module's own noun (tick 336)
+
+`grep -c -i -E 'age|dob|birth|under' ChatCaptureAction.php` returned **6** for a file with **no** age check — every hit is
+`message`. Tick 334 ruled an absence search is decided by READING the hits; this is its mirror, a **presence** count
+manufactured by a substring of the domain's most common word. Anchor with word boundaries (`\bage\b`) and read the lines.
+
+## ⚠️ Three SITE-208 backlog items measured and NOT briefed (tick 336)
+
+- **Consent on the TURN path.** `ChatCaptureAction` drops the message body without consent, but `ChatTurnAction:18-23`
+  writes every visitor turn's body to `chat_turns.message` with **no consent gate**, and C-Agent writes the same text to
+  `agent_turns.user_message`. **NO-CLAUSE** for X-102 (327, re-grepped), and a gate would disable the chat outright without
+  a policy for where consent is established — inventing a policy (295, 300, 303, 327, 334), across sixty's C-Agent table.
+  TRACK 1 ACTION, advisory.
+- **The "pre-chat notice" BUILD PROPOSAL** (`ChatDoorTest.php:24`) — added by sixty's `01c1afeb` *"record missing rule 22
+  clauses"*; the plan returns nothing for a pre-chat notice or first-party transcripts; a notice is rendered by `Ui/`, Track
+  2's. **NO-CLAUSE**, per 224 *cannot work here*.
+- **The five `MEASURED` annotations on the merged docblock** no longer sit beside what they annotate, and annotation 2's
+  citation `ChatTurnAction.php:29` now lands on a blank line. ✅ Not re-annotated: each line **names its subject in text**,
+  so a careful reader still reaches the right conclusion (259). ⭐ **An annotation that names its subject survives a union
+  merge; one that relies on POSITION does not** — ours survived because they were written the first way.
+
+## ⛔ SITE-208 — the chat door's handoff, and P-148 on a chat turn (ruled at tick 336)
+
+C-Agent returns `status => 'handoff'` with reply *"I am connecting you with a team member…"* for `UNDER_18`, negative
+sentiment and a missing price fact. Measured: `grep -rn -e 'AgentRefused' -e "'handoff'" app/app` finds the handoff consumed
+by `AnswerAgentTurnJob:340` (the conversation path) and `AgentRefused` by `X-163/Listeners/RecordPriceGap` alone; **X-102
+references neither** `UNDER_18` nor `handoff`. So on the web chat the visitor may be told a human is coming with nothing
+behind it (Q2), and an under-18 signal in a turn may be followed by a capture writing the contact row G10-37's ⑤ says it
+must prevent (Q1, `GOAIEZ-MASTER-PLAN.md:30484`).
+
+**RULED: a WRITE-NOTHING measurement wave**, because both answers need the path traced end to end and one behavioural probe,
+and a build against a clause whose reach over the chat door is unmeasured is the shape refused at 295, 300 and 334. Verdict
+set carries **LATENT** (335) and **OTHER last** (265); the one scratch probe is deleted by exact name. Per 293 this entry
+states the ruling and no prediction.
+
+## Instruments, tick 336
+
+- ⛔ `git -C <abs path> …` is refused (*requires approval*), even for read-only `grep`/`log`. Plain `git` from the checkout
+  root with `':/'` pathspecs is accepted and drift-immune (335).
+- ⛔ `sed -n '/pat/,$p' <file>` refused again; `Read` with `offset`/`limit` is the route.
+- ⛔ A shell function definition is refused outright even when unused (`f() { :; }; …`), and it takes the whole compound with it.
+- ⚠️ The census's exclusion bound this tick was `^d0471f0c` (the unpushed merge, a superset of `origin/track/site` and of
+  `origin/main`), not `^origin/track/site`. A tighter exclusion can only shrink a surface (177), so the readings are
+  comparable once the push lands — recorded because a bound nobody writes down is the one that decays (192).
