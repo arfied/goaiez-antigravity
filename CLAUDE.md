@@ -18961,3 +18961,79 @@ already watches that file (it has since SITE-209); it now carries two reasons.
 - **Doctor** `boundary 41 · contract 85 · citation 0 · schema 16 · capability 204 · anchor 128 · journey 3` · **477**,
   stamp `20260829-0647` = `runtime_build`. No stage moved.
 - **HOLD** — backlog measured empty; every open chat-door item is a TRACK 1 ACTION or a recorded NO-CLAUSE refusal.
+
+## ⛔ A HOLD WRITES NO BRIEF, SO CASE (e)'s "PUSH THE PASSED RANGE AS ITEM 0" HAS NOWHERE TO LIVE — tick 339 passed SITE-210, ruled HOLD, and stranded the range (tick 340)
+
+Tick 339's block is **PASS** on `8200a10e` + `d553eaff` and rules **HOLD**. It never pushed. The reflog is the whole
+record: `origin/track/site@{11:01:04} 4af71adc` and **no later entry** until this tick — the passed range and tick 339's
+own notes (`7918e068`) sat unpushed **2 h 49 m**, while Track 1's merge `bd3e9c5f` (second parent `4af71adc`) and money's
+and stages' notes each recorded main as containing this lane only through SITE-209.
+
+⭐ Case (e) reads *"write the next BRIEF.md/KICKOFF.md … (push the passed range as item 0) and dispatch. If the backlog is
+empty, write a HOLD block and stop."* The push is phrased **as an item of the brief**, and the HOLD branch writes **no
+brief** — so on exactly the branch where nothing else will happen for hours, the push is the one act with no home. Third
+form of tick 252's law: 252 a `push:` line armed with **no numbered item** to spend it, 210 a line **malformed** so the
+gate never opened, 340 **no brief at all**. All three silent, and none catchable by reading the block.
+
+✅ **RULED by the lane supervisor: a tick that rules HOLD pushes the gated range itself, by explicit ref, in the same tick,
+and its block names the pushed sha.** The seat may already do this (charter: *pushes only a sha it has gated and
+recorded*); what was missing is that on a HOLD it is the **only** push that will ever happen. Executed this tick:
+`4af71adc..7918e068`.
+
+## ⛔ "RECORDED IN AN ADDENDUM WHEN IT LANDS" IS A PROMISE AN APPEND-ONLY LEDGER CANNOT KEEP — and tick 339's gate had already landed when the promise was made (tick 340)
+
+Tick 339's block: *"This seat's own §7 is queued (pid 2075717 alive by `readlink`, `gate-start` with no terminal row) and
+is recorded in an addendum when it lands."* Measured, in order:
+
+| event | time | source |
+| :-- | :-- | :-- |
+| pest `2113684` completes rc 2 | **11:26:49** | `gate-runs.tsv:12119` |
+| `gate-end` for `2075717` | **11:26:49** | `gate-runs.tsv:12120` |
+| `.gate339.txt` final write | **11:26:49** | mtime |
+| `.blk339.md` last saved | 11:27:52 | mtime |
+| block appended | 11:28:28 | `REVIEWS.md` mtime |
+
+The gate landed **99 s before the append**. No addendum exists — the block is the last thing in the file.
+
+⭐ **The hedge composition has two halves and this is the first measured failure of the second.** 242: append with the
+blocked section named unmeasured — done. 231: **re-check at the append** — skipped. Every prior firing of the pair
+(231, 245, 250, 261, 286, 300) held. And the promise made it structurally worse than a plain unmeasured §7: *"recorded
+in an addendum"* reads as a commitment, so the next reader stops looking, while a HOLD tick has **no successor event**
+to write that addendum — nothing re-invokes the seat when a gate lands.
+
+✅ **RULED: a block never promises a later addendum.** Either (a) the re-check runs as the command immediately before
+`cat >>` — `Read gate-runs.tsv` for the gate pid's terminal row — and a landed §7 is written into the block, or (b) the
+section is named unmeasured **and the next tick owns it**. Tick 340 discharged (b) for tick 339.
+
+✅ **The result, read at source from `.gate339.txt` on `d553eaff`:** `tests 2544 · passed 2535 · FAILED 7 · errors 2`,
+⭐ `a_published_site_carries_all_seven` **ABSENT — J11 GREEN**, **byte-identical to the coder's run including both sets**
+⇒ tick 255's borrow ran at a zero delta and its falsifier **FIRED and PASSED**. The pushed range stands on it.
+
+## ⚠️ The box's gate log went silent for 2 h 11 m and every lane fired within one minute (tick 340)
+
+`gate-runs.tsv:12138` is sixty's `gate-end` at **11:39:28**; `:12139` is Track 1's `gate` at **13:50:47**, then
+`site`, `ui`, `stages`, `reviews`, `sixty` all start by **13:51:40**. ⛔ The cause is **not measured and no block names
+one** (227, 230, 249). What it changes is operational: every sibling supervisor is live in the same minute this tick
+is, so arrivals mid-tick are the expected case — stages' `3435197b` committed 13:50:55 and arrived **13:51:21**, after
+this tick's opening `for-each-ref` (220).
+
+## Tick 340 — measured, for the record
+
+- **Case (e) → HOLD.** Newest block PASS (tick 339), `coder.pid` 1947948 dead on both halves (179; `pgrep agy` → one
+  pid, `…/grs-antig`, Track 1's), `BRIEF.md` 10:59 older than the block, `OWNER.md` 09:27 older.
+- **Re-openers, all four measured null**: no owner answer; `origin/main` unmoved at `bd3e9c5f` (no sealed-file merge);
+  no regeneration (doctor unchanged); census byte-identical.
+- **Pushed `4af71adc..7918e068`** — SITE-210 plus tick 339's notes, fast-forward, the notes delta `CLAUDE.md` alone.
+- **Gate (no `--tests`, tree unchanged since 339 but for `CLAUDE.md`)**: §0 pin `goaiez_antig_site_test` · §2 exactly
+  one `⛔ app/phpunit.xml` (207 healthy) · §4 seals ✓ · §6 pint passed, phpstan 0.
+- **Doctor, live**: stamp `20260829-0647` = `runtime_build` · `ok integrity clean · FAIL boundary 139ms 41 ·
+  contract 33ms 85 · ok citation 1167ms clean · schema 477ms 16 · capability 25ms 204 · anchor 254ms 128 ·
+  journey 0ms 3` · **477**, SUM ✓, `ok` only on clean stages. No stage moved.
+- **Census `7 · 4 · 1 · 4`**, byte-identical to tick 339, halves `--full-history` with `':/'` pathspecs. Half 1: six merges
+  of main plus reviews' attributed `ffb9ef3c`; no violating partition. Complement `SchemeTokenTest.php · bin/supervise.sh ·
+  CLAUDE.md · .claude/settings.json`. Dependency query (X-163/X-108 Models+Database, `AgentAnswerAction.php`) **empty**.
+- **Paired stats**: money `30419abd` (arrived 11:22:45, inside tick 339 and after its paired stats) — `CLAUDE.md` +20;
+  stages `3435197b` — `CLAUDE.md` +8. Nothing in this lane's column.
+- **Fourth surface** `main 14 · money 16 · pricebook 14 · reviews 15 · sixty 42 · stages 41 · ui 16 · site 198 ·
+  HEAD 198`; no branch below main's 14.
+- **X-102 id census** `3 G13-15 · 1 G13-37 · 1 G15-01 · 1 G16-21 · 3 G21-01 · 1 G2-57 · 1 G8-36`, unchanged.
