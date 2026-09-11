@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-11T10:40:41",
+ "updated": "2026-09-11T11:25:10",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1604,6 +1604,12 @@
    "module": "X-124",
    "chose": "owner layout views are measured for fixed neutral colour utilities by a pinned count over every component declaring the owner layout, and X-199's owner views use the scheme tokens, with ring-black ring-opacity-5 replaced by ring-rule because Tailwind 4 emits nothing for ring-opacity",
    "at": "2026-09-11T10:40:41",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-124",
+   "chose": "the last two fixed neutral utilities beside scheme tokens in owner layout views use tokens, and the scheme pin counts the remaining text-white on a saturated button and the dark border variant rather than excluding them",
+   "at": "2026-09-11T11:25:10",
    "ruling": "R245"
   }
  ],
