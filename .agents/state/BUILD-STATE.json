@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-11T14:34:54",
+ "updated": "2026-09-11T15:05:03",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1442,6 +1442,12 @@
    "module": "X-163",
    "chose": "Pricebook's callout deduction property is calloutFeeDeducted, the name pricebook.blade.php and updatedCalloutFeeDeducted() bind, so ticking the box saves the choice and a stored deduction loads ticked",
    "at": "2026-09-11T14:34:54",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-163",
+   "chose": "a refused price row keeps its Confirm clickable on Pricebook and ConfirmationScreen; the server refusal is the only guard, and the Needs a price flag clears only when a confirm succeeds or the row is deleted",
+   "at": "2026-09-11T15:05:03",
    "ruling": "R245"
   }
  ],
