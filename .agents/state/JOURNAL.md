@@ -854,3 +854,4 @@
 - `2026-09-11T11:01:00` note: run 158: merged origin/main 73b8fe08 into track/reviews (460 behind → 0, owner rule 2026-09-09 trigger 1); conflicts: none; X-102 42501 errors gone; failing set: 8 baseline, 1 NOT BUILT, 2 INCOMING
 - `2026-09-11T11:01:00` stage citation = 0
 - `2026-09-11T11:01:00` stage capability = 204
+- `2026-09-11T11:37:18` note: run 159: arm other (red, green, red) — X-01 g19_08 alone red, with C-Reviews G20-04 before repair green, after red; probe customers live 4→7→11; restored a0d6ccf4's G20-04 fixture (08fdbd68 had re-forged customers.id); gate errors 2; dev DB 28 migrations pending from 2026_09_05_220831_add_ssl_installed_to_page_versions_in_x103
