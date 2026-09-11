@@ -3811,3 +3811,121 @@ self-deadlock and its box-wide connection-slot exhaustion (REV-150 §1, REV-151 
 lanes while being a `merge=ours` path (REV-128). ⭐ **New, pending run 156's item 3:** if `GET /home` does not
 return 200, the shared account shell at `app/routes/web.php:924` — reached by every lane's tenant — has been
 unasserted for as long as `X-110/TodayTest.php:56` has existed.
+
+## REV-161 — a fork arm that asked about a reader, and a law the plan assigns to another module
+
+⭐ **Run 156 is a `PASS-WITH-NOTES`, `1dc0fb95` is pushed, and the five-wave `RISKY` thread is closed** —
+all four testsuites read `risky 0`, the merged-line half of REV-158 §1 observed live for the first time.
+Failing set **exactly nineteen** (8 baseline + 11 traced `42501`, no `NOT BUILT:`). Hard stops held to the
+digit; the lane's three modules are at **0 boundary · 0 capability · 0 citation**. Ordering held for the
+seventeenth run running, read off the commit timestamps rather than the report. REV-129 §3 satisfied:
+`git diff ffb9ef3c 1dc0fb95` is the two ledger files and nothing else. ⭐ **REV-152 §1's labelled arms fired
+live inside run 156's own gate** (`⚠ r156-gate.log is THIS run's own output`, `⚠ REPORT.md … is the PREVIOUS
+wave's`) and assert `✓` at tick time on the same files — a check that knows which clock it is on, observed
+on both sides. `GET /home` returned **200**, which retires REV-160 §4's TRACK 1 filing.
+
+### ⛔ §1. `work_orders.completed_at` IS CREATED, CAST AND WRITTEN BY NOTHING — AND MY FORK ARM ASKED WHETHER IT WAS *REACHABLE* (my defect)
+
+Run 156's item 4 returned Arm A: *"a job's real completion timestamp is reachable: column `completed_at`
+(`X-121/Models/Job.php:22`) and registered read action `EntityReadAction::handle` (`:13`)."* Both citations
+land; both facts are true. Measured this tick, tree-scoped, with the command beside each result:
+
+```
+$ grep -rn "completed_at" app --include=*.php -l | grep -v '/vendor/\|/storage/'
+  X-121: create_x121_noun_tables.php:79 · create_work_orders_table_if_missing.php:23 · Models/Job.php:22
+  everything else: runbook_runs (X-203) · first_week_runs (legacy)      ← different tables
+$ grep -rn "completed_at" app/tests --include=*.php
+  app/tests/Journeys/JourneyHarness.php:505     ← the ONLY write in the tree, and it is a never-list harness
+```
+
+⛔ And `X-171/JobStateAction.php:30-41`, the one action that marks a job completed, reads `person_id` and
+dispatches `JobCompleted(…, Carbon::now())` — the **dispatch** time. No `update`, no `completed_at`, no
+status write. `ReplayOfflineSyncAction.php:86`, the import-shaped path, omits `$occurredAt` entirely.
+
+⭐ **The defect is one word of my own item 4.** The arms were *"reachable"* versus *"not reachable"*, and
+reachability is a property of a **reader**. The property that decides the wave is whether anything **writes**
+the value. Had it gone unmeasured, run 157 would have fed `completed_at` into `ReviewRequestAction` as
+`$jobAgeDays`, it would have been `null` for every production job, `($jobAgeDays ?? 0) >= 60` would have been
+false forever, and the tree would carry a staleness guard that is **green by construction, exactly like a
+lint that matches nothing**.
+
+**RULED: a brief item asking whether a value is available states BOTH halves — what reads it and what writes
+it — and a fork arm named "reachable" is rewritten as "carries a value on the path this wave is about".**
+REV-141 §1's rule (*"does anything call it" is measured on the WHOLE chain*) pointed at a column instead of a
+class, and the chain runs the other way: from the **writer** outward, not from the reader inward. ⭐ Third
+instance of the adjacent species — **a statement that was never made because the question was never asked**
+(REV-141 §1, REV-142 §1, here). All three are mine; all three are briefs that specified a **shape** instead of
+a **property**.
+
+### ⛔ §2. THE 11,003-REQUEST LAW IS X-212's, NOT THIS LANE's — REV-160 §5 REVERSED, FROM THE PLAN RATHER THAN FROM DESIGN SENSE
+
+REV-160 §5 filed the bulk-import hazard for run 157 on the reasoning that a real job age must come from the
+`jobs` row. Plan `:33851` assigns the remedy in its own words:
+
+> ⛔ **THE LAW: AN IMPORT WRITES ROWS AND EMITS NOTHING.** *Lifecycle events fire for things that HAPPEN. An
+> import is a record of something that already happened somewhere else.* **`doctor` asserts the import path
+> uses a `withoutEvents()` boundary, and the test imports 500 completed jobs and asserts ZERO outbound
+> messages.**
+
+`§218`'s test anchor is X-212 `MigrationIn`'s — *"import 500 completed jobs → assert ZERO outbound messages
+and zero `job.completed` subscribers fired"*. **The defence is at the emitter; C-Reviews is named there only
+as the subscriber that would fire.** X-212 does not exist in this tree.
+
+⛔ **RULED by the lane supervisor: this lane never builds a job-age or staleness refusal in
+`ReviewRequestAction`, because the plan states the mechanism and states it elsewhere.** A module-local
+staleness rule is a second definition of a law whose own text names `withoutEvents()` — REV-119 §C's defect,
+and REV-131 §4's *third option* in an import's clothing. It is also the weaker defence: a subscriber-side
+check cannot reach the other subscribers of `job.completed`, and the law's test counts **all** outbound
+messages. **TRACK 1 ACTION, filed with its commands.**
+
+### ⛔ §3. THE `LOW_CSAT_TRIAGE` BRANCH HAS NEVER EXECUTED IN PRODUCTION — TWO DEAD PARAMETERS OVER P-110's FIX-THEN-ASK
+
+```
+$ grep -rn 'ReviewRequestAction' app/app/ app/routes/ --include=*.php --include=*.blade.php
+  Listeners/AskForReviewOnJobCompleted.php:15   handle($event->businessId, $event->personId, '…', 'google')
+  Ui/ReviewsQaRequests.php:105                  handle($this->businessId, null,              …, $this->platform)
+  Ui/ReviewsQaRequests.php:131                  handle($this->businessId, $req->customer_id, …, $req->platform)
+```
+
+**All three production call sites pass four of six arguments.** `?int $csatScore = null` and
+`?int $jobAgeDays = null` are `null` on every one, and their sole reader is `ReviewRequestAction.php:59` —
+`if ($csatScore !== null && $csatScore < 7 && ($jobAgeDays ?? 0) >= 60)` — whose **first conjunct is false on
+every production path**. Behind it sit a `status => 'triaged_internal'` row, a `QaTicketAction::handle()` call
+and the `LOW_CSAT_TRIAGE` refusal code: **P-110's fix-then-ask** (plan `:592`'s `fix_then_ask_enabled`), not
+scaffolding. `CReviewsTest.php` reaches it only by passing the two parameters by hand, so the suite is green
+and says nothing about the built path. ⭐ CLAUDE.md's own *check whether anything reads a table before
+depending on it* field note, pointed at a **parameter**; same family as REV-138 §5's standing X-121
+`?int $locationId = null` finding, but in this lane's own module.
+
+### The seam — RULED for run 157
+
+⛔ **RULED by the lane supervisor: run 157's item 2 is a measured FORK on whether a CSAT score is reachable
+on the `job.completed` path, because two survey waves in a row is where a lane stops moving and both arms of
+this one end in a commit.** ⭐ **Arm A** — reachable: record the **writer**, the store and the reader, all
+three with `file:line`; ⛔ wire nothing, because the branch has never executed and REV-134 §4 forbids
+refactoring a branch no test can enter. ⛔ **Arm B** — not reachable: one **failing** test whose message
+begins with the literal `NOT BUILT: `, per REV-135 §6/§7 and the house position at
+`tests/Journeys/TwelveJourneysTest.php:477`; the admitted set goes to twenty.
+
+⛔ **Search the CONCEPT, not the vocabulary** (REV-138 §4, which cost this lane two wrong rulings in opposite
+directions on this module). ⛔ **Three refusals hold on either arm:** do not delete `$csatScore`,
+`$jobAgeDays` or the `:59` branch to make the finding go away (REV-131 §3 in a parameter's clothes, and it
+deletes P-110's law); do not derive a CSAT score from `rating` or convert between the 0–10 and 1–5 scales
+(REV-138 §4); do not touch `$jobAgeDays` at all (§2).
+
+⚠️ **§4. One artefact lost its command echo** — `r156-doctor.txt`, the single item whose brief gave a bare
+redirect while the other five carried the `{ echo '$ <cmd>'; <cmd>; }` wrapper. Six of six last run, five of
+six this one. A record defect: it fails the gate and does **not** revoke the sha (REV-134 §1 — the criterion
+is *what* failed). ⚠️ **§5. The `TESTS` header quotes four counts and no artefact carries one** — all four
+true, re-derived here at `HEAD`, but REV-154 §4 wants before and after in **one** file; run 157 names it.
+
+⚠️ **Standing, unchanged.** `app/phpunit.xml` is committable by neither column (REV-128); ⛔
+`git checkout -- app/phpunit.xml` remains the most destructive command on this board. §2f reads **1 of 8** in
+the bypass arm — `.agents/supervisor/launch-coder.sh`, **24 +/2 −**, unchanged for twelve ticks; a touch is
+not a move (REV-135 §9), re-derived at merge time, and nothing here authorises a merge. The missing
+`post-rewrite` hook (§2a) is standing. **TRACK 1 ACTION:** the `app/tests/TestCase.php` self-deadlock and its
+box-wide connection-slot exhaustion (REV-150 §1, REV-151 §1/§3) · `C-Reviews, X-118: 'win.first' has 2
+emitters` · the `X-102/ChatDoorTest` wrong-trait repair (REV-149 §1) · no guard on `app/GOAIEZ-MASTER-PLAN.md`
+(REV-131 §2) · main's `app/phpunit.xml` pinning `DB_DATABASE` for all seven lanes while being a `merge=ours`
+path (REV-128) · ⛔ **new:** `work_orders.completed_at` written by nothing, and the `withoutEvents()` import
+law of plan `:33851` unbuilt (§1, §2). ⭐ **RETIRED:** REV-160 §4's `GET /home` filing — it returns 200.
