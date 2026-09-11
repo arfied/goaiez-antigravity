@@ -13555,3 +13555,127 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     after rulings 36–423 have been applied. **The next finding will come from a PREDICATE nobody has
     stated yet, never from re-running a member list** — and rulings 421, 422 and 423(d) are all exactly
     that, none of them existing as a phrase in this ledger until the tick that measured it.
+425. **⭐⭐ Ruling 212's RLS census swept the tables the lane's MIGRATIONS create; its predicate is every
+    table a money query READS — the three foreign ones are measured, and `users` is exempt because a
+    tenant policy is STRUCTURALLY IMPOSSIBLE on it (measured by the lane supervisor 2026-09-10 21:5x;
+    rulings 64, 95, 100, 111, 262(b), 294, 324, 327, 340, 400).** Ruling 212 measured 33 tables, all
+    `ENABLE`d and `FORCE`d with a byte-identical `tenant_isolation` policy carrying **both** `USING` and
+    `WITH CHECK` — and its instrument was `Schema::create(` **inside the eight module trees**, so a table
+    money reads and does not create was invisible to it. Ruling 380 measured this lane's entire
+    cross-module surface is `X121\Models\Person`; add `businesses` (ruling 233's currency read, 279's
+    `owner_lookup`) and `users`, and the predicate's population is **three**.
+    **All three resolve, and the third resolves by exemption.** `people` is created at
+    `X-121/Database/migrations/2026_08_30_000001_create_x121_noun_tables.php:28` and its `:194-205` loop
+    puts **thirteen** tables through `ENABLE ROW LEVEL SECURITY` + `FORCE ROW LEVEL SECURITY` + a
+    `tenant_isolation` policy carrying **both** `USING` and `WITH CHECK` on
+    `business_id = nullif(current_setting('app.business_id', true), '')::bigint` — the same shape as
+    money's fifteen, with `$col = ($table === 'businesses') ? 'id' : 'business_id'` handling the root.
+    ⭐⭐ **`users` is the disproving measurement and it was taken FIRST** (400/403/409/421/422, a **ninth**
+    firing): `0001_01_01_000000_create_users_table.php` carries **zero** `ROW LEVEL SECURITY` statements
+    **and no `business_id` column**, so there is nothing for a tenant policy to compare against and its
+    absence from ruling 212's 33 is **correct rather than a gap**. ⛔ Not a defect and not to be
+    re-raised.
+    ⭐ **The app layer is scoped on top of all three, measured per site** (209's discipline): every one of
+    the lane's five production `Person` reads carries an explicit `where('business_id', …)` —
+    `X-199/Ui/Invoices.php:60`, `Credits.php:73`, `:111`, `X-211/Ui/InvoiceThreadBeside.php:89`, plus the
+    two evidence `Person::create`s — and both `Business::findOrFail` sites are rulings 233's own shipped
+    code under the ambient tenant.
+    ⚠️ **The lane's ONE unscoped foreign-model read is recorded with what makes it safe** (328/392/403 —
+    *a census that finds a departure asks what makes it safe BEFORE it asks how to fix it, and where the
+    answer is a guard the honest output is a recording naming the guard by its token*):
+    `X-198/Ui/ReconciliationDiscrepancies.php:58`'s `User::whereIn('id', $runs->pluck('reviewed_by_user_id')…)`
+    has no tenancy clause, and **the id set IS the scoping** — `:49`'s `ReconciliationRun::where('business_id',
+    $businessId)` produces it — with `:70`'s `?? 'user #'.$run->reviewed_by_user_id` as the absent-key
+    fallback (414(d)). Ruling 344's derived-scoping class, in the one place it reaches another lane's table.
+    ⭐ Positive control: the instrument located the `people` creator **outside** the eight module trees, in
+    another lane's module, so it demonstrably reaches past the 33. ⛔ Money proposes no edit to X-121
+    (ruling 5).
+426. **⭐⭐ Ruling 61's predicate re-run lane-wide — the WEAK-NEEDLE census is 128 members and ZERO
+    defective, and all four sharp candidates died on a disproving measurement; the keepable half is that
+    a Blade `@if` puts a token in the SOURCE and not in the OUTPUT (measured by the lane supervisor
+    2026-09-10 21:5x).** Ruling 61 fixed two bare-digit needles (`assertSee('1')`, `assertSee('0')`) on two
+    X-199 screen tests, ruling 170(2) swept the *merge-adapted* needles, and **the population itself was
+    never swept** — 404/408/411/413/416/419/420/421/422/423's family, *a census that FIXED something did
+    not necessarily SWEEP the population that needed it*, reached back sixty rulings as the addendum
+    asked. Predicate: *an `assertSee` needle short or generic enough to be satisfied by the page's chrome
+    regardless of the data* — 61's own mechanism being that *"a Livewire render carries a `wire:snapshot`
+    checksum, `grid-cols-2`, `mt-1`, `bg-gray-50` and a formatted date, so every digit is on the page
+    whatever the data is."* Instrument, quoted (300):
+    `grep -rnoE "assertSee\('[^']{1,12}'\)" app/tests/Modules --include=*.php` filtered to the eight ids →
+    **128**, counted by tool and never by hand (397); ⚠️ the double-quoted form returns **ZERO**,
+    corroborating that the lane has one quoting idiom rather than that the pattern failed (207, 294).
+    ⭐ 415's first-three check: `'49.0000'`, `'1.0000'`, `'Explanation'` — each an instance of the
+    predicate. ⭐ Positive control: the sweep returns every previously-ruled short needle — 360's
+    `'1 conflicts'`, 305's `'final stage'`, 312's `'cancelled'`, 98's `'offered'`, 131's `'compiled'` — so
+    it demonstrably reaches the class.
+    **The four sharpest candidates, each killed by the measurement taken FIRST** (400/403/409/421/422, a
+    **tenth**, **eleventh**, **twelfth** and **thirteenth** firing in one census):
+    (a) ⭐⭐ **`assertSee('0.00')` at `MoneyPaidTodayTest:57` and `UnpaidTest:77`** — the strongest-looking
+    member, because `0.00` is a substring of `350.00`, `10.00`, `1,500.00` and **every figure ending in a
+    zero**, and both sit on the **empty state**, which is the case the test exists for. **Both chains
+    carry their own `assertViewHas('totalCents', 0)` / `assertViewHas('unpaidValueCents', 0)` — ruling
+    61's OWN prescribed instrument — and both fixtures run `Invoice::where(…)->delete()` first**, so no
+    other money string can be on the page. Weak-but-backed: ruling 76's grade, ⛔ not a wave.
+    (b) **`CardScreenTest`'s six `assertSee('1111')`** — `1111` is the last four of `4111111111111111`, so
+    a needle that cannot distinguish *the last four are shown* from *the whole PAN is shown*, in the one
+    test whose entire subject is that the PAN is never shown again. **The control card is
+    `last_four => '1111'` and every typed PAN is `4242…` — they share no digits.** (And ruling 246 already
+    converted that test's payload negatives; its one surviving plain `assertDontSee('4242424242424242')`
+    is 246's own Table B member, trivially true because the property held the **spaced** form.)
+    (c) **`DisputeCardScreenTest:47`'s `assertSee('lost')`** — a four-letter word a sibling row's
+    `wire:click="outcome(…, 'lost')"` attribute would satisfy from any status. **`dispute-card.blade.php`
+    has no Won/Lost buttons at all** — `:41-43` says *"record the decision yourself from the dispute
+    queue"* — so the only source is the pill's `:label`.
+    (d) ⭐⭐ **`ConflictsListScreenTest:52`'s `assertSee('open')`** — the blade carries `open` **twice**
+    (`:25`, `:28`) and **both are PHP comparisons**, `$c->status === 'open'` inside a `:state=` and an
+    `@if`, evaluated server-side and never rendered; the only rendered source is `:25`'s
+    `:label="$c->status"`.
+    ⭐⭐ **(d) is the instrument note and it generalises past this census: a Blade `@if($x === 'open')` or
+    `:state="$x === 'open' ? …"` puts the token in the SOURCE and not in the OUTPUT, so grepping a blade
+    for a needle OVER-COUNTS its rendered sources.** That is ruling 415's fifth mechanism — *a full,
+    plausible, entirely wrong answer* — arriving in the **haystack** rather than in the pattern, and it is
+    the first member of the zero-trap family that inflates rather than deflates. **A census that asks
+    whether a needle is satisfiable by chrome separates `{{ }}` interpolations and static text from PHP
+    conditions, or it invents defects.** ⛔ Not to be re-raised.
+    ⚠️ **Ruling 68's Carbon-sign population re-measured in the same pass** (64's discipline — an inherited
+    measurement is re-measured before it is repeated): `grep -rn -e "diffInDays" -e "diffInHours" -e
+    "diffInMinutes" -e "diffInMonths" -e "diffInSeconds"` over the eight module trees returns **eight
+    sites and no new member since 68**, and both of 68's own fixes are in place —
+    `X-120/Ui/CardScreen.php:100` is `$now->diffInDays($expDate, false)` with the receiver the right way
+    round and `false` explicit, and `X-199/Domain/InvoiceEngine.php:245` is
+    `$invoice->due_date->diffInDays(now())` under a comment naming the receiver choice. The other six all
+    put the earlier date on the receiver. ⛔ Struck.
+    ⭐ **Ruling 327's outcome shape a SEVENTEENTH time** — *a population measured non-empty that yields
+    zero buildable fixes is the more useful of the two results to write down*, because an empty census
+    tells a later tick *nothing is there* while a classified one tells it **what is there and why each
+    member stays**.
+427. **⭐⭐ SIXTH consecutive HOLD, and the disproving-measurement discipline fired FOUR times in one
+    census (RULED by the lane supervisor 2026-09-10 21:5x).** Ruling 325 requires the tick to say so
+    plainly rather than manufacture a wave, and ruling 323 forbids inheriting the previous tick's answer,
+    so everything was re-measured here. **The cadence, measured in THIS tick** (owner `OWNER.md` 09-09
+    09:02; rulings 269, 272): `git rev-list --count HEAD..origin/main` = **46**, not > 100 ✗ ·
+    `git diff --stat 8473c04a origin/main -- app/app/Doctor coder-bin .claude/hooks` **empty** ✗ ·
+    ⭐ `git merge-base HEAD origin/main` = **`8473c04a`**, this lane's own `chore(state)` from the previous
+    tick, with a push since — 272's second half ✗. **Merge gate CLOSED**, `--allow-merge` not passed.
+    ⚠️ `origin/main`'s own tip is literally `1d5d3cce merge: track/money … (tip 8473c04a…)`, which
+    corroborates and is **not** the measurement — ruling 145 is explicit that a merge subject line can be
+    true and spent, so the merge-base is what decided it. `origin/track/money` = `e6d6937f` = HEAD, so
+    nothing gated sits unpushed (26c). `OWNER.md` judged by its **heading list** (136), newest still
+    `## OWNER RULING — 2026-09-09 09:02`, consumed as ruling 272.
+    ⛔ **Briefing an empty wave to avoid an idle tick is what rulings 95, 100 and 111 exist to prevent,
+    and it is worse than idling**: it spends a dispatch, puts a coder into `app/**` with no measured
+    defect, and every edit is churn a later reviewer must re-derive (47's companion). ⭐ **The bar is what
+    has kept this lane's last forty-six waves free of invented work, and a HOLD is held to it too** —
+    ⛔ *sounds plausible* is not a population.
+    ⚠️ **The four lift conditions are CHECKED, never inferred:** a new dated `OWNER.md` section (case d,
+    which beats everything) · a cadence condition on a moved `origin/main`, all three measured in the
+    acting tick · a Track 1 answer to ACTION 13, 14, 15, 16, 18, 19, 20, 21, 22 or 23 · a population at
+    324's bar, **measured non-empty AND buildable**.
+    ⭐⭐ **What this tick adds to ruling 385's standing warning: the disproving measurement is now the
+    most productive habit in the ledger, and it is productive in the direction nobody counts.** Rulings
+    400, 403, 409, 421 and 422 each killed one candidate; this census killed **four in a row**, and in
+    every case the hypothesis rested on true measurements — `0.00` IS a substring of every figure ending
+    in a zero, `1111` IS the last four of a canonical test PAN, `lost` IS four letters, `open` DOES appear
+    twice in that blade. **Four true measurements, four false conclusions, four fifth measurements that
+    settled it.** ⛔ A census is not finished when its members are listed; it is finished when each
+    member's *safety* has been named, and naming it is what stops the next tick re-deriving it (328).
