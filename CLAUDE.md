@@ -15567,3 +15567,119 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     and rulings 333/340 both rest on that column being filled), and the **fourth** measurement, the
     column's own `->useCurrent()` DEFAULT, disproved it in one read. **Ask which measurement would
     DISPROVE the candidate and take that one FIRST.**
+483. **⭐⭐⭐ RULING 454'S INSTRUMENT CARRIED THREE `-e` TERMS AND ITS ANSWER WAS REPORTED UNDER ONE OF
+    THEM — the lane's two "fives" are DIFFERENT FILES, the transacted set is TEN, and "71 untransacted"
+    is right by TWO CANCELLING ERRORS (RULED by the lane supervisor 2026-09-11 04:5x).** Ruling 481's
+    move — *a one-clause safety inside a struck census is the cheapest place left to look, because a
+    strike records the conclusion and rarely the command* (257, 355) — was aimed at ruling 455's safety
+    (*the 71 untransacted files are safe because ruling 400 gives each `provisionTenant` a fresh
+    business*), and measuring it required re-measuring **which** files are untransacted. Ruling 454 swept
+    `-e "RefreshesTenantDatabase" -e "DatabaseTransactions" -e "RefreshDatabase"` and reported its five
+    hits under the **first** name. Split: `grep -rn -F -e "RefreshesTenantDatabase" app/tests/Modules`
+    returns **11 lines — 10 real `use` statements in five files, ALL OTHER LANES' (X-157 ×4, X-102 ×1)**
+    — plus ⭐ **ONE PROSE hit, `X-198/X198Test.php:694`, a comment**, which is the zero trap's mechanism 8
+    (a substring inside a longer phrase, INFLATING) caught only by **reading the hit** (262(b)), and which
+    re-confirms rulings 457 and 462 in passing. `grep -rn -F -e "use DatabaseTransactions" -e "use
+    RefreshDatabase"` over the eight trees returns **five files, ALL X-199's, ALL `DatabaseTransactions`**
+    — `CreditsTest:19`, `DeclinesTest:22`, `InvoicesTest:19`, `UnpaidTest:20`, `MoneyPaidTodayTest:21`.
+    ⭐⭐ **The two fives are different files and get different things:** the **pest-style** five —
+    `X-199/InvoiceNumberTest`, `X-199/InvoiceEngineTest`, `X-199/MarkInvoicesDueTest`, `X-211/ArEngineTest`,
+    `X-198/GatewayEngineTest` — get the trait from `Pest.php:84-86`'s `->use(...)->in('Modules')` **binding**
+    (transaction **+ schema refresh + `useTestDatabase()`**), and the **`DatabaseTransactions`** five are
+    class-based and get a **transaction only**. ⭐⭐⭐ **So the TRANSACTED set is TEN, not five** — and
+    454's *"71 untransacted"* is **exactly right**, reached from a wrong denominator (76) minus a wrong
+    five: **81 total − 10 = 71**, and **76 class-based + 5 pest-style = 81**, the arithmetic closing from
+    both directions (412). **Two errors cancelling is the most dangerous kind, because the number looks
+    corroborated** — ruling 448's *a count paired with an incorrect list is worse than either alone*, and
+    ruling 371's family a **twelfth** encoding. ⭐⭐ **429's known-member corroboration fires in the
+    strongest form available: the census returned BOTH of ruling 457's experimental subjects on the
+    correct sides** — `X198Test` class-based with neither mechanism (457 measured
+    `DB::transactionLevel()` = **0**) and `MarkInvoicesDueTest` pest-style with the binding (**1**).
+    **An experiment run one tick earlier is the best control a census can have.** ⚠️ The pest-style count
+    was re-run line-anchored after `-e "test("` matched **`latest(`** — ruling 214's own recorded hazard,
+    mechanism 8 twice in one tick. ⚠️ **FOURTEENTH inherited attribution corrected** (163, 171, 176, 257,
+    289, 355, 374, 383, 394(a), 449, 454, 458), ruling 257's shape a fourteenth time. ⛔ **454's
+    CONCLUSION stands entire** — a hand-written PHPUnit class gets no `->use()` binding, proved in vendor
+    and then by experiment — only its member naming moves, and **462's dependency is sharper: `X198Test`
+    is in NEITHER transacted set.**
+
+484. **⭐⭐⭐ THE MONEY SUITE'S SCHEMA REFRESH RESTS ON FIVE FILES CONTINUING TO BE PEST-STYLE, AND A
+    `--filter`ed PROOF GETS NONE (RULED by the lane supervisor 2026-09-11 04:5x).**
+    `RefreshesTenantDatabase`'s own docblock states the split and the stake — ⭐ ruling 326's shape a
+    **FOURTEENTH** time: `:22-23` *"schema created by the owner role (`pgsql_migrate`) — DDL is allowed ·
+    tests executed as the runtime role (`pgsql`) — RLS applies"* and `:29` *"the migration runs once per
+    process (guarded by `RefreshDatabaseState`)"*. `app/tests/TestCase.php:22` is
+    `// // use RefreshesTenantDatabase;` — **commented out**, re-measured this tick (64, 323) — so
+    `Pest.php`'s binding is the only route, and ruling 483 makes that route **five files wide in this
+    lane**. Two consequences, neither previously stated: (1) ⭐ **a `--filter`ed run on a CLASS-BASED test
+    applies no migration at all**, and every mutation proof here is filtered (72, 195, 314, 418), so
+    MONEY-203's new partial unique index reached `goaiez_antig_money_test` **only because a full gate had
+    run first** — the proof passed on a schema it did not create; (2) ⭐ **converting any one of the five
+    to a class — the ordinary way this lane writes a test — silently removes the lane's schema refresh**,
+    and the next migration simply never applies, failing a later suite in a file that did not change.
+    ⚠️ **The trait does NOT switch the connection's ROLE, and the docblock's `:25-26` stake is narrower
+    than it reads**: the runtime role is a property of the `pgsql` connection's config, so a class-based
+    money test runs as the runtime role with RLS applying whether or not it has the trait — the split the
+    trait maintains is about where **DDL** runs. ⭐ Ruling 460's probe measured the second belt
+    independently (`rls=1`, `FORCE` constrains even the owner), so isolation holds for all 71. **Ruling
+    481's inversion recurring: the stated safety names the mechanism that does not cover the majority, and
+    the real guarantee is elsewhere.** ⛔ **Not this lane's to fix** — `app/tests/TestCase.php` and
+    `Pest.php` are Track 1's (5), and ruling 462 already filed the doctor's own X-103 recommendation
+    (*bind the trait in the base `TestCase`*) on **TRACK 1 ACTION 13**. ⭐ **This is the strongest argument
+    yet for it and is recorded on that same item**, because it converts a tidiness note into a statement
+    about whether this lane's migrations reach its own test database at all.
+
+485. **⛔ THE SESSION-VARIABLE census — measured NON-EMPTY, ZERO buildable, struck on three grounds
+    (RULED by the lane supervisor 2026-09-11 04:5x).** The candidate: *`Tenancy` writes the tenant with
+    `set_config(?, ?, false)` — **session**-scoped — and ruling 457 measured 71 of 81 money test files
+    untransacted, so the value persists onto the connection into the NEXT test, where a stale tenant could
+    make an assertion pass for the wrong reason.* Nobody had stated it; 454/457 opened the transaction
+    question and stopped. ⭐⭐ **The safety is written in the code's own rule text** (326, **fifteenth**
+    instance and the most explicit yet) — `Tenancy.php:225-238`: *"Session scope means the value outlives a
+    request if a connection is ever reused… **That is safe here only because every entry point sets it
+    unconditionally, so a stale value is always overwritten before it can be read.** Do not weaken that."*
+    — with `:258` recording that *a session-level `set_config` is itself transactional in PostgreSQL*, so
+    the ten transacted files roll it back. **Struck on three measured grounds, the disproving measurement
+    taken FIRST** (400, a **twenty-fifth** firing): (1) ⭐ **the test layer reproduces the production
+    entry-point discipline by convention** — every money test method opens with `TestCase::provisionTenant`,
+    which ends in `Tenancy::set()` at `TestCase.php:177`, or in `X198Test`'s idiom with `provisionTenant`
+    **immediately followed by an explicit `DB::statement("SET app.business_id = …")`** at eleven-plus call
+    sites; (2) ⭐⭐ **every cross-tenant test RESTORES the rendering tenant explicitly** — the lane's four
+    isolation tests (`X-199/DeclinesTest:24`, `InvoicesTest:21`, `UnpaidTest:22`, `CreditsTest:21`) are
+    byte-identical in shape, `provisionTenant` t1 → seed → `provisionTenant` t2 → `Tenancy::actingAs(t2,
+    closure)` → **an explicit `Tenancy::set((int) $biz->id)`** → render, and `X198Test:383-396` sets before
+    **each** half; (3) ⭐⭐⭐ **every one of those chains opens with a PAIRED POSITIVE that pins the
+    rendering tenant** — `assertViewHas('declinesCount', 1)` + `assertSee('880.00')` **before** four
+    `assertDontSee` — so a wrong ambient tenant **fails the positive loudly** (400's second direction), and
+    ruling 101's *inverting a negative without replacing its positive is how a check quietly stops
+    checking* is already satisfied with ruling 61's own `assertViewHas` as the instrument. ⭐ **Ground 3
+    answers the sharpest form of the candidate, which ruling 400 did not cover**: 400 ruled *"there is no
+    third arrangement in which the wrong tenant is read and the assertion still holds"*, and that is
+    **false for a bare NEGATIVE assertion** — a lone `assertDontSee` of another tenant's value holds
+    whatever the ambient tenant is. **The lane has no bare one.** ⚠️ The `forgetAll` population was
+    measured with it — **two money files**, `X-211/ArOverdueQueueTest` (2 sites) and
+    `X-211/DetectOverdueReceivablesCommandTest` (13), both already governed by 276 and 193 — against a
+    control **firing and discriminating** at fifteen-plus sites in `X-102/ChatDoorTest` and `X-01/X01Test`;
+    ⛔ money proposes no edit on those (5). ⛔ Not to be re-raised. ⭐ Ruling 327's outcome shape a
+    **THIRTY-SEVENTH** time.
+
+486. **⛔ SEVENTEENTH consecutive HOLD (RULED by the lane supervisor 2026-09-11 04:5x).** All four lift
+    conditions measured in the acting tick (269, 272, 323): `OWNER.md`'s newest heading still
+    `## OWNER RULING — 2026-09-09 09:02` (136), consumed as ruling 272 — case (d) ✗ · the cadence **all
+    three ✗** — `git rev-list --count HEAD..origin/main` = **12**, not > 100 ·
+    `git diff --stat e78d9ba3 origin/main -- app/app/Doctor coder-bin .claude/hooks` **empty** ·
+    merge-base **`e78d9ba3`**, this lane's own `chore(supervisor)`, with **four** ledger commits since
+    carrying no substantive work (272's second half) · no Track 1 answer to ACTION 13, 14, 15, 16 (half —
+    446), 18, 19, 20, 21, 22, 23 or 24 · and 483/484/485's population is **non-empty and NOT buildable**,
+    its one live item cross-lane and already filed. `origin/main` = **`8c35fbc8`**. **Merge gate CLOSED**,
+    `--allow-merge` not passed. ⚠️ Ruling 145's trap is live on the board and was not read as the
+    measurement — the **merge-base** decided condition 3. ⛔ Briefing an empty wave to avoid an idle tick
+    is what rulings 95, 100 and 111 exist to prevent, and it is worse than idling; ⛔ *sounds plausible* is
+    not a population. **Cap untouched — no BLOCK is open.**
+    ⭐⭐⭐ **What this tick adds to ruling 385's standing warning: the cheapest place left to look now has a
+    SIBLING, and both are demonstrated.** 481 and 485 each swept **a ONE-CLAUSE SAFETY inside a struck
+    census**; 483 swept **a MULTI-TERM INSTRUMENT whose answer was reported under ONE of its terms.** ⭐ The
+    second is cheaper still, because the instrument is already written down in the ruling — **re-run it
+    with its terms SPLIT and compare the members, not the count.** ⛔ This is NOT a reason to stop
+    censusing: it is what a lane looks like after rulings 36–486 have been applied, and 483 came from
+    re-running an instrument this ledger had already run.
