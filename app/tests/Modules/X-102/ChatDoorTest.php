@@ -29,6 +29,11 @@ class ChatDoorTest extends TestCase
      * BUILD PROPOSAL: ChatTurnCreated carries no message text, but could safely do so because the AgentTurns law prohibits unencrypted text in job payloads, not synchronous event payloads (EmailReplied safely carries text). Owner: X-102
      * CLOSED: X-102 should record the agent's reply synchronously. The premise of listening to AgentTurnAnswer is wrong, as AnswerAgentTurnJob proves callers use the synchronous return array, and the event carries no session ID. Owner: X-102
      * REFINEMENT: The count assertion for ChatTurn was narrowed to author_type = 'visitor'. The original assertion (count === 1) would have failed if 0 or 2 visitor turns were created, and the new assertion still fails in those exact cases while legitimately permitting the new agent turn row.
+     * MEASURED 2026-09-10 (site lane): FALSE — the premise does not hold at source: no caller can supply an author type other than 'visitor' today (app/app/Modules/X-102/Http/Controllers/ChatTurnController.php:45).
+     * MEASURED 2026-09-10 (site lane): TRUE AND NOT OURS — X-102 holds no conversation column to pass, so Track 1 must mint the mapping (app/app/Modules/X-102/Actions/ChatTurnAction.php:29).
+     * MEASURED 2026-09-10 (site lane): TRUE BUT THE OUTPUT HAS NO CONSUMER — no file in the tree reads the turn_number column (app/app/Modules/C-Agent/Models/AgentTurn.php:26).
+     * MEASURED 2026-09-10 (site lane): TRUE AND NOT OURS — the claim holds about the phone column, but UnifiedInboxManager belongs to X-01 (app/app/Modules/X-01/Domain/UnifiedInboxManager.php:35).
+     * MEASURED 2026-09-10 (site lane): FALSE — the premise does not hold at source: the AgentTurns law does not prohibit unencrypted text but notes the payload carries a row id, and the event has zero listeners anyway (app/app/Services/Agent/AgentTurns.php:184).
      */
     public function test_valid_key_creates_chat_session_for_right_business(): void
     {
