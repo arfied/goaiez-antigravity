@@ -2886,6 +2886,15 @@ certified by `.gateT346.txt`. **Tick 346 wrote a HOLD**: the census input is unm
   STAGES-238 item 7 asked for §2 and §4, but section 8 did not list them, so the coder never pasted
   them.
 
+⌛ **Tick 347 — HOLD.** `main` moved `46afc022` → `f58aec8f`: +2 first-parent / +10 ancestor, a
+`track/ui` merge (css + one test) and the owner's `--coder claude` fallback re-enable.
+- All three drift conditions are FALSE.
+- No checker byte moved.
+- This lane's `launch-coder.sh:21` already accepts `--coder claude`, so there is nothing to adopt.
+
+Tick 346's notes were committed as `e11a9ea8`, certified by `.gateT347b.txt`, and pushed
+`4c7129dc..e11a9ea8`. The census input is unmoved and the backlog is empty.
+
 ⌛ **S-200 as dispatched (history): §3 ledger refresh, dispatched at tick 345 as STAGES-238, merge gate CLOSED.**
 Tick 344's HOLD missed that §3 still read `boundary 55 · citation 3 · capability 207` while §5 reads
 **41 · 0 · 204** (`.gateT345b.txt` at `423ec5a9`, total 477, the eight sum). This is S-191's exact
