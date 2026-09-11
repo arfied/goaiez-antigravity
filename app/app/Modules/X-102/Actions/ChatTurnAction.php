@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Event;
 
 final class ChatTurnAction
 {
-    public function handle(int $businessId, int $chatSessionId, string $authorType, string $message): ChatTurn
+    public function handle(int $businessId, int $chatSessionId, string $authorType, string $message): array
     {
         $turn = ChatTurn::create([
             'business_id' => $businessId,
@@ -28,6 +28,7 @@ final class ChatTurnAction
         // 2. $conversationId is not passed. This is a build owed by Track 1: mapping chat_session_id to C-Agent's conversation_id so HUMAN_TAKEOVER_LATCH works is required, but it has not been asked for yet.
         // 3. $turnNumber defaults to 1. This is a build owed: X-102 should compute and pass the real turn number.
 
+        $agentTurn = null;
         if ($authorType === 'visitor') {
             $response = app('App\Modules\CAgent\Actions\AgentAnswerAction')->handle($businessId, $message);
             if (isset($response['reply'])) { // TODO(X-102): This guard is dead. AgentAnswerAction always returns the 'reply' key (even as ''), so isset() refuses nothing and blank turns are inserted.
@@ -45,6 +46,6 @@ final class ChatTurnAction
             }
         }
 
-        return $turn;
+        return [$turn, $agentTurn];
     }
 }
