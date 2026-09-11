@@ -1361,3 +1361,11 @@ Therefore, adding a row to the tracker could move only the capability count.
 - `2026-09-09T10:29:39` stage journey = 3
 - `2026-09-09T10:29:39` note: citation left 0 for the first time: 3 rows, all X-198 (R036 PaymentLinkAction.php:40, R037 GatewayEngine.php:76, R093 StripeGatewayClient.php:17), inherited through the 2026-09-09 merge of origin/main cbdba9cd. This lane authors no app/ byte (ours-since-base is app/phpunit.xml alone), so they are money's to resolve. Filed as TRACK 1 ACTION 14. Never fixed here.
 - `2026-09-09T10:29:39` note: §7 finished with tests 2436 · passed 2428 · FAILED 6 · errors 2. Six failures are RULING FO evidence-artifact tests (X-117, X-198, X-199, X-211) not owned by this lane, and the two errors are 'JOURNEY HARNESS NOT IMPLEMENTED' which are not evidence-artifact tests.
+- `2026-09-11T10:06:59` stage integrity = 0
+- `2026-09-11T10:06:59` stage boundary = 41
+- `2026-09-11T10:06:59` stage contract = 85
+- `2026-09-11T10:06:59` stage citation = 0
+- `2026-09-11T10:06:59` stage schema = 16
+- `2026-09-11T10:06:59` stage capability = 204
+- `2026-09-11T10:06:59` stage anchor = 128
+- `2026-09-11T10:06:59` stage journey = 3
