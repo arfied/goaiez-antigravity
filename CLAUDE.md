@@ -17458,3 +17458,84 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty wave to avoid an idle tick is what
     rulings 95, 100 and 111 forbid. ⚠️ `app/CLAUDE.md` came into context again this tick. It is Laravel Boost
     boilerplate and was not followed.
+
+550. **⭐ The WHITESPACE-NORMALISATION census and its multibyte sibling: 12 `trim(` sites and 11 byte-string
+    function sites in the lane. One member validates a TRIMMED value and stores the UNTRIMMED one. It is recorded at
+    ruling 76's grade. Zero buildable (measured by the lane supervisor 2026-09-11 11:1x, by `date` `11:10`; rulings 76,
+    96, 98, 206, 262(b), 294, 324, 327, 328, 376(b), 377, 404, 415, 429, 449, 514).** Ruling 404 recorded that
+    `AgeingByReason`'s `empty()` and `ArEngine`'s `trim(...) === ''` disagree about what an empty reference is. Nobody
+    had asked the complementary question over the whole lane: *when an engine checks a trimmed value, does it store
+    that trimmed value?* The case ruling 206 and 404 did not name is the other half of the same seam: length and
+    case functions applied to owner text with byte semantics.
+    **Instruments, quoted (300)**, each over the eight money module trees, `/Database/` filtered out:
+    - `grep -rn -F -e "trim("` → **12**.
+    - `grep -rn -e "[^a-z_]strlen(" -e "[^a-z_]substr(" -e "strtoupper(" -e "strtolower("` → **11**.
+    - The in-lane discriminating control: `grep -rn -F -e "mb_strlen(" -e "mb_substr(" -e "mb_strtolower("` → **3**,
+      and all three are length guards on owner-typed text (`AccountingSyncEngine:54,:95`, rulings 206's own fix;
+      `ArEngine:240`, ruling 404's own fix).
+    - ⭐ **Positive control:** `grep -rln -e "[^a-z_]strlen(" -e "[^a-z_]substr("` over `app/app/Services` and
+      `app/app/Livewire` → **28** files.
+    **The multibyte half: all 11 are safe, and they are safe for the same reason (328). Each operates on text
+    whose alphabet is ASCII by construction.**
+    - `CardPresentAction:25,:47,:48,:60,:72` act on `$digits`, the output of `preg_replace('/\D/', …)`. ⭐ Known
+      members (429): rulings 377 and 380(a).
+    - `InvoiceNumber:29` strips the `INV-` prefix this app writes. ⭐ Known member: ruling 376(b).
+    - `CheckoutEngine:88,:233` uppercase `Str::random`, which is ASCII. Rulings 327 and 465.
+    - `StripeGatewayClient:32,:74` lowercase a `char(3)` currency code. Ruling 233.
+    - `AccountingSyncEngine:47` lowercases owner text only to compare it with the ASCII sentinel `'uncategorised'`.
+      `AccountingSyncEngine:26`, `AccountingSyncAction:61` and the migration default at `2026_08_30_000092:57`
+      write exactly that literal, so it is this app's own sentinel and not a vendor spelling. `app/composer.json`
+      requires `php ^8.4`, and since PHP 8.2 `strtolower` is locale-insensitive, so no locale can change the
+      comparison.
+    ⭐ **So every length guard on owner-typed text in the lane uses `mb_strlen`, and every byte function in the lane
+    touches an ASCII-only value.** The instrument separates the two sets exactly, which is what a discriminating
+    control has to show.
+    **The trim half, each member read (262(b)) with its safety named (328):**
+    - **Trim-then-use, the trimmed value is what is stored or passed on (6):** `AccountingSyncEngine:46`,
+      `:84`, `:85`, `:86` (all four reassign the variable and then store it); `CardPresentAction:37` (`$name`, which
+      is never stored, 119); `DisputeNoteAction:23` (the trimmed `$note` becomes the evidence content).
+    - **Trim in the component, and the trimmed value is what reaches the engine (2):** `DisputeQueue:34` (`$note`
+      into `$items`); `AgeingByReason:49` (only decides whether `$cap` is null; the stored value is `(int)`-cast).
+    - **Display concatenation, never stored (3):** `X-199/Credits:86`, `:113` and `Invoices:62` trim a
+      `first_name.' '.last_name` join so a missing half leaves no stray space.
+    - ⭐ **Check-trimmed, store-untrimmed (1):** `ArEngine::logOfflinePayment()` refuses at `:235` when
+      `trim((string) $reference) === ''`, then measures `mb_strlen((string) $reference)` at `:240` and stores
+      `'reference_number' => $reference` at `:249`, all untrimmed. So a pasted `"  CHK-1044  "` is stored with its
+      padding. Its three siblings above trim first and store the result, which is ruling 98's tell.
+    **Why it is recorded and not briefed.** Nothing false is stored or rendered. The padded reference is still the
+    reference the owner typed, and HTML collapses the whitespace where `collections-package-preview` renders it
+    (364). Ruling 514 measured that `offline_payments` legitimately repeats and carries no unique index and no
+    lookup on `reference_number`, so padding cannot split or hide a match. The only arithmetic consequence is
+    that the padding counts toward the 255-character guard, and the refusal it would produce is true of the value
+    submitted. The path is also unreachable in production: nothing raises an invoice (170, re-measured at 517).
+    ⛔ **Not a wave.** Briefing a whitespace fix with no owner-visible consequence is the churn rulings 95, 100 and
+    111 forbid. ⛔ **Not harmonised by reasoning alone:** the sibling with the stronger guarantee is
+    `AccountingSyncEngine`, and changing ArEngine to match it would still leave `AgeingByReason:105`'s `empty()`
+    and the engine's `trim()` disagreeing about `"0"` (404), so the one-line fix does not close the seam it sits in.
+    ⚠️ **Trigger:** a production caller of `logOfflinePayment`, a lookup or unique index keyed on
+    `reference_number`, or any wave with a provable item in `ArEngine::logOfflinePayment` (403's ride-along rule).
+    ⭐ 415's first-three check passed for both censuses (`X-199/Credits:86`, `DisputeQueue:34`, `CardPresentAction:37`;
+    `InvoiceNumber:29`, `CheckoutEngine:88`, `:233`), and so did 449's each-member-exists check: every member was
+    printed from a file. ⛔ Both populations are struck, not to be re-run. Ruling 327's outcome shape a
+    **sixtieth** time.
+    ⭐ **The generalisable half: a guard and a write that read the same variable can still read two different
+    values**, when the guard normalises inline (`trim(...) === ''`) and the write does not. A census of guards
+    therefore checks whether the guard **reassigns** the value or only **tests** a transformed copy of it.
+
+551. **⛔ FORTY-SEVENTH consecutive HOLD (RULED by the lane supervisor 2026-09-11 11:1x, by `date`).** All four lift
+    conditions were measured this tick (269, 272, 323), each case decided on mtimes (494):
+    - **Owner.** `OWNER.md`'s newest heading is still `## OWNER RULING — 2026-09-09 09:02` (136), mtime
+      `09-09 09:02:03`, older than `REVIEWS.md` (`11:02:20`).
+    - **Coder.** `--check` returned `CODER DEAD`.
+    - **Mailbox.** `REPORT.md` (`07:15:21`) and `BRIEF.md` (`07:07:27`) are both older than `REVIEWS.md`.
+    - **Cadence, all three ✗.** After `git fetch --no-write-fetch-head origin`, `origin/main` = **`41f21fab`**,
+      unmoved. `git rev-list --count HEAD..origin/main` = **39**, not above 100.
+      `git diff --stat dca743e8 origin/main -- app/app/Doctor coder-bin .claude/hooks` is empty.
+      `git merge-base HEAD origin/main` = **`dca743e8`**, and `git diff --name-status dca743e8 origin/main` is the
+      same 12 paths (504): 7 per-track, X-102's three, and Track 2's `app.css` and `ReplyQueueStylesheetTest.php`.
+    - **Track 1.** No answer to ACTION 13–25.
+    - **Population.** Ruling 550's is non-empty and not buildable.
+
+    **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty wave to avoid an idle tick is what
+    rulings 95, 100 and 111 forbid. ⚠️ `php -v` needs approval on this seat, so the PHP runtime version was read
+    from `app/composer.json`'s constraint and not measured.
