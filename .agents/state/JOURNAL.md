@@ -781,3 +781,4 @@
 - `2026-09-11T14:34:54` (R245) X-163 — Pricebook's callout deduction property is calloutFeeDeducted, the name pricebook.blade.php and updatedCalloutFeeDeducted() bind, so ticking the box saves the choice and a stored deduction loads ticked
 - `2026-09-11T15:05:03` (R245) X-163 — a refused price row keeps its Confirm clickable on Pricebook and ConfirmationScreen; the server refusal is the only guard, and the Needs a price flag clears only when a confirm succeeds or the row is deleted
 - `2026-09-11T15:33:05` (R245) X-163 — ConfirmationScreen::updatePrice and DailyPricingDigest::updatePrice are private; a price reaches those screens' writes only through confirm(), so a browser call cannot rewrite a confirmed price
+- `2026-09-11T15:52:58` (R245) X-82 — RateRegistryView converts a typed amount to cents with (int) round((float) $amount * 100), X-163's shape, so a typed 19.99 is stored as 1999 cents and never truncated to 1998
