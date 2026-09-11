@@ -16610,3 +16610,63 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty wave to avoid an idle
     tick is what rulings 95, 100 and 111 forbid. ⚠️ `app/CLAUDE.md` came into context again this tick. It
     is Laravel Boost boilerplate and was not followed.
+
+522. **⭐⭐ Ruling 520's IDENTITY half: the Migrator keys files by basename, so a duplicate basename, a
+    migration outside a loaded directory, or a named migration class would each fail silently or fatally.
+    All are measured ZERO, with controls, and the two JSON columns and three ALTER `down()`s are measured
+    with them. Zero buildable (measured by the lane supervisor 2026-09-11 07:5x, by `date` `07:50`).**
+    Ruling 520 measured in vendor that `Migrator::getMigrationFiles()` keys every file by migration name and
+    sorts on it across all loaded paths, and it swept the ORDER that key implies. The same key has an
+    IDENTITY consequence nobody had measured. A second file with the same basename in another module
+    overwrites the first in that collection, and one migration never runs while the command reports success.
+    **Instruments, quoted (300):**
+    - `find app/app/Modules app/database -path '*migrations*' -name '*.php' -printf '%f\n' | sort | uniq -d`
+      prints **nothing**. `| wc -l` gives **486** and `| sort -u | wc -l` gives **486**, so the zero is
+      corroborated by an independent count (207, 294). ⭐ Positive control: the same `sort | uniq -d` over
+      every module `.php` basename fires at once (`ApprovalRequested.php`, `AssistantEngine.php`,
+      `attribution-row.blade.php`), so the instrument detects a repeat.
+    - `grep -rn -F -e "loadMigrationsFrom"` over the eight money modules returns **8**, one per provider,
+      each `__DIR__.'/Database/migrations'`. ⭐ Control: 120+ providers carry it tree-wide.
+    - `find` for a money migration outside `Database/migrations`, or nested below it, returns **nothing**.
+      The same instrument tree-wide returns 15 files, and ⭐ every one is a class whose NAME contains
+      *Migration* (`X-212`'s `MigrationRun`, `X-129`'s `MigrationEngine`), not a migration: the zero trap's
+      mechanism 8 (inflating), caught by reading the hit (262(b)). The lane has **43** migration files.
+    - `grep -rl -F -e "return new class" app/app/Modules app/database --include=*.php | grep -c -F -e
+      "/migrations/"` = **486**, equal to the file count, so every migration in the tree is an anonymous
+      class and no two named classes can collide.
+    ⭐ **Known member (429):** MONEY-203 to MONEY-211's nine index migrations each proved they ran through
+    their own `SQLSTATE[23505]` mutation (503, 506, 508, 513, 516), and all nine sit directly in a loaded
+    `Database/migrations`. ⭐ 415's first-three check and 449's each-member-exists check passed.
+    **Measured in the same pass and struck with it:**
+    - The lane's two JSON columns are both cast `array`: `carts.items` (`jsonb`, `Cart.php:16`) and
+      `ar_collections_packages.contents` (`json`, `ArCollectionsPackage.php:16`). ⚠️ `contents` is `json`, not
+      `jsonb`, so Postgres has no equality operator for it. `grep -rn -F -e "contents"` over X-211's module
+      and test trees shows every read is a PHP array index (the preview blade, three test assertions), with
+      no SQL predicate, `DISTINCT` or `GROUP BY` on it. Safe.
+    - The three non-index ALTER migrations' `down()`s restore their prior state: `payments.status` default
+      back to `'captured'`, `orders.status` default back to `'paid'`, and `payment_links.url` back to
+      `varchar(255)`. ⚠️ The last one fails **loudly** with `22001` if a URL longer than 255 exists, which
+      ruling 41 measured a live Stripe link is (422 characters). A loud rollback refusal is not a silent
+      no-op, and ruling 41 part 3 forbids editing the migration. Recorded, not buildable.
+    ⛔ Struck, not to be re-run. ⚠️ **Trigger:** a new migration directory in the lane, a migration moved or
+    renamed, or a named migration class. Ruling 327's outcome shape a **forty-sixth** time.
+    ⭐ **The general lesson is 520's third half.** A key that fixes ORDER also fixes IDENTITY. A census of
+    what a sort key sorts owes a census of what the same key silently overwrites.
+
+523. **⛔ TWENTY-SEVENTH consecutive HOLD (RULED by the lane supervisor 2026-09-11 07:5x, by `date`).** All
+    four lift conditions were measured this tick (269, 272, 323), each case decided on mtimes (494):
+    - **Owner.** `OWNER.md`'s newest heading is still `## OWNER RULING — 2026-09-09 09:02` (136). Its
+      mtime is `09-09 09:02:03`.
+    - **Coder.** `--check` returned `CODER DEAD`.
+    - **Mailbox.** `REPORT.md` (`07:15:21`) and `BRIEF.md` (`07:07:27`) are both older than
+      `REVIEWS.md` (`07:43:03`).
+    - **Cadence, all three ✗.** `origin/main` = **`46afc022`**, unmoved.
+      `git rev-list --count HEAD..origin/main` = **19**, not above 100.
+      `git diff --stat dca743e8… origin/main -- app/app/Doctor coder-bin .claude/hooks` is empty.
+      The merge-base is **`dca743e8`**, this lane's own pushed supervisor tip. Its content,
+      `git diff --name-status dca743e8… origin/main`, is the 7 per-track paths plus X-102's three (504).
+    - **Track 1.** No answer to ACTION 13–25.
+    - **Population.** Ruling 522's is non-empty and not buildable.
+
+    **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty wave to avoid an idle
+    tick is what rulings 95, 100 and 111 forbid.
