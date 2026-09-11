@@ -6,10 +6,10 @@ namespace Tests\Modules\X163;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X163\Models\PriceBookItem;
-use App\Modules\X163\Ui\ConfirmationScreen;
 use App\Modules\X163\Actions\CalloutLookupAction;
 use App\Modules\X163\Models\CalloutFee;
+use App\Modules\X163\Models\PriceBookItem;
+use App\Modules\X163\Ui\ConfirmationScreen;
 use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -266,6 +266,7 @@ class ConfirmationScreenTest extends TestCase
 
         Livewire::actingAs($user)->test(ConfirmationScreen::class)->assertOk();
     }
+
     public function test_ticking_deducted_with_no_fee_set_writes_no_fee_and_the_agent_refuses(): void
     {
         $owner = User::factory()->create();
