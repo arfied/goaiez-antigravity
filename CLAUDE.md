@@ -8961,6 +8961,72 @@ Watch for: <the trap that applies, by name>
   must be **re-measured before it is briefed**, never inherited from this line. Board at tick 305: proposals
   **14** · `app/app/Modules/` **0** · `CLOSED:` **5**. Suite at `324b5233`: `tests 2450 · passed 2442 ·
   assertions 10805 · failed 6 · errors 2`, the standing **eight** by identity.
+- ⚠️⚠️ **A correction can carry its scope word into the REPORT and drop it from the DOCBLOCK — and the
+  counterexample to the unscoped sentence is then the very method it documents.** Wave 173 was sent to
+  replace a false `BUILD PROPOSAL` row and wrote `Finding: There are no direct callers bypassing the HTTP
+  middleware.` at `X102Test.php:531`, over a method that IS one — `grep -c "captureAction->handle"` on that
+  file is **13**. The true claim, stated correctly in the wave's own `ITEM1` field and in its run log, is
+  *"no direct callers **in production**"*: `grep -rn "ChatCaptureAction" app/app app/tests --include=*.php`
+  is eight lines, the class, three of `ChatCaptureController` and four of `X102Test.php`. **`REPORT.md` is
+  overwritten every wave and a docblock is not, so the terser record is the durable one** — the inverse of
+  tick 275's NOTE 1, where the numbered answers were the precise ones. ⭐ The tell needs no tree beyond the
+  file: **a sentence asserting the ABSENCE of a caller shape, sitting over a method of that shape, is false
+  in its own file whatever it is true of.** ⚠️ And the same commit scoped the *other* docblock correctly
+  (`ChatDoorTest.php:383`, *"redundant on the only existing path"*), so this is ticks 244/246 with both
+  instances inside one diff: **one instruction each, and the scope discipline transferred to one of two.**
+- ⚠️ **§6 prints pint's object and phpstan's on ONE line, so a `grep -m1` for either returns BOTH — the
+  tick-172 misread made structurally inevitable, and describing the field is what causes it.** Wave 173's
+  `PINT` and `PHPSTAN` came back byte-identical, each carrying both objects, from a brief of mine reading
+  *"the object out of that file, whole and alone"*. Fourth recurrence of tick 302's own rule — *print the
+  command, never describe the fields* — after `MOVED` (tick 285), `MOVED` again (tick 302) and `MESSAGE`
+  (wave 171). **RULED at tick 306: `PINT` and `PHPSTAN` are each a `grep -o` whose character class stops at
+  the first closing brace**, printed verbatim; a class that cannot cross a `}` cannot reach its neighbour.
+  ⭐ Same tick, same family, cheap: `grep -m1 "STAGES   :"` (tick 288) carries its own label into the value,
+  and `| cut -d: -f2-` strips it — recorded at tick 294 and again here, so **fix a cosmetic field on the
+  tick that notices it twice** rather than recording it a third time.
+- ⚠️ **Every field a brief names by its LABEL goes in the fenced template block.** Wave 173's item 5 said
+  *"write `LEDGER : no row this wave`"* in prose over a template with no `LEDGER` slot, and the decline
+  landed in `NOT RUN` and `NOTES`. Seventh recurrence of *a measurement or a field named in a brief's prose
+  with no slot in the template is answered somewhere else* (ticks 259, 263, 265, 267, 271, 289), all seven
+  this column's.
+- ⚠️ **A picked sentence with two clauses is answered on the clause a single command can reach.** Wave 173's
+  `Q2` quoted *"the ledger row was already perfectly correct, only the files needed modification"* and
+  answered with an empty `git diff … JOURNAL.md`, which establishes the second clause and is silent on the
+  first — the tick-283 *artifact that agrees* family in its half-answering form. **Require the command to
+  reach EVERY clause of the sentence, and to be one whose output would differ if the sentence were false.**
+- ⭐⭐ **`Q5` — *re-run one command out of item 0 and say whether it matches what the brief printed* — is the
+  working replacement for the retired free-text contradiction question, and it paid on its first outing.**
+  Wave 173 answered `No … 13 lines instead of 14, because I removed the BUILD PROPOSAL line`, output pasted.
+  The twelve failed wordings all asked the coder to LOCATE a disagreement inside its own report, which is
+  answerable by a convention, a universal ground, an agreeing artifact or an invention; this one asks it to
+  **reconcile the brief against the tree**, which its own work is expected to change. Keep printing item 0's
+  commands with their outputs so there is something to re-run against.
+- **Backlog at tick 306 — wave 174 is what happens to C-Agent's REPLY after `ChatTurnAction` calls it, and
+  this column names no conclusion.** Tick 305 named `ChatDoorTest.php:29` and said to re-measure before
+  briefing; re-measured, it is **not** the wave — `grep -rn "ChatTurnCreated" app/app app/tests
+  --include=*.php` is one declaration, one `use`, one dispatch at `ChatTurnAction.php:22` and two docblock
+  rows, so **zero listeners**, and widening an event nobody consumes is decision 272's write-only shape.
+  What the same measurement turned up is on no row at all: `ChatTurnAction.php:34` calls
+  `AgentAnswerAction->handle($businessId, $message)` and **discards the return array**, which carries
+  `turn_id · status · reply`; `ChatTurnController:48-50` answers `201` with `['id' => $turn->id]` and no
+  reply; all five `AgentTurn::create` calls write `$conversationId` and `$turnNumber`, which from this path
+  are the defaults `null` and `1`; `chat_turns` gets one `author_type => 'visitor'` row per turn and never
+  an agent row; and `AgentTurn`'s only reader anywhere is `C-Agent/Ui/Thread.php:19`,
+  `where('business_id')->orderBy('id','desc')->get()`, business-wide with no per-conversation key.
+  Lane-owned on both ends, single-module to change, on the live public unauthenticated
+  `POST /api/chat/{key}/turn` door, blocked on no vendor, no credential and no Track 1 declaration.
+  ⛔ **Whether that is a defect, a deliberate write-only door, or a build owed is the coder's** — the
+  conclusion-withheld form is 27-for-27 and has corrected this column five times on X-102's seams alone, so
+  the measurements go over printed with a conclusion attached to none and the third and fourth branches are
+  written out (tick 192). ⚠️ `ChatDoorTest.php:104-123` already asserts on `AgentTurn` from this path
+  (wave-97/tick-200 census handed over, standing ⛔ intact), and `app/public/goaiez-chat.js` does not exist,
+  so a build that puts the reply in the response builds for a consumer that is itself a board row — a
+  measurement for the coder, never a reason of mine. ⛔ `ChatDoorTest.php:26` is Track 1's; `:25` and `:27`
+  are unreachable behind `ChatTurnController:45`'s hardcoded `authorType: 'visitor'` and a column with six
+  writers and no reader, re-measured this tick. Board at tick 306: proposals **13** · `app/app/Modules/`
+  **0** · `CLOSED:` **5**. Suite at `51085ebe`: `tests 2450 · passed 2442 · assertions 10805 · failed 6 ·
+  errors 2`, the standing **eight** by identity. `vs origin/main: behind 360, ahead 47` — tick 272 governs
+  the next merge. Re-run every grep; never inherit one.
 
 ## Style
 
