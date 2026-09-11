@@ -39,6 +39,8 @@ use App\Modules\CReviews\Ui\ReviewsQaRequests;
 use App\Modules\CSms\Events\SendRequested;
 use App\Modules\X121\Models\Person;
 use App\Modules\X171\Events\JobCompleted;
+use App\Modules\X181\Actions\QaTicketCreateAction;
+use App\Modules\X181\Actions\QaTicketResolveAction;
 use App\Modules\X181\Models\QaTicket;
 use App\Services\Billing\CreditLedger;
 use App\Services\Config\DefaultsRegistry;
@@ -1088,6 +1090,69 @@ class CReviewsTest extends TestCase
         $this->assertEquals('refused', $res['status'], json_encode($res));
         $this->assertEquals('CONSENT_REFUSED', $res['refusal_code'], json_encode($res));
         $this->assertEquals('no_consent_record', $res['reason'], json_encode($res));
+    }
+
+    public function test_g20_05_csat_on_resolve_asks_a_person_with_a_phone(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'CSAT Send Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $person = Person::create(['business_id' => $biz->id, 'first_name' => 'Ana', 'phone' => '+15125550411']);
+        $ticket = app(QaTicketCreateAction::class)->handle($biz->id, $person->id, 'Triage');
+
+        Event::fake([SendRequested::class, CsatRequested::class]);
+
+        app(QaTicketResolveAction::class)->handle($biz->id, $ticket->id, 'fixed');
+
+        Event::assertDispatched(SendRequested::class, function ($e) use ($biz, $ticket) {
+            return $e->businessId === $biz->id
+                && $e->compositionId === $ticket->id
+                && $e->recipientPhone === '+15125550411'
+                && $e->messageClass === 'marketing';
+        });
+        Event::assertDispatched(CsatRequested::class, function ($e) use ($biz, $ticket, $person) {
+            return $e->businessId === $biz->id && $e->ticketId === $ticket->id && $e->personId === $person->id;
+        });
+        $this->assertNotNull(QaTicket::find($ticket->id)->csat_requested_at);
+    }
+
+    public function test_g20_05_csat_on_resolve_is_silent_without_a_phone_or_a_person(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'CSAT Silent Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $phoneless = Person::create(['business_id' => $biz->id, 'first_name' => 'Bo']);
+        $withPerson = app(QaTicketCreateAction::class)->handle($biz->id, $phoneless->id, 'Triage');
+        $withoutPerson = app(QaTicketCreateAction::class)->handle($biz->id, null, 'Triage');
+
+        Event::fake([SendRequested::class, CsatRequested::class]);
+
+        app(QaTicketResolveAction::class)->handle($biz->id, $withPerson->id, 'fixed');
+        app(QaTicketResolveAction::class)->handle($biz->id, $withoutPerson->id, 'fixed');
+
+        Event::assertNotDispatched(SendRequested::class);
+        Event::assertNotDispatched(CsatRequested::class);
+        $this->assertNull(QaTicket::find($withPerson->id)->csat_requested_at);
+        $this->assertNull(QaTicket::find($withoutPerson->id)->csat_requested_at);
+    }
+
+    public function test_g20_05_csat_on_resolve_is_suppressed_while_another_ticket_is_open(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'CSAT Suppressed Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $person = Person::create(['business_id' => $biz->id, 'first_name' => 'Cy', 'phone' => '+15125550412']);
+        $resolved = app(QaTicketCreateAction::class)->handle($biz->id, $person->id, 'Triage');
+        $stillOpen = app(QaTicketCreateAction::class)->handle($biz->id, $person->id, 'Second complaint');
+
+        Event::fake([SendRequested::class, CsatRequested::class]);
+
+        app(QaTicketResolveAction::class)->handle($biz->id, $resolved->id, 'fixed');
+
+        $this->assertEquals('open', QaTicket::find($stillOpen->id)->status);
+        Event::assertNotDispatched(SendRequested::class);
+        Event::assertNotDispatched(CsatRequested::class);
+        $this->assertNull(QaTicket::find($resolved->id)->csat_requested_at);
     }
 
     /**
