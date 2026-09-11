@@ -18,6 +18,7 @@ use App\Modules\X211\Models\ArPlanTerm;
 use App\Modules\X211\Models\OfflinePayment;
 use App\Modules\X211\Models\PaymentPlan;
 use App\Modules\X211\Models\ReceivableState;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 
@@ -141,61 +142,80 @@ final class ArEngine
      */
     public function offerPlan(int $businessId, int $invoiceId, int $installmentsCount = 3, string $frequency = 'monthly'): PaymentPlan
     {
-        return DB::transaction(function () use ($businessId, $invoiceId, $installmentsCount, $frequency) {
-            $invoice = app(InvoiceReader::class)->forBusiness($businessId, $invoiceId);
+        try {
+            return DB::transaction(function () use ($businessId, $invoiceId, $installmentsCount, $frequency) {
+                $invoice = app(InvoiceReader::class)->forBusiness($businessId, $invoiceId);
 
-            $existing = PaymentPlan::where('business_id', $businessId)
-                ->where('invoice_id', $invoiceId)
-                ->first();
-            if ($existing !== null) {
-                throw new PlanAlreadyOfferedException(sprintf(
-                    '%s is already on a plan: %d %s payments. Nothing was stored.',
-                    $invoice->invoice_number, $existing->installments_count, $existing->frequency
-                ));
+                $existing = PaymentPlan::where('business_id', $businessId)
+                    ->where('invoice_id', $invoiceId)
+                    ->first();
+                if ($existing !== null) {
+                    throw $this->planAlreadyOffered($invoice->invoice_number, $existing);
+                }
+
+                if ($installmentsCount < 2) {
+                    throw new \InvalidArgumentException('A plan is at least two payments.');
+                }
+
+                $daysPer = ['weekly' => 7, 'biweekly' => 14, 'monthly' => 30][$frequency] ?? null;
+                if ($daysPer === null) {
+                    throw new \InvalidArgumentException("Unknown frequency {$frequency}.");
+                }
+
+                // G1-61 / G1-70 / N-033: past the threshold this is credit, not a schedule — it routes to a
+                // financing partner and we never hold the paper. The throw is before the first write.
+                $terms = ArPlanTerm::where('business_id', $businessId)->first() ?? new ArPlanTerm;
+                $termDays = $installmentsCount * $daysPer;
+                if ($installmentsCount > $terms->max_installments || $termDays > $terms->max_term_days) {
+                    throw new PlanPastThresholdException(sprintf(
+                        '%d %s payments over %d days is credit, not a schedule: past %d payments or %d days this routes to a financing partner. Nothing was stored.',
+                        $installmentsCount, $frequency, $termDays, $terms->max_installments, $terms->max_term_days
+                    ));
+                }
+
+                $remaining = $invoice->total_cents - $invoice->paid_cents;
+                $installmentAmount = (int) ceil($remaining / $installmentsCount);
+
+                $plan = PaymentPlan::create([
+                    'business_id' => $businessId,
+                    'invoice_id' => $invoiceId,
+                    'installments_count' => $installmentsCount,
+                    'installment_amount_cents' => $installmentAmount,
+                    'frequency' => $frequency,
+                    'status' => 'offered',
+                ]);
+
+                $state = ReceivableState::firstOrCreate(
+                    ['business_id' => $businessId, 'invoice_id' => $invoiceId],
+                    ['status' => 'payment_plan']
+                );
+                $state->update(['status' => 'payment_plan']);
+
+                Event::dispatch(new ArPlanAccepted($businessId, $plan->id, $invoiceId));
+
+                return $plan;
+            });
+        } catch (UniqueConstraintViolationException $e) {
+            // A second offer stored a plan for this invoice between the guard and the insert. The
+            // transaction has rolled back, so read the plan that won and refuse as the guard does.
+            $existing = PaymentPlan::where('business_id', $businessId)->where('invoice_id', $invoiceId)->first();
+            if ($existing === null) {
+                throw $e;
             }
 
-            if ($installmentsCount < 2) {
-                throw new \InvalidArgumentException('A plan is at least two payments.');
-            }
-
-            $daysPer = ['weekly' => 7, 'biweekly' => 14, 'monthly' => 30][$frequency] ?? null;
-            if ($daysPer === null) {
-                throw new \InvalidArgumentException("Unknown frequency {$frequency}.");
-            }
-
-            // G1-61 / G1-70 / N-033: past the threshold this is credit, not a schedule — it routes to a
-            // financing partner and we never hold the paper. The throw is before the first write.
-            $terms = ArPlanTerm::where('business_id', $businessId)->first() ?? new ArPlanTerm;
-            $termDays = $installmentsCount * $daysPer;
-            if ($installmentsCount > $terms->max_installments || $termDays > $terms->max_term_days) {
-                throw new PlanPastThresholdException(sprintf(
-                    '%d %s payments over %d days is credit, not a schedule: past %d payments or %d days this routes to a financing partner. Nothing was stored.',
-                    $installmentsCount, $frequency, $termDays, $terms->max_installments, $terms->max_term_days
-                ));
-            }
-
-            $remaining = $invoice->total_cents - $invoice->paid_cents;
-            $installmentAmount = (int) ceil($remaining / $installmentsCount);
-
-            $plan = PaymentPlan::create([
-                'business_id' => $businessId,
-                'invoice_id' => $invoiceId,
-                'installments_count' => $installmentsCount,
-                'installment_amount_cents' => $installmentAmount,
-                'frequency' => $frequency,
-                'status' => 'offered',
-            ]);
-
-            $state = ReceivableState::firstOrCreate(
-                ['business_id' => $businessId, 'invoice_id' => $invoiceId],
-                ['status' => 'payment_plan']
+            throw $this->planAlreadyOffered(
+                app(InvoiceReader::class)->forBusiness($businessId, $invoiceId)->invoice_number,
+                $existing
             );
-            $state->update(['status' => 'payment_plan']);
+        }
+    }
 
-            Event::dispatch(new ArPlanAccepted($businessId, $plan->id, $invoiceId));
-
-            return $plan;
-        });
+    private function planAlreadyOffered(string $invoiceNumber, PaymentPlan $existing): PlanAlreadyOfferedException
+    {
+        return new PlanAlreadyOfferedException(sprintf(
+            '%s is already on a plan: %d %s payments. Nothing was stored.',
+            $invoiceNumber, $existing->installments_count, $existing->frequency
+        ));
     }
 
     /**
@@ -254,69 +274,84 @@ final class ArEngine
      */
     public function packageForCollections(int $businessId, int $invoiceId, ?int $packagedByUserId = null): array
     {
-        return DB::transaction(function () use ($businessId, $invoiceId, $packagedByUserId) {
-            $invoice = app(InvoiceReader::class)->forBusiness($businessId, $invoiceId);
+        try {
+            return DB::transaction(function () use ($businessId, $invoiceId, $packagedByUserId) {
+                $invoice = app(InvoiceReader::class)->forBusiness($businessId, $invoiceId);
 
-            $priorPackage = ArCollectionsPackage::where('business_id', $businessId)
-                ->where('invoice_id', $invoiceId)
-                ->exists();
-            if ($priorPackage) {
-                throw new AlreadyPackagedException(
-                    "{$invoice->invoice_number} has already been packaged for collections. Nothing was packaged."
+                $priorPackage = ArCollectionsPackage::where('business_id', $businessId)
+                    ->where('invoice_id', $invoiceId)
+                    ->exists();
+                if ($priorPackage) {
+                    throw $this->alreadyPackaged($invoice->invoice_number);
+                }
+
+                $attempted = ArDunningAction::where('business_id', $businessId)->where('invoice_id', $invoiceId)->exists()
+                    || PaymentPlan::where('business_id', $businessId)->where('invoice_id', $invoiceId)->exists()
+                    || OfflinePayment::where('business_id', $businessId)->where('invoice_id', $invoiceId)->exists();
+
+                if (! $attempted) {
+                    throw new NoResolutionAttemptException(
+                        "Record a resolution attempt first — a reason, a plan or a payment — before {$invoice->invoice_number} goes to collections. Nothing was packaged."
+                    );
+                }
+
+                $conversationIds = $invoice->customer_id
+                    ? Conversation::where('business_id', $businessId)->where('person_id', $invoice->customer_id)->pluck('id')
+                    : collect();
+
+                $contents = [
+                    'invoice_number' => $invoice->invoice_number,
+                    'total_cents' => (int) $invoice->total_cents,
+                    'paid_cents' => (int) $invoice->paid_cents,
+                    'balance_cents' => (int) ($invoice->total_cents - $invoice->paid_cents),
+                    'due_date' => $invoice->due_date->toDateString(),
+                    'lines' => app(InvoiceReader::class)->linesForInvoice($businessId, $invoiceId),
+                    'payments' => OfflinePayment::where('business_id', $businessId)->where('invoice_id', $invoiceId)->orderBy('id')
+                        ->get(['amount_cents', 'payment_method', 'reference_number', 'created_at'])->toArray(),
+                    'actions' => ArDunningAction::where('business_id', $businessId)->where('invoice_id', $invoiceId)->orderBy('id')
+                        ->get(['action', 'reason', 'created_at'])->toArray(),
+                    'messages_count' => Message::where('business_id', $businessId)->whereIn('conversation_id', $conversationIds)->count(),
+                ];
+
+                $package = ArCollectionsPackage::create([
+                    'business_id' => $businessId,
+                    'invoice_id' => $invoiceId,
+                    'packaged_by_user_id' => $packagedByUserId,
+                    'contents' => $contents,
+                ]);
+
+                $state = ReceivableState::firstOrCreate(
+                    ['business_id' => $businessId, 'invoice_id' => $invoiceId],
+                    ['status' => 'packaged_collections']
                 );
+                $state->update(['status' => 'packaged_collections']);
+
+                Event::dispatch(new ArPackaged($businessId, $invoiceId));
+
+                return [
+                    'invoice_id' => $invoiceId,
+                    'status' => 'packaged_collections',
+                    'bundle_url' => null,
+                    'package_id' => $package->id,
+                    'packaged_by_user_id' => $packagedByUserId,
+                ];
+            });
+        } catch (UniqueConstraintViolationException $e) {
+            // A second package was stored for this invoice between the guard and the insert. The
+            // transaction has rolled back, so confirm the package that won and refuse as the guard does.
+            if (! ArCollectionsPackage::where('business_id', $businessId)->where('invoice_id', $invoiceId)->exists()) {
+                throw $e;
             }
 
-            $attempted = ArDunningAction::where('business_id', $businessId)->where('invoice_id', $invoiceId)->exists()
-                || PaymentPlan::where('business_id', $businessId)->where('invoice_id', $invoiceId)->exists()
-                || OfflinePayment::where('business_id', $businessId)->where('invoice_id', $invoiceId)->exists();
+            throw $this->alreadyPackaged(app(InvoiceReader::class)->forBusiness($businessId, $invoiceId)->invoice_number);
+        }
+    }
 
-            if (! $attempted) {
-                throw new NoResolutionAttemptException(
-                    "Record a resolution attempt first — a reason, a plan or a payment — before {$invoice->invoice_number} goes to collections. Nothing was packaged."
-                );
-            }
-
-            $conversationIds = $invoice->customer_id
-                ? Conversation::where('business_id', $businessId)->where('person_id', $invoice->customer_id)->pluck('id')
-                : collect();
-
-            $contents = [
-                'invoice_number' => $invoice->invoice_number,
-                'total_cents' => (int) $invoice->total_cents,
-                'paid_cents' => (int) $invoice->paid_cents,
-                'balance_cents' => (int) ($invoice->total_cents - $invoice->paid_cents),
-                'due_date' => $invoice->due_date->toDateString(),
-                'lines' => app(InvoiceReader::class)->linesForInvoice($businessId, $invoiceId),
-                'payments' => OfflinePayment::where('business_id', $businessId)->where('invoice_id', $invoiceId)->orderBy('id')
-                    ->get(['amount_cents', 'payment_method', 'reference_number', 'created_at'])->toArray(),
-                'actions' => ArDunningAction::where('business_id', $businessId)->where('invoice_id', $invoiceId)->orderBy('id')
-                    ->get(['action', 'reason', 'created_at'])->toArray(),
-                'messages_count' => Message::where('business_id', $businessId)->whereIn('conversation_id', $conversationIds)->count(),
-            ];
-
-            $package = ArCollectionsPackage::create([
-                'business_id' => $businessId,
-                'invoice_id' => $invoiceId,
-                'packaged_by_user_id' => $packagedByUserId,
-                'contents' => $contents,
-            ]);
-
-            $state = ReceivableState::firstOrCreate(
-                ['business_id' => $businessId, 'invoice_id' => $invoiceId],
-                ['status' => 'packaged_collections']
-            );
-            $state->update(['status' => 'packaged_collections']);
-
-            Event::dispatch(new ArPackaged($businessId, $invoiceId));
-
-            return [
-                'invoice_id' => $invoiceId,
-                'status' => 'packaged_collections',
-                'bundle_url' => null,
-                'package_id' => $package->id,
-                'packaged_by_user_id' => $packagedByUserId,
-            ];
-        });
+    private function alreadyPackaged(string $invoiceNumber): AlreadyPackagedException
+    {
+        return new AlreadyPackagedException(
+            "{$invoiceNumber} has already been packaged for collections. Nothing was packaged."
+        );
     }
 
     /**
