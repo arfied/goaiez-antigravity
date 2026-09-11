@@ -30,7 +30,7 @@ final class ChatTurnAction
 
         if ($authorType === 'visitor') {
             $response = app('App\Modules\CAgent\Actions\AgentAnswerAction')->handle($businessId, $message);
-            if (isset($response['reply'])) {
+            if (isset($response['reply'])) { // TODO(X-102): This guard is dead. AgentAnswerAction always returns the 'reply' key (even as ''), so isset() refuses nothing and blank turns are inserted.
                 $agentTurn = ChatTurn::create([
                     'business_id' => $businessId,
                     'chat_session_id' => $chatSessionId,
