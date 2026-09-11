@@ -6,11 +6,11 @@ namespace Tests\Modules\X163;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X163\Actions\CalloutLookupAction;
 use App\Modules\X163\Actions\PriceQuoteAction;
 use App\Modules\X163\Domain\PricebookEngine;
-use App\Modules\X163\Models\PriceBookItem;
-use App\Modules\X163\Actions\CalloutLookupAction;
 use App\Modules\X163\Models\CalloutFee;
+use App\Modules\X163\Models\PriceBookItem;
 use App\Modules\X163\Ui\Pricebook;
 use App\Support\Tenancy;
 use Livewire\Livewire;
@@ -396,9 +396,9 @@ class PricebookScreenTest extends TestCase
         Tenancy::setUser($owner->id);
 
         CalloutFee::create(['business_id' => $biz->id, 'callout_fee_cents' => 8500, 'deducted_if_proceeding' => false]);
-        
+
         Livewire::actingAs($owner)->test(Pricebook::class)->set('calloutFeeDeducted', true);
-        
+
         $row = CalloutFee::where('business_id', $biz->id)->firstOrFail();
         $this->assertTrue($row->deducted_if_proceeding, 'T1 A1 deducted_if_proceeding is not true');
         $this->assertSame(8500, $row->callout_fee_cents, 'T1 A2 callout_fee_cents is not 8500');
@@ -411,9 +411,9 @@ class PricebookScreenTest extends TestCase
         Tenancy::setUser($owner->id);
 
         CalloutFee::create(['business_id' => $biz->id, 'callout_fee_cents' => 8500, 'deducted_if_proceeding' => true]);
-        
+
         $component = Livewire::actingAs($owner)->test(Pricebook::class);
-        
+
         $this->assertSame(true, $component->get('calloutFeeDeducted'), 'T2 A1 calloutFeeDeducted is not true');
         $component->assertSeeHtml('wire:model="calloutFeeDeducted"');
     }
@@ -425,12 +425,12 @@ class PricebookScreenTest extends TestCase
         Tenancy::setUser($owner->id);
 
         Livewire::actingAs($owner)->test(Pricebook::class)->set('calloutFeeDeducted', true);
-        
+
         $row = CalloutFee::where('business_id', $biz->id)->first();
         $this->assertNotNull($row, 'T3 A1 row is null');
         $this->assertSame(0, $row->callout_fee_cents, 'T3 A2 callout_fee_cents is not 0');
         $this->assertTrue($row->deducted_if_proceeding, 'T3 A3 deducted_if_proceeding is not true');
-        
+
         $res = app(CalloutLookupAction::class)->handle($biz->id);
         $this->assertSame('NO_FACT', $res['refusal_code'] ?? null, 'T3 A4 refusal_code is not NO_FACT');
     }
