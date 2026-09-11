@@ -17105,3 +17105,49 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
 
     **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty wave to avoid an idle
     tick is what rulings 95, 100 and 111 forbid.
+
+538. **⭐ The PHP-FUNCTION aggregate census, the spelling ruling 532 could not see: 4 `max(`/`min(` calls in
+    the lane, every one the TWO-SCALAR form, zero array form, zero `array_sum`/`array_reduce`. PHP 8's
+    `ValueError` on an empty array cannot fire. Zero buildable (measured by the lane supervisor 2026-09-11
+    10:1x, by `date` `10:10`; rulings 207, 294, 324, 327, 328, 371, 415, 429, 449, 532).** Ruling 532 swept
+    `->max(`/`->min(`/`->avg(`/`->sum(`, which are Collection and Builder METHODS, and closed with *"the hazard is
+    decided by the aggregate's NAME"*. The same aggregation spelled as a PHP FUNCTION has a different empty-set
+    failure: `max([])` and `min([])` throw `ValueError` in PHP 8 rather than returning null, and `array_sum([])`
+    returns `0`. That is 532's own lesson, a census keyed on a written form, turned on 532 itself.
+    **Instrument, quoted (300):** `grep -rn -F -e "max(" -e "min(" -e "array_sum(" -e "array_reduce("` over the
+    eight module trees returns **4**:
+    - `X-199/Domain/InvoiceEngine.php:174` `max(0, $invoice->total_cents - $invoice->paid_cents)` (365's own fix);
+    - `X-199/Domain/InvoiceEngine.php:243` `(int) max(1, $invoice->due_date->diffInDays(now()))` (68's own fix);
+    - `X-211/Domain/ArEngine.php:69` `min($percentCap, $terms->late_fee_cap_cents)`, behind an `=== null` branch;
+    - `X-211/Domain/ArEngine.php:86` `min($feeCents, $headroom)` (221's cap).
+    ⭐ **Known member (429):** `ArEngine:69` and `:86` are 532's own looser-instrument result. ⭐ **415's first three**
+    are each an instance. ⭐ The `-F "max("` substring also matches `\max(` and a spread `max(...$x)`, so the zero
+    for the array form is not a spelling miss.
+    **Each member's safety (328):** all four take two scalar arguments, so no empty array can reach them. The
+    arguments are never null: `:174`'s operands are NOT NULL integer columns, `:243`'s is a Carbon float, `:69` sits
+    behind its own null branch, and `:86`'s `$headroom` is computed from a `->value(…) ?? 0` read (221).
+    ⭐ **Positive control fires and DISCRIMINATES:** `grep -rn -F -e "array_sum(" -e "array_reduce(" -e "max(["
+    -e "min(["` over `app/app/Services` and `app/app/Livewire` returns the array form, including
+    `Services/Audit/AuditContext.php:95`'s `array_sum($ratings) / count($ratings)`, whose `count` would divide by
+    zero on an empty set. ⛔ Money proposes no edit on those and asserts no defect (ruling 5).
+    ⛔ Struck, not to be re-run. ⚠️ **Trigger:** an array-form `max`/`min`, or an `array_sum` divided by a count,
+    in the lane. Ruling 327's outcome shape a **fifty-fourth** time. ⭐ **The aggregate family is closed on both
+    spellings:** methods (532) and functions (this ruling).
+
+539. **⛔ FORTY-FIRST consecutive HOLD (RULED by the lane supervisor 2026-09-11 10:1x, by `date`).** All four lift
+    conditions were measured this tick (269, 272, 323), each case decided on mtimes (494):
+    - **Owner.** `OWNER.md`'s newest heading is still `## OWNER RULING — 2026-09-09 09:02` (136), mtime
+      `09-09 09:02:03`.
+    - **Coder.** `--check` returned `CODER DEAD`.
+    - **Mailbox.** `REPORT.md` (`07:15:21`) and `BRIEF.md` (`07:07:27`) are both older than `REVIEWS.md`
+      (`10:02:21`).
+    - **Cadence, all three ✗.** After `git fetch --no-write-fetch-head origin`, `origin/main` = **`46afc022`**,
+      unmoved. `git rev-list --count HEAD..origin/main` = **19**. `git diff --stat dca743e8 origin/main --
+      app/app/Doctor coder-bin .claude/hooks` is empty. `git merge-base HEAD origin/main` = **`dca743e8`**, this
+      lane's own pushed supervisor tip, and `git diff --name-status dca743e8 origin/main` is the 7 per-track paths
+      plus X-102's three (504).
+    - **Track 1.** No answer to ACTION 13–25.
+    - **Population.** Ruling 538's is non-empty and not buildable.
+
+    **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty wave to avoid an idle tick is what
+    rulings 95, 100 and 111 forbid.
