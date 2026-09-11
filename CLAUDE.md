@@ -2914,6 +2914,14 @@ and the lane is now 3 / 16 behind.
 - `pgrep -a -P 1 -f "grs-antig-stages-run"` is the one-command lane-coder check for agy and claude
   alike: empty means no coder of this lane is live.
 
+⌛ **Tick 350 — HOLD.** `main` moved `73b8fe08` → `41f21fab`: one first-parent commit, a `track/ui`
+merge (`app.css` plus `ReplyQueueStylesheetTest.php`, no Modules path). That is +1 first-parent /
++4 ancestor, and the lane is now 4 / 20 behind.
+- All three drift conditions are FALSE, and no checker byte moved.
+- §3 is unchanged at `0·41·85·0·16·204·128·3`.
+- Tick 349's notes were committed as `bfe6823f`, certified by `.gateT350b.txt`, and pushed
+  `11ed4c01..bfe6823f`.
+
 ⌛ **S-200 as dispatched (history): §3 ledger refresh, dispatched at tick 345 as STAGES-238, merge gate CLOSED.**
 Tick 344's HOLD missed that §3 still read `boundary 55 · citation 3 · capability 207` while §5 reads
 **41 · 0 · 204** (`.gateT345b.txt` at `423ec5a9`, total 477, the eight sum). This is S-191's exact
