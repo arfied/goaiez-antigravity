@@ -2718,6 +2718,10 @@
   {
    "at": "2026-09-10T01:18:46",
    "note": "X-102: line 23 is FALSE (the premise does not hold at source), line 24 is TRUE AND NOT OURS, line 25 is TRUE BUT THE OUTPUT HAS NO CONSUMER, line 26 is TRUE AND NOT OURS, and line 27 is FALSE (the premise does not hold at source); the full measurement is in the docblock at app/tests/Modules/X-102/ChatDoorTest.php:23."
+  },
+  {
+   "at": "2026-09-11T11:04:52",
+   "note": "X-102 G21-01: the killed-capability refusal carrier test_refusal_no_scripted_attendees_social_proof asserted only the absence of an attendees key that nothing in the module can write. Since chat_turns exists and ChatTurnAction writes the author type its caller passes, a scripted message posing as another attendee would be a turn, so the carrier now also asserts that starting a chat writes no turn and that one visitor message writes exactly a visitor turn and an agent turn. No production change; a guard refusing a non-visitor author is not built because the only caller hardcodes visitor and the guard could not fire."
   }
  ]
 }
