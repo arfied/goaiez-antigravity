@@ -1040,6 +1040,54 @@ class CReviewsTest extends TestCase
         $res = $action->handle($biz->id, $req->id);
 
         $this->assertEquals('refused', $res['status'], json_encode($res));
+        $this->assertEquals('NO_CONSENT_RECORD', $res['refusal_code'], json_encode($res));
+    }
+
+    public function test_g20_04_reviewer_contact_refused_when_the_phone_owner_has_not_consented(): void
+    {
+        \loadEveryRequiredRegister();
+
+        $biz = self::provisionTenant(['name' => 'Reviewer Contact No Consent Biz']);
+
+        $location = Location::forceCreate([
+            'business_id' => $biz->id,
+            'name' => 'HQ',
+            'timezone' => 'America/Chicago',
+        ]);
+
+        app(DefaultsRegistry::class)->set('messaging.quiet_hours_start', '21:00', 'test');
+        app(DefaultsRegistry::class)->set('messaging.quiet_hours_end', '08:00', 'test');
+        $this->travelTo('2026-09-02 18:00:00');
+
+        app(CreditLedger::class)->record(CreditProduct::Sms, CreditKind::Purchase, 100, 'test');
+
+        $customer = Customer::forceCreate([
+            'business_id' => $biz->id,
+            'location_id' => $location->id,
+            'region_code' => 'TX',
+            'phone' => '+15125559999',
+            'name' => 'John',
+        ]);
+
+        $person = Person::create([
+            'business_id' => $biz->id,
+            'first_name' => 'John',
+            'phone' => '+15125559999',
+        ]);
+
+        $req = ReviewRequest::create([
+            'business_id' => $biz->id,
+            'platform' => 'google',
+            'customer_name' => 'John Doe',
+            'customer_id' => $person->id,
+        ]);
+
+        $action = new ReviewerContactAction;
+        $res = $action->handle($biz->id, $req->id);
+
+        $this->assertEquals('refused', $res['status'], json_encode($res));
+        $this->assertEquals('CONSENT_REFUSED', $res['refusal_code'], json_encode($res));
+        $this->assertEquals('no_consent_record', $res['reason'], json_encode($res));
     }
 
     /**
