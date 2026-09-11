@@ -48,7 +48,7 @@ final class ChatTurnController
 
         return response()->json([
             'id' => $turn->id,
-
+            'reply' => $agentTurn?->message,
         ], 201);
     }
 }
