@@ -4058,3 +4058,31 @@ and occasion, with no emitter and no purpose (`SendKey.php:104-113`). `outreach_
 request N to one phone dedupe each other silently. Three emitters already share that id space. **RULED: an emitter is
 not namespaced locally to dodge another module's key scheme** (REV-131 §4). The collision is filed to Track 1, and
 any stamp the emitter writes is named for what it can observe. `csat_requested_at` means *requested*, never *sent*.
+
+## REV-167 — a live path built beside a dead one, and a P-205 guard the plan puts somewhere else
+
+⛔ **§1. Run 162 built the production path for "CSAT on resolve" and left the module's older writer standing
+(2026-09-11, my defect).** `QaTicketAction::resolve()` (`QaTicketAction.php:42-59`) stamps `csat_requested_at` and dispatches
+`CsatRequested`. It never sends, never checks for an open ticket, and never fires `ticket.resolved`, and nothing in
+`app/app` or `app/routes` calls it. Its only callers are four lines in `CReviewsTest.php`, so `test_g18_14` and
+`test_g20_05_reopen_ticket_on_one_star` stayed green on a path production never takes. The brief scoped it out as
+*"stays as it is"* without grepping for a caller. That is REV-141 §1's whole-chain rule, applied to the outer screens
+and not to a sibling writer of the same column. **RULED: a brief that builds a production path for a behaviour first
+lists every existing writer of that behaviour's column or event, each with its outermost production caller. A writer
+with none is named in the brief, never scoped out as "stays as it is".** When the dead writer carries a real property
+the live path lacks, the property moves and the writer goes. Here the property is *a resolved ticket is not resolved
+twice*.
+
+⛔ **§2. P-205's guard on the review ask is not built inside C-Reviews.** Plan `:661`: *"The arbiter is a SPINE service: a
+module that resolves a collision locally has re-created the problem."* X-181's own anchor, `:35238`: *"asserted via P-205,
+with no special case in C-Reviews."* The tree has no such arbiter.
+- `SendCollisionArbiter` is a 24h window that ranks the invite above recovery.
+- X-186 takes a caller-supplied `$hasOpenRecover`.
+- `isGrowSuppressed` has one production caller.
+
+**RULED: the review ask does not call `isGrowSuppressed` locally.** The gap is a `NOT BUILT: P-205` test beside X-181's
+anchor, and the arbiter is a Track 1 filing. ⚠️ The CSAT listener's local call is different in kind: plan `:32254`
+writes *"suppressed on any conversation with an open escalation"* into G20-05's own row.
+
+⚠️ **§3. A `--filter` is a regex over method names, so its predicted count comes from `grep -n 'function <pattern>'`.**
+`CReviewsTest::test_g20_05` matched a pre-existing fourth method, and the brief predicted three.
