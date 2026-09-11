@@ -501,4 +501,35 @@ class AgeingByReasonScreenTest extends TestCase
 
         $this->assertSame(0, ArPlanTerm::where('business_id', $biz->id)->count());
     }
+
+    public function test_a_part_paid_invoice_says_how_much_was_logged(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'Part', 'last_name' => 'Payer']);
+        $inv = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-P1',
+            'total_cents' => 125000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(20),
+        ]);
+
+        Livewire::actingAs($owner)->test(AgeingByReason::class)
+            ->assertOk()
+            ->set('reference.'.$inv->id, 'CHK-P1')
+            ->set('amountCents.'.$inv->id, 1250)
+            ->call('logPayment', $inv->id)
+            ->assertSee('Payment logged: 12.50.')
+            ->assertDontSee('Payment logged.')
+            ->assertSee('INV-P1');
+
+        $this->assertSame(1250, OfflinePayment::where('business_id', $biz->id)->firstOrFail()->amount_cents);
+        $this->assertSame('issued', $inv->fresh()->status);
+    }
 }
