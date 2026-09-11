@@ -19037,3 +19037,33 @@ this tick's opening `for-each-ref` (220).
 - **Fourth surface** `main 14 · money 16 · pricebook 14 · reviews 15 · sixty 42 · stages 41 · ui 16 · site 198 ·
   HEAD 198`; no branch below main's 14.
 - **X-102 id census** `3 G13-15 · 1 G13-37 · 1 G15-01 · 1 G16-21 · 3 G21-01 · 1 G2-57 · 1 G8-36`, unchanged.
+
+## ⛔ THE CLOSING TIP RE-READ HAS THE SAME EVALUATION TIME AS THE §7 HEDGE — it runs as the command before `cat >>`, never before the section is drafted (tick 342)
+
+Tick 340 ruled that a block's §7 re-check runs **at the append**, after tick 339's gate landed 99 s before an append
+that promised an addendum. Tick 257 ruled the closing tip re-read is left **blank until the command returns**. Neither
+said *when* that command runs relative to the append, and tick 341 ran it **before writing the section**:
+
+| event | time | source |
+| :-- | :-- | :-- |
+| tick 341's closing re-read (caught stages `153203b2`) | `@{14:01:07}` + | block text |
+| ⛔ money `b839c43e → e339d094` arrives | **`@{14:02:15}`** | reflog |
+| tick 341's block appended, tips-at-close `money b839c43e` | **14:03:09** | `REVIEWS.md` mtime |
+
+So the **"Tips at the close"** line — the next miss's lower bound (192) — was stale by one ref at the moment it was
+written. Nil consequence here (`e339d094` is `CLAUDE.md` +27, no censused path, and the reflog holds the true bound —
+193), but the table is precisely the value tick 192 says a later tick bounds its paired stat by.
+
+✅ **RULED: the closing `for-each-ref` is the last command before `cat <blk> >> REVIEWS.md`, and if it differs from the
+drafted table the table is re-filled from it.** Same law as 231/340 — a reading has an evaluation time — applied to the
+one line whose whole purpose is to be the next tick's bound.
+
+## ⚠️ A tick names its scratch files from the ledger's NEWEST HEADER, read before the first write (tick 342)
+
+This tick started its gate as its first act (257) into `.gate341.txt`, inferring the number from `CLAUDE.md`'s last
+section (340) — and tick 341 had already run at 14:0x, writing **no** notes, so the digest stopped at 340 while the
+ledger did not. The file overwrote tick 341's own gate output. ⛔ Nothing lost — tick 341's block quotes every section it
+relied on, and gate files are scratch (259) — but it is tick 301's law (*read `REVIEWS.md` for a previous value, never
+this file's digest*) reaching a **filename**: a HOLD tick that writes no notes makes the digest's last tick number
+**lower than the ledger's**, and every tick that follows a notes-less HOLD inherits the off-by-one. `grep -n '^## TICK'
+REVIEWS.md | tail -1` before any write.
