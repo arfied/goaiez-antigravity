@@ -13033,3 +13033,156 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     **full and internally consistent**, and it is therefore the first that could have survived review. ⛔ So
     a census is not validated by its instrument being correct — the pattern here was correct; it is
     validated by its MEMBERS being instances of what it claims to measure.
+416. **⭐⭐ Ruling 404 swept owner-typed STRING length against a `varchar`; its NUMERIC sibling was never
+    stated — the lane has six owner-typed numeric inputs, five safe each for a DIFFERENT measured reason,
+    and `late_fee_cap_cents` is a Postgres `integer` reached with a LOWER BOUND ONLY (RULED by the lane
+    supervisor 2026-09-10 20:3x, briefed as MONEY-196; the finding that lifts seven ticks of HOLD).**
+    Ruling 404 is itself an instance of the family rulings 404/408/411/413 name — *a census that FIXED
+    something did not necessarily SWEEP the population that needed it; every ruling that fixed something
+    owes the question, what predicate did its INSTRUMENT measure, and is that the same predicate as its
+    REMEDY?* 404's instrument was `type="text"` inputs traced to their `varchar`; its remedy was a
+    **magnitude guard on an owner-typed value**. **The numeric half of that remedy's population has never
+    been swept**, and it is the sharper half, because a numeric column's ceiling is invisible in the
+    declaration an author reads (`unsignedInteger` *looks* unbounded) where `varchar(255)` states its own.
+    **Instruments, quoted (ruling 300), each in the standing one-root-plus-filter form:**
+    `grep -rn -e 'type="number"' app/app/Modules --include=*.blade.php` filtered to the eight ids → **6**;
+    corroborated by `grep -rn -e 'max=' -e 'min=' …` → **5 of the same 6 plus four out-of-lane** (ruling
+    294 — the second instrument's members overlap and extend); then
+    `grep -rn -e 'unsignedInteger' -e 'unsignedSmallInteger' -e 'unsignedTinyInteger' -e 'smallInteger'
+    -e '>integer' app/app/Modules --include=*.php` filtered to the eight `Database` trees → **17 narrow
+    columns**; then each input traced to its column and **read** (262(b)).
+    ⭐ **Ruling 415's check ran on BOTH censuses and both passed**: the first three numeric inputs
+    (`credits:48`'s `limit`, `ageing:32`'s `term.percent`, `ageing:33`'s `term.cap`) are each an
+    owner-typed numeric input, and the first three columns (`included_minutes`, `rate_cents_per_min`,
+    `day_in_cycle`) are each a narrow integer column. **No member is of the wrong kind.**
+    ⭐⭐ **The column ceiling is MEASURED IN VENDOR, never asserted** (rulings 300, 374 — a CHECK's or a
+    declaration's wording is a hint, never a measurement):
+    `Blueprint::unsignedInteger($column)` at `Blueprint.php:978-981` is
+    `return $this->integer($column, $autoIncrement, true)`, and
+    `PostgresGrammar::typeInteger()` at `:846-849` returns the literal **`'integer'`** with **no reference
+    to `$column->unsigned`** — so the unsigned flag is **dropped on Postgres** and the column is a signed
+    `integer`, max **2,147,483,647**. `typeSmallInteger()` at `:890-893` returns `'smallint'`, max 32,767.
+    **Five are safe and each for a DIFFERENT reason, which is what makes the sixth a finding rather than a
+    convention:** `limit.{id}` → `credit_limit_cents` is **bigInteger** · `amountCents.{id}` →
+    `offline_payments.amount_cents` is **bigInteger** · `term.percent` → `late_fee_percent` is `smallint`
+    but **guarded 1–100 in BOTH layers** (`AgeingByReason:50`, `ArEngine:110`) · `feeCents.{id}` never
+    reaches a column raw — `ArEngine:65`'s `min($percentCap, $cap)` caps it, and `late_fee_cents` is
+    **bigInteger** besides · `installments.{id}` → `installments_count` is `smallint` and **guarded at
+    `ArEngine:160` before the write at `:170`** by the P-193 threshold (`max_installments`, default 3).
+    ⭐ That last one is **ruling 328's shape a fourth time** — *a prior guard makes a later census's
+    finding invisible* — and the guard exists for a reason unrelated to overflow, which is why it is
+    recorded by its token (`$installmentsCount > $terms->max_installments`) and not by its line (289, 293).
+    **The finding is `term.cap` → `late_fee_cap_cents`.** Measured over the WHOLE of both methods (ruling
+    395 — *a line range inside a claim is a citation of where the reader stopped*):
+    `AgeingByReason::saveTerm:55` refuses `$cap !== null && $cap < 1` and `ArEngine::setLateFeeTerm:113`
+    refuses `$capCents !== null && $capCents < 1` — **a lower bound, in both layers, and no upper bound in
+    either** — over an `unsignedInteger`. The input at `ageing-by-reason.blade.php:33` carries `min="1"`
+    and **no `max`**, and ruling 344 measured a `wire:model` value is the browser's to set, so the
+    browser attribute is not the guard. An owner typing a cap of `99999999999` cents reaches Postgres,
+    which refuses `SQLSTATE[22003] … value "99999999999" is out of range for type integer`, and
+    `saveTerm:64`'s `\Throwable` tail renders *"We could not save that term: SQLSTATE[22003]…"*.
+    **That is ruling 206's and 404's measured defect exactly, one column type over** — ruling 100's *is
+    that actually why it refused?* answered by a framework string — and it is **worse** than 404's
+    `22001`, because the message names the column's own width to the owner.
+    ⭐⭐ **The positive control DISCRIMINATES and it is IN THE LANE, four lines from the finding**
+    (324's bar in 408/413/414's strongest form): `term.percent` is the same shape — owner-typed numeric,
+    narrow column, same form, same method — and is bounded **on both ends in both layers**. **The
+    instrument separates a both-ends-guarded owner-typed numeric field from a lower-bound-only one inside
+    a single method**, which is a stronger demonstration than finding the shape in another lane. The
+    external control fires too: the same instrument returns eleven out-of-lane numeric inputs, three of
+    them (`X-163 pricebook:68,:72,:117`) carrying `step="0.01"` with **no `min` and no `max`**. ⛔ Money
+    proposes no edit on those and asserts no defect it has not measured (ruling 5) — their columns were
+    not read.
+    **RULED: the upper bound goes in `ArEngine::setLateFeeTerm` ONLY, throwing
+    `\InvalidArgumentException`, against a `private const MAX_CAP_CENTS = 2147483647` beside ruling 404's
+    own `MAX_REFERENCE` at `:43`.** Three decisions inside that, each with its reason:
+    (i) ⭐ **ENGINE-ONLY, not both layers** — 404's shipped shape is an engine guard plus the component's
+    existing tail (`ArEngine:210`, rendered by `AgeingByReason`'s `\Throwable` catch), it is ruling 337's
+    *a guard in the engine proves the CONTRACT and covers the consumer nobody has written yet*, and it
+    avoids a **second copy of the number**, which is ruling 37's *second place for the truth to disagree*
+    and ruling 213's own recorded hazard. The asymmetry that leaves — lower bound in two layers, upper in
+    one — is recorded, not papered over.
+    (ii) ⭐ **`\InvalidArgumentException`, NOT a new module class**, matching the two sibling bounds on the
+    **same method** (`:111`, `:114`). Ruling 228(a)'s corollary: a wave must not CREATE a mismatch either,
+    and `setLateFeeTerm` has a settled internal idiom for its own bounds while `logOfflinePayment` has a
+    different one for its own — **both internally consistent, so the method being edited is the one to
+    match.** It also means ⛔ **no new class under the classmapped `app/app/Modules/`, so ruling 318 does
+    not fire** and the wave carries no `composer dump-autoload` step (225 — a step required where it
+    cannot bite is one the next reviewer must re-derive). ⚠️ The divergence from 404's
+    `ReferenceTooLongException` is deliberate and is written down so no later tick reads it as an
+    oversight.
+    (iii) ⭐ **The message echoes the owner's value BESIDE the limit** —
+    `sprintf('A cap of %s cents is too large: the most this can hold is %s cents. Nothing was saved.',
+    number_format($capCents), number_format(self::MAX_CAP_CENTS))` — which is ruling 389's
+    **measured-intelligible** shape, the one clean member of its own census (`PlanPastThresholdException`
+    prints the value AND the threshold), in the input's own notation of **cents** (368a measured every
+    money input in this lane names its unit), ending in the module's sibling idiom (*"Nothing was
+    logged."* · *"Nothing was applied."* · *"Nothing was stored."*).
+    ⛔ **The bound is the column's own maximum and not a rounder business figure**: 404's precedent named
+    the column's limit, and any smaller ceiling is a policy this lane has not been given — the threshold
+    numbers on this very table are OWNER ACTION 13's (rulings 214, 263). ⛔ **Never widen the column**:
+    ruling 41 part 3 forbids editing that migration and a new one to widen a ceiling nothing has reached
+    is churn. ⛔ Never `validate()` or `$rules` — a second refusal vocabulary rendered by a mechanism no
+    sweep in this lane reads (206's explicit refusal). ⛔ Never a browser `max=`, which ruling 344 measured
+    is not a guard. ⛔ The two lower-bound messages, the percent guard, the `min()` read at `:65`, the
+    success message at `:62` and the pill at `blade:27` are **byte-identical** (47's companion).
+    ⚠️ **Fixed rather than recorded** (204/130's precedent, and 403's sixth test answered): the branch
+    **is** rendered, **is** driven by existing fixtures, and **nothing makes it safe** — no guard above 1
+    in either layer, no `max` on the input, and the column is `integer`. Unlike ruling 403's nine
+    `Tenancy::id()` sites (safe behind a guard), 392(c)'s frequency (safe by a default at the read) or
+    `installments_count` above (safe by the P-193 threshold), **there is no closing guard to record.**
+    ⚠️ **Blast radius, measured with interior fragments BEFORE the brief shipped (46, 86, 146): ZERO.**
+    Every existing cap fixture is small — `2000` (`AgeingByReasonScreenTest:201`, `:287`), `5000`
+    (`X211Test:84`), `2000` (`X211Test:436`) — so **no existing assertion moves and no existing test can
+    see the defect** (68), and the item **adds** a method (70). The sweep is **14** lines, counted by
+    listing (217, 397).
+    ⭐⭐ **RULED on the proof, and the discriminator is NOT the obvious assertion.**
+    `AgeingByReasonScreenTest:197` establishes the file's refused-`saveTerm` shape —
+    `assertSame(0, ArPlanTerm::where('business_id', $biz->id)->count())` — and that count is green **both
+    ways**: under the mutation `updateOrCreate` runs, Postgres throws `22003`, the `DB::transaction` at
+    `:117` rolls back, and the row count is still 0. Ruling 82's *a proof that cannot fail is not a
+    proof*, so the count is **kept** (it pins M29-C, *a refusal writes nothing*) and the brief states
+    that it is **not** the discriminator — which is ruling 215's own lesson, *measure WHY an assertion is
+    green before pinning it as a guard*. The discriminators are the two message assertions plus
+    ⭐ **`assertDontSee('SQLSTATE')`, which asserts the defect's absence directly** rather than merely the
+    new wording (ruling 101's positive-and-negative in one place). ⚠️ Ruling 62's trap is named in the
+    brief: the percent guard at `:50` runs **first**, so the test must set a **valid** percent or it never
+    reaches the cap. ⚠️ ⛔ **No `Event::fake`, and the reason is stated**: the guard throws before
+    `ArEngine:123`'s dispatch, so there is nothing to fake — which sidesteps ruling 398's bare-vs-selective
+    hazard entirely, and ruling 148's census already measured `ArLateFeeTermSet` has no consumer.
+    ⛔ No `view:clear` (202 — no blade is mutated) and ⭐ `php -l` **is** legitimate here, both touched
+    files being PHP, which is the first wave in some time where ruling 183's prohibition does not apply.
+    ⚠️ Ruling 310 re-measured rather than inherited: `grep -rn -e 'File::allFiles' app/tests` returns
+    **19** scanners; `N008Test:18` and `N010Test:17` are both `app_path('Modules/X-201')`, X-157's matches
+    the single literal `EdgeProvisionAction`, and the three `app_path()` scans are structural — a
+    `DefaultsRegistry` presence filter (`:3577`, its own comment), an **AST parse** (`:4338`) and
+    `codeWithoutComments()` plus method-call tokens (`:5547`), ⭐ the last of which **strips comments
+    outright**, so prose in a docblock cannot feed it. Dictated prose in X-211 feeds no instrument (63).
+    ⭐ **The generalisable half: a column's CEILING is invisible in the declaration its author reads.**
+    `varchar(255)` states its own limit, which is why ruling 206's and 404's authors could see it;
+    `unsignedInteger` reads as *a positive whole number* and its 2,147,483,647 is nowhere on the line. **So
+    every owner-typed NUMERIC input is traced to its column's declared WIDTH, not to its declared name** —
+    and the same question is owed to `smallInteger`, `tinyInteger` and `decimal(p,s)`, whose ceilings are
+    narrower still and equally unstated.
+
+417. **⭐ Recorded from the same census and deliberately NOT briefed — the `(int)` of an out-of-range
+    FLOAT is undefined in PHP and this seat cannot execute it (RULED by the lane supervisor 2026-09-10
+    20:3x; rulings 193, 327).** `X-199/Ui/Credits.php:46` is
+    `(int) round(((float) $typed) * 100)` over an owner-typed dollar figure. A typed `1e20` becomes a
+    float of `1e22`, and casting a float beyond `PHP_INT_MAX` to `int` is **undefined behaviour** in PHP 8
+    — it does not throw, and the result is platform-dependent. If it wraps negative, `TermsSetAction:26`
+    refuses it (the lower-bound guard doing double duty); if it wraps positive, a wrong limit is stored
+    silently into a **bigInteger**, which holds it. ⛔ **Recorded, never briefed**: ruling 193 is explicit
+    that *a member whose harm rests on an unmeasured mechanism is recorded, never briefed*, and this seat
+    cannot run PHP to measure which way the cast goes on this build (296, 300's family). ⭐ It is also why
+    MONEY-196 is **one** item: bloating a wave with an unmeasured member is what the HOLD discipline
+    exists to refuse. ⚠️ Measured and clean in the same pass, so no later tick re-derives them:
+    `(int) 'abc'` is `0`, which the existing `< 1` guard refuses with the honest *"The cap is an amount in
+    cents, or blank for none."* — **the lower-bound guard is the non-numeric guard too** — and `(int)
+    '1.5'` is `1`, a truncation to whole cents that is correct rather than lossy, since a cent is
+    indivisible. ⚠️ `exp_year` is `unsignedSmallInteger` (32,767) and owner-typed, and it is safe by TWO
+    measured facts: ruling 119 measured `card_tokens` has **no production writer at all** so nothing
+    reaches the column, and ruling 389's new `< 1000` guard refuses the notation error that would
+    otherwise reach it. ⚠️ `quantity` on `order_lines` and `invoice_lines` is `unsignedInteger` and is
+    **not owner-typed** — every `quantity` occurrence in the lane's blades is a **render**, measured, and
+    the numeric-input census returned no quantity field.
