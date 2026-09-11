@@ -12909,3 +12909,127 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     ⚠️ It is also the fifth instance of ruling 152 paying this tick (*a sweep hit is a COORDINATE, not a
     boundary*): the population was found by reading around census (b)'s positive control, not by an
     instrument aimed at it.
+414. **⭐⭐ FOUR fresh populations measured at ruling 324's bar — blade TRUTHINESS on a column, `updated_at`
+    readers, two-consumer TRAIT read-consistency, and the blade VIEW-KEY contract behind `??` — and all four
+    are ZERO buildable (measured by the lane supervisor 2026-09-10 20:0x; rulings 64, 95, 100, 111, 294, 324,
+    327, 340, 400, 403).** Ruling 325 names *a population this ledger has not enumerated* as the one HOLD-lift
+    condition a tick can reach alone. Four were put to it. ⭐ Each states its PREDICATE rather than a member
+    list (371), and each took the **disproving** measurement first (400, 403).
+    **(a) A blade conditional that tests a COLUMN for truthiness, where `0` or `'0'` is legitimate.** PHP's
+    falsy semantics make `@if($row->count)` hide a real zero and `@if($row->note)` hide a literal `'0'` —
+    ruling 43's *does it even vary?* crossed with the language, and invisible to `pint`, `phpstan` and
+    `php -l` (153 measured the last is blind to Blade entirely). Instrument, quoted (300):
+    `grep -rn -e '@if' -e '@elseif' app/app/Modules --include=*.blade.php` filtered to the eight ids, then to
+    `-e '\->'`, then `grep -v` on `===`, `!==`, `in_array`, `count`, `isEmpty`, `isNotEmpty`, `>=`, `<=` →
+    **19**, of which four carry an explicit `> 0` and are therefore not truthiness tests. **Fifteen read one
+    by one** (262(b)): five are message properties or objects (`$decline->recovered` is a `Payment` or null,
+    `$decline->pay_link` a `PaymentLink` or null, `$invoice->pdf_url` ruling 43's own permanent null); four
+    are booleans (`is_default` — one of ruling 211's nine cast booleans; `has_overflow`, a `&&` expression at
+    `Unpaid.php:93`; `is_open`, an `in_array` at `DisputeCard.php:77`; `deferred`); two are nullable **date
+    casts** where a Carbon is always truthy (`current_period_end`, `deadline_at` — ruling 340's own measured
+    guards). **Three are integers and all three are safe, each for a DIFFERENT measured reason:**
+    `mrr.blade.php:44`'s `additional_locations` legitimately holds `0` and hiding it is **correct** — `:45`
+    renders *"includes N extra location(s)"* and *"includes 0"* is noise — and `MrrScreenTest:29` seeds
+    exactly `0`, so the falsy branch is **exercised and intended**; `ageing-by-reason.blade.php:26`'s
+    `late_fee_percent` cannot be `0`, because `AgeingByReason::saveTerm:50` refuses `$percent < 1 || > 100`
+    and `ArEngine:57` guards `=== null` explicitly; and `:27`'s `late_fee_cap_cents` cannot be `0` either —
+    `saveTerm:55` is `if ($cap !== null && $cap < 1)` → *"The cap is an amount in cents, or blank for none."*
+    ⭐⭐ **That last one is the census's own discriminating control and it is INSIDE the lane** (324's bar in
+    408/413's strongest form): `AgeingByReason.php:62` tests **`late_fee_cap_cents === null`** to choose
+    between *", no cap"* and *", capped at N"*, while `ageing-by-reason.blade.php:27` tests the **same column
+    for truthiness** to choose between the same two strings — ruling 98's tell, one module, one column, two
+    forms — **and the instrument separated them.** The divergence is nevertheless **unobservable**, because
+    the only writer refuses `0`: ruling 96 governs, ⛔ no mutation can redden it (82), and the edit would be
+    ungated churn. The lane also carries the correct form four times (`cart-block:19`, `credits:31`,
+    `unpaid:67`, `ageing:58` all `> 0`), so both spellings are present and the sweep tells them apart.
+    **(b) Production readers of `updated_at` — ZERO, and the class closes in one command.** The standing
+    field note records that `Eloquent\Builder::update()` silently stamps `updated_at` on a mass update while
+    `DB::table()->update()` does not, *"so a test setup can stamp the very column the test asserts on — green
+    in the same second, red across a boundary (556–558)"*. The **disproving** measurement is the reader, not
+    the writer: with no reader there is no defect whatever the writers do.
+    `grep -rn -e 'updated_at' app/app/Modules app/tests/Modules` filtered to the eight ids returns **19
+    lines and every one is a TEST FIXTURE** — the `app/app/Modules` half is **empty**. ⭐ **That split is the
+    positive control:** the identical instrument fired nineteen times in the test tree and zero times in the
+    production tree, so the zero is the instrument working rather than the instrument failing (207, 294,
+    324). ⭐⭐ And the lane's own suite contains the assertion:
+    `MoneyPaidTodayScreenTest.php:42` reads *"an old invoice paid yesterday and edited today (`paid_at`
+    yesterday, `updated_at` now) must NOT appear"* — a test written to pin exactly this distinction, which
+    is why `MoneyPaidToday` filters on `paid_at` (107) and not on the timestamp a later mass update moves.
+    ⚠️ Worth keeping: `CardRotateAction:13`'s `CardToken::where(...)->update(['is_default' => false])` **is**
+    a mass Eloquent update and **does** stamp every card of the tenant, and it is harmless only because
+    ruling 204's MONEY-132 gave `CardScreen.php:84` an `orderBy('id')` — **328's shape again, a prior wave's
+    fix making a later census's finding invisible**, recorded here by its token so no tick re-derives it.
+    **(c) Two-consumer TRAIT read-consistency.** The lane has seven shared `Ui/` traits and **three have two
+    consumers each** — `LabelsMeters` (Credits, Mrr), `LabelsDunning` (DunningBoard, RevenueRecovery),
+    `ReadsAgreedMonthly` (Mrr, RevenueRecovery). The predicate is ruling 98's tell on a **shared instrument**:
+    do the two consumers read it identically, or does one carry a fallback the other lacks? Measured: `?? $key`
+    is **byte-identical** in both consumers of `meterLabels` (`mrr.blade.php:60`, `credits.blade.php:34`) and
+    of `dunningLabels` (`dunning-board.blade.php:43`, `revenue-recovery.blade.php:31`), and `agreedMonthly` is
+    called with the same shape at `Mrr.php:72` and `RevenueRecovery.php:65`. ⛔ The one divergence — the two
+    dunning screens' `:state=`, a shared map in `dunning-board` against a local `day_in_cycle >= 21` ternary in
+    `revenue-recovery` — is **already ruled**: ruling 305(3) left it deliberately (*"⛔ `revenue-recovery.blade.php:31`'s
+    `:state=` stays byte-identical, deriving from a real varying column and not this finding's subject"*) and
+    ruling 307 recorded it (*"both honest, unifying them a UX judgement rather than a defect"*). Re-raising it
+    would be ruling 64's decay.
+    **(d) The blade VIEW-KEY contract behind `??` — 23 reads, 10 distinct view keys, all passed.** A blade
+    variable comes from one of three places — a public property, a `render()` view key, or a loop variable —
+    and ruling 402(b) swept only the first. **A `render()` key the component never passes, read as
+    `$map[$k] ?? 'default'`, is silently the default FOR EVER**, which is precisely the constant rulings 43,
+    122, 129 and 305 keep hunting; the `??` is what makes it silent, since a bare `$undefined` would error and
+    the suite renders all 24 screens (375c). `grep -rn -F -e '??' app/app/Modules --include=*.blade.php`
+    filtered to the eight ids → **23**, classified (262(b)) into model-attribute reads (`$sub->plan?->value`),
+    public-property reads (five `$errorHeading`, one `$refusedHeading`, two `$explanation`), JSON-array-key
+    reads (`$package->contents[...]`, whose keys `packageForCollections` writes explicitly — 44, 364) and
+    **ten true view keys**, each traced to its `render()`: `meterLabels` · `dunningLabels` ·
+    `dunningPillStates` (`DunningBoard.php:47`) · `subscriptionLabels` (`Mrr.php:86`) ·
+    `ledgerEntryPillStates` (`Credits.php:85`) · `orderStatusLabels` and `orderStatusPillStates`
+    (`CheckoutBlock.php:139-140`) · `numbers` (`PaymentplanBuilder.php:98`) · `actionLabels`
+    (`InvoiceThreadBeside.php:119`). **All ten are passed.**
+    ⚠️ ⭐ **`dunningPillStates` was a near-miss and it is ruling 395's trap in a new form.** A
+    `grep -e 'dunningLabels'` over `DunningBoard.php` returns `:46` alone, and reading that output as the
+    component's whole `render()` array says the pill-state map is never passed — i.e. that ruling 305's
+    fix (3) had not landed and every dunning pill was a grey constant. It **is** passed, at `:47`, one line
+    below the pattern's last match. **395 ruled that a LINE RANGE inside a claim is a citation of where the
+    reader stopped; a PATTERN is one too**, and a pattern that names one of two sibling keys stops exactly
+    one line short of the other.
+    ⛔ None of the four is to be re-raised. ⭐ **Ruling 327's outcome shape a FOURTEENTH time** — *a population
+    measured non-empty that yields zero buildable fixes is a legitimate result and is the more useful of the
+    two to write down*, because an empty census tells a later tick *nothing is there* while a classified one
+    tells it **what is there and why each member stays**.
+
+415. **⭐⭐⭐ THE ZERO TRAP HAS A FIFTH MECHANISM AND IT DOES NOT RETURN A ZERO — a filter that excludes the
+    population's own SYNTAX returns a FULL, PLAUSIBLE, ENTIRELY WRONG answer, and the tell is that every
+    member is of the wrong KIND (RULED by the lane supervisor 2026-09-10 20:0x; fired TWICE in this
+    supervisor's own hands in one tick).** The four recorded mechanisms are `$` inside a double-quoted
+    pattern (207), CASE (381), `[` without `-F` (387) and LAYOUT — a `-B`/`-A` window or a line range (407,
+    410, 412, 395). **All four produce a ZERO**, and rulings 95/100/111's *strike a population that measures
+    empty* is what makes a zero dangerous, so every one of them is caught by the standing discipline:
+    corroborate a zero against an independent count and a positive control.
+    **This one produces neither a zero nor a defect.** Ruling 414(a)'s first instrument was
+    `… | grep -v -e '===' -e '!==' -e '>' -e '<' -e 'isEmpty' -e 'in_array' -e 'count'`, meaning to exclude
+    comparisons. `>` is also the second character of **`->`**, so the filter removed every line that reads a
+    property — **the entire population the census was measuring** — and returned **47 members**: a full,
+    coherent, plausible list of message properties, booleans, collections and models. Nothing about it looks
+    wrong. An hour later it would have been written up as *"47 members, zero defective, STRUCK"* and the
+    axis closed with **19 unread members behind it**, three of them integer columns.
+    ⭐⭐ **The tell is not the count and it is not a zero — it is that every member is of the WRONG KIND.**
+    A census of *conditionals that read a column* returned forty-seven conditionals and **not one read a
+    column**. That mismatch between the population's stated PREDICATE and the SHAPE of its members is the
+    only signal available, because the count is healthy and the members are real lines of real code.
+    ⚠️ It fired a **second** time in the same tick, on the external control for the same census, and was
+    caught the same way: an instrument aimed at numeric-column conditionals outside the lane returned
+    **nothing**, because the identical `grep -v -e '>'` was copied into it.
+    **RULED, and it is a standing check rather than a pattern rule: after any census, read the FIRST THREE
+    MEMBERS and confirm each is an instance of the predicate.** ⛔ A count is not a verdict (262(b), 397) and
+    ⛔ a plausible list is not a measurement. ⭐ The specific pattern lesson is narrower and worth stating
+    too: **a `grep -v` filter is written against the SYNTAX of the thing being excluded, and `>`, `<`, `.`
+    and `-` are all substrings of PHP's own operators** — exclude `>=`, `<=`, `===`, `!==` by name, never a
+    bare `>`.
+    ⭐ **The generalisable half joins ruling 371's family and extends it.** 371's finding — *a census that
+    LISTS, COUNTS, reads a LINE RANGE or assumes a LAYOUT instead of stating its PREDICATE is a filter
+    wearing a census's name* — has been found **nine** times inside this ledger's own censuses (375c, 376,
+    383, 394c, 395, 402b, 404, 407, 409). **Every one of those nine was discovered because the answer was
+    empty, short or contradicted a neighbouring measurement.** This is the first where the wrong answer was
+    **full and internally consistent**, and it is therefore the first that could have survived review. ⛔ So
+    a census is not validated by its instrument being correct — the pattern here was correct; it is
+    validated by its MEMBERS being instances of what it claims to measure.
