@@ -16441,3 +16441,52 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     ⚠️ Deploy note (501): no production order exists to duplicate (117). The dev database is unmeasurable from this
     seat, so the brief's 3.4 stop-clause is 463's `UNRESOLVED` fallback. **Dispatched run 236, 1 of 2, before
     these rulings were written (464).**
+516. **⭐⭐ MONEY-211 PASSES. The racer hook ran through a RETRY LOOP for the first time, and a catch written for
+    one constraint is proven to handle a second (RULED by the lane supervisor 2026-09-11 07:2x, by `date`, on
+    `f96c63bf`).** The surface is exactly the migration `2026_09_11_080000_x117_unique_order_auth_token.php`,
+    `X117Test.php` (one method, no import) and `CheckoutEngine.php`, where **every changed line is a `//` comment
+    in one of the two catch arms**. `git diff -w --stat` equals the raw stat (468). The migration, the engine and
+    the test are in one commit, `3a431f9b`.
+    `RED (no index):` is `Failed asserting that 2 is identical to 1.`, the seventh consecutive wave in 418's shape.
+    `RED (mutation):` carries `SQLSTATE[23505]` and `orders_business_auth_token_unique`. `GREEN (after gate)` has
+    six assertions, including `AUTH_USED`, so the loser met the guard's own code (515).
+    §7 read raw is **`tests 2542 · passed 2539 · FAILED 1 · errors 2`**, exactly the floor listed before the run,
+    so route (iii) carried it (391). The ordering is serial: commit `07:10:24`, gate `07:13:24`, mutation insert
+    `07:13:58`. The lock was free (322), so the re-gate was declined by choice. Pushed `90c482bb..f96c63bf`.
+    ⭐ **Ruling 510 held on its second outing**, and ruling 515's premise is proven by the mutation rather than
+    read from the loop: with the catch arm bypassed, the index's own violation reaches the caller. With the
+    loop intact, the refusal does. ⭐ **The racer hook has now transferred to five tables** (205, 206, 207, 208,
+    211) and through a retry loop, where 209 and 210 carried their own catch.
+517. **⛔ The READ-MODIFY-WRITE census on an aggregate: three members, zero buildable, and the twenty-fourth HOLD.
+    Ruling 514's population is exhausted and no further population meets 324's bar (RULED by the lane
+    supervisor 2026-09-11 07:2x).** The instrument, quoted (300), is
+    `grep -rn -F -e "paid_cents' =>" -e "late_fee_cents' =>" -e "lockForUpdate" app/app/Modules --include=*.php`,
+    filtered to the four money engines. Three rows compute a new aggregate from a value read earlier with no row
+    lock:
+    - `X-199/Domain/InvoiceEngine.php:180` (`recordPayment`, `'paid_cents' => $newPaid`)
+    - `X-211/Domain/ArEngine.php:94` (`applyLateFee`, `$state->late_fee_cents + $finalFee`)
+    - `X-211/Domain/ArEngine.php:256` (`logOfflinePayment`, `'paid_cents' => $newPaid`)
+
+    The other hits are copies into a package or charge row (`:225`, `:305`), zero-initialisers, casts, or the
+    lane's four locks, which are X-117's sellable locks plus `InvoiceNumber::next()`.
+    ⭐ **Known-member check fires (429):** `applyLateFee` is ruling 499's own recorded residual.
+    ⭐ **Positive control fires:** `lockForUpdate` appears in 19 files tree-wide.
+    A concurrent pair on any member loses an update: two payments record as one, or two fees exceed 221's
+    ceiling.
+    **Safety (328): every production route needs an invoice, and nothing in production raises one.** Re-measured
+    this tick, not inherited (323): `grep -rn -F -e "issueInvoice(" app/app` minus its definition returns
+    `InvoiceIssueAction:15`, whose class has **no caller** (`grep -rn -F -e "InvoiceIssueAction" app/app
+    app/routes` returns only its declaration), and the two evidence commands. That is rulings 170 and 490
+    unchanged.
+    ⛔ **Not briefed, and the reason is the proof, not only reachability.** A lock fix (a `lockForUpdate` re-read)
+    is proven only by a racer that **blocks** on the lock, and ruling 472 measured that this single-process suite
+    cannot hold one session blocked while another runs. An atomic `UPDATE … SET paid_cents = paid_cents + ?` is
+    provable without blocking, via a model-`retrieved` hook. But it restructures ruling 103's status derivation and
+    221's cap in three engines across two modules, on a path no owner reaches. Ruling 232 governs that trade.
+    ⛔ **Trigger for reopening: a production caller of `issueInvoice`, never a wave boundary** (469's form).
+    ⭐ Ruling 327's outcome shape a **forty-third** time.
+    ⚠️ The cadence was measured this tick: 17 behind; the guarded-checker diff was empty; the merge-base is
+    `c4d95fae`, the lane's own tip; its content is 7 per-track paths plus X-102's three. None fires (504).
+    ⚠️ **The four lift conditions are checked, never inferred:** a new dated `OWNER.md` section; a cadence
+    condition on a moved `origin/main`; a Track 1 answer to ACTION 13–25; a population at 324's bar that is
+    measured non-empty **and** buildable.
