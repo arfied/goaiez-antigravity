@@ -5,7 +5,7 @@
 #
 #   bash .agents/supervisor/launch-coder.sh                 # auto-numbers the run
 #   bash .agents/supervisor/launch-coder.sh --check         # liveness only, no launch
-#   bash .agents/supervisor/launch-coder.sh --coder claude   # quota fallback
+#   bash .agents/supervisor/launch-coder.sh --coder claude   # REFUSED since owner ruling 2026-09-11 14:0x
 #   bash .agents/supervisor/launch-coder.sh --allow-merge    # opens GOAIEZ_MERGE_OK
 #   bash .agents/supervisor/launch-coder.sh --allow-harness  # opens GOAIEZ_HARNESS_OK
 #
@@ -59,13 +59,17 @@ while [ -n "${1:-}" ]; do
   case "$1" in
     --coder)
       case "${2:-}" in
-        agy|claude) CODER="$2" ;;
-        *) echo "REFUSED: --coder takes 'agy' or 'claude', got '${2:-}'"; exit 1 ;;
+        agy) CODER="$2" ;;
+        # Owner ruling 2026-09-11 14:0x (supersedes 10:2x, restores 2026-09-10): the
+        # claude fallback is DISABLED on every track. On "quota reached" the tick
+        # records it and stops; the next tick after the reset dispatches agy.
+        claude) echo "REFUSED: --coder claude is DISABLED (owner ruling 2026-09-11 14:0x). Record the agy quota exit in REVIEWS.md and stop."; exit 1 ;;
+        *) echo "REFUSED: --coder takes 'agy', got '${2:-}'"; exit 1 ;;
       esac
       shift 2 ;;
     --allow-merge) ALLOW_MERGE=1; shift ;;
     --allow-harness) ALLOW_HARNESS=1; shift ;;
-    *) echo "REFUSED: unknown argument '$1' (expected --check, --coder agy|claude, --allow-merge, --allow-harness)"; exit 1 ;;
+    *) echo "REFUSED: unknown argument '$1' (expected --check, --coder agy, --allow-merge, --allow-harness)"; exit 1 ;;
   esac
 done
 
