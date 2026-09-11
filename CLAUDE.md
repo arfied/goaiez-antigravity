@@ -13186,3 +13186,136 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     otherwise reach it. ⚠️ `quantity` on `order_lines` and `invoice_lines` is `unsignedInteger` and is
     **not owner-typed** — every `quantity` occurrence in the lane's blades is a **render**, measured, and
     the numeric-input census returned no quantity field.
+418. **⭐⭐⭐ A mutation proof whose RED dump renders the DEFECT'S OWN TEXT is the strongest form available —
+    it proves the assertion is load-bearing AND that the finding was real, and every proof in this ledger
+    before now proved only the first (RULED by the lane supervisor 2026-09-10 20:3x, on MONEY-196's
+    `a391c6c9`).** Ruling 72 requires a mutation proof re-run against the committed tree with its RED line
+    quoted; 195 added the failing test's **name**; 314 both halves; 82 a GREEN re-run either side. MONEY-196
+    satisfied all four — and its mutated render also carried *"We could not save that term: **SQLSTATE[22003]:
+    Numeric value out of range: 7 ERROR: value "99999999999" is out of range for type integer** … insert into
+    "ar_plan_terms" …"*, which is **ruling 416's prediction, measured**. 416 argued from vendor source
+    (`Blueprint.php:978-981` → `PostgresGrammar.php:846-849` returns the literal `'integer'` with no reference
+    to `$column->unsigned`) that an owner-typed cap above 2,147,483,647 reaches Postgres and returns
+    `SQLSTATE[22003]` through `saveTerm:64`'s tail; the proof **exhibited it**. **RULED: where a wave's
+    subject is a value reaching an external system, the mutation's RED dump is read for the DEFECT'S OWN
+    SIGNATURE and not only for the new assertion's failure** — a dump that fails the assertion without
+    exhibiting the old behaviour proves the assertion and leaves the finding unevidenced, which is the
+    difference between *this test checks something* and *the thing it checks was happening*. ⚠️ It is also
+    ruling 82's collateral answered in its strongest form: the two renders differ by the thing under test and
+    by nothing else. ⭐ And it closes the loop 302 opened from the other end — 302 proved a checker blind by
+    changing what it should see and measuring that it did not move; this proves a finding real by removing the
+    fix and measuring that the defect returns. **Both are experiments, and both beat an argument from source.**
+    ⚠️ Recorded, not charged: `assertSame(0, ArPlanTerm::…->count())` is green **both ways** — the mutation
+    throws inside `DB::transaction`, which rolls back — and the brief said so; it is kept because it pins
+    M29-C, and the discriminators are the two `assertSee`s plus `assertDontSee('SQLSTATE')` (215's *measure
+    WHY an assertion is green before pinning it as a guard*). ⚠️ Ruling 391's route (iii) carried the review
+    and **the lock was FREE** (`pgrep`'s one hit was this seat's own command quoting the string — 322, *read
+    the hit*), so the re-gate was declined **by choice, not by constraint**, which is the mirror of ruling
+    401 and is what makes (iii) a standing answer rather than a lucky one: 348's question — *what could §7
+    catch that I have not already measured?* — answers **nothing**, because a reddened standing assertion
+    would have moved `passed` off a floor derived by listing before the run.
+
+419. **⭐⭐ The COLUMN-WIDTH family is CLOSED on every type — `varchar`, `integer`, `smallInteger`,
+    `tinyInteger`, `decimal` and `text` — and ruling 41's own widening migration is VERIFIED to have landed
+    (measured by the lane supervisor 2026-09-10 20:3x; rulings 64, 95, 100, 111, 294, 324, 327).** Rulings 41
+    (a 422-character Stripe URL against a `varchar(255)`), 404 (owner-typed text) and 416 (owner-typed
+    numeric) are three instances of one predicate — **a column's declared WIDTH against the longest value its
+    writer can produce** — and 416's closing named `smallInteger`, `tinyInteger` and `decimal(p,s)` as
+    unswept. All are now measured and all are clean.
+    **(a) `decimal(p,s)` — ONE column in the lane and nothing owner-typed reaches it.**
+    `grep -rn -e 'decimal' app/app/Modules --include=*.php` filtered to the eight ids returns
+    `X-173 …000092:56 $table->decimal('confidence_score', 4, 3)`; ⭐ the control fires at **37** tree-wide
+    (C-Mail, X-116, X-130, X-131, X-132, X-134, X-136), so a one-member answer here is a measurement and not
+    a broken pattern. **The disproving measurement, taken first (400, 403):** its only writer is
+    `AccountingSyncAction:60`, and `grep -rn -e 'syncTransactions' -e 'AccountingSyncAction' app/app` returns
+    the class declaration and its own method definition — **no production caller** (81, 223, 327, re-measured
+    rather than inherited, 323). ⚠️ Recorded at ruling 76's grade: `decimal(4,3)` **rounds at write** and
+    `CONFIDENCE_THRESHOLD = 0.85`, so a persisted `0.8499` becomes `0.850` and **crosses the threshold** —
+    unreachable, and unobservable besides, since `conflicts-list.blade.php:23`'s `round(× 100)` renders 85 %
+    either way. Ruling 96 governs. ⛔ Not a wave.
+    **(b) String columns — 75 members, every one bounded.** The narrowest is `X-120 last_four`,
+    `string('last_four', 4)`, written by `CardPresentAction:53`'s `substr($digits, -4)`, which returns at most
+    four. Every other is a default `varchar(255)` in one of five already-measured classes: owner-typed and
+    **guarded** (206, 364, 368, 369, 392, 404) · a bounded **vocabulary** · a bounded **vendor id**
+    (`gateway_charge_id` at 27 chars, 173/282; `provider_link_id`, ruling 41's own measurement) · **no
+    production writer** (`partner`, `bundle_url`, `pdf_url`, `photo_path`, `last_action`, `last_reason`,
+    `financing_partner`, `lost_reason`, `card_on_file_token`, `sku`, `name`) · or **app-minted by
+    concatenation**, the one class no prior census had enumerated, which returns **four** and all four bounded
+    by construction: `'topup_'.uniqid()` = 19 · `'ORD-'.strtoupper(Str::random(6))` = 10, twice (327's own
+    subject) · `'idem_pay_link_'.time()` = 24. ⭐ **Not one embeds an unbounded row value**, which is the only
+    way a 255 can overflow once owner input and vendor strings are accounted for.
+    **(c) ⭐ Ruling 41's widening migration LANDED, and finding that out fired ruling 407's trap.**
+    `grep -rln "text('url')"` returns **nothing** — because the fix is not a Blueprint call:
+    `X-198/Database/migrations/2026_09_06_110000_widen_x198_payment_link_url.php:14` is
+    `DB::statement('ALTER TABLE payment_links ALTER COLUMN url TYPE text')`, found by **reading the file**
+    rather than grepping it (262(b), 395). **A pattern encodes a syntax assumption**, and here the zero was
+    the assumption failing rather than the remedy missing. This is ruling 64's discipline aimed at this
+    ledger's own remedies: **a ruling that ordered a fix is re-measured for whether the fix shipped.**
+    **(d) ⭐⭐ Ruling 416's own INSTRUMENT GAP, measured and clean.** 416 swept `type="number"` against integer
+    columns and 404 swept `type="text"` against `varchar`, so **a `type="text"` input CAST to a number** falls
+    between them. `grep -rn -E '\((int|float)\) *\$this->' …/Ui/` returns **two** —
+    `X-120/Ui/CardScreen.php:73`'s `(int) $this->expMonth` and `(int) $this->expYear` (against
+    `unsignedSmallInteger` columns) and 416's own `(int) $this->term['cap']`. **The disproving measurement:**
+    `present()` persists nothing, and
+    `grep -rn -e 'CardToken::create' -e 'CardToken::updateOrCreate' -e 'new CardToken' app/app` returns **one
+    line**, `CardStoreAction:27`, which ruling 119 measured has no caller outside tests — **so the two values
+    reach no column.** ⭐ The divergence is deliberate, not an oversight: `type="text"` with
+    `inputmode="numeric"` and `autocomplete="cc-exp-*"` is the correct HTML for a card field, where
+    `type="number"` brings spinners, locale grouping and leading-zero loss. ⛔ Not to be harmonised (228(a)).
+    ⛔ **None of the five types is to be re-raised.** ⭐ Ruling 327's outcome shape a **fifteenth** time.
+
+420. **⭐⭐⭐ Ruling 365's instrument listed four DEFAULT VALUES where its predicate is ANY optional parameter
+    — the complement is thirteen members, and the one nobody had measured is a value accepted across two
+    layers and DISCARDED, kept alive by a CHECK that asserts a SIGNATURE rather than a BEHAVIOUR (RULED by
+    the lane supervisor 2026-09-10 20:3x).** Ruling 365's predicate is *an optional parameter the only
+    production callers never supply, so the callee's default silently governs* — the shape behind rulings
+    185, 233(b) and 365's own `recordPayment` finding. **Its instrument was**
+    `grep -rn -e "= null," -e "= null)" -e "= true," … -e "= 0)"` — **a list of four falsy default VALUES**,
+    which cannot match `= ''`, `= 'fraudulent'`, `= 'net_30'`, `= 'check'`, `= 'monthly'`, `= 1`, `= 3`,
+    `= 8`, `= 15` or `= 30`. Re-run on the predicate,
+    `grep -rn -E "public function [a-zA-Z]+\(.*= ('[^']*'|[1-9][0-9]*)[,)]"` over the lane's `Domain/` and
+    `Actions/` returns **thirteen**. ⭐ Ruling 415's check: the first three (`$multiplier = 8`,
+    `$expiresMinutes = 15`, `$quantity = 1`) are each an instance of the predicate.
+    **Twelve are already ruled** — `$termsType = 'net_30'` **stays** (185, a second legitimate role);
+    `$offlineMethod = 'check'` is 223(c)'s accepted-and-dropped parameter with no production caller (170);
+    `$dueDays = 30` is 186's; `$method`/`$photoPath`/`$reference` are 364's, 363's and 404's;
+    `$installmentsCount = 3` and `$frequency = 'monthly'` are **both supplied** by `PaymentplanBuilder`
+    (392(c)'s default-at-the-read); `$reason = 'fraudulent'` is 221's; `$multiplier = 8` is C-Billing
+    `Domain/`, Track 1's (5); `$expiresMinutes = 15` and `$quantity = 1` are cart policy, and 417 measured
+    `quantity` is **not owner-typed** anywhere in this lane's blades.
+    **The thirteenth is `DisputeDefenseEngine::record(…, string $gateway = '')`.** Read whole rather than by
+    line range (395): its `Dispute::create` array carries `business_id`, `invoice_id`,
+    `chargeback_amount_cents`, `reason` and `status` — **and no gateway** — while `DisputeRecordAction:16`
+    forwards the parameter faithfully. **A caller-supplied value travels two layers and is silently
+    discarded**: ruling 37/51's *"a caller-supplied value is a second place for the truth to disagree"* with
+    the sign reversed, and the **second** recorded instance after 223(c)'s `$offlineMethod`.
+    ⭐⭐ **What keeps it alive is a CHECK asserting a SIGNATURE.** `N008Test.php:55` is
+    `assertContains('gateway', $params, 'Record action must accept gateway field')` — **reflection** — and
+    `:58` calls `handle(…, 'unknown_gateway_xyz')`. N-008's ⑤ is *"it accepts `chargeback.received` from any
+    gateway; doctor asserts no gateway name appears in the dispute logic (P-197)"*, and the test proves
+    agnosticism by proving the parameter is **accepted** — which it is, by being thrown away. ⭐ That file's
+    real behavioural half is sound and is `:33`'s `assertEmpty($foundGateways)`, a directory scan over
+    `app_path('Modules/X-201')` for six gateway names (63's instrument, scoped to its own module).
+    ⛔ **RULED: recorded, not briefed — there is no fix that does not break something.** Removing the
+    parameter reddens `N008Test:55`, a capability CHECK carrying an `N-008` token
+    `CapabilityStage::testedIds()` reads (295), and deleting an assertion is the One Rule. Storing it needs a
+    `gateway` column on a table ruling 79 measured has **no production writer at all**, for a webhook 79
+    already recorded `UNRESOLVED` — ruling 59. Putting it on `DisputeOpened` is ruling 44 **inverted**: 44
+    dropped an always-null event field precisely because propagating a fiction to every future listener costs
+    nothing to remove now. **The parameter, the reflection assertion and the absent column are a matched set
+    this lane owns, unreachable in production, and nothing false reaches an owner.** → **TRACK 1 ACTION 13's
+    list**, as the capability-CHECK half: whether an N-008-shaped ⑤ is satisfiable by a *signature* is the
+    frozen plan's question and Track 1's.
+    ⚠️ Recorded with it at ruling 76's grade: `N008Test`'s inline comments at `:38`, `:40`, `:51` and `:57`
+    are **stale** — *"Currently it doesn't take a gateway parameter"*, *"this is a named missing behaviour"*,
+    *"This will fail since gateway is not accepted"* — narrating the pre-parameter state directly above a
+    line that **passes**. Rulings 81/224's docblock family in a CHECK file. ⛔ Not a wave: nothing false about
+    the SYSTEM is asserted, no mutation can redden a comment (81, 244, 356), and 47's companion forbids
+    editing a file for a reason no brief names.
+    ⭐ **The generalisable half is ruling 371's family a FIFTH encoding.** *A census that LISTS its members
+    instead of stating its PREDICATE is a filter wearing a census's name, and it closes silently* — found now
+    in a **member list** (371), a **count** (375c, 383), a **line range** (395), a **layout** (407, 410,
+    412), an **excluded syntax** (415), and a **list of VALUES**. ⭐⭐ Ruling 365's instrument enumerated the
+    defaults its author had already seen, so a default it had not seen was invisible **by construction**.
+    ⛔ **A census over a syntactic form states the form's general shape — here `= <any literal>` — and never
+    the literals it expects to find.**
