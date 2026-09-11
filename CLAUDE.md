@@ -3982,3 +3982,34 @@ failure need not be the same.
 ⚠️ **§2. A pattern that has never matched in a tree cannot prove absence from that tree.**
 `git grep "'id' =>" origin/main` printed nothing because main's line is `insertGetId`, not because the fixture
 is absent. REV-136 §1, caught one step late by re-grepping the comment text.
+
+## REV-164 — a repair ordered on every arm of its own fork, and a fixture that bent to two id spaces
+
+⛔ **§1. REV-163 ordered the G20-04 fixture restored "on every arm", and the fork came back `other (red, green, red)`
+(2026-09-11, my defect).** X-01's two tests were red **alone** (`r159-x01-alone.txt`), so this lane's fixture was
+not needed for them to fail; `X01Test.php:468` forges `people.id = customers.id` itself. The restore wrote a
+`customers` id into `review_requests.customer_id`, which is `constrained('people')` (`create_c_reviews_tables.php:18`),
+and the pair went red on exactly that FK (`r159-together-after.txt`). A repair ordered on every arm is a conclusion
+reached before the measurement that could change it. **RULED: a fixture restore reads the FK target of every column
+it writes before it is briefed, and no repair is ordered on an arm its own fork could falsify.**
+
+⛔ **§2. Class-based module tests commit their rows (measured, `r159-probe-0/1/2.txt`).** `n_live_tup` on `customers`
+rose `4 → 7 → 11`, exactly the rows items 4 and 5 inserted, and a rolled-back insert is never live.
+`tests/TestCase.php:22` has the trait commented out, and `Pest.php:84-86`'s `->in('Modules')` did not reach these
+classes. So every explicit id in a module fixture is a latent primary-key collision, and results depend on order.
+**Red when filtered, green in the gate** is the signature, not a flake. TRACK 1's file.
+
+⛔ **§3. The forge was the honest shape of a product defect.** `ReviewerContactAction.php:23` reads
+`consent_records.customer_id` (→ `customers`, `create_consent_records_table.php:29`) with
+`review_requests.customer_id` (→ `people`), so consent for customer N answers for person N. The "allowed" test can
+pass only when the ids coincide, which is why `c7c14a87` and `08fdbd68` forged them and `a0d6ccf4` passed by
+committed-row coincidence. It is latent: there are zero production callers. `X-01/Ui/Thread.php:50` already said
+*"people and customers inhabit different ID spaces."* **RULED: an id is read only from the space its column's FK
+names, and a fixture that must forge an id to pass is reported as a finding about the code under test before it is
+repaired as a fixture.**
+
+⛔ **§4. X-204's `consent.decide` is not a consent read.** `X-204/Domain/ConsentService.php:30-110` checks suppression
+and a caller-supplied state, then grants. It reads no consent record, so calling it to ask whether a person consented
+mints a grant from a phone number (P-068). The engine that reads `consent_records` is
+`App\Services\Consent\ConsentService::decide(Customer, …)`, Marketing by default (`:123`). A phone reaches a customer
+as `C-Sms/Actions/SmsSendAction.php:40` does. Run 160 rewires the action that way.
