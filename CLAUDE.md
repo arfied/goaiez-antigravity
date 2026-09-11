@@ -16986,3 +16986,71 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty wave to avoid an idle tick is what
     rulings 95, 100 and 111 forbid. ⚠️ `app/CLAUDE.md` came into context again this tick. It is Laravel Boost
     boilerplate and was not followed.
+
+534. **⭐⭐ Ruling 517's read-modify-write census was keyed on the `'<col>' =>` ASSIGNMENT form, and the same
+    operation written as a COMPOUND ASSIGNMENT (`+=`, `-=`, `++`) was never swept. It is 25 lines in the lane,
+    ONE of them a persisted column, which is Track 1's and locked. Reading around the hits found a quantity
+    default that four readers apply and one method skips, unreachable. Zero buildable (measured by the lane
+    supervisor 2026-09-11 09:5x, by `date` `09:50`; rulings 64, 96, 152, 262(b), 294, 324, 327, 328, 371, 415,
+    429, 517, 532).** This is 532's cheapest place to look, *a census keyed on one written form misses the same
+    operation written another way*, aimed at 517. 517's instrument was `grep -F -e "paid_cents' =>"
+    -e "late_fee_cents' =>" -e "lockForUpdate"`, which cannot see `$model->col += $x; $model->save();`.
+    **Instrument, quoted (300):** `grep -rn -F -e "+=" -e "-=" -e "++" -e "--;"` over the eight module trees
+    returns **25** lines. ⭐ **Positive control:** `grep -rln -F -e "+="` over `app/app/Services`,
+    `app/app/Models` and `app/app/Livewire` returns **31** files. ⭐ **Known member (429):**
+    `C-Billing/Domain/BillingLedgerEngine.php:103`'s `$limit->topups_today_cents += $amountCents`, which is
+    ruling 262's own cited property-assign member. ⭐ **415's first three** (`InvoiceDraftAction:20`,
+    `MarkInvoicesDueCommand:31`, `:57`) are each an instance of the predicate.
+    **Each class and its safety (328):**
+    - **23 are LOCAL variables**, never a column: running totals over lines (`InvoiceDraftAction:20`,
+      `InvoiceEngine:36`, `CheckoutEngine:32,:227,:303,:347`), console counters (225's own), the Luhn walk
+      (380(a)), loop counters (492) and two screen tallies (`Declines:91`, 114; `CheckoutBlock:121`, 208).
+      `AccountingSyncAction:55,:66` are unreachable (81).
+    - **2 are persisted columns**, `BillingLedgerEngine:103` and `:106`, both on a `TrialLimit` read at `:86`
+      under `lockForUpdate()` inside `DB::transaction` and saved at `:107`. That is a locked read-modify-write,
+      correct as written, and C-Billing `Domain/` is Track 1's (5).
+    ⭐ **So 517's population is complete in this form too.** No money engine writes an aggregate through `+=`.
+    ⭐⭐ **Reading around the hits (152) found a divergent default.** Cart item `quantity` is read at ten sites.
+    Four apply `?? 1` and an `(int)` cast: `CartBlock:90`, `CheckoutBlock:118`, `CheckoutEngine:32` (`buildCart`)
+    and `:303`/`:347` (`addToCart`/`writeCart`). ⭐ **`checkoutCart()` reads `$item['quantity']` bare five
+    times**, at `:214`, `:217`, `:223`, `:225` and `:227`. A cart row whose item has no `quantity` key would be
+    totalled at quantity 1 by `buildCart` and `writeCart`, shown at quantity 1 by both screens, and then fail
+    `checkoutCart` with an undefined-key `ErrorException`. That is ruling 98's tell: one module, two answers to
+    what a missing quantity means. **Its safety, named (328): no reachable writer produces such an item.**
+    - `addToCart` always writes `quantity` (`:319`, `:325`), and `removeFromCart` keeps existing items as they
+      are.
+    - `buildCart` stores the caller's `$items` unchanged, and `grep -rn -F -e "CartBuildAction" app/app`
+      returns only its own declaration, so it has **no production caller** (170(3)). All seven of its test
+      call sites in `X117Test.php` pass `quantity`.
+    - The one raw cart insert, `X117Test.php:548`, writes `'items' => '[]'`, which `:198` refuses as
+      `CART_EXPIRED` before any item is read.
+    - The storefront has no production catalogue writer either (117, 469).
+    ⛔ **Recorded at ruling 96's grade, not briefed.** No test can build a quantity-less cart except by calling
+    the caller-less `buildCart` with a shape no writer produces, which would be manufacturing reachability
+    (327). ⛔ The four `?? 1` readers are not harmonised down and the five bare reads are not harmonised up:
+    both are correct for every cart the code writes (228(a)). ⚠️ **Trigger:** a production caller of
+    `CartBuildAction`, or a cart writer that can omit `quantity`. Ruling 327's outcome shape a **fifty-second**
+    time.
+    ⭐ **The general lesson, 532's sharpened:** a census over WRITES names the operation, not its spelling.
+    `=>` inside `update([…])`, a property assign, `+=`, `->increment(` and a raw `UPDATE … SET x = x + ?` all
+    write a column. Only the first was swept, and `->increment(` is the one that is atomic by construction
+    (`CheckoutEngine:81,:157,:243`).
+
+535. **⛔ THIRTY-NINTH consecutive HOLD (RULED by the lane supervisor 2026-09-11 09:5x, by `date`).** All four
+    lift conditions were measured this tick (269, 272, 323), each case decided on mtimes (494):
+    - **Owner.** `OWNER.md`'s newest heading is still `## OWNER RULING — 2026-09-09 09:02` (136), mtime
+      `09-09 09:02:03`.
+    - **Coder.** `--check` returned `CODER DEAD`.
+    - **Mailbox.** `REPORT.md` (`07:15:21`) and `BRIEF.md` (`07:07:27`) are both older than `REVIEWS.md`
+      (`09:43:31`).
+    - **Cadence, all three ✗.** After `git fetch --no-write-fetch-head origin`, `origin/main` =
+      **`46afc022`**, unmoved. `git rev-list --count HEAD..origin/main` = **19**.
+      `git diff --stat dca743e8 origin/main -- app/app/Doctor coder-bin .claude/hooks` is empty.
+      `git merge-base HEAD origin/main` = **`dca743e8`**, this lane's own pushed supervisor tip, and
+      `git diff --name-status dca743e8 origin/main` is the 7 per-track paths plus X-102's three (504).
+    - **Track 1.** No answer to ACTION 13–25.
+    - **Population.** Ruling 534's is non-empty and not buildable.
+
+    **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty wave to avoid an idle tick is what
+    rulings 95, 100 and 111 forbid. ⚠️ `app/CLAUDE.md` came into context again this tick. It is Laravel Boost
+    boilerplate and was not followed.
