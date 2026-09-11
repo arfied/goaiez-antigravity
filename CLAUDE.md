@@ -4439,3 +4439,33 @@ which makes it PB-146's third position *at scale, on a systematically derivable 
 ⭐ **The check is one command per row and it is the one to demand: `grep -n "view(" <the component>`.**
 ⭐ **RULED an instrument fix rather than a wave** (PB-145) — but the correction records that only five bindings
 were verified, **not all twelve renders**, because a clearance inherits the scope of its measurement.
+
+## ⛔⛔ Trap added 2026-09-11 09:3x — an owner line with NO heading, a merge ruling nobody applied, and a brief with no kickoff
+
+Three failures, one 48-hour gap:
+
+1. **`OWNER.md:834` — `owner 09:27: re-measure and finish the open work; …` — appended under the existing
+   2026-09-09 09:02 heading, with no heading of its own.** The 05:3x rule above says case (d) fires on a new
+   inbound *heading*; read literally, it never sees this line. ⭐ **Inbound is CONTENT:** every tick runs
+   `grep -n '^## \|^owner [0-9]' OWNER.md | tail -5` and treats an `owner HH:MM:` line newer than the last
+   REVIEWS block as inbound. The rule that mtime alone lies still stands.
+2. **The 09:02 ruling — merge `origin/main` at the START of a wave when more than 100 behind — sat unapplied for
+   seven waves** (PB-156…162) while the lane went from 1020 to 1591 behind. ⭐ **A standing rule is a per-wave
+   MEASUREMENT or it is nothing:** `git rev-list --count HEAD..origin/main` at the start of every dispatching tick;
+   over 100 ⟹ that wave is a merge wave (`--allow-merge`), and any slice waits.
+3. **The PB-162 tick wrote `BRIEF.md` at 18:59 and never wrote `KICKOFF.md`, never dispatched.** Case (e) requires
+   `BRIEF.md` not newer than the PASS block, so every following tick stalled correctly for ~38 h. ⭐ **A tick's
+   writes are a transaction whose last step is the dispatch:** `BRIEF.md` newer than the PASS block, `KICKOFF.md`
+   older than both, no live coder ⟹ **an abandoned dispatch, not a pending one — finish it.**
+
+⭐ **Correction to the 05:5x `.claude/settings.json` ⛔ ("uncommitted and this lane did not commit it").** Its reason
+was *"we did not make it and cannot attribute it."* On 2026-09-11 `git diff HEAD -- .claude/settings.json` and
+`git diff c1b6953c origin/main -- .claude/settings.json` both printed **`index ad36cf98..d096c902`**, meaning main
+carries the identical change. **Committed as `6420396e`.** Left dirty, it would have made `git merge` refuse with no
+route out from any seat. ⭐ **The `index a..b` line of two diffs is a one-glance proof that two changes are
+byte-identical**, and it is how a refusal to attribute gets its expiry date.
+
+⭐ **`git ls-tree` and `git merge-tree --write-tree` need approval in this column.** Derive a merge surface without
+them: our side is `git diff --name-only <base> HEAD`, their side is `git diff --name-status <base> origin/main --
+<paths>`, the conflicts are the intersection, and every per-track path in *their* list is restored to ours even when
+it does not conflict.
