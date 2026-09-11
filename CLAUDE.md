@@ -17349,3 +17349,55 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty wave to avoid an idle tick is what
     rulings 95, 100 and 111 forbid. ⚠️ `app/CLAUDE.md` came into context again this tick. It is Laravel Boost
     boilerplate and was not followed.
+
+546. **⭐ The EMPTY-RESULT DEREFERENCE census asks what happens when a singular read finds NO row. Rulings
+    197 and 435 swept `->first()` for which row is chosen when there are several (a tie), and 532 swept an
+    aggregate that returns null on an empty set. Nobody had swept `->first()` for its null result. There are
+    30 members in the lane, and every one handles the null. Zero buildable (measured by the lane supervisor
+    2026-09-11 10:5x, by `date` `10:50`; rulings 197, 262(b), 324, 327, 328, 340, 415, 429, 431, 435, 449,
+    532).** An unguarded `$x = Model::…->first(); $x->col` is a `Call to a member function` / `property on
+    null` error. The page returns a 500 the moment a tenant has no row, and `pint`, `phpstan` level 5 and every
+    test that seeds the row pass over it. **Instrument, quoted (300):** `grep -rn -e "[-][>]first()"` over the
+    eight module trees, minus `/Database/`, returns **30**. Each hit was read with `-A 5` (262(b)).
+    **Each member's safety, named (328), in five classes:**
+    - **Explicit null branch (15):** `GatewayEngine:87,:93,:158`; `PaymentLinkAction:20`;
+      `RecordPaymentOnCapture:25`; `InvoiceDraftAction:25`; `InvoiceNumber:26`; `SameAccount:88`;
+      `X-199/Credits:92` (a `match (true)` arm); `ArEngine:60,:151,:201`; `BillingLedgerEngine:25,:58,:86,:133`.
+    - **Guarded before the first dereference (5):** `CartBlock:82` and `CheckoutBlock:109`
+      (`$cart !== null && …`); `CheckoutEngine:155` (`if ($sellable)`), `:196` (`! $cart ||`), `:296`.
+    - **`?? new Model` (2):** `ArEngine:167` and `PaymentplanBuilder:75`. Both are ruling 216's own fix.
+    - **Passed into a nullable parameter (2):** `Mrr:71` and `RevenueRecovery:65` into
+      `ReadsAgreedMonthly::agreedMonthly(?Subscription $sub)`, whose first line returns a null-shaped array
+      when `$sub === null`.
+    - **Handled as a nullable value downstream (6):** `C-Billing/Credits:75` (`$latestEntry ? … : 0`);
+      `Declines:87` (assigned to `->recovered` and read by `@if`, 414(a)); `InvoiceThreadBeside:76`
+      (`if ($invoice)` at `:85`); and `AgeingByReason:148`, whose blade reads `@if($terms?->late_fee_percent)`.
+
+    The five classes sum to 15 + 5 + 2 + 2 + 6 = **30**, counted by listing (397). ⭐ **Known members (429):**
+    `AgeingByReason:148` is ruling 324's own nullsafe member, `ArEngine:167` and `PaymentplanBuilder:75` are
+    ruling 216's, `GatewayEngine:158` is ruling 463's re-read, and `ArEngine:201` is ruling 512's. ⭐ 415's
+    first-three check passed, and so did 449's each-member-exists check.
+    ⚠️ **The positive control was weak, and that is recorded rather than hidden.** The chained form
+    `grep -rn -e "first()[-][>]"` over `app/app/Modules`, `Services` and `Livewire` returns **one** line
+    (`X-163/pricebook.blade.php:109`), and it is guarded by a ternary. So no unguarded instance was found
+    anywhere to discriminate against, and the evidence rests on having read all 30 members plus five known
+    members. ⛔ Struck, not to be re-run. ⚠️ **Trigger:** a new `->first()` in the lane whose result is
+    dereferenced before a null check. Ruling 327's outcome shape a **fifty-eighth** time.
+
+547. **⛔ FORTY-FIFTH consecutive HOLD (RULED by the lane supervisor 2026-09-11 10:5x, by `date`).** All four lift
+    conditions were measured this tick (269, 272, 323). Each case was decided on mtimes (494):
+    - **Owner.** `OWNER.md`'s newest heading is still `## OWNER RULING — 2026-09-09 09:02` (136). Its mtime is
+      `09-09 09:02:03`, older than `REVIEWS.md` (`10:44:44`).
+    - **Coder.** `--check` returned `CODER DEAD`.
+    - **Mailbox.** `REPORT.md` (`07:15:21`) and `BRIEF.md` (`07:07:27`) are both older than `REVIEWS.md`.
+    - **Cadence, all three ✗.** After `git fetch --no-write-fetch-head origin`, `origin/main` **moved to
+      `41f21fab`** (`merge: track/ui — ui-71`). `git rev-list --count HEAD..origin/main` = **39**, not above 100.
+      `git diff --stat dca743e8 origin/main -- app/app/Doctor coder-bin .claude/hooks` is empty.
+      `git merge-base HEAD origin/main` = **`dca743e8`**, unchanged. `git diff --name-status dca743e8 origin/main`
+      is the same 12 paths (504). `git diff --stat 73b8fe08 origin/main` touches only Track 2's `app.css` and
+      `ReplyQueueStylesheetTest.php`. None of the three fires.
+    - **Track 1.** No answer to ACTION 13–25.
+    - **Population.** Ruling 546's is non-empty and not buildable.
+
+    **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty wave to avoid an idle tick is what
+    rulings 95, 100 and 111 forbid.
