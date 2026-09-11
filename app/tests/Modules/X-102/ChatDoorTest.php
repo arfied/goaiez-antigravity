@@ -28,7 +28,6 @@ class ChatDoorTest extends TestCase
      * BUILD PROPOSAL: X-01 cannot listen to ChatTurnCreated and use ingestMessage because web visitors only have a session token, which ingestMessage would wrongly insert into the Person phone column since it lacks an '@'. Owner: X-01
      * BUILD PROPOSAL: ChatTurnCreated carries no message text, but could safely do so because the AgentTurns law prohibits unencrypted text in job payloads, not synchronous event payloads (EmailReplied safely carries text). Owner: X-102
      * BUILD PROPOSAL: X-102 owes an event listener for C-Agent's AgentTurnAnswer to record the agent's reply as a ChatTurn. Owner: X-102
-     * BUILD PROPOSAL: X-102 owes an event listener for C-Agent's AgentTurnAnswer to record the agent's reply as a ChatTurn. Owner: X-102
      */
     public function test_valid_key_creates_chat_session_for_right_business(): void
     {
@@ -122,7 +121,6 @@ class ChatDoorTest extends TestCase
         $this->assertEquals(1, AgentTurn::where('business_id', $biz->id)->count());
         $agentTurn = AgentTurn::first();
         $this->assertEquals('Hello from visitor', $agentTurn->user_message);
-        dump($agentTurn->toArray());
     }
 
     public function test_key_for_business_a_and_session_for_business_b_returns_404(): void
