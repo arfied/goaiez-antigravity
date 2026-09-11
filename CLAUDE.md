@@ -13992,3 +13992,72 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     SAFETY has been named** (328) — and naming it is what stops the next tick re-deriving it.
     ⛔ Briefing an empty wave to avoid an idle tick is what rulings 95, 100 and 111 exist to prevent, and
     it is worse than idling; ⛔ *sounds plausible* is not a population.
+437. **⭐⭐ Four waves built a display map to stop a snake_case token reaching an owner and NONE swept the
+    map's FALLBACK — six maps, ten read sites, ZERO reachable fallbacks, and the known-member rule fired
+    six times (measured by the lane supervisor 2026-09-10 23:5x; rulings 64, 95, 100, 111, 262(b), 294,
+    324, 327, 328, 400, 415, 429).** Rulings 90 (`meter_type`), 131 (`submitted`), 305
+    (`ai_off_voicemail_only`) and 312 (`pending_payment`) each fixed one raw token on the screen it was
+    on. Every map read in this lane is `$map[$key] ?? $rawToken`, so the predicate — never stated — is
+    *can any value the column's WRITERS produce reach the fallback?*, and where it can the owner reads
+    the raw token, which is those four waves' own defect surviving in the members they did not map.
+    Instrument (300): `grep -rn -F -e "LABELS" -e "Labels" -e "labels" app/app/Modules --include=*.php`
+    filtered to the eight ids → **6 maps, 10 read sites**. ⭐⭐ **Ruling 429's corroboration fired SIX
+    times** — the instrument returned every previously-ruled map (90, 131/421, 305, 309, 312, 392(b)),
+    which is a stronger check than a count or an out-of-lane control because it tests the instrument
+    against the exact shape the census exists to find. ⭐ 415's first-three check passed.
+    **Every member's safety NAMED (328), by the disproving measurement rather than by reading the map:**
+    `dunning_states.status` — `BillingLedgerEngine:154`'s `$status` is three values and `:119`'s
+    `'charged'` is a **different key on a return array** (262(b), read the hit), so with the column
+    default the reachable set is four and the map has four (`grace`/`terminated` are 305's
+    declared-and-unwritten pair) · `ar_dunning_actions.action` — X-211's three writers produce
+    `reason_recorded` and `escalate_to_human`, both keys, the other seven hits being other lanes' tables
+    · `orders.status` — of twelve `'status' =>` sites only four write the ROW (`pending_payment`,
+    `cancelled`), `sold_out` and `refused` being envelope keys, which re-confirms ruling 312 ·
+    `meters.meter_type` — rulings 88/338/429 measured **no writer anywhere in the app**, so no row can
+    reach it · `dispute_evidence.evidence_type` — the `?? $type` reads from the **required** list, all
+    four of which are keys (421) · and `sync-error-rate.blade.php:29` has **no fallback and needs none**,
+    both maps being filled in a single `foreach` over the collection the blade loops (414(a)).
+    ⭐⭐ **The live candidate was `subscriptions.status` and it died on a COMPLETENESS measurement**:
+    `grep -n -F -e "case " app/app/Enums/SubscriptionStatus.php` returns **six** cases and
+    `LabelsSubscription` maps **all six**, `active` mapped to itself *"so the map is complete rather than
+    partial"* — the trait's own docblock, which is the disproof stated in the code. ⭐
+    `dunningPillStates`' `?? 'unknown'` **is** reachable and is ruling 305's own deliberate outcome.
+    ⛔ Not to be re-raised.
+438. **⭐⭐ An enum-cast column renders a 500 rather than a token, so it is a SHARPER predicate than 437's
+    — and the lane's 32 models declare ZERO enum casts, with the one foreign column money renders guarded
+    by a `tryFrom` whose refusal is stated in the code's own rule text (measured by the lane supervisor
+    2026-09-10 23:5x).** Ruling 312 measured `SignalState::from()` **throws** on an unrecognised value, so
+    a column cast to an enum whose writers can put a non-enum string in the row fails at **render**, not
+    at the label — and ruling 211 swept the lane's `$casts` for booleans and dates without ever stating
+    it. `grep -rn -F -e "Enums" app/app/Modules --include=*.php | grep -e "/Models/"` returns **three
+    lines and NOT ONE is money's** (`X-125/Models/FlowRun.php` ×2, `X-204/Models/SendPermit.php`), so
+    ⭐ the positive control fires outside the lane and the money-owned population is **empty**; ⛔ money
+    proposes no edit on those (ruling 5). **The one enum-cast column a money screen renders is
+    `subscriptions.status`**, cast at `App/Models/Subscription.php:225` — another lane's model — and its
+    writers are six enum cases in `Services/Billing/Subscriptions.php` plus the **only** one taking a raw
+    external string, `StripeWebhooks.php:549`'s `SubscriptionStatus::tryFrom($rawStatus)`, **the
+    non-throwing form**, whose null is refused outright at `:555` and returns
+    `GatewayEventOutcome::Unmodelled` so it never reaches the column. ⭐⭐ **Ruling 326's shape a SEVENTH
+    time** (after 326's `env()`, 370's `SampleStateModuleTest` pin, 372's `ScreenStates` docblock, 399's
+    `Pest.php`, 429's `db:footprint`, 435's `ArEngine:323-325`): the safety is the code's own stated rule
+    at `:551-554` — *"⚠️ REFUSED RATHER THAN ROUNDED … A status we do not model will not become one
+    Stripe redelivers differently, so retrying is three days of noise; what is needed is a person."*
+    **When a census's safety is written down in the code's own rule text, the strike is stronger than the
+    measurement that prompted it.** ⚠️ And money's read is null-safe independently —
+    `mrr.blade.php:36`'s `?? $sub->status?->value ?? 'no status'`, ruling 324's own measured member — so
+    the two guards do not depend on each other. ⛔ Not to be re-raised.
+439. **⭐⭐ TENTH consecutive HOLD, and both of this tick's censuses were decided by the DISPROVING
+    measurement (RULED by the lane supervisor 2026-09-10 23:5x).** All four lift conditions measured ✗ in
+    the acting tick (269, 272, 323): **47** behind, not > 100 · the guarded-checker diff over
+    `app/app/Doctor coder-bin .claude/hooks` **empty** · the merge-base **`8473c04a`**, this lane's own
+    `chore(state)`, with five pushes since (272's second half) · `OWNER.md`'s newest heading still
+    `## OWNER RULING — 2026-09-09 09:02` (136) · and no Track 1 answer to ACTION 13–24. **Merge gate
+    CLOSED.** ⚠️ Ruling 145's trap is live on the board and was not read as the measurement:
+    `origin/main`'s recent history carries `merge: track/money` subject lines that are true and **spent**.
+    ⭐ Ruling 327's outcome shape a **TWENTY-SECOND** and **TWENTY-THIRD** time.
+    ⭐⭐ **What this adds to ruling 385's standing warning: 437's live candidate died on a completeness
+    count and 438's on the form of a single vendor call — `tryFrom` rather than `from`, one word.** Both
+    hypotheses rested on true measurements (four waves DID fix one map each and stop; an enum cast DOES
+    throw on an unmodelled value), and both were false. ⛔ Briefing an empty wave to avoid an idle tick is
+    what rulings 95, 100 and 111 exist to prevent, and it is worse than idling; ⛔ *sounds plausible* is
+    not a population.
