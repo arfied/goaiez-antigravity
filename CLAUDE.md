@@ -12813,3 +12813,99 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     two different predicates, and the population that needed the remedy is swept only by the second.**
     229 is the fourth instance after 206 (swept for a missing catch tail, ruled a length refusal — 404),
     390 and 405 (each fixed ONE static heading, neither swept the other seventeen — 408).
+412. **⭐⭐ Ruling 407's LAYOUT trap fired a SECOND time and on a live 13-member population — a `-A 1`
+    window over guards whose `return` sits TWO lines below the assignment returned ZERO — and the three
+    censuses it was gating are all measured CLEAN (RULED by the lane supervisor 2026-09-10 19:3x;
+    rulings 64, 95, 100, 111, 294, 324, 327, 340, 371, 407).** Ruling 325 names *a population this ledger
+    has not enumerated* as the one HOLD-lift condition a tick can reach alone, at ruling 324's bar.
+    Three were put to it and all three are zero-buildable.
+    ⭐⭐ **The instrument lesson is the durable half, and it is 407's fourth mechanism measured a second
+    time.** Census (b)'s first instrument was
+    `grep -rn -A 1 -e "this->error = " app/app/Modules --include=*.php | grep -e "return;"` and it printed
+    **ZERO**. The pattern was correct and the population is **13**. **Measured:** the identical sweep at
+    `-A 2` returns 13, and reading `X-211/Ui/AgeingByReason.php` shows why — the lane's guard idiom is
+    `$this->error = '…';` · a blank line · `return;`, so the `return` is **two** lines below the
+    assignment and a one-line window can never see it. ⚠️ Rulings 95/100/111 **strike** a population that
+    measures empty, so an uncorroborated false zero is one tick from deleting a live one — here it would
+    have struck the census before it began. ⭐ **And the positive control proved the gap is the HOUSE
+    idiom rather than a money quirk**: `X-118/Ui/DayOneSignup.php:55→:57` and `:77→:79` carry the same
+    two-line gap in another lane. **A layout-assuming instrument is re-run by enumerating its PREDICATE
+    directly (410), never by trusting its window.**
+    **(a) `sprintf` PLACEHOLDER↔ARGUMENT CORRESPONDENCE — 40 members, ZERO defective.** Ruling 389 swept
+    the lane's interpolating refusal messages for their **NOTATION** (*in whose units is this written*);
+    nobody had asked whether each placeholder receives the argument it **names**, in order and of the
+    right type. The failure is silent in the one direction that matters — PHP 8 throws
+    `ArgumentCountError` on too few arguments (loud) and ignores extras, but a **swapped** `%s`/`%d`
+    renders wrong text or a bare `0`, and ruling 70 keeps measuring that most of these messages are
+    asserted by nothing. Instrument, quoted (300): `grep -rn -e "sprintf" app/app/Modules --include=*.php`
+    filtered to the eight ids → **40**, every multi-line body **read** (262(b)). All 40 correspond.
+    ⭐ Worth keeping as the shape done right: `ArEngine:161`'s five-placeholder
+    `'%d %s payments over %d days is credit … past %d payments or %d days'` against
+    `$installmentsCount, $frequency, $termDays, $terms->max_installments, $terms->max_term_days` — the
+    lane's densest message, and correct.
+    **(b) A COMPONENT GUARD THAT SETS A REFUSAL AND DOES NOT RETURN — 27 residual members, ZERO
+    defective.** Ruling 206 swept the doors for a missing `\Throwable` tail and ruling 383 for the
+    action-method exception surface; **neither asked whether a refusal actually STOPS the act.** The
+    defect would be owner-visible and silent to every gate: `$error` and `$success` are separate
+    properties, so a guard that falls through renders the refusal **beside** the success of the thing it
+    refused. Decomposed rather than eyeballed (397 — every count is derived by listing): **98** non-clear
+    `$this->error` assignments = **43** `getMessage` catch arms + **28** `isn't in this account` tenancy
+    arms + **27** residual, and all 27 read one by one. Thirteen are guards that `return`, the rest are
+    catch arms or terminal `if`/`else` branch arms. ⭐ The decomposition is its own corroboration: in
+    `AgeingByReason` the arithmetic closes exactly (14 assignments − 3 clears = 11 = 6 guards + 5 catch
+    arms). ⭐⭐ **The control DISCRIMINATES** (324's strongest form, as 408's did): `X-118/Ui/DayOneSignup`
+    carries both kinds — `:55` and `:77` are guards that return, `:70` and `:92` are catch arms — so the
+    instrument separates them outside the lane. ⛔ Money proposes no edit there (ruling 5).
+    **(c) RULING 149's CHECK ON 405/408's HEADING RULE — it HELD on all FIVE components.** *A fix to a
+    paperwork rule is itself a claim, and the tick after it says whether it held.* Ruling 408 required
+    `$errorHeading` *"cleared in every method that clears `$error`"*. Measured: `X-120/CardScreen`
+    clears at `:40`, `:60` and `:67` — **all three methods, `addCard()` included, which never sets it**
+    (390's own requirement, the one a coder skips); `X-211/AgeingByReason` clears `$refusedHeading` at
+    `:47`, `:74`, `:102` — all three; `X-198/ConnectCard` clears at `:25` and `:48`;
+    `X-117/CheckoutBlock` clears at `:47` and **sets at the top** of `pay():59` and `cancel():89`;
+    `X-173/ConnectionMappingView` sets at the top of `connect():33` and `mapAccount():48`.
+    ⭐ **Two idioms — clear-then-set-per-arm (X-198, X-120) and set-at-top (X-117, X-173) — and BOTH are
+    correct**, because a heading set unconditionally before any error can be assigned is never stale.
+    ⛔ Not harmonised: 228(a) forbids editing a pair where both members are honest.
+    ⚠️ `X-199/Declines::toggleShowAll()` sets **neither**, and that is ruling 361's own measured
+    exemption — it does not clear `$error` either, and *an error that is still true after a view toggle
+    is still true*. 408's requirement is conditional on the method clearing `$error`; this one does not.
+    ⭐ **Ruling 229's `settleUpLater` strike RE-CONFIRMED on re-measurement** (64's discipline), found by
+    reading around (c)'s clean hit (152, twenty-fifth tick): its catch is `ModelNotFoundException` alone
+    with no `\Throwable` tail, and `DeferDeclineAction` is still exactly what 229 measured — a
+    tenant-scoped `findOrFail` plus a `firstOrCreate` on two **integer** columns, so there is no length
+    path (404), no vendor call and no second write the narrow catch could miss.
+    ⛔ None of the three is to be re-raised. ⭐ **Ruling 327's outcome shape a THIRTEENTH time** — *a
+    population measured non-empty that yields zero buildable fixes is the more useful of the two results
+    to write down*, because an empty census tells a later tick *nothing is there* while a classified one
+    tells it **what is there and why each member stays**.
+
+413. **⭐⭐ A relay PREFIX whose relay is MISSING — the owner is told an act failed and given a sentence
+    that ends at a colon — is measured ZERO in this lane and ONE in the tree, and the one is another
+    lane's signup screen (RULED by the lane supervisor 2026-09-10 19:3x; filed TRACK 1 ACTION 23).**
+    Ruling 229 removed one **false** catch prefix and ruling 411 swept the population on 229's own
+    predicate — 46 members, zero false. **Its complement was never stated: a prefix that is TRUE and
+    whose `$e->getMessage()` was never concatenated**, so the string reaches the owner as
+    `'Failed to provision tenant: '` — a truncated sentence with the reason absent and `$e` bound and
+    unused. ⭐ It is invisible to every gate: `pint` has no opinion, `phpstan` at level 5 does not flag an
+    unused catch variable, and `php -l` parses it. Instrument, quoted (300), and it is the **direct**
+    instrument for the defect rather than a catch census — the seat refuses `$e` inside a piped pattern,
+    which is what forced the better one: `grep -rn -e ": ';" app/app/Modules --include=*.php`, run
+    **tree-wide so the control comes free**.
+    **It returns exactly ONE line, `X-118/Ui/DayOneSignup.php:70`, and money has ZERO.**
+    ⭐ **The control is the hit itself and it DISCRIMINATES**: the same instrument is silent over money's
+    46 prefixes, every one of which concatenates (411), and fires on the one that does not.
+    ⚠️ **The zero was corroborated against the shape the pattern assumed** (407): the double-quoted form
+    `-e ': ";'` returns nothing either, so the zero is not an artefact of the quote style.
+    ⚠️ **The hit was READ rather than grepped** (262(b), 395): `:69-71` is
+    `} catch (\Throwable $e) { $this->errorMessage = 'Failed to provision tenant: '; }` — the whole arm,
+    so the claim is measured over the statement and not over the line a filter stopped at.
+    ⛔ **Money proposes no edit and asserts no defect it has not measured** (ruling 5 — X-118 is track
+    sixty's). It is filed in **ruling 343's precedent**, which recorded `X-194/Actions/SetDefaultViewAction`
+    as ACTION 17 on exactly this basis: cross-lane, measured, money edits nothing.
+    ⭐ **The generalisable half is ruling 411's own, inverted: 411 asked whether a prefix's CLAIM is true
+    and this asks whether its SENTENCE is finished.** A prefix is a claim of two parts — what it asserts,
+    and what it hands over — and every census of messages in this ledger before now measured the first.
+    ⚠️ It is also the fifth instance of ruling 152 paying this tick (*a sweep hit is a COORDINATE, not a
+    boundary*): the population was found by reading around census (b)'s positive control, not by an
+    instrument aimed at it.
