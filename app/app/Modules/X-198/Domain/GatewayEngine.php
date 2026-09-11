@@ -13,6 +13,7 @@ use App\Modules\X198\Models\MerchantConnection;
 use App\Modules\X198\Models\Payment;
 use App\Modules\X198\Models\Payout;
 use App\Modules\X198\Models\ReconciliationRun;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 
@@ -147,6 +148,20 @@ final class GatewayEngine
             });
         } catch (GatewayNotConfiguredException $e) {
             throw $e;
+        } catch (UniqueConstraintViolationException $e) {
+            // A concurrent capture on this key won the race between the pre-check at :83 and the
+            // create at :126. The index refused our row; the winner's is the one that exists.
+            // This re-read is outside the rolled-back transaction, so it can run at all.
+            $winner = Payment::where('business_id', $businessId)
+                ->where('idempotency_key', $idempotencyKey)
+                ->where('status', '!=', 'failed')
+                ->first();
+
+            if ($winner === null) {
+                throw $e;
+            }
+
+            return $winner;
         } catch (\RuntimeException $e) {
             DB::transaction(function () use ($businessId, $amountCents, $paymentToken, $idempotencyKey, $currency) {
                 $connection = MerchantConnection::where('business_id', $businessId)->first();
