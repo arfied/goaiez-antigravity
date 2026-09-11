@@ -36,17 +36,15 @@ final class InvoiceEngine
                 $totalCents += ($line['quantity'] ?? 1) * ($line['unit_price_cents'] ?? 0);
             }
 
-            $terms = CreditTerm::where('business_id', $businessId)->where('customer_id', $customerId)->first();
-            if ($terms === null) {
-                $terms = CreditTerm::create([
-                    'business_id' => $businessId,
-                    'customer_id' => $customerId,
+            $terms = CreditTerm::firstOrCreate(
+                ['business_id' => $businessId, 'customer_id' => $customerId],
+                [
                     'terms_type' => $termsType,
                     'credit_limit_cents' => 500000, // $5,000 credit limit
                     'current_outstanding_cents' => 0,
                     'card_on_file_token' => null,
-                ]);
-            }
+                ]
+            );
 
             $dueDays = CreditTerm::TERMS_DAYS[$terms->terms_type] ?? 0;
 

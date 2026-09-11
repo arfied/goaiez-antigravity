@@ -252,4 +252,58 @@ class X199Test extends TestCase
         $invoice2 = $this->draftAction->handle($biz->id, $customer2->id, $lines, 30);
         $this->assertEquals(now()->addDays(30)->toDateString(), $invoice2->due_date->toDateString());
     }
+
+    public function test_a_concurrent_terms_row_is_absorbed_into_the_one_row_for_the_customer(): void
+    {
+        // This test turns on X199Test being a CLASS-BASED PHPUnit file, which Pest's
+        // ->use(RefreshesTenantDatabase::class)->in('Modules') binding does NOT reach, so the racer's
+        // row COMMITS on pgsql_migrate and issueInvoice() can see it. If TestCase ever binds a refresh
+        // trait directly, this test stops proving anything -- while very likely still passing.
+        Carbon::setTestNow(now());
+
+        $biz = TestCase::provisionTenant(['name' => 'Terms Race Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $customer = Person::create([
+            'business_id' => $biz->id,
+            'first_name' => 'Race',
+            'last_name' => 'Terms',
+        ]);
+
+        // A second request lands a terms row for the same customer between the engine's read and its
+        // insert. It writes on pgsql_migrate, a separate session, so it commits. RLS is FORCED and
+        // constrains the owner role too.
+        $racer = DB::connection('pgsql_migrate');
+        $racer->statement("SET app.business_id = '{$biz->id}'");
+
+        CreditTerm::creating(function () use ($racer, $biz, $customer): void {
+            $racer->table('credit_terms')->insert([
+                'business_id' => $biz->id,
+                'customer_id' => $customer->id,
+                'terms_type' => 'net_60',
+            ]);
+        });
+
+        try {
+            $res = $this->engine->issueInvoice(
+                $biz->id,
+                $customer->id,
+                [['description' => 'Work', 'quantity' => 1, 'unit_price_cents' => 10000]]
+            );
+        } finally {
+            CreditTerm::flushEventListeners();
+        }
+
+        // The engine absorbs the winner's row: one terms row for the customer.
+        $this->assertSame(
+            1,
+            CreditTerm::where('business_id', $biz->id)->where('customer_id', $customer->id)->count()
+        );
+
+        // And the invoice took its due date from the row that won (net 60), not from the net 30 the
+        // engine would have written.
+        $this->assertSame(now()->addDays(60)->toDateString(), $res['invoice']->due_date->toDateString());
+
+        Carbon::setTestNow();
+    }
 }
