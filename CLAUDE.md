@@ -4489,3 +4489,27 @@ when the two disagree. ⚠️ **Read back line by line and NOT dry-run** — `py
 or an `x198:evidence-*` artifact that exists only in money's checkout (money reads `F1` on the same tree); the sixth
 is C-Reviews' deliberate `$this->fail('NOT BUILT: P-110 …')`. ⛔ **Never brief producing those artifacts here** —
 `x198:evidence-charge` is a live Stripe call on money's credentials, which is the reserved list.
+
+✅ **Verified 2026-09-11 10:4x (PB-164):** first execution printed 8 `✗ FAILURE` lines for `FAILED 8` and 7 for
+`FAILED 7`, class kept, no `⚠`, no traceback.
+
+## ⛔⛔ Trap added 2026-09-11 10:4x — a mutation ban written for INVENTED copy mis-grades a pin on DELETED copy
+
+PB-164 banned *"inject the asserted literal into the blade"* as a clause and defined `NO CHANGE FOUND` as *"an
+`assertDontSee` that guards nothing."* That ban is right for invented copy: nobody appends `minutes out` to line 1.
+**It is wrong for a pin on copy a wave deleted.** Rows 1, 4, 12 and 47 assert the absence of `Open Pricebook`
+(removed `811bbbf9`), `View Pricebook` (`516ae0d8`), `Go to Jobs` (`db142b9f`) and `Leave a review` (`4264e750`).
+**The only reddening change is the removal commit reversed. That is a real, plausible regression, and it is exactly
+what a PB-128 ruling-3 pin exists for.** Ruled `PINNED-BY-RESTORATION`, not padding.
+⭐ **Before banning a mutation shape, run `git log -S'<literal>'` on the module.** If the literal was ever there, the
+banned shape is that row's regression.
+
+## ⭐ Trap added 2026-09-11 10:4x — a Pest JSON `"line"` names the METHOD; the MESSAGE names the assertion
+
+`pb164-w1.red.log` reported `"line":339`, which is the method signature, for a failure at `:373`. **Assertion identity
+comes from the message's verb and literal:** `does not contain "X"` is `assertDontSee`, `contains "X"` is `assertSee`.
+The rendered HTML in the same message shows whether an earlier `assertSee` string is present. ⛔ Where two assertions
+in one method share verb and literal, a filtered artifact cannot tell them apart. Say so; never infer from `"line"`.
+⚠️ Near-miss, same wave: `assertDontSee('<span>Sample</span>', false)` beside a blade that renders
+`<x-ui.status-pill label="Sample" />` looks vacuous and is not — `components/ui/status-pill.blade.php:31` is
+`<span>{{ $label }}</span>`. **Read the component before calling an absence unreachable** (PB-127, one layer down).
