@@ -13,6 +13,11 @@ final class QaTicketResolveAction
     public function handle(int $businessId, int $ticketId, string $resolutionNotes): QaTicket
     {
         $ticket = QaTicket::where('business_id', $businessId)->findOrFail($ticketId);
+
+        if ($ticket->status === 'resolved') {
+            return $ticket;
+        }
+
         $ticket->update([
             'status' => 'resolved',
             'resolved_at' => now(),
