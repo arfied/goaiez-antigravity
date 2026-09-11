@@ -4086,3 +4086,33 @@ writes *"suppressed on any conversation with an open escalation"* into G20-05's 
 
 ⚠️ **§3. A `--filter` is a regex over method names, so its predicted count comes from `grep -n 'function <pattern>'`.**
 `CReviewsTest::test_g20_05` matched a pre-existing fourth method, and the brief predicted three.
+
+## REV-168 — a behaviour change briefed against its tests and not its callers, and a module whose last gates belong to nobody in this lane
+
+⛔ **§1. Run 163 made `QaTicketResolveAction` do nothing to a resolved ticket (2026-09-11, my defect).** The brief kept
+59 neighbouring tests green and never read the line after each production call:
+- `Tickets.php:74-75`, `QaQueueSlaDueAt.php:69-70` and `QaReport.php:85-86` still report success.
+- `LossAlerts.php:89-94` still sends a real X-153 alert quoting notes that were never saved.
+
+Only a stale page reaches it. `QaTicketReadAction.php:19`/`:43` and `tickets.blade.php:89` keep resolved tickets off
+every fresh render, and the source refuted the fresh-page hypothesis before it became a ruling. **RULED: a brief that
+changes what an action does in some state lists every production caller, each with the line after the call, and says
+what that line does in the new state.** REV-167 §1 asked about writers; this asks about callers. It is run 165's
+candidate.
+
+⛔ **§2. `doctor:module-done C-Reviews` is red on gates 1, 2, 5, 6 and 7, and none of them can be discharged inside the
+lane.**
+- `lint.json`, `render.json` and `surfaces.json` (`ModuleDoneCommand.php:111`, `:371`, `:390`) have no producer anywhere in
+  the committed tree, and a hand-written one is AGENTS.md:96's fabrication.
+- `runtime-proof.json` (`:157`) needs a real send, which is reserved.
+- Gate 7 (`:410`) needs the whole platform's doctor at 0.
+
+**RULED: one `state.py unresolved` row per red gate** (`built`, `tested`, `dashboard`, `surfaces`, `gate`), each naming the
+`file:line` that would discharge it. The rows are one per gate because `state.py resolve` refuses two rows on one stage
+(`bin/state.py:182-188`). Recording them closes wave 8 (`wave.md:93`) and empties this lane's backlog after §1's repair.
+⚠️ X-181 and X-110 read DONE with no evidence directory, and `state.py done` checks no gate (`bin/state.py:160-162`).
+Those are hand marks platform-wide, so they are a TRACK 1 ACTION and not re-marked here.
+
+⚠️ **§3. A report line claiming an artefact differs from the brief quotes the brief's expected value and its
+`BRIEF.md` line.** Run 163 reported a 61-versus-41 mismatch that the brief never predicted, and blamed formatting for
+it. The real cause was the tree: one import and a 19-line method were deleted.
