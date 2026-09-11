@@ -18832,3 +18832,77 @@ The compliance direction is the one a ⛔ clause protects; the commercial cost i
   stages 41 · ui 16 · site 197`.
 - ⛔ Refused shell forms this tick: `sort -t'{'` inside a pipe, `sed -n '/pat/,$p'`. The doctor call drifted the shell and the loud
   detector fired twice before the reset.
+
+## ⛔ A WAVE CAN BE REFUSED BY ITS OWN EARLIER GATE — and the "not gated" it reports is overtaken the moment that gate lands (tick 338)
+
+SITE-209's item 10 quoted §7 as `✗ REFUSED: 1 other pest process(es) on goaiez_antig_site_test (checkouts pinning
+it: /home/goaiez/agents/grs-antig-site)` and wrote *"The wave was not gated on its tests."* `gate-runs.tsv` says the
+pest the refusal named (`1798624`) belonged to gate `1786953` **in this checkout**, started at 10:38:03 — seven
+seconds after the wave's final commit — and completed at 10:43:21. The refused run (`1822433`) started at 10:41:10.
+The report was written at 10:42:36. **The first gate finished 45 seconds after the report said no gate existed.**
+
+⭐ **Both runs wrote the same output file**, so `/home/goaiez/tmp/site209-gate.txt` holds the refused §7 followed by
+the completed verdict (`tests 2544 · passed 2533 · FAILED 7 · errors 4`, J11 absent). The evidence the report said
+was missing sat one screen below the line it quoted.
+
+⛔ **Why the gate ran twice is not measured and is not named** (227, 230, 249). The composition is the finding:
+tick 234 (*a wave refused by its own leftover pest*) plus tick 318 (*a report's "not gated" has an evaluation
+time*) produce a case neither predicts — **a self-refusal reads exactly like a real clash, while the refusing run is
+seconds from producing the §7 the report says is absent.** Only the pid separates them.
+
+✅ **RULED: every brief says the gate runs EXACTLY ONCE, in the foreground, and nothing else starts until it
+returns; and a `REFUSED` §7 is quoted with the pest pid it names plus `readlink /proc/<pid>/cwd`.** A pid in this
+checkout is the wave's own queued suite; a pid in another checkout is a real clash. ⚠️ And the reviewer's reading:
+**a `REFUSED` §7 in a report sends you to `gate-runs.tsv` for this checkout's rows in the window, never to a
+verdict** — the completed run, if there is one, is there.
+
+## ⛔ THE FIFTH AXIS RE-RUNS WHEN A **WRITE SURFACE** ARRIVES — a killed capability's refusal carrier that asserts a key nothing writes stops being harmless the day a table appears that could carry the feature (tick 338)
+
+`G21-01` is ⛔ KILLED (*"scripted messages posing as other attendees is manufactured social proof"*), and its refusal
+carrier `X102Test.php:463` asserts `assertArrayNotHasKey('attendees', $session->toArray())` — tick 211's shape, the
+absence of a key nothing can write. While X-102 had no turn table that was merely weak. **Since 2026-09-08 it has
+`chat_turns`, and `ChatTurnAction::handle(…, string $authorType, …)` writes any author its caller passes.** A
+scripted attendee message now has somewhere to live, and the carrier cannot see it.
+
+⭐ Tick 303's law — *re-run the sweeps that predate a new category* — reaching a **credit**, and tick 199's law that a
+verdict decays with its population. The trigger is not a new id, a new violation or a count: **it is a migration
+creating a table in a module whose killed capabilities are refusals.** No instrument this lane owns fires on that.
+⛔ When a sibling's merge adds a table to an owned module, read that module's KILLED rows' carriers against it.
+
+**RULED: SITE-210** adds the real subject inside the existing carrier (zero turns on start; exactly
+`['visitor','agent']` after one visitor message) with two additive, never-committed falsifiers. ⛔ No guard in
+`ChatTurnAction` — tick 329 measured `$authorType` TRUE and LATENT, so a guard would be tick 280's dead defence
+manufactured. **An assertion can pin a behaviour a guard would be dead code for**: the test fails the day a path
+injects a scripted turn, whereas the guard would only fail the day someone passes a non-visitor author, which
+nothing does.
+
+## ✅ P-148's contact-row writers are EXACTLY TWO, and both now refuse at the write (tick 338)
+
+`X121\Models\Person` is written by exactly two files across the seven owned modules — `X-102/ChatCaptureAction`
+(refusing since `3ebe8d8a`) and `X-155/FormCaptureAction` (refusing at `:29-32`). The disconfirming member: X-137
+stores phone numbers, but they are the business's own pool numbers, never a caller's. A clean sweep is a result (280).
+
+## ✅ The take is UNNECESSARY when main's delta on the lane's paths is the lane's own lines (tick 338)
+
+`origin/main` moved 15 ancestor / 4 first-parent commits past the take pin `46afc022`. Over the fourteen owned paths
+plus `C-Agent`, `app/app/Doctor`, `app/tests/Journeys` and `.claude`, main differs from the pin by exactly
+`ChatDoorTest.php +5` — **this lane's own `MEASURED` lines coming back through Track 1's merge `73b8fe08`**. Tick 326's
+shape, measured in one command: the door is open and the room holds our own five lines.
+
+## Tick 338 — measured, for the record
+
+- **SITE-209 PASS-WITH-NOTES**, `3ebe8d8a` + `c18c380d`. Five falsifier states reconciled arithmetically in this seat,
+  including 293's SUM for F-B's two failing methods; pest's `line` 600/642 equals both declaration lines (298); every
+  witness predicted both values and they differed (324); the fix was committed before the mutations, so 328's
+  inversion did not apply. ⚠️ F-B proves only the recording (#2), F-A's `ChatLead`/`422`/body assertions are reasoned,
+  not measured (270).
+- **Coder's completed §7 (on the interleaved gate file)** `tests 2544 · passed 2533 · FAILED 7 · errors 4`: +2 tests,
+  +2 errors from ONE intermittent cause (Authorize.Net `E00040`, reaching two journeys — 311), J11 absent.
+- **Doctor**, live: `boundary 41 · contract 85 · citation 0 · schema 16 · capability 204 · anchor 128 · journey 3` ·
+  **477**, stamp `20260829-0647` = `runtime_build`. No stage moved.
+- **Census `6 · 3 · 1 · 3`**, halves `--full-history`; complement fell 5 → 3 as `main` gained ui (191). Dependency query
+  now includes `C-Agent/Actions/AgentAnswerAction.php` — load-bearing for this lane since `3ebe8d8a` — and is clean.
+  Fourth surface `main 14 · money 16 · pricebook 14 · reviews 15 · sixty 42 · stages 41 · ui 16 · site 197 · HEAD 198`.
+- ⛔ Shell forms: `ls` on `/home/goaiez/tmp/*` is refused and **takes the whole compound with it** (a `readlink` in the
+  same call printed nothing); `Read` on the same path is accepted. `git grep -c <pat> <ref> <ref> … -- <path>` accepts
+  several trees in one call and replaces a refused `for` loop.
