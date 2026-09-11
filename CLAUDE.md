@@ -2856,8 +2856,29 @@ DB pin intact, ours-since-base `app/phpunit.xml` alone, `§2e`/`§2f`/`§2g` all
 eight summing to it exactly, pint `passed`, phpstan `0`, and §1 back to **77** after item 1 deleted
 `generate_report.py`. Tip `ed01c9eb` pushed (`9aa5924e..ed01c9eb`), certified per `RULING GH(i)`.
 
-⏳ **S-198 — the owner-ordered THIRD take (drift condition 1). OPEN, dispatched at tick 342 as
-STAGES-236 (run 214), merge gate `--allow-merge` OPEN.** Not an invented wave: `RULING GQ` bound this
+✅ **S-198 — COMPLETE at tick 343 (STAGES-236, PASS-WITH-NOTES).** Merge `dceb5563` (parents
+`ea356afd` · `af72fe7f`). Restore proof empty, DB pin intact, and `app/` byte-identical to the pin
+except `app/phpunit.xml`. §5 reads `0·52·85·3·16·207·128·3`, total **494**, and the eight sum to it.
+`boundary` 55→52 is **main's** number (`RULING FO`), not a lane credit. Tip `7ae479b7` pushed
+`ea356afd..7ae479b7`, certified by `.gateT343.txt`.
+
+⏳ **S-199 — the FOURTH take. OPEN, dispatched at tick 343 as STAGES-237 (run 215, pid 1411266),
+merge gate `--allow-merge` OPEN.**
+- **Triggers:** `OWNER.md:698` (owner 2026-09-11 09:27: *"re-measure and finish the open work; guard
+  now admits bin/state.py in a merge"*) and drift condition (1) on the **ancestor** count, **475**
+  (68 first-parent, straddling per `GQ(iii)`).
+- **Target:** pin `46afc022`, base `af72fe7f`, range 146 `app/` files.
+- **Range contents:** about 20 new Module classes (the brief orders
+  `composer --working-dir=app dump-autoload`) and 11 migrations, which are **not** run.
+- **Not in the range:** no checker, lockfile, resources, `bin/` or `app/phpunit.xml` byte.
+- **Per-track rows:** `CLAUDE.md` and `launch-coder.sh`.
+- **Review floors:** the same as S-198 below, plus the verdict line pasted verbatim. Then **re-run
+  the admission census** against the merged tree with `RULING EX`'s completeness proof.
+- ⚠️ **Case (d) lesson:** the owner's 09:27 line landed under the OLD 09:02 heading, so
+  `GE(i)`'s heading enumeration alone would have missed it. When `OWNER.md`'s mtime moves, read its
+  tail as well.
+
+⌛ **S-198 as dispatched (history):** Not an invented wave: `RULING GQ` bound this
 seat in advance to dispatch at the first tick whose **own pin** carries an ancestor behind-count
 above 100, and pin `af72fe7f` carries **108**. Target pin `af72fe7f`, base `57781d59` (main's own
 commit), range 28 `app/` files. **Review it against these floors:** the item-6 restore proof
