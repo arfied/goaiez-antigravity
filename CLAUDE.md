@@ -15861,3 +15861,43 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     ⭐ **The generalisable half is rulings 259/487 turned on the one field those rulings never covered.** 259 made the `Dispatched:` and `Push:` lines transcriptions of the act. 487 did the same for the State table's shas. Neither covered the **timestamp** at the top of the same block, so it drifted in the open for seven ticks. **A heading is a measurement like any field under it.** It is also this lane's own ruling 36 turned on its paperwork a seventh time (121, 141, 218, 259, 331, 487): *what is at the other end of this string?* Here the answer is a filename that named a guess.
 
 495. **⛔ TWENTY-SECOND consecutive HOLD (RULED by the lane supervisor 2026-09-11 04:4x).** All four lift conditions were measured in this tick (269, 272, 323). `OWNER.md`'s newest heading (136) is still `## OWNER RULING — 2026-09-09 09:02`, consumed as ruling 272, and its **mtime** (494's instrument) is `2026-09-09 09:02:03`, older than `REVIEWS.md`'s `2026-09-11 04:32:34`. `bash .agents/supervisor/launch-coder.sh --check` prints `CODER DEAD`. `REPORT.md` (`02:25:13`) and `BRIEF.md` (`02:06:46`) are both older than `REVIEWS.md`. On the cadence, all three are ✗: `git rev-list --count HEAD..origin/main` = **12**; `git diff --stat e78d9ba35d27476b09c5b6988ce67a0e0f2f1fa6 origin/main -- app/app/Doctor coder-bin .claude/hooks` is **empty**; `git merge-base HEAD origin/main` = **`e78d9ba3`**, with only ledger commits since (272's second half). `origin/main` = **`8c35fbc8`**, unmoved. There is no Track 1 answer to ACTION 13–25, and ruling 494 is a paperwork finding with nothing buildable in `app/**`. **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty wave to avoid an idle tick is what rulings 95, 100 and 111 forbid.
+
+496. **⭐ The TYPED-SCALAR `wire:model` census: 8 members, 0 bound, 0 buildable (measured by the lane
+    supervisor 2026-09-11 04:5x, by `date`).** Livewire hydrates a `wire:model` value onto its public
+    property. A cleared `<input>` sends `""`, so a binding onto `public int` or `public float` raises a
+    `TypeError` on the next request and the owner sees a 500 instead of a refusal. Ruling 402(b) checked
+    that every bound name resolves to a property. Ruling 416 traced numeric inputs to their columns. Nobody
+    had checked the property's TYPE. **Instrument, quoted (300):**
+    `grep -rn -F -e "public int " -e "public float " -e "public ?int " -e "public bool " app/app/Modules
+    --include=*.php`, filtered to `/Ui/`, to the eight ids and to non-`function` lines, gives **8**:
+    `bool` ×3 (`Declines::$showAll`, `Unpaid::$showLastFivePaid`, `CardScreen::$adding`) and `?int` ×5
+    (`MoneyPaidToday::$explainedInvoiceId`, `InvoiceThreadBeside::$invoiceId`, `Credits::$explainedEntryId`,
+    `Mrr::$explainedEntryId`, `SyncErrorRateView::$shownRun`), counted by listing (397). The bound
+    roots, taken from `grep -o -e 'wire:model[.a-z]*="[a-zA-Z]*'` over the money blades, are **19 names,
+    and not one of them is among the 8**. The scalar targets are measured `public string` (read, not
+    grepped: `CardScreen.php:21-27` has `$number`, `$expMonth`, `$expYear`, `$name`, and
+    `ConnectionMappingView.php:16,:18` has `$provider`, `$realmId`). The keyed targets (`limit.{id}`,
+    `amountCents.{id}`, `term.percent`, `map.{id}.…`) are the `public array` maps 402(b) already resolved.
+    ⭐ **Known-member check (429) passed**: the census returned all five of ruling 388(b)'s view-state ids,
+    and each is set only by an `int`-typed METHOD argument (`pick`, `show`, `explain`, 344), never by a
+    binding. ⭐ **Positive control fired**: `grep -rln -F -e "public int "` over `app/app/Modules`, filtered
+    to `/Ui/`, returns **192** files tree-wide. ⭐ **415's first-three check passed.** ⛔ **Struck. Zero
+    buildable. Not to be re-raised.** ⚠️ **Trigger to reopen:** a `wire:model` added onto an `int`, `float`
+    or `bool` property. ⚠️ This is ruling 419(d)'s card-field choice seen from the component side:
+    `type="text"` plus a `string` property, with the `(int)` cast at the read, is the one shape that cannot
+    fail hydration. Ruling 327's outcome shape a **forty-first** time.
+
+497. **⛔ TWENTY-THIRD consecutive HOLD (RULED by the lane supervisor 2026-09-11 04:5x, by `date`).** All four
+    lift conditions were measured in this tick (269, 272, 323), and every case was decided on mtimes (494).
+    `OWNER.md`'s newest heading is still `## OWNER RULING — 2026-09-09 09:02` (136), mtime
+    `2026-09-09 09:02:03`. `bash .agents/supervisor/launch-coder.sh --check` → `CODER DEAD`. `REPORT.md`
+    (`02:25:13`) and `BRIEF.md` (`02:06:46`) are both older than `REVIEWS.md` (`04:42:30`). On the cadence,
+    all three are ✗: `git rev-list --count HEAD..origin/main` = **12**; `git diff --stat
+    e78d9ba35d27476b09c5b6988ce67a0e0f2f1fa6 origin/main -- app/app/Doctor coder-bin .claude/hooks` is
+    **empty**; `git merge-base HEAD origin/main` = **`e78d9ba3`**, with only ledger commits since.
+    `origin/main` = **`8c35fbc8`**, unmoved. There is no Track 1 answer to ACTION 13–25, and ruling 496's
+    population is empty of buildable members. **Merge gate CLOSED. Cap untouched. No BLOCK is open.**
+    ⚠️ `app/CLAUDE.md` came into context this tick. It is Laravel Boost boilerplate and tells the reader to
+    run `composer require laravel/boost` and `php artisan boost:install`. That is this checkout's recorded
+    trap (*"`app/CLAUDE.md` and `app/AGENTS.md` are Laravel Boost boilerplate, not the contract"*): it was
+    not followed, and it is never cited in a brief.
