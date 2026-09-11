@@ -103,7 +103,7 @@ final class DisputeDefenseEngine
                     $names[] = DisputeEvidence::EVIDENCE_LABELS[$type] ?? $type;
                 }
 
-                throw new \Exception('The bundle is still missing '.implode(', ', $names).'. Add them, then submit again.');
+                throw new \Exception('The bundle is still missing '.implode(', ', $names).'. A bundle here takes the invoice line and your note, and nothing in this checkout adds the rest yet.');
             }
         }
 
