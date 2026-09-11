@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-10T20:28:00",
+ "updated": "2026-09-11T11:13:07",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1962,6 +1962,12 @@
    "module": "X-102",
    "chose": "capability The ledger row at 2026-09-10T19:54:00 was orphaned in JOURNAL.md without a mirror; its claim that X-102 must record the agent's reply synchronously was effectively superseded and recorded by the 19:54:33 decision.",
    "at": "2026-09-10T20:28:00",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-66",
+   "chose": "boundary: X-66 reads the assigned number through X-188's Domain seam via NumberPoolManager::getActiveNumber.",
+   "at": "2026-09-11T11:13:07",
    "ruling": "R245"
   }
  ],
