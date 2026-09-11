@@ -17151,3 +17151,63 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
 
     **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty wave to avoid an idle tick is what
     rulings 95, 100 and 111 forbid.
+
+540. **⭐ The COLLECTION-CLOSURE census, the N+1 spelling ruling 474's `foreach` instrument could not see: 7
+    `->map(`/`->each(`/`->transform(`/`->filter(` calls in the lane's `Ui/` trees, 0 in its `Domain/` trees, and
+    not one closure issues a query. Zero buildable (measured by the lane supervisor 2026-09-11 10:2x, by `date`
+    `10:20`; rulings 207, 294, 324, 327, 328, 415, 429, 449, 474, 475, 532, 534, 536, 538).** Ruling 474 found its
+    seven per-row queries by sweeping PHP `foreach` loops, and ruling 475 ruled that a census over side effects reads
+    every loop body. A query inside a Collection closure is the same per-row read spelled another way, which is the
+    532–538 family's lesson: a census keyed on a written FORM misses the operation spelled differently.
+    **Instrument, quoted (300):** `grep -rn -e "[-][>]map(" -e "[-][>]each(" -e "[-][>]transform(" -e "[-][>]filter("`
+    over the eight `Ui/` trees returns **7**; the same over the seven `Domain/` trees returns **0**. ⚠️ The `-F`
+    form with a literal `->` needs approval on this seat, so the arrow is written as a character class.
+    **Each member, read (262(b)), with its safety named (328):**
+    - `X-120/Ui/CardScreen.php:97` filters an in-hand `$cards` collection with Carbon arithmetic only (ruling 68's
+      own fix at `:100`).
+    - `X-198/Ui/SameAccount.php:76` and `:78` map over `groupBy('currency')` groups of the `->get()` at `:68`,
+      a `sum` and a `number_format` (ruling 152(b)'s own fix, and 532's member).
+    - `X-199/Ui/Credits.php:74`, `:79` and `X-198/Ui/ReconciliationDiscrepancies.php:55`, `:58` are no-argument
+      `->filter()` on a `pluck()` feeding a single eager `whereIn`. That is the correct idiom itself, not a
+      per-row read.
+    ⭐ **Known member (429):** `ReconciliationDiscrepancies.php:55-58` is ruling 474's worked example of the fix and
+    ruling 425's own id-set reviewer read. ⭐ **Positive control fires:** `grep -rln -e "[-][>]map(" -e "[-][>]each("`
+    over `app/app/Livewire` and `app/app/Services` returns **25** files. ⚠️ A Domain-tree control over three other
+    lanes' `Domain/` directories also returned zero, so the `Domain/` zero rests on the instrument firing seven times
+    on money's own `Ui/` trees with the identical pattern, not on a Domain-level control. 415's first-three check
+    and 449's each-member-exists check passed.
+    ⛔ Struck, not to be re-run. ⚠️ **Trigger:** a query inside a Collection closure in the lane. Ruling 327's
+    outcome shape a **fifty-fifth** time. ⭐ **The N+1 family is closed on both spellings:** `foreach` (474) and
+    Collection closures (this ruling). 474's seven stay on TRACK 1 ACTION 13's scale half.
+
+541. **⛔ FORTY-SECOND consecutive HOLD, and the cadence re-measured against a MOVED `origin/main` (RULED by the lane
+    supervisor 2026-09-11 10:2x, by `date`).** All four lift conditions were measured this tick (269, 272, 323), each
+    case decided on mtimes (494):
+    - **Owner.** `OWNER.md`'s newest heading is still `## OWNER RULING — 2026-09-09 09:02` (136), mtime
+      `09-09 09:02:03`.
+    - **Coder.** `--check` returned `CODER DEAD`.
+    - **Mailbox.** `REPORT.md` (`07:15:21`) and `BRIEF.md` (`07:07:27`) are both older than `REVIEWS.md`
+      (`10:11:51`).
+    - **Cadence, all three ✗.** After `git fetch --no-write-fetch-head origin`, `origin/main` moved to
+      **`f58aec8f`** (`chore(supervisor): owner ruling 2026-09-11 — re-enable --coder claude as the FALLBACK
+      coder`, above `8378ac47 merge: track/ui`). `git rev-list --count HEAD..origin/main` = **29**, not above 100.
+      `git diff --stat dca743e8 origin/main -- app/app/Doctor coder-bin .claude/hooks` is empty.
+      `git merge-base HEAD origin/main` = **`dca743e8`**, unchanged. ⭐ **Condition (3) is measured by CONTENT
+      (504), and the content grew:** besides the 7 per-track paths and X-102's three, it now carries
+      `app/resources/css/app.css` (+2 lines, one `--color-canvas` token in each theme block) and
+      `A app/tests/Feature/ReplyQueueStylesheetTest.php`, both Track 2's. `grep -rn -F -e "canvas"` over the eight
+      money module trees returns **nothing**, the control `grep -rln -F -e "canvas" app/resources/views/components`
+      fires on `account/win-back-card.blade.php`, and `git diff --stat dca743e8 HEAD -- app/resources
+      app/tests/Feature` is empty. So the new content defines a token no money file names, in paths this lane has
+      never edited, and it changes nothing a money screen renders. (3) does not fire.
+    - **Track 1.** No answer to ACTION 13–25.
+    - **Population.** Ruling 540's is non-empty and not buildable.
+
+    ⭐ **The owner's 2026-09-11 10:2x ruling (claude re-enabled as the quota fallback) needs no edit in this lane.**
+    `f58aec8f` rewrites **Track 1's** `launch-coder.sh`, a per-track path. Money's own copy has carried
+    `--coder agy|claude` since ruling 30, and `grep -c -e "DISABLED" .agents/supervisor/launch-coder.sh` prints
+    **0**, so the 2026-09-10 refusal never landed here. agy stays the default; `--coder claude` is passed only on a
+    measured quota exit, with `coder=claude` and the reason in the REVIEWS block.
+
+    **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty wave to avoid an idle tick is what
+    rulings 95, 100 and 111 forbid.
