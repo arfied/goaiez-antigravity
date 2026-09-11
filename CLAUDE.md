@@ -18590,3 +18590,92 @@ the `form_type` derivation (no clause, and its falsifier asserts the wave's own 
 
 Per tick 293 this entry states the **ruling and the falsifier and no prediction**; the outcome is the next
 tick's to write.
+
+## ⛔ AN OWNER REPLY APPENDED WITHOUT A HEADING IS INVISIBLE TO A HEADING-KEYED CASE (d) — and the mtime test caught it (tick 335)
+
+`OWNER.md:1169` is one line — *"owner 09:27: re-measure and finish the open work; guard now admits bin/state.py in a
+merge"* — appended **beneath** the two-day-old, already-processed 2026-09-09 09:02 heading. Tick 315 recorded Track 1's
+N133: an mtime comparison between two files with independent writers races silently, and a token test on the newest
+heading does not. This is the converse, measured: **a token test on the newest heading cannot see an unheaded append,
+and the mtime test did.** ⛔ Neither case-(d) test is complete alone. Read the file's **tail**, not only its headings,
+whenever its mtime is newer than the last block.
+
+## ⛔ A TRUE PREMISE WITH AN UNREACHABLE CONSEQUENCE IS NOT FALSE — label a claim by the FACT it asserts, never by whether anything EXERCISES it (tick 335)
+
+SITE-206 labelled `ChatDoorTest.php:23`'s proposal *"FALSE — the premise does not hold at source: no caller can
+supply an author type other than 'visitor'."* The premise was *"ChatTurnAction calls C-Agent unconditionally"*, and at
+`b24faf74` `ChatTurnAction.php:32` did exactly that under its own TODO at `:28` — *"This is a defect."* The wave's
+measurement (the only caller hardcodes `'visitor'`) is a **caller census**, which answers **reachability** (273, 330);
+tick 329 had recorded the right disposition, *TRUE and LATENT*. A premise refuted by a caller census is a category
+error, and it is the reading-side twin of tick 280's *a dead defence reads as covering a case it cannot reach*.
+
+⛔ **Every verdict set this lane writes for a claim carries a LATENT row** — *TRUE, and nothing in the tree can reach
+the consequence* — beside FALSE, or the wave rounds latent to false (265). ⚠️ Moot on main (sixty built the guard).
+No correcting `state.py` note (259, 331); SITE-208 re-annotates the editable comment.
+
+## ⛔ A REPORT WRITTEN TO STDOUT IS NOT A REPORT — the fourth residue case of a dead or finished wave (tick 335)
+
+Tick 197 found a report at the checkout root; tick 272 found none anywhere. Run 221 (`AGY_EXIT=0`) composed its whole
+report — Items 0, 11, 13 — **to its session output**, so it exists only in `/home/goaiez/tmp/agy-grs-antig-site-run221.log`
+and the mailbox `REPORT.md` stayed the previous wave's. The residue check therefore has three places to look:
+**the mailbox, the checkout root, and the run log** (`Read` on the absolute path is accepted; `grep`/`tail` are not).
+⛔ And its items 1–5 — the measurements the annotations were supposed to be written from — are in none of them. Every
+brief and kickoff now says *write the file; printed text is not the report*.
+
+## ⭐ WHEN MAIN CONTAINS US, THIS SEAT'S OWN NOTES COMMIT MOVES `CLAUDE.md` BETWEEN MERGE QUADRANTS (tick 335)
+
+Tick 316 measured the degenerate merge — Track 1 merging this lane puts the base at our tip, so our side is empty and
+`merge=ours` cannot fire — and ruled the notes commit step 0 because `git merge` refuses a dirty file it must write.
+Tick 335 adds the second reason. At base `9fb67295`, main changed `CLAUDE.md` and we had not: **ours ❌ / main ✅, a
+silent take** of Track 1's copy, 18,556 lines shorter. Committing this tick's notes makes it **both-sides**, so the
+driver fires and ours wins. ⭐ The commit is not tidiness; it is what moves the one file whose loss is unrecoverable
+into the protected quadrant. `launch-coder.sh`, `.claude/settings.json` and `bin/supervise.sh` have no such commit and
+stay in the restore list.
+
+## ⭐ A `':/'` TOP-RELATIVE PATHSPEC IS DRIFT-IMMUNE — measured, and the first remedy for tick 209's fault that is not "remember to reset" (tick 335)
+
+With the shell left in `app/` by `cd app && php artisan doctor`, `git grep -c … origin/main --
+':/app/tests/Modules/X-102/ChatDoorTest.php'` resolved correctly and printed the cwd-relative `tests/Modules/…` path.
+A plain relative pathspec in the same state exits 0 in silence (209, 277, 285). ⭐ **Any git pathspec issued while the
+shell's position is uncertain is written `':/<path>'`** — the query carries its own anchor. ⚠️ It covers git only, never
+`grep`, `Read` or `Write`, so the per-call reset stands.
+
+## ⚠️ A MERGE BRIEF MERGES THE PINNED SHA, NEVER THE REF (tick 335)
+
+Every conflict and restore prediction is measured at one `origin/main` sha, and `refs/remotes` is a live feed of the
+box's pushes (220) — main moved mid-tick at 300, 318, 326, 327 and 334. `git merge --no-ff --no-commit origin/main` in a
+wave that runs an hour later merges a population nobody measured. `git merge --no-ff --no-commit <sha>` makes a moved
+main **irrelevant** rather than a stop, which is tick 333's branch-not-stop law applied to the take itself.
+
+## ⚠️ The owner's condition (3) moots the behind-count unit (tick 335)
+
+Stages' RULING GQ found the owner's condition (1) — *more than 100 behind* — states a threshold and no unit. This lane
+measured **547 ancestor / 84 first-parent** at pin `46afc022`: the readings straddle. It was not decided, because
+condition (3) — *about to push a slice for Track 1* — fired independently: `b24faf74` was unpushed and textually
+conflicts with main. ⭐ **When one condition of a disjunction fires unambiguously, record the straddle of another and do
+not rule it** — a unit chosen under no pressure is a ruling whose falsifier never fires.
+
+## ⚠️ Sixty's X-102 builds LANDED on main — tick 195's ruling reopened a third time and was merged (tick 335)
+
+Consent (`$request->boolean('consent')`, fail-closed, `consent_logged_at` column), a visitor-only C-Agent call with a
+synchronous `agent` `ChatTurn` whose `isset($response['reply'])` guard sixty's own TODO calls dead, and three CLOSED
+docblock lines replacing proposal `:23`. Sixty's state gained twelve X-102/X-103/X-137-keyed rows (fourth surface 30 →
+42 — 323's rise reading). ⭐ Tick 327's *no consent wave* is **superseded by events**, not re-ruled. Per 195 the lane
+reviews it as its own **on the merged tree** — SITE-208, queued, never bundled with the take (215).
+
+## Tick 335 — measured, for the record
+
+- **SITE-206 PASS-WITH-NOTES**, `75c4410d` + `b24faf74`, gated here, **push HELD** by the owner's condition (3).
+- **§7 baseline `tests 2441 · passed 2433 · FAILED 6 · errors 2`** on `b24faf74`, J11 **absent — GREEN**, both
+  intermittent causes absent (311). The post-take §7 is a **new baseline**.
+- **Doctor** `boundary 50 · contract 85 · citation 3 · schema 16 · capability 207 · anchor 128 · journey 3` · **492**,
+  stamp `20260829-0647` = `runtime_build`. No stage moved.
+- **Census `4 · 2 · 1 · 2`**, halves `--full-history`. One non-merge sibling commit in the column: reviews' `ffb9ef3c`
+  adds `->assertOk()` to `X-110/TodayTest.php` — a strengthening, advisory. Every other member is a merge of main.
+- **Fourth surface** `main 14 · money 16 · pricebook 14 · reviews 15 · sixty 42 · stages 41 · ui 16 · site 197 ·
+  HEAD 197`; tick 326's note-does-not-move-a-count finding confirmed a second time.
+- **Take measured at pin `46afc022`**: base `9fb67295` (main contains us), ancestor behind 547, first-parent 84, one
+  predicted conflict (`ChatDoorTest.php`), three restores, 32 added module files. **SITE-207 dispatched with
+  `--allow-merge`.**
+- **Tips at the open**: `main 46afc022` · `money a96b6166` · `pricebook 74f5b79b` · `reviews f49ee6c4` ·
+  `sixty b04c9d0c` · `stages ea356afd` · `ui 06fef730` · `site 9fb67295`.
