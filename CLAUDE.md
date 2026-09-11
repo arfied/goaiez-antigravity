@@ -17792,3 +17792,29 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
    - **Population.** Ruling 573's is empty of buildable members.
 
    **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty coder wave to avoid an idle tick is what rulings 95, 100 and 111 forbid. No gate ran this tick: `HEAD`'s `app/**` is unchanged since the last supervisor gate, so the floor stays ruling 564's.
+
+575. **⭐ Ruling 573's `[.]` defect was swept across this ledger. It has ONE live member, ruling 569(c)'s `Request [.]` term, which could never match a `Request $request` parameter. Re-run with a bare dot, it still returns ZERO in the money modules, and the control fires on 7 files, including 569(c)'s own known members. 569(c)'s conclusion holds. Zero buildable (measured by the lane supervisor 2026-09-11 15:3x, by `date` `15:30`; rulings 207, 262(b), 294, 324, 327, 328, 381, 415, 429, 569, 573).** Ruling 573 found that ruling 207's `.`-for-`$` stand-in, written inside a bracket as `[.]`, matches only a literal dot, and the addendum named the sweep. **Instrument, quoted (300):** `grep -n -F -e "[.]" CLAUDE.md` returns **3** lines, each read (262(b)):
+   - `:17781` is ruling 573's own record of the defect.
+   - `:17777` is 573's spread corroboration, `[.][.][.].`. **It is correct as written**, because a spread `...$x` IS three literal dots followed by any character. A literal dot was intended there.
+   - ⭐ **`:17739` is ruling 569(c)'s `-e "Request [.]"`, which is the defect.** It asks for `Request .`, a literal dot, so a Livewire action or controller type-hinting `Request $request` was invisible to that term. 569(c)'s control fired on 10 files through its **other** terms (`request()`, `->input(`, `->query(`), so the dead term was hidden by a healthy count. That is ruling 483's shape: a multi-term instrument's non-zero answer covers a term that matched nothing.
+
+   **The re-run, quoted (300):**
+   - `grep -rn -e "Request .request" -e "use Illuminate.Http.Request" -e "Request::"` over the eight money module trees → **0**.
+   - Corroboration on case and fully-qualified spelling (381): `grep -rni -e "Http.Request" -e "request .request"` over the same trees → **0**.
+   - ⭐ **Positive control fires:** the first two terms over `app/app/Modules` and `app/app/Livewire` → **7** files: `C-Reviews/Actions/ConfirmRemovalRequestAction.php`, `C-Reviews/Domain/RemovalFilingGate.php`, X-102's three chat controllers, and the X-137 and X-157 service providers.
+   - ⭐ **Known members (429):** X-102's `ChatStartController`, `ChatCaptureController` and `ChatTurnController` are the controllers ruling 569(c)'s own control returned.
+   - 415's first-three check passed on the control members, and 449's each-member-exists check passed: every member was printed from a file.
+   - ⛔ Money proposes no edit on any control member (5).
+
+   **So a money screen still takes client input only through Livewire method arguments and bound properties**, and 569(c) now rests on a term that can fire. ⚠️ **TWENTY-FIRST inherited attribution corrected**, in ruling 257's shape: the ledger recorded an instrument, and one of its terms had never been shown to fire. ⛔ Struck, not to be re-run. ⚠️ **Trigger:** a `Request`-typed parameter or import added in the lane. Ruling 327's outcome shape a **sixty-ninth** time.
+   ⭐ **The generalisable half is ruling 573's, one step further:** a bracketed `[.]` is not always wrong. A spread really is three literal dots. So the sweep is **read hit by hit**, never filtered by pattern shape, and each `[.]` term is judged by whether its author meant a literal dot or a `$`.
+
+576. **⛔ FIFTY-EIGHTH consecutive HOLD (RULED by the lane supervisor 2026-09-11 15:3x, by `date` `15:30`).** All four lift conditions were measured this tick (269, 272, 323), each case decided on mtimes (494):
+   - **Owner.** `OWNER.md`'s newest heading is still `## OWNER RULING — 2026-09-09 09:02` (136), mtime `09-09 09:02:03`, older than `REVIEWS.md` (`15:22:42`).
+   - **Coder.** `--check` returned `CODER DEAD`.
+   - **Mailbox.** `REPORT.md` (`07:15:21`) and `BRIEF.md` (`07:07:27`) are both older than `REVIEWS.md`.
+   - **Cadence, all three ✗.** After `git fetch --no-write-fetch-head origin`, `origin/main` = **`bd3e9c5f`**, unmoved (`git diff --name-status bd3e9c5f origin/main | wc -l` = 0). `git rev-list --count HEAD..origin/main` = **44**. `git diff --stat dca743e8 origin/main -- app/app/Doctor coder-bin .claude/hooks` is empty. `git merge-base HEAD origin/main` = **`dca743e8`**.
+   - **Track 1.** No answer to ACTION 13–28.
+   - **Population.** Ruling 575's is empty of buildable members.
+
+   **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty coder wave to avoid an idle tick is what rulings 95, 100 and 111 forbid. No gate ran this tick: `HEAD`'s `app/**` is unchanged since the last supervisor gate, so the floor stays ruling 564's.
