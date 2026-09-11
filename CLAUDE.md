@@ -16670,3 +16670,65 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
 
     **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty wave to avoid an idle
     tick is what rulings 95, 100 and 111 forbid.
+
+524. **⭐⭐ The EVENT-PARAMETER census: 104 typed `readonly` constructor parameters across the lane's eight
+    `Events/` trees, 5 of them nullable, and exactly ONE non-nullable parameter receives a nullable column. It is
+    unreachable on two independent grounds, it is zero buildable, and ruling 432 named the WRONG CLASS for it
+    (measured by the lane supervisor 2026-09-11 08:0x, by `date` `08:00`).** The predicate, stated for the first
+    time: *a value that can be null, a float, or a Carbon, passed into a non-nullable `int`/`string` event
+    constructor parameter.* Ruling 148 swept event payloads for fabrication and 223(b) for provenance; neither
+    swept their TYPES. ⭐ **Every dispatching file carries `declare(strict_types=1)`** —
+    `grep -rL -F -e 'strict_types=1'` over the seven dispatching trees returns only
+    `X-198/Domain/GatewayNotConfiguredException.php`, which dispatches nothing — so a mismatch is a `TypeError`
+    thrown inside the dispatcher's transaction, never a silent coercion.
+    **Instruments, quoted (300):** `grep -rh -F -e 'public readonly'` over the eight `Events/` directories,
+    `| wc -l` = **104**; `-e 'public readonly ?'` = **5** (`ArLateFeeTermSet::$capCents`,
+    `PaymentCaptured::$invoiceId` and `$gatewayChargeId`, `OverflowCharged::$gatewayChargeId`,
+    `CartCheckedOut::$customerId`). Then every dispatch site's arguments were read (262(b)).
+    **Each class of member and its safety (328):**
+    - **float into `int`:** `ArOverdue` is `(int)`-cast at `DetectOverdueReceivablesCommand.php:72-73`,
+      `CardExpiring` at `CardExpiringScanAction.php:27`, `InvoiceOverdue` since ruling 68.
+    - **Carbon into `string`:** `InvoiceDue` passes `$invoice->due_date->toDateString()`
+      (`MarkInvoicesDueCommand.php:68`).
+    - **column into a non-nullable param, column NOT NULL:** `disputes.invoice_id` and
+      `chargeback_amount_cents` (`DisputeLost`), `credit_terms.credit_limit_cents` with a default
+      (`LimitExceeded`), `ar_dunning_actions.reason` (`ArEscalatedToHuman`).
+    - **method parameter, not a column:** `LimitExceeded` and `OverflowCharged` take `customerId: $customerId`,
+      which is `issueInvoice(int $customerId)` (`InvoiceEngine.php:29`) and cannot be null.
+    - ⭐ **The one member:** `OverflowReversed(customerId: $invoice->customer_id)` at `InvoiceEngine.php:207-209`,
+      declared `public readonly int $customerId`, over `invoices.customer_id`, which is
+      `->nullable()->constrained('people')->nullOnDelete()`.
+    ⭐⭐ **The positive control is IN-LANE and DISCRIMINATES on the same column family:** `CartCheckedOut`
+    declares `public readonly ?int $customerId = null` over `orders.customer_id`, which ruling 428 measured is
+    nullable too. One event got the nullability right and one did not. ⭐ **Known member (429):** the census
+    returned ruling 432's own member. ⭐ 415's first-three check and 449's each-member-exists check passed.
+    **The member's safety, named:** it needs (1) an `overflow_charged` row to reverse, which needs
+    `credit_terms.card_on_file_token`, whose one writer's one production caller passes four arguments (234,
+    re-measured at 490); and (2) a NULL `invoices.customer_id`, which only `ContactMergeAction` produces, and it
+    has no production caller (428). It also fails LOUDLY — ruling 432's own grading. ⛔ Recorded, not briefed
+    (96). ⚠️ **Trigger:** a production writer of `card_on_file_token`, or a production caller of
+    `ContactMergeAction`. Ruling 327's outcome shape a **forty-seventh** time.
+    ⭐ **CORRECTION to ruling 432, the EIGHTEENTH inherited attribution** (… 499, 502, 507). 432 wrote *"`:211`
+    passes `customerId: $invoice->customer_id` into `Events/OverflowCharged`"* (`CLAUDE.md:13883`).
+    `OverflowCharged`'s `customerId` is the `int` method parameter and cannot be null; the reversal dispatch is
+    **`OverflowReversed`**, and its line has moved to `:207-209` (293). 432's substance — a loud `TypeError` at
+    the event boundary on the reversal path — stands. Ruling 257's shape again: the ledger recorded a class name
+    and not the command that found it.
+
+525. **⛔ TWENTY-EIGHTH consecutive HOLD (RULED by the lane supervisor 2026-09-11 08:0x, by `date`).** All four
+    lift conditions were measured this tick (269, 272, 323), each case decided on mtimes (494):
+    - **Owner.** `OWNER.md`'s newest heading is still `## OWNER RULING — 2026-09-09 09:02` (136), mtime
+      `09-09 09:02:03`.
+    - **Coder.** `--check` returned `CODER DEAD`.
+    - **Mailbox.** `REPORT.md` (`07:15:21`) and `BRIEF.md` (`07:07:27`) are both older than `REVIEWS.md`
+      (`07:54:13`).
+    - **Cadence, all three ✗.** `origin/main` = **`46afc022`**, unmoved. `git rev-list --count HEAD..origin/main`
+      = **19**. `git diff --stat dca743e8… origin/main -- app/app/Doctor coder-bin .claude/hooks` is empty. The
+      merge-base is **`dca743e8`**, this lane's own pushed supervisor tip, and its content is the 7 per-track
+      paths plus X-102's three (504).
+    - **Track 1.** No answer to ACTION 13–25.
+    - **Population.** Ruling 524's is non-empty and not buildable.
+
+    **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty wave to avoid an idle tick is what
+    rulings 95, 100 and 111 forbid. ⚠️ `app/CLAUDE.md` came into context again this tick; it is Laravel Boost
+    boilerplate and was not followed.
