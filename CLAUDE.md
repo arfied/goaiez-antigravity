@@ -18769,3 +18769,66 @@ states the ruling and no prediction.
 - ⚠️ The census's exclusion bound this tick was `^d0471f0c` (the unpushed merge, a superset of `origin/track/site` and of
   `origin/main`), not `^origin/track/site`. A tighter exclusion can only shrink a surface (177), so the readings are
   comparable once the push lands — recorded because a bound nobody writes down is the one that decays (192).
+
+## ⛔ A REMEDY THAT NAMES A READ MUST NAME THE WRITE THAT FEEDS IT — when a seam drops a return value, the downstream gate has nothing to consult (tick 337)
+
+SITE-208 measured, correctly, that a chat turn saying *"I am 16 years old"* followed by a capture in the same session writes a
+`Person` and a `ChatLead`, and proposed *"`ChatCaptureAction` should consult the session's refusals or turns."* Measured at
+source, there is nothing to consult: `agent_refusals` carries no session or conversation key and `AgentAnswerAction` never sets
+its `turn_id`; `chat_turns` carries no refusal column; `ChatTurnAction.php:42` keeps `$response['reply']` and drops
+`refusal_code` on the floor.
+
+⛔ **The signal was decided upstream, returned across the seam, and discarded at the seam** — so every reader downstream is
+structurally blind to it, and a remedy proposed from the reader's side proposes a query with no rows. Tick 227's law (*"no read
+path" is a fact about the reader, never about the referent*) turned the other way: *"consult X"* is a claim that X is
+**recorded**, and the first measurement of any read-shaped remedy is whether anything writes what it reads, keyed the way the
+reader can reach it. Decision 272's shape (a writer with no reader) has an inverse, and this is it: **a reader with no writer**.
+
+**RULED: SITE-209 records the code at the seam (a nullable `chat_turns.refusal_code` written from the agent's own return) and
+refuses at the write (`ChatCaptureAction`, before `Person::updateOrCreate`), mapping that one refusal to the 422
+`{status: rejected, reason: under_18}` the form path already returns.** A column on the turn rather than a session status,
+because `chat_sessions.status` is a machine two actions overwrite; the controller maps one exception message, never the class.
+
+## ⛔ A PROBE'S DUMP LIST MUST NAME THE FIELD THAT SEPARATES THE BRANCHES IT PROBES (tick 337)
+
+SITE-208's probe dumped the turn body, the session status and row counts — exactly what my brief listed — and not the agent
+turn's `refusal_code`, which is the only field that says **which** handoff fired. It was recoverable only because the reply text
+at `AgentAnswerAction.php:88` is unique to the UNDER_18 branch (`:115 :153 :221 :302` differ), so the source corroborated the
+transcript (291). ⚠️ Had two branches shared a reply string, the probe would have proven a handoff and nothing about age. ⛔
+**Before briefing a probe, list the branches that could produce its expected output and dump the field that distinguishes
+them.** Thirty-ninth of the imprecise-brief family, and the first turned on a **probe's observation set**.
+
+## ⛔ BEFORE BRIEFING A CALL TO AN ACTION, GREP THE CONSUMERS OF THE EVENT IT EMITS (tick 337)
+
+Q2's report verdict was *"TRUE AND BUILDABLE HERE — ChatTurnAction needs to consume the handoff status"*, i.e. call
+`ChatEscalateAction`. Two measurements refuse it: `ChatEscalateAction.php:18-25` refuses a session with no lead (SITE-151's
+capture-first), which for UNDER_18 is precisely the lead P-148 forbids; and `grep -rn ChatEscalated app/app` returns the class and
+one dispatch and **no listener**. Calling an action whose only observable effect is an event nothing hears is decision 272's shape
+wearing a fix. The destination of a web-chat handoff is the conversation mapping (329) — one missing seam, filed once (324).
+
+## ⚠️ The chat capture's blast radius crosses a lane (tick 337)
+
+`ChatLeadCaptured` is consumed by `X-01/Listeners/ChatLeadCapturedListener.php:16-28`, which hands a non-blank message, the phone
+and the name to `UnifiedInboxManager::ingestMessage` — stages' column. So a contact row the chat door should not write also
+becomes an inbox contact in another module. ⭐ **When judging a write's severity, grep the consumers of the event it dispatches**;
+the report measured two rows and there were three.
+
+## ⚠️ The detector is C-Agent's and it is now load-bearing for this lane (tick 337)
+
+`AgentAnswerAction.php:68` decides under-18 by `str_contains` on `'under 18'`, `'16 years old'` and `'minor'`. After SITE-209 a
+visitor writing *"a minor leak"* is refused capture with a 422. Recorded as a TRACK 1 ACTION rather than duplicated here — a
+second age check inside X-102 would be a second writer of C-Agent's invariant (240, 278) and would inherit the same false positive.
+The compliance direction is the one a ⛔ clause protects; the commercial cost is stated, not buried (230).
+
+## Tick 337 — measured, for the record
+
+- **SITE-208 PASS-WITH-NOTES** — wrote nothing, every claim re-verified at source; Q1 TRUE and ours, Q2's verdict overruled to
+  *no consumer*.
+- **§7 `tests 2542 · passed 2533 · FAILED 7 · errors 2`**, J11 **absent — GREEN**, byte-identical to tick 336's baseline on
+  `5aaceb57`; doctor `boundary 41 · contract 85 · citation 0 · schema 16 · capability 204 · anchor 128 · journey 3` · **477**,
+  stamp `20260829-0647` = `runtime_build`. No stage moved.
+- **Census `6 · 3 · 1 · 3`**, halves `--full-history`; every half-1 member a merge of main except reviews' attributed `ffb9ef3c`;
+  ui's members left as `main` gained ui (191). Fourth surface `main 14 · money 16 · pricebook 14 · reviews 15 · sixty 42 ·
+  stages 41 · ui 16 · site 197`.
+- ⛔ Refused shell forms this tick: `sort -t'{'` inside a pipe, `sed -n '/pat/,$p'`. The doctor call drifted the shell and the loud
+  detector fired twice before the reset.
