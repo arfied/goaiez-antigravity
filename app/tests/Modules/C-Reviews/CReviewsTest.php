@@ -773,6 +773,8 @@ class CReviewsTest extends TestCase
 
         exec("grep -rnE 'ReviewGating|DestinationSettings|invite_threshold' ".escapeshellarg($dir).' 2>/dev/null', $out, $code);
 
+        $this->assertContains($code, [0, 1], "grep command failed to run correctly (exit code: {$code})");
+
         $this->assertSame([], $out, "Module contains per-location gating references:\n".implode("\n", $out));
     }
 
