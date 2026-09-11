@@ -1118,3 +1118,29 @@ PREDICTIONS before it is re-issued, not just for its shas.** Four lines of site'
 FELL by one" — were sitting inside a measure-only brief for a tick where site's product is 0. That is N126, *a
 gate that carries its own expected answer is not a gate*, and the tick before had flagged two lines of exactly
 this class one block earlier and then wrote four more.
+
+⚠️ **A LANE CAN BE MISSING ITS OWN COMMITS THAT `main` ALREADY CARRIES, AND THEN ITS SIDE OF A SHARED FILE IS A
+REVERT WEARING THE LANE'S NAME (N167, 2026-09-10, tick 311).** `git merge-base HEAD origin/track/sixty` measured
+`e48feb87` — **07:10 today** — while `git log e48feb87..origin/main -- <the two shared X-102 files>` listed five
+commits authored *in the sixty lane* and dated **09-09 22:25 → 09-10 00:34**, i.e. earlier than the base by
+fourteen hours. Timestamps do not order ancestry, and the resolution is measured, not inferred:
+`git branch -a --contains c8264b05` prints `main`, `track/money`, `track/site` — and **not `track/sixty`**. So
+`main` holds five of sixty's commits that sixty's own branch does not, and every one of them edits a file this
+merge conflicts on.
+The one that bites is `8d1e1559`, which swapped `app/tests/Modules/X-102/ChatDoorTest.php`'s stock
+`Illuminate\Foundation\Testing\RefreshDatabase` for the project's `Tests\Concerns\RefreshesTenantDatabase`.
+Sixty's side of that file **still says `RefreshDatabase`** — not because sixty decided anything, but because the
+commit that changed it is absent there. ⛔ **Any resolution rule phrased as "take the lane's test file whole"
+therefore reverts `main`'s trait fix, and the suite stays GREEN either way**, because both traits run: it is a
+silent revert with no red to find it. This is run 115's shape (*a guard clause written for a case is defeated by
+removing the case*) arriving through branch topology rather than through a restore.
+**RULED: before writing any per-file resolution list, run `git branch -a --contains <sha>` on each of `main`'s
+own commits to each conflicted path.** A sha that `main` has and the lane does not means the lane's side of that
+region is stale by construction and `ours` wins there — state it region by region, never file by file.
+**Corollary — a resolution list can be derived with `merge-tree` REFUSED, which it is to this seat.** The set
+that can possibly conflict is `intersect(files ours changed since base, files theirs changed since base)`; for
+sixty that was **2 of 11 paths**, and `git diff <base> <ours> -- <path>` beside `git diff <base> <theirs> --
+<path>` (base-first both times, N123) gives every region and its two candidate bodies. The prior tick's
+independent `merge-tree` reading — `rc=1`, conflicted path `ChatDoorTest.php` — agreed with the derivation, which
+is the second instrument N111 asks for. A refused instrument is not a missing measurement; it is a measurement
+that has to be assembled from the ones that are allowed.
