@@ -4,9 +4,15 @@ declare(strict_types=1);
 
 namespace Tests\Modules\CReviews;
 
+use App\Enums\CapturedBy;
+use App\Enums\CaptureSurface;
+use App\Enums\ConsentType;
+use App\Enums\CreditKind;
+use App\Enums\CreditProduct;
+use App\Enums\OutreachChannel;
 use App\Enums\ReviewSource;
 use App\Enums\ReviewStatus;
-use App\Models\ConsentRecord;
+use App\Models\Customer;
 use App\Models\Location;
 use App\Models\Review;
 use App\Modules\CReviews\Actions\ConfirmRemovalRequestAction;
@@ -34,6 +40,11 @@ use App\Modules\CSms\Events\SendRequested;
 use App\Modules\X121\Models\Person;
 use App\Modules\X171\Events\JobCompleted;
 use App\Modules\X181\Models\QaTicket;
+use App\Services\Billing\CreditLedger;
+use App\Services\Config\DefaultsRegistry;
+use App\Services\Consent\ConsentCapture;
+use App\Services\Consent\ConsentService;
+use App\Support\HashedIp;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -915,7 +926,43 @@ class CReviewsTest extends TestCase
 
     public function test_g20_04_reviewer_name_signal_allowed_with_consent(): void
     {
+        \loadEveryRequiredRegister();
+
         $biz = self::provisionTenant(['name' => 'Reviewer Contact Test Biz 2']);
+
+        $location = Location::forceCreate([
+            'business_id' => $biz->id,
+            'name' => 'HQ',
+            'timezone' => 'America/Chicago',
+        ]);
+
+        app(DefaultsRegistry::class)->set('messaging.quiet_hours_start', '21:00', 'test');
+        app(DefaultsRegistry::class)->set('messaging.quiet_hours_end', '08:00', 'test');
+        $this->travelTo('2026-09-02 18:00:00');
+
+        app(CreditLedger::class)->record(CreditProduct::Sms, CreditKind::Purchase, 100, 'test');
+
+        $customer = Customer::forceCreate([
+            'business_id' => $biz->id,
+            'location_id' => $location->id,
+            'region_code' => 'TX',
+            'phone' => '+15125559999',
+            'name' => 'John',
+        ]);
+
+        $capture = new ConsentCapture(
+            CapturedBy::Platform,
+            CaptureSurface::FeedbackPage,
+            ConsentType::ExpressWritten,
+            'v1.0',
+            'web',
+            [
+                'url' => 'https://example.com',
+                'ip_hash' => HashedIp::hash('127.0.0.1'),
+                'user_agent' => 'test',
+            ]
+        );
+        app(ConsentService::class)->record($customer, OutreachChannel::Sms, $capture, 'test');
 
         $person = Person::create([
             'business_id' => $biz->id,
@@ -923,35 +970,76 @@ class CReviewsTest extends TestCase
             'phone' => '+15125559999',
         ]);
 
-        // Satisfy the legacy foreign key
-        $customerId = DB::table('customers')->insertGetId([
-            'business_id' => $biz->id,
-            'created_at' => now(),
-        ]);
-
-        ConsentRecord::create([
-            'business_id' => $biz->id,
-            'customer_id' => $customerId,
-            'channel' => 'sms',
-            'state' => 'opted_in',
-            'captured_by' => 'platform',
-            'capture_surface' => 'feedback_page',
-            'disclosure_version' => '1.0',
-            'proof_hash' => 'dummy',
-            'terms_version' => '1.0',
-        ]);
-
         $req = ReviewRequest::create([
             'business_id' => $biz->id,
             'platform' => 'google',
             'customer_name' => 'John Doe',
-            'customer_id' => $customerId,
+            'customer_id' => $person->id,
         ]);
 
         $action = new ReviewerContactAction;
         $res = $action->handle($biz->id, $req->id);
 
-        $this->assertEquals('sent', $res['status']);
+        $this->assertEquals('sent', $res['status'], json_encode($res));
+    }
+
+    public function test_g20_04_reviewer_contact_refused_when_the_consent_belongs_to_another_customer(): void
+    {
+        \loadEveryRequiredRegister();
+
+        $biz = self::provisionTenant(['name' => 'Reviewer Contact Refused Biz']);
+
+        $location = Location::forceCreate([
+            'business_id' => $biz->id,
+            'name' => 'HQ',
+            'timezone' => 'America/Chicago',
+        ]);
+
+        app(DefaultsRegistry::class)->set('messaging.quiet_hours_start', '21:00', 'test');
+        app(DefaultsRegistry::class)->set('messaging.quiet_hours_end', '08:00', 'test');
+        $this->travelTo('2026-09-02 18:00:00');
+
+        app(CreditLedger::class)->record(CreditProduct::Sms, CreditKind::Purchase, 100, 'test');
+
+        $customer = Customer::forceCreate([
+            'business_id' => $biz->id,
+            'location_id' => $location->id,
+            'region_code' => 'TX',
+            'phone' => '+15125559999',
+            'name' => 'John',
+        ]);
+
+        $capture = new ConsentCapture(
+            CapturedBy::Platform,
+            CaptureSurface::FeedbackPage,
+            ConsentType::ExpressWritten,
+            'v1.0',
+            'web',
+            [
+                'url' => 'https://example.com',
+                'ip_hash' => HashedIp::hash('127.0.0.1'),
+                'user_agent' => 'test',
+            ]
+        );
+        app(ConsentService::class)->record($customer, OutreachChannel::Sms, $capture, 'test');
+
+        $person = Person::create([
+            'business_id' => $biz->id,
+            'first_name' => 'Jane',
+            'phone' => '+15125559998',
+        ]);
+
+        $req = ReviewRequest::create([
+            'business_id' => $biz->id,
+            'platform' => 'google',
+            'customer_name' => 'Jane Doe',
+            'customer_id' => $person->id,
+        ]);
+
+        $action = new ReviewerContactAction;
+        $res = $action->handle($biz->id, $req->id);
+
+        $this->assertEquals('refused', $res['status'], json_encode($res));
     }
 
     /**
