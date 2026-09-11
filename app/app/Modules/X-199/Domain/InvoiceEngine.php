@@ -36,17 +36,15 @@ final class InvoiceEngine
                 $totalCents += ($line['quantity'] ?? 1) * ($line['unit_price_cents'] ?? 0);
             }
 
-            $terms = CreditTerm::where('business_id', $businessId)->where('customer_id', $customerId)->first();
-            if ($terms === null) {
-                $terms = CreditTerm::create([
-                    'business_id' => $businessId,
-                    'customer_id' => $customerId,
+            $terms = CreditTerm::firstOrCreate(
+                ['business_id' => $businessId, 'customer_id' => $customerId],
+                [
                     'terms_type' => $termsType,
                     'credit_limit_cents' => 500000, // $5,000 credit limit
                     'current_outstanding_cents' => 0,
                     'card_on_file_token' => null,
-                ]);
-            }
+                ]
+            );
 
             $dueDays = CreditTerm::TERMS_DAYS[$terms->terms_type] ?? 0;
 
@@ -99,7 +97,7 @@ final class InvoiceEngine
                             idempotencyKey: 'overflow_'.$invoice->id.'_'.$overflowAmount
                         );
                         $gatewayChargeId = $payment->gateway_charge_id;
-                        // The payment row's own status, which is the gateway's word (R235/R236).
+                        // The payment row's own status, which is the gateway's word.
                         // A pending charge has an id, so deriving from the id writes 'charged' for
                         // money that has not settled.
                         $status = $payment->status === 'captured' ? 'charged' : 'refused';
@@ -161,7 +159,19 @@ final class InvoiceEngine
     {
         return DB::transaction(function () use ($businessId, $invoiceId, $amountCents) {
             $invoice = Invoice::where('business_id', $businessId)->findOrFail($invoiceId);
-            $payAmount = $amountCents ?? $invoice->total_cents;
+
+            // A payment is recorded against an OPEN invoice. `paid` and `draft` are exactly
+            // InvoiceReader's own definition of not-open (:41, :49), never a second literal
+            // list, so an `overdue` invoice stays payable. The throw is before the first write.
+            if (in_array($invoice->status, ['paid', 'draft'], true)) {
+                throw new InvoiceNotPayableException(sprintf(
+                    'Invoice %s is %s: a payment is only recorded against an open invoice. Nothing was recorded.',
+                    $invoice->invoice_number,
+                    $invoice->status
+                ));
+            }
+
+            $payAmount = $amountCents ?? max(0, $invoice->total_cents - $invoice->paid_cents);
 
             $newPaid = $invoice->paid_cents + $payAmount;
             $status = $newPaid >= $invoice->total_cents ? 'paid' : $invoice->status;

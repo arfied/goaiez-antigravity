@@ -70,7 +70,7 @@
                             @foreach($entries as $entry)
                                 <tr>
                                     <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-gray-900 sm:pl-6">
-                                        <x-ui.status-pill :state="$entry->amount_hundredths_cents < 0 ? 'attention' : 'ok'" :label="$entry->entry_type" />
+                                        <x-ui.status-pill :state="$ledgerEntryPillStates[$entry->entry_type] ?? 'unknown'" :label="$entry->entry_type" />
                                     </td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 text-right tabular-nums">
                                         {{ number_format($entry->amount_hundredths_cents / 10000, 4) }}

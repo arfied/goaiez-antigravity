@@ -339,4 +339,94 @@ class CardScreenTest extends TestCase
             ->assertSet('expYear', '')
             ->assertSet('name', '');
     }
+
+    public function test_the_make_default_button_carries_the_double_send_guard(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $card = CardToken::create([
+            'business_id' => $biz->id,
+            'gateway_payment_method_id' => 'tok_9',
+            'gateway_customer_id' => 'cus_9',
+            'brand' => 'Visa',
+            'last_four' => '9999',
+            'exp_month' => 12,
+            'exp_year' => now()->year + 1,
+            'is_default' => false,
+        ]);
+
+        Livewire::actingAs($owner)->test(CardScreen::class)
+            ->assertOk()
+            ->assertSeeHtml('wire:target="makeDefault('.$card->id.')"');
+    }
+
+    public function test_making_a_card_default_does_not_leave_a_stale_tokenisation_notice(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $card = CardToken::create([
+            'business_id' => $biz->id,
+            'gateway_payment_method_id' => 'tok_stale',
+            'gateway_customer_id' => 'cus_stale',
+            'brand' => 'Visa',
+            'last_four' => '1111',
+            'exp_month' => 12,
+            'exp_year' => now()->year + 2,
+            'is_default' => false,
+        ]);
+
+        Livewire::actingAs($owner)->test(CardScreen::class)
+            ->assertOk()
+            ->set('number', '4242424242424242')
+            ->set('expMonth', '12')
+            ->set('expYear', (string) (now()->year + 2))
+            ->set('name', 'A Plumber')
+            ->call('present')
+            ->assertSee('Waiting on Stripe tokenisation:')
+            ->call('makeDefault', $card->id)
+            ->assertSee('Card set as default')
+            ->assertDontSee('Waiting on Stripe tokenisation:');
+    }
+
+    public function test_a_two_digit_expiry_year_is_refused_as_incomplete_not_as_expired(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        Livewire::actingAs($owner)->test(CardScreen::class)
+            ->call('addCard')
+            ->set('number', '4242 4242 4242 4242')
+            ->set('expMonth', '12')
+            ->set('expYear', '30')
+            ->set('name', 'A Plumber')
+            ->call('present')
+            ->assertSee('The expiry year needs all four digits, not 30')
+            ->assertDontSee('That card expired');
+    }
+
+    public function test_the_error_heading_names_the_act_that_failed(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        Livewire::actingAs($owner)->test(CardScreen::class)
+            ->call('addCard')
+            ->set('number', '4242424242424241')
+            ->set('expMonth', '12')
+            ->set('expYear', (string) (now()->year + 2))
+            ->set('name', 'A Plumber')
+            ->call('present')
+            ->assertSee('Could not check that card')
+            ->assertDontSee('update your cards');
+    }
 }

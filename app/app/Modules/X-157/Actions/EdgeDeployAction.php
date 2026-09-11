@@ -6,7 +6,7 @@ namespace App\Modules\X157\Actions;
 
 use App\Models\Business;
 use App\Modules\X103\Actions\PageReadAction;
-use App\Modules\X103\Models\PageVersion;
+use App\Modules\X103\Actions\PageVersionAction;
 use App\Modules\X108\Models\Appointment;
 use App\Modules\X155\Actions\FormReadAction;
 use App\Modules\X157\Events\DeployCompleted;
@@ -40,7 +40,7 @@ final class EdgeDeployAction
 
             if ($commitId) {
                 // X-103 ↔ X-157 seam (R245): derive ssl_installed from EdgeZone.has_valid_ssl
-                PageVersion::where('commit_id', $commitId)->update(['ssl_installed' => $zone->has_valid_ssl]);
+                app(PageVersionAction::class)->recordSslInstalled($commitId, $zone->has_valid_ssl);
             }
 
             // 1. SSL Certificate check: a site cannot be published without a valid certificate (TEST ANCHOR)
@@ -150,7 +150,7 @@ final class EdgeDeployAction
             $html .= "</head><body>\n";
 
             if ($commitId) {
-                $version = PageVersion::where('commit_id', $commitId)->first();
+                $version = app(PageVersionAction::class)->forCommit($commitId);
                 if ($version) {
                     $blockTypes = is_array($version->content_blocks)
                         ? array_column($version->content_blocks, 'type')

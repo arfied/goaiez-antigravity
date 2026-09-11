@@ -87,7 +87,7 @@
             @if($actions->isNotEmpty())
                 <ul class="mt-3 space-y-1 text-sm">
                     @foreach($actions as $act)
-                        <li>{{ $act->reason }} <span class="text-ink-3">· {{ $act->action }} · {{ $act->created_at->diffForHumans() }}</span></li>
+                        <li>{{ $act->reason }} <span class="text-ink-3">· {{ $actionLabels[$act->action] ?? $act->action }} · {{ $act->created_at->diffForHumans() }}</span></li>
                     @endforeach
                 </ul>
             @endif

@@ -12,6 +12,8 @@ use Livewire\Component;
 
 class DunningBoard extends Component
 {
+    use LabelsDunning;
+
     public ?string $error = null;
 
     public function advance(int $stateId, DunningAdvanceAction $action): void
@@ -41,6 +43,8 @@ class DunningBoard extends Component
 
         return view('c-billing::dunning-board', [
             'states' => $states,
+            'dunningLabels' => $this->dunningLabels(),
+            'dunningPillStates' => $this->dunningPillStates(),
         ]);
     }
 

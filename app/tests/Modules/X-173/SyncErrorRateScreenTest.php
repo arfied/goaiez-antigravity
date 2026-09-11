@@ -109,4 +109,26 @@ class SyncErrorRateScreenTest extends TestCase
             ->assertSee('a conflict, never a silent gap')
             ->assertDontSee('§30.5');
     }
+
+    public function test_a_single_conflict_in_two_hundred_lines_is_not_reported_as_zero_percent()
+    {
+        $biz = self::provisionTenant();
+        Tenancy::set($biz->id);
+
+        $conn = app(AccountingConnectAction::class)->connect($biz->id, 'xero', 'realm_under_one');
+
+        SyncRun::create([
+            'business_id' => $biz->id,
+            'connection_id' => $conn->id,
+            'records_synced' => 200,
+            'conflicts_count' => 1,
+            'status' => 'completed',
+        ]);
+
+        Livewire::test(SyncErrorRateView::class)
+            ->assertOk()
+            ->assertSee('1 conflicts')
+            ->assertSee('under 1% conflicts')
+            ->assertDontSee('0% conflicts');
+    }
 }

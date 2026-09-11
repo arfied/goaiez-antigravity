@@ -11,20 +11,29 @@ use App\Modules\X102\Models\ChatSession;
 use App\Modules\X102\Models\ChatTurn;
 use App\Services\Pixel\PixelKeys;
 use App\Support\Tenancy;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
+use Tests\Concerns\RefreshesTenantDatabase;
 use Tests\TestCase;
 
 class ChatDoorTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshesTenantDatabase;
 
     /**
-     * BUILD PROPOSAL: X-102's ChatTurnAction calls C-Agent unconditionally; it should only call if the author is 'visitor'. Owner: X-102
+     * CLOSED: X-102 chat capture — the 400 Bad Request returned by the middleware is correct behavior, making the internal 500 safely unreachable.
+     * BUILD PROPOSAL: pre-chat notice and first-party transcripts only for the chat widget Owner: X-102
+     * CLOSED: X-102's ChatTurnAction conditionally calling C-Agent only if the author is 'visitor' was built in b2452a02.
      * BUILD PROPOSAL: mapping chat_session_id to C-Agent's conversation_id so HUMAN_TAKEOVER_LATCH works is required, but it has not been asked for yet. Owner: Track 1
      * BUILD PROPOSAL: X-102's ChatTurnAction defaults the turn number to 1; it should compute and pass the real turn number. Owner: X-102
      * BUILD PROPOSAL: X-01 cannot listen to ChatTurnCreated and use ingestMessage because web visitors only have a session token, which ingestMessage would wrongly insert into the Person phone column since it lacks an '@'. Owner: X-01
      * BUILD PROPOSAL: ChatTurnCreated carries no message text, but could safely do so because the AgentTurns law prohibits unencrypted text in job payloads, not synchronous event payloads (EmailReplied safely carries text). Owner: X-102
+     * CLOSED: X-102 should record the agent's reply synchronously. The premise of listening to AgentTurnAnswer is wrong, as AnswerAgentTurnJob proves callers use the synchronous return array, and the event carries no session ID. Owner: X-102
+     * REFINEMENT: The count assertion for ChatTurn was narrowed to author_type = 'visitor'. The original assertion (count === 1) would have failed if 0 or 2 visitor turns were created, and the new assertion still fails in those exact cases while legitimately permitting the new agent turn row.
+     * MEASURED 2026-09-10 (site lane): FALSE — the premise does not hold at source: no caller can supply an author type other than 'visitor' today (app/app/Modules/X-102/Http/Controllers/ChatTurnController.php:45).
+     * MEASURED 2026-09-10 (site lane): TRUE AND NOT OURS — X-102 holds no conversation column to pass, so Track 1 must mint the mapping (app/app/Modules/X-102/Actions/ChatTurnAction.php:29).
+     * MEASURED 2026-09-10 (site lane): TRUE BUT THE OUTPUT HAS NO CONSUMER — no file in the tree reads the turn_number column (app/app/Modules/C-Agent/Models/AgentTurn.php:26).
+     * MEASURED 2026-09-10 (site lane): TRUE AND NOT OURS — the claim holds about the phone column, but UnifiedInboxManager belongs to X-01 (app/app/Modules/X-01/Domain/UnifiedInboxManager.php:35).
+     * MEASURED 2026-09-10 (site lane): FALSE — the premise does not hold at source: the AgentTurns law does not prohibit unencrypted text but notes the payload carries a row id, and the event has zero listeners anyway (app/app/Services/Agent/AgentTurns.php:184).
      */
     public function test_valid_key_creates_chat_session_for_right_business(): void
     {
@@ -106,11 +115,12 @@ class ChatDoorTest extends TestCase
         ]);
 
         $response->assertStatus(201);
-        $response->assertJsonStructure(['id']);
+        $response->assertJsonStructure(['id', 'reply']);
+        $response->assertJson(['reply' => 'Hello! How can I help you today?']);
 
         Tenancy::set((int) $biz->id);
-        $this->assertEquals(1, ChatTurn::where('chat_session_id', $session->id)->count());
-        $turn = ChatTurn::first();
+        $this->assertEquals(1, ChatTurn::where('chat_session_id', $session->id)->where('author_type', 'visitor')->count());
+        $turn = ChatTurn::where('author_type', 'visitor')->first();
         $this->assertEquals('Hello from visitor', $turn->message);
         $this->assertEquals('visitor', $turn->author_type);
 
@@ -118,8 +128,18 @@ class ChatDoorTest extends TestCase
         $this->assertEquals(1, AgentTurn::where('business_id', $biz->id)->count());
         $agentTurn = AgentTurn::first();
         $this->assertEquals('Hello from visitor', $agentTurn->user_message);
+
+        $this->assertEquals(1, ChatTurn::where('chat_session_id', $session->id)->where('author_type', 'agent')->count());
     }
 
+    /**
+     * Asserts that a session belonging to another business is not reachable through this route.
+     * This is an outcome invariant: it is green with and without the controller's
+     * ->where('business_id', $businessId) clause, because row-level security enforces
+     * the same filter one layer down. It is therefore not a sentinel for that clause,
+     * and the clause's liveness was proven separately by corrupting it (scoping to
+     * the wrong business id), which reddens the same-tenant tests instead.
+     */
     public function test_key_for_business_a_and_session_for_business_b_returns_404(): void
     {
         $bizA = TestCase::provisionTenant(['name' => 'Business A', 'currency' => 'USD']);
@@ -332,5 +352,244 @@ class ChatDoorTest extends TestCase
 
         $response->assertStatus(400);
         $response->assertJson(['error' => 'Bad Request']);
+    }
+
+    public function test_blank_capture_phone_returns_400(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Lead Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+        $key = app(PixelKeys::class)->ensureFor($biz);
+        Tenancy::forgetAll();
+
+        $startResponse = $this->postJson("/api/chat/{$key}/start");
+        $sessionToken = $startResponse->json('session_token');
+
+        $response = $this->postJson("/api/chat/{$key}/capture", [
+            'session_token' => $sessionToken,
+            'name' => 'John Doe',
+            'phone' => '   ',
+        ]);
+
+        $response->assertStatus(400);
+        $response->assertJson(['error' => 'Bad Request']);
+
+        Tenancy::set((int) $biz->id);
+        $this->assertSame(0, ChatLead::where('business_id', $biz->id)->count());
+    }
+
+    /**
+     * Asserts that a session belonging to another business is not reachable through this route.
+     * This is an outcome invariant: it is green with and without the controller's
+     * ->where('business_id', $businessId) clause, because row-level security enforces
+     * the same filter one layer down. It is therefore not a sentinel for that clause,
+     * and the clause's liveness was proven separately by corrupting it (scoping to
+     * the wrong business id), which reddens the same-tenant tests instead.
+     */
+    public function test_capture_scopes_session_lookup_by_business_id(): void
+    {
+        $bizA = TestCase::provisionTenant(['name' => 'Business A', 'currency' => 'USD']);
+        Tenancy::set((int) $bizA->id);
+        $keyA = app(PixelKeys::class)->ensureFor($bizA);
+
+        $bizB = TestCase::provisionTenant(['name' => 'Business B', 'currency' => 'USD']);
+        Tenancy::set((int) $bizB->id);
+        ChatSession::create([
+            'business_id' => $bizB->id,
+            'session_token' => 'sess_biz_b_capture',
+            'status' => 'active',
+            'rage_clicks_count' => 0,
+            'is_ai_capped' => false,
+        ]);
+
+        Tenancy::forgetAll();
+
+        $response = $this->postJson("/api/chat/{$keyA}/capture", [
+            'session_token' => 'sess_biz_b_capture',
+            'name' => 'John Doe',
+            'phone' => '1234567890',
+            'email' => 'john@example.com',
+            'message' => 'Hello',
+        ]);
+
+        $response->assertStatus(404);
+        $response->assertJson(['error' => 'Session not found']);
+    }
+
+    /**
+     * This test is unfalsifiable for the middleware's behavior because the lack of consent
+     * drops the message before the trim logic's output can be verified.
+     */
+    public function test_http_middleware_normalises_whitespace_message_to_null(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Lead Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+        $key = app(PixelKeys::class)->ensureFor($biz);
+
+        $session = ChatSession::create([
+            'business_id' => $biz->id,
+            'session_token' => 'sess_lead_test',
+            'status' => 'active',
+            'rage_clicks_count' => 0,
+            'is_ai_capped' => false,
+        ]);
+        Tenancy::forgetAll();
+
+        $response = $this->postJson("/api/chat/{$key}/capture", [
+            'session_token' => 'sess_lead_test',
+            'name' => 'John Doe',
+            'phone' => '1234567890',
+            'email' => 'john@example.com',
+            'message' => "   \n\t ",
+        ]);
+
+        $response->assertStatus(201);
+        $response->assertJsonStructure(['id']);
+
+        Tenancy::set((int) $biz->id);
+        $this->assertEquals(1, ChatLead::where('chat_session_id', $session->id)->count());
+        $lead = ChatLead::first();
+        $this->assertNull($lead->message);
+        $this->assertNull($lead->consent_logged_at);
+    }
+
+    /**
+     * Decision: The HTTP stack normalises a whitespace message to null.
+     * Reasoning: A detail that is blank or whitespace was not given (R245). The framework's global middleware
+     * (TrimStrings and ConvertEmptyStringsToNull) trims whitespace and converts empty strings to null before
+     * they reach the controller.
+     *
+     * Finding: This test is unfalsifiable for the middleware's behavior because the action carries its own
+     * trim logic, which is redundant on the only existing path. A mutation bypassing the middleware still survives
+     * because the action nullifies the whitespace anyway.
+     *
+     * It is, however, falsifiable for the controller's parameter mapping: a mutation that bypasses the
+     * controller's mapping by passing a non-whitespace string (like $sessionToken) into the message parameter
+     * reddens this test, establishing that it protects the controller boundary.
+     */
+    public function test_http_middleware_normalises_whitespace_message_to_null_when_consented(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Lead Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+        $key = app(PixelKeys::class)->ensureFor($biz);
+
+        $session = ChatSession::create([
+            'business_id' => $biz->id,
+            'session_token' => 'sess_lead_test',
+            'status' => 'active',
+            'rage_clicks_count' => 0,
+            'is_ai_capped' => false,
+        ]);
+        Tenancy::forgetAll();
+
+        $response = $this->postJson("/api/chat/{$key}/capture", [
+            'session_token' => 'sess_lead_test',
+            'name' => 'John Doe',
+            'phone' => '1234567890',
+            'email' => 'john@example.com',
+            'message' => "   \n\t ",
+            'consent' => true,
+        ]);
+
+        $response->assertStatus(201);
+        $response->assertJsonStructure(['id']);
+
+        Tenancy::set((int) $biz->id);
+        $this->assertEquals(1, ChatLead::where('chat_session_id', $session->id)->count());
+        $lead = ChatLead::first();
+        $this->assertNull($lead->message);
+        $this->assertNotNull($lead->consent_logged_at);
+    }
+
+    /**
+     * Decision: The HTTP stack normalises a whitespace phone to null, triggering a 400 before the action.
+     * Reasoning: TrimStrings and ConvertEmptyStringsToNull convert whitespace to null. The controller's
+     * !is_string($phone) check catches this and returns a 400 Bad Request. The DomainException in the action
+     * is therefore unreachable over HTTP.
+     */
+    public function test_whitespace_capture_phone_returns_400(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Lead Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+        $key = app(PixelKeys::class)->ensureFor($biz);
+
+        $session = ChatSession::create([
+            'business_id' => $biz->id,
+            'session_token' => 'sess_lead_test',
+            'status' => 'active',
+            'rage_clicks_count' => 0,
+            'is_ai_capped' => false,
+        ]);
+        Tenancy::forgetAll();
+
+        $response = $this->postJson("/api/chat/{$key}/capture", [
+            'session_token' => 'sess_lead_test',
+            'name' => 'John Doe',
+            'phone' => "   \n\t ",
+        ]);
+
+        Tenancy::set((int) $biz->id);
+        $this->assertEquals(0, ChatLead::where('chat_session_id', $session->id)->count());
+
+        $response->assertStatus(400);
+        $response->assertJson(['error' => 'Bad Request']);
+    }
+
+    public function test_capture_drops_message_when_consent_absent(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Lead Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+        $key = app(PixelKeys::class)->ensureFor($biz);
+
+        $session = ChatSession::create([
+            'business_id' => $biz->id,
+            'session_token' => 'sess_lead_test_noconsent',
+            'status' => 'active',
+            'rage_clicks_count' => 0,
+            'is_ai_capped' => false,
+        ]);
+        Tenancy::forgetAll();
+
+        $response = $this->postJson("/api/chat/{$key}/capture", [
+            'session_token' => 'sess_lead_test_noconsent',
+            'name' => 'John Doe',
+            'phone' => '1234567890',
+            'message' => 'Hello',
+        ]);
+
+        $response->assertStatus(201);
+        Tenancy::set((int) $biz->id);
+        $lead = ChatLead::where('chat_session_id', $session->id)->first();
+        $this->assertNull($lead->message);
+        $this->assertNull($lead->consent_logged_at);
+    }
+
+    public function test_capture_keeps_message_when_consent_provided(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Lead Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+        $key = app(PixelKeys::class)->ensureFor($biz);
+
+        $session = ChatSession::create([
+            'business_id' => $biz->id,
+            'session_token' => 'sess_lead_test_consent',
+            'status' => 'active',
+            'rage_clicks_count' => 0,
+            'is_ai_capped' => false,
+        ]);
+        Tenancy::forgetAll();
+
+        $response = $this->postJson("/api/chat/{$key}/capture", [
+            'session_token' => 'sess_lead_test_consent',
+            'name' => 'John Doe',
+            'phone' => '1234567890',
+            'message' => 'Hello',
+            'consent' => true,
+        ]);
+
+        $response->assertStatus(201);
+        Tenancy::set((int) $biz->id);
+        $lead = ChatLead::where('chat_session_id', $session->id)->first();
+        $this->assertEquals('Hello', $lead->message);
+        $this->assertNotNull($lead->consent_logged_at);
     }
 }

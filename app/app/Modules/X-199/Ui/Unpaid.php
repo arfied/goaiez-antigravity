@@ -56,11 +56,13 @@ class Unpaid extends Component
         if ($this->showLastFivePaid) {
             $query->where('status', 'paid')
                 ->orderByDesc('created_at')
+                ->orderByDesc('id')
                 ->limit(5);
         } else {
             $query->whereNotIn('status', ['paid', 'draft'])
                 ->whereRaw('paid_cents < total_cents')
-                ->orderBy('due_date', 'asc');
+                ->orderBy('due_date', 'asc')
+                ->orderBy('id');
         }
 
         $invoices = $query->get();

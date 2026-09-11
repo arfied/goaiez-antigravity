@@ -103,7 +103,7 @@ final class DisputeDefenseEngine
                     $names[] = DisputeEvidence::EVIDENCE_LABELS[$type] ?? $type;
                 }
 
-                throw new \Exception('The bundle is still missing '.implode(', ', $names).'. Add them, then submit again.');
+                throw new \Exception('The bundle is still missing '.implode(', ', $names).'. A bundle here takes the invoice line and your note, and nothing in this checkout adds the rest yet.');
             }
         }
 
@@ -122,6 +122,18 @@ final class DisputeDefenseEngine
         }
 
         $dispute = Dispute::where('business_id', $businessId)->findOrFail($disputeId);
+
+        // A dispute is outcomed ONCE. `won` and `lost` are exactly DisputeQueue's own definition of
+        // not-yet-outcomed (:91's whereNotIn), never a second literal list, so `opened` and `compiled`
+        // stay outcomeable. The throw is before the first write.
+        if (in_array($dispute->status, ['won', 'lost'], true)) {
+            throw new DisputeAlreadyOutcomedException(sprintf(
+                'Invoice #%d is already %s: an outcome is recorded once and is never overwritten. Nothing was recorded.',
+                $dispute->invoice_id,
+                $dispute->status
+            ));
+        }
+
         $dispute->update(['status' => $outcome]);
 
         $clawbackTriggered = false;

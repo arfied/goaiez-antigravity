@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Modules\CBilling;
 
 use App\Models\User;
+use App\Modules\CBilling\Domain\BillingLedgerEngine;
 use App\Modules\CBilling\Models\CreditLedgerEntry;
 use App\Modules\CBilling\Models\Meter;
 use App\Modules\CBilling\Models\TrialLimit;
@@ -47,7 +48,7 @@ class CreditsScreenTest extends TestCase
         $entryA2 = CreditLedgerEntry::create([
             'business_id' => $biz->id,
             'entry_type' => 'debit',
-            'amount_hundredths_cents' => -10000,
+            'amount_hundredths_cents' => 10000,
             'balance_after_hundredths_cents' => 490000,
             'reference_id' => 'ref-123', 'description' => 'Used AI tokens',
             'created_at' => now(),
@@ -82,7 +83,8 @@ class CreditsScreenTest extends TestCase
             ->assertSee('49.0000') // credit balance
             ->assertSeeInOrder(['Credit balance', '49.0000', 'Ledger'])
             ->assertDontSee('AI Credits')
-            ->assertSee('-1.0000')
+            ->assertSee('1.0000')
+            ->assertDontSee('-1.0000')
             ->assertSeeInOrder(['SMS Segments', '100', 'Cost: 5.0000'])
             ->assertDontSee('888.0000') // entry B
             ->assertDontSee('99.9000') // other tenant's meter cost
@@ -163,5 +165,22 @@ class CreditsScreenTest extends TestCase
                 ->where('entry_type', 'topup')
                 ->count()
         );
+    }
+
+    public function test_a_debit_written_by_the_engine_is_flagged_on_the_credits_ledger()
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $engine = app(BillingLedgerEngine::class);
+        $engine->grant($biz->id, 250000, 'grant_welcome', 'Welcome credit');
+        $engine->debit($biz->id, 12000, 'call_1', 'AI call, 3 minutes');
+
+        Livewire::actingAs($owner)->test(Credits::class)
+            ->assertOk()
+            ->assertSee('debit')
+            ->assertSeeHtml('bg-attention-bg');
     }
 }
