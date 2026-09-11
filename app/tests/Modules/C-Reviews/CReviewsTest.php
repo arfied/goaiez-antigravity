@@ -1155,6 +1155,11 @@ class CReviewsTest extends TestCase
         $this->assertNull(QaTicket::find($resolved->id)->csat_requested_at);
     }
 
+    public function test_g20_05_csat_answer_has_no_inbound_path(): void
+    {
+        $this->fail('NOT BUILT: G20-05 — the CSAT ask is requested on ticket.resolved, but no inbound path reaches QaTicketAction::receiveCsat (QaTicketAction.php:61, zero production callers); InfobipInboundController and InboundMessages dispatch no event a module can subscribe to, so a 1-star reply cannot reopen the ticket.');
+    }
+
     /**
      * Test that csat_score is not present on review_requests and qa_tickets tables.
      */
