@@ -16803,3 +16803,70 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty wave to avoid an idle tick is
     what rulings 95, 100 and 111 forbid. ⚠️ `app/CLAUDE.md` came into context again; it is Laravel Boost
     boilerplate and was not followed.
+
+528. **⭐⭐ The COMPONENT→SEAM ARGUMENT-TYPE census, the Livewire half ruling 526 left open: 34 call sites
+    in 22 components, every PHP component file declares `strict_types=1`, and every argument is provably
+    of its parameter's type or read from a text-input map that can only hold a string. The raw-boolean
+    blade echo is measured zero with it. Zero buildable (measured by the lane supervisor 2026-09-11 08:2x,
+    by `date` `08:20`).** Ruling 526 swept the Action→Engine boundary and named its unswept sibling:
+    what a component passes INTO an Action. Under `strict_types=1` a mismatch there is a `TypeError` on
+    the owner's press. **Instruments, quoted (300):**
+    - `grep -rL -F -e "strict_types=1"` over the eight `Ui/` trees prints **only blades**, so every
+      component PHP file is strict.
+    - `grep -rn -F -e "->handle("` over the same trees → **30**; `grep -rn -E -e "action->[a-gi-z][A-Za-z]*\("`
+      → **2** (`CardScreen:47` `rotateDefault`, `ConnectionMappingView:57` `mapAccount`); direct engine
+      calls → **2** (`Unpaid:37`, `Invoices:36`, both `recordPayment`). **34 call sites.**
+    - Action signatures read with `grep -rn -A 8 -F -e "function handle("` over the eight `Actions/` trees;
+      each call site's arguments read with `-B 14` (262(b)).
+
+    **Every argument falls in one of six classes, each safe:**
+    - a Livewire method `int` parameter, `Tenancy::idOrFail()`, a literal (`5000`), or an `integer`-cast
+      column (`DunningState.php:16` `day_in_cycle`, `$card->id`);
+    - an explicit cast at the component: `(int)` at `CardScreen:73`, `X-199 Credits:46,:48`,
+      `AgeingByReason:48,:76,:111`, `PaymentplanBuilder:35`, `CollectionsPackagePreview:39`,
+      `ReconciliationDiscrepancies:29`; `(string)` at `X-199 Credits:45`, `PaymentplanBuilder:36`,
+      `InvoiceThreadBeside:50`, `DisputeCard:33`, `AgeingByReason:118`;
+    - a typed `string` property (`CartBlock`/`CheckoutBlock::$sessionToken`, `CardScreen::$number`/`$name`);
+    - ⭐ a nullable property GUARDED before the call: `CheckoutBlock::$authToken` is `?string`, and `:64`'s
+      `if ($this->authToken === null) { … return; }` runs ahead of `:71`'s `string $freshAuthToken`;
+    - a nullable value into a nullable parameter: `AgeingByReason:49`'s `$cap` into `?int $capCents`;
+    - an array the component builds itself (`DisputeQueue:33-37` `$items`).
+    **Five values are uncast, in three components**: `AgeingByReason:126`'s `$ref` into `?string $reference`,
+    `ConflictsListView:26`'s `$answer` into `string $resolutionAccount`, and `ConnectionMappingView:52-54`'s
+    `$category`, `$glId`, `$glName`. Each is read from a `public array` filled by a text-input
+    `wire:model`, so it holds a string, and the four `?? ''` defaults are strings. `$ref` has no `??` and is
+    safe because `:105`'s `empty($this->reference[$invoiceId])` refuses a missing key first. **A mismatch
+    needs a client that sets a non-string into its own component**, and it lands in each method's
+    `\Throwable` tail (206), shown only to that client. ⛔ Recorded at ruling 76's grade, never briefed;
+    ⛔ not harmonised with the `(string)`-casting siblings, because both forms are correct for every owner
+    (228(a)).
+    ⭐ **Known members (429):** the census returned `CheckoutBlock:64-71`, ruling 245's `$authToken` pair, and
+    `CardScreen:73`'s casts, ruling 496/419(d)'s member. ⭐ **Controls:** `grep -rn -E -e "= .this->[a-zA-Z]+\[.[a-zA-Z]+\];"`
+    over `app/app/Modules` returns exactly **one** line in the whole tree, money's own `$ref`, so the
+    instrument reaches the shape; `grep -rn -E -e "handle\(.*this->[a-zA-Z]+\["` returns only
+    `DisputeCard:33`, which casts. 415's first-three and 449's each-member-exists checks passed.
+    ⭐ **The blade half the addendum also named, raw non-string echoes:**
+    `grep -rn -E -e "\{\{[^}(]*is_(default|active|enabled|connected)[^}(]*\}\}"` over
+    `app/resources/views` and `app/app/Modules` returns **5** out-of-lane lines (X-112, X-113, X-139, X-142,
+    X-16) and every one is a ternary, so the instrument fires and money has **zero**. The lane's array
+    columns reach `{{ }}` only as scalar subscripts or `count()` (`collections-package-preview.blade.php:32,:35`).
+    ⛔ Money proposes no edit on the out-of-lane lines (5). ⛔ Both halves struck, not to be re-run.
+    ⚠️ **Trigger:** a component passing an uncast value from a non-text input, or a new Action parameter
+    typed narrower than its caller's value. Ruling 327's outcome shape a **forty-ninth** time.
+
+529. **⛔ THIRTIETH consecutive HOLD (RULED by the lane supervisor 2026-09-11 08:2x, by `date`).** All four
+    lift conditions were measured this tick (269, 272, 323), each case decided on mtimes (494):
+    - **Owner.** `OWNER.md`'s newest heading is still `## OWNER RULING — 2026-09-09 09:02` (136), mtime
+      `09-09 09:02:03`.
+    - **Coder.** `--check` returned `CODER DEAD`.
+    - **Mailbox.** `REPORT.md` (`07:15:21`) and `BRIEF.md` (`07:07:27`) are both older than `REVIEWS.md`
+      (`08:13:01`).
+    - **Cadence, all three ✗.** `origin/main` = **`46afc022`**, unmoved. `git rev-list --count
+      HEAD..origin/main` = **19**. `git diff --stat dca743e8… origin/main -- app/app/Doctor coder-bin
+      .claude/hooks` is empty. The merge-base is **`dca743e8`**, this lane's own pushed supervisor tip, and
+      its content is the 7 per-track paths plus X-102's three (504).
+    - **Track 1.** No answer to ACTION 13–25.
+    - **Population.** Ruling 528's is non-empty and not buildable.
+
+    **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty wave to avoid an idle tick is
+    what rulings 95, 100 and 111 forbid.
