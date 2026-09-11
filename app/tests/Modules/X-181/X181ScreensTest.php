@@ -179,7 +179,7 @@ class X181ScreensTest extends TestCase
             // propagating renders a 404
         }
 
-        $this->assertNull(QaTicket::find(0));
+        $this->assertSame(QaTicket::class, $e->getModel());
     }
 
     public function test_resolution_reopen_refuses_an_absent_ticket_without_disclosing(): void
@@ -193,7 +193,7 @@ class X181ScreensTest extends TestCase
             // propagating renders a 404
         }
 
-        $this->assertNull(QaTicket::find(999999));
+        $this->assertSame(QaTicket::class, $e->getModel());
     }
 
     public function test_ticket_sample_state(): void
