@@ -4571,3 +4571,34 @@ flag and wrong for the button, because I never asked what else reads `$refusals`
 component flag, grep the blade for every attribute that flag drives (`disabled`, `@if`, `wire:loading`), and ask whether
 the path OUT of that state is still reachable by a click.** No wrong value came out of it (the row stays unconfirmed and
 the agent refuses), so it is recorded as (r2′), not blocked.
+
+## ⭐ Trap added 2026-09-11 14:2x — Pest's JSON OMITS `"errors"` when it is zero, so the four-number command prints three
+
+PB-167's brief told the coder to copy all four counts from `grep -oE '"(tests|passed|failed|errors)":[0-9]+' <log>`.
+In `pb167-defect.red.log` and `pb167-m1…m8.red.log`, **the `"errors"` key is not present at all**. It appears only when
+the count is non-zero (`pb167-m9.red.log`: `"errors":3`). The coder caught it in answer 17. I had not checked the
+schema.
+
+⭐ **An absent key is not a zero until an arithmetic check says so.** Read `errors` as 0 only when
+`tests = passed + failed` holds in that log. When `errors` is present, require `tests = passed + failed + errors`. All
+eleven PB-167 logs reconcile (`17 = 14 + 3`, `116 = 115 + 1`, `116 = 114 + 2`, `116 = 111 + 2 + 3`).
+It is PB-161's shape again, one field over: evidence demanded from an instrument that does not always print it.
+
+## ⭐⭐ Trap added 2026-09-11 14:2x — BINDING-NAME PARITY: a `wire:model` whose root no public property carries
+
+`pricebook.blade.php:30` binds `wire:model="calloutFeeDeducted"`. `Pricebook`'s property is `$deductedIfProceeding` (`:22`),
+and its hook `updatedCalloutFeeDeducted()` (`:69`) is named for the blade's name. Livewire `v4.4.2`
+`HandleComponents::updateProperty()` (the `getPublicPropertiesDefinedOnSubclass` check) throws
+`PublicPropertyNotFoundException`. So ticking the box fails the request, and a stored deduction never loads ticked.
+**The owner's screen shows "off" while the agent promises the deduction.**
+
+⭐ **No test could see it.** `Livewire::test()` renders the blade without resolving its bindings, and no test `set()`s
+either name. It is the third member of *a component test exercises methods, not controls* (the layout note, the
+`disabled` trap).
+
+⭐ **The sweep is two greps and was run lane-wide on 2026-09-11.** Scope: `wire:model` only, in the ten modules'
+`Ui/views`. The blade-to-component pairing was taken from the file names and verified by reading for X-163's three.
+**23 bindings on 8 components: 22 resolve, 1 does not** (the one above). ⛔ SPENT for `wire:model`.
+`wire:click`/`wire:submit` targets are a different question, and PB-145's remedy sweep already covered them.
+⭐ **The fix follows the majority.** The blade, the hook and the sibling `ConfirmationScreen` all say `calloutFeeDeducted`,
+so the PROPERTY is renamed. The blade does not change (PB-168).
