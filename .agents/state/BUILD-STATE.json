@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-11T06:55:01",
+ "updated": "2026-09-11T07:14:44",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2849,6 +2849,12 @@
    "module": "X-211",
    "chose": "A raced plan offer or collections package is refused as the guard refuses it An invoice carries one plan and one collections package, and each was guarded by a read before its insert, which refuses a second press but lets two concurrent presses both insert. A unique index on business and invoice makes the second insert fail, and a catch outside the transaction re-reads the row that won and throws the same refusal the guard throws. The loser is refused rather than handed the winner because the two offers can carry different terms.",
    "at": "2026-09-11T06:55:01",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-117",
+   "chose": "A raced checkout on one authorisation is refused by the guard it raced An authorisation pays once, and checkoutCart guarded that with a read before its insert, which refuses a second press but lets two concurrent presses both place an order. A unique index on business and authorisation token makes the second insert fail inside the checkout's existing retry loop, whose re-run meets the same guard and refuses exactly as a sequential second press is refused, so no new catch is written and the loser's refusal cannot drift from the guard's.",
+   "at": "2026-09-11T07:14:44",
    "ruling": "R245"
   }
  ]
