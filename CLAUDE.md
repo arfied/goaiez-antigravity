@@ -9242,6 +9242,72 @@ Watch for: <the trap that applies, by name>
   passed 2442 · assertions 10806 · failed 6 · errors 2`, the standing **eight** by identity.
   `vs origin/main: behind 370, ahead 58` — tick 272 governs the next merge. Re-run every grep; never inherit
   one.
+- ⚠️⚠️ **A `stat` that runs BEFORE the `cp` it describes reports the PREVIOUS copy, and size, mtime and `cmp`
+  all read innocent on it — the ordering rule was written for the COPY and not for the FIELD.** Tick 309 ruled
+  *a copy is taken only after the gate whose object it is has exited, and the very next command is
+  `grep -o '"failed":[0-9]*'` on it*; wave 177 honoured both and its `ARTIFACTS` still reported
+  `scratch/w177-pest-raw-green.log` as **3061 bytes @ 20:30:47** against a disk **3523 @ 20:32:46**, because
+  the generator's `stat -c '%s %y %n' scratch/w<N>-*` is line 203 and its `cp` is line **206**. The `stat`
+  measured a pre-gate copy the `cp` three lines later replaced, so `RAW` and its `"failed":6` are right and one
+  field describes a tree that no longer exists. ⛔ **The fix is one line of ordering: the `cp` and its
+  `"failed"` grep run BEFORE the `stat`, and `ARTIFACTS` is the last artifact field in the report.**
+  ⚠️ What the earlier file held is **unestablished and recorded as unestablished** (tick 268) — 3061 matches
+  neither of the previous wave's two objects, and `scratch/`'s own directory mtime equalling the stale
+  timestamp is consistent with a generator run twice without proving it. Newest member of the stale-artifact
+  family and the first whose cause is a field's POSITION inside an honest generator.
+- ⚠️ **A durable sentence about a BRANCH is a claim about that branch's REACHABILITY, and the price of it is
+  reading the guard above it.** Wave 177's comment — *"`isset()` refuses nothing **and blank turns are
+  inserted**"* — is exact in its first clause (all eight of `AgentAnswerAction`'s returns carry a non-null
+  `reply`, verified per site) and is a **prediction** in its second: the only `'reply' => ''` is the
+  `HUMAN_TAKEOVER_LATCH` branch at `:56-61`, inside `if ($conversationId !== null)`, and `ChatTurnAction` calls
+  `handle($businessId, $message)` with no third argument — so no blank turn can be inserted until
+  `ChatDoorTest.php:26`'s Track 1 mapping lands. `REPORT.md` is overwritten and a code comment is not, so a
+  reader six weeks out meets a present-tense defect the tree does not have. Fourth recurrence of the
+  scope-clause family after ticks 302, 304 and 308, and the false-presence mirror of wave 95's false absences.
+  NOTE and not `BLOCK` by ticks 286, 263 and 218 — the finding survives the clause being scoped, a comment
+  corrects forward by rewriting itself, and nothing left the board.
+- ⚠️ **The ranking question has a WAVE-SHAPED escape as well as a field-shaped one: on a wave forbidden to add
+  a test, `TESTS` is flat by construction and any pair built on it could not have gone the other way.** Wave
+  177 named `TESTS` and `COUNTS` while the live pair sat in its own report (`ARTIFACTS` saying 3061 bytes
+  against a `RAW` printing a 3523-byte object — same artifact, same file, either could have been otherwise).
+  The standing clause forbids a guarantee *"by how the two fields are defined"* and does not reach a guarantee
+  by the kind of wave. ⛔ Per tick 245 the fix is a **restriction of the eligible set, not another
+  prohibition**: the two must both be MEASUREMENTS OF THE SAME ARTIFACT, and a prose field is not eligible.
+- ⚠️ **A re-run question's eligible set is the commands whose output the brief PRINTED — naming two items does
+  not restrict anything.** Wave 177's `Q5` picked the one command in the brief whose output was described in
+  prose rather than pasted, re-ran it correctly, and had to write *"no output was printed in the brief for this
+  command to match against"* — an answer that can neither match nor fail. Its two answerable siblings, both
+  with printed outputs, sat in the same brief. Say *"a command whose output this brief prints"* in words.
+- **Backlog at tick 310 — wave 178 is what the chat turn door GIVES ITS CALLER, and it is a BUILD.** RULED,
+  measured this tick and not inherited (tick 235). `grep -rn "chat_turns\|ChatTurn::" app/app --include=*.php`
+  is the migration, `Models/ChatTurn.php:15`'s `$table` and `ChatTurnAction.php:15` and `:34` — **two writers,
+  zero readers**; `grep -rn "ChatTurnCreated" app/app app/tests --include=*.php` is one declaration, one `use`,
+  two dispatches and two docblock rows — **zero listeners**; and `ChatTurnController:48-50` answers
+  `201 ['id' => $turn->id]`. So the agent's reply wave 176 was built to record is observable by **nothing**
+  outside the test suite — decision 272's write-only shape at door scale, on a live public unauthenticated
+  path, wholly inside this lane. ⛔ **This column names no shape** — return it in the body, add a read route,
+  argue it is right as it stands — and the conclusion-withheld hand-over is 29-for-29, having corrected this
+  column six times on X-102's seams alone. ⚠️ Hazards handed over as measurements: `ChatDoorTest`'s turn-door
+  assertions are `assertStatus(201)` + `assertJsonStructure(['id'])` (`:112-113`, `:249-250`, `:370-371`,
+  `:418-419`), a **subset** assertion, and the ⛔ is stated in both directions (tick 307) with the tick-308
+  refinement ruling available; `$response['status']` is discarded today, so a `handoff` reply from the
+  reachable `UNDER_18`/`NEGATIVE_SENTIMENT_HANDOFF`/`NO_FACT` branches is stored as an ordinary agent turn
+  with no marker; `chat_turns` carries only `business_id · chat_session_id · author_type · message`, is
+  `ENABLE`+`FORCE` RLS with a matching `WITH CHECK`, and a migration is this lane's while a manifest
+  declaration is Track 1's (tick 227); and the no-tenant window is stated as the operation that fails, never
+  a line range (tick 285). NOTE 2's scope word rides the build item rather than sitting beside it. ⛔ No
+  `⛔ REFUSED`, no `UNRESOLVED` (X-102 is one of the thirteen and nothing external is missing); ⛔ no numbers
+  published to a mutating wave (tick 208). Every other row is measured shut this tick: `ChatDoorTest:24` and
+  `X01Test:609` need `app/public/goaiez-chat.js`, which does not exist; `:26` is Track 1's; `:27` is
+  `agent_turns.turn_number`, six writers and no reader; `:28` is X-01's, blocked on an identifier
+  `ChatTurnCreated` does not carry; `:29` would widen an event with no listener; `CMailTest:516` the unbuilt
+  scoring model; `CAgentTest:182` an X-66 turn event **and** a Track 1 declaration; `CAgentTest:274` content
+  with no store and no reader; `X102Test:314` asset columns `chat_turns` lacks; `X66Test:97` Track 1's;
+  `ParkListScreenTest:19` no tenant-cancellation surface. Board at tick 310: proposals **12** ·
+  `app/app/Modules/` **0** · `CLOSED:` **7**. Suite at `8865fac6`: `tests 2450 · passed 2441 ·
+  assertions 10805 · failed 6 · errors 3` — the standing **eight** by identity plus the
+  `pg_terminate_backend` flapper (tick 237). `vs origin/main: behind 370, ahead 62` — tick 272 governs the
+  next merge. Re-run every grep; never inherit one.
 
 ## Style
 
