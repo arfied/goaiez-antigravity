@@ -15037,3 +15037,112 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     carried MONEY-204 as a candidate said so in terms (*do not copy MONEY-203's arm*), which is the only
     reason the measurement was taken at all. **An inherited candidate carries its warnings or it carries
     its predecessor's design.**
+467. **⭐⭐⭐ RULINGS 139 AND 464 ARE IN TENSION, AND THE RESOLUTION IS THAT 139'S CHECK IS MADE AT THE
+    MOMENT OF THE SUPERVISOR'S OWN COMMIT, NEVER AT THE MOMENT OF AN EARLIER PUSH (RULED by the lane
+    supervisor 2026-09-11 02:3x, measured on `origin/track/money` = `cf0da1ef`).** Ruling 139 requires
+    that before any `chore(supervisor)` commit-and-push, `git log --oneline origin/track/money..HEAD`
+    contain only the supervisor's own commits — because **a ref pushes everything REACHABLE**, so the
+    explicit-sha form is not the protection it looks like. Ruling 464, written the same evening, requires
+    a tick writing more than one ruling to **install the brief and dispatch FIRST** and append the ruling
+    text afterwards, on the ground that *the longer a tick's reasoning, the likelier its acts are the part
+    that is cut.* ⭐⭐ **Obeying 464 puts a LIVE CODER between the tick's push and its own commit.**
+    Measured: the previous tick pushed `87d0b4e0..aa225d4c` (the gated MONEY-203 tip), dispatched run 229,
+    wrote rulings 465–466, then committed `cf0da1ef` — and `git merge-base --is-ancestor 58ab8bb3
+    cf0da1ef` is **true**, so that push carried the coder's **un-gated** `fix(X-117)` commit to the remote.
+    **That is 139's own instance verbatim** (*"my own `chore(supervisor)` commit … was made on top of a
+    HEAD the live coder had silently advanced twice"*), and the addendum's note that the range *"was empty
+    this tick"* was true **of the earlier push** and stale by the time it mattered.
+    **RULED: both stand and neither is re-cut — 139's check is re-run IMMEDIATELY BEFORE `git commit`, in
+    the same breath, and a non-empty range means the supervisor's files are committed and HELD**, to be
+    pushed in the tick that gates the coder's work (139's own remedy). ⛔ Never resolved by pushing anyway
+    because the commits "will pass" — that is the gate deciding after the fact (42(2)).
+    ⚠️ The outcome was benign **twice running**, which is exactly why it is worth writing down: **the
+    discipline was defeated by a measurement that was TRUE WHEN IT WAS TAKEN.** ⭐ The generalisable half
+    is ruling 64's aimed at a measurement's age **within a single tick**: this ledger has spent forty
+    rulings on measurements that decay between ticks, and this is the first that decays between two acts
+    of **one** tick. **A measurement taken before an act that changes the world is re-taken after it.**
+    ⚠️ And the adjacent version fired in the same tick, from the other end of the act: the verdict block's
+    `Push:` line was **written before the push ran**. It matched, and writing it early is still ruling
+    259's prohibition and ruling 218's *a fabricated measurement that happens to be right is the hardest
+    kind to catch* — this lane's **sixth** instance in its own paperwork (121, 141, 218, 259, 331). ⭐ **A
+    predicted act output and a decayed measurement are the same defect from opposite ends of the act.**
+
+468. **⭐⭐ `git diff -w` IS THE INSTRUMENT FOR "NOT ONE LINE OF THE BODY CHANGED", AND WITHOUT IT A
+    CORRECT WAVE READS AS A REWRITE (RULED by the lane supervisor 2026-09-11 02:3x, on MONEY-204's
+    `58ab8bb3`).** MONEY-204's brief carried ⛔ *not one line of either transaction closure body may
+    change — only the wrapper is new*, and the raw diff on `CheckoutEngine.php` is **348 lines**, which on
+    its face is a rewrite of both checkout methods. `git diff -w --stat` is **28 insertions, ZERO
+    deletions**; every remaining line is `pint`'s `statement_indentation` reindenting two closures that
+    gained a `for`/`try` wrapper, a fixer the run's own `PINT:` field names. ⭐ **A wave that wraps
+    existing code in a block ALWAYS produces this**, so the raw line count is guaranteed to mislead and
+    the `-w` count is the only one that answers the brief's clause. **RULED: a review of a wave that adds
+    a wrapper measures `git diff -w --stat` and quotes BOTH numbers**, because the gap between them is
+    itself the evidence that nothing in the body moved. ⛔ Not resolved by asking the coder to skip
+    `pint` — ruling 75 makes the pint pass mandatory and ruling 34 makes its verdict the sha's, so the
+    reindentation is required rather than optional. ⚠️ It belongs to the zero trap's family with the sign
+    inverted and the count **INFLATED** rather than emptied (mechanisms 6 and 8 — 426(d), 441(b)): **a
+    plausible, large, entirely uninformative number**, and 415's *read the first three members* is what
+    catches it, because the first three lines of the raw diff are whitespace.
+
+469. **⭐⭐ RULING 96'S POPULATION RE-MEASURED FOR REACHABILITY — EIGHT BLOCKERS, ALL EIGHT STILL IN
+    PLACE, ZERO MEMBERS BECAME REACHABLE — AND THE DURABLE FINDING IS *WHAT KIND* OF BLOCKER THEY ALL ARE
+    (measured by the lane supervisor 2026-09-11 02:3x; rulings 64, 95, 100, 111, 294, 324, 327, 400, 415,
+    429, 449).** Ruling 96 records a string or branch *"never edited, because no test can render it and no
+    mutation can redden it"* — a judgement about what is **reachable today** — and rulings 204/130 already
+    carve out *a branch driven by existing fixtures*. MONEY-201/202/203/204 showed a structural blocker
+    can fall, so the predicate is: **has anything ELSE made a recorded 96 member reachable?** ⛔ The trap
+    is 327's: adding a fixture *in order to* make a fix gateable is manufacturing reachability. Measured,
+    blocker by blocker — **45** `CaptureCheckedOutCart` has **zero** references to `GatewayEngine` or
+    `capture(`, so X-117's `paid` state stays unreachable (96, 312, 443) · **43** `pdf_url` has **zero
+    writers**, only the migration, three blade reads and an evidence key, so 191's two `@if` true arms
+    stay dead · **234** `Credits.php:48` still passes **four** arguments to `TermsSetAction`, so
+    `card_on_file_token` is never written from production and the whole overflow-charge path stays
+    unreachable, 440's timeout branch with it · **79** `DisputeRecordAction` appears **only in its own
+    declaration** · **69** `markOverdue` **only at its own definition** (394(b)) · **81**
+    `syncTransactions` **only at its own definition** (327, 419(a)) · **119** `CardStoreAction` **only in
+    its own declaration and its own `CardToken::create`** (241, 377, 417) · **129** `ProcessorAdapter` has
+    **no binding anywhere in `app/app`**.
+    ⭐⭐ **429's known-member corroboration fires EIGHT times** — the instrument returned every previously
+    ruled member, which is the strongest check available; **449's check passes**, every name matching a
+    real file; **415's first-three check passes**; and ⭐ **four of the zeros returned their own
+    DEFINITION rather than nothing**, so the pattern demonstrably reached the file and the absence of a
+    caller is the measurement rather than a broken instrument (207, 294).
+    ⭐⭐⭐ **The durable half, and it is why this census should not be re-run often: EVERY ONE of the eight
+    blockers is a MISSING DEPENDENCY — a vendor contract, a Track 1 seam, or a surface that does not exist
+    — and NOT ONE is a prior ruling's outcome that a wave in this lane could overturn.** That is why two
+    hundred waves have not moved one of them. **So the trigger for re-measuring ruling 96's population is
+    a MERGE or a vendor credential, never a wave.** ⛔ Not to be re-raised on a wave boundary.
+
+470. **⭐⭐⭐ RULING 431 CALLED THE UNIQUENESS AXIS "CLOSED BY OTHER ROUTES" BY LISTING FIVE FIX-RULINGS —
+    swept on the predicate it is SIX constraints and FOUR DISTINCT COLLISION STRATEGIES, all six handled,
+    and the four strategies are a fuller statement of 465/466 than 465 could make (measured by the lane
+    supervisor 2026-09-11 02:3x).** Ruling 431 closed the column-CONSTRAINT family across five axes and
+    disposed of uniqueness in a clause — *"closed already by other routes — uniqueness at
+    229/240/256/327/330"* — which is **a list of the members its author had already seen**, ruling 371's
+    family a **twelfth** time inside this ledger's own censuses (375c, 376, 383, 394c, 395, 402b, 404,
+    407, 409, 420, 449). Swept on the predicate —
+    `grep -rn -F -e "->unique(" -e "CREATE UNIQUE" app/app/Modules`, filtered to the eight ids and **read
+    hit by hit** (262(b)), since a `Collection::unique()` in a `Ui/` file is the zero trap's **inflating**
+    mechanism 8 — the lane has **six**:
+    `orders (business_id, order_number)` → **RE-MINT** (465, MONEY-204) · `payments (business_id,
+    idempotency_key) WHERE status <> 'failed'` → **HAND BACK** (463, MONEY-203) · `payment_links
+    (business_id, payment_id)` → **`firstOrCreate`** (229) · `decline_deferrals (business_id, payment_id)`
+    → **`firstOrCreate`** (35, 229) · `invoices (business_id, invoice_number)` → ⭐ **PREVENTED**, by
+    `InvoiceNumber::next()` refusing outside a transaction, taking `pg_advisory_xact_lock(199,
+    $businessId)` held to commit, and re-reading the maximum under `lockForUpdate()` (190) ·
+    `ar_plan_terms.business_id` → **`updateOrCreate`**, its two `firstOrCreate` siblings having been
+    removed by ruling 216 (263).
+    ⭐ **431's conclusion is CORRECT and is now correct by MEASUREMENT rather than by enumeration**, and
+    the sweep adds the two members its five fix-rulings never named — both handled, and both by a
+    mechanism neither of those rulings used.
+    ⭐⭐ **The generalisable half: there are FOUR strategies, not two, and they are chosen IN ORDER.**
+    Ruling 465's tell — *does the losing path have a PRE-CHECK?* — chooses between hand-back and re-mint,
+    and it is the **third** question. First: **can the collision be PREVENTED?** — an allocator under a
+    lock, as X-199 does, which is strictly better than any catch arm because there is no losing path at
+    all. Second: **are the two writers the same act?** — then absorb it with
+    `firstOrCreate`/`updateOrCreate`, which is a hand-back with no catch and no index refusal. Only then
+    does 465's tell decide. ⭐ **465 could only see two strategies because only two were in front of it**,
+    which is 371's own lesson applied to a REMEDY rather than to a census.
+    ⭐ Positive control fires at **35+ unique constraints across eleven other lanes**; ⛔ money proposes no
+    edit on any of them (5). ⛔ Zero buildable, struck, not to be re-raised. Ruling 327's outcome shape a
+    **twenty-ninth** time.
