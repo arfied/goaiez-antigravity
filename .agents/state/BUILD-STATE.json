@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-11T10:09:29",
+ "updated": "2026-09-11T10:40:41",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1598,6 +1598,12 @@
    "module": "X-124",
    "chose": "the dark palette is guarded by a plain root rule inside the prefers-color-scheme dark media query rather than a nested theme block, which Tailwind 4 flattens into the unguarded theme, and the linked stylesheet test pins the guard, the single dark declaration and the single light declaration",
    "at": "2026-09-11T10:09:29",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-124",
+   "chose": "owner layout views are measured for fixed neutral colour utilities by a pinned count over every component declaring the owner layout, and X-199's owner views use the scheme tokens, with ring-black ring-opacity-5 replaced by ring-rule because Tailwind 4 emits nothing for ring-opacity",
+   "at": "2026-09-11T10:40:41",
    "ruling": "R245"
   }
  ],
