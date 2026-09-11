@@ -2877,6 +2877,23 @@ and EMPTY**: 301 − 254 = 47 ids; 204 flagged rows = §5; the intersection is `
   it. Writes are refused while cwd is `app/`, so read the census through a pipe.
 - ⚠️ A 0-byte root `paths.txt` (09:36:32, unattributed) is debris: §1 is **78**, not 77.
 
+⌛ **S-200 — §3 ledger refresh. OPEN, dispatched at tick 345 as STAGES-238, merge gate CLOSED.**
+Tick 344's HOLD missed that §3 still read `boundary 55 · citation 3 · capability 207` while §5 reads
+**41 · 0 · 204** (`.gateT345b.txt` at `423ec5a9`, total 477, the eight sum). This is S-191's exact
+shape: eight `state.py stage` rows copied from the wave's own §5, the two `.agents/state/` files
+committed by named path, then a verify gate. The wave also deletes the root 0-byte `paths.txt`.
+**Review against these floors:**
+- §3 == §5 field by field;
+- the stage-row count rises by exactly 8;
+- `null` count 0;
+- `git show --stat HEAD` lists exactly the two state paths;
+- the static stages are unchanged from this seat's values;
+- `schema` is 14–16 with its rows, and `journey` is 3 or 4 with its slugs;
+- §1 is taken after the report.
+
+⚠️ **The lesson: when reviewing a take, compare §3 against §5 in the same review, not only §5
+against its floors.** A take moves §5 and leaves §3 behind by construction (`RULING CK`).
+
 ⌛ **S-199 as dispatched (history):** the FOURTH take, dispatched at tick 343 as STAGES-237 (run 215,
 pid 1411266), merge gate `--allow-merge` OPEN.
 - **Triggers:** `OWNER.md:698` (owner 2026-09-11 09:27: *"re-measure and finish the open work; guard
