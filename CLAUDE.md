@@ -16732,3 +16732,74 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty wave to avoid an idle tick is what
     rulings 95, 100 and 111 forbid. ⚠️ `app/CLAUDE.md` came into context again this tick; it is Laravel Boost
     boilerplate and was not followed.
+
+526. **⭐⭐ The ACTION↔ENGINE TYPE-BOUNDARY census: 43 Action classes, 31 are one-line delegates to an engine
+    method, and every one of the 31 matches its callee's RETURN type and PARAMETER types. Every Action file
+    declares `strict_types=1`. Zero buildable (measured by the lane supervisor 2026-09-11 08:1x, by `date`
+    `08:10`).** Ruling 524 swept the TYPE at the event boundary. The Action→Engine boundary is the other typed
+    seam every screen write crosses, and nobody had swept it. With `strict_types=1`, a delegate declaring
+    `: array` over an engine returning a model, or passing `?int` into an engine's `int`, is a `TypeError`
+    on the owner's press, invisible to `phpstan`'s reading of either file alone only if the two drift apart.
+    **Instruments, quoted (300):**
+    - `grep -rn -F -e "public function handle("` over the eight `Actions/` trees → **37** lines.
+    - `grep -rn -e "return " -e "): "` over the same trees, which also catches multi-line signatures and
+      entry points not named `handle` → the six the first grep missed: `CardRotateAction::rotateDefault`,
+      `CardExpiringScanAction::scan`, `AccountingMapAction::mapAccount`, `AccountingSyncAction`,
+      `AccountingConnectAction`, `CardStoreAction`. ⭐ **37 + 6 = 43, ruling 170's own count of the lane's
+      Actions**, so the census is corroborated by an independent count (207, 294). ⚠️ A census keyed on the
+      method NAME `handle` would have been six short: ruling 371's family, a member list inside a pattern.
+    - `grep -rn -A 8 -F -e "public function "` over the seven `Domain/` trees, filtered to signature lines →
+      every engine method's declared return type.
+    - `grep -rL -F -e "strict_types=1"` over the eight `Actions/` trees → **nothing**, so every mismatch
+      would be loud, never coerced.
+    **The 31 delegates, return type ← engine return type, each read (262(b)):** `DiscrepancyReviewAction`
+    `ReconciliationRun` ← `reviewDiscrepancy` · `MerchantApplyAction` array ← `applyForSubMerchant` ·
+    `PayoutReconcileAction` array ← `reconcilePayout` · `OrderCancelAction` array ← `cancelOrder` ·
+    `InvoiceRecordOfflineAction` array ← `recordPayment` · `MerchantConnectAction` ← `connect` ·
+    `CartBuildAction` `Cart` ← `buildCart` · `DisputeCompileAction` array ← `compile` ·
+    `CartCheckoutAction` array ← `checkout` · `ArSetLateFeeTermAction` `ArPlanTerm` ← `setLateFeeTerm` ·
+    `ArApplyLateFeeAction` array ← `applyLateFee` · `ConflictResolveAction` array ← `resolveConflict` ·
+    `PaymentCaptureAction` `Payment` ← `capture` · `ArRecordReasonAction` ← `recordReason` ·
+    `ArOfferPlanAction` `PaymentPlan` ← `offerPlan` · `ArLogOfflinePaymentAction` `OfflinePayment` ←
+    `logOfflinePayment` · `CartRemoveAction` `Cart` ← `removeFromCart` · `InvoiceIssueAction` array ←
+    `issueInvoice` · `DisputeOutcomeAction` array ← `recordOutcome` · `ArPackageForCollectionsAction`
+    array ← `packageForCollections` · `DisputeRecordAction` `Dispute` ← `record` · `CartPayAction` array ←
+    `checkoutCart` · `LedgerGrantAction` `CreditLedgerEntry` ← `grant` · `DisputeNoteAction` array ←
+    `compile` · `LedgerDebitAction` ← `debit` · `AccountingMapAction` array ← `mapAccount` · `CartAddAction`
+    `Cart` ← `addToCart` · `DunningAdvanceAction` `DunningState` ← `advanceDunning` · `TopupChargeAction`
+    array ← `topup` · `PaymentAttachAction` `Payment` ← `attachPayment` · `DisputeSubmitAction` `Dispute` ←
+    `submit`. **31, counted by listing (397).** Parameters match too, the multi-line four read whole
+    (`PaymentCaptureAction`↔`capture`, `CartPayAction`↔`checkoutCart`, `CartCheckoutAction`↔`checkout`,
+    `AccountingMapAction`↔`mapAccount`). The one difference is **widening**: `InvoiceRecordOfflineAction`
+    passes `int $amountCents` into `recordPayment`'s `?int`, which cannot throw.
+    ⭐ **Known member (429):** `PaymentCaptureAction` ↔ `capture()` is ruling 233's own pair. 233 removed
+    `$currency` from BOTH, and the census returns them still four-for-four. ⭐ The 12 non-delegates build their
+    own return value (`InvoiceDraftAction`, `PaymentLinkAction`, `AccountingConnectAction`, `TermsSetAction`,
+    `AccountingSyncAction`, `ArForceAchAction`, `DeferDeclineAction`, `CardRotateAction`,
+    `CardExpiringScanAction`, `CardStoreAction`, `CardPresentAction`, `LedgerExplainAction`), each already
+    governed (170, 186, 229, 119, 223(c), 377, 343, 68). ⭐ 415's first-three check passed; 449's
+    each-member-exists check passed, every name being a printed path.
+    ⚠️ **No discriminating control fired, and that is stated rather than hidden:** a mismatched pair exists
+    nowhere in the tree this seat searched, so the evidence is the independent 43 count plus the known
+    member, not a found defect elsewhere. ⛔ Struck, not to be re-run. ⚠️ **Trigger:** an engine method's
+    signature changed without its Action, or a new delegate Action. Ruling 327's outcome shape a
+    **forty-eighth** time. ⭐ **The general lesson is 371's again: a census over methods names the SIGNATURE
+    SHAPE (`): `), never the method name**, because the lane's Action entry points are not all `handle`.
+
+527. **⛔ TWENTY-NINTH consecutive HOLD (RULED by the lane supervisor 2026-09-11 08:1x, by `date`).** All four
+    lift conditions were measured this tick (269, 272, 323), each case decided on mtimes (494):
+    - **Owner.** `OWNER.md`'s newest heading is still `## OWNER RULING — 2026-09-09 09:02` (136), mtime
+      `09-09 09:02:03`.
+    - **Coder.** `--check` returned `CODER DEAD`.
+    - **Mailbox.** `REPORT.md` (`07:15:21`) and `BRIEF.md` (`07:07:27`) are both older than `REVIEWS.md`
+      (`08:04:43`).
+    - **Cadence, all three ✗.** `origin/main` = **`46afc022`**, unmoved. `git rev-list --count
+      HEAD..origin/main` = **19**. `git diff --stat dca743e8… origin/main -- app/app/Doctor coder-bin
+      .claude/hooks` is empty. The merge-base is **`dca743e8`**, this lane's own pushed supervisor tip, and
+      its content is the 7 per-track paths plus X-102's three (504).
+    - **Track 1.** No answer to ACTION 13–25.
+    - **Population.** Ruling 526's is non-empty and not buildable.
+
+    **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty wave to avoid an idle tick is
+    what rulings 95, 100 and 111 forbid. ⚠️ `app/CLAUDE.md` came into context again; it is Laravel Boost
+    boilerplate and was not followed.
