@@ -29,7 +29,22 @@ final class ChatTurnAction
         // 2. $conversationId is not passed. This is a build owed by Track 1: mapping chat_session_id to C-Agent's conversation_id so HUMAN_TAKEOVER_LATCH works is required, but it has not been asked for yet.
         // 3. $turnNumber defaults to 1. This is a build owed: X-102 should compute and pass the real turn number.
 
-        app('App\Modules\CAgent\Actions\AgentAnswerAction')->handle($businessId, $message);
+        if ($authorType === 'visitor') {
+            $response = app('App\Modules\CAgent\Actions\AgentAnswerAction')->handle($businessId, $message);
+            if (isset($response['reply'])) {
+                $agentTurn = ChatTurn::create([
+                    'business_id' => $businessId,
+                    'chat_session_id' => $chatSessionId,
+                    'author_type' => 'agent',
+                    'message' => $response['reply'],
+                ]);
+
+                Event::dispatch(new ChatTurnCreated(
+                    businessId: $businessId,
+                    turnId: $agentTurn->id,
+                ));
+            }
+        }
 
         return $turn;
     }

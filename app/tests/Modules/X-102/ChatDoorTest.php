@@ -112,8 +112,8 @@ class ChatDoorTest extends TestCase
         $response->assertJsonStructure(['id']);
 
         Tenancy::set((int) $biz->id);
-        $this->assertEquals(1, ChatTurn::where('chat_session_id', $session->id)->count());
-        $turn = ChatTurn::first();
+        $this->assertEquals(1, ChatTurn::where('chat_session_id', $session->id)->where('author_type', 'visitor')->count());
+        $turn = ChatTurn::where('author_type', 'visitor')->first();
         $this->assertEquals('Hello from visitor', $turn->message);
         $this->assertEquals('visitor', $turn->author_type);
 
@@ -121,6 +121,8 @@ class ChatDoorTest extends TestCase
         $this->assertEquals(1, AgentTurn::where('business_id', $biz->id)->count());
         $agentTurn = AgentTurn::first();
         $this->assertEquals('Hello from visitor', $agentTurn->user_message);
+
+        $this->assertEquals(1, ChatTurn::where('chat_session_id', $session->id)->where('author_type', 'agent')->count());
     }
 
     public function test_key_for_business_a_and_session_for_business_b_returns_404(): void
