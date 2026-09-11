@@ -569,4 +569,61 @@ class X117Test extends TestCase
         $this->assertSame($sellable->id, (int) $cart->items[0]['sellable_id']);
         $this->assertSame(1500, $cart->total_cents);
     }
+
+    public function test_a_concurrent_checkout_on_one_authorisation_is_refused_and_places_one_order(): void
+    {
+        // This test turns on X117Test being a CLASS-BASED PHPUnit file, which Pest's
+        // ->use(RefreshesTenantDatabase::class)->in('Modules') binding does NOT reach, so the racer's
+        // row COMMITS on pgsql_migrate and checkoutCart() can see it. If TestCase ever binds a refresh
+        // trait directly, this test stops proving anything -- while very likely still passing.
+        $biz = TestCase::provisionTenant(['name' => 'Auth Race Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $sellable = Sellable::create([
+            'business_id' => $biz->id,
+            'name' => 'Auth Race Item',
+            'sku' => 'AUTH-RACE-1',
+            'inventory_quantity' => 10,
+            'unit_price_cents' => 1500,
+        ]);
+
+        $sessionToken = 'sess_auth_race';
+        $token = 'auth_race_token';
+        $this->cartAction->handle($biz->id, $sessionToken, [['sellable_id' => $sellable->id, 'quantity' => 1]], 15);
+
+        // A second press on the same authorisation places its order between checkoutCart()'s AUTH_USED
+        // guard and its insert. It writes on pgsql_migrate, a separate session, so it commits. RLS is
+        // FORCED and constrains the owner role too. Its order number is lower-case, which the engine's
+        // strtoupper() draw can never produce, so only the authorisation can collide.
+        $racer = DB::connection('pgsql_migrate');
+        $racer->statement("SET app.business_id = '{$biz->id}'");
+
+        Order::creating(function () use ($racer, $biz, $token): void {
+            $racer->table('orders')->insert([
+                'business_id' => $biz->id,
+                'order_number' => 'ORD-racer1',
+                'status' => 'pending_payment',
+                'total_cents' => 1500,
+                'auth_token' => $token,
+            ]);
+        });
+
+        try {
+            $res = $this->engine->checkoutCart($biz->id, $sessionToken, $token, null);
+        } finally {
+            Order::flushEventListeners();
+        }
+
+        // The authorisation placed one order.
+        $this->assertSame(1, Order::where('business_id', $biz->id)->where('auth_token', $token)->count());
+
+        // The loser got the guard's own refusal: the retry re-ran the guard against the order that won.
+        $this->assertSame('refused', $res['status']);
+        $this->assertSame('AUTH_USED', $res['refusal_code']);
+
+        // Nothing of the losing attempt survived: no order line, stock untouched, the cart still there.
+        $this->assertSame(0, OrderLine::where('business_id', $biz->id)->count());
+        $this->assertSame(10, $sellable->fresh()->inventory_quantity);
+        $this->assertSame(1, Cart::where('business_id', $biz->id)->where('session_token', $sessionToken)->count());
+    }
 }
