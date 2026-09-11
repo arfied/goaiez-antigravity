@@ -9027,6 +9027,60 @@ Watch for: <the trap that applies, by name>
   **0** · `CLOSED:` **5**. Suite at `51085ebe`: `tests 2450 · passed 2442 · assertions 10805 · failed 6 ·
   errors 2`, the standing **eight** by identity. `vs origin/main: behind 360, ahead 47` — tick 272 governs
   the next merge. Re-run every grep; never inherit one.
+- ⚠️⚠️ **A blocker established in the AGY RUN LOG and left off the row is a row that reads buildable — and an
+  agy log dies with its run, so it is the one record that cannot be cited later.** Wave 174 correctly found
+  the seam this column had missed (`C-Agent/Events/AgentTurnAnswer.php` carries `agentReply`, is dispatched
+  live at `AgentAnswerAction.php:179`/`:340` inside the `handle()` the chat door reaches, and has **zero**
+  listeners) and filed `BUILD PROPOSAL: X-102 owes an event listener for C-Agent's AgentTurnAnswer … Owner:
+  X-102`. Its run log then said the listener *"cannot be safely built to correlate the session yet"* — a
+  sentence **nowhere in the tree**. Measured, the blocker is real and is two things: `chat_turns.chat_session_id`
+  is `constrained('chat_sessions')`, **NOT NULL**, while `AgentTurnAnswer` carries no session or conversation
+  id at all; and `AgentAnswerAction` has a **second** production caller (`app/app/Jobs/AnswerAgentTurnJob.php:334`),
+  so a blanket X-102 listener fires on every C-Agent answer platform-wide. `grep -rn "BUILD PROPOSAL:"
+  app/tests/Modules/` **is** this lane's backlog, so a row hiding its blocker is how a future tick briefs a
+  wave into an FK wall (tick 191). ⭐ **The house form is already on the board two rows away**:
+  `CAgentTest.php:182`'s `G5-32` carries its blocker in its own final clause (*"To become buildable, an event
+  carrying a `call_turns` row ID must exist"*) — same module pair, one line. **Ask a proposal row to carry the
+  clause that says why it is not this wave's**, and read the run log against the row before crediting either.
+- ⚠️⚠️ **The inverse of "never weaken a standing assertion" is NOT a rule, and a coder handed only the ⛔ will
+  read a standing assertion as a design constraint.** Wave 174 rejected the synchronous route —
+  `ChatTurnAction` has `$chatSessionId` and the reply in hand at `:32`, so it is the one route with **no**
+  correlation problem — on the ground that *"`ChatDoorTest` asserts exactly one `ChatTurn` and one
+  `AgentTurn`"*. `ChatDoorTest.php:114` is `assertEquals(1, ChatTurn::where('chat_session_id', …)->count())`
+  and a second `author_type => 'agent'` row would make it `2`: that is a **diagnosis the build owes**, not a
+  fact about what the build should be. ⛔ Half of it is this column's — my brief said *"the fix is never to
+  edit, weaken or delete a standing assertion; a red is a diagnosis you owe, not a licence"*, which forbids
+  weakening and is silent on the other direction. **Say both in words every time: an assertion may not be
+  weakened to fit a build, AND it may not settle what the build is.** Otherwise the second is a free way to
+  rule a correct design out, and nothing in the gate or in any field can see it.
+- ⚠️ **A commit message that disagrees with what its commit ships costs one `git show --stat`, and net-zero
+  churn hides in the middle of a range.** Wave 174's `501c488c` (correctly messaged `chore(state)`, both state
+  files present) also committed `dump($agentTurn->toArray());` into a standing public-door test; `1c24c279`
+  carries the **identical** `chore(state)` message and touches **no state file at all**, its whole diff being
+  one duplicated `BUILD PROPOSAL:` line; `1a8aef71` removed both and said so in its message. The tip is right
+  and the disclosure is real, which is why it is a note — but a bisect landing on either intermediate sha meets
+  a debug statement (the tick-295 intermediate-state shape with `dump()` in place of a parse error), and
+  `NOT RUN : none` / `NOTES : none` were written over exactly this: the eleventh recurrence of grading item
+  completion from the field that asks about it (ticks 249, 267, 271, 273, 284, 295). **Diff every commit in
+  the range, not only the net.**
+- **Backlog at tick 307 — wave 175 is whether the agent's reply can be recorded as a `ChatTurn` at ALL, by any
+  route, and this column names none of them.** RULED, re-derived this tick (tick 235): the row wave 174 put on
+  the board names one route and hides its blocker (NOTE 2 above), and the route with **no** blocker was ruled
+  out on a reason that is not a reason (NOTE 3), so the honest wave is the question rather than either answer.
+  Lane-owned on both ends (X-102 and C-Agent are both in the thirteen), single-module to change, on the live
+  unauthenticated `POST /api/chat/{key}/turn` door, blocked on no vendor, no credential and no Track 1
+  declaration. Measurements go over **printed with a conclusion attached to none** (the form is 28-for-28 and
+  has corrected this column six times on X-102's seams alone): `AgentTurnAnswer`'s five promoted properties,
+  both dispatch sites, both of `AgentAnswerAction`'s production callers, `chat_turns`' non-null
+  `chat_session_id` FK, `ChatTurnAction::handle()` whole, `ChatDoorTest.php:104-124` whole, and
+  `X-102/ModuleServiceProvider.php`, which registers **no** listener today — with the third and fourth branches
+  written out (tick 192). ⚠️ The wave-97/tick-200 hazard is live and the ⛔ is stated in **both** directions
+  (NOTE 3). ⛔ No `⛔ REFUSED`, no `UNRESOLVED`; ⛔ `ChatDoorTest.php:26` (mapping `chat_session_id` to
+  C-Agent's `conversation_id`) is **Track 1's** and not this wave's to build, though whether it bears on the
+  question is a measurement for the coder; ⛔ no numbers published to a mutating wave (tick 208). Board at tick
+  307: proposals **14** · `app/app/Modules/` **0** · `CLOSED:` **5**. Suite at `1a8aef71`: `tests 2450 ·
+  passed 2442 · assertions 10805 · failed 6 · errors 2`, the standing **eight** by identity.
+  `vs origin/main: behind 365, ahead 51` — tick 272 governs the next merge. Re-run every grep; never inherit one.
 
 ## Style
 
