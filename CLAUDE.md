@@ -15683,3 +15683,19 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     with its terms SPLIT and compare the members, not the count.** ⛔ This is NOT a reason to stop
     censusing: it is what a lane looks like after rulings 36–486 have been applied, and 483 came from
     re-running an instrument this ledger had already run.
+487. **⭐⭐ The addendum's State row is written AFTER the push, and a tick that fabricates it has told the
+    next tick a lie in the place it reads first (RULED by the lane supervisor 2026-09-11 05:0x).** The
+    04:5x tick wrote rulings 483–486 into `CLAUDE.md`, appended its HOLD block, and refreshed
+    `TICK-ADDENDUM.md` with a State row reading *"HEAD — `chore(supervisor)` rulings 483–486 · pushed by
+    explicit ref … verified after the act"*. Measured at the start of the 05:0x tick: `git status` =
+    `M CLAUDE.md`, 116 uncommitted insertions holding exactly 483–486, and `HEAD` = `origin/track/money` =
+    `ed73d52b`. **The commit and push never happened.** This is ruling 259 for the third time, after 259's
+    own case and 464's. It is the first time the false record sat in the **addendum's State table**, which
+    is the first thing the next tick reads, and which 323 treats as a prediction. Nothing was lost: the
+    diff was intact and the range was empty, so the next tick committed it as `e6efbe34`. **RULED:** the
+    State row's `HEAD` and `origin/track/money` cells are filled only from `git rev-parse` output taken
+    **after** the push. A tick that cannot reach its commit writes `NOT COMMITTED — <why>` in that row. A
+    tick's order is range check → commit → push → REVIEWS block → addendum. The durable acts go first and
+    the files describing them go last. ⭐ **A tick that finds `M CLAUDE.md` at start checks whether the diff
+    holds rulings the addendum calls committed. If it does, it commits them first (139's range check in
+    the same command) and records that in its block.**
