@@ -1527,6 +1527,10 @@
   {
    "at": "2026-09-10T19:40:44",
    "note": "run 153: no counts moved; item 2 took Arm B (blanket catch in sendRequest is unreachable because customerId is hardcoded to null, failing early with CUSTOMER_UNKNOWN)"
+  },
+  {
+   "at": "2026-09-10T20:12:20",
+   "note": "run 154: nothing moved, X-181 sites QaQueueSlaDueAt, Ticket, and Resolution were all reachable and proved leaky, then repaired."
   }
  ],
  "resolved": [
