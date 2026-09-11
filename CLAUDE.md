@@ -2862,8 +2862,23 @@ except `app/phpunit.xml`. §5 reads `0·52·85·3·16·207·128·3`, total **494
 `boundary` 55→52 is **main's** number (`RULING FO`), not a lane credit. Tip `7ae479b7` pushed
 `ea356afd..7ae479b7`, certified by `.gateT343.txt`.
 
-⏳ **S-199 — the FOURTH take. OPEN, dispatched at tick 343 as STAGES-237 (run 215, pid 1411266),
-merge gate `--allow-merge` OPEN.**
+✅ **S-199 — COMPLETE at tick 344 (STAGES-237, PASS-WITH-NOTES).** Merge `6ac471d5` (parents
+`7ae479b7` · `46afc022`), restore proof empty, DB pin intact, `app/` byte-identical to the pin but the
+DB pin. §5 `0·41·85·0·16·204·128·3` = **477**; `citation` 3 → 0 and `boundary`/`capability` falls are
+**main's** (`RULING FO`), and TRACK 1 ACTION 14 is discharged by main. `§2f`'s one candidate
+(`test_anchor_concurrent_checkouts_and_inventory_reservation`) is **`RULING EP`-benign** — main's
+`7f7a4f77` renamed it to `…_sequential_checkouts_and_inventory_decrement`. **Admission census re-run
+and EMPTY**: 301 − 254 = 47 ids; 204 flagged rows = §5; the intersection is `X-117` G1-73/G1-81
+(`CM`), `X-158` G16-32 (§257.4), `X-212` G4-54 (`CB`). Tip `83962488` pushed, certified by
+`.gateT344.txt`. **Tick 344 wrote a HOLD.**
+- ⚠️ **Parallel Bash calls share one cwd.** Never batch a cwd-dependent call (`php artisan …`) with a
+  `cd`: tick 344's first census ran from the root, printed `Could not open input file: artisan`, and
+  exited 1 exactly like doctor's by-design red. The `grep -cE "^ · "` row control (0 vs 204) caught
+  it. Writes are refused while cwd is `app/`, so read the census through a pipe.
+- ⚠️ A 0-byte root `paths.txt` (09:36:32, unattributed) is debris: §1 is **78**, not 77.
+
+⌛ **S-199 as dispatched (history):** the FOURTH take, dispatched at tick 343 as STAGES-237 (run 215,
+pid 1411266), merge gate `--allow-merge` OPEN.
 - **Triggers:** `OWNER.md:698` (owner 2026-09-11 09:27: *"re-measure and finish the open work; guard
   now admits bin/state.py in a merge"*) and drift condition (1) on the **ancestor** count, **475**
   (68 first-parent, straddling per `GQ(iii)`).
