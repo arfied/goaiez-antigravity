@@ -163,7 +163,7 @@ class CreditsScreenTest extends TestCase
             'is_connected' => true,
         ]);
 
-        // A real charge object exists at the provider and has not settled (R235), so the row is
+        // A real charge object exists at the provider and has not settled, so the row is
         // 'refused' with a real gateway id on it.
         Http::fake([
             'api.stripe.com/*' => Http::response(['id' => 'ch_pending_credits_0000000', 'status' => 'pending'], 200),

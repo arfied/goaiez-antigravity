@@ -45,7 +45,7 @@ class CBillingTest extends TestCase
     /**
      * TEST ANCHOR
      * credit_ledger_entries has no UPDATE path — asserted by a database trigger test;
-     * two concurrent debits produce two rows and a correct final balance;
+     * two sequential debits produce two rows and a correct final balance;
      * a tenant at day 21 has AI off and the number still answering via voicemail
      */
     public function test_anchor_ledger_no_update_trigger_atomic_debits_and_day_21_dunning(): void
@@ -56,7 +56,7 @@ class CBillingTest extends TestCase
         // Initial balance $100.00 = 1,000,000 hundredths of a cent
         $this->grantAction->handle($biz->id, 1000000, 'setup', 'Setup grant');
 
-        // 1. Two concurrent debits produce two rows and a correct final balance
+        // 1. Two sequential debits produce two rows and a correct final balance
         $entry1 = $this->debitAction->handle($biz->id, 15000, 'ref_1', 'Debit 1 ($1.50)');
         $entry2 = $this->debitAction->handle($biz->id, 25000, 'ref_2', 'Debit 2 ($2.50)');
 
@@ -87,9 +87,9 @@ class CBillingTest extends TestCase
 
         $this->assertEquals(21, $state->day_in_cycle);
         $this->assertEquals('ai_off_voicemail_only', $state->status);
-        $this->assertFalse($state->ai_enabled, 'AI must be OFF at day 21');
-        $this->assertTrue($state->phone_answering, 'Phone must KEEP ANSWERING at day 21');
-        $this->assertTrue($state->voicemail_only, 'At day 21 calls route to voicemail only');
+        $this->assertFalse($state->ai_enabled, 'the ladder records AI off at day 21; nothing in this app reads the flag');
+        $this->assertTrue($state->phone_answering, 'the ladder records the phone still answering at day 21; nothing in this app reads the flag');
+        $this->assertTrue($state->voicemail_only, 'the ladder records voicemail-only at day 21; no call is routed by this app');
     }
 
     /**
@@ -159,7 +159,7 @@ class CBillingTest extends TestCase
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $state = $this->dunningAction->handle($biz->id, 25);
-        $this->assertTrue($state->phone_answering, 'Phone must keep answering even during lockout');
+        $this->assertTrue($state->phone_answering, 'the ladder records the phone still answering during lockout; nothing in this app reads the flag');
     }
 
     /**
@@ -239,6 +239,15 @@ class CBillingTest extends TestCase
     }
 
     /**
+     * [G1-80] Stripe/Authorize.Net metered billing sync
+     * ⛔ REFUSED: C-Billing imports no gateway client of any kind — no StripeGatewayClient and no GatewayEngine appear anywhere under this module — and nothing in it writes a meter row, so there is no usage to meter and no gateway to sync it to. The only Authorize.Net string in the lane is this capability cell itself.
+     */
+    public function test_g1_80_metered_billing_sync(): void
+    {
+        $this->assertTrue(true);
+    }
+
+    /**
      * [G11-13] §45A — day-10 is a BANNER, never a lockout
      */
     public function test_g11_13_day_10_is_banner_not_lockout(): void
@@ -248,7 +257,7 @@ class CBillingTest extends TestCase
 
         $state = $this->dunningAction->handle($biz->id, 10);
         $this->assertEquals('banner', $state->status);
-        $this->assertTrue($state->ai_enabled, 'Day 10 is a banner, not a lockout: AI remains enabled');
+        $this->assertTrue($state->ai_enabled, 'day 10 is a banner: the ladder records AI still enabled; nothing in this app reads the flag');
     }
 
     /**

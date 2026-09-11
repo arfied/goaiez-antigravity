@@ -39,7 +39,7 @@ final class ChatTurnController
             return response()->json(['error' => 'Session not found'], 404);
         }
 
-        $turn = $action->handle(
+        [$turn, $agentTurn] = $action->handle(
             businessId: $businessId,
             chatSessionId: $session->id,
             authorType: 'visitor',
@@ -48,6 +48,7 @@ final class ChatTurnController
 
         return response()->json([
             'id' => $turn->id,
+            'reply' => $agentTurn?->message,
         ], 201);
     }
 }

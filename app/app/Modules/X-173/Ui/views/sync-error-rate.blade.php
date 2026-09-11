@@ -8,7 +8,7 @@
     @if(count($runs) === 0)
         <x-ui.empty-state heading="No sync has run yet.">Nothing syncs on a schedule: a run happens only when a connected ledger is synced, and connecting waits on QuickBooks, Xero or Sage OAuth credentials that do not exist in this checkout.</x-ui.empty-state>
     @else
-        <p>This ledger: {{ $seen }} lines seen · {{ $conflicts }} conflicts · {{ $overall === null ? 'nothing synced yet' : round($overall * 100).'% conflicts' }}</p>
+        <p>This ledger: {{ $seen }} lines seen · {{ $conflicts }} conflicts · {{ $overallLabel }}</p>
         <p>Nothing is posted to a ledger from here: these lines were categorised inside this app only.</p>
         
         <ul>
@@ -26,7 +26,7 @@
                     @elseif($run->conflicts_count === 0)
                         <x-ui.status-pill state="ok" label="0% conflicts" />
                     @else
-                        <x-ui.status-pill state="attention" :label="round($rate * 100).'% conflicts'" />
+                        <x-ui.status-pill state="attention" :label="$rateLabels[$run->id]" />
                     @endif
                     
                     <x-ui.button size="default" wire:click="show({{ $run->id }})">Show its conflicts</x-ui.button>

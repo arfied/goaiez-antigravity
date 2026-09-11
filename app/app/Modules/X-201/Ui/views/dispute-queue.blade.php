@@ -10,7 +10,7 @@
 @else
 <ul class="space-y-4">
 @foreach($disputes as $d)
-<li class="border rounded p-4 shadow bg-white">
+<li class="border rounded p-4 shadow bg-white" wire:key="dispute-{{ $d->id }}">
 <span class="font-semibold">Invoice #{{ $d->invoice_id }}</span>
 <span class="tabular-nums">{{ number_format($d->chargeback_amount_cents / 100, 2) }}</span>
 <span class="text-sm text-ink-2">{{ $d->reason }}</span>

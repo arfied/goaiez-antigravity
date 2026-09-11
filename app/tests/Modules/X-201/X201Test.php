@@ -7,6 +7,7 @@ namespace Tests\Modules\X201;
 use App\Modules\X201\Actions\DisputeCompileAction;
 use App\Modules\X201\Actions\DisputeRecordAction;
 use App\Modules\X201\Actions\DisputeSubmitAction;
+use App\Modules\X201\Domain\DisputeAlreadyOutcomedException;
 use App\Modules\X201\Domain\DisputeDefenseEngine;
 use App\Modules\X201\Events\DisputeLost;
 use App\Modules\X201\Events\DisputeOpened;
@@ -116,7 +117,7 @@ class X201Test extends TestCase
         // 4. Lost dispute writes commission.clawed_back for the released commission on that job (TEST ANCHOR)
         $outcomeRes = $this->engine->recordOutcome($biz->id, $dispute->id, 'lost', 'bank_ruled_in_cardholder_favor');
         $this->assertEquals('lost', $outcomeRes['status']);
-        $this->assertTrue($outcomeRes['commission_clawback_triggered'], 'Lost dispute triggers commission clawback');
+        $this->assertTrue($outcomeRes['commission_clawback_triggered'], 'a lost dispute sets the clawback flag; no commission is taken back, because nothing acts on that flag');
 
         $outcomeRecord = DisputeOutcome::where('business_id', $biz->id)->where('dispute_id', $dispute->id)->first();
         $this->assertEquals('lost', $outcomeRecord->outcome);
@@ -137,5 +138,31 @@ class X201Test extends TestCase
         $outcomeRes = $this->engine->recordOutcome($biz->id, $dispute->id, 'won');
         $this->assertEquals('won', $outcomeRes['status']);
         $this->assertFalse($outcomeRes['commission_clawback_triggered']);
+    }
+
+    /**
+     * A second outcome on a dispute that is already won or lost is refused before the first write.
+     */
+    public function test_a_dispute_is_outcomed_once_and_a_second_outcome_is_refused(): void
+    {
+        Event::fake([DisputeLost::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Dispute Once Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $dispute = $this->recordAction->handle($biz->id, 907, 42000, 'fraudulent');
+        $this->engine->recordOutcome($biz->id, $dispute->id, 'won');
+        $this->assertSame('won', $dispute->fresh()->status);
+
+        try {
+            $this->engine->recordOutcome($biz->id, $dispute->id, 'lost');
+            $this->fail('A second outcome on an already-outcomed dispute must be refused.');
+        } catch (DisputeAlreadyOutcomedException $e) {
+            $this->assertStringContainsString('is already won: an outcome is recorded once', $e->getMessage());
+        }
+
+        $this->assertSame('won', $dispute->fresh()->status, 'a refused outcome leaves the terminal status alone');
+        $this->assertSame(1, DisputeOutcome::where('business_id', $biz->id)->where('dispute_id', $dispute->id)->count());
+        Event::assertNotDispatched(DisputeLost::class);
     }
 }

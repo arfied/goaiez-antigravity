@@ -143,4 +143,27 @@ class ConflictsListScreenTest extends TestCase
         $this->assertSame('open', $row->status);
         $this->assertSame('uncategorised', $row->assigned_category);
     }
+
+    public function test_conflicts_list_keys_each_row(): void
+    {
+        $bizA = self::provisionTenant();
+        Tenancy::set($bizA->id);
+
+        $connectAction = app(AccountingConnectAction::class);
+        $syncAction = app(AccountingSyncAction::class);
+
+        $connA = $connectAction->connect($bizA->id, 'quickbooks', 'realm_qb_4412');
+        $syncAction->syncTransactions($bizA->id, $connA->id, [
+            ['ref' => 'inv_tx_102', 'description' => 'desc2', 'confidence' => 0.62, 'category' => 'guess'],
+            ['ref' => 'inv_tx_103', 'description' => 'desc3', 'confidence' => 0.30, 'category' => 'guess'],
+        ]);
+
+        $id102 = AccountingSyncConflict::where('business_id', $bizA->id)->where('transaction_ref', 'inv_tx_102')->first()->id;
+        $id103 = AccountingSyncConflict::where('business_id', $bizA->id)->where('transaction_ref', 'inv_tx_103')->first()->id;
+
+        Livewire::test(ConflictsListView::class)
+            ->assertOk()
+            ->assertSeeHtml('wire:key="conflict-'.$id102.'"')
+            ->assertSeeHtml('wire:key="conflict-'.$id103.'"');
+    }
 }

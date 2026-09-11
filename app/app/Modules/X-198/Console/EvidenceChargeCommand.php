@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\File;
 
 final class EvidenceChargeCommand extends Command
 {
-    protected $signature = 'x198:evidence-charge';
+    protected $signature = 'x198:evidence-charge {--business= : Reuse this tenant instead of provisioning a new one}';
 
     protected $description = 'Evidence a real charge outside the suite';
 
@@ -28,16 +28,37 @@ final class EvidenceChargeCommand extends Command
             return self::FAILURE;
         }
 
-        $user = User::first() ?? User::factory()->create();
-        $tenant = $provisioner->provision($user);
-        Tenancy::set($tenant->id);
-        $businessId = $tenant->id;
+        // ⚠️ **`provision()` IS THE SIGNUP PATH AND IT SPENDS A PHONE NUMBER.**
+        // It mints a new business on every call and claims a dedicated number out
+        // of the platform pool, which nothing returns unless the tenant departs.
+        // Five evidence commands called it on every run and the nine-number pool
+        // is now empty, so this artifact could not be regenerated at all. The
+        // tenant is therefore GIVEN — by --business, else by this artifact's own
+        // record of the last one — and provisioned only when there is no other.
+        $businessId = (int) ($this->option('business') ?: 0);
+
+        if ($businessId === 0) {
+            $previous = storage_path('app/evidence/j9/charge.json');
+
+            if (File::exists($previous)) {
+                $decoded = json_decode(File::get($previous), true);
+                $businessId = is_array($decoded) ? (int) ($decoded['business_id'] ?? 0) : 0;
+            }
+        }
+
+        if ($businessId === 0) {
+            $user = User::first() ?? User::factory()->create();
+            $businessId = $provisioner->provision($user)->id;
+        }
+
+        Tenancy::set($businessId);
 
         $gatewayEngine->connect($businessId, 'stripe', 'acct_tenant_stripe_123');
         $payment = $gatewayEngine->capture($businessId, 12500, 'tok_visa', 'idem_j9_'.time());
 
         $data = [
-            'payments_written' => Payment::where('business_id', $businessId)->count(),
+            'business_id' => $businessId,
+            'tenant_payments_total' => Payment::where('business_id', $businessId)->count(),
             'gateway_charge_id' => $payment->gateway_charge_id,
             'payment_status' => $payment->status,
             'amount_cents' => 12500,

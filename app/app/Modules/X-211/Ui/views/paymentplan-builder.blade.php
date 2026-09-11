@@ -42,7 +42,7 @@
         <h2>Split an open invoice</h2>
         <ul class="space-y-4">
             @foreach($invoices as $inv)
-                <li class="border rounded p-4 shadow bg-white">
+                <li class="border rounded p-4 shadow bg-white" wire:key="plan-inv-{{ $inv->id }}">
                     <div class="flex justify-between items-center mb-4">
                         <div>
                             <span class="font-semibold">{{ $inv->invoice_number }}</span>

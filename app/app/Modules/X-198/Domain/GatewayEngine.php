@@ -13,6 +13,7 @@ use App\Modules\X198\Models\MerchantConnection;
 use App\Modules\X198\Models\Payment;
 use App\Modules\X198\Models\Payout;
 use App\Modules\X198\Models\ReconciliationRun;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 
@@ -73,7 +74,7 @@ final class GatewayEngine
         string $idempotencyKey
     ): Payment {
         // The tenant's own declared currency, read from the row that holds it. A caller-supplied
-        // currency is a second place for the truth to disagree (R037), and the lane's one
+        // currency is a second place for the truth to disagree, and the lane's one
         // production capture supplied none at all, so every charge went out in dollars.
         $currency = Business::findOrFail($businessId)->currency;
 
@@ -118,7 +119,7 @@ final class GatewayEngine
                     $gatewayStatus = $result['status'];
                 }
 
-                // The gateway's word, never the presence of an id (R235). A charge it took but has
+                // The gateway's word, never the presence of an id. A charge it took but has
                 // not settled arrives with a real id and 'pending', and awaiting_processor is
                 // already this column's name for "the gateway has it and we cannot say it settled".
                 $status = $gatewayStatus === 'succeeded' ? 'captured' : 'awaiting_processor';
@@ -147,6 +148,20 @@ final class GatewayEngine
             });
         } catch (GatewayNotConfiguredException $e) {
             throw $e;
+        } catch (UniqueConstraintViolationException $e) {
+            // A concurrent capture on this key won the race between the pre-check at :83 and the
+            // create at :126. The index refused our row; the winner's is the one that exists.
+            // This re-read is outside the rolled-back transaction, so it can run at all.
+            $winner = Payment::where('business_id', $businessId)
+                ->where('idempotency_key', $idempotencyKey)
+                ->where('status', '!=', 'failed')
+                ->first();
+
+            if ($winner === null) {
+                throw $e;
+            }
+
+            return $winner;
         } catch (\RuntimeException $e) {
             DB::transaction(function () use ($businessId, $amountCents, $paymentToken, $idempotencyKey, $currency) {
                 $connection = MerchantConnection::where('business_id', $businessId)->first();

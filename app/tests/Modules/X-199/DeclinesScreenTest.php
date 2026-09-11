@@ -433,4 +433,73 @@ class DeclinesScreenTest extends TestCase
 
         Carbon::setTestNow();
     }
+
+    public function test_the_declines_list_is_ordered_when_every_row_shares_one_timestamp(): void
+    {
+        $base = now()->startOfWeek()->addDays(3)->setTime(10, 0);
+        Carbon::setTestNow($base);
+
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+
+        Payment::create([
+            'business_id' => $biz->id,
+            'amount_cents' => 1111,
+            'currency' => 'USD',
+            'payment_token' => 'tok_ord_a',
+            'idempotency_key' => 'idem_ord_a',
+            'status' => 'failed',
+        ]);
+
+        Payment::create([
+            'business_id' => $biz->id,
+            'amount_cents' => 2222,
+            'currency' => 'USD',
+            'payment_token' => 'tok_ord_b',
+            'idempotency_key' => 'idem_ord_b',
+            'status' => 'failed',
+        ]);
+
+        Payment::create([
+            'business_id' => $biz->id,
+            'amount_cents' => 3333,
+            'currency' => 'USD',
+            'payment_token' => 'tok_ord_c',
+            'idempotency_key' => 'idem_ord_c',
+            'status' => 'failed',
+        ]);
+
+        Livewire::actingAs($owner)->test(Declines::class)->assertOk()->assertSeeInOrder(['33.33', '22.22', '11.11']);
+
+        Carbon::setTestNow();
+    }
+
+    public function test_a_failed_deferral_names_the_deferral_and_not_the_pay_link(): void
+    {
+        $base = now()->startOfWeek()->addDays(3)->setTime(12, 0);
+        Carbon::setTestNow($base);
+
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        Payment::create([
+            'business_id' => $biz->id,
+            'amount_cents' => 15000,
+            'currency' => 'USD',
+            'payment_token' => 'tok_hd2',
+            'idempotency_key' => 'idem_hd2',
+            'status' => 'failed',
+            'created_at' => $base,
+        ]);
+
+        Livewire::actingAs($owner)->test(Declines::class)
+            ->call('settleUpLater', 999999)
+            ->assertSee('Could not set that aside')
+            ->assertDontSee('make that pay link');
+
+        Carbon::setTestNow();
+    }
 }
