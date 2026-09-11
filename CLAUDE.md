@@ -15146,3 +15146,115 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     ⭐ Positive control fires at **35+ unique constraints across eleven other lanes**; ⛔ money proposes no
     edit on any of them (5). ⛔ Zero buildable, struck, not to be re-raised. Ruling 327's outcome shape a
     **twenty-ninth** time.
+471. **⭐⭐ THE `SQLSTATE` CENSUS IS MEASURED AND CLOSED — eight Postgres error classes a money write can
+    raise, ONE live member, ZERO buildable — and two of the three unswept classes are STRUCTURALLY
+    IMPOSSIBLE rather than merely guarded (measured by the lane supervisor 2026-09-11 03:0x; rulings 64,
+    95, 100, 111, 262(b), 294, 300, 324, 327, 400, 415, 429, 449).** Rulings 206 (`22001`, a `varchar`
+    overflow reaching a `\Throwable` tail), 416 (`22003`, an integer overflow doing the same) and 463/465
+    (`23505`, a unique violation) are **three findings of ONE predicate found incidentally** — ruling
+    319's signature of an unenumerated population — and the predicate had never been stated: *every
+    Postgres error class a money write can raise, measured against whether the owner reads a SENTENCE or
+    a raw framework string.*
+    ⭐⭐ **429's known-member corroboration fires THREE times** — the census returns `22001` → 206's
+    `mb_strlen` guards and 404's `MAX_REFERENCE`, `22003` → 416's `MAX_CAP_CENTS`, `23505` → 463's
+    re-read and 465's re-mint, which is the exact shape the census exists to find. ⭐ 415's first-three
+    check passes and ⭐ 449's *each member EXISTS* check passes, every cited file and line having been
+    read rather than named.
+    **`23514` is STRUCTURALLY IMPOSSIBLE: the lane declares NOT ONE check constraint on any of its 33
+    tables.** ⭐ Its disproof is the zero trap's **mechanism 8 (a substring inside a longer phrase,
+    INFLATING)** caught by **reading the hit** (262(b), 426(d), 441(b)): `grep -i -F -e "CHECK (" -e
+    "->check(" -e "ADD CONSTRAINT"` over `app/app/Modules` returns thirty-plus lines and **every one** is
+    the RLS policy's `WITH CHECK (business_id = nullif(current_setting('app.business_id', true),
+    '')::bigint)` clause, or a `Tenancy::check()` / `auth()->check()` guard. A census that had counted
+    that grep would have reported a live population that does not exist. Corroborated from the other
+    side: all **49** `DB::statement` lines in the eight migration trees are RLS, a `SET DEFAULT`, an
+    index or ruling 41's type widen — ruling 431's own measurement re-run on the whole lane rather than
+    inherited (64, 323).
+    **`22P02` is STRUCTURALLY UNREACHABLE**: every owner-typed numeric value is `(int)`-cast at the
+    **component** boundary *before* its guard (`AgeingByReason:48,:49,:76,:111`, `Credits:46`, measured
+    rather than inherited from 416/417), and `grep -F -e 'type="date"' -e 'type="datetime' -e
+    'type="time"'` over **every blade in the tree** returns **nothing**, so no owner string can reach a
+    date or numeric column un-cast. **`23503` has one member and it is ruling 432's already-recorded
+    `TermsSetAction:42`**, unreachable because 428's `ContactMergeAction` has no production caller.
+    `23502` (431) and `42501` (400) are re-confirmed and ⛔ not re-run.
+    ⛔ **The census is CLOSED and is not to be re-run.** Its one live member is ruling 472's, and **its
+    trigger is a production catalogue writer, never a wave boundary** — ruling 469's own form of a
+    re-measurement trigger. ⭐ Ruling 327's outcome shape a **THIRTIETH** time: *a population measured
+    NON-EMPTY that yields ZERO buildable fixes is a legitimate result and is the more useful of the two
+    to write down*, because an empty census tells a later tick *nothing is there* while a classified one
+    tells it **what is there and why each member stays**.
+
+472. **⭐⭐⭐ THE LANE HAS TWO MULTI-ROW LOCK LOOPS OVER ONE TABLE IN TWO DIFFERENT ORDERS, NO `$attempts`
+    RETRY, AND A `\Throwable` TAIL — a `40P01` deadlock prints `SQLSTATE` to a CUSTOMER — and it is
+    RECORDED, NOT BRIEFED, because a deadlock proof needs a second PROCESS where rulings 454/457 bought
+    only a second CONNECTION (RULED by the lane supervisor 2026-09-11 03:0x).** Measured:
+    `X-117/Domain/CheckoutEngine::checkoutCart():205-207` takes `Sellable … lockForUpdate()` once per
+    item in **`$cart->items` order** — the JSON array's insertion order, written by `addToCart` — while
+    `cancelOrder():151-153` takes the same lock per line over `OrderLine::where(...)->get()`, which has
+    **no `ORDER BY`** and therefore returns heap order (ruling 204's own mechanism). Two transactions
+    touching the same two sellables in opposite orders deadlock and Postgres kills one; `checkout():61`
+    locks a single row and cannot participate. **Where it lands is measured, not assumed:**
+    `DB::transaction($closure)` is called with **no `$attempts` argument** at `:57`, `:142` and `:177`,
+    so the framework's retry — which ruling 465 measured fires **only** on `causedByConcurrencyError`,
+    i.e. exactly a deadlock — is **off**; and MONEY-204's `for` loops at `:125` and `:276` catch
+    `UniqueConstraintViolationException` **alone**. So a `QueryException` carrying `40P01` propagates to
+    `CheckoutBlock::pay()`'s `\Throwable` tail and the customer reads *"We could not take that payment:
+    SQLSTATE[40P01]: Deadlock detected…"* — rulings 206/416/463's shape, one error class over, on the
+    storefront checkout.
+    **⛔ RECORDED, NOT BRIEFED. Three safeties named (328), and the second is decisive.** (1)
+    **Unreachable in production** — ruling 117 measured `sellables` has no production writer, so the
+    catalogue is empty for every real tenant and no cart exists to check out; ruling 469 re-measured all
+    eight of ruling 96's blockers this cycle and found every one still in place. (2) ⭐⭐⭐ **A deadlock
+    proof needs two OS PROCESSES and this suite is single-process.** Rulings 454 and 457 measured away a
+    structural blocker by buying a second **CONNECTION** (`pgsql_migrate`, ruling 458); a deadlock needs
+    two **threads of execution**, because the first session must *block* while the second runs, and PHP
+    is synchronous — the instant either session waits, the process waits, and the second session never
+    runs. (3) **The fix is restructuring rather than additive, and it has an owner-facing consequence**:
+    sorting the lock acquisition is the textbook remedy and is correct, but `checkoutCart`'s sold-out
+    refusal returns from **inside** the lock loop and therefore names the first short item **in iteration
+    order**, so a sort changes which item an owner is told about, with `CheckoutBlockScreenTest:85`
+    asserting a named one.
+    ⭐⭐ **The contrast with MONEY-204 — which shipped on the SAME unreachable path — is the ruling, and
+    it is ruling 466 applied to a candidate rather than to a design.** There the defect was **provable**
+    (`Str::createRandomStringsUsingSequence` forces the collision deterministically, no racer at all —
+    465), the fix was **additive** (`git diff -w`: 28 insertions and ZERO deletions — 468), and the cost
+    of not shipping was a failed checkout printing `SQLSTATE`. Here the fix restructures, the proof is
+    indirect at best, and the hazard needs concurrency the lane cannot produce. **Ruling 232 governs:
+    introducing a new hazard is worse than deferring the removal of an old one.**
+    ⚠️ `cancelOrder():151`'s unordered `get()` is ruling 204/333's own shape and is **unobservable** — it
+    feeds a lock loop and nothing renders it — so `Declines.php:81`'s precedent governs: recorded, never
+    edited, because no test can render it and no mutation can redden it (96). → **TRACK 1 ACTION 13**,
+    to land with whatever wave gives this lane a real catalogue.
+    ⭐ **The generalisable half: A BLOCKER REMOVED FOR ONE WAVE IS NOT REMOVED FOR EVERY WAVE.** Ruling
+    458 taught that *a blocker is a CONJUNCTION, and removing one of its terms moves the question to the
+    next*; this adds that **the term a measurement removes is narrower than the sentence that stated
+    it.** Rulings 240/256/327 all cited *"a racing fixture cannot be committed"* and MONEY-201/202
+    removed it — for the two waves whose proofs needed a committed ROW. A proof that needs a **blocked
+    session** is a different term wearing the same words, and it did not move.
+
+473. **⭐⭐ THE LANE'S ONE CATCH INSIDE A TRANSACTION IS SAFE, AND THE REASON IS MEASURED IN VENDOR: A
+    NESTED `DB::transaction` IS A SAVEPOINT AND ITS ROLLBACK RECOVERS AN ABORTED POSTGRES TRANSACTION
+    (measured by the lane supervisor 2026-09-11 03:0x).** Ruling 220 enumerated the lane's 21
+    `DB::transaction(` closures and asked whether a write precedes a throw inside one; ruling 229
+    enumerated the 88 catch blocks and asked what class each catches. **Their intersection had never been
+    measured**, and it is ruling 163's own mechanism: in Postgres a failed statement aborts the enclosing
+    transaction, so every later statement in it dies `25P02` — which means **a catch inside a transaction
+    closure that continues to issue statements is a cascade**, and the owner reads a message about
+    entirely the wrong thing. The lane has exactly one: `X-199/Domain/InvoiceEngine` opens
+    `DB::transaction` at `:33` and carries a `catch (\Exception)` at `:106` whose handler logs and then
+    **continues** to `OverflowCharge::create` at `:117`.
+    **It cannot fire.** `capture()` opens its own `DB::transaction` at `GatewayEngine:82`, so when called
+    from inside `issueInvoice`'s it is **nested** — and measured in vendor rather than reasoned (456's
+    lesson; 440's precedent, where an assumed exception hierarchy was wrong):
+    `Illuminate/Database/Concerns/ManagesTransactions.php:158-160` issues **`SAVEPOINT trans<n+1>`**
+    whenever `transactions >= 1` and the grammar supports savepoints, and `performRollBack($toLevel)` at
+    `:300-313` issues **`ROLLBACK TO SAVEPOINT`** for any non-zero level. A savepoint rollback is
+    precisely what **recovers** an aborted Postgres transaction, so the outer transaction is usable and
+    `:117` runs on a clean connection. ⭐ It is also why ruling 463's re-read at `GatewayEngine:151` works
+    whether `capture()` is called standalone or from inside `issueInvoice`.
+    ⭐⭐ **This is ruling 460's finding recurring, and it is the half nobody expects: A TERM CAN BE ALREADY
+    SATISFIED.** Ruling 163's mechanism is real — it reddened `InvoiceNumberTest` and cost a wave — and
+    here the framework's savepoint nesting satisfies it for free. **Measure a term before assuming it
+    hostile as surely as before assuming it absent** (460's own closing words), and ⭐ 472 is the mirror
+    in the same tick: there the unexamined term was hostile and it killed the wave, here it was satisfied
+    and it killed the finding.
