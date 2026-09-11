@@ -12737,3 +12737,79 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     act under test.
     ⛔ No `view:clear` (202, 225 — the mutations are PHP) and ⛔ no `composer dump-autoload` (318 — no new
     class).
+409. **⭐⭐ Ruling 408's instrument LISTED five property names where its predicate is *any message property
+    rendered under a static heading* — `$success` was the sixth, and it is measured CLEAN (measured by the
+    lane supervisor 2026-09-10 19:0x; rulings 64, 95, 100, 111, 324, 327, 371).** Ruling 408 swept
+    `grep -rn -F -e '{{ $error }}' -e '{{ $refused }}' -e '{{ $waiting }}' -e '{{ $financing }}' -e
+    '{{ $authorised }}'` — **a member list, not a predicate**, which is ruling 371's own defect and the
+    **ninth** time it has been found inside this ledger's own censuses (375c, 376, 383, 394(c), 395,
+    402(b), 404, 407). Re-run on the predicate: `grep -rn -F -e '{{ $success }}' app/app/Modules
+    --include=*.blade.php` filtered to the eight ids returns **18** renders, of which **exactly one
+    carries a heading** — `C-Billing/Ui/views/credits.blade.php:18`'s `<x-ui.attention-card state="ok"
+    heading="Top-up recorded">`. Its setters, measured rather than assumed (262(b)): `grep -n -e 'public
+    function' -e 'this->success = ' app/app/Modules/C-Billing/Ui/Credits.php` returns `topup():53` as the
+    **only** setter — `explain()` clears `$success` at `:31` and never writes it. **One act, one heading:
+    408's own clean criterion**, and the heading is *"Top-up recorded"*, which ruling 87 already measured
+    is the **honest** word for what that button does. ⭐ So 408's population is now **46 message renders
+    across six properties** and the heading question is closed over all of them. ⛔ Not a wave and not to
+    be re-raised. ⚠️ ⭐ It is also ruling 392(c)'s lesson a fourth time — **a hypothesis built on TRUE
+    measurements can still be false**: three true facts (a heading exists, the property is rendered
+    eighteen times, 408's instrument omitted it) still produced a clean answer, because the fourth
+    measurement — **how many acts SET it** — is the one that decides. Take the disproving measurement
+    first (400, 403).
+
+410. **⭐⭐ Ruling 393's instrument was a `-B 6` context window — ruling 407's own FOURTH zero-trap
+    mechanism, written four ticks AFTER it — and the re-run on the predicate measures 393 COMPLETE
+    (measured by the lane supervisor 2026-09-10 19:0x).** Ruling 407 ruled that *a `-B`/`-A` context
+    window encodes an assumption about the SHAPE of the thing being measured, and it is a claim like any
+    other*; ruling 393 had swept state-gated buttons with `grep -rn -B 6 -e 'wire:click' -e 'wire:submit'
+    … | grep -e '@if' -e '@elseif'`, so a control whose gating `@if` sits seven or more lines above it was
+    invisible to it. ⭐⭐ **Widening the window is NOT the re-run** — `-B 14` doubles the `@if` count from
+    **84** to **166** without saying which *controls* are newly covered, because a wider window sweeps in
+    unrelated conditions and cannot distinguish a newly-covered member from a coincidental match. **The
+    predicate is the gating CONDITION, so the population is enumerated directly**: `grep -rn -e '@if' -e
+    '@elseif' app/app/Modules --include=*.blade.php` filtered to the eight ids returns **142**, and
+    filtered again to `-e 'status' -e "=== '" -e 'in_array'` returns **THIRTEEN** state-gating conditions.
+    Every one is accounted for: `X-117 checkout-block:62` (Cancel — ruling 350's own fix) · `X-173
+    conflicts-list:28` (resolve — ruling 395, `resolveConflict():61` refuses `'resolved'`) · `X-199
+    invoices:55/61/63` (Record payment — ruling 393's own fix) · `X-201 dispute-card:37` and
+    `dispute-queue:30` (Submit — ruling 62, `submit():80`) · `X-201 dispute-card:40` and
+    `dispute-queue:33` (Won/Lost — ruling 396's own fix) · `X-198 connect-card:25` (Apply — ruling 129,
+    `GatewayEngine:32`) · `X-199 invoices:72` and `unpaid:87` (`in_array(id, $expanded)`, a UI toggle
+    making no claim about a write — out of population) · `X-211 ageing-by-reason:58` (a status **pill**,
+    not a control — out of population). ⭐ **393's window missed NOTHING**, measured rather than hoped.
+    ⛔ Not to be re-raised. ⚠️ The keepable half is the method: **a layout-assuming instrument is re-run by
+    enumerating its PREDICATE directly, never by widening its window.**
+
+411. **⭐⭐ Ruling 229(b) removed ONE false catch PREFIX and nobody had swept the prefix population on
+    229's own predicate — it is 46 members and ZERO are false, so that defect was SINGULAR (measured by
+    the lane supervisor 2026-09-10 19:0x).** Ruling 229's *instrument* was the 88 catch blocks swept for
+    **what class they catch**; its *remedy* was about **the PREFIX a catch prepends to
+    `$e->getMessage()`** — ruling 404's shape exactly (*a census that FIXED something did not necessarily
+    SWEEP the population that needed it*). 229's reasoning was that `Declines::sendPayLink()`'s *"The pay
+    link was not made: "* guarded **the persist as well as the client call**, so a write failure after a
+    successful Stripe session would have it *assert the opposite of the truth*. **The predicate is
+    therefore: does the catch's try block contain a write the prefix's claim would be false about?**
+    Instrument, quoted (300): `grep -rn -e 'getMessage' app/app/Modules --include=*.php` filtered to
+    `/Ui/` and the eight ids → **46**. ⭐⭐ **The disproving measurement was taken FIRST** (400, 403): the
+    one candidate is `X-211/Ui/InvoiceThreadBeside.php:65`'s *"We could not record that: "*, because
+    ruling 330 measured `ArEngine::recordReason()` makes **two** writes (`:327` `ArDunningAction::create`
+    and `:335` `firstOrCreate`) — and `:324` is `return DB::transaction(function () …)` with **both
+    inside it**, so a throw rolls both back and the prefix is true. Every other member has its throw
+    **before** its first write inside a transaction, as rulings 216, 220, 330, 332, 393 and 396 each
+    measured for their own, and ruling 393 already recorded the criterion in terms: *"that prefix is TRUE
+    of this refusal — unlike ruling 229(b)'s, it asserts an outcome the catch CAN know, because the guard
+    is before the first write."* ⛔ Not a wave and not to be re-raised.
+    ⚠️ **Recorded at ruling 76's grade and deliberately NOT briefed:** four of the 46 are in a developer
+    register against the other forty-two's owner register — `C-Billing/Credits.php:40` *"Error explaining
+    entry: "*, `:60` *"Error topping up: "*, `DunningBoard.php:28` *"Failed to advance dunning: "* and
+    `X-199/MoneyPaidToday.php:39` *"Error explaining invoice: "* — and two of them describe an act their
+    own module words differently elsewhere (`Credits:60` against `Mrr:62` and `RevenueRecovery:42`'s *"We
+    could not top up"*; `Credits:40` against `Mrr:42`'s *"We could not explain that entry"*). ⛔ **Nothing
+    is false**, so ruling 228(a) governs — *a wave that harmonises a pair where both members are honest
+    breaks the good one* — and ruling 123's *one fact, one wording* was the SHAPE of a remedy for a
+    falsehood (123(b)), never a licence to reword honest copy.
+    ⭐ The general half, and it is ruling 404's sharpened: **a fix ruling's INSTRUMENT and its REMEDY are
+    two different predicates, and the population that needed the remedy is swept only by the second.**
+    229 is the fourth instance after 206 (swept for a missing catch tail, ruled a length refusal — 404),
+    390 and 405 (each fixed ONE static heading, neither swept the other seventeen — 408).
