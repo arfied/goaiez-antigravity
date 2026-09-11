@@ -17559,3 +17559,30 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
    - **Population.** Ruling 552's is empty and not buildable.
 
    **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty wave to avoid an idle tick is what rulings 95, 100 and 111 forbid.
+
+554. **⭐ The REMOVED-FRAMEWORK-SPELLING census on the model and input layers: zero `protected $dates`, zero `array_get(`/`str_slug(`/`Event::fire(`, and zero `wire:model.defer`/`.lazy`/`prefetch` in the money modules. Verified in vendor, Laravel 13.29.0's `getDates()` ignores any `$dates` property, while Livewire 3 still accepts `.lazy`. So only `$dates` is dead here, and money has none. Zero buildable (measured by the lane supervisor 2026-09-11 13:5x, by `date` `13:50`; rulings 207, 211, 262(b), 294, 324, 327, 381(c), 415, 429, 552).** This follows ruling 552's lead, *a framework-version spelling: a call the current vendor no longer defines, verified in vendor first*, and applies it to the model and binding layers, which 552 never swept.
+   **Vendor, measured rather than assumed (416, 419, 440).**
+   - `app/vendor/laravel/framework/src/Illuminate/Foundation/Application.php:48` is `const VERSION = '13.29.0'`.
+   - `Eloquent/Concerns/HasAttributes.php:1661-1667` `getDates()` returns only `getCreatedAtColumn()`/`getUpdatedAtColumn()` when `usesTimestamps()`. So a `protected $dates` array casts **nothing**, and a date read through it would be a raw string.
+   - ⚠️ `app/vendor/livewire/livewire/dist/livewire.esm.js:4815` is `modifiers.includes("change") || modifiers.includes("lazy")`, so `.lazy` is **live** in Livewire 3. ⛔ It is not recorded as removed. Ruling 381(c) already measured the lane's single modifier (`.live`).
+
+   **Instruments, quoted (300)**, each over the eight money module trees:
+   - `-e "protected .dates" -e "array_get(" -e "str_slug(" -e "wire:model.defer"` → **0**.
+   - `-e "wire:model.lazy" -e "prefetch" -e "Event::fire(" -e "protected .dates"` → **0**.
+   - ⭐ **Known member (429):** `grep -rn -e "protected .casts"` over the same trees → **27**, which is exactly ruling 211's measured count of the modern spelling. So the instrument reaches the model layer, and the lane uses the current form everywhere.
+   - ⭐ **Positive control fires:** `grep -rln` over `app/app` and `app/resources/views` for the removed terms returns `X-110/Ui/views/abandoned-forms.blade.php:38`, `wire:model.defer="messages.{{ $a['id'] }}"`. The instrument therefore finds a Livewire 2 spelling in another lane. ⛔ Money proposes no edit there and asserts no defect (5). Whether Livewire 3 ignores `.defer` was **not measured**.
+   - The terms carry no `$`, `[` or upper-case ambiguity. `.` stands in for `$` (207, 381, 387).
+
+   ⛔ Struck, not to be re-run. ⚠️ **Trigger:** a `$dates` property, a removed helper, or a Livewire 2 modifier added in the lane. Ruling 327's outcome shape a **sixty-second** time.
+
+555. **⛔ FORTY-NINTH consecutive HOLD (RULED by the lane supervisor 2026-09-11 13:5x, by `date` `13:50`).** All four lift conditions were measured this tick (269, 272, 323), each case decided on mtimes (494):
+   - **Owner.** `OWNER.md`'s newest heading is still `## OWNER RULING — 2026-09-09 09:02` (136), mtime `09-09 09:02:03`, older than `REVIEWS.md` (`11:22:52`).
+   - **Coder.** `--check` returned `CODER DEAD`.
+   - **Mailbox.** `REPORT.md` (`07:15:21`) and `BRIEF.md` (`07:07:27`) are both older than `REVIEWS.md`.
+   - **Cadence, all three ✗.** After `git fetch --no-write-fetch-head origin`, `origin/main` = **`bd3e9c5f`**, unmoved since 553. `git rev-list --count HEAD..origin/main` = **44**, not above 100. `git diff --stat dca743e8 origin/main -- app/app/Doctor coder-bin .claude/hooks` is empty. `git merge-base HEAD origin/main` = **`dca743e8`**, with no new main content since 553's content read (504).
+   - **Track 1.** No answer to ACTION 13–25.
+   - **Population.** Ruling 554's is empty and not buildable.
+
+   ⚠️ The wall clock moved 2h27m since the last tick (`11:23` → `13:50`), and nothing in the lane or on `origin/main` moved with it.
+
+   **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty wave to avoid an idle tick is what rulings 95, 100 and 111 forbid. ⚠️ `app/CLAUDE.md` came into context again. It is Laravel Boost boilerplate and was not followed.
