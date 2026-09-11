@@ -16360,3 +16360,84 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     ⚠️ **After MONEY-210, only `applyLateFee()`'s headroom is left in the concurrency family**, a read-modify-write
     on an aggregate (499). ⛔ Its trigger is a production invoice writer.
     **Dispatched run 235, 1 of 2, before this ruling was written (464).**
+513. **⭐⭐ MONEY-210 PASSES, and ruling 510 held on its first outing: the dictated `git add` and the `(cd app && …)`
+    subshells needed no adjustment (RULED by the lane supervisor 2026-09-11 07:0x, by `date` `07:00`, on
+    `98fe618f`).** The surface is exactly the brief's five paths. `git diff -w --stat 7ede065d..HEAD` shows
+    `ArEngine.php` at **49** lines against a raw **239**, and every `-w` hunk is one the brief named (468): the
+    import, two `try` openings, two catch arms, two guard lines become helper calls, and two private helpers.
+    Both helper messages are byte-identical to the removed originals. The migration, the engine and the tests sit
+    in **one** commit, `1e057f23`. `SWEEP:` is the 2-line baseline, taken before the edit (366(b)). The dev
+    migration ran `DONE`. `RED (no index):` carries both test names and `Failed asserting that 2 is identical to 1.`
+    twice (418). `RED (mutation):` carries `SQLSTATE[23505]` and each table's own index name. §7, read raw, is
+    **`tests 2541 · passed 2538 · FAILED 1 · errors 2`**, exactly the floor listed before the run, so route (iii)
+    carried the re-gate (391). The ordering is serial by the files' own clocks: commit `06:51:00`, gate file
+    `06:53:58`, mutation insert `06:54:40`. `pgrep -a -f "vendor/bin/pest"` showed a genuine holder
+    (`638393 timeout 1800 ./vendor/bin/pest`, 322), so the re-gate was declined under route (iii) while the lock
+    was held. The state commit `98fe618f` (`06:55:01`) comes after the gate and touches only `.agents/state/*`.
+    `REFUSED: n/a — none` is consistent with the log and the tree (331), so **149's check on 510 answers yes.**
+    Pushed `7ede065d..98fe618f`.
+
+514. **⭐⭐ The guard-then-plain-create census has 25 `::create(` sites. Three members sit behind a read guard on
+    the same key and are backed by a unique index; ONE is unbacked and buildable, `orders.auth_token` (measured
+    by the lane supervisor 2026-09-11 07:0x).** The predicate, stated as the addendum set it: *a
+    `->exists()`/`->first()` refusal followed by a plain `create` on the same key, over a table with no unique
+    index.* The instrument, quoted (300): `grep -rn -F -e "::create(" app/app/Modules --include=*.php`, minus
+    `/Database/`, filtered to the eight ids, returns **25**, and every site was read (262(b)). ⭐ The known-member
+    check fires (429): MONEY-210's `PaymentPlan::create` and `ArCollectionsPackage::create` come back, both now
+    backed. `Payment::create` is guarded by `capture()`'s idempotency read and backed by MONEY-203's partial index.
+    **Out of population, each for a named reason (328):**
+    - `OfflinePayment`, `ArDunningAction` `reason_recorded`, `DisputeEvidence`, `OrderLine` and `InvoiceLine`
+      legitimately repeat;
+    - `Invoice` is **prevented** by `InvoiceNumber::next()`'s lock (470);
+    - `ReconciliationRun` and `Dispute` carry no read guard at all;
+    - the evidence commands are out of population;
+    - `DisputeOutcome` is guarded by a dispute **status** read, not by the outcome's key, and 396 leaves
+      `defended`/`conceded` re-outcomable, so a unique index would be wrong;
+    - `InvoiceEngine`'s reversal `OverflowCharge` is behind an invoice-row status read, which is a
+      read-modify-write on an aggregate and so `applyLateFee()`'s family (499), with the same trigger;
+    - C-Billing's `TrialLimit`/`DunningState` `first()`-then-`create` sit in Track 1's `Domain/` (5);
+    - `CardToken`, `SyncRun`/`AccountingSyncConflict` and `AccountingConnection` are unreachable (119, 81, 73a).
+
+    **The member:** `CheckoutEngine::checkoutCart()` refuses a reused authorisation with
+    `Order::where(business_id)->where(auth_token)->exists()` and later runs `Order::create([... 'auth_token' …])`,
+    while `orders` is unique only on `(business_id, order_number)`. Two concurrent presses both pass, the second
+    waits on the first's sellable lock, then re-reads stock and places a **second order on one authorisation**.
+    Ruling 45's one-shot nonce (*"this authorisation pays once"*) is broken under concurrency. Unreachable in
+    production (117), and briefed on rulings 204/130's and MONEY-204/206's precedent: the branch is driven by
+    existing fixtures, the fix is additive, and a mutation can redden it.
+
+515. **⭐⭐⭐ `orders.auth_token` needs NO catch arm: MONEY-204's retry loop already catches every unique violation
+    and re-runs the closure, so the loser meets the guard's OWN code. The design is index-alone, and the loop's
+    comments become load-bearing (RULED by the lane supervisor 2026-09-11 07:0x, briefed as MONEY-211).**
+    Ruling 470 orders the strategies: prevent, then absorb, then 465's tell. Two presses on one authorisation are
+    one act, and the sequential answer is a **refusal** (`AUTH_USED`). So the loser must get that refusal (512's
+    principle: *the loser gets the guard's exact refusal*). MONEY-210 had to copy its guard's message into a
+    catch arm to do that, and moved the message into a helper so the two could not drift. **Here nothing is
+    copied.** `checkoutCart()`'s `catch (UniqueConstraintViolationException $e)` sits outside `DB::transaction`
+    and is not narrowed to an index name. Measured on the live file:
+    - the auth-token violation raises at `Order::create`;
+    - the loop re-runs the closure;
+    - the guard's `->exists()` sees the committed winner and returns `AUTH_USED`, **from the guard's own code, so
+      it cannot drift**.
+
+    ⭐ Ruling 479's side-effect sweep, taken first: before `Order::create`, `checkoutCart()` writes nothing (the
+    sellable locks are reads), and every `Event::dispatch` comes after it. So the re-run is idempotent.
+    ⭐⭐ **The generalisable half: a catch written for one constraint becomes the handler for every constraint
+    added later.** That is a gift here, and it is also the hazard. A future edit narrowing the catch to
+    `orders_business_order_number_unique` would turn a raced authorisation into a raw `SQLSTATE[23505]` on the
+    storefront (206/416's shape). So **the comment is part of the fix, and a wave that makes an existing catch
+    load-bearing for a new constraint rewrites that catch's comment in the same commit.** ⚠️ `checkout()`, the
+    single-sellable path, has **no** `AUTH_USED` guard (304) and no production caller (170(3)). With the index, a
+    reused authorisation there fails five times and rethrows, where today it silently places a second order.
+    Loud beats silently wrong (66), and a guard on an unreached path stays refused (304), so it is recorded and
+    its comment says so.
+    ⭐ The proof's racer uses a **lower-case** order number, which the engine's `strtoupper(Str::random(6))` draw
+    can never produce, so only the authorisation can collide. Three discriminators beyond the row count: the
+    refusal code, zero order lines, and untouched stock. ⚠️ `X117Test` is class-based and untransacted (483), so
+    the test carries 462's dependency comment. **Blast radius: ZERO**, measured token by token across
+    `CheckoutBlockScreenTest`, `X117Test`, `CheckoutEngineSeamTest` and `X-198/CheckoutCaptureSeamTest`. ⚠️ The
+    census's `auth_token` grep inflates on `'oauth_token_fixture'` in two X-173 lines (mechanism 8), which are
+    named in Table B. Predicted floor **`tests 2542 · passed 2539 · FAILED 1 · errors 2`**, derived by listing.
+    ⚠️ Deploy note (501): no production order exists to duplicate (117). The dev database is unmeasurable from this
+    seat, so the brief's 3.4 stop-clause is 463's `UNRESOLVED` fallback. **Dispatched run 236, 1 of 2, before
+    these rulings were written (464).**
