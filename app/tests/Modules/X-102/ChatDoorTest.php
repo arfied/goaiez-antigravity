@@ -27,7 +27,7 @@ class ChatDoorTest extends TestCase
      * BUILD PROPOSAL: X-102's ChatTurnAction defaults the turn number to 1; it should compute and pass the real turn number. Owner: X-102
      * BUILD PROPOSAL: X-01 cannot listen to ChatTurnCreated and use ingestMessage because web visitors only have a session token, which ingestMessage would wrongly insert into the Person phone column since it lacks an '@'. Owner: X-01
      * BUILD PROPOSAL: ChatTurnCreated carries no message text, but could safely do so because the AgentTurns law prohibits unencrypted text in job payloads, not synchronous event payloads (EmailReplied safely carries text). Owner: X-102
-     * BUILD PROPOSAL: X-102 owes an event listener for C-Agent's AgentTurnAnswer to record the agent's reply as a ChatTurn. Owner: X-102
+     * BUILD PROPOSAL: X-102 should record the agent's reply synchronously. The premise of listening to AgentTurnAnswer is wrong, as AnswerAgentTurnJob proves callers use the synchronous return array, and the event carries no session ID. Owner: X-102
      */
     public function test_valid_key_creates_chat_session_for_right_business(): void
     {
