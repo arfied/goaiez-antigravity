@@ -16183,3 +16183,81 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     **Predicted floor `tests 2538 · passed 2535 · FAILED 1 · errors 2`**, derived by listing. **Dispatched run
     233, 1 of 2.** ⛔ `credit_terms` (499) remains NOT index-alone: `InvoiceEngine.php:41` is a plain `create`
     writer.
+508. **⭐⭐ MONEY-208 PASSES, and ruling 507's fixture-correction rule held on its first outing. The corrected
+    ordering fixture still reddens under a reversed ordering clause, so replacing an unreachable seeded state did
+    not neuter the proof it carried (RULED by the lane supervisor 2026-09-11 06:2x, by `date` `06:26`, on
+    `0af95c7d`).**
+    The surface is exactly the migration `2026_09_11_050000_x198_unique_merchant_gateway.php`, `X198Test.php`
+    (one import, one method), three value lines of `ConnectCardScreenTest.php` and the two state files. No
+    `GatewayEngine.php` or `ConnectCard.php` line is in the range, and `git diff -w --stat` equals the raw stat
+    (468).
+    `RED (no index):` is `Failed asserting that 2 is identical to 1.`, the sixth consecutive wave in 418's
+    shape. `RED (mutation):` carries `SQLSTATE[23505]` and `merchant_connections_business_gateway_unique`.
+    ⭐⭐ **Proof B is the load-bearing half.** Ruling 507 changed the values of ruling 204's ordering fixture from
+    three `stripe` rows to `stripe/square/clover` rewritten to `plaid`, and it required the corrected test to
+    redden under `->orderByDesc('id')`. It did. `ORDER RED`'s render lists `clover / square / plaid` and fails
+    `contains "acct_two" in specified order`. So the question 507 put — *does the constraint's fixture
+    correction keep the proof it carries?* — is answered by experiment rather than argued, which is 302's
+    method applied to a fixture.
+    §7 read raw is **`tests 2538 · passed 2535 · FAILED 1 · errors 2`**, exactly the floor listed before the run,
+    so route (iii) carried the re-gate (391). The ordering is serial by the files' own clocks: commit
+    `06:07:14`, then gate file `06:10:15`, then the mutation's insert `06:10:41`. Pushed `f147f027..0af95c7d`.
+    ⭐ **The racer hook has now transferred to a fourth table on its first run.**
+    **Ruling 499's census, re-run from its predicate** (`firstOrCreate(`, `updateOrCreate(`, `createOrFirst(`
+    over the eight ids, against every unique constraint, read hit by hit): **14 sites, 13 backed, ONE unbacked,
+    `credit_terms`.** Ruling 429's known-member check returned every one of 499's own members.
+
+509. **⭐⭐⭐ `credit_terms` is the FIRST absorb-family table whose writers DISAGREE on idiom. The design stays
+    absorb, the plain `create` becomes `firstOrCreate` in the SAME commit as the index, and the proof's second
+    discriminator is ruling 185's own column (RULED by the lane supervisor 2026-09-11 06:2x, briefed as
+    MONEY-209).**
+    Rulings 499 and 507 recorded `credit_terms` as *"NOT index-alone: `InvoiceEngine.php:41` is a plain `create`
+    writer"*. Measured this tick, writer by writer:
+    - `grep -rn -F -e "CreditTerm::create" -e "CreditTerm::updateOrCreate" app/app app/tests` prints **14**
+      lines: two production writers and twelve test fixtures.
+    - `grep -rn -F -e "new CreditTerm" -e "CreditTerm::insert" -e "CreditTerm::forceCreate"
+      -e "CreditTerm::firstOrCreate"` prints **nothing**.
+    - The two writers are `TermsSetAction:41`, an `updateOrCreate` keyed `business_id, customer_id`, and
+      `InvoiceEngine.php:39-49`, a read-then-`create` on the same two columns inside `issueInvoice()`'s
+      `DB::transaction`.
+    - Every fixture creates at most one row per (business, customer) in its method. Where
+      `CreditsScreenTest:86-99` issues two invoices for one customer, the engine **reads** the existing row.
+    ⭐⭐ **Ruling 466's question decides the design: both writers mean the same thing**, one terms row per
+    customer. So the loser hands back the winner (absorb, 470's second strategy), and neither re-mints (465) nor
+    refuses (330).
+    ⛔ **An index alone is ruling 232's hazard verbatim.** `issueInvoice()` has no catch around the terms write,
+    so the loser's `23505` would abort the whole invoice.
+    ⭐ **So the writer change and the index are ONE commit**, which is MONEY-203's ⛔⛔ in a new form. There, the
+    catch arm could not ship without the index. Here, the index cannot ship without the catch that
+    `firstOrCreate` supplies.
+    ⭐ **Ruling 460's savepoint term is already satisfied here** (473). `createOrFirst()` wraps its create in
+    `withSavepointIfNeeded()` (vendor `:2023-2027`), and `issueInvoice()`'s open transaction means a savepoint is
+    taken. The `23505` rolls back only to that savepoint, and `->first()` then reads the winner on a clean
+    transaction. Re-read in vendor this tick (`:750-756`).
+    ⭐⭐ **The proof has a second discriminator that the four index-alone waves did not.** Ruling 185 made
+    `$dueDays` come from `$terms->terms_type`, the stored row. The racer writes `net_60` and the engine would
+    write `net_30`, so `$res['invoice']->due_date` equals *now + 60 days* only if the engine used **the row
+    that won**. Two things are asserted this way: that one row exists, and that the invoice was issued against
+    it rather than against a stale in-memory object. The clock is frozen through the read and cleared as the
+    method's last line (33, 334).
+    ⭐ **The mutation restores the PRE-WAVE code**, and that is correct here even though ruling 225 warned
+    against it. 225's hazard is a mutation that reddens a control assertion as well as its subject. This method
+    has no control: its first assertion is the subject, and the old writer's `23505` aborts before any assertion
+    runs. So the RED carries `SQLSTATE[23505]` and `credit_terms_business_customer_unique`, and it can come from
+    nothing else.
+    ⚠️ `customer_id` is **nullable** (`nullOnDelete`, ruling 428's `ContactMergeAction`). Postgres treats NULLs
+    as distinct in a unique index, so terms rows a merged contact orphans never collide, and a future merge is
+    not refused by this index. That is deliberately **not** `NULLS NOT DISTINCT`: two orphaned rows are two
+    customers' history, not a duplicate.
+    ⚠️ **Deploy note (501).** No production `credit_terms` duplicate can exist. `issueInvoice()` has no
+    production caller (490), and `Credits::setTerms()` `findOrFail`s an existing term, so its `updateOrCreate`
+    only ever updates (347).
+    **Predicted floor `tests 2539 · passed 2536 · FAILED 1 · errors 2`**, derived by listing
+    (`gate-money208.txt` §7 plus item 2's one method). **Dispatched run 234, 1 of 2, before this ruling was
+    written (464).**
+    ⭐ **After MONEY-209 the absorb family is closed on its index half.** Two items are left, and neither is
+    index-alone:
+    - **330's residual** (`payment_plans`, `ar_collections_packages`): the losers are sequential refusals, so
+      it takes 465's refuse design.
+    - **`applyLateFee()`'s headroom**: a read-modify-write on an aggregate (499). ⛔ Its trigger is a production
+      invoice writer.
