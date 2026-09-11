@@ -221,6 +221,22 @@ class CReviewsScreensTest extends TestCase
         $this->assertNotNull($ticket->resolved_at);
     }
 
+    public function test_tickets_resolve_leak(): void
+    {
+        $otherBiz = self::provisionTenant(['name' => 'Other Biz']);
+        $req = ReviewRequest::create(['business_id' => $otherBiz->id, 'rating' => 2]);
+        app(QaTicketAction::class)->handle($otherBiz->id, $req->id);
+        $ticket = QaTicket::where('business_id', $otherBiz->id)->first();
+
+        try {
+            Livewire::test(Tickets::class, ['businessId' => $this->bizId])
+                ->call('resolve', $ticket->id, 'fixed the scheduling');
+            $this->fail('resolve accepted an id this business cannot see.');
+        } catch (ModelNotFoundException $e) {
+            // the refusal: propagating renders a 404, which discloses nothing
+        }
+    }
+
     public function test_loss_alerts_mount_and_empty(): void
     {
         Livewire::test(LossAlerts::class, ['businessId' => $this->bizId])
