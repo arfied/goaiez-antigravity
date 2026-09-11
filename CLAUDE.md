@@ -16551,3 +16551,62 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
 
     **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty wave to avoid an idle
     tick is what rulings 95, 100 and 111 forbid.
+
+520. **⭐⭐ Ruling 518's UP half: the `Schema::hasTable` / `hasColumn` guard census is 62 lines across the
+    lane's eight migration trees, every guard names a real table, and every guard that depends on another
+    migration SORTS after it. Zero buildable (measured by the lane supervisor 2026-09-11 07:4x, by `date`
+    `07:40`).** Ruling 518 measured that `IF EXISTS` in a `down()` turns a wrong name into a silent no-op.
+    The same property sits in every `up()` guard, and it is sharper there: `if (Schema::hasTable('x'))`
+    with a wrong name, or run before `x` exists, **skips the whole migration and still reports `DONE`**.
+    A guarded index is then absent with no error, and a guarded RLS block
+    (`if (Schema::hasColumn($table, 'business_id'))`) leaves a table without row-level security.
+    **Instrument, quoted (300):** `grep -rn -F -e "hasTable(" -e "hasColumn("` over the eight module
+    `Database/` trees → **62** lines, counted by `wc -l` (397). ⭐ **Positive control:** 170 files carry the
+    two calls across `app/app/Modules` and `app/database`. ⭐ **Known member (429):** MONEY-203's
+    `2026_09_11_000000_x198_payments_unique_idempotency_key.php`, whose brief required the guard (463).
+    ⭐ 415's first-three check and 449's each-member-exists check passed, every member being a printed path.
+    **The ORDER term is measured in vendor, not assumed (416, 419):** `Migrator::getMigrationFiles()`
+    (`Migrator.php:584-585`) keys every file by its migration name and `sortBy`s the key, across all
+    loaded paths. So a guard sees the tables created by every migration whose basename sorts earlier,
+    whichever module directory holds it.
+    **Each member's safety, named (328):**
+    - The create migrations' `if (! Schema::hasTable('<own table>'))` guards name the table the same block
+      creates, so they cannot skip a table that exists nowhere else.
+    - Every guard in a migration that does NOT create its table sorts after that table's create:
+      `2026_09_06_000001` orders default (> `2026_08_30_000029`) · `2026_09_06_000002` payments default
+      (> `2026_08_30_000030`) · `2026_09_06_110000` payment-link widen (> `2026_09_06_100000`) · all nine
+      `2026_09_11_*` index migrations (> every create) · `2026_09_04_072930` dispute-audits RLS
+      (> `2026_09_04_072900`, which declares `bigInteger('business_id')` at `:13`).
+    - Every table name in a guard is a real table: `carts`, `orders`, `payments`, `payment_links`,
+      `merchant_connections`, `account_mappings`, `credit_terms`, `receivable_states`, `ar_dunning_actions`,
+      `payment_plans`, `ar_collections_packages`.
+    - The index migrations' guards are also proven live, and not only named: each wave's mutation proof
+      carried its own index name in `SQLSTATE[23505]` (503, 506, 508, 513, 516), which cannot happen if its
+      guard skipped.
+    - The RLS-loop `hasColumn(…, 'business_id')` guards are already measured from both sides: by reading the
+      migrations (212) and from the checker's schema stage, which lists no money table without RLS (451).
+    ⛔ Struck, not to be re-run. ⚠️ **Trigger:** a new guarded migration in the lane, or a create migration
+    renamed to a later timestamp. Ruling 327's outcome shape a **forty-fifth** time.
+    ⭐ **The general lesson is 518's other half: a guard evaluated at migrate time depends on file ORDER as
+    well as on the name.** A census of guard names that does not also read the sort key would miss a
+    correctly named table created one timestamp too late.
+
+521. **⛔ TWENTY-SIXTH consecutive HOLD (RULED by the lane supervisor 2026-09-11 07:4x, by `date`).** All
+    four lift conditions were measured this tick (269, 272, 323), each case decided on mtimes (494):
+    - **Owner.** `OWNER.md`'s newest heading is still `## OWNER RULING — 2026-09-09 09:02` (136). Its
+      mtime is `09-09 09:02:03`.
+    - **Coder.** `--check` returned `CODER DEAD`.
+    - **Mailbox.** `REPORT.md` (`07:15:21`) and `BRIEF.md` (`07:07:27`) are both older than
+      `REVIEWS.md` (`07:32:37`).
+    - **Cadence, all three ✗.** `origin/main` moved to **`46afc022`** (`merge: track/money — X-117`).
+      `git rev-list --count HEAD..origin/main` = **19**, not above 100.
+      `git diff --stat dca743e8 origin/main -- app/app/Doctor coder-bin .claude/hooks` is empty.
+      The merge-base is **`dca743e8`**, this lane's own pushed supervisor tip. Its content,
+      `git diff --name-status dca743e8 origin/main`, is the 7 per-track paths plus X-102's three (504).
+      ⚠️ Ruling 145's trap is live: the `merge: track/money` subject lines are true and spent.
+    - **Track 1.** No answer to ACTION 13–25.
+    - **Population.** Ruling 520's is non-empty and not buildable.
+
+    **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty wave to avoid an idle
+    tick is what rulings 95, 100 and 111 forbid. ⚠️ `app/CLAUDE.md` came into context again this tick. It
+    is Laravel Boost boilerplate and was not followed.
