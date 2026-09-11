@@ -23,7 +23,7 @@
    "fails": "COMMIT"
   },
   "citation": {
-   "violations": 3,
+   "violations": 0,
    "fails": "COMMIT"
   },
   "schema": {
@@ -31,7 +31,7 @@
    "fails": "MERGE"
   },
   "capability": {
-   "violations": 207,
+   "violations": 204,
    "fails": "MERGE"
   },
   "anchor": {
@@ -1551,6 +1551,10 @@
   {
    "at": "2026-09-10T21:33:58",
    "note": "run 157: Arm B \u2014 The JobCompleted event carries no csatScore, and the column was dropped from review_requests and qa_tickets on 2026-09-09. Failing test added."
+  },
+  {
+   "at": "2026-09-11T11:01:00",
+   "note": "run 158: merged origin/main 73b8fe08 into track/reviews (460 behind \u2192 0, owner rule 2026-09-09 trigger 1); conflicts: none; X-102 42501 errors gone; failing set: 8 baseline, 1 NOT BUILT, 2 INCOMING"
   }
  ],
  "resolved": [

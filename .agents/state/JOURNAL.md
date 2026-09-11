@@ -851,3 +851,6 @@
 - `2026-09-10T21:09:01` note: run 156 item 3: Arm A — test_home_renders_today goes green, risky drops to 0.
 - `2026-09-10T21:09:01` note: run 156 item 4: Arm A — Job completion time is reachable at X-121's completed_at column using EntityReadAction.
 - `2026-09-10T21:33:58` note: run 157: Arm B — The JobCompleted event carries no csatScore, and the column was dropped from review_requests and qa_tickets on 2026-09-09. Failing test added.
+- `2026-09-11T11:01:00` note: run 158: merged origin/main 73b8fe08 into track/reviews (460 behind → 0, owner rule 2026-09-09 trigger 1); conflicts: none; X-102 42501 errors gone; failing set: 8 baseline, 1 NOT BUILT, 2 INCOMING
+- `2026-09-11T11:01:00` stage citation = 0
+- `2026-09-11T11:01:00` stage capability = 204
