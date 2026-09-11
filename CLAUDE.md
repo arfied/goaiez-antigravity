@@ -9629,6 +9629,53 @@ Watch for: <the trap that applies, by name>
   Board: proposals **13** (six in the eleven, all shut unless wave 183 re-derives the X-188 row as buildable) ·
   `app/app/Modules/` **0** · `CLOSED:` **7**. Wave 184 then takes the stale `C-Mail G11-03` `UNRESOLVED`
   correction, re-measured. Re-run every grep; never inherit one.
+- ⚠️⚠️ **A state that needs a method to be reached AGAIN has the second call as a link, and a brief that prints
+  the method without its caller has left that link out.** Wave 183's X-188 row is blocked, it says, on *"no
+  production caller to NumberParkAction"*. True, but it is one missing link of two: `assignLiveNumber`'s only
+  production path is `OnboardingStartAction`, and `:37` `provision($user)` creates a NEW business on every call.
+  So no production path reaches `assignLiveNumber` twice for one business id, even with a park trigger. My
+  question 1a printed `assignLiveNumber` and never its caller (tick 307, with the blocker count wrong).
+  **Before crediting "blocked by X", grep the callers of every method the sequence calls more than once.**
+- ⚠️ **A template line whose value is a COMMAND gets the command's NAME back.** `GENERATOR : cat
+  scratch/w183-generator.sh` came back as that literal string, from an `echo`. That is tick 297's leak with the
+  generator field as the carrier, and it defeats tick 290's control. The file was recoverable only because
+  `ARTIFACTS` `stat`s its path (tick 311). **Name the field by what it must CONTAIN, e.g. "the file's contents,
+  pasted".**
+- ⚠️ **The tick-314 `C-Mail G11-03` backlog item was DISCHARGED before it was queued — measured at tick 317,
+  never brief it (tick 191).** `JOURNAL.md:832` (`2026-09-05T21:42:57`) already corrects the two stub-era rows
+  forward. `:835` is a later `UNRESOLVED` on a different ground: `mail_domains.dkim_public_key` has no producer,
+  with `grep -rn dkim_public_key app/app app/database` giving the migration and `DnsCard`'s reader only. That
+  row is provider-owned and rule-09 external, so it stands. **A backlog line that names a row by its text must be
+  re-derived against every LATER row for that id.**
+- ⚠️ **No cancellation event exists anywhere in this tree, so X-188's park trigger is not lane-buildable.**
+  `App\Services\Billing\SubscriptionCancellation` dispatches nothing and touches no number. `TenantDeletion:589`
+  calls `releaseFromTenant()` and then deletes the business, and all four X-188 tables are `cascadeOnDelete` on
+  `business_id`. `ParkListScreenTest:19`'s trigger would need a root dispatch.
+- ⚠️ **`C-Sms/Domain/SmsComposer.php:11`'s `use X204\Models\Suppression` has no code use.** The file names the
+  model only in that import and in the comment at `:65`, and the consent check goes through
+  `ConsentService::decide()` (`Domain`, exempt). One of the lane's nine boundary rows has no dependency behind it.
+- ⭐⭐ **The X-188 dead-`$businessId` shape (waves 132–135) is LANE-WIDE, and it was found by reading the file
+  behind a doctor row.** `grep -rln 'public int .businessId = 0'` across the eleven modules gives **20** files,
+  and only **3** declare `mount` (`X-01/Ui/Thread.php`, `X-124/Ui/ChatDockEvery.php`,
+  `X-188/Ui/PoolInventory.php`). ⚠️ The pile is **NOT yet triaged per id**: routing, whether the property feeds
+  a query, and whether the table has a live writer are per component (ticks 187, 209, 218, 221, 281). Never
+  write "all seventeen render empty". **When one module carries a component-wide defect, grep the whole lane for
+  its shape on the tick it is fixed.**
+- **Backlog at tick 317 — wave 184 is C-Sms `Thread`'s tenant wire, and it is a BUILD.** RULED, measured this tick.
+  - `routes.generated.php:12`, tenant group only. `#[Locked] public int $businessId = 0`, no `mount`, `render()`
+    returns `collect()` unless `businessId > 0`.
+  - `ThreadScreenTest` asserts `assertOk()` only.
+  - `sms_compositions` is `ENABLE`+`FORCE` RLS with `USING` and `WITH CHECK`.
+  - Its writer `SmsComposer.php:96` is reached through C-Sms's own `SendRequested` listener, which five modules
+    dispatch.
+  - ⛔ Shape withheld (32-for-32). ⛔ `DonottextList` is not paired (its read is also a cross-module `Models`
+    import). ⛔ No numbers published (tick 208).
+  - Wave 183 is pushed at this tick's notes commit.
+  - **Wave 185** is either the per-id triage of the other seventeen unmounted components, or `DonottextList`,
+    re-measured when briefed.
+  - Board: proposals **13** · `app/app/Modules/` **0** · `CLOSED:` **7**. `9 12` vs `origin/main`, and no merge
+    condition holds.
+  - Re-run every grep; never inherit one.
 
 ## Style
 
