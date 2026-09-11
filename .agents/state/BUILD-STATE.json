@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-11T15:17:43",
+ "updated": "2026-09-11T16:00:09",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1622,6 +1622,12 @@
    "module": "X-124",
    "chose": "the linked stylesheet test checks by position that every dark variant class name sits inside a prefers-color-scheme dark block, after a brace balance check and with a non-zero count inside, and the check is proven by mutating the variant to a data attribute form that the class selector needle cannot see",
    "at": "2026-09-11T15:17:43",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-108",
+   "chose": "the waitlist screen renders in the owner layout with mount resolving the tenant, and its test renders the empty branch and a row written through WaitlistJoinAction by real GETs, proven by mutating the tenant resolution",
+   "at": "2026-09-11T16:00:09",
    "ruling": "R245"
   }
  ],
