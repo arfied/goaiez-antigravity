@@ -393,7 +393,7 @@
             <button
                 type="button"
                 wire:click="toggleAdvanced"
-                class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm text-sm font-medium {{ $advancedEnabled ? 'text-rose-700 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:text-rose-300' : 'text-indigo-700 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/40 dark:text-indigo-300' }}"
+                class="inline-flex items-center px-4 py-2 border border-rule dark:border-gray-700 rounded-md shadow-sm text-sm font-medium {{ $advancedEnabled ? 'text-rose-700 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:text-rose-300' : 'text-indigo-700 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/40 dark:text-indigo-300' }}"
             >
                 {{ $advancedEnabled ? 'Turn off Advanced tools' : 'Turn on Advanced tools' }}
             </button>
