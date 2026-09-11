@@ -10,6 +10,7 @@ use App\Modules\X117\Actions\OrderCancelAction;
 use App\Modules\X117\Domain\CheckoutEngine;
 use App\Modules\X117\Domain\OrderNotCancellableException;
 use App\Modules\X117\Events\InventoryUpdated;
+use App\Modules\X117\Models\Cart;
 use App\Modules\X117\Models\Order;
 use App\Modules\X117\Models\OrderLine;
 use App\Modules\X117\Models\Sellable;
@@ -513,5 +514,59 @@ class X117Test extends TestCase
             1,
             Order::where('business_id', $biz->id)->where('order_number', 'ORD-TAKEN1')->count()
         );
+    }
+
+    public function test_a_concurrent_add_to_cart_is_absorbed_into_one_cart_for_the_session(): void
+    {
+        // This test turns on X117Test being a CLASS-BASED PHPUnit file, which Pest's
+        // ->use(RefreshesTenantDatabase::class)->in('Modules') binding does NOT reach, so the racer's
+        // row COMMITS on pgsql_migrate and addToCart() can see it. If TestCase ever binds a refresh
+        // trait directly, this test stops proving anything -- while very likely still passing.
+        $biz = TestCase::provisionTenant(['name' => 'Cart Race Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $sellable = Sellable::create([
+            'business_id' => $biz->id,
+            'name' => 'Race Item',
+            'sku' => 'RACE-1',
+            'inventory_quantity' => 10,
+            'unit_price_cents' => 1500,
+        ]);
+
+        $sessionToken = 'sess_cart_race';
+
+        // A second request lands a cart for the same session between updateOrCreate()'s read and its
+        // insert. It writes on pgsql_migrate, a separate session, so it commits. RLS is FORCED and
+        // constrains the owner role too.
+        $racer = DB::connection('pgsql_migrate');
+        $racer->statement("SET app.business_id = '{$biz->id}'");
+
+        Cart::creating(function () use ($racer, $biz, $sessionToken): void {
+            $racer->table('carts')->insert([
+                'business_id' => $biz->id,
+                'session_token' => $sessionToken,
+                'items' => '[]',
+                'total_cents' => 0,
+                'expires_at' => now()->addMinutes(15)->toDateTimeString(),
+            ]);
+        });
+
+        try {
+            $this->engine->addToCart($biz->id, $sessionToken, $sellable->id, 1);
+        } finally {
+            Cart::flushEventListeners();
+        }
+
+        // The loser absorbs the winner's row: one cart for the session.
+        $this->assertSame(
+            1,
+            Cart::where('business_id', $biz->id)->where('session_token', $sessionToken)->count()
+        );
+
+        // And updateOrCreate() filled the loser's line onto the cart that won, so nothing was dropped.
+        $cart = Cart::where('business_id', $biz->id)->where('session_token', $sessionToken)->first();
+        $this->assertSame(1, count($cart->items));
+        $this->assertSame($sellable->id, (int) $cart->items[0]['sellable_id']);
+        $this->assertSame(1500, $cart->total_cents);
     }
 }
