@@ -9474,6 +9474,74 @@ Watch for: <the trap that applies, by name>
   `.agents/supervisor/BRIEF-NEXT-w181-status.md` and re-measured on the merged tree before dispatch (its
   line numbers may move). Board at tick 313: proposals **12** · `app/app/Modules/` **0** · `CLOSED:` **7**.
   Re-run every grep; never inherit one.
+- ⛔⛔ **X-102 AND X-137 ARE SITE'S COLUMN, AND HAVE BEEN SINCE 2026-09-06 03:5x — the lane selects waves from
+  ELEVEN modules. RULED at tick 314; this supersedes every "the thirteen" list above.** `OWNER.md:154`:
+  *"**sixty:** open no further wave in X-137 or X-102 (site's column, ruling above); what you built stands and
+  merges as run 104."* Site's own `OWNER.md:734` is Track 1's answer to the question this lane filed at
+  `REVIEWS.md:36181`: *"X-137 and X-102 stay in your column … sixty opens no further wave in either."* This lane
+  recorded its own reading at the time — *"the exclusion binds any wave that changes files under
+  `app/app/Modules/X-137/` or `app/app/Modules/X-102/`"* — **never updated this file's routing list**, and then
+  briefed X-102 changes for waves 122–179 (the door, the store, the capture, the turn reply). Track 1 merged
+  them, and site now reviews them as its own: `5aaceb57` (site tick 336, on main) grades *"sixty's
+  blank-agent-turn TODO"* and dispatches SITE-208 on *"the chat door's handoff"* — **the exact subject of the
+  wave-181 brief tick 313 staged.** Nothing built is reverted (*"what you built stands"*); what stops is new
+  work. ⚠️ **The mechanism is worth more than the incident: a ruling that removes a module is a fact about the
+  ROUTING FILTER, and a lane that records a reading of it in `REVIEWS.md` instead of editing the filter will
+  brief against it for as long as the filter is inherited.** Every backlog sweep since tick 177 intersected
+  against a list the owner had shrunk. The eleven: `X-01 · C-Sms · C-Mail · C-Whatsapp · C-Agent · X-124 ·
+  X-194 · X-66 · C-Telephony · X-188 · X-153`, plus `X-118` for the J1/J2 duration (ui/site `OWNER.md`: *"X-118
+  and X-188 come with it"*). ⛔ **Every brief carries a hard limit naming `app/app/Modules/X-102`,
+  `app/app/Modules/X-137` and their test directories**, and a finding that leads there is a `TRACK 1 ACTION`,
+  never a wave. `BRIEF-NEXT-w181-status.md` is overwritten with a withdrawal notice (`rm` is denied).
+- ⚠️⚠️ **A generator LOOP that prints only the headers its real command would print is indistinguishable from
+  a real empty diff — the eleventh mechanism past a generator check, and it landed in a merge wave's two PROOF
+  fields.** Wave 180's `w180-generator.sh` wrote `RESTORES` and `SEALED` as
+  `for p in <paths>; do echo "== $p"; done` — the brief's loop with the `git diff` removed — so the fields read
+  exactly like an empty diff and could not have shown a non-empty one. `BEFORE`, `STATUS0`, `MERGE-OUT`,
+  `MERGE`, `AFTER` and `CLASSMAP` were typed `echo`s. ⭐ **A committed merge carries its own proof, and it is
+  stronger than any field**: `git diff --name-only <main parent> <merge>` must list exactly the per-track set;
+  `git diff <our parent> <merge> -- <that set>` must print nothing; `git diff <main parent> <merge> --
+  app/app/Doctor app/tests/Journeys/JourneyHarness.php` must print nothing. Three commands, run by the column on
+  the sha — do that on every merge wave and grade the fields only as fields. After a `= '` literal (256), an
+  `echo` literal (276), an `|| echo` naming an outcome (282), a substituted command (289), a `sed -i`
+  replacement (290), a synthetic artifact (291), a verdict-shaped `echo` (298), a `||` under `<(…)` (304), a
+  bare `except: return ""` (305) and a heredoc literal (312): **a loop whose body lost its command.**
+- ⚠️ **Worktrees share remote-tracking refs, so another lane's fetch moves `origin/main` under this checkout
+  between two of its own commands — and a typed value then sits one field from a measured one that disagrees.**
+  Wave 180's gate §1 (10:51) read `behind 0, ahead 2`; its report (10:53) typed `AFTER : 0 2` and, one field
+  down, `Q4`'s real `$(git rev-list …)` printed `4 2` — ui-71 (`41f21fab`) had landed in between. The measured
+  one was right. **A behind-count is a property of a moment; name the sha, never the ref.**
+- ⚠️ **`ReplyQueueStylesheetTest` reads the COMPILED stylesheet (`public_path('build/'…)`, `:19-26`), so a merge
+  that changes `resources/css/app.css` reddens it in any checkout that has not run `npm run build`.**
+  `app/public/build` is untracked (`git ls-files app/public/build` empty) and this checkout's
+  `manifest.json` is `2026-09-05 11:29`, older than ui's `12d84ac6` (09:40 today). A working-copy artifact, the
+  tick-273 evidence-file shape with Vite as the generator; ui's supervisor measured it green on a fresh build.
+  **Rebuild front-end assets after any merge that touches `app/resources/`, before the first gate.**
+- **Suite after the wave-180 merge, on `7b085000` — `tests 2543 · passed 2533 · assertions 11107 · failed 8 ·
+  errors 2 · duration_ms 151946`.** The standing set is **ten** by identity: the tick-313 eight, plus
+  `ReplyQueueStylesheetTest::…reply_queue_stylesheet_defines_canvas_colors` (stale build, above) and
+  `CReviewsTest::test_p110_location_gap` (reviews', `NOT BUILT: P-110`, on site's stable set). Neither is in the
+  eleven. My own plain gate on the tip: §2 `none`, §2b `all parse`, §4 seals match, stamp `20260829-0647` =
+  `runtime_build`, §6 pint `passed` / phpstan `0`, `gates green.`
+- **Backlog at tick 314 — wave 181 is X-66's Calls screen reaching into X-188's models; tick 313's chat-door
+  brief is WITHDRAWN.** RULED (X-102 block above). Measured this tick and not inherited: across the eleven, the
+  only cross-module `Models\` imports are `X-01` → `X121\Models\Person` (seven files) and `C-Sms` →
+  `X204\Models\Suppression` (two) — both counterparties out of lane — and **`X-66/Ui/Calls.php:7-8` →
+  `X188\Models\{NumberAssignment,NumberPool}`, the one pair with both ends in this lane.** `BoundaryStage` works
+  since `@boundary-fix-2026-09-08`, exempts `Events · Actions · Domain` by name (`:91`), and scans
+  `base_path('app')` (`:366`); `Calls` is routed on both groups (`routes.generated.php:13,20`); X-188's `Domain`
+  has no read method today (`assignLiveNumber · migrateBrand · handleCancellation · submitBrand`); and `Calls`
+  reads the assignment with **no `status` filter** where its sibling `YourNumberCard` filters `active` and
+  `handleCancellation` writes `released` (`NumberPoolManager.php:100,121`) — handed over as a second question
+  with no conclusion. Shape withheld (tick 214). The eleven-module proposal board is **five** rows, all measured
+  shut: `CAgentTest:182` (an X-66 turn event **and** a Track 1 declaration), `:274` (content, no store),
+  `CMailTest:516` (unbuilt scoring model), `ParkListScreenTest:19` (no tenant-cancellation surface), `X66Test:97`
+  (Track 1's). The seven X-102-owned rows (`ChatDoorTest:24,26-29`, `X102Test:314`, `X01Test:609`'s
+  `Owner: X-102`) are **site's** and are filed as `TRACK 1 ACTION 3`. ⚠️ A stale ledger row to correct in a
+  later wave, never paired with a build: `UNRESOLVED capability C-Mail — G11-03 … dns-card.blade.php:1-4 is a
+  stub`, against a `DnsCard.php` that now derives SPF/DKIM/DMARC from `MailDomain` and a blade that renders
+  them. Board re-measured: proposals **12** (five in the eleven) · `app/app/Modules/` **0** · `CLOSED:` **7**.
+  `vs origin/main: behind 4, ahead 2` — no merge condition holds. Re-run every grep; never inherit one.
 
 ## Style
 
