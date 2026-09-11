@@ -14402,3 +14402,185 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     three members were chosen because each is a ledger line whose safety IS the grep's emptiness, which
     is ruling 429's known-member corroboration applied to a staleness check: **run the census against a
     member the ledger already rules on, or it cannot tell you it is working.**
+448. **⭐⭐⭐ THE DOCTOR LANE SLICE IS BYTE-IDENTICAL ACROSS A 112-COMMIT MERGE AND 32 WAVES — and ruling
+    307's "29 findings" beside a prose list of TWENTY-SIX is ruling 371's family inside this ledger's own
+    record for the ELEVENTH time; the three it counted and never named are now named (measured by the
+    lane supervisor 2026-09-11 01:5x, on MONEY-200's `doctor-money200.txt`).** Ruling 307 closed the
+    doctor axis with *"the lane's whole doctor slice is now governed — **29 findings** measured this tick
+    and not one buildable here: 12 cross-module boundary imports · 2 `X-117 @provides … agent_reachable` ·
+    1 `G18-29 the ⑤ names no refusal` · the 4 vacuous cells · 7 `no runtime proof`."* **12+2+1+4+7 = 26.**
+    The count and the enumeration disagreed by three, and no tick noticed for thirty-two waves, because a
+    count reads as its own corroboration.
+    ⭐⭐ **The instrument is a DIFF of two retained captures, not a re-derivation from prose.**
+    `doctor-money168-after.txt` (Sep 10 00:20, 87985 B, **pre-merge**) and `doctor-money200.txt`
+    (Sep 10 23:18, 86442 B, **post-merge**) were each sliced to the lane's eight ids in two halves, and
+    `diff` returns **EMPTY on both** — over files that are otherwise 1543 bytes different. ⭐ That is
+    ruling 302's experiment shape (*a before/after capture whose byte counts are equal is that measurement
+    in one line*) applied across a **merge**: the two trees differ and the money slice does not. **14 + 15
+    = 29**, corroborating the report's count from an independent extraction, and ruling 415's first-three
+    check passes on both halves (each is a genuine ` · ` violation line).
+    **The three unnamed members are `C-Billing · G1-78`, `X-198 · G1-34` and `X-199 · G1-60`, all three
+    *"the ⑤ names no refusal — and this capability CAN refuse"*.** Ruling 32 names the second and third as
+    group (1), **frozen-plan blocked**; `G1-78` is the same shape in the same generated file class, and
+    ⭐ it is measured **present in the PRE-merge capture too**, so it is not new. ⛔ None is buildable here:
+    `capabilities.php` is **generated** and harvested from the frozen plan (29, 32, 295), editing a cell to
+    make a check pass is §298's annotation prohibition, C-Billing `Domain/` is Track 1's (5), and owner
+    ruling 15 governs the inverse shape (a cell *gaining* a refusal clause), not this one.
+    ⭐⭐ **RULED: a census that records a COUNT beside a PARTIAL enumeration hands the next tick a number it
+    cannot audit** — the next tick cannot tell a NEW member from one the prose never named, and the count
+    matching is exactly what stops it looking. That is ruling 371's family with a new encoding after a
+    member list (371), a count (375c, 383), a line range (395), a layout (407, 410, 412), an excluded
+    syntax (415) and a list of values (420): **a count paired with an INCOMPLETE list, which is worse than
+    either alone.** ⛔ **The remedy is not a longer prose list — it is to RETAIN THE CAPTURE AND DIFF IT.**
+    A capture is bytes and a prose summary is a claim; the diff answers *did the membership move* without
+    anyone re-deriving it, and it is the only instrument that survives its own author.
+
+449. **⭐⭐⭐ A BRIEF THAT DICTATES A MEMBER LIST BY NAME HAS DICTATED THE CENSUS'S MEMBERSHIP — this one
+    invented three table names and omitted three real ones, and its own clause FORBADE the check that
+    would have caught it, converting an instrument defect into a false retention finding (RULED by the
+    lane supervisor 2026-09-11 01:5x, on MONEY-200's footprint capture).** MONEY-200's item 2.2 dictated
+    *"every row whose table name is one of this lane's **33**"* and listed them. Measured against the
+    migrations — the truth source, ruling 431 having established that this lane's `DB::statement` adds no
+    column or table beyond ruling 41's `ALTER COLUMN url TYPE text`:
+    `grep -rn -F -e "Schema::create('invoice_numbers'" -e "Schema::create('cart_items'" -e
+    "Schema::create('sync_conflicts'" app/app/Modules` returns **NOTHING** — **three of the brief's names
+    name no table in this application** — while
+    `grep -rn -F -e "Schema::create('accounting_sync_conflicts'" -e "Schema::create('dunning_states'" -e
+    "Schema::create('trial_limits'"` returns three lines in **money's own migrations**
+    (`X-173/…000092:51`, `C-Billing/…000025:66`, `:52`), and **all three ARE in the footprint's unbounded
+    list**. So `LANE: 30` is three short and the answer is **LANE: 33** — ruling 212's measured population
+    exactly.
+    ⭐⭐ **The count matching 33 is what made the list look corroborated.** This is ruling 415's mechanism
+    — *a full, plausible, entirely wrong answer* — arriving in a **dictated member list** rather than in a
+    grep filter, and **415's own prescribed tell cannot fire**: *read the first three members and confirm
+    each is an instance of the predicate* passes trivially, because every name in the list **is** a
+    plausible table name. ⛔ **The check that DOES fire is the complement: confirm each member EXISTS.**
+    ⭐⭐⭐ **The dangerous half is the brief's own clause**, dictated verbatim at `BRIEF.md:103-105`:
+    *"⚠️ If a money table you expect is **absent** from the unbounded list, that means something DOES
+    delete from it on a clock — **that is a result, not a miss.** Do not go looking for it; the absence is
+    the answer."* **That sentence converts a wrong name into a retention finding and explicitly forbids
+    the one measurement that would disprove it.** Had this tick trusted it, it would have recorded that
+    something on a clock deletes rows from `dunning_states`, `trial_limits` and `sync_conflicts` — three
+    tables rulings 201 and 88 measured have **no writer at all** — which is ruling 43's fiction
+    manufactured by a brief, in the one document a later tick reads as the spec.
+    **RULED, two standing consequences.** (1) **A brief that dictates a member list by NAME requires the
+    run to report, under `REFUSED:`, any name that matched NOTHING** — an unmatched name is an instrument
+    defect and is **never** read as a result. (2) ⛔ **A brief never tells a run that an absence is
+    self-explanatory.** That is ruling 400's disproving measurement forbidden in advance, and 400 is this
+    ledger's highest-yield habit with twelve firings; a clause that pre-empts it is the one kind of
+    instruction that can make a census worse than not running it.
+    ⚠️ It is the ruling 66/75/82/92/94/106/118/147/153/175/183/189/192/193/195/198/200/202/204/207/210/
+    215/217/218/219/222/225/226/228/229/231/232/233/235/237/238/241/242/243/244/246/247/252/254/271/284/
+    287/293/299/300/308/314/331/336/341/398 dictation family a **thirty-fifth** time, with a new
+    instrument: a dictated **signature**, **line**, **needle**, **floor**, **test**, **command**,
+    **sweep**, **report-field list**, **proof RED line**, **resolution policy**, **finalisation step**,
+    **pint path list**, **mailbox path**, **working directory**, **ambient state**, **quotation**,
+    **cleanup**, **prohibition**, **test double** — and now a **MEMBER LIST**, which is alone in the
+    family in being **unrecoverable from the output**: a dictated pattern can be re-derived by re-running
+    it, and a dictated list cannot be distinguished from a correct one by reading what it returned.
+
+450. **⭐⭐ ALL 33 OF MONEY'S TABLES ARE UNBOUNDED — nothing on a clock deletes a row from any of them —
+    and it yields ZERO buildable, because almost nothing in this lane has a production writer (measured
+    2026-09-11 01:5x; rulings 64, 95, 100, 111, 327).** Ruling 428 closed the DELETE-and-CASCADE family
+    and could not reach the retention half: *which money tables does nothing on a clock delete a row
+    from?* `db:footprint --unbounded` is the house's own instrument for it (429 — *"Only the tables
+    nothing on a clock deletes a row from"*, its own docblock), and the answer is **all 33**.
+    ⛔ **Not a retention wave**, and the reasoning is measured rather than assumed: **an unbounded table
+    nothing writes to is not a retention problem**, and this lane's writers are almost all absent —
+    `invoices` (170: nothing in production raises one; `issueInvoice`'s only non-test callers are three
+    evidence commands) · `payments` (234: `credit_terms.card_on_file_token` has no production writer, so
+    `capture()`'s only production caller never fires) · `sellables`/`carts`/`orders`/`order_lines` (117:
+    the storefront's catalogue has no production writer, so no cart can be built) · `disputes` (79) ·
+    `payouts` (51) · `card_tokens` (119) · `meters` (88, 338, 429: no writer **anywhere in the app**) ·
+    `dunning_states` (201: the create branch is unreachable from either screen) · X-173's four (73a:
+    `connect()` refuses by design; 81: `syncTransactions` has no production caller). **The one table with
+    a reachable production writer is `credit_ledger_entries`, through the credits top-up button.**
+    ⛔ The **scale** half is already TRACK 1 ACTION 13 (346 — the paginator is Track 2's kit and a bounded
+    aggregate is cross-lane). ⚠️ ⛔ **No conclusion is drawn from any percentage or row count in that
+    output**, and the tool says why in its own closing text: *"~ROWS, REWRITTEN and REMOVED come from the
+    statistics collector … read them as a shape and never as a census"* and *"490 of these have never been
+    analysed, so their ~ROWS reads 0 whatever they hold"* — so `carts`' `100% REMOVED` and `sellables`'
+    `61% REWRITTEN` are noise, and the capture ran against `app/.env`'s **dev** database besides.
+    ⭐ Ruling 326's shape a **ninth** time (after 326's `env()`, 370's `SampleStateModuleTest` pin, 372's
+    `ScreenStates` docblock, 399's `Pest.php`, 429's `db:footprint`, 435's `ArEngine:323-325`, 438's
+    `StripeWebhooks:551-554`, 441's kit prose): **the tool states its own limits, and honouring them is
+    cheaper than measuring around them.** ⛔ Not to be re-raised. Ruling 327's outcome shape a
+    **twenty-eighth** time.
+
+451. **⭐⭐ RULING 429'S REMEDY APPLIED TO THE DOCTOR ITSELF — re-sliced by TABLE NAME rather than by
+    module id, the capture returns ZERO members the id filter missed, and the schema stage corroborates
+    ruling 212 FROM THE CHECKER'S OWN SIDE (measured 2026-09-11 01:5x).** Ruling 429 measured the zero
+    trap's seventh mechanism — *an instrument that assumes a module's code is reached through its
+    NAMESPACE* — and ruled that **the instrument for *does this touch my lane* is the TABLE NAMES, never
+    the namespaces.** Every doctor slice this ledger has taken (302, 307, 448) filtered on the eight
+    module **ids**, so a violation naming only a table or a column was invisible to all of them by
+    construction. Re-run: all **33** money table names, in seven `grep -c -F` batches over the whole
+    86 KB capture → **ZERO**, with a case-insensitive re-run (381) returning **1**, which is
+    `Modules/X-199/Ui/Invoices.php` and already one of the 29.
+    ⭐ **The zero is corroborated three ways** (207, 294, 324, 429): an independent count (29 = 14 + 15,
+    from a separate extraction), a **KNOWN-MEMBER control** — `grep -c -F -e "places_api_calls" -e
+    "csat_score"` returns **4**, so the capture demonstrably carries table-named violations and the
+    instrument demonstrably finds them — and the case-insensitive re-run above.
+    ⭐⭐ **The schema stage is the finding's better half.** Its 16 violations are named by **table**, and
+    twelve are `<table>: tenant-owned table has no RLS` — `places_api_calls`, `opt_outs`,
+    `suppression_lifts`, `tenant_deletion_requests`, `gbp_account_bindings`, `data_requests`,
+    `support_queue_entries`, `zernio_account_days`, `gbp_grant_revocation_attempts`, `voice_usage_events`,
+    `gbp_profile_bindings`, `operator_alerts` — and **NOT ONE is among money's 33**. Ruling 212 measured
+    RLS on all 33 by reading this lane's **migrations**; this measures the same fact from the
+    **checker's** side, on a different instrument, against a live database. **A prior ruling
+    re-established by a second independent instrument is stronger than the ruling was**, and it costs one
+    grep. ⚠️ The other four schema members are another lane's `csat_score` columns (285 measured money's
+    exposure nil), a `SWITCH and a CONTRACT together` deploy finding, and `role goaiez_backup has
+    BYPASSRLS` — a **platform role**, reserved (credentials/production), ⛔ not this lane's. ⛔ Struck.
+
+452. **⭐⭐ THE MERGE'S FOREIGN-SURFACE CHECK, RUN FOR THE FIRST TIME AND MEASURED CLEAN — rulings 444 and
+    447 measured a merge against money's OWN trees and against money's rulings' greps, and neither
+    measured it against the code money DEPENDS ON (RULED by the lane supervisor 2026-09-11 01:5x).**
+    Ruling 58's four damage shapes are all defined over **money's** module and test trees, and 444
+    measured all four empty on the `4936cb06` merge. ⭐⭐ **The shape none of them covers is a change to a
+    file money does not own and does not conflict on**: `App\Models\Business`, `App\Support\Tenancy`,
+    `X121\Models\Person`, the UI kit, `resources/views/components/**`, `app/config/surfaces.generated.php`,
+    `app/config/features.php`, `app/app/Doctor/**`, `app/tests/Journeys/JourneyHarness.php`,
+    `app/tests/Support/**`, `app/tests/TestCase.php`, `app/tests/Pest.php`, `app/phpunit.xml`. A change
+    there lands in no money file, touches no money module, produces no conflict and no deletion — **and
+    can still change what money's screens render or what its suite proves.** ⭐ **Ruling 65's own instance
+    is exactly this class** — main relocated `X-121/Models/{Conversation,Message}` to `App\Models\`, the
+    component was corrected and the TEST was not, and `phpstan.neon`'s `paths: - app/` excludes
+    `app/tests/` — and ruling 380 recorded money's 21 readers of `X121\Models\Person`, **sixteen of them
+    in test files outside phpstan's eye**, as *a watch item whose trigger is a `main` merge*. **This is the
+    first tick to run that watch.**
+    Measured: `git diff --name-only b9e534be..HEAD` is **27 paths** — 26 from main plus this lane's
+    `CLAUDE.md` — and **not one is on that surface**: no `App/Models/`, no `App/Support/`, no `X-121/`, no
+    `resources/views/`, no `app/config/`, no `app/app/Doctor/`, no `app/tests/Journeys/`, no
+    `app/tests/Support/`, no `TestCase.php`, no `Pest.php`, no `app/phpunit.xml`. Main's whole landed set
+    is C-Reviews (11), X-102 (5), Infobip SMS (5) and six other lanes' tests. ⛔ Struck **FOR THIS MERGE
+    ONLY** — like 447, the answer is a property of what the other lanes shipped and is **re-measured at
+    the next merge**. **RULED: every merge review runs the foreign-surface check as a named step**, and
+    it is one command: the landed path list read against money's dependency surface.
+
+453. **⭐⭐ TWELFTH consecutive HOLD, and the measurement wave EARNED ITS TICK without producing a wave
+    (RULED by the lane supervisor 2026-09-11 01:5x).** MONEY-200 was dispatched to produce a backlog and
+    produced none: the doctor slice is byte-identical (448), the table-name re-slice is empty (451), the
+    foreign surface is untouched (452) and the footprint is zero-buildable (450). ⛔ **No wave is
+    dispatched, and that is the RESULT rather than an omission** — briefing an empty wave to avoid an idle
+    tick is what rulings 95, 100 and 111 exist to prevent, and it is worse than idling: it spends a
+    dispatch, puts a coder into `app/**` with no measured defect, and every edit is churn a later reviewer
+    must re-derive (47's companion). ⛔ *Sounds plausible* is not a population. The dispatch cap is
+    **untouched** — no BLOCK is open.
+    ⭐⭐ **What the wave DID produce is ruling 449, and 449 is a defect in this ledger's own briefing
+    practice rather than in the lane's code — which is the more durable of the two outcomes**, because a
+    brief defect recurs on every future census and a code defect recurs once. ⭐ Ruling 258 established
+    that a measurement wave is not an empty wave, and ruling 300 recorded that the one previous doctor
+    capture produced rulings 297 and 298; this one produced 448 through 452. **A measurement wave is
+    judged by the rulings it makes possible, never by whether it hands the next tick a code wave.**
+    ⚠️ **The four lift conditions are CHECKED, never inferred**: a new dated `OWNER.md` section (case d,
+    which beats everything) · a cadence condition on a moved `origin/main`, **all three measured in the
+    acting tick** (269, 272, 323) · a Track 1 answer to ACTION 13, 14, 15, 16 (half), 18, 19, 20, 21, 22,
+    23 or 24 · a population at ruling 324's bar, **measured non-empty AND buildable**, instrument
+    corroborated, positive control fired, **known member returned** (429), members listed, 415's
+    first-three check run, **and each member's safety named** (328).
+    ⭐ **Ruling 385's standing warning restated, because after four zero-buildable censuses in one tick it
+    is the thing most likely to be misread: this is NOT a reason to stop censusing.** It is what a lane
+    looks like after rulings 36–452 have been applied. **The next finding will come from a PREDICATE
+    nobody has stated yet, never from re-running a member list** — and 451 and 452 are both exactly that,
+    neither existing as a phrase in this ledger until the tick that measured it.
