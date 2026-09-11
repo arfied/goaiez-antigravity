@@ -36,6 +36,7 @@
 
     /* Surface — cool paper, deliberately not the AI-default warm cream */
     --color-paper: #fafaf9;
+    --color-canvas: #fafaf9;
     --color-card: #ffffff;
     --color-rule: #e4e4e1;
     --color-rule-strong: #c9c9c4;
@@ -87,6 +88,7 @@
 @media (prefers-color-scheme: dark) {
     @theme {
         --color-paper: #16191c;
+        --color-canvas: #16191c;
         --color-card: #1d2125;
         --color-rule: #2b3035;
         --color-rule-strong: #3d444b;
