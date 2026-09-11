@@ -13679,3 +13679,154 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     twice in that blade. **Four true measurements, four false conclusions, four fifth measurements that
     settled it.** ⛔ A census is not finished when its members are listed; it is finished when each
     member's *safety* has been named, and naming it is what stops the next tick re-deriving it (328).
+428. **⭐⭐ THE DELETE AND CASCADE census — never named in 392 rulings — is 57 foreign keys, 62 delete
+    call sites and ZERO buildable, because NOTHING in this application deletes an invoice, a payment, an
+    order, a sellable, a dispute or a payout; the one code path that would hard-delete a `people` row
+    REPOINTS NOTHING, and it has no production caller (measured by the lane supervisor 2026-09-10 22:2x;
+    rulings 64, 95, 100, 111, 262(b), 294, 324, 327, 340).** Every census in this ledger has asked what a
+    row SAYS (36's family), what WRITES it (306, 423), what READS it (258–265), what GUARDS it (209, 212,
+    275, 402) or what ORDERS it (204, 333–339). **Nobody had asked what REMOVES it, or what goes with it.**
+    The failure shape is the sharpest available and is invisible to every gate: a `cascadeOnDelete` is a
+    rule in a **migration**, enforced by **Postgres**, fired by a `DELETE` in **another lane's file**, so
+    `pint`, `phpstan`, `php -l` and all 24 screen tests pass over it and the row is simply gone.
+    **Instruments, quoted (ruling 300), each in the standing one-root-plus-filter form:**
+    `grep -rn -e "->delete()" -e "->forceDelete()" -e "::destroy(" -e "->truncate()" app/app/Modules` →
+    **8 tree-wide, ONE of them money's**; `grep -rn -e "cascadeOnDelete" -e "onDelete" -e "SoftDeletes"
+    -e "nullOnDelete" -e "restrictOnDelete" app/app/Modules` filtered to the eight ids → **57 foreign
+    keys**; and `grep -rn -e "->delete()" app/app/Services app/app/Console` → **54**.
+    ⭐ **Positive control fires at 141 files** carrying `cascadeOnDelete` tree-wide and **1** carrying
+    `SoftDeletes`, so the instrument locates both halves of the family and money's absence of soft deletes
+    is measured against a tree that has one. ⭐ Ruling 415's first-three check passed on both sweeps.
+    **The population resolves into three classes and every one is safe, each for a MEASURED reason.**
+    **(i) `business_id → cascadeOnDelete` on all 33 tables** — a tenant deletion takes the tenant's money
+    with it, which is correct and is what stops a purge leaving orphans. ⭐ The census found its own
+    in-tree exerciser: `app/app/Console/Commands/PurgeFixtureDataCommand.php:59`'s `$businessQuery->delete()`
+    (`db:purge-fixtures`), **dry-run by default, `--force`-gated and in no schedule** — the one reachable
+    delete of a money parent, and the cascade is right for it.
+    **(ii) `nullOnDelete` on twelve nullable FKs** — `invoices.customer_id`, `credit_terms.customer_id`,
+    `overflow_charges.customer_id`/`invoice_id`, `orders.customer_id`, `invoices.payment_id`,
+    `payments.merchant_connection_id`, `payouts`/`reconciliation_runs`' connection and payout ids,
+    `sellables.price_item_id`, `sync_conflicts.sync_run_id`, and two `users` ids. **The parent is
+    undeletable in every case but two.**
+    **(iii) `cascadeOnDelete` on fourteen non-business parents** — `invoice_lines.invoice_id`,
+    `ar_dunning_actions.invoice_id`, `receivable_states.invoice_id`, `payment_plans.invoice_id`,
+    `offline_payments.invoice_id`, `ar_collections_packages.invoice_id`, `payment_links.payment_id`,
+    `decline_deferrals.payment_id`, `dispute_evidence.dispute_id`, `dispute_audits.dispute_id`,
+    `order_lines.order_id`, `order_lines.sellable_id`, `account_mappings.connection_id`,
+    `sync_conflicts.connection_id`. ⭐⭐ **`order_lines.sellable_id` is the one that would do real damage** —
+    deleting a catalogue item destroys the line items of **historical orders** while `orders.total_cents`
+    survives as a persisted column, so an order's lines would permanently fail to add up to its total,
+    which is ruling 208's finding made durable by a schema rule instead of by a missing `where`. ⛔ It is
+    **unreachable**: the tree-wide sweep for a delete of `Sellable`, `Invoice`, `Payment`, `Order`,
+    `Dispute` or `Payout` — as a model call or a `->delete()` on an instance — returns **NOTHING**, and
+    ruling 117 already measured `Sellable`'s only writer anywhere is an evidence command.
+    ⭐⭐⭐ **The one live finding is cross-lane and is filed, not built.**
+    `X-01/Actions/ContactMergeAction.php:25` is `$source->delete()` on `App\Modules\X121\Models\Person` —
+    **the exact class ruling 380 measured is this lane's entire cross-module surface**, with no
+    `App\Models\Person` in the tree, so there is no two-classes-one-name ambiguity (90, 309's trap
+    checked and absent). It merges **phone and email only** (`:18-23`) and **repoints nothing**, so a
+    contact merge fires `ON DELETE SET NULL` on four money columns at once: an invoice loses its customer,
+    an order loses its customer, an overflow charge loses both, and — the sharpest — **`credit_terms`
+    becomes unreachable**, because `InvoiceEngine:39`'s `where('customer_id', $customerId)` can never match
+    a NULL row again, so the customer's agreed credit limit and terms are silently replaced by the default
+    at the next invoice. ⛔ **Not money's to fix and not a wave, on FIVE measured grounds**: X-01 is
+    another lane's module (5); ruling 41 part 3 forbids editing the migration, and a new one is worse in
+    both directions — `restrictOnDelete` makes the merge FAIL for any customer with an invoice and
+    `cascadeOnDelete` deletes the invoice, so `nullOnDelete` is the least-bad of the three and the real fix
+    is a repoint in X-01's own action; **`ContactMergeAction` has NO production caller** (`grep -rn` returns
+    its own declaration and three lines of `X01Test.php` — ruling 170(3)/102/355's shape), so the trigger is
+    latent; **all five money readers of `customer_id` are already null-safe, measured line by line** —
+    `Credits.php:74`'s `->pluck('customer_id')->filter()`, `:85`'s `$people[$id] ?? null` with a
+    `'Customer #'` fallback, `Invoices.php:61`'s `->find()`, `InvoiceThreadBeside.php:89`'s and
+    `ArEngine.php:279`'s explicit `$invoice->customer_id ? … : …` guards; and the one cosmetic residue
+    (`'Customer #'` with nothing after it on a NULL) is unreachable by the same argument, so ruling 96
+    governs. → **TRACK 1 ACTION 24**, in rulings 343 and 413's precedent — measured, cross-lane, money edits
+    nothing — because **the day that action acquires a caller, money's invoices lose their customers and
+    their credit terms in one click.**
+    ⚠️ Measured clean in the same pass and recorded so no later tick re-derives it: `Person` does **NOT**
+    soft-delete — the model has no trait and the `people` migration has no `deleted_at` — so a merge is a
+    hard delete and the SET NULL genuinely fires. ⭐ `ExportBuilder.php:1339`'s `$person->deleted_at` is the
+    tree's **only** `SoftDeletes` model, `App\Models\Customer`, a different class on a different table:
+    ruling 90's two-things-one-name trap for the **fifth** time (the two ledgers, `AiEngine`'s
+    `entry_type`, `Person`/`Customer`), caught by taking the disproving measurement first.
+    ⚠️ `X-163/Ui/Pricebook.php:168` and `ConfirmationScreen.php:105` delete a `PriceBookItem` **from a
+    button**, which nulls `sellables.price_item_id` — and money's catalogue price does not move, because
+    ruling 117 measured money reads `sellables.unit_price_cents` and imports no pricebook model, and ruling
+    263 measured `price_item_id` has no reader. **The corrected copy MONEY-104 shipped is what makes that
+    true**, which is ruling 328's *a prior wave's fix is invisible to the census that would otherwise find
+    its absence*, a fifth time. ⛔ Not to be re-raised. ⭐ Ruling 327's outcome shape an **EIGHTEENTH** time.
+429. **⭐⭐⭐ AN INSTRUMENT THAT ASSUMES A MODULE'S CODE IS REACHED THROUGH ITS NAMESPACE IS THE ZERO
+    TRAP'S SEVENTH MECHANISM — ruling 151(1)'s predicate re-run returned a FALSE ZERO, and the only thing
+    that caught it is that the population contains a KNOWN MEMBER (RULED by the lane supervisor 2026-09-10
+    22:2x).** Ruling 151(1) measured that this lane's two scheduled commands carry an architecture lint
+    pinning both windows, and ruling 80 found `CheckDeadlinesCommand` implemented, tested and **in no
+    schedule** — *"a NEW shape for this lane: the referent is present, tested, and unreachable."* Its
+    instrument was **this lane's two commands**; its predicate is **every command whose absence from a
+    schedule makes a capability unreachable**, which is rulings 404/408/411/413/416/419/420/421/422/423/426's
+    family — *a census that FIXED something did not necessarily SWEEP the population that needed it.*
+    **The first instrument was `grep -rln "Modules\\CBilling" … "Modules\\X211" app/app/Console` and it
+    returned ZERO.** ⭐⭐ `CheckDeadlinesCommand` **is in that directory** and imports `Carbon`,
+    `Illuminate\Console\Command` and `Illuminate\Support\Facades\DB` — **and no module namespace at all**,
+    because it reaches X-201's tables through raw `DB::`. So the sweep was a claim that a module's code is
+    always reached through its namespace, and a command written against the database directly is invisible
+    to it **by construction**. **RULED: the instrument for *does this command touch my lane* is the TABLE
+    NAMES, never the namespaces** — re-run as `grep -rln` over money's 33 table names, it returns
+    **seven of 114 command files** and ruling 80's known member is among them.
+    ⭐⭐⭐ **And the generalisable half is the corroboration rule, which is cheaper and stronger than
+    everything in the zero-trap discipline so far: WHERE A POPULATION CONTAINS A MEMBER THIS LEDGER HAS
+    ALREADY RULED ON, THE INSTRUMENT IS RUN AGAINST THAT MEMBER FIRST.** Rulings 207, 294 and 324 corroborate
+    a zero against an independent COUNT and a positive control drawn from elsewhere in the tree; a known
+    member is better than both, because it tests the instrument against **the exact shape the census
+    exists to find**, in the exact directory, and a miss is unambiguous. ⛔ A census over a population with
+    a known member that does not return it is **wrong**, whatever its count says.
+    **The seven members, read one by one (262(b)) with each safety named:** `CheckDeadlinesCommand` —
+    ruling 80's own, already **TRACK 1 ACTION**, and doubly blocked besides (nothing writes `deadline_at`
+    outside tests) · `PurgeFixtureDataCommand` (`db:purge-fixtures`) — ruling 428(i)'s by-design tenant
+    purge, dry-run by default, `--force`-gated, **not scheduled** · `ShowTableFootprint`,
+    `ShowColumnReaders`, `ShowMethodCallers` — **read-only diagnostics**, every one of `ShowTableFootprint`'s
+    eleven `insert|update|delete` hits being prose in a comment or an output line · `SurfacesGenerateCommand`
+    — Track 1's generator (ruling 20) · `ReconcileZernioAccounts` — ⭐ a **false positive**, its only match
+    being `meters` inside the word **`parameters`** in a comment at `:209`, which is ruling 426(d)'s
+    INFLATING direction on a plain substring and the eighth member of the family.
+    ⭐ **The schedule itself is measured: `app/routes/console.php`'s only hits for this census are
+    `zernio:meter` and `zernio:reconcile`**, neither of which touches a money table — so **no command
+    outside this lane's module trees implements a money capability and waits on a schedule**, and ruling
+    80's instance remains the only member of its own shape. ⛔ Struck, not to be re-raised.
+    ⚠️ **Rulings 88 and 338 are CONFIRMED on a stronger instrument than either used.** 88 swept
+    `meter_type` and 338 swept `Meter::`; re-run as
+    `grep -rn -e "table('meters')" -e "Meter::create" -e "Meter::updateOrCreate" -e "Meter::firstOrCreate"
+    -e "new Meter" app/app app/database` — the **table name plus four creation idioms, including the raw
+    `DB::table` form a model-name sweep cannot see** — it returns **NOTHING**. The `meters` table has no
+    writer anywhere, `zernio:meter` included.
+    ⚠️ **A ninth instrument note, free from the same sweep: a Laravel command's signature can be a
+    PHP ATTRIBUTE.** `ShowTableFootprint.php:64` is `#[Signature('db:footprint …')]`, so a
+    `grep -e "signature = "` census of commands under-counts — this lane's eleven all use the property
+    form and the platform tree uses both. ⭐⭐ **And that command is the house's own instrument for this
+    tick's other census:** `db:footprint --unbounded` is documented as *"Only the tables nothing on a clock
+    deletes a row from"*, which is ruling 326's shape a fifth time — **the positive control lands on a tool
+    the house built for the same question**. ⛔ `php app/artisan` is refused to this seat (296, 300), so it
+    is recorded as a **measurement item with no predicted value** for a later brief, never as a claim.
+430. **⭐⭐ SEVENTH consecutive HOLD, and the tick's yield is two censuses and a cross-lane finding (RULED
+    by the lane supervisor 2026-09-10 22:2x).** Ruling 325 requires the tick to say so plainly rather than
+    manufacture a wave, and ruling 323 forbids inheriting the previous tick's answer, so everything was
+    re-measured here. **The cadence, measured in THIS tick** (owner `OWNER.md` 09-09 09:02; rulings 269,
+    272): `git rev-list --count HEAD..origin/main` = **46**, not > 100 ✗ ·
+    `git diff --stat 8473c04a origin/main -- app/app/Doctor coder-bin .claude/hooks` **empty** ✗ ·
+    `git merge-base HEAD origin/main` = **`8473c04a`**, this lane's own `chore(state)`, with two
+    `chore(supervisor)` pushes since — 272's second half ✗. **Merge gate CLOSED**, `--allow-merge` not
+    passed. `origin/track/money` = `40428969` = HEAD, so nothing gated sits unpushed (26c). `OWNER.md`
+    judged by its **heading list** (136), newest still `## OWNER RULING — 2026-09-09 09:02`.
+    ⛔ **Briefing an empty wave to avoid an idle tick is what rulings 95, 100 and 111 exist to prevent, and
+    it is worse than idling** — it spends a dispatch, puts a coder into `app/**` with no measured defect,
+    and every edit is churn a later reviewer must re-derive (47's companion). ⛔ *Sounds plausible* is not a
+    population. ⚠️ **The four lift conditions are CHECKED, never inferred**: a new dated `OWNER.md` section
+    (case d) · a cadence condition on a moved `origin/main`, all three measured in the acting tick · a
+    Track 1 answer to ACTION 13, 14, 15, 16, 18, 19, 20, 21, 22, 23 or **24** · a population at ruling 324's
+    bar, **measured non-empty AND buildable**.
+    ⭐⭐ **What this tick adds to the standing warning: the DISPROVING measurement killed two candidates and
+    the KNOWN-MEMBER check killed an instrument.** The contact merge looked like a wave until
+    `grep -rn ContactMergeAction` returned no production caller and five null-safe readers; the soft-delete
+    hazard looked like a wave until `Person` turned out to have no trait and the tree's one `SoftDeletes`
+    model turned out to be a different class; and the schedule census returned a **false zero** that only
+    ruling 80's own known member could expose. **Three hypotheses, all built on true measurements, all
+    false** — rulings 400/403/409/421/422/426's habit paying for the seventh, eighth and ninth time.
