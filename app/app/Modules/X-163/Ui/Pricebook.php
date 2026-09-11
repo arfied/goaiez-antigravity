@@ -19,7 +19,8 @@ class Pricebook extends Component
 {
     public float $calloutFeeDollars = 0.00;
 
-    public bool $deductedIfProceeding = false;
+    // (R245) the deduction property carries the name pricebook.blade.php and updatedCalloutFeeDeducted() bind
+    public bool $calloutFeeDeducted = false;
 
     public string $newServiceName = '';
 
@@ -52,7 +53,7 @@ class Pricebook extends Component
         $fee = CalloutFee::where('business_id', $businessId)->first();
         if ($fee) {
             $this->calloutFeeDollars = $fee->callout_fee_cents / 100;
-            $this->deductedIfProceeding = (bool) $fee->deducted_if_proceeding;
+            $this->calloutFeeDeducted = (bool) $fee->deducted_if_proceeding;
         }
 
         $items = PriceBookItem::where('business_id', $businessId)->get();
@@ -80,7 +81,7 @@ class Pricebook extends Component
             ['business_id' => $businessId],
             [
                 'callout_fee_cents' => $cents,
-                'deducted_if_proceeding' => $this->deductedIfProceeding,
+                'deducted_if_proceeding' => $this->calloutFeeDeducted,
             ]
         );
     }
