@@ -16870,3 +16870,67 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
 
     **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty wave to avoid an idle tick is
     what rulings 95, 100 and 111 forbid.
+
+530. **⭐⭐ The last two TYPE boundaries ruling 528 left unswept are measured: listener `handle()` against its
+    event's property types (3 listeners), and console options into engine parameters (5 options). Every file is
+    `strict_types=1`, every value is of its parameter's type or cast first, and both halves have zero buildable
+    members (measured by the lane supervisor 2026-09-11 08:3x, by `date` `08:30`).** Rulings 524 (events), 526
+    (Action→Engine) and 528 (component→Action) swept the typed seams a screen write crosses. The addendum named
+    the two that were left: what a listener does with the event it receives, and what a console option becomes
+    before it reaches an engine. Under `strict_types=1` a mismatch at either is a `TypeError`.
+    **Instruments, quoted (300):**
+    - `grep -rn -A 30 "function handle"` over the eight `Listeners/` paths prints **3** listeners. Five paths do not
+      exist (X-117, X-120, X-173, X-201, C-Billing), and the `ugrep` warnings say so, so the three is the whole
+      population and not a partial read (192).
+    - `grep -rn -B 1 -A 12 "function __construct"` over the four event classes those listeners touch.
+    - `grep -rn -e "option(" -e "argument(" -e "signature"` over the four `Console/` trees prints **11**
+      signatures and **5** option reads, all `--business`, and **zero** `argument(` reads.
+    - `grep -rL -F -e "strict_types=1"` over the three `Listeners/` and four `Console/` trees prints **nothing**.
+
+    **Listener half, each member's safety named (328):**
+    - `X-198/Listeners/CaptureCheckedOutCart` reads `$event->businessId` only, an `int` (`CartCheckedOut:10`),
+      into a `where`. Ruling 45's emptied listener (478).
+    - `X-211/Listeners/ProcessOverdueReceivable` reads `ArOverdue`'s three `int` properties. Its `(int)` cast on
+      `businessId` is redundant, not needed. It passes `$action->reason` into `ArEscalatedToHuman`'s `string
+      $reason` only when `wasRecentlyCreated`, so the value is the literal it just supplied, never a stored null.
+    - `X-199/Listeners/RecordPaymentOnCapture` guards `?int $invoiceId` with `=== null` before use, passes
+      `int $paymentId` into `payment_id`, and passes `int $amountCents` into `recordPayment`'s `?int` (365), which
+      widens and cannot throw. It is registered by nothing (102, 478), so it is unreachable in any case.
+
+    **Console half:** all five `--business` reads (`X-117 EvidenceCheckoutCommand:42`, `X-198
+    EvidencePaymentLinkCommand:38`, `X-198 EvidenceChargeCommand:38`, `X-199 EvidenceInvoiceCommand:48`, `X-211
+    EvidenceRecoveryCommand:51`) are `(int) ($this->option('business') ?: 0)`, so the value is an `int` before any
+    engine sees it. The other six commands take no option and no argument.
+    ⭐ **Known members (429):** the console census returned ruling 277/278's own `--business` shape, five for five,
+    and the listener census returned ruling 102's `RecordPaymentOnCapture` and ruling 478's two registered
+    listeners. ⭐ **Controls fire and discriminate:** `grep -rln -F -e "function handle("` over `app/app/Modules`
+    filtered to `/Listeners/` counts **16** files tree-wide, and uncast `$this->option(` reads exist outside the
+    lane, e.g. `app/app/Console/Commands/AuditPublishedContent.php:41`'s `$only = $this->option('business')`, the
+    same option name read without a cast. ⛔ Money proposes no edit on those (5). 415's first-three check and 449's
+    each-member-exists check passed.
+    ⚠️ **Recorded at ruling 76's grade, not briefed:** `(int)` turns a mistyped `--business=abc` into `0`, which the
+    command reads as "no flag" and so falls back to the artifact or to provisioning. A mistyped `--business=18x`
+    becomes `18`. These are operator evidence commands with no production caller and no owner on the other end, and
+    the empty number pool makes the provisioning fallback refuse loudly (270). ⛔ Nothing is false and nothing is
+    reached by a tenant.
+    ⛔ **Both halves struck, not to be re-run.** With 524, 526 and 528, this closes every typed seam the lane has.
+    ⚠️ **Trigger:** a new listener registration, a new `Event::listen` naming a money event, or a console option
+    passed to an engine without a cast. Ruling 327's outcome shape a **fiftieth** time.
+
+531. **⛔ THIRTY-FIRST consecutive HOLD (RULED by the lane supervisor 2026-09-11 08:3x, by `date`).** All four lift
+    conditions were measured this tick (269, 272, 323), each case decided on mtimes (494):
+    - **Owner.** `OWNER.md`'s newest heading is still `## OWNER RULING — 2026-09-09 09:02` (136), mtime
+      `09-09 09:02:03`.
+    - **Coder.** `--check` returned `CODER DEAD`.
+    - **Mailbox.** `REPORT.md` (`07:15:21`) and `BRIEF.md` (`07:07:27`) are both older than `REVIEWS.md`
+      (`08:25:01`).
+    - **Cadence, all three ✗.** `origin/main` = **`46afc022`**, unmoved after `git fetch --no-write-fetch-head
+      origin`. `git rev-list --count HEAD..origin/main` = **19**. `git diff --stat dca743e8 origin/main --
+      app/app/Doctor coder-bin .claude/hooks` is empty. `git merge-base HEAD origin/main` = **`dca743e8`**, this
+      lane's own pushed supervisor tip, and `git diff --name-status dca743e8 origin/main` is the 7 per-track paths
+      plus X-102's three (504).
+    - **Track 1.** No answer to ACTION 13–25.
+    - **Population.** Ruling 530's is non-empty and not buildable.
+
+    **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty wave to avoid an idle tick is what
+    rulings 95, 100 and 111 forbid.
