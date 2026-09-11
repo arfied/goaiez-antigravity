@@ -111,7 +111,7 @@ class ChatDoorTest extends TestCase
 
         $response->assertStatus(201);
         $response->assertJsonStructure(['id', 'reply']);
-        
+
         Tenancy::set((int) $biz->id);
         $this->assertEquals(1, ChatTurn::where('chat_session_id', $session->id)->where('author_type', 'visitor')->count());
         $turn = ChatTurn::where('author_type', 'visitor')->first();
