@@ -178,30 +178,17 @@ class CReviewsTest extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'CSAT Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $person = Person::create(['business_id' => $biz->id, 'first_name' => 'John', 'last_name' => 'Doe']);
+        $person = Person::create(['business_id' => $biz->id, 'first_name' => 'John', 'last_name' => 'Doe', 'phone' => '+15125550413']);
+        $ticket = app(QaTicketCreateAction::class)->handle($biz->id, $person->id, 'Triage');
 
-        $ticket = QaTicket::create([
-            'business_id' => $biz->id,
-            'person_id' => $person->id,
-            'subject' => 'Triage',
-            'description' => 'Test',
-            'status' => 'open',
-            'arrived_at' => now(),
-            'sla_due_at' => now()->addHours(48),
-        ]);
+        Event::fake([SendRequested::class, CsatRequested::class]);
 
-        Event::fake([CsatRequested::class]);
+        app(QaTicketResolveAction::class)->handle($biz->id, $ticket->id, 'fixed');
+        app(QaTicketResolveAction::class)->handle($biz->id, $ticket->id, 'fixed twice');
 
-        $action = new QaTicketAction;
-        $action->resolve($biz->id, $ticket->id);
-
-        Event::assertDispatched(CsatRequested::class, function ($e) use ($biz, $ticket) {
-            return $e->businessId === $biz->id && $e->ticketId === $ticket->id && $e->personId === $ticket->person_id;
-        });
-
-        $action->resolve($biz->id, $ticket->id);
-
+        Event::assertDispatched(SendRequested::class, 1);
         Event::assertDispatched(CsatRequested::class, 1);
+        $this->assertEquals('fixed', QaTicket::find($ticket->id)->resolution_notes);
     }
 
     /**
@@ -260,10 +247,10 @@ class CReviewsTest extends TestCase
 
         $ticketId = QaTicket::where('review_request_id', $r->id)->first()->id;
 
-        $this->ticketAction->resolve($biz->id, $ticketId);
+        app(QaTicketResolveAction::class)->handle($biz->id, $ticketId, 'fixed');
 
         $ticket = QaTicket::find($ticketId);
-        $this->assertNotNull($ticket->csat_requested_at);
+        $this->assertNull($ticket->csat_requested_at, 'the ticket has no person, so no CSAT was asked');
         $this->assertEquals('resolved', $ticket->status);
 
         $this->ticketAction->receiveCsat($biz->id, $ticketId, 1);
@@ -278,7 +265,7 @@ class CReviewsTest extends TestCase
         $this->ticketAction->handle($biz->id, $r2->id);
         $ticketId2 = QaTicket::where('review_request_id', $r2->id)->first()->id;
 
-        $this->ticketAction->resolve($biz->id, $ticketId2);
+        app(QaTicketResolveAction::class)->handle($biz->id, $ticketId2, 'fixed');
         $this->ticketAction->receiveCsat($biz->id, $ticketId2, 5);
         $ticket2 = QaTicket::find($ticketId2);
 
@@ -1157,7 +1144,7 @@ class CReviewsTest extends TestCase
 
     public function test_g20_05_csat_answer_has_no_inbound_path(): void
     {
-        $this->fail('NOT BUILT: G20-05 — the CSAT ask is requested on ticket.resolved, but no inbound path reaches QaTicketAction::receiveCsat (QaTicketAction.php:61, zero production callers); InfobipInboundController and InboundMessages dispatch no event a module can subscribe to, so a 1-star reply cannot reopen the ticket.');
+        $this->fail('NOT BUILT: G20-05 — the CSAT ask is requested on ticket.resolved, but no inbound path reaches QaTicketAction::receiveCsat (QaTicketAction.php:41, zero production callers); InfobipInboundController and InboundMessages dispatch no event a module can subscribe to, so a 1-star reply cannot reopen the ticket.');
     }
 
     /**
