@@ -15466,3 +15466,104 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     plausible* is not a population. ⭐ The one carried candidate is unchanged and stays blocked — ruling
     474's N+1 population, recorded on TRACK 1 ACTION 13's scale half, whose **trigger for re-opening is a
     production catalogue or invoice writer, or a merge, never a wave boundary.**
+481. **⭐⭐⭐ THE `created_at` PROVENANCE CENSUS — THREE opt-out routes measured, money uses exactly ONE
+    once and it is REQUIRED rather than merely safe, ZERO buildable — and ruling 340's stated safety for
+    `created_at` is WRONG about the one table with the STRONGEST guarantee (measured by the lane
+    supervisor 2026-09-11 04:3x; rulings 64, 95, 100, 111, 262(b), 294, 300, 324, 327, 328, 371, 400,
+    415, 429, 449, 478).** Ruling 340 swept the lane's nullable-column dereferences — `->format()`,
+    `->isPast()`, `->toDateString()` on a column that can be null — and closed its `created_at` members
+    with a single clause: *"and every `created_at` is `timestamps()`"*. **That is a claim about the
+    SCHEMA, offered as the safety for a claim about the ORM, and it had never been measured from the
+    model's side.** The predicate nobody had stated: *is `created_at` filled on every money table, and
+    BY WHAT?*
+    ⭐⭐ **Completeness first, which is ruling 478's own lesson — a census over an opt-out measures how
+    many WAYS a thing can be opted out of before it sweeps one of them.** A model can decline to fill a
+    timestamp three ways, and a census of `$timestamps` alone would have been the zero trap's mechanism
+    9 (a declaration form) with a full, plausible, wrong answer: (1) `public $timestamps = false` —
+    **ONE** member in money · (2) `const CREATED_AT = null` / `const UPDATED_AT = null` — **ZERO** in
+    money · (3) a write that bypasses the ORM's timestamp hook — `Model::insert()`, `upsert()`,
+    `withoutTimestamps()`, `insertGetId()` — **ZERO** in money.
+    ⭐ **Every one of the three zeros is corroborated by a positive control that FIRES and
+    DISCRIMINATES** (207, 294, 324): route 2's instrument returns **6+** `app/app/Models` classes nulling
+    `CREATED_AT`/`UPDATED_AT` (`AuthorizeNetEvent:41,:43`, `AuthorizeNetCustomer:40`, `AuditLogEntry:78`,
+    `AutoRenewalAcknowledgement:48`, `BusinessFact:31`); route 3's returns **14 raw hits tree-wide, of
+    which 11 are real** call sites in five other lanes (`X-119/FactResolver:93`,
+    `X-121/JobCreateAction:44`, `X-138/RoiComputeAction:16`, `X-138/AttributionQueryAction:31`,
+    `Services/Messaging/SendingHealth:442`) **and THREE are prose** (`ArchivePixelBatchJob:223`'s
+    comment, `FailedSignIn:23`'s and `FailedSignIns:78`'s docblocks) — ⭐ **the zero trap's mechanism 8
+    (a substring inside a longer phrase, INFLATING) caught by reading the hit** (262(b)), and 415's
+    first-three check separating them. ⛔ Money proposes no edit on any of those (ruling 5).
+    **The pairing is 1:1 and correct in BOTH directions, counted by listing (397):** of ruling 212's
+    **33** tables, `timestamps()` appears **32** times — X-199 5 (4+1) · X-211 6 (3+1+1+1) · X-198 5
+    (4+1) · X-117 4 · X-173 4 · X-120 1 · X-201 4 (3+1) · C-Billing 3 — and the **one** table without it
+    is `credit_ledger_entries`, whose model is the **one** of 32 declaring `$timestamps = false`.
+    ⭐ **The DUAL is closed too and nobody had asked it**: a `$timestamps = false` model on a table that
+    HAS `updated_at` would leave that column permanently NULL, and there is no such member.
+    ⭐⭐ **And the one member is REQUIRED, not merely safe.**
+    `2026_08_30_000025_create_c_billing_tables.php:23` is `$table->timestamp('created_at')->useCurrent()`
+    with **no `updated_at` column at all** — the table is append-only, enforced by
+    `trg_prevent_update_credit_ledger` at `:26-37`, whose function **raises** on any UPDATE — so
+    `$timestamps = true` would make Eloquent write `updated_at` and Postgres error `42703` on **every
+    insert**. `CreditLedgerEntry:22` is the fix, not the defect.
+    ⭐⭐⭐ **THE INVERSION, and it is why ruling 340's reason is wrong in the direction that matters.**
+    `Blueprint::timestamps()` creates a **NULLABLE** `created_at` with **NO default**, so on all 32
+    tables the column is non-null **only because the ORM fills it**. `timestamp('created_at')->useCurrent()`
+    creates a **NOT NULL** column with a **database default**. **So the one table 340's stated reason
+    EXCLUDED is the one with the strongest guarantee, and the 32 it NAMED rest on the ORM.** 340's
+    conclusion holds; its stated reason is one table short and points at the weaker mechanism.
+    ⭐ Its own member on that table — `C-Billing/Actions/LedgerExplainAction.php:22`'s bare
+    `$entry->created_at->toIso8601String()` — is therefore safe for a **better** reason than 340 gave.
+    **THIRTEENTH inherited attribution corrected** (163, 171, 176, 257, 289, 355, 374, 383, 394(a), 449,
+    454, 458), and ruling 257's shape a thirteenth time: **the ledger recorded a conclusion and not the
+    command.**
+    ⭐⭐ **The one ORM-bypassing write in the lane is SAFE BY CONSTRUCTION rather than by guard.**
+    `grep -rn -F -e "DB::table(" app/app/Modules` minus migrations returns **one** money line —
+    `X-199/Console/EvidenceInvoiceCommand.php:90`'s `DB::table('invoices')->insert([...])`, which omits
+    `created_at` — and it **cannot land a row**: it is ruling 278's deliberately-failing duplicate,
+    refused by `unique(['business_id','invoice_number'])` (470's **prevent** strategy), with `:100`
+    reporting FAILURE if it ever succeeds. ⭐ Ruling 151(5) recorded that line as *"an evidence insert"*
+    and never asked what it omits; the answer is that the omission is unreachable.
+    ⭐ **429's known-member corroboration fires**: the census returns `credit_ledger_entries`, ruling 90's
+    own two-ledgers-one-name table and ruling 309's `entry_type` subject — the exact shape the census
+    exists to find. 449's *each member EXISTS* passes, every cited file having been read rather than
+    named. ⛔ **ZERO buildable, struck, not to be re-raised.** ⭐ Ruling 327's outcome shape a
+    **THIRTY-SIXTH** time: *a population measured NON-EMPTY that yields ZERO buildable fixes is a
+    legitimate result and is the more useful of the two to write down*, because an empty census tells a
+    later tick *nothing is there* while a classified one tells it **what is there and why each member
+    stays**. ⚠️ ⛔ The `updated_at` half is **already struck at 414(b)** — zero production readers in the
+    eight module trees, against a control of 19 test-fixture hits — and is not to be re-run.
+    ⭐ **The generalisable half: A NON-NULL COLUMN AND A COLUMN NOTHING LEAVES NULL ARE DIFFERENT FACTS,
+    AND ONLY ONE OF THEM IS IN THE SCHEMA.** Ruling 431 closed the nullability axis by reading Blueprint
+    declarations, which is the right instrument for *may this column be null*; it cannot answer *is this
+    column ever null in practice*, because that is a property of every writer. **A census that reads a
+    schema to establish a runtime guarantee has measured the weaker fact** — and here the weaker fact
+    was quoted as the stronger one for 141 rulings.
+
+482. **⛔ SIXTEENTH consecutive HOLD (RULED by the lane supervisor 2026-09-11 04:3x).** All four lift
+    conditions measured in the acting tick (269, 272, 323): `OWNER.md`'s newest heading still
+    `## OWNER RULING — 2026-09-09 09:02` (136), consumed as ruling 272 — case (d) ✗ · the cadence **all
+    three ✗** — `git rev-list --count HEAD..origin/main` = **11**, not > 100 ·
+    `git diff --stat e78d9ba3 origin/main -- app/app/Doctor coder-bin .claude/hooks` **empty** ·
+    merge-base **`e78d9ba3`**, this lane's own `chore(supervisor)` rulings 467–470, with **three
+    `chore(supervisor)` ledger commits since carrying no substantive work** (272's second half) · no
+    Track 1 answer to ACTION 13, 14, 15, 16 (half — 446), 18, 19, 20, 21, 22, 23 or 24 · and ruling
+    481's population is **non-empty and NOT buildable**. **Merge gate CLOSED**, `--allow-merge` not
+    passed. ⚠️ Ruling 145's trap is live on the board and was not read as the measurement — the
+    **merge-base** decided condition 3, never a `merge: track/money` subject line.
+    ⛔ Briefing an empty wave to avoid an idle tick is what rulings 95, 100 and 111 exist to prevent, and
+    it is worse than idling: it spends a dispatch, puts a coder into `app/**` with no measured defect,
+    and every edit is churn a later reviewer must re-derive (47's companion). ⛔ *Sounds plausible* is
+    not a population. ⭐ The one carried candidate is unchanged and stays blocked — **ruling 474's N+1
+    population**, recorded on TRACK 1 ACTION 13's scale half, whose **trigger for re-opening is a
+    production catalogue or invoice writer, or a merge, never a wave boundary.**
+    ⭐⭐ **How 481 was found, because it is the cheapest method this ledger has and it worked again:
+    ruling 478's move — every ruling that swept "X under condition C" owes the sweep of "X under NOT-C"
+    — applied to ruling 340.** 340 swept *where a nullsafe guard is NEEDED* and closed one group with a
+    one-clause safety; **the complement is the safety itself, measured from the other side of the ORM.**
+    ⭐ And the highest-yield habit fired for the **TWENTY-FOURTH** time
+    (400/403/409/421/422/426/431/434/435/437/438/440/454/460/472/473/478): the hypothesis — *a model
+    declaring `$timestamps = false` on a table whose `created_at` is rendered is a latent 500* — rested
+    on **three true measurements** (the declaration exists, the model casts `created_at` to a datetime,
+    and rulings 333/340 both rest on that column being filled), and the **fourth** measurement, the
+    column's own `->useCurrent()` DEFAULT, disproved it in one read. **Ask which measurement would
+    DISPROVE the candidate and take that one FIRST.**
