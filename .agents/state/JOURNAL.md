@@ -942,3 +942,4 @@
 - `2026-09-10T19:33:07` (R245) X-102 — boundary The premise that AgentTurnAnswer is the sanctioned crossing is wrong; AnswerAgentTurnJob proves callers use the synchronous return array. R245
 - `2026-09-10T19:54:00` (R245) X-102 — capability The 2026-09-10T19:04:40 claim that "X-102 owes an event listener for C-Agent's AgentTurnAnswer" is wrong; X-102 must record the agent's reply synchronously using the return array. R245
 - `2026-09-10T19:54:33` (R245) X-102 — capability X-102 stores the agent's reply as a ChatTurn synchronously in ChatTurnAction, keeping the door response unchanged and correctly preserving the conversation state. R245
+- `2026-09-10T20:28:00` (R245) X-102 — capability The ledger row at 2026-09-10T19:54:00 was orphaned in JOURNAL.md without a mirror; its claim that X-102 must record the agent's reply synchronously was effectively superseded and recorded by the 19:54:33 decision.
