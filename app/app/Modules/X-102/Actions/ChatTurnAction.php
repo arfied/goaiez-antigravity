@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Event;
 
 final class ChatTurnAction
 {
+    /**
+     * @return array{0: ChatTurn, 1: ChatTurn|null}
+     */
     public function handle(int $businessId, int $chatSessionId, string $authorType, string $message): array
     {
         $turn = ChatTurn::create([
