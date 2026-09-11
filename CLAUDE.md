@@ -4602,3 +4602,38 @@ either name. It is the third member of *a component test exercises methods, not 
 `wire:click`/`wire:submit` targets are a different question, and PB-145's remedy sweep already covered them.
 ⭐ **The fix follows the majority.** The blade, the hook and the sibling `ConfirmationScreen` all say `calloutFeeDeducted`,
 so the PROPERTY is renamed. The blade does not change (PB-168).
+
+## ⭐⭐ Trap added 2026-09-11 14:5x — A SELF-LOCKING CONTROL: a flag that disables the only control that clears it
+
+`pricebook.blade.php:121` and `confirmation-screen.blade.php:80` render Confirm `disabled` while `$refusals[$id]` is set.
+Each flag has exactly two clearing paths: the method behind that disabled button (`confirmItem():170`,
+`confirm():101`) and delete (`deleteItem()`). **So once a row is refused, the only live control on it deletes it.**
+Typing a corrected price changes nothing, because no sync clears the flag, and only a reload does. The screen's own
+pill says *Needs a price* and then disables the control that accepts one. `Livewire::test()->call()` ignores
+`disabled`, so the fourth member of *a component test exercises methods, not controls* was invisible to every test.
+
+⭐ **The instrument: for each flag a blade uses to disable or hide a control, list every line that clears the flag.
+If each one is reached only through that control, the state is absorbing.** It takes two greps: the flag's
+`unset`/assignment sites, and the `wire:click` that reaches each.
+
+⭐ **The discriminator was a sibling that works.** `daily-pricing-digest.blade.php:38` has no `disabled` and re-checks
+the price on the server on every click. A client `disabled` that copies a server refusal is two places answering one
+question (PB-120, PB-166). **Delete the copy, keep the refusal and the pill** (PB-169). Here the majority (two of
+three) was the defect, so *follow the majority* does not apply when the majority is the thing being measured.
+⛔ The addendum had written that the digest shared the stall. It never measured that, and it was false. **Read a
+sibling's blade before writing "same shape".**
+⚠️ Pin it with `assertDoesNotMatchRegularExpression('/wire:click="confirm\(ID\)"\s+disabled/', $component->html())`.
+A bare `assertDontSeeHtml('disabled')` fails for the wrong reason: the page carries `disabled:opacity-50` classes
+and `wire:loading.attr="disabled"`.
+Lane sweep of `disabled` in the ten modules' `Ui/views`: 3 attribute sites, the two above plus X-171's unconditional
+`Pay on site` placeholder. ⛔ SPENT.
+
+## ⭐ Trap added 2026-09-11 14:5x — A COUNT THAT DID NOT MOVE IS NOT A COMPOSITION THAT DID NOT MOVE
+
+PB-168's `errors 3` equalled PB-167's. The report attributed it to *"E00040 on
+`cancel_is_one_tap_with_nothing_in_between`"*, **the test my brief had named as PB-167's**. The gate log named another,
+`a_completed_job_asks_for_a_review_once_inside_the_cadence` (`pb168-gate-1.log:152`). One external test went from error
+to pass, another went from pass to error, and both counts came out net zero. PB-135 asks for the cause of every
+*difference*, so a zero was never asked about, and a name the brief had supplied filled the gap.
+⭐ **Reconcile the non-passing set BY NAME against the last gate's list, every wave.** Give that list in the brief as a
+**measured baseline**, never as the expected answer.
