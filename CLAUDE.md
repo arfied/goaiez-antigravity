@@ -13397,3 +13397,161 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     correct, the check is a CHECK, and only the sentence telling the owner what to do about it is false.
     ⛔ So a refusal that names a missing INPUT is measured against every surface that can supply it —
     and where the answer is none, the honest closing names the dependency, never an instruction.
+
+422. **⭐⭐⭐ A GREP SCOPED TO A FILE IS A CITATION OF WHERE THE READER STOPPED, WHEN THE METHOD UNDER
+    MEASUREMENT DELEGATES — four true measurements said `N011Test` leaks a frozen clock into every later
+    test, and the fifth, *where does `tearDown()` DELEGATE to*, disproves it (RULED by the lane
+    supervisor 2026-09-10 21:2x).** Ruling 399's `::fake` census named **seven fake class names** where
+    its predicate is *any test double that disables application machinery* — ruling 420/421's sub-form,
+    *an instrument that enumerates the INSTANCES its author had already seen*. Ruling 398 had already
+    established the axis in its general form (*a bare `Event::fake()` is not a wider selective one: it
+    disables the application, so every fixture after it runs in a different app*), and named
+    `Carbon::setTestNow` as the unswept member and **ruling 33's own subject**.
+    Re-run on the predicate: `grep -rn -e "setTestNow" app/tests/Modules --include=*.php` filtered to
+    the eight ids → **51 call sites**. ⭐ Ruling 415's check passed — the first three
+    (`CardScreenTest:163` a set, `:211` a clear, `MoneyPaidTodayTest:26` a set) are each an instance.
+    Paired per file, **fifty pair a set with a clear** and ⭐⭐ **`N011Test.php` sets the clock three
+    hours forward at `:31` and has no clear anywhere in the file** — no `tearDown`, no `setUp`, nothing.
+    **The four true measurements that made it look live:** (1) the missing clear, measured; (2) the
+    project's own `TestCase::pinTheClockIfDriven():124-126` **returns early when `TEST_CLOCK` is unset**,
+    which its own docblock says is *"CI, the pre-push hook and every ordinary run"* — so setUp does not
+    re-establish the clock and a leak from a prior test would survive into the next; (3)
+    `grep -n -i -e "carbon" app/vendor/laravel/framework/src/Illuminate/Foundation/Testing/TestCase.php`
+    returns **NOTHING**, so the framework's own `TestCase` file contains no clock reset; (4) fifty of
+    fifty-one sites clear explicitly, which reads as the lane knowing it must.
+    ⭐⭐⭐ **The conclusion is FALSE, and the fifth measurement is a delegation.** That file's
+    `tearDown():95-101` is four lines and its body is `$this->tearDownTheTestEnvironment()`, which lives
+    in `Concerns/InteractsWithTestCaseLifecycle.php:162-168`:
+    `if (class_exists(Carbon::class)) { Carbon::setTestNow(); }` **and** the same for `CarbonImmutable`,
+    **unconditionally**; and this project's `TestCase::tearDown():71` ends in `parent::tearDown()`, which
+    reaches it. **The framework clears the clock after every test that boots it, so `N011Test`'s missing
+    clear cannot leak.** ⛔ Not a defect, not to be re-raised.
+    **RULED: a claim about what a method does NOT do is measured over every file the method DELEGATES
+    to, and a grep scoped to the file the method is DECLARED in is a citation of where the reader
+    stopped.** That is ruling 395's line-range trap one level out — 395 ruled *a LINE RANGE inside such a
+    claim is a citation of where the reader stopped, never a scope*, and a **file** is a scope with the
+    same property the moment the method's body is one call. ⭐ The tell is free and was present here: a
+    `tearDown()` whose whole body is a single delegating call.
+    ⚠️ **It is the SIXTH firing of rulings 400/403/409/421** — *a hypothesis built on TRUE measurements
+    can still be false; ask which measurement would DISPROVE the candidate and take that one FIRST* — and
+    the first where the disproof lived in **vendor** rather than in this tree (416 and 419 each measured
+    in vendor, but to CONFIRM rather than to kill).
+    ⭐ **The keepable by-product, so no later tick re-derives it: the lane's fifty explicit clears are
+    WITHIN-TEST correctness, not leak protection.** Ruling 33's subject is the clock frozen *through the
+    render*, and its *"cleared only as the method's last line"* half is about the rest of the method, not
+    about the next test. ⚠️ `N011Test`'s within-test half is clean too, measured rather than assumed:
+    everything after `:31` — the `Artisan::call('disputes:check-deadlines')`, the `dispute_audits` read
+    and the assertion — **wants** the travelled clock, which is the whole point of a 48-hour deadline
+    test, and ruling 80 already governs that command (implemented, tested, in no schedule — TRACK 1).
+
+423. **⭐⭐ FOUR more populations measured at ruling 324's bar this tick and all four are ZERO buildable
+    — and the fourth is ruling 415's fifth mechanism aimed at ruling 410's OWN filter (measured by the
+    lane supervisor 2026-09-10 21:2x; rulings 64, 95, 100, 111, 262(b), 294, 324, 327, 340, 415).**
+    **(a) ⭐ Ruling 363/421's unswept half — the IMPERATIVE-REMEDY census, 11 members, ZERO defective.**
+    421 closed with *"⛔ a refusal that names a missing INPUT is measured against every surface that can
+    supply it. Unswept: every other refusal in the lane that names something the owner must provide."*
+    Instrument, quoted (300): the lane's `error = '` / `error = sprintf` / `throw new` lines filtered to
+    an imperative directed at the owner (`enter|add|pick|choose|select|write|provide|type|upload|attach|
+    sign in|first\.|again\.|set the|give`) → **14 raw**. ⭐ **Ruling 415's check caught three at once:**
+    members 2, 4 and 7 are `'We could not add that: '`, `'We could not attach that payment: '` and
+    `'We could not add that note: '` — **catch PREFIXES**, matched on `add that` / `attach that`, not
+    imperatives. **Read the hit** (262(b)) → the real population is **11**. Each traced to its screen:
+    *"tap Authorise first"* (the Authorise button is at `checkout-block:45`, 349) · *"Choose a ledger …
+    QuickBooks, Xero or Sage"* (369's own whitelist, its `<select>` measured agreeing at 392(b)) ·
+    *"Pick due on receipt, net 15, net 30 or net 60"* (`credits.blade.php:43`'s select, 392(b)) ·
+    *"Write the note first"* (⭐ measured on **both** X-201 blades — `dispute-card:33` and
+    `dispute-queue:27` each carry a note `<input>`) · *"Pick monthly, every two weeks, or weekly"* (392(c)
+    measured unreachable from the screen; the select offers all three) · X-211's three `Enter …` (the
+    percent, fee and amount inputs at `ageing-by-reason:32,:72,:62`) · ⭐ *"Choose how the payment
+    arrived: cash, cheque, Zelle or wire"* (MONEY-186's `<select>` at `:63` renders **`Cheque` · `Cash` ·
+    `Zelle` · `Wire transfer`** — the labels match the refusal's own words, including the British
+    *cheque* against the column's `check`) · *"Pick one of the reasons"* (392(b)'s explicit placeholder).
+    The eleventh, `CollectionsPackagePreview:32`'s *"sign in as the owner first"*, is **ruling 100's own
+    recorded member** — `render():51`'s `abort_unless` means the branch can never render to anyone, so
+    ruling 96 governs. ⛔ Struck.
+    **(b) Ruling 306's VOCABULARY census on its unmeasured WRITE axis — three columns, ZERO defective.**
+    The addendum carried *"the migrations declare twenty vocabularies and 421 measured the write side for
+    one of them."* Enumerated: `grep -rn -E "^\s+\\$table->(string|enum)\(" app/app/Modules --include=*.php`
+    filtered to the eight ids and to `//` → **24 lines**, of which two are prose comments (`partner`,
+    `financing_partner`) and two are `TEST ANCHOR` markers. ⭐ 415's check: the first three (`entry_type`,
+    `meter_type`, `dunning_states.status`) are each a declared vocabulary. Cross-referenced against the
+    ledger, **seventeen are already measured** (90, 88/338, 305, 312, 369, 235/239/307, 51, 221, 392(b),
+    69/191/312/393, 131/396, 421, 227, 98, 364) and **three were not**: `sellables.fulfilment_type` —
+    ruling 117 already measured `Sellable`'s only writer is an evidence command, so the whole column is
+    unreachable in production; ⭐ **`overflow_charges.charge_type` — BOTH declared values written
+    (`InvoiceEngine:122`, `:202`) and both READ by two screens**, the cleanest vocabulary in the lane; and
+    ⭐⭐ **`receivable_states.status` — ALL FIVE declared values written** (`current` `:241`, `overdue`
+    `:89,:94`, `payment_plan` `:191,:193`, `escalated` `:352,:354`, `packaged_collections`
+    `:306,:308`), **the lane's only fully-honest vocabulary and worth keeping as the shape done right.**
+    ⚠️ The sweep also returned `ArForceAchAction:15`'s `'status' => 'enforced'`, a value in no declared
+    vocabulary — **read the hit** (262(b)): the method returns an **array** and writes no column at all,
+    it has no production caller (170(3)) and ruling 315 already recorded its sibling key. ⛔ Struck.
+    **(c) ⭐ Ruling 419's negative — a value bounded by a VENDOR's limit rather than by a COLUMN's.**
+    419 closed `varchar`, `integer`, `smallInteger`, `tinyInteger`, `decimal` and `text`; ruling 340
+    demands the complement, and rulings 230/233/235 swept the two outbound calls for **truth** and
+    **provenance** and never for **length**. Measured: `businesses.name` is a bare `$table->string('name')`
+    = varchar(255), and `PaymentLinkAction:30` is `$business->name.' - card payment'` → up to **270
+    characters** posted as `line_items[0][price_data][product_data][name]`. ⛔ **Recorded at ruling
+    76/193's grade, never briefed, and the reasoning is the failure MODE rather than the arithmetic:**
+    whether Stripe refuses that length is a **vendor fact this seat cannot measure** (193's own bar, and
+    ruling 417's precedent — *a member whose harm rests on an unmeasured mechanism is recorded*), and in
+    the refusing case the owner reads MONEY-141's honest *"The gateway would not open a payment page: <the
+    provider's own error.message>"* (227, 228) — **a truthful vendor-relayed refusal is the outcome those
+    rulings designed, not a fiction**, so even the bad branch is already correct. A 240-character business
+    name is the trigger. ⛔ Not a wave.
+    **(d) ⭐⭐ Ruling 410's own FILTER, re-run on the predicate — five members, ZERO defective, and it is
+    a positive control on ruling 393's remedy.** 410 enumerated 142 `@if`/`@elseif` conditions and
+    filtered to `-e 'status' -e "=== '" -e 'in_array'` — **a list of the syntax it expected**, which is
+    ruling 415's fifth mechanism, so a control gated on `@if($row->some_nullable)` was invisible to it.
+    Re-run with that filter inverted → **six raw**, and 415's check separates them: `same-account:19`'s
+    `@if($conn->payouts_count === 0)` is a **display** branch (152(c)'s own fix) the three-line window
+    swept in, and `card-screen:49`'s `@if($adding)` is component UI state and not a row precondition.
+    **Five real members and every one is enforced by the write:** `@if(!$card->is_default)` →
+    `CardRotateAction` is clear-all-then-set and therefore **idempotent** (343) · `@if($run->reviewed_label
+    === null)` → ruling 393's own measured positive control, `reviewDiscrepancy():226` throwing
+    `NothingToReviewException` and `:230` returning idempotently · `@if(!$decline->deferred)` →
+    `DeferDeclineAction` is a **`firstOrCreate`** (35, 229) · and ⭐⭐ `@if($d->is_open)` → the note form,
+    where `DisputeCard:77` computes `is_open` as `in_array($d->status, ['opened','compiled'], true)` and
+    `DisputeNoteAction` routes into `DisputeDefenseEngine:49`'s
+    `in_array($dispute->status, ['submitted','won','lost'], true)` → `DisputeAlreadySubmittedException`
+    — **the exact complement, the same set stated two ways.** ⚠️ The catch list at `DisputeCard:36` names
+    that class and was the *hint*; the guard itself was **measured**, because ruling 374 is explicit that
+    a hint is never a measurement. **So ruling 393's remedy — *a conditionally-rendered button is a CLAIM
+    ABOUT A PRECONDITION and the write must enforce it* — now holds across BOTH the status-gated
+    population (394, 410) and the non-status-gated one.** ⛔ Struck.
+    ⭐ **Ruling 327's outcome shape a SIXTEENTH time** — *a population measured non-empty that yields zero
+    buildable fixes is the more useful of the two results to write down*, because an empty census tells a
+    later tick *nothing is there* while a classified one tells it **what is there and why each member
+    stays.** ⛔ None of the four is to be re-raised.
+
+424. **⭐⭐ FIFTH HOLD, and ruling 418's shape HELD on its first re-outing (RULED by the lane supervisor
+    2026-09-10 21:2x).** MONEY-197 passed on every measured axis and its `RAW` carried the defect's own
+    sentence — *"Add them, then submit again."* — inside the RED dump, so the proof evidenced the
+    **FINDING** and not merely that the new assertion is load-bearing. **Ruling 418 was written one wave
+    earlier and its first application was unprompted**, which is ruling 149's discipline satisfied (*a fix
+    to a paperwork rule is itself a claim, and the tick after it says whether it held*). Recorded with it:
+    ruling 362's collapsed `GATE:` held for the third outing — the coder transcribed **no number**, so
+    42(2) is satisfied by construction; ruling 367's `(clean — no output)` sentinel for the third; and
+    366(b)/367's baseline `SWEEP:` for the fourth.
+    **The cadence, measured in THIS tick and never inherited (269, 272, 323):** `git rev-list --count
+    HEAD..origin/main` = **45**, not > 100 ✗ · `git diff --stat b91de39c origin/main -- app/app/Doctor
+    coder-bin .claude/hooks` **empty** ✗ · ⭐ `git merge-base HEAD origin/main` = **`b91de39c`, a money
+    `chore(supervisor)` commit from this same evening**, so Track 1 is merging this lane hourly and the
+    base **IS** a recent money tip with pushes since — 272's own second half ✗. **Merge gate CLOSED**,
+    `--allow-merge` not passed. `OWNER.md` judged by its **heading list** (136), newest still
+    `## OWNER RULING — 2026-09-09 09:02`, consumed as ruling 272.
+    ⛔ **Briefing an empty wave to avoid an idle tick is what rulings 95, 100 and 111 exist to prevent,
+    and it is worse than idling**: it spends a dispatch, puts a coder into `app/**` with no measured
+    defect, and every edit is churn a later reviewer must re-derive (47's companion). ⭐ **The bar is what
+    has kept this lane's last forty-five waves free of invented work, and a HOLD is held to it too** —
+    ⛔ *sounds plausible* is not a population, and ruling 422 is this tick's demonstration: the one
+    candidate that looked live for four measurements died on the fifth.
+    ⚠️ **The four lift conditions are CHECKED, never inferred:** a new dated `OWNER.md` section (case d,
+    which beats everything) · a cadence condition on a moved `origin/main`, all three measured in the
+    acting tick · a Track 1 answer to ACTION 13, 14, 15, 16, 18, 19, 20, 21, 22 or 23 · a population at
+    324's bar, **measured non-empty AND buildable**.
+    ⭐⭐ **Ruling 385's warning restated, because after five clean censuses in one tick it is the thing
+    most likely to be misread: this is NOT a reason to stop censusing.** It is what a lane looks like
+    after rulings 36–423 have been applied. **The next finding will come from a PREDICATE nobody has
+    stated yet, never from re-running a member list** — and rulings 421, 422 and 423(d) are all exactly
+    that, none of them existing as a phrase in this ledger until the tick that measured it.
