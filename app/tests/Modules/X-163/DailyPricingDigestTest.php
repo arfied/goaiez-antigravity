@@ -378,4 +378,33 @@ class DailyPricingDigestTest extends TestCase
 
         Livewire::actingAs($user)->test(DailyPricingDigest::class)->assertOk();
     }
+
+    public function test_a_browser_call_cannot_rewrite_a_confirmed_price_on_the_daily_digest(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        $item = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Gutter Clean',
+            'price_cents' => 9500,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'confirmed_at' => now(),
+        ]);
+
+        $component = Livewire::actingAs($owner)->test(DailyPricingDigest::class);
+
+        $refused = false;
+        try {
+            $component->call('updatePrice', $item->id, 0);
+        } catch (\Livewire\Exceptions\MethodNotFoundException $e) {
+            $refused = true;
+        }
+
+        $this->assertEquals(9500, $item->fresh()->price_cents, 'T2 A1 a browser call rewrote a confirmed price');
+        $this->assertTrue($refused, 'T2 A2 updatePrice answered a browser call');
+    }
+
 }

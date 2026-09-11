@@ -340,4 +340,33 @@ class ConfirmationScreenTest extends TestCase
         $component->assertSee('Needs a price');
         $this->assertDoesNotMatchRegularExpression('/wire:click="confirm\('.$item->id.'\)"\s+disabled/', $component->html(), 'T2 A2 Confirm is disabled on a row that needs a price');
     }
+
+    public function test_a_browser_call_cannot_rewrite_a_confirmed_price_on_the_confirmation_screen(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        $item = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Drain Unblock',
+            'price_cents' => 12000,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'confirmed_at' => now(),
+        ]);
+
+        $component = Livewire::actingAs($owner)->test(ConfirmationScreen::class);
+
+        $refused = false;
+        try {
+            $component->call('updatePrice', $item->id, 0);
+        } catch (\Livewire\Exceptions\MethodNotFoundException $e) {
+            $refused = true;
+        }
+
+        $this->assertEquals(12000, $item->fresh()->price_cents, 'T1 A1 a browser call rewrote a confirmed price');
+        $this->assertTrue($refused, 'T1 A2 updatePrice answered a browser call');
+    }
+
 }
