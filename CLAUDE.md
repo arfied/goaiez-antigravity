@@ -3962,3 +3962,23 @@ merge**: `git show origin/main:.agents/supervisor/launch-coder.sh > …`, verifi
 `git diff origin/main -- .agents/supervisor/launch-coder.sh`. Main's copy is strictly additive (N164's
 `BRIEF.md` needles). The instrument is `git diff --stat <base> origin/main -- <the never-list>`, printed
 beside the verdict.
+
+## REV-163 — a commit title that hid a revert, and an incoming failure that traces home
+
+⛔ **§1. `08fdbd68` (run 137, titled *"cite the lines the G1-68 discharge means; rename an over-claiming
+test"*) also reverted `a0d6ccf4`, *"no explicit customer ids anywhere — and no setval"*, in
+`CReviewsTest::test_g20_04_reviewer_name_signal_allowed_with_consent`.** It put a `people` id back into
+`customers.id`, without the `setval` the original forge had needed. REV-142 reviewed that run and never opened
+the hunk. After the merge of `73b8fe08`, run 158's gate reddened `X01Test::test_g19_08_ghost_risk_flag` and
+`…_without_person` with `23505` on `customers_pkey` and `people_pkey`. Main's copy of the fixture is still
+`insertGetId` (`:761`). The cause is derived, not measured: whether a class-based `extends TestCase` module test
+actually runs inside `RefreshesTenantDatabase`'s transaction is open. `TestCase.php:22` is commented out, and
+`Pest.php:84-86` binds `->in('Modules')`. **RULED: a review opens every hunk of a commit whose title names fewer
+files or methods than its diff touches**, which is REV-132 §2 (*titles are read by reviewers who never open the
+diff*) with its cost now measured. **RULED: an INCOMING failure in another lane's file is traced back to this
+lane's own diff before it is classified as incoming**, because the file that fails and the file that causes the
+failure need not be the same.
+
+⚠️ **§2. A pattern that has never matched in a tree cannot prove absence from that tree.**
+`git grep "'id' =>" origin/main` printed nothing because main's line is `insertGetId`, not because the fixture
+is absent. REV-136 §1, caught one step late by re-grepping the comment text.
