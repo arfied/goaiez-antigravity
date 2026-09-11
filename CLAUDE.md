@@ -17054,3 +17054,54 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty wave to avoid an idle tick is what
     rulings 95, 100 and 111 forbid. ⚠️ `app/CLAUDE.md` came into context again this tick. It is Laravel Boost
     boilerplate and was not followed.
+
+536. **⭐ The RAW-SQL census, the last spelling ruling 534 named: 3 raw fragments in the lane outside
+    migrations, every one a string literal with no interpolated value, and ZERO raw-SQL writes. Zero
+    buildable (measured by the lane supervisor 2026-09-11 10:0x, by `date` `10:00`; rulings 207, 294, 324,
+    327, 328, 333, 381, 415, 429, 449, 534).** Ruling 534 closed with *"a column is written by `=>`, a
+    property assign, `+=`, `->increment(` and raw SQL. Only the first was swept."* 534 then swept `+=`, and
+    `->increment(` is atomic by construction. The raw half has two hazards, and nobody had stated either
+    as a predicate: (a) a raw fragment carrying an interpolated value, which is an injection path that
+    `pint`, `phpstan` and every test pass over; and (b) a raw `UPDATE`/`INSERT`/`DELETE` that bypasses the
+    model, its casts and its `business_id` scope.
+    **Instruments, quoted (300):** `grep -rn -F -e "Raw(" -e "DB::select(" -e "DB::update("
+    -e "DB::statement("` over the eight module trees, minus `/Database/`, returns **3**. ⭐ **Zero-trap
+    mechanism 2 (case, 381) was checked, not assumed.** `-F "Raw("` cannot match `DB::raw(`, so the census
+    was re-run with `-i -F -e "raw(" -e "DB::insert(" -e "DB::unprepared(" -e "DB::delete("`, and it
+    returned the **same 3**. The lane carries no `DB::raw(` and no raw write.
+    **The three, each read (262(b)) with its safety named (328):**
+    - `X-173/Ui/ConflictsListView.php:50` is `orderByRaw("case when status = 'open' then 0 else 1 end")`,
+      a literal. ⭐ **Known member (429):** this is ruling 333's own clean member, with a `:51`
+      `orderByDesc('id')` tiebreak.
+    - `X-199/Ui/Unpaid.php:63` and `:77` are both `whereRaw('paid_cents < total_cents')`, a literal
+      column comparison. Both sit inside queries already scoped by `business_id` (209).
+    ⭐ **Positive control fires and DISCRIMINATES:** `grep -rln -F -e "Raw("` over `app/app/Services`,
+    `app/app/Models` and `app/app/Livewire` returns **36** files, and the lowercase form outside the lane
+    finds the interpolated shape the predicate names: `app/app/Services/Pixel/PixelDeliveryHealth.php:130`
+    is `DB::raw("pixel_delivery_samples.{$column} + 1")`, and
+    `app/app/Services/Ops/PlatformHealth.php:506` concatenates a ternary into `DB::raw`. So the
+    instrument reaches both literal and interpolated fragments, and money has only literal ones. ⛔ Money
+    proposes no edit on those and asserts no defect (ruling 5): their interpolated values were not traced.
+    415's first-three check and 449's each-member-exists check passed.
+    ⛔ Struck, not to be re-run. ⚠️ **Trigger:** a raw fragment in the lane carrying a variable, or a raw
+    SQL write outside a migration. Ruling 327's outcome shape a **fifty-third** time.
+    ⭐ **With 534 this closes ruling 534's write-spelling list:** `=>` (517), property assign and `+=`
+    (534), `->increment(` (atomic), and raw SQL (this ruling).
+
+537. **⛔ FORTIETH consecutive HOLD (RULED by the lane supervisor 2026-09-11 10:0x, by `date`).** All four
+    lift conditions were measured this tick (269, 272, 323), each case decided on mtimes (494):
+    - **Owner.** `OWNER.md`'s newest heading is still `## OWNER RULING — 2026-09-09 09:02` (136), mtime
+      `09-09 09:02:03`.
+    - **Coder.** `--check` returned `CODER DEAD`.
+    - **Mailbox.** `REPORT.md` (`07:15:21`) and `BRIEF.md` (`07:07:27`) are both older than `REVIEWS.md`
+      (`09:53:16`).
+    - **Cadence, all three ✗.** After `git fetch --no-write-fetch-head origin`, `origin/main` =
+      **`46afc022`**, unmoved. `git rev-list --count HEAD..origin/main` = **19**.
+      `git diff --stat dca743e8 origin/main -- app/app/Doctor coder-bin .claude/hooks` is empty.
+      `git merge-base HEAD origin/main` = **`dca743e8`**, this lane's own pushed supervisor tip, and
+      `git diff --name-status dca743e8 origin/main` is the 7 per-track paths plus X-102's three (504).
+    - **Track 1.** No answer to ACTION 13–25.
+    - **Population.** Ruling 536's is non-empty and not buildable.
+
+    **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty wave to avoid an idle
+    tick is what rulings 95, 100 and 111 forbid.
