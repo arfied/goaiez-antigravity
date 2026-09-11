@@ -434,4 +434,24 @@ class PricebookScreenTest extends TestCase
         $res = app(CalloutLookupAction::class)->handle($biz->id);
         $this->assertSame('NO_FACT', $res['refusal_code'] ?? null, 'T3 A4 refusal_code is not NO_FACT');
     }
+
+    public function test_a_refused_add_keeps_confirm_clickable_and_typing_does_not_clear_the_flag(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        $component = Livewire::actingAs($owner)
+            ->test(Pricebook::class)
+            ->set('newServiceName', 'Gutter Clean')
+            ->set('newPriceDollars', 0)
+            ->call('addItem');
+
+        $row = PriceBookItem::where('business_id', $biz->id)->where('service_name', 'Gutter Clean')->firstOrFail();
+
+        $component->assertSee('Needs a price');
+        $this->assertDoesNotMatchRegularExpression('/wire:click="confirmItem\('.$row->id.'\)"\s+disabled/', $component->html(), 'T1 A2 Confirm is disabled on a row that needs a price');
+        $component->set('inlinePrices.'.$row->id, 45.00);
+        $this->assertArrayHasKey($row->id, $component->get('refusals'), 'T1 A3 typing a price cleared the flag before any confirm');
+    }
 }

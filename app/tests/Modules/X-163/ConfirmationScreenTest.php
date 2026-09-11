@@ -320,4 +320,24 @@ class ConfirmationScreenTest extends TestCase
         $res = app(CalloutLookupAction::class)->handle($biz->id);
         $this->assertSame('$0.01', $res['formatted_fee'] ?? null, 'T4 A1: formatted_fee is not $0.01');
     }
+
+    public function test_a_refused_confirm_keeps_confirm_clickable(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        $item = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Zero Price Service',
+            'price_cents' => 0,
+            'is_sample' => true,
+            'is_confirmed' => false,
+        ]);
+
+        $component = Livewire::actingAs($owner)->test(ConfirmationScreen::class)->call('confirm', $item->id);
+
+        $component->assertSee('Needs a price');
+        $this->assertDoesNotMatchRegularExpression('/wire:click="confirm\('.$item->id.'\)"\s+disabled/', $component->html(), 'T2 A2 Confirm is disabled on a row that needs a price');
+    }
 }

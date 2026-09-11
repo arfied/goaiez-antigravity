@@ -77,7 +77,6 @@
                             </button>
                             
                             <button wire:click="confirm({{ $item->id }})" 
-                                    @if(isset($refusals[$item->id])) disabled @endif
                                     class="h-10 px-4 text-sm font-medium text-white bg-accent hover:bg-accent-hover rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                                 @if(isset($prices[$item->id]) && $prices[$item->id] != ($item->price_cents / 100))
                                     Fix price, then confirm
