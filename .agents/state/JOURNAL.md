@@ -940,3 +940,5 @@
 - `2026-09-10T18:13:34` (R245) X-102 — boundary X102Test.php:531 is false because there are no direct callers bypassing the HTTP middleware; ChatDoorTest.php:383 is true as the action's trim logic is redundant on the only existing path. R245
 - `2026-09-10T19:04:40` (R245) X-102 — capability X-102 owes an event listener for C-Agent's AgentTurnAnswer to record the agent's reply as a ChatTurn R245
 - `2026-09-10T19:33:07` (R245) X-102 — boundary The premise that AgentTurnAnswer is the sanctioned crossing is wrong; AnswerAgentTurnJob proves callers use the synchronous return array. R245
+- `2026-09-10T19:54:00` (R245) X-102 — capability The 2026-09-10T19:04:40 claim that "X-102 owes an event listener for C-Agent's AgentTurnAnswer" is wrong; X-102 must record the agent's reply synchronously using the return array. R245
+- `2026-09-10T19:54:33` (R245) X-102 — capability X-102 stores the agent's reply as a ChatTurn synchronously in ChatTurnAction, keeping the door response unchanged and correctly preserving the conversation state. R245
