@@ -15361,3 +15361,108 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     and `in_array(5, ['5'])` is **true** loose and **false** strict — **making it strict would be the
     regression.** ⛔ Struck, and ⛔ never "hardened" by adding `true` across the board. ⭐ Ruling 327's
     outcome shape a **thirty-first, thirty-second, thirty-third and thirty-fourth** time.
+478. **⭐⭐⭐ RULING 343 SWEPT THE *QUEUED* HALF OF THE DISPATCH-INSIDE-A-TRANSACTION SEAM AND ITS
+    COMPLEMENT WAS NEVER STATED — a SYNCHRONOUS listener runs inside its dispatcher's open transaction,
+    the lane has exactly ONE and it is read-only, and the REGISTRATION SURFACE is measured complete
+    (measured by the lane supervisor 2026-09-11 04:0x; rulings 64, 95, 100, 111, 262(b), 294, 324, 327,
+    328, 340, 371, 400, 415, 429, 449).** Ruling 343(a) measured *a `dispatch()` inside an open
+    transaction hands a queued listener a row the worker cannot yet see*, found `afterCommit` absent and
+    the lane's one `ShouldQueue` listener dispatched outside any transaction, and struck the axis. **Its
+    complement is a different defect with a different failure mode**: a listener that is NOT queued runs
+    **synchronously, inside the dispatcher's transaction**, so its writes are undone by a rollback it did
+    not cause and — the sharper half — **its throw aborts a transaction that is not its own**, taking the
+    dispatcher's whole atomic block with it. Invisible to every gate, because the dispatcher, the
+    registration and the handler are three files.
+    ⭐⭐ **The completeness half is MEASURED, and it is what makes this a census rather than a filter
+    (371).** A Laravel listener can be registered three ways and two do not exist here:
+    `grep -rn -F -e "shouldDiscoverEvents" -e "withEvents" app/app app/bootstrap` returns **NOTHING**,
+    `grep -rn -F -e "listen = ["` over `app/app` returns **NOTHING**, and `ls app/app/Providers/` is
+    `AppServiceProvider` · `FortifyServiceProvider` · `GoaiezRuntimeServiceProvider` — **no
+    `EventServiceProvider`.** So `Event::listen` is the whole surface and an 18-line sweep is the whole
+    population. ⭐ 415's first-three check passes and 449's *each member EXISTS* passes.
+    **Of 18 registrations tree-wide, exactly TWO name a money event and both are money's own:**
+    `X-198/ModuleServiceProvider.php:30` `CartCheckedOut → CaptureCheckedOutCart`, **synchronous**, and
+    `X-211/ModuleServiceProvider.php:35` `ArOverdue → ProcessOverdueReceivable`, the lane's **only**
+    `ShouldQueue`. ⭐ **So the population is bounded at ONE whatever the dispatch-site count** — which is
+    why a census of dispatch sites would have been the wrong instrument.
+    **The one member is SAFE and its safety is NAMED (328):** `CheckoutEngine:109` and `:259` dispatch
+    `CartCheckedOut` **inside `DB::transaction`**, reaching `CaptureCheckedOutCart::handle()`, whose whole
+    body is one `MerchantConnection::where('business_id', …)->where('is_connected', true)->exists()` and a
+    return — ruling 45's own emptied listener. **No write for a rollback to take, no domain throw to abort
+    the caller.** ⚠️ The safety is **conditional on ruling 45 holding**: its docblock says *"It still has a
+    job the day a real token arrives"*, so **the day it captures, it captures inside X-117's
+    transaction** — recorded by its token, never by its line (289, 293).
+    ⭐⭐ **The DUAL is closed and nobody had asked it** — *does money dispatch a FOREIGN event inside its
+    own transaction?*, which would put another lane's writes and throws inside a money atomic block. All
+    **23** `Event::dispatch` sites across the eight module trees name a **money** event class,
+    corroborated by rulings 380/447's measurement that this lane's entire cross-module import surface is
+    `X121\Models\Person`. ⚠️ **A string-named registration cannot reach money either**: `X-186:30`'s
+    `Event::listen('suppression.added', …)` is the tree's one string form and **all 23 money dispatches
+    are `new <Class>`**.
+    ⭐ **The queued half is safe TWICE OVER, and the second reason STRENGTHENS ruling 276.** 276 rested
+    partly on `app/phpunit.xml:37` pinning `QUEUE_CONNECTION=database` — **a property of the TEST
+    environment.** Measured: `app/config/queue.php:16` is `env('QUEUE_CONNECTION', 'database')`, so the
+    **default is `database`, not `sync`**, and a `ShouldQueue` listener queues in production with no
+    `.env` line. ⭐⭐ That matters because **`ShouldQueue` is a promise the QUEUE DRIVER keeps** — under
+    `sync` every queued listener is synchronous and this census's population would be **two**. The belt
+    beneath it: `DetectOverdueReceivablesCommand` carries **no `DB::transaction` anywhere** (re-measured
+    on the live file, 64/323), so even under `sync` the listener runs inside no enclosing transaction.
+    ⭐⭐⭐ **The positive control FIRES, DISCRIMINATES, and returns a KNOWN MEMBER (429).**
+    `grep -rn -F -e "::create" -e "->update(" -e "firstOrCreate" app/app/Modules --include=*.php | grep
+    -e "/Listeners/"` returns **three writing listeners** — `X-163/Listeners/RecordPriceGap:34` and
+    `RecordPriceGapFromRefusal:38`, both **registered synchronously** at `X-163:27,:32` (⛔ money proposes
+    no edit and asserts no defect, ruling 5 — their dispatchers were not read) — **and
+    `X-199/Listeners/RecordPaymentOnCapture:28`'s `$invoice->update(['payment_id' => …])`, ruling 102's
+    own member.** So the instrument demonstrably locates a **writing** listener, in this lane, and **the
+    census's answer is one-and-read-only ONLY because ruling 102 refused to register it.**
+    ⭐⭐ **And that hands ruling 102 a SECOND, INDEPENDENT reason nobody had stated.** 102 refused
+    registration because the listener calls `recordPayment()`, which writes `status => 'paid'` —
+    *marking an invoice paid off an event*. Measured now: `PaymentCaptured` is dispatched at
+    `GatewayEngine:139` and `capture()`'s `DB::transaction` opens at `:82` and closes at `:147`, so
+    **`:139` is INSIDE it** — and via ruling 473's savepoint nesting, inside `issueInvoice()`'s outer
+    transaction too. **Registering it would put an X-199 invoice write inside an X-198 transaction**, so
+    a gateway rollback would silently un-pay an invoice and an X-199 throw would abort a capture.
+    ⛔ Still not to be registered, now for two reasons rather than one. ⛔ Zero buildable, struck, not to
+    be re-raised. ⭐ Ruling 327's outcome shape a **thirty-fifth** time.
+
+479. **⭐⭐ MONEY-204's RETRY LOOP RE-RUNS EVERY SIDE EFFECT IN ITS CLOSURE AND `Event::dispatch` IS NOT
+    TRANSACTIONAL — it is safe by an ORDERING property that wave was not thinking about (measured by the
+    lane supervisor 2026-09-11 04:0x).** MONEY-204 wrapped both `CheckoutEngine` mint sites in
+    `for ($attempt = 1; ; $attempt++) { try { return DB::transaction(fn () => …); } catch
+    (UniqueConstraintViolationException) { … } }`, and ruling 465 measured the rollback makes the retry
+    idempotent **for the ROW writes** — the order and the inventory decrement both go back. ⭐⭐ **A
+    dispatched EVENT does not go back.** `Event::dispatch` is not transactional, so a dispatch inside a
+    rolled-back attempt has already happened and the closure then re-runs in full — which would fire
+    `InventoryUpdated` and `CartCheckedOut` **twice for one order**, the first carrying an `orderId` that
+    no longer exists.
+    **Measured SAFE, and the safety is pure ordering.** `Order::create` — `:85` and `:228` — precedes
+    **every** dispatch at both sites (`:103`, `:109`, `:252`, `:259`), and ⭐ **it is the only
+    unique-constrained write either closure makes**: ruling 470 enumerated the lane's six unique
+    constraints and **`order_lines` is not among them**, so a `UniqueConstraintViolationException` inside
+    either closure can only be the order number's, thrown **before** anything is dispatched. Zero
+    double-dispatch. ⚠️ `$cart->delete()` at `:267` sits after the dispatches and inside the transaction,
+    so a rollback correctly restores the cart.
+    ⭐ **Recorded rather than struck, because the safety is an accident of ordering in a wave whose
+    subject was a random string.** Two future edits break it and neither looks like it touched this:
+    **moving a dispatch above `Order::create`**, or **adding a unique constraint to `order_lines`**.
+    Found by their tokens, never by the line numbers quoted here (289, 293). ⛔ No wave: nothing is wrong
+    today, and a guard against a future edit is machinery for a defect that does not exist (59, 327).
+    ⚠️ The generalisable half joins ruling 465/466's family: **a retry loop is idempotent only over the
+    effects a ROLLBACK can reach**, and an event, an HTTP call, a log line and a file write are all
+    outside it — so a wave that adds a retry owes a sweep of its closure for every effect that is not a
+    row.
+
+480. **⛔ FIFTEENTH consecutive HOLD (RULED by the lane supervisor 2026-09-11 04:0x).** All four lift
+    conditions measured in the acting tick (269, 272, 323): `OWNER.md`'s newest heading still
+    `## OWNER RULING — 2026-09-09 09:02` (136), consumed as ruling 272 · the cadence **all three ✗** —
+    **11** behind (not > 100), the guarded-checker diff over `app/app/Doctor coder-bin .claude/hooks`
+    **empty**, and the merge-base **`e78d9ba3`**, this lane's own `chore(supervisor)`, with two
+    `chore(supervisor)` commits since carrying no substantive work (272's second half) · no Track 1
+    answer to ACTION 13, 14, 15, 16 (half — 446), 18, 19, 20, 21, 22, 23 or 24 · and ruling 478's
+    population is **non-empty and NOT buildable**. **Merge gate CLOSED**, `--allow-merge` not passed.
+    ⚠️ Ruling 145's trap is live on the board and was not read as the measurement — the **merge-base**
+    decided condition 3, never a `merge: track/money` subject line. ⛔ Briefing an empty wave to avoid an
+    idle tick is what rulings 95, 100 and 111 exist to prevent, and it is worse than idling; ⛔ *sounds
+    plausible* is not a population. ⭐ The one carried candidate is unchanged and stays blocked — ruling
+    474's N+1 population, recorded on TRACK 1 ACTION 13's scale half, whose **trigger for re-opening is a
+    production catalogue or invoice writer, or a merge, never a wave boundary.**
