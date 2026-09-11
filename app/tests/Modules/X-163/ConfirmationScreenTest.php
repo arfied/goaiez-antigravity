@@ -11,6 +11,7 @@ use App\Modules\X163\Models\CalloutFee;
 use App\Modules\X163\Models\PriceBookItem;
 use App\Modules\X163\Ui\ConfirmationScreen;
 use App\Support\Tenancy;
+use Livewire\Exceptions\MethodNotFoundException;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -361,12 +362,11 @@ class ConfirmationScreenTest extends TestCase
         $refused = false;
         try {
             $component->call('updatePrice', $item->id, 0);
-        } catch (\Livewire\Exceptions\MethodNotFoundException $e) {
+        } catch (MethodNotFoundException $e) {
             $refused = true;
         }
 
         $this->assertEquals(12000, $item->fresh()->price_cents, 'T1 A1 a browser call rewrote a confirmed price');
         $this->assertTrue($refused, 'T1 A2 updatePrice answered a browser call');
     }
-
 }
