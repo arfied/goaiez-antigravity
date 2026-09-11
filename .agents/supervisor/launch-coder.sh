@@ -4,7 +4,9 @@
 # KICKOFF.md, detached, logging to /home/goaiez/tmp/agy-run<N>.log.
 #
 #   bash .agents/supervisor/launch-coder.sh                 # Antigravity (default)
-#   bash .agents/supervisor/launch-coder.sh --coder claude  # Claude Code as the coder
+#   bash .agents/supervisor/launch-coder.sh --coder claude  # Claude Code as the FALLBACK coder —
+#                                                           # re-enabled by the owner 2026-09-11
+#                                                           # (was refused 2026-09-10 → 09-11)
 #                                                           # (owner 2026-09-05: the
 #                                                           # default account; only
 #                                                           # when agy reports
@@ -20,7 +22,7 @@ ALLOW_HARNESS=0
 ALLOW_RESTORE=0
 while [ $# -gt 0 ]; do
   case "$1" in
-    --coder) CODER="${2:-}"; shift 2;;
+    --coder) CODER="${2:-}"; shift 2;;  # 2026-09-11 10:2x — the owner re-enabled `--coder claude` (the fallback coder, used when agy reports "quota reached"); the 2026-09-10 refusal is retired. Was: if [ "$CODER" = claude ]; then echo "REFUSED: --coder claude is DISABLED (owner 2026-09-10: no fallback coder for now; on quota reached, wait for the reset)"; exit 1; fi; shift 2;;
     --allow-merge) ALLOW_MERGE=1; shift;;   # opens the shared coder guard's merge gate (GOAIEZ_MERGE_OK=1) for THIS run only; the guard added it 2026-09-05 13:27
     --allow-harness) ALLOW_HARNESS=1; shift;;  # opens GOAIEZ_HARNESS_OK=1 for THIS run only (guard, 2026-09-06 17:2x). It opens the ABILITY TO COMMIT app/tests/Journeys/JourneyHarness.php, not permission to weaken it: quote the diff in REVIEWS, and a change that makes a journey easier to pass is a BLOCK.
     --allow-restore) ALLOW_RESTORE=1; shift;;  # opens GOAIEZ_RESTORE_OK=1 for THIS run only (owner ruling 2026-09-07, reserved-questions item 3B; guard clause added the same day). It permits `git checkout|restore -- <existing file paths>` and NOTHING else: no directory, no option, and supervisor-owned paths (.agents/supervisor, .agents/rules, .claude, CLAUDE.md, bin/supervise.sh, bin/state.py, any .env) stay refused inside it, because restoring one of those discards the supervisor's uncommitted notes — that is run 27. Restoring a SEALED file is the safe direction: it can only discard a local modification, never weaken a committed check.
@@ -48,6 +50,26 @@ fi
 if grep -q 'Harness gate \*\*OPEN' .agents/supervisor/KICKOFF.md && [ "$ALLOW_HARNESS" = 0 ]; then
   echo "REFUSED: KICKOFF.md declares 'Harness gate **OPEN' but --allow-harness was not passed."
   echo "         The run would export GOAIEZ_HARNESS_OK=0 and could not commit the merged harness."
+  exit 1
+fi
+# N164 (2026-09-10, tick 303): the two arms above read KICKOFF.md ONLY, and the CODER READS
+# BRIEF.md. Tick 303 found the standing wave-269 brief declaring "Merge gate **OPEN** for this
+# run" at item 2 while KICKOFF.md said "Merge gate closed for this run" — a bare dispatch would
+# have passed both arms above, exported GOAIEZ_MERGE_OK=0, and handed the coder a brief telling
+# it the gate was open. That is N103 with the two sources of truth moved one file across, and
+# the guard written for N103 could not see it: it was watching the file the supervisor declares
+# in, not the file the coder obeys. Same needles, same fail-open construction (a brief that says
+# neither is silent; a brief that says "closed" cannot match). Positive control at the time of
+# writing: the needle read 0 in BRIEF.md and KICKOFF.md after tick 303's correction, and 16 in
+# REVIEWS.md — it matches text of this shape, it just does not match a correct mailbox.
+if grep -q 'Merge gate \*\*OPEN' .agents/supervisor/BRIEF.md && [ "$ALLOW_MERGE" = 0 ]; then
+  echo "REFUSED: BRIEF.md declares 'Merge gate **OPEN' but --allow-merge was not passed."
+  echo "         The coder reads BRIEF.md; the run would export GOAIEZ_MERGE_OK=0 and the shared guard would refuse the merge."
+  exit 1
+fi
+if grep -q 'Harness gate \*\*OPEN' .agents/supervisor/BRIEF.md && [ "$ALLOW_HARNESS" = 0 ]; then
+  echo "REFUSED: BRIEF.md declares 'Harness gate **OPEN' but --allow-harness was not passed."
+  echo "         The coder reads BRIEF.md; the run would export GOAIEZ_HARNESS_OK=0 and could not commit the merged harness."
   exit 1
 fi
 
