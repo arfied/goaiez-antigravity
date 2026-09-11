@@ -17,6 +17,7 @@ use App\Modules\X121\Models\Person;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class X117Test extends TestCase
@@ -466,5 +467,51 @@ class X117Test extends TestCase
             $sellable->refresh();
             $this->assertSame(11, $sellable->inventory_quantity);
         }
+    }
+
+    public function test_a_colliding_order_number_is_re_minted_and_the_checkout_still_lands(): void
+    {
+        // Str::random draws from 62 symbols and strtoupper collapses them to 36 non-uniformly, so
+        // order numbers collide by birthday at ~38k orders. The sequence seam forces the first draw
+        // to collide with a number this tenant already holds; the second draw must be taken.
+        $biz = TestCase::provisionTenant(['name' => 'OrderNumberCollision', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        // …seed a Sellable with stock, build a cart through the engine's own API, and seed an
+        // existing Order on this business whose order_number is 'ORD-TAKEN1'…
+        $sellable = Sellable::create([
+            'business_id' => $biz->id,
+            'name' => 'Collision Item',
+            'sku' => 'COL-1',
+            'inventory_quantity' => 10,
+            'unit_price_cents' => 1500,
+        ]);
+
+        Order::create([
+            'business_id' => $biz->id,
+            'customer_id' => null,
+            'order_number' => 'ORD-TAKEN1',
+            'status' => 'pending_payment',
+            'total_cents' => 1500,
+            'auth_token' => 'auth_token_taken',
+        ]);
+
+        $sessionToken = 'sess_collision';
+        $this->cartAction->handle($biz->id, $sessionToken, [['sellable_id' => $sellable->id, 'quantity' => 1]], 15);
+
+        Str::createRandomStringsUsingSequence(['TAKEN1', 'FRESH2']);
+
+        $res = app(CheckoutEngine::class)->checkoutCart($biz->id, $sessionToken, 'auth_fresh_token');
+
+        Str::createRandomStringsNormally();
+
+        // The order that landed carries the SECOND draw, not the first and not the taken one.
+        $this->assertSame('ORD-FRESH2', $res['order_number']);
+
+        // And there is exactly one order under the taken number — the pre-existing one.
+        $this->assertSame(
+            1,
+            Order::where('business_id', $biz->id)->where('order_number', 'ORD-TAKEN1')->count()
+        );
     }
 }
