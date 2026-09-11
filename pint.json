@@ -1,0 +1,16 @@
+{
+    "preset": "laravel",
+    "exclude": [
+        "app/app/Doctor",
+        "app/vendor",
+        "app/node_modules",
+        "app/storage",
+        "app/bootstrap/cache",
+        "plugins"
+    ],
+    "notPath": [
+        "app/app/Console/Commands/DoctorCommand.php",
+        "app/app/Console/Commands/DoctorSelfTestCommand.php",
+        "app/app/Console/Commands/ModuleDoneCommand.php"
+    ]
+}

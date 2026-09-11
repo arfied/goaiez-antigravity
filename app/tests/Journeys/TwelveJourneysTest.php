@@ -482,24 +482,37 @@ final class TwelveJourneysTest extends TestCase
     // ═══════════════════════════════════════════════════════════════════
 
     #[Test]
-    public function an_invoice_reaches_a_real_charge_id(): void
+    public function a_real_gateway_charge_id_exists_and_no_invoice_is_tied_to_it(): void
     {
-        $tenant = $this->tenantWithLiveNumber();
-        $invoice = $this->issueInvoice($tenant, amountMinor: 12_500);
+        $path = storage_path('app/evidence/j9/charge.json');
+        if (! file_exists($path)) {
+            $this->fail('Artifact missing. You must run php artisan x198:evidence-charge first.');
+        }
 
-        $charge = $this->payInvoice($invoice);
+        $artifact = json_decode(file_get_contents($path), true);
 
         // ⛔ The gateway's own id. Nothing here can mint one, which is the only
         //    reason this assertion means anything.
         $this->assertNotEmpty(
-            $charge['gateway_charge_id'] ?? '',
-            'The invoice was marked paid with no gateway charge id — no money moved.'
+            $artifact['gateway_charge_id'] ?? '',
+            'The artifact carries no gateway charge id — nothing reached the provider.'
         );
+        $this->assertTrue(str_starts_with($artifact['gateway_charge_id'], 'ch_'), 'Charge id must start with ch_');
+        $this->assertFalse($artifact['running_unit_tests'], 'Artifact must not be created under test');
+        // ⛔ The artifact carries no invoice status, and that is the finding.
+        //    payments.invoice_id EXISTS (2026_09_04_000000_add_invoice_id_to_payments.php),
+        //    and so does PaymentCaptured::$invoiceId and X-199's RecordPaymentOnCapture.
+        //    The seam is declared at three layers and connected at none: capture() takes
+        //    (businessId, amountCents, paymentToken, idempotencyKey) and no invoice id, and
+        //    the listener that would consume one is registered by nothing because it calls
+        //    recordPayment(), which marks an invoice paid off an event. So this journey can
+        //    prove a real charge id and cannot prove it paid THIS invoice.
+        //    J9's goal is UNRESOLVED against that, not against a missing column.
+        $this->assertArrayNotHasKey('invoice_status', $artifact);
 
-        $this->assertSame('paid', $this->invoiceStatus($invoice));
         $this->writeEvidence('invoice-to-paid', [
             'passed' => true,
-            'artifact_id' => $charge['gateway_charge_id'],
+            'artifact_id' => $artifact['gateway_charge_id'],
         ]);
     }
 

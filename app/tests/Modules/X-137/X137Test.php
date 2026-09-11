@@ -280,4 +280,20 @@ class X137Test extends TestCase
         $this->assertEquals('active', $token->status);
         $this->assertNull($token->joined_call_id);
     }
+
+    public function test_a_short_link_with_a_blank_destination_is_refused_before_it_is_counted(): void
+    {
+        Event::fake([LinkClicked::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Cold Click', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $link = $this->shortAction->handle($biz->id, '   ', 'flyer_a');
+
+        $response = $this->get("/l/{$biz->id}/{$link->short_code}");
+
+        $this->assertEquals(0, LinkClick::count(), 'Blank destination counted as click');
+        Event::assertNotDispatched(LinkClicked::class);
+        $response->assertNotFound();
+    }
 }

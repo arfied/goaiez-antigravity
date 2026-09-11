@@ -15,9 +15,8 @@ final class PaymentCaptureAction
         int $businessId,
         int $amountCents,
         string $paymentToken,
-        string $idempotencyKey,
-        string $currency = 'USD'
+        string $idempotencyKey
     ): Payment {
-        return $this->engine->capture($businessId, $amountCents, $paymentToken, $idempotencyKey, $currency);
+        return $this->engine->capture($businessId, $amountCents, $paymentToken, $idempotencyKey);
     }
 }

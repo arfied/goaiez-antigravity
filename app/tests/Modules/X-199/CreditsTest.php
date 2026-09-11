@@ -20,7 +20,9 @@ class CreditsTest extends TestCase
 
     public function test_credits_data_and_tenant_isolation(): void
     {
-        $biz = TestCase::provisionTenant(['name' => 'Credits Tenant 1']);
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = TestCase::provisionTenant(['name' => 'Credits Tenant 1', 'owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
         Tenancy::set((int) $biz->id);
         $customer = PersonFactory::new()->create(['business_id' => $biz->id]);
 
@@ -50,18 +52,18 @@ class CreditsTest extends TestCase
 
         Tenancy::set((int) $biz->id);
 
-        Livewire::test(Credits::class, ['businessId' => $biz->id])
-            ->assertSee('$5,000.00')
-            ->assertSee('$1,500.00 outstanding')
-            ->assertSee('Net 30')
-            ->assertDontSee('Due On Receipt')
-            ->assertDontSee('$999.00');
+        Livewire::test(Credits::class)
+            ->assertSee('5,000.00')
+            ->assertSee('1,500.00')
+            ->assertSee('net 30')
+            ->assertDontSee('selected>due on receipt</option>', false)
+            ->assertDontSee('999.00');
 
         CreditTerm::where('business_id', $biz->id)->delete();
-        Livewire::test(Credits::class, ['businessId' => $biz->id])
-            ->assertSee('$0.00')
-            ->assertSee('$0.00 outstanding')
-            ->assertSee('No credit terms have been issued');
+        Livewire::test(Credits::class)
+            ->assertSee('Nobody is on terms yet.')
+            ->assertSee('A commercial customer gets terms')
+            ->assertSee('so no terms row is created yet');
     }
 
     public function test_route_renders_credits(): void
@@ -85,8 +87,8 @@ class CreditsTest extends TestCase
 
         $this->get(route('x-199.credits'))
             ->assertOk()
-            ->assertSee('$5,000.00')
-            ->assertSee('$1,500.00 outstanding')
-            ->assertSee('Net 30');
+            ->assertSee('5,000.00')
+            ->assertSee('1,500.00')
+            ->assertSee('net 30');
     }
 }

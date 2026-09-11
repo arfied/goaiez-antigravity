@@ -116,4 +116,13 @@ final class CommissionEngine
             'reason' => $reason,
         ];
     }
+
+    public function exportPayroll(int $businessId): array
+    {
+        $commissions = Commission::where('business_id', $businessId)
+            ->where('status', 'released')
+            ->get();
+
+        return $commissions->toArray();
+    }
 }

@@ -20,7 +20,9 @@ class InvoicesTest extends TestCase
 
     public function test_invoices_data_and_tenant_isolation(): void
     {
-        $biz = TestCase::provisionTenant(['name' => 'Invoices Tenant 1']);
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = TestCase::provisionTenant(['name' => 'Invoices Tenant 1', 'owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
         Tenancy::set((int) $biz->id);
         $customer = PersonFactory::new()->create(['business_id' => $biz->id]);
 
@@ -54,18 +56,23 @@ class InvoicesTest extends TestCase
 
         Tenancy::set((int) $biz->id);
 
-        Livewire::test(Invoices::class, ['businessId' => $biz->id])
-            ->assertSee('1 invoices')
-            ->assertSee('$350.00')
+        Livewire::test(Invoices::class)
+            ->assertViewHas('invoices', function ($collection) {
+                return $collection->count() === 1;
+            })
+            ->assertSee('350.00')
             ->assertSee('INV-INV-001')
             ->assertDontSee('INV-INV-002-ISOLATED')
-            ->assertDontSee('$999.00');
+            ->assertDontSee('999.00');
 
         Invoice::where('business_id', $biz->id)->delete();
-        Livewire::test(Invoices::class, ['businessId' => $biz->id])
-            ->assertSee('0 invoices')
-            ->assertSee('$0.00')
-            ->assertSee('No customer invoices have been generated yet');
+        Livewire::test(Invoices::class)
+            ->assertViewHas('invoices', function ($collection) {
+                return $collection->count() === 0;
+            })
+            ->assertDontSee('350.00')
+            ->assertSee('No invoices yet.')
+            ->assertSee('No invoice has been raised for this account.');
     }
 
     public function test_route_renders_invoices(): void
@@ -91,8 +98,8 @@ class InvoicesTest extends TestCase
 
         $this->get(route('x-199.invoices'))
             ->assertOk()
-            ->assertSee('1 invoices')
-            ->assertSee('$350.00')
+            ->assertSee('Customer Invoices')
+            ->assertSee('350.00')
             ->assertSee('INV-INV-001');
     }
 }

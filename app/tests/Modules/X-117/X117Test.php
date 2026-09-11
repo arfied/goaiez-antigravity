@@ -8,13 +8,17 @@ use App\Modules\X117\Actions\CartBuildAction;
 use App\Modules\X117\Actions\CartCheckoutAction;
 use App\Modules\X117\Actions\OrderCancelAction;
 use App\Modules\X117\Domain\CheckoutEngine;
+use App\Modules\X117\Domain\OrderNotCancellableException;
 use App\Modules\X117\Events\InventoryUpdated;
+use App\Modules\X117\Models\Cart;
 use App\Modules\X117\Models\Order;
 use App\Modules\X117\Models\OrderLine;
 use App\Modules\X117\Models\Sellable;
 use App\Modules\X121\Models\Person;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class X117Test extends TestCase
@@ -38,10 +42,10 @@ class X117Test extends TestCase
 
     /**
      * TEST ANCHOR
-     * 100 concurrent checkouts of a 1-unit item yield exactly one paid order and 99 honest "sold out" responses;
+     * 100 sequential checkouts of a 1-unit item yield exactly one pending_payment order and 99 honest "sold out" responses;
      * grep -rE 'price' app/Modules/X-117/ shows reads only — never a write to a price
      */
-    public function test_anchor_concurrent_checkouts_and_inventory_reservation(): void
+    public function test_anchor_sequential_checkouts_and_inventory_decrement(): void
     {
         Event::fake([InventoryUpdated::class]);
 
@@ -73,7 +77,7 @@ class X117Test extends TestCase
                 customerId: $customer->id
             );
 
-            if ($res['status'] === 'paid') {
+            if ($res['status'] === 'pending_payment') {
                 $paidCount++;
             } elseif ($res['status'] === 'sold_out') {
                 $soldOutCount++;
@@ -190,6 +194,23 @@ class X117Test extends TestCase
         $this->assertSame(15, (int) $cart15->expires_at->diffInMinutes($cart30->expires_at));
     }
 
+    public function test_an_order_row_written_without_a_status_is_pending_payment(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Default Status Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $id = DB::table('orders')->insertGetId([
+            'business_id' => $biz->id,
+            'order_number' => 'ORD-TEST-123',
+            'total_cents' => 1000,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $order = DB::table('orders')->find($id);
+        $this->assertEquals('pending_payment', $order->status);
+    }
+
     /** [G18-29] */
     public function test_g18_29_lifecycle_stops_at_money(): void
     {
@@ -212,14 +233,14 @@ class X117Test extends TestCase
             freshAuthToken: 'auth_tok_'.uniqid()
         );
 
-        $this->assertEquals('paid', $res['status']);
+        $this->assertEquals('pending_payment', $res['status']);
 
         $order = Order::findOrFail($res['order_id']);
-        $this->assertEquals('paid', $order->status);
+        $this->assertEquals('pending_payment', $order->status);
 
         $orderLine = OrderLine::where('order_id', $order->id)->firstOrFail();
 
-        $this->assertContains($order->status, ['paid', 'cancelled', 'sold_out']);
+        $this->assertContains($order->status, ['paid', 'cancelled', 'sold_out', 'pending_payment']);
 
         $this->cancelAction->handle($biz->id, $order->id);
         $order->refresh();
@@ -274,5 +295,335 @@ class X117Test extends TestCase
                 $content
             );
         }
+    }
+
+    /**
+     * [G1-75] a pricing STRUCTURE, not a promotion; the price is looked up or REFUSED (P-092)
+     */
+    public function test_g1_75_price_is_looked_up_or_refused(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Price Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $sellable = Sellable::create([
+            'business_id' => $biz->id,
+            'name' => 'Consultation',
+            'sku' => 'CON-PRICE',
+            'inventory_quantity' => 10,
+            'unit_price_cents' => 5000,
+        ]);
+
+        // (i) Assert the total equals the stored unit_price_cents, ignoring caller input
+        $cart = $this->cartAction->handle(
+            businessId: $biz->id,
+            sessionToken: 'sess_price_1',
+            items: [['sellable_id' => $sellable->id, 'quantity' => 2, 'unit_price_cents' => 1000]]
+        );
+
+        $this->assertEquals(10000, $cart->total_cents, 'Total must equal stored price * qty (5000 * 2), ignoring input price');
+
+        // (ii) Assert an unknown sellable is refused with ModelNotFoundException
+        $this->expectException(ModelNotFoundException::class);
+        $this->cartAction->handle(
+            businessId: $biz->id,
+            sessionToken: 'sess_price_2',
+            items: [['sellable_id' => 9999, 'quantity' => 1]]
+        );
+    }
+
+    /**
+     * [G6-02] A post-charge upsell on a card already on file would charge a second time on the
+     * authorisation that paid the first order. checkoutCart() refuses that: an authorisation is a
+     * one-shot nonce, and the guard is the SECOND check in the method, before the cart is even
+     * read. The second cart below is therefore load-bearing — with no cart the method would refuse
+     * for a different reason and this test would pass for the wrong one.
+     */
+    public function test_g6_02_an_authorisation_pays_once_and_a_second_charge_on_it_is_refused(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Upsell Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $sellable = Sellable::create([
+            'business_id' => $biz->id,
+            'name' => 'Filter',
+            'sku' => 'FIL-1',
+            'inventory_quantity' => 5,
+            'unit_price_cents' => 2500,
+        ]);
+
+        $token = 'auth_'.uniqid();
+
+        $this->cartAction->handle($biz->id, 'sess_upsell', [['sellable_id' => $sellable->id, 'quantity' => 1]], 15);
+        $first = $this->engine->checkoutCart($biz->id, 'sess_upsell', $token, null);
+        $this->assertSame('pending_payment', $first['status']);
+
+        $this->cartAction->handle($biz->id, 'sess_upsell', [['sellable_id' => $sellable->id, 'quantity' => 1]], 15);
+        $second = $this->engine->checkoutCart($biz->id, 'sess_upsell', $token, null);
+
+        $this->assertSame('refused', $second['status']);
+        $this->assertSame('AUTH_USED', $second['refusal_code']);
+        $this->assertStringContainsString('an authorisation pays once and this one already has', $second['message']);
+        $this->assertSame(1, Order::where('business_id', $biz->id)->count());
+        $this->assertSame(4, $sellable->fresh()->inventory_quantity);
+    }
+
+    /**
+     * [G17-31] One currency, and no conversion path. Every money value X-117 writes is minor units
+     * of the account's single currency: a cart total is the exact integer sum of its lines with no
+     * factor applied, and neither the result, the order nor its lines carries a rate or a landed
+     * cost. The scan is the shape test_g18_29 already uses on this file's fulfilment vocabulary.
+     * It deliberately does NOT refuse a bare `currency` column — naming the currency of a money
+     * value is a fix, and converting between two is what this capability rules out.
+     */
+    public function test_g17_31_one_currency_with_no_conversion_path(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'One Currency Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $cheap = Sellable::create([
+            'business_id' => $biz->id,
+            'name' => 'Washer',
+            'sku' => 'WSH-1',
+            'inventory_quantity' => 9,
+            'unit_price_cents' => 1500,
+        ]);
+
+        $dear = Sellable::create([
+            'business_id' => $biz->id,
+            'name' => 'Manifold',
+            'sku' => 'MAN-1',
+            'inventory_quantity' => 9,
+            'unit_price_cents' => 2075,
+        ]);
+
+        $this->cartAction->handle($biz->id, 'sess_one_currency', [
+            ['sellable_id' => $cheap->id, 'quantity' => 2],
+            ['sellable_id' => $dear->id, 'quantity' => 3],
+        ], 15);
+
+        $res = $this->engine->checkoutCart($biz->id, 'sess_one_currency', 'auth_'.uniqid(), null);
+
+        $this->assertSame('pending_payment', $res['status']);
+        $this->assertSame(2 * 1500 + 3 * 2075, $res['total_cents']);
+
+        $order = Order::findOrFail($res['order_id']);
+        $this->assertSame(2 * 1500 + 3 * 2075, $order->total_cents);
+
+        $line = OrderLine::where('order_id', $order->id)->firstOrFail();
+
+        $names = array_merge(
+            array_keys($res),
+            array_keys($order->getAttributes()),
+            array_keys($line->getAttributes())
+        );
+
+        foreach ($names as $name) {
+            $this->assertDoesNotMatchRegularExpression(
+                '/(exchange_rate|fx_rate|conversion_rate|converted_|landed_cost)/i',
+                $name
+            );
+        }
+    }
+
+    public function test_an_order_already_cancelled_is_refused_and_its_stock_is_not_returned_twice(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Cancel Test', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $businessId = $biz->id;
+
+        $order = Order::create([
+            'business_id' => $businessId,
+            'customer_id' => null,
+            'order_number' => 'ORD-TEST',
+            'status' => 'pending_payment',
+            'total_cents' => 1500,
+            'auth_token' => 'auth_token',
+        ]);
+
+        $sellable = Sellable::create([
+            'business_id' => $businessId,
+            'name' => 'Item',
+            'sku' => 'ITEM-01',
+            'unit_price_cents' => 1500,
+            'inventory_quantity' => 10,
+        ]);
+
+        OrderLine::create([
+            'business_id' => $businessId,
+            'order_id' => $order->id,
+            'sellable_id' => $sellable->id,
+            'quantity' => 1,
+            'subtotal_cents' => 1500,
+        ]);
+
+        $this->cancelAction->handle($businessId, $order->id);
+
+        $sellable->refresh();
+        $this->assertSame(11, $sellable->inventory_quantity);
+
+        try {
+            $this->cancelAction->handle($businessId, $order->id);
+            $this->fail('A second cancel was accepted: cancelOrder has no status guard.');
+        } catch (OrderNotCancellableException $e) {
+            $sellable->refresh();
+            $this->assertSame(11, $sellable->inventory_quantity);
+        }
+    }
+
+    public function test_a_colliding_order_number_is_re_minted_and_the_checkout_still_lands(): void
+    {
+        // Str::random draws from 62 symbols and strtoupper collapses them to 36 non-uniformly, so
+        // order numbers collide by birthday at ~38k orders. The sequence seam forces the first draw
+        // to collide with a number this tenant already holds; the second draw must be taken.
+        $biz = TestCase::provisionTenant(['name' => 'OrderNumberCollision', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        // …seed a Sellable with stock, build a cart through the engine's own API, and seed an
+        // existing Order on this business whose order_number is 'ORD-TAKEN1'…
+        $sellable = Sellable::create([
+            'business_id' => $biz->id,
+            'name' => 'Collision Item',
+            'sku' => 'COL-1',
+            'inventory_quantity' => 10,
+            'unit_price_cents' => 1500,
+        ]);
+
+        Order::create([
+            'business_id' => $biz->id,
+            'customer_id' => null,
+            'order_number' => 'ORD-TAKEN1',
+            'status' => 'pending_payment',
+            'total_cents' => 1500,
+            'auth_token' => 'auth_token_taken',
+        ]);
+
+        $sessionToken = 'sess_collision';
+        $this->cartAction->handle($biz->id, $sessionToken, [['sellable_id' => $sellable->id, 'quantity' => 1]], 15);
+
+        Str::createRandomStringsUsingSequence(['TAKEN1', 'FRESH2']);
+
+        $res = app(CheckoutEngine::class)->checkoutCart($biz->id, $sessionToken, 'auth_fresh_token');
+
+        Str::createRandomStringsNormally();
+
+        // The order that landed carries the SECOND draw, not the first and not the taken one.
+        $this->assertSame('ORD-FRESH2', $res['order_number']);
+
+        // And there is exactly one order under the taken number — the pre-existing one.
+        $this->assertSame(
+            1,
+            Order::where('business_id', $biz->id)->where('order_number', 'ORD-TAKEN1')->count()
+        );
+    }
+
+    public function test_a_concurrent_add_to_cart_is_absorbed_into_one_cart_for_the_session(): void
+    {
+        // This test turns on X117Test being a CLASS-BASED PHPUnit file, which Pest's
+        // ->use(RefreshesTenantDatabase::class)->in('Modules') binding does NOT reach, so the racer's
+        // row COMMITS on pgsql_migrate and addToCart() can see it. If TestCase ever binds a refresh
+        // trait directly, this test stops proving anything -- while very likely still passing.
+        $biz = TestCase::provisionTenant(['name' => 'Cart Race Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $sellable = Sellable::create([
+            'business_id' => $biz->id,
+            'name' => 'Race Item',
+            'sku' => 'RACE-1',
+            'inventory_quantity' => 10,
+            'unit_price_cents' => 1500,
+        ]);
+
+        $sessionToken = 'sess_cart_race';
+
+        // A second request lands a cart for the same session between updateOrCreate()'s read and its
+        // insert. It writes on pgsql_migrate, a separate session, so it commits. RLS is FORCED and
+        // constrains the owner role too.
+        $racer = DB::connection('pgsql_migrate');
+        $racer->statement("SET app.business_id = '{$biz->id}'");
+
+        Cart::creating(function () use ($racer, $biz, $sessionToken): void {
+            $racer->table('carts')->insert([
+                'business_id' => $biz->id,
+                'session_token' => $sessionToken,
+                'items' => '[]',
+                'total_cents' => 0,
+                'expires_at' => now()->addMinutes(15)->toDateTimeString(),
+            ]);
+        });
+
+        try {
+            $this->engine->addToCart($biz->id, $sessionToken, $sellable->id, 1);
+        } finally {
+            Cart::flushEventListeners();
+        }
+
+        // The loser absorbs the winner's row: one cart for the session.
+        $this->assertSame(
+            1,
+            Cart::where('business_id', $biz->id)->where('session_token', $sessionToken)->count()
+        );
+
+        // And updateOrCreate() filled the loser's line onto the cart that won, so nothing was dropped.
+        $cart = Cart::where('business_id', $biz->id)->where('session_token', $sessionToken)->first();
+        $this->assertSame(1, count($cart->items));
+        $this->assertSame($sellable->id, (int) $cart->items[0]['sellable_id']);
+        $this->assertSame(1500, $cart->total_cents);
+    }
+
+    public function test_a_concurrent_checkout_on_one_authorisation_is_refused_and_places_one_order(): void
+    {
+        // This test turns on X117Test being a CLASS-BASED PHPUnit file, which Pest's
+        // ->use(RefreshesTenantDatabase::class)->in('Modules') binding does NOT reach, so the racer's
+        // row COMMITS on pgsql_migrate and checkoutCart() can see it. If TestCase ever binds a refresh
+        // trait directly, this test stops proving anything -- while very likely still passing.
+        $biz = TestCase::provisionTenant(['name' => 'Auth Race Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $sellable = Sellable::create([
+            'business_id' => $biz->id,
+            'name' => 'Auth Race Item',
+            'sku' => 'AUTH-RACE-1',
+            'inventory_quantity' => 10,
+            'unit_price_cents' => 1500,
+        ]);
+
+        $sessionToken = 'sess_auth_race';
+        $token = 'auth_race_token';
+        $this->cartAction->handle($biz->id, $sessionToken, [['sellable_id' => $sellable->id, 'quantity' => 1]], 15);
+
+        // A second press on the same authorisation places its order between checkoutCart()'s AUTH_USED
+        // guard and its insert. It writes on pgsql_migrate, a separate session, so it commits. RLS is
+        // FORCED and constrains the owner role too. Its order number is lower-case, which the engine's
+        // strtoupper() draw can never produce, so only the authorisation can collide.
+        $racer = DB::connection('pgsql_migrate');
+        $racer->statement("SET app.business_id = '{$biz->id}'");
+
+        Order::creating(function () use ($racer, $biz, $token): void {
+            $racer->table('orders')->insert([
+                'business_id' => $biz->id,
+                'order_number' => 'ORD-racer1',
+                'status' => 'pending_payment',
+                'total_cents' => 1500,
+                'auth_token' => $token,
+            ]);
+        });
+
+        try {
+            $res = $this->engine->checkoutCart($biz->id, $sessionToken, $token, null);
+        } finally {
+            Order::flushEventListeners();
+        }
+
+        // The authorisation placed one order.
+        $this->assertSame(1, Order::where('business_id', $biz->id)->where('auth_token', $token)->count());
+
+        // The loser got the guard's own refusal: the retry re-ran the guard against the order that won.
+        $this->assertSame('refused', $res['status']);
+        $this->assertSame('AUTH_USED', $res['refusal_code']);
+
+        // Nothing of the losing attempt survived: no order line, stock untouched, the cart still there.
+        $this->assertSame(0, OrderLine::where('business_id', $biz->id)->count());
+        $this->assertSame(10, $sellable->fresh()->inventory_quantity);
+        $this->assertSame(1, Cart::where('business_id', $biz->id)->where('session_token', $sessionToken)->count());
     }
 }

@@ -77,6 +77,7 @@ class X206Test extends TestCase
 
     /**
      * [N-206-01] credential store and fetch
+     * [N-043] ⛔ REFUSED: `php artisan why N-043` reports it is never DEFINED. A CREDENTIAL IS NEVER RETURNED IN PLAINTEXT TO ANY CALLER. Nothing to assert. (R245, REV-81/REV-83)
      */
     public function test_n_206_01_store_and_fetch(): void
     {

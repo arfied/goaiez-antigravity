@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X200;
 
+use App\Enums\UserRole;
+use App\Models\User;
 use App\Modules\X200\Actions\CallbackScheduleAction;
 use App\Modules\X200\Actions\CallDisposeAction;
 use App\Modules\X200\Actions\CampaignPauseAction;
@@ -14,10 +16,14 @@ use App\Modules\X200\Actions\SeatLoginAction;
 use App\Modules\X200\Actions\SeatLogoutAction;
 use App\Modules\X200\Events\CallRequested;
 use App\Modules\X200\Models\CallDisposition;
+use App\Modules\X200\Ui\Wallboard;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Schema;
 use InvalidArgumentException;
+use Livewire\Livewire;
+use Symfony\Component\Process\Process;
 use Tests\TestCase;
 
 class X200Test extends TestCase
@@ -275,5 +281,130 @@ class X200Test extends TestCase
 
         $qa = $this->qaAction->scoreCall($biz->id, $seat->id, 2003, 50, 'Some negative note');
         $this->assertTrue($qa->is_positive_only);
+    }
+
+    /**
+     * [G3-04]
+     */
+    public function test_g3_04_predictive_pacing_under_the_3_percent_abandonment_ceiling(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Outbound Contact Center Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $camp = $this->startAction->startCampaign($biz->id, 'Spring AC Tune-Up Outbound', 3.00);
+        $this->assertEquals(3.00, $camp->abandonment_ceiling_pct);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->startAction->startCampaign($biz->id, 'Illegal Hyper-Dialing', 3.01);
+    }
+
+    /**
+     * Achievement layer has no rank or penalty columns.
+     * [G2-35]
+     * [G2-26]
+     * [G2-37]
+     * [G18-02]
+     * [G18-13]
+     * [G18-16]
+     */
+    public function test_g2_35_the_wallboard_scorecard_is_positive_only(): void
+    {
+        foreach (['rank', 'ranking', 'position', 'penalty', 'demerit'] as $col) {
+            $this->assertFalse(Schema::hasColumn('qa_scorecards', $col), "qa_scorecards must not have $col");
+        }
+    }
+
+    /**
+     * Wallboard layer has no per-person tile/rank columns.
+     * [G16-15]
+     * [G9-38]
+     * [G13-02]
+     */
+    public function test_g16_15_the_wallboard_positive_by_construction(): void
+    {
+        foreach (['rank', 'ranking', 'leaderboard_rank', 'position', 'penalty', 'demerit'] as $col) {
+            $this->assertFalse(Schema::hasColumn('dialer_seats', $col), "dialer_seats must not have $col");
+        }
+    }
+
+    /**
+     * No per-person negative output exists in the schema.
+     * [G15-29]
+     */
+    public function test_g15_29_no_per_person_negative_output_exists_in_the_schema(): void
+    {
+        foreach (['rank', 'ranking', 'leaderboard_rank', 'position', 'penalty', 'demerit'] as $col) {
+            $this->assertFalse(Schema::hasColumn('qa_scorecards', $col), "qa_scorecards must not have $col");
+        }
+    }
+
+    /**
+     * [G18-19]
+     */
+    public function test_g18_19_twilio_is_absent(): void
+    {
+        Event::fake([CallRequested::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'G18-19 Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $camp = $this->startAction->startCampaign($biz->id, 'G18-19 Campaign', 2.85);
+        $humanSeat = $this->loginAction->login($biz->id, 'G18-19 Agent', isAi: false);
+
+        $this->dialAction->dialNext($biz->id, $camp->id, $humanSeat->id, '+12145550188');
+        Event::assertDispatched(CallRequested::class);
+
+        $process = new Process(['grep', '-ri', 'twilio', app_path('Modules/X-200')]);
+        $process->run();
+
+        $output = $process->getOutput();
+        $lines = explode("\n", trim($output));
+        $offending = array_filter($lines, function ($line) {
+            if ($line === '') {
+                return false;
+            }
+            // Ignore the capabilities file where the rule is stated
+            if (str_contains($line, 'capabilities.php')) {
+                return false;
+            }
+
+            return true;
+        });
+
+        $this->assertEmpty($offending, 'Twilio is forbidden in the X-200 module (Infobip primary). Found: '.implode("\n", $offending));
+
+        // Also assert CallRequested carries no provider
+        $reflection = new \ReflectionClass(CallRequested::class);
+        $this->assertFalse($reflection->hasProperty('provider'), 'CallRequested must not carry a provider');
+    }
+
+    /**
+     * [G21-13]
+     * The channel half of this rule is owned by X-01.
+     */
+    public function test_g21_13_a_closed_deal_appears_on_the_wallboard(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = TestCase::provisionTenant(['name' => 'Wallboard Tenant', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $camp = $this->startAction->startCampaign($biz->id, 'Sales Camp', 3.00);
+        $seat = $this->loginAction->login($biz->id, 'Agent Joe', isAi: false);
+
+        $this->disposeAction->disposeCall(
+            businessId: $biz->id,
+            campaignId: $camp->id,
+            seatId: $seat->id,
+            phone: '+12145550188',
+            disposition: 'sale_won',
+            isUncertainAmd: false
+        );
+
+        $this->actingAs($owner);
+        $this->get(route('x-200.wallboard'))->assertOk();
+
+        $component = Livewire::test(Wallboard::class, ['businessId' => $biz->id]);
+        $dispositions = $component->viewData('dispositions');
+        $this->assertTrue($dispositions->contains('disposition', 'sale_won'), 'Wallboard must render the closed deal');
     }
 }

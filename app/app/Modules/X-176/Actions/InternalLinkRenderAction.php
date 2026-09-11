@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X176\Actions;
 
-use App\Modules\X103\Models\Page;
+use App\Modules\X103\Actions\PageReadAction;
 
 final class InternalLinkRenderAction
 {
@@ -13,10 +13,7 @@ final class InternalLinkRenderAction
      */
     public function handle(int $businessId): string
     {
-        $pages = Page::where('business_id', $businessId)
-            ->where('is_published', true)
-            ->orderBy('slug', 'asc')
-            ->get();
+        $pages = app(PageReadAction::class)->publishedFor($businessId);
 
         if ($pages->isEmpty()) {
             return '';
@@ -39,7 +36,7 @@ final class InternalLinkRenderAction
             $slug = trim((string) $page->slug, '/');
 
             if ($slug === '') {
-                if (! isset($collidingKeys['']) && ! empty($page->title)) {
+                if (! isset($collidingKeys['']) && trim((string) $page->title) !== '') {
                     $usablePages[] = $page;
                 }
 
@@ -52,7 +49,7 @@ final class InternalLinkRenderAction
 
             foreach ($parts as $part) {
                 $current = $current ? $current.'/'.$part : $part;
-                if (isset($collidingKeys[$current]) || ! isset($hierarchyPages[$current]) || empty($hierarchyPages[$current]->title)) {
+                if (isset($collidingKeys[$current]) || ! isset($hierarchyPages[$current]) || trim((string) $hierarchyPages[$current]->title) === '') {
                     $usable = false;
                     break;
                 }

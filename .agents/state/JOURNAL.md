@@ -1,3 +1,152 @@
+- `2026-08-30T02:05:15` state initialised
+- `2026-08-30T02:05:26` note: bootstrap-done
+- `2026-08-30T02:05:26` selftest: sound
+- `2026-08-30T02:05:26` UNRESOLVED schema X-121 - canonical jobs noun undecided
+- `2026-08-30T02:05:26` X-123 -> DONE
+- `2026-08-30T02:05:26` X-122 -> DONE
+- `2026-08-30T02:05:26` X-126 -> DONE
+- `2026-08-30T02:05:26` X-119 -> DONE
+- `2026-08-30T02:05:26` seal observed deadbeef00000000
+- `2026-08-30T02:12:17` note: bootstrap-done
+- `2026-08-30T02:12:17` selftest: sound
+- `2026-08-30T02:12:17` UNRESOLVED schema X-121 - test
+- `2026-08-30T02:12:17` X-123 -> DONE
+- `2026-08-30T02:12:17` X-122 -> DONE
+- `2026-08-30T02:12:17` X-126 -> DONE
+- `2026-08-30T02:12:17` X-119 -> DONE
+- `2026-08-30T02:12:17` X-128 -> DONE
+- `2026-08-30T02:12:17` C-Ai -> DONE
+- `2026-08-30T02:12:17` X-219 -> DONE
+- `2026-08-30T02:12:17` X-220 -> DONE
+- `2026-08-30T02:12:18` X-204 -> DONE
+- `2026-08-30T02:12:18` X-206 -> DONE
+- `2026-08-30T02:12:18` C-Telephony -> DONE
+- `2026-08-30T02:12:18` C-Sms -> DONE
+- `2026-08-30T02:12:18` C-Agent -> DONE
+- `2026-08-30T02:12:18` X-66 -> DONE
+- `2026-08-30T02:12:18` X-188 -> DONE
+- `2026-08-30T02:12:18` X-153 -> DONE
+- `2026-08-30T02:12:18` X-01 -> DONE
+- `2026-08-30T02:12:18` X-118 -> DONE
+- `2026-08-30T02:12:18` X-163 -> DONE
+- `2026-08-30T02:12:18` UNRESOLVED schema X-164 - test
+- `2026-08-30T02:12:18` X-108 -> DONE
+- `2026-08-30T02:12:18` C-Reviews -> DONE
+- `2026-08-30T02:12:18` X-181 -> DONE
+- `2026-08-30T02:12:18` X-110 -> DONE
+- `2026-08-30T02:12:18` C-Billing -> DONE
+- `2026-08-30T02:12:18` X-199 -> DONE
+- `2026-08-30T02:12:18` X-211 -> DONE
+- `2026-08-30T02:12:18` X-202 -> DONE
+- `2026-08-30T02:12:18` X-117 -> DONE
+- `2026-08-30T02:12:18` X-198 -> DONE
+- `2026-08-30T02:12:18` X-172 -> DONE
+- `2026-08-30T02:12:18` X-112 -> DONE
+- `2026-08-30T02:12:18` X-166 -> DONE
+- `2026-08-30T02:12:18` X-157 -> DONE
+- `2026-08-30T02:12:18` X-178 -> DONE
+- `2026-08-30T02:12:18` X-103 -> DONE
+- `2026-08-30T02:12:18` X-102 -> DONE
+- `2026-08-30T02:12:18` X-155 -> DONE
+- `2026-08-30T02:12:19` X-137 -> DONE
+- `2026-08-30T02:12:19` UNRESOLVED schema X-176 - test
+- `2026-08-30T02:12:19` X-212 -> DONE
+- `2026-08-30T02:12:19` X-203 -> DONE
+- `2026-08-30T02:12:19` C-Mail -> DONE
+- `2026-08-30T02:12:19` C-Whatsapp -> DONE
+- `2026-08-30T02:12:19` X-147 -> DONE
+- `2026-08-30T02:12:19` X-207 -> DONE
+- `2026-08-30T02:12:19` X-193 -> DONE
+- `2026-08-30T02:12:19` X-208 -> DONE
+- `2026-08-30T02:12:19` X-125 -> DONE
+- `2026-08-30T02:12:19` X-127 -> DONE
+- `2026-08-30T02:12:19` X-149 -> DONE
+- `2026-08-30T02:12:19` X-170 -> DONE
+- `2026-08-30T02:12:19` X-201 -> DONE
+- `2026-08-30T02:12:19` X-10 -> DONE
+- `2026-08-30T02:12:19` X-113 -> DONE
+- `2026-08-30T02:12:19` X-124 -> DONE
+- `2026-08-30T02:12:19` X-143 -> DONE
+- `2026-08-30T02:12:19` X-151 -> DONE
+- `2026-08-30T02:12:19` X-162 -> DONE
+- `2026-08-30T02:12:19` UNRESOLVED schema X-165 - test
+- `2026-08-30T02:12:19` X-171 -> DONE
+- `2026-08-30T02:12:19` X-189 -> DONE
+- `2026-08-30T02:12:19` X-214 -> DONE
+- `2026-08-30T02:12:19` X-215 -> DONE
+- `2026-08-30T02:12:19` X-07 -> DONE
+- `2026-08-30T02:12:19` X-104 -> DONE
+- `2026-08-30T02:12:19` X-111 -> DONE
+- `2026-08-30T02:12:19` X-129 -> DONE
+- `2026-08-30T02:12:19` X-138 -> DONE
+- `2026-08-30T02:12:20` X-139 -> DONE
+- `2026-08-30T02:12:20` X-145 -> DONE
+- `2026-08-30T02:12:20` X-148 -> DONE
+- `2026-08-30T02:12:20` X-150 -> DONE
+- `2026-08-30T02:12:20` X-16 -> DONE
+- `2026-08-30T02:12:20` X-160 -> DONE
+- `2026-08-30T02:12:20` X-167 -> DONE
+- `2026-08-30T02:12:20` X-168 -> DONE
+- `2026-08-30T02:12:20` X-175 -> DONE
+- `2026-08-30T02:12:20` X-177 -> DONE
+- `2026-08-30T02:12:20` UNRESOLVED schema X-180 - test
+- `2026-08-30T02:12:20` X-194 -> DONE
+- `2026-08-30T02:12:20` X-195 -> DONE
+- `2026-08-30T02:12:20` X-197 -> DONE
+- `2026-08-30T02:12:20` X-209 -> DONE
+- `2026-08-30T02:12:20` X-82 -> DONE
+- `2026-08-30T02:12:20` X-08 -> DONE
+- `2026-08-30T02:12:20` X-120 -> DONE
+- `2026-08-30T02:12:20` X-136 -> DONE
+- `2026-08-30T02:12:20` X-141 -> DONE
+- `2026-08-30T02:12:20` X-142 -> DONE
+- `2026-08-30T02:12:20` X-156 -> DONE
+- `2026-08-30T02:12:20` X-173 -> DONE
+- `2026-08-30T02:12:20` X-213 -> DONE
+- `2026-08-30T02:12:20` X-105 -> DONE
+- `2026-08-30T02:12:20` X-109 -> DONE
+- `2026-08-30T02:12:21` X-114 -> DONE
+- `2026-08-30T02:12:21` X-116 -> DONE
+- `2026-08-30T02:12:21` X-130 -> DONE
+- `2026-08-30T02:12:21` X-131 -> DONE
+- `2026-08-30T02:12:21` UNRESOLVED schema X-132 - test
+- `2026-08-30T02:12:21` X-134 -> DONE
+- `2026-08-30T02:12:21` X-135 -> DONE
+- `2026-08-30T02:12:21` X-140 -> DONE
+- `2026-08-30T02:12:21` X-144 -> DONE
+- `2026-08-30T02:12:21` X-154 -> DONE
+- `2026-08-30T02:12:21` X-158 -> DONE
+- `2026-08-30T02:12:21` X-159 -> DONE
+- `2026-08-30T02:12:21` X-161 -> DONE
+- `2026-08-30T02:12:21` X-179 -> DONE
+- `2026-08-30T02:12:21` X-182 -> DONE
+- `2026-08-30T02:12:21` X-183 -> DONE
+- `2026-08-30T02:12:21` X-184 -> DONE
+- `2026-08-30T02:12:21` X-185 -> DONE
+- `2026-08-30T02:12:21` X-186 -> DONE
+- `2026-08-30T02:12:21` X-190 -> DONE
+- `2026-08-30T02:12:21` X-191 -> DONE
+- `2026-08-30T02:12:21` X-192 -> DONE
+- `2026-08-30T02:12:21` X-196 -> DONE
+- `2026-08-30T02:12:21` X-200 -> DONE
+- `2026-08-30T02:12:21` UNRESOLVED schema X-205 - test
+- `2026-08-30T02:12:21` X-210 -> DONE
+- `2026-08-30T02:12:21` X-217 -> DONE
+- `2026-08-30T02:12:21` X-218 -> DONE
+- `2026-08-30T02:12:21` journey J1 -> green
+- `2026-08-30T02:12:21` journey J2 -> green
+- `2026-08-30T02:12:22` journey J3 -> green
+- `2026-08-30T02:12:22` journey J4 -> green
+- `2026-08-30T02:12:22` journey J5 -> green
+- `2026-08-30T02:12:22` journey J6 -> green
+- `2026-08-30T02:12:22` journey J7 -> green
+- `2026-08-30T02:12:22` journey J8 -> green
+- `2026-08-30T02:12:22` journey J9 -> green
+- `2026-08-30T02:12:22` journey J10 -> green
+- `2026-08-30T02:12:22` journey J11 -> green
+- `2026-08-30T02:12:22` journey J12 -> green
+- `2026-08-30T02:53:49` (R245) X-121 — work_orders as the canonical noun; Laravel keeps jobs
+- `2026-08-30T03:21:18` note: bootstrap-done
 - `2026-08-29T14:30:24` seal observed f1e73d9fc181eb1c
 - `2026-08-29T14:31:11` selftest: sound
 - `2026-08-29T14:37:58` note: bootstrap-done
@@ -270,155 +419,6 @@
 - `2026-08-29T16:43:19` journey J10 -> green
 - `2026-08-29T16:43:19` journey J11 -> green
 - `2026-08-29T16:43:19` journey J12 -> green
-- `2026-08-30T02:05:15` state initialised
-- `2026-08-30T02:05:26` note: bootstrap-done
-- `2026-08-30T02:05:26` selftest: sound
-- `2026-08-30T02:05:26` UNRESOLVED schema X-121 - canonical jobs noun undecided
-- `2026-08-30T02:05:26` X-123 -> DONE
-- `2026-08-30T02:05:26` X-122 -> DONE
-- `2026-08-30T02:05:26` X-126 -> DONE
-- `2026-08-30T02:05:26` X-119 -> DONE
-- `2026-08-30T02:05:26` seal observed deadbeef00000000
-- `2026-08-30T02:12:17` note: bootstrap-done
-- `2026-08-30T02:12:17` selftest: sound
-- `2026-08-30T02:12:17` UNRESOLVED schema X-121 - test
-- `2026-08-30T02:12:17` X-123 -> DONE
-- `2026-08-30T02:12:17` X-122 -> DONE
-- `2026-08-30T02:12:17` X-126 -> DONE
-- `2026-08-30T02:12:17` X-119 -> DONE
-- `2026-08-30T02:12:17` X-128 -> DONE
-- `2026-08-30T02:12:17` C-Ai -> DONE
-- `2026-08-30T02:12:17` X-219 -> DONE
-- `2026-08-30T02:12:17` X-220 -> DONE
-- `2026-08-30T02:12:18` X-204 -> DONE
-- `2026-08-30T02:12:18` X-206 -> DONE
-- `2026-08-30T02:12:18` C-Telephony -> DONE
-- `2026-08-30T02:12:18` C-Sms -> DONE
-- `2026-08-30T02:12:18` C-Agent -> DONE
-- `2026-08-30T02:12:18` X-66 -> DONE
-- `2026-08-30T02:12:18` X-188 -> DONE
-- `2026-08-30T02:12:18` X-153 -> DONE
-- `2026-08-30T02:12:18` X-01 -> DONE
-- `2026-08-30T02:12:18` X-118 -> DONE
-- `2026-08-30T02:12:18` X-163 -> DONE
-- `2026-08-30T02:12:18` UNRESOLVED schema X-164 - test
-- `2026-08-30T02:12:18` X-108 -> DONE
-- `2026-08-30T02:12:18` C-Reviews -> DONE
-- `2026-08-30T02:12:18` X-181 -> DONE
-- `2026-08-30T02:12:18` X-110 -> DONE
-- `2026-08-30T02:12:18` C-Billing -> DONE
-- `2026-08-30T02:12:18` X-199 -> DONE
-- `2026-08-30T02:12:18` X-211 -> DONE
-- `2026-08-30T02:12:18` X-202 -> DONE
-- `2026-08-30T02:12:18` X-117 -> DONE
-- `2026-08-30T02:12:18` X-198 -> DONE
-- `2026-08-30T02:12:18` X-172 -> DONE
-- `2026-08-30T02:12:18` X-112 -> DONE
-- `2026-08-30T02:12:18` X-166 -> DONE
-- `2026-08-30T02:12:18` X-157 -> DONE
-- `2026-08-30T02:12:18` X-178 -> DONE
-- `2026-08-30T02:12:18` X-103 -> DONE
-- `2026-08-30T02:12:18` X-102 -> DONE
-- `2026-08-30T02:12:18` X-155 -> DONE
-- `2026-08-30T02:12:19` X-137 -> DONE
-- `2026-08-30T02:12:19` UNRESOLVED schema X-176 - test
-- `2026-08-30T02:12:19` X-212 -> DONE
-- `2026-08-30T02:12:19` X-203 -> DONE
-- `2026-08-30T02:12:19` C-Mail -> DONE
-- `2026-08-30T02:12:19` C-Whatsapp -> DONE
-- `2026-08-30T02:12:19` X-147 -> DONE
-- `2026-08-30T02:12:19` X-207 -> DONE
-- `2026-08-30T02:12:19` X-193 -> DONE
-- `2026-08-30T02:12:19` X-208 -> DONE
-- `2026-08-30T02:12:19` X-125 -> DONE
-- `2026-08-30T02:12:19` X-127 -> DONE
-- `2026-08-30T02:12:19` X-149 -> DONE
-- `2026-08-30T02:12:19` X-170 -> DONE
-- `2026-08-30T02:12:19` X-201 -> DONE
-- `2026-08-30T02:12:19` X-10 -> DONE
-- `2026-08-30T02:12:19` X-113 -> DONE
-- `2026-08-30T02:12:19` X-124 -> DONE
-- `2026-08-30T02:12:19` X-143 -> DONE
-- `2026-08-30T02:12:19` X-151 -> DONE
-- `2026-08-30T02:12:19` X-162 -> DONE
-- `2026-08-30T02:12:19` UNRESOLVED schema X-165 - test
-- `2026-08-30T02:12:19` X-171 -> DONE
-- `2026-08-30T02:12:19` X-189 -> DONE
-- `2026-08-30T02:12:19` X-214 -> DONE
-- `2026-08-30T02:12:19` X-215 -> DONE
-- `2026-08-30T02:12:19` X-07 -> DONE
-- `2026-08-30T02:12:19` X-104 -> DONE
-- `2026-08-30T02:12:19` X-111 -> DONE
-- `2026-08-30T02:12:19` X-129 -> DONE
-- `2026-08-30T02:12:19` X-138 -> DONE
-- `2026-08-30T02:12:20` X-139 -> DONE
-- `2026-08-30T02:12:20` X-145 -> DONE
-- `2026-08-30T02:12:20` X-148 -> DONE
-- `2026-08-30T02:12:20` X-150 -> DONE
-- `2026-08-30T02:12:20` X-16 -> DONE
-- `2026-08-30T02:12:20` X-160 -> DONE
-- `2026-08-30T02:12:20` X-167 -> DONE
-- `2026-08-30T02:12:20` X-168 -> DONE
-- `2026-08-30T02:12:20` X-175 -> DONE
-- `2026-08-30T02:12:20` X-177 -> DONE
-- `2026-08-30T02:12:20` UNRESOLVED schema X-180 - test
-- `2026-08-30T02:12:20` X-194 -> DONE
-- `2026-08-30T02:12:20` X-195 -> DONE
-- `2026-08-30T02:12:20` X-197 -> DONE
-- `2026-08-30T02:12:20` X-209 -> DONE
-- `2026-08-30T02:12:20` X-82 -> DONE
-- `2026-08-30T02:12:20` X-08 -> DONE
-- `2026-08-30T02:12:20` X-120 -> DONE
-- `2026-08-30T02:12:20` X-136 -> DONE
-- `2026-08-30T02:12:20` X-141 -> DONE
-- `2026-08-30T02:12:20` X-142 -> DONE
-- `2026-08-30T02:12:20` X-156 -> DONE
-- `2026-08-30T02:12:20` X-173 -> DONE
-- `2026-08-30T02:12:20` X-213 -> DONE
-- `2026-08-30T02:12:20` X-105 -> DONE
-- `2026-08-30T02:12:20` X-109 -> DONE
-- `2026-08-30T02:12:21` X-114 -> DONE
-- `2026-08-30T02:12:21` X-116 -> DONE
-- `2026-08-30T02:12:21` X-130 -> DONE
-- `2026-08-30T02:12:21` X-131 -> DONE
-- `2026-08-30T02:12:21` UNRESOLVED schema X-132 - test
-- `2026-08-30T02:12:21` X-134 -> DONE
-- `2026-08-30T02:12:21` X-135 -> DONE
-- `2026-08-30T02:12:21` X-140 -> DONE
-- `2026-08-30T02:12:21` X-144 -> DONE
-- `2026-08-30T02:12:21` X-154 -> DONE
-- `2026-08-30T02:12:21` X-158 -> DONE
-- `2026-08-30T02:12:21` X-159 -> DONE
-- `2026-08-30T02:12:21` X-161 -> DONE
-- `2026-08-30T02:12:21` X-179 -> DONE
-- `2026-08-30T02:12:21` X-182 -> DONE
-- `2026-08-30T02:12:21` X-183 -> DONE
-- `2026-08-30T02:12:21` X-184 -> DONE
-- `2026-08-30T02:12:21` X-185 -> DONE
-- `2026-08-30T02:12:21` X-186 -> DONE
-- `2026-08-30T02:12:21` X-190 -> DONE
-- `2026-08-30T02:12:21` X-191 -> DONE
-- `2026-08-30T02:12:21` X-192 -> DONE
-- `2026-08-30T02:12:21` X-196 -> DONE
-- `2026-08-30T02:12:21` X-200 -> DONE
-- `2026-08-30T02:12:21` UNRESOLVED schema X-205 - test
-- `2026-08-30T02:12:21` X-210 -> DONE
-- `2026-08-30T02:12:21` X-217 -> DONE
-- `2026-08-30T02:12:21` X-218 -> DONE
-- `2026-08-30T02:12:21` journey J1 -> green
-- `2026-08-30T02:12:21` journey J2 -> green
-- `2026-08-30T02:12:22` journey J3 -> green
-- `2026-08-30T02:12:22` journey J4 -> green
-- `2026-08-30T02:12:22` journey J5 -> green
-- `2026-08-30T02:12:22` journey J6 -> green
-- `2026-08-30T02:12:22` journey J7 -> green
-- `2026-08-30T02:12:22` journey J8 -> green
-- `2026-08-30T02:12:22` journey J9 -> green
-- `2026-08-30T02:12:22` journey J10 -> green
-- `2026-08-30T02:12:22` journey J11 -> green
-- `2026-08-30T02:12:22` journey J12 -> green
-- `2026-08-30T02:53:49` (R245) X-121 — work_orders as the canonical noun; Laravel keeps jobs
-- `2026-08-30T03:21:18` note: bootstrap-done
 - `2026-08-31T04:18:42` UNRESOLVED schema X-121 - 12 per-person ranking columns across legacy tables and SWITCH+CONTRACT deployment ordering require separate phased release per §150.4 and §259
 - `2026-08-31T04:24:07` stage integrity = 0
 - `2026-08-31T04:24:07` stage boundary = 0
@@ -774,97 +774,5 @@
 - `2026-09-05T17:42:54` note: X-201 deadline_at: answered — migration 2026_09_04_072843_add_deadline_at_to_disputes_table.php on main
 - `2026-09-05T17:42:54` note: C-Reviews messageClass: answered — ReviewRequested carries messageClass since the reviews merge (c3ed23ed); the C-Sms listener consumes send.requested (run 94)
 - `2026-09-05T17:42:54` note: C-Sms TrialEligibility: answered by owner ruling 2026-09-05 — the journey funds its tenant as test setup; TrialEligibility stands in production (J10 green since run 96b)
-- `2026-09-05T18:31:13` (R245) X-163 — removed test_n_062_assertion(): the merge's capabilities.php regeneration dropped N-062 from X-163 (owner ruling 18, misattribution fixed by Track 1), so the hardcoded true answers no assertion.
-- `2026-09-05T23:48:18` UNRESOLVED capability X-175 - N-075/N-077 say a price on site comes from X-163; FieldAssistantEngine::ask() takes verifiedAnswer from its caller and performs no X-163 lookup — no seam exists in this module
-- `2026-09-05T23:48:50` (R245) X-168 — removed test_n_062_capabilities(): N-062 is not a key in X-168/capabilities.php (grep -c = 0), so the assertTrue(true) answered no cell; same shape as the X-163 removal of 2026-09-05T18:31:13, owner ruling 18 (R245)
-- `2026-09-05T23:48:57` UNRESOLVED tests X-175 - N-175-01 requires a throttled-network fixture to assert the field surface works offline; no such fixture exists in the repo
-- `2026-09-05T23:49:19` UNRESOLVED tests X-171 - G4-26 says 'offline-first is the premise' which states a premise, not a behaviour; ReplayOfflineSyncAction handles offline replay and conflicts, but the premise itself has no separate behavioural assertion beyond what the test anchor already proves
-- `2026-09-06T00:05:57` (R245) X-175 — - (R245) supersedes the 2026-09-05T23:48:18 UNRESOLVED: the X-163 seam DOES exist in X-175, at Ui/StafffacingAssistantPanel.php:8 and :37 (PriceLookupAction->handle), which feeds isSamplePrice/verifiedAnswer into ask(); the engine being answer-agnostic is the design. N-075/N-077's price clause is already covered by StafffacingAssistantPanelTest::test_confirmed_price, ::test_sample_price_refused and ::test_not_in_pricebook. The prior line was an unmade decision recorded as a missing dependency (rule 09) and was the supervisor's wording.
-- `2026-09-06T01:15:49` (R245) X-172 — supersedes the 2026-09-05T08:35:23 UNRESOLVED: the named dependency app/tests/Modules/X-172/Screens/Fixtures.php arrived; generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook
-- `2026-09-06T01:16:27` (R245) X-171 — (b) a law assertion: X-171 reads no credit or cap store at all; assert that no path under app/Modules/X-171/ consults one, and the directory is non-empty.
-- `2026-09-06T01:21:00` (R245) X-172 — G10-24 names refusal: a redline is SURFACED with a diff, never accepted
-- `2026-09-06T04:18:42` (R245) X-171 — G4-26 is proven as a law over the module directory. Supersedes UNRESOLVED 2026-09-05T23:49:19.
-- `2026-09-06T04:18:50` (R245) X-175 — N-175-01 is asserted on a real throttled fixture using Http::fake throwing ConnectionException. Supersedes UNRESOLVED 2026-09-05T23:48:57.
-- `2026-09-06T10:24:21` (R245) X-175 — a test may not supply data the screen fails to read for itself
-- `2026-09-06T11:06:40` (R245) X-171 — a magnitude is derived from the column the screen formats, never written into a name string
-- `2026-09-06T11:33:25` (R245) X-175 — a price on the field surface comes from X-163's lookup or is refused; verifiedAnswer never carries a price. Supersedes UNRESOLVED capability X-175.
 - `2026-09-06T11:36:06` note: X-103 ssl_installed: three migrations add/alter one column (2026_09_05_220831, 2026_09_06_000001, 2026_09_06_053000); order leaves default false; consolidate when X-103 next opens
-- `2026-09-06T11:47:36` (R245) X-171 — offline-first is proven behaviourally by a whole offline session replaying with nothing lost and nothing doubled, not only by the structural no-network grep. Supersedes UNRESOLVED tests X-171.
-- `2026-09-06T13:37:18` RESOLVED tests X-172 - Main's surfaces:generate now emits the hook. Fixtures.php exists and mints a real token through PortalLinkAction; CustomerfacingPortalScreenTest does a real GET and a Livewire::test(). (was: generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook)
-- `2026-09-06T13:37:25` RESOLVED tests X-175 - superseded by the decision recorded 2026-09-06T04:18:50 (a real throttled fixture, Http::fake throwing ConnectionException). (was: N-175-01 requires a throttled-network fixture to assert the field surface works offline; no such fixture exists in the repo)
-- `2026-09-06T13:37:32` RESOLVED capability X-175 - The seam was built in PB-74 and recorded 2026-09-06T11:33:25. (was: N-075/N-077 say a price on site comes from X-163; FieldAssistantEngine::ask() takes verifiedAnswer from its caller and performs no X-163 lookup — no seam exists in this module)
-- `2026-09-06T13:37:38` RESOLVED tests X-171 - superseded by the decision recorded 2026-09-06T11:47:36 (a whole offline session replayed, nothing lost and nothing doubled). (was: G4-26 says 'offline-first is the premise' which states a premise, not a behaviour; ReplayOfflineSyncAction handles offline replay and conflicts, but the premise itself has no separate behavioural assertion beyond what the test anchor already proves)
-- `2026-09-06T13:39:44` UNRESOLVED capability X-167 - G1-76: missing Receipt model/action
-- `2026-09-06T13:43:37` UNRESOLVED capability X-167 - G1-79, G6-39, G6-43, G6-47, G6-49: missing Receipt, Job completion reconcile, Kit, Refund, Serial models/actions
-- `2026-09-06T14:02:09` X-171 -> DONE
-- `2026-09-06T14:02:09` X-172 -> DONE
-- `2026-09-06T14:02:09` X-175 -> DONE
-- `2026-09-06T14:05:28` UNRESOLVED capability X-167 - G6-22: missing Shopify/Woo integration
-- `2026-09-06T14:05:28` UNRESOLVED capability X-167 - G19-02: missing parcel rates provider
-- `2026-09-06T14:05:28` UNRESOLVED capability X-167 - G17-15: missing hardware scanner integration
-- `2026-09-06T14:05:28` UNRESOLVED capability X-167 - G2-24: missing hardware scanner integration
-- `2026-09-06T14:05:28` UNRESOLVED capability X-167 - G6-08: missing barcode library
-- `2026-09-06T14:05:28` (R245) X-167 — G6-18: bounded out by X-167 scope (a van and a storage unit, not a warehouse)
-- `2026-09-06T14:05:28` (R245) X-167 — G6-24: bounded out by X-167 scope (a van and a storage unit, not a warehouse)
-- `2026-09-06T14:17:54` (R245) X-166 — N-048: margin is proven by refusal (the module reads no invoiced source) plus a collected-figure test; the collected amount is supplied by the caller, and the money lane owns the payments source (R245)
-- `2026-09-06T14:44:17` (R245) X-163 — a NO_FACT agent refusal about pricebook creates a price_cents=0, is_confirmed=false row so the owner sees the gap in the daily digest.
-- `2026-09-06T15:17:11` (R245) X-163 — R245: the daily pricing digest lists every unconfirmed flagged gap until it is priced, newest refusal first — the day window silently hid an unpriced gap at midnight (PB-86)
-- `2026-09-06T18:50:13` (R245) X-163 — an unpriced gap is priced where it is seen: the daily digest's confirm control carries an amount, and the amount the owner types is what is written (R245)
-- `2026-09-06T18:50:13` (R245) X-163 — a confirmation with no positive amount refuses and writes nothing, so a cleared field can never erase the price it refused (R245)
-- `2026-09-06T19:08:08` (R245) X-163 — a price range refuses on the same terms a price quote does
-- `2026-09-06T19:26:33` (R245) X-163 — a price quote names the most specific matching service, not the first row found
-- `2026-09-06T19:43:54` (R245) X-163 — a callout fee the owner never set is refused, never invented and never written
-- `2026-09-06T19:56:07` (R245) X-163 — (R245) a price lookup with no location prefers the business-wide row and refuses when two location books disagree
-- `2026-09-06T20:06:25` (R245) X-163 — an inline price edit that changes the amount clears the confirmation, and one that does not changes nothing
-- `2026-09-06T20:25:38` (R245) X-163 — addItem() refuses a second business-wide row with the same service_name for the same business, and says so through addError
-- `2026-09-06T20:44:23` (R245) X-163 — the field refusal renders inline beneath its own input rather than in the page-level panel
-- `2026-09-06T21:06:52` (R245) X-163 — a price lookup with no location refuses when two business-wide rows disagree on the amount, and still quotes when they agree
-- `2026-09-06T21:54:35` (R245) X-163 — a NO_FACT pricebook refusal records a business-wide gap row and never mutates a location-scoped row
-- `2026-09-06T22:15:37` (R245) X-163 — a price gap is keyed by the service name trimmed and whitespace-collapsed, case preserved, and a blank name records nothing
-- `2026-09-06T22:37:03` (R245) X-163 — a wave reports the gate's test line only after the gate has printed its verdict, and a killed or zero-byte pest is reported verbatim as UNRESOLVED rather than as a computed count
-- `2026-09-06T22:47:47` (R245) X-163 — a service name is matched on a folded service_key written by the model on save, while service_name keeps its display case, so the pricebook reader and the duplicate guard agree by construction
-- `2026-09-06T23:07:49` (R245) X-163 — The gap writer firstOrCreate match key becomes ['business_id', 'service_key', 'location_book_id'] and service_name moves to the create attributes. This prevents two refusals differing only in case from creating two business-wide gap rows under one service_key.
 - `2026-09-06T23:16:43` note: J8 restore drill: JourneyHarness:814 names its scratch db goaiez_antig_drill_<pid> and :908 force-drops it; the supervisor's wave-119 gate errored 42501 permission denied to terminate process where the coder's gate on the identical tree did not; drill dbs on the box at 2026-09-06 23:10: UNRESOLVED; reproduced in wave 120: no
-- `2026-09-06T23:26:10` (R245) X-163 — Sort the daily pricing digest by highest refusal count first, using the most recent refusal time only to break ties.
-- `2026-09-06T23:45:44` (R245) X-163 — a lookup with no location refuses only when the rows disagree on the amount, whether those rows are business-wide or location-scoped.
-- `2026-09-06T23:57:49` (R245) X-163 — a refusal caused by two pricebook entries disagreeing on the amount says so, and keeps the NO_FACT code and the word pricebook that the gap recorder matches on.
-- `2026-09-07T00:24:30` (R245) X-163 — a NO_FACT price refusal on any channel records the gap row, and a refusal caused by rows that already exist and disagree records nothing.
-- `2026-09-07T00:49:40` (R245) X-163 — a question matches a pricebook service on whole words only, and a service name with no word matches nothing
-- `2026-09-07T01:07:33` (R245) X-163 — pint runs over the touched paths before every commit, so the committed sha is formatted, not only the working tree
-- `2026-09-07T01:45:47` (R245) C-Agent — — a price fact whose key has an empty slug matches no question, and a question matches a price fact on whole words only (ruling 20)
-- `2026-09-07T02:17:22` (R245) C-Agent — a price question is answered from the X-163 pricebook when a confirmed non-sample item matches, and only falls back to the facts table when it does not; an unconfirmed pricebook row is never a quote (ruling 20)
-- `2026-09-07T02:51:43` (R245) C-Agent — a callout question is answered from X-163's callout fee verbatim, and refuses NO_FACT when no fee is set (ruling 20)
-- `2026-09-07T03:27:54` (R245) C-Agent — — a pricebook row in SAMPLE state or left unconfirmed refuses to the customer and never falls back to the facts table (ruling 20)
-- `2026-09-07T04:36:21` (R245) X-163 — a price range lookup matches on the normalised service key and refuses a sample or unconfirmed row with its own code instead of NO_FACT
-- `2026-09-08T06:02:32` (R245) X-163 — pricebook engine quote_response respects deducted_if_proceeding flag
-- `2026-09-08T06:20:34` (R245) X-163 — PriceQuoteAction returns service_name alongside amount so AgentAnswerAction can build an attributed quote
-- `2026-09-08T06:50:24` (R245) X-82 — RateLookupAction refuses a sample rate with SAMPLE_STATE_REFUSED and returns no amount, matching X-163's sample doctrine
-- `2026-09-08T07:07:35` (R245) X-82 — RateLookupAction refuses an inactive rate with INACTIVE_RATE_REFUSED and returns no amount; the grandfathered branch is deliberately exempt so a tenant lock survives deactivation of the global rate
-- `2026-09-08T08:14:59` (R245) X-175 — the field assistant refuses an on-site price whenever the pricebook refused a MATCHED row (SAMPLE_STATE_REFUSED or UNCONFIRMED), not only a sample; NO_FACT still falls through to the verified-procedure path because no row matched
-- `2026-09-08T08:42:17` (R245) X-163 — a staff channel is refused a sample or unconfirmed price exactly as a customer channel is, but the refusal does not increment refusal_count or dispatch PriceRefusalFlagged, because the owner's digest reports CUSTOMER refusals; admin still sees the row unrefused
-- `2026-09-08T09:07:33` UNRESOLVED TESTS X-167 - grep for warehouse|shipment|shipping_label|freight matches Database/migrations/2026_08_30_000076_create_x167_inventory_tables.php:19
-- `2026-09-08T09:07:50` (R245) X-167 — G6-24 is asserted against per-location stock; G6-18 is refused by the module's scope bound
-- `2026-09-08T09:28:24` (R245) X-167 — G6-18 is asserted as a closed-set schema refusal because the scope bound is about representability, and that the previous TESTS unresolved is superseded
-- `2026-09-08T09:47:49` (R245) X-166 — a margin *report* excludes sample rows at the action's query root because every production caller aggregates, while the per-job management screen keeps showing them labelled because it queries the model directly.
-- `2026-09-08T10:20:34` (R245) X-172 — the expired-link re-issue is adopted in-band — mount() keeps the PortalLink that PortalLinkAction returns and re-points the component's token, because PortalViewAction's own contract is a re-issue without credential requirements; the notice no longer claims an out-of-band send, and a deactivated link still 404s without minting
-- `2026-09-08T10:55:52` (R245) X-163 — the pricebook screen surfaces PriceConfirmAction's FILL_ME refusal by capturing the return value, mirroring ConfirmationScreen and DailyPricingDigest, rather than duplicating the price predicate in the screen
-- `2026-09-08T11:28:06` (R245) X-163 — ConfirmationScreen confirm() now unsets the prices key so it does not outlive the row removed from the view --ruling R245
-- `2026-09-08T13:13:59` (R245) X-163 — DailyPricingDigest::confirm() unsets the prices key on the success arm, mirroring ConfirmationScreen, because the digest query filters is_confirmed=false so a confirmed row leaves the view and its typed price must not outlive it --ruling R245
-- `2026-09-08T14:10:30` (R245) X-167 — Reorders claims a restock is proposed at the reorder point; StockLow and ReorderTriggered have no listener and the only PurchaseOrder writer is the manual Propose restock button, so the sentence is corrected to describe the shipped manual path rather than wiring an auto-proposing listener, which capabilities.php does not declare and which would mint a duplicate PO on every consumption below the point --ruling R245
-- `2026-09-08T14:35:36` (R245) X-167 — test_no_purchase_order_is_created_automatically_at_the_reorder_point duplicated test_g6_48_a_low_stock_alert_never_places_an_order line for line and died to the same single mutation, so the uncited duplicate is deleted and its named assertion message moves onto the G6-48 cited test, keeping one contract id to one independently reddenable assertion --ruling R245
-- `2026-09-08T16:02:02` (R245) X-168 — the X-168 job-state window is an open/close pair; closeJobWindow closes the most recent open entry for a job and writes nothing when there is none.
-- `2026-09-08T16:35:19` (R245) X-168 — closeJobWindow's job_id scope is load-bearing and is now pinned by a test that fails if the filter is dropped.
-- `2026-09-08T17:12:18` (R245) X-168 — one open window per job — a repeat call for a job that already has an open entry returns the existing entry and writes nothing. Refuse, do not supersede. Return the existing entry, not null.
-- `2026-09-08T17:54:57` (R245) X-171 — TechOnSite event now carries the occurredAt moment of the tap
-- `2026-09-08T18:11:48` (R245) X-168 — one open window per job per PERSON — the open-entry guard scopes on timesheet_id (an entry's person identity exists only through it), while closeJobWindow stays job-scoped and closes EVERY open window on the job, updating each affected timesheet
-- `2026-09-08T18:41:15` (R245) X-171 — JobCompleted carries a nullable occurredAt: the live tap in JobStateAction passes Carbon::now(), and the offline replay in ReplayOfflineSyncAction passes null because its jsonb payload carries no occurrence time and inventing now() there would stamp the sync moment onto every replayed window
-- `2026-09-08T19:05:04` (R245) X-168 — a JobCompleted with no occurredAt does not close a job window: closeJobWindow's null argument means 'the caller did not specify, use now' while the event's null means 'the caller knows it does not know', so the listener refuses rather than pass one meaning to a seam that reads the other and stamp the sync moment on every replayed completion
-- `2026-09-08T19:41:26` (R245) X-168 — R245: X-168 records job time from ARRIVAL (on_site), not from en_route; the two empty states said en route and were wrong. en_route stays unwired because whether travel time is paid is an unstated business rule and total_hours is what the owner approves (ruling 33, capabilities.php:37 N-072 'arrival').
-- `2026-09-08T23:32:30` (R245) X-162 — R245: the dispatch board's empty state no longer names a Jobs screen or offers a Go to Jobs button — go-to-jobs has no listener and X-121 exposes no Jobs screen. Dispatching a technician from this screen is undeclared in capabilities.php and is week-2 capability work on work_orders, which is X-121's (ruling 8).
-- `2026-09-08T23:55:57` (R245) X-163 — R245: the confirmation screen's empty state no longer offers an Open Pricebook button — open-pricebook has no listener and navigating between Livewire screens is undeclared in capabilities.php. The heading and sentence are unchanged because they are true; only the remedy was dead.
-- `2026-09-09T03:14:44` (R245) X-172 — R245: the customer portal no longer offers a Leave a review link — it was a bare href=# that went nowhere, and a review destination is undeclared in X-172's capabilities.php and belongs to the reviews track. The three real portal actions are unchanged; only the dead remedy was removed.
-- `2026-09-09T08:05:55` (R245) X-171 — R245: JobStateAction scopes the work_orders person_id read to the acting tenant. A cross-tenant read on a wired production path is a defect regardless of what capabilities.php declares; RLS sits beneath the application scope. Ruled by the lane supervisor, PB-153.
-- `2026-09-09T09:24:24` UNRESOLVED X-119 exposes no path to retract a taught price fact; a price. fact outlives the pricebook row that taught it (X-163 deleteItem:165). X-119 - 
-- `2026-09-09T09:24:38` (R245) X-163 — an (R245) contract note that X-163 teaches on confirm and has no retraction seam, so a deleted item's fact persists, and that the retraction is X-119's to expose.
-- `2026-09-09T13:43:35` (R245) X-162 — R245: markEnRoute takes ?int etaMinutes; with none given it records no EtaPrediction and no notification, never a default (PB-159, lane supervisor ruling)
-- `2026-09-09T16:46:30` (R245) X-172 — R245: the portal states the technician is en route without an ETA when none was recorded; it never renders an empty minutes figure and never withholds a true en-route state (PB-160, lane supervisor ruling)

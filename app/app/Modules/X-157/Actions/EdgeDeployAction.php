@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Modules\X157\Actions;
 
 use App\Models\Business;
-use App\Modules\X103\Models\Page;
-use App\Modules\X103\Models\PageVersion;
+use App\Modules\X103\Actions\PageReadAction;
+use App\Modules\X103\Actions\PageVersionAction;
 use App\Modules\X108\Models\Appointment;
-use App\Modules\X155\Models\FormDefinition;
+use App\Modules\X155\Actions\FormReadAction;
 use App\Modules\X157\Events\DeployCompleted;
 use App\Modules\X157\Events\DeployRolledBack;
 use App\Modules\X157\Models\Deployment;
@@ -40,7 +40,7 @@ final class EdgeDeployAction
 
             if ($commitId) {
                 // X-103 ↔ X-157 seam (R245): derive ssl_installed from EdgeZone.has_valid_ssl
-                PageVersion::where('commit_id', $commitId)->update(['ssl_installed' => $zone->has_valid_ssl]);
+                app(PageVersionAction::class)->recordSslInstalled($commitId, $zone->has_valid_ssl);
             }
 
             // 1. SSL Certificate check: a site cannot be published without a valid certificate (TEST ANCHOR)
@@ -118,10 +118,13 @@ final class EdgeDeployAction
                 ->limit(20)
                 ->get();
             foreach ($appointments as $apt) {
+                if (trim((string) $apt->service_name) === '' || $apt->start_time === null || $apt->end_time === null) {
+                    continue;
+                }
                 $events[] = [
-                    'name' => (string) ($apt->service_name ?? 'Appointment'),
-                    'startDate' => $apt->start_time?->toIso8601String(),
-                    'endDate' => $apt->end_time?->toIso8601String(),
+                    'name' => $apt->service_name,
+                    'startDate' => $apt->start_time->toIso8601String(),
+                    'endDate' => $apt->end_time->toIso8601String(),
                 ];
             }
 
@@ -133,9 +136,12 @@ final class EdgeDeployAction
                 ->limit(20)
                 ->get();
             foreach ($priceBookItems as $item) {
+                if (trim((string) $item->service_name) === '') {
+                    continue;
+                }
                 $productOffers[] = [
                     'name' => $item->service_name,
-                    'price' => $item->price_cents !== null ? ($item->price_cents / 100) : null,
+                    'price' => $item->price_cents / 100,
                 ];
             }
 
@@ -144,7 +150,7 @@ final class EdgeDeployAction
             $html .= "</head><body>\n";
 
             if ($commitId) {
-                $version = PageVersion::where('commit_id', $commitId)->first();
+                $version = app(PageVersionAction::class)->forCommit($commitId);
                 if ($version) {
                     $blockTypes = is_array($version->content_blocks)
                         ? array_column($version->content_blocks, 'type')
@@ -161,18 +167,26 @@ final class EdgeDeployAction
 
                     foreach ($version->content_blocks as $block) {
                         if (($block['type'] ?? '') === 'video_embed') {
+                            if (! is_scalar($block['name'] ?? '') || ! is_scalar($block['contentUrl'] ?? '') || ! is_scalar($block['uploadDate'] ?? '')
+                                || trim((string) ($block['name'] ?? '')) === '' || trim((string) ($block['contentUrl'] ?? '')) === '' || trim((string) ($block['uploadDate'] ?? '')) === '') {
+                                continue;
+                            }
                             // VideoObject injected on publish (TEST ANCHOR, G16-25, ruling 41)
                             $videos[] = [
-                                'name' => $block['name'] ?? null,
-                                'contentUrl' => $block['contentUrl'] ?? null,
-                                'uploadDate' => $block['uploadDate'] ?? null,
+                                'name' => $block['name'],
+                                'contentUrl' => $block['contentUrl'],
+                                'uploadDate' => $block['uploadDate'],
                             ];
                         }
                         if (($block['type'] ?? '') === 'faq') {
+                            if (! is_scalar($block['question'] ?? '') || ! is_scalar($block['answer'] ?? '')
+                                || trim((string) ($block['question'] ?? '')) === '' || trim((string) ($block['answer'] ?? '')) === '') {
+                                continue;
+                            }
                             // FAQPage schema injected on publish (TEST ANCHOR, G8-16, ruling 41)
                             $faqs[] = [
-                                'question' => $block['question'] ?? null,
-                                'answer' => $block['answer'] ?? null,
+                                'question' => $block['question'],
+                                'answer' => $block['answer'],
                             ];
                         }
                     }
@@ -181,7 +195,7 @@ final class EdgeDeployAction
                         $html .= "<div class=\"chat-widget-container\"></div>\n";
                     }
                     if ($hasForm) {
-                        $formId = FormDefinition::where('business_id', $businessId)->orderBy('id')->value('id');
+                        $formId = app(FormReadAction::class)->firstIdForBusiness($businessId);
                         $action = $formId === null
                             ? ''
                             : " method=\"post\" action=\"/sites/{$businessId}/{$deployHash}/forms/{$formId}\"";
@@ -195,8 +209,8 @@ final class EdgeDeployAction
 
             $breadcrumbs = [];
             if ($pageId !== null && $businessName !== null && $commitId !== null) {
-                $page = Page::find($pageId);
-                if ($page && ! empty($page->slug) && ! empty($page->title)) {
+                $page = app(PageReadAction::class)->findForBusiness($businessId, $pageId);
+                if ($page && ! empty($page->slug) && trim((string) $page->title) !== '') {
                     $parts = explode('/', trim($page->slug, '/'));
                     if (count($parts) > 1) {
                         $paths = [];
@@ -206,10 +220,7 @@ final class EdgeDeployAction
                             $paths[] = $current;
                         }
 
-                        $pages = Page::where('business_id', $businessId)
-                            ->where('is_published', true)
-                            ->whereIn(DB::raw("trim(both '/' from slug)"), $paths)
-                            ->get();
+                        $pages = app(PageReadAction::class)->publishedForSlugs($businessId, $paths);
 
                         $hierarchyPages = [];
                         $usable = true;
@@ -224,7 +235,7 @@ final class EdgeDeployAction
 
                         if ($usable) {
                             foreach ($paths as $path) {
-                                if (! isset($hierarchyPages[$path]) || empty($hierarchyPages[$path]->title)) {
+                                if (! isset($hierarchyPages[$path]) || trim((string) $hierarchyPages[$path]->title) === '') {
                                     $usable = false;
                                     break;
                                 }
@@ -278,7 +289,7 @@ final class EdgeDeployAction
                     $html .= "<script type=\"application/ld+json\">\n".json_encode($schemaResult['json_ld'], JSON_THROW_ON_ERROR | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT)."\n</script>\n";
                 }
 
-                $page = Page::find($pageId);
+                $page = app(PageReadAction::class)->findForBusiness($businessId, $pageId);
                 if ($page) {
                     $contentBlocks = (isset($version) && $version && is_array($version->content_blocks)) ? $version->content_blocks : [];
                     $llmsTxtContent = app(LlmsTxtRenderAction::class)->handle(

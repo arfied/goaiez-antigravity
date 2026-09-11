@@ -200,6 +200,41 @@ class X181ScreensTest extends TestCase
             ->assertOk()
             ->assertSee('SLA met')
             ->assertSee('SLA missed')
-            ->assertSee('CSAT 8/10');
+            ->assertSee('Awaiting CSAT')
+            ->assertDontSee('CSAT 8/10');
+    }
+
+    public function test_resolution_shows_awaiting_csat_when_requested(): void
+    {
+        QaTicket::create([
+            'business_id' => $this->bizId,
+            'subject' => 'CSAT Requested Ticket',
+            'arrived_at' => now()->subDays(2),
+            'status' => 'resolved',
+            'resolved_at' => now()->subHours(1),
+            'csat_requested_at' => now()->subHours(1),
+            'sla_due_at' => now()->addHours(1),
+        ]);
+
+        Livewire::test(Resolution::class, ['businessId' => $this->bizId])
+            ->assertOk()
+            ->assertSee('Awaiting CSAT');
+    }
+
+    public function test_resolution_hides_csat_pill_when_never_requested(): void
+    {
+        QaTicket::create([
+            'business_id' => $this->bizId,
+            'subject' => 'No CSAT Ticket',
+            'arrived_at' => now()->subDays(2),
+            'status' => 'resolved',
+            'resolved_at' => now()->subHours(1),
+            'csat_requested_at' => null,
+            'sla_due_at' => now()->addHours(1),
+        ]);
+
+        Livewire::test(Resolution::class, ['businessId' => $this->bizId])
+            ->assertOk()
+            ->assertDontSee('Awaiting CSAT');
     }
 }

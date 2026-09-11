@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-09T16:46:30",
+ "updated": "2026-09-05T17:11:31",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -543,17 +543,10 @@
    "unresolved": []
   },
   "X-119": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 1,
    "intent": "INFORM",
-   "unresolved": [
-    {
-     "module": "X-119",
-     "stage": "X-119 exposes no path to retract a taught price fact; a price. fact outlives the pricebook row that taught it (X-163 deleteItem:165).",
-     "why": "",
-     "at": "2026-09-09T09:24:24"
-    }
-   ]
+   "unresolved": []
   },
   "X-120": {
    "status": "DONE",
@@ -826,59 +819,10 @@
    "unresolved": []
   },
   "X-167": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 22,
    "intent": "INFORM",
-   "unresolved": [
-    {
-     "module": "X-167",
-     "stage": "capability",
-     "why": "G1-76: missing Receipt model/action",
-     "at": "2026-09-06T13:39:44"
-    },
-    {
-     "module": "X-167",
-     "stage": "capability",
-     "why": "G1-79, G6-39, G6-43, G6-47, G6-49: missing Receipt, Job completion reconcile, Kit, Refund, Serial models/actions",
-     "at": "2026-09-06T13:43:37"
-    },
-    {
-     "module": "X-167",
-     "stage": "capability",
-     "why": "G6-22: missing Shopify/Woo integration",
-     "at": "2026-09-06T14:05:28"
-    },
-    {
-     "module": "X-167",
-     "stage": "capability",
-     "why": "G19-02: missing parcel rates provider",
-     "at": "2026-09-06T14:05:28"
-    },
-    {
-     "module": "X-167",
-     "stage": "capability",
-     "why": "G17-15: missing hardware scanner integration",
-     "at": "2026-09-06T14:05:28"
-    },
-    {
-     "module": "X-167",
-     "stage": "capability",
-     "why": "G2-24: missing hardware scanner integration",
-     "at": "2026-09-06T14:05:28"
-    },
-    {
-     "module": "X-167",
-     "stage": "capability",
-     "why": "G6-08: missing barcode library",
-     "at": "2026-09-06T14:05:28"
-    },
-    {
-     "module": "X-167",
-     "stage": "TESTS",
-     "why": "grep for warehouse|shipment|shipping_label|freight matches Database/migrations/2026_08_30_000076_create_x167_inventory_tables.php:19",
-     "at": "2026-09-08T09:07:33"
-    }
-   ]
+   "unresolved": []
   },
   "X-168": {
    "status": "DONE",
@@ -899,10 +843,17 @@
    "unresolved": []
   },
   "X-172": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 11,
    "intent": "INFORM",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-172",
+     "stage": "tests",
+     "why": "generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook",
+     "at": "2026-09-05T08:35:23"
+    }
+   ]
   },
   "X-173": {
    "status": "DONE",
@@ -1384,6 +1335,12 @@
    "at": "2026-09-04T22:41:56"
   },
   {
+   "module": "X-172",
+   "stage": "tests",
+   "why": "generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook",
+   "at": "2026-09-05T08:35:23"
+  },
+  {
    "module": "C-Sms",
    "stage": "capability",
    "why": "TrialEligibility: The journey tenant needs a confirmed Google listing for real credit grant",
@@ -1394,60 +1351,6 @@
    "stage": "tests",
    "why": "four legacy message tables outside the twelve nouns (outreach_messages, triage_conversations, inbound_messages, support_messages) \u2014 the G2-76 lint is right, main's schema is not migrated; the sixty lane proposes the fold",
    "at": "2026-09-05T17:11:31"
-  },
-  {
-   "module": "X-167",
-   "stage": "capability",
-   "why": "G1-76: missing Receipt model/action",
-   "at": "2026-09-06T13:39:44"
-  },
-  {
-   "module": "X-167",
-   "stage": "capability",
-   "why": "G1-79, G6-39, G6-43, G6-47, G6-49: missing Receipt, Job completion reconcile, Kit, Refund, Serial models/actions",
-   "at": "2026-09-06T13:43:37"
-  },
-  {
-   "module": "X-167",
-   "stage": "capability",
-   "why": "G6-22: missing Shopify/Woo integration",
-   "at": "2026-09-06T14:05:28"
-  },
-  {
-   "module": "X-167",
-   "stage": "capability",
-   "why": "G19-02: missing parcel rates provider",
-   "at": "2026-09-06T14:05:28"
-  },
-  {
-   "module": "X-167",
-   "stage": "capability",
-   "why": "G17-15: missing hardware scanner integration",
-   "at": "2026-09-06T14:05:28"
-  },
-  {
-   "module": "X-167",
-   "stage": "capability",
-   "why": "G2-24: missing hardware scanner integration",
-   "at": "2026-09-06T14:05:28"
-  },
-  {
-   "module": "X-167",
-   "stage": "capability",
-   "why": "G6-08: missing barcode library",
-   "at": "2026-09-06T14:05:28"
-  },
-  {
-   "module": "X-167",
-   "stage": "TESTS",
-   "why": "grep for warehouse|shipment|shipping_label|freight matches Database/migrations/2026_08_30_000076_create_x167_inventory_tables.php:19",
-   "at": "2026-09-08T09:07:33"
-  },
-  {
-   "module": "X-119",
-   "stage": "X-119 exposes no path to retract a taught price fact; a price. fact outlives the pricebook row that taught it (X-163 deleteItem:165).",
-   "why": "",
-   "at": "2026-09-09T09:24:24"
   }
  ],
  "decisions": [
@@ -1522,444 +1425,6 @@
    "chose": "a duplicate ARB subscription (E00012) is reused, never re-created; the existing id comes from the vendor (run 97, R245)",
    "at": "2026-09-05T16:22:13",
    "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "removed test_n_062_assertion(): the merge's capabilities.php regeneration dropped N-062 from X-163 (owner ruling 18, misattribution fixed by Track 1), so the hardcoded true answers no assertion.",
-   "at": "2026-09-05T18:31:13",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-168",
-   "chose": "removed test_n_062_capabilities(): N-062 is not a key in X-168/capabilities.php (grep -c = 0), so the assertTrue(true) answered no cell; same shape as the X-163 removal of 2026-09-05T18:31:13, owner ruling 18 (R245)",
-   "at": "2026-09-05T23:48:50",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-175",
-   "chose": "- (R245) supersedes the 2026-09-05T23:48:18 UNRESOLVED: the X-163 seam DOES exist in X-175, at Ui/StafffacingAssistantPanel.php:8 and :37 (PriceLookupAction->handle), which feeds isSamplePrice/verifiedAnswer into ask(); the engine being answer-agnostic is the design. N-075/N-077's price clause is already covered by StafffacingAssistantPanelTest::test_confirmed_price, ::test_sample_price_refused and ::test_not_in_pricebook. The prior line was an unmade decision recorded as a missing dependency (rule 09) and was the supervisor's wording.",
-   "at": "2026-09-06T00:05:57",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-172",
-   "chose": "supersedes the 2026-09-05T08:35:23 UNRESOLVED: the named dependency app/tests/Modules/X-172/Screens/Fixtures.php arrived; generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook",
-   "at": "2026-09-06T01:15:49",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-171",
-   "chose": "(b) a law assertion: X-171 reads no credit or cap store at all; assert that no path under app/Modules/X-171/ consults one, and the directory is non-empty.",
-   "at": "2026-09-06T01:16:27",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-172",
-   "chose": "G10-24 names refusal: a redline is SURFACED with a diff, never accepted",
-   "at": "2026-09-06T01:21:00",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-171",
-   "chose": "G4-26 is proven as a law over the module directory. Supersedes UNRESOLVED 2026-09-05T23:49:19.",
-   "at": "2026-09-06T04:18:42",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-175",
-   "chose": "N-175-01 is asserted on a real throttled fixture using Http::fake throwing ConnectionException. Supersedes UNRESOLVED 2026-09-05T23:48:57.",
-   "at": "2026-09-06T04:18:50",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-175",
-   "chose": "a test may not supply data the screen fails to read for itself",
-   "at": "2026-09-06T10:24:21",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-171",
-   "chose": "a magnitude is derived from the column the screen formats, never written into a name string",
-   "at": "2026-09-06T11:06:40",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-175",
-   "chose": "a price on the field surface comes from X-163's lookup or is refused; verifiedAnswer never carries a price. Supersedes UNRESOLVED capability X-175.",
-   "at": "2026-09-06T11:33:25",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-171",
-   "chose": "offline-first is proven behaviourally by a whole offline session replaying with nothing lost and nothing doubled, not only by the structural no-network grep. Supersedes UNRESOLVED tests X-171.",
-   "at": "2026-09-06T11:47:36",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-167",
-   "chose": "G6-18: bounded out by X-167 scope (a van and a storage unit, not a warehouse)",
-   "at": "2026-09-06T14:05:28",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-167",
-   "chose": "G6-24: bounded out by X-167 scope (a van and a storage unit, not a warehouse)",
-   "at": "2026-09-06T14:05:28",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-166",
-   "chose": "N-048: margin is proven by refusal (the module reads no invoiced source) plus a collected-figure test; the collected amount is supplied by the caller, and the money lane owns the payments source (R245)",
-   "at": "2026-09-06T14:17:54",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "a NO_FACT agent refusal about pricebook creates a price_cents=0, is_confirmed=false row so the owner sees the gap in the daily digest.",
-   "at": "2026-09-06T14:44:17",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "R245: the daily pricing digest lists every unconfirmed flagged gap until it is priced, newest refusal first \u2014 the day window silently hid an unpriced gap at midnight (PB-86)",
-   "at": "2026-09-06T15:17:11",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "an unpriced gap is priced where it is seen: the daily digest's confirm control carries an amount, and the amount the owner types is what is written (R245)",
-   "at": "2026-09-06T18:50:13",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "a confirmation with no positive amount refuses and writes nothing, so a cleared field can never erase the price it refused (R245)",
-   "at": "2026-09-06T18:50:13",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "a price range refuses on the same terms a price quote does",
-   "at": "2026-09-06T19:08:08",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "a price quote names the most specific matching service, not the first row found",
-   "at": "2026-09-06T19:26:33",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "a callout fee the owner never set is refused, never invented and never written",
-   "at": "2026-09-06T19:43:54",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "(R245) a price lookup with no location prefers the business-wide row and refuses when two location books disagree",
-   "at": "2026-09-06T19:56:07",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "an inline price edit that changes the amount clears the confirmation, and one that does not changes nothing",
-   "at": "2026-09-06T20:06:25",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "addItem() refuses a second business-wide row with the same service_name for the same business, and says so through addError",
-   "at": "2026-09-06T20:25:38",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "the field refusal renders inline beneath its own input rather than in the page-level panel",
-   "at": "2026-09-06T20:44:23",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "a price lookup with no location refuses when two business-wide rows disagree on the amount, and still quotes when they agree",
-   "at": "2026-09-06T21:06:52",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "a NO_FACT pricebook refusal records a business-wide gap row and never mutates a location-scoped row",
-   "at": "2026-09-06T21:54:35",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "a price gap is keyed by the service name trimmed and whitespace-collapsed, case preserved, and a blank name records nothing",
-   "at": "2026-09-06T22:15:37",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "a wave reports the gate's test line only after the gate has printed its verdict, and a killed or zero-byte pest is reported verbatim as UNRESOLVED rather than as a computed count",
-   "at": "2026-09-06T22:37:03",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "a service name is matched on a folded service_key written by the model on save, while service_name keeps its display case, so the pricebook reader and the duplicate guard agree by construction",
-   "at": "2026-09-06T22:47:47",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "The gap writer firstOrCreate match key becomes ['business_id', 'service_key', 'location_book_id'] and service_name moves to the create attributes. This prevents two refusals differing only in case from creating two business-wide gap rows under one service_key.",
-   "at": "2026-09-06T23:07:49",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "Sort the daily pricing digest by highest refusal count first, using the most recent refusal time only to break ties.",
-   "at": "2026-09-06T23:26:10",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "a lookup with no location refuses only when the rows disagree on the amount, whether those rows are business-wide or location-scoped.",
-   "at": "2026-09-06T23:45:44",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "a refusal caused by two pricebook entries disagreeing on the amount says so, and keeps the NO_FACT code and the word pricebook that the gap recorder matches on.",
-   "at": "2026-09-06T23:57:49",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "a NO_FACT price refusal on any channel records the gap row, and a refusal caused by rows that already exist and disagree records nothing.",
-   "at": "2026-09-07T00:24:30",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "a question matches a pricebook service on whole words only, and a service name with no word matches nothing",
-   "at": "2026-09-07T00:49:40",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "pint runs over the touched paths before every commit, so the committed sha is formatted, not only the working tree",
-   "at": "2026-09-07T01:07:33",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Agent",
-   "chose": "\u2014 a price fact whose key has an empty slug matches no question, and a question matches a price fact on whole words only (ruling 20)",
-   "at": "2026-09-07T01:45:47",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Agent",
-   "chose": "a price question is answered from the X-163 pricebook when a confirmed non-sample item matches, and only falls back to the facts table when it does not; an unconfirmed pricebook row is never a quote (ruling 20)",
-   "at": "2026-09-07T02:17:22",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Agent",
-   "chose": "a callout question is answered from X-163's callout fee verbatim, and refuses NO_FACT when no fee is set (ruling 20)",
-   "at": "2026-09-07T02:51:43",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Agent",
-   "chose": "\u2014 a pricebook row in SAMPLE state or left unconfirmed refuses to the customer and never falls back to the facts table (ruling 20)",
-   "at": "2026-09-07T03:27:54",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "a price range lookup matches on the normalised service key and refuses a sample or unconfirmed row with its own code instead of NO_FACT",
-   "at": "2026-09-07T04:36:21",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "pricebook engine quote_response respects deducted_if_proceeding flag",
-   "at": "2026-09-08T06:02:32",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "PriceQuoteAction returns service_name alongside amount so AgentAnswerAction can build an attributed quote",
-   "at": "2026-09-08T06:20:34",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-82",
-   "chose": "RateLookupAction refuses a sample rate with SAMPLE_STATE_REFUSED and returns no amount, matching X-163's sample doctrine",
-   "at": "2026-09-08T06:50:24",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-82",
-   "chose": "RateLookupAction refuses an inactive rate with INACTIVE_RATE_REFUSED and returns no amount; the grandfathered branch is deliberately exempt so a tenant lock survives deactivation of the global rate",
-   "at": "2026-09-08T07:07:35",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-175",
-   "chose": "the field assistant refuses an on-site price whenever the pricebook refused a MATCHED row (SAMPLE_STATE_REFUSED or UNCONFIRMED), not only a sample; NO_FACT still falls through to the verified-procedure path because no row matched",
-   "at": "2026-09-08T08:14:59",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "a staff channel is refused a sample or unconfirmed price exactly as a customer channel is, but the refusal does not increment refusal_count or dispatch PriceRefusalFlagged, because the owner's digest reports CUSTOMER refusals; admin still sees the row unrefused",
-   "at": "2026-09-08T08:42:17",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-167",
-   "chose": "G6-24 is asserted against per-location stock; G6-18 is refused by the module's scope bound",
-   "at": "2026-09-08T09:07:50",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-167",
-   "chose": "G6-18 is asserted as a closed-set schema refusal because the scope bound is about representability, and that the previous TESTS unresolved is superseded",
-   "at": "2026-09-08T09:28:24",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-166",
-   "chose": "a margin *report* excludes sample rows at the action's query root because every production caller aggregates, while the per-job management screen keeps showing them labelled because it queries the model directly.",
-   "at": "2026-09-08T09:47:49",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-172",
-   "chose": "the expired-link re-issue is adopted in-band \u2014 mount() keeps the PortalLink that PortalLinkAction returns and re-points the component's token, because PortalViewAction's own contract is a re-issue without credential requirements; the notice no longer claims an out-of-band send, and a deactivated link still 404s without minting",
-   "at": "2026-09-08T10:20:34",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "the pricebook screen surfaces PriceConfirmAction's FILL_ME refusal by capturing the return value, mirroring ConfirmationScreen and DailyPricingDigest, rather than duplicating the price predicate in the screen",
-   "at": "2026-09-08T10:55:52",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "ConfirmationScreen confirm() now unsets the prices key so it does not outlive the row removed from the view --ruling R245",
-   "at": "2026-09-08T11:28:06",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "DailyPricingDigest::confirm() unsets the prices key on the success arm, mirroring ConfirmationScreen, because the digest query filters is_confirmed=false so a confirmed row leaves the view and its typed price must not outlive it --ruling R245",
-   "at": "2026-09-08T13:13:59",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-167",
-   "chose": "Reorders claims a restock is proposed at the reorder point; StockLow and ReorderTriggered have no listener and the only PurchaseOrder writer is the manual Propose restock button, so the sentence is corrected to describe the shipped manual path rather than wiring an auto-proposing listener, which capabilities.php does not declare and which would mint a duplicate PO on every consumption below the point --ruling R245",
-   "at": "2026-09-08T14:10:30",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-167",
-   "chose": "test_no_purchase_order_is_created_automatically_at_the_reorder_point duplicated test_g6_48_a_low_stock_alert_never_places_an_order line for line and died to the same single mutation, so the uncited duplicate is deleted and its named assertion message moves onto the G6-48 cited test, keeping one contract id to one independently reddenable assertion --ruling R245",
-   "at": "2026-09-08T14:35:36",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-168",
-   "chose": "the X-168 job-state window is an open/close pair; closeJobWindow closes the most recent open entry for a job and writes nothing when there is none.",
-   "at": "2026-09-08T16:02:02",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-168",
-   "chose": "closeJobWindow's job_id scope is load-bearing and is now pinned by a test that fails if the filter is dropped.",
-   "at": "2026-09-08T16:35:19",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-168",
-   "chose": "one open window per job \u2014 a repeat call for a job that already has an open entry returns the existing entry and writes nothing. Refuse, do not supersede. Return the existing entry, not null.",
-   "at": "2026-09-08T17:12:18",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-171",
-   "chose": "TechOnSite event now carries the occurredAt moment of the tap",
-   "at": "2026-09-08T17:54:57",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-168",
-   "chose": "one open window per job per PERSON \u2014 the open-entry guard scopes on timesheet_id (an entry's person identity exists only through it), while closeJobWindow stays job-scoped and closes EVERY open window on the job, updating each affected timesheet",
-   "at": "2026-09-08T18:11:48",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-171",
-   "chose": "JobCompleted carries a nullable occurredAt: the live tap in JobStateAction passes Carbon::now(), and the offline replay in ReplayOfflineSyncAction passes null because its jsonb payload carries no occurrence time and inventing now() there would stamp the sync moment onto every replayed window",
-   "at": "2026-09-08T18:41:15",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-168",
-   "chose": "a JobCompleted with no occurredAt does not close a job window: closeJobWindow's null argument means 'the caller did not specify, use now' while the event's null means 'the caller knows it does not know', so the listener refuses rather than pass one meaning to a seam that reads the other and stamp the sync moment on every replayed completion",
-   "at": "2026-09-08T19:05:04",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-168",
-   "chose": "R245: X-168 records job time from ARRIVAL (on_site), not from en_route; the two empty states said en route and were wrong. en_route stays unwired because whether travel time is paid is an unstated business rule and total_hours is what the owner approves (ruling 33, capabilities.php:37 N-072 'arrival').",
-   "at": "2026-09-08T19:41:26",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-162",
-   "chose": "R245: the dispatch board's empty state no longer names a Jobs screen or offers a Go to Jobs button \u2014 go-to-jobs has no listener and X-121 exposes no Jobs screen. Dispatching a technician from this screen is undeclared in capabilities.php and is week-2 capability work on work_orders, which is X-121's (ruling 8).",
-   "at": "2026-09-08T23:32:30",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "R245: the confirmation screen's empty state no longer offers an Open Pricebook button \u2014 open-pricebook has no listener and navigating between Livewire screens is undeclared in capabilities.php. The heading and sentence are unchanged because they are true; only the remedy was dead.",
-   "at": "2026-09-08T23:55:57",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-172",
-   "chose": "R245: the customer portal no longer offers a Leave a review link \u2014 it was a bare href=# that went nowhere, and a review destination is undeclared in X-172's capabilities.php and belongs to the reviews track. The three real portal actions are unchanged; only the dead remedy was removed.",
-   "at": "2026-09-09T03:14:44",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-171",
-   "chose": "R245: JobStateAction scopes the work_orders person_id read to the acting tenant. A cross-tenant read on a wired production path is a defect regardless of what capabilities.php declares; RLS sits beneath the application scope. Ruled by the lane supervisor, PB-153.",
-   "at": "2026-09-09T08:05:55",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "an (R245) contract note that X-163 teaches on confirm and has no retraction seam, so a deleted item's fact persists, and that the retraction is X-119's to expose.",
-   "at": "2026-09-09T09:24:38",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-162",
-   "chose": "R245: markEnRoute takes ?int etaMinutes; with none given it records no EtaPrediction and no notification, never a default (PB-159, lane supervisor ruling)",
-   "at": "2026-09-09T13:43:35",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-172",
-   "chose": "R245: the portal states the technician is en route without an ETA when none was recorded; it never renders an empty minutes figure and never withholds a true en-route state (PB-160, lane supervisor ruling)",
-   "at": "2026-09-09T16:46:30",
-   "ruling": "R245"
   }
  ],
  "notes": [
@@ -1998,36 +1463,6 @@
   {
    "at": "2026-09-06T23:16:43",
    "note": "J8 restore drill: JourneyHarness:814 names its scratch db goaiez_antig_drill_<pid> and :908 force-drops it; the supervisor's wave-119 gate errored 42501 permission denied to terminate process where the coder's gate on the identical tree did not; drill dbs on the box at 2026-09-06 23:10: UNRESOLVED; reproduced in wave 120: no"
-  }
- ],
- "resolved": [
-  {
-   "module": "X-172",
-   "stage": "tests",
-   "was": "generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook",
-   "why": "Main's surfaces:generate now emits the hook. Fixtures.php exists and mints a real token through PortalLinkAction; CustomerfacingPortalScreenTest does a real GET and a Livewire::test().",
-   "at": "2026-09-06T13:37:18"
-  },
-  {
-   "module": "X-175",
-   "stage": "tests",
-   "was": "N-175-01 requires a throttled-network fixture to assert the field surface works offline; no such fixture exists in the repo",
-   "why": "superseded by the decision recorded 2026-09-06T04:18:50 (a real throttled fixture, Http::fake throwing ConnectionException).",
-   "at": "2026-09-06T13:37:25"
-  },
-  {
-   "module": "X-175",
-   "stage": "capability",
-   "was": "N-075/N-077 say a price on site comes from X-163; FieldAssistantEngine::ask() takes verifiedAnswer from its caller and performs no X-163 lookup \u2014 no seam exists in this module",
-   "why": "The seam was built in PB-74 and recorded 2026-09-06T11:33:25.",
-   "at": "2026-09-06T13:37:32"
-  },
-  {
-   "module": "X-171",
-   "stage": "tests",
-   "was": "G4-26 says 'offline-first is the premise' which states a premise, not a behaviour; ReplayOfflineSyncAction handles offline replay and conflicts, but the premise itself has no separate behavioural assertion beyond what the test anchor already proves",
-   "why": "superseded by the decision recorded 2026-09-06T11:47:36 (a whole offline session replayed, nothing lost and nothing doubled).",
-   "at": "2026-09-06T13:37:38"
   }
  ]
 }

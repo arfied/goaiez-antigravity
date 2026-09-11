@@ -99,6 +99,14 @@ class X102Test extends TestCase
 
         // 3. Four rage-clicks escalate (TEST ANCHOR)
         $activeSession = $this->startAction->handle($biz->id, '192.168.1.2', false);
+        $this->captureAction->handle(
+            businessId: $biz->id,
+            sessionId: $activeSession->id,
+            name: 'Jane Doe',
+            phone: '+15551234568',
+            email: 'jane@example.com',
+            message: 'Help'
+        );
         $this->escalateAction->recordRageClick($biz->id, $activeSession->id); // 1
         $this->escalateAction->recordRageClick($biz->id, $activeSession->id); // 2
         $this->escalateAction->recordRageClick($biz->id, $activeSession->id); // 3
@@ -121,8 +129,17 @@ class X102Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Capture First', 'currency' => 'USD']);
         Tenancy::set((int) $biz->id);
+        Event::fake([ChatLeadCaptured::class, ChatEscalated::class]);
 
         $session = $this->startAction->handle($biz->id, '192.168.1.1', false);
+
+        $escalateBeforeCapture = $this->escalateAction->handle($biz->id, $session->id, 'test');
+        $this->assertEquals('capture_required', $escalateBeforeCapture['status']);
+        $this->assertEquals('NO_CONTACT_METHOD_ON_SESSION', $escalateBeforeCapture['refusal_code']);
+
+        $sessionBefore = ChatSession::where('business_id', $biz->id)->find($session->id);
+        $this->assertEquals('active', $sessionBefore->status);
+        Event::assertNotDispatched(ChatEscalated::class);
 
         $unGroundedRes = $this->escalateAction->answerQuestion(
             businessId: $biz->id,
@@ -150,6 +167,20 @@ class X102Test extends TestCase
 
         $sessionFresh = ChatSession::where('business_id', $biz->id)->find($session->id);
         $this->assertEquals('lead_captured', $sessionFresh->status);
+
+        $leadQuery = ChatLead::where('business_id', $biz->id)->where('chat_session_id', $session->id)->first();
+        $this->assertNotNull($leadQuery);
+        $this->assertNotEmpty($leadQuery->phone);
+
+        $escalateAfterCapture = $this->escalateAction->handle($biz->id, $session->id, 'test');
+        $this->assertEquals('escalated', $escalateAfterCapture['status']);
+
+        $sessionEscalated = ChatSession::where('business_id', $biz->id)->find($session->id);
+        $this->assertEquals('escalated', $sessionEscalated->status);
+
+        $leadAfter = ChatLead::where('business_id', $biz->id)->where('chat_session_id', $session->id)->first();
+        $this->assertNotNull($leadAfter);
+        $this->assertNotEmpty($leadAfter->phone);
     }
 
     /**
@@ -216,6 +247,28 @@ class X102Test extends TestCase
         $this->assertEquals(['79'], $matches[0]);
     }
 
+    public function test_a_grounding_fact_of_zero_is_answered(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Zero Fact', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $res = $this->escalateAction->answerQuestion($biz->id, 'what is the cost?', '0');
+
+        $this->assertEquals('answered', $res['status']);
+        $this->assertTrue(str_contains($res['answer'], '0'));
+    }
+
+    public function test_a_whitespace_grounding_fact_is_refused(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Whitespace Fact', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $res = $this->escalateAction->answerQuestion($biz->id, 'what is the cost?', '   ');
+
+        $this->assertEquals('refused', $res['status']);
+        $this->assertEquals('NO_GROUNDING_FACT', $res['refusal_code']);
+    }
+
     /**
      * [G13-37] the widget offers help instead of watching them fail
      */
@@ -226,6 +279,14 @@ class X102Test extends TestCase
         Tenancy::set((int) $biz->id);
 
         $session = $this->startAction->handle($biz->id, '192.168.1.1', false);
+        $this->captureAction->handle(
+            businessId: $biz->id,
+            sessionId: $session->id,
+            name: 'Jane Doe',
+            phone: '+15551234568',
+            email: 'jane@example.com',
+            message: 'Help'
+        );
 
         $res1 = $this->escalateAction->recordRageClick($biz->id, $session->id);
         $this->assertEquals('rage_click_recorded', $res1['status']);
@@ -250,7 +311,7 @@ class X102Test extends TestCase
     }
 
     /**
-     * BUILD PROPOSAL: G16-21 (R245) — Carousels require items and asset paths, but X-102 lacks a chat message store to provide them (it owns only chat_sessions and chat_leads). The store itself is currently blocked because X-102 lacks the client-side JS bundle (goaiez-chat.js) to drive it (the unauthenticated API door was built in Wave 122). Owner: X-102 to build, Track 1 to declare (manifest)
+     * BUILD PROPOSAL: G16-21 (R245) — Carousels require items and asset paths, but X-102's chat message store lacks columns to provide them. Owner: X-102 to build, Track 1 to declare (manifest)
      */
     public function test_g16_21_chat_carousels(): void
     {
@@ -385,7 +446,8 @@ class X102Test extends TestCase
             sessionId: $session->id,
             name: 'Real Visitor',
             phone: '+15551234567',
-            message: 'I have a question'
+            message: 'I have a question',
+            consent: true
         );
 
         $this->assertEquals(1, ChatLead::where('business_id', $biz->id)->count());
@@ -412,5 +474,98 @@ class X102Test extends TestCase
         // with no injected attendees. A mutation adding them crashes.
         $this->assertEquals('active', $session->status);
         $this->assertArrayNotHasKey('attendees', $session->toArray());
+    }
+
+    public function test_a_blank_phone_is_refused_at_capture(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Blank Phone Refusal', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $session = $this->startAction->handle($biz->id, '192.168.1.1', false);
+
+        $refusedEmpty = false;
+        try {
+            $this->captureAction->handle(
+                businessId: $biz->id,
+                sessionId: $session->id,
+                name: 'Blank Phone',
+                phone: '',
+                email: 'blank@example.com',
+                message: 'Hello'
+            );
+        } catch (\DomainException $e) {
+            $this->assertEquals('NO_CONTACT_METHOD_ON_CAPTURE', $e->getMessage());
+            $refusedEmpty = true;
+        }
+        $this->assertTrue($refusedEmpty, 'An empty string phone must be refused');
+
+        $refusedWhitespace = false;
+        try {
+            $this->captureAction->handle(
+                businessId: $biz->id,
+                sessionId: $session->id,
+                name: 'Whitespace Phone',
+                phone: '   ',
+                email: 'space@example.com',
+                message: 'Hello'
+            );
+        } catch (\DomainException $e) {
+            $this->assertEquals('NO_CONTACT_METHOD_ON_CAPTURE', $e->getMessage());
+            $refusedWhitespace = true;
+        }
+        $this->assertTrue($refusedWhitespace, 'A whitespace-only phone must be refused');
+
+        $this->assertEquals(0, ChatLead::where('business_id', $biz->id)->where('chat_session_id', $session->id)->count());
+        $this->assertEquals(0, Person::where('business_id', $biz->id)->where('phone', '')->count());
+        $this->assertEquals(0, Person::where('business_id', $biz->id)->where('phone', '   ')->count());
+
+        $sessionFresh = ChatSession::where('business_id', $biz->id)->find($session->id);
+        $this->assertEquals('active', $sessionFresh->status);
+    }
+
+    /**
+     * Decision: ChatCaptureAction normalises a whitespace message to null.
+     * Reasoning: A detail that is blank or whitespace was not given (R245). Normalising to null ensures
+     * we don't pass an empty string down to the event listeners like ChatLeadCapturedListener which expects
+     * a meaningful message or null, preventing downstream rollbacks of valid lead captures.
+     * Finding: There are no direct callers bypassing the HTTP middleware in production.
+     */
+    public function test_action_normalises_whitespace_message_to_null(): void
+    {
+        Event::fake([ChatLeadCaptured::class, ChatEscalated::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Direct Action', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $session = $this->startAction->handle($biz->id, '192.168.1.1');
+
+        $lead = $this->captureAction->handle(
+            businessId: $biz->id,
+            sessionId: $session->id,
+            name: 'Direct User',
+            phone: '1234567890',
+            email: 'direct@example.com',
+            message: "   \n\t ",
+            consent: true
+        );
+
+        $this->assertNull($lead->message, 'The action itself must normalise a whitespace message to null');
+    }
+
+    public function test_capture_action_defaults_to_no_consent_record(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'No Consent Default', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $session = $this->startAction->handle($biz->id, '192.168.1.1', false);
+
+        $lead = $this->captureAction->handle(
+            businessId: $biz->id,
+            sessionId: $session->id,
+            name: 'No Consent',
+            phone: '+15550000000'
+        );
+
+        $this->assertNull($lead->consent_logged_at, 'The action must not write a consent record by default');
     }
 }

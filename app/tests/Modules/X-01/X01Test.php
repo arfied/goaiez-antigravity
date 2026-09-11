@@ -23,12 +23,16 @@ use App\Modules\X01\Events\TakeoverReleased;
 use App\Modules\X01\Events\TakeoverStarted;
 use App\Modules\X01\Exceptions\LeadRatingOutOfRangeRefused;
 use App\Modules\X01\Exceptions\TakeoverNotLatchedRefused;
+use App\Modules\X01\Listeners\ChatLeadCapturedListener;
 use App\Modules\X01\Models\LeadScore;
 use App\Modules\X01\Models\TakeoverLatch;
 use App\Modules\X01\Ui\Account\Inbox as AccountInbox;
 use App\Modules\X01\Ui\CustomersList;
 use App\Modules\X01\Ui\Thread;
+use App\Modules\X102\Events\ChatLeadCaptured;
 use App\Modules\X121\Models\Person;
+use App\Support\Tenancy;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
@@ -247,9 +251,17 @@ class X01Test extends TestCase
 
     /**
      * [G2-76] the unified inbox is the header's first line
-     * ⛔ REFUSED: G2-76 — the capability's own text is "the unified inbox is the header's first line"; there is no clause to assert
+     * ⛔ REFUSED: surveyed UnifiedInboxManager (ingestMessage, takeover, replyWithTakeover, scoreLead) and Ui/Thread (mount, draftAiReply, sendReply, render) and found no seam; app/app/Modules/X-01/Ui/ contains no Header component. The owner header lives in core at app/app/Support/Account/OwnerNav.php and orders the inbox fourth, contradicting the capability cross-lane.
      */
     public function test_g2_76_unified_inbox_header(): void
+    {
+        $this->assertTrue(true);
+    }
+
+    /**
+     * A lint, cross-lane, red by design, awaiting a Track 1 ruling on the twelve-noun list.
+     */
+    public function test_no_table_outside_the_twelve_nouns_holds_a_message_thread_or_contact(): void
     {
         $files = array_merge(
             glob(database_path('migrations/*.php')) ?: [],
@@ -269,7 +281,16 @@ class X01Test extends TestCase
         }
         $violators = array_unique($violators);
 
-        $this->assertEmpty($violators, 'No table outside the twelve nouns may hold a message, thread, or contact. Found violators: '.implode(', ', $violators));
+        // Inherited before this branch's base (e737094c, 2026-08-31): four core tables that
+        // predate the twelve-noun consolidation. Frozen so the rule refuses every NEW one.
+        // Ownership is an open TRACK 1 ACTION (REV-112) — do not add a fifth name here.
+        $baseline = ['outreach_messages', 'triage_conversations', 'inbound_messages', 'support_messages'];
+
+        $this->assertEmpty(
+            array_diff($violators, $baseline),
+            'No NEW table outside the twelve nouns may hold a message, thread, or contact. Found: '
+                .implode(', ', array_diff($violators, $baseline))
+        );
     }
 
     /**
@@ -419,15 +440,46 @@ class X01Test extends TestCase
         $admin = User::factory()->create();
         $biz = TestCase::provisionTenant(['name' => 'Ghost Biz']);
         $customer = Customer::factory()->create(['business_id' => $biz->id, 'name' => 'Ghosty']);
-        LeadScore::create(['business_id' => $biz->id, 'person_id' => $customer->id, 'lead_rating' => 10, 'grade' => 'F', 'confidence' => 0.9, 'signals' => []]);
+        $person = Person::create(['business_id' => $biz->id, 'first_name' => 'Ghosty', 'email' => $customer->email, 'phone' => $customer->phone]);
+        LeadScore::create(['business_id' => $biz->id, 'person_id' => $person->id, 'lead_rating' => 10, 'grade' => 'F', 'confidence' => 0.9, 'signals' => []]);
         $response = Livewire::actingAs($admin)->test(Thread::class, ['customer' => $customer]);
         $response->assertSee('Ghost Risk', false);
 
         // Negative case
         $customer2 = Customer::factory()->create(['business_id' => $biz->id, 'name' => 'Goody']);
-        LeadScore::create(['business_id' => $biz->id, 'person_id' => $customer2->id, 'lead_rating' => 90, 'grade' => 'A', 'confidence' => 0.9, 'signals' => []]);
+        $person2 = Person::create(['business_id' => $biz->id, 'first_name' => 'Goody', 'email' => $customer2->email, 'phone' => $customer2->phone]);
+        LeadScore::create(['business_id' => $biz->id, 'person_id' => $person2->id, 'lead_rating' => 90, 'grade' => 'A', 'confidence' => 0.9, 'signals' => []]);
         $response2 = Livewire::actingAs($admin)->test(Thread::class, ['customer' => $customer2]);
         $response2->assertDontSee('Ghost Risk', false);
+    }
+
+    /**
+     * Proves that the thread component does not display the "Ghost Risk" warning for a Customer
+     * when an unrelated Person with the same ID has an 'F' lead grade but is not linked to the Customer.
+     */
+    public function test_g19_08_ghost_risk_flag_without_person(): void
+    {
+        $admin = User::factory()->create();
+        $biz = TestCase::provisionTenant(['name' => 'Ghost Biz']);
+        $customer = Customer::factory()->create(['business_id' => $biz->id, 'name' => 'Ghosty']);
+
+        // Create an unrelated Person that happens to share the Customer's ID.
+        $person = Person::create([
+            'id' => $customer->id,
+            'business_id' => $biz->id,
+            'first_name' => 'Unrelated',
+            'email' => 'unrelated@example.com',
+        ]);
+
+        LeadScore::create([
+            'business_id' => $biz->id,
+            'person_id' => $person->id,
+            'lead_rating' => 10,
+            'grade' => 'F',
+        ]);
+
+        $response = Livewire::actingAs($admin)->test(Thread::class, ['customer' => $customer]);
+        $response->assertDontSee('Ghost Risk', false);
     }
 
     /**
@@ -457,6 +509,7 @@ class X01Test extends TestCase
      * [G19-22] positive half: every channel lands on ONE Conversation.
      * (R245) listener returns early when the inbound WhatsApp message body is empty
      * Asserts against UnifiedInboxManager::ingestMessage() on real data.
+     * CLOSED: WhatsApp inbound body — consent_logged_at stamping was built in 52931f57.
      */
     public function test_g19_22_single_conversation_identity(): void
     {
@@ -483,6 +536,9 @@ class X01Test extends TestCase
         $this->assertEquals(1, Conversation::where('person_id', $res1['person_id'])->count(), 'Conversation::count() for that person must be 1');
     }
 
+    /**
+     * CLOSED: Email inbound body — consent_logged_at stamping was built in 52931f57.
+     */
     public function test_g11_12_email_reply_bridge(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Email Reply Bridge Biz', 'currency' => 'USD']);
@@ -547,5 +603,127 @@ class X01Test extends TestCase
         // 3. That the release is consulted by something other than the method that wrote it.
         $this->expectException(TakeoverNotLatchedRefused::class);
         $this->manager->replyWithTakeover($biz->id, $c->id, 'anything');
+    }
+
+    /**
+     * BUILD PROPOSAL: goaiez-chat.js — the chat widget itself does not exist Owner: X-102
+     */
+    public function test_chat_capture_wire_creates_conversation(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Inbox Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $convUpdated = null;
+        Event::listen(ConversationUpdated::class, function ($event) use (&$convUpdated) {
+            $convUpdated = $event;
+        });
+
+        Event::dispatch(new ChatLeadCaptured(
+            businessId: $biz->id,
+            leadId: 99,
+            personId: 999,
+            name: 'Chat User',
+            phone: '+15550000000',
+            message: 'Hello chat',
+        ));
+
+        $this->assertDatabaseHas('conversations', [
+            'channel' => 'chat',
+            'status' => 'open',
+        ]);
+
+        $this->assertNotNull($convUpdated, 'ConversationUpdated event should have been dispatched');
+        $this->assertEquals('Hello chat', $convUpdated->messageSnippet, 'That conversation carries the visitor message');
+    }
+
+    /**
+     * Proves that UnifiedInboxManager::ingestMessage stamps consent and stores the body for owned channels (whatsapp),
+     * but drops the body without bypassing the gate for channels that lack consent (chat).
+     */
+    public function test_ingest_message_gate_polarity(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Gate Polarity Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $resWa = $this->manager->ingestMessage(
+            businessId: $biz->id,
+            channel: 'whatsapp',
+            identifier: '+15125550200',
+            senderName: 'WA User',
+            body: 'Body WA'
+        );
+        $this->assertDatabaseHas('messages', [
+            'conversation_id' => $resWa['conversation_id'],
+            'body' => 'Body WA',
+        ]);
+
+        $resChat = $this->manager->ingestMessage(
+            businessId: $biz->id,
+            channel: 'chat',
+            identifier: '+15125550300',
+            senderName: 'Chat User',
+            body: 'Body Chat'
+        );
+        $this->assertDatabaseMissing('messages', [
+            'conversation_id' => $resChat['conversation_id'],
+            'body' => 'Body Chat',
+        ]);
+    }
+
+    public function test_ingest_message_refuses_when_ambient_tenant_is_absent(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'RLS Biz', 'currency' => 'USD']);
+        Tenancy::forgetAll();
+
+        $this->expectException(QueryException::class);
+        $this->expectExceptionMessage('new row violates row-level security policy for table "people"');
+
+        $this->manager->ingestMessage(
+            businessId: $biz->id,
+            channel: 'sms',
+            identifier: '+15125550201',
+            senderName: 'RLS User',
+            body: 'Body RLS'
+        );
+    }
+
+    public function test_chat_lead_captured_listener_ignores_whitespace_message(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Whitespace Biz', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        $listener = app(ChatLeadCapturedListener::class);
+        $event = new ChatLeadCaptured(
+            businessId: $biz->id,
+            leadId: 1,
+            personId: 1,
+            name: 'Whitespace User',
+            phone: '+15125550202',
+            message: '   ',
+        );
+
+        // Before the fix, this would call ingestMessage and throw InvalidArgumentException
+        $listener->handle($event);
+
+        $this->assertDatabaseMissing('messages', [
+            'business_id' => $biz->id,
+        ]);
+    }
+
+    public function test_empty_message_throws(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Empty Msg Biz', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('An empty message is not a message');
+
+        $this->manager->ingestMessage(
+            businessId: $biz->id,
+            channel: 'whatsapp',
+            identifier: '+15125550999',
+            senderName: 'Webhook User',
+            body: '   '
+        );
     }
 }

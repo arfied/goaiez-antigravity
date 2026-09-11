@@ -19,4 +19,31 @@ final class TemplateEngine
 
         return 'Welcome! We see you use '.$techStack.'.';
     }
+
+    public function detectPlatform(string $rawPage): ?string
+    {
+        if (stripos($rawPage, 'cdn.shopify.com') !== false || stripos($rawPage, 'Shopify.theme') !== false) {
+            return 'Shopify';
+        }
+        if (stripos($rawPage, 'wp-content/plugins/woocommerce') !== false || stripos($rawPage, 'class="woocommerce') !== false) {
+            return 'WooCommerce';
+        }
+        if (stripos($rawPage, '/js/mage/') !== false || stripos($rawPage, 'mage/cookies.js') !== false) {
+            return 'Magento';
+        }
+        if (stripos($rawPage, 'bigcommerce.com') !== false) {
+            return 'BigCommerce';
+        }
+
+        return null;
+    }
+
+    public function excludeBoilerplate(string $rawPage): string
+    {
+        $content = preg_replace('/<nav\b[^>]*>.*?<\/nav>/is', '', $rawPage);
+        $content = preg_replace('/<footer\b[^>]*>.*?<\/footer>/is', '', $content ?? '');
+        $content = preg_replace('/<cookie-banner\b[^>]*>.*?<\/cookie-banner>/is', '', $content ?? '');
+
+        return trim($content ?? '');
+    }
 }

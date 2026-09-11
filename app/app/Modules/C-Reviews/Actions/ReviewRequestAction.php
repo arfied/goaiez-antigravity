@@ -7,7 +7,7 @@ namespace App\Modules\CReviews\Actions;
 use App\Modules\CReviews\Events\ReviewRequested;
 use App\Modules\CReviews\Models\ReviewRequest;
 use App\Modules\CSms\Events\SendRequested;
-use App\Modules\X121\Models\Person;
+use App\Modules\X121\Actions\EntityReadAction;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Event;
 
@@ -63,7 +63,6 @@ final class ReviewRequestAction
                 'platform' => $platform,
                 'status' => 'triaged_internal',
                 'gbp_suspended' => false,
-                'csat_score' => $csatScore,
             ]);
 
             app(QaTicketAction::class)->handle($businessId, $req->id);
@@ -106,15 +105,14 @@ final class ReviewRequestAction
             'platform' => $platform,
             'status' => 'sent',
             'gbp_suspended' => false,
-            'csat_score' => $csatScore,
         ]);
 
-        $person = Person::find($customerId);
-        if ($person !== null && ! empty($person->phone)) {
+        $person = app(EntityReadAction::class)->handle('people', $customerId, $businessId);
+        if ($person !== null && ! empty($person['phone'])) {
             Event::dispatch(new SendRequested(
                 businessId: $businessId,
                 compositionId: $req->id,
-                recipientPhone: $person->phone,
+                recipientPhone: $person['phone'],
                 messageClass: self::MESSAGE_CLASS,
                 body: $promptTemplate,
                 segmentsCount: 1
