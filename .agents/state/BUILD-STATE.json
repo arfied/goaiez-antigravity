@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-11T15:37:15",
+ "updated": "2026-09-11T15:54:42",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -113,7 +113,7 @@
   },
   "8": {
    "track": "J10 reviews",
-   "status": "BUILDING",
+   "status": "DONE",
    "modules": [
     "C-Reviews",
     "X-181",
@@ -384,10 +384,41 @@
    "unresolved": []
   },
   "C-Reviews": {
-   "status": "BUILDING",
+   "status": "UNRESOLVED",
    "wave": 8,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "C-Reviews",
+     "stage": "built",
+     "why": "module-done gate 1 BUILT needs app/storage/app/evidence/C-Reviews/lint.json naming its tool and command (app/app/Console/Commands/ModuleDoneCommand.php:111), which CI is meant to write; no committed file writes lint.json, and a hand-written one is fabrication (AGENTS.md:96). Discharged when a CI step writes it.",
+     "at": "2026-09-11T15:54:18"
+    },
+    {
+     "module": "C-Reviews",
+     "stage": "tested",
+     "why": "module-done gate 2 TESTED needs runtime-proof.json with a vendor-issued artifact id off a non-sync driver (app/app/Console/Commands/ModuleDoneCommand.php:157); for C-Reviews that is a real SMS to a real person through C-Sms, which is reserved. The only producer in the tree is the money lane's (app/app/Modules/X-198/Console/RuntimeProofCommand.php:128). Discharged by a real send on a real transport.",
+     "at": "2026-09-11T15:54:18"
+    },
+    {
+     "module": "C-Reviews",
+     "stage": "dashboard",
+     "why": "module-done gate 5 DASHBOARD needs render.json with empty_state_honest for 4 declared blocks (app/app/Console/Commands/ModuleDoneCommand.php:371); no committed file writes render.json, and a hand-written one is fabrication (AGENTS.md:96). Discharged when a render-evidence producer exists.",
+     "at": "2026-09-11T15:54:18"
+    },
+    {
+     "module": "C-Reviews",
+     "stage": "surfaces",
+     "why": "module-done gate 6 SURFACES needs surfaces.json with refused_undeclared (app/app/Console/Commands/ModuleDoneCommand.php:390); no committed file writes surfaces.json, and a hand-written one is fabrication (AGENTS.md:96). Discharged when a surface-evidence producer exists.",
+     "at": "2026-09-11T15:54:19"
+    },
+    {
+     "module": "C-Reviews",
+     "stage": "gate",
+     "why": "module-done gate 7 GATE needs the whole platform's php artisan doctor to exit 0 (app/app/Console/Commands/ModuleDoneCommand.php:410); it reads boundary 41, contract 85, schema 14, capability 204, anchor 128, journey 2, no boundary, capability or citation row names C-Reviews, X-181 or X-110, and C-Reviews' own rows are win.first with two emitters (Track 1) and gate 2's missing runtime proof. Discharged when doctor exits 0.",
+     "at": "2026-09-11T15:54:19"
+    }
+   ]
   },
   "C-Sms": {
    "status": "UNRESOLVED",
@@ -1223,6 +1254,36 @@
    "stage": "tests",
    "why": "four legacy message tables outside the twelve nouns (outreach_messages, triage_conversations, inbound_messages, support_messages) \u2014 the G2-76 lint is right, main's schema is not migrated; the sixty lane proposes the fold",
    "at": "2026-09-05T17:11:31"
+  },
+  {
+   "module": "C-Reviews",
+   "stage": "built",
+   "why": "module-done gate 1 BUILT needs app/storage/app/evidence/C-Reviews/lint.json naming its tool and command (app/app/Console/Commands/ModuleDoneCommand.php:111), which CI is meant to write; no committed file writes lint.json, and a hand-written one is fabrication (AGENTS.md:96). Discharged when a CI step writes it.",
+   "at": "2026-09-11T15:54:18"
+  },
+  {
+   "module": "C-Reviews",
+   "stage": "tested",
+   "why": "module-done gate 2 TESTED needs runtime-proof.json with a vendor-issued artifact id off a non-sync driver (app/app/Console/Commands/ModuleDoneCommand.php:157); for C-Reviews that is a real SMS to a real person through C-Sms, which is reserved. The only producer in the tree is the money lane's (app/app/Modules/X-198/Console/RuntimeProofCommand.php:128). Discharged by a real send on a real transport.",
+   "at": "2026-09-11T15:54:18"
+  },
+  {
+   "module": "C-Reviews",
+   "stage": "dashboard",
+   "why": "module-done gate 5 DASHBOARD needs render.json with empty_state_honest for 4 declared blocks (app/app/Console/Commands/ModuleDoneCommand.php:371); no committed file writes render.json, and a hand-written one is fabrication (AGENTS.md:96). Discharged when a render-evidence producer exists.",
+   "at": "2026-09-11T15:54:18"
+  },
+  {
+   "module": "C-Reviews",
+   "stage": "surfaces",
+   "why": "module-done gate 6 SURFACES needs surfaces.json with refused_undeclared (app/app/Console/Commands/ModuleDoneCommand.php:390); no committed file writes surfaces.json, and a hand-written one is fabrication (AGENTS.md:96). Discharged when a surface-evidence producer exists.",
+   "at": "2026-09-11T15:54:19"
+  },
+  {
+   "module": "C-Reviews",
+   "stage": "gate",
+   "why": "module-done gate 7 GATE needs the whole platform's php artisan doctor to exit 0 (app/app/Console/Commands/ModuleDoneCommand.php:410); it reads boundary 41, contract 85, schema 14, capability 204, anchor 128, journey 2, no boundary, capability or citation row names C-Reviews, X-181 or X-110, and C-Reviews' own rows are win.first with two emitters (Track 1) and gate 2's missing runtime proof. Discharged when doctor exits 0.",
+   "at": "2026-09-11T15:54:19"
   }
  ],
  "decisions": [
@@ -1380,6 +1441,12 @@
    "module": "C-Reviews",
    "chose": "CSAT on resolve has one writer, AskForCsatOnTicketResolved on X-181's ticket.resolved; QaTicketAction::resolve() is removed because no production code called it and it stamped csat_requested_at with no send, no guard and no ticket.resolved; the review ask is not suppressed locally by an open qa_ticket, because P-205 puts that arbiter in the spine (plan :661, :35238)",
    "at": "2026-09-11T15:37:15",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Reviews",
+   "chose": "module-done's five red gates are recorded UNRESOLVED, one row per gate (built, tested, dashboard, surfaces, gate), because each waits on a dependency outside this lane: a CI, render or surface evidence producer that does not exist, a real send on a reserved transport, or the whole platform's doctor; no evidence file is written and C-Reviews is not marked DONE",
+   "at": "2026-09-11T15:54:42",
    "ruling": "R245"
   }
  ],
@@ -1603,6 +1670,10 @@
   {
    "at": "2026-09-11T15:37:15",
    "note": "run 163: one CSAT writer \u2014 r163-red.txt The expected [App\\Modules\\CSms\\Events\\SendRequested] event was dispatched 2 times instead of 1 time.; r163-reopen.txt tests 1 passed 1; guard green r163-green.txt; neighbours r163-neighbours.txt tests 59 passed 59; QaTicketAction::resolve() removed, receiveCsat now :41; r163-creviews.txt tests 42 failed 2; mutation red r163-mutation.txt The expected [App\\Modules\\CSms\\Events\\SendRequested] event was dispatched 2 times instead of 1 time.; P-205 NOT BUILT test added; module-done r163-module-done.txt \u26d4 \u26d4 \u2705 \u2705 \u26d4 \u26d4 \u26d4; gate tests 2566 \u00b7 passed 2554 \u00b7 FAILED 9 \u00b7 errors 3"
+  },
+  {
+   "at": "2026-09-11T15:54:42",
+   "note": "run 164: module-done C-Reviews re-measured r164-module-done.txt \u26d4 1 BUILT, \u26d4 2 TESTED, \u2705 3 CONTENT, \u2705 4 HELP, \u26d4 5 DASHBOARD, \u26d4 6 SURFACES, \u26d4 7 GATE, identical to run 163 (r164-module-done-diff.txt rc=done only); doctor r164-doctor.txt integrity 0 \u00b7 boundary 41 \u00b7 contract 85 \u00b7 citation 0 \u00b7 schema 14 \u00b7 capability 204 \u00b7 anchor 128 \u00b7 journey 2; evidence dir absent; five UNRESOLVED rows recorded (built, tested, dashboard, surfaces, gate); state.py next BUILD_WAVE wave 11 J6-J7 portal"
   }
  ],
  "resolved": [
