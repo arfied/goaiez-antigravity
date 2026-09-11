@@ -16071,3 +16071,62 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     **Predicted floor `tests 2536 · passed 2533 · FAILED 1 · errors 2`**, derived by listing:
     `gate-money205.txt` §7 `2535 · 2532 · FAILED 1 · errors 2`, and item 2 adds one method. ⛔ Absorb
     nothing (125). Dispatched **run 231, 1 of 2 against nothing**, before these rulings were written (464).
+
+503. **⭐⭐ MONEY-206 PASSES: a unique index alone made a third table's absorb atomic, and ruling 418's
+    shape held for the FOURTH consecutive wave (RULED by the lane supervisor 2026-09-11 05:4x, by `date`
+    `05:40`, on `49042cc8`).** The surface is exactly the migration
+    `2026_09_11_030000_x117_unique_cart_session.php`, `X117Test.php` (one import, one method) and the two
+    state files, with **no `CheckoutEngine.php` line changed**. `SWEEP:` is the brief's 13-line baseline.
+    `RED (no index):` carries `Failed asserting that 2 is identical to 1.`, the defect's own signature.
+    `RED (mutation):` carries `SQLSTATE[23505]` and `carts_business_session_unique`, with GREEN on both sides.
+    §7 read raw is **`tests 2536 · passed 2533 · FAILED 1 · errors 2`**, exactly the floor derived by listing
+    before the run, so route (iii) carried the re-gate (391). The ordering is serial by the files' own
+    clocks: commit `05:27:20`, then the gate file `05:30:18`, then the mutation's insert timestamp
+    `05:30:42`. Pushed `2cfb7200..49042cc8`. ⭐ The dependency on X117Test being untransacted is written into
+    the test (462). After MONEY-205 and MONEY-206, the next table in line is MONEY-207.
+
+504. **⭐⭐ Cadence condition (3) does NOT fire when the merge-base IS the tip this lane last pushed and
+    main's commits since carry nothing but per-track paths and another lane's module (RULED by the lane
+    supervisor 2026-09-11 05:4x).** Measured this tick: `origin/main` = `79773b2d`
+    (`merge: track/money — money205 (tip 2cfb7200…)`), `git merge-base HEAD origin/main` = **`2cfb7200`** =
+    `origin/track/money`, and main is 13 ahead. Read literally, ruling 272's wording fires (3): this
+    tick's push is the first since Track 1 merged the lane, and it carries a wave. **It does not fire, and
+    the reason is measured rather than preferred.** `git diff --name-only 2cfb7200 origin/main` returns
+    exactly **10 paths**:
+    - **seven are per-track** (`CLAUDE.md`, `bin/supervise.sh`, `launch-coder.sh`,
+      `.claude/settings.json`, `app/phpunit.xml`, and the two state files). A merge must restore every one
+      of them to money's copy (444, 285).
+    - **three are X-102**, track sixty's module. The One Rule gives those to main whole, and no money file
+      reads them.
+
+    So a merge wave would move **zero** bytes of content into money's trees. It would spend a dispatch,
+    open the guard, and put the four exposed per-track paths at risk for nothing (444's `app/phpunit.xml`
+    swap being the silent one). The owner's purpose for (3) is that the slice Track 1 merges is clean
+    against main. Track 1's own `79773b2d` is the proof: it merged money's previous tip at that same base.
+    **RULED:** (3) is measured by the CONTENT of `<merge-base>..origin/main` outside the per-track set, not
+    by the fact of a push. It fires when that content touches a path this lane changes or depends on (452's
+    foreign surface). This agrees with 424's hourly-merge reading and refines 272's wording.
+
+505. **⭐⭐ `account_mappings` is index-alone-safe, measured writer by writer, and is briefed as MONEY-207
+    (RULED by the lane supervisor 2026-09-11 05:4x).** Ruling 466 requires each table's census to be
+    re-measured and never inferred from a sibling. The measurements:
+    - `grep -rn -F -e "AccountMapping::" app/app app/tests` returns **8** lines: one writer
+      (`AccountingSyncEngine.php:111`, `updateOrCreate` keyed `business_id, connection_id,
+      internal_category`), one ordered reader, and six test counts.
+    - `grep -rn -F -e "account_mappings"` finds **no raw insert**. `grep -rn -F -e "mapAccount("` returns
+      **six** call sites. Each maps a distinct category or remaps one already mapped
+      (`ConnectionMappingScreenTest:52-58`, `:143`), and a remap is an update under `updateOrCreate`.
+    - So a plain `(business_id, connection_id, internal_category)` unique index refuses nothing the code
+      does today. It is **not** partial. `mapAccount` opens no transaction, so no savepoint term applies.
+
+    ⭐ **The fixture differs from 205/206 in one measured way.** `mapAccount` refuses an inactive
+    connection **before** its write, and `AccountingConnectAction:22` sets `is_active` only when a token is
+    passed (84). So the racer test connects with a token, or the stop-clause fires on a refusal rather
+    than on the race. ⭐ The discriminator beyond the row count is `$result['mapping_id']` equal to the
+    surviving row's id, with the loser's `gl_4000` filled onto that row, which proves `updateOrCreate`
+    handed back the winner. `X173Test` is class-based and untransacted (483), and the test carries 462's
+    dependency comment. **Predicted floor `tests 2537 · passed 2534 · FAILED 1 · errors 2`**, derived by
+    listing from `gate-money206.txt` §7 plus the one method item 2 adds. ⚠️ Deploy note (501): no production
+    `account_mappings` row can exist to duplicate, because the connect door refuses by design (73a).
+    **Dispatched run 232, 1 of 2.** ⛔ `merchant_connections` (502) and `credit_terms` (499) remain NOT
+    index-alone.
