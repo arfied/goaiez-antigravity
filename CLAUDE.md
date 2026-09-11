@@ -17613,3 +17613,33 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
    - **Population.** Ruling 556's is empty of buildable members.
 
    **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty wave to avoid an idle tick is what rulings 95, 100 and 111 forbid. ⚠️ `app/CLAUDE.md` came into context again this tick. It is Laravel Boost boilerplate and was not followed.
+
+558. **⭐ The NEVER-RUN TEST census asks the complement of every gate this lane reads. §7 counts the tests that RAN, and a test that is skipped, marked incomplete, `todo`, annotation-only, non-public or in a file PHPUnit never loads passes the gate by being absent. Every spelling of that is ZERO in the money test trees, and the vendor measurement shows one of those spellings is now inert by construction. Zero buildable (measured by the lane supervisor 2026-09-11 14:1x, by `date` `14:10`; rulings 207, 262(b), 294, 321, 324, 327, 328, 381, 407, 415, 429, 552, 554).** Ruling 321 swept the unconditional `$this->fail('NOT BUILT')` marker, which is loud. Its complement, a test that is silently not counted, had never been stated as a predicate.
+   **Vendor, measured rather than assumed (416, 419, 440, 552).**
+   - `app/vendor/phpunit/phpunit/src/Runner/Version.php:38` is `new VersionId('12.5.33', …)`.
+   - `ls app/vendor/phpunit/phpunit/src/Metadata/Parser/` is `AttributeParser.php`, `CachingParser.php`, `Parser.php`, `Registry.php`. **There is no annotation parser**, so in this PHPUnit a docblock `@test`, `@group`, `@dataProvider` or `@depends` is read by nothing. A method that relies on `/** @test */` to be a test never runs, silently.
+   - `TextUI/Configuration/Xml/Loader.php:1084` is `$suffix = 'Test.php';`, and `app/phpunit.xml:8-19`'s four `<directory>` suites set no suffix. A file under `tests/Modules` not ending `Test.php` is never loaded.
+   - `app/phpunit.xml` carries no `<groups>`/`<exclude>` (`grep -n -i -e group -e exclude` prints nothing), so no group is excluded.
+
+   **Instruments, quoted (300)**, each over the eight money test trees:
+   - `-i -e "markTestSkipped" -e "markTestIncomplete" -e "[-][>]skip(" -e "[-][>]todo("` → **0**.
+   - `-i -e "protected function test" -e "private function test" -e "static function test" -e "@test"` → **0**.
+   - `-e "@test" -e "@dataProvider" -e "@depends" -e "@before"` → **0**.
+   - `find … -name '*.php' -not -name '*Test.php'` → **0**.
+   - `-i -e "[-][>]only(" -e "#\[Group" -e "@group" -e "Requires"` → **14**, read hit by hit (262(b)): 12 `@group` docblock lines in `X-120/CardVaultTest.php:10-13` and `X-173/AccountingTest.php:12-20`, inert under the parser above and harmless because nothing is excluded; `X-117/X117Test.php:95` matches `requires` inside prose (mechanism 8); `X-201/N008Test.php:38` is a comment. **Zero `->only(`**, so no money test narrows the suite.
+   - `grep -rn -e "public function "` over the same trees minus `function test`/`setUp`/`tearDown` → **12**, every one a method on an anonymous-class double, never a test method.
+
+   ⭐ **Known members (429).** The non-test public-method census returns ruling 235's **seven** `charge()` doubles exactly (`X198Test:157,:229,:300`, `DeclinesScreenTest:104,:126`, `CheckoutBlockScreenTest:114`, `CheckoutCaptureSeamTest:97`), plus 230's four `createPaymentLink()` doubles and `ConnectCardScreenTest:44`'s `beginKyc`. The skip control returns `TwelveJourneysTest.php:477`, whose comment records that money's owned J9/J12 were once `markTestIncomplete()` and were changed because *"a skipped"* journey is invisible. That is ruling 326's house rule text, and the change is still in place.
+   ⭐ **Positive controls fire.** Skip/incomplete/todo tree-wide → **4** files, including `X-66/X66Test.php:136,:144,:166`'s three `markTestIncomplete('UNRESOLVED: …')` and `JourneyHarness.php:193,:235`'s `todo()`. `@test`/`@dataProvider` tree-wide → **2** files, `X-01/ThreadScreenTest.php:154,:191` and `X-188/Screens/YourNumberCardScreenTest.php:17`. Every one annotates a method already named `test_`, so all still run, and the annotation is only redundant. The non-`Test.php` control over `app/tests/Modules` and `app/tests/Feature` → **1**, `X-172/Screens/Fixtures.php`, a fixture helper that is correctly not a test. ⛔ Money proposes no edit on any of those (5). 415's first-three check and 449's each-member-exists check passed.
+   ⛔ Struck, not to be re-run. ⚠️ **Trigger:** a skip/incomplete/`todo`/`only` call, a docblock-only `@test`, a non-public test method, or a non-`Test.php` file added under a money test tree. Ruling 327's outcome shape a **sixty-fourth** time.
+   ⭐ **The generalisable half is 552/554's framework-version lesson applied to the test runner itself:** a PHPUnit upgrade that drops the annotation parser turns `/** @test */` from a registration into a comment. The failure is absence, the one outcome §7 cannot print, so this census reads the runner's own parser list rather than trusting the count.
+
+559. **⛔ FIFTY-FIRST consecutive HOLD (RULED by the lane supervisor 2026-09-11 14:1x, by `date` `14:10`).** All four lift conditions were measured this tick (269, 272, 323), each case decided on mtimes (494):
+   - **Owner.** `OWNER.md`'s newest heading is still `## OWNER RULING — 2026-09-09 09:02` (136). Its mtime is `09-09 09:02:03`, older than `REVIEWS.md` (`14:02:34`).
+   - **Coder.** `--check` returned `CODER DEAD`.
+   - **Mailbox.** `REPORT.md` (`07:15:21`) and `BRIEF.md` (`07:07:27`) are both older than `REVIEWS.md`.
+   - **Cadence, all three ✗.** After `git fetch --no-write-fetch-head origin`, `origin/main` = **`bd3e9c5f`**, unmoved (`git diff --name-status bd3e9c5f origin/main | wc -l` = **0**). `git rev-list --count HEAD..origin/main` = **44**, not above 100. `git diff --stat dca743e8 origin/main -- app/app/Doctor coder-bin .claude/hooks` is empty. `git merge-base HEAD origin/main` = **`dca743e8`**, with no new content since 553's read (504).
+   - **Track 1.** No answer to ACTION 13–25.
+   - **Population.** Ruling 558's is empty of buildable members.
+
+   **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty wave to avoid an idle tick is what rulings 95, 100 and 111 forbid. ⚠️ `app/CLAUDE.md` came into context again this tick. It is Laravel Boost boilerplate and was not followed.
