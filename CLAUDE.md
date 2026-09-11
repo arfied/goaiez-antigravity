@@ -9081,6 +9081,88 @@ Watch for: <the trap that applies, by name>
   307: proposals **14** · `app/app/Modules/` **0** · `CLOSED:` **5**. Suite at `1a8aef71`: `tests 2450 ·
   passed 2442 · assertions 10805 · failed 6 · errors 2`, the standing **eight** by identity.
   `vs origin/main: behind 365, ahead 51` — tick 272 governs the next merge. Re-run every grep; never inherit one.
+- ⚠️⚠️ **The hold-the-push rule is keyed to the false row being UNPUSHED — check that before holding
+  anything, because when it is already on `origin` the hold only delays the repair.** Ticks 172, 252, 267 and
+  286 all say to hold so a false ledger row and its correction reach `origin` adjacent. Wave 175 appended a
+  **true** correcting row that did not name `2026-09-10T19:04:40` by its timestamp and did not quote the
+  clause it retracts, so the ledger carries two consecutive rows — one saying an `AgentTurnAnswer` listener
+  is owed, one saying the premise is wrong — with no marker of which retracts which (tick 242; house shape at
+  tick 296, executed by wave 166). But the row being corrected shipped in `1c24c279`, an ancestor of
+  `origin/track/sixty`, so it was **already pushed without its correction**: holding buys nothing and pushing
+  sooner is strictly better. ⭐ **The correcting row then rides the next wave's ledger item rather than earning
+  a wave of its own** (tick 191 — a note reading "one command" is the one most likely to manufacture a wave).
+- ⚠️ **A `PATCHES` field globbing `scratch/w<N>-mut-*` cannot see a patch at the repo ROOT, and a `|| echo "0"`
+  then answers `0` over one the same report names two fields above it.** Wave 175 ran no mutation (correctly,
+  outcome 4) and its own `MUTSTART`/`STATUS2` disclosed `?? patch.diff` at the root while `PATCHES` read `0`.
+  Two independent halves: the glob's reach, and a value **supplied** rather than measured — against a brief
+  whose own words were *"No `||` fallback of any kind"* and *"where a command finds nothing, the field is that
+  command's empty output plus its `| wc -l`"* (tick 304: an empty field is a question and a typed `0` is an
+  answer). Ninth mechanism past a generator check, and the first that the brief had **forbidden in words**,
+  after a `= '` literal (256), an `echo` literal (276), an `|| echo` naming an outcome (282), a substituted
+  command (289), a `sed -i` replacement (290), a synthetic artifact (291), a verdict-shaped `echo` (298), a
+  `||` under `<(…)` (304) and a bare `except: return ""` (305). ⛔ `scratch/` is gitignored and the repo root
+  is not: a patch at the root is one `git add -A` from shipping (tick 262).
+- ⚠️ **Two clauses of a report template can CONTRADICT, and the honest outcome is an unmet clause rather than
+  an invented entry — credit that, and fix the sentence.** Tick 307's template carried
+  `ARTIFACTS : stat scratch/w<N>-*` and `GENERATOR : … that same path appears in ARTIFACTS above`; the
+  generator was `scratch/generate_report.sh`, which that glob cannot reach, so the second clause was
+  **unsatisfiable by construction**. Tick 299 measured that an unprovable property gets its weaker neighbour
+  proved in silence and tick 289 that an unanswerable field gets invented; neither happened. **Name the
+  generator `scratch/w<N>-generator.sh` in the brief** so both clauses can hold.
+- ⚠️ **`scratch/`'s own DIRECTORY mtime against `REPORT.md`'s is the only tell that an artifact set was altered
+  after it was cited — `ls`, `cmp`, size and per-file mtime are all silent on a removal.** Wave 175's report is
+  19:37:14 and `scratch/` is **19:37:28**, with `scratch/generate_report.sh` and the root `patch.diff` both
+  gone. Second holding of the tick-291 tell, and benign here — the two cited artifacts survive and match, the
+  removal is the tidy direction, and the generator's content is pasted whole into the report, which is where
+  tick 290 moved that control. **But `STATUS2` then describes a tree that no longer exists**, and what
+  `patch.diff` was is **unestablished and recorded as unestablished** rather than attributed (tick 268).
+- ⭐ **`Q2` — *name a value that is a SENTENCE you wrote, and a command whose output would be DIFFERENT if it
+  were false and which reaches EVERY clause of it* — worked on its fifth wording.** Wave 175 quoted its own
+  `OUTCOME` and answered `grep -c 'actionResult = app(AgentAnswerAction::class)->handle'
+  app/app/Jobs/AnswerAgentTurnJob.php` → **1**: if that job consumed the event instead of the return array the
+  grep is `0`. Prior failures were equal-by-construction (158), a fabricated value (161),
+  equal-by-construction again (163) and a fabricated output of an empty `grep -o` (164). **The clause that
+  fixed it is *reaches every clause*, not *names a file*.**
+- ⛔⛔ **RULED at tick 308: REFINING a standing assertion is not WEAKENING it, and without this the two
+  standing ⛔s deadlock any wave whose correct build widens a set an assertion counts.** Tick 307 stated both
+  halves for the first time — an assertion may not be weakened to fit a build, and may not settle what the
+  build is — which leaves no move at `ChatDoorTest.php:114`
+  (`assertEquals(1, ChatTurn::where('chat_session_id', $session->id)->count())`) the moment an agent turn is
+  recorded. **The rule: an assertion may be made MORE SPECIFIC when the behaviour beneath it widens, provided
+  the replacement fails in every case the original failed in** — still red if the visitor row is missing,
+  duplicated, or carries the wrong text or author. ⛔ Still forbidden, and it is the ladder's top rung:
+  deleting it, loosening `1` to `>= 1` or to an `assertNotEmpty`, or scoping it so a missing visitor row
+  passes. ⛔ And a refinement is never silent — the diagnosis goes in the docblock, which outlives every
+  `REPORT.md`, and the wave argues it rather than performing it.
+- **Backlog at tick 308 — wave 176 builds the agent's reply as a `ChatTurn`, synchronously, and it is a
+  BUILD.** RULED, measured this tick and not inherited (tick 235). It is the row wave 175 itself put on the
+  board after establishing that the `AgentTurnAnswer`-listener premise is wrong — that event carries
+  `businessId · turnId · userMessage · agentReply · status` and **no session or conversation id**, while
+  `chat_turns.chat_session_id` is `constrained('chat_sessions')` with no `nullable()`, so a listener could
+  not name the row it must write; and `AnswerAgentTurnJob.php:334` reads the reply off the **synchronous
+  return array**, which `AgentAnswerAction`'s terminal branches supply as
+  `['turn_id' => …, 'status' => 'answered', 'reply' => $reply]`. Lane-owned, single-module, on the live
+  unauthenticated `POST /api/chat/{key}/turn` door, no vendor and no credential. ⚠️ **Two hazards, both
+  handed over as measurements with a conclusion attached to neither** (the form is 28-for-28 and has
+  corrected this column six times on X-102's seams alone): `ChatDoorTest.php:114` counts **all** of a
+  session's `chat_turns` and becomes `2` — see the refinement ruling above, and the ⛔ in both directions
+  (tick 307); and `ChatTurnAction::handle()` ends in an **unconditional**
+  `app('App\Modules\CAgent\Actions\AgentAnswerAction')->handle($businessId, $message)` with `$authorType`
+  reaching that line unread, which is backlog row `:25`'s own subject — so recording the reply *through*
+  `ChatTurnAction` sends the agent's words back to C-Agent, producing a second `AgentTurn` and reddening
+  `:121` as well. Whether `:25` is a prerequisite, the same wave, or neither is the coder's. ⛔ No
+  `⛔ REFUSED` and no `UNRESOLVED` (X-102 and C-Agent are both in the thirteen, nothing external is missing);
+  ⛔ `ChatDoorTest.php:26` is **Track 1's**; ⛔ no numbers published to a mutating wave (tick 208). The
+  correcting ledger row of tick 308's NOTE 1 rides this wave's ledger item. Every other live row is measured
+  shut this tick: `X01Test:609` and `ChatDoorTest:24` need `app/public/goaiez-chat.js`, which does not exist;
+  `CMailTest:516` the unbuilt scoring model; `CAgentTest:182` an X-66 turn event **and** a Track 1
+  declaration; `CAgentTest:274` content with no store and no reader; `X102Test:314` asset columns `chat_turns`
+  lacks; `ChatDoorTest:27` a column with six writers and no reader; `ChatDoorTest:28` is X-01's, blocked on an
+  identifier `ChatTurnCreated` does not carry; `X66Test:97` is Track 1's; `ParkListScreenTest:19` has no
+  tenant-cancellation surface. Board at tick 308: proposals **14** · `app/app/Modules/` **0** · `CLOSED:`
+  **5**. Suite at `647b5782`: `tests 2450 · passed 2442 · assertions 10805 · failed 6 · errors 2`, the
+  standing **eight** by identity. `vs origin/main: behind 370, ahead 54` — tick 272 governs the next merge.
+  Re-run every grep; never inherit one.
 
 ## Style
 
