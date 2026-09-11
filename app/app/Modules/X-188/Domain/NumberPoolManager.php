@@ -167,6 +167,7 @@ final class NumberPoolManager
         }
 
         $poolNumber = NumberPool::find($assignment->phone_number_id);
+
         return $poolNumber?->phone_number;
     }
 }
