@@ -19119,3 +19119,53 @@ is unchanged.
   (183, 188); both add a keyed `decided` row for the sibling's own module.
 - Tick 343's closing table read `reviews a3e9c66d`; the reflog says `0441f84a` arrived `@{14:30:15}`, **after** that block's append
   (14:22:24) — arrival, not a defect of 343's re-read (220).
+
+## ⛔ A SIBLING'S COMMIT RECORDED BY ITS **DIFF** CANNOT BE MATCHED TO A LATER FINDING BY ITS **DEFECT** — the ledger held SITE-211's answer nine ticks before the wave (tick 345)
+
+SITE-211 named the one risky test in the suite: `X-110/TodayTest.php:56 test_home_renders_today`, a real `GET /home` whose response is
+discarded, so a 500 on the account shell passes as a pass. Tick 335's census had already recorded reviews' `ffb9ef3c` in the same file
+as *"adds `->assertOk()` to `X-110/TodayTest.php` — a strengthening, advisory"*, and tick 344 briefed a measurement wave without
+connecting the two. The advisory named **what the commit changed** (`+assertOk`) and not **what it closed** (an assertion-less GET), so
+nothing about the later finding — a risky count, then a method name — could be matched against it.
+
+⭐ Three lanes converged on this one test inside a day — reviews measured `/home` at 200 and fixed it (REV-160/161), money named it and
+filed a TRACK 1 ACTION against this lane (ruling 564), this lane named it (SITE-211) — and the fix was already sitting on a branch
+headed for `main`.
+
+> ⛔ **Record a sibling's commit in this lane's column by the DEFECT it closes, in the vocabulary a later finding will arrive in** —
+> "the assertion-less `GET /home` in `TodayTest` now asserts 200" — never by its diff alone. And **before briefing any fix in the lane's
+> own column, `git grep` the line on every sibling tip**: one command, and it is the only instrument that sees a fix in flight.
+
+Same family as tick 260 (*a finding recorded but never briefed decays exactly like an unmeasured one*), turned on a **sibling's
+remedy**: a remedy recorded in the wrong vocabulary is as invisible as one never recorded. RULED at tick 345: adopt by reference (211),
+no wave, TRACK 1 ACTION — merging `track/reviews` closes money's action 27.
+
+## ⛔ A TEST FILE OUTSIDE EVERY `<testsuite>` IS INVISIBLE TO THE GATE IN BOTH DIRECTIONS — its incompletes are not "counted inside passed", they are not counted at all (tick 345)
+
+Tick 344 recorded a disagreement it could not close: `grep -rln markTestIncomplete` names `tests/Patches/FourPatchesTest.php` with
+eight calls, while the gate's JSON says `incomplete 3`. Measured: `app/phpunit.xml`'s testsuites are `tests/Unit · Feature · Modules ·
+Journeys`, the same on `origin/main`, so `tests/Patches/` is **never collected** and pest has nothing to count.
+
+⛔ **A reconciliation between source and count can only reconcile what the runner collected**, and a file outside every suite fails
+neither half — it adds no test, no failure, no incomplete, no risky. Tick 344's money-derived rule (*incomplete and risky are counted
+inside passed*) is true, and bounded by the same blindness one level out. Before reading a count against a grep of the tree, read the
+runner's collection scope. Advisory to Track 1; the file is shared and from the initial build.
+
+## ⛔ UNIGNORED phpstan IS NOT A TYPO DETECTOR — two of its 13 hits in this lane are columns that EXIST (tick 345)
+
+Money's rulings 566-568 measured that `app/phpstan.neon:17` ignores `#Access to an undefined property#` tree-wide, so `phpstan errors 0`
+is a count after the ignore list. Run here over the seven owned modules with no ignores and every relevant module migration path
+(`.agents/supervisor/.phpstan345.neon`): **13 errors, zero typos, nothing buildable** — eleven untyped `Model` reads of columns that exist,
+and **two typed reads that larastan flags although the column is plainly in a core migration** (`businesses.address`
+`2026_07_30_072149:36`, `locations.website_url` `2026_07_30_072150:43`). Cause not measured, not named.
+
+⛔ So an "undefined property" from that run is a **candidate**, never a finding: each hit is confirmed against the migration that would
+declare the column before anyone calls it a silent-null read. A sweep that counted hits as defects would have briefed two fixes for
+columns that exist. Recorded with its config so it is re-runnable rather than re-derivable (280).
+
+## ⚠️ A brief item that runs pest OUTSIDE the gate must take the box-wide lock too (tick 345)
+
+SITE-211's item 2 wrapped its whole-suite run in `flock -w 2400 /home/goaiez/tmp/pest.lock`; item 1, the owned-column run, did not, and
+ran a suite on `goaiez_antig_site_test` outside the serialisation tick 216 adopted. Nothing collided, and that is luck. ⛔ **Every pest
+invocation a brief names carries the `flock`, not only the long one** — a short suite is still a suite, and the lock is not a
+performance measure.
