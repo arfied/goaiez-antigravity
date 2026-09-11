@@ -63,18 +63,13 @@ class QaQueueSlaDueAt extends Component
             return;
         }
         Tenancy::set($this->businessId);
-        try {
-            $action = app(QaTicketResolveAction::class);
-            $action->handle($this->businessId, $ticketId, $notes);
+        $action = app(QaTicketResolveAction::class);
+        $action->handle($this->businessId, $ticketId, $notes);
 
-            $this->noticeType = 'success';
-            $this->actionNotice = '✅ Ticket resolved successfully.';
-            $this->resolvingTicketId = null;
-            $this->resolutionNotes = '';
-        } catch (\Exception $e) {
-            $this->noticeType = 'error';
-            $this->actionNotice = '🚫 Error: '.$e->getMessage();
-        }
+        $this->noticeType = 'success';
+        $this->actionNotice = '✅ Ticket resolved successfully.';
+        $this->resolvingTicketId = null;
+        $this->resolutionNotes = '';
     }
 
     public function render()

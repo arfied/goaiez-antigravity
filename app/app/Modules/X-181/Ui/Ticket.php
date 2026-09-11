@@ -8,7 +8,6 @@ use App\Modules\CReviews\Actions\ReviewRequestReadAction;
 use App\Modules\X181\Actions\QaTicketResolveAction;
 use App\Modules\X181\Models\QaTicket;
 use App\Support\Tenancy;
-use Exception;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
@@ -45,13 +44,9 @@ class Ticket extends Component
 
     public function resolve(string $notes): void
     {
-        try {
-            $this->actionNotice = null;
-            app(QaTicketResolveAction::class)->handle($this->businessId, $this->ticketId, $notes);
-            $this->resolutionNotes = '';
-        } catch (Exception $e) {
-            $this->actionNotice = $e->getMessage();
-        }
+        $this->actionNotice = null;
+        app(QaTicketResolveAction::class)->handle($this->businessId, $this->ticketId, $notes);
+        $this->resolutionNotes = '';
     }
 
     public function render()
