@@ -18906,3 +18906,58 @@ shape, measured in one command: the door is open and the room holds our own five
 - ⛔ Shell forms: `ls` on `/home/goaiez/tmp/*` is refused and **takes the whole compound with it** (a `readlink` in the
   same call printed nothing); `Read` on the same path is accepted. `git grep -c <pat> <ref> <ref> … -- <path>` accepts
   several trees in one call and replaces a refused `for` loop.
+
+## ⛔ A DELTA REQUESTED WITHOUT ITS FORMULA READS AS AN ANOMALY EXACTLY AT ITS BOUNDARY VALUE (tick 339)
+
+SITE-210's brief asked each falsifier for *"the green assertion count minus the red assertion count"*. F-B's mutation was
+caught by the method's LAST assertion, so the delta was **0** — tick 291's closed form says that is required
+(`green − red = (assertions in the method) − (index of the failing one)`; the failing assertion counts before it fails) —
+and the report's prose stalled on it mid-sentence (*"= 0 assertion failure, wait..."*) before recovering. The arithmetic was
+right; the request gave no way to read it. ⛔ **Every brief that asks for a falsifier's delta supplies the closed form beside
+it and says that 0 means the last assertion failed.** Same family as tick 291's warning that a Δ of 0 looks like fabrication,
+reached from the coder's side.
+
+## ⛔ MAIN WIRES A HOOK THAT REFUSES THIS LANE'S OWN ITEM 0 — write C1 as a redirect, never a pipe (tick 339)
+
+`origin/main`'s `.claude/settings.json` (+15 past our tip `4af71adc`) adds a `PreToolUse` Bash hook running
+`.claude/hooks/no-piped-gate-tool.py`, which this checkout has held unwired since the take at `d0471f0c`. Read at source:
+`INVOCATION` matches `artisan test`, `vendor/bin/pest|phpstan|pint` and **`bin/supervise\.sh`**, after peeling wrappers
+including `bash`, and denies the call when that statement contains an unquoted `|`. Every brief since SITE-204 writes C1 as
+`bash bin/supervise.sh 2>&1 | grep -A 3 'forbidden paths touched'` — refused the day that hook reaches a coder here, and the
+`--coder claude` fallback (enabled 2026-09-11 10:2x) reads `.claude/settings.json`.
+
+✅ **RULED: C1 is `bash bin/supervise.sh > /home/goaiez/tmp/site-<n>-c1.txt 2>&1` and then a separate
+`grep -A 3 'forbidden paths touched' /home/goaiez/tmp/site-<n>-c1.txt`.** The hook's reason is correct and is this lane's own
+§6 lesson (tick 227 — a pipe loses the gate's rc) one layer up; C1 happens not to need the rc, which is exactly why the
+pipe crept in unnoticed. ⚠️ A brief whose item 0 works only while a file this lane does not own stays unchanged is a
+brief with an unrecorded dependency. Same family as tick 313's *a ground value this seat cannot execute is a recollection
+wearing a command* — here a command that a sibling's configuration can make unexecutable.
+
+## ✅ Tick 338's two rulings, both on their HEALTHY branches (tick 339)
+
+- **"The gate runs EXACTLY ONCE"**: one `--tests` gate (pid `1962102`), started five seconds after the final commit, pest
+  `11:06:06 → 11:08:37`, and `REPORT.md` written at `11:09:42` — after it returned. The only other `grs-antig-site` row in
+  the window is the brief's own item-0 no-`--tests` run, separable only by pid (259).
+- **"The fifth axis re-runs when a write surface arrives"**: its population in this lane is exactly four KILLED rows
+  (X-110 `G13-09 G13-13 G13-32`, X-102 `G21-01`), and X-110 holds one migration dated 2026-08-30, so G21-01 was the only
+  member with a trigger. The sweep is closed; recorded so it is not re-derived.
+
+⚠️ And one coupling SITE-210 created, stated rather than buried (230): G21-01's refusal carrier now reads
+`['visitor','agent']` only because C-Agent's `AgentAnswerAction` returns a `reply` key for that message. A C-Agent change
+that stopped replying would redden a scripted-attendee refusal for an unrelated reason. The cross-lane dependency query
+already watches that file (it has since SITE-209); it now carries two reasons.
+
+## Tick 339 — measured, for the record
+
+- **SITE-210 PASS**, `8200a10e` + `d553eaff`; falsifiers F-A 4−3=1 at #3 and F-B 4−4=0 at #4, pest `line` 465 = the
+  declaration in both (298); witnesses predicted both values and differed (324); neither a revert (287, 328).
+- **Tick 236's check on Track 1's merge `bd3e9c5f`** (second parent `4af71adc`): SITE-209's signature lines present;
+  SITE-210 unmerged, not dropped (258).
+- **Take unnecessary**: base `4af71adc`, behind 16 / 5 first-parent, ahead 2; main's only delta on the lane's paths is the
+  per-track `.claude/settings.json`.
+- **Census `7 · 4 · 1 · 4`**, the growth being sixty's merge of `73b8fe08` (silent at its accepting bound) and ui's new
+  `SchemeTokenTest`, whose owned-module population is six `X-110/Ui/` components, Track 2's. Fourth surface `main 14 · money
+  16 · pricebook 14 · reviews 15 · sixty 42 · stages 41 · ui 16 · site 198 · HEAD 198`.
+- **Doctor** `boundary 41 · contract 85 · citation 0 · schema 16 · capability 204 · anchor 128 · journey 3` · **477**,
+  stamp `20260829-0647` = `runtime_build`. No stage moved.
+- **HOLD** — backlog measured empty; every open chat-door item is a TRACK 1 ACTION or a recorded NO-CLAUSE refusal.
