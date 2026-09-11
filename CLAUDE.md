@@ -19186,3 +19186,33 @@ component state and every `render()` scopes by the business id; `InstallVerify::
 `#[Locked] public int $businessId`**, the one attribute that stops a browser call from widening scope. A future component in these
 modules without it is the member to read first. Per 224: **already done here**. ⚠️ `Ui/` is Track 2's under ruling 5, so this is a
 measurement and never a build surface; what makes it this lane's to measure is that the components call this lane's `Actions/`.
+
+## ⛔ A QUOTED INTERPOLATION INTO A JS EXPRESSION IS DECIDED BY THE VALUE'S **WRITERS**, NOT BY ITS NAME — money's census listed ours as a control, and tracing it makes it LATENT (tick 351)
+
+Eighth firing of tick 215's law. Money's `32f9e280` (ruling 579): Blade escapes `'` to an entity, the browser decodes it back
+before Livewire or Alpine parses the attribute, so `wire:click="m('{{ $x }}')"` breaks on any value holding a quote — and money's
+own control list named **`X-110/visitors-live.blade.php:42`** without tracing it (*"their values were not traced"*). Traced here:
+
+| site | expression |
+| :-- | :-- |
+| `X-110/Ui/views/visitors-live.blade.php:42` | `wire:click="openEvents('{{ $session->visitor_id }}')"` |
+| `X-110/Ui/views/cooling.blade.php:39` | `wire:click="dismiss('{{ $visitor['visitor_id'] }}')"` |
+| ⛔ `X-110/Ui/views/cooling.blade.php:38` | `x-on:click="…getElementById('opener-{{ $visitor['visitor_id'] }}')…"` — an **Alpine** expression, evaluated as JS |
+| `X-110/Ui/views/cooling.blade.php:31` | `wire:model="openers.{{ $visitor['visitor_id'] }}"` — a dot path |
+
+Every other directive interpolation in the six owned `Ui/views` trees is an integer id (`$a['id']`, `$d->id`); single-quoted
+directive values: **0**. All four read `visits.visitor_id`, and its writers are exactly **two**: `X-110/Domain/PixelEngine::recordVisit`
+(**zero production callers** — every caller is `X110Test`/`X155Test`; `PixelEventsAction`, which does not call it anyway, is routed
+nowhere) and `database/seeders/UiReviewSeeder.php:315`. The production collector under `app/app/Services/Pixel/` never names
+`visitor_id`. Fixtures are all machine-shaped (`v-cool`, `vis_123`, `456`).
+
+⇒ **TRUE AND LATENT** (335's row): the expression shape is unsafe for a string, and nothing in the tree can supply one with a quote.
+⛔ **No wave**: the remedy's site is the blade (`@js`/`Js::from`, the house rule at `assistant-answers.blade.php:328-338`), which is
+Track 2's under ruling 5; and a shape guard in `recordVisit` would be a defence nothing can reach (280, 329). ⚠️ **Trigger, named:**
+the day any production path writes `visits.visitor_id` from a browser — the collector adopting X-110's tables, or `recordVisit`
+gaining a routed caller — `cooling.blade.php:38` becomes stored script injection in the tenant shell, not merely a dead button.
+Advisory to Track 1 for Track 2. Per 224 **the door is open and the room is empty**.
+
+⭐ The generalisation, and it is money's own caveat made operative: **a census that classifies interpolations by their TYPE must
+trace string members to their WRITERS before calling any a defect** — the name `visitor_id` reads like browser input and has no
+browser writer, and only the writer census separates "machine-shaped by construction" from "machine-shaped by luck".
