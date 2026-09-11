@@ -228,7 +228,10 @@ if [ $want_tests -eq 1 ]; then
   fi
   if [ $want_tests -eq 1 ]; then
   # pest under a wall clock: a hung suite must say so, not hang the tick (OWNER.md 08:0x).
-  run_tool pest env DB_DATABASE=goaiez_antig_money_test timeout 1800 ./vendor/bin/pest
+  # ruling 563: pao counts risky/incomplete but never names them; PHPUnit's own event
+  # log does, and it lands in this checkout where the supervisor can read it.
+  : > "$ROOT/.agents/supervisor/pest-events.txt"
+  run_tool pest env DB_DATABASE=goaiez_antig_money_test timeout 1800 ./vendor/bin/pest --log-events-text "$ROOT/.agents/supervisor/pest-events.txt"
   flock -u 9 2>/dev/null
   printf '%s' "$out" | tail -1 > /home/goaiez/tmp/last-pest-$(basename "$(git rev-parse --show-toplevel)").json
   [ $rc -ne 0 ] && fail=1
@@ -260,6 +263,9 @@ if n>5: print("   … %d more" % (n-5))'
   else
     echo "  (pest's last line is not the JSON summary · rc=$rc)"
     printf '%s\n' "$out" | tail -12 | sed 's/^/  /'
+  fi
+  if [ -s "$ROOT/.agents/supervisor/pest-events.txt" ]; then
+    grep -A 1 -e 'Test Considered Risky (' -e 'Test Marked Incomplete (' "$ROOT/.agents/supervisor/pest-events.txt" | grep -v -e '^--$' | head -24 | sed 's/^/   ⚠️ /'
   fi
   fi   # want_tests, re-checked after the lock
   fi   # busy
