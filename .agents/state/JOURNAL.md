@@ -944,3 +944,11 @@
 - `2026-09-10T19:54:33` (R245) X-102 — capability X-102 stores the agent's reply as a ChatTurn synchronously in ChatTurnAction, keeping the door response unchanged and correctly preserving the conversation state. R245
 - `2026-09-10T20:28:00` (R245) X-102 — capability The ledger row at 2026-09-10T19:54:00 was orphaned in JOURNAL.md without a mirror; its claim that X-102 must record the agent's reply synchronously was effectively superseded and recorded by the 19:54:33 decision.
 - `2026-09-11T11:13:07` (R245) X-66 — boundary: X-66 reads the assigned number through X-188's Domain seam via NumberPoolManager::getActiveNumber.
+- `2026-09-11T14:05:56` stage integrity = 0
+- `2026-09-11T14:05:56` stage boundary = 39
+- `2026-09-11T14:05:56` stage contract = 85
+- `2026-09-11T14:05:56` stage citation = 0
+- `2026-09-11T14:05:57` stage schema = 16
+- `2026-09-11T14:05:57` stage capability = 204
+- `2026-09-11T14:05:57` stage anchor = 128
+- `2026-09-11T14:05:57` stage journey = 3

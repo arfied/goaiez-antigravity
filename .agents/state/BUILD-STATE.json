@@ -15,7 +15,7 @@
    "fails": "COMMIT"
   },
   "boundary": {
-   "violations": 55,
+   "violations": 39,
    "fails": "COMMIT"
   },
   "contract": {
@@ -23,7 +23,7 @@
    "fails": "COMMIT"
   },
   "citation": {
-   "violations": 3,
+   "violations": 0,
    "fails": "COMMIT"
   },
   "schema": {
@@ -31,7 +31,7 @@
    "fails": "MERGE"
   },
   "capability": {
-   "violations": 207,
+   "violations": 204,
    "fails": "MERGE"
   },
   "anchor": {
