@@ -127,8 +127,8 @@ class AgeingByReason extends Component
 
             app(InvoiceReader::class)->forBusiness($businessId, $invoiceId);
 
-            $action->handle($businessId, $invoiceId, $amount, $method, $ref);
-            $this->success = 'Payment logged.';
+            $payment = $action->handle($businessId, $invoiceId, $amount, $method, $ref);
+            $this->success = sprintf('Payment logged: %s.', number_format($payment->amount_cents / 100, 2));
             unset($this->reference[$invoiceId], $this->amountCents[$invoiceId], $this->paymentMethod[$invoiceId]);
         } catch (UnreferencedPaymentException $e) {
             $this->refusedHeading = 'Payment not logged';
