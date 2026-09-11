@@ -14796,3 +14796,159 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     ⛔ ⚠️ **No expected value is dictated and no clause says what an answer would mean** (rulings 296,
     449): a brief that tells a run an outcome is self-explanatory forbids ruling 400's disproving
     measurement in advance, which is what MONEY-200's brief did and ruling 449 exists to stop.
+460. **⭐⭐⭐ ALL THREE OF RULING 458'S INFERRED TERMS ARE MEASURED — `rls=1 inside=1 survives=1` — AND THE
+    FIFTH TERM, WHICH NOBODY HAD STATED, IS ALREADY SATISFIED BY THE PRODUCTION CODE'S EXISTING SHAPE (RULED
+    by the lane supervisor 2026-09-11 02:5x, on MONEY-202's probe).** Ruling 458's frame is *a blocker is a
+    CONJUNCTION, and removing one of its terms does not open the path — it moves the question to the next
+    term*, and it listed four terms behind the racer proof that rulings 240, 256 and 327 called impossible.
+    MONEY-202's probe settles the three that were inferred, each under its own `idempotency_key` so no
+    measurement could be produced by another's cause (61's discipline applied to a probe):
+    **(A) visibility — `inside=1`**, a row committed on `pgsql_migrate` mid-way through an open
+    `DB::transaction` on `pgsql` IS visible from `pgsql`; **(B) survival — `survives=1`**, it survives that
+    transaction's rollback; **(C) owner RLS — `rls=1`**, `FORCE` does constrain the owner role, so
+    `RefreshesTenantDatabase:15-18`'s claim is now **measured rather than read** (374) and a racer must
+    `SET app.business_id` on its own connection. ⭐ `rls` was never a kill condition either way, because the
+    racer supplies `business_id` explicitly.
+    ⭐⭐⭐ **The fifth term is the one this ruling adds, and it was found by taking the disproving measurement
+    FIRST** (400's habit, a **sixteenth** firing): *where does the `23505` LAND, and can the catch-and-re-read
+    run at all?* Ruling 163 measured that in Postgres a failed statement aborts the **whole** enclosing
+    transaction, so every later statement in it dies `25P02`, and `capture()`'s whole body is inside
+    `DB::transaction`. **Measured on the live file rather than inherited (64, 323):**
+    `GatewayEngine.php` closes that transaction at **`:147`**, and `catch (GatewayNotConfiguredException)` at
+    `:148` and `catch (\RuntimeException)` at `:150` are **OUTSIDE** it — and `:150`'s `failed` write at
+    `:151-163` opens its **own fresh** `DB::transaction`. So (i) ruling 163's cascade **cannot fire**;
+    (ii) ⭐ **ruling 256's stated hazard is REAL and now measured rather than reasoned** — a bare index puts a
+    `23505` into `:150`, which writes a `failed` row for a charge Stripe actually took, whereupon MONEY-145's
+    `$attempt` at `:105-108` counts `failed` rows and `:115` mints a **fresh** key the provider cannot dedupe,
+    which is the double charge ruling 230 set out to prevent; and (iii) ⭐⭐ **ruling 240(d)'s requirement that
+    the re-read happen OUTSIDE the transaction needs NO restructure** — the place to put it already exists.
+    ⚠️ The generalisable half: **a conjunction's unstated terms are not all obstacles.** 458 predicted the
+    next term would block; this one was **already satisfied**, and only reading the method end to end could
+    say which. ⛔ So a term is measured before it is assumed hostile as surely as before it is assumed absent.
+
+461. **⭐⭐⭐ THE DOCTOR HAD WRITTEN RULING 454'S FINDING DOWN ALL ALONG, IN A CAPTURE THIS LANE HAD ALREADY
+    RETAINED — the contradiction this ledger carried for seventy-five rulings was resolvable at any time by
+    reading a file on its own disk (RULED by the lane supervisor 2026-09-11 02:5x).** Ruling 454 settled, in
+    vendor source and then by experiment (457), that a hand-written PHPUnit class gets no
+    `RefreshesTenantDatabase` and therefore no per-test transaction — and that rulings 225 and 256 had
+    carried opposite answers since. Measured this tick while reading the floor:
+    **`gate-money200.txt:40` is `schema X-103 — class-based module tests get no DB refresh; rows accumulate
+    in goaiez_antig_test and edited migrations never re-apply there. Recommend binding
+    RefreshesTenantDatabase in base TestCase to resolve this.`** ⭐ **That is ruling 454's finding, its
+    mechanism and its remedy, printed by a checker this lane runs every gate.**
+    ⭐⭐ It also explains the asymmetry between the two contradicting rulings: **ruling 225 cited the doctor**
+    (*"X-103's standing `UNRESOLVED` records that class-based module tests get no DB refresh"*) and was
+    **right**; ruling 256 reasoned from a `pest()->extend(…)->use(…)->in('Modules')` line and was **wrong**.
+    So the ledger's own citation practice already contained the answer, and what failed was that **no census
+    needed the two together** until ruling 454's did — which is 454's own lesson, now with its cheapest
+    possible remedy attached. **RULED: before reaching for vendor source to settle a contradiction, grep the
+    RETAINED CAPTURES** — `doctor-*.txt`, `gate-*.txt`, `footprint-*.txt` — because a checker that reports a
+    fact every run has been reporting it for as long as the contradiction has existed. ⭐ Ruling 326's shape a
+    **TWELFTH** time (after 326's `env()`, 370's `SampleStateModuleTest` pin, 372's `ScreenStates` docblock,
+    399's `Pest.php`, 429's `db:footprint`, 435's `ArEngine:323-325`, 438's `StripeWebhooks:551-554`, 441's
+    kit prose, 450's footprint caveat, 459's purge warning), and the strongest of the twelve, because the
+    rule text was not merely *near* the finding — it **was** the finding, waiting in a retained artifact.
+    ⚠️ And it corroborates ruling 448 from the other direction: **retain the capture and diff it** — a
+    retained capture is worth more than the summary written from it, and this one was worth a ruling
+    seventy-five rulings after it was taken.
+
+462. **⭐⭐ THE RACER PROOF'S SHAPE IS RULED, AND ITS DEPENDENCY ON `X198Test.php` BEING UNTRANSACTED IS NAMED
+    — because the doctor's own X-103 recommendation would silently invalidate it (RULED by the lane
+    supervisor 2026-09-11 02:5x, briefed as MONEY-203 item 3).** Every term being measured, the shape is:
+    (i) the test lives in **`X198Test.php`**, class-based and therefore **untransacted** (457, by experiment),
+    so a row committed beside it is not swept away; (ii) the racing row goes on **`pgsql_migrate`** — 458's
+    second connection, `database.php:103`, reading the same `DB_DATABASE` that `app/phpunit.xml:34` pins —
+    preceded by `SET app.business_id` on **that** connection, which `rls=1` makes mandatory (460);
+    (iii) ⭐ the hook is **`Http::fake(function () { … })`**, whose closure runs at the HTTP boundary — for
+    `capture()`, between the pre-check at `GatewayEngine.php:83-86` and the `Payment::create` at `:126` —
+    **which is ruling 229's own proven shape, already in this file at `X198Test.php:521-559`**, so the
+    instrument is adopted rather than invented (123, one wording per module). ⚠️ **229's proof writes its
+    racer on the SAME connection and that is correct for IT**, because `PaymentLinkAction` carries no
+    transaction; `capture()` does, which is exactly why the second connection is required here and why the
+    two proofs must not be harmonised (228(a)).
+    ⭐⭐⭐ **The dependency, recorded because nothing in this checkout would announce its loss:**
+    `gate-money200.txt:40`'s X-103 finding **recommends binding `RefreshesTenantDatabase` in the base
+    `TestCase`** (461). If Track 1 adopts that, `X198Test.php` becomes transacted, the racer's commit is no
+    longer a commit, and this proof stops proving anything — **while very likely still passing**, because a
+    same-transaction row also trips a unique index. That is ruling 65's silent-relocation shape one mechanism
+    over: another lane's reasonable change, in a file this lane does not own (`app/tests/TestCase.php`),
+    breaking a money proof weeks later with no gate to say so. ⛔ **So the test carries a comment naming the
+    dependency in terms**, and the item is filed on **TRACK 1 ACTION 13**'s list. ⚠️ Ruling 455's safety for
+    the other 71 untransacted files is untouched and unaffected either way.
+
+463. **⭐⭐⭐ THE `payments.idempotency_key` WAVE IS BRIEFABLE — index AND catch in ONE commit, never apart;
+    the RE-READ is the discriminator rather than an index name; and the one fact this seat cannot measure is
+    an `UNRESOLVED` fallback (RULED by the lane supervisor 2026-09-11 02:5x, briefed as MONEY-203).**
+    Rulings 240, 256 and 327 retired this wave three times for want of a proof shape, and ruling 458 measured
+    the defect is **real**: `capture():83-86`'s pre-check is a check-then-act across a live HTTP call, so two
+    concurrent captures on one key both read null and both persist — the money moves **once** (MONEY-144's
+    `Idempotency-Key` dedupes at Stripe) and the **local row lands twice**, giving two `Payment` rows carrying
+    the same `gateway_charge_id`, `PaymentCaptured` dispatched twice (101), and **`SameAccount`'s per-currency
+    total — the figure ruling 239 made honest — summing that charge twice.** A ledger double-count on a money
+    screen.
+    ⛔⛔ **The index NEVER ships alone**, and ruling 232 is the reason in one line — *introducing a new hazard
+    is worse than deferring the removal of an old one* — with 460's measured mechanism behind it: a bare
+    `23505` reaches `:150`, writes a **`failed`** row for a charge Stripe took, and MONEY-145's `$attempt`
+    mints a fresh key the provider cannot dedupe. **So items 1 and 2 are ONE commit.**
+    ⭐⭐ **RULED: the re-read is the discriminator and no index name appears in the catch.** Measured —
+    `2026_08_30_000030_create_x198_gateway_tables.php` declares **four `->index()` and NOT ONE unique
+    constraint**, so the new partial index is the only unique index on `payments` and a `23505` from a
+    `Payment::create` can only be ours; and the arm's body — *re-read the pre-check's own query; return the
+    row if it is there, rethrow if it is not* — scopes itself by **the thing that matters** rather than by a
+    string, which is ruling 37's *a second place for the truth to disagree* avoided in the schema's own name.
+    ⛔ Never `$e->index === '<name>'`: it adds a literal to get wrong for a precision the behaviour already
+    has. ⭐ The catch arm sits **ABOVE** `:150`, because
+    `UniqueConstraintViolationException extends QueryException extends PDOException extends RuntimeException`
+    — **measured in vendor this tick** (`Illuminate/Database/UniqueConstraintViolationException.php`, and
+    `PostgresConnection.php:78-80`'s `'23505' === $exception->getCode()`), never inherited, because ruling
+    440 corrected exactly such an assumed hierarchy once already. ⭐⭐ **And the file's own existing order
+    establishes the idiom**: `GatewayNotConfiguredException extends \RuntimeException` is caught first at
+    `:148` for precisely this reason, so the ordering is adopted, not invented (123).
+    **The predicate is `WHERE status <> 'failed'`, EQUAL to the pre-check's** (240(b)): an index narrower than
+    the pre-check would admit a row the code would have short-circuited, and one wider would refuse the
+    retry-after-decline the lane deliberately allows. ⛔ A **new** migration, never an edit to
+    `2026_08_30_000030` (41 part 3), in the shape
+    `2026_09_06_000002_x198_payments_default_awaiting_processor.php` already establishes — `declare(strict_types=1)`,
+    a docblock, a `Schema::hasTable` guard, a raw `DB::statement` (a partial index is inexpressible as
+    `$table->unique()`), and a real `down()`. ⛔ **Not `CREATE INDEX CONCURRENTLY`**: it cannot run inside a
+    transaction and Laravel wraps every migration in one.
+    ⚠️ **Blast radius, measured call site by call site BEFORE the brief shipped (46, 64, 86, 146): ZERO.**
+    The lane has **three** same-key capture pairs and every one yields exactly **one** non-`failed` row —
+    `X198Test.php:67-68` (the pre-check short-circuits; one row), `InvoiceEngineTest.php:287-303` (same,
+    asserting `count === 1`), and ⭐ `X198Test.php:178`'s
+    `test_a_retry_after_a_decline_is_not_short_circuited_by_idempotency`, which asserts `count === 2` and is
+    **safe** because the two are one `failed` and one `captured` and the partial predicate covers only the
+    second. Ruling 240(b)'s inherited measurement **re-confirmed on the live tree.**
+    ⛔ **The one fact this seat cannot measure is the DEV database.** A new migration applies to
+    `goaiez_antig_money`, and `CREATE UNIQUE INDEX` **fails** if two non-`failed` rows already share a pair
+    there. Reasoning says it cannot — the pre-check prevents it by construction, and both evidence commands
+    key on `<time>` — but `php artisan` and `psql` are refused to this seat (296, 300), so it is **unmeasured**
+    (193). **RULED: the brief requires the migration's own output reported verbatim, and a refusal is
+    `UNRESOLVED` with the error quoted, nothing committed** — ruling 39's fallback shape, which is a
+    PASS-WITH-NOTES and never a BLOCK.
+464. **⭐⭐ RULING 259 FIRED A SECOND TIME AND ON THE TICK THAT WROTE THE WAVE IT ANNOUNCED — the verdict
+    block said "Dispatching MONEY-203" and the tick was cut off before committing, pushing, briefing or
+    dispatching, so the ledger carried a ruled wave that no run had ever been given (RULED by the lane
+    supervisor 2026-09-11 02:0x).** Ruling 259 ruled that *a verdict block's `Dispatched:` and `Push:` lines
+    are written AFTER the act, quoting the launcher's `LAUNCHED` line and the push's output*, and set the
+    order — commit, push, install the brief, dispatch, **then** append the closing lines. Measured this tick:
+    `REVIEWS.md`'s newest block (00:36) closes *"Dispatching **MONEY-203** … Dispatch 1 of 2 against
+    nothing"*, and against it `BRIEF.md` and `KICKOFF.md` are **MONEY-202's** (00:20), no `agy-run228.log`
+    exists, `CLAUDE.md` carries rulings 460–463 **uncommitted**, and `git log --oneline
+    origin/track/money..HEAD` is **empty** — so nothing the block announced had happened. ⭐ The cost was
+    **one tick of lane time and nothing else**, because the range was empty and the sha had not moved: no
+    ref was wrong, no measurement was false, and the next tick's case (e) recovers it exactly.
+    ⭐⭐ **What is new is WHICH tick it happened to.** 259's instance was a tick that ran out of room mid-way;
+    this one is the tick that produced the lane's most consequential ruling in forty waves — 460–463, which
+    measured away the last term of a blocker three rulings had called permanent — and **the length of the
+    ruling is what displaced the acts.** So: **the longer a tick's reasoning, the likelier its acts are the
+    part that is cut**, and the acts are the half the next tick cannot reconstruct from the ledger. **RULED:
+    a tick that is writing more than one ruling installs the BRIEF and DISPATCHES before it writes them**,
+    and appends the ruling text afterwards — inverting 259's order for the ruling-writing half alone, on the
+    ground that a brief on disk and a live run are recoverable state while an unwritten ruling is merely a
+    ruling the next tick must re-derive from measurements it still has.
+    ⚠️ ⛔ **The `Push:` and `Dispatched:` half of 259 is UNCHANGED**: they are still written after the act and
+    still quote the act's own output, because that is what stops a *false* record — this ruling moves the
+    ORDER of the acts, never the order of the recording. ⚠️ And the recovery worked because the previous tick
+    obeyed 259 in the one way that mattered: **it wrote no `Dispatched:` line at all** rather than a false
+    one, so this tick read "Dispatching" as the prediction it was and measured rather than believed it.
