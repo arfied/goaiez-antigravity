@@ -1569,6 +1569,14 @@
   {
    "at": "2026-09-11T14:16:35",
    "note": "run 160: arm A \u2014 ReviewerContactAction resolves person \u2192 phone \u2192 customer and asks the legacy ConsentService::decide (Marketing default); red before: {\"status\":\"refused\",\"refusal_code\":\"NO_CONSENT_RECORD\"}; green after: 3/3; mutation red; gate tests 7 FAILED 2 errors"
+  },
+  {
+   "at": "2026-09-11T14:37:00",
+   "note": "run 161: gap arm A (r161-gap.txt: tests 3 passed 3); consent refusal test added, red under if(false): {\"status\":\"sent\",\"review_request_id\":17} Failed asserting that two strings are equal.; CSAT store arm A: qa_tickets.status at app/app/Modules/X-181/Actions/QaTicketCreateAction.php:33; gate tests 2561 \u00b7 passed 2552 \u00b7 FAILED 7 \u00b7 errors 2"
+  },
+  {
+   "at": "2026-09-11T14:37:02",
+   "note": "run 160 correction: the run 160 note lost a field; r160-gate.log \u00a77 reads tests 2560 \u00b7 passed 2551 \u00b7 FAILED 7 \u00b7 errors 2"
   }
  ],
  "resolved": [
