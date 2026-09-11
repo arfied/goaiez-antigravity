@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-10T08:10:22",
+ "updated": "2026-09-11T14:16:35",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1357,6 +1357,12 @@
    "chose": "the confirming user is the authenticated session user, read inside the component; a caller-supplied id was the previous shape and is refused. (app/app/Modules/C-Reviews/Ui/LossAlerts.php:134)",
    "at": "2026-09-10T08:10:22",
    "ruling": "R245"
+  },
+  {
+   "module": "C-Reviews",
+   "chose": "ReviewerContactAction decides a reviewer's contactability with the legacy ConsentService::decide on the customer that owns the person's phone, Marketing purpose; it never reads consent_records by review_requests.customer_id (a people id) and never uses X-204's consent.decide, which reads no consent record",
+   "at": "2026-09-11T14:16:35",
+   "ruling": "R245"
   }
  ],
  "notes": [
@@ -1559,6 +1565,10 @@
   {
    "at": "2026-09-11T11:37:18",
    "note": "run 159: arm other (red, green, red) \u2014 X-01 g19_08 alone red, with C-Reviews G20-04 before repair green, after red; probe customers live 4\u21927\u219211; restored a0d6ccf4's G20-04 fixture (08fdbd68 had re-forged customers.id); gate errors 2; dev DB 28 migrations pending from 2026_09_05_220831_add_ssl_installed_to_page_versions_in_x103"
+  },
+  {
+   "at": "2026-09-11T14:16:35",
+   "note": "run 160: arm A \u2014 ReviewerContactAction resolves person \u2192 phone \u2192 customer and asks the legacy ConsentService::decide (Marketing default); red before: {\"status\":\"refused\",\"refusal_code\":\"NO_CONSENT_RECORD\"}; green after: 3/3; mutation red; gate tests 7 FAILED 2 errors"
   }
  ],
  "resolved": [

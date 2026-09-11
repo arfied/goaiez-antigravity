@@ -855,3 +855,5 @@
 - `2026-09-11T11:01:00` stage citation = 0
 - `2026-09-11T11:01:00` stage capability = 204
 - `2026-09-11T11:37:18` note: run 159: arm other (red, green, red) — X-01 g19_08 alone red, with C-Reviews G20-04 before repair green, after red; probe customers live 4→7→11; restored a0d6ccf4's G20-04 fixture (08fdbd68 had re-forged customers.id); gate errors 2; dev DB 28 migrations pending from 2026_09_05_220831_add_ssl_installed_to_page_versions_in_x103
+- `2026-09-11T14:16:35` note: run 160: arm A — ReviewerContactAction resolves person → phone → customer and asks the legacy ConsentService::decide (Marketing default); red before: {"status":"refused","refusal_code":"NO_CONSENT_RECORD"}; green after: 3/3; mutation red; gate tests 7 FAILED 2 errors
+- `2026-09-11T14:16:35` (R245) C-Reviews — ReviewerContactAction decides a reviewer's contactability with the legacy ConsentService::decide on the customer that owns the person's phone, Marketing purpose; it never reads consent_records by review_requests.customer_id (a people id) and never uses X-204's consent.decide, which reads no consent record
