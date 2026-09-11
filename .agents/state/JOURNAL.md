@@ -938,3 +938,4 @@
 - `2026-09-10T17:27:02` (R245) X-102 — boundary 2026-09-10T16:53:19 The consented test is unfalsifiable for the HTTP middleware because the action duplicates the trim logic R245
 - `2026-09-10T17:45:52` (R245) X-102 — boundary test_http_middleware_normalises_whitespace_message_to_null_when_consented is falsifiable for the controller parameter mapping R245
 - `2026-09-10T18:13:34` (R245) X-102 — boundary X102Test.php:531 is false because there are no direct callers bypassing the HTTP middleware; ChatDoorTest.php:383 is true as the action's trim logic is redundant on the only existing path. R245
+- `2026-09-10T19:04:40` (R245) X-102 — capability X-102 owes an event listener for C-Agent's AgentTurnAnswer to record the agent's reply as a ChatTurn R245
