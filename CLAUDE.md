@@ -15777,3 +15777,61 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     with ledger commits only since (272's second half). `origin/main` = **`8c35fbc8`**, unmoved. There is
     no Track 1 answer to ACTION 13–25, and 488's population is non-empty and **not buildable**. **Merge gate
     CLOSED. Cap untouched. No BLOCK is open.**
+490. **⭐⭐ Ruling 470's PREVENT strategy read as a COST: X-199's per-business invoice-number lock is held
+    across a live Stripe call. It is one member, unreachable twice over, and zero buildable (measured by
+    the lane supervisor 2026-09-11 05:3x; rulings 96, 229, 232, 324, 327, 328, 429, 440, 472).** This
+    applies the third form of the addendum's "cheapest place left to look" (488): *when a ruling names a
+    thing's strongest property, ask what that same property costs.* Ruling 470 ranked **prevent** first of
+    four collision strategies, and its worked example is `InvoiceNumber::next()`. That method refuses
+    outside a transaction, takes `pg_advisory_xact_lock(199, $businessId)` **held to commit**, and
+    re-reads the highest invoice row under `lockForUpdate()`.
+    **The cost, measured by reading both methods whole (395).** `InvoiceEngine::issueInvoice()` opens
+    `DB::transaction` at `:33` and allocates the number at `:56`, so the advisory lock and the row lock
+    are taken there. Only then, at `:95`, does it call `GatewayEngine::capture()`. `capture()` opens a
+    nested transaction, which ruling 473 measured is a savepoint, so the **outer** commit is what releases
+    the locks. Inside it, at `:112`, `StripeGatewayClient::charge()` makes the live HTTP call. Ruling 440
+    measured the vendor defaults at 30 seconds of timeout plus 10 of connect. So every other invoice
+    allocation for that business waits behind a Stripe response. That is the shape ruling 229 refused in
+    terms: *"not by an advisory lock … that holds a DB transaction open across a live HTTP call."* It
+    arrived here by nesting, not by design. ⚠️ The wait is also unbounded on the database side:
+    `grep -rn -i -e "lock_timeout" -e "statement_timeout" app/config app/app` returns only two docblocks
+    in other lanes' services, so no connection sets a lock timeout. The waiter waits for the holder's
+    whole HTTP bound. **It cannot deadlock**, because there is one advisory key per business, always
+    taken first.
+    **The population is ONE, measured as *a transaction that holds an explicit lock AND reaches an
+    outbound call*.** The lane's eight `lockForUpdate` sites and one advisory lock were each checked against
+    the lane's two outbound calls (ruling 440). X-117's three `CheckoutEngine` locks reach no HTTP call,
+    since the one synchronous listener is read-only (478). C-Billing's three `TrialLimit` locks reach none
+    either, because C-Billing has no gateway client (87). `capture()`'s own transaction takes no explicit
+    lock. ⭐ **429's known-member check fires:** `grep -rn -F -e "pg_advisory" app/app` returns exactly
+    `InvoiceNumber.php:20`, which is ruling 190's and 470's own member. ⭐ The control fires as well:
+    `grep -rln -F -e "lockForUpdate" app/app | wc -l` = **19** files tree-wide.
+    **Its safety, named (328): the member is unreachable on TWO independent grounds, both re-measured
+    this tick.** (1) The overflow branch needs a card token. `card_on_file_token` has one writer,
+    `TermsSetAction:38`, which writes it through a fifth parameter, and the one production caller,
+    `X-199/Ui/Credits.php:48`, passes **four** arguments. That is ruling 234, still in place. (2)
+    `issueInvoice()` has no production caller. Its callers are `InvoiceIssueAction:15`, which has no caller
+    outside its own directory, and three evidence-command lines (170). ⛔ **Recorded, not briefed.** Ruling
+    96 governs. The fix would move the capture out of the allocating transaction, which changes the atomicity
+    ruling 99 relies on, since the overflow row is written with the invoice. The proof would need a
+    **blocked second session**, which ruling 472 measured this single-process suite cannot produce. Ruling
+    232 decides between them: introducing a new hazard is worse than deferring an old one. ⛔ **Trigger for
+    re-opening: a production writer of `card_on_file_token`, or a production caller of `issueInvoice`,
+    never a wave boundary** (469's shape). Ruling 327's outcome shape a **thirty-ninth** time.
+    ⭐ **The generalisable half: a lock's hold time is the enclosing transaction's, not the method's.**
+    `InvoiceNumber::next()` is correct and short on its own. Its cost is decided by whatever its **caller**
+    does before committing. So a census of a locking method reads every caller's transaction to its end,
+    which is ruling 422's delegation rule turned outward: the scope that matters is the caller's, not the
+    callee's file.
+
+491. **⛔ TWENTIETH consecutive HOLD (RULED by the lane supervisor 2026-09-11 05:3x).** All four lift
+    conditions were measured in this tick (269, 272, 323). `OWNER.md`'s newest heading is still
+    `## OWNER RULING — 2026-09-09 09:02`, consumed as ruling 272 (136). `bash
+    .agents/supervisor/launch-coder.sh --check` → `CODER DEAD`. `REPORT.md` (02:25) and `BRIEF.md` (02:06)
+    are both older than the newest `REVIEWS.md` block. On the cadence, all three are ✗:
+    `git rev-list --count HEAD..origin/main` = **12**; `git diff --stat e78d9ba3 origin/main --
+    app/app/Doctor coder-bin .claude/hooks` is **empty**; `git merge-base HEAD origin/main` = **`e78d9ba3`**,
+    with only ledger commits since (272's second half). `origin/main` = **`8c35fbc8`**, unmoved. There is no
+    Track 1 answer to ACTION 13–25, and ruling 490's population is non-empty and **not buildable**. **Merge
+    gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty wave to avoid an idle tick is what
+    rulings 95, 100 and 111 forbid.
