@@ -42,6 +42,9 @@ final class ArEngine
     /** offline_payments.reference_number is varchar(255); a longer reference is refused, never truncated. */
     private const MAX_REFERENCE = 255;
 
+    /** ar_plan_terms.late_fee_cap_cents is a Postgres integer; a larger cap is refused, never truncated. */
+    private const MAX_CAP_CENTS = 2147483647;
+
     /**
      * Apply a late fee inside the agreement's term — refused when the agreement names none (G1-71); the percent and the cap are the tenant's row (P-193).
      */
@@ -112,6 +115,13 @@ final class ArEngine
         }
         if ($capCents !== null && $capCents < 1) {
             throw new \InvalidArgumentException('The cap is an amount in cents, or none.');
+        }
+
+        if ($capCents !== null && $capCents > self::MAX_CAP_CENTS) {
+            throw new \InvalidArgumentException(sprintf(
+                'A cap of %s cents is too large: the most this can hold is %s cents. Nothing was saved.',
+                number_format($capCents), number_format(self::MAX_CAP_CENTS)
+            ));
         }
 
         return DB::transaction(function () use ($businessId, $percent, $capCents) {
