@@ -17211,3 +17211,55 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
 
     **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty wave to avoid an idle tick is what
     rulings 95, 100 and 111 forbid.
+
+542. **⭐ The PRE-RENDER LIFECYCLE census, ruling 402(d)'s guard-POSITION question asked of the hooks that run
+    BEFORE `render()`: 3 `mount()` bodies in the lane, all assignment-only, zero `boot`/`hydrate`/`updated*`/
+    `dehydrate` hooks, and zero route parameters that could feed a `mount()`. Zero buildable (measured by the lane
+    supervisor 2026-09-11 10:3x, by `date` `10:30`; rulings 207, 294, 324, 327, 328, 344, 381, 388(b), 402(d), 415,
+    429, 431, 449).** Ruling 402(d) measured that `abort_unless(… Tenancy::check(), 403)` is the FIRST statement of
+    all 24 renders, with no read above it. That is a statement about `render()`. Livewire runs `mount()`, `boot()`,
+    `hydrate()` and `updated*()` before `render()`, so a query in any of them runs before the guard, and nobody had
+    swept those hooks. **Instruments, quoted (300):**
+    - `grep -rn -A 12 "function mount"` over the eight money `Ui/` trees → **3** members.
+    - `grep -rn -e "function boot" -e "function hydrate" -e "function updat" -e "function dehydrate"` over the same
+      trees → **0**. ⭐ Control: the same pattern over `app/app/Modules` and `app/app/Livewire`, filtered to `/Ui/`
+      and `Livewire/`, returns **9** files, so the zero is a measurement, not a broken pattern (207, 294).
+    - `grep -n -F -e "{"` over the eight `routes.generated.php` files → **11** lines, and every one is a
+      `->group(function () {` opener (262(b), read the hit). So money's routes declare **no route parameter**, and a
+      full-page `mount()` here can only receive its defaults.
+    **The three members, each with its safety named (328):**
+    - `X-117/Ui/CartBlock.php:28` and `X-117/Ui/CheckoutBlock.php:39` are each
+      `$this->sessionToken = $sessionToken ?? session()->getId();`, with no read and no write. ⭐ **Known member
+      (429):** ruling 431's own default-at-the-read.
+    - `X-211/Ui/InvoiceThreadBeside.php:32` is `$this->invoiceId = $invoiceId;`, with no read. ⭐ **Known member
+      (429):** ruling 388(b)'s view-state id, resolved in `render()` by `firstWhere(…) ?? first()` over a scoped
+      collection (337, 344).
+    ⭐ **The positive control DISCRIMINATES:** `grep -rn -A 6 "function mount" app/app/Modules --include=*.php |
+    grep -e "::where(" -e "findOrFail(" -e "::find("` returns mount bodies that DO query before render, in other
+    lanes: `X-163/Ui/Pricebook.php:52`, `X-163/Ui/ConfirmationScreen.php:30`, `X-179/Ui/MatchScores.php:27`,
+    `X-179/Ui/ProspecttenantfacingTop3Preview.php:27`, and `X-01/Ui/Thread.php:40`, which reads
+    `request()->query('customer')` in `mount()`. ⛔ Money proposes no edit and asserts no defect on those (ruling 5):
+    their guards were not read. 74 `Ui/` files tree-wide declare `mount`. 415's first-three check and 449's
+    each-member-exists check passed.
+    ⛔ Struck, not to be re-run. ⚠️ **Trigger:** a `mount()`/`boot()`/`hydrate()`/`updated*()` in the lane that reads or
+    writes a model, or a route parameter added to a money route. Ruling 327's outcome shape a **fifty-sixth** time.
+    ⭐ **The general lesson is 402(d)'s widened:** a guard's position is measured against every hook that runs before
+    it, not only against the method it opens.
+
+543. **⛔ FORTY-THIRD consecutive HOLD (RULED by the lane supervisor 2026-09-11 10:3x, by `date`).** All four lift
+    conditions were measured this tick (269, 272, 323), each case decided on mtimes (494):
+    - **Owner.** `OWNER.md`'s newest heading is still `## OWNER RULING — 2026-09-09 09:02` (136), mtime
+      `09-09 09:02:03`.
+    - **Coder.** `--check` returned `CODER DEAD`.
+    - **Mailbox.** `REPORT.md` (`07:15:21`) and `BRIEF.md` (`07:07:27`) are both older than `REVIEWS.md`
+      (`10:23:08`).
+    - **Cadence, all three ✗.** After `git fetch --no-write-fetch-head origin`, `origin/main` = **`f58aec8f`**,
+      unmoved since 541. `git rev-list --count HEAD..origin/main` = **29**. `git diff --stat dca743e8 origin/main --
+      app/app/Doctor coder-bin .claude/hooks` is empty. `git merge-base HEAD origin/main` = **`dca743e8`**, and
+      `git diff --name-status dca743e8 origin/main` is the same 12 paths 541 read: the 7 per-track paths, X-102's
+      three, and Track 2's `app.css` token and `ReplyQueueStylesheetTest.php` (504).
+    - **Track 1.** No answer to ACTION 13–25.
+    - **Population.** Ruling 542's is non-empty and not buildable.
+
+    **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty wave to avoid an idle tick is what
+    rulings 95, 100 and 111 forbid.
