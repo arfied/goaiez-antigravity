@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-11T06:31:50",
+ "updated": "2026-09-11T06:55:01",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2843,6 +2843,12 @@
    "module": "X-199",
    "chose": "A raced terms row is absorbed into the one row for its customer Both terms writers are keyed on business and customer; the engine's was a plain read-then-create, so it becomes firstOrCreate, whose createOrFirst catches a unique violation inside a savepoint and returns the winner, and a unique index gives that catch something to catch. The two land together because the index alone would put an uncaught unique violation into invoice issuing.",
    "at": "2026-09-11T06:31:50",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-211",
+   "chose": "A raced plan offer or collections package is refused as the guard refuses it An invoice carries one plan and one collections package, and each was guarded by a read before its insert, which refuses a second press but lets two concurrent presses both insert. A unique index on business and invoice makes the second insert fail, and a catch outside the transaction re-reads the row that won and throws the same refusal the guard throws. The loser is refused rather than handed the winner because the two offers can carry different terms.",
+   "at": "2026-09-11T06:55:01",
    "ruling": "R245"
   }
  ]
