@@ -844,3 +844,4 @@
 - `2026-09-10T18:57:59` note: run 151: gate 7 reads the whole-tree doctor exit code so it is not a C-Reviews row; gates 1, 5, and 6 read evidence files with no writer anywhere in the tree; and gate 2's runtime-proof.json needs a real external artifact id.
 - `2026-09-10T18:58:14` note: run 151: FAILED fell by one (7 -> 6) because test_p110_location_gap was replaced; it was superseded by JOURNAL.md:822 and replacement law is at app/app/Modules/C-Reviews/Domain/PublicThreshold.php:14 and app/app/Modules/C-Reviews/Database/migrations/2026_08_30_000022_create_c_reviews_tables.php:46
 - `2026-09-10T19:17:06` note: run 152: nothing moved because this wave changes an assertion inside an existing test
+- `2026-09-10T19:40:44` note: run 153: no counts moved; item 2 took Arm B (blanket catch in sendRequest is unreachable because customerId is hardcoded to null, failing early with CUSTOMER_UNKNOWN)
