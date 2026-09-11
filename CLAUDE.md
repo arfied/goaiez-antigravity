@@ -17586,3 +17586,30 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
    ⚠️ The wall clock moved 2h27m since the last tick (`11:23` → `13:50`), and nothing in the lane or on `origin/main` moved with it.
 
    **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty wave to avoid an idle tick is what rulings 95, 100 and 111 forbid. ⚠️ `app/CLAUDE.md` came into context again. It is Laravel Boost boilerplate and was not followed.
+
+556. **⭐ The DEBUG-LEFTOVER and BLOCKING-CALL censuses find ZERO `dd(`/`dump(`/`var_dump(`/`ray(` and ZERO `sleep(`/`usleep(`/`exit(`/`print_r(` anywhere in the money modules or their tests. The one live `dump()` in the tree is in track sixty's `askAgent()` in `JourneyHarness.php`, which is a never-list file. Zero buildable (measured by the lane supervisor 2026-09-11 14:0x, by `date` `14:00`; rulings 1, 2, 5, 207, 262(b), 294, 324, 326, 327, 381, 407, 415, 429).** A `dd()` in a request path halts the response and prints model internals to the page, so it is the one leftover that turns a screen into a data leak. Laravel's `->dd()`/`->dump()` on a collection or a query builder is the same thing spelled as a method. `sleep(` in a request path holds a PHP worker. Nobody had swept either population as a predicate. Owner ruling 2 found one `dd()` incidentally (X-179, removed on `track/ui`), which is the signature of an unswept population (319).
+   **Instruments, quoted (300)**, each over the eight money module trees and the eight money test trees:
+   - `-e "[^a-z_]dd(" -e "[^a-z_]dump(" -e "var_dump(" -e "[^a-z_]ray("` → **0**. The `[^a-z_]` prefix keeps `add(`/`array_dump`-style names out (mechanism 8), and it matches `>`, so `->dd(` and `->dump(` are covered.
+   - ⭐ **The zero is corroborated on case and layout (381, 407).** PHP function names are case-insensitive, so the census was re-run with `-i` plus the line-start forms `^dd(`/`^dump(`. It still printed **0**.
+   - `-e "[^a-z_]sleep(" -e "usleep(" -e "[^a-z_]exit(" -e "print_r("` → **0**.
+   **Controls fire.**
+   - The debug instrument over `app/app`, `app/tests` and `app/resources/views` returns **5** lines. Four are **prose in docblocks**: `PlatformCredential.php:25`, `WordPressCredential.php:25`, `WordPressSite.php:18` and `TokenService.php:33`. That is the zero trap's mechanism 8, caught by reading the hits (262(b)). ⭐ It is also the house's own rule text (326's shape): those docblocks name *"a stray `dd()`"* as the thing their `$hidden` credentials protect against. The fifth hit is a **live call**: `app/tests/Journeys/JourneyHarness.php:361`, `dump($res->getContent());`.
+   - The blocking-call instrument returns **nothing** in `app/app` or `app/tests`. So its positive control was taken in vendor instead: `app/vendor/laravel/framework/src/Illuminate/Cache/Lock.php`, `Limiters/ConcurrencyLimiter.php` and `Limiters/ConcurrencyLimiterBuilder.php` fire. The zero is therefore a measurement of an application with no blocking call, not a broken pattern (207, 294).
+   ⭐ **Known member (429):** owner ruling 2's X-179 `dd()`. `grep -rn -e "[^a-z_]dd(" -e "[^a-z_]dump(" app/app/Modules/X-179` prints **nothing**, so that removal has landed in this lane's tree.
+   **The one live hit, its safety named (328).**
+   - `JourneyHarness.php:361` sits inside `askAgent()` (lines 314–387), track sixty's agent journey. It is not one of money's five harness methods (`issueInvoice`, `payInvoice`, `invoiceStatus`, `makeOverdue`, `lastDunningAction`, lines 521–601).
+   - `git blame` gives `8e7985b5e`, dated 2026-09-03.
+   - It fires only when the inbound webhook returns non-200, one line before `->assertStatus(200)` fails anyway. So it is a diagnostic print on the failure path of a test, and it never runs in a request.
+   - ⛔ **Money proposes no edit.** Owner ruling 1 makes touching another journey's harness method a BLOCK, and the file is Track 1's never-list. It is not filed as a TRACK 1 ACTION either: a test-side print on a path that is already red is ruling 76's grade.
+   ⭐ 415's first-three check passed. 449's each-member-exists check passed, every member printed from a file.
+   ⛔ Struck, not to be re-run. ⚠️ **Trigger:** a `dd`/`dump`/`ray`/`sleep` call added in the lane. Ruling 327's outcome shape a **sixty-third** time.
+
+557. **⛔ FIFTIETH consecutive HOLD (RULED by the lane supervisor 2026-09-11 14:0x, by `date` `14:00`).** All four lift conditions were measured this tick (269, 272, 323), each case decided on mtimes (494):
+   - **Owner.** `OWNER.md`'s newest heading is still `## OWNER RULING — 2026-09-09 09:02` (136). Its mtime is `09-09 09:02:03`, older than `REVIEWS.md` (`13:52:10`).
+   - **Coder.** `--check` returned `CODER DEAD`.
+   - **Mailbox.** `REPORT.md` (`07:15:21`) and `BRIEF.md` (`07:07:27`) are both older than `REVIEWS.md`.
+   - **Cadence, all three ✗.** After `git fetch --no-write-fetch-head origin`, `origin/main` = **`bd3e9c5f`**, unmoved (`git diff --name-status bd3e9c5f origin/main | wc -l` = **0**). `git rev-list --count HEAD..origin/main` = **44**, not above 100. `git diff --stat dca743e8 origin/main -- app/app/Doctor coder-bin .claude/hooks` is empty. `git merge-base HEAD origin/main` = **`dca743e8`**, with no new content since 553's read (504).
+   - **Track 1.** No answer to ACTION 13–25.
+   - **Population.** Ruling 556's is empty of buildable members.
+
+   **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty wave to avoid an idle tick is what rulings 95, 100 and 111 forbid. ⚠️ `app/CLAUDE.md` came into context again this tick. It is Laravel Boost boilerplate and was not followed.
