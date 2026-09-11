@@ -19216,3 +19216,24 @@ Advisory to Track 1 for Track 2. Per 224 **the door is open and the room is empt
 ⭐ The generalisation, and it is money's own caveat made operative: **a census that classifies interpolations by their TYPE must
 trace string members to their WRITERS before calling any a defect** — the name `visitor_id` reads like browser input and has no
 browser writer, and only the writer census separates "machine-shaped by construction" from "machine-shaped by luck".
+
+## ✅ CLEAN SWEEP — money's parser-boundary census (rulings 581-582) over the seven owned modules: no caller string reaches a second parser (tick 352)
+
+Ninth firing of tick 215's law, measured here rather than adopted (223). Money's `2233c327` names three places a caller-supplied
+string crosses into a second parser — SQL `LIKE`, `preg_*` and URL encoding. Run over the owned modules' code with `--include='*.php'`,
+each class paired with a positive control so a zero is a measurement and not a mis-scoped query (209):
+
+- **`LIKE`/`ilike`/`whereLike`: 0** (control: `app/app/Console/Commands/*` hits).
+- **raw SQL, migrations excluded: 2, both literal** — `X-103/Actions/PageReadAction.php:28`'s `DB::raw("trim(both '/' from slug)")`
+  with the slugs bound through `whereIn`, and `X-155/Ui/SpamRate.php:20`'s literal `COUNT/SUM` (Track 2's `Ui/`).
+- **`preg_*`: one file** — `X-155/Actions/FormGenerateAction.php:21-22,39`. Every needle is a literal from arrays the action writes
+  itself (`:15-19`, `:43-50`), quoted with `preg_quote($needle, '/')` against the pattern's own delimiter, and the caller's
+  `$description` is only ever the **haystack**.
+- **`http_build_query`/`urlencode`/`rawurlencode`: 0** (control: `app/app/Services/…` hits).
+
+⭐ The disconfirming member (280): `FormGenerateAction`'s `(?<![a-z])…(?![a-z])` guards are what stop the needle `age` matching inside
+`message` or `page` — the substring trap tick 336 measured on this seat's own grep, already solved in the code the grep was looking at.
+Per 224: **already done here.**
+
+⚠️ Instrument: a Bash redirect to `/home/goaiez/tmp/…` is refused from this seat (*"may only write to files in the allowed working
+directories"*), so a gate's output file lives under `.agents/supervisor/`; `Read` on `/home/goaiez/tmp/*` remains the accepted read route.
