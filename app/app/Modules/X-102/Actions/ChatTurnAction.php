@@ -40,6 +40,7 @@ final class ChatTurnAction
                     'chat_session_id' => $chatSessionId,
                     'author_type' => 'agent',
                     'message' => $response['reply'],
+                    'refusal_code' => $response['refusal_code'] ?? null,
                 ]);
 
                 Event::dispatch(new ChatTurnCreated(

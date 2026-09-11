@@ -9,6 +9,7 @@ use App\Modules\CAgent\Models\AgentTurn;
 use App\Modules\X102\Models\ChatLead;
 use App\Modules\X102\Models\ChatSession;
 use App\Modules\X102\Models\ChatTurn;
+use App\Modules\X121\Models\Person;
 use App\Services\Pixel\PixelKeys;
 use App\Support\Tenancy;
 use Illuminate\Support\Str;
@@ -591,5 +592,88 @@ class ChatDoorTest extends TestCase
         $lead = ChatLead::where('chat_session_id', $session->id)->first();
         $this->assertEquals('Hello', $lead->message);
         $this->assertNotNull($lead->consent_logged_at);
+    }
+
+    /**
+     * P-148 on the chat door: an under-18 signal on a turn prevents the contact row at the capture write.
+     */
+    public function test_capture_after_an_under_18_turn_writes_no_contact_row(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Minor Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+        $key = app(PixelKeys::class)->ensureFor($biz);
+
+        $session = ChatSession::create([
+            'business_id' => $biz->id,
+            'session_token' => 'sess_minor_capture',
+            'status' => 'active',
+            'rage_clicks_count' => 0,
+            'is_ai_capped' => false,
+        ]);
+        Tenancy::forgetAll();
+
+        $turn = $this->postJson("/api/chat/{$key}/turn", [
+            'session_token' => 'sess_minor_capture',
+            'message' => 'I am 16 years old',
+        ]);
+        $turn->assertStatus(201);
+
+        Tenancy::set((int) $biz->id);
+        $this->assertSame('UNDER_18', ChatTurn::where('chat_session_id', $session->id)->where('author_type', 'agent')->value('refusal_code'));
+        Tenancy::forgetAll();
+
+        $capture = $this->postJson("/api/chat/{$key}/capture", [
+            'session_token' => 'sess_minor_capture',
+            'name' => 'Minor Visitor',
+            'phone' => '+15550009209',
+            'consent' => true,
+        ]);
+
+        Tenancy::set((int) $biz->id);
+        $this->assertSame(0, Person::where('business_id', $biz->id)->where('phone', '+15550009209')->count());
+        $this->assertSame(0, ChatLead::where('chat_session_id', $session->id)->count());
+        $capture->assertStatus(422);
+        $capture->assertJson(['status' => 'rejected', 'reason' => 'under_18']);
+    }
+
+    /**
+     * The capture refusal is specific to the under-18 code: a handoff for another reason still captures the lead.
+     */
+    public function test_capture_after_a_non_age_handoff_turn_is_written(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Handoff Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+        $key = app(PixelKeys::class)->ensureFor($biz);
+
+        $session = ChatSession::create([
+            'business_id' => $biz->id,
+            'session_token' => 'sess_sentiment_capture',
+            'status' => 'active',
+            'rage_clicks_count' => 0,
+            'is_ai_capped' => false,
+        ]);
+        Tenancy::forgetAll();
+
+        $turn = $this->postJson("/api/chat/{$key}/turn", [
+            'session_token' => 'sess_sentiment_capture',
+            'message' => 'I want to speak to a human',
+        ]);
+        $turn->assertStatus(201);
+
+        Tenancy::set((int) $biz->id);
+        $this->assertSame('NEGATIVE_SENTIMENT_HANDOFF', ChatTurn::where('chat_session_id', $session->id)->where('author_type', 'agent')->value('refusal_code'));
+        Tenancy::forgetAll();
+
+        $capture = $this->postJson("/api/chat/{$key}/capture", [
+            'session_token' => 'sess_sentiment_capture',
+            'name' => 'Adult Visitor',
+            'phone' => '+15550009210',
+            'consent' => true,
+        ]);
+
+        Tenancy::set((int) $biz->id);
+        $this->assertSame(1, Person::where('business_id', $biz->id)->where('phone', '+15550009210')->count());
+        $this->assertSame(1, ChatLead::where('chat_session_id', $session->id)->count());
+        $capture->assertStatus(201);
     }
 }
