@@ -14,8 +14,8 @@ cd "$(dirname "$0")/.." || exit 1
 ROOT="$PWD"; APP="$ROOT/app"
 PROD_DB="goaiez_antig"
 # Track 5 (money): dev DB goaiez_antig_money, tests goaiez_antig_money_test (exported above pest).
-want_tests=0; want_doctor=0
-for a in "$@"; do case "$a" in --tests) want_tests=1;; --full-doctor) want_doctor=1;; esac; done
+want_tests=0; want_doctor=0; want_unignored=0
+for a in "$@"; do case "$a" in --tests) want_tests=1;; --full-doctor) want_doctor=1;; --phpstan-unignored) want_unignored=1;; esac; done
 bar() { printf '\n\033[1m== %s\033[0m\n' "$*"; }
 fail=0
 
@@ -182,6 +182,39 @@ run_tool phpstan ./vendor/bin/phpstan analyse --memory-limit=1G --no-progress
 if tool_killed phpstan; then fail=1; else
   printf '%s\n' "$out" | tail -4 | sed 's/^/  /'
   [ "$rc" -ne 0 ] && fail=1
+fi
+
+if [ $want_unignored -eq 1 ]; then
+  bar "6b. phpstan on the money modules WITHOUT ignoreErrors, module migrations scanned  (ruling 566, advisory)"
+  # app/phpstan.neon ignores '#Access to an undefined property#' tree-wide, and larastan
+  # scans database/migrations only (extension.neon databaseMigrationsPath: []), so every
+  # read of a money-model column is unresolved and that one pattern silences all of them,
+  # a typo included. Eloquent strict mode is off, so a typo reads null. This run adds the
+  # modules' own migration paths: what is still undefined is not a column. Read-only, its
+  # cache lives in a mktemp dir, and it never moves `fail`.
+  ntmp=$(mktemp -d "${TMPDIR:-/tmp}/phpstan-unig-XXXXXX")
+  {
+    echo "includes:"
+    echo "    - $APP/vendor/larastan/larastan/extension.neon"
+    echo "parameters:"
+    echo "    level: 5"
+    echo "    treatPhpDocTypesAsCertain: false"
+    echo "    tmpDir: $ntmp/cache"
+    echo "    paths:"
+    for m in X-117 X-120 X-173 X-198 X-199 X-201 X-211 C-Billing; do echo "        - $APP/app/Modules/$m"; done
+    echo "    databaseMigrationsPath:"
+    for m in X-117 X-120 X-173 X-198 X-199 X-201 X-211 C-Billing X-121; do echo "        - $APP/app/Modules/$m/Database/migrations"; done
+  } > "$ntmp/phpstan.neon"
+  # laravel/pao rewrites phpstan's output into one JSON line (--error-format is ignored)
+  # and truncates error_details unless -v is passed, so both are handled here: -v for
+  # the whole list, then one line per file header and per line+message.
+  run_tool phpstan-unignored ./vendor/bin/phpstan analyse -c "$ntmp/phpstan.neon" --memory-limit=1G --no-progress -v
+  if ! tool_killed phpstan-unignored; then
+    echo "  rc=$rc · $(printf '%s\n' "$out" | grep -o -e '"errors":[0-9]*' | head -1) · truncated: $(printf '%s\n' "$out" | grep -c -F '"truncated":true')"
+    printf '%s\n' "$out" | grep -o -e '"[^"]*[.]php":[[]' -e '"line":[0-9]*,"message":"[^"]*"' \
+      | sed -e "s#$APP/##" -e 's/"message"://' | head -400 | sed 's/^/  /'
+  fi
+  rm -rf "$ntmp"
 fi
 
 if [ $want_tests -eq 1 ]; then
