@@ -123,10 +123,12 @@ final class CheckoutEngine
                     ];
                 });
             } catch (UniqueConstraintViolationException $e) {
-                // The order number collided. The transaction rolled back — the order row and the
-                // stock decrement with it — so re-running the closure draws a fresh number and is
-                // idempotent. The loop is OUTSIDE the transaction because a 23505 aborts the
-                // enclosing one, and a retry inside it would die 25P02.
+                // The order number collided, or this authorisation already placed an order. The
+                // transaction rolled back, so re-running the closure draws a fresh number and is
+                // idempotent. This method has no AUTH_USED guard (checkoutCart() has one), so a
+                // reused authorisation fails on every attempt and the last failure is rethrown. The
+                // loop is OUTSIDE the transaction because a 23505 aborts the enclosing one, and a retry
+                // inside it would die 25P02.
                 if ($attempt >= self::ORDER_NUMBER_ATTEMPTS) {
                     throw $e;
                 }
@@ -274,10 +276,13 @@ final class CheckoutEngine
                     ];
                 });
             } catch (UniqueConstraintViolationException $e) {
-                // The order number collided. The transaction rolled back — the order row and the
-                // stock decrement with it — so re-running the closure draws a fresh number and is
-                // idempotent. The loop is OUTSIDE the transaction because a 23505 aborts the
-                // enclosing one, and a retry inside it would die 25P02.
+                // Two constraints raise here, and re-running the closure handles both. If the order
+                // number collided, the re-run draws a fresh number. If a second press on this
+                // authorisation placed its order first, the re-run meets the AUTH_USED guard and refuses
+                // exactly as a sequential second press is refused. The transaction rolled back, so the
+                // re-run is idempotent. The loop is OUTSIDE the transaction because a 23505 aborts the
+                // enclosing one, and a retry inside it would die 25P02. Never narrow this catch to one
+                // index name: a raced authorisation would then reach the customer as a raw 23505.
                 if ($attempt >= self::ORDER_NUMBER_ATTEMPTS) {
                     throw $e;
                 }
