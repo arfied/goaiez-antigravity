@@ -16490,3 +16490,64 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     ⚠️ **The four lift conditions are checked, never inferred:** a new dated `OWNER.md` section; a cadence
     condition on a moved `origin/main`; a Track 1 answer to ACTION 13–25; a population at 324's bar that is
     measured non-empty **and** buildable.
+518. **⭐⭐ The ROLLBACK census of the lane's nine new migrations finds 11 unique indexes, and every
+    `CREATE UNIQUE INDEX` name matches the `DROP INDEX IF EXISTS` in its own `down()`. Zero buildable.
+    The keepable part is that `IF EXISTS` would hide a mismatch, so only a name census can see one
+    (measured by the lane supervisor 2026-09-11 07:3x, by `date` `07:30`).** This takes ruling 499's
+    method, *read a strength as a cost*, and applies it to the seven index waves (MONEY-203 to MONEY-211).
+    Each one added a `down()`. A `down()` that names the wrong index **still exits 0**, because
+    `DROP INDEX IF EXISTS <typo>` drops nothing and raises nothing. The rollback then reports success
+    and leaves the constraint on the table. The first sign would be a later deploy, or a re-run of the
+    migration, dying `42P07 relation already exists` on a `CREATE UNIQUE INDEX` of an index a rollback
+    claimed to remove. No gate in this checkout runs `down()`. **Instrument, quoted (300):**
+    `grep -rhn -A 2 -F -e "CREATE UNIQUE INDEX"` over the five module migration trees that carry the
+    new files, read beside
+    `grep -n -e "statement" -e "function" -e "drop" -e "hasTable"` over the same nine files. The
+    result is **11 names in 9 files, each matched to its own drop by reading**:
+    - `payments_business_idempotency_active_unique`
+    - `account_mappings_business_connection_category_unique`
+    - `receivable_states_business_invoice_unique`
+    - `ar_dunning_actions_one_escalation_unique`
+    - `orders_business_order_number_unique`
+    - `orders_business_auth_token_unique`
+    - `payment_plans_business_invoice_unique`
+    - `ar_collections_packages_business_invoice_unique`
+    - `carts_business_session_unique`
+    - `merchant_connections_business_gateway_unique`
+    - `credit_terms_business_customer_unique`
+
+    Checks, per 324's bar:
+    - ⭐ **Known member (429):** the census returns MONEY-203's `payments` migration, whose brief
+      dictated *"a real `down()`"* (463).
+    - ⭐ **Positive control:** 29 files carry the phrase across `app/app/Modules` and `app/database`.
+    - ⭐ The first-three check (415) passed. The each-member-exists check (449) passed: every name was
+      read from a file.
+    - The two-index files drop in reverse creation order, which is correct and not merely harmless.
+    - Two partial predicates (`WHERE status <> 'failed'`, `WHERE action = 'escalate_to_human'`) are
+      dropped by name. A partial index needs no predicate to drop.
+
+    ⛔ Struck, not to be re-run. ⚠️ **Trigger to re-open:** a new index migration in the lane. Ruling
+    327's outcome shape a **forty-fourth** time.
+    ⭐ **The general lesson: an idempotent DDL guard (`IF EXISTS`, `IF NOT EXISTS`, `Schema::hasTable`)
+    turns a wrong name from an error into a no-op.** A migration whose `down()` is only exercised by
+    rollback therefore needs its names measured against its `up()`. Running it does not show a
+    mismatch.
+
+519. **⛔ TWENTY-FIFTH consecutive HOLD (RULED by the lane supervisor 2026-09-11 07:3x, by `date`).**
+    All four lift conditions were measured this tick (269, 272, 323), each case decided on mtimes (494):
+    - **Owner.** `OWNER.md`'s newest heading is still `## OWNER RULING — 2026-09-09 09:02` (136). Its
+      mtime is `09-09 09:02:03`.
+    - **Coder.** `--check` returned `CODER DEAD`.
+    - **Mailbox.** `REPORT.md` (`07:15:21`) and `BRIEF.md` (`07:07:27`) are both older than
+      `REVIEWS.md` (`07:23:55`).
+    - **Cadence, all three ✗.** `origin/main` moved to **`c6885f44`** (`merge: track/money — X-211`).
+      `git rev-list --count HEAD..origin/main` = **18**, not above 100.
+      `git diff --stat 90c482bb… origin/main -- app/app/Doctor coder-bin .claude/hooks` is empty.
+      The merge-base is **`90c482bb`**, this lane's own pushed supervisor tip. Its content,
+      `git diff --name-status 90c482bb… origin/main`, is the 7 per-track paths plus X-102's three
+      (504). ⚠️ Ruling 145's trap is live: the `merge: track/money` subject lines are true and spent.
+    - **Track 1.** No answer to ACTION 13–25.
+    - **Population.** Ruling 518's is non-empty and not buildable.
+
+    **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty wave to avoid an idle
+    tick is what rulings 95, 100 and 111 forbid.
