@@ -16006,3 +16006,68 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     run, and each member's safety named (328). **MONEY-205 is dispatched as dispatch 1 of 2 against
     nothing**, following ruling 464's order: brief installed and run launched **before** these rulings were
     written.
+501. **⭐⭐ MONEY-205 PASSES and the unexecuted racer hook TRANSFERRED on its first run — MONEY-203's
+    second-connection shape now works on a model event as well as on an HTTP seam (RULED by the lane
+    supervisor 2026-09-11 05:2x, by `date` `05:25`, on `09695bd9`).** Every measurement in the addendum's
+    checklist was taken this tick. `git status --short --untracked-files=all` is empty, matching `TREE:`
+    and §1's `0 uncommitted path(s)` (331). `git diff --stat 9f1834e5..HEAD` is exactly the migration,
+    `X211Test.php` and the two state files, **131 insertions and 1 deletion**, so no writer moved (the
+    wave's ⛔ #1). `SWEEP:` is the brief's 12 Table B lines, taken before the edit (366(b)). `RED (no
+    index):` carries the test name and `Failed asserting that 2 is identical to 1.`, the defect's own
+    signature (418, holding for the third consecutive wave). `RAW:` shows the dev migration `DONE`, so
+    463's dev-duplicate stop-clause did not fire. `RED (mutation):` carries `SQLSTATE[23505]` and
+    `ar_dunning_actions_one_escalation_unique`, with GREEN on both sides (82). ⭐ **Route (iii) carried
+    the re-gate** (391): §7 read raw is `tests 2535 · passed 2532 · FAILED 1 · errors 2`, the floor
+    derived by listing **before** the run, with 42's tell absent and the mutation proof timestamped
+    `10:15:51 UTC` = `05:15:51`, **after** the gate file's `05:15:27`, so the two were serial.
+    `pgrep -a -f "vendor/bin/pest"` returned only this seat's own command (322). Pushed `9f1834e5..09695bd9`.
+    ⭐ **The run log's first two lines are quoted in the verdict block** (287): *"root agent idle; waiting
+    for 1 background task(s) (bounded by --print-timeout)"* · *"I have initiated the gate process in the
+    background. I will wait for it to finish…"*, `AGY_EXIT=0`. The run blocked and wrote the report
+    after the gate exited (`REPORT.md` `05:16:50` > gate `05:15:27`), which is 218(2)'s behaviour; the
+    verb is not charged (341).
+    ⚠️ **Recorded for the deploy, not as an action:** the two new unique indexes run against
+    `goaiez_antig` when Track 1 deploys, and `CREATE UNIQUE INDEX` refuses if duplicates already exist
+    there. None can: ruling 170 measured nothing in production raises an invoice, so no production
+    `receivable_states` or escalation row exists to duplicate.
+
+502. **⭐⭐⭐ `carts` is the next absorb table, CHOSEN over `merchant_connections` on a measured blast
+    radius, and ruling 197's "recorded, not migrated" for `carts` is CORRECTED by ruling 499 (RULED by the
+    lane supervisor 2026-09-11 05:2x, briefed as MONEY-206).** Ruling 499 left three unbacked absorb
+    tables with no plain-create sibling (`carts`, `merchant_connections`, `account_mappings`) and ruled one
+    table per wave, each writer census re-measured (466). All three were re-measured this tick.
+    **`merchant_connections` is NOT index-alone-safe.** Its writer `GatewayEngine::connect():60` is
+    `updateOrCreate(['business_id','gateway_name'])`, but `ConnectCardScreenTest.php:192-211`
+    (`test_the_recorded_gateways_list_holds_its_order_when_a_row_is_rewritten`, ruling 204's own ordering
+    proof) seeds **three `stripe` rows in one business** through plain `MerchantConnection::create`, and
+    31 other fixtures across X-198 and X-199 use plain `create`. A `(business_id, gateway_name)` index
+    reddens 204's proof, so that wave must rewrite fixtures first (ruling 232's hazard in test form).
+    ⛔ Not briefed until that fixture census is its own item. **`account_mappings`** has one writer
+    (`AccountingSyncEngine:111`, keyed `business_id, connection_id, internal_category`), zero plain
+    creates and zero fixtures: safe, and next after this wave. **`carts` goes first on consequence:** two
+    writers, both `Cart::updateOrCreate(['business_id','session_token'])` (`CheckoutEngine.php:35`,
+    `:345`); **zero** plain creates in `app/app` and `app/tests`; hard-deleted after checkout (no
+    `SoftDeletes`), so a plain unique index refuses nothing the code does today; and five `->first()`
+    readers with no `ORDER BY` (`CheckoutEngine:194,:291,:328`, `CheckoutBlock:109`, `CartBlock:82`), so a
+    double press of *Add* leaves which cart a customer checks out undefined and can drop a line.
+    ⭐⭐ **Ruling 197 struck the `Cart::…->first()` reads with the reason *"every writer goes through
+    `CheckoutEngine::writeCart()`'s `updateOrCreate` — the column is indexed and not unique, which is
+    recorded, not migrated."*** Ruling 499 measured in vendor that `updateOrCreate` is precisely the call
+    that fails to absorb without a unique index. **197's safety is therefore the defect's mechanism.**
+    SIXTEENTH inherited attribution corrected (163, 171, 176, 257, 289, 355, 374, 383, 394(a), 449, 454,
+    458, 481, 483, 499).
+    **Measured before dictating (193):** the sweep `grep -rn -F -e "Cart::" app/app app/tests` returns
+    13 lines. ⭐ One is mechanism 8's inflating substring: `X-198/ModuleServiceProvider.php:30`'s
+    `CaptureCheckedOutCart::class`, named in Table B so the stop-clause cannot fire on it. The table's
+    rows are counted to match (217). `carts` has `items jsonb` and `expires_at timestamp` **NOT NULL**, so
+    the racer's raw insert supplies both. ⭐ **`updateOrCreate` hands the proof a second discriminator
+    MONEY-205 lacked:** after absorbing, it `fill()`s the loser's values onto the winner and saves, so the
+    surviving cart's `total_cents` is `1500` (the loser's line) rather than the racer's `0`. That asserts
+    no line was dropped, not merely that one row exists. ⚠️ The `items` array is asserted by count, id
+    and total **separately**, because `jsonb` stores object keys in its own order and `assertSame` on an array
+    compares key order (ruling 82's family, measured before it could fail against
+    a correct implementation). `X117Test` is class-based and untransacted (483), and the test carries
+    462's dependency comment. `addToCart` opens no transaction, so no savepoint term applies.
+    **Predicted floor `tests 2536 · passed 2533 · FAILED 1 · errors 2`**, derived by listing:
+    `gate-money205.txt` §7 `2535 · 2532 · FAILED 1 · errors 2`, and item 2 adds one method. ⛔ Absorb
+    nothing (125). Dispatched **run 231, 1 of 2 against nothing**, before these rulings were written (464).
