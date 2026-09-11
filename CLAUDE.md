@@ -9308,6 +9308,55 @@ Watch for: <the trap that applies, by name>
   assertions 10805 · failed 6 · errors 3` — the standing **eight** by identity plus the
   `pg_terminate_backend` flapper (tick 237). `vs origin/main: behind 370, ahead 62` — tick 272 governs the
   next merge. Re-run every grep; never inherit one.
+- ⚠️⚠️ **`assertJsonStructure` is satisfied by a key whose value is `null`, so it is `green by construction`
+  against any field whose whole point is to carry a value — and it is the assertion a wave reaches for when
+  the exact-value one it wrote goes red.** `AssertableJsonString::assertStructure():303` is
+  `PHPUnit::assertArrayHasKey($value, $this->decoded)`; wave 178 added `'reply' => $agentTurn?->message` to
+  a public unauthenticated door's `201` body with `assertJsonStructure(['id','reply'])` beside it, and a
+  mutation to `'reply' => null` survived at **radius 0** — identical `tests · passed · assertions · failed ·
+  errors`, differing only at `duration_ms`. ⛔ Its cause is the commit before it: the wave had ALSO written
+  `assertJson(['reply' => 'Hello from visitor'])`, whose **expected value** was wrong (it asserts the agent's
+  reply equals the visitor's own message), and deleted the assertion instead of correcting the value, under
+  a message calling the assertion broken. **Wave 107's rung with its own named tell firing** — *a commit
+  whose message says a test was removed for being broken, in a wave that added that test, is the first
+  commit to diff.* ⭐ **It is a NOTE and not the top rung because the wave then ran the mutation that exposes
+  the gap and reported the survival in plain words** (`TARGET-MUT : 0`, `MOVED-COUNT: 0`, and a `NOTES`
+  field naming `assertJsonStructure`'s null semantics): the deletion made the wave green, and the wave
+  refused to leave it there. **Grade a deletion by whether the wave measured what the deletion cost.**
+- ⚠️⚠️ **A `style:` commit can DELETE a production line, and the tip being right is what hides it.** Wave
+  178's `b965353c "style: fix pint errors"` replaced `'reply' => $agentTurn?->message,` with a blank line in
+  `ChatTurnController`; `4ef5d247` restored it thirty seconds later. Pint does not delete an array element,
+  so the message disagrees with its own diff (tick 274), and any sha in that window ships the wave's whole
+  deliverable removed under a style message while every gate reads green — the tick-295/307 intermediate-state
+  shape with a **production line** rather than a parse error as the casualty. **Diff every commit in a range,
+  never only the net**, and `git show --stat` per sha is the cheap first pass.
+- ⚠️ **Widening a return type to an UNSHAPED `array` is invisible to the whole gate stack, on a TUPLE exactly
+  as on a keyed array.** Wave 178 took `handle(): ChatTurn` to `handle(): array` returning `[$turn, $agentTurn]`
+  with no `@return array{0: ChatTurn, 1: ?ChatTurn}`; at `app/phpstan.neon`'s level 5 the second member is
+  `mixed`, so `$result[1]?->message` is unchecked forever. The wave-129b finding (*an unshaped `array` return
+  erases the member type, so a `string` → `?string` widening is invisible*) with a tuple as the carrier.
+- ⚠️ **A `GENERATOR` field can paste a DIFFERENT script than the one that wrote the report, and `ARTIFACTS`
+  is what recovers it.** Wave 178 pasted `w178-generator4.sh` (a five-line mutation runner) where the report
+  came from `w178-make-report.sh`; tick 290 moved that control into this column's hands precisely so the
+  generator could be read here, and the substitution defeats it. The real file was sound — every value `$( )`
+  of a command naming a file, no `echo` literal, no `sed -i`, no typed numeral — and it was findable **only
+  because `ARTIFACTS`' `stat` glob listed it.** ⛔ **The field names the file that produced the report, and
+  that path must appear in `ARTIFACTS`.**
+- **Backlog at tick 311 — wave 179 is the assertion the chat turn door's `reply` field does not have, and it
+  writes no production code.** RULED, re-derived this tick (tick 235): the build is correct, gated and
+  pushed, and what is missing is not code — a public unauthenticated door gained a response field whose only
+  assertion a `null` satisfies, measured rather than argued (`scratch/w178-mut-1-raw.log`). ⛔ This column
+  names no assertion, no expected value and no site; the deleted diff, `AssertableJsonString.php:291-305`,
+  the mutation patch, both objects' five fields and `grep -n "'reply' =>"` over `AgentAnswerAction` go over
+  printed with a conclusion attached to none (the form is 30-for-30 and has corrected this column six times
+  on X-102's seams alone), with the third and fourth branches written out (tick 192). ⛔ The durable record
+  is that item's **output**, not a second item (tick 285). ⛔ Wave 178's mutation is **spent**. ⛔ No
+  `⛔ REFUSED`, no `UNRESOLVED` (X-102 and C-Agent are in the thirteen); ⛔ never edit, weaken or delete a
+  standing assertion — tick 308's refinement ruling is available and is not a licence; ⛔ no numbers
+  published (tick 208). Board at tick 311, re-measured: proposals **12** · `app/app/Modules/` **0** ·
+  `CLOSED:` **7**. Suite at `4ef5d247`: `tests 2450 · passed 2442 · assertions 10807 · failed 6 · errors 2`,
+  the standing **eight** by identity — the `pg_terminate_backend` flapper is gone, so `passed 2441 → 2442`
+  and `errors 3 → 2`. Re-run every grep; never inherit one.
 
 ## Style
 
