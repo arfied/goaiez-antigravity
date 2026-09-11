@@ -198,19 +198,19 @@ class ConnectCardScreenTest extends TestCase
 
         MerchantConnection::create([
             'business_id' => $biz->id,
-            'gateway_name' => 'stripe',
+            'gateway_name' => 'square',
             'merchant_account_id' => 'acct_two',
             'is_connected' => true,
         ]);
 
         MerchantConnection::create([
             'business_id' => $biz->id,
-            'gateway_name' => 'stripe',
+            'gateway_name' => 'clover',
             'merchant_account_id' => 'acct_three',
             'is_connected' => true,
         ]);
 
-        $first->update(['gateway_name' => 'square']);
+        $first->update(['gateway_name' => 'plaid']);
 
         Livewire::actingAs($owner)->test(ConnectCard::class)
             ->assertSeeInOrder(['acct_one', 'acct_two', 'acct_three']);

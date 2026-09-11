@@ -14,6 +14,7 @@ use App\Modules\X198\Domain\StripeGatewayClient;
 use App\Modules\X198\Events\PaymentCaptured;
 use App\Modules\X198\Events\PayoutReconciled;
 use App\Modules\X198\Events\ReconciliationDiscrepancy;
+use App\Modules\X198\Models\MerchantConnection;
 use App\Modules\X198\Models\Payment;
 use App\Modules\X198\Models\PaymentLink;
 use App\Modules\X198\Models\Payout;
@@ -731,5 +732,47 @@ class X198Test extends TestCase
                 ->where('status', '!=', 'failed')
                 ->count()
         );
+    }
+
+    public function test_a_concurrent_connect_is_absorbed_into_one_connection_for_the_gateway(): void
+    {
+        // This test turns on X198Test being a CLASS-BASED PHPUnit file, which Pest's
+        // ->use(RefreshesTenantDatabase::class)->in('Modules') binding does NOT reach, so the racer's
+        // row COMMITS on pgsql_migrate and connect() can see it. If TestCase ever binds a refresh
+        // trait directly, this test stops proving anything -- while very likely still passing.
+        $biz = TestCase::provisionTenant(['name' => 'Connect Race Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        // A second request lands a connection for the same gateway between updateOrCreate()'s read and
+        // its insert. It writes on pgsql_migrate, a separate session, so it commits. RLS is FORCED and
+        // constrains the owner role too.
+        $racer = DB::connection('pgsql_migrate');
+        $racer->statement("SET app.business_id = '{$biz->id}'");
+
+        MerchantConnection::creating(function () use ($racer, $biz): void {
+            $racer->table('merchant_connections')->insert([
+                'business_id' => $biz->id,
+                'gateway_name' => 'stripe',
+                'merchant_account_id' => 'acct_racer',
+                'is_connected' => true,
+            ]);
+        });
+
+        try {
+            $connection = $this->connectAction->handle($biz->id, 'stripe', 'acct_loser');
+        } finally {
+            MerchantConnection::flushEventListeners();
+        }
+
+        // The loser absorbs the winner's row: one connection for the gateway.
+        $this->assertSame(
+            1,
+            MerchantConnection::where('business_id', $biz->id)->where('gateway_name', 'stripe')->count()
+        );
+
+        // And updateOrCreate() filled the loser's account onto the row that won, and returned that row.
+        $row = MerchantConnection::where('business_id', $biz->id)->where('gateway_name', 'stripe')->first();
+        $this->assertSame($row->id, $connection->id);
+        $this->assertSame('acct_loser', $row->merchant_account_id);
     }
 }
