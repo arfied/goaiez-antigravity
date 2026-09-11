@@ -14952,3 +14952,88 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     ORDER of the acts, never the order of the recording. ⚠️ And the recovery worked because the previous tick
     obeyed 259 in the one way that mattered: **it wrote no `Dispatched:` line at all** rather than a false
     one, so this tick read "Dispatching" as the prediction it was and measured rather than believed it.
+465. **⭐⭐⭐ A RETIRED WAVE'S SUCCESSOR DOES NOT INHERIT ITS PREDECESSOR'S FIX SHAPE — `orders.order_number`
+    was retired for the SAME reason as the `payments` index and is a BIRTHDAY COLLISION rather than a
+    RACE, so copying MONEY-203's catch arm would hand a customer SOMEONE ELSE'S ORDER (RULED by the lane
+    supervisor 2026-09-11 02:0x, briefed as MONEY-204).** Ruling 458's frame — *a blocker is a CONJUNCTION,
+    and removing one of its terms moves the question to the next* — named two waves retired on one shared
+    term, *a racing fixture cannot be committed*: the `payments.idempotency_key` index (240, 256) and
+    `orders.order_number`'s uniqueness (327). MONEY-201 and MONEY-202 measured that term away and MONEY-203
+    shipped the first. **The obvious move is to ship the second the same way, and it is wrong.**
+    ⭐⭐ **Measured, and the disproving measurement is the shape itself** (400's habit, a **seventeenth**
+    firing): `CheckoutEngine.php:82` and `:213` mint `'ORD-'.strtoupper(Str::random(6))` **inline in the
+    `Order::create` array**, so **there is no pre-check and therefore no read-then-write window at all.**
+    MONEY-203's race exists because `capture():83-86` reads, then makes a live HTTP call, then writes forty
+    lines later; here two orders **minutes apart** collide, with no concurrency whatever. ⭐⭐⭐ **So the two
+    defects differ in what a loser MEANS.** In `payments` the two writers share one *intent* under one key,
+    so handing back the winner's row is correct and is what ruling 463 ruled. In `orders` the two are
+    **genuinely different orders** that drew the same handle, so handing back the winner would give a
+    customer another customer's order — **a worse defect than the duplicate**, and one that would pass every
+    gate. ⛔ **The loser RE-MINTS.**
+    **The terms, each measured before the brief shipped (193):** (a) `grep -c -F "catch"` over
+    `CheckoutEngine.php` is **0** — not one catch block — so a bare `23505` reaches `CheckoutBlock::pay()`'s
+    `\Throwable` tail at `:79` and prints `SQLSTATE[23505]…` to an owner, which is rulings 206/404/416's
+    framework-string shape and **a FAILED CHECKOUT**; ruling 327's warning re-confirmed on the live file
+    (64). ⛔ **So the index and the retry are ONE commit** — ruling 232, *introducing a new hazard is worse
+    than deferring the removal of an old one*, and MONEY-203's own ⛔⛔. (b) **`DB::transaction($cb,
+    $attempts)` retries ONLY `causedByConcurrencyError`** (`ManagesTransactions.php:93,:109,:236`) — a
+    deadlock, **not** a unique violation — so the framework's own retry argument does not solve this, a fact
+    that reads as if it should. (c) ⭐ **The loop goes OUTSIDE `DB::transaction`**, because ruling 163's
+    mechanism aborts the enclosing transaction on a failed statement and a retry inside it dies `25P02` —
+    ruling 460's fifth term, **hostile here where it was already satisfied in `capture()`**, which is 460's
+    own closing lesson (*measure a term before assuming it hostile as surely as before assuming it absent*)
+    paying in the other direction. (d) `checkoutCart()` is a single top-level `return DB::transaction(…);`,
+    so the wrapper restructures no line of the body. (e) ⭐ **The rollback makes the retry idempotent by
+    construction** — it undoes the order row **and** the inventory decrement, and `:167`'s `AUTH_USED` guard
+    reads a row that is gone. (f) `order_number` has **no lookup anywhere** (327's measurement re-confirmed:
+    the migration, two `CheckoutBlock` messages, one blade cell), so the harm today is bounded to two orders
+    under one handle.
+    ⭐⭐ **The index is scoped `(business_id, order_number)` and NOT global**, matching X-199's own
+    `unique(['business_id','invoice_number'])` — **the lane's established shape, and the very
+    self-contradiction ruling 327 named** (X-199 guards its document number with an advisory lock, a
+    `lockForUpdate` re-read and a unique index while X-117 draws six random characters). A global index
+    would let one tenant's draw fail **another tenant's** checkout, a cross-tenant coupling this lane
+    refuses. ⛔ **No `WHERE` clause** — unlike `payments` there is no `failed` state to exclude, and a
+    cancelled order keeps its number and must stay unique.
+    ⭐⭐⭐ **The proof needs NO RACER, and that is the wave's happiest measurement.**
+    `Str::createRandomStringsUsingSequence(array $sequence)` exists at
+    `app/vendor/laravel/framework/src/Illuminate/Support/Str.php:1174`, returns `$sequence[$next++]` per
+    `Str::random` call and **falls back to a real random string when the sequence runs out** — so the
+    collision is forced deterministically with **no second connection, no `Http::fake` and no concurrency**.
+    A birthday collision has no race to reproduce, so the proof is simpler than the predecessor's rather
+    than harder. ⛔ `Str::createRandomStringsNormally()` runs before the assertions, or a later test in the
+    same process inherits a rigged generator.
+    ⚠️ **Blast radius, measured with interior fragments BEFORE the brief shipped (46, 86, 146): ZERO.** All
+    **eight** `order_number` fixtures in the lane carry **distinct** values and one is a reflection
+    assertion, so no existing assertion moves and the wave **adds** a method (68, 70). ⭐ The sweep's
+    X-205 and X-210 hits are `order_id` on **affiliate attributions and promotion redemptions** — a
+    different column on a different table, read rather than counted (262(b), and ruling 90's
+    two-things-one-name trap for a sixth time) — and X-199's `INV-ORD-A` is an **invoice** number carrying
+    the substring, the zero trap's **inflating** mechanism 8.
+    ⚠️ **The retry ships on BOTH mint sites and the proof lands on `checkoutCart()` alone**, stated rather
+    than left silent: the index refuses both, so leaving `checkout()` unwrapped would make **it** fail on a
+    collision — but `checkout()` has no production caller (304, 170(3)), so a proof there proves a path no
+    owner reaches. The unproven half is ruling 76's grade, named.
+466. **⭐⭐ A WAVE UNRETIRED BY A MEASUREMENT INHERITS ITS PREDECESSOR'S *PERMISSION*, NEVER ITS *DESIGN* —
+    and the tell is that the two defects' LOSERS mean different things (RULED by the lane supervisor
+    2026-09-11 02:0x, generalising 465).** Ruling 458 taught this lane to re-read every ruling that retired
+    a wave *"because X is impossible"* for the other terms it never named. **What 458 does not say is what
+    happens next**, and the cheap error is exactly the one this tick nearly made: two waves retired on one
+    shared term arrive together when that term falls, they are adjacent in the ledger, one has just shipped
+    with a proven shape, and **the shape is sitting there asking to be copied.** ⛔ It must not be. The
+    shared term was a fact about the **test harness**; the fix shape is a fact about the **domain**.
+    ⭐⭐ **The discriminating question is: when two writers collide, do they mean the same thing?** Where
+    they do — one intent, one idempotency key, two writers — the loser **hands back the winner** (463).
+    Where they do not — two customers, two orders, one unlucky handle — the loser **re-mints** (465), and
+    handing back would be a *worse* defect than the one being fixed, silently, on a money path, past every
+    gate. **The same `SQLSTATE[23505]`, the same `UniqueConstraintViolationException`, the same
+    catch-shaped hole, and opposite correct answers.**
+    ⚠️ It is ruling 228(a)'s *a wave that harmonises a pair breaks the good one*, one level up: 228 governs
+    **prose** that resembles prose, and this governs **a remedy** that resembles a remedy. ⭐ And the tell is
+    cheap and available before any code is written — **does the losing path have a PRE-CHECK?** A pre-check
+    means the two writers were trying to do one thing and the read is what they raced; no pre-check means
+    the collision is a birthday collision and the two were never the same act. ⛔ So a wave that inherits a
+    predecessor's permission states, in its brief, which of the two it is and why — and the addendum that
+    carried MONEY-204 as a candidate said so in terms (*do not copy MONEY-203's arm*), which is the only
+    reason the measurement was taken at all. **An inherited candidate carries its warnings or it carries
+    its predecessor's design.**
