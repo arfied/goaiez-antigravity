@@ -13830,3 +13830,77 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     model turned out to be a different class; and the schedule census returned a **false zero** that only
     ruling 80's own known member could expose. **Three hypotheses, all built on true measurements, all
     false** — rulings 400/403/409/421/422/426's habit paying for the seventh, eighth and ninth time.
+431. **⭐⭐ Ruling 419 closed the column-WIDTH family on every type and nobody had asked about the other
+    four CONSTRAINT axes — NULLABILITY is thirteen members and ZERO defective, and the disproving
+    measurement killed five of them in one command (measured by the lane supervisor 2026-09-10 22:5x;
+    rulings 64, 95, 100, 111, 294, 324, 327, 340, 400, 415, 429).** Rulings 206, 404 and 416 each fixed an
+    owner-typed value reaching a column whose **width** refused it (`22001`, `22003`), and 419 closed that
+    family across `varchar`, `integer`, `smallInteger`, `tinyInteger`, `decimal` and `text`. ⭐ **A width is
+    one of FIVE constraints a column carries**, and the sibling axes had never been stated as predicates.
+    Four turn out to be closed already by other routes — **uniqueness** at 229/240/256/327/330, **foreign
+    keys** at 428, **defaults** at 84/122/129/263/392 — and **nullability** was open. Its harm is 404's and
+    416's shape exactly and is invisible to every gate: a `NOT NULL` column written from a value that can be
+    null returns `SQLSTATE[23502] … null value in column "x" violates not-null constraint`, which a
+    `\Throwable` tail renders to an owner — ruling 100's *is that actually why it refused?* answered by a
+    framework string.
+    **Instruments, quoted (ruling 300).** First the truth-source check, which is ruling 419's own lesson
+    measured in the **safe** direction: `grep -rn -e "DB::statement" app/app/Modules --include=*.php`
+    filtered to the eight ids and to `not null|alter column|add column` returns **six** lines and **not one
+    changes nullability** (two `SET DEFAULT` pairs and 419's own `ALTER COLUMN url TYPE text`), so the
+    Blueprint declarations are the whole nullability truth and a Blueprint grep is sufficient here. Then
+    `grep -rn -F -e "?int " -e "?string " -e "?float " -e "?bool " -e "?Carbon " app/app/Modules
+    --include=*.php` filtered to the eight ids and to `function` → **13**.
+    ⭐⭐ **Ruling 429's known-member corroboration fires THREE times** — the instrument returns
+    `recordPayment`'s `?int $amountCents` (365's own finding), `ArLogOfflinePaymentAction`'s
+    `?string $photoPath` (363's) and `setLateFeeTerm`'s `?int $capCents` (416's). ⭐ 415's first-three check
+    passes: `?int $customerId`, `?string $sessionToken`, `?Carbon $currentDate`.
+    ⭐⭐ **The disproving measurement was taken FIRST and killed five at once** (400/403/409/421/422/426):
+    **`offline_payments.reference_number` IS `->nullable()`** (`2026_08_30_000027:47` — ⚠️ ruling 404 quoted
+    that exact line for its **width** and did not record its nullability), and so are `photo_path`,
+    `lost_reason`, `packaged_by_user_id` and `orders.customer_id`. ⭐ So `logOfflinePayment`'s
+    *photo-without-a-reference* branch — which passes the engine's `empty(reference) && empty(photo)` guard
+    — writes a legitimate NULL rather than a `23502`.
+    **One target is NOT nullable and it is the one that looked live:** `carts.session_token` is
+    `$table->string('session_token')->index()` (`2026_08_30_000029:32`) against
+    `CartBlock::mount(?string $sessionToken = null)` and `CheckoutBlock::mount(?string $sessionToken =
+    null)`. ⭐ Both bodies, **read whole rather than by line range** (395, 422), are
+    `$this->sessionToken = $sessionToken ?? session()->getId();` — **ruling 392(c)'s default-at-the-read** —
+    and the property is a non-nullable `public string $sessionToken = ''` besides, so the nullable parameter
+    can never reach the column as null. The other six are already ruled (365, 416, 68, 261, 161, 337).
+    ⛔ **Zero buildable, struck, not to be re-raised — and with it the CONSTRAINT family is CLOSED on all
+    five axes.** ⭐ The generalisable half: **a column is a bundle of constraints, and a census of one of
+    them is not a census of the column** — which is ruling 340's *where X is USED is not where X is NEEDED*
+    aimed at a schema rather than at a guard.
+432. **⭐⭐ Ruling 428 measured the READERS of `customer_id` and stopped; the WRITERS are three, and a
+    contact merge does NOT silently corrupt — it fails LOUDLY at three boundaries (RULED by the lane
+    supervisor 2026-09-10 22:5x).** The second half of 431's predicate is *a write whose source is a
+    nullable COLUMN read*, which intersects ruling 428 exactly: `X-01/Actions/ContactMergeAction.php:25`
+    hard-deletes a `Person`, four `nullOnDelete` FKs fire, and `invoices.customer_id` becomes NULL.
+    `grep -rn -e "customer_id" app/app/Modules/X-199 app/app/Modules/X-211 app/app/Modules/X-117
+    --include=*.php` with `Database` filtered out returns **25** lines, of which three are writer-side:
+    `InvoiceEngine:200` writes `'customer_id' => $invoice->customer_id` into an `OverflowCharge`, whose
+    column is **nullable**, so a legitimate NULL; ⭐⭐ `:211` passes `customerId: $invoice->customer_id` into
+    `Events/OverflowCharged`, whose constructor is `public readonly int $customerId` — **non-nullable**, so
+    the reversal path throws a **TypeError at the event boundary** rather than announcing a fiction, which
+    is ruling 66's *loud beats silently wrong* and is the **correct** failure; and ⭐ `Ui/Credits.php:48`
+    casts `(int) $term->customer_id` into `TermsSetAction:42`'s `updateOrCreate`, so a NULL would write `0`
+    into a column with an FK to `people` and be refused `23503`.
+    ⚠️ **This REFINES ACTION 24 rather than correcting it** — 428's *silently orphans* is still true of the
+    SET NULL itself, and what is added is that **every money path that would propagate it is loud**, with
+    `credit_terms` staying the item's real money consequence (the customer's agreed limit becomes
+    unreachable through `InvoiceEngine:39`'s `where('customer_id', …)`, 428's own finding). ⛔ Still not
+    money's to fix on 428's five measured grounds, and the trigger is still absent.
+    ⭐ The generalisable half: **a census of a nulling path's READERS is not a census of its WRITERS**, and
+    the two have opposite failure modes — a null-safe reader is silent and a non-nullable writer is loud —
+    so a finding that measures only one half reports the wrong failure mode for the other.
+433. **⭐ The `$attributes`-default census is ONE member and it is already ruled (measured 2026-09-10
+    22:5x).** A model-level `$attributes` default disagreeing with its migration's `->default()` is ruling
+    98's shape with a real consequence — an unsaved model renders one number and a saved row carries
+    another. `grep -rn -F -e "attributes = [" app/app/Modules --include=*.php` filtered to the eight ids
+    returns **one**, `X-211/Models/ArPlanTerm.php:15`, whose `max_installments = 3` / `max_term_days = 90`
+    ruling 263 already measured **agree** with `2026_09_04_170000:20-21`. ⭐ The external control fires at
+    **11** tree-wide, so a one-member answer is a measurement and not a broken pattern (207, 294, 324).
+    ⛔ Struck. ⚠️ **EIGHTH consecutive HOLD**, all four lift conditions measured ✗ in the acting tick (269,
+    272, 323): 46 behind, the guarded-checker diff empty, the merge-base **`8473c04a`** this lane's own
+    `chore(state)` with three pushes since, `OWNER.md`'s newest heading still 2026-09-09 09:02, and no
+    Track 1 answer to ACTION 13–24. ⭐ Ruling 327's outcome shape a **NINETEENTH** time.
