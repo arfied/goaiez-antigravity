@@ -24,4 +24,7 @@ test('reply queue stylesheet defines canvas colors', function (): void {
 
     expect($css)->toContain('.text-canvas');
     expect($css)->toContain('.bg-canvas');
+    expect(preg_match('/@media \(prefers-color-scheme:dark\)\{[^{}]*\{[^}]*--color-paper:#16191c/', $css))->toBe(1, 'the dark surface value is not declared inside a prefers-color-scheme:dark block of the stylesheet this page links, so either the dark palette applies in every colour scheme or it is gone');
+    expect(substr_count($css, '--color-paper:#16191c'))->toBe(1, 'the dark value is also declared somewhere else, outside the guard, or the dark palette is gone');
+    expect(substr_count($css, '--color-paper:#fafaf9'))->toBe(1, 'the stylesheet carries no light surface, so every visitor gets the dark palette, or the light value is declared twice');
 });

@@ -86,7 +86,7 @@
 /* Dark mode inverts surface and ink. Signal meaning is what is constant across themes;
    the hue is retuned for the surface. */
 @media (prefers-color-scheme: dark) {
-    @theme {
+    :root {
         --color-paper: #16191c;
         --color-canvas: #16191c;
         --color-card: #1d2125;
@@ -163,7 +163,7 @@
    Scoped to `.legal-prose` rather than added to preflight, because every other
    surface in this application composes its own type from utilities and a global
    heading style would silently restyle all of them. Tokens only — the palette
-   already answers dark mode at `@theme`, so this inherits it rather than
+   already answers dark mode in the token blocks above, so this inherits it rather than
    restating any colour. */
 .legal-prose {
     line-height: 1.7;
