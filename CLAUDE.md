@@ -19067,3 +19067,55 @@ relied on, and gate files are scratch (259) — but it is tick 301's law (*read 
 this file's digest*) reaching a **filename**: a HOLD tick that writes no notes makes the digest's last tick number
 **lower than the ledger's**, and every tick that follows a notes-less HOLD inherits the off-by-one. `grep -n '^## TICK'
 REVIEWS.md | tail -1` before any write.
+
+## ⛔ `passed` INCLUDES INCOMPLETE AND RISKY TESTS — tick 226's arithmetic is blind to it BY CONSTRUCTION, and this lane's own last gate JSON carries `incomplete 3 · risky 1` (tick 344)
+
+Tick 215's law again (*read a sibling's supervisor commits*). Money's `39647c21` (ruling 560): `laravel/pao`
+computes `passed = tests − failed − errors − skipped`, emits `incomplete`/`risky` only when non-zero, and `bin/supervise.sh`
+printed only `tests · passed · FAILED · errors`. **Measured here rather than adopted** (223): this lane's gate line was
+byte-identical (`bin/supervise.sh:266`), and `Read /home/goaiez/tmp/last-pest-grs-antig-site.json` — tick 339's gate on
+`d553eaff` — ends **`"incomplete":3,"risky":1`**.
+
+⭐ **Every §7 baseline this lane has recorded since the keys first appeared carried them silently**, and the check this
+ledger uses to accept a §7 cannot see them: `2535 + 7 + 2 = 2544` reconciles **exactly**, because the four sit inside
+`passed`. Tick 226's `passed + FAILED + errors = tests` is a check on **accounting**, never on **outcome** — it is satisfied
+by any partition that sums, and a risky test (most often one that performed no assertion) is a green that proves nothing.
+Same family as tick 181 (*an unchanged count proves no NET loss*) and tick 189 (*a count aggregating opposite verdicts is not a
+reading*), reaching the one instrument this lane reads every wave.
+
+✅ **Adopted, not copied** (216): money's seven lines inserted after `:266`; `passed` unchanged so every recorded floor stays
+comparable. ⛔ **UNEXERCISED** — the fragment runs only under `--tests`, and `python3 -c` needs approval here (money recorded the
+same). SITE-211's gate is its first run and is told what a missing line and a traceback each mean (193: *a remedy asserted but never
+fired is not a remedy*). ⚠️ Not pushed until exercised.
+
+⚠️ **The counts do not reconcile with the source, and that is the wave's to measure**: `grep -rln markTestIncomplete app/tests/`
+finds X-66 (three calls, sixty's) and `tests/Patches/FourPatchesTest.php` (**eight**), yet the JSON says `incomplete 3`. And
+`risky 1` names nothing. **SITE-211** names every one through PHPUnit's `--log-events-text` (`Test Considered Risky (…)` at
+`ConsideredRisky.php:69`, `Test Marked Incomplete (…)` at `MarkedIncomplete.php:68`), owned column first, whole suite under the
+lock second, and writes nothing. `--display-risky` does not exist in this PHPUnit's `Cli/Builder.php`; the events log is the instrument.
+
+## ⛔ THE DEPENDENCY QUERY'S FIRST FIRING ON A `Models/` CHANGE — additive, and only reading the hunk says so (tick 344)
+
+Tick 240 created the scoped cross-lane query and warned it exists to be **read**, never to be quiet. Pricebook's `dde864ab`
+fired it: `X-163/Models/CalloutFee.php` +5 and `Domain/PricebookEngine.php` +2 −1. Read at source: a new
+`public static function isSet(int $cents): bool { return $cents > 0; }` and a refusal clause in `lookupCallout()` — **no column,
+no cast, no rename**, and `grep -rn CalloutFee` over the six owned code modules returns nothing; this lane reads only
+`X163\Models\PriceBookItem` (`EdgeDeployAction:16`). **Clean, and the pairing is the measurement**: `Models/` is the directory
+that *can* break a reader, and a hit there is a reason to read the diff, never a finding by itself.
+
+## ⚠️ The owner's `--coder claude` refusal adopted in this lane's launcher — and UNEXERCISED from this seat (tick 344)
+
+Money's `39647c21` made the ruling mechanical in its launcher. This lane's `launch-coder.sh:41` accepted `agy|claude`; it now
+refuses `claude` with exit 1 **before** the liveness check, the snapshot and the launch, so no path below reaches `:92`'s claude
+branch. ⛔ `bash .agents/supervisor/launch-coder.sh --coder claude` **requires approval** from this seat (the dispatch allow is an
+exact string), so the refusal is **read at source, not fired** — recorded as a rule, never as a remedy (193). The bare dispatch form
+is unchanged.
+
+## ⚠️ Three dispositions the census or the paired stats would otherwise re-derive (tick 344)
+
+- Pricebook's `797c5410`/`dde864ab` (X-163, its own) and reviews' `7ce56d70` (C-Reviews, its own) — nothing in this column; only
+  the paired stat prints them (190).
+- Shared-state trigger on `0441f84a` and `5b0322d5`: one deletion each, the top-level `updated` timestamp, the benign minimum
+  (183, 188); both add a keyed `decided` row for the sibling's own module.
+- Tick 343's closing table read `reviews a3e9c66d`; the reflog says `0441f84a` arrived `@{14:30:15}`, **after** that block's append
+  (14:22:24) — arrival, not a defect of 343's re-read (220).

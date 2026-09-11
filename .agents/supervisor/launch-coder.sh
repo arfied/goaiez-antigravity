@@ -38,7 +38,15 @@ while [ $# -gt 0 ]; do
     *) echo "REFUSED: unknown argument $1 (takes only --coder agy|claude, --allow-merge, --allow-harness, --status)"; exit 1;;
   esac
 done
-case "$CODER" in agy|claude) ;; *) echo "REFUSED: --coder must be agy or claude"; exit 1;; esac
+# Owner ruling 2026-09-11 14:0x (supersedes the 10:2x re-enable, restores 2026-09-10): the claude
+# fallback is DISABLED on every track. On "quota reached" the tick records it in REVIEWS.md and
+# stops; the next tick after the reset dispatches agy. Refused here, before any liveness check,
+# snapshot or launch, so no path below can reach the claude branch (tick 344, after money's 39647c21).
+case "$CODER" in
+  agy) ;;
+  claude) echo "REFUSED: --coder claude is DISABLED (owner ruling 2026-09-11 14:0x). Record the agy quota exit in REVIEWS.md and stop."; exit 1;;
+  *) echo "REFUSED: --coder must be agy"; exit 1;;
+esac
 
 # Liveness probe. Restored 2026-09-05 17:5x: main's copy dropped it in the ff and
 # every supervisor tick's "is the coder alive?" check became `REFUSED: unknown

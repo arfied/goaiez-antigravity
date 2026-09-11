@@ -264,6 +264,13 @@ if [ $want_tests -eq 1 ]; then
 import json,sys
 d=json.loads(sys.stdin.read())
 print("  tests %s · passed %s · FAILED %s · errors %s · result %s" % (d.get("tests"),d.get("passed"),d.get("failed",0),d.get("errors"),d.get("result")))
+# tick 344 (adopted from money ruling 560): laravel/pao computes passed = tests - failed - errors - skipped,
+# so an INCOMPLETE or RISKY test is counted INSIDE "passed", and pao emits these keys only when non-zero.
+# Print them, or the gate cannot show an absence. passed is unchanged so every recorded floor stays comparable.
+inside=[(k,d.get(k)) for k in ("incomplete","risky") if d.get(k)]
+if inside: print("   ⚠️ counted INSIDE passed, not passes: %s" % " · ".join("%s %s" % kv for kv in inside))
+other=[(k,d.get(k)) for k in ("skipped","warnings","deprecations","notices","php_errors") if d.get(k)]
+if other: print("   ⚠️ also reported by pest: %s" % " · ".join("%s %s" % kv for kv in other))
 for f in (d.get("failures") or [])[:5]:
     print("   ✗ FAILURE %s" % f.get("test","?").split("::")[-1])
 for e in (d.get("error_details") or [])[:5]:
