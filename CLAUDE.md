@@ -15258,3 +15258,106 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     hostile as surely as before assuming it absent** (460's own closing words), and ⭐ 472 is the mirror
     in the same tick: there the unexamined term was hostile and it killed the wave, here it was satisfied
     and it killed the finding.
+474. **⭐⭐⭐ THE N+1 CENSUS IS MEASURED NON-EMPTY — SEVEN OF SIXTEEN COMPONENTS ISSUE A QUERY PER ROW,
+    THE CORRECT IDIOM IS IN-LANE NINE TIMES AND SIX LINES ABOVE ONE OF THE DEFECTS — AND IT IS RECORDED
+    ON TRACK 1 ACTION 13's SCALE HALF, NOT BRIEFED (RULED by the lane supervisor 2026-09-11 03:3x).**
+    Predicate, stated for the first time: *a model read issued once per row inside a component's PHP
+    `foreach`, where the collection being looped is already in hand.* Ruling 434 swept what a component
+    **writes onto** model objects and 435 what it **collapses to one row**; neither asked what it
+    **re-reads per row**. ⭐ Blades are out of population — they render, they do not query.
+    **Instrument, quoted (300):** `grep -rn -F -e "foreach" app/app/Modules --include=*.php` filtered to
+    `/Ui/` and the eight ids → **16 PHP components, one `foreach` each**; then the read-token sweep for
+    line numbers; then **every loop body read** (262(b)).
+    **The seven:** `X-199/Ui/Invoices.php` `:59`/`:60` (`Person::where→find`, **1/row**) ·
+    `X-199/Ui/Declines.php` `:81`/`:82`,`:94` (`Payment::…->first()`, `DeclineDeferral::…->exists()`,
+    **2/row**) · `X-117/Ui/CheckoutBlock.php` `:115`/`:116` (`Sellable::where→find`, **1/row**) ·
+    `X-211/Ui/CollectionsPackagePreview.php` `:60`/`:63`,`:64`,`:65` (three `count()`, **3/row**) ·
+    `X-211/Ui/AgeingByReason.php` `:155`/`:157`,`:159` (**2/row**) · `C-Billing/Ui/RevenueRecovery.php`
+    `:72`/`:73` (**1/row**) · ⭐⭐⭐ `X-173/Ui/SyncErrorRateView.php` `:43`/`:44`, whose
+    `$engine->errorRate()` reaches `AccountingSyncEngine:139`'s `SyncRun::where(…)->findOrFail(…)` —
+    **the component fetches `$runs` at `:39` and then re-reads each of those rows BY PRIMARY KEY, one
+    query per row, for a collection it is already holding.** Not an eager-loading omission at all.
+    ⭐⭐ **NINE are clean and the positive control is therefore IN-LANE and DISCRIMINATING** (324's bar
+    in 408/413/414/442's strongest form): `X-201/DisputeCard:71` and `DisputeQueue:92` are the
+    byte-identical `whereIn(…)->get()->groupBy(…)` idiom with clean loops · `X-199/Credits:73,:78`
+    eager-load by `whereIn` · ⭐ `X-198/ReconciliationDiscrepancies:54`'s `keyBy('id')` plus ruling 425's
+    own measured id-set reviewers read **is the model of the fix** · `X-198/SameAccount:64-70` is four
+    eager reads then a clean loop · plus `X-199/Unpaid`, `X-211/PaymentplanBuilder`,
+    `C-Billing/DunningBoard`, `X-117/CartBlock`. **The lane HAS the idiom and applies it nine times out of
+    sixteen** — ruling 98's tell, and in `Invoices.php` the correct form is **six lines above its own
+    N+1** (`:54-57`) while in `Declines.php` it is **inside the same loop** (`:75`+`:79`'s
+    `keyBy('payment_id')`, read at `:98` for `pay_link`, beside two per-row queries for the other two
+    fields). ⭐ 429's known-member corroboration fires **twice** — `CheckoutBlock:116` is ruling 208's own
+    fix and `ReconciliationDiscrepancies:54-63` is ruling 425's own member; 415's first-three check and
+    449's each-member-EXISTS both pass.
+    ⭐⭐ **The disproving measurement was taken FIRST (400, a TWENTIETH firing) and came back POSITIVE — a
+    proof IS available:** `app/tests/Modules/X-176/SchemaVisibilityTest.php:451,:456` uses
+    `DB::enableQueryLog()` / `getQueryLog()` **in a `tests/Modules/` file**, the same harness shape money's
+    tests live in, so ruling 82's *a proof that cannot fail is not a proof* is satisfiable.
+    ⛔ **RULED: RECORDED, not briefed.** Ruling 346 governs this axis and struck the unwindowed-list
+    census for reasons that still hold — *nothing false is rendered*, and *the harm is scale, an axis on
+    which this lane has measured no production data, no reported slowness and no tenant* — with every
+    affected table measured empty for every real tenant (170, 234, 117, 81, 73a, 201; re-measured, 64,
+    469). ⭐⭐ **And 346 recorded the scale half of EXACTLY THESE SCREENS as TRACK 1 ACTION 13**, because
+    a paginator is Track 2's kit and a bounded aggregate is cross-lane: **the N+1 and the unwindowed list
+    are ONE ITEM SEEN FROM TWO ENDS, because the query shape of a screen whose row count nothing bounds
+    is not decidable in this lane alone.** ⚠️ **Two of 346's four strike reasons do NOT transfer and that
+    is recorded rather than glossed** — the fix here creates no disclosure, and the defect IS provable.
+    **What carries the strike is the axis plus the cross-lane dependency, never the proof's absence.**
+    ⭐ The wave is **ready**: the seven above are its scope, `DB::enableQueryLog` its proof shape, and
+    `ReconciliationDiscrepancies:54-63` its worked example. ⛔ **Trigger for re-opening: a production
+    writer or a merge, NEVER a wave boundary** (469's shape, 472's precedent).
+
+475. **⭐⭐⭐ A QUERY BEHIND A METHOD CALL IS INVISIBLE TO A QUERY-TOKEN SWEEP — ruling 474's own
+    instrument was insufficient by construction and its sharpest member surfaced only from reading the
+    loop body (RULED by the lane supervisor 2026-09-11 03:3x).** `SyncErrorRateView:44` is
+    `$engine->errorRate($businessId, $run->id)`; the query is at `AccountingSyncEngine:139`. A
+    `grep -e "::where(" -e "->find("` over `Ui/` **cannot see it**. ⭐ That is ruling 429's seventh
+    zero-trap mechanism — *an instrument that assumes a module's code is reached through its namespace* —
+    with the assumption moved from the **namespace** to the **call site**: **a sweep for a query TOKEN
+    measures where a query is WRITTEN, never where one is ISSUED.** ⛔ So a census over SIDE EFFECTS reads
+    every loop body, and a count of token hits is a **lower bound**. Eleventh encoding in ruling 371's
+    family after a member list, a count, a line range, a layout, an excluded syntax, a value list, a
+    namespace, a substring, a declaration form and a dictated member list.
+
+476. **⭐⭐ A QUERY-SHAPED PRIVATE METHOD BESIDE A CORRECTED LOOP IS NOT THE LOOP'S DISCARDED HALF — GREP
+    ITS CALLER (RULED by the lane supervisor 2026-09-11 03:3x).** Two of ruling 474's candidates were
+    false positives and each died on one grep (400, a twenty-first and twenty-second firing).
+    `X-198/ReconciliationDiscrepancies:78`'s `private function payoutLabel()` does
+    `Payout::where(…)->find($run->payout_id)` — **the N+1 form of the very lookup the corrected loop at
+    `:62-63` reads from a `keyBy('id')` map, in the same file** — and `X-199/Credits:109`'s
+    `private function customerName()` does the same beside its own eager `whereIn` map. **Both look
+    exactly like the residue ruling 49/50(c)'s family would name.** Measured: `payoutLabel` is called at
+    `:32` and `customerName` at `:50`, **each inside an ACTION method, once per press** — per-ACTION
+    queries, not per-ROW ones, and both correct. ⭐ **The tell that separates them is the ARITY OF THE
+    CALLER, which no read of the method itself can supply.**
+
+477. **⛔ THREE FURTHER CENSUSES MEASURED AND STRUCK, ZERO BUILDABLE (measured by the lane supervisor
+    2026-09-11 03:3x; rulings 64, 95, 100, 111, 294, 324, 327, 400, 415, 429, 449).**
+    **(a) `match` without a `default` arm** — a fall-through raises `UnhandledMatchError`, a 500 rather
+    than ruling 437's raw token. The lane has **three**, all `match (true)` — **the form that can never be
+    exhaustive and therefore always needs a default** — and all three carry one:
+    `C-Billing/BillingLedgerEngine:141`, `X-120/CardPresentAction:50` (⭐ **ruling 377's own member, so
+    429's known-member corroboration fires**) and `X-199/Ui/Credits:94` (ruling 237's three-way split).
+    ⭐ Control fires at 20+ files tree-wide. ⭐ Keepable: **`match ($enum)` over every case is exhaustive
+    and needs no default; `match (true)` is never exhaustive.** ⛔ Struck.
+    **(b) `abort` in a Livewire ACTION method** — an `abort` outside `render()` returns a raw 403 to the
+    AJAX request instead of an `$error` sentence (94's family). `grep -rc -F -e "abort"` over the money
+    `Ui/` trees returns **exactly 1 for all 24 components**, and ruling 402(d) measured independently
+    that the one is `render()`'s **first statement** — the conjunction gives **zero in actions**, with
+    402(d)'s own member set returned in full (429). ⭐ Control **DISCRIMINATES**: eight out-of-lane
+    components carry **2** (X-162, X-163 ×3, X-171, X-179 ×2). ⛔ Money proposes no edit on those (5).
+    ⛔ Struck.
+    **(c) A loose `in_array` on a whitelist** — 18 members, **11 strict, 7 loose**, ⭐ and the disproving
+    measurement kills every one. `app/composer.json:9` is `"php": "^8.4"`, and **PHP 8 compares an int
+    with a non-numeric string AS STRINGS**, so the classic `in_array(0, ['won','lost'])` bypass is gone.
+    The one whitelist among the loose seven is `X-201/DisputeDefenseEngine:120`
+    (`['won','lost','defended','conceded']`, ruling 227/344's member): the file carries
+    `declare(strict_types=1)` at `:3` and the signature is `string $outcome` at `:118`, so the needle is
+    **provably a string**, none of the four values is numeric, and loose and strict are **behaviourally
+    identical** — with `DisputeOutcomeAction:15`'s **strict** `['won','lost']` upstream besides.
+    ⭐⭐ **And for the int-vs-id members the LOOSE form is the ROBUST one**: `$expanded` is a public
+    Livewire property with no `#[Locked]`, so a client-tampered `["5"]` round-trips as a numeric string
+    and `in_array(5, ['5'])` is **true** loose and **false** strict — **making it strict would be the
+    regression.** ⛔ Struck, and ⛔ never "hardened" by adding `true` across the board. ⭐ Ruling 327's
+    outcome shape a **thirty-first, thirty-second, thirty-third and thirty-fourth** time.
