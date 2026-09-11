@@ -4013,3 +4013,27 @@ and a caller-supplied state, then grants. It reads no consent record, so calling
 mints a grant from a phone number (P-068). The engine that reads `consent_records` is
 `App\Services\Consent\ConsentService::decide(Customer, …)`, Marketing by default (`:123`). A phone reaches a customer
 as `C-Sms/Actions/SmsSendAction.php:40` does. Run 160 rewires the action that way.
+
+## REV-165 — a rerouted decision proved by its route and never by its answer
+
+⛔ **§1. Run 160 moved `ReviewerContactAction` onto the legacy consent engine and proved the move with a mutation of the
+phone match. No test hands `decide()` a customer who owns the phone and has not consented (2026-09-11, my defect).**
+The three `test_g20_04` callers (`CReviewsTest.php:920`, `:980`, `:1039`) all return before `decide()` or reach its
+grant, so `if (! $decision->isGranted())` can be deleted with all three green. The input is
+`ConsentService.php:286-287` → `SendRefusalReason::NoConsentRecord` (`'no_consent_record'`, `SendRefusalReason.php:146`),
+behind `:268-269`'s `RegistryNotLoaded`, which is why the fixture must still load the registers. **RULED: a brief that
+reroutes a decision through an engine names the engine's refusal as a test of its own, with the input that produces
+it. A mutation of the route proves the route; only a refusal test proves the engine's answer is read.** The sha was
+pushed: the change is a tightening, and the old code sent on a `consent_records` row of any state for a different human.
+
+⚠️ **§2. A fixture copied from `SendRequestedListenerTest` (`use DatabaseTransactions;`, `:36`) into `CReviewsTest`
+(no trait, `:56`) commits what the precedent rolls back**: three `SuppressionRegistry` loads, two `PlatformSetting`
+rows and a credit purchase. Measured harmless today (`RegistryNotLoaded` is referenced only by `Pest.php`; the
+quiet-hours seeds are `21:00`/`08:00`, `DefaultsManifest.php:820`/`:826`). **RULED: a brief that points a fixture at a
+precedent names any isolation difference between the two files.**
+
+⛔ **§3. The CSAT slice has a plan guard the staged brief never read.** `GOAIEZ-MASTER-PLAN.md:32254`: CSAT · NPS ·
+post-call survey, L3, *"a survey fires after a bad call and reads as taunting"*, **"suppressed on any conversation
+with an open escalation, asserted"**. No `Schema::create` of an escalation table exists. `BRIEF-r159-csat.md` is
+retired, run 161 measures the store (writer, reader and key, each at a `file:line`), and run 162 builds the listener
+with the arm known.
