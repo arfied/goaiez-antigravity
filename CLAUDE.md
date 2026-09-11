@@ -17878,3 +17878,33 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
    - **Population.** Ruling 581's is empty of buildable members.
 
    **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty coder wave to avoid an idle tick is what rulings 95, 100 and 111 forbid. No gate ran this tick: `HEAD`'s `app/**` is unchanged since the last supervisor gate, so the floor stays ruling 564's.
+
+583. **⭐ The FORMAT-STRING and DATE-PARSE census, the two shapes the 16:0x addendum named as unmeasured after ruling 581: all 42 `sprintf` calls in the eight money modules take a LITERAL format string, zero take a variable or a constant template, and zero owner strings reach `Carbon::parse`/`strtotime`/`createFromFormat`. The one owner-typed date build and the one owner-typed `number_format` are each guarded before they run. Zero buildable (measured by the lane supervisor 2026-09-11 18:5x, by `date` `18:50`; rulings 207, 262(b), 294, 324, 327, 328, 389, 407, 415, 416, 429, 449, 567, 575, 581).** A `sprintf($fmt, …)` whose format comes from input turns a `%` in that input into a format directive (an `ArgumentCountError` or wrong text), and a `Carbon::parse($input)` accepts strings like `next tuesday`, so either would be a parser boundary of ruling 579's kind.
+   **Instruments, quoted (300)**, each over the eight money module trees:
+   - `grep -rho -F -e "sprintf("` `| wc -l` → **42** occurrences; `-e "sprintf('"` → **27**, the single-line literal formats.
+   - `grep -rn -F -e "sprintf(" | grep -v -F -e "sprintf('"` → **15** lines, every one a call whose format starts on the next line. ⚠️ Ruling 567's hiding direction checked: the occurrence counts (42 = 27 + 15) close exactly, so no line carrying two calls was dropped.
+   - `grep -rn -A 1 -F -e "sprintf("`, filtered to context lines → all **15** continuation lines are quoted literals (e.g. `ArEngine.php:123`, `CardScreen.php:75`, `InvoiceEngine.php:168`), read hit by hit (262(b)).
+   - ⭐⭐ **An instrument defect, caught before it was trusted.** The first variable-format term was `sprintf(.[a-zA-Z]`, where ruling 207's bare `.` stands for `$`. It returned **20** money lines, and every one was a `sprintf('The …` literal: the `.` also matches the opening quote. So a bare `.` is a stand-in for `$` only where the next character class cannot also follow a quote. Re-written as `sprintf(.[a-zA-Z_]*[,)]` (an identifier followed directly by `,` or `)`, which a quoted literal cannot produce), it returns **0** in money.
+   - `grep -rn -F -e "Carbon::parse(" -e "createFromFormat(" -e "strtotime(" -e "new DateTime"` → **0**. `-e "Carbon::create" -e "Carbon::make(" -e "date_create" -e "Carbon::createFromTimestamp"` → **3**, all `Carbon::createFromDate`.
+   ⭐ **Controls fire and discriminate.** `sprintf(.[a-zA-Z_]*[,)]` over `app/app` → **2**: `Console/Commands/NumberStateCommand.php:132` `sprintf($success, …)` and `X-183/Actions/ContentIllustrateAction.php:13` `sprintf($promptTemplate, $topic)`. `-e "sprintf(self::"` over `app/app` → **2** constant templates (`Jobs/SendAgentNudgeJob.php:264`, `Services/Agent/AgentComposer.php:395`). `Carbon::parse(`/`createFromFormat(`/`strtotime(` over `Services`, `Livewire` and `Modules` → **12+** files (`PlanOffers.php`, `AuthorizeNetWebhooks.php`, `GbpReview.php`, …). ⛔ Money proposes no edit on any of them and asserts no defect (5): their inputs were not traced.
+   **Each member's safety, named (328):**
+   - The 42 `sprintf` formats are literals, so input only ever reaches the VALUE arguments, where `%` is inert.
+   - `CardScreen.php:98` and `CardExpiringScanAction.php:26` build dates from `exp_year`/`exp_month` columns cast `integer`.
+   - ⭐ **Known member (429):** `CardPresentAction.php:34` builds a date from owner-typed `int $expMonth`/`int $expYear`, and `:28` refuses a month outside 1–12 and `:31` a year below 1000 before it runs, so `createFromDate` never overflows a month or reads a two-digit year. That is ruling 389's own guard.
+   - ⭐ **Known member (429):** `ArEngine.php:124` `number_format($capCents)` formats an owner-typed value, and `$capCents` is a typed `int` behind `:117`'s and `:121`'s bounds. That is ruling 416's own message.
+   - ⚠️ The `number_format(.this` term is **dead tree-wide** (zero in `Modules` and `Livewire`), so it proves nothing on its own (573). The owner-typed `number_format` half rests on the known member above, not on that term.
+   415's first-three check passed on both censuses; 449's each-member-exists check passed, every member printed from a file.
+   ⛔ Struck, not to be re-run. ⚠️ **Trigger:** a `sprintf`/`vsprintf` in the lane taking a non-literal format, or a `Carbon::parse`/`strtotime`/`createFromFormat` taking owner input. Ruling 327's outcome shape a **seventy-third** time.
+   ⭐ **The generalisable half is ruling 207's workaround, turned once more (573 was the first):** a bare `.` for `$` also matches `'` and `"`, so a term meaning "a variable here" returns every quoted literal as a false member, and its non-zero count looks like a finding. Anchor the character after the stand-in to a class a quote cannot satisfy.
+
+584. **⛔ SIXTY-SECOND consecutive HOLD (RULED by the lane supervisor 2026-09-11 18:5x, by `date` `18:50`).** All four lift conditions were measured this tick (269, 272, 323), each case decided on mtimes (494):
+   - **Owner.** `OWNER.md`'s newest heading is still `## OWNER RULING — 2026-09-09 09:02` (136), mtime `09-09 09:02:03`, older than `REVIEWS.md` (`16:01:59`).
+   - **Coder.** `--check` returned `CODER DEAD`.
+   - **Mailbox.** `REPORT.md` (`07:15:21`) and `BRIEF.md` (`07:07:27`) are both older than `REVIEWS.md`.
+   - **Cadence, all three ✗.** After `git fetch --no-write-fetch-head origin`, `origin/main` = **`bd3e9c5f`**, unmoved (`git diff --name-status bd3e9c5f origin/main | wc -l` = 0). `git rev-list --count HEAD..origin/main` = **44**. `git diff --stat dca743e8 origin/main -- app/app/Doctor coder-bin .claude/hooks` is empty. `git merge-base HEAD origin/main` = **`dca743e8`**.
+   - **Track 1.** No answer to ACTION 13–28.
+   - **Population.** Ruling 583's is empty of buildable members.
+
+   ⚠️ The wall clock moved 2h50m since the last tick (`16:00` → `18:50`) and nothing in the lane or on `origin/main` moved with it.
+
+   **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty coder wave to avoid an idle tick is what rulings 95, 100 and 111 forbid. No gate ran this tick: `HEAD`'s `app/**` is unchanged since the last supervisor gate, so the floor stays ruling 564's.
