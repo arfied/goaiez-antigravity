@@ -4037,3 +4037,24 @@ post-call survey, L3, *"a survey fires after a bad call and reads as taunting"*,
 with an open escalation, asserted"**. No `Schema::create` of an escalation table exists. `BRIEF-r159-csat.md` is
 retired, run 161 measures the store (writer, reader and key, each at a `file:line`), and run 162 builds the listener
 with the arm known.
+
+## REV-166 — a reader with no caller, and an idempotency key shared by emitters that cannot see each other
+
+⚠️ **§1. A store measurement named a reader nobody calls (2026-09-11, run 161).** Item 5 cited
+`QaMarketingSuppressionCheckAction.php:18` as what reads an open `qa_ticket`. The citation lands, and
+`grep -rn QaMarketingSuppressionCheckAction app/app app/routes` shows only its declaration. Its callers are
+`X181Test.php:70`/`:83`. The same grep that found `qa_tickets` also listed `conversations.escalated_at`: the plan's
+own noun, a cast at `Conversation.php:79`, no writer, keyed by `customer_id`. Nobody opened it. **RULED: a
+store-measurement row names the outermost production caller of both its writer and its reader.** A reader with only
+test callers is written as such. REV-161 §1 asked who writes a value. This is the same question asked of the reader.
+⭐ When the plan's noun has no store, look for the lane's own verb. C-Reviews calls opening a QA ticket `escalateToQa`
+(`ReviewsQaRequests.php:193`, `QaReport.php:62`), and X-181's anchor (plan `:35238`, P-205) makes an open ticket
+suppress every GROW toward that person.
+
+⛔ **§2. Before adding an emitter, read how the consumer builds its idempotency key.** C-Sms's occasion is
+`'csms:'.$event->compositionId` (`SendRequestedListener.php:56`). `SendKey::for` hashes tenant, channel, recipient
+and occasion, with no emitter and no purpose (`SendKey.php:104-113`). `outreach_messages.send_key` is unique, and
+`PlatformMessageSender.php:289-304` returns a lost claim as `duplicate`. So a CSAT for ticket N and a review ask for
+request N to one phone dedupe each other silently. Three emitters already share that id space. **RULED: an emitter is
+not namespaced locally to dodge another module's key scheme** (REV-131 §4). The collision is filed to Track 1, and
+any stamp the emitter writes is named for what it can observe. `csat_requested_at` means *requested*, never *sent*.
