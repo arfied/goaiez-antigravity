@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-11T14:16:35",
+ "updated": "2026-09-11T15:02:44",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1363,6 +1363,12 @@
    "chose": "ReviewerContactAction decides a reviewer's contactability with the legacy ConsentService::decide on the customer that owns the person's phone, Marketing purpose; it never reads consent_records by review_requests.customer_id (a people id) and never uses X-204's consent.decide, which reads no consent record",
    "at": "2026-09-11T14:16:35",
    "ruling": "R245"
+  },
+  {
+   "module": "C-Reviews",
+   "chose": "subscribes to X-181's ticket.resolved (AskForCsatOnTicketResolved) and requests a CSAT ask only for a person with a phone and no other open qa_ticket (X-181 isGrowSuppressed, P-205, the plan :32254 guard); message class marketing; compositionId is the ticket id; csat_requested_at is stamped last and records that a send was requested, never that one was delivered",
+   "at": "2026-09-11T15:02:44",
+   "ruling": "R245"
   }
  ],
  "notes": [
@@ -1577,6 +1583,10 @@
   {
    "at": "2026-09-11T14:37:02",
    "note": "run 160 correction: the run 160 note lost a field; r160-gate.log \u00a77 reads tests 2560 \u00b7 passed 2551 \u00b7 FAILED 7 \u00b7 errors 2"
+  },
+  {
+   "at": "2026-09-11T15:02:44",
+   "note": "run 162: CSAT on ticket.resolved built (AskForCsatOnTicketResolved); red first r162-red.txt tests 4 passed 3; green 4/4; neighbours r162-neighbours.txt tests 55 passed 55; M1/M2/M3 red: test_g20_05_csat_on_resolve_is_suppressed_while_another_ticket_is_open / test_g20_05_csat_on_resolve_is_silent_without_a_phone_or_a_person / test_g20_05_csat_on_resolve_is_silent_without_a_phone_or_a_person; answer half NOT BUILT test added; send-key collision recorded r162-sendkey.txt; gate tests 2565 \u00b7 passed 2554 \u00b7 FAILED 8 \u00b7 errors 3"
   }
  ],
  "resolved": [
