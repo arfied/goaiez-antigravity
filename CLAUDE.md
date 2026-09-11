@@ -16934,3 +16934,55 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
 
     **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty wave to avoid an idle tick is what
     rulings 95, 100 and 111 forbid.
+
+532. **⭐ The NULL-AGGREGATE census: 7 query or collection aggregates in the lane, all `sum`, and none can return
+    null. Zero buildable. Ruling 190's "maximum" is not a `max()` call, so a census keyed on the method name cannot
+    see it (measured by the lane supervisor 2026-09-11 09:4x, by `date` `09:41`).** The predicate, stated for the
+    first time: *an aggregate (`max`/`min`/`avg`/`sum`) whose empty-set result is null, reaching typed arithmetic
+    or a typed parameter under `strict_types=1`.* It is the null half of the TYPE family that rulings 524–530 closed
+    at every seam, applied inside a method instead of across one.
+    **Instrument, quoted (300):** `grep -rn -F -e "->max(" -e "->min(" -e "->avg(" -e "->sum("` over the eight module
+    trees (one grep, eight directories) → **7**. All are `->sum(`, and there are **zero** `->max(`, `->min(` or
+    `->avg(`. ⭐ **Positive control fires:** the same instrument over `app/app/Services app/app/Models
+    app/app/Livewire` returns **16** files.
+    **Vendor, measured rather than assumed (416, 419, 440):** `Collections/Traits/EnumeratesValues.php:582-588` is
+    `return $this->reduce(fn ($result, $item, $key) => $result + $callback($item, $key), 0);`, so a Collection sum
+    over an empty set is `0`. `Database/Query/Builder.php:4088-4092` is `return $result ?: 0;`, so a Builder sum is
+    never null either. `Builder::max()` at `:4077-4080` returns `aggregate()` bare, which is null on an empty set.
+    **Each member's safety, named (328):**
+    - Six are Collection sums over collections already fetched: `X-173/SyncErrorRateView:49,:50` (both `(int)`-cast),
+      `X-198/SameAccount:76` (over `groupBy` groups of the `->get()` at `:68`), `SameAccount:85` (over
+      `$payouts->where(…)`, a Collection from `:69`'s `->get()`), `X-199/Unpaid:80`, and `X-199/MoneyPaidToday:54`.
+    - One is a Builder sum: `C-Billing/RevenueRecovery:76`. It is `(int)`-cast at `:73` and fed into `intdiv` at `:77`.
+    ⭐ **Known member (429), read rather than grepped:** ruling 190 recorded that `InvoiceNumber::next()` *"re-reads
+    the maximum under `lockForUpdate()`"*. It is `->orderByDesc('invoice_number')->lockForUpdate()->first()` at
+    `:22-26`, with an explicit null branch at `:28-32` (`$nextNumber = 1`). So the lane's one maximum read handles
+    its empty case. It is invisible to a `->max(` instrument by construction (371's family: a census keyed on a
+    method name). Its shape, an ordered singular read, was already swept by 197 and 435.
+    ⭐ **The looser instrument** (`-e "max(" -e "min(" -e "sum(" -e "avg("` over X-117's and X-211's `Domain/` and
+    `InvoiceNumber.php`) returns only `ArEngine:69` and `:86`. Both are PHP's `min()` over two non-null integers,
+    ruling 221's own cap arithmetic. 415's first-three check passed. 449's each-member-exists check passed.
+    ⛔ Struck, not to be re-run. ⚠️ **Trigger:** a new `->max(`, `->min(` or `->avg(` in the lane. Ruling 327's
+    outcome shape a **fifty-first** time.
+    ⭐ **The generalisable half:** `sum` is safe on both classes that carry it, and `max`/`min`/`avg` are null on an
+    empty set on both. So the hazard is decided by the aggregate's NAME, not by whether the receiver is a Collection
+    or a Builder.
+
+533. **⛔ THIRTY-EIGHTH consecutive HOLD (RULED by the lane supervisor 2026-09-11 09:4x, by `date` `09:41`).** All
+    four lift conditions were measured this tick (269, 272, 323), each case decided on mtimes (494):
+    - **Owner.** `OWNER.md`'s newest heading is still `## OWNER RULING — 2026-09-09 09:02` (136), mtime
+      `09-09 09:02:03`.
+    - **Coder.** `--check` returned `CODER DEAD`.
+    - **Mailbox.** `REPORT.md` (`07:15:21`) and `BRIEF.md` (`07:07:27`) are both older than `REVIEWS.md`
+      (`09:30:46`).
+    - **Cadence, all three ✗.** After `git fetch --no-write-fetch-head origin`, `origin/main` =
+      **`46afc022`**, unmoved. `git rev-list --count HEAD..origin/main` = **19**.
+      `git diff --stat dca743e8 origin/main -- app/app/Doctor coder-bin .claude/hooks` is empty.
+      `git merge-base HEAD origin/main` = **`dca743e8`**, this lane's own pushed supervisor tip, and
+      `git diff --name-status dca743e8 origin/main` is the 7 per-track paths plus X-102's three (504).
+    - **Track 1.** No answer to ACTION 13–25.
+    - **Population.** Ruling 532's is non-empty and not buildable.
+
+    **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty wave to avoid an idle tick is what
+    rulings 95, 100 and 111 forbid. ⚠️ `app/CLAUDE.md` came into context again this tick. It is Laravel Boost
+    boilerplate and was not followed.
