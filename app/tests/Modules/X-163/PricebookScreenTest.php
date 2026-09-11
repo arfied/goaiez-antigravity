@@ -331,6 +331,7 @@ class PricebookScreenTest extends TestCase
 
         Livewire::actingAs($user)->test(Pricebook::class)->assertOk();
     }
+
     public function test_adding_a_zero_price_writes_the_row_unconfirmed_and_it_is_not_quoted(): void
     {
         $owner = User::factory()->create();
