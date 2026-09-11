@@ -850,3 +850,4 @@
 - `2026-09-10T21:09:01` note: run 156 item 1: Arm A — getModel() exists. Mutation went red tests 15 · failed 2, restored to green tests 15 · passed 15.
 - `2026-09-10T21:09:01` note: run 156 item 3: Arm A — test_home_renders_today goes green, risky drops to 0.
 - `2026-09-10T21:09:01` note: run 156 item 4: Arm A — Job completion time is reachable at X-121's completed_at column using EntityReadAction.
+- `2026-09-10T21:33:58` note: run 157: Arm B — The JobCompleted event carries no csatScore, and the column was dropped from review_requests and qa_tickets on 2026-09-09. Failing test added.

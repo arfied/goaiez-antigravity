@@ -1547,6 +1547,10 @@
   {
    "at": "2026-09-10T21:09:01",
    "note": "run 156 item 4: Arm A \u2014 Job completion time is reachable at X-121's completed_at column using EntityReadAction."
+  },
+  {
+   "at": "2026-09-10T21:33:58",
+   "note": "run 157: Arm B \u2014 The JobCompleted event carries no csatScore, and the column was dropped from review_requests and qa_tickets on 2026-09-09. Failing test added."
   }
  ],
  "resolved": [
