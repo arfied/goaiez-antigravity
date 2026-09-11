@@ -221,7 +221,7 @@ class CReviewsScreensTest extends TestCase
         $this->assertNotNull($ticket->resolved_at);
     }
 
-    public function test_tickets_resolve_leak(): void
+    public function test_tickets_resolve_refuses_an_unowned_ticket_without_disclosing(): void
     {
         $otherBiz = self::provisionTenant(['name' => 'Other Biz']);
         $req = ReviewRequest::create(['business_id' => $otherBiz->id, 'rating' => 2]);
@@ -230,11 +230,17 @@ class CReviewsScreensTest extends TestCase
 
         try {
             Livewire::test(Tickets::class, ['businessId' => $this->bizId])
-                ->call('resolve', $ticket->id, 'fixed the scheduling');
+                ->call('resolve', $ticket->id, 'fixed the scheduling')
+                ->assertDontSee('No query results for model');
             $this->fail('resolve accepted an id this business cannot see.');
         } catch (ModelNotFoundException $e) {
             // the refusal: propagating renders a 404, which discloses nothing
         }
+
+        Tenancy::set($otherBiz->id);
+        $ticket->refresh();
+        $this->assertNull($ticket->resolved_at);
+        $this->assertNotEquals('resolved', $ticket->status);
     }
 
     public function test_loss_alerts_mount_and_empty(): void
