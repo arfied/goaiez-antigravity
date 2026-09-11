@@ -1531,6 +1531,10 @@
   {
    "at": "2026-09-10T20:12:20",
    "note": "run 154: nothing moved, X-181 sites QaQueueSlaDueAt, Ticket, and Resolution were all reachable and proved leaky, then repaired."
+  },
+  {
+   "at": "2026-09-10T20:41:54",
+   "note": "run 155: the two reddened panel tests are replaced by assertions of refusal without disclosure; item 4 proves ReviewsQaRequests::sendRequest reads no customer_id from its form; item 5 locates the risky test in X-110's TodayTest."
   }
  ],
  "resolved": [
