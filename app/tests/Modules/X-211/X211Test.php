@@ -489,4 +489,86 @@ class X211Test extends TestCase
 
         $this->assertSame(1, ArCollectionsPackage::where('business_id', $biz->id)->where('invoice_id', $invoice->id)->count());
     }
+
+    public function test_a_concurrent_escalation_is_absorbed_into_one_escalation_and_one_receivable_state(): void
+    {
+        // This test turns on X211Test being a CLASS-BASED PHPUnit file, which Pest's
+        // ->use(RefreshesTenantDatabase::class)->in('Modules') binding does NOT reach, so the racer's
+        // rows COMMIT on pgsql_migrate and recordReason() can see them. If TestCase ever binds a
+        // refresh trait directly, this test stops proving anything -- while very likely still passing.
+        $biz = TestCase::provisionTenant(['name' => 'Escalation Race Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'R', 'last_name' => 'R']);
+        $invoice = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-RACE-01',
+            'total_cents' => 20000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(5)->toDateString(),
+        ]);
+
+        // A second writer lands the same two rows between firstOrCreate()'s read and its insert. It
+        // writes on pgsql_migrate, a separate session, so it commits rather than joining
+        // recordReason()'s open transaction. RLS is FORCED and constrains the owner role too.
+        $racer = DB::connection('pgsql_migrate');
+        $racer->statement("SET app.business_id = '{$biz->id}'");
+
+        ArDunningAction::creating(function (ArDunningAction $action) use ($racer, $biz, $invoice): void {
+            if ($action->action !== 'escalate_to_human') {
+                return;
+            }
+
+            $racer->table('ar_dunning_actions')->insert([
+                'business_id' => $biz->id,
+                'invoice_id' => $invoice->id,
+                'action' => 'escalate_to_human',
+                'reason' => 'Escalated by the racer',
+            ]);
+        });
+
+        ReceivableState::creating(function () use ($racer, $biz, $invoice): void {
+            $racer->table('receivable_states')->insert([
+                'business_id' => $biz->id,
+                'invoice_id' => $invoice->id,
+                'status' => 'overdue',
+            ]);
+        });
+
+        try {
+            app(ArEngine::class)->recordReason($biz->id, $invoice->id, 'complaint');
+        } finally {
+            ArDunningAction::flushEventListeners();
+            ReceivableState::flushEventListeners();
+        }
+
+        // The loser absorbs the winner's rows: one escalation, one receivable state.
+        $this->assertSame(
+            1,
+            ArDunningAction::where('business_id', $biz->id)
+                ->where('invoice_id', $invoice->id)
+                ->where('action', 'escalate_to_human')
+                ->count()
+        );
+        $this->assertSame(
+            1,
+            ReceivableState::where('business_id', $biz->id)->where('invoice_id', $invoice->id)->count()
+        );
+
+        // The escalation that survived is the racer's, and recordReason()'s update landed on the
+        // receivable state it absorbed.
+        $this->assertSame(
+            'Escalated by the racer',
+            ArDunningAction::where('business_id', $biz->id)
+                ->where('invoice_id', $invoice->id)
+                ->where('action', 'escalate_to_human')
+                ->value('reason')
+        );
+        $this->assertSame(
+            'escalated',
+            ReceivableState::where('business_id', $biz->id)->where('invoice_id', $invoice->id)->value('status')
+        );
+    }
 }
