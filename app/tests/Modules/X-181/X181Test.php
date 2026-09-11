@@ -84,6 +84,11 @@ class X181Test extends TestCase
         $this->assertFalse($isSuppressedAfterResolve, 'Resolved ticket must lift the marketing suppression');
     }
 
+    public function test_anchor_p205_the_review_ask_is_not_suppressed_by_an_open_ticket(): void
+    {
+        $this->fail('NOT BUILT: P-205 — an open qa_ticket suppresses only the CSAT ask (AskForCsatOnTicketResolved); the C-Reviews review ask dispatches SendRequested at ReviewRequestAction.php:112 without consulting isGrowSuppressed, and plan :661 puts the arbiter in the SPINE with no special case in C-Reviews (:35238); no spine service reads qa_tickets.');
+    }
+
     /**
      * [G20-16] the triage routing that §37 made the owner law
      */
