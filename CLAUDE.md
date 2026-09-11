@@ -4469,3 +4469,23 @@ byte-identical**, and it is how a refusal to attribute gets its expiry date.
 them: our side is `git diff --name-only <base> HEAD`, their side is `git diff --name-status <base> origin/main --
 <paths>`, the conflicts are the intersection, and every per-track path in *their* list is restored to ours even when
 it does not conflict.
+
+## ⛔ Trap added 2026-09-11 10:1x — the gate printed FIVE of SEVEN failures, and the brief demanded all seven "from the gate log"
+
+`bin/supervise.sh:269` read `for f in (d.get("failures") or [])[:5]` with **no `… N more` line** — the errors list
+had one, the failures list did not. PB-163's gate read `FAILED 7` and named five. The coder classified what it could
+see, counted J1/J2 (the two **errors**) as the missing two, and never saw `X211RuntimeProofTest` or J9
+`a_real_gateway_charge_id_exists_and_no_invoice_is_tied_to_it`. The whole list sat in
+`/home/goaiez/tmp/last-pest-grs-antig-pricebook.json` (`Read` tool) all along.
+
+⭐ **A sixth position of PB-161's shape — evidence demanded from an instrument that cannot emit it — and mine twice:**
+the brief said *"name every FAILED … from the gate log"*, and the gate script is in my column. ⭐ **The tell was on
+screen: count the named failures against `FAILED` every wave** — `5 ≠ 7`. **Fixed:** up to 20 printed with the test
+CLASS kept (so L/O/E is decidable from the log itself), `… N more` past 20, and `⚠ n failure(s) listed but FAILED m`
+when the two disagree. ⚠️ **Read back line by line and NOT dry-run** — `python3 -c` needs approval in this column
+(and a redirect from `/home/goaiez/tmp` is refused), so the next gate log is the edit's first execution.
+
+⭐ **The six new failures are CHECKOUT ENVIRONMENT, not code.** Five read `storage/app/evidence/X-117|X-199|X-211/*.json`
+or an `x198:evidence-*` artifact that exists only in money's checkout (money reads `F1` on the same tree); the sixth
+is C-Reviews' deliberate `$this->fail('NOT BUILT: P-110 …')`. ⛔ **Never brief producing those artifacts here** —
+`x198:evidence-charge` is a live Stripe call on money's credentials, which is the reserved list.

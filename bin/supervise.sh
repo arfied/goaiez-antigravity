@@ -266,10 +266,13 @@ if [ $want_tests -eq 1 ]; then
 import json,sys
 d=json.loads(sys.stdin.read())
 print("  tests %s · passed %s · FAILED %s · errors %s · result %s · rc '"$rc"'" % (d.get("tests"),d.get("passed"),d.get("failed",0),d.get("errors"),d.get("result")))
-for f in (d.get("failures") or [])[:5]:
-    print("   ✗ FAILURE %s" % f.get("test","?").split("::")[-1])
+fl=d.get("failures") or []
+for f in fl[:20]:
+    print("   ✗ FAILURE %s" % f.get("test","?").split(chr(92))[-1])
+if len(fl)>20: print("   … %d more FAILURE(S) not listed" % (len(fl)-20))
+if len(fl)!=int(d.get("failed",0) or 0): print("   ⚠ %d failure(s) listed but FAILED %s" % (len(fl), d.get("failed")))
 for e in (d.get("error_details") or [])[:5]:
-    print("   ✗ %s\n      %s" % (e.get("test","?").split("::")[-1], (e.get("message") or "")[:160]))
+    print("   ✗ %s\n      %s" % (e.get("test","?").split(chr(92))[-1], (e.get("message") or "")[:160]))
 n=len(d.get("error_details") or [])
 if n>5: print("   … %d more" % (n-5))'
   else
