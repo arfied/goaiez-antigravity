@@ -3633,3 +3633,181 @@ not a move (REV-135 §9), re-derived at merge time, and nothing here authorises 
 `post-rewrite` hook (§2a) is standing. **TRACK 1 ACTION, unchanged:** the `app/tests/TestCase.php`
 self-deadlock and its box-wide connection-slot exhaustion (REV-150 §1, REV-151 §1/§3), `C-Reviews, X-118:
 'win.first' has 2 emitters`, and the `X-102/ChatDoorTest` wrong-trait repair (REV-149 §1).
+
+## REV-160 — a post-condition with no subject, and a paste-ready string that crowded out nine citations
+
+⭐ **Run 155 is a `PASS-WITH-NOTES` and `c44d6385` is pushed — 7 commits.** The two reddened panel tests are
+replaced by assertions of a refusal that discloses nothing; `errors 16 → 13`, `passed 2449 → 2452`, `tests`
+unchanged — two renames plus the Authorize.Net flap leaving on its own, which is REV-140 §3's *never predict
+a bare `passed` absolute* illustrated again in passing. The failing set is **exactly the admitted nineteen**
+(8 baseline + 11 traced `42501`), per-suite reconciling to the union `1 + 420 + 2038 + 12 = 2471`. Hard stops
+held, stamp matches `runtime_build`, pint `passed`, phpstan `errors 0`, six of six artefacts carry a command
+echo. Ordering held for the seventeenth run running. REV-129 §3 satisfied: `git diff e498c627 c44d6385`
+touches `.agents/state/**` and nothing else.
+
+### ⛔ §1. THE POST-CONDITION REV-158 §1 ASKED FOR IS VACUOUS ON AN ABSENT ID, AND IT IS THE ONLY ASSERTION THE TAKEN PATH EXECUTES
+
+`X181ScreensTest.php:171-197` proves a refusal by catching the escape, then closes with
+`$this->assertNull(QaTicket::find(0))` — and `assertDontSee`/`$this->fail` **never run** on the healthy path,
+because the exception is thrown inside `->call()`. So the only assertion PHPUnit counts is one that was true
+before the call, is true after it, and would be true had the component done anything else whatever. A row
+with id `0` cannot exist.
+
+⭐ **The test is NOT green-by-construction, and that distinction is why this is a note.** Restore the blanket
+catch and `assertDontSee` reddens on the leak; restore it with a generic message and `$this->fail` reddens.
+The teeth are real. What is empty is the assertion that gets *counted* — which is precisely the property that
+keeps it out of the `risky` column, so REV-158 §1's own instrument reads green on an empty statement.
+
+⛔ **My defect, and it is the case REV-158 §1 did not cover.** That ruling was written against
+`CReviewsScreensTest.php:375-395`, where a **real row** is refreshed and proved unchanged — the same sound
+shape as run 154's cross-tenant tests at `TicketScreenTest.php:77-80`. An **absent-id** test has no row to be
+unchanged, and the ruling handed over the word "post-condition" without saying what to do when there is
+nothing to post a condition about.
+
+**RULED: where a catch-the-escape test has no row to assert against, the caught EXCEPTION is the observation,
+and the test asserts a property of it** — `assertSame(QaTicket::class, $e->getModel())`: the refusal came from
+the lookup this screen was asked to make, not from an unrelated failure. ⛔ **Do not seed a row to create a
+subject** — that converts the test into the cross-tenant test the module already has, and loses the absent-id
+case.
+
+⭐ **Ninth instance of the axis sub-species, and the first where the axis is a WORD rather than a mechanism.**
+REV-138 §4 fixed a search's SCOPE and left its VOCABULARY · REV-140 §4 fixed a grep's TIMING and left the
+GREP · REV-143 fixed TRACKEDNESS and left LOADABILITY · REV-150 §2 moved a PRODUCER and left three CONSUMERS ·
+REV-151 §2 fixed an artefact's LOCATION and left its CLOCK · REV-152 §1 fixed the CLOCK and left the mid-wave
+case · REV-158 §2 moved the schema line's SOURCE and dropped its PROPERTY · REV-159 §4 got a check's SUBJECT
+right and its SCOPE one directory too narrow · here a ruling named the right INSTRUMENT and left the case
+where the instrument has no subject.
+
+### ⛔ §2. THE LADDER READ FROM ITS BLIND SIDE — A PASTE-READY STRING FOR *ONE* FIELD CROWDED OUT THE NINE THAT HAD ONLY A CITATION (my defect)
+
+```
+$ bash bin/supervise.sh          # §3, at tick time
+    ⛔ REPORT.md is missing 9 of 10 rule-10 header field(s):
+       COMMITS DECIDED DOCTOR MODULES REFUSED STAGES STATUS TESTS UNRESOLVED
+$ grep -n 'rule-10 header' .agents/supervisor/r155-gate.log
+  115:  ✓ REPORT.md carries all 10 rule-10 header fields      ← about run 154's report
+```
+
+Run 155's brief §8 gave REV-140 §2's per-item rule and REV-158 §2's paste-ready `RAW` literal, and **named no
+other field**. `RAW` is the one field that arrived. The coder wrote exactly what the section specified.
+
+⭐ **This lane has measured the ladder twelve times — *a paste-ready string beats a citation, a redirect beats
+a paste-ready string, a CHECK beats a redirect* — and every previous instance was a win. This is its cost:
+inside one section, the field with a literal DISPLACES the fields with none.** Structural, not careless, in
+the same way REV-138 §2 said of `STAGES: none moved`.
+
+**RULED: a brief's report section carries the WHOLE ten-field header as a paste-ready skeleton, never one
+line of it.** REV-140 §2's per-item lines sit **beneath** the header, not in place of it. ⚠️ The check needs
+no change — it named all nine on its first firing against a real report, which is the instrument standard.
+
+### ⛔ §3. REV-158 §3a WAS HALF WRONG: C-REVIEWS HAS AN ORIGINATOR, IT IS REGISTERED, AND IT IS TESTED
+
+REV-158 §3a ruled `ReviewsQaRequests::sendRequest` *"dead by construction"* and generalised it to *"the
+missing half is the caller"* — **without ever grepping for a caller**. Run 155's item 4 inherited that framing
+and decided Arm B on a **blade** grep, while the first section of its own artefact said otherwise
+(`r155-customer.txt:2`). Re-measured this tick, tree-scoped, command beside each result:
+
+```
+$ grep -n 'function \|customer' app/app/Modules/C-Reviews/Ui/ReviewsQaRequests.php
+  81: sendRequest()      → :105  handle($this->businessId, null, …)        ← the manual form, the ONLY null
+  119: resendAsk(int $id) → :131  handle($this->businessId, $req->customer_id, …)
+$ grep -n 'wire:click\|wire:submit' …/views/reviews-qa-requests.blade.php
+  40: wire:submit="sendRequest"     129: wire:click="resendAsk({{ $r->id }})"   ← "Resend ask", a real button
+$ grep -rn 'ReviewRequestAction' app/app/ app/routes/ --include=*.php --include=*.blade.php
+  Listeners/AskForReviewOnJobCompleted.php:14
+$ grep -n 'JobCompleted\|AskForReview' app/app/Modules/C-Reviews/ModuleServiceProvider.php   → :29 · :30
+$ grep -rn 'Event::dispatch(new JobCompleted' app/app/
+  X-171/Actions/JobStateAction.php:35        X-171/Actions/ReplayOfflineSyncAction.php:86
+$ grep -n 'new JobCompleted' app/tests/Modules/C-Reviews/CReviewsTest.php
+  792 · 812 · 815 · 837 · 840 · 855          ← six real dispatches, one with a null personId
+```
+
+**The chain is complete end to end** and the plan settles the design rather than leaving it open:
+`GOAIEZ-MASTER-PLAN.md:33851` — *"Each `Job` row emits `job.completed`. **`C-Reviews` subscribes to
+`job.completed`**"* — and `:33271`, *"on `ticket.resolved` the ask fires again"*. **The module originates
+through the listener; the screen resends.** `sendRequest`'s `null` is not a missing caller; it is a manual
+surface the law does not have.
+
+**RULED: a fork arm is decided by the instrument the arm is ABOUT.** A blade grep answers where a customer is
+*typed*, never where one comes *from*. ⭐ Tenth instance of *a correct statement present in the tree and not
+read back*, and the fourth where the statement is inside the artefact the report was quoting (REV-132's
+erratum, REV-137 §2, REV-154 §1, here).
+
+### ⭐ §4. THE FIVE-WAVE `RISKY 1` IS THIS LANE'S, IS ONE TEST, AND IS THE PROJECT FIELD NOTE POINTED AT ITSELF
+
+`r155-risky-lane.txt`: C-Reviews `69/69` clean, X-181 `25/25` clean, **X-110 `35/35` with `"risky":1`**. A
+full read of all twelve X-110 test files — 35 methods, matching the artefact exactly — finds one method with
+no assertion of any kind:
+
+```
+$ git show HEAD:app/tests/Modules/X-110/TodayTest.php     # :56-64
+  public function test_home_renders_today(): void { … $this->actingAs($owner)->get('/home'); }
+```
+
+**A real routed `GET` whose response is discarded** — the project `CLAUDE.md` field note in its most literal
+form: *"Any new screen needs one real `GET` asserting `assertOk()`."* The test does the exactly-right thing
+and asserts nothing about it, so the one failure mode the note exists to catch is the one it cannot see.
+⛔ **Eighth costume of this lane's oldest trap**, after a lint that matched nothing, a route-gated component,
+a `#[Locked]` branch, an `assertTrue(true)` body, a production guard with no test (REV-151 §1), an assertion
+that pinned the defect in place (REV-153 §1) and a test the suite itself flagged (REV-158 §1).
+
+⛔ **RULED: `->assertOk()` is added as a measured FORK and Arm B is not repaired.** `app/routes/web.php:924`
+routes `/home` to `App\Livewire\Account\Home` in `app/app/Livewire/` — the legacy account shell, not a module
+and not this lane's path. A red arm is a `TRACK 1 ACTION` and the assertion is committed anyway, left red and
+named, per the house position at `tests/Journeys/TwelveJourneysTest.php:477`: *a green suite that proves
+nothing is worse than a red one that proves something.*
+
+### ⚠️ §5. FILED FOR RUN 157 WITH ITS COMMANDS — THE PLAN'S BULK-IMPORT HAZARD HAS NO DEFENCE ON THE BUILT PATH
+
+```
+$ grep -n 'jobAgeDays' app/app/Modules/C-Reviews/Actions/ReviewRequestAction.php
+  29: ?int $jobAgeDays = null     59: if ($csatScore !== null && $csatScore < 7 && ($jobAgeDays ?? 0) >= 60)
+$ git show HEAD:app/app/Modules/C-Reviews/Listeners/AskForReviewOnJobCompleted.php
+  $action->handle($event->businessId, $event->personId, '…', 'google');      ← four of six arguments
+```
+
+`$jobAgeDays` is **always null on the only production path that originates a request**, and its one reader is
+behind `$csatScore < 7`, also always null there. Plan `:33851` names the consequence in its own words: *"The
+import lands 11,003 completed jobs … ⛔⛔ Every customer that tenant has served in five years receives a review
+request within the hour — from a company that just switched software, about a job from 2021."* The two-pass
+cap and the 30-day cadence window do not help: 11,003 **distinct** customers clear both.
+
+⚠️ **And the age is not simply on the event.** `JobCompleted` carries `?CarbonInterface $occurredAt`, but
+`JobStateAction.php:35` dispatches `Carbon::now()` — the **dispatch** time, not the job's completion time —
+and `ReplayOfflineSyncAction.php:86`, the import-shaped path, omits it entirely. A real job age has to come
+from the `jobs` row, which **X-121 owns**, making this a seam rather than a parameter. ⛔ Not ruled and not
+briefed as a build: run 156 measures it with the commands supplied and both arms stated; run 157 builds or
+files it.
+
+### The seam — RULED for run 156
+
+⛔ **RULED by the lane supervisor: run 156 repairs §1, closes §4 as a fork, measures §5, and builds nothing
+new** — the lane has just pushed, and both open items are one-method test edits whose whole value is that the
+verification stays single (REV-132's erratum). Items ascend in cost and each ends in a fact whichever way it
+goes (REV-127's second-mechanism rule).
+
+⛔ **Hard stops, from the coder's own dump:** `integrity 0 · boundary 41 · contract 85 · citation 3 ·
+schema 14 · capability 207 · anchor 128 · journey 2`; C-Reviews, X-181 and X-110 at **0** boundary,
+**0** capability, **0** citation. ⛔ **The admitted set is NINETEEN this run, not twenty** — the
+Authorize.Net `E00040` is absent and its return is admitted under REV-140 §1; `test_home_renders_today` is
+admitted **only** if item 3 takes Arm B. Any other failing name revokes the sha outright.
+
+⛔ **Scoped OUT:** no repair of item 3's Arm B (`/home` is the legacy shell) · nothing under
+`app/app/Livewire/**`, `app/app/Modules/X-121/**` or `app/app/Modules/X-171/**` · no change to `sendRequest`,
+its blade form or the `CUSTOMER_UNKNOWN` refusal — the refusal is the law · no deletion of `$actionNotice` or
+the blade panel (REV-159 §3) · no change to the two cross-tenant tests in `app/tests/Modules/X-181/Screens/`,
+which are correct · no new column, migration, table or model · no `manifest.php` / `capabilities.php` edit ·
+no new screen, route change or `surfaces:generate` · no merge · no `GRANT`/`ALTER`/`DROP`/`CREATE`/`migrate` ·
+nothing under `app/tests/Modules/X-102/**` · no `git checkout`/`git restore` · no `git push`.
+
+⚠️ **Standing, unchanged.** `app/phpunit.xml` is committable by neither column (REV-128); ⛔
+`git checkout -- app/phpunit.xml` remains the most destructive command on this board. §2f reads **1 of 8** in
+the bypass arm — `.agents/supervisor/launch-coder.sh`, **24 +/2 −**, unchanged for eleven ticks; a touch is
+not a move (REV-135 §9), re-derived at merge time, and nothing here authorises a merge. The missing
+`post-rewrite` hook (§2a) is standing. **TRACK 1 ACTION, unchanged:** the `app/tests/TestCase.php`
+self-deadlock and its box-wide connection-slot exhaustion (REV-150 §1, REV-151 §1/§3), `C-Reviews, X-118:
+'win.first' has 2 emitters`, the `X-102/ChatDoorTest` wrong-trait repair (REV-149 §1), no guard on
+`app/GOAIEZ-MASTER-PLAN.md` (REV-131 §2), and main's `app/phpunit.xml` pinning `DB_DATABASE` for all seven
+lanes while being a `merge=ours` path (REV-128). ⭐ **New, pending run 156's item 3:** if `GET /home` does not
+return 200, the shared account shell at `app/routes/web.php:924` — reached by every lane's tenant — has been
+unasserted for as long as `X-110/TodayTest.php:56` has existed.
