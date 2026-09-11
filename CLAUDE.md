@@ -14061,3 +14061,157 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     throw on an unmodelled value), and both were false. ⛔ Briefing an empty wave to avoid an idle tick is
     what rulings 95, 100 and 111 exist to prevent, and it is worse than idling; ⛔ *sounds plausible* is
     not a population.
+440. **⭐⭐ The OUTBOUND-CALL CONFIGURATION census — rulings 230/233/235 swept the two `Http::` calls'
+    headers, bodies and RESPONSES and nobody swept the call's own SETTINGS; both are bounded by the
+    framework's defaults, and the disproving measurement corrected an exception hierarchy this ledger had
+    assumed (measured by the lane supervisor 2026-09-11 00:2x; rulings 64, 95, 100, 111, 262(b), 294, 300,
+    324, 327, 340, 400).** An unbounded outbound wait hangs a Livewire request indefinitely, and it is
+    invisible to every gate — `Http::fake` never waits. Instrument, quoted (300):
+    `grep -rn -e "Http::" app/app/Modules --include=*.php` filtered to the eight ids → **2**, the whole
+    outbound surface (`StripeGatewayClient:27`, `:66`), re-measured rather than inherited from 233 (323).
+    **Neither sets `->timeout()`, `->connectTimeout()` or `->retry()`.**
+    ⭐⭐ **Measured in VENDOR rather than asserted** (300, 374, 416, 419, 438):
+    `app/vendor/laravel/framework/src/Illuminate/Http/Client/PendingRequest.php:269` is
+    `'connect_timeout' => 10` and `:272` is `'timeout' => 30`, so **both calls are bounded by the
+    framework's own defaults** and there is no unbounded wait to fix. ⛔ A `->retry()` is new machinery
+    with no measured defect (59) and, with the `Idempotency-Key` already sent (230), the provider already
+    dedupes a repeat.
+    ⭐⭐⭐ **The disproving measurement (an ELEVENTH firing of 400/403/409/421/422/426/431/434/435/437/438)
+    killed the hypothesis AND corrected a hierarchy this ledger had assumed.** The candidate was: a timeout
+    inside `capture()` is caught by its `catch (\RuntimeException)`, writes a **`failed`** `Payment` row
+    for a charge Stripe may have taken, MONEY-145's `$attempt` counter increments, and the retry carries a
+    **fresh** idempotency key the provider cannot dedupe — the double charge ruling 230 set out to
+    prevent. **Measured: `ConnectionException extends HttpClientException extends Exception`**
+    (`ConnectionException.php:5`, `HttpClientException.php:7`) — **NOT `RuntimeException`.** So a timeout
+    propagates **past** that catch, the enclosing `DB::transaction` rolls back, **no `failed` row is
+    written**, `$attempt` does not move, and the retry carries the **same** key. **The actual behaviour is
+    the one ruling 230 wanted**, and it is safe for a reason nobody had written down.
+    ⚠️ The one owner-visible residue is measured and **RECORDED**: `PaymentLinkAction` does not catch (229),
+    so a timed-out pay link reaches `Declines::sendPayLink()`'s `\Throwable` tail as `cURL error 28: …` —
+    rulings 206/404/416's framework-string shape. ⛔ Not briefed, on two measured grounds: `charge()` and
+    therefore the declines screen are **unreachable in production** — re-measured under 64,
+    `TermsSetAction:38` is `card_on_file_token`'s only writer and its one production caller
+    `Credits::setTerms():48` passes four arguments (234) — and **no fixture throws a `ConnectionException`**,
+    so the branch is not driven by an existing test and ruling 204/130's exemption does not hold;
+    manufacturing one is 327. Ruling 96 governs. ⛔ Not to be re-raised.
+    ⭐ Ruling 327's outcome shape a **TWENTY-FOURTH** time.
+441. **⭐⭐ Three more populations measured at ruling 324's bar and all three STRUCK — and two of the
+    three are refused at APPLICATION scale rather than on their merits (measured by the lane supervisor
+    2026-09-11 00:2x).**
+    **(a) The non-int Livewire ARGUMENT census — ruling 344's unswept sibling predicate, ONE money member.**
+    344 swept `public function` in `Ui/` asking *is the client-supplied ID scoped*; the sibling predicate is
+    *is a client-supplied STRING, BOOL or ARRAY argument constrained*, which 344 answered for one member in
+    passing and never enumerated. Instrument: the same `public function` sweep filtered to `string `,
+    `bool `, `array ` → **21 tree-wide and exactly ONE money's** —
+    `X-201/Ui/DisputeQueue.php:65`'s `outcome(int $disputeId, string $outcome, …)`, whitelisted by
+    `DisputeDefenseEngine:120`'s `in_array($outcome, ['won','lost','defended','conceded'])`, which is
+    **ruling 227's own measured member**, so ⭐ **429's known-member corroboration fires** and ⭐ the control
+    fires at 20 out-of-lane members. ⛔ Money proposes no edit on those (5). ⚠️ `?string ` is caught by the
+    same substring and is 431's already-swept population; the lane's one untyped parameter is 402's
+    recorded `SameAccount::pull($connectionId = null)`, safe by its own `(int)` cast.
+    **(b) The DESTRUCTIVE-ACT CONFIRMATION census — ZERO in the lane and ZERO IN THE TREE.**
+    `grep -rn -e "wire:confirm"` over `app/app/Modules` and `app/resources/views` returns **nothing**, and
+    the zero was corroborated against any confirmation mechanism at all: the kit's two `confirm` hits are
+    prose (*"confirmed listings"*) — the zero trap's eighth mechanism, a substring inside a longer word,
+    caught by **reading the hit** (262(b), 426(d)). ⛔ **So there is no positive control and that IS the
+    verdict:** the application has no confirmation convention, and giving money's irreversible acts one
+    would invent a policy this app does not have — **ruling 372's measured refusal verbatim** (*it makes
+    money the one lane in twelve whose panels say Dismiss — ruling 123 violated at application scale*), and
+    ruling 59/327's manufacturing besides.
+    **(c) ⭐⭐ The INPUT-LABEL census — 18 money inputs, ZERO `<label>`, and it is STILL not this lane's
+    wave.** Every owner input in the lane carries its meaning in a `placeholder` **alone**, and a
+    placeholder **disappears the moment the owner types** — so the unit is gone at exactly the moment the
+    value exists. ⭐ The positive control fires hard: `grep -rc -e "<label"` over `app/app/Modules` returns
+    **ten blades and NOT ONE is money's**. ⛔ Struck on three measured grounds. (i) **Nothing is false** and
+    the unit IS stated (368(a)'s own measurement, re-confirmed), so it is ruling 76's grade. (ii) **No CHECK
+    covers it** — `app/tests/Feature/Architecture/` is seven files and `grep -i -e "label" -e "aria"` over
+    them returns **nothing**, so the house has an a11y CHECK for heading levels (`HeadingSeamTest`, 162) and
+    none for labelling: money is departing from no rule. (iii) **Ten blades against a hundred is the
+    application's pattern**, so (b)'s reasoning governs — 372's refusal at application scale. ⚠️ Ruling 21's
+    raw-markup clause is NOT the blocker and it is recorded so no later tick reaches for it: the kit has no
+    form control (194), so a `<label>` is exactly what the `<input>`s beside it already are (364).
+    ⛔ None of the three is to be re-raised. ⭐ Ruling 327's outcome shape a **TWENTY-FIFTH**,
+    **TWENTY-SIXTH** and **TWENTY-SEVENTH** time.
+442. **⭐⭐⭐ Ruling 111 swept whether the FIGURE inside a confirmation comes from the row the action wrote
+    and measured four clean; its negative — WHICH CONFIRMATIONS CARRY NO FIGURE AT ALL — is 25 members and
+    exactly ONE, and it is the lane's only screen act that records MONEY RECEIVED (RULED by the lane
+    supervisor 2026-09-11 00:2x, briefed as MONEY-198; the finding that lifts eleven ticks of HOLD).**
+    Ruling 111 is a member of the family rulings 404/408/411/413/416/419/420/421/422/423/426/429/431/435/437
+    name — *a census that FIXED something did not necessarily SWEEP the population that needed it; every
+    ruling that fixed something owes the question, what predicate did its INSTRUMENT measure, and is that
+    the same predicate as its REMEDY?* — and it is ruling 340's *where X is USED is not where X is NEEDED*
+    aimed at a confirmation. ⭐⭐ **111 stated the standard itself**, in terms: *"`AgeingByReason:77` is the
+    one to keep in mind as the shape done right … the confirmation prints the CAPPED fee, not the fee the
+    owner typed. That is ruling 51's principle satisfied by construction, and it is what the sweep was
+    looking for everywhere else."* It then swept only the confirmations that already had a figure.
+    **Instrument, quoted (300):** `grep -rn -F -e "success = " app/app/Modules --include=*.php` filtered to
+    `/Ui/` and minus `success = null` → **25**. ⭐ 415's first-three check passes (C-Billing's three topup
+    confirmations are each a `$this->success` on an owner act). ⭐⭐ **429's known-member corroboration
+    fires:** the instrument returned all four of ruling 111's own measured-clean members —
+    `AgeingByReason`'s applied-fee line, `PaymentplanBuilder:53`, and `Credits`/`Mrr`'s topup — the exact
+    shape the census exists to find.
+    **Twenty-four of twenty-five echo what the act recorded**, and ⭐⭐ **the discriminating control is
+    IN-LANE and on the SAME hazard**: `X-199/Ui/Credits.php:51` takes a limit the owner types in **whole
+    dollars**, converts it `× 100`, and reads the saved figure back **off the row the action returned**
+    (`number_format($updated->credit_limit_cents / 100, 2)`) — so a unit mistake is echoed back in the
+    owner's own unit at once. Two more controls sit in the **same component** as the finding:
+    `AgeingByReason:62` echoes the saved percent and cap and `:85` the **capped** fee.
+    **The one member is `X-211/Ui/AgeingByReason.php:131`'s bare literal `'Payment logged.'`** — and
+    `:130` **discards the action's return value entirely** (`$action->handle(...)` with no assignment)
+    where its sibling four lines up assigns `$res` and reads it back. ⭐ So one component carries three
+    confirmations, two echo their figure and one does not, and the one that does not is **the lane's only
+    screen act that records money received against a customer's debt** — ruling 98's self-contradiction
+    tell at four lines' distance. ⚠️ The field is labelled *"Amount in cents"* while the same row renders
+    the balance in **dollars** (`blade:53`, `number_format($inv->balance_cents / 100, 2)`), so an owner
+    reading `1,250.00` one line up and typing `1250` records **$12.50** and is told only *"Payment
+    logged."*
+    ⭐ **The disproving measurement was taken FIRST and it WEAKENS rather than kills** (400's habit, twelfth
+    firing): `render():158` recomputes `balance_cents = total_cents - paid_cents` and
+    `ArEngine::logOfflinePayment()` does update `paid_cents`, so the balance visibly falls and the owner is
+    not left with **no** signal. That is why the grade is an absent affordance and not a falsehood — and it
+    is why the wave is two lines.
+    **RULED: `sprintf('Payment logged: %s.', number_format($payment->amount_cents / 100, 2))`, the figure
+    read back off the ROW THE WRITE PRODUCED and never from `$amount`** — ruling 51's discipline (*the row
+    already knows; a caller-supplied value is a second place for the truth to disagree*, 37) and 111's own
+    stated standard, so the echo is a **provenance** fix rather than a cosmetic one.
+    ⭐⭐ **The opening two words are byte-identical and that is the ruling, not an accident.** All three
+    existing needles are `assertSee('Payment logged')` (`AgeingByReasonScreenTest:109`, `:369`, `:397`), and
+    preserving the opening keeps every one green with no edit — rulings 198 and 421's own shape (*the TRUE
+    opening clause stays byte-identical and only the defective clause moves*), which makes the blast radius
+    genuinely **ZERO**. ⛔ **The invoice number is deliberately NOT echoed**, and the reason is measured:
+    `:110`'s `assertDontSee('INV-A1')` asserts the row **left the list** after a full payment, and a
+    confirmation naming the invoice would break it — a real negative this wave has no business weakening
+    (39, 46, the One Rule). The unit hazard turns on the **amount**, not on the identity, and the owner
+    pressed the button on a specific row.
+    ⛔ **Neither placeholder moves and no `<label>` is added** — 368(a) recorded the X-199/X-211 unit split
+    at ruling 76's grade, 441(c) struck the label population at application scale, and 228(a) forbids
+    harmonising a pair where both members are honest. ⛔ `:128`'s unassigned
+    `app(InvoiceReader::class)->forBusiness(...)` stays exactly as it is — a pure existence-and-tenancy
+    check, and assigning it would be a second change with no owner-visible consequence (47's companion).
+    ⛔ No new class, so ruling 318 does not fire and no `composer dump-autoload` is briefed; ⛔ no blade is
+    mutated, so ruling 202's `view:clear` is not briefed either — **a procedural step required where it
+    cannot bite is one the next reviewer must re-derive** (225). ⭐ `php -l` **is** legitimate, both touched
+    files being PHP (183).
+    ⚠️ **Blast radius, measured with interior fragments BEFORE the brief shipped (46, 86, 146): ZERO.** The
+    sweep is **4** lines counted by listing (217, 397) — the one assignment and the three positives — and
+    **all eleven `assertDontSee` in that file were read**: two name a figure and both are prefixed
+    `late fee ` (`:187`, `:299`), so a payment confirmation cannot match them. No existing assertion moves,
+    so the wave **adds** a method (68, 70) and the predicted floor is
+    **`tests 2515 · passed 2511 · FAILED 2 · errors 2`**, derived by listing (92, 200) from
+    `gate-money197.txt:95`'s measured `2514 · 2510` — ⛔ written with its DERIVATION and never a line
+    citation (378), its four reds being the permanent set (321's two plus track sixty's two).
+    ⭐⭐ **The proof is ruling 418's shape by construction**: reverting `:131` to the literal makes the RED
+    dump render **`Payment logged.`** — the defect's own text — which proves the FINDING and not merely
+    that the assertion is load-bearing.
+    ⚠️ **The fixture is a PARTIAL payment and that is load-bearing**: all three existing fixtures pay in
+    **full**, so the invoice leaves the list and none can render the case where the row — and its balance —
+    stay on screen beside the confirmation, which is ruling 68 exactly (*a test that cannot see the defect
+    is not the test that proves the fix*). ⚠️ The needle `Payment logged: 12.50.` was measured against the
+    page it renders on: the only other figure is the balance `1,237.50`, which does not contain it, and the
+    paired `assertDontSee('Payment logged.')` cannot fail against a correct implementation because the
+    corrected sentence carries `logged:` and not `logged.` (61, 82, 131). ⚠️ **The positive goes FIRST in
+    the chain** — a Livewire chain stops at the first failure and the mutation reddens both halves, so the
+    brief predicts the positive's message (153). ⚠️ **No new WORD enters the module** — the change appends
+    `: %s.` to two words already in that file — so ruling 63's prose-feeds-an-instrument hazard cannot fire
+    and the `File::allFiles` population (re-measured this tick per 310: 16 scanners, the three `app_path()`
+    ones structural) needs no further reading. ⚠️ No `G##-##`/`N-###` token is introduced (295).
