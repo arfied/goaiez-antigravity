@@ -59,7 +59,7 @@ class RateRegistryView extends Component
             return;
         }
 
-            $cents = (int) round((float) $this->amountInput[$rateId] * 100);
+        $cents = (int) round((float) $this->amountInput[$rateId] * 100);
 
         app(RateSetAction::class)->setRate(
             $this->businessId,
