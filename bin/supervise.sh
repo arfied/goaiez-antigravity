@@ -735,6 +735,49 @@ if [ -f "$_rp" ] && [ -f "$_r10" ]; then
   fi
 fi
 
+# ⛔ REPORT.md's SCHEMA LINE NAMES THE DATABASE IT WAS READ FROM, OR IT IS NOT A
+#   MEASUREMENT (REV-119 §B, made a check at REV-158 §2).
+#
+# REV-119 §B ruled `schema` is reported with its database or not reported, because
+# SchemaStage reads a LIVE database (app/.env's) and every lane measures a different
+# number on the identical commit. It was handed over as a citation (REV-132 §3), a
+# firmer citation (REV-134 §5), a paste-ready literal (REV-135, emitted correctly)
+# and that literal again (REV-138 §2, missed) before §2 of REV-138 made the GATE
+# print the annotated line. REV-157 then found the gate relays the PREVIOUS wave's
+# dump and pointed the coder at its own — and the raw `php artisan doctor` output
+# does NOT carry the `(read from …)` suffix, because this script composes it. So
+# the source moved and the property was lost: run 153 quoted its own dump exactly
+# as briefed and the annotation went with it. Fixing the SOURCE and losing the
+# PROPERTY is this lane's axis sub-species, seventh instance.
+#
+# ⚠ The neighbouring property this does NOT cover (REV-146 §1's standard): it
+#   asserts the line names A database, never that it names the RIGHT one. A report
+#   quoting `(read from goaiez_antig_test…)` passes here.
+if [ -f "$_rp" ]; then
+  _rawsch=$(grep -E 'FAIL schema ' "$_rp" 2>/dev/null | head -1)
+  if [ -n "$_rawsch" ]; then
+    case "$_rawsch" in
+      *"read from "*)
+        printf '    ✓ REPORT.md schema line names the database it was read from\n' ;;
+      *)
+        if [ "$wave_self" = 1 ]; then
+          printf '    ⚠ REPORT.md %s is the PREVIOUS wave’s — its schema line names no database:\n' \
+            "$(date -r "$_rp" '+%F %T')"
+          printf '        %s\n' "$_rawsch"
+          echo "      Not asserted from inside a gate; checked at tick time (REV-152 §1)."
+        else
+          fail=1
+          printf '    ⛔ REPORT.md quotes a schema count with NO database beside it:\n'
+          printf '        %s\n' "$_rawsch"
+          echo "       SchemaStage reads app/.env's LIVE database, so that number is not a"
+          echo "       property of any sha and every lane measures a different one (REV-119 §B)."
+          echo "       The form is:  FAIL schema <ms> <n> violation(s) — fails the MERGE   (read from <db>, per app/.env)"
+          echo "       ⚠ record defect, not a tree defect — it does NOT revoke the sha by itself."
+        fi ;;
+    esac
+  fi
+fi
+
 # ⛔ A WAVE ARTEFACT THAT RECORDS A SHELL ERROR INSTEAD OF A MEASUREMENT (REV-137 §1).
 #
 # Run 132's `.agents/supervisor/r132-doctor.txt` was 40 bytes and read
@@ -885,7 +928,14 @@ t  = d.get("tests"); pa = d.get("passed")
 f  = d.get("failed", 0) or 0; er = d.get("errors", 0) or 0
 if t is None or pa is None:
     print("    ⚠ %s: result %s — no tests/passed to reconcile" % (name, d.get("result"))); sys.exit(0)
-print("    %s: tests %s · passed %s · failed %s · errors %s" % (name, t, pa, f, er))
+rk = d.get("risky", 0) or 0
+print("    %s: tests %s · passed %s · failed %s · errors %s%s"
+      % (name, t, pa, f, er, (" · RISKY %s" % rk) if rk else ""))
+if rk:
+    print("       ⚠ %s risky test(s) — PHPUnits own word for a test that RAN and asserted" % rk)
+    print("         NOTHING. It is counted as passed, so it is invisible in tests/passed/")
+    print("         failed/errors and in every gate line this lane reads. That is the")
+    print("         green-by-construction trap wearing the suite own label (REV-158 §1).")
 names = [e.get("test", "?").split("::")[-1] for e in (d.get("failures") or []) + (d.get("error_details") or [])]
 for n in sorted(set(names)):
     print("       ✗ %s" % n)
@@ -1257,8 +1307,14 @@ if [ $want_tests -eq 1 ]; then
   PEST_SUITE_DIR="$psdir" python3 - "$psdir/summary.txt" > "$ptmp" <<'PYMERGE'
 import json, os, sys
 d = os.environ['PEST_SUITE_DIR']
+# ⛔ `risky` IS SUMMED HERE BECAUSE A RISKY TEST IS COUNTED AS PASSED (REV-158 §1).
+#   PHPUnit marks a test risky when it RAN and asserted nothing. It lands in
+#   `passed`, so tests/passed/failed/errors — every number this lane gates on —
+#   is blind to it, and the per-suite artefacts have carried `RISKY 1` in Modules
+#   since run 142 with nobody reading it. Dropping the field here is what made the
+#   four-process gate blind to the property its own inputs were reporting.
 tot = {'tool': 'pest', 'result': 'passed', 'tests': 0, 'passed': 0,
-       'failed': 0, 'errors': 0, 'assertions': 0, 'duration_ms': 0}
+       'failed': 0, 'errors': 0, 'risky': 0, 'assertions': 0, 'duration_ms': 0}
 fails, errs, lines, missing = [], [], [], []
 for n in ('Unit', 'Feature', 'Modules', 'Journeys'):
     try:
@@ -1277,13 +1333,13 @@ for n in ('Unit', 'Feature', 'Modules', 'Journeys'):
         missing.append(n)
         lines.append('%-9s NO pest JSON LINE — %d byte(s) of output kept' % (n, sum(len(x) + 1 for x in raw)))
         continue
-    for k in ('tests', 'passed', 'failed', 'errors', 'assertions', 'duration_ms'):
+    for k in ('tests', 'passed', 'failed', 'errors', 'risky', 'assertions', 'duration_ms'):
         tot[k] += int(obj.get(k) or 0)
     fails.extend(obj.get('failures') or [])
     errs.extend(obj.get('error_details') or [])
-    lines.append('%-9s tests %-5s passed %-5s failed %-3s errors %-3s %sms' % (
+    lines.append('%-9s tests %-5s passed %-5s failed %-3s errors %-3s risky %-3s %sms' % (
         n, obj.get('tests'), obj.get('passed'), obj.get('failed', 0),
-        obj.get('errors'), obj.get('duration_ms')))
+        obj.get('errors'), obj.get('risky', 0) or 0, obj.get('duration_ms')))
 tot['failures'] = fails
 tot['error_details'] = errs
 tot['suites'] = 4 - len(missing)

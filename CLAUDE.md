@@ -3270,3 +3270,201 @@ remains the most destructive command on this board. §2f reads **1 of 8** in the
 missing `post-rewrite` hook (§2a) is standing. **TRACK 1 ACTION, unchanged:** the `app/tests/TestCase.php`
 self-deadlock and its box-wide connection-slot exhaustion (REV-150 §1, REV-151 §1/§3), `C-Reviews, X-118:
 'win.first' has 2 emitters`, and the `X-102/ChatDoorTest` wrong-trait repair (REV-149 §1).
+
+## REV-158 — a test PHPUnit itself called risky, and a fix that moved the source and lost the property
+
+⭐ **Run 153 is a `PASS-WITH-NOTES` and the repair it shipped is sound.** The blanket
+`catch (\Exception $e)` is gone from `Tickets::resolve`, the success path is byte-for-byte what it was, the
+flip is mutation-proven (`r153-mutation.txt` reddens with the test's own *"resolve accepted an id this
+business cannot see."*), and the failing set is **exactly the admitted nineteen** — 8 baseline + 11 traced
+`42501`, no `NOT BUILT:`, counted from the gate's own `✗` list rather than remembered. Hard stops all held
+against the coder's own dump (`integrity 0 · boundary 41 · contract 85 · citation 3 · schema 14 ·
+capability 207 · anchor 128 · journey 2`), stamp `20260829-0647` matches `runtime_build`, pint `passed`,
+phpstan `errors 0`, both ledger files named, and the test count re-derived here at `HEAD` and `a7165a59`
+reads **29 → 30**. Ordering held for the fifteenth run running: gate `19:39:33` → doctor `19:40:02` →
+state `19:40:47` → report `19:41:11`. `3727a1b0` is pushed.
+
+### ⛔ §1. THE NEW TEST PASSES WITH ZERO ASSERTIONS, PHPUNIT SAID SO IN THE ARTEFACT THAT PROVES THE WAVE, AND NO NUMBER THIS LANE GATES ON CAN SEE IT
+
+`r153-green.txt`, the artefact whose job is to show the repair green, in full:
+
+```
+$ (cd app && DB_DATABASE=goaiez_antig_reviews_test ./vendor/bin/pest --filter tickets_resolve)
+{"tool":"pest","result":"passed","tests":1,"passed":1,"assertions":0,"duration_ms":211,"risky":1}
+```
+
+**`"assertions":0,"risky":1`.** The body is `try { …->call('resolve', …); $this->fail(…); } catch
+(ModelNotFoundException $e) { /* comment */ }` — when the exception escapes, `$this->fail()` is never
+reached and the catch block asserts nothing, so the test passes by **not failing**. PHPUnit has a word for
+that and printed it.
+
+⭐ **It is not green-by-construction, and that distinction is the whole finding.** `r153-mutation.txt` reddens
+it, so it is load-bearing today. What it lacks is a *statement*: it asserts nothing about the ticket, nothing
+about the notice, nothing about what the tenant sees. **The precedent the brief cited has the missing half
+and the coder copied only the top of it** — `CReviewsScreensTest.php:375-395` ends
+`$removal->refresh(); $this->assertEquals('prepared', $removal->status);` after its catch, which is the
+post-condition that turns *"the exception escaped"* into *"and nothing happened"*. My brief quoted lines
+`368-373` — the `try`/`catch` — and stopped one line above the assertion that makes the shape sound.
+
+⛔ **And `risky` is invisible in every number this lane gates on.** PHPUnit counts a risky test as **passed**,
+so `tests · passed · FAILED · errors` cannot move; REV-134 §1's admitted-set criterion is a statement about
+`✗` names and a risky test has none. Measured with the command beside the number (REV-132's erratum
+standard), the per-suite artefacts have been carrying it in plain sight:
+
+```
+$ bash bin/supervise.sh   # §3, after this tick's change
+    r142-ts-modules.txt: tests 2030 · passed 2013 · failed 6 · errors 11 · RISKY 1
+    r144-ts-modules.txt: tests 2030 · passed 2013 · failed 6 · errors 11 · RISKY 1
+    r145-ts-modules.txt: tests 2030 · passed 2013 · failed 6 · errors 11 · RISKY 1
+    r137-screen.txt:     tests 28   · passed 27   · failed 0 · errors 1  · RISKY 1
+    r153-green.txt:      tests 1    · passed 1    · failed 0 · errors 0  · RISKY 1
+```
+
+⭐ **The Modules suite has carried exactly one risky test since run 142** — five waves — and nothing read it,
+because §7's four-process merger summed six keys and `risky` was not one of them. **The inputs were reporting
+the property and the merger dropped it**, which is REV-150 §2's producer/consumer shape pointed at a field
+instead of a separator.
+
+**RULED: `bin/supervise.sh` §3 prints `RISKY n` per pest artefact, and §7's merger sums `risky` into the
+merged line and the per-suite lines.** Live on its first run — five artefacts, the ⚠ arm firing on real data
+this lane produced weeks apart. ⚠️ The merged-line half needs a `--tests` run to observe, so run 154's gate
+is its first live reading.
+
+⛔ **RULED: a test that proves a refusal by catching an escape asserts the POST-CONDITION as well, and a
+`risky` reading on a test this lane wrote is a finding, never noise.** The catch-block comment is
+documentation; `assertEquals`/`assertDatabaseHas` is the test. ⭐ This is the lane's oldest trap in its
+seventh costume — a lint that matched nothing, a route-gated component, a `#[Locked]` branch, an
+`assertTrue(true)` body, a production guard with no test (REV-151 §1), an assertion that pinned the defect in
+place (REV-153 §1), and now **a test the suite itself flagged and nobody's instrument surfaced**.
+
+### ⛔ §2. REV-157 FIXED THE SCHEMA LINE'S SOURCE AND LOST ITS DATABASE — SEVENTH ON THE AXIS, AND MY DEFECT BOTH TIMES
+
+`REPORT.md`'s `RAW` line reads `FAIL schema 480ms 14 violation(s) — fails the MERGE`. That is
+`r153-doctor.txt:265` **verbatim and correctly quoted** — and it carries no database, so REV-119 §B is
+violated for the fourth time in this lane's history.
+
+⛔ **The coder did exactly what the brief said.** REV-138 §2 made `bin/supervise.sh` compose the annotated
+line, because an instruction about how to *format* a line cannot survive a report that emits none. REV-157
+then found the gate **relays** that line from a doctor dump which REV-119 §D guarantees is the *previous*
+wave's, and pointed the coder at its own dump instead. Correct — and it lost the property: **`php artisan
+doctor`'s raw output does not contain `(read from …)`; this script adds it.** Run 153's brief said the
+coder's own dump *"carries its database"*. It does not, and I wrote that sentence one tick after building the
+thing that adds it.
+
+⭐ **Seventh instance of this lane's axis sub-species** — REV-138 §4 fixed a failing search's *scope* and left
+its *vocabulary*, REV-140 §4 fixed a grep's *timing* and left the *grep*, REV-143 fixed *trackedness* and
+left *loadability*, REV-150 §2 moved a *producer* and left three *consumers*, REV-151 §2 fixed an artefact's
+*location* and left its *clock*, REV-152 §1 fixed the *clock* and left the mid-wave case, and here a fix
+moved the **source** and dropped the **property**. Every one of the seven landed one axis from the defect.
+
+**RULED: `bin/supervise.sh` §3 asserts that `REPORT.md`'s schema line names a database, with REV-152 §1's
+`wave_self` discriminator** — labelled inside a gate, where the report is necessarily the previous wave's;
+asserted at tick time, where it is the wave being reviewed. Live on its first run against run 153's real
+report:
+
+```
+    ⛔ REPORT.md quotes a schema count with NO database beside it:
+        RAW       : FAIL schema 480ms 14 violation(s) — fails the MERGE
+```
+
+⚠️ **The neighbouring property it does NOT cover** (REV-146 §1's standard): it asserts the line names *a*
+database, never that it names the *right* one — a report quoting `(read from goaiez_antig_test…)` passes.
+⭐ **The ladder, a twelfth time: a paste-ready string beats a citation, a redirect beats a paste-ready string,
+and a CHECK beats a redirect** — and this rung was reached only after the paste-ready literal had worked once
+(REV-135) and was then made unquotable by its own successor.
+
+### ⚠️ §3. THE FORK'S ARTEFACT MEASURED ANOTHER MODULE'S TEST, AND THE CONCLUSION IS RIGHT BECAUSE THE CODER DID NOT LEAN ON IT
+
+`r153-fork.txt` reads `{"tool":"pest","result":"passed","tests":1,"passed":1,"assertions":2}` for
+`--filter send_request`. What that filter matched, measured here:
+
+```
+$ grep -rn 'send_request' app/tests/ --include=*.php
+  app/tests/Modules/X-124/X124Test.php:114:  test_g1_30_internal_message_has_no_send_requested_in_its_trace
+$ grep -rn 'sendRequest' app/tests/Modules/C-Reviews/ --include=*.php
+  CReviewsScreensTest.php:48   assertSeeHtml('wire:submit="sendRequest"')     ← the only hit, and it calls nothing
+```
+
+**No test in this lane calls `sendRequest` at all**, so my filter string could only ever match something
+else. It matched X-124's, in another lane, and returned green.
+
+⭐ **The report did not cite it as the proof, and that is why this is a note.** Item 2 reasons from source —
+`sendRequest` passes `null` for `$customerId`, and `ReviewRequestAction::handle` returns `CUSTOMER_UNKNOWN`
+before any `ReviewRequest::create` — and I verified both independently: `ReviewsQaRequests.php:105` passes
+`null`; `ReviewRequestAction.php:50-56` is the early return. **Arm B is correct.** **RULED: an artefact whose
+command selected nothing it was aimed at says so in `REPORT.md`** — a green JSON from a filter that matched a
+stranger is REV-137 §2's shape with a passing result instead of a shell error, and it is harder to see.
+
+⛔ **§3a. AND THE FORK UNCOVERED SOMETHING BIGGER THAN THE CATCH IT WAS AIMED AT: `sendRequest` CANNOT
+SUCCEED.** `reviews-qa-requests.blade.php:40`/`:60` bind it to a real `wire:submit` form with a
+**"Send the ask"** button on a routed screen, and the hardcoded `null` means every click returns
+`🚫 REFUSAL [CUSTOMER_UNKNOWN]`. The screen's primary action is dead by construction, no test calls it, and
+the refusal is honest — so nothing is red and nothing is leaking. **Filed for run 155 as a measured fork, not
+briefed today** (one seam per run): the question is where a `customer_id` comes from on that screen, and
+`review_requests.customer_id` is nullable while the action requires it. ⛔ **Do not "fix" it by relaxing the
+action's `CUSTOMER_UNKNOWN` refusal** — that refusal is the law; the missing half is the caller.
+
+### ⚠️ §4. MY OWN SCOPED-OUT LIST NAMED THREE X-181 SITES AND THE GREP I HANDED OVER WOULD HAVE FOUND ONE
+
+Run 153's brief scoped out `X-181/Ui/QaQueueSlaDueAt.php:74`, `Ui/Ticket.php:53`, `Ui/Resolution.php:46` as
+"the same defect". Re-measured here before briefing them:
+
+```
+$ grep -rn 'catch (\\Exception\|getMessage()' app/app/Modules/X-181/ --include=*.php
+  Resolution.php:46        $this->actionNotice = $e->getMessage();      ← no catch line shown
+  Ticket.php:53            $this->actionNotice = $e->getMessage();      ← no catch line shown
+  QaQueueSlaDueAt.php:74   } catch (\Exception $e) {
+$ grep -n '^use ' app/app/Modules/X-181/Ui/Resolution.php app/app/Modules/X-181/Ui/Ticket.php | grep -i exception
+  Resolution.php:10:use Exception;      Ticket.php:11:use Exception;
+```
+
+Two of the three write `catch (Exception $e)` against an **imported** `Exception`, which the
+escaped-backslash pattern cannot match. They are blanket catches — the import proves it — and only the
+`getMessage()` half of the pattern found them. **A list that happened to be right for a reason the command
+could not see.** ⭐ REV-138 §4 ruled that fixing a failing search's *scope* leaves its *vocabulary*; this is
+the vocabulary defect on its own, in a pattern I wrote. **RULED: a search for a language construct covers
+every spelling the language admits, and for `catch` that is `\Exception` and an imported `Exception` both.**
+Run 154's derivation command carries both and a `use Exception;` census beside it.
+
+⭐ **All three screens are routed** — `routes.generated.php`, `web · auth · tenant.role`, prefix
+`app/x-181` — so the disclosure audience is identical to C-Reviews', and all three call
+`QaTicketResolveAction`/`QaTicketReopenAction`, whose `where('business_id', …)->findOrFail()` makes the
+branch enterable exactly as `Tickets::resolve`'s was.
+
+### ⚠️ §5. THE SECOND GATE, AND THE CHECK THAT FOUND IT WAS LOOKING FOR SOMETHING ELSE
+
+`r153-gate-2.log` is in the mailbox, in no brief and cited in no report: a second `supervise.sh --tests`
+started at `19:37:59`, thirty seconds into the real gate. §7 refused it correctly and REV-146 §4's reworded
+`ARM=mine` printed exactly what it was built to print — *"If you started a gate, THIS IS IT — wait for it"* —
+which closes that arm live, against a real concurrent gate rather than a probe. No harm done.
+
+⭐ **It surfaced through REV-153 §2's command-echo check, which was not looking for it.** That check excludes
+`*-gate.log` because this script writes those; `r153-gate-2.log` does not match that glob, so it was scanned,
+found to open with `== 0. database guard` instead of `$ `, and flagged. **RULED: the exclusion stays exactly
+as narrow as it is.** An undeclared artefact is worth more than a clean count, and REV-146 §4's standing
+finding holds: *an artefact in the mailbox that no brief asked for and no report cites is invisible work.*
+
+### The seam — RULED for run 154
+
+⛔ **RULED by the lane supervisor: run 154 repairs §1 first and then finishes the disclosure sweep across
+X-181's three routed screens, because they are one defect with one instrument and one proof shape, and the
+mutation is taken on ONE site so the verification stays single** (REV-132's erratum). Item 1 is the smallest
+and is the review's headline; the rest ascend and each ends in a fact whichever way it goes (REV-127's
+second-mechanism rule).
+
+⛔ **Hard stops, measured from the coder's own dump:** `boundary 41 · contract 85 · citation 3 · schema 14 ·
+capability 207 · anchor 128 · journey 2`, C-Reviews and X-181 at **0** boundary, **0** capability, **0**
+citation. Any movement stops the wave and is reported, never quieted by editing a declaration (REV-131 §3).
+
+⛔ **Scoped OUT, on purpose:** `sendRequest`'s dead action (§3a — run 155, and it needs a measurement first),
+no new column, migration, table or model, no `manifest.php` / `capabilities.php` edit, no new screen and no
+route change, no merge, no `GRANT`/`ALTER`/`DROP`/`CREATE`/`migrate`, nothing under
+`app/tests/Modules/X-102/**`, no `git checkout`/`git restore`, no `git push`.
+
+⚠️ **Standing, unchanged.** `app/phpunit.xml` is committable by neither column (REV-128); ⛔
+`git checkout -- app/phpunit.xml` remains the most destructive command on this board. §2f reads **1 of 8** in
+the bypass arm — `.agents/supervisor/launch-coder.sh`, **24 +/2 −**, unchanged for nine ticks; a touch is not
+a move (REV-135 §9), and its verdict is re-derived at merge time. The missing `post-rewrite` hook (§2a) is
+standing. **TRACK 1 ACTION, unchanged:** the `app/tests/TestCase.php` self-deadlock and its box-wide
+connection-slot exhaustion (REV-150 §1, REV-151 §1/§3), `C-Reviews, X-118: 'win.first' has 2 emitters`, and
+the `X-102/ChatDoorTest` wrong-trait repair (REV-149 §1).
