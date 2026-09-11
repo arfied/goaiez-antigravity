@@ -16130,3 +16130,56 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     `account_mappings` row can exist to duplicate, because the connect door refuses by design (73a).
     **Dispatched run 232, 1 of 2.** ⛔ `merchant_connections` (502) and `credit_terms` (499) remain NOT
     index-alone.
+506. **⭐⭐ MONEY-207 PASSES and the racer hook transferred to a THIRD table on its first run; this seat
+    CANNOT read `/home/goaiez/tmp/last-pest-*.json`, so ruling 174's corroboration instrument is not this
+    seat's (RULED by the lane supervisor 2026-09-11 06:0x, by `date` `06:05`, on `a8d6ded2`).** The surface
+    is exactly the migration `2026_09_11_040000_x173_unique_account_mapping.php`, `X173Test.php` and the two
+    state files, with no `AccountingSyncEngine.php` change. `git diff -w --stat` is identical to the raw
+    stat (468). `RED (no index):` is `Failed asserting that 2 is identical to 1.`, which makes ruling 418's
+    shape five consecutive waves. `RED (mutation):` carries `SQLSTATE[23505]` and
+    `account_mappings_business_connection_category_unique`. §7 read raw is
+    **`tests 2537 · passed 2534 · FAILED 1 · errors 2`**, exactly the floor listed before the run, so route
+    (iii) carried the re-gate (391). Ordering: commit `05:47:10` → gate `05:49:59` → mutation `05:50:15`.
+    Pushed `443d99d2..a8d6ded2`.
+    ⚠️ **The instrument half.** Rulings 174, 219 and 288 name
+    `/home/goaiez/tmp/last-pest-<checkout>.json` as the supervisor's corroboration instrument. This tick
+    measured that the seat's sandbox refuses both `ls` and `head` on that path (*"may only list files in the
+    allowed working directories"*). **So the raw gate file is this seat's only §7 witness**, which 42(2)
+    permits. ⛔ A verdict block never claims a JSON cross-check it did not run. Recorded as the seat
+    constraint it is, alongside ruling 30's `/home/goaiez/tmp` log deviation.
+    ⚠️ Cadence (3) was measured again by content (504). The merge-base is **`443d99d2`**, this lane's own
+    pushed supervisor tip. `origin/main` = `f6ea4840` is 14 ahead, and `git diff --name-only 443d99d2
+    origin/main` gives 7 per-track paths plus 3 X-102 paths. It does not fire.
+507. **⭐⭐ `merchant_connections` IS briefable. Its blocker was ONE fixture, not 31, and a fixture seeding a
+    state the production writer can never produce is corrected rather than routed around (RULED by the lane
+    supervisor 2026-09-11 06:0x, briefed as MONEY-208).** Ruling 502 refused `merchant_connections` as not
+    index-alone, because `ConnectCardScreenTest.php:192-211` seeds three `stripe` rows in one business and
+    *"31 other fixtures"* use plain `create`. Re-measured under ruling 64:
+    - `grep -rn -F -e "MerchantConnection::create" -e "MerchantConnection::updateOrCreate" app/app app/tests`
+      prints **30** lines, 1 writer plus **29** fixtures. The 31 was never listed, and it was two high.
+      That is the **seventeenth** inherited attribution corrected, ruling 257's shape again.
+    - `new MerchantConnection`, `::factory`, `::insert`, `::forceCreate` and raw `merchant_connections`
+      writes outside migrations are all **zero**.
+    - Every `connect()` call site (`EvidenceChargeCommand`, `EvidenceCheckoutCommand`,
+      `CheckoutBlockScreenTest:108`, `CheckoutCaptureSeamTest` ×3, `X198Test` ×11) goes through
+      `updateOrCreate`, which the index absorbs.
+    - Mapped fixture by fixture onto its test method, **28 of 29 create at most one row per
+      (business, gateway)**, where two rows share a method they sit in two different businesses. Exactly
+      **one** method violates: 204's ordering proof.
+    ⭐⭐ **The violation is itself a defect, so correcting it is not accommodation.** The only writer keys on
+    `(business_id, gateway_name)`, so three `stripe` rows in one business is a state production can never
+    reach. That is ruling 41 part 2: a fixture written to the screen rather than to the real thing's shape.
+    The ordering proof does not depend on the rows sharing a gateway. It depends on an `UPDATE` moving a row
+    within heap order. **RULED:**
+    - the three rows take `stripe`, `square` and `clover`, and the rewrite moves the first to `plaid`,
+      the vocabulary the create migration names at `:18`;
+    - the assertion stays byte-identical;
+    - ⭐ **Proof B reverses `ConnectCard.php:67`'s `orderBy('id')` and requires the corrected test to
+      redden**, so the correction is shown not to have neutered the proof (82, 204's reversal rule).
+    ⛔ The rewrite target cannot stay `square`, because the update itself would then violate the index.
+    ⚠️ The generalisable half, sharpening 466: **a fixture that blocks a constraint is measured for whether
+    production can reach the state it seeds.** If it cannot, the fixture is the defect and belongs in the
+    same commit as the constraint. If it can, the constraint is the wrong design.
+    **Predicted floor `tests 2538 · passed 2535 · FAILED 1 · errors 2`**, derived by listing. **Dispatched run
+    233, 1 of 2.** ⛔ `credit_terms` (499) remains NOT index-alone: `InvoiceEngine.php:41` is a plain `create`
+    writer.
