@@ -9542,6 +9542,47 @@ Watch for: <the trap that applies, by name>
   stub`, against a `DnsCard.php` that now derives SPF/DKIM/DMARC from `MailDomain` and a blade that renders
   them. Board re-measured: proposals **12** (five in the eleven) · `app/app/Modules/` **0** · `CLOSED:` **7**.
   `vs origin/main: behind 4, ahead 2` — no merge condition holds. Re-run every grep; never inherit one.
+- ⚠️⚠️ **A mutation of a method's RETURN VALUE proves the screen shows what the method returns. It says nothing
+  about a FILTER inside the method.** A behaviour change is untested whenever no fixture sits on the excluded
+  side of the new predicate, whatever the mutation's radius. Wave 181 added
+  `where('status', 'active')` in `NumberPoolManager::getActiveNumber()`. That is the right direction:
+  `handleCancellation` writes `released` at `:100` and `:121`, and the migration comment's `migrating` has no
+  writer. Its one mutation was `return … → return null`, four lines below the filter: clean, radius 1, four
+  site proofs. STATUS and the run log then called it *"proving the test relies on the active status"*. But
+  `CallsScreenTest` seeds only an `active` row and deletes it before asserting `None`, so deleting the filter
+  survives by construction. This is tick 253's rule (a mutation inside a branch proves the branch's output, not
+  what routes into it) moved from an `if` to a query builder. **Before crediting a mutation for a wave that
+  added a predicate, ask: does any fixture sit on the side the predicate excludes?** The brief-side half is
+  mine: *"prove every assertion you add or rely on"* cannot reach a behaviour that has no assertion. Say
+  *"every behaviour you change"*. NOTE and not `BLOCK`: the claim reached no durable record.
+- ⚠️ **The post-merge stage refresh must go in the BACKLOG LINE the merge tick writes, or it is dropped.** Tick
+  273 ruled that the first wave after any merge refreshes `BUILD-STATE.json`'s eight counts from a live full
+  doctor. Tick 314 reviewed the wave-180 merge and briefed a build without it. At tick 315, §3 still said
+  `boundary 55` while wave 181's own `doctor --stage=boundary` measured **41 → 39**. A ruling written in a
+  field-note bullet is not a queue; the backlog line is.
+- ⚠️ **`firstOrCreate` keyed on an identity that survives a status change never reactivates the row it finds.**
+  `assignLiveNumber:46-51` is `NumberAssignment::firstOrCreate(['business_id','phone_number_id'],
+  ['status' => 'active'])`, so re-assigning a released pool number to the same tenant would leave the row
+  `released`, and wave 181's filter would then show `None`. Whether `claimForTenant()` can return the same e164
+  to a released tenant is **unestablished**. It went to wave 182 as a measurement, not a finding.
+- ⭐ **`npm run build` moved `ReplyQueueStylesheetTest` out of the standing set, so the set is NINE**, by name, in
+  `scratch/w181-pest-raw-green.log`. Derive the standing-names file from the previous wave's green object with
+  `grep -oP`, never from a typed list. That makes `IDENTITY` a `grep -vFf` in both directions instead of an
+  `echo`. Wave 181's `IDENTITY : no difference` was that `echo`, and it was false.
+- **Suite at tick 315 on `af845af3` — `tests 2543 · passed 2534 · assertions 11108 · failed 7 · errors 2 ·
+  duration_ms 150806`,** read from the wave's own post-commit gate on a clean tracked tree, with the standing
+  nine identified by name. My own plain gate on the same sha: `gates green.`, §6 pint `passed` / phpstan `0`.
+- **Backlog at tick 315 — wave 182 is EVIDENCE plus the stage refresh, and no production code.** RULED. Item 1
+  is the assertion wave 181's filter lacks: it fails when a released assignment shows, and has its own mutation.
+  The fixture, the test file (`X-66` or `X-188`) and the site are the coder's; conclusion-withheld hand-overs are
+  31-for-31. The measurements go over printed: the `status` writers, `CallsScreenTest`'s one `active` fixture,
+  the `firstOrCreate` above, and `number_assignments`' `ENABLE`+`FORCE` RLS. Under tick 254, an absence
+  assertion read under the same tenant the released row lands under is falsifiable. Item 2 is tick 273's refresh
+  of all eight stage counts via `state.py stage`, with the sum equal to the run's own `N violation(s).` (tick
+  274). No merge condition holds: `9 6` after a fetch, and no diff under Doctor, harness or hooks. Board:
+  proposals **12** (five in the eleven, all shut) · `app/app/Modules/` **0** · `CLOSED:` **7**. Wave 183 then
+  takes the board or the stale `C-Mail G11-03` `UNRESOLVED` correction, re-measured. Re-run every grep; never
+  inherit one.
 
 ## Style
 
