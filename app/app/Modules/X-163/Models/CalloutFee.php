@@ -16,4 +16,9 @@ class CalloutFee extends Model
         'callout_fee_cents' => 'integer',
         'deducted_if_proceeding' => 'boolean',
     ];
+
+    public static function isSet(int $cents): bool
+    {
+        return $cents > 0;
+    }
 }
