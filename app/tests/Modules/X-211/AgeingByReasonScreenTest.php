@@ -485,4 +485,20 @@ class AgeingByReasonScreenTest extends TestCase
 
         $this->assertSame(0, OfflinePayment::where('business_id', $biz->id)->count());
     }
+
+    public function test_a_cap_above_the_column_ceiling_is_refused_and_says_so(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+
+        Livewire::actingAs($owner)->test(AgeingByReason::class)
+            ->set('term.percent', 10)
+            ->set('term.cap', 99999999999)
+            ->call('saveTerm')
+            ->assertSee('A cap of 99,999,999,999 cents is too large')
+            ->assertSee('the most this can hold is 2,147,483,647 cents')
+            ->assertDontSee('SQLSTATE');
+
+        $this->assertSame(0, ArPlanTerm::where('business_id', $biz->id)->count());
+    }
 }
