@@ -4513,3 +4513,27 @@ in one method share verb and literal, a filtered artifact cannot tell them apart
 ⚠️ Near-miss, same wave: `assertDontSee('<span>Sample</span>', false)` beside a blade that renders
 `<x-ui.status-pill label="Sample" />` looks vacuous and is not — `components/ui/status-pill.blade.php:31` is
 `<span>{{ $label }}</span>`. **Read the component before calling an absence unreachable** (PB-127, one layer down).
+
+## ⛔ Trap added 2026-09-11 11:1x — `git log -S` over code can never find a DATA literal, and "never existed" graded three pins as padding
+
+PB-165 item 2 graded `ReordersTest:100`, `TimesheetsTest:121` and `MarginByJobTest:128` `NO CHANGE FOUND` because
+`git log -S` found each literal nowhere in the module's code. **All three are `assertDontSee(X) → call('toggle') →
+assertSee(X)` with `X` seeded by the test** (a SKU, a `stateWindow`, a cost). Each is pinned by its collapsed-by-default
+guard — `reorders.blade.php:50`, `timesheets.blade.php:43`, `margin-by-job.blade.php:46` → `@if(true)`. Ruled
+`PINNED-BY-TOGGLE` structurally: the trailing `assertSee` already proves the literal renders only inside that guard.
+⭐ **An instrument that searches CODE answers nothing about a literal the TEST supplies.** Read the method's setup
+before choosing the search. This is PB-145's disease again, and mine: the amendment named `git log -S` as the only
+instrument. ⭐ **A verdict names the production change. A search that fails to find one is not evidence that none
+exists.**
+
+## ⭐ Trap added 2026-09-11 11:1x — REFUSAL PARITY ACROSS WRITERS: a refusal one writer enforces, another skips
+
+PB-154's consumer-side shape turned around. `PriceConfirmAction:18` refuses `price_cents <= 0` before writing
+`is_confirmed = true`. `Pricebook::addItem():114` writes `is_confirmed => ! $this->newIsSample` from a price that
+defaults to `0.00` and never asks. `PriceQuoteAction:19-29` and `AgentAnswerAction:236-238` then say *"Our price for …
+is $0.00."* ⭐ **The instrument: for every refusal an action checks before writing a guarded state, list every OTHER
+writer of that state and ask whether it checks the same thing.** ⛔ **The fix that reads as the most consistent —
+route the second writer through the action — was wrong**, because the action also dispatches `PricebookUpdated`, and
+a fact taught on add outlives the row (TRACK 1 (i)). **When a second writer skips a refusal, share the PREDICATE, not
+the ACTION**, unless every side effect of the action is also wanted on that path. PB-166 is the first row;
+`saveCalloutFee()` is the next, unmeasured.
