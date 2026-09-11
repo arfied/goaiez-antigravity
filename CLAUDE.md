@@ -9163,6 +9163,85 @@ Watch for: <the trap that applies, by name>
   **5**. Suite at `647b5782`: `tests 2450 · passed 2442 · assertions 10805 · failed 6 · errors 2`, the
   standing **eight** by identity. `vs origin/main: behind 370, ahead 54` — tick 272 governs the next merge.
   Re-run every grep; never inherit one.
+- ⚠️⚠️ **The tick-300 state-commit authenticity test has a blind spot, and it is the MTIME half: an orphaned
+  `JOURNAL.md` row followed by a GENUINE `state.py` row passes it, because the real row moves the file's mtime
+  forward.** Wave 176's `6aabd04e` ships two journal rows and **one** ledger decision —
+  `grep -c '2026-09-10T19:54:33' .agents/state/BUILD-STATE.json` → **2**, `grep -c '2026-09-10T19:54:00'` →
+  **0** — while the journal's mtime (`19:54:33.864`) equals its own newest stamp to the second and
+  `git show --stat` reads a pure `JOURNAL.md | 2 ++`. Two of the three checks pass. **Only the per-stamp
+  mirror grep, run once PER ROW the commit adds, can see an orphan**; make it a report field (`MIRROR`) so
+  the coder runs it itself. ⭐ **And do not reach for tick 299's forgery verdict without reading the source:**
+  `bin/state.py:204-213` puts `print(...)` **between** `journal(...)` and `save(s)` at `:249`, so a
+  `BrokenPipeError` there (`state.py decided … | head`) writes the journal row and never the ledger — an
+  innocent mechanism in which **the tool is the defect and can orphan a row**. Tick 299 had the coder's own
+  run log saying it had hand-appended; absent that, the row's content being true makes this the wave-86
+  orphan (tick 274, a NOTE) and the cause goes over under the tick-250 method with the honest exit kept.
+  ⚠️ Its repair is **not** wave 86's one `git add`: `state.py` stamps `now()`, so the mirror can never be
+  written at the orphan's own stamp and one NEW row naming it is the whole remedy — which is also why holding
+  the push buys only adjacency, and is still worth one wave while `REVIEWS.md` is gitignored and the ledger is
+  the only record `origin` will ever carry.
+- ⚠️⚠️ **A `-green` copy taken BEFORE the wave's final gate captures the MUTATION run's object, and four
+  fields then inherit it — each reading as a survival.** Wave 176: `cmp scratch/w176-pest-raw-green.log
+  scratch/w176-mut-1-raw.log` is **silent**, 3305 bytes each, `duration_ms 146840` and `failed 7` shared; the
+  copy is stamped 20:00:35 and the final gate did not finish until 20:02:11, so `pest-raw-last.log` still held
+  the mutated run. `GREEN` equals `MUTATED` (delta 0), `TARGET-GRN : 1` where a true green gives **0** — so
+  the pair reads *already red* instead of `0/1` — and `MOVED` / `MOVED-COUNT : 0`. Wave 153's defect exactly,
+  and the true green (`pest-raw-last.log`, `failed 6`, `duration_ms 146689`) showed a clean radius-1 redden.
+  ⛔ **The tick-279 content check must run AT THE MOMENT OF THE COPY, not as a later reading**: the very next
+  command after the `cp` is `grep -o '"failed":[0-9]*'` on the file just written, pasted — a green object and
+  a mutated object of one tree differ there by construction, where size, mtime and `cmp` all read innocent.
+  ⭐ Deflating direction ⇒ NOTE, not the tick-290/291 `BLOCK`, **and the reviewer records the proof** (tick
+  262) or the next tick re-briefs proven work.
+- ⚠️⚠️ **A field defined as a check on the MUTATED tree is unanswerable from a generator that runs at REPORT
+  time — and the honest answer then looks like a failure.** Tick 298 made `APPLIED` the content proof
+  (`grep -c '<the line the patch adds>' <the file>`); a well-run wave reverts before writing its report, so
+  the command can only ever return `0`. Wave 176 reported **`0`** rather than typing `1`, in the one field
+  whose whole purpose is to prove a mutation reached the tree and where a typed `1` is unfalsifiable.
+  ⭐ **Credit that loudly, and fix the field the way `MUTSTART` already is** — capture it to
+  `scratch/w<N>-applied-<n>.txt` **between the apply and the gate** and make the field a `cat`. Generalise:
+  **before writing a field, ask at what moment its command runs and whether the state it measures still
+  exists then.**
+- ⚠️ **A wave that BUILDS a backlog row's subject and does not close the row leaves the board asking for
+  finished work — and the same claim usually sits in a code comment too.** Wave 176 shipped
+  `if ($authorType === 'visitor')` at `ChatTurnAction.php:32`, which is exactly what `ChatDoorTest.php:25`
+  says is owed, while `ChatTurnAction.php:28` — four lines **above** that `if` — still reads *"This is a
+  defect: we should only call C-Agent if the author is 'visitor'."* `grep -rn "BUILD PROPOSAL:"
+  app/tests/Modules/` **is** this lane's backlog, so that is tick 191's manufacture-a-wave hazard authored
+  into the tree. ⭐ The wave disclosed the change itself in `NOTES`, which is what keeps it a records note
+  rather than a scope finding, and both records correct forward by rewriting themselves (tick 263). **When a
+  wave's diff satisfies a row it was not sent to close, grep the row AND the comments in the file it
+  changed** — and brief them as two numbered items, because a board label and a code comment are different
+  forms.
+- ⚠️ **`[^\"]*` excludes BACKSLASH, so a `"test":"…"` census matches nothing on this reporter — recorded at
+  tick 304 for `MESSAGE` and then printed back into a brief by this column.** Wave 176's `green-names.txt`
+  and `mut-names.txt` are both **0 bytes**, because a test name carries `Tests\\Modules\\X102\\…` and inside
+  a bracket expression a backslash is literal. The answering form is the one that wave's own `MESSAGE` used:
+  `grep -oP '"test":"(?:[^"\\]|\\.)*"'`. Nth recurrence of *a grep PATTERN is a claim about the file it
+  greps* (ticks 285, 289, 294, 302, 304; waves 158, 165, 169) and the second where the pattern is mine.
+- ⭐ **33 tracked `*.patch` files sit at the repo ROOT and they are NOT this lane's — measured at tick 309 so
+  no future tick chases them.** `git ls-files -- '*.patch'` returns all 33 (`debug-*.patch`,
+  `fix-auth-db*.patch`, `test-j1-debug*.patch`, …); `git log origin/main --oneline -1 -- debug-customer.patch
+  fix-auth.patch test-harness.patch` names `cc9ae213 "J1 textback passes"`, so they arrived on `origin/main`
+  and entered here with the wave-148 merge. The repo root is not gitignored and `scratch/` is; deleting
+  another lane's tracked files is not this column's call. Filed as a `TRACK 1 ACTION` at tick 309.
+- **Backlog at tick 309 — wave 177 is records and readings only; wave 178 builds whatever it licenses.**
+  RULED, and the reason is that the one thing missing is **not code**: wave 176's build is verified, gated
+  and mutation-proven, and what is owed is a ledger in which the orphan is explained, two durable records
+  that contradict the code beside them, and one reading. ⛔ **Push HELD** at `1cbcbad1` (`b2452a02 ·
+  6aabd04e · 1cbcbad1` plus this column's notes) so the orphaned row and the row explaining it reach
+  `origin` together (ticks 172, 252, 274, 308). The reading is `isset($response['reply'])` at
+  `ChatTurnAction.php:34`: **all seven `return [` sites in `AgentAnswerAction` carry a `'reply'` key**
+  (`:60 · :97 · :124 · :162 · :190 · :230 · :311`), so the guard can never be false and refuses nothing; the
+  one branch returning `'reply' => ''` is the `HUMAN_TAKEOVER_LATCH` refusal at `:46-61`, unreachable from
+  this path because `$conversationId` arrives `null` (tick 308), so nothing writes an empty agent turn today
+  — and `$response['status']` is discarded, so a refusal carrying a real refusal sentence is stored as an
+  ordinary agent turn with no marker. ⛔ This column names no conclusion; if what the wave finds is **owed**
+  the home is one line on the board, if it is **dead** the home is a comment beside the line, and the change
+  itself is wave 178's so it can carry its own test and mutation (ticks 218–223). Board re-measured this
+  tick: proposals **13** · `app/app/Modules/` **0** · `CLOSED:` **6**. Suite at `1cbcbad1`: `tests 2450 ·
+  passed 2442 · assertions 10806 · failed 6 · errors 2`, the standing **eight** by identity.
+  `vs origin/main: behind 370, ahead 58` — tick 272 governs the next merge. Re-run every grep; never inherit
+  one.
 
 ## Style
 
