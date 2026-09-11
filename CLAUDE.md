@@ -13904,3 +13904,91 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     272, 323): 46 behind, the guarded-checker diff empty, the merge-base **`8473c04a`** this lane's own
     `chore(state)` with three pushes since, `OWNER.md`'s newest heading still 2026-09-09 09:02, and no
     Track 1 answer to ACTION 13–24. ⭐ Ruling 327's outcome shape a **NINETEENTH** time.
+434. **⭐⭐ The COMPUTED VIEW-ATTRIBUTE census — 42 members, ZERO collisions, ZERO buildable, and the whole
+    census is ONE disproving command (measured by the lane supervisor 2026-09-10 23:2x; rulings 64, 95,
+    100, 111, 262(b), 294, 324, 327, 328, 400, 415).** Ruling 324 measured that this lane declares **zero**
+    Eloquent relations and **zero** accessors, and ruling 414(d) swept the `render()` VIEW KEYS a blade
+    reads. **Neither asked what a component writes onto the MODEL OBJECTS themselves.** Predicate: *a value
+    assigned onto a model instance by a component — a view attribute that is not a column — measured for
+    (i) a name collision with a real column on that model, and (ii) any path that would persist or re-read
+    it as one.* ⭐ The failure shape is sharp and invisible to every gate: with `$guarded = []` on all 32
+    models (208), an assignment whose name IS a column silently overwrites that column in memory, and
+    anything that later saves the instance persists the computed value — `pint`, `phpstan` and `php -l`
+    all pass over it.
+    **Instrument, quoted (300):** `grep -rnE "[a-z]\->[a-z_]+ = " app/app/Modules --include=*.php`
+    filtered to `/Ui/`, then `grep -v "this->"` (a component's own properties are rulings 245/361/402(b)'s
+    population, not this one), then to the eight ids → **42**. ⭐ Positive control fires: unfiltered it
+    returns **73**, so 31 sit outside the lane; ⛔ money proposes no edit on any of them (ruling 5).
+    ⭐ 415's first-three check passes — `$state->recovered_cents`, `$state->stays_on`, `$run->payout_label`.
+    ⭐⭐ **The disproving measurement was taken FIRST (a TENTH firing) and it is the whole census:** the 29
+    distinct attribute names swept against every `$table->` column declaration in every module's migrations
+    returns **14 lines and NOT ONE is a collision** — every hit is the same word on a **different table**
+    (`payout_date` a column of `payouts` assigned onto a `ReconciliationRun`, which ruling 263 had already
+    read correctly; `late_fee_cents` a column of `receivable_states` assigned onto an `Invoice`; `reason` a
+    column of `disputes` and of `ar_dunning_actions` assigned onto an `Invoice`). ⚠️ The Blueprint
+    declarations are the whole truth here, which ruling 431 measured rather than assumed: `DB::statement`
+    in this lane's migrations adds or alters no column beyond ruling 41's `ALTER COLUMN url TYPE text`.
+    **Each member's safety, named (328):** (i) no collision; (ii) ⭐ **components perform zero direct
+    writes** — ruling 412's measurement, `::create|->update|->save|->delete|::updateOrCreate|
+    ::firstOrCreate|->increment|->decrement` over the eight `Ui/` trees returning **one** line, a
+    `Carbon::createFromDate` — so no instance carrying a view attribute is ever saved; (iii) zero relations
+    (324), so a relation-shaped name (`$invoice->lines`, `$decline->pay_link`, `$d->evidence_items`)
+    shadows nothing. ⚠️ Recorded at ruling 76's grade and NOT briefed: `$invoice->lines = $lines->get(…)`
+    puts a **Collection** into `$attributes`, so a `save()` on that instance would try to persist a `lines`
+    column and die `SQLSTATE[42703]` — **unreachable by (ii)**, so ruling 96 governs and the edit would be
+    ungated churn. ⛔ Not a wave and not to be re-raised.
+435. **⭐⭐ Ruling 197's singular-read census re-run on its PREDICATE — 11 members, ZERO buildable, and the
+    known-member rule fires TWICE (measured by the lane supervisor 2026-09-10 23:2x).** Ruling 197 swept
+    *"singular reads"* with `->first()` / `->latest(` / `->sole()` — **a list of three forms** — where its
+    predicate is *any read that collapses many rows to one and whose choice is therefore undefined*.
+    ⭐ **That is ruling 371's family a TENTH time inside this ledger's own censuses** (375c, 376, 383, 394c,
+    395, 402(b), 404, 407, 409, 420): *a census that LISTS its members instead of stating its PREDICATE is
+    a filter wearing a census's name, and it closes silently.* `->value(`, `->find(` and `->firstWhere(`
+    are all outside those three forms.
+    **Instruments, quoted (300):** `grep -rn -F -e "->value(" app/app/Modules` filtered to the eight ids →
+    **3**; `grep -rnE "\->(firstWhere|sole|find)\(" app/app/Modules --include=*.php` filtered to `/Ui/` and
+    the eight ids → **8**. ⭐ Positive control fires: `->value(` returns **12 tree-wide**.
+    ⭐⭐ **Ruling 429's corroboration fires TWICE** — the `->value(` instrument returns ruling 221's own
+    shipped fix (`ArEngine.php:75`'s headroom read) and the singular-read instrument returns ruling 208's
+    own shipped fix (`CheckoutBlock.php:116`'s scoped `Sellable::where('business_id', …)->find(…)`).
+    **Every member, read whole rather than at the line the filter stopped at (152, 262(b), 395), with its
+    safety named:** `ArEngine.php:73-75` and `AgeingByReason.php:157` are an **unordered**
+    `ReceivableState::where(business_id, invoice_id)->value('late_fee_cents')` and are **singular by
+    WRITER** — all five writers are `firstOrCreate(['business_id' => …, 'invoice_id' => …], …)` at
+    `ArEngine:87`, `:189`, `:304`, `:350` plus a `where(…)->update(…)` at `:239`, so the pair is unique by
+    construction, which is ⭐ **ruling 338's own criterion verbatim** (*tie-candidacy is decided by the
+    WRITER's cardinality, not by the index's uniqueness*), the criterion 338 used to strike `dunning_states`
+    · `AgeingByReason.php:159-162` is `->latest('id')->value('reason')`, ordered on a unique column, so the
+    choice is total and it is the newest reason, which is what the screen means ·
+    ⭐⭐ `InvoiceThreadBeside.php:106`'s `firstWhere('action', 'escalate_to_human')` is the one **non-unique**
+    key and needed its own disproving measurement: **both** escalation writers are `firstOrCreate` keyed on
+    `['business_id', 'invoice_id', 'action' => 'escalate_to_human']` (`ArEngine:345-348`,
+    `ProcessOverdueReceivable:20-26`), so at most one escalation row per invoice — **and the engine's own
+    docblock states it in terms** at `ArEngine:323-325`, *"the escalate_to_human row is what the ageing
+    screen and the dunning listener both read, so it is a gate, not a sort (§216.5 FAILS IF)"*, which is
+    ⭐ **ruling 326's shape a SIXTH time** (after 326's `env()`, 370's `SampleStateModuleTest` pin, 372's
+    `ScreenStates` docblock, 399's `Pest.php`, 429's `db:footprint`): **when a census's safety is written
+    down in the code's own rule text, the strike is stronger than the measurement that prompted it** ·
+    `InvoiceThreadBeside.php:76` is ruling 337's own member, total since MONEY-177's `orderBy('id')`
+    tiebreak · `CartBlock.php:88` is `firstWhere('id', …)` on a unique key · and
+    `ReconciliationDiscrepancies.php:80`, `Invoices.php:61`, `Credits.php:111`,
+    `InvoiceThreadBeside.php:89` are `find(<primary key>)`, every one tenant-scoped (209), with ruling 432
+    already measuring the `customer_id` null path. ⛔ The race that would make two `ReceivableState` rows
+    possible is already-ruled ground: ruling 256 retired that class — a racing fixture cannot be committed
+    from a second connection under `Pest.php:84-86`'s `RefreshesTenantDatabase`, and shipping a unique
+    index alone converts a cheap defect into an expensive one (240, 256, 327, 330). ⛔ Not to be re-raised.
+436. **⭐⭐ NINTH consecutive HOLD, and BOTH of this tick's censuses were decided by ONE command each —
+    the one that would DISPROVE the candidate (RULED by the lane supervisor 2026-09-10 23:2x).** All four
+    lift conditions measured ✗ in the acting tick (269, 272, 323): **47** behind, not > 100 · the
+    guarded-checker diff over `app/app/Doctor coder-bin .claude/hooks` **empty** · the merge-base
+    **`8473c04a`**, this lane's own `chore(state): MONEY-197 decision`, with four pushes since (272's
+    second half) · `OWNER.md`'s newest heading still `## OWNER RULING — 2026-09-09 09:02` (136) · and no
+    Track 1 answer to ACTION 13–24. ⚠️ **Ruling 145's trap is live on the board and was not read as the
+    measurement**: `origin/main`'s recent history carries `merge: track/money` subject lines that are true
+    and **spent**. ⭐ Ruling 327's outcome shape a **TWENTIETH** and **TWENTY-FIRST** time.
+    ⭐⭐ **What this adds to ruling 385's standing warning:** 434's collision sweep killed a 42-member
+    population outright and 435's writer-cardinality read killed the one member whose key is genuinely
+    non-unique. **A census is not finished when its members are listed; it is finished when each member's
+    SAFETY has been named** (328) — and naming it is what stops the next tick re-deriving it.
+    ⛔ Briefing an empty wave to avoid an idle tick is what rulings 95, 100 and 111 exist to prevent, and
+    it is worse than idling; ⛔ *sounds plausible* is not a population.
