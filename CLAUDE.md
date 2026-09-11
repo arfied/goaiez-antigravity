@@ -9676,6 +9676,76 @@ Watch for: <the trap that applies, by name>
   - Board: proposals **13** · `app/app/Modules/` **0** · `CLOSED:` **7**. `9 12` vs `origin/main`, and no merge
     condition holds.
   - Re-run every grep; never inherit one.
+- ⚠️⚠️ **`Livewire::test` reads the tenant the TEST set, not the one `ResolveTenant` sets, so a content assertion
+  riding it proves a component's `Tenancy::id()` fallback and never the production request.**
+  - `app/tests/TestCase.php:177` is `Tenancy::set($biz->id)` inside `provisionTenant`. So every
+    `Livewire::test` after it has an ambient tenant, and no middleware runs.
+  - Only a real `GET` traverses `ResolveTenant`, which `app/bootstrap/app.php:59` appends to the `web` group.
+  - Wave 184's `C-Sms/Screens/ThreadScreenTest::test_screen_displays_tenant_sms` asserts `assertOk()` on the GET
+    and `assertSee` on `Livewire::test`. Its mutation (`$this->businessId = 0`) is a real proof of `mount()`.
+  - Nothing yet shows the signed-in owner's request resolves the tenant the component reads. Tick 243's shape
+    (the test supplies the input production must supply) in a milder form, because `Tenancy::id()` is the
+    channel `ResolveTenant` writes.
+  - NOTE, folded into the next wave that opens that file (tick 191). **Ask which tenant a content assertion reads
+    under, not only whether it can fail.**
+- ⚠️ **A generator that ends in `} >> REPORT.md` leaves the previous wave's report on top.**
+  - Wave 184's `REPORT.md` is wave 183's 121 lines followed by wave 184's; `STATUS` appears twice.
+  - Second recurrence of tick 251's *written once and replaced, never appended*.
+  - The tell costs one `grep -c "^STATUS" REPORT.md`. Brief the redirect as `>` on the whole block.
+- ⛔ **RULED at tick 318: `|| true` is permitted in a report generator; a `||` that PRINTS is not.**
+  - The tick-304 ban on every `||` is unsatisfiable under `set -e`, because `grep -c` exits 1 on a count of 0.
+    Wave 184 added `|| true` on 23 lines to survive, and every value still came from a command naming a file.
+  - The defect tick 304 caught was `|| echo none` supplying an outcome. `|| true` supplies nothing.
+  - Check the property, never the construct (tick 292).
+- ⚠️ **`APPLIED` printed without its pattern is discriminating only by inference.**
+  - Wave 184's `2` came from a pattern matching both `public int $businessId = 0;` and the mutated
+    `$this->businessId = 0;`, so the unmutated file gives `1`.
+  - The pattern is recorded in no artifact. The field must print the pattern beside the count, and the pattern
+    must match only a line that exists after the apply.
+- ⭐ **`AGY_EXIT=124` beside a complete report and a clean tree is a FINISHED wave held open, not a death
+  shape.**
+  - Run 192's whole log is `root agent idle; waiting for 2 background task(s)` / `error: interrupted` /
+    `AGY_EXIT=124`.
+  - `REPORT.md` was written 14:57:58. The pid held until the 3h bound (tick 215) freed it at ~17:40.
+  - `ps -o pid,ppid,etime,cmd -u goaiez` showed nothing from this checkout but supervisor ticks.
+  - Read the log's first line before running the four shape commands.
+- ✅✅ **C-Sms `Thread`'s tenant wire is PROVEN and wave 184's mutation is SPENT — never re-brief it.**
+  - Green `2544 · 2535 · 11113 · failed 7 · errors 2`: `+1 · +1 · +3` on wave 183, one new three-assertion test,
+    and the standing nine by identity.
+  - Mutated `passed 2534 · failed 8`, `assertions` flat because `assertSee` is the target's last assertion (tick
+    249). Radius 1.
+  - §1 pins `M app/app/Modules/C-Sms/Ui/Thread.php`, and the message carries the component's own rendered
+    `No SMS messages in thread.`
+- **Per-id table of the lane's sixteen unmounted `$businessId` components, measured at tick 318** (4 of 20 now
+  mount: `X-01/Thread`, `X-124/ChatDockEvery`, `X-188/PoolInventory`, `C-Sms/Thread`). Every one of the sixteen
+  renders a `where('business_id', $this->businessId)` or hands the property to an action.
+  - **Tenant group** (`web · auth · tenant.role`): `X-01/CustomersList`, `C-Whatsapp/TemplateStatusCard`,
+    `C-Agent/Thread`, `C-Agent/TeachingBox`, `C-Agent/RefusalcodeDistributionPer`, `C-Mail/WarmupCalendarsPer`,
+    `C-Telephony/CarrierRosterHealth`, `C-Telephony/FailoverLog`, `C-Sms/DonottextList`, `X-194/AnyViewIt`,
+    `X-194/SavedViewsList`.
+  - **Both groups:** `X-153/AlertReplyBy`, `X-153/AlertRosterScreen`.
+  - **Admin group only:** `X-124/PreviewCard`, `TodaysRecommendationStrip`, `AssistantunsupportedLog`. The admin
+    twin's tenant is `TRACK 1 ACTION 2` (tick 245), so these are not a lane wave.
+  - **Writers, measured only for C-Agent:**
+    - `agent_turns` and `agent_refusals` are live: `AgentAnswerAction`'s creates, reached from
+      `AnswerAgentTurnJob:334`, plus the job's own `:389`/`:397`.
+    - `agent_instructions`' one writer is `AgentTeachAction:19`, which has **no caller**. `TeachingBox` is the
+      writerless shape (ticks 201, 205).
+  - Every other writer is **unmeasured**. Measure it on the tick that briefs the component.
+- **Backlog at tick 318 — wave 185 is C-Agent's `Thread` and `RefusalcodeDistributionPer` tenant wires, as two
+  numbered items, and it is a BUILD.** RULED.
+  - Both are in lane, single-module and tenant-routed. Both read an `ENABLE`+`FORCE` RLS table with a live
+    writer, and both standing screen tests assert `assertOk()` only.
+  - `grep -rn "No agent turns recorded\|Zero refusals logged" app/tests` is empty, so no standing assertion reads
+    either blade's empty branch.
+  - Two builds of one measured shape group where a correction and a build do not (ticks 218–223). Each item still
+    carries its own test and its own mutation, and the brief says their answers need not agree.
+  - ⛔ `TeachingBox` is excluded (writerless). ⛔ `DonottextList` is excluded (an X-204 `Models` read). ⛔ X-124's
+    three are excluded (admin-only).
+  - The NOTE on `Livewire::test` goes over as a measurement with no conclusion.
+  - Board: proposals **13** · `app/app/Modules/` **0** · `CLOSED:` **7**. `9 15` vs `origin/main`, and the
+    Doctor/harness/hooks diff is empty, so no merge condition holds.
+  - Re-run every grep; never inherit one.
 
 ## Style
 
