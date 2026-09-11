@@ -4672,3 +4672,24 @@ comes from `wire:model` state, and `:147-151` clears confirmation on a change). 
 
 ⭐ Measured in passing (PB-169 M5): Livewire calls a generic `updated($name)` on `set('inlinePrices.N')`, so typing into a
 nested key does reach a hook.
+
+## ⭐⭐ Trap added 2026-09-11 15:4x — THE CENTS SEAM HAS TWO DIRECTIONS, and the 09-08 sweep measured one
+
+The 2026-09-08 sweep cleared all 29 `number_format` sites and was marked ⛔ SPENT. **It measured cents → dollars (display).
+It never asked dollars → cents (input).**
+
+Measured over the ten modules' `*.php` with `* 100` and `floatval|(float)`: 18 `* 100` lines, 5 of them percentages. Of
+the **13 money conversions**, the **10 in X-163** use `(int) round((float) $x * 100)`. **Three truncate:**
+`X-82/Ui/RateRegistryView.php:37`, `:62` and `X-165/Ui/Plans.php:39`, each `(int) (floatval($x) * 100)`.
+`floatval('19.99') * 100` is `1998.9999999999998`, so an owner who types $19.99 gets 1998 cents.
+
+⭐ **Every test input on those three sites is binary-exact** (`'99.50'`, `'75.00'`, `'299.00'`), so no test could see it.
+**PB-115's method transfers to arithmetic: if every seeded amount is a whole or half dollar, the rounding arm is
+untested.**
+
+⭐ **A SPENT entry names its DIRECTION as well as its scope.** "The cents seam is clean" was read as covering both
+directions. Running an instrument in its other direction is a scope correction, not a loosened criterion — the same move
+as the read-side sweep after the write-side one.
+
+⛔ **X-165's site waits.** `N-165-01` says X-165 never authors a price, yet `Plans::proposePlan()` authors one. Its end
+state may remove the typed box a test would pin, so that is **(r5)**, to be ruled first. **PB-171 fixes X-82 only.**
