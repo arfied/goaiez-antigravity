@@ -9,6 +9,7 @@ use App\Modules\X181\Ui\QaQueueSlaDueAt;
 use App\Modules\X181\Ui\Resolution;
 use App\Modules\X181\Ui\Ticket;
 use App\Support\Tenancy;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -167,20 +168,32 @@ class X181ScreensTest extends TestCase
         $this->assertNull($ticket->resolved_at);
     }
 
-    public function test_ticket_resolve_error_shows_panel(): void
+    public function test_ticket_resolve_refuses_an_absent_ticket_without_disclosing(): void
     {
-        Livewire::test(Ticket::class, ['businessId' => $this->bizId, 'ticketId' => 0])
-            ->call('resolve', 'x')
-            ->assertOk()
-            ->assertSee('Action failed');
+        try {
+            Livewire::test(Ticket::class, ['businessId' => $this->bizId, 'ticketId' => 0])
+                ->call('resolve', 'x')
+                ->assertDontSee('No query results for model');
+            $this->fail('resolve accepted an absent ticket.');
+        } catch (ModelNotFoundException $e) {
+            // propagating renders a 404
+        }
+
+        $this->assertNull(QaTicket::find(0));
     }
 
-    public function test_resolution_reopen_error_shows_panel(): void
+    public function test_resolution_reopen_refuses_an_absent_ticket_without_disclosing(): void
     {
-        Livewire::test(Resolution::class, ['businessId' => $this->bizId])
-            ->call('reopen', 999999)
-            ->assertOk()
-            ->assertSee('Action failed');
+        try {
+            Livewire::test(Resolution::class, ['businessId' => $this->bizId])
+                ->call('reopen', 999999)
+                ->assertDontSee('No query results for model');
+            $this->fail('reopen accepted an absent ticket.');
+        } catch (ModelNotFoundException $e) {
+            // propagating renders a 404
+        }
+
+        $this->assertNull(QaTicket::find(999999));
     }
 
     public function test_ticket_sample_state(): void

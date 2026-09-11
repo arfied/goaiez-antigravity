@@ -35,6 +35,7 @@ class Ticket extends Component
 
     public string $resolutionNotes = '';
 
+    /** The panel is the house error surface, reachable only from a domain refusal this module does not yet raise; infrastructure faults propagate by design */
     public ?string $actionNotice = null;
 
     public function toggleSample(): void
