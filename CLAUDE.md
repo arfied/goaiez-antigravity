@@ -14688,3 +14688,111 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     ⭐ **The HOLD lifts on condition 4 as a MEASUREMENT, which rulings 258, 296 and 453 bless in terms** —
     *a measurement wave is not an empty wave, and it is judged by the rulings it makes possible, never by
     whether it hands the next tick a code wave.* Twelve consecutive HOLDs end here.
+457. **⭐⭐⭐ RULING 454 IS CONFIRMED BY EXPERIMENT — a class-based money test runs at
+    `DB::transactionLevel()` **0** and a pest-style one at **1** — and the output carries the MECHANISM as
+    well as the outcome, which nobody predicted (RULED by the lane supervisor 2026-09-11 01:0x, on
+    MONEY-201's run 226).** Ruling 454 measured in vendor that Pest applies a `->use()` binding only to a
+    `TestCaseFactory` (`TestRepository.php:178`'s `private function make(TestCaseFactory $testCase)`,
+    `:190`'s `$testCase->traits[] = $class;`), which a hand-written PHPUnit class does not have — so **71
+    of this lane's 76 class-based test files get no `RefreshesTenantDatabase`, no per-test transaction and
+    no rollback** — and ruling 456 refused to brief the wave that turned on it, on ruling 302's ground
+    that *where a ruling rests on reading SOURCE the cheapest confirmation is an EXPERIMENT*, because
+    **256's own error was building on an inference**. The experiment, in pest's own JSON:
+    `P\Tests\Modules\X199\MarkInvoicesDueTest::__pest_evaluable_probe_transaction_level` →
+    *"Failed asserting that **1** is identical to -1."*; `Tests\Modules\X198\X198Test::test_probe_transaction_level`
+    → *"PROBE class-based X198Test\nFailed asserting that **0** is identical to -1."*
+    **Ruling 225 is right, ruling 256's half is FALSE, and both are now measured rather than read.**
+    ⭐⭐⭐ **The unpredicted half is the class NAMES.** Measured this tick in vendor:
+    `app/vendor/pestphp/pest/src/Factories/TestCaseFactory.php:123` is `$classFQN = 'P\\'.$relativePath;`
+    — **the `P\` prefix is emitted by `TestCaseFactory` ITSELF**, the exact class 454's argument turns on.
+    So the two fully-qualified names in the failure JSON are the mechanism's own signature: the pest-style
+    file carries `P\`, therefore it HAS a factory, therefore `make()` ran, therefore the trait was applied,
+    therefore level `1`; the class-based file has no `P\`, therefore no factory, therefore `make()` never
+    ran, therefore level `0`. ⭐⭐ **The outcome and the mechanism arrived in the same four lines**, and only
+    the outcome was designed for. **So an experiment built to settle an inference should be read for what
+    else its output happens to prove** — ruling 302 established the experiment as cheaper than an argument
+    from source; this adds that it is also **richer**, because a real run prints things a reading cannot.
+    ⚠️ Ruling 455's safety is untouched and **no wave is owed on the 71 files**: ruling 400's fresh business
+    per `provisionTenant` means a leaked row belongs to a tenant no later test reads, and the one exposed
+    shape — a cross-tenant sweep — has exactly two members, both measured order-robust with their reason
+    stated in the code (326's tenth instance).
+
+458. **⭐⭐⭐ RULING 240(c)'s "`app/config/database.php` defines ONE pgsql connection" IS FALSE —
+    `pgsql_migrate` exists, is LIVE IN THE SUITE, and its credentials are proven by the fact that
+    `migrate:fresh` runs on it; so the racer shape rulings 240, 256 and 327 called impossible now rests on
+    THREE inferences rather than on a structural blocker (RULED by the lane supervisor 2026-09-11 01:0x).**
+    Ruling 240(c) recorded *"⭐ The decisive new measurement: the proof needs a SECOND CONNECTION … and
+    `app/config/database.php` defines **one** pgsql connection, and a second would need its own
+    `SET app.business_id` for RLS."* Measured: **`app/config/database.php:103` is `'pgsql_migrate'`**, a
+    second `pgsql` driver on the same host and database with a **different username**
+    (`DB_MIGRATE_USERNAME`, default `goaiez_owner`) and therefore a separate PDO session with its own
+    transaction state. ⭐⭐ **And it is not vestigial:** `app/tests/Concerns/RefreshesTenantDatabase.php:170`
+    passes `'--database' => 'pgsql_migrate'` to `migrate:fresh`, `:105` iterates
+    `['pgsql', 'pgsql_migrate']`, and `:22` documents the split — *"schema created by the owner role
+    (`pgsql_migrate`) — DDL is allowed"*. **Its credentials therefore resolve in the test environment, and
+    the proof is the suite's own green**: the schema every run builds is built through that connection.
+    ⚠️ **TWELFTH inherited attribution corrected** (163, 171, 176, 257, 289, 355, 374, 383, 394(a), 449,
+    454), and ruling 257's shape a twelfth time: **the ledger recorded a conclusion and not the command.**
+    **What is now MEASURED, and what is still INFERRED — the distinction is the ruling.** Measured:
+    (1) a class-based money test is untransacted, so its writes commit (457, by experiment);
+    (2) `pgsql_migrate` exists and connects under test (above); (3) `payments` carries `ENABLE` **and**
+    `FORCE ROW LEVEL SECURITY` plus `tenant_isolation` with both `USING` and `WITH CHECK` on
+    `business_id = nullif(current_setting('app.business_id', true), '')::bigint`
+    (`2026_08_30_000030…:71-78`, ruling 212 re-measured on this table); (4) `capture()`'s whole body is
+    inside `DB::transaction` at `GatewayEngine.php:81` — **production code, which ruling 454 does not
+    touch**, so a racer on the SAME connection is inside capture's own transaction and rolls back with it,
+    exactly as 240(c) reasoned; (5) `useTestDatabase()` **rewrites `config()` only** and never connects,
+    purges or sets session state (`:103-119`), and with `app/phpunit.xml:34` pinning
+    `DB_DATABASE=goaiez_antig_money_test` the derived name equals the configured one, so `:112`'s
+    `continue` fires and **a class-based file lands on the test database by the ENV PIN rather than by the
+    trait** — which is independently why ruling 444 calls that pin the sharpest exposed path at every merge.
+    ⛔ **Still inferred, and therefore still not briefable as a wave:** (A) a row committed on a second
+    session is **visible** to an open transaction on `pgsql` (READ COMMITTED); (B) it **survives** that
+    transaction's rollback; (C) `FORCE` genuinely constrains the **owner** role, so the racer needs its own
+    `SET app.business_id` — which rests on `RefreshesTenantDatabase:15-18`'s docblock, and **ruling 374 is
+    explicit that a docblock's wording is a hint, never a measurement.**
+    ⭐⭐⭐ **RULED: the wave is STILL not briefed and the SECOND experiment is (ruling 459).** This is ruling
+    456's own reasoning one step further along the chain, and the stake is unchanged: ruling 232 —
+    *introducing a new hazard is worse than deferring the removal of an old one* — and 256's measured
+    hazard is specific, that a bare index puts a `23505` into `capture()`'s `catch (\RuntimeException)`
+    (`UniqueConstraintViolationException extends QueryException extends PDOException extends
+    RuntimeException`), writing a **`failed`** row for a charge Stripe actually took, whereupon MONEY-145's
+    `$attempt` mints a **fresh** idempotency key the provider cannot dedupe — **the double charge ruling
+    230 set out to prevent.** ⛔ To reopen that wave on three inferences would repeat 256's mistake with
+    real money at the other end. ⚠️ The generalisable half: **a blocker is a CONJUNCTION, and removing one
+    of its terms does not open the path — it moves the question to the next term.** 454 removed the suite
+    transaction; capture's own transaction, the second session's visibility and the owner's RLS standing
+    are three further terms, and only the first of those three was ever written down.
+
+459. **⭐⭐ MONEY-202 is the RACER PROBE — three integers in one RED line, zero commits, and its own
+    disproving measurement built into the instrument (RULED by the lane supervisor 2026-09-11 01:0x,
+    briefed as MONEY-202).** The probe is one method appended to `X-198/X198Test.php` — measured
+    class-based and therefore untransacted (457), `DB` already imported at `:22` so **no new import and
+    therefore no `pint` fixer** (ruling 353), the file's own tenant idiom being
+    `TestCase::provisionTenant([...])` + `DB::statement("SET app.business_id = '{$biz->id}'")` at eleven
+    call sites (ruling 123, one wording per file). It settles ruling 458's three inferences in one run:
+    **`rls=`** — an insert on `pgsql_migrate` with that session's `app.business_id` **unset** must be
+    refused if `FORCE` constrains the owner; **`inside=`** — a row committed on `pgsql_migrate` mid-way
+    through an open `DB::transaction` on `pgsql`, read back from `pgsql`; **`survives=`** — the same read
+    after that transaction has rolled back. ⭐ All three arrive in the **message** of one deliberately-failing
+    assertion against a sentinel, which is ruling 418's shape inverted and needs no output capture.
+    ⭐⭐ **Each integer is produced under a DISTINCT `idempotency_key`, so no one measurement can be produced
+    by another's cause** — ruling 61's discipline applied to a probe rather than to an assertion.
+    ⛔ **Never purge or disconnect either connection.** `RefreshesTenantDatabase:90-96` records that
+    measured-rather-than-reasoned: *"the suite holds its per-test transaction on `pgsql`, so purging
+    disconnects and rolls that back underneath whatever is running … with the purge, eight tests in
+    `PlaceResolverTest` failed on a missing table **against the correct database**; without it, all 2,141
+    pass."* ⭐ Ruling 326's eleventh instance — the constraint is written in the code's own rule text.
+    ⚠️ The insert is dictated against **measured** columns rather than against the table's name (rulings
+    416, 419's method): `payments`' only NOT-NULLs without a default are `business_id`, `amount_cents`,
+    `payment_token` and `idempotency_key` (`2026_08_30_000030…:26-37`), `currency` and `status` carry
+    defaults, `gateway_charge_id` and `merchant_connection_id` are nullable, and `timestamps()` are
+    nullable — so a four-column raw insert cannot die on a constraint the probe is not about. ⚠️ The
+    `business_id` FK to `businesses` resolves from the owner session because **Postgres bypasses RLS for
+    referential-integrity checks** (ruling 428's own measurement). ⛔ The probe **deletes its own rows on
+    `pgsql_migrate`** before it ends: the file is untransacted so they would otherwise commit, and ruling
+    455's safety (a fresh business per `provisionTenant`) makes a leak harmless but not tidy — leaving one
+    where a single statement removes it is churn a later reviewer must re-derive (47's companion).
+    ⛔ ⚠️ **No expected value is dictated and no clause says what an answer would mean** (rulings 296,
+    449): a brief that tells a run an outcome is self-explanatory forbids ruling 400's disproving
+    measurement in advance, which is what MONEY-200's brief did and ruling 449 exists to stop.
