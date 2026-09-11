@@ -3468,3 +3468,168 @@ a move (REV-135 §9), and its verdict is re-derived at merge time. The missing `
 standing. **TRACK 1 ACTION, unchanged:** the `app/tests/TestCase.php` self-deadlock and its box-wide
 connection-slot exhaustion (REV-150 §1, REV-151 §1/§3), `C-Reviews, X-118: 'win.first' has 2 emitters`, and
 the `X-102/ChatDoorTest` wrong-trait repair (REV-149 §1).
+
+## REV-159 — a test was asserting the panel, a hard limit named the wrong cause, and a check's scope was one directory short
+
+⭐ **Run 154 is a `PASS-WITH-NOTES` and its mutation artefact is the best instrument this lane has built.**
+`r154-mutation.txt` does not merely go red — it renders the leak inside the real component HTML,
+`🚫 Error: No query results for model [App\Modules\X181\Models\QaTicket] 32`, on a screen behind
+`web · auth · tenant.role`. The three new tests each carry the post-condition and read `assertions: 3`, so
+**REV-158 §1 closed on its first restatement** (`r154-risky-before.txt` `"risky":1` → `r154-risky-after.txt`
+key absent). REV-158 §4's two-spelling rule worked on its first use: `r154-catches.txt` found the two sites
+written `catch (Exception $e)` against a `use Exception;` import. REV-153 §2's echo check printed its ✓ arm
+(`10 checked · 10 carry a command echo`) and REV-158 §2's schema-line check printed ✓ after four historical
+violations. Ordering held for the sixteenth run running.
+
+⭐ **The arithmetic closes to the digit:** run 153 `tests 2468 · passed 2449 · FAILED 6 · errors 13` → run
+154 `tests 2471 · passed 2449 · FAILED 6 · errors 16`. Three tests added, three moved out of `passed`.
+⚠️ REV-140 §3 illustrated again in passing — **a bare `passed` absolute would have been wrong in both
+directions at once.**
+
+### ⛔ §1. THE RANGE IS HELD ON TWO NAMES, AND THE CRITERION IS UNCHANGED
+
+| class | n |
+| :--- | :--- |
+| baseline (REV-134 §1) | 8 |
+| traced `42501` (REV-149 §2) | 11 |
+| vendor `UNRESOLVED — ` (REV-140 §1), Authorize.Net `E00040` | 1 |
+| **admitted** | **20** |
+| ⛔ **not admitted** | **2** — `test_ticket_resolve_error_shows_panel` · `test_resolution_reopen_error_shows_panel` |
+
+**RULED: `e2c3885e` is NOT pushed, on REV-153 §4's criterion unchanged** — all three admitted classes exist
+to separate a statement about the VENDOR or the ENVIRONMENT from a statement about THIS TREE, and both of
+these are tests in this lane's own wave-8 module reddened by this lane's own commit in the same wave. Four
+commits held for one wave; the repair is two test methods.
+
+### ⛔ §2. MY HARD LIMIT PREDICTED THE WRONG CAUSE, AND THE RIGHT ONE WAS IN THE REVIEW ABOVE IT (my defect)
+
+Run 154's brief: *"Every existing X-181 screen test must stay green untouched. If one goes red, the repair
+changed a success path and that is the wave's headline."* It did not change a success path. Both reddened
+tests are **error**-path tests that assert the disclosure:
+
+```
+$ grep -n -A4 'function test_ticket_resolve_error_shows_panel' app/tests/Modules/X-181/X181ScreensTest.php
+  175:            ->assertSee('Action failed');
+$ grep -n 'Action failed' app/app/Modules/X-181/Ui/views/ticket.blade.php
+  4:  <x-ui.error-panel heading="Action failed">{{ $actionNotice }}</x-ui.error-panel>
+```
+
+`$actionNotice` *was* `$e->getMessage()`, so each test passed **because** the component swallowed the
+exception. That is REV-153 §1's shape — *a passing test pinning the disclosure defect in place* — one
+lane-module over, ruled on one review earlier, and re-anticipated wrongly here. Had the coder obeyed the
+limit's *reasoning* rather than its *instruction*, a correct repair would have been reverted as a
+regression.
+
+**RULED: a brief's hard limit on an existing test names BOTH cases — the change broke a success path, OR
+the test was asserting the thing the change removed — and says which evidence separates them.** The
+separator is one read: **a test whose assertion is satisfied only when the removed code runs was never a
+guard; it was a specification of the defect.** ⭐ Second of the adjacent species (REV-142 §1 was the first):
+not *a correct statement in the tree never read back*, but **a correct statement I had just written,
+applied to the wrong half of the next question.**
+
+### ⛔ §3. THE HOUSE ERROR PANEL IS UNREACHABLE ON TWO SCREENS AND IS A RESERVED SURFACE, NOT DEAD CODE
+
+`Ticket.php` and `Resolution.php` now assign `$actionNotice` **only** `null`, so `@if ($actionNotice)` can
+never be true; `QaQueueSlaDueAt` is different and correct — it still sets the panel on its **success** path.
+
+```
+$ grep -rl 'x-ui.error-panel' app/app/Modules --include=*.blade.php | wc -l      → 62
+```
+
+**RULED: the property and the blade block STAY, and the record is a docblock.** It is a house component on
+sixty-two views, and REV-152 §2's design is that the catch narrows to the module's own **domain** exceptions
+while everything else propagates — X-181's two actions throw none today, so the narrow set is empty and the
+surface is reserved for the first one. That is REV-154 §2's shape: **a reserved last link is RECORDED where
+it lives, not wired and not removed.** ⛔ Deleting a house surface from two screens is REV-131 §4's *third
+option* in a presentation hat, and an unrecorded reserved boundary reads as dead code to every later reader
+— which is how this seat rediscovered `RemovalFilingGate` as a suspected defect fourteen runs after
+building it.
+
+### ⛔ §4. §2g PRINTED A TRUE SENTENCE WHILE THE TREE WAS NOT CLEAN — EIGHTH ON THE AXIS, FIXED THIS TICK
+
+Run 154 left `scratch-qaqueue-test.php`, `scratch-resolution-test.php`, `scratch-ticket-test.php` untracked
+at the **repo root**, each declaring the same class name in the same namespace as a tracked test under
+`app/tests/Modules/X-181/Screens/`. §1 listed all three as `??`; §2g, four screens later, printed
+`no untracked PHP under app/ ✓` — **true**, and it reads as *the tree is clean* — because its pathspec was
+`'app/*.php'`. **RULED: the census widens to the whole repo.** Live on its first run, ⚠ arm, `fail`
+correctly unset: `untracked PHP: 3 · referenced by HEAD: 0`.
+
+⚠️ **The property it does NOT cover** (REV-146 §1's standard): `cls` is derived from the **filename**, so a
+file whose declared class differs from its basename — exactly these three — lands in the advisory arm even
+when `HEAD` references that class. §2h extracts declared classes properly; the two are not wired together,
+and this stays the cheap census rather than a second parser.
+
+⭐ **Eighth instance of the axis sub-species, and the list reads as one thing now:** REV-138 §4 fixed a
+search's SCOPE and left its VOCABULARY · REV-140 §4 fixed a grep's TIMING and left the GREP · REV-143 fixed
+TRACKEDNESS and left LOADABILITY · REV-150 §2 moved a PRODUCER and left three CONSUMERS · REV-151 §2 fixed
+an artefact's LOCATION and left its CLOCK · REV-152 §1 fixed the CLOCK and left the mid-wave case ·
+REV-158 §2 moved the schema line's SOURCE and dropped its PROPERTY · here a check's SUBJECT was right and
+its SCOPE was one directory too narrow.
+
+### ⚠️ §5. TWO SMALLER RECORD RULINGS
+
+**A report that quotes an `errors` delta accounts for every name in it, including the admitted ones.** Run
+154 reported `errors 13 → 16` and named two of three; the third was the Authorize.Net `E00040` vendor flap,
+admitted and therefore inconsequential — but a name left unmentioned is indistinguishable from a name not
+noticed, and REV-140 §1 already requires the admitted set quoted in full by any report leaning on it.
+
+**Two brief items that run the same command write to the same artefact, or the brief gives them different
+filters.** `r154-green.txt` and `r154-branch-QaQueueSlaDueAt.txt` are the identical `--filter` with
+`assertions 2` and `assertions 3`; both are real and taken either side of the post-condition edit, and the
+pair reads like a contradiction until the timestamps are compared.
+
+### ⛔ TRACK 1 ACTION — the disclosure shape is house-wide, and the mechanism is now exhibited twice
+
+```
+$ grep -rlE 'catch *\( *\\?Exception' app/app/Modules --include=*.php | grep '/Ui/' | wc -l   → 24
+$ grep -rl  'getMessage()'            app/app/Modules --include=*.php | grep '/Ui/' | wc -l   → 39
+$ grep -rl  'x-ui.error-panel'        app/app/Modules --include=*.blade.php        | wc -l    → 62
+$ grep -rn  "assertSee('Action failed')" app/tests --include=*.php | wc -l                    → 10
+```
+
+Two of those ten assertions were X-181's, and `r154-mutation.txt` / `r147-mutation.txt` **exhibit** what
+the panel contains when the exception is a `QueryException`: host, port, **database name**, statement and
+bindings, to an authenticated tenant. ⛔ **The other eight are UNMEASURED and are named as unmeasured** — a
+panel can legitimately carry a domain refusal's own message, which is the design REV-152 §2 ruled for.
+Filed is the *mechanism and the census*, never a verdict on another lane's module; `C-Ai/Ui/ModelBoard`,
+`X-125/Ui/Runs`, `X-135/Ui/ResearchDossierPer`, `X-150/Ui/ProviderCostPer`, `X-151/Ui/FetchBoard`,
+`X-156/Ui/ConnectSourceView`, `X-16/Ui/ServiceareaPolygon` carry both patterns. ⚠️ **The intersection count
+is deliberately absent** — the one `comm` that would have produced it warned `input is not in sorted order`,
+and a number from a command that printed a warning is worse than no number.
+
+### The seam — RULED for run 155
+
+⛔ **RULED by the lane supervisor: run 155's item 2 is the two reddened tests, because two test methods are
+the whole distance between this lane and a four-commit push, and a held range is the most expensive thing
+on this board.** The repair is the **assertion** (REV-153 §1) — the refusal is a propagating
+`ModelNotFoundException`, a 404 that discloses nothing — and it is a tightening: an assertion that required
+disclosure is replaced by assertions that require refusal *and* no state change. ⛔ **The catch does not
+come back, in any form**, including narrowed-with-`report($e)`, which closes the disclosure and leaves the
+fault green in the suite.
+
+⛔ **Then the `sendRequest` fork, and it stays a MEASUREMENT.** `ReviewsQaRequests::sendRequest` hardcodes
+`null` for `$customerId`, so its blanket catch is **unenterable** behind the early `CUSTOMER_UNKNOWN`
+return — and REV-134 §4 forbids refactoring a branch no test can enter. The catch is blocked behind the
+`customer_id` question, so the question is measured first, both arms stated in advance. ⛔ The
+`CUSTOMER_UNKNOWN` refusal is the law; the caller is what is missing. ⛔ And no identity comes from the
+browser (REV-142 §1).
+
+⛔ **And the long-standing `RISKY 1` gets one measurement rather than another adverb.** Run 154's brief
+scoped it out as *"almost certainly another lane's"*; this lane punishes *probably* (REV-147 §4, REV-149
+§1). C-Reviews went `risky 1 → 0` and the Modules suite still reads `risky 1`, so the long-standing one is
+measurably a different test and measurably still there. Three filtered runs settle whose it is.
+
+⛔ **Scoped OUT, on purpose:** no new column, migration, table or model · no `manifest.php` /
+`capabilities.php` edit · no new screen, route change or `surfaces:generate` · ⛔ no deletion of
+`$actionNotice` or of the blade panel (§3) · no repair of anything items 4 or 5 find · no merge · no
+`GRANT`/`ALTER`/`DROP`/`CREATE`/`migrate` · nothing under `app/tests/Modules/X-102/**` · no
+`git checkout`/`git restore` · no `git push` · nothing in another lane's module, however clearly the census
+shows the same defect there.
+
+⚠️ **Standing, unchanged.** `app/phpunit.xml` is committable by neither column (REV-128); ⛔
+`git checkout -- app/phpunit.xml` remains the most destructive command on this board. §2f reads **1 of 8**
+in the bypass arm — `.agents/supervisor/launch-coder.sh`, **24 +/2 −**, unchanged for ten ticks; a touch is
+not a move (REV-135 §9), re-derived at merge time, and nothing here authorises a merge. The missing
+`post-rewrite` hook (§2a) is standing. **TRACK 1 ACTION, unchanged:** the `app/tests/TestCase.php`
+self-deadlock and its box-wide connection-slot exhaustion (REV-150 §1, REV-151 §1/§3), `C-Reviews, X-118:
+'win.first' has 2 emitters`, and the `X-102/ChatDoorTest` wrong-trait repair (REV-149 §1).

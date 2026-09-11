@@ -428,16 +428,38 @@ bar "2g. a class the COMMITTED tree references whose file git does not have"
 # returns") and left the tree/commit distinction untouched; this is the instrument half.
 # The baseline is therefore HEAD, never the working tree: `git grep … HEAD`.
 # Arms: ⛔ when a tracked file at HEAD names an untracked file's class; ⚠ when an untracked
-# app PHP file is unreferenced (still invisible to a named-path commit); ✓ when there are none.
-bar_untracked=$(git -C "$ROOT" ls-files --others --exclude-standard -- 'app/*.php' 2>/dev/null)
+# PHP file is unreferenced (still invisible to a named-path commit); ✓ when there are none.
+#
+# ⛔ REV-159, 2026-09-10: THE CENSUS PATHSPEC WAS 'app/*.php' AND RUN 154 LEFT THREE
+#   UNTRACKED PHP FILES AT THE REPO ROOT — scratch-ticket-test.php, scratch-resolution-test.php,
+#   scratch-qaqueue-test.php, each declaring the SAME class name in the SAME namespace as a
+#   tracked test under app/tests/Modules/X-181/Screens/. This section printed
+#   `no untracked PHP under app/ ✓`, which was TRUE and read as "the tree is clean". §1's
+#   working-tree listing showed the three `??` lines four screens higher and nothing joined them
+#   up. Pathspec widened to the whole repo. Same axis sub-species this lane has now paid for
+#   eight times: REV-138 §4 fixed a search's SCOPE and left its VOCABULARY, REV-140 §4 fixed a
+#   grep's TIMING and left the GREP, REV-143 fixed TRACKEDNESS and left LOADABILITY, REV-150 §2
+#   moved a PRODUCER and left three CONSUMERS, REV-151 §2 fixed an artefact's LOCATION and left
+#   its CLOCK, REV-152 §1 fixed the CLOCK and left the mid-wave case, REV-158 §2 moved the
+#   schema line's SOURCE and dropped its PROPERTY — and here a check's SUBJECT was right and
+#   its SCOPE was one directory too narrow.
+#
+# ⚠ THE PROPERTY THIS DOES NOT COVER (REV-146 §1's standard — this lane's corrections keep
+#   landing one axis from the defect, so the axis is said out loud): `cls` is derived from the
+#   FILENAME. A file whose declared class differs from its basename — which is exactly what run
+#   154's three scratch files are — lands in the advisory ⚠ arm even when HEAD references that
+#   class by name. §2h extracts DECLARED classes properly (REV-146 §2 walks the file the way the
+#   parser does); these two sections are not wired together and this one is deliberately the
+#   cheap census rather than a second parser.
+bar_untracked=$(git -C "$ROOT" ls-files --others --exclude-standard -- '*.php' 2>/dev/null)
 if [ -z "$bar_untracked" ]; then
-  echo "  no untracked PHP under app/ ✓"
+  echo "  no untracked PHP anywhere in the repo ✓"
 else
   ut_ref=0; ut_n=0
   for u in $bar_untracked; do
     ut_n=$((ut_n+1))
     cls=$(basename "$u" .php)
-    refs=$(git -C "$ROOT" grep -l -F "$cls" HEAD -- 'app/*.php' 2>/dev/null | sed 's/^HEAD://')
+    refs=$(git -C "$ROOT" grep -l -F "$cls" HEAD -- '*.php' 2>/dev/null | sed 's/^HEAD://')
     if [ -n "$refs" ]; then
       ut_ref=$((ut_ref+1))
       echo "  ⛔ $u is UNTRACKED, and HEAD references $cls:"
@@ -447,7 +469,7 @@ else
       echo "  ⚠ $u is untracked and unreferenced at HEAD — a named-path commit will not pick it up"
     fi
   done
-  echo "  untracked app PHP: $ut_n · referenced by HEAD: $ut_ref"
+  echo "  untracked PHP: $ut_n · referenced by HEAD: $ut_ref"
   [ "$ut_ref" -gt 0 ] && fail=1
 fi
 
