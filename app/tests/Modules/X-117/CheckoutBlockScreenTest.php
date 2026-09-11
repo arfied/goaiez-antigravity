@@ -325,4 +325,15 @@ class CheckoutBlockScreenTest extends TestCase
             ->assertSeeHtml('wire:target="authorise"')
             ->assertSeeHtml('wire:target="pay"');
     }
+
+    public function test_a_failed_cancel_names_the_cancel_and_not_the_payment(): void
+    {
+        $biz = self::provisionTenant();
+        Tenancy::set($biz->id);
+
+        Livewire::test(CheckoutBlock::class, ['sessionToken' => 'sess_hd1'])
+            ->call('cancel', 999999)
+            ->assertSee('Could not cancel that order')
+            ->assertDontSee('take that payment');
+    }
 }

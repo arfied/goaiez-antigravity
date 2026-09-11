@@ -20,7 +20,7 @@
             </div>
 
             @if($error)
-                <x-ui.error-panel heading="We couldn't make that pay link">{{ $error }}</x-ui.error-panel>
+                <x-ui.error-panel :heading="$errorHeading ?? 'Could not make that pay link'">{{ $error }}</x-ui.error-panel>
             @endif
             
             @if($declines->isEmpty())

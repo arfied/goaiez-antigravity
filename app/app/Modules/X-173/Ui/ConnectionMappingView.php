@@ -21,6 +21,8 @@ class ConnectionMappingView extends Component
 
     public ?string $error = null;
 
+    public ?string $errorHeading = null;
+
     public ?string $success = null;
 
     public ?string $waiting = null;
@@ -28,6 +30,7 @@ class ConnectionMappingView extends Component
     public function connect(): void
     {
         $this->error = null;
+        $this->errorHeading = 'Could not connect that ledger';
         $this->success = null;
         $this->waiting = null;
 
@@ -42,6 +45,7 @@ class ConnectionMappingView extends Component
     public function mapAccount(int $connectionId, AccountingMapAction $action): void
     {
         $this->error = null;
+        $this->errorHeading = 'Could not save that mapping';
         $this->success = null;
         $this->waiting = null;
 
