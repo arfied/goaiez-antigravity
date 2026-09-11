@@ -11,6 +11,10 @@ use App\Support\Tenancy;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
+/**
+ * Decision (R245): Reads consent as a boolean from the request, failing closed (false) if absent, to comply with rule 22 (no message capture before consent).
+ * If false, ChatCaptureAction drops the message.
+ */
 final class ChatCaptureController
 {
     public function __invoke(Request $request, string $key, PixelKeys $keys, ChatCaptureAction $action): JsonResponse
@@ -52,6 +56,8 @@ final class ChatCaptureController
             return response()->json(['error' => 'Session not found'], 404);
         }
 
+        $consent = $request->boolean('consent');
+
         $lead = $action->handle(
             businessId: $businessId,
             sessionId: $session->id,
@@ -60,6 +66,7 @@ final class ChatCaptureController
             email: is_string($email) ? $email : null,
             message: is_string($message) ? $message : null,
             formType: is_string($formType) ? $formType : 'live_chat',
+            consent: $consent,
         );
 
         return response()->json([

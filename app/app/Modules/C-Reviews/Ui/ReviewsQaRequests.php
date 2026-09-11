@@ -7,6 +7,7 @@ namespace App\Modules\CReviews\Ui;
 use App\Modules\CReviews\Actions\QaTicketAction;
 use App\Modules\CReviews\Actions\ReviewReplyAction;
 use App\Modules\CReviews\Actions\ReviewRequestAction;
+use App\Modules\CReviews\Domain\PublicThreshold;
 use App\Modules\CReviews\Models\QaSetting;
 use App\Modules\CReviews\Models\ReviewRequest;
 use App\Modules\X121\Actions\EntityReadAction;
@@ -60,9 +61,8 @@ class ReviewsQaRequests extends Component
     public function getThreshold(): int
     {
         Tenancy::set($this->businessId);
-        $setting = QaSetting::where('business_id', $this->businessId)->first();
 
-        return $setting ? (int) $setting->min_public_stars : 4;
+        return app(PublicThreshold::class)->for($this->businessId);
     }
 
     public function getTicketRecipient(): string

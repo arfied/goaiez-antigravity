@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\CReviews\Ui;
 
 use App\Modules\CReviews\Actions\QaTicketAction;
-use App\Modules\CReviews\Models\QaSetting;
+use App\Modules\CReviews\Domain\PublicThreshold;
 use App\Modules\CReviews\Models\ReviewReply;
 use App\Modules\CReviews\Models\ReviewRequest;
 use App\Modules\X181\Actions\QaTicketReadAction;
@@ -102,11 +102,7 @@ class QaReport extends Component
 
         $drilldownRows = [];
 
-        $threshold = 4;
-        $setting = QaSetting::where('business_id', $this->businessId)->first();
-        if ($setting) {
-            $threshold = (int) $setting->min_public_stars;
-        }
+        $threshold = app(PublicThreshold::class)->for($this->businessId);
 
         if (! $this->isSample) {
 

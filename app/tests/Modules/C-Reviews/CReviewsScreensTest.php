@@ -236,8 +236,17 @@ class CReviewsScreensTest extends TestCase
         $req = ReviewRequest::create(['business_id' => $this->bizId, 'rating' => 3]);
 
         Livewire::test(LossAlerts::class, ['businessId' => $this->bizId])
-            ->assertSee('Rating 3 <= 4')
+            ->assertSee('Rating 3 < 4')
             ->assertSee('Review #'.$req->id);
+    }
+
+    public function test_a_four_star_review_is_not_a_loss_alert_at_the_default_threshold(): void
+    {
+        QaSetting::updateOrCreate(['business_id' => $this->bizId], ['min_public_stars' => 4]);
+        $req = ReviewRequest::create(['business_id' => $this->bizId, 'rating' => 4]);
+
+        Livewire::test(LossAlerts::class, ['businessId' => $this->bizId])
+            ->assertDontSee('Review #'.$req->id);
     }
 
     public function test_loss_alerts_resolved_on_time_does_not_appear(): void

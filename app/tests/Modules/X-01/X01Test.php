@@ -509,7 +509,7 @@ class X01Test extends TestCase
      * [G19-22] positive half: every channel lands on ONE Conversation.
      * (R245) listener returns early when the inbound WhatsApp message body is empty
      * Asserts against UnifiedInboxManager::ingestMessage() on real data.
-     * BUILD PROPOSAL: WhatsApp inbound body — stamp consent_logged_at because the customer addressed this message to this business's own WhatsApp number Owner: X-01
+     * CLOSED: WhatsApp inbound body — consent_logged_at stamping was built in 52931f57.
      */
     public function test_g19_22_single_conversation_identity(): void
     {
@@ -537,7 +537,7 @@ class X01Test extends TestCase
     }
 
     /**
-     * BUILD PROPOSAL: Email inbound body — stamp consent_logged_at because the customer addressed this message to this business's own email address Owner: X-01
+     * CLOSED: Email inbound body — consent_logged_at stamping was built in 52931f57.
      */
     public function test_g11_12_email_reply_bridge(): void
     {
@@ -606,7 +606,7 @@ class X01Test extends TestCase
     }
 
     /**
-     * BUILD PROPOSAL: Chat inbound body — pre-chat notice and logged consent on the chat widget Owner: X-102
+     * BUILD PROPOSAL: goaiez-chat.js — the chat widget itself does not exist Owner: X-102
      */
     public function test_chat_capture_wire_creates_conversation(): void
     {
