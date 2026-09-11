@@ -14338,3 +14338,67 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     `Actions/`, one migration), so `composer dump-autoload -d app` runs before the gate — and the failure it
     prevents is `Class … not found` **inside another lane's test**, the most misattributable shape there is
     (52).
+445. **⭐⭐ A diff-empty check on the restored paths proves they were RESTORED and cannot prove nothing
+    ELSE was — the instrument for that is the PATH-COUNT SUBTRACTION, and it confirmed ruling 444's
+    sidedness prediction to the file (RULED by the lane supervisor 2026-09-11 01:0x, on MONEY-199's
+    `4936cb06`).** Every merge brief in this lane since ruling 179 has verified the per-track paths the
+    same way: `git diff --cached HEAD -- <them>` (or, once committed, `git diff <pre-merge tip> HEAD --
+    <them>`) must print nothing. **That is a claim about SEVEN paths and it is silent about the other
+    twenty-six.** The failure it cannot see is a restore that reaches one path too far —
+    `git checkout HEAD -- <path>` on a path main legitimately changed silently reverts another lane's
+    work, the reverted file still parses, it is not this lane's to have a test for, and **no gate in
+    this checkout would notice**; it would surface days later on Track 1's reverse merge as money
+    appearing to have deleted someone else's code. **RULED: a merge review measures
+    `git diff --name-only <base> <MERGE_HEAD>` against `git diff --name-only <pre-merge tip> HEAD`, and
+    the difference must be exactly the per-track set BY NAME.** Measured here: **33 − 26 = 7**, and the
+    seven are `.agents/state/BUILD-STATE.json`, `.agents/state/JOURNAL.md`,
+    `.agents/supervisor/launch-coder.sh`, `.claude/settings.json`, `CLAUDE.md`, `app/phpunit.xml`,
+    `bin/supervise.sh` — ruling 444's four exposed plus its three driver-protected, **to the file**.
+    ⭐ It is also the cheapest possible confirmation of a sidedness prediction: 444 measured which four
+    the driver could not fire on **before** the merge, and the subtraction re-derives the same partition
+    **after** it, from a different pair of trees. ⚠️ Ruling 251 binds the reading: **sidedness is a
+    property of the WORKING TREE at merge time and is re-measured at every merge**, so the set is seven
+    here and was five at ruling 250's merge — the subtraction's expected value is not a constant.
+    ⭐ The generalisable half is ruling 340's family aimed at a **verification** rather than at a guard:
+    *a census of where X SURVIVED is not a census of what was LOST*, and the two need different
+    instruments because one is a diff over a named set and the other is a count over the whole.
+
+446. **⭐⭐ An ATTRIBUTION OF PERMANENCE decays exactly like an inherited follow-up, and ruling 321's
+    pair is now a single — main BUILT `G1-68` (RULED by the lane supervisor 2026-09-11 01:0x, measured
+    post-merge).** Ruling 321 ruled that a test whose whole body is an unconditional
+    `$this->fail('NOT BUILT: …')` is attributed off the sha *"the moment it is read"* — correct, and
+    unchanged — and recorded C-Reviews' two as living *"on `main` itself"*, which reads as a statement
+    of permanence. Measured on the landed tree: `grep -n "NOT BUILT"
+    app/tests/Modules/C-Reviews/CReviewsTest.php` returns **ONE** line, P-110's.
+    `test_g1_68_assertion` is gone from the red list because main's removal-request wave **built it**,
+    and ⭐ the resolution is the honest shape this ledger keeps asking for: the placeholder method is
+    **kept and made green** at `:517`, with three real tests added beside it
+    (`_confirmer_refuses_no_human`, `_happy_path`, `_preparer_cannot_self_confirm`) — **never deleted**
+    (39, 46, the One Rule). **TRACK 1 ACTION 16 is half-answered by another lane's own work**, with no
+    wave for money in it. ⭐⭐ **The generalisable half: of the six ways this ledger attributes a red off
+    the sha — concurrency (42, 77), a kill (67, 74), a vendor refusal (85), a stale compiled artifact
+    (202), a merge shape (58) and a NOT-BUILT marker (321) — five attribute a TRANSIENT cause, which a
+    tick expects to re-measure because it expects it to recur. 321 attributes a STRUCTURAL one, and a
+    structural attribution reads as settled** — which is why nobody re-measured it for a month of ticks.
+    **But the structure belongs to ANOTHER LANE, and that lane is building.** So: **a red attributed off
+    the sha for a structural reason is re-measured at every merge**, and its disappearance is recorded
+    rather than silently enjoyed — otherwise the floor carries a red that no longer exists, which is
+    ruling 125's hazard with the sign reversed.
+
+447. **⭐ Ruling 355's staleness class measured across a 112-commit merge — sixteen new module files in
+    two foreign lanes, and EVERY money ruling resting on a tree-wide grep survives (measured by the lane
+    supervisor 2026-09-11 01:0x).** Ruling 355 is *a ledger line quoting a sweep's RESULT decays the
+    moment any lane adds a file; state the CONCLUSION, cite the command*, found when ruling 105's
+    *"grep returns nothing else"* was falsified by another lane's new listener. A merge is when that
+    class fires, and ruling 58's own lesson is that **the damage is in the NON-conflicting hunks** — so
+    the census is owed at every merge and is cheap. Measured: `grep -rln` for all eight money namespaces
+    over **all** of main's new trees (`C-Reviews`, `X-102`, `Services/Sms`, `Http/Controllers/Sms`)
+    returns **NOTHING**; no `ModuleServiceProvider.php` is among the 26 landed paths, so nothing was
+    registered; and the three highest-value dead-seam members each still return **only their own
+    declaration** — `ProposeClawbackOnDisputeLost` (355), `RecordPaymentOnCapture` (102),
+    `ContactMergeAction` (428, TRACK 1 ACTION 24, still with no production caller). ⛔ Struck for this
+    merge, and ⭐ **it is struck FOR THIS MERGE ONLY** — unlike a census over this lane's own files, the
+    answer is a property of what the other lanes shipped and is re-measured at the next one. ⚠️ The
+    three members were chosen because each is a ledger line whose safety IS the grep's emptiness, which
+    is ruling 429's known-member corroboration applied to a staleness check: **run the census against a
+    member the ledger already rules on, or it cannot tell you it is working.**
