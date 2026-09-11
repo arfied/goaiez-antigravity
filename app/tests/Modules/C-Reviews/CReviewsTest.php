@@ -778,6 +778,13 @@ class CReviewsTest extends TestCase
         $this->assertSame([], $out, "Module contains per-location gating references:\n".implode("\n", $out));
     }
 
+    public function test_p110_fix_then_ask_has_no_production_csat_source(): void
+    {
+        $this->fail('NOT BUILT: P-110 — ReviewRequestAction::$csatScore is null on all three production '
+            .'call sites (AskForReviewOnJobCompleted:15, ReviewsQaRequests:105, :131), so the '
+            .'LOW_CSAT_TRIAGE branch at ReviewRequestAction.php:59 cannot execute. The csat_score column was dropped from review_requests and qa_tickets on 2026-09-09.');
+    }
+
     public function test_job_completed_creates_review_request(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Review Biz', 'currency' => 'USD']);
