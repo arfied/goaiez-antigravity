@@ -15901,3 +15901,108 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     run `composer require laravel/boost` and `php artisan boost:install`. That is this checkout's recorded
     trap (*"`app/CLAUDE.md` and `app/AGENTS.md` are Laravel Boost boilerplate, not the contract"*): it was
     not followed, and it is never cited in a brief.
+498. **⭐ The float-to-integer money conversion census: 4 members, all rounded or all-integer, zero
+    buildable (measured by the lane supervisor 2026-09-11 05:0x, by `date`).** Rulings 213 and 328 swept
+    the lane's `intdiv`/`ceil`/`floor`/`round` sites, i.e. arithmetic that makes cents SMALLER. Nobody had
+    swept the other direction, a float multiplied up into cents and cast. `(int) ((float) $x * 100)`
+    truncates `0.29 * 100 = 28.999…` to **28**, so a missing `round` loses a cent silently. **Instrument,
+    quoted (300):** `grep -rn -F -e "* 100" app/app/Modules --include=*.php`, filtered to the eight ids and
+    minus migrations, gives **4**. `X-199/Ui/Credits.php:46` is `(int) round(((float) … ) * 100)`, rounded.
+    `X-173/Ui/SyncErrorRateView.php:29` is `(int) round($rate * 100)`, rounded, and it is a percentage, not
+    money. `conflicts-list.blade.php:23` is `round(… * 100)`, rounded, also a percentage.
+    `C-Billing/Domain/BillingLedgerEngine.php:105` is `$amountCents * 100`, integer times integer into
+    hundredths, and C-Billing `Domain/` is Track 1's (5). ⭐ **Known-member check (429) passed**: the census
+    returned ruling 328's own member 2 (`Credits.php:46`). ⛔ Struck. ⚠️ **Trigger:** a new `* 100` on a
+    float. Ruling 327's outcome shape a **forty-second** time.
+
+499. **⭐⭐⭐ RULING 470'S ABSORB STRATEGY READ AS A COST: `firstOrCreate` absorbs a race ONLY when a UNIQUE
+    INDEX backs it. The lane has 14 absorb sites and 3 are backed. X-211's six writers over two unbacked
+    tables are briefed as MONEY-205, the index-alone fix. Ruling 435's strike rested on ruling 256's
+    CORRECTED premise (RULED by the lane supervisor 2026-09-11 05:1x, briefed as MONEY-205).** This is the
+    third of the addendum's cheapest places to look (488, 490, 492): *when a ruling names a thing's
+    strongest property, ask what that property costs.* Ruling 470 named four collision strategies and
+    listed **absorb** (`firstOrCreate`/`updateOrCreate`) as the second. Every member it named sits on a
+    table with a unique constraint. **Its complement, an absorb with nothing behind it, was never stated.**
+    ⭐⭐ **Measured in vendor, and it is the whole finding.** `Builder::firstOrCreate():733-739` reads first
+    and, when nothing is found, calls `createOrFirst():750-756`, whose only race handling is
+    `catch (UniqueConstraintViolationException)`. **With no unique index nothing raises**, so two
+    concurrent writers both pass the read and both insert. The catch is dead code. `updateOrCreate():766-772`
+    is `tap($this->firstOrCreate(…))` and inherits the same property. ⭐ The term that looks hostile is
+    already satisfied: `withSavepointIfNeeded():2023-2027` wraps the create in a savepoint whenever a
+    transaction is open, so a `23505` inside `ArEngine`'s `DB::transaction` does not cascade `25P02`. That
+    is ruling 473's mechanism in the framework's own absorb path, and ruling 460's *a term can be already
+    satisfied* a third time.
+    **Instrument, quoted (300):** `grep -rn -e "firstOrCreate(" -e "updateOrCreate(" -e "createOrFirst("
+    app/app/Modules --include=*.php`, filtered to the eight ids, gives **14**. Against every unique
+    constraint in the lane's migrations (`grep -rn -F -e "unique(" -e "UNIQUE"`, filtered), **3 are backed**:
+    `PaymentLink` (229), `DeclineDeferral` (35, 229) and `ArPlanTerm` (`business_id` unique, 263). ⭐ **The
+    known-member check (429) passed three times**, returning 470's own absorb members. ⭐ **Positive control
+    fired**: 99 `app/app` files carry the two calls tree-wide. ⭐ **415's first-three check passed**
+    (`Cart::updateOrCreate` ×2, `AccountMapping::updateOrCreate`). **11 are UNBACKED, across 6 tables.**
+    **The six tables, each with its safety or its gap named (328):**
+    - `receivable_states`: 4 writers (`ArEngine:87,:189,:304,:350`), **all** `firstOrCreate`, no plain `create`
+      anywhere. **Briefed.**
+    - `ar_dunning_actions` escalation rows: 2 writers (`ArEngine:345`, `ProcessOverdueReceivable:20`), both
+      `firstOrCreate`. The table legitimately keeps many rows per invoice (`ArEngine:337`'s
+      `reason_recorded` is a plain `create`), so the fix index is **PARTIAL**, `WHERE action =
+      'escalate_to_human'`. **Briefed.**
+    - `credit_terms`: ⛔ **NOT index-alone.** `TermsSetAction:41`'s `updateOrCreate` has a **plain-`create`
+      sibling** at `X-199/Domain/InvoiceEngine.php:41`, so a unique index would put a raw `23505` into
+      `issueInvoice()`. That is exactly ruling 232's *introducing a new hazard is worse than deferring an
+      old one*, and ruling 490 measured `issueInvoice` has no production caller. Recorded.
+    - `carts`, `merchant_connections`, `account_mappings`: `grep -rn -e "Cart::create" -e
+      "MerchantConnection::create" -e "AccountMapping::create" app/app` returns **nothing**, so index-alone
+      would be safe. But all three are unreachable (117, 93/129, 73a) and ruling 197 recorded `carts`. A
+      later wave; ⛔ not bundled (466: each table's writers are measured, never inferred from a sibling).
+    ⭐⭐ **The two X-211 tables are the wave because the fix is ONE MIGRATION AND ZERO WRITER EDITS.**
+    Every writer already chose absorb (470's second strategy), so adding the index makes a design the
+    author already wrote atomic. It is not a new design (466). The loser's `createOrFirst()` returns
+    `->first()`, a **retrieved** model with `wasRecentlyCreated === false`, so the dispatch-once gates at
+    `ArEngine:356` and `ProcessOverdueReceivable:28` hold by construction. ⭐ `ArEngine.php:323-325`'s own
+    docblock calls the escalation row *"a gate, not a sort (§216.5 FAILS IF)"*, which is ruling 326's shape
+    a **seventeenth** time: the code's own rule text states the property the missing index fails to enforce.
+    ⭐⭐⭐ **CORRECTION to ruling 435, the FIFTEENTH inherited attribution** (163, 171, 176, 257, 289, 355,
+    374, 383, 394(a), 449, 454, 458, 481, 483). 435 struck the two-`ReceivableState`-rows race with *"ruling
+    256 retired that class: a racing fixture cannot be committed from a second connection"*. **Ruling 454
+    measured 256's premise FALSE**, and MONEY-202 (460) measured the race term away (`inside=1
+    survives=1`). The addendum recorded *"both waves retired on the racing-fixture term are SPENT"*, which
+    counted MONEY-203 and MONEY-204 and **missed 435's strike and 330's residual, both resting on the same
+    retired term.** ⭐ **A ruling that retires a premise owes a sweep of every ruling that CITED it** (257's
+    shape: `grep -n -F -e "retired that class" -e "same harness blocker" -e "cannot be committed from a
+    second connection" CLAUDE.md` returns 327, 330, 358 and 435). 330's residual (`payment_plans`,
+    `ar_collections_packages`, no unique `(business_id, invoice_id)`) is the next member. Its losers are
+    guarded by sequential `PlanAlreadyOfferedException`/`AlreadyPackagedException` refusals rather than by
+    absorb, so its design is 465's **refuse**, never 499's index-alone, and it stays recorded.
+    ⚠️ **Residual, recorded and NOT briefed:** `applyLateFee()` computes `$headroom` from an unordered read at
+    `:73-75` before its `firstOrCreate` at `:87`. Under true concurrency two presses both read headroom
+    against zero and both add a fee. The index collapses their two rows into ONE, but that row can exceed
+    ruling 221's invoice ceiling. It is a read-modify-write on an aggregate, a different predicate from this
+    census. The fix is a `lockForUpdate` re-read after the absorb, which moves a refusal after a write that
+    ruling 216 made the comment disown. Unreachable (170). ⛔ **Trigger:** a production invoice writer.
+    ⭐ **The proof hook is a MODEL EVENT, and it is dictated UNEXECUTED behind a stop-clause** (256, 193).
+    `Model::performInsert():1586` fires `creating` before the insert, so a test-registered
+    `ArDunningAction::creating` / `ReceivableState::creating` closure commits the racing row on
+    `pgsql_migrate` (458, 460) **between `firstOrCreate`'s read and its insert**. Money needs no HTTP call
+    for this, unlike MONEY-203's `Http::fake` seam. The test lives in `X211Test`, class-based and
+    untransacted (457, 483), and carries 462's dependency comment. ⭐ **The proof for an index-alone fix is
+    the index's ABSENCE, measured first**: RED on the pre-migration schema with `2 is identical to 1`
+    (418's strongest form, the defect exhibited), then GREEN after the gate applies the migration (484: a
+    filtered class-based run applies none), then a writer mutated to a plain `create` → RED carrying
+    `SQLSTATE[23505]` and the index name. ⭐ Ruling 484's ordering hazard was measured rather than assumed:
+    `app/phpunit.xml`'s suites run `Unit`, `Feature`, `Modules`, `Journeys` in that order, and
+    `gate-money203.txt:95`, the first gate carrying MONEY-203's new index, passed its class-based race test.
+    So a full gate refreshes the schema before `tests/Modules`.
+
+500. **⭐⭐ TWENTY-THREE consecutive HOLDs END on condition 4, a population at ruling 324's bar and
+    BUILDABLE (RULED by the lane supervisor 2026-09-11 05:1x, by `date`).** Every case was decided on
+    mtimes (494). `OWNER.md`'s newest heading is still `## OWNER RULING — 2026-09-09 09:02` (136), mtime
+    `09-09 09:02:03`. `REPORT.md` (`02:25:13`) and `BRIEF.md` (`02:06:46`) are older than `REVIEWS.md`
+    (`04:52:55`), so this is case (e). `--check` → `CODER DEAD`. Cadence, all three ✗ (269, 272, 323):
+    `git rev-list --count HEAD..origin/main` = **12**; `git diff --stat e78d9ba35d27476b09c5b6988ce67a0e0f2f1fa6
+    origin/main -- app/app/Doctor coder-bin .claude/hooks` is **empty**; merge-base **`e78d9ba3`** with only
+    ledger commits since. `origin/main` = **`8c35fbc8`**. **Merge gate CLOSED.** Ruling 499's population
+    meets 324's bar: measured non-empty and buildable, instrument corroborated, positive control fired,
+    known members returned (429), members listed and each shown to EXIST (449), 415's first-three check
+    run, and each member's safety named (328). **MONEY-205 is dispatched as dispatch 1 of 2 against
+    nothing**, following ruling 464's order: brief installed and run launched **before** these rulings were
+    written.
