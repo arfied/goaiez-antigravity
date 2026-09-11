@@ -19169,3 +19169,20 @@ SITE-211's item 2 wrapped its whole-suite run in `flock -w 2400 /home/goaiez/tmp
 ran a suite on `goaiez_antig_site_test` outside the serialisation tick 216 adopted. Nothing collided, and that is luck. ⛔ **Every pest
 invocation a brief names carries the `flock`, not only the long one** — a short suite is still a suite, and the lock is not a
 performance measure.
+
+## ✅ CLEAN SWEEP — every public Livewire method in the owned modules' `Ui/` is BOUND and TENANT-SAFE; pricebook's PB-169 instrument, measured here (tick 350)
+
+Seventh firing of tick 215's law. Pricebook's `0619a8e3` (PB-169): Livewire admits **every public method** on a component as an
+endpoint (`HandleComponents.php:565-575`), bound in a blade or not, with browser-supplied arguments; its unbound `updatePrice`
+bypassed two R245 guards. The instrument is two greps — `public function` in `Ui/*.php` minus `mount`/`render`, then
+`(wire:[a-z.]+|target)="…"` in `Ui/views` — and for each method, where its argument comes from.
+
+Measured over the seven owned modules (X-103 has no `Ui/`, and `grep` warned rather than falling silent — 251): **5 action methods,
+5 bound, 0 unbound.** `X-157 EdgeStatusPer::rollback(int $deploymentId)` is refused by `EdgeRollbackAction:15`'s
+`where('business_id', …)->findOrFail`; `X-110 AbandonedForms::recover`, `Cooling::dismiss`, `VisitorsLive::openEvents` write only
+component state and every `render()` scopes by the business id; `InstallVerify::toggleEvents` takes nothing.
+
+⭐ The disconfirming property that makes the closure re-checkable (280): **every one of these components carries its tenant as
+`#[Locked] public int $businessId`**, the one attribute that stops a browser call from widening scope. A future component in these
+modules without it is the member to read first. Per 224: **already done here**. ⚠️ `Ui/` is Track 2's under ruling 5, so this is a
+measurement and never a build surface; what makes it this lane's to measure is that the components call this lane's `Actions/`.
