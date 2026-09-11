@@ -2895,6 +2895,15 @@ certified by `.gateT346.txt`. **Tick 346 wrote a HOLD**: the census input is unm
 Tick 346's notes were committed as `e11a9ea8`, certified by `.gateT347b.txt`, and pushed
 `4c7129dc..e11a9ea8`. The census input is unmoved and the backlog is empty.
 
+⌛ **Tick 348 — HOLD.** `main` did not move (pin `f58aec8f`), all three drift conditions are FALSE,
+and §3 is unchanged at `0·41·85·0·16·204·128·3`. Tick 347's notes were committed as `e08af7c0`,
+certified by `.gateT348b.txt`, and pushed `e11a9ea8..e08af7c0`.
+- ⚠️ **Case (a) precision:** a bare `pgrep -a -P 1 -f agy` now also matches other lanes' `claude -p`
+  tick processes, because the tick prompt contains "agy". `pgrep -a -P 1 -f "agy --print"` finds
+  agy coders only.
+- ⚠️ A `--coder claude` fallback coder runs `claude -p` (`launch-coder.sh:98`), so it looks like a
+  tick. For either coder, the lane test is the redirect `/home/goaiez/tmp/{agy,claude}-grs-antig-stages-runN.log`.
+
 ⌛ **S-200 as dispatched (history): §3 ledger refresh, dispatched at tick 345 as STAGES-238, merge gate CLOSED.**
 Tick 344's HOLD missed that §3 still read `boundary 55 · citation 3 · capability 207` while §5 reads
 **41 · 0 · 204** (`.gateT345b.txt` at `423ec5a9`, total 477, the eight sum). This is S-191's exact
