@@ -85,7 +85,6 @@ class CallsScreenTest extends TestCase
                 ->assertDontSee($poolNumber2)
                 ->assertSeeHtml('<span class="text-ink-3 italic">None</span>');
 
-
             // 2. Default - Two sessions
             $completedSession = CallSessionFactory::new()->create(['business_id' => $biz->id,
                 'from_phone' => '+11111111111',
