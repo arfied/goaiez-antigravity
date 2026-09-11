@@ -13319,3 +13319,81 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     defaults its author had already seen, so a default it had not seen was invisible **by construction**.
     ⛔ **A census over a syntactic form states the form's general shape — here `= <any literal>` — and never
     the literals it expects to find.**
+421. **⭐⭐⭐ The fraud-defence refusal asks the owner for four things NO SURFACE IN THIS CHECKOUT CAN
+    PRODUCE, and closes with "Add them, then submit again" — the lane's own suite asserts the dead end as
+    correct behaviour (RULED by the lane supervisor 2026-09-10 21:0x, briefed as MONEY-197; the finding
+    that lifts five ticks of HOLD).** Ruling 315's `{{ }}` census used a **six-name list**
+    (`refusal_code|action|reason|entry_type|meter_type|outcome`) where its predicate is *an enumerated
+    column rendered raw*, which is ruling 420's own sub-form — *an instrument that enumerates the
+    instances its author had already seen closes silently*. Re-run on the predicate (**410's method**:
+    enumerate the predicate directly, never widen the window), the lane's twenty declared vocabularies
+    against `{{ }}` returns **nine** renders the name list could not see, and ⭐ **ruling 415's check
+    passed** — the first three (`fulfilment_type`, `provider`, `sync_conflicts.status`) are each an
+    instance. The sharpest-looking member was `X-201`'s `{{ $item->evidence_type }}` on **two** blades,
+    whose declared vocabulary carries the snake_case `signed_estimate` and `call_log`: ruling 90/305/312's
+    display-map shape, in the module ruling 131 fixed the **pill** for while leaving the list four lines
+    up (113/116/123's sibling shape).
+    ⭐⭐⭐ **The disproving measurement killed it and uncovered something worse** (400/403/409, a **fifth**
+    firing). `grep -rn "DisputeEvidence::create\|new DisputeEvidence" app/app app/tests` returns **ONE**
+    line tree-wide — `DisputeDefenseEngine:58` — and every `'type' =>` that reaches it is **`invoice` or
+    `note`** (`DisputeQueue::compile():33,:36` and `DisputeNoteAction:32,:34`, the lane's only two
+    production evidence writers; `grep -rn "addEvidence"` returns **nothing**). Both reachable values are
+    ordinary English words, so the raw render is **unreachable** and ruling 96 governs — ⛔ recorded,
+    never edited, because no test can render it and no mutation can redden it.
+    **What the same measurement exposes is `submit()`.** `DisputeDefenseEngine:96-107` requires
+    `['call_log','transcript','delivery_receipt','consent_record']` whenever `reason === 'fraudulent'` —
+    and ruling 221 measured that value is **both the column default and the method-parameter default,
+    with every writer passing it explicitly**, so it is the arm **every** dispute takes. ⭐⭐ **The four
+    required types are exactly the four `DisputeEvidence::EVIDENCE_LABELS` maps, and NOT ONE of them is a
+    value either writer can produce.** So on both screens the owner presses **Compile evidence**, presses
+    **Seal the defence**, and reads *"The bundle is still missing the call log, the call transcript, the
+    delivery receipt, the consent record. **Add them, then submit again.**"* — over a form whose only
+    input is a note textarea. **The screen's entire purpose cannot complete, and the closing clause names
+    a remedy no surface offers.**
+    ⭐⭐ **This is ruling 363's defect at its strongest yet** — 363's was *"a reference number or a photo"*
+    on a form with no file input; this is a **four-item shopping list** on a form that can produce none of
+    them, with *"Add them"* as the instruction. And ⭐ **`DisputeQueueScreenTest:107-127` is the assertion
+    that CERTIFIES it** (ruling 43's shape): it drives the exact owner path — a default `fraudulent`
+    dispute, a note, compile, submit — and asserts the dead-end sentence as correct, green precisely
+    because the dead end is there.
+    **RULED: the TRUE opening clause stays BYTE-IDENTICAL and only the false remedy clause moves** —
+    `'. A bundle here takes the invoice line and your note, and nothing in this checkout adds the rest
+    yet.'` — ruling 21's finished waiting state and ruling 50(a)'s two halves, with the `$missing` list
+    and its `EVIDENCE_LABELS` rendering kept, so it still **varies** per dispute (43's corollary) and
+    `:123`/`:124`'s `assertDontSee('call_log')`/`('consent_record')` stay green by construction (ruling
+    227's own pairing).
+    ⛔ **The requirement itself is NOT weakened or dropped** — `:96-107` is the evidence-completeness
+    CHECK ruling 54 composed at the merge and ruling 62 made reachable, and *"⛔ dropping either is the
+    One Rule"*. ⛔ **No evidence-type picker is built**: a call log and a transcript are telephony's and a
+    delivery receipt and a consent record are not this lane's (ruling 5), and ruling 79 already recorded
+    the chargeback webhook `UNRESOLVED` — minting a surface to make a sentence true is ruling 59.
+    ⛔ **The bare `\Exception` is NOT promoted to the module's `final class … extends \DomainException`
+    idiom, and the reason is measured rather than stylistic**: `DisputeQueue::submit():56-62` and
+    `DisputeCard::approve():56-62` each catch `DisputeNotCompiledException`, then `ModelNotFoundException`,
+    then a `\Throwable` tail that PREFIXES the message, while ruling 396 measured `outcome():78` catches
+    `\DomainException` **first and renders it bare** — so changing the class would silently drop the
+    prefix on one path and not another, a behaviour change with owner-visible consequence that this
+    wave has no reason to make (47's companion). ⛔ The two prefixes stay: ruling 411 measured both TRUE,
+    the throw being before the write.
+    ⚠️ **Fixed rather than recorded** (204/130's precedent, as rulings 79, 97, 105, 131, 227 and 396 each
+    were in this module after 79 measured `disputes` has no production writer): the branch **is** rendered
+    and **is** driven by an existing fixture, so a mutation can redden it.
+    ⚠️ **Blast radius, measured with interior fragments BEFORE the brief shipped (46, 86, 146): exactly
+    ONE assertion lane-wide** — `DisputeQueueScreenTest:122` — **CHANGED and never deleted** (39, 46), and
+    the change is **forced**, since the old needle is then nowhere on the page. The sweep is **3** lines
+    counted by listing (217, 397), the third being another lane's prose in
+    `app/tests/Support/browser_console_helpers.php:39`. The wave therefore **adds no method** and the
+    floor is **unchanged** (92, 200).
+    ⚠️ **The proof is ruling 418's shape by construction**: reverting `:106` reddens that test and the RED
+    dump renders *"Add them, then submit again."* — **the defect's own text**, which proves the FINDING and
+    not merely the assertion. ⛔ No `view:clear` (202, 225 — no blade is mutated) and ⛔ no
+    `composer dump-autoload` (318 — no new class). ⚠️ Ruling 310 re-measured rather than inherited:
+    `N010Test:17` and `N008Test:18` both scan `app_path('Modules/X-201')` in full, case-insensitively, for
+    `refund` and for six gateway names — the dictated sentence carries **neither**, and introduces no
+    `G##-##`/`N-###` token (295).
+    ⭐ **The generalisable half: a REQUIREMENT and a REMEDY are two claims, and a census of one is not a
+    census of the other.** Ruling 363 asked whether a refusal's remedy is reachable and swept the
+    **doors**; this is the same predicate asked of a **completeness check**, where the requirement is
+    correct, the check is a CHECK, and only the sentence telling the owner what to do about it is false.
+    ⛔ So a refusal that names a missing INPUT is measured against every surface that can supply it —
+    and where the answer is none, the honest closing names the dependency, never an instruction.
