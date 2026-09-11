@@ -17263,3 +17263,89 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
 
     **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty wave to avoid an idle tick is what
     rulings 95, 100 and 111 forbid.
+
+544. **⭐⭐ Ruling 209's census was keyed on `::where(`, and a model query can be opened by another spelling.
+    The opener census is 16 spellings and 5 members, all safe. Re-deriving 209 on today's tree finds the
+    `::where(` member it missed: `MarkInvoicesDueCommand:58`, which predates 209 by three days and whose
+    sibling carries 209's own fix. It is recorded, not built (measured by the lane supervisor 2026-09-11
+    10:4x, by `date` `10:40`; rulings 82, 96, 98, 207, 209, 212, 225, 257, 262(b), 273, 294, 324, 327, 328,
+    403, 415, 425, 429, 449, 532–540).** This is 532–540's cheapest place to look, *a census keyed on a
+    written FORM misses the same operation spelled another way*, aimed at 209's tenancy census.
+    **The opener census. Instruments, quoted (300)**, each over the eight money module trees with `/Database/`
+    filtered out:
+    - `-e "::query(" -e "::whereIn(" -e "::orderBy(" -e "::latest("` → **3**.
+    - `-e "::select(" -e "::count(" -e "::pluck(" -e "::with("` → **0**.
+    - `-e "::all(" -e "::firstWhere(" -e "::whereKey(" -e "::withoutGlobalScopes("` → **2**.
+    - `-e "::whereNull(" -e "::whereDate(" -e "::whereNotIn(" -e "::whereHas("` → **0**.
+
+    ⭐ **Controls fire.** `grep -rln -F -e "::whereIn(" -e "::query("` over `app/app/Services` and
+    `app/app/Livewire` → **205** files. `-e "::count(" -e "::pluck(" -e "::whereNull(" -e "::all("` over
+    `Services`, `Livewire` and `Models` → **10**. So the two zero batches are measurements rather than
+    broken patterns (207, 294).
+    **The five members, each read (262(b)), with its safety named (328):**
+    - `X-198/Ui/ReconciliationDiscrepancies.php:58` `User::whereIn('id', $runs->pluck(…))`. The id set comes
+      from `:49`'s scoped runs. ⭐ Ruling 425's known member (429).
+    - `X-211/Console/DetectOverdueReceivablesCommand.php:28` and `X-199/Console/MarkInvoicesDueCommand.php:26`
+      `User::query()->select('id')->orderBy('id')->chunkById(200, …)`. `users` has no `business_id` and no RLS
+      (425). This is the cross-tenant sweep by design (151(1)), and it reads only ids.
+    - `MarkInvoicesDueCommand.php:50` and `DetectOverdueReceivablesCommand.php:54`
+      `Business::withoutGlobalScopes()->where('owner_user_id', $userId)`, each directly after
+      `Tenancy::setUser($userId)`. ⭐ Ruling 273's working shape and known member (429).
+
+    ⭐ 415's first-three check and 449's each-member-exists check passed.
+    **The re-derivation of 209.** `grep -rn -F -e "::where("` over the same trees → **160**. Piping that through
+    `grep -v -e "business_id"` leaves **ONE** line. A `grep -v` on a substring can hide a line that mentions
+    `business_id` without scoping by it (415's hiding direction), so the corroboration is
+    `… | grep -F -e "business_id" | grep -v -F -e "::where('business_id'"`, which prints **nothing**. So
+    **159 of 160 open with `::where('business_id'`, and exactly one does not.**
+    ⭐⭐ **The one is `X-199/Console/MarkInvoicesDueCommand.php:58`.** It reads
+    `Invoice::where('due_date', '<', now()->toDateString())->where('status', 'issued')->whereNull('due_detected_at')->get()`.
+    `git blame -L 56,61` attributes it to `c8f94f3a7` **2026-09-05** (`:60` is `f21520953` 2026-09-08). **It
+    predates ruling 209, and 209 wrote "exactly THREE omit `business_id`".** ⭐ Its sibling is the other
+    scheduled sweep, the pair ruling 225 compared line by line. `DetectOverdueReceivablesCommand.php:62` carries
+    209's own fix, `app(InvoiceReader::class)->overdueIssued((int) $business->id)`, and `:66` carries the
+    scoped escalation read. So one command of the pair was fixed and its twin was not (ruling 98's tell).
+    ⚠️ **NINETEENTH inherited attribution corrected** (… 499, 502, 507, 524), in ruling 257's shape: the ledger
+    recorded a count and not the command that re-derives it.
+    **Safety, named (328).** The query runs inside `Tenancy::actingAs((int) $business->id, …)` at `:57`.
+    `invoices` is `ENABLE`d and `FORCE`d with `tenant_isolation` on `USING` and `WITH CHECK` (212, re-confirmed
+    from the checker's side at 451). So the row set is that tenant's.
+    ⛔ **Recorded at ruling 76's grade, not briefed.** Both variants return the same rows, so no mutation can
+    redden a `where('business_id')` clause (82, 96).
+    - Ruling 209 shipped two such unprovable clauses only because its item (a) had a provable half: a signature
+      whose omission became a `TypeError`.
+    - This query is inline in a command. It has no signature to harden, and minting a reader method in order to
+      manufacture a provable half is ruling 327's refusal.
+    - Ruling 403 governs: the one-clause edit rides along only with a provable item in the same file.
+
+    ⚠️ The residual is 403's: if `actingAs` were ever removed, this query fails **silent** (RLS returns zero rows),
+    while its sibling's signature fails **loud**.
+    ⛔ Zero buildable. Struck, not to be re-run. ⚠️ **Trigger:** a wave with a provable item in
+    `MarkInvoicesDueCommand.php`, a production-reachable edit to either scheduled sweep, or a new money model
+    query that neither opens with `business_id` nor sits behind one of these five named safeties. Ruling 327's
+    outcome shape a **fifty-seventh** time.
+    ⭐ **The generalisable half: a census count written as "exactly N" is re-derived by the cheapest instrument
+    that can print N.** Here that is one `grep -v` plus its hiding-direction corroboration, two commands. 209's
+    reading was by hand over 152 lines and was one short. The two-command form would have printed the fourth on
+    the day 209 was written.
+
+545. **⛔ FORTY-FOURTH consecutive HOLD (RULED by the lane supervisor 2026-09-11 10:4x, by `date`).** All four lift
+    conditions were measured this tick (269, 272, 323), each case decided on mtimes (494):
+    - **Owner.** `OWNER.md`'s newest heading is still `## OWNER RULING — 2026-09-09 09:02` (136), mtime
+      `09-09 09:02:03`, older than `REVIEWS.md` (`10:32:20`).
+    - **Coder.** `--check` returned `CODER DEAD`.
+    - **Mailbox.** `REPORT.md` (`07:15:21`) and `BRIEF.md` (`07:07:27`) are both older than `REVIEWS.md`.
+    - **Cadence, all three ✗.** After `git fetch --no-write-fetch-head origin`, `origin/main` **moved to
+      `73b8fe08`** (`merge: track/site — docs(X-102)`). `git rev-list --count HEAD..origin/main` = **35**, not
+      above 100. `git diff --stat dca743e8 origin/main -- app/app/Doctor coder-bin .claude/hooks` is empty.
+      `git merge-base HEAD origin/main` = **`dca743e8`**, unchanged. ⭐ Condition (3) is measured by CONTENT (504):
+      `git diff --name-status dca743e8 origin/main` is the same 12 paths 541 read (7 per-track, X-102's three,
+      Track 2's `app.css` and `ReplyQueueStylesheetTest.php`). The new commits change only X-102's three and
+      the site lane's ledger. `grep -rln -F -e "X102" -e "X-102"` over the eight money module trees and two test
+      trees prints **nothing**. None fires.
+    - **Track 1.** No answer to ACTION 13–25.
+    - **Population.** Ruling 544's is non-empty and not buildable.
+
+    **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty wave to avoid an idle tick is what
+    rulings 95, 100 and 111 forbid. ⚠️ `app/CLAUDE.md` came into context again this tick. It is Laravel Boost
+    boilerplate and was not followed.
