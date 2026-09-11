@@ -4637,3 +4637,38 @@ to pass, another went from pass to error, and both counts came out net zero. PB-
 *difference*, so a zero was never asked about, and a name the brief had supplied filled the gap.
 ⭐ **Reconcile the non-passing set BY NAME against the last gate's list, every wave.** Give that list in the brief as a
 **measured baseline**, never as the expected answer.
+⚠️ PB-169 moved it back: `pb169-gate-1.log:152` is `cancel_is_one_tap…` again. **E00040 alternates between two
+Authorize.Net journeys from wave to wave.** It is external, TRACK 1 ACTION (c), and its name is never predictable.
+
+## ⭐⭐ Trap added 2026-09-11 15:2x — AN ENDPOINT NO CONTROL USES: every public Livewire method is callable
+
+`HandleComponents.php:565-575` (Livewire `v4.4.2`) admits every public method defined on the component subclass except
+`render`. **A method that no blade binds is still an endpoint.** Its arguments are whatever a browser sends, and no
+review-before-live guard on the bound path applies to them.
+
+`ConfirmationScreen::updatePrice(int $itemId, $value):70` and `DailyPricingDigest::updatePrice(...):28` were public. Each
+had exactly one caller, inside its own `confirm()`, which refuses ≤0 before calling. A direct
+`call('updatePrice', <confirmed id>, 0)` wrote `price_cents = 0` and left `is_confirmed = true`. `PriceQuoteAction:27`
+then returned `amount 0` to the agent. **Both R245 guards were bypassed**: PB-166's `confirmable()` and `Pricebook:148`'s
+clear-on-change. No test could see it, because every test drove `confirm()`.
+
+⭐ **The instrument is two greps:**
+1. `grep -n 'public function'` over the components, minus `mount`, `render` and `updated*` hooks.
+2. The action bindings in the blades: `wire:(click|submit|…)` **and** `target=` (the empty-state component binds through
+   `target`).
+
+For each unbound method, ask where its value comes from:
+- **`wire:model` state** the browser can already write → CLEAR.
+- **A call argument** → check what the bound path refuses first.
+
+⭐ **The fix is `private`, never a guard inside a public method.** A guard on `$this->prices` reads client-writable state,
+and a ≤0 refusal still lets a confirmed amount change. `ConfirmationScreen::saveCalloutFee():58` was already the
+precedent. **PB-170.**
+
+Census on 2026-09-11, scope as above, over the ten modules' `Ui/*.php`: **46 action methods · 42 bound (41 `wire:`,
+1 `target=`) · 4 unbound.** Of the four, `Pricebook::saveCalloutFee` and `Pricebook::updatePrice` are CLEAR (their value
+comes from `wire:model` state, and `:147-151` clears confirmation on a change). The other two are the defect above.
+⛔ SPENT.
+
+⭐ Measured in passing (PB-169 M5): Livewire calls a generic `updated($name)` on `set('inlinePrices.N')`, so typing into a
+nested key does reach a hook.
