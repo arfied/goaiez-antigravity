@@ -408,6 +408,7 @@ class ChatDoorTest extends TestCase
         $response->assertStatus(404);
         $response->assertJson(['error' => 'Session not found']);
     }
+
     /**
      * This test is unfalsifiable for the middleware's behavior because the lack of consent
      * drops the message before the trim logic's output can be verified.
