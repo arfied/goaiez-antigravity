@@ -2877,7 +2877,16 @@ and EMPTY**: 301 − 254 = 47 ids; 204 flagged rows = §5; the intersection is `
   it. Writes are refused while cwd is `app/`, so read the census through a pipe.
 - ⚠️ A 0-byte root `paths.txt` (09:36:32, unattributed) is debris: §1 is **78**, not 77.
 
-⌛ **S-200 — §3 ledger refresh. OPEN, dispatched at tick 345 as STAGES-238, merge gate CLOSED.**
+✅ **S-200 — COMPLETE at tick 346 (STAGES-238, PASS).** Ledger commit `fb3fb47b` touches the two
+state paths only. Stage rows went 80 → 88, the `null` count is 0, and §3 == §5 in `.gateT346.txt` at
+`4c7129dc` (`0·41·85·0·16·204·128·3` = 477). Root `paths.txt` is deleted. Tip `4c7129dc` was pushed,
+certified by `.gateT346.txt`. **Tick 346 wrote a HOLD**: the census input is unmoved since `6ac471d5`
+(no `app/` path changed) and the backlog is empty on measurement.
+- ⚠️ **Brief lesson:** a brief body must not ask for an item that its own report-shape list omits.
+  STAGES-238 item 7 asked for §2 and §4, but section 8 did not list them, so the coder never pasted
+  them.
+
+⌛ **S-200 as dispatched (history): §3 ledger refresh, dispatched at tick 345 as STAGES-238, merge gate CLOSED.**
 Tick 344's HOLD missed that §3 still read `boundary 55 · citation 3 · capability 207` while §5 reads
 **41 · 0 · 204** (`.gateT345b.txt` at `423ec5a9`, total 477, the eight sum). This is S-191's exact
 shape: eight `state.py stage` rows copied from the wave's own §5, the two `.agents/state/` files
