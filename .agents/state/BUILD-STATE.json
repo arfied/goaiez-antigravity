@@ -1535,6 +1535,18 @@
   {
    "at": "2026-09-10T20:41:54",
    "note": "run 155: the two reddened panel tests are replaced by assertions of refusal without disclosure; item 4 proves ReviewsQaRequests::sendRequest reads no customer_id from its form; item 5 locates the risky test in X-110's TodayTest."
+  },
+  {
+   "at": "2026-09-10T21:09:01",
+   "note": "run 156 item 1: Arm A \u2014 getModel() exists. Mutation went red tests 15 \u00b7 failed 2, restored to green tests 15 \u00b7 passed 15."
+  },
+  {
+   "at": "2026-09-10T21:09:01",
+   "note": "run 156 item 3: Arm A \u2014 test_home_renders_today goes green, risky drops to 0."
+  },
+  {
+   "at": "2026-09-10T21:09:01",
+   "note": "run 156 item 4: Arm A \u2014 Job completion time is reachable at X-121's completed_at column using EntityReadAction."
   }
  ],
  "resolved": [
