@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-11T11:25:10",
+ "updated": "2026-09-11T14:50:03",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1610,6 +1610,12 @@
    "module": "X-124",
    "chose": "the last two fixed neutral utilities beside scheme tokens in owner layout views use tokens, and the scheme pin counts the remaining text-white on a saturated button and the dark border variant rather than excluding them",
    "at": "2026-09-11T11:25:10",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-124",
+   "chose": "the dark variant is bound to the prefers-color-scheme dark media query instead of a dark class that the layouts set on html, so dark utilities apply exactly when the dark palette does, and the linked stylesheet test pins that no rule carries the class variant selector where-dark-comma, with the comma because Tailwind wraps the own class names of divide utilities in where",
+   "at": "2026-09-11T14:50:03",
    "ruling": "R245"
   }
  ],
