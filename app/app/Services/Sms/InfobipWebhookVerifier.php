@@ -326,11 +326,23 @@ final class InfobipWebhookVerifier implements VerifiesWebhookSenders
      * string cannot turn an invalid signature into a valid one, because the
      * expected value contains no upper-case bytes to lose. Base64 is compared
      * as sent — there case *is* significant.
+     *
+     * ⛔ **AND INFOBIP'S HMAC PROFILE SENDS `SHA256=<64 hex>` (captured
+     * 2026-09-10).** The `SHA256=` prefix is stripped here before the
+     * constant-time comparisons run. It is stripped rather than trusted as an
+     * algorithm selector: this verifier always hashes with SHA-256 and compares
+     * against that expectation, so the prefix is removed to allow the hex
+     * comparison to succeed, not read to decide how to hash.
      */
     private function matches(?string $presented, string $baseString, string $secret): bool
     {
         if (! is_string($presented) || $presented === '') {
             return false;
+        }
+
+        $presented = trim($presented);
+        if (preg_match('/^sha256=/i', $presented)) {
+            $presented = preg_replace('/^sha256=/i', '', $presented);
         }
 
         $expected = hash_hmac('sha256', $baseString, $secret);

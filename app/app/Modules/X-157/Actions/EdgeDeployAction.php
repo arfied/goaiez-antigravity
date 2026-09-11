@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Modules\X157\Actions;
 
 use App\Models\Business;
-use App\Modules\X103\Models\Page;
-use App\Modules\X103\Models\PageVersion;
+use App\Modules\X103\Actions\PageReadAction;
+use App\Modules\X103\Actions\PageVersionAction;
 use App\Modules\X108\Models\Appointment;
-use App\Modules\X155\Models\FormDefinition;
+use App\Modules\X155\Actions\FormReadAction;
 use App\Modules\X157\Events\DeployCompleted;
 use App\Modules\X157\Events\DeployRolledBack;
 use App\Modules\X157\Models\Deployment;
@@ -40,7 +40,7 @@ final class EdgeDeployAction
 
             if ($commitId) {
                 // X-103 ↔ X-157 seam (R245): derive ssl_installed from EdgeZone.has_valid_ssl
-                PageVersion::where('commit_id', $commitId)->update(['ssl_installed' => $zone->has_valid_ssl]);
+                app(PageVersionAction::class)->recordSslInstalled($commitId, $zone->has_valid_ssl);
             }
 
             // 1. SSL Certificate check: a site cannot be published without a valid certificate (TEST ANCHOR)
@@ -150,7 +150,7 @@ final class EdgeDeployAction
             $html .= "</head><body>\n";
 
             if ($commitId) {
-                $version = PageVersion::where('commit_id', $commitId)->first();
+                $version = app(PageVersionAction::class)->forCommit($commitId);
                 if ($version) {
                     $blockTypes = is_array($version->content_blocks)
                         ? array_column($version->content_blocks, 'type')
@@ -195,7 +195,7 @@ final class EdgeDeployAction
                         $html .= "<div class=\"chat-widget-container\"></div>\n";
                     }
                     if ($hasForm) {
-                        $formId = FormDefinition::where('business_id', $businessId)->orderBy('id')->value('id');
+                        $formId = app(FormReadAction::class)->firstIdForBusiness($businessId);
                         $action = $formId === null
                             ? ''
                             : " method=\"post\" action=\"/sites/{$businessId}/{$deployHash}/forms/{$formId}\"";
@@ -209,7 +209,7 @@ final class EdgeDeployAction
 
             $breadcrumbs = [];
             if ($pageId !== null && $businessName !== null && $commitId !== null) {
-                $page = Page::find($pageId);
+                $page = app(PageReadAction::class)->findForBusiness($businessId, $pageId);
                 if ($page && ! empty($page->slug) && trim((string) $page->title) !== '') {
                     $parts = explode('/', trim($page->slug, '/'));
                     if (count($parts) > 1) {
@@ -220,10 +220,7 @@ final class EdgeDeployAction
                             $paths[] = $current;
                         }
 
-                        $pages = Page::where('business_id', $businessId)
-                            ->where('is_published', true)
-                            ->whereIn(DB::raw("trim(both '/' from slug)"), $paths)
-                            ->get();
+                        $pages = app(PageReadAction::class)->publishedForSlugs($businessId, $paths);
 
                         $hierarchyPages = [];
                         $usable = true;
@@ -292,7 +289,7 @@ final class EdgeDeployAction
                     $html .= "<script type=\"application/ld+json\">\n".json_encode($schemaResult['json_ld'], JSON_THROW_ON_ERROR | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT)."\n</script>\n";
                 }
 
-                $page = Page::find($pageId);
+                $page = app(PageReadAction::class)->findForBusiness($businessId, $pageId);
                 if ($page) {
                     $contentBlocks = (isset($version) && $version && is_array($version->content_blocks)) ? $version->content_blocks : [];
                     $llmsTxtContent = app(LlmsTxtRenderAction::class)->handle(

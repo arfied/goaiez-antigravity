@@ -12,10 +12,12 @@ use App\Modules\X211\Actions\ArForceAchAction;
 use App\Modules\X211\Actions\ArLogOfflinePaymentAction;
 use App\Modules\X211\Actions\ArOfferPlanAction;
 use App\Modules\X211\Actions\ArPackageForCollectionsAction;
+use App\Modules\X211\Domain\AlreadyPackagedException;
 use App\Modules\X211\Domain\ArEngine;
 use App\Modules\X211\Domain\FeeAtCapException;
 use App\Modules\X211\Domain\FeeWithoutTermException;
 use App\Modules\X211\Domain\NoResolutionAttemptException;
+use App\Modules\X211\Domain\PlanAlreadyOfferedException;
 use App\Modules\X211\Domain\PlanPastThresholdException;
 use App\Modules\X211\Domain\UnreferencedPaymentException;
 use App\Modules\X211\Events\ArFeeApplied;
@@ -451,5 +453,249 @@ class X211Test extends TestCase
 
         $this->assertSame(2000, (int) ReceivableState::where('business_id', $biz->id)->where('invoice_id', $invoice->id)->value('late_fee_cents'));
         Event::assertDispatchedTimes(ArFeeApplied::class, 2);
+    }
+
+    public function test_a_second_collections_package_on_one_invoice_is_refused_and_writes_nothing(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'AR Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $user = User::factory()->create();
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'Overdue', 'last_name' => 'Client']);
+        $invoice = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-AR-103',
+            'total_cents' => 60000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(15)->toDateString(),
+        ]);
+
+        ArDunningAction::create([
+            'business_id' => $biz->id,
+            'invoice_id' => $invoice->id,
+            'action' => 'escalate_to_human',
+            'reason' => 'Silence',
+        ]);
+
+        $this->engine->packageForCollections($biz->id, $invoice->id, $user->id);
+
+        try {
+            $this->engine->packageForCollections($biz->id, $invoice->id, $user->id);
+            $this->fail('A second package was not refused.');
+        } catch (AlreadyPackagedException $e) {
+            $this->assertStringContainsString('has already been packaged for collections', $e->getMessage());
+        }
+
+        $this->assertSame(1, ArCollectionsPackage::where('business_id', $biz->id)->where('invoice_id', $invoice->id)->count());
+    }
+
+    public function test_a_concurrent_escalation_is_absorbed_into_one_escalation_and_one_receivable_state(): void
+    {
+        // This test turns on X211Test being a CLASS-BASED PHPUnit file, which Pest's
+        // ->use(RefreshesTenantDatabase::class)->in('Modules') binding does NOT reach, so the racer's
+        // rows COMMIT on pgsql_migrate and recordReason() can see them. If TestCase ever binds a
+        // refresh trait directly, this test stops proving anything -- while very likely still passing.
+        $biz = TestCase::provisionTenant(['name' => 'Escalation Race Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'R', 'last_name' => 'R']);
+        $invoice = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-RACE-01',
+            'total_cents' => 20000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(5)->toDateString(),
+        ]);
+
+        // A second writer lands the same two rows between firstOrCreate()'s read and its insert. It
+        // writes on pgsql_migrate, a separate session, so it commits rather than joining
+        // recordReason()'s open transaction. RLS is FORCED and constrains the owner role too.
+        $racer = DB::connection('pgsql_migrate');
+        $racer->statement("SET app.business_id = '{$biz->id}'");
+
+        ArDunningAction::creating(function (ArDunningAction $action) use ($racer, $biz, $invoice): void {
+            if ($action->action !== 'escalate_to_human') {
+                return;
+            }
+
+            $racer->table('ar_dunning_actions')->insert([
+                'business_id' => $biz->id,
+                'invoice_id' => $invoice->id,
+                'action' => 'escalate_to_human',
+                'reason' => 'Escalated by the racer',
+            ]);
+        });
+
+        ReceivableState::creating(function () use ($racer, $biz, $invoice): void {
+            $racer->table('receivable_states')->insert([
+                'business_id' => $biz->id,
+                'invoice_id' => $invoice->id,
+                'status' => 'overdue',
+            ]);
+        });
+
+        try {
+            app(ArEngine::class)->recordReason($biz->id, $invoice->id, 'complaint');
+        } finally {
+            ArDunningAction::flushEventListeners();
+            ReceivableState::flushEventListeners();
+        }
+
+        // The loser absorbs the winner's rows: one escalation, one receivable state.
+        $this->assertSame(
+            1,
+            ArDunningAction::where('business_id', $biz->id)
+                ->where('invoice_id', $invoice->id)
+                ->where('action', 'escalate_to_human')
+                ->count()
+        );
+        $this->assertSame(
+            1,
+            ReceivableState::where('business_id', $biz->id)->where('invoice_id', $invoice->id)->count()
+        );
+
+        // The escalation that survived is the racer's, and recordReason()'s update landed on the
+        // receivable state it absorbed.
+        $this->assertSame(
+            'Escalated by the racer',
+            ArDunningAction::where('business_id', $biz->id)
+                ->where('invoice_id', $invoice->id)
+                ->where('action', 'escalate_to_human')
+                ->value('reason')
+        );
+        $this->assertSame(
+            'escalated',
+            ReceivableState::where('business_id', $biz->id)->where('invoice_id', $invoice->id)->value('status')
+        );
+    }
+
+    public function test_a_concurrent_plan_offer_is_refused_and_the_invoice_keeps_one_plan(): void
+    {
+        // This test turns on X211Test being a CLASS-BASED PHPUnit file, which Pest's
+        // ->use(RefreshesTenantDatabase::class)->in('Modules') binding does NOT reach, so the racer's
+        // row COMMITS on pgsql_migrate and offerPlan() can see it. If TestCase ever binds a refresh
+        // trait directly, this test stops proving anything -- while very likely still passing.
+        $biz = TestCase::provisionTenant(['name' => 'Plan Race Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'P', 'last_name' => 'P']);
+        $invoice = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-PLAN-RACE',
+            'total_cents' => 30000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(5)->toDateString(),
+        ]);
+
+        // A second offer stores a plan for this invoice between offerPlan()'s guard and its insert. It
+        // writes on pgsql_migrate, a separate session, so it commits. RLS is FORCED and constrains the
+        // owner role too.
+        $racer = DB::connection('pgsql_migrate');
+        $racer->statement("SET app.business_id = '{$biz->id}'");
+
+        PaymentPlan::creating(function () use ($racer, $biz, $invoice): void {
+            $racer->table('payment_plans')->insert([
+                'business_id' => $biz->id,
+                'invoice_id' => $invoice->id,
+                'installments_count' => 3,
+                'installment_amount_cents' => 10000,
+                'frequency' => 'monthly',
+                'status' => 'offered',
+            ]);
+        });
+
+        $refused = null;
+        try {
+            $this->engine->offerPlan($biz->id, $invoice->id, 2, 'biweekly');
+        } catch (PlanAlreadyOfferedException $e) {
+            $refused = $e;
+        } finally {
+            PaymentPlan::flushEventListeners();
+        }
+
+        // The invoice keeps one plan.
+        $this->assertSame(
+            1,
+            PaymentPlan::where('business_id', $biz->id)->where('invoice_id', $invoice->id)->count()
+        );
+
+        // The loser is refused exactly as the guard refuses a second offer, naming the plan that won
+        // (the racer's 3 monthly payments, not the 2 biweekly payments this call asked for).
+        $this->assertNotNull($refused);
+        $this->assertStringContainsString(
+            'INV-PLAN-RACE is already on a plan: 3 monthly payments',
+            $refused->getMessage()
+        );
+    }
+
+    public function test_a_concurrent_collections_package_is_refused_and_the_invoice_keeps_one_package(): void
+    {
+        // This test turns on X211Test being a CLASS-BASED PHPUnit file, which Pest's
+        // ->use(RefreshesTenantDatabase::class)->in('Modules') binding does NOT reach, so the racer's
+        // row COMMITS on pgsql_migrate and packageForCollections() can see it. If TestCase ever binds a
+        // refresh trait directly, this test stops proving anything -- while very likely still passing.
+        $biz = TestCase::provisionTenant(['name' => 'Package Race Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $user = User::factory()->create();
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'K', 'last_name' => 'K']);
+        $invoice = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-PKG-RACE',
+            'total_cents' => 60000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(15)->toDateString(),
+        ]);
+
+        // A resolution attempt is recorded first, or packageForCollections() refuses before its insert.
+        ArDunningAction::create([
+            'business_id' => $biz->id,
+            'invoice_id' => $invoice->id,
+            'action' => 'escalate_to_human',
+            'reason' => 'Silence',
+        ]);
+
+        // A second package is stored for this invoice between the guard and the insert. It writes on
+        // pgsql_migrate, a separate session, so it commits. RLS is FORCED and constrains the owner role too.
+        $racer = DB::connection('pgsql_migrate');
+        $racer->statement("SET app.business_id = '{$biz->id}'");
+
+        ArCollectionsPackage::creating(function () use ($racer, $biz, $invoice): void {
+            $racer->table('ar_collections_packages')->insert([
+                'business_id' => $biz->id,
+                'invoice_id' => $invoice->id,
+                'contents' => json_encode(['invoice_number' => 'INV-PKG-RACE']),
+            ]);
+        });
+
+        $refused = null;
+        try {
+            $this->engine->packageForCollections($biz->id, $invoice->id, $user->id);
+        } catch (AlreadyPackagedException $e) {
+            $refused = $e;
+        } finally {
+            ArCollectionsPackage::flushEventListeners();
+        }
+
+        // The invoice keeps one package.
+        $this->assertSame(
+            1,
+            ArCollectionsPackage::where('business_id', $biz->id)->where('invoice_id', $invoice->id)->count()
+        );
+
+        // The loser is refused exactly as the guard refuses a second package.
+        $this->assertNotNull($refused);
+        $this->assertStringContainsString(
+            'INV-PKG-RACE has already been packaged for collections',
+            $refused->getMessage()
+        );
     }
 }

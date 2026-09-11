@@ -17,6 +17,8 @@ use Livewire\Component;
 
 class InvoiceThreadBeside extends Component
 {
+    use LabelsDunningAction;
+
     private const THREAD_WINDOW = 50;
 
     public ?int $invoiceId = null;
@@ -114,6 +116,7 @@ class InvoiceThreadBeside extends Component
             'actions' => $actions,
             'escalation' => $escalation,
             'reasons' => ArEngine::REASONS,
+            'actionLabels' => $this->dunningActionLabels(),
         ]);
     }
 }

@@ -74,7 +74,7 @@ class CheckoutBlockScreenTest extends TestCase
         $screen = Livewire::test(CheckoutBlock::class, ['sessionToken' => 'sess_1']);
         $screen->set('authToken', $token)
             ->call('pay')
-            ->assertSee('needs a fresh authorisation');
+            ->assertSee('an authorisation pays once and this one already has');
 
         $this->assertSame(8, $boiler->fresh()->inventory_quantity);
         $this->assertSame(1, Order::where('business_id', $biz->id)->count());
@@ -246,5 +246,94 @@ class CheckoutBlockScreenTest extends TestCase
             ->assertDontSee('Nothing to pay for yet.')
             ->assertSee('Lines not shown: 1')
             ->assertSee('25.00');
+    }
+
+    public function test_the_order_list_names_its_status_in_the_owners_words_and_never_the_column_token()
+    {
+        $biz = self::provisionTenant();
+        Tenancy::set($biz->id);
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::setUser($owner->id);
+
+        Order::create([
+            'business_id' => $biz->id,
+            'customer_id' => null,
+            'order_number' => 'ORD-LABEL01',
+            'status' => 'pending_payment',
+            'total_cents' => 1000,
+            'auth_token' => 'auth_label_1',
+        ]);
+
+        Livewire::actingAs($owner)->test(CheckoutBlock::class)
+            ->assertOk()
+            ->assertSee('ORD-LABEL01')
+            ->assertSee('placed, not paid')
+            ->assertDontSee('pending_payment');
+    }
+
+    public function test_a_cancelled_order_carries_no_attention_signal()
+    {
+        $biz = self::provisionTenant();
+        Tenancy::set($biz->id);
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::setUser($owner->id);
+
+        Order::create([
+            'business_id' => $biz->id,
+            'customer_id' => null,
+            'order_number' => 'ORD-CANCEL01',
+            'status' => 'cancelled',
+            'total_cents' => 1000,
+            'auth_token' => 'auth_cancel_1',
+        ]);
+
+        Livewire::actingAs($owner)->test(CheckoutBlock::class)
+            ->assertOk()
+            ->assertSee('ORD-CANCEL01')
+            ->assertSee('cancelled')
+            ->assertDontSeeHtml('bg-attention-bg');
+    }
+
+    public function test_the_checkout_write_buttons_carry_the_double_send_guard(): void
+    {
+        $biz = self::provisionTenant();
+        Tenancy::set($biz->id);
+        $owner = User::findOrFail($biz->owner_user_id);
+
+        $order = Order::create([
+            'business_id' => $biz->id,
+            'customer_id' => null,
+            'order_number' => 'ORD-TEST-GUARD',
+            'status' => 'pending_payment',
+            'total_cents' => 1000,
+            'auth_token' => 'auth_guard',
+        ]);
+
+        $filter = Sellable::create([
+            'business_id' => $biz->id,
+            'name' => 'Limited filter',
+            'sku' => 'FLT-GUARD',
+            'inventory_quantity' => 1,
+            'unit_price_cents' => 4500,
+            'fulfilment_type' => 'physical',
+        ]);
+        (new CartAddAction)->handle($biz->id, 'sess_guard', $filter->id);
+
+        Livewire::actingAs($owner)->test(CheckoutBlock::class, ['sessionToken' => 'sess_guard'])
+            ->assertOk()
+            ->assertSeeHtml('wire:target="cancel('.$order->id.')"')
+            ->assertSeeHtml('wire:target="authorise"')
+            ->assertSeeHtml('wire:target="pay"');
+    }
+
+    public function test_a_failed_cancel_names_the_cancel_and_not_the_payment(): void
+    {
+        $biz = self::provisionTenant();
+        Tenancy::set($biz->id);
+
+        Livewire::test(CheckoutBlock::class, ['sessionToken' => 'sess_hd1'])
+            ->call('cancel', 999999)
+            ->assertSee('Could not cancel that order')
+            ->assertDontSee('take that payment');
     }
 }

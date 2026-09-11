@@ -6,7 +6,9 @@ use App\Modules\X198\Domain\GatewayEngine;
 use App\Modules\X198\Domain\StripeGatewayClient;
 use App\Modules\X198\Models\MerchantConnection;
 use App\Modules\X198\Models\Payment;
+use App\Modules\X199\Actions\InvoiceDraftAction;
 use App\Modules\X199\Domain\InvoiceEngine;
+use App\Modules\X199\Domain\InvoiceNotPayableException;
 use App\Modules\X199\Domain\InvoiceReader;
 use App\Modules\X199\Events\InvoiceOverdue;
 use App\Modules\X199\Events\InvoicePaid;
@@ -16,6 +18,7 @@ use App\Modules\X199\Events\OverflowReversed;
 use App\Modules\X199\Models\CreditTerm;
 use App\Modules\X199\Models\OverflowCharge;
 use App\Support\Tenancy;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -533,5 +536,102 @@ test('a pending overflow charge is refused, not charged', function () {
 
         expect($overflow->status)->toBe('refused');
         expect($overflow->reference_id)->toBe('ch_pending_x199_000000000');
+    });
+});
+
+test('recording a payment with no amount records the balance and never overpays', function () {
+    Event::fake([InvoicePaid::class, OverflowReversed::class]);
+
+    $business = Business::factory()->create();
+    $customer = Person::create(['business_id' => $business->id]);
+
+    Tenancy::actingAs((int) $business->id, function () use ($business, $customer) {
+        $engine = app(InvoiceEngine::class);
+
+        $result = $engine->issueInvoice(
+            $business->id,
+            $customer->id,
+            [['description' => 'Test', 'quantity' => 1, 'unit_price_cents' => 10000]],
+            'net_30'
+        );
+        $invoice = $result['invoice'];
+
+        $engine->recordPayment($business->id, $invoice->id, 3000);
+
+        $invoice->refresh();
+        expect($invoice->paid_cents)->toBe(3000);
+
+        $engine->recordPayment($business->id, $invoice->id);
+
+        $invoice->refresh();
+        expect($invoice->paid_cents)->toBe(10000);
+        expect($invoice->status)->toBe('paid');
+    });
+});
+
+test('a payment on a paid invoice is refused and its paid_at is not moved', function () {
+    $business = Business::factory()->create();
+    $customer = Person::create(['business_id' => $business->id]);
+
+    Tenancy::actingAs((int) $business->id, function () use ($business, $customer) {
+        $engine = app(InvoiceEngine::class);
+
+        $settled = Carbon::now()->subDays(60);
+        Carbon::setTestNow($settled);
+
+        $result = $engine->issueInvoice(
+            $business->id,
+            $customer->id,
+            [['description' => 'Test', 'quantity' => 1, 'unit_price_cents' => 10000]],
+            'net_30'
+        );
+        $invoice = $result['invoice'];
+
+        $engine->recordPayment($business->id, $invoice->id);
+
+        $invoice->refresh();
+        expect($invoice->status)->toBe('paid');
+        $settledAt = $invoice->paid_at->toIso8601String();
+
+        Carbon::setTestNow($settled->copy()->addDays(30));
+
+        try {
+            $engine->recordPayment($business->id, $invoice->id);
+            $this->fail('A payment on a paid invoice must be refused.');
+        } catch (InvoiceNotPayableException $e) {
+            expect($e->getMessage())->toContain('is paid: a payment is only recorded against an open invoice');
+        }
+
+        $invoice->refresh();
+        expect($invoice->paid_at->toIso8601String())->toBe($settledAt);
+
+        Carbon::setTestNow();
+    });
+});
+
+test('a payment on a draft invoice is refused and the draft is not silently paid', function () {
+    $business = Business::factory()->create();
+    $customer = Person::create(['business_id' => $business->id]);
+
+    Tenancy::actingAs((int) $business->id, function () use ($business, $customer) {
+        $draft = app(InvoiceDraftAction::class)->handle(
+            $business->id,
+            $customer->id,
+            [['description' => 'Test', 'quantity' => 1, 'unit_price_cents' => 10000]]
+        );
+
+        expect($draft->status)->toBe('draft');
+
+        try {
+            app(InvoiceEngine::class)->recordPayment($business->id, $draft->id);
+            $this->fail('A payment on a draft invoice must be refused.');
+        } catch (InvoiceNotPayableException $e) {
+            expect($e->getMessage())->toContain('is draft: a payment is only recorded against an open invoice');
+        }
+
+        $draft->refresh();
+        expect($draft->status)->toBe('draft');
+        expect($draft->paid_cents)->toBe(0);
+        expect($draft->paid_at)->toBeNull();
     });
 });

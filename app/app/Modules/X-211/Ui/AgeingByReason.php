@@ -13,6 +13,7 @@ use App\Modules\X211\Domain\FeeWithoutTermException;
 use App\Modules\X211\Domain\UnreferencedPaymentException;
 use App\Modules\X211\Models\ArDunningAction;
 use App\Modules\X211\Models\ArPlanTerm;
+use App\Modules\X211\Models\OfflinePayment;
 use App\Modules\X211\Models\ReceivableState;
 use App\Support\Tenancy;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -24,11 +25,15 @@ class AgeingByReason extends Component
 
     public array $amountCents = [];
 
+    public array $paymentMethod = [];
+
     public array $term = [];
 
     public array $feeCents = [];
 
     public ?string $refused = null;
+
+    public ?string $refusedHeading = null;
 
     public ?string $error = null;
 
@@ -39,6 +44,7 @@ class AgeingByReason extends Component
         $this->error = null;
         $this->success = null;
         $this->refused = null;
+        $this->refusedHeading = null;
         $percent = (int) ($this->term['percent'] ?? 0);
         $cap = trim((string) ($this->term['cap'] ?? '')) === '' ? null : (int) $this->term['cap'];
         if ($percent < 1 || $percent > 100) {
@@ -65,6 +71,7 @@ class AgeingByReason extends Component
         $this->error = null;
         $this->success = null;
         $this->refused = null;
+        $this->refusedHeading = null;
         $businessId = Tenancy::idOrFail();
         $fee = (int) ($this->feeCents[$invoiceId] ?? 0);
         if ($fee <= 0) {
@@ -78,6 +85,7 @@ class AgeingByReason extends Component
             $this->success = sprintf('Late fee of %s applied to %s.', number_format($res['applied_fee_cents'] / 100, 2), $invoice->invoice_number);
             unset($this->feeCents[$invoiceId]);
         } catch (FeeWithoutTermException|FeeAtCapException $e) {
+            $this->refusedHeading = 'Late fee not applied';
             $this->refused = $e->getMessage();
         } catch (ModelNotFoundException) {
             $this->error = "That invoice isn't in this account any more.";
@@ -90,10 +98,12 @@ class AgeingByReason extends Component
     {
         $this->error = null;
         $this->success = null;
+        $this->refused = null;
+        $this->refusedHeading = null;
         $businessId = Tenancy::idOrFail();
 
         if (empty($this->reference[$invoiceId])) {
-            $this->error = 'We need a reference number or a photo.';
+            $this->error = 'We need the reference number. This screen cannot take a photo yet, so a reference is the only way to log this payment.';
 
             return;
         }
@@ -105,15 +115,23 @@ class AgeingByReason extends Component
             return;
         }
 
+        $method = (string) ($this->paymentMethod[$invoiceId] ?? 'check');
+        if (! in_array($method, OfflinePayment::METHODS, true)) {
+            $this->error = 'Choose how the payment arrived: cash, cheque, Zelle or wire.';
+
+            return;
+        }
+
         try {
             $ref = $this->reference[$invoiceId];
 
             app(InvoiceReader::class)->forBusiness($businessId, $invoiceId);
 
-            $action->handle($businessId, $invoiceId, $amount, 'check', $ref);
-            $this->success = 'Payment logged.';
-            unset($this->reference[$invoiceId], $this->amountCents[$invoiceId]);
+            $payment = $action->handle($businessId, $invoiceId, $amount, $method, $ref);
+            $this->success = sprintf('Payment logged: %s.', number_format($payment->amount_cents / 100, 2));
+            unset($this->reference[$invoiceId], $this->amountCents[$invoiceId], $this->paymentMethod[$invoiceId]);
         } catch (UnreferencedPaymentException $e) {
+            $this->refusedHeading = 'Payment not logged';
             $this->refused = $e->getMessage();
         } catch (ModelNotFoundException) {
             $this->error = "That invoice isn't in this account any more.";

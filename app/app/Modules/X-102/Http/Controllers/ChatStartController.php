@@ -25,11 +25,13 @@ final class ChatStartController extends Controller
 
         Tenancy::set((int) $business->id);
 
+        $pixelSessionToken = $request->input('pixel_session_token');
+
         $session = $action->handle(
             businessId: (int) $business->id,
             visitorIp: $request->ip(),
             isAiCapped: null,
-            pixelSessionToken: $request->input('pixel_session_token')
+            pixelSessionToken: is_string($pixelSessionToken) ? $pixelSessionToken : null
         );
 
         return response()->json(['session_token' => $session->session_token], 201);

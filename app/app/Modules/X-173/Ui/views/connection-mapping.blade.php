@@ -4,7 +4,7 @@
     <p>This screen maps each category to one ledger account, reviewed once by a person. Nothing has synced: connecting a ledger waits on QuickBooks, Xero or Sage OAuth credentials, and none exist in this checkout.</p>
 
     @if($error)
-        <x-ui.error-panel heading="We couldn't save that mapping">{{ $error }}</x-ui.error-panel>
+        <x-ui.error-panel :heading="$errorHeading ?? 'Could not save that mapping'">{{ $error }}</x-ui.error-panel>
     @endif
     
     @if($success)

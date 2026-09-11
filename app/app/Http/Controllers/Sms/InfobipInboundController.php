@@ -12,6 +12,7 @@ use App\Services\Sms\InboundMessages;
 use App\Services\Sms\InfobipWebhookVerifier;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 /**
  * `POST /webhooks/infobip/inbound` — where a customer's STOP arrives.
@@ -60,6 +61,39 @@ final class InfobipInboundController extends Controller
         // any reformatting invalidates it — so nothing may parse this request
         // until it has been shown to be genuine.
         if (! $verifier->verify($request)) {
+            $sigHeader = config('services.infobip.signature_header');
+            $possible = array_filter(['X-Hub-Signature', 'X-Signature', $sigHeader, 'X-Ib-Exchange-Req-Signature', 'X-Ib-Exchange-Req-Timestamp']);
+            $present = [];
+            foreach ($possible as $h) {
+                if ($request->hasHeader($h)) {
+                    $present[] = (string) $h;
+                }
+            }
+            $present = array_values(array_unique($present));
+
+            $sigValue = is_string($sigHeader) ? $request->header($sigHeader, '') : '';
+            $sigValue = is_string($sigValue) ? $sigValue : '';
+
+            $results = $request->input('results');
+            $messageIds = [];
+            if (is_array($results)) {
+                foreach (array_slice($results, 0, 5) as $m) {
+                    if (is_array($m) && isset($m['messageId']) && is_string($m['messageId'])) {
+                        $messageIds[] = $m['messageId'];
+                    }
+                }
+            }
+
+            Log::warning('Infobip inbound refused: signature did not verify', [
+                'signature_headers_present' => $present,
+                'signature_len' => strlen($sigValue),
+                'signature_prefix' => $sigValue !== '' ? substr($sigValue, 0, 7) : null,
+                'body_sha256' => hash('sha256', $request->getContent()),
+                'content_length' => $request->header('Content-Length'),
+                'message_ids' => $messageIds,
+                'user_agent' => $request->header('User-Agent'),
+            ]);
+
             // ⚠️ **COUNTED (T176 P23), AND THIS IS THE ENDPOINT WHERE THE
             // SILENCE IS A COMPLIANCE PROBLEM.** An unconfigured signing key
             // refuses every genuine delivery, which means every STOP arriving
@@ -90,7 +124,7 @@ final class InfobipInboundController extends Controller
             }
 
             $id = $message['messageId'] ?? null;
-            $from = $message['from'] ?? null;
+            $from = $message['from'] ?? $message['sender'] ?? null;
 
             // ⚠️ A MESSAGE WITH NO SENDER OR NO ID IS SKIPPED RATHER THAN
             // FAILING THE BATCH, and the choice is deliberate: one unreadable
@@ -114,8 +148,13 @@ final class InfobipInboundController extends Controller
             // ⚠️ **THE SMS KEYS STILL WIN WHEN THEY ARE THERE.** `cleanText` is
             // the carrier's own keyword-stripped body and is the better input;
             // the fallback is reached only when neither key exists, which is
-            // exactly the MMS envelope.
+            // exactly the MMS envelope. (The MO subscription shape is tested
+            // below as another fallback. The same fallback in InfobipDeliveryController
+            // is NOT in scope here.)
             $text = $message['cleanText'] ?? $message['text'] ?? null;
+            if (! is_string($text) && isset($message['content'][0]) && is_array($message['content'][0]) && (! isset($message['content'][0]['type']) || $message['content'][0]['type'] === 'TEXT')) {
+                $text = $message['content'][0]['cleanText'] ?? $message['content'][0]['text'] ?? null;
+            }
             $text = is_string($text) ? $text : InboundMediaPayload::text($message);
 
             $receivedAt = $message['receivedAt'] ?? null;
@@ -132,7 +171,7 @@ final class InfobipInboundController extends Controller
             // is the shared Lane A pool number; resolving it to a business and
             // narrowing the carrier STOP to that tenant is refused at the write
             // site (1582), not weighed here.
-            $to = $message['to'] ?? null;
+            $to = $message['to'] ?? $message['destination'] ?? null;
 
             // ⚠️ **THE CARRIER'S OWN PART COUNT, WHICH IS THE ONLY HONEST SOURCE
             // FOR IT** (4923). `SmsMoReport.smsCount` — *"The number of parts
