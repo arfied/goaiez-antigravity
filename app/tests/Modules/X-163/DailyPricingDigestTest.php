@@ -12,6 +12,7 @@ use App\Modules\X163\Models\PriceBookItem;
 use App\Modules\X163\Ui\DailyPricingDigest;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Event;
+use Livewire\Exceptions\MethodNotFoundException;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -399,12 +400,11 @@ class DailyPricingDigestTest extends TestCase
         $refused = false;
         try {
             $component->call('updatePrice', $item->id, 0);
-        } catch (\Livewire\Exceptions\MethodNotFoundException $e) {
+        } catch (MethodNotFoundException $e) {
             $refused = true;
         }
 
         $this->assertEquals(9500, $item->fresh()->price_cents, 'T2 A1 a browser call rewrote a confirmed price');
         $this->assertTrue($refused, 'T2 A2 updatePrice answered a browser call');
     }
-
 }
