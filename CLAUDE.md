@@ -17726,3 +17726,29 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
    - ⚠️ Both gates' verdict reads `⛔ a gate failed above`. So do both earlier supervisor gates (`gate-sup-1430.txt`, `gate-sup-1450.txt`), which ran before §6b existed, so the failure is pre-existing and §6b never moves `fail`.
    - ⚠️ `app/CLAUDE.md` came into context again. It is Laravel Boost boilerplate and was not followed.
    - ⚠️ Scratch files left for a later brief's item 0, because `rm` is refused: `phpstan-noignore.neon`, `phpstan-withignore.neon`, `rulings-566-568.md`, `hold-1455.md`, `gate-sup-1500.txt` and `gate-sup-1510.txt`.
+
+569. **⭐ Three of the addendum's pointers are measured and STRUCK. (a) Ruling 344's `grep -v -e 'render' -e 'mount'` exclusion, re-run per ruling 567, hid ZERO members: it removes exactly 27 lines, the 24 `render()`s and the 3 `mount()`s. (b) The four `app/phpstan.neon` ignore patterns that ruling 566 did not read match ZERO money errors, measured by §6b's own output. (c) The HTTP-input census finds ZERO `request()`/`Request`/`->input(`/`->query(`/superglobal reads in the money modules. Zero buildable (measured by the lane supervisor 2026-09-11 15:0x, by `date` `15:00`; rulings 207, 262(b), 294, 324, 327, 328, 344, 381, 383, 415, 429, 542, 566, 567).**
+   **(a) The 567 pointer, aimed at ruling 344.** Ruling 567 showed that a `grep -v <token>` exclusion also drops members that carry the token for another reason. Ruling 344's instrument ended in `grep -v -e 'render' -e 'mount'`, and `mount` is a substring of `amount`, a word this lane's money code uses throughout. **Measured:**
+   - Pre-exclusion instrument: `grep -rn -e "public function" <the eight money module trees> --include=*.php | grep -F -e "/Ui/" | grep -c -e "mount" -e "render"` → **27**.
+   - Removal check: the same pipeline over `app/app/Modules` with `| grep -v -F -e "function render(" -e "function mount("` → **nothing**, in money and tree-wide.
+   - **So the exclusion removed exactly 24 renders (402(d) measured all 24) plus 3 mounts (542 measured all 3), and nothing else.** The zero is corroborated by an independent count, not by an empty grep alone (207, 294).
+   - ⭐ **Known members (429):** the 27 are rulings 402(d)'s and 542's populations, to the digit.
+   - Ruling 344's "31" is ruling 383's name-union correction and is unrelated to this exclusion.
+   **(b) The four ignores ruling 566 did not read.** `app/phpstan.neon:18-21` suppresses a `Connection::transaction()` unresolvable type, `Collection` template covariance, an anonymous function returning `array{location:`, and a `Collection`-returns-`Collection` mismatch. §6b runs with **no `ignoreErrors` at all**. In `gate-sup-1510.txt`, `grep -c -F -e "Access to an undefined property"` = **67** and `grep -c -F -e '"line":'` = **67**, so every error phpstan reports in the money modules at level 5 is `property.notFound`. **Each of the four patterns therefore suppresses nothing in this lane today.** ⛔ Struck. ⚠️ **Trigger:** a §6b line that is not `property.notFound`.
+   **(c) HTTP input.** A Livewire component that reads `request()` or a superglobal takes client input outside both ruling 344's census (method arguments) and ruling 245's (public properties).
+   - Instrument, over the eight money trees: `-e "request()" -e "Request [.]" -e "[-][>]input(" -e "[-][>]query("` → **0**.
+   - Corroboration (381): `-e "_GET" -e "_POST" -e "_SERVER" -e "_COOKIE"` → **0**.
+   - ⭐ **The positive control fires and returns a known member (429):** the first instrument over `app/app/Modules` and `app/app/Livewire` lists **10** files, including `X-01/Ui/Thread.php`, which is ruling 542's own control member (`request()->query('customer')` in `mount()`), and X-102's three chat controllers. The superglobal instrument lists 4+ files in `app/app`. Those hits were not read, and some may be substrings (mechanism 8).
+   - ⛔ Money proposes no edit on any of them (5).
+   - ⭐ 415's first-three check has no money members to read; the controls' members were printed from files (449).
+   **So a money screen's client input reaches PHP only through Livewire method arguments and bound properties**, both of which are already swept (344, 245, 402(b), 496, 528). ⛔ Struck, not to be re-run. ⚠️ **Trigger:** a `request()`, `Request` or superglobal read in the lane. Ruling 327's outcome shape a **sixty-sixth** time.
+
+570. **⛔ FIFTY-FIFTH consecutive HOLD (RULED by the lane supervisor 2026-09-11 15:0x, by `date` `15:00`).** All four lift conditions were measured this tick (269, 272, 323), and each case was decided on mtimes (494):
+   - **Owner.** `OWNER.md`'s newest heading is still `## OWNER RULING — 2026-09-09 09:02` (136), mtime `09-09 09:02:03`, older than `REVIEWS.md` (`14:56:59`).
+   - **Coder.** `--check` returned `CODER DEAD`.
+   - **Mailbox.** `REPORT.md` (`07:15:21`) and `BRIEF.md` (`07:07:27`) are both older than `REVIEWS.md`.
+   - **Cadence, all three ✗.** After `git fetch --no-write-fetch-head origin`, `origin/main` = **`bd3e9c5f`**, unmoved (`git diff --name-status bd3e9c5f origin/main | wc -l` = 0). `git rev-list --count HEAD..origin/main` = **44**. `git diff --stat dca743e8 origin/main -- app/app/Doctor coder-bin .claude/hooks` is empty. `git merge-base HEAD origin/main` = **`dca743e8`**.
+   - **Track 1.** No answer to ACTION 13–28.
+   - **Population.** Ruling 569's is empty of buildable members.
+
+   **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty coder wave to avoid an idle tick is what rulings 95, 100 and 111 forbid. ⚠️ `app/CLAUDE.md` came into context again this tick. It is Laravel Boost boilerplate and was not followed.
