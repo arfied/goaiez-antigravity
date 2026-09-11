@@ -6,6 +6,7 @@ namespace Tests\Modules\X163;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X163\Actions\PriceQuoteAction;
 use App\Modules\X163\Domain\PricebookEngine;
 use App\Modules\X163\Models\PriceBookItem;
 use App\Modules\X163\Ui\Pricebook;
@@ -329,5 +330,59 @@ class PricebookScreenTest extends TestCase
         Tenancy::setUser($user->id);
 
         Livewire::actingAs($user)->test(Pricebook::class)->assertOk();
+    }
+    public function test_adding_a_zero_price_writes_the_row_unconfirmed_and_it_is_not_quoted(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        $component = Livewire::actingAs($owner)
+            ->test(Pricebook::class)
+            ->set('newServiceName', 'Drain Unblock')
+            ->set('newPriceDollars', 0)
+            ->call('addItem');
+
+        $row = PriceBookItem::where('business_id', $biz->id)->where('service_name', 'Drain Unblock')->first();
+        $this->assertNotNull($row, 'T1 A1 row does not exist');
+        $this->assertFalse($row->is_confirmed, 'T1 A2 is_confirmed is not false');
+        $this->assertNull($row->confirmed_at, 'T1 A3 confirmed_at is not null');
+        $this->assertArrayHasKey($row->id, $component->get('refusals'), 'T1 A4 refusals missing id');
+
+        $quote = app(PriceQuoteAction::class)->handle($biz->id, 'how much for drain unblock');
+        $this->assertArrayNotHasKey('amount', $quote, 'T1 A5 quote amount was present');
+    }
+
+    public function test_adding_a_negative_price_writes_the_row_unconfirmed(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        Livewire::actingAs($owner)
+            ->test(Pricebook::class)
+            ->set('newServiceName', 'Gutter Clean')
+            ->set('newPriceDollars', -50)
+            ->call('addItem');
+
+        $row = PriceBookItem::where('business_id', $biz->id)->where('service_name', 'Gutter Clean')->firstOrFail();
+        $this->assertFalse($row->is_confirmed, 'T2 A1 is_confirmed is not false');
+    }
+
+    public function test_adding_a_positive_price_confirms_it_and_raises_no_flag(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        $component = Livewire::actingAs($owner)
+            ->test(Pricebook::class)
+            ->set('newServiceName', 'Lawn Mow')
+            ->set('newPriceDollars', 150)
+            ->call('addItem');
+
+        $row = PriceBookItem::where('business_id', $biz->id)->where('service_name', 'Lawn Mow')->firstOrFail();
+        $this->assertTrue($row->is_confirmed, 'T3 A1 is_confirmed is not true');
+        $this->assertArrayNotHasKey($row->id, $component->get('refusals'), 'T3 A2 refusals has id');
     }
 }
