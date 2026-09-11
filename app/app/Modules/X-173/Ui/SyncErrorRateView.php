@@ -19,6 +19,18 @@ class SyncErrorRateView extends Component
         $this->shownRun = $this->shownRun === $runId ? null : $runId;
     }
 
+    /**
+     * A rate above zero never renders as 0%: round() sends anything under half a percent
+     * to zero, and this screen promises that a line which could not be placed is a
+     * conflict and never a silent gap.
+     */
+    private function conflictRateLabel(float $rate): string
+    {
+        $percent = (int) round($rate * 100);
+
+        return $percent === 0 && $rate > 0 ? 'under 1% conflicts' : $percent.'% conflicts';
+    }
+
     public function render(AccountingSyncEngine $engine)
     {
         abort_unless(Tenancy::check(), 403);
@@ -27,8 +39,11 @@ class SyncErrorRateView extends Component
         $runs = SyncRun::where('business_id', $businessId)->orderByDesc('id')->get();
 
         $rates = [];
+        $rateLabels = [];
         foreach ($runs as $run) {
-            $rates[$run->id] = $engine->errorRate($businessId, $run->id);
+            $rate = $engine->errorRate($businessId, $run->id);
+            $rates[$run->id] = $rate;
+            $rateLabels[$run->id] = $rate === null ? 'nothing to sync' : $this->conflictRateLabel($rate);
         }
 
         $sumSynced = (int) $runs->sum('records_synced');
@@ -47,7 +62,9 @@ class SyncErrorRateView extends Component
         return view('x-173::sync-error-rate', [
             'runs' => $runs,
             'rates' => $rates,
+            'rateLabels' => $rateLabels,
             'overall' => $overall,
+            'overallLabel' => $overall === null ? 'nothing synced yet' : $this->conflictRateLabel($overall),
             'seen' => $seen,
             'conflicts' => $conflicts,
             'shownConflicts' => $shownConflicts,

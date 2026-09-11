@@ -14,7 +14,7 @@ final class StripeGatewayClient
      * ⭐ $idempotencyKey is sent to the gateway as its own `Idempotency-Key` header, so a repeated
      * request returns the FIRST charge instead of making a second one. It must already be
      * namespaced by business: every charge here posts with the PLATFORM secret and no
-     * `Stripe-Account` (R093), so all tenants share one idempotency namespace at the provider.
+     * `Stripe-Account`, so all tenants share one idempotency namespace at the provider.
      * Returns an array carrying the charge 'id' and its 'status'.
      */
     public function charge(int $amountCents, string $source, string $currency, string $idempotencyKey): array
@@ -44,7 +44,7 @@ final class StripeGatewayClient
 
         // The gateway's own settlement word, not the presence of an id. A charge it has taken but
         // not settled comes back 200 with a real id and 'pending', and reading only the id records
-        // that as captured (R235). A response carrying no status has confirmed nothing, and is
+        // that as captured. A response carrying no status has confirmed nothing, and is
         // never read as success.
         $status = $response->json('status');
 
@@ -54,7 +54,7 @@ final class StripeGatewayClient
     /**
      * ⭐ $idempotencyKey is sent as the gateway's own `Idempotency-Key` header, so a second press
      * returns the FIRST checkout session instead of opening a second one nobody can reach. It must
-     * already be namespaced by business, for the reason charge() gives above (R093).
+     * already be namespaced by business, for the reason charge() gives above.
      */
     public function createPaymentLink(int $amountCents, string $description, string $currency, string $idempotencyKey): array
     {

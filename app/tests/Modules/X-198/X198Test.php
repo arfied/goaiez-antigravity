@@ -14,6 +14,7 @@ use App\Modules\X198\Domain\StripeGatewayClient;
 use App\Modules\X198\Events\PaymentCaptured;
 use App\Modules\X198\Events\PayoutReconciled;
 use App\Modules\X198\Events\ReconciliationDiscrepancy;
+use App\Modules\X198\Models\MerchantConnection;
 use App\Modules\X198\Models\Payment;
 use App\Modules\X198\Models\PaymentLink;
 use App\Modules\X198\Models\Payout;
@@ -572,7 +573,7 @@ class X198Test extends TestCase
         app(GatewayEngine::class)->capture($biz->id, 4500, 'tok_visa', 'idem_header_1');
 
         // The key carries the business because every charge posts with the platform secret and no
-        // Stripe-Account (R093), so all tenants share one idempotency namespace at the provider.
+        // Stripe-Account, so all tenants share one idempotency namespace at the provider.
         Http::assertSent(function ($request) use ($biz) {
             return $request->url() === 'https://api.stripe.com/v1/charges'
                 && $request->hasHeader('Idempotency-Key', 'x198-charge-'.$biz->id.'-idem_header_1-0');
@@ -672,7 +673,7 @@ class X198Test extends TestCase
         $this->connectAction->handle($biz->id, 'stripe', 'acct_pending');
 
         // A real charge object exists at the provider and has not settled. Reading only the id
-        // records this as captured (R235).
+        // records this as captured.
         Http::fake([
             'api.stripe.com/*' => Http::response(['id' => 'ch_pending_0000000000000', 'status' => 'pending'], 200),
         ]);
@@ -684,7 +685,94 @@ class X198Test extends TestCase
         // The id is kept: a charge object does exist there, and it is the honest handle on it.
         $this->assertSame('ch_pending_0000000000000', $payment->gateway_charge_id);
 
-        // An event named Captured must not fire for money that was not captured (R101, R236).
+        // An event named Captured must not fire for money that was not captured.
         Event::assertNotDispatched(PaymentCaptured::class);
+    }
+
+    public function test_a_concurrent_capture_on_one_key_hands_back_the_row_that_won(): void
+    {
+        // This test turns on X198Test being a CLASS-BASED PHPUnit file, which Pest's
+        // ->use(RefreshesTenantDatabase::class)->in('Modules') binding does NOT reach: measured
+        // DB::transactionLevel() === 0 here and === 1 in a pest-style file. The racer's row must
+        // COMMIT for capture() to see it. If TestCase ever binds a refresh trait directly, this
+        // test stops proving anything -- while very likely still passing.
+        $biz = TestCase::provisionTenant(['name' => 'CaptureRace', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->connectAction->handle($biz->id, 'stripe', 'acct_race');
+
+        $key = 'idem_capture_race';
+
+        Http::fake(function () use ($biz, $key) {
+            // A second capture on the same key wins while the gateway is answering ours.
+            // It lands on pgsql_migrate -- a separate session, so it commits rather than
+            // joining capture()'s open transaction. RLS is FORCED on payments and constrains
+            // the owner role too, so that session sets its own tenant first.
+            DB::connection('pgsql_migrate')->statement("SET app.business_id = '{$biz->id}'");
+            DB::connection('pgsql_migrate')->table('payments')->insert([
+                'business_id' => $biz->id,
+                'amount_cents' => 7700,
+                'payment_token' => 'tok_racer',
+                'idempotency_key' => $key,
+                'status' => 'captured',
+                'gateway_charge_id' => 'ch_3RACER00000000000000000',
+            ]);
+
+            return Http::response(['id' => 'ch_3OURS000000000000000000', 'status' => 'succeeded'], 200);
+        });
+
+        $payment = app(GatewayEngine::class)->capture($biz->id, 7700, 'tok_ours', $key);
+
+        // The loser hands back the winner's row, and there is exactly one row for this pair.
+        $this->assertSame('ch_3RACER00000000000000000', $payment->gateway_charge_id);
+        $this->assertSame(
+            1,
+            Payment::where('business_id', $biz->id)
+                ->where('idempotency_key', $key)
+                ->where('status', '!=', 'failed')
+                ->count()
+        );
+    }
+
+    public function test_a_concurrent_connect_is_absorbed_into_one_connection_for_the_gateway(): void
+    {
+        // This test turns on X198Test being a CLASS-BASED PHPUnit file, which Pest's
+        // ->use(RefreshesTenantDatabase::class)->in('Modules') binding does NOT reach, so the racer's
+        // row COMMITS on pgsql_migrate and connect() can see it. If TestCase ever binds a refresh
+        // trait directly, this test stops proving anything -- while very likely still passing.
+        $biz = TestCase::provisionTenant(['name' => 'Connect Race Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        // A second request lands a connection for the same gateway between updateOrCreate()'s read and
+        // its insert. It writes on pgsql_migrate, a separate session, so it commits. RLS is FORCED and
+        // constrains the owner role too.
+        $racer = DB::connection('pgsql_migrate');
+        $racer->statement("SET app.business_id = '{$biz->id}'");
+
+        MerchantConnection::creating(function () use ($racer, $biz): void {
+            $racer->table('merchant_connections')->insert([
+                'business_id' => $biz->id,
+                'gateway_name' => 'stripe',
+                'merchant_account_id' => 'acct_racer',
+                'is_connected' => true,
+            ]);
+        });
+
+        try {
+            $connection = $this->connectAction->handle($biz->id, 'stripe', 'acct_loser');
+        } finally {
+            MerchantConnection::flushEventListeners();
+        }
+
+        // The loser absorbs the winner's row: one connection for the gateway.
+        $this->assertSame(
+            1,
+            MerchantConnection::where('business_id', $biz->id)->where('gateway_name', 'stripe')->count()
+        );
+
+        // And updateOrCreate() filled the loser's account onto the row that won, and returned that row.
+        $row = MerchantConnection::where('business_id', $biz->id)->where('gateway_name', 'stripe')->first();
+        $this->assertSame($row->id, $connection->id);
+        $this->assertSame('acct_loser', $row->merchant_account_id);
     }
 }

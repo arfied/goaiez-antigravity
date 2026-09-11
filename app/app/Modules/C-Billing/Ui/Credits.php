@@ -15,6 +15,7 @@ use Livewire\Component;
 class Credits extends Component
 {
     use LabelsMeters;
+    use SignalsLedgerEntry;
 
     public ?int $explainedEntryId = null;
 
@@ -81,6 +82,7 @@ class Credits extends Component
             'entries' => $entries,
             'aiBalance' => $aiBalance,
             'meterLabels' => $meterLabels,
+            'ledgerEntryPillStates' => $this->ledgerEntryPillStates(),
         ]);
     }
 }

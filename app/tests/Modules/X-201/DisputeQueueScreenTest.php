@@ -119,10 +119,26 @@ class DisputeQueueScreenTest extends TestCase
             ->set('note.'.$dispute->id, 'Tech was on site and the customer signed')
             ->call('compile', $dispute->id)
             ->call('submit', $dispute->id)
-            ->assertSee('The bundle is still missing the call log, the call transcript, the delivery receipt, the consent record. Add them, then submit again.')
+            ->assertSee('The bundle is still missing the call log, the call transcript, the delivery receipt, the consent record. A bundle here takes the invoice line and your note, and nothing in this checkout adds the rest yet.')
             ->assertDontSee('call_log')
             ->assertDontSee('consent_record');
 
         $this->assertSame('compiled', $dispute->fresh()->status);
+    }
+
+    public function test_dispute_queue_keys_each_row(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $open1 = app(DisputeRecordAction::class)->handle($biz->id, 902, 85000, 'unrecognized_transaction');
+        $open2 = app(DisputeRecordAction::class)->handle($biz->id, 904, 1000);
+
+        Livewire::actingAs($owner)->test(DisputeQueue::class)
+            ->assertOk()
+            ->assertSeeHtml('wire:key="dispute-'.$open1->id.'"')
+            ->assertSeeHtml('wire:key="dispute-'.$open2->id.'"');
     }
 }

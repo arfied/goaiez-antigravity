@@ -33,7 +33,7 @@
                         <span class="text-sm text-ink-2 ml-2">renews {{ $sub->current_period_end->toDateString() }}</span>
                     @endif
                 </div>
-                <x-ui.status-pill :state="$sub->status?->value === 'active' ? 'ok' : 'attention'" :label="$sub->status?->value ?? 'no status'" />
+                <x-ui.status-pill :state="$sub->status?->value === 'active' ? 'ok' : 'attention'" :label="$subscriptionLabels[$sub->status?->value] ?? $sub->status?->value ?? 'no status'" />
             </div>
             @if($monthly['cents'] === null)
                 <x-ui.attention-card state="attention" heading="No agreed price on this row">

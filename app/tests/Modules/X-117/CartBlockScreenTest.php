@@ -92,4 +92,17 @@ class CartBlockScreenTest extends TestCase
             ->assertSee('Bringing prices across from the pricebook is not built here')
             ->assertDontSee('The catalogue builds itself from the pricebook');
     }
+
+    public function test_the_catalogue_orders_by_id_when_two_items_share_a_name(): void
+    {
+        $biz = self::provisionTenant();
+        Tenancy::set($biz->id);
+
+        Sellable::create(['business_id' => $biz->id, 'name' => 'Callout', 'sku' => 'CAL-EARLY', 'inventory_quantity' => 4, 'unit_price_cents' => 7300, 'fulfilment_type' => 'service']);
+        Sellable::create(['business_id' => $biz->id, 'name' => 'Callout', 'sku' => 'CAL-LATER', 'inventory_quantity' => 4, 'unit_price_cents' => 9100, 'fulfilment_type' => 'service']);
+
+        Livewire::test(CartBlock::class, ['sessionToken' => 'sess_tie'])
+            ->assertOk()
+            ->assertSeeInOrder(['73.00', '91.00']);
+    }
 }

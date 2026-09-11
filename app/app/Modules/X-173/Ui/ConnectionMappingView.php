@@ -21,6 +21,8 @@ class ConnectionMappingView extends Component
 
     public ?string $error = null;
 
+    public ?string $errorHeading = null;
+
     public ?string $success = null;
 
     public ?string $waiting = null;
@@ -28,13 +30,22 @@ class ConnectionMappingView extends Component
     public function connect(): void
     {
         $this->error = null;
+        $this->errorHeading = 'Could not connect that ledger';
         $this->success = null;
-        $this->waiting = sprintf('Waiting on %s OAuth: no %s credentials exist in this checkout, so nothing was connected. The one-click connect lands when the owner grants them.', $this->provider, $this->provider);
+        $this->waiting = null;
+
+        if (! in_array($this->provider, AccountingConnection::PROVIDERS, true)) {
+            $this->error = 'Choose a ledger this app connects to: QuickBooks, Xero or Sage.';
+
+            return;
+        }
+        $this->waiting = sprintf('Waiting on %s OAuth: no %s credentials exist in this checkout, so nothing was connected. The one-click connect lands when the owner grants them. The company id was not stored either: there is no connection to store it on until that credential exists.', $this->provider, $this->provider);
     }
 
     public function mapAccount(int $connectionId, AccountingMapAction $action): void
     {
         $this->error = null;
+        $this->errorHeading = 'Could not save that mapping';
         $this->success = null;
         $this->waiting = null;
 

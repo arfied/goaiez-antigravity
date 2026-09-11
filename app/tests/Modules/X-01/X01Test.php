@@ -23,6 +23,7 @@ use App\Modules\X01\Events\TakeoverReleased;
 use App\Modules\X01\Events\TakeoverStarted;
 use App\Modules\X01\Exceptions\LeadRatingOutOfRangeRefused;
 use App\Modules\X01\Exceptions\TakeoverNotLatchedRefused;
+use App\Modules\X01\Listeners\ChatLeadCapturedListener;
 use App\Modules\X01\Models\LeadScore;
 use App\Modules\X01\Models\TakeoverLatch;
 use App\Modules\X01\Ui\Account\Inbox as AccountInbox;
@@ -30,6 +31,8 @@ use App\Modules\X01\Ui\CustomersList;
 use App\Modules\X01\Ui\Thread;
 use App\Modules\X102\Events\ChatLeadCaptured;
 use App\Modules\X121\Models\Person;
+use App\Support\Tenancy;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
@@ -437,15 +440,46 @@ class X01Test extends TestCase
         $admin = User::factory()->create();
         $biz = TestCase::provisionTenant(['name' => 'Ghost Biz']);
         $customer = Customer::factory()->create(['business_id' => $biz->id, 'name' => 'Ghosty']);
-        LeadScore::create(['business_id' => $biz->id, 'person_id' => $customer->id, 'lead_rating' => 10, 'grade' => 'F', 'confidence' => 0.9, 'signals' => []]);
+        $person = Person::create(['business_id' => $biz->id, 'first_name' => 'Ghosty', 'email' => $customer->email, 'phone' => $customer->phone]);
+        LeadScore::create(['business_id' => $biz->id, 'person_id' => $person->id, 'lead_rating' => 10, 'grade' => 'F', 'confidence' => 0.9, 'signals' => []]);
         $response = Livewire::actingAs($admin)->test(Thread::class, ['customer' => $customer]);
         $response->assertSee('Ghost Risk', false);
 
         // Negative case
         $customer2 = Customer::factory()->create(['business_id' => $biz->id, 'name' => 'Goody']);
-        LeadScore::create(['business_id' => $biz->id, 'person_id' => $customer2->id, 'lead_rating' => 90, 'grade' => 'A', 'confidence' => 0.9, 'signals' => []]);
+        $person2 = Person::create(['business_id' => $biz->id, 'first_name' => 'Goody', 'email' => $customer2->email, 'phone' => $customer2->phone]);
+        LeadScore::create(['business_id' => $biz->id, 'person_id' => $person2->id, 'lead_rating' => 90, 'grade' => 'A', 'confidence' => 0.9, 'signals' => []]);
         $response2 = Livewire::actingAs($admin)->test(Thread::class, ['customer' => $customer2]);
         $response2->assertDontSee('Ghost Risk', false);
+    }
+
+    /**
+     * Proves that the thread component does not display the "Ghost Risk" warning for a Customer
+     * when an unrelated Person with the same ID has an 'F' lead grade but is not linked to the Customer.
+     */
+    public function test_g19_08_ghost_risk_flag_without_person(): void
+    {
+        $admin = User::factory()->create();
+        $biz = TestCase::provisionTenant(['name' => 'Ghost Biz']);
+        $customer = Customer::factory()->create(['business_id' => $biz->id, 'name' => 'Ghosty']);
+
+        // Create an unrelated Person that happens to share the Customer's ID.
+        $person = Person::create([
+            'id' => $customer->id,
+            'business_id' => $biz->id,
+            'first_name' => 'Unrelated',
+            'email' => 'unrelated@example.com',
+        ]);
+
+        LeadScore::create([
+            'business_id' => $biz->id,
+            'person_id' => $person->id,
+            'lead_rating' => 10,
+            'grade' => 'F',
+        ]);
+
+        $response = Livewire::actingAs($admin)->test(Thread::class, ['customer' => $customer]);
+        $response->assertDontSee('Ghost Risk', false);
     }
 
     /**
@@ -475,7 +509,7 @@ class X01Test extends TestCase
      * [G19-22] positive half: every channel lands on ONE Conversation.
      * (R245) listener returns early when the inbound WhatsApp message body is empty
      * Asserts against UnifiedInboxManager::ingestMessage() on real data.
-     * BUILD PROPOSAL: WhatsApp inbound body — stamp consent_logged_at because the customer addressed this message to this business's own WhatsApp number Owner: X-01
+     * CLOSED: WhatsApp inbound body — consent_logged_at stamping was built in 52931f57.
      */
     public function test_g19_22_single_conversation_identity(): void
     {
@@ -503,7 +537,7 @@ class X01Test extends TestCase
     }
 
     /**
-     * BUILD PROPOSAL: Email inbound body — stamp consent_logged_at because the customer addressed this message to this business's own email address Owner: X-01
+     * CLOSED: Email inbound body — consent_logged_at stamping was built in 52931f57.
      */
     public function test_g11_12_email_reply_bridge(): void
     {
@@ -572,7 +606,7 @@ class X01Test extends TestCase
     }
 
     /**
-     * BUILD PROPOSAL: Chat inbound body — pre-chat notice and logged consent on the chat widget Owner: X-102
+     * BUILD PROPOSAL: goaiez-chat.js — the chat widget itself does not exist Owner: X-102
      */
     public function test_chat_capture_wire_creates_conversation(): void
     {
@@ -600,5 +634,96 @@ class X01Test extends TestCase
 
         $this->assertNotNull($convUpdated, 'ConversationUpdated event should have been dispatched');
         $this->assertEquals('Hello chat', $convUpdated->messageSnippet, 'That conversation carries the visitor message');
+    }
+
+    /**
+     * Proves that UnifiedInboxManager::ingestMessage stamps consent and stores the body for owned channels (whatsapp),
+     * but drops the body without bypassing the gate for channels that lack consent (chat).
+     */
+    public function test_ingest_message_gate_polarity(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Gate Polarity Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $resWa = $this->manager->ingestMessage(
+            businessId: $biz->id,
+            channel: 'whatsapp',
+            identifier: '+15125550200',
+            senderName: 'WA User',
+            body: 'Body WA'
+        );
+        $this->assertDatabaseHas('messages', [
+            'conversation_id' => $resWa['conversation_id'],
+            'body' => 'Body WA',
+        ]);
+
+        $resChat = $this->manager->ingestMessage(
+            businessId: $biz->id,
+            channel: 'chat',
+            identifier: '+15125550300',
+            senderName: 'Chat User',
+            body: 'Body Chat'
+        );
+        $this->assertDatabaseMissing('messages', [
+            'conversation_id' => $resChat['conversation_id'],
+            'body' => 'Body Chat',
+        ]);
+    }
+
+    public function test_ingest_message_refuses_when_ambient_tenant_is_absent(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'RLS Biz', 'currency' => 'USD']);
+        Tenancy::forgetAll();
+
+        $this->expectException(QueryException::class);
+        $this->expectExceptionMessage('new row violates row-level security policy for table "people"');
+
+        $this->manager->ingestMessage(
+            businessId: $biz->id,
+            channel: 'sms',
+            identifier: '+15125550201',
+            senderName: 'RLS User',
+            body: 'Body RLS'
+        );
+    }
+
+    public function test_chat_lead_captured_listener_ignores_whitespace_message(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Whitespace Biz', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        $listener = app(ChatLeadCapturedListener::class);
+        $event = new ChatLeadCaptured(
+            businessId: $biz->id,
+            leadId: 1,
+            personId: 1,
+            name: 'Whitespace User',
+            phone: '+15125550202',
+            message: '   ',
+        );
+
+        // Before the fix, this would call ingestMessage and throw InvalidArgumentException
+        $listener->handle($event);
+
+        $this->assertDatabaseMissing('messages', [
+            'business_id' => $biz->id,
+        ]);
+    }
+
+    public function test_empty_message_throws(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Empty Msg Biz', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('An empty message is not a message');
+
+        $this->manager->ingestMessage(
+            businessId: $biz->id,
+            channel: 'whatsapp',
+            identifier: '+15125550999',
+            senderName: 'Webhook User',
+            body: '   '
+        );
     }
 }

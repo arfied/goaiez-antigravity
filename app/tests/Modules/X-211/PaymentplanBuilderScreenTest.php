@@ -181,4 +181,73 @@ class PaymentplanBuilderScreenTest extends TestCase
 
         $this->assertSame(0, ArPlanTerm::where('business_id', $biz->id)->count());
     }
+
+    public function test_a_second_plan_offer_on_one_invoice_is_refused_and_writes_nothing(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'John', 'last_name' => 'Doe']);
+
+        $inv = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-A1',
+            'total_cents' => 90000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(10),
+        ]);
+
+        Event::fake([ArPlanAccepted::class]);
+
+        Livewire::actingAs($owner)->test(PaymentplanBuilder::class)
+            ->set('installments.'.$inv->id, 3)
+            ->set('frequency.'.$inv->id, 'monthly')
+            ->call('offerPlan', $inv->id)
+            ->assertSee('Plan recorded on ')
+            ->call('offerPlan', $inv->id)
+            ->assertSee('We could not offer that plan: ')
+            ->assertSee('is already on a plan');
+
+        $this->assertSame(1, PaymentPlan::where('business_id', $biz->id)->where('invoice_id', $inv->id)->count());
+        Event::assertDispatchedTimes(ArPlanAccepted::class, 1);
+    }
+
+    public function test_plan_builder_keys_each_invoice_row(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'John', 'last_name' => 'Doe']);
+
+        $inv1 = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-A1',
+            'total_cents' => 90000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(10),
+        ]);
+
+        $inv2 = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-A2',
+            'total_cents' => 50000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(5),
+        ]);
+
+        Livewire::actingAs($owner)->test(PaymentplanBuilder::class)
+            ->assertOk()
+            ->assertSeeHtml('wire:key="plan-inv-'.$inv1->id.'"')
+            ->assertSeeHtml('wire:key="plan-inv-'.$inv2->id.'"');
+    }
 }

@@ -132,4 +132,28 @@ class RevenueRecoveryScreenTest extends TestCase
             ->assertSee('Nothing in this checkout puts one there')
             ->assertDontSee('This account is current');
     }
+
+    public function test_revenue_recovery_names_the_final_stage_and_never_its_raw_token(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        DunningState::create([
+            'business_id' => $biz->id,
+            'day_in_cycle' => 21,
+            'status' => 'ai_off_voicemail_only',
+            'ai_enabled' => false,
+            'phone_answering' => true,
+            'voicemail_only' => true,
+        ]);
+
+        Livewire::actingAs($owner)->test(RevenueRecovery::class)
+            ->assertOk()
+            ->assertSee('final stage')
+            ->assertDontSee('ai_off_voicemail_only')
+            ->assertSee('Day 21 of 21');
+    }
 }

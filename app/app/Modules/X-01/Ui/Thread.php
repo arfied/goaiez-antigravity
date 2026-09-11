@@ -43,8 +43,13 @@ class Thread extends Component
         $this->customer = $customer;
         if ($this->customer) {
             $personId = $this->resolvePersonId();
-            $score = LeadScore::where('person_id', $personId ?: $this->customer->id)->value('grade');
-            $this->isGhostRisk = ($score === 'F');
+            if ($personId) {
+                $score = LeadScore::where('person_id', $personId)->value('grade');
+                $this->isGhostRisk = ($score === 'F');
+            } else {
+                // If there is no Person, we do not fall back to customer.id because people and customers inhabit different ID spaces.
+                $this->isGhostRisk = false;
+            }
         }
     }
 

@@ -5,11 +5,15 @@ declare(strict_types=1);
 namespace Tests\Modules\CReviews;
 
 use App\Models\ConsentRecord;
+use App\Modules\CReviews\Actions\ConfirmRemovalRequestAction;
+use App\Modules\CReviews\Actions\PrepareRemovalRequestAction;
 use App\Modules\CReviews\Actions\QaTicketAction;
 use App\Modules\CReviews\Actions\ReviewerContactAction;
 use App\Modules\CReviews\Actions\ReviewReplyAction;
 use App\Modules\CReviews\Actions\ReviewRequestAction;
 use App\Modules\CReviews\Actions\ReviewSyncAction;
+use App\Modules\CReviews\Domain\RemovalFilingGate;
+use App\Modules\CReviews\Domain\RemovalNotConfirmedException;
 use App\Modules\CReviews\Events\CsatRequested;
 use App\Modules\CReviews\Events\FirstWin;
 use App\Modules\CReviews\Events\ReplyPublished;
@@ -290,10 +294,19 @@ class CReviewsTest extends TestCase
     /**
      * [G20-06] named in the header
      * ⛔ REFUSED: surveyed Actions, Database, Events, Listeners, Models, Ui and found no implementation.
+     * ⭐ DISCHARGED 2026-09-10 (run 131). The refusal above surveyed the MODULE and was true of it.
+     *    The law is built OUTSIDE it, in the legacy app:
+     *    database/migrations/2026_07_31_201816_create_review_destinations_table.php:47
+     *      — smallInteger('invite_threshold'), the per-destination solicitation policy
+     *    …:76 — CHECK (invite_threshold BETWEEN 0 AND 5)
+     *    …:68 — CHECK (destination <> 'trustpilot' OR invite_threshold = 0)
+     *    app/Models/ReviewDestinationSetting.php — the tenant-scoped model over that table
      */
     public function test_g20_06_header(): void
     {
-        $this->assertTrue(true);
+        $this->assertTrue(Schema::hasTable('review_destinations'));
+        $this->assertTrue(Schema::hasColumn('review_destinations', 'invite_threshold'));
+        $this->assertTrue(Schema::hasColumn('review_destinations', 'enabled'));
     }
 
     /**
@@ -346,10 +359,17 @@ class CReviewsTest extends TestCase
     /**
      * [G20-09] the owner's original ask, now the header
      * ⛔ REFUSED: surveyed Actions, Database, Events, Listeners, Models, Ui and found no implementation.
+     * ⭐ DISCHARGED 2026-09-10 (run 131). The refusal above surveyed the MODULE and was true of it.
+     *    The fix-then-ask loop is built OUTSIDE it, in the legacy app:
+     *    app/Services/Reviews/ReviewRouter.php:1234 — sets fix_then_ask_offered_at when the check-in goes out
+     *    app/Services/Reviews/ReviewRouter.php:1284 — recordFixThenAskResponse(), the confirmed-fix path
+     *    database/migrations/2026_08_27_135742_add_fix_then_ask_to_triage_conversations_table.php:51
      */
     public function test_g20_09_header(): void
     {
-        $this->assertTrue(true);
+        $this->assertTrue(Schema::hasTable('triage_conversations'));
+        $this->assertTrue(Schema::hasColumn('triage_conversations', 'fix_then_ask_offered_at'));
+        $this->assertTrue(Schema::hasColumn('triage_conversations', 'resolved_at'));
     }
 
     /**
@@ -490,10 +510,113 @@ class CReviewsTest extends TestCase
     /**
      * [G1-68] assertion placeholder
      * ⛔ REFUSED: surveyed Actions, Database, Events, Listeners, Models, Ui and found no Google review removal preparation or human confirmation logic.
+     * ⭐ DISCHARGED 2026-09-10 (run 136). The automation prepares the request but filing requires a human confirmation.
+     *    Gate: app/app/Modules/C-Reviews/Domain/RemovalFilingGate.php:11
+     *    Test: app/tests/Modules/C-Reviews/CReviewsTest.php:512
      */
     public function test_g1_68_assertion(): void
     {
-        $this->assertTrue(true);
+        $biz = self::provisionTenant(['name' => 'G168 Test Biz']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $req = ReviewRequest::create([
+            'business_id' => $biz->id,
+            'platform' => 'google',
+            'rating' => 1,
+        ]);
+
+        $preparer = new PrepareRemovalRequestAction;
+        $removal = $preparer->execute($biz->id, $req->id, 'tos_ground_example', 'Prepared Body', 'google_rev_id');
+
+        $gate = new RemovalFilingGate;
+
+        $this->expectException(RemovalNotConfirmedException::class);
+        $this->expectExceptionMessage('This removal request has not been confirmed by a human.');
+
+        $gate->assertFilable($removal);
+    }
+
+    public function test_g1_68_confirmer_refuses_no_human(): void
+    {
+        $biz = self::provisionTenant(['name' => 'G168 Test Biz']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $req = ReviewRequest::create([
+            'business_id' => $biz->id,
+            'platform' => 'google',
+            'rating' => 1,
+        ]);
+
+        $preparer = new PrepareRemovalRequestAction;
+        $removal = $preparer->execute($biz->id, $req->id, 'tos_ground_example', 'Prepared Body', 'google_rev_id');
+
+        $confirmer = new ConfirmRemovalRequestAction;
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('A user ID is required to confirm a removal request.');
+
+        $confirmer->execute($removal, null);
+    }
+
+    public function test_g1_68_happy_path(): void
+    {
+        $biz = self::provisionTenant(['name' => 'G168 Test Biz']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $req = ReviewRequest::create([
+            'business_id' => $biz->id,
+            'platform' => 'google',
+            'rating' => 1,
+        ]);
+
+        $userId = \DB::table('users')->insertGetId([
+            'name' => 'Test User',
+            'email' => 'testuser@example.com',
+            'password' => 'secret',
+        ]);
+
+        $preparer = new PrepareRemovalRequestAction;
+        $removal = $preparer->execute($biz->id, $req->id, 'tos_ground_example', 'Prepared Body', 'google_rev_id');
+
+        $confirmer = new ConfirmRemovalRequestAction;
+        $confirmer->execute($removal, $userId);
+
+        $this->assertEquals('confirmed', $removal->status);
+        $this->assertEquals($userId, $removal->confirmed_by_user_id);
+        $this->assertNotNull($removal->confirmed_at);
+
+        $gate = new RemovalFilingGate;
+        $gate->assertFilable($removal);
+    }
+
+    public function test_g1_68_preparer_cannot_self_confirm(): void
+    {
+        $biz = self::provisionTenant(['name' => 'G168 Test Biz']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $req = ReviewRequest::create([
+            'business_id' => $biz->id,
+            'platform' => 'google',
+            'rating' => 1,
+        ]);
+
+        $preparer = new PrepareRemovalRequestAction;
+        $removal = $preparer->execute($biz->id, $req->id, 'tos_ground_example', 'Prepared Body', 'google_rev_id');
+
+        $this->assertNull($removal->confirmed_by_user_id);
+        $this->assertNull($removal->confirmed_at);
+        $this->assertEquals('prepared', $removal->status);
+    }
+
+    /**
+     * Measured in r133-fork.txt:
+     * - app/app/Modules/C-Reviews/Database/migrations/2026_08_30_000022_create_c_reviews_tables.php:19-29 (no location column)
+     * - app/app/Modules/C-Reviews/Listeners/AskForReviewOnJobCompleted.php:14-23 (no location passed)
+     * - app/app/Models/Business.php:191-193 (Business hasMany Location, so it cannot resolve to one)
+     */
+    public function test_p110_location_gap(): void
+    {
+        $this->fail('NOT BUILT: P-110 — review_requests carries no location, so C-Reviews cannot apply the per-location invite_threshold that ReviewGating and DestinationSettings enforce.');
     }
 
     public function test_job_completed_creates_review_request(): void
@@ -672,5 +795,30 @@ class CReviewsTest extends TestCase
     {
         $this->assertFalse(Schema::hasColumn('review_requests', 'csat_score'));
         $this->assertFalse(Schema::hasColumn('qa_tickets', 'csat_score'));
+    }
+
+    public function test_p193_threshold_change_moves_4_star_review_to_internal(): void
+    {
+        $biz = self::provisionTenant(['name' => 'Threshold Test Biz']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        ReviewRequest::create([
+            'business_id' => $biz->id,
+            'rating' => 4,
+            'platform' => 'google',
+        ]);
+
+        Livewire::test(ReviewsQaRequests::class, ['businessId' => $biz->id])
+            ->assertViewHas('publicCount', 1)
+            ->assertViewHas('internalCount', 0);
+
+        QaSetting::updateOrCreate(
+            ['business_id' => $biz->id],
+            ['min_public_stars' => 5]
+        );
+
+        Livewire::test(ReviewsQaRequests::class, ['businessId' => $biz->id])
+            ->assertViewHas('publicCount', 0)
+            ->assertViewHas('internalCount', 1);
     }
 }

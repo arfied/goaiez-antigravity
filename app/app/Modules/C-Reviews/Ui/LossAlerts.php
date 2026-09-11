@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Modules\CReviews\Ui;
 
-use App\Modules\CReviews\Models\QaSetting;
+use App\Modules\CReviews\Domain\PublicThreshold;
 use App\Modules\CReviews\Models\ReviewRequest;
 use App\Modules\X153\Actions\AlertSendAction;
+use App\Modules\X181\Actions\QaTicketReadAction;
 use App\Modules\X181\Actions\QaTicketResolveAction;
-use App\Modules\X181\Models\QaTicket;
 use App\Support\Tenancy;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -116,15 +116,9 @@ class LossAlerts extends Component
 
         $alerts = collect();
         if (! $this->isSample) {
-            $settings = QaSetting::where('business_id', $this->businessId)->first();
-            $minStars = $settings ? $settings->min_public_stars : 4;
+            $minStars = app(PublicThreshold::class)->for($this->businessId);
 
-            $breachedTickets = QaTicket::where('business_id', $this->businessId)
-                ->whereIn('status', ['open', 'in_progress'])
-                ->whereNotNull('sla_due_at')
-                ->where('sla_due_at', '<=', now())
-                ->orderBy('sla_due_at', 'asc')
-                ->get()
+            $breachedTickets = app(QaTicketReadAction::class)->getBreachedSlaTickets($this->businessId)
                 ->map(function ($t) {
                     $t->alert_type = 'ticket';
                     $t->alert_reason = 'SLA breached ('.$t->sla_due_at->diffForHumans().')';
@@ -134,7 +128,7 @@ class LossAlerts extends Component
                 });
 
             $lowRatingRequests = ReviewRequest::where('business_id', $this->businessId)
-                ->where('rating', '<=', $minStars)
+                ->where('rating', '<', $minStars)
                 ->whereNotNull('rating')
                 ->whereNotExists(function ($query) {
                     $query->select('id')
@@ -145,15 +139,13 @@ class LossAlerts extends Component
                 ->get()
                 ->map(function ($r) use ($minStars) {
                     $r->alert_type = 'review';
-                    $r->alert_reason = "Rating {$r->rating} <= {$minStars} and no resolved ticket";
+                    $r->alert_reason = "Rating {$r->rating} < {$minStars} and no resolved ticket";
                     $r->risk_level = 2;
 
                     return $r;
                 });
 
-            $lowCsatRequests = QaTicket::where('business_id', $this->businessId)
-                ->whereNotNull('reopened_at')
-                ->get()
+            $lowCsatRequests = app(QaTicketReadAction::class)->getReopenedTickets($this->businessId)
                 ->map(function ($t) {
                     $t->alert_type = 'ticket';
                     $t->alert_reason = 'Resolved ticket was reopened due to low CSAT';

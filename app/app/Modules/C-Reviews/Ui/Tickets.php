@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Modules\CReviews\Ui;
 
 use App\Modules\CReviews\Models\ReviewRequest;
-use App\Modules\X121\Models\Person;
+use App\Modules\X121\Actions\EntityReadAction;
+use App\Modules\X181\Actions\QaTicketReadAction;
 use App\Modules\X181\Actions\QaTicketResolveAction;
-use App\Modules\X181\Models\QaTicket;
 use App\Support\Tenancy;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -88,22 +88,14 @@ class Tickets extends Component
 
         $tickets = collect();
         if (! $this->isSample) {
-            $query = QaTicket::where('business_id', $this->businessId);
-
-            if ($this->tab === 'open') {
-                $query->whereIn('status', ['open', 'in_progress'])->orderBy('sla_due_at', 'asc');
-            } else {
-                $query->where('status', 'resolved')->orderBy('resolved_at', 'desc');
-            }
-
-            $tickets = $query->get()->map(function ($t) {
+            $tickets = app(QaTicketReadAction::class)->getTicketsByTab($this->businessId, $this->tab)->map(function ($t) {
                 $t->is_breached = $t->status !== 'resolved' && $t->sla_due_at && $t->sla_due_at <= now();
 
                 $t->customer_name = 'Unknown';
                 if ($t->person_id) {
-                    $person = Person::find($t->person_id);
+                    $person = app(EntityReadAction::class)->handle('people', $t->person_id, $this->businessId);
                     if ($person) {
-                        $t->customer_name = $person->name;
+                        $t->customer_name = $person['name'];
                     }
                 }
 
@@ -162,7 +154,7 @@ class Tickets extends Component
             })->values();
         }
 
-        $isEmpty = ! $this->isSample && QaTicket::where('business_id', $this->businessId)->count() === 0;
+        $isEmpty = ! $this->isSample && app(QaTicketReadAction::class)->countTickets($this->businessId) === 0;
 
         return view('c-reviews::tickets', [
             'tickets' => $tickets,

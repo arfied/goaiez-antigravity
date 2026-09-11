@@ -93,9 +93,9 @@ class Credits extends Component
 
             $term->overflow = match (true) {
                 $latestCharged === null => 'no overflow yet',
-                // R237: 'refused' covers three facts, and only two of them mean the card said no.
+                // 'refused' covers three facts, and only two of them mean the card said no.
                 // A charge the gateway took but has not settled arrives with a real id on
-                // reference_id (R235), so the id is the discriminator the row already carries.
+                // reference_id, so the id is the discriminator the row already carries.
                 $latestCharged->status === 'refused' && $latestCharged->reference_id !== null => 'the gateway took it and has not settled it yet',
                 $latestCharged->status === 'refused' => 'the card did not absorb it and the invoice still stands',
                 in_array($latestCharged->invoice_id, $reversedInvoices, true) => 'reversed against the invoice',

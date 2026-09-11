@@ -122,4 +122,15 @@ class X120Test extends TestCase
         $discover = $action->handle('6011111111111117', 12, 2030, 'Test User');
         $this->assertEquals('card', $discover['brand']);
     }
+
+    public function test_card_present_action_names_only_the_brand_the_digits_identify(): void
+    {
+        $action = new CardPresentAction;
+
+        $jcb = $action->handle('3530111333300000', 12, 2030, 'Test User');
+        $this->assertEquals('card', $jcb['brand'], 'A JCB card starts 35 and is not an Amex; a leading 3 identifies no issuer.');
+
+        $mastercard2 = $action->handle('2223003122003222', 12, 2030, 'Test User');
+        $this->assertEquals('mastercard', $mastercard2['brand'], 'Mastercard has been 2221-2720 since 2016.');
+    }
 }

@@ -48,6 +48,7 @@ class MoneyPaidToday extends Component
             ->where('status', 'paid')
             ->where('paid_at', '>=', now()->startOfDay())
             ->orderByDesc('paid_at')
+            ->orderByDesc('id')
             ->get();
 
         $totalCents = $invoices->sum('total_cents');

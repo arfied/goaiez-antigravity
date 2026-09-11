@@ -166,4 +166,69 @@ class InvoiceThreadBesideScreenTest extends TestCase
             ->assertSee('and a draft is never issued')
             ->assertDontSee('Every issued invoice is paid');
     }
+
+    public function test_the_thread_names_its_dunning_actions_in_the_owners_words(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'John', 'last_name' => 'Doe']);
+
+        $invoice = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-A1',
+            'total_cents' => 45000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(12),
+        ]);
+
+        Livewire::actingAs($owner)->test(InvoiceThreadBeside::class, ['invoiceId' => $invoice->id])
+            ->assertOk()
+            ->set('reason.'.$invoice->id, 'complaint')
+            ->call('recordReason', $invoice->id)
+            ->assertSee('flagged for a human')
+            ->assertSee('reason recorded')
+            ->assertDontSee('escalate_to_human')
+            ->assertDontSee('reason_recorded');
+    }
+
+    public function test_the_thread_screen_opens_on_a_determined_invoice_when_due_dates_tie(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'John', 'last_name' => 'Doe']);
+
+        $invA = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-TIE-A',
+            'total_cents' => 111100,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->addDays(15),
+        ]);
+
+        $invB = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-TIE-B',
+            'total_cents' => 222200,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => $invA->due_date,
+        ]);
+
+        Livewire::actingAs($owner)->test(InvoiceThreadBeside::class)
+            ->assertOk()
+            ->assertSee('1,111.00')
+            ->assertDontSee('2,222.00');
+    }
 }

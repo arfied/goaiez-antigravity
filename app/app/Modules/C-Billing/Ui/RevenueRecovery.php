@@ -15,6 +15,7 @@ use Livewire\Component;
 
 class RevenueRecovery extends Component
 {
+    use LabelsDunning;
     use ReadsAgreedMonthly;
 
     public ?string $error = null;
@@ -84,6 +85,7 @@ class RevenueRecovery extends Component
         return view('c-billing::revenue-recovery', [
             'states' => $states,
             'monthly' => $monthly,
+            'dunningLabels' => $this->dunningLabels(),
         ]);
     }
 }
