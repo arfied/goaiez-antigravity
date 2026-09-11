@@ -14215,3 +14215,126 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     `: %s.` to two words already in that file — so ruling 63's prose-feeds-an-instrument hazard cannot fire
     and the `File::allFiles` population (re-measured this tick per 310: 16 scanners, the three `app_path()`
     ones structural) needs no further reading. ⚠️ No `G##-##`/`N-###` token is introduced (295).
+443. **⭐⭐ Ruling 442's byte-identical-opening design produced a GENUINELY zero blast radius, measured at
+    the three needles' original line numbers — and ruling 418's shape held on its SECOND consecutive outing
+    (RULED by the lane supervisor 2026-09-11 00:5x, on MONEY-198's `1f49de10`).** MONEY-198 shipped ruling
+    442 exactly: `AgeingByReason.php:130` is `$payment = $action->handle(…)` and `:131` is
+    `sprintf('Payment logged: %s.', number_format($payment->amount_cents / 100, 2))`. ⭐⭐ **The figure comes
+    from the ROW and not from `$amount`, and the provenance was measured rather than assumed** — traced
+    through `ArLogOfflinePaymentAction::handle(): OfflinePayment` to `ArEngine::logOfflinePayment()`, whose
+    `$payment = OfflinePayment::create([...])` inside `DB::transaction` is the row the write produced. That
+    is ruling 51/37's discipline satisfied by construction and 111's own stated standard, so the wave is a
+    **provenance** fix rather than a cosmetic one. `app(InvoiceReader::class)->forBusiness(…)` stayed
+    unassigned (47's companion) and the `unset(…)` clear stayed the last statement inside the `try` (387).
+    ⭐⭐ **The blast radius was ZERO in fact and not merely in forecast.** `grep -rn -F -e "Payment logged"`
+    returns the three existing needles at **`:109`, `:369`, `:397`** — their original line numbers,
+    byte-identical — and `git diff --stat` is **31 insertions, 0 deletions** on that file. **The design
+    exists precisely so they need not move** (198, 421: *the TRUE opening clause stays byte-identical and
+    only the defective clause moves*), and this is the first time in this ledger that the prediction and
+    the measurement have been checked against each other at the LINE level. ⭐ **A wave that preserves an
+    opening clause can be verified by line NUMBER, which is cheaper and stronger than re-reading the
+    assertions** — the numbers moving at all would mean the file was rewritten around them.
+    ⭐⭐ **Ruling 418 held on its second consecutive outing, unprompted.** The RED dump renders
+    `<p>Payment logged.</p>` — **the defect's own text** — inside a failure whose message is
+    `contains "Payment logged: 12.50."`, so the proof evidences the **FINDING** and not merely that the new
+    assertion is load-bearing, and GREEN 1 → RED → GREEN 2 brackets it (82's collateral) with the test's
+    **name** and the assertion's **message** both verbatim (72, 195, 314).
+    ⭐ **The re-gate was declined by ROUTE (iii) with the lock FREE, which makes it a CHOICE and not a
+    constraint** (348, 391, 401's mirror). All four statements measured: 42's mechanism absent — §7 landed
+    **exactly** on `tests 2515 · passed 2511 · FAILED 2 · errors 2`, the floor derived by listing **before**
+    the run, and 42's mechanism drops the schema and therefore **cascades** errors, so it cannot
+    coincidentally reproduce an independently-derived arithmetic prediction on both counts; 42's tell absent
+    (`grep -F -e "relation" -e "does not exist"` over the gate file returns **nothing**, and `errors` did not
+    rise); the gate file read **RAW** by the supervisor, never from `REPORT.md` (42(2)); and §1's
+    `0 uncommitted path(s)` against this seat's own empty `git status --short --untracked-files=all` **and**
+    empty `git diff --stat HEAD -- app/` (34, 71, both directions). ⚠️ `pgrep -a -f "vendor/bin/pest"`
+    returned **one hit and it was this seat's own command line quoting the string** (322 — **read the hit**),
+    so the shared lock was free and a re-gate was available; ruling 348's question — *what could §7 catch
+    that I have not already measured?* — answers **nothing**, because a reddened standing assertion would
+    have moved `passed` off that floor.
+    ⭐ **Three paperwork rulings held and it is recorded per ruling 149's discipline** (*a fix to a paperwork
+    rule is itself a claim, and the tick after it says whether it held*): **362**'s collapsed `GATE:` for the
+    fourth outing — the coder transcribed **no number at all**, so 42(2) is satisfied **by construction** and
+    every §7 digit in this verdict is the supervisor's own raw read; **367**'s `(clean — no output)` sentinel
+    for the fourth; and **366(b)/367**'s `SWEEP:` as the **baseline** for the fifth, its `:131` still carrying
+    the pre-edit literal, which is the correct instant. ⚠️ `PINT:` carried **one** object and that is
+    **correct, not a shortfall**: the brief dictated a single `pint` invocation naming **both** staged paths
+    (189's requirement — *the path list is checked against the commit's own `--` list*), so one object is the
+    whole answer, and §6's `passed` on a tree whose `git diff --stat HEAD -- app/` is empty makes that
+    verdict **the sha's** (34). ⚠️ Ruling 271 held too: the `state.py decided` line states the RULE and
+    enumerates nothing, and ruling 106's argument-order lesson was applied unprompted (`R245` supplied by the
+    tool, never passed).
+444. **⭐⭐⭐ THE CADENCE FIRES ON CONDITION (1) — 112 BEHIND — AND THE `app/phpunit.xml` SWAP IS MEASURED IN
+    THE ACT FOR THE FIRST TIME: main's one-sided hunk sets `DB_DATABASE` to `goaiez_antig_test`, TRACK 1's
+    DATABASE, and the `merge=ours` driver CANNOT fire on it (RULED by the lane supervisor 2026-09-11 00:5x;
+    measured against `origin/main` = `d06b32ac`, merge-base `8473c04a`, money 112 behind).** Eleven
+    consecutive HOLDs end here, and not on a census: the owner's 09-09 09:02 cadence merges `origin/main` at
+    the start of a wave when **any** of three conditions holds, and all three were re-measured in this tick
+    (269, 272, 323) — **(1) `git rev-list --count HEAD..origin/main` = 112 > 100, FIRES** · (2)
+    `git diff --stat 8473c04a origin/main -- app/app/Doctor coder-bin .claude/hooks` **empty** ✗ ·
+    (3) the merge-base **is** this lane's own `chore(state)` with pushes since ✗. One of three is enough.
+    ⚠️ Ruling 145's trap was live on the board and was **not** read as the measurement: `origin/main` carries
+    `merge: track/money` subject lines that are true and **spent**, and the merge-base is what decided it.
+    ⭐⭐ **THE SHAPE, and it is the cleanest this lane has measured: 33 paths, and ALL FOUR of ruling 58's
+    damage shapes are EMPTY.** (1) main adds no test in money's eight test trees — its only
+    `app/tests/Modules/` paths are C-Reviews, X-01 and X-102; (2) main touches **no file** in money's eight
+    module trees — its only `app/app/Modules/` paths are C-Reviews and X-102; (3) `git diff --name-status
+    --diff-filter=D` over the whole range is **EMPTY** — zero deletions in 112 commits, so ruling 58's
+    deleted-class shape **cannot fire** and ruling 380's recorded watch item (21 readers of
+    `X121\Models\Person`, sixteen of them outside phpstan's `paths:` and therefore invisible to it) is
+    **not triggered by this merge**; (4) no generated route tests. `app/tests/Journeys` is **untouched**, so
+    the **harness gate stays CLOSED** and `--allow-harness` is not passed (74: never a standing flag).
+    ⭐ `source/` and `.agents/rules/10-supervisor.md` are untouched on **both** sides, so ruling 31's
+    historically decisive one-sided `source/` hunk **does not exist in this merge** — the reason rulings
+    18/22/23/25/31 refused it six times is measurably absent.
+    ⭐⭐⭐ **SIDEDNESS IS THE WHOLE RISK, and `.gitattributes` is the false comfort (250, 251, 285, 320).**
+    The driver is armed — `.gitattributes` is **in the working tree** carrying all eight paths and
+    `git config --get merge.ours.driver` returns **`true`**, so ruling 27's working-tree caveat is satisfied
+    — **but a driver fires only where BOTH sides changed the file.** Measured: **TWO-SIDED, driver keeps
+    money's copy** — `CLAUDE.md` (money **+818**, main −14233), `.agents/state/BUILD-STATE.json` (8 / 1907),
+    `.agents/state/JOURNAL.md` (1 / 552); **ONE-SIDED MAIN-ONLY, EXPOSED, the driver cannot fire and each
+    must be hand-restored** — `app/phpunit.xml` (2), `bin/supervise.sh` (490),
+    `.agents/supervisor/launch-coder.sh` (204), `.claude/settings.json` (23). **Exactly ruling
+    179/251/285/320's four, and 179's ranking is unchanged.** ⭐⭐ **`app/phpunit.xml` is sharpest and this
+    is the first time the diff has been READ rather than predicted:** main replaces
+    `value="goaiez_antig_money_test"` with `value="goaiez_antig_test"` at `:34`. `bin/supervise.sh` §0 exits
+    2 only on *production*, and `goaiez_antig_test` is **not** production, so **NO GATE IN THIS CHECKOUT
+    CATCHES THE SWAP** — and `bin/supervise.sh` is second sharpest for the reason that compounds it: **the
+    instrument that would notice is itself in the exposed set.** ⛔ The restore is never skipped because a
+    path is listed in `.gitattributes`. ⭐ **Ruling 251 is CONFIRMED by a second independent measurement:**
+    `CLAUDE.md` is two-sided **only because this lane's rulings are committed**, so the supervisor's step-0
+    commit does not merely let the merge *start* (52's reason (1)) — it **ARMS the driver on the lane's
+    largest and most irreplaceable per-track file**, and the hand-restore set is **four** rather than five.
+    ⛔ This is never generalised into *commit something to arm the driver*: the driver fires on a file both
+    sides changed, so it is armed only by a change this lane genuinely made and would have committed anyway.
+    ⚠️ **Sidedness is a property of the WORKING TREE at merge time and is re-measured at every merge, never
+    inherited** (251) — it was five at ruling 250's merge and four here, and which of the eight are protected
+    depends entirely on which ones THIS LANE happened to edit since the base.
+    ⭐ **The two-party sequence (52) is unchanged and ruling 285's pathless route is briefed as an ATTEMPT,
+    never an assumption**: after the driver resolves the two-sided paths and `git checkout HEAD -- <the
+    four>` restores the exposed ones, every guarded path's stage-0 blob equals `HEAD`'s and none appears in
+    `coder-bin/git`'s `git diff --cached --name-only` input, so a **pathless** `git commit --no-edit` passes
+    the guard — and if it refuses, the coder stops with the merge **STAGED** and the supervisor commits it
+    next tick, which is a graceful degradation rather than a lost run. ⭐ `git checkout HEAD -- <path>` is
+    **permitted inside a gated merge** (252: the exemption is conjunctive — `GOAIEZ_MERGE_OK=1`,
+    `MERGE_HEAD` present, tree-ish literally `HEAD`, a `--`, existing regular files) and is **preferred over
+    `git show HEAD:<path> > <path>`**, because it updates index and worktree atomically and validates its
+    own form, where the two-step re-implementation leaves a window and has no validation at all — on the
+    four files whose silent loss no gate here can detect. ⛔ `git merge --abort` is forbidden whatever
+    happens (53; it destroyed this lane's ledger once, 2026-09-04 13:07), and ruling 53's **default clause**
+    binds: an uncovered conflicting path is reported with the merge **still staged**, never aborted and
+    never guessed. ⚠️ Ruling 286: the expected-path table is a **RULE with a measured exception list**, never
+    a closed set, because `origin/main` moves between measurement and merge — so the stop-clause fires only
+    on a path the RULE does not reach, and ruling 182 requires the reviewing tick to re-measure Table B and
+    all four of 58's shapes against **`MERGE_HEAD`**, never against the briefed sha. ⚠️ ⛔ **`php -l` is NOT
+    run on the four restored paths** — all are XML, JSON, Markdown or shell, and ruling 183 measured that
+    `php -l` on a non-PHP file writes a parse error to an untracked `error_log` at the repo root (muddying
+    §1, the instrument rulings 34 and 71 turn on) and is **vacuous** on a shell script. The checks that
+    actually read them are `git diff --cached HEAD -- <them>` printing nothing, a `grep` for the pin,
+    `bash -n` on the two scripts and `wc -c`. ⚠️ **No floor is predicted** (157): 112 commits of three other
+    lanes' tests arrive at once and no arithmetic available before the merge produces the count, so the gate
+    measures it and the verdict block records it as the new baseline. ⚠️ **Ruling 318 binds**: main adds
+    seven new files under the classmapped `app/app/Modules/` (four C-Reviews `Domain/`/`Models/`, two
+    `Actions/`, one migration), so `composer dump-autoload -d app` runs before the gate — and the failure it
+    prevents is `Class … not found` **inside another lane's test**, the most misattributable shape there is
+    (52).
