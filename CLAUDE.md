@@ -15699,3 +15699,81 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     the files describing them go last. ⭐ **A tick that finds `M CLAUDE.md` at start checks whether the diff
     holds rulings the addendum calls committed. If it does, it commits them first (139's range check in
     the same command) and records that in its block.**
+488. **⭐⭐⭐ THE LANE HAS EXACTLY ONE TIMESTAMP THE TEST CLOCK CANNOT REACH, TWO SCREENS COMPARE IT
+    AGAINST APP-CLOCK VALUES, AND `TestCase`'S OWN `TEST_CLOCK` DOCBLOCK REFUSES THE BROWSER SUITE FOR
+    THE SAME HAZARD WHILE LEAVING THIS ONE HALF-PINNED IN SILENCE (RULED by the lane supervisor
+    2026-09-11 05:1x; filed TRACK 1 ACTION 25).** Found by reading ruling 481's inversion forwards. 481
+    measured that `credit_ledger_entries.created_at` is the one money timestamp filled by Postgres
+    (`timestamp('created_at')->useCurrent()`, model `$timestamps = false`), and called it the strongest
+    non-null guarantee in the lane. **Its complement is that it is the one money timestamp filled by a
+    clock `Carbon::setTestNow()` cannot touch.** Predicate, stated for the first time: *a comparison
+    between a DATABASE-clock timestamp and an APP-clock value.*
+    **Instruments, quoted (300):** `grep -rn -i -e "useCurrent" -e "current_timestamp" app/app/Modules`
+    filtered to the eight ids → **ONE**, 481's own member, so ⭐ **429's known-member check fires**; the
+    control `grep -rln` over `app/app/Modules app/database` → **20 files** tree-wide. Then
+    `grep -rn -F -e "'created_at'" app/app/Modules` filtered to the eight ids and minus migrations →
+    **five production comparisons**. **Two touch the database-clock table:** `C-Billing/Ui/Mrr.php`'s
+    `->where('created_at', '>=', now()->startOfMonth())` and ⭐ `C-Billing/Ui/RevenueRecovery.php`'s
+    `->where('created_at', '>=', $state->created_at)`. The second compares against a `DunningState` row
+    the ORM stamped, so **two clocks meet inside ONE comparison**. `X-199/Ui/Declines.php`'s two compare
+    ORM-stamped `payments` rows against `now()` and against each other. That is one clock, so it is clean.
+    **Writers, read whole (395):** `grep -rn -F -e "CreditLedgerEntry::" app/app app/tests` returns
+    `BillingLedgerEngine`'s three `CreditLedgerEntry::create` calls (debit, grant, topup) and not one passes
+    `created_at`. Every explicit `created_at` is a test fixture (`CreditsScreenTest`, and
+    `RevenueRecoveryScreenTest`'s `grant_old`). ⚠️ Ruling 90's second ledger, `App\Services\Billing\
+    CreditLedger`, writes a different table and is not in population (262(b)).
+    ⭐⭐ **The disproving measurement was taken FIRST and killed the production half** (400's habit, a
+    **twenty-sixth** firing). The candidate was a timezone skew between the two clocks. Measured:
+    `app/config/app.php:68` is `'timezone' => 'UTC'`. Both `pgsql` and `pgsql_migrate` in
+    `app/config/database.php` carry `'timezone' => 'UTC'`. Vendor
+    `PostgresConnector::configureTimezone()` issues `set time zone '{$timezone}'` on connect, and
+    `PostgresGrammar::typeTimestamp()` makes the column `timestamp without time zone` defaulting to
+    `CURRENT_TIMESTAMP`. **Both clocks write UTC wall time, so production is CLEAN.** ⚠️ `DB_HOST` lives in
+    `app/.env`, which this seat cannot read. The `127.0.0.1` default is a hint and not a measurement (374),
+    so same-host clock agreement is recorded as inferred.
+    ⭐⭐⭐ **The surviving half is the `TEST_CLOCK` facility, and the code's own rule text names the
+    hazard.** `app/tests/TestCase.php`'s `pinTheClockIfDriven()` pins `Carbon::setTestNow()` from
+    `TEST_CLOCK` before every test. Its docblock refuses the Browser suite because *"a browser test drives a
+    real HTTP server in a separate process that never sees this variable, so the client would be pinned and
+    the server would not, and every assertion spanning the two would compare instants from different
+    calendars"*. It adds that *"it is a refusal rather than a silent skip because a run that quietly ignored
+    the pin would report a clean arm it had never driven."* **Postgres is that second process.**
+    `clockPinIsUnsafeFor()` is `str_contains(…, 'Tests/Browser')` and nothing else, so it half-pins the two
+    C-Billing screen tests in silence. ⭐ This is ruling 326's shape a **SIXTEENTH** time: the rule text
+    names the exact hazard and applies it to the wrong process.
+    **Consequence by direction, derived from the fixtures and never run (296):** a pin in the **PAST** is
+    the docblock's own example, `2026-08-31T23:30:00Z` run on 09-11. The engine's writes then carry the real
+    `CURRENT_TIMESTAMP`, which is later than every pinned comparand. `MrrScreenTest`'s
+    `assertSee('Welcome credit')` and `RevenueRecoveryScreenTest`'s
+    `assertSee('credit of 25.00 added since the ladder started')` stay **GREEN**, and Mrr's
+    `startOfMonth()` boundary, the exact arm the instrument exists to drive, **is never driven**. That is
+    the docblock's *"clean arm it had never driven"*, word for word. A pin in the **FUTURE** turns both
+    tests **RED** for a clock artefact, which a census run would read as a boundary defect (163's
+    misattribution class). ⭐ `CreditsScreenTest` and `CBillingTest` are **immune** and that was measured:
+    `Credits.php` reads the ledger `orderByDesc('id')` with no `created_at` filter, and `CBillingTest`
+    asserts counts.
+    ⛔ **Not buildable in this lane, on two grounds.** The writer is C-Billing `Domain/`, which is Track 1's
+    (5, 87), and `app/tests/TestCase.php` is Track 1's (484). Track 1 has two fixes. The writer can pass
+    `'created_at' => now()`, which the append-only trigger accepts because it fires on UPDATE only (481).
+    Or `clockPinIsUnsafeFor` can learn about database-clock columns. ⛔ **Money does not rewrite its two
+    readers**, because a reader cannot know which clock stamped a row. ⛔ Not a wave and not to be
+    re-raised. **Trigger: a change to a C-Billing ledger writer, or a `TEST_CLOCK` census run.**
+    ⭐ **The generalisable half: A GUARD THAT NAMES A PROCESS PROTECTS AGAINST THE PROCESS IT NAMES.** The
+    hazard belongs to every clock that is not PHP's, and a database default is a clock. Ruling 327's
+    outcome shape a **THIRTY-EIGHTH** time.
+
+489. **⭐⭐ RULING 483'S SPLIT APPLIES ONLY TO A NON-ZERO ANSWER, SO THE ADDENDUM'S CARRIED POINTER TO
+    SPLIT 481'S THREE-ROUTE SWEEP IS MOOT BY LOGIC (RULED by the lane supervisor 2026-09-11 05:1x).** The
+    05:0x addendum named *"481's own three-route sweep and 471's eight-class one"* as the next multi-term
+    instruments to split. A grep union of `-e` terms that returns zero has every term at zero, so splitting
+    it cannot surface a member. The zero only needs to be shown to have RUN, and 481's controls fired
+    (6+, and 14 raw / 11 real). 471 already measured its eight classes one by one. ⭐ **483's move applies
+    to a multi-term instrument whose answer was NON-ZERO and was reported under ONE term's name.** That is
+    the only shape in which terms can hide one another. ⛔ Struck as a pointer. ⛔ **NINETEENTH consecutive
+    HOLD**, with all four lift conditions measured in this tick (269, 272, 323). `OWNER.md`'s newest
+    heading is still `## OWNER RULING — 2026-09-09 09:02` (136). The cadence is **all three ✗**:
+    `git rev-list --count HEAD..origin/main` = **12**; `git diff --stat e78d9ba3 origin/main --
+    app/app/Doctor coder-bin .claude/hooks` is **empty**; `git merge-base HEAD origin/main` = **`e78d9ba3`**,
+    with ledger commits only since (272's second half). `origin/main` = **`8c35fbc8`**, unmoved. There is
+    no Track 1 answer to ACTION 13–25, and 488's population is non-empty and **not buildable**. **Merge gate
+    CLOSED. Cap untouched. No BLOCK is open.**
