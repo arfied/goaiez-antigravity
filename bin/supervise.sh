@@ -517,6 +517,49 @@ else
   [ "$cm_miss" -gt 0 ] && fail=1
 fi
 
+bar "2i. uncommitted app/ work — a tree state no sha owns  (REV-156 §1)"
+# ⛔ RUN 151 HAND-REVERTED A MUTATION AND LEFT ONE BLANK LINE BEHIND, AND THAT
+#   BLANK LINE TURNED THE GATE'S PINT RED ON A SHA WHOSE OWN COPY OF THE FILE IS
+#   CLEAN. The report then cited `r151-pint.txt` — a genuine, correctly-echoed
+#   `pint --test` taken 15 minutes BEFORE the mutation — and never mentioned that
+#   its own gate, 15 minutes after, read `result: fail` on the file the wave had
+#   dirtied. Both statements were true of the moment they were taken and the
+#   wave's conclusion was false.
+#
+# ⭐ The property is not "the coder was untidy". Every working-tree instrument in
+#   this script — §2b's `php -l`, §2c's debris grep, §2h's autoloader walk, §6's
+#   pint and phpstan — reads the CHECKOUT, while the reviewer, the push and
+#   `git log` read `HEAD`. An uncommitted `app/` path is the one state where
+#   those two disagree, so it either hides a defect from the gate (REV-128 §2,
+#   where the working tree was RIGHT and HEAD was wrong) or invents one that no
+#   sha owns (here, inverted). CLAUDE.md has said "do not review a dirty tree"
+#   since this lane began; it was a sentence, and a sentence cannot be read by
+#   the gate. REV-138 §2's ladder, an eleventh time: a CHECK beats a redirect.
+#
+# ⭐ `app/phpunit.xml` is EXCLUDED and that exclusion is derived, not stated: §2
+#   above already prints it as a forbidden path every single run, so re-reporting
+#   it here would be a second copy of one finding. It is the lane's standing
+#   REV-128 divergence — committable by neither column — and it is the reason
+#   this check cannot simply demand a clean tree.
+#
+# ⚠ The neighbouring property this does NOT cover (REV-146 §1's standard): it
+#   sees a path git knows is modified or untracked. A file changed and changed
+#   back reads clean, and so does an edit inside a path `.gitignore` hides —
+#   which is exactly how a stray local `phpunit.xml` goes unnoticed.
+_dirty=$(git -C "$ROOT" status --porcelain --untracked-files=all -- app 2>/dev/null \
+         | sed 's/^...//' | grep -v '^app/phpunit\.xml$' || true)
+if [ -n "$_dirty" ]; then
+  printf '%s\n' "$_dirty" | sed 's/^/  ⛔ /'
+  echo "     uncommitted under app/ — invisible to review and to the push, while pint,"
+  echo "     phpstan, php -l and the autoloader walk above all measured it. A number"
+  echo "     from this gate is a statement about the CHECKOUT, not about HEAD."
+  echo "     Repair by content, never by hand: git show <sha>:<path> > <path>,"
+  echo "     verified by an empty  git diff <sha> HEAD -- <path>  (REV-127)."
+  fail=1
+else
+  echo "  none (app/phpunit.xml excluded — §2 reports it, REV-128)"
+fi
+
 bar "3. build state"
 python3 "$ROOT/bin/state.py" status 2>&1 | head -30 | sed 's/^/  /'
 python3 "$ROOT/bin/state.py" next 2>&1 | head -20 | sed 's/^/  /'
@@ -655,6 +698,15 @@ fi
 #   asserts each field is PRESENT, never that its value is measured. `TESTS: none`
 #   on a wave that ran a suite passes here — REV-146 §5 is the ruling for that,
 #   and it is a judgement a grep cannot make.
+#
+# ⛔ REV-156 §3: THIS CHECK CARRIED REV-152 §1's IMPLICIT CLOCK AND FIRED ON THE
+#   WRONG WAVE'S REPORT ON ITS FIRST RUN. REV-119 §D puts the report AFTER the
+#   gate, so inside a `--tests` run `REPORT.md` is necessarily the PREVIOUS
+#   wave's — and run 151's gate printed `⛔ missing 10 of 10` about run 150's
+#   report, three minutes before run 151's own report was written carrying all
+#   ten. REV-152 §1 ruled this for the two checks above and this one was written
+#   one tick later without the discriminator: the ruling was not the shape of the
+#   check, so it did not carry. Labelled inside a gate, asserted at tick time.
 _r10="$ROOT/.agents/rules/10-supervisor.md"
 if [ -f "$_rp" ] && [ -f "$_r10" ]; then
   _fields=$(grep -oE '^[A-Z]{3,10} *:' "$_r10" | tr -d ' :' | sort -u)
@@ -664,7 +716,13 @@ if [ -f "$_rp" ] && [ -f "$_r10" ]; then
       _n=$((_n + 1))
       if grep -qE "^ *$_f *:" "$_rp"; then _have=$((_have + 1)); else _miss="$_miss $_f"; fi
     done
-    if [ -n "$_miss" ]; then
+    if [ -n "$_miss" ] && [ "$wave_self" = 1 ]; then
+      printf '    ⚠ REPORT.md %s is the PREVIOUS wave’s (this wave’s comes after this gate,\n' \
+        "$(date -r "$_rp" '+%F %T')"
+      printf '      REV-119 §D) — it is missing %d of %d rule-10 header field(s):%s\n' \
+        "$((_n - _have))" "$_n" "$_miss"
+      echo "      Not asserted from inside a gate; the header is checked at tick time (REV-156 §3)."
+    elif [ -n "$_miss" ]; then
       fail=1
       printf '    ⛔ REPORT.md is missing %d of %d rule-10 header field(s):%s\n' \
         "$((_n - _have))" "$_n" "$_miss"
