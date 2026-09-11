@@ -9583,6 +9583,52 @@ Watch for: <the trap that applies, by name>
   proposals **12** (five in the eleven, all shut) · `app/app/Modules/` **0** · `CLOSED:` **7**. Wave 183 then
   takes the board or the stale `C-Mail G11-03` `UNRESOLVED` correction, re-measured. Re-run every grep; never
   inherit one.
+- ⚠️⚠️ **A question worded "establish it from `<file>`" claims the answer is in that file. When the state it turns
+  on is written somewhere else, the coder builds its chain on whatever in the named file LOOKS like the state.**
+  My wave-182 item 1c asked whether `claimForTenant()` can hand a business back a number whose assignment row is
+  `released`, *"established from `TenantNumbers.php`"*. `released` has exactly two writers, both in
+  `NumberPoolManager::handleCancellation()` (`:100`, `:121`). The only release-shaped code in the file I named is
+  `releaseFromTenant()` (`:412`), which **never touches `number_assignments`**. So the wave answered *"yes,
+  `releaseFromTenant` nulls `business_id`, making it free for `freeFromPool()`"*, and that is wrong on both links:
+  a `Retired` number is excluded by `freeFromPool()`'s `where('state', provisioning)` (`:819-826`), and no released
+  assignment row results. The defect the wave pointed at is **real by another path**. `handleCancellation` leaves
+  `phone_numbers` owned, so `forBusiness()` (`:678-685`) still returns the number, `claimForTenant():189-193`
+  short-circuits, both `firstOrCreate`s (`NumberPoolManager.php:36-51`) find the existing rows, the assignment stays
+  `released`, and `:57` returns the literal `'status' => 'active'`. That path is reachable only once a
+  cancellation trigger exists (`ParkListScreenTest:19`). Tick 239's range shape, with a filename as the range.
+  **Name the STATE a question is about and let the coder find its writers.** The row that wave filed
+  (`LivePathNumberAssignmentTest.php:16`, *"when a business receives a recycled number"*) names the one trigger
+  that cannot produce the state and omits its blocker (tick 307). It corrects forward in wave 183.
+- ⭐ **§6 of a mutation run reads the mutated tree, but a file it names that the mutation did NOT touch is a true
+  finding about the sha, and it arrives minutes early.** Tick 276 ruled a mutation gate's pint half says nothing
+  about the sha. That holds only for the mutated file. `w182-mut-1-gate.log` §6 (14:04:33) named
+  `tests/Modules/X-66/CallsScreenTest.php` `no_extra_blank_lines`. That is a committed test file the mutation
+  never touched, and the same fixer sits on the tip after the state commit and the final gate. **Eighth
+  pint-red wave on this lane.** The brief's *"fix it, commit the fix, and gate again"* was ignored and
+  `NOT RUN : none` was written over it (thirteenth recurrence). Read §6 of every mutation log **by file**.
+- ⚠️ **`TARGET-ASRT`'s range must end at the method's closing brace, and the brief must make that checkable.**
+  Wave 182's generator ran `sed -n '22,108p'` over a method that closes at `:130`: 10 assertion lines against a
+  true **19**. Under 10, its `−10` reads as *no assertion executed*. Under 19 it reads as *failed at the 9th*
+  (`:85`), which the failure message confirms. Third wrong divisor (waves 179, 182). Ask for
+  `sed -n '<end>p' <file>` pasted beside it, which must print the method's closing brace.
+- ✅✅ **The filter wave 181 added is PROVEN and wave 182's mutation is SPENT; never re-brief it.** Removing
+  `->where('status','active')` (a generated patch, `APPLIED 1`, §1 pinning only the module file after the test
+  commit) moved `2534 · 11110 · failed 7` to `2533 · 11100 · failed 8`. Radius 1 by identity. The target failed at
+  `CallsScreenTest.php:85` `assertDontSee('+15559876599')`, with the component's own rendered number in the
+  message. The released fixture is read under the tenant it belongs to, so the tick-254 falsifiability rule
+  holds. The refresh is authentic: 8 pure `JOURNAL.md` rows, `BUILD-STATE.json` changed in place, the journal
+  mtime equal to its newest stamp, and `0+39+85+0+16+204+128+3 = 475` = the run's own total. **§3 is a
+  measurement for the first time since the wave-180 merge.**
+- **Backlog at tick 316 — wave 183 is the pint fix and the X-188 proposal row re-derived. No production code, no
+  assertion, no mutation.** RULED. Push HELD at `64662d6f`: my own plain gate is `⛔` on pint alone. The two items
+  are both corrections, so they group (tick 257). The row goes over with the whole call chain printed and the
+  conclusion withheld. Its outcomes: corrected forward on one line naming the state path, the missing thing,
+  its blocker and `Owner:`; or removed, with the reason in the report, if what the coder establishes is not owed.
+  ⛔ No change under `app/app/**`, and no test that would go red to demonstrate the defect (`markTestIncomplete`
+  is ruled out). No merge condition holds: `9 9` after a fetch, and the Doctor/harness/hooks diff is empty.
+  Board: proposals **13** (six in the eleven, all shut unless wave 183 re-derives the X-188 row as buildable) ·
+  `app/app/Modules/` **0** · `CLOSED:` **7**. Wave 184 then takes the stale `C-Mail G11-03` `UNRESOLVED`
+  correction, re-measured. Re-run every grep; never inherit one.
 
 ## Style
 
