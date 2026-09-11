@@ -4537,3 +4537,37 @@ route the second writer through the action — was wrong**, because the action a
 a fact taught on add outlives the row (TRACK 1 (i)). **When a second writer skips a refusal, share the PREDICATE, not
 the ACTION**, unless every side effect of the action is also wanted on that path. PB-166 is the first row;
 `saveCalloutFee()` is the next, unmeasured.
+
+## ⛔⛔ Trap added 2026-09-11 13:5x — an UPSERT that names one column inherits the MIGRATION DEFAULT for every other column
+
+Found by tracing (r3) from its entry point instead of from `saveCalloutFee()`. `ConfirmationScreen::updatedCalloutFeeDeducted()`
+upserts `['deducted_if_proceeding' => …]` **only**. On a tenant with no row, the create branch takes
+`callout_fee_cents ->default(7500)` from the migration, and `lookupCallout()` → `AgentAnswerAction:166` tells every
+caller *"our callout fee is $75.00"*. **An owner ticked a checkbox, and the agent quoted a fee nobody typed.** The
+sibling hook upserts cents only, and inherits `deducted_if_proceeding ->default(true)` while the screen's box shows
+unticked.
+
+⭐⭐ **PB-91 removed this same `7500` from the engine's null branch. The column default carried it back through a
+different door.** A fix that removes a fabricated constant from code has not removed it while a column default holds
+the same value. ⭐ **The instrument: grep every `updateOrCreate(` / `firstOrCreate(` / `create(` for the columns it does
+NOT name, and read each one's migration default.** A default that is a *policy* (a flag, a status) is a choice. A
+default that is a *measurement* (a price, a duration, a count) is PB-158's fabricated number in schema form.
+
+⛔ **The obvious fix, naming both columns from component state, is wrong on its own.** It writes `0` when no fee was
+typed, and `lookupCallout()` speaks `$0.00`. The engine had to refuse a fee at or below zero first
+(`CalloutFee::isSet()`, shared with `ConfirmationScreen:123`, which already called only `> 0` "set"). **Two readers of
+one row with two predicates is the tell that the refusal belongs in the shared one.** PB-167.
+
+## ⭐⭐ Trap added 2026-09-11 13:5x — `Livewire::test()->call()` ignores `disabled`, and a fix that sets a UI flag must ask what the flag disables
+
+`X163Test::test_pricebook_confirm_clears_after_correction:1503-1508` calls `confirmItem` **while the refusal flag
+stands**. `pricebook.blade.php:121` renders that button `disabled` in exactly that state. The inline price at `:117` is
+a deferred `wire:model` whose only server consumer is reached through that disabled button. **The test proves a
+recovery no browser can perform:** the owner must reload. It is the sibling of the field note *"`Livewire::test()` never
+renders the layout."* **A component test exercises methods, not controls.**
+
+⛔ **And my own PB-166 ruling moved that stall onto the add path.** Ruling 2 set the flag on add, which was right for the
+flag and wrong for the button, because I never asked what else reads `$refusals`. ⭐ **Before ruling that a fix sets a
+component flag, grep the blade for every attribute that flag drives (`disabled`, `@if`, `wire:loading`), and ask whether
+the path OUT of that state is still reachable by a click.** No wrong value came out of it (the row stays unconfirmed and
+the agent refuses), so it is recorded as (r2′), not blocked.
