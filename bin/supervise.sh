@@ -919,6 +919,20 @@ if [ -n "$_doc" ]; then
   if [ -n "$_sch" ]; then
     printf '  schema, annotated for the report (REV-119 §B) — from %s:\n' "${_doc##*/}"
     printf '    %s   (read from %s, per app/.env)\n' "$_sch" "${env_db:-<unset>}"
+    # ⛔ REV-157: THE HEALTHY ARM NEEDED THE SAME LABEL AS THE BROKEN ONE.
+    #   REV-156 §2 ruled "when the gate measures a tool you also measured by hand,
+    #   the report quotes the GATE's line". That is right for pint, phpstan and pest
+    #   — the gate RUNS those. It is wrong for exactly this line, which the gate
+    #   READS from an artefact that REV-119 §D guarantees is the PREVIOUS wave's.
+    #   Run 152 obeyed both rules and published `455ms` from r151-doctor.txt while
+    #   its own dump, 12s later, read `454ms`. Same count, so no harm; the provenance
+    #   was wrong and nothing said so. The broken arm below has carried this label
+    #   since REV-152 — the healthy one, which is the arm that runs every clean wave,
+    #   did not.
+    if [ "$wave_self" = 1 ]; then
+      echo '    ⚠ that dump is the PREVIOUS wave’s — REV-119 §D puts this wave’s after this gate.'
+      echo '      Quote the schema line from YOUR OWN doctor dump, not from this gate (REV-157 §1).'
+    fi
     # ⛔ A STAGE THAT COULD NOT CONNECT REPORTS A *LOWER* NUMBER, AND A LOWER
     #   NUMBER READS AS AN IMPROVEMENT (REV-151 §3).
     #
