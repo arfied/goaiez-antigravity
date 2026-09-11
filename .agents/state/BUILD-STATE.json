@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-11T09:12:21",
+ "updated": "2026-09-11T09:42:19",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1586,6 +1586,12 @@
    "module": "X-124",
    "chose": "track/ui took origin/main at 46afc022 over base 563c74d1, adopting main's Doctor checkers, seals, journey harness, state.py, hooks and .gitattributes whole and restoring its own phpunit.xml database pin, gate script, settings, launcher, CLAUDE.md and state ledger",
    "at": "2026-09-11T09:12:21",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-124",
+   "chose": "the canvas colour token is the page surface, defined as a literal in both theme blocks, and the stylesheet class test derives the linked stylesheet from a real GET of the reply queue rather than globbing the build directory",
+   "at": "2026-09-11T09:42:19",
    "ruling": "R245"
   }
  ],
