@@ -16261,3 +16261,102 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
       it takes 465's refuse design.
     - **`applyLateFee()`'s headroom**: a read-modify-write on an aggregate (499). ⛔ Its trigger is a production
       invoice writer.
+
+510. **⭐⭐ Two dictated-command defects surfaced by MONEY-209's `REFUSED:`, one of them latent for FIVE waves:
+    `git commit -- <path>` cannot commit an UNTRACKED file, and a multi-line block that opens with `cd app &&`
+    breaks every root-relative line after it (RULED by the lane supervisor 2026-09-11 06:4x, by `date`
+    `06:44`, on MONEY-209's run 234).**
+    **(a) The latent one.** MONEY-205 through 209 each created a new migration, and each brief dictated
+    `git commit -m "…" -- <new path> <other paths>`. Git refuses a pathspec for a file that is not tracked, so
+    the dictated command fails every time. Four runs silently added the file and did not say so. Run 234 said so
+    under `REFUSED:`. That is **ruling 336's shape exactly**: an instruction every executor has silently
+    corrected is a latent defect, not a working one. It is the **third** time ruling 313's confession field has
+    paid for itself on a brief defect nobody else could see. **RULED: a brief that creates a file dictates
+    `git add <that path>` by name, immediately before the named-path commit.** ⛔ Never `git add -A` or
+    `git add .`: the one added path is the new file. A commit's `-- <paths>` list then still names every path.
+    **(b) The directory one.** MONEY-209's lint blocks were `cd app && ./vendor/bin/pint …` followed on the next
+    line by `php -l app/app/…`. In the coder's shell the `cd` persists, so the second line cannot open its file.
+    **RULED: every dictated command runs from the repo root, and a tool that needs `app/` runs in a subshell,
+    `(cd app && …)`**, so the directory cannot leak into the next line. That is ruling 192's *a tick runs no
+    `cd`* extended to the coder's own blocks. MONEY-210 is the first brief in this shape.
+    ⚠️ Neither departure spends a dispatch (60b, 71, 313). The run adjusted the command to do what the brief
+    meant and reported it, which is the behaviour ruling 313 asks for. ⚠️ This is the ruling 66/75/…/336 dictation
+    family again, and **a dictated COMMIT COMMAND dictates whether a new file can be committed at all**.
+
+511. **⭐⭐ The absorb family is CLOSED on its index half: 15 absorb sites, 9 tables, all 9 backed by a unique
+    index. Cadence (3) does not fire on 16 commits of per-track and X-102 content (measured by the lane
+    supervisor 2026-09-11 06:4x).** Ruling 499's census re-run from its predicate —
+    `grep -rn -e "firstOrCreate(" -e "updateOrCreate(" -e "createOrFirst(" app/app/Modules --include=*.php`,
+    filtered to the eight ids and minus `/Database/` — prints **15** sites. The one more than 499's 14 is
+    MONEY-209's own `InvoiceEngine.php:39`. Read against
+    `grep -rn -F -e "unique(" -e "UNIQUE" app/app/Modules --include=*.php` over the lane's `Database/` trees,
+    every table is backed:
+    - `carts` (206)
+    - `payment_links` (229)
+    - `merchant_connections` (208)
+    - `credit_terms` (209)
+    - `decline_deferrals` (35)
+    - `receivable_states` (205)
+    - `ar_plan_terms` (263)
+    - `ar_dunning_actions`, partial (205)
+    - `account_mappings` (207)
+
+    ⭐ The known-member check fired (429): every one of 499's own members came back. ⛔ The absorb census is
+    struck, not to be re-run. **Trigger:** a new `firstOrCreate`/`updateOrCreate` site, or a new unique
+    constraint dropped.
+    ⚠️ **Cadence, measured this tick (269, 272, 323, 504).** `origin/main` = **`a90154f8`**.
+    - (1) `git rev-list --count HEAD..origin/main` = **16**. ✗
+    - (2) `git diff --stat 905f600c origin/main -- app/app/Doctor coder-bin .claude/hooks` is **empty**. ✗
+    - (3) `git merge-base HEAD origin/main` = **`905f600c`**, this lane's own pushed supervisor tip. Its content
+      `git diff --name-only 905f600c origin/main` is the 7 per-track paths plus X-102's three. ✗
+
+    **Merge gate CLOSED.**
+
+512. **⭐⭐⭐ Ruling 330's residual is BRIEFABLE as a REFUSE design: a unique index per table plus a catch OUTSIDE
+    the transaction that re-reads the winner and throws the guard's own refusal. Both refusal messages move into
+    helpers so the guard and the catch cannot drift apart (RULED by the lane supervisor 2026-09-11 06:4x,
+    briefed as MONEY-210).**
+    Ruling 330 gave `ArEngine::offerPlan()` and `packageForCollections()` sequential refusals
+    (`PlanAlreadyOfferedException`, `AlreadyPackagedException`). It recorded the true-concurrency window as
+    `UNRESOLVED` against the racing-fixture blocker, which ruling 454 measured false and MONEY-202 measured away.
+    **The census, measured before the brief:**
+    - `grep -rn -F -e "PaymentPlan::create" -e "ArCollectionsPackage::create" -e "table('payment_plans')"
+      -e "table('ar_collections_packages')" app/app app/tests app/database` prints **2** lines, both in
+      `ArEngine`. There is **zero** fixture, seeder or raw insert.
+    - Neither table has a unique index.
+    - Every test that calls either method twice on one invoice is refused by the **sequential guard** before the
+      insert: `PaymentplanBuilderScreenTest:209-213` and `X211Test:481-484`. So a plain
+      `(business_id, invoice_id)` index refuses nothing the code does today.
+    - Each guard refuses **any** existing row, so the index carries **no `WHERE`**, matching the guard's
+      predicate (240(b)).
+    - `grep -n -F -e "DB::transaction"` over both components, both actions and `EvidenceRecoveryCommand` prints
+      **nothing**, so neither method is ever called inside an outer transaction.
+
+    ⭐⭐ **Why REFUSE and not absorb (466, 470).** Two offers for one invoice can carry **different** terms, so
+    handing the loser the winner's plan would print *"Plan recorded on …: 2 biweekly payments"* over a stored
+    plan of 3 monthly. That is ruling 330's own reason. Two packages are two handovers of one account, and
+    330 refused the second. ⭐ **The loser gets the guard's exact exception and message**, so the component's
+    existing `\Throwable` tail renders the same sentence the sequential refusal renders today, and neither
+    component changes (47's companion).
+    ⭐⭐ **Why the catch goes OUTSIDE `DB::transaction`.** Both creates are plain `create`, not `createOrFirst`,
+    so no savepoint wraps them (473's term is **not** satisfied here). The violation aborts the transaction,
+    Laravel rolls it back and rethrows, and a re-read outside runs on a clean connection. A catch inside the
+    closure would die `25P02` (ruling 163). This is ruling 460's *measure a term before assuming it satisfied*,
+    the sign opposite to 209's.
+    ⭐ **Why a re-read and not the exception.** If no winning row is found, the violation was something else,
+    and the catch rethrows it untouched (463).
+    ⭐ **Why the helpers.** A second copy of a refusal message is ruling 37's *second place for the truth to
+    disagree*. Moving both messages into `planAlreadyOffered()` and `alreadyPackaged()` keeps each sentence
+    **byte-identical** to today's and in one place, and the two existing assertions on them
+    (`is already on a plan`, `has already been packaged for collections`) stay green unchanged.
+    ⭐⭐ **The proof's second discriminator is the message.** The racer stores **3 monthly** payments and the
+    engine asks for **2 biweekly**, so `INV-PLAN-RACE is already on a plan: 3 monthly payments` can only come
+    from a re-read of the **winner's** row. The mutation makes each catch arm rethrow first, so both tests error
+    carrying `SQLSTATE[23505]` and their own index name.
+    **Predicted floor `tests 2541 · passed 2538 · FAILED 1 · errors 2`**, derived by listing:
+    `gate-money209.txt` §7 `2539 · 2536`, and item 2 adds two methods. ⛔ Absorb nothing (125).
+    ⚠️ Deploy note (501): no production plan or package can be duplicated, because nothing in production
+    raises an invoice (170).
+    ⚠️ **After MONEY-210, only `applyLateFee()`'s headroom is left in the concurrency family**, a read-modify-write
+    on an aggregate (499). ⛔ Its trigger is a production invoice writer.
+    **Dispatched run 235, 1 of 2, before this ruling was written (464).**
