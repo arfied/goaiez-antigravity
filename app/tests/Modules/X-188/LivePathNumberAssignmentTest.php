@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
+// BUILD PROPOSAL: updateOrCreate instead of firstOrCreate when a business receives a recycled number. Owner: X-188
+
 class LivePathNumberAssignmentTest extends TestCase
 {
     private OnboardingStartAction $starter;
