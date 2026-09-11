@@ -2856,7 +2856,102 @@ DB pin intact, ours-since-base `app/phpunit.xml` alone, `§2e`/`§2f`/`§2g` all
 eight summing to it exactly, pint `passed`, phpstan `0`, and §1 back to **77** after item 1 deleted
 `generate_report.py`. Tip `ed01c9eb` pushed (`9aa5924e..ed01c9eb`), certified per `RULING GH(i)`.
 
-⛔ **The backlog is EMPTY at tick 341 and that tick wrote a HOLD — the HUNDREDTH consecutive tick with no
+⏳ **S-198 — the owner-ordered THIRD take (drift condition 1). OPEN, dispatched at tick 342 as
+STAGES-236 (run 214), merge gate `--allow-merge` OPEN.** Not an invented wave: `RULING GQ` bound this
+seat in advance to dispatch at the first tick whose **own pin** carries an ancestor behind-count
+above 100, and pin `af72fe7f` carries **108**. Target pin `af72fe7f`, base `57781d59` (main's own
+commit), range 28 `app/` files. **Review it against these floors:** the item-6 restore proof
+(`git diff HEAD~1 HEAD -- <per-track>` prints nothing) **and** `grep -n DB_DATABASE app/phpunit.xml`
+reading `goaiez_antig_stages_test`; `composer dump-autoload` ran **before** the first gate;
+`§2e`/`§2f`/`§2g` quoted verbatim now that `HEAD` is a merge; **all eight `§5` numbers plus the
+`N violation(s)` total line, with the eight summing to it** (`RULING GF(ii)`); `integrity` **0** — a
+rise is a BLOCK; `schema` reported as a **range** with its row list and `journey` with its slugs;
+pint `passed` and phpstan `0`; and §1 taken **after** `REPORT.md` was written (`GG(ii)`). ⛔ **A
+candidate named by `§2f`/`§2g` is a STOP, never a thing the wave resolves.** ⛔ **The merge commit is
+bare by necessity** — git refuses a partial commit during a merge — and that is the one exception to
+the named-paths rule, stated in the brief so it is not read as a violation.
+
+⛔⛔ **`RULING CN`'s DECOY HAS RECURRED LIVE, and tick 342's own brief is why.** A root
+`REPORT.md` appeared at **21:41:19**, four minutes after run 214 launched at 21:37:27 — it was
+**absent** from this tick's opening `git status` and from `.gateT342.txt`'s §1, so it is **this
+wave's output**, not the 2026-09-08 debris `CN` recorded. ⚠️ **It is NEWER than the mailbox copy**
+(`.agents/supervisor/REPORT.md`, 10:55), which is exactly the hazard `CN` names: **case (b)'s
+freshness test passes on the wrong file.** ⛔ **Tick 343 opens `.agents/supervisor/REPORT.md` by its
+FULL PATH and reviews that; if the mailbox copy is still 10:55 when the wave closes, the wave
+reported to the wrong place and that is a finding about the report's LOCATION, never about its
+content.** ⚠️ **The cause is in the brief, and it is this seat's:** the brief's closing section is
+headed bare `## REPORT.md` and cites rule 10 for the shape without ever naming
+`.agents/supervisor/REPORT.md` as the path — `RULING GF`'s shape one artefact over, an instruction
+whose *substance* was right and which omitted the one word that makes it executable. ✅ **Standing
+correction: every brief names the mailbox path in full — `.agents/supervisor/REPORT.md` — and never
+the bare filename**, because the bare filename resolves to the decoy from the checkout root, which
+is where the coder runs. ⛔ **Do not `.gitignore` it** — §1 "working tree" is a CHECK and widening its
+ignore list is the One Rule shape; deletion is the coder's capability, `rm` being refused to this
+seat (S-183 was a wave).
+
+## ⭐⭐ THE TAKE IS ORDERED AND DISPATCHED — STAGES-236, run 214, merge gate **OPEN** (tick 342)
+
+⛔ **`RULING GQ`'s advance ruling FIRED at tick 342's own pin, and the standing refusal is
+SUPERSEDED.** The owner's drift condition (1) is evaluated on the **ancestor** count (`GQ(i)`), and
+at pin `af72fe7f` that count is **108** — above 100 for the first time at a tick's own pin. The
+first-parent count is **15**, below it: ⛔ **the two readings STRADDLE the threshold, said out loud
+as `GQ(iii)` requires.** `GQ` decided this in advance precisely so no later tick would re-litigate
+it. **The merge is ordered, and ticks 238–341's *"OPEN, UNNECESSARY and REFUSED"* formula is retired
+for the duration of this take.**
+
+⚠️ **This seat's measurement that the take is *unnecessary* is unchanged and stands** — re-measured
+at the pin, `DD`'s two-row re-check prints nothing, the `Doctor`/`JourneyHarness`/`.claude/`/
+`seals.json` diff is **empty** so `RULING EQ`'s void condition is **not** reached and this lane's
+checker **is** main's byte-identical, and ours-since-base in `app/` is `app/phpunit.xml` alone. **It
+is superseded, not repealed:** the owner supplied a different predicate, and an owner ruling relayed
+through the reserved-list channel outranks a lane-supervisor judgement inside its own column
+(tick 319's precedent). Do not re-argue it.
+
+⭐ **The cheapest take this lane has been ordered to take.** `28 files, +523/−67` in `app/`; the only
+per-track row is **`CLAUDE.md`**; **`app/phpunit.xml` is NOT in the range**, so `RULING DC`/`DQ`'s
+destructive `DB_DATABASE` row is **absent** — *the restore step stays item 3 regardless and its proof
+stays `git diff HEAD~1 HEAD -- <per-track>` printing nothing, never item 3's silence*. No lockfiles
+and no `app/resources/`, so **no `composer install`, no `npm run build`**. No checker byte moves, so
+`RULING FO` survives the merge and the eight counts stay comparable across it.
+⛔ **The classmap trap IS live** — two new classes (`X-103/Actions/PageReadAction.php`,
+`X-155/Actions/FormReadAction.php`), so `composer dump-autoload` runs **before the first gate**.
+⭐⭐ **`RULING BS`'s owner call has EXECUTED on `main`**, exactly as tick 324 predicted: the range
+carries two migrations dropping `csat_score` from `review_requests` and `qa_tickets`. ⛔ **The wave
+does NOT migrate** (`RULING FD` — `schema` is a fact about a **shared server**), so `schema` is
+floored as a **RANGE reaching 14** with the row list demanded, never a number.
+⚠️ **`RULING FM`'s void condition is NOT reached** — merge base `57781d59` is **main's own commit** —
+so `EP`'s ours-since-base test is valid and `§2e`/`§2f`/`§2g` will be sound when `HEAD` becomes a
+merge; `§2f`/`§2g` are **triggers, never verdicts**, and a named candidate is reported and STOPPED
+on, never resolved and never narrowed.
+
+⭐ **The launcher's GATE/BRIEF AGREEMENT block got its FIRST LIVE POSITIVE CONTROL.** Adopted at tick
+197 and verified until now only against a **synthetic** string, because this seat had never once
+opened the gate — `grep` over `REVIEWS.md` returned `0` for `Merge gate **OPEN`. `KICKOFF.md` says
+exactly `Merge gate **OPEN**`, `--allow-merge` was passed, and the run launched. The convention
+`CLAUDE.md` binds has now executed end to end.
+
+```
+LAUNCHED run 214 (pid 2477663) coder=agy merge-gate=OPEN log=/home/goaiez/tmp/agy-grs-antig-stages-run214.log
+```
+
+⭐ **A precision recorded and deliberately NOT lettered — `RULING GO(iii)` is LOAD-BEARING for the
+first time.** Tick 342's marker is **`MAIN DID NOT MOVE: pin af72fe7f`**, not `MOVED`, even though
+pin-to-pin the ref moved `1155a1ef → af72fe7f`: that transition **reproduces tick 341's recorded
+`DK` event exactly — same from, same to** — and `GO(iii)` bars reading it as a movement event.
+⛔ **The stakes are new**: tick 341's own marker is `MOVED` *for that same event*, so a `MOVED` here
+would put **two consecutive moved ticks in the census for ONE move**. ⚠️ Ticks 336 and 339 met the
+neighbouring shape and wrote `MOVED`; neither inflated a streak, because in both the **predecessor's
+marker** was `DID NOT MOVE`. **Tick 342 is the first where the predecessor's marker is `MOVED` for
+the very event the pin-to-pin delta reproduces**, which is the case `GO(iii)` exists for. ⛔ Not
+lettered — applying an existing clause is not a discovery (`RULING FW`; ticks 317 and 332 are the
+precedent).
+
+⚠️ **The admission census's shelf life is about to be SPENT.** It was not re-run at tick 342 and the
+reason was measured first (`git diff --stat 6240383f HEAD -- app/app/Modules/` empty, corroborated by
+`capability` **207** unchanged) — **but the merge moves 28 `app/` files, so tick 343 re-runs it
+against the merged tree with `RULING EX`'s completeness proof and never carries the table forward.**
+
+⛔ **The backlog was EMPTY at tick 341 and that tick wrote a HOLD — the HUNDREDTH consecutive tick with no
 instrument change, and it LETTERS `RULING GQ`, so the decline streak ENDS AT THREE (338 · 339 · 340)**, both
 ordinals derived in-tick per `RULING FZ`. ⭐ **The instrument ordinal is stated in `GN`'s permanent/rolling
 form**: `GB(ii)`'s distinct-authoring-tick reader returns **97** subjects since tick 241's `8e178993`, the one
