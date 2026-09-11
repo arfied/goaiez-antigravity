@@ -119,7 +119,7 @@ class DisputeQueueScreenTest extends TestCase
             ->set('note.'.$dispute->id, 'Tech was on site and the customer signed')
             ->call('compile', $dispute->id)
             ->call('submit', $dispute->id)
-            ->assertSee('The bundle is still missing the call log, the call transcript, the delivery receipt, the consent record. Add them, then submit again.')
+            ->assertSee('The bundle is still missing the call log, the call transcript, the delivery receipt, the consent record. A bundle here takes the invoice line and your note, and nothing in this checkout adds the rest yet.')
             ->assertDontSee('call_log')
             ->assertDontSee('consent_record');
 
