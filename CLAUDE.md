@@ -14584,3 +14584,107 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     looks like after rulings 36–452 have been applied. **The next finding will come from a PREDICATE
     nobody has stated yet, never from re-running a member list** — and 451 and 452 are both exactly that,
     neither existing as a phrase in this ledger until the tick that measured it.
+454. **⭐⭐⭐ RULINGS 225 AND 256 CONTRADICT EACH OTHER ABOUT WHETHER A CLASS-BASED MODULE TEST IS
+    TRANSACTED, THIS LEDGER HAS CARRIED BOTH FOR SEVENTY-FIVE RULINGS, AND 256 RETIRED TWO WAVES ON THE
+    FALSE HALF — measured in VENDOR: Pest applies a `->use()` binding only to a `TestCaseFactory`, which
+    a hand-written PHPUnit class does not have (RULED by the lane supervisor 2026-09-11 02:3x).**
+    Ruling 256 retired the `payments.idempotency_key` unique-index wave on the ground that
+    *"`app/tests/Pest.php:84-86` is `pest()->extend(TestCase::class)->use(RefreshesTenantDatabase::class)
+    ->in('Modules')`, so **every** test under `tests/Modules` gets the trait — `X198Test.php`, where the
+    real proof would live, as much as the probe."* Ruling 225, one wave earlier, had written the
+    opposite: *"the class extends `Tests\TestCase` with **no `DatabaseTransactions`**, X-103's standing
+    `UNRESOLVED` records that **class-based module tests get no DB refresh**."* **Both cannot be true.**
+    ⭐⭐ **Measured in vendor rather than argued from a line's wording** (374's *a declaration's wording is
+    a hint, never a measurement*; the method rulings 416, 419, 438 and 440 each used):
+    `pestphp/pest/src/PendingCalls/UsesCall.php:174-176` ends in
+    `TestSuite::getInstance()->tests->use(…)`, which stores the binding **per path** at
+    `Repositories/TestRepository.php:70-98`; it is consumed at `:178`, whose signature is
+    **`private function make(TestCaseFactory $testCase): void`**, and `:190` is
+    `$testCase->traits[] = $class;`. **A `TestCaseFactory` exists only for a file whose tests were
+    registered through `test()`/`it()`** (`$this->testCases[$filename]`, `:203`). **A hand-written
+    PHPUnit class has none, so `make()` is never called for it and the trait is never applied.**
+    **RULED: ruling 225 is right, ruling 256's half is FALSE, and this ledger's copy is corrected in
+    place rather than dropped (355).** ⚠️ **Eleventh inherited attribution corrected** (163, 171, 176,
+    257, 289, 355, 374, 383, 394(a), 449), and it is the most expensive of the eleven, because it is the
+    only one that **retired work**.
+    **The population, measured:** `grep -rl -e "extends TestCase"` over the eight test trees → **76**;
+    over the six trees X-198, X-201, X-117, X-120, X-173 and C-Billing → **46**;
+    `grep -rlc -e "RefreshesTenantDatabase" -e "DatabaseTransactions" -e "RefreshDatabase"` over those
+    six → ⭐ **ZERO**, and over X-199 and X-211 → **5**, every one in X-199. `app/tests/TestCase.php:22`
+    is `// // use RefreshesTenantDatabase;` — **commented out**. **So 71 of this lane's 76 class-based
+    test files run with no per-test transaction and no rollback.**
+    ⭐ **The five are main's merge-adopted X-199 tests** (`CreditsTest`, `DeclinesTest`, `UnpaidTest`,
+    `MoneyPaidTodayTest`, `InvoicesTest` — 58 shape (1), 170(2)), **and their explicit declaration is
+    itself corroboration**: another lane's author declared a trait that, on 256's reading, the binding
+    would already have supplied. **The zero is corroborated four ways** (207, 294, 324, 429): the trait
+    instrument demonstrably **fires** (5 in X-199); the class-based instrument fires in the same six
+    directories (**46**), so they are not empty; ⭐⭐ **ruling 429's known-member check returns BOTH of
+    this ledger's existing members of the question** — 256's own `X-198/X198Test.php` and 225's own
+    `X-211/DetectOverdueReceivablesCommandTest.php`; and 415's first-three check passes. Ruling 449's
+    check — **each member EXISTS** — passes, the instrument having returned real paths.
+    ⭐ **The generalisable half: a ledger that carries two rulings which cannot both be true will not
+    notice, because each is read on the day it is needed and never against the other.** What surfaced it
+    was neither ruling but a **third** question — *which test files leak rows?* — whose answer required
+    both. **A contradiction between two rulings is found by a census whose predicate needs them
+    together**, never by re-reading either.
+
+455. **⭐⭐ 71 untransacted test files have never bitten, and the safety is ruling 400's — a fresh business
+    per `provisionTenant`, so a leaked row belongs to a tenant no later test reads (measured 2026-09-11
+    02:3x; ruling 328's *name each member's safety*).** An untransacted test's rows **commit**. They are
+    invisible for a measured reason: ruling 400 measured `TestCase::provisionTenant` calls
+    `TenantProvisioner::provision()` with a fresh `User::factory()->create()` **on every call**, so **no
+    two test methods share a business**, and RLS sits beneath the application scope (212, re-confirmed
+    from the checker's own side at 451). Nothing accumulates across runs either: `RefreshDatabase`'s
+    `migrate:fresh` runs once per process, so each suite run starts clean. ⛔ **So this is not a
+    71-member defect and no wave is owed on it.**
+    ⭐⭐ **The one exposed shape is a CROSS-TENANT SWEEP**, and the lane has exactly two —
+    `x211:detect-overdue` and `x199:mark-due`, ruling 151(1)'s scheduled pair, ruling 209 having measured
+    `InvoiceReader::overdueIssued()` takes no `$businessId` at all. **Both tests are measured
+    order-robust and each states its own reason in the code** —
+    `DetectOverdueReceivablesCommandTest:244` (*"The first sweep chases everything overdue, so the second
+    finds nothing to dispatch."*) and `MarkInvoicesDueTest:57` (*"Once for THIS invoice — the idempotency
+    marker, **not a fact about the whole database**."*, this lane's own MONEY-125 work). ⭐ **Ruling
+    326's shape a TENTH time**: when a census's safety is written down in the code's own rule text, the
+    strike is stronger than the measurement that prompted it. ⛔ Struck.
+    ⚠️ **Recorded, not briefed:** `Tests\Concerns\RefreshesTenantDatabase`'s docblock closes *"Verified by
+    tests/Feature/TestDatabaseLifecycleTest.php"* and **that file does not exist** — ruling 49/50(c)'s
+    derived-reference class in a docblock. `app/tests/Concerns/` is not this lane's (5) and a comment no
+    mutation can redden is ruling 81/244/356's grade. → **TRACK 1 ACTION 13**'s list.
+
+456. **⭐⭐⭐ TWO RETIRED WAVES TURN ON RULING 454, AND THE EXPERIMENT IS BRIEFED RATHER THAN THE WAVE
+    (RULED by the lane supervisor 2026-09-11 02:3x, briefed as MONEY-201).** Rulings 240, 256 and 327
+    each retired a **real** defect for one reason only — that the proof was structurally unobtainable:
+    **240/256**, `GatewayEngine::capture()`'s check-then-act across a live HTTP call, where MONEY-144's
+    `Idempotency-Key` means the money moves once but the **local row lands twice** — two `Payment` rows
+    carrying the same `gateway_charge_id`, `PaymentCaptured` dispatched twice (101), and **`SameAccount`'s
+    per-currency total, the figure ruling 239 made honest, summing that charge twice**; and **327**,
+    `orders.order_number` as `strtoupper(Str::random(6))` on a non-unique column, an effective alphabet of
+    ≈33.7 rather than 36 and even odds at ≈38,000 orders. Both were retired because *"a racing row cannot
+    be committed from a second connection … the trait holds one transaction open on the runtime
+    connection"* (256). **If `X198Test.php` is untransacted its writes commit, a second connection can see
+    them, and the proof shape all three rulings called impossible is available — both waves reopen.**
+    ⛔ **RULED: the wave is NOT briefed and the EXPERIMENT is.** Ruling 302 is directly on point — *where a
+    ruling rests on reading source, the cheapest confirmation is an experiment that changes the thing the
+    code should see and measures it* — and **ruling 256's error was building on an inference.** To reopen a
+    wave touching a **double-charge** path on a supervisor's inference from vendor source would repeat
+    256's mistake one level over. Ruling 232 governs the stake: *introducing a new hazard is worse than
+    deferring the removal of an old one*, and the hazard is specific — 256 measured that a bare index puts
+    a `23505` into `capture()`'s `catch (\RuntimeException)` (`UniqueConstraintViolationException extends
+    QueryException extends PDOException extends RuntimeException`), which writes a **`failed`** row for a
+    charge Stripe actually took, whereupon MONEY-145's `$attempt` counter mints a **fresh** idempotency key
+    the provider cannot dedupe. **That is the double charge ruling 230 set out to prevent.**
+    ⭐⭐ **The probe is `DB::transactionLevel()` — zero writes, no table, no schema dependency, no second
+    connection** — read inside a class-based money test and inside a pest-style one as the positive
+    control, each as a **deliberately-failing** assertion against a sentinel, so the measured integer
+    arrives in the RED line itself and needs no output capture. **Ruling 418's shape inverted: the RED line
+    IS the measurement.** ⛔ The brief dictates **no expected value** (296) and ⛔ **no clause telling the
+    run what an answer would mean** — ruling 449's prohibition, written the same day after MONEY-200's
+    brief told a run an absence was self-explanatory and thereby forbade ruling 400's disproving
+    measurement in advance. ⛔ Nothing is committed to `app/**`: both probes are appended and hand-restored
+    inside the run (71), with `TREE:` proving it (367). ⛔ **No gate is briefed**, with its reason stated —
+    the wave commits nothing to `app/**`, so ruling 348's *what could §7 catch that I have not already
+    measured?* answers **nothing**, and a procedural step required where it cannot bite is one the next
+    reviewer must re-derive (225).
+    ⭐ **The HOLD lifts on condition 4 as a MEASUREMENT, which rulings 258, 296 and 453 bless in terms** —
+    *a measurement wave is not an empty wave, and it is judged by the rulings it makes possible, never by
+    whether it hands the next tick a code wave.* Twelve consecutive HOLDs end here.
