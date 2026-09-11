@@ -1144,3 +1144,28 @@ sixty that was **2 of 11 paths**, and `git diff <base> <ours> -- <path>` beside 
 independent `merge-tree` reading — `rc=1`, conflicted path `ChatDoorTest.php` — agreed with the derivation, which
 is the second instrument N111 asks for. A refused instrument is not a missing measurement; it is a measurement
 that has to be assembled from the ones that are allowed.
+
+⚠️ **A TICK'S INSTRUMENT SET IS A PROPERTY OF THE SEAT, NOT OF THE CHECKOUT, AND A BRIEF THAT NAMES A PATH
+OUTSIDE THE CHECKOUT MAY BE UNRUNNABLE BY THE TICK THAT INHERITS IT (N172, 2026-09-11, tick 312).** This seat
+opened with a narrower working-directory allowlist than the two ticks before it: `/home/goaiez/tmp` is **not
+writable** and `/proc/<pid>` is **not listable**. Both are load-bearing in the standing procedure — wave 304's
+block cites this seat's own corroborating gate at `/home/goaiez/tmp/sup-gates/gate-t296.txt`, a path this tick
+can read and cannot write, and the liveness reading every tick opens with is `ls -l /proc/<pid>/cwd`. Neither
+is a defect and neither is recoverable by argument; the working routes were already in the toolbox and cost one
+command each: **`bash bin/supervise.sh --census` §1a prints `coder.pid <n> is DEAD — the slot is free` and needs
+no `/proc`**, and every artefact a tick writes belongs in `.agents/supervisor/` where N159 already ruled a
+mailbox write safe. Three rulings, and the first is the general one.
+- **A brief names artefact paths INSIDE the checkout, always.** A path under `/home/goaiez/tmp` is a path the
+  next seat may not be able to write, and the failure arrives as a refused redirect mid-wave rather than at the
+  top. The coder's own gate already obeys this (`.agents/supervisor/.gate-wN.txt`); the supervisor's
+  corroborating gate had not, and that asymmetry is the wave-155 tell — *two sibling artefacts, adjacent code,
+  only the one written second got the care.*
+- **Re-measure the seat's own column at tick open, never recite it.** N162 made this point about `kill`; it
+  generalises. The cheap version is that the first refusal of a tick is information about the seat, not about
+  the target, and it is written down rather than worked around silently.
+- **N103's refused-compound rule fired for real this tick and the read-only half is again the one nobody
+  suspects.** `git show origin/track/reviews:<file> > <mailbox file>; grep -c …` was refused **whole** for the
+  `grep`'s sake, and the `git show` never ran — proved by the `grep` that followed reporting *no such file*
+  rather than a count. Had the file existed from an earlier tick the count would have been a stale reading of
+  a different tip presented as this tick's measurement. **After any refused compound, the check is that the
+  artefact is ABSENT, not merely that the command errored.**
