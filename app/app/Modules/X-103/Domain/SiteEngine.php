@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Modules\X103\Domain;
 
 use App\Modules\X103\Events\ApprovalRequested;
+use App\Modules\X103\Events\PagePublished;
+use App\Modules\X103\Events\SitePublished;
 use App\Modules\X103\Models\Funnel;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
@@ -25,7 +27,7 @@ final class SiteEngine
 
             $commitId = 'commit_'.Str::random(16);
 
-            $required = ['chat_widget', 'form_capture', 'dni_script', 'seo_tags', 'schema_markup'];
+            $required = ['pixel_script', 'chat_widget', 'form_capture', 'dni_script', 'seo_tags', 'schema_markup'];
             foreach ($required as $type) {
                 $found = false;
                 foreach ($contentBlocks as $block) {
@@ -39,19 +41,28 @@ final class SiteEngine
                 }
             }
 
+            $blockTypes = array_column($contentBlocks, 'type');
             $version = PageVersion::create([
                 'business_id' => $businessId,
                 'page_id' => $page->id,
                 'commit_id' => $commitId,
                 'content_blocks' => $contentBlocks,
-                'pixel_installed' => true, // G9-04 full-stack site law
-                'ssl_enabled' => true,
+                'pixel_installed' => in_array('pixel_script', $blockTypes, true), // G9-04 full-stack site law
+                'chat_installed' => in_array('chat_widget', $blockTypes, true), // G9-04 full-stack site law
+                'form_capture_installed' => in_array('form_capture', $blockTypes, true), // G9-04 full-stack site law
+                'dni_installed' => in_array('dni_script', $blockTypes, true), // G9-04 full-stack site law
+                'seo_tags_installed' => in_array('seo_tags', $blockTypes, true), // G9-04 full-stack site law
+                'schema_installed' => in_array('schema_markup', $blockTypes, true), // G9-04 full-stack site law
+                'ssl_enabled' => false, // set true only by the SSL provisioning step (J11)
             ]);
 
             $page->update([
                 'is_published' => true,
                 'current_version_id' => $version->id,
             ]);
+
+            Event::dispatch(new PagePublished($businessId, $page->id, $commitId, $version->id));
+            Event::dispatch(new SitePublished($businessId, $page->id, $commitId, $version->id));
 
             return [
                 'status' => 'published',

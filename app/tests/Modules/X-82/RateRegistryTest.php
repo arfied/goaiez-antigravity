@@ -152,4 +152,53 @@ class RateRegistryViewTest extends TestCase
             ->assertOk()
             ->assertSee('$1,234.56');
     }
+
+    public function test_seeded_rate_reaches_the_page(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz1 = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        Rate::create([
+            'business_id' => $biz1->id,
+            'rate_code' => 'TEST_RATE_TENANT',
+            'amount_cents' => 68743,
+            'currency' => 'USD',
+            'current_version' => 1,
+            'is_active' => true,
+        ]);
+
+        $this->get(route('x-82.rate-registry'))
+            ->assertOk()
+            ->assertSee('$687.43');
+
+        $admin = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);
+        $this->actingAs($admin);
+        $biz2 = $this->provisionTenant(['owner_user_id' => $admin->id]);
+
+        Rate::create([
+            'business_id' => $biz2->id,
+            'rate_code' => 'TEST_RATE_ADMIN',
+            'amount_cents' => 68743,
+            'currency' => 'USD',
+            'current_version' => 1,
+            'is_active' => true,
+        ]);
+
+        $this->get(route('x-82.rate-registry.admin'))
+            ->assertOk()
+            ->assertSee('$687.43');
+    }
+
+    public function test_staff_is_forbidden(): void
+    {
+        $user = User::factory()->create();
+        $user->role = UserRole::Staff;
+        $user->save();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
+
+        Livewire::actingAs($user)->test(RateRegistryView::class)->assertForbidden();
+
+    }
 }

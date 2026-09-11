@@ -10,6 +10,7 @@ use App\Modules\X161\Actions\DemoProvisionAction;
 use App\Modules\X161\Actions\DemoResetAction;
 use App\Modules\X161\Domain\DemoSandboxEngine;
 use App\Modules\X161\Domain\SandboxCarrierTransport;
+use App\Modules\X161\Domain\SandboxEngine;
 use App\Modules\X161\Events\DemoConverted;
 use App\Modules\X161\Events\DemoProvisioned;
 use App\Modules\X161\Events\DemoStopReceived;
@@ -101,5 +102,28 @@ class X161Test extends TestCase
     public function test_demo_capabilities(): void
     {
         $this->assertTrue(true);
+    }
+
+    /**
+     * [G4-56]
+     */
+    public function test_time_travel_allowed_only_in_sandbox(): void
+    {
+        $engine = new SandboxEngine;
+        $this->assertTrue($engine->timeTravelAllowed(true));
+        $this->assertFalse($engine->timeTravelAllowed(false));
+    }
+
+    /**
+     * [G8-41]
+     */
+    public function test_destruction_due_when_untouched_14_days_and_warned(): void
+    {
+        $engine = new SandboxEngine;
+        $this->assertTrue($engine->destructionDue(true, 14, true));
+        $this->assertFalse($engine->destructionDue(true, 14, false));
+        $this->assertFalse($engine->destructionDue(false, 14, true));
+        $this->assertFalse($engine->destructionDue(true, 13, true));
+        $this->assertFalse($engine->destructionDue(false, 99, true));
     }
 }

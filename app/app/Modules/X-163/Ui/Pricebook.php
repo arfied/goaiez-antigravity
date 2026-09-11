@@ -39,6 +39,8 @@ class Pricebook extends Component
 
     public array $inlinePrices = [];
 
+    public array $refusals = [];
+
     public ?int $traceItemId = null;
 
     public function mount(): void
@@ -91,6 +93,13 @@ class Pricebook extends Component
 
         $businessId = Tenancy::id();
 
+        if (PriceBookItem::where('business_id', $businessId)->where('service_key', PriceBookItem::serviceKey($this->newServiceName))->whereNull('location_book_id')->exists()) {
+            // (R245) addItem() refuses a second business-wide row with the same service_name for the same business, and says so through addError
+            $this->addError('newServiceName', 'A business-wide price for this service already exists.');
+
+            return;
+        }
+
         $min = $this->newMinPriceDollars ? (int) round((float) $this->newMinPriceDollars * 100) : null;
         $max = $this->newMaxPriceDollars ? (int) round((float) $this->newMaxPriceDollars * 100) : null;
 
@@ -103,6 +112,7 @@ class Pricebook extends Component
             'tax_rate_pct' => (float) $this->newTaxRatePct,
             'is_sample' => $this->newIsSample,
             'is_confirmed' => ! $this->newIsSample,
+            'confirmed_at' => $this->newIsSample ? null : now(),
         ]);
 
         $this->inlinePrices[$item->id] = $item->price_cents / 100;
@@ -119,9 +129,19 @@ class Pricebook extends Component
     {
         $businessId = Tenancy::id();
         if (isset($this->inlinePrices[$id])) {
-            PriceBookItem::where('business_id', $businessId)->where('id', $id)->update([
-                'price_cents' => (int) round((float) $this->inlinePrices[$id] * 100),
-            ]);
+            $newCents = (int) round((float) $this->inlinePrices[$id] * 100);
+            $query = PriceBookItem::where('business_id', $businessId)->where('id', $id);
+            $row = $query->first();
+
+            if ($row) {
+                $payload = ['price_cents' => $newCents];
+                if ($row->price_cents !== $newCents) {
+                    // (R245) an inline price edit that changes the amount clears the confirmation, and one that does not changes nothing
+                    $payload['is_confirmed'] = false;
+                    $payload['confirmed_at'] = null;
+                }
+                $query->update($payload);
+            }
         }
     }
 
@@ -133,7 +153,13 @@ class Pricebook extends Component
         }
 
         $confirmer = app(PriceConfirmAction::class);
-        $confirmer->handle($businessId, $id);
+        $result = $confirmer->handle($businessId, $id);
+
+        if (isset($result['refusal_code']) && $result['refusal_code'] === 'FILL_ME') {
+            $this->refusals[$id] = true;
+        } else {
+            unset($this->refusals[$id]);
+        }
     }
 
     public function deleteItem(int $id): void
@@ -141,6 +167,7 @@ class Pricebook extends Component
         $businessId = Tenancy::id();
         PriceBookItem::where('business_id', $businessId)->where('id', $id)->delete();
         unset($this->inlinePrices[$id]);
+        unset($this->refusals[$id]);
     }
 
     public function tracePrice(int $id): void

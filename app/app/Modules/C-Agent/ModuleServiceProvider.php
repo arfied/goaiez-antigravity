@@ -4,10 +4,15 @@ declare(strict_types=1);
 
 namespace App\Modules\CAgent;
 
+use App\Modules\CAgent\Listeners\TakeoverReleasedListener;
+use App\Modules\CAgent\Listeners\TakeoverStartedListener;
 use App\Modules\CAgent\Ui\GroundcheckScreen;
 use App\Modules\CAgent\Ui\RefusalcodeDistributionPer;
 use App\Modules\CAgent\Ui\TeachingBox;
 use App\Modules\CAgent\Ui\Thread;
+use App\Modules\X01\Events\TakeoverReleased;
+use App\Modules\X01\Events\TakeoverStarted;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 
@@ -20,6 +25,8 @@ final class ModuleServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Event::listen(TakeoverStarted::class, TakeoverStartedListener::class);
+        Event::listen(TakeoverReleased::class, TakeoverReleasedListener::class);
         $this->loadRoutesFrom(__DIR__.'/routes.generated.php');
 
         $this->loadMigrationsFrom(__DIR__.'/Database/migrations');

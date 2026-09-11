@@ -8,16 +8,21 @@ use App\Models\Conversation;
 use App\Modules\X01\Events\ContactCreated;
 use App\Modules\X01\Events\ConversationUpdated;
 use App\Modules\X01\Events\LeadScored;
+use App\Modules\X01\Events\TakeoverReleased;
 use App\Modules\X01\Events\TakeoverStarted;
 use App\Modules\X01\Exceptions\LeadRatingOutOfRangeRefused;
 use App\Modules\X01\Exceptions\TakeoverNotLatchedRefused;
 use App\Modules\X01\Models\LeadScore;
 use App\Modules\X01\Models\TakeoverLatch;
 use App\Modules\X121\Models\Person;
+use App\Services\Conversations\ConversationThreads;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 
+/**
+ * (R245) Integrity: Rethrow invariant-violation InvalidArgumentExceptions in ingestMessage.
+ */
 final class UnifiedInboxManager
 {
     /**
@@ -70,10 +75,19 @@ final class UnifiedInboxManager
 
             // Find or create Conversation for this Person
             $conversation = Tenancy::actingAs($businessId, function () use ($person, $channel) {
-                return Conversation::firstOrCreate(
+                $convo = Conversation::firstOrCreate(
                     ['person_id' => $person->id],
                     ['channel' => $channel, 'status' => 'open']
                 );
+
+                if (in_array($channel, ['whatsapp', 'email'])) {
+                    if (! $convo->hasLoggedConsent()) {
+                        $convo->consent_logged_at = now();
+                        $convo->save();
+                    }
+                }
+
+                return $convo;
             });
 
             Event::dispatch(new ConversationUpdated(
@@ -82,6 +96,20 @@ final class UnifiedInboxManager
                 channel: $channel,
                 messageSnippet: substr($body, 0, 50)
             ));
+
+            // Safe to call recordInbound (which relies on the ambient tenant without setting it) because
+            // the Person find-or-create above triggers the `people` table's RLS policy (ENABLE + FORCE ROW LEVEL SECURITY
+            // with a matching WITH CHECK in 2026_08_30_000001_create_x121_noun_tables.php:203). If the ambient
+            // tenant is absent or mismatched, the Person write fails before reaching here.
+            try {
+                app(ConversationThreads::class)->recordInbound($conversation, $body);
+            } catch (\InvalidArgumentException $e) {
+                if (str_contains($e->getMessage(), 'cleared to store message content')) {
+                    // A thread that has not been cleared to store message content does not store one, dropping it instead.
+                } else {
+                    throw $e;
+                }
+            }
 
             return [
                 'person_id' => $person->id,
@@ -122,6 +150,39 @@ final class UnifiedInboxManager
                 'operator_name' => $operatorName,
                 'label' => 'Human takeover',
                 'is_active' => true,
+            ];
+        });
+    }
+
+    /**
+     * Release human takeover on a conversation (TEST ANCHOR).
+     */
+    public function releaseTakeover(int $businessId, int $conversationId): array
+    {
+        return DB::transaction(function () use ($businessId, $conversationId) {
+            $latch = TakeoverLatch::where('business_id', $businessId)
+                ->where('conversation_id', $conversationId)
+                ->where('is_active', true)
+                ->first();
+
+            if ($latch === null) {
+                throw TakeoverNotLatchedRefused::forConversation($conversationId);
+            }
+
+            $latch->update([
+                'is_active' => false,
+                'released_at' => now(),
+            ]);
+
+            Event::dispatch(new TakeoverReleased(
+                businessId: $businessId,
+                conversationId: $conversationId
+            ));
+
+            return [
+                'latch_id' => $latch->id,
+                'conversation_id' => $conversationId,
+                'is_active' => false,
             ];
         });
     }

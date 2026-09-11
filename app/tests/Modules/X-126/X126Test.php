@@ -87,6 +87,13 @@ class X126Test extends TestCase
 
     /**
      * [N-126-01] capability arbiter decision evaluation
+     * [N-049] ⛔ REFUSED: `php artisan why N-049` reports it is never DEFINED. NO Fact → NO SKILL, on EVERY action, with no bypass path. Nothing to assert. (R245, REV-81/REV-83)
+     * [N-050] ⛔ REFUSED: `php artisan why N-050` reports it is never DEFINED. no Fact → no skill, every action, no bypass. Nothing to assert. (R245, REV-81/REV-83)
+     * [N-051] ⛔ REFUSED: `php artisan why N-051` reports it is never DEFINED. no Fact → no skill, every action, no bypass. Nothing to assert. (R245, REV-81/REV-83)
+     * [N-052] ⛔ REFUSED: `php artisan why N-052` reports it is never DEFINED. NO Fact → NO SKILL, on EVERY action, with no bypass path. Nothing to assert. (R245, REV-81/REV-83)
+     * [N-054] ⛔ REFUSED: `php artisan why N-054` reports it is never DEFINED. no Fact → no skill, every action, no bypass. Nothing to assert. (R245, REV-81/REV-83)
+     * [N-057] ⛔ REFUSED: `php artisan why N-057` reports it is never DEFINED. no Fact → no skill, every action, no bypass. Nothing to assert. (R245, REV-81/REV-83)
+     * [N-060] ⛔ REFUSED: `php artisan why N-060` reports it is never DEFINED. no Fact → no skill, every action, no bypass. Nothing to assert. (R245, REV-81/REV-83)
      */
     public function test_n_126_01_decision_evaluation(): void
     {
@@ -103,6 +110,28 @@ class X126Test extends TestCase
         );
 
         $this->assertEquals('permitted', $res['decision']);
+    }
+
+    /**
+     * [N-126-01] refusal path: no fact
+     */
+    public function test_n_126_01_refusal_no_fact(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Policy Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $res = $this->checker->handle(
+            businessId: $biz->id,
+            capabilityName: 'entity.update',
+            context: [
+                'requires_grounding' => true,
+                'has_grounding_fact' => false,
+                'has_consent' => true,
+            ]
+        );
+
+        $this->assertEquals('refused', $res['decision']);
+        $this->assertEquals('NO_FACT', $res['refusal_code']);
     }
 
     /**

@@ -125,10 +125,14 @@ class StafffacingAssistantPanelTest extends TestCase
         Event::fake([AssistantSuggested::class, UpsellPrompted::class, PriceRefusalFlagged::class]);
 
         Livewire::actingAs($user)->test(StafffacingAssistantPanel::class)
-            ->set('question', 'Random Thing Not In DB')
+            ->set('question', 'How much for a Random Thing Not In DB')
             ->call('ask')
-            ->assertSee('Not in the pricebook. Nothing to quote.')
-            ->assertSee('Answered');
+            ->assertSee('I\'d need to confirm that price')
+            ->assertSee('Needs a price');
+
+        $this->assertEquals(1, FieldSuggestion::where('business_id', $biz->id)->count());
+        $suggestion = FieldSuggestion::where('business_id', $biz->id)->first();
+        $this->assertTrue((bool) $suggestion->is_unconfirmed_price);
     }
 
     public function test_ask_again(): void
@@ -166,5 +170,34 @@ class StafffacingAssistantPanelTest extends TestCase
         $this->assertStringNotContainsString('Sms', $content);
         $this->assertStringNotContainsString('Notif', $content);
         $this->assertStringNotContainsString('Infobip', $content);
+    }
+
+    public function test_real_get_shows_derived_magnitude(): void
+    {
+        $user = User::factory()->create();
+        $user->role = UserRole::Owner;
+        $user->save();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        Event::fake([AssistantSuggested::class, UpsellPrompted::class, PriceRefusalFlagged::class]);
+
+        $item = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Derived Test Service',
+            'price_cents' => 28417,
+            'is_sample' => false,
+            'tax_rate_pct' => 8.25,
+            'is_confirmed' => true,
+        ]);
+
+        Livewire::actingAs($user)->test(StafffacingAssistantPanel::class)
+            ->set('question', 'Derived Test Service')
+            ->call('ask');
+
+        $this->actingAs($user)->get(route('x-175.stafffacing-assistant-panel'))
+            ->assertOk()
+            ->assertSee('284.17');
     }
 }

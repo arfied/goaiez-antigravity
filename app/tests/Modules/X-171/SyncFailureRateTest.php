@@ -13,6 +13,7 @@ use App\Modules\X171\Models\DeviceSyncConflict;
 use App\Modules\X171\Models\DeviceSyncQueue;
 use App\Modules\X171\Ui\SyncFailureRate;
 use App\Support\Tenancy;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -46,6 +47,34 @@ class SyncFailureRateTest extends TestCase
             ->assertOk()
             ->assertSee('No device mutations yet.')
             ->assertSee('No sync conflicts. Every device mutation replayed cleanly.');
+    }
+
+    public function test_seeded_row_reaches_the_page(): void
+    {
+        Event::fake([SyncConflict::class, JobCompleted::class]);
+
+        $user = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);
+        $biz = TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
+
+        for ($i = 0; $i < 8; $i++) {
+            DB::table('device_sync_queue')->insert([
+                'business_id' => $biz->id,
+                'client_mutation_id' => 'mut_'.$i,
+                'device_id' => 'device_default',
+                'action_name' => 'job.completed',
+                'payload' => '[]',
+                'version' => 1,
+                'status' => $i < 5 ? 'conflicted' : 'processed',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
+        $this->actingAs($user)
+            ->get(route('x-171.sync-failure-rate.admin'))
+            ->assertOk()
+            ->assertSee('62.5 %');
     }
 
     public function test_conflicts_and_processed_mutate_stats(): void

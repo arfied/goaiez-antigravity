@@ -14,6 +14,7 @@ use App\Modules\X162\Events\JobDispatched;
 use App\Modules\X162\Events\RouteChanged;
 use App\Modules\X162\Events\TechEnRoute;
 use App\Modules\X162\Models\DispatchAssignment;
+use App\Modules\X162\Models\EtaPrediction;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -101,5 +102,49 @@ class X162Test extends TestCase
 
         $route = $this->routeAction->handle($biz->id, 42, [101, 102, 103], 12.8);
         $this->assertEquals(12.8, $route->total_distance_km);
+    }
+
+    public function test_job_dispatch_performs_no_referential_validation(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Unvalidated Dispatch Tenant', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        // ids that exist in no table at all
+        $assignment = (new JobDispatchAction)->handle($biz->id, 987654321, 987654322);
+
+        $this->assertEquals(987654321, $assignment->job_id, 'job_id is written verbatim: X-162 validates no dispatch target.');
+        $this->assertEquals(987654322, $assignment->tech_id, 'tech_id is written verbatim: X-162 validates no dispatch target.');
+        $this->assertDatabaseHas('dispatch_assignments', [
+            'business_id' => $biz->id,
+            'job_id' => 987654321,
+            'tech_id' => 987654322,
+        ]);
+    }
+
+    public function test_en_route_without_an_eta_records_nothing_and_notifies_nobody(): void
+    {
+        Event::fake([JobDispatched::class, TechEnRoute::class, RouteChanged::class, EtaUpdated::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Field Dispatch Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $jobId = 1001;
+        $techId = 42;
+
+        $assignment = $this->dispatchAction->handle($biz->id, $jobId, $techId);
+
+        $res = $this->enRouteAction->markEnRoute($biz->id, $jobId, $techId);
+
+        $this->assertSame('en_route', $res['status'], 'Status must be en_route');
+        $this->assertNull($res['eta_minutes'], 'ETA minutes must be null');
+        $this->assertFalse($res['notification_sent'], 'Notification must not be sent');
+        $this->assertSame(0, EtaPrediction::where('business_id', $biz->id)->where('job_id', $jobId)->count(), 'No EtaPrediction should be created');
+
+        Event::assertDispatchedTimes(TechEnRoute::class, 1);
+        Event::assertDispatched(TechEnRoute::class, fn ($e) => $e->etaMinutes === null);
+
+        $q = $this->queryAction->handle($biz->id, $jobId);
+        $this->assertNull($q['eta_minutes'], 'Query ETA minutes must be null');
+        $this->assertDoesNotMatchRegularExpression('/\d+ minutes/', $q['grounded_answer'], 'Grounded answer must not contain X minutes');
     }
 }

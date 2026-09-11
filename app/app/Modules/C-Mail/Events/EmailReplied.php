@@ -10,6 +10,8 @@ final class EmailReplied
         public readonly int $businessId,
         public readonly int $mailDomainId,
         public readonly string $fromEmail,
-        public readonly string $subject
+        public readonly string $subject,
+        public readonly string $senderName = '',
+        public readonly string $body = ''
     ) {}
 }

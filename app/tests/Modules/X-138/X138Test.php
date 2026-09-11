@@ -10,6 +10,8 @@ use App\Modules\X138\Events\AttributionAmbiguous;
 use App\Modules\X138\Events\JobAttributed;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 
 class X138Test extends TestCase
@@ -93,10 +95,168 @@ class X138Test extends TestCase
     }
 
     /**
-     * [G4-25], [G9-13], [G9-14], [G9-33], [G9-34], [G13-04], [G13-06], [G13-10], [G13-16], [G13-21], [G13-23], [G13-33], [G17-24]
+     * [G9-14]
      */
-    public function test_attribution_capabilities(): void
+    public function test_g9_14_ad_spend_stored_in_roi_snapshot(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Ad Spend Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        Http::fake();
+
+        $result = $this->roiAction->computeCampaignRoi($biz->id, 'spend_campaign', 60000, 10000);
+
+        $this->assertDatabaseHas('roi_snapshots', [
+            'id' => $result['snapshot_id'],
+            'ad_spend_cents' => 60000,
+            'business_id' => $biz->id,
+        ]);
+
+        Http::assertNothingSent();
+    }
+
+    /**
+     * [G9-33]
+     */
+    public function test_g9_33_campaign_mapped_to_closed_revenue(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Revenue Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $result = $this->roiAction->computeCampaignRoi($biz->id, 'revenue_campaign', 10000, 250000);
+
+        $this->assertDatabaseHas('roi_snapshots', [
+            'id' => $result['snapshot_id'],
+            'campaign_name' => 'revenue_campaign',
+            'closed_revenue_cents' => 250000,
+            'business_id' => $biz->id,
+        ]);
+
+        $this->assertEquals(25.0, $result['roi_multiple']);
+    }
+
+    /**
+     * [G13-10]
+     */
+    public function test_g13_10_offline_close_mapped_to_click_touches(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Offline Close Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $touches = [
+            ['source' => 'organic_search', 'timestamp' => '2026-08-20T10:00:00Z', 'utm_campaign' => 'fall_cleaning'],
+        ];
+
+        Event::fake([JobAttributed::class]);
+
+        $result = $this->queryAction->queryJobAttribution(
+            businessId: $biz->id,
+            jobId: 777,
+            qualifyingTouches: $touches,
+            jobValueCents: 85000 // offline close value
+        );
+
+        $this->assertDatabaseHas('attribution_queries', [
+            'id' => $result['query_id'],
+            'job_value' => 85000,
+            'touches' => json_encode($touches),
+            'attribution_status' => 'single',
+        ]);
+
+        Event::assertDispatched(JobAttributed::class, fn ($e) => $e->touchSource === 'organic_search' && $e->jobId === 777);
+    }
+
+    /**
+     * [G9-13]
+     */
+    public function test_g9_13_attribution_is_a_query_not_a_pipeline(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Query Not Pipeline Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $touches = [
+            ['source' => 'organic_search', 'timestamp' => '2026-08-22T10:00:00Z', 'utm_campaign' => 'fall_cleaning'],
+            ['source' => 'paid_search',    'timestamp' => '2026-08-23T11:00:00Z', 'utm_campaign' => 'fall_cleaning'],
+        ];
+
+        Queue::fake();
+
+        $result = $this->queryAction->queryJobAttribution(
+            businessId: $biz->id,
+            jobId: 8801,
+            qualifyingTouches: $touches,
+            jobValueCents: 50000
+        );
+
+        Queue::assertNothingPushed();
+        $this->assertSame('ambiguous', $result['attribution_status']);
+    }
+
+    /**
+     * [G13-16]
+     */
+    public function test_g13_16_both_touches_stored_in_one_row(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Both Touches Stored Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $touches = [
+            ['source' => 'organic_search', 'timestamp' => '2026-08-22T10:00:00Z', 'utm_campaign' => 'fall_cleaning'],
+            ['source' => 'paid_search',    'timestamp' => '2026-08-23T11:00:00Z', 'utm_campaign' => 'fall_cleaning'],
+        ];
+
+        Event::fake([AttributionAmbiguous::class]);
+
+        $result = $this->queryAction->queryJobAttribution(
+            businessId: $biz->id,
+            jobId: 8802,
+            qualifyingTouches: $touches,
+            jobValueCents: 60000
+        );
+
+        $this->assertDatabaseHas('attribution_queries', [
+            'id' => $result['query_id'],
+            'touches' => json_encode($touches),
+        ]);
+
+        Event::assertDispatched(AttributionAmbiguous::class, fn ($e) => count($e->qualifyingTouches) === 2);
+    }
+
+    /**
+     * [G13-06]
+     * X-122 owns the action log (action_invocations); queryJobAttribution accepts touches as a parameter, reading no log.
+     */
+    public function test_g13_06_attribution_is_a_pure_query_over_touches(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Query Action Log Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $twoTouches = [['source' => 'a'], ['source' => 'b']];
+        $oneTouch = [['source' => 'c']];
+        $zeroTouches = [];
+
+        $res2 = $this->queryAction->queryJobAttribution($biz->id, 9002, $twoTouches, 100);
+        $this->assertEquals('ambiguous', $res2['attribution_status']);
+        $this->assertDatabaseHas('attribution_queries', [
+            'id' => $res2['query_id'],
+            'attribution_status' => 'ambiguous',
+            'touches' => json_encode($twoTouches),
+        ]);
+
+        $res1 = $this->queryAction->queryJobAttribution($biz->id, 9001, $oneTouch, 100);
+        $this->assertEquals('single', $res1['attribution_status']);
+        $this->assertDatabaseHas('attribution_queries', [
+            'id' => $res1['query_id'],
+            'attribution_status' => 'single',
+            'touches' => json_encode($oneTouch),
+        ]);
+
+        $res0 = $this->queryAction->queryJobAttribution($biz->id, 9000, $zeroTouches, 100);
+        $this->assertEquals('none', $res0['attribution_status']);
+        $this->assertDatabaseHas('attribution_queries', [
+            'id' => $res0['query_id'],
+            'attribution_status' => 'none',
+            'touches' => json_encode($zeroTouches),
+        ]);
     }
 }

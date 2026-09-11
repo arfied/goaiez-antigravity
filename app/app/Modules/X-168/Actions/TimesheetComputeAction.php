@@ -43,6 +43,16 @@ final class TimesheetComputeAction
             ['period_end' => $periodEnd, 'total_hours' => 0.00, 'status' => 'open']
         );
 
+        $existingOpenEntry = TimesheetEntry::where('business_id', $businessId)
+            ->where('timesheet_id', $timesheet->id)
+            ->where('job_id', $jobId)
+            ->whereNull('ended_at')
+            ->first();
+
+        if ($existingOpenEntry) {
+            return $existingOpenEntry;
+        }
+
         $durationMinutes = 0;
         if ($endedAt) {
             $durationMinutes = max(0, (int) $startedAt->diffInMinutes($endedAt));
@@ -60,14 +70,54 @@ final class TimesheetComputeAction
             'location_lng' => $locationLng,
         ]);
 
-        // Recompute total hours for timesheet
+        $this->updateTotalHoursAndDispatch($businessId, $timesheet);
+
+        return $entry;
+    }
+
+    public function closeJobWindow(int $businessId, int $jobId, ?Carbon $endedAt = null): ?TimesheetEntry
+    {
+        $entries = TimesheetEntry::where('business_id', $businessId)
+            ->where('job_id', $jobId)
+            ->whereNull('ended_at')
+            ->get();
+
+        $latestEntry = $entries->sortByDesc('id')->first();
+
+        if (! $latestEntry) {
+            return null;
+        }
+
+        $endedAt = $endedAt ?? Carbon::now();
+
+        $timesheetIds = [];
+        foreach ($entries as $entry) {
+            $durationMinutes = max(0, (int) $entry->started_at->diffInMinutes($endedAt));
+
+            $entry->update([
+                'ended_at' => $endedAt,
+                'duration_minutes' => $durationMinutes,
+            ]);
+
+            $timesheetIds[] = $entry->timesheet_id;
+        }
+
+        foreach (array_unique($timesheetIds) as $timesheetId) {
+            $timesheet = Timesheet::find($timesheetId);
+            $this->updateTotalHoursAndDispatch($businessId, $timesheet);
+        }
+
+        return $latestEntry;
+    }
+
+    private function updateTotalHoursAndDispatch(int $businessId, Timesheet $timesheet): void
+    {
         $totalMinutes = TimesheetEntry::where('timesheet_id', $timesheet->id)->sum('duration_minutes');
         $totalHours = round($totalMinutes / 60, 2);
         $timesheet->update(['total_hours' => $totalHours]);
 
         Event::dispatch(new TimesheetSubmitted($businessId, $timesheet->id, $totalHours));
-        Event::dispatch(new PeriodReady($businessId, $timesheet->id, $periodEnd));
+        Event::dispatch(new PeriodReady($businessId, $timesheet->id, $timesheet->period_end->toDateString()));
 
-        return $entry;
     }
 }

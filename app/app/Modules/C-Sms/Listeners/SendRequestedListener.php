@@ -21,9 +21,9 @@ final class SendRequestedListener
 
     public function handle(SendRequested $event): void
     {
-        $consentState = match ($event->messageClass) {
-            'marketing' => 'opted_in',
-            default => 'transactional',
+        $consentState = match (OutreachPurpose::tryFrom($event->messageClass) ?? OutreachPurpose::Transactional) {
+            OutreachPurpose::Marketing => 'opted_in',
+            OutreachPurpose::Transactional => 'transactional',
         };
 
         $decision = $this->decideAction->handle(
@@ -36,10 +36,7 @@ final class SendRequestedListener
         if (! $decision['granted']) {
             $customer = Customer::where('business_id', $event->businessId)->where('phone', $event->recipientPhone)->first();
             if ($customer) {
-                $purposeEnum = match ($event->messageClass) {
-                    'marketing' => OutreachPurpose::Marketing,
-                    default => OutreachPurpose::Transactional,
-                };
+                $purposeEnum = OutreachPurpose::tryFrom($event->messageClass) ?? OutreachPurpose::Transactional;
                 $legacyDecision = app(ConsentService::class)->decide($customer, OutreachChannel::Sms, $purposeEnum);
                 if ($legacyDecision->isGranted()) {
                     throw new \Exception('UNRESOLVED C-Sms design "two consent engines disagree: X-204 refused, legacy granted"');
@@ -55,7 +52,8 @@ final class SendRequestedListener
             $event->body,
             $event->messageClass,
             '12:00',
-            $decision['permit_id'] ?? 0
+            $decision['permit_id'] ?? 0,
+            'csms:'.$event->compositionId
         );
     }
 }

@@ -105,15 +105,30 @@ class X112Test extends TestCase
     }
 
     /**
-     * [G2-43] & [G7-02] the client sees the agency's price only (§17.5)
+     * [G2-43] & [G7-02]
+     * Asserting: the client sees the agency's price only (§17.5)
      */
     public function test_g2_43_client_sees_agency_price_only(): void
     {
-        $this->assertTrue(true);
+        $owner = User::factory()->create();
+        $biz = app(TenantProvisioner::class)->provision($owner);
+        Tenancy::set($biz->id);
+
+        $agency = Agency::create(['business_id' => $biz->id, 'agency_name' => 'Agency', 'agency_mode' => 'full_service']);
+        $this->markupAction->handle($biz->id, $agency->id, 'sms_segment', 100, 300);
+
+        $clientRates = $this->engine->getClientFacingRates($biz->id, $agency->id);
+        $this->assertArrayHasKey('sms_segment', $clientRates);
+        $this->assertEquals(400, $clientRates['sms_segment']['rate_cents']);
+        $this->assertArrayNotHasKey('wholesale_rate_cents', $clientRates['sms_segment']);
+        $this->assertArrayNotHasKey('retail_markup_cents', $clientRates['sms_segment']);
+        $this->assertArrayNotHasKey('cost', $clientRates['sms_segment']);
+        $this->assertArrayNotHasKey('margin', $clientRates['sms_segment']);
     }
 
     /**
-     * [G2-67] & [G9-09] the agency's weekly client report
+     * [G2-67] & [G9-09]
+     * ⛔ REFUSED: surveyed AgencyEngine and found no seam or method for rendering weekly client reports.
      */
     public function test_g2_67_weekly_report(): void
     {
@@ -121,7 +136,8 @@ class X112Test extends TestCase
     }
 
     /**
-     * [G4-09] a sub-tenant may narrow, never widen
+     * [G4-09]
+     * ⛔ REFUSED: RoleAssignAction.php writes a role string with updateOrCreate and never compares it to a parent scope; AgencyEngine::authorizeStaff() returns authorized/role and enforces active/inactive only. There is no narrowing anywhere.
      */
     public function test_g4_09_subtenant_scope(): void
     {
@@ -130,6 +146,7 @@ class X112Test extends TestCase
 
     /**
      * [G4-22] the agency's client sees results without a password
+     * ⛔ REFUSED: surveyed routes.generated.php and found all routes are under 'auth' middleware; no route serves a client view without auth.
      */
     public function test_g4_22_client_zero_password_results(): void
     {
@@ -137,9 +154,19 @@ class X112Test extends TestCase
     }
 
     /**
-     * [G7-05], [G7-06], [G7-07], [G7-44] named in header
+     * [G7-05], [G7-07], [G7-44] named in the header
+     * ⛔ REFUSED: these are register bookkeeping, not capabilities, so there is nothing to assert.
      */
     public function test_header_capabilities(): void
+    {
+        $this->assertTrue(true);
+    }
+
+    /**
+     * [G7-06] named in the header; the log is X-122's
+     * ⛔ REFUSED: surveyed AgencyEngine and found no seam for X-122 logging; impersonation writes to its own ImpersonationLog.
+     */
+    public function test_g7_06_header_log(): void
     {
         $this->assertTrue(true);
     }
@@ -163,6 +190,7 @@ class X112Test extends TestCase
 
     /**
      * [G7-13] task visibility per client
+     * ⛔ REFUSED: tasks are a core feature (CrmTask), but surveyed Actions, Database, Domain, Events, Models, Ui and found no client visibility implementation.
      */
     public function test_g7_13_task_visibility(): void
     {
@@ -170,7 +198,8 @@ class X112Test extends TestCase
     }
 
     /**
-     * [G7-19] a Loom on the client dashboard
+     * [G7-19]
+     * ⛔ REFUSED: surveyed AgencyEngine and found no seam or method for Loom or client dashboard media.
      */
     public function test_g7_19_loom_on_dashboard(): void
     {
@@ -202,15 +231,32 @@ class X112Test extends TestCase
     }
 
     /**
-     * [G7-30] gross margin per deal
+     * [G7-30]
+     * Asserting: gross margin per deal; the approval above a floor is X-202's
      */
     public function test_g7_30_gross_margin(): void
     {
-        $this->assertTrue(true);
+        Event::fake([MarginComputed::class]);
+        $owner = User::factory()->create();
+        $biz = app(TenantProvisioner::class)->provision($owner);
+        Tenancy::set($biz->id);
+
+        $agency = Agency::create(['business_id' => $biz->id, 'agency_name' => 'Agency', 'agency_mode' => 'full_service']);
+        $this->markupAction->handle($biz->id, $agency->id, 'seo_audit', 5000, 2000);
+
+        Event::assertDispatched(MarginComputed::class, function ($event) use ($biz) {
+            return $event->businessId === $biz->id && $event->serviceType === 'seo_audit' && $event->marginCents === 2000;
+        });
+
+        $agencyRates = $this->engine->getAgencyFacingRates($biz->id, $agency->id);
+        $this->assertArrayHasKey('seo_audit', $agencyRates);
+        $this->assertEquals(5000, $agencyRates['seo_audit']['cost']);
+        $this->assertEquals(2000, $agencyRates['seo_audit']['margin']);
     }
 
     /**
-     * [G7-31] named in header; Infobip rates from X-82
+     * [G7-31]
+     * ⛔ REFUSED: surveyed AgencyEngine and found no seam for fetching Infobip rates from X-82.
      */
     public function test_g7_31_rates(): void
     {
@@ -218,7 +264,8 @@ class X112Test extends TestCase
     }
 
     /**
-     * [G9-32] client health on the agency dashboard
+     * [G9-32]
+     * ⛔ REFUSED: surveyed AgencyEngine and found no seam or method for checking client health scores.
      */
     public function test_g9_32_client_health(): void
     {
@@ -226,7 +273,8 @@ class X112Test extends TestCase
     }
 
     /**
-     * [G16-10] agency announcements are named in the header
+     * [G16-10] agency announcements
+     * ⛔ REFUSED: an un-dismissible popup is not a notification class we have (P-062).
      */
     public function test_g16_10_agency_announcements(): void
     {
@@ -234,7 +282,8 @@ class X112Test extends TestCase
     }
 
     /**
-     * [G19-21] account manager told before the client leaves
+     * [G19-21]
+     * ⛔ REFUSED: surveyed AgencyEngine and found no seam or method for account manager churn notifications.
      */
     public function test_g19_21_account_manager_notification(): void
     {

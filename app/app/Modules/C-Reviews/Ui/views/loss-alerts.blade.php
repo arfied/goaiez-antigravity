@@ -23,7 +23,7 @@
 
         @if($isEmpty)
             <x-ui.empty-state heading="No customers at risk right now" action="Show a sample" target="toggleSample">
-                A row appears here when a ticket passes its SLA, a review falls at or below the public threshold with no ticket resolved, or a resolved request gets a CSAT under 7.
+                A row appears here when a ticket passes its SLA, a review falls below the public threshold with no ticket resolved, or a resolved request gets a CSAT under 7.
             </x-ui.empty-state>
         @else
             <div class="space-y-4">

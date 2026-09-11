@@ -42,7 +42,7 @@ class TimesheetsTest extends TestCase
         Tenancy::setUser($user->id);
 
         Livewire::actingAs($user)->test(TimesheetsView::class)
-            ->assertSee('No timesheets yet. Hours appear when a technician goes en route.');
+            ->assertSee('No timesheets yet. Hours appear when a technician arrives on site.');
     }
 
     public function test_seeded_sheet_shows_name_hours_and_no_sample_pill(): void
@@ -146,5 +146,30 @@ class TimesheetsTest extends TestCase
             ->call('reopen', $sheet->id);
 
         $this->assertDatabaseHas('timesheets', ['id' => $sheet->id, 'status' => 'open']);
+    }
+
+    public function test_seeded_timesheet_reaches_the_page(): void
+    {
+        $user = User::factory()->create();
+        $user->role = UserRole::Owner;
+        $user->save();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        Timesheet::create([
+            'business_id' => $biz->id,
+            'person_id' => $user->id,
+            'period_start' => '2026-08-25',
+            'period_end' => '2026-08-31',
+            'total_hours' => 7.75,
+            'status' => 'open',
+            'is_sample' => false,
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('x-168.timesheets'))
+            ->assertOk()
+            ->assertSee('7:45');
     }
 }

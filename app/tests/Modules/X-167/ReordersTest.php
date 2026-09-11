@@ -41,7 +41,7 @@ class ReordersTest extends TestCase
         Tenancy::setUser($user->id);
 
         Livewire::actingAs($user)->test(Reorders::class)
-            ->assertSee('No reorders yet. A restock is proposed when stock falls to its reorder point.');
+            ->assertSee('No reorders yet. Stock at its reorder point is flagged on Stock by van; propose a restock there and it appears here.');
     }
 
     public function test_seeded_reorders_show_correctly(): void
@@ -129,5 +129,33 @@ class ReordersTest extends TestCase
 
         Livewire::actingAs($user)->test(Reorders::class)
             ->assertSee('<span>Sample</span>', false);
+    }
+
+    public function test_real_get_shows_derived_magnitude(): void
+    {
+        $user = User::factory()->create();
+        $user->role = UserRole::Owner;
+        $user->save();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $supplier = Supplier::create([
+            'business_id' => $biz->id,
+            'name' => 'HVAC Wholesale Supply',
+            'email' => 'orders@hvacwholesale.test',
+        ]);
+
+        app(ReorderProposeAction::class)->handle(
+            businessId: $biz->id,
+            supplierId: $supplier->id,
+            items: [['sku' => 'COPPER-10M-SPOOL', 'qty' => 5, 'unit' => 'm', 'unit_price_cents' => 10239]],
+            totalCents: 51199
+        );
+
+        $this->actingAs($user)
+            ->get(route('x-167.reorders'))
+            ->assertOk()
+            ->assertSee('511.99');
     }
 }

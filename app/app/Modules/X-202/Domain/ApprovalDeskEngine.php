@@ -65,6 +65,14 @@ final class ApprovalDeskEngine
     }
 
     /**
+     * Determine if a decision authorizes an automated publish. (R245)
+     */
+    public function authorizesPublish(bool $isL1Forever, string $status): bool
+    {
+        return $status === 'approved' && ! $isL1Forever;
+    }
+
+    /**
      * Decide approval item (approve or reject).
      */
     public function decide(
@@ -82,24 +90,45 @@ final class ApprovalDeskEngine
                 : null;
             $stepsCount = $chain->steps_count ?? 1;
 
+            $newComment = null;
+            if ($comment !== null) {
+                $timestamp = now()->toIso8601String();
+                $newLine = "[{$timestamp}] {$comment}";
+                $newComment = $item->decision_comment
+                    ? $item->decision_comment."\n".$newLine
+                    : $newLine;
+            }
+
             // A sequential chain advances one desk per approval; only the last step decides,
             // and ApprovalDecided fires only on the step that sets a terminal status (R245).
             if ($decision === 'approved' && $item->current_step < $stepsCount) {
-                $item->update(['current_step' => $item->current_step + 1]);
+                $updates = ['current_step' => $item->current_step + 1];
+
+                if ($newComment !== null) {
+                    $updates['decision_comment'] = $newComment;
+                }
+
+                $item->update($updates);
 
                 return [
                     'approval_item_id' => $item->id,
                     'status' => 'pending',
                     'current_step' => $item->current_step,
+                    'publish_authorized' => false,
                 ];
             }
 
-            $item->update([
+            $updates = [
                 'status' => $decision,
                 'decided_by_user_id' => $userId,
                 'decided_at' => now(),
-                'decision_comment' => $comment,
-            ]);
+            ];
+
+            if ($newComment !== null) {
+                $updates['decision_comment'] = $newComment;
+            }
+
+            $item->update($updates);
 
             Event::dispatch(new ApprovalDecided(
                 businessId: $businessId,
@@ -112,6 +141,7 @@ final class ApprovalDeskEngine
                 'status' => $decision,
                 'current_step' => $item->current_step,
                 'decided_at' => $item->decided_at->toIso8601String(),
+                'publish_authorized' => $this->authorizesPublish((bool) $item->is_l1_forever, $decision),
             ];
         });
     }

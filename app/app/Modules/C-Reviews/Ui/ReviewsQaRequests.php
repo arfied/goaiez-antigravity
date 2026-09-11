@@ -7,10 +7,11 @@ namespace App\Modules\CReviews\Ui;
 use App\Modules\CReviews\Actions\QaTicketAction;
 use App\Modules\CReviews\Actions\ReviewReplyAction;
 use App\Modules\CReviews\Actions\ReviewRequestAction;
+use App\Modules\CReviews\Domain\PublicThreshold;
 use App\Modules\CReviews\Models\QaSetting;
 use App\Modules\CReviews\Models\ReviewRequest;
-use App\Modules\X121\Models\Person;
-use App\Modules\X181\Models\QaTicket;
+use App\Modules\X121\Actions\EntityReadAction;
+use App\Modules\X181\Actions\QaTicketReadAction;
 use App\Support\Tenancy;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -60,9 +61,8 @@ class ReviewsQaRequests extends Component
     public function getThreshold(): int
     {
         Tenancy::set($this->businessId);
-        $setting = QaSetting::where('business_id', $this->businessId)->first();
 
-        return $setting ? (int) $setting->min_public_stars : 4;
+        return app(PublicThreshold::class)->for($this->businessId);
     }
 
     public function getTicketRecipient(): string
@@ -70,9 +70,9 @@ class ReviewsQaRequests extends Component
         Tenancy::set($this->businessId);
         $setting = QaSetting::where('business_id', $this->businessId)->first();
         if ($setting && ! empty($setting->ticket_recipient_id)) {
-            $person = Person::find($setting->ticket_recipient_id);
+            $person = app(EntityReadAction::class)->handle('people', $setting->ticket_recipient_id, $this->businessId);
 
-            return $person ? $person->name : 'not set';
+            return $person ? $person['name'] : 'not set';
         }
 
         return 'not set';
@@ -243,12 +243,12 @@ class ReviewsQaRequests extends Component
             $requests = $query->get()->map(function ($req) {
                 $req->customer_name = null;
                 if ($req->customer_id) {
-                    $person = Person::find($req->customer_id);
+                    $person = app(EntityReadAction::class)->handle('people', $req->customer_id, $this->businessId);
                     if ($person) {
-                        $req->customer_name = $person->name;
+                        $req->customer_name = $person['name'];
                     }
                 }
-                $req->ticket = QaTicket::where('review_request_id', $req->id)->first();
+                $req->ticket = app(QaTicketReadAction::class)->findByReviewRequestId($this->businessId, $req->id);
 
                 return $req;
             });

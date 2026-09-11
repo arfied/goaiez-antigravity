@@ -14,6 +14,23 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
+/**
+ * ⛔ REFUSED: G3-46 — the capability's own text is "an expiring short link (P-072)"; a noun phrase, not a refusal
+ * ⛔ REFUSED: G5-02 — the capability's own text is "episode resources — spec with the video pass (turn 32)"; a scheduling note, not an assertion
+ * ⛔ REFUSED: G5-52 — the capability's own text is "video tone → written tone"; a transformation arrow, no refusal
+ * ⛔ REFUSED: G8-37 — the capability's own text is "show-notes rewriting — spec with the video pass (turn 32)"; a scheduling note, not an assertion
+ * ⛔ REFUSED: G11-27 — the capability's own text is "episode promo — spec with the video pass (turn 32)"; a scheduling note, not an assertion
+ * ⛔ REFUSED: G12-06 — the capability's own text is "show notes and player — the video pass"; a restatement of the ①, no refusal
+ * ⛔ REFUSED: G12-22 — the capability's own text is "episode furniture — the video pass"; a restatement of the ①, no refusal
+ * ⛔ REFUSED: G12-23 — the capability's own text is "transcribe → notes — the video pass"; a transformation arrow, no refusal
+ * ⛔ REFUSED: G12-24 — the capability's own text is "a video summarised into slides"; a noun phrase, not a refusal
+ * ⛔ REFUSED: G12-34 — the capability's own text is "quotes pulled from a transcript"; a noun phrase, not a refusal
+ * ⛔ REFUSED: G12-37 — the capability's own text is "transcript → thread"; a transformation arrow, no refusal
+ * ⛔ REFUSED: G16-14 — the capability's own text is "the branch is a state on the Conversation"; the mechanism is a state on the Conversation, a noun X-158 neither owns nor reads
+ * ⛔ REFUSED: G16-22 — the capability's own text is "three cuts from the long form"; a noun phrase, not a refusal
+ * ⛔ REFUSED: G16-23 — the capability's own text is "topic changes detected in the audio"; a noun phrase, not a refusal
+ * ⛔ REFUSED: G18-26 — the capability's own text is "live webinar rooms and tokens"; a noun phrase, not a refusal
+ */
 class X158Test extends TestCase
 {
     private VideoRenderAction $renderAction;
@@ -32,6 +49,8 @@ class X158Test extends TestCase
      * every rendered video has a caption track;
      * the transcript of a demo video contains the demo number as digits;
      * a watch past 50% writes video.watched with depth
+     * [G3-25]
+     * [G9-30]
      */
     public function test_anchor_captions_present_demo_number_digits_and_watch_past_50_percent(): void
     {
@@ -42,7 +61,7 @@ class X158Test extends TestCase
 
         $demoNumber = 1042;
 
-        // 1. Render demo proposal video (TEST ANCHOR & G16-02, G16-30)
+        // 1. Render demo proposal video (TEST ANCHOR)
         $video = $this->renderAction->renderVideo(
             businessId: $biz->id,
             title: 'Automated Lead Qualification Demo',
@@ -50,7 +69,7 @@ class X158Test extends TestCase
         );
 
         $this->assertNotNull($video);
-        $this->assertNotEmpty($video->caption_track_url, 'Every rendered video has a caption track (TEST ANCHOR & G16-02)');
+        $this->assertNotEmpty($video->caption_track_url, 'Every rendered video has a caption track (TEST ANCHOR)');
         $this->assertStringContainsString((string) $demoNumber, $video->transcript, 'Transcript of demo video contains demo number as digits (TEST ANCHOR)');
         Event::assertDispatched(VideoRendered::class);
 
@@ -65,7 +84,7 @@ class X158Test extends TestCase
         $this->assertFalse($shortView->passed_50_percent);
         Event::assertNotDispatched(VideoWatched::class);
 
-        // 3. Playback past 50% (75% depth) -> writes view row and dispatches video.watched with depth (TEST ANCHOR & G3-25, G9-30)
+        // 3. Playback past 50% (75% depth) -> writes view row and dispatches video.watched with depth (TEST ANCHOR)
         $deepView = $this->hostAction->recordView(
             businessId: $biz->id,
             videoId: $video->id,
@@ -85,13 +104,5 @@ class X158Test extends TestCase
         $savedView = VideoView::where('business_id', $biz->id)->where('viewer_session_id', 'sess_user_002')->first();
         $this->assertNotNull($savedView);
         $this->assertTrue($savedView->passed_50_percent);
-    }
-
-    /**
-     * [G3-22], [G3-25], [G3-46], [G5-02], [G5-52], [G8-37], [G9-30], [G11-27], [G12-06], [G12-22], [G12-23], [G12-24], [G12-34], [G12-37], [G16-02], [G16-06], [G16-14], [G16-22], [G16-23], [G16-30], [G18-26], [G16-32]
-     */
-    public function test_video_capabilities(): void
-    {
-        $this->assertTrue(true);
     }
 }

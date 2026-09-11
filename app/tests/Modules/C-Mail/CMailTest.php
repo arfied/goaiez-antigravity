@@ -6,18 +6,26 @@ namespace Tests\Modules\CMail;
 
 use App\Modules\CMail\Actions\EmailDnsCheckAction;
 use App\Modules\CMail\Actions\EmailHaltSeedAction;
+use App\Modules\CMail\Actions\EmailIngestEventAction;
 use App\Modules\CMail\Actions\EmailSendAction;
 use App\Modules\CMail\Actions\EmailUnsubscribeAction;
 use App\Modules\CMail\Actions\EmailWarmupAction;
+use App\Modules\CMail\Events\EmailBounced;
+use App\Modules\CMail\Events\EmailComplained;
+use App\Modules\CMail\Events\EmailReplied;
 use App\Modules\CMail\Events\EmailSent;
 use App\Modules\CMail\Exceptions\ConstantWarmupQuantityRefused;
 use App\Modules\CMail\Models\MailDomain;
 use App\Modules\CMail\Models\MailEvent;
 use App\Modules\CMail\Models\WarmupCalendar;
+use App\Modules\CMail\Ui\DnsCard;
 use App\Modules\X204\Domain\ConsentService;
 use App\Modules\X204\Models\Suppression;
+use App\Services\Config\DefaultsRegistry;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Livewire\Livewire;
+use PHPUnit\Framework\Attributes\Group;
 use Tests\TestCase;
 
 class CMailTest extends TestCase
@@ -301,6 +309,27 @@ class CMailTest extends TestCase
     /**
      * [G4-08], [G7-40], [G10-28], [G11-03], [G11-20] DNS & DMARC
      */
+    #[Group('G11-03')]
+    public function test_g11_03_dns_card_shows_records_with_copy_button_and_no_spf_instructions(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'DNS Card Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $domain = $this->dnsAction->handle($biz->id, 'card.apex-air.com');
+        $domain->update(['spf_status' => 'missing', 'dkim_status' => 'missing', 'dmarc_status' => 'missing']);
+
+        $defaults = app(DefaultsRegistry::class);
+        $sendingDomain = $defaults->value('mail.sending_domain');
+
+        Livewire::test(DnsCard::class)
+            ->assertSee('v=spf1 include:'.$sendingDomain.' ~all')
+            ->assertSee('_dmarc.card.apex-air.com')
+            ->assertSee('v=DMARC1; p=quarantine;')
+            ->assertSee('Copy') // copy affordance
+            ->assertDontSee('configure SPF', false)
+            ->assertDontSee('set up SPF', false);
+    }
+
     public function test_dns_dmarc_records(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'DNS Biz', 'currency' => 'USD']);
@@ -392,8 +421,234 @@ class CMailTest extends TestCase
     }
 
     /**
-     * [G9-21], [G11-06], [G11-09], [G11-10], [G11-11], [G11-12], [G11-15], [G11-17], [G11-18], [G11-29], [G11-38]
+     * [G11-10] pre-send bounce and spam-trap gate
      */
+    #[Group('G11-10')]
+    public function test_g11_10_pre_send_bounce_and_spam_trap_gate(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Bounce Gate Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $domain = $this->dnsAction->handle($biz->id, 'bounce-gate.apex-air.com');
+
+        $bouncedEmail = 'bounced@acme.com';
+        $spamTrapEmail = 'spamtrap@acme.com';
+        $cleanEmail = 'clean@acme.com';
+
+        MailEvent::create([
+            'business_id' => $biz->id,
+            'mail_domain_id' => $domain->id,
+            'event_type' => 'bounced',
+            'recipient_email' => $bouncedEmail,
+            'subject' => 'Prior send',
+        ]);
+
+        MailEvent::create([
+            'business_id' => $biz->id,
+            'mail_domain_id' => $domain->id,
+            'event_type' => 'spam-trap',
+            'recipient_email' => $spamTrapEmail,
+            'subject' => 'Prior send',
+        ]);
+
+        Event::fake([EmailSent::class]);
+
+        // (a) Refusal for bounced
+        $refusedBounce = $this->sendAction->handle(
+            businessId: $biz->id,
+            mailDomainId: $domain->id,
+            recipientEmail: $bouncedEmail,
+            subject: 'New Campaign',
+            sendType: 'marketing'
+        );
+        $this->assertDatabaseMissing('mail_events', [
+            'business_id' => $biz->id,
+            'recipient_email' => $bouncedEmail,
+            'subject' => 'New Campaign',
+            'event_type' => 'sent',
+        ]);
+        Event::assertNotDispatched(function (EmailSent $event) use ($bouncedEmail) {
+            return $event->recipientEmail === $bouncedEmail;
+        });
+        $this->assertSame('refused_bounced_or_spam', $refusedBounce['status']);
+
+        // (a) Refusal for spam-trap
+        $refusedSpam = $this->sendAction->handle(
+            businessId: $biz->id,
+            mailDomainId: $domain->id,
+            recipientEmail: $spamTrapEmail,
+            subject: 'New Campaign',
+            sendType: 'marketing'
+        );
+        $this->assertDatabaseMissing('mail_events', [
+            'business_id' => $biz->id,
+            'recipient_email' => $spamTrapEmail,
+            'subject' => 'New Campaign',
+            'event_type' => 'sent',
+        ]);
+        Event::assertNotDispatched(function (EmailSent $event) use ($spamTrapEmail) {
+            return $event->recipientEmail === $spamTrapEmail;
+        });
+        $this->assertSame('refused_bounced_or_spam', $refusedSpam['status']);
+
+        // (b) Positive control
+        $success = $this->sendAction->handle(
+            businessId: $biz->id,
+            mailDomainId: $domain->id,
+            recipientEmail: $cleanEmail,
+            subject: 'New Campaign',
+            sendType: 'marketing'
+        );
+        $this->assertDatabaseHas('mail_events', [
+            'business_id' => $biz->id,
+            'recipient_email' => $cleanEmail,
+            'subject' => 'New Campaign',
+            'event_type' => 'sent',
+        ]);
+        Event::assertDispatched(function (EmailSent $event) use ($cleanEmail) {
+            return $event->recipientEmail === $cleanEmail;
+        });
+        $this->assertSame('processed', $success['status']);
+    }
+
+    /**
+     * ⛔ REFUSED: G11-06 — the capability's own text is "named in the header"; there is no clause to assert
+     * BUILD PROPOSAL: G11-09 — a test send scored before the campaign has not been built yet; C-Mail is owned by this lane (EmailWarmupAction.php, EmailSendAction.php)
+     * BUILT: G11-10 — test_g11_10_pre_send_bounce_and_spam_trap_gate() (the gate reads a value nothing wrote until this wave)
+     * BUILT: C-Mail ingest event action. The HTTP transport is external and absent.
+     * BUILT: C-Mail — handle EmailComplained to write complaint_rate and is_marketing_paused (test anchor is a complaint rate crossing 0.10% pauses every marketing send). The HTTP transport that would call the ingest in production still does not exist.
+     * ⛔ REFUSED: G11-11 — the capability's own text is "named in the header"; there is no clause to assert
+     * ⛔ REFUSED: G11-12 (first half) — the capability's own text is "named in the header"; there is no clause to assert
+     * BUILT: G11-12 (second half) — the live bridge from C-Mail to X-01 is built (test lives in X-01/X01Test.php: test_g11_12_email_reply_bridge). However, the HTTP transport that would call the ingest in production still does not exist.
+     * ⛔ REFUSED: G11-15 — the capability's own text is "named in the header"; there is no clause to assert
+     * ⛔ REFUSED: G11-17 — the capability's own text is "named in the header"; there is no clause to assert
+     * ⛔ REFUSED: G11-18 — the capability's own text is "= the row above; one spec"; it points at G11-17, which is itself "named in the header"; there is no clause to assert
+     * ⛔ REFUSED: G11-29 — the capability's own text is "named in the header"; there is no clause to assert
+     * ⛔ REFUSED: G11-38 — the capability's own text is "named in the header"; there is no clause to assert
+     * UNRESOLVED: G9-21 — primary-vs-spam placement per network requires an external seed service not owned by this tree (capabilities.php:37)
+     */
+    public function test_ingest_event_action_dispatches_events_and_gates_marketing_sends(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Ingest Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $domain = $this->dnsAction->handle($biz->id, 'ingest.apex-air.com');
+        $ingestAction = new EmailIngestEventAction;
+
+        Event::fake([EmailBounced::class, EmailComplained::class, EmailReplied::class]);
+
+        $ingestAction->handle($biz->id, $domain->id, 'bounced', 'b1@acme.com', 'Subj 1');
+        Event::assertDispatched(EmailBounced::class, function ($event) {
+            return $event->recipientEmail === 'b1@acme.com' && $event->bounceType === 'bounced';
+        });
+
+        $ingestAction->handle($biz->id, $domain->id, 'spam-trap', 's1@acme.com', 'Subj 2');
+        Event::assertDispatched(EmailBounced::class, function ($event) {
+            return $event->recipientEmail === 's1@acme.com' && $event->bounceType === 'spam-trap';
+        });
+
+        $ingestAction->handle($biz->id, $domain->id, 'complained', 'c1@acme.com', 'Subj 3');
+        Event::assertDispatched(EmailComplained::class, function ($event) use ($biz, $domain) {
+            $freshDomain = MailDomain::where('business_id', $biz->id)->findOrFail($domain->id);
+
+            return $event->businessId === $biz->id && $event->mailDomainId === $domain->id && $event->complaintRate === (float) $freshDomain->complaint_rate;
+        });
+
+        $ingestAction->handle($biz->id, $domain->id, 'replied', 'r1@acme.com', 'Subj 4');
+        Event::assertDispatched(EmailReplied::class, function ($event) {
+            return $event->fromEmail === 'r1@acme.com' && $event->subject === 'Subj 4';
+        });
+
+        Event::fake([EmailBounced::class, EmailComplained::class, EmailReplied::class]);
+        $ingestAction->handle($biz->id, $domain->id, 'delivered', 'd1@acme.com', 'Subj 5');
+        Event::assertNotDispatched(EmailBounced::class);
+        Event::assertNotDispatched(EmailComplained::class);
+        Event::assertNotDispatched(EmailReplied::class);
+
+        Event::fake([EmailSent::class]);
+
+        $refused = $this->sendAction->handle(
+            businessId: $biz->id,
+            mailDomainId: $domain->id,
+            recipientEmail: 'b1@acme.com',
+            subject: 'New Mktg',
+            sendType: 'marketing'
+        );
+        $this->assertSame('refused_bounced_or_spam', $refused['status']);
+
+        $success = $this->sendAction->handle(
+            businessId: $biz->id,
+            mailDomainId: $domain->id,
+            recipientEmail: 'd1@acme.com',
+            subject: 'New Mktg',
+            sendType: 'marketing'
+        );
+        $this->assertSame('processed', $success['status']);
+    }
+
+    public function test_complaint_recomputes_rate_and_pauses_marketing(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Complaint Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $domain = $this->dnsAction->handle($biz->id, 'complaint.apex-air.com');
+
+        // Create 1 sent event so the rate denominator is > 0
+        MailEvent::create([
+            'business_id' => $biz->id,
+            'mail_domain_id' => $domain->id,
+            'event_type' => 'sent',
+            'send_type' => 'marketing',
+            'recipient_email' => 'sent@acme.com',
+            'subject' => 'Prior send',
+        ]);
+
+        $ingestAction = new EmailIngestEventAction;
+        $ingestAction->handle($biz->id, $domain->id, 'complained', 'sent@acme.com', 'Prior send');
+
+        // A1 - Re-read the row from the database
+        $freshDomain = MailDomain::where('business_id', $biz->id)->findOrFail($domain->id);
+        $this->assertEquals(1.0, $freshDomain->complaint_rate, 'A1: complaint rate should be recomputed and persisted');
+
+        // A2 - is_marketing_paused is true
+        $this->assertTrue($freshDomain->is_marketing_paused, 'A2: is_marketing_paused should be true');
+
+        // A3 - a marketing send is refused because of the pause
+        // Use a clean email so it doesn't trigger the bounce/spam-trap gate
+        $refusedSend = $this->sendAction->handle(
+            businessId: $biz->id,
+            mailDomainId: $domain->id,
+            recipientEmail: 'clean@acme.com',
+            subject: 'New Mktg',
+            sendType: 'marketing'
+        );
+        $this->assertSame('refused_paused', $refusedSend['status'], 'A3: send should be refused due to pause');
+        $this->assertSame('MARKETING_SENDS_PAUSED_COMPLAINT_RATE', $refusedSend['refusal_code'], 'A3: correct refusal code');
+
+        // A4 - The negative case
+        $domainNegative = $this->dnsAction->handle($biz->id, 'negative.apex-air.com');
+        MailEvent::create([
+            'business_id' => $biz->id,
+            'mail_domain_id' => $domainNegative->id,
+            'event_type' => 'sent',
+            'send_type' => 'marketing',
+            'recipient_email' => 'sent-neg@acme.com',
+            'subject' => 'Prior send',
+        ]);
+
+        $ingestAction->handle($biz->id, $domainNegative->id, 'replied', 'sent-neg@acme.com', 'Prior send');
+
+        $acceptedSend = $this->sendAction->handle(
+            businessId: $biz->id,
+            mailDomainId: $domainNegative->id,
+            recipientEmail: 'clean-neg@acme.com',
+            subject: 'New Mktg',
+            sendType: 'marketing'
+        );
+        $this->assertSame('processed', $acceptedSend['status'], 'A4: send should be processed when not paused');
+        $this->assertFalse(MailDomain::where('business_id', $biz->id)->findOrFail($domainNegative->id)->is_marketing_paused, 'A4: domain is not paused');
+    }
+
     public function test_header_capabilities(): void
     {
         $this->assertTrue(true);

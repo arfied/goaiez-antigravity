@@ -20,8 +20,10 @@ final class FormValidateAction
         $form = FormDefinition::where('business_id', $businessId)->findOrFail($formDefinitionId);
 
         // 1. Honeypot bot check (G3-64, G13-05)
-        $honeypot = $form->honeypot_field ?? 'website_url';
-        if (! empty($payload[$honeypot])) {
+        $configured = $form->honeypot_field ?? '';
+        $honeypot = trim((string) $configured) !== '' ? (string) $configured : 'website_url';
+        $submitted = $payload[$honeypot] ?? null;
+        if ($submitted !== null && $submitted !== '' && $submitted !== []) {
             Event::dispatch(new FormSpamRejected($businessId, $formDefinitionId, 'honeypot_triggered', $ipAddress));
 
             return [
@@ -40,6 +42,41 @@ final class FormValidateAction
                 'is_spam' => true,
                 'reason' => 'ip_timezone_mismatch',
             ];
+        }
+
+        // 3. Multi-step logic (G2-17), narrowed by the adaptive rule (G5-30):
+        //    a step the answers do not reach is never enforced.
+        $steps = (new FormAdaptiveStepsAction)->handle($form, $payload);
+
+        foreach ($steps as $step) {
+            $required = $step['required'] ?? [];
+
+            if (! is_array($required) || $required === []) {
+                continue;
+            }
+
+            $missing = [];
+
+            foreach ($required as $field) {
+                // a member that is not a valid array key is not a field name, so it is skipped exactly as a malformed required is at :54
+                if (! is_string($field) && ! is_int($field)) {
+                    continue;
+                }
+
+                if (! array_key_exists($field, $payload) || $payload[$field] === null || $payload[$field] === '') {
+                    $missing[] = $field;
+                }
+            }
+
+            if ($missing !== []) {
+                return [
+                    'is_valid' => false,
+                    'is_spam' => false,
+                    'reason' => 'incomplete_step',
+                    'step' => $step['step'] ?? null,
+                    'missing' => $missing,
+                ];
+            }
         }
 
         return [

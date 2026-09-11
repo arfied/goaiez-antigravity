@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Modules\CReviews;
 
+use App\Models\Business;
+use App\Models\User;
 use App\Modules\CReviews\Actions\QaTicketAction;
 use App\Modules\CReviews\Actions\ReviewSyncAction;
 use App\Modules\CReviews\Models\QaSetting;
@@ -234,8 +236,17 @@ class CReviewsScreensTest extends TestCase
         $req = ReviewRequest::create(['business_id' => $this->bizId, 'rating' => 3]);
 
         Livewire::test(LossAlerts::class, ['businessId' => $this->bizId])
-            ->assertSee('Rating 3 <= 4')
+            ->assertSee('Rating 3 < 4')
             ->assertSee('Review #'.$req->id);
+    }
+
+    public function test_a_four_star_review_is_not_a_loss_alert_at_the_default_threshold(): void
+    {
+        QaSetting::updateOrCreate(['business_id' => $this->bizId], ['min_public_stars' => 4]);
+        $req = ReviewRequest::create(['business_id' => $this->bizId, 'rating' => 4]);
+
+        Livewire::test(LossAlerts::class, ['businessId' => $this->bizId])
+            ->assertDontSee('Review #'.$req->id);
     }
 
     public function test_loss_alerts_resolved_on_time_does_not_appear(): void
@@ -256,5 +267,33 @@ class CReviewsScreensTest extends TestCase
         $ticket->refresh();
         $this->assertEquals('resolved', $ticket->status);
         $this->assertSame(1, Alert::where('business_id', $this->bizId)->count());
+    }
+
+    public function test_reviews_qa_requests_route_renders(): void
+    {
+        $biz = Business::find($this->bizId);
+        $user = User::find($biz->owner_user_id);
+        $this->actingAs($user)->get(route('c-reviews.reviews-qa-requests'))->assertOk();
+    }
+
+    public function test_qa_report_route_renders(): void
+    {
+        $biz = Business::find($this->bizId);
+        $user = User::find($biz->owner_user_id);
+        $this->actingAs($user)->get(route('c-reviews.qa-report'))->assertOk();
+    }
+
+    public function test_tickets_route_renders(): void
+    {
+        $biz = Business::find($this->bizId);
+        $user = User::find($biz->owner_user_id);
+        $this->actingAs($user)->get(route('c-reviews.tickets'))->assertOk();
+    }
+
+    public function test_loss_alerts_route_renders(): void
+    {
+        $biz = Business::find($this->bizId);
+        $user = User::find($biz->owner_user_id);
+        $this->actingAs($user)->get(route('c-reviews.loss-alerts'))->assertOk();
     }
 }

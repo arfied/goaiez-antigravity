@@ -7,6 +7,7 @@ namespace Tests\Modules\X168;
 use App\Enums\UserRole;
 use App\Models\User;
 use App\Modules\X168\Actions\TimesheetComputeAction;
+use App\Modules\X168\Models\Timesheet;
 use App\Modules\X168\Ui\OwnHoursView;
 use App\Support\Tenancy;
 use Carbon\Carbon;
@@ -30,7 +31,7 @@ class OwnHoursTest extends TestCase
         Tenancy::setUser($user->id);
 
         Livewire::actingAs($user)->test(OwnHoursView::class)
-            ->assertSee('No hours yet. Your hours start when you go en route on a job.');
+            ->assertSee('No hours yet. Your hours start when you arrive on site at a job.');
     }
 
     public function test_shows_own_sheets_only(): void
@@ -98,5 +99,40 @@ class OwnHoursTest extends TestCase
 
         Livewire::actingAs($user)->test(OwnHoursView::class)
             ->assertSee('en_route');
+    }
+
+    public function test_real_get_shows_derived_magnitude(): void
+    {
+        $user = User::factory()->create();
+        $user->role = UserRole::Owner;
+        $user->save();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        Timesheet::create([
+            'business_id' => $biz->id,
+            'person_id' => $user->id,
+            'period_start' => '2026-08-24',
+            'period_end' => '2026-08-30',
+            'total_hours' => 9.25,
+            'status' => 'draft',
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('x-168.own-hours'))
+            ->assertOk()
+            ->assertSee('9:15');
+    }
+
+    public function test_super_admin_is_admitted(): void
+    {
+        $user = User::factory()->create();
+        $user->role = UserRole::SuperAdmin;
+        $user->save();
+        TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
+
+        Livewire::actingAs($user)->test(OwnHoursView::class)->assertOk();
     }
 }

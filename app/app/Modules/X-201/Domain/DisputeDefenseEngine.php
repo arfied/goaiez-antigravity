@@ -11,6 +11,7 @@ use App\Modules\X201\Events\EvidenceCompiled;
 use App\Modules\X201\Models\Dispute;
 use App\Modules\X201\Models\DisputeEvidence;
 use App\Modules\X201\Models\DisputeOutcome;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Event;
 
 final class DisputeDefenseEngine
@@ -30,9 +31,12 @@ final class DisputeDefenseEngine
         return $dispute;
     }
 
-    public function getExposure(int $businessId): float
+    /**
+     * No delivery or fulfilment store exists in this lane, so money-taken-vs-work-delivered has no second term.
+     */
+    public function getExposure(int $businessId): null
     {
-        return (float) ($businessId * 100.0);
+        return null;
     }
 
     /**
@@ -41,6 +45,13 @@ final class DisputeDefenseEngine
     public function compile(int $businessId, int $disputeId, array $evidenceItems): array
     {
         $dispute = Dispute::where('business_id', $businessId)->findOrFail($disputeId);
+
+        if (in_array($dispute->status, ['submitted', 'won', 'lost'], true)) {
+            throw new DisputeAlreadySubmittedException(sprintf(
+                'Invoice #%d is already submitted: a submitted bundle is sealed and nothing is added to it.',
+                $dispute->invoice_id
+            ));
+        }
 
         $savedItems = [];
         foreach ($evidenceItems as $item) {
@@ -69,14 +80,30 @@ final class DisputeDefenseEngine
     {
         $dispute = Dispute::where('business_id', $businessId)->findOrFail($disputeId);
 
-        $types = DisputeEvidence::where('dispute_id', $disputeId)->pluck('evidence_type')->toArray();
+        if ($dispute->status !== 'compiled') {
+            throw new DisputeNotCompiledException('Compile the evidence first: a dispute is never submitted empty.');
+        }
+
+        if ($dispute->deadline_at && Carbon::now()->isAfter($dispute->deadline_at)) {
+            throw new \Exception('Dispute deadline has passed');
+        }
+
+        $types = DisputeEvidence::where('business_id', $businessId)
+            ->where('dispute_id', $disputeId)
+            ->pluck('evidence_type')
+            ->toArray();
 
         if ($dispute->reason === 'fraudulent') {
             $required = ['call_log', 'transcript', 'delivery_receipt', 'consent_record'];
             $missing = array_diff($required, $types);
 
             if (! empty($missing)) {
-                throw new \Exception('missing: '.implode(', ', $missing));
+                $names = [];
+                foreach ($missing as $type) {
+                    $names[] = DisputeEvidence::EVIDENCE_LABELS[$type] ?? $type;
+                }
+
+                throw new \Exception('The bundle is still missing '.implode(', ', $names).'. A bundle here takes the invoice line and your note, and nothing in this checkout adds the rest yet.');
             }
         }
 
@@ -95,6 +122,18 @@ final class DisputeDefenseEngine
         }
 
         $dispute = Dispute::where('business_id', $businessId)->findOrFail($disputeId);
+
+        // A dispute is outcomed ONCE. `won` and `lost` are exactly DisputeQueue's own definition of
+        // not-yet-outcomed (:91's whereNotIn), never a second literal list, so `opened` and `compiled`
+        // stay outcomeable. The throw is before the first write.
+        if (in_array($dispute->status, ['won', 'lost'], true)) {
+            throw new DisputeAlreadyOutcomedException(sprintf(
+                'Invoice #%d is already %s: an outcome is recorded once and is never overwritten. Nothing was recorded.',
+                $dispute->invoice_id,
+                $dispute->status
+            ));
+        }
+
         $dispute->update(['status' => $outcome]);
 
         $clawbackTriggered = false;

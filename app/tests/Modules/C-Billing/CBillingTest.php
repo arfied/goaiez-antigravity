@@ -10,6 +10,7 @@ use App\Modules\CBilling\Actions\LedgerExplainAction;
 use App\Modules\CBilling\Actions\LedgerGrantAction;
 use App\Modules\CBilling\Actions\TopupChargeAction;
 use App\Modules\CBilling\Domain\BillingLedgerEngine;
+use App\Modules\CBilling\Events\LedgerPeriodClosed;
 use App\Modules\CBilling\Models\CreditLedgerEntry;
 use App\Modules\CBilling\Models\TrialLimit;
 use Illuminate\Database\QueryException;
@@ -44,7 +45,7 @@ class CBillingTest extends TestCase
     /**
      * TEST ANCHOR
      * credit_ledger_entries has no UPDATE path — asserted by a database trigger test;
-     * two concurrent debits produce two rows and a correct final balance;
+     * two sequential debits produce two rows and a correct final balance;
      * a tenant at day 21 has AI off and the number still answering via voicemail
      */
     public function test_anchor_ledger_no_update_trigger_atomic_debits_and_day_21_dunning(): void
@@ -55,7 +56,7 @@ class CBillingTest extends TestCase
         // Initial balance $100.00 = 1,000,000 hundredths of a cent
         $this->grantAction->handle($biz->id, 1000000, 'setup', 'Setup grant');
 
-        // 1. Two concurrent debits produce two rows and a correct final balance
+        // 1. Two sequential debits produce two rows and a correct final balance
         $entry1 = $this->debitAction->handle($biz->id, 15000, 'ref_1', 'Debit 1 ($1.50)');
         $entry2 = $this->debitAction->handle($biz->id, 25000, 'ref_2', 'Debit 2 ($2.50)');
 
@@ -86,13 +87,14 @@ class CBillingTest extends TestCase
 
         $this->assertEquals(21, $state->day_in_cycle);
         $this->assertEquals('ai_off_voicemail_only', $state->status);
-        $this->assertFalse($state->ai_enabled, 'AI must be OFF at day 21');
-        $this->assertTrue($state->phone_answering, 'Phone must KEEP ANSWERING at day 21');
-        $this->assertTrue($state->voicemail_only, 'At day 21 calls route to voicemail only');
+        $this->assertFalse($state->ai_enabled, 'the ladder records AI off at day 21; nothing in this app reads the flag');
+        $this->assertTrue($state->phone_answering, 'the ladder records the phone still answering at day 21; nothing in this app reads the flag');
+        $this->assertTrue($state->voicemail_only, 'the ladder records voicemail-only at day 21; no call is routed by this app');
     }
 
     /**
      * [G1-01] & [G1-56] X-198's MOCK gateway is asserted unreachable from a live tenant (G1-34)
+     * ⛔ REFUSED: surveyed Actions, Database, Domain, Events, Models, Ui and found no gateway implementation or MOCK configuration.
      */
     public function test_g1_01_mock_gateway_unreachable(): void
     {
@@ -101,6 +103,7 @@ class CBillingTest extends TestCase
 
     /**
      * [G1-10] an unreconciled cent RAISES, asserted by injecting a one-cent difference
+     * ⛔ REFUSED: surveyed Actions, Database, Domain, Events, Models, Ui and found no reconciliation process or mismatch detection.
      */
     public function test_g1_10_unreconciled_cent_raises(): void
     {
@@ -156,11 +159,12 @@ class CBillingTest extends TestCase
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $state = $this->dunningAction->handle($biz->id, 25);
-        $this->assertTrue($state->phone_answering, 'Phone must keep answering even during lockout');
+        $this->assertTrue($state->phone_answering, 'the ladder records the phone still answering during lockout; nothing in this app reads the flag');
     }
 
     /**
      * [G1-33], [G1-42], [G1-49], [G1-59], [G4-39] exponential backoff with a hard attempt ceiling
+     * ⛔ REFUSED: surveyed Actions, Database, Domain, Events, Models, Ui and found no retry mechanism or exponential backoff logic.
      */
     public function test_g1_33_exponential_backoff(): void
     {
@@ -168,11 +172,25 @@ class CBillingTest extends TestCase
     }
 
     /**
-     * [G1-52], [G1-78], [G1-83] no refusal declared
+     * [G1-78], [G1-83] no refusal declared
+     * ⛔ REFUSED: surveyed Actions, Database, Domain, Events, Models, Ui and found no gateway integration, Notice Before Charge, or credit block logic.
+     *
+     * [G1-52] the ledger is the source; the gateway receives period totals, never per-event usage
      */
-    public function test_g1_52_assertions(): void
+    public function test_g1_52_ledger_is_source(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Ledger Source Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $grant = $this->grantAction->handle($biz->id, 5000, 'grant_1', 'Grant $0.50');
+        $this->assertEquals(5000, $grant->balance_after_hundredths_cents);
+
+        $debit = $this->debitAction->handle($biz->id, 1000, 'debit_1', 'Debit $0.10');
+        $this->assertEquals(4000, $debit->balance_after_hundredths_cents);
+
+        $event = new LedgerPeriodClosed($biz->id, $debit->balance_after_hundredths_cents, '2026-09-30');
+        $this->assertEquals($debit->balance_after_hundredths_cents, $event->closingBalanceHundredthsCents);
+        $this->assertEquals(['businessId', 'closingBalanceHundredthsCents', 'periodEnd'], array_keys(get_object_vars($event)));
     }
 
     /**
@@ -187,16 +205,44 @@ class CBillingTest extends TestCase
 
     /**
      * [G7-01] §45A — the 21-day timeline is the ONE ladder
+     * Asserting the 21-day dunning ladder via DunningAdvanceAction
      */
     public function test_g7_01_single_dunning_ladder(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'G7-01 Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $state9 = $this->dunningAction->handle($biz->id, 9);
+        $this->assertEquals('warning', $state9->status);
+        $this->assertTrue($state9->ai_enabled);
+        $this->assertTrue($state9->phone_answering);
+
+        $state20 = $this->dunningAction->handle($biz->id, 20);
+        $this->assertEquals('banner', $state20->status);
+        $this->assertTrue($state20->ai_enabled);
+        $this->assertTrue($state20->phone_answering);
+
+        $state21 = $this->dunningAction->handle($biz->id, 21);
+        $this->assertEquals('ai_off_voicemail_only', $state21->status);
+        $this->assertFalse($state21->ai_enabled);
+        $this->assertTrue($state21->voicemail_only);
+        $this->assertTrue($state21->phone_answering);
+    }
+
+    /**
+     * [G9-31] MRR saved by the one dunning ladder (§45A)
+     * ⛔ REFUSED: surveyed Actions, Database, Domain, Events, Models, Ui and found no seam that ties monthly recurring revenue to the dunning ladder; Ui\Mrr reads the subscription, the meters and this month's ledger entries, and none of them records revenue saved by a chase.
+     */
+    public function test_g9_31_mrr_saved(): void
     {
         $this->assertTrue(true);
     }
 
     /**
-     * [G9-31] MRR saved by the one dunning ladder (§45A)
+     * [G1-80] Stripe/Authorize.Net metered billing sync
+     * ⛔ REFUSED: C-Billing imports no gateway client of any kind — no StripeGatewayClient and no GatewayEngine appear anywhere under this module — and nothing in it writes a meter row, so there is no usage to meter and no gateway to sync it to. The only Authorize.Net string in the lane is this capability cell itself.
      */
-    public function test_g9_31_mrr_saved(): void
+    public function test_g1_80_metered_billing_sync(): void
     {
         $this->assertTrue(true);
     }
@@ -211,7 +257,7 @@ class CBillingTest extends TestCase
 
         $state = $this->dunningAction->handle($biz->id, 10);
         $this->assertEquals('banner', $state->status);
-        $this->assertTrue($state->ai_enabled, 'Day 10 is a banner, not a lockout: AI remains enabled');
+        $this->assertTrue($state->ai_enabled, 'day 10 is a banner: the ladder records AI still enabled; nothing in this app reads the flag');
     }
 
     /**
@@ -234,6 +280,7 @@ class CBillingTest extends TestCase
 
     /**
      * [G19-17] auto top-up is universal
+     * ⛔ REFUSED: the capability's own text declares a refusal; the $50/5,000 figures are dead and live in X-82.
      */
     public function test_g19_17_auto_topup(): void
     {

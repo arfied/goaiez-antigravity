@@ -73,6 +73,17 @@ class ConfirmationScreen extends Component
     {
         $businessId = Tenancy::id();
 
+        $cents = 0;
+        if (isset($this->prices[$itemId])) {
+            $cents = (int) round((float) $this->prices[$itemId] * 100);
+        }
+
+        if ($cents <= 0) {
+            $this->refusals[$itemId] = true;
+
+            return;
+        }
+
         if (isset($this->prices[$itemId])) {
             $this->updatePrice($itemId, $this->prices[$itemId]);
         }
@@ -84,6 +95,7 @@ class ConfirmationScreen extends Component
             $this->refusals[$itemId] = true;
         } else {
             unset($this->refusals[$itemId]);
+            unset($this->prices[$itemId]);
         }
     }
 
@@ -93,11 +105,6 @@ class ConfirmationScreen extends Component
         PriceBookItem::where('business_id', $businessId)->where('id', $itemId)->delete();
         unset($this->prices[$itemId]);
         unset($this->refusals[$itemId]);
-    }
-
-    public function openPricebook()
-    {
-        $this->dispatch('open-pricebook');
     }
 
     public function render()

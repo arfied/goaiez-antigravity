@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace App\Modules\X199;
 
-use App\Modules\X198\Events\PaymentCaptured;
-use App\Modules\X199\Listeners\RecordPaymentOnCapture;
+use App\Modules\X199\Console\MarkInvoicesDueCommand;
 use App\Modules\X199\Ui\Credits;
 use App\Modules\X199\Ui\Declines;
 use App\Modules\X199\Ui\Invoices;
 use App\Modules\X199\Ui\MoneyPaidToday;
 use App\Modules\X199\Ui\Unpaid;
-use Illuminate\Support\Facades\Event;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 
@@ -29,17 +28,25 @@ final class ModuleServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__.'/Database/migrations');
         $this->loadViewsFrom(__DIR__.'/Ui/views', 'x-199');
 
-        Event::listen(
-            PaymentCaptured::class,
-            RecordPaymentOnCapture::class
-        );
-
         if (class_exists(Livewire::class)) {
             Livewire::component('x-199.money-paid-today', MoneyPaidToday::class);
             Livewire::component('x-199.unpaid', Unpaid::class);
             Livewire::component('x-199.declines', Declines::class);
             Livewire::component('x-199.invoices', Invoices::class);
             Livewire::component('x-199.credits', Credits::class);
+        }
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                MarkInvoicesDueCommand::class,
+                Console\EvidenceInvoiceCommand::class,
+                Console\RuntimeProofCommand::class,
+            ]);
+
+            $this->app->booted(function () {
+                $schedule = $this->app->make(Schedule::class);
+                $schedule->command('x199:mark-due')->daily()->withoutOverlapping(180);
+            });
         }
     }
 }

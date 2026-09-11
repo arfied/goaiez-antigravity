@@ -10,8 +10,10 @@ use App\Modules\X175\Domain\FieldAssistantEngine;
 use App\Modules\X175\Events\AssistantSuggested;
 use App\Modules\X175\Events\UpsellPrompted;
 use App\Modules\X175\Models\FieldSuggestion;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class X175Test extends TestCase
@@ -96,9 +98,58 @@ class X175Test extends TestCase
 
     /**
      * [N-175-01]
+     * [N-063] ⛔ REFUSED: `php artisan why N-063` reports it is never DEFINED, and its ⑤ in
+     *   capabilities.php is boilerplate identical across every N row and across modules —
+     *   it names other modules entirely. Nothing to assert. (R245, REV-80/REV-81)
+     * [N-064] ⛔ REFUSED: `php artisan why N-064` reports it is never DEFINED, and its ⑤ in
+     *   capabilities.php is boilerplate identical across every N row and across modules —
+     *   it names other modules entirely. Nothing to assert. (R245, REV-80/REV-81)
+     * [N-067] ⛔ REFUSED: `php artisan why N-067` reports it is never DEFINED, and its ⑤ in
+     *   capabilities.php is boilerplate identical across every N row and across modules —
+     *   it names other modules entirely. Nothing to assert. (R245, REV-80/REV-81)
+     * [N-070] ⛔ REFUSED: `php artisan why N-070` reports it is never DEFINED, and its ⑤ in
+     *   capabilities.php is boilerplate identical across every N row and across modules —
+     *   it names other modules entirely. Nothing to assert. (R245, REV-80/REV-81)
+     * [N-073] ⛔ REFUSED: `php artisan why N-073` reports it is never DEFINED, and its ⑤ in
+     *   capabilities.php is boilerplate identical across every N row and across modules —
+     *   it names other modules entirely. Nothing to assert. (R245, REV-80/REV-81)
+     * [N-076] ⛔ REFUSED: `php artisan why N-076` reports it is never DEFINED, and its ⑤ in
+     *   capabilities.php is boilerplate identical across every N row and across modules —
+     *   it names other modules entirely. Nothing to assert. (R245, REV-80/REV-81)
+     * [N-079] ⛔ REFUSED: `php artisan why N-079` reports it is never DEFINED, and its ⑤ in
+     *   capabilities.php is boilerplate identical across every N row and across modules —
+     *   it names other modules entirely. Nothing to assert. (R245, REV-80/REV-81)
+     * [N-082] ⛔ REFUSED: `php artisan why N-082` reports it is never DEFINED, and its ⑤ in
+     *   capabilities.php is boilerplate identical across every N row and across modules —
+     *   it names other modules entirely. Nothing to assert. (R245, REV-80/REV-81)
+     * [N-085] ⛔ REFUSED: `php artisan why N-085` reports it is never DEFINED, and its ⑤ in
+     *   capabilities.php is boilerplate identical across every N row and across modules —
+     *   it names other modules entirely. Nothing to assert. (R245, REV-80/REV-81)
      */
     public function test_n_175_capabilities(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Field Tech Assistant Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        Http::fake(fn () => throw new ConnectionException('offline'));
+
+        $techPersonId = 882;
+        $jobId = 9104;
+        $techQuery = 'What is the torque spec for Carrier 24VNA9 compressor mounting bolts?';
+        $verifiedAnswer = 'Torque to 18 ft-lbs in star pattern';
+
+        $verifiedResult = $this->askAction->handle(
+            businessId: $biz->id,
+            jobId: $jobId,
+            techPersonId: $techPersonId,
+            queryText: $techQuery,
+            isSamplePrice: false,
+            verifiedAnswer: $verifiedAnswer
+        );
+
+        $this->assertEquals('answered', $verifiedResult['status']);
+        $this->assertEquals($verifiedAnswer, $verifiedResult['response']);
+
+        Http::assertNothingSent();
     }
 }

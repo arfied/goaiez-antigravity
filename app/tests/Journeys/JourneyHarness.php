@@ -9,14 +9,16 @@ use App\Models\Business;
 use App\Models\User;
 use App\Modules\X103\Domain\SiteEngine;
 use App\Modules\X103\Models\Page;
-use App\Modules\X103\Models\PageVersion;
 use App\Modules\X112\Domain\AgencyEngine;
 use App\Modules\X112\Models\Agency;
 use App\Modules\X112\Models\Markup;
 use App\Modules\X113\Actions\StaffInviteAction;
 use App\Modules\X118\Ui\ProspectSignup;
+use App\Modules\X121\Actions\JobCreateAction;
 use App\Modules\X121\Models\Job;
 use App\Modules\X121\Models\Person;
+use App\Modules\X157\Actions\EdgeProvisionAction;
+use App\Modules\X157\Models\Deployment;
 use App\Modules\X162\Models\DispatchAssignment;
 use App\Modules\X163\Actions\PriceConfirmAction;
 use App\Modules\X163\Models\PriceBookItem;
@@ -24,7 +26,7 @@ use App\Modules\X171\Actions\JobStateAction;
 use App\Modules\X198\Domain\GatewayEngine;
 use App\Modules\X199\Domain\InvoiceEngine;
 use App\Modules\X199\Models\Invoice;
-use App\Modules\X211\Models\ReceivableState;
+use App\Modules\X211\Models\ArDunningAction;
 use App\Services\Billing\AuthorizeNetApi;
 use App\Services\Billing\AuthorizeNetGateway;
 use App\Services\Sms\TenantNumbers;
@@ -33,6 +35,7 @@ use App\Support\CardholderName;
 use App\Support\Identifier;
 use App\Support\PlatformCredentials;
 use App\Support\Tenancy;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
@@ -135,6 +138,30 @@ trait JourneyHarness
             ['business_id' => $tenant['id']],
             ['first_name' => 'Stop Person', 'phone' => '+15551239999']
         );
+
+        $locationId = DB::table('locations')->where('business_id', $tenant['id'])->value('id');
+        DB::table('locations')->where('id', $locationId)->update(['timezone' => 'America/New_York']);
+        DB::table('customers')->insert([
+            'id' => $person->id,
+            'business_id' => $tenant['id'],
+            'location_id' => $locationId,
+            'phone' => '+15551239999',
+            'name' => 'Stop Person',
+            'region_code' => 'TX',
+            'created_at' => now(),
+        ]);
+        $customerId = $person->id;
+
+        DB::table('consent_records')->insert([
+            'business_id' => $tenant['id'],
+            'customer_id' => $customerId,
+            'channel' => 'sms',
+            'consent_type' => 'express',
+            'captured_by' => 'tenant',
+            'capture_surface' => 'manual',
+            'disclosure_version' => '1.0',
+            'created_at' => now(),
+        ]);
 
         for ($i = 0; $i < $count; $i++) {
             DB::table('campaign_steps')->insert([
@@ -292,7 +319,13 @@ trait JourneyHarness
             ->first()->e164 ?? '+19015922708';
         $customerPhone = '+15550123';
 
+        $person = Person::firstOrCreate(
+            ['business_id' => $tenant['id'], 'phone' => $customerPhone],
+            ['first_name' => 'Journey Customer']
+        );
+
         DB::table('customers')->insertOrIgnore([
+            'id' => $person->id,
             'business_id' => $tenant['id'],
             'phone' => $customerPhone,
             'name' => 'Journey Customer',
@@ -363,16 +396,27 @@ trait JourneyHarness
 
     private function bookFromQuote(array $tenant, array $quote): array
     {
-        $id = DB::table('work_orders')->insertGetId([
-            'business_id' => $tenant['id'],
-            'price_cents' => $quote['amount'],
-            'status' => 'booked',
-            'title' => 'Drain Unblock',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        $personId = DB::table('people')->where('business_id', $tenant['id'])->value('id');
+        if (! $personId) {
+            $personId = DB::table('people')->insertGetId([
+                'business_id' => $tenant['id'],
+                'first_name' => 'Journey',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
 
-        return ['status' => 'booked', 'job_id' => (string) $id];
+        $action = new JobCreateAction;
+        $res = $action->handle(
+            businessId: $tenant['id'],
+            personId: (int) $personId,
+            title: 'Drain Unblock',
+            priceCents: $quote['amount'] ?? 0
+        );
+
+        DB::table('work_orders')->where('id', $res['job_id'])->update(['status' => 'booked']);
+
+        return ['status' => 'booked', 'job_id' => (string) $res['job_id']];
     }
 
     /** ⭐ Proves the send passed ConsentService::decide(), not that it looked consented. */
@@ -494,16 +538,21 @@ trait JourneyHarness
     /** ⛔ Must reach the gateway and return ITS id. @param array<string,mixed> $invoice @return array<string,mixed> */
     private function payInvoice(array $invoice): array
     {
-        $engine = app(GatewayEngine::class);
-        $businessId = $invoice['business_id'];
-        $amount = $invoice['total_cents'];
-        $invoiceId = $invoice['id'];
+        $gatewayEngine = app(GatewayEngine::class);
+        $gatewayEngine->connect($invoice['business_id'], 'stripe', 'acct_test');
 
-        $engine->connect($businessId, 'stripe', 'self');
+        $payment = $gatewayEngine->capture(
+            $invoice['business_id'],
+            $invoice['total_cents'],
+            'tok_visa',
+            'idempotent_'.uniqid()
+        );
 
-        $payment = $engine->capture($businessId, $amount, 'tok_visa', 'idem_cap_'.uniqid(), 'USD', $invoiceId);
-
-        $payment = $engine->requestCharge($businessId, $payment->id, $amount, 'usd', 'tok_visa', 'idem_req_'.uniqid(), $invoiceId);
+        app(InvoiceEngine::class)->recordPayment(
+            $invoice['business_id'],
+            $invoice['id'],
+            $payment->amount_cents
+        );
 
         return $payment->toArray();
     }
@@ -516,20 +565,30 @@ trait JourneyHarness
     /** @param array<string,mixed> $invoice */
     private function makeOverdue(array $invoice): void
     {
-        app(InvoiceEngine::class)->markOverdue($invoice['business_id'], $invoice['id']);
+        $inv = Invoice::find($invoice['id']);
+        $inv->update(['due_date' => now()->subDays(10)]);
+
+        $tenantId = Tenancy::id();
+        $userId = Tenancy::userId();
+
+        Artisan::call('x211:detect-overdue');
+
+        if ($userId !== null) {
+            Tenancy::setUser($userId);
+        }
+        if ($tenantId !== null) {
+            Tenancy::set($tenantId);
+        }
     }
 
     /** ⭐ R211: resolution precedes any automatic stop. @param array<string,mixed> $invoice @return array<string,mixed> */
     private function lastDunningAction(array $invoice): array
     {
-        $state = ReceivableState::where('business_id', $invoice['business_id'])
-            ->where('invoice_id', $invoice['id'])
+        $action = ArDunningAction::where('invoice_id', $invoice['id'])
+            ->latest('id')
             ->first();
 
-        return [
-            'action' => $state->last_action ?? null,
-            'reason' => $state->last_reason ?? null,
-        ];
+        return $action ? $action->toArray() : [];
     }
 
     // ── agency isolation ─────────────────────────────────────────────────
@@ -600,13 +659,16 @@ trait JourneyHarness
             $roleId
         );
 
-        $job = Job::create([
-            'business_id' => $tenant['id'],
-            'person_id' => $person['id'],
-            'title' => 'Real Job',
-            'price_cents' => 10000,
-            'status' => 'committed',
-        ]);
+        $jobRes = (new JobCreateAction)->handle(
+            businessId: $tenant['id'],
+            personId: $person['id'],
+            title: 'Real Job',
+            priceCents: 10000
+        );
+        $jobId = $jobRes['job_id'];
+
+        DB::table('work_orders')->where('id', $jobId)->update(['status' => 'committed']);
+        $job = Job::find($jobId);
 
         DispatchAssignment::create([
             'business_id' => $tenant['id'],
@@ -627,25 +689,40 @@ trait JourneyHarness
             'slug' => 'home',
         ]);
 
+        app(EdgeProvisionAction::class)->handle($tenant['id'], 'j11-site.example.com', true);
+
         $published = app(SiteEngine::class)->publish(
             $tenant['id'],
             $page->id,
             [['type' => 'hero']]
         );
 
-        $version = PageVersion::findOrFail($published['version_id']);
-        $blocks = json_encode($version->content_blocks ?? []);
+        $deployment = Deployment::where('business_id', $tenant['id'])
+            ->where('page_id', $page->id)
+            ->latest()
+            ->first();
+
+        $this->assertNotNull($deployment, 'publish produced no deployment — the edge listener did not run');
+
+        $response = $this->get("/sites/{$tenant['id']}/{$deployment->deploy_hash}");
+        $html = (string) $response->getContent();
+
+        $zoneRow = $deployment->edgeZone;
+        $this->assertNotNull($zoneRow, 'the deployment carries no edge zone');
+        $zoneRow->update(['has_valid_ssl' => false]);
+        $withoutSsl = $this->get("/sites/{$tenant['id']}/{$deployment->deploy_hash}");
+        $zoneRow->update(['has_valid_ssl' => true]);
 
         return [
             'deploy_id' => $published['commit_id'],
             'features' => [
-                'pixel' => (bool) $version->pixel_installed,
-                'chat' => str_contains($blocks, 'chat_widget'),
-                'form_capture' => str_contains($blocks, 'form_capture'),
-                'dni' => str_contains($blocks, 'dni_script'),
-                'seo' => str_contains($blocks, 'seo_tags'),
-                'schema' => str_contains($blocks, 'schema_markup'),
-                'ssl' => isset($version->ssl_installed) ? (bool) $version->ssl_installed : false,
+                'pixel' => str_contains($html, 'x110-pixel'),
+                'chat' => str_contains($html, 'chat-widget-container'),
+                'form_capture' => str_contains($html, 'form-capture-x155'),
+                'dni' => str_contains($html, 'dni-pool-x137'),
+                'seo' => str_contains($html, 'seo-meta-x176'),
+                'schema' => str_contains($html, 'application/ld+json'),
+                'ssl' => $response->status() === 200 && $withoutSsl->status() === 404,
             ],
         ];
     }

@@ -74,4 +74,80 @@ class X07Test extends TestCase
     {
         $this->assertTrue(true);
     }
+
+    /** [G9-39] */
+    public function test_g9_39_risk_is_a_business_period_metric_never_a_person_score(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Forecasting Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->churnAction->evaluateRisk($biz->id, '2026-11', riskScore: 20, threshold: 70);
+        $this->churnAction->evaluateRisk($biz->id, '2026-11', riskScore: 91, threshold: 70);
+
+        $this->assertEquals(1, Forecast::where('business_id', $biz->id)->where('period_month', '2026-11')->count());
+        $forecast = Forecast::where('business_id', $biz->id)->where('period_month', '2026-11')->first();
+        $this->assertEquals(91, $forecast->churn_risk_pct);
+
+        $keys = array_keys($forecast->getAttributes());
+        $this->assertContains('business_id', $keys);
+        $this->assertContains('period_month', $keys);
+        $this->assertGreaterThanOrEqual(8, count($keys));
+        foreach ($keys as $key) {
+            $this->assertDoesNotMatchRegularExpression('/(user|staff|rep|agent|employee|person|burnout|fatigue|shift|productivity)/i', $key);
+        }
+
+        $visited = 0;
+        $matched = 0;
+        $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(base_path('app/Modules/X-07')));
+        foreach ($files as $file) {
+            if ($file->isFile() && $file->getExtension() === 'php' && ! in_array($file->getFilename(), ['capabilities.php', 'manifest.php'])) {
+                $visited++;
+                $content = file_get_contents($file->getPathname());
+                if (preg_match('/Forecast/', $content)) {
+                    $matched++;
+                }
+                $this->assertDoesNotMatchRegularExpression('/\b(burnout|fatigue|surveillance|productivity|punitive|timesheet|keystroke|idle_time)\b/i', $content);
+            }
+        }
+        $this->assertGreaterThanOrEqual(9, $visited);
+        $this->assertGreaterThanOrEqual(3, $matched);
+    }
+
+    /** [G9-40] */
+    public function test_g9_40_money_is_never_attributed_to_a_person(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Forecasting Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $forecast = $this->computeAction->compute($biz->id, '2026-12', 5000, 3000);
+        $this->assertEquals(5000, $forecast->booked_cents);
+        $this->assertEquals(3000, $forecast->collected_cents);
+        $this->assertNotEquals($forecast->booked_cents, $forecast->collected_cents);
+
+        $props = array_map(
+            fn ($p) => $p->getName(),
+            (new \ReflectionClass(ForecastUpdated::class))->getProperties(\ReflectionProperty::IS_PUBLIC)
+        );
+        $this->assertContains('businessId', $props);
+        $this->assertContains('periodMonth', $props);
+        foreach ($props as $p) {
+            $this->assertDoesNotMatchRegularExpression('/(user|staff|rep|agent|employee|person)/i', $p);
+        }
+
+        $visited = 0;
+        $matched = 0;
+        $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(base_path('app/Modules/X-07')));
+        foreach ($files as $file) {
+            if ($file->isFile() && $file->getExtension() === 'php' && ! in_array($file->getFilename(), ['capabilities.php', 'manifest.php'])) {
+                $visited++;
+                $content = file_get_contents($file->getPathname());
+                if (preg_match('/Forecast/', $content)) {
+                    $matched++;
+                }
+                $this->assertDoesNotMatchRegularExpression('/\b(tired|lazy|blame|reprimand|punish|underperform|cost_per_rep|rep_score)\b/i', $content);
+            }
+        }
+        $this->assertGreaterThanOrEqual(9, $visited);
+        $this->assertGreaterThanOrEqual(3, $matched);
+    }
 }

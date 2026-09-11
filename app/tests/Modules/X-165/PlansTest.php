@@ -138,4 +138,43 @@ class PlansTest extends TestCase
             ->call('startMembership', $plan->id)
             ->assertHasErrors(['personInput.'.$plan->id => 'Enter the customer first.']);
     }
+
+    public function test_seeded_row_reaches_the_page(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        MembershipPlan::create([
+            'business_id' => $biz->id,
+            'name' => 'Platinum Plan',
+            'price_cents' => 55555,
+            'billing_interval_months' => 12,
+            'renewal_reminder_days' => 7,
+        ]);
+
+        $this->actingAs($owner)->get(route('x-165.plans'))->assertOk()->assertSee('555.55');
+    }
+
+    public function test_staff_is_forbidden(): void
+    {
+        $user = User::factory()->create();
+        $user->role = UserRole::Staff;
+        $user->save();
+        TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
+
+        Livewire::actingAs($user)->test(Plans::class)->assertForbidden();
+    }
+
+    public function test_manager_is_admitted(): void
+    {
+        $user = User::factory()->create();
+        $user->role = UserRole::Manager;
+        $user->save();
+        TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
+
+        Livewire::actingAs($user)->test(Plans::class)->assertOk();
+    }
 }

@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X157;
 
+use App\Modules\X103\Actions\SitePublishAction;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
 use App\Modules\X121\Models\Asset;
+use App\Modules\X121\Models\Person;
+use App\Modules\X155\Models\FormDefinition;
+use App\Modules\X155\Models\FormSubmission;
 use App\Modules\X157\Actions\EdgeDeployAction;
 use App\Modules\X157\Actions\EdgeProvisionAction;
 use App\Modules\X157\Actions\EdgeRollbackAction;
@@ -22,10 +26,13 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
+use Tests\Concerns\RefreshesTenantDatabase;
 use Tests\TestCase;
 
 class X157Test extends TestCase
 {
+    use RefreshesTenantDatabase;
+
     private EdgeProvisionAction $provisionAction;
 
     private EdgeDeployAction $deployAction;
@@ -164,11 +171,92 @@ class X157Test extends TestCase
         Storage::disk('local')->assertExists("sites/{$deploy['deploy_hash']}.html");
         Http::assertNothingSent();
 
-        $this->get("/sites/{$deploy['deploy_hash']}")->assertOk();
+        $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}")->assertOk();
         Http::assertNothingSent();
 
         $this->assertFalse(class_exists('App\Modules\X157\Models\Asset'));
         $this->assertTrue(class_exists(Asset::class));
+    }
+
+    public function test_a_flag_column_alone_does_not_put_a_marker_on_the_page(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $commitId = 'commit_'.Str::random(16);
+        PageVersion::create([
+            'business_id' => $biz->id,
+            'page_id' => $page->id,
+            'commit_id' => $commitId,
+            'content_blocks' => [],
+            'pixel_installed' => false,
+            'chat_installed' => true,
+            'form_capture_installed' => true,
+            'dni_installed' => true,
+        ]);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $commitId,
+            businessName: $biz->name
+        );
+
+        $html = Storage::disk('local')->get("sites/{$deploy['deploy_hash']}.html");
+
+        $this->assertStringNotContainsString('chat-widget-container', $html);
+        $this->assertStringNotContainsString('form-capture-x155', $html);
+        $this->assertStringNotContainsString('dni-pool-x137', $html);
+    }
+
+    public function test_the_pixel_flag_alone_does_not_put_a_pixel_on_the_page(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $commitId = 'commit_'.Str::random(16);
+        PageVersion::create([
+            'business_id' => $biz->id,
+            'page_id' => $page->id,
+            'commit_id' => $commitId,
+            'content_blocks' => [],
+            'pixel_installed' => true,
+        ]);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $commitId,
+            businessName: $biz->name
+        );
+
+        $html = Storage::disk('local')->get("sites/{$deploy['deploy_hash']}.html");
+
+        $this->assertStringNotContainsString('x110-pixel', $html);
     }
 
     public function test_feature_flags_absent(): void
@@ -232,9 +320,10 @@ class X157Test extends TestCase
             'page_id' => $page->id,
             'commit_id' => $commitId,
             'content_blocks' => [
-                ['type' => 'chat'],
+                ['type' => 'pixel_script'],
+                ['type' => 'chat_widget'],
                 ['type' => 'form_capture'],
-                ['type' => 'dni'],
+                ['type' => 'dni_script'],
             ],
             'pixel_installed' => true,
         ]);
@@ -293,14 +382,14 @@ class X157Test extends TestCase
 
         Storage::disk('local')->put('sites/test_hash_1.html', 'BODY_CONTENT');
 
-        $response = $this->get('/sites/test_hash_1');
+        $response = $this->get("/sites/{$biz->id}/test_hash_1");
         $response->assertStatus(200);
         $this->assertEquals('BODY_CONTENT', $response->getContent());
     }
 
     public function test_route_unknown_hash_returns_404(): void
     {
-        $response = $this->get('/sites/unknown_hash_999');
+        $response = $this->get('/sites/999/unknown_hash_999');
         $response->assertStatus(404);
     }
 
@@ -323,7 +412,7 @@ class X157Test extends TestCase
 
         Storage::disk('local')->put('sites/test_hash_no_ssl.html', 'BODY_CONTENT');
 
-        $response = $this->get('/sites/test_hash_no_ssl');
+        $response = $this->get("/sites/{$biz->id}/test_hash_no_ssl");
         $response->assertStatus(404);
     }
 
@@ -458,5 +547,1792 @@ class X157Test extends TestCase
             ->assertSee('That deployment is not available for this business.');
 
         $this->assertEquals('deployed', $deploymentB->refresh()->status);
+    }
+
+    public function test_route_cleared_tenant_returns_404(): void
+    {
+        Storage::fake('local');
+        $bizA = TestCase::provisionTenant(['name' => 'Biz A', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$bizA->id}'");
+
+        $page = Page::create(['business_id' => $bizA->id, 'title' => 'Home', 'slug' => 'home']);
+        $site = app(SitePublishAction::class)->handle($bizA->id, $page->id, []);
+        $zone = $this->provisionAction->handle($bizA->id, 'acme.com', true);
+        $deploy = $this->deployAction->handle($bizA->id, $zone->id, 120, 1500, $page->id, $site['commit_id'], $bizA->name);
+
+        $bizB = TestCase::provisionTenant(['name' => 'Biz B', 'currency' => 'USD']);
+
+        $this->get("/sites/{$bizB->id}/{$deploy['deploy_hash']}")->assertStatus(404);
+    }
+
+    public function test_route_cleared_tenant_returns_200_positive(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, [
+                ['type' => 'chat'],
+                ['type' => 'form_capture'],
+                ['type' => 'dni'],
+            ]);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        DB::statement("SELECT set_config('app.business_id', '', true)");
+        $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}")->assertStatus(200);
+    }
+
+    /** (R245) */
+    public function test_the_published_route_carries_all_seven_elements(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, [
+                ['type' => 'chat'],
+                ['type' => 'form_capture'],
+                ['type' => 'dni'],
+            ]);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        $response = $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}");
+        $response->assertStatus(200);
+        $html = (string) $response->getContent();
+
+        $this->assertStringContainsString('x110-pixel', $html);
+        $this->assertStringContainsString('chat-widget-container', $html);
+        $this->assertStringContainsString('form-capture-x155', $html);
+        $this->assertStringContainsString('dni-pool-x137', $html);
+        $this->assertStringContainsString('seo-meta-x176', $html);
+        $this->assertStringContainsString('application/ld+json', $html);
+
+        $zoneRow = Deployment::where('deploy_hash', $deploy['deploy_hash'])->first()->edgeZone;
+        $zoneRow->update(['has_valid_ssl' => false]);
+        $withoutSsl = $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}");
+        $withoutSsl->assertStatus(404);
+        $zoneRow->update(['has_valid_ssl' => true]);
+    }
+
+    /** (R245) */
+    public function test_a_site_published_with_no_blocks_still_carries_all_seven(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, []);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        $response = $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}");
+        $response->assertStatus(200);
+        $html = (string) $response->getContent();
+
+        $this->assertStringContainsString('chat-widget-container', $html);
+        $this->assertStringContainsString('x110-pixel', $html);
+        $this->assertStringContainsString('form-capture-x155', $html);
+        $this->assertStringContainsString('dni-pool-x137', $html);
+        $this->assertStringContainsString('seo-meta-x176', $html);
+        $this->assertStringContainsString('application/ld+json', $html);
+
+        $zoneRow = Deployment::where('deploy_hash', $deploy['deploy_hash'])->first()->edgeZone;
+        $zoneRow->update(['has_valid_ssl' => false]);
+        $withoutSsl = $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}");
+        $withoutSsl->assertStatus(404);
+        $zoneRow->update(['has_valid_ssl' => true]);
+    }
+
+    /** (R245) */
+    public function test_the_published_route_emits_each_site_law_element_once(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, [
+                ['type' => 'chat'],
+                ['type' => 'form_capture'],
+                ['type' => 'dni'],
+            ]);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        $response = $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}");
+        $response->assertStatus(200);
+        $html = (string) $response->getContent();
+
+        $this->assertSame(1, substr_count($html, 'chat-widget-container'));
+        $this->assertSame(1, substr_count($html, 'form-capture-x155'));
+        $this->assertSame(1, substr_count($html, 'dni-pool-x137'));
+        $this->assertSame(1, substr_count($html, 'x110-pixel'));
+    }
+
+    /** (R245) */
+    public function test_the_published_pixel_tag_names_a_url_this_platform_serves(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, []);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        $response = $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}");
+        $response->assertStatus(200);
+        $html = (string) $response->getContent();
+
+        preg_match('/<script\s+id="x110-pixel"\s+src="([^"]+)"/', $html, $matches);
+        $src = $matches[1];
+
+        $this->get($src)->assertOk();
+        $this->assertSame(404, $this->get('/pixel.js')->getStatusCode());
+    }
+
+    /** (R245) */
+    public function test_the_published_schema_url_and_canonical_name_the_same_page(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, []);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        $response = $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}");
+        $response->assertStatus(200);
+        $html = (string) $response->getContent();
+
+        $this->assertSame(1, preg_match('/<link rel="canonical" href="([^"]+)"/', $html, $c));
+        $this->assertSame(1, preg_match('#<script type="application/ld\+json">\s*(\{.*?\})\s*</script>#s', $html, $j));
+        $ld = json_decode($j[1], true, 512, JSON_THROW_ON_ERROR);
+        $this->assertIsArray($ld);
+        $this->assertSame($c[1], $ld['url']);
+        $this->assertStringNotContainsString("/pages/{$page->id}", $ld['url']);
+    }
+
+    /** (R245) */
+    public function test_a_tenant_name_cannot_close_an_element_in_the_published_document(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Acme </script><script>alert(1)</script> HVAC', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, []);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        $response = $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}");
+        $response->assertStatus(200);
+        $html = (string) $response->getContent();
+
+        $this->assertSame(substr_count($html, '<script'), substr_count($html, '</script>'));
+        $this->assertSame(1, preg_match('#<script type="application/ld\+json">\s*(\{.*?\})\s*</script>#s', $html, $j));
+        $ld = json_decode($j[1], true, 512, JSON_THROW_ON_ERROR);
+        $this->assertSame($biz->name, $ld['name']);
+    }
+
+    public function test_serving_a_published_site_resolves_the_tenant_through_the_chokepoint(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Acme HVAC', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, []);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        Tenancy::forgetAll();
+
+        $response = $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}");
+        $response->assertStatus(200);
+
+        $this->assertSame(
+            (string) $biz->id,
+            DB::connection('pgsql')->selectOne("SELECT current_setting('app.business_id', true) AS v")->v
+        );
+
+        $this->assertSame($biz->id, Tenancy::id());
+    }
+
+    /** (R245) */
+    public function test_route_deployment_whose_artifact_is_missing_returns_404(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, [
+                ['type' => 'chat'],
+                ['type' => 'form_capture'],
+                ['type' => 'dni'],
+            ]);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        $response = $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}");
+        $response->assertStatus(200);
+        $this->assertStringContainsString('dni-pool-x137', (string) $response->getContent());
+
+        Storage::disk('local')->delete("sites/{$deploy['deploy_hash']}.html");
+        $this->assertFalse(Storage::disk('local')->exists("sites/{$deploy['deploy_hash']}.html"));
+
+        $missing = $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}");
+        $missing->assertStatus(404);
+    }
+
+    /** (R245) */
+    public function test_route_rolled_back_deployment_returns_404(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, [
+                ['type' => 'chat'],
+                ['type' => 'form_capture'],
+                ['type' => 'dni'],
+            ]);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        $response = $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}");
+        $response->assertStatus(200);
+        $this->assertStringContainsString('dni-pool-x137', (string) $response->getContent());
+
+        $deployment = Deployment::where('deploy_hash', $deploy['deploy_hash'])->firstOrFail();
+        app(EdgeRollbackAction::class)->handle($biz->id, $deployment->id);
+        $this->assertEquals('rolled_back', $deployment->refresh()->status);
+
+        $this->assertTrue(Storage::disk('local')->exists("sites/{$deploy['deploy_hash']}.html"));
+
+        $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}")->assertStatus(404);
+    }
+
+    /** (R245) */
+    public function test_route_superseded_deployment_returns_404(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, [
+                ['type' => 'chat'],
+                ['type' => 'form_capture'],
+                ['type' => 'dni'],
+            ]);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $first = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        $this->get("/sites/{$biz->id}/{$first['deploy_hash']}")
+            ->assertStatus(200)
+            ->assertSee('dni-pool-x137', false);
+
+        $second = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        $this->assertNotEquals($first['deploy_hash'], $second['deploy_hash']);
+
+        $this->get("/sites/{$biz->id}/{$second['deploy_hash']}")
+            ->assertStatus(200)
+            ->assertSee('dni-pool-x137', false);
+
+        $this->assertTrue(Storage::disk('local')->exists("sites/{$first['deploy_hash']}.html"));
+        $this->assertTrue(Storage::disk('local')->exists("sites/{$second['deploy_hash']}.html"));
+
+        $this->get("/sites/{$biz->id}/{$first['deploy_hash']}")->assertStatus(404);
+    }
+
+    /** (R245) */
+    public function test_rollback_restores_the_superseded_predecessor(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, [
+                ['type' => 'chat'],
+                ['type' => 'form_capture'],
+                ['type' => 'dni'],
+            ]);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $first = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+        $aRow = Deployment::where('deploy_hash', $first['deploy_hash'])->firstOrFail();
+
+        $this->get("/sites/{$biz->id}/{$first['deploy_hash']}")
+            ->assertStatus(200)
+            ->assertSee('dni-pool-x137', false);
+
+        $second = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        $this->assertNotEquals($first['deploy_hash'], $second['deploy_hash']);
+        $bRow = Deployment::where('deploy_hash', $second['deploy_hash'])->firstOrFail();
+
+        $this->get("/sites/{$biz->id}/{$first['deploy_hash']}")->assertStatus(404);
+        $this->get("/sites/{$biz->id}/{$second['deploy_hash']}")
+            ->assertStatus(200)
+            ->assertSee('dni-pool-x137', false);
+
+        app(EdgeRollbackAction::class)->handle($biz->id, $bRow->id);
+
+        $this->get("/sites/{$biz->id}/{$second['deploy_hash']}")->assertStatus(404);
+
+        $this->get("/sites/{$biz->id}/{$first['deploy_hash']}")
+            ->assertStatus(200)
+            ->assertSee('dni-pool-x137', false);
+
+        $this->assertEquals('deployed', $aRow->refresh()->status);
+    }
+
+    /** (R245) */
+    public function test_rollback_of_a_superseded_deployment_promotes_nothing(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, [
+                ['type' => 'chat'],
+                ['type' => 'form_capture'],
+                ['type' => 'dni'],
+            ]);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $first = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+        $aRow = Deployment::where('deploy_hash', $first['deploy_hash'])->firstOrFail();
+
+        $second = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+        $bRow = Deployment::where('deploy_hash', $second['deploy_hash'])->firstOrFail();
+
+        app(EdgeRollbackAction::class)->handle($biz->id, $aRow->id);
+
+        $this->get("/sites/{$biz->id}/{$second['deploy_hash']}")
+            ->assertStatus(200)
+            ->assertSee('dni-pool-x137', false);
+        $this->assertEquals('deployed', $bRow->refresh()->status);
+
+        $this->get("/sites/{$biz->id}/{$first['deploy_hash']}")->assertStatus(404);
+        $this->assertEquals('rolled_back', $aRow->refresh()->status);
+    }
+
+    public function test_rollback_of_a_superseded_deployment_does_not_promote_an_older_one(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, [
+                ['type' => 'chat'],
+                ['type' => 'form_capture'],
+                ['type' => 'dni'],
+            ]);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $first = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+        $aRow = Deployment::where('deploy_hash', $first['deploy_hash'])->firstOrFail();
+
+        $second = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+        $bRow = Deployment::where('deploy_hash', $second['deploy_hash'])->firstOrFail();
+
+        $third = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+        $cRow = Deployment::where('deploy_hash', $third['deploy_hash'])->firstOrFail();
+
+        $this->assertCount(3, array_unique([$first['deploy_hash'], $second['deploy_hash'], $third['deploy_hash']]));
+
+        $this->assertEquals('superseded', $aRow->refresh()->status);
+        $this->assertEquals('superseded', $bRow->refresh()->status);
+        $this->assertEquals('deployed', $cRow->refresh()->status);
+
+        app(EdgeRollbackAction::class)->handle($biz->id, $bRow->id);
+
+        $this->get("/sites/{$biz->id}/{$first['deploy_hash']}")->assertStatus(404);
+        $this->assertEquals('superseded', $aRow->refresh()->status);
+
+        $this->get("/sites/{$biz->id}/{$third['deploy_hash']}")
+            ->assertStatus(200)
+            ->assertSee('dni-pool-x137', false);
+        $this->assertEquals('deployed', $cRow->refresh()->status);
+
+        $this->get("/sites/{$biz->id}/{$second['deploy_hash']}")->assertStatus(404);
+        $this->assertEquals('rolled_back', $bRow->refresh()->status);
+    }
+
+    public function test_a_zone_has_exactly_one_live_deployment_through_a_rollback_cycle(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, [
+                ['type' => 'chat'],
+                ['type' => 'form_capture'],
+                ['type' => 'dni'],
+            ]);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $live = fn () => Deployment::where('business_id', $biz->id)
+            ->where('edge_zone_id', $zone->id)
+            ->where('status', 'deployed')
+            ->count();
+
+        $first = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+        $aRow = Deployment::where('deploy_hash', $first['deploy_hash'])->firstOrFail();
+        $this->assertEquals(1, $live());
+
+        $second = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+        $bRow = Deployment::where('deploy_hash', $second['deploy_hash'])->firstOrFail();
+        $this->assertEquals(1, $live());
+
+        app(EdgeRollbackAction::class)->handle($biz->id, $bRow->id);
+        $this->assertEquals(1, $live());
+        $this->get("/sites/{$biz->id}/{$first['deploy_hash']}")
+            ->assertStatus(200)
+            ->assertSee('dni-pool-x137', false);
+
+        $third = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+        $cRow = Deployment::where('deploy_hash', $third['deploy_hash'])->firstOrFail();
+        $this->assertEquals(1, $live());
+        $this->get("/sites/{$biz->id}/{$first['deploy_hash']}")->assertStatus(404);
+
+        app(EdgeRollbackAction::class)->handle($biz->id, $cRow->id);
+        $this->assertEquals(1, $live());
+        $this->get("/sites/{$biz->id}/{$first['deploy_hash']}")
+            ->assertStatus(200)
+            ->assertSee('dni-pool-x137', false);
+    }
+
+    public function test_publishing_a_page_deploys_it_to_the_businesses_active_zone(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $site = app(SitePublishAction::class)->handle($biz->id, $page->id, [
+            ['type' => 'chat'], ['type' => 'form_capture'], ['type' => 'dni'],
+        ]);
+
+        $deployment = Deployment::where('business_id', $biz->id)->where('edge_zone_id', $zone->id)->firstOrFail();
+        $this->assertSame('deployed', $deployment->status);
+
+        $response = $this->get("/sites/{$biz->id}/{$deployment->deploy_hash}");
+        $this->assertSame(200, $response->getStatusCode());
+
+        $html = (string) $response->getContent();
+        $this->assertSame(1, preg_match('#<script type="application/ld\+json">\s*(\{.*?\})\s*</script>#s', $html, $j));
+        $ld = json_decode($j[1], true, 512, JSON_THROW_ON_ERROR);
+        $this->assertSame($biz->name, $ld['name']);
+    }
+
+    public function test_publishing_without_an_edge_zone_publishes_and_deploys_nothing(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)->handle($biz->id, $page->id, [
+            ['type' => 'chat'], ['type' => 'form_capture'], ['type' => 'dni'],
+        ]);
+
+        $this->assertTrue($page->fresh()->is_published);
+        $this->assertSame(0, Deployment::where('business_id', $biz->id)->count());
+    }
+
+    public function test_a_failed_deploy_leaves_the_page_published(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        Event::listen(DeployCompleted::class, function (): void {
+            throw new \RuntimeException('edge storage unavailable');
+        });
+
+        app(SitePublishAction::class)->handle($biz->id, $page->id, [['type' => 'chat'], ['type' => 'form_capture'], ['type' => 'dni']]);
+
+        $this->assertTrue($page->fresh()->is_published);
+        $this->assertNotNull($page->fresh()->current_version_id);
+        $this->assertSame(0, Deployment::where('business_id', $biz->id)->count());
+    }
+
+    public function test_nothing_learns_of_a_deploy_before_its_artifact_exists(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $artifactExistedAtDispatch = null;
+
+        Event::listen(DeployCompleted::class, function (DeployCompleted $event) use (&$artifactExistedAtDispatch): void {
+            $artifactExistedAtDispatch = Storage::disk('local')->exists("sites/{$event->deployHash}.html");
+        });
+
+        app(SitePublishAction::class)->handle($biz->id, $page->id, [['type' => 'chat'], ['type' => 'form_capture'], ['type' => 'dni']]);
+
+        $this->assertNotNull($artifactExistedAtDispatch, 'the DeployCompleted listener never ran');
+        $this->assertTrue($artifactExistedAtDispatch);
+
+        $deployment = Deployment::where('business_id', $biz->id)->firstOrFail();
+        $this->assertSame('deployed', $deployment->status);
+        $this->assertTrue(Storage::disk('local')->exists("sites/{$deployment->deploy_hash}.html"));
+    }
+
+    public function test_a_deploy_whose_artifact_cannot_be_written_is_not_announced(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        Storage::disk('local')->makeDirectory('sites');
+
+        $sitesDir = Storage::disk('local')->path('sites');
+        $this->assertDirectoryExists($sitesDir);
+
+        chmod($sitesDir, 0500);
+        clearstatcache();
+
+        try {
+            $this->assertFalse(
+                Storage::disk('local')->put('sites/probe.html', 'x'),
+                'the sabotage did not make sites/ unwritable — this test proves nothing'
+            );
+
+            $announced = false;
+
+            Event::listen(DeployCompleted::class, function () use (&$announced): void {
+                $announced = true;
+            });
+
+            app(SitePublishAction::class)->handle($biz->id, $page->id, [['type' => 'chat'], ['type' => 'form_capture'], ['type' => 'dni']]);
+
+            $this->assertFalse($announced, 'DeployCompleted fired for a deploy whose artifact was never written');
+            $this->assertSame(0, Deployment::where('business_id', $biz->id)->count());
+            $this->assertTrue($page->fresh()->is_published);
+        } finally {
+            chmod($sitesDir, 0700);
+        }
+    }
+
+    public function test_a_deploy_missing_its_seo_half_is_not_announced(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $commitId = 'commit_'.Str::random(16);
+        PageVersion::create([
+            'business_id' => $biz->id,
+            'page_id' => $page->id,
+            'commit_id' => $commitId,
+            'content_blocks' => [['type' => 'chat_widget'], ['type' => 'form_capture'], ['type' => 'dni_script']],
+            'pixel_installed' => true,
+        ]);
+
+        $announced = false;
+
+        Event::listen(DeployCompleted::class, function () use (&$announced): void {
+            $announced = true;
+        });
+
+        $good = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $commitId,
+            businessName: $biz->name
+        );
+
+        $this->assertSame('deployed', $good['status'], 'the control deploy did not succeed — this test proves nothing');
+        $this->assertTrue($announced, 'the control deploy was not announced — this test proves nothing');
+
+        $goodHtml = Storage::disk('local')->get("sites/{$good['deploy_hash']}.html");
+        $this->assertStringContainsString('seo-meta-x176', $goodHtml);
+        $this->assertStringContainsString('application/ld+json', $goodHtml);
+        $this->assertStringContainsString('chat-widget-container', $goodHtml);
+
+        $announced = false;
+
+        try {
+            $this->deployAction->handle(
+                businessId: $biz->id,
+                edgeZoneId: $zone->id,
+                measuredTtfbMs: 120,
+                speedBudgetMs: 1500,
+                pageId: $page->id,
+                commitId: $commitId,
+                businessName: null
+            );
+        } catch (\RuntimeException) {
+            // the refusal; the four assertions below are the claim, not the exception
+        }
+
+        $this->assertFalse($announced, 'DeployCompleted fired for a site published without its SEO half');
+        $this->assertSame(1, Deployment::where('business_id', $biz->id)->count());
+        $this->assertSame(
+            ["sites/{$good['deploy_hash']}.html", "sites/{$good['deploy_hash']}.llms.txt"],
+            Storage::disk('local')->files('sites'),
+            'a second artifact was written for a deploy carrying four of the seven elements'
+        );
+        $this->assertSame('deployed', Deployment::where('business_id', $biz->id)->sole()->status);
+    }
+
+    public function test_the_listener_publishes_all_seven_on_a_real_request(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)->handle($biz->id, $page->id, [
+            ['type' => 'chat'],
+            ['type' => 'form_capture'],
+            ['type' => 'dni'],
+        ]);
+
+        $this->assertSame('published', $site['status']);
+
+        $deployment = Deployment::where('business_id', $biz->id)
+            ->where('status', 'deployed')
+            ->sole();
+
+        $this->assertSame($zone->id, $deployment->edge_zone_id, 'the listener did not deploy to the provisioned zone');
+
+        $response = $this->get("/sites/{$biz->id}/{$deployment->deploy_hash}");
+        $response->assertStatus(200);
+        $html = (string) $response->getContent();
+
+        $this->assertStringContainsString('x110-pixel', $html, 'the listener deploy is missing the pixel');
+        $this->assertStringContainsString('chat-widget-container', $html, 'the listener deploy is missing the chat marker');
+        $this->assertStringContainsString('form-capture-x155', $html, 'the listener deploy is missing the form marker');
+        $this->assertStringContainsString('dni-pool-x137', $html, 'the listener deploy is missing the DNI marker');
+        $this->assertStringContainsString('seo-meta-x176', $html, 'the listener deploy is missing the SEO title');
+        $this->assertStringContainsString('rel="canonical"', $html, 'the listener deploy is missing the canonical link');
+        $this->assertStringContainsString('application/ld+json', $html, 'the listener deploy is missing the schema block');
+
+        $zone->update(['has_valid_ssl' => false]);
+        $response = $this->get("/sites/{$biz->id}/{$deployment->deploy_hash}");
+        $response->assertStatus(404);
+
+        $zone->update(['has_valid_ssl' => true]);
+        $response = $this->get("/sites/{$biz->id}/{$deployment->deploy_hash}");
+        $response->assertStatus(200);
+    }
+
+    public function test_a_second_pages_publish_leaves_the_first_page_live(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $home = Page::create(['business_id' => $biz->id, 'title' => 'Home', 'slug' => 'home']);
+        $about = Page::create(['business_id' => $biz->id, 'title' => 'About', 'slug' => 'about']);
+
+        app(SitePublishAction::class)->handle($biz->id, $home->id, [['type' => 'chat']]);
+
+        $homeDeploy = Deployment::where('business_id', $biz->id)->where('status', 'deployed')->sole();
+        $homeHash = $homeDeploy->deploy_hash;
+
+        $this->assertSame(
+            (int) $home->id,
+            (int) $homeDeploy->page_id,
+            'the deployment does not record which page it rendered'
+        );
+
+        app(SitePublishAction::class)->handle($biz->id, $about->id, [['type' => 'chat']]);
+
+        $aboutDeploy = Deployment::where('business_id', $biz->id)->orderByDesc('id')->first();
+        $this->assertNotSame($homeHash, $aboutDeploy->deploy_hash);
+
+        $homeResponse = $this->get("/sites/{$biz->id}/{$homeHash}");
+        $homeResponse->assertStatus(200);
+        $this->assertStringContainsString(
+            '<title id="seo-meta-x176">Home</title>',
+            (string) $homeResponse->getContent(),
+            'publishing a second page took the first page down'
+        );
+
+        $aboutResponse = $this->get("/sites/{$biz->id}/{$aboutDeploy->deploy_hash}");
+        $aboutResponse->assertStatus(200);
+        $this->assertStringContainsString(
+            '<title id="seo-meta-x176">About</title>',
+            (string) $aboutResponse->getContent(),
+            'the second page did not serve its own artifact'
+        );
+
+        $this->assertSame(
+            2,
+            Deployment::where('business_id', $biz->id)->where('status', 'deployed')->count(),
+            'two published pages must leave two live deployments'
+        );
+    }
+
+    public function test_rolling_back_one_page_leaves_another_pages_history_alone(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $home = Page::create(['business_id' => $biz->id, 'title' => 'Home', 'slug' => 'home']);
+        $about = Page::create(['business_id' => $biz->id, 'title' => 'About', 'slug' => 'about']);
+
+        app(SitePublishAction::class)->handle($biz->id, $home->id, [['type' => 'chat']]);
+        $aRow = Deployment::where('business_id', $biz->id)->where('status', 'deployed')->sole();
+
+        app(SitePublishAction::class)->handle($biz->id, $home->id, [['type' => 'chat']]);
+        $bRow = Deployment::where('business_id', $biz->id)->where('status', 'deployed')->sole();
+
+        app(SitePublishAction::class)->handle($biz->id, $about->id, [['type' => 'chat']]);
+        $cRow = Deployment::where('business_id', $biz->id)
+            ->where('page_id', $about->id)
+            ->where('status', 'deployed')
+            ->sole();
+
+        $this->assertSame(
+            'superseded',
+            $aRow->refresh()->status,
+            'the first home deploy should already be superseded before any rollback'
+        );
+
+        app(EdgeRollbackAction::class)->handle($biz->id, $cRow->id);
+
+        $this->assertSame(
+            'superseded',
+            $aRow->refresh()->status,
+            'rolling back the about page promoted a retired home deployment'
+        );
+        $this->get("/sites/{$biz->id}/{$aRow->deploy_hash}")->assertStatus(404);
+        $this->assertSame(
+            'deployed',
+            $bRow->refresh()->status,
+            'rolling back the about page disturbed the live home deploy'
+        );
+        $this->assertSame(
+            1,
+            Deployment::where('business_id', $biz->id)
+                ->where('page_id', $home->id)
+                ->where('status', 'deployed')
+                ->count(),
+            'the home page must have exactly one live deployment'
+        );
+
+        app(EdgeRollbackAction::class)->handle($biz->id, $bRow->id);
+
+        $this->assertSame(
+            'deployed',
+            $aRow->refresh()->status,
+            'rolling back the live home deploy did not restore its own predecessor'
+        );
+        $this->get("/sites/{$biz->id}/{$aRow->deploy_hash}")->assertStatus(200);
+    }
+
+    /** (R245) */
+    public function test_the_published_form_posts_to_an_address_that_captures(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, [
+                ['type' => 'chat'],
+                ['type' => 'form_capture'],
+                ['type' => 'dni'],
+            ]);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Contact',
+            'slug' => 'contact',
+            'steps' => [],
+            'schema' => [],
+        ]);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        $pageResp = $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}");
+        $pageResp->assertStatus(200);
+
+        $html = (string) $pageResp->getContent();
+        $this->assertMatchesRegularExpression(
+            '/<form class="form-capture-x155"[^>]*action="[^"]+"/',
+            $html,
+            'the published form names no address'
+        );
+
+        preg_match('/<form class="form-capture-x155"[^>]*action="([^"]+)"/', $html, $m);
+        $this->assertSame(
+            "/sites/{$biz->id}/{$deploy['deploy_hash']}/forms/{$form->id}",
+            $m[1],
+            'the published form posts to the wrong address'
+        );
+
+        $post = $this->post($m[1], [
+            'first_name' => 'Rae',
+            'phone' => '+15559990001',
+            'email' => 'rae@example.com',
+        ]);
+        $post->assertStatus(201);
+
+        $person = Person::where('business_id', $biz->id)->where('phone', '+15559990001')->first();
+        $this->assertNotNull($person, 'the published form captured no contact');
+
+        $this->assertSame('Rae', $person->first_name);
+
+        $this->assertSame(1, FormSubmission::where('business_id', $biz->id)
+            ->where('form_definition_id', $form->id)->count());
+
+        $deployment = Deployment::where('deploy_hash', $deploy['deploy_hash'])->firstOrFail();
+        app(EdgeRollbackAction::class)->handle($biz->id, $deployment->id);
+
+        $this->post($m[1], [
+            'first_name' => 'Sam',
+            'phone' => '+15559990002',
+        ])->assertStatus(404);
+
+        $this->assertSame(1, FormSubmission::where('business_id', $biz->id)
+            ->where('form_definition_id', $form->id)->count(),
+            'a rolled back site still accepted a submission');
+    }
+
+    public function test_a_bot_filling_the_honeypot_is_refused_by_the_published_form_endpoint(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, [
+                ['type' => 'chat'],
+                ['type' => 'form_capture'],
+                ['type' => 'dni'],
+            ]);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Contact',
+            'slug' => 'contact',
+            'steps' => [],
+            'schema' => [],
+        ]);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        $pageResp = $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}");
+        $pageResp->assertStatus(200);
+
+        $html = (string) $pageResp->getContent();
+        preg_match('/<form class="form-capture-x155"[^>]*action="([^"]+)"/', $html, $m);
+
+        $post = $this->post($m[1], [
+            'first_name' => 'Rae',
+            'website_url' => 'http://spam-link.ru',
+        ]);
+
+        $post->assertStatus(422);
+        $post->assertJson(['status' => 'rejected']);
+
+        $submission = FormSubmission::where('business_id', $biz->id)
+            ->where('form_definition_id', $form->id)
+            ->firstOrFail();
+
+        $this->assertTrue($submission->is_spam);
+        $this->assertSame('honeypot_triggered', $submission->spam_reason);
+        $this->assertSame('http://spam-link.ru', $submission->payload['website_url']);
+    }
+
+    public function test_the_published_form_refuses_a_form_belonging_to_another_business(): void
+    {
+        Storage::fake('local');
+        $bizA = TestCase::provisionTenant(['name' => 'Tenant A', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$bizA->id}'");
+
+        $page = Page::create([
+            'business_id' => $bizA->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($bizA->id, $page->id, [
+                ['type' => 'chat'],
+                ['type' => 'form_capture'],
+                ['type' => 'dni'],
+            ]);
+
+        $zone = $this->provisionAction->handle($bizA->id, 'acme-a.com', true);
+
+        $formA = FormDefinition::create([
+            'business_id' => $bizA->id,
+            'form_name' => 'Contact A',
+            'slug' => 'contact-a',
+            'steps' => [],
+            'schema' => [],
+        ]);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $bizA->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $bizA->name
+        );
+
+        $bizB = TestCase::provisionTenant(['name' => 'Tenant B', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$bizB->id}'");
+
+        $formB = FormDefinition::create([
+            'business_id' => $bizB->id,
+            'form_name' => 'Contact B',
+            'slug' => 'contact-b',
+            'steps' => [],
+            'schema' => [],
+        ]);
+
+        $pageResp = $this->get("/sites/{$bizA->id}/{$deploy['deploy_hash']}");
+        $pageResp->assertStatus(200);
+
+        $html = (string) $pageResp->getContent();
+        preg_match('/<form class="form-capture-x155"[^>]*action="([^"]+)"/', $html, $m);
+
+        $action = preg_replace('/\/forms\/\d+$/', '/forms/'.$formB->id, $m[1]);
+
+        $post = $this->post($action, [
+            'first_name' => 'Rae',
+            'email' => 'rae@example.com',
+        ]);
+
+        $post->assertStatus(404);
+
+        $count = FormSubmission::whereIn('business_id', [$bizA->id, $bizB->id])->count();
+        $this->assertSame(0, $count, 'a cross-tenant form id captured a submission');
+    }
+
+    public function test_the_published_form_accepts_an_array_valued_field_without_a_server_error(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, [
+                ['type' => 'chat'],
+                ['type' => 'form_capture'],
+                ['type' => 'dni'],
+            ]);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Contact',
+            'slug' => 'contact',
+            'steps' => [],
+            'schema' => [],
+        ]);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        $pageResp = $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}");
+        $pageResp->assertStatus(200);
+
+        $html = (string) $pageResp->getContent();
+        preg_match('/<form class="form-capture-x155"[^>]*action="([^"]+)"/', $html, $m);
+
+        $post = $this->post($m[1], [
+            'first_name' => 'Rae',
+            'phone' => ['+15559990001'],
+        ]);
+        $post->assertStatus(201);
+
+        $submission = FormSubmission::where('business_id', $biz->id)
+            ->where('form_definition_id', $form->id)
+            ->firstOrFail();
+
+        $this->assertSame(['+15559990001'], $submission->payload['phone']);
+
+        $person = Person::findOrFail($submission->person_id);
+        $this->assertNull($person->phone);
+        $this->assertSame('Rae', $person->first_name);
+    }
+
+    public function test_a_lapsed_certificate_stops_the_published_form_from_accepting_a_submission(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, [
+                ['type' => 'chat'],
+                ['type' => 'form_capture'],
+                ['type' => 'dni'],
+            ]);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Contact',
+            'slug' => 'contact',
+            'steps' => [],
+            'schema' => [],
+        ]);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        $pageResp = $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}");
+        $pageResp->assertStatus(200);
+
+        $html = (string) $pageResp->getContent();
+        preg_match('/<form class="form-capture-x155"[^>]*action="([^"]+)"/', $html, $m);
+
+        $post = $this->post($m[1], [
+            'first_name' => 'Rae',
+            'phone' => '+15559990001',
+            'email' => 'rae@example.com',
+        ]);
+        $post->assertStatus(201);
+
+        $this->assertSame(1, FormSubmission::where('business_id', $biz->id)
+            ->where('form_definition_id', $form->id)->count());
+
+        $zone->update(['has_valid_ssl' => false]);
+
+        $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}")->assertStatus(404);
+
+        $this->post($m[1], [
+            'first_name' => 'Rae',
+            'phone' => '+15559990001',
+            'email' => 'rae@example.com',
+        ])->assertStatus(404);
+
+        $this->assertSame(1, FormSubmission::where('business_id', $biz->id)
+            ->where('form_definition_id', $form->id)->count(),
+            'a site whose certificate lapsed still accepted a submission');
+    }
+
+    /** (R245) */
+    public function test_a_video_block_becomes_videoobject_in_the_served_page_schema(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Video Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, [
+                ['type' => 'chat'],
+                ['type' => 'form_capture'],
+                ['type' => 'dni'],
+                [
+                    'type' => 'video_embed',
+                    'name' => 'Drain Clearing Explained',
+                    'contentUrl' => 'https://video.example.com/drain.mp4',
+                    'uploadDate' => '2026-09-01',
+                ],
+            ]);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        $response = $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}");
+        $response->assertStatus(200);
+        $body = (string) $response->getContent();
+
+        $this->assertSame(
+            1,
+            preg_match('#<script type="application/ld\+json">\s*(.*?)\s*</script>#s', $body, $m),
+            'the served page carries no JSON-LD block at all'
+        );
+        $ld = json_decode($m[1], true, 512, JSON_THROW_ON_ERROR);
+
+        $this->assertSame('VideoObject', $ld['video'][0]['@type'] ?? null);
+        $this->assertSame('Drain Clearing Explained', $ld['video'][0]['name'] ?? null);
+        $this->assertSame('https://video.example.com/drain.mp4', $ld['video'][0]['contentUrl'] ?? null);
+        $this->assertSame('2026-09-01', $ld['video'][0]['uploadDate'] ?? null);
+    }
+
+    public function test_a_malformed_video_block_is_omitted_from_the_served_page_schema(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Video Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, [
+                ['type' => 'chat'],
+                ['type' => 'form_capture'],
+                ['type' => 'dni'],
+                [
+                    'type' => 'video_embed',
+                    'name' => 'Broken',
+                    'uploadDate' => '2026-09-01',
+                ],
+            ]);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        $response = $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}");
+        $response->assertStatus(200);
+        $body = (string) $response->getContent();
+
+        $this->assertStringContainsString('application/ld+json', $body);
+        $this->assertStringNotContainsString('Broken', $body);
+        $this->assertStringContainsString('dni-pool-x137', $body);
+    }
+
+    public function test_the_published_form_refuses_a_minor_and_writes_no_contact(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, [
+                ['type' => 'chat'],
+                ['type' => 'form_capture'],
+                ['type' => 'dni'],
+            ]);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Contact',
+            'slug' => 'contact',
+            'steps' => [],
+            'schema' => [],
+        ]);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        $pageResp = $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}");
+        $pageResp->assertStatus(200);
+
+        $html = (string) $pageResp->getContent();
+        preg_match('/<form class="form-capture-x155"[^>]*action="([^"]+)"/', $html, $m);
+
+        $post = $this->post($m[1], [
+            'first_name' => 'Kid',
+            'phone' => '+15550008181',
+            'date_of_birth' => now()->subYears(15)->toDateString(),
+        ]);
+
+        $this->assertSame(0, Person::where('business_id', $biz->id)->where('phone', '+15550008181')->count(),
+            'P-148: an under-18 signal at ingest wrote a contact row through the published form');
+
+        $this->assertSame(0, FormSubmission::where('business_id', $biz->id)->count(),
+            'P-148: an under-18 submission was stored through the published form');
+
+        $post->assertStatus(422);
+        $this->assertSame('under_18', $post->json('reason'));
+    }
+
+    public function test_the_published_form_refuses_an_unanswered_required_step(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, [
+                ['type' => 'chat'],
+                ['type' => 'form_capture'],
+                ['type' => 'dni'],
+            ]);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Contact',
+            'slug' => 'contact',
+            'steps' => [
+                ['step' => 1, 'required' => ['project_type']],
+            ],
+            'schema' => [],
+        ]);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        $pageResp = $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}");
+        $pageResp->assertStatus(200);
+
+        $html = (string) $pageResp->getContent();
+        preg_match('/<form class="form-capture-x155"[^>]*action="([^"]+)"/', $html, $m);
+
+        $postA = $this->post($m[1], [
+            'first_name' => 'John',
+            'phone' => '+15550008182',
+            'project_type' => 'roofing',
+        ]);
+
+        $postA->assertStatus(201);
+        $this->assertSame('captured', $postA->json('status'));
+        $this->assertSame(1, FormSubmission::where('business_id', $biz->id)->where('form_definition_id', $form->id)->count());
+
+        $postB = $this->post($m[1], [
+            'first_name' => 'John',
+            'phone' => '+15550008182',
+        ]);
+
+        $postB->assertStatus(422);
+        $this->assertSame('incomplete_step', $postB->json('reason'));
+        $this->assertContains('project_type', $postB->json('missing'));
+        $this->assertSame(1, $postB->json('step'));
+        $this->assertSame(1, FormSubmission::where('business_id', $biz->id)->where('form_definition_id', $form->id)->count());
+    }
+
+    public function test_the_published_form_skips_a_malformed_required_field_and_still_enforces_its_siblings(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, [
+                ['type' => 'chat'],
+                ['type' => 'form_capture'],
+                ['type' => 'dni'],
+            ]);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Contact',
+            'slug' => 'contact',
+            'steps' => [
+                ['step' => 1, 'required' => [['nested'], 'project_type']],
+            ],
+            'schema' => [],
+        ]);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        $pageResp = $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}");
+        $pageResp->assertStatus(200);
+
+        $html = (string) $pageResp->getContent();
+        preg_match('/<form class="form-capture-x155"[^>]*action="([^"]+)"/', $html, $m);
+
+        $postB = $this->post($m[1], [
+            'first_name' => 'John',
+            'phone' => '+15550008182',
+        ]);
+
+        $postB->assertStatus(422);
+        $this->assertSame(['project_type'], $postB->json('missing'));
+        $this->assertSame('incomplete_step', $postB->json('reason'));
+
+        $postA = $this->post($m[1], [
+            'first_name' => 'John',
+            'phone' => '+15550008182',
+            'project_type' => 'roofing',
+        ]);
+
+        $postA->assertStatus(201);
+        $this->assertSame('captured', $postA->json('status'));
+        $this->assertSame(1, FormSubmission::where('business_id', $biz->id)->where('form_definition_id', $form->id)->count());
     }
 }

@@ -46,6 +46,9 @@
         }
     },
     "scripts": {
+        "deploy": [
+            "bash deploy.sh"
+        ],
         "setup": [
             "composer install",
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",

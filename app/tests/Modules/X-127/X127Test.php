@@ -10,6 +10,7 @@ use App\Modules\X127\Actions\TenantzeroProofAction;
 use App\Modules\X127\Events\TenantzeroClaimVerified;
 use App\Modules\X127\Events\TenantzeroMetricPublished;
 use App\Modules\X127\Models\PublishedMetric;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -83,7 +84,32 @@ class X127Test extends TestCase
      */
     public function test_n_127_01(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Tenant Zero', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $metric = $this->metricAction->handle(
+            businessId: $biz->id,
+            metricKey: 'net_revenue_q3',
+            publishedValue: '$142,500.00',
+            liveQuery: 'SELECT sum(amount_cents) FROM billing_transactions WHERE q=3'
+        );
+
+        $res = $this->proofAction->handle($biz->id, 'net_revenue_q3', '$142,500.01');
+
+        $this->assertEquals('pulled_drifted', $res['status']);
+        $this->assertEquals('$142,500.00', $res['previous_claim']);
+
+        $pulledMetric = PublishedMetric::where('business_id', $biz->id)->find($metric->id);
+        $this->assertNull($pulledMetric->published_value);
+        $this->assertEquals('pulled_drifted', $pulledMetric->status);
+        $this->assertEquals('$142,500.01', $pulledMetric->last_verified_value);
+
+        $res2 = $this->proofAction->handle($biz->id, 'net_revenue_q3', '$142,500.00');
+        $this->assertEquals('pulled_drifted', $res2['status']);
+        $this->assertNull($res2['previous_claim']);
+
+        $reReadMetric = PublishedMetric::where('business_id', $biz->id)->find($metric->id);
+        $this->assertEquals('pulled_drifted', $reReadMetric->status);
     }
 
     /**
@@ -91,7 +117,19 @@ class X127Test extends TestCase
      */
     public function test_n_127_02(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Tenant Zero', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $config1 = $this->configAction->handle($biz->id, isTenantZero: true, publicProof: true);
+        $this->assertTrue($config1->is_tenant_zero);
+
+        $config2 = $this->configAction->handle($biz->id, isTenantZero: true, publicProof: true);
+
+        $count = DB::table('tenant_zero_config')->where('business_id', $biz->id)->count();
+        $this->assertEquals(1, $count);
+
+        $this->expectException(ModelNotFoundException::class);
+        $this->proofAction->handle($biz->id, 'metric_that_was_never_published', '$1.00');
     }
 
     /**
@@ -99,6 +137,23 @@ class X127Test extends TestCase
      */
     public function test_n_127_03(): void
     {
-        $this->assertTrue(true);
+        $bizB = TestCase::provisionTenant(['name' => 'Other Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$bizB->id}'");
+
+        $this->metricAction->handle($bizB->id, 'metric_b', '$100.00', 'SELECT 1');
+
+        $countB = PublishedMetric::where('business_id', $bizB->id)->count();
+        $this->assertEquals(1, $countB);
+
+        $bizA = TestCase::provisionTenant(['name' => 'Tenant Zero', 'currency' => 'USD']);
+        $this->configAction->handle($bizA->id, isTenantZero: true, publicProof: true);
+
+        DB::statement("SET app.business_id = '{$bizA->id}'");
+
+        $countA = PublishedMetric::where('business_id', $bizB->id)->count();
+        $this->assertEquals(0, $countA);
+
+        $this->expectException(ModelNotFoundException::class);
+        $this->proofAction->handle($bizB->id, 'metric_b', '$100.00');
     }
 }

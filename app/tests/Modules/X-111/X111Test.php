@@ -9,12 +9,18 @@ use App\Modules\X111\Actions\OpsBanAction;
 use App\Modules\X111\Actions\OpsExportAction;
 use App\Modules\X111\Actions\OpsImpersonateAction;
 use App\Modules\X111\Actions\OpsTicketAction;
+use App\Modules\X111\Actions\ResolveAlertAction;
 use App\Modules\X111\Domain\OpsEngine;
 use App\Modules\X111\Events\AlertOperator;
 use App\Modules\X111\Events\TicketOpened;
+use App\Modules\X111\Models\IpBan;
+use App\Modules\X111\Models\ManualQueue;
+use App\Modules\X111\Models\OperatorAlert;
+use App\Modules\X111\Models\TenantTicket;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 class X111Test extends TestCase
@@ -94,10 +100,200 @@ class X111Test extends TestCase
     }
 
     /**
-     * [G1-29], [G1-35], [G2-63], [G4-05], [G4-14], [G4-24], [G4-28], [G4-31], [G4-33], [G4-36], [G4-40], [G4-41], [G4-47], [G5-17], [G5-18], [G5-38], [G7-33], [G9-05], [G9-19], [G9-20], [G9-28], [G17-07], [G17-17], [G19-09], [G21-02], [G21-05], [G21-14], [G15-28]
+     * [G4-14] the operator's; the tenant's conversational search is X-01's. ElasticSearch is corpus vocabulary — one database (§22)
      */
-    public function test_ops_console_capabilities(): void
+    public function test_g4_14_elasticsearch_vocabulary(): void
     {
-        $this->assertTrue(true);
+        $drivers = array_column(config('database.connections'), 'driver');
+        $this->assertNotContains('elasticsearch', $drivers);
+
+        $this->assertNull((new IpBan)->getConnectionName());
+        $this->assertNull((new ManualQueue)->getConnectionName());
+        $this->assertNull((new OperatorAlert)->getConnectionName());
+        $this->assertNull((new TenantTicket)->getConnectionName());
+
+        $biz = TestCase::provisionTenant(['name' => 'Elastic Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $alert = $this->alertAction->handle($biz->id, 'critical', 'Check elasticsearch');
+
+        $row = DB::connection(config('database.default'))
+            ->table((new OperatorAlert)->getTable())
+            ->where('id', $alert->id)
+            ->first();
+
+        $this->assertNotNull($row);
+        $this->assertEquals($biz->id, $row->business_id);
+    }
+
+    /**
+     * [G2-63]
+     */
+    public function test_g2_63_a_human_request_is_present_as_a_support_ticket(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Human Ticket Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $transcript = 'Please connect me to human support.';
+        $ticket = $this->ticketAction->handle($biz->id, $transcript, 'human_escalation');
+
+        $this->assertDatabaseHas('tenant_tickets', ['id' => $ticket->id, 'full_transcript' => $transcript]);
+        $this->assertSame('human_requested', $ticket->source);
+    }
+
+    /** [G9-06] */
+    public function test_g9_06_ops_console_alerts_a_human_and_pauses_no_ad_spend(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Ops Control Center Tenant 2', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $alert = $this->alertAction->handle($biz->id, 'critical', 'Investigate anomalous request volume');
+
+        $this->assertEquals('open', $alert->status);
+        $this->assertEquals('Investigate anomalous request volume', $alert->action_verb_message);
+
+        (new ResolveAlertAction)->handle($alert);
+        $alert->refresh();
+        $this->assertEquals('resolved', $alert->status);
+
+        $alertKeys = array_keys($alert->getAttributes());
+        $params = (new \ReflectionMethod(OpsAlertAction::class, 'handle'))->getParameters();
+        $paramNames = array_map(fn ($p) => $p->getName(), $params);
+
+        $this->assertContains('businessId', $paramNames);
+        $this->assertContains('severity', $paramNames);
+        $this->assertContains('message', $paramNames);
+        $this->assertGreaterThanOrEqual(3, count($paramNames));
+
+        $names = array_merge($alertKeys, $paramNames);
+        foreach ($names as $name) {
+            $this->assertDoesNotMatchRegularExpression('/(cpc|adset|ad_spend|campaign|pause|budget|bidding|creative)/i', $name);
+        }
+
+        $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(app_path('Modules/X-111')));
+        $files = [];
+        foreach ($iterator as $file) {
+            if ($file->isFile() && $file->getExtension() === 'php' && ! in_array($file->getBasename(), ['capabilities.php', 'manifest.php'])) {
+                $files[] = $file->getPathname();
+            }
+        }
+        $this->assertGreaterThanOrEqual(21, count($files));
+
+        $controlCount = 0;
+        foreach ($files as $filePath) {
+            $content = file_get_contents($filePath);
+            $this->assertDoesNotMatchRegularExpression('/\b(cpc|cost_per_click|bid|bids|bidding|adset|ad_set|ad_spend|adwords|campaign|campaigns|pause|paused|retarget|remarketing)\b/i', $content, "File $filePath matched forbidden term");
+            if (preg_match('/OperatorAlert|OpsEngine|TenantTicket/', $content)) {
+                $controlCount++;
+            }
+        }
+
+        $this->assertGreaterThanOrEqual(8, $controlCount);
+    }
+
+    /**
+     * [G5-18] the HELP path; reply HUMAN always escalates (R37)
+     */
+    public function test_g5_18_help_path_always_escalates(): void
+    {
+        Event::fake([TicketOpened::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Help Path Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $t1 = $this->ticketAction->handle($biz->id, '<a transcript>', 'billing');
+        $t2 = $this->ticketAction->handle($biz->id, '<a different transcript>', 'general');
+
+        $this->assertSame('billing', $t1->category);
+        $this->assertSame('general', $t2->category);
+
+        Event::assertDispatchedTimes(TicketOpened::class, 2);
+
+        Event::assertDispatched(TicketOpened::class, fn (TicketOpened $e) => $e->ticketId === $t1->id && $e->source === 'human_requested');
+        Event::assertDispatched(TicketOpened::class, fn (TicketOpened $e) => $e->ticketId === $t2->id && $e->source === 'human_requested');
+    }
+
+    /** [G5-18] */
+    public function test_g5_18_human_reply_escalates(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Human Escalate', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $ticket = $this->ticketAction->handle($biz->id, 'HUMAN', 'human_escalation');
+        $this->assertEquals('human_requested', $ticket->source);
+        $this->assertEquals('open', $ticket->status);
+        $this->assertDatabaseHas('tenant_tickets', ['id' => $ticket->id, 'full_transcript' => 'HUMAN']);
+    }
+
+    /** [G7-33] */
+    public function test_g7_33_spend_ceiling_alerts_never_stops_phone(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Ceiling', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $alert = $this->alertAction->handle($biz->id, 'warning', 'Spend ceiling reached');
+        $this->assertEquals('warning', $alert->severity);
+        $this->assertStringContainsString('Spend ceiling reached', $alert->action_verb_message);
+
+        $alertKeys = array_keys($alert->getAttributes());
+        $params = (new \ReflectionMethod(OpsAlertAction::class, 'handle'))->getParameters();
+        $paramNames = array_map(fn ($p) => $p->getName(), $params);
+
+        $names = array_merge($alertKeys, $paramNames);
+        foreach ($names as $name) {
+            $this->assertDoesNotMatchRegularExpression('/(phone|telephony|answering|hangup|divert)/i', $name);
+        }
+    }
+
+    /** [G19-09] */
+    public function test_g19_09_compromise_halt_is_security_stop(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Security Halt', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $ban = $this->banAction->handle($biz->id, '203.0.113.5', 'Compromise halt');
+        $this->assertDatabaseHas('ip_bans', ['id' => $ban->id]);
+
+        $banKeys = array_keys($ban->getAttributes());
+        $params = (new \ReflectionMethod(OpsBanAction::class, 'handle'))->getParameters();
+        $paramNames = array_map(fn ($p) => $p->getName(), $params);
+
+        $names = array_merge($banKeys, $paramNames);
+        foreach ($names as $name) {
+            $this->assertDoesNotMatchRegularExpression('/(balance|credit|cap|dunning|arrears)/i', $name);
+        }
+    }
+
+    /** [G15-28] */
+    public function test_g15_28_no_pay_field_exposed(): void
+    {
+        $this->assertFalse(Schema::hasColumn('operator_alerts', 'pay'));
+        $this->assertFalse(Schema::hasColumn('tenant_tickets', 'pay'));
+    }
+
+    /** [G4-24] */
+    public function test_g4_24_throttle_refusal(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Throttle Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $ip = '10.0.0.1';
+        $this->banAction->handle($biz->id, $ip, 'fraud', 24);
+
+        $engine = new OpsEngine;
+
+        try {
+            $engine->checkThrottle($biz->id, $ip);
+            $this->fail('Throttle did not refuse.');
+        } catch (\DomainException $e) {
+            $this->assertStringContainsString('THROTTLE REFUSED', $e->getMessage());
+        }
+
+        // Pass case
+        $engine->checkThrottle($biz->id, '10.0.0.2');
+        $this->assertDatabaseHas('ip_bans', ['business_id' => $biz->id, 'ip_address' => '10.0.0.1']);
+        $this->assertDatabaseMissing('ip_bans', ['business_id' => $biz->id, 'ip_address' => '10.0.0.2']);
+
+        // The dead-tier half is not assertable here: X-111 exposes no pricing or plan surface, and the module's only occurrence of $99/$999 is the ⑤ tracker text in capabilities.php.
     }
 }

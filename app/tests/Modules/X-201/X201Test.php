@@ -7,6 +7,7 @@ namespace Tests\Modules\X201;
 use App\Modules\X201\Actions\DisputeCompileAction;
 use App\Modules\X201\Actions\DisputeRecordAction;
 use App\Modules\X201\Actions\DisputeSubmitAction;
+use App\Modules\X201\Domain\DisputeAlreadyOutcomedException;
 use App\Modules\X201\Domain\DisputeDefenseEngine;
 use App\Modules\X201\Events\DisputeLost;
 use App\Modules\X201\Events\DisputeOpened;
@@ -14,8 +15,10 @@ use App\Modules\X201\Events\EvidenceCompiled;
 use App\Modules\X201\Models\Dispute;
 use App\Modules\X201\Models\DisputeEvidence;
 use App\Modules\X201\Models\DisputeOutcome;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 class X201Test extends TestCase
@@ -35,6 +38,30 @@ class X201Test extends TestCase
         $this->recordAction = new DisputeRecordAction($this->engine);
         $this->compileAction = new DisputeCompileAction($this->engine);
         $this->submitAction = new DisputeSubmitAction($this->engine);
+    }
+
+    public function test_dependency_deadline_at_exists(): void
+    {
+        $this->assertTrue(Schema::hasColumn('disputes', 'deadline_at'), 'disputes.deadline_at must exist');
+    }
+
+    public function test_dispute_cannot_be_submitted_after_deadline(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Dispute Deadline Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $dispute = $this->recordAction->handle($biz->id, 999, 50000, 'unrecognized');
+
+        $evidenceBundle = [
+            ['type' => 'invoice', 'content' => 'Invoice #999'],
+        ];
+        $this->compileAction->handle($biz->id, $dispute->id, $evidenceBundle);
+
+        $dispute->update(['deadline_at' => Carbon::now()->subDay()]);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Dispute deadline has passed');
+        $this->submitAction->handle($biz->id, $dispute->id);
     }
 
     /**
@@ -59,6 +86,7 @@ class X201Test extends TestCase
             chargebackAmountCents: $chargebackAmountCents,
             reason: 'unrecognized_transaction'
         );
+        $dispute->update(['deadline_at' => Carbon::now()->addDay()]); // valid deadline
 
         $this->assertEquals('opened', $dispute->status);
         Event::assertDispatched(DisputeOpened::class);
@@ -89,7 +117,7 @@ class X201Test extends TestCase
         // 4. Lost dispute writes commission.clawed_back for the released commission on that job (TEST ANCHOR)
         $outcomeRes = $this->engine->recordOutcome($biz->id, $dispute->id, 'lost', 'bank_ruled_in_cardholder_favor');
         $this->assertEquals('lost', $outcomeRes['status']);
-        $this->assertTrue($outcomeRes['commission_clawback_triggered'], 'Lost dispute triggers commission clawback');
+        $this->assertTrue($outcomeRes['commission_clawback_triggered'], 'a lost dispute sets the clawback flag; no commission is taken back, because nothing acts on that flag');
 
         $outcomeRecord = DisputeOutcome::where('business_id', $biz->id)->where('dispute_id', $dispute->id)->first();
         $this->assertEquals('lost', $outcomeRecord->outcome);
@@ -110,5 +138,31 @@ class X201Test extends TestCase
         $outcomeRes = $this->engine->recordOutcome($biz->id, $dispute->id, 'won');
         $this->assertEquals('won', $outcomeRes['status']);
         $this->assertFalse($outcomeRes['commission_clawback_triggered']);
+    }
+
+    /**
+     * A second outcome on a dispute that is already won or lost is refused before the first write.
+     */
+    public function test_a_dispute_is_outcomed_once_and_a_second_outcome_is_refused(): void
+    {
+        Event::fake([DisputeLost::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Dispute Once Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $dispute = $this->recordAction->handle($biz->id, 907, 42000, 'fraudulent');
+        $this->engine->recordOutcome($biz->id, $dispute->id, 'won');
+        $this->assertSame('won', $dispute->fresh()->status);
+
+        try {
+            $this->engine->recordOutcome($biz->id, $dispute->id, 'lost');
+            $this->fail('A second outcome on an already-outcomed dispute must be refused.');
+        } catch (DisputeAlreadyOutcomedException $e) {
+            $this->assertStringContainsString('is already won: an outcome is recorded once', $e->getMessage());
+        }
+
+        $this->assertSame('won', $dispute->fresh()->status, 'a refused outcome leaves the terminal status alone');
+        $this->assertSame(1, DisputeOutcome::where('business_id', $biz->id)->where('dispute_id', $dispute->id)->count());
+        Event::assertNotDispatched(DisputeLost::class);
     }
 }
