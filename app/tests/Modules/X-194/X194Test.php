@@ -470,6 +470,11 @@ class X194Test extends TestCase
             ->assertDontSee('We could not save your view.');
     }
 
+    /**
+     * Shows that a database failure during iteration yields the error panel.
+     * Cannot show that retry clears the panel because Livewire 3 test hydration
+     * causes empty HTML on $refresh, making assertDontSee pass trivially.
+     */
     public function test_saved_views_list_read_escapes_its_guard(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Test Tenant', 'currency' => 'USD']);
