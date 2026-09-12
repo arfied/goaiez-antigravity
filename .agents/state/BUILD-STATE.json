@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-12T05:07:25",
+ "updated": "2026-09-12T16:13:27",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1980,6 +1980,12 @@
    "module": "X-194",
    "chose": "2026-09-12T02:46:03: AnyViewIt only refuses to render for a missing location timezone if a valid view is selected (viewId > 0). locationTimezone is locked to prevent client tampering.",
    "at": "2026-09-12T05:07:25",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-204",
+   "chose": "The App\\Modules\\X121\\Models\\Person import Track 1 names adds one boundary row, which is accepted and recorded, because X-121 exposes no phone lookup and Track 1 forbids changing X-121.",
+   "at": "2026-09-12T16:13:27",
    "ruling": "R245"
   }
  ],

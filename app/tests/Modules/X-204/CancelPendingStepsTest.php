@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Modules\X204;
 
 use App\Models\Customer;
+use App\Modules\X121\Models\Person;
 use App\Modules\X186\Models\CampaignRun;
 use App\Modules\X204\Domain\ConsentService;
 use Illuminate\Support\Facades\DB;
@@ -18,26 +19,54 @@ class CancelPendingStepsTest extends TestCase
         DB::statement("SET app.business_id = '{$tenant->id}'");
 
         $phone = '+15550009999';
-        $customer = Customer::create([
+
+        $targetPerson = Person::create([
             'business_id' => $tenant->id,
             'phone' => $phone,
-            'first_name' => 'Test',
-            'last_name' => 'Cancel',
+            'first_name' => 'Target',
+            'last_name' => 'Person',
         ]);
 
-        $run = CampaignRun::create([
+        $targetRun = CampaignRun::create([
             'business_id' => $tenant->id,
-            'person_id' => $customer->id,
-            'campaign_id' => 'test-campaign',
+            'person_id' => $targetPerson->id,
+            'campaign_id' => 'target-campaign',
             'current_step' => 1,
             'is_active' => true,
             'is_suppressed' => false,
         ]);
 
+        $decoyPerson = Person::create([
+            'business_id' => $tenant->id,
+            'phone' => '+15550008888',
+            'first_name' => 'Decoy',
+            'last_name' => 'Person',
+        ]);
+
+        $decoyRun = CampaignRun::create([
+            'business_id' => $tenant->id,
+            'person_id' => $decoyPerson->id,
+            'campaign_id' => 'decoy-campaign',
+            'current_step' => 1,
+            'is_active' => true,
+            'is_suppressed' => false,
+        ]);
+
+        Customer::forceCreate([
+            'id' => $decoyPerson->id,
+            'business_id' => $tenant->id,
+            'phone' => $phone,
+            'first_name' => 'Decoy',
+            'last_name' => 'Customer',
+        ]);
+
         $service = new ConsentService;
         $service->suppress($tenant->id, $phone, 'sms', 'opt_out');
 
-        $run->refresh();
-        $this->assertFalse($run->is_active, 'CampaignRun should be deactivated by the opt-out');
+        $targetRun->refresh();
+        $this->assertFalse($targetRun->is_active, 'Target CampaignRun should be deactivated by the opt-out');
+
+        $decoyRun->refresh();
+        $this->assertTrue($decoyRun->is_active, 'Decoy CampaignRun should remain untouched');
     }
 }

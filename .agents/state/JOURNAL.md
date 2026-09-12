@@ -962,3 +962,4 @@
 - `2026-09-12T02:40:39` stage journey = 3
 - `2026-09-12T02:46:03` (R245) X-194 — AnyViewIt renders an account-wide saved view in the timezone of the currently selected location from LocationContext, disclosing it via the location picker. If the location lacks a timezone, or no location exists, it refuses to render. G9-37 locationTimezone requires no location_id column on saved_views.
 - `2026-09-12T05:07:25` (R245) X-194 — 2026-09-12T02:46:03: AnyViewIt only refuses to render for a missing location timezone if a valid view is selected (viewId > 0). locationTimezone is locked to prevent client tampering.
+- `2026-09-12T16:13:27` (R245) X-204 — The App\Modules\X121\Models\Person import Track 1 names adds one boundary row, which is accepted and recorded, because X-121 exposes no phone lookup and Track 1 forbids changing X-121.
