@@ -443,6 +443,13 @@ final class OwnerNav
             // neither a nav entry nor a written exclusion. This screen runs a
             // real query and renders it on every GET once mount() resolves the
             // tenant, so it owes a nav entry.
+            OwnerNavItem::make('Offers your customers used', 'x-210.redemptions', OwnerNavItem::GROUP_MORE),
+
+            // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
+            // Architecture/OwnerNavTest fails the build on an owner screen with
+            // neither a nav entry nor a written exclusion. This screen runs a
+            // real query and renders it on every GET once mount() resolves the
+            // tenant, so it owes a nav entry.
             OwnerNavItem::make('Automations you have set up', 'x-125.canvas', OwnerNavItem::GROUP_MORE),
 
             // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
