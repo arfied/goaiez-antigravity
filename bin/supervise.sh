@@ -173,9 +173,27 @@ cd "$APP" || exit 1
 [ -d /home/goaiez/tmp ] && export TMPDIR=/home/goaiez/tmp
 
 bar "4. checker soundness + seal"
-php artisan doctor:selftest 2>&1 | tail -4 | sed 's/^/  /' || { fail=1; echo "  ⛔ RUNTIME — the checker, not the code"; }
-php artisan doctor --stage=integrity 2>&1 | tail -4 | sed 's/^/  /' || { fail=1; echo "  ⛔ SEAL/integrity red"; }
-echo "  runtime_build in BUILD-STATE: $(python3 -c "import json;print(json.load(open('$ROOT/.agents/state/BUILD-STATE.json'))['runtime_build'])" 2>/dev/null) — compare with the doctor build stamp above"
+# Ruling 595: `tail -4` showed the right lines ONLY on the green path. On red, selftest ends
+# in a three-line "paste this back" footer and integrity in five lines of two-systems prose
+# (DoctorSelfTestCommand::render, DoctorCommand::handle), so the window printed boilerplate
+# and never the check or seal that failed -- and this seat cannot run doctor to find out (296).
+# Green keeps the old four lines; red prints the head, where the named failures are.
+st_out=$(php artisan doctor:selftest 2>&1); st_rc=$?
+if [ "$st_rc" -eq 0 ]; then printf '%s\n' "$st_out" | tail -4 | sed 's/^/  /'
+else printf '%s\n' "$st_out" | head -40 | sed 's/^/  /'; fail=1; echo "  ⛔ RUNTIME — the checker, not the code · rc=$st_rc"; fi
+in_out=$(php artisan doctor --stage=integrity 2>&1); in_rc=$?
+if [ "$in_rc" -eq 0 ]; then printf '%s\n' "$in_out" | tail -4 | sed 's/^/  /'
+else printf '%s\n' "$in_out" | head -40 | sed 's/^/  /'; fail=1; echo "  ⛔ SEAL/integrity red · rc=$in_rc"; fi
+# The stamp sat inside the window only because a clean integrity prints exactly four lines.
+# Compared mechanically now. It does not move `fail`: BUILD-STATE.json is a merge=ours
+# per-track path, so a merge can leave it behind main's checker -- read which side moved.
+stamp=$(printf '%s\n' "$in_out" | grep -o 'build [0-9][0-9-]*' | head -1 | cut -d' ' -f2)
+rbuild=$(python3 -c "import json;print(json.load(open('$ROOT/.agents/state/BUILD-STATE.json'))['runtime_build'])" 2>/dev/null)
+if [ -n "$stamp" ] && [ "$stamp" = "$rbuild" ]; then
+  echo "  build stamp: doctor $stamp = BUILD-STATE runtime_build"
+else
+  echo "  ⛔ build stamp: doctor ${stamp:-<none printed>} · BUILD-STATE runtime_build ${rbuild:-<unreadable>} — counts from this checker are not the ones BUILD-STATE recorded; read which side moved"
+fi
 
 if [ $want_doctor -eq 1 ]; then
   bar "5. all eight stages  (non-zero exit on any red stage is by design)"
