@@ -81,7 +81,8 @@ class CreditsScreenTest extends TestCase
         Livewire::actingAs($owner)->test(Credits::class)
             ->assertOk()
             ->assertSee('49.0000') // credit balance
-            ->assertSeeInOrder(['Credit balance', '49.0000', 'Ledger'])
+            ->assertSeeInOrder(['Top-up ledger balance', '49.0000', 'Ledger'])
+            ->assertDontSee('Credit balance')
             ->assertDontSee('AI Credits')
             ->assertSee('1.0000')
             ->assertDontSee('-1.0000')
@@ -152,6 +153,8 @@ class CreditsScreenTest extends TestCase
 
         $lw = Livewire::actingAs($owner)->test(Credits::class)
             ->call('topup')
+            ->assertSee('50.00 added to the top-up ledger. It is separate from the credit your plan includes and the credit you buy.')
+            ->assertDontSee('added to your balance')
             ->assertSee('Nothing was charged: this button grants credit');
 
         $entry = CreditLedgerEntry::where('business_id', $biz->id)

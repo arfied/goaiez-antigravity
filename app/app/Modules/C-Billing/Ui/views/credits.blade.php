@@ -21,7 +21,7 @@
         <div wire:loading.remove class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 mb-8">
             <div class="bg-card overflow-hidden shadow rounded-[--radius-card] border border-rule">
                 <div class="px-4 py-5 sm:p-6">
-                    <dt class="text-sm font-medium text-ink-2 truncate">Credit balance</dt>
+                    <dt class="text-sm font-medium text-ink-2 truncate">Top-up ledger balance</dt>
                     <dd class="mt-1 text-3xl font-semibold text-ink tabular-nums">
                         {{ number_format($aiBalance / 10000, 4) }}
                     </dd>
