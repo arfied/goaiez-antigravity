@@ -154,32 +154,47 @@ gate_tool() {  # <tool-name> <cmd...>
   fi
 }
 
+# 0a. §0's and §1's OWN lines, on disk beside what they print. ADDED 2026-09-12 00:3x
+# (REV-136). Run 136's report pasted a §0/§1 no command printed — a header this script
+# has never had, five commits in a `git log` form §1 does not use, four shas invented
+# past their eighth character — while §1a onward was the gate's own. The head of a long
+# gate is the part most likely to reach a coder truncated, and §7b1a already showed that
+# a line on disk is pasted where a line on screen gets retyped. So every line §0 and §1
+# print is teed here byte for byte (the `==` bars are not), and a report pastes `cat` of
+# this file. ⛔ One generation, rotated at gate start, like §7's log and summary.
+gate_head="$ROOT/.agents/supervisor/.tick-gate-head"
+[ -s "$gate_head" ] && { mv -f "$gate_head" "$gate_head.prev" 2>/dev/null || true; }
+: > "$gate_head" 2>/dev/null || true
+hw() { tee -a "$gate_head" 2>/dev/null; }
+
 bar "0. database guard  (allowlist: .env=$LANE_DB · phpunit.xml=$LANE_TEST_DB)"
 env_db=$(grep -E '^DB_DATABASE=' "$APP/.env" 2>/dev/null | head -1 | cut -d= -f2- | tr -d "\"' ")
 xml_db=$(grep -oE 'name="DB_DATABASE" value="[^"]*"' "$APP/phpunit.xml" 2>/dev/null | sed -E 's/.*value="([^"]*)"/\1/')
-echo "  app/.env         DB_DATABASE=${env_db:-<unset>}"
-echo "  app/phpunit.xml  DB_DATABASE=${xml_db:-<unset>}"
+echo "  app/.env         DB_DATABASE=${env_db:-<unset>}" | hw
+echo "  app/phpunit.xml  DB_DATABASE=${xml_db:-<unset>}" | hw
 # A wrong name is exit 2 whether or not it is production: goaiez_antig is PRODUCTION
 # (2026-08-31, NEXT-SESSION.md), goaiez_antig_test and goaiez_antig_dev are Track 1's,
 # and a suite run inside another track's database is the same drop-the-schema shape.
 guard_db() {  # <label> <value> <expected>
   case "$2" in
     "$3") return 0;;
-    "") echo "  ⚠ $1 has no DB_DATABASE — expected $3. Nothing below is trustworthy."; fail=1; return 0;;
-    "$PROD_DB") echo "  ⛔ $1 points at PRODUCTION ($PROD_DB). Stop. Nothing below may run."; exit 2;;
-    *) echo "  ⛔ $1 is $2, not this lane's $3. Stop — that is another track's database."; exit 2;;
+    "") echo "  ⚠ $1 has no DB_DATABASE — expected $3. Nothing below is trustworthy." | hw; fail=1; return 0;;
+    "$PROD_DB") echo "  ⛔ $1 points at PRODUCTION ($PROD_DB). Stop. Nothing below may run." | hw; exit 2;;
+    *) echo "  ⛔ $1 is $2, not this lane's $3. Stop — that is another track's database." | hw; exit 2;;
   esac
 }
 guard_db "app/.env        " "$env_db" "$LANE_DB"
 guard_db "app/phpunit.xml " "$xml_db" "$LANE_TEST_DB"
-[ $fail -eq 0 ] && echo "  both on this lane"
+[ $fail -eq 0 ] && echo "  both on this lane" | hw
 
 bar "1. working tree"
-git status --short | head -40
-echo "  $(git status --short | wc -l) uncommitted path(s)"
-git log --oneline -5 | sed 's/^/  /'
-git rev-list --left-right --count origin/main...HEAD 2>/dev/null \
-  | awk '{print "  vs origin/main (local ref): behind " $1 ", ahead " $2 "  — refresh with: git fetch --no-write-fetch-head origin"}'
+{
+  git status --short | head -40
+  echo "  $(git status --short | wc -l) uncommitted path(s)"
+  git log --oneline -5 | sed 's/^/  /'
+  git rev-list --left-right --count origin/main...HEAD 2>/dev/null \
+    | awk '{print "  vs origin/main (local ref): behind " $1 ", ahead " $2 "  — refresh with: git fetch --no-write-fetch-head origin"}'
+} | hw
 
 bar "1a. uncommitted PHP that boots the framework  (walks around the §0 database pin)"
 # A script that require()s bootstrap/app.php reads app/.env, never app/phpunit.xml, so §0's pin
