@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-12T16:52:34",
+ "updated": "2026-09-12T17:21:49",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -849,9 +849,9 @@
    "unresolved": [
     {
      "module": "X-172",
-     "stage": "tests",
-     "why": "generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook",
-     "at": "2026-09-05T08:35:23"
+     "stage": "route",
+     "why": "x-172.customerfacing-portal/{token} is generated behind web, auth, tenant.role (X-172/routes.generated.php:8), so a customer holding a portal token and no account cannot open the portal, and no production path issues a portal link; waiting on Track 1 surfaces:generate to mount a token-credentialed customer route (TRACK 1 ACTION o)",
+     "at": "2026-09-12T17:21:49"
     }
    ]
   },
@@ -1335,12 +1335,6 @@
    "at": "2026-09-04T22:41:56"
   },
   {
-   "module": "X-172",
-   "stage": "tests",
-   "why": "generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook",
-   "at": "2026-09-05T08:35:23"
-  },
-  {
    "module": "C-Sms",
    "stage": "capability",
    "why": "TrialEligibility: The journey tenant needs a confirmed Google listing for real credit grant",
@@ -1351,6 +1345,12 @@
    "stage": "tests",
    "why": "four legacy message tables outside the twelve nouns (outreach_messages, triage_conversations, inbound_messages, support_messages) \u2014 the G2-76 lint is right, main's schema is not migrated; the sixty lane proposes the fold",
    "at": "2026-09-05T17:11:31"
+  },
+  {
+   "module": "X-172",
+   "stage": "route",
+   "why": "x-172.customerfacing-portal/{token} is generated behind web, auth, tenant.role (X-172/routes.generated.php:8), so a customer holding a portal token and no account cannot open the portal, and no production path issues a portal link; waiting on Track 1 surfaces:generate to mount a token-credentialed customer route (TRACK 1 ACTION o)",
+   "at": "2026-09-12T17:21:49"
   }
  ],
  "decisions": [
@@ -1511,6 +1511,15 @@
   {
    "at": "2026-09-06T23:16:43",
    "note": "J8 restore drill: JourneyHarness:814 names its scratch db goaiez_antig_drill_<pid> and :908 force-drops it; the supervisor's wave-119 gate errored 42501 permission denied to terminate process where the coder's gate on the identical tree did not; drill dbs on the box at 2026-09-06 23:10: UNRESOLVED; reproduced in wave 120: no"
+  }
+ ],
+ "resolved": [
+  {
+   "module": "X-172",
+   "stage": "tests",
+   "was": "generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook",
+   "why": "discharged: the generator fixture hook exists (SurfacesGenerateCommand reads tests/Modules/X-172/Screens/Fixtures.php), Fixtures::token() mints a real token through PortalLinkAction, and CustomerfacingPortalScreenTest GETs x-172.customerfacing-portal with it and passes in pb176-gate-1.log",
+   "at": "2026-09-12T17:21:32"
   }
  ]
 }
