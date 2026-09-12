@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-11T16:00:09",
+ "updated": "2026-09-11T19:16:51",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1628,6 +1628,12 @@
    "module": "X-108",
    "chose": "the waitlist screen renders in the owner layout with mount resolving the tenant, and its test renders the empty branch and a row written through WaitlistJoinAction by real GETs, proven by mutating the tenant resolution",
    "at": "2026-09-11T16:00:09",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-164",
+   "chose": "the estimates list screen renders in the owner layout with mount resolving the tenant, and its test renders the empty branch and an estimate written through EstimateDraftAction by real GETs, proven by mutating the tenant resolution",
+   "at": "2026-09-11T19:16:51",
    "ruling": "R245"
   }
  ],
