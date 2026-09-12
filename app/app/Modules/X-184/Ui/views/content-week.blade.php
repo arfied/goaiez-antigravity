@@ -1,11 +1,6 @@
 <div>
-<x-surface.sample-state module="the content calendar: a whole plan proposed from their industry and their transcripts" screen="content_week" />
     <div class="p-4 space-y-4">
-        <h3 class="text-lg font-bold text-ink">Weekly Content Cadence Proposal</h3>
-        
-        @if ($isSample)
-            <x-ui.sample />
-        @endif
+        <h2 class="text-lg font-bold text-ink">Posts planned for your week</h2>
 
         <div wire:loading.delay wire:target="approveCadence, scheduleItem">
             <x-ui.skeleton label="Loading content plans…" :lines="3" />
@@ -39,7 +34,7 @@
                                     @endif
                                 </div>
                             </div>
-                            
+
                             <div class="pl-4 border-l-2 border-rule">
                                 <x-ui.row-list>
                                     @foreach($plan->items as $item)
@@ -48,7 +43,7 @@
                                                 <div>
                                                     <div class="font-medium text-ink">{{ $item->channel }} - {{ $item->topic_theme }}</div>
                                                     <div class="text-sm text-ink-2">Source: {{ $item->source_event }}</div>
-                                                    <div class="text-sm text-ink-2">Date: {{ $item->scheduled_date }}</div>
+                                                    <div class="text-sm text-ink-2">Date: {{ $item->scheduled_date->toFormattedDateString() }}</div>
                                                 </div>
                                                 <div>
                                                     @if($item->is_scheduled)
@@ -68,6 +63,6 @@
                     @endforeach
                 </div>
             @endif
-            </div>
+        </div>
     </div>
 </div>

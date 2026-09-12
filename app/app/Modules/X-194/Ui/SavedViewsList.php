@@ -22,6 +22,8 @@ class SavedViewsList extends Component
 
     public string $errorMessage = '';
 
+    public string $saveError = '';
+
     public function mount(int $businessId = 0): void
     {
         $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
@@ -35,12 +37,13 @@ class SavedViewsList extends Component
     public function saveView(): void
     {
         $this->validate();
+        $this->saveError = '';
 
         try {
             app(ViewSaveAction::class)->save($this->businessId, $this->newViewName);
             $this->newViewName = '';
         } catch (\Exception $e) {
-            $this->errorMessage = 'We could not save your view.';
+            $this->saveError = 'We could not save your view.';
         }
     }
 

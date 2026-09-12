@@ -6,7 +6,9 @@ namespace Tests\Modules\X185\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X185\Actions\CampaignCreateAction;
 use App\Modules\X185\Ui\DigestLine;
+use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,7 +20,24 @@ class DigestLineScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-185.digest-line'))->assertOk();
+        $this->get(route('x-185.digest-line'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
+            ->assertSee('No sequences yet')
+            ->assertDontSee('this screen is planned in');
+
+        Tenancy::set((int) $biz->id);
+        app(CampaignCreateAction::class)->createSequence(
+            businessId: (int) $biz->id,
+            name: 'Spring tune-up reminders',
+        );
+        Tenancy::forget();
+
+        $this->get(route('x-185.digest-line'))
+            ->assertOk()
+            ->assertSee('Spring tune-up reminders · running')
+            ->assertDontSee('No sequences yet');
 
         Livewire::test(DigestLine::class)->assertOk();
     }
