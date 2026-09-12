@@ -211,7 +211,7 @@ final class InfobipWebhookVerifier implements VerifiesWebhookSenders
      * N176: The VOICE_SIGNATURE_HEADER is checked after the configured one as a
      * second body-scheme header. The exclusivity reasoning at (4507) applies to it
      * too: if exchange headers are present, we don't evaluate the body-scheme
-     * headers, avoiding the replay hole.
+     * headers, which prevents a fall-through but leaves the replay open (4508).
      */
     public function verify(Request $request): bool
     {
@@ -229,7 +229,7 @@ final class InfobipWebhookVerifier implements VerifiesWebhookSenders
 
         // ⛔ **EXCLUSIVE, NEVER A FALL-THROUGH** (4507). See the class docblock:
         // an `||` over the two constructions lets a captured exchange signature
-        // be presented as a body-only header over the base string `T . body`.
+        // be presented as a body-only one over the base string `T . body`.
         if ($scheme === 'exchange' || $this->carriesExchangeHeaders($request)) {
             return $scheme !== 'body' && $this->exchangeSignatureMatches($request, $body, $secret);
         }
