@@ -405,9 +405,7 @@ class X194Test extends TestCase
             columnsConfig: []
         );
 
-        $mock = \Mockery::mock(ViewSaveAction::class);
-        $mock->shouldReceive('save')->andThrow(new \Exception('Save exploded'));
-        $this->app->instance(ViewSaveAction::class, $mock);
+        DB::statement("SET app.business_id = '9999'");
 
         $component = Livewire::test(SavedViewsList::class, ['businessId' => $biz->id])
             ->call('load')
@@ -418,9 +416,8 @@ class X194Test extends TestCase
             ->assertSee('We could not save your view.')
             ->assertSee('Existing View');
 
-        $mock2 = \Mockery::mock(ViewSaveAction::class);
-        $mock2->shouldReceive('save')->andReturn(new SavedView);
-        $this->app->instance(ViewSaveAction::class, $mock2);
+        // Revert for successful save
+        DB::statement("SET app.business_id = '{$biz->id}'");
 
         $component->set('newViewName', 'Successful View')
             ->call('saveView')
