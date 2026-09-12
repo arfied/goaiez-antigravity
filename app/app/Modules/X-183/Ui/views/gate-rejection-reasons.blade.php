@@ -1,6 +1,16 @@
 <div>
-    <x-surface.sample-state module="writing and illustration" screen="gate_rejection_reasons" />
-    <div class="gate-rejection-reasons-view p-4">
-        <h3 class="text-lg font-bold">Pre-Publish Grounding Rejection Diagnostic</h3>
+    <div class="p-4">
+        <h2 class="text-xl font-bold text-ink">Drafts held back before publishing</h2>
+        @if($rejections->isEmpty())
+            <x-ui.empty-state icon="○" heading="Nothing held back">
+                When a draft is held back before publishing, it appears here with the reason.
+            </x-ui.empty-state>
+        @else
+            <ul class="mt-3 space-y-2">
+                @foreach($rejections as $rejection)
+                    <li class="text-ink">{{ $titles[$rejection->draft_id] }} · {{ preg_replace('/^R\d+:\s*/', '', (string) $rejection->rejection_reason) }}</li>
+                @endforeach
+            </ul>
+        @endif
     </div>
 </div>
