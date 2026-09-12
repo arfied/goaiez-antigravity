@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X194\Ui;
 
 use App\Modules\X194\Actions\ViewRenderAction;
+use App\Services\Tenant\LocationContext;
 use App\Support\Tenancy;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Url;
@@ -25,8 +26,8 @@ class AnyViewIt extends Component
         $this->load();
     }
 
-    #[Url]
-    public string $locationTimezone = 'UTC';
+    #[Locked]
+    public string $locationTimezone = '';
 
     public ?float $jobValue = null;
 
@@ -39,6 +40,27 @@ class AnyViewIt extends Component
     public function load(): void
     {
         $this->ready = true;
+
+        if ($this->businessId > 0 && $this->viewId > 0) {
+            $context = app(LocationContext::class);
+            $location = $context->current();
+
+            if ($location === null) {
+                $this->errorMessage = 'Your account has no location to render the view in.';
+                $this->ready = false;
+
+                return;
+            }
+
+            if ($location->timezone === null) {
+                $this->errorMessage = 'The location has no timezone set.';
+                $this->ready = false;
+
+                return;
+            }
+
+            $this->locationTimezone = $location->timezone;
+        }
     }
 
     public function render()

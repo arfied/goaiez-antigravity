@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X194;
 
+use App\Models\Location;
+use App\Models\User;
 use App\Modules\X194\Actions\ReportPdfAction;
 use App\Modules\X194\Actions\ViewRenderAction;
 use App\Modules\X194\Actions\ViewSaveAction;
@@ -15,6 +17,7 @@ use App\Modules\X194\Models\SavedView;
 use App\Modules\X194\Models\ViewSchedule;
 use App\Modules\X194\Ui\AnyViewIt;
 use App\Modules\X194\Ui\SavedViewsList;
+use App\Services\Tenant\LocationContext;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -203,11 +206,14 @@ class X194Test extends TestCase
             columnsConfig: []
         );
 
+        $location = Location::where('business_id', $biz->id)->first();
+        $location->timezone = 'America/Denver';
+        $location->save();
+
         // Test with null value
         Livewire::test(AnyViewIt::class, [
             'businessId' => $biz->id,
             'viewId' => $view->id,
-            'locationTimezone' => 'America/Denver',
             'jobValue' => null,
             'jobCount' => 7,
         ])
@@ -217,11 +223,13 @@ class X194Test extends TestCase
             ->assertSeeHtml('data-job-count="7"')
             ->assertSeeHtml('data-estimate-tile="--"');
 
+        $location->timezone = 'America/New_York';
+        $location->save();
+
         // Test with real value
         Livewire::test(AnyViewIt::class, [
             'businessId' => $biz->id,
             'viewId' => $view->id,
-            'locationTimezone' => 'America/New_York',
             'jobValue' => 1500.50,
             'jobCount' => 3,
         ])
@@ -251,6 +259,10 @@ class X194Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'View Error Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $location = Location::where('business_id', $biz->id)->first();
+        $location->timezone = 'America/New_York';
+        $location->save();
 
         $component = Livewire::test(AnyViewIt::class, [
             'businessId' => $biz->id,
@@ -285,7 +297,7 @@ class X194Test extends TestCase
     /**
      * [G4-20], [G8-10], [G9-11], [G9-23], [G9-26], [G9-35], [G9-37], [G13-17]
      *
-     * BUILD PROPOSAL: G9-37 locationTimezone requires a location_id column on saved_views, Owner: X-194
+     * CLOSED: G9-37 — built in f28f6539
      * ⛔ REFUSED: G4-20 — a house standard enforced by lint, not a capability row
      * ⛔ REFUSED: G8-10 — named in the header; the JSONB column is X-121's (out of this lane)
      * ⛔ REFUSED: G9-11 — named in the header
@@ -293,6 +305,38 @@ class X194Test extends TestCase
      * ⛔ REFUSED: G9-26 — named in the header (report.pdf)
      * ⛔ REFUSED: G13-17 — revenue on the territory map; the polygons are X-10's (out of this lane)
      */
+    public function test_two_locations_displays_selected_timezone_on_real_get(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['name' => 'Two Locations', 'owner_user_id' => $owner->id]);
+
+        $location1 = Location::where('business_id', $biz->id)->first();
+        $location1->name = 'Loc One';
+        $location1->timezone = 'America/Denver';
+        $location1->save();
+
+        $location2 = new Location(['business_id' => $biz->id, 'name' => 'Loc Two', 'is_autopilot_active' => true]);
+        $location2->timezone = 'America/New_York';
+        $location2->save();
+
+        $view = $this->saveAction->save(
+            businessId: $biz->id,
+            viewName: 'Job View Alpha',
+            viewType: 'table',
+            filterConfig: [],
+            columnsConfig: []
+        );
+
+        $this->withSession([LocationContext::SESSION_KEY => $location2->id]);
+
+        $response = $this->actingAs($owner)->get(route('x-194.any-view-it', ['viewId' => $view->id]));
+
+        $response->assertOk();
+        $response->assertSee('Job View Alpha');
+        $response->assertSee('America/New_York');
+        $response->assertSee('Loc Two');
+    }
+
     public function test_reporting_capabilities(): void
     {
         $this->assertTrue(true);
