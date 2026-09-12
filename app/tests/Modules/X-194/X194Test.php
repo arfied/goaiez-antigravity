@@ -26,7 +26,7 @@ use Livewire\Livewire;
 use Tests\TestCase;
 
 /**
- * BUILD PROPOSAL: X-194 needs a way to aggregate job counts and values for a view, but the jobs table is owned by X-121 and there is no cross-module action for this.
+ * BUILD PROPOSAL: X-194 needs a way to aggregate job counts and values for a view, but the jobs table is owned by X-121 and there is no cross-module action for this. Owner: X-121
  */
 class X194Test extends TestCase
 {
