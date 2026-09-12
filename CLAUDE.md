@@ -10686,6 +10686,46 @@ Watch for: <the trap that applies, by name>
     on `OWNER ACTION 1` unless `OWNER.md` answers.
   - `62 13` vs `origin/main` after a fetch, and the Doctor/harness/hooks/seals diff is empty, so no merge condition holds.
   - Board: proposals **14** · `app/app/Modules/` **0** · `CLOSED:` **8**. Re-run every grep; never inherit one.
+- ⚠️ **Grade case (d) by whether the last block QUOTES the newest `OWNER.md` section, never by mtime alone.** Tick 354
+  wrote `REVIEWS.md` at `16:37:38` and restated OWNER ACTION 1 as open. `OWNER.md`'s answer had landed at `16:37:24`,
+  fourteen seconds earlier. By mtime, (d) did not fire at tick 355; by content, the answer was unapplied. This is tick
+  350's race a second time. **At tick open, `grep -n "^## " OWNER.md | tail -3` against the last block's quotations.**
+- ⚠️⚠️ **`assertTrue(true)` can be reddened only by an exception UPSTREAM of it, and that proves the path, never the
+  assertion — so a `COVERAGE` field claiming a tautology "executes and fails" is a false claim about a real red.**
+  - Wave 192b's `test_opt_out_does_nothing_if_no_person_exists` has `assertTrue(true)` as its only assertion. Mutation 3
+    (drop the listener's null guard) put it in `error_details` with `Attempt to read property "id" on null`, raised inside
+    `suppress()` before the assertion line.
+  - The same mutation moved **six** standing tests (`CMailTest::g1_43`, `G143Test`, `CWhatsappTest::g10_40`,
+    `ConsentAssertionTest::n_006`, `X204Test::g7_17`, `X204Test::n_013`), so the no-throw path already had coverage by
+    traversal. **A mutation's radius is also a census of who already covered the path.** Read it before crediting a new
+    test as the coverage.
+  - The method's name, *does nothing*, is asserted by nothing: it seeds no run.
+- ⚠️ **An `APPLIED` pattern for a wrapper DELETION must sit on the deleted wrapper line.** A pattern on the call inside the
+  wrapper counts `1 → 1` by construction. That was wave 192b's mutation 3, and only §1's pin and the message proved it
+  applied.
+- ⭐ **Livewire's `Testable::__call` forwards any unknown method to the LAST update's `TestResponse`
+  (`vendor/livewire/livewire/src/Features/SupportTesting/Testable.php:411-420`).** So `->call('x')->assertOk()` or
+  `->assertStatus(200)` is an in-suite probe of a non-OK update. It runs through the gate with no bootstrap script. It is
+  the legitimate route to the question tick 349's wave reached for with `artisan tinker`.
+- ⭐ **When a gate's failure count differs from another checkout's, count the artifact-missing reds first.** Six of the
+  lane's seven failures are missing files under the untracked `app/storage/app/evidence/**` (tick 273). A one-count
+  difference between checkouts is a working-copy fact until a test file or code diff says otherwise.
+- **Suite at tick 355 on `aa093326`:** `tests 2588 · passed 2579 · assertions 11307 · failed 7 · errors 2 ·
+  duration_ms 171905`, from wave 192b's green gate at that HEAD. The standing nine hold by identity. My plain gate
+  (`.agents/supervisor/.t355-gate.log`) reads `gates green.`
+- **Backlog at tick 355 — wave 190d is dispatched on the owner's 16:3x ruling (OWNER ACTION 1 CLOSED, a fresh dispatch
+  pair).** RULED (`REVIEWS.md` tick 355). Wave 192b is PASS-WITH-NOTES and pushed; both X-204 mutations are spent.
+  - **190d:** why `test_saved_views_list_read_escapes_its_guard`'s `$refresh` update answers non-OK, established only by
+    test-body probes through the gate. Then one of: a new method whose retry assertion a mutation reddens on its own
+    terms, or a one-line `BUILD PROPOSAL:`, or both. Plus the false docblock corrected forward. One committed file:
+    `X194Test.php`. No `state.py`.
+  - **192c:** replace or remove `CancelPendingStepsTest::test_opt_out_does_nothing_if_no_person_exists`'s `assertTrue(true)`
+    (NOTE 1).
+  - **191b:** `InfobipWebhookVerifier.php:211-214` against 4508, plus the A3/A4/A5 and log-value mutations.
+  - **Track 1 merges the tip** once the X-194 chain is ruled PASS on a pushed sha.
+  - The wave-190 chain's spent mutations: `w190b-mut-1`/`-4`, `-mut-3`, `-mut-2`, `w190c-mut-2`, `-mut-3`.
+  - `66 17` vs `origin/main` `0d85dd89`, and the Doctor/harness/hooks/seals diff is empty, so no merge condition holds.
+  - Board: proposals **14** · `app/app/Modules/` **0** · `CLOSED:` **8**. Re-run every grep; never inherit one.
 
 ## Style
 
