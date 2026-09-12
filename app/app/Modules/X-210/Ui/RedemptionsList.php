@@ -33,6 +33,7 @@ class RedemptionsList extends Component
         return view('x-210::redemptions', [
             'redemptions' => $redemptions,
             'codes' => $codes,
+            'totalCents' => $redemptions->sum('discount_applied_cents'),
         ]);
     }
 }

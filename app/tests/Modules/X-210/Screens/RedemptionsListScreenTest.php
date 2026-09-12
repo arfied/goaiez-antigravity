@@ -26,6 +26,7 @@ class RedemptionsListScreenTest extends TestCase
             ->assertSee('Your account')
             ->assertDontSee('Internal Platform Console')
             ->assertSee('No offers used yet')
+            ->assertDontSee('taken off in all')
             ->assertDontSee('this screen is planned in');
 
         Tenancy::set((int) $biz->id);
@@ -53,6 +54,7 @@ class RedemptionsListScreenTest extends TestCase
             ->assertSee('$50.00 off')
             ->assertSee('FALL15')
             ->assertSee('$15.00 off')
+            ->assertSee('$65.00 taken off in all, across 2 uses')
             ->assertDontSee('No offers used yet');
 
         Livewire::test(RedemptionsList::class)->assertOk();
