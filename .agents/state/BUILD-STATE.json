@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-12T05:00:12",
+ "updated": "2026-09-12T13:37:49",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2873,6 +2873,12 @@
    "module": "X-199",
    "chose": "An invoice number is allocated from the highest existing number read in numeric order, with no upper digit limit. The counter pads to six digits but does not truncate, so a business past INV-999999 writes INV-1000000, and a read limited to six digits or sorted as a string would find INV-999999 again and be refused by the unique index on every later invoice.",
    "at": "2026-09-12T05:00:12",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Billing",
+   "chose": "A C-Billing ledger row takes its timestamp from the app clock, never from the column default. The screens that read the ledger filter it against now(), so a row stamped by a second clock can be counted in a month it was not written in, and one clock for the writer and the readers keeps a pinned test clock and a real day in agreement.",
+   "at": "2026-09-12T13:37:49",
    "ruling": "R245"
   }
  ]
