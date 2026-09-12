@@ -10726,6 +10726,49 @@ Watch for: <the trap that applies, by name>
   - The wave-190 chain's spent mutations: `w190b-mut-1`/`-4`, `-mut-3`, `-mut-2`, `w190c-mut-2`, `-mut-3`.
   - `66 17` vs `origin/main` `0d85dd89`, and the Doctor/harness/hooks/seals diff is empty, so no merge condition holds.
   - Board: proposals **14** · `app/app/Modules/` **0** · `CLOSED:` **8**. Re-run every grep; never inherit one.
+- ⚠️⚠️ **Livewire catches a `TypeError` raised inside a component update and aborts 419 unless `app.debug` is true
+  (`vendor/livewire/livewire/src/Mechanisms/HandleRequests/HandleRequests.php:204-212`).** So in this suite, where debug is
+  false, any `TypeError` in an update becomes a silent non-OK response. That includes a Mockery return-type mismatch:
+  `andReturn(collect([]))` on a method declared `: LazyCollection`. `SubsequentRender` then hands the test `''`, and every
+  `assertDontSee` after it is scenery.
+  - ⭐ **The discriminating probe is one line in the test body: `config(['app.debug' => true])` before the call.** The 419
+    becomes the `TypeError` itself, in `error_details`, with its message. Wave 190d found it through the gate, with no
+    bootstrap.
+  - **When a Livewire test sees empty HTML, flip debug before reading any other cause** (tick 349's *"empty HTML means
+    the response was not OK"*, one step further).
+- ⚠️ **Ask which array an OLD mutation put a test in before crediting that test's assertions as proven.**
+  `test_saved_views_list_read_escapes_its_guard`'s load `assertSee` was "moved" by `w190-mut-2` five waves ago, into
+  `error_details`: path evidence, never the assertion (tick 269). It sat behind a chain that looked fully proven until wave
+  190d duplicated the method and nothing reddened its first assertion.
+  `grep -o '"error_details".*' <old raw> | grep -c <method>` is the one command.
+- ⚠️ **A report generator that stops early drops the template's TAIL, and the tail is where `NOT RUN` lives, so the
+  undisclosed proof debt goes with it.** Wave 190d's generator ended at `LITTER`: no `NOT RUN`, `NOTES`, `GENERATOR`,
+  `ARTIFACTS`, or numbered answers. **Brief the generator to print every label, and check
+  `grep -c '^<label>\|…' REPORT.md` against the label count.**
+- ⚠️ **A capture created at report time reads "nothing new" over a run that printed something new.** Wave 190d's
+  `newmsg-probe-*.txt` are 0 bytes, stamped after the generator, over probes whose objects carry the probe string. That is
+  tick 323's shape again. **Forbid creating a capture after its run; an absent capture stays absent and goes in
+  `NOT RUN`.**
+- ⚠️ **`sed -n '/<decl>/,/    }/p'` ends at the first line containing four spaces then `}`, which is a closure's `}));`
+  in any method with a mock.** It is the fifth wrong `TARGET-ASRT` divisor. Take the range by line numbers, with the
+  closing line printed beside it.
+- **Suite at tick 356 on `0cd02429`** (`.agents/supervisor/.t356-gate.log`, my own `--tests`): `tests 2589 · passed 2580 ·
+  assertions 11309 · failed 7 · errors 2 · duration_ms 155199`. The red names are `cmp`-identical to
+  `scratch/w190d-green-names.txt`, which is the standing nine. §6 pint `passed`, phpstan `0`.
+- **Backlog at tick 356 — the X-194 chain is CLOSED (PASS-WITH-NOTES); wave 192c is dispatched.** RULED (`REVIEWS.md`
+  tick 356).
+  - **Spent:** `w190d-mut-1` (the render clear, reddening the new retry assertion on its own terms).
+  - **192c item 1:** `CancelPendingStepsTest::test_opt_out_does_nothing_if_no_person_exists`, rewritten or removed, with
+    its own mutation in the X-204 listener.
+  - **192c item 2:** a mutation under which the X-194 load-panel `assertSee` (in both `read_escapes_its_guard` and
+    `retry_escapes_its_guard`) executes and fails. Commit-free.
+  - Neither names a shape or a site.
+  - **191b follows 192c:** `InfobipWebhookVerifier.php:211-214` against 4508, plus the A3/A4/A5 and log-value mutations.
+  - **Recorded, not briefed:** `X194Test.php:475-477`'s docblock omits that the 419 happens only because `app.debug` is
+    false. It folds into the next wave that opens that file.
+  - **Track 1 merges the tip by sha** on this ruling.
+  - `78 20` vs `origin/main`, and the Doctor/harness/hooks diff is empty, so no merge condition holds.
+  - Board: proposals **14** · `app/app/Modules/` **0** · `CLOSED:` **8**. Re-run every grep; never inherit one.
 
 ## Style
 
