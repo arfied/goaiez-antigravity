@@ -1700,6 +1700,10 @@
   {
    "at": "2026-09-12T03:07:09",
    "note": "run 169: boundary 41 \u2192 39 recorded from r169-boundary.txt (FAIL boundary 139ms 39 violation(s), build 20260829-0647) and r169-rows-diff.txt (39/39, diff rc=0 against r167-doctor.txt:5-82); the count moved at run 165's merge 45b5fb8e of origin/main 8b407d10, which removed the two X-66/Ui/Calls.php X188 import rows (REV-170 \u00a71); runs 165-167 measured 39 and recorded no stage line (REV-173 \u00a73); Arm A"
+  },
+  {
+   "at": "2026-09-12T13:23:14",
+   "note": "run 170: merge of origin/main 1e5661af (owner rule 2026-09-09 trigger (1), 116 behind); r170-merged.txt shortstats equal and 25 files changed, 1052 insertions(+), 135 deletions(-); r170-gate.log tests 2608 \u00b7 passed 2595 \u00b7 FAILED 9 \u00b7 errors 4, incoming names: none; r170-doctor.txt integrity 0 \u00b7 boundary 39 \u00b7 contract 85 \u00b7 citation 0 \u00b7 schema 14 \u00b7 capability 204 \u00b7 anchor 128 \u00b7 journey 2, moved by the merge: none"
   }
  ],
  "resolved": [
