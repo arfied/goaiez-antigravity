@@ -9822,6 +9822,57 @@ Watch for: <the trap that applies, by name>
     Doctor/harness/hooks diff is empty, so no merge condition holds.
   - After 186 the per-id table has no live-writer wire left in lane. **Wave 187 is the writerless pile's owner
     question or X-194, re-measured when briefed.**
+- ⭐ **A mutated object's message carrying the blade's own EMPTY-BRANCH string is a one-command site proof, and it
+  discriminates sibling mutations too.** Wave 186: `grep -c 'No alerts broadcasted'` is **1** on
+  `w186-mut-1-raw.log` and **0** on the green object and on mut-2's; `grep -c 'No active reply codes pending'` is
+  the mirror. The string lives only in its blade, so it can reach a failure message only as the module's rendered
+  output (the tick-200 exception, thirteenth and fourteenth holdings). With `failed` +1, the target name's
+  `grep -c` 0 → 1 and the names files growing by exactly one name's bytes (927 → 1021, a 94-byte name each), the
+  radius reconstructs without `grep -vFf`, which this column's permissions refuse inside a pipeline.
+- ⚠️ **A report's REASON for a shape can name a caller that does not exist — grep the embedders before crediting a
+  mount-parameter rationale.** Wave 186's `ITEM2` justified `mount(int $businessId = 0)` with *"admin can view
+  alerts for a specific business if passed"*. `grep -rn "alert-reply-by\|AlertReplyBy" app/app app/resources
+  app/routes` is the provider's registration and two parameterless routes; nothing passes one. The shape is the
+  house shape and is right; the reason is false. REPORT-only, so it is a NOTE (tick 260: a brief may license an
+  outcome, never a reason). **Ask for the embedder grep as a field whenever a wave's reason is about a caller.**
+- ⚠️ **An eligibility clause is obeyed in PRINTING and skipped in RE-PICKING.** Wave 186's `Q1` quoted a sentence
+  from my `KICKOFF.md:25` and grepped `BRIEF.md`, then printed the honest **0**. The tick-297 redirect held and the
+  answer was still ineligible, against *"pick another before you write the report"*. **Name the source file in the
+  field and make a 0 a stop, not a value.**
+- **Per-id table, closed at tick 320.** After wave 186 the lane's `public int $businessId = 0` components are 18
+  files, 6 mounting (`X-01/Thread`, `C-Sms/Thread`, `C-Agent/Thread`, `X-124/ChatDockEvery`, `X-188/PoolInventory`,
+  `X-153/AlertReplyBy`) and 12 not:
+  - **Excluded:** `X-01/CustomersList` and `C-Sms/DonottextList` (another module's `Models`); X-124's three
+    (admin-only).
+  - **Writerless:** `C-Telephony` ×2, `C-Mail/WarmupCalendarsPer`, `C-Whatsapp/TemplateStatusCard` (writers need a
+    vendor path), `C-Agent/TeachingBox`, and **X-194's two**. `ViewSaveAction`, the sole creator of
+    `saved_views`, has no production caller. `SetDefaultViewAction` only updates. `ViewSaved` has zero listeners.
+    `AnyViewIt` also carries a `#[Locked] $viewId` with no writer and no route parameter.
+  - ⛔ **`TeachingBox` is not a writer build for this lane.** `AgentTeachAction` writes `facts` through
+    `DB::table`, `facts` is X-121's canonical noun (`X-121/manifest.php` `owns_table`), and X-119 reads it and
+    renders `teaching_box`.
+- **Suite at tick 320 on `9e6f9fe8` — `tests 2548 · passed 2539 · assertions 11129 · failed 7 · errors 2 ·
+  duration_ms 151415`**, from the wave's post-tip gate (`scratch/w186-gate.log` 19:48:29, §1 `?? error_log`
+  only). The standing nine hold by identity. `+2 · +2 · +8` on wave 185: two four-assertion tests. My plain gate
+  on the tip (`.agents/supervisor/.t320-gate.log`): §2 `none`, §2b `all parse`, 17 keys, stamp `20260829-0647` =
+  `runtime_build`, pint `passed` / phpstan `0`, `gates green.` No suite of my own (tick 277).
+- **Backlog at tick 320 — wave 187 is X-194 saved views, as two numbered builds.** RULED.
+  - Item 1: `saved_views` gets a production writer on a routed X-194 screen, for the signed-in tenant.
+  - Item 2: `SavedViewsList` shows the tenant's saved views on a real request.
+  - Why: of the writerless pile, X-194 is the one where the table, the writer, the reader and both routes all sit
+    in one lane module with no vendor. The screen's own empty state promises *"When you save a view, it will
+    appear here."*, and nothing in production can do it.
+  - ⛔ Writer before wire: a wire on a writerless table renders empty forever (tick 318).
+  - ⛔ `AnyViewIt`'s `viewId` is a measurement only. The entry point, input, validation and shapes are withheld
+    (tick 214).
+  - ⚠️ Handed over as measurements: `wire:init="load"` gates the list on `$ready`; three `X194Test` methods pass
+    `['businessId' => $biz->id]`; and `X194Test:177,178,246` assert blade strings.
+  - The `'R245'` fixture in `RefusalcodeDistributionPerScreenTest.php:38` is still owed to the next wave that opens
+    that file (tick 191).
+  - Board: proposals **13** · `app/app/Modules/` **0** · `CLOSED:` **7**. After a fetch, `9 22` vs
+    `origin/main`, and the Doctor/harness/hooks diff is empty, so no merge condition holds.
+  - **After 187 the in-lane, vendor-free writerless pile is empty**, and the rest is an owner/vendor question.
+    Re-measure before briefing.
 
 ## Style
 
