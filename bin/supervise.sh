@@ -369,11 +369,23 @@ if [ $want_tests -eq 1 ]; then
   # ⛔ One generation only. An accumulating archive is litter, and this file's
   # own rulings on litter above `app/` apply to the supervisor too.
   pest_log_prev="$ROOT/.agents/supervisor/.tick-pest.prev.log"
+  # 7b1a. §7's OWN summary lines, on disk beside the log. ADDED 2026-09-11 21:3x
+  # (REV-134). Three reports (REV-128, REV-132, REV-134) pasted a `pest rc=` line no
+  # gate printed — each a red filtered gate whose output reached the coder truncated,
+  # each retyped with another gate's rc or elapsed. The truth sat in gate-runs.tsv,
+  # which a coder seat cannot read. So the two lines a report is judged on are written
+  # here byte for byte as echoed, and a report pastes `cat` of this file — a command's
+  # output — instead of a recollection. ⛔ One generation, rotated WITH the log, so
+  # `.prev.summary` always describes `.prev.log` (an absent summary rotates as empty).
+  pest_summary="$ROOT/.agents/supervisor/.tick-pest.summary"
+  pest_summary_prev="$ROOT/.agents/supervisor/.tick-pest.prev.summary"
   if [ -s "$pest_log" ]; then
     mv -f "$pest_log" "$pest_log_prev" 2>/dev/null || true
+    mv -f "$pest_summary" "$pest_summary_prev" 2>/dev/null || : > "$pest_summary_prev"
     echo "  (previous run's §7 output kept at .agents/supervisor/.tick-pest.prev.log)"
   fi
   : > "$pest_log"
+  : > "$pest_summary"
 
   # 7b2. The BOX-WIDE suite lock (Track 1, OWNER.md 2026-09-06 14:1x).
   #
@@ -465,7 +477,9 @@ if [ $want_tests -eq 1 ]; then
   # log still ends in a complete pest JSON, say so: the measurement survived and
   # the wave can be gated on it.
   bytes=$(wc -c < "$pest_log" | tr -d ' ')
-  echo "  pest rc=$rc · ${bytes} bytes of output · ${pest_elapsed}s elapsed (cap ${pest_timeout})"
+  pest_line="  pest rc=$rc · ${bytes} bytes of output · ${pest_elapsed}s elapsed (cap ${pest_timeout})"
+  echo "$pest_line"
+  printf '%s\n' "$pest_line" > "$pest_summary"
   if [ "$rc" -eq 124 ] || [ "$rc" -eq 137 ] || [ "$rc" -eq 143 ]; then
     if [ "$rc" -eq 124 ] || [ "$pest_elapsed" -ge $(( pest_cap * 9 / 10 )) ]; then
       echo "  ⛔ TIMED OUT after ${pest_elapsed}s of a ${pest_timeout} cap (rc=$rc) — killed, not failed."
@@ -495,10 +509,12 @@ if [ $want_tests -eq 1 ]; then
   # that did not hold is a failure, not an error; the two counts are independent and
   # both belong here.
   if printf '%s' "$out" | tail -1 | grep -q '^{"tool":"pest"'; then
-    printf '%s' "$out" | tail -1 | python3 -c '
-import json,sys
+    printf '%s' "$out" | tail -1 | PEST_SUMMARY="$pest_summary" python3 -c '
+import json,os,sys
 d=json.loads(sys.stdin.read())
-print("  tests %s · passed %s · failed %s · errors %s · result %s" % (d.get("tests"),d.get("passed"),d.get("failed"),d.get("errors"),d.get("result")))
+line="  tests %s · passed %s · failed %s · errors %s · result %s" % (d.get("tests"),d.get("passed"),d.get("failed"),d.get("errors"),d.get("result"))
+print(line)
+open(os.environ["PEST_SUMMARY"],"a",encoding="utf-8").write(line+"\n")
 for e in (d.get("error_details") or [])[:5]:
     print("   ✗ %s\n      %s" % (e.get("test","?").split("::")[-1], (e.get("message") or "")[:160]))
 n=len(d.get("error_details") or [])
