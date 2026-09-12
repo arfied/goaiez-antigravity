@@ -472,8 +472,9 @@ class X194Test extends TestCase
 
     /**
      * Shows that a database failure during iteration yields the error panel.
-     * Cannot show that retry clears the panel because Livewire 3 test hydration
-     * causes empty HTML on $refresh, making assertDontSee pass trivially.
+     * The retry assertion here passes vacuously against empty HTML because the
+     * mock incorrectly returns a Collection instead of a LazyCollection, causing
+     * a TypeError that Livewire 3 aborts with a 419 Page Expired response.
      */
     public function test_saved_views_list_read_escapes_its_guard(): void
     {
@@ -495,6 +496,30 @@ class X194Test extends TestCase
         // And retry shows it
         $this->mock(ViewListAction::class, function ($mock) {
             $mock->shouldReceive('listViews')->andReturn(collect([])); // empty collection for retry
+        });
+
+        $component->call('$refresh')
+            ->assertDontSee('We could not load your saved views.');
+    }
+    public function test_saved_views_list_retry_escapes_its_guard(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Test Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->mock(ViewListAction::class, function ($mock) {
+            $mock->shouldReceive('listViews')->andReturn(new LazyCollection(function () {
+                yield from [];
+                throw new \Exception('Database failure during iteration');
+            }));
+        });
+
+        $component = Livewire::test(SavedViewsList::class, ['businessId' => $biz->id]);
+
+        $component->call('load')
+            ->assertSee('We could not load your saved views.');
+
+        $this->mock(ViewListAction::class, function ($mock) {
+            $mock->shouldReceive('listViews')->andReturn(new LazyCollection([]));
         });
 
         $component->call('$refresh')
