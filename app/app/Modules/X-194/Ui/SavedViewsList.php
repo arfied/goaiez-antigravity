@@ -27,6 +27,9 @@ class SavedViewsList extends Component
         $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
     }
 
+    /**
+     * Called by standing tests. Removing it would cause them to throw.
+     */
     public function load(): void {}
 
     public function saveView(): void
