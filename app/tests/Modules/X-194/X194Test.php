@@ -405,11 +405,12 @@ class X194Test extends TestCase
             columnsConfig: []
         );
 
-        DB::statement("SET app.business_id = '9999'");
-
         $component = Livewire::test(SavedViewsList::class, ['businessId' => $biz->id])
             ->call('load')
             ->assertSee('Existing View');
+
+        // Force RLS failure during save by switching tenant context context
+        DB::statement("SET app.business_id = '9999'");
 
         $component->set('newViewName', 'Failing View')
             ->call('saveView')
