@@ -19597,3 +19597,14 @@ this checkout's 2026-09-05 17:4x fast-forward, so **this lane's own first-parent
 `JobCreateAction`, JOURNAL +1) and `5606d096` (14:37:14, BUILD-STATE only) carry the **same** `(R245) X-121 — JobCreateAction is the one create path`
 decision stamped `13:46:19` — money's MONEY-79 shape, 51 minutes apart, in Track 1's column. `c361f328` registers X-221-223 in BUILD-STATE with no
 decision line. Advisory; ⛔ never a parallel fix, and `state.py` owns both files.
+
+## ⭐ A BUILD-STATE-ONLY COMMIT CANNOT COME FROM `state.py` — money's ruling 612, measured on this lane's own byte-identical file (tick 366)
+
+`git diff --stat origin/main HEAD -- bin/state.py` is empty, so money's write census is a census of this file, not an analogue. At source: every
+mutating branch calls `journal(…)` (`:162 :168 :196 :211 :216 :218 :220 :222 :226`) and falls to the single `save(s)` at `:249`; `:84`'s init pairs
+its own `journal`. ⭐ **So the review-list rule "a hand edit to `BUILD-STATE.json` is a BLOCK" is decidable by one set difference**: a first-parent
+commit touching `BUILD-STATE.json` and not `JOURNAL.md` is a hand edit or a merge resolution, never the tool. Tick 365's three unpaired commits are
+all main's. ⚠️ Bound: it holds while `state.py` stays byte-identical to main — re-read `:249` if its diff ever prints.
+
+Also measured at 366: `AGENTS.md:131` (*do not `git push` until PASS*) is 609(c)'s class and grants no act here (`7a09e8fc`, `coder-bin/git:168`);
+`livewire ?v?3` returns nothing in this lane's `CLAUDE.md`, `AGENTS.md` or `07-tech-stack.md` (lock pins v4.4.2) — money's 614 has no member here.
