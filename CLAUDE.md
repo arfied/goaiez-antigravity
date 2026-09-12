@@ -9746,6 +9746,82 @@ Watch for: <the trap that applies, by name>
   - Board: proposals **13** · `app/app/Modules/` **0** · `CLOSED:` **7**. `9 15` vs `origin/main`, and the
     Doctor/harness/hooks diff is empty, so no merge condition holds.
   - Re-run every grep; never inherit one.
+- ⭐⭐ **A content assertion on a real `GET` IS evidence that `ResolveTenant` resolved the tenant, and the reason is
+  one method.** `Tenancy::forget()` (`app/app/Support/Tenancy.php:138-143`) is `Context::forgetHidden()` plus
+  `applyToDatabase('')`, and `ResolveTenant` opens with `Tenancy::forgetAll()`. So the tenant
+  `TestCase::provisionTenant` set is cleared on the connection before the owner lookup, and an `assertSee` on the
+  response reads under the tenant the middleware set. Wave 185 put its content assertions on the `GET` first, and
+  both mutations reddened that first assertion (`−3` on a four-assertion test, radius 1). **That is tick 318's NOTE
+  1 answered in form.** Brief content assertions onto the real `GET`; a `Livewire::test` half beside it proves the
+  component alone.
+- ⚠️ **A mutation off the site the brief named can still be a reinstatement, and `git diff --stat` on the file
+  decides it.** Wave 185's mutation 1 flipped `Thread::render()`'s `> 0` to `< 0` instead of undoing `mount()`.
+  The file's whole diff for the wave is the added `mount()` and its `use`, and before the wave `businessId` was
+  always `0`, so the mutated render is output-identical to the pre-wave file for every input. Red under the
+  mutation therefore means red on the pre-wave tree, which proves `mount()` load-bearing. **Before calling a
+  mutation off-site, check whether the wave's diff to that file is the only thing the mutation's effect could be
+  standing in for.**
+- ⚠️ **The RLS-only shape shipped a THIRD time without the in-file comment, and the brief printed the shape without
+  the rule.** Wave 185's `RefusalcodeDistributionPer::render()` is `AgentRefusal::get()`, which is safe
+  (`agent_refusals` is `ENABLE`+`FORCE` RLS with `USING` and `WITH CHECK`, and `ResolveTenant` sets the tenant). It
+  carries no sentence saying where the tenant guard went, and it keeps a dead `#[Locked] public int $businessId = 0`
+  that reads like a filter. My brief's M5 printed `YourNumberCard.php:19` as "the RLS-only shape" and said nothing
+  of tick 246's comment obligation (tick 247 recorded exactly this). **A brief that prints a shape prints the
+  obligations that travel with it.**
+- ⚠️ **A fixture value outside the column's own vocabulary is the wave-100 rung in a test.**
+  `RefusalcodeDistributionPerScreenTest` seeds `'refusal_code' => 'R245'` against
+  `AgentRefusal::VALID_REFUSAL_CODES` (`NO_FACT … RESTRICTED_TOPIC`). `R###` is also this programme's
+  decision-citation form, so the fixture reads like a citation. It is test-only and the assertion is real. Owed to
+  the next wave that opens that file (tick 191).
+- ⚠️ **Wave 185's `MESSAGE` retyped the printed class `[^"\\]` as `[^\"]`.** That class does not exclude a
+  backslash, so the match runs to the first escaped quote and stops. The target's message came back as
+  `Failed asserting that '<!DOCTYPE html>\\n\n<html lang=\"`, which lost the module's rendered output (the tick-200
+  site proof). Newest member of *a grep PATTERN is a claim about the file it greps*. Print the pattern and require it
+  copied byte-for-byte.
+- **Per-id writers for the lane's unmounted `$businessId` components, measured at tick 319** (tick 318's table
+  named the components and measured writers only for C-Agent).
+  - **Writerless — never brief a wire:**
+    - `C-Telephony/CarrierRosterHealth`: `carrier_health`'s one writer `CarrierHealthAction::updateStatus` has no
+      caller.
+    - `C-Telephony/FailoverLog`: `carrier_receipts`' writer is `CarrierRouter:111`, reached only by
+      `CarrierSendAction` and `CarrierCallAction`, and neither has a caller.
+    - `C-Mail/WarmupCalendarsPer`: `EmailWarmupAction`, the writer, has no caller. `EmailSendAction:70` reads the
+      table.
+    - `C-Whatsapp/TemplateStatusCard`: `TemplateSubmitAction`, the writer, has no caller.
+    - `C-Agent/TeachingBox` (tick 318).
+    - That is the tick-205 dead-mechanism shape at lane scale: five screens whose store nothing in production
+      fills.
+  - **Excluded:** `X-01/CustomersList` and `C-Sms/DonottextList` both read another module's `Models`
+    (`X121\Person`, `X204\Suppression`); X-124's three are admin-only (`TRACK 1 ACTION 2`).
+  - **Live — `X-153/AlertRosterScreen` (`alerts`) and `X-153/AlertReplyBy` (`reply_codes`):** the only writer
+    `AlertSendAction` is called from `C-Reviews/Ui/LossAlerts::alertTeam`/`resolveAndAlert`. That screen is routed
+    (`c-reviews.loss-alerts`) and its `mount()` resolves the tenant or aborts 403.
+    - `is_live => false` has one writer, `AlertClaimAction:53`, and it has no caller. So `AlertReplyBy`'s
+      `where('is_live', true)` excludes nothing production produces today.
+  - **Unmeasured:** X-194's `AnyViewIt`/`SavedViewsList` (`saved_views` writer `ViewSaveAction`, callers not
+    grepped).
+- **Suite at tick 319 on `bfc5946d` — `tests 2546 · passed 2537 · assertions 11121 · failed 7 · errors 2 ·
+  duration_ms 153483`.** Read from the wave's post-tip gate (`scratch/w185-gate.log` 19:14:07 over
+  `?? error_log` only, against the tip commit at 19:02:22). The standing nine hold by identity. Against wave 184's
+  `2544 · 2535 · 11113` that is `+2 · +2 · +8`: two new four-assertion tests. My own plain gate on the tip
+  (`.agents/supervisor/.t319-gate.log`): §2 `none`, §2b `all parse`, stamp `20260829-0647` = `runtime_build`, §6
+  pint `passed` / phpstan `0`, `gates green.` I ran no suite of my own (tick 277).
+- **Backlog at tick 319 — wave 186 is X-153's `AlertRosterScreen` and `AlertReplyBy` tenant wires, as two numbered
+  builds, plus item 0: the RLS-only comment owed on `RefusalcodeDistributionPer`.** RULED.
+  - They are the only two unmounted lane components left with a live production writer.
+  - Item 0 is a correction numbered apart, with its own commit and no mutation. Tick 246's wave-135 precedent
+    paired one the same way. The brief says in words that the comment obligation travels with the RLS-only shape,
+    into either X-153 item (tick 247).
+  - ⛔ Never edit `C-Reviews/**`; `LossAlerts` is the reviews lane's.
+  - ⛔ The admin twin's tenant stays `TRACK 1 ACTION 2`. Both X-153 standing tests have an admin method, and their
+    `assertOk()` stays byte-identical.
+  - ⛔ Shape withheld (tick 214); no numbers published (tick 208). `AlertClaimAction` being uncalled goes over as a
+    measurement.
+  - `grep -rn "No alerts broadcasted\|No active reply codes pending" app/tests` is **0**.
+  - Board: proposals **13** · `app/app/Modules/` **0** · `CLOSED:` **7**. `9 18` vs `origin/main`, and the
+    Doctor/harness/hooks diff is empty, so no merge condition holds.
+  - After 186 the per-id table has no live-writer wire left in lane. **Wave 187 is the writerless pile's owner
+    question or X-194, re-measured when briefed.**
 
 ## Style
 
