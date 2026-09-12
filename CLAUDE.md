@@ -18222,3 +18222,34 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
    - **Population.** Ruling 604's is recorded and not buildable.
 
    **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty coder wave to avoid an idle tick is what rulings 95, 100 and 111 forbid. ⚠️ No gate ran this tick: nothing in `bin/supervise.sh` or `app/**` changed, so the floor stays ruling 564's.
+
+606. **⭐ The JOURNAL-LINE ↔ COMMIT census, the "no matching commit" BLOCK's first census: of 112 first-parent `chore(state)` commits in `fe094469..HEAD`, 100 sit directly on the wave's code commit, and the 12 that do not are all accounted for. ONE decision line was committed 42 seconds BEFORE the code it records, and it landed inside the same reviewed range. Zero buildable (measured by the lane supervisor 2026-09-11 20:4x, by `date` `20:40`; rulings 139, 248, 262(b), 271, 294, 324, 327, 328, 415, 429, 467, 604).** `CLAUDE.md`'s review checklist says a `JOURNAL.md` line with no matching commit is a BLOCK, and nothing had ever censused it.
+   **Instruments, quoted (300):**
+   - `git log --first-parent --format='%h %s' fe094469..HEAD | grep -c -F -e "chore(state)"` → **112**.
+   - `… | grep -A1 -F -e "chore(state)"`, keeping the parent lines that are not `fix(`/`test(`/`feat(` → **12**. Each was read with `git log --first-parent -4 <sha>` (262(b)).
+
+   **The 12, each with its safety named (328):**
+   - **Five record a measurement or a correction, and commit no code by design:** `48581e10` (MONEY-154's census), `ffcaf6e2` (155), `d49622f4` (156), `8d31ccc6` (160's untracked evidence run), and `c69194d5` (158). ⭐ **Known member (429):** `c69194d5` is ruling 271's overstated decided line. Its correction note `b0132aac` exists, which is 271's remedy in place.
+   - **Three sit on code commits with unconventional subjects, so the filter over-matched (mechanism 8):** `6b05c747` on `e89c41b4 Stop previewing…`, `ca6f78cb` on `49325ea0 Assert a plan offer…`, and `d7cb2717` on `a4a16f6f style: pint fixes`, which sits on `a1cd340b feat(X-199)`.
+   - **Three have a supervisor commit between the code and the state commit.** This is ruling 139/467's live-coder interleave: `a6f3785b` (above `9d2abc0d`, whose parent is `350ee3c4 fix(X-117)`), `b2d62766` (above `08508b66`, parent `214175c9 test(X-199)`, the same second), and `f0dfee70` (above `432d99d7`, parent `edf53c97 test(X-199)`). All three waves were reviewed after both commits existed.
+   - ⭐ **One decision precedes its code:** `3a5adc0c` (`04:43:15`, MONEY-174 run 199) records *"the engine refuses a second before its first write"*. Its code, `23373378 feat(X-211): refuse second plan and collections package before write`, lands at `04:43:57`. That run was reviewed under rulings 331–332 on a range that already held both.
+
+   **Why none of it is a defect.** The rule is measured at REVIEW, over `git log <pushed>..HEAD`, and in all 112 cases the matching commit was in the reviewed range. ⚠️ **The hazard the one member names is a run that dies between the two commits** (a quota death, ruling 248's reap, MONEY-37's partial commit). The tip would then carry a decision with no code behind it. The instruments that would catch it already exist: the reviewing tick reads the run log before the report (30, 40, 248, 287), and every brief's ⛔ surface clause lists the code paths a decision must come with (133). ⛔ Recorded, not built: the lines are `state.py`'s and a hand edit is a BLOCK. ⚠️ **Trigger:** a reviewed range whose `chore(state)` commit has no code commit beside it. ⭐ **Positive control DISCRIMINATES:** 100 of the 112 sit on code, and the instrument separates them. 415's first-three check passed. 449's each-member-exists check passed, every sha printed by `git`. Ruling 327's outcome shape an **eightieth** time.
+
+607. **⭐ The STAGED-BRIEF identity census, the other half of 602's delegation question: all 93 staged `BRIEF-money*.md` copies carry a heading naming their own file's wave, `BRIEF.md` names MONEY-211 (the last dispatch, run 236, 515), and the absence of 201–211 copies is item-0 cleanup rather than a gap. Zero buildable (measured by the lane supervisor 2026-09-11 20:4x; rulings 262(b), 264, 327, 415, 429, 449, 602).**
+   **Instruments, quoted (300):**
+   - `grep -r -m1 --include='BRIEF-money*' -e "^# BRIEF" <abs>/.agents/supervisor/` → **93** headings, each read against its filename, including the lettered `113b`, `137b`, `161b` and `162b`. **Zero mismatches.**
+   - `ls <abs>/.agents/supervisor/ | grep -i -e brief`, outside the 110–199 range → `BRIEF.md`, `BRIEF-MONEY-103.staged.md` and `BRIEF-money200.md`. So no copy of MONEY-201–211 is on disk.
+   - ⭐ **Known member (429):** `REVIEWS.md:52451` records MONEY-208's item 0 deleting `brief-money207.md` and `kickoff-money207.md`. So the missing copies were removed by design (47: scratch is deleted), and the verdict blocks carry each wave's design (264).
+
+   ⚠️ **What this census cannot measure, stated rather than hidden:** `BRIEF.md` is overwritten in place and gitignored, so whether the brief a run READ matched its staged copy is unrecoverable for every past wave. The binding that survives is 604's: the report's `COMMITS:` shas against `git log`. ⛔ Struck, not to be re-run. ⚠️ **Trigger:** a `Dispatched:` line naming a wave whose `BRIEF.md` heading names another. 415's first-three check passed. Ruling 327's outcome shape an **eighty-first** time.
+
+608. **⛔ SEVENTY-THIRD consecutive HOLD (RULED by the lane supervisor 2026-09-11 20:4x, by `date` `20:40`).** All four lift conditions were measured this tick (269, 272, 323), each case decided on mtimes (494):
+   - **Owner.** `OWNER.md`'s newest heading is still `## OWNER RULING — 2026-09-09 09:02` (136), mtime `09-09 09:02:03`, older than `REVIEWS.md` (`20:32:18`).
+   - **Coder.** `--check` returned `CODER DEAD`, with no note.
+   - **Mailbox.** `REPORT.md` (`07:15:21`) and `BRIEF.md` (`07:07:27`) are both older than `REVIEWS.md`.
+   - **Cadence, all three ✗.** After `git fetch --no-write-fetch-head origin`, `origin/main` = **`bd3e9c5f`**, unmoved (`git diff --name-status bd3e9c5f origin/main | wc -l` = 0). `git rev-list --count HEAD..origin/main` = **44**. `git diff --stat dca743e8 origin/main -- app/app/Doctor coder-bin .claude/hooks` is empty. `git merge-base HEAD origin/main` = **`dca743e8`**.
+   - **Track 1.** No answer to ACTION 13–32.
+   - **Population.** Rulings 606's and 607's are recorded and not buildable.
+
+   **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty coder wave to avoid an idle tick is what rulings 95, 100 and 111 forbid. ⚠️ No gate ran this tick: nothing in `bin/supervise.sh` or `app/**` changed, so the floor stays ruling 564's.
