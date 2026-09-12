@@ -21,6 +21,7 @@ use App\Services\Tenant\LocationContext;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Livewire\Features\SupportLockedProperties\CannotUpdateLockedPropertyException;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -275,6 +276,34 @@ class X194Test extends TestCase
     }
 
     /**
+     * Proves that a client cannot update the locationTimezone Livewire property directly.
+     */
+    public function test_location_timezone_is_locked_and_cannot_be_updated_by_client(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Locked Timezone Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $view = $this->saveAction->save(
+            businessId: $biz->id,
+            viewName: 'Job View Alpha',
+            viewType: 'table',
+            filterConfig: [],
+            columnsConfig: []
+        );
+
+        $location = Location::where('business_id', $biz->id)->first();
+        $location->timezone = 'America/Denver';
+        $location->save();
+
+        $this->expectException(CannotUpdateLockedPropertyException::class);
+
+        Livewire::test(AnyViewIt::class, [
+            'businessId' => $biz->id,
+            'viewId' => $view->id,
+        ])->set('locationTimezone', 'Europe/London');
+    }
+
+    /**
      * Proves a signed-in tenant can save a view via the UI, reaching ViewSaveAction.
      */
     public function test_saved_views_list_can_save_a_view(): void
@@ -295,15 +324,8 @@ class X194Test extends TestCase
     }
 
     /**
-     * [G4-20], [G8-10], [G9-11], [G9-23], [G9-26], [G9-35], [G9-37], [G13-17]
-     *
-     * CLOSED: G9-37 — built in f28f6539
-     * ⛔ REFUSED: G4-20 — a house standard enforced by lint, not a capability row
-     * ⛔ REFUSED: G8-10 — named in the header; the JSONB column is X-121's (out of this lane)
-     * ⛔ REFUSED: G9-11 — named in the header
-     * ⛔ REFUSED: G9-23 — named in the header
-     * ⛔ REFUSED: G9-26 — named in the header (report.pdf)
-     * ⛔ REFUSED: G13-17 — revenue on the territory map; the polygons are X-10's (out of this lane)
+     * Proves that a GET request displays the timezone of the selected location,
+     * and that the selected location is appropriately marked as selected in the dropdown.
      */
     public function test_two_locations_displays_selected_timezone_on_real_get(): void
     {
@@ -334,9 +356,20 @@ class X194Test extends TestCase
         $response->assertOk();
         $response->assertSee('Job View Alpha');
         $response->assertSee('America/New_York');
-        $response->assertSee('Loc Two');
+        $response->assertSeeInOrder(['value="'.$location2->id.'"', 'selected', '>'.$location2->name.'</option>'], false);
     }
 
+    /**
+     * [G4-20], [G8-10], [G9-11], [G9-23], [G9-26], [G9-35], [G9-37], [G13-17]
+     *
+     * CLOSED: G9-37 — built in f28f6539
+     * ⛔ REFUSED: G4-20 — a house standard enforced by lint, not a capability row
+     * ⛔ REFUSED: G8-10 — named in the header; the JSONB column is X-121's (out of this lane)
+     * ⛔ REFUSED: G9-11 — named in the header
+     * ⛔ REFUSED: G9-23 — named in the header
+     * ⛔ REFUSED: G9-26 — named in the header (report.pdf)
+     * ⛔ REFUSED: G13-17 — revenue on the territory map; the polygons are X-10's (out of this lane)
+     */
     public function test_reporting_capabilities(): void
     {
         $this->assertTrue(true);
