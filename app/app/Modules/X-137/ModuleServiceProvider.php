@@ -39,6 +39,12 @@ final class ModuleServiceProvider extends ServiceProvider
             $businessId = (int) $business;
             Tenancy::set($businessId);
 
+            // Tenancy on this read is this business_id clause and nothing else. short_links carries the platform's
+            // public_read policy (FOR SELECT USING (true), app/database/migrations/2026_08_11_130139_create_short_links_table.php)
+            // and Postgres ORs permissive policies, so row-level security does not restrict a SELECT here, and this model has
+            // none of the platform ShortLink model's other safeguards (no BelongsToTenant scope, a six-character code).
+            // Measured in SITE-212: with this clause removed, test_g13_24_short_code_is_redeemable_only_under_its_own_business
+            // answers 302 where it asserts 404. Do not remove it on the ground that row-level security covers it.
             $shortLink = ShortLink::where('business_id', $businessId)
                 ->where('short_code', $code)
                 ->firstOrFail();
