@@ -263,6 +263,26 @@ class X194Test extends TestCase
     }
 
     /**
+     * Proves a signed-in tenant can save a view via the UI, reaching ViewSaveAction.
+     */
+    public function test_saved_views_list_can_save_a_view(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Save UI Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $component = Livewire::test(SavedViewsList::class, ['businessId' => $biz->id])
+            ->set('newViewName', 'My Shiny View')
+            ->call('saveView');
+
+        $this->assertDatabaseHas('saved_views', [
+            'business_id' => $biz->id,
+            'view_name' => 'My Shiny View',
+        ]);
+
+        $component->assertSet('newViewName', '');
+    }
+
+    /**
      * [G4-20], [G8-10], [G9-11], [G9-23], [G9-26], [G9-35], [G9-37], [G13-17]
      *
      * ⛔ REFUSED: G4-20 — a house standard enforced by lint, not a capability row
