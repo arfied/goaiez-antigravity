@@ -17990,3 +17990,38 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
    - **Population.** Ruling 589's has no buildable members.
 
    **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty coder wave to avoid an idle tick is what rulings 95, 100 and 111 forbid. No gate ran this tick: `HEAD`'s `app/**` is unchanged since the last supervisor gate, so the floor stays ruling 564's. ⚠️ `app/CLAUDE.md` came into context again this tick. It is Laravel Boost boilerplate and was not followed.
+
+
+591. **⭐⭐ The gate's own §2 had two defects in this supervisor's column, and both are fixed. (a) Its range was `HEAD~1..HEAD`, the last commit only, so a wave's earlier commits were hidden from the forbidden-path check and from §2b's `php -l`. (b) Its generated-file term `^app/Modules/[^/]+/(manifest|capabilities)\.php$` was written relative to `app/` and applied to repo-relative paths, so it matched NOTHING. §2 could never flag a hand-edited manifest or capabilities file (RULED by the lane supervisor 2026-09-11 19:3x, by `date` `19:30`; rulings 26, 29, 42(2), 133, 182, 295, 560, 563, 566, 575).** This is the addendum's *"a count a gate prints whose DEFINITION lives in the emitter"* (560, 566), aimed at `bin/supervise.sh` itself. §2's `none` is a count, and its definition is two things nobody had read: the range it diffs and the path form its regex assumes.
+   **(a) The range. Measured on MONEY-211:**
+   - `git diff --name-only 90c482bb f96c63bf` lists **5** paths: the migration, `CheckoutEngine.php`, `X117Test.php` and the two state files.
+   - `git diff --name-only f96c63bf~1 f96c63bf` lists **2**, the state files alone.
+   - The harm was mostly latent. A coder's gate usually runs before its `chore(state)` commit, so a single-code-commit wave was covered (516's ordering: commit `07:10:24`, gate `07:13:24`, state `07:14:44`).
+   - A wave with several code commits before its gate was not covered. MONEY-190's three commits (`16:23:25`, `16:24:23`, `16:24:30`, gate `16:27:20`, ruling 391) showed §2 and §2b only the third.
+   - ⭐ The reviewer's own surface check (`git diff --stat <pushed>..HEAD`, 133) always covered the whole range, and pint and phpstan parse the whole tree. So nothing slipped through, but the gate's line claimed a scope it did not have.
+   **(b) The dead term. Measured with `git ls-files`:**
+   - `grep -c -E '^app/Modules/'` → **0**.
+   - `grep -c -E '^app/app/Modules/[^/]+/(manifest|capabilities)[.]php'` → **254**.
+   - The other terms fire: `seals.json` **1**, `^runtime/` **8**, `^app/app/Doctor/` **14**. So one term in a healthy multi-term regex was dead. That is ruling 575's shape, a dead term hidden behind a working control.
+   - The cause is visible in this ledger's own prose. `CLAUDE.md`'s "Reviewing a REPORT" writes the rule app-relative, as `app/Modules/*/manifest.php`, and the regex copied that form into a repo-relative diff.
+   - ⚠️ Rulings 29 and 295 forbid hand-editing a generated `capabilities.php` or `manifest.php`. **That prohibition had no gate.**
+   **The fix, in this column.**
+   - `touched` now diffs from `origin/<branch>` whenever that ref is a strict ancestor of `HEAD`, and prints `range: <base>..HEAD (N commit(s))`. The supervisor pushes only gated shas (26), so that range is exactly the unreviewed work. It falls back to `HEAD~1` when `HEAD` is already pushed or detached.
+   - The term becomes `^app/app/Modules/[^/]+/(manifest|capabilities)\.php$`.
+   - On a merge wave nothing changes: a single unpushed merge commit's first parent **is** `origin/track/money`, so the new range equals the old one. ⚠️ A merge that brings `main`'s regenerated manifests will now print ⛔ and set `fail=1`. That is the designed behaviour, and the hit is read against `MERGE_HEAD` (182), never absorbed.
+   **Executed, not argued.** `43084cb5` was committed unpushed, then `bash bin/supervise.sh` ran into `gate-sup-1940.txt`. §2 printed `range: origin/track/money..HEAD  (1 commit(s))` and `none`, and §2b printed `all parse`. So the new branch ran with no `set -u` error.
+   - ⚠️ The corrected term was **not** exercised against a real hand-edited manifest. None exists, and making one is `app/**`. It rests on the `ls-files` count above and on its anchor form, which is the same as the three terms that fire.
+   - ⚠️ §2a's red, the 2026-09-02 post-rewrite ledger entries, is pre-existing and is the reason ruling 568 recorded every supervisor gate's verdict as failed. It is unchanged.
+   **Cross-lane.** `git show origin/main:bin/supervise.sh` carries both defects: `:207` is `git diff --name-only HEAD~1 HEAD`, and `:211`'s pattern holds the same `^app/Modules/` term. So every lane's gate inherits them → **TRACK 1 ACTION 29.** ⛔ Money edits nothing outside its own copy (5).
+   ⭐ Ruling 327's outcome shape does **not** apply: this population was buildable, in this column, and is built.
+   ⭐ **The generalisable half:** a path pattern written relative to one directory and applied to paths relative to another matches nothing, silently. A gate's `none` is only as wide as its range and its path base, so a census of a gate reads both.
+
+592. **⛔ SIXTY-SIXTH consecutive HOLD for the coder, with the gate fix shipped instead (RULED by the lane supervisor 2026-09-11 19:3x, by `date` `19:30`).** All four lift conditions were measured this tick (269, 272, 323), and each case was decided on mtimes (494):
+   - **Owner.** `OWNER.md`'s newest heading is still `## OWNER RULING — 2026-09-09 09:02` (136). Its mtime is `09-09 09:02:03`, older than `REVIEWS.md` (`19:23:56`).
+   - **Coder.** `--check` returned `CODER DEAD`.
+   - **Mailbox.** `REPORT.md` (`07:15:21`) and `BRIEF.md` (`07:07:27`) are both older than `REVIEWS.md`.
+   - **Cadence, all three ✗.** After `git fetch --no-write-fetch-head origin`, `origin/main` is **`bd3e9c5f`**, unmoved: `git diff --name-status bd3e9c5f origin/main | wc -l` = 0. `git rev-list --count HEAD..origin/main` = **44**. `git diff --stat dca743e8 origin/main -- app/app/Doctor coder-bin .claude/hooks` is empty. `git merge-base HEAD origin/main` = **`dca743e8`**.
+   - **Track 1.** There is no answer to ACTION 13–28.
+   - **Population.** Ruling 591's was buildable, and its fix is a supervisor file, so no coder wave follows from it.
+
+   **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty coder wave to avoid an idle tick is what rulings 95, 100 and 111 forbid. ⚠️ The gate this tick ran **without** `--tests`, so the floor stays ruling 564's.
