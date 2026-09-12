@@ -10638,6 +10638,54 @@ Watch for: <the trap that applies, by name>
   - After 191b the lane holds on `OWNER ACTION 1` (the wave-190 cap) unless `OWNER.md` answers.
   - `58 11` vs `origin/main` after a fetch, and the Doctor/harness/hooks/seals diff is empty, so no merge condition
     holds. Board: proposals **14** · `app/app/Modules/` **0** · `CLOSED:` **8**. Re-run every grep; never inherit one.
+- ⚠️⚠️ **`forceCreate` turns a silently-DROPPED fixture key into a SQL error, because Laravel's guardable-column
+  filter only runs on the guarded path.** `GuardsAttributes::isGuardableColumn` (`:248-260`) reads the table's column
+  listing, and a key that is not a column is treated as guarded and dropped by `create()`/`fill()` on a model whose
+  `$guarded` is a list. So the pre-wave `Customer::create(['first_name' => …, 'last_name' => …])` passed for months on a
+  `customers` table that has only `name` (`create_customers_table.php:33`). Wave 192 needed an explicit `id`, reached for
+  `forceCreate`, kept the same keys, and got `SQLSTATE[42703] column "first_name" … does not exist` at the fixture — before
+  `suppress()`, so neither assertion ran. **A fixture copied from a `create` into a `forceCreate` must be re-checked
+  against the migration**, and a green `create` is no evidence its keys are columns.
+- ⚠️⚠️ **A wave's rewritten test can be RED on its own green gate while the report says "prove", and the reinstatement
+  mutation then moves NOTHING — green and mutated objects differ only at `duration_ms`.** Wave 192:
+  - `NEW-REDS` named the wave's own test and the green object read `errors 3`.
+  - `STATUS` said *"to prove fix"* and answer 1 said the mutation *"breaks both"*.
+  - `MOVED` for that mutation was 0 bytes, and `cmp` of the two objects is `differ: byte 96`.
+  - Tick 347's rule fired as written: **a field that names a new red is not a disclosure**. BLOCK, hold the push.
+  - ⭐ The cheap control is the `TARGET-GRN`/`TARGET-MUT` pair (tick 298), which wave 192's brief dropped: `1/1` reads
+    *already red* on its face. **Every mutation block carries it.**
+  - ⭐ And a brief that says *"if `new-reds` is not empty, stop before the mutations"* makes the red a gate, not a field.
+- ⚠️ **`newmsg-<n>` over a SQL error reports the SAME failure as new when the message embeds a timestamp or an id.**
+  Wave 192's `MESSAGE` showed the fixture error as a new message under a mutation that moved nothing, because
+  `created_at` and the inserted ids differ between runs. **Read `moved` for whether a test moved; `newmsg` only for what
+  it says.**
+- ⚠️ **`SequenceStopAction` carries no `Tenancy` call** (read whole at tick 354). A report claiming the X-204 listener's
+  write *"uses Tenancy::actingAs (from SequenceStopAction)"* is false: the write lands under the connection's
+  `app.business_id`, which `CancelPendingStepsTest` sets itself. **Read the callee before crediting a tenancy claim about
+  it.**
+- ✅ **The tick-353 no-heredoc generator ruling held on its first ask.** Wave 192's `scratch/w192-generator.sh` is one
+  `{ … } > REPORT.md` group of `printf` plus commands, with no `$(`, no `>>` and no heredoc, and every measured field was
+  real. What failed was the prose fields beside correct measured ones: **a generator makes fields unwritable, not
+  sentences true.**
+- **Suite at tick 354 on `b82182ae`:** `tests 2587 · passed 2577 · assertions 11304 · failed 7 · errors 3 ·
+  duration_ms 154980`, from the wave's green gate (§1 at that HEAD, `?? error_log`). Against tick 353's
+  `2587 · 2578 · 11305 · failed 7 · errors 2`: `passed −1 · errors +1 · assertions −1`, i.e. the old test's one
+  assertion gone and the new test contributing none. The standing nine plus the wave's own red. My plain gate
+  (`.agents/supervisor/.t354-gate.log`) reads `gates green.`, pint `passed`, phpstan `0`.
+- **Backlog at tick 354 — wave 192b makes the X-204 falsifier test execute and proves both assertions; dispatch 1 of 2
+  for the wave-192 BLOCK.** RULED (`REVIEWS.md` tick 354).
+  - **Stays:** the listener in `b82182ae` (Track 1's shape verbatim), the `2026-09-12T16:13:27` ledger row, and the boundary
+    row (36 → 37).
+  - **Items:** the fixture fixed to the `customers` schema, keeping the decoy's id collision and phone; the no-person branch
+    decided and said; mutation 1 re-run unedited (not spent — its target was already red); a mutation for every assertion
+    the reinstatement cannot make execute and fail; wave 192's four false sentences answered by cause under the tick-250
+    method.
+  - ⛔ **Push HELD** at `origin/track/sixty` `72cfce48`. `b82182ae` and this tick's notes commit wait for a green test.
+  - If 192b does not discharge the BLOCK, the next tick writes an `OWNER ACTION` and stops (the cap).
+  - **Then wave 191b** (the verifier docblock `:211-214` against 4508, and the A3/A4/A5 and log-value mutations), then HOLD
+    on `OWNER ACTION 1` unless `OWNER.md` answers.
+  - `62 13` vs `origin/main` after a fetch, and the Doctor/harness/hooks/seals diff is empty, so no merge condition holds.
+  - Board: proposals **14** · `app/app/Modules/` **0** · `CLOSED:` **8**. Re-run every grep; never inherit one.
 
 ## Style
 
