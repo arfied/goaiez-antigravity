@@ -42,8 +42,8 @@
                 </div>
             @empty
                 <div class="sm:col-span-2">
-                    <x-ui.empty-state heading="No usage metered yet.">
-                        Nothing in this checkout writes a usage meter, so no SMS, voice, AI, email or lead usage has been recorded for this account. Usage lands here once the telephony and agent modules meter it.
+                    <x-ui.empty-state heading="No usage on this list yet.">
+                        This list reads its own usage meters, and nothing in this checkout writes to them yet. Calls and messages are recorded elsewhere in this app, and this list does not read that record.
                     </x-ui.empty-state>
                 </div>
             @endforelse
@@ -52,7 +52,7 @@
         <div wire:loading.remove class="mt-8 flow-root">
             <h2 class="text-lg font-semibold leading-6 text-ink mb-4">Ledger</h2>
             @if($entries->isEmpty())
-                <x-ui.empty-state heading="No ledger entries yet." action="Top up" target="topup">A top-up from this screen writes a row here. Nothing in this checkout raises a debit or a grant, so usage charges and plan credits appear once they are built.</x-ui.empty-state>
+                <x-ui.empty-state heading="No ledger entries yet." action="Top up" target="topup">A top-up from this screen writes a row here. Usage charges and plan credits are recorded on a separate credit ledger elsewhere in this app, and this list does not read it.</x-ui.empty-state>
             @else
                 <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
                     <table class="min-w-full divide-y divide-gray-300">

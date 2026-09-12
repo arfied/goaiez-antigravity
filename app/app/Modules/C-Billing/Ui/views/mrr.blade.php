@@ -52,7 +52,7 @@
 
         <h2>Meters</h2>
         @if($meters->isEmpty())
-            <x-ui.empty-state heading="Nothing metered yet.">Nothing in this checkout writes a usage meter, so this list fills once the telephony, SMS and agent modules meter what they use.</x-ui.empty-state>
+            <x-ui.empty-state heading="Nothing on this list yet.">This list reads its own usage meters, and nothing in this checkout writes to them yet. Calls and messages are recorded elsewhere in this app, and this list does not read that record.</x-ui.empty-state>
         @else
             <ul class="space-y-2">
                 @foreach($meters as $meter)
@@ -67,7 +67,7 @@
 
         <h2>This month's ledger</h2>
         @if($entries->isEmpty())
-            <x-ui.empty-state heading="No ledger entries this month.">A top-up from the credits screen writes a row here. Nothing in this checkout raises a debit or a grant, so usage charges and plan credits appear once they are built.</x-ui.empty-state>
+            <x-ui.empty-state heading="No ledger entries this month.">A top-up from the credits screen writes a row here. Usage charges and plan credits are recorded on a separate credit ledger elsewhere in this app, and this list does not read it.</x-ui.empty-state>
         @else
             <ul class="space-y-2">
                 @foreach($entries as $entry)
