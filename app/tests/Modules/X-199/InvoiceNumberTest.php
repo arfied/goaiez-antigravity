@@ -203,3 +203,34 @@ test('the first invoice for a business takes a lock even though there is no row 
         });
     });
 });
+
+test('the counter keeps counting past six digits', function () {
+    $business = Business::factory()->create();
+    $customer = Person::create(['business_id' => $business->id]);
+
+    $engine = app(InvoiceEngine::class);
+
+    Tenancy::actingAs((int) $business->id, function () use ($engine, $business, $customer, &$next) {
+        foreach (['INV-999999', 'INV-1000000'] as $number) {
+            Invoice::create([
+                'business_id' => $business->id,
+                'customer_id' => $customer->id,
+                'invoice_number' => $number,
+                'status' => 'issued',
+                'due_date' => now()->addDays(30),
+                'total_cents' => 100,
+            ]);
+        }
+
+        $issued = $engine->issueInvoice(
+            $business->id,
+            $customer->id,
+            [['description' => 'Next', 'quantity' => 1, 'unit_price_cents' => 100]],
+            'net_30'
+        );
+
+        $next = $issued['invoice']->invoice_number;
+    });
+
+    expect($next)->toBe('INV-1000001');
+});

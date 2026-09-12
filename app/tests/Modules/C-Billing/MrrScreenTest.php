@@ -69,7 +69,8 @@ class MrrScreenTest extends TestCase
             ->assertSee('ref grant_welcome')
             ->assertSee('Add 50.00 credit')
             ->call('topup')
-            ->assertSee('50.00 of credit added to your balance')
+            ->assertSee('50.00 added to the top-up ledger. It is separate from the credit your plan includes and the credit you buy.')
+            ->assertDontSee('added to your balance')
             ->assertSee('Nothing was charged: this button grants credit');
 
         $this->assertSame(1, CreditLedgerEntry::where('business_id', $biz->id)->where('entry_type', 'topup')->count());
@@ -89,8 +90,12 @@ class MrrScreenTest extends TestCase
 
         Livewire::actingAs($owner)->test(Mrr::class)
             ->assertOk()
-            ->assertSee('Nothing in this checkout writes a usage meter, so this list fills once the telephony, SMS and agent modules meter what they use.')
-            ->assertSee('Nothing in this checkout raises a debit or a grant, so usage charges and plan credits appear once they are built.')
+            ->assertSee('Calls and messages are recorded elsewhere in this app, and this list does not read that record.')
+            ->assertSee('Nothing on this list yet.')
+            ->assertSee('Usage charges and plan credits are recorded on a separate credit ledger elsewhere in this app, and this list does not read it.')
+            ->assertDontSee('writes a usage meter')
+            ->assertDontSee('raises a debit or a grant')
+            ->assertDontSee('Nothing metered yet')
             ->assertDontSee('The five meters fill')
             ->assertSee('No agreed price is recorded on this subscription row')
             ->assertDontSee('3443');
