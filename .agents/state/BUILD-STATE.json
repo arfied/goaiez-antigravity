@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-12T14:13:32",
+ "updated": "2026-09-12T15:02:46",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1688,6 +1688,12 @@
    "module": "X-183",
    "chose": "the held back drafts screen renders in the owner layout with mount resolving the tenant and lists each refused gate result by its draft title and its reason with a leading citation token removed at display, never printing the body, and its test renders the empty branch and three drafts written through ContentWriteAction and checked through ContentGateAction by real GETs, two refused and one passed and absent, proven by mutating the tenant resolution and the token removal",
    "at": "2026-09-12T14:13:32",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-210",
+   "chose": "the create an offer screen renders in the owner layout with mount resolving the tenant and saves an offer through PromotionCreateAction from a code, a whole percent or a dollar amount off and a limit on uses, refusing a code the business already has and a limit below one, and its test saves one by a Livewire call and sees it on the offers running screen by a real GET, proven by mutating the tenant resolution and the duplicate code rule",
+   "at": "2026-09-12T15:02:46",
    "ruling": "R245"
   }
  ],
