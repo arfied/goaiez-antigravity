@@ -10321,6 +10321,53 @@ Watch for: <the trap that applies, by name>
   - After 188i the X-194 cluster has no owed proof. **Wave 189 takes the board**, re-measured when briefed.
   - `32 1` vs `origin/main` after a fetch, and the Doctor/harness/hooks/seals diff is empty, so no merge condition
     holds. Board: proposals **14** · `app/app/Modules/` **0** · `CLOSED:` **8**. Re-run every grep; never inherit one.
+- ⚠️⚠️ **A mutation that reinstates TWO removed values proves only the one whose assertion fails FIRST in each moved
+  test.** A failing assertion ends its method, so every assertion on the other value goes unexecuted, however clean the
+  radius.
+  - Wave 188i's generated reinstatement of `$jobValue` **and** `$jobCount` moved two tests, and both failed at a
+    **count** assertion (`X194Test.php:227`, `:271`). The single `grep -o` over the mutated object that shows it:
+    `does not contain \"data-job-count\"`.
+  - So `data-estimate-tile="--"` never ran under any mutation, and tick 345's *"no owed proof after 188i"* was wrong.
+  - ⭐ **After any multi-value mutation, read which assertion each moved test failed at, and list every assertion
+    below it as unproven.** This is the tick-214 coverage rule applied per value instead of per method.
+  - ⚠️ Its corollary retires tick 345's *"dead `jobValue`/`jobCount` parameters"*. Mutation 2's red at `:227` shows that
+    `Livewire::test` parameters fill public properties when the properties exist, with `mount()` taking none of them.
+    So parameters dead on the green tree can be exactly what holds a behaviour under a mutation. **Never brief removing
+    a "dead" fixture before a mutation has shown it is dead.**
+- ⚠️ **An ordering rule stated without its reason gets skipped where the reason does not reach, and nobody discloses
+  it.** Wave 188i made patch 2 at `08:03:33`, ten minutes before mutation 1's after-capture, against *"Mutation 1 is
+  finished before patch 2 is made"*.
+  - Harmless: patch 2 was a diff between two commits and cannot carry a working-tree compound.
+  - Undisclosed all the same. **Say which patches the rule binds, and why.**
+- ⚠️ **`->lazy()` returns a `LazyCollection`, so the query runs where the collection is iterated — in the blade, outside
+  the component's `try`.** `SavedViewsList::render()`'s catch is therefore dead, and the section's load panel can never
+  render for a failing list read.
+  - `SavedViewsList.php:68` documents the escape as *"Defence in depth … thus no test reaches it."* That is a durable
+    comment recording a dead guard as a safeguard.
+  - Its sibling at `:55` routes a default-view failure under *"We could not load your saved views."*, and that panel's
+    `@if` hides the form and the list. That is the error-panel docblock's two rules, both broken.
+  - **Before crediting a catch around an action call, ask whether the action returns a value or a deferred query.**
+- ✅ **Wave 188i's two mutations are SPENT; never re-brief them.**
+  - `w188i-mut-1` (`SavedViewsList::saveView()`'s `$this->saveError = ''` deleted): radius 1, `assertions` flat, target
+    failed at its last assertion with the rendered panel and three rows in the message. Tick 343's clause 3 is proven.
+  - `w188i-mut-2` (generated from `git diff HEAD 3d2d175a`): radius 2, both at the count tile. The count half of tick
+    344's ruling is proven; the value half is not.
+  - Suite on `4d640c1c`: `tests 2579 · passed 2570 · assertions 11283 · failed 7 · errors 2 · duration_ms 153070`, the
+    standing nine by identity. My plain gate (`.agents/supervisor/.t346-gate.log`) reads `gates green.`
+- **Backlog at tick 346 — wave 190 is three numbered items in X-194.** RULED (`REVIEWS.md` tick 346, PASS-WITH-NOTES;
+  `4d640c1c` pushed). Wave number **190**: tick 339 already used 189 for the merge, so tick 345's *"wave 189"* collided.
+  - **Item 1 (evidence).** One hand-edit mutation reinstating `$jobValue` alone. A survival is a finding. No predicted
+    outcome is published (tick 293).
+  - **Item 2 (build).** RULED: a failing list read renders `SavedViewsList`'s load panel instead of escaping, and a retry
+    after the cause is gone shows the list.
+  - **Item 3 (build).** RULED: a default-view failure is named as that failure and leaves the list on screen.
+  - **Shapes withheld** (tick 214). Each build carries a new method and a mutation reinstating its own defect only.
+    `:55`/`:68` comments must be true after. Standing `SavedViewsList` assertions stay byte-identical, with the ⛔ in both
+    directions.
+  - Still recorded and not briefed: the `catch (\Exception)` shape; the `'R245'` fixture at
+    `RefusalcodeDistributionPerScreenTest.php:38`.
+  - `33 1` vs `origin/main` after a fetch, and the Doctor/harness/hooks/seals diff is empty, so no merge condition holds.
+    Board: proposals **14** · `app/app/Modules/` **0** · `CLOSED:` **8**. Re-run every grep; never inherit one.
 
 ## Style
 
