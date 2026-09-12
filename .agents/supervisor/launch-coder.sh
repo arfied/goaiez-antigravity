@@ -53,20 +53,66 @@ esac
 # argument --status`, exit 1. It exits BEFORE any dispatch path — the bare script
 # always launches, and an argument that merely fell through to the launcher once
 # turned three probes into accidental dispatches (runs 7, 8, 9).
+#
+# Liveness (tick 360, money's ruling 597 measured here, adapted). A bare `kill -0` on the
+# pidfile was wrong both ways:
+#  - nothing clears the pidfile when a run ends and this box wraps its pid space within a
+#    day, so the old pid comes back as some other process. MEASURED at tick 360: with
+#    sixty's live agy pid 63463 (cwd …/grs-antig-sixty) written into this pidfile, --status
+#    printed `ALIVE: pid 63463`, and the dispatch path below used the identical expression,
+#    so every tick would have refused to launch for as long as that stranger lived.
+#  - the pidfile holds the `nohup bash` wrapper; `timeout` and agy are separate processes,
+#    so a killed wrapper leaves a live coder that read DEAD — a second writer in this tree,
+#    the one-writer BLOCK. READ, not run: no orphan was constructed.
+# So a live pidfile pid counts only if its cwd is this checkout. An UNREADABLE cwd counts
+# as ours — the direction that cannot produce a second writer — and names the pid, so a
+# tick resolves it with tick 176's second `pgrep`. Then any agy process whose cwd is this
+# checkout counts even when the pidfile does not name it. agy only: a supervisor tick is a
+# `claude` process with this cwd and must never read as a running coder.
+HERE=$(pwd -P)
+CODER_PID=""
+CODER_NOTE=""
+coder_running() {
+  local pid cwd p
+  pid=""
+  if [ -f "$PIDFILE" ]; then pid=$(cat "$PIDFILE" 2>/dev/null || true); fi
+  if [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null; then
+    cwd=$(readlink "/proc/$pid/cwd" 2>/dev/null || true)
+    if [ -z "$cwd" ] || [ "$cwd" = "$HERE" ]; then
+      CODER_PID="$pid"
+      if [ -z "$cwd" ]; then CODER_NOTE="pidfile pid $pid is alive and its cwd is unreadable: counted as ours (the safe direction); re-run pgrep agy — a pid that persists unreadable is another uid's (tick 176)"; fi
+      return 0
+    fi
+    CODER_NOTE="pidfile pid $pid is alive but runs in $cwd, not this checkout: a reused pid, ignored"
+  fi
+  for p in $(pgrep -f '/[.]local/bin/agy ' 2>/dev/null || true); do
+    cwd=$(readlink "/proc/$p/cwd" 2>/dev/null || true)
+    if [ "$cwd" = "$HERE" ]; then
+      CODER_PID="$p"
+      CODER_NOTE="the pidfile names no live coder here, but agy process $p runs in this checkout: an orphaned coder"
+      return 0
+    fi
+  done
+  return 1
+}
+
 if [ "$STATUS_ONLY" -eq 1 ]; then
-  if [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
-    echo "ALIVE: pid $(cat "$PIDFILE")"
+  if coder_running; then
+    echo "ALIVE: pid $CODER_PID"
   else
     echo "DEAD: no coder for this track (pidfile: $( [ -f "$PIDFILE" ] && cat "$PIDFILE" || echo none ))"
   fi
+  if [ -n "$CODER_NOTE" ]; then echo "  note: $CODER_NOTE"; fi
   echo "(probe only — no dispatch. Run with no arguments to launch.)"
   exit 0
 fi
 
-if [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
-  echo "REFUSED: this track's coder is already active (pid $(cat "$PIDFILE"))"
+if coder_running; then
+  echo "REFUSED: this track's coder is already active (pid $CODER_PID)"
+  if [ -n "$CODER_NOTE" ]; then echo "  note: $CODER_NOTE"; fi
   exit 1
 fi
+if [ -n "$CODER_NOTE" ]; then echo "note: $CODER_NOTE"; fi
 [ -s .agents/supervisor/KICKOFF.md ] || { echo "REFUSED: KICKOFF.md missing or empty"; exit 1; }
 
 # Push gate. Restored 2026-09-05 17:5x alongside --status; main's copy never sets
