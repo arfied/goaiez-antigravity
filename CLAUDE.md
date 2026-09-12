@@ -3293,6 +3293,17 @@ intact, classmap rebuilt.
 - ⛔ **These notes are UNCOMMITTED on purpose** (`RULING EO`: no partial commit while `MERGE_HEAD`
   exists). Commit them after run 220's merge commit lands, then gate that tip and push it (`GH(i)`).
 
+✅ **S-203 — COMPLETE at tick 409 (STAGES-242, PASS-WITH-NOTES).** Merge `a100e6ec` (parents
+`5d71300e` · `51902cc4`), restore proof empty, DB pin intact, `app/` byte-identical to the pin except
+`app/phpunit.xml`. §5 `0·39·85·0·16·204·128·3` = **475**, the eight sum to it, and §3 == §5, so no
+ledger refresh wave is needed.
+- `§2f` named two candidates; both are **`RULING EP`-benign**. Base `29312e16` is main's commit, and
+  main's C-Billing fixes renamed both tests to `…_says_it_reads_only_its_own_ladder`.
+- **Admission census re-run and EMPTY**: 301 − 254 = 47 pairs; the intersection is `X-117`
+  G1-73/G1-81 (`CM`), `X-158` G16-32 (§257.4), `X-212` G4-54 (`CB`).
+- Tick 408's notes were committed as `743ce222`, certified by `.gateT409.txt`, and pushed
+  `5d71300e..743ce222`. The lane is 198 ahead / 0 behind. **Tick 409 wrote a HOLD.**
+
 ⌛ **S-202 as dispatched (history): §3 ledger refresh, dispatched at tick 394 as STAGES-240, merge gate CLOSED.** §3 still
 reads `boundary 41` against §5's 39. This is S-200's shape. The JOURNAL `^- .+ stage ` rows start at 96.
 - ⚠️ **Brief lesson:** `--full-doctor` §5 truncates its row dump and prints no `schema` rows. Ask for
