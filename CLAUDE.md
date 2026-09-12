@@ -18856,3 +18856,24 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
    - **Cadence, all three ✗.** `origin/main` = `51902cc4`, unmoved, 13 ahead. The guarded-checker diff is empty. The merge-base is `0b1f637a`. **Merge gate CLOSED.**
    - **Population.** Ruling 649's is buildable.
    **Dispatched:** `LAUNCHED run 240 coder=agy merge-gate=closed harness-gate=closed (pid 2700435)`. This is dispatch 1 of 2 against nothing. `BRIEF.md` (11 997 B) and `KICKOFF.md` (1 894 B) were written before the launcher ran. Predicted floor: `tests 2572 · passed 2569 · FAILED 1 · errors 2`.
+
+651. **⭐ MONEY-215 PASSES. Ruling 649's fix landed as briefed, and both half-mutations rendered the defect's own signature: the allocator re-issued `INV-1000000` into the unique index. §7 lands on the predicted floor after ruling 85's Authorize.Net `E00040` member is subtracted (RULED by the lane supervisor 2026-09-12 05:1x, by `date` `05:10`, on `2e8e15fa`; rulings 26, 85, 125, 357, 378, 391, 418, 623, 649).**
+   - **Surface.** The surface is exactly the two X-199 code paths and both state files. `git diff -w --stat` equals the raw stat.
+   - **Gate.** §7 read raw is `tests 2572 · passed 2568 · FAILED 1 · errors 3`. The extra error is `cancel_is_one_tap_with_nothing_in_between` / `E00040`, which the brief named in advance. Ruling 85's three legs still hold: the mechanism is another lane's harness posting to Authorize.Net, Authorize.Net is Track 1's gateway, and nothing in the diff reaches it.
+   - **Floor.** By derivation (378): **`tests 2572 · passed 2569 · FAILED 1 · errors 2`** = `gate-money215.txt` §7 minus that one attributed member. ⛔ It is not absorbed into the floor (125).
+   - **Ordering.** Commit `04:55:50`, then the gate `04:59:18` (lock line present, 357), then mutations `04:59:30`/`04:59:55`, then the state commit `05:00:15`.
+   - **Push order (623).** The verdict block was appended first, then `2e8e15fa` was pushed by explicit ref. That push carries the supervisor's own `e9be2c56`.
+   - ⭐ **Rulings 649 and 418 held on first outing.** Each half-mutation's RED printed `values (…, INV-1000000, …)` into `invoices_business_id_invoice_number_unique`, so each proof evidences the finding and not merely the assertion.
+
+652. **⛔ HOLD after the PASS (RULED by the lane supervisor 2026-09-12 05:1x, by `date` `05:10`).** All four lift conditions were measured this tick (269, 272, 323), each case decided on mtimes (494):
+   - **Owner.** `OWNER.md`'s newest heading is still `## OWNER RULING — 2026-09-09 09:02` (136). Its last line is the applied 01:3x note (624), mtime `01:33:27`, older than `REVIEWS.md`.
+   - **Coder.** `--check` returned `CODER DEAD`.
+   - **Cadence, all three ✗.**
+     - After `git fetch --no-write-fetch-head origin`, `origin/main` = **`51902cc4`**, unmoved.
+     - `git rev-list --count HEAD..origin/main` = **13**.
+     - The merge-base is `0b1f637a`, and main's content since is ruling 643's measured set (504).
+     - The guarded-checker diff is unchanged, since `origin/main` did not move.
+   - **Track 1.** No answer to ACTION 13–33.
+   - **Population.** No carried population has fired its trigger, and no new population meets ruling 324's bar this tick.
+
+   **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty coder wave to avoid an idle tick is what rulings 95, 100 and 111 forbid.
