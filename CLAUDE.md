@@ -10820,6 +10820,32 @@ Watch for: <the trap that applies, by name>
   - `78 22` vs `origin/main` `82588b6d` after a fetch, and the Doctor/harness/hooks diff is empty, so no merge condition
     holds.
   - Board: proposals **14** · `app/app/Modules/` **0** · `CLOSED:` **8**. Re-run every grep; never inherit one.
+- ⚠️⚠️ **`AGY_EXIT=0` can end a run that has NOT finished: the root agent goes idle waiting on a background task, and the
+  whole log is `root agent idle; waiting for 1 background task(s)` then `AGY_EXIT=0`, minutes in, with no report.**
+  - Run 215 (wave 191b) did this about six minutes after dispatch, well inside `--print-timeout 8h`.
+  - Tick 207 reads a clean exit as a finished wave; here it was neither finished nor a death with a cause.
+  - The discriminator is the standing pair, `git log <floor>..HEAD` and `git status --porcelain`, plus `ls scratch/` for how
+    far the capture protocol got. A patch with no `pre-apply` capture beside it never ran.
+  - What the background task was is unestablished.
+  - ⛔ Every brief says in words: **every command in the foreground, and never go idle while a command you started is
+    running.**
+- ⚠️ **A patch made by edit, `git diff`, then a restore from a `.bak` copy is correct only while the copy equals the tip.**
+  Run 215 made all eight of its patches that way, before any run, with copies in `scratch/`. `cmp` against the committed
+  files was silent, so nothing was compounded. The brief-side rule is **edit, `git diff -- <file> > <patch>`, then
+  `git apply -R <patch>`**, with no copy of a production file anywhere.
+- **Backlog at tick 358 — wave 191c is 191b's remainder, dispatched bare; wave 190e follows it.** RULED (`REVIEWS.md` tick
+  358).
+  - `694380f0` (191b items 0 and 1: the verifier docblock and the `:232` restore) is verified, gated and pushed.
+  - **191c:**
+    - item 3's `content_length` decision;
+    - a fresh green gate;
+    - `scratch/w191b-mut-1..8.patch` run **unedited** under `w191c` names (none is spent);
+    - a mutation for anything item 1 adds;
+    - the final gate and the report.
+  - **190e** is unchanged from tick 357: the load panel's heading, the `read_escapes_its_guard` docblock's `app.debug`, the
+    default-view `Try again` label, and the value half's Livewire-update proof. Re-measure when briefed.
+  - `85 24` vs `origin/main` after a fetch, and the Doctor/harness/hooks diff is empty, so no merge condition holds.
+  - Board: proposals **14** · `app/app/Modules/` **0** · `CLOSED:` **8**. Re-run every grep; never inherit one.
 
 ## Style
 
