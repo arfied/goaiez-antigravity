@@ -285,7 +285,7 @@ class X194Test extends TestCase
     /**
      * [G4-20], [G8-10], [G9-11], [G9-23], [G9-26], [G9-35], [G9-37], [G13-17]
      *
-     * BUILD PROPOSAL: G9-37 locationTimezone requires a location_id column on saved_views, Owner: X-194
+     * CLOSED: G9-37 — built in f28f6539
      * ⛔ REFUSED: G4-20 — a house standard enforced by lint, not a capability row
      * ⛔ REFUSED: G8-10 — named in the header; the JSONB column is X-121's (out of this lane)
      * ⛔ REFUSED: G9-11 — named in the header
