@@ -10056,6 +10056,34 @@ Watch for: <the trap that applies, by name>
   188d above, the `X194Test.php:288` row, `AnyViewIt::$ready`, wave 187's NOTE 5, and the `'R245'` fixture.
   `9 30` vs `origin/main`, Doctor/harness/hooks diff empty, so no merge condition holds. **Each tick re-checks
   `git diff --cached --name-only | wc -l`: on `0` it writes 188d, on `1` it holds with a one-paragraph block.**
+- ⚠️ **A blocker that only another seat can clear leaves no trace when it clears except the measurement, so a
+  HOLD tick re-runs the measurement and never inherits it.** Ticks 325–338 each re-ran
+  `git diff --cached --name-only | wc -l` and got `1`; tick 339 got **`0`**. The index cleared between
+  `REVIEWS.md` `02:00:58` and `02:10:16`. The writer is **unestablished**: this lane's `OWNER.md` is unchanged
+  (`09-11 10:36`), and a `stat` of the worktree index needs approval from this seat. It is recorded as
+  unestablished, not attributed (tick 268).
+- ⚠️ **A lane held on its index falls behind at main's pace, so the first wave after the unblock is the merge.**
+  At the clear the lane was `176 0` behind `origin/main`, up from `9 30` at tick 325 over fourteen HOLD ticks.
+  Tick 313's ruling applies: the owner's three conditions are checked before the backlog is read.
+- **Backlog at tick 339 — wave 189 is the `origin/main` merge at `68fafdb3`, dispatched `--allow-merge`; wave 188d
+  follows it.** RULED.
+  - Condition (1) holds (176 behind). Condition (2) does not: the Doctor/harness/hooks diff is empty.
+  - Main brings 67 files. One is under `app/app/Modules`: site's `X-102` migration adding `refusal_code` to
+    `chat_turns`. Two are under `app/resources` (`css/app.css`, `livewire/account/settings.blade.php`), so
+    `npm run build` precedes the first gate (the stale-Vite red, tick 314).
+  - All eight per-track paths differ from main. After this tick's notes commit, `CLAUDE.md` is two-sided and its
+    `merge=ours` driver fires; the other seven take git's fast-path. All eight are restored anyway (tick 272).
+  - Main's `.claude/settings.json` wires `no-piped-gate-tool.py`, grants `Edit`/`Write(bin/state.py)`,
+    `Edit(supervisor-tick.sh)` and `Edit(coder-bin/git)`, and drops `ps -p · ps -o · kill -0`. **Ours is
+    restored.**
+  - Pre-merge baseline on `3a9c04b9` (the same `app/` tree as the tip), from `scratch/w188b-pest-raw-green.log`:
+    `2552 · 2543 · 11138 · failed 7 · errors 2`. The standing nine, by name, are in
+    `scratch/w188-standing-names.txt`. Post-merge, identity is the proof and counts prove nothing (tick 216).
+  - **Wave 188d** carries tick 273's post-merge refresh of all eight stage counts as item 0, then the tick-324
+    items: the G9-37 location timezone, the `X194Test.php:288` row, `AnyViewIt::$ready`, wave 187's NOTE 5, and
+    the `'R245'` fixture. Re-measure every line number on the merged tree before briefing it.
+  - Board at tick 339: proposals **14** · `app/app/Modules/` **0** · `CLOSED:` **7**. Re-run every grep; never
+    inherit one.
 
 ## Style
 
