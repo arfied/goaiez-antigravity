@@ -19676,3 +19676,58 @@ X-137's rows carry `token` and `target_url` NULL. What the platform's readers do
 - ⚠️ Tick 342's gap, three seconds wide: money's `48443105` arrived `@{21:24:39}` and tick 367's block was appended at 21:24:42 carrying
   `money 9b6e8866`. Nil consequence (`CLAUDE.md` only).
 - **SITE-212 dispatched** — write-nothing measurement of `short_links`' running columns and policies and one removal falsifier on `:42`.
+
+## ⭐ `SOLE BRACE` MEASURED — the first removal falsifier in this lane to redden on an app-level tenancy clause, and the discriminator is the table's WHOLE permissive policy set (tick 369)
+
+SITE-212 read `pg_policies` for `short_links` in `goaiez_antig_site_test`. Three policies came back, all PERMISSIVE:
+
+- `public_read` — `SELECT`, qual `true`;
+- `tenant_isolation` — `ALL`, keyed on `business_id`;
+- `tenant_write` — `ALL`, keyed on `business_id`.
+
+With `X-137/ModuleServiceProvider.php:42`'s `where('business_id', $businessId)` removed,
+`test_g13_24_short_code_is_redeemable_only_under_its_own_business` answered **302 where it asserts 404**. The run failed at assertion #1
+of 4, and the method's four assertions are `assertNotFound` 1, `assertEquals` 1 and `assertRedirect` **2** (tick 290's arity).
+`"line":214` is the declaration line (298). Tick 368's reading of the migrations and the catalog agree.
+
+⭐ **Ticks 308/321/322 measured removal falsifiers unable to redden** on `form_definitions`, `pages` and `chat_sessions`, where
+`tenant_isolation` was the only policy. The discriminator is **every permissive policy on the table, read from `pg_policies`**. It is
+never the policy in the module's own migration. X-137's migration creates `tenant_isolation` on `short_links` and reads as isolated,
+but under the first creator's `public_read` that policy restricts no `SELECT`. **Before briefing a removal falsifier, enumerate the
+table's permissive policies. One `USING (true)` for the operation under test means the app clause is the sole brace, and the
+falsifier CAN redden.**
+
+## ⭐ A SECOND MODEL OVER A TABLE INHERITS THE TABLE'S POLICIES AND NONE OF THE FIRST MODEL'S SAFEGUARDS (tick 369)
+
+`app/database/migrations/2026_08_11_130139_create_short_links_table.php:27-48` is Track 1's own argument for why `public_read` is safe.
+It rests on three safeguards. `App\Models\ShortLink` holds all three, and `App\Modules\X137\Models\ShortLink` holds none:
+
+| safeguard | platform model | X-137 model |
+| :-- | :-- | :-- |
+| a global scope that throws | `use BelongsToTenant` (`:41`) | plain `Model`, `$guarded = []` |
+| an unguessable key | 12 base62 ≈ 71 bits | `LinkShortAction:14` `Str::random(6)` ≈ 35.7 bits |
+| a rate-limited resolver | `ShortLinkRateLimits` | route registered with no middleware |
+
+⛔ **When a module reads a table another model owns, read the first creator's safety argument and check each clause against the second
+model.** A migration can document exactly why a permissive policy is safe, and the documentation covers only the model it was written
+beside. Nothing in X-137's files names the argument.
+
+⚠️ The population is exactly **two** reads of X-137's model, both scoped: `ModuleServiceProvider:42` and `LinkQrAction:13`. The second
+has zero production callers. Its cross-tenant `update` would match no row, because UPDATE uses the tenant policies and `public_read`
+covers SELECT only.
+
+⚠️ **`BelongsToTenant` on X-137's model is measured and NOT briefed.** It enforces the table's recorded design, and its blast radius is
+measured. The trait's `creating` hook calls `Tenancy::idOrFail()`. `X137Test.php` sets tenancy with **14** raw `SET app.business_id`
+statements and **0** `Tenancy::` calls, so it is a fixture-rewriting wave of its own (215).
+
+⚠️ Code length and throttling: no clause. Per 224, **cannot work here**.
+
+**SITE-213** writes the finding at both lines (SITE-202's pattern) and in one `state.py note`, which also corrects `JOURNAL.md`'s
+`2026-09-08T06:56:50` "not null" column claim.
+
+## ⚠️ Instruments, tick 369
+
+- ⛔ A `$` in a grep **pattern** is refused even when it only anchors an alternative (`-e 'class ShortLink$'`), and the refusal takes the
+  whole compound with it (305).
+- ⛔ `ugrep` rejects `\M` inside an `-e` pattern as an invalid escape. Use `-F` for namespaced class names.
+- ⛔ `sort -t'{'` inside a pipe is refused; issue one `git reflog show -n 1 <ref>` per ref instead.
