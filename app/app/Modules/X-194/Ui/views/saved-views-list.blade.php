@@ -23,7 +23,7 @@
                     <div class="border p-4 rounded" wire:key="view-{{ $view->id }}">
                         <div class="flex justify-between items-center">
                             <div>
-                                <strong>{{ $view->view_name }}</strong>
+                                <a href="{{ route('x-194.any-view-it', ['viewId' => $view->id]) }}" class="text-blue-600 hover:underline"><strong>{{ $view->view_name }}</strong></a>
                                 @if($view->is_default)
                                     <span class="ml-2 text-xs text-gray-500">(Default)</span>
                                 @endif
