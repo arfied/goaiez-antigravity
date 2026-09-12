@@ -18253,3 +18253,58 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
    - **Population.** Rulings 606's and 607's are recorded and not buildable.
 
    **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty coder wave to avoid an idle tick is what rulings 95, 100 and 111 forbid. ⚠️ No gate ran this tick: nothing in `bin/supervise.sh` or `app/**` changed, so the floor stays ruling 564's.
+
+609. **⭐⭐ The coder's contract `.agents/rules/10-supervisor.md` is STALE against this lane on four points. It still defines a `REPORT.md` shape that no money brief has asked for since ruling 147, and it still carries Track 1's push step. It is RECORDED, not edited, because money's copy is byte-identical to main's and a money-only edit would carry onto main's contract on Track 1's reverse merge. TRACK 1 ACTION 33 (RULED by the lane supervisor 2026-09-11 20:5x, by `date` `20:50`; rulings 24, 26, 27, 147, 225, 232, 250, 362, 366, 367, 374, 429, 604).** The 20:4x addendum listed this as unread: the rule file against what this lane's briefs require of `REPORT.md` today. Read whole, `:28-48`, `:3-5`, `:55-66` and `:86-95` disagree with the arrangement in four places:
+   - **(a) The REPORT shape.** `:37-47` prescribes `# REPORT — wave <n> / <track> — <ISO timestamp>` and the fields `STATUS`, `COMMITS`, `MODULES`, `STAGES`, `TESTS`, `DECIDED`, `UNRESOLVED`, `REFUSED`, `DOCTOR`, `RAW`. Money's last brief asked for `COMMITS · DONE · UNRESOLVED · REFUSED · SWEEP · RAW · RED (no index) · GREEN (after gate) · RED (mutation) · GREEN (restored) · PINT · TREE · GATE` (`BRIEF.md:387-388`). ⭐ Rule 10's `COMMITS : <git log --oneline origin/main..HEAD>` would paste **47** commits on this branch today (`git rev-list --count origin/main..HEAD`), because money's reviewed range is `origin/track/money..HEAD`, not `origin/main..HEAD`. `TREE`, `GATE` (ruling 362's path-only form), `PINT` and `SWEEP` do not exist in the rule. `DOCTOR` and `STAGES` are fields ruling 296 measured this seat cannot check.
+   - **(b) `:3-5` says the supervisor "never commits".** That has been false since ruling 24, and ruling 26 made the supervisor the lane's only pusher.
+   - **(c) `:55-66`'s push step** tells the coder to run `git push origin main` when `BRIEF.md`'s `push:` line reads `YES`. It is headed *"Track 1, added 2026-09-03"*, so it is **Track 1's** step, correct on `main` and wrong here.
+   - **(d) `:88-89` says the supervisor edits its files "uncommitted".** Since ruling 24 the supervisor commits `CLAUDE.md` and pushes it, and the mailbox is gitignored.
+
+   ⭐⭐ **Known member (429):** ruling 147. MONEY-111's brief said *"Fixed shape (rule 10)"* and spelled out only two fields, and its report carried only those two. `grep -r -l --include='BRIEF-money*' -e "rule 10"` over the staged briefs returns exactly `BRIEF-money110.md:350` and `BRIEF-money111.md:310`, the two briefs that deferred to rule 10 by reference. So the stale contract has already cost this lane one report.
+
+   **Each point's safety, named (328):**
+   - (a) Every brief since ruling 147 enumerates its report fields by name, and the coder followed the brief. Ruling 604 measured that run 236's report opens `COMMITS:` / `DONE:` with no `# REPORT` header, `STATUS` or `DOCTOR`. Rule 10's own `:16-17` makes `BRIEF.md` win on *"what done means for the slice under review"*.
+   - (c) This is closed by two independent guards, both read this tick. `launch-coder.sh:126` hard-sets `PUSH_OK=0` (ruling 26b), and `coder-bin/git:168` refuses `git push` unless `GOAIEZ_PUSH_OK=1`. Money's `BRIEF.md:3` reads `push: NO — the supervisor pushes the gated tip (ruling 26)`. A coder that tried the step would stop at the guard's `REFUSED`.
+   - (b) and (d) are descriptive prose that grant the coder no act, and the guard already refuses every supervisor path (`coder-bin/git:22`, `:68`, `:155`).
+
+   ⭐⭐ **Why it is not edited here, measured rather than assumed.**
+   - `git diff --stat origin/main HEAD -- .agents/rules/10-supervisor.md` is **empty**, so money's copy equals main's.
+   - `git log dca743e8..origin/main -- .agents/rules/10-supervisor.md` has **0** commits.
+   - Money's own last edit was `cc9ae213` on 2026-09-03, before the lanes diverged.
+   - `git show origin/main:.gitattributes` marks the file `merge=ours`, and ruling 27 measured that a driver fires only where **both** sides changed a file.
+
+   So a money-only edit is a one-sided change, and Track 1's merge of `track/money` would take money's text onto `main` with no conflict. That would replace a push step that is **correct on main** with money's. It is ruling 25 reason (3), the overwrite incident, in the direction nobody guards. ⛔ Ruling 232 governs: the defect is latent and closed twice, and the edit would introduce a live hazard onto another lane's contract. → **TRACK 1 ACTION 33**, with three shapes to choose from: per-lane copies that each lane's merge restores; moving the REPORT shape out of the shared rule and into the briefs; or a rule 10 that names `BRIEF.md`'s field list as authoritative.
+
+   **RULED, in this column:** every brief this lane writes states, at its report-fields heading, *"these fields replace rule 10's `REPORT.md` shape; rule 10's push step does not apply here (ruling 26)"*. ⛔ No brief says *"Fixed shape (rule 10)"* again (ruling 147). ⚠️ No brief is written this tick, so the rule binds the next one. ⚠️ No other lane's rule 10 is inside this seat's add-dirs, so no discriminating control was taken, and the evidence is the two briefs above plus the byte-identical diff.
+
+   ⭐ **The generalisable half: a shared contract file is written in the voice of the lane that authored it**, here Track 1's push step. Rulings that change what a lane's mailbox carries (362, 366, 367) owe a re-read of every shared text that describes the same mailbox, and the copy is fixed by its owner rather than by the lane that noticed. Ruling 327's outcome shape an **eighty-second** time.
+
+610. **⭐ The STATE-PAIR census, the half ruling 606 left unread: of 183 first-parent commits in `fe094469..HEAD` that touch `.agents/state/JOURNAL.md`, 182 also touch `BUILD-STATE.json`. The one that does not, MONEY-79's `51ec4bd1`, staged its decision's JOURNAL line and left the `BUILD-STATE.json` write for the fix wave 21 minutes later. That was inside a BLOCKed, unpushed range, and the pushed range `a36e199f..9f3dbd86` carried both. Zero buildable (measured by the lane supervisor 2026-09-11 20:5x; rulings 26, 262(b), 294, 324, 327, 328, 415, 429, 449, 606).** `state.py decided` writes both files in one run. `bin/state.py:208-211` appends the decision to `BUILD-STATE.json` (`s["decisions"]`) and then calls `journal(...)`. So a JOURNAL line without its BUILD-STATE twin in the same commit means the coder staged one file and not the other.
+
+   **Instruments, quoted (300):**
+   - `git log --first-parent --format=%h fe094469..HEAD -- .agents/state/JOURNAL.md | wc -l` → **183**.
+   - The same command over `.agents/state/BUILD-STATE.json` → **182**.
+   - Both lists were written to scratch files, then `grep -v -F -x -f` was run in each direction. JOURNAL-only: **`51ec4bd1`**. BUILD-STATE-only: **nothing**.
+
+   ⭐ **Positive control, and it discriminates:** 182 of 183 pair, and the instrument separated the one that does not.
+
+   **The member, read whole (262(b)), with its safety named (328):**
+   - `git show --stat 51ec4bd1` (2026-09-06 15:36:59, *"MONEY-79: the exposure ledger stops returning a primary key"*) touches `JOURNAL.md` +1, `DisputeDefenseEngine.php` and `N009Test.php`, with **no `BUILD-STATE.json`**.
+   - Its JOURNAL diff adds the `(R245) X-201 — N-009's exposure ledger returns null` decision.
+   - `git log -S "exposure ledger returns null"` over both state files prints `51ec4bd1` (JOURNAL) and **`9f3dbd86`** (MONEY-79b, 15:57:17, BUILD-STATE).
+   - At HEAD, `grep -c -F` finds the decision **once in each file**.
+   - ⭐ **Safety:** the MONEY-79 verdict (`REVIEWS.md:24585`) was a **BLOCK, push refused**. The MONEY-79b verdict (`:24730`) lists `9f3dbd86`'s paths as including both state files and records **PUSHED `a36e199f..9f3dbd86`**. So no pushed tip ever carried the JOURNAL line without its twin.
+
+   ⭐ **Known member (429):** ruling 606's census, whose 112 `chore(state)` commits all sit inside this population. ⚠️ **The tell was already in the ledger and was read past.** MONEY-79's scope table (`REVIEWS.md:24597`) lists `.agents/state/JOURNAL.md +1` and no `BUILD-STATE.json` row. ⭐ So the cheap instrument for a review is one command: `git diff --stat <pushed>..HEAD -- .agents/state/` must name **both** files or **neither**. A range that names one is ruling 606's decision-without-its-record, one layer down.
+
+   ⛔ Recorded, not built: `state.py` owns both files, and a hand edit is a BLOCK. ⚠️ **Trigger:** a reviewed range whose `.agents/state/` diff names one state file. 415's first-three check passed. 449's each-member-exists check passed: every sha was printed by `git`. Ruling 327's outcome shape an **eighty-third** time.
+
+611. **⛔ SEVENTY-FOURTH consecutive HOLD (RULED by the lane supervisor 2026-09-11 20:5x, by `date` `20:50`).** All four lift conditions were measured this tick (269, 272, 323), and each case was decided on mtimes (494):
+   - **Owner.** `OWNER.md`'s newest heading is still `## OWNER RULING — 2026-09-09 09:02` (136). Its mtime is `09-09 09:02:03`, older than `REVIEWS.md` (`20:44:25`).
+   - **Coder.** `--check` returned `CODER DEAD`, with no note.
+   - **Mailbox.** `REPORT.md` (`07:15:21`) and `BRIEF.md` (`07:07:27`) are both older than `REVIEWS.md`.
+   - **Cadence, all three ✗.** After `git fetch --no-write-fetch-head origin`, `origin/main` = **`bd3e9c5f`**, unmoved (`git diff --name-status bd3e9c5f origin/main | wc -l` = 0). `git rev-list --count HEAD..origin/main` = **44**. `git diff --stat dca743e8 origin/main -- app/app/Doctor coder-bin .claude/hooks` is empty. `git merge-base HEAD origin/main` = **`dca743e8`**.
+   - **Track 1.** No answer to ACTION 13–32.
+   - **Population.** Ruling 609's is cross-lane and filed as ACTION 33. Ruling 610's is recorded and not buildable.
+
+   **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty coder wave to avoid an idle tick is what rulings 95, 100 and 111 forbid. ⚠️ No gate ran this tick: nothing in `bin/supervise.sh` or `app/**` changed, so the floor stays ruling 564's.
