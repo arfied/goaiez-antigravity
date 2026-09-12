@@ -3148,6 +3148,25 @@ recorded `RULING DK` event, so it is not a new movement (`RULING GO(iii)`).
 - Tick 391's notes were committed as `19b5e370`, certified by `.gateT392.txt`, and pushed
   `3f92d155..19b5e370`.
 
+⭐ **Tick 393 — THE FIFTH TAKE IS ORDERED: S-201, dispatched as STAGES-239 with `--allow-merge`.**
+`main` moved `7f79ed49` → `29312e16`: one first-parent commit, a `track/ui` merge (five owner-shell
+screens, `app.css`, test changes). That is +1 first-parent / +34 ancestor.
+- **Drift condition (1) is TRUE on the ancestor count, which is what `RULING GQ(i)` uses.** At the pin
+  the lane is **130 ancestor / 10 first-parent** behind, so the two readings **straddle** the
+  threshold (`GQ(iii)`). `GQ`'s advance ruling fires. Conditions (2) and (3) are FALSE: the
+  `Doctor`/`JourneyHarness`/`.claude/hooks`/`seals.json` diff since `6ac471d5` is empty.
+- **Merge base `46afc022` is main's own commit**, so `RULING FM`'s void condition is not reached. Our
+  side's `app/` change since the base is `app/phpunit.xml` alone.
+- **The range:** 68 `app/` files (+1213/−173). No new class under `app/app/Modules/` (the one `A` row
+  there is a migration, and it is not run). No lockfile changes. `app/resources/css/app.css` and one
+  blade view move, but the wave runs no suite, so no `npm run build`. **`app/phpunit.xml` is NOT in the
+  range.**
+- **Per-track rows:** `.agents/supervisor/launch-coder.sh` alone. Main's copy adds `--allow-harness`
+  and `--allow-restore`. **Not adoptable** (`RULING CL`/`CY`/`CZ`), so it is restored from `HEAD`.
+- **Before the take**, §3 == §5 at `0·41·85·0·16·204·128·3` = 477.
+- Tick 392's notes were committed as `10367d42`. These notes are committed **before** the dispatch
+  (`RULING EO`: this seat cannot commit while a merge is staged).
+
 ⌛ **S-200 as dispatched (history): §3 ledger refresh, dispatched at tick 345 as STAGES-238, merge gate CLOSED.**
 Tick 344's HOLD missed that §3 still read `boundary 55 · citation 3 · capability 207` while §5 reads
 **41 · 0 · 204** (`.gateT345b.txt` at `423ec5a9`, total 477, the eight sum). This is S-191's exact
