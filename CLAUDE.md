@@ -10485,6 +10485,12 @@ Watch for: <the trap that applies, by name>
   transcript uuid under `~/.gemini/antigravity-cli/brain/` is not discoverable here, and `ls
   /home/goaiez/agents/coder-bin/` needs approval. Record the words, §0's database, and the tree state. File it (tick
   349).
+  - ⚠️ **Corrected at tick 351: there was no guard.** Track 1 (`OWNER.md` 2026-09-12 12:4x): `coder-bin/` holds `git · kill ·
+    killall · pkill · shell-init.sh`, and nothing wraps `php`.
+  - `Read` settles it without `ls`: `Read /home/goaiez/agents/coder-bin/php` returns *"File does not exist."*, and
+    `shell-init.sh` only runs `enable -n kill`.
+  - **A coder's *"bypassed"* is a claim about a guard. Name the guard file and `Read` it before filing a breach.** What
+    190c crossed was this lane's own brief limit, which no tool enforces.
 - ⭐ **A test-body probe that puts the rendered HTML into an assertion message measures exactly what a Livewire assertion
   sees, with no bootstrap script.** Wave 190c's `->assertSee('MAKE ME FAIL ' . $component->html())` after `$refresh`
   printed *"Failed asserting that '' … contains "MAKE ME FAIL ""*. That was the one piece of 1b evidence the forbidden
@@ -10526,6 +10532,21 @@ Watch for: <the trap that applies, by name>
     - The `'R245'` fixture at `RefusalcodeDistributionPerScreenTest.php:38` still waits for the wave that opens its file.
   - `34 6` vs `origin/main`, Doctor/harness/hooks untouched, so no merge condition holds.
   - Board: proposals **14** · `app/app/Modules/` **0** · `CLOSED:` **8**. Re-run every grep; never inherit one.
+- ⚠️ **An `OWNER.md` update that answers only a `TRACK 1 ACTION` fires case (d) and does not lift a cap HOLD.**
+  - Apply the answer.
+  - Re-grade only the item it touches, and never the verdict, if other items stand on their own.
+  - Restate the still-open `OWNER ACTION` as the last block, so the owner's next reply is measurable against it, and
+    dispatch nothing.
+  - A HOLD re-check's `OWNER.md` `stat` is a property of a moment. Tick 350 read `09-11 10:36` at `13:10`, and Track 1's
+    answer landed at `13:12:38`.
+- **Backlog at tick 351 — HOLD, unchanged from tick 349.**
+  - `TRACK 1 ACTION 1` is CLOSED, and tick 349's BLOCK item 2 is re-graded to a brief-limit crossing. The BLOCK stands on
+    items 1 and 3.
+  - RULED: the no-bootstrap limit stays a brief rule, and this lane asks for no `coder-bin/php` wrapper.
+  - `OWNER ACTION 1` is restated and open. The proposed 190d and the renumbered 190e are as in the tick-349 line above.
+  - `36 7` vs `origin/main` `4ba54b40`, Doctor/harness/hooks diff empty, so no merge condition holds. Board: proposals
+    **14** · `CLOSED:` **8**.
+  - The range `002f40fd · 1a5dda8f · 354e31ce` and the tick-351 notes commit are held.
 
 ## Style
 
