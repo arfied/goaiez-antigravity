@@ -10581,6 +10581,63 @@ Watch for: <the trap that applies, by name>
   - **Wave-190 chain:** still HOLD on `OWNER ACTION 1`. After 191 the lane HOLDs again unless `OWNER.md` answers.
   - `53 8` vs `origin/main` `fcbb7a49`, and the Doctor/harness/hooks diff is empty, so no merge condition holds.
   - Board: proposals **14** · `CLOSED:` **8** · `app/app/Modules/` **0**. Re-run every grep; never inherit one.
+- ⚠️⚠️ **A QUOTED heredoc delimiter (`cat << 'EOF'`) makes every `$( … )` inside it literal text, so a generator that
+  obeys "every field is a command" to the letter can ship a report in which no command ran.** Wave 191's
+  `scratch/w191-generator.sh:4` did exactly that, and all 58 lines of `REPORT.md` are unexpanded commands. Wave 190c's
+  report was also a heredoc with zero fields. This is the newest mechanism past a generator check, and the first where
+  the construct the ruling REQUIRES was made inert rather than a forbidden one being used.
+  - ⭐ The artifacts reconstruct the whole report when the capture protocol held, so it cost a re-derivation and not a
+    proof.
+  - ⛔ **RULED at tick 353: a report generator on this lane contains no heredoc.** It is one
+    `{ … } > .agents/supervisor/REPORT.md` group of commands.
+  - **This column greps `REPORT.md` for `$(` before reading it.** A count above zero means no field was measured.
+- ⚠️⚠️ **A reinstatement-only mutation rule cannot reach an assertion that already passes on the pre-wave tree, so a
+  brief that demands both "an assertion on the side it excludes" and "one reinstatement per behaviour" has made the
+  exclusion assertions unprovable by construction.**
+  - Wave 191's `test_voice_header_acceptance` holds five assertions. Only A1/A2 can fail at `947af117`. A3 (a wrong
+    value → false, Track 1's own negative control), A4 (scheme `exchange` → false) and A5 (an exchange timestamp present
+    → false) are true there, so the reinstatement never evaluated them.
+  - The defect is mine. The generalisation of tick 322's *"a test against content the pre-wave screen never rendered
+    passes on the pre-wave tree"* is: **every brief requires each assertion that passes at the floor sha to be NAMED, and
+    to have a mutation of its own** — a fail-open, a reordering, a value change — or to be named in `NOT RUN`.
+- ⚠️ **A docblock citing one of two paired rulings can claim the property the second ruling says the first cannot
+  deliver.** `InfobipWebhookVerifier.php:211-214` credits 4507's exclusive `if` with *"avoiding the replay hole"*, and
+  `:109-117` (4508) says *"THAT `if` ALONE DOES NOT CLOSE THE REPLAY, WHICH IS WHY THE SCHEME CAN BE PINNED"*. **When a
+  wave cites a numbered ruling, read the ruling adjacent to it in the same docblock.**
+- ⭐ **A Mockery `shouldHaveReceived` miss lands in `error_details`, not `failures`, and it IS the assertion failing.**
+  Mockery raises `InvalidCountException`, which PHPUnit classes as an error. So tick 269's *"a target in `error_details`
+  proves a code path, not the assertion"* does not reach a Mockery expectation. **Read the message: if it is the
+  expectation's own text (`should be called at least 1 times but called 0 times`), the assertion executed.**
+- ⚠️ **X-204's `ConsentService::suppress()` has NO production caller, so `CancelPendingStepsOnSuppression` is reached by
+  tests alone.** Measured at tick 353:
+  - `grep -rn "\->suppress(" app/app app/routes` reaches it only from `C-Mail/Actions/EmailUnsubscribeAction.php:30` and
+    `X-204/Actions/ConsentSuppressAction.php:17`, and neither class is named outside its own file and the tests.
+  - Production unsubscribe and STOP run through root `App\Services\Consent\ConsentService`.
+  - So Track 1's X-204 finding is a latent consent defect, not a live one. The tick-225 module-entry-point check,
+    applied to an assignment rather than to a brief of mine.
+- ✅ **Wave 191's two mutations are SPENT; never re-brief them.**
+  - `w191-mut-1` is the verifier diff reversed: radius 2, `−4 −5 = −9` exact.
+  - `w191-mut-2` is the controller diff reversed: radius 1, and its Mockery miss is in `error_details`.
+  - The tick-322 waiting rule and the capture protocol held completely, for a third wave running: three
+    verdict/`0`/`1` wait files, pattern counts falling `1 → 0`, §1 pinning a module file each time, and every `after`
+    capture newer than its raw copy.
+  - Suite on `4c7bb75c`: `tests 2587 · passed 2578 · assertions 11305 · failed 7 · errors 2`, the standing nine by
+    identity. My plain gate (`.agents/supervisor/.t353-gate.log`) reads `gates green.`
+- **Backlog at tick 353 — wave 192 is X-204's `CancelPendingStepsOnSuppression` resolving a `Person`, a Track 1
+  assignment, dispatched bare; wave 191b follows it.** RULED (`REVIEWS.md` tick 353, PASS-WITH-NOTES; N176 pushed).
+  - **Wave 192 scope:** the listener and `app/tests/Modules/X-204/CancelPendingStepsTest.php` only. Track 1's shape is
+    verbatim: resolve by `business_id`+`phone`; pass `$person->id`; with no person, do nothing and say so; a decoy
+    `Customer` whose id collides with another person's runs.
+  - RULED: the `X121\Models\Person` import adds one boundary row, accepted and recorded with one
+    `state.py decided (R245)`. X-121 exposes no phone lookup, and Track 1 forbids changing it.
+  - **Wave 191b:**
+    - the verifier docblock `:211-214` corrected forward to agree with 4508;
+    - a mutation for each of `test_voice_header_acceptance`'s A3/A4/A5;
+    - a mutation for the refusal log's context values, not only its existence.
+    - No production behaviour change.
+  - After 191b the lane holds on `OWNER ACTION 1` (the wave-190 cap) unless `OWNER.md` answers.
+  - `58 11` vs `origin/main` after a fetch, and the Doctor/harness/hooks/seals diff is empty, so no merge condition
+    holds. Board: proposals **14** · `app/app/Modules/` **0** · `CLOSED:` **8**. Re-run every grep; never inherit one.
 
 ## Style
 
