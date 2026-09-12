@@ -1,11 +1,6 @@
 <div>
-<x-surface.sample-state module="multi-channel sequencing" screen="stop_log" />
     <div class="p-4 space-y-6">
-        <h3 class="text-lg font-bold text-ink">Do-Not-Text / Stopped Log</h3>
-
-        @if ($isSample)
-            <x-ui.sample />
-        @endif
+        <h2 class="text-lg font-bold text-ink">People a campaign stopped or paused for</h2>
 
         @if ($lastStoppedPersonId !== null)
             <x-ui.attention-card state="ok">
@@ -27,13 +22,13 @@
                     There was an error communicating with the database.
                 </x-ui.error-panel>
             @elseif ($runs->isEmpty())
-                <x-ui.empty-state icon="○" heading="No sequences stopped">
-                    There are no stopped or suppressed campaign runs yet.
+                <x-ui.empty-state icon="○" heading="No campaign has stopped or paused yet">
+                    When someone replies, or a campaign is paused for them, they appear here.
                 </x-ui.empty-state>
             @else
                 <x-ui.row-list>
                     @foreach($runs as $run)
-                        @php $person = $people->get($run->person_id); @endphp
+                        @php $person = $people->get($run->person_id); $suppression = preg_replace('/\s*\([A-Z]-\d+\)$/', '', (string) $run->suppression_reason); @endphp
                         <x-ui.row>
                             <div class="flex items-center justify-between w-full">
                                 <div>
@@ -45,9 +40,9 @@
                                     </div>
                                     <div class="text-sm text-ink-2">
                                         @if($run->is_suppressed)
-                                            <x-ui.status-pill state="attention" label="Suppressed: {{ $run->suppression_reason }}" />
+                                            <x-ui.status-pill state="attention" label="{{ $suppression }}" />
                                         @elseif($run->stopped_reason)
-                                            <x-ui.status-pill state="attention" label="Stopped: {{ $run->stopped_reason }}" />
+                                            <x-ui.status-pill state="attention" label="{{ $run->stopped_reason }}" />
                                         @endif
                                     </div>
                                 </div>
