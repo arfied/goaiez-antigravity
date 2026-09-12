@@ -15,9 +15,7 @@ class RefusalcodeDistributionPer extends Component
 
     public function render()
     {
-        $refusals = ($this->businessId > 0)
-            ? AgentRefusal::where('business_id', $this->businessId)->get()
-            : collect();
+        $refusals = AgentRefusal::get();
 
         return view('c-agent::refusalcode-distribution-per', [
             'refusals' => $refusals,
