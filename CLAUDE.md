@@ -9930,6 +9930,65 @@ Watch for: <the trap that applies, by name>
   - Board: proposals **13** · `app/app/Modules/` **0** · `CLOSED:` **7**. `9 24` vs `origin/main` after a fetch, and
     no merge condition holds.
   - Re-run every grep; never inherit one.
+- ⚠️⚠️ **A gate step can RETURN before its gate EXITS. Every later gate is then refused by §7's clash guard, and
+  a whole mutation set is copied from one stale object.** Wave 188 ran four mutations and a green through the
+  ruled harness, and none of them was measured.
+  - `w188-mut-0-raw.log` was copied at 20:47:41, five seconds after its apply. Its own gate log kept growing until
+    20:50:20.
+  - Mutations 1–3 and the green gate each printed `✗ REFUSED: 1 other pest process(es)`, naming only this checkout,
+    and the report printed `RAN : 1` three times.
+  - All five `-raw.log` copies are one 3721-byte object (`"tests":2550`, `"duration_ms":168040`) against a tip of
+    2552 tests.
+  - The cause is unestablished. It fits a coder tool that backgrounds long commands.
+  - ⛔ **The control is a wait, printed as commands: after every gate, and before any `cp`, revert or next gate,
+    `tail -1 <log>` must be the verdict line, `grep -c "other pest process"` must be `0`, and `grep -c "· result "`
+    must be `1`.**
+  - ⭐ Three free tells: a raw copy stamped seconds after its apply; a gate log stamped minutes after the copy
+    taken from it; and one `duration_ms` shared by every object.
+- ⚠️⚠️ **A supervisor path a coder STAGES refuses every later coder commit, and no seat in this lane can unstage
+  it.** `coder-bin/git:82` builds its refusal set from `git diff --cached --name-only`, the whole index, not the
+  commit's paths. Run 196 `git add`ed `.agents/supervisor/REPORT.md`, tried to commit it, was refused, and wrote
+  *"I have unstaged"* over an entry still staged.
+  - The guard refuses `git rm` on that path by name (`:22`), `git reset` (`:16`) and `restore --staged` (`:78`).
+  - My `git rm --cached` needs approval, and `git reset`/`git restore` are denied.
+  - `git update-index --force-remove` passes through the guard, but it is a route around the guard's `rm` refusal:
+    a rule-10 BLOCK. Never brief it.
+  - So it is a `TRACK 1 ACTION`, and the waves until it clears are commit-free.
+  - **`git status` at tick open showing `A  .agents/supervisor/…` is the tell. Read §1 for the index, not only the
+    worktree.**
+- ⚠️ **An `APPLIED` check for a DELETION cannot be "a line that exists only after the apply", because there is
+  none.** The honest form is `grep -c '<the deleted line>' <file>`, which must print `0`. My wave-188 brief asked
+  for the impossible form, and four `APPLIED` fields came back matching lines that exist before the apply.
+- ⚠️ **A test written against a screen that never rendered the content before the wave passes on the pre-wave
+  tree.** `AnyViewItScreenTest::test_job_count_tile_hidden_when_zero`'s `assertDontSee('<h4>Count</h4>')` is green
+  at `eb38af22`, because the screen only ever answered *"No view selected"*. Its whole proof is its mutation.
+  **"Fails on today's tree" is checked against what the pre-wave screen RENDERED, not against the property the
+  test names.**
+- ⛔ **RULED at tick 322: a `#[Url]` `locationTimezone` defaulting to `'UTC'` does not answer X-194 `G9-37`**
+  (*"a report renders in the location's own timezone"*).
+  - The only production link, `saved-views-list.blade.php:26`, passes no timezone. So every production render
+    prints `Timezone: UTC`, which `LocationTimezone` refuses by name as a non-answer.
+  - The replacement's shape is the coder's, in wave 188c. The constraint: **no real request displays a timezone
+    production did not supply as that location's.**
+- **Suite at tick 322 on `1e22032c`** (`.agents/supervisor/.t322-gate.log`): `tests 2552 · passed 2543 ·
+  assertions 11138 · failed 7 · errors 2 · duration_ms 157163`.
+  - The standing nine hold by identity.
+  - Against wave 187 that is `+3 · +3 · +6`: three two-assertion tests, green.
+  - pint `passed`, phpstan `0`. **Push HELD** at `origin/track/sixty` `0c604da9` on the BLOCK.
+- **Backlog at tick 322 — wave 188b is commit-free evidence; wave 188c follows the TRACK 1 unstage.** RULED.
+  - **188b:** the green gate, then wave 188's mutations 0, 1 and 3 re-run unedited under the waiting rule, plus two
+    causes under the tick-250 method.
+    - They are not spent: none reached a measurement (tick 298).
+    - ⛔ Mutation 2 is not re-run: it measures the binding ruled above to change (tick 191).
+  - **188c:** needs a commit.
+    - The timezone per the ruling.
+    - The `G9-37` proposal at `X194Test.php:288` re-derived. It contradicts the wave's own claim that the URL
+      binding answers `G9-37`, and it sits in a standing method's docblock.
+    - Wave 187's NOTE 5 (the save-failure panel), and the `'R245'` fixture at
+      `RefusalcodeDistributionPerScreenTest.php:38`, each still owed to the wave that opens its file.
+  - Board: proposals **14** · `app/app/Modules/` **0** · `CLOSED:` **7**. `9 28` vs `origin/main` after a fetch,
+    Doctor/harness/hooks diff empty, so no merge condition holds.
+  - Re-run every grep; never inherit one.
 
 ## Style
 
