@@ -18520,3 +18520,80 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     `KICKOFF.md` (1 855 B) were both written before the launcher ran (464, 602). ⚠️ The brief's item 0 deletes
     `hold-*.md`, `closing-*.md`, `kickoff-*.md`, `phpstan-*.neon`, `test-560.py` and `tick-*`. All of them are already
     appended or superseded, and it spares `sup2130*`, this tick's scratch.
+
+623. **⭐⭐ MONEY-212 PASSES, and ruling 259 fired a FOURTH time: a tick pushed `b4f78872` at 21:51:49 and wrote a
+    MONEY-213 brief, then ended with no verdict block, no rulings and no dispatch. The push stands and is recorded
+    after the fact from the reflog and the gate file (RULED by the lane supervisor 2026-09-12 01:4x, by `date`
+    `01:40`; rulings 26, 42(2), 259, 391, 418, 464, 487).** Measured: `git reflog show
+    refs/remotes/origin/track/money` → `b4f78872 … 21:51:49 update by push`; `REVIEWS.md` mtime unchanged at
+    `21:40:53`; `BRIEF.md`/`KICKOFF.md` rewritten `21:55` for a relabel wave; no run 238 log; `HEAD` = the pushed
+    sha. The verdict (surface, copy, four proofs, §7 on the listed floor) is in `REVIEWS.md`'s 01:4x block. ⭐ **A
+    push without its record is re-derived, never repeated and never reverted**: the reflog names the sha and the
+    time, and the gate file names what was gated, and neither can be written by the tick that lost its record.
+    ⭐ The sharper half is 464's: this tick pushed FIRST and then ran out, which is the order 26(c) requires
+    ("the push happens in the tick that writes the PASS") executed without its second act. **So a reviewing tick
+    appends the verdict block BEFORE it pushes** — a record without a push is recovered by the next tick's 26(c)
+    check; a push without a record needs a forensic reconstruction like this one.
+
+624. **⭐⭐ The owner answered by appending a BULLET under a two-day-old heading, and ruling 136's heading-list
+    instrument cannot see it; case (d) is judged by mtime AND the file's tail (RULED by the lane supervisor
+    2026-09-12 01:4x; rulings 136, 145, 323, 494).** Ruling 136 ruled that `OWNER.md` is judged by its heading
+    list and never its mtime, after an mtime moved over unchanged content. Measured today: mtime `01:33:27`, the
+    newest `## ` heading still `2026-09-09 09:02`, and line 787 is a new owner note — *"tick skipped after a
+    session-limit pass; re-read REPORT.md and the coder state, then proceed"*. A tick obeying 136 literally reads
+    "no new section" and skips the owner. **RULED: when `OWNER.md`'s mtime is newer than `REVIEWS.md`, read its
+    last 10 lines as well as its heading list; new content under an old heading is case (d).** ⭐ 136's instance
+    (mtime moved, content unchanged) is still caught: the tail then matches the last recorded state. ⚠️ The
+    generalisable half is 136's inverted: a heading list is a summary, and a writer who appends without a heading
+    defeats any instrument that reads only summaries.
+
+625. **⭐⭐ Cadence condition (1) FIRES — 186 behind `origin/main` `8b407d10` — so MONEY-213 is the MERGE and the
+    staged relabel becomes MONEY-214; ruling 621 is answered (RULED by the lane supervisor 2026-09-12 01:4x;
+    owner ruling 2026-09-09 09:02, rulings 269, 272, 323, 621).** Measured in this tick: `git rev-list --count
+    HEAD..origin/main` = **186** (> 100); `git diff --stat dca743e8 origin/main -- app/app/Doctor coder-bin
+    .claude/hooks` empty; merge-base `dca743e8`. The owner's rule is "merge at the START of a wave", so the lost
+    tick's relabel brief is not dispatched first. ⭐ **Its two premises are measured, not inherited:** `grep -rln
+    -F -e "TrialLimit" app/app | grep -v Modules/C-Billing` returns only `X-210/Domain/X210Engine.php`, and
+    `app/app/Livewire/Account/Credit.php:55` is `## Six balances, never one`. So 621's measurement is done and the
+    relabel is briefable; it is preserved byte-for-byte as `BRIEF-money214-relabel.staged.md` (13 060 B) and
+    `KICKOFF-money214-relabel.staged.md` (1 898 B), to be re-swept against the merged tree before dispatch (its
+    Table A line numbers are pre-merge, though the merge touches no C-Billing file).
+
+626. **⭐⭐⭐ The `8b407d10` merge shape: zero conflicts, zero deletions, TWO exposed per-track paths (not four),
+    and the one-sided main change inside money's tree is ADOPTED because a new main CHECK counts it (RULED by the
+    lane supervisor 2026-09-12 01:4x; rulings 27, 58, 59, 157, 176, 251, 318, 444, 445, 452).**
+    - **Sidedness (251 again: a property of the tree at merge time).** Main side 80 paths; money side 13
+      (`git diff --name-only dca743e8 HEAD`). Two-sided: `CLAUDE.md`, both state files, **`bin/supervise.sh` and
+      `.agents/supervisor/launch-coder.sh`** — all `merge=ours`, driver `true`, so the driver keeps money's copy.
+      ⭐ The gate and launcher were exposed at every previous merge (179, 285, 444) and are protected now only
+      because rulings 560–597 changed them. **One-sided main-only, EXPOSED:** `app/phpunit.xml` (main pins
+      `goaiez_antig_test`, Track 1's database — no gate here catches it) and `.claude/settings.json` (23).
+    - **Ruling 58's shapes.** (1) main changes no money test tree; (3) `--diff-filter=D` = 0; (4) none.
+      (2) ⭐ main changes **five X-199 blades** (`cb8d9f84`, Track 2, *"use the scheme tokens instead of fixed
+      neutral colours"*), and money's side is unchanged since the base, so git takes main's copy silently.
+      Measured: `git diff dca743e8 origin/main -- app/app/Modules/X-199/Ui/views | grep '^[-+] ' | grep -v
+      'class="'` prints **nothing** — class tokens only, no copy, no directive, no `wire:`. And main adds
+      `tests/Feature/Architecture/SchemeTokenTest.php`, which counts fixed neutrals in the views of every
+      component declaring `components.account.layout` — in money that is exactly X-199's five (155) — pinned at
+      `2`. **RULED (59, money's terms): adopt main's five blades whole.** Restoring money's copy would redden a
+      CHECK money may not edit, for no owner-visible gain.
+    - **Classmap (318).** Added under `app/app/Modules`: one X-102 migration. `composer dump-autoload -d app` is
+      still run before the gate.
+    - **Foreign surface (452).** `OwnerNav.php` +35 adds five nav entries (X-108, X-164, X-10, X-07, X-125),
+      none money's; `HeadingSeamTest`, `OwnerNavTest`, `SampleStateModuleTest` pins move on main (e.g. `$illegal`
+      210→205). Money's merged tree differs from main's only in the eight C-Billing copy files, which change no
+      `sample-state` line, no heading level and no `#[Layout]`, so main's pins are expected to hold — a
+      prediction, and ⛔ **no floor is stated** (157).
+    - `app/tests/Journeys`, `source/`, `.agents/rules`, `.gitignore`, `AGENTS.md`: untouched by main. Harness
+      gate closed.
+
+627. **⭐⭐ A merge wave INVERTS ruling 464's order: the supervisor's rulings are committed and pushed BEFORE the
+    dispatch, and no supervisor commit happens again until the merge commit lands (RULED by the lane supervisor
+    2026-09-12 01:4x; rulings 22, 25, 52, 139, 251, 464, 467).** Ruling 464 puts dispatch before long ruling text
+    because acts are what a cut-off loses. For a merge wave that order is unsafe twice: a dirty `CLAUDE.md` makes
+    `git merge` refuse (main changed it — reason (1) of 22/25), and a supervisor commit while the merge is staged
+    moves `HEAD` under the coder's resolution. ⭐ And 251 measured that the step-0 commit is what makes
+    `CLAUDE.md` two-sided and driver-protected. **RULED: for a merge wave, commit and push the rulings first, then
+    brief and dispatch with `--allow-merge`; the next tick does not edit `CLAUDE.md` while that coder is alive**,
+    and writes its rulings into `REVIEWS.md` scratch until the merge commit is on `HEAD`. ⛔ `REVIEWS.md`,
+    `BRIEF.md`, `KICKOFF.md` and the addendum are gitignored and may be written at any time.
