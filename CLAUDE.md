@@ -3122,6 +3122,14 @@ and §3 is unchanged at `0·41·85·0·16·204·128·3`. The lane is 173 ahead /
 - RULED: adopted main's `--coder claude` refusal into this lane's `launch-coder.sh`. It only refuses and hands no run a new capability. Both controls went through an unknown-argument backstop.
 - Tick 388's notes (`d6d667d5`) and the launcher (`8a6df5e8`) were committed by named path, certified by `.gateT389b.txt`, and pushed `be92b098..8a6df5e8`.
 
+⌛ **Tick 390 — HOLD.** `main` moved `8451b92a` → `bce54396`: one first-parent commit, a `track/pricebook`
+merge (`X-163`/`X-82` actions, UI and tests). That is +1 first-parent / +33 ancestor, and the lane is now
+8 / 64 behind.
+- All three drift conditions are FALSE, and no checker, hook, `bin/state.py` or launcher byte moved.
+- §3 is unchanged at `0·41·85·0·16·204·128·3`. The lane is 176 ahead / 8 behind first-parent at `7f535547`.
+- Tick 389's notes were committed as `7f535547`, certified by `.gateT390.txt`, and pushed
+  `8a6df5e8..7f535547`.
+
 ⌛ **S-200 as dispatched (history): §3 ledger refresh, dispatched at tick 345 as STAGES-238, merge gate CLOSED.**
 Tick 344's HOLD missed that §3 still read `boundary 55 · citation 3 · capability 207` while §5 reads
 **41 · 0 · 204** (`.gateT345b.txt` at `423ec5a9`, total 477, the eight sum). This is S-191's exact
