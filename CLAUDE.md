@@ -18877,3 +18877,33 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
    - **Population.** No carried population has fired its trigger, and no new population meets ruling 324's bar this tick.
 
    **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty coder wave to avoid an idle tick is what rulings 95, 100 and 111 forbid.
+
+653. **⭐ The LOOSE-COMPARISON census covers the spellings of PHP loose comparison that ruling 477(c) did not reach. 477(c) swept `in_array` only. Its siblings are `==`, `!=`, `<>`, `switch` (which compares with `==`) and `array_search`/`array_keys` without the strict flag. All of them are ZERO in the eight money modules. Five spaceless hits are Eloquent `'!='` SQL operators, and every one belongs to a prior ruling. Zero buildable (measured by the lane supervisor 2026-09-12 13:1x, by `date` `13:10`; rulings 207, 239, 262(b), 294, 305, 324, 327, 328, 337, 415, 429, 449, 463, 477(c), 532–540).** The hazard is real in PHP 8: two numeric strings compare as numbers under `==`, so `'0042' == '42'` is true and a card's `last_four` or a reference number could match another. **Instruments, quoted (300)**, each over the eight money module trees `--include=*.php`:
+   - `-e " == " -e " != " -e "switch (" -e "array_search("` → **0**.
+   - `-e " <> " -e "array_keys(.[a-zA-Z_]*, " -e "array_unique(" -e "SORT_REGULAR"` → **1**. That hit is `X-198/Database/migrations/2026_09_11_000000_x198_payments_unique_idempotency_key.php:26` `WHERE status <> 'failed'`, which is SQL inside ruling 463's partial index, not PHP (mechanism 8).
+   - Layout corroboration (407), the spaceless form `-e "[^=!]==[^=]" -e "[^=!]!=[^=]"` → **5**, each read (262(b)). Every one is a query-builder operator string: `SameAccount.php:68` (239), `GatewayEngine.php:86` and `:157` (463's pre-check and re-read), `InvoiceReader.php:73` (337) and `RevenueRecovery.php:68` (305). ⭐ **Known members (429):** all five are prior rulings' own lines. An exact SQL `!=` on a text status against a literal is not a PHP comparison.
+   - ⭐ The strict population exists: `grep -rho -e " === " -e " !== "` over the same trees → **177**, e.g. `DisputeDefenseEngine.php:83,:96,:141`.
+
+   ⭐ **Positive control.** The code-shaped `-e "[a-zA-Z)] == " -e "[a-zA-Z)] != "` over `app/app`, `app/routes` and `app/database` returns only prose: `X-217/Actions/AffiliatePipelineAction.php:35`'s comment and `Services/Ops/ScheduledRunMeter.php:116,:517`'s docblocks. So the application has no loose `==` in code either. The instrument demonstrably reaches code in vendor, where `-e "[a-zA-Z)] == " -e "switch ("` over `app/vendor/laravel/framework/src/Illuminate/Support` fires on **4** files. ⚠️ Whether pint's `laravel` preset enforces `strict_comparison` was **not measured**. The preset is inside the compressed `builds/pint` phar, so `grep -a` printing 0 there proves nothing. The zero is not attributed to a pint rule. ⛔ Money proposes no edit on any control member (5). 415's first-three check passed. 449's each-member-exists check passed: every member was printed from a file.
+   ⛔ Struck, not to be re-run. ⚠️ **Trigger:** a `==`, `!=`, `switch` or non-strict `array_search` added in the lane. Ruling 327's outcome shape a **ninety-sixth** time.
+   ⭐ **The generalisable half:** a comparison operator inside a quoted query-builder argument is a SQL string, not a PHP operator. A census of PHP operators reads whether the hit sits inside quotes, or it counts SQL as PHP.
+
+654. **⛔ HOLD. Track 1 merged money's tip `416d5028` at `1e8aa0ce`, so `git merge-base HEAD origin/main` now IS `HEAD`. Main's 45 commits since carry nothing money depends on (RULED by the lane supervisor 2026-09-12 13:1x, by `date` `13:10`).** All four lift conditions were measured this tick (269, 272, 323), each case decided on mtimes (494):
+   - **Owner.** `OWNER.md`'s mtime `01:33:27` is older than `REVIEWS.md` (`05:12:30`). Its newest heading is still `2026-09-09 09:02`, and its last line is still the applied 01:3x note (624).
+   - **Coder.** `--check` returned `CODER DEAD`.
+   - **Mailbox.** `REPORT.md` (`05:00:44`) and `BRIEF.md` (`04:54:40`) are both older than `REVIEWS.md`.
+   - **Cadence, all three ✗.**
+     - After `git fetch --no-write-fetch-head origin`, `origin/main` = **`1e5661af`**.
+     - `git rev-list --count HEAD..origin/main` = **45**, not above 100.
+     - `git diff --stat 8b407d10 origin/main -- app/app/Doctor coder-bin .claude/hooks` is empty.
+     - ⭐ Condition (3) is decided by content (504). `git diff --name-status HEAD origin/main` lists **1406** paths.
+       - **1380** are `docs/vendors/zernio/` (`1e5661af docs(vendors): Zernio OpenAPI 1.0.4`).
+       - The other 26 are the seven per-track paths, ruling 643's measured X-184/X-185/X-210/OwnerNav/pin set, and track sixty's X-194 screens and tests.
+       - `git diff --stat 51902cc4 origin/main --` over `app/app/Support`, `app/tests/Feature`, `app/resources`, `app/config`, `app/database`, `app/routes`, `app/bootstrap` and the composer and npm manifests is **empty**, so nothing new is on ruling 452's foreign surface.
+       - The same diff over the eight money module and test trees is **0** paths, and `--diff-filter=D` is **0**.
+   - **Track 1.** No answer to ACTION 13–33.
+   - **Population.** Ruling 653's has no buildable members.
+
+   ⚠️ The wall clock moved 7h58m since the last tick (`05:12` → `13:10`), and nothing in the lane moved with it.
+
+   **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty coder wave to avoid an idle tick is what rulings 95, 100 and 111 forbid. No gate ran this tick, because nothing in `app/**` or `bin/supervise.sh` changed, so the floor stays `tests 2572 · passed 2569 · FAILED 1 · errors 2`.
