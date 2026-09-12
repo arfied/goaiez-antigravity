@@ -18823,3 +18823,36 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
    - **Population.** Ruling 647's has no buildable members.
 
    **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty coder wave to avoid an idle tick is what rulings 95, 100 and 111 forbid. No gate ran this tick, because nothing in `app/**` or `bin/supervise.sh` changed, so the floor stays `tests 2571 · passed 2568 · FAILED 1 · errors 2`. ⚠️ `app/CLAUDE.md` came into context again this tick. It is Laravel Boost boilerplate and was not followed.
+
+649. **⭐⭐ X-199's invoice counter stops working at INV-1000000. `InvoiceNumber::next()` reads the highest existing number through a regex that matches exactly six digits and a STRING sort. The first seven-digit number it writes is therefore invisible to its next read, and the unique index refuses that invoice and every one after it, forever. Rulings 376(b) and 470 called this allocator safe. Briefed as MONEY-215 (RULED by the lane supervisor 2026-09-12 04:5x, by `date` `04:50`; rulings 33, 96, 170, 190, 232, 257, 262(b), 278, 294, 324, 327, 328, 376(b), 415, 418, 429, 449, 465, 470).**
+   The predicate had never been stated: *a highest-value read over a STRING column that holds a number, where the writer can produce a value the read cannot see or cannot order.* **Instruments, quoted (300):**
+   - `grep -rn -e "orderBy('[a-z_]*number" -e "orderByDesc('[a-z_]*number" -e "max('[a-z_]*number" -e "orderByRaw"` over `app/app/Modules`, `app/app/Services` and `app/app/Livewire` → one money member, `X-199/Domain/InvoiceNumber.php:24`.
+   - ⭐ **The control discriminates:** the tree's other ordered or maxed number columns are integers, read from their migrations. They are `X-123` `sequence_number` (bigInteger), `version_number` in `X-125`, `X-160`, `X-164` and `X-82` (unsignedInteger), and `step_number` in `X-185` and `X-186` (unsignedSmallInteger). `X-199`'s `invoice_number` is `$table->string('invoice_number')`, the one string among them.
+   **The mechanism, read whole (395):**
+   - `:23` is `where('invoice_number', '~', '^INV-[0-9]{6}$')`, `:24` is `orderByDesc('invoice_number')`, `:29` is `(int) substr(…, 4)` and `:35` is `'INV-'.str_pad((string) $nextNumber, 6, '0', STR_PAD_LEFT)`.
+   - After `INV-999999` the method correctly writes `INV-1000000`. The next call's regex excludes that row, so it reads `INV-999999`, returns `INV-1000000` again, and `2026_09_06_030000_add_unique_invoice_number_per_business.php:12` refuses the insert.
+   - Every later call repeats that, so the failure is permanent and per business.
+   - Widening the regex alone fails too, because as strings `INV-999999` > `INV-1000000`.
+   - `git blame` gives the regex and order to `241fd1ab0` (2026-09-06). Its purpose was to skip non-numeric numbers such as `InvoiceNumberTest.php:108`'s `INV-LEGACY`, and it excluded seven digits as a side effect.
+   - Both production allocation paths take it: `InvoiceEngine.php:54` and `InvoiceDraftAction.php:34`.
+   ⚠️ **TWENTY-SEVENTH inherited attribution corrected**, in ruling 257's shape. Ruling 376(b) (`CLAUDE.md:11213-11215`) wrote *"`str_pad` does not truncate, so the sequence stays correct past six digits"*. That reasoned about the WRITE and never read the READ two lines above it. Ruling 470 (`:15140-15141`) ranked this allocator the **prevent** strategy, *"strictly better than any catch arm because there is no losing path at all"*. At the boundary there is a losing path, and it loses permanently. Ruling 278's *"safe on reuse to six digits"* is true as worded.
+   ⭐ **Known members (429):** rulings 190's lock and 470's prevent example.
+   **RULED: MONEY-215 widens the regex to `{6,}` and orders by `length(invoice_number) desc`, then by the string.** Among these numbers that is numeric order, because only a six-digit number is ever zero-padded. The dictated comment states why. Why this is fixed and not recorded (96):
+   - A test reaches it, and a mutation reddens it.
+   - Its seeds `INV-999999` and `INV-1000000` are output of the production writer standing in for volume, so this is not ruling 327's manufacturing reachability. 327 refuses a fixture shape no writer produces.
+   - The fix is additive on every existing row: six-digit numbers keep their order and every non-numeric fixture stays excluded.
+   - ⛔ No cast. A `::bigint` would add an overflow the length sort cannot have.
+   - ⛔ No migration. The unique index is correct, and it is what makes the failure loud.
+   ⚠️ **Reachability, stated:** a business needs a million invoices, and nothing in production raises an invoice at all (170). Ruling 232's trade still favours the fix, because it introduces no hazard on any row that exists.
+   ⚠️ **Blast radius, measured (46, 86, 146):** the sweep is 5 lines. `EvidenceInvoiceCommand.php:79`, `X199RuntimeProofTest.php:20` and `X211RuntimeProofTest.php:23` keep `{6}`, because each checks one artifact made on a tenant with a handful of invoices. That is recorded, not harmonised (228(a)). No existing test seeds a seven-digit number, so none can see the defect (68) and the wave adds one test.
+   ⭐ **The proof is ruling 418's shape.** Each half reverted alone makes the new test error with the unique index's own name, so it evidences the finding as well as the assertion.
+   415's first-three check passed. 449's each-member-exists check passed: every line was printed by `grep`.
+   ⭐ **The generalisable half:** a zero-padded counter is a number in its WRITE and a string in its READ, and the two agree only up to the pad width. A census of an allocator reads both, because the safety argument for one says nothing about the other.
+
+650. **⭐ The HOLD ends on condition 4 and MONEY-215 was dispatched before these rulings were written (RULED by the lane supervisor 2026-09-12 04:5x, by `date` `04:50`; rulings 269, 272, 323, 464, 494, 602, 624).** All four lift conditions were measured this tick, each case decided on mtimes:
+   - **Owner.** `OWNER.md`'s mtime `01:33:27` is older than `REVIEWS.md` (`03:33:37`). Its last line is still the applied 01:3x note.
+   - **Coder.** `--check` returned `CODER DEAD`.
+   - **Mailbox.** `REPORT.md` `02:11:59` and `BRIEF.md` `02:05:45` are older than `REVIEWS.md`.
+   - **Cadence, all three ✗.** `origin/main` = `51902cc4`, unmoved, 13 ahead. The guarded-checker diff is empty. The merge-base is `0b1f637a`. **Merge gate CLOSED.**
+   - **Population.** Ruling 649's is buildable.
+   **Dispatched:** `LAUNCHED run 240 coder=agy merge-gate=closed harness-gate=closed (pid 2700435)`. This is dispatch 1 of 2 against nothing. `BRIEF.md` (11 997 B) and `KICKOFF.md` (1 894 B) were written before the launcher ran. Predicted floor: `tests 2572 · passed 2569 · FAILED 1 · errors 2`.
