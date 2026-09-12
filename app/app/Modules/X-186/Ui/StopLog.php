@@ -7,9 +7,12 @@ namespace App\Modules\X186\Ui;
 use App\Modules\X121\Models\Person;
 use App\Modules\X186\Actions\SequenceStopAction;
 use App\Modules\X186\Models\CampaignRun;
+use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Campaigns stopped or paused'])]
 class StopLog extends Component
 {
     #[Locked]
@@ -17,11 +20,14 @@ class StopLog extends Component
 
     public bool $failed = false;
 
-    public bool $isSample = false;
-
     public ?int $lastStoppedCount = null;
 
     public ?int $lastStoppedPersonId = null;
+
+    public function mount(int $businessId = 0)
+    {
+        $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
+    }
 
     public function stopRemaining(int $personId, SequenceStopAction $action): void
     {
