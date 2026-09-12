@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-12T02:10:54",
+ "updated": "2026-09-12T16:52:34",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1466,6 +1466,12 @@
    "module": "X-163",
    "chose": "QuotablePriceAction gives another module a price only from a confirmed, non-sample row that PriceConfirmAction::confirmable() accepts: options() lists those rows and resolve() returns amount and service_name, or refuses with NO_FACT, SAMPLE_STATE_REFUSED, UNCONFIRMED or FILL_ME; it is the seam X-165 prices a plan through",
    "at": "2026-09-12T02:10:54",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-165",
+   "chose": "a plan's price comes only from X-163's QuotablePriceAction: Plans lists options(), and proposePlan() writes a plan only when resolve() returns an amount, otherwise it shows 'Choose a confirmed price from your pricebook.' and writes nothing; the typed price box is gone, so X-165 authors no price (N-165-01)",
+   "at": "2026-09-12T16:52:34",
    "ruling": "R245"
   }
  ],
