@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-12T16:01:11",
+ "updated": "2026-09-12T17:05:58",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -937,12 +937,6 @@
      "stage": "contract",
      "why": "send.requested correctly emitted by multiple modules per R231, but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
      "at": "2026-09-03T13:47:25"
-    },
-    {
-     "module": "X-186",
-     "stage": "capability",
-     "why": "no action enrols a person into a campaign",
-     "at": "2026-09-04T22:41:56"
     }
    ]
   },
@@ -1329,12 +1323,6 @@
    "at": "2026-09-04T08:05:31"
   },
   {
-   "module": "X-186",
-   "stage": "capability",
-   "why": "no action enrols a person into a campaign",
-   "at": "2026-09-04T22:41:56"
-  },
-  {
    "module": "X-172",
    "stage": "tests",
    "why": "generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook",
@@ -1707,6 +1695,12 @@
    "chose": "the stop log renders in the owner layout with mount resolving the tenant and lists each stopped or paused campaign run by the person, the campaign and its reason with a trailing citation token removed at display, a stop pressed by hand records that it was stopped by hand instead of an inbound reply, campaign_runs.person_id holds a people id per the Track 1 ruling, and its test renders the empty branch and runs written through CampaignCreateAction, CampaignRunAction and SequenceStopAction by real GETs, proven by mutating the tenant resolution and the stop reason",
    "at": "2026-09-12T16:01:11",
    "ruling": "R245"
+  },
+  {
+   "module": "X-186",
+   "chose": "CampaignEnrolAction enrols one person into one campaign at step 1 and sends nothing, so the first send stays CampaignRunAction and its firstOrCreate finds the enrolled run by the same business, campaign and person; it refuses a campaign with no steps in the business, an id that the X-121 EntityReadAction seam does not find in people for the business, and a second enrolment of the same person into the same campaign whatever state the first run is in; the refusal is a read then a write and not a unique index, so two enrolments racing each other can both pass; proven by mutating the duplicate query and the people check",
+   "at": "2026-09-12T17:05:58",
+   "ruling": "R245"
   }
  ],
  "notes": [
@@ -1721,6 +1715,15 @@
   {
    "at": "2026-09-07T00:26:35",
    "note": "dup_of: 1 target surviving, 11 discarded"
+  }
+ ],
+ "resolved": [
+  {
+   "module": "X-186",
+   "stage": "capability",
+   "was": "no action enrols a person into a campaign",
+   "why": "CampaignEnrolAction now enrols a person into a campaign, and its test refuses a second enrolment of the same person into the same campaign",
+   "at": "2026-09-12T17:05:59"
   }
  ]
 }
