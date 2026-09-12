@@ -4781,3 +4781,23 @@ class file under `app/Modules/`**, and a slice brief that adds one needs the aut
    13:31, and its log ends `root agent idle; waiting for 1 background task(s)` · `AGY_EXIT=124`, around 16:23. The tsv
    shows two gate calls the coder re-issued *"because bash output didn't appear instantly"*. It spent no cap and held the
    lane for three hours. **Every brief says: run every command in the foreground, and wait for it.**
+
+## ⛔ Trap added 2026-09-12 17:1x — a clearance that reads the COMPONENT never learns the ROUTE, and a discharged UNRESOLVED waits for someone to look
+
+1. **PB-147 cleared X-172's portal as "correctly public".** Its reasoning: the token is the credential, and the caller has no
+   tenant. But `X-172/routes.generated.php:8` has mounted it under `['web', 'auth', 'tenant.role']` since `3b7568de`
+   (2026-09-04), so a customer with a token and no account is refused, and nothing in production issues a link. The component
+   reasoning was right; the route file was never opened.
+   ⭐ **Before calling a screen public, read the middleware of the route that mounts it.** The defect is latent, because no link
+   reaches a customer. It is recorded as X-172 `UNRESOLVED route` and TRACK 1 ACTION (o).
+2. **X-172's `UNRESOLVED tests` (*"needs a generator fixture hook"*, 09-05) had already expired when it was re-read.**
+   `SurfacesGenerateCommand.php:359-382` reads `tests/Modules/<id>/Screens/Fixtures.php`, and X-172's screen test GETs the portal
+   with a real token. It is the third member of the UNRESOLVED-expiry trap, after ruling 8 and PB-142.
+   ⭐ **When the backlog runs dry, re-measure the lane's open `UNRESOLVED` records first**
+   (`grep -n -A12 '"<id>": {' .agents/state/BUILD-STATE.json`). Withdraw an expired one with
+   `state.py resolve <id> <stage> --reason …`.
+3. **The *"Sample — … not built yet"* banner is on all 23 of this lane's screen views, and it is not this lane's to remove.**
+   `resources/views/components/surface/sample-state.blade.php` has no condition. A removal lowers `SampleStateModuleTest`'s
+   `toBe(227)`/`toBe(202)` pins and walks the `OwnerNavTest` interlock. The precedent (`4ae5d9e2`) is Track 2's owner-shell
+   conversion, which edits `OwnerNav.php` and three Architecture tests. TRACK 1 ACTION (n).
+   ⛔ **Never lower another track's pinned count from this lane.**
