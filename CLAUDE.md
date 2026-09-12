@@ -19262,3 +19262,35 @@ one-directional** — nothing in `FormCaptureAction.php` says which way a future
 
 ⚠️ Instrument, confirmed a second time: after `cd app && php artisan doctor` drifted the shell, a `git grep … -- ':/.agents/state/…'`
 printed `../.agents/state/…` and counted correctly — tick 335's `':/'` drift immunity, measured on the census's fourth surface.
+
+## ✅ CLEAN SWEEP — money's byte-string function census (rulings 585-586) over the seven owned modules, and the PLATFORM FLOOR decides the predicate (tick 354)
+
+Eleventh firing of tick 215's law, measured here rather than adopted (223). Money's `3d397613` widens its ruling 550 from four byte
+functions to their other spellings, on the predicate *a byte-string function applied to text that may not be ASCII*. Run over the seven
+owned modules' code with `-w --include='*.php'` and `-e` patterns (a parenthesis in a pattern is refused — 286), positive control
+`app/app/Services` + `app/app/Livewire` → **35** files (209), case-insensitive corroboration with `-i` agreeing (381's shape):
+
+| class | owned members | input, traced |
+| :-- | :-- | :-- |
+| `str_pad` · `wordwrap` · `str_split` · `strrev` · `strpos` · `stripos` · `substr` · `strlen` · `ucwords` · `lcfirst` · `mb_*` | **0** | — |
+| `ucfirst` | **3**, all `X-110/Ui/` (Track 2's) — `VisitorsLive.php:83`, `AbandonedForms.php:62`, `:65` | the fallback arm after a literal label map over a pixel `event_name` / payload `abandoned_field` / `form_id` |
+| `strtolower` | **2** — `X-155/FormGenerateAction.php:11` (caller `$description`), `X-176/SchemaRenderAction.php:32` (`businesses.vertical`) | the haystack for literal ASCII `preg_quote`d needles (352); a key into a literal ASCII vertical map with a `LocalBusiness` fallback |
+| `Str::random` | **7** — X-110, X-157 ×3, X-137, X-103 ×2, X-102 | an ASCII alphabet by construction; `Str::plural` ×2 on literal ASCII nouns |
+
+⭐ **The disconfirming member is the platform, not a call site.** `app/composer.json:9` requires `php ^8.4` and
+`vendor/composer/platform_check.php:7` refuses below `80401`. Money's corruption case — `ucfirst` mangling a first letter outside ASCII —
+needs **locale-dependent** case mapping, and PHP made `strtolower`/`strtoupper`/`ucfirst`/`lcfirst`/`ucwords` locale-insensitive and
+ASCII-only in 8.2. ⚠️ **That semantic is a READING, not a measurement** — `php -r` is refused from this seat (284) — and the verdict does
+not rest on it alone: every `strtolower` member feeds a comparison against ASCII literals, and every `ucfirst` member is a display
+fallback in Track 2's column. What the floor adds is the bound: **on this platform a case function can leave a non-ASCII initial
+uncapitalised, and cannot cut a character.** Per 224: **already done here** for the byte functions (zero members), **cannot work here**
+for the three `ucfirst`s (Track 2's). Zero buildable.
+
+⭐ **The generalisation, tick 353's law one level down.** 353 ruled that a threshold comparison inherits the SIGN convention of the
+library that produced its left side, and that convention changed between Carbon 2 and 3 with no change at any call site. The same holds
+for the **language**: whether a byte-string case function corrupts multibyte text is a property of the PHP version, not of the call. ⛔
+**A census whose defect predicate depends on a language semantic reads the platform floor (`composer.json` `php`, `platform_check.php`)
+before classifying a single member** — the spelling is identical on a PHP where it corrupts and on one where it cannot.
+
+⚠️ **Trigger, named:** a `substr`/`strlen`/`str_pad`/`wordwrap` added over owner-typed or visitor-typed text in these modules; or
+`platform_check.php`'s floor dropping below 8.2 — neither can happen in a HOLD tick, and both would show in a stat.
