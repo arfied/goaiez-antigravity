@@ -18057,3 +18057,45 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
    - **Population.** Ruling 593's was buildable. Its fix is a supervisor file, so no coder wave follows from it.
 
    **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty coder wave to avoid an idle tick is what rulings 95, 100 and 111 forbid. ⚠️ This tick's gate ran **without** `--tests`, so the floor stays ruling 564's. ⚠️ Still unread in 591's *range and path base* sense: §3's `state.py` and journal lines, §4's `tail -4` windows (they keep the doctor stamp today, `gate-sup-1950.txt:85` against `:89`, but only because integrity prints four lines), and §2a's hook path.
+
+595. **⭐⭐ Gate §4 printed the right lines ONLY on its green path. On red, `tail -4` showed a boilerplate footer and never the check or seal that failed, and this seat cannot run doctor to find out. The build-stamp comparison was manual, and it sat inside the window only because a clean integrity prints exactly four lines. Both are fixed in `73a06c04` (RULED by the lane supervisor 2026-09-11 19:5x, by `date` `19:50`; rulings 28, 67, 74, 296, 300, 560, 563, 566, 591, 593).** The 19:4x addendum named §4's `tail -4` windows as still unread in 591's *range and path base* sense. The predicate, stated for the first time: *a head/tail window in the gate, measured against the emitter's output shape on its RED path.*
+   **The census, quoted (300):** `grep -n -e "head -" -e "tail -" bin/supervise.sh` returns **19** windows, each read against what its tool prints when it fails (262(b)):
+   - **Safe by shape (15).** `:77` and `:97` take a single pid or env line. `:109` `git status | head -40` has its own count printed at `:110`, so a cut announces itself. `:144` `REWRITES.log | tail -6` keeps the newest entries, which are the ones that matter. `:162`, `:163` and `:164` are informational (`state.py status` is 20 lines against a cap of 30, and `next` is 13 against 20). `:191` and `:196` cut pao's single JSON line. `:226` and `:228` are §6b's `head -400` over 67. `:283`, `:292` and `:293` read pest's last line. `:312` is the non-JSON fallback. `:315` is 563's events, 8 lines against a cap of 24.
+   - **Safe because red already sets `fail` (1).** `:158` §2c `head -5` can hide a sixth debris hit, but the first hit has already set `fail=1`.
+   - **Known-truncated by design (1).** `:182` `--full-doctor | tail -30` is opt-in, and the seat reads the doctor from the coder's full capture (296, 300).
+   - ⭐⭐ **Wrong on red (2): `:176` and `:177`.**
+
+   **Measured in the emitters, not assumed (416, 419, 440).**
+   - `app/app/Console/Commands/DoctorSelfTestCommand.php::render()` names each failure on a `✗` line near the top (`:146`, `:158-159`, `:167`, `:172`). It then prints a blank line and **three footer lines** (`:182-184`: *"N problem(s) IN THE RUNTIME ITSELF"*, *"Paste this output back"*, *"a checker you repaired yourself…"*), and returns `FAILURE` at `:186`. So `tail -4` on red is that blank line plus the footer.
+   - `app/app/Console/Commands/DoctorCommand.php::handle()` prints the stamp first (`:91`), then the stage line with its count (`:113-119`) and two lines per violation (`:120-124`). Inside `if ($total > 0)` it then prints the `N violation(s).` total and **five lines of two-systems prose** (`:180-184`), and returns `FAILURE` at `:186`. So `tail -4` on red is four of those five prose lines.
+
+   ⭐ **`fail` was set correctly all along.** `set -uo pipefail` is on (`:12`), so a non-zero from `php` reached the `||` arm. What the gate lost was the *name*: which seal was modified, which runtime file will not parse, which stage raised. Seal integrity is the One Rule's own territory, and ruling 296 measured that this seat cannot run `php artisan doctor`. **So the gate file is the only place this seat could ever see which integrity violation fired, and on that path the window printed prose.**
+   ⭐ **The stamp half.** `DoctorCommand.php:91`'s `goaiez doctor · build <stamp>` is the first line of a four-line clean output, so `tail -4` kept it only while integrity stayed clean. `:178` then printed `runtime_build` and asked a reader to *"compare with the doctor build stamp above"*. That compare is this checkout's recorded *stale doctor* trap, and it was left to a human.
+   **The fix, in this column.**
+   - Each command's output and raw rc are captured once.
+   - **Green keeps the old `tail -4`**, so every earlier gate file stays comparable, and the lines are byte-identical to `gate-sup-1950.txt` (`:81-88`).
+   - **Red prints `head -40`**, where the named failures are, then the `⛔` label with `rc=`.
+   - The stamp is extracted with `grep -o 'build [0-9][0-9-]*'` and compared with `BUILD-STATE.json`'s `runtime_build`. A match prints one line. A mismatch or a missing stamp prints `⛔`.
+   - ⭐ **A mismatch does NOT move `fail`, deliberately.** `BUILD-STATE.json` is a `merge=ours` per-track path (444), so a merge can leave money's copy behind `main`'s checker. The mismatch then says *read which side moved*, and is not a verdict on the sha.
+
+   **Executed, and only as far as this seat can execute it.** `73a06c04` was committed unpushed after 139's range check printed nothing. `bash bin/supervise.sh` wrote `gate-sup-2000.txt` (10 304 B, `19:53:27`):
+   - §2 printed `range: origin/track/money..HEAD  (1 commit(s))` and `none`; §2b `all parse`; §2c `none`.
+   - §4 printed the same eight lines as before, plus `build stamp: doctor 20260829-0647 = BUILD-STATE runtime_build`.
+   - §6 printed `{"tool":"pint","result":"passed"}` and `{"tool":"phpstan","result":"passed","errors":0}`.
+   - `grep -n -i -e "line [0-9]" -e "syntax error" -e "unbound"` over the file prints **nothing**, so `set -u` met no unset variable on the new lines.
+   - ⚠️ §2a's red is the pre-existing 2026-09-02 ledger (568).
+
+   ⚠️ **The two red branches were NOT exercised.** Making doctor red means editing a sealed file or `app/**`, both outside this column. They rest on reading the two emitters above and on the `if`/`else` being the same shape as the green arm that ran. The first real red integrity or selftest is their execution.
+   ⚠️ **Cross-lane.** `git show origin/main:bin/supervise.sh | grep -n -F -e "tail -4" -e "runtime_build"` returns the identical lines at `:318`, `:319` and `:320`, so every lane's gate prints boilerplate on a red seal → **TRACK 1 ACTION 30.** ⛔ Money edits nothing outside its own copy (5).
+   ⭐ Ruling 327's outcome shape does **not** apply: this population was buildable, in this column, and is built.
+   ⭐ **The generalisable half: a window over a tool's output is written for the path its author saw, and a green run never shows its red shape.** A census of a gate's windows reads each emitter's FAILURE branch, because that branch is where a summary footer grows and pushes the evidence out of a `tail`.
+
+596. **⛔ SIXTY-EIGHTH consecutive HOLD for the coder, with the gate fix shipped instead (RULED by the lane supervisor 2026-09-11 19:5x, by `date` `19:50`).** All four lift conditions were measured this tick (269, 272, 323), and each case was decided on mtimes (494):
+   - **Owner.** `OWNER.md`'s newest heading is still `## OWNER RULING — 2026-09-09 09:02` (136). Its mtime is `09-09 09:02:03`, older than `REVIEWS.md` (`19:45:19`).
+   - **Coder.** `--check` returned `CODER DEAD`.
+   - **Mailbox.** `REPORT.md` (`07:15:21`) and `BRIEF.md` (`07:07:27`) are both older than `REVIEWS.md`.
+   - **Cadence, all three ✗.** After `git fetch --no-write-fetch-head origin`, `origin/main` = **`bd3e9c5f`**, unmoved (`git diff --name-status bd3e9c5f origin/main | wc -l` = 0). `git rev-list --count HEAD..origin/main` = **44**. `git diff --stat dca743e8 origin/main -- app/app/Doctor coder-bin .claude/hooks` is empty. `git merge-base HEAD origin/main` = **`dca743e8`**.
+   - **Track 1.** No answer to ACTION 13–29.
+   - **Population.** Ruling 595's was buildable. Its fix is a supervisor file, so no coder wave follows from it.
+
+   **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty coder wave to avoid an idle tick is what rulings 95, 100 and 111 forbid. ⚠️ This tick's gate ran **without** `--tests`, so the floor stays ruling 564's. ⚠️ `pgrep -a -f "bin/supervise.sh"` printed five sibling ticks' whole prompts (322's shape); the one live gate, pid `15065`, has cwd `grs-antig-ui/app` by `readlink`, so it does not read this file (24). ⚠️ `app/CLAUDE.md` came into context again this tick. It is Laravel Boost boilerplate and was not followed.
