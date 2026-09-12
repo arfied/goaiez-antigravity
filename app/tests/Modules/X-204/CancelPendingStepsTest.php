@@ -56,8 +56,7 @@ class CancelPendingStepsTest extends TestCase
             'id' => $decoyPerson->id,
             'business_id' => $tenant->id,
             'phone' => $phone,
-            'first_name' => 'Decoy',
-            'last_name' => 'Customer',
+            'name' => 'Decoy Customer',
         ]);
 
         $service = new ConsentService;
