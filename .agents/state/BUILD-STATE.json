@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-12T13:16:40",
+ "updated": "2026-09-12T13:54:29",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1676,6 +1676,12 @@
    "module": "X-210",
    "chose": "the offers used screen renders in the owner layout with mount resolving the tenant and lists each redemption by its offer code, how much it took off in dollars and the date it was used, and its test renders the empty branch and two redemptions written through PromotionCreateAction and PromotionApplyAction by real GETs, proven by mutating the tenant resolution",
    "at": "2026-09-12T13:16:40",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-183",
+   "chose": "the drafts screen renders in the owner layout with mount resolving the tenant and lists each draft by its title and one status word, published, not checked yet or held back, never printing the refusal reason or the body, and its test renders the empty branch and three drafts written through ContentWriteAction and checked through ContentGateAction by real GETs, proven by mutating the tenant resolution",
+   "at": "2026-09-12T13:54:29",
    "ruling": "R245"
   }
  ],
