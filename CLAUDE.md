@@ -3040,6 +3040,11 @@ and §3 is unchanged at `0·41·85·0·16·204·128·3`. The lane is 158 ahead /
 - Tick 372's notes were committed as `a57e4b3d`, certified by `.gateT373.txt`, and pushed
   `3fa3cfe9..a57e4b3d`.
 
+⌛ **Tick 374 — HOLD.** `main` did not move (pin `bd3e9c5f`), all three drift conditions are FALSE,
+and §3 is unchanged at `0·41·85·0·16·204·128·3`. The lane is 159 ahead / 5 behind first-parent at `dde82a19`.
+- Tick 373's notes were committed as `dde82a19`, certified by `.gateT374.txt`, and pushed
+  `a57e4b3d..dde82a19`.
+
 ⌛ **S-200 as dispatched (history): §3 ledger refresh, dispatched at tick 345 as STAGES-238, merge gate CLOSED.**
 Tick 344's HOLD missed that §3 still read `boundary 55 · citation 3 · capability 207` while §5 reads
 **41 · 0 · 204** (`.gateT345b.txt` at `423ec5a9`, total 477, the eight sum). This is S-191's exact
