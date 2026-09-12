@@ -19437,3 +19437,52 @@ ui's `9d52d08a` (X-164, stages' catch-all with Track 2's `Ui/` grant) moved thre
 law: an exhaustive assertion is coupled to every writer of the population it enumerates, and the coupling appears in no diff. ⛔ **Any
 future site wave that adds a `Ui/` component, a `tenant.role` route or a sample-state call site in the seven modules runs those three lints
 as a numbered item** — its red would otherwise surface in Track 2's column with nothing in this lane's diff naming them. Advisory; no wave.
+
+## ⛔ THE LAUNCHER'S OWN LIVENESS CHECK WAS A BARE `kill -0` ON A PIDFILE NOTHING CLEARS — this seat had the two-part check since tick 179, and the one process that enforces one-writer never did (tick 360)
+
+Sixteenth firing of tick 215's law, measured here rather than adopted (223). Money's `65ba0814` (ruling 597): `launch-coder.sh`'s liveness
+was `[ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")"`, wrong both ways. This lane's copy carried it at **two** sites — `:57` (`--status`) and
+`:66` (the dispatch refusal) — and `origin/main:.agents/supervisor/launch-coder.sh:77` carries it too.
+
+**Reproduced here before the fix, not inferred:**
+
+| pidfile holds | cwd | unfixed `--status` | fixed `--status` |
+| :-- | :-- | :-- | :-- |
+| `2899882` (dead) | — | `DEAD` | `DEAD`, no note |
+| ⛔ `63463` — sixty's live agy | `…/grs-antig-sixty` | ⛔ **`ALIVE: pid 63463`** | `DEAD` + *"a reused pid, ignored"* |
+| `92758` — this tick's own process | `…/grs-antig-site` | — | `ALIVE: pid 92758` |
+| `2899882` restored | — | — | `DEAD`, no note |
+
+⭐ **The dispatch path used the identical expression**, so with any sibling's pid recycled into this pidfile every tick would have printed
+`REFUSED: this track's coder is already active` and parked the lane for that stranger's whole lifetime — while this seat's own case (a),
+which has run tick 179's two-part check (`readlink` + `pgrep agy`) since tick 179, would have said the coder was dead. **The seat checked
+correctly and the launcher it calls did not, and the two disagree in exactly the case 179 was written for.** Tick 179 wrote the rule for a
+reader; nobody carried it into the writer that enforces the rule.
+
+⛔ **The other direction is the one-writer BLOCK and is READ, not run**: `$!` is the `nohup bash` wrapper, and `timeout`/agy are separate
+processes, so a killed wrapper leaves a live coder that `kill -0` reads DEAD — and the next dispatch puts a second writer in this tree.
+
+**Fixed in `1f315b36`, adapted not copied (216)**: `coder_running()` counts a live pidfile pid only if its cwd is this checkout, then scans
+`pgrep -f '/[.]local/bin/agy '` for any agy whose cwd is this checkout. Two adaptations: this lane's `--status` form (money's is `--check`),
+and a note on the **unreadable-cwd** branch. ⚠️ Money counts an unreadable cwd as ours; tick 176 measured that a pid which *persists*
+unreadable is another uid's and cannot be this lane's writer. **Kept money's direction anyway** — refusing is the only direction that cannot
+produce a second writer, and a stall is recoverable where a second writer is not — and the note tells a tick to resolve it with 176's second
+`pgrep`. A tradeoff chosen, not a rule contradicted.
+
+⚠️ **The orphan scan's positive control is BOUNDED, and the bound is the finding** (209): `pgrep -f '/[.]local/bin/agy '` returned
+`63459 63462 63463` — sixty's wrapper, `timeout` and agy, all `…/grs-antig-sixty` — and **not** Track 1's live agy `2191262`. So the pattern
+matches **this launcher's own invocation shape** (`/home/goaiez/.local/bin/agy --print`, `:109`) and misses an agy started any other way —
+which is exactly the 2026-09-03 incident's shape (an interactive `agy` started by hand). ⛔ **The launcher's scan is not the one-writer
+check.** The charter's `pgrep agy` + `readlink` stays the seat's check before every dispatch and gate; the launcher's scan closes the
+wrapper-killed case only.
+
+⚠️ Two branches **unexercised**: the orphan-positive (no orphan constructed) and the unreadable-cwd (no other-uid pid available). Rules until
+they fire (193). ⚠️ The probe wrote two foreign pids into `coder.pid` and restored it; `coder.pid` is untracked (`.agents/supervisor/*`
+ignored but `launch-coder.sh`), so the restore is proven by the final `DEAD (pidfile: 2899882)`, not by git. TRACK 1 ACTION: money's ACTION 31
+— `origin/main`'s launcher carries the bare check; ⛔ this lane edits nothing outside its own copy.
+
+## ⚠️ Instrument, tick 360
+
+`grep -E '^goaiez doctor'` over live doctor output returned the stage lines and **not** the stamp header — the header carries a leading space
+(223's `^FAIL` shape, on the one extrinsic field). The gate's §4 line `build stamp: doctor … = BUILD-STATE runtime_build` (359) is now the
+mechanical source of the stamp equality, which is why the miss cost nothing. ⛔ Anchor on `goaiez doctor · build`, never `^`.
