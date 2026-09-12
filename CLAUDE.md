@@ -18672,3 +18672,54 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
    - **Population.** Ruling 636's has no buildable members.
 
    **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty coder wave to avoid an idle tick is what rulings 95, 100 and 111 forbid. No gate ran this tick, because nothing in `app/**` or `bin/supervise.sh` changed, so the floor stays `tests 2571 · passed 2568 · FAILED 1 · errors 2`. ⚠️ `app/CLAUDE.md` came into context again this tick. It is Laravel Boost boilerplate and was not followed.
+
+638. **⭐ The NULLABLE-COUNTABLE census is the null half of ruling 538's function spelling. It covers `count()` on a value that may not be Countable, and `foreach` over a value that may be null. The money modules have 11 real `count(` lines carrying 13 calls, and 8 `foreach` sites over the lane's two JSON columns. Every value is an array, a Collection, or defaulted with `?? []`. Both JSON columns are NOT NULL, and every writer passes a PHP array. Zero buildable (measured by the lane supervisor 2026-09-12 02:5x, by `date` `02:50`; rulings 44, 207, 262(b), 294, 324, 327, 328, 360, 364, 415, 429, 449, 532, 538, 546).**
+
+   Ruling 532 swept aggregate METHODS and 538 swept aggregate FUNCTIONS for an empty set. Neither asked about a NULL set. In PHP 8, `count(null)` throws `TypeError`. `foreach` over null emits a warning, and the vendor code, measured rather than assumed, turns that warning into a throw: `Foundation/Bootstrap/HandleExceptions.php:71-76` has `handleError()` throw `new ErrorException(...)` for every level except deprecations. So both shapes are a 500 on a screen.
+
+   **Instruments, quoted (300):**
+   - `grep -rn -e "[^>a-z_]count("` over the eight money module trees, minus `/Database/`, returns **13** lines. Two are comments (`CheckoutBlock.php:128`, `InvoiceThreadBeside.php:100`, each saying *"no count()"*), which is mechanism 8, caught by reading the hits (262(b)). The other **11** lines carry 13 calls. The `[^>a-z_]` prefix keeps `->count(` out.
+   - `grep -rn -e "json(" -e "jsonb("` over the same trees, filtered to `/Database/`, returns **2** columns: `carts.items` (`jsonb`) and `ar_collections_packages.contents` (`json`). Neither is `->nullable()`.
+   - `grep -rn -e "'array'" -e "'json'" -e "AsArrayObject" -e "'collection'"` over the same trees returns **2** casts: `Cart.php:16` and `ArCollectionsPackage.php:16`, both `'array'`.
+   - `grep -rn -e "items as" -e "contents as" -e "items\[" -e "contents\["` over X-117 and X-211 returns the 8 read sites.
+
+   **Each class and its safety (328):**
+   - **Local array initialised `[]` (4):**
+     - `CardExpiringScanAction:45` `$alerted` (from `:23`)
+     - `DisputeDefenseEngine:69,:74` `$savedItems` (from `:56`)
+     - `checkout-block.blade.php:26` `$lines` (from `CheckoutBlock.php:112`)
+     - ⭐ `sync-error-rate.blade.php:35` `$shownConflicts`, which is `[]` at `SyncErrorRateView.php:55` and a query result only inside `if ($this->shownRun !== null)`, so it is never null.
+   - **Typed `array` parameter (1):** `AccountingSyncAction:42`'s `count($transactions)` over `array $transactions` at `:32`.
+   - **Eloquent Collection from `->get()`, which is `Countable` (4):** `checkout-block.blade.php:50` `$orders` (`CheckoutBlock.php:126,:130`), `connection-mapping.blade.php:20` (`:76`), `sync-error-rate.blade.php:8` (`:39`), and `conflicts-list.blade.php:16` (`ConflictsListView.php:49`).
+   - **`?? []` default (3 calls on one line):** `collections-package-preview.blade.php:35`'s `count($package->contents['lines'|'payments'|'actions'] ?? [])`.
+   - **`foreach` over `$cart->items` (3):** `CheckoutBlock.php:115` and `CartBlock.php:87` are behind ruling 546's `$cart !== null &&`, and `CheckoutEngine.php:208` is behind `! $cart ||`.
+   - **`foreach` over a local `$items` (3):** `:30` comes from `buildCart(… array $items …)`. `:301` comes from `:298`'s `$live ? $cart->items : []`. `:345` comes from `writeCart(… array $items …)`. ⚠️ `:317`'s by-reference loop is the same `$items` as `:301`.
+
+   ⭐⭐ **The residual term is closed by the WRITERS, not the schema.** `NOT NULL` refuses SQL `NULL`, but the JSON literal `null` is a valid non-null `json` value, and the `'array'` cast decodes it to PHP `null`. So the guarantee depends on what each writer passes. `carts.items` has four writers:
+   - `buildCart` passes a typed `array`.
+   - `writeCart` passes a typed `array`.
+   - `removeFromCart` passes `array_values(array_filter(...))`.
+   - `X117Test.php:548`'s racer insert passes `'items' => '[]'`.
+
+   `ar_collections_packages.contents` has one writer, `ArEngine.php:320`, which passes `$contents`. That is an array literal built at `:302`. `grep -rn -F -e "table('carts')"` over `app/app`, `app/tests` and `app/database` returns only that racer. ⭐ **So no writer can store a JSON `null`**, which is the same shape as ruling 481's *"a non-null column and a column nothing leaves null are different facts"*.
+
+   ⭐ **Known members (429):** `SyncErrorRateView.php:55` is ruling 360's screen, `:35`'s `contents` is ruling 44/364's bundle, and the three `$cart !== null` guards are ruling 546's.
+   ⭐ **Positive control fires:** the same `count(` instrument over `app/app/Services` and `app/app/Livewire` returns **90** files.
+   415's first-three check passed (`$alerted`, `$savedItems`, `$lines`). 449's each-member-exists check passed, because every member was printed from a file.
+   ⛔ Struck, not to be re-run.
+   ⚠️ **Trigger:** a nullable JSON column in the lane, a writer passing a non-array into `items`/`contents`, or a `count`/`foreach` over a `->value()` result or a nullable property. Ruling 327's outcome shape a **ninetieth** time.
+   ⭐ **The generalisable half: an `array` cast on a NOT NULL JSON column still admits a decoded `null`.** A census of JSON reads therefore measures every writer's argument type, not the column's constraint.
+
+639. **⛔ HOLD after the census (RULED by the lane supervisor 2026-09-12 02:5x, by `date` `02:50`).** All four lift conditions were measured this tick (269, 272, 323), and each case was decided on mtimes (494):
+   - **Owner.** `OWNER.md`'s mtime `01:33:27` is older than `REVIEWS.md` (`02:42:39`). Its newest heading is still `2026-09-09 09:02`, and its last line is still the applied 01:3x owner note (624).
+   - **Coder.** `--check` returned `CODER DEAD`.
+   - **Mailbox.** `REPORT.md` (`02:11:59`) and `BRIEF.md` (`02:05:45`) are both older than `REVIEWS.md`.
+   - **Cadence, all three ✗.**
+     - After `git fetch --no-write-fetch-head origin`, `origin/main` = **`ef52d10b`**, unmoved, and `git rev-list --count HEAD..origin/main` = **2**.
+     - `git diff --stat 8b407d10 origin/main -- app/app/Doctor coder-bin .claude/hooks` is empty.
+     - `git diff --name-status HEAD origin/main` lists the seven per-track paths only (504).
+     - `git merge-base HEAD origin/main` = `0b1f637a`, this lane's own pushed tip.
+   - **Track 1.** No answer to ACTION 13–33.
+   - **Population.** Ruling 638's has no buildable members.
+
+   **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty coder wave to avoid an idle tick is what rulings 95, 100 and 111 forbid. No gate ran this tick, because nothing in `app/**` or `bin/supervise.sh` changed, so the floor stays `tests 2571 · passed 2568 · FAILED 1 · errors 2`. ⚠️ `app/CLAUDE.md` came into context again this tick. It is Laravel Boost boilerplate and was not followed.
