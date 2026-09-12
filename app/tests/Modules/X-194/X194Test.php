@@ -207,7 +207,8 @@ class X194Test extends TestCase
         );
 
         $location = Location::where('business_id', $biz->id)->first();
-        $location->update(['timezone' => 'America/Denver']);
+        $location->timezone = 'America/Denver';
+        $location->save();
 
         // Test with null value
         Livewire::test(AnyViewIt::class, [
@@ -222,7 +223,8 @@ class X194Test extends TestCase
             ->assertSeeHtml('data-job-count="7"')
             ->assertSeeHtml('data-estimate-tile="--"');
 
-        $location->update(['timezone' => 'America/New_York']);
+        $location->timezone = 'America/New_York';
+        $location->save();
 
         // Test with real value
         Livewire::test(AnyViewIt::class, [
@@ -259,7 +261,8 @@ class X194Test extends TestCase
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $location = Location::where('business_id', $biz->id)->first();
-        $location->update(['timezone' => 'America/New_York']);
+        $location->timezone = 'America/New_York';
+        $location->save();
 
         $component = Livewire::test(AnyViewIt::class, [
             'businessId' => $biz->id,
@@ -308,14 +311,13 @@ class X194Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Two Locations', 'owner_user_id' => $owner->id]);
 
         $location1 = Location::where('business_id', $biz->id)->first();
-        $location1->update(['name' => 'Loc One', 'timezone' => 'America/Denver']);
+        $location1->name = 'Loc One';
+        $location1->timezone = 'America/Denver';
+        $location1->save();
 
-        $location2 = Location::create([
-            'business_id' => $biz->id,
-            'name' => 'Loc Two',
-            'timezone' => 'America/New_York',
-            'is_autopilot_active' => true,
-        ]);
+        $location2 = new Location(['business_id' => $biz->id, 'name' => 'Loc Two', 'is_autopilot_active' => true]);
+        $location2->timezone = 'America/New_York';
+        $location2->save();
 
         $view = $this->saveAction->save(
             businessId: $biz->id,
