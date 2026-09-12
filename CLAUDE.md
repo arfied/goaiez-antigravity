@@ -19516,3 +19516,15 @@ no baseline a landed commit would falsify, the net is gone. Recorded, not built;
 ⚠️ And one instance of tick 342's gap, eleven seconds wide: tick 361's closing re-read ran at 20:21:37 and its append at 20:21:48, and stages'
 `716d4cf6` arrived `@{20:21:42}` between them. Nil consequence (`CLAUDE.md` +5), but the re-read is only as late as the command before
 `cat >>`, and a composed append with an intervening `Read`/placeholder check is not "immediately".
+
+## ✅ Money's ruling 604 measured here — this lane's REPORT.md is bound to its wave by BRIEF-NAMED SCRATCH PATHS, not a header (tick 363)
+
+Eighteenth firing of tick 215's law, measured rather than adopted (223). Money's `bfe1feb4`: a `REPORT.md` naming no run or wave in a header is
+still bound to its run by its commit shas, its wave-named gate path and its mtime. Tick 362 read it and recorded the precondition as having no
+subject. It has one: the standing `REPORT.md` (14:55:51, SITE-211) opens `# Item 0 — ground values` — **no wave in any header** — and carries
+**twelve** occurrences of `site-211-*` scratch paths (`-c1`, `-owned`, `-events-owned`, `-all`, `-events-all`, `-gate`), every one supplied by the
+brief. SITE-211 committed nothing, so money's sha binding has no member here; the path binding alone carries it.
+
+⭐ **The binding is a property of the BRIEF, not the report**: it holds only because every brief since SITE-204 names its scratch files with the
+wave id. ⚠️ **Trigger, named**: a brief that names a generic scratch path (`gate.txt`, `/home/goaiez/tmp/c1.txt`) removes the only field binding its
+report to its wave — keep the wave id in every scratch path a brief supplies. Recorded, not built; a typed RUN field would be a claim (money 605).
