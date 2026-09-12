@@ -3247,6 +3247,11 @@ checker, hook, seal, `coder-bin` or `bin/state.py` byte). That is +1 first-paren
 - §3 is unchanged at `0·39·85·0·16·204·128·3`.
 - Tick 403's notes (`34e7bfdb`) were certified by `.gateT404.txt` and pushed `305d44ff..34e7bfdb`.
 
+⌛ **Tick 405 — HOLD.** `main` did not move (pin `ef52d10b`), all three drift conditions are FALSE,
+and §3 is unchanged at `0·39·85·0·16·204·128·3`. The lane is 193 ahead / 4 behind first-parent
+(193 / **99** ancestor) at `32e08a1b`. The ancestor count is still one short of the 100 threshold.
+- Tick 404's notes (`32e08a1b`) were certified by `.gateT405.txt` and pushed `34e7bfdb..32e08a1b`.
+
 ⌛ **S-202 as dispatched (history): §3 ledger refresh, dispatched at tick 394 as STAGES-240, merge gate CLOSED.** §3 still
 reads `boundary 41` against §5's 39. This is S-200's shape. The JOURNAL `^- .+ stage ` rows start at 96.
 - ⚠️ **Brief lesson:** `--full-doctor` §5 truncates its row dump and prints no `schema` rows. Ask for
