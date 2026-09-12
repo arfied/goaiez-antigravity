@@ -18418,3 +18418,105 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
    - **Population.** Rulings 617's and 618's have no buildable members.
 
    **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty coder wave to avoid an idle tick is what rulings 95, 100 and 111 forbid. ⚠️ No gate ran this tick: nothing in `bin/supervise.sh` or `app/**` changed, so the floor stays ruling 564's. ⚠️ `app/CLAUDE.md` came into context again this tick. It is Laravel Boost boilerplate and was not followed.
+
+620. **⭐⭐ Ruling 618's shape, re-run over this lane's own owner copy: the phrase "Nothing in this checkout" appears
+    16 times in the eight money modules, and SIX of those claims are false for the app as a whole. Each was measured
+    against the one table its screen reads. Rulings 88, 90 and 201 wrote them. Briefed as MONEY-212 (RULED by the
+    lane supervisor 2026-09-11 21:3x, by `date` `21:30`; rulings 50(a), 64, 88, 90, 123, 201, 257, 262(b), 294, 324,
+    326, 328, 380, 415, 429, 449, 464, 618).** The 21:2x addendum named the candidate: *an absence claim of the form
+    "X has no writer" stated for one table, where the concept may live on a sibling table.* The census, quoted (300):
+    `grep -rn -o -e "Nothing in this checkout[^.]*"` over the eight module trees prints **16** lines, each read (262(b)).
+    ⭐ **Controls:** a sibling-table census,
+    `grep -rho -e "Schema::create('[a-z_]*dunning[a-z_]*'" …` (and `payout`, `dispute`, `card`, `usage`, `meter`,
+    `invoice`, `ledger`, `cost`, `ai_calls`), returned `dunning_attempts`, `affiliate_payouts`, `voice_usage_events`,
+    `message_cost_entries`, `credit_ledger`, `ai_calls` and others beside money's own tables. `qa_scorecards` and
+    `scorecards` matched `card` as a substring, which is mechanism 8 (262(b)).
+    **The six false members, each with its sibling writer measured:**
+    - **Dunning.** `dunning-board.blade.php:19` and `revenue-recovery.blade.php:24` say *"Nothing in this checkout puts an
+      account on the dunning ladder"*, under headings *"No account is in dunning"* and *"Nobody is in dunning"*. But
+      `App\Services\Billing\AuthorizeNetWebhooks.php:578` calls `$this->dunning->open($business)`, the job at
+      `AdvanceDunningScheduleJob.php:133` advances it, and `app/routes/console.php:140` schedules
+      `billing:advance-dunning`. `App\Models\DunningAttempt`'s docblock states *"THIS TABLE IS THE SUSPENSION RULE"* (326's
+      shape, a twenty-second time). So a tenant whose subscription payment is being retried opens money's screens and
+      reads that nobody is in dunning. That is **reachable in production**, because `origin/main` is deployed.
+    - **Usage.** `credits.blade.php:46` says *"no SMS, voice, AI, email or lead usage has been recorded for this
+      account"*, and `mrr.blade.php:55` says *"Nothing in this checkout writes a usage meter"*. But
+      `App\Services\Voice\VoiceSpend::record():191` writes `voice_usage_events` with `business_id`, and
+      `App\Services\Billing\MessageCostLedger.php:205-206` writes `message_cost_entries` with `Tenancy::idOrFail()`.
+      `FetchVoicemailRecordingJob`, `InboundMessages`, `DeliveryReceipts`, `PlatformMessageSender` and
+      `ReviewInviteSender` reach them.
+    - **Ledger.** `credits.blade.php:55` and `mrr.blade.php:70` say *"Nothing in this checkout raises a debit or a grant,
+      so usage charges and plan credits appear once they are built."* But `App\Services\Billing\CreditLedger::record()` is
+      called from `AiCredits.php:340`, `CreditClawbacks.php:247`, `CreditPurchases.php:391` and `CreditGrants.php:201`,
+      and `credits:reset-monthly` (`console.php:152`) grants each month's plan credits through `resetMonthly()`. Both
+      exist, on `credit_ledger`.
+    ⭐⭐ **Ruling 90 measured the second ledger and still wrote the sentence.** Its own words were *"`App\Services\Billing\
+    CreditLedger:1007` does not fill this list … Two ledgers, one name, and the shorter grep would have said the sentence
+    was true."* That was right about **the list**, and the sentence it approved is about **the checkout**. Ruling 201's
+    *"a ladder starts from a missed subscription payment, which is `App\Services\Billing`'s and Track 1's"* named the
+    sibling's owner and then ruled copy saying the sibling does not exist. **TWENTY-FOURTH inherited attribution
+    corrected** (… 613, 618), in ruling 257's shape: each ruling measured the claim over its own table and wrote it about
+    the whole app.
+    **The ten true members, each safety named (328):**
+    - `checkout-block.blade.php:51` says *"writes the catalogue a cart is built from"*. The qualifier scopes the claim to
+      `sellables`, which has one writer, an evidence command (117). `price_book_items` is a different catalogue and is not
+      the one a cart is built from.
+    - The nine invoice sentences (X-199 ×5, X-211 ×4) say *"raises one from a completed job"*.
+      `grep -rln -F -e "X199\Models\Invoice" app/app app/database`, with X-199 and X-211 excluded, prints **nothing**, and
+      the tree has one `invoices` table. So nothing outside the lane raises an invoice either.
+    ⭐ **Known member (429):** ruling 618's `businesses.timezone` / `locations.timezone` pair is the shape the census exists
+    to find, found one tick earlier. 415's first-three check passed. 449's each-member-exists check passed: every writer
+    line was printed by `grep`.
+    **RULED:** each false empty state says what is true on its own screen. It reads **its own** table, nothing in this
+    checkout writes that table yet, and the thing it describes is recorded **elsewhere in this app**, which the screen
+    does not read. The two dunning headings and the two usage headings change with it.
+    - ⛔ **No screen is named in the copy.** `/account/plan` and `/account/credit` exist (`routes/web.php:994`, `:1051`),
+      but their owner-facing nav labels were not measured, so the copy names no destination (613's rule, applied to a
+      label).
+    - ⛔ **No cross-module read is added.** Reading `Dunning::isOpen()` or `CreditLedger::balance()` from a money
+      component is a new seam onto a Track 1 platform service (380, 618).
+    - ⛔ **The ledger headings `No ledger entries yet.` and `No ledger entries this month.` stay.** They are true of the
+      list they head.
+    - ⚠️ Blast radius, measured before briefing (46, 86, 146): sweep 1 is **12** lines (6 Blade, 6 test) and sweep 2 is
+      **4** Blade lines. Two test methods are renamed, because their names state the false claim (50(b)). Nothing in
+      `app/app`, `app/tests`, `app/storage/app/evidence` or `.agents/state` names either method. **No method is added**, so
+      the predicted floor is unchanged at `tests 2542 · passed 2539 · FAILED 1 · errors 2`, derived from
+      `gate-sup-1450.txt:98` plus zero added methods (92, 378).
+    - ⚠️ The four proofs mutate Blade lines, so the brief orders `view:clear` between each revert and restore and before
+      the gate (202, 210).
+    ⭐ **The generalisable half is 618's, turned on this lane's own shipped work:** *"nothing in this checkout does X"* is a
+    claim about the app, and a census that proves it reads every table that carries X, never only the one the screen
+    reads. Ruling 327's outcome shape does **not** apply: this population was buildable and is briefed.
+
+621. **⭐ Recorded, not briefed: `credits.blade.php:24`'s headline `Credit balance` reads C-Billing's own ledger, while the
+    tenant's actual credit balance is Track 1's `credit_ledger` (RULED by the lane supervisor 2026-09-11 21:3x; rulings
+    107, 123, 620).** Ruling 123 relabelled that headline from *"AI Credits Balance"* to *"Credit balance"*, on the ground
+    that `BillingLedgerEngine` writes one balance for every product. Ruling 620 measured that C-Billing's
+    `credit_ledger_entries` is not the app's credit ledger: `App\Services\Billing\CreditLedger::balance()` answers from
+    `credit_ledger`, and grants, usage debits and purchases all land there. So for a real tenant the headline shows only
+    top-ups made on this screen, under a label that names the whole balance. That is ruling 107's shape, *"the label names
+    a quantity the code does not compute"*, one ledger over.
+    ⛔ **Not in MONEY-212, for a measured reason.** It is a figure label rather than an empty state, and the honest
+    wording depends on what `/account/credit` shows the owner, which was not measured this tick. Relabelling it without
+    that measurement would be ruling 613's label-from-memory. ⚠️ **Trigger:** MONEY-212's review. The next tick measures
+    `livewire/account/credit.blade.php`'s headline figure and its label, then briefs or strikes.
+
+622. **⭐⭐ The seventy-seven-tick HOLD ends on condition 4, and the dispatch preceded these rulings (RULED by the lane
+    supervisor 2026-09-11 21:3x, by `date` `21:30`).** All four lift conditions were measured this tick (269, 272, 323),
+    and each case was decided on mtimes (494):
+    - **Owner.** `OWNER.md`'s newest heading is still `## OWNER RULING — 2026-09-09 09:02` (136). Its mtime is
+      `09-09 09:02:03`, older than `REVIEWS.md` (`21:24:52`).
+    - **Coder.** `--check` returned `CODER DEAD` before the dispatch and `CODER ALIVE pid=487900` after it.
+    - **Mailbox.** `REPORT.md` (`07:15:21`) and the old `BRIEF.md` (`07:07:27`) were both older than `REVIEWS.md`, so
+      this was case (e).
+    - **Cadence, all three ✗.** After `git fetch --no-write-fetch-head origin`, `origin/main` = **`bd3e9c5f`**, unmoved
+      (`git diff --name-status bd3e9c5f origin/main | wc -l` = 0). `git rev-list --count HEAD..origin/main` = **44**.
+      `git diff --stat dca743e8 origin/main -- app/app/Doctor coder-bin .claude/hooks` is empty. `git merge-base HEAD
+      origin/main` = **`dca743e8`**. **Merge gate CLOSED**, and `--allow-merge` was not passed.
+    - **Population.** Ruling 620's meets 324's bar: measured non-empty and buildable, with a positive control, a known
+      member, members read and each safety named.
+    **Dispatched:** `LAUNCHED run 237 coder=agy merge-gate=closed harness-gate=closed (pid 487900)
+    log=.agents/supervisor/logs/agy-run237.log`. It is dispatch 1 of 2 against nothing, and the `BRIEF.md` (20 371 B) and
+    `KICKOFF.md` (1 855 B) were both written before the launcher ran (464, 602). ⚠️ The brief's item 0 deletes
+    `hold-*.md`, `closing-*.md`, `kickoff-*.md`, `phpstan-*.neon`, `test-560.py` and `tick-*`. All of them are already
+    appended or superseded, and it spares `sup2130*`, this tick's scratch.
