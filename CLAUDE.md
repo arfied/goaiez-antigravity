@@ -4755,3 +4755,29 @@ the commit, so the red was already published into the wave's range, which **held
 ⭐ **The classmap trap is not merge-only.** The same wave's first green run threw `Target class … does not exist` for the
 new action, cured by `composer dump-autoload`. The 09-08 trap says *"every class a merge adds"*. **It is every new
 class file under `app/Modules/`**, and a slice brief that adds one needs the autoload step before its first test run.
+
+## ⭐ Trap added 2026-09-12 16:3x — probe the dictated TEXT, not a neighbour, and three brief defects PB-174/175 exposed
+
+1. **A dictated fix is proven by running phpstan on the dictated text, beside a control that reproduces a red.** A green
+   neighbour chain is not a proof. `X-110/Ui/VisitorsLive.php:58`'s `->get()->toBase()->map(…)` is green, and `toBase()`
+   on `QuotablePriceAction` stayed red (`pb174-phpstan.log`). Six candidates were probed under
+   `.agents/supervisor/probe-pb175/`, and only the `foreach` (ProbeC) was clean. PB-175 landed it byte for byte, and its
+   gate read `"result":"passed"`. **This corrects the 02:3x rule "dictate a chain the tree already proves green".**
+   **Method:**
+   - write the candidates under `.agents/supervisor/probe-*/` while the cwd is the checkout root;
+   - run `cd app` ALONE;
+   - run `./vendor/bin/phpstan analyse --memory-limit=1G --no-progress --error-format=json <abs paths>` ALONE;
+   - run `./vendor/bin/pint --test <abs path>` ALONE;
+   - run `cd /home/goaiez/agents/grs-antig-pricebook` ALONE.
+   A `Write` is refused while the cwd is `app/`. `cd … &&` or a `TMPDIR=` prefix makes phpstan need approval.
+2. **This checkout's phpstan and pint print `{"tool":…,"result":"passed|failed",…}`, with no `totals` key.** PB-174's
+   STOP table keyed on `"totals"`. **Key every table on `"result"`.**
+3. **A STOP that says "run no gate", beside a standing rule that says "write REPORT.md only after the gate", ends the
+   run with no report** (PB-174). Every STOP row names its own report step.
+4. **In a wave that merged, `git log -p --no-merges <base>..HEAD -- app/` walks through the merge into every main
+   commit.** PB-175's `MINUS LINES` printed 50 of main's deletions beside the lane's 7. **Every range ledger in such a wave
+   carries `--not <main sha>`.**
+5. **An agy run that leaves a command in the background idles until its 3h `timeout`.** Run 175 wrote its report at
+   13:31, and its log ends `root agent idle; waiting for 1 background task(s)` · `AGY_EXIT=124`, around 16:23. The tsv
+   shows two gate calls the coder re-issued *"because bash output didn't appear instantly"*. It spent no cap and held the
+   lane for three hours. **Every brief says: run every command in the foreground, and wait for it.**
