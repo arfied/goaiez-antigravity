@@ -22,7 +22,7 @@ class AnyViewItScreenTest extends TestCase
 
         // Give location a timezone so it renders
         $location = Location::where('business_id', $biz->id)->first();
-        $location->timezone = 'UTC';
+        $location->timezone = 'America/Chicago';
         $location->save();
 
         $this->get(route('x-194.any-view-it'))->assertOk();
@@ -37,7 +37,7 @@ class AnyViewItScreenTest extends TestCase
         $this->actingAs($owner);
 
         $location = Location::where('business_id', $biz->id)->first();
-        $location->timezone = 'UTC';
+        $location->timezone = 'America/Chicago';
         $location->save();
 
         $view = app(ViewSaveAction::class)->save($biz->id, 'My Initial GET View');
@@ -72,7 +72,7 @@ class AnyViewItScreenTest extends TestCase
         $this->actingAs($owner);
 
         $location = Location::where('business_id', $biz->id)->first();
-        $location->timezone = 'UTC';
+        $location->timezone = 'America/Chicago';
         $location->save();
 
         $view = app(ViewSaveAction::class)->save($biz->id, 'Count View');
