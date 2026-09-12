@@ -19294,3 +19294,22 @@ before classifying a single member** — the spelling is identical on a PHP wher
 
 ⚠️ **Trigger, named:** a `substr`/`strlen`/`str_pad`/`wordwrap` added over owner-typed or visitor-typed text in these modules; or
 `platform_check.php`'s floor dropping below 8.2 — neither can happen in a HOLD tick, and both would show in a stat.
+
+## ✅ CLEAN SWEEP — money's division/modulo OPERATOR census (rulings 587-588) over the seven owned modules: zero unguarded variable divisors (tick 355)
+
+Twelfth firing of tick 215's law, measured here rather than adopted (223). Money's `80e5bf11` widens its ruling 328 (five FUNCTION
+names) to the **operators**: PHP 8 throws `DivisionByZeroError` for `$a / 0` and `$a % 0`, so a variable divisor with no guard is a 500.
+Over the seven owned modules' code with `--include='*.php'`, positive control `app/app/Services` → **77** files (209):
+
+| instrument | owned hits | read at source |
+| :-- | :-- | :-- |
+| `-e ' / ' -e ' % '` | **5** | `X-157/EdgeDeployAction.php:144` `price_cents / 100` — a **literal** divisor · `X-155/Ui/SpamRate.php:27` `$spam / $total` behind `$total > 0 ?` on the same line, `$total` an `(int)` cast (Track 2's `Ui/`) · `X-157/Ui/views/edge-status-per.blade.php:34` and `X-110/Ui/views/visitors-live.blade.php:36` — a `/` in display text and an `implode(' / ')` literal · `X-155/FormCaptureAction.php:38` — a comment |
+| `-w intdiv fmod fdiv bcdiv bcmod gmp_div` | **0** | — |
+| PCRE no-space `[/%]\x24\|[/%]\(` | **2** | both `X-155/FormGenerateAction.php:22,39` — the **opening delimiter of a `preg_` pattern**, `'/(?<![a-z])'` |
+
+**One real variable division in the lane, guarded, in another lane's column.** Per 224: **already done here.** Zero buildable.
+
+⚠️ The two no-space hits are this lane's own regex delimiters: a `/`-delimited `preg_` pattern that opens with a group reads exactly like
+a division by a parenthesised expression. Tick 306's shape — the instrument's false positives are drawn from code this lane already
+wrote — so the no-space form is **read, never counted**. ⚠️ **Trigger, named:** a `/` or `%` by a non-literal divisor added in these
+modules.
