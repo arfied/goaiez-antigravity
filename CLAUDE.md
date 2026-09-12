@@ -10114,6 +10114,50 @@ Watch for: <the trap that applies, by name>
   - `0 2` vs `origin/main` `68fafdb3` after a fetch, and the Doctor/harness/hooks diff is empty, so no merge
     condition holds.
   - Board: proposals **14** · `app/app/Modules/` **0** · `CLOSED:` **7**. Re-run every grep; never inherit one.
+- ⚠️⚠️ **A coder's "the suite hangs" is a claim about the TREE, and the only instrument that tests it is the
+  supervisor's own `--tests` run.** Wave 188d skipped its green gate and every mutation because *"the test suite
+  consistently hangs indefinitely when run via supervise.sh"*.
+  - My gate on the same sha completed in **157 s** with no lock line.
+  - The wave's own `scratch/w188d-wait-green.txt` read verdict / **`1`** / `0`: §7's clash guard **refused** the gate
+    for another pest process.
+  - Two of its `--tests` logs end at §7's header with nothing after.
+  - The wave also ran a bare `pest --filter` (a hard limit), which runs outside `pest.lock` against the same
+    database.
+  - Eighth recurrence of the onset/outcome rule (tick 247), and the first whose blocker is the wave's own
+    overlapping runs. ⛔ Brief every gate as foreground, one at a time, and copy nothing unless the wait file reads
+    verdict / `0` / `1`.
+  - ⚠️ `pest-raw-last.log` then held **wave 189's object** under wave 188d's `-green` name, and `new-reds` computed
+    from it was empty over a tree with three new reds. The waiting rule's "copy nothing" half is load-bearing.
+- ⚠️⚠️ **`TenantProvisioner` creates a location with a NULL timezone.**
+  - `grep -n timezone` over `LocationProvisioner.php` and `TenantProvisioner.php` is empty.
+  - `LocationFactory.php:67`'s `America/New_York` is only a factory default.
+  - A build that refuses a null timezone therefore reddens every standing test that renders through a provisioned
+    tenant. Wave 188d reddened three `X194Test` methods. Its diagnosis inferred the factory default and named one of
+    the three.
+  - **Before briefing a refusal on a nullable column, grep what the provisioner writes to it.**
+- ⚠️ **Removing `#[Url]` does not make a Livewire property server-only; `#[Locked]` does.**
+  - `HandleComponents::updateProperty` (`vendor/livewire/…/HandleComponents.php:430`) accepts a client update to any
+    unlocked public property.
+  - So a value `render()` displays stays client-settable after the URL binding goes.
+  - Ruled at tick 341: *no real request displays a timezone production did not supply* includes a Livewire update
+    request.
+- **Backlog at tick 341 — wave 188e fixes 188d and proves both; wave 188f follows.** RULED (`REVIEWS.md` tick 341,
+  `BLOCK`, dispatch 1 of 2).
+  - **188e items:**
+    - the three red standing `X194Test` tests, per test;
+    - `test_any_view_it_component`'s two timezone parameters and two timezone `assertSee`s, ruled rewritable like
+      `test_location_timezone_from_url`, while the other two tests' assertions stay byte-identical;
+    - `locationTimezone` client-settable;
+    - the two-location branch;
+    - one green gate, then a mutation set covering 188d's and 188e's behaviour. `w188d-mut-1..4` are unrun and not
+      spent.
+  - ⛔ **Push HELD** at `86ed5127`. `1e1bcff6`, the stage refresh, is verified: the eight rows sum to 475 = the
+    doctor total.
+  - **188f:** `AnyViewIt::$ready`, and `load()` never clearing `$errorMessage` on retry. Also wave 187's NOTE 5 and
+    the `'R245'` fixture at `RefusalcodeDistributionPerScreenTest.php:38`. Re-measure each.
+  - `17 7` vs `origin/main` after a fetch, and the Doctor/harness/hooks diff is empty, so no merge condition holds.
+  - Board: proposals **13** · `app/app/Modules/` **0** · `CLOSED:` **8**.
+  - Standing set on the tip, by identity: the post-merge nine plus the three `X194Test` reds.
 
 ## Style
 
