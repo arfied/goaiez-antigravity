@@ -19731,3 +19731,52 @@ statements and **0** `Tenancy::` calls, so it is a fixture-rewriting wave of its
   whole compound with it (305).
 - ⛔ `ugrep` rejects `\M` inside an `-e` pattern as an invalid escape. Use `-F` for namespaced class names.
 - ⛔ `sort -t'{'` inside a pipe is refused; issue one `git reflog show -n 1 <ref>` per ref instead.
+
+## ⛔ A COUNT OF TENANCY CALLS IN A TEST FILE IS NOT THE TENANCY STATE THE FILE RUNS IN — the helper every fixture calls sets it (tick 370)
+
+Tick 369 deferred putting `BelongsToTenant` on X-137's `ShortLink` model as "a fixture-rewriting wave of its own", because
+`X137Test.php` carries 14 raw `SET app.business_id` statements and **0** `Tenancy::` calls. Both counts are right; the conclusion
+is not. `app/tests/TestCase.php:177` — the last line of `provisionTenant` — is `Tenancy::set($biz->id)`, and every X-137 fixture
+opens with `TestCase::provisionTenant(...)`. So `TenantScope`'s `Tenancy::idOrFail()` has a tenant in every fixture, the route sets
+its own at `ModuleServiceProvider:40`, and `LinkShortAction` passes `business_id`, so the trait's `??=` never fires. **Predicted
+fixture edits: zero.**
+
+⛔ **Before sizing a fixture change, read the helper every fixture calls** — `grep -n 'Tenancy' app/tests/TestCase.php` is one command.
+A grep scoped to the test file measures the calls that file makes, never the state its setup leaves. Same family as tick 306, one
+level out: there the fixture's *writes*, here the fixture's *setup helper's* writes. A deferral recorded with a cost it does not have
+is tick 260's decay in its expensive direction — the wave would never have been briefed.
+
+## ⚠️ `tenantOwnedTables()` scans `app_path('Models')` only — the trait's RLS convention cannot see a module model (tick 370)
+
+`BelongsToTenant`'s docblock promises that a model carrying it is asserted to have forced RLS on its table. The discovery
+(`app/tests/Support/architecture_helpers.php:1348-1379`, `:1350`) walks `app/app/Models` alone, so a module model is neither guarded
+nor at risk. Precedent already in the tree: `X-163/Models/PriceBookItem.php`. ⛔ A wave adding the trait to a module model gets **no**
+convention coverage from that lint in either direction — its only falsifier is its own. TRACK 1 ACTION (13), advisory.
+
+## ⭐ WHERE A SECOND BRACE IS BEING ADDED, TICK 322's LAW IS THE DESIGN OF THE FALSIFIER, NOT AN OBSTACLE TO IT (tick 370)
+
+Tick 322 ruled that a removal mutation cannot redden while a lower layer enforces the same invariant. SITE-214 adds an
+application-level brace (`TenantScope`) beside an existing one (the route's `business_id` clause), so the measurement is a **matrix
+on one fixture**: M1 removes the clause and keeps the scope (predicted GREEN — the scope refuses alone), M2 removes both (predicted
+RED, SITE-212's 302). ⛔ M1's green alone proves nothing (an unapplied mutation is green too — 320), and M2's red alone is a state
+already measured; **only the pair measures the new brace**, and each carries a presence witness predicted in both values (324).
+Commit the change before mutating, mutate and restore by edit, and prove the restore with an **empty** `git diff --stat` (287, 328).
+
+## ⚠️ A comment describing the state a planned wave changes is rewritten IN that wave (tick 370)
+
+SITE-213 wrote *"Tenancy on this read is this business_id clause and nothing else … no BelongsToTenant scope"* at
+`ModuleServiceProvider:42`. It was true when committed and is false the moment SITE-214 lands. Tick 251's *grep for the tests whose
+names describe a deleted mechanism* reaches **comments**: before briefing a change, grep the lane's own recent comments for
+sentences the change falsifies. Two in this wave, both replaced in item 2 with text claiming only what source already says.
+
+## Tick 370 — measured, for the record
+
+- **SITE-213 PASS**, `fcaec1f6` + `e4a84fcb`, comments and note verbatim. §7 `2544 · 2535 · FAILED 7 · errors 2`, J11 **absent —
+  GREEN**, byte-identical to the coder's. Doctor `boundary 41 · contract 85 · citation clean · schema 16 · capability 204 · anchor 128 ·
+  journey 3` · **477**, stamp `20260829-0647` = `runtime_build`. No stage moved.
+- **`origin/main` → `8451b92a`** (`@{00:07:05}`): a ui merge (X-199 views, `SchemeTokenTest`) plus Track 1 notes. Not a site merge;
+  take unnecessary (checker byte-identical).
+- **Census `8 · 4 · 1 · 11`**, byte-identical; fourth surface unchanged; tick 326 confirmed a third time (a `note` does not move the
+  owned-id count).
+- **SITE-214 dispatched** — `ShortLink` takes `BelongsToTenant` + `TenantScoped`, two comments rewritten, M1/M2 matrix, a write-nothing
+  `pg_policies qual = true` census.
