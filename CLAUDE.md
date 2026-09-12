@@ -4693,3 +4693,43 @@ as the read-side sweep after the write-side one.
 
 ⛔ **X-165's site waits.** `N-165-01` says X-165 never authors a price, yet `Plans::proposePlan()` authors one. Its end
 state may remove the typed box a test would pin, so that is **(r5)**, to be ruled first. **PB-171 fixes X-82 only.**
+
+## ⛔⛔ Trap added 2026-09-12 01:4x (closed by PB-172 02:0x) — a SHARED file's safe merge side is decided by whose `+` lines exist
+
+`.agents/state/JOURNAL.md` and `BUILD-STATE.json` are written by every lane through `state.py`, and Track 1 orders them at
+merge time. So "take main's side" reads like the safe default for them in a lane taking `origin/main`. **Measured on
+09-12, it would have silently erased this lane's six 09-11 R245 decisions.** Track 1 merged our product at `bce54396`
+and did not merge the state. Main's journal ended `2026-09-06T23:16:43`, and its `BUILD-STATE.updated` read
+`2026-09-05T17:11:31`.
+
+⭐ **The rule: run `git diff <our tip> origin/main -- <shared file>`.**
+- **If main's side is pure `-` lines of ours, main never received them. Restore ours** inside the merge, with
+  `git checkout HEAD -- <file>` (guard `:34-46`).
+- **If main's diff has `+` lines of its own, main's side carries something ours lacks** (PB-163's case).
+- **If both sides carry lines, neither copy is whole.** That is a `TRACK 1 ACTION` for a human-ordered union. ⛔ Never
+  hand-edit it, because `state.py` owns both files.
+
+PB-172 applied it: six restored files, `grep -c '2026-09-11T1' JOURNAL.md` still `6`, and TRACK 1 ACTION (m) filed.
+⚠️ **A count instrument cannot catch this.** The merge is clean and the gate is green either way. Only the review
+sentence *"every `(R245)` in code has a matching `decided` line"* would ever notice, and only much later.
+
+## ⭐ Trap added 2026-09-12 01:4x — a tick's writes are a TRANSACTION, and the dispatch is its last step
+
+Twice (PB-162 on 09-09, and the 09-11 16:0x tick) a tick wrote its verdict and `BRIEF.md`, then died at a session
+limit before `KICKOFF.md` and the launch. Every tick after that stalled correctly under case (e), for 38 hours the
+first time.
+
+⭐ **The order: verdict block → push → BRIEF → KICKOFF → dispatch.** Addendum notes, `CLAUDE.md` carries and anything
+cosmetic come after. The exception is a supervisor commit that must precede a slice wave's gate window. ⛔ **Never make
+that commit before a merge wave**: a non-base `CLAUDE.md` turns a zero-conflict merge into a conflict. ⛔ **Never make a
+supervisor `git commit` while the coder holds `MERGE_HEAD`**, because it would commit the coder's merge from the wrong
+seat (ruling 32).
+⭐ **An abandoned dispatch looks like this:** a `REVIEWS.md` block ends in a dispatch heading with no `LAUNCHED` line,
+`BRIEF.md` is newer than `KICKOFF.md`, and `pgrep -af -P <coder.pid>` prints nothing. **Finish it; do not wait.**
+
+## ⭐ Trap added 2026-09-12 01:4x — inbound owner content has a THIRD format
+
+The 09-11 09:3x trap added `owner HH:MM:` lines with no heading. On 09-12 a third format arrived:
+`- 2026-09-12 01:3x owner: …`. It matches neither `^## ` nor `^owner [0-9]`. ⭐ **Run
+`grep -n '^## \|owner [0-9]\|owner:' .agents/supervisor/OWNER.md`, and `Read` its last ten lines too.** A new format
+is found by reading, never by a grep written for the old ones.
