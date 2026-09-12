@@ -18308,3 +18308,48 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
    - **Population.** Ruling 609's is cross-lane and filed as ACTION 33. Ruling 610's is recorded and not buildable.
 
    **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty coder wave to avoid an idle tick is what rulings 95, 100 and 111 forbid. ⚠️ No gate ran this tick: nothing in `bin/supervise.sh` or `app/**` changed, so the floor stays ruling 564's.
+
+612. **⭐ The two unread items the 20:5x addendum named are measured. (a) `bin/state.py`'s write paths: every branch that reaches `save(s)` also calls `journal(...)`, so ZERO subcommands write `BUILD-STATE.json` without a journal line. Every branch journals BEFORE it saves, so the only way to get a journal line without its state twin is an exception inside `save()`. (b) Rules 00–09 carry no mailbox or push text. `AGENTS.md:124,:128-132` carries rule 10's stale push sentence, byte-identical to main's, and it joins TRACK 1 ACTION 33. Zero buildable (measured by the lane supervisor 2026-09-11 21:0x, by `date` `21:00`; rulings 5, 26, 147, 262(b), 294, 324, 327, 328, 415, 429, 609, 610).**
+   **(a) Instrument, quoted (300):** `grep -n -e "def " -e "save(" -e "journal(" -e "sys.argv" bin/state.py`, then `main()` (`:154-249`) read whole (395). The write paths:
+   - `init` (`:84`): `save(s); journal(...)`, both.
+   - `start`/`done` (`:161-162`), `unresolved` (`:165-168`), `resolve` (`:190-196`), `decided` (`:208-211`), `journey` (`:215-216`), `stage` (`:218`), `selftest` (`:220`), `seal` (`:222`), `note` (`:226`): each mutates `s`, calls `journal()`, then falls through to `:249`'s single `save(s)`.
+   - `report`/`status` (`:227-246`) return at `:246` before `save`, and write neither file.
+   - `next` (`:90-142`) only prints.
+   ⭐ **Every refusal exits BEFORE the journal call**, so a refused command writes neither file:
+   - `_set`'s roster check at `:145-146`, reached first by `start`/`done`/`unresolved`;
+   - `resolve`'s five refusals at `:173-188`;
+   - `decided`'s roster check at `:206-207`;
+   - `stage`'s `int(a[1])`, evaluated before its journal call;
+   - `journey`'s `KeyError` on an unknown id, raised before the journal call.
+   ⭐ **Known member (429):** `decided` at `:208-211` is ruling 610's own cited path. ⭐ **The control discriminates:** the census separates the two read-only branches (`report`/`status`, `next`) from the ten mutating ones. 415's first-three check passed (`start`/`done`, `unresolved`, `resolve`).
+   **Safety, named (328):**
+   - Nothing writes `BUILD-STATE.json` without a journal line.
+   - The reverse, a journal line with no state change, needs `STATE.write_text` to raise after `JRNL.open("a")` succeeded. That means a disk-full or a permission change in the ~1 ms between two writes to the same directory. There is no measured instance: ruling 610's one JOURNAL-only commit, `51ec4bd1`, was a staging omission whose twin landed in `9f3dbd86`, not a `state.py` crash.
+   - ⛔ `bin/state.py` is in neither column of this lane. The coder never commits `bin`, and the supervisor commits only `bin/supervise.sh`. `git diff --stat origin/main HEAD -- bin/state.py` is empty and its last change is `c699a785` (2026-09-06), so any edit is Track 1's. Recorded at ruling 76's grade and not filed: a sub-millisecond window with no instance is not worth a Track 1 item.
+   ⚠️ Also recorded: `journey`, `stage`, `selftest` and `seal` do not refresh `s["updated"]`. It is cosmetic, and no reader in this lane uses that field for a decision.
+   **(b) Instrument, quoted (300):** `grep -n -i -e "supervisor" -e "REPORT.md" -e "git push" -e "BRIEF"` over `.agents/rules/00`–`09` and `AGENTS.md` prints **8** lines.
+   - Three are `08-modular-ddd-cqrs.md:101,:104,:106` and `03-module-contract.md:12`, where "brief" means `php artisan brief`, the module brief, not the mailbox. That is mechanism 8, caught by reading the hits (262(b)).
+   - Five are `AGENTS.md:124,:128,:130,:131,:132`. `:131` reads **"Do not `git push` until `REVIEWS.md` says `PASS`"**, which is ruling 609(c)'s class: the coder never pushes in this lane (26).
+   ⭐ **The safety is the one 609 measured:** `launch-coder.sh:126` hard-sets `PUSH_OK=0`, and `coder-bin/git:168` refuses a push without `GOAIEZ_PUSH_OK=1`. `git diff --stat origin/main HEAD -- AGENTS.md .agents/rules/` is **empty**, and the rules' last change is `a42d6dd9` (2026-08-30), so a money-only edit would ride onto main's contract (609). ⛔ Not edited. **TRACK 1 ACTION 33's scope gains `AGENTS.md:124,:128-132`.** Rules 00–09 are struck. Ruling 327's outcome shape an **eighty-fourth** time.
+
+613. **⭐⭐ The installed Livewire is v4.4.2, not 3. Seven lines of this ledger (rulings 241, 347, 552, 554) name "Livewire 3", and no command ever printed that version. Every one of their CONCLUSIONS rested on a vendor file read in the v4.4.2 tree, so all of them hold. Only the version label is wrong, and it is corrected in place rather than rewritten (RULED by the lane supervisor 2026-09-11 21:0x; rulings 257, 289, 326, 355, 374, 416, 440, 552, 554).** This follows the addendum's pointer to *"a framework-version spelling"* (552, 554) and turns it on the ledger's own version NAME.
+   **Measured:**
+   - `app/composer.lock:3285-3286` is `"name": "livewire/livewire"`, `"version": "v4.4.2"`.
+   - `app/composer.json:19` is `"livewire/livewire": "^4.0"`.
+   - ⭐ **The house's rule text states it** (326's shape, a twentieth time): `.agents/rules/07-tech-stack.md:14` reads *"Livewire 4 + Alpine.js"*, and `AGENTS.md:121` calls the stack *"⛔ the pinned stack — Laravel 13, Livewire 4 … Not a default to be re-chosen"*.
+   - `grep -c -F -e "Livewire 3" CLAUDE.md` = **7**, at `:6116` (241), `:9799` (347), `:17543`/`:17551` (552) and `:17563`/`:17567`/`:17573` (554).
+   **Why each conclusion survives:**
+   - The vendor facts were read in the installed tree: `SupportEvents/HandlesEvents.php` (the directory is listed in v4.4.2 this tick), `dist/livewire.esm.js:4815`'s `.lazy` branch, and `HandlesEvents.php:9`'s `$listeners`.
+   - 552's *"Livewire 2's `emit` family no longer exists"* is a statement about what vendor defines. It is true of v4.4.2.
+   - 241's deferred `wire:model` and 347's DOM morphing were read from behaviour, and v4 keeps both; ruling 496 measured the hydration consequence without a version.
+   ⚠️ **TWENTY-SECOND inherited attribution corrected**, in ruling 257's shape: the ledger wrote a version from memory beside measurements that never printed one. ⭐ **The generalisable half is ruling 374's, aimed at a label:** a version number in a ruling is a claim like a line number (293) or a class name (524). It is cited by the command that prints it (`grep -A 1 '"name": "<pkg>"' app/composer.lock`), never by recall. A ruling that says *"removed in version N"* without that citation has only proved the current vendor lacks it, and that part is the half that matters. ⛔ No buildable member; the seven lines are corrected by this ruling standing beside them (355). ⚠️ **Trigger:** a brief or ruling that dictates behaviour by framework version rather than by a vendor file.
+
+614. **⛔ SEVENTY-FIFTH consecutive HOLD (RULED by the lane supervisor 2026-09-11 21:0x, by `date` `21:00`).** All four lift conditions were measured this tick (269, 272, 323), each case decided on mtimes (494):
+   - **Owner.** `OWNER.md`'s newest heading is still `## OWNER RULING — 2026-09-09 09:02` (136), mtime `09-09 09:02:03`, older than `REVIEWS.md` (`20:54:47`).
+   - **Coder.** `--check` returned `CODER DEAD`, no note.
+   - **Mailbox.** `REPORT.md` (`07:15:21`) and `BRIEF.md` (`07:07:27`) are both older than `REVIEWS.md`.
+   - **Cadence, all three ✗.** After `git fetch --no-write-fetch-head origin`, `origin/main` = **`bd3e9c5f`**, unmoved (`git diff --name-status bd3e9c5f origin/main | wc -l` = 0). `git rev-list --count HEAD..origin/main` = **44**. `git diff --stat dca743e8 origin/main -- app/app/Doctor coder-bin .claude/hooks` is empty. `git merge-base HEAD origin/main` = **`dca743e8`**.
+   - **Track 1.** No answer to ACTION 13–33.
+   - **Population.** Rulings 612's and 613's have no buildable members.
+
+   **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty coder wave to avoid an idle tick is what rulings 95, 100 and 111 forbid. ⚠️ No gate ran this tick: nothing in `bin/supervise.sh` or `app/**` changed, so the floor stays ruling 564's.
