@@ -10194,6 +10194,39 @@ Watch for: <the trap that applies, by name>
     line number before briefing.
   - `29 11` vs `origin/main` after a fetch, and the Doctor/harness/hooks/seals diff is empty, so no merge condition
     holds. Board: proposals **13** · `app/app/Modules/` **0** · `CLOSED:` **8**. Re-run every grep; never inherit one.
+- ⚠️ **An `APPLIED` pattern containing `\n` can never match, because `grep` reads by line — so the count is `0` by
+  construction.** Wave 188f's mutation 1 deleted a `#[Locked]` byte-identical to two others, so no single-line pattern
+  could match *"the deleted line only"*. My brief asked for exactly that, which is tick 299's unsatisfiable property.
+  **The form for deleting a duplicated line is a count taken before the apply and after it, which must fall.** Print
+  both captures in the command block.
+- ⚠️ **A probe script that bootstraps the application can sit in `scratch/` unclaimed, and `error_log` is silent when
+  it succeeds.** Wave 188f left `scratch/w188f-test-assert.php` (`require 'app/bootstrap/app.php'` → `bootstrap()`),
+  against a hard limit printed in both the brief and the kickoff. Whether it ran is unestablished: the transcript is
+  outside this column's sandbox, and the probe answered the very question item 1 turned on.
+  **`grep -rl "bootstrap/app.php" scratch/w<N>-*` is a one-command field**; brief it as one.
+- ⚠️ **`AnyViewIt::$jobValue` and `$jobCount` are client-settable and have no production writer, and the Count and
+  Estimate tiles display them.** Measured at tick 343: outside `AnyViewIt.php`, `grep -rn "jobCount\|jobValue" app/app
+  app/resources app/routes` gives only `ViewRenderAction`'s parameters and the blade (the `X-138` hits are a different
+  action). This is tick 341's timezone ruling applied to two more inputs, and it is **wave 188h**, never paired with a
+  build.
+- ✅ **Wave 188f's two mutations are SPENT; never re-brief them.**
+  - `w188e-mut-3`, re-run as `w188f-mut-1`, reddens the lock test on its own terms at radius 1.
+  - `w188f-mut-2` (the picker's `:selected` → `options()->first()`) fails the new `assertSeeInOrder` at the 4th of 4
+    with `America/New_York` passing.
+  - Suite on `ddfe2ac2`: `tests 2576 · passed 2567 · assertions 11275 · failed 7 · errors 2`, and the standing nine hold
+    by identity. My plain gate is `gates green.`
+- **Backlog at tick 343 — wave 188g is `AnyViewIt`'s and `SavedViewsList`'s unclearable error panels, as two numbered
+  builds.** RULED (`REVIEWS.md` tick 343).
+  - **Item 1.** `load()` never clears `$errorMessage`, so the panel's `retry="load"` can never recover. `$ready`'s
+    skeleton branch is unreachable.
+  - **Item 2.** A save failure renders under *"We could not load your saved views."* and hides the form and the list.
+    Its `$refresh` retry never clears it.
+  - **Standing assertions.** `X194Test.php:193-194` and `:274-275` stay byte-identical. The ⛔ holds in both directions.
+    Shapes are withheld. Mutations reinstate the defect.
+  - **Wave 188h** is `jobValue`/`jobCount`, re-measured when briefed. The `'R245'` fixture still folds into the wave
+    that opens its file.
+  - `30 1` vs `origin/main` after a fetch, and the Doctor/harness/hooks/seals diff is empty, so no merge condition
+    holds. Board: proposals **13** · `app/app/Modules/` **0** · `CLOSED:` **8**. Re-run every grep; never inherit one.
 
 ## Style
 
