@@ -19313,3 +19313,35 @@ Over the seven owned modules' code with `--include='*.php'`, positive control `a
 a division by a parenthesised expression. Tick 306's shape — the instrument's false positives are drawn from code this lane already
 wrote — so the no-space form is **read, never counted**. ⚠️ **Trigger, named:** a `/` or `%` by a non-literal divisor added in these
 modules.
+
+## ✅ CLEAN SWEEP — money's catch-arm reachability census (rulings 589-590) over the seven owned modules; its DEAD-CLASS half has an EMPTY population here, so the question moves from the CLASS to the MESSAGE (tick 356)
+
+Thirteenth firing of tick 215's law, measured here rather than adopted (223). Money's `86c175b5` asks whether every declared exception
+class is thrown and whether every named catch arm's `try` can raise the class it names. Over the seven owned modules' code with
+`--include='*.php'` and the PCRE hex form for the parenthesis (286):
+
+| instrument | owned | read at source |
+| :-- | :-- | :-- |
+| `extends …Exception` | **0** (control: **78** files under `app/app`) | this lane declares **no** exception class |
+| `throw new` | **8** | all SPL: `\RuntimeException` ×2 (`EdgeDeployAction:68 :383`), `\DomainException` ×6 (`ChatCaptureAction:28 :49`, `CallAttributeAction:26 :49 :94 :140`), each a message-string code |
+| `catch \x28` | **11** | 3 `\Throwable` tails · 4 X-110 `Ui/` `Exception` tails (`AbandonedForms`/`Cooling` import `use Exception;`, so they resolve to `\Exception`, not a dead `App\Modules\X110\Ui\Exception`) · `FormCaptureAction:147` `\Exception` ← `Carbon::parse` (291, 353) · `EdgeStatusPer:25` `ModelNotFoundException` ← `EdgeRollbackAction`'s `findOrFail` (350) · **two `\DomainException` arms** |
+
+⭐ **The precondition.** Money's lane declares 21 classes, so *"is every declared class thrown?"* has members there. This lane declares
+**none**, so that half is empty by construction. Every named arm here catches an SPL base class or a catch-all, which makes reachability
+trivially true **for the class**. The question that still has content is whether the arm tells **which** code it caught. The two
+`\DomainException` arms answer it differently, and both answers are right:
+
+- `X-102/ChatCaptureController:72-79` maps **only** `UNDER_18_SIGNAL_ON_SESSION` to 422 and **rethrows** everything else (SITE-209). So
+  `NO_CONTACT_METHOD_ON_CAPTURE`, which is dead through this route (330), would surface as a 500 rather than be silently mapped.
+- `X-157/ModuleServiceProvider:74-76` maps **every** `\DomainException` to 409 carrying its message. The reachable throwers are
+  `VISITOR_SESSION_TOKEN_REQUIRED` and `BUSINESS_NOT_CONFIGURED_FOR_DNI`, both asserted at the route (`DniRouteTest:110 :117`). The two
+  `NUMBER_ALREADY_ASSIGNED…` throws need a campaign argument the route never passes (308).
+
+⛔ **When a lane throws base classes keyed by message strings, a class-level reachability census is satisfied by construction. Read the
+arm's HANDLER for message discrimination instead.** A handler that maps every message is a policy about **future** throwers in its `try`'s
+delegate chain, not only the current ones. Per 224: **already done here.** Zero buildable.
+
+⚠️ **Advisory for Track 2, measured and not briefed:** the four X-110 `Ui/` tails pass `$e->getMessage()` as `loadError`, and
+`cooling`, `install-verify`, `visitors-live` and `abandoned-forms` render it with `{{ }}` (escaped, so not script). A `QueryException`
+message carries SQL text and bindings, so a database fault shows query text in the tenant shell. No clause measured, and it is Track 2's
+`Ui/` under ruling 5. ⚠️ **Trigger, named:** a named domain catch arm or a declared exception class added in these modules.
