@@ -4801,3 +4801,16 @@ class file under `app/Modules/`**, and a slice brief that adds one needs the aut
    `toBe(227)`/`toBe(202)` pins and walks the `OwnerNavTest` interlock. The precedent (`4ae5d9e2`) is Track 2's owner-shell
    conversion, which edits `OwnerNav.php` and three Architecture tests. TRACK 1 ACTION (n).
    ⛔ **Never lower another track's pinned count from this lane.**
+
+## ⛔ Trap added 2026-09-12 17:3x — a STOP checked against a state the brief already knows fires by construction
+
+1. **PB-177's item 3 required `git diff --name-only HEAD` to list only the two state files.** The twelve `plugins/wordpress/**`
+   pint reformats (TRACK 1 (e)) have been ` M ` since 09-08, and item 0 had measured a **scoped**
+   `git status --porcelain -- app/ .agents/state`. The unscoped check could never pass; the coder stopped correctly and the wave
+   cost one dispatch.
+   ⭐ **A precondition uses the pathspec of the baseline that measured it, and a known standing dirty path is excluded by name
+   inside the check.**
+2. **Item 1 expected `withdrew tests on X-172`.** That string is `bin/state.py:199`, printed only when records remain. X-172 had
+   one record, so `:202` printed `withdrew the last UNRESOLVED on X-172; status -> BUILDING …`. The brief never read the tool.
+   ⭐ **Key a state tool's success on the record it writes (`grep -n -A12 '"<id>": {'`, the JOURNAL tail), never on its printed
+   prose, and read a tool's print branches before quoting one.**
