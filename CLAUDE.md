@@ -3167,6 +3167,25 @@ screens, `app.css`, test changes). That is +1 first-parent / +34 ancestor.
 - Tick 392's notes were committed as `10367d42`. These notes are committed **before** the dispatch
   (`RULING EO`: this seat cannot commit while a merge is staged).
 
+✅ **S-201 — COMPLETE at tick 394 (STAGES-239, PASS-WITH-NOTES).** Merge `115422fc` (parents
+`efebbb93` · `29312e16`), restore proof empty, DB pin intact, and `app/` byte-identical to the pin
+except `app/phpunit.xml`. §2e/§2f/§2g all printed ✓.
+- §5 reads `0·39·85·0·16·204·128·3`, total **475**, and the eight sum to it. `boundary` 41→39 is
+  **main's** number (`RULING FO`).
+- **The admission census was re-run and is EMPTY.** 301 − 254 = 47 pairs, and the 204 flagged rows
+  equal §5. The intersection is `X-117` G1-73/G1-81 (`CM`), `X-158` G16-32 (§257.4) and `X-212`
+  G4-54 (`CB`).
+- Tip `115422fc` was pushed `efebbb93..115422fc`, certified by `.gateT394.txt`.
+- `main` moved to `1cd4320d` (`track/site` SITE-213). The lane is 1 / 33 behind, and all three drift
+  conditions are FALSE.
+
+⌛ **S-202 — §3 ledger refresh, dispatched at tick 394 as STAGES-240, merge gate CLOSED.** §3 still
+reads `boundary 41` against §5's 39. This is S-200's shape. The JOURNAL `^- .+ stage ` rows start at 96.
+- ⚠️ **Brief lesson:** `--full-doctor` §5 truncates its row dump and prints no `schema` rows. Ask for
+  them only through `php artisan doctor --stage=schema`, or measure them from this seat (`RULING FI`).
+- ⚠️ **Report lesson:** STAGES-239 wrote "§3 matches §5" beside 41 vs 39. Compare the numbers, never
+  the sentence.
+
 ⌛ **S-200 as dispatched (history): §3 ledger refresh, dispatched at tick 345 as STAGES-238, merge gate CLOSED.**
 Tick 344's HOLD missed that §3 still read `boundary 55 · citation 3 · capability 207` while §5 reads
 **41 · 0 · 204** (`.gateT345b.txt` at `423ec5a9`, total 477, the eight sum). This is S-191's exact
