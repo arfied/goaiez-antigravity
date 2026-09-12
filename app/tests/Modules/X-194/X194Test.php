@@ -359,6 +359,74 @@ class X194Test extends TestCase
         $response->assertSeeInOrder(['value="'.$location2->id.'"', 'selected', '>'.$location2->name.'</option>'], false);
     }
 
+    public function test_any_view_it_retry_recovers_when_cause_is_gone(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'View Retry Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $view = $this->saveAction->save(
+            businessId: $biz->id,
+            viewName: 'Recover View',
+            viewType: 'table',
+            filterConfig: [],
+            columnsConfig: []
+        );
+
+        $location = Location::where('business_id', $biz->id)->first();
+        $location->timezone = null;
+        $location->save();
+
+        $component = Livewire::test(AnyViewIt::class, [
+            'businessId' => $biz->id,
+            'viewId' => $view->id,
+        ]);
+
+        $component->call('load')
+            ->assertSee('The location has no timezone set.');
+
+        $location->timezone = 'America/Denver';
+        $location->save();
+
+        $component->call('load')
+            ->assertDontSee('The location has no timezone set.')
+            ->assertSee('America/Denver');
+    }
+
+    public function test_saved_views_list_retains_list_on_save_failure(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Save Error Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->saveAction->save(
+            businessId: $biz->id,
+            viewName: 'Existing View',
+            viewType: 'table',
+            filterConfig: [],
+            columnsConfig: []
+        );
+
+        $mock = \Mockery::mock(ViewSaveAction::class);
+        $mock->shouldReceive('save')->andThrow(new \Exception('Save exploded'));
+        $this->app->instance(ViewSaveAction::class, $mock);
+
+        $component = Livewire::test(SavedViewsList::class, ['businessId' => $biz->id])
+            ->call('load')
+            ->assertSee('Existing View');
+
+        $component->set('newViewName', 'Failing View')
+            ->call('saveView')
+            ->assertSee('We could not save your view.')
+            ->assertSee('Existing View');
+
+        $mock2 = \Mockery::mock(ViewSaveAction::class);
+        $mock2->shouldReceive('save')->andReturn(new SavedView);
+        $this->app->instance(ViewSaveAction::class, $mock2);
+
+        $component->set('newViewName', 'Successful View')
+            ->call('saveView')
+            ->assertDontSee('We could not save your view.');
+    }
+
     /**
      * [G4-20], [G8-10], [G9-11], [G9-23], [G9-26], [G9-35], [G9-37], [G13-17]
      *
