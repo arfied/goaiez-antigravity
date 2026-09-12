@@ -19345,3 +19345,48 @@ delegate chain, not only the current ones. Per 224: **already done here.** Zero 
 `cooling`, `install-verify`, `visitors-live` and `abandoned-forms` render it with `{{ }}` (escaped, so not script). A `QueryException`
 message carries SQL text and bindings, so a database fault shows query text in the tenant shell. No clause measured, and it is Track 2's
 `Ui/` under ruling 5. ⚠️ **Trigger, named:** a named domain catch arm or a declared exception class added in these modules.
+
+## ⛔ THIS LANE'S OWN GATE §2 SCANNED A STATE COMMIT ON EVERY CODER GATE FOR A HUNDRED TICKS, AND ITS GENERATED-FILE TERM MATCHED NOTHING — money's rulings 591-592, measured here and fixed in this seat's column (tick 357)
+
+Fourteenth firing of tick 215's law, measured here rather than adopted (223). Money's `43084cb5` says its gate's §2 scanned only
+`HEAD~1..HEAD` and its `manifest|capabilities` term was app-relative. This lane's `bin/supervise.sh` carried both, read at source:
+
+| half | before | measured |
+| :-- | :-- | :-- |
+| **range** | `:105 git diff --name-only HEAD~1 HEAD` | SITE-210: `d553eaff~1..d553eaff` → `.agents/state/` only; `8200a10e~1..d553eaff` adds `X102Test.php` |
+| **term** | `^app/Modules/[^/]+/(manifest\|capabilities)\.php$` | tracked matches **0**; with `app/app/Modules/` **254**; on SITE-89's `91998b24` old 0, new 4 |
+
+⭐ **The two halves compose into a gate blind twice over, and tick 245's own ruling is what made the first half total.** 245 ruled *the state
+commit is the LAST numbered step of the wave* — correct, and it guaranteed that `HEAD~1..HEAD` on every coder gate since held nothing but
+`.agents/state/`. So §2 and §2b have never scanned a wave's code commit. **A rule that fixes a residue can change the population another
+instrument samples, and nothing announces it** — same family as tick 211 (*`merge=ours` is a conflict resolver, not a protection*) and 316
+(*being merged into main is what disables `merge=ours` against main*): a correct change elsewhere silently empties a check's input.
+
+✅ **No past verdict changes, measured**: a first-parent sweep of `261347f5..HEAD` restricted to every forbidden pathspec prints five commits,
+all reviewed per commit by `git show --stat` (four `JourneyHarness.php` under ruling 1, ticks 229-230; `91998b24`, tick 197), and §2b's lint
+blindness was covered by §6's phpstan. The standing review habit — **grade every commit with `git show --stat`, never the gate's §2** — is what
+absorbed a hundred ticks of a blind section. ⛔ Keep it: a gate section is corroboration of the reviewer's own per-commit read, never a substitute.
+
+**RULED (tick 357): fixed in `69e7b990`, adapted not copied (216)** — `base` is `origin/<branch>` when HEAD is ahead of it, else `HEAD~1`; the
+term is repo-relative; this lane's `.env.example` exclusion kept. **Exercised on BOTH branches** (`HEAD~1..HEAD` with the edit uncommitted,
+`origin/track/site..HEAD (1 commit)` after committing it), each with exactly one `⛔ app/phpunit.xml`. ⚠️ The corrected **term** is proven by an
+equivalent grep on a real commit, not through the script — no HOLD-tick range touches a generated file — so it is a rule until a regeneration
+wave fires it (193).
+
+⚠️ **Two consequences for reading §2 from now on.** (1) On a **merge wave** the range carries main's whole delta, so adopted `app/app/Doctor/**`
+and `seals.json` paths print `⛔` — loud by design; separate adoption from edit by byte-identity against the merged sha (317), never by the
+`⛔` count. (2) A coder gate's `⛔` list is now its **whole unpushed range**, which is what 196/207's *one known path, any second is a BLOCK*
+always assumed it was.
+
+## ⛔ `\x24` IN PCRE IS A LITERAL DOLLAR, NEVER THE END ANCHOR — a false zero from this seat's own workaround (tick 357)
+
+Ticks 305/313 made `\x24` the accepted substitute because a `$` anywhere in a grep pattern is refused from this seat, and there it matched a
+literal `$` in PHP source (`\x24visitorSessionToken`) — correct. At tick 357 it was used as an **anchor** (`capabilities\.php\x24`) and returned
+**0 for the corrected term as well as the old one**, which is what a working fix and a broken instrument look identical as. Tick 209's rule caught
+it — a surface that drops to zero is a tooling fault until a positive control says otherwise — and the re-run without the anchor beside a listing
+of the commit's paths read 0 and 4. ⛔ **`\x24` substitutes for the `$` CHARACTER, never for `$` the ANCHOR.** Where an end anchor matters, use a
+git pathspec (`':(top,glob)app/app/Modules/*/capabilities.php'`) or drop the anchor and state why the suffix is unambiguous.
+
+⚠️ Same shape as tick 313's *a ground value this seat cannot execute is a recollection wearing a command*, one level in: an accepted workaround for
+a refused character carries only the character's **literal** meaning, and the refused form's **syntactic** meaning has no substitute in the same
+tool.
