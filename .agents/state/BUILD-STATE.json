@@ -1674,6 +1674,10 @@
   {
    "at": "2026-09-11T15:54:42",
    "note": "run 164: module-done C-Reviews re-measured r164-module-done.txt \u26d4 1 BUILT, \u26d4 2 TESTED, \u2705 3 CONTENT, \u2705 4 HELP, \u26d4 5 DASHBOARD, \u26d4 6 SURFACES, \u26d4 7 GATE, identical to run 163 (r164-module-done-diff.txt rc=done only); doctor r164-doctor.txt integrity 0 \u00b7 boundary 41 \u00b7 contract 85 \u00b7 citation 0 \u00b7 schema 14 \u00b7 capability 204 \u00b7 anchor 128 \u00b7 journey 2; evidence dir absent; five UNRESOLVED rows recorded (built, tested, dashboard, surfaces, gate); state.py next BUILD_WAVE wave 11 J6-J7 portal"
+  },
+  {
+   "at": "2026-09-12T01:55:19",
+   "note": "run 165: merge of origin/main 8b407d10 (owner rule 2026-09-09 trigger (1), 151 behind); r165-merged.txt shortstats equal and 92 0; r165-gate.log tests 2594 \u00b7 passed 2581 \u00b7 FAILED 9 \u00b7 errors 4, incoming names: none; r165-doctor.txt integrity 0 \u00b7 boundary 39 \u00b7 contract 85 \u00b7 citation 0 \u00b7 schema 14 \u00b7 capability 204 \u00b7 anchor 128 \u00b7 journey 2, moved by the merge: boundary 39"
   }
  ],
  "resolved": [
