@@ -257,12 +257,29 @@ if [ $census_only -eq 1 ]; then
   echo; echo "  (--census: sections 1a/1b only; exit $fail)"; exit $fail
 fi
 
-bar "2. forbidden paths touched  (uncommitted + last commit)"
-touched=$( { git diff --name-only HEAD~1 HEAD 2>/dev/null; } | sort -u)
+bar "2. forbidden paths touched  (uncommitted + unpushed range)"
+# REV-176 (2026-09-12), ported by hand from main's 4ba54b40 (money's ruling 591, Track 1 ACTIONs 29 and 33).
+# HEAD~1..HEAD saw only the LAST commit. Run 170 ended in a chore(state) commit, so at review time §2 and
+# §2b never saw the merge commit the wave existed for. The range is now everything not yet on
+# origin/<branch>, because the supervisor pushes only gated shas; it falls back to HEAD~1 once HEAD is
+# pushed or detached. bin/supervise.sh reads both-sides-moved in §2f, so the merge=ours driver keeps OURS
+# and main's fix could never have arrived by merge — a hand port is the only route.
+# ⚠ Not covered (REV-146 §1): after the push the range collapses to HEAD~1, so a review read AFTER the
+# push is as blind as before; and base..HEAD across a merge lists the incoming side's paths too, which is
+# REV-126's point (a merge walks past the guard) rather than noise.
+s2_up="origin/$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
+s2_base="HEAD~1"
+if [ "$s2_up" != "origin/HEAD" ] && git merge-base --is-ancestor "$s2_up" HEAD 2>/dev/null \
+   && [ "$(git rev-parse "$s2_up" 2>/dev/null)" != "$(git rev-parse HEAD)" ]; then s2_base="$s2_up"; fi
+echo "  range: $s2_base..HEAD  ($(git rev-list --count "$s2_base"..HEAD 2>/dev/null) commit(s))"
+touched=$( { git diff --name-only "$s2_base" HEAD 2>/dev/null; } | sort -u)
 sup_edits=$(git diff --name-only HEAD -- .agents/supervisor CLAUDE.md bin/supervise.sh 2>/dev/null)
 [ -n "$sup_edits" ] && printf '%s\n' "$sup_edits" | sed 's/^/  ℹ supervisor working notes (uncommitted — leave them alone): /'
 touched=$(printf '%s\n%s' "$touched" "$(git diff --name-only HEAD | grep -vE '^(\.agents/supervisor/|CLAUDE\.md$|bin/supervise\.sh$)')" | sort -u | grep -v '^$')
-pat='^app/app/Doctor/|seals\.json$|tests/Journeys/JourneyHarness\.php$|^app/Modules/[^/]+/(manifest|capabilities)\.php$|(^|/)\.env(\.|$)|^app/phpunit\.xml$|^source/|^runtime/|^bin/state\.py$|^\.agents/supervisor/(BRIEF|REVIEWS)\.md$'
+# REV-176: modules live under app/app/Modules. The old `^app/Modules/` anchor matched 0 of the 26 generated
+# files b05f42d7 changed and the corrected one matches 26 (t176-b05-names.txt), so this arm was blind to
+# REV-131 §3's own incident.
+pat='^app/app/Doctor/|seals\.json$|tests/Journeys/JourneyHarness\.php$|^app/app/Modules/[^/]+/(manifest|capabilities)\.php$|(^|/)\.env(\.|$)|^app/phpunit\.xml$|^source/|^runtime/|^bin/state\.py$|^\.agents/supervisor/(BRIEF|REVIEWS)\.md$'
 hits=$(printf '%s\n' "$touched" | grep -E "$pat" | grep -v '\.env\.example$' || true)
 if [ -n "$hits" ]; then
   printf '%s\n' "$hits" | sed 's/^/  ⛔ /'
@@ -534,7 +551,11 @@ else
   done < "$cm_gone"
   rm -f "$cm_pairs" "$cm_gone"
   echo "  module classes declared: $cm_seen · unresolvable: $cm_miss · classmap keys: $(wc -l < "$cm_keys" | tr -d ' ')"
-  echo "  classmap generated: $(date -r "$cm_file" '+%Y-%m-%d %H:%M:%S')"
+  # REV-176: this is the file's last CONTENT change, not the last dump. Run 170's dump-autoload printed
+  # "Generated optimized autoload files containing 15301 classes" at 13:17:53 (r170-autoload.txt:573) and the
+  # mtime stayed 02:13:38, because nothing incoming added a class. Compare it with a commit that ADDED a
+  # class (REV-146 §1's arithmetic), never with the time of the last dump.
+  echo "  classmap last written: $(date -r "$cm_file" '+%Y-%m-%d %H:%M:%S')  (last content change, not last dump)"
   rm -f "$cm_keys"
   [ "$cm_miss" -gt 0 ] && fail=1
 fi

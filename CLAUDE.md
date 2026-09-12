@@ -4190,3 +4190,23 @@ tree.
 ⭐ **§3. A supervisor commit touching only `CLAUDE.md` rides a push range beside `.agents/state/**` (REV-129 §3 extended),
 because no gate executes it.** `bin/supervise.sh`, `.claude/**`, `launch-coder.sh` and `.agents/rules/**` do not: each
 changes what a gate checks or what the coder is told.
+
+## REV-176 — a both-sides-moved per-track row is a change that will never arrive
+
+⛔ **§1. §2f's ✓ `both sides moved; the merge=ours driver FIRES and keeps ours` is read for what main changed (2026-09-12,
+my defect).** Main's `4ba54b40` fixed two defects in its own copy of `supervise.sh` §2, and this lane's copy had both:
+- **Range.** `HEAD~1..HEAD` saw only the last commit. Run 170 ended in a state commit, so at review time §2 never saw the
+  merge.
+- **Pattern.** `^app/Modules/` can never match a module path: it matched 0 of `b05f42d7`'s 26 generated files, and the
+  corrected anchor matches 26.
+
+`bin/supervise.sh` read both-sides-moved, so the driver keeps ours, and the fix could never arrive by merge.
+
+**RULED: every both-sides-moved row in §2f is diffed with `git show <their sha> -- <path>`, and each hunk is ported, kept
+out, or filed, with a reason.** REV-169 §4 ruled this for the bypass row, which reaches the lane. The driver-fires row is
+its mirror: it never does, however good the change. Both §2 hunks are ported. `.agents/rules/10-supervisor.md` keeps ours
+on main's eleven-field REPORT shape, because §3 checks ten fields and every brief here hands over ten.
+
+⚠️ **§2. An mtime is the last content change, not the last write attempt.** `composer dump-autoload` ran and printed
+`Generated … 15301 classes`, and `autoload_classmap.php` kept its 02:13 mtime, because nothing incoming added a class. §2h
+now says `last written`, not `generated`.
