@@ -1,13 +1,14 @@
 <div>
-    <x-surface.sample-state module="**two modes — APPOINTMENT and JOB — the profile picks (§29.3)**" screen="waitlist" />
-    <div class="waitlist-container p-4">
-        <h3 class="text-lg font-bold">Active Waitlists</h3>
+    <div class="p-4">
+        <h2 class="text-xl font-bold text-ink">Waiting for a slot</h2>
         @if($waitlists->isEmpty())
-            <p class="text-gray-500">No customers on waitlist.</p>
+            <x-ui.empty-state icon="○" heading="Nobody is waiting">
+                When a customer asks to hear about an opening, they appear here.
+            </x-ui.empty-state>
         @else
-            <ul>
+            <ul class="mt-3 space-y-2">
                 @foreach($waitlists as $w)
-                    <li>{{ $w->customer_name }} [{{ $w->status }}]</li>
+                    <li class="text-ink">{{ $w->customer_name }} · {{ $w->service_name }} · {{ $w->preferred_date->format('M j') }} · {{ ucfirst($w->status) }}</li>
                 @endforeach
             </ul>
         @endif

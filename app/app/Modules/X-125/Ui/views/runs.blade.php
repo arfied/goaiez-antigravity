@@ -21,7 +21,7 @@
                         </div>
                         <x-ui.button wire:click="retry({{ $run->id }})">Retry</x-ui.button>
                     </div>
-                    <p class="mt-2 text-sm text-gray-600">
+                    <p class="mt-2 text-sm text-ink-2">
                         @if ($run->flowVersion && $run->flowVersion->plain_explanation)
                             {{ $run->flowVersion->plain_explanation }}
                         @elseif ($run->flowVersion)
