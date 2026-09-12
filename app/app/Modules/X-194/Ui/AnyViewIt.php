@@ -25,6 +25,7 @@ class AnyViewIt extends Component
         $this->load();
     }
 
+    #[Url]
     public string $locationTimezone = 'UTC';
 
     public ?float $jobValue = null;
