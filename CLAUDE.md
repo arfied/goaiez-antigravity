@@ -3203,6 +3203,11 @@ and §3 is unchanged at `0·39·85·0·16·204·128·3`. The lane is 186 ahead /
 (186 / 37 ancestor) at `b47083e6`.
 - Tick 397's notes (`b47083e6`) were certified by `.gateT398.txt` and pushed `b7757e88..b47083e6`.
 
+⌛ **Tick 399 — HOLD.** `main` did not move (pin `8b407d10`), all three drift conditions are FALSE,
+and §3 is unchanged at `0·39·85·0·16·204·128·3`. The lane is 187 ahead / 2 behind first-parent
+(187 / 37 ancestor) at `05452236`.
+- Tick 398's notes (`05452236`) were certified by `.gateT399.txt` and pushed `b47083e6..05452236`.
+
 ⌛ **S-202 as dispatched (history): §3 ledger refresh, dispatched at tick 394 as STAGES-240, merge gate CLOSED.** §3 still
 reads `boundary 41` against §5's 39. This is S-200's shape. The JOURNAL `^- .+ stage ` rows start at 96.
 - ⚠️ **Brief lesson:** `--full-doctor` §5 truncates its row dump and prints no `schema` rows. Ask for
