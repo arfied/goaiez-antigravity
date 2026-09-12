@@ -10,8 +10,8 @@ final class LinkQrAction
 {
     public function handle(int $businessId, int $shortLinkId): string
     {
-        // short_links is readable by every business under the platform's public_read policy, so this business_id clause
-        // is the only tenancy check on this read; the redirect route in ../ModuleServiceProvider.php records the measurement.
+        // short_links is readable by every business under the platform's public_read policy, so tenancy on this read is this
+        // business_id clause and the model's TenantScope global scope; the redirect route in ../ModuleServiceProvider.php records it.
         $link = ShortLink::where('business_id', $businessId)->findOrFail($shortLinkId);
         $qrSvg = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='#000'/></svg>";
 
