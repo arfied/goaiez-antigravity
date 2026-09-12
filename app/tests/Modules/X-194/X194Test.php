@@ -501,6 +501,7 @@ class X194Test extends TestCase
         $component->call('$refresh')
             ->assertDontSee('We could not load your saved views.');
     }
+
     public function test_saved_views_list_retry_escapes_its_guard(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Test Tenant', 'currency' => 'USD']);
