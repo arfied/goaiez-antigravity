@@ -3257,6 +3257,25 @@ and §3 is unchanged at `0·39·85·0·16·204·128·3`. The lane is 194 ahead /
 (194 / **99** ancestor) at `915be99e`. The ancestor count is still one short of the 100 threshold.
 - Tick 405's notes (`915be99e`) were certified by `.gateT406.txt` and pushed `32e08a1b..915be99e`.
 
+⭐ **Tick 407 — THE SIXTH TAKE IS ORDERED: S-203, dispatched as STAGES-241 with `--allow-merge`.**
+`main` moved `ef52d10b` → `51902cc4`: one first-parent commit, `merge: track/ui — product 13` (X-184,
+X-185 and X-210 screens, `OwnerNav.php`, three architecture tests; 13 files). That is +1 first-parent
+/ +11 ancestor.
+- **Drift condition (1) is TRUE on the ancestor count** (`RULING GQ(i)`). At the pin the lane is
+  **110 ancestor / 5 first-parent** behind, so the readings straddle the threshold (`GQ(iii)`) and
+  `GQ`'s advance ruling fires. (2) is FALSE: the `Doctor`/`JourneyHarness`/`.claude/`/`seals.json`/
+  `bin/`/`.agents/`/`CLAUDE.md` diff from base to pin is empty. (3) is FALSE.
+- **Merge base `29312e16` is main's own commit**, so `RULING FM`'s void condition is not reached.
+  Ours-since-base in `app/` is `app/phpunit.xml` alone.
+- **The range:** 28 `app/` files (+240/−52), every row `M`. No new class, no migration, no lockfile,
+  no `app/resources/`, and **no `app/phpunit.xml`**. **No per-track row at all**:
+  `git diff --name-status HEAD...51902cc4 -- .agents/ CLAUDE.md .claude/ bin/ app/phpunit.xml` prints
+  nothing. The restore step stays an item, and its proof stays `git diff HEAD~1 HEAD -- <per-track>`
+  printing nothing.
+- **Before the take**, §3 reads `0·39·85·0·16·204·128·3` (§5 last verified at 475, tick 395).
+- Tick 406's notes (`a435b3db`) and these notes are committed **before** the dispatch (`RULING EO`).
+  The pushed sha and its gate are recorded in the tick-407 REVIEWS block.
+
 ⌛ **S-202 as dispatched (history): §3 ledger refresh, dispatched at tick 394 as STAGES-240, merge gate CLOSED.** §3 still
 reads `boundary 41` against §5's 39. This is S-200's shape. The JOURNAL `^- .+ stage ` rows start at 96.
 - ⚠️ **Brief lesson:** `--full-doctor` §5 truncates its row dump and prints no `schema` rows. Ask for
