@@ -680,6 +680,30 @@ if [ -n "$_gl" ] && [ -f "$_rp" ]; then
     printf '      REPORT.md %s is the PREVIOUS wave’s — REV-119 §D puts this wave’s report\n' \
       "$(date -r "$_rp" '+%F %T')"
     echo "      after this gate, so the order is checked at tick time, not from inside the gate."
+  # ⛔ REV-171 §1 (2026-09-12): A GATE LOG WITH NO VERDICT SECTION IS A GATE THAT DID NOT
+  #   FINISH, AND AN ORDER CHECK AGAINST IT PRINTS A ✓ ABOUT NOTHING. Run 166's gate
+  #   started 02:15:12, waited on another lane's pest.lock, and its process was gone by
+  #   02:21 with the log ending on the lock-wait line. REPORT.md (02:18:37) was newer
+  #   than that log (02:15:30), so this block printed ✓ at tick time — true about two
+  #   mtimes and false about the wave, whose suite was never measured. The mtime is not
+  #   the property; completion is. Matched on bar()'s own escape sequence, never on the
+  #   bare words, so the text this arm prints cannot make a killed log read as finished
+  #   (REV-138 §1). ⚠ NOT covered: a finished gate that ran against a different sha
+  #   than the one the report describes.
+  elif ! grep -qF $'\033[1m== verdict\033[0m' "$_gl"; then
+    _gl_last=$(grep -v '^[[:space:]]*$' "$_gl" | tail -n 1 | cut -c1-140)
+    if [ "$wave_self" = 1 ]; then
+      printf '    ⚠ %s %s never reached its verdict section — a previous wave’s gate that did not finish\n' \
+        "${_gl##*/}" "$(date -r "$_gl" '+%F %T')"
+      echo "      (labelled, not failed, inside a gate — REV-152 §1)"
+    else
+      fail=1
+      printf '    ⛔ %s %s never reached its verdict section — that gate did not finish\n' \
+        "${_gl##*/}" "$(date -r "$_gl" '+%F %T')"
+      printf '       its last line: %s\n' "$_gl_last"
+      echo "       it was killed or abandoned mid-run: REPORT.md's order against it proves nothing,"
+      echo "       and every test claim resting on it is NOT MEASURED (REV-171 §1)"
+    fi
   elif [ "$_rp" -ot "$_gl" ]; then
     fail=1
     printf '    ⛔ REPORT.md %s is OLDER than %s %s\n' \

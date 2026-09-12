@@ -4151,3 +4151,20 @@ assumption.
 refuses `--coder claude`. This lane's copy still accepted it until §2f's bypass forced the adoption. §2f's list is where
 owner rulings enforced in code reach a lane, so an `OURS UNCHANGED, THEIRS MOVED` row is read for what it changes, not
 only for whether the guard can commit it.
+
+## REV-171 — a gate log with no verdict is a gate that did not finish, and an order check against it proves nothing
+
+⛔ **§1. Run 166's gate never finished, and `supervise.sh` §3 printed ✓ about it at tick time (2026-09-12, my defect).**
+The gate started at 02:15:12 and waited on another lane's `pest.lock`. Its log ends on the lock-wait line, with no
+`== verdict` section. By 02:21 no `supervise.sh` from this checkout was alive. `REPORT.md` (02:18:37) was newer than the
+log (02:15:30), so REV-142 §2's check read `✓ REPORT.md … is newer than r166-gate.log`. That is true of two mtimes and
+false about a wave whose suite was never measured. The check tested **order** and left **completion** one axis over.
+**RULED: a gate log with no verdict section is an unfinished gate.** §3 now matches `bar()`'s escape sequence, never the
+bare words, so text it prints cannot satisfy it (REV-138 §1). It sets `fail` at tick time and labels the case inside a
+gate (REV-152 §1). ⚠️ Not covered: a finished gate that ran against a different sha than the one the report describes.
+
+⚠️ **§2. A report says what a gate did, not what it thinks caused it.** Run 166 wrote *"gate timed out"*. §7's wait is
+40 minutes and the report came 3m25s after the gate started, and no `result` line exists. The accurate words are
+*"did not finish; the log ends at <line>"*. What ended the gate is unmeasured. Run 165's gate ran 4m15s uninterrupted, so
+the coder's tool budget is not a fixed figure under four minutes. A wave whose gate may wait on the box-wide lock carries
+start and end stamps in their own tool calls, and the four-testsuite fallback (REV-148 §4) behind a verdict count.
