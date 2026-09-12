@@ -108,12 +108,21 @@ git log --oneline -5 | sed 's/^/  /'
 git rev-list --left-right --count origin/main...HEAD 2>/dev/null \
   | awk '{print "  vs origin/main (local ref): behind " $1 ", ahead " $2 "  — refresh with: git fetch --no-write-fetch-head origin"}'
 
-bar "2. forbidden paths touched  (uncommitted + last commit)"
-touched=$( { git diff --name-only HEAD~1 HEAD 2>/dev/null; } | sort -u)
+bar "2. forbidden paths touched  (uncommitted + every commit not yet on origin — ruling 591)"
+# Ruling 591: HEAD~1..HEAD saw only the LAST commit, so a wave that committed twice, or
+# ended in a chore(state) commit, hid its earlier commits from §2 and §2b. The unreviewed
+# range is everything not yet on the pushed branch, because the supervisor pushes only
+# gated shas (26). Falls back to HEAD~1 when HEAD is already pushed or detached.
+upstream="origin/$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
+base="HEAD~1"
+if [ "$upstream" != "origin/HEAD" ] && git merge-base --is-ancestor "$upstream" HEAD 2>/dev/null \
+   && [ "$(git rev-parse "$upstream" 2>/dev/null)" != "$(git rev-parse HEAD)" ]; then base="$upstream"; fi
+echo "  range: $base..HEAD  ($(git rev-list --count "$base"..HEAD 2>/dev/null) commit(s))"
+touched=$( { git diff --name-only "$base" HEAD 2>/dev/null; } | sort -u)
 sup_edits=$(git diff --name-only HEAD -- .agents/supervisor CLAUDE.md bin/supervise.sh 2>/dev/null)
 [ -n "$sup_edits" ] && printf '%s\n' "$sup_edits" | sed 's/^/  ℹ supervisor working notes (uncommitted — leave them alone): /'
 touched=$(printf '%s\n%s' "$touched" "$(git diff --name-only HEAD | grep -vE '^(\.agents/supervisor/|CLAUDE\.md$|bin/supervise\.sh$)')" | sort -u | grep -v '^$')
-pat='^app/app/Doctor/|seals\.json$|tests/Journeys/JourneyHarness\.php$|^app/Modules/[^/]+/(manifest|capabilities)\.php$|(^|/)\.env(\.|$)|^app/phpunit\.xml$|^source/|^runtime/|^bin/state\.py$|^\.agents/supervisor/(BRIEF|REVIEWS)\.md$'
+pat='^app/app/Doctor/|seals\.json$|tests/Journeys/JourneyHarness\.php$|^app/app/Modules/[^/]+/(manifest|capabilities)\.php$|(^|/)\.env(\.|$)|^app/phpunit\.xml$|^source/|^runtime/|^bin/state\.py$|^\.agents/supervisor/(BRIEF|REVIEWS)\.md$'
 hits=$(printf '%s\n' "$touched" | grep -E "$pat" || true)
 if [ -n "$hits" ]; then
   printf '%s\n' "$hits" | sed 's/^/  ⛔ /'
