@@ -165,6 +165,12 @@ final class InfobipWebhookVerifier implements VerifiesWebhookSenders
     public const string EXCHANGE_TIMESTAMP_HEADER = 'X-Ib-Exchange-Req-Timestamp';
 
     /**
+     * N176: Infobip's Calls platform signs voice webhooks in X-Ib-Hmac-Signature.
+     * Evaluated as a second body-scheme header.
+     */
+    public const string VOICE_SIGNATURE_HEADER = 'X-Ib-Hmac-Signature';
+
+    /**
      * How old a timestamped signature may be.
      *
      * ⛔ **FIVE MINUTES, AND WHETHER THAT IS WIDE ENOUGH FOR A CARRIER RETRY IS
@@ -201,6 +207,11 @@ final class InfobipWebhookVerifier implements VerifiesWebhookSenders
      * Returns a bool rather than throwing: the caller answers 401 either way,
      * and an exception here would tempt somebody into a `try`/`catch` that
      * swallows a verification failure into a 200.
+     *
+     * N176: The VOICE_SIGNATURE_HEADER is checked after the configured one as a
+     * second body-scheme header. The exclusivity reasoning at (4507) applies to it
+     * too: if exchange headers are present, we don't evaluate the body-scheme
+     * headers, avoiding the replay hole.
      */
     public function verify(Request $request): bool
     {
@@ -218,13 +229,14 @@ final class InfobipWebhookVerifier implements VerifiesWebhookSenders
 
         // ⛔ **EXCLUSIVE, NEVER A FALL-THROUGH** (4507). See the class docblock:
         // an `||` over the two constructions lets a captured exchange signature
-        // be presented as a body-only one over the base string `T . body`.
+        // be presented as a body-only header over the base string `T . body`.
         if ($scheme === 'exchange' || $this->carriesExchangeHeaders($request)) {
             return $scheme !== 'body' && $this->exchangeSignatureMatches($request, $body, $secret);
         }
 
         return $scheme !== 'exchange'
-            && $this->matches($request->header($this->header()), $body, $secret);
+            && ($this->matches($request->header($this->header()), $body, $secret)
+                || $this->matches($request->header(self::VOICE_SIGNATURE_HEADER), $body, $secret));
     }
 
     /**
