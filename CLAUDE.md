@@ -19486,3 +19486,33 @@ ignored but `launch-coder.sh`), so the restore is proven by the final `DEAD (pid
 `grep -E '^goaiez doctor'` over live doctor output returned the stage lines and **not** the stamp header — the header carries a leading space
 (223's `^FAIL` shape, on the one extrinsic field). The gate's §4 line `build stamp: doctor … = BUILD-STATE runtime_build` (359) is now the
 mechanical source of the stamp equality, which is why the miss cost nothing. ⛔ Anchor on `goaiez doctor · build`, never `^`.
+
+## ⚠️ MONEY'S RULING 602 REPRODUCES IN THIS LANE'S LAUNCHER — and the safety money names does NOT transfer, a different one holds (tick 362)
+
+Seventeenth firing of tick 215's law, measured here rather than adopted (223). Money's `b8112bda`: `launch-coder.sh` checks
+`KICKOFF.md` for **presence** only, so a tick that dispatched without rewriting the mailbox would re-run the last wave. This lane's copy,
+read at source: `grep -n -i kickoff .agents/supervisor/launch-coder.sh` → `:116 [ -s .agents/supervisor/KICKOFF.md ] || REFUSED` and the
+two launch lines, nothing else. **Reproduces.**
+
+⭐ **Two differences from money, both measured, and they point opposite ways:**
+
+- **This lane's kickoff DOES carry its own identity** — `KICKOFF.md:1` is `# KICKOFF — SITE-211`. So an identity check is *expressible*
+  here where money measured it is not. ⛔ Still not built: the owner's 2026-09-11 14:0x ruling makes a quota death redispatch the
+  **unchanged** brief on the next tick, and an identity refusal keyed to "this wave already has a verdict" blocks exactly that sanctioned
+  re-run (money's ruling 232 reasoning, and it holds here).
+- ⛔ **Money's second safety — *the stale brief refuses itself at item 1* — does NOT hold here.** SITE-211's item 0 CLAIMs C2-C4 all say
+  *report and proceed*, and C1 stops only on a second `⛔` path (`BRIEF.md:37-49`). A stale re-run runs to completion.
+- ✅ **The safety that holds instead is the wave's own shape**: SITE-211 is write-nothing and commit-nothing by construction
+  (`KICKOFF.md:15`, item 5 proves it). ⚠️ What a re-run *would* cost is named: one run, one whole-suite pest under the box-wide lock
+  (every sibling queued behind it), and a fresh `REPORT.md` newer than the last block — so the next tick takes case (b) on a wave tick 345
+  already reviewed. The KICKOFF heading plus `grep -n 'SITE-211' REVIEWS.md` is what lets that tick see it.
+
+⭐ **The general form, one step past money's**: a stale-dispatch net is a property of **the stale wave**, not of the launcher — money's holds
+because its briefs open with a pre-wave baseline that a landed wave falsifies, this lane's because its last wave writes nothing. **Neither is a
+property that the NEXT wave inherits.** ⚠️ **Trigger, named**: the day this lane's last-reviewed brief is a *build* wave whose item 0 has
+no baseline a landed commit would falsify, the net is gone. Recorded, not built; the standing order (write BRIEF and KICKOFF before
+`launch-coder.sh`, quote the `LAUNCHED` line) is the only check.
+
+⚠️ And one instance of tick 342's gap, eleven seconds wide: tick 361's closing re-read ran at 20:21:37 and its append at 20:21:48, and stages'
+`716d4cf6` arrived `@{20:21:42}` between them. Nil consequence (`CLAUDE.md` +5), but the re-read is only as late as the command before
+`cat >>`, and a composed append with an intervening `Read`/placeholder check is not "immediately".
