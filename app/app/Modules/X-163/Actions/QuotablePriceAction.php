@@ -13,19 +13,25 @@ final class QuotablePriceAction
 {
     public function options(int $businessId): array
     {
-        return PriceBookItem::where('business_id', $businessId)
+        $items = PriceBookItem::where('business_id', $businessId)
             ->where('is_confirmed', true)
             ->where('is_sample', false)
             ->orderBy('service_name')
-            ->get()
-            ->filter(fn (PriceBookItem $item) => PriceConfirmAction::confirmable($item->price_cents))
-            ->map(fn (PriceBookItem $item) => [
+            ->get();
+
+        $options = [];
+        foreach ($items as $item) {
+            if (! PriceConfirmAction::confirmable($item->price_cents)) {
+                continue;
+            }
+            $options[] = [
                 'id' => $item->id,
                 'service_name' => $item->service_name,
                 'price_cents' => $item->price_cents,
-            ])
-            ->values()
-            ->all();
+            ];
+        }
+
+        return $options;
     }
 
     public function resolve(int $businessId, int $itemId): array
