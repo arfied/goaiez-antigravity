@@ -69,14 +69,5 @@ class CancelPendingStepsTest extends TestCase
         $this->assertTrue($decoyRun->is_active, 'Decoy CampaignRun should remain untouched');
     }
 
-    public function test_opt_out_does_nothing_if_no_person_exists(): void
-    {
-        $tenant = self::provisionTenant(['name' => 'No Person Tenant', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$tenant->id}'");
-
-        $service = new ConsentService;
-        $service->suppress($tenant->id, '+15550009999', 'sms', 'opt_out');
-
-        $this->assertTrue(true, 'Suppression with no person should return cleanly');
-    }
+    // Removed test_opt_out_does_nothing_if_no_person_exists: six other tests already prove a no-person suppression does not throw.
 }
