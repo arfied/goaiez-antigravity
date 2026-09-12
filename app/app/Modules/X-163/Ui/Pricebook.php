@@ -19,7 +19,8 @@ class Pricebook extends Component
 {
     public float $calloutFeeDollars = 0.00;
 
-    public bool $deductedIfProceeding = false;
+    // (R245) the deduction property carries the name pricebook.blade.php and updatedCalloutFeeDeducted() bind
+    public bool $calloutFeeDeducted = false;
 
     public string $newServiceName = '';
 
@@ -52,7 +53,7 @@ class Pricebook extends Component
         $fee = CalloutFee::where('business_id', $businessId)->first();
         if ($fee) {
             $this->calloutFeeDollars = $fee->callout_fee_cents / 100;
-            $this->deductedIfProceeding = (bool) $fee->deducted_if_proceeding;
+            $this->calloutFeeDeducted = (bool) $fee->deducted_if_proceeding;
         }
 
         $items = PriceBookItem::where('business_id', $businessId)->get();
@@ -80,7 +81,7 @@ class Pricebook extends Component
             ['business_id' => $businessId],
             [
                 'callout_fee_cents' => $cents,
-                'deducted_if_proceeding' => $this->deductedIfProceeding,
+                'deducted_if_proceeding' => $this->calloutFeeDeducted,
             ]
         );
     }
@@ -102,18 +103,26 @@ class Pricebook extends Component
 
         $min = $this->newMinPriceDollars ? (int) round((float) $this->newMinPriceDollars * 100) : null;
         $max = $this->newMaxPriceDollars ? (int) round((float) $this->newMaxPriceDollars * 100) : null;
+        $cents = (int) round((float) $this->newPriceDollars * 100);
+
+        // (R245) addItem() confirms a new non-sample price only when PriceConfirmAction::confirmable() admits it
+        $confirmed = ! $this->newIsSample && PriceConfirmAction::confirmable($cents);
 
         $item = PriceBookItem::create([
             'business_id' => $businessId,
             'service_name' => $this->newServiceName,
-            'price_cents' => (int) round((float) $this->newPriceDollars * 100),
+            'price_cents' => $cents,
             'price_min_cents' => $min,
             'price_max_cents' => $max,
             'tax_rate_pct' => (float) $this->newTaxRatePct,
             'is_sample' => $this->newIsSample,
-            'is_confirmed' => ! $this->newIsSample,
-            'confirmed_at' => $this->newIsSample ? null : now(),
+            'is_confirmed' => $confirmed,
+            'confirmed_at' => $confirmed ? now() : null,
         ]);
+
+        if (! $this->newIsSample && ! $confirmed) {
+            $this->refusals[$item->id] = true;
+        }
 
         $this->inlinePrices[$item->id] = $item->price_cents / 100;
 
