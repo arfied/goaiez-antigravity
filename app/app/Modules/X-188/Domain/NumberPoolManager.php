@@ -155,4 +155,19 @@ final class NumberPoolManager
             'brand_type' => 'shared',
         ]);
     }
+
+    public function getActiveNumber(int $businessId): ?string
+    {
+        $assignment = NumberAssignment::where('business_id', $businessId)
+            ->where('status', 'active')
+            ->first();
+
+        if (! $assignment) {
+            return null;
+        }
+
+        $poolNumber = NumberPool::find($assignment->phone_number_id);
+
+        return $poolNumber?->phone_number;
+    }
 }

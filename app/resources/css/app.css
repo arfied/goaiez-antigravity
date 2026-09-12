@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant dark (@media (prefers-color-scheme: dark));
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -36,6 +36,7 @@
 
     /* Surface — cool paper, deliberately not the AI-default warm cream */
     --color-paper: #fafaf9;
+    --color-canvas: #fafaf9;
     --color-card: #ffffff;
     --color-rule: #e4e4e1;
     --color-rule-strong: #c9c9c4;
@@ -85,8 +86,9 @@
 /* Dark mode inverts surface and ink. Signal meaning is what is constant across themes;
    the hue is retuned for the surface. */
 @media (prefers-color-scheme: dark) {
-    @theme {
+    :root {
         --color-paper: #16191c;
+        --color-canvas: #16191c;
         --color-card: #1d2125;
         --color-rule: #2b3035;
         --color-rule-strong: #3d444b;
@@ -161,7 +163,7 @@
    Scoped to `.legal-prose` rather than added to preflight, because every other
    surface in this application composes its own type from utilities and a global
    heading style would silently restyle all of them. Tokens only — the palette
-   already answers dark mode at `@theme`, so this inherits it rather than
+   already answers dark mode in the token blocks above, so this inherits it rather than
    restating any colour. */
 .legal-prose {
     line-height: 1.7;

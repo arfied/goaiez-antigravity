@@ -5,19 +5,14 @@ declare(strict_types=1);
 namespace App\Modules\X153\Ui;
 
 use App\Modules\X153\Models\Alert;
-use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class AlertRosterScreen extends Component
 {
-    #[Locked]
-    public int $businessId = 0;
-
     public function render()
     {
-        $alerts = ($this->businessId > 0)
-            ? Alert::where('business_id', $this->businessId)->orderBy('id', 'desc')->get()
-            : collect();
+        // Tenant isolation is enforced by Postgres RLS policy 'tenant_isolation' in 2026_08_30_000016_create_x153_alert_tables.php.
+        $alerts = Alert::orderBy('id', 'desc')->get();
 
         return view('x-153::alert-roster-screen', [
             'alerts' => $alerts,

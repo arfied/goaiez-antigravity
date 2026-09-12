@@ -1,13 +1,14 @@
 <div>
-    <x-surface.sample-state module="branching" screen="canvas" />
     <div class="flow-canvas-view p-4">
-        <h3 class="text-lg font-bold">Workflow Canvas</h3>
+        <h2 class="text-xl font-bold text-ink">Every automation you have set up</h2>
         @if($flows->isEmpty())
-            <p class="text-gray-500">No active flows configured.</p>
+            <x-ui.empty-state icon="○" heading="No automations yet">
+                When you set up an automation, it appears here.
+            </x-ui.empty-state>
         @else
-            <ul>
+            <ul class="mt-3 space-y-2">
                 @foreach($flows as $f)
-                    <li>#{{ $f->id }}: {{ $f->name }} [{{ $f->status }}] (Trigger: {{ $f->trigger_event }})</li>
+                    <li class="text-ink">{{ $f->name }} · {{ ucfirst(str_replace('_', ' ', $f->status)) }}</li>
                 @endforeach
             </ul>
         @endif

@@ -7,6 +7,7 @@ namespace App\Modules\X102\Actions;
 use App\Modules\X102\Events\ChatLeadCaptured;
 use App\Modules\X102\Models\ChatLead;
 use App\Modules\X102\Models\ChatSession;
+use App\Modules\X102\Models\ChatTurn;
 use App\Modules\X121\Models\Person;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -36,6 +37,17 @@ final class ChatCaptureAction
 
         return DB::transaction(function () use ($businessId, $sessionId, $name, $phone, $email, $message, $formType, $consent) {
             $session = ChatSession::where('business_id', $businessId)->findOrFail($sessionId);
+
+            // P-148 (GOAIEZ-MASTER-PLAN.md:625, row 30484): an under-18 signal at ingest prevents the
+            // contact row, asserted at the write, not at the reply. On the chat door the signal arrives
+            // on a turn: C-Agent refuses it as UNDER_18 and ChatTurnAction records that code on the agent
+            // turn, so the refusal is read here, before any Person or ChatLead is written.
+            if (ChatTurn::where('business_id', $businessId)
+                ->where('chat_session_id', $session->id)
+                ->where('refusal_code', 'UNDER_18')
+                ->exists()) {
+                throw new \DomainException('UNDER_18_SIGNAL_ON_SESSION');
+            }
 
             // 1. Form submission creates the Person (TEST ANCHOR)
             // A detail that is blank or whitespace was not given (R245, 2026-09-05).

@@ -6,7 +6,9 @@ namespace Tests\Modules\X164\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X164\Actions\EstimateDraftAction;
 use App\Modules\X164\Ui\EstimatesList;
+use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,7 +20,23 @@ class EstimatesListScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-164.estimates-list'))->assertOk();
+        $this->get(route('x-164.estimates-list'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
+            ->assertSee('No estimates yet')
+            ->assertDontSee('this screen is planned in');
+
+        Tenancy::set((int) $biz->id);
+        app(EstimateDraftAction::class)->handle((int) $biz->id, null, [
+            ['service_name' => 'Gutter cleaning', 'quantity' => 3, 'unit_price_cents' => 4175],
+        ]);
+        Tenancy::forget();
+
+        $this->get(route('x-164.estimates-list'))
+            ->assertOk()
+            ->assertSee('$125.25')
+            ->assertDontSee('No estimates yet');
 
         Livewire::test(EstimatesList::class)->assertOk();
     }
