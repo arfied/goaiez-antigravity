@@ -29,10 +29,6 @@ class AnyViewIt extends Component
     #[Locked]
     public string $locationTimezone = '';
 
-    public ?float $jobValue = null;
-
-    public int $jobCount = 0;
-
     public string $errorMessage = '';
 
     public bool $ready = false;
@@ -75,8 +71,8 @@ class AnyViewIt extends Component
                     $this->businessId,
                     $this->viewId,
                     $this->locationTimezone,
-                    $this->jobValue,
-                    $this->jobCount
+                    null,
+                    0
                 );
             } catch (\Exception $e) {
                 $this->errorMessage = 'Please try again later or contact support if the issue persists.';
