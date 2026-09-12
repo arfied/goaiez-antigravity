@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X66\Ui;
 
-use App\Modules\X188\Models\NumberAssignment;
-use App\Modules\X188\Models\NumberPool;
+use App\Modules\X188\Domain\NumberPoolManager;
 use App\Modules\X66\Models\CallSession;
 use App\Modules\X66\Models\CallTurn;
 use App\Modules\X66\Models\Voicemail;
@@ -34,11 +33,8 @@ class Calls extends Component
 
         $assignedNumber = null;
         try {
-            $assignment = NumberAssignment::where('business_id', $businessId)->first();
-            if ($assignment) {
-                $poolNumber = NumberPool::where('id', $assignment->phone_number_id)->first();
-                $assignedNumber = $poolNumber?->phone_number;
-            }
+            $manager = app(NumberPoolManager::class);
+            $assignedNumber = $manager->getActiveNumber($businessId);
         } catch (\Throwable $e) {
             $this->errorMessage = "We couldn't load the assigned number.";
         }

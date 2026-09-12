@@ -394,6 +394,41 @@ final class OwnerNav
             // neither a nav entry nor a written exclusion. This screen runs a
             // real query and renders it on every GET once mount() resolves the
             // tenant, so it owes a nav entry.
+            OwnerNavItem::make('Who is waiting for a slot', 'x-108.waitlist', OwnerNavItem::GROUP_MORE),
+
+            // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
+            // Architecture/OwnerNavTest fails the build on an owner screen with
+            // neither a nav entry nor a written exclusion. This screen runs a
+            // real query and renders it on every GET once mount() resolves the
+            // tenant, so it owes a nav entry.
+            OwnerNavItem::make('Estimates you have drafted', 'x-164.estimates-list', OwnerNavItem::GROUP_MORE),
+
+            // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
+            // Architecture/OwnerNavTest fails the build on an owner screen with
+            // neither a nav entry nor a written exclusion. This screen runs a
+            // real query and renders it on every GET once mount() resolves the
+            // tenant, so it owes a nav entry.
+            OwnerNavItem::make('Areas you cover', 'x-10.territory-map', OwnerNavItem::GROUP_MORE),
+
+            // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
+            // Architecture/OwnerNavTest fails the build on an owner screen with
+            // neither a nav entry nor a written exclusion. This screen runs a
+            // real query and renders it on every GET once mount() resolves the
+            // tenant, so it owes a nav entry.
+            OwnerNavItem::make('Booked and collected by month', 'x-07.forecast-risk-tiles', OwnerNavItem::GROUP_MORE),
+
+            // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
+            // Architecture/OwnerNavTest fails the build on an owner screen with
+            // neither a nav entry nor a written exclusion. This screen runs a
+            // real query and renders it on every GET once mount() resolves the
+            // tenant, so it owes a nav entry.
+            OwnerNavItem::make('Automations you have set up', 'x-125.canvas', OwnerNavItem::GROUP_MORE),
+
+            // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
+            // Architecture/OwnerNavTest fails the build on an owner screen with
+            // neither a nav entry nor a written exclusion. This screen runs a
+            // real query and renders it on every GET once mount() resolves the
+            // tenant, so it owes a nav entry.
             OwnerNavItem::make('Automations that ran', 'x-125.runs', OwnerNavItem::GROUP_MORE),
         ];
     }

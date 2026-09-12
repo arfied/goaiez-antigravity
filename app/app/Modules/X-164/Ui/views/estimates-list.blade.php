@@ -1,13 +1,14 @@
 <div>
-    <x-surface.sample-state module="good/better/best presentation" screen="estimates_list" />
-    <div class="estimates-list-container p-4">
-        <h3 class="text-lg font-bold">Estimates & Contracts</h3>
+    <div class="p-4">
+        <h2 class="text-xl font-bold text-ink">Every estimate, newest first</h2>
         @if($estimates->isEmpty())
-            <p class="text-gray-500">No estimates drafted.</p>
+            <x-ui.empty-state icon="○" heading="No estimates yet">
+                When you draft an estimate for a customer, it appears here.
+            </x-ui.empty-state>
         @else
-            <ul>
+            <ul class="mt-3 space-y-2">
                 @foreach($estimates as $est)
-                    <li>#{{ $est->estimate_number }} - ${{ number_format($est->total_cents / 100, 2) }} [{{ $est->status }}] (v{{ $est->price_book_version }})</li>
+                    <li class="text-ink">{{ $est->estimate_number }} · ${{ number_format($est->total_cents / 100, 2) }} · {{ ucfirst($est->status) }}</li>
                 @endforeach
             </ul>
         @endif

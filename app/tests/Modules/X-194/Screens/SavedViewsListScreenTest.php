@@ -6,6 +6,7 @@ namespace Tests\Modules\X194\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X194\Actions\ViewSaveAction;
 use App\Modules\X194\Ui\SavedViewsList;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -18,7 +19,11 @@ class SavedViewsListScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-194.saved-views-list'))->assertOk();
+        app(ViewSaveAction::class)->save($biz->id, 'Real GET View');
+
+        $this->get(route('x-194.saved-views-list'))
+            ->assertOk()
+            ->assertSee('Real GET View');
 
         Livewire::test(SavedViewsList::class)->assertOk();
     }
