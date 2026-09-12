@@ -9989,6 +9989,48 @@ Watch for: <the trap that applies, by name>
   - Board: proposals **14** · `app/app/Modules/` **0** · `CLOSED:` **7**. `9 28` vs `origin/main` after a fetch,
     Doctor/harness/hooks diff empty, so no merge condition holds.
   - Re-run every grep; never inherit one.
+- ✅✅ **The waiting rule held on its first outing, and it held because it was printed as COMMANDS.** Tick 322
+  printed `tail -1 <log>` · `grep -c "other pest process"` · `grep -c "· result "` as three commands to run after
+  every gate and before any `cp`, `git apply` or next gate. Wave 188b's four gates came back with 0 refusals and one
+  result line each, every raw copy stamped after its own gate log closed, and four distinct `duration_ms`
+  (`156539 · 155502 · 155655 · 155987`). Wave 188 had lost its whole set to gates returning early. **Mutations 0, 1
+  and 3 of `scratch/w188-mut-<n>.patch` are SPENT; never re-brief them.** Mutation 1's site proof is free:
+  `grep -c "Loading view"` is 1 in the mutated object and 0 in the green, because the skeleton is the module's own
+  rendered branch.
+- ⚠️ **A field asking for a command's output "as captured", over a command block that printed no redirect, gets a
+  zero-byte file created at report time.** Wave 188b's `CHECK` cat'd `scratch/w188b-check-<n>.txt`: 0 bytes each,
+  all stamped 2 ms before the generator and eleven minutes after the last apply. Brief item 2 had printed
+  `git apply --check <patch>` bare. The proof survived only because `APPLIED` was a redirect captured between apply
+  and gate. **Every field that cats a file names, in the command block, the redirect that writes that file**, and
+  `stat` beside the field shows the moment. This is tick 289's unanswerable-field family with a capture as the gap.
+- ⚠️ **`Architecture/AccountScreensTest` is the third documentary lint.** `LocationContext.php:131-134` says it
+  *"fails the build on any component that reads this class without rendering `<x-account.location-picker>`"*.
+  `git cat-file -e origin/main:app/tests/Feature/Architecture/AccountScreensTest.php` is `fatal`, it is absent here
+  too, and the only hit is a mention at `architecture_helpers.php:5614`. After `Architecture/PixelTest` (tick 229)
+  and `InboxTest` (tick 276). The disclosure the class calls its fallback's honesty is **unenforced**, so a new reader
+  can take the first location silently and nothing reddens. Hand this over whenever a brief touches
+  `LocationContext`.
+- ⚠️ **`AnyViewIt::$ready` is vestigial since `wire:init` went.** `mount()` calls `load()`, `load()` sets
+  `$ready = true`, and nothing sets it false. So `@elseif (! $ready)` is unreachable on a real request, and
+  `retry="load"` re-sets a true flag. It is a reading for 188d, not a wave.
+- **Suite at tick 323 on `3a9c04b9`** (wave 188b's green gate, tracked tree byte-identical to the sha):
+  `tests 2552 · passed 2543 · assertions 11138 · failed 7 · errors 2 · duration_ms 156539`. The standing nine hold
+  (`cmp` against `w188-standing-names.txt` is silent). pint `passed`, phpstan `0`.
+- **Backlog at tick 323 — wave 188c is the G9-37 location-timezone READING, commit-free; 188d builds it once
+  TRACK 1 ACTION 1 clears.** RULED.
+  - Wave 188's range is **pushed**. The timezone ruling is owed work, not a hold: the `UTC` label has no
+    cross-tenant reach.
+  - 188c asks three questions, answers need not agree: which location (none / one / many), what is displayed when
+    that location's timezone is null, and whether `X194Test.php:288`'s row names what is owed. Measurements are
+    printed and withheld: `LocationContext::current()`, `LocationTimezone`'s refusal, `locations.timezone`
+    nullable, `saved_views` with no location column, `view_schedules.timezone default 'UTC'`, `ConsentService`'s
+    null → refusal, and the missing lint.
+  - ⛔ No `state.py` in a commit-free wave: it writes two tracked files.
+  - **188d**, needing a commit: the timezone build; the `:288` row; the `$ready` reading; wave 187's NOTE 5
+    (save-failure panel); the `'R245'` fixture at `RefusalcodeDistributionPerScreenTest.php:38`.
+  - Board: proposals **14** · `app/app/Modules/` **0** · `CLOSED:` **7**. `9 29` vs `origin/main` after a fetch,
+    Doctor/harness/hooks diff empty, so no merge condition holds.
+  - Re-run every grep; never inherit one.
 
 ## Style
 
