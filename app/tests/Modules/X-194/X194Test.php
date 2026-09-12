@@ -549,6 +549,30 @@ class X194Test extends TestCase
             ->assertDontSee('We could not update your default view.');
     }
 
+    public function test_saved_views_list_default_view_retry_button_is_wired(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Wiring Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $view = $this->saveAction->save(
+            businessId: $biz->id,
+            viewName: 'Some Existing View',
+            viewType: 'table',
+            filterConfig: [],
+            columnsConfig: []
+        );
+
+        $this->mock(SetDefaultViewAction::class, function ($mock) {
+            $mock->shouldReceive('setDefault')->andThrow(new \Exception('Database update failed'));
+        });
+
+        $component = Livewire::test(SavedViewsList::class, ['businessId' => $biz->id])
+            ->call('load');
+
+        $component->call('makeDefault', $view->id)
+            ->assertSeeHtml('wire:click="clearDefaultError"');
+    }
+
     public function test_saved_views_list_default_view_failure_does_not_show_load_heading(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Heading Tenant', 'currency' => 'USD']);
