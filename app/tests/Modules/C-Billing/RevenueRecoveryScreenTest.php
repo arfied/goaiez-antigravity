@@ -119,7 +119,7 @@ class RevenueRecoveryScreenTest extends TestCase
             ->assertDontSee('3443');
     }
 
-    public function test_the_recovery_screen_says_nobody_has_been_put_on_the_ladder_and_what_that_waits_on(): void
+    public function test_the_recovery_screen_says_it_reads_only_its_own_ladder(): void
     {
         $biz = self::provisionTenant();
         $owner = User::findOrFail($biz->owner_user_id);
@@ -129,7 +129,10 @@ class RevenueRecoveryScreenTest extends TestCase
 
         Livewire::actingAs($owner)->test(RevenueRecovery::class)
             ->assertOk()
-            ->assertSee('Nothing in this checkout puts one there')
+            ->assertSee('retried on a separate schedule that this screen does not read')
+            ->assertSee('No ladder on this screen yet.')
+            ->assertDontSee('Nothing in this checkout puts one there')
+            ->assertDontSee('Nobody is in dunning')
             ->assertDontSee('This account is current');
     }
 
