@@ -15,7 +15,7 @@
    "fails": "COMMIT"
   },
   "boundary": {
-   "violations": 41,
+   "violations": 39,
    "fails": "COMMIT"
   },
   "contract": {
@@ -1696,6 +1696,10 @@
   {
    "at": "2026-09-12T02:52:08",
    "note": "run 168: read-only schema measurement (REV-172) \u2014 r168-migrate-count-test.txt goaiez_antig_reviews_test config-not-cached Pending 0; r168-schema-test.txt FAIL schema 14 violation(s) read from goaiez_antig_reviews_test; r168-rows-diff.txt dev 14 rows \u00b7 test 14 rows \u00b7 diff rc=0; r168-rls-dev.txt goaiez_antig_reviews []; r168-rls-test.txt goaiez_antig_reviews_test [{\"relname\":\"review_removal_requests\",\"relrowsecurity\":true,\"relforcerowsecurity\":true}]; Arm A"
+  },
+  {
+   "at": "2026-09-12T03:07:09",
+   "note": "run 169: boundary 41 \u2192 39 recorded from r169-boundary.txt (FAIL boundary 139ms 39 violation(s), build 20260829-0647) and r169-rows-diff.txt (39/39, diff rc=0 against r167-doctor.txt:5-82); the count moved at run 165's merge 45b5fb8e of origin/main 8b407d10, which removed the two X-66/Ui/Calls.php X188 import rows (REV-170 \u00a71); runs 165-167 measured 39 and recorded no stage line (REV-173 \u00a73); Arm A"
   }
  ],
  "resolved": [
