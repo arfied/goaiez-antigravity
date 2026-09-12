@@ -201,4 +201,44 @@ class RateRegistryViewTest extends TestCase
         Livewire::actingAs($user)->test(RateRegistryView::class)->assertForbidden();
 
     }
+
+    public function test_a_typed_amount_with_cents_is_stored_to_the_cent_on_a_new_rate(): void
+    {
+        $admin = User::factory()->create(['role' => UserRole::SuperAdmin]);
+        $biz = TestCase::provisionTenant(['owner_user_id' => $admin->id]);
+        Tenancy::setUser($admin->id);
+
+        Livewire::actingAs($admin)
+            ->test(RateRegistryView::class)
+            ->set('newRateCode', 'CENTS_RATE')
+            ->set('newAmountDollars', '19.99')
+            ->call('setRate');
+
+        $stored = Rate::where('business_id', $biz->id)->where('rate_code', 'CENTS_RATE')->value('amount_cents');
+
+        $this->assertSame(1999, (int) $stored, 'T1 A1 a typed 19.99 was not stored as 1999 cents');
+    }
+
+    public function test_a_typed_amount_with_cents_is_stored_to_the_cent_on_an_inline_rate(): void
+    {
+        $admin = User::factory()->create(['role' => UserRole::SuperAdmin]);
+        $biz = TestCase::provisionTenant(['owner_user_id' => $admin->id]);
+        Tenancy::setUser($admin->id);
+
+        $rate = Rate::create([
+            'business_id' => $biz->id,
+            'rate_code' => 'INLINE_CENTS',
+            'amount_cents' => 5000,
+            'currency' => 'USD',
+            'current_version' => 1,
+            'is_active' => true,
+        ]);
+
+        Livewire::actingAs($admin)
+            ->test(RateRegistryView::class)
+            ->set("amountInput.{$rate->id}", '19.99')
+            ->call('setInlineRate', $rate->id);
+
+        $this->assertSame(1999, (int) $rate->fresh()->amount_cents, 'T2 A1 a typed 19.99 was not stored as 1999 cents');
+    }
 }

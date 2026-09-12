@@ -2,7 +2,7 @@
     <div class="p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto">
         <div class="sm:flex sm:items-center">
             <div class="sm:flex-auto">
-                <h2 class="text-xl font-semibold leading-6 text-gray-900">Invoices</h2>
+                <h2 class="text-xl font-semibold leading-6 text-ink">Invoices</h2>
             </div>
         </div>
         <div class="mt-8 flow-root">
@@ -21,36 +21,36 @@
                     </x-ui.empty-state>
                 </div>
             @else
-                <div wire:loading.remove class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-[--radius-card]">
-                    <table class="min-w-full divide-y divide-gray-300">
-                        <thead class="bg-gray-50">
+                <div wire:loading.remove class="overflow-hidden shadow ring-1 ring-rule sm:rounded-[--radius-card]">
+                    <table class="min-w-full divide-y divide-rule">
+                        <thead class="bg-paper">
                             <tr>
-                                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Number</th>
-                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Customer</th>
-                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Status</th>
-                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Due Date</th>
-                                <th scope="col" class="px-3 py-3.5 text-right text-sm font-semibold text-gray-900">Total</th>
-                                <th scope="col" class="px-3 py-3.5 text-right text-sm font-semibold text-gray-900">Paid</th>
+                                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-ink sm:pl-6">Number</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Customer</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Status</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Due Date</th>
+                                <th scope="col" class="px-3 py-3.5 text-right text-sm font-semibold text-ink">Total</th>
+                                <th scope="col" class="px-3 py-3.5 text-right text-sm font-semibold text-ink">Paid</th>
                                 <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
                                     <span class="sr-only">Actions</span>
                                 </th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-200 bg-white">
+                        <tbody class="divide-y divide-rule bg-card">
                             @foreach($invoices as $invoice)
                                 <tr>
-                                    <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ $invoice->invoice_number }}</td>
-                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ $invoice->customer_name }}</td>
-                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                    <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-ink sm:pl-6">{{ $invoice->invoice_number }}</td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-ink-2">{{ $invoice->customer_name }}</td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-ink-2">
                                         <x-ui.status-pill :state="$invoice->status === 'paid' ? 'ok' : ($invoice->status === 'draft' ? 'unknown' : 'attention')" :label="$invoice->status" />
                                     </td>
-                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ $invoice->due_date }}</td>
-                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-900 text-right tabular-nums">
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-ink-2">{{ $invoice->due_date }}</td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-ink text-right tabular-nums">
                                         <x-ui.button size="default" variant="quiet" class="!px-0" wire:click="toggleExpanded({{ $invoice->id }})">
                                             {{ number_format($invoice->total_cents / 100, 2) }}
                                         </x-ui.button>
                                     </td>
-                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 text-right tabular-nums">{{ number_format($invoice->paid_cents / 100, 2) }}</td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-ink-2 text-right tabular-nums">{{ number_format($invoice->paid_cents / 100, 2) }}</td>
                                     <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                                         @if($invoice->status === 'paid')
                                             @if($invoice->pdf_url)
@@ -70,13 +70,13 @@
                                     </td>
                                 </tr>
                                 @if(in_array($invoice->id, $expanded))
-                                    <tr class="bg-gray-50">
+                                    <tr class="bg-paper">
                                         <td colspan="7" class="px-6 py-4">
-                                            <ul class="divide-y divide-gray-200">
+                                            <ul class="divide-y divide-rule">
                                                 @foreach($invoice->lines as $line)
                                                     <li class="py-2 flex justify-between">
-                                                        <span class="text-sm text-gray-600">{{ $line->description }} (x{{ $line->quantity }})</span>
-                                                        <span class="text-sm text-gray-900 tabular-nums">{{ number_format($line->subtotal_cents / 100, 2) }}</span>
+                                                        <span class="text-sm text-ink-2">{{ $line->description }} (x{{ $line->quantity }})</span>
+                                                        <span class="text-sm text-ink tabular-nums">{{ number_format($line->subtotal_cents / 100, 2) }}</span>
                                                     </li>
                                                 @endforeach
                                             </ul>

@@ -1,13 +1,14 @@
 <div>
-    <x-surface.sample-state module="skill-based" screen="territory_map" />
     <div class="territory-map-view p-4">
-        <h3 class="text-lg font-bold">Territory & Geocode Map</h3>
+        <h2 class="text-xl font-bold text-ink">Every area you have mapped</h2>
         @if($territories->isEmpty())
-            <p class="text-gray-500">No territories drawn on map.</p>
+            <x-ui.empty-state icon="○" heading="No service areas yet">
+                When you map an area you cover, it appears here.
+            </x-ui.empty-state>
         @else
-            <ul>
+            <ul class="mt-3 space-y-2">
                 @foreach($territories as $t)
-                    <li>#{{ $t->id }}: {{ $t->name }} (Staff: {{ $t->assigned_staff_id ?? 'Unassigned' }})</li>
+                    <li class="text-ink">{{ $t->name }} · {{ $t->assigned_staff_id !== null ? 'Assigned' : 'Not assigned yet' }}</li>
                 @endforeach
             </ul>
         @endif

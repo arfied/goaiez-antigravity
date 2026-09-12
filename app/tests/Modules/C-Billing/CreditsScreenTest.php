@@ -113,8 +113,11 @@ class CreditsScreenTest extends TestCase
         ]);
 
         Livewire::actingAs($owner)->test(Credits::class)
-            ->assertSee('Nothing in this checkout writes a usage meter')
-            ->assertDontSee('SMS Segments');
+            ->assertSee('Calls and messages are recorded elsewhere in this app, and this list does not read that record.')
+            ->assertSee('No usage on this list yet.')
+            ->assertDontSee('SMS Segments')
+            ->assertDontSee('writes a usage meter')
+            ->assertDontSee('No usage metered yet');
     }
 
     public function test_the_credits_ledger_empty_state_names_what_it_waits_on(): void
@@ -127,8 +130,9 @@ class CreditsScreenTest extends TestCase
 
         Livewire::actingAs($owner)->test(Credits::class)
             ->assertOk()
-            ->assertSee('Nothing in this checkout raises a debit or a grant, so usage charges and plan credits appear once they are built.')
-            ->assertDontSee('A grant, a top-up or a debit writes a line here');
+            ->assertSee('Usage charges and plan credits are recorded on a separate credit ledger elsewhere in this app, and this list does not read it.')
+            ->assertDontSee('A grant, a top-up or a debit writes a line here')
+            ->assertDontSee('raises a debit or a grant');
     }
 
     public function test_credits_topup_refuses_at_the_daily_ceiling(): void

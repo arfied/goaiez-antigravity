@@ -1,7 +1,7 @@
 <div>
     <div class="p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto">
         <div class="mb-8">
-            <h2 class="text-xl font-semibold leading-6 text-gray-900">Unpaid Invoices</h2>
+            <h2 class="text-xl font-semibold leading-6 text-ink">Unpaid Invoices</h2>
             @if(!$showLastFivePaid)
                 <div class="mt-4 grid grid-cols-2 gap-4">
                     <div class="bg-card px-4 py-5 shadow sm:rounded-[--radius-card] border border-rule">
@@ -38,23 +38,23 @@
                     </x-ui.empty-state>
                 </div>
             @else
-                <div wire:loading.remove class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-[--radius-card]">
-                    <table class="min-w-full divide-y divide-gray-300">
-                        <thead class="bg-gray-50">
+                <div wire:loading.remove class="overflow-hidden shadow ring-1 ring-rule sm:rounded-[--radius-card]">
+                    <table class="min-w-full divide-y divide-rule">
+                        <thead class="bg-paper">
                             <tr>
-                                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Number</th>
-                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Due Date</th>
-                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Days Overdue</th>
-                                <th scope="col" class="px-3 py-3.5 text-right text-sm font-semibold text-gray-900">Outstanding</th>
+                                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-ink sm:pl-6">Number</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Due Date</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Days Overdue</th>
+                                <th scope="col" class="px-3 py-3.5 text-right text-sm font-semibold text-ink">Outstanding</th>
                                 <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
                                     <span class="sr-only">Actions</span>
                                 </th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-200 bg-white">
+                        <tbody class="divide-y divide-rule bg-card">
                             @foreach($invoices as $invoice)
                                 <tr>
-                                    <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                                    <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-ink sm:pl-6">
                                         {{ $invoice->invoice_number }}
                                         @if($invoice->has_overflow)
                                             <p class="mt-1">
@@ -62,15 +62,15 @@
                                             </p>
                                         @endif
                                     </td>
-                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ $invoice->due_date ? $invoice->due_date->format('M j, Y') : 'N/A' }}</td>
-                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-ink-2">{{ $invoice->due_date ? $invoice->due_date->format('M j, Y') : 'N/A' }}</td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-ink-2">
                                         @if($invoice->days_overdue > 0)
                                             <x-ui.status-pill state="alert" :label="$invoice->days_overdue.' days overdue'" />
                                         @else
                                             <x-ui.status-pill state="ok" label="Not overdue" />
                                         @endif
                                     </td>
-                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-900 text-right tabular-nums">
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-ink text-right tabular-nums">
                                         <x-ui.button size="default" variant="quiet" class="!px-0 font-semibold text-indigo-600" wire:click="toggleExpanded({{ $invoice->id }})">
                                             {{ number_format($invoice->outstanding_cents / 100, 2) }}
                                         </x-ui.button>
@@ -85,10 +85,10 @@
                                     </td>
                                 </tr>
                                 @if(in_array($invoice->id, $expanded))
-                                    <tr class="bg-gray-50">
+                                    <tr class="bg-paper">
                                         <td colspan="5" class="px-6 py-4">
-                                            <p class="text-sm text-gray-600">Total: <span class="tabular-nums font-semibold">{{ number_format($invoice->total_cents / 100, 2) }}</span></p>
-                                            <p class="text-sm text-gray-600">Paid: <span class="tabular-nums font-semibold">{{ number_format($invoice->paid_cents / 100, 2) }}</span></p>
+                                            <p class="text-sm text-ink-2">Total: <span class="tabular-nums font-semibold">{{ number_format($invoice->total_cents / 100, 2) }}</span></p>
+                                            <p class="text-sm text-ink-2">Paid: <span class="tabular-nums font-semibold">{{ number_format($invoice->paid_cents / 100, 2) }}</span></p>
                                         </td>
                                     </tr>
                                 @endif
