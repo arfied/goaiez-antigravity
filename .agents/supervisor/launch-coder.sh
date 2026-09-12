@@ -123,9 +123,20 @@ if [ -n "$CODER_NOTE" ]; then echo "note: $CODER_NOTE"; fi
 # "open for <range>" does NOT arm it.
 # Written as an `if`, never `grep … && VAR=1`: under `set -euo pipefail` a failing
 # AND-list is the last command of the script and aborts every non-push dispatch.
+#
+# Tick 365 (money's ruling 609(c), measured here): the gate is now CLOSED unconditionally and a
+# `push: YES` brief is REFUSED loudly instead of arming it. `.agents/rules/10-supervisor.md:59-66`
+# is Track 1's push step — it tells the coder to run `git push origin main` as the FIRST thing
+# of any run whose brief says YES — and `coder-bin/git:167-169` refuses only force flags, never a
+# refspec. MEASURED at tick 365: local `main` (shared across worktrees) is 6 ahead of
+# origin/main, so a YES brief here would let a coder obeying rule 10 publish Track 1's unpushed
+# commits to main. This seat has pushed every range itself by explicit ref since tick 340, and the
+# last GOAIEZ_PUSH_OK=1 launch was run 146. Refusing (not silently zeroing) keeps run 13's
+# lesson: a push line that does nothing must say so.
 PUSH_OK=0
 if grep -qE '^push:.*\bYES\b' .agents/supervisor/BRIEF.md 2>/dev/null; then
-  PUSH_OK=1
+  echo "REFUSED: BRIEF.md says push: YES, but this lane's coder never pushes — rule 10's push step is Track 1's and pushes main (tick 365). The supervisor pushes gated ranges by explicit ref; write push: NO."
+  exit 1
 fi
 export GOAIEZ_PUSH_OK="$PUSH_OK"
 
