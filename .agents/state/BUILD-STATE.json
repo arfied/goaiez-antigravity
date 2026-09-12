@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-11T21:06:17",
+ "updated": "2026-09-12T00:07:05",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1652,6 +1652,12 @@
    "module": "X-07",
    "chose": "the forecast screen renders in the owner layout with mount resolving the tenant and reads the churn risk from the churn_risk_pct column it is stored in, and its test renders the empty branch and a forecast written through ForecastComputeAction and ChurnScoreAction by real GETs, proven by mutating the tenant resolution and the column name",
    "at": "2026-09-11T21:06:17",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-185",
+   "chose": "the message sequences screen renders in the owner layout with mount resolving the tenant and lists each sequence by name and whether it is running, and its test renders the empty branch and a sequence written through CampaignCreateAction by real GETs, proven by mutating the tenant resolution",
+   "at": "2026-09-12T00:07:05",
    "ruling": "R245"
   }
  ],
