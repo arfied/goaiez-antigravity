@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-12T02:11:23",
+ "updated": "2026-09-12T02:37:14",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1664,6 +1664,12 @@
    "module": "X-184",
    "chose": "the content week screen renders in the owner layout with mount resolving the tenant, drops the isSample flag nothing writes, keeps each item's source event because ContentWeekTest asserts it and the column is free text, prints the scheduled date as a date, and its test renders the empty branch and a plan written through PlanProposeAction by real GETs, proven by mutating the tenant resolution",
    "at": "2026-09-12T02:11:23",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-210",
+   "chose": "the active offers screen renders in the owner layout with mount resolving the tenant and lists each live promotion by code, its discount in words as a percent or in dollars, and how many of its uses are spent, and its test renders the empty branch and one promotion of each discount type written through PromotionCreateAction by real GETs, proven by mutating the tenant resolution",
+   "at": "2026-09-12T02:37:14",
    "ruling": "R245"
   }
  ],
