@@ -58,16 +58,26 @@ final class ChatCaptureController
 
         $consent = $request->boolean('consent');
 
-        $lead = $action->handle(
-            businessId: $businessId,
-            sessionId: $session->id,
-            name: $name,
-            phone: $phone,
-            email: is_string($email) ? $email : null,
-            message: is_string($message) ? $message : null,
-            formType: is_string($formType) ? $formType : 'live_chat',
-            consent: $consent,
-        );
+        try {
+            $lead = $action->handle(
+                businessId: $businessId,
+                sessionId: $session->id,
+                name: $name,
+                phone: $phone,
+                email: is_string($email) ? $email : null,
+                message: is_string($message) ? $message : null,
+                formType: is_string($formType) ? $formType : 'live_chat',
+                consent: $consent,
+            );
+        } catch (\DomainException $e) {
+            // Only the under-18 refusal is mapped, to the shape the form path returns for the same
+            // clause (FormCaptureAction). Every other refusal is rethrown, never silently mapped.
+            if ($e->getMessage() !== 'UNDER_18_SIGNAL_ON_SESSION') {
+                throw $e;
+            }
+
+            return response()->json(['status' => 'rejected', 'reason' => 'under_18'], 422);
+        }
 
         return response()->json([
             'id' => $lead->id,

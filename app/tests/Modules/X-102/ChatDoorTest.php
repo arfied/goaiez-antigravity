@@ -9,6 +9,7 @@ use App\Modules\CAgent\Models\AgentTurn;
 use App\Modules\X102\Models\ChatLead;
 use App\Modules\X102\Models\ChatSession;
 use App\Modules\X102\Models\ChatTurn;
+use App\Modules\X121\Models\Person;
 use App\Services\Pixel\PixelKeys;
 use App\Support\Tenancy;
 use Illuminate\Support\Str;
@@ -29,6 +30,11 @@ class ChatDoorTest extends TestCase
      * BUILD PROPOSAL: ChatTurnCreated carries no message text, but could safely do so because the AgentTurns law prohibits unencrypted text in job payloads, not synchronous event payloads (EmailReplied safely carries text). Owner: X-102
      * CLOSED: X-102 should record the agent's reply synchronously. The premise of listening to AgentTurnAnswer is wrong, as AnswerAgentTurnJob proves callers use the synchronous return array, and the event carries no session ID. Owner: X-102
      * REFINEMENT: The count assertion for ChatTurn was narrowed to author_type = 'visitor'. The original assertion (count === 1) would have failed if 0 or 2 visitor turns were created, and the new assertion still fails in those exact cases while legitimately permitting the new agent turn row.
+     * MEASURED 2026-09-10 (site lane): FALSE — the premise does not hold at source: no caller can supply an author type other than 'visitor' today (app/app/Modules/X-102/Http/Controllers/ChatTurnController.php:45).
+     * MEASURED 2026-09-10 (site lane): TRUE AND NOT OURS — X-102 holds no conversation column to pass, so Track 1 must mint the mapping (app/app/Modules/X-102/Actions/ChatTurnAction.php:29).
+     * MEASURED 2026-09-10 (site lane): TRUE BUT THE OUTPUT HAS NO CONSUMER — no file in the tree reads the turn_number column (app/app/Modules/C-Agent/Models/AgentTurn.php:26).
+     * MEASURED 2026-09-10 (site lane): TRUE AND NOT OURS — the claim holds about the phone column, but UnifiedInboxManager belongs to X-01 (app/app/Modules/X-01/Domain/UnifiedInboxManager.php:35).
+     * MEASURED 2026-09-10 (site lane): FALSE — the premise does not hold at source: the AgentTurns law does not prohibit unencrypted text but notes the payload carries a row id, and the event has zero listeners anyway (app/app/Services/Agent/AgentTurns.php:184).
      */
     public function test_valid_key_creates_chat_session_for_right_business(): void
     {
@@ -110,7 +116,8 @@ class ChatDoorTest extends TestCase
         ]);
 
         $response->assertStatus(201);
-        $response->assertJsonStructure(['id']);
+        $response->assertJsonStructure(['id', 'reply']);
+        $response->assertJson(['reply' => 'Hello! How can I help you today?']);
 
         Tenancy::set((int) $biz->id);
         $this->assertEquals(1, ChatTurn::where('chat_session_id', $session->id)->where('author_type', 'visitor')->count());
@@ -585,5 +592,88 @@ class ChatDoorTest extends TestCase
         $lead = ChatLead::where('chat_session_id', $session->id)->first();
         $this->assertEquals('Hello', $lead->message);
         $this->assertNotNull($lead->consent_logged_at);
+    }
+
+    /**
+     * P-148 on the chat door: an under-18 signal on a turn prevents the contact row at the capture write.
+     */
+    public function test_capture_after_an_under_18_turn_writes_no_contact_row(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Minor Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+        $key = app(PixelKeys::class)->ensureFor($biz);
+
+        $session = ChatSession::create([
+            'business_id' => $biz->id,
+            'session_token' => 'sess_minor_capture',
+            'status' => 'active',
+            'rage_clicks_count' => 0,
+            'is_ai_capped' => false,
+        ]);
+        Tenancy::forgetAll();
+
+        $turn = $this->postJson("/api/chat/{$key}/turn", [
+            'session_token' => 'sess_minor_capture',
+            'message' => 'I am 16 years old',
+        ]);
+        $turn->assertStatus(201);
+
+        Tenancy::set((int) $biz->id);
+        $this->assertSame('UNDER_18', ChatTurn::where('chat_session_id', $session->id)->where('author_type', 'agent')->value('refusal_code'));
+        Tenancy::forgetAll();
+
+        $capture = $this->postJson("/api/chat/{$key}/capture", [
+            'session_token' => 'sess_minor_capture',
+            'name' => 'Minor Visitor',
+            'phone' => '+15550009209',
+            'consent' => true,
+        ]);
+
+        Tenancy::set((int) $biz->id);
+        $this->assertSame(0, Person::where('business_id', $biz->id)->where('phone', '+15550009209')->count());
+        $this->assertSame(0, ChatLead::where('chat_session_id', $session->id)->count());
+        $capture->assertStatus(422);
+        $capture->assertJson(['status' => 'rejected', 'reason' => 'under_18']);
+    }
+
+    /**
+     * The capture refusal is specific to the under-18 code: a handoff for another reason still captures the lead.
+     */
+    public function test_capture_after_a_non_age_handoff_turn_is_written(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Handoff Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+        $key = app(PixelKeys::class)->ensureFor($biz);
+
+        $session = ChatSession::create([
+            'business_id' => $biz->id,
+            'session_token' => 'sess_sentiment_capture',
+            'status' => 'active',
+            'rage_clicks_count' => 0,
+            'is_ai_capped' => false,
+        ]);
+        Tenancy::forgetAll();
+
+        $turn = $this->postJson("/api/chat/{$key}/turn", [
+            'session_token' => 'sess_sentiment_capture',
+            'message' => 'I want to speak to a human',
+        ]);
+        $turn->assertStatus(201);
+
+        Tenancy::set((int) $biz->id);
+        $this->assertSame('NEGATIVE_SENTIMENT_HANDOFF', ChatTurn::where('chat_session_id', $session->id)->where('author_type', 'agent')->value('refusal_code'));
+        Tenancy::forgetAll();
+
+        $capture = $this->postJson("/api/chat/{$key}/capture", [
+            'session_token' => 'sess_sentiment_capture',
+            'name' => 'Adult Visitor',
+            'phone' => '+15550009210',
+            'consent' => true,
+        ]);
+
+        Tenancy::set((int) $biz->id);
+        $this->assertSame(1, Person::where('business_id', $biz->id)->where('phone', '+15550009210')->count());
+        $this->assertSame(1, ChatLead::where('chat_session_id', $session->id)->count());
+        $capture->assertStatus(201);
     }
 }

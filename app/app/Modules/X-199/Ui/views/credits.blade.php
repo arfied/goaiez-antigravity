@@ -22,7 +22,7 @@
     @else
         <ul class="space-y-4">
             @foreach($terms as $term)
-                <li class="border rounded p-4 shadow bg-white">
+                <li class="border rounded p-4 shadow bg-card">
                     <div class="flex flex-wrap justify-between items-center gap-2">
                         <div>
                             <span class="font-semibold">{{ $term->customer_name }}</span>

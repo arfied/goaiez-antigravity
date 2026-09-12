@@ -6,9 +6,12 @@ namespace Tests\Modules\X163;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X163\Actions\CalloutLookupAction;
+use App\Modules\X163\Models\CalloutFee;
 use App\Modules\X163\Models\PriceBookItem;
 use App\Modules\X163\Ui\ConfirmationScreen;
 use App\Support\Tenancy;
+use Livewire\Exceptions\MethodNotFoundException;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -263,5 +266,107 @@ class ConfirmationScreenTest extends TestCase
         Tenancy::setUser($user->id);
 
         Livewire::actingAs($user)->test(ConfirmationScreen::class)->assertOk();
+    }
+
+    public function test_ticking_deducted_with_no_fee_set_writes_no_fee_and_the_agent_refuses(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        Livewire::actingAs($owner)->test(ConfirmationScreen::class)->set('calloutFeeDeducted', true);
+
+        $row = CalloutFee::where('business_id', $biz->id)->first();
+        $this->assertNotNull($row, 'T1 A1: the row was not created');
+        $this->assertSame(0, $row->callout_fee_cents, 'T1 A2: callout_fee_cents is not 0');
+        $this->assertTrue($row->deducted_if_proceeding, 'T1 A3: deducted_if_proceeding is not true');
+
+        $res = app(CalloutLookupAction::class)->handle($biz->id);
+        $this->assertSame('NO_FACT', $res['refusal_code'] ?? null, 'T1 A4: refusal_code is not NO_FACT');
+    }
+
+    public function test_typing_a_fee_with_deducted_unticked_writes_deducted_false(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        Livewire::actingAs($owner)->test(ConfirmationScreen::class)->set('calloutFeeDollars', 85);
+
+        $row = CalloutFee::where('business_id', $biz->id)->firstOrFail();
+        $this->assertSame(8500, $row->callout_fee_cents, 'T2 A1: callout_fee_cents is not 8500');
+        $this->assertFalse($row->deducted_if_proceeding, 'T2 A2: deducted_if_proceeding is not false');
+    }
+
+    public function test_a_negative_callout_fee_is_refused(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        CalloutFee::create(['business_id' => $biz->id, 'callout_fee_cents' => -5000, 'deducted_if_proceeding' => false]);
+
+        $res = app(CalloutLookupAction::class)->handle($biz->id);
+        $this->assertSame('NO_FACT', $res['refusal_code'] ?? null, 'T3 A1: refusal_code is not NO_FACT');
+    }
+
+    public function test_a_one_cent_callout_fee_is_quoted(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        CalloutFee::create(['business_id' => $biz->id, 'callout_fee_cents' => 1, 'deducted_if_proceeding' => false]);
+
+        $res = app(CalloutLookupAction::class)->handle($biz->id);
+        $this->assertSame('$0.01', $res['formatted_fee'] ?? null, 'T4 A1: formatted_fee is not $0.01');
+    }
+
+    public function test_a_refused_confirm_keeps_confirm_clickable(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        $item = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Zero Price Service',
+            'price_cents' => 0,
+            'is_sample' => true,
+            'is_confirmed' => false,
+        ]);
+
+        $component = Livewire::actingAs($owner)->test(ConfirmationScreen::class)->call('confirm', $item->id);
+
+        $component->assertSee('Needs a price');
+        $this->assertDoesNotMatchRegularExpression('/wire:click="confirm\('.$item->id.'\)"\s+disabled/', $component->html(), 'T2 A2 Confirm is disabled on a row that needs a price');
+    }
+
+    public function test_a_browser_call_cannot_rewrite_a_confirmed_price_on_the_confirmation_screen(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        $item = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Drain Unblock',
+            'price_cents' => 12000,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'confirmed_at' => now(),
+        ]);
+
+        $component = Livewire::actingAs($owner)->test(ConfirmationScreen::class);
+
+        $refused = false;
+        try {
+            $component->call('updatePrice', $item->id, 0);
+        } catch (MethodNotFoundException $e) {
+            $refused = true;
+        }
+
+        $this->assertEquals(12000, $item->fresh()->price_cents, 'T1 A1 a browser call rewrote a confirmed price');
+        $this->assertTrue($refused, 'T1 A2 updatePrice answered a browser call');
     }
 }
