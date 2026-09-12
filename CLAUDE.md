@@ -10158,6 +10158,42 @@ Watch for: <the trap that applies, by name>
   - `17 7` vs `origin/main` after a fetch, and the Doctor/harness/hooks diff is empty, so no merge condition holds.
   - Board: proposals **13** · `app/app/Modules/` **0** · `CLOSED:` **8**.
   - Standing set on the tip, by identity: the post-merge nine plus the three `X194Test` reds.
+- ⚠️⚠️ **A runner that RENAMES the brief's files breaks every generator field that greps by filename, and the
+  fields still print real output — from the wrong file.** Wave 188e's `run-mutations.sh` wrote the **gate log** to
+  `w188e-mut-<n>-raw.log` and the **pest object** to `-pest-raw.log`, the reverse of the brief. The generator then
+  grepped the right name and got the wrong file: `DELTAS` printed only `"errors":0` and `MESSAGE` printed phpstan's
+  messages. `APPLIED` became `git apply`'s stdout, 0 bytes, and `AFTER` became a copy of `MOVED` instead of
+  `git status`. Nothing was invented, and every number was recoverable from the `-pest-raw.log` copies plus §1 of each
+  gate log. **Before grading a mutation field, `grep -c '"duration_ms"'` the file it cites: 1 on an object, 0 on a gate
+  log.** A brief that prints commands must also say *"unchanged, these names, this order"*.
+- ⚠️ **An `assertSee` on a picker option's text passes whatever is selected, because every option renders.**
+  `location-picker.blade.php:52-56` prints every location's name, and the disclosure is `:55`'s `@selected`. So
+  `X194Test.php:337`'s `assertSee('Loc Two')` could not fail. It is the rendered-string absence rung (wave 88) in the
+  positive direction. **Ask what else on the page renders the same string.**
+- ⚠️ **Inserting a method directly under a docblock steals the docblock.** Wave 188e put
+  `test_two_locations_…` between `X194Test.php:297-307` (`CLOSED: G9-37` and six `⛔ REFUSED`) and the
+  `assertTrue(true)` stub those lines judge. Every file-level grep (`BOARD`, the tick-191 arithmetic,
+  `CapabilityStage`) is blind to it. **Read `grep -n "public function test\|CLOSED:\|REFUSED:"` in order: a verdict
+  line's next `function` is the method it describes.**
+- **Suite at tick 342 on `90b53137`:** `tests 2575 · passed 2566 · assertions 11274 · failed 7 · errors 2 ·
+  duration_ms 155857`, from the wave's green gate over a tracked tree equal to the sha. The standing nine hold by
+  identity (`w188e-new-reds.txt` and `-gone-reds.txt` are both 0 bytes). My plain gate (`.t342-gate.log`) reads
+  `gates green.`, pint `passed`, phpstan `0`.
+- **Backlog at tick 342 — wave 188f is evidence and corrections for 188e, with no production code; 188g follows.**
+  RULED (`REVIEWS.md` tick 342, PASS-WITH-NOTES). The tick-341 hold is discharged and the range is pushed.
+  - **188f, four numbered items whose answers need not agree:**
+    - a client-update assertion on `locationTimezone`, proven by `w188e-mut-3.patch` re-run unedited. It survived at
+      radius 0 and is **not spent**.
+    - a disclosure assertion that fails when the wrong location is disclosed, with its own mutation;
+    - the verdict docblock moved back over `test_reporting_capabilities`, byte-identical;
+    - the three `'UTC'` fixtures (`AnyViewItScreenTest.php:25,40,75`) given a value production can hold.
+  - **Spent:** `w188e-mut-1`, `-2`, `-4`, `-5` and `-6`. Mutation 4 is path evidence: it reddened both refusal tests at
+    `assertOk` (a 500), not at their messages.
+  - **188g:** `AnyViewIt::$ready`, and `load()` never clearing `$errorMessage` on retry. Also wave 187's NOTE 5, the
+    `SavedViewsList` save-failure panel. The `'R245'` fixture folds into the wave that opens its file. Re-measure every
+    line number before briefing.
+  - `29 11` vs `origin/main` after a fetch, and the Doctor/harness/hooks/seals diff is empty, so no merge condition
+    holds. Board: proposals **13** · `app/app/Modules/` **0** · `CLOSED:` **8**. Re-run every grep; never inherit one.
 
 ## Style
 
