@@ -19554,3 +19554,46 @@ Ruling 607, the staged-brief identity census, has **no population here**: `ls .a
 method's body is changing it"*. **This lane deliberately does the opposite for credit carriers** (SITE-140 in `test_g12_03_capabilities`,
 SITE-210 in G21-01's carrier), because `CapabilityStage` credits by the id literal and a second carrier obscures which method discharges the clause
 (240). The two rules have different subjects, and neither transfers.
+
+## ⛔ Money's ruling 609(c) reproduces here WITHOUT money's safety — rule 10's push step targets `main`, the guard checks no refspec, and local `main` is 6 ahead of origin/main (tick 365)
+
+Twentieth firing of tick 215's law, measured here rather than adopted (223). `.agents/rules/10-supervisor.md` is byte-identical to
+`origin/main`'s (`git diff --stat origin/main HEAD --` empty; last commit `cc9ae213`, pre-divergence; `.gitattributes:5` `merge=ours`).
+`:59-66` is headed *"Push step (Track 1, added 2026-09-03)"* and tells the coder, as the FIRST act of any run whose brief reads
+`push: YES`, to run **`git push origin main`**.
+
+| money's safety for (c) | here |
+| :-- | :-- |
+| `launch-coder.sh` hard-sets `PUSH_OK=0` (its ruling 26b) | ⛔ **absent** — `:126-130` DERIVED `PUSH_OK=1` from `^push:.*\bYES\b` in `BRIEF.md` |
+| `coder-bin/git:168` refuses push without the variable | ✅ same guard — and `:167-169` refuses only `--force`/`-f`/`--force-with-lease`, **never a refspec** |
+
+⭐ **The consequence is concrete**: `git rev-list --left-right --count origin/main...main` → **`0 6`**. `refs/heads/main` is shared across every
+worktree and is Track 1's working branch (newest `8451b92a`, 14:16, Track 1's notes). A brief here reading `push: YES` would have let a coder
+obeying rule 10 **fast-forward origin/main onto six unpushed Track 1 commits**, with no conflict and no refusal. The only barrier was
+convention: every LAUNCHED line since run 146 (`REVIEWS.md:62322`) reads `GOAIEZ_PUSH_OK=0`, because tick 340 made this seat the only pusher.
+**A convention is not a guard, and this one stood one `YES` away from Track 1's branch.**
+
+**RULED and executed (`7a09e8fc`): `launch-coder.sh` never arms the push gate and REFUSES a `push: YES` brief loudly** — refusing rather than
+silently zeroing keeps run 13's lesson (a push line that does nothing must say so). ✅ Safe in both directions by construction: `PUSH_OK=0` is
+unconditional, so even a broken refusal leaves the guard closed. ⛔ **UNEXERCISED** — `--status` exits before the gate; the NO branch fires on
+the next dispatch, the YES branch only if a brief ever says YES (193). ⛔ **Rule 10 is NOT edited**: a one-sided lane edit to a `merge=ours` file
+travels silently onto `main` at Track 1's merge (211) and would replace a push step that is correct there. ⛔ **Every future brief says: rule 10's
+push step and its `REPORT.md` shape do not apply here; this brief's items replace them — and the brief's `push:` line is `NO`.** TRACK 1 ACTION
+(10): `coder-bin/git`'s push clause could refuse any refspec naming `main` outside `grs-antig`.
+
+⭐ **The general form, one step past money's**: a guard whose **variable** is checked but whose **target** is not is only as narrow as the
+instruction the coder follows — and here the instruction lives in a shared file written in another lane's voice. **When a guard admits an act,
+read what the coder's contract tells it to do with that act, not only whether the gate is open.**
+
+⚠️ (a), (b), (d) reproduce and grant no act: this lane's briefs enumerate report fields (363), and (b)/(d) are prose the guard already enforces against.
+⚠️ Instrument: a subshell `(cd app && php artisan doctor …)` is **refused** ("shell operators that require approval"), so the drift-causing plain
+form stays the only accepted artisan form and the per-call reset stands (285).
+
+## ✅ Money's ruling 610 measured here — three unpaired state commits, all MAIN's, two of them ONE split pair (tick 365)
+
+`git log --first-parent --format=%h --since=2026-09-02 HEAD --` each state file, set difference both ways (`grep -v -F -x -f`): JOURNAL **121**,
+BUILD-STATE **122**; JOURNAL-only `f71b0efa`; BUILD-STATE-only `5606d096`, `c361f328`. **All three are `origin/main`'s**, dated 09-04/09-05, before
+this checkout's 2026-09-05 17:4x fast-forward, so **this lane's own first-parent commits have zero unpaired members.** `f71b0efa` (13:46:24, X-121
+`JobCreateAction`, JOURNAL +1) and `5606d096` (14:37:14, BUILD-STATE only) carry the **same** `(R245) X-121 — JobCreateAction is the one create path`
+decision stamped `13:46:19` — money's MONEY-79 shape, 51 minutes apart, in Track 1's column. `c361f328` registers X-221-223 in BUILD-STATE with no
+decision line. Advisory; ⛔ never a parallel fix, and `state.py` owns both files.
