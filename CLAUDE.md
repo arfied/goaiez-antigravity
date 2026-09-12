@@ -18172,3 +18172,32 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
    - **Population.** Ruling 599's is cross-lane and ruling 600's is recorded. Neither is a coder wave.
 
    **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty coder wave to avoid an idle tick is what rulings 95, 100 and 111 forbid. ⚠️ No gate ran this tick: nothing in `bin/supervise.sh` or `app/**` changed, so the floor stays ruling 564's. ⚠️ No pidfile was written this tick. Every pidfile read was read-only.
+
+602. **⭐ The launcher's `KICKOFF.md` check is PRESENCE, not identity: `launch-coder.sh:120` refuses only an EMPTY kickoff, and the kickoff names no wave of its own. A tick that dispatched without rewriting both mailbox files would re-run the last wave. It is recorded, not built. The stale brief's own stop-clause refuses at item 1, and the obvious identity check has six false members in this ledger (measured by the lane supervisor 2026-09-11 20:2x, by `date` `20:20`; rulings 96, 118, 232, 259, 327, 328, 429, 464, 487, 597, 599, 600).** This is 597's predicate aimed at the launcher's other input: *an identity check that checks existence rather than the thing it names*.
+   **Measured.**
+   - `grep -n -F -e "KICKOFF" .agents/supervisor/launch-coder.sh` returns `:120` (`[ -s … ] || REFUSED: KICKOFF.md missing or empty`) and the two launch lines, and nothing else. So a non-empty stale kickoff launches.
+   - `KICKOFF.md` (2538 B) opens *"Read `.agents/supervisor/BRIEF.md` and do exactly what it says, in order, items 0 through 7."* `grep -o -e "MONEY-[0-9]*"` over it prints only `MONEY-204`, a reference inside the wave description. **The kickoff carries no identity of its own. Its identity is whatever `BRIEF.md` says.**
+   - ⚠️ An mtime freshness check would be defeated today: 597's experiment restored `KICKOFF.md` by `Write`, moving its mtime to `20:06:24`, newer than `BRIEF.md` (`07:07:27`), while both still carry MONEY-211.
+   **The hazard.** A tick that took case (e) and ran the launcher without writing a new `BRIEF.md`/`KICKOFF.md` would dispatch MONEY-211 again, and the launcher would print `LAUNCHED run 237`.
+   **Its safety, named (328), and it holds twice.**
+   (1) Every tick writes the brief and kickoff before it dispatches (464's order), and 259/487 require the `Dispatched:` line to quote the launcher's own `LAUNCHED` line.
+   (2) ⭐ **The stale brief refuses itself.** MONEY-211's item 1 requires `grep -rn -F -e "auth_token" app/app app/tests app/database` to print **14** lines before any edit, and today it prints **18**. That is MONEY-211's own migration, comments and test, landed. So the re-run stops at item 1 under its own stop-clause and commits nothing (118). Every brief since ruling 118 opens with a baseline sweep keyed to a pre-wave tree, so this safety is structural rather than lucky.
+   ⭐⭐ **The obvious fix is wrong, and that is measured.** "Refuse a kickoff whose wave already has a `REVIEWS.md` heading" has **six** false members among the wave-naming headings:
+   - `:23274` `MONEY-74 run 88: TRANSPORT DEATH, redispatched as run 89`, a legitimate byte-for-byte redispatch that the check would refuse;
+   - five dispatch-announcing headings that name their wave before any verdict: `:41687` MONEY-174, `:45723` MONEY-189, `:47667` MONEY-194, `:50289` MONEY-201, `:52125` MONEY-205.
+   Ruling 30 also requires a quota death to redispatch the **unchanged** brief. A wave-id check keyed to a verdict word would need the heading vocabulary to be stable, and it is not: `PASS`, `PASS-WITH-NOTES`, `BLOCK`, `then HOLD` and prose all appear.
+   ⭐ **Known member (429):** ruling 30's quota redispatch and the MONEY-74 run 88→89 redispatch are the shape a presence-only check exists to allow.
+   ⛔ **Recorded, not built.** Ruling 232 governs: a refusal on the dispatch path that blocks the two sanctioned redispatches (quota, transport death) is a new hazard, while the stale re-run costs one run and commits nothing. ⚠️ **Trigger:** a brief whose first item has no baseline sweep, or a measured dispatch of a wave that already has a verdict block.
+   ⭐ 415's first-three check passed on the headings, which were read rather than counted: the raw `-c` of **13** included verdict headings carrying `then HOLD`, which is mechanism 8. 449's each-member-exists check passed.
+   Ruling 327's outcome shape a **seventy-eighth** time.
+   ⭐ **The generalisable half: a mailbox file that delegates its identity to another file cannot be identity-checked on its own.** The honest net is the delegate's first act, so a brief's item 1 baseline is also the launcher's missing freshness check.
+
+603. **⛔ SEVENTY-FIRST consecutive HOLD (RULED by the lane supervisor 2026-09-11 20:2x, by `date` `20:20`).** All four lift conditions were measured this tick (269, 272, 323), each case decided on mtimes (494):
+   - **Owner.** `OWNER.md`'s newest heading is still `## OWNER RULING — 2026-09-09 09:02` (136), mtime `09-09 09:02:03`, older than `REVIEWS.md` (`20:16:01`).
+   - **Coder.** `--check` returned `CODER DEAD`, with no note.
+   - **Mailbox.** `REPORT.md` (`07:15:21`) and `BRIEF.md` (`07:07:27`) are both older than `REVIEWS.md`.
+   - **Cadence, all three ✗.** After `git fetch --no-write-fetch-head origin`, `origin/main` = **`bd3e9c5f`**, unmoved. `git rev-list --count HEAD..origin/main` = **44**, not above 100. `git merge-base HEAD origin/main` = **`dca743e8`**, with no new main content since 553's read (504). The guarded-checker diff is unchanged from 601, since `origin/main` did not move.
+   - **Track 1.** No answer to ACTION 13–32.
+   - **Population.** Ruling 602's is recorded and not buildable.
+
+   **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty coder wave to avoid an idle tick is what rulings 95, 100 and 111 forbid. ⚠️ No gate ran this tick: nothing in `bin/supervise.sh` or `app/**` changed, so the floor stays ruling 564's. ⚠️ No mailbox file was written except `REVIEWS.md`, `TICK-ADDENDUM.md` and this tick's scratch files.
