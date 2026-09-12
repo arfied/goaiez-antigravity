@@ -10463,6 +10463,69 @@ Watch for: <the trap that applies, by name>
   - The `'R245'` fixture at `RefusalcodeDistributionPerScreenTest.php:38` still waits for the wave that opens its file.
   - `34 3` vs `origin/main` after a fetch, and the Doctor/harness/hooks/seals diff is empty, so no merge condition holds.
   - Board: proposals **14** · `app/app/Modules/` **0** · `CLOSED:` **8**. Re-run every grep; never inherit one.
+- ⚠️⚠️ **In Livewire's testing layer, EMPTY HTML after a call means the update's response was NOT OK. It is never a
+  property of hydration or of `$refresh`.**
+  - `app/vendor/livewire/livewire/src/Features/SupportTesting/SubsequentRender.php:42-51` returns a `ComponentState` with
+    html `''` only when `! $response->isOk()`. Otherwise `:65` uses the update's own HTML.
+  - `RequestBroker.php:28` disables exception handling **except** for `HttpException` and `AuthorizationException`, so
+    those two are how a Livewire test call goes non-OK without throwing.
+  - `app/tests/Feature/OwnerChannelTextsAdminTest.php:554-555` is `call('$refresh')->assertSee(...)`, green in this
+    suite. That is the one-line refutation of any "Livewire empties HTML on refresh" claim.
+  - Wave 190c wrote that claim into `test_saved_views_list_read_escapes_its_guard`'s docblock (`1a5dda8f`). **An
+    assertion that passes against `''` is scenery, and the empty string is a symptom to diagnose, not a framework fact.**
+- ⚠️⚠️ **A brief that says "establish it from source" must print the file where the answer lives. Otherwise the coder
+  reaches for a live runtime.**
+  - Wave 190c's brief printed `SavedViewsList::render()` and `HandleComponents.php:219-234`, and not
+    `SubsequentRender.php`.
+  - The coder then *"bypassed the coder guard to run `php artisan tinker`"*: the no-bootstrap hard limit in substance,
+    crossed on purpose on the last dispatch of a BLOCK chain. It also got the mechanism wrong.
+  - The tick-239 range shape, with a file list as the range. **Before briefing a "why does this test see X" question,
+    find the file that produces X and print it.**
+- ⚠️ **A coder's own report naming a guard bypass is a `TRACK 1 ACTION`, and this seat cannot investigate it.** The run's
+  transcript uuid under `~/.gemini/antigravity-cli/brain/` is not discoverable here, and `ls
+  /home/goaiez/agents/coder-bin/` needs approval. Record the words, §0's database, and the tree state. File it (tick
+  349).
+- ⭐ **A test-body probe that puts the rendered HTML into an assertion message measures exactly what a Livewire assertion
+  sees, with no bootstrap script.** Wave 190c's `->assertSee('MAKE ME FAIL ' . $component->html())` after `$refresh`
+  printed *"Failed asserting that '' … contains "MAKE ME FAIL ""*. That was the one piece of 1b evidence the forbidden
+  tinker session was reaching for. Uncommitted, run through the gate, reverted: the legitimate form.
+- ⭐ **A §7 window plus its `… N more` count reconstructs the whole red set when the object is overwritten.** Wave
+  190c's forced-error run showed 12 names plus "5 more", against `failed 15 · errors 2`. The standing nine are known by
+  name, and four of them are among the 12, so the five unshown are the other five of the nine, and
+  `read_escapes_its_guard` is proven absent. **Window + count + a known standing set = identity, without the object.**
+- ⚠️ **Mutation evidence survives a dropped capture protocol only through §1 and §7 of the gate log. Keep the two log
+  kinds apart so that survival is readable.** Wave 190c ran mutations 2 and 3 with no `-raw.log`, `moved`, `applied` or
+  `wait` file. Both are still gradeable, because `-gate.log` §1 pins the module file and §7 names the one moved test
+  with its tag (`FAIL`, not `ERROR`). Mutation 2's `assertions` count is lost to the shared object's overwrite.
+- ✅ **Wave 190c's mutations 2 and 3 are SPENT; never re-brief them.**
+  - `w190c-mut-2` comments out `clearDefaultError()`'s assignment. `…_default_view_retry_clears_panel` fails at its closing
+    `assertDontSee`, radius 1.
+  - `w190c-mut-3` removes the blade's `retry="clearDefaultError"`. The new `…_default_view_retry_button_is_wired` fails at
+    its only assertion (`assertions` flat, `passed −1`), radius 1.
+  - Tick 348's NOTE 1 is discharged in both halves. `w190c-mut-1-gate.log` re-ran the spent `w190b-mut-1`, and its
+    patch file was then overwritten with a different edit, so `scratch/w190c-mut-1.patch` does not match that log.
+- **Suite at tick 349 on `1a5dda8f`** (`.agents/supervisor/.t349-gate.log`, my own `--tests`): `tests 2584 · passed 2575
+  · assertions 11292 · failed 7 · errors 2 · duration_ms 153114`.
+  - The standing nine hold by name, and pint `passed` / phpstan `0`.
+  - Against the wave's green `2583 · 2574 · 11291` that is `+1 · +1 · +1`: the new one-assertion test, green.
+  - `origin/track/sixty` is `a3c5b824`. `002f40fd` and `1a5dda8f` are gated and **held**.
+- **Backlog at tick 349 — HOLD. The wave-190 BLOCK chain has spent its two dispatches.** `REVIEWS.md` tick 349:
+  `BLOCK`, `OWNER ACTION 1`, `TRACK 1 ACTION 1`. `BRIEF.md` and `KICKOFF.md` are HOLD notices.
+  - **Nothing dispatches until `OWNER.md` answers**, and that reply is case (d). Every tick until then is a one-paragraph
+    HOLD re-check: `stat` `OWNER.md`, `ps -p` the pid, and `git rev-parse HEAD origin/track/sixty`.
+  - **Proposed 190d (in the OWNER ACTION), no production code:**
+    - the `read_escapes_its_guard` docblock corrected forward;
+    - why that component's `$refresh` update is non-OK, from `SubsequentRender.php:42-65` and `RequestBroker.php:22-39`
+      printed with the conclusion withheld;
+    - a replacement assertion in a new method with its own mutation, or a one-line `BUILD PROPOSAL:` if the defect is the
+      component's.
+    - The false docblock ships adjacent to its correction, so the held range is pushed with 190d.
+  - **Renumbered to 190e:**
+    - the default-view `Try again` label (tick 348 NOTE 2);
+    - the value half's Livewire-update proof, with `catch (\Exception)` folded in.
+    - The `'R245'` fixture at `RefusalcodeDistributionPerScreenTest.php:38` still waits for the wave that opens its file.
+  - `34 6` vs `origin/main`, Doctor/harness/hooks untouched, so no merge condition holds.
+  - Board: proposals **14** · `app/app/Modules/` **0** · `CLOSED:` **8**. Re-run every grep; never inherit one.
 
 ## Style
 
