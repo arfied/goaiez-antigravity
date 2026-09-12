@@ -3304,6 +3304,10 @@ ledger refresh wave is needed.
 - Tick 408's notes were committed as `743ce222`, certified by `.gateT409.txt`, and pushed
   `5d71300e..743ce222`. The lane is 198 ahead / 0 behind. **Tick 409 wrote a HOLD.**
 
+⌛ **Tick 410 — HOLD.** `main` did not move (pin `51902cc4`), all three drift conditions are FALSE,
+and §3 is unchanged at `0·39·85·0·16·204·128·3`. The lane is 199 ahead / 0 behind at `02a9fd2a`.
+- Tick 409's notes (`02a9fd2a`) were certified by `.gateT410.txt` and pushed `743ce222..02a9fd2a`.
+
 ⌛ **S-202 as dispatched (history): §3 ledger refresh, dispatched at tick 394 as STAGES-240, merge gate CLOSED.** §3 still
 reads `boundary 41` against §5's 39. This is S-200's shape. The JOURNAL `^- .+ stage ` rows start at 96.
 - ⚠️ **Brief lesson:** `--full-doctor` §5 truncates its row dump and prints no `schema` rows. Ask for
