@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-11T07:14:44",
+ "updated": "2026-09-11T21:44:55",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2855,6 +2855,12 @@
    "module": "X-117",
    "chose": "A raced checkout on one authorisation is refused by the guard it raced An authorisation pays once, and checkoutCart guarded that with a read before its insert, which refuses a second press but lets two concurrent presses both place an order. A unique index on business and authorisation token makes the second insert fail inside the checkout's existing retry loop, whose re-run meets the same guard and refuses exactly as a sequential second press is refused, so no new catch is written and the loser's refusal cannot drift from the guard's.",
    "at": "2026-09-11T07:14:44",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Billing",
+   "chose": "An empty state that says nothing in this app does a thing measures that claim over the whole app, never over the one table its screen reads. The four C-Billing screens read their own dunning ladder, usage meters and ledger, while the app's subscription dunning, call and message usage, and credit ledger live on other tables, so each empty state says what its own table holds and that the rest is recorded elsewhere and not read here.",
+   "at": "2026-09-11T21:44:55",
    "ruling": "R245"
   }
  ]
