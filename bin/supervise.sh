@@ -31,6 +31,10 @@ fail=0
 GATE_LOG=/home/goaiez/tmp/gate-runs.tsv
 GATE_PROJECT="goaiez-antigravity"
 GATE_CHECKOUT="$(basename "$ROOT")"
+# Ruling 593: ONE name for this checkout's pest summary. The lock-timeout sentinel went to
+# last-pest-money.json while the summary went to last-pest-grs-antig-money.json, so a run
+# that never ran left the canonical file holding the PREVIOUS run's numbers.
+PEST_JSON="/home/goaiez/tmp/last-pest-$GATE_CHECKOUT.json"
 GATE_PID=$$
 log_gate() { # <start_iso> <end_iso> <tool_pid> <rc> <tool>
   printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
@@ -245,6 +249,7 @@ if [ $want_tests -eq 1 ]; then
   if [ -n "$busy" ]; then
     echo "  ⛔ REFUSED: a pest run is live in a checkout pinning goaiez_antig_money_test:$busy"
     echo "     (two suites on one database is the 'permission denied to terminate process' shape — rerun when idle)"
+    echo '{"tool":"pest","result":"refused-shared-db"}' > "$PEST_JSON" 2>/dev/null
     fail=1
     out=''; rc=0
   else
@@ -264,7 +269,7 @@ if [ $want_tests -eq 1 ]; then
     }
     if [ $lock_held -eq 0 ]; then
       echo "  ✗ pest NOT RUN — $PEST_LOCK held for 40 minutes. Not a red suite: no test ran."
-      echo '{"tool":"pest","result":"lock-timeout"}' > /home/goaiez/tmp/last-pest-money.json
+      echo '{"tool":"pest","result":"lock-timeout"}' > "$PEST_JSON" 2>/dev/null
       fail=1; want_tests=0
     fi
   fi
@@ -275,7 +280,7 @@ if [ $want_tests -eq 1 ]; then
   : > "$ROOT/.agents/supervisor/pest-events.txt"
   run_tool pest env DB_DATABASE=goaiez_antig_money_test timeout 1800 ./vendor/bin/pest --log-events-text "$ROOT/.agents/supervisor/pest-events.txt"
   flock -u 9 2>/dev/null
-  printf '%s' "$out" | tail -1 > /home/goaiez/tmp/last-pest-$(basename "$(git rev-parse --show-toplevel)").json
+  printf '%s' "$out" | tail -1 > "$PEST_JSON"
   [ $rc -ne 0 ] && fail=1
   [ $rc -eq 124 ] && echo "  ⛔ TIMEOUT: pest exceeded 1800s and was killed — the number below, if any, is partial"
   # ruling 67: 137 is 128+9 (SIGKILL), 143 is 128+15 (SIGTERM). A killed suite did
