@@ -37,6 +37,7 @@ class InfobipVoiceRefusalLogTest extends TestCase
                 'HTTP_X_IB_HMAC_SIGNATURE' => $badBase64,
                 'HTTP_USER_AGENT' => 'ReactorNetty/1.1.17',
                 'CONTENT_TYPE' => 'application/json',
+                'HTTP_CONTENT_LENGTH' => strlen($body),
             ],
             $body
         );
