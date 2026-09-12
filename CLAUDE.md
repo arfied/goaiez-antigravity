@@ -3237,6 +3237,16 @@ and §3 is unchanged at `0·39·85·0·16·204·128·3`. The lane is 191 ahead /
   per-track copy against main's, not main moving: `git log 29312e16..68fafdb3 -- .claude/` is empty.
   It is not drift condition (2).
 
+⌛ **Tick 404 — HOLD.** `main` moved `68fafdb3` → `ef52d10b`: one first-parent commit, a `track/money`
+merge (three C-Billing `Ui/*.php` screens, one blade view, three screen tests; 7 `app/` files, no
+checker, hook, seal, `coder-bin` or `bin/state.py` byte). That is +1 first-parent / +6 ancestor.
+- All three drift conditions are FALSE. The lane is 192 ahead / 4 behind first-parent (192 / **99**
+  ancestor) at `34e7bfdb`. ⚠️ **99 is one short**: the rule is "more than 100", so the next merge of
+  this size on `main` very likely fires condition (1), and `RULING GQ`'s advance ruling then dispatches
+  the take under `--allow-merge`. Merge base `29312e16` is unmoved.
+- §3 is unchanged at `0·39·85·0·16·204·128·3`.
+- Tick 403's notes (`34e7bfdb`) were certified by `.gateT404.txt` and pushed `305d44ff..34e7bfdb`.
+
 ⌛ **S-202 as dispatched (history): §3 ledger refresh, dispatched at tick 394 as STAGES-240, merge gate CLOSED.** §3 still
 reads `boundary 41` against §5's 39. This is S-200's shape. The JOURNAL `^- .+ stage ` rows start at 96.
 - ⚠️ **Brief lesson:** `--full-doctor` §5 truncates its row dump and prints no `schema` rows. Ask for
