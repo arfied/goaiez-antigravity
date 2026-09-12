@@ -7,6 +7,8 @@ namespace Tests\Modules\X194;
 use App\Models\Location;
 use App\Models\User;
 use App\Modules\X194\Actions\ReportPdfAction;
+use App\Modules\X194\Actions\SetDefaultViewAction;
+use App\Modules\X194\Actions\ViewListAction;
 use App\Modules\X194\Actions\ViewRenderAction;
 use App\Modules\X194\Actions\ViewSaveAction;
 use App\Modules\X194\Actions\ViewScheduleAction;
@@ -21,6 +23,7 @@ use App\Services\Tenant\LocationContext;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\LazyCollection;
 use Livewire\Features\SupportLockedProperties\CannotUpdateLockedPropertyException;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -459,6 +462,58 @@ class X194Test extends TestCase
         $component->set('newViewName', 'Successful View')
             ->call('saveView')
             ->assertDontSee('We could not save your view.');
+    }
+
+    public function test_saved_views_list_read_escapes_its_guard(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Test Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->mock(ViewListAction::class, function ($mock) {
+            $mock->shouldReceive('listViews')->andReturn(new LazyCollection(function () {
+                yield from [];
+                throw new \Exception('Database failure during iteration');
+            }));
+        });
+
+        $component = Livewire::test(SavedViewsList::class, ['businessId' => $biz->id]);
+
+        $component->call('load')
+            ->assertSee('We could not load your saved views.');
+
+        // And retry shows it
+        $this->mock(ViewListAction::class, function ($mock) {
+            $mock->shouldReceive('listViews')->andReturn(collect([])); // empty collection for retry
+        });
+
+        $component->call('$refresh')
+            ->assertDontSee('We could not load your saved views.');
+    }
+
+    public function test_saved_views_list_default_view_failure_retains_list(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Default View Failure Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $view = $this->saveAction->save(
+            businessId: $biz->id,
+            viewName: 'Some Existing View',
+            viewType: 'table',
+            filterConfig: [],
+            columnsConfig: []
+        );
+
+        $this->mock(SetDefaultViewAction::class, function ($mock) {
+            $mock->shouldReceive('setDefault')->andThrow(new \Exception('Database update failed'));
+        });
+
+        $component = Livewire::test(SavedViewsList::class, ['businessId' => $biz->id])
+            ->call('load')
+            ->assertSee('Some Existing View');
+
+        $component->call('makeDefault', $view->id)
+            ->assertSee('We could not update your default view.')
+            ->assertSee('Some Existing View'); // retain the list
     }
 
     /**
