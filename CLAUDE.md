@@ -17929,3 +17929,25 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
    - **Population.** Ruling 585's is empty of buildable members.
 
    **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty coder wave to avoid an idle tick is what rulings 95, 100 and 111 forbid. No gate ran this tick: `HEAD`'s `app/**` is unchanged since the last supervisor gate, so the floor stays ruling 564's.
+
+587. **⭐ Ruling 328's `Ui/` arithmetic census used five FUNCTION names (`intdiv`/`ceil`/`floor`/`round`/`fmod`). The division and modulo OPERATORS were never swept by that name list: 3 members by variable divisor in the eight money modules, all three guarded and all three already known, zero by modulo, and the no-space spelling returns only paths and prose. Zero buildable (measured by the lane supervisor 2026-09-11 19:1x, by `date` `19:10`; rulings 207, 213, 223, 262(b), 294, 324, 327, 328, 332, 360, 415, 429, 449, 532, 585).** PHP 8 throws `DivisionByZeroError` for `$a / 0` and `$a % 0`, so a variable divisor with no guard is a 500. A render reaches that from an empty tenant, and an action reaches it from an owner-typed zero. Ruling 213 swept `' / '` in `Domain/` only. Ruling 328 swept `Ui/` by function name and struck the axis. That is the addendum's *"a census keyed on a method NAME or written FORM"* (532–540, 585), aimed at 328.
+   **Instruments, quoted (300)**, each over the eight money module trees minus `/Database/`:
+   - `-e ' / .[a-zA-Z_]' -e ' % .[a-zA-Z_]'` → **12** lines. A bare `.` stands in for `$` and cannot be satisfied by a digit (583), so a literal divisor such as `/ 100` is excluded by design; ruling 345(a) swept those. **9 are prose**: a docblock, a capability cell, two evidence-command strings, a `sprintf` literal, three generated `sample-state` attributes and one placeholder. That is mechanism 8, caught by reading each hit (262(b)). **3 are real divisions.**
+   - Spelling corroboration: `-e '[a-zA-Z_)]/.[a-zA-Z_(]' -e 'fdiv(' -e 'fmod('` over the same trees `--include=*.php`, minus `//` and `http` → **20** lines, every one a path string, a `__DIR__.'/Ui/views'`, a capability cell, or `CardPresentAction.php:35`'s `%02d/%d` format. **Zero divisions without spaces.**
+   - ⭐ **Positive control fires:** the first instrument over `app/app/Services` and `app/app/Livewire` → **8+** files (`Services/Ai/AiSpend.php`, `Services/Billing/CostBookTotal.php`, `Services/Ai/AnthropicClient.php`, …). ⛔ Money proposes no edit on those (5).
+   **The three members, each guard read (395) and its safety named (328):**
+   - `X-173/Domain/AccountingSyncEngine.php:134` `$conflictsCount / $seen` sits behind `$seen === 0 ? null :` on the same line. ⭐ **Known member (429):** ruling 223's own guard, and ruling 360's `rateOf`.
+   - `X-211/Domain/ArEngine.php:177` `ceil($remaining / $installmentsCount)` sits behind `:156`'s `if ($installmentsCount < 2)` refusal, inside the same transaction. ⭐ **Known member:** ruling 213's `ceil` member, with its guard's position ratified by 332.
+   - `X-211/Ui/PaymentplanBuilder.php:88` `ceil($inv->balance_cents / $typed)` sits behind `:85`'s `if ($typed < 2)`, and `:84` is `(int) (… ?? 3)`. ⭐ **Known member:** ruling 328's member 1, found there through `ceil(`.
+   ⭐ **Every variable divisor in the lane is guarded before the operator runs**, and the guards are the ones rulings 223 and 328 already named. 415's first-three check passed. 449's each-member-exists check passed: every member was printed from a file.
+   ⛔ Struck, not to be re-run. ⚠️ **Trigger:** a `/` or `%` by a non-literal divisor added in the lane. Ruling 327's outcome shape a **seventy-fifth** time.
+
+588. **⛔ SIXTY-FOURTH consecutive HOLD (RULED by the lane supervisor 2026-09-11 19:1x, by `date` `19:10`).** All four lift conditions were measured this tick (269, 272, 323), each case decided on mtimes (494):
+   - **Owner.** `OWNER.md`'s newest heading is still `## OWNER RULING — 2026-09-09 09:02` (136), mtime `09-09 09:02:03`, older than `REVIEWS.md` (`19:02:05`).
+   - **Coder.** `--check` returned `CODER DEAD`.
+   - **Mailbox.** `REPORT.md` (`07:15:21`) and `BRIEF.md` (`07:07:27`) are both older than `REVIEWS.md`.
+   - **Cadence, all three ✗.** After `git fetch --no-write-fetch-head origin`, `origin/main` = **`bd3e9c5f`**, unmoved (`git diff --name-status bd3e9c5f origin/main | wc -l` = 0). `git rev-list --count HEAD..origin/main` = **44**. `git diff --stat dca743e8 origin/main -- app/app/Doctor coder-bin .claude/hooks` is empty. `git merge-base HEAD origin/main` = **`dca743e8`**.
+   - **Track 1.** No answer to ACTION 13–28.
+   - **Population.** Ruling 587's is empty of buildable members.
+
+   **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty coder wave to avoid an idle tick is what rulings 95, 100 and 111 forbid. No gate ran this tick: `HEAD`'s `app/**` is unchanged since the last supervisor gate, so the floor stays ruling 564's.
