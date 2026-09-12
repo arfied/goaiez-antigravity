@@ -101,12 +101,24 @@ git log --oneline -5 | sed 's/^/  /'
 git rev-list --left-right --count origin/main...HEAD 2>/dev/null \
   | awk '{print "  vs origin/main (local ref): behind " $1 ", ahead " $2 "  — refresh with: git fetch --no-write-fetch-head origin"}'
 
-bar "2. forbidden paths touched  (uncommitted + last commit)"
-touched=$( { git diff --name-only HEAD~1 HEAD 2>/dev/null; } | sort -u)
+bar "2. forbidden paths touched  (uncommitted + every commit not yet on origin — tick 357)"
+# Tick 357 (money's ruling 591, measured here rather than copied): HEAD~1..HEAD saw only the
+# LAST commit, and since tick 245 every wave ends in a .agents/state/ commit, so on a coder's own
+# gate §2 and §2b scanned the state commit and never the wave's code commit. The unreviewed range
+# is every commit not yet on origin/<this branch>, because the supervisor pushes only gated shas.
+# Falls back to HEAD~1 when HEAD is already pushed or detached. On a merge wave the range carries
+# main's whole delta, so adopted app/app/Doctor paths print ⛔ — loud by design; the reviewer
+# separates adoption from edit by byte-identity against the merged sha (tick 317).
+upstream="origin/$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
+base="HEAD~1"
+if [ "$upstream" != "origin/HEAD" ] && git merge-base --is-ancestor "$upstream" HEAD 2>/dev/null \
+   && [ "$(git rev-parse "$upstream" 2>/dev/null)" != "$(git rev-parse HEAD)" ]; then base="$upstream"; fi
+echo "  range: $base..HEAD  ($(git rev-list --count "$base"..HEAD 2>/dev/null) commit(s))"
+touched=$( { git diff --name-only "$base" HEAD 2>/dev/null; } | sort -u)
 sup_edits=$(git diff --name-only HEAD -- .agents/supervisor CLAUDE.md bin/supervise.sh 2>/dev/null)
 [ -n "$sup_edits" ] && printf '%s\n' "$sup_edits" | sed 's/^/  ℹ supervisor working notes (uncommitted — leave them alone): /'
 touched=$(printf '%s\n%s' "$touched" "$(git diff --name-only HEAD | grep -vE '^(\.agents/supervisor/|CLAUDE\.md$|bin/supervise\.sh$)')" | sort -u | grep -v '^$')
-pat='^app/app/Doctor/|seals\.json$|tests/Journeys/JourneyHarness\.php$|^app/Modules/[^/]+/(manifest|capabilities)\.php$|(^|/)\.env(\.|$)|^app/phpunit\.xml$|^source/|^runtime/|^bin/state\.py$|^\.agents/supervisor/(BRIEF|REVIEWS)\.md$'
+pat='^app/app/Doctor/|seals\.json$|tests/Journeys/JourneyHarness\.php$|^app/app/Modules/[^/]+/(manifest|capabilities)\.php$|(^|/)\.env(\.|$)|^app/phpunit\.xml$|^source/|^runtime/|^bin/state\.py$|^\.agents/supervisor/(BRIEF|REVIEWS)\.md$'
 hits=$(printf '%s\n' "$touched" | grep -E "$pat" | grep -v '\.env\.example$' || true)
 if [ -n "$hits" ]; then
   printf '%s\n' "$hits" | sed 's/^/  ⛔ /'
