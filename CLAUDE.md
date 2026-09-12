@@ -19780,3 +19780,58 @@ sentences the change falsifies. Two in this wave, both replaced in item 2 with t
   owned-id count).
 - **SITE-214 dispatched** — `ShortLink` takes `BelongsToTenant` + `TenantScoped`, two comments rewritten, M1/M2 matrix, a write-nothing
   `pg_policies qual = true` census.
+
+## ⭐ A CUMULATIVE MUTATION MATRIX IS SELF-WITNESSING — M2's red is impossible unless M1's mutation is in the file (tick 371)
+
+Tick 320 made a pasted diff and a presence count the witness for every mutate-and-test item, because a green state is what an
+unapplied mutation looks like. SITE-214's report **digested** both of its witness diffs. Its prose read *"M1 diff had 1 `-` and 1 `+`
+line, count 0"*, which is tick 251's shape landing on the one artefact tick 320 made load-bearing. It cost nothing, and the reason is
+a design property worth keeping.
+
+- M2 was defined as **M1 plus** removing the scope.
+- The pre-wave state (clause present, scope absent) was **green** on that test at every gate since SITE-212.
+- So M2's measured red (302 for 404) **cannot occur unless the route clause was absent**. The later red witnesses the earlier green's
+  mutation, and it does so from a file on disk (`site-214-m2.xml`), independent of the report's prose.
+
+⚠️ **Bound:** the red proves presence at M2's run. It proves presence at M1's run only if nothing restored the clause between the
+runs, which rests on testimony. ⛔ **When a green state is load-bearing, design the matrix so a later red state depends on it.** A matrix
+of independent mutations has no such property, and each of its greens needs its own witness.
+
+## ⛔ THE JUNIT `<testcase>` HAS NO `line` ATTRIBUTE — and the junit FAILURE TRACE carries the ASSERTION line that pest's JSON cannot (tick 371)
+
+SITE-214's brief asked for *"the testcase's `assertions` and `line` attributes"* from `--log-junit`. The element carries `name`,
+`file`, `class`, `classname`, `assertions` and `time`, and **no `line`**. This is tick 334's law (*an evidence request names a FIELD and a
+COMMAND — check that the command's format carries the field*), written by this seat. The coder substituted pest's JSON `line` silently,
+and its "what was wrong in this brief" item said nothing — a report defect beside the brief defect (247).
+
+⭐ **The same file holds the better instrument.** `site-214-m2.xml:10`'s `<failure>` trace ends `at tests/Modules/X-137/X137Test.php:223`,
+and `:223` is `->assertNotFound()`, the **failing assertion's** line. Pest's JSON `line` read `214`, the method's **declaration** (tick 268).
+Tick 268 recorded that pest's `line` cannot discriminate two assertions in one method, and tick 291 built assertion-count arithmetic to do
+it indirectly. **The junit failure trace does it directly, and every falsifier in this lane already writes junit.** ⚠️ Only a failure
+has a trace; a green state has none. Ask for *"the last `at tests/…:N` line of the junit `<failure>` element"*, never for a `line`
+attribute.
+
+## ✅ CLEAN SWEEP — the permissive-policy class is closed for this lane, and `call_tokens`/`link_clicks` carry no `USING (true)` (tick 371)
+
+SITE-214's item 12 enumerated every `pg_policies` row with `qual = true` in `goaiez_antig_site_test`, with `current_database()` in the
+projection (321). It found **17** tables. Of this lane's 21 owned models (every `protected $table` read), **only `short_links`** is among
+them, and it is also the only owned table with a second model under `app/app/Models`. A grep of the owned module code for every
+listed table and model name returns only Track 1's `PixelKeys` service in X-102's controllers. That service reads `pixel_keys`,
+public by design, and it is not an owned model.
+
+⛔ `call_tokens` and `link_clicks` are **absent**. Tick 370 refused bundling them because their policy sets were unmeasured, and that half
+is now measured. A removal falsifier on their application clauses cannot redden (322), so `TenantScope` on those models would have **no
+falsifier** — refused, per 224 **cannot work here**. ⭐ Tick 369's law, *enumerate the table's whole permissive policy set before
+briefing a removal falsifier*, now has its lane-wide population and one member, already closed by SITE-212 to SITE-214.
+
+## Tick 371 — measured, for the record
+
+- **SITE-214 PASS-WITH-NOTES**, `b01dbe56` + `bdd9de7c`. §7 `2544 · 2535 · FAILED 7 · errors 2`, J11 **absent — GREEN**,
+  byte-identical to the coder's on the same sha. Doctor `boundary 41 · contract 85 · citation clean · schema 16 · capability 204 ·
+  anchor 128 · journey 3` · **477**, stamp `20260829-0647` = `runtime_build`. No stage moved.
+- **`origin/main` → `7f79ed49`** (`@{00:30:31}`), `merge: track/sixty — product`, 21 files, **zero** owned or watched paths.
+  It is not a merge of this lane, and the take is unnecessary (base `4af71adc`, behind 87, ahead 34, checker byte-identical).
+- **Census `6 · 2 · 0 · 10`.** Both shrinks come from sixty's `7b085000` merging into main, a bound moving. The dependency query is
+  empty, and now also watches `Concerns/BelongsToTenant.php` and `Scopes/TenantScope.php`. Fourth surface `main 14 · sixty 42 ·
+  stages 41 · site 198 · HEAD 199`.
+- **RULED HOLD.** The backlog is measured empty. The gated range `c47c113d..` plus these notes is pushed by explicit ref (340).
