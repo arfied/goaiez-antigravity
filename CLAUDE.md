@@ -10547,6 +10547,40 @@ Watch for: <the trap that applies, by name>
   - `36 7` vs `origin/main` `4ba54b40`, Doctor/harness/hooks diff empty, so no merge condition holds. Board: proposals
     **14** · `CLOSED:` **8**.
   - The range `002f40fd · 1a5dda8f · 354e31ce` and the tick-351 notes commit are held.
+- ⚠️⚠️ **A Track 1 assignment that arrives while a lane BLOCK chain sits at its cap is a NEW wave, not dispatch 3 of
+  the chain.** Case (d) dispatches it; the capped chain's `OWNER ACTION` stays open and is restated. RULED at tick 352
+  on `OWNER.md` 2026-09-12 15:1x (N176: production refuses every Infobip voice webhook with a 401).
+  - ⚠️ **What it costs:** a lane has one branch, so the new wave's commits descend from the held range. The gated sha
+    pushed for it therefore carries the held false docblock (`1a5dda8f`).
+  - That is accepted because the false sentence is a test docblock, which corrects forward by rewriting itself (tick
+    263). No ledger row and no commit message is false. Holding it against a production 401 strands the fix.
+  - **Disclose the carried range in the `REVIEWS.md` block and in the Track 1 relay**, never silently.
+  - ⛔ Folding the chain's correction into the new wave is refused. That would be dispatch 3 of the chain wearing another
+    wave's number (tick 351).
+- ⚠️ **A "recorded real payload" handed over as an ELIDED QUOTE is not a recording.** Track 1's N176 quotes two voice
+  bodies with `…` elisions. `git grep -n -i "x-ib-hmac\|ReactorNetty" origin/main -- app docs` is empty, so no capture
+  exists in any tree this lane can read.
+  - A fixture built from that quote is a reconstruction. Its file says so, it names `OWNER.md:665` as its source, and the
+    report lists which bytes were filled in.
+  - Calling it recorded is the tick-291 synthetic artifact, with a vendor body in place of a pest object.
+  - The vendor-docs standard (`git show origin/main:docs/vendors/zernio/README.md`, item 2) puts fixtures under
+    `app/tests/Fixtures/vendors/<vendor>/`.
+- ⚠️ **`InfobipVoiceController` has no HTTP test anywhere, and the `VoiceTest` lint its docblock names does not exist.**
+  - `grep -rn "InfobipVoiceController\|webhooks/infobip/voice" app/tests --include=*.php` is empty.
+  - `app/tests/Feature/Architecture/` holds eight files, none of them `VoiceTest`.
+  - That is the fourth documentary lint, after `PixelTest` (229), `InboxTest` (276) and `AccountScreensTest` (323).
+- **Backlog at tick 352 — wave 191 is N176, Infobip voice webhook signatures, dispatched bare.** RULED.
+  - **Scope:** root code Track 1 assigned (*"Calls & Voice is yours"*), outside the eleven modules and therefore named
+    by Track 1 rather than by this column's routing filter: `app/app/Services/Sms/InfobipWebhookVerifier.php` accepts
+    `X-Ib-Hmac-Signature` as a second body-scheme header; `app/app/Http/Controllers/Voice/InfobipVoiceController.php`
+    logs a 401 in `InfobipInboundController:87`'s shape; a replay of the two quoted body shapes through the real route.
+    Every behaviour changed gets its mutation.
+  - `git diff --stat HEAD origin/main` over all six touched paths is empty, so main holds identical copies and there is
+    no conflict risk.
+  - **Not in the wave:** `IngestVoiceEventJob`, `voice.enabled`, the attestation, the Calls configuration.
+  - **Wave-190 chain:** still HOLD on `OWNER ACTION 1`. After 191 the lane HOLDs again unless `OWNER.md` answers.
+  - `53 8` vs `origin/main` `fcbb7a49`, and the Doctor/harness/hooks diff is empty, so no merge condition holds.
+  - Board: proposals **14** · `CLOSED:` **8** · `app/app/Modules/` **0**. Re-run every grep; never inherit one.
 
 ## Style
 
