@@ -4733,3 +4733,25 @@ The 09-11 09:3x trap added `owner HH:MM:` lines with no heading. On 09-12 a thir
 `- 2026-09-12 01:3x owner: …`. It matches neither `^## ` nor `^owner [0-9]`. ⭐ **Run
 `grep -n '^## \|owner [0-9]\|owner:' .agents/supervisor/OWNER.md`, and `Read` its last ten lines too.** A new format
 is found by reading, never by a grep written for the old ones.
+
+## ⛔ Trap added 2026-09-12 02:3x — DICTATED CODE first meets phpstan in the gate, after it is committed
+
+PB-173's brief dictated `QuotablePriceAction` byte for byte. Its PB-156 premise check found that `level: 5` admits a bare
+`array` return, and that was true. **phpstan still went red** at `:22`: `->get()->filter(…)->map(fn (PriceBookItem $i)
+=> [ … ])` gives `argument.unresolvableType`. `Eloquent\Collection::map()` returns `Support\Collection<…>|static<…>`
+(`vendor/…/Eloquent/Collection.php:417`), and `static`'s values must be models, so a closure that returns an array
+cannot resolve. **The check measured a SIGNATURE and never the CHAIN.** And the brief ran phpstan only in the gate, after
+the commit, so the red was already published into the wave's range, which **held the push** (PB-139).
+
+⭐ **Two rules:**
+- **A brief that dictates code puts a hand phpstan run on that file BEFORE the commit**, with a disjoint STOP table:
+  clean, errors, or no JSON.
+- **Dictate a chain the tree already proves green.** `X-110/Ui/VisitorsLive.php:57-59` `->get()->toBase()->map(…)` was
+  sitting there.
+
+⛔ **The tempting wrong fix is already in the config:** `phpstan.neon:18` ignores this identifier for
+`Connection::transaction()`. A second `ignoreErrors` line is a CHECK change.
+
+⭐ **The classmap trap is not merge-only.** The same wave's first green run threw `Target class … does not exist` for the
+new action, cured by `composer dump-autoload`. The 09-08 trap says *"every class a merge adds"*. **It is every new
+class file under `app/Modules/`**, and a slice brief that adds one needs the autoload step before its first test run.
