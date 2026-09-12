@@ -3215,6 +3215,15 @@ and §3 is unchanged at `0·39·85·0·16·204·128·3`. The lane is 188 ahead /
 - `coder.pid` (1479672) is stale. The one live init-parented agy (pid 1756889) carries Track 1's
   `MERGE·HARNESS·RESTORE` trio, not this lane.
 
+⌛ **Tick 401 — HOLD.** `main` moved `8b407d10` → `68fafdb3`: one first-parent commit, a `track/money`
+merge ("product 8": four C-Billing blade views and their screen tests, 8 `app/` files, no checker,
+hook, seal, `coder-bin`, `bin/state.py` or per-track byte). That is +1 first-parent / +56 ancestor.
+- All three drift conditions are FALSE. The lane is 189 ahead / 3 behind first-parent (189 / 93
+  ancestor) at `2bd329b2`. The ancestor count, 93, is 7 short of the 100 threshold, so re-measure it
+  at every pin (`RULING GQ`). Merge base `29312e16` is unmoved.
+- §3 is unchanged at `0·39·85·0·16·204·128·3`.
+- Tick 400's notes (`2bd329b2`) were certified by `.gateT401.txt` and pushed `c13dddd2..2bd329b2`.
+
 ⌛ **S-202 as dispatched (history): §3 ledger refresh, dispatched at tick 394 as STAGES-240, merge gate CLOSED.** §3 still
 reads `boundary 41` against §5's 39. This is S-200's shape. The JOURNAL `^- .+ stage ` rows start at 96.
 - ⚠️ **Brief lesson:** `--full-doctor` §5 truncates its row dump and prints no `schema` rows. Ask for
