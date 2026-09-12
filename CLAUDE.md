@@ -19390,3 +19390,50 @@ git pathspec (`':(top,glob)app/app/Modules/*/capabilities.php'`) or drop the anc
 ⚠️ Same shape as tick 313's *a ground value this seat cannot execute is a recollection wearing a command*, one level in: an accepted workaround for
 a refused character carries only the character's **literal** meaning, and the refused form's **syntactic** meaning has no substitute in the same
 tool.
+
+## ⛔ A GATE WINDOW WRITTEN ON THE GREEN PATH HIDES THE RED PATH'S NAME — money's ruling 595 reproduces in this lane's §4, and the build-stamp compare only ever worked because a clean integrity prints exactly four lines (tick 359)
+
+Fifteenth firing of tick 215's law, measured here rather than adopted (223). `bin/supervise.sh:175-177` was byte-identical to money's
+pre-fix lines and to `origin/main:bin/supervise.sh:318-320`. Emitters read at source:
+
+| command | red output ends with | so `tail -4` printed | the name lives at |
+| :-- | :-- | :-- | :-- |
+| `doctor:selftest` | `DoctorSelfTestCommand::render` `:175` blank + `:182-184` three footer lines | blank + "paste this back" | the `✗` lines `:146-172` |
+| `doctor --stage=integrity` | `DoctorCommand::handle` `:134-136` total, `:151` blank, `:180-184` five two-systems prose lines | four lines of prose | stamp `:91`, stage line `:113-119` |
+
+⛔ `fail` was always set (`set -uo pipefail`, `:12`) — what the window lost was **which** seal was modified, which runtime file will not
+parse, which stage raised, on the One Rule's own territory, at a seat that cannot edit or re-run the checker to find out.
+
+⭐ **And tick 305's extrinsic check was half-mechanised by coincidence.** Every brief since 305 states the stamp equality as a comparison;
+the gate printed `runtime_build` and asked the reader to *"compare with the doctor build stamp above"* — and the stamp was above only
+because a clean integrity is exactly four lines. On a red integrity the instruction would have stayed and its other operand scrolled out.
+**A comparison whose operand is present by the shape of the green output is not a check; it is a coincidence that holds until the
+first red.**
+
+**Fixed in `5bff0674`, adapted not copied (216)**: output and rc captured once; green keeps `tail -4` (so every earlier gate file stays
+comparable — `.gate359.txt:95-102` is byte-identical to `.gate358.txt:95-102`); red prints `head -40` plus `rc=`; the stamp is compared
+mechanically and a mismatch prints `⛔` **without** moving `fail`, because `.gitattributes:7` makes `BUILD-STATE.json` `merge=ours` and a
+merge can leave it behind the checker — the line says read which side moved. ⚠️ **Only the GREEN branch is exercised.** Making doctor red
+means editing a sealed file or `app/**`, outside this column; the red branches rest on the emitters read above and are a rule until the
+first real red fires them (193).
+
+⭐ **The general form, money's and confirmed here: a window over a tool's output is written for the path its author saw, and a green run
+never shows the red shape. Census a gate's `head`/`tail` windows against each emitter's FAILURE branch** — that is where a summary footer
+grows and pushes the evidence out of a `tail`.
+
+## ⚠️ TICK 257 AND TICK 342 BOTH SAY "FIRST" — the header grep precedes the gate launch (tick 359)
+
+This tick launched its gate as its first act (257) into `.gate358.txt`, named before reading `REVIEWS.md`'s newest header — and tick 358
+existed, a notes-less HOLD, so the file overwrote tick 358's gate output. Tick 342 recorded exactly this after a notes-less HOLD made the
+digest's last tick lower than the ledger's. Nothing lost: tick 358's block quotes every section it relied on (259 — gate files are
+scratch). ⛔ **Two rules that each claim "first" compose into an order: `grep -n '^## TICK' .agents/supervisor/REVIEWS.md | tail -1` is one
+command and runs before the gate is launched**, because the gate's filename depends on it and the gate's own wait does not.
+
+## ⚠️ Track 2's exact-count architecture lints count THIS lane's modules as members (tick 359)
+
+ui's `9d52d08a` (X-164, stages' catch-all with Track 2's `Ui/` grant) moved three lints by ±1: `HeadingSeamTest` total 20→21 / seam
+19→20, `OwnerNavTest` invisible 267→266 / withoutLayout 254→253 / unbuilt 213→212, `SampleStateModuleTest` total 234→233 / illegal
+209→208. Each asserts an **exact** total over every module's components, routes or call sites — this lane's seven among them. Tick 234's
+law: an exhaustive assertion is coupled to every writer of the population it enumerates, and the coupling appears in no diff. ⛔ **Any
+future site wave that adds a `Ui/` component, a `tenant.role` route or a sample-state call site in the seven modules runs those three lints
+as a numbered item** — its red would otherwise surface in Track 2's column with nothing in this lane's diff naming them. Advisory; no wave.
