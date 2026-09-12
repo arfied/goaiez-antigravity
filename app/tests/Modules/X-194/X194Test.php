@@ -410,7 +410,7 @@ class X194Test extends TestCase
             ->assertSee('Existing View');
 
         // Force a save failure by throwing an exception in the event listener
-        \Illuminate\Support\Facades\Event::listen(\App\Modules\X194\Events\ViewSaved::class, function () {
+        Event::listen(ViewSaved::class, function () {
             throw new \Exception('Save failed');
         });
 
@@ -419,7 +419,7 @@ class X194Test extends TestCase
             ->assertSee('We could not save your view.')
             ->assertSee('Existing View');
 
-        \Illuminate\Support\Facades\Event::forget(\App\Modules\X194\Events\ViewSaved::class);
+        Event::forget(ViewSaved::class);
 
         $component->set('newViewName', 'Successful View')
             ->call('saveView')
