@@ -1,4 +1,4 @@
-<div wire:init="load">
+<div>
     @if ($errorMessage)
         <x-ui.error-panel heading="We could not render your view." retry="load">
             {{ $errorMessage }}
@@ -16,10 +16,12 @@
         </div>
         
         <div class="flex gap-4 mt-4">
-            <div class="border p-4 rounded tile">
-                <h4>Count</h4>
-                <p data-job-count="{{ $viewData['job_count'] }}">{{ $viewData['job_count'] }}</p>
-            </div>
+            @if ($viewData['job_count'] > 0)
+                <div class="border p-4 rounded tile">
+                    <h4>Count</h4>
+                    <p data-job-count="{{ $viewData['job_count'] }}">{{ $viewData['job_count'] }}</p>
+                </div>
+            @endif
             <div class="border p-4 rounded tile">
                 <h4>Estimate</h4>
                 <p data-estimate-tile="{{ $viewData['estimate_tile'] }}">{{ $viewData['estimate_tile'] }}</p>

@@ -11,11 +11,16 @@ use Illuminate\Support\Facades\Event;
 
 final class PriceConfirmAction
 {
+    public static function confirmable(int $priceCents): bool
+    {
+        return $priceCents > 0;
+    }
+
     public function handle(int $businessId, int $itemId): array
     {
         $item = PriceBookItem::where('business_id', $businessId)->findOrFail($itemId);
 
-        if ($item->price_cents <= 0) {
+        if (! self::confirmable($item->price_cents)) {
             return [
                 'item_id' => $item->id,
                 'is_confirmed' => false,

@@ -120,7 +120,8 @@ final class PricebookEngine
             ->when($locationBookId !== null, fn ($q) => $q->where('location_book_id', $locationBookId))
             ->first();
 
-        if ($callout === null) {
+        // (R245) a callout row whose fee CalloutFee::isSet() does not admit is refused exactly like no row
+        if ($callout === null || ! CalloutFee::isSet($callout->callout_fee_cents)) {
             return [
                 'status' => 'refused',
                 'refusal_code' => 'NO_FACT',

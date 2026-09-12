@@ -6,7 +6,10 @@ namespace App\Modules\X194\Ui;
 
 use App\Modules\X194\Actions\SetDefaultViewAction;
 use App\Modules\X194\Actions\ViewListAction;
+use App\Modules\X194\Actions\ViewSaveAction;
+use App\Support\Tenancy;
 use Livewire\Attributes\Locked;
+use Livewire\Attributes\Validate;
 use Livewire\Component;
 
 class SavedViewsList extends Component
@@ -14,13 +17,31 @@ class SavedViewsList extends Component
     #[Locked]
     public int $businessId = 0;
 
+    #[Validate('required|string|max:255')]
+    public string $newViewName = '';
+
     public string $errorMessage = '';
 
-    public bool $ready = false;
-
-    public function load(): void
+    public function mount(int $businessId = 0): void
     {
-        $this->ready = true;
+        $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
+    }
+
+    /**
+     * Called by standing tests. Removing it would cause them to throw.
+     */
+    public function load(): void {}
+
+    public function saveView(): void
+    {
+        $this->validate();
+
+        try {
+            app(ViewSaveAction::class)->save($this->businessId, $this->newViewName);
+            $this->newViewName = '';
+        } catch (\Exception $e) {
+            $this->errorMessage = 'We could not save your view.';
+        }
     }
 
     public function makeDefault(int $viewId): void
@@ -37,7 +58,7 @@ class SavedViewsList extends Component
     {
         try {
             $action = app(ViewListAction::class);
-            $views = ($this->businessId > 0 && $this->ready)
+            $views = ($this->businessId > 0)
                 ? $action->listViews($this->businessId)
                 : collect();
         } catch (\Exception $e) {

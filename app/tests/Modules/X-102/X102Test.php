@@ -12,11 +12,13 @@ use App\Models\User;
 use App\Modules\X102\Actions\ChatCaptureAction;
 use App\Modules\X102\Actions\ChatEscalateAction;
 use App\Modules\X102\Actions\ChatStartAction;
+use App\Modules\X102\Actions\ChatTurnAction;
 use App\Modules\X102\Events\ChatEscalated;
 use App\Modules\X102\Events\ChatLeadCaptured;
 use App\Modules\X102\Events\ChatStarted;
 use App\Modules\X102\Models\ChatLead;
 use App\Modules\X102\Models\ChatSession;
+use App\Modules\X102\Models\ChatTurn;
 use App\Modules\X102\Ui\CustomerfacingWidget;
 use App\Modules\X121\Models\Person;
 use App\Services\Ai\AiSpend;
@@ -474,6 +476,18 @@ class X102Test extends TestCase
         // with no injected attendees. A mutation adding them crashes.
         $this->assertEquals('active', $session->status);
         $this->assertArrayNotHasKey('attendees', $session->toArray());
+
+        // The refusal on the table that could carry the killed feature: starting a chat writes no turn,
+        // and one visitor message writes exactly the visitor's turn and the agent's reply, each authored
+        // as what it is. A scripted message posing as another attendee would be a turn of its own.
+        $this->assertSame(0, ChatTurn::where('chat_session_id', $session->id)->count());
+
+        app(ChatTurnAction::class)->handle($biz->id, $session->id, 'visitor', 'Is anyone else here?');
+
+        $this->assertSame(
+            ['visitor', 'agent'],
+            ChatTurn::where('chat_session_id', $session->id)->orderBy('id')->pluck('author_type')->all()
+        );
     }
 
     public function test_a_blank_phone_is_refused_at_capture(): void

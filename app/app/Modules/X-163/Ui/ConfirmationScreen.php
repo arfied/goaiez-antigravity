@@ -47,23 +47,27 @@ class ConfirmationScreen extends Component
 
     public function updatedCalloutFeeDollars($value)
     {
-        $businessId = Tenancy::id();
-        CalloutFee::updateOrCreate(
-            ['business_id' => $businessId],
-            ['callout_fee_cents' => (int) round((float) $value * 100)]
-        );
+        $this->saveCalloutFee();
     }
 
     public function updatedCalloutFeeDeducted($value)
     {
-        $businessId = Tenancy::id();
+        $this->saveCalloutFee();
+    }
+
+    private function saveCalloutFee(): void
+    {
+        // (R245) every ConfirmationScreen callout write names both columns, so neither inherits a migration default
         CalloutFee::updateOrCreate(
-            ['business_id' => $businessId],
-            ['deducted_if_proceeding' => (bool) $value]
+            ['business_id' => Tenancy::id()],
+            [
+                'callout_fee_cents' => (int) round((float) $this->calloutFeeDollars * 100),
+                'deducted_if_proceeding' => $this->calloutFeeDeducted,
+            ]
         );
     }
 
-    public function updatePrice(int $itemId, $value)
+    private function updatePrice(int $itemId, $value)
     {
         $businessId = Tenancy::id();
         PriceBookItem::where('business_id', $businessId)->where('id', $itemId)->update(['price_cents' => (int) round((float) $value * 100)]);
@@ -120,7 +124,7 @@ class ConfirmationScreen extends Component
         $callout = CalloutFee::where('business_id', $businessId)->first();
 
         $unconfirmedCount = PriceBookItem::where('business_id', $businessId)->where('is_confirmed', false)->count();
-        $isCalloutSet = $callout && $callout->callout_fee_cents > 0;
+        $isCalloutSet = $callout && CalloutFee::isSet($callout->callout_fee_cents);
 
         return view('x-163::confirmation-screen', [
             'items' => $items,
