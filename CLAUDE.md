@@ -4168,3 +4168,25 @@ gate (REV-152 §1). ⚠️ Not covered: a finished gate that ran against a diffe
 *"did not finish; the log ends at <line>"*. What ended the gate is unmeasured. Run 165's gate ran 4m15s uninterrupted, so
 the coder's tool budget is not a fixed figure under four minutes. A wave whose gate may wait on the box-wide lock carries
 start and end stamps in their own tool calls, and the four-testsuite fallback (REV-148 §4) behind a verdict count.
+
+## REV-172 — a stage cannot see a table its database never created
+
+⛔ **§1. REV-141's "schema held at 14" was confirmed on a database that never ran the migration it was about (2026-09-12,
+my defect).** Run 167 read `migrate:status` on `goaiez_antig_reviews`, the `.env` database that `SchemaStage.php:43-47`
+queries through `pg_class`. `2026_09_10_100000_create_review_removal_requests_table` reads `Pending`
+(`r167-migrate-status.txt:481`). So "the migration enabled RLS itself and `schema` held at 14" was true of the number and
+said nothing about the table. The RLS itself is proven on the test database by a real refusal (`r147-mutation.txt:1`,
+`new row violates row-level security policy for table "review_removal_requests"`). **RULED: a stage count offered as
+confirming a property of a named table is a measurement only when the migration that creates the table reads `Ran` on the
+database the stage read.** It is REV-119 §B narrowed to one table. **And a `Pending` count is scoped by owner in the brief
+that asks for it**: line 481 is this lane's own module, and nothing asked the coder to say so.
+
+⚠️ **§2. One unguarded migration silently freezes a database's schema.** X-103's `2026_09_05_220831` adds `ssl_installed`
+with no `Schema::hasColumn`, and its guarded sibling `2026_09_06_000001` had already run, so every plain `migrate` on the dev
+database stops there. 29 migrations are behind it, six of them RLS tables. `origin/main` still carries it unguarded, so it is
+a TRACK 1 ACTION. REV-119 §B's `(read from <db>)` names the database, and it cannot show that the database is behind its
+tree.
+
+⭐ **§3. A supervisor commit touching only `CLAUDE.md` rides a push range beside `.agents/state/**` (REV-129 §3 extended),
+because no gate executes it.** `bin/supervise.sh`, `.claude/**`, `launch-coder.sh` and `.agents/rules/**` do not: each
+changes what a gate checks or what the coder is told.
