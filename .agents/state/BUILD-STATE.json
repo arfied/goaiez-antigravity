@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-11T20:02:42",
+ "updated": "2026-09-11T20:23:39",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1640,6 +1640,12 @@
    "module": "X-125",
    "chose": "the automations canvas renders in the owner layout with mount resolving the tenant, and its test renders the empty branch and a flow written through FlowCreateAction by real GETs, proven by mutating the tenant resolution",
    "at": "2026-09-11T20:02:42",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-10",
+   "chose": "the service areas screen renders in the owner layout with mount resolving the tenant, and its test renders the empty branch and a territory written through TerritoryDefineAction by real GETs, proven by mutating the tenant resolution",
+   "at": "2026-09-11T20:23:39",
    "ruling": "R245"
   }
  ],
