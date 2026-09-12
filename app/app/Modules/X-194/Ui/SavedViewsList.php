@@ -59,6 +59,11 @@ class SavedViewsList extends Component
         }
     }
 
+    public function clearDefaultError(): void
+    {
+        $this->defaultError = '';
+    }
+
     public function render()
     {
         $this->errorMessage = '';

@@ -13,7 +13,7 @@
         @endif
         @if ($defaultError)
             <div class="mb-4">
-                <x-ui.error-panel heading="We could not update your default view.">
+                <x-ui.error-panel heading="We could not update your default view." retry="clearDefaultError">
                     {{ $defaultError }}
                 </x-ui.error-panel>
             </div>
