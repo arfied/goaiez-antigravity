@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-11T21:44:55",
+ "updated": "2026-09-12T02:11:28",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2861,6 +2861,12 @@
    "module": "C-Billing",
    "chose": "An empty state that says nothing in this app does a thing measures that claim over the whole app, never over the one table its screen reads. The four C-Billing screens read their own dunning ladder, usage meters and ledger, while the app's subscription dunning, call and message usage, and credit ledger live on other tables, so each empty state says what its own table holds and that the rest is recorded elsewhere and not read here.",
    "at": "2026-09-11T21:44:55",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Billing",
+   "chose": "A balance or top-up confirmation on a money screen names the ledger it actually reads. C-Billing's ledger is a top-up ledger that nothing outside the module spends, while the tenant's plan and bought credit live on a separate credit ledger that the app shows apart, so these screens call it the top-up ledger and say it is separate rather than calling it the tenant's credit balance.",
+   "at": "2026-09-12T02:11:28",
    "ruling": "R245"
   }
  ]
