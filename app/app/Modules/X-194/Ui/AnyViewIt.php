@@ -39,6 +39,7 @@ class AnyViewIt extends Component
 
     public function load(): void
     {
+        $this->errorMessage = '';
         $this->ready = true;
 
         if ($this->businessId > 0 && $this->viewId > 0) {
