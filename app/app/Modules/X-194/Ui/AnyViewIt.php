@@ -26,6 +26,7 @@ class AnyViewIt extends Component
         $this->load();
     }
 
+    #[Locked]
     public string $locationTimezone = '';
 
     public ?float $jobValue = null;
@@ -40,7 +41,7 @@ class AnyViewIt extends Component
     {
         $this->ready = true;
 
-        if ($this->businessId > 0) {
+        if ($this->businessId > 0 && $this->viewId > 0) {
             $context = app(LocationContext::class);
             $location = $context->current();
 

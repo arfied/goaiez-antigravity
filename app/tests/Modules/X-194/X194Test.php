@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X194;
 
+use App\Models\Location;
+use App\Models\User;
 use App\Modules\X194\Actions\ReportPdfAction;
 use App\Modules\X194\Actions\ViewRenderAction;
 use App\Modules\X194\Actions\ViewSaveAction;
@@ -15,6 +17,7 @@ use App\Modules\X194\Models\SavedView;
 use App\Modules\X194\Models\ViewSchedule;
 use App\Modules\X194\Ui\AnyViewIt;
 use App\Modules\X194\Ui\SavedViewsList;
+use App\Services\Tenant\LocationContext;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -203,11 +206,13 @@ class X194Test extends TestCase
             columnsConfig: []
         );
 
+        $location = Location::where('business_id', $biz->id)->first();
+        $location->update(['timezone' => 'America/Denver']);
+
         // Test with null value
         Livewire::test(AnyViewIt::class, [
             'businessId' => $biz->id,
             'viewId' => $view->id,
-            'locationTimezone' => 'America/Denver',
             'jobValue' => null,
             'jobCount' => 7,
         ])
@@ -217,11 +222,12 @@ class X194Test extends TestCase
             ->assertSeeHtml('data-job-count="7"')
             ->assertSeeHtml('data-estimate-tile="--"');
 
+        $location->update(['timezone' => 'America/New_York']);
+
         // Test with real value
         Livewire::test(AnyViewIt::class, [
             'businessId' => $biz->id,
             'viewId' => $view->id,
-            'locationTimezone' => 'America/New_York',
             'jobValue' => 1500.50,
             'jobCount' => 3,
         ])
@@ -251,6 +257,9 @@ class X194Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'View Error Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $location = Location::where('business_id', $biz->id)->first();
+        $location->update(['timezone' => 'America/New_York']);
 
         $component = Livewire::test(AnyViewIt::class, [
             'businessId' => $biz->id,
@@ -293,6 +302,39 @@ class X194Test extends TestCase
      * ⛔ REFUSED: G9-26 — named in the header (report.pdf)
      * ⛔ REFUSED: G13-17 — revenue on the territory map; the polygons are X-10's (out of this lane)
      */
+    public function test_two_locations_displays_selected_timezone_on_real_get(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['name' => 'Two Locations', 'owner_user_id' => $owner->id]);
+
+        $location1 = Location::where('business_id', $biz->id)->first();
+        $location1->update(['name' => 'Loc One', 'timezone' => 'America/Denver']);
+
+        $location2 = Location::create([
+            'business_id' => $biz->id,
+            'name' => 'Loc Two',
+            'timezone' => 'America/New_York',
+            'is_autopilot_active' => true,
+        ]);
+
+        $view = $this->saveAction->save(
+            businessId: $biz->id,
+            viewName: 'Job View Alpha',
+            viewType: 'table',
+            filterConfig: [],
+            columnsConfig: []
+        );
+
+        $this->withSession([LocationContext::SESSION_KEY => $location2->id]);
+
+        $response = $this->actingAs($owner)->get(route('x-194.any-view-it', ['viewId' => $view->id]));
+
+        $response->assertOk();
+        $response->assertSee('Job View Alpha');
+        $response->assertSee('America/New_York');
+        $response->assertSee('Loc Two');
+    }
+
     public function test_reporting_capabilities(): void
     {
         $this->assertTrue(true);
