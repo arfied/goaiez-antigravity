@@ -10412,6 +10412,57 @@ Watch for: <the trap that applies, by name>
     The `'R245'` fixture at `RefusalcodeDistributionPerScreenTest.php:38` still waits for the wave that opens its file.
   - `34 1` vs `origin/main` after a fetch, and the Doctor/harness/hooks/seals diff is empty, so no merge condition holds.
     Board: proposals **14** · `app/app/Modules/` **0** · `CLOSED:` **8**.
+- ⚠️⚠️ **A brief clause that says what an unexpected outcome MEANS gets that outcome reported, whether or not it
+  happened.** My wave-190b brief said *"A mutation that turns a test red before you expected it to is a finding: say
+  which test and at which assertion."*
+  - The report's `DESIGN` and `NOTES` then named `test_saved_views_list_read_escapes_its_guard` as reddened early under
+    mutations 1 and 4.
+  - `grep -c read_escapes_its_guard` is `0` on both objects, and both `MOVED` fields list one other test.
+  - So the retry assertion the item existed to prove **survived**, and the report claimed the opposite, with `NOT RUN :
+    none`.
+  - **Fourteenth leak recurrence**, after a derivation instruction (tick 293).
+  - ⛔ **The replacement form:** `DESIGN` names, for each mutation, only tests that appear in that mutation's `MOVED`
+    field. A mutation whose target is absent from its `MOVED` field survived, and goes in `NOT RUN`.
+  - A prose field restating a measured field is wrong in both directions: the same report under-named mutation 3's
+    four moved tests as two.
+- ⚠️ **A mutation that DELETES the method a test calls lands the target in `error_details` with "Public method
+  [...] not found".** That is path evidence that the method exists, never proof of the assertion after the call.
+  - And a test that calls a Livewire method directly cannot see whether the button a person clicks is wired to it.
+  - Wave 190b's `retry="clearDefaultError"` is read by **no** test: `grep -rn clearDefaultError app/tests` is one
+    `->call(...)`.
+  - **Ask what the user's control calls, not only what the method does.**
+- ⚠️ **Removing `SavedViewsList::render()`'s `$this->errorMessage = '';` reddened the client-set-value test and left the
+  retry-after-failed-read test green.** Yet Livewire gathers view data after `$component->render()` (`getView`,
+  `HandleComponents.php:361-375`) and snapshots after render (`update()`, `:219-234`), so a render-set value persists.
+  - **The cause is unestablished** and goes to wave 190c as a question.
+  - Never brief the render clear as what that test depends on until the cause is measured.
+- ⭐ **`error-panel.blade.php` takes `retryLabel` (default `Try again`).** A panel whose control only clears must say so;
+  the label is the component docblock's outcome-language rule applied to the button.
+- **Suite at tick 348 on `0939b999`:** `tests 2583 · passed 2574 · assertions 11291 · failed 7 · errors 2 ·
+  duration_ms 165869`, from the wave's green gate over a tracked tree equal to the sha.
+  - The standing nine hold by identity: `cmp` of the green names against 188i's is silent.
+  - My plain gate (`.agents/supervisor/.t348-gate.log`) reads `gates green.`, pint `passed`, phpstan `0`.
+- **Backlog at tick 348 — wave 190c is the BLOCK's evidence, dispatch 2 of 2; it builds nothing.** RULED (`REVIEWS.md`
+  tick 348).
+  - **The range is pushed.** The tick-347 hold's reason, the standing red, is discharged, and the BLOCK sits on
+    `REPORT.md` alone.
+  - **Items:**
+    - 1a: the cause of the false `MOVED` claim, under the tick-250 method with the honest exit;
+    - 1b: what `read_escapes_its_guard`'s retry assertion depends on, established from source, then a mutation, or the
+      evidence that none exists;
+    - 2a: a mutation letting `…_default_view_retry_clears_panel`'s closing `assertDontSee` execute and fail;
+    - 2b: a new method that fails when the panel's button stops calling the clearing method, with a blade-only mutation.
+  - **Spent:** `w190b-mut-1` = `-mut-4` (the error_state proof), `-mut-3` (the list-retained and heading proofs), and
+    `-mut-2` (path evidence).
+  - **If 190c does not discharge the BLOCK, the next tick writes an `OWNER ACTION` block and stops (the cap).**
+  - **Wave 190d** carries:
+    - the default-view control's `Try again` label (NOTE 2);
+    - the value half's Livewire-update proof (renumbered from tick 347's *"190c"*), with the `catch (\Exception)`
+      shape folded in.
+    - Re-measure both.
+  - The `'R245'` fixture at `RefusalcodeDistributionPerScreenTest.php:38` still waits for the wave that opens its file.
+  - `34 3` vs `origin/main` after a fetch, and the Doctor/harness/hooks/seals diff is empty, so no merge condition holds.
+  - Board: proposals **14** · `app/app/Modules/` **0** · `CLOSED:` **8**. Re-run every grep; never inherit one.
 
 ## Style
 
