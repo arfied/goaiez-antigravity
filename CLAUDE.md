@@ -10084,6 +10084,36 @@ Watch for: <the trap that applies, by name>
     the `'R245'` fixture. Re-measure every line number on the merged tree before briefing it.
   - Board at tick 339: proposals **14** · `app/app/Modules/` **0** · `CLOSED:` **7**. Re-run every grep; never
     inherit one.
+- ✅ **Wave 189's merge (`8a14296c`) is PASS, and on a merge wave three commands on the sha outrank every report
+  field.** Parents `304db800`/`68fafdb3`. `git diff --name-only <main parent> <merge>` is exactly the eight
+  per-track paths. `git diff <our parent> <merge> -- <the eight>` is empty. The Doctor/harness/hooks/seals diff
+  against main's parent is empty. `cmp` of the post-merge names file against the pre-merge standing names file is
+  silent. The report's `RESTORES` (eight headers only) could not have told a loop that ran its diffs from one that
+  did not (tick 314); the sha did.
+- ⚠️ **A `#[Url]` property carrying a value a real request DISPLAYS is a client-supplied value presented as
+  production's — and a test asserting that the URL value shows is a standing assertion load-bearing on the defect.**
+  `AnyViewItScreenTest::test_location_timezone_from_url` (wave 188) asserts a query-string `America/Chicago` is
+  displayed, which is exactly what tick 322 ruled out. RULED at tick 340: that one method does not stand as written
+  (rewrite, or delete with its reason written where it stood). The two-directions ⛔ (tick 307) and the refinement
+  ruling (tick 308) still govern every other standing assertion.
+- **Doctor's raw per-stage line shape, proven on `scratch/w182-doctor-raw.log`:** ` FAIL <stage> <n>ms <n>
+  violation(s) — fails the <scope>` for red stages, ` ok <stage> …` for clean ones, and a final
+  `<n> violation(s).`. Print that grep in any stage-refresh brief rather than describing the lines (tick 285).
+- **Backlog at tick 340 — wave 188d is the post-merge stage refresh (item 1) and the G9-37 location-timezone build
+  (item 2), dispatched bare.** RULED.
+  - The merge changed nothing under X-194, `Services/Tenant`, `Models/Location.php` or the account components, so
+    tick 324's measurements hold.
+  - The source is `locations.timezone`, through the root model or a root service, never a default. **No real request
+    displays a timezone production did not supply as that location's**, and a query-string `locationTimezone` must
+    not change what is displayed. Which location, how it is disclosed, and the no-location and null-timezone
+    renders are the coder's. Both precedents are printed: `LocationContext::current():137` with its disclosure
+    docblock `:126`, and `SiteChanges.php:75-79`, plus the `ConsentService.php:523-531` null reader.
+  - `X194Test.php:288` is item 2's output: `CLOSED:` naming the sha if built, or corrected forward on one line.
+  - **Wave 188e** takes `AnyViewIt::$ready`, wave 187's NOTE 5 (the `SavedViewsList` save-failure panel), and the
+    `'R245'` fixture at `RefusalcodeDistributionPerScreenTest.php:38`. Re-measure each on the tree 188d leaves.
+  - `0 2` vs `origin/main` `68fafdb3` after a fetch, and the Doctor/harness/hooks diff is empty, so no merge
+    condition holds.
+  - Board: proposals **14** · `app/app/Modules/` **0** · `CLOSED:` **7**. Re-run every grep; never inherit one.
 
 ## Style
 
