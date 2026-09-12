@@ -3179,7 +3179,16 @@ except `app/phpunit.xml`. §2e/§2f/§2g all printed ✓.
 - `main` moved to `1cd4320d` (`track/site` SITE-213). The lane is 1 / 33 behind, and all three drift
   conditions are FALSE.
 
-⌛ **S-202 — §3 ledger refresh, dispatched at tick 394 as STAGES-240, merge gate CLOSED.** §3 still
+✅ **S-202 — COMPLETE at tick 395 (STAGES-240, PASS).** Ledger commit `54e30b45` touches the two
+state paths only. Stage rows went 96 → 104, the `null` count is 0, and §3 == §5 in `.gateT395.txt` at
+`54e30b45` (`0·39·85·0·16·204·128·3` = 475). Tip `54e30b45` was pushed `115422fc..54e30b45`,
+certified by `.gateT395.txt`. **Tick 395 wrote a HOLD**: no `app/` path changed since `115422fc`, so
+the admission census input is unmoved and the backlog is empty on measurement.
+- `main` moved `1cd4320d` → `8b407d10`: +1 first-parent / +4 ancestor, a merge touching three
+  `X-137` files (no checker, hook, seal, `coder-bin` or `bin/state.py` byte). The lane is 183 ahead
+  and 2 / 37 behind at `54e30b45`, and all three drift conditions are FALSE.
+
+⌛ **S-202 as dispatched (history): §3 ledger refresh, dispatched at tick 394 as STAGES-240, merge gate CLOSED.** §3 still
 reads `boundary 41` against §5's 39. This is S-200's shape. The JOURNAL `^- .+ stage ` rows start at 96.
 - ⚠️ **Brief lesson:** `--full-doctor` §5 truncates its row dump and prints no `schema` rows. Ask for
   them only through `php artisan doctor --stage=schema`, or measure them from this seat (`RULING FI`).
