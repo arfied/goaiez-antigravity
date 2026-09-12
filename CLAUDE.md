@@ -19237,3 +19237,28 @@ Per 224: **already done here.**
 
 ⚠️ Instrument: a Bash redirect to `/home/goaiez/tmp/…` is refused from this seat (*"may only write to files in the allowed working
 directories"*), so a gate's output file lives under `.agents/supervisor/`; `Read` on `/home/goaiez/tmp/*` remains the accepted read route.
+
+## ✅ CLEAN SWEEP — money's format-string and date-parse census (rulings 583-584) over the seven owned modules; the one parser hit is guarded and its untested direction OVER-refuses (tick 353)
+
+Tenth firing of tick 215's law, measured here rather than adopted (223). Money's `1b291a98` names a caller-typed string reaching a
+format template or a date parser. Over the owned modules' code with `--include='*.php'` and `-e` patterns (an `-E` alternation over
+several paths is refused — 334), positive control in `app/app/Console/Commands/*` (209):
+
+- **`sprintf`/`vsprintf`/`printf(`: 0** · **`number_format`: 0** · **`strtotime`, `createFromFormat`, `createFromDate`, `Carbon::create*`,
+  `new Carbon`, `DateTime`, `date_create`, `CarbonImmutable::`: 0.**
+- **`Carbon::parse`: one** — `X-155/Actions/FormCaptureAction.php:143`, a **visitor-typed** DOB inside `isUnderEighteen`, admitted only
+  when `is_scalar` and non-blank after trim (`:141`, SITE-171 + SITE-163) and wrapped in `try … catch (\Exception)` (`:142-149`).
+
+⚠️ **The direction nothing tests, measured at source rather than recalled**: `composer.lock:3695` pins `nesbot/carbon` **3.13.2** and
+`Carbon/Traits/Difference.php:127` is `diffInYears($date = null, bool $absolute = false, …): float` — **signed**. So a **future** DOB gives a
+negative difference, `< 18` holds, and the submission is refused as `under_18`: over-refusal of a nonsense value, the safe direction for
+P-148, with only a misattributed reason as cost. ⛔ No wave — no clause governs a future DOB, so choosing "no signal" over "refuse" is
+inventing a policy (295, 300, 303, 334). Per 224: **cannot work here**; the day a clause exists the change is one `isFuture()` guard.
+
+⭐ **The general form, and the reason to read the library rather than the call**: a comparison against a threshold inherits the SIGN
+convention of the function that produced its left side, and that convention changed between Carbon 2 and 3 with no change at any call site.
+**When a guard compares a library difference to a threshold, read the library's signature for `$absolute` before calling the guard
+one-directional** — nothing in `FormCaptureAction.php` says which way a future date falls.
+
+⚠️ Instrument, confirmed a second time: after `cd app && php artisan doctor` drifted the shell, a `git grep … -- ':/.agents/state/…'`
+printed `../.agents/state/…` and counted correctly — tick 335's `':/'` drift immunity, measured on the census's fourth surface.
