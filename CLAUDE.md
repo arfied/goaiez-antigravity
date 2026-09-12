@@ -19528,3 +19528,29 @@ brief. SITE-211 committed nothing, so money's sha binding has no member here; th
 ⭐ **The binding is a property of the BRIEF, not the report**: it holds only because every brief since SITE-204 names its scratch files with the
 wave id. ⚠️ **Trigger, named**: a brief that names a generic scratch path (`gate.txt`, `/home/goaiez/tmp/c1.txt`) removes the only field binding its
 report to its wave — keep the wave id in every scratch path a brief supplies. Recorded, not built; a typed RUN field would be a claim (money 605).
+
+## ✅ Money's ruling 606 measured here — this lane's "decision before code" member CANNOT exist, and tick 245's ordering is WHY (tick 364)
+
+Nineteenth firing of tick 215's law, measured here rather than adopted (223). Money's `620fee80` is the first census of the charter's review-list
+rule that a `JOURNAL.md` line with no matching commit is a BLOCK. It finds one hazard member: a decision committed 42 seconds before its code,
+inside the same reviewed range. Measured over `7e2a1844..HEAD` with `git log --first-parent --format='%h %ci %s' | grep -A1 -F 'chore(state)'`
+(the log is newest first, so `-A1` prints each state commit's parent):
+
+| population | count | reading |
+| :-- | --: | :-- |
+| state commit sits directly on its wave's code, docs, test or refactor commit | **13** | every one lands **after** that commit |
+| filing or note wave, no code by design | **2** | `18fd58ee` SITE-196, `abd8e416` SITE-197 |
+| decision committed **before** its code | **0** | — |
+
+⭐ **The zero is a consequence of a rule, not luck.** Tick 245 made the state commit the LAST numbered step of every wave. A run that dies between the
+two commits therefore leaves code with no decision. Tick 197's residue check finds that, and the next brief sweeps it. The one known late member,
+`9cf6bc6b`, landed 71 minutes after its code as SITE-189's step 0, which is tick 318's orphan and exactly that recovery. ⚠️ **Trigger, named:** a
+brief that places `state.py decided` before the code commit. Recorded, not built.
+
+Ruling 607, the staged-brief identity census, has **no population here**: `ls .agents/supervisor/ | grep -i -e brief -e kickoff` returns
+`BRIEF.md` and `KICKOFF.md` only, because this lane stages no copies (224 — the room is empty).
+
+⚠️ Recorded so it is not rediscovered as a contradiction: sixty's `0c604da9` rules *"a new assertion goes in a NEW method; adding to a standing
+method's body is changing it"*. **This lane deliberately does the opposite for credit carriers** (SITE-140 in `test_g12_03_capabilities`,
+SITE-210 in G21-01's carrier), because `CapabilityStage` credits by the id literal and a second carrier obscures which method discharges the clause
+(240). The two rules have different subjects, and neither transfers.
