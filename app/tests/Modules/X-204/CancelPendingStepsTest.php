@@ -76,7 +76,7 @@ class CancelPendingStepsTest extends TestCase
 
         $service = new ConsentService;
         $service->suppress($tenant->id, '+15550009999', 'sms', 'opt_out');
-        
+
         $this->assertTrue(true, 'Suppression with no person should return cleanly');
     }
 }
