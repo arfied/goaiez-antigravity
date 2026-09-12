@@ -17951,3 +17951,42 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
    - **Population.** Ruling 587's is empty of buildable members.
 
    **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty coder wave to avoid an idle tick is what rulings 95, 100 and 111 forbid. No gate ran this tick: `HEAD`'s `app/**` is unchanged since the last supervisor gate, so the floor stays ruling 564's.
+
+589. **⭐ The CATCH-ARM REACHABILITY census asks the question ruling 229 did not: can each named catch arm's `try` actually raise the class it names, and is every declared exception class thrown somewhere? In the eight money modules there are 21 declared exception classes, every one has at least one throw site, and all 15 named domain catch arms reach their thrower. Zero buildable. The control shows that a `new ClassName` grep cannot see a class constructed dynamically (measured by the lane supervisor 2026-09-11 19:2x, by `date` `19:20`; rulings 62, 207, 221, 229, 262(b), 294, 324, 327, 328, 332, 383, 389, 395, 405, 411, 415, 421, 422, 423(d), 429, 449, 463, 481, 526).** Ruling 229 enumerated the lane's 88 catch blocks and asked what class each catches and whether its handler suits a reader of that class. Ruling 383 swept methods with no catch. Nobody had asked whether a named arm is **dead**, meaning its `try` cannot raise the class, so the arm and its owner-facing message are prose nothing can render. Nobody had asked the complement either: whether a declared class is never thrown.
+   **Instruments, quoted (300)**, each over the eight money module trees:
+   - `-e "extends .DomainException" -e "extends .RuntimeException" -e "extends .Exception" -e "extends .InvalidArgumentException"` → **21** declared classes (19 `\DomainException`, 2 `\RuntimeException`).
+   - `grep -rho -e "new [A-Za-z]*Exception(" | sort | uniq -c` → **every one of the 21 appears at least once**, plus 4 bare `new RuntimeException(` in `StripeGatewayClient`. **Zero dead classes.**
+   - `grep -rn -e "throw new [A-Z][A-Za-z]*Exception("` → **31** throw sites, each mapped to its enclosing method with `grep -n -e "public function "`.
+   - `grep -rho -e "catch ([^ )]*" | sort | uniq -c` → 31 `ModelNotFoundException`, 32 `\Throwable`, 5 `UniqueConstraintViolationException`, 5 `\DomainException`, 1 `\RuntimeException`, 1 `\Exception`, and **15 named domain arms**.
+   **The 15 named arms, each `try` read whole (395), the delegate chain followed (422), and its safety named (328):**
+   - `X-199/Ui/Credits.php:58` `InvalidTermsException` ← `TermsSetAction::handle:23,:27`, called at `:48`.
+   - `X-198/Ui/SameAccount.php:36` `PaymentAlreadyLandedException` ← `PaymentAttachAction` → `GatewayEngine::attachPayment():267`.
+   - `X-198/Ui/ReconciliationDiscrepancies.php:35` `NothingToReviewException` ← `DiscrepancyReviewAction` → `reviewDiscrepancy():242`.
+   - `X-198/Domain/GatewayEngine.php:149` `GatewayNotConfiguredException` ← `StripeGatewayClient:24` inside `capture()`'s `try`. ⭐ Ruling 463's own arm.
+   - `X-117/Ui/CartBlock.php:43` `SoldOutException` ← `CartAddAction` → `CheckoutEngine::addToCart():308`.
+   - `X-120/Ui/CardScreen.php:82` `CardExpiredException|CardNumberInvalidException` ← `CardPresentAction:26–44`. ⭐ Rulings 383 and 389's.
+   - `X-201/Ui/DisputeCard.php:36` `DisputeAlreadySubmittedException` ← `DisputeNoteAction:36` → `compile():50`. ⭐ Ruling 423(d)'s.
+   - `X-201/Ui/DisputeCard.php:56` and `DisputeQueue.php:56` `DisputeNotCompiledException` ← `DisputeSubmitAction` → `submit():84`. ⭐ Rulings 62 and 421's.
+   - `X-211/Ui/PaymentplanBuilder.php:61` `PlanPastThresholdException` ← `offerPlan():170`. ⭐ Ruling 332's.
+   - `X-211/Ui/CollectionsPackagePreview.php:41` and `X-211/Console/EvidenceRecoveryCommand.php:92` `NoResolutionAttemptException` ← `packageForCollections():293`.
+   - `X-211/Ui/AgeingByReason.php:87` `FeeWithoutTermException|FeeAtCapException` ← `applyLateFee():62,:79`. ⭐ Ruling 221's.
+   - `X-211/Ui/AgeingByReason.php:133` `UnreferencedPaymentException` ← `logOfflinePayment():237`. ⭐ Ruling 405's.
+   - `X-199/Console/EvidenceInvoiceCommand.php:103` `QueryException` ← the deliberately-failing duplicate insert. ⭐ Ruling 481's.
+   ⭐ **Known members (429):** ten of the fifteen are prior rulings' own arms, listed above.
+   **The seven thrown classes with no named arm** each reach a measured tail. `OrderNotCancellableException` (350), `InvoiceNotPayableException` (393), `PlanAlreadyOfferedException` and `AlreadyPackagedException` (512) and `ReferenceTooLongException` (404) reach a `\Throwable` tail whose prefix ruling 411 measured true. `DisputeAlreadyOutcomedException` reaches `DisputeQueue:77`'s `\DomainException` arm (396). `InvoiceNumberOutsideTransactionException` is a programmer guard (190). ⚠️ `DisputeQueue::compile()` has no named arm for `compile():50`'s `DisputeAlreadySubmittedException`, so it falls to its tail. That tail's prefix, *"We could not compile that dispute: "*, is true of the refusal, which ruling 411 already measured.
+   ⭐ **The positive control fires, and it names the instrument's limit.** The same two lists were taken tree-wide: classes caught under `app/app`, and classes constructed by `new` under `app/app` plus `app/vendor/laravel/framework/src`. They were written to scratch files, and `comm -23` over them printed **9** classes caught but never constructed by `new ClassName`: `InvalidFormatException`, `InvalidStateException`, `JsonException`, `MimeException`, `QueryException`, `RandomException`, `SignatureVerificationException`, `UniqueConstraintViolationException` and `ValidationException`. **None is dead.** Two were measured in vendor rather than assumed:
+   - `Database/Connection.php:854-857` selects `UniqueConstraintViolationException::class` into `$exceptionType` and constructs it as `new $exceptionType(`.
+   - `Validation/ValidationException.php:70` constructs through `new static(`.
+   The rest are thrown by PHP itself (`JsonException`, `RandomException`) or by other vendors (Carbon, Symfony Mime, Socialite, Stripe). ⛔ Money proposes no edit (5). 415's first-three check passed. 449's each-member-exists check passed: every member was printed from a file.
+   ⛔ Struck, not to be re-run. ⚠️ **Trigger:** a named catch arm added in the lane, or a throw moved out of a method a named arm's `try` reaches. Ruling 327's outcome shape a **seventy-sixth** time.
+   ⭐ **The generalisable half is ruling 532–540's, applied to construction:** a class can be constructed by `new ClassName`, `new $variable`, `new static`, a factory method, or the PHP runtime. A census that proves a class DEAD from zero `new ClassName` matches has only proved it is never constructed by that one spelling.
+
+590. **⛔ SIXTY-FIFTH consecutive HOLD (RULED by the lane supervisor 2026-09-11 19:2x, by `date` `19:20`).** All four lift conditions were measured this tick (269, 272, 323). Each case was decided on mtimes (494):
+   - **Owner.** `OWNER.md`'s newest heading is still `## OWNER RULING — 2026-09-09 09:02` (136), mtime `09-09 09:02:03`, older than `REVIEWS.md` (`19:12:05`).
+   - **Coder.** `--check` returned `CODER DEAD`.
+   - **Mailbox.** `REPORT.md` (`07:15:21`) and `BRIEF.md` (`07:07:27`) are both older than `REVIEWS.md`.
+   - **Cadence, all three ✗.** After `git fetch --no-write-fetch-head origin`, `origin/main` = **`bd3e9c5f`**, unmoved (`git diff --name-status bd3e9c5f origin/main | wc -l` = 0). `git rev-list --count HEAD..origin/main` = **44**. `git diff --stat dca743e8 origin/main -- app/app/Doctor coder-bin .claude/hooks` is empty. `git merge-base HEAD origin/main` = **`dca743e8`**.
+   - **Track 1.** No answer to ACTION 13–28.
+   - **Population.** Ruling 589's has no buildable members.
+
+   **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty coder wave to avoid an idle tick is what rulings 95, 100 and 111 forbid. No gate ran this tick: `HEAD`'s `app/**` is unchanged since the last supervisor gate, so the floor stays ruling 564's. ⚠️ `app/CLAUDE.md` came into context again this tick. It is Laravel Boost boilerplate and was not followed.
