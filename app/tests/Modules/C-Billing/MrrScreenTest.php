@@ -69,7 +69,8 @@ class MrrScreenTest extends TestCase
             ->assertSee('ref grant_welcome')
             ->assertSee('Add 50.00 credit')
             ->call('topup')
-            ->assertSee('50.00 of credit added to your balance')
+            ->assertSee('50.00 added to the top-up ledger. It is separate from the credit your plan includes and the credit you buy.')
+            ->assertDontSee('added to your balance')
             ->assertSee('Nothing was charged: this button grants credit');
 
         $this->assertSame(1, CreditLedgerEntry::where('business_id', $biz->id)->where('entry_type', 'topup')->count());
