@@ -18353,3 +18353,33 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
    - **Population.** Rulings 612's and 613's have no buildable members.
 
    **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty coder wave to avoid an idle tick is what rulings 95, 100 and 111 forbid. ⚠️ No gate ran this tick: nothing in `bin/supervise.sh` or `app/**` changed, so the floor stays ruling 564's.
+
+
+615. **⭐ The VERSION-LABEL census, the unread item ruling 613 named: seven version labels in this ledger besides Livewire's, and every one holds. `Carbon 3.13.2` and `Laravel 13.29.0` are cited to `composer.lock` lines that still print those versions. `PHP 8.4` is now MEASURED as a floor on the runtime rather than read off a constraint: `platform_check.php:7` refuses any PHP below 8.4.1, it is loaded unconditionally, and the gate's PHP tools ran. Zero buildable (measured by the lane supervisor 2026-09-11 21:1x, by `date` `21:10`; rulings 68, 207, 294, 324, 327, 328, 374, 415, 429, 550, 551, 554, 558, 613).** Ruling 613 corrected "Livewire 3" to v4.4.2 and named the rest of the population: *every other version or package NAME in this ledger checked against `app/composer.lock`*.
+   **Instruments, quoted (300):**
+   - `grep -o -e "Carbon [0-9][0-9.]*" -e "PHPUnit [0-9][0-9.]*" -e "Laravel [0-9][0-9.]*" -e "Pest [0-9][0-9.]*" CLAUDE.md | sort | uniq -c` → `Carbon 2` ×2, `Carbon 3` ×1, `Laravel 13` ×1, `Laravel 13.29.0` ×1.
+   - `-e "Larastan [0-9][0-9.]*" -e "PHP [0-9][0-9.]*" -e "Postgres[A-Za-z]* [0-9][0-9.]*" -e "Pint [0-9][0-9.]*"` → `PHP 8` ×6, `PHP 8.2` ×1, `PHP 8.4` ×1.
+   - Located with `grep -n -o`: `Carbon` at `:1503`, `:1508`, `:1536` (ruling 68); `PHP 8.4` at `:11356` (379); `PHP 8.2` at `:17488` (550); `Laravel 13.29.0` at `:17563` (554); `Laravel 13` at `:18339` (613, quoting `AGENTS.md`).
+   - Installed, from `grep -n -A 1 -e '"name": "<pkg>"' app/composer.lock`: `laravel/framework` **v13.29.0** (`:1762`), `nesbot/carbon` **3.13.2** (`:3695`), `pestphp/pest` **v4.7.8** (`:11032`), `phpunit/phpunit` **12.5.33** (`:11949`), `larastan/larastan` **v3.10.0** (`:10407`), `laravel/pao` **v1.1.4** (`:10639`), `laravel/pint` **v1.30.5** (`:10724`).
+
+   **Each label and its safety (328):**
+   - **`Carbon 3` / `Carbon 2`** (68). 68 cited `composer.lock:3695` and `Difference.php:254`. Both still hold: `:3695` prints `3.13.2`, and `grep -n -F -e "public function diffInDays(" …/Difference.php` prints `:254 … bool $absolute = false …`. The two `Carbon 2` mentions describe the old default, which is history rather than a claim about the install. ⭐ **Known member (429):** 68 is the one ruling that already cited the command a label needs, so it is the shape the census exists to find.
+   - **`Laravel 13.29.0`** (554) was measured in vendor (`Application.php:48`) and matches `composer.lock:1762`. **`Laravel 13`** (613) quotes rule text.
+   - ⭐⭐ **`PHP 8.4`** (379: *"a missing array key is a warning and a `null` in PHP 8.4"*), plus the six `PHP 8` language facts (538's `ValueError`, 477(c)'s string comparison, and others) and 550's *"since PHP 8.2"*. Ruling 551 recorded that `php -v` needs approval, so the runtime was read off `composer.json`'s `^8.4` **constraint** and never measured. **It is now measured as a floor.** `app/vendor/composer/platform_check.php:7` is `if (!(PHP_VERSION_ID >= 80401))`, `autoload_real.php:25` requires that file unconditionally, and `grep -n -i -e "platform" app/composer.json` prints nothing, so no `platform-check: false` disables it. `gate-sup-2000.txt` carries `{"tool":"pint","result":"passed"}`, and pint loads the autoloader. **So the runtime PHP is ≥ 8.4.1**, and every `PHP 8`, `8.2` and `8.4` claim in this ledger is true of it.
+   - PHPUnit's `12.5.33` (558) is written into the ledger as a vendor `VersionId`, not as a `PHPUnit N` label, so the name pattern could not reach it. Its `composer.lock:11949` matches anyway.
+
+   ⭐ **Positive control fires:** the name-plus-digit instrument returned thirteen occurrences of seven distinct labels (397: counted by `uniq -c`, never by hand), so the census's zero is a zero of *wrong labels*, not of labels.
+   ⚠️ **What the instrument cannot see, stated rather than hidden:** a version spelled without its package name (`v4`, `^4.0`) or a package named with no digits. 613 covered Livewire's own spellings. Larastan, pao, pint and pest carry no version label anywhere in this ledger, so they make no claim to check.
+   415's first-three check passed. 449's each-member-exists check passed: every line was printed by `grep`.
+   ⛔ Struck, not to be re-run. ⚠️ **Trigger:** a version label written into a ruling or brief without the command that prints it (613), or `composer.lock` changing a package this ledger names. Ruling 327's outcome shape an **eighty-fifth** time.
+   ⭐ **The generalisable half: a constraint is not a version, but a platform check turns a constraint into a measured floor.** When a seat cannot run the interpreter, the autoloader's own refusal combined with a tool that ran is the measurement.
+
+616. **⛔ SEVENTY-SIXTH consecutive HOLD (RULED by the lane supervisor 2026-09-11 21:1x, by `date` `21:10`).** All four lift conditions were measured this tick (269, 272, 323), and each case was decided on mtimes (494):
+   - **Owner.** `OWNER.md`'s newest heading is still `## OWNER RULING — 2026-09-09 09:02` (136). Its mtime is `09-09 09:02:03`, older than `REVIEWS.md` (`21:03:36`).
+   - **Coder.** `--check` returned `CODER DEAD`, with no note.
+   - **Mailbox.** `REPORT.md` (`07:15:21`) and `BRIEF.md` (`07:07:27`) are both older than `REVIEWS.md`.
+   - **Cadence, all three ✗.** After `git fetch --no-write-fetch-head origin`, `origin/main` = **`bd3e9c5f`**, unmoved (`git diff --name-status bd3e9c5f origin/main | wc -l` = 0). `git rev-list --count HEAD..origin/main` = **44**. `git diff --stat dca743e8 origin/main -- app/app/Doctor coder-bin .claude/hooks` is empty. `git merge-base HEAD origin/main` = **`dca743e8`**.
+   - **Track 1.** No answer to ACTION 13–33.
+   - **Population.** Ruling 615's has no buildable members.
+
+   **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty coder wave to avoid an idle tick is what rulings 95, 100 and 111 forbid. ⚠️ No gate ran this tick: nothing in `bin/supervise.sh` or `app/**` changed, so the floor stays ruling 564's.
