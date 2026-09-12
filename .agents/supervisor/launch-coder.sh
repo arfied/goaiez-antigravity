@@ -41,14 +41,52 @@ ALLOW_MERGE=0
 # of the fake green this repo keeps finding. Never a standing flag.
 ALLOW_HARNESS=0
 
+# Liveness (ruling 597). `kill -0 <pidfile pid>` alone is wrong both ways:
+#  - nothing clears the pidfile when a run ends, and this box wraps its pid space
+#    within a day (run 236's wrapper was 678253 at 07:07; new pids were 5-digit by
+#    20:00), so the old pid comes back as some other process. Measured: with the
+#    live grs-antig-ui wrapper's pid in this pidfile, --check printed CODER ALIVE
+#    and the launcher refused. A tick then stops as "coder running" for as long as
+#    that stranger lives.
+#  - the pidfile holds the `nohup bash` wrapper, and the `timeout`/agy children are
+#    separate processes, so a killed wrapper leaves a live coder that read as DEAD,
+#    and a tick would dispatch a second writer into this tree.
+# So: a live pidfile pid counts only if its cwd is this checkout (unreadable = ours,
+# the safe direction), and any agy process whose cwd is this checkout counts even
+# when the pidfile does not name it. agy only: a tick is a `claude` process with
+# this cwd, and matching claude would read every tick as a running coder.
+HERE=$(pwd -P)
+CODER_PID=""
+CODER_NOTE=""
+coder_running() {
+  local pid cwd p
+  pid=""
+  if [ -f "$PIDFILE" ]; then pid=$(cat "$PIDFILE" 2>/dev/null || true); fi
+  if [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null; then
+    cwd=$(readlink "/proc/$pid/cwd" 2>/dev/null || true)
+    if [ -z "$cwd" ] || [ "$cwd" = "$HERE" ]; then CODER_PID="$pid"; return 0; fi
+    CODER_NOTE="pidfile pid $pid is alive but runs in $cwd, not this checkout: a reused pid, ignored"
+  fi
+  for p in $(pgrep -f '/[.]local/bin/agy ' 2>/dev/null || true); do
+    cwd=$(readlink "/proc/$p/cwd" 2>/dev/null || true)
+    if [ "$cwd" = "$HERE" ]; then
+      CODER_PID="$p"
+      CODER_NOTE="the pidfile names no live coder here, but agy process $p runs in this checkout: an orphaned coder"
+      return 0
+    fi
+  done
+  return 1
+}
+
 # --check: report liveness and exit without launching anything. Used by the
 # unattended supervisor tick, whose allowlist has no ps/pgrep/kill.
 if [ "${1:-}" = "--check" ]; then
-  if [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
-    echo "CODER ALIVE pid=$(cat "$PIDFILE")"
+  if coder_running; then
+    echo "CODER ALIVE pid=$CODER_PID"
   else
     echo "CODER DEAD"
   fi
+  if [ -n "$CODER_NOTE" ]; then echo "  note: $CODER_NOTE"; fi
   exit 0
 fi
 
@@ -73,10 +111,12 @@ while [ -n "${1:-}" ]; do
   esac
 done
 
-if [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
-  echo "REFUSED: this track's coder is already active (pid $(cat "$PIDFILE"))"
+if coder_running; then
+  echo "REFUSED: this track's coder is already active (pid $CODER_PID)"
+  if [ -n "$CODER_NOTE" ]; then echo "  note: $CODER_NOTE"; fi
   exit 1
 fi
+if [ -n "$CODER_NOTE" ]; then echo "note: $CODER_NOTE"; fi
 [ -s .agents/supervisor/KICKOFF.md ] || { echo "REFUSED: KICKOFF.md missing or empty"; exit 1; }
 
 # Push gate. Added 2026-09-04 14:2x (MONEY-17c) to open the coder's push on a
