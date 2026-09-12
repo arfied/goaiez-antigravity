@@ -19622,3 +19622,57 @@ in this seat, so the floor is measured **by doctor**. ⭐ Read the entry point b
 ⚠️ And money's name-plus-digit label census reaches only `Carbon 2` ×2 and `PHP 8` ×1 here: this lane writes versions as package names and
 constraints (`nesbot/carbon 3.13.2`, `php ^8.4`, `v4.4.2`), which that pattern cannot see. All hold by hand (`composer.lock:3695 :3286`,
 `composer.json:9`, `Difference.php:127`). Census by both spellings.
+
+## ⛔ `short_links` HAS TWO CREATORS AND THIS LANE'S PERMANENT RECORD CITES THE ONE THAT NEVER RUNS — and the running create's `public_read` makes X-137's app-level scope the SOLE tenancy brace on the redirect read (tick 368)
+
+Twenty-first firing of tick 215's law, money's ruling 617 measured here rather than adopted (223). Its instrument reproduces the same **22**
+duplicate-creator tables tree-wide. The seven owned modules create **23** tables and exactly **one** is among the 22: **`short_links`**.
+Read at source, all three writers, in migrator order (basename sort across every loaded path — money's ruling 520):
+
+| migration | runs | creates or alters | `destination_url` | policies |
+| :-- | :-- | :-- | :-- | :-- |
+| `app/database/migrations/2026_08_11_130139_create_short_links_table.php` | **first**, unconditionally (`:66`) | `token` nullable unique, `target_url`, `customer_id`, `purpose`, `expires_at`, `revoked_at` | **absent** | ENABLE + FORCE, **`public_read FOR SELECT USING (true)`** (`:118-119`), `tenant_write` (`:123-126`) |
+| `X-137/…/2026_08_30_000039_create_x137_dni_tables.php` | the create at `:30-39` is `if (! Schema::hasTable(...))` ⇒ **never runs** | the `else` at `:41-54` ADDS `short_code` nullable unique, `destination_url` **nullable**, `qr_svg`, `campaign` | `:35 text('destination_url')` NOT NULL — **dead** | `:74` drops only `tenant_isolation IF EXISTS`, `:77` creates `tenant_isolation` |
+| `X-121/…/2026_08_31_000007_reconcile_legacy_module_columns.php` | third | `:106-122`, the same four `hasColumn` adds | no-op | — |
+
+`grep -rn -F 'DROP POLICY IF EXISTS public_read ON short_links'` over every migration → **0**.
+
+**⛔ Consequence 1 — a permanent-record claim cites the dead create.** `JOURNAL.md`'s `2026-09-08T06:56:50` (R245) X-137 row reads *"the
+destination column is a not null text column with no default"*, and tick 314's section above cites `…000039…:35 NOT NULL, no default`. Per
+the migrations it is **nullable** in the schema that runs. ✅ SITE-186's guard survives by construction — `trim((string) null) === ''` refuses
+a null exactly as it refuses a blank — so the **conclusion** stands and the **column claim** is wrong. This is money's 617 hazard (*a claim about
+a table's columns cites the create that sorts FIRST, never the first grep hit*), committed by this lane sixty ticks before money named it.
+`state.py` has no withdraw (210); the correction goes in a note, written in the wave AFTER the catalog is measured, never from this reading (225, 314).
+
+**⭐ Consequence 2 — the tenancy brace inverts tick 322 for this one table.** Postgres OR's permissive policies, so a `SELECT` satisfied by
+`public_read USING (true)` returns every tenant's row whatever `tenant_isolation` says. So `X-137/ModuleServiceProvider.php:42`'s
+`where('business_id', $businessId)` is the **sole** brace on the redirect read, and `X137Test.php:214`'s cross-tenant `assertNotFound` should be
+**falsifiable by removal** — the opposite of what ticks 308/321/322 measured on `pages`, `form_definitions` and `chat_sessions`, where FORCE RLS
+`tenant_isolation` was the only policy. Tick 322's law (*before briefing a removal falsifier, ask whether a lower layer enforces the same
+invariant*) answers **no** here, from the first creator's own policy text. ⚠️ **A reading of intent, not of the catalog** (321 — a migration
+is what was intended, `pg_policies` is what is); SITE-212 measures both and writes nothing.
+
+**⭐ The general form, one step past money's:** *cite the create that sorts first* extends to **policies**. A guarded shadow migration's RLS
+block runs on a table it did not create, and can ADD a policy beside the first creator's without removing any. Under permissive OR, an added
+policy that looks restrictive restricts nothing. **Read every creator's policy set, never only the one in your module** — X-137's migration
+reads as "this table has tenant isolation" and, on the migrations' own evidence, does not.
+
+⚠️ Recorded, not measured: `short_links` is the platform's SL-5 table (Track 1's — `app/app/Services/ShortLinks/`, `ShortLinkController`), and
+X-137's rows carry `token` and `target_url` NULL. What the platform's readers do with such rows is not measured from this seat. TRACK 1 ACTION.
+
+⚠️ `app/CLAUDE.md` (Laravel Boost boilerplate) came into context this tick and was not followed.
+
+## Tick 368 — measured, for the record
+
+- **Case**: HOLD fall-through (256) — `coder.pid` 2899882 dead on both halves (179), `pgrep agy` → **2191262** (`…/grs-antig`) only; `REPORT.md`,
+  `OWNER.md`, `BRIEF.md` all older than tick 367's block. **Re-opener fired: money's 617**, which reached this lane's column.
+- **Gate** (no `--tests`): §0 site test pin · §1 `behind 16, ahead 27` = tick 367's `16, 26` + `b5fcdc83` ✓ (225) · §2 exactly one
+  `⛔ app/phpunit.xml` · §4 seals ✓, stamp `20260829-0647` = `runtime_build` · §6 pint passed, phpstan 0.
+- **Doctor**, live: `boundary 41 · contract 85 · citation clean · schema 16 · capability 204 · anchor 128 · journey 3` · **477**, SUM ✓, `ok`
+  only on the clean stages. No stage moved.
+- **Census** a MISS on money (`48443105`, `CLAUDE.md` +35) and stages (`19586dbb`, `CLAUDE.md` +5, arrived `@{21:30:55}` after this tick's opening
+  read — 220); halves `8 · 4 · 1`, complement 11, byte-identical. Fourth surface `main 14 · money 16 · pricebook 14 · reviews 15 · sixty 42 ·
+  stages 41 · ui 16 · site 198 · HEAD 198`. Dependency query: `dde864ab` alone, attributed at 344.
+- ⚠️ Tick 342's gap, three seconds wide: money's `48443105` arrived `@{21:24:39}` and tick 367's block was appended at 21:24:42 carrying
+  `money 9b6e8866`. Nil consequence (`CLAUDE.md` only).
+- **SITE-212 dispatched** — write-nothing measurement of `short_links`' running columns and policies and one removal falsifier on `:42`.
