@@ -4,8 +4,9 @@
 # KICKOFF.md, detached, logging to /home/goaiez/tmp/agy-run<N>.log.
 #
 #   bash .agents/supervisor/launch-coder.sh                 # Antigravity (default)
-#   bash .agents/supervisor/launch-coder.sh --coder claude  # Claude Code as the coder
-#                                                           # (owner 2026-09-05: the
+#   bash .agents/supervisor/launch-coder.sh --coder claude  # REFUSED (owner 2026-09-11 14:0x:
+#                                                           # no fallback coder)
+#                                                           # (was, owner 2026-09-05: the
 #                                                           # default account; only
 #                                                           # when agy reports
 #                                                           # "quota reached")
@@ -18,7 +19,7 @@ CODER=agy
 ALLOW_MERGE=0
 while [ $# -gt 0 ]; do
   case "$1" in
-    --coder) CODER="${2:-}"; shift 2;;
+    --coder) CODER="${2:-}"; if [ "$CODER" = claude ]; then echo "REFUSED: --coder claude is DISABLED (owner 2026-09-11 14:0x: no fallback coder; on quota reached, record it in REVIEWS.md and wait for agy)"; exit 1; fi; shift 2;;  # adopted tick 389 from origin/main 8451b92a; refusal only, hands no run any capability
     --allow-merge) ALLOW_MERGE=1; shift;;   # opens the shared coder guard's merge gate (GOAIEZ_MERGE_OK=1) for THIS run only; the guard added it 2026-09-05 13:27
     *) echo "REFUSED: unknown argument $1 (takes only --coder agy|claude, --allow-merge)"; exit 1;;
   esac
