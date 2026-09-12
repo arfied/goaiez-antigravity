@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-11T15:54:42",
+ "updated": "2026-09-12T02:18:01",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1448,6 +1448,12 @@
    "chose": "module-done's five red gates are recorded UNRESOLVED, one row per gate (built, tested, dashboard, surfaces, gate), because each waits on a dependency outside this lane: a CI, render or surface evidence producer that does not exist, a real send on a reserved transport, or the whole platform's doctor; no evidence file is written and C-Reviews is not marked DONE",
    "at": "2026-09-11T15:54:42",
    "ruling": "R245"
+  },
+  {
+   "module": "X-181",
+   "chose": "QaTicketResolveAction refuses a ticket that is already resolved by throwing App\\Modules\\X181\\Domain\\TicketAlreadyResolvedException instead of returning it unchanged, because its five production callers (C-Reviews Tickets, QaReport and LossAlerts, X-181 QaQueueSlaDueAt and Ticket) could not tell a no-op from a resolve, said resolved, and LossAlerts sent a real alert quoting notes nobody saved; each caller catches only that exception, around the call, so resolved keeps one definition and a caller that forgets the catch fails closed",
+   "at": "2026-09-12T02:18:01",
+   "ruling": "R245"
   }
  ],
  "notes": [
@@ -1678,6 +1684,10 @@
   {
    "at": "2026-09-12T01:55:19",
    "note": "run 165: merge of origin/main 8b407d10 (owner rule 2026-09-09 trigger (1), 151 behind); r165-merged.txt shortstats equal and 92 0; r165-gate.log tests 2594 \u00b7 passed 2581 \u00b7 FAILED 9 \u00b7 errors 4, incoming names: none; r165-doctor.txt integrity 0 \u00b7 boundary 39 \u00b7 contract 85 \u00b7 citation 0 \u00b7 schema 14 \u00b7 capability 204 \u00b7 anchor 128 \u00b7 journey 2, moved by the merge: boundary 39"
+  },
+  {
+   "at": "2026-09-12T02:18:01",
+   "note": "run 166: a stale resolve is refused \u2014 r166-red.txt tests 6 failed 6; r166-green.txt tests 6 passed 6; r166-mutation.txt tests 6 failed 6; r166-after.txt tests 107 vs r166-before.txt tests 102, same failing set; r166-gate.log TESTS NOT MEASURED; r166-doctor.txt boundary 39 \u00b7 contract 85 \u00b7 schema 14 \u00b7 capability 204"
   }
  ],
  "resolved": [
