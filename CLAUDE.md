@@ -4116,3 +4116,38 @@ Those are hand marks platform-wide, so they are a TRACK 1 ACTION and not re-mark
 ⚠️ **§3. A report line claiming an artefact differs from the brief quotes the brief's expected value and its
 `BRIEF.md` line.** Run 163 reported a 61-versus-41 mismatch that the brief never predicted, and blamed formatting for
 it. The real cause was the tree: one import and a 19-line method were deleted.
+
+## REV-169 — a no-op the caller cannot see is a refusal, and a tick writes in the order its acts happen
+
+⛔ **§1. A no-op a caller cannot tell from success is refused by a narrow domain exception, never signalled by a return
+value (2026-09-11, ruled for the stale-resolve slice, now run 166).** `QaTicketResolveAction` returned early on a
+resolved ticket, and all five of its callers kept saying the ticket was resolved. `LossAlerts::resolveAndAlert` still
+sent a real X-153 alert quoting notes that were never saved. A return signal (`wasChanged()`, a bool) keeps one
+definition of "resolved", but it fails **open**: a caller that forgets to check it sends the alert, and nothing in the
+suite goes red. A thrown `X181\Domain\TicketAlreadyResolvedException` fails **closed**, because a forgotten catch
+propagates. **RULED: the action throws, and each caller catches only that class, around the call itself, and returns
+before anything that describes a write.** `ModelNotFoundException` keeps propagating. This is REV-152 §2's narrowed
+catch with its first real member, and it makes X-181 `Ticket.php`'s reserved panel (REV-159 §3) live. ⚠️ A test that
+calls an action twice is a stale page, so it flips when the no-op becomes a refusal. Its repair wraps the second call in
+`assertThrows` and keeps every post-condition, never REV-160 §1's catch-the-escape shape.
+
+⛔ **§2. A tick killed mid-write left a brief claiming a push, a review block and a commit, none of which existed
+(2026-09-11 16:0x, my defect).** A session limit stopped the tick after it had drafted the REV-169 block and this
+section and written `BRIEF.md` and `KICKOFF.md`, and before it appended, pushed, committed or launched. The two files the
+coder reads were the ones that survived. `BRIEF.md:14` said `cd5288f5 is pushed` while `origin/track/reviews...HEAD` read
+`0	2`. This is REV-162 §1's shape one step earlier: there the review described a dispatch before it ran, and here the
+brief described a push. **RULED: a tick writes in the order its next reader needs the acts to have happened. The
+`REVIEWS.md` block is appended, then the push, then the supervisor commit, then `BRIEF.md`/`KICKOFF.md`, then the launch,
+then the dispatch tail. Everything is drafted into `t<N>-*` side files first.** A tick killed at any step then leaves a
+mailbox that describes only acts that ran.
+
+⚠️ **§3. A staged brief is a snapshot of the tree it was written against.** The stale-resolve brief was correct at
+16:11. The 151-commit merge that preceded it invalidates its §0, its item-1 baseline (`git diff --stat a1bbc078 HEAD --
+app` empty), its `HEAD` expectation and its gate prediction. **RULED: a brief staged behind a merge is re-derived at the
+tick that dispatches it, and its §0 says it was.** REV-162 staged `BRIEF-r159-csat.md` "byte-for-byte" on the same
+assumption.
+
+⭐ **§4. A per-track launcher can silently re-enable what the owner disabled.** After the 14:0x ruling, `main`'s launcher
+refuses `--coder claude`. This lane's copy still accepted it until §2f's bypass forced the adoption. §2f's list is where
+owner rulings enforced in code reach a lane, so an `OURS UNCHANGED, THEIRS MOVED` row is read for what it changes, not
+only for whether the guard can commit it.
