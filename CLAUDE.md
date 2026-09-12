@@ -19608,3 +19608,17 @@ all main's. ⚠️ Bound: it holds while `state.py` stays byte-identical to main
 
 Also measured at 366: `AGENTS.md:131` (*do not `git push` until PASS*) is 609(c)'s class and grants no act here (`7a09e8fc`, `coder-bin/git:168`);
 `livewire ?v?3` returns nothing in this lane's `CLAUDE.md`, `AGENTS.md` or `07-tech-stack.md` (lock pins v4.4.2) — money's 614 has no member here.
+
+## ⭐ "A TOOL RAN, SO THE AUTOLOADER RAN" HOLDS ONLY IF THE TOOL'S ENTRY POINT REQUIRES IT — money's ruling 615, measured here with a different witness (tick 367)
+
+Money's 615 calls the PHP ≥ 8.4.1 floor MEASURED: `platform_check.php` is loaded unconditionally and pint ran. This lane recorded the same floor at
+tick 354 as a READING (`php -r` refused — 284). Measured at source rather than adopted (223): `platform_check.php:11-24` **throws**
+`\RuntimeException`, so it refuses rather than warns; `autoload_real.php:25` requires it on the first `getLoader()` with only the singleton return
+before it; `app/composer.json` has no `platform` key. ⛔ **But pint is not a witness**: `app/vendor/bin/pint:16`, the file's only `autoload`
+occurrence, is the Composer proxy **setting** `$GLOBALS['_composer_autoload_path']` — it requires nothing, and whether the phar consults it is not
+observable here (`vendor/bin/phpstan` is the same). ✅ `app/artisan:10` requires `vendor/autoload.php` unconditionally, and `php artisan doctor` ran
+in this seat, so the floor is measured **by doctor**. ⭐ Read the entry point before calling a green tool evidence that the application bootstrapped.
+
+⚠️ And money's name-plus-digit label census reaches only `Carbon 2` ×2 and `PHP 8` ×1 here: this lane writes versions as package names and
+constraints (`nesbot/carbon 3.13.2`, `php ^8.4`, `v4.4.2`), which that pattern cannot see. All hold by hand (`composer.lock:3695 :3286`,
+`composer.json:9`, `Difference.php:127`). Census by both spellings.
