@@ -1688,6 +1688,10 @@
   {
    "at": "2026-09-12T02:18:01",
    "note": "run 166: a stale resolve is refused \u2014 r166-red.txt tests 6 failed 6; r166-green.txt tests 6 passed 6; r166-mutation.txt tests 6 failed 6; r166-after.txt tests 107 vs r166-before.txt tests 102, same failing set; r166-gate.log TESTS NOT MEASURED; r166-doctor.txt boundary 39 \u00b7 contract 85 \u00b7 schema 14 \u00b7 capability 204"
+  },
+  {
+   "at": "2026-09-12T02:34:11",
+   "note": "run 167: gate of HEAD d756a1d6 (carries e6b63849) \u2014 r167-gate.log tests 2599 \u00b7 passed 2587 \u00b7 FAILED 9 \u00b7 errors 3; not needed; r167-gate-stamps.txt 2026-09-12T02:30:40-05:00 \u2192 2026-09-12T02:33:39-05:00; r167-doctor.txt boundary 39 \u00b7 contract 85 \u00b7 schema 14 \u00b7 capability 204; r167-migrate-status.txt goaiez_antig_reviews config-not-cached, Pending 29, ssl_installed Arm A"
   }
  ],
  "resolved": [
