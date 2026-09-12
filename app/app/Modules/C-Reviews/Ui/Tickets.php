@@ -8,6 +8,7 @@ use App\Modules\CReviews\Models\ReviewRequest;
 use App\Modules\X121\Actions\EntityReadAction;
 use App\Modules\X181\Actions\QaTicketReadAction;
 use App\Modules\X181\Actions\QaTicketResolveAction;
+use App\Modules\X181\Domain\TicketAlreadyResolvedException;
 use App\Support\Tenancy;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -69,7 +70,16 @@ class Tickets extends Component
         Tenancy::set($this->businessId);
 
         $action = app(QaTicketResolveAction::class);
-        $action->handle($this->businessId, $ticketId, $notes);
+        try {
+            $action->handle($this->businessId, $ticketId, $notes);
+        } catch (TicketAlreadyResolvedException $e) {
+            $this->noticeType = 'warning';
+            $this->actionNotice = $e->getMessage();
+            $this->resolvingTicketId = null;
+            $this->resolutionNotes = '';
+
+            return;
+        }
 
         $this->noticeType = 'success';
         $this->actionNotice = '✅ Ticket resolved successfully.';

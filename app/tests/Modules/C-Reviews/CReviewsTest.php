@@ -41,6 +41,7 @@ use App\Modules\X121\Models\Person;
 use App\Modules\X171\Events\JobCompleted;
 use App\Modules\X181\Actions\QaTicketCreateAction;
 use App\Modules\X181\Actions\QaTicketResolveAction;
+use App\Modules\X181\Domain\TicketAlreadyResolvedException;
 use App\Modules\X181\Models\QaTicket;
 use App\Services\Billing\CreditLedger;
 use App\Services\Config\DefaultsRegistry;
@@ -184,7 +185,11 @@ class CReviewsTest extends TestCase
         Event::fake([SendRequested::class, CsatRequested::class]);
 
         app(QaTicketResolveAction::class)->handle($biz->id, $ticket->id, 'fixed');
-        app(QaTicketResolveAction::class)->handle($biz->id, $ticket->id, 'fixed twice');
+        $this->assertThrows(
+            fn () => app(QaTicketResolveAction::class)->handle($biz->id, $ticket->id, 'fixed twice'),
+            TicketAlreadyResolvedException::class,
+            'Ticket #'.$ticket->id.' is already resolved; nothing was saved.'
+        );
 
         Event::assertDispatched(SendRequested::class, 1);
         Event::assertDispatched(CsatRequested::class, 1);

@@ -115,6 +115,30 @@ class X181ScreensTest extends TestCase
         $this->assertEquals('fixed', $ticket->resolution_notes);
     }
 
+    public function test_qa_queue_resolve_on_a_resolved_ticket_saves_nothing(): void
+    {
+        $ticket = QaTicket::create(['business_id' => $this->bizId, 'subject' => 'Already resolved', 'arrived_at' => now(), 'status' => 'resolved', 'sla_due_at' => now()->addHours(1), 'resolved_at' => now()->subHour(), 'resolution_notes' => 'first']);
+
+        Livewire::test(QaQueueSlaDueAt::class, ['businessId' => $this->bizId])
+            ->call('resolve', $ticket->id, 'second')
+            ->assertSee('Ticket #'.$ticket->id.' is already resolved; nothing was saved.');
+
+        $ticket->refresh();
+        $this->assertEquals('first', $ticket->resolution_notes);
+    }
+
+    public function test_ticket_resolve_on_a_resolved_ticket_saves_nothing(): void
+    {
+        $ticket = QaTicket::create(['business_id' => $this->bizId, 'subject' => 'Already resolved', 'arrived_at' => now(), 'status' => 'resolved', 'sla_due_at' => now()->addHours(1), 'resolved_at' => now()->subHour(), 'resolution_notes' => 'first']);
+
+        Livewire::test(Ticket::class, ['businessId' => $this->bizId, 'ticketId' => $ticket->id])
+            ->call('resolve', 'second')
+            ->assertSee('Ticket #'.$ticket->id.' is already resolved; nothing was saved.');
+
+        $ticket->refresh();
+        $this->assertEquals('first', $ticket->resolution_notes);
+    }
+
     public function test_resolution_mount_and_empty(): void
     {
         Livewire::test(Resolution::class, ['businessId' => $this->bizId])

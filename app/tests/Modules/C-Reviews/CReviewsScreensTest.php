@@ -301,6 +301,44 @@ class CReviewsScreensTest extends TestCase
         $this->assertSame(1, Alert::where('business_id', $this->bizId)->count());
     }
 
+    public function test_tickets_resolve_on_a_resolved_ticket_saves_nothing(): void
+    {
+        $ticket = QaTicket::create(['business_id' => $this->bizId, 'subject' => 'test', 'arrived_at' => now(), 'status' => 'resolved', 'sla_due_at' => now()->addHours(2), 'resolved_at' => now()->subHour(), 'resolution_notes' => 'first']);
+
+        Livewire::test(Tickets::class, ['businessId' => $this->bizId])
+            ->call('resolve', $ticket->id, 'second')
+            ->assertSee('Ticket #'.$ticket->id.' is already resolved; nothing was saved.');
+
+        $ticket->refresh();
+        $this->assertEquals('first', $ticket->resolution_notes);
+    }
+
+    public function test_loss_alerts_resolve_on_a_resolved_ticket_sends_no_alert(): void
+    {
+        $ticket = QaTicket::create(['business_id' => $this->bizId, 'subject' => 'test', 'arrived_at' => now(), 'status' => 'resolved', 'sla_due_at' => now()->addHours(2), 'resolved_at' => now()->subHour(), 'resolution_notes' => 'first']);
+
+        $screen = Livewire::test(LossAlerts::class, ['businessId' => $this->bizId])
+            ->call('resolveAndAlert', $ticket->id, 'second');
+
+        $this->assertSame(0, Alert::where('business_id', $this->bizId)->count());
+        $screen->assertSee('Ticket #'.$ticket->id.' is already resolved; nothing was saved. No alert was sent.');
+
+        $ticket->refresh();
+        $this->assertEquals('first', $ticket->resolution_notes);
+    }
+
+    public function test_qa_report_resolve_on_a_resolved_ticket_saves_nothing(): void
+    {
+        $ticket = QaTicket::create(['business_id' => $this->bizId, 'subject' => 'test', 'arrived_at' => now(), 'status' => 'resolved', 'sla_due_at' => now()->addHours(2), 'resolved_at' => now()->subHour(), 'resolution_notes' => 'first']);
+
+        Livewire::test(QaReport::class, ['businessId' => $this->bizId])
+            ->call('resolveTicket', $ticket->id)
+            ->assertSee('Ticket #'.$ticket->id.' is already resolved; nothing was saved.');
+
+        $ticket->refresh();
+        $this->assertEquals('first', $ticket->resolution_notes);
+    }
+
     public function test_loss_alerts_prepares_removal(): void
     {
         $req = ReviewRequest::create(['business_id' => $this->bizId, 'rating' => 1]);

@@ -13,6 +13,7 @@ use App\Modules\CReviews\Models\ReviewRequest;
 use App\Modules\X153\Actions\AlertSendAction;
 use App\Modules\X181\Actions\QaTicketReadAction;
 use App\Modules\X181\Actions\QaTicketResolveAction;
+use App\Modules\X181\Domain\TicketAlreadyResolvedException;
 use App\Support\Tenancy;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -83,7 +84,16 @@ class LossAlerts extends Component
         }
         Tenancy::set($this->businessId);
         $action = app(QaTicketResolveAction::class);
-        $action->handle($this->businessId, $ticketId, $notes);
+        try {
+            $action->handle($this->businessId, $ticketId, $notes);
+        } catch (TicketAlreadyResolvedException $e) {
+            $this->noticeType = 'warning';
+            $this->actionNotice = $e->getMessage().' No alert was sent.';
+            $this->resolvingTicketId = null;
+            $this->resolutionNotes = '';
+
+            return;
+        }
 
         $alertAction = app(AlertSendAction::class);
         $alertAction->handle(

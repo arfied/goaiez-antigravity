@@ -6,6 +6,7 @@ namespace App\Modules\X181\Ui;
 
 use App\Modules\CReviews\Actions\ReviewRequestReadAction;
 use App\Modules\X181\Actions\QaTicketResolveAction;
+use App\Modules\X181\Domain\TicketAlreadyResolvedException;
 use App\Modules\X181\Models\QaTicket;
 use App\Support\Tenancy;
 use Livewire\Attributes\Locked;
@@ -35,7 +36,7 @@ class Ticket extends Component
 
     public string $resolutionNotes = '';
 
-    /** The panel is the house error surface, reachable only from a domain refusal this module does not yet raise; infrastructure faults propagate by design */
+    /** The panel is the house error surface. Its one domain refusal is TicketAlreadyResolvedException, a stale page resolving a ticket that is already resolved; infrastructure faults propagate by design */
     public ?string $actionNotice = null;
 
     public function toggleSample(): void
@@ -46,7 +47,11 @@ class Ticket extends Component
     public function resolve(string $notes): void
     {
         $this->actionNotice = null;
-        app(QaTicketResolveAction::class)->handle($this->businessId, $this->ticketId, $notes);
+        try {
+            app(QaTicketResolveAction::class)->handle($this->businessId, $this->ticketId, $notes);
+        } catch (TicketAlreadyResolvedException $e) {
+            $this->actionNotice = $e->getMessage();
+        }
         $this->resolutionNotes = '';
     }
 
