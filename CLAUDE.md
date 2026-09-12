@@ -18917,3 +18917,48 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
    **RULED: MONEY-217's brief measures `capture()`'s callers and doubles, registers `RecordPaymentOnCapture` with after-commit dispatch, passes the invoice id from `InvoiceEngine`'s overflow path only, and runs the evidence under ruling 282's copy-first rule.** ⛔ No listener write inside `capture()`'s transaction. ⛔ No real-money charge: Stripe test mode per owner ruling 10.
 
 657. **⭐ The G1-80 refusal test is rewritten to assert its own docblock, and its scanner is a new directory instrument over `app/app/Modules/C-Billing` (RULED by the lane supervisor 2026-09-12 13:2x; rulings 63, 224, 295, 310).** Track 1's shape is taken with `str_contains` needles `X198`, `GatewayClient`, `GatewayEngine`. Measured zero today, with the X-198 control firing. ⚠️ **Ruling 310 binds from now on:** prose dictated into any C-Billing file (a blade included, since `getExtension()` of `.blade.php` is `php`) that names `GatewayEngine`, `GatewayClient` or `X198` reddens this test. A brief that writes C-Billing copy about gateways checks these three tokens first (63).
+
+658. **⭐ MONEY-216 PASSES. Track 1's ACTION 25 writer fix landed as briefed, and G1-80 now asserts its docblock. §7 landed on the floor derived before the run with nothing to subtract, so the floor is `tests 2573 · passed 2570 · FAILED 1 · errors 2` (RULED by the lane supervisor 2026-09-12 13:4x, by `date` `13:43`, on `2a785fbd`; rulings 85, 175, 295, 378, 391, 418, 468, 610, 623, 657).**
+   - **Surface.** The surface is exactly the brief's five paths, and `git diff -w --stat` equals the raw stat. `grep -c -F -e "'created_at' => now(),"` on the engine = 3. G1-80's docblock and signature are byte-identical.
+   - **Proofs.** The three engine-path mutations each failed the April render's `assertDontSee` for their own needle, so each RED renders the defect: a database-clock row surfacing in the wrong month (418).
+   - **Gate.** §7 is `2573 · 2570 · FAILED 1 · errors 2` with no `E00040` member, so route (iii) carried the re-gate (391).
+   - **Push.** The verdict was appended before the push (623), then `bea42ba2..2a785fbd` was pushed by explicit sha.
+   - ⚠️ **Not charged.** The brief's 6.4 asked for the file path *"in the diff"* while its step 2 asked for *"the first message line"*. The coder followed step 2. This is the ruling 175 family: a brief's two instructions disagreeing.
+   - ⭐ **Ruling 657's hazard is now live.** A C-Billing file naming `X198`, `GatewayClient` or `GatewayEngine` reddens G1-80.
+
+659. **⭐⭐⭐ TRACK 1 ACTION 13's one-wave shape is REFUSED. The only production `capture()` that carries an invoice, `InvoiceEngine`'s overflow charge, is a float against the credit limit that `recordPayment` REVERSES when the invoice is paid, so wiring `RecordPaymentOnCapture` from it would credit the float as payment. Ruling 656's acceptance is withdrawn and one of its premises is corrected (RULED by the lane supervisor 2026-09-12 13:4x; rulings 59, 102, 170, 232, 257, 262(b), 365, 400, 429, 478, 656).**
+   Ruling 656 accepted Track 1's *"register the listener, thread the invoice id through `capture()`"*, sequenced it as MONEY-217, and named *"`InvoiceEngine`'s overflow path only"* as the invoice id's source. It never measured **what the overflow charge is**. That is the disproving measurement (400), and this tick took it first.
+   **The measurements.**
+   - `X-199/X199Test.php:109-114`, a TEST ANCHOR, pays an over-limit invoice in full and asserts an `overflow_reversed` row for the overflow's same 50 000.
+   - `InvoiceEngine::recordPayment()` reverses every `overflow_charged` row once the invoice is `paid`.
+   - `X-199/Ui/Credits.php:102` calls a charged overflow *"covered by the card on file; service never stopped"*.
+   So the overflow is a float that keeps service running over the limit. It is returned when the invoice is paid, and it is not money toward the invoice.
+   **The consequence.** The listener calls `recordPayment($biz, $invoice, $event->amountCents)`. When the overflow is at least the outstanding balance, the invoice is marked `paid` and the same call records its own charge as reversed. Otherwise `paid_cents` absorbs the float, the later full payment settles `total − overflow`, and the float is still reversed, so the ledger says the customer received back money they never overpaid. Either way the rows describe a money movement that did not happen. That is ruling 102's first reason, with its mechanism now measured.
+   **The census of producers.** `grep -rn -e "[-][>]capture(" -e "function capture(" app/app app/tests app/database`, read hit by hit (262(b)):
+   - `InvoiceEngine.php:93` is the float.
+   - `EvidenceChargeCommand.php:57` is evidence and carries no invoice.
+   - `PaymentCaptureAction.php:20` has no caller (170).
+   - `X198Test` ×8 and `InvoiceEngineTest` ×2 are tests.
+   - `OwnerConsentService`, `InboundMediaCapture` and `Settings.php` are other classes.
+   ⭐ **Known member (429).** `JourneyHarness::payInvoice():544` is the only caller where a capture is an invoice payment. It captures `total_cents` and then calls `recordPayment` itself, so the one correct shape exists only in a harness, wired by hand.
+   **RULED.**
+   - ⛔ The listener stays unregistered.
+   - ⛔ No invoice id is threaded into `capture()`.
+   - ⛔ No `payments.invoice_id` writer is added, because a writer with no reader is decision 272 (257).
+   - ⛔ No consumer is built for a producer that does not exist (59 inverted).
+   The real dependency is a customer-facing pay-this-invoice-by-card door. That door needs browser tokenisation, which is X-120's contract-parked dependency (20, 45, 119).
+   ⚠️ **Correction to 656.** Its *"`recordPayment` pays only the outstanding balance by default (365)"* does not apply on this path, because the listener passes `$event->amountCents` explicitly. **TWENTY-EIGHTH inherited attribution corrected**, in ruling 257's shape: a design constraint was cited without reading the call it constrained.
+   ⚠️ 656's premise correction stands. The red runtime-proof tests are missing untracked artifacts (39, 187), not an unwired seam.
+   ⭐ **The generalisable half: before wiring an event to a consumer, measure what the producer's act MEANS in the producer's own tests.** A payment row and an event named `PaymentCaptured` say money moved. They do not say toward what, and the answer here lives in a reversal assertion three modules away from the listener.
+
+660. **⛔ HOLD after the PASS (RULED by the lane supervisor 2026-09-12 13:4x, by `date` `13:43`).** All four lift conditions were measured this tick (269, 272, 323), and each case was decided on mtimes (494, 655).
+   - **Owner.** `OWNER.md` is `13:12:14` with 842 lines, equal to the addendum's recorded values.
+   - **Coder.** `--check` returned `CODER DEAD`.
+   - **Cadence, all three ✗.**
+     - After `git fetch --no-write-fetch-head origin`, `origin/main` = **`4ba54b40`**, unmoved, and `git rev-list --count HEAD..origin/main` = **46**.
+     - `git diff --stat 416d5028 origin/main -- app/app/Doctor coder-bin .claude/hooks` is empty.
+     - `git diff --name-status 416d5028 origin/main` is the seven per-track paths, `.agents/rules/10-supervisor.md`, ruling 643's measured X-184/X-185/X-210/OwnerNav/pin set and track sixty's X-194. None of it is money's (504).
+   - **Track 1.** ACTION 13 is answered and refused (659). 15, 16 (half), 21, 26, 28, 30 and 31 are still open.
+   - **Population.** No carried population has fired its trigger.
+
+   **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty coder wave to avoid an idle tick is what rulings 95, 100 and 111 forbid.
