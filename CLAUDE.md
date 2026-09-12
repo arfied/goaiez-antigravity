@@ -3229,6 +3229,14 @@ and §3 is unchanged at `0·39·85·0·16·204·128·3`. The lane is 190 ahead /
 (190 / 93 ancestor) at `fb2e26f5`. The ancestor count is still 7 short of the 100 threshold.
 - Tick 401's notes (`fb2e26f5`) were certified by `.gateT402.txt` and pushed `2bd329b2..fb2e26f5`.
 
+⌛ **Tick 403 — HOLD.** `main` did not move (pin `68fafdb3`), all three drift conditions are FALSE,
+and §3 is unchanged at `0·39·85·0·16·204·128·3`. The lane is 191 ahead / 3 behind first-parent
+(191 / 93 ancestor) at `305d44ff`. The ancestor count is still 7 short of the 100 threshold.
+- Tick 402's notes (`305d44ff`) were certified by `.gateT403.txt` and pushed `fb2e26f5..305d44ff`.
+- ⚠️ `git diff --stat 115422fc 68fafdb3 -- .claude/` shows `settings.json | 15 +`. That is this lane's
+  per-track copy against main's, not main moving: `git log 29312e16..68fafdb3 -- .claude/` is empty.
+  It is not drift condition (2).
+
 ⌛ **S-202 as dispatched (history): §3 ledger refresh, dispatched at tick 394 as STAGES-240, merge gate CLOSED.** §3 still
 reads `boundary 41` against §5's 39. This is S-200's shape. The JOURNAL `^- .+ stage ` rows start at 96.
 - ⚠️ **Brief lesson:** `--full-doctor` §5 truncates its row dump and prints no `schema` rows. Ask for
