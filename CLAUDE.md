@@ -10227,6 +10227,59 @@ Watch for: <the trap that applies, by name>
     that opens its file.
   - `30 1` vs `origin/main` after a fetch, and the Doctor/harness/hooks/seals diff is empty, so no merge condition
     holds. Board: proposals **13** · `app/app/Modules/` **0** · `CLOSED:` **8**. Re-run every grep; never inherit one.
+- ⚠️⚠️ **A capture file outlives the run that wrote it. When a wave re-runs a step with a runner that drops the
+  captures, the report `cat`s the FIRST run's captures beside the SECOND run's objects.** Every value is real, and
+  every one is from the wrong run.
+  - Wave 188g's `scratch/run-gates.sh` (06:56) dropped the wait, `APPLIED`, `made` and `--check` lines the brief
+    printed.
+  - So `WAIT-GREEN`, `RAN` ×2, `APPLIED` ×2, `MADE` ×2 and `NEW-REDS` all came from a 06:30–06:53 attempt whose
+    gate logs and objects the script then overwrote.
+  - `NEW-REDS` named the wave's own new test as red, and the green object beside it contains that name **0** times.
+  - ⭐ **The tell is one comparison in `ARTIFACTS`: a capture older than the gate log it vouches for is from another
+    run.** The first attempt also overlapped: `applied-2` (06:33) is older than `wait-1` (06:41), the tick-322
+    shape again.
+  - ⛔ Brief it in words — re-running a step re-runs every capture of that step — and paste every runner script.
+    NOTE by tick 206 when the final gate logs carry the truth and the reviewer re-runs the triple.
+- ⚠️ **A `patch`-left `.orig` under `app/tests/Modules/` doubles every verdict line into the board grep.**
+  - Wave 188g's `X194Test.php.orig` made `grep -rn "CLOSED:" app/tests/Modules/` read 9 against a true 8.
+  - `CapabilityStage` (`*.php`), the classmap and pint are all blind to it. This is the tick-271 shape under
+    `app/tests`.
+  - `find app -name '*.orig' -o -name '*.rej' -o -name '*.bak'` is a one-line `LITTER` field.
+- ⚠️ **A failure injected AFTER the write fails the call and not the write — ask which side of the write an injected
+  failure sits on.** `ViewSaveAction::save()` is `SavedView::create()` then `Event::dispatch(new ViewSaved(…))`, with
+  no transaction. So wave 188g's throwing listener leaves the row written while the section says *"We could not save
+  your view."* An RLS `WITH CHECK` refusal is a real no-row failure, and it also empties the list read under the same
+  tenant. The fixture choice is the coder's; the comment must say which it is.
+- ⚠️ **A scratch-glob grep for a string the generator itself prints can never read 0** (tick 292). Wave 188g's
+  `grep -rl "bootstrap/app.php" scratch/w188g-*` hit its own generator. The honest form is
+  `find scratch -maxdepth 1 -name '*.php' -newer scratch/w<N>-start.txt`.
+- ⭐ **X-121 exposes no aggregate read.**
+  - `X-121/Actions/` is `EntityHistory · EntityRead · EntityRestore · EntityWrite · JobCreate`.
+    `EntityReadAction::handle(string $table, int $id, int $businessId): ?array` reads one row.
+  - `EntityService`'s public methods are `read · write · restore · compareVersions`.
+  - X-121 owns `jobs` (`manifest.php:54`), and `JobCreateAction:44` writes `work_orders`.
+  - Anything in the eleven that needs a job count or sum has no sanctioned seam today. That is a measurement for a
+    brief, never a conclusion.
+- **Suite at tick 344 on `dbad48c4`:** `tests 2578 · passed 2569 · assertions 11282 · failed 7 · errors 2 ·
+  duration_ms 152722`, from the wave's post-tip green gate. The standing nine hold by identity. My plain gate
+  (`.agents/supervisor/.t344-gate.log`): `gates green.`, pint `passed`, phpstan `0`.
+- **Backlog at tick 344 — wave 188h is three numbered items.** RULED (`REVIEWS.md` tick 344, PASS-WITH-NOTES).
+  - **Item 0**, a correction: the `.orig` moved to `scratch/`, and `X194Test.php:412`'s comment made true of the
+    write.
+  - **Item 1**, evidence: a mutation proving `:426` (`$this->saveError = ''`, the ruling's third clause).
+  - **Item 2**, a build: `AnyViewIt::$jobValue`/`$jobCount` are unlocked and have no production writer, and the Count
+    and Estimate tiles display them. RULED: no real request, a Livewire update included, displays a job count or value
+    production did not supply for that tenant's view.
+    - `test_any_view_it_component`'s four tile assertions (`:224-225`, `:240-241`) are ruled rewritable on tick 340's
+      ground.
+    - `AnyViewItScreenTest::test_job_count_tile_hidden_when_zero` stays byte-identical.
+  - `w188g-mut-1` and `-2` are spent.
+  - Recorded and not briefed: `SavedViewsList::makeDefault()` still routes a failure to the load-error panel; its own
+    comment documents the catch as unreachable.
+  - The `'R245'` fixture still folds into the wave that opens its file.
+  - `31 6` vs `origin/main` after a fetch, and the Doctor/harness/hooks/seals diff is empty, so no merge condition
+    holds. Board: proposals **13** · `app/app/Modules/` **0** · `CLOSED:` **8** (9 with the `.orig`). Re-run every
+    grep; never inherit one.
 
 ## Style
 
