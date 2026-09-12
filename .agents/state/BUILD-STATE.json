@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-11T11:13:07",
+ "updated": "2026-09-12T02:46:03",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1968,6 +1968,12 @@
    "module": "X-66",
    "chose": "boundary: X-66 reads the assigned number through X-188's Domain seam via NumberPoolManager::getActiveNumber.",
    "at": "2026-09-11T11:13:07",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-194",
+   "chose": "AnyViewIt renders an account-wide saved view in the timezone of the currently selected location from LocationContext, disclosing it via the location picker. If the location lacks a timezone, or no location exists, it refuses to render. G9-37 locationTimezone requires no location_id column on saved_views.",
+   "at": "2026-09-12T02:46:03",
    "ruling": "R245"
   }
  ],
