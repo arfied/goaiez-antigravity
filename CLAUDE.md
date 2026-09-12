@@ -10368,6 +10368,50 @@ Watch for: <the trap that applies, by name>
     `RefusalcodeDistributionPerScreenTest.php:38`.
   - `33 1` vs `origin/main` after a fetch, and the Doctor/harness/hooks/seals diff is empty, so no merge condition holds.
     Board: proposals **14** · `app/app/Modules/` **0** · `CLOSED:` **8**. Re-run every grep; never inherit one.
+- ⚠️⚠️ **A report field that NAMES a new red is not a disclosure — read `NEW-REDS` before any prose field.** Wave 190's
+  `render()` opens with `$this->errorMessage = '';`, which wipes the `->set('errorMessage', …)` in the standing
+  `X194Test::test_saved_views_list_error_state` and turns it red. The brief named that test in words.
+  - `NEW-REDS` printed the name. `DESIGN`, `NOT RUN` and `NOTES` said nothing, and the gate's verdict looked like the
+    standing set's.
+  - **BLOCK and hold the push**: shipping it makes the red standing by inheritance.
+  - The arithmetic is what separates a lane red from a flapper: `+2 tests · +1 passed · +1 failed · +4 assertions` is two
+    new methods (2 and 3 assertions) plus a 2-assertion standing test now failing at its first.
+- ⚠️⚠️ **A defect can live in TWO lines, and a one-line mutation of it then proves a proposition the pre-wave tree
+  already satisfied.** Wave 190's mutation 3 moved `makeDefault()`'s error back to `$errorMessage`.
+  - Because the same wave's `render()` clears that property, the message vanished and the list stayed. The target failed
+    at `assertSee('We could not update your default view.')`.
+  - On `6d991f56` that assertion **passes**: the old load panel printed the sentence as its body. The list-retained
+    assertion (the one that fails pre-wave) never ran.
+  - **Before crediting a reinstatement, ask which assertions fail on the pre-wave tree** (`git show <floor>:<file>`), and
+    require the mutation to reach one of them.
+  - A brief that says *"reinstates this item's defect and nothing else"* must also say *"which may be more than one
+    line"*.
+- ⚠️ **An `assertSee` of a string the pre-wave render printed as a panel BODY cannot assert a HEADING ruling.** Only an
+  absence assertion on the old heading can.
+- ✅ **Tick 344's tile ruling: the VALUE half is proven via parameters and SPENT (wave 190 mutation 1). The report
+  called it a survival over its own `MOVED` count of 1.**
+  - `test_any_view_it_component` failed at `:247` (its 8th and last assertion), with `$1,500.50` rendered.
+  - ⚠️ The Livewire-**update** half for the value is still unproven. `test_client_cannot_set_job_count_or_value_for_view`'s
+    `catch (\Exception)` swallows the `jobCount` throw after a successful `jobValue` set, so it cannot see a value-only
+    reinstatement.
+- ⚠️ **A wait capture of 2 bytes is one line of three.** The four `w190-wait-*.txt` files each read `1`. Only the
+  `· result ` count ran. `wc -l` beside `RAN` makes it visible.
+- ⚠️ **`MESSAGE` built from `$(cat moved.txt)` greps the whole `"test":"Tests\\…"` string and never matches.** Print the
+  method-name extraction verbatim: `grep -o '::[a-z0-9_]*' <moved> | cut -c3-`.
+- **Backlog at tick 347 — wave 190b is the BLOCK fix; nothing is pushed.** RULED (`REVIEWS.md` tick 347, BLOCK,
+  dispatch 1 of 2).
+  - **The ruling.** No real request, a Livewire update included, displays a `SavedViewsList` load-error message that the
+    component did not produce from a failing read.
+    - `test_saved_views_list_error_state` is ruled rewritable, on tick 340's ground, keeping its name.
+  - **The items.**
+    - the default-view panel's retry, which is `$refresh` and never clears `defaultError` (`error-panel.blade.php:14-15`);
+    - a mutation reaching `test_saved_views_list_default_view_failure_retains_list`'s list assertion;
+    - a mutation reaching `test_saved_views_list_read_escapes_its_guard`'s retry assertion;
+    - a heading-absent assertion in a new method.
+  - After 190b, **wave 190c** is the value half's Livewire-update proof. The `catch (\Exception)` shape folds into it.
+    The `'R245'` fixture at `RefusalcodeDistributionPerScreenTest.php:38` still waits for the wave that opens its file.
+  - `34 1` vs `origin/main` after a fetch, and the Doctor/harness/hooks/seals diff is empty, so no merge condition holds.
+    Board: proposals **14** · `app/app/Modules/` **0** · `CLOSED:` **8**.
 
 ## Style
 
