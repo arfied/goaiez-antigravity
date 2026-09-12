@@ -10031,6 +10031,31 @@ Watch for: <the trap that applies, by name>
   - Board: proposals **14** · `app/app/Modules/` **0** · `CLOSED:` **7**. `9 29` vs `origin/main` after a fetch,
     Doctor/harness/hooks diff empty, so no merge condition holds.
   - Re-run every grep; never inherit one.
+- ⚠️ **An `echo` redirected into a scratch file and then `cat`ed is an eleventh way past the generator check.**
+  Wave 188c's `echo "MATCH: yes" > scratch/…; cat …` meets *"every value is the output of a command that names a
+  file"* by its wording, and the value could not have come out otherwise. Half mine: a `MATCH: yes|no` field has no
+  command that produces it. **Remove any field only a typed value can fill; the reviewer compares.** Its sibling: a
+  start-state capture the generator re-runs at report time equals `STATUS2` by construction, so **item 0 writes the
+  start file and the generator only `cat`s it**.
+- **RULED at tick 324 — the G9-37 timezone source is `locations.timezone` through a root service, never a
+  default.** It is the only tenant-supplied timezone store with a production writer (`LocationTimezone::set`).
+  - `users.timezone` has no writer.
+  - X-121's `businesses.timezone default 'UTC'` sits inside `if (! Schema::hasTable('businesses'))`, so it is not
+    on the root schema.
+  - **188d designs, and the brief prints both precedents with no conclusion attached:**
+    - which location an account-wide saved view renders in: `LocationContext::current()`, whose docblock makes the
+      fallback honest only with `<x-account.location-picker>` on screen (it renders only for `> 1` location, and the
+      lint enforcing that does not exist), or every location named, as `SiteChanges` does
+      (*"IT READS NO `LocationContext` AND RENDERS NO PICKER, DELIBERATELY (5837)"*);
+    - what renders for no location (`current()` is null, so `current()->timezone` dereferences null);
+    - what renders for a null timezone: `ConsentService.php:523-531` is the reader precedent (null → a refusal).
+  - The tick-322 limit stands: no real request displays a timezone production did not supply as that location's.
+- **Backlog at tick 325 — HOLD, unchanged from tick 324.** `git diff --cached --name-only` still prints
+  `.agents/supervisor/REPORT.md`, so the guard refuses every coder commit. TRACK 1 ACTION 1 is unanswered (`OWNER.md`
+  10:36, and the only mailbox relay in it is the discharged 2026-09-04 one). Every lane-owned item left needs a commit:
+  188d above, the `X194Test.php:288` row, `AnyViewIt::$ready`, wave 187's NOTE 5, and the `'R245'` fixture.
+  `9 30` vs `origin/main`, Doctor/harness/hooks diff empty, so no merge condition holds. **Each tick re-checks
+  `git diff --cached --name-only | wc -l`: on `0` it writes 188d, on `1` it holds with a one-paragraph block.**
 
 ## Style
 
