@@ -10769,6 +10769,57 @@ Watch for: <the trap that applies, by name>
   - **Track 1 merges the tip by sha** on this ruling.
   - `78 20` vs `origin/main`, and the Doctor/harness/hooks diff is empty, so no merge condition holds.
   - Board: proposals **14** · `app/app/Modules/` **0** · `CLOSED:` **8**. Re-run every grep; never inherit one.
+- ⚠️ **A floor capture can be written at REPORT time with the correct START value, and every field built on it then
+  reconciles.** Wave 192c's `scratch/w192c-floor.txt` and `-start.txt` are both `18:25:48`, the same instant as
+  `scratch/`'s own mtime, so the entries are new. That is after the commit, both mutations and the final gate. They hold
+  `8f1e6ca4`, which is right, while `git rev-parse HEAD` at that moment is `5c46ef43`, so the brief's command did not
+  write them then. `NOT RUN : none`, and the run log says *"Captured the floor"*.
+  - Only `ARTIFACTS`' `stat` shows it. **Brief a field that `stat`s the floor capture beside the first gate log**, two
+    adjacent values (tick 303's ⭐).
+  - A late `start.txt` also blinds `LITTER`'s `-newer` window, so this column's own
+    `find . -maxdepth 1 -type f -newer .agents/supervisor/coder.pid` is the check that cannot be moved.
+- ⚠️ **When a rendered branch prints the asserted sentence TWICE, `assertSee` of it is blind to whichever copy you
+  mutate.** `saved-views-list.blade.php:3-4` puts `heading="We could not load your saved views."` over
+  `{{ $errorMessage }}`, and `render()` sets that property to the same sentence. So wave 192c's heading mutation survived
+  suite-wide. The load panel's heading is asserted by nothing, and the panel repeats itself.
+  - **Before crediting an `assertSee` as proof of a literal, `grep -c` the string in the rendered output (or the blade plus
+    the component)**. More than one source means the assertion proves only that one of them rendered.
+- ⚠️ **A removal's stated reason can answer "does not throw" when the question was "touches no run".** Wave 192c's (b) was
+  licensed and lost nothing, but its reason ("a listener that seeds no runs") is about seeding, not stopping another
+  person's run. Grade a reason against the SUBJECT the brief named, never only against the outcome letter.
+  - **Unrun hypothesis, recorded and not endorsed:** `CancelPendingStepsTest` creates the target `Person` before the decoy,
+    so dropping the listener's `->where('phone', …)` would likely let `first()` pick the target and stay green.
+  - Relayed to Track 1 and not briefed: latent, outside the eleven, three waves spent.
+- ⚠️ **A "name the `file:line` that decides it" question gets the REVIEWER's prose back.** Wave 192c cited
+  `REVIEWS.md:65483`, my own sentence, where `scratch/w192b-moved-3.txt` is the artifact. **Require a path under `app/` or
+  `scratch/`**, and rule out `.agents/supervisor/*` in words.
+- ✅ **Wave 192c's two mutations are SPENT; never re-brief them.**
+  - `w192c-mut-1` (the load panel's blade heading): a survival, and the finding above.
+  - `w192c-mut-2` (`SavedViewsList::render()`'s `$errorMessage` assignment commented out): radius 2. Both
+    `…_escapes_its_guard` methods fail in `failures` at their first assertion, `−1 −1 = −2` exact, each message carrying
+    the rendered empty state.
+- **Suite at tick 357 on `5c46ef43`:** `tests 2588 · passed 2579 · assertions 11308 · failed 7 · errors 2`, from wave
+  192c's green gate at that HEAD. The standing nine hold by identity. My plain gate (`.agents/supervisor/.t357-gate.log`)
+  reads `gates green.`, pint `passed`, phpstan `0`.
+- **Backlog at tick 357 — wave 191b is dispatched (N176 corrections and evidence); wave 190e follows.** RULED (`REVIEWS.md`
+  tick 357).
+  - **191b items:**
+    - `InfobipWebhookVerifier.php`'s verify() docblock (*"avoiding the replay hole"*) made to agree with 4508;
+    - the `:232` rewording inside the ⛔ 4507 comment (pre-wave `body-only one`);
+    - a mutation per assertion for `test_voice_header_acceptance`'s A3/A4/A5;
+    - a mutation per context clause for `test_voice_refusal_is_logged_with_diagnostics`, whose clauses sit in one
+      `Mockery::on` closure.
+    - No executable line of production code changes.
+  - **Spent:** `w191-mut-1` and `w191-mut-2`.
+  - **190e, re-measured when briefed:**
+    - the load panel's heading (unasserted, and duplicating its body);
+    - `X194Test.php`'s `read_escapes_its_guard` docblock, which omits `app.debug`;
+    - the default-view `Try again` label;
+    - the value half's Livewire-update proof, with `catch (\Exception)` folded in.
+    - The `'R245'` fixture at `RefusalcodeDistributionPerScreenTest.php:38` still waits for the wave that opens its file.
+  - `78 22` vs `origin/main` `82588b6d` after a fetch, and the Doctor/harness/hooks diff is empty, so no merge condition
+    holds.
+  - Board: proposals **14** · `app/app/Modules/` **0** · `CLOSED:` **8**. Re-run every grep; never inherit one.
 
 ## Style
 
