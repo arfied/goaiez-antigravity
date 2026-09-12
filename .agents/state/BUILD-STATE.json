@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-11T10:37:56",
+ "updated": "2026-09-12T00:31:11",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -2535,6 +2535,12 @@
    "module": "X-102",
    "chose": "the chat door records the refusal code the agent returns on the agent chat turn (nullable chat_turns.refusal_code, written by ChatTurnAction) and ChatCaptureAction throws UNDER_18_SIGNAL_ON_SESSION before Person::updateOrCreate when the session holds an UNDER_18 turn; ChatCaptureController maps exactly that refusal to 422 with status rejected and reason under_18, the shape FormCaptureAction returns for the same clause. P-148 and G10-37 assert the under-18 signal at the write, not at the reply. Refused: an age check inside X-102 (a second writer of the C-Agent detector), keying the read on agent_refusals (it has no session key), a session status (two actions overwrite it), catching every DomainException, and deleting a contact row captured before the signal arrived.",
    "at": "2026-09-11T10:37:56",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-137",
+   "chose": "The X-137 ShortLink model uses BelongsToTenant and implements TenantScoped, the safeguard the short_links creator migration 2026_08_11_130139 names for the platform ShortLink model. short_links carries public_read FOR SELECT USING true and Postgres ORs permissive policies, so row level security restricts no read of the table, and SITE-212 measured the redirect business_id clause as the only tenancy check. The route and LinkQrAction keep their business_id clauses. Measured at SITE-214: with the redirect clause removed and the scope present, test_g13_24_short_code_is_redeemable_only_under_its_own_business stays green; with both removed it answers 302 where it asserts 404. No fixture changed, because TestCase provisionTenant sets tenancy for every fixture. Refused: removing either application check, changing the public_read policy (another lane creates the table), a longer short code or a rate limiter (no clause), and routing X-137 links through the platform resolver (module ownership, a Track 1 question).",
+   "at": "2026-09-12T00:31:11",
    "ruling": "R245"
   }
  ],
