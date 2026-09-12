@@ -409,16 +409,17 @@ class X194Test extends TestCase
             ->call('load')
             ->assertSee('Existing View');
 
-        // Force RLS failure during save by switching tenant context context
-        DB::statement("SET app.business_id = '9999'");
+        // Force a save failure by throwing an exception in the event listener
+        \Illuminate\Support\Facades\Event::listen(\App\Modules\X194\Events\ViewSaved::class, function () {
+            throw new \Exception('Save failed');
+        });
 
         $component->set('newViewName', 'Failing View')
             ->call('saveView')
             ->assertSee('We could not save your view.')
             ->assertSee('Existing View');
 
-        // Revert for successful save
-        DB::statement("SET app.business_id = '{$biz->id}'");
+        \Illuminate\Support\Facades\Event::forget(\App\Modules\X194\Events\ViewSaved::class);
 
         $component->set('newViewName', 'Successful View')
             ->call('saveView')
