@@ -17908,3 +17908,24 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
    ⚠️ The wall clock moved 2h50m since the last tick (`16:00` → `18:50`) and nothing in the lane or on `origin/main` moved with it.
 
    **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty coder wave to avoid an idle tick is what rulings 95, 100 and 111 forbid. No gate ran this tick: `HEAD`'s `app/**` is unchanged since the last supervisor gate, so the floor stays ruling 564's.
+
+585. **⭐ Ruling 550's multibyte half used four function names (`strlen`/`substr`/`strtoupper`/`strtolower`). Swept on its predicate, a byte-string function applied to text that may not be ASCII, the other spellings are ONE `str_pad` and THREE `Str::random`, all on ASCII values by construction, and zero `ucfirst`/`ucwords`/`wordwrap`/`str_split`/`strrev`/`strpos`/`stripos`. Zero buildable (measured by the lane supervisor 2026-09-11 19:0x, by `date` `19:00`; rulings 207, 262(b), 294, 324, 327, 328, 376(b), 381, 415, 429, 449, 45, 327, 532, 550).** This is the addendum's *"a census keyed on a method NAME or written FORM"* (532–540) aimed at ruling 550, which listed four byte functions and struck the axis. `ucfirst`/`ucwords` on owner text would mangle a first letter outside ASCII, `wordwrap`/`str_split`/`strrev` would cut a multibyte character in half, and `str_pad` counts bytes when it pads.
+   **Instruments, quoted (300)**, each over the eight money module trees:
+   - `-e "ucfirst(" -e "ucwords(" -e "str_pad(" -e "wordwrap("` → **1**, `X-199/Domain/InvoiceNumber.php:35` `'INV-'.str_pad((string) $nextNumber, 6, '0', STR_PAD_LEFT)`.
+   - `-e "str_split(" -e "strrev(" -e "stripos(" -e "strpos("` → **0**.
+   - `-F -e "Str::"` → **3**: `X-117/Ui/CheckoutBlock.php:52` `'auth_'.Str::random(20)` and `X-117/Domain/CheckoutEngine.php:88`, `:233` `'ORD-'.strtoupper(Str::random(6))`.
+   - ⭐ **Case corroborated (381):** `-i -e "ucfirst(" -e "ucwords(" -e "strpos(" -e "str_split("` → **0**.
+   ⭐ **Controls fire.** The case/pad terms over `app/app/Services`, `app/app/Livewire` and `app/resources/views` → **15** files (`Services/Messaging/Composer/NameNormaliser.php`, `Livewire/Account/AssistantAnswers.php`, `resources/views/livewire/account/credit.blade.php`, …). The search/split terms over `Services` and `Livewire` → 5+ files (`Services/Audit/PageText.php`, `Services/Reviews/ReplyGuardrails.php`, …). ⛔ Money proposes no edit on any of them and asserts no defect (5): their inputs were not traced.
+   ⭐ **Known members (429):** `InvoiceNumber.php:35` is ruling 376(b)'s own pair; the three `Str::random` sites are rulings 45 and 327's; and `grep -rn -e "mb_[a-z_]*("` returns exactly ruling 550's three `mb_strlen` length guards (`AccountingSyncEngine:54,:95`, `ArEngine:240`).
+   **Each member's safety, named (328):** `str_pad` pads a `(string)` cast of an integer sequence number, so every byte is an ASCII digit; `Str::random` draws from an ASCII alphabet (327), and `strtoupper` on it is 550's own measured member. So the byte/multibyte partition 550 measured holds on every spelling: owner-typed text in the lane meets `mb_strlen` and nothing else. 415's first-three check passed; 449's each-member-exists check passed, every member printed from a file.
+   ⛔ Struck, not to be re-run. ⚠️ **Trigger:** a byte-string function added in the lane over owner-typed or stored text. Ruling 327's outcome shape a **seventy-fourth** time.
+
+586. **⛔ SIXTY-THIRD consecutive HOLD (RULED by the lane supervisor 2026-09-11 19:0x, by `date` `19:00`).** All four lift conditions were measured this tick (269, 272, 323), each case decided on mtimes (494):
+   - **Owner.** `OWNER.md`'s newest heading is still `## OWNER RULING — 2026-09-09 09:02` (136), mtime `09-09 09:02:03`, older than `REVIEWS.md` (`18:52:57`).
+   - **Coder.** `--check` returned `CODER DEAD`.
+   - **Mailbox.** `REPORT.md` (`07:15:21`) and `BRIEF.md` (`07:07:27`) are both older than `REVIEWS.md`.
+   - **Cadence, all three ✗.** After `git fetch --no-write-fetch-head origin`, `origin/main` = **`bd3e9c5f`**, unmoved (`git diff --name-status bd3e9c5f origin/main | wc -l` = 0). `git rev-list --count HEAD..origin/main` = **44**. `git diff --stat dca743e8 origin/main -- app/app/Doctor coder-bin .claude/hooks` is empty. `git merge-base HEAD origin/main` = **`dca743e8`**.
+   - **Track 1.** No answer to ACTION 13–28.
+   - **Population.** Ruling 585's is empty of buildable members.
+
+   **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty coder wave to avoid an idle tick is what rulings 95, 100 and 111 forbid. No gate ran this tick: `HEAD`'s `app/**` is unchanged since the last supervisor gate, so the floor stays ruling 564's.
