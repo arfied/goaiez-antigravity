@@ -18631,3 +18631,23 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
    - **Population.** Ruling 632's has no buildable members, and no carried candidate has fired its trigger.
 
    **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty coder wave to avoid an idle tick is what rulings 95, 100 and 111 forbid.
+
+634. **⭐ The HARDCODED-LINK census covers the `href` half that ruling 342(b) never reached. 342(b) swept `route()`, `url()` and `redirect` for minted URLs. Nobody had asked about an `href=` whose value no helper mints. The eight money blades carry four members, every one known and safe, so nothing is buildable (measured by the lane supervisor 2026-09-12 02:3x, by `date` `02:30`; rulings 21, 36, 38, 41, 43, 191, 206, 262(b), 324, 327, 328, 342(b), 415, 429, 449, 469).**
+   A hardcoded `href` to an unmounted path would be ruling 38's lie relocated from a `success_url` to an owner's link. An owner-typed value in an `href` would be ruling 579's parser boundary in a URL.
+   **Instrument, quoted (300):** `grep -rn -e 'href=' -e '@error' -e 'mailto:' -e 'tel:'` over the eight money module trees `--include=*.blade.php` → **4**. Each hit was read (262(b)).
+   - **`unpaid.blade.php:81`, `invoices.blade.php:57` and `:65`** are each `<x-ui.button :href="$invoice->pdf_url" … target="_blank">`. The census for writers, `grep -rn -F -e "pdf_url" app/app app/database --include=*.php` minus `/views/`, returns the migration, `EvidenceInvoiceCommand.php:98` (which copies the value into an artifact) and another lane's `print_materials` column. It also returns `UiReviewSeeder.php:407-409`, which writes `'pdf_url' => null`. **No writer sets the column**, so each `@if($invoice->pdf_url)` arm stays unreachable. That is rulings 43, 191 and 469, re-measured (64, 323).
+   - **`declines.blade.php:63`** is `<a href="{{ $decline->pay_link->url }}">`. Its value is Stripe's own `$response->json('url')` (`StripeGatewayClient.php:91`), persisted at `PaymentLinkAction.php:50` (rulings 36, 41). It is vendor-issued rather than owner-typed, it is escaped by `{{ }}`, and it carries no `target`.
+   - There are zero `@error`, `mailto:` and `tel:` directives, which is consistent with ruling 206's measurement that the lane has no `validate()`.
+   ⭐ **The positive control fires:** `grep -rln -e 'href='` over `app/resources/views` and `app/app/Modules` blades → **100** files. ⭐ **Known members (429):** ruling 43's `pdf_url` and ruling 36's pay link. 415's first-three check passed. 449's each-member-exists check passed, because every member was printed from a file.
+   ⚠️ **Recorded at ruling 76's grade:** `app/resources/views/components/ui/button.blade.php:52-53` renders `<a href="{{ $href }}" …>` and merges the caller's `target`. It adds no `rel`. Every `target="_blank"` caller in money sits in an unreachable arm, and the kit is Track 2's (21).
+   ⛔ Struck, not to be re-run. ⚠️ **Trigger:** a writer of `invoices.pdf_url`, or a hardcoded or owner-derived `href` added to a money blade. Ruling 327's outcome shape an **eighty-eighth** time.
+
+635. **⛔ HOLD after the census (RULED by the lane supervisor 2026-09-12 02:3x, by `date` `02:30`).** All four lift conditions were measured this tick (269, 272, 323), and each case was decided on mtimes (494):
+   - **Owner.** `OWNER.md`'s mtime is `01:33:27`, older than `REVIEWS.md` (`02:23:34`), and its last line is still the applied 01:3x owner note (624).
+   - **Coder.** `--check` returned `CODER DEAD`.
+   - **Mailbox.** `REPORT.md` (`02:11:59`) and `BRIEF.md` (`02:05:45`) are both older than `REVIEWS.md`.
+   - **Cadence, all three ✗.** After `git fetch --no-write-fetch-head origin`, `origin/main` is **`68fafdb3`**, unmoved. `git rev-list --count HEAD..origin/main` = **1**. `git diff --stat 8b407d10 origin/main -- app/app/Doctor coder-bin .claude/hooks` is empty. `git diff --name-status HEAD origin/main` lists the seven per-track paths plus MONEY-214's own C-Billing paths, which are money's side (504). ⚠️ `git merge-base HEAD origin/main` now prints `bf80de9f`. That is a valid common ancestor, because Track 1 merged it at `68fafdb3`, so it is not a moved base.
+   - **Track 1.** No answer to ACTION 13–33.
+   - **Population.** Ruling 634's has no buildable members.
+
+   **Merge gate CLOSED. Cap untouched. No BLOCK is open.** ⛔ Briefing an empty coder wave to avoid an idle tick is what rulings 95, 100 and 111 forbid. No gate ran this tick, because nothing in `app/**` or `bin/supervise.sh` changed, so the floor stays `tests 2571 · passed 2568 · FAILED 1 · errors 2`.
