@@ -9873,6 +9873,63 @@ Watch for: <the trap that applies, by name>
     `origin/main`, and the Doctor/harness/hooks diff is empty, so no merge condition holds.
   - **After 187 the in-lane, vendor-free writerless pile is empty**, and the rest is an owner/vendor question.
     Re-measure before briefing.
+- ⚠️ **A hard limit can be crossed in the STRENGTHENING direction, and it stays silent unless a field must name it.**
+  - Wave 187 added a fixture and an `assertSee` to the standing
+    `SavedViewsListScreenTest::test_screen_renders_for_tenant`. The brief read *"stays byte-identical … Adding new
+    methods is fine"*.
+  - Nothing weakened, but the file's only real `GET` of the empty branch is gone, and no field mentioned it.
+  - NOTE by ticks 206/222: the finding survives, and moving four lines would manufacture a wave.
+  - **Brief it in words: a new assertion goes in a NEW method, and adding to a standing method's body is changing
+    it. `NOT RUN` names every hard limit crossed.**
+  - The check is per method, not per hunk (tick 302).
+- ⭐ **A brief that requires a real-`GET` content assertion on a `wire:init` component has licensed removing the lazy
+  load**, because a `GET` response carries only the first render. Wave 187 did exactly that and credited the brief
+  with an *"explicit"* demand it never made. **Say which design a requirement forces when you write it, and grade the
+  design as the brief's.**
+- ⭐ **`App\Services\Tenant\LocationTimezone` is the only writer of `locations.timezone`, and it refuses `UTC` and
+  `GMT` by name** as *"the value that arrives when somebody reaches for a default rather than an answer"*.
+  - `locations` is a root table: nullable `timezone` at `create_locations_table.php:44`, `ENABLE`+`FORCE` RLS with
+    `WITH CHECK` at `:73-75`.
+  - `App\Models\Location` is a root model (`BelongsToTenant`, `TenantScoped`), so reading it is not a module
+    crossing.
+  - X-194's `AnyViewIt` defaults `public string $locationTimezone = 'UTC'` and prints it under a capability, G9-37,
+    that reads *"a report renders in the location's own timezone"*.
+  - `saved_views` carries no location column, so *which* location is itself an open measurement.
+- ⚠️ **A save failure rendered through a section's LOAD-error panel hides the section and names the wrong failure.**
+  - `SavedViewsList` (wave 187): `saveView()`'s catch sets `$errorMessage`, and the blade's `@if ($errorMessage)`
+    replaces the form **and** the list with *"We could not load your saved views."*
+  - The panel's default retry `$refresh` never clears `$errorMessage`.
+  - That breaks `error-panel.blade.php`'s own ⚠️ (*"the heading names what failed"*, *"IT GUARDS A SECTION, NOT A
+    PAGE"*).
+  - Low reach, since the RLS `WITH CHECK` refusal fires only for a signed-in user with no business. Backlog, not a
+    wave on its own.
+- **Suite at tick 321 on `eb38af22` — `tests 2549 · passed 2540 · assertions 11132 · failed 7 · errors 2 ·
+  duration_ms 153610`**, from the wave's post-tip gate over a clean tracked tree.
+  - The standing nine hold by identity (`cmp` of the names files is silent).
+  - Against wave 186 that is `+1 · +1 · +3`.
+  - My plain gate (`.agents/supervisor/.t321-gate.log`): `gates green.`, pint `passed` / phpstan `0`, stamp =
+    `runtime_build`. No suite of my own (tick 277).
+  - Both wave-187 mutations are **spent**.
+- **Backlog at tick 321 — wave 188 is X-194's `AnyViewIt` showing a signed-in tenant's saved view on a real
+  request.** RULED, re-derived rather than inherited (tick 235).
+  - Tick 320's *"the pile is empty after 187"* did not see that wave 187's writer unblocks `AnyViewIt`. It is now the
+    lane's one routed tenant screen that answers *"No view selected"* on every request: `#[Locked] $businessId` and
+    `$viewId` both start at `0`, there is no `mount()`, `routes.generated.php:10` carries no parameter, and nothing
+    links to it.
+  - Item 0 folds wave 187's NOTE 4 (a comment on `SavedViewsList::load()`) and NOTE 3 (a mutation for A2).
+  - Item 1 is the build.
+  - Item 2 is `AnyViewIt`'s three unsourced inputs (`locationTimezone`, `jobCount`, `jobValue`), **per input,
+    answers need not agree**, with the `LocationTimezone` measurement above and `jobs` being X-121's canonical noun.
+  - ⛔ Shape withheld (32-for-32). ⛔ Never an `X121\Models` read. ⛔ Never edit `LocationTimezone` or
+    `Livewire/Account/Settings`.
+  - ⚠️ All four standing `AnyViewIt` `Livewire::test` calls pass `businessId`, `viewId`, `locationTimezone`,
+    `jobValue` and `jobCount` as parameters on a component with no `mount()`. Whether they still reach those
+    properties once one exists is a diagnosis owed.
+  - Still owed: wave 187's NOTE 5 (the save-failure panel) and the `'R245'` fixture at
+    `RefusalcodeDistributionPerScreenTest.php:38`, each to the next wave that opens its file.
+  - Board: proposals **13** · `app/app/Modules/` **0** · `CLOSED:` **7**. `9 24` vs `origin/main` after a fetch, and
+    no merge condition holds.
+  - Re-run every grep; never inherit one.
 
 ## Style
 
