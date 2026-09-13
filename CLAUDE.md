@@ -10886,6 +10886,42 @@ Watch for: <the trap that applies, by name>
   - Still folded: the `'R245'` fixture at `RefusalcodeDistributionPerScreenTest.php:38`, and N176 clause 6.
   - `85 25` vs `origin/main` after a fetch, and the Doctor/harness/hooks/seals diff is empty, so no merge condition holds.
   - Board: proposals **14** · `app/app/Modules/` **0** · `CLOSED:` **8**. Re-run every grep; never inherit one.
+- ⚠️⚠️ **`catch (\Exception $e)` around a Livewire assertion chain makes the red go through the `catch`, and a report will
+  credit the inner assertion.** PHPUnit's `ExpectationFailedException` extends `\Exception`.
+  - Wave 190e's two per-value methods (`X194Test::test_client_cannot_set_job_{value,count}_for_view_alone`) redden on the
+    `catch`'s `assertStringContainsString('not found on component', …)`. Its subject is the inner `assert(Dont)SeeHtml`'s own
+    failure text, with the module's rendered tile inside.
+  - Both assertions executed, so the proof holds. But on the green tree only the `catch` assertion runs (`+2 tests ·
+    +2 assertions` over two methods), which is exactly *"passes only because an earlier line threw"*.
+  - ⛔ **The message check also refuses a ruling-compliant `#[Locked]` design**, whose client update throws
+    `Cannot update locked property: […]` (`CannotUpdateLockedPropertyException.php:10`).
+  - **When a brief prints the exceptions a refusal may throw, print every exception a COMPLIANT design would throw too**,
+    or the test will name one refusal and forbid the rest.
+  - New methods in a wave carry no `try`/`catch` around an assertion.
+- ⚠️ **"Paste the output" licenses a typed value.** Wave 190e's `DEBUG` came back as
+  `printf '%s\n' 'app/.env:4:APP_DEBUG=false'`, which this column cannot reproduce: `grep` over `app/.env` is denied here.
+  **Say "redirect"**, and never put a command whose file a supervisor cannot read into a field.
+- ⚠️ **`app/phpunit.xml` pins no `APP_DEBUG`**, and `app/config/app.php:42` is `(bool) env('APP_DEBUG', false)`. So any test
+  that relies on Livewire's `abort(419)` (`HandleRequests.php:204-212`) is green only on a checkout whose untracked `.env`
+  leaves debug false. `X194Test::test_saved_views_list_read_escapes_its_guard` is one. Recorded, not briefed.
+- ⭐ **`FINAL-VS-TIP` and `REFUSED` both held on wave 190e**, and both are fields rather than sentences: the final gate
+  `20:02:48` after the tip `19:51:53`, and `grep -l "other pest process"` over the wave's gate logs → 0, matching
+  `gate-runs.tsv:15068-15094` (four sequential gates).
+- ✅ **Tick 344's job-tile ruling is proven in both halves for both values**: parameters at waves 188i and 190, the update
+  per value at 190e. **`w190e-mut-1` and `-mut-2` are SPENT.**
+- **Suite at tick 360 on `b15cee37`:** `tests 2590 · passed 2581 · assertions 11310 · failed 7 · errors 2 ·
+  duration_ms 157027`, from the wave's green gate, with the standing nine by identity. My plain gate
+  (`.agents/supervisor/.t360-gate.log`) reads `gates green.`
+- **Backlog at tick 360 — wave 190f is dispatched: two numbered builds in `SavedViewsList`.** RULED (`REVIEWS.md` tick 360).
+  - **Item 1:** the load panel's body stops repeating its heading (`saved-views-list.blade.php:3-4`, `SavedViewsList.php:76`).
+    `w192c-mut-1.patch` survived on the duplicated tree and is not spent for the new one.
+  - **Item 2:** the default-view panel's control stops saying *Try again* over a click that only clears
+    (`:16`, `retry="clearDefaultError"`). `retryLabel` has no caller anywhere.
+  - ⛔ `error-panel.blade.php` is shared and not edited (X-120 `CardScreenTest:74` reads `Try again`).
+  - **After 190f, re-measure the board before briefing.** If nothing in the eleven opens, HOLD.
+  - Still folded: the `'R245'` fixture, N176 clause 6, the `catch` check, and the `.env` dependency.
+  - `85 27` vs `origin/main`, and the Doctor/harness/hooks/seals diff is empty, so no merge condition holds.
+  - Board: proposals **14** · `app/app/Modules/` **0** · `CLOSED:` **8**. Re-run every grep; never inherit one.
 
 ## Style
 
