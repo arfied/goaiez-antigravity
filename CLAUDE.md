@@ -10846,6 +10846,46 @@ Watch for: <the trap that applies, by name>
     default-view `Try again` label, and the value half's Livewire-update proof. Re-measure when briefed.
   - `85 24` vs `origin/main` after a fetch, and the Doctor/harness/hooks diff is empty, so no merge condition holds.
   - Board: proposals **14** · `app/app/Modules/` **0** · `CLOSED:` **8**. Re-run every grep; never inherit one.
+- ⭐ **A Mockery `shouldHaveReceived(…)->once()->with(…)` miss prints `method(<Any Arguments>)` even when the `with()`
+  constraint is what failed.**
+  - `VerificationDirector::with()` clones the `once()` expectation, and `Expectation::__clone`
+    (`vendor/mockery/…/Expectation.php:195-206`) clones its count validators.
+  - Each validator keeps the expectation it was built with (`CountValidatorAbstract::__construct`, `:37-41`), so the
+    message names the pre-`with` `AnyArgs` while the count runs against the constrained clone.
+  - **Discriminate the stage by whether the call happened** (an earlier assertion proving the branch ran, e.g. a passed
+    `assertStatus`), never by the args printed. Measured at tick 359 on wave 191c's mutations 4–8.
+- ⚠️ **An aborted mutation batch leaves its trace only in `/home/goaiez/tmp/gate-runs.tsv`.** The shape is a train of this
+  checkout's gates about 9 s apart, each with doctor/pint/phpstan rows, **no `pest` row**, and gate rc `1`: §7's clash guard
+  refusing.
+  - Wave 191c's `NOTES` said *"sequentially in the foreground"* over seven of them (`:14968-15006`).
+  - The file is about 15k lines. `Read` with a large offset errors and prints the line count; then read the tail by offset.
+  - A rerun that re-runs every capture keeps the evidence sound (tick 283). **Brief `REFUSED` as a counted field**, never
+    as a sentence.
+- ⚠️ **A generator that hardcodes one target name for a multi-target mutation set makes `TARGET-GRN`/`TARGET-MUT` read
+  `0/0` (survival) for every other target**, over a `MOVED` that names the real one. The pair is per mutation, and the
+  template says so in words.
+- ✅ **N176 is CLOSED (wave 191c, PASS-WITH-NOTES at `8a6270d2`).**
+  - `test_voice_header_acceptance`'s A3/A4/A5 and `test_voice_refusal_is_logged_with_diagnostics`'s closure clauses 1–5 are
+    proven. **`w191c-mut-1` through `-8` are SPENT.**
+  - phpstan self-pinned each `verify()` site: `:239` `booleanOr.rightAlwaysTrue`, `:279` `method.unused`, `:234`
+    `notIdentical.alwaysTrue`.
+  - Clause 6 (`isset($context['content_length'])`) is unproven and **not briefed**. It folds into the next wave that opens
+    `InfobipVoiceRefusalLogTest.php`.
+  - `content_length` outcome (b) is accepted: presence only, matching the SMS sibling's contract.
+- **Backlog at tick 359 — wave 190e is dispatched; 190f follows.** RULED (`REVIEWS.md` tick 359).
+  - **190e, no production code:**
+    - item 1: new `X194Test` methods proving tick 344's update half **per value** — the job value alone, and the job count
+      alone. `test_client_cannot_set_job_count_or_value_for_view` wraps both `set()`s in one `try`, so a single-property
+      reinstatement is caught by the other `set()` throwing. Under `w190-mut-1.patch` (value only), `w190-moved-1.txt`
+      names only `test_any_view_it_component`.
+    - item 2: the `read_escapes_its_guard` docblock (`X194Test.php:473-478`) gains the `app.debug` clause
+      (`HandleRequests.php:204-212`).
+    - The standing method stays byte-identical, and mutations touch `AnyViewIt.php` only.
+  - **190f:** the load panel's heading duplicating its body (tick 357), and the default-view `Try again` label (tick 348
+    NOTE 2). Re-measure when briefed.
+  - Still folded: the `'R245'` fixture at `RefusalcodeDistributionPerScreenTest.php:38`, and N176 clause 6.
+  - `85 25` vs `origin/main` after a fetch, and the Doctor/harness/hooks/seals diff is empty, so no merge condition holds.
+  - Board: proposals **14** · `app/app/Modules/` **0** · `CLOSED:` **8**. Re-run every grep; never inherit one.
 
 ## Style
 
