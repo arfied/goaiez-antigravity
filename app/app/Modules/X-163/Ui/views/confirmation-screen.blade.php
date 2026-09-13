@@ -1,10 +1,9 @@
 <div>
-    <x-surface.sample-state module="services with prices" screen="confirmation_screen" />
     <livewire:x-124.chat-dock-every />
     
     <div class="max-w-3xl mx-auto px-4 py-8" wire:loading.class="opacity-50">
         <div class="mb-8">
-            <h1 class="text-2xl font-semibold text-ink mb-2">Price Confirmation</h1>
+            <h2 class="text-2xl font-semibold text-ink mb-2">Price Confirmation</h2>
             <p class="text-ink-2">
                 callout fee: {{ $isCalloutSet ? 'set' : 'not set' }} &middot; 
                 {{ $unconfirmedCount }} left to review
@@ -77,7 +76,7 @@
                             </button>
                             
                             <button wire:click="confirm({{ $item->id }})" 
-                                    class="h-10 px-4 text-sm font-medium text-white bg-accent hover:bg-accent-hover rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                                    class="h-10 px-4 text-sm font-medium text-paper bg-accent hover:bg-accent-hover rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                                 @if(isset($prices[$item->id]) && $prices[$item->id] != ($item->price_cents / 100))
                                     Fix price, then confirm
                                 @else

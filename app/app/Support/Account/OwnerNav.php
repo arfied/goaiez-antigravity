@@ -452,6 +452,7 @@ final class OwnerNav
             // tenant, so it owes a nav entry.
             OwnerNavItem::make('Automations that ran', 'x-125.runs', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Your prices', 'x-163.pricebook', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Prices to confirm', 'x-163.confirmation-screen', OwnerNavItem::GROUP_MORE),
         ];
     }
 
