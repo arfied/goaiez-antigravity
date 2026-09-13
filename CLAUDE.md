@@ -184,8 +184,9 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
   only the gate's output counts.
 - Shared files: `.agents/state/JOURNAL.md` and `BUILD-STATE.json` are written
   by every track through `state.py`. ⛔ Never rebase before a push — ruling 21
-  (2026-09-04): this track pushes `track/pricebook` as it stands; Track 1
-  orders both sides' journal lines at merge time. Never edit either file by hand.
+  (2026-09-04): this track pushes `track/pricebook` as it stands. Never edit either file by hand.
+  ⚠️ **Corrected by Track 1 on 2026-09-12 18:1x:** `.agents/state/**` is a per-track path and never merges into `main`,
+  so nobody orders the two sides' journal lines. Track 1 reads a lane's `(R245)` from the lane's ledger at its merged tip.
 - SMS/mail drivers stay `log` in tests. A vendor send happens only in a
   journey on the real transport, with the owner's credentials.
 
@@ -327,8 +328,9 @@ reviews these at product close.
 21. **`track/pricebook` pushes as-is; never a rebase before a push.** Every commit
     ahead of `origin/main` is reviewed, hard rule ③ forbids rewriting one, the coder
     guard refuses `rebase` unconditionally, and a rebase would put every SHA in the
-    rewrite ledger. Track 1 is the only merger and orders `JOURNAL.md` /
-    `BUILD-STATE.json` at merge time. The TRACK 4 rebase sentence is struck.
+    rewrite ledger. Track 1 is the only merger. (Its clause "and orders `JOURNAL.md` /
+    `BUILD-STATE.json` at merge time" is superseded by Track 1 on 2026-09-12 18:1x: per-track paths never merge into
+    `main`.) The TRACK 4 rebase sentence is struck.
     ⚠️ **The "push is the coder's" sentence is struck too** (owner, `OWNER.md` 14:0x:
     *"The coder never pushes (its guard stays closed)"*, and the owner runs no git by
     hand from now on). The **supervisor** pushes, and only a sha it has gated and
@@ -4706,12 +4708,21 @@ and did not merge the state. Main's journal ended `2026-09-06T23:16:43`, and its
 - **If main's side is pure `-` lines of ours, main never received them. Restore ours** inside the merge, with
   `git checkout HEAD -- <file>` (guard `:34-46`).
 - **If main's diff has `+` lines of its own, main's side carries something ours lacks** (PB-163's case).
-- **If both sides carry lines, neither copy is whole.** That is a `TRACK 1 ACTION` for a human-ordered union. ⛔ Never
-  hand-edit it, because `state.py` owns both files.
+- **If both sides carry lines, neither copy is whole.** ~~That is a `TRACK 1 ACTION` for a human-ordered union.~~ Track 1
+  ruled on 2026-09-12 18:1x that no union is coming (below). ⛔ Never hand-edit either file, because `state.py` owns both.
 
 PB-172 applied it: six restored files, `grep -c '2026-09-11T1' JOURNAL.md` still `6`, and TRACK 1 ACTION (m) filed.
 ⚠️ **A count instrument cannot catch this.** The merge is clean and the gate is green either way. Only the review
 sentence *"every `(R245)` in code has a matching `decided` line"* would ever notice, and only much later.
+
+⭐ **Closed 2026-09-13 05:1x.** Track 1 ruled that `.agents/state/**` is a per-track path that never merges into `main`, and
+that it reads a lane's `(R245)` from the lane's ledger at its merged tip. So (m) is not a defect. **A `+` line on main's side
+can be STALENESS rather than content.** Main's `10 67` against `4cc166af` were its 09-05 `updated` stamp, the X-172 `tests`
+record PB-177 withdrew, and the same record at another position: an older copy of ours. Read what each `+` line is before
+calling it something ours lacks.
+**RULED by the lane supervisor:** when this lane takes `main`, `.agents/state/**` is restored to ours whole, like the other
+per-track paths. The `+`-lines diff is still run and printed. It is a STOP only if main's side adds a record or decision
+that names one of this lane's ten module ids and that ours lacks.
 
 ## ⭐ Trap added 2026-09-12 01:4x — a tick's writes are a TRANSACTION, and the dispatch is its last step
 
