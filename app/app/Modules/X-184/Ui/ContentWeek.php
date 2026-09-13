@@ -7,17 +7,23 @@ namespace App\Modules\X184\Ui;
 use App\Modules\X184\Actions\PlanApproveCadenceAction;
 use App\Modules\X184\Actions\PlanScheduleAction;
 use App\Modules\X184\Models\ContentPlan;
+use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Your content week'])]
 class ContentWeek extends Component
 {
     #[Locked]
     public int $businessId = 0;
 
-    public bool $failed = false;
+    public function mount(int $businessId = 0)
+    {
+        $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
+    }
 
-    public bool $isSample = false;
+    public bool $failed = false;
 
     public function approveCadence(int $planId, PlanApproveCadenceAction $action): void
     {

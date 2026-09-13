@@ -13,6 +13,7 @@ use App\Services\Voice\InfobipVoiceEvent;
 use App\Services\Voice\VoiceGreeting;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 /**
  * `POST /webhooks/infobip/voice` — where a missed call arrives (T176 P2).
@@ -72,6 +73,32 @@ final class InfobipVoiceController extends Controller
         PlatformHealth $health,
     ): JsonResponse {
         if (! $verifier->verify($request)) {
+            $sigHeader = config('services.infobip.signature_header');
+            $voiceHeader = 'X-Ib-Hmac-Signature';
+
+            $possible = array_filter(['X-Hub-Signature', 'X-Signature', $sigHeader, $voiceHeader, 'X-Ib-Exchange-Req-Signature', 'X-Ib-Exchange-Req-Timestamp']);
+            $present = [];
+            foreach ($possible as $h) {
+                if ($request->hasHeader($h)) {
+                    $present[] = (string) $h;
+                }
+            }
+            $present = array_values(array_unique($present));
+
+            $sigValue = (string) $request->header($voiceHeader, '');
+            if ($sigValue === '') {
+                $sigValue = is_string($sigHeader) ? (string) $request->header($sigHeader, '') : '';
+            }
+
+            Log::warning('Infobip voice webhook refused: signature did not verify', [
+                'signature_headers_present' => $present,
+                'signature_len' => strlen($sigValue),
+                'signature_prefix' => $sigValue !== '' ? substr($sigValue, 0, 7) : null,
+                'body_sha256' => hash('sha256', $request->getContent()),
+                'content_length' => $request->header('Content-Length'),
+                'user_agent' => $request->header('User-Agent'),
+            ]);
+
             // ⚠️ **COUNTED (T176 P23).** An unconfigured signing key refuses
             // every genuine delivery, which here means every missed call is
             // dropped — the owner is never told and the caller is never texted,

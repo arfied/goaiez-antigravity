@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X165\Ui;
 
 use App\Enums\UserRole;
+use App\Modules\X163\Actions\QuotablePriceAction;
 use App\Modules\X165\Actions\MembershipStartAction;
 use App\Modules\X165\Actions\PlanProposeAction;
 use App\Modules\X165\Models\Membership;
@@ -20,7 +21,7 @@ class Plans extends Component
 
     public string $newName = '';
 
-    public string $newPrice = '';
+    public string $newItemId = '';
 
     public array $personInput = [];
 
@@ -36,16 +37,22 @@ class Plans extends Component
             return;
         }
 
-        $priceCents = (int) (floatval($this->newPrice) * 100);
+        $price = app(QuotablePriceAction::class)->resolve($this->businessId, (int) $this->newItemId);
+
+        if (! isset($price['amount'])) {
+            $this->addError('newItemId', 'Choose a confirmed price from your pricebook.');
+
+            return;
+        }
 
         app(PlanProposeAction::class)->handle(
             $this->businessId,
             $this->newName,
-            $priceCents
+            $price['amount']
         );
 
         $this->newName = '';
-        $this->newPrice = '';
+        $this->newItemId = '';
     }
 
     public function startMembership(int $planId)
@@ -77,6 +84,7 @@ class Plans extends Component
 
         return view('x-165::plans', [
             'plans' => $plans,
+            'priceOptions' => app(QuotablePriceAction::class)->options($this->businessId),
         ]);
     }
 }

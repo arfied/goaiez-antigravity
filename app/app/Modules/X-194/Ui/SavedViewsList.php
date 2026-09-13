@@ -22,6 +22,10 @@ class SavedViewsList extends Component
 
     public string $errorMessage = '';
 
+    public string $saveError = '';
+
+    public string $defaultError = '';
+
     public function mount(int $businessId = 0): void
     {
         $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
@@ -35,35 +39,43 @@ class SavedViewsList extends Component
     public function saveView(): void
     {
         $this->validate();
+        $this->saveError = '';
 
         try {
             app(ViewSaveAction::class)->save($this->businessId, $this->newViewName);
             $this->newViewName = '';
         } catch (\Exception $e) {
-            $this->errorMessage = 'We could not save your view.';
+            $this->saveError = 'We could not save your view.';
         }
     }
 
     public function makeDefault(int $viewId): void
     {
+        $this->defaultError = '';
         try {
             app(SetDefaultViewAction::class)->setDefault($this->businessId, $viewId);
         } catch (\Exception $e) {
-            // Defence in depth: SetDefaultViewAction uses Builder::update() which does not throw in normal conditions, so no test reaches this block.
-            $this->errorMessage = 'We could not update your default view.';
+            $this->defaultError = 'We could not update your default view.';
         }
+    }
+
+    public function clearDefaultError(): void
+    {
+        $this->defaultError = '';
     }
 
     public function render()
     {
+        $this->errorMessage = '';
         try {
             $action = app(ViewListAction::class);
             $views = ($this->businessId > 0)
-                ? $action->listViews($this->businessId)
+                ? $action->listViews($this->businessId)->collect()
                 : collect();
         } catch (\Exception $e) {
-            // Defence in depth: ViewListAction returns a LazyCollection so the query runs on blade iteration, escaping this try block; thus no test reaches it.
-            $this->errorMessage = 'We could not load your saved views.';
+            // A space string makes $errorMessage truthy for the blade condition without displaying extra text.
+
+            $this->errorMessage = ' ';
             $views = collect();
         }
 
