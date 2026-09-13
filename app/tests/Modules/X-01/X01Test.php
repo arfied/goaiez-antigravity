@@ -461,11 +461,11 @@ class X01Test extends TestCase
     {
         $admin = User::factory()->create();
         $biz = TestCase::provisionTenant(['name' => 'Ghost Biz']);
-        $customer = Customer::factory()->create(['id' => 998877665, 'business_id' => $biz->id, 'name' => 'Ghosty']);
+        $customer = Customer::factory()->create(['id' => mt_rand(1000000, 9000000), 'business_id' => $biz->id, 'name' => 'Ghosty']);
 
         // Create an unrelated Person that happens to share the Customer's ID.
         $person = Person::create([
-            'id' => 998877665,
+            'id' => mt_rand(1000000, 9000000),
             'business_id' => $biz->id,
             'first_name' => 'Unrelated',
             'email' => 'unrelated@example.com',
@@ -725,5 +725,18 @@ class X01Test extends TestCase
             senderName: 'Webhook User',
             body: '   '
         );
+    }
+
+    public function test_global_search_is_proven_through_the_seam(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Search Biz']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->createContact->handle($biz->id, 'Search Person', '+15125550888', 'search@example.com');
+        
+        $results = $this->search->handle($biz->id, '+15125550888');
+        
+        $this->assertEquals(1, $results['results_count']);
+        $this->assertEquals('+15125550888', $results['contacts'][0]['phone']);
     }
 }
