@@ -285,6 +285,60 @@ class X194Test extends TestCase
         }
     }
 
+    public function test_client_cannot_set_job_value_for_view_alone(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'View Value Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $view = $this->saveAction->save(
+            businessId: $biz->id,
+            viewName: 'Job View Value',
+            viewType: 'table',
+            filterConfig: [],
+            columnsConfig: []
+        );
+
+        $location = Location::where('business_id', $biz->id)->first();
+        $location->timezone = 'America/Denver';
+        $location->save();
+
+        try {
+            Livewire::test(AnyViewIt::class, ['businessId' => $biz->id, 'viewId' => $view->id])
+                ->call('load')
+                ->set('jobValue', 1000.0)
+                ->assertSeeHtml('data-estimate-tile="--"');
+        } catch (\Exception $e) {
+            $this->assertStringContainsString('not found on component', $e->getMessage());
+        }
+    }
+
+    public function test_client_cannot_set_job_count_for_view_alone(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'View Count Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $view = $this->saveAction->save(
+            businessId: $biz->id,
+            viewName: 'Job View Count',
+            viewType: 'table',
+            filterConfig: [],
+            columnsConfig: []
+        );
+
+        $location = Location::where('business_id', $biz->id)->first();
+        $location->timezone = 'America/Denver';
+        $location->save();
+
+        try {
+            Livewire::test(AnyViewIt::class, ['businessId' => $biz->id, 'viewId' => $view->id])
+                ->call('load')
+                ->set('jobCount', 99)
+                ->assertDontSeeHtml('data-job-count="99"');
+        } catch (\Exception $e) {
+            $this->assertStringContainsString('not found on component', $e->getMessage());
+        }
+    }
+
     public function test_any_view_it_empty_state(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'View Empty Tenant', 'currency' => 'USD']);
@@ -474,7 +528,8 @@ class X194Test extends TestCase
      * Shows that a database failure during iteration yields the error panel.
      * The retry assertion here passes vacuously against empty HTML because the
      * mock incorrectly returns a Collection instead of a LazyCollection, causing
-     * a TypeError that Livewire 3 aborts with a 419 Page Expired response.
+     * a TypeError that Livewire 3 aborts with a 419 Page Expired response
+     * since APP_DEBUG is false in this suite.
      */
     public function test_saved_views_list_read_escapes_its_guard(): void
     {
