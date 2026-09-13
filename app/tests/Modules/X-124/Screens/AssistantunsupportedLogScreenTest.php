@@ -6,7 +6,9 @@ namespace Tests\Modules\X124\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X124\Actions\AssistantAskAction;
 use App\Modules\X124\Ui\AssistantunsupportedLog;
+use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -34,9 +36,9 @@ class AssistantunsupportedLogScreenTest extends TestCase
             ->assertSee('No unsupported utterances recorded.')
             ->assertDontSee('this screen is planned in');
 
-        \App\Support\Tenancy::set((int)$biz->id);
-        app(\App\Modules\X124\Actions\AssistantAskAction::class)->handle((int)$biz->id, 'ui101-sess', 'Fly me to Mars tomorrow morning');
-        \App\Support\Tenancy::forget();
+        Tenancy::set((int) $biz->id);
+        app(AssistantAskAction::class)->handle((int) $biz->id, 'ui101-sess', 'Fly me to Mars tomorrow morning');
+        Tenancy::forget();
 
         $this->get(route('x-124.assistantunsupported-log'))
             ->assertOk()
