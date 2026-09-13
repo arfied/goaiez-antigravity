@@ -993,20 +993,8 @@
     {
      "module": "X-157",
      "stage": "boundary",
-     "why": "X-108 exposes no read action returning a business upcoming booked appointments: AppointmentBookAction, AppointmentCancelAction, AvailabilityRequestAction and WaitlistJoinAction are the whole of its registered surface and AvailabilityRequest returns free slots, not booked rows, so EdgeDeployAction:115 reads X108\\Models\\Appointment directly and BoundaryStage reports the import. X-108 is another lane under ruling 5, so the read action is that lane to build. Deleting the read is not available: the Event node it feeds is the asserted clause of G8-15, which is credited. This is the same absent seam already filed as capability X-176 at 2026-09-06T16:31:06, counted once and reported by two stages against two modules.",
-     "at": "2026-09-09T18:01:35"
-    },
-    {
-     "module": "X-157",
-     "stage": "boundary",
      "why": "X-163 exposes no catalog-shaped read for a business confirmed price book: BookVersionAction, CalloutLookupAction, PriceConfirmAction, PriceLookupAction, PriceQuoteAction and PriceRangeAction are the whole of its registered surface and every one is per-service or per-quote, so EdgeDeployAction:132 reads X163\\Models\\PriceBookItem directly and BoundaryStage reports the import. X-163 is another lane under ruling 5, so the catalog read is that lane to build. Deleting the read is not available: the OfferCatalog node it feeds is the asserted clause of G8-14, which is credited. This is the same absent seam already filed as capability X-176 at 2026-09-06T16:52:20, counted once and reported by two stages against two modules.",
      "at": "2026-09-09T18:01:40"
-    },
-    {
-     "module": "X-157",
-     "stage": "boundary",
-     "why": "--reason EdgeDeployAction:115 lists appointments; X-108 exports no AppointmentListAction (needs one: appointments for a business, read-only)",
-     "at": "2026-09-13T08:24:12"
     }
    ]
   },
@@ -2004,12 +1992,6 @@
   {
    "module": "X-157",
    "stage": "boundary",
-   "why": "X-108 exposes no read action returning a business upcoming booked appointments: AppointmentBookAction, AppointmentCancelAction, AvailabilityRequestAction and WaitlistJoinAction are the whole of its registered surface and AvailabilityRequest returns free slots, not booked rows, so EdgeDeployAction:115 reads X108\\Models\\Appointment directly and BoundaryStage reports the import. X-108 is another lane under ruling 5, so the read action is that lane to build. Deleting the read is not available: the Event node it feeds is the asserted clause of G8-15, which is credited. This is the same absent seam already filed as capability X-176 at 2026-09-06T16:31:06, counted once and reported by two stages against two modules.",
-   "at": "2026-09-09T18:01:35"
-  },
-  {
-   "module": "X-157",
-   "stage": "boundary",
    "why": "X-163 exposes no catalog-shaped read for a business confirmed price book: BookVersionAction, CalloutLookupAction, PriceConfirmAction, PriceLookupAction, PriceQuoteAction and PriceRangeAction are the whole of its registered surface and every one is per-service or per-quote, so EdgeDeployAction:132 reads X163\\Models\\PriceBookItem directly and BoundaryStage reports the import. X-163 is another lane under ruling 5, so the catalog read is that lane to build. Deleting the read is not available: the OfferCatalog node it feeds is the asserted clause of G8-14, which is credited. This is the same absent seam already filed as capability X-176 at 2026-09-06T16:52:20, counted once and reported by two stages against two modules.",
    "at": "2026-09-09T18:01:40"
   },
@@ -2024,12 +2006,6 @@
    "stage": "boundary",
    "why": "X-121 exposes no create path for a Person: EntityWriteAction::handle takes string table, int id, int businessId, so it updates a row that already exists, and EntityReadAction reads by id and not by phone, so ChatCaptureAction:36 calls Person::updateOrCreate keyed on business_id and phone directly and BoundaryStage reports the import. X-121 is the spine and belongs to Track 1 under owner ruling 8, which already ruled this disposition for the same fact when pricebook recorded UNRESOLVED - X-121 exposes no create path and refused the raw insert. The missing dependency is a registered find-or-create-by-phone action on the spine. Twenty-four files across about fifteen modules in every lane import X121 Models directly, so the shape is repo-wide and advisory to Track 1; these two rows are this lane own two files.",
    "at": "2026-09-09T18:01:52"
-  },
-  {
-   "module": "X-157",
-   "stage": "boundary",
-   "why": "--reason EdgeDeployAction:115 lists appointments; X-108 exports no AppointmentListAction (needs one: appointments for a business, read-only)",
-   "at": "2026-09-13T08:24:12"
   }
  ],
  "decisions": [
@@ -2766,6 +2742,22 @@
   {
    "at": "2026-09-13T13:20:28",
    "note": "X-157 3 UNRESOLVED boundary records on X-157 - state.py resolve refused due to duplicates. AppointmentListAction arrived under owner grant 2026-09-13 (SITE-218); EdgeDeployAction lists through it"
+  }
+ ],
+ "resolved": [
+  {
+   "module": "X-157",
+   "stage": "boundary",
+   "was": "--reason EdgeDeployAction:115 lists appointments; X-108 exports no AppointmentListAction (needs one: appointments for a business, read-only)",
+   "why": "SITE-219: AppointmentListAction arrived under owner grant 2026-09-13 (SITE-218); EdgeDeployAction lists through it",
+   "at": "2026-09-13T16:46:51"
+  },
+  {
+   "module": "X-157",
+   "stage": "boundary",
+   "was": "X-108 exposes no read action returning a business upcoming booked appointments: AppointmentBookAction, AppointmentCancelAction, AvailabilityRequestAction and WaitlistJoinAction are the whole of its registered surface and AvailabilityRequest returns free slots, not booked rows, so EdgeDeployAction:115 reads X108\\Models\\Appointment directly and BoundaryStage reports the import. X-108 is another lane under ruling 5, so the read action is that lane to build. Deleting the read is not available: the Event node it feeds is the asserted clause of G8-15, which is credited. This is the same absent seam already filed as capability X-176 at 2026-09-06T16:31:06, counted once and reported by two stages against two modules.",
+   "why": "SITE-219: same seam as AppointmentListAction; superseded by SITE-218 grant",
+   "at": "2026-09-13T16:46:55"
   }
  ]
 }
