@@ -719,6 +719,31 @@ class X194Test extends TestCase
             ->assertSeeHtml('<h3 class="font-display text-lg font-semibold text-ink">We could not load your saved views.</h3>');
     }
 
+    public function test_saved_views_list_default_view_failure_button_label_is_not_try_again(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Default Button Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $view = $this->saveAction->save(
+            businessId: $biz->id,
+            viewName: 'Some Existing View',
+            viewType: 'table',
+            filterConfig: [],
+            columnsConfig: []
+        );
+
+        $this->mock(SetDefaultViewAction::class, function ($mock) {
+            $mock->shouldReceive('setDefault')->andThrow(new \Exception('Database update failed'));
+        });
+
+        $component = Livewire::test(SavedViewsList::class, ['businessId' => $biz->id])
+            ->call('load');
+
+        $component->call('makeDefault', $view->id)
+            ->assertDontSee('Try again')
+            ->assertSee('Dismiss');
+    }
+
     /**
      * [G4-20], [G8-10], [G9-11], [G9-23], [G9-26], [G9-35], [G9-37], [G13-17]
      *
