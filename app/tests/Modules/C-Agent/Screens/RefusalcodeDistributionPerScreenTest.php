@@ -35,16 +35,16 @@ class RefusalcodeDistributionPerScreenTest extends TestCase
 
         AgentRefusal::create([
             'business_id' => $biz->id,
-            'refusal_code' => 'R245',
+            'refusal_code' => 'UNDER_18',
             'reason' => 'Tenant requested something',
         ]);
 
         $this->get(route('c-agent.refusalcode-distribution-per'))
-            ->assertSee('R245')
+            ->assertSee('UNDER_18')
             ->assertSee('Tenant requested something');
 
         Livewire::test(RefusalcodeDistributionPer::class)
-            ->assertSee('R245')
+            ->assertSee('UNDER_18')
             ->assertSee('Tenant requested something');
     }
 }
