@@ -494,6 +494,7 @@ final class OwnerNav
             OwnerNavItem::make('Campaigns running now', 'x-186.live-run', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('People in your campaigns', 'x-186.audience-preview-count', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Your campaign sequences', 'x-186.sequence-builder', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Your prices', 'x-163.pricebook', OwnerNavItem::GROUP_MORE),
         ];
     }
 
