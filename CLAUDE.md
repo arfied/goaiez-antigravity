@@ -10974,6 +10974,43 @@ Watch for: <the trap that applies, by name>
     source), `read_escapes_its_guard`'s `.env` dependency, and the shared-markup absence above.
   - `85 31` vs `origin/main` `0817b7d6`, and the Doctor/harness/hooks/seals diff is empty, so no merge condition holds.
   - Board: proposals **14** · `app/app/Modules/` **0** · `CLOSED:` **8**. Re-run every grep; never inherit one.
+- ⚠️ **`NOTES : none` over an agy log whose first line is `root agent idle; waiting for N background task(s)` is false, and the
+  log is the only artifact that says so.** Wave 193's run log said *"waiting for the runner script to finish"* and then
+  *"entirely in the foreground"*. It cost nothing, because `gate-runs.tsv` rows `15161–15194` show five sequential runner
+  gates and nothing else. **`Read` the run log's first two lines before crediting a `NOTES : none`**; tick 361's runner form is
+  permitted, and saying so is still owed.
+- ⚠️ **An `ELSEWHERE`-style claim about a RENDERED page is reached only by the render.** A grep of the component's source files
+  cannot see a layout, a sibling component, or a value computed at render time. Wave 193's grep of three source files printed
+  empty output with no `| wc -l`, and the claim was proven instead by M3's own message: the value occurred once, inside the
+  assertion's `contains "…"`. **When a mutation removes a value from a render, `grep -c <value>` on its message IS the
+  page-wide check.**
+- ⭐ **Tick 361's two controls held on their first ask, and both are orderings made checkable as two adjacent values.**
+  - `GEN-AFTER`: the generator is stamped after the final gate log.
+  - `GATE-ROWS`: before and after counts of this checkout's gate rows, with the gate-log count beside them, the delta being
+    exactly 2 per gate.
+  - Wave 193: `1334 → 1344` over 5 logs, and generator `21:17:54` after gate `21:16:35`.
+- ✅ **Wave 193 is PASS-WITH-NOTES at `11a7fc77`, and its three mutations are SPENT; never re-brief them.**
+  - `w193-mut-1` (`retryLabel="Okay"`) proves `assertSee('Dismiss')`, with `assertions` flat on a two-assertion method.
+  - `w193-mut-2` (`content_length => null`) proves N176 clause 6, so **N176's six clauses are all proven**.
+  - `w193-mut-3` (the refusal code dropped from the `<li>`) proves the `UNDER_18` fixture reaches the page only through the
+    seeded row: `−3` on a four-assertion method.
+  - Suite on `11a7fc77`: `tests 2593 · passed 2584 · assertions 11314 · failed 7 · errors 2 · duration_ms 159630`, the standing
+    nine by identity. My plain gate (`.agents/supervisor/.t362-gate.log`) reads `gates green.`
+  - Recorded, not briefed: `SavedViewsList.php`'s new comment does not warn that restoring the sentence reinstates the repeated
+    heading.
+- **Backlog at tick 362 — EMPTY: HOLD.** RULED (`REVIEWS.md` tick 362).
+  - The board re-measured at **14** proposals, the same membership as tick 361, all shut. `app/app/Modules/` **0** · `CLOSED:`
+    **8**.
+  - Still recorded, not briefed, for the reasons tick 361 gave: `X194Test.php`'s `catch` message checks,
+    `read_escapes_its_guard`'s `.env` dependency, and the shared-markup absence.
+  - `85 34` vs `origin/main` `0817b7d6` after a fetch, and the Doctor/harness/hooks/seals diff is empty, so no merge condition
+    holds.
+  - **Each HOLD tick re-runs, and never inherits:**
+    - `git fetch --no-write-fetch-head origin`, then `git rev-list --left-right --count origin/main...HEAD` (above 100 behind,
+      the next wave is the merge, dispatched `--allow-merge`);
+    - `git diff --name-status HEAD origin/main -- app/app/Doctor app/tests/Journeys/JourneyHarness.php .claude/hooks`;
+    - `grep -n "^## " .agents/supervisor/OWNER.md | tail -3` against the last block's quotations (tick 355);
+    - the board grep.
 
 ## Style
 
