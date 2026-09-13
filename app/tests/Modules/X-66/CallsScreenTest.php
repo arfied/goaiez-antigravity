@@ -64,6 +64,27 @@ class CallsScreenTest extends TestCase
                 ->assertDontSee('Failed to load number')
                 ->assertSee('No calls yet');
 
+            // 5. Pool-number state: released assignment
+            $poolNumber2 = '+15559876599';
+            $pool2 = NumberPool::create([
+                'business_id' => $biz->id,
+                'phone_number' => $poolNumber2,
+                'area_code' => '555',
+                'carrier_name' => 'telnyx',
+                'status' => 'available',
+                'complaint_count' => 0,
+            ]);
+            $assignment2 = NumberAssignment::create([
+                'business_id' => $biz->id,
+                'phone_number_id' => $pool2->id,
+                'assigned_at' => now(),
+                'status' => 'released',
+            ]);
+
+            Livewire::test(Calls::class)
+                ->assertDontSee($poolNumber2)
+                ->assertSeeHtml('<span class="text-ink-3 italic">None</span>');
+
             // 2. Default - Two sessions
             $completedSession = CallSessionFactory::new()->create(['business_id' => $biz->id,
                 'from_phone' => '+11111111111',

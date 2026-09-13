@@ -27,7 +27,7 @@
             @else
                 <div wire:loading.remove class="space-y-6">
                     @foreach($invoices as $invoice)
-                        <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-[--radius-card] bg-card">
+                        <div class="overflow-hidden shadow ring-1 ring-rule rounded-[--radius-card] bg-card">
                             <div class="p-4 border-b border-rule">
                                 <h3 class="text-base font-medium text-ink">{{ $invoice->invoice_number }} <x-ui.status-pill state="ok" label="Paid" /></h3>
                                 <p class="mt-1 text-sm text-ink-2">Paid: {{ $invoice->paid_at->format('g:i A') }}</p>

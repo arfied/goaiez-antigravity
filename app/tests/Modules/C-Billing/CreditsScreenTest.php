@@ -81,7 +81,8 @@ class CreditsScreenTest extends TestCase
         Livewire::actingAs($owner)->test(Credits::class)
             ->assertOk()
             ->assertSee('49.0000') // credit balance
-            ->assertSeeInOrder(['Credit balance', '49.0000', 'Ledger'])
+            ->assertSeeInOrder(['Top-up ledger balance', '49.0000', 'Ledger'])
+            ->assertDontSee('Credit balance')
             ->assertDontSee('AI Credits')
             ->assertSee('1.0000')
             ->assertDontSee('-1.0000')
@@ -113,8 +114,11 @@ class CreditsScreenTest extends TestCase
         ]);
 
         Livewire::actingAs($owner)->test(Credits::class)
-            ->assertSee('Nothing in this checkout writes a usage meter')
-            ->assertDontSee('SMS Segments');
+            ->assertSee('Calls and messages are recorded elsewhere in this app, and this list does not read that record.')
+            ->assertSee('No usage on this list yet.')
+            ->assertDontSee('SMS Segments')
+            ->assertDontSee('writes a usage meter')
+            ->assertDontSee('No usage metered yet');
     }
 
     public function test_the_credits_ledger_empty_state_names_what_it_waits_on(): void
@@ -127,8 +131,9 @@ class CreditsScreenTest extends TestCase
 
         Livewire::actingAs($owner)->test(Credits::class)
             ->assertOk()
-            ->assertSee('Nothing in this checkout raises a debit or a grant, so usage charges and plan credits appear once they are built.')
-            ->assertDontSee('A grant, a top-up or a debit writes a line here');
+            ->assertSee('Usage charges and plan credits are recorded on a separate credit ledger elsewhere in this app, and this list does not read it.')
+            ->assertDontSee('A grant, a top-up or a debit writes a line here')
+            ->assertDontSee('raises a debit or a grant');
     }
 
     public function test_credits_topup_refuses_at_the_daily_ceiling(): void
@@ -148,6 +153,8 @@ class CreditsScreenTest extends TestCase
 
         $lw = Livewire::actingAs($owner)->test(Credits::class)
             ->call('topup')
+            ->assertSee('50.00 added to the top-up ledger. It is separate from the credit your plan includes and the credit you buy.')
+            ->assertDontSee('added to your balance')
             ->assertSee('Nothing was charged: this button grants credit');
 
         $entry = CreditLedgerEntry::where('business_id', $biz->id)

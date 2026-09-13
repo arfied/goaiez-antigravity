@@ -118,7 +118,6 @@
                                 </div>
                                 
                                 <button wire:click="confirmItem({{ $item->id }})" 
-                                        @if(isset($refusals[$item->id])) disabled @endif
                                         class="h-10 px-3 text-sm font-medium text-white bg-accent hover:bg-accent-hover rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Confirm</button>
                                 <button wire:click="deleteItem({{ $item->id }})" class="h-10 px-3 text-sm font-medium text-alert hover:bg-alert-bg rounded-md transition-colors">Delete</button>
                             </div>

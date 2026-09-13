@@ -6,7 +6,10 @@ namespace App\Modules\X194\Ui;
 
 use App\Modules\X194\Actions\SetDefaultViewAction;
 use App\Modules\X194\Actions\ViewListAction;
+use App\Modules\X194\Actions\ViewSaveAction;
+use App\Support\Tenancy;
 use Livewire\Attributes\Locked;
+use Livewire\Attributes\Validate;
 use Livewire\Component;
 
 class SavedViewsList extends Component
@@ -14,35 +17,65 @@ class SavedViewsList extends Component
     #[Locked]
     public int $businessId = 0;
 
+    #[Validate('required|string|max:255')]
+    public string $newViewName = '';
+
     public string $errorMessage = '';
 
-    public bool $ready = false;
+    public string $saveError = '';
 
-    public function load(): void
+    public string $defaultError = '';
+
+    public function mount(int $businessId = 0): void
     {
-        $this->ready = true;
+        $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
+    }
+
+    /**
+     * Called by standing tests. Removing it would cause them to throw.
+     */
+    public function load(): void {}
+
+    public function saveView(): void
+    {
+        $this->validate();
+        $this->saveError = '';
+
+        try {
+            app(ViewSaveAction::class)->save($this->businessId, $this->newViewName);
+            $this->newViewName = '';
+        } catch (\Exception $e) {
+            $this->saveError = 'We could not save your view.';
+        }
     }
 
     public function makeDefault(int $viewId): void
     {
+        $this->defaultError = '';
         try {
             app(SetDefaultViewAction::class)->setDefault($this->businessId, $viewId);
         } catch (\Exception $e) {
-            // Defence in depth: SetDefaultViewAction uses Builder::update() which does not throw in normal conditions, so no test reaches this block.
-            $this->errorMessage = 'We could not update your default view.';
+            $this->defaultError = 'We could not update your default view.';
         }
+    }
+
+    public function clearDefaultError(): void
+    {
+        $this->defaultError = '';
     }
 
     public function render()
     {
+        $this->errorMessage = '';
         try {
             $action = app(ViewListAction::class);
-            $views = ($this->businessId > 0 && $this->ready)
-                ? $action->listViews($this->businessId)
+            $views = ($this->businessId > 0)
+                ? $action->listViews($this->businessId)->collect()
                 : collect();
         } catch (\Exception $e) {
-            // Defence in depth: ViewListAction returns a LazyCollection so the query runs on blade iteration, escaping this try block; thus no test reaches it.
-            $this->errorMessage = 'We could not load your saved views.';
+            // A space string makes $errorMessage truthy for the blade condition without displaying extra text.
+
+            $this->errorMessage = ' ';
             $views = collect();
         }
 
