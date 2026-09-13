@@ -191,6 +191,7 @@ final class OwnerNav
             OwnerNavItem::make('Things your assistant could not do', 'x-124.assistantunsupported-log', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Action preview', 'x-124.preview-card', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Lead routing rules', 'x-10.routing-rules', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Unassigned leads', 'x-10.unassigned-count', OwnerNavItem::GROUP_MORE),
             // The plan, and the cancellation (2980–2999). Under More on the same
             // distinction as the three above: it is looked at when something
             // about the money changes, not every day.
