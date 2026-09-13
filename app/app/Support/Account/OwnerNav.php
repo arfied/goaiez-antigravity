@@ -492,6 +492,7 @@ final class OwnerNav
             // real query and renders it on every GET once mount() resolves the
             // tenant, so it owes a nav entry.
             OwnerNavItem::make('Campaigns running now', 'x-186.live-run', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('People in your campaigns', 'x-186.audience-preview-count', OwnerNavItem::GROUP_MORE),
         ];
     }
 
