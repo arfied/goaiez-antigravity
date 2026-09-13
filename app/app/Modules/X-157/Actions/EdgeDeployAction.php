@@ -13,7 +13,7 @@ use App\Modules\X157\Events\DeployCompleted;
 use App\Modules\X157\Events\DeployRolledBack;
 use App\Modules\X157\Models\Deployment;
 use App\Modules\X157\Models\EdgeZone;
-use App\Modules\X163\Models\PriceBookItem;
+use App\Modules\X163\Actions\QuotablePriceAction;
 use App\Modules\X176\Actions\InternalLinkRenderAction;
 use App\Modules\X176\Actions\LlmsTxtRenderAction;
 use App\Modules\X176\Actions\SchemaRenderAction;
@@ -129,19 +129,17 @@ final class EdgeDeployAction
             }
 
             $productOffers = [];
-            $priceBookItems = PriceBookItem::where('business_id', $businessId)
-                ->where('is_confirmed', true)
-                ->where('is_sample', false)
-                ->orderBy('id', 'asc')
-                ->limit(20)
-                ->get();
+            $priceBookItems = app(QuotablePriceAction::class)->options($businessId);
+            // The old code did ->limit(20), so we do array_slice
+            usort($priceBookItems, fn ($a, $b) => $a['id'] <=> $b['id']);
+            $priceBookItems = array_slice($priceBookItems, 0, 20);
             foreach ($priceBookItems as $item) {
-                if (trim((string) $item->service_name) === '') {
+                if (trim((string) $item['service_name']) === '') {
                     continue;
                 }
                 $productOffers[] = [
-                    'name' => $item->service_name,
-                    'price' => $item->price_cents / 100,
+                    'name' => $item['service_name'],
+                    'price' => $item['price_cents'] / 100,
                 ];
             }
 
