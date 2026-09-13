@@ -1,9 +1,8 @@
 <div>
-    <x-surface.sample-state module="services with prices" screen="pricebook" />
     <livewire:x-124.chat-dock-every />
     
     <div class="max-w-4xl mx-auto px-4 py-8" wire:loading.class="opacity-50">
-        <h1 class="text-2xl font-semibold text-ink mb-6">Pricebook</h1>
+        <h2 class="text-2xl font-semibold text-ink mb-6">Pricebook</h2>
 
         @if(session()->has('error'))
             <x-ui.error-panel class="mb-8">

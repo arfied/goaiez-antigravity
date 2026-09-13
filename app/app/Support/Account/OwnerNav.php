@@ -451,6 +451,7 @@ final class OwnerNav
             // real query and renders it on every GET once mount() resolves the
             // tenant, so it owes a nav entry.
             OwnerNavItem::make('Automations that ran', 'x-125.runs', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Your prices', 'x-163.pricebook', OwnerNavItem::GROUP_MORE),
         ];
     }
 
