@@ -3308,6 +3308,15 @@ ledger refresh wave is needed.
 and §3 is unchanged at `0·39·85·0·16·204·128·3`. The lane is 199 ahead / 0 behind at `02a9fd2a`.
 - Tick 409's notes (`02a9fd2a`) were certified by `.gateT410.txt` and pushed `743ce222..02a9fd2a`.
 
+⌛ **Tick 411 — HOLD.** `main` moved `51902cc4` → `1e5661af`: +7 first-parent / +43 ancestor. The range is
+five lane merges (money invoice; sixty X-194 ×3 plus supervisor), one `Merge 7368b134` (X-194 tests), and
+the `docs(vendors)` Zernio export. That is 1388 files, 1380 of them under `docs/vendors/zernio/`, with 8
+`app/` files (X-194, X-199) and no checker, hook, seal, per-track or `bin/` byte.
+- All three drift conditions are FALSE: 7 / 43 behind, and the checker diff is empty.
+- §3 is unchanged at `0·39·85·0·16·204·128·3`. The lane is 200 ahead / 7 behind first-parent (200 / 43
+  ancestor) at `0eb27333`. The merge base `51902cc4` is main's own commit.
+- Tick 410's notes (`0eb27333`) were certified by `.gateT411b.txt` and pushed `02a9fd2a..0eb27333`.
+
 ⌛ **S-202 as dispatched (history): §3 ledger refresh, dispatched at tick 394 as STAGES-240, merge gate CLOSED.** §3 still
 reads `boundary 41` against §5's 39. This is S-200's shape. The JOURNAL `^- .+ stage ` rows start at 96.
 - ⚠️ **Brief lesson:** `--full-doctor` §5 truncates its row dump and prints no `schema` rows. Ask for
