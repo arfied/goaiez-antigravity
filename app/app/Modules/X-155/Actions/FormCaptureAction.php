@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X155\Actions;
 
-use App\Modules\X121\Models\Person;
+use App\Modules\X121\Actions\PersonUpsertAction;
 use App\Modules\X155\Events\FormCaptured;
 use App\Modules\X155\Models\FormDefinition;
 use App\Modules\X155\Models\FormSubmission;
@@ -50,24 +50,21 @@ final class FormCaptureAction
                 $form = FormDefinition::where('business_id', $businessId)->findOrFail($formDefinitionId);
 
                 $spamPhone = $this->given($payload['phone'] ?? null);
-                $person = $spamPhone === null
-                    ? new Person(['business_id' => $businessId])
-                    : Person::firstOrNew(['business_id' => $businessId, 'phone' => $spamPhone]);
-                // A submission judged spam never rewrites a contact the business already has (R245, 2026-09-05).
-                if (! $person->exists) {
-                    $person->fill([
-                        'first_name' => $this->given($payload['first_name'] ?? null)
-                            ?? $this->given($payload['name'] ?? null)
-                            ?? 'Visitor',
+
+                $upsert = app(PersonUpsertAction::class)->upsertByPhone(
+                    $businessId,
+                    $spamPhone,
+                    [
+                        'first_name' => $this->given($payload['first_name'] ?? null) ?? $this->given($payload['name'] ?? null),
                         'email' => $this->given($payload['email'] ?? null),
-                    ]);
-                    $person->save();
-                }
+                    ],
+                    true
+                );
 
                 $submission = FormSubmission::create([
                     'business_id' => $businessId,
                     'form_definition_id' => $form->id,
-                    'person_id' => $person->id,
+                    'person_id' => $upsert['id'],
                     'payload' => $payload,
                     'ip_address' => $ipAddress,
                     'user_timezone' => $userTimezone,
@@ -79,7 +76,7 @@ final class FormCaptureAction
                     'status' => 'rejected',
                     'reason' => $validation['reason'],
                     'submission_id' => $submission->id,
-                    'person_id' => $person->id,
+                    'person_id' => $upsert['id'],
                 ];
             });
         }
@@ -90,26 +87,21 @@ final class FormCaptureAction
             // Direct entity writing (G2-20, G13-35): forms write straight to Person entity, no intermediate buffer
             $phone = $this->given($payload['phone'] ?? null);
 
-            // A submission that carries no phone gets its own contact, never a shared one (R245, 2026-09-05).
-            $person = $phone === null
-                ? new Person(['business_id' => $businessId])
-                : Person::firstOrNew(['business_id' => $businessId, 'phone' => $phone]);
-            // Only write the fields the payload actually carried (R245, 2026-09-05).
-            $person->fill(array_filter([
-                'first_name' => $this->given($payload['first_name'] ?? ($payload['name'] ?? null)),
-                'email' => $this->given($payload['email'] ?? null),
-            ], fn ($v) => $v !== null));
-
-            if (! $person->exists) {
-                $person->first_name ??= 'Visitor';
-            }
-            $person->save();
+            $upsert = app(PersonUpsertAction::class)->upsertByPhone(
+                $businessId,
+                $phone,
+                [
+                    'first_name' => $this->given($payload['first_name'] ?? ($payload['name'] ?? null)),
+                    'email' => $this->given($payload['email'] ?? null),
+                ],
+                false
+            );
 
             // Every submission row references a Person id (TEST ANCHOR)
             $submission = FormSubmission::create([
                 'business_id' => $businessId,
                 'form_definition_id' => $form->id,
-                'person_id' => $person->id,
+                'person_id' => $upsert['id'],
                 'payload' => $payload,
                 'ip_address' => $ipAddress,
                 'user_timezone' => $userTimezone,
@@ -120,13 +112,13 @@ final class FormCaptureAction
                 businessId: $businessId,
                 submissionId: $submission->id,
                 formDefinitionId: $form->id,
-                personId: $person->id
+                personId: $upsert['id']
             ));
 
             return [
                 'status' => 'captured',
                 'submission_id' => $submission->id,
-                'person_id' => $person->id,
+                'person_id' => $upsert['id'],
             ];
         });
     }

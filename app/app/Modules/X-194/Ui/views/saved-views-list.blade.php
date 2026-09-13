@@ -11,6 +11,13 @@
                 </x-ui.error-panel>
             </div>
         @endif
+        @if ($defaultError)
+            <div class="mb-4">
+                <x-ui.error-panel heading="We could not update your default view." retry="clearDefaultError" retryLabel="Dismiss">
+                    {{ $defaultError }}
+                </x-ui.error-panel>
+            </div>
+        @endif
         <div class="mb-6">
             <form wire:submit="saveView">
                 <input type="text" wire:model="newViewName" placeholder="New view name">

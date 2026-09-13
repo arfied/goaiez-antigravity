@@ -1,9 +1,8 @@
 <div>
-    <x-surface.sample-state module="services with prices" screen="pricebook" />
     <livewire:x-124.chat-dock-every />
     
     <div class="max-w-4xl mx-auto px-4 py-8" wire:loading.class="opacity-50">
-        <h1 class="text-2xl font-semibold text-ink mb-6">Pricebook</h1>
+        <h2 class="text-2xl font-semibold text-ink mb-6">Pricebook</h2>
 
         @if(session()->has('error'))
             <x-ui.error-panel class="mb-8">
@@ -38,7 +37,7 @@
                 <h2 class="text-lg font-medium text-ink mb-4">Try a question</h2>
                 <div class="flex gap-2 mb-4">
                     <input type="text" wire:model="testQuery" class="flex-1 h-10 px-3 py-2 bg-paper border border-rule rounded-md focus:outline-none focus:ring-2 focus:ring-accent" placeholder="e.g. Leak Repair">
-                    <button wire:click="runTestQuote" class="h-10 px-4 text-sm font-medium text-white bg-accent hover:bg-accent-hover rounded-md transition-colors">Ask</button>
+                    <button wire:click="runTestQuote" class="h-10 px-4 text-sm font-medium text-paper bg-accent hover:bg-accent-hover rounded-md transition-colors">Ask</button>
                 </div>
                 @if($testQuoteResult)
                     <div class="p-3 bg-surface rounded border border-rule text-sm text-ink">
@@ -72,7 +71,7 @@
                         <input type="number" step="0.01" wire:model="newTaxRatePct" class="w-full h-10 px-3 py-2 bg-paper border border-rule rounded-md focus:outline-none focus:ring-2 focus:ring-accent" placeholder="0.00">
                     </div>
                     <div>
-                        <button wire:click="addItem" class="w-full h-10 text-sm font-medium text-white bg-ink hover:bg-ink-2 rounded-md transition-colors">Add</button>
+                        <button wire:click="addItem" class="w-full h-10 text-sm font-medium text-paper bg-ink hover:bg-ink-2 rounded-md transition-colors">Add</button>
                     </div>
                 </div>
             </div>
@@ -118,7 +117,7 @@
                                 </div>
                                 
                                 <button wire:click="confirmItem({{ $item->id }})" 
-                                        class="h-10 px-3 text-sm font-medium text-white bg-accent hover:bg-accent-hover rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Confirm</button>
+                                        class="h-10 px-3 text-sm font-medium text-paper bg-accent hover:bg-accent-hover rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Confirm</button>
                                 <button wire:click="deleteItem({{ $item->id }})" class="h-10 px-3 text-sm font-medium text-alert hover:bg-alert-bg rounded-md transition-colors">Delete</button>
                             </div>
                         </div>
