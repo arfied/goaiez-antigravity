@@ -1,7 +1,6 @@
 <div>
     @if ($errorMessage)
         <x-ui.error-panel heading="We could not load your saved views.">
-            {{ $errorMessage }}
         </x-ui.error-panel>
     @else
         @if ($saveError)

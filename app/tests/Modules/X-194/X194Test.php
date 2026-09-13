@@ -683,6 +683,42 @@ class X194Test extends TestCase
             ->assertDontSee('We could not load your saved views.');
     }
 
+    public function test_saved_views_list_load_panel_body_does_not_repeat_heading(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Test Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->mock(ViewListAction::class, function ($mock) {
+            $mock->shouldReceive('listViews')->andReturn(new LazyCollection(function () {
+                yield from [];
+                throw new \Exception('Database failure during iteration');
+            }));
+        });
+
+        $component = Livewire::test(SavedViewsList::class, ['businessId' => $biz->id]);
+
+        $component->call('load')
+            ->assertDontSeeHtml('<p class="text-base leading-relaxed text-ink-2">We could not load your saved views.</p>');
+    }
+
+    public function test_saved_views_list_load_panel_has_correct_heading(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Test Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->mock(ViewListAction::class, function ($mock) {
+            $mock->shouldReceive('listViews')->andReturn(new LazyCollection(function () {
+                yield from [];
+                throw new \Exception('Database failure during iteration');
+            }));
+        });
+
+        $component = Livewire::test(SavedViewsList::class, ['businessId' => $biz->id]);
+
+        $component->call('load')
+            ->assertSeeHtml('<h3 class="font-display text-lg font-semibold text-ink">We could not load your saved views.</h3>');
+    }
+
     /**
      * [G4-20], [G8-10], [G9-11], [G9-23], [G9-26], [G9-35], [G9-37], [G13-17]
      *
