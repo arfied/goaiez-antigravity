@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-13T12:26:43",
+ "updated": "2026-09-13T14:40:38",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1484,6 +1484,12 @@
    "module": "X-163",
    "chose": "PB-181: the confirmation screen renders in the owner shell; banner gone; nav entry Prices to confirm; proven by real GET on a real row (Track 1 ruling on action n)",
    "at": "2026-09-13T12:26:43",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-163",
+   "chose": "PB-182: daily-pricing-digest is an owner screen; layout, pins, and screen test applied",
+   "at": "2026-09-13T14:40:38",
    "ruling": "R245"
   }
  ],

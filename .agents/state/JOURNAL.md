@@ -788,3 +788,4 @@
 - `2026-09-12T17:21:49` UNRESOLVED route X-172 - x-172.customerfacing-portal/{token} is generated behind web, auth, tenant.role (X-172/routes.generated.php:8), so a customer holding a portal token and no account cannot open the portal, and no production path issues a portal link; waiting on Track 1 surfaces:generate to mount a token-credentialed customer route (TRACK 1 ACTION o)
 - `2026-09-13T08:13:11` (R245) X-163 — PB-179: the pricebook screen renders in the owner shell; banner gone; nav entry Your prices; proven by real GET on a real row (Track 1 ruling on action n, 2026-09-13)
 - `2026-09-13T12:26:43` (R245) X-163 — PB-181: the confirmation screen renders in the owner shell; banner gone; nav entry Prices to confirm; proven by real GET on a real row (Track 1 ruling on action n)
+- `2026-09-13T14:40:38` (R245) X-163 — PB-182: daily-pricing-digest is an owner screen; layout, pins, and screen test applied
