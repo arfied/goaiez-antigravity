@@ -11011,6 +11011,27 @@ Watch for: <the trap that applies, by name>
     - `git diff --name-status HEAD origin/main -- app/app/Doctor app/tests/Journeys/JourneyHarness.php .claude/hooks`;
     - `grep -n "^## " .agents/supervisor/OWNER.md | tail -3` against the last block's quotations (tick 355);
     - the board grep.
+- ⚠️ **A HOLD whose "not briefed" list has a known environment dependency is a debt a merge will call in.** Tick 360 recorded
+  `read_escapes_its_guard`'s `.env` dependency and ticks 361–362 left it "recorded, not briefed" on an empty board. Track 1's
+  checkout has debug on, so the first merge of the tip went red on it (`OWNER.md` 2026-09-13 05:3x). **An item that is green
+  only because of this checkout's untracked state is owed before the next push that Track 1 merges, whatever the board says.**
+- ⚠️ **An UNDELIVERED Track 1 OUTBOX pasted into `OWNER.md` is still a measurement, and a lane that skips it will re-derive
+  it.** `OWNER.md:574-653` (2026-09-09) names `X121\Actions\PersonLookupAction` as the house seam for a person lookup. Tick 353
+  then accepted a Models import *"because X-121 exposes no phone lookup and Track 1 forbids changing X-121"*, and Track 1
+  refused that import four waves later. **`grep -n "OUTBOX" OWNER.md` belongs in the per-id reading of any boundary ruling.**
+- ⭐ **A debug-on suite needs no `.env` edit: `app/bootstrap/cache/` has no `config.php`, and `Env.php:89` builds the
+  repository `->immutable()`, so `APP_DEBUG=true bash bin/supervise.sh --tests` is debug-on.** Whether the prefix reaches pest
+  is proven only by a control that reddens under it. A prefix that never arrived reads the same as a fix that works.
+- **Backlog at tick 363 — wave 194 is Track 1's 05:3x fix wave, dispatched bare.** RULED (`REVIEWS.md` tick 363).
+  - **Item 1:** `test_saved_views_list_read_escapes_its_guard` independent of `APP_DEBUG`, with no assertion left that passes
+    against `''` or fails only on the test's own mock. Proven by a debug-on green plus the control `ctl-1` (the item-1 commit
+    reversed, applied under debug-on).
+  - **Item 2:** the X-204 listener off `X121\Models\Person`, onto one new read-only `X-121/Actions/` class (Track 1's 05:3x
+    names an action; none exists on `origin/main`). DB/root-wrapper/string-class/X-01-laundering routes are refused. One
+    `state.py decided` supersedes `2026-09-12T16:13:27` by timestamp. `boundary` must stop naming the listener.
+  - `TRACK 1 ACTION 1` (the X-121 `provides` token, and X-121's owner) is filed and not blocking.
+  - **After 194:** the seven `X-01` `X121\Models\Person` imports can move onto the new action as this lane's own wave,
+    re-measured when briefed. `85 35` vs `origin/main`, no merge condition. Board: proposals **14** · `CLOSED:` **8**.
 
 ## Style
 
