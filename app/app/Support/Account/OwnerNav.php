@@ -424,6 +424,7 @@ final class OwnerNav
             // real query and renders it on every GET once mount() resolves the
             // tenant, so it owes a nav entry.
             OwnerNavItem::make('Message sequences you run', 'x-185.digest-line', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Content packs', 'x-185.experiment-board', OwnerNavItem::GROUP_MORE),
 
             // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
             // Architecture/OwnerNavTest fails the build on an owner screen with
