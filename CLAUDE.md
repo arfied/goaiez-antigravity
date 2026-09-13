@@ -10922,6 +10922,58 @@ Watch for: <the trap that applies, by name>
   - Still folded: the `'R245'` fixture, N176 clause 6, the `catch` check, and the `.env` dependency.
   - `85 27` vs `origin/main`, and the Doctor/harness/hooks/seals diff is empty, so no merge condition holds.
   - Board: proposals **14** · `app/app/Modules/` **0** · `CLOSED:` **8**. Re-run every grep; never inherit one.
+- ⚠️⚠️ **A report generator stamped BEFORE the runner it reports on has written every prose field as a prediction, and the
+  tell is two mtimes.** Wave 190f's `scratch/w190f-generator.sh` is `20:27:01`; its runner's green gate started `20:29:46`,
+  and the runner called the generator at the end.
+  - So `STATUS`, `DESIGN`, `COVERAGE`, `NOT RUN : none` and both numbered answers were typed before a single measured field
+    existed. Answer 2 says so in its tense: *"will show +3 passed methods"*.
+  - Most came true. `NOT RUN : none` did not: an assertion with no executing mutation and two crossed hard limits.
+  - *"Re-read every measured field before typing prose"* cannot be obeyed by a script written first. **Brief the generator
+    as written after the runner exits, with a `GEN-AFTER` field that stats the final gate log and the generator together.**
+- ⚠️⚠️ **Gates a coder starts by hand before its runner appear only in `/home/goaiez/tmp/gate-runs.tsv`, and a `REFUSED`
+  field that greps the wave's gate logs cannot see them.** Wave 190f's rows `15101-15120` hold three:
+  - one `--tests` started 36 s before the wave's last item commit, with the patches made inside its pest window;
+  - one refused by §7's clash guard (8 s, no `pest` row);
+  - one more `--tests`, unreported.
+  - Its `NOTES` said *"without overlapping"*. The runner re-ran every capture, so nothing rested on them (tick 283).
+  - ⭐ **The mechanical check is a row count:** `grep -cP '\tgrs-antig-sixty\tgate$'` on that file before item 0 and at report
+    time. The delta is two rows per gate (start and end), and must equal twice the number of gate logs the wave kept.
+- ⛔ **RULED at tick 361: the platform backgrounds long coder commands, so *"never background a command"* is unsatisfiable,
+  and a single sequential runner script is the permitted form.** Waves 190e, 190f and 191b all opened `root agent idle;
+  waiting for N background task(s)`. The runner is the only thing that runs a gate, and while it runs the coder edits,
+  commits and patches nothing.
+- ⚠️ **A value that reads like a typo and is load-bearing must say so in its file.** `SavedViewsList.php:76` is now
+  `$this->errorMessage = ' ';`: a single space that keeps `@if ($errorMessage)` true while Blade trims the body to an empty
+  `<p>`. The obvious "fix" (the sentence back) reinstates the defect wave 190f removed. Wave 193 item 1b owes the comment.
+- ⚠️ **`assertDontSeeHtml` of exact markup another component owns goes silently vacuous when that component's markup
+  changes.** `…_load_panel_body_does_not_repeat_heading` asserts the absence of `error-panel.blade.php`'s own
+  `<p class="text-base leading-relaxed text-ink-2">…</p>`. A class change makes it unmatchable forever. The positive
+  `assertSeeHtml` beside it goes red on the same change, so only the absence is silent. Recorded, not briefed.
+- ✅ **Wave 190f's three mutations are SPENT; never re-brief them.**
+  - `w190f-mut-1`: `' '` back to the sentence reddens the body test.
+  - `w190f-mut-2` is `w192c-mut-1.patch` (the heading), reused. It now reddens three tests, where it survived suite-wide on
+    the duplicated tree. **Tick 357's "the load panel's heading is asserted by nothing" is discharged.**
+  - `w190f-mut-3`: `retryLabel="Dismiss"` removed reddens A1 `assertDontSee('Try again')` only. **A2 `assertSee('Dismiss')` is
+    unproven.**
+- **Suite at tick 361 on `b10a69e4`:** `tests 2593 · passed 2584 · assertions 11314 · failed 7 · errors 2 ·
+  duration_ms 158512`, from the wave's green gate. The standing nine hold by identity. My plain gate
+  (`.agents/supervisor/.t361-gate.log`) reads `gates green.`
+- **Backlog at tick 361 — wave 193 is the folded proof debt, dispatched; after it the lane HOLDs.** RULED (`REVIEWS.md` tick
+  361, PASS-WITH-NOTES; `b10a69e4` pushed).
+  - Board re-measured: no in-lane row opens (`CMailTest:516` scoring model; `CAgentTest:182` X-66 turn event plus Track 1;
+    `:274` content; the two X-188 rows need a cancellation trigger; `X66Test:97` Track 1's; `X194Test:32` X-121's; the X-102
+    rows site's).
+  - Tick 360's *"still folded, not briefed"* re-derived: on an empty board no wave opens those files, so folding is abandoning.
+  - **Item 1 (X-194):** a mutation proving `assertSee('Dismiss')`, and one comment on `SavedViewsList.php:76` with no
+    executable change.
+  - **Item 2 (N176 clause 6):** a mutation touching only `InfobipVoiceController.php`'s `content_length` entry. Commit-free.
+  - **Item 3 (C-Agent):** `RefusalcodeDistributionPerScreenTest.php:38,43,47`'s `'R245'` to one value in
+    `AgentRefusal::VALID_REFUSAL_CODES`, the three literals only, plus a mutation showing that value reaches the page only
+    through the seeded row.
+  - Still recorded, not briefed: `X194Test.php:282,310,337`'s `catch` message checks (owed to whoever builds X-121's job
+    source), `read_escapes_its_guard`'s `.env` dependency, and the shared-markup absence above.
+  - `85 31` vs `origin/main` `0817b7d6`, and the Doctor/harness/hooks/seals diff is empty, so no merge condition holds.
+  - Board: proposals **14** · `app/app/Modules/` **0** · `CLOSED:` **8**. Re-run every grep; never inherit one.
 
 ## Style
 
