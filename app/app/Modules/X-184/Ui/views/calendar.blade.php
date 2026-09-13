@@ -1,6 +1,10 @@
 <div>
-    <x-surface.sample-state module="the content calendar: a whole plan proposed from their industry and their transcripts" screen="calendar" />
     <div class="calendar-view p-4">
-        <h3 class="text-lg font-bold">Multi-Channel Scheduled Calendar</h3>
+        <h2>Content calendar</h2>
+        @forelse($items as $item)
+            <div>{{ $item->scheduled_date->format('D j M') }} - {{ $item->channel }} - {{ $item->topic_theme }} - {{ $item->is_scheduled ? 'scheduled' : 'proposed' }}</div>
+        @empty
+            <p>No content is planned yet</p>
+        @endforelse
     </div>
 </div>
