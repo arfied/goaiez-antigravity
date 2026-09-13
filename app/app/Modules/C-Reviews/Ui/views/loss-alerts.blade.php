@@ -48,7 +48,22 @@
                                     <x-ui.button wire:click="startResolve({{ $alert->id }})" size="default" variant="primary">Resolve and Alert</x-ui.button>
                                 @endif
                             @else
-                                <x-ui.button wire:click="alertTeam({{ $alert->id }})" size="default" variant="primary">Alert Team</x-ui.button>
+                                @if($preparingReviewId === $alert->id)
+                                    <div class="flex flex-col space-y-2">
+                                        <input type="text" wire:model="prepareTosGround" class="border p-1 text-sm rounded" placeholder="ToS Ground...">
+                                        <input type="text" wire:model="prepareGoogleId" class="border p-1 text-sm rounded" placeholder="Google Review ID...">
+                                        <textarea wire:model="prepareBody" class="border p-1 text-sm rounded" placeholder="Explanation..."></textarea>
+                                        <div class="flex space-x-2">
+                                            <x-ui.button wire:click="prepareRemoval({{ $alert->id }}, $wire.prepareTosGround, $wire.prepareBody, $wire.prepareGoogleId)" size="default" variant="primary">Submit Request</x-ui.button>
+                                            <x-ui.button wire:click="cancelPrepare" size="default" variant="quiet">Cancel</x-ui.button>
+                                        </div>
+                                    </div>
+                                @else
+                                    <div class="flex flex-col space-y-2">
+                                        <x-ui.button wire:click="alertTeam({{ $alert->id }})" size="default" variant="primary">Alert Team</x-ui.button>
+                                        <x-ui.button wire:click="startPrepare({{ $alert->id }})" size="default" variant="secondary">Prepare Removal</x-ui.button>
+                                    </div>
+                                @endif
                             @endif
                         </div>
                     </div>
@@ -56,6 +71,28 @@
             </div>
         @endif
         
+        @if(isset($removalRequests) && $removalRequests->isNotEmpty())
+            <div class="mt-8">
+                <h4 class="text-lg font-bold mb-4">Google Review Removal Requests</h4>
+                <div class="space-y-4">
+                    @foreach($removalRequests as $req)
+                        <div class="border rounded p-4 flex flex-col md:flex-row justify-between items-start md:items-center">
+                            <div>
+                                <div class="font-bold">Removal for Review #{{ $req->review_request_id }}</div>
+                                <div class="text-sm text-gray-700">ToS Ground: {{ $req->tos_ground }}</div>
+                                <div class="text-sm text-gray-500">Status: {{ $req->status }}</div>
+                            </div>
+                            <div class="mt-4 md:mt-0 flex space-x-2">
+                                @if($req->status === 'prepared')
+                                    <x-ui.button wire:click="confirmRemoval({{ $req->id }})" size="default" variant="primary">Confirm Removal</x-ui.button>
+                                @endif
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endif
+
         <div class="mt-8">
             <slot name="assistant"></slot>
         </div>

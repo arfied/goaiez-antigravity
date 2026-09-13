@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\Modules\X186\Ui;
 
-use App\Modules\X121\Models\Person;
+use App\Modules\X121\Actions\EntityReadAction;
 use App\Modules\X186\Actions\SequenceStopAction;
 use App\Modules\X186\Models\CampaignRun;
+use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Campaigns stopped or paused'])]
 class StopLog extends Component
 {
     #[Locked]
@@ -17,11 +20,14 @@ class StopLog extends Component
 
     public bool $failed = false;
 
-    public bool $isSample = false;
-
     public ?int $lastStoppedCount = null;
 
     public ?int $lastStoppedPersonId = null;
+
+    public function mount(int $businessId = 0)
+    {
+        $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
+    }
 
     public function stopRemaining(int $personId, SequenceStopAction $action): void
     {
@@ -48,8 +54,13 @@ class StopLog extends Component
             ->orderByDesc('updated_at')
             ->get();
 
-        $personIds = $runs->pluck('person_id')->unique()->values()->toArray();
-        $people = Person::whereIn('id', $personIds)->get()->keyBy('id');
+        $people = collect();
+        foreach ($runs->pluck('person_id')->unique() as $personId) {
+            $row = app(EntityReadAction::class)->handle('people', (int) $personId, $this->businessId);
+            if ($row !== null) {
+                $people->put((int) $personId, $row);
+            }
+        }
 
         return view('x-186::stop-log', [
             'runs' => $runs,

@@ -18,8 +18,8 @@
                 <div class="flex flex-col gap-4 p-4 border border-rule rounded-[--radius-panel] bg-card">
                     <div class="flex items-start justify-between">
                         <div>
-                            <h2 class="text-xl font-bold text-ink">{{ $person->first_name }} {{ $person->last_name }}</h2>
-                            <p class="text-ink-2">{{ $person->email }} @if($person->email && $person->phone) · @endif {{ $person->phone }}</p>
+                            <h2 class="text-xl font-bold text-ink">{{ $person['first_name'] }} {{ $person['last_name'] }}</h2>
+                            <p class="text-ink-2">{{ $person['email'] }} @if($person['email'] && $person['phone']) · @endif {{ $person['phone'] }}</p>
                         </div>
                         
                         <div class="flex flex-col items-end gap-2">

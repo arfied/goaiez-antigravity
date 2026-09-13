@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Modules\X199\Console;
 
 use App\Models\User;
-use App\Modules\X121\Models\Person;
-use App\Modules\X198\Models\Payment;
+use App\Modules\X121\Actions\PersonLookupAction;
+use App\Modules\X198\Actions\PaymentReadAction;
 use App\Modules\X199\Domain\InvoiceEngine;
 use App\Services\TenantProvisioner;
 use App\Support\Tenancy;
@@ -63,8 +63,7 @@ final class EvidenceInvoiceCommand extends Command
 
         Tenancy::set($businessId);
 
-        $person = Person::create([
-            'business_id' => $businessId,
+        $personId = app(PersonLookupAction::class)->create($businessId, [
             'first_name' => 'Invoice',
             'last_name' => 'Customer',
             'phone' => '+15555555555',
@@ -73,7 +72,7 @@ final class EvidenceInvoiceCommand extends Command
         $lines = [
             ['description' => 'Test Line', 'quantity' => 1, 'unit_price_cents' => 12500],
         ];
-        $invoiceRes = $invoiceEngine->issueInvoice($businessId, $person->id, $lines);
+        $invoiceRes = $invoiceEngine->issueInvoice($businessId, $personId, $lines);
         $invoice = $invoiceRes['invoice'];
 
         if (preg_match('/^INV-[0-9]{6}$/', (string) $invoice->invoice_number) !== 1) {
@@ -108,7 +107,7 @@ final class EvidenceInvoiceCommand extends Command
 
         $data = [
             'business_id' => $businessId,
-            'payments_written' => Payment::where('business_id', $businessId)->count(),
+            'payments_written' => app(PaymentReadAction::class)->countForBusiness($businessId),
             'invoice_number' => $invoice->invoice_number,
             'invoice_status' => $invoice->status,
             'paid_at' => $invoice->paid_at,

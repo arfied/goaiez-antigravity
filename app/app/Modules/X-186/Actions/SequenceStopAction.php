@@ -21,10 +21,14 @@ final class SequenceStopAction
             ->where('is_active', true)
             ->get();
 
+        $stoppedReason = $replyChannel === 'manual'
+            ? 'You stopped this by hand'
+            : "Stopped by inbound customer reply on channel: {$replyChannel}";
+
         foreach ($activeRuns as $run) {
             $run->update([
                 'is_active' => false,
-                'stopped_reason' => "Stopped by inbound customer reply on channel: {$replyChannel}",
+                'stopped_reason' => $stoppedReason,
             ]);
 
             Event::dispatch(new CampaignReplied($businessId, $run->campaign_id, $personId, $replyChannel));

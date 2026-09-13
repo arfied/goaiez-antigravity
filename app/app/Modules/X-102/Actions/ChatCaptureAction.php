@@ -8,7 +8,7 @@ use App\Modules\X102\Events\ChatLeadCaptured;
 use App\Modules\X102\Models\ChatLead;
 use App\Modules\X102\Models\ChatSession;
 use App\Modules\X102\Models\ChatTurn;
-use App\Modules\X121\Models\Person;
+use App\Modules\X121\Actions\PersonUpsertAction;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 
@@ -53,18 +53,19 @@ final class ChatCaptureAction
             // A detail that is blank or whitespace was not given (R245, 2026-09-05).
             $contactEmail = is_string($email) && trim($email) === '' ? null : $email;
 
-            $person = Person::updateOrCreate(
-                ['business_id' => $businessId, 'phone' => $phone],
-                array_filter([
+            $upsert = app(PersonUpsertAction::class)->upsertByPhone(
+                $businessId,
+                $phone,
+                [
                     'first_name' => $name,
                     'email' => $contactEmail,
-                ], fn ($v) => $v !== null)
+                ]
             );
 
             $lead = ChatLead::create([
                 'business_id' => $businessId,
                 'chat_session_id' => $session->id,
-                'person_id' => $person->id,
+                'person_id' => $upsert['id'],
                 'name' => $name,
                 'phone' => $phone,
                 'email' => $email,
@@ -79,7 +80,7 @@ final class ChatCaptureAction
             Event::dispatch(new ChatLeadCaptured(
                 businessId: $businessId,
                 leadId: $lead->id,
-                personId: $person->id,
+                personId: $upsert['id'],
                 name: $name,
                 phone: $phone,
                 message: $message

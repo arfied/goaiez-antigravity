@@ -41,6 +41,8 @@ final class BillingLedgerEngine
                 'balance_after_hundredths_cents' => $newBalance,
                 'reference_id' => $referenceId,
                 'description' => $description,
+                // App clock, not the column default: Mrr and RevenueRecovery filter this column against now().
+                'created_at' => now(),
             ]);
         });
     }
@@ -73,6 +75,8 @@ final class BillingLedgerEngine
                 'balance_after_hundredths_cents' => $newBalance,
                 'reference_id' => $referenceId,
                 'description' => $description,
+                // App clock, not the column default: Mrr and RevenueRecovery filter this column against now().
+                'created_at' => now(),
             ]);
         });
     }
@@ -113,6 +117,8 @@ final class BillingLedgerEngine
                 'balance_after_hundredths_cents' => $limit->current_balance_hundredths_cents,
                 'reference_id' => 'topup_'.uniqid(),
                 'description' => 'Automatic balance top-up',
+                // App clock, not the column default: Mrr and RevenueRecovery filter this column against now().
+                'created_at' => now(),
             ]);
 
             return [
