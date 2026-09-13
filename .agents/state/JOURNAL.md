@@ -826,3 +826,4 @@
 - `2026-09-13T08:59:24` (R245) X-125 — UI-96: flow-error-dashboard renders in the owner shell; lists failed runs and auto-paused flows; banner gone
 - `2026-09-13T09:25:22` (R245) X-131 — UI-97: interest-tags renders in the owner shell across all people; tenant-set and inferred rows labelled apart; banner gone
 - `2026-09-13T09:43:39` (R245) X-184 — UI-98: calendar renders in the owner shell; proposed and scheduled items apart; banner gone
+- `2026-09-13T10:59:16` (R245) X-185 — UI-99: experiment-board renders in the owner shell; proven and testing packs apart; banner gone
