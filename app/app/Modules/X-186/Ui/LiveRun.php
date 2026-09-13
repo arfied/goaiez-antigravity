@@ -31,7 +31,6 @@ class LiveRun extends Component
         $runs = CampaignRun::where('business_id', $this->businessId)
             ->where('is_active', true)
             ->where('is_suppressed', false)
-            ->whereNull('stopped_reason')
             ->orderByDesc('updated_at')
             ->get();
 

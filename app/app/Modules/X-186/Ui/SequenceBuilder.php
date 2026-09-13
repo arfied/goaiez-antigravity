@@ -6,13 +6,21 @@ namespace App\Modules\X186\Ui;
 
 use App\Modules\X186\Actions\CampaignCreateAction;
 use App\Modules\X186\Models\CampaignStep;
+use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Your campaign sequences'])]
 class SequenceBuilder extends Component
 {
     #[Locked]
     public int $businessId = 0;
+
+    public function mount(int $businessId = 0)
+    {
+        $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
+    }
 
     public bool $failed = false;
 
