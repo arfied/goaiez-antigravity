@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-13T08:28:06",
+ "updated": "2026-09-13T09:27:39",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -119,7 +119,7 @@
   },
   "9": {
    "track": "J9-J12 money",
-   "status": "DONE",
+   "status": "BUILDING",
    "modules": [
     "C-Billing",
     "X-199",
@@ -1023,17 +1023,10 @@
    ]
   },
   "X-199": {
-   "status": "UNRESOLVED",
+   "status": "BUILDING",
    "wave": 9,
    "intent": "INFORM",
-   "unresolved": [
-    {
-     "module": "X-199",
-     "stage": "boundary",
-     "why": "EvidenceInvoiceCommand creates a Person; X-121 exports no create seam yet \u2014 PersonLookupAction::create arrives from sixty wave 195",
-     "at": "2026-09-13T08:28:06"
-    }
-   ]
+   "unresolved": []
   },
   "X-200": {
    "status": "DONE",
@@ -1135,12 +1128,6 @@
      "stage": "doctor",
      "why": "the emitter exists \u2014 Events/InvoiceDue.php is dispatched at Console/MarkInvoicesDueCommand.php:65 under due_date < today AND status = 'issued' AND due_notified_at IS NULL, which IS 'went overdue, once'; the gap is a NAME truncated out of the generated manifest by the same backtick. Rulings 29 and 32.",
      "at": "2026-09-06T06:08:18"
-    },
-    {
-     "module": "X-211",
-     "stage": "boundary",
-     "why": "EvidenceRecoveryCommand creates a Person; same dependency",
-     "at": "2026-09-13T08:28:06"
     }
    ]
   },
@@ -1345,18 +1332,6 @@
    "stage": "ui",
    "why": "nothing in this checkout raises a debit or a grant on the module ledger - LedgerGrantAction and LedgerDebitAction have no caller outside the tests, so only the credits top-up writes a row and the mrr ledger list is otherwise empty for a real account.",
    "at": "2026-09-06T20:58:58"
-  },
-  {
-   "module": "X-199",
-   "stage": "boundary",
-   "why": "EvidenceInvoiceCommand creates a Person; X-121 exports no create seam yet \u2014 PersonLookupAction::create arrives from sixty wave 195",
-   "at": "2026-09-13T08:28:06"
-  },
-  {
-   "module": "X-211",
-   "stage": "boundary",
-   "why": "EvidenceRecoveryCommand creates a Person; same dependency",
-   "at": "2026-09-13T08:28:06"
   }
  ],
  "notes": [
@@ -2917,6 +2892,22 @@
    "chose": "MONEY-218: PaymentReadAction is X-198's exported read seam (exists, declined, recovered, links, countForBusiness); read-only, tenant-scoped",
    "at": "2026-09-13T08:28:06",
    "ruling": "R245"
+  }
+ ],
+ "resolved": [
+  {
+   "module": "X-199",
+   "stage": "boundary",
+   "was": "EvidenceInvoiceCommand creates a Person; X-121 exports no create seam yet \u2014 PersonLookupAction::create arrives from sixty wave 195",
+   "why": "PersonLookupAction::create arrived on main (sixty wave 195, merged as main 356); EvidenceInvoiceCommand creates people through it",
+   "at": "2026-09-13T09:27:39"
+  },
+  {
+   "module": "X-211",
+   "stage": "boundary",
+   "was": "EvidenceRecoveryCommand creates a Person; same dependency",
+   "why": "same arrival; EvidenceRecoveryCommand creates people through it",
+   "at": "2026-09-13T09:27:39"
   }
  ]
 }
