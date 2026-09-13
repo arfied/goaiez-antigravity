@@ -423,6 +423,7 @@ final class OwnerNav
             // neither a nav entry nor a written exclusion. This screen runs a
             // real query and renders it on every GET once mount() resolves the
             // tenant, so it owes a nav entry.
+            OwnerNavItem::make('Starter content', 'x-180.pack-browser', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Message sequences you run', 'x-185.digest-line', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Content packs', 'x-185.experiment-board', OwnerNavItem::GROUP_MORE),
 
