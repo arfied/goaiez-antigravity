@@ -486,6 +486,12 @@ final class OwnerNav
             // real query and renders it on every GET once mount() resolves the
             // tenant, so it owes a nav entry.
             OwnerNavItem::make('Campaigns stopped or paused', 'x-186.stop-log', OwnerNavItem::GROUP_MORE),
+
+            // Architecture/OwnerNavTest fails the build on an owner screen with
+            // neither a nav entry nor a written exclusion. This screen runs a
+            // real query and renders it on every GET once mount() resolves the
+            // tenant, so it owes a nav entry.
+            OwnerNavItem::make('Campaigns running now', 'x-186.live-run', OwnerNavItem::GROUP_MORE),
         ];
     }
 
