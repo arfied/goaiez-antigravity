@@ -14,7 +14,7 @@
                         <div class="flex items-center justify-between w-full">
                             <div>
                                 <div class="font-medium text-ink">
-                                    {{ $person ? ($person->first_name . ' ' . $person->last_name) : 'Unknown Person' }}
+                                    {{ $person ? ($person['first_name'] . ' ' . $person['last_name']) : 'Unknown Person' }}
                                 </div>
                                 <div class="text-sm text-ink-2">
                                     Campaign: {{ $run->campaign_id }} (Step {{ $run->current_step }})

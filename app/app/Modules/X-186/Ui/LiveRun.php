@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X186\Ui;
 
-use App\Modules\X121\Models\Person;
+use App\Modules\X121\Actions\EntityReadAction;
 use App\Modules\X186\Models\CampaignRun;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
@@ -35,8 +35,13 @@ class LiveRun extends Component
             ->orderByDesc('updated_at')
             ->get();
 
-        $personIds = $runs->pluck('person_id')->unique()->values()->toArray();
-        $people = Person::whereIn('id', $personIds)->get()->keyBy('id');
+        $people = collect();
+        foreach ($runs->pluck('person_id')->unique() as $personId) {
+            $row = app(EntityReadAction::class)->handle('people', (int) $personId, $this->businessId);
+            if ($row !== null) {
+                $people->put((int) $personId, $row);
+            }
+        }
 
         return view('x-186::live-run', [
             'runs' => $runs,
