@@ -823,3 +823,4 @@
 - `2026-09-13T06:32:12` (R245) X-186 — the live run and the stop log read each person through X-121's exported EntityReadAction instead of importing its model, so the module owns no cross-boundary import, and both screen tests keep proving the rendered names by real GETs, proven by mutating each read
 - `2026-09-13T08:09:16` (R245) X-186 — UI-94: audience-preview-count renders in the owner shell and counts distinct people over active, unsuppressed, un-stopped runs; the banner is gone
 - `2026-09-13T08:29:48` (R245) X-186 — UI-95: sequence-builder renders in the owner shell and composes/duplicates for the signed-in tenant; banner gone
+- `2026-09-13T08:59:24` (R245) X-125 — UI-96: flow-error-dashboard renders in the owner shell; lists failed runs and auto-paused flows; banner gone
