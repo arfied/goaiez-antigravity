@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-13T06:16:55",
+ "updated": "2026-09-13T06:32:12",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1706,6 +1706,12 @@
    "module": "X-186",
    "chose": "the live run renders in the owner layout with mount resolving the tenant and lists every campaign run that is active, not suppressed and not stopped by the person, the campaign and its step, with the sample-state banner gone, and its test renders the empty branch and two real enrolments written through CampaignCreateAction and CampaignEnrolAction with one of them stopped through SequenceStopAction by real GETs, proven by mutating the tenant resolution and the running filter",
    "at": "2026-09-13T06:16:55",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-186",
+   "chose": "the live run and the stop log read each person through X-121's exported EntityReadAction instead of importing its model, so the module owns no cross-boundary import, and both screen tests keep proving the rendered names by real GETs, proven by mutating each read",
+   "at": "2026-09-13T06:32:12",
    "ruling": "R245"
   }
  ],
