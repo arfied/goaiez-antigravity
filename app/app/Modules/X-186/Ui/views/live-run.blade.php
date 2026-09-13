@@ -1,6 +1,32 @@
 <div>
-    <x-surface.sample-state module="multi-channel sequencing" screen="live_run" />
-    <div class="live-run-view p-4">
-        <h3 class="text-lg font-bold">Active Drip Campaigns Live Run</h3>
+    <div class="p-4 space-y-6">
+        <h2 class="text-lg font-bold text-ink">People inside a campaign right now</h2>
+
+        @if ($runs->isEmpty())
+            <x-ui.empty-state icon="○" heading="No campaign is running for anyone yet">
+                When someone is enrolled in a campaign, they appear here until it finishes, pauses or is stopped.
+            </x-ui.empty-state>
+        @else
+            <x-ui.row-list>
+                @foreach($runs as $run)
+                    @php $person = $people->get($run->person_id); @endphp
+                    <x-ui.row>
+                        <div class="flex items-center justify-between w-full">
+                            <div>
+                                <div class="font-medium text-ink">
+                                    {{ $person ? ($person->first_name . ' ' . $person->last_name) : 'Unknown Person' }}
+                                </div>
+                                <div class="text-sm text-ink-2">
+                                    Campaign: {{ $run->campaign_id }} (Step {{ $run->current_step }})
+                                </div>
+                            </div>
+                            <div>
+                                <x-ui.status-pill state="ok" label="Running" />
+                            </div>
+                        </div>
+                    </x-ui.row>
+                @endforeach
+            </x-ui.row-list>
+        @endif
     </div>
 </div>
