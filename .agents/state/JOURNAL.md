@@ -828,3 +828,4 @@
 - `2026-09-13T09:43:39` (R245) X-184 — UI-98: calendar renders in the owner shell; proposed and scheduled items apart; banner gone
 - `2026-09-13T10:59:16` (R245) X-185 — UI-99: experiment-board renders in the owner shell; proven and testing packs apart; banner gone
 - `2026-09-13T11:08:32` (R245) X-180 — UI-100: pack-browser renders in the owner shell; each seeded pack lists its assets; banner gone
+- `2026-09-13T12:32:27` (R245) X-124 — UI-101: assistantunsupported-log is an owner screen; mount() takes Tenancy::id(); unsupported rows from AssistantAskAction.
