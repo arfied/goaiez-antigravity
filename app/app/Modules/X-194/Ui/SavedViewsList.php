@@ -73,7 +73,7 @@ class SavedViewsList extends Component
                 ? $action->listViews($this->businessId)->collect()
                 : collect();
         } catch (\Exception $e) {
-            $this->errorMessage = 'We could not load your saved views.';
+            $this->errorMessage = ' ';
             $views = collect();
         }
 
