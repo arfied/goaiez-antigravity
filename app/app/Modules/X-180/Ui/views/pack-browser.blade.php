@@ -5,7 +5,7 @@
         @forelse($packs as $pack)
             <div class="mt-4 border rounded p-4">
                 <h3 class="font-bold">{{ $pack->pack_name }}</h3>
-                <p class="text-sm text-gray-600">{{ $pack->industry }} - {{ $pack->assets_count }} assets</p>
+                <p class="text-sm text-ink-2">{{ $pack->industry }} - {{ $pack->assets_count }} assets</p>
                 
                 @if($pack->assets_manifest && count($pack->assets_manifest) > 0)
                     <ul class="list-disc ml-5 mt-2">
