@@ -824,3 +824,4 @@
 - `2026-09-13T08:09:16` (R245) X-186 — UI-94: audience-preview-count renders in the owner shell and counts distinct people over active, unsuppressed, un-stopped runs; the banner is gone
 - `2026-09-13T08:29:48` (R245) X-186 — UI-95: sequence-builder renders in the owner shell and composes/duplicates for the signed-in tenant; banner gone
 - `2026-09-13T08:59:24` (R245) X-125 — UI-96: flow-error-dashboard renders in the owner shell; lists failed runs and auto-paused flows; banner gone
+- `2026-09-13T09:25:22` (R245) X-131 — UI-97: interest-tags renders in the owner shell across all people; tenant-set and inferred rows labelled apart; banner gone
