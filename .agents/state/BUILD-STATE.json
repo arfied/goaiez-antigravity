@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-12T00:31:11",
+ "updated": "2026-09-13T08:26:30",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1001,6 +1001,12 @@
      "stage": "boundary",
      "why": "X-163 exposes no catalog-shaped read for a business confirmed price book: BookVersionAction, CalloutLookupAction, PriceConfirmAction, PriceLookupAction, PriceQuoteAction and PriceRangeAction are the whole of its registered surface and every one is per-service or per-quote, so EdgeDeployAction:132 reads X163\\Models\\PriceBookItem directly and BoundaryStage reports the import. X-163 is another lane under ruling 5, so the catalog read is that lane to build. Deleting the read is not available: the OfferCatalog node it feeds is the asserted clause of G8-14, which is credited. This is the same absent seam already filed as capability X-176 at 2026-09-06T16:52:20, counted once and reported by two stages against two modules.",
      "at": "2026-09-09T18:01:40"
+    },
+    {
+     "module": "X-157",
+     "stage": "boundary",
+     "why": "--reason EdgeDeployAction:115 lists appointments; X-108 exports no AppointmentListAction (needs one: appointments for a business, read-only)",
+     "at": "2026-09-13T08:24:12"
     }
    ]
   },
@@ -2018,6 +2024,12 @@
    "stage": "boundary",
    "why": "X-121 exposes no create path for a Person: EntityWriteAction::handle takes string table, int id, int businessId, so it updates a row that already exists, and EntityReadAction reads by id and not by phone, so ChatCaptureAction:36 calls Person::updateOrCreate keyed on business_id and phone directly and BoundaryStage reports the import. X-121 is the spine and belongs to Track 1 under owner ruling 8, which already ruled this disposition for the same fact when pricebook recorded UNRESOLVED - X-121 exposes no create path and refused the raw insert. The missing dependency is a registered find-or-create-by-phone action on the spine. Twenty-four files across about fifteen modules in every lane import X121 Models directly, so the shape is repo-wide and advisory to Track 1; these two rows are this lane own two files.",
    "at": "2026-09-09T18:01:52"
+  },
+  {
+   "module": "X-157",
+   "stage": "boundary",
+   "why": "--reason EdgeDeployAction:115 lists appointments; X-108 exports no AppointmentListAction (needs one: appointments for a business, read-only)",
+   "at": "2026-09-13T08:24:12"
   }
  ],
  "decisions": [
@@ -2541,6 +2553,18 @@
    "module": "X-137",
    "chose": "The X-137 ShortLink model uses BelongsToTenant and implements TenantScoped, the safeguard the short_links creator migration 2026_08_11_130139 names for the platform ShortLink model. short_links carries public_read FOR SELECT USING true and Postgres ORs permissive policies, so row level security restricts no read of the table, and SITE-212 measured the redirect business_id clause as the only tenancy check. The route and LinkQrAction keep their business_id clauses. Measured at SITE-214: with the redirect clause removed and the scope present, test_g13_24_short_code_is_redeemable_only_under_its_own_business stays green; with both removed it answers 302 where it asserts 404. No fixture changed, because TestCase provisionTenant sets tenancy for every fixture. Refused: removing either application check, changing the public_read policy (another lane creates the table), a longer short code or a rate limiter (no clause), and routing X-137 links through the platform resolver (module ownership, a Track 1 question).",
    "at": "2026-09-12T00:31:11",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-121",
+   "chose": "SITE-216: PersonUpsertAction is X-121's exported write seam for find-or-create-by-phone; null phone always creates; onlyIfNew for spam; only given keys written",
+   "at": "2026-09-13T08:26:30",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-155",
+   "chose": "SITE-216: form capture writes people through PersonUpsertAction; the four R245 rules hold and are tested",
+   "at": "2026-09-13T08:26:30",
    "ruling": "R245"
   }
  ],
