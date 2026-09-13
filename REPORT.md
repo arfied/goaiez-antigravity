@@ -1,16 +1,22 @@
-# PB-182
+# PB-183 / PB-184
 
 STATUS: close
 
-1. Took main (via `git merge --no-ff --no-commit origin/main` with GOAIEZ_MERGE_OK=1) and restored per-track paths as requested.
-2. Target `x-163.daily-pricing-digest` built out: converted from sample-state to owner layout, added to `OwnerNav.php`.
-3. Screen tests updated in `DailyPricingDigestScreenTest.php`, including a Red A missing row check that confirmed tenant isolation (`.pb182-redA.txt`).
-4. Red B captured a visibility check failure by temporarily dropping the refusal filter (`.pb182-redB.txt`).
-5. Updated pins in `OwnerNavTest`, `HeadingSeamTest`, and `SampleStateModuleTest`.
-6. State updated: `bin/state.py decided X-163 "PB-182: daily-pricing-digest is an owner screen; layout, pins, and screen test applied"`.
-7. Gate executed and results noted below.
+1. Took main (`git merge --no-ff --no-commit origin/main`) and restored paths according to the rule.
+2. PB-183 (tip `fbb53f29`): Artefacts generated include `.agents/supervisor/.gate-pb183.txt`, `.pb183-redA.txt`, and `.pb183-redB.txt`.
+3. PB-184 (tip `e034ac0d`): Includes commits `2db24b64` (merge), `da2e54f7` (feat), and `e034ac0d` (pins). Artefacts generated include `.gate-pb184.txt`, `.pb184-redA.txt`, and `.pb184-redB.txt`.
+4. the test already had the row assertion after the real GET; PB-183's mutation missed the query (88 B passed); PB-184 pointed the Members query at a second provisioned tenant id and reddened — first-mutation-missed-the-query, not a missing assertion.
 
-GATE: `  tests 2645 · passed 2635 · FAILED 8 · errors 2 · result failed · rc 2`
+PROOF:
+.agents/rules/10-supervisor.md
+.agents/state/BUILD-STATE.json
+.agents/state/JOURNAL.md
+.agents/supervisor/launch-coder.sh
+CLAUDE.md
+app/phpunit.xml
+bin/supervise.sh
+
+GATE: `  tests 2646 · passed 2636 · FAILED 8 · errors 2 · result failed · rc 2`
 ```
--rw-r--r-- 1 goaiez goaiez 9597 2026-09-13 14:52:46.934953414 -0500 .agents/supervisor/.gate-pb182.txt
+-rw-r--r-- 1 goaiez goaiez 9603 2026-09-13 18:16:30.224752159 -0500 .agents/supervisor/.gate-pb184.txt
 ```
