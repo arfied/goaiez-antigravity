@@ -6,6 +6,7 @@ namespace Tests\Modules\X165;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X163\Models\PriceBookItem;
 use App\Modules\X165\Models\MembershipPlan;
 use App\Modules\X165\Ui\Plans;
 use App\Support\Tenancy;
@@ -67,11 +68,12 @@ class PlansTest extends TestCase
         $owner->save();
         $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
         Tenancy::setUser($owner->id);
+        $item = $this->pricebookItem($biz->id, 'Platinum Service', 29900, true);
 
         Livewire::actingAs($owner)
             ->test(Plans::class)
             ->set('newName', 'Platinum Plan')
-            ->set('newPrice', '299.00')
+            ->set('newItemId', (string) $item->id)
             ->call('proposePlan');
 
         $this->assertDatabaseHas('membership_plans', [
@@ -176,5 +178,63 @@ class PlansTest extends TestCase
         Tenancy::setUser($user->id);
 
         Livewire::actingAs($user)->test(Plans::class)->assertOk();
+    }
+
+    /**
+     * [N-165-01]
+     */
+    public function test_a_refused_pricebook_row_shows_the_sentence(): void
+    {
+        $owner = User::factory()->create();
+        $owner->role = UserRole::Owner;
+        $owner->save();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+        $item = $this->pricebookItem($biz->id, 'Brake Pads', 8000, false);
+
+        Livewire::actingAs($owner)
+            ->test(Plans::class)
+            ->set('newName', 'Brake Plan')
+            ->set('newItemId', (string) $item->id)
+            ->call('proposePlan')
+            ->assertSee('Choose a confirmed price from your pricebook.');
+    }
+
+    public function test_the_price_list_offers_a_confirmed_pricebook_row(): void
+    {
+        $owner = User::factory()->create();
+        $owner->role = UserRole::Owner;
+        $owner->save();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+        $this->pricebookItem($biz->id, 'Annual Tune-Up', 4999, true);
+
+        Livewire::actingAs($owner)
+            ->test(Plans::class)
+            ->assertSee('Annual Tune-Up ($49.99)');
+    }
+
+    public function test_the_typed_price_box_is_gone(): void
+    {
+        $owner = User::factory()->create();
+        $owner->role = UserRole::Owner;
+        $owner->save();
+        TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        Livewire::actingAs($owner)
+            ->test(Plans::class)
+            ->assertDontSeeHtml('wire:model="newPrice"');
+    }
+
+    private function pricebookItem(int $businessId, string $name, int $cents, bool $confirmed): PriceBookItem
+    {
+        return PriceBookItem::create([
+            'business_id' => $businessId,
+            'service_name' => $name,
+            'price_cents' => $cents,
+            'is_sample' => false,
+            'is_confirmed' => $confirmed,
+        ]);
     }
 }

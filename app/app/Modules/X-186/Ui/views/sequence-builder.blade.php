@@ -1,14 +1,13 @@
 <div>
-<x-surface.sample-state module="multi-channel sequencing" screen="sequence_builder" />
     <div class="p-4 space-y-6">
-        <h3 class="text-lg font-bold text-ink">Broadcast Composer</h3>
+        <h2 class="text-lg font-bold text-ink">Broadcast Composer</h2>
 
         @if ($isSample)
             <x-ui.sample />
         @endif
         
         <div class="bg-card border border-rule rounded-lg p-4 space-y-4">
-            <h4 class="font-medium text-ink">Compose New Sequence</h4>
+            <h3 class="font-medium text-ink">Compose New Sequence</h3>
             
             @if ($composeError)
                 <x-ui.status-pill state="alert" label="{{ $composeError }}" />
@@ -46,7 +45,7 @@
                     There was an error communicating with the database.
                 </x-ui.error-panel>
             @elseif ($campaigns->isEmpty())
-                <x-ui.empty-state icon="○" heading="No sequences built yet">
+                <x-ui.empty-state icon="○" heading="No sequence yet — compose one above">
                     Your campaigns will appear here once built.
                 </x-ui.empty-state>
             @else
@@ -54,7 +53,7 @@
                     @foreach($campaigns as $campaignId => $steps)
                         <div class="space-y-2">
                             <div class="flex items-center justify-between">
-                                <div class="font-medium text-ink">{{ $campaignId }}</div>
+                                <div class="font-medium text-ink">{{ $campaignId }} ({{ $steps->count() }} steps)</div>
                                 <x-ui.button wire:click="duplicate('{{ $campaignId }}')" size="default">
                                     Duplicate
                                 </x-ui.button>

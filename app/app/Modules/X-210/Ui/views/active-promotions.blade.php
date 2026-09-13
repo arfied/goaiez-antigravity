@@ -1,6 +1,24 @@
 <div>
-    <x-surface.sample-state module="⭐⭐ **The tenant's own offer layer: create a promotion, target it, distribute it across every channel the platform already owns, redeem it against a real price, and measure what it actually earned.** ⛔ **It is NOT a coupon plugin.** *A coupon plugin knows a code and a percentage.* ⭐⭐⭐ **This one knows the pricebook with costs, the job history, the customer graph and the cadence ceiling — so it can warn about margin before the offer exists, target it from real jobs rather than a list, and refuse to over-contact the person it is targeting.**" screen="active_promotions" />
-    <div class="active-promotions-view p-4">
-        <h3 class="text-lg font-bold">Live Active Promotions</h3>
+    <div class="p-4">
+        <h2 class="text-xl font-bold text-ink">Offers running now</h2>
+        @if($promotions->isEmpty())
+            <x-ui.empty-state icon="○" heading="No offers running">
+                When you create an offer for your customers, it appears here while it can still be used.
+            </x-ui.empty-state>
+        @else
+            <ul class="mt-3 space-y-2">
+                @foreach($promotions as $promotion)
+                    <li class="text-ink">
+                        {{ $promotion->code }} ·
+                        @if($promotion->discount_type === 'percentage')
+                            {{ $promotion->discount_value }}% off
+                        @else
+                            ${{ number_format($promotion->discount_value / 100, 2) }} off
+                        @endif
+                        · {{ $promotion->redemptions_count }} of {{ $promotion->max_redemptions }} used
+                    </li>
+                @endforeach
+            </ul>
+        @endif
     </div>
 </div>

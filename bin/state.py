@@ -170,27 +170,47 @@ def main(argv):
         # Withdraws ONE unresolved record and says why.  It never marks work done:
         # UNRESOLVED is TERMINAL, so a module whose last blocker goes returns to
         # BUILDING and `next` surfaces it again; `done` stays the coder's after a gate.
+        # Optional --match <needle> selects one of several same-stage rows by substring
+        # of `why` (SITE-218: three boundary rows blocked a bare resolve).
         if "--reason" not in a or len(a) < 4:
-            print("resolve <id> <stage> --reason <why...>  "
+            print("resolve <id> <stage> [--match <needle>] --reason <why...>  "
                   "(a withdrawal without a reason is not a record)"); sys.exit(1)
         i = a.index("--reason")
         mid, stage, why = a[0], a[1], " ".join(a[i + 1:]).strip()
+        match = None
+        if "--match" in a:
+            mi = a.index("--match")
+            if mi + 1 >= i:
+                print("resolve --match needs a needle before --reason"); sys.exit(1)
+            match = a[mi + 1]
         if not why:
             print("resolve needs a reason after --reason"); sys.exit(1)
         if mid not in s["modules"]:
             print(f"{mid} is not on the roster"); sys.exit(1)
         hit = [r for r in s["modules"][mid]["unresolved"] if r["stage"] == stage]
-        if not hit:
+        if match is not None:
+            hit = [r for r in hit if match in r.get("why", "")]
+            if not hit:
+                print(f"no UNRESOLVED {stage} on {mid} matching {match!r}"); sys.exit(1)
+            if len(hit) > 1:
+                print(f"{len(hit)} UNRESOLVED {stage} on {mid} match {match!r} — "
+                      f"narrow the needle"); sys.exit(1)
+        elif not hit:
             print(f"no UNRESOLVED {stage} on {mid}"); sys.exit(1)
-        if len(hit) > 1:
+        elif len(hit) > 1:
             print(f"{len(hit)} UNRESOLVED {stage} records on {mid} — a stage does "
-                  f"not name one of them; withdrawing would take both. Say which "
+                  f"not name one of them; withdrawing would take both. Pass "
+                  f"--match <needle> (substring of why) to pick one, or say which "
                   f"in REVIEWS and fix the duplicate first"); sys.exit(1)
         was = hit[0]["why"]
+        # Drop only the matched row (module+stage+why+at), not every same-stage row.
+        # JSON reload breaks object identity across the two lists, so key on fields.
+        drop_key = (hit[0].get("module", mid), hit[0]["stage"], hit[0]["why"], hit[0].get("at"))
+        def _keep(r, default_mid=mid):
+            return (r.get("module", default_mid), r["stage"], r["why"], r.get("at")) != drop_key
         s["modules"][mid]["unresolved"] = [
-            r for r in s["modules"][mid]["unresolved"] if r["stage"] != stage]
-        s["unresolved"] = [r for r in s["unresolved"]
-                           if not (r["module"] == mid and r["stage"] == stage)]
+            r for r in s["modules"][mid]["unresolved"] if _keep(r)]
+        s["unresolved"] = [r for r in s["unresolved"] if _keep(r)]
         s.setdefault("resolved", []).append(
             {"module": mid, "stage": stage, "was": was, "why": why, "at": now()})
         journal(f"RESOLVED {stage} {mid} - {why} (was: {was})")

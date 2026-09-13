@@ -20,7 +20,9 @@ final class InvoiceNumber
         DB::selectOne('select pg_advisory_xact_lock(?, ?)', [199, $businessId]);
 
         $lastInvoice = Invoice::where('business_id', $businessId)
-            ->where('invoice_number', '~', '^INV-[0-9]{6}$')
+            ->where('invoice_number', '~', '^INV-[0-9]{6,}$')
+            // Length first: past six digits a plain string sort puts INV-999999 above INV-1000000.
+            ->orderByRaw('length(invoice_number) desc')
             ->orderByDesc('invoice_number')
             ->lockForUpdate()
             ->first();
