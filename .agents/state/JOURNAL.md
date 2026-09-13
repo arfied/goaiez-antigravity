@@ -947,3 +947,5 @@
 - `2026-09-13T08:24:12` UNRESOLVED boundary X-157 - --reason EdgeDeployAction:115 lists appointments; X-108 exports no AppointmentListAction (needs one: appointments for a business, read-only)
 - `2026-09-13T08:26:30` (R245) X-121 — SITE-216: PersonUpsertAction is X-121's exported write seam for find-or-create-by-phone; null phone always creates; onlyIfNew for spam; only given keys written
 - `2026-09-13T08:26:30` (R245) X-155 — SITE-216: form capture writes people through PersonUpsertAction; the four R245 rules hold and are tested
+- `2026-09-13T13:20:24` (R245) X-108 — SITE-218: AppointmentListAction is X-108's exported read-only list of upcoming appointments for a business (owner grant 2026-09-13); site added only AppointmentListAction.php; EdgeDeployAction consumes it; eventual X-108 owner inherits this seam
+- `2026-09-13T13:20:28` note: X-157 3 UNRESOLVED boundary records on X-157 - state.py resolve refused due to duplicates. AppointmentListAction arrived under owner grant 2026-09-13 (SITE-218); EdgeDeployAction lists through it
