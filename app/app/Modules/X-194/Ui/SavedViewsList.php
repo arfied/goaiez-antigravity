@@ -73,6 +73,8 @@ class SavedViewsList extends Component
                 ? $action->listViews($this->businessId)->collect()
                 : collect();
         } catch (\Exception $e) {
+            // A space string makes $errorMessage truthy for the blade condition without displaying extra text.
+
             $this->errorMessage = ' ';
             $views = collect();
         }
