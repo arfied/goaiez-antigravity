@@ -502,6 +502,7 @@ final class OwnerNav
             OwnerNavItem::make('Your campaign sequences', 'x-186.sequence-builder', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Your prices', 'x-163.pricebook', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Prices to confirm', 'x-163.confirmation-screen', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Daily pricing digest', 'x-163.daily-pricing-digest', OwnerNavItem::GROUP_MORE),
         ];
     }
 
