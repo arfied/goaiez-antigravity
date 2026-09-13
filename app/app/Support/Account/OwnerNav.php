@@ -188,7 +188,7 @@ final class OwnerNav
             // proposal sitting unconfirmed for ever, which reads exactly like a
             // business that never uploaded anything.
             OwnerNavItem::make('What your assistant can quote', 'account.assistant-answers', OwnerNavItem::GROUP_MORE),
-
+            OwnerNavItem::make('Things your assistant could not do', 'x-124.assistantunsupported-log', OwnerNavItem::GROUP_MORE),
             // The plan, and the cancellation (2980–2999). Under More on the same
             // distinction as the three above: it is looked at when something
             // about the money changes, not every day.
