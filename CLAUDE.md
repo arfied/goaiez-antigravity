@@ -586,6 +586,10 @@ any reader who reaches it first* — and EOF is where readers land. When a secti
 place, delete the original in the same commit; `grep -n '^## '` for duplicate headings is the check,
 and it is one command.
 
+⚠️ **NEVER KILL A LAUNCHER WRAPPER — THE ORPHAN WRITES UNTRACKED (2026-09-13).** Killing the `bash -c … timeout … agy` wrapper of runs 182/168 left the **agy children** alive and writing into two checkouts with no pidfile, no launcher and no waiter — the untracked-writer shape `bash bin/supervise.sh --census` exists to catch, and it was luck that what they wrote was the product wanted. **Rule: never kill a wrapper.** If a kill is unavoidable, kill the **agy** pid itself (`ps --ppid <wrapper>`), then run `--census` in that checkout and quote `none` before touching the mailbox. After any kill, treat the checkout as possibly still being written until the census says otherwise. Supervisor shells are not on `coder-bin`'s PATH, so a seat `kill` leaves no `/home/goaiez/tmp/kill-log.tsv` row — hand-write `ts · killer=supervisor · target pid · target cwd` in the ledger whenever you kill anything.
+
+⚠️ **EMPTY `AGY_EXIT=0` (11-byte log) VS CONCURRENT FIRST MINUTES — AND A COUNTER-EXAMPLE (2026-09-13).** Empties 183/169 and earlier 342/348 shared being launched while another agy on the box was in its first minutes. Counter-example: six launches at 08:06 within twelve seconds **all took**. Keep stagger ≥60s and the +90s check (seven `.mt*`/`.doctor-pre` or a growing gate file ⇒ took; another 11-byte exit ⇒ hold, do not launch a third). Record each launch's outcome next to what else was running; three more readings settle account vs timing.
+
 ⚠️ **A BORROWED MEASUREMENT MUST CARRY THE INSTRUMENT THAT TOOK IT; A NUMBER LAUNDERED THROUGH THE
 SUPERVISOR BECOMES A FALSE SECOND WITNESS (N111, 2026-09-07, found reviewing wave 127).** Wave 128's
 brief quoted, under item 6, *"The baseline, measured by **my own** gate on `8727aff4` this tick:
