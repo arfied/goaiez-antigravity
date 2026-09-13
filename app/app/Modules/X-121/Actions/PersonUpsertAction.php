@@ -28,9 +28,6 @@ final class PersonUpsertAction
 
             if (! $exists) {
                 // A detail that is blank or whitespace was not given (R245, 2026-09-05).
-                // Wait, if I'm not moving this rule here, maybe I shouldn't paste the comment.
-                // But the instruction says "the four R245 comments move with the logic".
-                // We'll see.
                 $person->first_name ??= 'Visitor';
             }
 
