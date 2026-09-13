@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-12T17:21:49",
+ "updated": "2026-09-13T08:13:11",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1472,6 +1472,12 @@
    "module": "X-165",
    "chose": "a plan's price comes only from X-163's QuotablePriceAction: Plans lists options(), and proposePlan() writes a plan only when resolve() returns an amount, otherwise it shows 'Choose a confirmed price from your pricebook.' and writes nothing; the typed price box is gone, so X-165 authors no price (N-165-01)",
    "at": "2026-09-12T16:52:34",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-163",
+   "chose": "PB-179: the pricebook screen renders in the owner shell; banner gone; nav entry Your prices; proven by real GET on a real row (Track 1 ruling on action n, 2026-09-13)",
+   "at": "2026-09-13T08:13:11",
    "ruling": "R245"
   }
  ],
