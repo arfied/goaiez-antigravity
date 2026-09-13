@@ -25,7 +25,7 @@ class DailyPricingDigest extends Component
         abort_unless($businessId !== null && $businessId > 0, 403);
     }
 
-    public function updatePrice(int $itemId, $value)
+    private function updatePrice(int $itemId, $value)
     {
         $businessId = Tenancy::id();
         PriceBookItem::where('business_id', $businessId)->where('id', $itemId)->update(['price_cents' => (int) round((float) $value * 100)]);
