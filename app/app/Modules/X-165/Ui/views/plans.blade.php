@@ -6,9 +6,15 @@
         <h2 class="text-lg font-medium text-ink mb-4">Propose a plan</h2>
         <form wire:submit="proposePlan" class="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
             <input type="text" wire:model="newName" placeholder="Plan Name" class="border p-2 rounded">
-            <input type="number" step="0.01" wire:model="newPrice" placeholder="Price" class="border p-2 rounded">
+            <select wire:model="newItemId" class="border p-2 rounded">
+                <option value="">Price from your pricebook</option>
+                @foreach($priceOptions as $option)
+                    <option value="{{ $option['id'] }}">{{ $option['service_name'] }} (${{ number_format($option['price_cents'] / 100, 2) }})</option>
+                @endforeach
+            </select>
             <x-ui.submit target="proposePlan" busy="Proposing...">Propose a plan</x-ui.submit>
         </form>
+        @error('newItemId') <span class="text-red-500 text-sm block mt-2">{{ $message }}</span> @enderror
     </div>
 
     @if($plans->isEmpty())

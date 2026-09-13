@@ -15,6 +15,15 @@
             <p class="timezone-display">Timezone: {{ $viewData['timezone'] }}</p>
         </div>
         
+        @php
+            $context = app(\App\Services\Tenant\LocationContext::class);
+        @endphp
+        @if ($context->hasChoice())
+            <div class="mt-4">
+                <x-account.location-picker :locations="$context->options()" :selected="$context->current()" />
+            </div>
+        @endif
+
         <div class="flex gap-4 mt-4">
             @if ($viewData['job_count'] > 0)
                 <div class="border p-4 rounded tile">

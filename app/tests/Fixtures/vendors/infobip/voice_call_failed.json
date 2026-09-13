@@ -1,0 +1,16 @@
+{
+  "callId": "test-call-123",
+  "timestamp": 1700000005000,
+  "callsConfigurationId": "f2570344-abcd",
+  "properties": {
+    "callLog": {
+      "state": "CANCELLED",
+      "errorCode": {
+        "id": 10202,
+        "name": "CANCELLED"
+      },
+      "hangupSource": "ENDPOINT"
+    }
+  },
+  "type": "CALL_FAILED"
+}

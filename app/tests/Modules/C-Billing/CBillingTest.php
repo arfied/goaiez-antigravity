@@ -15,6 +15,7 @@ use App\Modules\CBilling\Models\CreditLedgerEntry;
 use App\Modules\CBilling\Models\TrialLimit;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Tests\TestCase;
 
 class CBillingTest extends TestCase
@@ -244,7 +245,18 @@ class CBillingTest extends TestCase
      */
     public function test_g1_80_metered_billing_sync(): void
     {
-        $this->assertTrue(true);
+        $hits = [];
+        foreach (File::allFiles(app_path('Modules/C-Billing')) as $file) {
+            if ($file->getExtension() !== 'php') {
+                continue;
+            }
+            $source = $file->getContents();
+            if (str_contains($source, 'X198') || str_contains($source, 'GatewayClient') || str_contains($source, 'GatewayEngine')) {
+                $hits[] = $file->getRelativePathname();
+            }
+        }
+
+        $this->assertSame([], $hits, 'a C-Billing file names a gateway client or engine');
     }
 
     /**

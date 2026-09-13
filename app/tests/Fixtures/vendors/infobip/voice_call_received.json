@@ -1,0 +1,11 @@
+{
+  "callId": "test-call-123",
+  "timestamp": 1700000000000,
+  "callsConfigurationId": "f2570344-abcd",
+  "properties": {
+    "call": {
+      "state": "CALLING"
+    }
+  },
+  "type": "CALL_RECEIVED"
+}

@@ -1,6 +1,21 @@
 <div>
-    <x-surface.sample-state module="⭐⭐ **The tenant's own offer layer: create a promotion, target it, distribute it across every channel the platform already owns, redeem it against a real price, and measure what it actually earned.** ⛔ **It is NOT a coupon plugin.** *A coupon plugin knows a code and a percentage.* ⭐⭐⭐ **This one knows the pricebook with costs, the job history, the customer graph and the cadence ceiling — so it can warn about margin before the offer exists, target it from real jobs rather than a list, and refuse to over-contact the person it is targeting.**" screen="redemptions" />
-    <div class="redemptions-view p-4">
-        <h3 class="text-lg font-bold">Promotion Redemptions Audit Log</h3>
+    <div class="p-4">
+        <h2 class="text-xl font-bold text-ink">Offers your customers used</h2>
+        @if($redemptions->isEmpty())
+            <x-ui.empty-state icon="○" heading="No offers used yet">
+                When a customer uses one of your offers, it appears here with how much it took off their bill.
+            </x-ui.empty-state>
+        @else
+            <p class="mt-1 text-base text-ink-2">${{ number_format($totalCents / 100, 2) }} taken off in all, across {{ $redemptions->count() }} {{ $redemptions->count() === 1 ? 'use' : 'uses' }}.</p>
+            <ul class="mt-3 space-y-2">
+                @foreach($redemptions as $redemption)
+                    <li class="text-ink">
+                        {{ $codes[$redemption->promotion_id] ?? 'An offer' }} ·
+                        ${{ number_format($redemption->discount_applied_cents / 100, 2) }} off ·
+                        {{ $redemption->redeemed_at->toFormattedDateString() }}
+                    </li>
+                @endforeach
+            </ul>
+        @endif
     </div>
 </div>

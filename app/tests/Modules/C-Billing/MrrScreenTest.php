@@ -13,6 +13,7 @@ use App\Modules\CBilling\Models\Meter;
 use App\Modules\CBilling\Models\TrialLimit;
 use App\Modules\CBilling\Ui\Mrr;
 use App\Support\Tenancy;
+use Carbon\Carbon;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -136,5 +137,42 @@ class MrrScreenTest extends TestCase
             ->assertOk()
             ->assertSee('checkout not completed')
             ->assertDontSee('pending_checkout');
+    }
+
+    public function test_ledger_entries_take_the_app_clock_so_a_month_reads_its_own_entries(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        // A month this suite always runs after, so the database clock can never land inside it.
+        $pin = Carbon::parse('2026-03-15 10:00:00');
+        Carbon::setTestNow($pin);
+
+        $engine = app(BillingLedgerEngine::class);
+        $grant = $engine->grant($biz->id, 250000, 'grant_march', 'March plan credit');
+        $debit = $engine->debit($biz->id, 12000, 'call_march', 'March AI call');
+        $topup = $engine->topup($biz->id, 5000);
+
+        Livewire::actingAs($owner)->test(Mrr::class)
+            ->assertOk()
+            ->assertSee('March plan credit')
+            ->assertSee('March AI call')
+            ->assertSee('Automatic balance top-up');
+
+        Carbon::setTestNow($pin->copy()->addMonth());
+
+        Livewire::actingAs($owner)->test(Mrr::class)
+            ->assertOk()
+            ->assertDontSee('March plan credit')
+            ->assertDontSee('March AI call')
+            ->assertDontSee('Automatic balance top-up');
+
+        foreach ([$grant->id, $debit->id, $topup['entry_id']] as $entryId) {
+            $this->assertSame('2026-03-15 10:00:00', CreditLedgerEntry::findOrFail($entryId)->created_at->toDateTimeString());
+        }
+
+        Carbon::setTestNow();
     }
 }
