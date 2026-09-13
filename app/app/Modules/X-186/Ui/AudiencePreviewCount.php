@@ -29,8 +29,7 @@ class AudiencePreviewCount extends Component
 
         $query = CampaignRun::where('business_id', $this->businessId)
             ->where('is_active', true)
-            ->where('is_suppressed', false)
-            ->whereNull('stopped_reason');
+            ->where('is_suppressed', false);
 
         return view('x-186::audience-preview-count', [
             'count' => (clone $query)->count(),
