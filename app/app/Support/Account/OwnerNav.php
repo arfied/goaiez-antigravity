@@ -409,6 +409,7 @@ final class OwnerNav
             // real query and renders it on every GET once mount() resolves the
             // tenant, so it owes a nav entry.
             OwnerNavItem::make('Areas you cover', 'x-10.territory-map', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Customer interests', 'x-131.interest-tags', OwnerNavItem::GROUP_MORE),
 
             // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
             // Architecture/OwnerNavTest fails the build on an owner screen with
@@ -430,6 +431,7 @@ final class OwnerNav
             // real query and renders it on every GET once mount() resolves the
             // tenant, so it owes a nav entry.
             OwnerNavItem::make('Posts planned for your week', 'x-184.content-week', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Content calendar', 'x-184.calendar', OwnerNavItem::GROUP_MORE),
 
             // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
             // Architecture/OwnerNavTest fails the build on an owner screen with
@@ -479,6 +481,7 @@ final class OwnerNav
             // real query and renders it on every GET once mount() resolves the
             // tenant, so it owes a nav entry.
             OwnerNavItem::make('Automations that ran', 'x-125.runs', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Automation errors', 'x-125.flow-error-dashboard', OwnerNavItem::GROUP_MORE),
 
             // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
             // Architecture/OwnerNavTest fails the build on an owner screen with
