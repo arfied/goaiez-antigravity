@@ -733,9 +733,9 @@ class X01Test extends TestCase
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $this->createContact->handle($biz->id, 'Search Person', '+15125550888', 'search@example.com');
-        
+
         $results = $this->search->handle($biz->id, '+15125550888');
-        
+
         $this->assertEquals(1, $results['results_count']);
         $this->assertEquals('+15125550888', $results['contacts'][0]['phone']);
     }
