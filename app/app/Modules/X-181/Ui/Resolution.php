@@ -7,7 +7,6 @@ namespace App\Modules\X181\Ui;
 use App\Modules\X181\Actions\QaTicketReopenAction;
 use App\Modules\X181\Models\QaTicket;
 use App\Support\Tenancy;
-use Exception;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
@@ -30,6 +29,7 @@ class Resolution extends Component
 
     public bool $isSample = false;
 
+    /** The panel is the house error surface, reachable only from a domain refusal this module does not yet raise; infrastructure faults propagate by design */
     public ?string $actionNotice = null;
 
     public function toggleSample(): void
@@ -39,12 +39,8 @@ class Resolution extends Component
 
     public function reopen(int $ticketId): void
     {
-        try {
-            $this->actionNotice = null;
-            app(QaTicketReopenAction::class)->handle($this->businessId, $ticketId);
-        } catch (Exception $e) {
-            $this->actionNotice = $e->getMessage();
-        }
+        $this->actionNotice = null;
+        app(QaTicketReopenAction::class)->handle($this->businessId, $ticketId);
     }
 
     public function render()

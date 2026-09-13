@@ -1,9 +1,8 @@
 <div>
-    <x-surface.sample-state module="services with prices" screen="daily_pricing_digest" />
     <livewire:x-124.chat-dock-every />
     
     <div class="max-w-3xl mx-auto px-4 py-8" wire:loading.class="opacity-50">
-        <h1 class="text-2xl font-semibold text-ink mb-2">Daily Pricing Digest</h1>
+        <h2 class="text-2xl font-semibold text-ink mb-2">Daily Pricing Digest</h2>
         
         @if($items->isEmpty())
             <p class="text-ink-2 mb-8">Every pricing question was answered</p>
@@ -35,7 +34,7 @@
                                    wire:model="prices.{{ $item->id }}"
                                    class="w-32 h-10 px-3 py-2 bg-paper border border-rule rounded-md focus:outline-none focus:ring-2 focus:ring-accent"
                                    placeholder="0.00">
-                            <button wire:click="confirm({{ $item->id }})" class="h-10 px-4 text-sm font-medium text-white bg-accent hover:bg-accent-hover rounded-md transition-colors whitespace-nowrap">
+                            <button wire:click="confirm({{ $item->id }})" class="h-10 px-4 text-sm font-medium text-paper bg-accent hover:bg-accent-hover rounded-md transition-colors whitespace-nowrap">
                                 Click to confirm
                             </button>
                         </div>

@@ -13,8 +13,10 @@ use App\Modules\X163\Models\CalloutFee;
 use App\Modules\X163\Models\LocationBook;
 use App\Modules\X163\Models\PriceBookItem;
 use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Your prices'])]
 class Pricebook extends Component
 {
     public float $calloutFeeDollars = 0.00;
