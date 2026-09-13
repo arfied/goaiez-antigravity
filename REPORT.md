@@ -20,3 +20,7 @@ GATE: `  tests 2646 · passed 2636 · FAILED 8 · errors 2 · result failed · r
 ```
 -rw-r--r-- 1 goaiez goaiez 9603 2026-09-13 18:16:30.224752159 -0500 .agents/supervisor/.gate-pb184.txt
 ```
+
+Classmap:
+`ls -l app/vendor/composer/autoload_classmap.php`:
+-rw-r--r-- 1 goaiez goaiez 1933178 Sep 13 14:34 app/vendor/composer/autoload_classmap.php
