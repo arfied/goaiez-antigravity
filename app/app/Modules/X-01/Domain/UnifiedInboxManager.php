@@ -14,7 +14,9 @@ use App\Modules\X01\Exceptions\LeadRatingOutOfRangeRefused;
 use App\Modules\X01\Exceptions\TakeoverNotLatchedRefused;
 use App\Modules\X01\Models\LeadScore;
 use App\Modules\X01\Models\TakeoverLatch;
-use App\Modules\X121\Models\Person;
+use App\Modules\X121\Actions\EntityReadAction;
+use App\Modules\X121\Actions\EntityWriteAction;
+use App\Modules\X121\Actions\PersonLookupAction;
 use App\Services\Conversations\ConversationThreads;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
@@ -38,19 +40,11 @@ final class UnifiedInboxManager
         return DB::transaction(function () use ($businessId, $channel, $identifier, $senderName, $body) {
             $isEmail = str_contains($identifier, '@');
 
-            // Find or create single Person
-            $person = Person::where('business_id', $businessId)
-                ->where(function ($query) use ($identifier, $isEmail) {
-                    if ($isEmail) {
-                        $query->where('email', $identifier);
-                    } else {
-                        $query->where('phone', $identifier);
-                    }
-                })->first();
+            $lookup = app(PersonLookupAction::class);
+            $personId = $isEmail ? $lookup->idForEmail($businessId, $identifier) : $lookup->idForPhone($businessId, $identifier);
 
-            if ($person === null) {
-                $person = Person::create([
-                    'business_id' => $businessId,
+            if ($personId === null) {
+                $personId = $lookup->create($businessId, [
                     'first_name' => $senderName,
                     'last_name' => '',
                     'email' => $isEmail ? $identifier : null,
@@ -59,24 +53,26 @@ final class UnifiedInboxManager
 
                 Event::dispatch(new ContactCreated(
                     businessId: $businessId,
-                    personId: $person->id,
+                    personId: $personId,
                     name: $senderName,
-                    phone: $person->phone,
-                    email: $person->email
+                    phone: ! $isEmail ? $identifier : null,
+                    email: $isEmail ? $identifier : null
                 ));
             } else {
                 // Merge identifier if missing
-                if ($isEmail && empty($person->email)) {
-                    $person->update(['email' => $identifier]);
-                } elseif (! $isEmail && empty($person->phone)) {
-                    $person->update(['phone' => $identifier]);
+                $person = app(EntityReadAction::class)->handle('people', $personId, $businessId);
+                $writer = app(EntityWriteAction::class);
+                if ($isEmail && empty($person['email'])) {
+                    $writer->handle('people', $personId, $businessId, ['email' => $identifier]);
+                } elseif (! $isEmail && empty($person['phone'])) {
+                    $writer->handle('people', $personId, $businessId, ['phone' => $identifier]);
                 }
             }
 
             // Find or create Conversation for this Person
-            $conversation = Tenancy::actingAs($businessId, function () use ($person, $channel) {
+            $conversation = Tenancy::actingAs($businessId, function () use ($personId, $channel) {
                 $convo = Conversation::firstOrCreate(
-                    ['person_id' => $person->id],
+                    ['person_id' => $personId],
                     ['channel' => $channel, 'status' => 'open']
                 );
 
@@ -112,7 +108,7 @@ final class UnifiedInboxManager
             }
 
             return [
-                'person_id' => $person->id,
+                'person_id' => $personId,
                 'conversation_id' => $conversation->id,
                 'channel' => $channel,
                 'body' => $body,
