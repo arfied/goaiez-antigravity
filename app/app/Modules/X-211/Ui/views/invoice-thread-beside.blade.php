@@ -42,7 +42,7 @@
                 </div>
                 <p class="text-sm text-ink-2">Due {{ $invoice->due_date->toDateString() }} · {{ number_format($invoice->balance_cents / 100, 2) }} owed of {{ number_format($invoice->total_cents / 100, 2) }}</p>
                 @if($customer)
-                    <p class="text-sm text-ink-2">{{ $customer->first_name }} {{ $customer->last_name }}</p>
+                    <p class="text-sm text-ink-2">{{ $customer['first_name'] ?? '' }} {{ $customer['last_name'] ?? '' }}</p>
                 @endif
                 <ul class="mt-3 space-y-1">
                     @foreach($lines as $line)
@@ -54,7 +54,7 @@
             <section class="border rounded p-4 shadow bg-white">
                 <h2>The thread</h2>
                 @if($messages->isEmpty())
-                    <x-ui.empty-state heading="No messages yet.">Nothing has been said with {{ $customer ? $customer->first_name : 'this customer' }} on any channel.</x-ui.empty-state>
+                    <x-ui.empty-state heading="No messages yet.">Nothing has been said with {{ $customer ? ($customer['first_name'] ?? '') : 'this customer' }} on any channel.</x-ui.empty-state>
                 @else
                     @if($threadTruncated)
                         <p class="text-sm text-ink-2">The 50 most recent messages are shown. Older messages in this conversation are not on this page.</p>

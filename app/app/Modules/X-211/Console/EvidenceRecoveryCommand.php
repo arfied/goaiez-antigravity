@@ -6,7 +6,7 @@ namespace App\Modules\X211\Console;
 
 use App\Models\User;
 use App\Modules\X121\Models\Person;
-use App\Modules\X198\Models\Payment;
+use App\Modules\X198\Actions\PaymentReadAction;
 use App\Modules\X199\Domain\InvoiceEngine;
 use App\Modules\X211\Domain\ArEngine;
 use App\Modules\X211\Domain\NoResolutionAttemptException;
@@ -95,7 +95,7 @@ final class EvidenceRecoveryCommand extends Command
 
         $data = [
             'business_id' => $businessId,
-            'payments_written' => Payment::where('business_id', $businessId)->count(),
+            'payments_written' => app(PaymentReadAction::class)->countForBusiness($businessId),
             'plan_id' => $plan->id,
             'installment_amount_cents' => $plan->installment_amount_cents,
             'reason' => 'card_expired',
