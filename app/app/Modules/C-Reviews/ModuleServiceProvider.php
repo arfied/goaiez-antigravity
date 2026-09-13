@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Modules\CReviews;
 
+use App\Modules\CReviews\Listeners\AskForCsatOnTicketResolved;
 use App\Modules\CReviews\Listeners\AskForReviewOnJobCompleted;
 use App\Modules\CReviews\Ui\LossAlerts;
 use App\Modules\CReviews\Ui\QaReport;
 use App\Modules\CReviews\Ui\ReviewsQaRequests;
 use App\Modules\CReviews\Ui\Tickets;
 use App\Modules\X171\Events\JobCompleted;
+use App\Modules\X181\Events\TicketResolved;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
@@ -28,6 +30,11 @@ final class ModuleServiceProvider extends ServiceProvider
         Event::listen(
             JobCompleted::class,
             AskForReviewOnJobCompleted::class
+        );
+
+        Event::listen(
+            TicketResolved::class,
+            AskForCsatOnTicketResolved::class
         );
 
         $this->loadMigrationsFrom(__DIR__.'/Database/migrations');
