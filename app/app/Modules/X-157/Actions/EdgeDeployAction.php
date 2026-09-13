@@ -7,7 +7,7 @@ namespace App\Modules\X157\Actions;
 use App\Models\Business;
 use App\Modules\X103\Actions\PageReadAction;
 use App\Modules\X103\Actions\PageVersionAction;
-use App\Modules\X108\Models\Appointment;
+use App\Modules\X108\Actions\AppointmentListAction;
 use App\Modules\X155\Actions\FormReadAction;
 use App\Modules\X157\Events\DeployCompleted;
 use App\Modules\X157\Events\DeployRolledBack;
@@ -112,19 +112,15 @@ final class EdgeDeployAction
             $business = Business::find($businessId);
             $address = is_array($business?->address) ? $business->address : null;
 
-            $appointments = Appointment::where('business_id', $businessId)
-                ->where('start_time', '>=', now())
-                ->orderBy('start_time', 'asc')
-                ->limit(20)
-                ->get();
+            $appointments = app(AppointmentListAction::class)->forBusiness($businessId);
             foreach ($appointments as $apt) {
-                if (trim((string) $apt->service_name) === '' || $apt->start_time === null || $apt->end_time === null) {
+                if (trim((string) $apt['service_name']) === '' || $apt['start_time'] === null || $apt['end_time'] === null) {
                     continue;
                 }
                 $events[] = [
-                    'name' => $apt->service_name,
-                    'startDate' => $apt->start_time->toIso8601String(),
-                    'endDate' => $apt->end_time->toIso8601String(),
+                    'name' => $apt['service_name'],
+                    'startDate' => $apt['start_time']->toIso8601String(),
+                    'endDate' => $apt['end_time']->toIso8601String(),
                 ];
             }
 
