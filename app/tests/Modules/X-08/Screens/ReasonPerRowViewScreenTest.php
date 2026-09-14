@@ -18,8 +18,20 @@ class ReasonPerRowViewScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-08.reason-per-row'))->assertOk();
+        $this->get(route('x-08.reason-per-row'))
+            ->assertOk()
+            ->assertSee('Reason Per Row')
+            ->assertSee('This screen is reason-per-row');
 
         Livewire::test(ReasonPerRowView::class)->assertOk();
+    }
+
+    public function test_403_for_other_roles(): void
+    {
+        $tech = User::factory()->create(['role' => UserRole::Staff]);
+        $this->actingAs($tech);
+
+        $this->get(route('x-08.reason-per-row'))->assertForbidden();
+        Livewire::test(ReasonPerRowView::class)->assertForbidden();
     }
 }
