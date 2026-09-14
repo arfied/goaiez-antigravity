@@ -22,8 +22,8 @@ class RiskListViewScreenTest extends TestCase
         Tenancy::set($biz->id);
 
         $this->get(route('x-08.risk-list'))
-             ->assertOk()
-             ->assertSee('No churn scores yet.');
+            ->assertOk()
+            ->assertSee('No churn scores yet.');
 
         ChurnScore::create([
             'business_id' => $biz->id,
@@ -31,13 +31,13 @@ class RiskListViewScreenTest extends TestCase
             'login_decay_days' => 5,
             'roi_open_rate_rising' => true,
             'risk_level' => 'High Risk',
-            'recommendation_note' => 'Follow up'
+            'recommendation_note' => 'Follow up',
         ]);
 
         $this->get(route('x-08.risk-list'))
-             ->assertOk()
-             ->assertSee('DISTINCT_TENANT_XYZ')
-             ->assertSee('High Risk');
+            ->assertOk()
+            ->assertSee('DISTINCT_TENANT_XYZ')
+            ->assertSee('High Risk');
 
         Livewire::test(RiskListView::class)->assertOk();
     }
