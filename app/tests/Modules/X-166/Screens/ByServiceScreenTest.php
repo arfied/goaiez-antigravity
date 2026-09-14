@@ -27,7 +27,7 @@ class ByServiceScreenTest extends TestCase
         // 2. Seed a JobCost
         JobCost::create([
             'business_id' => $biz->id,
-            'job_id' => 88884321, 
+            'job_id' => 88884321,
             'price_book_version' => 'v2.0',
             'tech_id' => 50,
             'service_type' => 'DistinctiveService42', // Distinctive field
