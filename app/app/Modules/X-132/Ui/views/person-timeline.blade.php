@@ -1,6 +1,12 @@
 <div>
-    <x-surface.sample-state module="identity resolution" screen="person_timeline" />
-    <div class="person-timeline-view p-4">
-        <h3 class="text-lg font-bold">Person Identity Evidence Timeline</h3>
-    </div>
+    <h2>Person timeline</h2>
+    @if($evidence->isEmpty())
+        <p>No evidence found.</p>
+    @else
+        <ul>
+            @foreach($evidence as $item)
+                <li>{{ $item->field_value }}</li>
+            @endforeach
+        </ul>
+    @endif
 </div>
