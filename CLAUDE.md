@@ -315,6 +315,16 @@ bytes the lane absorbed, not product (t420's X-163/X-165 STOP was exactly that
 shape — inherit, not clobber). The STOP for foreign-module paths applies to the
 merge-base..tip list, never to the stale last-merged-tip..tip list.
 
+⛔ **Production path (t422):** no `git -C` argument may name
+`/home/goaiez/public_html/goaiez-antigravity` except `rev-parse`, `reflog`,
+`log`, `status`, `diff`. Every write to production goes through the **deploy
+step only**, and the deploy step is preceded by `rev-parse` quoted in the
+ledger. If production's HEAD ever differs from the last deployed sha in the
+ledger, that is an **incident block first** and a deploy second. (Reflog
+2026-09-13 18:27:26: `checkout: moving from main to track/pricebook` in the
+production clone — a branch checkout, not a detached sha — then
+`pull --ff-only` to `8d87ad42`; that is the shape this rule forbids.)
+
 Procedure (the coder runs it, the supervisor reviews the merge commit):
 0. **First, the SUPERVISOR commits its own tracked notes** — `git add CLAUDE.md
    bin/supervise.sh && git commit -m "chore(supervisor): notes before merge"`
