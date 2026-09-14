@@ -509,6 +509,7 @@ final class OwnerNav
             OwnerNavItem::make('Daily pricing digest', 'x-163.daily-pricing-digest', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Margin by job', 'x-166.margin-by-job', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Churn risk list', 'x-08.risk-list', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Sorted risk rankings', 'x-08.sorted', OwnerNavItem::GROUP_MORE),
         ];
     }
 
