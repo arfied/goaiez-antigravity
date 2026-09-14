@@ -44,7 +44,7 @@
                         </tr>
                         @if(isset($expanded[$c->id]))
                             <tr>
-                                <td colspan="8" class="bg-gray-50 p-2">
+                                <td colspan="8" class="bg-surface p-2">
                                     <div class="flex space-x-4">
                                         <span>Labour: {{ $money[$c->id]['labor'] }}</span>
                                         <span>Materials: {{ $money[$c->id]['materials'] }}</span>
