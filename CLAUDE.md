@@ -305,6 +305,16 @@ Only Track 1 merges. Per-track files NEVER merge: `.agents/supervisor/**`,
 `CLAUDE.md`, `.claude/settings.json`, `bin/supervise.sh`,
 `.agents/rules/10-supervisor.md`, `app/phpunit.xml`, `.agents/state/**`.
 
+⭐ **Product baseline (t421, replaces "base = the lane's last merged tip"):** every
+main-merge brief measures and quotes
+`git merge-base origin/main <lane tip>` as the product base, then
+`git diff --name-status <that-base> <lane tip> -- app ':!app/phpunit.xml'`
+(base first, N123). A lane that took main since its last merge onto main has a
+**newer** merge-base; a diff from the *old* last-merged tip lists inherited
+bytes the lane absorbed, not product (t420's X-163/X-165 STOP was exactly that
+shape — inherit, not clobber). The STOP for foreign-module paths applies to the
+merge-base..tip list, never to the stale last-merged-tip..tip list.
+
 Procedure (the coder runs it, the supervisor reviews the merge commit):
 0. **First, the SUPERVISOR commits its own tracked notes** — `git add CLAUDE.md
    bin/supervise.sh && git commit -m "chore(supervisor): notes before merge"`
