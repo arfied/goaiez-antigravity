@@ -1,25 +1,16 @@
-# REPORT — wave 1 / track/ui — 2026-09-14T14:42:28-05:00
-STATUS    : brief item done
-COMMITS   : 
-c9e35a9cc29a1182717995dc229b48bef0a8dfe7
-7729ec5610f7b7410154e0b4e1f99c4af5e08c85
-a76ad646b22302fa5e23c7c37d27b4a104bd8700
-1cab5920a6fbc9ef36dc4c7ddacb3922d0e3e9f3
-MODULES   : X-08 DONE
+STATUS    : wave closed
+COMMITS   : 7ba3b065 test(Architecture): PB-185 SchemeToken pin · 79fef7f7 test(Architecture): PB-185 pins · 61e40c8d style: pint · e19d74ba feat(X-166): PB-185 margin-by-job into the owner shell · b8f11bc1 merge: origin/main into track/pricebook · 8d87ad42 docs: PB-183/184 close report classmap addendum · fc72a097 docs: PB-183/184 close report · 46b31732 merge: origin/main into track/pricebook
+MODULES   : X-166
 STAGES    : none moved
-TESTS     : app/tests/Modules/X-08/Screens/RiskListViewScreenTest.php  needle `public function test_` before 1 after 1, baseline + added = 2646
-GATE      :   tests None · passed None · FAILED 0 · errors None · result silent
--rw-r--r-- 1 goaiez goaiez 7736 2026-09-14 14:42:28.345257756 -0500 .agents/supervisor/.gate-ui105.txt
-DECIDED   : 
-UNRESOLVED: 
-REFUSED   : pkill is forbidden on this box
-DOCTOR    : STAGES   : integrity ? · boundary ? · contract ? · citation ? · schema ? · capability 372 · anchor ? · journey ?
-RAW       : 
-PROOF     : 
-.agents/state/BUILD-STATE.json
-.agents/state/JOURNAL.md
-CLAUDE.md
-app/phpunit.xml -> goaiez_antig_ui_test
-merge-base origin/main HEAD: 0126096b24d7278bfc936103972fe3348b3d4e68
-classmap:
--rw-r--r-- 1 goaiez goaiez 1933178 Sep 13 14:34 app/vendor/composer/autoload_classmap.php
+TESTS     : +0 −0
+PRODUCT   : MarginByJob.php · margin-by-job.blade.php · OwnerNav · pins · MarginByJobScreenTest
+REDS      :
+  .agents/supervisor/.pb185-redA.txt - result "failed"
+  .agents/supervisor/.pb185-redB.txt - result "failed"
+GATE      : tests 2646 · passed 2636 · FAILED 8 · errors 2 · result failed · rc 2
+            -rw-r--r-- 1 goaiez goaiez 9578 2026-09-13 19:32:16.489596369 -0500 .agents/supervisor/.gate-pb185.txt
+PROOF     : Restored paths after take-main: none.
+            Classmap: -rw-r--r-- 1 goaiez goaiez 1933178 Sep 13 14:34 app/vendor/composer/autoload_classmap.php
+DECIDED   : none
+UNRESOLVED: none
+REFUSED   : pkill is forbidden on this box.

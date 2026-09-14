@@ -305,6 +305,33 @@ Only Track 1 merges. Per-track files NEVER merge: `.agents/supervisor/**`,
 `CLAUDE.md`, `.claude/settings.json`, `bin/supervise.sh`,
 `.agents/rules/10-supervisor.md`, `app/phpunit.xml`, `.agents/state/**`.
 
+⭐ **Product baseline (t421, replaces "base = the lane's last merged tip"):** every
+main-merge brief measures and quotes
+`git merge-base origin/main <lane tip>` as the product base, then
+`git diff --name-status <that-base> <lane tip> -- app ':!app/phpunit.xml'`
+(base first, N123). A lane that took main since its last merge onto main has a
+**newer** merge-base; a diff from the *old* last-merged tip lists inherited
+bytes the lane absorbed, not product (t420's X-163/X-165 STOP was exactly that
+shape — inherit, not clobber). The STOP for foreign-module paths applies to the
+merge-base..tip list, never to the stale last-merged-tip..tip list.
+
+⛔ **Production path (t422):** no `git -C` argument may name
+`/home/goaiez/public_html/goaiez-antigravity` except `rev-parse`, `reflog`,
+`log`, `status`, `diff`. Every write to production goes through the **deploy
+step only**, and the deploy step is preceded by `rev-parse` quoted in the
+ledger. If production's HEAD ever differs from the last deployed sha in the
+ledger, that is an **incident block first** and a deploy second. (Reflog
+2026-09-13 18:27:26: `checkout: moving from main to track/pricebook` in the
+production clone — a branch checkout, not a detached sha — then
+`pull --ff-only` to `8d87ad42`; that is the shape this rule forbids.)
+
+⭐ **Deploy standing check (t423):** before `git pull --ff-only && composer deploy`,
+`git -C /home/goaiez/public_html/goaiez-antigravity symbolic-ref --short HEAD`
+must print `main`. A `reset --hard origin/main` can leave HEAD on a local
+lane branch that merely points at main's sha — right tree, wrong name; the next
+`pull --ff-only` then fast-forwards the lane again. Deploy path is
+`pull --ff-only` on `main`, or nothing. Never `reset --hard` on production.
+
 Procedure (the coder runs it, the supervisor reviews the merge commit):
 0. **First, the SUPERVISOR commits its own tracked notes** — `git add CLAUDE.md
    bin/supervise.sh && git commit -m "chore(supervisor): notes before merge"`
@@ -585,6 +612,10 @@ procedure is not harmless documentation, it is a second source of truth that out
 any reader who reaches it first* — and EOF is where readers land. When a section is revised in
 place, delete the original in the same commit; `grep -n '^## '` for duplicate headings is the check,
 and it is one command.
+
+⚠️ **NEVER KILL A LAUNCHER WRAPPER — THE ORPHAN WRITES UNTRACKED (2026-09-13).** Killing the `bash -c … timeout … agy` wrapper of runs 182/168 left the **agy children** alive and writing into two checkouts with no pidfile, no launcher and no waiter — the untracked-writer shape `bash bin/supervise.sh --census` exists to catch, and it was luck that what they wrote was the product wanted. **Rule: never kill a wrapper.** If a kill is unavoidable, kill the **agy** pid itself (`ps --ppid <wrapper>`), then run `--census` in that checkout and quote `none` before touching the mailbox. After any kill, treat the checkout as possibly still being written until the census says otherwise. Supervisor shells are not on `coder-bin`'s PATH, so a seat `kill` leaves no `/home/goaiez/tmp/kill-log.tsv` row — hand-write `ts · killer=supervisor · target pid · target cwd` in the ledger whenever you kill anything.
+
+⚠️ **EMPTY `AGY_EXIT=0` (11-byte log) VS CONCURRENT FIRST MINUTES — AND A COUNTER-EXAMPLE (2026-09-13).** Empties 183/169 and earlier 342/348 shared being launched while another agy on the box was in its first minutes. Counter-example: six launches at 08:06 within twelve seconds **all took**. Keep stagger ≥60s and the +90s check (seven `.mt*`/`.doctor-pre` or a growing gate file ⇒ took; another 11-byte exit ⇒ hold, do not launch a third). Record each launch's outcome next to what else was running; three more readings settle account vs timing.
 
 ⚠️ **A BORROWED MEASUREMENT MUST CARRY THE INSTRUMENT THAT TOOK IT; A NUMBER LAUNDERED THROUGH THE
 SUPERVISOR BECOMES A FALSE SECOND WITNESS (N111, 2026-09-07, found reviewing wave 127).** Wave 128's
