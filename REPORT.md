@@ -1,38 +1,25 @@
-## Merge result
-HEAD is not a merge — nothing to compare
-
-## Shells remaining
-shells remaining: 0
-
-## Grep counts
-
-
-## Gate line
-tests 2646 · passed 2635 · FAILED 9 · errors 2
-
-## Doctor first line
-goaiez doctor · build 20260829-0647
-
-## Mutation RED line
-Failed asserting that '<!DOCTYPE html>\n
-<html lang="en" class="antialiased dark">\n
-<head>\n
- <meta ... 
-</body>\n
-</html>\n
-' [UTF-8](length: 95316) contains "Unassigned Leads Queue" [ASCII](length: 22).
-
-UNRESOLVED:
-contract    X-186        — send.requested correctly emitted by multiple modules per R231, but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.
-    contract    X-190        — approval.requested correctly emitted by multiple modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.
-    contract    X-205        — approval.requested correctly emitted by multiple proposing modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.
-    contract    X-217        — send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.
-    contract    X-218        — send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.
-    tests       X-193        — column quiet_hours_start is missing from notification_classes and not named in the brief
-    tests       X-201        — column deadline_at is missing from disputes and not named in the brief
-    tests       C-Reviews    — ReviewRequested event lacks messageClass so the module cannot express the send class (marketing) without a legacy change
-    contract    C-Reviews    — send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.
-    capability  X-186        — no action enrols a person into a campaign
-    tests       X-172        — generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook
-    capability  C-Sms        — TrialEligibility: The journey tenant needs a confirmed Google listing for real credit grant
-    tests       X-01         — four legacy message tables outside the twelve nouns (outreach_messages, triage_conversations, inbound_messages, support_messages) — the G2-76 lint is right, main's schema is not migrated; the sixty lane proposes the fold
+# REPORT — wave 1 / track/ui — 2026-09-14T13:21:15-05:00
+STATUS    : brief item done
+COMMITS   : 
+c9e35a9cc29a1182717995dc229b48bef0a8dfe7
+7729ec5610f7b7410154e0b4e1f99c4af5e08c85
+a76ad646b22302fa5e23c7c37d27b4a104bd8700
+1cab5920a6fbc9ef36dc4c7ddacb3922d0e3e9f3
+MODULES   : X-08 DONE
+STAGES    : none moved
+TESTS     : app/tests/Modules/X-08/Screens/RiskListViewScreenTest.php  needle `public function test_` before 1 after 1, baseline + added = 2646
+GATE      :     tests       X-01         — four legacy message tables outside the twelve nouns (outreach_messages, triage_conversations, inbound_messages, support_messages) — the G2-76 lint is right, main's schema is not migrated; the sixty lane proposes the fold
+-rw-r--r-- 1 goaiez goaiez 7083 2026-09-14 13:21:15.811608985 -0500 .agents/supervisor/.gate-ui105.txt
+DECIDED   : 
+UNRESOLVED: 
+REFUSED   : none
+DOCTOR    : STAGES   : integrity ? · boundary ? · contract ? · citation ? · schema ? · capability 372 · anchor ? · journey ?
+RAW       : 
+PROOF     : 
+.agents/state/BUILD-STATE.json
+.agents/state/JOURNAL.md
+CLAUDE.md
+app/phpunit.xml -> goaiez_antig_ui_test
+merge-base origin/main HEAD: 0126096b24d7278bfc936103972fe3348b3d4e68
+classmap:
+-rw-r--r-- 1 goaiez goaiez 1933178 Sep 13 14:34 app/vendor/composer/autoload_classmap.php
