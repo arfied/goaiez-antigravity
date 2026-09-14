@@ -6,6 +6,7 @@ namespace Tests\Modules\X166\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X166\Models\JobCost;
 use App\Modules\X166\Ui\MarginByJob;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -24,7 +25,7 @@ class MarginByJobScreenTest extends TestCase
             ->assertSee('No costed jobs yet. A job is costed when it completes.');
 
         // 2. Seed a JobCost
-        \App\Modules\X166\Models\JobCost::create([
+        JobCost::create([
             'business_id' => $biz->id,
             'job_id' => 99991234, // Distinctive field
             'price_book_version' => 'v1.4',

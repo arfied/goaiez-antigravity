@@ -7,8 +7,8 @@ namespace App\Modules\X166\Ui;
 use App\Enums\UserRole;
 use App\Modules\X166\Models\JobCost;
 use App\Support\Tenancy;
-use Livewire\Attributes\Locked;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 #[Layout('components.account.layout', ['heading' => 'Margin by job'])]
