@@ -6,7 +6,9 @@ namespace Tests\Modules\X08\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X08\Models\ChurnScore;
 use App\Modules\X08\Ui\SortedView;
+use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -16,9 +18,38 @@ class SortedViewScreenTest extends TestCase
     {
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
-        $this->actingAs($owner);
 
-        $this->get(route('x-08.sorted'))->assertOk();
+        $otherBiz = $this->provisionTenant();
+        Tenancy::set($otherBiz->id);
+        ChurnScore::create([
+            'business_id' => $otherBiz->id,
+            'tenant_identifier' => 'OTHER_TENANT_XYZ',
+            'login_decay_days' => 5,
+            'roi_open_rate_rising' => true,
+            'risk_level' => 'Other Risk',
+            'recommendation_note' => 'Other note',
+        ]);
+
+        $this->actingAs($owner);
+        Tenancy::set($biz->id);
+
+        ChurnScore::create([
+            'business_id' => $biz->id,
+            'tenant_identifier' => 'MY_TENANT_ABC',
+            'login_decay_days' => 5,
+            'roi_open_rate_rising' => true,
+            'risk_level' => 'My High Risk',
+            'recommendation_note' => 'My note',
+        ]);
+
+        $this->get(route('x-08.sorted'))
+            ->assertOk()
+            ->assertSee('Sorted Risk Rankings')
+            ->assertSee('Identifier:')
+            ->assertSee('Risk Level:')
+            ->assertSee('MY_TENANT_ABC')
+            ->assertSee('My High Risk')
+            ->assertDontSee('OTHER_TENANT_XYZ');
 
         Livewire::test(SortedView::class)->assertOk();
     }

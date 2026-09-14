@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-13T14:40:38",
+ "updated": "2026-09-05T17:11:31",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -849,9 +849,9 @@
    "unresolved": [
     {
      "module": "X-172",
-     "stage": "route",
-     "why": "x-172.customerfacing-portal/{token} is generated behind web, auth, tenant.role (X-172/routes.generated.php:8), so a customer holding a portal token and no account cannot open the portal, and no production path issues a portal link; waiting on Track 1 surfaces:generate to mount a token-credentialed customer route (TRACK 1 ACTION o)",
-     "at": "2026-09-12T17:21:49"
+     "stage": "tests",
+     "why": "generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook",
+     "at": "2026-09-05T08:35:23"
     }
    ]
   },
@@ -1335,6 +1335,12 @@
    "at": "2026-09-04T22:41:56"
   },
   {
+   "module": "X-172",
+   "stage": "tests",
+   "why": "generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook",
+   "at": "2026-09-05T08:35:23"
+  },
+  {
    "module": "C-Sms",
    "stage": "capability",
    "why": "TrialEligibility: The journey tenant needs a confirmed Google listing for real credit grant",
@@ -1345,12 +1351,6 @@
    "stage": "tests",
    "why": "four legacy message tables outside the twelve nouns (outreach_messages, triage_conversations, inbound_messages, support_messages) \u2014 the G2-76 lint is right, main's schema is not migrated; the sixty lane proposes the fold",
    "at": "2026-09-05T17:11:31"
-  },
-  {
-   "module": "X-172",
-   "stage": "route",
-   "why": "x-172.customerfacing-portal/{token} is generated behind web, auth, tenant.role (X-172/routes.generated.php:8), so a customer holding a portal token and no account cannot open the portal, and no production path issues a portal link; waiting on Track 1 surfaces:generate to mount a token-credentialed customer route (TRACK 1 ACTION o)",
-   "at": "2026-09-12T17:21:49"
   }
  ],
  "decisions": [
@@ -1425,72 +1425,6 @@
    "chose": "a duplicate ARB subscription (E00012) is reused, never re-created; the existing id comes from the vendor (run 97, R245)",
    "at": "2026-09-05T16:22:13",
    "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "addItem() confirms a new non-sample price only when PriceConfirmAction::confirmable() admits it; a price at or below zero is written unconfirmed with no confirmed_at and flagged Needs a price",
-   "at": "2026-09-11T11:21:52",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "a callout fee is set only when CalloutFee::isSet() admits it (above zero); lookupCallout() refuses any other row with NO_FACT, and every ConfirmationScreen callout write names both columns so neither inherits a migration default",
-   "at": "2026-09-11T14:11:45",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "Pricebook's callout deduction property is calloutFeeDeducted, the name pricebook.blade.php and updatedCalloutFeeDeducted() bind, so ticking the box saves the choice and a stored deduction loads ticked",
-   "at": "2026-09-11T14:34:54",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "a refused price row keeps its Confirm clickable on Pricebook and ConfirmationScreen; the server refusal is the only guard, and the Needs a price flag clears only when a confirm succeeds or the row is deleted",
-   "at": "2026-09-11T15:05:03",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "ConfirmationScreen::updatePrice and DailyPricingDigest::updatePrice are private; a price reaches those screens' writes only through confirm(), so a browser call cannot rewrite a confirmed price",
-   "at": "2026-09-11T15:33:05",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-82",
-   "chose": "RateRegistryView converts a typed amount to cents with (int) round((float) $amount * 100), X-163's shape, so a typed 19.99 is stored as 1999 cents and never truncated to 1998",
-   "at": "2026-09-11T15:52:58",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "QuotablePriceAction gives another module a price only from a confirmed, non-sample row that PriceConfirmAction::confirmable() accepts: options() lists those rows and resolve() returns amount and service_name, or refuses with NO_FACT, SAMPLE_STATE_REFUSED, UNCONFIRMED or FILL_ME; it is the seam X-165 prices a plan through",
-   "at": "2026-09-12T02:10:54",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-165",
-   "chose": "a plan's price comes only from X-163's QuotablePriceAction: Plans lists options(), and proposePlan() writes a plan only when resolve() returns an amount, otherwise it shows 'Choose a confirmed price from your pricebook.' and writes nothing; the typed price box is gone, so X-165 authors no price (N-165-01)",
-   "at": "2026-09-12T16:52:34",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "PB-179: the pricebook screen renders in the owner shell; banner gone; nav entry Your prices; proven by real GET on a real row (Track 1 ruling on action n, 2026-09-13)",
-   "at": "2026-09-13T08:13:11",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "PB-181: the confirmation screen renders in the owner shell; banner gone; nav entry Prices to confirm; proven by real GET on a real row (Track 1 ruling on action n)",
-   "at": "2026-09-13T12:26:43",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "PB-182: daily-pricing-digest is an owner screen; layout, pins, and screen test applied",
-   "at": "2026-09-13T14:40:38",
-   "ruling": "R245"
   }
  ],
  "notes": [
@@ -1529,15 +1463,6 @@
   {
    "at": "2026-09-06T23:16:43",
    "note": "J8 restore drill: JourneyHarness:814 names its scratch db goaiez_antig_drill_<pid> and :908 force-drops it; the supervisor's wave-119 gate errored 42501 permission denied to terminate process where the coder's gate on the identical tree did not; drill dbs on the box at 2026-09-06 23:10: UNRESOLVED; reproduced in wave 120: no"
-  }
- ],
- "resolved": [
-  {
-   "module": "X-172",
-   "stage": "tests",
-   "was": "generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook",
-   "why": "discharged: the generator fixture hook exists (SurfacesGenerateCommand reads tests/Modules/X-172/Screens/Fixtures.php), Fixtures::token() mints a real token through PortalLinkAction, and CustomerfacingPortalScreenTest GETs x-172.customerfacing-portal with it and passes in pb176-gate-1.log",
-   "at": "2026-09-12T17:21:32"
   }
  ]
 }
