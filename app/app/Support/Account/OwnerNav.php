@@ -513,6 +513,7 @@ final class OwnerNav
             OwnerNavItem::make('Churn risk list', 'x-08.risk-list', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Sorted risk rankings', 'x-08.sorted', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Reason per row', 'x-08.reason-per-row', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Person timeline', 'x-132.person-timeline', OwnerNavItem::GROUP_MORE),
         ];
     }
 
