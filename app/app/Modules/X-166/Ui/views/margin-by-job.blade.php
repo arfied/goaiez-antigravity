@@ -1,5 +1,4 @@
 <div>
-    <x-surface.sample-state module="actual vs expected per job" screen="margin_by_job" />
     <div class="margin-job-view p-4">
         <h2>Margin by job</h2>
         <p>Expected comes from the pricebook; actual comes from the field.</p>
@@ -45,7 +44,7 @@
                         </tr>
                         @if(isset($expanded[$c->id]))
                             <tr>
-                                <td colspan="8" class="bg-gray-50 p-2">
+                                <td colspan="8" class="bg-surface p-2">
                                     <div class="flex space-x-4">
                                         <span>Labour: {{ $money[$c->id]['labor'] }}</span>
                                         <span>Materials: {{ $money[$c->id]['materials'] }}</span>
