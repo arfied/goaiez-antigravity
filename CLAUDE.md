@@ -325,6 +325,13 @@ ledger, that is an **incident block first** and a deploy second. (Reflog
 production clone — a branch checkout, not a detached sha — then
 `pull --ff-only` to `8d87ad42`; that is the shape this rule forbids.)
 
+⭐ **Deploy standing check (t423):** before `git pull --ff-only && composer deploy`,
+`git -C /home/goaiez/public_html/goaiez-antigravity symbolic-ref --short HEAD`
+must print `main`. A `reset --hard origin/main` can leave HEAD on a local
+lane branch that merely points at main's sha — right tree, wrong name; the next
+`pull --ff-only` then fast-forwards the lane again. Deploy path is
+`pull --ff-only` on `main`, or nothing. Never `reset --hard` on production.
+
 Procedure (the coder runs it, the supervisor reviews the merge commit):
 0. **First, the SUPERVISOR commits its own tracked notes** — `git add CLAUDE.md
    bin/supervise.sh && git commit -m "chore(supervisor): notes before merge"`
