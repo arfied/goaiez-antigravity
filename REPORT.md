@@ -1,26 +1,16 @@
-# PB-183 / PB-184
-
-STATUS: close
-
-1. Took main (`git merge --no-ff --no-commit origin/main`) and restored paths according to the rule.
-2. PB-183 (tip `fbb53f29`): Artefacts generated include `.agents/supervisor/.gate-pb183.txt`, `.pb183-redA.txt`, and `.pb183-redB.txt`.
-3. PB-184 (tip `e034ac0d`): Includes commits `2db24b64` (merge), `da2e54f7` (feat), and `e034ac0d` (pins). Artefacts generated include `.gate-pb184.txt`, `.pb184-redA.txt`, and `.pb184-redB.txt`.
-4. the test already had the row assertion after the real GET; PB-183's mutation missed the query (88 B passed); PB-184 pointed the Members query at a second provisioned tenant id and reddened — first-mutation-missed-the-query, not a missing assertion.
-
-PROOF:
-.agents/rules/10-supervisor.md
-.agents/state/BUILD-STATE.json
-.agents/state/JOURNAL.md
-.agents/supervisor/launch-coder.sh
-CLAUDE.md
-app/phpunit.xml
-bin/supervise.sh
-
-GATE: `  tests 2646 · passed 2636 · FAILED 8 · errors 2 · result failed · rc 2`
-```
--rw-r--r-- 1 goaiez goaiez 9603 2026-09-13 18:16:30.224752159 -0500 .agents/supervisor/.gate-pb184.txt
-```
-
-Classmap:
-`ls -l app/vendor/composer/autoload_classmap.php`:
--rw-r--r-- 1 goaiez goaiez 1933178 Sep 13 14:34 app/vendor/composer/autoload_classmap.php
+STATUS    : wave closed
+COMMITS   : 7ba3b065 test(Architecture): PB-185 SchemeToken pin · 79fef7f7 test(Architecture): PB-185 pins · 61e40c8d style: pint · e19d74ba feat(X-166): PB-185 margin-by-job into the owner shell · b8f11bc1 merge: origin/main into track/pricebook · 8d87ad42 docs: PB-183/184 close report classmap addendum · fc72a097 docs: PB-183/184 close report · 46b31732 merge: origin/main into track/pricebook
+MODULES   : X-166
+STAGES    : none moved
+TESTS     : +0 −0
+PRODUCT   : MarginByJob.php · margin-by-job.blade.php · OwnerNav · pins · MarginByJobScreenTest
+REDS      :
+  .agents/supervisor/.pb185-redA.txt - result "failed"
+  .agents/supervisor/.pb185-redB.txt - result "failed"
+GATE      : tests 2646 · passed 2636 · FAILED 8 · errors 2 · result failed · rc 2
+            -rw-r--r-- 1 goaiez goaiez 9578 2026-09-13 19:32:16.489596369 -0500 .agents/supervisor/.gate-pb185.txt
+PROOF     : Restored paths after take-main: none.
+            Classmap: -rw-r--r-- 1 goaiez goaiez 1933178 Sep 13 14:34 app/vendor/composer/autoload_classmap.php
+DECIDED   : none
+UNRESOLVED: none
+REFUSED   : pkill is forbidden on this box.
