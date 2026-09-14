@@ -1,4 +1,4 @@
-# REPORT — wave 1 / track/ui — 2026-09-14T13:21:15-05:00
+# REPORT — wave 1 / track/ui — 2026-09-14T13:25:33-05:00
 STATUS    : brief item done
 COMMITS   : 
 c9e35a9cc29a1182717995dc229b48bef0a8dfe7
@@ -8,11 +8,11 @@ a76ad646b22302fa5e23c7c37d27b4a104bd8700
 MODULES   : X-08 DONE
 STAGES    : none moved
 TESTS     : app/tests/Modules/X-08/Screens/RiskListViewScreenTest.php  needle `public function test_` before 1 after 1, baseline + added = 2646
-GATE      :     tests       X-01         — four legacy message tables outside the twelve nouns (outreach_messages, triage_conversations, inbound_messages, support_messages) — the G2-76 lint is right, main's schema is not migrated; the sixty lane proposes the fold
--rw-r--r-- 1 goaiez goaiez 7083 2026-09-14 13:21:15.811608985 -0500 .agents/supervisor/.gate-ui105.txt
+GATE      :   tests 2646 · passed 2635 · FAILED 9 · errors 2 · result failed
+-rw-r--r-- 1 goaiez goaiez 9208 2026-09-14 13:25:33.279603355 -0500 .agents/supervisor/.gate-ui105.txt
 DECIDED   : 
 UNRESOLVED: 
-REFUSED   : none
+REFUSED   : pkill is forbidden on this box
 DOCTOR    : STAGES   : integrity ? · boundary ? · contract ? · citation ? · schema ? · capability 372 · anchor ? · journey ?
 RAW       : 
 PROOF     : 
