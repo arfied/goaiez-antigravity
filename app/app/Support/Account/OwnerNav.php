@@ -507,6 +507,7 @@ final class OwnerNav
             OwnerNavItem::make('Your members', 'x-165.members', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Your plans', 'x-165.plans', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Daily pricing digest', 'x-163.daily-pricing-digest', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Margin by job', 'x-166.margin-by-job', OwnerNavItem::GROUP_MORE),
         ];
     }
 

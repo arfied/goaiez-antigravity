@@ -1,18 +1,16 @@
 STATUS    : wave closed
-COMMITS   : 89a415ad merge · 90696e29 feat · 5b2115e5 pins · c0cccdba pint · 904d5a51 merge: origin/main into track/ui
-MODULES   : X-10
+COMMITS   : 7ba3b065 test(Architecture): PB-185 SchemeToken pin · 79fef7f7 test(Architecture): PB-185 pins · 61e40c8d style: pint · e19d74ba feat(X-166): PB-185 margin-by-job into the owner shell · b8f11bc1 merge: origin/main into track/pricebook · 8d87ad42 docs: PB-183/184 close report classmap addendum · fc72a097 docs: PB-183/184 close report · 46b31732 merge: origin/main into track/pricebook
+MODULES   : X-166
 STAGES    : none moved
 TESTS     : +0 −0
-PRODUCT   : RoutingRules.php · routing-rules.blade.php · OwnerNav · pins · RoutingRulesScreenTest
-REDS      : 
-  .agents/supervisor/.ui103-redA.txt (821 bytes) - result "failed" - test: Tests\Modules\X10\Screens\RoutingRulesScreenTest::test_red_a_second_tenant_missing_row
-  .agents/supervisor/.ui103-redB.txt (807 bytes) - result "failed" - test: Tests\Modules\X10\Screens\RoutingRulesScreenTest::test_red_b_a_label
-GATE      : tests 2644 · passed 2633 · FAILED 9 · errors 2 · result failed
-            -rw-r--r-- 1 goaiez goaiez 9679 2026-09-13 17:01:08.951696518 -0500 .agents/supervisor/.gate-ui103.txt
-PROOF     : Restored paths after take-main:
-            .agents/state/BUILD-STATE.json
-            .agents/state/JOURNAL.md
-            CLAUDE.md
+PRODUCT   : MarginByJob.php · margin-by-job.blade.php · OwnerNav · pins · MarginByJobScreenTest
+REDS      :
+  .agents/supervisor/.pb185-redA.txt - result "failed"
+  .agents/supervisor/.pb185-redB.txt - result "failed"
+GATE      : tests 2646 · passed 2636 · FAILED 8 · errors 2 · result failed · rc 2
+            -rw-r--r-- 1 goaiez goaiez 9578 2026-09-13 19:32:16.489596369 -0500 .agents/supervisor/.gate-pb185.txt
+PROOF     : Restored paths after take-main: none.
+            Classmap: -rw-r--r-- 1 goaiez goaiez 1933178 Sep 13 14:34 app/vendor/composer/autoload_classmap.php
 DECIDED   : none
 UNRESOLVED: none
-REFUSED   : none
+REFUSED   : pkill is forbidden on this box.
