@@ -6,6 +6,8 @@ namespace Tests\Modules\X167\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X167\Models\StockItem;
+use App\Modules\X167\Models\StockLocation;
 use App\Modules\X167\Ui\StockByVan;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -18,7 +20,34 @@ class StockByVanScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-167.stock-by-van'))->assertOk();
+        // Empty state
+        $this->get(route('x-167.stock-by-van'))
+            ->assertOk()
+            ->assertSeeText('No stock yet');
+
+        $owner2 = User::factory()->create(['role' => UserRole::Owner]);
+        $biz2 = $this->provisionTenant(['owner_user_id' => $owner2->id]);
+
+        // Seed distinctive StockItem/StockLocation
+        $loc = StockLocation::create([
+            'business_id' => $biz2->id,
+            'name' => 'Distinctive Van 999',
+        ]);
+        
+        StockItem::create([
+            'business_id' => $biz2->id,
+            'location_id' => $loc->id,
+            'sku' => 'DISTINCT-123',
+            'name' => 'Distinctive Widget',
+            'quantity' => 10,
+            'reorder_point' => 5,
+            'unit' => 'ea',
+        ]);
+
+        $this->get(route('x-167.stock-by-van'))
+            ->assertOk()
+            ->assertSeeText('Distinctive Van 999')
+            ->assertSeeText('Distinctive Widget');
 
         Livewire::test(StockByVan::class)->assertOk();
     }
