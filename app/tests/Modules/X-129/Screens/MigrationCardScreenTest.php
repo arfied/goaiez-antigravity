@@ -37,7 +37,7 @@ class MigrationCardScreenTest extends TestCase
             'source_url' => '/old-distinctive-4483',
             'destination_url' => '/new-distinctive-4483',
             'status_code' => 301,
-            'is_verified' => true
+            'is_verified' => true,
         ]);
         Tenancy::forget();
 
