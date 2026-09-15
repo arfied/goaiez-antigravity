@@ -1,6 +1,5 @@
 <div>
-    <x-surface.sample-state module="time tracking" screen="own_hours" />
-    <h1>Own Hours</h1>
+    <h2>Your hours</h2>
 
     @if($timesheets->isEmpty())
         <x-ui.empty-state>No hours yet. Your hours start when you arrive on site at a job.</x-ui.empty-state>

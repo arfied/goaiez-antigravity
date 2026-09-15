@@ -39,8 +39,9 @@ test('every <x-surface.sample-state> names a real module', function () {
     }
 
     // 3. partition into legal / illegal / unparseable
-    expect($total)->toBe(189);
+    expect($total)->toBe(188);
     expect($unparseable)->toBe(0);
-    expect($illegal)->toBe(164, '219 call sites use a prose description instead of a real module ID (e.g., \'planned in ⭐⭐⭐ **IT IS THE WIZARD...\'). A red means the number moved: up when the generator emits another, down when Track 1 repairs them, and "lower the number and record it" is the honest response to the second. The limit of what was measured: these are call sites in app/app/Modules/**/*.blade.php; no blade has been mapped to a route.');
+    expect($legal)->toBe(25);
+    expect($illegal)->toBe(163, '219 call sites use a prose description instead of a real module ID (e.g., \'planned in ⭐⭐⭐ **IT IS THE WIZARD...\'). A red means the number moved: up when the generator emits another, down when Track 1 repairs them, and "lower the number and record it" is the honest response to the second. The limit of what was measured: these are call sites in app/app/Modules/**/*.blade.php; no blade has been mapped to a route.');
     expect($legal + $illegal + $unparseable)->toBe($total);
 });
