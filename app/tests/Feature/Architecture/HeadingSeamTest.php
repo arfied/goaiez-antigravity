@@ -180,8 +180,8 @@ test('owner layout heading seam contract', function () {
         }
     }
 
-    expect($total)->toBe(103, 'If it went UP, a new module component uses the owner layout. If it went DOWN, a component dropped the layout or was deleted.');
-    expect($seam)->toBe(102, 'If it went UP, a component added the heading key to its layout. If it went DOWN, a component removed it or was deleted.');
+    expect($total)->toBe(104, 'If it went UP, a new module component uses the owner layout. If it went DOWN, a component dropped the layout or was deleted.');
+    expect($seam)->toBe(103, 'If it went UP, a component added the heading key to its layout. If it went DOWN, a component removed it or was deleted.');
 
     expect($own)->toBe(1, 'If it went UP, a component uses the layout without the heading key. If it went DOWN, a component added the heading key or was deleted.');
     expect($unresolvedView)->toBe(0, 'If it went UP, a component uses a first view literal that cannot be resolved. Its known edge: a component with two view( literals lands on the first. If it went DOWN, an unresolved view literal was fixed.');
