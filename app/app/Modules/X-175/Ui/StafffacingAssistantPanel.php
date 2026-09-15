@@ -8,9 +8,11 @@ use App\Enums\UserRole;
 use App\Modules\X175\Actions\FieldAskAction;
 use App\Modules\X175\Models\FieldSuggestion;
 use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Field assistant'])]
 class StafffacingAssistantPanel extends Component
 {
     #[Locked]
