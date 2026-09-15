@@ -525,6 +525,7 @@ final class OwnerNav
             OwnerNavItem::make('Your hours', 'x-168.own-hours', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Referral slots', 'x-190.slot-board', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Your rates', 'x-82.rate-registry', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Field assistant', 'x-175.stafffacing-assistant-panel', OwnerNavItem::GROUP_MORE),
         ];
     }
 

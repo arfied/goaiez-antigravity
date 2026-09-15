@@ -1,5 +1,4 @@
 <div>
-    <x-surface.sample-state module="the same C-Agent, third deployment, pointed at the tech: objection RAG" screen="stafffacing_assistant_panel" />
     <div class="assistant-panel-view p-4">
         <h2>Field assistant</h2>
         <p>It listens, retrieves and suggests; it never speaks to the customer.</p>
