@@ -6,6 +6,7 @@ namespace App\Modules\X102\Ui;
 
 use App\Enums\UserRole;
 use App\Modules\X102\Models\ChatLead;
+use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -23,8 +24,8 @@ class OfflineFormInbox extends Component
 
     public function boot(): void
     {
-        if ($this->businessId === 0 && \App\Support\Tenancy::id() !== null) {
-            $this->businessId = \App\Support\Tenancy::id();
+        if ($this->businessId === 0 && Tenancy::id() !== null) {
+            $this->businessId = Tenancy::id();
         }
     }
 
