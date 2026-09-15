@@ -11,12 +11,14 @@ use App\Modules\X177\Models\GbpStateLog;
 use App\Support\Tenancy;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 /**
  * (R245) Suspension-risk events screen reads the current tenant under RLS; a cross-tenant fleet view needs a platform-scoped read that does not exist (same shape as the businesses-policy refusal); listed UNRESOLVED, not faked.
  */
+#[Layout('components.account.layout', ['heading' => 'Suspension risks'])]
 class SuspensionriskEventsFleetwide extends Component
 {
     #[Locked]
