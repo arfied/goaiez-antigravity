@@ -515,6 +515,7 @@ final class OwnerNav
             OwnerNavItem::make('Sorted risk rankings', 'x-08.sorted', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Reason per row', 'x-08.reason-per-row', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Person timeline', 'x-132.person-timeline', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Stock by van', 'x-167.stock-by-van', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Resolution rate & confidence', 'x-132.resolution-rate-confidence', OwnerNavItem::GROUP_MORE),
         ];
     }
