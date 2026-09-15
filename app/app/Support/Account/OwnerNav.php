@@ -544,6 +544,7 @@ final class OwnerNav
             OwnerNavItem::make('Forms', 'x-155.forms', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Plugin sites', 'x-104.plugin-settings-page', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Migration status', 'x-129.migration-card', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Edge deployments', 'x-157.edge-status-per', OwnerNavItem::GROUP_MORE),
         ];
     }
 
