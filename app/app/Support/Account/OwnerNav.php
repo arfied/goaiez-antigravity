@@ -551,6 +551,7 @@ final class OwnerNav
             OwnerNavItem::make('Parked numbers', 'x-188.park-list', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Change history', 'x-121.entity-history-viewer', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Restore tests', 'x-203.dr-dashboard', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Rage clicks', 'x-102.rageclick-rate', OwnerNavItem::GROUP_MORE),
         ];
     }
 
