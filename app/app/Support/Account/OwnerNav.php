@@ -558,6 +558,7 @@ final class OwnerNav
             OwnerNavItem::make('Restore test log', 'x-203.restorationtest-log', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Push health', 'x-207.perplatform-delivery-health', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Agent turns', 'c-agent.thread', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Push prompts', 'x-207.one-confirmonce-toggle', OwnerNavItem::GROUP_MORE),
         ];
     }
 
