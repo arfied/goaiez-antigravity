@@ -36,6 +36,7 @@ class DemoFillCommandTest extends TestCase
         $this->assertDatabaseHas('field_suggestions', ['business_id' => $biz->id, 'query_text' => 'Sugg 0', 'is_sample' => true]);
         $this->assertDatabaseHas('rates', ['business_id' => $biz->id, 'rate_code' => 'RATE_0', 'is_sample' => true]);
         $this->assertDatabaseHas('call_tokens', ['business_id' => $biz->id, 'whisper_text' => 'demo·Call from website direct']);
+        $this->assertDatabaseHas('dispatch_assignments', ['business_id' => $biz->id, 'job_id' => 100, 'is_sample' => true]);
         $c1 = FormDefinition::count();
         $this->artisan('demo:fill', ['email' => $owner->email])->assertExitCode(0);
 
@@ -50,6 +51,7 @@ class DemoFillCommandTest extends TestCase
 
         $this->assertDatabaseHas('form_definitions', ['id' => $unmarked->id]);
         $this->assertDatabaseMissing('form_definitions', ['form_name' => 'demo·Form 1']);
+        $this->assertDatabaseMissing('dispatch_assignments', ['business_id' => $biz->id, 'job_id' => 100]);
     }
 
     public function test_the_converted_screens_show_the_demo_rows(): void
@@ -64,9 +66,13 @@ class DemoFillCommandTest extends TestCase
 
         $this->get(route('x-155.forms'))->assertOk()->assertSee('demo·');
         $this->get(route('x-155.submissions-thread'))->assertOk()->assertSee('demo·');
-        $this->get(route('x-163.pricebook'))->assertOk()->assertSee('Sample');
-        $this->get(route('x-165.plans'))->assertOk()->assertSee('Sample');
-        $this->get(route('x-167.stock-by-van'))->assertOk()->assertSee('Sample');
-        $this->get(route('x-168.timesheets'))->assertOk()->assertSee('Sample');
+        $this->get(route('x-163.pricebook'))->assertOk()->assertSee('Item 0');
+        $this->get(route('x-165.plans'))->assertOk()->assertSee('Plan A');
+        $this->get(route('x-166.margin-by-job'))->assertOk()->assertSee('80.00');
+        $this->get(route('x-167.stock-by-van'))->assertOk()->assertSee('demo·Van 1');
+        $this->get(route('x-168.timesheets'))->assertOk()->assertSee(now()->startOfWeek()->format('Y-m-d'));
+        $this->get(route('x-170.commissions'))->assertOk()->assertSee('pending_cash_collection');
+        $this->get(route('x-162.dispatch-board'))->assertOk()->assertSee('Job #100');
+        // x-188 has no demo rows: number_pool carries neither a sample flag nor free text (PB-205b).
     }
 }
