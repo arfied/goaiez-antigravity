@@ -6,7 +6,10 @@ namespace Tests\Modules\X168\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X168\Actions\TimesheetComputeAction;
 use App\Modules\X168\Ui\ApprovalsView;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,7 +21,53 @@ class ApprovalsViewScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-168.approvals'))->assertOk();
+        $this->get(route('x-168.approvals'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
+            ->assertDontSee('this screen is planned in')
+            ->assertSee('Nothing waiting for approval.');
+
+        // seed distinctive timesheet/entry
+        $owner->name = 'Alice Tech';
+        $owner->save();
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $now = Carbon::parse('2024-01-01 08:00:00');
+        app(TimesheetComputeAction::class)->recordJobWindow(
+            businessId: $biz->id,
+            personId: $owner->id,
+            jobId: 7701,
+            stateWindow: 'en_route',
+            startedAt: $now,
+            endedAt: $now->copy()->addMinutes(125),
+            locationLat: 37.7749,
+            locationLng: -122.4194
+        );
+
+        // second tenant isolation
+        $biz2 = $this->provisionTenant();
+        $owner2 = User::factory()->create(['role' => UserRole::Owner]);
+        $tech2 = User::factory()->create(['role' => UserRole::Staff, 'name' => 'Bob Tech']);
+        DB::statement("SET app.business_id = '{$biz2->id}'");
+        app(TimesheetComputeAction::class)->recordJobWindow(
+            businessId: $biz2->id,
+            personId: $tech2->id,
+            jobId: 9999,
+            stateWindow: 'en_route',
+            startedAt: $now,
+            endedAt: $now->copy()->addMinutes(60),
+            locationLat: 0,
+            locationLng: 0
+        );
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        // GET asserts
+        $response = $this->get(route('x-168.approvals'));
+        $response->assertOk()
+            ->assertSee('Alice Tech')
+            ->assertDontSee('Bob Tech')
+            ->assertDontSee('Nothing waiting for approval.');
 
         Livewire::test(ApprovalsView::class)->assertOk();
     }

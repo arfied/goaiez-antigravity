@@ -10,9 +10,11 @@ use App\Modules\X165\Actions\RenewalReminderAction;
 use App\Modules\X165\Models\Membership;
 use App\Modules\X165\Models\MembershipPlan;
 use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Your members'])]
 class Members extends Component
 {
     #[Locked]

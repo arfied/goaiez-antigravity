@@ -1,16 +1,16 @@
-# PB-182
-
-STATUS: close
-
-1. Took main (via `git merge --no-ff --no-commit origin/main` with GOAIEZ_MERGE_OK=1) and restored per-track paths as requested.
-2. Target `x-163.daily-pricing-digest` built out: converted from sample-state to owner layout, added to `OwnerNav.php`.
-3. Screen tests updated in `DailyPricingDigestScreenTest.php`, including a Red A missing row check that confirmed tenant isolation (`.pb182-redA.txt`).
-4. Red B captured a visibility check failure by temporarily dropping the refusal filter (`.pb182-redB.txt`).
-5. Updated pins in `OwnerNavTest`, `HeadingSeamTest`, and `SampleStateModuleTest`.
-6. State updated: `bin/state.py decided X-163 "PB-182: daily-pricing-digest is an owner screen; layout, pins, and screen test applied"`.
-7. Gate executed and results noted below.
-
-GATE: `  tests 2645 · passed 2635 · FAILED 8 · errors 2 · result failed · rc 2`
-```
--rw-r--r-- 1 goaiez goaiez 9597 2026-09-13 14:52:46.934953414 -0500 .agents/supervisor/.gate-pb182.txt
-```
+STATUS    : wave closed
+COMMITS   : 7ba3b065 test(Architecture): PB-185 SchemeToken pin · 79fef7f7 test(Architecture): PB-185 pins · 61e40c8d style: pint · e19d74ba feat(X-166): PB-185 margin-by-job into the owner shell · b8f11bc1 merge: origin/main into track/pricebook · 8d87ad42 docs: PB-183/184 close report classmap addendum · fc72a097 docs: PB-183/184 close report · 46b31732 merge: origin/main into track/pricebook
+MODULES   : X-166
+STAGES    : none moved
+TESTS     : +0 −0
+PRODUCT   : MarginByJob.php · margin-by-job.blade.php · OwnerNav · pins · MarginByJobScreenTest
+REDS      :
+  .agents/supervisor/.pb185-redA.txt - result "failed"
+  .agents/supervisor/.pb185-redB.txt - result "failed"
+GATE      : tests 2646 · passed 2636 · FAILED 8 · errors 2 · result failed · rc 2
+            -rw-r--r-- 1 goaiez goaiez 9578 2026-09-13 19:32:16.489596369 -0500 .agents/supervisor/.gate-pb185.txt
+PROOF     : Restored paths after take-main: none.
+            Classmap: -rw-r--r-- 1 goaiez goaiez 1933178 Sep 13 14:34 app/vendor/composer/autoload_classmap.php
+DECIDED   : none
+UNRESOLVED: none
+REFUSED   : pkill is forbidden on this box.

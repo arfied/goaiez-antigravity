@@ -1,5 +1,4 @@
 <div>
-    <x-surface.sample-state module="van and storage-unit stock" screen="reorders" />
     <div class="reorders-view p-4">
         <h2>Reorders</h2>
         <p>Stock at its reorder point is flagged on Stock by van; propose the restock there and the supplier prices it.</p>
@@ -49,7 +48,7 @@
                         </tr>
                         @if(isset($expanded[$po->id]))
                             <tr>
-                                <td colspan="7" class="bg-gray-50 p-2">
+                                <td colspan="7" class="bg-surface p-2">
                                     <ul class="space-y-1">
                                         @php
                                             $items = is_array($po->items) ? $po->items : (json_decode($po->items ?? '[]', true) ?? []);
