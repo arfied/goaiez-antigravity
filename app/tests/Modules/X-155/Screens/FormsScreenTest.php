@@ -6,7 +6,9 @@ namespace Tests\Modules\X155\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X155\Models\FormDefinition;
 use App\Modules\X155\Ui\Forms;
+use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,7 +20,31 @@ class FormsScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-155.forms'))->assertOk();
+        $this->get(route('x-155.forms'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
+            ->assertDontSee('this screen is planned in')
+            ->assertSee('No forms constructed yet.');
+
+        Tenancy::setUser($owner->id);
+        FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Distinctive Form 4481',
+            'slug' => 'distinctive-4481',
+            'steps' => [['step' => 1, 'fields' => ['phone']]],
+            'schema' => ['phone' => 'required|string'],
+            'honeypot_field' => 'website_url'
+        ]);
+        Tenancy::forget();
+
+        $this->get(route('x-155.forms'))
+            ->assertOk()
+            ->assertSee('Distinctive Form 4481')
+            ->assertSee('distinctive-4481')
+            ->assertSee('1 step(s)')
+            ->assertSee('0 submissions')
+            ->assertDontSee('No forms constructed yet.');
 
         Livewire::test(Forms::class)->assertOk();
     }

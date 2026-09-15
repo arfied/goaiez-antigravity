@@ -536,6 +536,7 @@ final class OwnerNav
             OwnerNavItem::make('Connected accounts', 'x-182.connected-accounts', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Commissions', 'x-170.commissions', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Scorecards', 'x-170.scorecard', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Forms', 'x-155.forms', OwnerNavItem::GROUP_MORE),
         ];
     }
 
