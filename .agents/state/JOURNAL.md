@@ -819,3 +819,4 @@
 - `2026-09-15T13:03:46` (R245) X-188 — MONEY-222: parked numbers render in the owner shell on a real parked number; admin door kept
 - `2026-09-15T14:09:33` (R245) X-188 — MONEY-223: the live business number renders in the owner shell on a real assignment; admin door kept
 - `2026-09-15T16:07:52` (R245) X-188 — MONEY-224: number complaints render in the owner shell on a real number; RLS read; admin door kept
+- `2026-09-15T18:01:57` (R245) X-153 — MONEY-225: the team alert roster renders in the owner shell on a real alert; RLS read; admin door kept
