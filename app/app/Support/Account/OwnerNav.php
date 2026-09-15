@@ -533,6 +533,7 @@ final class OwnerNav
             OwnerNavItem::make('Number pool', 'x-188.pool-inventory', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Discounts given', 'x-210.earnedvsgiven-panel', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Call attribution', 'x-137.attribution-row', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Commissions', 'x-170.commissions', OwnerNavItem::GROUP_MORE),
         ];
     }
 
