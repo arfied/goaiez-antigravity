@@ -11,9 +11,11 @@ use App\Modules\X168\Models\Timesheet;
 use App\Support\Tenancy;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Carbon;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Approvals'])]
 class ApprovalsView extends Component
 {
     #[Locked]
