@@ -523,6 +523,7 @@ final class OwnerNav
             OwnerNavItem::make('Approvals', 'x-168.approvals', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Social queue', 'x-182.social-queue', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Your hours', 'x-168.own-hours', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Referral slots', 'x-190.slot-board', OwnerNavItem::GROUP_MORE),
         ];
     }
 
