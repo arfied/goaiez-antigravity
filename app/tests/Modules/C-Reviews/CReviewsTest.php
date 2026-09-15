@@ -1157,12 +1157,17 @@ class CReviewsTest extends TestCase
         $ticket = app(QaTicketCreateAction::class)->handle($biz->id, $person->id, 'Triage');
         $ticket->update(['status' => 'resolved', 'resolved_at' => now(), 'csat_requested_at' => now()]);
 
+        \App\Support\Tenancy::forget();
+        DB::statement("RESET app.business_id");
+
         Event::dispatch(new MessageReceived($biz->id, $person->id, '+15125550413', '1', 'msg_distinctive_4500', now()->toIso8601String()));
+
+        DB::statement("SET app.business_id = '{$biz->id}'");
 
         $ticket->refresh();
         $this->assertEquals('open', $ticket->status);
         $this->assertNotNull($ticket->reopened_at);
-        $this->assertDatabaseHas('csat_answers', ['qa_ticket_id' => $ticket->id, 'score' => 1]);
+        $this->assertDatabaseHas('csat_answers', ['business_id' => $biz->id, 'qa_ticket_id' => $ticket->id, 'score' => 1]);
     }
 
     public function test_g20_05_a_five_records_the_answer_and_keeps_the_ticket_resolved(): void
@@ -1179,7 +1184,7 @@ class CReviewsTest extends TestCase
         $ticket->refresh();
         $this->assertEquals('resolved', $ticket->status);
         $this->assertNull($ticket->reopened_at);
-        $this->assertDatabaseHas('csat_answers', ['qa_ticket_id' => $ticket->id, 'score' => 5]);
+        $this->assertDatabaseHas('csat_answers', ['business_id' => $biz->id, 'qa_ticket_id' => $ticket->id, 'score' => 5]);
     }
 
     public function test_g20_05_a_reply_with_no_pending_ask_is_ignored(): void

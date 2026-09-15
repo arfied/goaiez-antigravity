@@ -14,6 +14,7 @@ use App\Models\Conversation;
 use App\Models\InboundMessage;
 use App\Models\OwnerReply;
 use App\Modules\CSms\Events\MessageReceived;
+use App\Modules\X121\Actions\PersonLookupAction;
 use App\Services\ActivityService;
 use App\Services\Agent\AgentTurns;
 use App\Services\AuditService;
@@ -366,7 +367,7 @@ final class InboundMessages
         if ($businessId !== null) {
             Event::dispatch(new MessageReceived(
                 businessId: (int) $businessId,
-                personId: $filed?->thread->customer_id,
+                personId: $businessId !== null ? app(PersonLookupAction::class)->idForPhone((int) $businessId, $from) : null,
                 fromPhone: $from,
                 body: $text,
                 providerMessageId: $providerMessageId,

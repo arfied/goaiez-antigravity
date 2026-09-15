@@ -23,22 +23,26 @@ final class RecordCsatOnReply
             return;
         }
 
-        $ticket = app(QaTicketReadAction::class)->latestAwaitingCsatForPerson($event->businessId, $event->personId);
+        \App\Support\Tenancy::actingAs((int) $event->businessId, function () use ($event, $body): void {
+            $ticket = app(QaTicketReadAction::class)->latestAwaitingCsatForPerson($event->businessId, $event->personId);
 
-        if ($ticket === null) {
-            return;
-        }
+            if ($ticket === null) {
+                return;
+            }
 
-        $score = (int) $body;
+            $score = (int) $body;
 
-        CsatAnswer::query()->create([
-            'qa_ticket_id' => $ticket->id,
-            'score' => $score,
-            'body' => $body,
-            'is_valid' => true,
-            'received_at' => $event->receivedAt,
-        ]);
+            CsatAnswer::query()->create([
+                'business_id' => $event->businessId,
+                'person_id' => $event->personId,
+                'qa_ticket_id' => $ticket->id,
+                'score' => $score,
+                'body' => $body,
+                'is_valid' => true,
+                'received_at' => $event->receivedAt,
+            ]);
 
-        app(QaTicketAction::class)->receiveCsat($event->businessId, $ticket->id, $score);
+            app(QaTicketAction::class)->receiveCsat($event->businessId, $ticket->id, $score);
+        });
     }
 }

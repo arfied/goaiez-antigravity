@@ -26,8 +26,11 @@ class InboundMessagesDispatchesMessageReceivedTest extends TestCase
         $service = app(InboundMessages::class);
         $service->handle('msg_distinctive_4501', '+15125550421', '5', now()->toIso8601String(), $toNumber);
 
-        Event::assertDispatched(MessageReceived::class, function ($e) {
-            return $e->body === '5' && $e->fromPhone === '+15125550421';
+        Event::assertDispatched(MessageReceived::class, function ($e) use ($person, $biz) {
+            return $e->body === '5' 
+                && $e->fromPhone === '+15125550421'
+                && $e->personId === $person->id
+                && $e->businessId === $biz->id;
         });
     }
 }
