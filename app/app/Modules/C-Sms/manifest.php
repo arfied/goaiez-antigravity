@@ -35,6 +35,11 @@ return [
     ],
     'emits' => [
         'send.requested',
+        'message.sent',
+        'message.delivered',
+        'message.failed',
+        'message.received',
+        'stop.received',
     ],
     'consumes' => [
         'call.missed',
