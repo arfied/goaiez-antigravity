@@ -1,6 +1,19 @@
 <div>
-    <x-surface.sample-state module="**Backups, restores, point-in-time recovery, multi-region, cold-storage hashing and runbook automation — as an OPERATED SURFACE, not a cron nobody reads.** ⭐⭐⭐ **The module's whole premise: A BACKUP IS A HYPOTHESIS UNTIL IT IS RESTORED.** *Restoration runs on a schedule into an isolated environment and is **verified by row counts and a checksum**.* ⛔ **A failed restoration test is a P1, not a warning.**" screen="runbook_runner" />
     <div class="runbook-runner-view p-4">
-        <h3 class="text-lg font-bold">DR Runbook Automation Runner</h3>
+        <h2 class="text-lg font-bold text-ink">Runbooks</h2>
+        @if($runbooks->isEmpty())
+            <p class="text-ink-2">No runbooks defined.</p>
+        @else
+            <ul>
+                @foreach($runbooks as $r)
+                    <li>{{ $r->title }} — on {{ $r->trigger_event }} ({{ count($r->steps ?? []) }} steps)</li>
+                @endforeach
+            </ul>
+        @endif
+        <ul>
+            @foreach($runs as $run)
+                <li>{{ $run->started_at }} — runbook #{{ $run->runbook_id }} [{{ $run->status }}]</li>
+            @endforeach
+        </ul>
     </div>
 </div>
