@@ -541,6 +541,7 @@ final class OwnerNav
             OwnerNavItem::make('Schema status', 'x-176.seo-tab-website', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Chat leads', 'x-102.offline-form-inbox', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Retired devices', 'x-207.retirement-reasons', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Reveal log', 'x-206.reveal-log', OwnerNavItem::GROUP_MORE),
         ];
     }
 
