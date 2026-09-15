@@ -817,3 +817,4 @@
 - `2026-09-15T11:05:57` (R245) X-104 — MONEY-220: plugin install count renders in the owner shell on a real active install; admin door kept
 - `2026-09-15T11:51:41` (R245) X-104 — MONEY-221: plugin sites list renders in the owner shell on a real install; admin door kept
 - `2026-09-15T13:03:46` (R245) X-188 — MONEY-222: parked numbers render in the owner shell on a real parked number; admin door kept
+- `2026-09-15T14:09:33` (R245) X-188 — MONEY-223: the live business number renders in the owner shell on a real assignment; admin door kept
