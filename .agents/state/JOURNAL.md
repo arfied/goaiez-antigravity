@@ -881,3 +881,4 @@
 - `2026-09-12T13:23:14` note: run 170: merge of origin/main 1e5661af (owner rule 2026-09-09 trigger (1), 116 behind); r170-merged.txt shortstats equal and 25 files changed, 1052 insertions(+), 135 deletions(-); r170-gate.log tests 2608 · passed 2595 · FAILED 9 · errors 4, incoming names: none; r170-doctor.txt integrity 0 · boundary 39 · contract 85 · citation 0 · schema 14 · capability 204 · anchor 128 · journey 2, moved by the merge: none
 - `2026-09-15T11:10:17` (R245) X-129 — REV-178: redirect queue renders in the owner shell on a real redirect mapping; admin door kept
 - `2026-09-15T12:04:39` (R245) X-129 — REV-179: migration status card renders in the owner shell on a real redirect mapping; admin door kept
+- `2026-09-15T12:43:34` (R245) C-Reviews — REV-181 loss-alerts: sample-mode guards answer with a warning notice instead of a silent return; standing banner names the four disabled actions
