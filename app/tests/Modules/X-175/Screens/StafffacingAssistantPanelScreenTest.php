@@ -34,7 +34,7 @@ class StafffacingAssistantPanelScreenTest extends TestCase
             'response_text' => 'Distinctive answer 4471',
             'is_unconfirmed_price' => false,
             'is_upsell' => false,
-            'is_sample' => false
+            'is_sample' => false,
         ]);
         Tenancy::forget();
 
