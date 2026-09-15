@@ -6,7 +6,9 @@ namespace Tests\Modules\X129\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X129\Models\RedirectMap;
 use App\Modules\X129\Ui\MigrationCard;
+use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,7 +20,27 @@ class MigrationCardScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-129.migration-card'))->assertOk();
+        $this->get(route('x-129.migration-card'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
+            ->assertDontSee('this screen is planned in')
+            ->assertSee('No redirects mapped yet.');
+
+        Tenancy::setUser($owner->id);
+        RedirectMap::create([
+            'business_id' => $biz->id,
+            'source_url' => '/old-distinctive-4483',
+            'destination_url' => '/new-distinctive-4483',
+            'status_code' => 301,
+            'is_verified' => true,
+        ]);
+        Tenancy::forget();
+
+        $this->get(route('x-129.migration-card'))
+            ->assertOk()
+            ->assertSee('Verified redirects: 1 of 1')
+            ->assertDontSee('No redirects mapped yet.');
 
         Livewire::test(MigrationCard::class)->assertOk();
     }
