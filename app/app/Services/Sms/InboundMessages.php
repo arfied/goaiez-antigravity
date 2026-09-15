@@ -13,6 +13,8 @@ use App\Enums\SuppressionReason;
 use App\Models\Conversation;
 use App\Models\InboundMessage;
 use App\Models\OwnerReply;
+use App\Modules\CSms\Events\MessageReceived;
+use App\Modules\X121\Actions\PersonLookupAction;
 use App\Services\ActivityService;
 use App\Services\Agent\AgentTurns;
 use App\Services\AuditService;
@@ -29,6 +31,7 @@ use App\Support\SqlState;
 use App\Support\Tenancy;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
@@ -358,6 +361,19 @@ final class InboundMessages
         $this->captureMedia($record, $media, $ownerBusinessIds);
 
         $this->recordCost($record, $providerMessageId, $toNumber, $media !== [], $segments);
+
+        // G20-05: the inbound text becomes a module event so C-Reviews can hear a CSAT answer.
+        $businessId = $filed?->thread->business_id ?? $ownerBusinessIds[0] ?? $this->numbers->tenantFor($toNumber);
+        if ($businessId !== null) {
+            Event::dispatch(new MessageReceived(
+                businessId: (int) $businessId,
+                personId: $businessId !== null ? app(PersonLookupAction::class)->idForPhone((int) $businessId, $from) : null,
+                fromPhone: $from,
+                body: $text,
+                providerMessageId: $providerMessageId,
+                receivedAt: $receivedAt ?? now()->toIso8601String()
+            ));
+        }
 
         $this->answerWithAssistant($filed, $providerMessageId, $media !== []);
 
