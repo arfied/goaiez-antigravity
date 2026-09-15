@@ -542,6 +542,7 @@ final class OwnerNav
             OwnerNavItem::make('Chat leads', 'x-102.offline-form-inbox', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Retired devices', 'x-207.retirement-reasons', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Forms', 'x-155.forms', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Form submissions', 'x-155.submissions-thread', OwnerNavItem::GROUP_MORE),
         ];
     }
 
