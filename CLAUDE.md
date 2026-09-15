@@ -1240,3 +1240,24 @@ mailbox write safe. Three rulings, and the first is the general one.
   rather than a count. Had the file existed from an earlier tick the count would have been a stale reading of
   a different tip presented as this tick's measurement. **After any refused compound, the check is that the
   artefact is ABSENT, not merely that the command errored.**
+
+⚠️ **A LANE'S TAKE-MAIN RIGHT AFTER MAIN MERGED THAT LANE'S TIP IS A FAST-FORWARD CANDIDATE, AND A FAST-FORWARD
+REPLACES THE LANE'S PER-TRACK FILES WITH MAIN'S (N182, 2026-09-15, reviews run 177 / REV-182).** The brief said
+`git merge --no-ff --no-commit origin/main`; the coder ran `git merge -m … origin/main`. Because wave 412 had just
+merged `46d2f463` into main, `origin/main` was a descendant of the lane tip and git fast-forwarded — reflog
+`merge 585956ad…: Fast-forward (no commit created; -m option ignored)`. The lane's HEAD became main's commit
+outright, so `CLAUDE.md`, `bin/supervise.sh`, `.agents/rules/10-supervisor.md`, `BUILD-STATE.json` and
+`JOURNAL.md` at the lane tip are MAIN's copies (`git diff --numstat 46d2f463 HEAD` on the five: 1305 added,
+6156 deleted). The report's `Item 0 restore list: (empty)` and `git diff HEAD~1 HEAD -- <the eight>: (empty)`
+were both TRUE — and measured against a `HEAD~1` that was main's own commit, so the check could not contain the
+loss (run 115's shape inverted: the lane lost its guard files instead of main losing a check). `state.py decided`
+then wrote the lane's decision into MAIN's ledger copy. Repair is the owner's: the coder guard refuses any coder
+commit staging those paths, this seat cannot write into a sibling checkout, and the plumbing route
+(scratch index → `commit-tree`, no working tree touched) was refused to this seat too. Rulings: **(1) every lane
+review checks `git log -1 --format=%P <take-main sha> | wc -w` = 2** — a one-parent "merge" is the defect,
+whatever the report says; **(2) every product brief's item 0 carries, right after the merge commit,
+`git log --oneline -1 # must be YOUR merge commit …; a main commit instead means it FAST-FORWARDED: STOP`**;
+**(3) the product of such a run may still be pushed** when clean — main is unaffected (the five paths are
+identical to main's and stage nothing at the next merge) and the lane's copies survive in history — but the
+restore is recorded as an OWNER ACTION with the exact commands, and every `state.py` line the lane records
+before the restore lands is listed for re-recording afterwards.
