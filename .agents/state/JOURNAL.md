@@ -786,3 +786,4 @@
 - `2026-09-15T11:20:13` (R245) X-207 — UI-118: retired devices render in the owner shell on a real retired token; admin door kept
 - `2026-09-15T12:38:18` (R245) X-206 — UI-119: credential reveal log renders in the owner shell on a real reveal record
 - `2026-09-15T13:49:38` (R245) X-206 — UI-120: credential connections render in the owner shell on a real stored credential
+- `2026-09-15T15:06:14` (R245) X-207 — UI-121: push platform health renders in the owner shell on a real device token and delivery; admin door kept
