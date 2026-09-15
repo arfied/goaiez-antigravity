@@ -1,15 +1,15 @@
 <div>
-    <x-surface.sample-state module="`Business" screen="entity_history_viewer" />
     <div class="entity-history-container p-4">
-        <h3 class="text-lg font-bold">Entity History</h3>
+        <h2 class="text-lg font-bold text-ink">Change history</h2>
         @if($history->isEmpty())
-            <p class="text-gray-500">No history records found for this entity.</p>
+            <p class="text-ink-2">No history records yet.</p>
         @else
-            <ul class="divide-y divide-gray-200">
+            <ul class="divide-y divide-rule">
                 @foreach($history as $item)
                     <li class="py-2">
                         <span class="font-mono text-sm">v{{ $item->version }}</span>
-                        <span class="text-xs text-gray-400">{{ $item->created_at }}</span>
+                        <span class="ml-2 text-sm text-ink">{{ $item->entity_type }} #{{ $item->entity_id }}</span>
+                        <span class="text-xs text-ink-2">{{ $item->created_at }}</span>
                     </li>
                 @endforeach
             </ul>
