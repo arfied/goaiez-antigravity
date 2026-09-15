@@ -539,6 +539,7 @@ final class OwnerNav
             OwnerNavItem::make('Plugin installs', 'x-104.install-count', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Redirect queue', 'x-129.cutover-queue', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Schema status', 'x-176.seo-tab-website', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Edge deployments', 'x-157.edge-status-per', OwnerNavItem::GROUP_MORE),
         ];
     }
 
