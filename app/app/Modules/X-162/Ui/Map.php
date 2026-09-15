@@ -10,8 +10,10 @@ use App\Modules\X162\Models\Route;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Locked;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Route map'])]
 class Map extends Component
 {
     #[Locked]
