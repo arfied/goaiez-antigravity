@@ -783,3 +783,4 @@
 - `2026-09-15T01:58:34` (R245) X-210 — UI-115: targeting-preview renders in the owner shell on a real promotion scope
 - `2026-09-15T02:36:14` (R245) X-210 — UI-116: discounts-given panel renders in the owner shell on a real redemption
 - `2026-09-15T03:10:54` (R245) X-182 — UI-117: connected accounts render in the owner shell on a real social account row
+- `2026-09-15T11:20:13` (R245) X-207 — UI-118: retired devices render in the owner shell on a real retired token; admin door kept
