@@ -524,6 +524,7 @@ final class OwnerNav
             OwnerNavItem::make('Social queue', 'x-182.social-queue', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Your hours', 'x-168.own-hours', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Referral slots', 'x-190.slot-board', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Your rates', 'x-82.rate-registry', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Partner network', 'x-190.network-map', OwnerNavItem::GROUP_MORE),
         ];
     }
