@@ -4,6 +4,7 @@ namespace App\Console\DemoFill\Fillers;
 
 use App\Console\DemoFill\DemoFiller;
 use App\Models\Business;
+use App\Modules\X162\Models\DispatchAssignment;
 
 class X162Filler implements DemoFiller
 {
@@ -14,11 +15,11 @@ class X162Filler implements DemoFiller
 
     public function fill(Business $business): int
     {
-        if (\App\Modules\X162\Models\DispatchAssignment::where('business_id', $business->id)->where('is_sample', true)->exists()) {
+        if (DispatchAssignment::where('business_id', $business->id)->where('is_sample', true)->exists()) {
             return 0;
         }
 
-        \App\Modules\X162\Models\DispatchAssignment::create([
+        DispatchAssignment::create([
             'business_id' => $business->id,
             'job_id' => 100,
             'tech_id' => $business->owner_user_id,
@@ -26,7 +27,7 @@ class X162Filler implements DemoFiller
             'is_sample' => true,
         ]);
 
-        \App\Modules\X162\Models\DispatchAssignment::create([
+        DispatchAssignment::create([
             'business_id' => $business->id,
             'job_id' => 101,
             'tech_id' => $business->owner_user_id,
@@ -39,7 +40,7 @@ class X162Filler implements DemoFiller
 
     public function purge(Business $business): int
     {
-        return \App\Modules\X162\Models\DispatchAssignment::where('business_id', $business->id)
+        return DispatchAssignment::where('business_id', $business->id)
             ->where('is_sample', true)
             ->delete();
     }
