@@ -21,7 +21,12 @@ class YourNumberCardScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-188.your-number-card'))->assertOk();
+        $this->get(route('x-188.your-number-card'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
+            ->assertDontSee('this screen is planned in')
+            ->assertSee('No active number assigned.');
 
         Livewire::test(YourNumberCard::class)->assertOk(); // standing check
     }

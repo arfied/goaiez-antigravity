@@ -548,7 +548,15 @@ final class OwnerNav
             OwnerNavItem::make('Chat thread', 'x-102.thread', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Reveal log', 'x-206.reveal-log', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Form submissions', 'x-155.submissions-thread', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Parked numbers', 'x-188.park-list', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Change history', 'x-121.entity-history-viewer', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Restore tests', 'x-203.dr-dashboard', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Rage clicks', 'x-102.rageclick-rate', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Connections', 'x-206.connections', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Spam rate', 'x-155.spam-rate', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Your number', 'x-188.your-number-card', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Restore test log', 'x-203.restorationtest-log', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Push health', 'x-207.perplatform-delivery-health', OwnerNavItem::GROUP_MORE),
         ];
     }
 
