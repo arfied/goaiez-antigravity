@@ -8,9 +8,11 @@ use App\Enums\UserRole;
 use App\Modules\X82\Actions\RateSetAction;
 use App\Modules\X82\Models\Rate;
 use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Your rates'])]
 class RateRegistryView extends Component
 {
     #[Locked]
