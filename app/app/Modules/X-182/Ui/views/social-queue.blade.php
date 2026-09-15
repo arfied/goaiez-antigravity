@@ -1,6 +1,14 @@
 <div>
-    <x-surface.sample-state module="posting autopilot" screen="social_queue" />
     <div class="social-queue-view p-4">
-        <h3 class="text-lg font-bold">Social Media Publishing Pipeline Queue</h3>
+        <h2 class="text-lg font-bold text-ink">Social queue</h2>
+        @if($posts->isEmpty())
+            <p class="text-ink-2">No posts queued.</p>
+        @else
+            <ul>
+                @foreach($posts as $post)
+                    <li>{{ $post->content_text }} {{ $post->comments->count() }} comments</li>
+                @endforeach
+            </ul>
+        @endif
     </div>
 </div>

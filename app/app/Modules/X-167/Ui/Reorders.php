@@ -8,9 +8,11 @@ use App\Enums\UserRole;
 use App\Modules\X167\Models\PurchaseOrder;
 use App\Modules\X167\Models\Supplier;
 use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Reorders'])]
 class Reorders extends Component
 {
     #[Locked]
