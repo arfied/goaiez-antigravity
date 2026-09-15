@@ -332,6 +332,31 @@ lane branch that merely points at main's sha — right tree, wrong name; the nex
 `pull --ff-only` then fast-forwards the lane again. Deploy path is
 `pull --ff-only` on `main`, or nothing. Never `reset --hard` on production.
 
+⚠️ **A DEPLOY BACKUP RECORDED BY FILENAME ALONE CANNOT BE CHECKED BY ANYONE, AND SIX WERE RECORDED THAT WAY
+IN ONE DAY (N180, 2026-09-14).** `REVIEWS.md` carries six `goaiez_antig-<ts>-pre-<sha>.sql` names for
+2026-09-14 and **zero** paths — the path-bearing needle returns nothing for any of them. Nothing matching
+`*20260914-222023*` exists under `/home/goaiez` to depth 4 or under `/` to depth 3; `/backup` exists and is
+unreadable from a supervisor seat, so the honest reading is **unverifiable**, not *missing*. That is the
+sibling project's `cp … .bak` incident in slow motion: a rollback artefact asserted in a record that
+structurally cannot be checked, discovered by the person trying to restore from it. **RULED: a deploy line
+records the backup's absolute path and its `ls -la --time-style=full-iso` line, or it does not record a
+backup**; a tick that cannot read the directory writes `backup: <name> — UNVERIFIED (path not recorded)`
+rather than repeating the bare filename as though it were a measurement. Same ladder as N160 — *a citation <
+a paste-ready string < a redirect < a named field* — and the same asymmetry: **a backup nobody checked reads
+as a backup that exists.**
+
+⚠️ **`supervise.sh` RUNS AND SILENTLY LEAVES NO ROW IN THE SHARED GATE LEDGER FROM A SEAT THAT CANNOT WRITE
+`/home/goaiez/tmp` (N181, 2026-09-14).** `--census` printed
+`bin/supervise.sh: line 74: /home/goaiez/tmp/gate-runs.tsv: Permission denied` twice and exited **0** —
+by design, since `log_gate` ends `>> "$GATE_LOG" 2>/dev/null || true`, fail-open so a gate is never lost to
+a logging fault. The two stderr lines are then buried by the `> file 2>&1` capture every tick uses, and
+`gate-runs.tsv` under-reports with no marker where. The gap is **per-seat, not per-checkout** (the previous
+tick's rows are present). Remedy is one token, because `:72` already makes it overridable and N172 already
+ruled artefacts belong inside the checkout:
+`GATE_LOG=.agents/supervisor/gate-runs.tsv bash bin/supervise.sh --tests > .agents/supervisor/.gate-wN.txt 2>&1`.
+The general shape is this file's oldest: **an instrument that fails open is honest about its result and
+silent about its own coverage** — `rc=0` says the gate ran, never that it was recorded.
+
 Procedure (the coder runs it, the supervisor reviews the merge commit):
 0. **First, the SUPERVISOR commits its own tracked notes** — `git add CLAUDE.md
    bin/supervise.sh && git commit -m "chore(supervisor): notes before merge"`
