@@ -6,7 +6,10 @@ namespace Tests\Modules\X168\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X168\Actions\TimesheetComputeAction;
 use App\Modules\X168\Ui\OwnHoursView;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -25,10 +28,10 @@ class OwnHoursViewScreenTest extends TestCase
             ->assertDontSee('this screen is planned in')
             ->assertSee('No hours yet.');
 
-        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
+        DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $now = \Carbon\Carbon::parse('2024-01-01 08:00:00');
-        app(\App\Modules\X168\Actions\TimesheetComputeAction::class)->recordJobWindow(
+        $now = Carbon::parse('2024-01-01 08:00:00');
+        app(TimesheetComputeAction::class)->recordJobWindow(
             businessId: $biz->id,
             personId: $owner->id,
             jobId: 7701,
@@ -41,8 +44,8 @@ class OwnHoursViewScreenTest extends TestCase
 
         $biz2 = $this->provisionTenant();
         $tech2 = User::factory()->create(['role' => UserRole::Staff, 'name' => 'Bob Tech']);
-        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz2->id}'");
-        app(\App\Modules\X168\Actions\TimesheetComputeAction::class)->recordJobWindow(
+        DB::statement("SET app.business_id = '{$biz2->id}'");
+        app(TimesheetComputeAction::class)->recordJobWindow(
             businessId: $biz2->id,
             personId: $tech2->id,
             jobId: 9999,
@@ -52,7 +55,7 @@ class OwnHoursViewScreenTest extends TestCase
             locationLat: 0,
             locationLng: 0
         );
-        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
+        DB::statement("SET app.business_id = '{$biz->id}'");
 
         $this->get(route('x-168.own-hours'))
             ->assertOk()
