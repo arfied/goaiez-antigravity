@@ -537,6 +537,7 @@ final class OwnerNav
             OwnerNavItem::make('Commissions', 'x-170.commissions', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Scorecards', 'x-170.scorecard', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Plugin installs', 'x-104.install-count', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Redirect queue', 'x-129.cutover-queue', OwnerNavItem::GROUP_MORE),
         ];
     }
 
