@@ -534,6 +534,7 @@ final class OwnerNav
             OwnerNavItem::make('Discounts given', 'x-210.earnedvsgiven-panel', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Call attribution', 'x-137.attribution-row', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Connected accounts', 'x-182.connected-accounts', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Retired devices', 'x-207.retirement-reasons', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Commissions', 'x-170.commissions', OwnerNavItem::GROUP_MORE),
         ];
     }
