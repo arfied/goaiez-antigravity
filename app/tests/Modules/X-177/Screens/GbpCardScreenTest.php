@@ -6,7 +6,10 @@ namespace Tests\Modules\X177\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X177\Models\GbpConnection;
+use App\Modules\X177\Models\GbpPost;
 use App\Modules\X177\Ui\GbpCard;
+use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,7 +21,33 @@ class GbpCardScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-177.gbp-card'))->assertOk();
+        $this->get(route('x-177.gbp-card'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
+            ->assertDontSee('this screen is planned in')
+            ->assertSee('Connect Google');
+
+        Tenancy::setUser($owner->id);
+        $conn = GbpConnection::create([
+            'business_id' => $biz->id,
+            'account_ref' => 'acct_distinctive_4502',
+            'external_label' => 'Distinctive Store 4502',
+            'profile_status' => 'active',
+        ]);
+        GbpPost::create([
+            'business_id' => $biz->id,
+            'connection_id' => $conn->id,
+            'content' => 'Distinctive post 4502',
+        ]);
+        Tenancy::forget();
+
+        $this->get(route('x-177.gbp-card'))
+            ->assertOk()
+            ->assertSee('Distinctive Store 4502')
+            ->assertSee('Profile is active')
+            ->assertSee('Distinctive post 4502')
+            ->assertDontSee('Connect Google');
 
         Livewire::test(GbpCard::class)->assertOk();
     }

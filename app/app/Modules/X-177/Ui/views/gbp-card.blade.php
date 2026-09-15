@@ -1,7 +1,7 @@
 <div>
     <div class="gbp-card-container p-4 max-w-lg mx-auto md:max-w-4xl">
         <div class="flex justify-between items-center mb-4">
-            <h3 class="text-xl font-bold">Google Business Profile</h3>
+            <h2 class="text-xl font-bold text-ink">Google profile</h2>
             <div class="flex items-center space-x-2">
                 <x-ui.button wire:click="toggleSample" size="default" variant="secondary">
                     {{ $isSample ? 'Exit Sample' : 'Sample' }}
@@ -33,7 +33,7 @@
                             </div>
                             
                             @if($c->latest_post)
-                                <div class="text-xs text-gray-600 border-t pt-2 mt-2">
+                                <div class="text-xs text-ink-2 border-t pt-2 mt-2">
                                     <span class="font-bold">Latest Post:</span> {{ $c->latest_post->content }}
                                 </div>
                             @endif
@@ -50,10 +50,10 @@
                     </div>
                     
                     @if($viewingLogId === $c->id && $c->latest_log)
-                        <div class="bg-gray-100 p-4 rounded text-sm mt-2 font-mono">
+                        <div class="bg-surface p-4 rounded text-sm mt-2 font-mono">
                             <div class="font-bold mb-2">Latest Log Event: {{ $c->latest_log->event_type }}</div>
                             <div>{{ json_encode($c->latest_log->details) }}</div>
-                            <div class="text-gray-500 mt-1">{{ $c->latest_log->created_at }}</div>
+                            <div class="text-ink-2 mt-1">{{ $c->latest_log->created_at }}</div>
                         </div>
                     @endif
                 @endforeach
