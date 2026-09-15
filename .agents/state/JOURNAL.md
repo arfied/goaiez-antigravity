@@ -969,3 +969,4 @@
 - `2026-09-15T12:32:48` (R245) X-102 — SIXTY-197: chat thread renders in the owner shell on a real chat turn; admin door kept
 - `2026-09-15T13:29:12` (R245) X-102 — SIXTY-198: rage clicks render in the owner shell on a real chat session; admin door kept
 - `2026-09-15T15:13:16` (R245) C-Agent — SIXTY-199: agent turns render in the owner shell on a real agent turn; the module has no admin door
+- `2026-09-15T17:15:06` (R245) C-Reviews — G20-05: a texted CSAT answer reaches the ticket via C-Sms message.received; answers live in csat_answers, never on qa_tickets
