@@ -31,7 +31,7 @@ class OfflineFormInboxScreenTest extends TestCase
         Tenancy::setUser($owner->id);
         $session = ChatSession::create([
             'business_id' => $biz->id,
-            'session_token' => 'sess_distinctive_4476',
+            'session_token' => 'sess_distinctive_4476_' . uniqid(),
             'status' => 'active',
             'rage_clicks_count' => 0,
             'is_ai_capped' => false,

@@ -21,6 +21,13 @@ class OfflineFormInbox extends Component
     #[Locked]
     public int $businessId = 0;
 
+    public function boot(): void
+    {
+        if ($this->businessId === 0 && \App\Support\Tenancy::id() !== null) {
+            $this->businessId = \App\Support\Tenancy::id();
+        }
+    }
+
     public function render()
     {
         $leads = ($this->businessId > 0)
