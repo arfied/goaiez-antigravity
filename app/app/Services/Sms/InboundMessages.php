@@ -359,6 +359,19 @@ final class InboundMessages
 
         $this->recordCost($record, $providerMessageId, $toNumber, $media !== [], $segments);
 
+        // G20-05: the inbound text becomes a module event so C-Reviews can hear a CSAT answer.
+        $businessId = $filed?->thread->business_id ?? $ownerBusinessIds[0] ?? $this->numbers->tenantFor($toNumber);
+        if ($businessId !== null) {
+            \Illuminate\Support\Facades\Event::dispatch(new \App\Modules\CSms\Events\MessageReceived(
+                businessId: (int) $businessId,
+                personId: $filed?->thread->customer_id,
+                fromPhone: $from,
+                body: $text,
+                providerMessageId: $providerMessageId,
+                receivedAt: $receivedAt ?? now()->toIso8601String()
+            ));
+        }
+
         $this->answerWithAssistant($filed, $providerMessageId, $media !== []);
 
         return $keyword;

@@ -1149,7 +1149,50 @@ class CReviewsTest extends TestCase
 
     public function test_g20_05_csat_answer_has_no_inbound_path(): void
     {
-        $this->fail('NOT BUILT: G20-05 — the CSAT ask is requested on ticket.resolved, but no inbound path reaches QaTicketAction::receiveCsat (QaTicketAction.php:41, zero production callers); InfobipInboundController and InboundMessages dispatch no event a module can subscribe to, so a 1-star reply cannot reopen the ticket.');
+        $biz = self::provisionTenant(['name' => 'CSAT Answer 1', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $person = Person::create(['business_id' => $biz->id, 'first_name' => 'Ana', 'phone' => '+15125550413']);
+        $ticket = app(QaTicketCreateAction::class)->handle($biz->id, $person->id, 'Triage');
+        $ticket->update(['status' => 'resolved', 'resolved_at' => now(), 'csat_requested_at' => now()]);
+
+        Event::dispatch(new \App\Modules\CSms\Events\MessageReceived($biz->id, $person->id, '+15125550413', '1', 'msg_distinctive_4500', now()->toIso8601String()));
+
+        $ticket->refresh();
+        $this->assertEquals('open', $ticket->status);
+        $this->assertNotNull($ticket->reopened_at);
+        $this->assertDatabaseHas('csat_answers', ['qa_ticket_id' => $ticket->id, 'score' => 1]);
+    }
+
+    public function test_g20_05_a_five_records_the_answer_and_keeps_the_ticket_resolved(): void
+    {
+        $biz = self::provisionTenant(['name' => 'CSAT Answer 5', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $person = Person::create(['business_id' => $biz->id, 'first_name' => 'Ana', 'phone' => '+15125550414']);
+        $ticket = app(QaTicketCreateAction::class)->handle($biz->id, $person->id, 'Triage');
+        $ticket->update(['status' => 'resolved', 'resolved_at' => now(), 'csat_requested_at' => now()]);
+
+        Event::dispatch(new \App\Modules\CSms\Events\MessageReceived($biz->id, $person->id, '+15125550414', '5', 'msg_distinctive_4501', now()->toIso8601String()));
+
+        $ticket->refresh();
+        $this->assertEquals('resolved', $ticket->status);
+        $this->assertNull($ticket->reopened_at);
+        $this->assertDatabaseHas('csat_answers', ['qa_ticket_id' => $ticket->id, 'score' => 5]);
+    }
+
+    public function test_g20_05_a_reply_with_no_pending_ask_is_ignored(): void
+    {
+        $biz = self::provisionTenant(['name' => 'CSAT Answer Ignored', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $person = Person::create(['business_id' => $biz->id, 'first_name' => 'Ana', 'phone' => '+15125550415']);
+        $ticket = app(QaTicketCreateAction::class)->handle($biz->id, $person->id, 'Triage');
+        $ticket->update(['status' => 'resolved', 'resolved_at' => now()]);
+
+        Event::dispatch(new \App\Modules\CSms\Events\MessageReceived($biz->id, $person->id, '+15125550415', '5', 'msg_distinctive_4502', now()->toIso8601String()));
+
+        $this->assertDatabaseMissing('csat_answers', ['qa_ticket_id' => $ticket->id]);
     }
 
     /**

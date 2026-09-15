@@ -94,6 +94,20 @@ final class QaTicketReadAction
         return QaTicket::where('business_id', $businessId)->count();
     }
 
+    public function latestAwaitingCsatForPerson(int $businessId, int $personId): ?QaTicket
+    {
+        return QaTicket::where("business_id", $businessId)
+            ->where("person_id", $personId)
+            ->whereNotNull("csat_requested_at")
+            ->whereNotExists(function (\Illuminate\Database\Query\Builder $query) {
+                $query->select(\Illuminate\Support\Facades\DB::raw(1))
+                    ->from("csat_answers")
+                    ->whereColumn("csat_answers.qa_ticket_id", "qa_tickets.id");
+            })
+            ->orderBy("csat_requested_at", "desc")
+            ->first();
+    }
+
     public function findById(int $businessId, int $ticketId): QaTicket
     {
         return QaTicket::where('business_id', $businessId)->findOrFail($ticketId);

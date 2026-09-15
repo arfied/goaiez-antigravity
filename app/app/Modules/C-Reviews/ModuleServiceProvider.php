@@ -28,6 +28,11 @@ final class ModuleServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__.'/routes.generated.php');
 
         Event::listen(
+            \App\Modules\CSms\Events\MessageReceived::class,
+            \App\Modules\CReviews\Listeners\RecordCsatOnReply::class
+        );
+
+        Event::listen(
             JobCompleted::class,
             AskForReviewOnJobCompleted::class
         );
