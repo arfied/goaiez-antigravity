@@ -535,6 +535,10 @@ final class OwnerNav
             OwnerNavItem::make('Call attribution', 'x-137.attribution-row', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Connected accounts', 'x-182.connected-accounts', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Commissions', 'x-170.commissions', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Scorecards', 'x-170.scorecard', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Plugin installs', 'x-104.install-count', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Redirect queue', 'x-129.cutover-queue', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Schema status', 'x-176.seo-tab-website', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Chat leads', 'x-102.offline-form-inbox', OwnerNavItem::GROUP_MORE),
         ];
     }
