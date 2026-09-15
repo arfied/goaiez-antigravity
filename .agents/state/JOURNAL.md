@@ -778,3 +778,4 @@
 - `2026-09-06T23:16:43` note: J8 restore drill: JourneyHarness:814 names its scratch db goaiez_antig_drill_<pid> and :908 force-drops it; the supervisor's wave-119 gate errored 42501 permission denied to terminate process where the coder's gate on the identical tree did not; drill dbs on the box at 2026-09-06 23:10: UNRESOLVED; reproduced in wave 120: no
 - `2026-09-14T23:44:32` (R245) X-168 — PB-193: approvals renders in the owner shell; nav beside Timesheets
 - `2026-09-15T00:15:43` (R245) X-168 — PB-194: own-hours renders in the owner shell; X-168's three screens converted
+- `2026-09-15T00:43:58` (R245) X-82 — PB-195: rate-registry renders in the owner shell; admin door kept
