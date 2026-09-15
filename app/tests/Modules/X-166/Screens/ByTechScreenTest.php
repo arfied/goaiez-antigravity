@@ -6,6 +6,7 @@ namespace Tests\Modules\X166\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X166\Models\JobCost;
 use App\Modules\X166\Ui\ByTech;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -25,7 +26,7 @@ class ByTechScreenTest extends TestCase
 
         // 2. Seed a JobCost with distinctive tech
         $tech = User::factory()->create(['name' => 'DistinctiveTechName99']);
-        \App\Modules\X166\Models\JobCost::create([
+        JobCost::create([
             'business_id' => $biz->id,
             'job_id' => 88884323,
             'price_book_version' => 'v2.0',

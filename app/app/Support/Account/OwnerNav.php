@@ -517,6 +517,7 @@ final class OwnerNav
             OwnerNavItem::make('Person timeline', 'x-132.person-timeline', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Stock by van', 'x-167.stock-by-van', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Resolution rate & confidence', 'x-132.resolution-rate-confidence', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Prompt copy', 'x-207.promptcopy-editor', OwnerNavItem::GROUP_MORE),
         ];
     }
 
