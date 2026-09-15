@@ -6,8 +6,8 @@ namespace Tests\Modules\X82\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X82\Ui\RateRegistryView;
 use App\Modules\X82\Models\Rate;
+use App\Modules\X82\Ui\RateRegistryView;
 use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -35,7 +35,7 @@ class RateRegistryViewScreenTest extends TestCase
             'currency' => 'USD',
             'current_version' => 1,
             'is_active' => true,
-            'is_sample' => false
+            'is_sample' => false,
         ]);
         Tenancy::forget();
 
