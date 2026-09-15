@@ -1535,6 +1535,10 @@
   {
    "at": "2026-09-06T23:16:43",
    "note": "J8 restore drill: JourneyHarness:814 names its scratch db goaiez_antig_drill_<pid> and :908 force-drops it; the supervisor's wave-119 gate errored 42501 permission denied to terminate process where the coder's gate on the identical tree did not; drill dbs on the box at 2026-09-06 23:10: UNRESOLVED; reproduced in wave 120: no"
+  },
+  {
+   "at": "2026-09-15T16:32:03",
+   "note": "X-155 X-163 X-164 X-165 X-166 X-167 X-168 X-170 X-175 X-188 PB-205: implemented DemoFillCommand for all lane modules"
   }
  ]
 }
