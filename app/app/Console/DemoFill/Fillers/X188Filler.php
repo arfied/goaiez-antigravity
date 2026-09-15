@@ -4,9 +4,6 @@ namespace App\Console\DemoFill\Fillers;
 
 use App\Console\DemoFill\DemoFiller;
 use App\Models\Business;
-use App\Modules\X188\Models\NumberAssignment;
-use App\Modules\X188\Models\NumberPark;
-use App\Modules\X188\Models\NumberPool;
 
 class X188Filler implements DemoFiller
 {

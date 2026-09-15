@@ -66,7 +66,7 @@ class DemoFillCommandTest extends TestCase
         $this->get(route('x-155.submissions-thread'))->assertOk()->assertSee('demo·');
         $this->get(route('x-163.pricebook'))->assertOk()->assertSee('Sample');
         $this->get(route('x-165.plans'))->assertOk()->assertSee('Sample');
-                $this->get(route('x-167.stock-by-van'))->assertOk()->assertSee('Sample');
+        $this->get(route('x-167.stock-by-van'))->assertOk()->assertSee('Sample');
         $this->get(route('x-168.timesheets'))->assertOk()->assertSee('Sample');
-                }
+    }
 }
