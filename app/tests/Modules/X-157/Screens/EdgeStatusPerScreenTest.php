@@ -6,9 +6,9 @@ namespace Tests\Modules\X157\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X157\Ui\EdgeStatusPer;
 use App\Modules\X157\Models\Deployment;
 use App\Modules\X157\Models\EdgeZone;
+use App\Modules\X157\Ui\EdgeStatusPer;
 use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
