@@ -9,9 +9,11 @@ use App\Modules\X167\Actions\ReorderProposeAction;
 use App\Modules\X167\Models\StockItem;
 use App\Modules\X167\Models\StockLocation;
 use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Stock by van'])]
 class StockByVan extends Component
 {
     #[Locked]
