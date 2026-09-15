@@ -528,6 +528,7 @@ final class OwnerNav
             OwnerNavItem::make('Partner network', 'x-190.network-map', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Field assistant', 'x-175.stafffacing-assistant-panel', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Pool depth', 'x-190.pool-depth-per', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Promotion targeting', 'x-210.targeting-preview', OwnerNavItem::GROUP_MORE),
         ];
     }
 
