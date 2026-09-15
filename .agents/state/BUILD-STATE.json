@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-15T13:15:21",
+ "updated": "2026-09-15T16:42:17",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -113,7 +113,7 @@
   },
   "8": {
    "track": "J10 reviews",
-   "status": "DONE",
+   "status": "BUILDING",
    "modules": [
     "C-Reviews",
     "X-181",
@@ -384,23 +384,10 @@
    "unresolved": []
   },
   "C-Reviews": {
-   "status": "UNRESOLVED",
+   "status": "BUILDING",
    "wave": 8,
    "intent": "GROW",
-   "unresolved": [
-    {
-     "module": "C-Reviews",
-     "stage": "tests",
-     "why": "ReviewRequested event lacks messageClass so the module cannot express the send class (marketing) without a legacy change",
-     "at": "2026-09-04T07:55:55"
-    },
-    {
-     "module": "C-Reviews",
-     "stage": "contract",
-     "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
-     "at": "2026-09-04T08:05:31"
-    }
-   ]
+   "unresolved": []
   },
   "C-Sms": {
    "status": "UNRESOLVED",
@@ -1317,18 +1304,6 @@
    "at": "2026-09-04T02:05:53"
   },
   {
-   "module": "C-Reviews",
-   "stage": "tests",
-   "why": "ReviewRequested event lacks messageClass so the module cannot express the send class (marketing) without a legacy change",
-   "at": "2026-09-04T07:55:55"
-  },
-  {
-   "module": "C-Reviews",
-   "stage": "contract",
-   "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
-   "at": "2026-09-04T08:05:31"
-  },
-  {
    "module": "X-186",
    "stage": "capability",
    "why": "no action enrols a person into a campaign",
@@ -1469,6 +1444,22 @@
   {
    "at": "2026-09-06T23:16:43",
    "note": "J8 restore drill: JourneyHarness:814 names its scratch db goaiez_antig_drill_<pid> and :908 force-drops it; the supervisor's wave-119 gate errored 42501 permission denied to terminate process where the coder's gate on the identical tree did not; drill dbs on the box at 2026-09-06 23:10: UNRESOLVED; reproduced in wave 120: no"
+  }
+ ],
+ "resolved": [
+  {
+   "module": "C-Reviews",
+   "stage": "tests",
+   "was": "ReviewRequested event lacks messageClass so the module cannot express the send class (marketing) without a legacy change",
+   "why": "ReviewRequested carries messageClass since the reviews merge c3ed23ed (ledger note 2026-09-05T17:42:54); the C-Sms listener consumes send.requested",
+   "at": "2026-09-15T16:42:17"
+  },
+  {
+   "module": "C-Reviews",
+   "stage": "contract",
+   "was": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+   "why": "sealed ContractStage.php:575 now carries the multi-emitter exemption for send.requested (owner ruling); the stage no longer fails on it",
+   "at": "2026-09-15T16:42:17"
   }
  ]
 }
