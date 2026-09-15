@@ -6,9 +6,11 @@ namespace App\Modules\X188\Ui;
 
 use App\Modules\X188\Models\NumberPool;
 use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Number pool'])]
 class PoolInventory extends Component
 {
     #[Locked]

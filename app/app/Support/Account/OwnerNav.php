@@ -530,6 +530,7 @@ final class OwnerNav
             OwnerNavItem::make('Pool depth', 'x-190.pool-depth-per', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Route map', 'x-162.map', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Promotion targeting', 'x-210.targeting-preview', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Number pool', 'x-188.pool-inventory', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Discounts given', 'x-210.earnedvsgiven-panel', OwnerNavItem::GROUP_MORE),
         ];
     }
