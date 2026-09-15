@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X137\Screens;
 
-use App\Modules\X137\Models\CallToken;
-use App\Support\Tenancy;
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X137\Models\CallToken;
 use App\Modules\X137\Ui\AttributionRow;
+use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -35,7 +35,7 @@ class AttributionRowScreenTest extends TestCase
             'campaign_source' => 'distinctive_campaign_4471',
             'whisper_text' => 'Call from distinctive_campaign_4471',
             'expires_at' => now()->addMinutes(30),
-            'status' => 'active'
+            'status' => 'active',
         ]);
         Tenancy::forget();
 
