@@ -6,7 +6,9 @@ namespace Tests\Modules\X190\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X190\Models\ReferralSlot;
 use App\Modules\X190\Ui\SlotBoard;
+use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -25,13 +27,13 @@ class SlotBoardScreenTest extends TestCase
             ->assertDontSee('this screen is planned in')
             ->assertSee('No referral slots yet.');
 
-        \App\Support\Tenancy::set((int) $biz->id);
-        \App\Modules\X190\Models\ReferralSlot::create([
+        Tenancy::set((int) $biz->id);
+        ReferralSlot::create([
             'business_id' => $biz->id,
             'category' => 'electrical-4471',
-            'territory_zip' => '75001'
+            'territory_zip' => '75001',
         ]);
-        \App\Support\Tenancy::forget();
+        Tenancy::forget();
 
         $this->get(route('x-190.slot-board'))
             ->assertOk()
