@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Tests\Modules\X181;
 
 use App\Modules\CReviews\Models\ReviewRequest;
+use App\Modules\CReviews\Actions\ReviewRequestAction;
+use App\Modules\CSms\Events\SendRequested;
 use App\Modules\X121\Models\Person;
 use App\Modules\X181\Actions\QaMarketingSuppressionCheckAction;
 use App\Modules\X181\Actions\QaTicketCreateAction;
@@ -84,9 +86,52 @@ class X181Test extends TestCase
         $this->assertFalse($isSuppressedAfterResolve, 'Resolved ticket must lift the marketing suppression');
     }
 
-    public function test_anchor_p205_the_review_ask_is_not_suppressed_by_an_open_ticket(): void
+        public function test_anchor_p205_the_review_ask_is_not_suppressed_by_an_open_ticket(): void
     {
-        $this->fail('NOT BUILT: P-205 — an open qa_ticket suppresses only the CSAT ask (AskForCsatOnTicketResolved); the C-Reviews review ask dispatches SendRequested at ReviewRequestAction.php:112 without consulting isGrowSuppressed, and plan :661 puts the arbiter in the SPINE with no special case in C-Reviews (:35238); no spine service reads qa_tickets.');
+        $biz = TestCase::provisionTenant(['name' => 'QA Ticket Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $person = Person::create(['business_id' => $biz->id, 'first_name' => 'Distinctive', 'phone' => '+15125554499']);
+
+        $this->createAction->handle(
+            businessId: $biz->id,
+            personId: $person->id,
+            subject: 'Customer complaint',
+            description: 'Customer is very unhappy',
+            slaHours: 24
+        );
+
+        Event::fake([SendRequested::class]);
+
+        $result = app(ReviewRequestAction::class)->handle(
+            businessId: $biz->id,
+            customerId: $person->id,
+            promptTemplate: 'Please leave a review',
+            platform: 'google'
+        );
+
+        Event::assertNotDispatched(SendRequested::class);
+        $this->assertEquals('suppressed', is_array($result) ? $result['status'] : $result->status);
+    }
+
+    public function test_anchor_p205_the_review_ask_goes_out_when_no_ticket_is_open(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'QA Ticket Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $person = Person::create(['business_id' => $biz->id, 'first_name' => 'Distinctive', 'phone' => '+15125554499']);
+
+        Event::fake([SendRequested::class]);
+
+        $result = app(ReviewRequestAction::class)->handle(
+            businessId: $biz->id,
+            customerId: $person->id,
+            promptTemplate: 'Please leave a review',
+            platform: 'google'
+        );
+
+        Event::assertDispatched(SendRequested::class);
+        $this->assertEquals('sent', is_array($result) ? $result['status'] : $result->status);
     }
 
     /**
