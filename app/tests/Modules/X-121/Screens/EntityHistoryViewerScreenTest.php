@@ -37,7 +37,7 @@ class EntityHistoryViewerScreenTest extends TestCase
             'snapshot' => [],
             'reversal_action' => 'entity.restore',
             'created_by' => 'test',
-            'commit_id' => 'commit_distinctive_4489'
+            'commit_id' => 'commit_distinctive_4489',
         ]);
         Tenancy::forget();
 
