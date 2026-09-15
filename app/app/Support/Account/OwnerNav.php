@@ -546,6 +546,7 @@ final class OwnerNav
             OwnerNavItem::make('Migration status', 'x-129.migration-card', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Edge deployments', 'x-157.edge-status-per', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Chat thread', 'x-102.thread', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Rage clicks', 'x-102.rageclick-rate', OwnerNavItem::GROUP_MORE),
         ];
     }
 

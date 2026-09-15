@@ -6,7 +6,9 @@ namespace Tests\Modules\X102\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X102\Models\ChatSession;
 use App\Modules\X102\Ui\RageclickRate;
+use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,7 +20,28 @@ class RageclickRateScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-102.rageclick-rate'))->assertOk();
+        $this->get(route('x-102.rageclick-rate'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
+            ->assertDontSee('this screen is planned in')
+            ->assertSee('No rage clicks recorded.');
+
+        Tenancy::setUser($owner->id);
+        ChatSession::create([
+            'business_id' => $biz->id,
+            'session_token' => 'sess_distinctive_4490',
+            'status' => 'active',
+            'rage_clicks_count' => 7,
+            'is_ai_capped' => false
+        ]);
+        Tenancy::forget();
+
+        $this->get(route('x-102.rageclick-rate'))
+            ->assertOk()
+            ->assertSee('sess_distinctive_4490: 7 rage clicks')
+            ->assertSee('[active]')
+            ->assertDontSee('No rage clicks recorded.');
 
         Livewire::test(RageclickRate::class)->assertOk();
     }
