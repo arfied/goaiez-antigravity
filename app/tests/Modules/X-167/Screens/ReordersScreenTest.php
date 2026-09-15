@@ -6,6 +6,8 @@ namespace Tests\Modules\X167\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X167\Models\PurchaseOrder;
+use App\Modules\X167\Models\Supplier;
 use App\Modules\X167\Ui\Reorders;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -23,12 +25,12 @@ class ReordersScreenTest extends TestCase
             ->assertSee('<h2>Reorders</h2>', false)
             ->assertSee('No reorders yet.');
 
-        $supplier = \App\Modules\X167\Models\Supplier::create([
+        $supplier = Supplier::create([
             'business_id' => $biz->id,
             'name' => 'Distinctive Supplier 881',
         ]);
 
-        \App\Modules\X167\Models\PurchaseOrder::create([
+        PurchaseOrder::create([
             'business_id' => $biz->id,
             'supplier_id' => $supplier->id,
             'po_number' => 'PO-9912',
