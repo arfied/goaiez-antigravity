@@ -787,3 +787,4 @@
 - `2026-09-15T10:56:34` (R245) X-170 — PB-201: commissions render in the owner shell on a real commission row
 - `2026-09-15T11:42:22` (R245) X-155 — PB-202: forms list renders in the owner shell on a real form definition; admin door kept
 - `2026-09-15T12:53:58` (R245) X-155 — PB-203: form submissions feed renders in the owner shell on a real submission; admin door kept
+- `2026-09-15T14:00:05` (R245) X-155 — PB-204: spam rate renders in the owner shell on real submissions; admin door kept
