@@ -34,7 +34,7 @@ class FormsScreenTest extends TestCase
             'slug' => 'distinctive-4481',
             'steps' => [['step' => 1, 'fields' => ['phone']]],
             'schema' => ['phone' => 'required|string'],
-            'honeypot_field' => 'website_url'
+            'honeypot_field' => 'website_url',
         ]);
         Tenancy::forget();
 
