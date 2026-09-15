@@ -34,7 +34,7 @@ class DrDashboardScreenTest extends TestCase
             'actual_checksum' => 'sha_distinctive_4489',
             'expected_row_count' => 4489,
             'restored_row_count' => 4489,
-            'status' => 'passed'
+            'status' => 'passed',
         ]);
         Tenancy::forget();
 
