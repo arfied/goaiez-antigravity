@@ -24,7 +24,7 @@ class RestorationtestLog extends Component
     public function render()
     {
         return view('x-203::restorationtest-log', [
-            'tests' => ($this->businessId > 0) ? RestoreTest::where('business_id', $this->businessId)->orderByDesc('id')->get() : collect()
+            'tests' => ($this->businessId > 0) ? RestoreTest::where('business_id', $this->businessId)->orderByDesc('id')->get() : collect(),
         ]);
     }
 }

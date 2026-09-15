@@ -36,7 +36,7 @@ class RestorationtestLogScreenTest extends TestCase
             'expected_row_count' => 4493,
             'restored_row_count' => 4493,
             'status' => 'failed_checksum_mismatch',
-            'failure_reason' => 'Distinctive reason 4493'
+            'failure_reason' => 'Distinctive reason 4493',
         ]);
         Tenancy::forget();
 
