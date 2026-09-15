@@ -35,7 +35,7 @@ class InstallCountScreenTest extends TestCase
             'is_active' => true,
             'theme_files_modified_count' => 0,
             'pillars_active' => ['chat'],
-            'injected_assets' => null
+            'injected_assets' => null,
         ]);
         Tenancy::forget();
 
