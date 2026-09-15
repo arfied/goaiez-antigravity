@@ -1261,3 +1261,18 @@ whatever the report says; **(2) every product brief's item 0 carries, right afte
 identical to main's and stage nothing at the next merge) and the lane's copies survive in history — but the
 restore is recorded as an OWNER ACTION with the exact commands, and every `state.py` line the lane records
 before the restore lands is listed for re-recording afterwards.
+
+⚠️ **THE CODER OPENS EVERY RUN NOT KNOWING ITS OWN WORKING DIRECTORY, AND A RUN THAT EXITS IN TWENTY SECONDS WITH
+`AGY_EXIT=0` IS THE CLI DYING ON ONE MALFORMED TOOL ARGUMENT (N183 + N184, 2026-09-15).** Two findings from one
+afternoon of "empty exits" (11-byte log, no commit, no artefact), both read off the coder's own transcripts at
+`~/.gemini/antigravity-cli/brain/<id>/.system_generated/logs/transcript.jsonl` — step 1 is the first tool call.
+**N183:** all thirty-two runs of the day opened with `pwd`/`find … BRIEF.md` from `/home/goaiez`, `/workspace` or `/`;
+the CLI's own log says `workspaceDirs=[<the checkout>]` but the model's `run_command` `Cwd` defaults elsewhere, and
+one good run `cat`-ed a **sibling lane's** brief while guessing. **RULED: every `KICKOFF.md` states the checkout's
+absolute path, names the brief by absolute path, and says every command runs there** — the next two runs opened with
+`view_file <absolute brief>` and `Cwd` = the checkout. **N184:** the empties themselves are exactly the runs whose first
+`run_command` carried `WaitMsBeforeAsync` as a JSON *string* (`"5000"`) — four of four empties, zero of twenty-eight
+good runs; the CLI ends the turn on it instead of erroring back to the model. **RULED: every kickoff also says
+`WaitMsBeforeAsync` is a bare integer, never a quoted string.** Correlate with
+`grep -c '"WaitMsBeforeAsync": *"\\"' <transcript>`. An empty exit is never a dispatch of the cap and never the
+wave's fault: rename its `.launch-*.txt`, re-launch, and read the transcript before blaming spacing.
