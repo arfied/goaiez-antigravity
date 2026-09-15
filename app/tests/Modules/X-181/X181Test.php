@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X181;
 
-use App\Modules\CReviews\Models\ReviewRequest;
 use App\Modules\CReviews\Actions\ReviewRequestAction;
+use App\Modules\CReviews\Models\ReviewRequest;
 use App\Modules\CSms\Events\SendRequested;
 use App\Modules\X121\Models\Person;
 use App\Modules\X181\Actions\QaMarketingSuppressionCheckAction;
@@ -86,7 +86,7 @@ class X181Test extends TestCase
         $this->assertFalse($isSuppressedAfterResolve, 'Resolved ticket must lift the marketing suppression');
     }
 
-        public function test_anchor_p205_the_review_ask_is_not_suppressed_by_an_open_ticket(): void
+    public function test_anchor_p205_the_review_ask_is_not_suppressed_by_an_open_ticket(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'QA Ticket Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
