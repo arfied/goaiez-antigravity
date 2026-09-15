@@ -25,17 +25,14 @@ class StockByVanScreenTest extends TestCase
             ->assertOk()
             ->assertSeeText('No stock yet');
 
-        $owner2 = User::factory()->create(['role' => UserRole::Owner]);
-        $biz2 = $this->provisionTenant(['owner_user_id' => $owner2->id]);
-
         // Seed distinctive StockItem/StockLocation
         $loc = StockLocation::create([
-            'business_id' => $biz2->id,
+            'business_id' => $biz->id,
             'name' => 'Distinctive Van 999',
         ]);
 
         StockItem::create([
-            'business_id' => $biz2->id,
+            'business_id' => $biz->id,
             'location_id' => $loc->id,
             'sku' => 'DISTINCT-123',
             'name' => 'Distinctive Widget',
