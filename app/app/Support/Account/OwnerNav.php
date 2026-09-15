@@ -557,6 +557,7 @@ final class OwnerNav
             OwnerNavItem::make('Your number', 'x-188.your-number-card', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Restore test log', 'x-203.restorationtest-log', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Push health', 'x-207.perplatform-delivery-health', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Number complaints', 'x-188.pernumber-complaint-board', OwnerNavItem::GROUP_MORE),
         ];
     }
 
