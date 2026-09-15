@@ -34,7 +34,7 @@ class ScorecardUiScreenTest extends TestCase
             'period_key' => '2026-Q3-distinctive-4480',
             'revenue_collected_cents' => 500000,
             'commissions_earned_cents' => 123456,
-            'average_review_score' => 4.80,
+            'average_rating' => 4.80,
         ]);
         Tenancy::forget();
 
