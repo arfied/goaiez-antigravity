@@ -6,9 +6,9 @@ namespace App\Modules\CAgent\Ui;
 
 use App\Modules\CAgent\Models\AgentTurn;
 use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
-use Livewire\Attributes\Layout;
 
 #[Layout('components.account.layout', ['heading' => 'Agent turns'])]
 class Thread extends Component
