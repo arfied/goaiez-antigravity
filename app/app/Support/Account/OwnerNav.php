@@ -562,6 +562,7 @@ final class OwnerNav
             OwnerNavItem::make('Number complaints', 'x-188.pernumber-complaint-board', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Runbooks', 'x-203.runbook-runner', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Google profile', 'x-177.gbp-card', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('QA queue', 'x-181.qa-queue-sladueat', OwnerNavItem::GROUP_MORE),
         ];
     }
 
