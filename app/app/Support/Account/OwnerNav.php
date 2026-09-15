@@ -559,6 +559,7 @@ final class OwnerNav
             OwnerNavItem::make('Push health', 'x-207.perplatform-delivery-health', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Agent turns', 'c-agent.thread', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Runbooks', 'x-203.runbook-runner', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Google profile', 'x-177.gbp-card', OwnerNavItem::GROUP_MORE),
         ];
     }
 
