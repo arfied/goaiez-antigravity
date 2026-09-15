@@ -955,3 +955,4 @@
 - `2026-09-15T12:12:16` (R245) X-157 — SITE-221: edge deployments render in the owner shell on a real deployment; admin door kept
 - `2026-09-15T13:24:44` (R245) X-203 — SITE-222: restore tests render in the owner shell on a real restore test; the module has no admin door
 - `2026-09-15T14:39:53` (R245) X-203 — SITE-223: the restore test log renders in the owner shell on a real failed restore test; the module has no admin door
+- `2026-09-15T16:33:52` (R245) X-203 — SITE-224: runbooks and their runs render in the owner shell on a real runbook; the module has no admin door
