@@ -540,6 +540,7 @@ final class OwnerNav
             OwnerNavItem::make('Redirect queue', 'x-129.cutover-queue', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Schema status', 'x-176.seo-tab-website', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Chat leads', 'x-102.offline-form-inbox', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Chat thread', 'x-102.thread', OwnerNavItem::GROUP_MORE),
         ];
     }
 
