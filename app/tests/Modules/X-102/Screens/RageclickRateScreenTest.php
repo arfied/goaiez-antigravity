@@ -33,7 +33,7 @@ class RageclickRateScreenTest extends TestCase
             'session_token' => 'sess_distinctive_4490',
             'status' => 'active',
             'rage_clicks_count' => 7,
-            'is_ai_capped' => false
+            'is_ai_capped' => false,
         ]);
         Tenancy::forget();
 
