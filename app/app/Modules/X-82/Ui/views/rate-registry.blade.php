@@ -1,9 +1,8 @@
 <div>
-    <x-surface.sample-state module="the rate registry — **a row cannot be invented; no document carries a number**" screen="rate_registry" />
-    <h1 class="text-2xl font-bold mb-4 text-ink">Rate Registry</h1>
+    <h2 class="text-2xl font-bold mb-4 text-ink">Your rates</h2>
 
     <div class="bg-paper rounded-xl border border-rule p-6 mb-8">
-        <h2 class="text-lg font-medium text-ink mb-4">Set a rate</h2>
+        <h3 class="text-lg font-medium text-ink mb-4">Set a rate</h3>
         <form wire:submit="setRate" class="flex gap-4">
             <input type="text" wire:model="newRateCode" placeholder="Rate Code (e.g. PLATINUM)" class="border p-2 rounded">
             <input type="number" step="0.01" wire:model="newAmountDollars" placeholder="Amount" class="border p-2 rounded">
