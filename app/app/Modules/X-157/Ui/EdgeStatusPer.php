@@ -6,16 +6,24 @@ namespace App\Modules\X157\Ui;
 
 use App\Modules\X157\Actions\EdgeRollbackAction;
 use App\Modules\X157\Models\Deployment;
+use App\Support\Tenancy;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Edge deployments'])]
 class EdgeStatusPer extends Component
 {
     #[Locked]
     public int $businessId = 0;
 
     public ?string $errorMessage = null;
+
+    public function mount(int $businessId = 0)
+    {
+        $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
+    }
 
     public function rollback(int $deploymentId)
     {

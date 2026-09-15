@@ -542,6 +542,11 @@ final class OwnerNav
             OwnerNavItem::make('Chat leads', 'x-102.offline-form-inbox', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Retired devices', 'x-207.retirement-reasons', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Forms', 'x-155.forms', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Plugin sites', 'x-104.plugin-settings-page', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Migration status', 'x-129.migration-card', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Edge deployments', 'x-157.edge-status-per', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Chat thread', 'x-102.thread', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Reveal log', 'x-206.reveal-log', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Form submissions', 'x-155.submissions-thread', OwnerNavItem::GROUP_MORE),
         ];
     }
