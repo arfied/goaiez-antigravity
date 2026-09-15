@@ -25,7 +25,7 @@ class OneConfirmonceToggle extends Component
     public function render()
     {
         return view('x-207::one-confirmonce-toggle', [
-            'prompts' => ($this->businessId > 0) ? PushPrompt::where('business_id', $this->businessId)->orderByDesc('id')->get() : collect()
+            'prompts' => ($this->businessId > 0) ? PushPrompt::where('business_id', $this->businessId)->orderByDesc('id')->get() : collect(),
         ]);
     }
 }
