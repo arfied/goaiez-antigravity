@@ -779,3 +779,4 @@
 - `2026-09-15T00:08:48` (R245) X-182 — UI-111: social-queue renders in the owner shell on real posts
 - `2026-09-15T00:36:21` (R245) X-190 — UI-112: slot-board renders in the owner shell on a real referral slot; admin door kept
 - `2026-09-15T01:04:28` (R245) X-190 — UI-113: network-map renders in the owner shell on a real partner row; admin door kept
+- `2026-09-15T01:23:38` (R245) X-190 — UI-114: pool-depth-per renders in the owner shell on a real pool count; admin door kept; X-190's three screens converted
