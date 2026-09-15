@@ -1,6 +1,14 @@
 <div>
-    <x-surface.sample-state module="one-click install" screen="plugin_settings_page" />
     <div class="plugin-settings-view p-4">
-        <h3 class="text-lg font-bold">Universal CMS Plugin Settings</h3>
+        <h2 class="text-lg font-bold text-ink">Plugin sites</h2>
+        @if($installs->isEmpty())
+            <p class="text-ink-2">No plugin sites connected yet.</p>
+        @else
+            <ul>
+                @foreach($installs as $install)
+                    <li>{{ $install->site_url }} — {{ $install->is_active ? 'active' : 'inactive' }}</li>
+                @endforeach
+            </ul>
+        @endif
     </div>
 </div>
