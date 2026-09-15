@@ -538,6 +538,7 @@ final class OwnerNav
             OwnerNavItem::make('Scorecards', 'x-170.scorecard', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Plugin installs', 'x-104.install-count', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Redirect queue', 'x-129.cutover-queue', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Migration status', 'x-129.migration-card', OwnerNavItem::GROUP_MORE),
         ];
     }
 
