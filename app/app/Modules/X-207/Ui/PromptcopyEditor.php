@@ -6,7 +6,9 @@ namespace App\Modules\X207\Ui;
 
 use App\Enums\UserRole;
 use App\Modules\X207\Models\PushPrompt;
+use App\Support\Admin\AdminAccess;
 use App\Support\Tenancy;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -19,7 +21,10 @@ class PromptcopyEditor extends Component
 
     public function mount()
     {
-        abort_unless(auth()->check() && (auth()->user()->hasRole(UserRole::Owner, UserRole::Manager)), 403);
+        abort_unless(
+            auth()->check() && (auth()->user()->hasRole(UserRole::Owner, UserRole::Manager) || Gate::allows(AdminAccess::GATE)),
+            403
+        );
         $this->businessId = Tenancy::id();
     }
 

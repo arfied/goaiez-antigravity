@@ -38,6 +38,17 @@ class PromptcopyEditorScreenTest extends TestCase
             ->assertSee('Distinctive Push Prompt Title');
     }
 
+    public function test_screen_renders_for_admin(): void
+    {
+        $user = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);
+        $this->actingAs($user);
+        $biz = $this->provisionTenant(['owner_user_id' => $user->id]);
+
+        $this->get(route('x-207.promptcopy-editor.admin'))->assertOk();
+
+        Livewire::test(PromptcopyEditor::class)->assertOk();
+    }
+
     public function test_screen_403_for_other_roles(): void
     {
         $tech = User::factory()->create(['role' => UserRole::Staff]);
