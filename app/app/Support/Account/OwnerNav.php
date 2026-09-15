@@ -549,6 +549,7 @@ final class OwnerNav
             OwnerNavItem::make('Reveal log', 'x-206.reveal-log', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Form submissions', 'x-155.submissions-thread', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Parked numbers', 'x-188.park-list', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Change history', 'x-121.entity-history-viewer', OwnerNavItem::GROUP_MORE),
         ];
     }
 
