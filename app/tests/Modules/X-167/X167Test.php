@@ -384,7 +384,8 @@ class X167Test extends TestCase
     public function test_g6_43_selling_a_kit_decrements_every_component_atomically_or_refused(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'T4', 'currency' => 'USD']);
-        $item = StockItem::create(['business_id' => $biz->id, 'location_id' => 1, 'sku' => 'K1', 'barcode' => 'K1', 'name' => 'K1', 'quantity' => 10.0, 'unit' => 'ea', 'reorder_point' => 0.0]);
+        $loc = StockLocation::create(['business_id' => $biz->id, 'name' => 'Test Van', 'type' => 'van']);
+        $item = StockItem::create(['business_id' => $biz->id, 'location_id' => $loc->id, 'sku' => 'K1', 'barcode' => 'K1', 'name' => 'K1', 'quantity' => 10.0, 'unit' => 'ea', 'reorder_point' => 0.0]);
         $res = $this->engine->sellKit($biz->id, [['id' => $item->id, 'qty' => 2]]);
         $this->assertEquals('sold', $res['status']);
 
@@ -397,7 +398,8 @@ class X167Test extends TestCase
     public function test_g6_47_a_refund_restocks_exactly_once(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'T5', 'currency' => 'USD']);
-        $item = StockItem::create(['business_id' => $biz->id, 'location_id' => 1, 'sku' => 'R1', 'barcode' => 'R1', 'name' => 'R1', 'quantity' => 10.0, 'unit' => 'ea', 'reorder_point' => 0.0]);
+        $loc = StockLocation::create(['business_id' => $biz->id, 'name' => 'Test Van', 'type' => 'van']);
+        $item = StockItem::create(['business_id' => $biz->id, 'location_id' => $loc->id, 'sku' => 'R1', 'barcode' => 'R1', 'name' => 'R1', 'quantity' => 10.0, 'unit' => 'ea', 'reorder_point' => 0.0]);
 
         $res1 = $this->engine->refundSale($biz->id, $item->id, 5.0, 'ref-123');
         $this->assertEquals('restocked', $res1['status']);
@@ -410,7 +412,8 @@ class X167Test extends TestCase
     public function test_g6_49_serialised_item_with_no_serial_cannot_be_closed(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'T6', 'currency' => 'USD']);
-        $item = StockItem::create(['business_id' => $biz->id, 'location_id' => 1, 'sku' => 'S1', 'barcode' => 'S1', 'name' => 'S1', 'quantity' => 1.0, 'unit' => 'ea', 'reorder_point' => 0.0]);
+        $loc = StockLocation::create(['business_id' => $biz->id, 'name' => 'Test Van', 'type' => 'van']);
+        $item = StockItem::create(['business_id' => $biz->id, 'location_id' => $loc->id, 'sku' => 'S1', 'barcode' => 'S1', 'name' => 'S1', 'quantity' => 1.0, 'unit' => 'ea', 'reorder_point' => 0.0]);
 
         $res = $this->engine->closeItem($biz->id, $item->id, true, 'SN-123');
         $this->assertEquals('closed', $res['status']);

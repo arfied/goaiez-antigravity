@@ -15,11 +15,11 @@ class X175Filler implements DemoFiller
 
     public function fill(Business $business): int
     {
-        if (FieldSuggestion::where('business_id', $business->id)->where('query_text', 'like', self::MARKER.'%')->exists()) {
+        if (FieldSuggestion::where('business_id', $business->id)->where('is_sample', true)->exists()) {
             return 0;
         }
         for ($i = 0; $i < 3; $i++) {
-            FieldSuggestion::create(['business_id' => $business->id, 'query_text' => self::MARKER."Sugg $i", 'response_text' => 'Demo response']);
+            FieldSuggestion::create(['business_id' => $business->id, 'query_text' => "Sugg $i", 'response_text' => 'Demo response', 'is_sample' => true]);
         }
 
         return 3;
@@ -27,6 +27,6 @@ class X175Filler implements DemoFiller
 
     public function purge(Business $business): int
     {
-        return FieldSuggestion::where('business_id', $business->id)->where('query_text', 'like', self::MARKER.'%')->delete();
+        return FieldSuggestion::where('business_id', $business->id)->where('is_sample', true)->delete();
     }
 }

@@ -15,11 +15,11 @@ class X165Filler implements DemoFiller
 
     public function fill(Business $business): int
     {
-        if (MembershipPlan::where('business_id', $business->id)->where('name', 'like', self::MARKER.'%')->exists()) {
+        if (MembershipPlan::where('business_id', $business->id)->where('is_sample', true)->exists()) {
             return 0;
         }
-        MembershipPlan::create(['business_id' => $business->id, 'name' => self::MARKER.'Plan A', 'price_cents' => 9900]);
-        MembershipPlan::create(['business_id' => $business->id, 'name' => self::MARKER.'Plan B', 'price_cents' => 19900]);
+        MembershipPlan::create(['business_id' => $business->id, 'name' => 'Plan A', 'price_cents' => 9900, 'is_sample' => true]);
+        MembershipPlan::create(['business_id' => $business->id, 'name' => 'Plan B', 'price_cents' => 19900, 'is_sample' => true]);
 
         // Membership lacks a human-visible string column for the marker
         return 2;
@@ -27,6 +27,6 @@ class X165Filler implements DemoFiller
 
     public function purge(Business $business): int
     {
-        return MembershipPlan::where('business_id', $business->id)->where('name', 'like', self::MARKER.'%')->delete();
+        return MembershipPlan::where('business_id', $business->id)->where('is_sample', true)->delete();
     }
 }

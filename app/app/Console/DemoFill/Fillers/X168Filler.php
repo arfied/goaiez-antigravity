@@ -16,11 +16,11 @@ class X168Filler implements DemoFiller
 
     public function fill(Business $business): int
     {
-        if (Timesheet::where('business_id', $business->id)->where('status', 'like', self::MARKER.'%')->exists()) {
+        if (Timesheet::where('business_id', $business->id)->where('is_sample', true)->exists()) {
             return 0;
         }
-        $ts1 = Timesheet::create(['business_id' => $business->id, 'person_id' => $business->owner_user_id, 'period_start' => now()->startOfWeek(), 'period_end' => now()->endOfWeek(), 'status' => self::MARKER.'open']);
-        $ts2 = Timesheet::create(['business_id' => $business->id, 'person_id' => $business->owner_user_id, 'period_start' => now()->subWeek()->startOfWeek(), 'period_end' => now()->subWeek()->endOfWeek(), 'status' => self::MARKER.'open']);
+        $ts1 = Timesheet::create(['business_id' => $business->id, 'person_id' => $business->owner_user_id, 'period_start' => now()->startOfWeek(), 'period_end' => now()->endOfWeek(), 'status' => 'open', 'is_sample' => true]);
+        $ts2 = Timesheet::create(['business_id' => $business->id, 'person_id' => $business->owner_user_id, 'period_start' => now()->subWeek()->startOfWeek(), 'period_end' => now()->subWeek()->endOfWeek(), 'status' => 'open', 'is_sample' => true]);
 
         TimesheetEntry::create(['business_id' => $business->id, 'timesheet_id' => $ts1->id, 'state_window' => 'on_site', 'started_at' => now()->subHours(4), 'ended_at' => now(), 'duration_minutes' => 240]);
         TimesheetEntry::create(['business_id' => $business->id, 'timesheet_id' => $ts1->id, 'state_window' => 'en_route', 'started_at' => now()->subHours(8), 'ended_at' => now()->subHours(4), 'duration_minutes' => 240]);
@@ -33,7 +33,7 @@ class X168Filler implements DemoFiller
 
     public function purge(Business $business): int
     {
-        $tsIds = Timesheet::where('business_id', $business->id)->where('status', 'like', self::MARKER.'%')->pluck('id');
+        $tsIds = Timesheet::where('business_id', $business->id)->where('is_sample', true)->pluck('id');
         $count = TimesheetEntry::whereIn('timesheet_id', $tsIds)->delete();
         $count += Timesheet::whereIn('id', $tsIds)->delete();
 

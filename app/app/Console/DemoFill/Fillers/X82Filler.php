@@ -15,11 +15,11 @@ class X82Filler implements DemoFiller
 
     public function fill(Business $business): int
     {
-        if (Rate::where('business_id', $business->id)->where('rate_code', 'like', self::MARKER.'%')->exists()) {
+        if (Rate::where('business_id', $business->id)->where('is_sample', true)->exists()) {
             return 0;
         }
         for ($i = 0; $i < 3; $i++) {
-            Rate::create(['business_id' => $business->id, 'rate_code' => self::MARKER."RATE_$i", 'amount_cents' => 1000, 'currency' => 'USD', 'current_version' => 1]);
+            Rate::create(['business_id' => $business->id, 'rate_code' => "RATE_$i", 'amount_cents' => 1000, 'currency' => 'USD', 'current_version' => 1, 'is_sample' => true]);
         }
 
         return 3;
@@ -27,6 +27,6 @@ class X82Filler implements DemoFiller
 
     public function purge(Business $business): int
     {
-        return Rate::where('business_id', $business->id)->where('rate_code', 'like', self::MARKER.'%')->delete();
+        return Rate::where('business_id', $business->id)->where('is_sample', true)->delete();
     }
 }
