@@ -25,7 +25,7 @@ class RetirementReasons extends Component
     public function render()
     {
         return view('x-207::retirement-reasons', [
-            'tokens' => ($this->businessId > 0) ? DeviceToken::where('business_id', $this->businessId)->where('status', 'retired')->orderByDesc('id')->get() : collect()
+            'tokens' => ($this->businessId > 0) ? DeviceToken::where('business_id', $this->businessId)->where('status', 'retired')->orderByDesc('id')->get() : collect(),
         ]);
     }
 }

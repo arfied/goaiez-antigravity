@@ -33,7 +33,7 @@ class RetirementReasonsScreenTest extends TestCase
             'platform' => 'ios',
             'device_token' => 'tok-distinctive-4474',
             'status' => 'retired',
-            'retirement_reason' => 'distinctive_reason_4474'
+            'retirement_reason' => 'distinctive_reason_4474',
         ]);
         Tenancy::forget();
 
