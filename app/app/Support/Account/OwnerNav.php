@@ -543,6 +543,7 @@ final class OwnerNav
             OwnerNavItem::make('Retired devices', 'x-207.retirement-reasons', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Forms', 'x-155.forms', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Plugin sites', 'x-104.plugin-settings-page', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Migration status', 'x-129.migration-card', OwnerNavItem::GROUP_MORE),
         ];
     }
 
