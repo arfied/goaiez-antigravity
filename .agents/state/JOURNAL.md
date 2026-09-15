@@ -782,3 +782,4 @@
 - `2026-09-15T01:23:38` (R245) X-190 — UI-114: pool-depth-per renders in the owner shell on a real pool count; admin door kept; X-190's three screens converted
 - `2026-09-15T01:58:34` (R245) X-210 — UI-115: targeting-preview renders in the owner shell on a real promotion scope
 - `2026-09-15T02:36:14` (R245) X-210 — UI-116: discounts-given panel renders in the owner shell on a real redemption
+- `2026-09-15T03:10:54` (R245) X-182 — UI-117: connected accounts render in the owner shell on a real social account row
