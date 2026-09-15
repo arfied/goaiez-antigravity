@@ -34,7 +34,7 @@ class CommissionsScreenTest extends TestCase
             'staff_id' => 10,
             'amount_cents' => 123456,
             'status' => 'released',
-            'payment_id' => 'pay_distinctive_4475'
+            'payment_id' => 'pay_distinctive_4475',
         ]);
         Tenancy::forget();
 
