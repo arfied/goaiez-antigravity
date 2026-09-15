@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-15T01:52:12",
+ "updated": "2026-09-15T02:16:02",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1454,6 +1454,12 @@
    "module": "X-162",
    "chose": "PB-197: route map renders in the owner shell on a real technician route",
    "at": "2026-09-15T01:52:12",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-188",
+   "chose": "PB-198: number pool inventory renders in the owner shell on a real pool number; admin door kept",
+   "at": "2026-09-15T02:16:02",
    "ruling": "R245"
   }
  ],
