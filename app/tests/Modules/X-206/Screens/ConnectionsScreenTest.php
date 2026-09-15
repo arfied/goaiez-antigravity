@@ -32,7 +32,7 @@ class ConnectionsScreenTest extends TestCase
             'business_id' => $biz->id,
             'service_name' => 'distinctive_service_4491',
             'encrypted_secret' => 'enc_distinctive_4491',
-            'key_hint' => 'hint4491'
+            'key_hint' => 'hint4491',
         ]);
         Tenancy::forget();
 
