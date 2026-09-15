@@ -1,9 +1,8 @@
 <div>
-    <x-surface.sample-state module="commission injection" screen="scorecard" />
     <div class="scorecard-view p-4">
-        <h3 class="text-lg font-bold">Technician & Sales Scorecard</h3>
+        <h2 class="text-lg font-bold text-ink">Scorecards</h2>
         @if($scorecards->isEmpty())
-            <p class="text-gray-500">No scorecard records.</p>
+            <p class="text-ink-2">No scorecard records.</p>
         @else
             <ul>
                 @foreach($scorecards as $s)
