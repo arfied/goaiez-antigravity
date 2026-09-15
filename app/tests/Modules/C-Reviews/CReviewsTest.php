@@ -49,6 +49,7 @@ use App\Services\Config\DefaultsRegistry;
 use App\Services\Consent\ConsentCapture;
 use App\Services\Consent\ConsentService;
 use App\Support\HashedIp;
+use App\Support\Tenancy;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -1157,8 +1158,8 @@ class CReviewsTest extends TestCase
         $ticket = app(QaTicketCreateAction::class)->handle($biz->id, $person->id, 'Triage');
         $ticket->update(['status' => 'resolved', 'resolved_at' => now(), 'csat_requested_at' => now()]);
 
-        \App\Support\Tenancy::forget();
-        DB::statement("RESET app.business_id");
+        Tenancy::forget();
+        DB::statement('RESET app.business_id');
 
         Event::dispatch(new MessageReceived($biz->id, $person->id, '+15125550413', '1', 'msg_distinctive_4500', now()->toIso8601String()));
 

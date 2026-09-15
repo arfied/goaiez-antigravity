@@ -8,6 +8,7 @@ use App\Modules\CReviews\Actions\QaTicketAction;
 use App\Modules\CReviews\Models\CsatAnswer;
 use App\Modules\CSms\Events\MessageReceived;
 use App\Modules\X181\Actions\QaTicketReadAction;
+use App\Support\Tenancy;
 
 final class RecordCsatOnReply
 {
@@ -23,7 +24,7 @@ final class RecordCsatOnReply
             return;
         }
 
-        \App\Support\Tenancy::actingAs((int) $event->businessId, function () use ($event, $body): void {
+        Tenancy::actingAs((int) $event->businessId, function () use ($event, $body): void {
             $ticket = app(QaTicketReadAction::class)->latestAwaitingCsatForPerson($event->businessId, $event->personId);
 
             if ($ticket === null) {
