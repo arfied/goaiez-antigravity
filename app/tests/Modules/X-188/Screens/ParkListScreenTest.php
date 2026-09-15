@@ -24,11 +24,18 @@ class ParkListScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
+        $this->get(route('x-188.park-list'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
+            ->assertDontSee('this screen is planned in')
+            ->assertSee('No numbers in 14-day parking.');
+
         // Given a parked number
         $pool = NumberPool::create([
             'business_id' => $biz->id,
-            'phone_number' => '+15551234567',
-            'area_code' => '555',
+            'phone_number' => '+15125554488',
+            'area_code' => '512',
         ]);
         $park = NumberPark::create([
             'business_id' => $biz->id,
@@ -37,7 +44,10 @@ class ParkListScreenTest extends TestCase
             'park_until' => now()->addDays(14),
         ]);
 
-        $this->get(route('x-188.park-list'))->assertOk();
+        $this->get(route('x-188.park-list'))
+            ->assertOk()
+            ->assertSee('Parked until: '.$park->park_until)
+            ->assertDontSee('No numbers in 14-day parking.');
 
         Livewire::test(ParkList::class)
             ->assertOk()
