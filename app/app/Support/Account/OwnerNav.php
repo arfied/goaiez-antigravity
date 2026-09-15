@@ -521,6 +521,7 @@ final class OwnerNav
             OwnerNavItem::make('Timesheets', 'x-168.timesheets', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Prompt copy', 'x-207.promptcopy-editor', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Approvals', 'x-168.approvals', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Social queue', 'x-182.social-queue', OwnerNavItem::GROUP_MORE),
         ];
     }
 
