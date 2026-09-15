@@ -965,3 +965,4 @@
 - `2026-09-12T16:13:27` (R245) X-204 — The App\Modules\X121\Models\Person import Track 1 names adds one boundary row, which is accepted and recorded, because X-121 exposes no phone lookup and Track 1 forbids changing X-121.
 - `2026-09-13T05:44:26` (R245) X-204 — 2026-09-12T16:13:27 is superseded: the clause that X-121 exposes no phone lookup and Track 1 forbids changing X-121 no longer holds. Track 1 requested and we added the exported seam PersonLookupAction.
 - `2026-09-13T08:17:59` (R245) X-01 — wave 195: X-01 reads and writes people only through X-121's exported actions (PersonLookupAction, EntityReadAction); the model import is gone from all seven files; X-204's no-person test asserts the run table is untouched
+- `2026-09-15T11:00:18` (R245) X-102 — SIXTY-196: offline form inbox renders in the owner shell on a real captured chat lead; admin door kept

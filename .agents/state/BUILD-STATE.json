@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-13T08:17:59",
+ "updated": "2026-09-15T11:00:18",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1998,6 +1998,12 @@
    "module": "X-01",
    "chose": "wave 195: X-01 reads and writes people only through X-121's exported actions (PersonLookupAction, EntityReadAction); the model import is gone from all seven files; X-204's no-person test asserts the run table is untouched",
    "at": "2026-09-13T08:17:59",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-102",
+   "chose": "SIXTY-196: offline form inbox renders in the owner shell on a real captured chat lead; admin door kept",
+   "at": "2026-09-15T11:00:18",
    "ruling": "R245"
   }
  ],
