@@ -779,3 +779,4 @@
 - `2026-09-14T23:44:32` (R245) X-168 — PB-193: approvals renders in the owner shell; nav beside Timesheets
 - `2026-09-15T00:15:43` (R245) X-168 — PB-194: own-hours renders in the owner shell; X-168's three screens converted
 - `2026-09-15T00:43:58` (R245) X-82 — PB-195: rate-registry renders in the owner shell; admin door kept
+- `2026-09-15T01:17:05` (R245) X-175 — PB-196: field assistant panel renders in the owner shell on a real suggestion
