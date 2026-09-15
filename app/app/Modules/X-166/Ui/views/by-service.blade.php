@@ -1,5 +1,5 @@
 <div>
-    <x-surface.sample-state module="actual vs expected per job" screen="by_service" />
+    
     <div class="margin-service-view p-4">
         <h2>Margin by service</h2>
         
@@ -38,7 +38,7 @@
                         </tr>
                         @if(isset($expanded[$row['key']]))
                             <tr>
-                                <td colspan="7" class="bg-gray-50 p-2">
+                                <td colspan="7" class="bg-surface p-2">
                                     <ul class="space-y-1">
                                         @foreach($row['jobs'] as $job)
                                             <li>Job #{{ $job->job_id }} (v{{ $job->price_book_version }}) margin: {{ number_format($job->gross_margin_cents / 100, 2, '.', '') }}</li>
