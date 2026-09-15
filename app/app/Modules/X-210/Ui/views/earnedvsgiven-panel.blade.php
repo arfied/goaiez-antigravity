@@ -1,6 +1,10 @@
 <div>
-    <x-surface.sample-state module="⭐⭐ **The tenant's own offer layer: create a promotion, target it, distribute it across every channel the platform already owns, redeem it against a real price, and measure what it actually earned.** ⛔ **It is NOT a coupon plugin.** *A coupon plugin knows a code and a percentage.* ⭐⭐⭐ **This one knows the pricebook with costs, the job history, the customer graph and the cadence ceiling — so it can warn about margin before the offer exists, target it from real jobs rather than a list, and refuse to over-contact the person it is targeting.**" screen="earnedvsgiven_panel" />
     <div class="earnedvsgiven-panel-view p-4">
-        <h3 class="text-lg font-bold">Earned Revenue vs Discount Margin Analysis</h3>
+        <h2 class="text-lg font-bold text-ink">Discounts given</h2>
+        @if((int) $totalDiscount === 0)
+            <p class="text-ink-2">No discounts given yet.</p>
+        @else
+            <p class="text-ink">Total discount given: ${{ number_format($totalDiscount / 100, 2) }}</p>
+        @endif
     </div>
 </div>
