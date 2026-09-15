@@ -22,8 +22,6 @@ use App\Modules\CReviews\Actions\ReviewerContactAction;
 use App\Modules\CReviews\Actions\ReviewReplyAction;
 use App\Modules\CReviews\Actions\ReviewRequestAction;
 use App\Modules\CReviews\Actions\ReviewSyncAction;
-use App\Modules\CReviews\Actions\CsatAnswerReadAction;
-use App\Modules\CReviews\Models\CsatAnswer;
 use App\Modules\CReviews\Domain\PublicThreshold;
 use App\Modules\CReviews\Domain\RemovalFilingGate;
 use App\Modules\CReviews\Domain\RemovalNotAddressableException;
@@ -33,6 +31,7 @@ use App\Modules\CReviews\Events\FirstWin;
 use App\Modules\CReviews\Events\ReplyPublished;
 use App\Modules\CReviews\Events\ReviewReceived;
 use App\Modules\CReviews\Events\ReviewRequested;
+use App\Modules\CReviews\Models\CsatAnswer;
 use App\Modules\CReviews\Models\QaSetting;
 use App\Modules\CReviews\Models\ReviewReply;
 use App\Modules\CReviews\Models\ReviewRequest;
@@ -812,7 +811,7 @@ class CReviewsTest extends TestCase
 
         $req = ReviewRequest::where('business_id', $biz->id)->where('customer_id', $person->id)->latest('id')->first();
         $this->assertEquals('triaged_internal', $req->status);
-        
+
         $newTicket = QaTicket::where('business_id', $biz->id)->where('review_request_id', $req->id)->first();
         $this->assertNotNull($newTicket);
 
@@ -844,7 +843,7 @@ class CReviewsTest extends TestCase
 
         $req = ReviewRequest::where('business_id', $biz->id)->where('customer_id', $person->id)->latest('id')->first();
         $this->assertEquals('sent', $req->status);
-        
+
         Event::assertDispatched(SendRequested::class, 1);
     }
 
@@ -873,7 +872,7 @@ class CReviewsTest extends TestCase
 
         $req = ReviewRequest::where('business_id', $biz->id)->where('customer_id', $person->id)->latest('id')->first();
         $this->assertEquals('sent', $req->status);
-        
+
         $newTicket = QaTicket::where('business_id', $biz->id)->where('review_request_id', $req->id)->first();
         $this->assertNull($newTicket);
     }
