@@ -13,6 +13,5 @@ final class MessageReceived
         public readonly ?string $body,
         public readonly string $providerMessageId,
         public readonly string $receivedAt
-    ) {
-    }
+    ) {}
 }

@@ -13,6 +13,7 @@ use App\Enums\SuppressionReason;
 use App\Models\Conversation;
 use App\Models\InboundMessage;
 use App\Models\OwnerReply;
+use App\Modules\CSms\Events\MessageReceived;
 use App\Services\ActivityService;
 use App\Services\Agent\AgentTurns;
 use App\Services\AuditService;
@@ -29,6 +30,7 @@ use App\Support\SqlState;
 use App\Support\Tenancy;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
@@ -362,7 +364,7 @@ final class InboundMessages
         // G20-05: the inbound text becomes a module event so C-Reviews can hear a CSAT answer.
         $businessId = $filed?->thread->business_id ?? $ownerBusinessIds[0] ?? $this->numbers->tenantFor($toNumber);
         if ($businessId !== null) {
-            \Illuminate\Support\Facades\Event::dispatch(new \App\Modules\CSms\Events\MessageReceived(
+            Event::dispatch(new MessageReceived(
                 businessId: (int) $businessId,
                 personId: $filed?->thread->customer_id,
                 fromPhone: $from,

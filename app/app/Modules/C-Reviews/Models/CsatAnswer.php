@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\CReviews\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Modules\X181\Models\QaTicket;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CsatAnswer extends Model

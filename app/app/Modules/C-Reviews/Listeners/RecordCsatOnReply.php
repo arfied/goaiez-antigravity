@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Modules\CReviews\Listeners;
 
+use App\Modules\CReviews\Actions\QaTicketAction;
 use App\Modules\CReviews\Models\CsatAnswer;
 use App\Modules\CSms\Events\MessageReceived;
-use App\Modules\CReviews\Actions\QaTicketAction;
 use App\Modules\X181\Actions\QaTicketReadAction;
 
 final class RecordCsatOnReply
@@ -18,8 +18,8 @@ final class RecordCsatOnReply
         }
 
         $body = trim($event->body ?? '');
-        
-        if (!in_array($body, ['1', '2', '3', '4', '5'], true)) {
+
+        if (! in_array($body, ['1', '2', '3', '4', '5'], true)) {
             return;
         }
 

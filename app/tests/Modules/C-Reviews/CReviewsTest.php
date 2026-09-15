@@ -36,6 +36,7 @@ use App\Modules\CReviews\Models\ReviewReply;
 use App\Modules\CReviews\Models\ReviewRequest;
 use App\Modules\CReviews\Ui\LossAlerts;
 use App\Modules\CReviews\Ui\ReviewsQaRequests;
+use App\Modules\CSms\Events\MessageReceived;
 use App\Modules\CSms\Events\SendRequested;
 use App\Modules\X121\Models\Person;
 use App\Modules\X171\Events\JobCompleted;
@@ -1156,7 +1157,7 @@ class CReviewsTest extends TestCase
         $ticket = app(QaTicketCreateAction::class)->handle($biz->id, $person->id, 'Triage');
         $ticket->update(['status' => 'resolved', 'resolved_at' => now(), 'csat_requested_at' => now()]);
 
-        Event::dispatch(new \App\Modules\CSms\Events\MessageReceived($biz->id, $person->id, '+15125550413', '1', 'msg_distinctive_4500', now()->toIso8601String()));
+        Event::dispatch(new MessageReceived($biz->id, $person->id, '+15125550413', '1', 'msg_distinctive_4500', now()->toIso8601String()));
 
         $ticket->refresh();
         $this->assertEquals('open', $ticket->status);
@@ -1173,7 +1174,7 @@ class CReviewsTest extends TestCase
         $ticket = app(QaTicketCreateAction::class)->handle($biz->id, $person->id, 'Triage');
         $ticket->update(['status' => 'resolved', 'resolved_at' => now(), 'csat_requested_at' => now()]);
 
-        Event::dispatch(new \App\Modules\CSms\Events\MessageReceived($biz->id, $person->id, '+15125550414', '5', 'msg_distinctive_4501', now()->toIso8601String()));
+        Event::dispatch(new MessageReceived($biz->id, $person->id, '+15125550414', '5', 'msg_distinctive_4501', now()->toIso8601String()));
 
         $ticket->refresh();
         $this->assertEquals('resolved', $ticket->status);
@@ -1190,7 +1191,7 @@ class CReviewsTest extends TestCase
         $ticket = app(QaTicketCreateAction::class)->handle($biz->id, $person->id, 'Triage');
         $ticket->update(['status' => 'resolved', 'resolved_at' => now()]);
 
-        Event::dispatch(new \App\Modules\CSms\Events\MessageReceived($biz->id, $person->id, '+15125550415', '5', 'msg_distinctive_4502', now()->toIso8601String()));
+        Event::dispatch(new MessageReceived($biz->id, $person->id, '+15125550415', '5', 'msg_distinctive_4502', now()->toIso8601String()));
 
         $this->assertDatabaseMissing('csat_answers', ['qa_ticket_id' => $ticket->id]);
     }

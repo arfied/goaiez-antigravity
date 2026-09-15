@@ -2,11 +2,11 @@
 
 namespace Tests\Feature\Sms;
 
-use App\Models\Business;
 use App\Models\PhoneNumber;
-use App\Modules\X121\Models\Person;
 use App\Modules\CSms\Events\MessageReceived;
+use App\Modules\X121\Models\Person;
 use App\Services\Sms\InboundMessages;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
@@ -15,9 +15,9 @@ class InboundMessagesDispatchesMessageReceivedTest extends TestCase
     public function test_inbound_messages_dispatches_event(): void
     {
         $biz = self::provisionTenant(['name' => 'Dispatch Biz', 'currency' => 'USD']);
-        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
+        DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $toNumber = \App\Models\PhoneNumber::where('business_id', $biz->id)->first()->e164;
+        $toNumber = PhoneNumber::where('business_id', $biz->id)->first()->e164;
 
         $person = Person::create(['business_id' => $biz->id, 'first_name' => 'Ana', 'phone' => '+15125550421']);
 
