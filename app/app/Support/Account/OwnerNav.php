@@ -544,6 +544,7 @@ final class OwnerNav
             OwnerNavItem::make('Forms', 'x-155.forms', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Plugin sites', 'x-104.plugin-settings-page', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Migration status', 'x-129.migration-card', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Change history', 'x-121.entity-history-viewer', OwnerNavItem::GROUP_MORE),
         ];
     }
 
