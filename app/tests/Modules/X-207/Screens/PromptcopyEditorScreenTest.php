@@ -45,7 +45,7 @@ class PromptcopyEditorScreenTest extends TestCase
         $this->actingAs($tech);
 
         $this->get(route('x-207.promptcopy-editor'))->assertForbidden();
-        
+
         Livewire::test(PromptcopyEditor::class)
             ->assertForbidden();
     }
