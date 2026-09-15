@@ -20,12 +20,8 @@ class MigrationCardScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $response = $this->get(route('x-129.migration-card'));
-        if ($response->status() !== 200) {
-            file_put_contents('/tmp/error.html', $response->getContent());
-        }
-
-        $response->assertOk()
+        $this->get(route('x-129.migration-card'))
+            ->assertOk()
             ->assertSee('Your account')
             ->assertDontSee('Internal Platform Console')
             ->assertDontSee('this screen is planned in')
