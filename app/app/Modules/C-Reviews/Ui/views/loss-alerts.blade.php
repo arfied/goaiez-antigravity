@@ -10,7 +10,7 @@
         </div>
 
         @if($actionNotice)
-            <div class="mb-4 p-2 rounded {{ $noticeType === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+            <div class="mb-4 p-2 rounded {{ $noticeType === 'success' ? 'bg-green-100 text-green-800' : ($noticeType === 'warning' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
                 {{ $actionNotice }}
             </div>
         @endif
@@ -18,6 +18,7 @@
         @if($isSample)
             <div class="mb-4 p-2 bg-yellow-100 text-yellow-800 rounded text-sm font-bold">
                 SAMPLE DATA
+                <span class="block font-normal">Sample mode, actions are off. Submit, Alert Team, Prepare Removal and Confirm Removal do nothing on sample rows. Exit Sample to act on your own.</span>
             </div>
         @endif
 
