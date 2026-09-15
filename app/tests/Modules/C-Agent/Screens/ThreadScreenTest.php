@@ -19,7 +19,12 @@ class ThreadScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('c-agent.thread'))->assertOk();
+        $this->get(route('c-agent.thread'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
+            ->assertDontSee('this screen is planned in')
+            ->assertSee('No agent turns recorded.');
 
         Livewire::test(Thread::class)->assertOk();
     }
