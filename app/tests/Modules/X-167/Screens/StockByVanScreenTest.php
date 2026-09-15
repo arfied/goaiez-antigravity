@@ -33,7 +33,7 @@ class StockByVanScreenTest extends TestCase
             'business_id' => $biz2->id,
             'name' => 'Distinctive Van 999',
         ]);
-        
+
         StockItem::create([
             'business_id' => $biz2->id,
             'location_id' => $loc->id,
