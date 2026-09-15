@@ -547,6 +547,7 @@ final class OwnerNav
             OwnerNavItem::make('Edge deployments', 'x-157.edge-status-per', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Chat thread', 'x-102.thread', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Reveal log', 'x-206.reveal-log', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Connections', 'x-206.connections', OwnerNavItem::GROUP_MORE),
         ];
     }
 
