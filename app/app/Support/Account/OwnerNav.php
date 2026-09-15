@@ -531,6 +531,7 @@ final class OwnerNav
             OwnerNavItem::make('Route map', 'x-162.map', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Promotion targeting', 'x-210.targeting-preview', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Number pool', 'x-188.pool-inventory', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Call attribution', 'x-137.attribution-row', OwnerNavItem::GROUP_MORE),
         ];
     }
 
