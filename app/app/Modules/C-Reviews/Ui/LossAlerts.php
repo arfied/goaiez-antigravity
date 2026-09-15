@@ -80,6 +80,9 @@ class LossAlerts extends Component
     public function resolveAndAlert(int $ticketId, string $notes): void
     {
         if ($this->isSample) {
+            $this->noticeType = 'warning';
+            $this->actionNotice = 'Sample mode, actions are off. Exit Sample to act on your own rows.';
+
             return;
         }
         Tenancy::set($this->businessId);
@@ -112,6 +115,9 @@ class LossAlerts extends Component
     public function alertTeam(int $reviewRequestId): void
     {
         if ($this->isSample) {
+            $this->noticeType = 'warning';
+            $this->actionNotice = 'Sample mode, actions are off. Exit Sample to act on your own rows.';
+
             return;
         }
         Tenancy::set($this->businessId);
@@ -142,6 +148,9 @@ class LossAlerts extends Component
     public function prepareRemoval(int $reviewRequestId, string $tosGround, string $preparedBody, string $googleReviewId): void
     {
         if ($this->isSample) {
+            $this->noticeType = 'warning';
+            $this->actionNotice = 'Sample mode, actions are off. Exit Sample to act on your own rows.';
+
             return;
         }
         Tenancy::set($this->businessId);
@@ -160,6 +169,9 @@ class LossAlerts extends Component
     public function confirmRemoval(int $removalId): void
     {
         if ($this->isSample) {
+            $this->noticeType = 'warning';
+            $this->actionNotice = 'Sample mode, actions are off. Exit Sample to act on your own rows.';
+
             return;
         }
         Tenancy::set($this->businessId);
