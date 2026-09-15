@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-13T13:20:24",
+ "updated": "2026-09-15T11:15:20",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -2547,6 +2547,12 @@
    "module": "X-108",
    "chose": "SITE-218: AppointmentListAction is X-108's exported read-only list of upcoming appointments for a business (owner grant 2026-09-13); site added only AppointmentListAction.php; EdgeDeployAction consumes it; eventual X-108 owner inherits this seam",
    "at": "2026-09-13T13:20:24",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-176",
+   "chose": "SITE-220: schema status renders in the owner shell on a real schema snapshot",
+   "at": "2026-09-15T11:15:20",
    "ruling": "R245"
   }
  ],
