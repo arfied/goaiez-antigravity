@@ -553,6 +553,7 @@ final class OwnerNav
             OwnerNavItem::make('Restore tests', 'x-203.dr-dashboard', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Rage clicks', 'x-102.rageclick-rate', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Connections', 'x-206.connections', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Push health', 'x-207.perplatform-delivery-health', OwnerNavItem::GROUP_MORE),
         ];
     }
 
