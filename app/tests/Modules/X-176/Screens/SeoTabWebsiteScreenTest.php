@@ -32,7 +32,7 @@ class SeoTabWebsiteScreenTest extends TestCase
             'page_id' => 4477,
             'entity_type' => 'LocalBusiness',
             'json_ld' => ['@type' => 'LocalBusiness'],
-            'commit_id' => 'commit_distinctive_4477'
+            'commit_id' => 'commit_distinctive_4477',
         ]);
         Tenancy::forget();
 
