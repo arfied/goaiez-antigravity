@@ -1,6 +1,14 @@
 <div>
-    <x-surface.sample-state module="the growth and referral engine" screen="network_map" />
     <div class="network-map-view p-4">
-        <h3 class="text-lg font-bold">Territory Partner Network Map</h3>
+        <h2 class="text-lg font-bold text-ink">Partner network</h2>
+        @if($partners->isEmpty())
+            <p class="text-ink-2">No partners in your network yet.</p>
+        @else
+            <ul>
+                @foreach($partners as $partner)
+                    <li>{{ $partner->company_name }} {{ $partner->category }} {{ $partner->territory_zip }}</li>
+                @endforeach
+            </ul>
+        @endif
     </div>
 </div>
