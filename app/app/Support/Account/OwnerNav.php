@@ -554,6 +554,7 @@ final class OwnerNav
             OwnerNavItem::make('Rage clicks', 'x-102.rageclick-rate', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Connections', 'x-206.connections', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Spam rate', 'x-155.spam-rate', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Your number', 'x-188.your-number-card', OwnerNavItem::GROUP_MORE),
         ];
     }
 
