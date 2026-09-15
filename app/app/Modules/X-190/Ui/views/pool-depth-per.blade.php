@@ -1,6 +1,10 @@
 <div>
-    <x-surface.sample-state module="the growth and referral engine" screen="pool_depth_per" />
     <div class="pool-depth-per-view p-4">
-        <h3 class="text-lg font-bold">Partner Pool Territory Depth</h3>
+        <h2 class="text-lg font-bold text-ink">Pool depth</h2>
+        @if($count === 0)
+            <p class="text-ink-2">No partners in your pool yet.</p>
+        @else
+            <p class="text-ink">{{ $count }} {{ $count === 1 ? 'partner' : 'partners' }} in your pool.</p>
+        @endif
     </div>
 </div>
