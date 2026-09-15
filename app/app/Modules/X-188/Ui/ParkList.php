@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Modules\X188\Ui;
 
 use App\Modules\X188\Models\NumberPark;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Parked numbers'])]
 class ParkList extends Component
 {
     public function render()
