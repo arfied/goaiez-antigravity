@@ -1,5 +1,4 @@
 <div>
-    <x-surface.sample-state module="the kanban and predictability board" screen="map" />
     <h2>Route map</h2>
     <p>{{ $sentence }}</p>
 

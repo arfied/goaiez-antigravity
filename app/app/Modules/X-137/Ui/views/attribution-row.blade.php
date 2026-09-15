@@ -1,9 +1,8 @@
 <div>
-    <x-surface.sample-state module="dynamic number insertion" screen="attribution_row" />
     <div class="attribution-row-view p-4">
-        <h3 class="text-lg font-bold">Call Attribution Feed</h3>
+        <h2 class="text-lg font-bold text-ink">Call attribution</h2>
         @if($tokens->isEmpty())
-            <p class="text-gray-500">No active DNI tokens allocated.</p>
+            <p class="text-ink-2">No active DNI tokens allocated.</p>
         @else
             <ul>
                 @foreach($tokens as $t)

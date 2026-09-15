@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace App\Modules\X132\Ui;
 
+use App\Enums\UserRole;
 use App\Modules\X132\Models\ResolutionEvidence;
+use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Person timeline'])]
 class PersonTimelineView extends Component
 {
     #[Locked]
@@ -15,6 +19,12 @@ class PersonTimelineView extends Component
 
     #[Locked]
     public int $personId = 0;
+
+    public function mount()
+    {
+        abort_unless(auth()->check() && (auth()->user()->hasRole(UserRole::Owner, UserRole::Manager)), 403);
+        $this->businessId = Tenancy::id();
+    }
 
     public function render()
     {
