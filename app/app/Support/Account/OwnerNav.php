@@ -535,6 +535,7 @@ final class OwnerNav
             OwnerNavItem::make('Call attribution', 'x-137.attribution-row', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Connected accounts', 'x-182.connected-accounts', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Commissions', 'x-170.commissions', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Chat leads', 'x-102.offline-form-inbox', OwnerNavItem::GROUP_MORE),
         ];
     }
 

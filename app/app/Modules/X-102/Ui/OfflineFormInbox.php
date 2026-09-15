@@ -6,9 +6,11 @@ namespace App\Modules\X102\Ui;
 
 use App\Enums\UserRole;
 use App\Modules\X102\Models\ChatLead;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Chat leads'])]
 class OfflineFormInbox extends Component
 {
     public function mount(): void
