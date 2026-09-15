@@ -562,6 +562,7 @@ final class OwnerNav
             OwnerNavItem::make('Runbooks', 'x-203.runbook-runner', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Google profile', 'x-177.gbp-card', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Team alerts', 'x-153.alert-roster-screen', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Reply codes', 'x-153.alert-reply-by', OwnerNavItem::GROUP_MORE),
         ];
     }
 
