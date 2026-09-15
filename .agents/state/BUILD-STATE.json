@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-12T02:18:01",
+ "updated": "2026-09-15T11:10:17",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1453,6 +1453,12 @@
    "module": "X-181",
    "chose": "QaTicketResolveAction refuses a ticket that is already resolved by throwing App\\Modules\\X181\\Domain\\TicketAlreadyResolvedException instead of returning it unchanged, because its five production callers (C-Reviews Tickets, QaReport and LossAlerts, X-181 QaQueueSlaDueAt and Ticket) could not tell a no-op from a resolve, said resolved, and LossAlerts sent a real alert quoting notes nobody saved; each caller catches only that exception, around the call, so resolved keeps one definition and a caller that forgets the catch fails closed",
    "at": "2026-09-12T02:18:01",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-129",
+   "chose": "REV-178: redirect queue renders in the owner shell on a real redirect mapping; admin door kept",
+   "at": "2026-09-15T11:10:17",
    "ruling": "R245"
   }
  ],
