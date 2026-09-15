@@ -62,7 +62,6 @@ class TimesheetsViewScreenTest extends TestCase
 
         // GET asserts
         $response = $this->get(route('x-168.timesheets'));
-        file_put_contents('/home/goaiez/tmp/test_dump.html', $response->getContent());
         $response->assertOk()
             ->assertSee('Alice Tech')
             ->assertDontSee('Bob Tech')
