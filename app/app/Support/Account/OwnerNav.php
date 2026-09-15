@@ -519,6 +519,7 @@ final class OwnerNav
             OwnerNavItem::make('Reorders', 'x-167.reorders', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Resolution rate & confidence', 'x-132.resolution-rate-confidence', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Timesheets', 'x-168.timesheets', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Prompt copy', 'x-207.promptcopy-editor', OwnerNavItem::GROUP_MORE),
         ];
     }
 
