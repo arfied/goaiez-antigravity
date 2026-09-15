@@ -815,3 +815,4 @@
 - `2026-09-13T09:27:39` RESOLVED boundary X-199 - PersonLookupAction::create arrived on main (sixty wave 195, merged as main 356); EvidenceInvoiceCommand creates people through it (was: EvidenceInvoiceCommand creates a Person; X-121 exports no create seam yet — PersonLookupAction::create arrives from sixty wave 195)
 - `2026-09-13T09:27:39` RESOLVED boundary X-211 - same arrival; EvidenceRecoveryCommand creates people through it (was: EvidenceRecoveryCommand creates a Person; same dependency)
 - `2026-09-15T11:05:57` (R245) X-104 — MONEY-220: plugin install count renders in the owner shell on a real active install; admin door kept
+- `2026-09-15T11:51:41` (R245) X-104 — MONEY-221: plugin sites list renders in the owner shell on a real install; admin door kept
