@@ -332,18 +332,33 @@ lane branch that merely points at main's sha — right tree, wrong name; the nex
 `pull --ff-only` then fast-forwards the lane again. Deploy path is
 `pull --ff-only` on `main`, or nothing. Never `reset --hard` on production.
 
-⚠️ **A DEPLOY BACKUP RECORDED BY FILENAME ALONE CANNOT BE CHECKED BY ANYONE, AND SIX WERE RECORDED THAT WAY
-IN ONE DAY (N180, 2026-09-14).** `REVIEWS.md` carries six `goaiez_antig-<ts>-pre-<sha>.sql` names for
-2026-09-14 and **zero** paths — the path-bearing needle returns nothing for any of them. Nothing matching
-`*20260914-222023*` exists under `/home/goaiez` to depth 4 or under `/` to depth 3; `/backup` exists and is
-unreadable from a supervisor seat, so the honest reading is **unverifiable**, not *missing*. That is the
-sibling project's `cp … .bak` incident in slow motion: a rollback artefact asserted in a record that
-structurally cannot be checked, discovered by the person trying to restore from it. **RULED: a deploy line
-records the backup's absolute path and its `ls -la --time-style=full-iso` line, or it does not record a
-backup**; a tick that cannot read the directory writes `backup: <name> — UNVERIFIED (path not recorded)`
-rather than repeating the bare filename as though it were a measurement. Same ladder as N160 — *a citation <
-a paste-ready string < a redirect < a named field* — and the same asymmetry: **a backup nobody checked reads
-as a backup that exists.**
+⚠️ **A DEPLOY BACKUP RECORDED BY FILENAME ALONE, AND A `find -maxdepth` REPORTED AS ABSENCE (N180,
+2026-09-14; finding corrected by the owner the same hour).** `REVIEWS.md` carries six
+`goaiez_antig-<ts>-pre-<sha>.sql` names for 2026-09-14 and **zero** paths — the path-bearing needle returns
+nothing for any of them. From that I concluded the backups were *unverifiable*. **They are not.** The deploy
+script's path is relative to `app/`, so they sit inside the production checkout, six levels below
+`/home/goaiez`, and my searches stopped at `-maxdepth 4` and `-maxdepth 3`:
+
+```
+-rw-r--r-- 1 goaiez goaiez 5283511 2026-09-14 22:20:24.055311887 -0500
+/home/goaiez/public_html/goaiez-antigravity/app/storage/backups/goaiez_antig-20260914-222023-pre-07304252.sql
+```
+
+All six of today's are in that one directory, sizes climbing monotonically. **The rule stands and the
+finding is withdrawn**: *a deploy line records the backup's absolute path and its `ls -la
+--time-style=full-iso` line, or it does not record a backup* — six entries named a file with no path, and
+resolving one took an owner who happened to know the directory. Same ladder as N160, *a citation < a
+paste-ready string < a redirect < a named field*.
+⛔ **The transferable defect is the search horizon.** `find -maxdepth N` returning nothing is a statement
+about **N**, and I wrote it into a ledger as a statement about the filesystem — N116's rule (*before
+believing a `0`, ask which tree could have held a `1`*) with the tree being a depth. **RULED: a `find` that
+returns nothing is quoted WITH its `-maxdepth`, or re-run without one before anything is concluded.** It
+joins §2e's baseline, wave 122's needle, N111's attribution, N123's sign, N121's count and N137's cap: *an
+instrument that can only under-report is safe as a trigger and unsafe as a finding.*
+⚠️ And a seat note from the same measurement: **this Cursor seat reads `root root` as the owner/group of
+every file in every checkout** while `id` returns `uid=0(root)`. Size, mtime and path are evidence from
+here; **a user/group column is not**. A tick diffing an owner's paste against its own `ls` will otherwise
+find a discrepancy that does not exist.
 
 ⚠️ **`supervise.sh` RUNS AND SILENTLY LEAVES NO ROW IN THE SHARED GATE LEDGER FROM A SEAT THAT CANNOT WRITE
 `/home/goaiez/tmp` (N181, 2026-09-14).** `--census` printed
