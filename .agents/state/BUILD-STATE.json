@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-13T09:27:39",
+ "updated": "2026-09-15T11:05:57",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2891,6 +2891,12 @@
    "module": "X-198",
    "chose": "MONEY-218: PaymentReadAction is X-198's exported read seam (exists, declined, recovered, links, countForBusiness); read-only, tenant-scoped",
    "at": "2026-09-13T08:28:06",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-104",
+   "chose": "MONEY-220: plugin install count renders in the owner shell on a real active install; admin door kept",
+   "at": "2026-09-15T11:05:57",
    "ruling": "R245"
   }
  ],
