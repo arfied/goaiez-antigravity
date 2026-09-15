@@ -8,9 +8,11 @@ use App\Enums\UserRole;
 use App\Modules\X168\Models\Timesheet;
 use App\Modules\X168\Models\TimesheetEntry;
 use Illuminate\Contracts\View\View;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Your hours'])]
 class OwnHoursView extends Component
 {
     #[Locked]
