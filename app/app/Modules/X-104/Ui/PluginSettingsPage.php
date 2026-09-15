@@ -24,7 +24,7 @@ class PluginSettingsPage extends Component
     public function render()
     {
         return view('x-104::plugin-settings-page', [
-            'installs' => ($this->businessId > 0) ? PluginInstall::where('business_id', $this->businessId)->orderByDesc('id')->get() : collect()
+            'installs' => ($this->businessId > 0) ? PluginInstall::where('business_id', $this->businessId)->orderByDesc('id')->get() : collect(),
         ]);
     }
 }
