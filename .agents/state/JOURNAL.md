@@ -790,3 +790,4 @@
 - `2026-09-15T17:21:21` (R245) X-207 — UI-122: push prompts render in the owner shell on a real prompt; admin door kept
 - `2026-09-15T18:59:55` (R245) X-181 — UI-123: the QA queue renders in the owner shell on a real ticket; sample toggle kept; no admin door
 - `2026-09-15T19:56:12` (R245) X-181 — UI-124: the Resolved tickets card renders in the owner shell on a real connection; no admin door (X-181 has none)
+- `2026-09-15T22:42:46` (R245) X-181 — UI-125: the Ticket card renders in the owner shell on a real connection; no admin door (X-181 has none)
