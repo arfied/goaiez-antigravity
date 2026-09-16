@@ -6,10 +6,9 @@ namespace App\Console\DemoFill\Fillers;
 
 use App\Console\DemoFill\DemoFiller;
 use App\Models\Business;
-use App\Modules\X124\Models\AssistantUnsupported;
 use App\Modules\X124\Models\AssistantRecommendation;
+use App\Modules\X124\Models\AssistantUnsupported;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class X124Filler implements DemoFiller
 {
@@ -27,7 +26,7 @@ class X124Filler implements DemoFiller
         $session_id = DB::table('assistant_sessions')->insertGetId([
             'business_id' => $business->id,
             'user_id' => null,
-            'session_token' => self::MARKER.'_token_' . $business->id,
+            'session_token' => self::MARKER.'_token_'.$business->id,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -45,6 +44,7 @@ class X124Filler implements DemoFiller
         $count = AssistantUnsupported::where('business_id', $business->id)->where('utterance', 'like', self::MARKER.'%')->delete();
         $count += AssistantRecommendation::where('business_id', $business->id)->where('title', 'like', self::MARKER.'%')->delete();
         DB::table('assistant_sessions')->where('business_id', $business->id)->where('session_token', 'like', self::MARKER.'%')->delete();
+
         return $count;
     }
 }

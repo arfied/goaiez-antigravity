@@ -34,6 +34,7 @@ class X183Filler implements DemoFiller
     {
         $count = GateResult::where('business_id', $business->id)->where('rejection_reason', 'like', self::MARKER.'%')->delete();
         $count += ContentDraft::where('business_id', $business->id)->where('title', 'like', self::MARKER.'%')->delete();
+
         return $count;
     }
 }

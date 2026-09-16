@@ -27,7 +27,7 @@ class X132Filler implements DemoFiller
         $linked = Person::create(['business_id' => $business->id, 'first_name' => self::MARKER.'Johnny', 'last_name' => 'Doe']);
 
         PersonLink::create(['business_id' => $business->id, 'canonical_person_id' => $canonical->id, 'linked_person_id' => $linked->id, 'confidence_rate' => 0.999]);
-        
+
         ResolutionEvidence::create(['business_id' => $business->id, 'canonical_person_id' => $canonical->id, 'field_name' => 'email', 'field_value' => self::MARKER.'evidence1', 'source_provider' => 'test', 'confidence_rate' => 0.99]);
         ResolutionEvidence::create(['business_id' => $business->id, 'canonical_person_id' => $canonical->id, 'field_name' => 'phone', 'field_value' => self::MARKER.'evidence2', 'source_provider' => 'test', 'confidence_rate' => 0.99]);
 
@@ -39,6 +39,7 @@ class X132Filler implements DemoFiller
         $count = ResolutionEvidence::where('business_id', $business->id)->where('field_value', 'like', self::MARKER.'%')->delete();
         $count += PersonLink::where('business_id', $business->id)->where('confidence_rate', 0.999)->delete();
         $count += Person::where('business_id', $business->id)->where('first_name', 'like', self::MARKER.'%')->delete();
+
         return $count;
     }
 }

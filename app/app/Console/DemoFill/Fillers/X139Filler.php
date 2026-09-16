@@ -23,7 +23,7 @@ class X139Filler implements DemoFiller
         }
 
         AdConnection::create(['business_id' => $business->id, 'platform' => self::MARKER.'GoogleAds', 'account_id' => '123-456-7890']);
-        
+
         ConversionUpload::create(['business_id' => $business->id, 'job_id' => 1, 'conversion_value_cents' => 100, 'status' => 'uploaded', 'rejection_reason' => null, 'gclid_or_fbc' => self::MARKER.'101']);
         ConversionUpload::create(['business_id' => $business->id, 'job_id' => 2, 'conversion_value_cents' => 200, 'status' => 'uploaded', 'rejection_reason' => null, 'gclid_or_fbc' => self::MARKER.'102']);
         ConversionUpload::create(['business_id' => $business->id, 'job_id' => 3, 'conversion_value_cents' => 300, 'status' => 'rejected', 'rejection_reason' => self::MARKER.'Invalid format', 'gclid_or_fbc' => self::MARKER.'103']);
@@ -35,6 +35,7 @@ class X139Filler implements DemoFiller
     {
         $count = ConversionUpload::where('business_id', $business->id)->where('gclid_or_fbc', 'like', self::MARKER.'%')->delete();
         $count += AdConnection::where('business_id', $business->id)->where('platform', 'like', self::MARKER.'%')->delete();
+
         return $count;
     }
 }

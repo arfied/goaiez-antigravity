@@ -37,6 +37,7 @@ class X138Filler implements DemoFiller
     {
         $count = DB::table('attribution_queries')->where('business_id', $business->id)->where('attribution_status', 'like', self::MARKER.'%')->delete();
         $count += DB::table('roi_snapshots')->where('business_id', $business->id)->where('campaign_name', 'like', self::MARKER.'%')->delete();
+
         return $count;
     }
 }
