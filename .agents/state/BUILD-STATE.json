@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-15T22:34:31",
+ "updated": "2026-09-16T14:19:33",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -2040,6 +2040,12 @@
    "module": "C-Agent",
    "chose": "SIXTY-202: the teaching box lists real instructions in the owner shell; a tenant-scoped read with a mount; C-Agent has no admin door",
    "at": "2026-09-15T22:34:31",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Agent",
+   "chose": "SIXTY-203: the grounding screen counts and lists real agent turns in the owner shell; an RLS-scoped read like the refusals screen; C-Agent has no admin door",
+   "at": "2026-09-16T14:19:33",
    "ruling": "R245"
   }
  ],
