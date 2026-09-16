@@ -18,6 +18,7 @@ class GroundcheckScreen extends Component
         $answered = AgentTurn::where('status', 'answered')->count();
         $refused = AgentTurn::where('status', 'refused')->count();
         $handoff = AgentTurn::where('status', 'handoff')->count();
+
         return view('c-agent::groundcheck-screen', ['turns' => $turns, 'answered' => $answered, 'refused' => $refused, 'handoff' => $handoff]);
     }
 }
