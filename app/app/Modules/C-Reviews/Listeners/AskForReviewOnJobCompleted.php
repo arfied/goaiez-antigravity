@@ -11,12 +11,15 @@ final class AskForReviewOnJobCompleted
 {
     public function handle(JobCompleted $event): void
     {
+        // P-113: a job replayed late (X-171 offline sync) carries its real completion date; a fresh job is day 0 and is never triaged.
         $action = new ReviewRequestAction;
         $action->handle(
             $event->businessId,
             $event->personId,
             'How did the repair go? Please leave us a review!',
-            'google'
+            'google',
+            csatScore: null,
+            jobAgeDays: $event->occurredAt === null ? 0 : (int) $event->occurredAt->diffInDays(now())
         );
     }
 }

@@ -563,6 +563,10 @@ final class OwnerNav
             OwnerNavItem::make('Google profile', 'x-177.gbp-card', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Team alerts', 'x-153.alert-roster-screen', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Reply codes', 'x-153.alert-reply-by', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Suspension risks', 'x-177.suspensionrisk-events-fleetwide', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Push prompts', 'x-207.one-confirmonce-toggle', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('QA queue', 'x-181.qa-queue-sladueat', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Resolved tickets', 'x-181.resolution', OwnerNavItem::GROUP_MORE),
         ];
     }
 

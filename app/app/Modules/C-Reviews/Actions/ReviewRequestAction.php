@@ -61,6 +61,10 @@ final class ReviewRequestAction
         if (app(QaMarketingSuppressionCheckAction::class)->isGrowSuppressed($businessId, $customerId)) {
             return ReviewRequest::create(['business_id' => $businessId, 'customer_id' => $customerId, 'platform' => $platform, 'status' => 'suppressed', 'gbp_suspended' => false])->toArray();
         }
+
+        // P-110: an explicit score wins (tests, G20-07); otherwise the person's latest csat_answers row is the production source.
+        $csatScore ??= app(CsatAnswerReadAction::class)->latestNormalisedScore($businessId, $customerId);
+
         if ($csatScore !== null && $csatScore < 7 && ($jobAgeDays ?? 0) >= 60) {
             $req = ReviewRequest::create([
                 'business_id' => $businessId,
