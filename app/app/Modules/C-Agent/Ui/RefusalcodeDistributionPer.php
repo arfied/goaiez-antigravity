@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Modules\CAgent\Ui;
 
 use App\Modules\CAgent\Models\AgentRefusal;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Agent refusals'])]
 class RefusalcodeDistributionPer extends Component
 {
     public function render()

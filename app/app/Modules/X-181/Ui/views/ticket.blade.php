@@ -1,4 +1,5 @@
 <div>
+    <h2 class="text-lg font-bold text-ink">Ticket</h2>
     @if ($actionNotice)
         <div class="mb-4">
             <x-ui.error-panel heading="Action failed">{{ $actionNotice }}</x-ui.error-panel>
@@ -34,18 +35,18 @@
                 <div>Rating: {{ $review->rating }}</div>
             @endif
 
-            <div class="text-gray-700 whitespace-pre-line">{{ $ticket->description }}</div>
-            <div class="text-sm text-gray-500">Arrived: {{ $ticket->arrived_at?->diffForHumans() }}</div>
+            <div class="text-ink-2 whitespace-pre-line">{{ $ticket->description }}</div>
+            <div class="text-sm text-ink-2">Arrived: {{ $ticket->arrived_at?->diffForHumans() }}</div>
 
             @if ($ticket->status === 'resolved')
                 <div class="mt-4 p-4 border rounded">
                     <div class="font-semibold">Resolution</div>
-                    <div class="text-sm text-gray-600 mt-1">{{ $ticket->resolution_notes }}</div>
-                    <div class="text-xs text-gray-400 mt-2">Resolved {{ $ticket->resolved_at?->diffForHumans() }}</div>
+                    <div class="text-sm text-ink-2 mt-1">{{ $ticket->resolution_notes }}</div>
+                    <div class="text-xs text-ink-2 mt-2">Resolved {{ $ticket->resolved_at?->diffForHumans() }}</div>
                 </div>
             @else
                 <div class="mt-4 flex items-center gap-2">
-                    <input type="text" wire:model="resolutionNotes" class="border p-2 rounded" />
+                    <input type="text" wire:model="resolutionNotes" class="border border-rule p-2 rounded" />
                     <x-ui.button wire:click="resolve($wire.resolutionNotes)">Resolve</x-ui.button>
                 </div>
             @endif

@@ -23,9 +23,33 @@ class TicketScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-181.ticket'))->assertOk();
+        $this->get(route('x-181.ticket'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
+            ->assertDontSee('this screen is planned in')
+            ->assertSee('Pick a ticket');
 
-        Livewire::test(Ticket::class)->assertOk();
+        $review = ReviewRequest::create([
+            'business_id' => $biz->id,
+            'rating' => 4,
+            'platform' => 'google',
+        ]);
+
+        $ticket = QaTicket::create([
+            'business_id' => $biz->id,
+            'review_request_id' => $review->id,
+            'subject' => 'Distinctive ticket 4511',
+            'description' => 'Distinctive description 4511',
+            'status' => 'open',
+            'arrived_at' => now(),
+            'sla_due_at' => now()->addHours(2),
+        ]);
+
+        Livewire::test(Ticket::class, ['ticketId' => $ticket->id])
+            ->assertOk()
+            ->assertSee('Distinctive ticket 4511')
+            ->assertSee('Distinctive description 4511');
     }
 
     public function test_review_request_branch_is_reached(): void

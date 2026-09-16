@@ -1,4 +1,5 @@
 <div>
+    <h2 class="text-lg font-bold text-ink">Resolved tickets</h2>
     @if ($actionNotice)
         <div class="mb-4">
             <x-ui.error-panel heading="Action failed">{{ $actionNotice }}</x-ui.error-panel>
@@ -32,8 +33,8 @@
                         @endif
                     </div>
 
-                    <div class="text-sm text-gray-700 mt-2">{{ $ticket->resolution_notes }}</div>
-                    <div class="text-xs text-gray-500">Resolved: {{ $ticket->resolved_at?->diffForHumans() }}</div>
+                    <div class="text-sm text-ink-2 mt-2">{{ $ticket->resolution_notes }}</div>
+                    <div class="text-xs text-ink-2">Resolved: {{ $ticket->resolved_at?->diffForHumans() }}</div>
                 </div>
             @endforeach
         </div>

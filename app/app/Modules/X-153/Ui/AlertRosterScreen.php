@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Modules\X153\Ui;
 
 use App\Modules\X153\Models\Alert;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Team alerts'])]
 class AlertRosterScreen extends Component
 {
     public function render()

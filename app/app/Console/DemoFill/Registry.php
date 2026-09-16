@@ -11,6 +11,9 @@ class Registry
     {
         $fillers = [
             new Fillers\X82Filler,
+            new Fillers\CReviewsFiller,
+            new Fillers\X181Filler,
+            new Fillers\X153Filler,
             new Fillers\X137Filler,
             new Fillers\X155Filler,
             new Fillers\X162Filler,
