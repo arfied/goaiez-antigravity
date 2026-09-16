@@ -24,7 +24,28 @@ class ResolutionScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-181.resolution'))->assertOk();
+        $this->get(route('x-181.resolution'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
+            ->assertDontSee('this screen is planned in')
+            ->assertSee('Nothing resolved yet');
+
+        QaTicket::create([
+            'business_id' => $biz->id,
+            'subject' => 'Distinctive resolved 4504',
+            'arrived_at' => now(),
+            'status' => 'resolved',
+            'resolved_at' => now(),
+            'resolution_notes' => 'Distinctive notes 4504',
+            'sla_due_at' => now()->addHours(1),
+        ]);
+
+        $this->get(route('x-181.resolution'))
+            ->assertOk()
+            ->assertSee('Distinctive resolved 4504')
+            ->assertSee('Distinctive notes 4504')
+            ->assertDontSee('Nothing resolved yet');
 
         Livewire::test(Resolution::class)->assertOk();
     }
