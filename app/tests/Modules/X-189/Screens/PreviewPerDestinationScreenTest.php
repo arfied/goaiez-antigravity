@@ -34,7 +34,7 @@ class PreviewPerDestinationScreenTest extends TestCase
             'license_source' => 'client_upload',
             'output_media_url' => 'https://example.test/branded_distinctive_4570.jpg',
             'overlay_layer' => ['logo' => 'top-left'],
-            'destination' => 'instagram'
+            'destination' => 'instagram',
         ]);
         Tenancy::forget();
 
