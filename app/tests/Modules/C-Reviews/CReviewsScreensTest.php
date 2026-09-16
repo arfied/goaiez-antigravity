@@ -247,7 +247,7 @@ class CReviewsScreensTest extends TestCase
     {
         Livewire::test(LossAlerts::class, ['businessId' => $this->bizId])
             ->assertOk()
-            ->assertSee('Customer Loss and Churn Risk Alerts')
+            ->assertSee('Loss alerts')
             ->assertSee('No customers at risk right now');
     }
 

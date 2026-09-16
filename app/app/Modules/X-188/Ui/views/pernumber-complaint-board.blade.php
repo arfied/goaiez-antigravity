@@ -1,7 +1,14 @@
 <div>
-    <x-surface.sample-state module="assigns a GO AI EZ number at signup" screen="pernumber_complaint_board" />
     <div class="complaints-board p-4">
-        <h3 class="text-lg font-bold">Per-Number Complaint Board</h3>
-        <p class="text-gray-500">All numbers complaint rate below 0.1% threshold.</p>
+        <h2 class="text-lg font-bold text-ink">Number complaints</h2>
+        @if($numbers->isEmpty())
+            <p class="text-ink-2">All numbers complaint rate below 0.1% threshold.</p>
+        @else
+            <ul>
+                @foreach($numbers as $n)
+                    <li>{{ $n->phone_number }}: {{ $n->complaint_count }} complaints [{{ $n->status }}]</li>
+                @endforeach
+            </ul>
+        @endif
     </div>
 </div>

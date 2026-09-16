@@ -20,7 +20,12 @@ class AlertReplyByScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-153.alert-reply-by'))->assertOk();
+        $this->get(route('x-153.alert-reply-by'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
+            ->assertDontSee('this screen is planned in')
+            ->assertSee('No active reply codes pending.');
 
         Livewire::test(AlertReplyBy::class)->assertOk();
     }
