@@ -114,7 +114,7 @@ class X199Filler implements DemoFiller
             'payment_id' => $payment->id,
         ]);
         $count++;
-        
+
         $payment2 = Payment::create([
             'business_id' => $business->id,
             'amount_cents' => 20000,
