@@ -3,6 +3,7 @@
 namespace Tests\Feature\Console;
 
 use App\Enums\UserRole;
+use App\Models\Location;
 use App\Models\User;
 use App\Modules\X08\Models\ChurnScore;
 use App\Support\Tenancy;
@@ -20,7 +21,7 @@ class DemoFillUi2Test extends TestCase
     {
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
-        \App\Models\Location::where('business_id', $biz->id)->update(['website_url' => 'https://demo.url', 'website_confirmed_at' => now()]);
+        Location::where('business_id', $biz->id)->update(['website_url' => 'https://demo.url', 'website_confirmed_at' => now()]);
 
         Tenancy::forgetAll();
         $this->artisan('demo:fill', [
@@ -83,7 +84,7 @@ class DemoFillUi2Test extends TestCase
     {
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
-        \App\Models\Location::where('business_id', $biz->id)->update(['website_url' => 'https://demo.url', 'website_confirmed_at' => now()]);
+        Location::where('business_id', $biz->id)->update(['website_url' => 'https://demo.url', 'website_confirmed_at' => now()]);
 
         Tenancy::forgetAll();
         $this->artisan('demo:fill', [

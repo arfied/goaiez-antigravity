@@ -30,6 +30,7 @@ class X10Filler implements DemoFiller
     {
         $count = RoutingRule::where('business_id', $business->id)->where('name', 'like', self::MARKER.'%')->delete();
         $count += Territory::where('business_id', $business->id)->where('name', 'like', self::MARKER.'%')->delete();
+
         return $count;
     }
 }

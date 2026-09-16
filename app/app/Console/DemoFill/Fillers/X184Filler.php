@@ -21,7 +21,7 @@ class X184Filler implements DemoFiller
         }
 
         $plan = ContentPlan::create(['business_id' => $business->id, 'week_label' => self::MARKER.'Plan', 'posts_per_week_cadence' => 2]);
-        
+
         PlanItem::create(['business_id' => $business->id, 'plan_id' => $plan->id, 'channel' => self::MARKER.'Chan1', 'scheduled_date' => now(), 'topic_theme' => 'demo·Theme', 'source_event' => 'demo·Event']);
         PlanItem::create(['business_id' => $business->id, 'plan_id' => $plan->id, 'channel' => self::MARKER.'Chan2', 'scheduled_date' => now(), 'topic_theme' => 'demo·Theme', 'source_event' => 'demo·Event']);
 
@@ -32,6 +32,7 @@ class X184Filler implements DemoFiller
     {
         $count = PlanItem::where('business_id', $business->id)->where('channel', 'like', self::MARKER.'%')->delete();
         $count += ContentPlan::where('business_id', $business->id)->where('week_label', 'like', self::MARKER.'%')->delete();
+
         return $count;
     }
 }

@@ -4,10 +4,10 @@ namespace App\Console\DemoFill\Fillers;
 
 use App\Console\DemoFill\DemoFiller;
 use App\Models\Business;
-use App\Modules\X110\Models\Visit;
-use App\Modules\X110\Models\Session;
-use App\Modules\X110\Models\PixelEvent;
 use App\Modules\X110\Models\CwvSample;
+use App\Modules\X110\Models\PixelEvent;
+use App\Modules\X110\Models\Session;
+use App\Modules\X110\Models\Visit;
 
 class X110Filler implements DemoFiller
 {
@@ -42,6 +42,7 @@ class X110Filler implements DemoFiller
         $count += Session::where('business_id', $business->id)->whereIn('visit_id', $visits)->delete();
         $count += Visit::where('business_id', $business->id)->where('visitor_id', 'like', self::MARKER.'%')->delete();
         $count += CwvSample::where('business_id', $business->id)->where('url', 'like', self::MARKER.'%')->delete();
+
         return $count;
     }
 }
