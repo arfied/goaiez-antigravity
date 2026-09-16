@@ -1,7 +1,7 @@
 <div>
     <div class="sla-queue-container p-4 max-w-lg mx-auto md:max-w-4xl">
         <div class="flex justify-between items-center mb-4">
-            <h3 class="text-xl font-bold">QA Queue and SLA Due Watch</h3>
+            <h2 class="text-xl font-bold text-ink">QA queue</h2>
             <div class="flex items-center space-x-2">
                 <x-ui.button wire:click="toggleSample" size="default" variant="secondary">
                     {{ $isSample ? 'Exit Sample' : 'Sample' }}
@@ -31,7 +31,7 @@
                     <div class="border rounded p-4 flex flex-col md:flex-row justify-between items-start md:items-center {{ $t->is_breached ? 'bg-red-50' : '' }}">
                         <div>
                             <div class="font-bold">Ticket #{{ $t->id }}</div>
-                            <div class="text-sm text-gray-700">{{ $t->subject }}</div>
+                            <div class="text-sm text-ink-2">{{ $t->subject }}</div>
                             <div class="mt-1">
                                 @if($t->is_breached)
                                     <x-ui.status-pill state="alert" label="SLA breached" />
