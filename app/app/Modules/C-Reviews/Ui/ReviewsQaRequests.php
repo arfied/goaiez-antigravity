@@ -128,7 +128,7 @@ class ReviewsQaRequests extends Component
         }
 
         $action = app(ReviewRequestAction::class);
-        $res = $action->handle($this->businessId, $req->customer_id, $this->promptTemplate, $req->platform);
+        $res = $action->handle($this->businessId, $req->customer_id, $this->promptTemplate, $req->platform, csatScore: null, jobAgeDays: (int) $req->created_at->diffInDays(now()));
         if ($res['status'] === 'refused') {
             $this->noticeType = 'error';
             $this->actionNotice = "🚫 REFUSAL [{$res['refusal_code']}]: ".($res['message'] ?? '');
