@@ -9,9 +9,9 @@ use App\Models\User;
 use App\Modules\CReviews\Actions\QaTicketAction;
 use App\Modules\CReviews\Models\ReviewRequest;
 use App\Modules\CReviews\Ui\Tickets;
-use App\Support\Tenancy;
 use App\Modules\X121\Models\Person;
 use App\Modules\X181\Actions\QaTicketCreateAction;
+use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -66,5 +66,4 @@ class TicketsScreenTest extends TestCase
             ->assertOk()
             ->assertSee('Distinctive Person4509');
     }
-
 }

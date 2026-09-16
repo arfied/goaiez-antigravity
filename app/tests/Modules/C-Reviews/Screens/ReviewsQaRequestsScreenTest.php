@@ -6,11 +6,12 @@ namespace Tests\Modules\CReviews\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\CReviews\Models\ReviewRequest;
 use App\Modules\CReviews\Models\QaSetting;
+use App\Modules\CReviews\Models\ReviewRequest;
+use App\Modules\CReviews\Ui\ReviewsQaRequests;
 use App\Modules\X121\Models\Person;
 use App\Support\Tenancy;
-use App\Modules\CReviews\Ui\ReviewsQaRequests;
+use Illuminate\Support\Facades\Schema;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -49,7 +50,6 @@ class ReviewsQaRequestsScreenTest extends TestCase
             ->assertSee('Distinctive Person4509');
     }
 
-
     public function test_the_ticket_recipient_shows_by_name(): void
     {
         $owner = User::factory()->create(['role' => UserRole::Owner]);
@@ -58,7 +58,11 @@ class ReviewsQaRequestsScreenTest extends TestCase
 
         Tenancy::setUser($owner->id);
         $person = Person::create(['business_id' => $biz->id, 'first_name' => 'Distinctive', 'last_name' => 'Person4509', 'phone' => '+15125554509']);
-        if (!\Illuminate\Support\Facades\Schema::connection('pgsql_migrate')->hasColumn('qa_settings', 'ticket_recipient_id')) { \Illuminate\Support\Facades\Schema::connection('pgsql_migrate')->table('qa_settings', function ($table) { $table->foreignId('ticket_recipient_id')->nullable(); }); }
+        if (! Schema::connection('pgsql_migrate')->hasColumn('qa_settings', 'ticket_recipient_id')) {
+            Schema::connection('pgsql_migrate')->table('qa_settings', function ($table) {
+                $table->foreignId('ticket_recipient_id')->nullable();
+            });
+        }
         QaSetting::updateOrCreate(['business_id' => $biz->id], ['ticket_recipient_id' => $person->id]);
         Tenancy::forget();
 
@@ -66,5 +70,4 @@ class ReviewsQaRequestsScreenTest extends TestCase
             ->assertOk()
             ->assertSee('Distinctive Person4509');
     }
-
 }

@@ -64,15 +64,16 @@ class ReviewsQaRequests extends Component
 
         return app(PublicThreshold::class)->for($this->businessId);
     }
-    private function displayName(?array $person): ?string {
+
+    private function displayName(?array $person): ?string
+    {
         if ($person === null) {
             return null;
         }
         $name = trim(($person['first_name'] ?? '').' '.($person['last_name'] ?? ''));
+
         return $name !== '' ? $name : null;
     }
-
-
 
     public function getTicketRecipient(): string
     {
