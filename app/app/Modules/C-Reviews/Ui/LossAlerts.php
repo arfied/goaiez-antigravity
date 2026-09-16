@@ -15,7 +15,6 @@ use App\Modules\X181\Actions\QaTicketReadAction;
 use App\Modules\X181\Actions\QaTicketResolveAction;
 use App\Modules\X181\Domain\TicketAlreadyResolvedException;
 use App\Support\Tenancy;
-use Illuminate\Support\Collection;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;

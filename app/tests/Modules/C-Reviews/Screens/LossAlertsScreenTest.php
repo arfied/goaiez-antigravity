@@ -32,7 +32,7 @@ class LossAlertsScreenTest extends TestCase
         Tenancy::setUser($owner->id);
         $reviewReq = ReviewRequest::create([
             'business_id' => $biz->id,
-            'rating' => 1
+            'rating' => 1,
         ]);
         ReviewRemovalRequest::create([
             'business_id' => $biz->id,
@@ -40,7 +40,7 @@ class LossAlertsScreenTest extends TestCase
             'tos_ground' => 'Distinctive ground 4506',
             'prepared_body' => 'Prepared explanation body',
             'google_review_id' => 'google_abc_123',
-            'status' => 'prepared'
+            'status' => 'prepared',
         ]);
         Tenancy::forget();
 
