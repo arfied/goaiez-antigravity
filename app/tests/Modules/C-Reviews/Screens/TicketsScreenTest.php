@@ -9,6 +9,8 @@ use App\Models\User;
 use App\Modules\CReviews\Actions\QaTicketAction;
 use App\Modules\CReviews\Models\ReviewRequest;
 use App\Modules\CReviews\Ui\Tickets;
+use App\Modules\X121\Models\Person;
+use App\Modules\X181\Actions\QaTicketCreateAction;
 use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -47,5 +49,21 @@ class TicketsScreenTest extends TestCase
             ->assertDontSee('No open tickets');
 
         Livewire::test(Tickets::class)->assertOk();
+    }
+
+    public function test_a_ticket_with_a_person_shows_the_customer_name(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        Tenancy::setUser($owner->id);
+        $person = Person::create(['business_id' => $biz->id, 'first_name' => 'Distinctive', 'last_name' => 'Person4509', 'phone' => '+15125554509']);
+        app(QaTicketCreateAction::class)->handle($biz->id, $person->id, 'Triage');
+        Tenancy::forget();
+
+        $this->get(route('c-reviews.tickets'))
+            ->assertOk()
+            ->assertSee('Distinctive Person4509');
     }
 }

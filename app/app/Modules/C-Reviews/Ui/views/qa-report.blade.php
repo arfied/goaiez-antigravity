@@ -4,17 +4,17 @@
     </div>
 
     <!-- Header -->
-    <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+    <div class="flex items-center justify-between pb-2 border-b border-rule">
         <div>
-            <h1 class="text-lg font-bold text-white flex items-center gap-2">
-                QA Report
+            <h2 class="text-lg font-bold text-ink flex items-center gap-2">
+                QA report
                 @if($isSample)
                     <x-ui.status-pill state="attention" label="SAMPLE" />
                 @endif
-            </h1>
-            <p class="text-sm text-slate-400">Triage split and action metrics.</p>
+            </h2>
+            <p class="text-sm text-ink-2">Triage split and action metrics.</p>
         </div>
-        <div class="flex items-center gap-1.5 bg-slate-900 rounded-lg p-1 border border-slate-800">
+        <div class="flex items-center gap-1.5 bg-surface rounded-lg p-1 border border-rule">
             <x-ui.button size="default" :variant="$days === 7 ? 'primary' : 'quiet'" wire:click="setDays(7)">7 Days</x-ui.button>
             <x-ui.button size="default" :variant="$days === 30 ? 'primary' : 'quiet'" wire:click="setDays(30)">30 Days</x-ui.button>
             <x-ui.button size="default" :variant="$days === 90 ? 'primary' : 'quiet'" wire:click="setDays(90)">90 Days</x-ui.button>
@@ -33,42 +33,42 @@
         <x-ui.empty-state heading="Nothing to report yet" action="Show a sample" target="toggleSample">The first review request goes out when a job completes.</x-ui.empty-state>
     @else
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div wire:click="selectDrilldown('requests_sent')" data-tile="requests_sent" data-value="{{ $requestsSent }}" class="p-5 rounded-2xl bg-slate-900 border border-slate-800 cursor-pointer hover:border-purple-500 transition group {{ $drilldown === 'requests_sent' ? 'ring-2 ring-purple-500' : '' }}">
-                <div class="text-xs font-medium text-slate-400 mb-1 group-hover:text-purple-300 transition">Requests Sent</div>
-                <div class="text-3xl font-bold text-white">{{ $requestsSent }}</div>
+            <div wire:click="selectDrilldown('requests_sent')" data-tile="requests_sent" data-value="{{ $requestsSent }}" class="p-5 rounded-2xl bg-surface border border-rule cursor-pointer hover:border-purple-500 transition group {{ $drilldown === 'requests_sent' ? 'ring-2 ring-purple-500' : '' }}">
+                <div class="text-xs font-medium text-ink-2 mb-1 group-hover:text-purple-300 transition">Requests Sent</div>
+                <div class="text-3xl font-bold text-ink">{{ $requestsSent }}</div>
             </div>
             
-            <div wire:click="selectDrilldown('reviews_received')" data-tile="reviews_received" data-value="{{ $reviewsReceived }}" class="p-5 rounded-2xl bg-slate-900 border border-slate-800 cursor-pointer hover:border-purple-500 transition group {{ $drilldown === 'reviews_received' ? 'ring-2 ring-purple-500' : '' }}">
-                <div class="text-xs font-medium text-slate-400 mb-1 group-hover:text-purple-300 transition">Reviews Received</div>
-                <div class="text-3xl font-bold text-white">{{ $reviewsReceived }}</div>
+            <div wire:click="selectDrilldown('reviews_received')" data-tile="reviews_received" data-value="{{ $reviewsReceived }}" class="p-5 rounded-2xl bg-surface border border-rule cursor-pointer hover:border-purple-500 transition group {{ $drilldown === 'reviews_received' ? 'ring-2 ring-purple-500' : '' }}">
+                <div class="text-xs font-medium text-ink-2 mb-1 group-hover:text-purple-300 transition">Reviews Received</div>
+                <div class="text-3xl font-bold text-ink">{{ $reviewsReceived }}</div>
             </div>
             
-            <div wire:click="selectDrilldown('public_path')" data-tile="public_path" data-value="{{ $publicPath }}" class="p-5 rounded-2xl bg-slate-900 border border-slate-800 cursor-pointer hover:border-purple-500 transition group {{ $drilldown === 'public_path' ? 'ring-2 ring-purple-500' : '' }}">
+            <div wire:click="selectDrilldown('public_path')" data-tile="public_path" data-value="{{ $publicPath }}" class="p-5 rounded-2xl bg-surface border border-rule cursor-pointer hover:border-purple-500 transition group {{ $drilldown === 'public_path' ? 'ring-2 ring-purple-500' : '' }}">
                 <div class="text-xs font-medium text-emerald-500/80 mb-1 group-hover:text-emerald-400 transition">Public Path</div>
-                <div class="text-3xl font-bold text-white">{{ $publicPath }}</div>
+                <div class="text-3xl font-bold text-ink">{{ $publicPath }}</div>
             </div>
             
-            <div wire:click="selectDrilldown('internal_qa')" data-tile="internal_qa" data-value="{{ $internalQa }}" class="p-5 rounded-2xl bg-slate-900 border border-slate-800 cursor-pointer hover:border-purple-500 transition group {{ $drilldown === 'internal_qa' ? 'ring-2 ring-purple-500' : '' }}">
+            <div wire:click="selectDrilldown('internal_qa')" data-tile="internal_qa" data-value="{{ $internalQa }}" class="p-5 rounded-2xl bg-surface border border-rule cursor-pointer hover:border-purple-500 transition group {{ $drilldown === 'internal_qa' ? 'ring-2 ring-purple-500' : '' }}">
                 <div class="text-xs font-medium text-rose-500/80 mb-1 group-hover:text-rose-400 transition">Triaged Internal</div>
-                <div class="text-3xl font-bold text-white">{{ $internalQa }}</div>
+                <div class="text-3xl font-bold text-ink">{{ $internalQa }}</div>
             </div>
             
-            <div wire:click="selectDrilldown('replies_published')" data-tile="replies_published" data-value="{{ $repliesPublished }}" class="p-5 rounded-2xl bg-slate-900 border border-slate-800 cursor-pointer hover:border-purple-500 transition group {{ $drilldown === 'replies_published' ? 'ring-2 ring-purple-500' : '' }}">
-                <div class="text-xs font-medium text-slate-400 mb-1 group-hover:text-purple-300 transition">Replies Published</div>
-                <div class="text-3xl font-bold text-white">{{ $repliesPublished }}</div>
+            <div wire:click="selectDrilldown('replies_published')" data-tile="replies_published" data-value="{{ $repliesPublished }}" class="p-5 rounded-2xl bg-surface border border-rule cursor-pointer hover:border-purple-500 transition group {{ $drilldown === 'replies_published' ? 'ring-2 ring-purple-500' : '' }}">
+                <div class="text-xs font-medium text-ink-2 mb-1 group-hover:text-purple-300 transition">Replies Published</div>
+                <div class="text-3xl font-bold text-ink">{{ $repliesPublished }}</div>
             </div>
             
-            <div wire:click="selectDrilldown('replies_drafted')" data-tile="replies_drafted" data-value="{{ $repliesDrafted }}" class="p-5 rounded-2xl bg-slate-900 border border-slate-800 cursor-pointer hover:border-purple-500 transition group {{ $drilldown === 'replies_drafted' ? 'ring-2 ring-purple-500' : '' }}">
+            <div wire:click="selectDrilldown('replies_drafted')" data-tile="replies_drafted" data-value="{{ $repliesDrafted }}" class="p-5 rounded-2xl bg-surface border border-rule cursor-pointer hover:border-purple-500 transition group {{ $drilldown === 'replies_drafted' ? 'ring-2 ring-purple-500' : '' }}">
                 <div class="text-xs font-medium text-amber-500/80 mb-1 group-hover:text-amber-400 transition">Drafted to Inbox</div>
-                <div class="text-3xl font-bold text-white">{{ $repliesDrafted }}</div>
+                <div class="text-3xl font-bold text-ink">{{ $repliesDrafted }}</div>
             </div>
             
-            <div wire:click="selectDrilldown('open_tickets_sla')" data-tile="open_tickets_sla" data-value="{{ $openTicketsSla }}" class="p-5 rounded-2xl bg-slate-900 border border-slate-800 cursor-pointer hover:border-purple-500 transition group {{ $drilldown === 'open_tickets_sla' ? 'ring-2 ring-purple-500' : '' }}">
-                <div class="text-xs font-medium text-slate-400 mb-1 group-hover:text-purple-300 transition">Tickets in SLA</div>
-                <div class="text-3xl font-bold text-white">{{ $openTicketsSla }}</div>
+            <div wire:click="selectDrilldown('open_tickets_sla')" data-tile="open_tickets_sla" data-value="{{ $openTicketsSla }}" class="p-5 rounded-2xl bg-surface border border-rule cursor-pointer hover:border-purple-500 transition group {{ $drilldown === 'open_tickets_sla' ? 'ring-2 ring-purple-500' : '' }}">
+                <div class="text-xs font-medium text-ink-2 mb-1 group-hover:text-purple-300 transition">Tickets in SLA</div>
+                <div class="text-3xl font-bold text-ink">{{ $openTicketsSla }}</div>
             </div>
             
-            <div wire:click="selectDrilldown('breached_tickets')" data-tile="breached_tickets" data-value="{{ $breachedTickets }}" class="p-5 rounded-2xl bg-slate-900 border border-slate-800 cursor-pointer hover:border-purple-500 transition group {{ $drilldown === 'breached_tickets' ? 'ring-2 ring-purple-500' : '' }}">
+            <div wire:click="selectDrilldown('breached_tickets')" data-tile="breached_tickets" data-value="{{ $breachedTickets }}" class="p-5 rounded-2xl bg-surface border border-rule cursor-pointer hover:border-purple-500 transition group {{ $drilldown === 'breached_tickets' ? 'ring-2 ring-purple-500' : '' }}">
                 <div class="text-xs font-medium text-rose-500/80 mb-1 group-hover:text-rose-400 transition">Breached Tickets</div>
                 <div class="text-3xl font-bold text-rose-500">{{ $breachedTickets }}</div>
             </div>
@@ -81,20 +81,20 @@
         @endif
 
         @if($drilldown && !$isSample)
-            <div class="mt-8 pt-6 border-t border-slate-800 space-y-4">
+            <div class="mt-8 pt-6 border-t border-rule space-y-4">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-sm font-bold text-white uppercase tracking-wider">Drilldown Details</h3>
+                    <h3 class="text-sm font-bold text-ink uppercase tracking-wider">Drilldown Details</h3>
                     <x-ui.button size="default" variant="quiet" wire:click="selectDrilldown('')">Close</x-ui.button>
                 </div>
                 
                 <div class="space-y-2">
                     @forelse($drilldownRows as $row)
-                        <div class="p-3 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-between">
+                        <div class="p-3 rounded-lg bg-surface border border-rule flex items-center justify-between">
                             <div>
-                                <div class="text-xs text-slate-300">
+                                <div class="text-xs text-ink-2">
                                     @if(!empty($row->is_request))
                                         Request #{{ $row->id }} - {{ $row->platform }} ({{ $row->rating ?? 'no rating' }}) - {{ $row->status }}
-                                        <div class="italic text-[10px] mt-1 text-slate-400">"{{ $row->review_text ?? 'no text' }}"</div>
+                                        <div class="italic text-[10px] mt-1 text-ink-2">"{{ $row->review_text ?? 'no text' }}"</div>
                                     @elseif(!empty($row->is_reply))
                                         Reply #{{ $row->id }} for Request #{{ $row->review_request_id }} - {{ $row->status }}
                                     @elseif(!empty($row->is_ticket))
