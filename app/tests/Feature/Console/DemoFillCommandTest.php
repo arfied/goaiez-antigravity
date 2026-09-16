@@ -21,7 +21,13 @@ class DemoFillCommandTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
-        $this->artisan('demo:fill', ['email' => $owner->email])->assertExitCode(0);
+        Tenancy::forgetAll(); // explicitly clear tenant to test from a bare console context
+        try {
+            $this->artisan('demo:fill', ['email' => $owner->email])->assertExitCode(0);
+        } catch (\Throwable $e) {
+            file_put_contents('/tmp/err.txt', $e->getTraceAsString());
+            throw $e;
+        }
 
         Tenancy::set($biz->id); // Restore tenant for test assertions
 
@@ -44,6 +50,7 @@ class DemoFillCommandTest extends TestCase
         $this->assertDatabaseHas('alerts', ['business_id' => $biz->id, 'title' => 'demo·Angry customer on the line']);
         $this->assertDatabaseHas('reply_codes', ['business_id' => $biz->id, 'code' => 'A7K2Q']);
         $c1 = FormDefinition::count();
+        Tenancy::forgetAll(); // explicitly clear tenant to test from a bare console context
         $this->artisan('demo:fill', ['email' => $owner->email])->assertExitCode(0);
 
         Tenancy::set($biz->id); // Restore tenant
@@ -51,6 +58,7 @@ class DemoFillCommandTest extends TestCase
 
         $unmarked = FormDefinition::create(['business_id' => $biz->id, 'form_name' => 'Unmarked Form', 'slug' => 'unmarked', 'steps' => [], 'schema' => []]);
 
+        Tenancy::forgetAll(); // explicitly clear tenant to test from a bare console context
         $this->artisan('demo:fill', ['email' => $owner->email, '--purge' => true])->assertExitCode(0);
 
         Tenancy::set($biz->id); // Restore tenant
@@ -72,6 +80,7 @@ class DemoFillCommandTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
+        Tenancy::forgetAll(); // explicitly clear tenant to test from a bare console context
         $this->artisan('demo:fill', ['email' => $owner->email])->assertExitCode(0);
 
         Tenancy::set($biz->id); // Restore tenant for test assertions
