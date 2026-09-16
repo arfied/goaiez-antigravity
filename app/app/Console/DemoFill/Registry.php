@@ -10,10 +10,19 @@ class Registry
     public static function fillers(): array
     {
         $fillers = [
+            new Fillers\CAgentFiller,
             new Fillers\CReviewsFiller,
+            new Fillers\X08Filler,
+            new Fillers\X10Filler,
             new Fillers\X82Filler,
+            new Fillers\X102Filler,
+            new Fillers\X104Filler,
             new Fillers\X108Filler,
+            new Fillers\X110Filler,
             new Fillers\X121Filler,
+            new Fillers\X125Filler,
+            new Fillers\X129Filler,
+            new Fillers\X131Filler,
             new Fillers\X137Filler,
             new Fillers\X153Filler,
             new Fillers\X155Filler,
@@ -29,9 +38,20 @@ class Registry
             new Fillers\X175Filler,
             new Fillers\X176Filler,
             new Fillers\X177Filler,
+            new Fillers\X180Filler,
             new Fillers\X181Filler,
+            new Fillers\X182Filler,
+            new Fillers\X184Filler,
+            new Fillers\X185Filler,
+            new Fillers\X186Filler,
             new Fillers\X188Filler,
+            new Fillers\X190Filler,
+            new Fillers\X199Filler,
             new Fillers\X203Filler,
+            new Fillers\X205Filler,
+            new Fillers\X206Filler,
+            new Fillers\X207Filler,
+            new Fillers\X210Filler,
         ];
 
         usort($fillers, fn ($a, $b) => strcmp($a->module(), $b->module()));
