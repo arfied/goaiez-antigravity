@@ -567,6 +567,11 @@ final class OwnerNav
             OwnerNavItem::make('Push prompts', 'x-207.one-confirmonce-toggle', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('QA queue', 'x-181.qa-queue-sladueat', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Resolved tickets', 'x-181.resolution', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('QA tickets', 'c-reviews.tickets', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Loss alerts', 'c-reviews.loss-alerts', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Claim expiry', 'x-153.claimexpiry-rate', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Agent refusals', 'c-agent.refusalcode-distribution-per', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('QA report', 'c-reviews.qa-report', OwnerNavItem::GROUP_MORE),
         ];
     }
 

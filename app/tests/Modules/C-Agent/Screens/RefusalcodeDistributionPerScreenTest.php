@@ -19,7 +19,12 @@ class RefusalcodeDistributionPerScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('c-agent.refusalcode-distribution-per'))->assertOk();
+        $this->get(route('c-agent.refusalcode-distribution-per'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
+            ->assertDontSee('this screen is planned in')
+            ->assertSee('Zero refusals logged.');
 
         Livewire::test(RefusalcodeDistributionPer::class)->assertOk();
     }

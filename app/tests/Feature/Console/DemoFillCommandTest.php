@@ -37,6 +37,12 @@ class DemoFillCommandTest extends TestCase
         $this->assertDatabaseHas('rates', ['business_id' => $biz->id, 'rate_code' => 'RATE_0', 'is_sample' => true]);
         $this->assertDatabaseHas('call_tokens', ['business_id' => $biz->id, 'whisper_text' => 'demo·Call from website direct']);
         $this->assertDatabaseHas('dispatch_assignments', ['business_id' => $biz->id, 'job_id' => 100, 'is_sample' => true]);
+        $this->assertDatabaseHas('review_requests', ['business_id' => $biz->id, 'rating' => 2, 'review_text' => 'demo·Tech arrived late and tracking was off']);
+        $this->assertDatabaseHas('review_replies', ['business_id' => $biz->id, 'status' => 'draft']);
+        $this->assertDatabaseHas('qa_tickets', ['business_id' => $biz->id, 'subject' => 'demo·Invoice higher than the estimate', 'status' => 'open']);
+        $this->assertDatabaseHas('csat_answers', ['business_id' => $biz->id, 'score' => 4]);
+        $this->assertDatabaseHas('alerts', ['business_id' => $biz->id, 'title' => 'demo·Angry customer on the line']);
+        $this->assertDatabaseHas('reply_codes', ['business_id' => $biz->id, 'code' => 'A7K2Q']);
         $c1 = FormDefinition::count();
         $this->artisan('demo:fill', ['email' => $owner->email])->assertExitCode(0);
 
@@ -52,10 +58,19 @@ class DemoFillCommandTest extends TestCase
         $this->assertDatabaseHas('form_definitions', ['id' => $unmarked->id]);
         $this->assertDatabaseMissing('form_definitions', ['form_name' => 'demo·Form 1']);
         $this->assertDatabaseMissing('dispatch_assignments', ['business_id' => $biz->id, 'job_id' => 100]);
+        $this->assertDatabaseMissing('review_requests', ['business_id' => $biz->id, 'rating' => 2, 'review_text' => 'demo·Tech arrived late and tracking was off']);
+        $this->assertDatabaseMissing('review_replies', ['business_id' => $biz->id, 'status' => 'draft']);
+        $this->assertDatabaseMissing('qa_tickets', ['business_id' => $biz->id, 'subject' => 'demo·Invoice higher than the estimate', 'status' => 'open']);
+        $this->assertDatabaseMissing('csat_answers', ['business_id' => $biz->id, 'score' => 4]);
+        $this->assertDatabaseMissing('alerts', ['business_id' => $biz->id, 'title' => 'demo·Angry customer on the line']);
+        $this->assertDatabaseMissing('reply_codes', ['business_id' => $biz->id, 'code' => 'A7K2Q']);
+        $this->assertDatabaseMissing('people', ['business_id' => $biz->id, 'first_name' => 'demo·Dana']);
     }
 
     public function test_the_converted_screens_show_the_demo_rows(): void
     {
+        error_reporting(E_ALL & ~E_WARNING & ~E_NOTICE);
+
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
@@ -73,6 +88,12 @@ class DemoFillCommandTest extends TestCase
         $this->get(route('x-168.timesheets'))->assertOk()->assertSee(now()->startOfWeek()->format('Y-m-d'));
         $this->get(route('x-170.commissions'))->assertOk()->assertSee('pending_cash_collection');
         $this->get(route('x-162.dispatch-board'))->assertOk()->assertSee('Job #100');
+        $this->get(route('x-181.qa-queue-sladueat'))->assertOk()->assertSee('demo·Invoice higher than the estimate');
+        $this->get(route('x-153.alert-roster-screen'))->assertOk()->assertSee('demo·Angry customer on the line');
+        $this->get(route('x-153.alert-reply-by'))->assertOk()->assertSee('A7K2Q');
+        $this->get(route('c-reviews.tickets'))->assertOk()->assertSee('Ticket #');
+        $this->get(route('c-reviews.reviews-qa-requests'))->assertOk();
+        $this->get(route('c-reviews.loss-alerts'))->assertOk()->assertSee('SLA breached');
         // x-188 has no demo rows: number_pool carries neither a sample flag nor free text (PB-205b).
     }
 }

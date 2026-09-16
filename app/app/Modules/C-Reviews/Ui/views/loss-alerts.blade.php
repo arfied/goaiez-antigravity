@@ -1,7 +1,7 @@
 <div>
     <div class="loss-alerts p-4 max-w-lg mx-auto md:max-w-4xl">
         <div class="flex justify-between items-center mb-4">
-            <h3 class="text-xl font-bold">Customer Loss and Churn Risk Alerts</h3>
+            <h2 class="text-xl font-bold text-ink">Loss alerts</h2>
             <div class="flex items-center space-x-2">
                 <x-ui.button wire:click="toggleSample" size="default" variant="secondary">
                     {{ $isSample ? 'Exit Sample' : 'Sample' }}
@@ -37,7 +37,7 @@
                                 <div class="font-bold">Review #{{ $alert->id }}</div>
                             @endif
                             <div class="text-sm text-red-600 font-semibold">{{ $alert->alert_reason }}</div>
-                            <div class="text-xs text-gray-500">Risk Level: {{ $alert->risk_level }}</div>
+                            <div class="text-xs text-ink-2">Risk Level: {{ $alert->risk_level }}</div>
                         </div>
                         <div class="mt-4 md:mt-0 flex space-x-2">
                             @if($alert->alert_type === 'ticket')
@@ -80,8 +80,8 @@
                         <div class="border rounded p-4 flex flex-col md:flex-row justify-between items-start md:items-center">
                             <div>
                                 <div class="font-bold">Removal for Review #{{ $req->review_request_id }}</div>
-                                <div class="text-sm text-gray-700">ToS Ground: {{ $req->tos_ground }}</div>
-                                <div class="text-sm text-gray-500">Status: {{ $req->status }}</div>
+                                <div class="text-sm text-ink-2">ToS Ground: {{ $req->tos_ground }}</div>
+                                <div class="text-sm text-ink-2">Status: {{ $req->status }}</div>
                             </div>
                             <div class="mt-4 md:mt-0 flex space-x-2">
                                 @if($req->status === 'prepared')
