@@ -12,6 +12,7 @@ class Registry
         $fillers = [
             new Fillers\X82Filler,
             new Fillers\CReviewsFiller,
+            new Fillers\X104Filler,
             new Fillers\X181Filler,
             new Fillers\X153Filler,
             new Fillers\X137Filler,
@@ -26,6 +27,7 @@ class Registry
             new Fillers\X170Filler,
             new Fillers\X175Filler,
             new Fillers\X188Filler,
+            new Fillers\X199Filler,
         ];
 
         usort($fillers, fn ($a, $b) => strcmp($a->module(), $b->module()));
