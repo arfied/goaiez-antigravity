@@ -1,9 +1,8 @@
 <div>
-    <x-surface.sample-state module="C-Agent" screen="teaching_box" />
     <div class="teaching-box-container p-4">
-        <h3 class="text-lg font-bold">Agent Teaching Box</h3>
+        <h2 class="text-lg font-bold text-ink">Agent teaching</h2>
         @if($instructions->isEmpty())
-            <p class="text-gray-500">No custom instructions defined.</p>
+            <p class="text-ink-2">No custom instructions defined.</p>
         @else
             <ul>
                 @foreach($instructions as $inst)
