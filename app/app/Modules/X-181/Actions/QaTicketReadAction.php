@@ -7,6 +7,8 @@ namespace App\Modules\X181\Actions;
 use App\Modules\X181\Models\QaTicket;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Facades\DB;
 
 final class QaTicketReadAction
 {
@@ -92,6 +94,20 @@ final class QaTicketReadAction
     public function countTickets(int $businessId): int
     {
         return QaTicket::where('business_id', $businessId)->count();
+    }
+
+    public function latestAwaitingCsatForPerson(int $businessId, int $personId): ?QaTicket
+    {
+        return QaTicket::where('business_id', $businessId)
+            ->where('person_id', $personId)
+            ->whereNotNull('csat_requested_at')
+            ->whereNotExists(function (Builder $query) {
+                $query->select(DB::raw(1))
+                    ->from('csat_answers')
+                    ->whereColumn('csat_answers.qa_ticket_id', 'qa_tickets.id');
+            })
+            ->orderBy('csat_requested_at', 'desc')
+            ->first();
     }
 
     public function findById(int $businessId, int $ticketId): QaTicket

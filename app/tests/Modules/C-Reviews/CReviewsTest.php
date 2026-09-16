@@ -31,11 +31,13 @@ use App\Modules\CReviews\Events\FirstWin;
 use App\Modules\CReviews\Events\ReplyPublished;
 use App\Modules\CReviews\Events\ReviewReceived;
 use App\Modules\CReviews\Events\ReviewRequested;
+use App\Modules\CReviews\Models\CsatAnswer;
 use App\Modules\CReviews\Models\QaSetting;
 use App\Modules\CReviews\Models\ReviewReply;
 use App\Modules\CReviews\Models\ReviewRequest;
 use App\Modules\CReviews\Ui\LossAlerts;
 use App\Modules\CReviews\Ui\ReviewsQaRequests;
+use App\Modules\CSms\Events\MessageReceived;
 use App\Modules\CSms\Events\SendRequested;
 use App\Modules\X121\Models\Person;
 use App\Modules\X171\Events\JobCompleted;
@@ -48,6 +50,7 @@ use App\Services\Config\DefaultsRegistry;
 use App\Services\Consent\ConsentCapture;
 use App\Services\Consent\ConsentService;
 use App\Support\HashedIp;
+use App\Support\Tenancy;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -785,9 +788,93 @@ class CReviewsTest extends TestCase
 
     public function test_p110_fix_then_ask_has_no_production_csat_source(): void
     {
-        $this->fail('NOT BUILT: P-110 — ReviewRequestAction::$csatScore is null on all three production '
-            .'call sites (AskForReviewOnJobCompleted:15, ReviewsQaRequests:105, :131), so the '
-            .'LOW_CSAT_TRIAGE branch at ReviewRequestAction.php:59 cannot execute. The csat_score column was dropped from review_requests and qa_tickets on 2026-09-09.');
+        $biz = TestCase::provisionTenant(['name' => 'Triage Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $person = Person::create(['business_id' => $biz->id, 'first_name' => 'John', 'phone' => '+15125559999']);
+        $ticket = app(QaTicketCreateAction::class)->handle($biz->id, $person->id, 'Triage');
+        app(QaTicketResolveAction::class)->handle($biz->id, $ticket->id, 'fixed');
+
+        CsatAnswer::create([
+            'business_id' => $biz->id,
+            'person_id' => $person->id,
+            'qa_ticket_id' => $ticket->id,
+            'score' => 2,
+            'body' => '2',
+            'is_valid' => true,
+            'received_at' => now(),
+        ]);
+
+        Event::fake([SendRequested::class]);
+
+        Event::dispatch(new JobCompleted($biz->id, 100, 200, $person->id, now()->subDays(61)));
+
+        $req = ReviewRequest::where('business_id', $biz->id)->where('customer_id', $person->id)->latest('id')->first();
+        $this->assertEquals('triaged_internal', $req->status);
+
+        $newTicket = QaTicket::where('business_id', $biz->id)->where('review_request_id', $req->id)->first();
+        $this->assertNotNull($newTicket);
+
+        Event::assertNotDispatched(SendRequested::class);
+    }
+
+    public function test_p110_a_four_or_five_csat_answer_lets_the_ask_go_out(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Go Out Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $person = Person::create(['business_id' => $biz->id, 'first_name' => 'Jane', 'phone' => '+15125559998']);
+        $ticket = app(QaTicketCreateAction::class)->handle($biz->id, $person->id, 'Triage');
+        app(QaTicketResolveAction::class)->handle($biz->id, $ticket->id, 'fixed');
+
+        CsatAnswer::create([
+            'business_id' => $biz->id,
+            'person_id' => $person->id,
+            'qa_ticket_id' => $ticket->id,
+            'score' => 5,
+            'body' => '5',
+            'is_valid' => true,
+            'received_at' => now(),
+        ]);
+
+        Event::fake([SendRequested::class]);
+
+        Event::dispatch(new JobCompleted($biz->id, 100, 200, $person->id, now()->subDays(61)));
+
+        $req = ReviewRequest::where('business_id', $biz->id)->where('customer_id', $person->id)->latest('id')->first();
+        $this->assertEquals('sent', $req->status);
+
+        Event::assertDispatched(SendRequested::class, 1);
+    }
+
+    public function test_p110_a_fresh_job_is_never_triaged(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Fresh Job Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $person = Person::create(['business_id' => $biz->id, 'first_name' => 'Jake', 'phone' => '+15125559997']);
+        $ticket = app(QaTicketCreateAction::class)->handle($biz->id, $person->id, 'Triage');
+        app(QaTicketResolveAction::class)->handle($biz->id, $ticket->id, 'fixed');
+
+        CsatAnswer::create([
+            'business_id' => $biz->id,
+            'person_id' => $person->id,
+            'qa_ticket_id' => $ticket->id,
+            'score' => 2,
+            'body' => '2',
+            'is_valid' => true,
+            'received_at' => now(),
+        ]);
+
+        Event::fake([SendRequested::class]);
+
+        Event::dispatch(new JobCompleted($biz->id, 100, 200, $person->id, now()));
+
+        $req = ReviewRequest::where('business_id', $biz->id)->where('customer_id', $person->id)->latest('id')->first();
+        $this->assertEquals('sent', $req->status);
+
+        $newTicket = QaTicket::where('business_id', $biz->id)->where('review_request_id', $req->id)->first();
+        $this->assertNull($newTicket);
     }
 
     public function test_job_completed_creates_review_request(): void
@@ -1149,7 +1236,55 @@ class CReviewsTest extends TestCase
 
     public function test_g20_05_csat_answer_has_no_inbound_path(): void
     {
-        $this->fail('NOT BUILT: G20-05 — the CSAT ask is requested on ticket.resolved, but no inbound path reaches QaTicketAction::receiveCsat (QaTicketAction.php:41, zero production callers); InfobipInboundController and InboundMessages dispatch no event a module can subscribe to, so a 1-star reply cannot reopen the ticket.');
+        $biz = self::provisionTenant(['name' => 'CSAT Answer 1', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $person = Person::create(['business_id' => $biz->id, 'first_name' => 'Ana', 'phone' => '+15125550413']);
+        $ticket = app(QaTicketCreateAction::class)->handle($biz->id, $person->id, 'Triage');
+        $ticket->update(['status' => 'resolved', 'resolved_at' => now(), 'csat_requested_at' => now()]);
+
+        Tenancy::forget();
+        DB::statement('RESET app.business_id');
+
+        Event::dispatch(new MessageReceived($biz->id, $person->id, '+15125550413', '1', 'msg_distinctive_4500', now()->toIso8601String()));
+
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $ticket->refresh();
+        $this->assertEquals('open', $ticket->status);
+        $this->assertNotNull($ticket->reopened_at);
+        $this->assertDatabaseHas('csat_answers', ['business_id' => $biz->id, 'qa_ticket_id' => $ticket->id, 'score' => 1]);
+    }
+
+    public function test_g20_05_a_five_records_the_answer_and_keeps_the_ticket_resolved(): void
+    {
+        $biz = self::provisionTenant(['name' => 'CSAT Answer 5', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $person = Person::create(['business_id' => $biz->id, 'first_name' => 'Ana', 'phone' => '+15125550414']);
+        $ticket = app(QaTicketCreateAction::class)->handle($biz->id, $person->id, 'Triage');
+        $ticket->update(['status' => 'resolved', 'resolved_at' => now(), 'csat_requested_at' => now()]);
+
+        Event::dispatch(new MessageReceived($biz->id, $person->id, '+15125550414', '5', 'msg_distinctive_4501', now()->toIso8601String()));
+
+        $ticket->refresh();
+        $this->assertEquals('resolved', $ticket->status);
+        $this->assertNull($ticket->reopened_at);
+        $this->assertDatabaseHas('csat_answers', ['business_id' => $biz->id, 'qa_ticket_id' => $ticket->id, 'score' => 5]);
+    }
+
+    public function test_g20_05_a_reply_with_no_pending_ask_is_ignored(): void
+    {
+        $biz = self::provisionTenant(['name' => 'CSAT Answer Ignored', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $person = Person::create(['business_id' => $biz->id, 'first_name' => 'Ana', 'phone' => '+15125550415']);
+        $ticket = app(QaTicketCreateAction::class)->handle($biz->id, $person->id, 'Triage');
+        $ticket->update(['status' => 'resolved', 'resolved_at' => now()]);
+
+        Event::dispatch(new MessageReceived($biz->id, $person->id, '+15125550415', '5', 'msg_distinctive_4502', now()->toIso8601String()));
+
+        $this->assertDatabaseMissing('csat_answers', ['qa_ticket_id' => $ticket->id]);
     }
 
     /**

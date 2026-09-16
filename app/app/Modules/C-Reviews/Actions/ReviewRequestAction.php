@@ -8,6 +8,7 @@ use App\Modules\CReviews\Events\ReviewRequested;
 use App\Modules\CReviews\Models\ReviewRequest;
 use App\Modules\CSms\Events\SendRequested;
 use App\Modules\X121\Actions\EntityReadAction;
+use App\Modules\X181\Actions\QaMarketingSuppressionCheckAction;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Event;
 
@@ -55,6 +56,14 @@ final class ReviewRequestAction
                 'message' => 'Review requests require a known customer',
             ];
         }
+
+        // P-205: an open qa_ticket suppresses the review ask; the arbiter is X-181's isGrowSuppressed (same as AskForCsatOnTicketResolved).
+        if (app(QaMarketingSuppressionCheckAction::class)->isGrowSuppressed($businessId, $customerId)) {
+            return ReviewRequest::create(['business_id' => $businessId, 'customer_id' => $customerId, 'platform' => $platform, 'status' => 'suppressed', 'gbp_suspended' => false])->toArray();
+        }
+
+        // P-110: an explicit score wins (tests, G20-07); otherwise the person's latest csat_answers row is the production source.
+        $csatScore ??= app(CsatAnswerReadAction::class)->latestNormalisedScore($businessId, $customerId);
 
         if ($csatScore !== null && $csatScore < 7 && ($jobAgeDays ?? 0) >= 60) {
             $req = ReviewRequest::create([

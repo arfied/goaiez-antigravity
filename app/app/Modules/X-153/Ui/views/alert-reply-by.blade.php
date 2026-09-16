@@ -1,9 +1,8 @@
 <div>
-    <x-surface.sample-state module="five-character alphanumeric reply codes *(R75/R125 — 28.6M combinations; a code is never reused into another visitor's thread)*" screen="alert_reply_by" />
     <div class="alert-reply-container p-4">
-        <h3 class="text-lg font-bold">Fast-Path Reply Codes</h3>
+        <h2 class="text-lg font-bold text-ink">Reply codes</h2>
         @if($codes->isEmpty())
-            <p class="text-gray-500">No active reply codes pending.</p>
+            <p class="text-ink-2">No active reply codes pending.</p>
         @else
             <ul>
                 @foreach($codes as $c)
