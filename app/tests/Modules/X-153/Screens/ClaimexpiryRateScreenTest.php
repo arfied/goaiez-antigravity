@@ -32,6 +32,7 @@ class ClaimexpiryRateScreenTest extends TestCase
         Tenancy::setUser($owner->id);
 
         $alert = Alert::create([
+            'business_id' => $biz->id,
             'title' => 'Distinctive alert 4507',
             'body' => 'Test body',
             'alert_class' => 'urgent',
@@ -39,6 +40,7 @@ class ClaimexpiryRateScreenTest extends TestCase
         ]);
 
         AlertClaim::create([
+            'business_id' => $biz->id,
             'alert_id' => $alert->id,
             'claimed_by_user_id' => $owner->id,
             'status' => 'active',
@@ -46,6 +48,7 @@ class ClaimexpiryRateScreenTest extends TestCase
         ]);
 
         AlertClaim::create([
+            'business_id' => $biz->id,
             'alert_id' => $alert->id,
             'claimed_by_user_id' => $owner->id,
             'status' => 'expired',
