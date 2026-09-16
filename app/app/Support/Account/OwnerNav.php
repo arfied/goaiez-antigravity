@@ -574,6 +574,7 @@ final class OwnerNav
             OwnerNavItem::make('QA report', 'c-reviews.qa-report', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Agent teaching', 'c-agent.teaching-box', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Ticket', 'x-181.ticket', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Reviews', 'c-reviews.reviews-qa-requests', OwnerNavItem::GROUP_MORE),
         ];
     }
 
