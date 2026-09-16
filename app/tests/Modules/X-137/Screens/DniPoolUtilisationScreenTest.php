@@ -32,12 +32,12 @@ class DniPoolUtilisationScreenTest extends TestCase
         DB::statement("SET app.business_id = '{$biz->id}'");
         DB::table('dni_pool_numbers')->insert([
             ['business_id' => $biz->id, 'phone_number' => '+15125554521'],
-            ['business_id' => $biz->id, 'phone_number' => '+15125554522']
+            ['business_id' => $biz->id, 'phone_number' => '+15125554522'],
         ]);
         DB::table('dni_pool_settings')->insert([
-            'business_id' => $biz->id, 'fallback_number' => '+15125554520'
+            'business_id' => $biz->id, 'fallback_number' => '+15125554520',
         ]);
-        
+
         CallToken::create([
             'business_id' => $biz->id,
             'visitor_session_token' => 'visitor-token-1',
@@ -47,8 +47,8 @@ class DniPoolUtilisationScreenTest extends TestCase
             'expires_at' => now()->addMinutes(30),
             'status' => 'active',
         ]);
-        
-        DB::statement("RESET app.business_id");
+
+        DB::statement('RESET app.business_id');
 
         $this->get(route('x-137.dni-pool-utilisation'))
             ->assertOk()
