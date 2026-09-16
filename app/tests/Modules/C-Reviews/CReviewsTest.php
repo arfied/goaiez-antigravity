@@ -31,6 +31,7 @@ use App\Modules\CReviews\Events\FirstWin;
 use App\Modules\CReviews\Events\ReplyPublished;
 use App\Modules\CReviews\Events\ReviewReceived;
 use App\Modules\CReviews\Events\ReviewRequested;
+use App\Modules\CReviews\Models\CsatAnswer;
 use App\Modules\CReviews\Models\QaSetting;
 use App\Modules\CReviews\Models\ReviewReply;
 use App\Modules\CReviews\Models\ReviewRequest;
@@ -787,9 +788,93 @@ class CReviewsTest extends TestCase
 
     public function test_p110_fix_then_ask_has_no_production_csat_source(): void
     {
-        $this->fail('NOT BUILT: P-110 — ReviewRequestAction::$csatScore is null on all three production '
-            .'call sites (AskForReviewOnJobCompleted:15, ReviewsQaRequests:105, :131), so the '
-            .'LOW_CSAT_TRIAGE branch at ReviewRequestAction.php:59 cannot execute. The csat_score column was dropped from review_requests and qa_tickets on 2026-09-09.');
+        $biz = TestCase::provisionTenant(['name' => 'Triage Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $person = Person::create(['business_id' => $biz->id, 'first_name' => 'John', 'phone' => '+15125559999']);
+        $ticket = app(QaTicketCreateAction::class)->handle($biz->id, $person->id, 'Triage');
+        app(QaTicketResolveAction::class)->handle($biz->id, $ticket->id, 'fixed');
+
+        CsatAnswer::create([
+            'business_id' => $biz->id,
+            'person_id' => $person->id,
+            'qa_ticket_id' => $ticket->id,
+            'score' => 2,
+            'body' => '2',
+            'is_valid' => true,
+            'received_at' => now(),
+        ]);
+
+        Event::fake([SendRequested::class]);
+
+        Event::dispatch(new JobCompleted($biz->id, 100, 200, $person->id, now()->subDays(61)));
+
+        $req = ReviewRequest::where('business_id', $biz->id)->where('customer_id', $person->id)->latest('id')->first();
+        $this->assertEquals('triaged_internal', $req->status);
+
+        $newTicket = QaTicket::where('business_id', $biz->id)->where('review_request_id', $req->id)->first();
+        $this->assertNotNull($newTicket);
+
+        Event::assertNotDispatched(SendRequested::class);
+    }
+
+    public function test_p110_a_four_or_five_csat_answer_lets_the_ask_go_out(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Go Out Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $person = Person::create(['business_id' => $biz->id, 'first_name' => 'Jane', 'phone' => '+15125559998']);
+        $ticket = app(QaTicketCreateAction::class)->handle($biz->id, $person->id, 'Triage');
+        app(QaTicketResolveAction::class)->handle($biz->id, $ticket->id, 'fixed');
+
+        CsatAnswer::create([
+            'business_id' => $biz->id,
+            'person_id' => $person->id,
+            'qa_ticket_id' => $ticket->id,
+            'score' => 5,
+            'body' => '5',
+            'is_valid' => true,
+            'received_at' => now(),
+        ]);
+
+        Event::fake([SendRequested::class]);
+
+        Event::dispatch(new JobCompleted($biz->id, 100, 200, $person->id, now()->subDays(61)));
+
+        $req = ReviewRequest::where('business_id', $biz->id)->where('customer_id', $person->id)->latest('id')->first();
+        $this->assertEquals('sent', $req->status);
+
+        Event::assertDispatched(SendRequested::class, 1);
+    }
+
+    public function test_p110_a_fresh_job_is_never_triaged(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Fresh Job Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $person = Person::create(['business_id' => $biz->id, 'first_name' => 'Jake', 'phone' => '+15125559997']);
+        $ticket = app(QaTicketCreateAction::class)->handle($biz->id, $person->id, 'Triage');
+        app(QaTicketResolveAction::class)->handle($biz->id, $ticket->id, 'fixed');
+
+        CsatAnswer::create([
+            'business_id' => $biz->id,
+            'person_id' => $person->id,
+            'qa_ticket_id' => $ticket->id,
+            'score' => 2,
+            'body' => '2',
+            'is_valid' => true,
+            'received_at' => now(),
+        ]);
+
+        Event::fake([SendRequested::class]);
+
+        Event::dispatch(new JobCompleted($biz->id, 100, 200, $person->id, now()));
+
+        $req = ReviewRequest::where('business_id', $biz->id)->where('customer_id', $person->id)->latest('id')->first();
+        $this->assertEquals('sent', $req->status);
+
+        $newTicket = QaTicket::where('business_id', $biz->id)->where('review_request_id', $req->id)->first();
+        $this->assertNull($newTicket);
     }
 
     public function test_job_completed_creates_review_request(): void

@@ -6,9 +6,11 @@ namespace App\Modules\X153\Ui;
 
 use App\Modules\X153\Models\ReplyCode;
 use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Reply codes'])]
 class AlertReplyBy extends Component
 {
     #[Locked]
