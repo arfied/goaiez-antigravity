@@ -18,7 +18,7 @@ class CustomerfacingWidgetScreenTest extends TestCase
     {
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
-        
+
         $this->actingAs($owner)->get(route('x-102.customerfacing-widget'))
             ->assertOk()
             ->assertSee('Your account')
@@ -35,7 +35,7 @@ class CustomerfacingWidgetScreenTest extends TestCase
             'visitor_ip' => '203.0.113.50',
             'status' => 'active',
             'rage_clicks_count' => 0,
-            'is_ai_capped' => false
+            'is_ai_capped' => false,
         ]);
         ChatSession::create([
             'business_id' => $biz->id,
@@ -43,7 +43,7 @@ class CustomerfacingWidgetScreenTest extends TestCase
             'visitor_ip' => '203.0.113.50',
             'status' => 'closed',
             'rage_clicks_count' => 0,
-            'is_ai_capped' => false
+            'is_ai_capped' => false,
         ]);
         Tenancy::forget();
 
