@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-16T12:53:46",
+ "updated": "2026-09-16T12:54:28",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -113,7 +113,7 @@
   },
   "8": {
    "track": "J10 reviews",
-   "status": "BUILDING",
+   "status": "DONE",
    "modules": [
     "C-Reviews",
     "X-181",
@@ -384,10 +384,17 @@
    "unresolved": []
   },
   "C-Reviews": {
-   "status": "BUILDING",
+   "status": "UNRESOLVED",
    "wave": 8,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "C-Reviews",
+     "stage": "DASHBOARD",
+     "why": "no render evidence for 4 declared block(s)",
+     "at": "2026-09-16T12:54:28"
+    }
+   ]
   },
   "C-Sms": {
    "status": "UNRESOLVED",
@@ -1326,6 +1333,12 @@
    "stage": "tests",
    "why": "four legacy message tables outside the twelve nouns (outreach_messages, triage_conversations, inbound_messages, support_messages) \u2014 the G2-76 lint is right, main's schema is not migrated; the sixty lane proposes the fold",
    "at": "2026-09-05T17:11:31"
+  },
+  {
+   "module": "C-Reviews",
+   "stage": "DASHBOARD",
+   "why": "no render evidence for 4 declared block(s)",
+   "at": "2026-09-16T12:54:28"
   }
  ],
  "decisions": [
