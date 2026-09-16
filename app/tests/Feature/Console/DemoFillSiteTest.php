@@ -37,7 +37,7 @@ class DemoFillSiteTest extends TestCase
 
         Tenancy::forgetAll();
         $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-157,X-176,X-177,X-203,X-108,X-121'])->assertExitCode(0);
-        
+
         Tenancy::set($biz->id);
         $this->assertSame(2, EntityHistoryRecord::where('business_id', $biz->id)->where('entity_type', 'demo·people')->count());
 
