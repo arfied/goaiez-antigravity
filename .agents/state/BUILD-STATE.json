@@ -1491,6 +1491,10 @@
   {
    "at": "2026-09-15T21:59:04",
    "note": "C-Reviews REV-188: the Undefined array key name crash (PB-206) is fixed at the three EntityReadAction call sites"
+  },
+  {
+   "at": "2026-09-16T17:22:13",
+   "note": "X-129 REV-192: demo:fill filler for X-129's two owner-shell screens; marked demo\u00b7 rows, idempotent, purgeable"
   }
  ],
  "resolved": [
