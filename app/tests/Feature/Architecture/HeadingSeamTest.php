@@ -180,8 +180,8 @@ test('owner layout heading seam contract', function () {
         }
     }
 
-    expect($total)->toBe(106, 'If it went UP, a new module component uses the owner layout. If it went DOWN, a component dropped the layout or was deleted.');
-    expect($seam)->toBe(105, 'If it went UP, a component added the heading key to its layout. If it went DOWN, a component removed it or was deleted.');
+    expect($total)->toBe(108, 'If it went UP, a new module component uses the owner layout. If it went DOWN, a component dropped the layout or was deleted.');
+    expect($seam)->toBe(107, 'If it went UP, a component added the heading key to its layout. If it went DOWN, a component removed it or was deleted.');
     expect($own)->toBe(1, 'If it went UP, a component uses the layout without the heading key. If it went DOWN, a component added the heading key or was deleted.');
     expect($unresolvedView)->toBe(0, 'If it went UP, a component uses a first view literal that cannot be resolved. Its known edge: a component with two view( literals lands on the first. If it went DOWN, an unresolved view literal was fixed.');
     expect($skips)->toBe(0, 'If it went UP, a blade\'s first <h[1-6] tag is the wrong level (not h2 for seam, not h1 for own). This reads the blade\'s text, not a response body, and never sees a heading emitted by a component such as <x-ui.empty-state heading="…">. If it went DOWN, a blade heading was fixed.');
