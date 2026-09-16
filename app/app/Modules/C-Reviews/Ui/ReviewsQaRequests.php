@@ -65,6 +65,16 @@ class ReviewsQaRequests extends Component
         return app(PublicThreshold::class)->for($this->businessId);
     }
 
+    private function displayName(?array $person): ?string
+    {
+        if ($person === null) {
+            return null;
+        }
+        $name = trim(($person['first_name'] ?? '').' '.($person['last_name'] ?? ''));
+
+        return $name !== '' ? $name : null;
+    }
+
     public function getTicketRecipient(): string
     {
         Tenancy::set($this->businessId);
@@ -72,7 +82,8 @@ class ReviewsQaRequests extends Component
         if ($setting && ! empty($setting->ticket_recipient_id)) {
             $person = app(EntityReadAction::class)->handle('people', $setting->ticket_recipient_id, $this->businessId);
 
-            return $person ? $person['name'] : 'not set';
+            // PB-206: people carry first_name/last_name, never name.
+            return $this->displayName($person) ?? 'not set';
         }
 
         return 'not set';
@@ -245,7 +256,8 @@ class ReviewsQaRequests extends Component
                 if ($req->customer_id) {
                     $person = app(EntityReadAction::class)->handle('people', $req->customer_id, $this->businessId);
                     if ($person) {
-                        $req->customer_name = $person['name'];
+                        // PB-206: people carry first_name/last_name, never name.
+                        $req->customer_name = $this->displayName($person);
                     }
                 }
                 $req->ticket = app(QaTicketReadAction::class)->findByReviewRequestId($this->businessId, $req->id);
