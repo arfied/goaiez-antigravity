@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-15T20:44:31",
+ "updated": "2026-09-16T14:52:38",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2939,6 +2939,12 @@
    "module": "X-153",
    "chose": "MONEY-227: the claim-expiry screen reads real claims and renders in the owner shell; admin door kept",
    "at": "2026-09-15T20:44:31",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Billing",
+   "chose": "MONEY-228: the built Credits screen renders in the owner shell with its real meters, ledger, top-up and explain untouched; fifteen neutrals tokened; C-Billing has no admin door",
+   "at": "2026-09-16T14:52:38",
    "ruling": "R245"
   }
  ],
