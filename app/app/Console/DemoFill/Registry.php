@@ -15,6 +15,7 @@ class Registry
             new Fillers\X104Filler,
             new Fillers\X108Filler,
             new Fillers\X121Filler,
+            new Fillers\X129Filler,
             new Fillers\X137Filler,
             new Fillers\X153Filler,
             new Fillers\X155Filler,
