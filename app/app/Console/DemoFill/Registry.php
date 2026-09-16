@@ -10,11 +10,14 @@ class Registry
     public static function fillers(): array
     {
         $fillers = [
+            new Fillers\CAgentFiller,
             new Fillers\CReviewsFiller,
             new Fillers\X82Filler,
+            new Fillers\X102Filler,
             new Fillers\X104Filler,
             new Fillers\X108Filler,
             new Fillers\X121Filler,
+            new Fillers\X129Filler,
             new Fillers\X137Filler,
             new Fillers\X153Filler,
             new Fillers\X155Filler,
