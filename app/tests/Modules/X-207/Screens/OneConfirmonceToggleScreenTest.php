@@ -6,7 +6,9 @@ namespace Tests\Modules\X207\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X207\Models\PushPrompt;
 use App\Modules\X207\Ui\OneConfirmonceToggle;
+use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,7 +20,27 @@ class OneConfirmonceToggleScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-207.one-confirmonce-toggle'))->assertOk();
+        $this->get(route('x-207.one-confirmonce-toggle'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
+            ->assertDontSee('this screen is planned in')
+            ->assertSee('No push prompts configured.');
+
+        Tenancy::setUser($owner->id);
+        PushPrompt::create([
+            'business_id' => $biz->id,
+            'prompt_title' => 'Distinctive Prompt 4497',
+            'prompt_body' => 'Distinctive body 4497',
+            'is_active' => true,
+        ]);
+        Tenancy::forget();
+
+        $this->get(route('x-207.one-confirmonce-toggle'))
+            ->assertOk()
+            ->assertSee('Distinctive Prompt 4497')
+            ->assertSee('[active]')
+            ->assertDontSee('No push prompts configured.');
 
         Livewire::test(OneConfirmonceToggle::class)->assertOk();
     }

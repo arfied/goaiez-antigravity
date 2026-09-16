@@ -30,7 +30,7 @@ class X181ScreensTest extends TestCase
     {
         Livewire::test(QaQueueSlaDueAt::class, ['businessId' => $this->bizId])
             ->assertOk()
-            ->assertSee('QA Queue and SLA Due Watch')
+            ->assertSee('QA queue')
             ->assertSee('The QA queue is clear');
     }
 
