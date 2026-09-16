@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-15T23:35:18",
+ "updated": "2026-09-16T12:53:46",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -113,7 +113,7 @@
   },
   "8": {
    "track": "J10 reviews",
-   "status": "DONE",
+   "status": "BUILDING",
    "modules": [
     "C-Reviews",
     "X-181",
@@ -384,17 +384,10 @@
    "unresolved": []
   },
   "C-Reviews": {
-   "status": "UNRESOLVED",
+   "status": "BUILDING",
    "wave": 8,
    "intent": "GROW",
-   "unresolved": [
-    {
-     "module": "C-Reviews",
-     "stage": "contract",
-     "why": "win.first has two plan-sanctioned emitters (C-Reviews P-113 first review received; X-118 onboarding test call, plan \u00a727169); ContractStage.php:575 admits multi-emitters by name only and is sealed \u2014 needs the owner's by-name exemption, then resolve + done",
-     "at": "2026-09-15T23:35:18"
-    }
-   ]
+   "unresolved": []
   },
   "C-Sms": {
    "status": "UNRESOLVED",
@@ -1333,12 +1326,6 @@
    "stage": "tests",
    "why": "four legacy message tables outside the twelve nouns (outreach_messages, triage_conversations, inbound_messages, support_messages) \u2014 the G2-76 lint is right, main's schema is not migrated; the sixty lane proposes the fold",
    "at": "2026-09-05T17:11:31"
-  },
-  {
-   "module": "C-Reviews",
-   "stage": "contract",
-   "why": "win.first has two plan-sanctioned emitters (C-Reviews P-113 first review received; X-118 onboarding test call, plan \u00a727169); ContractStage.php:575 admits multi-emitters by name only and is sealed \u2014 needs the owner's by-name exemption, then resolve + done",
-   "at": "2026-09-15T23:35:18"
   }
  ],
  "decisions": [
@@ -1507,6 +1494,13 @@
    "was": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
    "why": "sealed ContractStage.php:575 now carries the multi-emitter exemption for send.requested (owner ruling); the stage no longer fails on it",
    "at": "2026-09-15T16:42:17"
+  },
+  {
+   "module": "C-Reviews",
+   "stage": "contract",
+   "was": "win.first has two plan-sanctioned emitters (C-Reviews P-113 first review received; X-118 onboarding test call, plan \u00a727169); ContractStage.php:575 admits multi-emitters by name only and is sealed \u2014 needs the owner's by-name exemption, then resolve + done",
+   "why": "owner exemption 2026-09-16: win.first added by name to ContractStage multiEmitterOk in 6ed8285d (seals.json digest 836c0587ec0a945c); the contract stage no longer names C-Reviews",
+   "at": "2026-09-16T12:53:46"
   }
  ]
 }
