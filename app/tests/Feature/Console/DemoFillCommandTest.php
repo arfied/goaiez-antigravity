@@ -22,12 +22,7 @@ class DemoFillCommandTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
         Tenancy::forgetAll(); // explicitly clear tenant to test from a bare console context
-        try {
-            $this->artisan('demo:fill', ['email' => $owner->email])->assertExitCode(0);
-        } catch (\Throwable $e) {
-            file_put_contents('/tmp/err.txt', $e->getTraceAsString());
-            throw $e;
-        }
+        $this->artisan('demo:fill', ['email' => $owner->email])->assertExitCode(0);
 
         Tenancy::set($biz->id); // Restore tenant for test assertions
 
