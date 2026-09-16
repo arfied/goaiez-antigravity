@@ -795,3 +795,4 @@
 - `2026-09-16T12:13:25` note: X-155 PB-207: demo:fill threw No tenant in context on production; the command now calls Tenancy::set
 - `2026-09-16T14:26:44` (R245) X-205 — PB-208: affiliate earnings render in the owner shell on a real attribution; the module has no admin door
 - `2026-09-16T16:24:21` (R245) X-205 — PB-209: the affiliates list renders in the owner shell on a real affiliate row; the module has no admin door
+- `2026-09-16T17:43:17` note: X-205 PB-210: demo:fill filler for X-205's owner-shell screens; marked demo· rows, idempotent, purgeable
