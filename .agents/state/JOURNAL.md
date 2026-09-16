@@ -781,3 +781,4 @@
 - `2026-09-15T16:42:17` RESOLVED contract C-Reviews - sealed ContractStage.php:575 now carries the multi-emitter exemption for send.requested (owner ruling); the stage no longer fails on it (was: send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.)
 - `2026-09-15T18:43:14` (R245) C-Reviews — P-110/P-113: the day-60 triage branch reads the person's latest csat_answers row (1–5 ×2 onto the 0–10 threshold); job age comes from JobCompleted.occurredAt or the original request date
 - `2026-09-15T20:03:54` (R245) C-Reviews — REV-185: the QA tickets card renders in the owner shell on a real connection; no admin door (C-Reviews has none)
+- `2026-09-15T20:40:31` (R245) C-Reviews — REV-186: the Loss alerts card renders in the owner shell on a real connection; no admin door (C-Reviews has none)
