@@ -70,18 +70,18 @@ class X205Filler implements DemoFiller
 
     public function purge(Business $business): int
     {
+        $affiliateIds = Affiliate::where('business_id', $business->id)
+            ->where('partner_name', 'like', self::MARKER.'%')
+            ->pluck('id');
+
         $count = AffiliatePayout::where('business_id', $business->id)
-            ->whereHas('affiliate', function ($q) {
-                $q->where('partner_name', 'like', self::MARKER.'%');
-            })->delete();
+            ->whereIn('affiliate_id', $affiliateIds)->delete();
 
         $count += AffiliateAttribution::where('business_id', $business->id)
-            ->whereHas('affiliate', function ($q) {
-                $q->where('partner_name', 'like', self::MARKER.'%');
-            })->delete();
+            ->whereIn('affiliate_id', $affiliateIds)->delete();
 
         $count += Affiliate::where('business_id', $business->id)
-            ->where('partner_name', 'like', self::MARKER.'%')
+            ->whereIn('id', $affiliateIds)
             ->delete();
 
         return $count;
