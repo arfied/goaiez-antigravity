@@ -2794,6 +2794,10 @@
   {
    "at": "2026-09-16T16:11:17",
    "note": "X-157 SITE-228: demo:fill fillers for the site lane's owner-shell modules (X-157 X-176 X-177 X-203 X-108 X-121); marked demo\u00b7 rows, idempotent, purgeable"
+  },
+  {
+   "at": "2026-09-16T18:29:53",
+   "note": "X-177 SITE-229: X177Filler sets location_id \u2014 production's gbp_connections has it NOT NULL (module migration create branch), test databases nullable (core migration first); demo:fill aborted there on 2026-09-16"
   }
  ],
  "resolved": [
