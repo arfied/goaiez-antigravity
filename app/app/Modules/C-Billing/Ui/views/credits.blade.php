@@ -1,8 +1,7 @@
 <div>
-    <x-surface.sample-state module="C-Billing" screen="credits" />
     <div class="p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto">
         <div class="mb-8 flex justify-between items-center">
-            <h1 class="text-xl font-semibold leading-6 text-ink">Credits & Usage</h1>
+            <h2 class="text-xl font-semibold leading-6 text-ink">Credits</h2>
             <x-ui.button size="default" wire:click="topup" wire:loading.attr="disabled" wire:target="topup">Top up</x-ui.button>
         </div>
 
@@ -50,32 +49,32 @@
         </div>
 
         <div wire:loading.remove class="mt-8 flow-root">
-            <h2 class="text-lg font-semibold leading-6 text-ink mb-4">Ledger</h2>
+            <h3 class="text-lg font-semibold leading-6 text-ink mb-4">Ledger</h3>
             @if($entries->isEmpty())
                 <x-ui.empty-state heading="No ledger entries yet." action="Top up" target="topup">A top-up from this screen writes a row here. Usage charges and plan credits are recorded on a separate credit ledger elsewhere in this app, and this list does not read it.</x-ui.empty-state>
             @else
-                <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
-                    <table class="min-w-full divide-y divide-gray-300">
-                        <thead class="bg-gray-50">
+                <div class="overflow-hidden shadow ring-1 ring-rule sm:rounded-lg">
+                    <table class="min-w-full divide-y divide-rule">
+                        <thead class="bg-surface">
                             <tr>
-                                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Type</th>
-                                <th scope="col" class="px-3 py-3.5 text-right text-sm font-semibold text-gray-900">Amount</th>
-                                <th scope="col" class="px-3 py-3.5 text-right text-sm font-semibold text-gray-900">Balance After</th>
+                                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-ink sm:pl-6">Type</th>
+                                <th scope="col" class="px-3 py-3.5 text-right text-sm font-semibold text-ink">Amount</th>
+                                <th scope="col" class="px-3 py-3.5 text-right text-sm font-semibold text-ink">Balance After</th>
                                 <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
                                     <span class="sr-only">Actions</span>
                                 </th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-200 bg-white">
+                        <tbody class="divide-y divide-rule bg-card">
                             @foreach($entries as $entry)
                                 <tr>
-                                    <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-gray-900 sm:pl-6">
+                                    <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-ink sm:pl-6">
                                         <x-ui.status-pill :state="$ledgerEntryPillStates[$entry->entry_type] ?? 'unknown'" :label="$entry->entry_type" />
                                     </td>
-                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 text-right tabular-nums">
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-ink-2 text-right tabular-nums">
                                         {{ number_format($entry->amount_hundredths_cents / 10000, 4) }}
                                     </td>
-                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 text-right tabular-nums">
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-ink-2 text-right tabular-nums">
                                         {{ number_format($entry->balance_after_hundredths_cents / 10000, 4) }}
                                     </td>
                                     <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
@@ -83,11 +82,11 @@
                                     </td>
                                 </tr>
                                 @if($explainedEntryId === $entry->id && $explanation)
-                                    <tr class="bg-gray-50">
+                                    <tr class="bg-surface">
                                         <td colspan="4" class="px-6 py-4">
-                                            <p class="text-sm text-gray-900 font-medium mb-1">Explanation</p>
-                                            <p class="text-sm text-gray-600">{{ $explanation['description'] }}</p>
-                                            <p class="text-xs text-gray-500 mt-2">Ref: {{ $explanation['reference_id'] ?? 'none' }}</p>
+                                            <p class="text-sm text-ink font-medium mb-1">Explanation</p>
+                                            <p class="text-sm text-ink-2">{{ $explanation['description'] }}</p>
+                                            <p class="text-xs text-ink-2 mt-2">Ref: {{ $explanation['reference_id'] ?? 'none' }}</p>
                                         </td>
                                     </tr>
                                 @endif

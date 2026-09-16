@@ -10,8 +10,10 @@ use App\Modules\CBilling\Models\CreditLedgerEntry;
 use App\Modules\CBilling\Models\Meter;
 use App\Support\Tenancy;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Credits'])]
 class Credits extends Component
 {
     use LabelsMeters;
