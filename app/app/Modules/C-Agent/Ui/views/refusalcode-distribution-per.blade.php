@@ -1,9 +1,8 @@
 <div>
-    <x-surface.sample-state module="C-Agent" screen="refusalcode_distribution_per" />
     <div class="refusal-dist-container p-4">
-        <h3 class="text-lg font-bold">Refusal Code Distribution</h3>
+        <h2 class="text-lg font-bold text-ink">Agent refusals</h2>
         @if($refusals->isEmpty())
-            <p class="text-gray-500">Zero refusals logged.</p>
+            <p class="text-ink-2">Zero refusals logged.</p>
         @else
             <ul>
                 @foreach($refusals as $ref)
