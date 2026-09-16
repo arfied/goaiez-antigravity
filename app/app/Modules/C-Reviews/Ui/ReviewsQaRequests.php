@@ -13,9 +13,11 @@ use App\Modules\CReviews\Models\ReviewRequest;
 use App\Modules\X121\Actions\EntityReadAction;
 use App\Modules\X181\Actions\QaTicketReadAction;
 use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Reviews'])]
 class ReviewsQaRequests extends Component
 {
     #[Locked]
