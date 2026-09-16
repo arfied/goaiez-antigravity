@@ -18,12 +18,14 @@ class DemoFillCommand extends Command
     {
         $email = $this->argument('email');
         $user = User::where('email', $email)->firstOrFail();
-        $business = Business::where('owner_user_id', $user->id)->firstOrFail();
+
+        Tenancy::setUser($user->id);
+        $business = Business::withoutGlobalScopes()->where('owner_user_id', $user->id)->firstOrFail();
 
         $only = $this->option('only');
         $onlyModules = $only ? explode(',', $only) : null;
 
-        Tenancy::setUser($user->id);
+        Tenancy::set($business->id); // PB-207: a console command establishes its own tenant — Context does not propagate here (production, 2026-09-16).
 
         $fillers = Registry::fillers();
 
@@ -43,6 +45,7 @@ class DemoFillCommand extends Command
         }
 
         Tenancy::forget();
+        Tenancy::forgetUser();
 
         return 0;
     }

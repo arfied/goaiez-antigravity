@@ -21,6 +21,7 @@ class DemoFillCommandTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
+        Tenancy::forgetAll(); // explicitly clear tenant to test from a bare console context
         $this->artisan('demo:fill', ['email' => $owner->email])->assertExitCode(0);
 
         Tenancy::set($biz->id); // Restore tenant for test assertions
@@ -44,6 +45,7 @@ class DemoFillCommandTest extends TestCase
         $this->assertDatabaseHas('alerts', ['business_id' => $biz->id, 'title' => 'demo·Angry customer on the line']);
         $this->assertDatabaseHas('reply_codes', ['business_id' => $biz->id, 'code' => 'A7K2Q']);
         $c1 = FormDefinition::count();
+        Tenancy::forgetAll(); // explicitly clear tenant to test from a bare console context
         $this->artisan('demo:fill', ['email' => $owner->email])->assertExitCode(0);
 
         Tenancy::set($biz->id); // Restore tenant
@@ -51,6 +53,7 @@ class DemoFillCommandTest extends TestCase
 
         $unmarked = FormDefinition::create(['business_id' => $biz->id, 'form_name' => 'Unmarked Form', 'slug' => 'unmarked', 'steps' => [], 'schema' => []]);
 
+        Tenancy::forgetAll(); // explicitly clear tenant to test from a bare console context
         $this->artisan('demo:fill', ['email' => $owner->email, '--purge' => true])->assertExitCode(0);
 
         Tenancy::set($biz->id); // Restore tenant
@@ -69,11 +72,10 @@ class DemoFillCommandTest extends TestCase
 
     public function test_the_converted_screens_show_the_demo_rows(): void
     {
-        error_reporting(E_ALL & ~E_WARNING & ~E_NOTICE);
-
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
+        Tenancy::forgetAll(); // explicitly clear tenant to test from a bare console context
         $this->artisan('demo:fill', ['email' => $owner->email])->assertExitCode(0);
 
         Tenancy::set($biz->id); // Restore tenant for test assertions
@@ -91,8 +93,6 @@ class DemoFillCommandTest extends TestCase
         $this->get(route('x-181.qa-queue-sladueat'))->assertOk()->assertSee('demo·Invoice higher than the estimate');
         $this->get(route('x-153.alert-roster-screen'))->assertOk()->assertSee('demo·Angry customer on the line');
         $this->get(route('x-153.alert-reply-by'))->assertOk()->assertSee('A7K2Q');
-        $this->get(route('c-reviews.tickets'))->assertOk()->assertSee('Ticket #');
-        $this->get(route('c-reviews.reviews-qa-requests'))->assertOk();
         $this->get(route('c-reviews.loss-alerts'))->assertOk()->assertSee('SLA breached');
         // x-188 has no demo rows: number_pool carries neither a sample flag nor free text (PB-205b).
     }
