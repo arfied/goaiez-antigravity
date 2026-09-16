@@ -784,3 +784,4 @@
 - `2026-09-15T20:40:31` (R245) C-Reviews — REV-186: the Loss alerts card renders in the owner shell on a real connection; no admin door (C-Reviews has none)
 - `2026-09-15T21:33:30` (R245) C-Reviews — REV-187: the QA report card renders in the owner shell on a real connection; no admin door (C-Reviews has none)
 - `2026-09-15T21:59:04` note: C-Reviews REV-188: the Undefined array key name crash (PB-206) is fixed at the three EntityReadAction call sites
+- `2026-09-15T22:52:02` (R245) C-Reviews — REV-189: the Reviews card renders in the owner shell on a real connection; no admin door (C-Reviews has none)
