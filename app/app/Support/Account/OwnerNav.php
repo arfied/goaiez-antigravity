@@ -581,6 +581,7 @@ final class OwnerNav
             OwnerNavItem::make('DNI pool usage', 'x-137.dni-pool-utilisation', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Credits', 'c-billing.credits', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Chat widget', 'x-102.customerfacing-widget', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Branded media', 'x-189.preview-per-destination', OwnerNavItem::GROUP_MORE),
         ];
     }
 
