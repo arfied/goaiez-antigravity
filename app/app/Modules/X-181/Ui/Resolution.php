@@ -7,9 +7,11 @@ namespace App\Modules\X181\Ui;
 use App\Modules\X181\Actions\QaTicketReopenAction;
 use App\Modules\X181\Models\QaTicket;
 use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Resolved tickets'])]
 class Resolution extends Component
 {
     #[Locked]
