@@ -19,7 +19,12 @@ class AlertRosterScreenScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-153.alert-roster-screen'))->assertOk();
+        $this->get(route('x-153.alert-roster-screen'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
+            ->assertDontSee('this screen is planned in')
+            ->assertSee('No alerts broadcasted.');
 
         Livewire::test(AlertRosterScreen::class)->assertOk();
     }
