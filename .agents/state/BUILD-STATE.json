@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-15T18:51:02",
+ "updated": "2026-09-16T14:44:27",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -2589,6 +2589,12 @@
    "module": "X-177",
    "chose": "SITE-226: the Suspension risks card renders in the owner shell on a real connection; admin door and sample toggle kept",
    "at": "2026-09-15T18:51:02",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-137",
+   "chose": "SITE-227: the DNI pool usage screen reads the real pool numbers, active tokens and fallback in the owner shell; admin door kept",
+   "at": "2026-09-16T14:44:27",
    "ruling": "R245"
   }
  ],

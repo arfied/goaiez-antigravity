@@ -958,3 +958,4 @@
 - `2026-09-15T16:33:52` (R245) X-203 — SITE-224: runbooks and their runs render in the owner shell on a real runbook; the module has no admin door
 - `2026-09-15T17:11:24` (R245) X-177 — SITE-225: the Google profile card renders in the owner shell on a real connection; admin door and sample toggle kept
 - `2026-09-15T18:51:02` (R245) X-177 — SITE-226: the Suspension risks card renders in the owner shell on a real connection; admin door and sample toggle kept
+- `2026-09-16T14:44:27` (R245) X-137 — SITE-227: the DNI pool usage screen reads the real pool numbers, active tokens and fallback in the owner shell; admin door kept
