@@ -16,15 +16,15 @@ class X153Filler implements DemoFiller
 
     public function fill(Business $business): int
     {
-        if (Alert::where('business_id', $business->id)->where('title', 'like', self::MARKER . '%')->exists()) {
+        if (Alert::where('business_id', $business->id)->where('title', 'like', self::MARKER.'%')->exists()) {
             return 0;
         }
 
         $a1 = Alert::create([
             'business_id' => $business->id,
             'alert_class' => 'urgent',
-            'title' => self::MARKER . 'Angry customer on the line',
-            'body' => self::MARKER . 'Angry customer on the line',
+            'title' => self::MARKER.'Angry customer on the line',
+            'body' => self::MARKER.'Angry customer on the line',
             'status' => 'pending',
             'claim_expires_at' => now()->addMinutes(30),
         ]);
@@ -32,8 +32,8 @@ class X153Filler implements DemoFiller
         $a2 = Alert::create([
             'business_id' => $business->id,
             'alert_class' => 'missed_call',
-            'title' => self::MARKER . 'Missed call from a new lead',
-            'body' => self::MARKER . 'Missed call from a new lead',
+            'title' => self::MARKER.'Missed call from a new lead',
+            'body' => self::MARKER.'Missed call from a new lead',
             'status' => 'claimed',
             'claim_expires_at' => now()->subHour(),
         ]);
@@ -51,7 +51,7 @@ class X153Filler implements DemoFiller
     public function purge(Business $business): int
     {
         return Alert::where('business_id', $business->id)
-            ->where('title', 'like', self::MARKER . '%')
+            ->where('title', 'like', self::MARKER.'%')
             ->delete();
     }
 }
