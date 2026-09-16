@@ -794,3 +794,4 @@
 - `2026-09-15T20:58:59` note: C-Reviews PB-206: ErrorException: Undefined array key "name" in /home/goaiez/agents/grs-antig-pricebook/app/app/Modules/C-Reviews/Ui/Tickets.php:103
 - `2026-09-16T12:13:25` note: X-155 PB-207: demo:fill threw No tenant in context on production; the command now calls Tenancy::set
 - `2026-09-16T14:26:44` (R245) X-205 — PB-208: affiliate earnings render in the owner shell on a real attribution; the module has no admin door
+- `2026-09-16T16:24:21` (R245) X-205 — PB-209: the affiliates list renders in the owner shell on a real affiliate row; the module has no admin door
