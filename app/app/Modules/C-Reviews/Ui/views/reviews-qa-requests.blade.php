@@ -2,20 +2,20 @@
     <div wire:loading><x-ui.skeleton label="Checking your reviews…" /></div>
 
     <!-- Header & Action Notice -->
-    <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+    <div class="flex items-center justify-between pb-2 border-b border-rule">
         <div>
-            <h1 class="text-lg font-bold text-white flex items-center gap-2">
-                Reviews & QA
+            <h2 class="text-lg font-bold text-ink flex items-center gap-2">
+                Reviews
                 @if($isSample)
                     <x-ui.status-pill state="attention" label="SAMPLE" />
                 @endif
             </h1>
-            <p class="text-sm text-slate-400">Manage review requests, replies, and QA tickets.</p>
+            <p class="text-sm text-ink-2">Manage review requests, replies, and QA tickets.</p>
         </div>
-        <div class="flex items-center gap-4 text-sm text-slate-400">
+        <div class="flex items-center gap-4 text-sm text-ink-2">
             <div class="flex flex-col text-right">
-                <span>Public Threshold: <strong class="text-white">{{ $threshold }}★</strong></span>
-                <span>QA Tickets to: <strong class="text-white">{{ $ticketRecipient }}</strong></span>
+                <span>Public Threshold: <strong class="text-ink">{{ $threshold }}★</strong></span>
+                <span>QA Tickets to: <strong class="text-ink">{{ $ticketRecipient }}</strong></span>
             </div>
         </div>
     </div>
@@ -31,16 +31,16 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Composer Panel -->
         <div class="lg:col-span-1 space-y-4">
-            <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-4 shadow-xl">
+            <div class="p-5 rounded-2xl bg-surface border border-rule space-y-4 shadow-xl">
                 <div class="flex items-center gap-2 mb-2">
                     <div class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]"></div>
-                    <h2 class="text-sm font-bold text-white">Send New Ask</h2>
+                    <h3 class="text-sm font-bold text-ink">Send New Ask</h3>
                 </div>
 
                 <form wire:submit="sendRequest" class="space-y-4">
                     <div>
-                        <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Platform</label>
-                        <select wire:model="platform" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:border-purple-500 focus:ring-1 focus:ring-purple-500">
+                        <label class="block text-[11px] font-semibold text-ink-2 uppercase tracking-wider mb-1">Platform</label>
+                        <select wire:model="platform" class="w-full px-3 py-2 rounded-xl bg-surface border border-rule text-xs text-ink focus:border-purple-500 focus:ring-1 focus:ring-purple-500">
                             <option value="google">Google</option>
                             <option value="yelp">Yelp</option>
                             <option value="facebook">Facebook</option>
@@ -49,11 +49,11 @@
                     </div>
 
                     <div>
-                        <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Prompt Template</label>
+                        <label class="block text-[11px] font-semibold text-ink-2 uppercase tracking-wider mb-1">Prompt Template</label>
                         <textarea 
                             wire:model="promptTemplate" 
                             rows="3" 
-                            class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                            class="w-full px-3 py-2 rounded-xl bg-surface border border-rule text-xs text-ink focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                         ></textarea>
                     </div>
 
@@ -75,15 +75,15 @@
                     <x-ui.button size="default" :variant="$filter === 'facebook' ? 'primary' : 'quiet'" wire:click="$set('filter', 'facebook')">Facebook</x-ui.button>
                     <x-ui.button size="default" :variant="$filter === 'bbb' ? 'primary' : 'quiet'" wire:click="$set('filter', 'bbb')">BBB</x-ui.button>
                 </div>
-                <div class="text-xs text-slate-400 font-medium whitespace-nowrap">
-                    Avg Rating: <span class="text-white">{{ $avgRating }}</span>
+                <div class="text-xs text-ink-2 font-medium whitespace-nowrap">
+                    Avg Rating: <span class="text-ink">{{ $avgRating }}</span>
                 </div>
             </div>
 
             <!-- Reviews Feed -->
             <div class="space-y-3">
                 @forelse($requests as $r)
-                    <div class="rounded-xl border border-slate-800 bg-slate-900/60 p-4 space-y-3 hover:border-slate-700 transition relative">
+                    <div class="rounded-xl border border-rule bg-surface p-4 space-y-3 hover:border-rule transition relative">
                         @if($isSample)
                             <div class="absolute top-2 right-2"><x-ui.status-pill state="attention" label="SAMPLE" /></div>
                         @endif
@@ -95,7 +95,7 @@
                                         {{ str_repeat('★', $r->rating) }}{{ str_repeat('☆', max(0, 5 - $r->rating)) }}
                                     </div>
                                 @else
-                                    <div class="text-slate-500 font-bold text-sm">No rating yet</div>
+                                    <div class="text-ink-2 font-bold text-sm">No rating yet</div>
                                 @endif
                             </div>
                             
@@ -113,17 +113,17 @@
                             <x-ui.status-pill :state="$statusState" :label="$statusLabel" />
                         </div>
 
-                        <div class="text-xs text-slate-400">
-                            Customer: <strong class="text-slate-200">{{ $r->customer_name ?? 'Unknown' }}</strong>
+                        <div class="text-xs text-ink-2">
+                            Customer: <strong class="text-ink-2">{{ $r->customer_name ?? 'Unknown' }}</strong>
                         </div>
 
-                        <p class="text-xs text-slate-200 leading-relaxed">
+                        <p class="text-xs text-ink-2 leading-relaxed">
                             "{{ $r->review_text ?? 'Review requested — awaiting customer response.' }}"
                         </p>
 
                         <!-- Action Bar for this Review -->
-                        <div class="flex items-center justify-between pt-2 border-t border-slate-800/80">
-                            <span class="text-[10px] text-slate-500 font-mono">Review ID #{{ $r->id }}</span>
+                        <div class="flex items-center justify-between pt-2 border-t border-rule">
+                            <span class="text-[10px] text-ink-2 font-mono">Review ID #{{ $r->id }}</span>
                             <div class="flex items-center gap-2">
                                 @if($r->status === 'sent' && !$r->rating)
                                     <x-ui.button size="default" wire:click="resendAsk({{ $r->id }})">Resend ask</x-ui.button>
@@ -145,20 +145,20 @@
 
                         <!-- Embedded Response Drafter if Selected -->
                         @if($selectedReviewId === $r->id)
-                            <div class="mt-3 p-4 rounded-xl bg-slate-950 border border-purple-500/40 space-y-3">
+                            <div class="mt-3 p-4 rounded-xl bg-surface border border-purple-500/40 space-y-3">
                                 <div class="flex items-center justify-between">
-                                    <span class="text-xs font-bold text-white">AI Response Generator</span>
+                                    <span class="text-xs font-bold text-ink">AI Response Generator</span>
                                     <x-ui.button size="default" variant="quiet" wire:click="unselectReview()">Cancel</x-ui.button>
                                 </div>
-                                <div class="text-xs text-slate-400 italic bg-slate-900 p-2 rounded">
+                                <div class="text-xs text-ink-2 italic bg-surface p-2 rounded">
                                     "{{ $r->review_text }}"
                                 </div>
                                 <form wire:submit="publishReply" class="space-y-3">
-                                    <textarea wire:model="replyDraft" rows="3" placeholder="Draft reply..." class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-xs text-white"></textarea>
+                                    <textarea wire:model="replyDraft" rows="3" placeholder="Draft reply..." class="w-full px-3 py-2 rounded-lg bg-surface border border-rule text-xs text-ink"></textarea>
                                     
                                     <div class="flex items-center justify-between">
-                                        <label class="flex items-center gap-2 text-xs text-slate-400">
-                                            <input type="checkbox" wire:model="isSarcasticOrAmbiguous" class="rounded bg-slate-900 border-slate-700 text-purple-600" />
+                                        <label class="flex items-center gap-2 text-xs text-ink-2">
+                                            <input type="checkbox" wire:model="isSarcasticOrAmbiguous" class="rounded bg-surface border-rule text-purple-600" />
                                             Flag as Sarcastic / Ambiguous (Draft to Inbox)
                                         </label>
                                         <x-ui.submit target="publishReply" busy="Publishing…">Publish reply</x-ui.submit>
