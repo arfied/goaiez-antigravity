@@ -821,3 +821,4 @@
 - `2026-09-15T16:07:52` (R245) X-188 — MONEY-224: number complaints render in the owner shell on a real number; RLS read; admin door kept
 - `2026-09-15T18:01:57` (R245) X-153 — MONEY-225: the team alert roster renders in the owner shell on a real alert; RLS read; admin door kept
 - `2026-09-15T18:34:21` (R245) X-153 — MONEY-226: the fast-path reply codes render in the owner shell on a real live code; admin door kept
+- `2026-09-15T20:44:31` (R245) X-153 — MONEY-227: the claim-expiry screen reads real claims and renders in the owner shell; admin door kept
