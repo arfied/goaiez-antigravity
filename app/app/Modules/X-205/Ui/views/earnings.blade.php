@@ -1,6 +1,14 @@
 <div>
-    <x-surface.sample-state module="**The referral and affiliate layer: every tenant gets an affiliate id; tiers, lifetime attribution, id merging, promo-code sync, a white-labelled portal, clawbacks and the W-9 collection.** ⛔⛔ **Every money row here is `MONEY` / `L1` FOREVER.**" screen="earnings" />
     <div class="earnings-view p-4">
-        <h3 class="text-lg font-bold">Affiliate Commission Earnings Ledger</h3>
+        <h2 class="text-lg font-bold text-ink">Affiliate earnings</h2>
+        @if($attributions->isEmpty())
+            <p class="text-ink-2">No commissions earned yet.</p>
+        @else
+            <ul>
+                @foreach($attributions as $a)
+                    <li>{{ $a->order_id }}: {{ $a->commission_cents }} cents on {{ $a->sale_amount_cents }} [{{ $a->clawback_status }}]</li>
+                @endforeach
+            </ul>
+        @endif
     </div>
 </div>
