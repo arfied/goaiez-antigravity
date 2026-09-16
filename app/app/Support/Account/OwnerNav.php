@@ -572,6 +572,7 @@ final class OwnerNav
             OwnerNavItem::make('Claim expiry', 'x-153.claimexpiry-rate', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Agent refusals', 'c-agent.refusalcode-distribution-per', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('QA report', 'c-reviews.qa-report', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Agent teaching', 'c-agent.teaching-box', OwnerNavItem::GROUP_MORE),
         ];
     }
 
