@@ -568,6 +568,7 @@ final class OwnerNav
             OwnerNavItem::make('QA queue', 'x-181.qa-queue-sladueat', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Resolved tickets', 'x-181.resolution', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('QA tickets', 'c-reviews.tickets', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Loss alerts', 'c-reviews.loss-alerts', OwnerNavItem::GROUP_MORE),
         ];
     }
 
