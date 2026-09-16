@@ -569,6 +569,7 @@ final class OwnerNav
             OwnerNavItem::make('Resolved tickets', 'x-181.resolution', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('QA tickets', 'c-reviews.tickets', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Loss alerts', 'c-reviews.loss-alerts', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Claim expiry', 'x-153.claimexpiry-rate', OwnerNavItem::GROUP_MORE),
         ];
     }
 
