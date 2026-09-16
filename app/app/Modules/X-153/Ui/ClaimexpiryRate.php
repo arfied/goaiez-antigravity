@@ -37,7 +37,7 @@ class ClaimexpiryRate extends Component
             $active = AlertClaim::where('business_id', $this->businessId)->where('status', 'active')->count();
             $expired = AlertClaim::where('business_id', $this->businessId)->where('status', 'expired')->count();
             $total = $active + $expired;
-            
+
             if ($total > 0) {
                 $rate = (int) round(($expired / $total) * 100);
             }

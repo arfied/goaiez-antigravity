@@ -30,28 +30,28 @@ class ClaimexpiryRateScreenTest extends TestCase
             ->assertSee('No claims yet.');
 
         Tenancy::setUser($owner->id);
-        
+
         $alert = Alert::create([
             'title' => 'Distinctive alert 4507',
             'body' => 'Test body',
             'alert_class' => 'urgent',
             'status' => 'claimed',
         ]);
-        
+
         AlertClaim::create([
             'alert_id' => $alert->id,
             'claimed_by_user_id' => $owner->id,
             'status' => 'active',
             'expires_at' => Carbon::now()->addMinutes(30),
         ]);
-        
+
         AlertClaim::create([
             'alert_id' => $alert->id,
             'claimed_by_user_id' => $owner->id,
             'status' => 'expired',
             'expires_at' => Carbon::now()->subHour(),
         ]);
-        
+
         Tenancy::forget();
 
         $this->get(route('x-153.claimexpiry-rate'))
