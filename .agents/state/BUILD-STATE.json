@@ -1547,6 +1547,10 @@
   {
    "at": "2026-09-15T20:25:53",
    "note": "X-155 PB-206: demo:fill covers C-Reviews, X-181 and X-153"
+  },
+  {
+   "at": "2026-09-15T20:58:59",
+   "note": "C-Reviews PB-206: ErrorException: Undefined array key \"name\" in /home/goaiez/agents/grs-antig-pricebook/app/app/Modules/C-Reviews/Ui/Tickets.php:103"
   }
  ]
 }

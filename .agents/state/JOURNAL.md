@@ -791,3 +791,4 @@
 - `2026-09-15T16:32:03` note: X-155 X-163 X-164 X-165 X-166 X-167 X-168 X-170 X-175 X-188 PB-205: implemented DemoFillCommand for all lane modules
 - `2026-09-15T17:02:26` note: X-155 PB-205: demo:fill command; fillers for the pricebook-lane modules; other lanes add theirs
 - `2026-09-15T20:25:53` note: X-155 PB-206: demo:fill covers C-Reviews, X-181 and X-153
+- `2026-09-15T20:58:59` note: C-Reviews PB-206: ErrorException: Undefined array key "name" in /home/goaiez/agents/grs-antig-pricebook/app/app/Modules/C-Reviews/Ui/Tickets.php:103
