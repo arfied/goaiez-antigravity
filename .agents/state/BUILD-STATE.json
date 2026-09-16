@@ -1750,6 +1750,10 @@
   {
    "at": "2026-09-10T18:48:41",
    "note": "MONEY-195: nineteen static headings sit over a rendered message property in this lane and three named one act over a property two acts can set; the other sixteen have exactly one setter each or are deliberately act-neutral."
+  },
+  {
+   "at": "2026-09-16T16:53:30",
+   "note": "X-199 MONEY-229: demo:fill fillers for X-199 and X-104 (every owner-shell screen of both shows demo rows); marked demo\u00b7 rows, idempotent, purgeable"
   }
  ],
  "decisions": [
