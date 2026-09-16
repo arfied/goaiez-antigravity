@@ -23,7 +23,28 @@ class ReviewsQaRequestsScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('c-reviews.reviews-qa-requests'))->assertOk();
+        $this->get(route('c-reviews.reviews-qa-requests'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
+            ->assertDontSee('this screen is planned in')
+            ->assertSee('No review requests yet');
+
+        Tenancy::setUser($owner->id);
+        ReviewRequest::create([
+            'business_id' => $biz->id,
+            'platform' => 'google',
+            'status' => 'published_public',
+            'rating' => 5,
+            'review_text' => 'Distinctive review 4510',
+            'gbp_suspended' => false,
+        ]);
+        Tenancy::forget();
+
+        $this->get(route('c-reviews.reviews-qa-requests'))
+            ->assertOk()
+            ->assertSee('Distinctive review 4510')
+            ->assertDontSee('No review requests yet');
 
         Livewire::test(ReviewsQaRequests::class)->assertOk();
     }
