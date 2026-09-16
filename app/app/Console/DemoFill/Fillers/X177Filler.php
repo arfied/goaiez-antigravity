@@ -25,6 +25,7 @@ class X177Filler implements DemoFiller
             'business_id' => $business->id,
             'account_ref' => 'acct_demo',
             'external_label' => self::MARKER.'Demo Store',
+            'location_id' => self::MARKER.'locations/demo',
             'profile_status' => 'active',
         ]);
 
