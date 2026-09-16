@@ -795,3 +795,4 @@
 - `2026-09-16T15:43:16` (R245) X-189 — UI-127: the branded-media previews render in the owner shell on a real row; the read gains its tenant mount; the module has no admin door
 - `2026-09-16T17:34:18` note: X-206 UI-128: demo:fill fillers for the ui lane's owner-shell modules (X-206 X-207 X-210 X-190 X-186 X-182); marked demo· rows, idempotent, purgeable
 - `2026-09-16T17:59:19` note: X-110 UI-129: demo:fill fillers for the ui lane's owner-shell modules (X-08 X-10 X-110 X-125 X-131 X-180 X-184 X-185); marked demo· rows, idempotent, purgeable
+- `2026-09-16T18:23:43` note: X-139 UI-130: demo:fill fillers for the ui lane's last owner-shell modules (X-07 X-124 X-132 X-138 X-139 X-183 X-192); marked demo· rows, idempotent, purgeable
