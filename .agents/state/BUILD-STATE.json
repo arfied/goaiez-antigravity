@@ -2790,6 +2790,10 @@
   {
    "at": "2026-09-13T13:20:28",
    "note": "X-157 3 UNRESOLVED boundary records on X-157 - state.py resolve refused due to duplicates. AppointmentListAction arrived under owner grant 2026-09-13 (SITE-218); EdgeDeployAction lists through it"
+  },
+  {
+   "at": "2026-09-16T16:11:17",
+   "note": "X-157 SITE-228: demo:fill fillers for the site lane's owner-shell modules (X-157 X-176 X-177 X-203 X-108 X-121); marked demo\u00b7 rows, idempotent, purgeable"
   }
  ],
  "resolved": [

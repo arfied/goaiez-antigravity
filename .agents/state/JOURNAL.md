@@ -959,3 +959,4 @@
 - `2026-09-15T17:11:24` (R245) X-177 — SITE-225: the Google profile card renders in the owner shell on a real connection; admin door and sample toggle kept
 - `2026-09-15T18:51:02` (R245) X-177 — SITE-226: the Suspension risks card renders in the owner shell on a real connection; admin door and sample toggle kept
 - `2026-09-16T14:44:27` (R245) X-137 — SITE-227: the DNI pool usage screen reads the real pool numbers, active tokens and fallback in the owner shell; admin door kept
+- `2026-09-16T16:11:17` note: X-157 SITE-228: demo:fill fillers for the site lane's owner-shell modules (X-157 X-176 X-177 X-203 X-108 X-121); marked demo· rows, idempotent, purgeable
