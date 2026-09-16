@@ -1565,6 +1565,10 @@
   {
    "at": "2026-09-06T23:16:43",
    "note": "J8 restore drill: JourneyHarness:814 names its scratch db goaiez_antig_drill_<pid> and :908 force-drops it; the supervisor's wave-119 gate errored 42501 permission denied to terminate process where the coder's gate on the identical tree did not; drill dbs on the box at 2026-09-06 23:10: UNRESOLVED; reproduced in wave 120: no"
+  },
+  {
+   "at": "2026-09-16T17:34:18",
+   "note": "X-206 UI-128: demo:fill fillers for the ui lane's owner-shell modules (X-206 X-207 X-210 X-190 X-186 X-182); marked demo\u00b7 rows, idempotent, purgeable"
   }
  ]
 }

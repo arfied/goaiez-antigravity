@@ -793,3 +793,4 @@
 - `2026-09-15T22:42:46` (R245) X-181 — UI-125: the Ticket card renders in the owner shell on a real connection; no admin door (X-181 has none)
 - `2026-09-16T14:35:51` (R245) X-206 — UI-126: the reveal screen performs a real, logged credential reveal through CredentialRevealAction in the owner shell; a cross-tenant id is refused and logged; the module has no admin door
 - `2026-09-16T15:43:16` (R245) X-189 — UI-127: the branded-media previews render in the owner shell on a real row; the read gains its tenant mount; the module has no admin door
+- `2026-09-16T17:34:18` note: X-206 UI-128: demo:fill fillers for the ui lane's owner-shell modules (X-206 X-207 X-210 X-190 X-186 X-182); marked demo· rows, idempotent, purgeable
