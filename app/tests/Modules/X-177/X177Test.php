@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X177;
 
+use App\Models\Location;
 use App\Modules\X177\Actions\GbpAnswerAction;
 use App\Modules\X177\Actions\GbpPostAction;
 use App\Modules\X177\Actions\GbpStateAction;
@@ -13,7 +14,6 @@ use App\Modules\X177\Events\GbpQuestionAnswered;
 use App\Modules\X177\Events\GbpReinstated;
 use App\Modules\X177\Events\GbpSuspended;
 use App\Modules\X177\Events\GbpSuspensionRisk;
-use App\Models\Location;
 use App\Modules\X177\Models\GbpConnection;
 use App\Modules\X177\Models\GbpPost;
 use Illuminate\Support\Facades\DB;
