@@ -23,7 +23,8 @@ class X178Filler implements DemoFiller
             return 0;
         }
 
-        echo "creating\n"; DesignChange::create([
+        echo "creating\n";
+        DesignChange::create([
             'business_id' => $business->id,
             'page_id' => 1,
             'change_type' => 'color_token',
@@ -34,7 +35,8 @@ class X178Filler implements DemoFiller
             'status' => 'applied',
         ]);
 
-        echo "creating\n"; DesignChange::create([
+        echo "creating\n";
+        DesignChange::create([
             'business_id' => $business->id,
             'page_id' => 1,
             'change_type' => 'block_order',

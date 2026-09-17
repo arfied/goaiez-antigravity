@@ -34,4 +34,3 @@ class SiteEditorAssistant extends Component
         ]);
     }
 }
-
