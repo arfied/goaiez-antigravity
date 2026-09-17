@@ -97,7 +97,7 @@ class X173Filler implements DemoFiller
             ->get();
         $connIds = $connections->pluck('id')->all();
 
-        if (!empty($connIds)) {
+        if (! empty($connIds)) {
             $count += SyncRun::whereIn('connection_id', $connIds)->delete();
         }
 

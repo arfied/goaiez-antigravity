@@ -7,7 +7,6 @@ namespace Tests\Modules\X173\Screens;
 use App\Enums\UserRole;
 use App\Models\User;
 use App\Modules\X173\Models\AccountingConnection;
-use App\Modules\X173\Models\AccountingSyncConflict;
 use App\Modules\X173\Models\SyncRun;
 use App\Modules\X173\Ui\SyncErrorRateView;
 use App\Support\Tenancy;
