@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-05T17:11:31",
+ "updated": "2026-09-17T11:35:21",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -140,7 +140,7 @@
   },
   "11": {
    "track": "J6-J7 portal",
-   "status": "DONE",
+   "status": "BUILDING",
    "modules": [
     "X-172",
     "X-112",
@@ -176,7 +176,7 @@
   },
   "15": {
    "track": "channels",
-   "status": "DONE",
+   "status": "BUILDING",
    "modules": [
     "C-Mail",
     "C-Whatsapp",
@@ -194,7 +194,7 @@
   },
   "17": {
    "track": "roster",
-   "status": "DONE",
+   "status": "BUILDING",
    "modules": [
     "X-125",
     "X-127",
@@ -843,17 +843,10 @@
    "unresolved": []
   },
   "X-172": {
-   "status": "UNRESOLVED",
+   "status": "BUILDING",
    "wave": 11,
    "intent": "INFORM",
-   "unresolved": [
-    {
-     "module": "X-172",
-     "stage": "tests",
-     "why": "generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook",
-     "at": "2026-09-05T08:35:23"
-    }
-   ]
+   "unresolved": []
   },
   "X-173": {
    "status": "DONE",
@@ -937,12 +930,6 @@
      "stage": "contract",
      "why": "send.requested correctly emitted by multiple modules per R231, but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
      "at": "2026-09-03T13:47:25"
-    },
-    {
-     "module": "X-186",
-     "stage": "capability",
-     "why": "no action enrols a person into a campaign",
-     "at": "2026-09-04T22:41:56"
     }
    ]
   },
@@ -984,17 +971,10 @@
    "unresolved": []
   },
   "X-193": {
-   "status": "UNRESOLVED",
+   "status": "BUILDING",
    "wave": 15,
    "intent": "GROW",
-   "unresolved": [
-    {
-     "module": "X-193",
-     "stage": "tests",
-     "why": "column quiet_hours_start is missing from notification_classes and not named in the brief",
-     "at": "2026-09-04T02:05:53"
-    }
-   ]
+   "unresolved": []
   },
   "X-194": {
    "status": "DONE",
@@ -1039,17 +1019,10 @@
    "unresolved": []
   },
   "X-201": {
-   "status": "UNRESOLVED",
+   "status": "BUILDING",
    "wave": 17,
    "intent": "RECOVER",
-   "unresolved": [
-    {
-     "module": "X-201",
-     "stage": "tests",
-     "why": "column deadline_at is missing from disputes and not named in the brief",
-     "at": "2026-09-04T02:05:53"
-    }
-   ]
+   "unresolved": []
   },
   "X-202": {
    "status": "DONE",
@@ -1305,18 +1278,6 @@
    "at": "2026-09-03T14:01:55"
   },
   {
-   "module": "X-193",
-   "stage": "tests",
-   "why": "column quiet_hours_start is missing from notification_classes and not named in the brief",
-   "at": "2026-09-04T02:05:53"
-  },
-  {
-   "module": "X-201",
-   "stage": "tests",
-   "why": "column deadline_at is missing from disputes and not named in the brief",
-   "at": "2026-09-04T02:05:53"
-  },
-  {
    "module": "C-Reviews",
    "stage": "tests",
    "why": "ReviewRequested event lacks messageClass so the module cannot express the send class (marketing) without a legacy change",
@@ -1327,18 +1288,6 @@
    "stage": "contract",
    "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
    "at": "2026-09-04T08:05:31"
-  },
-  {
-   "module": "X-186",
-   "stage": "capability",
-   "why": "no action enrols a person into a campaign",
-   "at": "2026-09-04T22:41:56"
-  },
-  {
-   "module": "X-172",
-   "stage": "tests",
-   "why": "generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook",
-   "at": "2026-09-05T08:35:23"
   },
   {
    "module": "C-Sms",
@@ -1463,6 +1412,36 @@
   {
    "at": "2026-09-06T23:16:43",
    "note": "J8 restore drill: JourneyHarness:814 names its scratch db goaiez_antig_drill_<pid> and :908 force-drops it; the supervisor's wave-119 gate errored 42501 permission denied to terminate process where the coder's gate on the identical tree did not; drill dbs on the box at 2026-09-06 23:10: UNRESOLVED; reproduced in wave 120: no"
+  }
+ ],
+ "resolved": [
+  {
+   "module": "X-193",
+   "stage": "tests",
+   "was": "column quiet_hours_start is missing from notification_classes and not named in the brief",
+   "why": "the column arrived: migration 2026_09_04_072838_add_quiet_hours_start_to_notification_classes_table.php (14df5c8a, 2026-09-04) adds quiet_hours_start and quiet_hours_end; X193Test::test_dependency_quiet_hours_start_exists is green; withdrawn on main after UI-135 withdrew it in the ui ledger",
+   "at": "2026-09-17T11:35:21"
+  },
+  {
+   "module": "X-186",
+   "stage": "capability",
+   "was": "no action enrols a person into a campaign",
+   "why": "the action arrived: CampaignEnrolAction::enrol (9a86b10e, 2026-09-12) enrols a person into a campaign; CampaignEnrolTest proves it in four methods; withdrawn on main after UI-135 withdrew it in the ui ledger",
+   "at": "2026-09-17T11:35:21"
+  },
+  {
+   "module": "X-201",
+   "stage": "tests",
+   "was": "column deadline_at is missing from disputes and not named in the brief",
+   "why": "the column arrived: migration 2026_09_04_072843_add_deadline_at_to_disputes_table.php (14df5c8a, 2026-09-04); Dispute casts it, DisputeDefenseEngine refuses past it, N011Test sets it; withdrawn on main after PB-216 withdrew it in the pricebook ledger",
+   "at": "2026-09-17T11:35:21"
+  },
+  {
+   "module": "X-172",
+   "stage": "tests",
+   "was": "generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook",
+   "why": "the fixture arrived: Fixtures::token mints a portal link through PortalLinkAction (f5cdb825, 2026-09-05); CustomerfacingPortalScreenTest opens the portal by token; withdrawn on main after PB-216 withdrew it in the pricebook ledger",
+   "at": "2026-09-17T11:35:21"
   }
  ]
 }
