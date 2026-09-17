@@ -825,3 +825,4 @@
 - `2026-09-16T14:52:38` (R245) C-Billing — MONEY-228: the built Credits screen renders in the owner shell with its real meters, ledger, top-up and explain untouched; fifteen neutrals tokened; C-Billing has no admin door
 - `2026-09-16T16:53:30` note: X-199 MONEY-229: demo:fill fillers for X-199 and X-104 (every owner-shell screen of both shows demo rows); marked demo· rows, idempotent, purgeable
 - `2026-09-16T21:23:03` (R245) C-Billing — MONEY-230: the MRR screen lists this account's meters and this month's ledger in the owner shell as Monthly billing; C-Billing has no admin door; CBillingFiller seeds two meters and two ledger rows
+- `2026-09-16T23:00:08` (R245) C-Billing — MONEY-231: revenue recovery and the dunning board sit in the owner shell; they already read their tenant; C-Billing has no admin door; no demo ladder is seeded — dunning_states carries no marker column

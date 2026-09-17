@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-16T21:23:03",
+ "updated": "2026-09-16T23:00:08",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2955,6 +2955,12 @@
    "module": "C-Billing",
    "chose": "MONEY-230: the MRR screen lists this account's meters and this month's ledger in the owner shell as Monthly billing; C-Billing has no admin door; CBillingFiller seeds two meters and two ledger rows",
    "at": "2026-09-16T21:23:03",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Billing",
+   "chose": "MONEY-231: revenue recovery and the dunning board sit in the owner shell; they already read their tenant; C-Billing has no admin door; no demo ladder is seeded \u2014 dunning_states carries no marker column",
+   "at": "2026-09-16T23:00:08",
    "ruling": "R245"
   }
  ],
