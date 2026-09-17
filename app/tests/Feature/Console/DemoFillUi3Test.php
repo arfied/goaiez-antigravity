@@ -26,7 +26,7 @@ class DemoFillUi3Test extends TestCase
         Tenancy::forgetAll();
         $this->artisan('demo:fill', [
             'email' => $owner->email,
-            '--only' => 'X-07,X-124,X-132,X-138,X-139,X-183,X-192,X-193,X-194',
+            '--only' => 'X-07,X-124,X-132,X-138,X-139,X-183,X-192,X-193,X-194,X-196',
         ])->assertExitCode(0);
 
         Tenancy::set($biz->id);
@@ -45,13 +45,14 @@ class DemoFillUi3Test extends TestCase
         $this->assertDatabaseHas('directory_memberships', ['business_id' => $biz->id, 'directory_name' => 'demo·Yelp']);
         $this->assertDatabaseHas('notification_classes', ['business_id' => $biz->id, 'caller_type' => 'demo·marketing']);
         $this->assertDatabaseHas('saved_views', ['business_id' => $biz->id, 'view_name' => 'demo·Open jobs']);
+        $this->assertDatabaseHas('extension_injections', ['business_id' => $biz->id, 'attestation_id' => 'demo·attest-1']);
 
         $c1 = Forecast::count();
 
         Tenancy::forgetAll();
         $this->artisan('demo:fill', [
             'email' => $owner->email,
-            '--only' => 'X-07,X-124,X-132,X-138,X-139,X-183,X-192,X-193,X-194',
+            '--only' => 'X-07,X-124,X-132,X-138,X-139,X-183,X-192,X-193,X-194,X-196',
         ])->assertExitCode(0);
 
         Tenancy::set($biz->id);
@@ -61,7 +62,7 @@ class DemoFillUi3Test extends TestCase
         $this->artisan('demo:fill', [
             'email' => $owner->email,
             '--purge' => true,
-            '--only' => 'X-07,X-124,X-132,X-138,X-139,X-183,X-192,X-193,X-194',
+            '--only' => 'X-07,X-124,X-132,X-138,X-139,X-183,X-192,X-193,X-194,X-196',
         ])->assertExitCode(0);
 
         Tenancy::set($biz->id);
@@ -80,6 +81,7 @@ class DemoFillUi3Test extends TestCase
         $this->assertDatabaseMissing('directory_memberships', ['business_id' => $biz->id, 'directory_name' => 'demo·Yelp']);
         $this->assertDatabaseMissing('notification_classes', ['business_id' => $biz->id, 'caller_type' => 'demo·marketing']);
         $this->assertDatabaseMissing('saved_views', ['business_id' => $biz->id, 'view_name' => 'demo·Open jobs']);
+        $this->assertDatabaseMissing('extension_injections', ['business_id' => $biz->id, 'attestation_id' => 'demo·attest-1']);
     }
 
     public function test_the_ui3_screens_show_the_demo_rows(): void
@@ -90,7 +92,7 @@ class DemoFillUi3Test extends TestCase
         Tenancy::forgetAll();
         $this->artisan('demo:fill', [
             'email' => $owner->email,
-            '--only' => 'X-07,X-124,X-132,X-138,X-139,X-183,X-192,X-193,X-194',
+            '--only' => 'X-07,X-124,X-132,X-138,X-139,X-183,X-192,X-193,X-194,X-196',
         ])->assertExitCode(0);
 
         Tenancy::set($biz->id);
@@ -128,6 +130,9 @@ class DemoFillUi3Test extends TestCase
 
         // X-194
         $this->get(route('x-194.saved-views-list'))->assertOk()->assertSee('demo·Open jobs')->assertSee('demo·This week');
+
+        // X-196
+        $this->get(route('x-196.extension-popup'))->assertOk()->assertSee('demo·attest-1')->assertSee('partner-directory.example');
 
         $location = Location::where('business_id', $biz->id)->first();
         $location->timezone = 'America/Chicago';

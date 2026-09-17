@@ -25,7 +25,7 @@ class DemoFillPricebookTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-205,X-162,X-171,X-172'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-205,X-162,X-171,X-172,X-201'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
 
@@ -37,16 +37,18 @@ class DemoFillPricebookTest extends TestCase
         $this->assertDatabaseHas('device_sync_conflicts', ['business_id' => $biz->id, 'conflict_reason' => 'demo·Server note newer than device note']);
         $this->assertDatabaseHas('portal_links', ['business_id' => $biz->id, 'token' => 'demo-portal-'.$biz->id, 'is_sample' => true]);
         $this->assertDatabaseHas('portal_views', ['business_id' => $biz->id, 'user_agent' => 'demo·Safari on iPhone']);
+        $this->assertDatabaseHas('disputes', ['business_id' => $biz->id, 'reason' => 'demo·Duplicate charge', 'status' => 'compiled']);
+        $this->assertDatabaseHas('dispute_evidence', ['business_id' => $biz->id, 'evidence_type' => 'call_log']);
 
         $c1 = Affiliate::count();
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-205,X-162,X-171,X-172'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-205,X-162,X-171,X-172,X-201'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
         $this->assertEquals($c1, Affiliate::count());
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--purge' => true, '--only' => 'X-205,X-162,X-171,X-172'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--purge' => true, '--only' => 'X-205,X-162,X-171,X-172,X-201'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
 
@@ -58,6 +60,8 @@ class DemoFillPricebookTest extends TestCase
         $this->assertDatabaseMissing('device_sync_conflicts', ['business_id' => $biz->id, 'conflict_reason' => 'demo·Server note newer than device note']);
         $this->assertDatabaseMissing('portal_links', ['business_id' => $biz->id, 'token' => 'demo-portal-'.$biz->id, 'is_sample' => true]);
         $this->assertDatabaseMissing('portal_views', ['business_id' => $biz->id, 'user_agent' => 'demo·Safari on iPhone']);
+        $this->assertDatabaseMissing('disputes', ['business_id' => $biz->id, 'reason' => 'demo·Duplicate charge', 'status' => 'compiled']);
+        $this->assertDatabaseMissing('dispute_evidence', ['business_id' => $biz->id, 'evidence_type' => 'call_log']);
     }
 
     public function test_the_pricebook_screens_show_the_demo_rows(): void
@@ -66,7 +70,7 @@ class DemoFillPricebookTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-205,X-162,X-171,X-172'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-205,X-162,X-171,X-172,X-201'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
         $this->actingAs($owner);
@@ -76,6 +80,8 @@ class DemoFillPricebookTest extends TestCase
         $this->get(route('x-205.payout-run'))->assertOk()->assertSee('50.00')->assertSee('requested');
         $this->get(route('x-162.dispatch-board'))->assertOk()->assertSee('Job #100')->assertSee('Job #101');
         $this->get(route('x-172.customerfacing-portal', ['token' => 'demo-portal-'.$biz->id]))->assertOk()->assertSee('Work Order')->assertSee('Sample');
+        $this->get(route('x-201.dispute-queue'))->assertOk()->assertSee('demo·Product not received')->assertSee('demo·Duplicate charge')->assertDontSee('demo·Fraudulent');
+        $this->get(route('x-201.dispute-card'))->assertOk()->assertSee('demo·Fraudulent')->assertSee('demo·Duplicate charge')->assertSee('2 evidence items');
     }
 
     public function test_x163_filler_is_idempotent(): void

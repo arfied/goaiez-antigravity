@@ -38,6 +38,8 @@ class DemoFillMoneyTest extends TestCase
         $this->assertDatabaseHas('meters', ['business_id' => $biz->id, 'meter_type' => 'demo·sms_segments']);
         $this->assertDatabaseHas('invoices', ['business_id' => $biz->id, 'invoice_number' => 'demo·AR-001']);
         $this->assertDatabaseHas('payment_plans', ['business_id' => $biz->id, 'installment_amount_cents' => 30000]);
+        $this->assertDatabaseHas('invoices', ['business_id' => $biz->id, 'invoice_number' => 'demo·AR-003']);
+        $this->assertDatabaseHas('ar_collections_packages', ['business_id' => $biz->id, 'partner' => null]);
 
         $c1 = Invoice::count();
         Tenancy::forgetAll();
@@ -63,6 +65,8 @@ class DemoFillMoneyTest extends TestCase
         $this->assertDatabaseMissing('meters', ['business_id' => $biz->id, 'meter_type' => 'demo·sms_segments']);
         $this->assertDatabaseMissing('invoices', ['business_id' => $biz->id, 'invoice_number' => 'demo·AR-001']);
         $this->assertDatabaseMissing('payment_plans', ['business_id' => $biz->id, 'installment_amount_cents' => 30000]);
+        $this->assertDatabaseMissing('invoices', ['business_id' => $biz->id, 'invoice_number' => 'demo·AR-003']);
+        $this->assertDatabaseMissing('ar_collections_packages', ['business_id' => $biz->id, 'partner' => null]);
     }
 
     public function test_the_money_screens_show_the_demo_rows(): void
@@ -91,5 +95,7 @@ class DemoFillMoneyTest extends TestCase
         $this->get(route('c-billing.dunning-board'))->assertOk()->assertSee('Nothing on this board yet.');
         $this->get(route('x-211.ageing-by-reason'))->assertOk()->assertSee('demo·AR-001')->assertSee('Customer promised to pay');
         $this->get(route('x-211.paymentplan-builder'))->assertOk()->assertSee('demo·AR-002')->assertSee('3 × 300.00 monthly');
+        $this->get(route('x-211.collections-package-preview'))->assertOk()->assertSee('demo·AR-001')->assertSee('demo·AR-003')->assertSee('waiting on a collections partner');
+        $this->get(route('x-211.invoice-thread-beside'))->assertOk()->assertSee('demo·AR-001')->assertSee('Why is it unpaid?');
     }
 }
