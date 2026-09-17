@@ -5,7 +5,6 @@ namespace App\Console\DemoFill\Fillers;
 use App\Console\DemoFill\DemoFiller;
 use App\Models\Business;
 use App\Models\Conversation;
-use App\Models\Message;
 use App\Modules\X01\Models\LeadScore;
 use App\Modules\X121\Models\Person;
 use Illuminate\Support\Facades\DB;
@@ -74,12 +73,12 @@ class X01Filler implements DemoFiller
     public function purge(Business $business): int
     {
         $count = 0;
-        
+
         $persons = Person::where('business_id', $business->id)
             ->where('first_name', 'like', self::MARKER.'%')
             ->where('last_name', 'like', '%Inbox%')
             ->get();
-            
+
         if ($persons->isEmpty()) {
             return 0;
         }
@@ -91,7 +90,7 @@ class X01Filler implements DemoFiller
                 $conversation->delete();
                 $count++;
             }
-            
+
             $count += LeadScore::where('person_id', $person->id)->delete();
             $person->delete();
             $count++;
