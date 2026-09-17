@@ -981,3 +981,4 @@
 - `2026-09-16T21:51:36` (R245) C-Mail — SIXTY-208: the DNS card and the warm-up calendars sit in the owner shell as Email domain and Domain warm-up; tenant-scoped reads; C-Mail has no admin door; CMailFiller seeds one domain and its warm-up
 - `2026-09-16T23:21:55` (R245) X-66 — SIXTY-209: the calls screen sits in the owner shell as Calls; it already read its tenant; the invented SAMPLE row is gone; admin door kept; X66Filler seeds two calls, a transcript and a voicemail
 - `2026-09-16T23:35:51` note: X-66 SIXTY-209b: test_calls_screen_renders_states now asserts the empty state carries no SAMPLE badge; the fabricated row left with SIXTY-209
+- `2026-09-17T02:45:08` (R245) C-Sms — SIXTY-210: the do-not-text list and the text thread sit in the owner shell as Do-not-text list and Text thread; tenant-scoped reads with mounts; C-Sms has no admin door; CSmsFiller seeds two texts and one suppressed number
