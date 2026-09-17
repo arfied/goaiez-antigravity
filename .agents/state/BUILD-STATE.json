@@ -2363,6 +2363,10 @@
   {
    "at": "2026-09-16T20:05:39",
    "note": "C-Ai SIXTY-207b: per-turn AI-call recording withdrawn \u2014 no turn uses a model yet and fact-gated turns must record none; the listener is the seam for the future model call"
+  },
+  {
+   "at": "2026-09-16T23:35:51",
+   "note": "X-66 SIXTY-209b: test_calls_screen_renders_states now asserts the empty state carries no SAMPLE badge; the fabricated row left with SIXTY-209"
   }
  ]
 }
