@@ -1,6 +1,5 @@
 <div>
-    <x-surface.sample-state module="C-Billing" screen="mrr" />
-    <h1>MRR</h1>
+    <h2 class="text-lg font-bold text-ink">Monthly billing</h2>
 
     <x-ui.attention-card state="attention" heading="One account at a time">
         MRR across every account is an operator roll-up. Every table it sums is behind row-level security keyed to this account, and no cross-account read path is built in this checkout yet. What follows is the row this account contributes.
@@ -23,8 +22,8 @@
     @if($sub === null)
         <x-ui.empty-state heading="No subscription on this account yet.">Signing up creates it; there is nothing to bill until then.</x-ui.empty-state>
     @else
-        <h2>Recurring</h2>
-        <div class="border rounded p-4 shadow bg-white">
+        <h3>Recurring</h3>
+        <div class="bg-card overflow-hidden shadow rounded-[--radius-card] border border-rule p-4">
             <div class="flex flex-wrap justify-between items-center gap-2">
                 <div>
                     <span class="font-semibold">{{ $sub->plan?->value ?? 'no plan' }}</span>
@@ -50,7 +49,7 @@
             </div>
         </div>
 
-        <h2>Meters</h2>
+        <h3>Meters</h3>
         @if($meters->isEmpty())
             <x-ui.empty-state heading="Nothing on this list yet.">This list reads its own usage meters, and nothing in this checkout writes to them yet. Calls and messages are recorded elsewhere in this app, and this list does not read that record.</x-ui.empty-state>
         @else
@@ -65,7 +64,7 @@
             </ul>
         @endif
 
-        <h2>This month's ledger</h2>
+        <h3>This month's ledger</h3>
         @if($entries->isEmpty())
             <x-ui.empty-state heading="No ledger entries this month.">A top-up from the credits screen writes a row here. Usage charges and plan credits are recorded on a separate credit ledger elsewhere in this app, and this list does not read it.</x-ui.empty-state>
         @else
