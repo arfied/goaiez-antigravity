@@ -597,6 +597,8 @@ final class OwnerNav
             OwnerNavItem::make('Dunning board', 'c-billing.dunning-board', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('View', 'x-194.any-view-it', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Calls', 'x-66.calls', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Overdue invoices', 'x-211.ageing-by-reason', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Payment plans', 'x-211.paymentplan-builder', OwnerNavItem::GROUP_MORE),
         ];
     }
 
