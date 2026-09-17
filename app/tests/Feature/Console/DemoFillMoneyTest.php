@@ -22,7 +22,7 @@ class DemoFillMoneyTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Billing,X-104,X-199'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Billing,X-104,X-199,X-211'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
 
@@ -36,16 +36,18 @@ class DemoFillMoneyTest extends TestCase
         $this->assertDatabaseHas('plugin_installs', ['business_id' => $biz->id, 'site_url' => 'demo·https://active.example']);
         $this->assertDatabaseHas('credit_ledger_entries', ['business_id' => $biz->id, 'description' => 'demo·Plan credit']);
         $this->assertDatabaseHas('meters', ['business_id' => $biz->id, 'meter_type' => 'demo·sms_segments']);
+        $this->assertDatabaseHas('invoices', ['business_id' => $biz->id, 'invoice_number' => 'demo·AR-001']);
+        $this->assertDatabaseHas('payment_plans', ['business_id' => $biz->id, 'installment_amount_cents' => 30000]);
 
         $c1 = Invoice::count();
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Billing,X-104,X-199'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Billing,X-104,X-199,X-211'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
         $this->assertEquals($c1, Invoice::count());
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Billing,X-104,X-199', '--purge' => true])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Billing,X-104,X-199,X-211', '--purge' => true])->assertExitCode(0);
 
         Tenancy::set($biz->id);
 
@@ -59,6 +61,8 @@ class DemoFillMoneyTest extends TestCase
         $this->assertDatabaseMissing('plugin_installs', ['business_id' => $biz->id, 'site_url' => 'demo·https://active.example']);
         $this->assertDatabaseMissing('credit_ledger_entries', ['business_id' => $biz->id, 'description' => 'demo·Plan credit']);
         $this->assertDatabaseMissing('meters', ['business_id' => $biz->id, 'meter_type' => 'demo·sms_segments']);
+        $this->assertDatabaseMissing('invoices', ['business_id' => $biz->id, 'invoice_number' => 'demo·AR-001']);
+        $this->assertDatabaseMissing('payment_plans', ['business_id' => $biz->id, 'installment_amount_cents' => 30000]);
     }
 
     public function test_the_money_screens_show_the_demo_rows(): void
@@ -67,7 +71,7 @@ class DemoFillMoneyTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Billing,X-104,X-199'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Billing,X-104,X-199,X-211'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
         $this->actingAs($owner);
@@ -85,5 +89,7 @@ class DemoFillMoneyTest extends TestCase
         $this->get(route('c-billing.credits'))->assertOk()->assertSee('demo·sms_segments');
         $this->get(route('c-billing.revenue-recovery'))->assertOk()->assertSee('No ladder on this screen yet.');
         $this->get(route('c-billing.dunning-board'))->assertOk()->assertSee('Nothing on this board yet.');
+        $this->get(route('x-211.ageing-by-reason'))->assertOk()->assertSee('demo·AR-001')->assertSee('Customer promised to pay');
+        $this->get(route('x-211.paymentplan-builder'))->assertOk()->assertSee('demo·AR-002')->assertSee('3 × 300.00 monthly');
     }
 }

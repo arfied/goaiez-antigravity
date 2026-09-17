@@ -23,7 +23,7 @@ class DemoFillSixtyTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Agent,C-Ai,C-Mail,X-66,X-102'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Agent,C-Ai,C-Mail,C-Sms,X-66,X-102'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
 
@@ -36,9 +36,11 @@ class DemoFillSixtyTest extends TestCase
         $this->assertDatabaseHas('ai_calls', ['business_id' => $biz->id, 'task' => 'demo·summary']);
         $this->assertDatabaseHas('mail_domains', ['business_id' => $biz->id, 'domain_name' => 'demo·mail.example.com']);
         $this->assertDatabaseHas('call_sessions', ['business_id' => $biz->id, 'call_sid' => 'demo·CA1']);
+        $this->assertDatabaseHas('sms_compositions', ['business_id' => $biz->id, 'recipient_phone' => '+15125550142']);
+        $this->assertDatabaseHas('suppressions', ['business_id' => $biz->id, 'reason' => 'demo·replied STOP']);
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Agent,C-Ai,C-Mail,X-66,X-102'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Agent,C-Ai,C-Mail,C-Sms,X-66,X-102'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
         $this->assertDatabaseCount('agent_turns', 3);
@@ -48,9 +50,10 @@ class DemoFillSixtyTest extends TestCase
         $this->assertDatabaseCount('chat_leads', 1);
         $this->assertDatabaseCount('chat_turns', 2);
         $this->assertDatabaseCount('ai_calls', 2);
+        $this->assertDatabaseCount('sms_compositions', 2);
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--purge' => true, '--only' => 'C-Agent,C-Ai,C-Mail,X-66,X-102'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--purge' => true, '--only' => 'C-Agent,C-Ai,C-Mail,C-Sms,X-66,X-102'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
         $this->assertDatabaseMissing('agent_turns', ['business_id' => $biz->id, 'status' => 'answered']);
@@ -62,6 +65,8 @@ class DemoFillSixtyTest extends TestCase
         $this->assertDatabaseMissing('ai_calls', ['business_id' => $biz->id, 'task' => 'demo·summary']);
         $this->assertDatabaseMissing('mail_domains', ['business_id' => $biz->id, 'domain_name' => 'demo·mail.example.com']);
         $this->assertDatabaseMissing('call_sessions', ['business_id' => $biz->id, 'call_sid' => 'demo·CA1']);
+        $this->assertDatabaseMissing('sms_compositions', ['business_id' => $biz->id, 'recipient_phone' => '+15125550142']);
+        $this->assertDatabaseMissing('suppressions', ['business_id' => $biz->id, 'reason' => 'demo·replied STOP']);
     }
 
     public function test_the_sixty_screens_show_the_demo_rows(): void
@@ -70,7 +75,7 @@ class DemoFillSixtyTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Agent,C-Ai,C-Mail,X-66,X-102'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Agent,C-Ai,C-Mail,C-Sms,X-66,X-102'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
         $this->actingAs($owner);
@@ -90,5 +95,8 @@ class DemoFillSixtyTest extends TestCase
         $this->get(route('x-102.offline-form-inbox'))->assertOk()->assertSee('demo·John Doe');
         $this->get(route('x-102.thread'))->assertOk()->assertSee('demo·Hello, I need some help.');
         $this->get(route('x-66.calls'))->assertOk()->assertSee('+15125550142')->assertSee('+15125550177')->assertSee('Transcript')->assertSee('Voicemail');
+
+        $this->get(route('c-sms.donottext-list'))->assertOk()->assertSee('+15125550199')->assertSee('demo·replied STOP');
+        $this->get(route('c-sms.thread'))->assertOk()->assertSee('demo·Your technician is on the way');
     }
 }
