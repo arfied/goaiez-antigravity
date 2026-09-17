@@ -149,4 +149,3 @@ class DemoFillUi3Test extends TestCase
         $this->get(route('x-194.any-view-it', ['viewId' => $id]))->assertOk()->assertSee('demo·Open jobs')->assertSee('America/Chicago');
     }
 }
-
