@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X177;
 
+use App\Models\Location;
 use App\Modules\X177\Actions\GbpPostAction;
 use App\Modules\X177\Models\GbpConnection;
 use App\Modules\X177\Models\GbpPost;
@@ -46,7 +47,9 @@ class X177ScreensTest extends TestCase
 
     public function test_gbp_card_latest_post_and_suspended_state(): void
     {
+        $loc = Location::factory()->create(['business_id' => $this->bizId]);
         $conn = GbpConnection::create([
+            'location_id' => $loc->id,
             'business_id' => $this->bizId,
             'account_ref' => '123',
             'external_label' => 'Main St Store',
@@ -66,7 +69,9 @@ class X177ScreensTest extends TestCase
 
     public function test_gbp_card_poll_state_action(): void
     {
+        $loc = Location::factory()->create(['business_id' => $this->bizId]);
         $conn = GbpConnection::create([
+            'location_id' => $loc->id,
             'business_id' => $this->bizId,
             'account_ref' => '123',
             'external_label' => 'Main St Store',
@@ -88,7 +93,9 @@ class X177ScreensTest extends TestCase
 
     public function test_suspension_risk_lists_flagged_post(): void
     {
+        $loc = Location::factory()->create(['business_id' => $this->bizId]);
         $conn = GbpConnection::create([
+            'location_id' => $loc->id,
             'business_id' => $this->bizId,
             'account_ref' => '123',
             'external_label' => 'Main St Store',
@@ -105,7 +112,9 @@ class X177ScreensTest extends TestCase
 
     public function test_suspension_risk_poll_action(): void
     {
+        $loc = Location::factory()->create(['business_id' => $this->bizId]);
         $conn = GbpConnection::create([
+            'location_id' => $loc->id,
             'business_id' => $this->bizId,
             'account_ref' => '123',
             'external_label' => 'Main St Store',
