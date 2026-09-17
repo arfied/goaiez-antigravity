@@ -17,7 +17,7 @@ class X163Filler implements DemoFiller
 
     public function fill(Business $business): int
     {
-        if (PriceBookItem::where('business_id', $business->id)->where('service_name', 'like', self::MARKER.'%')->exists()) {
+        if (PriceBookItem::where('business_id', $business->id)->where('is_sample', true)->exists()) {
             return 0;
         }
         $loc = LocationBook::create(['business_id' => $business->id, 'location_name' => self::MARKER.'Location', 'version' => 1]);

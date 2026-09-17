@@ -2,8 +2,11 @@
 
 namespace Tests\Feature\Console;
 
+use App\Console\DemoFill\DemoFiller;
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X163\Models\LocationBook;
+use App\Modules\X163\Models\PriceBookItem;
 use App\Modules\X205\Models\Affiliate;
 use App\Support\Tenancy;
 use Tests\TestCase;
@@ -61,5 +64,30 @@ class DemoFillPricebookTest extends TestCase
         $this->get(route('x-205.portal'))->assertOk()->assertSee('demo·Alpha Partners');
         $this->get(route('x-205.earnings'))->assertOk()->assertSee('demo·ord1');
         $this->get(route('x-205.payout-run'))->assertOk();
+    }
+
+    public function test_x163_filler_is_idempotent(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+
+        Tenancy::forgetAll();
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-163'])->assertExitCode(0);
+
+        Tenancy::set($biz->id);
+        $this->assertSame(5, PriceBookItem::where('business_id', $biz->id)->where('is_sample', true)->count());
+
+        Tenancy::forgetAll();
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-163'])->assertExitCode(0);
+
+        Tenancy::set($biz->id);
+        $this->assertSame(5, PriceBookItem::where('business_id', $biz->id)->where('is_sample', true)->count());
+        $this->assertSame(1, LocationBook::where('business_id', $biz->id)->where('location_name', 'like', DemoFiller::MARKER.'%')->count());
+
+        Tenancy::forgetAll();
+        $this->artisan('demo:fill', ['email' => $owner->email, '--purge' => true, '--only' => 'X-163'])->assertExitCode(0);
+
+        Tenancy::set($biz->id);
+        $this->assertSame(0, PriceBookItem::where('business_id', $biz->id)->where('is_sample', true)->count());
     }
 }
