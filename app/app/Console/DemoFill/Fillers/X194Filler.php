@@ -44,6 +44,7 @@ class X194Filler implements DemoFiller
     public function purge(Business $business): int
     {
         $count = SavedView::where('business_id', $business->id)->where('view_name', 'like', self::MARKER.'%')->delete();
+
         return $count;
     }
 }
