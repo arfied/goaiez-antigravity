@@ -13,6 +13,7 @@ use App\Modules\X177\Events\GbpQuestionAnswered;
 use App\Modules\X177\Events\GbpReinstated;
 use App\Modules\X177\Events\GbpSuspended;
 use App\Modules\X177\Events\GbpSuspensionRisk;
+use App\Models\Location;
 use App\Modules\X177\Models\GbpConnection;
 use App\Modules\X177\Models\GbpPost;
 use Illuminate\Support\Facades\DB;
@@ -57,10 +58,12 @@ class X177Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'GBP Profile Management Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
+        $loc = Location::factory()->create(['business_id' => $biz->id]);
+
         $conn = GbpConnection::create([
             'business_id' => $biz->id,
             'account_id' => 'acc_gbp_9901',
-            'location_id' => 'loc_austin_tx_101',
+            'location_id' => $loc->id,
             'profile_status' => 'active',
         ]);
 
