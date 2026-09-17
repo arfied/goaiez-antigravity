@@ -7,9 +7,9 @@ namespace App\Modules\X194\Ui;
 use App\Modules\X194\Actions\ViewRenderAction;
 use App\Services\Tenant\LocationContext;
 use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Url;
-use Livewire\Attributes\Layout;
 use Livewire\Component;
 
 #[Layout('components.account.layout', ['heading' => 'View'])]

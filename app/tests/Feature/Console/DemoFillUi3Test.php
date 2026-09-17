@@ -3,8 +3,10 @@
 namespace Tests\Feature\Console;
 
 use App\Enums\UserRole;
+use App\Models\Location;
 use App\Models\User;
 use App\Modules\X07\Models\Forecast;
+use App\Modules\X194\Models\SavedView;
 use App\Support\Tenancy;
 use Tests\TestCase;
 
@@ -122,10 +124,10 @@ class DemoFillUi3Test extends TestCase
         // X-194
         $this->get(route('x-194.saved-views-list'))->assertOk()->assertSee('demo·Open jobs')->assertSee('demo·This week');
 
-        $location = \App\Models\Location::where('business_id', $biz->id)->first();
+        $location = Location::where('business_id', $biz->id)->first();
         $location->timezone = 'America/Chicago';
         $location->save();
-        $id = \App\Modules\X194\Models\SavedView::where('business_id', $biz->id)->where('view_name', 'demo·Open jobs')->value('id');
+        $id = SavedView::where('business_id', $biz->id)->where('view_name', 'demo·Open jobs')->value('id');
         $this->get(route('x-194.any-view-it', ['viewId' => $id]))->assertOk()->assertSee('demo·Open jobs')->assertSee('America/Chicago');
     }
 }
