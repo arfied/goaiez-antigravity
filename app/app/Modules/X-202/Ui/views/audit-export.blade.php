@@ -1,7 +1,18 @@
 <div>
-    <x-surface.sample-state module="⭐⭐⭐ **The one queue every `L1` decision in the platform lands in — from all 114 modules.** *A refund proposal, a domino collision, a renewal with an ambiguous clause, a migration run, an offer post, an agency impersonation request.* ⛔⛔ **THE LAW OF THIS MODULE: IT ROUTES AND NEVER DECIDES.** *The item's own `P-195` floor governs the outcome; `X-202` decides only WHO SEES IT and WHEN.* ⭐⭐⭐ **Every item is a RECOMMENDATION PAYLOAD — *"the human is a reviewer, not a researcher."*** *An item with no pre-calculated proposed action FAILS THE WRITE.*" screen="audit_export" />
     <div class="audit-export p-4">
-        <h3 class="text-lg font-bold">Approval Audit Log Export</h3>
-        <p class="text-gray-500">Export complete approval chain history.</p>
+        <h2 class="text-lg font-bold text-ink">Approval history</h2>
+        @if($decided->isEmpty())
+            <x-ui.empty-state heading="No decisions yet.">Every approval or refusal is kept here with who made it and what they said.</x-ui.empty-state>
+        @else
+            <ul class="divide-y divide-rule">
+                @foreach($decided as $d)
+                    <li class="py-2" wire:key="decided-{{ $d->id }}">
+                        <span class="font-semibold">{{ $d->subject }}</span>
+                        <span class="text-sm text-ink-2">{{ $d->status }}</span>
+                        <span class="text-sm text-ink-2">{{ $d->decision_comment }}</span>
+                    </li>
+                @endforeach
+            </ul>
+        @endif
     </div>
 </div>

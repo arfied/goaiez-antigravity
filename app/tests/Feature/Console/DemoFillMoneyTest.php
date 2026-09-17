@@ -22,7 +22,7 @@ class DemoFillMoneyTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Billing,X-104,X-199,X-211,X-120,X-173'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Billing,X-104,X-199,X-211,X-120,X-173,X-202'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
 
@@ -44,16 +44,17 @@ class DemoFillMoneyTest extends TestCase
         $this->assertDatabaseHas('card_tokens', ['business_id' => $biz->id, 'last_four' => '5100']);
         $this->assertDatabaseHas('accounting_sync_conflicts', ['business_id' => $biz->id, 'transaction_ref' => 'demo·TXN-4625', 'status' => 'open']);
         $this->assertDatabaseHas('sync_runs', ['business_id' => $biz->id, 'records_synced' => 248]);
+        $this->assertDatabaseHas('approval_items', ['business_id' => $biz->id, 'subject' => 'demo·Refund for the Ridgeline callback']);
 
         $c1 = Invoice::count();
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Billing,X-104,X-199,X-211,X-120,X-173'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Billing,X-104,X-199,X-211,X-120,X-173,X-202'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
         $this->assertEquals($c1, Invoice::count());
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Billing,X-104,X-199,X-211,X-120,X-173', '--purge' => true])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Billing,X-104,X-199,X-211,X-120,X-173,X-202', '--purge' => true])->assertExitCode(0);
 
         Tenancy::set($biz->id);
 
@@ -75,6 +76,7 @@ class DemoFillMoneyTest extends TestCase
         $this->assertDatabaseMissing('card_tokens', ['business_id' => $biz->id, 'last_four' => '5100']);
         $this->assertDatabaseMissing('accounting_sync_conflicts', ['business_id' => $biz->id, 'transaction_ref' => 'demo·TXN-4625', 'status' => 'open']);
         $this->assertDatabaseMissing('sync_runs', ['business_id' => $biz->id, 'records_synced' => 248]);
+        $this->assertDatabaseMissing('approval_items', ['business_id' => $biz->id, 'subject' => 'demo·Refund for the Ridgeline callback']);
     }
 
     public function test_the_money_screens_show_the_demo_rows(): void
@@ -83,7 +85,7 @@ class DemoFillMoneyTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Billing,X-104,X-199,X-211,X-120,X-173'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Billing,X-104,X-199,X-211,X-120,X-173,X-202'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
         $this->actingAs($owner);
@@ -108,5 +110,7 @@ class DemoFillMoneyTest extends TestCase
         $this->get(route('x-120.card-screen'))->assertOk()->assertSee('Card ending in 4242')->assertSee('Card Expiring Soon')->assertSee('5100');
         $this->get(route('x-173.conflicts-list'))->assertOk()->assertSee('demo·TXN-4625')->assertSee('Resolved by a person');
         $this->get(route('x-173.sync-error-rate'))->assertOk()->assertSee('548 lines seen')->assertSee('2 conflicts')->assertSee('under 1% conflicts');
+        $this->get(route('x-202.queue'))->assertOk()->assertSee('demo·Refund for the Ridgeline callback');
+        $this->get(route('x-202.audit-export'))->assertOk()->assertSee('demo·Renewal with an ambiguous clause');
     }
 }
