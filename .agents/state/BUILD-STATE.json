@@ -1587,6 +1587,14 @@
   {
    "at": "2026-09-16T18:33:54",
    "note": "X-163 PB-211: X163Filler idempotency guard tested a marker it never wrote; now guards on is_sample; demo:fill wrote +7 rows on every production run 2026-09-16"
+  },
+  {
+   "at": "2026-09-17T02:59:35",
+   "note": "X-171 PB-214: X171Filler seeds two sample device mutations and one conflict; X-171 stays admin-only (no tenant route) so it is not an owner-shell conversion"
+  },
+  {
+   "at": "2026-09-17T02:59:35",
+   "note": "X-172 PB-214: X172Filler seeds one live sample portal link and one view; the customer portal is token-keyed and cannot carry an OwnerNav entry"
   }
  ]
 }

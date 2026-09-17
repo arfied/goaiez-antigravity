@@ -799,3 +799,5 @@
 - `2026-09-16T18:33:54` note: X-163 PB-211: X163Filler idempotency guard tested a marker it never wrote; now guards on is_sample; demo:fill wrote +7 rows on every production run 2026-09-16
 - `2026-09-16T21:30:32` (R245) X-205 — PB-212: the payout run lists this account's affiliate payouts in the owner shell as Affiliate payouts; a tenant-scoped read with a mount; X-205 has no admin door; the demo payout shows
 - `2026-09-16T22:39:48` (R245) X-162 — PB-213: the dispatch board sits in the owner shell as Dispatch board; it already read its tenant; X-162 has no admin door; the two sample assignments show
+- `2026-09-17T02:59:35` note: X-171 PB-214: X171Filler seeds two sample device mutations and one conflict; X-171 stays admin-only (no tenant route) so it is not an owner-shell conversion
+- `2026-09-17T02:59:35` note: X-172 PB-214: X172Filler seeds one live sample portal link and one view; the customer portal is token-keyed and cannot carry an OwnerNav entry
