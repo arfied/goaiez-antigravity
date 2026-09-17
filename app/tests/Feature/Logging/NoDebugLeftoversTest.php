@@ -15,9 +15,10 @@ class NoDebugLeftoversTest extends TestCase
 
     public function test_a_number_lookup_writes_no_phone_number_to_the_log(): void
     {
-        app(TenantNumbers::class)->addToPool('+15555550100');
-        $user = User::factory()->create();
-        $biz = app(TenantProvisioner::class)->provision($user);
+        $biz = static::provisionTenant(['name' => 'Business Name']);
+        app(TenantNumbers::class)->releaseFromTenant($biz->id);
+        $number = app(TenantNumbers::class)->assign($biz->id, '+15555550100');
+        app(TenantNumbers::class)->bringIntoService($number, 'test');
 
         Log::spy();
 
