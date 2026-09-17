@@ -42,9 +42,11 @@ return new class extends Migration
     {
         foreach (self::SET_NOT_NULL_WITH_DEFAULT as $t => $columns) {
             foreach ($columns as $c => $default) {
-                if (! Schema::hasTable($t) || ! Schema::hasColumn($t, $c)) continue;
+                if (! Schema::hasTable($t) || ! Schema::hasColumn($t, $c)) {
+                    continue;
+                }
 
-                $nullable = DB::selectOne("SELECT is_nullable FROM information_schema.columns WHERE table_schema = current_schema() AND table_name = ? AND column_name = ?", [$t, $c]);
+                $nullable = DB::selectOne('SELECT is_nullable FROM information_schema.columns WHERE table_schema = current_schema() AND table_name = ? AND column_name = ?', [$t, $c]);
                 if ($nullable && $nullable->is_nullable === 'NO') {
                     continue;
                 }
@@ -56,15 +58,18 @@ return new class extends Migration
 
         foreach (self::SET_NOT_NULL_NO_DEFAULT as $t => $columns) {
             foreach ($columns as $c) {
-                if (! Schema::hasTable($t) || ! Schema::hasColumn($t, $c)) continue;
+                if (! Schema::hasTable($t) || ! Schema::hasColumn($t, $c)) {
+                    continue;
+                }
 
-                $nullable = DB::selectOne("SELECT is_nullable FROM information_schema.columns WHERE table_schema = current_schema() AND table_name = ? AND column_name = ?", [$t, $c]);
+                $nullable = DB::selectOne('SELECT is_nullable FROM information_schema.columns WHERE table_schema = current_schema() AND table_name = ? AND column_name = ?', [$t, $c]);
                 if ($nullable && $nullable->is_nullable === 'NO') {
                     continue;
                 }
 
                 if (DB::table($t)->whereNull($c)->exists()) {
                     Log::warning("reconcile half two: {$t}.{$c} keeps NULLs; SET NOT NULL skipped");
+
                     continue;
                 }
 
