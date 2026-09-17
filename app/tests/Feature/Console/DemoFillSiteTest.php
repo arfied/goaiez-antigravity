@@ -18,7 +18,7 @@ class DemoFillSiteTest extends TestCase
 
         Tenancy::forgetAll();
 
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-157,X-176,X-177,X-203,X-108,X-121,X-123,X-191,X-16,X-140,X-178,X-118'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-157,X-176,X-177,X-203,X-108,X-121,X-123,X-191,X-16,X-140,X-178,X-118,X-160'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
 
@@ -44,15 +44,16 @@ class DemoFillSiteTest extends TestCase
         $this->assertDatabaseHas('content_topics', ['business_id' => $biz->id, 'topic_title' => 'demo·How much does a drain cleaning cost?']);
         $this->assertDatabaseHas('design_changes', ['business_id' => $biz->id, 'block_ref' => 'demo·hero_heading']);
         $this->assertDatabaseHas('onboarding_runs', ['business_id' => $biz->id, 'business_name' => 'demo·Ridgeline HVAC']);
+        $this->assertDatabaseHas('documents', ['business_id' => $biz->id, 'title' => 'demo·2026 price list']);
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-157,X-176,X-177,X-203,X-108,X-121,X-123,X-191,X-16,X-140,X-178,X-118'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-157,X-176,X-177,X-203,X-108,X-121,X-123,X-191,X-16,X-140,X-178,X-118,X-160'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
         $this->assertSame(2, EntityHistoryRecord::where('business_id', $biz->id)->where('entity_type', 'demo·people')->count());
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--purge' => true, '--only' => 'X-157,X-176,X-177,X-203,X-108,X-121,X-123,X-191,X-16,X-140,X-178,X-118'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--purge' => true, '--only' => 'X-157,X-176,X-177,X-203,X-108,X-121,X-123,X-191,X-16,X-140,X-178,X-118,X-160'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
         $this->assertDatabaseMissing('edge_zones', ['business_id' => $biz->id, 'domain_name' => 'demo·example.com']);
@@ -77,6 +78,7 @@ class DemoFillSiteTest extends TestCase
         $this->assertDatabaseMissing('content_topics', ['business_id' => $biz->id, 'topic_title' => 'demo·How much does a drain cleaning cost?']);
         $this->assertDatabaseMissing('design_changes', ['business_id' => $biz->id, 'block_ref' => 'demo·hero_heading']);
         $this->assertDatabaseMissing('onboarding_runs', ['business_id' => $biz->id, 'business_name' => 'demo·Ridgeline HVAC']);
+        $this->assertDatabaseMissing('documents', ['business_id' => $biz->id, 'title' => 'demo·2026 price list']);
     }
 
     public function test_the_site_screens_show_the_demo_rows(): void
@@ -85,7 +87,7 @@ class DemoFillSiteTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-157,X-176,X-177,X-203,X-108,X-121,X-123,X-191,X-16,X-140,X-178,X-118'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-157,X-176,X-177,X-203,X-108,X-121,X-123,X-191,X-16,X-140,X-178,X-118,X-160'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
         $this->actingAs($owner);
@@ -110,5 +112,7 @@ class DemoFillSiteTest extends TestCase
         $this->get(route('x-178.site-editor-assistant'))->assertOk()->assertSee('demo·hero_heading')->assertSee('color_token');
         $this->get(route('x-118.today'))->assertOk()->assertSee('demo·Ridgeline HVAC');
         $this->get(route('x-118.ttfm-distribution'))->assertOk()->assertSee('950');
+        $this->get(route('x-160.upload-drop'))->assertOk()->assertSee('demo·2026 price list');
+        $this->get(route('x-160.review-screen'))->assertOk()->assertSee('demo·Ridgeline service agreement');
     }
 }
