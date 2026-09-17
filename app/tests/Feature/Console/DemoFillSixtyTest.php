@@ -104,7 +104,7 @@ class DemoFillSixtyTest extends TestCase
         $this->get(route('c-sms.pernumber-complaint-monitoring'))->assertOk()->assertSee('+15125550142')->assertSee('1 sent · 0 halted')->assertSee('+15125550188')->assertSee('0 sent · 1 halted');
         $this->get(route('c-sms.composer-segment-warning'))->assertOk()->assertSee('demo·Spring tune-up special')->assertSee('bills as 2 segments');
         $this->get(route('c-sms.thread'))->assertOk()->assertSee('demo·Your technician is on the way');
-        
+
         $this->get(route('x-209.private-inbox'))->assertOk()->assertSee('demo·running 20 late to the Maple St job');
         $this->get(route('x-209.ladders-own-state'))->assertOk()->assertSee('demo·eta_update');
     }
