@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-17T10:05:54",
+ "updated": "2026-09-17T14:58:38",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2979,6 +2979,12 @@
    "module": "X-120",
    "chose": "MONEY-234: the card screen sits in the owner shell as Payment methods; already tenant-scoped; no admin door; X120Filler seeds a default visa and an expiring mastercard",
    "at": "2026-09-17T10:05:54",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-173",
+   "chose": "MONEY-235: the sync conflicts and sync error rate screens sit in the owner shell as Sync conflicts and Sync error rate; both already tenant-scoped; admin doors kept; connection-mapping left for a later wave; X173Filler seeds one ledger connection, two mappings, two runs and two conflicts",
+   "at": "2026-09-17T14:58:38",
    "ruling": "R245"
   }
  ],
