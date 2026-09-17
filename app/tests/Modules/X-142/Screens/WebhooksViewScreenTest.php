@@ -6,7 +6,9 @@ namespace Tests\Modules\X142\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X142\Models\WebhookSubscription;
 use App\Modules\X142\Ui\WebhooksView;
+use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,7 +20,29 @@ class WebhooksViewScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-142.webhooks'))->assertOk();
+        $this->get(route('x-142.webhooks'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
+            ->assertDontSee('this screen is planned in')
+            ->assertSee('No webhooks yet.');
+
+        Tenancy::setUser($owner->id);
+        WebhookSubscription::create([
+            'business_id' => $biz->id,
+            'target_url' => 'https://distinctive-4628.example/hooks',
+            'event_filter' => 'Distinctive event 4628',
+            'secret' => 'sec_distinctive4628',
+            'is_active' => true,
+        ]);
+        Tenancy::forget();
+
+        $this->get(route('x-142.webhooks'))
+            ->assertOk()
+            ->assertSee('https://distinctive-4628.example/hooks')
+            ->assertSee('Distinctive event 4628')
+            ->assertDontSee('sec_distinctive4628')
+            ->assertDontSee('No webhooks yet.');
 
         Livewire::test(WebhooksView::class)->assertOk();
     }
