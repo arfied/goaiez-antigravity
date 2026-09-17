@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-17T09:48:02",
+ "updated": "2026-09-17T14:51:11",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1525,6 +1525,12 @@
    "module": "X-196",
    "chose": "UI-134: extension-popup sits in the owner shell as Browser extension; the tenant mount and read were already built; banner removed; admin door kept; X196Filler seeds one session with two injections",
    "at": "2026-09-17T07:58:31",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-142",
+   "chose": "UI-136: connect-your-ai and webhooks sit in the owner shell as Connect your AI and Webhooks; both scoped to the tenant explicitly rather than by RLS alone; the webhook secret is never rendered; admin doors kept; X142Filler seeds two connections and two subscriptions",
+   "at": "2026-09-17T14:51:11",
    "ruling": "R245"
   }
  ],
