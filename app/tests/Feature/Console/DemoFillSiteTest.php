@@ -18,7 +18,7 @@ class DemoFillSiteTest extends TestCase
 
         Tenancy::forgetAll();
 
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-157,X-176,X-177,X-203,X-108,X-121,X-123,X-191'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-157,X-176,X-177,X-203,X-108,X-121,X-123,X-191,X-16'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
 
@@ -38,15 +38,17 @@ class DemoFillSiteTest extends TestCase
         $this->assertDatabaseHas('entity_history', ['business_id' => $biz->id, 'entity_type' => 'demo·people']);
         $this->assertDatabaseHas('dead_letters', ['business_id' => $biz->id, 'error_message' => 'demo·Webhook endpoint returned 503']);
         $this->assertDatabaseHas('link_placements', ['business_id' => $biz->id, 'anchor_text' => 'demo·local plumbing guide']);
+        $this->assertDatabaseHas('geo_grids', ['business_id' => $biz->id, 'grid_name' => 'demo·Downtown grid']);
+        $this->assertDatabaseHas('service_polygons', ['business_id' => $biz->id, 'polygon_name' => 'demo·North side']);
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-157,X-176,X-177,X-203,X-108,X-121,X-123,X-191'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-157,X-176,X-177,X-203,X-108,X-121,X-123,X-191,X-16'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
         $this->assertSame(2, EntityHistoryRecord::where('business_id', $biz->id)->where('entity_type', 'demo·people')->count());
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--purge' => true, '--only' => 'X-157,X-176,X-177,X-203,X-108,X-121,X-123,X-191'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--purge' => true, '--only' => 'X-157,X-176,X-177,X-203,X-108,X-121,X-123,X-191,X-16'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
         $this->assertDatabaseMissing('edge_zones', ['business_id' => $biz->id, 'domain_name' => 'demo·example.com']);
@@ -65,6 +67,8 @@ class DemoFillSiteTest extends TestCase
         $this->assertDatabaseMissing('entity_history', ['business_id' => $biz->id, 'entity_type' => 'demo·people']);
         $this->assertDatabaseMissing('dead_letters', ['business_id' => $biz->id, 'error_message' => 'demo·Webhook endpoint returned 503']);
         $this->assertDatabaseMissing('link_placements', ['business_id' => $biz->id, 'anchor_text' => 'demo·local plumbing guide']);
+        $this->assertDatabaseMissing('geo_grids', ['business_id' => $biz->id, 'grid_name' => 'demo·Downtown grid']);
+        $this->assertDatabaseMissing('service_polygons', ['business_id' => $biz->id, 'polygon_name' => 'demo·North side']);
     }
 
     public function test_the_site_screens_show_the_demo_rows(): void
@@ -73,7 +77,7 @@ class DemoFillSiteTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-157,X-176,X-177,X-203,X-108,X-121,X-123,X-191'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-157,X-176,X-177,X-203,X-108,X-121,X-123,X-191,X-16'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
         $this->actingAs($owner);
@@ -91,5 +95,7 @@ class DemoFillSiteTest extends TestCase
         $this->get(route('x-123.dlq-request-inspector'))->assertOk()->assertSee('demo·Webhook endpoint returned 503');
         $this->get(route('x-191.links-earned'))->assertOk()->assertSee('demo·local plumbing guide');
         $this->get(route('x-191.pitchacquire-ratio'))->assertOk()->assertSee('3 pitches sent')->assertSee('2 links earned');
+        $this->get(route('x-16.geogrid-map'))->assertOk()->assertSee('demo·Downtown grid')->assertSee('12 of 25 points scanned');
+        $this->get(route('x-16.servicearea-polygon'))->assertOk()->assertSee('demo·North side')->assertSee('demo·South side');
     }
 }
