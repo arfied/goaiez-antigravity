@@ -69,6 +69,7 @@ class Registry
             new Fillers\X206Filler,
             new Fillers\X207Filler,
             new Fillers\X210Filler,
+            new Fillers\X211Filler,
         ];
 
         usort($fillers, fn ($a, $b) => strcmp($a->module(), $b->module()));

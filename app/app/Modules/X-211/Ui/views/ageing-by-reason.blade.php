@@ -1,5 +1,5 @@
 <div>
-    <h1>Overdue, by reason</h1>
+    <h2 class="text-lg font-bold text-ink">Overdue invoices</h2>
 
     @if($error)
         <x-ui.error-panel heading="That didn't go through">
@@ -22,7 +22,7 @@
     </div>
 
     <section class="mb-8">
-        <h2>Late-fee term</h2>
+        <h3 class="font-semibold text-ink">Late-fee term</h3>
         @if($terms?->late_fee_percent)
             <x-ui.status-pill state="ok" :label="$terms->late_fee_percent.'% of the invoice'.($terms->late_fee_cap_cents ? ', capped at '.number_format($terms->late_fee_cap_cents / 100, 2) : ', no cap')" />
         @else
@@ -40,14 +40,14 @@
     @else
         @foreach($groups as $reason => $invoices)
             <div class="mb-8">
-                <h2>{{ $reason }}</h2>
+                <h3 class="font-semibold text-ink">{{ $reason }}</h3>
                 <ul class="space-y-4">
                     @foreach($invoices as $inv)
-                        <li class="border rounded p-4 shadow bg-white" wire:key="ageing-inv-{{ $inv->id }}">
+                        <li class="border rounded p-4 shadow bg-card" wire:key="ageing-inv-{{ $inv->id }}">
                             <div class="flex justify-between items-center mb-4">
                                 <div>
                                     <span class="font-semibold">{{ $inv->invoice_number }}</span>
-                                    <span class="text-gray-500 text-sm ml-2">Due {{ $inv->due_date->toDateString() }}</span>
+                                    <span class="text-ink-2 text-sm ml-2">Due {{ $inv->due_date->toDateString() }}</span>
                                 </div>
                                 <div class="tabular-nums">
                                     {{ number_format($inv->balance_cents / 100, 2) }}
