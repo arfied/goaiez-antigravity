@@ -15,6 +15,7 @@ class Registry
             new Fillers\CBillingFiller,
             new Fillers\CMailFiller,
             new Fillers\CReviewsFiller,
+            new Fillers\CSmsFiller,
             new Fillers\X07Filler,
             new Fillers\X08Filler,
             new Fillers\X10Filler,
@@ -46,6 +47,8 @@ class Registry
             new Fillers\X167Filler,
             new Fillers\X168Filler,
             new Fillers\X170Filler,
+            new Fillers\X171Filler,
+            new Fillers\X172Filler,
             new Fillers\X175Filler,
             new Fillers\X176Filler,
             new Fillers\X177Filler,
@@ -60,6 +63,7 @@ class Registry
             new Fillers\X190Filler,
             new Fillers\X191Filler,
             new Fillers\X192Filler,
+            new Fillers\X193Filler,
             new Fillers\X194Filler,
             new Fillers\X199Filler,
             new Fillers\X203Filler,
@@ -67,6 +71,7 @@ class Registry
             new Fillers\X206Filler,
             new Fillers\X207Filler,
             new Fillers\X210Filler,
+            new Fillers\X211Filler,
         ];
 
         usort($fillers, fn ($a, $b) => strcmp($a->module(), $b->module()));
