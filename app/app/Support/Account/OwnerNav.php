@@ -605,6 +605,8 @@ final class OwnerNav
             OwnerNavItem::make('Overdue invoices', 'x-211.ageing-by-reason', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Payment plans', 'x-211.paymentplan-builder', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Harvest coverage', 'x-16.harvest-coverage-by', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Number health', 'c-sms.pernumber-complaint-monitoring', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Message segments', 'c-sms.composer-segment-warning', OwnerNavItem::GROUP_MORE),
         ];
     }
 
