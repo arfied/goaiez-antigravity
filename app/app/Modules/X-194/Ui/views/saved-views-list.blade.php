@@ -1,4 +1,5 @@
 <div>
+    <h2 class="text-lg font-bold text-ink">Saved views</h2>
     @if ($errorMessage)
         <x-ui.error-panel heading="We could not load your saved views.">
             {{ $errorMessage }}
@@ -39,7 +40,7 @@
                             <div>
                                 <a href="{{ route('x-194.any-view-it', ['viewId' => $view->id]) }}" class="text-blue-600 hover:underline"><strong>{{ $view->view_name }}</strong></a>
                                 @if($view->is_default)
-                                    <span class="ml-2 text-xs text-gray-500">(Default)</span>
+                                    <span class="ml-2 text-xs text-ink-2">(Default)</span>
                                 @endif
                             </div>
                             @if(!$view->is_default)

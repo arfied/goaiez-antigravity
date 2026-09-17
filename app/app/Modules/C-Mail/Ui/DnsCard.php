@@ -7,8 +7,10 @@ namespace App\Modules\CMail\Ui;
 use App\Modules\CMail\Models\MailDomain;
 use App\Services\Config\DefaultsRegistry;
 use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Email domain'])]
 class DnsCard extends Component
 {
     public function render(DefaultsRegistry $defaults)
