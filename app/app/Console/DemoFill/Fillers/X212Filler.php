@@ -58,7 +58,7 @@ class X212Filler implements DemoFiller
     public function purge(Business $business): int
     {
         $runIds = MigrationRun::where('business_id', $business->id)->where('source_system', 'like', self::MARKER.'%')->pluck('id');
-        
+
         $count = 0;
         if ($runIds->isNotEmpty()) {
             $count += MigrationReject::whereIn('migration_run_id', $runIds)->delete();
