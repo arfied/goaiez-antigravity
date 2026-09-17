@@ -2806,6 +2806,10 @@
   {
    "at": "2026-09-16T19:18:09",
    "note": "X-121 SITE-231: reconciliation migration, half one \u2014 production had 18 NOT NULL columns the migrations leave nullable and lacked qa_settings.ticket_recipient_id (audit 2026-09-16); owner ruled production matches the tree; half two (13 SET NOT NULL, location_id design) open"
+  },
+  {
+   "at": "2026-09-16T20:14:08",
+   "note": "X-121 SITE-232: reconciliation half two (a) \u2014 13 columns the tree requires become NOT NULL on production, tree defaults backfilled, carrier_credentials.business_id only if no null exists; location_id design still an owner decision"
   }
  ],
  "resolved": [
