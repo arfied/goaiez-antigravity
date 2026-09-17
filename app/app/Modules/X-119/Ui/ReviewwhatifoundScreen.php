@@ -17,6 +17,7 @@ class ReviewwhatifoundScreen extends Component
         abort_unless(Tenancy::check(), 403);
         $businessId = Tenancy::idOrFail();
         $facts = DB::table('facts')->where('business_id', $businessId)->where('is_valid', false)->orderByDesc('id')->get();
+
         return view('x-119::reviewwhatifound-screen', ['facts' => $facts]);
     }
 }

@@ -17,6 +17,7 @@ class FactFreshnessPer extends Component
         abort_unless(Tenancy::check(), 403);
         $businessId = Tenancy::idOrFail();
         $facts = DB::table('facts')->where('business_id', $businessId)->where('is_valid', true)->orderBy('updated_at')->get();
+
         return view('x-119::fact-freshness-per', ['facts' => $facts]);
     }
 }

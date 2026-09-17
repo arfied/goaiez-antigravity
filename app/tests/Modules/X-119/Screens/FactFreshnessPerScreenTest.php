@@ -7,6 +7,8 @@ namespace Tests\Modules\X119\Screens;
 use App\Enums\UserRole;
 use App\Models\User;
 use App\Modules\X119\Ui\FactFreshnessPer;
+use App\Support\Tenancy;
+use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -25,8 +27,8 @@ class FactFreshnessPerScreenTest extends TestCase
             ->assertDontSee('this screen is planned in')
             ->assertSee('Nothing recorded yet.');
 
-        \App\Support\Tenancy::setUser($owner->id);
-        \Illuminate\Support\Facades\DB::table('facts')->insert([
+        Tenancy::setUser($owner->id);
+        DB::table('facts')->insert([
             'business_id' => $biz->id,
             'key' => 'distinctive.fact_4645',
             'value' => 'Distinctive value 4645',
@@ -34,7 +36,7 @@ class FactFreshnessPerScreenTest extends TestCase
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-        \App\Support\Tenancy::forget();
+        Tenancy::forget();
 
         $this->get(route('x-119.fact-freshness-per'))
             ->assertOk()
