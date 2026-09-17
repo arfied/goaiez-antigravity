@@ -6,7 +6,10 @@ namespace Tests\Modules\X123\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X123\Models\DeadLetter;
+use App\Modules\X123\Models\EventLog;
 use App\Modules\X123\Ui\DlqRequestInspector;
+use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,7 +21,36 @@ class DlqRequestInspectorScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-123.dlq-request-inspector'))->assertOk();
+        $this->get(route('x-123.dlq-request-inspector'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
+            ->assertDontSee('this screen is planned in')
+            ->assertSee('No failed deliveries.');
+
+        Tenancy::setUser($owner->id);
+
+        $eventLog = EventLog::create([
+            'business_id' => $biz->id,
+            'event_name' => 'distinctive.event.4602',
+            'payload' => [],
+            'status' => 'published',
+        ]);
+
+        DeadLetter::create([
+            'business_id' => $biz->id,
+            'event_log_id' => $eventLog->id,
+            'subscription_id' => null,
+            'error_message' => 'Distinctive failure 4602',
+            'attempts' => 10,
+        ]);
+
+        Tenancy::forget();
+
+        $this->get(route('x-123.dlq-request-inspector'))
+            ->assertOk()
+            ->assertSee('Distinctive failure 4602')
+            ->assertDontSee('No failed deliveries.');
 
         Livewire::test(DlqRequestInspector::class)->assertOk();
     }
