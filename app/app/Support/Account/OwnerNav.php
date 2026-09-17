@@ -614,6 +614,8 @@ final class OwnerNav
             OwnerNavItem::make('Browser extension', 'x-196.extension-popup', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Proposed pages', 'x-140.proposed-pages', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Payment methods', 'x-120.card-screen', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Sync conflicts', 'x-173.conflicts-list', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Sync error rate', 'x-173.sync-error-rate', OwnerNavItem::GROUP_MORE),
         ];
     }
 
