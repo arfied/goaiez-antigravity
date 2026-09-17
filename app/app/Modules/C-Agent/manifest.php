@@ -36,6 +36,7 @@ return [
         'agent.teach',
     ],
     'emits' => [
+        'agent.turn.started',
         'agent.turn.answer',
         'send.requested',
     ],
