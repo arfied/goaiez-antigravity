@@ -47,6 +47,8 @@ class Registry
             new Fillers\X167Filler,
             new Fillers\X168Filler,
             new Fillers\X170Filler,
+            new Fillers\X171Filler,
+            new Fillers\X172Filler,
             new Fillers\X175Filler,
             new Fillers\X176Filler,
             new Fillers\X177Filler,

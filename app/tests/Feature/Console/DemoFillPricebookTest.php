@@ -25,7 +25,7 @@ class DemoFillPricebookTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-205,X-162'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-205,X-162,X-171,X-172'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
 
@@ -33,16 +33,20 @@ class DemoFillPricebookTest extends TestCase
         $this->assertDatabaseHas('affiliate_attributions', ['business_id' => $biz->id, 'order_id' => 'demo·ord1']);
         $this->assertDatabaseHas('affiliate_payouts', ['business_id' => $biz->id, 'amount_cents' => 5000]);
         $this->assertDatabaseHas('dispatch_assignments', ['business_id' => $biz->id, 'job_id' => 100, 'is_sample' => true]);
+        $this->assertDatabaseHas('device_sync_queue', ['business_id' => $biz->id, 'client_mutation_id' => 'demo·mut-2', 'status' => 'conflicted']);
+        $this->assertDatabaseHas('device_sync_conflicts', ['business_id' => $biz->id, 'conflict_reason' => 'demo·Server note newer than device note']);
+        $this->assertDatabaseHas('portal_links', ['business_id' => $biz->id, 'token' => 'demo-portal-'.$biz->id, 'is_sample' => true]);
+        $this->assertDatabaseHas('portal_views', ['business_id' => $biz->id, 'user_agent' => 'demo·Safari on iPhone']);
 
         $c1 = Affiliate::count();
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-205,X-162'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-205,X-162,X-171,X-172'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
         $this->assertEquals($c1, Affiliate::count());
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--purge' => true, '--only' => 'X-205,X-162'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--purge' => true, '--only' => 'X-205,X-162,X-171,X-172'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
 
@@ -50,6 +54,10 @@ class DemoFillPricebookTest extends TestCase
         $this->assertDatabaseMissing('affiliate_attributions', ['business_id' => $biz->id, 'order_id' => 'demo·ord1']);
         $this->assertDatabaseMissing('affiliate_payouts', ['business_id' => $biz->id, 'amount_cents' => 5000]);
         $this->assertDatabaseMissing('dispatch_assignments', ['business_id' => $biz->id, 'job_id' => 100, 'is_sample' => true]);
+        $this->assertDatabaseMissing('device_sync_queue', ['business_id' => $biz->id, 'client_mutation_id' => 'demo·mut-2', 'status' => 'conflicted']);
+        $this->assertDatabaseMissing('device_sync_conflicts', ['business_id' => $biz->id, 'conflict_reason' => 'demo·Server note newer than device note']);
+        $this->assertDatabaseMissing('portal_links', ['business_id' => $biz->id, 'token' => 'demo-portal-'.$biz->id, 'is_sample' => true]);
+        $this->assertDatabaseMissing('portal_views', ['business_id' => $biz->id, 'user_agent' => 'demo·Safari on iPhone']);
     }
 
     public function test_the_pricebook_screens_show_the_demo_rows(): void
@@ -58,7 +66,7 @@ class DemoFillPricebookTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-205,X-162'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-205,X-162,X-171,X-172'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
         $this->actingAs($owner);
@@ -67,6 +75,7 @@ class DemoFillPricebookTest extends TestCase
         $this->get(route('x-205.earnings'))->assertOk()->assertSee('demo·ord1');
         $this->get(route('x-205.payout-run'))->assertOk()->assertSee('50.00')->assertSee('requested');
         $this->get(route('x-162.dispatch-board'))->assertOk()->assertSee('Job #100')->assertSee('Job #101');
+        $this->get(route('x-172.customerfacing-portal', ['token' => 'demo-portal-'.$biz->id]))->assertOk()->assertSee('Work Order')->assertSee('Sample');
     }
 
     public function test_x163_filler_is_idempotent(): void
