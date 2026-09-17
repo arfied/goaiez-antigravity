@@ -624,8 +624,8 @@ final class OwnerNav
             OwnerNavItem::make('First wins', 'x-118.today', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Time to first minute', 'x-118.ttfm-distribution', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Dry-run preview', 'x-212.dryrun-preview', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Import rejections', 'x-212.postimport-audit', OwnerNavItem::GROUP_MORE),
-        ];
+            OwnerNavItem::make('Import rejections', 'x-212.postimport-audit', OwnerNavItem::GROUP_MORE),            OwnerNavItem::make('Approvals', 'x-202.queue', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Approval history', 'x-202.audit-export', OwnerNavItem::GROUP_MORE),        ];
     }
 
     /**
