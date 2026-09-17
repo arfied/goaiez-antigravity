@@ -22,7 +22,7 @@ class DemoFillMoneyTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Billing,X-104,X-199,X-211'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Billing,X-104,X-199,X-211,X-120'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
 
@@ -40,16 +40,18 @@ class DemoFillMoneyTest extends TestCase
         $this->assertDatabaseHas('payment_plans', ['business_id' => $biz->id, 'installment_amount_cents' => 30000]);
         $this->assertDatabaseHas('invoices', ['business_id' => $biz->id, 'invoice_number' => 'demo·AR-003']);
         $this->assertDatabaseHas('ar_collections_packages', ['business_id' => $biz->id, 'partner' => null]);
+        $this->assertDatabaseHas('card_tokens', ['business_id' => $biz->id, 'gateway_customer_id' => 'demo·cus_4242']);
+        $this->assertDatabaseHas('card_tokens', ['business_id' => $biz->id, 'last_four' => '5100']);
 
         $c1 = Invoice::count();
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Billing,X-104,X-199,X-211'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Billing,X-104,X-199,X-211,X-120'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
         $this->assertEquals($c1, Invoice::count());
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Billing,X-104,X-199,X-211', '--purge' => true])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Billing,X-104,X-199,X-211,X-120', '--purge' => true])->assertExitCode(0);
 
         Tenancy::set($biz->id);
 
@@ -67,6 +69,8 @@ class DemoFillMoneyTest extends TestCase
         $this->assertDatabaseMissing('payment_plans', ['business_id' => $biz->id, 'installment_amount_cents' => 30000]);
         $this->assertDatabaseMissing('invoices', ['business_id' => $biz->id, 'invoice_number' => 'demo·AR-003']);
         $this->assertDatabaseMissing('ar_collections_packages', ['business_id' => $biz->id, 'partner' => null]);
+        $this->assertDatabaseMissing('card_tokens', ['business_id' => $biz->id, 'gateway_customer_id' => 'demo·cus_4242']);
+        $this->assertDatabaseMissing('card_tokens', ['business_id' => $biz->id, 'last_four' => '5100']);
     }
 
     public function test_the_money_screens_show_the_demo_rows(): void
@@ -75,7 +79,7 @@ class DemoFillMoneyTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Billing,X-104,X-199,X-211'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Billing,X-104,X-199,X-211,X-120'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
         $this->actingAs($owner);
@@ -97,5 +101,6 @@ class DemoFillMoneyTest extends TestCase
         $this->get(route('x-211.paymentplan-builder'))->assertOk()->assertSee('demo·AR-002')->assertSee('3 × 300.00 monthly');
         $this->get(route('x-211.collections-package-preview'))->assertOk()->assertSee('demo·AR-001')->assertSee('demo·AR-003')->assertSee('waiting on a collections partner');
         $this->get(route('x-211.invoice-thread-beside'))->assertOk()->assertSee('demo·AR-001')->assertSee('Why is it unpaid?');
+        $this->get(route('x-120.card-screen'))->assertOk()->assertSee('Card ending in 4242')->assertSee('Card Expiring Soon')->assertSee('5100');
     }
 }
