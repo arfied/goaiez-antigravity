@@ -2802,6 +2802,10 @@
   {
    "at": "2026-09-16T19:05:30",
    "note": "X-177 SITE-230: X177Filler creates a demo Location and sets location_id to its id \u2014 production's gbp_connections.location_id is bigint NOT NULL FK to locations (schema drift vs the tree); SITE-229's string would have failed there"
+  },
+  {
+   "at": "2026-09-16T19:18:09",
+   "note": "X-121 SITE-231: reconciliation migration, half one \u2014 production had 18 NOT NULL columns the migrations leave nullable and lacked qa_settings.ticket_recipient_id (audit 2026-09-16); owner ruled production matches the tree; half two (13 SET NOT NULL, location_id design) open"
   }
  ],
  "resolved": [
