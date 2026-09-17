@@ -18,7 +18,7 @@ class DemoFillSiteTest extends TestCase
 
         Tenancy::forgetAll();
 
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-157,X-176,X-177,X-203,X-108,X-121,X-123'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-157,X-176,X-177,X-203,X-108,X-121,X-123,X-191'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
 
@@ -37,15 +37,16 @@ class DemoFillSiteTest extends TestCase
         $this->assertDatabaseHas('people', ['business_id' => $biz->id, 'first_name' => 'demo·Dana']);
         $this->assertDatabaseHas('entity_history', ['business_id' => $biz->id, 'entity_type' => 'demo·people']);
         $this->assertDatabaseHas('dead_letters', ['business_id' => $biz->id, 'error_message' => 'demo·Webhook endpoint returned 503']);
+        $this->assertDatabaseHas('link_placements', ['business_id' => $biz->id, 'anchor_text' => 'demo·local plumbing guide']);
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-157,X-176,X-177,X-203,X-108,X-121,X-123'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-157,X-176,X-177,X-203,X-108,X-121,X-123,X-191'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
         $this->assertSame(2, EntityHistoryRecord::where('business_id', $biz->id)->where('entity_type', 'demo·people')->count());
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--purge' => true, '--only' => 'X-157,X-176,X-177,X-203,X-108,X-121,X-123'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--purge' => true, '--only' => 'X-157,X-176,X-177,X-203,X-108,X-121,X-123,X-191'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
         $this->assertDatabaseMissing('edge_zones', ['business_id' => $biz->id, 'domain_name' => 'demo·example.com']);
@@ -63,6 +64,7 @@ class DemoFillSiteTest extends TestCase
         $this->assertDatabaseMissing('people', ['business_id' => $biz->id, 'first_name' => 'demo·Dana']);
         $this->assertDatabaseMissing('entity_history', ['business_id' => $biz->id, 'entity_type' => 'demo·people']);
         $this->assertDatabaseMissing('dead_letters', ['business_id' => $biz->id, 'error_message' => 'demo·Webhook endpoint returned 503']);
+        $this->assertDatabaseMissing('link_placements', ['business_id' => $biz->id, 'anchor_text' => 'demo·local plumbing guide']);
     }
 
     public function test_the_site_screens_show_the_demo_rows(): void
@@ -71,7 +73,7 @@ class DemoFillSiteTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-157,X-176,X-177,X-203,X-108,X-121,X-123'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-157,X-176,X-177,X-203,X-108,X-121,X-123,X-191'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
         $this->actingAs($owner);
@@ -87,5 +89,7 @@ class DemoFillSiteTest extends TestCase
         $this->get(route('x-108.calendar'))->assertOk()->assertSee('demo·Demo Service');
         $this->get(route('x-121.entity-history-viewer'))->assertOk()->assertSee('demo·people');
         $this->get(route('x-123.dlq-request-inspector'))->assertOk()->assertSee('demo·Webhook endpoint returned 503');
+        $this->get(route('x-191.links-earned'))->assertOk()->assertSee('demo·local plumbing guide');
+        $this->get(route('x-191.pitchacquire-ratio'))->assertOk()->assertSee('3 pitches sent')->assertSee('2 links earned');
     }
 }
