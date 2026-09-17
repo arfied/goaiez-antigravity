@@ -25434,7 +25434,7 @@ Adopted as the standard for every header, including the spine: **WIZARD = inferr
 **SWARM** owns `app/Modules/Assistant/Omni/**` · the mode router · the completeness-model reader *(each module exposes `needs()` / `has()` — declared in its manifest, read here, never hard-coded)* · the preview renderer · **must not touch** any module's actions or the gate; **must not** hold a privileged channel on the bus *(§118.4)* · runtime proof = five traces, one per mode, each ending in a registry row or a logged refusal
 **SCREENS** ⭐ **the chat dock on every page** *(the primary interface)* · **the preview card** *(action + params + reversal class + "undo" — one object with the help card, §6.1)* · **Today's recommendation strip** *(RECOMMEND surfaces here and in the thread)* · operator: the `assistant.unsupported` log *(the roadmap)*
 **DECLARATIONS** `@renders chat_dock_every · preview_card · todays_recommendation_strip · assistantunsupported_log` *(derived from SCREENS, 2026-08-27 — names only; the JSON schema each block carries is turn 69's)*
-`@provides assistant.ask · assistant.preview · assistant.execute · assistant.undo · assistant.explain · assistant.recommend · search.global` · `@emits `assistant.request` ⭐ *(2026-08-27 — §235 group ④ GENUINELY MISSING: consumed and emitted by nobody; emitter derived from noun ownership)* · assistant.acted · assistant.refused · assistant.recommended · assistant.unsupported` · `@consumes `capability.decided` · `decision.proposed` *(X-145)* · `@owns_table assistant_sessions · assistant_recommendations · assistant_unsupported`
+`@provides assistant.ask · assistant.preview · assistant.execute · assistant.undo · assistant.explain · assistant.recommend · search.global` · `@emits `assistant.request` ⭐ *(2026-08-27 — §235 group ④ GENUINELY MISSING: consumed and emitted by nobody; emitter derived from noun ownership)* · assistant.acted · assistant.refused · assistant.recommended · assistant.unsupported` · `@consumes `capability.decided` · `@owns_table assistant_sessions · assistant_recommendations · assistant_unsupported`
 
 @agent_reachable `assistant.preview` ⭐ *(`P-209`'s BACKFILL GATE, 2026-08-27 — **DERIVED, never guessed**: read-shaped and proposal actions only. **Anything that spends, sends, deletes or changes config is NOT reachable** — the agent proposes it through the approval desk.)*
 **NEEDS / HAS** needs: a non-empty registry · grounding Facts for this tenant · has: modes online + Fact count
@@ -25534,7 +25534,7 @@ tenant asks → X-124 decides the MODE
  `ships: L3 · ceiling: L3`** ⭐⭐⭐ *(**`R235` 2026-08-27 — EVERY AUTOPILOT SHIPS ON.** The owner overruled the `L1 PROPOSE` default: *"ALL AI ON, by my law. The client can turn it off if they want. All autopilots on, with AI watching them."* ⛔ **`ships:` now EQUALS `ceiling:` — this acts from minute one.** The ladder survives as a DESCRIPTION of what the action is, **never as a gate on when it may run.** ⭐ Safety is `X-126`'s capability gate — **no grounding Fact, no skill** — not a human approving.)* *(**ships-at is `@intent RECOVER` under `§227.2`** — ⛔ ~~escalates and PROPOSES; it does not act alone~~ **STRUCK by `R235`** — ⭐ **it ACTS on a bad situation from minute one; it escalates only when the AI ITSELF cannot proceed**; the ceiling is what this module may reach on measured clean runs, never set)***SWARM** owns `app/Services/Telephony/**` *(Contracts · Adapters · Roster · Routing · Normalisers · Health)* · **`@visibility public` = `CarrierAdapter` + `CapabilityRouter` ONLY; every adapter and normaliser is `internal`** *(what keeps the leak impossible)* · **must not touch** any channel module, `ConsentService`, `SendPermit` · runtime proof = one send routed to Infobip with the carrier's receipt and segment count; one forced 429 showing failover to the next account on the SAME carrier; one forged webhook rejected by `SignatureVerifier`
 **SCREENS** none tenant-facing · operator: **the carrier roster + health board** *(status · latency p50 · cost · cold windows)* · the failover log *(every hop, with EXPLAIN's "why did this text come from a different number?")*
 **DECLARATIONS** `@renders carrier_roster_health · failover_log` *(derived from SCREENS, 2026-08-27 — names only; the JSON schema each block carries is turn 69's)*
-`@provides carrier.send · carrier.call · carrier.provision · carrier.health` · `@emits carrier.selected · carrier.failed_over · carrier.degraded · carrier.receipt` · `@consumes send.requested · call.requested · number.needed · consent.decided` · `@owns_table carrier_roster · carrier_bindings · carrier_health · carrier_receipts`
+`@provides carrier.send · carrier.call · carrier.provision · carrier.health` · `@emits carrier.selected · carrier.failed_over · carrier.degraded · carrier.receipt` · `@consumes send.requested · number.needed · consent.decided` · `@owns_table carrier_roster · carrier_bindings · carrier_health · carrier_receipts`
 
 @agent_reachable none ⛔ *(`P-209`'s BACKFILL GATE, 2026-08-27 — **every action here spends, sends, deletes or changes config. NONE is agent-reachable.** Silence would FAIL OPEN, so this declares the closed default explicitly.)*
 **NEEDS / HAS** needs: Infobip credentials valid · ≥1 ACTIVE adapter · health check green within the cadence · has: from the roster and the last health run
@@ -39450,3 +39450,27 @@ Deferred also: the e-commerce logistics rows *(3PL · FBA · drop-shipping · FI
 | **G15-34** | W-2 Pre-Flight | — | HR — shelved by the boss |
 | **G17-30** | Candidate Nurture Drips | — | e-commerce logistics — DEFERRED for the future (boss 2026-09-04); cart, checkout, storefront and inventory (X-167) stay IN |
 | **G18-29** | Will-Call/Pickup Routing | X-117 | will-call / pickup routing = commerce fulfilment |
+
+## 257.6 ⛔ REMOVED MODULES *(owner ruling 2026-09-17 — "remove the deferred"; supervisor added the three never-started)*
+
+| Module | What it was | Ruling |
+| :--- | :--- | :--- |
+| `X-200` | human-seat call center | REMOVED — directory, tests, provider, feature entries and plan waves deleted; tables kept |
+| `X-158` | video engine | REMOVED — same |
+| `X-159` | site-audit video | REMOVED — same |
+| `X-114` | media studio | REMOVED — same |
+| `X-144` | AI visibility tracker | REMOVED — same |
+| `X-197` | self-hosted voice | REMOVED — same |
+| `X-147` | RCS | REMOVED — same |
+| `X-143` | WebMCP | REMOVED — same |
+| `X-141` | what-if replay | REMOVED — same |
+| `X-145` | decisioning studio | REMOVED — same; `X-124` no longer consumes `decision.proposed` |
+| `X-213` | vision QA | REMOVED — same |
+| `X-208` | direct mail | REMOVED — same |
+| `X-215` | document signing | REMOVED — same |
+| `X-214` | surcharging | REMOVED — same |
+| `X-221` | AdsAdvisor (§257.1, never started) | REMOVED — plan entry only; no directory existed beyond the manifest scaffold |
+| `X-222` | LegalDesk (§257.2, never started) | REMOVED — same |
+| `X-223` | WarmupEngine (§257.3, never started) | REMOVED — same |
+
+The `@module` headers above stay in this document as history; `module:scaffold` and `capabilities:scaffold` skip these ids by name (their `REMOVED` list cites this ruling). `C-Telephony` no longer consumes `call.requested` (its only emitters were `X-200` and `X-197`). The 27 tables these modules created stay on every database; no down-migration is written. The tracker rows whose Parent names one of these modules are unowned again (§257.5) — owner-side.

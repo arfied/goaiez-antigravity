@@ -42,7 +42,6 @@ return [
     ],
     'consumes' => [
         'capability.decided',
-        'decision.proposed',
     ],
 
     // ⛔ P-163 — @owns_table may not name one of X-121's canonical nouns.
