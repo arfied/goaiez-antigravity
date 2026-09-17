@@ -629,6 +629,8 @@ final class OwnerNav
             OwnerNavItem::make('Approval history', 'x-202.audit-export', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Fixer inbox', 'x-209.private-inbox', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Autopilot ladder', 'x-209.ladders-own-state', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Person', 'x-01.person', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Activity', 'x-01.history', OwnerNavItem::GROUP_MORE),
         ];
     }
 
