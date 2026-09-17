@@ -798,3 +798,4 @@
 - `2026-09-16T17:43:17` note: X-205 PB-210: demo:fill filler for X-205's owner-shell screens; marked demo· rows, idempotent, purgeable
 - `2026-09-16T18:33:54` note: X-163 PB-211: X163Filler idempotency guard tested a marker it never wrote; now guards on is_sample; demo:fill wrote +7 rows on every production run 2026-09-16
 - `2026-09-16T21:30:32` (R245) X-205 — PB-212: the payout run lists this account's affiliate payouts in the owner shell as Affiliate payouts; a tenant-scoped read with a mount; X-205 has no admin door; the demo payout shows
+- `2026-09-16T22:39:48` (R245) X-162 — PB-213: the dispatch board sits in the owner shell as Dispatch board; it already read its tenant; X-162 has no admin door; the two sample assignments show
