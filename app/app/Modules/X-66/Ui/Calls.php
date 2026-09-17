@@ -9,8 +9,10 @@ use App\Modules\X66\Models\CallSession;
 use App\Modules\X66\Models\CallTurn;
 use App\Modules\X66\Models\Voicemail;
 use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Calls'])]
 class Calls extends Component
 {
     public ?int $selectedSessionId = null;

@@ -80,6 +80,10 @@ class DemoFillMoneyTest extends TestCase
         $this->get(route('x-104.install-count'))->assertOk()->assertSee('Active plugin sites: 1');
         $this->get(route('x-104.plugin-settings-page'))->assertOk()->assertSee('demo·https://active.example');
         $this->get(route('c-billing.mrr'))->assertOk()->assertSee('demo·Plan credit')->assertSee('demo·sms_segments');
+        $this->get(route('c-billing.revenue-recovery'))->assertOk()->assertSee('No ladder on this screen yet.');
+        $this->get(route('c-billing.dunning-board'))->assertOk()->assertSee('Nothing on this board yet.');
         $this->get(route('c-billing.credits'))->assertOk()->assertSee('demo·sms_segments');
+        $this->get(route('c-billing.revenue-recovery'))->assertOk()->assertSee('No ladder on this screen yet.');
+        $this->get(route('c-billing.dunning-board'))->assertOk()->assertSee('Nothing on this board yet.');
     }
 }
