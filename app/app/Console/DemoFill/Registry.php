@@ -28,6 +28,7 @@ class Registry
             new Fillers\X108Filler,
             new Fillers\X110Filler,
             new Fillers\X118Filler,
+            new Fillers\X119Filler,
             new Fillers\X120Filler,
             new Fillers\X121Filler,
             new Fillers\X123Filler,
