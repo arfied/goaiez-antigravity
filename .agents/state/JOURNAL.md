@@ -967,3 +967,4 @@
 - `2026-09-16T20:33:01` note: X-177 SITE-233: location_id is a bigint NOT NULL FK to locations on every database, as production already had it (the live connect flow writes location ids); fixtures create a location; the audit's last type difference closed
 - `2026-09-16T20:42:14` note: X-177 SITE-233b: the one remaining X-177 fixture with a string location_id now creates a Location; SITE-233's migration stands
 - `2026-09-16T21:12:16` (R245) X-123 — SITE-234: the dead-letter inspector lists real failed deliveries in the owner shell as Failed deliveries; a tenant-scoped read with a mount; admin door kept; X123Filler seeds one event and two dead letters
+- `2026-09-16T22:32:51` (R245) X-191 — SITE-235: earned links and the outreach ratio sit in the owner shell as Earned links and Outreach ratio; tenant-scoped reads with mounts; admin doors kept; X191Filler seeds a target, three pitches and two placements
