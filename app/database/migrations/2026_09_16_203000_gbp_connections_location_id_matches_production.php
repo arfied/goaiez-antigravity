@@ -39,6 +39,7 @@ return new class extends Migration
 
         if (DB::table('gbp_connections')->whereNull('location_id')->exists()) {
             Log::warning('gbp_connections.location_id has null values; cannot set NOT NULL');
+
             return;
         }
 
