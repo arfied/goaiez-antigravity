@@ -1,6 +1,18 @@
 <div>
-    <x-surface.sample-state module="⭐⭐ **The employee's own AI — the only agent in this platform that works for a PERSON rather than for the tenant.** *Everything else acts tenant → customer. **The Fixer acts employee → their own day**: their calendar, their inbox, their jobs, their reschedules.* ⛔⛔ **AND IT IS NOT A CHATBOT. It is a TOOL-CALLING AGENT: it mutates the system through `X-122 ActionRegistry` and only then communicates.** *A plumber texting "running 20 late, tell Smith and push my next" causes `fsm.job.update_eta` → `fsm.job.reschedule` → **then** the customer message. **The database changes first. The text is the consequence, never the substitute.*** ⭐ **It starts at L1 and climbs per action type, per employee** *(P-195)*. **Commanded by voice in `X-171`, by SMS from the employee's own phone, or from the private inbox — no dashboard required.**" screen="ladders_own_state" />
     <div class="ladder-state-view p-4">
-        <h3 class="text-lg font-bold">Autopilot Ladder State</h3>
+        <h2 class="text-lg font-bold text-ink">Autopilot ladder</h2>
+        @if($ladders->isEmpty())
+            <x-ui.empty-state heading="Nothing has earned autonomy yet.">Each action the assistant performs climbs its own ladder as it gets things right.</x-ui.empty-state>
+        @else
+            <ul class="divide-y divide-rule">
+                @foreach($ladders as $l)
+                    <li class="py-2" wire:key="ladder-{{ $l->id }}">
+                        <span class="font-semibold">{{ $l->action_name }}</span>
+                        <span class="text-sm text-ink-2 tabular-nums">level {{ $l->current_level }}</span>
+                        <span class="text-sm text-ink-2 tabular-nums">{{ $l->success_count }} successes</span>
+                    </li>
+                @endforeach
+            </ul>
+        @endif
     </div>
 </div>
