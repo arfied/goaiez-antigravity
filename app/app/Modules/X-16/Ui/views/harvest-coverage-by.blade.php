@@ -16,14 +16,14 @@
         </div>
     @else
         <div class="mt-6">
-            <p class="mb-4 text-sm font-medium text-gray-700">
+            <p class="mb-4 text-sm font-medium text-ink">
                 {{ $placesTotal }} places harvested across {{ $territoriesTotal }} territories
             </p>
             <div class="space-y-4">
                 @foreach($rows as $row)
                     <div class="p-4 border rounded-md flex justify-between items-center">
-                        <div class="font-medium text-gray-900">{{ $row->polygon_name }}</div>
-                        <div class="text-gray-600">{{ $row->places_inside }} places</div>
+                        <div class="font-medium text-ink">{{ $row->polygon_name }}</div>
+                        <div class="text-ink-2">{{ $row->places_inside }} places</div>
                     </div>
                 @endforeach
             </div>
