@@ -5,8 +5,8 @@ namespace App\Console\DemoFill\Fillers;
 use App\Console\DemoFill\DemoFiller;
 use App\Models\Business;
 use App\Modules\X199\Models\Invoice;
-use App\Modules\X211\Models\ArDunningAction;
 use App\Modules\X211\Models\ArCollectionsPackage;
+use App\Modules\X211\Models\ArDunningAction;
 use App\Modules\X211\Models\PaymentPlan;
 use App\Modules\X211\Models\ReceivableState;
 
