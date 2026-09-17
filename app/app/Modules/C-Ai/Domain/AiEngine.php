@@ -63,7 +63,7 @@ final class AiEngine
             $call = AiCall::create([
                 'business_id' => $businessId,
                 'task_id' => $taskId,
-                'task' => $task?->task_name ?? 'agent.turn',
+                'task' => $task->task_name ?? 'agent.turn',
                 'provider' => 'simulated',
                 'model' => $modelServed,
                 'model_requested' => $modelRequested,
