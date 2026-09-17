@@ -24,7 +24,7 @@ class DemoFillUi3Test extends TestCase
         Tenancy::forgetAll();
         $this->artisan('demo:fill', [
             'email' => $owner->email,
-            '--only' => 'X-07,X-124,X-132,X-138,X-139,X-183,X-192',
+            '--only' => 'X-07,X-124,X-132,X-138,X-139,X-183,X-192,X-194',
         ])->assertExitCode(0);
 
         Tenancy::set($biz->id);
@@ -41,13 +41,14 @@ class DemoFillUi3Test extends TestCase
         $this->assertDatabaseHas('content_drafts', ['business_id' => $biz->id, 'title' => 'demo·Spring Maintenance Guide']);
         $this->assertDatabaseHas('gate_results', ['business_id' => $biz->id, 'rejection_reason' => 'demo·Missing citation']);
         $this->assertDatabaseHas('directory_memberships', ['business_id' => $biz->id, 'directory_name' => 'demo·Yelp']);
+        $this->assertDatabaseHas('saved_views', ['business_id' => $biz->id, 'view_name' => 'demo·Open jobs']);
 
         $c1 = Forecast::count();
 
         Tenancy::forgetAll();
         $this->artisan('demo:fill', [
             'email' => $owner->email,
-            '--only' => 'X-07,X-124,X-132,X-138,X-139,X-183,X-192',
+            '--only' => 'X-07,X-124,X-132,X-138,X-139,X-183,X-192,X-194',
         ])->assertExitCode(0);
 
         Tenancy::set($biz->id);
@@ -57,7 +58,7 @@ class DemoFillUi3Test extends TestCase
         $this->artisan('demo:fill', [
             'email' => $owner->email,
             '--purge' => true,
-            '--only' => 'X-07,X-124,X-132,X-138,X-139,X-183,X-192',
+            '--only' => 'X-07,X-124,X-132,X-138,X-139,X-183,X-192,X-194',
         ])->assertExitCode(0);
 
         Tenancy::set($biz->id);
@@ -74,6 +75,7 @@ class DemoFillUi3Test extends TestCase
         $this->assertDatabaseMissing('content_drafts', ['business_id' => $biz->id, 'title' => 'demo·Spring Maintenance Guide']);
         $this->assertDatabaseMissing('gate_results', ['business_id' => $biz->id, 'rejection_reason' => 'demo·Missing citation']);
         $this->assertDatabaseMissing('directory_memberships', ['business_id' => $biz->id, 'directory_name' => 'demo·Yelp']);
+        $this->assertDatabaseMissing('saved_views', ['business_id' => $biz->id, 'view_name' => 'demo·Open jobs']);
     }
 
     public function test_the_ui3_screens_show_the_demo_rows(): void
@@ -84,7 +86,7 @@ class DemoFillUi3Test extends TestCase
         Tenancy::forgetAll();
         $this->artisan('demo:fill', [
             'email' => $owner->email,
-            '--only' => 'X-07,X-124,X-132,X-138,X-139,X-183,X-192',
+            '--only' => 'X-07,X-124,X-132,X-138,X-139,X-183,X-192,X-194',
         ])->assertExitCode(0);
 
         Tenancy::set($biz->id);
@@ -116,5 +118,8 @@ class DemoFillUi3Test extends TestCase
 
         // X-192
         $this->get(route('x-192.memberships-list'))->assertOk()->assertSee('demo·Yelp');
+
+        // X-194
+        $this->get(route('x-194.saved-views-list'))->assertOk()->assertSee('demo·Open jobs')->assertSee('demo·This week');
     }
 }

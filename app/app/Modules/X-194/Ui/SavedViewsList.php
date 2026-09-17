@@ -8,10 +8,12 @@ use App\Modules\X194\Actions\SetDefaultViewAction;
 use App\Modules\X194\Actions\ViewListAction;
 use App\Modules\X194\Actions\ViewSaveAction;
 use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Saved views'])]
 class SavedViewsList extends Component
 {
     #[Locked]

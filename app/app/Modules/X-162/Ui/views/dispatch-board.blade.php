@@ -1,5 +1,5 @@
 <div>
-    <x-surface.sample-state module="the kanban and predictability board" screen="dispatch_board" />
+    <h2 class="text-lg font-bold text-ink">Dispatch board</h2>
     <livewire:x-124.chat-dock-every />
     
     <div class="max-w-7xl mx-auto px-4 py-8" wire:loading.class="opacity-50">
@@ -19,7 +19,7 @@
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 @foreach(['dispatched', 'en_route', 'on_site', 'completed'] as $colStatus)
                     <div class="column bg-paper rounded-xl border border-rule p-4">
-                        <h2 class="text-lg font-medium text-ink mb-4">{{ ucfirst(str_replace('_', ' ', $colStatus)) }}</h2>
+                        <h3 class="text-lg font-medium text-ink mb-4">{{ ucfirst(str_replace('_', ' ', $colStatus)) }}</h3>
                         
                         <div class="space-y-4">
                             @foreach($assignments->where('status', $colStatus) as $assignment)
@@ -30,9 +30,9 @@
                                         </div>
                                     @endif
                                     
-                                    <h3 class="font-medium text-ink mb-1">
+                                    <h4 class="font-medium text-ink mb-1">
                                         {{ $workOrders->get($assignment->job_id) ?? 'Job #' . $assignment->job_id }}
-                                    </h3>
+                                    </h4>
                                     <p class="text-sm text-ink-2 mb-2">Tech ID: {{ $assignment->tech_id }}</p>
                                     
                                     @if($colStatus === 'en_route')
@@ -48,10 +48,7 @@
 
                                     <div class="mt-4 pt-3 border-t border-rule flex flex-col gap-2">
                                         @if($colStatus === 'dispatched')
-                                            <button wire:click="markEnRoute({{ $assignment->job_id }}, {{ $assignment->tech_id }})" 
-                                                    class="h-8 px-3 text-sm font-medium text-white bg-accent rounded hover:bg-accent-hover">
-                                                Mark en route
-                                            </button>
+                                            <x-ui.button wire:click="markEnRoute({{ $assignment->job_id }}, {{ $assignment->tech_id }})">Mark en route</x-ui.button>
                                         @endif
 
                                         @if(in_array($colStatus, ['en_route', 'on_site']))

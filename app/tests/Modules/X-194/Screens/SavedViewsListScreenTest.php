@@ -19,11 +19,19 @@ class SavedViewsListScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        app(ViewSaveAction::class)->save($biz->id, 'Real GET View');
+        $this->get(route('x-194.saved-views-list'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
+            ->assertDontSee('this screen is planned in')
+            ->assertSee('You have not saved a view yet.');
+
+        app(ViewSaveAction::class)->save($biz->id, 'Distinctive GET View 4604');
 
         $this->get(route('x-194.saved-views-list'))
             ->assertOk()
-            ->assertSee('Real GET View');
+            ->assertSee('Distinctive GET View 4604')
+            ->assertDontSee('You have not saved a view yet.');
 
         Livewire::test(SavedViewsList::class)->assertOk();
     }
