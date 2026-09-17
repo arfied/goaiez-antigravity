@@ -6,9 +6,8 @@ namespace Tests\Modules\X201\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X201\Ui\DisputeQueue;
 use App\Modules\X201\Models\Dispute;
-use App\Modules\X201\Models\DisputeEvidence;
+use App\Modules\X201\Ui\DisputeQueue;
 use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;

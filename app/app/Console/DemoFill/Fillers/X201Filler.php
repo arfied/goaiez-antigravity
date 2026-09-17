@@ -25,7 +25,7 @@ class X201Filler implements DemoFiller
             'business_id' => $business->id,
             'invoice_id' => 9001,
             'chargeback_amount_cents' => 18500,
-            'reason' => self::MARKER . 'Product not received',
+            'reason' => self::MARKER.'Product not received',
             'status' => 'opened',
             'deadline_at' => now()->addDays(10),
         ]);
@@ -34,7 +34,7 @@ class X201Filler implements DemoFiller
             'business_id' => $business->id,
             'invoice_id' => 9002,
             'chargeback_amount_cents' => 24000,
-            'reason' => self::MARKER . 'Duplicate charge',
+            'reason' => self::MARKER.'Duplicate charge',
             'status' => 'compiled',
         ]);
 
@@ -42,21 +42,21 @@ class X201Filler implements DemoFiller
             'business_id' => $business->id,
             'dispute_id' => $d2->id,
             'evidence_type' => 'invoice',
-            'file_url_or_content' => self::MARKER . 'Invoice #9002 — 240.00 disputed as duplicate charge',
+            'file_url_or_content' => self::MARKER.'Invoice #9002 — 240.00 disputed as duplicate charge',
         ]);
 
         DisputeEvidence::create([
             'business_id' => $business->id,
             'dispute_id' => $d2->id,
             'evidence_type' => 'call_log',
-            'file_url_or_content' => self::MARKER . 'Call on 14 Sep, 6 min, customer confirmed the visit',
+            'file_url_or_content' => self::MARKER.'Call on 14 Sep, 6 min, customer confirmed the visit',
         ]);
 
         $d3 = Dispute::create([
             'business_id' => $business->id,
             'invoice_id' => 9003,
             'chargeback_amount_cents' => 9900,
-            'reason' => self::MARKER . 'Fraudulent',
+            'reason' => self::MARKER.'Fraudulent',
             'status' => 'won',
         ]);
 
