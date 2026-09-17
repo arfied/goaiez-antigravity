@@ -6,8 +6,8 @@ namespace App\Console\DemoFill\Fillers;
 
 use App\Console\DemoFill\DemoFiller;
 use App\Models\Business;
-use App\Modules\X196\Models\ExtensionSession;
 use App\Modules\X196\Models\ExtensionInjection;
+use App\Modules\X196\Models\ExtensionSession;
 
 class X196Filler implements DemoFiller
 {
