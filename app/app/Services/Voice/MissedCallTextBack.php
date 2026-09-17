@@ -324,7 +324,7 @@ final class MissedCallTextBack
             );
         }
 
-        Log::error('TextBack outcome: '.json_encode($outcome));
+        Log::info('TextBack outcome: '.json_encode($outcome));
 
         return $outcome;
     }

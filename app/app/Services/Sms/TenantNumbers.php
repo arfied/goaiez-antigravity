@@ -116,7 +116,6 @@ final class TenantNumbers
     public function addToPool(string $e164, string $actor = self::ACTOR, ?string $reason = null): PhoneNumber
     {
         $normalised = Identifier::normalise($e164, OutreachChannel::Sms);
-        Log::warning('tenantFor e164: '.$e164.' result: '.($this->numberRow($normalised)->business_id ?? 'NULL'));
 
         if ($normalised === null) {
             throw new InvalidArgumentException(
@@ -272,7 +271,6 @@ final class TenantNumbers
         string $actor = self::ACTOR,
     ): PhoneNumber {
         $normalised = Identifier::normalise($e164, OutreachChannel::Sms);
-        Log::warning('tenantFor e164: '.$e164.' result: '.($this->numberRow($normalised)->business_id ?? 'NULL'));
 
         if ($normalised === null) {
             throw new InvalidArgumentException(
@@ -534,7 +532,6 @@ final class TenantNumbers
     public function isPlatformNumber(string $e164): bool
     {
         $normalised = Identifier::normalise($e164, OutreachChannel::Sms);
-        Log::warning('tenantFor e164: '.$e164.' result: '.($this->numberRow($normalised)->business_id ?? 'NULL'));
 
         if ($normalised === null) {
             return false;
@@ -602,7 +599,6 @@ final class TenantNumbers
     public function assign(int $businessId, string $e164, ?string $providerNumberId = null): PhoneNumber
     {
         $normalised = Identifier::normalise($e164, OutreachChannel::Sms);
-        Log::warning('tenantFor e164: '.$e164.' result: '.($this->numberRow($normalised)->business_id ?? 'NULL'));
 
         if ($normalised === null) {
             throw new InvalidArgumentException(
@@ -744,7 +740,6 @@ final class TenantNumbers
     public function tenantFor(string $e164): ?int
     {
         $normalised = Identifier::normalise($e164, OutreachChannel::Sms);
-        Log::warning('tenantFor e164: '.$e164.' result: '.($this->numberRow($normalised)->business_id ?? 'NULL'));
 
         if ($normalised === null) {
             return null;
