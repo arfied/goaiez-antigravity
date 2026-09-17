@@ -1,6 +1,6 @@
 <div>
     <div class="p-4 space-y-4">
-        <h3 class="text-lg font-bold text-ink">Customers Directory</h3>
+        <h2 class="text-lg font-bold text-ink">Customers</h2>
         
         @if ($isSample)
             <x-ui.sample />

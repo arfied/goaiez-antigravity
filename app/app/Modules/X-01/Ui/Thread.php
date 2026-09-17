@@ -14,9 +14,11 @@ use App\Modules\X01\Models\TakeoverLatch;
 use App\Modules\X121\Actions\PersonLookupAction;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Inbox'])]
 class Thread extends Component
 {
     #[Locked]

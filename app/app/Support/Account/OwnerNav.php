@@ -614,8 +614,13 @@ final class OwnerNav
             OwnerNavItem::make('Browser extension', 'x-196.extension-popup', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Proposed pages', 'x-140.proposed-pages', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Payment methods', 'x-120.card-screen', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Site editor', 'x-178.site-editor-assistant', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Connect your AI', 'x-142.connect-your-ai', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Webhooks', 'x-142.webhooks', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Sync conflicts', 'x-173.conflicts-list', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Sync error rate', 'x-173.sync-error-rate', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Customers', 'x-01.customers-list', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Inbox', 'x-01.thread', OwnerNavItem::GROUP_MORE),
         ];
     }
 
