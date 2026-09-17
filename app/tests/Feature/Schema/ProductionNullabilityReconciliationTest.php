@@ -45,4 +45,28 @@ class ProductionNullabilityReconciliationTest extends TestCase
             'qa_settings is missing ticket_recipient_id'
         );
     }
+
+    public function test_the_thirteen_tree_required_columns_are_not_nullable(): void
+    {
+        $pairs = [
+            'ai_calls' => ['cost_cents', 'latency_ms', 'prompt_version', 'tokens_in', 'tokens_out', 'ttft_ms', 'usage_unavailable'],
+            'brand_registrations' => ['brand_type', 'registration_status'],
+            'carrier_credentials' => ['business_id'],
+            'gbp_connections' => ['profile_status'],
+            'operator_alerts' => ['severity', 'status'],
+            'voicemails' => ['duration_seconds'],
+        ];
+
+        foreach ($pairs as $table => $columns) {
+            foreach ($columns as $column) {
+                $row = DB::selectOne(
+                    'select is_nullable from information_schema.columns where table_schema = current_schema() and table_name = ? and column_name = ?',
+                    [$table, $column]
+                );
+
+                $this->assertNotNull($row, "Column {$table}.{$column} does not exist");
+                $this->assertSame('NO', $row->is_nullable, "Column {$table}.{$column} is nullable");
+            }
+        }
+    }
 }
