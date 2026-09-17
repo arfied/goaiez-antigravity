@@ -799,3 +799,4 @@
 - `2026-09-16T21:40:12` (R245) X-194 — UI-131: the saved-views list sits in the owner shell as Saved views; it already read its tenant; X-194 has no admin door; X194Filler seeds two views
 - `2026-09-16T23:10:12` (R245) X-194 — UI-132: any-view-it sits in the owner shell as View; it already read its tenant; X-194 has no admin door; the demo view opens
 - `2026-09-16T23:26:35` note: X-194 UI-132b: test_location_timezone_from_url restored from 735b151e; UI-132 had removed it to match a brief's wrong method count
+- `2026-09-17T02:35:10` (R245) X-193 — UI-133: sends-by-class sits in the owner shell as Sends by class; tenant-scoped read with a mount; admin door kept; quiethour-holds untouched (reads no table); X193Filler seeds three notification classes
