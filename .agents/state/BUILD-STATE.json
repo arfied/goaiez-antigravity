@@ -937,12 +937,6 @@
      "stage": "contract",
      "why": "send.requested correctly emitted by multiple modules per R231, but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
      "at": "2026-09-03T13:47:25"
-    },
-    {
-     "module": "X-186",
-     "stage": "capability",
-     "why": "no action enrols a person into a campaign",
-     "at": "2026-09-04T22:41:56"
     }
    ]
   },
@@ -1316,12 +1310,6 @@
    "at": "2026-09-04T08:05:31"
   },
   {
-   "module": "X-186",
-   "stage": "capability",
-   "why": "no action enrols a person into a campaign",
-   "at": "2026-09-04T22:41:56"
-  },
-  {
    "module": "X-172",
    "stage": "tests",
    "why": "generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook",
@@ -1600,6 +1588,13 @@
    "stage": "tests",
    "was": "column quiet_hours_start is missing from notification_classes and not named in the brief",
    "why": "the column arrived: migration 2026_09_04_072838_add_quiet_hours_start_to_notification_classes_table.php (14df5c8a, 2026-09-04 02:32) adds quiet_hours_start and quiet_hours_end; X193Test::test_dependency_quiet_hours_start_exists asserts it and is green",
+   "at": "2026-09-17T09:48:02"
+  },
+  {
+   "module": "X-186",
+   "stage": "capability",
+   "was": "no action enrols a person into a campaign",
+   "why": "the action arrived: CampaignEnrolAction::enrol (9a86b10e, 2026-09-12) enrols a person into a campaign through X-121's EntityReadAction; CampaignEnrolTest proves it in four methods and is green",
    "at": "2026-09-17T09:48:02"
   }
  ]
