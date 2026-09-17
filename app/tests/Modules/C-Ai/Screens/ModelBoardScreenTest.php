@@ -46,7 +46,7 @@ class ModelBoardScreenTest extends TestCase
             'usage_unavailable' => false,
         ]);
 
-        DB::statement("RESET app.business_id");
+        DB::statement('RESET app.business_id');
 
         $this->get(route('c-ai.model-board'))
             ->assertOk()
