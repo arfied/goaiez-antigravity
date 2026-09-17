@@ -60,9 +60,10 @@ class InfobipVoiceHistoryReadBackTest extends TestCase
 
     public function test_a_missed_call_read_from_history_dispatches_call_missed_for_the_tenant(): void
     {
-        app(TenantNumbers::class)->addToPool('+15555550100');
         $business = static::provisionTenant(['name' => 'Business Name']);
-        app(TenantNumbers::class)->claimForTenant($business->id);
+        app(TenantNumbers::class)->releaseFromTenant($business->id);
+        $number = app(TenantNumbers::class)->assign($business->id, '+15555550100');
+        app(TenantNumbers::class)->bringIntoService($number, 'test');
 
         Tenancy::actingAs($business->id, function () {
             app(CallForwarding::class)->chooseMode(CallRoutingMode::Conditional, 'system');
