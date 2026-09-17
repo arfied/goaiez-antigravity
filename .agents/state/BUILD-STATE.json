@@ -2798,6 +2798,10 @@
   {
    "at": "2026-09-16T18:29:53",
    "note": "X-177 SITE-229: X177Filler sets location_id \u2014 production's gbp_connections has it NOT NULL (module migration create branch), test databases nullable (core migration first); demo:fill aborted there on 2026-09-16"
+  },
+  {
+   "at": "2026-09-16T19:05:30",
+   "note": "X-177 SITE-230: X177Filler creates a demo Location and sets location_id to its id \u2014 production's gbp_connections.location_id is bigint NOT NULL FK to locations (schema drift vs the tree); SITE-229's string would have failed there"
   }
  ],
  "resolved": [

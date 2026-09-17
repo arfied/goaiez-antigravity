@@ -961,3 +961,4 @@
 - `2026-09-16T14:44:27` (R245) X-137 — SITE-227: the DNI pool usage screen reads the real pool numbers, active tokens and fallback in the owner shell; admin door kept
 - `2026-09-16T16:11:17` note: X-157 SITE-228: demo:fill fillers for the site lane's owner-shell modules (X-157 X-176 X-177 X-203 X-108 X-121); marked demo· rows, idempotent, purgeable
 - `2026-09-16T18:29:53` note: X-177 SITE-229: X177Filler sets location_id — production's gbp_connections has it NOT NULL (module migration create branch), test databases nullable (core migration first); demo:fill aborted there on 2026-09-16
+- `2026-09-16T19:05:30` note: X-177 SITE-230: X177Filler creates a demo Location and sets location_id to its id — production's gbp_connections.location_id is bigint NOT NULL FK to locations (schema drift vs the tree); SITE-229's string would have failed there
