@@ -13,8 +13,10 @@ use App\Modules\X162\Models\EtaPrediction;
 use App\Support\Tenancy;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Dispatch board'])]
 class DispatchBoard extends Component
 {
     public $techIds = [];
