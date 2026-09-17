@@ -1,7 +1,18 @@
 <div>
-    <x-surface.sample-state module="**one Conversation per Person, every channel** — SMS, email, voice transcripts, web chat, WhatsApp in ONE timeline; contact de-duplication; record and screen pop; CRM logging and injection; field-level history; tagging and auto-categorisation; custom fields; bulk actions and exports *(moved here from X-121)*; conversational global search; lead transparency and hidden scoring; lead caps; ghost-risk; the preference centre. ⛔ **P18: `app/Livewire/Account/Inbox.php` exists but its scope was never verified — if it is a mail reader wearing the name, this is a build, not a wiring job, and it is replaced.**" screen="history" />
     <div class="history-card p-4">
-        <h3 class="text-lg font-bold">Activity History</h3>
-        <p class="text-gray-500">Chronological interaction timeline.</p>
+        <h2 class="text-lg font-bold text-ink">Activity</h2>
+        @if($messages->isEmpty())
+            <x-ui.empty-state heading="Nothing has happened yet.">Every text, call and chat with a customer lands here in one timeline, newest first.</x-ui.empty-state>
+        @else
+            <ul class="divide-y divide-rule">
+                @foreach($messages as $m)
+                    <li class="py-2" wire:key="msg-{{ $m->id }}">
+                        <span class="text-sm text-ink-2">{{ $m->direction }}</span>
+                        <span class="font-semibold">{{ $m->body }}</span>
+                        <span class="text-sm text-ink-2">{{ $m->sender_type }}</span>
+                    </li>
+                @endforeach
+            </ul>
+        @endif
     </div>
 </div>
