@@ -49,10 +49,10 @@ class CallsScreenTest extends TestCase
                 ->assertDontSee('Failed to load number')
                 ->assertDontSee('We couldn\'t load the assigned number');
 
-            // 1. Empty + SAMPLE
+            // 1. Empty state, no SAMPLE
             Livewire::test(Calls::class)
                 ->assertSee('No calls yet') // empty state invitation
-                ->assertSee('SAMPLE'); // SAMPLE badge
+                ->assertDontSee('SAMPLE'); // no invented row in the empty state
 
             // 4. Pool-number state: NO number assignment
             // Delete only rows WE created.

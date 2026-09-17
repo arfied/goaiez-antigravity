@@ -8,8 +8,10 @@ use App\Modules\CBilling\Actions\DunningAdvanceAction;
 use App\Modules\CBilling\Models\DunningState;
 use App\Support\Tenancy;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Dunning board'])]
 class DunningBoard extends Component
 {
     use LabelsDunning;

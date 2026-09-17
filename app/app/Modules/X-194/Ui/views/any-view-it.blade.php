@@ -1,4 +1,5 @@
 <div>
+    <h2 class="text-lg font-bold text-ink">View</h2>
     @if ($errorMessage)
         <x-ui.error-panel heading="We could not render your view." retry="load">
             {{ $errorMessage }}

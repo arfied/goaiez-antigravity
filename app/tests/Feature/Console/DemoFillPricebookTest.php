@@ -25,29 +25,31 @@ class DemoFillPricebookTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-205'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-205,X-162'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
 
         $this->assertDatabaseHas('affiliates', ['business_id' => $biz->id, 'partner_name' => 'demo·Alpha Partners']);
         $this->assertDatabaseHas('affiliate_attributions', ['business_id' => $biz->id, 'order_id' => 'demo·ord1']);
         $this->assertDatabaseHas('affiliate_payouts', ['business_id' => $biz->id, 'amount_cents' => 5000]);
+        $this->assertDatabaseHas('dispatch_assignments', ['business_id' => $biz->id, 'job_id' => 100, 'is_sample' => true]);
 
         $c1 = Affiliate::count();
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-205'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-205,X-162'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
         $this->assertEquals($c1, Affiliate::count());
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--purge' => true, '--only' => 'X-205'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--purge' => true, '--only' => 'X-205,X-162'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
 
         $this->assertDatabaseMissing('affiliates', ['business_id' => $biz->id, 'partner_name' => 'demo·Alpha Partners']);
         $this->assertDatabaseMissing('affiliate_attributions', ['business_id' => $biz->id, 'order_id' => 'demo·ord1']);
         $this->assertDatabaseMissing('affiliate_payouts', ['business_id' => $biz->id, 'amount_cents' => 5000]);
+        $this->assertDatabaseMissing('dispatch_assignments', ['business_id' => $biz->id, 'job_id' => 100, 'is_sample' => true]);
     }
 
     public function test_the_pricebook_screens_show_the_demo_rows(): void
@@ -56,7 +58,7 @@ class DemoFillPricebookTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-205'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-205,X-162'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
         $this->actingAs($owner);
@@ -64,6 +66,7 @@ class DemoFillPricebookTest extends TestCase
         $this->get(route('x-205.portal'))->assertOk()->assertSee('demo·Alpha Partners');
         $this->get(route('x-205.earnings'))->assertOk()->assertSee('demo·ord1');
         $this->get(route('x-205.payout-run'))->assertOk()->assertSee('50.00')->assertSee('requested');
+        $this->get(route('x-162.dispatch-board'))->assertOk()->assertSee('Job #100')->assertSee('Job #101');
     }
 
     public function test_x163_filler_is_idempotent(): void
