@@ -623,6 +623,8 @@ final class OwnerNav
             OwnerNavItem::make('Inbox', 'x-01.thread', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('First wins', 'x-118.today', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Time to first minute', 'x-118.ttfm-distribution', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Dry-run preview', 'x-212.dryrun-preview', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Import rejections', 'x-212.postimport-audit', OwnerNavItem::GROUP_MORE),
         ];
     }
 
