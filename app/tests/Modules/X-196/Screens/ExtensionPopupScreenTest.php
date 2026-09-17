@@ -26,7 +26,7 @@ class ExtensionPopupScreenTest extends TestCase
             ->assertSee('Your account')
             ->assertDontSee('Internal Platform Console')
             ->assertDontSee('this screen is planned in')
-            ->assertSee('No extension sessions yet.');
+            ->assertSee('No active sessions');
 
         Tenancy::setUser($owner->id);
         $session = ExtensionSession::create([
@@ -48,7 +48,7 @@ class ExtensionPopupScreenTest extends TestCase
             ->assertSee('Active')
             ->assertSee('https://distinctive-4615.example/prospect')
             ->assertSee('Distinctive attest 4615')
-            ->assertDontSee('No extension sessions yet.');
+            ->assertDontSee('No active sessions');
 
         Livewire::test(ExtensionPopup::class)->assertOk();
     }
