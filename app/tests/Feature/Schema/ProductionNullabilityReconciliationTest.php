@@ -25,7 +25,7 @@ class ProductionNullabilityReconciliationTest extends TestCase
         foreach (self::DROP_NOT_NULL as $table => $columns) {
             foreach ($columns as $column) {
                 $row = DB::selectOne(
-                    "select is_nullable from information_schema.columns where table_schema = current_schema() and table_name = ? and column_name = ?",
+                    'select is_nullable from information_schema.columns where table_schema = current_schema() and table_name = ? and column_name = ?',
                     [$table, $column]
                 );
 
