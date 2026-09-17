@@ -582,6 +582,7 @@ final class OwnerNav
             OwnerNavItem::make('Credits', 'c-billing.credits', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Chat widget', 'x-102.customerfacing-widget', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Branded media', 'x-189.preview-per-destination', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Affiliates', 'x-205.portal', OwnerNavItem::GROUP_MORE),
         ];
     }
 
