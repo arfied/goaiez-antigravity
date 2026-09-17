@@ -2387,6 +2387,10 @@
   {
    "at": "2026-09-17T12:44:04",
    "note": "C-Telephony SIXTY-213: InfobipVoiceProvider::call() reads GET /calls/1/calls/{id}/history (the live-call endpoint 404s once a call ends \u2014 measured on production 2026-09-17, three probe calls dropped); from/to normalised to E.164 at the parse boundary; InfobipVoiceHistoryReadBackTest fakes Infobip. The driver is core app/Services/Voice, noted under C-Telephony because the carrier seam is that module's."
+  },
+  {
+   "at": "2026-09-17T14:21:54",
+   "note": "C-Telephony SIXTY-214: five tenantFor warnings wrote caller numbers into the production log on every lookup, AutopilotJob logged claimRun nine times a tick, and a successful missed-call text-back was logged at ERROR; all three left behind by past debugging, none referenced by a test"
   }
  ]
 }
