@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-17T10:17:43",
+ "updated": "2026-09-17T15:09:13",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1500,6 +1500,12 @@
    "module": "X-201",
    "chose": "PB-215: dispute-card and dispute-queue sit in the owner shell as Disputes and Dispute queue; both already tenant-scoped; admin doors kept; X201Filler seeds three disputes, two evidence items and one outcome; module owned by pricebook from this wave",
    "at": "2026-09-17T08:25:38",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-01",
+   "chose": "PB-217: the customers directory and the inbox thread sit in the owner shell as Customers and Inbox; tenant-scoped reads of people, conversations and messages; the four legacy message tables are untouched under the 2026-09-17 exemption; X01Filler seeds a person, a score, a conversation and two messages",
+   "at": "2026-09-17T15:09:13",
    "ruling": "R245"
   }
  ],
