@@ -1,5 +1,5 @@
 <div>
-    <h1>Collections package</h1>
+    <h2 class="text-lg font-bold text-ink">Collections package</h2>
 
     <p class="text-base text-ink-2">The bundle is built here. Sending it to an agency is a human action, and it happens only after a resolution attempt is on record.</p>
 
@@ -24,10 +24,10 @@
     </div>
 
     @if($packages->isNotEmpty())
-        <h2>Packaged</h2>
+        <h3 class="font-semibold text-ink">Packaged</h3>
         <ul class="space-y-2">
             @foreach($packages as $package)
-                <li class="border rounded p-4 shadow bg-white">
+                <li class="border rounded p-4 shadow bg-card">
                     <div class="flex justify-between items-center">
                         <span class="font-semibold">{{ $package->contents['invoice_number'] ?? ('#'.$package->invoice_id) }}</span>
                         <x-ui.status-pill :state="$package->transmitted_at ? 'ok' : 'attention'" :label="$package->transmitted_at ? 'recorded as sent to '.$package->partner.'; nothing was sent from here' : 'waiting on a collections partner'" />
@@ -41,14 +41,14 @@
     @if($candidates->isEmpty())
         <x-ui.empty-state heading="Nothing to package.">No overdue invoice is waiting on collections. Nothing in this checkout raises one from a completed job, and a draft is never issued, so no invoice can go overdue yet.</x-ui.empty-state>
     @else
-        <h2>Overdue, not yet packaged</h2>
+        <h3 class="font-semibold text-ink">Overdue, not yet packaged</h3>
         <ul class="space-y-4">
             @foreach($candidates as $inv)
-                <li class="border rounded p-4 shadow bg-white">
+                <li class="border rounded p-4 shadow bg-card">
                     <div class="flex justify-between items-center mb-2">
                         <div>
                             <span class="font-semibold">{{ $inv->invoice_number }}</span>
-                            <span class="text-gray-500 text-sm ml-2">Due {{ $inv->due_date->toDateString() }}</span>
+                            <span class="text-ink-2 text-sm ml-2">Due {{ $inv->due_date->toDateString() }}</span>
                         </div>
                         <div class="tabular-nums">{{ number_format($inv->balance_cents / 100, 2) }} owed</div>
                     </div>

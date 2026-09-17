@@ -5,6 +5,7 @@ namespace App\Console\DemoFill\Fillers;
 use App\Console\DemoFill\DemoFiller;
 use App\Models\Business;
 use App\Modules\X16\Models\GeoGrid;
+use App\Modules\X16\Models\PlacesRecord;
 use App\Modules\X16\Models\ServicePolygon;
 
 class X16Filler implements DemoFiller
@@ -49,7 +50,51 @@ class X16Filler implements DemoFiller
             'is_active' => false,
         ]);
 
-        return 3;
+        PlacesRecord::create([
+            'business_id' => $business->id,
+            'place_id' => 'demo-place-1',
+            'name' => self::MARKER.'Riverside Plumbing',
+            'address' => self::MARKER.'120 Riverside Dr',
+            'latitude' => 30.35,
+            'longitude' => -97.75,
+            'phone' => null,
+            'is_chain' => false,
+        ]);
+
+        PlacesRecord::create([
+            'business_id' => $business->id,
+            'place_id' => 'demo-place-2',
+            'name' => self::MARKER.'Northgate Dental',
+            'address' => self::MARKER.'48 Northgate Ave',
+            'latitude' => 30.32,
+            'longitude' => -97.72,
+            'phone' => null,
+            'is_chain' => false,
+        ]);
+
+        PlacesRecord::create([
+            'business_id' => $business->id,
+            'place_id' => 'demo-place-3',
+            'name' => self::MARKER.'Southpark Bakery',
+            'address' => self::MARKER.'9 Southpark Rd',
+            'latitude' => 30.05,
+            'longitude' => -97.90,
+            'phone' => null,
+            'is_chain' => false,
+        ]);
+
+        PlacesRecord::create([
+            'business_id' => $business->id,
+            'place_id' => 'demo-place-4',
+            'name' => self::MARKER.'Hillcrest Vet',
+            'address' => self::MARKER.'77 Hillcrest Ln',
+            'latitude' => null,
+            'longitude' => null,
+            'phone' => null,
+            'is_chain' => false,
+        ]);
+
+        return 7;
     }
 
     public function purge(Business $business): int
@@ -62,6 +107,10 @@ class X16Filler implements DemoFiller
             ->where('polygon_name', 'like', self::MARKER.'%')
             ->delete();
 
-        return $gridsCount + $polygonsCount;
+        $placesCount = PlacesRecord::where('business_id', $business->id)
+            ->where('name', 'like', self::MARKER.'%')
+            ->delete();
+
+        return $gridsCount + $polygonsCount + $placesCount;
     }
 }
