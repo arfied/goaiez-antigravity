@@ -25,5 +25,10 @@ final class ModuleServiceProvider extends ServiceProvider
         if (class_exists(Livewire::class)) {
             Livewire::component('c-ai.model-board', ModelBoard::class);
         }
+
+        \Illuminate\Support\Facades\Event::listen(
+            \App\Modules\CAgent\Events\AgentTurnStarted::class,
+            \App\Modules\CAi\Listeners\RecordAiCallOnAgentTurnStarted::class
+        );
     }
 }

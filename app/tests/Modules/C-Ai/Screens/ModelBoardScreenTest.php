@@ -7,7 +7,9 @@ namespace Tests\Modules\CAi\Screens;
 use App\Enums\UserRole;
 use App\Models\User;
 use App\Modules\CAi\Models\AiCall;
+use App\Modules\CAi\Ui\ModelBoard;
 use Illuminate\Support\Facades\DB;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class ModelBoardScreenTest extends TestCase
@@ -17,6 +19,8 @@ class ModelBoardScreenTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
+
+        Livewire::test(ModelBoard::class)->assertOk();
 
         $this->get(route('c-ai.model-board'))
             ->assertOk()
