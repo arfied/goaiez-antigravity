@@ -1,5 +1,5 @@
 <div>
-<h1>Reconciliation discrepancies</h1>
+<h2 class="text-lg font-bold text-ink">Reconciliation discrepancies</h2>
 <x-ui.attention-card state="attention" heading="One account at a time">the cross-account roll-up is an operator read behind row-level security and no cross-account read path is built in this checkout yet; what follows is this account's runs.</x-ui.attention-card>
 @if($error) <x-ui.error-panel heading="We couldn't mark that run">{{ $error }}</x-ui.error-panel> @endif
 @if($success) <p>{{ $success }}</p> @endif
@@ -9,7 +9,7 @@
 @else
 <ul class="space-y-4">
 @foreach($runs as $run)
-<li class="border rounded p-4 shadow bg-white">
+<li class="border rounded p-4 shadow bg-card">
 <span class="font-semibold">{{ $run->payout_label }}</span>
 <span class="text-sm text-ink-2">{{ $run->payout_date }}</span>
 @if($run->reviewed_label === null)

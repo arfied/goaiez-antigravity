@@ -631,6 +631,7 @@ final class OwnerNav
             OwnerNavItem::make('Autopilot ladder', 'x-209.ladders-own-state', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Person', 'x-01.person', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Activity', 'x-01.history', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Reconciliation discrepancies', 'x-198.reconciliation-discrepancies', OwnerNavItem::GROUP_MORE),
         ];
     }
 
