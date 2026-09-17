@@ -12,6 +12,7 @@ class Registry
         $fillers = [
             new Fillers\CAgentFiller,
             new Fillers\CAiFiller,
+            new Fillers\CMailFiller,
             new Fillers\CReviewsFiller,
             new Fillers\X07Filler,
             new Fillers\X08Filler,
