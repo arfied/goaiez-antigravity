@@ -587,6 +587,7 @@ final class OwnerNav
             OwnerNavItem::make('Failed deliveries', 'x-123.dlq-request-inspector', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Monthly billing', 'c-billing.mrr', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Saved views', 'x-194.saved-views-list', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Affiliate payouts', 'x-205.payout-run', OwnerNavItem::GROUP_MORE),
         ];
     }
 
