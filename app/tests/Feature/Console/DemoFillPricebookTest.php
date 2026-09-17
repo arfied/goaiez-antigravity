@@ -81,7 +81,7 @@ class DemoFillPricebookTest extends TestCase
         $this->get(route('x-162.dispatch-board'))->assertOk()->assertSee('Job #100')->assertSee('Job #101');
         $this->get(route('x-172.customerfacing-portal', ['token' => 'demo-portal-'.$biz->id]))->assertOk()->assertSee('Work Order')->assertSee('Sample');
         $this->get(route('x-201.dispute-queue'))->assertOk()->assertSee('demo·Product not received')->assertSee('demo·Duplicate charge')->assertDontSee('demo·Fraudulent');
-        $this->get(route('x-201.dispute-card'))->assertOk()->assertSee('demo·Fraudulent')->assertSee('demo·Duplicate charge')->assertSee('2 evidence items');
+        $this->get(route('x-201.dispute-card'))->assertOk()->assertSee('demo·Fraudulent')->assertSee('demo·Duplicate charge')->assertSee('2 evidence items')->assertSee('Deadline:');
     }
 
     public function test_x163_filler_is_idempotent(): void
