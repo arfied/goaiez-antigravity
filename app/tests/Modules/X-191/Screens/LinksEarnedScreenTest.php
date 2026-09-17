@@ -6,7 +6,9 @@ namespace Tests\Modules\X191\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X191\Models\LinkPlacement;
 use App\Modules\X191\Ui\LinksEarned;
+use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,7 +20,30 @@ class LinksEarnedScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-191.links-earned'))->assertOk();
+        $this->get(route('x-191.links-earned'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
+            ->assertDontSee('this screen is planned in')
+            ->assertSee('No earned links yet.');
+
+        Tenancy::setUser($owner->id);
+
+        LinkPlacement::create([
+            'business_id' => $biz->id,
+            'pitch_id' => null,
+            'placed_url' => 'https://distinctive-4607.example/resources',
+            'anchor_text' => 'Distinctive anchor 4607',
+            'is_active' => true,
+        ]);
+
+        Tenancy::forget();
+
+        $this->get(route('x-191.links-earned'))
+            ->assertOk()
+            ->assertSee('Distinctive anchor 4607')
+            ->assertSee('live')
+            ->assertDontSee('No earned links yet.');
 
         Livewire::test(LinksEarned::class)->assertOk();
     }
