@@ -2379,6 +2379,10 @@
   {
    "at": "2026-09-16T23:35:51",
    "note": "X-66 SIXTY-209b: test_calls_screen_renders_states now asserts the empty state carries no SAMPLE badge; the fabricated row left with SIXTY-209"
+  },
+  {
+   "at": "2026-09-17T10:00:48",
+   "note": "REMOVED (owner ruling 2026-09-17, plan \u00a7257.6): X-200 X-158 X-159 X-114 X-144 X-197 X-147 X-143 X-141 X-145 X-213 X-208 X-215 X-214 X-221 X-222 X-223 \u2014 directories, tests, provider lines, feature entries and plan waves deleted in SIXTY-212; tables kept; C-Telephony and X-124 consumes corrected; scaffolds skip the seventeen by name"
   }
  ]
 }
