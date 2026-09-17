@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\CAi;
 
+use App\Modules\CAgent\Events\AgentTurnStarted;
+use App\Modules\CAi\Listeners\RecordAiCallOnAgentTurnStarted;
 use App\Modules\CAi\Ui\ModelBoard;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 
@@ -26,9 +29,9 @@ final class ModuleServiceProvider extends ServiceProvider
             Livewire::component('c-ai.model-board', ModelBoard::class);
         }
 
-        \Illuminate\Support\Facades\Event::listen(
-            \App\Modules\CAgent\Events\AgentTurnStarted::class,
-            \App\Modules\CAi\Listeners\RecordAiCallOnAgentTurnStarted::class
+        Event::listen(
+            AgentTurnStarted::class,
+            RecordAiCallOnAgentTurnStarted::class
         );
     }
 }
