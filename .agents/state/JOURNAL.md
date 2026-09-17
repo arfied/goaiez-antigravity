@@ -978,3 +978,4 @@
 - `2026-09-16T19:30:56` (R245) C-Ai — SIXTY-206: the model board lists real AI calls in the owner shell as AI calls; a tenant-scoped read with a mount; C-Ai has no admin door; CAiFiller seeds two calls
 - `2026-09-16T19:44:02` (R245) C-Ai — SIXTY-207: agent.turn.started is emitted by C-Agent (plan header + scaffolded manifest) and consumed by C-Ai, which records a simulated AI call per turn; the engine now writes task/provider/model; the real provider is a separate owner decision
 - `2026-09-16T20:05:39` note: C-Ai SIXTY-207b: per-turn AI-call recording withdrawn — no turn uses a model yet and fact-gated turns must record none; the listener is the seam for the future model call
+- `2026-09-16T21:51:36` (R245) C-Mail — SIXTY-208: the DNS card and the warm-up calendars sit in the owner shell as Email domain and Domain warm-up; tenant-scoped reads; C-Mail has no admin door; CMailFiller seeds one domain and its warm-up

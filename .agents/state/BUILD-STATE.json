@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-16T19:44:02",
+ "updated": "2026-09-16T21:51:36",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -2064,6 +2064,12 @@
    "module": "C-Ai",
    "chose": "SIXTY-207: agent.turn.started is emitted by C-Agent (plan header + scaffolded manifest) and consumed by C-Ai, which records a simulated AI call per turn; the engine now writes task/provider/model; the real provider is a separate owner decision",
    "at": "2026-09-16T19:44:02",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Mail",
+   "chose": "SIXTY-208: the DNS card and the warm-up calendars sit in the owner shell as Email domain and Domain warm-up; tenant-scoped reads; C-Mail has no admin door; CMailFiller seeds one domain and its warm-up",
+   "at": "2026-09-16T21:51:36",
    "ruling": "R245"
   }
  ],
