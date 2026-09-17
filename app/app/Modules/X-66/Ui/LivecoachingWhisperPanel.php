@@ -16,6 +16,7 @@ class LivecoachingWhisperPanel extends Component
     {
         $businessId = Tenancy::idOrFail();
         $autopsies = CallAutopsy::where('business_id', $businessId)->orderByDesc('id')->get();
+
         return view('x-66::livecoaching-whisper-panel', ['autopsies' => $autopsies]);
     }
 }

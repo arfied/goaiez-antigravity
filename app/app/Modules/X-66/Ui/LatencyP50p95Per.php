@@ -16,6 +16,7 @@ class LatencyP50p95Per extends Component
     {
         $businessId = Tenancy::idOrFail();
         $calls = CallSession::where('business_id', $businessId)->orderByDesc('latency_ms')->get();
+
         return view('x-66::latency-p50p95-per', ['calls' => $calls]);
     }
 }
