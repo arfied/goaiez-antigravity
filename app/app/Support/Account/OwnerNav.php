@@ -614,6 +614,7 @@ final class OwnerNav
             OwnerNavItem::make('Browser extension', 'x-196.extension-popup', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Proposed pages', 'x-140.proposed-pages', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Payment methods', 'x-120.card-screen', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Site editor', 'x-178.site-editor-assistant', OwnerNavItem::GROUP_MORE),
         ];
     }
 
