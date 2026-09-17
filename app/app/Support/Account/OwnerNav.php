@@ -607,6 +607,8 @@ final class OwnerNav
             OwnerNavItem::make('Harvest coverage', 'x-16.harvest-coverage-by', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Number health', 'c-sms.pernumber-complaint-monitoring', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Message segments', 'c-sms.composer-segment-warning', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Collections package', 'x-211.collections-package-preview', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Invoice thread', 'x-211.invoice-thread-beside', OwnerNavItem::GROUP_MORE),
         ];
     }
 
