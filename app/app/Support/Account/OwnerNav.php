@@ -584,6 +584,7 @@ final class OwnerNav
             OwnerNavItem::make('Branded media', 'x-189.preview-per-destination', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Affiliates', 'x-205.portal', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('AI calls', 'c-ai.model-board', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Monthly billing', 'c-billing.mrr', OwnerNavItem::GROUP_MORE),
         ];
     }
 
