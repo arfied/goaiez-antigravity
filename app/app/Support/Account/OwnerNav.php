@@ -612,6 +612,7 @@ final class OwnerNav
             OwnerNavItem::make('Disputes', 'x-201.dispute-card', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Dispute queue', 'x-201.dispute-queue', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Browser extension', 'x-196.extension-popup', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Proposed pages', 'x-140.proposed-pages', OwnerNavItem::GROUP_MORE),
         ];
     }
 
