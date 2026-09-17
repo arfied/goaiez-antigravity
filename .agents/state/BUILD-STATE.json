@@ -2810,6 +2810,10 @@
   {
    "at": "2026-09-16T20:14:08",
    "note": "X-121 SITE-232: reconciliation half two (a) \u2014 13 columns the tree requires become NOT NULL on production, tree defaults backfilled, carrier_credentials.business_id only if no null exists; location_id design still an owner decision"
+  },
+  {
+   "at": "2026-09-16T20:33:01",
+   "note": "X-177 SITE-233: location_id is a bigint NOT NULL FK to locations on every database, as production already had it (the live connect flow writes location ids); fixtures create a location; the audit's last type difference closed"
   }
  ],
  "resolved": [
