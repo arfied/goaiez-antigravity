@@ -52,7 +52,7 @@ class X66Filler implements DemoFiller
             'business_id' => $business->id,
             'call_sid' => self::MARKER.'CA2',
             'from_phone' => '+15125550177',
-            'to_phone' => '+15125550100', // added to_phone as the model might require it, but instructions omit it. Wait, the instructions didn't specify to_phone for the second session. Wait, the DB table has it nullable? Let's assume nullable or check migration.
+            'to_phone' => '+15125550100',
             'status' => 'missed',
             'latency_ms' => 0,
         ]);
