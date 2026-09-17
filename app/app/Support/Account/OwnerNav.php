@@ -621,6 +621,8 @@ final class OwnerNav
             OwnerNavItem::make('Sync error rate', 'x-173.sync-error-rate', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Customers', 'x-01.customers-list', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Inbox', 'x-01.thread', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Fixer inbox', 'x-209.private-inbox', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Autopilot ladder', 'x-209.ladders-own-state', OwnerNavItem::GROUP_MORE),
         ];
     }
 
