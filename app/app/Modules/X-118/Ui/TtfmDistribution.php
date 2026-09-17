@@ -17,6 +17,7 @@ class TtfmDistribution extends Component
         abort_unless(Tenancy::check(), 403);
         $businessId = Tenancy::idOrFail();
         $runs = OnboardingRun::where('business_id', $businessId)->orderBy('ttfm_ms')->get();
+
         return view('x-118::ttfm-distribution', ['runs' => $runs]);
     }
 }

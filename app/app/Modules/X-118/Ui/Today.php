@@ -17,6 +17,7 @@ class Today extends Component
         abort_unless(Tenancy::check(), 403);
         $businessId = Tenancy::idOrFail();
         $runs = OnboardingRun::where('business_id', $businessId)->orderByDesc('id')->get();
+
         return view('x-118::today', ['runs' => $runs]);
     }
 }
