@@ -1,11 +1,8 @@
 <div>
-    <x-surface.sample-state module="the operator's browser as a trigger: node-scraper integration *(the Gro Node cluster)*" screen="extension_popup" />
     <div class="extension-popup-view p-4">
-        <h3 class="text-lg font-bold mb-4">Browser Extension Assistant Ingest Popup</h3>
+        <h2 class="text-lg font-bold mb-4 text-ink">Browser extension</h2>
         @if($sessions->isEmpty())
-            <x-ui.empty-state heading="No active sessions" icon="🧩">
-                Please connect the browser extension to start scanning and injecting prospects.
-            </x-ui.empty-state>
+            <x-ui.empty-state heading="No extension sessions yet." icon="🧩">Connect the browser extension and every page it scans and every prospect it injects is listed here.</x-ui.empty-state>
         @else
             <x-ui.row-list>
                 @foreach($sessions as $session)

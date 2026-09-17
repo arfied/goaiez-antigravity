@@ -8,9 +8,11 @@ use App\Modules\X196\Actions\ExtensionInjectAction;
 use App\Modules\X196\Actions\ExtensionScanAction;
 use App\Modules\X196\Models\ExtensionSession;
 use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Browser extension'])]
 class ExtensionPopup extends Component
 {
     #[Locked]

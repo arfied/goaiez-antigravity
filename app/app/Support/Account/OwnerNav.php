@@ -604,6 +604,7 @@ final class OwnerNav
             OwnerNavItem::make('Text thread', 'c-sms.thread', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Overdue invoices', 'x-211.ageing-by-reason', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Payment plans', 'x-211.paymentplan-builder', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Browser extension', 'x-196.extension-popup', OwnerNavItem::GROUP_MORE),
         ];
     }
 
