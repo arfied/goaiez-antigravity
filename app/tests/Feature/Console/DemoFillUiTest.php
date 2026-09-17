@@ -24,7 +24,7 @@ class DemoFillUiTest extends TestCase
         Tenancy::forgetAll();
         $this->artisan('demo:fill', [
             'email' => $owner->email,
-            '--only' => 'X-206,X-207,X-210,X-190,X-186,X-182,X-212',
+            '--only' => 'X-206,X-207,X-210,X-190,X-186,X-182,X-212,X-113',
         ])->assertExitCode(0);
 
         Tenancy::set($biz->id);
@@ -46,13 +46,14 @@ class DemoFillUiTest extends TestCase
         $this->assertDatabaseHas('social_posts', ['business_id' => $biz->id, 'content_text' => 'demo·Text']);
         $this->assertDatabaseHas('comments', ['business_id' => $biz->id, 'author_name' => 'demo·Auth']);
         $this->assertDatabaseHas('migration_runs', ['business_id' => $biz->id, 'source_system' => 'demo·jobber']);
+        $this->assertDatabaseHas('staff_users', ['business_id' => $biz->id, 'name' => 'demo·Marcus Reed']);
 
         $c1 = Credential::count();
 
         Tenancy::forgetAll();
         $this->artisan('demo:fill', [
             'email' => $owner->email,
-            '--only' => 'X-206,X-207,X-210,X-190,X-186,X-182,X-212',
+            '--only' => 'X-206,X-207,X-210,X-190,X-186,X-182,X-212,X-113',
         ])->assertExitCode(0);
 
         Tenancy::set($biz->id);
@@ -62,7 +63,7 @@ class DemoFillUiTest extends TestCase
         $this->artisan('demo:fill', [
             'email' => $owner->email,
             '--purge' => true,
-            '--only' => 'X-206,X-207,X-210,X-190,X-186,X-182,X-212',
+            '--only' => 'X-206,X-207,X-210,X-190,X-186,X-182,X-212,X-113',
         ])->assertExitCode(0);
 
         Tenancy::set($biz->id);
@@ -84,6 +85,7 @@ class DemoFillUiTest extends TestCase
         $this->assertDatabaseMissing('social_posts', ['business_id' => $biz->id, 'content_text' => 'demo·Text']);
         $this->assertDatabaseMissing('comments', ['business_id' => $biz->id, 'author_name' => 'demo·Auth']);
         $this->assertDatabaseMissing('migration_runs', ['business_id' => $biz->id, 'source_system' => 'demo·jobber']);
+        $this->assertDatabaseMissing('staff_users', ['business_id' => $biz->id, 'name' => 'demo·Marcus Reed']);
     }
 
     public function test_the_ui_screens_show_the_demo_rows(): void
@@ -94,7 +96,7 @@ class DemoFillUiTest extends TestCase
         Tenancy::forgetAll();
         $this->artisan('demo:fill', [
             'email' => $owner->email,
-            '--only' => 'X-206,X-207,X-210,X-190,X-186,X-182,X-212',
+            '--only' => 'X-206,X-207,X-210,X-190,X-186,X-182,X-212,X-113',
         ])->assertExitCode(0);
 
         Tenancy::set($biz->id);
@@ -136,5 +138,9 @@ class DemoFillUiTest extends TestCase
         // X-212
         $this->get(route('x-212.dryrun-preview'))->assertOk()->assertSee('demo·jobber');
         $this->get(route('x-212.postimport-audit'))->assertOk()->assertSee('no phone number on the record');
+        
+        // X-113
+        $this->get(route('x-113.staff'))->assertOk()->assertSee('demo·Marcus Reed');
+        $this->get(route('x-113.roles'))->assertOk()->assertSee('demo·Field technician');
     }
 }

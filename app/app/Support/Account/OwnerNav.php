@@ -631,6 +631,8 @@ final class OwnerNav
             OwnerNavItem::make('Autopilot ladder', 'x-209.ladders-own-state', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Person', 'x-01.person', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Activity', 'x-01.history', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Staff', 'x-113.staff', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Roles', 'x-113.roles', OwnerNavItem::GROUP_MORE),
         ];
     }
 
