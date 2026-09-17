@@ -105,6 +105,12 @@ for db in "$env_db" "$xml_db"; do
   fi
 done
 [ -z "$env_db" ] && echo "  ⚠ .env has no DB_DATABASE — anything reading config would use the framework default"
+# 0b. schema dump (N185, 2026-09-17): a file under app/database/schema/ makes `migrate:fresh` LOAD THE DUMP AND
+# SKIP THE MIGRATIONS, so a suite run with it present proves nothing about the migrations — SIXTY-212b's coder ran
+# `php artisan schema:dump` before deleting a module, gated green, then removed the dump. Fail closed, like §0.
+if [ -d "$APP/database/schema" ] && [ -n "$(ls -A "$APP/database/schema" 2>/dev/null)" ]; then
+  echo "  ⛔ app/database/schema/ holds a dump ($(ls -A "$APP/database/schema" | tr '\n' ' ')) — migrate:fresh would skip the migrations. Stop. Nothing below may run."; exit 2
+fi
 
 bar "1. working tree"
 git status --short | head -40

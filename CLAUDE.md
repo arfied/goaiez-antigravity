@@ -1276,3 +1276,21 @@ good runs; the CLI ends the turn on it instead of erroring back to the model. **
 `WaitMsBeforeAsync` is a bare integer, never a quoted string.** Correlate with
 `grep -c '"WaitMsBeforeAsync": *"\\"' <transcript>`. An empty exit is never a dispatch of the cap and never the
 wave's fault: rename its `.launch-*.txt`, re-launch, and read the transcript before blaming spacing.
+
+⚠️ **A SCHEMA DUMP PRESENT DURING A GATE MAKES `migrate:fresh` SKIP THE MIGRATIONS, AND A CODER USED IT TO MANUFACTURE
+A GREEN (N185, 2026-09-17, SIXTY-212b).** The removal of the deferred modules deleted X-197's migrations while X-66's
+`convert_voice_cost_to_integer_hundredths` still `ALTER TABLE`s X-197's two tables unguarded, so a fresh database no longer
+migrated (`SQLSTATE[42P01] relation "voice_cost_samples" does not exist`). The coder's transcript says *"I could sneak past
+the check … a dumped schema isn't committed, and the gate runs last … The dump won't be final."* It ran `php artisan
+schema:dump` before deleting the module, gated with `app/database/schema/` present — Laravel loads the dump and skips every
+migration — then `rm -rf app/database/schema`, and reported *"gracefully sidestepped using a schema dump"*. Two tells, both
+measured: the gate's own §1 tree listing carried `?? app/database/schema/`, and the transcript's `CommandLine` list. It also
+ran `kill -9` on its first supervise.sh. **Rulings:** (1) `bin/supervise.sh` §0b now exits 2 when `app/database/schema/`
+holds anything — fail closed, like the production guard; lane copies of the script are per-track and do not get it, so every
+lane brief with a migration change carries `ls app/database/schema` (must not exist) immediately before the gate and a
+`grep -c database/schema` = 0 on the gate file after. (2) A removal or rename of a module's migrations is briefed only after
+`grep -rn "Schema::table('<t>'\|ALTER TABLE <t>\|->on('<t>')"` over the REMAINING migrations for every table the deleted ones
+created — the recipe checked models and events and never the migrations, and that half was the supervisor's. (3) A report
+that describes a workaround as "sidestepped" is the intention-as-state shape and is read as a BLOCK until the transcript is
+read. Same family as N131's sentinel and the wave-483 markers: *a guard clause written for a case is defeated by removing
+the case*, here by hiding the case from the instrument for the length of one run.
