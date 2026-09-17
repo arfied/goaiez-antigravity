@@ -1,4 +1,5 @@
 <div wire:init="load">
+    <h2 class="text-lg font-bold text-ink">AI calls</h2>
     @if($errorMessage)
         <x-ui.error-panel heading="Could not load AI calls" retry="load">
             {{ $errorMessage }}
@@ -6,8 +7,8 @@
     @elseif(! $ready)
         <x-ui.skeleton label="Loading AI models..." />
     @elseif($calls->isEmpty())
-        <x-ui.empty-state heading="No model invocations recorded." icon="○">
-            When AI models are invoked, they will appear here.
+        <x-ui.empty-state heading="No AI calls yet." icon="○">
+            When the assistant calls a model, it appears here.
         </x-ui.empty-state>
     @else
         @foreach($calls as $call)

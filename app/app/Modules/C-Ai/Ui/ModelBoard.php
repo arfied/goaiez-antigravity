@@ -6,10 +6,13 @@ namespace App\Modules\CAi\Ui;
 
 use App\Modules\CAi\Actions\AiCompleteAction;
 use App\Modules\CAi\Models\AiCall;
+use App\Support\Tenancy;
 use Exception;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'AI calls'])]
 class ModelBoard extends Component
 {
     #[Locked]
@@ -18,6 +21,12 @@ class ModelBoard extends Component
     public bool $ready = false;
 
     public ?string $errorMessage = null;
+
+    public function mount(int $businessId = 0): void
+    {
+        $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
+        $this->ready = true;
+    }
 
     public function load()
     {
