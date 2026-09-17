@@ -6,8 +6,8 @@ namespace Tests\Modules\X16\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X16\Ui\GeogridMap;
 use App\Modules\X16\Models\GeoGrid;
+use App\Modules\X16\Ui\GeogridMap;
 use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
