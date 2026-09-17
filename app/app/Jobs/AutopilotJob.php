@@ -729,7 +729,6 @@ abstract class AutopilotJob implements ShouldQueue
 
         $run = $this->claimRun();
 
-
         if ($run === null) {
             // The key was already claimed. Not an error — the answer to "has
             // this run?" is yes, and the side effect belongs to that run.
