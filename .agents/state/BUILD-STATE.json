@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-17T07:58:31",
+ "updated": "2026-09-17T09:48:02",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -176,7 +176,7 @@
   },
   "15": {
    "track": "channels",
-   "status": "DONE",
+   "status": "BUILDING",
    "modules": [
     "C-Mail",
     "C-Whatsapp",
@@ -984,17 +984,10 @@
    "unresolved": []
   },
   "X-193": {
-   "status": "UNRESOLVED",
+   "status": "BUILDING",
    "wave": 15,
    "intent": "GROW",
-   "unresolved": [
-    {
-     "module": "X-193",
-     "stage": "tests",
-     "why": "column quiet_hours_start is missing from notification_classes and not named in the brief",
-     "at": "2026-09-04T02:05:53"
-    }
-   ]
+   "unresolved": []
   },
   "X-194": {
    "status": "DONE",
@@ -1305,12 +1298,6 @@
    "at": "2026-09-03T14:01:55"
   },
   {
-   "module": "X-193",
-   "stage": "tests",
-   "why": "column quiet_hours_start is missing from notification_classes and not named in the brief",
-   "at": "2026-09-04T02:05:53"
-  },
-  {
    "module": "X-201",
    "stage": "tests",
    "why": "column deadline_at is missing from disputes and not named in the brief",
@@ -1605,6 +1592,15 @@
   {
    "at": "2026-09-16T23:26:35",
    "note": "X-194 UI-132b: test_location_timezone_from_url restored from 735b151e; UI-132 had removed it to match a brief's wrong method count"
+  }
+ ],
+ "resolved": [
+  {
+   "module": "X-193",
+   "stage": "tests",
+   "was": "column quiet_hours_start is missing from notification_classes and not named in the brief",
+   "why": "the column arrived: migration 2026_09_04_072838_add_quiet_hours_start_to_notification_classes_table.php (14df5c8a, 2026-09-04 02:32) adds quiet_hours_start and quiet_hours_end; X193Test::test_dependency_quiet_hours_start_exists asserts it and is green",
+   "at": "2026-09-17T09:48:02"
   }
  ]
 }
