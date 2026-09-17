@@ -1,6 +1,19 @@
 <div>
-    <x-surface.sample-state module="⭐⭐ **The employee's own AI — the only agent in this platform that works for a PERSON rather than for the tenant.** *Everything else acts tenant → customer. **The Fixer acts employee → their own day**: their calendar, their inbox, their jobs, their reschedules.* ⛔⛔ **AND IT IS NOT A CHATBOT. It is a TOOL-CALLING AGENT: it mutates the system through `X-122 ActionRegistry` and only then communicates.** *A plumber texting "running 20 late, tell Smith and push my next" causes `fsm.job.update_eta` → `fsm.job.reschedule` → **then** the customer message. **The database changes first. The text is the consequence, never the substitute.*** ⭐ **It starts at L1 and climbs per action type, per employee** *(P-195)*. **Commanded by voice in `X-171`, by SMS from the employee's own phone, or from the private inbox — no dashboard required.**" screen="private_inbox" />
     <div class="private-inbox-view p-4">
-        <h3 class="text-lg font-bold">Fixer Private Inbox</h3>
+        <h2 class="text-lg font-bold text-ink">Fixer inbox</h2>
+        @if($commands->isEmpty())
+            <x-ui.empty-state heading="No commands yet.">When someone on the crew texts the assistant, what they asked and what it did appears here.</x-ui.empty-state>
+        @else
+            <ul class="divide-y divide-rule">
+                @foreach($commands as $c)
+                    <li class="py-2" wire:key="cmd-{{ $c->id }}">
+                        <span class="font-semibold">{{ $c->raw_command }}</span>
+                        <span class="text-sm text-ink-2">{{ $c->parsed_intent }}</span>
+                        <span class="text-sm text-ink-2">{{ $c->status }}</span>
+                        <span class="text-sm text-ink-2 tabular-nums">{{ $c->eta_minutes_delayed }} min</span>
+                    </li>
+                @endforeach
+            </ul>
+        @endif
     </div>
 </div>

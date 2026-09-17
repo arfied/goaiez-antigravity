@@ -40,6 +40,7 @@ class DemoFillPricebookTest extends TestCase
         $this->assertDatabaseHas('disputes', ['business_id' => $biz->id, 'reason' => 'demo·Duplicate charge', 'status' => 'compiled']);
         $this->assertDatabaseHas('dispute_evidence', ['business_id' => $biz->id, 'evidence_type' => 'call_log']);
         $this->assertDatabaseHas('conversations', ['business_id' => $biz->id, 'subject' => 'demo·Water heater quote']);
+        $this->assertDatabaseHas('contact_tags', ['business_id' => $biz->id, 'tag' => 'demo·repeat customer']);
 
         $c1 = Affiliate::count();
         Tenancy::forgetAll();
@@ -64,6 +65,7 @@ class DemoFillPricebookTest extends TestCase
         $this->assertDatabaseMissing('disputes', ['business_id' => $biz->id, 'reason' => 'demo·Duplicate charge', 'status' => 'compiled']);
         $this->assertDatabaseMissing('dispute_evidence', ['business_id' => $biz->id, 'evidence_type' => 'call_log']);
         $this->assertDatabaseMissing('conversations', ['business_id' => $biz->id, 'subject' => 'demo·Water heater quote']);
+        $this->assertDatabaseMissing('contact_tags', ['business_id' => $biz->id, 'tag' => 'demo·repeat customer']);
     }
 
     public function test_the_pricebook_screens_show_the_demo_rows(): void
@@ -86,6 +88,8 @@ class DemoFillPricebookTest extends TestCase
         $this->get(route('x-201.dispute-card'))->assertOk()->assertSee('demo·Fraudulent')->assertSee('demo·Duplicate charge')->assertSee('2 evidence items')->assertSee('Deadline:');
         $this->get(route('x-01.customers-list'))->assertOk()->assertSee('demo·Marcus');
         $this->get(route('x-01.thread'))->assertOk()->assertSee('demo·Water heater quote');
+        $this->get(route('x-01.history'))->assertOk()->assertSee('demo·Is the water heater quote still good?');
+        $this->get(route('x-01.person'))->assertOk();
     }
 
     public function test_x163_filler_is_idempotent(): void
