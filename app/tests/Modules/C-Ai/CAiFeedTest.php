@@ -15,13 +15,14 @@ use Tests\TestCase;
 
 final class CAiFeedTest extends TestCase
 {
-    public function test_an_agent_turn_records_an_ai_call(): void
+    public function test_an_agent_turn_records_no_ai_call_until_a_model_is_used(): void
     {
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         DB::statement("SET app.business_id = {$biz->id}");
 
         $countBefore = AiCall::where('business_id', $biz->id)->count();
+        $this->assertEquals(0, $countBefore);
 
         Event::dispatch(new AgentTurnStarted(
             businessId: $biz->id,
@@ -31,12 +32,7 @@ final class CAiFeedTest extends TestCase
         ));
 
         $countAfter = AiCall::where('business_id', $biz->id)->count();
-        $this->assertEquals($countBefore + 1, $countAfter);
-
-        $call = AiCall::where('business_id', $biz->id)->orderBy('id', 'desc')->first();
-        $this->assertEquals('agent.turn', $call->task);
-        $this->assertEquals('simulated', $call->provider);
-        $this->assertEquals('default_primary', $call->model_served);
+        $this->assertEquals(0, $countAfter);
     }
 
     public function test_the_agent_announces_every_turn_once(): void
