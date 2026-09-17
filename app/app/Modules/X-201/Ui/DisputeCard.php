@@ -12,8 +12,10 @@ use App\Modules\X201\Models\Dispute;
 use App\Modules\X201\Models\DisputeEvidence;
 use App\Support\Tenancy;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Disputes'])]
 class DisputeCard extends Component
 {
     /** @var array<int,string> keyed by dispute id */

@@ -609,6 +609,8 @@ final class OwnerNav
             OwnerNavItem::make('Message segments', 'c-sms.composer-segment-warning', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Collections package', 'x-211.collections-package-preview', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Invoice thread', 'x-211.invoice-thread-beside', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Disputes', 'x-201.dispute-card', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Dispute queue', 'x-201.dispute-queue', OwnerNavItem::GROUP_MORE),
         ];
     }
 

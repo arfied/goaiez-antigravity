@@ -1,6 +1,5 @@
 <div>
-    <x-surface.sample-state module="receives `chargeback.received` from X-198 for **any gateway**" screen="dispute_card" />
-<h1>Disputes</h1>
+<h2 class="text-lg font-bold text-ink">Disputes</h2>
 <p class="text-base text-ink-2">A chargeback on one of this account's invoices opens a dispute here. You compile the bundle from the dispute queue and add what only you know. Money does not go back from this card: a dispute is defended, and giving money back is the gateway account's.</p>
 @if($error) <x-ui.error-panel heading="We couldn't do that">{{ $error }}</x-ui.error-panel> @endif
 @if($success) <p>{{ $success }}</p> @endif
@@ -10,7 +9,7 @@
 @else
 <ul class="space-y-4">
 @foreach($disputes as $d)
-<li class="border rounded p-4 shadow bg-white">
+<li class="border rounded p-4 shadow bg-card">
 <span class="font-semibold">Invoice #{{ $d->invoice_id }}</span>
 <span class="tabular-nums">{{ number_format($d->chargeback_amount_cents / 100, 2) }}</span>
 <span class="text-sm text-ink-2">{{ $d->reason }}</span>
