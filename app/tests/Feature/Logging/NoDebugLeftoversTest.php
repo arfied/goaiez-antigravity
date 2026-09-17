@@ -2,9 +2,7 @@
 
 namespace Tests\Feature\Logging;
 
-use App\Models\User;
 use App\Services\Sms\TenantNumbers;
-use App\Services\TenantProvisioner;
 use Illuminate\Support\Facades\Log;
 use Tests\Concerns\RefreshesTenantDatabase;
 use Tests\TestCase;
