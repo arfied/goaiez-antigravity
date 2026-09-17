@@ -2814,6 +2814,10 @@
   {
    "at": "2026-09-16T20:33:01",
    "note": "X-177 SITE-233: location_id is a bigint NOT NULL FK to locations on every database, as production already had it (the live connect flow writes location ids); fixtures create a location; the audit's last type difference closed"
+  },
+  {
+   "at": "2026-09-16T20:42:14",
+   "note": "X-177 SITE-233b: the one remaining X-177 fixture with a string location_id now creates a Location; SITE-233's migration stands"
   }
  ],
  "resolved": [
