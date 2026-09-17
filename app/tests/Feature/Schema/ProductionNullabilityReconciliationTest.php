@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Schema;
 
+use Tests\Concerns\RefreshesTenantDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 class ProductionNullabilityReconciliationTest extends TestCase
 {
+    use RefreshesTenantDatabase;
+
     private const DROP_NOT_NULL = [
         'ai_calls' => ['model', 'provider', 'task'],
         'brand_registrations' => ['provider', 'status', 'submitted_at', 'submitted_by'],
