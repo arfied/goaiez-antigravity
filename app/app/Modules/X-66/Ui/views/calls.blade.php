@@ -1,5 +1,5 @@
 <div class="flex flex-col gap-6 w-full max-w-3xl mx-auto p-4 md:p-6">
-    <x-surface.sample-state module="the front-desk agent on a live call: voice RAG with in-stream hesitation and objection detection" screen="calls" />
+    <h2 class="text-lg font-bold text-ink">Calls</h2>
     <section>
         @if ($errorMessage)
             <x-ui.error-panel heading="Number Unavailable" retry="$refresh">
@@ -18,7 +18,7 @@
     </section>
 
     <section>
-        <h2 class="text-xl font-bold text-ink mb-4">Call Sessions</h2>
+        <h3 class="text-xl font-bold text-ink mb-4">Call sessions</h3>
 
         <div wire:loading.delay>
             <x-ui.skeleton label="Loading call sessions" lines="3" />
@@ -29,25 +29,6 @@
                 <x-ui.empty-state action="Refresh List" target="$refresh" heading="No calls yet">
                     When people call your assigned number, the history will appear here.
                 </x-ui.empty-state>
-                
-                <h3 class="mt-6 font-display text-lg font-bold text-ink uppercase tracking-wider text-center text-ink-3">SAMPLE</h3>
-                <ul class="flex flex-col gap-3 opacity-60">
-                    <li class="relative flex flex-col border border-dashed border-rule rounded-[--radius-card] bg-card p-4 gap-3">
-                        <div class="absolute -top-2.5 right-4 bg-paper border border-rule px-2 py-0.5 rounded text-[10px] font-bold tracking-widest text-ink-3 uppercase">
-                            SAMPLE
-                        </div>
-                        <div class="flex justify-between items-start w-full gap-2">
-                            <span class="font-mono text-ink truncate">+1 (555) 019-8372</span>
-                            <x-ui.status-pill state="alert" label="Missed" class="shrink-0" />
-                        </div>
-                        <div class="flex justify-between items-center w-full text-sm text-ink-2">
-                            <span>0ms</span>
-                            <div class="flex gap-2">
-                                <span class="bg-paper border border-rule px-2 py-0.5 rounded text-xs">Voicemail</span>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
             @else
                 <ul class="flex flex-col gap-3">
                     @foreach ($calls as $call)
