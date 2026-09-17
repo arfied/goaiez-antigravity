@@ -595,6 +595,7 @@ final class OwnerNav
             OwnerNavItem::make('Dispatch board', 'x-162.dispatch-board', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Revenue recovery', 'c-billing.revenue-recovery', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Dunning board', 'c-billing.dunning-board', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('View', 'x-194.any-view-it', OwnerNavItem::GROUP_MORE),
         ];
     }
 
