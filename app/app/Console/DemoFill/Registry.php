@@ -60,6 +60,7 @@ class Registry
             new Fillers\X190Filler,
             new Fillers\X191Filler,
             new Fillers\X192Filler,
+            new Fillers\X193Filler,
             new Fillers\X194Filler,
             new Fillers\X199Filler,
             new Fillers\X203Filler,

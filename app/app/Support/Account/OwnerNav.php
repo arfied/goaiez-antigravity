@@ -599,6 +599,7 @@ final class OwnerNav
             OwnerNavItem::make('Calls', 'x-66.calls', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Geo-grid', 'x-16.geogrid-map', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Service area', 'x-16.servicearea-polygon', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Sends by class', 'x-193.sendsbyclass', OwnerNavItem::GROUP_MORE),
         ];
     }
 
