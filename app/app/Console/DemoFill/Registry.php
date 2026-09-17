@@ -54,6 +54,7 @@ class Registry
             new Fillers\X175Filler,
             new Fillers\X176Filler,
             new Fillers\X177Filler,
+            new Fillers\X178Filler,
             new Fillers\X180Filler,
             new Fillers\X181Filler,
             new Fillers\X182Filler,
