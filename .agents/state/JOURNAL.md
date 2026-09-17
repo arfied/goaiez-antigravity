@@ -801,3 +801,4 @@
 - `2026-09-16T22:39:48` (R245) X-162 — PB-213: the dispatch board sits in the owner shell as Dispatch board; it already read its tenant; X-162 has no admin door; the two sample assignments show
 - `2026-09-17T02:59:35` note: X-171 PB-214: X171Filler seeds two sample device mutations and one conflict; X-171 stays admin-only (no tenant route) so it is not an owner-shell conversion
 - `2026-09-17T02:59:35` note: X-172 PB-214: X172Filler seeds one live sample portal link and one view; the customer portal is token-keyed and cannot carry an OwnerNav entry
+- `2026-09-17T08:25:38` (R245) X-201 — PB-215: dispute-card and dispute-queue sit in the owner shell as Disputes and Dispute queue; both already tenant-scoped; admin doors kept; X201Filler seeds three disputes, two evidence items and one outcome; module owned by pricebook from this wave
