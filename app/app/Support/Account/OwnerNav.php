@@ -586,6 +586,7 @@ final class OwnerNav
             OwnerNavItem::make('AI calls', 'c-ai.model-board', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Failed deliveries', 'x-123.dlq-request-inspector', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Monthly billing', 'c-billing.mrr', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Saved views', 'x-194.saved-views-list', OwnerNavItem::GROUP_MORE),
         ];
     }
 
