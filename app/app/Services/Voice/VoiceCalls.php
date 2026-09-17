@@ -142,7 +142,7 @@ final class VoiceCalls
      * documented, so that is what is read.
      *
      *   https://www.infobip.com/docs/api/channels/voice/calls/calls-applications/calls-event-webhook
-     *   https://www.infobip.com/docs/api/channels/voice/calls/call-legs/get-call
+     *   https://www.infobip.com/docs/api/channels/voice/calls/call-legs/get-call-history
      */
     public function record(string $providerCallId): VoiceIngestOutcome
     {
