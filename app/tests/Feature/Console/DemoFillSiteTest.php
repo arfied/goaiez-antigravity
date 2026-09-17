@@ -18,7 +18,7 @@ class DemoFillSiteTest extends TestCase
 
         Tenancy::forgetAll();
 
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-157,X-176,X-177,X-203,X-108,X-121,X-123,X-191,X-16'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-157,X-176,X-177,X-203,X-108,X-121,X-123,X-191,X-16,X-140'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
 
@@ -41,15 +41,16 @@ class DemoFillSiteTest extends TestCase
         $this->assertDatabaseHas('geo_grids', ['business_id' => $biz->id, 'grid_name' => 'demo·Downtown grid']);
         $this->assertDatabaseHas('service_polygons', ['business_id' => $biz->id, 'polygon_name' => 'demo·North side']);
         $this->assertDatabaseHas('places_records', ['business_id' => $biz->id, 'name' => 'demo·Riverside Plumbing']);
+        $this->assertDatabaseHas('content_topics', ['business_id' => $biz->id, 'topic_title' => 'demo·How much does a drain cleaning cost?']);
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-157,X-176,X-177,X-203,X-108,X-121,X-123,X-191,X-16'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-157,X-176,X-177,X-203,X-108,X-121,X-123,X-191,X-16,X-140'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
         $this->assertSame(2, EntityHistoryRecord::where('business_id', $biz->id)->where('entity_type', 'demo·people')->count());
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--purge' => true, '--only' => 'X-157,X-176,X-177,X-203,X-108,X-121,X-123,X-191,X-16'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--purge' => true, '--only' => 'X-157,X-176,X-177,X-203,X-108,X-121,X-123,X-191,X-16,X-140'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
         $this->assertDatabaseMissing('edge_zones', ['business_id' => $biz->id, 'domain_name' => 'demo·example.com']);
@@ -71,6 +72,7 @@ class DemoFillSiteTest extends TestCase
         $this->assertDatabaseMissing('geo_grids', ['business_id' => $biz->id, 'grid_name' => 'demo·Downtown grid']);
         $this->assertDatabaseMissing('service_polygons', ['business_id' => $biz->id, 'polygon_name' => 'demo·North side']);
         $this->assertDatabaseMissing('places_records', ['business_id' => $biz->id, 'name' => 'demo·Riverside Plumbing']);
+        $this->assertDatabaseMissing('content_topics', ['business_id' => $biz->id, 'topic_title' => 'demo·How much does a drain cleaning cost?']);
     }
 
     public function test_the_site_screens_show_the_demo_rows(): void
@@ -79,7 +81,7 @@ class DemoFillSiteTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-157,X-176,X-177,X-203,X-108,X-121,X-123,X-191,X-16'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-157,X-176,X-177,X-203,X-108,X-121,X-123,X-191,X-16,X-140'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
         $this->actingAs($owner);
@@ -100,5 +102,6 @@ class DemoFillSiteTest extends TestCase
         $this->get(route('x-16.geogrid-map'))->assertOk()->assertSee('demo·Downtown grid')->assertSee('12 of 25 points scanned');
         $this->get(route('x-16.servicearea-polygon'))->assertOk()->assertSee('demo·North side')->assertSee('demo·South side');
         $this->get(route('x-16.harvest-coverage-by'))->assertOk()->assertSee('4 places harvested across 1 territories')->assertSee('demo·North side');
+        $this->get(route('x-140.proposed-pages'))->assertOk()->assertSee('demo·How much does a drain cleaning cost?')->assertSee('published');
     }
 }
