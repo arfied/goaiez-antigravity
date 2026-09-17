@@ -1,13 +1,16 @@
 <div>
-    <x-surface.sample-state module="classifies every `send.requested` as **`marketing`" screen="sendsbyclass" />
     <div class="sends-by-class-view p-4">
-        <h3 class="text-lg font-bold">Notification Sends by Class</h3>
+        <h2 class="text-lg font-bold text-ink">Sends by class</h2>
         @if($classes->isEmpty())
-            <p class="text-gray-500">No caller classifications configured.</p>
+            <x-ui.empty-state heading="No notification classes yet.">Each kind of send your business makes is classed here as account, marketing or transactional; marketing sends hold during quiet hours.</x-ui.empty-state>
         @else
-            <ul>
+            <ul class="divide-y divide-rule">
                 @foreach($classes as $c)
-                    <li>{{ $c->caller_type }}: [{{ $c->classification }}] (Quiet hours: {{ $c->respects_quiet_hours ? 'Yes' : 'No' }})</li>
+                    <li class="py-2">
+                        <span class="font-mono text-sm">{{ $c->caller_type }}</span>
+                        <span class="text-ink-2">{{ $c->classification }}</span>
+                        <span class="text-sm text-ink-2">{{ $c->respects_quiet_hours ? 'holds in quiet hours' : 'sends any time' }}</span>
+                    </li>
                 @endforeach
             </ul>
         @endif

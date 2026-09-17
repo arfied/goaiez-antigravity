@@ -7,9 +7,11 @@ namespace App\Modules\X16\Ui;
 use App\Modules\X16\Actions\MapsGeogridAction;
 use App\Modules\X16\Models\GeoGrid;
 use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Geo-grid'])]
 class GeogridMap extends Component
 {
     #[Locked]

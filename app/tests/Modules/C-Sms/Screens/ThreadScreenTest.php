@@ -8,6 +8,7 @@ use App\Enums\UserRole;
 use App\Models\User;
 use App\Modules\CSms\Models\SmsComposition;
 use App\Modules\CSms\Ui\Thread;
+use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,7 +20,31 @@ class ThreadScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('c-sms.thread'))->assertOk();
+        $this->get(route('c-sms.thread'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
+            ->assertDontSee('this screen is planned in')
+            ->assertSee('No texts yet.');
+
+        Tenancy::setUser($owner->id);
+        SmsComposition::create([
+            'business_id' => $biz->id,
+            'recipient_phone' => '+15125554611',
+            'message_class' => 'transactional',
+            'body' => 'Distinctive text 4611',
+            'segments_count' => 1,
+            'encoding' => 'gsm7',
+            'status' => 'sent',
+        ]);
+        Tenancy::forget();
+
+        $this->get(route('c-sms.thread'))
+            ->assertOk()
+            ->assertSee('+15125554611')
+            ->assertSee('Distinctive text 4611')
+            ->assertSee('sent')
+            ->assertDontSee('No texts yet.');
 
         Livewire::test(Thread::class)->assertOk();
     }
