@@ -6,6 +6,7 @@ use App\Console\DemoFill\DemoFiller;
 use App\Models\Business;
 use App\Modules\X199\Models\Invoice;
 use App\Modules\X211\Models\ArDunningAction;
+use App\Modules\X211\Models\ArCollectionsPackage;
 use App\Modules\X211\Models\PaymentPlan;
 use App\Modules\X211\Models\ReceivableState;
 
@@ -66,7 +67,43 @@ class X211Filler implements DemoFiller
             'status' => 'offered',
         ]);
 
-        return 5;
+        $inv3 = Invoice::create([
+            'business_id' => $business->id,
+            'customer_id' => null,
+            'invoice_number' => self::MARKER.'AR-003',
+            'total_cents' => 65000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(45)->startOfDay(),
+        ]);
+
+        ArDunningAction::create([
+            'business_id' => $business->id,
+            'invoice_id' => $inv3->id,
+            'action' => 'reason_recorded',
+            'reason' => 'No reply yet',
+        ]);
+
+        ArCollectionsPackage::create([
+            'business_id' => $business->id,
+            'invoice_id' => $inv3->id,
+            'packaged_by_user_id' => null,
+            'partner' => null,
+            'transmitted_at' => null,
+            'contents' => [
+                'invoice_number' => self::MARKER.'AR-003',
+                'total_cents' => 65000,
+                'paid_cents' => 0,
+                'balance_cents' => 65000,
+                'due_date' => now()->subDays(45)->startOfDay()->toDateString(),
+                'lines' => [],
+                'payments' => [],
+                'actions' => [['action' => 'reason_recorded', 'reason' => 'No reply yet']],
+                'messages_count' => 0,
+            ],
+        ]);
+
+        return 8;
     }
 
     public function purge(Business $business): int
@@ -79,6 +116,7 @@ class X211Filler implements DemoFiller
             return 0;
         }
 
+        $count += ArCollectionsPackage::whereIn('invoice_id', $ids)->delete();
         $count += PaymentPlan::whereIn('invoice_id', $ids)->delete();
         $count += ReceivableState::whereIn('invoice_id', $ids)->delete();
         $count += ArDunningAction::whereIn('invoice_id', $ids)->delete();

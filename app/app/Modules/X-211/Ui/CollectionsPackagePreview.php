@@ -13,8 +13,10 @@ use App\Modules\X211\Models\OfflinePayment;
 use App\Modules\X211\Models\PaymentPlan;
 use App\Support\Tenancy;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Collections package'])]
 class CollectionsPackagePreview extends Component
 {
     public ?string $error = null;
