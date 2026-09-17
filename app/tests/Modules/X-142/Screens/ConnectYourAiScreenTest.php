@@ -6,7 +6,9 @@ namespace Tests\Modules\X142\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X142\Models\McpToken;
 use App\Modules\X142\Ui\ConnectYourAi;
+use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,7 +20,29 @@ class ConnectYourAiScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-142.connect-your-ai'))->assertOk();
+        $this->get(route('x-142.connect-your-ai'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
+            ->assertDontSee('this screen is planned in')
+            ->assertSee('No connections yet.');
+
+        Tenancy::setUser($owner->id);
+        McpToken::create([
+            'business_id' => $biz->id,
+            'token_name' => 'Distinctive connection 4627',
+            'role_scope' => 'owner',
+            'permissions' => ['job.create'],
+            'token_hash' => hash('sha256', 'distinctive-4627'),
+            'is_revoked' => false,
+        ]);
+        Tenancy::forget();
+
+        $this->get(route('x-142.connect-your-ai'))
+            ->assertOk()
+            ->assertSee('Distinctive connection 4627')
+            ->assertSee('owner')
+            ->assertDontSee('No connections yet.');
 
         Livewire::test(ConnectYourAi::class)->assertOk();
     }

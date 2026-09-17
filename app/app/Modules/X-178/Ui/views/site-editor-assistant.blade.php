@@ -1,12 +1,11 @@
 <section class="site-editor-assistant-panel p-4">
-    <x-surface.sample-state module="design by conversation" screen="site_editor_assistant" />
-<h3 class="text-lg font-bold">Site Editor Assistant</h3>
+    <h2 class="text-lg font-bold text-ink">Site editor</h2>
     @if($changes->isEmpty())
-        <p class="text-gray-500">No recent design changes.</p>
+        <x-ui.empty-state heading="No design changes yet.">A change you ask for in plain words is recorded here with the block it touched and the contrast it kept.</x-ui.empty-state>
     @else
-        <ul>
+        <ul class="divide-y divide-rule">
             @foreach($changes as $c)
-                <li>#{{ $c->id }}: [{{ $c->change_type }}] -> {{ $c->block_ref }} (contrast: {{ $c->contrast_ratio }}:1)</li>
+                <li class="py-2"><span class="font-semibold">{{ $c->change_type }}</span> <span class="text-ink-2">{{ $c->block_ref }}</span> <span class="text-sm text-ink-2 tabular-nums">contrast {{ $c->contrast_ratio }}:1</span> <span class="text-sm text-ink-2">{{ $c->status }}</span></li>
             @endforeach
         </ul>
     @endif

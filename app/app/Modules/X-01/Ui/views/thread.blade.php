@@ -1,5 +1,5 @@
 <div>
-    <x-surface.sample-state module="**one Conversation per Person, every channel** — SMS, email, voice transcripts, web chat, WhatsApp in ONE timeline; contact de-duplication; record and screen pop; CRM logging and injection; field-level history; tagging and auto-categorisation; custom fields; bulk actions and exports *(moved here from X-121)*; conversational global search; lead transparency and hidden scoring; lead caps; ghost-risk; the preference centre. ⛔ **P18: `app/Livewire/Account/Inbox.php` exists but its scope was never verified — if it is a mail reader wearing the name, this is a build, not a wiring job, and it is replaced.**" screen="thread" />
+    <h2 class="text-lg font-bold text-ink">Inbox</h2>
     <div wire:poll.10s class="flex flex-col h-full bg-paper rounded-[--radius-card] border border-rule shadow-[--shadow-card] mt-4">
         <div class="px-4 py-4 border-b border-rule flex justify-between items-center bg-card rounded-t-[--radius-card]">
                                                 <h3 class="font-display font-semibold text-ink text-lg flex items-center gap-2">
@@ -37,9 +37,9 @@
             <div class="inbox-thread p-4">
                 <h3 class="text-lg font-bold">Omnichannel Conversation Thread</h3>
                 @if($conversations->isEmpty())
-                    <p class="text-gray-500">No conversations recorded.</p>
+                    <p class="text-ink-2">No conversations recorded.</p>
                 @else
-                    <p class="text-gray-500">Select a conversation. {{ $conversations->count() }} found.</p>
+                    <p class="text-ink-2">Select a conversation. {{ $conversations->count() }} found.</p>
                     <ul class="space-y-2 mt-2">
                         @foreach($conversations as $conversation)
                             <li class="p-3 border border-rule rounded">
