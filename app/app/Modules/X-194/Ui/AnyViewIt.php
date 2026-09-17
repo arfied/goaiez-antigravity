@@ -9,8 +9,10 @@ use App\Services\Tenant\LocationContext;
 use App\Support\Tenancy;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Url;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'View'])]
 class AnyViewIt extends Component
 {
     #[Locked]
