@@ -7,9 +7,11 @@ namespace App\Modules\X16\Ui;
 use App\Modules\X16\Models\PlacesRecord;
 use App\Modules\X16\Models\ServicePolygon;
 use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Harvest coverage'])]
 class HarvestCoverageBy extends Component
 {
     #[Locked]

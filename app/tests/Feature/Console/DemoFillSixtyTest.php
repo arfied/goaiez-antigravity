@@ -37,6 +37,7 @@ class DemoFillSixtyTest extends TestCase
         $this->assertDatabaseHas('mail_domains', ['business_id' => $biz->id, 'domain_name' => 'demo·mail.example.com']);
         $this->assertDatabaseHas('call_sessions', ['business_id' => $biz->id, 'call_sid' => 'demo·CA1']);
         $this->assertDatabaseHas('sms_compositions', ['business_id' => $biz->id, 'recipient_phone' => '+15125550142']);
+        $this->assertDatabaseHas('sms_compositions', ['business_id' => $biz->id, 'recipient_phone' => '+15125550188', 'status' => 'halted']);
         $this->assertDatabaseHas('suppressions', ['business_id' => $biz->id, 'reason' => 'demo·replied STOP']);
 
         Tenancy::forgetAll();
@@ -50,7 +51,7 @@ class DemoFillSixtyTest extends TestCase
         $this->assertDatabaseCount('chat_leads', 1);
         $this->assertDatabaseCount('chat_turns', 2);
         $this->assertDatabaseCount('ai_calls', 2);
-        $this->assertDatabaseCount('sms_compositions', 2);
+        $this->assertDatabaseCount('sms_compositions', 3);
 
         Tenancy::forgetAll();
         $this->artisan('demo:fill', ['email' => $owner->email, '--purge' => true, '--only' => 'C-Agent,C-Ai,C-Mail,C-Sms,X-66,X-102'])->assertExitCode(0);
@@ -66,6 +67,7 @@ class DemoFillSixtyTest extends TestCase
         $this->assertDatabaseMissing('mail_domains', ['business_id' => $biz->id, 'domain_name' => 'demo·mail.example.com']);
         $this->assertDatabaseMissing('call_sessions', ['business_id' => $biz->id, 'call_sid' => 'demo·CA1']);
         $this->assertDatabaseMissing('sms_compositions', ['business_id' => $biz->id, 'recipient_phone' => '+15125550142']);
+        $this->assertDatabaseMissing('sms_compositions', ['business_id' => $biz->id, 'recipient_phone' => '+15125550188']);
         $this->assertDatabaseMissing('suppressions', ['business_id' => $biz->id, 'reason' => 'demo·replied STOP']);
     }
 
@@ -97,6 +99,8 @@ class DemoFillSixtyTest extends TestCase
         $this->get(route('x-66.calls'))->assertOk()->assertSee('+15125550142')->assertSee('+15125550177')->assertSee('Transcript')->assertSee('Voicemail');
 
         $this->get(route('c-sms.donottext-list'))->assertOk()->assertSee('+15125550199')->assertSee('demo·replied STOP');
+        $this->get(route('c-sms.pernumber-complaint-monitoring'))->assertOk()->assertSee('+15125550142')->assertSee('1 sent · 0 halted')->assertSee('+15125550188')->assertSee('0 sent · 1 halted');
+        $this->get(route('c-sms.composer-segment-warning'))->assertOk()->assertSee('demo·Spring tune-up special')->assertSee('bills as 2 segments');
         $this->get(route('c-sms.thread'))->assertOk()->assertSee('demo·Your technician is on the way');
     }
 }

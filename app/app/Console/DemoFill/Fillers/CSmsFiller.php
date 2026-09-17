@@ -42,6 +42,16 @@ class CSmsFiller implements DemoFiller
             'status' => 'sent',
         ]);
 
+        SmsComposition::create([
+            'business_id' => $business->id,
+            'recipient_phone' => '+15125550188',
+            'message_class' => 'marketing',
+            'body' => self::MARKER.'Spring tune-up special: book any HVAC service this month and we will include a free filter change, a thermostat check and a written efficiency report for your records.',
+            'segments_count' => 2,
+            'encoding' => 'gsm7',
+            'status' => 'halted',
+        ]);
+
         Suppression::create([
             'business_id' => $business->id,
             'recipient_phone' => '+15125550199',
@@ -50,7 +60,7 @@ class CSmsFiller implements DemoFiller
             'suppressed_at' => now(),
         ]);
 
-        return 3;
+        return 4;
     }
 
     public function purge(Business $business): int
