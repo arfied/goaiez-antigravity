@@ -4,6 +4,7 @@ namespace App\Console\DemoFill\Fillers;
 
 use App\Console\DemoFill\DemoFiller;
 use App\Models\Business;
+use App\Models\Location;
 use App\Modules\X177\Models\GbpConnection;
 use App\Modules\X177\Models\GbpPost;
 use App\Modules\X177\Models\GbpStateLog;
@@ -21,10 +22,16 @@ class X177Filler implements DemoFiller
             return 0;
         }
 
+        $loc = Location::firstOrCreate(
+            ['business_id' => $business->id, 'name' => self::MARKER.'Demo Location'],
+            ['google_location_id' => self::MARKER.'locations/demo']
+        );
+
         $conn = GbpConnection::create([
             'business_id' => $business->id,
             'account_ref' => 'acct_demo',
             'external_label' => self::MARKER.'Demo Store',
+            'location_id' => $loc->id,
             'profile_status' => 'active',
         ]);
 
@@ -66,6 +73,10 @@ class X177Filler implements DemoFiller
             ->where('external_label', 'like', self::MARKER.'%')
             ->delete();
 
-        return $logCount + $postCount + $connCount;
+        $locCount = Location::where('business_id', $business->id)
+            ->where('name', 'like', self::MARKER.'%')
+            ->delete();
+
+        return $logCount + $postCount + $connCount + $locCount;
     }
 }

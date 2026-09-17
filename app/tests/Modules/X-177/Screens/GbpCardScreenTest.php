@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Modules\X177\Screens;
 
 use App\Enums\UserRole;
+use App\Models\Location;
 use App\Models\User;
 use App\Modules\X177\Models\GbpConnection;
 use App\Modules\X177\Models\GbpPost;
@@ -29,8 +30,10 @@ class GbpCardScreenTest extends TestCase
             ->assertSee('Connect Google');
 
         Tenancy::setUser($owner->id);
+        $loc = Location::factory()->create(['business_id' => $biz->id]);
         $conn = GbpConnection::create([
             'business_id' => $biz->id,
+            'location_id' => $loc->id,
             'account_ref' => 'acct_distinctive_4502',
             'external_label' => 'Distinctive Store 4502',
             'profile_status' => 'active',

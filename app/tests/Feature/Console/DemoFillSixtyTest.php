@@ -23,7 +23,7 @@ class DemoFillSixtyTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Agent,X-102'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Agent,C-Ai,X-102'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
 
@@ -33,9 +33,10 @@ class DemoFillSixtyTest extends TestCase
         $this->assertDatabaseHas('chat_sessions', ['business_id' => $biz->id, 'status' => 'active']);
         $this->assertDatabaseHas('chat_leads', ['business_id' => $biz->id, 'form_type' => 'offline_capped_form']);
         $this->assertDatabaseHas('chat_turns', ['business_id' => $biz->id, 'author_type' => 'visitor']);
+        $this->assertDatabaseHas('ai_calls', ['business_id' => $biz->id, 'task' => 'demo·summary']);
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Agent,X-102'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Agent,C-Ai,X-102'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
         $this->assertDatabaseCount('agent_turns', 3);
@@ -44,9 +45,10 @@ class DemoFillSixtyTest extends TestCase
         $this->assertDatabaseCount('chat_sessions', 2);
         $this->assertDatabaseCount('chat_leads', 1);
         $this->assertDatabaseCount('chat_turns', 2);
+        $this->assertDatabaseCount('ai_calls', 2);
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--purge' => true, '--only' => 'C-Agent,X-102'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--purge' => true, '--only' => 'C-Agent,C-Ai,X-102'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
         $this->assertDatabaseMissing('agent_turns', ['business_id' => $biz->id, 'status' => 'answered']);
@@ -55,6 +57,7 @@ class DemoFillSixtyTest extends TestCase
         $this->assertDatabaseMissing('chat_sessions', ['business_id' => $biz->id, 'status' => 'active']);
         $this->assertDatabaseMissing('chat_leads', ['business_id' => $biz->id, 'form_type' => 'offline_capped_form']);
         $this->assertDatabaseMissing('chat_turns', ['business_id' => $biz->id, 'author_type' => 'visitor']);
+        $this->assertDatabaseMissing('ai_calls', ['business_id' => $biz->id, 'task' => 'demo·summary']);
     }
 
     public function test_the_sixty_screens_show_the_demo_rows(): void
@@ -63,7 +66,7 @@ class DemoFillSixtyTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Agent,X-102'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Agent,C-Ai,X-102'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
         $this->actingAs($owner);
@@ -72,6 +75,8 @@ class DemoFillSixtyTest extends TestCase
         $this->get(route('c-agent.thread'))->assertOk()->assertSee('demo·Hi, I have a question.');
         $this->get(route('c-agent.refusalcode-distribution-per'))->assertOk()->assertSee('demo·User requested age restricted products.');
         $this->get(route('c-agent.teaching-box'))->assertOk()->assertSee('demo·Always greet the user with a smile.');
+
+        $this->get(route('c-ai.model-board'))->assertOk()->assertSee('default_primary');
 
         $this->get(route('x-102.customerfacing-widget'))->assertOk()->assertSee('2 sessions · 1 active');
         $this->get(route('x-102.rageclick-rate'))->assertOk()->assertSee('demo·sess_rage_'.$biz->id.': 3 rage clicks');

@@ -6,6 +6,7 @@ namespace App\Modules\CAgent\Actions;
 
 use App\Modules\CAgent\Events\AgentRefused;
 use App\Modules\CAgent\Events\AgentTurnAnswer;
+use App\Modules\CAgent\Events\AgentTurnStarted;
 use App\Modules\CAgent\Models\AgentRefusal;
 use App\Modules\CAgent\Models\AgentTurn;
 use App\Modules\CAgent\Models\TakeoverLatch;
@@ -26,6 +27,8 @@ final class AgentAnswerAction
         int $turnNumber = 1
     ): array {
         return DB::transaction(function () use ($businessId, $userMessage, $conversationId, $turnNumber) {
+            Event::dispatch(new AgentTurnStarted(businessId: $businessId, conversationId: $conversationId, turnNumber: $turnNumber, userMessage: $userMessage));
+
             if ($conversationId !== null) {
                 $latch = TakeoverLatch::where('business_id', $businessId)
                     ->where('conversation_id', $conversationId)
