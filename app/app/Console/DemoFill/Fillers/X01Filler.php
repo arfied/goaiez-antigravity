@@ -40,6 +40,12 @@ class X01Filler implements DemoFiller
             'grade' => 'A',
         ]);
 
+        \App\Modules\X01\Models\ContactTag::create([
+            'business_id' => $business->id,
+            'contact_id' => $person->id,
+            'tag' => 'demo·repeat customer',
+        ]);
+
         $conversation = Conversation::create([
             'business_id' => $business->id,
             'channel' => 'sms',
@@ -61,13 +67,13 @@ class X01Filler implements DemoFiller
                 'business_id' => $business->id,
                 'conversation_id' => $conversation->id,
                 'direction' => 'outbound',
-                'sender_type' => 'agent',
+                'sender_type' => 'person',
                 'body' => self::MARKER.'Yes — it holds through the end of the month.',
                 'created_at' => now(),
             ],
         ]);
 
-        return 5;
+        return 6;
     }
 
     public function purge(Business $business): int
@@ -92,6 +98,7 @@ class X01Filler implements DemoFiller
             }
 
             $count += LeadScore::where('person_id', $person->id)->delete();
+            $count += \App\Modules\X01\Models\ContactTag::where('contact_id', $person->id)->where('tag', 'demo·repeat customer')->delete();
             $person->delete();
             $count++;
         }
