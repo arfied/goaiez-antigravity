@@ -975,3 +975,4 @@
 - `2026-09-16T14:19:33` (R245) C-Agent — SIXTY-203: the grounding screen counts and lists real agent turns in the owner shell; an RLS-scoped read like the refusals screen; C-Agent has no admin door
 - `2026-09-16T15:18:32` (R245) X-102 — SIXTY-204: the chat widget screen is the owner's view of real chat sessions in the owner shell; the chat-widget-container marker is kept for the deploy and the harness; admin door kept
 - `2026-09-16T16:58:29` note: C-Agent SIXTY-205: demo:fill fillers for the sixty lane's owner-shell modules (C-Agent X-102); marked demo· rows, idempotent, purgeable
+- `2026-09-16T19:30:56` (R245) C-Ai — SIXTY-206: the model board lists real AI calls in the owner shell as AI calls; a tenant-scoped read with a mount; C-Ai has no admin door; CAiFiller seeds two calls
