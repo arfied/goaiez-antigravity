@@ -611,6 +611,7 @@ final class OwnerNav
             OwnerNavItem::make('Invoice thread', 'x-211.invoice-thread-beside', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Disputes', 'x-201.dispute-card', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Dispute queue', 'x-201.dispute-queue', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Browser extension', 'x-196.extension-popup', OwnerNavItem::GROUP_MORE),
         ];
     }
 
