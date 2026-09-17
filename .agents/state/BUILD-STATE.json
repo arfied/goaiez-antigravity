@@ -1589,6 +1589,10 @@
   {
    "at": "2026-09-16T18:23:43",
    "note": "X-139 UI-130: demo:fill fillers for the ui lane's last owner-shell modules (X-07 X-124 X-132 X-138 X-139 X-183 X-192); marked demo\u00b7 rows, idempotent, purgeable"
+  },
+  {
+   "at": "2026-09-16T23:26:35",
+   "note": "X-194 UI-132b: test_location_timezone_from_url restored from 735b151e; UI-132 had removed it to match a brief's wrong method count"
   }
  ]
 }
