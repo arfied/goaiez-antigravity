@@ -6,7 +6,9 @@ namespace Tests\Modules\X16\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X16\Models\ServicePolygon;
 use App\Modules\X16\Ui\ServiceareaPolygon;
+use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,7 +20,28 @@ class ServiceareaPolygonScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-16.servicearea-polygon'))->assertOk();
+        $this->get(route('x-16.servicearea-polygon'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
+            ->assertDontSee('this screen is planned in')
+            ->assertSee('No service area yet');
+
+        Tenancy::setUser($owner->id);
+        ServicePolygon::create([
+            'business_id' => $biz->id,
+            'polygon_name' => 'Distinctive area 4610',
+            'coordinates' => [[30.20, -97.80], [30.30, -97.80], [30.30, -97.70], [30.20, -97.70]],
+            'is_active' => true,
+        ]);
+        Tenancy::forget();
+
+        $this->get(route('x-16.servicearea-polygon'))
+            ->assertOk()
+            ->assertSee('Distinctive area 4610')
+            ->assertSee('4 points')
+            ->assertSee('Active')
+            ->assertDontSee('No service area yet');
 
         Livewire::test(ServiceareaPolygon::class)->assertOk();
     }

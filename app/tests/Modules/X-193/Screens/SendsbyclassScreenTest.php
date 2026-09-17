@@ -6,7 +6,9 @@ namespace Tests\Modules\X193\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X193\Models\NotificationClass;
 use App\Modules\X193\Ui\Sendsbyclass;
+use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,7 +20,28 @@ class SendsbyclassScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-193.sendsbyclass'))->assertOk();
+        $this->get(route('x-193.sendsbyclass'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
+            ->assertDontSee('this screen is planned in')
+            ->assertSee('No notification classes yet.');
+
+        Tenancy::setUser($owner->id);
+        NotificationClass::create([
+            'business_id' => $biz->id,
+            'caller_type' => 'Distinctive missed_call 4609',
+            'classification' => 'transactional',
+            'respects_quiet_hours' => false,
+        ]);
+        Tenancy::forget();
+
+        $this->get(route('x-193.sendsbyclass'))
+            ->assertOk()
+            ->assertSee('Distinctive missed_call 4609')
+            ->assertSee('transactional')
+            ->assertSee('sends any time')
+            ->assertDontSee('No notification classes yet.');
 
         Livewire::test(Sendsbyclass::class)->assertOk();
     }
