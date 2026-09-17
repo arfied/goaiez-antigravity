@@ -5,6 +5,7 @@ namespace App\Console\DemoFill\Fillers;
 use App\Console\DemoFill\DemoFiller;
 use App\Models\Business;
 use App\Models\Conversation;
+use App\Modules\X01\Models\ContactTag;
 use App\Modules\X01\Models\LeadScore;
 use App\Modules\X121\Models\Person;
 use Illuminate\Support\Facades\DB;
@@ -40,7 +41,7 @@ class X01Filler implements DemoFiller
             'grade' => 'A',
         ]);
 
-        \App\Modules\X01\Models\ContactTag::create([
+        ContactTag::create([
             'business_id' => $business->id,
             'contact_id' => $person->id,
             'tag' => 'demo·repeat customer',
@@ -98,7 +99,7 @@ class X01Filler implements DemoFiller
             }
 
             $count += LeadScore::where('person_id', $person->id)->delete();
-            $count += \App\Modules\X01\Models\ContactTag::where('contact_id', $person->id)->where('tag', 'demo·repeat customer')->delete();
+            $count += ContactTag::where('contact_id', $person->id)->where('tag', 'demo·repeat customer')->delete();
             $person->delete();
             $count++;
         }
