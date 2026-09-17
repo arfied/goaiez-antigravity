@@ -16,7 +16,6 @@ class ProductionNullabilityReconciliationTest extends TestCase
     private const DROP_NOT_NULL = [
         'ai_calls' => ['model', 'provider', 'task'],
         'brand_registrations' => ['provider', 'status', 'submitted_at', 'submitted_by'],
-        'gbp_connections' => ['location_id'],
         'knowledge_chunks' => ['content', 'source_id'],
         'operator_alerts' => ['fired_at', 'kind', 'summary'],
         'short_links' => ['purpose', 'target_url', 'token'],
@@ -68,5 +67,23 @@ class ProductionNullabilityReconciliationTest extends TestCase
                 $this->assertSame('NO', $row->is_nullable, "Column {$table}.{$column} is nullable");
             }
         }
+    }
+
+    public function test_gbp_connections_location_id_is_a_bigint_foreign_key(): void
+    {
+        $col = DB::selectOne(
+            'select data_type, is_nullable from information_schema.columns where table_schema = current_schema() and table_name = ? and column_name = ?',
+            ['gbp_connections', 'location_id']
+        );
+        $this->assertNotNull($col);
+        $this->assertSame('bigint', $col->data_type);
+        $this->assertSame('NO', $col->is_nullable);
+
+        $constraint = DB::selectOne(
+            'select constraint_name from information_schema.table_constraints where table_schema = current_schema() and table_name = ? and constraint_type = ? and constraint_name = ?',
+            ['gbp_connections', 'FOREIGN KEY', 'gbp_connections_location_id_foreign']
+        );
+        $this->assertNotNull($constraint);
+        $this->assertSame('gbp_connections_location_id_foreign', $constraint->constraint_name);
     }
 }
