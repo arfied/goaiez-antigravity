@@ -49,6 +49,24 @@ class AnyViewItScreenTest extends TestCase
             ->assertSee('Your account')->assertDontSee('No view selected');
     }
 
+    public function test_location_timezone_from_url(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        $location = Location::where('business_id', $biz->id)->first();
+        $location->timezone = 'Europe/London';
+        $location->save();
+
+        $view = app(ViewSaveAction::class)->save($biz->id, 'TZ View');
+
+        $this->get(route('x-194.any-view-it', ['viewId' => $view->id, 'locationTimezone' => 'America/Chicago']))
+            ->assertOk()
+            ->assertSee('Europe/London')
+            ->assertDontSee('America/Chicago');
+    }
+
     public function test_job_count_tile_hidden_when_zero(): void
     {
         $owner = User::factory()->create(['role' => UserRole::Owner]);
