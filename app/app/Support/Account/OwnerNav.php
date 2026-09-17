@@ -631,6 +631,8 @@ final class OwnerNav
             OwnerNavItem::make('Autopilot ladder', 'x-209.ladders-own-state', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Person', 'x-01.person', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Activity', 'x-01.history', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Call latency', 'x-66.latency-p50p95-per', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Call coaching', 'x-66.livecoaching-whisper-panel', OwnerNavItem::GROUP_MORE),
         ];
     }
 
