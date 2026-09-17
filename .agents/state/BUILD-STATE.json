@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-16T14:52:38",
+ "updated": "2026-09-16T21:23:03",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2949,6 +2949,12 @@
    "module": "C-Billing",
    "chose": "MONEY-228: the built Credits screen renders in the owner shell with its real meters, ledger, top-up and explain untouched; fifteen neutrals tokened; C-Billing has no admin door",
    "at": "2026-09-16T14:52:38",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Billing",
+   "chose": "MONEY-230: the MRR screen lists this account's meters and this month's ledger in the owner shell as Monthly billing; C-Billing has no admin door; CBillingFiller seeds two meters and two ledger rows",
+   "at": "2026-09-16T21:23:03",
    "ruling": "R245"
   }
  ],
