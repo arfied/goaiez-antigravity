@@ -31,7 +31,7 @@ class ReviewScreenScreenTest extends TestCase
         Document::create([
             'business_id' => $biz->id,
             'title' => 'Distinctive price list 4641',
-            'sha256_hash' => 'd4641' . str_repeat('a', 59),
+            'sha256_hash' => 'd4641'.str_repeat('a', 59),
             'status' => 'ingested',
             'mime_type' => 'application/pdf',
         ]);

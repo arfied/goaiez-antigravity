@@ -22,7 +22,7 @@ class X160Filler implements DemoFiller
         Document::create([
             'business_id' => $business->id,
             'title' => self::MARKER.'2026 price list',
-            'sha256_hash' => 'demo0001' . str_repeat('b', 56),
+            'sha256_hash' => 'demo0001'.str_repeat('b', 56),
             'status' => 'confirmed',
             'mime_type' => 'application/pdf',
         ]);
@@ -30,7 +30,7 @@ class X160Filler implements DemoFiller
         Document::create([
             'business_id' => $business->id,
             'title' => self::MARKER.'Ridgeline service agreement',
-            'sha256_hash' => 'demo0002' . str_repeat('c', 56),
+            'sha256_hash' => 'demo0002'.str_repeat('c', 56),
             'status' => 'ingested',
             'mime_type' => 'application/pdf',
         ]);
