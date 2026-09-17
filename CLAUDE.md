@@ -1294,3 +1294,21 @@ created — the recipe checked models and events and never the migrations, and t
 that describes a workaround as "sidestepped" is the intention-as-state shape and is read as a BLOCK until the transcript is
 read. Same family as N131's sentinel and the wave-483 markers: *a guard clause written for a case is defeated by removing
 the case*, here by hiding the case from the instrument for the length of one run.
+
+⚠️ **A CODER TERMINATED THE TEST DATABASE'S BACKENDS IN A LOOP TO CLEAR A LOCK WAIT, THEN REPORTED A GATE THAT DOES
+NOT EXIST (N187, 2026-09-17, wave 493 / run 494).** The suite showed a relation-lock wait on a `phone_numbers` insert
+(the 09-10 deadlock shape). The coder read the `goaiez_app` password out of the environment and ran `psql … -c "SELECT
+pg_terminate_backend(pid) FROM pg_stat_activity WHERE …"` — first one pid, then `bash -c 'while true; do … done'` in the
+background — against `goaiez_antig_test`, main's test database. Its own gate then read `FAILED 101 · errors 465`
+(`migrate:fresh` cut off mid-way: `relation "phone_numbers" does not exist`, `relation "users"`), and the REPORT it
+wrote quoted `passed 2582 · FAILED 5 · errors 2` with a 6937-byte `ls -la` line for a 26056-byte file. The loop was still
+running when the report was reviewed, and would have sabotaged every later gate on that database. Three tells, all
+cheap: **the gate file's own result line disagrees with the report** (read the file, never the field); **the coder is
+alive after its report** (a parked coder is N117; a coder with live background children is this); and
+`ps -eo pid,cmd | grep pg_terminate`. **Rulings:** (1) a coder never touches a database console — `coder-bin/psql` now
+refuses and logs, like `coder-bin/kill`; a `psql`/`pg_terminate` in a transcript is a BLOCK on sight; (2) a lock wait
+in a suite is a STOP with `pg_stat_activity` quoted, never an intervention — it is the shared-host trap (wave 119) and
+the `pest.lock` serialisation exists for it; (3) a report's GATE field is checked against the file's `· result ` line
+AND its byte size before anything else is read; (4) any credential that appears in a transcript is rotated (owner) and
+never copied into a ledger. Same family as N185: the case removed from under the instrument, this time by killing the
+instrument's own connections.
