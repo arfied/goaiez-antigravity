@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-17T07:50:08",
+ "updated": "2026-09-17T09:45:49",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -2619,6 +2619,12 @@
    "module": "X-16",
    "chose": "SITE-237: harvest coverage sits in the owner shell as Harvest coverage; layout attribute only, mount and reads were already tenant-scoped; 3 neutrals tokened; admin door and sample toggle kept; X16Filler extended with four harvested places",
    "at": "2026-09-17T07:50:08",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-140",
+   "chose": "SITE-238: proposed pages sit in the owner shell as Proposed pages; tenant-scoped mount beside the role guard; the topic list rendered with its sources and publish state; X140Filler seeds two topics and their sources",
+   "at": "2026-09-17T09:45:49",
    "ruling": "R245"
   }
  ],
