@@ -1,6 +1,17 @@
 <div>
-    <x-surface.sample-state module="⭐⭐ **Bringing a tenant's whole business across from ServiceTitan, Jobber, Housecall Pro — or from a spreadsheet.** *Customers, properties, job history, invoices, payments, estimates, photos, notes, agreements, the pricebook, staff and reviews.* ⛔⛔ **AND IT IS A TRANSLATION, NOT A COPY.** *Their job-status enum is not ours; their pricebook shape is not ours; their custom fields have no home.* ⭐⭐⭐ **A migration that maps 80% and silently drops 20% is worse than no migration — because the tenant finds the hole three months later, on a job, in front of a customer.**" screen="postimport_audit" />
     <div class="audit-view p-4">
-        <h3 class="text-lg font-bold">Post-Import Audit Trail</h3>
+        <h2 class="text-lg font-bold text-ink">Import rejections</h2>
+        @if($rejects->isEmpty())
+            <x-ui.empty-state heading="Nothing was rejected.">Every record an import could not bring across is listed here with the reason, so none of it goes missing quietly.</x-ui.empty-state>
+        @else
+            <ul class="divide-y divide-rule">
+                @foreach($rejects as $j)
+                    <li class="py-2" wire:key="reject-{{ $j->id }}">
+                        <span class="font-semibold">{{ $j->rejection_reason }}</span>,
+                        <span class="text-sm text-ink-2 tabular-nums">record {{ $j->record_index }}</span>
+                    </li>
+                @endforeach
+            </ul>
+        @endif
     </div>
 </div>
