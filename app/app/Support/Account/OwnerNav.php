@@ -612,6 +612,7 @@ final class OwnerNav
             OwnerNavItem::make('Disputes', 'x-201.dispute-card', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Dispute queue', 'x-201.dispute-queue', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Browser extension', 'x-196.extension-popup', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Payment methods', 'x-120.card-screen', OwnerNavItem::GROUP_MORE),
         ];
     }
 

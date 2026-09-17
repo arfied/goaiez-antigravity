@@ -1,6 +1,5 @@
 <div>
-    <x-surface.sample-state module="⭐⭐⭐ **[AMENDED T677" screen="card_screen" />
-    <h1 class="text-xl font-semibold mb-4">Payment Methods</h1>
+    <h2 class="text-lg font-bold text-ink">Payment methods</h2>
 
     @if($error)
         <x-ui.error-panel :heading="$errorHeading ?? 'Could not update your cards'">
