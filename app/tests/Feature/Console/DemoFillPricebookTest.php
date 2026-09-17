@@ -25,7 +25,7 @@ class DemoFillPricebookTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-205,X-162,X-171,X-172,X-201'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-205,X-162,X-171,X-172,X-201,X-01'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
 
@@ -39,16 +39,17 @@ class DemoFillPricebookTest extends TestCase
         $this->assertDatabaseHas('portal_views', ['business_id' => $biz->id, 'user_agent' => 'demo·Safari on iPhone']);
         $this->assertDatabaseHas('disputes', ['business_id' => $biz->id, 'reason' => 'demo·Duplicate charge', 'status' => 'compiled']);
         $this->assertDatabaseHas('dispute_evidence', ['business_id' => $biz->id, 'evidence_type' => 'call_log']);
+        $this->assertDatabaseHas('conversations', ['business_id' => $biz->id, 'subject' => 'demo·Water heater quote']);
 
         $c1 = Affiliate::count();
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-205,X-162,X-171,X-172,X-201'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-205,X-162,X-171,X-172,X-201,X-01'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
         $this->assertEquals($c1, Affiliate::count());
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--purge' => true, '--only' => 'X-205,X-162,X-171,X-172,X-201'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--purge' => true, '--only' => 'X-205,X-162,X-171,X-172,X-201,X-01'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
 
@@ -62,6 +63,7 @@ class DemoFillPricebookTest extends TestCase
         $this->assertDatabaseMissing('portal_views', ['business_id' => $biz->id, 'user_agent' => 'demo·Safari on iPhone']);
         $this->assertDatabaseMissing('disputes', ['business_id' => $biz->id, 'reason' => 'demo·Duplicate charge', 'status' => 'compiled']);
         $this->assertDatabaseMissing('dispute_evidence', ['business_id' => $biz->id, 'evidence_type' => 'call_log']);
+        $this->assertDatabaseMissing('conversations', ['business_id' => $biz->id, 'subject' => 'demo·Water heater quote']);
     }
 
     public function test_the_pricebook_screens_show_the_demo_rows(): void
@@ -70,7 +72,7 @@ class DemoFillPricebookTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-205,X-162,X-171,X-172,X-201'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-205,X-162,X-171,X-172,X-201,X-01'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
         $this->actingAs($owner);
@@ -82,6 +84,8 @@ class DemoFillPricebookTest extends TestCase
         $this->get(route('x-172.customerfacing-portal', ['token' => 'demo-portal-'.$biz->id]))->assertOk()->assertSee('Work Order')->assertSee('Sample');
         $this->get(route('x-201.dispute-queue'))->assertOk()->assertSee('demo·Product not received')->assertSee('demo·Duplicate charge')->assertDontSee('demo·Fraudulent');
         $this->get(route('x-201.dispute-card'))->assertOk()->assertSee('demo·Fraudulent')->assertSee('demo·Duplicate charge')->assertSee('2 evidence items')->assertSee('Deadline:');
+        $this->get(route('x-01.customers-list'))->assertOk()->assertSee('demo·Marcus');
+        $this->get(route('x-01.thread'))->assertOk()->assertSee('demo·Water heater quote');
     }
 
     public function test_x163_filler_is_idempotent(): void

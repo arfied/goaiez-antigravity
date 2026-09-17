@@ -1,6 +1,5 @@
 <div>
-    <x-surface.sample-state module="two-way sync to Xero / QuickBooks / Sage" screen="conflicts_list" />
-    <h1>Sync conflicts</h1>
+    <h2 class="text-lg font-bold text-ink">Sync conflicts</h2>
     <p>A line the sync could not place with confidence waits here for a person. It is never closed by the sync: two systems disagreeing about money is a human decision.</p>
 
     @if($error)
