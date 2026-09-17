@@ -261,7 +261,7 @@ test('the reachability check states the size of its own blind spot', function ()
 
     $invisible = array_values(array_diff(array_unique($tenantRole), $admitted));
 
-    expect(count($invisible))->toBe(95, 'If it went UP, a new module route ships behind tenant.role without opting into the owner layout, so it is reachable by URL and invisible to every check in this file. That is a regression. If it went DOWN, somebody converted a screen properly. Lower the number and record it.');
+    expect(count($invisible))->toBe(89, 'If it went UP, a new module route ships behind tenant.role without opting into the owner layout, so it is reachable by URL and invisible to every check in this file. That is a regression. If it went DOWN, somebody converted a screen properly. Lower the number and record it.');
 
     $withLayout = 0;
     $withoutLayout = 0;
