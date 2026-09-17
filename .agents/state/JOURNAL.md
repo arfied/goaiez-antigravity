@@ -977,3 +977,4 @@
 - `2026-09-16T16:58:29` note: C-Agent SIXTY-205: demo:fill fillers for the sixty lane's owner-shell modules (C-Agent X-102); marked demo· rows, idempotent, purgeable
 - `2026-09-16T19:30:56` (R245) C-Ai — SIXTY-206: the model board lists real AI calls in the owner shell as AI calls; a tenant-scoped read with a mount; C-Ai has no admin door; CAiFiller seeds two calls
 - `2026-09-16T19:44:02` (R245) C-Ai — SIXTY-207: agent.turn.started is emitted by C-Agent (plan header + scaffolded manifest) and consumed by C-Ai, which records a simulated AI call per turn; the engine now writes task/provider/model; the real provider is a separate owner decision
+- `2026-09-16T20:05:39` note: C-Ai SIXTY-207b: per-turn AI-call recording withdrawn — no turn uses a model yet and fact-gated turns must record none; the listener is the seam for the future model call

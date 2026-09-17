@@ -2347,6 +2347,10 @@
   {
    "at": "2026-09-16T16:58:29",
    "note": "C-Agent SIXTY-205: demo:fill fillers for the sixty lane's owner-shell modules (C-Agent X-102); marked demo\u00b7 rows, idempotent, purgeable"
+  },
+  {
+   "at": "2026-09-16T20:05:39",
+   "note": "C-Ai SIXTY-207b: per-turn AI-call recording withdrawn \u2014 no turn uses a model yet and fact-gated turns must record none; the listener is the seam for the future model call"
   }
  ]
 }
