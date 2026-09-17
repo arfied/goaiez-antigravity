@@ -26,13 +26,13 @@ class X113Filler implements DemoFiller
 
         $role = Role::create([
             'business_id' => $business->id,
-            'name' => self::MARKER . 'Field technician',
+            'name' => self::MARKER.'Field technician',
             'description' => 'Runs jobs and updates the customer.',
         ]);
 
         StaffUser::create([
             'business_id' => $business->id,
-            'name' => self::MARKER . 'Marcus Reed',
+            'name' => self::MARKER.'Marcus Reed',
             'email' => 'marcus.reed@partner-demo.example',
             'role_id' => $role->id,
             'is_active' => true,
@@ -40,7 +40,7 @@ class X113Filler implements DemoFiller
 
         StaffUser::create([
             'business_id' => $business->id,
-            'name' => self::MARKER . 'Dana Whitfield',
+            'name' => self::MARKER.'Dana Whitfield',
             'email' => 'dana.whitfield@partner-demo.example',
             'role_id' => $role->id,
             'is_active' => true,
@@ -53,7 +53,7 @@ class X113Filler implements DemoFiller
     {
         $staffCount = StaffUser::where('business_id', $business->id)->where('name', 'like', self::MARKER.'%')->delete();
         $roleCount = Role::where('business_id', $business->id)->where('name', 'like', self::MARKER.'%')->delete();
-        
+
         return $staffCount + $roleCount;
     }
 }
