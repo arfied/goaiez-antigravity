@@ -968,3 +968,4 @@
 - `2026-09-16T20:42:14` note: X-177 SITE-233b: the one remaining X-177 fixture with a string location_id now creates a Location; SITE-233's migration stands
 - `2026-09-16T21:12:16` (R245) X-123 — SITE-234: the dead-letter inspector lists real failed deliveries in the owner shell as Failed deliveries; a tenant-scoped read with a mount; admin door kept; X123Filler seeds one event and two dead letters
 - `2026-09-16T22:32:51` (R245) X-191 — SITE-235: earned links and the outreach ratio sit in the owner shell as Earned links and Outreach ratio; tenant-scoped reads with mounts; admin doors kept; X191Filler seeds a target, three pitches and two placements
+- `2026-09-17T02:28:10` (R245) X-16 — SITE-236: the geo-grid and service-area screens sit in the owner shell as Geo-grid and Service area; layout attribute only, mounts and reads were already tenant-scoped; 22 fixed neutrals tokened; admin doors and sample toggles kept; X16Filler seeds a grid and two service areas
