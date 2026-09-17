@@ -585,6 +585,7 @@ final class OwnerNav
             OwnerNavItem::make('Affiliates', 'x-205.portal', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('AI calls', 'c-ai.model-board', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Failed deliveries', 'x-123.dlq-request-inspector', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Affiliate payouts', 'x-205.payout-run', OwnerNavItem::GROUP_MORE),
         ];
     }
 

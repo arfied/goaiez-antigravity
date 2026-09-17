@@ -63,7 +63,7 @@ class DemoFillPricebookTest extends TestCase
 
         $this->get(route('x-205.portal'))->assertOk()->assertSee('demo·Alpha Partners');
         $this->get(route('x-205.earnings'))->assertOk()->assertSee('demo·ord1');
-        $this->get(route('x-205.payout-run'))->assertOk();
+        $this->get(route('x-205.payout-run'))->assertOk()->assertSee('50.00')->assertSee('requested');
     }
 
     public function test_x163_filler_is_idempotent(): void
