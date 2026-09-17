@@ -1,3470 +1,3230 @@
 {
- "_generated_by": "bin/generate-plan.py - do not hand-edit, re-run it",
- "generated": "2026-08-30",
- "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
- "roster": 127,
- "runtime_build": "20260829-0647",
- "seal_digest": "f1e73d9fc181eb1c",
- "next_free_module": "X-224",
- "next_free_ruling": "R247",
- "edge_model": {
-  "_measured": "199 consume edges: 197 resolve against an `emits` token, 2 against a `provides` token. The vocabularies are disjoint.",
-  "subscription_edges": 214,
-  "call_edges": 2,
-  "_why_it_matters": "a subscription is not a build-order constraint - the subscriber is built first and does not fire. Only the call edges are ordered."
- },
- "counts": {
-  "modules": 127,
-  "waves": 31,
-  "journeys": 12,
-  "doctor_stages": 8,
-  "module_gates": 7,
-  "orphan_events": 28,
-  "by_intent": {
-   "RECOVER": 18,
-   "INFORM": 37,
-   "OBSERVE": 14,
-   "SERVE": 17,
-   "GROW": 37,
-   "NONE": 1
-  }
- },
- "doctor_stages": [
-  {
-   "n": 1,
-   "stage": "integrity",
-   "fails": "COMMIT",
-   "what": "the stage that watches the other stages"
+  "_generated_by": "bin/generate-plan.py - do not hand-edit, re-run it",
+  "generated": "2026-08-30",
+  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
+  "roster": 127,
+  "runtime_build": "20260829-0647",
+  "seal_digest": "f1e73d9fc181eb1c",
+  "next_free_module": "X-224",
+  "next_free_ruling": "R247",
+  "edge_model": {
+    "_measured": "199 consume edges: 197 resolve against an `emits` token, 2 against a `provides` token. The vocabularies are disjoint.",
+    "subscription_edges": 214,
+    "call_edges": 2,
+    "_why_it_matters": "a subscription is not a build-order constraint - the subscriber is built first and does not fire. Only the call edges are ordered."
   },
-  {
-   "n": 2,
-   "stage": "boundary",
-   "fails": "COMMIT",
-   "what": "pure grep, ~2s"
+  "counts": {
+    "modules": 127,
+    "waves": 31,
+    "journeys": 12,
+    "doctor_stages": 8,
+    "module_gates": 7,
+    "orphan_events": 28,
+    "by_intent": {
+      "RECOVER": 18,
+      "INFORM": 37,
+      "OBSERVE": 14,
+      "SERVE": 17,
+      "GROW": 37,
+      "NONE": 1
+    }
   },
-  {
-   "n": 3,
-   "stage": "contract",
-   "fails": "COMMIT",
-   "what": "reads the annotations, never the prose"
+  "doctor_stages": [
+    {
+      "n": 1,
+      "stage": "integrity",
+      "fails": "COMMIT",
+      "what": "the stage that watches the other stages"
+    },
+    {
+      "n": 2,
+      "stage": "boundary",
+      "fails": "COMMIT",
+      "what": "pure grep, ~2s"
+    },
+    {
+      "n": 3,
+      "stage": "contract",
+      "fails": "COMMIT",
+      "what": "reads the annotations, never the prose"
+    },
+    {
+      "n": 4,
+      "stage": "citation",
+      "fails": "COMMIT",
+      "what": "every cited law resolves"
+    },
+    {
+      "n": 5,
+      "stage": "schema",
+      "fails": "MERGE",
+      "what": "tenancy and RLS, ~20s"
+    },
+    {
+      "n": 6,
+      "stage": "capability",
+      "fails": "MERGE",
+      "what": "id-matched, two-pass"
+    },
+    {
+      "n": 7,
+      "stage": "anchor",
+      "fails": "WAVE",
+      "what": "a real message-id, not an assertion"
+    },
+    {
+      "n": 8,
+      "stage": "journey",
+      "fails": "WAVE",
+      "what": "end to end on real transports"
+    }
+  ],
+  "module_gates": [
+    "1 BUILT",
+    "2 TESTED",
+    "3 CONTENT",
+    "4 HELP",
+    "5 DASHBOARD",
+    "6 SURFACES",
+    "7 GATE"
+  ],
+  "blocking_decisions": [
+    "jobs: canonical noun is a WORK ORDER; existing table is Laravel queue",
+    "businesses vs companies vs customers; facts vs business_facts",
+    "322 refusals still to be written (R240)",
+    "legacy triage declared REPLACE but not executed",
+    "R237 COMPLEX slot has no cost ceiling"
+  ],
+  "waves": [
+    {
+      "wave": 1,
+      "track": "spine",
+      "why": "Nothing sits on nothing. X-121 is the noun set, X-123 carries every event, X-122 is the action surface the agent may reach, X-126 decides whether it may, X-119 is what it may say, X-128 proves the seams.",
+      "modules": [
+        "X-121",
+        "X-123",
+        "X-122",
+        "X-126",
+        "X-119"
+      ],
+      "subscribes_to": [
+        "X-160",
+        "X-163",
+        "X-204"
+      ],
+      "subscribed_to_by": [
+        "C-Agent",
+        "C-Reviews",
+        "C-Telephony",
+        "X-01",
+        "X-10",
+        "X-102",
+        "X-103",
+        "X-105",
+        "X-108",
+        "X-109",
+        "X-113",
+        "X-114",
+        "X-116",
+        "X-117",
+        "X-118",
+        "X-124",
+        "X-130",
+        "X-131",
+        "X-132",
+        "X-134",
+        "X-135",
+        "X-140",
+        "X-142",
+        "X-143",
+        "X-144",
+        "X-145",
+        "X-148",
+        "X-151",
+        "X-154",
+        "X-158",
+        "X-159",
+        "X-161",
+        "X-162",
+        "X-164",
+        "X-165",
+        "X-171",
+        "X-175",
+        "X-176",
+        "X-179",
+        "X-182",
+        "X-183",
+        "X-184",
+        "X-186",
+        "X-189",
+        "X-190",
+        "X-191",
+        "X-192",
+        "X-193",
+        "X-194",
+        "X-196",
+        "X-200",
+        "X-204",
+        "X-205",
+        "X-207",
+        "X-210",
+        "X-214",
+        "X-215",
+        "X-217",
+        "X-218",
+        "X-219",
+        "X-220",
+        "X-66"
+      ],
+      "calls": [],
+      "not_yet_built_publishers": [
+        "X-160",
+        "X-163",
+        "X-204"
+      ],
+      "journeys_unlocked": []
+    },
+    {
+      "wave": 2,
+      "track": "spine",
+      "why": "Nothing sits on nothing. X-121 is the noun set, X-123 carries every event, X-122 is the action surface the agent may reach, X-126 decides whether it may, X-119 is what it may say, X-128 proves the seams.",
+      "modules": [
+        "X-128"
+      ],
+      "subscribes_to": [],
+      "subscribed_to_by": [],
+      "calls": [],
+      "not_yet_built_publishers": [],
+      "journeys_unlocked": []
+    },
+    {
+      "wave": 3,
+      "track": "ai-core",
+      "why": "R238: one call path, no second entrance. Before anything that calls a model, because a second entrance is unbuildable once two callers exist.",
+      "modules": [
+        "C-Ai",
+        "X-219",
+        "X-220"
+      ],
+      "subscribes_to": [
+        "X-126",
+        "X-162"
+      ],
+      "subscribed_to_by": [],
+      "calls": [],
+      "not_yet_built_publishers": [
+        "X-162"
+      ],
+      "journeys_unlocked": []
+    },
+    {
+      "wave": 4,
+      "track": "consent",
+      "why": "X-204 is the single decider of whether a message may be sent at all, and it precedes every transport: a suppression list that does not block is a list and not a suppression.",
+      "modules": [
+        "X-204",
+        "X-206"
+      ],
+      "subscribes_to": [
+        "X-126"
+      ],
+      "subscribed_to_by": [
+        "C-Sms",
+        "X-126"
+      ],
+      "calls": [],
+      "not_yet_built_publishers": [],
+      "journeys_unlocked": []
+    },
+    {
+      "wave": 5,
+      "track": "J1-J2-J4 the sixty seconds",
+      "why": "The first journey is the whole product in sixty seconds: a missed call becomes a consented text back. J2 puts a live agent on a real number from two signup fields; J4 proves STOP halts work already in flight. Built as one track because the carriers, the agent and the number pool consume each other's events.",
+      "modules": [
+        "C-Telephony",
+        "C-Sms",
+        "C-Agent",
+        "X-66",
+        "X-188"
+      ],
+      "subscribes_to": [
+        "C-Reviews",
+        "X-102",
+        "X-118",
+        "X-119",
+        "X-121",
+        "X-126",
+        "X-127",
+        "X-163",
+        "X-171",
+        "X-186",
+        "X-193",
+        "X-200",
+        "X-204",
+        "X-207",
+        "X-217",
+        "X-218"
+      ],
+      "subscribed_to_by": [
+        "C-Mail",
+        "C-Whatsapp",
+        "X-137",
+        "X-147",
+        "X-149",
+        "X-153",
+        "X-197",
+        "X-201"
+      ],
+      "calls": [],
+      "not_yet_built_publishers": [
+        "C-Reviews",
+        "X-102",
+        "X-118",
+        "X-127",
+        "X-163",
+        "X-171",
+        "X-186",
+        "X-193",
+        "X-200",
+        "X-207",
+        "X-217",
+        "X-218"
+      ],
+      "journeys_unlocked": [
+        "J1",
+        "J4"
+      ]
+    },
+    {
+      "wave": 6,
+      "track": "J1-J2-J4 the sixty seconds",
+      "why": "The first journey is the whole product in sixty seconds: a missed call becomes a consented text back. J2 puts a live agent on a real number from two signup fields; J4 proves STOP halts work already in flight. Built as one track because the carriers, the agent and the number pool consume each other's events.",
+      "modules": [
+        "X-153",
+        "X-01",
+        "X-118"
+      ],
+      "subscribes_to": [
+        "C-Reviews",
+        "X-111",
+        "X-126",
+        "X-66"
+      ],
+      "subscribed_to_by": [
+        "X-07",
+        "X-08",
+        "X-104",
+        "X-112",
+        "X-129",
+        "X-180",
+        "X-185",
+        "X-188",
+        "X-212"
+      ],
+      "calls": [],
+      "not_yet_built_publishers": [
+        "C-Reviews",
+        "X-111"
+      ],
+      "journeys_unlocked": [
+        "J2"
+      ]
+    },
+    {
+      "wave": 7,
+      "track": "J3 the pricebook",
+      "why": "A quote comes from the pricebook or does not come at all - no Fact, no skill, made visible.",
+      "modules": [
+        "X-163",
+        "X-164",
+        "X-108"
+      ],
+      "subscribes_to": [
+        "X-126",
+        "X-160",
+        "X-171"
+      ],
+      "subscribed_to_by": [
+        "X-111",
+        "X-119",
+        "X-166",
+        "X-172",
+        "X-175",
+        "X-198",
+        "X-66"
+      ],
+      "calls": [],
+      "not_yet_built_publishers": [
+        "X-160",
+        "X-171"
+      ],
+      "journeys_unlocked": [
+        "J3"
+      ]
+    },
+    {
+      "wave": 8,
+      "track": "J10 reviews",
+      "why": "The review split: a low rating is triaged before anybody is asked for a public one.",
+      "modules": [
+        "C-Reviews",
+        "X-181",
+        "X-110"
+      ],
+      "subscribes_to": [
+        "X-126"
+      ],
+      "subscribed_to_by": [
+        "C-Sms",
+        "X-102",
+        "X-127",
+        "X-136",
+        "X-137",
+        "X-153",
+        "X-170",
+        "X-177",
+        "X-185",
+        "X-208"
+      ],
+      "calls": [],
+      "not_yet_built_publishers": [],
+      "journeys_unlocked": [
+        "J10"
+      ]
+    },
+    {
+      "wave": 9,
+      "track": "J9-J12 money",
+      "why": "An invoice reaches a real charge id, and an overdue invoice is chased by reason with resolution before any stop.",
+      "modules": [
+        "C-Billing",
+        "X-199",
+        "X-211",
+        "X-202"
+      ],
+      "subscribes_to": [
+        "X-103",
+        "X-145",
+        "X-171",
+        "X-190",
+        "X-198",
+        "X-205",
+        "X-208"
+      ],
+      "subscribed_to_by": [
+        "X-07",
+        "X-138",
+        "X-139",
+        "X-170",
+        "X-172",
+        "X-173",
+        "X-198",
+        "X-201"
+      ],
+      "calls": [],
+      "not_yet_built_publishers": [
+        "X-103",
+        "X-145",
+        "X-171",
+        "X-190",
+        "X-198",
+        "X-205",
+        "X-208"
+      ],
+      "journeys_unlocked": [
+        "J12"
+      ]
+    },
+    {
+      "wave": 10,
+      "track": "J9-J12 money",
+      "why": "An invoice reaches a real charge id, and an overdue invoice is chased by reason with resolution before any stop.",
+      "modules": [
+        "X-117",
+        "X-198"
+      ],
+      "subscribes_to": [
+        "X-126",
+        "X-164",
+        "X-199"
+      ],
+      "subscribed_to_by": [
+        "C-Billing",
+        "X-120",
+        "X-166",
+        "X-170",
+        "X-173",
+        "X-199",
+        "X-201"
+      ],
+      "calls": [],
+      "not_yet_built_publishers": [],
+      "journeys_unlocked": [
+        "J9"
+      ]
+    },
+    {
+      "wave": 11,
+      "track": "J6-J7 portal",
+      "why": "Cancel is one tap with nothing in between; an agency client never sees cost or margin.",
+      "modules": [
+        "X-172",
+        "X-112",
+        "X-166"
+      ],
+      "subscribes_to": [
+        "X-118",
+        "X-162",
+        "X-163",
+        "X-164",
+        "X-167",
+        "X-168",
+        "X-171",
+        "X-198",
+        "X-199"
+      ],
+      "subscribed_to_by": [
+        "X-170",
+        "X-173"
+      ],
+      "calls": [],
+      "not_yet_built_publishers": [
+        "X-162",
+        "X-167",
+        "X-168",
+        "X-171"
+      ],
+      "journeys_unlocked": [
+        "J6",
+        "J7"
+      ]
+    },
+    {
+      "wave": 12,
+      "track": "J11 the site",
+      "why": "A published site carries all seven (P-125): pixel, chat, forms, DNI, SEO, schema, SSL.",
+      "modules": [
+        "X-157",
+        "X-178",
+        "X-103",
+        "X-102",
+        "X-155"
+      ],
+      "subscribes_to": [
+        "X-110",
+        "X-119",
+        "X-124",
+        "X-126",
+        "X-129",
+        "X-179"
+      ],
+      "subscribed_to_by": [
+        "C-Agent",
+        "X-202"
+      ],
+      "calls": [],
+      "not_yet_built_publishers": [
+        "X-124",
+        "X-129",
+        "X-179"
+      ],
+      "journeys_unlocked": []
+    },
+    {
+      "wave": 13,
+      "track": "J11 the site",
+      "why": "A published site carries all seven (P-125): pixel, chat, forms, DNI, SEO, schema, SSL.",
+      "modules": [
+        "X-137",
+        "X-176"
+      ],
+      "subscribes_to": [
+        "X-110",
+        "X-126",
+        "X-66"
+      ],
+      "subscribed_to_by": [
+        "X-138"
+      ],
+      "calls": [],
+      "not_yet_built_publishers": [],
+      "journeys_unlocked": [
+        "J11"
+      ]
+    },
+    {
+      "wave": 14,
+      "track": "J5-J8 safety",
+      "why": "A migration of five hundred jobs sends nothing; a deliberately corrupted backup fails the restore.",
+      "modules": [
+        "X-212",
+        "X-203"
+      ],
+      "subscribes_to": [
+        "X-118"
+      ],
+      "subscribed_to_by": [],
+      "calls": [],
+      "not_yet_built_publishers": [],
+      "journeys_unlocked": [
+        "J5",
+        "J8"
+      ]
+    },
+    {
+      "wave": 15,
+      "track": "channels",
+      "why": "The remaining transports, behind the seam the carriers established.",
+      "modules": [
+        "C-Mail",
+        "C-Whatsapp",
+        "X-207",
+        "X-193"
+      ],
+      "subscribes_to": [
+        "C-Agent",
+        "C-Sms",
+        "C-Telephony",
+        "X-126",
+        "X-127",
+        "X-186",
+        "X-217",
+        "X-218"
+      ],
+      "subscribed_to_by": [
+        "C-Sms",
+        "C-Telephony"
+      ],
+      "calls": [],
+      "not_yet_built_publishers": [
+        "X-127",
+        "X-186",
+        "X-217",
+        "X-218"
+      ],
+      "journeys_unlocked": []
+    },
+    {
+      "wave": 16,
+      "track": "channels",
+      "why": "The remaining transports, behind the seam the carriers established.",
+      "modules": [],
+      "subscribes_to": [
+        "X-181"
+      ],
+      "subscribed_to_by": [
+        "X-202"
+      ],
+      "calls": [],
+      "not_yet_built_publishers": [],
+      "journeys_unlocked": []
+    },
+    {
+      "wave": 17,
+      "track": "roster",
+      "why": "the rest of the roster, RECOVER and SERVE first because those are the intents that ship autonomous on day one",
+      "modules": [
+        "X-125",
+        "X-127",
+        "X-149",
+        "X-170",
+        "X-201"
+      ],
+      "subscribes_to": [
+        "C-Agent",
+        "C-Billing",
+        "C-Reviews",
+        "X-166",
+        "X-171",
+        "X-198",
+        "X-199",
+        "X-66"
+      ],
+      "subscribed_to_by": [
+        "C-Mail",
+        "C-Telephony",
+        "C-Whatsapp",
+        "X-141",
+        "X-147"
+      ],
+      "calls": [],
+      "not_yet_built_publishers": [
+        "X-171"
+      ],
+      "journeys_unlocked": []
+    },
+    {
+      "wave": 18,
+      "track": "roster",
+      "why": "the rest of the roster, RECOVER and SERVE first because those are the intents that ship autonomous on day one",
+      "modules": [
+        "X-10",
+        "X-113",
+        "X-124",
+        "X-151"
+      ],
+      "subscribes_to": [
+        "X-126",
+        "X-145"
+      ],
+      "subscribed_to_by": [
+        "X-150",
+        "X-16",
+        "X-178"
+      ],
+      "calls": [],
+      "not_yet_built_publishers": [
+        "X-145"
+      ],
+      "journeys_unlocked": []
+    },
+    {
+      "wave": 19,
+      "track": "roster",
+      "why": "the rest of the roster, RECOVER and SERVE first because those are the intents that ship autonomous on day one",
+      "modules": [
+        "X-162",
+        "X-165",
+        "X-171",
+        "X-189"
+      ],
+      "subscribes_to": [
+        "X-126"
+      ],
+      "subscribed_to_by": [
+        "C-Sms",
+        "X-07",
+        "X-127",
+        "X-136",
+        "X-138",
+        "X-139",
+        "X-160",
+        "X-163",
+        "X-167",
+        "X-168",
+        "X-172",
+        "X-177",
+        "X-199",
+        "X-201",
+        "X-209",
+        "X-219"
+      ],
+      "calls": [],
+      "not_yet_built_publishers": [],
+      "journeys_unlocked": []
+    },
+    {
+      "wave": 20,
+      "track": "roster",
+      "why": "the rest of the roster, RECOVER and SERVE first because those are the intents that ship autonomous on day one",
+      "modules": [
+        "X-07",
+        "X-104",
+        "X-111",
+        "X-129"
+      ],
+      "subscribes_to": [
+        "X-01",
+        "X-109",
+        "X-118",
+        "X-126",
+        "X-136",
+        "X-163",
+        "X-171",
+        "X-199"
+      ],
+      "subscribed_to_by": [
+        "X-153",
+        "X-157"
+      ],
+      "calls": [],
+      "not_yet_built_publishers": [
+        "X-109",
+        "X-136"
+      ],
+      "journeys_unlocked": []
+    },
+    {
+      "wave": 21,
+      "track": "roster",
+      "why": "the rest of the roster, RECOVER and SERVE first because those are the intents that ship autonomous on day one",
+      "modules": [
+        "X-138",
+        "X-139",
+        "X-148",
+        "X-150"
+      ],
+      "subscribes_to": [
+        "X-119",
+        "X-122",
+        "X-126",
+        "X-134",
+        "X-137",
+        "X-151",
+        "X-160",
+        "X-171",
+        "X-199"
+      ],
+      "subscribed_to_by": [
+        "X-124",
+        "X-202"
+      ],
+      "calls": [],
+      "not_yet_built_publishers": [
+        "X-134",
+        "X-160"
+      ],
+      "journeys_unlocked": []
+    },
+    {
+      "wave": 22,
+      "track": "roster",
+      "why": "the rest of the roster, RECOVER and SERVE first because those are the intents that ship autonomous on day one",
+      "modules": [
+        "X-16",
+        "X-160",
+        "X-167",
+        "X-168",
+        "X-175"
+      ],
+      "subscribes_to": [
+        "X-10",
+        "X-121",
+        "X-162",
+        "X-163",
+        "X-171"
+      ],
+      "subscribed_to_by": [
+        "X-119",
+        "X-148",
+        "X-163",
+        "X-166"
+      ],
+      "calls": [
+        "X-171"
+      ],
+      "not_yet_built_publishers": [],
+      "journeys_unlocked": []
+    },
+    {
+      "wave": 23,
+      "track": "roster",
+      "why": "the rest of the roster, RECOVER and SERVE first because those are the intents that ship autonomous on day one",
+      "modules": [
+        "X-177",
+        "X-180",
+        "X-194",
+        "X-195"
+      ],
+      "subscribes_to": [
+        "C-Reviews",
+        "C-Telephony",
+        "X-118",
+        "X-122",
+        "X-140",
+        "X-171",
+        "X-200"
+      ],
+      "subscribed_to_by": [],
+      "calls": [],
+      "not_yet_built_publishers": [
+        "X-140",
+        "X-200"
+      ],
+      "journeys_unlocked": []
+    },
+    {
+      "wave": 24,
+      "track": "roster",
+      "why": "the rest of the roster, RECOVER and SERVE first because those are the intents that ship autonomous on day one",
+      "modules": [
+        "X-209",
+        "X-82",
+        "X-08",
+        "X-120",
+        "X-136"
+      ],
+      "subscribes_to": [
+        "X-01",
+        "X-110",
+        "X-135",
+        "X-162",
+        "X-171",
+        "X-198"
+      ],
+      "subscribed_to_by": [
+        "X-07",
+        "X-185"
+      ],
+      "calls": [],
+      "not_yet_built_publishers": [
+        "X-135"
+      ],
+      "journeys_unlocked": []
+    },
+    {
+      "wave": 25,
+      "track": "roster",
+      "why": "the rest of the roster, RECOVER and SERVE first because those are the intents that ship autonomous on day one",
+      "modules": [
+        "X-142",
+        "X-156",
+        "X-173"
+      ],
+      "subscribes_to": [
+        "X-122",
+        "X-125",
+        "X-126",
+        "X-140",
+        "X-166",
+        "X-186",
+        "X-198",
+        "X-199"
+      ],
+      "subscribed_to_by": [],
+      "calls": [],
+      "not_yet_built_publishers": [
+        "X-140",
+        "X-186"
+      ],
+      "journeys_unlocked": []
+    },
+    {
+      "wave": 26,
+      "track": "roster",
+      "why": "the rest of the roster, RECOVER and SERVE first because those are the intents that ship autonomous on day one",
+      "modules": [
+        "X-105",
+        "X-109",
+        "X-116",
+        "X-130"
+      ],
+      "subscribes_to": [
+        "X-126"
+      ],
+      "subscribed_to_by": [
+        "X-111"
+      ],
+      "calls": [],
+      "not_yet_built_publishers": [],
+      "journeys_unlocked": []
+    },
+    {
+      "wave": 27,
+      "track": "roster",
+      "why": "the rest of the roster, RECOVER and SERVE first because those are the intents that ship autonomous on day one",
+      "modules": [
+        "X-131",
+        "X-132",
+        "X-134",
+        "X-135",
+        "X-140"
+      ],
+      "subscribes_to": [
+        "X-126"
+      ],
+      "subscribed_to_by": [
+        "X-136",
+        "X-150",
+        "X-177",
+        "X-213",
+        "X-218"
+      ],
+      "calls": [],
+      "not_yet_built_publishers": [],
+      "journeys_unlocked": []
+    },
+    {
+      "wave": 28,
+      "track": "roster",
+      "why": "the rest of the roster, RECOVER and SERVE first because those are the intents that ship autonomous on day one",
+      "modules": [
+        "X-154",
+        "X-161"
+      ],
+      "subscribes_to": [
+        "X-126"
+      ],
+      "subscribed_to_by": [],
+      "calls": [],
+      "not_yet_built_publishers": [],
+      "journeys_unlocked": []
+    },
+    {
+      "wave": 29,
+      "track": "roster",
+      "why": "the rest of the roster, RECOVER and SERVE first because those are the intents that ship autonomous on day one",
+      "modules": [
+        "X-179",
+        "X-182",
+        "X-183",
+        "X-184",
+        "X-185"
+      ],
+      "subscribes_to": [
+        "X-110",
+        "X-118",
+        "X-126",
+        "X-136"
+      ],
+      "subscribed_to_by": [
+        "X-178"
+      ],
+      "calls": [],
+      "not_yet_built_publishers": [],
+      "journeys_unlocked": []
+    },
+    {
+      "wave": 30,
+      "track": "roster",
+      "why": "the rest of the roster, RECOVER and SERVE first because those are the intents that ship autonomous on day one",
+      "modules": [
+        "X-186",
+        "X-190",
+        "X-191",
+        "X-192",
+        "X-196"
+      ],
+      "subscribes_to": [
+        "X-126"
+      ],
+      "subscribed_to_by": [
+        "C-Mail",
+        "C-Telephony",
+        "C-Whatsapp",
+        "X-141",
+        "X-147",
+        "X-202"
+      ],
+      "calls": [],
+      "not_yet_built_publishers": [],
+      "journeys_unlocked": []
+    },
+    {
+      "wave": 31,
+      "track": "roster",
+      "why": "the rest of the roster, RECOVER and SERVE first because those are the intents that ship autonomous on day one",
+      "modules": [
+        "X-205",
+        "X-210",
+        "X-217",
+        "X-218"
+      ],
+      "subscribes_to": [
+        "X-121",
+        "X-126",
+        "X-140"
+      ],
+      "subscribed_to_by": [
+        "C-Mail",
+        "C-Telephony",
+        "C-Whatsapp",
+        "X-147",
+        "X-197",
+        "X-202"
+      ],
+      "calls": [],
+      "not_yet_built_publishers": [],
+      "journeys_unlocked": []
+    }
+  ],
+  "journeys": [
+    {
+      "id": "J1",
+      "title": "a missed call becomes a consented text back",
+      "requires": [
+        "C-Telephony",
+        "C-Sms",
+        "X-188",
+        "X-204"
+      ],
+      "green_after_wave": 5
+    },
+    {
+      "id": "J2",
+      "title": "two fields at signup put a live agent on a real number",
+      "requires": [
+        "X-118",
+        "C-Agent",
+        "X-188",
+        "X-66"
+      ],
+      "green_after_wave": 6
+    },
+    {
+      "id": "J3",
+      "title": "a quote comes from the pricebook or does not come at all",
+      "requires": [
+        "X-163",
+        "X-119",
+        "X-126"
+      ],
+      "green_after_wave": 7
+    },
+    {
+      "id": "J4",
+      "title": "STOP halts every pending step for that person",
+      "requires": [
+        "X-204",
+        "C-Sms",
+        "X-121"
+      ],
+      "green_after_wave": 5
+    },
+    {
+      "id": "J5",
+      "title": "a migration of five hundred jobs sends nothing",
+      "requires": [
+        "X-212",
+        "X-204"
+      ],
+      "green_after_wave": 14
+    },
+    {
+      "id": "J6",
+      "title": "cancel is one tap with nothing in between",
+      "requires": [
+        "X-172",
+        "C-Billing"
+      ],
+      "green_after_wave": 11
+    },
+    {
+      "id": "J7",
+      "title": "an agency client never sees cost or margin",
+      "requires": [
+        "X-112",
+        "X-166"
+      ],
+      "green_after_wave": 11
+    },
+    {
+      "id": "J8",
+      "title": "a deliberately corrupted backup fails the restore",
+      "requires": [
+        "X-203"
+      ],
+      "green_after_wave": 14
+    },
+    {
+      "id": "J9",
+      "title": "an invoice reaches a real charge id",
+      "requires": [
+        "X-199",
+        "X-198",
+        "C-Billing"
+      ],
+      "green_after_wave": 10
+    },
+    {
+      "id": "J10",
+      "title": "a completed job asks for a review once inside the cadence",
+      "requires": [
+        "C-Reviews",
+        "X-181"
+      ],
+      "green_after_wave": 8
+    },
+    {
+      "id": "J11",
+      "title": "a published site carries all seven",
+      "requires": [
+        "X-157",
+        "X-110",
+        "X-102",
+        "X-155",
+        "X-137"
+      ],
+      "green_after_wave": 13
+    },
+    {
+      "id": "J12",
+      "title": "an overdue invoice is chased by reason, resolution first",
+      "requires": [
+        "X-211",
+        "X-199",
+        "X-204"
+      ],
+      "green_after_wave": 9
+    }
+  ],
+  "orphan_events": {
+    "subscription.renewed": [
+      "C-Billing",
+      "X-120",
+      "X-127",
+      "X-198",
+      "X-199",
+      "X-82"
+    ],
+    "message.received": [
+      "C-Agent",
+      "C-Whatsapp",
+      "X-153",
+      "X-185"
+    ],
+    "page.published": [
+      "X-155",
+      "X-157",
+      "X-195"
+    ],
+    "agent.turn.started": [
+      "C-Ai",
+      "X-148"
+    ],
+    "fetch.completed": [
+      "X-129",
+      "X-136"
+    ],
+    "prospect.scored": [
+      "X-217",
+      "X-218"
+    ],
+    "outcome.": [
+      "X-145"
+    ],
+    "campaign.scheduled": [
+      "C-Mail"
+    ],
+    "tenant.cancelled": [
+      "X-188"
+    ],
+    "message.sent": [
+      "X-137"
+    ],
+    "entity.updated": [
+      "X-119"
+    ],
+    "site.published": [
+      "X-119"
+    ],
+    "prompt.changed": [
+      "X-149"
+    ],
+    "model.changed": [
+      "X-149"
+    ],
+    "upload.received": [
+      "X-160"
+    ],
+    "refresh.due": [
+      "X-16"
+    ],
+    "page.loaded": [
+      "X-110"
+    ],
+    "agent.refused": [
+      "X-163"
+    ],
+    "order.paid": [
+      "X-167"
+    ],
+    "order.cancelled": [
+      "X-167"
+    ],
+    "zernio.webhook": [
+      "X-177"
+    ],
+    "entity.state_changed": [
+      "X-185"
+    ],
+    "country.detected": [
+      "X-82"
+    ],
+    "limit.exceeded": [
+      "X-120"
+    ],
+    "help.human_requested": [
+      "X-111"
+    ],
+    "credit.debited": [
+      "X-112"
+    ],
+    "rule.fired": [
+      "X-195"
+    ],
+    "invoice.overdue": [
+      "X-211"
+    ]
   },
-  {
-   "n": 4,
-   "stage": "citation",
-   "fails": "COMMIT",
-   "what": "every cited law resolves"
+  "call_edges": {
+    "X-175": [
+      "X-171"
+    ],
+    "X-198": [
+      "X-117"
+    ]
   },
-  {
-   "n": 5,
-   "stage": "schema",
-   "fails": "MERGE",
-   "what": "tenancy and RLS, ~20s"
+  "subscription_edges": {
+    "C-Agent": [
+      "X-102",
+      "X-119",
+      "X-126",
+      "X-66"
+    ],
+    "C-Billing": [
+      "X-198"
+    ],
+    "C-Mail": [
+      "C-Agent",
+      "C-Sms",
+      "X-127",
+      "X-186",
+      "X-193",
+      "X-207",
+      "X-217",
+      "X-218"
+    ],
+    "C-Reviews": [
+      "X-126"
+    ],
+    "C-Sms": [
+      "C-Reviews",
+      "C-Telephony",
+      "X-171",
+      "X-193",
+      "X-204",
+      "X-66"
+    ],
+    "C-Telephony": [
+      "C-Agent",
+      "C-Sms",
+      "X-121",
+      "X-127",
+      "X-186",
+      "X-200",
+      "X-207",
+      "X-217",
+      "X-218"
+    ],
+    "C-Whatsapp": [
+      "C-Agent",
+      "C-Sms",
+      "X-127",
+      "X-186",
+      "X-193",
+      "X-207",
+      "X-217",
+      "X-218"
+    ],
+    "X-01": [
+      "X-126"
+    ],
+    "X-07": [
+      "X-01",
+      "X-136",
+      "X-171",
+      "X-199"
+    ],
+    "X-08": [
+      "X-01",
+      "X-136"
+    ],
+    "X-10": [
+      "X-126"
+    ],
+    "X-102": [
+      "X-110",
+      "X-119",
+      "X-126"
+    ],
+    "X-103": [
+      "X-126"
+    ],
+    "X-104": [
+      "X-118"
+    ],
+    "X-105": [
+      "X-126"
+    ],
+    "X-108": [
+      "X-126"
+    ],
+    "X-109": [
+      "X-126"
+    ],
+    "X-111": [
+      "X-109",
+      "X-163"
+    ],
+    "X-112": [
+      "X-118"
+    ],
+    "X-113": [
+      "X-126"
+    ],
+    "X-114": [
+      "X-126"
+    ],
+    "X-116": [
+      "X-126"
+    ],
+    "X-117": [
+      "X-126"
+    ],
+    "X-118": [
+      "X-126"
+    ],
+    "X-119": [
+      "X-160",
+      "X-163"
+    ],
+    "X-120": [
+      "X-198"
+    ],
+    "X-122": [
+      "X-126"
+    ],
+    "X-124": [
+      "X-126",
+      "X-145"
+    ],
+    "X-126": [
+      "X-119",
+      "X-204"
+    ],
+    "X-127": [
+      "C-Reviews",
+      "X-171"
+    ],
+    "X-129": [
+      "X-118"
+    ],
+    "X-130": [
+      "X-126"
+    ],
+    "X-131": [
+      "X-126"
+    ],
+    "X-132": [
+      "X-126"
+    ],
+    "X-134": [
+      "X-126"
+    ],
+    "X-135": [
+      "X-126"
+    ],
+    "X-136": [
+      "X-110",
+      "X-135",
+      "X-171"
+    ],
+    "X-137": [
+      "X-110",
+      "X-66"
+    ],
+    "X-138": [
+      "X-137",
+      "X-171",
+      "X-199"
+    ],
+    "X-139": [
+      "X-138",
+      "X-171",
+      "X-199"
+    ],
+    "X-140": [
+      "X-126"
+    ],
+    "X-141": [
+      "X-125",
+      "X-186"
+    ],
+    "X-142": [
+      "X-122",
+      "X-126"
+    ],
+    "X-143": [
+      "X-126"
+    ],
+    "X-144": [
+      "X-126"
+    ],
+    "X-145": [
+      "X-122",
+      "X-126"
+    ],
+    "X-147": [
+      "C-Agent",
+      "C-Sms",
+      "C-Telephony",
+      "X-127",
+      "X-186",
+      "X-193",
+      "X-207",
+      "X-217",
+      "X-218"
+    ],
+    "X-148": [
+      "X-119",
+      "X-160"
+    ],
+    "X-149": [
+      "C-Agent"
+    ],
+    "X-150": [
+      "X-134",
+      "X-151"
+    ],
+    "X-151": [
+      "X-126"
+    ],
+    "X-153": [
+      "C-Reviews",
+      "X-111",
+      "X-66"
+    ],
+    "X-154": [
+      "X-126"
+    ],
+    "X-157": [
+      "X-129"
+    ],
+    "X-158": [
+      "X-126"
+    ],
+    "X-159": [
+      "X-126"
+    ],
+    "X-16": [
+      "X-10"
+    ],
+    "X-160": [
+      "X-171"
+    ],
+    "X-161": [
+      "X-126"
+    ],
+    "X-162": [
+      "X-126"
+    ],
+    "X-163": [
+      "X-160",
+      "X-171"
+    ],
+    "X-164": [
+      "X-126"
+    ],
+    "X-165": [
+      "X-126"
+    ],
+    "X-166": [
+      "X-163",
+      "X-167",
+      "X-168",
+      "X-198"
+    ],
+    "X-167": [
+      "X-171"
+    ],
+    "X-168": [
+      "X-162",
+      "X-171"
+    ],
+    "X-170": [
+      "C-Billing",
+      "C-Reviews",
+      "X-166",
+      "X-198"
+    ],
+    "X-171": [
+      "X-126"
+    ],
+    "X-172": [
+      "X-162",
+      "X-164",
+      "X-171",
+      "X-199"
+    ],
+    "X-173": [
+      "X-166",
+      "X-198",
+      "X-199"
+    ],
+    "X-175": [
+      "X-121",
+      "X-160",
+      "X-163"
+    ],
+    "X-176": [
+      "X-126"
+    ],
+    "X-177": [
+      "C-Reviews",
+      "X-140",
+      "X-171"
+    ],
+    "X-178": [
+      "X-124",
+      "X-179"
+    ],
+    "X-179": [
+      "X-126"
+    ],
+    "X-180": [
+      "X-118"
+    ],
+    "X-181": [
+      "C-Reviews"
+    ],
+    "X-182": [
+      "X-126"
+    ],
+    "X-183": [
+      "X-126"
+    ],
+    "X-184": [
+      "X-126"
+    ],
+    "X-185": [
+      "X-110",
+      "X-118",
+      "X-136"
+    ],
+    "X-186": [
+      "X-126"
+    ],
+    "X-188": [
+      "C-Telephony",
+      "X-118"
+    ],
+    "X-189": [
+      "X-126"
+    ],
+    "X-190": [
+      "X-126"
+    ],
+    "X-191": [
+      "X-126"
+    ],
+    "X-192": [
+      "X-126"
+    ],
+    "X-193": [
+      "X-126"
+    ],
+    "X-194": [
+      "X-122"
+    ],
+    "X-196": [
+      "X-126"
+    ],
+    "X-197": [
+      "C-Telephony",
+      "X-200"
+    ],
+    "X-198": [
+      "X-164",
+      "X-199"
+    ],
+    "X-199": [
+      "C-Billing",
+      "X-171",
+      "X-198"
+    ],
+    "X-200": [
+      "X-126"
+    ],
+    "X-201": [
+      "X-171",
+      "X-198",
+      "X-199",
+      "X-66"
+    ],
+    "X-202": [
+      "X-103",
+      "X-145",
+      "X-190",
+      "X-205",
+      "X-208"
+    ],
+    "X-204": [
+      "X-126"
+    ],
+    "X-205": [
+      "X-126"
+    ],
+    "X-207": [
+      "X-126"
+    ],
+    "X-208": [
+      "X-181"
+    ],
+    "X-209": [
+      "X-162",
+      "X-171"
+    ],
+    "X-210": [
+      "X-126"
+    ],
+    "X-212": [
+      "X-118"
+    ],
+    "X-213": [
+      "X-140"
+    ],
+    "X-214": [
+      "X-126"
+    ],
+    "X-215": [
+      "X-126"
+    ],
+    "X-217": [
+      "X-121",
+      "X-126"
+    ],
+    "X-218": [
+      "X-126",
+      "X-140"
+    ],
+    "X-219": [
+      "X-126",
+      "X-162"
+    ],
+    "X-220": [
+      "X-126",
+      "X-219"
+    ],
+    "X-66": [
+      "C-Telephony",
+      "X-119",
+      "X-126",
+      "X-163"
+    ]
   },
-  {
-   "n": 6,
-   "stage": "capability",
-   "fails": "MERGE",
-   "what": "id-matched, two-pass"
+  "architecture": {
+    "_decided": "CQRS-lite in every module; a Domain/ layer only where invariants are real; no event sourcing; no repositories over Eloquent.",
+    "every_module": [
+      "Actions/ (commands; never return a read model)",
+      "Queries/ (reads; never write)",
+      "Events/",
+      "Listeners/",
+      "Ui/",
+      "Database/",
+      "Tests/",
+      "ModuleServiceProvider.php"
+    ],
+    "domain_layer_when": "owns >=4 tables, OR touches money/consent/entitlement, OR the brief names an invariant spanning two of its own tables, OR a state machine with legal transitions",
+    "domain_layer_count": 34,
+    "refused": {
+      "event_sourcing": "contradicts P-163 one-table-one-owner - it wants one shared append-only store - and makes erasure of PHI and consent records materially harder. entity_history is VERSIONING, not event sourcing.",
+      "repositories_over_eloquent": "doubles the code, fights the framework, buys portability nobody wants.",
+      "separate_read_write_stores": "RLS plus one-table-one-owner already gives the isolation."
+    },
+    "cross_module_data": "a read model in YOUR OWN tables, fed by a Listeners/ projection from events you already consume. Never a cross-module use; never a join into a table you do not own."
   },
-  {
-   "n": 7,
-   "stage": "anchor",
-   "fails": "WAVE",
-   "what": "a real message-id, not an assertion"
+  "modules": {
+    "C-Agent": {
+      "intent": "SERVE",
+      "wave": 5,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "agent_turns",
+        "agent_refusals",
+        "agent_instructions"
+      ],
+      "what": "the base prompt engine and pre-trained industry prompts · custom RAG knowledge · intent matching · reply class"
+    },
+    "C-Ai": {
+      "intent": "RECOVER",
+      "wave": 3,
+      "domain_layer": true,
+      "domain_because": "money, consent or entitlement: billing",
+      "state": "not started",
+      "owns_table": [
+        "ai_calls",
+        "ai_tasks",
+        "ai_provider_accounts"
+      ],
+      "what": "cost routing · token arbitrage · provider waterfall · latency guardrails · prompt caching · usage billing: eve"
+    },
+    "C-Billing": {
+      "intent": "INFORM",
+      "wave": 9,
+      "domain_layer": true,
+      "domain_because": "owns 4 tables",
+      "state": "not started",
+      "owns_table": [
+        "credit_ledger_entries",
+        "meters",
+        "trial_limits",
+        "dunning_states"
+      ],
+      "what": "CreditLedger (988 lines exist — verified, extended) · the five meters: SMS segments · voice minutes · AI · ema"
+    },
+    "C-Mail": {
+      "intent": "OBSERVE",
+      "wave": 15,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "mail_domains",
+        "warmup_calendars",
+        "mail_events"
+      ],
+      "what": "the deliverability engine · inbox rotation · warmup ramping — a CALENDAR, not a setting · SPF flattening · DMA"
+    },
+    "C-Reviews": {
+      "intent": "GROW",
+      "wave": 8,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "review_requests",
+        "review_replies",
+        "qa_settings"
+      ],
+      "what": "§37.1: every review request is TRIAGED — low ratings go to internal QA as a SupportTicket with sla_due_at; hi"
+    },
+    "C-Sms": {
+      "intent": "RECOVER",
+      "wave": 5,
+      "domain_layer": true,
+      "domain_because": "money, consent or entitlement: dunning",
+      "state": "not started",
+      "owns_table": [
+        "sms_compositions",
+        "sms_moderation_results"
+      ],
+      "what": "missed-call text-back · deliverability fallback · reminders · dunning texts · spintax at scale (per-brand thro"
+    },
+    "C-Telephony": {
+      "intent": "RECOVER",
+      "wave": 5,
+      "domain_layer": true,
+      "domain_because": "owns 4 tables",
+      "state": "not started",
+      "owns_table": [
+        "carrier_roster",
+        "carrier_bindings",
+        "carrier_health",
+        "carrier_receipts"
+      ],
+      "what": "makes eight carriers indistinguishable to everything above it. Selection order: ① capability (rcs · mms · sip "
+    },
+    "C-Whatsapp": {
+      "intent": "INFORM",
+      "wave": 15,
+      "domain_layer": true,
+      "domain_because": "money, consent or entitlement: payment",
+      "state": "not started",
+      "owns_table": [
+        "whatsapp_templates",
+        "whatsapp_sessions"
+      ],
+      "what": "opt-in engine · payment links · Zernio WhatsApp + GBP chat sync · omni-channel merging into the one Conversati"
+    },
+    "X-01": {
+      "intent": "SERVE",
+      "wave": 6,
+      "domain_layer": true,
+      "domain_because": "owns 4 tables",
+      "state": "not started",
+      "owns_table": [
+        "contact_tags",
+        "custom_fields",
+        "lead_scores",
+        "takeover_latches"
+      ],
+      "what": "one Conversation per Person, every channel — SMS, email, voice transcripts, web chat, WhatsApp in ONE timeline"
+    },
+    "X-07": {
+      "intent": "INFORM",
+      "wave": 20,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 1 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "forecasts"
+      ],
+      "what": "MRR prediction · run-rate math · seasonality · manager roll-up · pipeline gap analysis · decay prediction · au"
+    },
+    "X-08": {
+      "intent": "OBSERVE",
+      "wave": 24,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 1 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "churn_scores"
+      ],
+      "what": "churn risk scoring from ROI-push open rate, conversation tone and job recency. It observes. It has no send pat"
+    },
+    "X-10": {
+      "intent": "SERVE",
+      "wave": 18,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "routing_rules",
+        "territories",
+        "assignments"
+      ],
+      "what": "skill-based · round-robin · conversion-based · fraud-score · natural-language rules · multi-stage · permission"
+    },
+    "X-102": {
+      "intent": "INFORM",
+      "wave": 12,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "chat_sessions",
+        "chat_leads"
+      ],
+      "what": "one line of JS · live chat injection · pre-chat lead capture · exit-intent RAG · rage-click detection (four cl"
+    },
+    "X-103": {
+      "intent": "GROW",
+      "wave": 12,
+      "domain_layer": true,
+      "domain_because": "owns 4 tables",
+      "state": "not started",
+      "owns_table": [
+        "pages",
+        "page_versions",
+        "funnels",
+        "site_forks"
+      ],
+      "what": "the funnel and website builder · funnel visualisation and persistence · drop-off targeting · integrated CRM fo"
+    },
+    "X-104": {
+      "intent": "INFORM",
+      "wave": 20,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 1 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "plugin_installs"
+      ],
+      "what": "one-click install · widget auto-injection · analytics injection · SEO meta sync · the WP takeover path · autom"
+    },
+    "X-105": {
+      "intent": "GROW",
+      "wave": 26,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "outreach_ladders",
+        "ladder_steps"
+      ],
+      "what": "multi-touch orchestration of the outreach ladder · sequential retargeting · autonomous follow-ups · reply clas"
+    },
+    "X-108": {
+      "intent": "SERVE",
+      "wave": 7,
+      "domain_layer": true,
+      "domain_because": "owns 5 tables",
+      "state": "not started",
+      "owns_table": [
+        "appointments",
+        "availability_rules",
+        "resources",
+        "slot_locks",
+        "waitlists"
+      ],
+      "what": "two modes — APPOINTMENT and JOB — the profile picks (§29.3) · calendar auto-block · blackouts and holiday over"
+    },
+    "X-109": {
+      "intent": "GROW",
+      "wave": 26,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 1 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "captcha_quota"
+      ],
+      "what": "asynchronous auto-submit of a researched proposal into the prospect's own contact form · the ONLY module where"
+    },
+    "X-110": {
+      "intent": "OBSERVE",
+      "wave": 8,
+      "domain_layer": true,
+      "domain_because": "owns 5 tables",
+      "state": "not started",
+      "owns_table": [
+        "pixel_events",
+        "visits",
+        "sessions",
+        "cwv_samples",
+        "identity_links"
+      ],
+      "what": "the 14 KB smart pixel · firing, detection, diagnostics · cross-domain and sub-page tracking · UTM harvesting ·"
+    },
+    "X-111": {
+      "intent": "INFORM",
+      "wave": 20,
+      "domain_layer": true,
+      "domain_because": "owns 4 tables",
+      "state": "not started",
+      "owns_table": [
+        "operator_alerts",
+        "ip_bans",
+        "tenant_tickets",
+        "manual_queue"
+      ],
+      "what": "health dashboard · the supervisor watchdog · health checks · global search and bulk exports (from X-121's stri"
+    },
+    "X-112": {
+      "intent": "INFORM",
+      "wave": 11,
+      "domain_layer": true,
+      "domain_because": "owns 5 tables",
+      "state": "not started",
+      "owns_table": [
+        "agencies",
+        "agency_clients",
+        "markups",
+        "impersonation_log",
+        "staff_roles"
+      ],
+      "what": "white-labelling · one-click impersonation, ALWAYS logged · the aggregated dashboard and roll-ups · margin mark"
+    },
+    "X-113": {
+      "intent": "SERVE",
+      "wave": 18,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "staff_users",
+        "roles",
+        "role_permissions"
+      ],
+      "what": "staff, roles, granular permissions, and the document vault. No scoring, no ranking, no attendance. WIZARD inf"
+    },
+    "X-116": {
+      "intent": "GROW",
+      "wave": 26,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "templates",
+        "template_blocks",
+        "funnel_shapes"
+      ],
+      "what": "200 procedural templates from the 192 industry rules; 80 main industries at premium depth, promoted by demand "
+    },
+    "X-117": {
+      "intent": "SERVE",
+      "wave": 10,
+      "domain_layer": true,
+      "domain_because": "owns 4 tables",
+      "state": "not started",
+      "owns_table": [
+        "sellables",
+        "orders",
+        "order_lines",
+        "carts"
+      ],
+      "what": "checkout overlay · dynamic service menu · up-sell injection · deposit capture on booking · membership checkout"
+    },
+    "X-118": {
+      "intent": "GROW",
+      "wave": 6,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "onboarding_runs",
+        "onboarding_steps"
+      ],
+      "what": "IT IS THE WIZARD, and it asks for two things: a business name and a phone number. The AI FINDS GBP · reviews ·"
+    },
+    "X-119": {
+      "intent": "INFORM",
+      "wave": 1,
+      "domain_layer": true,
+      "domain_because": "money, consent or entitlement: price",
+      "state": "both anchor clauses proven",
+      "owns_table": [],
+      "what": "the structured resolver: prices, hours and services BYPASS vector search and do an exact lookup against Fact ·"
+    },
+    "X-120": {
+      "intent": "OBSERVE",
+      "wave": 24,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 1 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "card_tokens"
+      ],
+      "what": "[AMENDED T677 · P-196 + §202A] THE ONLY COMPONENT IN THE ROSTER THAT MAY HOLD A PAN — and it MAY STORE IT, enc"
+    },
+    "X-121": {
+      "intent": "RECOVER",
+      "wave": 1,
+      "domain_layer": true,
+      "domain_because": "owns 13 tables",
+      "state": "X-121a additive only",
+      "owns_table": [
+        "businesses",
+        "people",
+        "conversations",
+        "messages",
+        "jobs",
+        "reviews",
+        "campaigns",
+        "assets",
+        "ledger_entries",
+        "facts",
+        "sites",
+        "numbers",
+        "entity_history"
+      ],
+      "what": "Business · Person · Conversation · Message · Job · Review · Campaign · Asset · LedgerEntry · Fact · Site · Num"
+    },
+    "X-122": {
+      "intent": "INFORM",
+      "wave": 1,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "action_manifests",
+        "action_invocations",
+        "action_reversals"
+      ],
+      "what": "each module publishes actions (id · label · typed params · returns · permission · reversal class: reversible ·"
+    },
+    "X-123": {
+      "intent": "INFORM",
+      "wave": 1,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "event_log",
+        "event_subscriptions",
+        "dead_letters"
+      ],
+      "what": "typed events, any module subscribes; dead-letter queue at 10 consecutive failures + the tenant emailed; expone"
+    },
+    "X-124": {
+      "intent": "SERVE",
+      "wave": 18,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "assistant_sessions",
+        "assistant_recommendations",
+        "assistant_unsupported"
+      ],
+      "what": "persistent chat on every page. OPERATE (\"text everyone who called last week\") · CONFIGURE (\"ask for a review"
+    },
+    "X-125": {
+      "intent": "RECOVER",
+      "wave": 17,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "flows",
+        "flow_versions",
+        "flow_runs"
+      ],
+      "what": "branching · conditional and sequential logic · the rules engine · multi-touch orchestration · triggers (event,"
+    },
+    "X-126": {
+      "intent": "RECOVER",
+      "wave": 1,
+      "domain_layer": true,
+      "domain_because": "money, consent or entitlement: capability, price",
+      "state": "gates 1,2,3 green",
+      "owns_table": [
+        "capability_policies",
+        "capability_decisions"
+      ],
+      "what": "evaluates on every action: no Fact → no skill (the agent never invents a price, a time or a link because this "
+    },
+    "X-127": {
+      "intent": "RECOVER",
+      "wave": 17,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "tenant_zero_config",
+        "published_metrics"
+      ],
+      "what": "GO AI EZ as tenant #0 on its own platform (§5). The same code, the same database, the same modules — at platfo"
+    },
+    "X-128": {
+      "intent": "OBSERVE",
+      "wave": 2,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 1 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "integration_matrix"
+      ],
+      "what": "reads every module's @renders matrix_view (derived from SCREENS, 2026-08-27 — names only; the JSON schema each"
+    },
+    "X-129": {
+      "intent": "INFORM",
+      "wave": 20,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "migrations",
+        "redirect_maps"
+      ],
+      "what": "R130, in the owner's words: \"a tenant is never left on a new empty domain — if they have a site, it MOVES and "
+    },
+    "X-130": {
+      "intent": "GROW",
+      "wave": 26,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "demand_series",
+        "demand_regions",
+        "weather_overlays"
+      ],
+      "what": "aggregate demand by trade and geography · seasonality · weather overlays and re-routing · competitor density ·"
+    },
+    "X-131": {
+      "intent": "GROW",
+      "wave": 27,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "person_interests",
+        "interest_clusters"
+      ],
+      "what": "interest and topic clustering · RFM · preference signals from pages, threads and replies · the preference-cent"
+    },
+    "X-132": {
+      "intent": "GROW",
+      "wave": 27,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "person_links",
+        "resolution_evidence"
+      ],
+      "what": "identity resolution · cross-device graphing · pixel deanonymisation · de-duplication · social appending · zero"
+    },
+    "X-134": {
+      "intent": "GROW",
+      "wave": 27,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "enrichment_fields",
+        "enrichment_runs"
+      ],
+      "what": "waterfall enrichment (free → cheap → expensive, stopping at first valid shape) · social appending · tech-stack"
+    },
+    "X-135": {
+      "intent": "GROW",
+      "wave": 27,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "research_runs",
+        "icebreakers",
+        "prospect_signals"
+      ],
+      "what": "the deep research agent · the icebreaker generator · pain-point matching · competitor mentions and hiring spik"
+    },
+    "X-136": {
+      "intent": "OBSERVE",
+      "wave": 24,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "signals",
+        "signal_scores",
+        "decay_models"
+      ],
+      "what": "high-intent alerts · revenue triggers · budget detection · decay modelling and prediction · stale-posting and "
+    },
+    "X-137": {
+      "intent": "INFORM",
+      "wave": 13,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "call_tokens",
+        "short_links",
+        "link_clicks"
+      ],
+      "what": "dynamic number insertion · click- and keyword-level attribution · callback tracking · the shortlink attributio"
+    },
+    "X-138": {
+      "intent": "INFORM",
+      "wave": 21,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "attribution_queries",
+        "roi_snapshots"
+      ],
+      "what": "click- and keyword-level attribution · lifetime attribution · multi-touch · CRM attribution · ROI calculation,"
+    },
+    "X-139": {
+      "intent": "INFORM",
+      "wave": 21,
+      "domain_layer": true,
+      "domain_because": "money, consent or entitlement: payment",
+      "state": "not started",
+      "owns_table": [
+        "ad_connections",
+        "conversion_uploads"
+      ],
+      "what": "offline event uploads to Google and Meta · offline tracking · offline payment logging · post-purchase exclusio"
+    },
+    "X-140": {
+      "intent": "GROW",
+      "wave": 27,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "content_topics",
+        "topic_sources"
+      ],
+      "what": "real customer questions become published answers · AI blog publishing · topic clustering · refreshing · season"
+    },
+    "X-142": {
+      "intent": "OBSERVE",
+      "wave": 25,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "mcp_tokens",
+        "webhook_subscriptions"
+      ],
+      "what": "full read/write across every registered action (the category leaders ship read-only MCP; ours is complete beca"
+    },
+    "X-148": {
+      "intent": "INFORM",
+      "wave": 21,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "knowledge_chunks",
+        "retrieval_cache"
+      ],
+      "what": "hybrid search (dense + BM25) · reciprocal rank fusion · cross-encoder rerank · chunk provenance · prompt cachi"
+    },
+    "X-149": {
+      "intent": "RECOVER",
+      "wave": 17,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "eval_sets",
+        "eval_runs",
+        "quality_series"
+      ],
+      "what": "golden sets per industry · A/B testing · automated QA scoring · eval-gated deploys · refusal-rate monitoring ·"
+    },
+    "X-150": {
+      "intent": "INFORM",
+      "wave": 21,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "provider_roster",
+        "provider_attempts",
+        "record_shapes"
+      ],
+      "what": "ten fetch methods in cost order — open data → free API → our own crawl → cheap paid → expensive paid — stoppin"
+    },
+    "X-151": {
+      "intent": "SERVE",
+      "wave": 18,
+      "domain_layer": true,
+      "domain_because": "owns 4 tables",
+      "state": "not started",
+      "owns_table": [
+        "fetches",
+        "fetch_targets",
+        "proxy_pool",
+        "robots_signals"
+      ],
+      "what": "deep scraping and bulk extraction · intelligent DOM parsing · the 60-second sitemap scraper · proxy rotation ·"
+    },
+    "X-153": {
+      "intent": "INFORM",
+      "wave": 6,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "alerts",
+        "alert_claims",
+        "reply_codes"
+      ],
+      "what": "five-character alphanumeric reply codes (R75/R125 — 28.6M combinations; a code is never reused into another vi"
+    },
+    "X-154": {
+      "intent": "GROW",
+      "wave": 28,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 1 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "tenant_lexicons"
+      ],
+      "what": "the tenant's own vocabulary (what they call their services, their tone, banned words, the jargon-lint exemptio"
+    },
+    "X-155": {
+      "intent": "OBSERVE",
+      "wave": 12,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "form_definitions",
+        "form_submissions"
+      ],
+      "what": "the form runtime shared by every site and the widget: capture, validate, write Person + Conversation + Job/Mes"
+    },
+    "X-156": {
+      "intent": "OBSERVE",
+      "wave": 25,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "ingest_sources",
+        "ingest_runs",
+        "ingest_rejections"
+      ],
+      "what": "omni-channel inbox sync · email inbox parsing · Gmail read-only watch · direct file uploads · historical inges"
+    },
+    "X-157": {
+      "intent": "RECOVER",
+      "wave": 12,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "deployments",
+        "edge_zones"
+      ],
+      "what": "Cloudflare zero-touch provisioning · S3 storage with versioning · page-speed optimisation · instant deployment"
+    },
+    "X-16": {
+      "intent": "INFORM",
+      "wave": 22,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "places_records",
+        "geo_grids",
+        "service_polygons"
+      ],
+      "what": "Places / local-SEO maps · \"find near me\" · bulk local-business extraction (name · phone · address · lat/lng · "
+    },
+    "X-160": {
+      "intent": "INFORM",
+      "wave": 22,
+      "domain_layer": true,
+      "domain_because": "money, consent or entitlement: price",
+      "state": "not started",
+      "owns_table": [
+        "documents",
+        "document_versions",
+        "extraction_runs"
+      ],
+      "what": "upload → detect type (PDF · DOCX · XLSX · CSV · image · scan) → OCR if needed (a photo of the price board on t"
+    },
+    "X-161": {
+      "intent": "GROW",
+      "wave": 28,
+      "domain_layer": true,
+      "domain_because": "money, consent or entitlement: ledger",
+      "state": "not started",
+      "owns_table": [
+        "demo_tenants",
+        "demo_sessions",
+        "demo_ledger"
+      ],
+      "what": "when we build a prospect's demo site we build them a working assistant on it, grounded in their own crawl — th"
+    },
+    "X-162": {
+      "intent": "SERVE",
+      "wave": 19,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "dispatch_assignments",
+        "routes",
+        "eta_predictions"
+      ],
+      "what": "the kanban and predictability board · real-time rep dashboard · manager roll-up · THE THIRD STATE: free · busy"
+    },
+    "X-163": {
+      "intent": "NONE",
+      "wave": 7,
+      "domain_layer": true,
+      "domain_because": "owns 4 tables",
+      "state": "not started",
+      "owns_table": [
+        "price_book_items",
+        "price_book_versions",
+        "location_books",
+        "callout_fees"
+      ],
+      "what": "services with prices · good / better / best tiers · price ranges (\"boiler replacement £1,800–£3,200\") ·"
+    },
+    "X-164": {
+      "intent": "SERVE",
+      "wave": 7,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "estimates",
+        "estimate_lines",
+        "estimate_versions"
+      ],
+      "what": "good/better/best presentation · auto-line items from the job notes · expiry enforcement — \"valid 7 days\"; day "
+    },
+    "X-165": {
+      "intent": "SERVE",
+      "wave": 19,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "membership_plans",
+        "memberships",
+        "member_visits"
+      ],
+      "what": "recurring service plans · membership checkout · overrides · priority scheduling — and it must be REAL · member"
+    },
+    "X-166": {
+      "intent": "INFORM",
+      "wave": 11,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "job_costs",
+        "margin_snapshots"
+      ],
+      "what": "actual vs expected per job · margin · cash-collected validation · profitability by tech, by service, by source"
+    },
+    "X-167": {
+      "intent": "INFORM",
+      "wave": 22,
+      "domain_layer": true,
+      "domain_because": "owns 4 tables",
+      "state": "not started",
+      "owns_table": [
+        "stock_items",
+        "stock_locations",
+        "purchase_orders",
+        "suppliers"
+      ],
+      "what": "van and storage-unit stock · fractional inventory (2.5 metres of pipe) · syncing · reorder alerts · a reorder "
+    },
+    "X-168": {
+      "intent": "INFORM",
+      "wave": 22,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "timesheets",
+        "timesheet_entries",
+        "pay_rules"
+      ],
+      "what": "time tracking · out-of-hours and overtime math are STRUCK — P-204 fenced them; §240 recorded this fix and the "
+    },
+    "X-170": {
+      "intent": "RECOVER",
+      "wave": 17,
+      "domain_layer": true,
+      "domain_because": "money, consent or entitlement: chargeback, commission, refund",
+      "state": "not started",
+      "owns_table": [
+        "commission_rules",
+        "commissions",
+        "scorecards"
+      ],
+      "what": "commission injection · split and tiered · margin-based (needs X-166) · clawback on refund or chargeback · spif"
+    },
+    "X-171": {
+      "intent": "SERVE",
+      "wave": 19,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "device_sync_queue",
+        "device_sync_conflicts"
+      ],
+      "what": "local-first with SQLite on the device — a basement has no signal · Wasm barcode at 60 fps · GPS clock-in bound"
+    },
+    "X-172": {
+      "intent": "INFORM",
+      "wave": 11,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "portal_links",
+        "portal_views"
+      ],
+      "what": "self-service · magic-link SSO — no password, ever · live ETA from the third state — the feature they tell peop"
+    },
+    "X-173": {
+      "intent": "OBSERVE",
+      "wave": 25,
+      "domain_layer": true,
+      "domain_because": "owns 4 tables",
+      "state": "not started",
+      "owns_table": [
+        "accounting_connections",
+        "account_mappings",
+        "sync_runs",
+        "accounting_sync_conflicts"
+      ],
+      "what": "two-way sync to Xero / QuickBooks / Sage · GL auto-categorisation with confidence (G1-03's home) · reconciliat"
+    },
+    "X-175": {
+      "intent": "INFORM",
+      "wave": 22,
+      "domain_layer": true,
+      "domain_because": "money, consent or entitlement: price",
+      "state": "not started",
+      "owns_table": [
+        "field_suggestions"
+      ],
+      "what": "the same C-Agent, third deployment, pointed at the tech: objection RAG · price lookup on site from X-163, neve"
+    },
+    "X-176": {
+      "intent": "GROW",
+      "wave": 13,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "schema_snapshots",
+        "crawler_visits"
+      ],
+      "what": "explicit allow for AI crawlers (GPTBot · ClaudeBot · PerplexityBot · Google-Extended) · structural SEO · hyper"
+    },
+    "X-177": {
+      "intent": "INFORM",
+      "wave": 23,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "gbp_connections",
+        "gbp_posts",
+        "gbp_state_log"
+      ],
+      "what": "GBP auto-sync · Q&A seeding · post generation and local-post automation · claimed-status · suspension monitori"
+    },
+    "X-178": {
+      "intent": "INFORM",
+      "wave": 12,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 1 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "design_changes"
+      ],
+      "what": "design by conversation · auto-build · form generator · one-click revisions · visual canvas · captions · featur"
+    },
+    "X-179": {
+      "intent": "GROW",
+      "wave": 29,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "template_matches",
+        "extracted_content"
+      ],
+      "what": "crawl their site, score all 200 · DOM parsing · boilerplate exclusion · their words, verbatim — we never rewri"
+    },
+    "X-180": {
+      "intent": "INFORM",
+      "wave": 23,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 1 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "content_packs"
+      ],
+      "what": "the seeded starter pack — N assets per industry, declared in a manifest. WIZARD inferred: the industry from si"
+    },
+    "X-181": {
+      "intent": "RECOVER",
+      "wave": 8,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 1 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "qa_tickets"
+      ],
+      "what": "the internal half of the review split: a low rating becomes a SupportTicket with an SLA, routed to a human, tr"
+    },
+    "X-182": {
+      "intent": "GROW",
+      "wave": 29,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "social_accounts",
+        "social_posts",
+        "comments"
+      ],
+      "what": "posting autopilot · best time to post · comment auto-reply · escalates anything negative to the inbox — never "
+    },
+    "X-183": {
+      "intent": "GROW",
+      "wave": 29,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "content_drafts",
+        "gate_results",
+        "trust_ladder"
+      ],
+      "what": "writing and illustration · blog publishing · copy and narrative · topic clustering · refreshing · evergreen re"
+    },
+    "X-184": {
+      "intent": "GROW",
+      "wave": 29,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "content_plans",
+        "plan_items"
+      ],
+      "what": "the content calendar: a whole plan proposed from their industry and their transcripts · monthly and multi-tier"
+    },
+    "X-185": {
+      "intent": "GROW",
+      "wave": 29,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "sequences",
+        "sequence_steps",
+        "content_packs"
+      ],
+      "what": "ALWAYS ON: A/B and split testing · hook testing · course correction · campaign ML optimisation · conversion-ba"
+    },
+    "X-186": {
+      "intent": "GROW",
+      "wave": 30,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "campaign_steps",
+        "campaign_runs"
+      ],
+      "what": "multi-channel sequencing · omnichannel · drip adjustment · send-time optimisation · resend-to-unopens · REPLY "
+    },
+    "X-188": {
+      "intent": "RECOVER",
+      "wave": 5,
+      "domain_layer": true,
+      "domain_because": "owns 4 tables",
+      "state": "not started",
+      "owns_table": [
+        "number_pool",
+        "number_assignments",
+        "brand_registrations",
+        "number_parks"
+      ],
+      "what": "assigns a GO AI EZ number at signup · submits 10DLC brand registration automatically — marketing SMS only (§15"
+    },
+    "X-189": {
+      "intent": "SERVE",
+      "wave": 19,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 1 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "branded_media"
+      ],
+      "what": "client photo → generated variant → branded card. It never fails: a missing photo yields the branded fallback. "
+    },
+    "X-190": {
+      "intent": "GROW",
+      "wave": 30,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "referral_slots",
+        "partner_pool",
+        "referrals"
+      ],
+      "what": "the growth and referral engine · the \"powered by\" viral loop · the referral slot model — EMPTY → SEARCHING → P"
+    },
+    "X-191": {
+      "intent": "GROW",
+      "wave": 30,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "link_targets",
+        "link_pitches",
+        "link_placements"
+      ],
+      "what": "broken-link building · competitor backlink poaching · guest-post pitching · link-intersect analysis · domain-a"
+    },
+    "X-192": {
+      "intent": "GROW",
+      "wave": 30,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "directory_memberships",
+        "citations"
+      ],
+      "what": "citation builder · chamber and directory discovery · ranking and pricing · profile BUILDING, not just joining "
+    },
+    "X-193": {
+      "intent": "GROW",
+      "wave": 15,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 1 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "notification_classes"
+      ],
+      "what": "classifies every send.requested as marketing · transactional · conversational · account — from the CALL"
+    },
+    "X-194": {
+      "intent": "INFORM",
+      "wave": 23,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "saved_views",
+        "view_schedules"
+      ],
+      "what": "chart generation · custom fields and schemas · cross-platform dashboards · consolidated and scheduled PDF repo"
+    },
+    "X-195": {
+      "intent": "INFORM",
+      "wave": 23,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "market_items",
+        "installs",
+        "feature_flags"
+      ],
+      "what": "template and snapshot sharing · the integration marketplace · feature toggling and gating · custom blacklists "
+    },
+    "X-196": {
+      "intent": "GROW",
+      "wave": 30,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "extension_sessions",
+        "extension_injections"
+      ],
+      "what": "the operator's browser as a trigger: node-scraper integration (the Gro Node cluster) · event-badge QR scanning"
+    },
+    "X-198": {
+      "intent": "RECOVER",
+      "wave": 10,
+      "domain_layer": true,
+      "domain_because": "owns 4 tables",
+      "state": "not started",
+      "owns_table": [
+        "merchant_connections",
+        "payments",
+        "payouts",
+        "reconciliation_runs"
+      ],
+      "what": "Stripe Connect AND Authorize.Net partner — both, owner T622 · payment integration · payment links · multi-acco"
+    },
+    "X-199": {
+      "intent": "INFORM",
+      "wave": 9,
+      "domain_layer": true,
+      "domain_because": "owns 4 tables",
+      "state": "not started",
+      "owns_table": [
+        "invoices",
+        "invoice_lines",
+        "credit_terms",
+        "overflow_charges"
+      ],
+      "what": "generates EVERY invoice — ours and the tenant's; C-Billing is the subscription and metering LEDGER and hands d"
+    },
+    "X-201": {
+      "intent": "RECOVER",
+      "wave": 17,
+      "domain_layer": true,
+      "domain_because": "money, consent or entitlement: chargeback",
+      "state": "not started",
+      "owns_table": [
+        "disputes",
+        "dispute_evidence",
+        "dispute_outcomes"
+      ],
+      "what": "receives chargeback.received from X-198 for any gateway · compiles the evidence bundle automatically (call log"
+    },
+    "X-202": {
+      "intent": "RECOVER",
+      "wave": 9,
+      "domain_layer": true,
+      "domain_because": "money, consent or entitlement: refund",
+      "state": "not started",
+      "owns_table": [
+        "approval_items",
+        "approval_chains"
+      ],
+      "what": "The one queue every L1 decision in the platform lands in — from all 114 modules. A refund proposal, a domino"
+    },
+    "X-203": {
+      "intent": "RECOVER",
+      "wave": 14,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "restore_tests",
+        "runbooks",
+        "runbook_runs"
+      ],
+      "what": "Backups, restores, point-in-time recovery, multi-region, cold-storage hashing and runbook automation — as an O"
+    },
+    "X-204": {
+      "intent": "GROW",
+      "wave": 4,
+      "domain_layer": true,
+      "domain_because": "owns 4 tables",
+      "state": "not started",
+      "owns_table": [
+        "send_permits",
+        "suppressions",
+        "import_attestations",
+        "compliance_registers"
+      ],
+      "what": "The single decider of whether a message may be sent to a person on a channel. Every sender asks; no sender dec"
+    },
+    "X-205": {
+      "intent": "GROW",
+      "wave": 31,
+      "domain_layer": true,
+      "domain_because": "money, consent or entitlement: payout",
+      "state": "not started",
+      "owns_table": [
+        "affiliates",
+        "affiliate_attributions",
+        "affiliate_payouts"
+      ],
+      "what": "The referral and affiliate layer: every tenant gets an affiliate id; tiers, lifetime attribution, id merging, "
+    },
+    "X-206": {
+      "intent": "RECOVER",
+      "wave": 4,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "credentials",
+        "credential_reveals"
+      ],
+      "what": "Every platform and tenant credential — API keys, OAuth tokens, gateway credentials, calendar connections — sco"
+    },
+    "X-207": {
+      "intent": "GROW",
+      "wave": 15,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "device_tokens",
+        "push_deliveries",
+        "push_prompts"
+      ],
+      "what": "The platform's one OWNED channel — the only one with no carrier between us and the device. Delivers to Web Pus"
+    },
+    "X-209": {
+      "intent": "INFORM",
+      "wave": 24,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "fixer_commands",
+        "fixer_ladder",
+        "staff_calendar_links"
+      ],
+      "what": "The employee's own AI — the only agent in this platform that works for a PERSON rather than for the tenant. Ev"
+    },
+    "X-210": {
+      "intent": "GROW",
+      "wave": 31,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "promotions",
+        "promotion_redemptions",
+        "promotion_scopes"
+      ],
+      "what": "The tenant's own offer layer: create a promotion, target it, distribute it across every channel the platform a"
+    },
+    "X-211": {
+      "intent": "RECOVER",
+      "wave": 9,
+      "domain_layer": true,
+      "domain_because": "money, consent or entitlement: invoice, payment",
+      "state": "not started",
+      "owns_table": [
+        "receivable_states",
+        "payment_plans",
+        "offline_payments"
+      ],
+      "what": "Getting a service business paid for work already done. Late fees, payment plans on large invoices, forcing ACH"
+    },
+    "X-212": {
+      "intent": "INFORM",
+      "wave": 14,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "migration_runs",
+        "migration_field_maps",
+        "migration_rejects"
+      ],
+      "what": "Bringing a tenant's whole business across from ServiceTitan, Jobber, Housecall Pro — or from a spreadsheet. Cu"
+    },
+    "X-217": {
+      "intent": "GROW",
+      "wave": 31,
+      "domain_layer": true,
+      "domain_because": "money, consent or entitlement: payout",
+      "state": "not started",
+      "owns_table": [
+        "affiliate_prospects",
+        "recruitment_offers"
+      ],
+      "what": "DISTINCT FROM X-205. X-205 is the affiliate PROGRAM — \"every tenant gets an affiliate id,\" tiers, payouts,"
+    },
+    "X-218": {
+      "intent": "GROW",
+      "wave": 31,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "influencer_profiles",
+        "influencer_deals",
+        "deliverables"
+      ],
+      "what": "Zero modules covered this under any name — influencer, creator, UGC, sponsorship all returned nothing. D"
+    },
+    "X-219": {
+      "intent": "OBSERVE",
+      "wave": 3,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "ai_providers",
+        "ai_models",
+        "ai_module_assignments"
+      ],
+      "what": "The roster and the assignment. Every model from every vendor — including self-hosted — is a ROW, and every mod"
+    },
+    "X-220": {
+      "intent": "OBSERVE",
+      "wave": 3,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "ai_prompts",
+        "golden_sets"
+      ],
+      "what": "A prompt is a ROW with a version, and its golden set is versioned with it. A prompt edited in code is an exper"
+    },
+    "X-66": {
+      "intent": "SERVE",
+      "wave": 5,
+      "domain_layer": true,
+      "domain_because": "owns 4 tables",
+      "state": "not started",
+      "owns_table": [
+        "call_sessions",
+        "call_turns",
+        "voicemails",
+        "call_autopsies"
+      ],
+      "what": "the front-desk agent on a live call: voice RAG with in-stream hesitation and objection detection · AMD · multi"
+    },
+    "X-82": {
+      "intent": "INFORM",
+      "wave": 24,
+      "domain_layer": false,
+      "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
+      "state": "not started",
+      "owns_table": [
+        "rates",
+        "rate_versions",
+        "allowances"
+      ],
+      "what": "the rate registry — a row cannot be invented; no document carries a number · per-country rates only where OUR "
+    }
   },
-  {
-   "n": 8,
-   "stage": "journey",
-   "fails": "WAVE",
-   "what": "end to end on real transports"
-  }
- ],
- "module_gates": [
-  "1 BUILT",
-  "2 TESTED",
-  "3 CONTENT",
-  "4 HELP",
-  "5 DASHBOARD",
-  "6 SURFACES",
-  "7 GATE"
- ],
- "blocking_decisions": [
-  "jobs: canonical noun is a WORK ORDER; existing table is Laravel queue",
-  "businesses vs companies vs customers; facts vs business_facts",
-  "322 refusals still to be written (R240)",
-  "legacy triage declared REPLACE but not executed",
-  "R237 COMPLEX slot has no cost ceiling"
- ],
- "waves": [
-  {
-   "wave": 1,
-   "track": "spine",
-   "why": "Nothing sits on nothing. X-121 is the noun set, X-123 carries every event, X-122 is the action surface the agent may reach, X-126 decides whether it may, X-119 is what it may say, X-128 proves the seams.",
-   "modules": [
-    "X-121",
-    "X-123",
-    "X-122",
-    "X-126",
-    "X-119"
-   ],
-   "subscribes_to": [
-    "X-160",
-    "X-163",
-    "X-204"
-   ],
-   "subscribed_to_by": [
+  "roster_list": [
     "C-Agent",
+    "C-Ai",
+    "C-Billing",
+    "C-Mail",
     "C-Reviews",
+    "C-Sms",
     "C-Telephony",
+    "C-Whatsapp",
     "X-01",
+    "X-07",
+    "X-08",
     "X-10",
     "X-102",
     "X-103",
+    "X-104",
     "X-105",
     "X-108",
     "X-109",
+    "X-110",
+    "X-111",
+    "X-112",
     "X-113",
-    "X-114",
     "X-116",
     "X-117",
     "X-118",
+    "X-119",
+    "X-120",
+    "X-121",
+    "X-122",
+    "X-123",
     "X-124",
+    "X-125",
+    "X-126",
+    "X-127",
+    "X-128",
+    "X-129",
     "X-130",
     "X-131",
     "X-132",
     "X-134",
     "X-135",
+    "X-136",
+    "X-137",
+    "X-138",
+    "X-139",
     "X-140",
     "X-142",
-    "X-143",
-    "X-144",
-    "X-145",
     "X-148",
+    "X-149",
+    "X-150",
     "X-151",
+    "X-153",
     "X-154",
-    "X-158",
-    "X-159",
+    "X-155",
+    "X-156",
+    "X-157",
+    "X-16",
+    "X-160",
     "X-161",
     "X-162",
+    "X-163",
     "X-164",
     "X-165",
+    "X-166",
+    "X-167",
+    "X-168",
+    "X-170",
     "X-171",
+    "X-172",
+    "X-173",
     "X-175",
     "X-176",
+    "X-177",
+    "X-178",
     "X-179",
+    "X-180",
+    "X-181",
     "X-182",
     "X-183",
     "X-184",
+    "X-185",
     "X-186",
+    "X-188",
     "X-189",
     "X-190",
     "X-191",
     "X-192",
     "X-193",
     "X-194",
+    "X-195",
     "X-196",
-    "X-200",
+    "X-198",
+    "X-199",
+    "X-201",
+    "X-202",
+    "X-203",
     "X-204",
     "X-205",
+    "X-206",
     "X-207",
+    "X-209",
     "X-210",
-    "X-214",
-    "X-215",
+    "X-211",
+    "X-212",
     "X-217",
     "X-218",
     "X-219",
     "X-220",
-    "X-66"
-   ],
-   "calls": [],
-   "not_yet_built_publishers": [
-    "X-160",
-    "X-163",
-    "X-204"
-   ],
-   "journeys_unlocked": []
-  },
-  {
-   "wave": 2,
-   "track": "spine",
-   "why": "Nothing sits on nothing. X-121 is the noun set, X-123 carries every event, X-122 is the action surface the agent may reach, X-126 decides whether it may, X-119 is what it may say, X-128 proves the seams.",
-   "modules": [
-    "X-128"
-   ],
-   "subscribes_to": [],
-   "subscribed_to_by": [],
-   "calls": [],
-   "not_yet_built_publishers": [],
-   "journeys_unlocked": []
-  },
-  {
-   "wave": 3,
-   "track": "ai-core",
-   "why": "R238: one call path, no second entrance. Before anything that calls a model, because a second entrance is unbuildable once two callers exist.",
-   "modules": [
-    "C-Ai",
-    "X-219",
-    "X-220"
-   ],
-   "subscribes_to": [
-    "X-126",
-    "X-162"
-   ],
-   "subscribed_to_by": [],
-   "calls": [],
-   "not_yet_built_publishers": [
-    "X-162"
-   ],
-   "journeys_unlocked": []
-  },
-  {
-   "wave": 4,
-   "track": "consent",
-   "why": "X-204 is the single decider of whether a message may be sent at all, and it precedes every transport: a suppression list that does not block is a list and not a suppression.",
-   "modules": [
-    "X-204",
-    "X-206"
-   ],
-   "subscribes_to": [
-    "X-126"
-   ],
-   "subscribed_to_by": [
-    "C-Sms",
-    "X-126"
-   ],
-   "calls": [],
-   "not_yet_built_publishers": [],
-   "journeys_unlocked": []
-  },
-  {
-   "wave": 5,
-   "track": "J1-J2-J4 the sixty seconds",
-   "why": "The first journey is the whole product in sixty seconds: a missed call becomes a consented text back. J2 puts a live agent on a real number from two signup fields; J4 proves STOP halts work already in flight. Built as one track because the carriers, the agent and the number pool consume each other's events.",
-   "modules": [
-    "C-Telephony",
-    "C-Sms",
-    "C-Agent",
     "X-66",
-    "X-188"
-   ],
-   "subscribes_to": [
-    "C-Reviews",
-    "X-102",
-    "X-118",
-    "X-119",
-    "X-121",
-    "X-126",
-    "X-127",
-    "X-163",
-    "X-171",
-    "X-186",
-    "X-193",
-    "X-200",
-    "X-204",
-    "X-207",
-    "X-217",
-    "X-218"
-   ],
-   "subscribed_to_by": [
-    "C-Mail",
-    "C-Whatsapp",
-    "X-137",
-    "X-147",
-    "X-149",
-    "X-153",
-    "X-197",
-    "X-201"
-   ],
-   "calls": [],
-   "not_yet_built_publishers": [
-    "C-Reviews",
-    "X-102",
-    "X-118",
-    "X-127",
-    "X-163",
-    "X-171",
-    "X-186",
-    "X-193",
-    "X-200",
-    "X-207",
-    "X-217",
-    "X-218"
-   ],
-   "journeys_unlocked": [
-    "J1",
-    "J4"
-   ]
-  },
-  {
-   "wave": 6,
-   "track": "J1-J2-J4 the sixty seconds",
-   "why": "The first journey is the whole product in sixty seconds: a missed call becomes a consented text back. J2 puts a live agent on a real number from two signup fields; J4 proves STOP halts work already in flight. Built as one track because the carriers, the agent and the number pool consume each other's events.",
-   "modules": [
-    "X-153",
-    "X-01",
-    "X-118"
-   ],
-   "subscribes_to": [
-    "C-Reviews",
-    "X-111",
-    "X-126",
-    "X-66"
-   ],
-   "subscribed_to_by": [
-    "X-07",
-    "X-08",
-    "X-104",
-    "X-112",
-    "X-129",
-    "X-180",
-    "X-185",
-    "X-188",
-    "X-212"
-   ],
-   "calls": [],
-   "not_yet_built_publishers": [
-    "C-Reviews",
-    "X-111"
-   ],
-   "journeys_unlocked": [
-    "J2"
-   ]
-  },
-  {
-   "wave": 7,
-   "track": "J3 the pricebook",
-   "why": "A quote comes from the pricebook or does not come at all - no Fact, no skill, made visible.",
-   "modules": [
-    "X-163",
-    "X-164",
-    "X-108"
-   ],
-   "subscribes_to": [
-    "X-126",
-    "X-160",
-    "X-171"
-   ],
-   "subscribed_to_by": [
-    "X-111",
-    "X-119",
-    "X-166",
-    "X-172",
-    "X-175",
-    "X-198",
-    "X-66"
-   ],
-   "calls": [],
-   "not_yet_built_publishers": [
-    "X-160",
-    "X-171"
-   ],
-   "journeys_unlocked": [
-    "J3"
-   ]
-  },
-  {
-   "wave": 8,
-   "track": "J10 reviews",
-   "why": "The review split: a low rating is triaged before anybody is asked for a public one.",
-   "modules": [
-    "C-Reviews",
-    "X-181",
-    "X-110"
-   ],
-   "subscribes_to": [
-    "X-126"
-   ],
-   "subscribed_to_by": [
-    "C-Sms",
-    "X-102",
-    "X-127",
-    "X-136",
-    "X-137",
-    "X-153",
-    "X-170",
-    "X-177",
-    "X-185",
-    "X-208"
-   ],
-   "calls": [],
-   "not_yet_built_publishers": [],
-   "journeys_unlocked": [
-    "J10"
-   ]
-  },
-  {
-   "wave": 9,
-   "track": "J9-J12 money",
-   "why": "An invoice reaches a real charge id, and an overdue invoice is chased by reason with resolution before any stop.",
-   "modules": [
-    "C-Billing",
-    "X-199",
-    "X-211",
-    "X-202"
-   ],
-   "subscribes_to": [
-    "X-103",
-    "X-145",
-    "X-171",
-    "X-190",
-    "X-198",
-    "X-205",
-    "X-208"
-   ],
-   "subscribed_to_by": [
-    "X-07",
-    "X-138",
-    "X-139",
-    "X-170",
-    "X-172",
-    "X-173",
-    "X-198",
-    "X-201"
-   ],
-   "calls": [],
-   "not_yet_built_publishers": [
-    "X-103",
-    "X-145",
-    "X-171",
-    "X-190",
-    "X-198",
-    "X-205",
-    "X-208"
-   ],
-   "journeys_unlocked": [
-    "J12"
-   ]
-  },
-  {
-   "wave": 10,
-   "track": "J9-J12 money",
-   "why": "An invoice reaches a real charge id, and an overdue invoice is chased by reason with resolution before any stop.",
-   "modules": [
-    "X-117",
-    "X-198"
-   ],
-   "subscribes_to": [
-    "X-126",
-    "X-164",
-    "X-199"
-   ],
-   "subscribed_to_by": [
-    "C-Billing",
-    "X-120",
-    "X-166",
-    "X-170",
-    "X-173",
-    "X-199",
-    "X-201"
-   ],
-   "calls": [],
-   "not_yet_built_publishers": [],
-   "journeys_unlocked": [
-    "J9"
-   ]
-  },
-  {
-   "wave": 11,
-   "track": "J6-J7 portal",
-   "why": "Cancel is one tap with nothing in between; an agency client never sees cost or margin.",
-   "modules": [
-    "X-172",
-    "X-112",
-    "X-166"
-   ],
-   "subscribes_to": [
-    "X-118",
-    "X-162",
-    "X-163",
-    "X-164",
-    "X-167",
-    "X-168",
-    "X-171",
-    "X-198",
-    "X-199"
-   ],
-   "subscribed_to_by": [
-    "X-170",
-    "X-173"
-   ],
-   "calls": [],
-   "not_yet_built_publishers": [
-    "X-162",
-    "X-167",
-    "X-168",
-    "X-171"
-   ],
-   "journeys_unlocked": [
-    "J6",
-    "J7"
-   ]
-  },
-  {
-   "wave": 12,
-   "track": "J11 the site",
-   "why": "A published site carries all seven (P-125): pixel, chat, forms, DNI, SEO, schema, SSL.",
-   "modules": [
-    "X-157",
-    "X-178",
-    "X-103",
-    "X-102",
-    "X-155"
-   ],
-   "subscribes_to": [
-    "X-110",
-    "X-119",
-    "X-124",
-    "X-126",
-    "X-129",
-    "X-179"
-   ],
-   "subscribed_to_by": [
-    "C-Agent",
-    "X-202"
-   ],
-   "calls": [],
-   "not_yet_built_publishers": [
-    "X-124",
-    "X-129",
-    "X-179"
-   ],
-   "journeys_unlocked": []
-  },
-  {
-   "wave": 13,
-   "track": "J11 the site",
-   "why": "A published site carries all seven (P-125): pixel, chat, forms, DNI, SEO, schema, SSL.",
-   "modules": [
-    "X-137",
-    "X-176"
-   ],
-   "subscribes_to": [
-    "X-110",
-    "X-126",
-    "X-66"
-   ],
-   "subscribed_to_by": [
-    "X-138"
-   ],
-   "calls": [],
-   "not_yet_built_publishers": [],
-   "journeys_unlocked": [
-    "J11"
-   ]
-  },
-  {
-   "wave": 14,
-   "track": "J5-J8 safety",
-   "why": "A migration of five hundred jobs sends nothing; a deliberately corrupted backup fails the restore.",
-   "modules": [
-    "X-212",
-    "X-203"
-   ],
-   "subscribes_to": [
-    "X-118"
-   ],
-   "subscribed_to_by": [],
-   "calls": [],
-   "not_yet_built_publishers": [],
-   "journeys_unlocked": [
-    "J5",
-    "J8"
-   ]
-  },
-  {
-   "wave": 15,
-   "track": "channels",
-   "why": "The remaining transports, behind the seam the carriers established.",
-   "modules": [
-    "C-Mail",
-    "C-Whatsapp",
-    "X-147",
-    "X-207",
-    "X-193"
-   ],
-   "subscribes_to": [
-    "C-Agent",
-    "C-Sms",
-    "C-Telephony",
-    "X-126",
-    "X-127",
-    "X-186",
-    "X-217",
-    "X-218"
-   ],
-   "subscribed_to_by": [
-    "C-Sms",
-    "C-Telephony"
-   ],
-   "calls": [],
-   "not_yet_built_publishers": [
-    "X-127",
-    "X-186",
-    "X-217",
-    "X-218"
-   ],
-   "journeys_unlocked": []
-  },
-  {
-   "wave": 16,
-   "track": "channels",
-   "why": "The remaining transports, behind the seam the carriers established.",
-   "modules": [
-    "X-208"
-   ],
-   "subscribes_to": [
-    "X-181"
-   ],
-   "subscribed_to_by": [
-    "X-202"
-   ],
-   "calls": [],
-   "not_yet_built_publishers": [],
-   "journeys_unlocked": []
-  },
-  {
-   "wave": 17,
-   "track": "roster",
-   "why": "the rest of the roster, RECOVER and SERVE first because those are the intents that ship autonomous on day one",
-   "modules": [
-    "X-125",
-    "X-127",
-    "X-149",
-    "X-170",
-    "X-201"
-   ],
-   "subscribes_to": [
-    "C-Agent",
-    "C-Billing",
-    "C-Reviews",
-    "X-166",
-    "X-171",
-    "X-198",
-    "X-199",
-    "X-66"
-   ],
-   "subscribed_to_by": [
-    "C-Mail",
-    "C-Telephony",
-    "C-Whatsapp",
-    "X-141",
-    "X-147"
-   ],
-   "calls": [],
-   "not_yet_built_publishers": [
-    "X-171"
-   ],
-   "journeys_unlocked": []
-  },
-  {
-   "wave": 18,
-   "track": "roster",
-   "why": "the rest of the roster, RECOVER and SERVE first because those are the intents that ship autonomous on day one",
-   "modules": [
-    "X-10",
-    "X-113",
-    "X-124",
-    "X-143",
-    "X-151"
-   ],
-   "subscribes_to": [
-    "X-126",
-    "X-145"
-   ],
-   "subscribed_to_by": [
-    "X-150",
-    "X-16",
-    "X-178"
-   ],
-   "calls": [],
-   "not_yet_built_publishers": [
-    "X-145"
-   ],
-   "journeys_unlocked": []
-  },
-  {
-   "wave": 19,
-   "track": "roster",
-   "why": "the rest of the roster, RECOVER and SERVE first because those are the intents that ship autonomous on day one",
-   "modules": [
-    "X-162",
-    "X-165",
-    "X-171",
-    "X-189",
-    "X-214"
-   ],
-   "subscribes_to": [
-    "X-126"
-   ],
-   "subscribed_to_by": [
-    "C-Sms",
-    "X-07",
-    "X-127",
-    "X-136",
-    "X-138",
-    "X-139",
-    "X-160",
-    "X-163",
-    "X-167",
-    "X-168",
-    "X-172",
-    "X-177",
-    "X-199",
-    "X-201",
-    "X-209",
-    "X-219"
-   ],
-   "calls": [],
-   "not_yet_built_publishers": [],
-   "journeys_unlocked": []
-  },
-  {
-   "wave": 20,
-   "track": "roster",
-   "why": "the rest of the roster, RECOVER and SERVE first because those are the intents that ship autonomous on day one",
-   "modules": [
-    "X-215",
-    "X-07",
-    "X-104",
-    "X-111",
-    "X-129"
-   ],
-   "subscribes_to": [
-    "X-01",
-    "X-109",
-    "X-118",
-    "X-126",
-    "X-136",
-    "X-163",
-    "X-171",
-    "X-199"
-   ],
-   "subscribed_to_by": [
-    "X-153",
-    "X-157"
-   ],
-   "calls": [],
-   "not_yet_built_publishers": [
-    "X-109",
-    "X-136"
-   ],
-   "journeys_unlocked": []
-  },
-  {
-   "wave": 21,
-   "track": "roster",
-   "why": "the rest of the roster, RECOVER and SERVE first because those are the intents that ship autonomous on day one",
-   "modules": [
-    "X-138",
-    "X-139",
-    "X-145",
-    "X-148",
-    "X-150"
-   ],
-   "subscribes_to": [
-    "X-119",
-    "X-122",
-    "X-126",
-    "X-134",
-    "X-137",
-    "X-151",
-    "X-160",
-    "X-171",
-    "X-199"
-   ],
-   "subscribed_to_by": [
-    "X-124",
-    "X-202"
-   ],
-   "calls": [],
-   "not_yet_built_publishers": [
-    "X-134",
-    "X-160"
-   ],
-   "journeys_unlocked": []
-  },
-  {
-   "wave": 22,
-   "track": "roster",
-   "why": "the rest of the roster, RECOVER and SERVE first because those are the intents that ship autonomous on day one",
-   "modules": [
-    "X-16",
-    "X-160",
-    "X-167",
-    "X-168",
-    "X-175"
-   ],
-   "subscribes_to": [
-    "X-10",
-    "X-121",
-    "X-162",
-    "X-163",
-    "X-171"
-   ],
-   "subscribed_to_by": [
-    "X-119",
-    "X-148",
-    "X-163",
-    "X-166"
-   ],
-   "calls": [
-    "X-171"
-   ],
-   "not_yet_built_publishers": [],
-   "journeys_unlocked": []
-  },
-  {
-   "wave": 23,
-   "track": "roster",
-   "why": "the rest of the roster, RECOVER and SERVE first because those are the intents that ship autonomous on day one",
-   "modules": [
-    "X-177",
-    "X-180",
-    "X-194",
-    "X-195",
-    "X-197"
-   ],
-   "subscribes_to": [
-    "C-Reviews",
-    "C-Telephony",
-    "X-118",
-    "X-122",
-    "X-140",
-    "X-171",
-    "X-200"
-   ],
-   "subscribed_to_by": [],
-   "calls": [],
-   "not_yet_built_publishers": [
-    "X-140",
-    "X-200"
-   ],
-   "journeys_unlocked": []
-  },
-  {
-   "wave": 24,
-   "track": "roster",
-   "why": "the rest of the roster, RECOVER and SERVE first because those are the intents that ship autonomous on day one",
-   "modules": [
-    "X-209",
-    "X-82",
-    "X-08",
-    "X-120",
-    "X-136"
-   ],
-   "subscribes_to": [
-    "X-01",
-    "X-110",
-    "X-135",
-    "X-162",
-    "X-171",
-    "X-198"
-   ],
-   "subscribed_to_by": [
-    "X-07",
-    "X-185"
-   ],
-   "calls": [],
-   "not_yet_built_publishers": [
-    "X-135"
-   ],
-   "journeys_unlocked": []
-  },
-  {
-   "wave": 25,
-   "track": "roster",
-   "why": "the rest of the roster, RECOVER and SERVE first because those are the intents that ship autonomous on day one",
-   "modules": [
-    "X-141",
-    "X-142",
-    "X-156",
-    "X-173",
-    "X-213"
-   ],
-   "subscribes_to": [
-    "X-122",
-    "X-125",
-    "X-126",
-    "X-140",
-    "X-166",
-    "X-186",
-    "X-198",
-    "X-199"
-   ],
-   "subscribed_to_by": [],
-   "calls": [],
-   "not_yet_built_publishers": [
-    "X-140",
-    "X-186"
-   ],
-   "journeys_unlocked": []
-  },
-  {
-   "wave": 26,
-   "track": "roster",
-   "why": "the rest of the roster, RECOVER and SERVE first because those are the intents that ship autonomous on day one",
-   "modules": [
-    "X-105",
-    "X-109",
-    "X-114",
-    "X-116",
-    "X-130"
-   ],
-   "subscribes_to": [
-    "X-126"
-   ],
-   "subscribed_to_by": [
-    "X-111"
-   ],
-   "calls": [],
-   "not_yet_built_publishers": [],
-   "journeys_unlocked": []
-  },
-  {
-   "wave": 27,
-   "track": "roster",
-   "why": "the rest of the roster, RECOVER and SERVE first because those are the intents that ship autonomous on day one",
-   "modules": [
-    "X-131",
-    "X-132",
-    "X-134",
-    "X-135",
-    "X-140"
-   ],
-   "subscribes_to": [
-    "X-126"
-   ],
-   "subscribed_to_by": [
-    "X-136",
-    "X-150",
-    "X-177",
-    "X-213",
-    "X-218"
-   ],
-   "calls": [],
-   "not_yet_built_publishers": [],
-   "journeys_unlocked": []
-  },
-  {
-   "wave": 28,
-   "track": "roster",
-   "why": "the rest of the roster, RECOVER and SERVE first because those are the intents that ship autonomous on day one",
-   "modules": [
-    "X-144",
-    "X-154",
-    "X-158",
-    "X-159",
-    "X-161"
-   ],
-   "subscribes_to": [
-    "X-126"
-   ],
-   "subscribed_to_by": [],
-   "calls": [],
-   "not_yet_built_publishers": [],
-   "journeys_unlocked": []
-  },
-  {
-   "wave": 29,
-   "track": "roster",
-   "why": "the rest of the roster, RECOVER and SERVE first because those are the intents that ship autonomous on day one",
-   "modules": [
-    "X-179",
-    "X-182",
-    "X-183",
-    "X-184",
-    "X-185"
-   ],
-   "subscribes_to": [
-    "X-110",
-    "X-118",
-    "X-126",
-    "X-136"
-   ],
-   "subscribed_to_by": [
-    "X-178"
-   ],
-   "calls": [],
-   "not_yet_built_publishers": [],
-   "journeys_unlocked": []
-  },
-  {
-   "wave": 30,
-   "track": "roster",
-   "why": "the rest of the roster, RECOVER and SERVE first because those are the intents that ship autonomous on day one",
-   "modules": [
-    "X-186",
-    "X-190",
-    "X-191",
-    "X-192",
-    "X-196"
-   ],
-   "subscribes_to": [
-    "X-126"
-   ],
-   "subscribed_to_by": [
-    "C-Mail",
-    "C-Telephony",
-    "C-Whatsapp",
-    "X-141",
-    "X-147",
-    "X-202"
-   ],
-   "calls": [],
-   "not_yet_built_publishers": [],
-   "journeys_unlocked": []
-  },
-  {
-   "wave": 31,
-   "track": "roster",
-   "why": "the rest of the roster, RECOVER and SERVE first because those are the intents that ship autonomous on day one",
-   "modules": [
-    "X-200",
-    "X-205",
-    "X-210",
-    "X-217",
-    "X-218"
-   ],
-   "subscribes_to": [
-    "X-121",
-    "X-126",
-    "X-140"
-   ],
-   "subscribed_to_by": [
-    "C-Mail",
-    "C-Telephony",
-    "C-Whatsapp",
-    "X-147",
-    "X-197",
-    "X-202"
-   ],
-   "calls": [],
-   "not_yet_built_publishers": [],
-   "journeys_unlocked": []
-  }
- ],
- "journeys": [
-  {
-   "id": "J1",
-   "title": "a missed call becomes a consented text back",
-   "requires": [
-    "C-Telephony",
-    "C-Sms",
-    "X-188",
-    "X-204"
-   ],
-   "green_after_wave": 5
-  },
-  {
-   "id": "J2",
-   "title": "two fields at signup put a live agent on a real number",
-   "requires": [
-    "X-118",
-    "C-Agent",
-    "X-188",
-    "X-66"
-   ],
-   "green_after_wave": 6
-  },
-  {
-   "id": "J3",
-   "title": "a quote comes from the pricebook or does not come at all",
-   "requires": [
-    "X-163",
-    "X-119",
-    "X-126"
-   ],
-   "green_after_wave": 7
-  },
-  {
-   "id": "J4",
-   "title": "STOP halts every pending step for that person",
-   "requires": [
-    "X-204",
-    "C-Sms",
-    "X-121"
-   ],
-   "green_after_wave": 5
-  },
-  {
-   "id": "J5",
-   "title": "a migration of five hundred jobs sends nothing",
-   "requires": [
-    "X-212",
-    "X-204"
-   ],
-   "green_after_wave": 14
-  },
-  {
-   "id": "J6",
-   "title": "cancel is one tap with nothing in between",
-   "requires": [
-    "X-172",
-    "C-Billing"
-   ],
-   "green_after_wave": 11
-  },
-  {
-   "id": "J7",
-   "title": "an agency client never sees cost or margin",
-   "requires": [
-    "X-112",
-    "X-166"
-   ],
-   "green_after_wave": 11
-  },
-  {
-   "id": "J8",
-   "title": "a deliberately corrupted backup fails the restore",
-   "requires": [
-    "X-203"
-   ],
-   "green_after_wave": 14
-  },
-  {
-   "id": "J9",
-   "title": "an invoice reaches a real charge id",
-   "requires": [
-    "X-199",
-    "X-198",
-    "C-Billing"
-   ],
-   "green_after_wave": 10
-  },
-  {
-   "id": "J10",
-   "title": "a completed job asks for a review once inside the cadence",
-   "requires": [
-    "C-Reviews",
-    "X-181"
-   ],
-   "green_after_wave": 8
-  },
-  {
-   "id": "J11",
-   "title": "a published site carries all seven",
-   "requires": [
-    "X-157",
-    "X-110",
-    "X-102",
-    "X-155",
-    "X-137"
-   ],
-   "green_after_wave": 13
-  },
-  {
-   "id": "J12",
-   "title": "an overdue invoice is chased by reason, resolution first",
-   "requires": [
-    "X-211",
-    "X-199",
-    "X-204"
-   ],
-   "green_after_wave": 9
-  }
- ],
- "orphan_events": {
-  "subscription.renewed": [
-   "C-Billing",
-   "X-120",
-   "X-127",
-   "X-198",
-   "X-199",
-   "X-82"
-  ],
-  "message.received": [
-   "C-Agent",
-   "C-Whatsapp",
-   "X-153",
-   "X-185"
-  ],
-  "page.published": [
-   "X-155",
-   "X-157",
-   "X-195"
-  ],
-  "agent.turn.started": [
-   "C-Ai",
-   "X-148"
-  ],
-  "fetch.completed": [
-   "X-129",
-   "X-136"
-  ],
-  "prospect.scored": [
-   "X-217",
-   "X-218"
-  ],
-  "outcome.": [
-   "X-145"
-  ],
-  "campaign.scheduled": [
-   "C-Mail"
-  ],
-  "tenant.cancelled": [
-   "X-188"
-  ],
-  "message.sent": [
-   "X-137"
-  ],
-  "entity.updated": [
-   "X-119"
-  ],
-  "site.published": [
-   "X-119"
-  ],
-  "prompt.changed": [
-   "X-149"
-  ],
-  "model.changed": [
-   "X-149"
-  ],
-  "upload.received": [
-   "X-160"
-  ],
-  "refresh.due": [
-   "X-16"
-  ],
-  "page.loaded": [
-   "X-110"
-  ],
-  "agent.refused": [
-   "X-163"
-  ],
-  "order.paid": [
-   "X-167"
-  ],
-  "order.cancelled": [
-   "X-167"
-  ],
-  "zernio.webhook": [
-   "X-177"
-  ],
-  "entity.state_changed": [
-   "X-185"
-  ],
-  "country.detected": [
-   "X-82"
-  ],
-  "limit.exceeded": [
-   "X-120"
-  ],
-  "help.human_requested": [
-   "X-111"
-  ],
-  "credit.debited": [
-   "X-112"
-  ],
-  "rule.fired": [
-   "X-195"
-  ],
-  "invoice.overdue": [
-   "X-211"
+    "X-82"
   ]
- },
- "call_edges": {
-  "X-175": [
-   "X-171"
-  ],
-  "X-198": [
-   "X-117"
-  ]
- },
- "subscription_edges": {
-  "C-Agent": [
-   "X-102",
-   "X-119",
-   "X-126",
-   "X-66"
-  ],
-  "C-Billing": [
-   "X-198"
-  ],
-  "C-Mail": [
-   "C-Agent",
-   "C-Sms",
-   "X-127",
-   "X-186",
-   "X-193",
-   "X-207",
-   "X-217",
-   "X-218"
-  ],
-  "C-Reviews": [
-   "X-126"
-  ],
-  "C-Sms": [
-   "C-Reviews",
-   "C-Telephony",
-   "X-171",
-   "X-193",
-   "X-204",
-   "X-66"
-  ],
-  "C-Telephony": [
-   "C-Agent",
-   "C-Sms",
-   "X-121",
-   "X-127",
-   "X-186",
-   "X-200",
-   "X-207",
-   "X-217",
-   "X-218"
-  ],
-  "C-Whatsapp": [
-   "C-Agent",
-   "C-Sms",
-   "X-127",
-   "X-186",
-   "X-193",
-   "X-207",
-   "X-217",
-   "X-218"
-  ],
-  "X-01": [
-   "X-126"
-  ],
-  "X-07": [
-   "X-01",
-   "X-136",
-   "X-171",
-   "X-199"
-  ],
-  "X-08": [
-   "X-01",
-   "X-136"
-  ],
-  "X-10": [
-   "X-126"
-  ],
-  "X-102": [
-   "X-110",
-   "X-119",
-   "X-126"
-  ],
-  "X-103": [
-   "X-126"
-  ],
-  "X-104": [
-   "X-118"
-  ],
-  "X-105": [
-   "X-126"
-  ],
-  "X-108": [
-   "X-126"
-  ],
-  "X-109": [
-   "X-126"
-  ],
-  "X-111": [
-   "X-109",
-   "X-163"
-  ],
-  "X-112": [
-   "X-118"
-  ],
-  "X-113": [
-   "X-126"
-  ],
-  "X-114": [
-   "X-126"
-  ],
-  "X-116": [
-   "X-126"
-  ],
-  "X-117": [
-   "X-126"
-  ],
-  "X-118": [
-   "X-126"
-  ],
-  "X-119": [
-   "X-160",
-   "X-163"
-  ],
-  "X-120": [
-   "X-198"
-  ],
-  "X-122": [
-   "X-126"
-  ],
-  "X-124": [
-   "X-126",
-   "X-145"
-  ],
-  "X-126": [
-   "X-119",
-   "X-204"
-  ],
-  "X-127": [
-   "C-Reviews",
-   "X-171"
-  ],
-  "X-129": [
-   "X-118"
-  ],
-  "X-130": [
-   "X-126"
-  ],
-  "X-131": [
-   "X-126"
-  ],
-  "X-132": [
-   "X-126"
-  ],
-  "X-134": [
-   "X-126"
-  ],
-  "X-135": [
-   "X-126"
-  ],
-  "X-136": [
-   "X-110",
-   "X-135",
-   "X-171"
-  ],
-  "X-137": [
-   "X-110",
-   "X-66"
-  ],
-  "X-138": [
-   "X-137",
-   "X-171",
-   "X-199"
-  ],
-  "X-139": [
-   "X-138",
-   "X-171",
-   "X-199"
-  ],
-  "X-140": [
-   "X-126"
-  ],
-  "X-141": [
-   "X-125",
-   "X-186"
-  ],
-  "X-142": [
-   "X-122",
-   "X-126"
-  ],
-  "X-143": [
-   "X-126"
-  ],
-  "X-144": [
-   "X-126"
-  ],
-  "X-145": [
-   "X-122",
-   "X-126"
-  ],
-  "X-147": [
-   "C-Agent",
-   "C-Sms",
-   "C-Telephony",
-   "X-127",
-   "X-186",
-   "X-193",
-   "X-207",
-   "X-217",
-   "X-218"
-  ],
-  "X-148": [
-   "X-119",
-   "X-160"
-  ],
-  "X-149": [
-   "C-Agent"
-  ],
-  "X-150": [
-   "X-134",
-   "X-151"
-  ],
-  "X-151": [
-   "X-126"
-  ],
-  "X-153": [
-   "C-Reviews",
-   "X-111",
-   "X-66"
-  ],
-  "X-154": [
-   "X-126"
-  ],
-  "X-157": [
-   "X-129"
-  ],
-  "X-158": [
-   "X-126"
-  ],
-  "X-159": [
-   "X-126"
-  ],
-  "X-16": [
-   "X-10"
-  ],
-  "X-160": [
-   "X-171"
-  ],
-  "X-161": [
-   "X-126"
-  ],
-  "X-162": [
-   "X-126"
-  ],
-  "X-163": [
-   "X-160",
-   "X-171"
-  ],
-  "X-164": [
-   "X-126"
-  ],
-  "X-165": [
-   "X-126"
-  ],
-  "X-166": [
-   "X-163",
-   "X-167",
-   "X-168",
-   "X-198"
-  ],
-  "X-167": [
-   "X-171"
-  ],
-  "X-168": [
-   "X-162",
-   "X-171"
-  ],
-  "X-170": [
-   "C-Billing",
-   "C-Reviews",
-   "X-166",
-   "X-198"
-  ],
-  "X-171": [
-   "X-126"
-  ],
-  "X-172": [
-   "X-162",
-   "X-164",
-   "X-171",
-   "X-199"
-  ],
-  "X-173": [
-   "X-166",
-   "X-198",
-   "X-199"
-  ],
-  "X-175": [
-   "X-121",
-   "X-160",
-   "X-163"
-  ],
-  "X-176": [
-   "X-126"
-  ],
-  "X-177": [
-   "C-Reviews",
-   "X-140",
-   "X-171"
-  ],
-  "X-178": [
-   "X-124",
-   "X-179"
-  ],
-  "X-179": [
-   "X-126"
-  ],
-  "X-180": [
-   "X-118"
-  ],
-  "X-181": [
-   "C-Reviews"
-  ],
-  "X-182": [
-   "X-126"
-  ],
-  "X-183": [
-   "X-126"
-  ],
-  "X-184": [
-   "X-126"
-  ],
-  "X-185": [
-   "X-110",
-   "X-118",
-   "X-136"
-  ],
-  "X-186": [
-   "X-126"
-  ],
-  "X-188": [
-   "C-Telephony",
-   "X-118"
-  ],
-  "X-189": [
-   "X-126"
-  ],
-  "X-190": [
-   "X-126"
-  ],
-  "X-191": [
-   "X-126"
-  ],
-  "X-192": [
-   "X-126"
-  ],
-  "X-193": [
-   "X-126"
-  ],
-  "X-194": [
-   "X-122"
-  ],
-  "X-196": [
-   "X-126"
-  ],
-  "X-197": [
-   "C-Telephony",
-   "X-200"
-  ],
-  "X-198": [
-   "X-164",
-   "X-199"
-  ],
-  "X-199": [
-   "C-Billing",
-   "X-171",
-   "X-198"
-  ],
-  "X-200": [
-   "X-126"
-  ],
-  "X-201": [
-   "X-171",
-   "X-198",
-   "X-199",
-   "X-66"
-  ],
-  "X-202": [
-   "X-103",
-   "X-145",
-   "X-190",
-   "X-205",
-   "X-208"
-  ],
-  "X-204": [
-   "X-126"
-  ],
-  "X-205": [
-   "X-126"
-  ],
-  "X-207": [
-   "X-126"
-  ],
-  "X-208": [
-   "X-181"
-  ],
-  "X-209": [
-   "X-162",
-   "X-171"
-  ],
-  "X-210": [
-   "X-126"
-  ],
-  "X-212": [
-   "X-118"
-  ],
-  "X-213": [
-   "X-140"
-  ],
-  "X-214": [
-   "X-126"
-  ],
-  "X-215": [
-   "X-126"
-  ],
-  "X-217": [
-   "X-121",
-   "X-126"
-  ],
-  "X-218": [
-   "X-126",
-   "X-140"
-  ],
-  "X-219": [
-   "X-126",
-   "X-162"
-  ],
-  "X-220": [
-   "X-126",
-   "X-219"
-  ],
-  "X-66": [
-   "C-Telephony",
-   "X-119",
-   "X-126",
-   "X-163"
-  ]
- },
- "architecture": {
-  "_decided": "CQRS-lite in every module; a Domain/ layer only where invariants are real; no event sourcing; no repositories over Eloquent.",
-  "every_module": [
-   "Actions/ (commands; never return a read model)",
-   "Queries/ (reads; never write)",
-   "Events/",
-   "Listeners/",
-   "Ui/",
-   "Database/",
-   "Tests/",
-   "ModuleServiceProvider.php"
-  ],
-  "domain_layer_when": "owns >=4 tables, OR touches money/consent/entitlement, OR the brief names an invariant spanning two of its own tables, OR a state machine with legal transitions",
-  "domain_layer_count": 36,
-  "refused": {
-   "event_sourcing": "contradicts P-163 one-table-one-owner - it wants one shared append-only store - and makes erasure of PHI and consent records materially harder. entity_history is VERSIONING, not event sourcing.",
-   "repositories_over_eloquent": "doubles the code, fights the framework, buys portability nobody wants.",
-   "separate_read_write_stores": "RLS plus one-table-one-owner already gives the isolation."
-  },
-  "cross_module_data": "a read model in YOUR OWN tables, fed by a Listeners/ projection from events you already consume. Never a cross-module use; never a join into a table you do not own."
- },
- "modules": {
-  "C-Agent": {
-   "intent": "SERVE",
-   "wave": 5,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "agent_turns",
-    "agent_refusals",
-    "agent_instructions"
-   ],
-   "what": "the base prompt engine and pre-trained industry prompts \u00b7 custom RAG knowledge \u00b7 intent matching \u00b7 reply class"
-  },
-  "C-Ai": {
-   "intent": "RECOVER",
-   "wave": 3,
-   "domain_layer": true,
-   "domain_because": "money, consent or entitlement: billing",
-   "state": "not started",
-   "owns_table": [
-    "ai_calls",
-    "ai_tasks",
-    "ai_provider_accounts"
-   ],
-   "what": "cost routing \u00b7 token arbitrage \u00b7 provider waterfall \u00b7 latency guardrails \u00b7 prompt caching \u00b7 usage billing: eve"
-  },
-  "C-Billing": {
-   "intent": "INFORM",
-   "wave": 9,
-   "domain_layer": true,
-   "domain_because": "owns 4 tables",
-   "state": "not started",
-   "owns_table": [
-    "credit_ledger_entries",
-    "meters",
-    "trial_limits",
-    "dunning_states"
-   ],
-   "what": "CreditLedger (988 lines exist \u2014 verified, extended) \u00b7 the five meters: SMS segments \u00b7 voice minutes \u00b7 AI \u00b7 ema"
-  },
-  "C-Mail": {
-   "intent": "OBSERVE",
-   "wave": 15,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "mail_domains",
-    "warmup_calendars",
-    "mail_events"
-   ],
-   "what": "the deliverability engine \u00b7 inbox rotation \u00b7 warmup ramping \u2014 a CALENDAR, not a setting \u00b7 SPF flattening \u00b7 DMA"
-  },
-  "C-Reviews": {
-   "intent": "GROW",
-   "wave": 8,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "review_requests",
-    "review_replies",
-    "qa_settings"
-   ],
-   "what": "\u00a737.1: every review request is TRIAGED \u2014 low ratings go to internal QA as a SupportTicket with sla_due_at; hi"
-  },
-  "C-Sms": {
-   "intent": "RECOVER",
-   "wave": 5,
-   "domain_layer": true,
-   "domain_because": "money, consent or entitlement: dunning",
-   "state": "not started",
-   "owns_table": [
-    "sms_compositions",
-    "sms_moderation_results"
-   ],
-   "what": "missed-call text-back \u00b7 deliverability fallback \u00b7 reminders \u00b7 dunning texts \u00b7 spintax at scale (per-brand thro"
-  },
-  "C-Telephony": {
-   "intent": "RECOVER",
-   "wave": 5,
-   "domain_layer": true,
-   "domain_because": "owns 4 tables",
-   "state": "not started",
-   "owns_table": [
-    "carrier_roster",
-    "carrier_bindings",
-    "carrier_health",
-    "carrier_receipts"
-   ],
-   "what": "makes eight carriers indistinguishable to everything above it. Selection order: \u2460 capability (rcs \u00b7 mms \u00b7 sip "
-  },
-  "C-Whatsapp": {
-   "intent": "INFORM",
-   "wave": 15,
-   "domain_layer": true,
-   "domain_because": "money, consent or entitlement: payment",
-   "state": "not started",
-   "owns_table": [
-    "whatsapp_templates",
-    "whatsapp_sessions"
-   ],
-   "what": "opt-in engine \u00b7 payment links \u00b7 Zernio WhatsApp + GBP chat sync \u00b7 omni-channel merging into the one Conversati"
-  },
-  "X-01": {
-   "intent": "SERVE",
-   "wave": 6,
-   "domain_layer": true,
-   "domain_because": "owns 4 tables",
-   "state": "not started",
-   "owns_table": [
-    "contact_tags",
-    "custom_fields",
-    "lead_scores",
-    "takeover_latches"
-   ],
-   "what": "one Conversation per Person, every channel \u2014 SMS, email, voice transcripts, web chat, WhatsApp in ONE timeline"
-  },
-  "X-07": {
-   "intent": "INFORM",
-   "wave": 20,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 1 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "forecasts"
-   ],
-   "what": "MRR prediction \u00b7 run-rate math \u00b7 seasonality \u00b7 manager roll-up \u00b7 pipeline gap analysis \u00b7 decay prediction \u00b7 au"
-  },
-  "X-08": {
-   "intent": "OBSERVE",
-   "wave": 24,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 1 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "churn_scores"
-   ],
-   "what": "churn risk scoring from ROI-push open rate, conversation tone and job recency. It observes. It has no send pat"
-  },
-  "X-10": {
-   "intent": "SERVE",
-   "wave": 18,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "routing_rules",
-    "territories",
-    "assignments"
-   ],
-   "what": "skill-based \u00b7 round-robin \u00b7 conversion-based \u00b7 fraud-score \u00b7 natural-language rules \u00b7 multi-stage \u00b7 permission"
-  },
-  "X-102": {
-   "intent": "INFORM",
-   "wave": 12,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "chat_sessions",
-    "chat_leads"
-   ],
-   "what": "one line of JS \u00b7 live chat injection \u00b7 pre-chat lead capture \u00b7 exit-intent RAG \u00b7 rage-click detection (four cl"
-  },
-  "X-103": {
-   "intent": "GROW",
-   "wave": 12,
-   "domain_layer": true,
-   "domain_because": "owns 4 tables",
-   "state": "not started",
-   "owns_table": [
-    "pages",
-    "page_versions",
-    "funnels",
-    "site_forks"
-   ],
-   "what": "the funnel and website builder \u00b7 funnel visualisation and persistence \u00b7 drop-off targeting \u00b7 integrated CRM fo"
-  },
-  "X-104": {
-   "intent": "INFORM",
-   "wave": 20,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 1 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "plugin_installs"
-   ],
-   "what": "one-click install \u00b7 widget auto-injection \u00b7 analytics injection \u00b7 SEO meta sync \u00b7 the WP takeover path \u00b7 autom"
-  },
-  "X-105": {
-   "intent": "GROW",
-   "wave": 26,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "outreach_ladders",
-    "ladder_steps"
-   ],
-   "what": "multi-touch orchestration of the outreach ladder \u00b7 sequential retargeting \u00b7 autonomous follow-ups \u00b7 reply clas"
-  },
-  "X-108": {
-   "intent": "SERVE",
-   "wave": 7,
-   "domain_layer": true,
-   "domain_because": "owns 5 tables",
-   "state": "not started",
-   "owns_table": [
-    "appointments",
-    "availability_rules",
-    "resources",
-    "slot_locks",
-    "waitlists"
-   ],
-   "what": "two modes \u2014 APPOINTMENT and JOB \u2014 the profile picks (\u00a729.3) \u00b7 calendar auto-block \u00b7 blackouts and holiday over"
-  },
-  "X-109": {
-   "intent": "GROW",
-   "wave": 26,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 1 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "captcha_quota"
-   ],
-   "what": "asynchronous auto-submit of a researched proposal into the prospect's own contact form \u00b7 the ONLY module where"
-  },
-  "X-110": {
-   "intent": "OBSERVE",
-   "wave": 8,
-   "domain_layer": true,
-   "domain_because": "owns 5 tables",
-   "state": "not started",
-   "owns_table": [
-    "pixel_events",
-    "visits",
-    "sessions",
-    "cwv_samples",
-    "identity_links"
-   ],
-   "what": "the 14 KB smart pixel \u00b7 firing, detection, diagnostics \u00b7 cross-domain and sub-page tracking \u00b7 UTM harvesting \u00b7"
-  },
-  "X-111": {
-   "intent": "INFORM",
-   "wave": 20,
-   "domain_layer": true,
-   "domain_because": "owns 4 tables",
-   "state": "not started",
-   "owns_table": [
-    "operator_alerts",
-    "ip_bans",
-    "tenant_tickets",
-    "manual_queue"
-   ],
-   "what": "health dashboard \u00b7 the supervisor watchdog \u00b7 health checks \u00b7 global search and bulk exports (from X-121's stri"
-  },
-  "X-112": {
-   "intent": "INFORM",
-   "wave": 11,
-   "domain_layer": true,
-   "domain_because": "owns 5 tables",
-   "state": "not started",
-   "owns_table": [
-    "agencies",
-    "agency_clients",
-    "markups",
-    "impersonation_log",
-    "staff_roles"
-   ],
-   "what": "white-labelling \u00b7 one-click impersonation, ALWAYS logged \u00b7 the aggregated dashboard and roll-ups \u00b7 margin mark"
-  },
-  "X-113": {
-   "intent": "SERVE",
-   "wave": 18,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "staff_users",
-    "roles",
-    "role_permissions"
-   ],
-   "what": "staff, roles, granular permissions, and the document vault. No scoring, no ranking, no attendance. WIZARD inf"
-  },
-  "X-114": {
-   "intent": "GROW",
-   "wave": 26,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "media_assets",
-    "brand_kits"
-   ],
-   "what": "AI stock sourcing \u00b7 visual canvas (stock + logo overlay) \u00b7 automatic resizing (one master \u2192 WebP at 100/500/10"
-  },
-  "X-116": {
-   "intent": "GROW",
-   "wave": 26,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "templates",
-    "template_blocks",
-    "funnel_shapes"
-   ],
-   "what": "200 procedural templates from the 192 industry rules; 80 main industries at premium depth, promoted by demand "
-  },
-  "X-117": {
-   "intent": "SERVE",
-   "wave": 10,
-   "domain_layer": true,
-   "domain_because": "owns 4 tables",
-   "state": "not started",
-   "owns_table": [
-    "sellables",
-    "orders",
-    "order_lines",
-    "carts"
-   ],
-   "what": "checkout overlay \u00b7 dynamic service menu \u00b7 up-sell injection \u00b7 deposit capture on booking \u00b7 membership checkout"
-  },
-  "X-118": {
-   "intent": "GROW",
-   "wave": 6,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "onboarding_runs",
-    "onboarding_steps"
-   ],
-   "what": "IT IS THE WIZARD, and it asks for two things: a business name and a phone number. The AI FINDS GBP \u00b7 reviews \u00b7"
-  },
-  "X-119": {
-   "intent": "INFORM",
-   "wave": 1,
-   "domain_layer": true,
-   "domain_because": "money, consent or entitlement: price",
-   "state": "both anchor clauses proven",
-   "owns_table": [],
-   "what": "the structured resolver: prices, hours and services BYPASS vector search and do an exact lookup against Fact \u00b7"
-  },
-  "X-120": {
-   "intent": "OBSERVE",
-   "wave": 24,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 1 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "card_tokens"
-   ],
-   "what": "[AMENDED T677 \u00b7 P-196 + \u00a7202A] THE ONLY COMPONENT IN THE ROSTER THAT MAY HOLD A PAN \u2014 and it MAY STORE IT, enc"
-  },
-  "X-121": {
-   "intent": "RECOVER",
-   "wave": 1,
-   "domain_layer": true,
-   "domain_because": "owns 13 tables",
-   "state": "X-121a additive only",
-   "owns_table": [
-    "businesses",
-    "people",
-    "conversations",
-    "messages",
-    "jobs",
-    "reviews",
-    "campaigns",
-    "assets",
-    "ledger_entries",
-    "facts",
-    "sites",
-    "numbers",
-    "entity_history"
-   ],
-   "what": "Business \u00b7 Person \u00b7 Conversation \u00b7 Message \u00b7 Job \u00b7 Review \u00b7 Campaign \u00b7 Asset \u00b7 LedgerEntry \u00b7 Fact \u00b7 Site \u00b7 Num"
-  },
-  "X-122": {
-   "intent": "INFORM",
-   "wave": 1,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "action_manifests",
-    "action_invocations",
-    "action_reversals"
-   ],
-   "what": "each module publishes actions (id \u00b7 label \u00b7 typed params \u00b7 returns \u00b7 permission \u00b7 reversal class: reversible \u00b7"
-  },
-  "X-123": {
-   "intent": "INFORM",
-   "wave": 1,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "event_log",
-    "event_subscriptions",
-    "dead_letters"
-   ],
-   "what": "typed events, any module subscribes; dead-letter queue at 10 consecutive failures + the tenant emailed; expone"
-  },
-  "X-124": {
-   "intent": "SERVE",
-   "wave": 18,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "assistant_sessions",
-    "assistant_recommendations",
-    "assistant_unsupported"
-   ],
-   "what": "persistent chat on every page. OPERATE (\"text everyone who called last week\") \u00b7 CONFIGURE (\"ask for a review"
-  },
-  "X-125": {
-   "intent": "RECOVER",
-   "wave": 17,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "flows",
-    "flow_versions",
-    "flow_runs"
-   ],
-   "what": "branching \u00b7 conditional and sequential logic \u00b7 the rules engine \u00b7 multi-touch orchestration \u00b7 triggers (event,"
-  },
-  "X-126": {
-   "intent": "RECOVER",
-   "wave": 1,
-   "domain_layer": true,
-   "domain_because": "money, consent or entitlement: capability, price",
-   "state": "gates 1,2,3 green",
-   "owns_table": [
-    "capability_policies",
-    "capability_decisions"
-   ],
-   "what": "evaluates on every action: no Fact \u2192 no skill (the agent never invents a price, a time or a link because this "
-  },
-  "X-127": {
-   "intent": "RECOVER",
-   "wave": 17,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "tenant_zero_config",
-    "published_metrics"
-   ],
-   "what": "GO AI EZ as tenant #0 on its own platform (\u00a75). The same code, the same database, the same modules \u2014 at platfo"
-  },
-  "X-128": {
-   "intent": "OBSERVE",
-   "wave": 2,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 1 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "integration_matrix"
-   ],
-   "what": "reads every module's @renders matrix_view (derived from SCREENS, 2026-08-27 \u2014 names only; the JSON schema each"
-  },
-  "X-129": {
-   "intent": "INFORM",
-   "wave": 20,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "migrations",
-    "redirect_maps"
-   ],
-   "what": "R130, in the owner's words: \"a tenant is never left on a new empty domain \u2014 if they have a site, it MOVES and "
-  },
-  "X-130": {
-   "intent": "GROW",
-   "wave": 26,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "demand_series",
-    "demand_regions",
-    "weather_overlays"
-   ],
-   "what": "aggregate demand by trade and geography \u00b7 seasonality \u00b7 weather overlays and re-routing \u00b7 competitor density \u00b7"
-  },
-  "X-131": {
-   "intent": "GROW",
-   "wave": 27,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "person_interests",
-    "interest_clusters"
-   ],
-   "what": "interest and topic clustering \u00b7 RFM \u00b7 preference signals from pages, threads and replies \u00b7 the preference-cent"
-  },
-  "X-132": {
-   "intent": "GROW",
-   "wave": 27,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "person_links",
-    "resolution_evidence"
-   ],
-   "what": "identity resolution \u00b7 cross-device graphing \u00b7 pixel deanonymisation \u00b7 de-duplication \u00b7 social appending \u00b7 zero"
-  },
-  "X-134": {
-   "intent": "GROW",
-   "wave": 27,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "enrichment_fields",
-    "enrichment_runs"
-   ],
-   "what": "waterfall enrichment (free \u2192 cheap \u2192 expensive, stopping at first valid shape) \u00b7 social appending \u00b7 tech-stack"
-  },
-  "X-135": {
-   "intent": "GROW",
-   "wave": 27,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "research_runs",
-    "icebreakers",
-    "prospect_signals"
-   ],
-   "what": "the deep research agent \u00b7 the icebreaker generator \u00b7 pain-point matching \u00b7 competitor mentions and hiring spik"
-  },
-  "X-136": {
-   "intent": "OBSERVE",
-   "wave": 24,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "signals",
-    "signal_scores",
-    "decay_models"
-   ],
-   "what": "high-intent alerts \u00b7 revenue triggers \u00b7 budget detection \u00b7 decay modelling and prediction \u00b7 stale-posting and "
-  },
-  "X-137": {
-   "intent": "INFORM",
-   "wave": 13,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "call_tokens",
-    "short_links",
-    "link_clicks"
-   ],
-   "what": "dynamic number insertion \u00b7 click- and keyword-level attribution \u00b7 callback tracking \u00b7 the shortlink attributio"
-  },
-  "X-138": {
-   "intent": "INFORM",
-   "wave": 21,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "attribution_queries",
-    "roi_snapshots"
-   ],
-   "what": "click- and keyword-level attribution \u00b7 lifetime attribution \u00b7 multi-touch \u00b7 CRM attribution \u00b7 ROI calculation,"
-  },
-  "X-139": {
-   "intent": "INFORM",
-   "wave": 21,
-   "domain_layer": true,
-   "domain_because": "money, consent or entitlement: payment",
-   "state": "not started",
-   "owns_table": [
-    "ad_connections",
-    "conversion_uploads"
-   ],
-   "what": "offline event uploads to Google and Meta \u00b7 offline tracking \u00b7 offline payment logging \u00b7 post-purchase exclusio"
-  },
-  "X-140": {
-   "intent": "GROW",
-   "wave": 27,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "content_topics",
-    "topic_sources"
-   ],
-   "what": "real customer questions become published answers \u00b7 AI blog publishing \u00b7 topic clustering \u00b7 refreshing \u00b7 season"
-  },
-  "X-141": {
-   "intent": "OBSERVE",
-   "wave": 25,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "replay_runs",
-    "counterfactuals"
-   ],
-   "what": "replay simulation \u00b7 time-travel queries \u00b7 session replay \u00b7 historical retargeting \u00b7 revival testing \u00b7 proof A/"
-  },
-  "X-142": {
-   "intent": "OBSERVE",
-   "wave": 25,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "mcp_tokens",
-    "webhook_subscriptions"
-   ],
-   "what": "full read/write across every registered action (the category leaders ship read-only MCP; ours is complete beca"
-  },
-  "X-143": {
-   "intent": "SERVE",
-   "wave": 18,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 0 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [],
-   "what": "actions marked surfaces: [webmcp] are emitted as navigator.modelContext tool contracts on sites published thro"
-  },
-  "X-144": {
-   "intent": "GROW",
-   "wave": 28,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "visibility_queries",
-    "visibility_answers"
-   ],
-   "what": "tracks whether AI assistants recommend them (ChatGPT \u00b7 Claude \u00b7 Perplexity \u00b7 Gemini \u00b7 AI Overviews) \u2014 asks the"
-  },
-  "X-145": {
-   "intent": "INFORM",
-   "wave": 21,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "decisions",
-    "decision_outcomes"
-   ],
-   "what": "candidate set = the action registry, filtered by the gate \u00b7 reward = each action's outcome_event (the measure "
-  },
-  "X-147": {
-   "intent": "INFORM",
-   "wave": 15,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 1 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "rcs_capabilities"
-   ],
-   "what": "rich media \u00b7 verified sender branding \u00b7 suggested replies and actions \u00b7 read receipts. Carrier: Sinch for RCS "
-  },
-  "X-148": {
-   "intent": "INFORM",
-   "wave": 21,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "knowledge_chunks",
-    "retrieval_cache"
-   ],
-   "what": "hybrid search (dense + BM25) \u00b7 reciprocal rank fusion \u00b7 cross-encoder rerank \u00b7 chunk provenance \u00b7 prompt cachi"
-  },
-  "X-149": {
-   "intent": "RECOVER",
-   "wave": 17,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "eval_sets",
-    "eval_runs",
-    "quality_series"
-   ],
-   "what": "golden sets per industry \u00b7 A/B testing \u00b7 automated QA scoring \u00b7 eval-gated deploys \u00b7 refusal-rate monitoring \u00b7"
-  },
-  "X-150": {
-   "intent": "INFORM",
-   "wave": 21,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "provider_roster",
-    "provider_attempts",
-    "record_shapes"
-   ],
-   "what": "ten fetch methods in cost order \u2014 open data \u2192 free API \u2192 our own crawl \u2192 cheap paid \u2192 expensive paid \u2014 stoppin"
-  },
-  "X-151": {
-   "intent": "SERVE",
-   "wave": 18,
-   "domain_layer": true,
-   "domain_because": "owns 4 tables",
-   "state": "not started",
-   "owns_table": [
-    "fetches",
-    "fetch_targets",
-    "proxy_pool",
-    "robots_signals"
-   ],
-   "what": "deep scraping and bulk extraction \u00b7 intelligent DOM parsing \u00b7 the 60-second sitemap scraper \u00b7 proxy rotation \u00b7"
-  },
-  "X-153": {
-   "intent": "INFORM",
-   "wave": 6,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "alerts",
-    "alert_claims",
-    "reply_codes"
-   ],
-   "what": "five-character alphanumeric reply codes (R75/R125 \u2014 28.6M combinations; a code is never reused into another vi"
-  },
-  "X-154": {
-   "intent": "GROW",
-   "wave": 28,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 1 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "tenant_lexicons"
-   ],
-   "what": "the tenant's own vocabulary (what they call their services, their tone, banned words, the jargon-lint exemptio"
-  },
-  "X-155": {
-   "intent": "OBSERVE",
-   "wave": 12,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "form_definitions",
-    "form_submissions"
-   ],
-   "what": "the form runtime shared by every site and the widget: capture, validate, write Person + Conversation + Job/Mes"
-  },
-  "X-156": {
-   "intent": "OBSERVE",
-   "wave": 25,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "ingest_sources",
-    "ingest_runs",
-    "ingest_rejections"
-   ],
-   "what": "omni-channel inbox sync \u00b7 email inbox parsing \u00b7 Gmail read-only watch \u00b7 direct file uploads \u00b7 historical inges"
-  },
-  "X-157": {
-   "intent": "RECOVER",
-   "wave": 12,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "deployments",
-    "edge_zones"
-   ],
-   "what": "Cloudflare zero-touch provisioning \u00b7 S3 storage with versioning \u00b7 page-speed optimisation \u00b7 instant deployment"
-  },
-  "X-158": {
-   "intent": "GROW",
-   "wave": 28,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "videos",
-    "video_views"
-   ],
-   "what": "synthetic video rendering \u00b7 burned-in captions \u2014 most watch muted \u00b7 short-form script extraction \u00b7 hook testin"
-  },
-  "X-159": {
-   "intent": "GROW",
-   "wave": 28,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "audits",
-    "audit_findings",
-    "experiential_tests"
-   ],
-   "what": "the 54 checks across 5 layers \u00b7 analytics and pixel detection \u00b7 page speed \u00b7 experiential tests \u2014 submit their"
-  },
-  "X-16": {
-   "intent": "INFORM",
-   "wave": 22,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "places_records",
-    "geo_grids",
-    "service_polygons"
-   ],
-   "what": "Places / local-SEO maps \u00b7 \"find near me\" \u00b7 bulk local-business extraction (name \u00b7 phone \u00b7 address \u00b7 lat/lng \u00b7 "
-  },
-  "X-160": {
-   "intent": "INFORM",
-   "wave": 22,
-   "domain_layer": true,
-   "domain_because": "money, consent or entitlement: price",
-   "state": "not started",
-   "owns_table": [
-    "documents",
-    "document_versions",
-    "extraction_runs"
-   ],
-   "what": "upload \u2192 detect type (PDF \u00b7 DOCX \u00b7 XLSX \u00b7 CSV \u00b7 image \u00b7 scan) \u2192 OCR if needed (a photo of the price board on t"
-  },
-  "X-161": {
-   "intent": "GROW",
-   "wave": 28,
-   "domain_layer": true,
-   "domain_because": "money, consent or entitlement: ledger",
-   "state": "not started",
-   "owns_table": [
-    "demo_tenants",
-    "demo_sessions",
-    "demo_ledger"
-   ],
-   "what": "when we build a prospect's demo site we build them a working assistant on it, grounded in their own crawl \u2014 th"
-  },
-  "X-162": {
-   "intent": "SERVE",
-   "wave": 19,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "dispatch_assignments",
-    "routes",
-    "eta_predictions"
-   ],
-   "what": "the kanban and predictability board \u00b7 real-time rep dashboard \u00b7 manager roll-up \u00b7 THE THIRD STATE: free \u00b7 busy"
-  },
-  "X-163": {
-   "intent": "NONE",
-   "wave": 7,
-   "domain_layer": true,
-   "domain_because": "owns 4 tables",
-   "state": "not started",
-   "owns_table": [
-    "price_book_items",
-    "price_book_versions",
-    "location_books",
-    "callout_fees"
-   ],
-   "what": "services with prices \u00b7 good / better / best tiers \u00b7 price ranges (\"boiler replacement \u00a31,800\u2013\u00a33,200\") \u00b7"
-  },
-  "X-164": {
-   "intent": "SERVE",
-   "wave": 7,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "estimates",
-    "estimate_lines",
-    "estimate_versions"
-   ],
-   "what": "good/better/best presentation \u00b7 auto-line items from the job notes \u00b7 expiry enforcement \u2014 \"valid 7 days\"; day "
-  },
-  "X-165": {
-   "intent": "SERVE",
-   "wave": 19,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "membership_plans",
-    "memberships",
-    "member_visits"
-   ],
-   "what": "recurring service plans \u00b7 membership checkout \u00b7 overrides \u00b7 priority scheduling \u2014 and it must be REAL \u00b7 member"
-  },
-  "X-166": {
-   "intent": "INFORM",
-   "wave": 11,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "job_costs",
-    "margin_snapshots"
-   ],
-   "what": "actual vs expected per job \u00b7 margin \u00b7 cash-collected validation \u00b7 profitability by tech, by service, by source"
-  },
-  "X-167": {
-   "intent": "INFORM",
-   "wave": 22,
-   "domain_layer": true,
-   "domain_because": "owns 4 tables",
-   "state": "not started",
-   "owns_table": [
-    "stock_items",
-    "stock_locations",
-    "purchase_orders",
-    "suppliers"
-   ],
-   "what": "van and storage-unit stock \u00b7 fractional inventory (2.5 metres of pipe) \u00b7 syncing \u00b7 reorder alerts \u00b7 a reorder "
-  },
-  "X-168": {
-   "intent": "INFORM",
-   "wave": 22,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "timesheets",
-    "timesheet_entries",
-    "pay_rules"
-   ],
-   "what": "time tracking \u00b7 out-of-hours and overtime math are STRUCK \u2014 P-204 fenced them; \u00a7240 recorded this fix and the "
-  },
-  "X-170": {
-   "intent": "RECOVER",
-   "wave": 17,
-   "domain_layer": true,
-   "domain_because": "money, consent or entitlement: chargeback, commission, refund",
-   "state": "not started",
-   "owns_table": [
-    "commission_rules",
-    "commissions",
-    "scorecards"
-   ],
-   "what": "commission injection \u00b7 split and tiered \u00b7 margin-based (needs X-166) \u00b7 clawback on refund or chargeback \u00b7 spif"
-  },
-  "X-171": {
-   "intent": "SERVE",
-   "wave": 19,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "device_sync_queue",
-    "device_sync_conflicts"
-   ],
-   "what": "local-first with SQLite on the device \u2014 a basement has no signal \u00b7 Wasm barcode at 60 fps \u00b7 GPS clock-in bound"
-  },
-  "X-172": {
-   "intent": "INFORM",
-   "wave": 11,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "portal_links",
-    "portal_views"
-   ],
-   "what": "self-service \u00b7 magic-link SSO \u2014 no password, ever \u00b7 live ETA from the third state \u2014 the feature they tell peop"
-  },
-  "X-173": {
-   "intent": "OBSERVE",
-   "wave": 25,
-   "domain_layer": true,
-   "domain_because": "owns 4 tables",
-   "state": "not started",
-   "owns_table": [
-    "accounting_connections",
-    "account_mappings",
-    "sync_runs",
-    "accounting_sync_conflicts"
-   ],
-   "what": "two-way sync to Xero / QuickBooks / Sage \u00b7 GL auto-categorisation with confidence (G1-03's home) \u00b7 reconciliat"
-  },
-  "X-175": {
-   "intent": "INFORM",
-   "wave": 22,
-   "domain_layer": true,
-   "domain_because": "money, consent or entitlement: price",
-   "state": "not started",
-   "owns_table": [
-    "field_suggestions"
-   ],
-   "what": "the same C-Agent, third deployment, pointed at the tech: objection RAG \u00b7 price lookup on site from X-163, neve"
-  },
-  "X-176": {
-   "intent": "GROW",
-   "wave": 13,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "schema_snapshots",
-    "crawler_visits"
-   ],
-   "what": "explicit allow for AI crawlers (GPTBot \u00b7 ClaudeBot \u00b7 PerplexityBot \u00b7 Google-Extended) \u00b7 structural SEO \u00b7 hyper"
-  },
-  "X-177": {
-   "intent": "INFORM",
-   "wave": 23,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "gbp_connections",
-    "gbp_posts",
-    "gbp_state_log"
-   ],
-   "what": "GBP auto-sync \u00b7 Q&A seeding \u00b7 post generation and local-post automation \u00b7 claimed-status \u00b7 suspension monitori"
-  },
-  "X-178": {
-   "intent": "INFORM",
-   "wave": 12,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 1 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "design_changes"
-   ],
-   "what": "design by conversation \u00b7 auto-build \u00b7 form generator \u00b7 one-click revisions \u00b7 visual canvas \u00b7 captions \u00b7 featur"
-  },
-  "X-179": {
-   "intent": "GROW",
-   "wave": 29,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "template_matches",
-    "extracted_content"
-   ],
-   "what": "crawl their site, score all 200 \u00b7 DOM parsing \u00b7 boilerplate exclusion \u00b7 their words, verbatim \u2014 we never rewri"
-  },
-  "X-180": {
-   "intent": "INFORM",
-   "wave": 23,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 1 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "content_packs"
-   ],
-   "what": "the seeded starter pack \u2014 N assets per industry, declared in a manifest. WIZARD inferred: the industry from si"
-  },
-  "X-181": {
-   "intent": "RECOVER",
-   "wave": 8,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 1 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "qa_tickets"
-   ],
-   "what": "the internal half of the review split: a low rating becomes a SupportTicket with an SLA, routed to a human, tr"
-  },
-  "X-182": {
-   "intent": "GROW",
-   "wave": 29,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "social_accounts",
-    "social_posts",
-    "comments"
-   ],
-   "what": "posting autopilot \u00b7 best time to post \u00b7 comment auto-reply \u00b7 escalates anything negative to the inbox \u2014 never "
-  },
-  "X-183": {
-   "intent": "GROW",
-   "wave": 29,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "content_drafts",
-    "gate_results",
-    "trust_ladder"
-   ],
-   "what": "writing and illustration \u00b7 blog publishing \u00b7 copy and narrative \u00b7 topic clustering \u00b7 refreshing \u00b7 evergreen re"
-  },
-  "X-184": {
-   "intent": "GROW",
-   "wave": 29,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "content_plans",
-    "plan_items"
-   ],
-   "what": "the content calendar: a whole plan proposed from their industry and their transcripts \u00b7 monthly and multi-tier"
-  },
-  "X-185": {
-   "intent": "GROW",
-   "wave": 29,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "sequences",
-    "sequence_steps",
-    "content_packs"
-   ],
-   "what": "ALWAYS ON: A/B and split testing \u00b7 hook testing \u00b7 course correction \u00b7 campaign ML optimisation \u00b7 conversion-ba"
-  },
-  "X-186": {
-   "intent": "GROW",
-   "wave": 30,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "campaign_steps",
-    "campaign_runs"
-   ],
-   "what": "multi-channel sequencing \u00b7 omnichannel \u00b7 drip adjustment \u00b7 send-time optimisation \u00b7 resend-to-unopens \u00b7 REPLY "
-  },
-  "X-188": {
-   "intent": "RECOVER",
-   "wave": 5,
-   "domain_layer": true,
-   "domain_because": "owns 4 tables",
-   "state": "not started",
-   "owns_table": [
-    "number_pool",
-    "number_assignments",
-    "brand_registrations",
-    "number_parks"
-   ],
-   "what": "assigns a GO AI EZ number at signup \u00b7 submits 10DLC brand registration automatically \u2014 marketing SMS only (\u00a715"
-  },
-  "X-189": {
-   "intent": "SERVE",
-   "wave": 19,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 1 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "branded_media"
-   ],
-   "what": "client photo \u2192 generated variant \u2192 branded card. It never fails: a missing photo yields the branded fallback. "
-  },
-  "X-190": {
-   "intent": "GROW",
-   "wave": 30,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "referral_slots",
-    "partner_pool",
-    "referrals"
-   ],
-   "what": "the growth and referral engine \u00b7 the \"powered by\" viral loop \u00b7 the referral slot model \u2014 EMPTY \u2192 SEARCHING \u2192 P"
-  },
-  "X-191": {
-   "intent": "GROW",
-   "wave": 30,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "link_targets",
-    "link_pitches",
-    "link_placements"
-   ],
-   "what": "broken-link building \u00b7 competitor backlink poaching \u00b7 guest-post pitching \u00b7 link-intersect analysis \u00b7 domain-a"
-  },
-  "X-192": {
-   "intent": "GROW",
-   "wave": 30,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "directory_memberships",
-    "citations"
-   ],
-   "what": "citation builder \u00b7 chamber and directory discovery \u00b7 ranking and pricing \u00b7 profile BUILDING, not just joining "
-  },
-  "X-193": {
-   "intent": "GROW",
-   "wave": 15,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 1 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "notification_classes"
-   ],
-   "what": "classifies every send.requested as marketing \u00b7 transactional \u00b7 conversational \u00b7 account \u2014 from the CALL"
-  },
-  "X-194": {
-   "intent": "INFORM",
-   "wave": 23,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "saved_views",
-    "view_schedules"
-   ],
-   "what": "chart generation \u00b7 custom fields and schemas \u00b7 cross-platform dashboards \u00b7 consolidated and scheduled PDF repo"
-  },
-  "X-195": {
-   "intent": "INFORM",
-   "wave": 23,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "market_items",
-    "installs",
-    "feature_flags"
-   ],
-   "what": "template and snapshot sharing \u00b7 the integration marketplace \u00b7 feature toggling and gating \u00b7 custom blacklists "
-  },
-  "X-196": {
-   "intent": "GROW",
-   "wave": 30,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "extension_sessions",
-    "extension_injections"
-   ],
-   "what": "the operator's browser as a trigger: node-scraper integration (the Gro Node cluster) \u00b7 event-badge QR scanning"
-  },
-  "X-197": {
-   "intent": "INFORM",
-   "wave": 23,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "voice_routes",
-    "voice_pool_state",
-    "voice_cost_samples"
-   ],
-   "what": "self-hosted STT/TTS/LLM on LiveKit \u00b7 Groq-node integration \u00b7 cost routing between managed and self-hosted \u00b7 mo"
-  },
-  "X-198": {
-   "intent": "RECOVER",
-   "wave": 10,
-   "domain_layer": true,
-   "domain_because": "owns 4 tables",
-   "state": "not started",
-   "owns_table": [
-    "merchant_connections",
-    "payments",
-    "payouts",
-    "reconciliation_runs"
-   ],
-   "what": "Stripe Connect AND Authorize.Net partner \u2014 both, owner T622 \u00b7 payment integration \u00b7 payment links \u00b7 multi-acco"
-  },
-  "X-199": {
-   "intent": "INFORM",
-   "wave": 9,
-   "domain_layer": true,
-   "domain_because": "owns 4 tables",
-   "state": "not started",
-   "owns_table": [
-    "invoices",
-    "invoice_lines",
-    "credit_terms",
-    "overflow_charges"
-   ],
-   "what": "generates EVERY invoice \u2014 ours and the tenant's; C-Billing is the subscription and metering LEDGER and hands d"
-  },
-  "X-200": {
-   "intent": "GROW",
-   "wave": 31,
-   "domain_layer": true,
-   "domain_because": "owns 7 tables",
-   "state": "not started",
-   "owns_table": [
-    "dial_campaigns",
-    "dial_lists",
-    "dial_attempts",
-    "dispositions",
-    "callbacks",
-    "seats",
-    "qa_scorecards"
-   ],
-   "what": "New \u2014 nothing in the plan had a human-seat dialer; \u00a718C.3's rung \u2462 is \"not a dialler with a script.\" This IS t"
-  },
-  "X-201": {
-   "intent": "RECOVER",
-   "wave": 17,
-   "domain_layer": true,
-   "domain_because": "money, consent or entitlement: chargeback",
-   "state": "not started",
-   "owns_table": [
-    "disputes",
-    "dispute_evidence",
-    "dispute_outcomes"
-   ],
-   "what": "receives chargeback.received from X-198 for any gateway \u00b7 compiles the evidence bundle automatically (call log"
-  },
-  "X-202": {
-   "intent": "RECOVER",
-   "wave": 9,
-   "domain_layer": true,
-   "domain_because": "money, consent or entitlement: refund",
-   "state": "not started",
-   "owns_table": [
-    "approval_items",
-    "approval_chains"
-   ],
-   "what": "The one queue every L1 decision in the platform lands in \u2014 from all 114 modules. A refund proposal, a domino"
-  },
-  "X-203": {
-   "intent": "RECOVER",
-   "wave": 14,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "restore_tests",
-    "runbooks",
-    "runbook_runs"
-   ],
-   "what": "Backups, restores, point-in-time recovery, multi-region, cold-storage hashing and runbook automation \u2014 as an O"
-  },
-  "X-204": {
-   "intent": "GROW",
-   "wave": 4,
-   "domain_layer": true,
-   "domain_because": "owns 4 tables",
-   "state": "not started",
-   "owns_table": [
-    "send_permits",
-    "suppressions",
-    "import_attestations",
-    "compliance_registers"
-   ],
-   "what": "The single decider of whether a message may be sent to a person on a channel. Every sender asks; no sender dec"
-  },
-  "X-205": {
-   "intent": "GROW",
-   "wave": 31,
-   "domain_layer": true,
-   "domain_because": "money, consent or entitlement: payout",
-   "state": "not started",
-   "owns_table": [
-    "affiliates",
-    "affiliate_attributions",
-    "affiliate_payouts"
-   ],
-   "what": "The referral and affiliate layer: every tenant gets an affiliate id; tiers, lifetime attribution, id merging, "
-  },
-  "X-206": {
-   "intent": "RECOVER",
-   "wave": 4,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "credentials",
-    "credential_reveals"
-   ],
-   "what": "Every platform and tenant credential \u2014 API keys, OAuth tokens, gateway credentials, calendar connections \u2014 sco"
-  },
-  "X-207": {
-   "intent": "GROW",
-   "wave": 15,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "device_tokens",
-    "push_deliveries",
-    "push_prompts"
-   ],
-   "what": "The platform's one OWNED channel \u2014 the only one with no carrier between us and the device. Delivers to Web Pus"
-  },
-  "X-208": {
-   "intent": "INFORM",
-   "wave": 16,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 1 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "mail_pieces"
-   ],
-   "what": "Physical mail as a channel. BYOK \u2014 the TENANT supplies the Lob key. Zero platform liability, zero platform ac"
-  },
-  "X-209": {
-   "intent": "INFORM",
-   "wave": 24,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "fixer_commands",
-    "fixer_ladder",
-    "staff_calendar_links"
-   ],
-   "what": "The employee's own AI \u2014 the only agent in this platform that works for a PERSON rather than for the tenant. Ev"
-  },
-  "X-210": {
-   "intent": "GROW",
-   "wave": 31,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "promotions",
-    "promotion_redemptions",
-    "promotion_scopes"
-   ],
-   "what": "The tenant's own offer layer: create a promotion, target it, distribute it across every channel the platform a"
-  },
-  "X-211": {
-   "intent": "RECOVER",
-   "wave": 9,
-   "domain_layer": true,
-   "domain_because": "money, consent or entitlement: invoice, payment",
-   "state": "not started",
-   "owns_table": [
-    "receivable_states",
-    "payment_plans",
-    "offline_payments"
-   ],
-   "what": "Getting a service business paid for work already done. Late fees, payment plans on large invoices, forcing ACH"
-  },
-  "X-212": {
-   "intent": "INFORM",
-   "wave": 14,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "migration_runs",
-    "migration_field_maps",
-    "migration_rejects"
-   ],
-   "what": "Bringing a tenant's whole business across from ServiceTitan, Jobber, Housecall Pro \u2014 or from a spreadsheet. Cu"
-  },
-  "X-213": {
-   "intent": "OBSERVE",
-   "wave": 25,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 1 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "vision_checks"
-   ],
-   "what": "a cheap vision-capable model checks tenant-generated output \u2014 pages, funnels, the 200 assets \u2014 against a check"
-  },
-  "X-214": {
-   "intent": "SERVE",
-   "wave": 19,
-   "domain_layer": true,
-   "domain_because": "money, consent or entitlement: payment",
-   "state": "not started",
-   "owns_table": [
-    "surcharge_policies"
-   ],
-   "what": "a tenant-configured surcharge on card payments. NOT a platform revenue rail \u2014 this is the tenant's own cost re"
-  },
-  "X-215": {
-   "intent": "SERVE",
-   "wave": 20,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "signable_documents",
-    "signature_requests",
-    "document_comments"
-   ],
-   "what": "documents sent, viewed, commented on, signed and stored. The provider is a DRIVER and a CONFIG ROW \u2014 DocuSign "
-  },
-  "X-217": {
-   "intent": "GROW",
-   "wave": 31,
-   "domain_layer": true,
-   "domain_because": "money, consent or entitlement: payout",
-   "state": "not started",
-   "owns_table": [
-    "affiliate_prospects",
-    "recruitment_offers"
-   ],
-   "what": "DISTINCT FROM X-205. X-205 is the affiliate PROGRAM \u2014 \"every tenant gets an affiliate id,\" tiers, payouts,"
-  },
-  "X-218": {
-   "intent": "GROW",
-   "wave": 31,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "influencer_profiles",
-    "influencer_deals",
-    "deliverables"
-   ],
-   "what": "Zero modules covered this under any name \u2014 influencer, creator, UGC, sponsorship all returned nothing. D"
-  },
-  "X-219": {
-   "intent": "OBSERVE",
-   "wave": 3,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "ai_providers",
-    "ai_models",
-    "ai_module_assignments"
-   ],
-   "what": "The roster and the assignment. Every model from every vendor \u2014 including self-hosted \u2014 is a ROW, and every mod"
-  },
-  "X-220": {
-   "intent": "OBSERVE",
-   "wave": 3,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 2 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "ai_prompts",
-    "golden_sets"
-   ],
-   "what": "A prompt is a ROW with a version, and its golden set is versioned with it. A prompt edited in code is an exper"
-  },
-  "X-66": {
-   "intent": "SERVE",
-   "wave": 5,
-   "domain_layer": true,
-   "domain_because": "owns 4 tables",
-   "state": "not started",
-   "owns_table": [
-    "call_sessions",
-    "call_turns",
-    "voicemails",
-    "call_autopsies"
-   ],
-   "what": "the front-desk agent on a live call: voice RAG with in-stream hesitation and objection detection \u00b7 AMD \u00b7 multi"
-  },
-  "X-82": {
-   "intent": "INFORM",
-   "wave": 24,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here - 3 table(s), no invariant keyword. Add Domain/ only if the brief names an invariant spanning two of its own tables, or a state machine with legal transitions",
-   "state": "not started",
-   "owns_table": [
-    "rates",
-    "rate_versions",
-    "allowances"
-   ],
-   "what": "the rate registry \u2014 a row cannot be invented; no document carries a number \u00b7 per-country rates only where OUR "
-  },
-  "X-221": {
-   "intent": "GROW",
-   "wave": 3,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here",
-   "state": "not started",
-   "owns_table": [
-    "ad_report_imports",
-    "ad_findings",
-    "ad_plans"
-   ],
-   "what": "The ads advisor: plans campaigns, writes ad copy and creative variants, analyses performance reports and coaches optimisation through the omni chat"
-  },
-  "X-222": {
-   "intent": "PROTECT",
-   "wave": 2,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here",
-   "state": "not started",
-   "owns_table": [
-    "legal_requests",
-    "policy_pages",
-    "retention_rules"
-   ],
-   "what": "The legal and privacy engine: DMCA takedown requests, privacy requests, policy pages per tenant, retention rules."
-  },
-  "X-223": {
-   "intent": "GROW",
-   "wave": 2,
-   "domain_layer": false,
-   "domain_because": "Eloquent model + Action class IS the aggregate here",
-   "state": "not started",
-   "owns_table": [
-    "warmup_domains",
-    "warmup_seeds",
-    "warmup_days"
-   ],
-   "what": "The email warm-up engine: a seed audience of platform-owned mailboxes, auto-reply simulation, important-tagging, and cross-platform sync."
-  }
- },
- "roster_list": [
-  "C-Agent",
-  "C-Ai",
-  "C-Billing",
-  "C-Mail",
-  "C-Reviews",
-  "C-Sms",
-  "C-Telephony",
-  "C-Whatsapp",
-  "X-01",
-  "X-07",
-  "X-08",
-  "X-10",
-  "X-102",
-  "X-103",
-  "X-104",
-  "X-105",
-  "X-108",
-  "X-109",
-  "X-110",
-  "X-111",
-  "X-112",
-  "X-113",
-  "X-114",
-  "X-116",
-  "X-117",
-  "X-118",
-  "X-119",
-  "X-120",
-  "X-121",
-  "X-122",
-  "X-123",
-  "X-124",
-  "X-125",
-  "X-126",
-  "X-127",
-  "X-128",
-  "X-129",
-  "X-130",
-  "X-131",
-  "X-132",
-  "X-134",
-  "X-135",
-  "X-136",
-  "X-137",
-  "X-138",
-  "X-139",
-  "X-140",
-  "X-141",
-  "X-142",
-  "X-143",
-  "X-144",
-  "X-145",
-  "X-147",
-  "X-148",
-  "X-149",
-  "X-150",
-  "X-151",
-  "X-153",
-  "X-154",
-  "X-155",
-  "X-156",
-  "X-157",
-  "X-158",
-  "X-159",
-  "X-16",
-  "X-160",
-  "X-161",
-  "X-162",
-  "X-163",
-  "X-164",
-  "X-165",
-  "X-166",
-  "X-167",
-  "X-168",
-  "X-170",
-  "X-171",
-  "X-172",
-  "X-173",
-  "X-175",
-  "X-176",
-  "X-177",
-  "X-178",
-  "X-179",
-  "X-180",
-  "X-181",
-  "X-182",
-  "X-183",
-  "X-184",
-  "X-185",
-  "X-186",
-  "X-188",
-  "X-189",
-  "X-190",
-  "X-191",
-  "X-192",
-  "X-193",
-  "X-194",
-  "X-195",
-  "X-196",
-  "X-197",
-  "X-198",
-  "X-199",
-  "X-200",
-  "X-201",
-  "X-202",
-  "X-203",
-  "X-204",
-  "X-205",
-  "X-206",
-  "X-207",
-  "X-208",
-  "X-209",
-  "X-210",
-  "X-211",
-  "X-212",
-  "X-213",
-  "X-214",
-  "X-215",
-  "X-217",
-  "X-218",
-  "X-219",
-  "X-220",
-  "X-66",
-  "X-82",
-  "X-221",
-  "X-222",
-  "X-223"
- ]
 }

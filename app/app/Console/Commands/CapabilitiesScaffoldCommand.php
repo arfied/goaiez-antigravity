@@ -47,6 +47,9 @@ final class CapabilitiesScaffoldCommand extends Command
 
     protected $description = 'Generate capabilities.php from the tracker. Refuses modules with no rows.';
 
+    /** §257.6 — removed by owner ruling 2026-09-17; their headers stay in the plan as history and are never scaffolded again. */
+    private const REMOVED = ['X-200', 'X-158', 'X-159', 'X-114', 'X-144', 'X-197', 'X-147', 'X-143', 'X-141', 'X-145', 'X-213', 'X-208', 'X-215', 'X-214', 'X-221', 'X-222', 'X-223'];
+
     public function handle(): int
     {
         $path = base_path((string) $this->option('tracker'));
@@ -326,7 +329,7 @@ final class CapabilitiesScaffoldCommand extends Command
         }
         preg_match_all('/@module\s+\*{0,2}((?:X|C)-[A-Za-z0-9]+)/', (string) file_get_contents($plan), $m);
 
-        return array_values(array_diff(array_unique($m[1]), ['X-nnn']));
+        return array_values(array_diff(array_unique($m[1]), ['X-nnn'], self::REMOVED));
     }
 
     /** @param array<string, array{assertion:string, status:string}> $caps */
