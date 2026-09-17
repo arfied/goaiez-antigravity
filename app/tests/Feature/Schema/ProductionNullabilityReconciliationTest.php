@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Schema;
 
-use Tests\Concerns\RefreshesTenantDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Tests\Concerns\RefreshesTenantDatabase;
 use Tests\TestCase;
 
 class ProductionNullabilityReconciliationTest extends TestCase
