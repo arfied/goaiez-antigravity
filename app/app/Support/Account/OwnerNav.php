@@ -619,6 +619,8 @@ final class OwnerNav
             OwnerNavItem::make('Webhooks', 'x-142.webhooks', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Sync conflicts', 'x-173.conflicts-list', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Sync error rate', 'x-173.sync-error-rate', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Customers', 'x-01.customers-list', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Inbox', 'x-01.thread', OwnerNavItem::GROUP_MORE),
         ];
     }
 

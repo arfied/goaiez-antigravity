@@ -8,10 +8,13 @@ use App\Models\Conversation;
 use App\Modules\X01\Actions\ConversationReadAction;
 use App\Modules\X01\Models\LeadScore;
 use App\Modules\X121\Actions\PersonLookupAction;
+use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Throwable;
 
+#[Layout('components.account.layout', ['heading' => 'Customers'])]
 class CustomersList extends Component
 {
     #[Locked]
@@ -20,6 +23,11 @@ class CustomersList extends Component
     public bool $isSample = false;
 
     public bool $failed = false;
+
+    public function mount(int $businessId = 0): void
+    {
+        $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
+    }
 
     public function openPerson(int $personId)
     {
