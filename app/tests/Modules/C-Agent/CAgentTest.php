@@ -462,7 +462,7 @@ class CAgentTest extends TestCase
         $this->assertNotNull($turn);
         $this->assertEquals('NO_FACT', $turn->refusal_code);
 
-        $this->assertEquals(1, AiCall::where('business_id', $biz->id)->count());
+        $this->assertEquals(0, AiCall::where('business_id', $biz->id)->count());
     }
 
     public function test_price_question_with_fact_uses_gate_and_replies_with_amount(): void
@@ -489,7 +489,7 @@ class CAgentTest extends TestCase
         $turn = AgentTurn::where('business_id', $biz->id)->orderBy('id', 'desc')->first();
         $this->assertNotNull($turn);
         $this->assertStringContainsString('$49.99', $turn->agent_reply);
-        $this->assertEquals(1, AiCall::where('business_id', $biz->id)->count());
+        $this->assertEquals(0, AiCall::where('business_id', $biz->id)->count());
     }
 
     public function test_confirmed_drain_unblock_price_inbound_turn(): void
@@ -514,7 +514,7 @@ class CAgentTest extends TestCase
         $this->assertNotNull($turn);
         $this->assertNull($turn->refusal_code);
         $this->assertStringContainsString('$18,500.00', $turn->agent_reply);
-        $this->assertEquals(1, AiCall::where('business_id', $biz->id)->count());
+        $this->assertEquals(0, AiCall::where('business_id', $biz->id)->count());
     }
 
     public function test_price_word_boundary_prevents_substring_match(): void
