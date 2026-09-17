@@ -26,7 +26,7 @@ class DemoFillUi3Test extends TestCase
         Tenancy::forgetAll();
         $this->artisan('demo:fill', [
             'email' => $owner->email,
-            '--only' => 'X-07,X-124,X-132,X-138,X-139,X-183,X-192,X-193,X-194,X-196',
+            '--only' => 'X-07,X-124,X-132,X-138,X-139,X-142,X-183,X-192,X-193,X-194,X-196',
         ])->assertExitCode(0);
 
         Tenancy::set($biz->id);
@@ -40,6 +40,8 @@ class DemoFillUi3Test extends TestCase
         $this->assertDatabaseHas('roi_snapshots', ['business_id' => $biz->id, 'campaign_name' => 'demo·Autumn Promo']);
         $this->assertDatabaseHas('ad_connections', ['business_id' => $biz->id, 'platform' => 'demo·GoogleAds']);
         $this->assertDatabaseHas('conversion_uploads', ['business_id' => $biz->id, 'gclid_or_fbc' => 'demo·101']);
+        $this->assertDatabaseHas('mcp_tokens', ['business_id' => $biz->id, 'token_name' => 'demo·Claude Desktop']);
+        $this->assertDatabaseHas('webhook_subscriptions', ['business_id' => $biz->id, 'event_filter' => 'demo·job.completed']);
         $this->assertDatabaseHas('content_drafts', ['business_id' => $biz->id, 'title' => 'demo·Spring Maintenance Guide']);
         $this->assertDatabaseHas('gate_results', ['business_id' => $biz->id, 'rejection_reason' => 'demo·Missing citation']);
         $this->assertDatabaseHas('directory_memberships', ['business_id' => $biz->id, 'directory_name' => 'demo·Yelp']);
@@ -52,7 +54,7 @@ class DemoFillUi3Test extends TestCase
         Tenancy::forgetAll();
         $this->artisan('demo:fill', [
             'email' => $owner->email,
-            '--only' => 'X-07,X-124,X-132,X-138,X-139,X-183,X-192,X-193,X-194,X-196',
+            '--only' => 'X-07,X-124,X-132,X-138,X-139,X-142,X-183,X-192,X-193,X-194,X-196',
         ])->assertExitCode(0);
 
         Tenancy::set($biz->id);
@@ -62,7 +64,7 @@ class DemoFillUi3Test extends TestCase
         $this->artisan('demo:fill', [
             'email' => $owner->email,
             '--purge' => true,
-            '--only' => 'X-07,X-124,X-132,X-138,X-139,X-183,X-192,X-193,X-194,X-196',
+            '--only' => 'X-07,X-124,X-132,X-138,X-139,X-142,X-183,X-192,X-193,X-194,X-196',
         ])->assertExitCode(0);
 
         Tenancy::set($biz->id);
@@ -76,6 +78,8 @@ class DemoFillUi3Test extends TestCase
         $this->assertDatabaseMissing('roi_snapshots', ['business_id' => $biz->id, 'campaign_name' => 'demo·Autumn Promo']);
         $this->assertDatabaseMissing('ad_connections', ['business_id' => $biz->id, 'platform' => 'demo·GoogleAds']);
         $this->assertDatabaseMissing('conversion_uploads', ['business_id' => $biz->id, 'gclid_or_fbc' => 'demo·101']);
+        $this->assertDatabaseMissing('mcp_tokens', ['business_id' => $biz->id, 'token_name' => 'demo·Claude Desktop']);
+        $this->assertDatabaseMissing('webhook_subscriptions', ['business_id' => $biz->id, 'event_filter' => 'demo·job.completed']);
         $this->assertDatabaseMissing('content_drafts', ['business_id' => $biz->id, 'title' => 'demo·Spring Maintenance Guide']);
         $this->assertDatabaseMissing('gate_results', ['business_id' => $biz->id, 'rejection_reason' => 'demo·Missing citation']);
         $this->assertDatabaseMissing('directory_memberships', ['business_id' => $biz->id, 'directory_name' => 'demo·Yelp']);
@@ -92,7 +96,7 @@ class DemoFillUi3Test extends TestCase
         Tenancy::forgetAll();
         $this->artisan('demo:fill', [
             'email' => $owner->email,
-            '--only' => 'X-07,X-124,X-132,X-138,X-139,X-183,X-192,X-193,X-194,X-196',
+            '--only' => 'X-07,X-124,X-132,X-138,X-139,X-142,X-183,X-192,X-193,X-194,X-196',
         ])->assertExitCode(0);
 
         Tenancy::set($biz->id);
@@ -118,6 +122,10 @@ class DemoFillUi3Test extends TestCase
         $this->get(route('x-139.conversions-pushed-tile'))->assertOk()->assertSee('Uploaded Conversions: 2');
         $this->get(route('x-139.rejection-rate'))->assertOk()->assertSee('demo·Invalid format');
 
+        // X-142
+        $this->get(route('x-142.connect-your-ai'))->assertOk()->assertSee('demo·Claude Desktop');
+        $this->get(route('x-142.webhooks'))->assertOk()->assertSee('https://hooks.example/demo/jobs');
+
         // X-183
         $this->get(route('x-183.draft-review'))->assertOk()->assertSee('demo·Spring Maintenance Guide');
         $this->get(route('x-183.gate-rejection-reasons'))->assertOk()->assertSee('demo·Missing citation');
@@ -141,3 +149,4 @@ class DemoFillUi3Test extends TestCase
         $this->get(route('x-194.any-view-it', ['viewId' => $id]))->assertOk()->assertSee('demo·Open jobs')->assertSee('America/Chicago');
     }
 }
+

@@ -614,6 +614,8 @@ final class OwnerNav
             OwnerNavItem::make('Browser extension', 'x-196.extension-popup', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Proposed pages', 'x-140.proposed-pages', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Payment methods', 'x-120.card-screen', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Connect your AI', 'x-142.connect-your-ai', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Webhooks', 'x-142.webhooks', OwnerNavItem::GROUP_MORE),
         ];
     }
 
