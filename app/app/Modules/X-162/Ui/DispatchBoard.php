@@ -14,7 +14,9 @@ use App\Support\Tenancy;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
+use Livewire\Attributes\Layout;
 
+#[Layout('components.account.layout', ['heading' => 'Dispatch board'])]
 class DispatchBoard extends Component
 {
     public $techIds = [];
