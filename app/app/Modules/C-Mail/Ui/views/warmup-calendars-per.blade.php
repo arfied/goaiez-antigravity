@@ -1,9 +1,8 @@
 <div>
-    <x-surface.sample-state module="C-Mail" screen="warmup_calendars_per" />
     <div class="warmup-view p-4">
-        <h3 class="text-lg font-bold">Domain Warmup Calendars</h3>
+        <h2 class="text-lg font-bold text-ink">Domain warm-up</h2>
         @if($calendars->isEmpty())
-            <p class="text-gray-500">No domains warming up.</p>
+            <x-ui.empty-state heading="No domains warming up.">A new sending domain warms up here, a few more messages each day.</x-ui.empty-state>
         @else
             <ul>
                 @foreach($calendars as $c)
