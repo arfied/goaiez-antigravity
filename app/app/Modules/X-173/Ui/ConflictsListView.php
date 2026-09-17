@@ -8,8 +8,10 @@ use App\Modules\X173\Actions\ConflictResolveAction;
 use App\Modules\X173\Models\AccountingSyncConflict;
 use App\Support\Tenancy;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Sync conflicts'])]
 class ConflictsListView extends Component
 {
     public array $resolutions = [];

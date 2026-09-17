@@ -617,6 +617,8 @@ final class OwnerNav
             OwnerNavItem::make('Site editor', 'x-178.site-editor-assistant', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Connect your AI', 'x-142.connect-your-ai', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Webhooks', 'x-142.webhooks', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Sync conflicts', 'x-173.conflicts-list', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Sync error rate', 'x-173.sync-error-rate', OwnerNavItem::GROUP_MORE),
         ];
     }
 

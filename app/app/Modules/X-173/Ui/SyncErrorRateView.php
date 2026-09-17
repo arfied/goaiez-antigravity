@@ -8,8 +8,10 @@ use App\Modules\X173\Domain\AccountingSyncEngine;
 use App\Modules\X173\Models\AccountingSyncConflict;
 use App\Modules\X173\Models\SyncRun;
 use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Sync error rate'])]
 class SyncErrorRateView extends Component
 {
     public ?int $shownRun = null;
