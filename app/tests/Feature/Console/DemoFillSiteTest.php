@@ -3,6 +3,7 @@
 namespace Tests\Feature\Console;
 
 use App\Enums\UserRole;
+use App\Models\Location;
 use App\Models\User;
 use App\Modules\X121\Models\EntityHistoryRecord;
 use App\Support\Tenancy;
@@ -24,7 +25,7 @@ class DemoFillSiteTest extends TestCase
         $this->assertDatabaseHas('edge_zones', ['business_id' => $biz->id, 'domain_name' => 'demo·example.com']);
         $this->assertDatabaseHas('deployments', ['business_id' => $biz->id, 'deploy_hash' => 'demo·a1b2c3d4']);
         $this->assertDatabaseHas('schema_snapshots', ['business_id' => $biz->id, 'entity_type' => 'demo·LocalBusiness']);
-        $this->assertDatabaseHas('gbp_connections', ['business_id' => $biz->id, 'external_label' => 'demo·Demo Store', 'location_id' => (string) \App\Models\Location::where('business_id', $biz->id)->where('name', 'demo·Demo Location')->value('id')]);
+        $this->assertDatabaseHas('gbp_connections', ['business_id' => $biz->id, 'external_label' => 'demo·Demo Store', 'location_id' => (string) Location::where('business_id', $biz->id)->where('name', 'demo·Demo Location')->value('id')]);
         $this->assertDatabaseHas('locations', ['business_id' => $biz->id, 'name' => 'demo·Demo Location']);
         $this->assertDatabaseHas('gbp_posts', ['business_id' => $biz->id, 'content' => 'demo·Demo post 1']);
         $this->assertDatabaseHas('gbp_state_log', ['business_id' => $biz->id, 'event_type' => 'demo·demo_event']);
