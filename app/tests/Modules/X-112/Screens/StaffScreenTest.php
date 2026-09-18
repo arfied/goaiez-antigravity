@@ -23,7 +23,7 @@ class StaffScreenTest extends TestCase
 
         $this->get(route('x-112.staff'))
             ->assertOk()
-            ->assertSee('Staff')
+            ->assertSee('Agency Staff Management')
             ->assertSee('No agency staff enrolled.');
 
         Tenancy::setUser($owner->id);
