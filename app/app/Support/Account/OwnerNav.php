@@ -636,6 +636,8 @@ final class OwnerNav
             OwnerNavItem::make('Staff', 'x-113.staff', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Roles', 'x-113.roles', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Reconciliation discrepancies', 'x-198.reconciliation-discrepancies', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Call latency', 'x-66.latency-p50p95-per', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Call coaching', 'x-66.livecoaching-whisper-panel', OwnerNavItem::GROUP_MORE),
         ];
     }
 
