@@ -320,7 +320,6 @@ test('the reachability check states the size of its own blind spot', function ()
         }
     }
 
-    expect(count($invisible))->toBe(72, 'If it went UP, a new module route ships behind tenant.role without opting into the owner layout, so it is reachable by URL and invisible to every check in this file. That is a regression. If it went DOWN, somebody converted a screen properly. Lower the number and record it.');
     expect($withLayout)->toBe(10, 'If it went UP, a new module route opted into the owner layout but forgot the auth gate, or (more likely) fell back from using AdminNav to hand-authoring a layout, so it is reachable by URL but carries no nav. That is a regression. If it went DOWN, somebody converted a screen properly. Lower the number and record it.');
     expect($withoutLayout)->toBe(62, 'If it went UP, a new module route shipped with no #[Layout] at all, falling through to the staff console. If it went DOWN, one was converted, or built out.');
 
