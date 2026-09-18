@@ -6,7 +6,6 @@ namespace App\Console\DemoFill\Fillers;
 
 use App\Console\DemoFill\DemoFiller;
 use App\Models\Business;
-use App\Models\User;
 use App\Modules\X112\Models\Agency;
 use App\Modules\X112\Models\AgencyClient;
 use App\Modules\X112\Models\StaffRole;

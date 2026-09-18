@@ -6,7 +6,10 @@ namespace Tests\Modules\X112\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X112\Models\Agency;
+use App\Modules\X112\Models\StaffRole;
 use App\Modules\X112\Ui\Staff;
+use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -23,21 +26,21 @@ class StaffScreenTest extends TestCase
             ->assertSee('Staff')
             ->assertSee('No agency staff enrolled.');
 
-        \App\Support\Tenancy::setUser($owner->id);
-        $agency = \App\Modules\X112\Models\Agency::create([
+        Tenancy::setUser($owner->id);
+        $agency = Agency::create([
             'business_id' => $biz->id,
             'agency_name' => 'Demo Agency',
             'whitelabel_domain' => 'demo.example',
             'agency_mode' => 'full_service',
         ]);
-        \App\Modules\X112\Models\StaffRole::create([
+        StaffRole::create([
             'business_id' => $biz->id,
             'agency_id' => $agency->id,
             'user_id' => $owner->id,
             'role' => 'account_manager',
             'is_active' => true,
         ]);
-        \App\Support\Tenancy::forget();
+        Tenancy::forget();
 
         $this->get(route('x-112.staff'))
             ->assertOk()
