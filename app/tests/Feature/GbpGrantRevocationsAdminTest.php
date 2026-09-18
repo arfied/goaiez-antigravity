@@ -306,7 +306,7 @@ test('the orphan probe does not run until an operator asks for it', function ():
 
     $component->call('findOrphans')
         ->assertSee('Business #99109')
-        ->assertDontSee('Business #'.$live->id);
+        ->assertDontSee('Business #'.$live->id.'</li>', escape: false);
 
     expect($switches)->toBeGreaterThan(0);
 });

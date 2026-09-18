@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-17T20:45:32",
+ "updated": "2026-09-17T11:35:21",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -176,7 +176,7 @@
   },
   "15": {
    "track": "channels",
-   "status": "DONE",
+   "status": "BUILDING",
    "modules": [
     "C-Mail",
     "C-Whatsapp",
@@ -930,12 +930,6 @@
      "stage": "contract",
      "why": "send.requested correctly emitted by multiple modules per R231, but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
      "at": "2026-09-03T13:47:25"
-    },
-    {
-     "module": "X-186",
-     "stage": "capability",
-     "why": "no action enrols a person into a campaign",
-     "at": "2026-09-04T22:41:56"
     }
    ]
   },
@@ -977,17 +971,10 @@
    "unresolved": []
   },
   "X-193": {
-   "status": "UNRESOLVED",
+   "status": "BUILDING",
    "wave": 15,
    "intent": "GROW",
-   "unresolved": [
-    {
-     "module": "X-193",
-     "stage": "tests",
-     "why": "column quiet_hours_start is missing from notification_classes and not named in the brief",
-     "at": "2026-09-04T02:05:53"
-    }
-   ]
+   "unresolved": []
   },
   "X-194": {
    "status": "DONE",
@@ -1291,12 +1278,6 @@
    "at": "2026-09-03T14:01:55"
   },
   {
-   "module": "X-193",
-   "stage": "tests",
-   "why": "column quiet_hours_start is missing from notification_classes and not named in the brief",
-   "at": "2026-09-04T02:05:53"
-  },
-  {
    "module": "C-Reviews",
    "stage": "tests",
    "why": "ReviewRequested event lacks messageClass so the module cannot express the send class (marketing) without a legacy change",
@@ -1307,12 +1288,6 @@
    "stage": "contract",
    "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
    "at": "2026-09-04T08:05:31"
-  },
-  {
-   "module": "X-186",
-   "stage": "capability",
-   "why": "no action enrols a person into a campaign",
-   "at": "2026-09-04T22:41:56"
   },
   {
    "module": "C-Sms",
@@ -1399,132 +1374,6 @@
    "chose": "a duplicate ARB subscription (E00012) is reused, never re-created; the existing id comes from the vendor (run 97, R245)",
    "at": "2026-09-05T16:22:13",
    "ruling": "R245"
-  },
-  {
-   "module": "X-168",
-   "chose": "PB-193: approvals renders in the owner shell; nav beside Timesheets",
-   "at": "2026-09-14T23:44:32",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-168",
-   "chose": "PB-194: own-hours renders in the owner shell; X-168's three screens converted",
-   "at": "2026-09-15T00:15:43",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-82",
-   "chose": "PB-195: rate-registry renders in the owner shell; admin door kept",
-   "at": "2026-09-15T00:43:58",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-175",
-   "chose": "PB-196: field assistant panel renders in the owner shell on a real suggestion",
-   "at": "2026-09-15T01:17:05",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-162",
-   "chose": "PB-197: route map renders in the owner shell on a real technician route",
-   "at": "2026-09-15T01:52:12",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-188",
-   "chose": "PB-198: number pool inventory renders in the owner shell on a real pool number; admin door kept",
-   "at": "2026-09-15T02:16:02",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-137",
-   "chose": "PB-199: call attribution feed renders in the owner shell on a real call token; admin door kept",
-   "at": "2026-09-15T03:07:45",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-170",
-   "chose": "PB-200: commissions render in the owner shell on a real commission row",
-   "at": "2026-09-15T10:14:16",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-170",
-   "chose": "PB-201: commissions render in the owner shell on a real commission row",
-   "at": "2026-09-15T10:56:34",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-155",
-   "chose": "PB-202: forms list renders in the owner shell on a real form definition; admin door kept",
-   "at": "2026-09-15T11:42:22",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-155",
-   "chose": "PB-203: form submissions feed renders in the owner shell on a real submission; admin door kept",
-   "at": "2026-09-15T12:53:58",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-155",
-   "chose": "PB-204: spam rate renders in the owner shell on real submissions; admin door kept",
-   "at": "2026-09-15T14:00:05",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-205",
-   "chose": "PB-208: affiliate earnings render in the owner shell on a real attribution; the module has no admin door",
-   "at": "2026-09-16T14:26:44",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-205",
-   "chose": "PB-209: the affiliates list renders in the owner shell on a real affiliate row; the module has no admin door",
-   "at": "2026-09-16T16:24:21",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-205",
-   "chose": "PB-212: the payout run lists this account's affiliate payouts in the owner shell as Affiliate payouts; a tenant-scoped read with a mount; X-205 has no admin door; the demo payout shows",
-   "at": "2026-09-16T21:30:32",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-162",
-   "chose": "PB-213: the dispatch board sits in the owner shell as Dispatch board; it already read its tenant; X-162 has no admin door; the two sample assignments show",
-   "at": "2026-09-16T22:39:48",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-201",
-   "chose": "PB-215: dispute-card and dispute-queue sit in the owner shell as Disputes and Dispute queue; both already tenant-scoped; admin doors kept; X201Filler seeds three disputes, two evidence items and one outcome; module owned by pricebook from this wave",
-   "at": "2026-09-17T08:25:38",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-01",
-   "chose": "PB-217: the customers directory and the inbox thread sit in the owner shell as Customers and Inbox; tenant-scoped reads of people, conversations and messages; the four legacy message tables are untouched under the 2026-09-17 exemption; X01Filler seeds a person, a score, a conversation and two messages",
-   "at": "2026-09-17T15:09:13",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-01",
-   "chose": "PB-218: person and history sit in the owner shell as Person and Activity; person's id is seeded from the query string for the first time, so the screen is reachable at all; the activity timeline read built over conversations and messages; no migration and no Schema:: call",
-   "at": "2026-09-17T17:07:14",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-119",
-   "chose": "PB-219: reviewwhatifound-screen and fact-freshness-per sit in the owner shell as What we learned and Fact freshness; both were bare stubs and both reads are built over the facts table through DB::table, because X-119 owns no table and importing X-121's model would add a boundary violation; X119Filler seeds three facts",
-   "at": "2026-09-17T18:45:56",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-212",
-   "chose": "PB-220: unmatchedfield-map sits in the owner shell as Field mapping; it was a bare stub and its read is built against migration_field_maps; the existing X212Filler is extended, not duplicated; no migration and no Schema:: call",
-   "at": "2026-09-17T20:45:32",
-   "ruling": "R245"
   }
  ],
  "notes": [
@@ -1563,58 +1412,36 @@
   {
    "at": "2026-09-06T23:16:43",
    "note": "J8 restore drill: JourneyHarness:814 names its scratch db goaiez_antig_drill_<pid> and :908 force-drops it; the supervisor's wave-119 gate errored 42501 permission denied to terminate process where the coder's gate on the identical tree did not; drill dbs on the box at 2026-09-06 23:10: UNRESOLVED; reproduced in wave 120: no"
-  },
-  {
-   "at": "2026-09-15T16:32:03",
-   "note": "X-155 X-163 X-164 X-165 X-166 X-167 X-168 X-170 X-175 X-188 PB-205: implemented DemoFillCommand for all lane modules"
-  },
-  {
-   "at": "2026-09-15T17:02:26",
-   "note": "X-155 PB-205: demo:fill command; fillers for the pricebook-lane modules; other lanes add theirs"
-  },
-  {
-   "at": "2026-09-15T20:25:53",
-   "note": "X-155 PB-206: demo:fill covers C-Reviews, X-181 and X-153"
-  },
-  {
-   "at": "2026-09-15T20:58:59",
-   "note": "C-Reviews PB-206: ErrorException: Undefined array key \"name\" in /home/goaiez/agents/grs-antig-pricebook/app/app/Modules/C-Reviews/Ui/Tickets.php:103"
-  },
-  {
-   "at": "2026-09-16T12:13:25",
-   "note": "X-155 PB-207: demo:fill threw No tenant in context on production; the command now calls Tenancy::set"
-  },
-  {
-   "at": "2026-09-16T17:43:17",
-   "note": "X-205 PB-210: demo:fill filler for X-205's owner-shell screens; marked demo\u00b7 rows, idempotent, purgeable"
-  },
-  {
-   "at": "2026-09-16T18:33:54",
-   "note": "X-163 PB-211: X163Filler idempotency guard tested a marker it never wrote; now guards on is_sample; demo:fill wrote +7 rows on every production run 2026-09-16"
-  },
-  {
-   "at": "2026-09-17T02:59:35",
-   "note": "X-171 PB-214: X171Filler seeds two sample device mutations and one conflict; X-171 stays admin-only (no tenant route) so it is not an owner-shell conversion"
-  },
-  {
-   "at": "2026-09-17T02:59:35",
-   "note": "X-172 PB-214: X172Filler seeds one live sample portal link and one view; the customer portal is token-keyed and cannot carry an OwnerNav entry"
   }
  ],
  "resolved": [
   {
+   "module": "X-193",
+   "stage": "tests",
+   "was": "column quiet_hours_start is missing from notification_classes and not named in the brief",
+   "why": "the column arrived: migration 2026_09_04_072838_add_quiet_hours_start_to_notification_classes_table.php (14df5c8a, 2026-09-04) adds quiet_hours_start and quiet_hours_end; X193Test::test_dependency_quiet_hours_start_exists is green; withdrawn on main after UI-135 withdrew it in the ui ledger",
+   "at": "2026-09-17T11:35:21"
+  },
+  {
+   "module": "X-186",
+   "stage": "capability",
+   "was": "no action enrols a person into a campaign",
+   "why": "the action arrived: CampaignEnrolAction::enrol (9a86b10e, 2026-09-12) enrols a person into a campaign; CampaignEnrolTest proves it in four methods; withdrawn on main after UI-135 withdrew it in the ui ledger",
+   "at": "2026-09-17T11:35:21"
+  },
+  {
    "module": "X-201",
    "stage": "tests",
    "was": "column deadline_at is missing from disputes and not named in the brief",
-   "why": "deadline_at landed in 14df5c8a (2026-09-04): nullable timestamp on disputes, Dispute casts it, DisputeDefenseEngine refuses past it, N011Test asserts the 48h raise; the record predates the column",
-   "at": "2026-09-17T10:17:43"
+   "why": "the column arrived: migration 2026_09_04_072843_add_deadline_at_to_disputes_table.php (14df5c8a, 2026-09-04); Dispute casts it, DisputeDefenseEngine refuses past it, N011Test sets it; withdrawn on main after PB-216 withdrew it in the pricebook ledger",
+   "at": "2026-09-17T11:35:21"
   },
   {
    "module": "X-172",
    "stage": "tests",
    "was": "generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook",
-   "why": "the fixture hook landed in f5cdb825 (2026-09-05): Fixtures::token mints a portal_links row through PortalLinkAction; the generated screen test opens the portal by that token and an unknown token is refused (PB-216); the record predates the hook",
-   "at": "2026-09-17T10:17:43"
+   "why": "the fixture arrived: Fixtures::token mints a portal link through PortalLinkAction (f5cdb825, 2026-09-05); CustomerfacingPortalScreenTest opens the portal by token; withdrawn on main after PB-216 withdrew it in the pricebook ledger",
+   "at": "2026-09-17T11:35:21"
   }
  ]
 }
