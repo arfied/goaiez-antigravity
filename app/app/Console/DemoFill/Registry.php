@@ -93,6 +93,7 @@ class Registry
             new Fillers\X210Filler,
             new Fillers\X211Filler,
             new Fillers\X212Filler,
+            new Fillers\X204Filler,
             new Fillers\X218Filler,
         ];
 
