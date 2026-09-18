@@ -29,19 +29,19 @@ class AllScreensTest extends TestCase
         $response->assertSee('All screens');
 
         $catalog = OwnerNav::catalog();
-        
+
         $this->assertNotEmpty($catalog);
-        
+
         $content = $response->getContent();
-        
+
         $foundCount = 0;
         foreach ($catalog as $item) {
             $routeUrl = route($item->route);
-            if (str_contains($content, 'href="' . $routeUrl . '"')) {
+            if (str_contains($content, 'href="'.$routeUrl.'"')) {
                 $foundCount++;
             }
         }
-        
+
         $catalogCount = count($catalog);
         $this->assertEquals($catalogCount, $foundCount);
         $this->assertGreaterThan(0, $catalogCount);

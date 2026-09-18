@@ -24,7 +24,7 @@ final class AllScreens extends Component
     public function render(): View
     {
         $catalog = OwnerNav::catalog();
-        
+
         $families = [];
         foreach ($catalog as $item) {
             $parts = explode('.', $item->route);
