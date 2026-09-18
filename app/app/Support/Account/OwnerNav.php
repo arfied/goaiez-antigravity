@@ -649,6 +649,8 @@ final class OwnerNav
             OwnerNavItem::make('Rows we could not take', 'x-156.rejectedrows-list', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Onboarding checks', 'x-118.groundcheck', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Field mapping', 'x-212.unmatchedfield-map', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Consent refusals', 'x-204.refusals-by-reason.admin', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Compliance registers', 'x-204.register-slot-states.admin', OwnerNavItem::GROUP_CATALOG),
         ];
     }
 

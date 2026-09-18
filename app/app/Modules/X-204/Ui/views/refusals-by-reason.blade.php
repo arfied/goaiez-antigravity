@@ -8,6 +8,7 @@
             <ul class="divide-y divide-gray-200">
                 @foreach($refusals as $ref)
                     <li class="py-2">
+                        <span class="font-mono text-sm text-gray-800 mr-2">{{ $ref->recipient_phone }}</span>
                         <span class="font-mono text-sm text-red-600">{{ $ref->refusal_reason }}</span>
                     </li>
                 @endforeach
