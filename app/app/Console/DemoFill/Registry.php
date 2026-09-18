@@ -36,6 +36,7 @@ class Registry
             new Fillers\X124Filler,
             new Fillers\X125Filler,
             new Fillers\X129Filler,
+            new Fillers\X130Filler,
             new Fillers\X131Filler,
             new Fillers\X132Filler,
             new Fillers\X137Filler,
