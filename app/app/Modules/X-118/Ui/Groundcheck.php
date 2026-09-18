@@ -17,6 +17,7 @@ class Groundcheck extends Component
         abort_unless(Tenancy::check(), 403);
         $businessId = Tenancy::idOrFail();
         $steps = OnboardingStep::where('business_id', $businessId)->orderByDesc('id')->get();
+
         return view('x-118::groundcheck', ['steps' => $steps]);
     }
 }

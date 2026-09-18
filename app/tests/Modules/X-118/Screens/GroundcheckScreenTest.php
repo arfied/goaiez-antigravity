@@ -32,7 +32,7 @@ class GroundcheckScreenTest extends TestCase
         $run = OnboardingRun::create([
             'business_id' => $biz->id,
             'business_name' => 'Demo Biz',
-            'contact_phone' => '555-0100'
+            'contact_phone' => '555-0100',
         ]);
         OnboardingStep::create([
             'business_id' => $biz->id,
