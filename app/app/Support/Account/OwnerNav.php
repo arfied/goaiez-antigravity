@@ -635,6 +635,7 @@ final class OwnerNav
             OwnerNavItem::make('Documents to review', 'x-160.review-screen', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Staff', 'x-113.staff', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Roles', 'x-113.roles', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Reconciliation discrepancies', 'x-198.reconciliation-discrepancies', OwnerNavItem::GROUP_MORE),
         ];
     }
 
