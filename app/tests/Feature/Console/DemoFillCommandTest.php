@@ -6,10 +6,12 @@ use App\Enums\UserRole;
 use App\Models\User;
 use App\Modules\X155\Models\FormDefinition;
 use App\Support\Tenancy;
+use Tests\Concerns\RefreshesTenantDatabase;
 use Tests\TestCase;
 
 class DemoFillCommandTest extends TestCase
 {
+    use RefreshesTenantDatabase;
     protected function tearDown(): void
     {
         Tenancy::forgetAll();
