@@ -10,6 +10,7 @@ use App\Services\Sms\TenantNumbers;
 use App\Services\TenantProvisioner;
 use App\Support\Tenancy;
 use Carbon\CarbonImmutable;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -57,18 +58,31 @@ abstract class TestCase extends BaseTestCase
 
     protected function tearDown(): void
     {
-        // Release numbers so journeys committing their transactions do not exhaust the pool
-        DB::table('phone_numbers')
-            ->where('e164', 'like', '+1512555%')
-            ->update([
-                'business_id' => null,
-                'location_id' => null,
-                'role' => 'shared_pool',
-                'state' => 'provisioning',
-                'state_reason' => 'Released in teardown',
-            ]);
+        try {
+            $this->releaseNumbers();
+        } finally {
+            parent::tearDown();
+        }
+    }
 
-        parent::tearDown();
+    protected function releaseNumbers(): void
+    {
+        try {
+            // Release numbers so journeys committing their transactions do not exhaust the pool
+            DB::table('phone_numbers')
+                ->where('e164', 'like', '+1512555%')
+                ->update([
+                    'business_id' => null,
+                    'location_id' => null,
+                    'role' => 'shared_pool',
+                    'state' => 'provisioning',
+                    'state_reason' => 'Released in teardown',
+                ]);
+        } catch (QueryException $e) {
+            if ($e->getCode() !== '25P02') {
+                throw $e;
+            }
+        }
     }
 
     /**
