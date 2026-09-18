@@ -52,7 +52,25 @@ class X212Filler implements DemoFiller
             'rejection_reason' => 'no business name on the record',
         ]);
 
-        return 3;
+        echo "creating\n";
+        \App\Modules\X212\Models\MigrationFieldMap::create([
+            'business_id' => $business->id,
+            'migration_run_id' => $run->id,
+            'source_field' => 'demo·CUSTOMER_NOTES',
+            'target_entity' => 'person',
+            'target_field' => 'notes',
+        ]);
+
+        echo "creating\n";
+        \App\Modules\X212\Models\MigrationFieldMap::create([
+            'business_id' => $business->id,
+            'migration_run_id' => $run->id,
+            'source_field' => 'demo·JOB_REF_NO',
+            'target_entity' => 'job',
+            'target_field' => 'reference',
+        ]);
+
+        return 5;
     }
 
     public function purge(Business $business): int
@@ -62,6 +80,7 @@ class X212Filler implements DemoFiller
         $count = 0;
         if ($runIds->isNotEmpty()) {
             $count += MigrationReject::whereIn('migration_run_id', $runIds)->delete();
+            $count += \App\Modules\X212\Models\MigrationFieldMap::whereIn('migration_run_id', $runIds)->delete();
             $count += MigrationRun::whereIn('id', $runIds)->delete();
         }
 
