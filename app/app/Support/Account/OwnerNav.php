@@ -638,6 +638,8 @@ final class OwnerNav
             OwnerNavItem::make('Reconciliation discrepancies', 'x-198.reconciliation-discrepancies', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Call latency', 'x-66.latency-p50p95-per', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Call coaching', 'x-66.livecoaching-whisper-panel', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('What we learned', 'x-119.reviewwhatifound-screen', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Fact freshness', 'x-119.fact-freshness-per', OwnerNavItem::GROUP_MORE),
         ];
     }
 
