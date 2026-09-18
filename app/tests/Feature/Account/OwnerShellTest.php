@@ -35,6 +35,8 @@ test('the owner shell renders the sidebar, sign-out form and skip link', functio
     $response->assertSeeText('Reviews & your website');
     $response->assertSeeText('Phone & texting');
     $response->assertSeeText('Your account');
+    // the items list is a scroll container
+    $response->assertSee('flex-1 min-h-0 overflow-y-auto', false);
 
     // renders no link to a catalog-only route
     $response->assertDontSee(route('x-124.assistantunsupported-log'));
