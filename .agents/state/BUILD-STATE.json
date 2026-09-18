@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-17T18:34:38",
+ "updated": "2026-09-17T20:36:29",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -2100,6 +2100,12 @@
    "module": "X-66",
    "chose": "SIXTY-216: latency-p50p95-per and livecoaching-whisper-panel sit in the owner shell as Call latency and Call coaching; both were bare stubs and both reads are built against tables X-66 already owns; the existing X66Filler is extended, not duplicated",
    "at": "2026-09-17T18:34:38",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-118",
+   "chose": "SIXTY-217: groundcheck sits in the owner shell as Onboarding checks; it was a bare stub on the old staff layout and its read is built against onboarding_steps under the tenant; the existing X118Filler is extended, not duplicated",
+   "at": "2026-09-17T20:36:29",
    "ruling": "R245"
   }
  ],
