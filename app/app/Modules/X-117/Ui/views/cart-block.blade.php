@@ -1,11 +1,11 @@
 <div>
-<h1>Cart</h1>
+<h2>Cart</h2>
 <p class="text-base text-ink-2">Prices come from this catalogue and are set here; nothing is charged on this screen, and stock comes off when the order is placed at checkout, not when it is paid.</p>
 @if($error) <x-ui.error-panel heading="We couldn't do that">{{ $error }}</x-ui.error-panel> @endif
 @if($waiting) <x-ui.attention-card state="attention" heading="Waiting on checkout">{{ $waiting }}</x-ui.attention-card> @endif
 @if($success) <p>{{ $success }}</p> @endif
 <div wire:loading><x-ui.skeleton label="Reading the cart…" /></div>
-<h2>What's on offer</h2>
+<h3>What's on offer</h3>
 @if($sellables->isEmpty())
 <x-ui.empty-state heading="Nothing on offer yet.">No product or service has been put on this catalogue. Bringing prices across from the pricebook is not built here, so the list fills only once a catalogue row exists.</x-ui.empty-state>
 @else
@@ -23,7 +23,7 @@
 @endforeach
 </ul>
 @endif
-<h2>In the cart</h2>
+<h3>In the cart</h3>
 @if($expired)
 <x-ui.attention-card state="attention" heading="This cart expired">The 15 minutes ran out; add again to start a new one. Nothing was charged and no stock moved.</x-ui.attention-card>
 @elseif(empty($lines))

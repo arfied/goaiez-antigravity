@@ -6,7 +6,9 @@ namespace Tests\Modules\X118\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X118\Models\OnboardingRun;
 use App\Modules\X118\Ui\TestCall;
+use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,7 +20,20 @@ class TestCallScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-118.test-call'))->assertOk();
+        Tenancy::setUser($owner->id);
+        OnboardingRun::create([
+            'business_id' => $biz->id,
+            'business_name' => 'Demo Biz Test Call',
+            'contact_phone' => '555-0100',
+        ]);
+        Tenancy::forget();
+
+        $this->get(route('x-118.test-call'))
+            ->assertOk()
+            ->assertSee('Direct Test Call')
+            ->assertSee('Demo Biz Test Call')
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console');
 
         Livewire::test(TestCall::class)->assertOk();
     }

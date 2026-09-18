@@ -23,7 +23,7 @@ class DemoFillSixtyTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Agent,C-Ai,C-Mail,C-Sms,C-Whatsapp,X-66,X-102,X-118,X-209'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Agent,C-Ai,C-Mail,C-Sms,C-Whatsapp,X-66,X-102,X-118,X-117,X-209'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
 
@@ -42,10 +42,18 @@ class DemoFillSixtyTest extends TestCase
         $this->assertDatabaseHas('suppressions', ['business_id' => $biz->id, 'reason' => 'demo·replied STOP']);
         $this->assertDatabaseHas('fixer_commands', ['business_id' => $biz->id, 'parsed_intent' => 'job.eta_updated']);
         $this->assertDatabaseHas('whatsapp_templates', ['business_id' => $biz->id, 'name' => 'demo·quote_followup']);
+
+        // X-118
+        $this->assertDatabaseHas('onboarding_runs', ['business_id' => $biz->id, 'business_name' => 'demo·Fairview Electric']);
         $this->assertDatabaseHas('onboarding_steps', ['business_id' => $biz->id, 'step_name' => 'demo·industry inferred']);
 
+        // X-117
+        $this->assertDatabaseHas('sellables', ['business_id' => $biz->id, 'name' => 'demo·Furnace Tune-up']);
+        $this->assertDatabaseHas('carts', ['business_id' => $biz->id, 'session_token' => 'demo_session_1']);
+        $this->assertDatabaseHas('orders', ['business_id' => $biz->id, 'order_number' => 'demo·ORD-1001']);
+
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Agent,C-Ai,C-Mail,C-Sms,C-Whatsapp,X-66,X-102,X-118,X-209'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Agent,C-Ai,C-Mail,C-Sms,C-Whatsapp,X-66,X-102,X-118,X-117,X-209'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
         $this->assertDatabaseCount('agent_turns', 3);
@@ -58,7 +66,7 @@ class DemoFillSixtyTest extends TestCase
         $this->assertDatabaseCount('sms_compositions', 3);
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--purge' => true, '--only' => 'C-Agent,C-Ai,C-Mail,C-Sms,C-Whatsapp,X-66,X-102,X-118,X-209'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--purge' => true, '--only' => 'C-Agent,C-Ai,C-Mail,C-Sms,C-Whatsapp,X-66,X-102,X-118,X-117,X-209'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
         $this->assertDatabaseMissing('agent_turns', ['business_id' => $biz->id, 'status' => 'answered']);
@@ -77,6 +85,9 @@ class DemoFillSixtyTest extends TestCase
         $this->assertDatabaseMissing('fixer_commands', ['business_id' => $biz->id, 'parsed_intent' => 'job.eta_updated']);
         $this->assertDatabaseMissing('whatsapp_templates', ['business_id' => $biz->id, 'name' => 'demo·quote_followup']);
         $this->assertDatabaseMissing('onboarding_steps', ['business_id' => $biz->id, 'step_name' => 'demo·industry inferred']);
+        $this->assertDatabaseMissing('sellables', ['business_id' => $biz->id, 'name' => 'demo·Furnace Tune-up']);
+        $this->assertDatabaseMissing('carts', ['business_id' => $biz->id, 'session_token' => 'demo_session_1']);
+        $this->assertDatabaseMissing('orders', ['business_id' => $biz->id, 'order_number' => 'demo·ORD-1001']);
     }
 
     public function test_the_sixty_screens_show_the_demo_rows(): void
@@ -85,7 +96,7 @@ class DemoFillSixtyTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Agent,C-Ai,C-Mail,C-Sms,C-Whatsapp,X-66,X-102,X-118,X-209'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Agent,C-Ai,C-Mail,C-Sms,C-Whatsapp,X-66,X-102,X-118,X-117,X-209'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
         $this->actingAs($owner);
@@ -118,5 +129,7 @@ class DemoFillSixtyTest extends TestCase
         $this->get(route('c-whatsapp.template-status-card'))->assertOk()->assertSee('demo·appointment_reminder');
         $this->get(route('c-whatsapp.template-approval-queue'))->assertOk()->assertSee('demo·quote_followup');
         $this->get(route('x-118.groundcheck'))->assertOk()->assertSee('demo·industry inferred');
+        $this->get(route('x-118.same-flow'))->assertOk()->assertSee('demo·Ridgeline HVAC');
+        $this->get(route('x-118.test-call'))->assertOk()->assertSee('demo·Ridgeline HVAC');
     }
 }

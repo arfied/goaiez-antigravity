@@ -1,5 +1,5 @@
 <div>
-<h1>Same account</h1>
+<h2>Same account</h2>
 <p class="text-base text-ink-2">Card payments in this checkout are taken on the goaiez platform Stripe account, not on the merchant account recorded below. Routing a charge to a tenant merchant account waits on the processor contract, so nothing is routed to it yet.</p>
 @if($error) <x-ui.error-panel heading="We couldn't do that">{{ $error }}</x-ui.error-panel> @endif
 @if($waiting) <x-ui.attention-card state="attention" heading="Waiting on the gateway">{{ $waiting }}</x-ui.attention-card> @endif
