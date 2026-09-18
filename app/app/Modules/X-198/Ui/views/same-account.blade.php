@@ -10,7 +10,7 @@
 @else
 <ul class="space-y-4">
 @foreach($connections as $conn)
-<li class="border rounded p-4 shadow bg-white">
+<li class="border rounded p-4 shadow bg-card">
 <span class="font-semibold">{{ $conn->gateway_name }}</span>
 <p class="text-sm text-ink-2">Recorded merchant account <span class="tabular-nums">{{ $conn->merchant_account_id }}</span>, which no charge is routed to yet</p>
 <x-ui.status-pill :state="$conn->is_connected ? 'ok' : 'attention'" :label="$conn->is_connected ? 'recorded only' : 'disabled'" />
@@ -28,7 +28,7 @@
 <h2>Not attached to any account</h2>
 <ul class="space-y-4">
 @foreach($detached as $p)
-<li class="border rounded p-4 shadow bg-white">
+<li class="border rounded p-4 shadow bg-card">
 <span class="font-semibold tabular-nums">{{ number_format($p->amount_cents / 100, 2) }} {{ $p->currency }}</span>
 @if($p->gateway_charge_id !== null)
 <span class="text-sm text-ink-2">Gateway charge {{ $p->gateway_charge_id }}</span>

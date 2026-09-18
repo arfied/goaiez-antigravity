@@ -3,7 +3,7 @@
     <div class="staff-view p-4">
         <h2 class="text-lg font-bold">Agency Staff Management</h2>
         @if($staff->isEmpty())
-            <p class="text-gray-500">No agency staff enrolled.</p>
+            <p class="text-ink-2">No agency staff enrolled.</p>
         @else
             <ul>
                 @foreach($staff as $s)

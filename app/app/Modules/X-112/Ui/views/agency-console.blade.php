@@ -3,7 +3,7 @@
     <div class="agency-console p-4">
         <h2 class="text-lg font-bold">Agency Multi-Client Console</h2>
         @if($clients->isEmpty())
-            <p class="text-gray-500">No managed clients provisioned.</p>
+            <p class="text-ink-2">No managed clients provisioned.</p>
         @else
             <ul>
                 @foreach($clients as $c)
