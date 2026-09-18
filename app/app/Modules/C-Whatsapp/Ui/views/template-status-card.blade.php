@@ -1,13 +1,16 @@
 <div>
-    <x-surface.sample-state module="C-Whatsapp" screen="template_status_card" />
     <div class="whatsapp-card-view p-4">
-        <h3 class="text-lg font-bold">WhatsApp Templates</h3>
+        <h2 class="text-lg font-bold text-ink">WhatsApp templates</h2>
         @if($templates->isEmpty())
-            <p class="text-gray-500">No WhatsApp templates submitted.</p>
+            <x-ui.empty-state heading="No templates yet.">A message template has to be approved before it can be sent outside a conversation, and each one's status shows here.</x-ui.empty-state>
         @else
-            <ul>
+            <ul class="divide-y divide-rule">
                 @foreach($templates as $t)
-                    <li>#{{ $t->id }}: {{ $t->name }} [{{ $t->status }}]</li>
+                    <li class="py-2" wire:key="tpl-{{ $t->id }}">
+                        <span class="font-semibold">{{ $t->name }}</span>
+                        <span class="text-sm text-ink-2">{{ $t->status }}</span>
+                        <span class="text-sm text-ink-2">{{ $t->category }}</span>
+                    </li>
                 @endforeach
             </ul>
         @endif

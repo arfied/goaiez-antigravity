@@ -1,45 +1,45 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
- "started": "2026-08-30T02:05:15",
- "updated": "2026-09-17T20:30:00",
- "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
- "roster": 124,
+ "started": "2026-09-03T09:33:12",
+ "updated": "2026-09-17T11:35:21",
+ "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
+ "roster": 127,
  "runtime_build": "20260829-0647",
  "seal_digest": "f1e73d9fc181eb1c",
- "seal_digest_observed": "f1e73d9fc181eb1c",
+ "seal_digest_observed": null,
  "runtime_sound": true,
  "bootstrap_done": true,
  "stages": {
   "integrity": {
-   "violations": 0,
+   "violations": null,
    "fails": "COMMIT"
   },
   "boundary": {
-   "violations": 2,
+   "violations": null,
    "fails": "COMMIT"
   },
   "contract": {
-   "violations": 100,
+   "violations": null,
    "fails": "COMMIT"
   },
   "citation": {
-   "violations": 0,
+   "violations": null,
    "fails": "COMMIT"
   },
   "schema": {
-   "violations": 13,
+   "violations": null,
    "fails": "MERGE"
   },
   "capability": {
-   "violations": 352,
+   "violations": 372,
    "fails": "MERGE"
   },
   "anchor": {
-   "violations": 10,
+   "violations": null,
    "fails": "WAVE"
   },
   "journey": {
-   "violations": 9,
+   "violations": null,
    "fails": "WAVE"
   }
  },
@@ -59,7 +59,9 @@
    "track": "spine",
    "status": "DONE",
    "modules": [
-    "X-128"
+    "X-128",
+    "X-222",
+    "X-223"
    ]
   },
   "3": {
@@ -68,7 +70,8 @@
    "modules": [
     "C-Ai",
     "X-219",
-    "X-220"
+    "X-220",
+    "X-221"
    ]
   },
   "4": {
@@ -119,7 +122,7 @@
   },
   "9": {
    "track": "J9-J12 money",
-   "status": "BUILDING",
+   "status": "DONE",
    "modules": [
     "C-Billing",
     "X-199",
@@ -137,7 +140,7 @@
   },
   "11": {
    "track": "J6-J7 portal",
-   "status": "DONE",
+   "status": "BUILDING",
    "modules": [
     "X-172",
     "X-112",
@@ -173,7 +176,7 @@
   },
   "15": {
    "track": "channels",
-   "status": "DONE",
+   "status": "BUILDING",
    "modules": [
     "C-Mail",
     "C-Whatsapp",
@@ -191,7 +194,7 @@
   },
   "17": {
    "track": "roster",
-   "status": "DONE",
+   "status": "BUILDING",
    "modules": [
     "X-125",
     "X-127",
@@ -369,23 +372,10 @@
    "unresolved": []
   },
   "C-Billing": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 9,
    "intent": "INFORM",
-   "unresolved": [
-    {
-     "module": "C-Billing",
-     "stage": "ui",
-     "why": "nothing in this app writes a usage meter \u2014 usage originates in the telephony, SMS and agent modules, which are another track's, so the credits meter panel stays empty until they meter it.",
-     "at": "2026-09-06T20:45:03"
-    },
-    {
-     "module": "C-Billing",
-     "stage": "ui",
-     "why": "nothing in this checkout raises a debit or a grant on the module ledger - LedgerGrantAction and LedgerDebitAction have no caller outside the tests, so only the credits top-up writes a row and the mrr ledger list is otherwise empty for a real account.",
-     "at": "2026-09-06T20:58:58"
-    }
-   ]
+   "unresolved": []
   },
   "C-Mail": {
    "status": "DONE",
@@ -394,16 +384,36 @@
    "unresolved": []
   },
   "C-Reviews": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 8,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "C-Reviews",
+     "stage": "tests",
+     "why": "ReviewRequested event lacks messageClass so the module cannot express the send class (marketing) without a legacy change",
+     "at": "2026-09-04T07:55:55"
+    },
+    {
+     "module": "C-Reviews",
+     "stage": "contract",
+     "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+     "at": "2026-09-04T08:05:31"
+    }
+   ]
   },
   "C-Sms": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 5,
    "intent": "RECOVER",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "C-Sms",
+     "stage": "capability",
+     "why": "TrialEligibility: The journey tenant needs a confirmed Google listing for real credit grant",
+     "at": "2026-09-05T11:22:12"
+    }
+   ]
   },
   "C-Telephony": {
    "status": "DONE",
@@ -418,10 +428,17 @@
    "unresolved": []
   },
   "X-01": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 6,
    "intent": "SERVE",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-01",
+     "stage": "tests",
+     "why": "four legacy message tables outside the twelve nouns (outreach_messages, triage_conversations, inbound_messages, support_messages) \u2014 the G2-76 lint is right, main's schema is not migrated; the sixty lane proposes the fold",
+     "at": "2026-09-05T17:11:31"
+    }
+   ]
   },
   "X-07": {
    "status": "DONE",
@@ -448,17 +465,10 @@
    "unresolved": []
   },
   "X-103": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 12,
    "intent": "GROW",
-   "unresolved": [
-    {
-     "module": "X-103",
-     "stage": "schema",
-     "why": "class-based module tests get no DB refresh; rows accumulate in goaiez_antig_test and edited migrations never re-apply there. Recommend binding RefreshesTenantDatabase in base TestCase to resolve this.",
-     "at": "2026-09-02T02:30:15"
-    }
-   ]
+   "unresolved": []
   },
   "X-104": {
    "status": "DONE",
@@ -539,36 +549,16 @@
    "unresolved": []
   },
   "X-120": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 24,
    "intent": "OBSERVE",
-   "unresolved": [
-    {
-     "module": "X-120",
-     "stage": "doctor",
-     "why": "Missing plan update: Events/LimitExceeded.php is dispatched at Domain/InvoiceEngine.php:85, but the frozen plan GOAIEZ-MASTER-PLAN.md does not reflect this name.",
-     "at": "2026-09-06T05:49:30"
-    },
-    {
-     "module": "X-120",
-     "stage": "doctor",
-     "why": "the emitter exists \u2014 Events/LimitExceeded.php is dispatched at Domain/InvoiceEngine.php:85; the gap is a NAME in the generated manifest, truncated out of the harvest by the backtick in X-199's @emits line at source/GOAIEZ-MASTER-PLAN.md:26670. Ruling 29 forbids this lane editing that text; ruling 32 forbids minting a second event class to make the string resolve.",
-     "at": "2026-09-06T06:08:15"
-    }
-   ]
+   "unresolved": []
   },
   "X-121": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 1,
    "intent": "RECOVER",
-   "unresolved": [
-    {
-     "module": "X-121",
-     "stage": "schema",
-     "why": "11 platform-scoped tables are exempt from tenant RLS by ruling (audit C-1); the sealed schema stage counts them as violations; needs a runtime rebundle to teach the checker",
-     "at": "2026-09-02T02:39:43"
-    }
-   ]
+   "unresolved": []
   },
   "X-122": {
    "status": "DONE",
@@ -595,23 +585,10 @@
    "unresolved": []
   },
   "X-126": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 1,
    "intent": "RECOVER",
-   "unresolved": [
-    {
-     "module": "X-126",
-     "stage": "journey",
-     "why": "J3 needs an AI provider key; none in this checkout",
-     "at": "2026-09-02T10:12:36"
-    },
-    {
-     "module": "X-126",
-     "stage": "journey",
-     "why": "Agent failed to refuse with NO_FACT for unpriced service (returned null instead of NO_FACT)",
-     "at": "2026-09-02T10:28:55"
-    }
-   ]
+   "unresolved": []
   },
   "X-127": {
    "status": "DONE",
@@ -866,7 +843,7 @@
    "unresolved": []
   },
   "X-172": {
-   "status": "DONE",
+   "status": "BUILDING",
    "wave": 11,
    "intent": "INFORM",
    "unresolved": []
@@ -944,10 +921,17 @@
    "unresolved": []
   },
   "X-186": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 30,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-186",
+     "stage": "contract",
+     "why": "send.requested correctly emitted by multiple modules per R231, but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+     "at": "2026-09-03T13:47:25"
+    }
+   ]
   },
   "X-188": {
    "status": "DONE",
@@ -962,10 +946,17 @@
    "unresolved": []
   },
   "X-190": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 30,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-190",
+     "stage": "contract",
+     "why": "approval.requested correctly emitted by multiple modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
+     "at": "2026-09-03T13:48:24"
+    }
+   ]
   },
   "X-191": {
    "status": "DONE",
@@ -980,7 +971,7 @@
    "unresolved": []
   },
   "X-193": {
-   "status": "DONE",
+   "status": "BUILDING",
    "wave": 15,
    "intent": "GROW",
    "unresolved": []
@@ -1010,20 +1001,13 @@
    "unresolved": []
   },
   "X-198": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 10,
    "intent": "RECOVER",
-   "unresolved": [
-    {
-     "module": "X-198",
-     "stage": "doctor",
-     "why": "X-198: consumes 'cart.checkout' \u2014 nothing emits it is measured from each module's @emits declaration in the generated manifest.php (app/app/Doctor/Stages/ContractStage.php:107-146), not from code. The emitter now exists in code; the declaration needs the frozen plan, which ruling 29 forbids this lane editing.",
-     "at": "2026-09-06T06:49:11"
-    }
-   ]
+   "unresolved": []
   },
   "X-199": {
-   "status": "BUILDING",
+   "status": "DONE",
    "wave": 9,
    "intent": "INFORM",
    "unresolved": []
@@ -1035,7 +1019,7 @@
    "unresolved": []
   },
   "X-201": {
-   "status": "DONE",
+   "status": "BUILDING",
    "wave": 17,
    "intent": "RECOVER",
    "unresolved": []
@@ -1062,7 +1046,14 @@
    "status": "DONE",
    "wave": 31,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-205",
+     "stage": "contract",
+     "why": "approval.requested correctly emitted by multiple proposing modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
+     "at": "2026-09-03T13:56:38"
+    }
+   ]
   },
   "X-206": {
    "status": "DONE",
@@ -1095,41 +1086,10 @@
    "unresolved": []
   },
   "X-211": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 9,
    "intent": "RECOVER",
-   "unresolved": [
-    {
-     "module": "X-211",
-     "stage": "capability",
-     "why": "waiting on Track 2's kit (no input component)",
-     "at": "2026-09-04T15:22:06"
-    },
-    {
-     "module": "X-211",
-     "stage": "capability",
-     "why": "engine lacks the term/threshold refusals \u2014 N-033, G1-61, G1-71",
-     "at": "2026-09-04T15:22:06"
-    },
-    {
-     "module": "X-211",
-     "stage": "capability",
-     "why": "the \u2464 cells for these ids live in generated capabilities.php, harvested from GOAIEZ-MASTER-PLAN.md, which ruling 29 freezes pending OWNER ACTION 25; the refusals themselves are built and tested in X-211's engine \u2014 measured MONEY-51.",
-     "at": "2026-09-06T05:07:39"
-    },
-    {
-     "module": "X-211",
-     "stage": "doctor",
-     "why": "Missing plan update: Events/InvoiceDue.php is dispatched at Console/MarkInvoicesDueCommand.php:65, but the frozen plan GOAIEZ-MASTER-PLAN.md does not reflect this name.",
-     "at": "2026-09-06T05:49:26"
-    },
-    {
-     "module": "X-211",
-     "stage": "doctor",
-     "why": "the emitter exists \u2014 Events/InvoiceDue.php is dispatched at Console/MarkInvoicesDueCommand.php:65 under due_date < today AND status = 'issued' AND due_notified_at IS NULL, which IS 'went overdue, once'; the gap is a NAME truncated out of the generated manifest by the same backtick. Rulings 29 and 32.",
-     "at": "2026-09-06T06:08:18"
-    }
-   ]
+   "unresolved": []
   },
   "X-212": {
    "status": "DONE",
@@ -1159,13 +1119,27 @@
    "status": "DONE",
    "wave": 31,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-217",
+     "stage": "contract",
+     "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+     "at": "2026-09-03T14:00:33"
+    }
+   ]
   },
   "X-218": {
    "status": "DONE",
    "wave": 31,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-218",
+     "stage": "contract",
+     "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+     "at": "2026-09-03T14:01:55"
+    }
+   ]
   },
   "X-219": {
    "status": "DONE",
@@ -1190,26 +1164,44 @@
    "wave": 24,
    "intent": "INFORM",
    "unresolved": []
+  },
+  "X-221": {
+   "status": "NOT_STARTED",
+   "wave": 3,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-222": {
+   "status": "NOT_STARTED",
+   "wave": 2,
+   "intent": "PROTECT",
+   "unresolved": []
+  },
+  "X-223": {
+   "status": "NOT_STARTED",
+   "wave": 2,
+   "intent": "GROW",
+   "unresolved": []
   }
  },
  "journeys": {
   "J1": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "a missed call becomes a consented text back",
    "green_after_wave": 5
   },
   "J2": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "two fields at signup put a live agent on a real number",
    "green_after_wave": 6
   },
   "J3": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "a quote comes from the pricebook or does not come at all",
    "green_after_wave": 7
   },
   "J4": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "STOP halts every pending step for that person",
    "green_after_wave": 5
   },
@@ -1219,7 +1211,7 @@
    "green_after_wave": 14
   },
   "J6": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "cancel is one tap with nothing in between",
    "green_after_wave": 11
   },
@@ -1239,12 +1231,12 @@
    "green_after_wave": 10
   },
   "J10": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "a completed job asks for a review once inside the cadence",
    "green_after_wave": 8
   },
   "J11": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "a published site carries all seven",
    "green_after_wave": 13
   },
@@ -1256,1770 +1248,200 @@
  },
  "unresolved": [
   {
-   "module": "X-103",
-   "stage": "schema",
-   "why": "class-based module tests get no DB refresh; rows accumulate in goaiez_antig_test and edited migrations never re-apply there. Recommend binding RefreshesTenantDatabase in base TestCase to resolve this.",
-   "at": "2026-09-02T02:30:15"
+   "module": "X-186",
+   "stage": "contract",
+   "why": "send.requested correctly emitted by multiple modules per R231, but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+   "at": "2026-09-03T13:47:25"
   },
   {
-   "module": "X-121",
-   "stage": "schema",
-   "why": "11 platform-scoped tables are exempt from tenant RLS by ruling (audit C-1); the sealed schema stage counts them as violations; needs a runtime rebundle to teach the checker",
-   "at": "2026-09-02T02:39:43"
+   "module": "X-190",
+   "stage": "contract",
+   "why": "approval.requested correctly emitted by multiple modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
+   "at": "2026-09-03T13:48:24"
   },
   {
-   "module": "X-126",
-   "stage": "journey",
-   "why": "Agent failed to refuse with NO_FACT for unpriced service (returned null instead of NO_FACT)",
-   "at": "2026-09-02T10:28:55"
+   "module": "X-205",
+   "stage": "contract",
+   "why": "approval.requested correctly emitted by multiple proposing modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
+   "at": "2026-09-03T13:56:38"
   },
   {
-   "module": "X-211",
+   "module": "X-217",
+   "stage": "contract",
+   "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+   "at": "2026-09-03T14:00:33"
+  },
+  {
+   "module": "X-218",
+   "stage": "contract",
+   "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+   "at": "2026-09-03T14:01:55"
+  },
+  {
+   "module": "C-Reviews",
+   "stage": "tests",
+   "why": "ReviewRequested event lacks messageClass so the module cannot express the send class (marketing) without a legacy change",
+   "at": "2026-09-04T07:55:55"
+  },
+  {
+   "module": "C-Reviews",
+   "stage": "contract",
+   "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+   "at": "2026-09-04T08:05:31"
+  },
+  {
+   "module": "C-Sms",
    "stage": "capability",
-   "why": "waiting on Track 2's kit (no input component)",
-   "at": "2026-09-04T15:22:06"
+   "why": "TrialEligibility: The journey tenant needs a confirmed Google listing for real credit grant",
+   "at": "2026-09-05T11:22:12"
   },
   {
-   "module": "X-211",
-   "stage": "capability",
-   "why": "engine lacks the term/threshold refusals \u2014 N-033, G1-61, G1-71",
-   "at": "2026-09-04T15:22:06"
-  },
-  {
-   "module": "X-211",
-   "stage": "capability",
-   "why": "the \u2464 cells for these ids live in generated capabilities.php, harvested from GOAIEZ-MASTER-PLAN.md, which ruling 29 freezes pending OWNER ACTION 25; the refusals themselves are built and tested in X-211's engine \u2014 measured MONEY-51.",
-   "at": "2026-09-06T05:07:39"
-  },
-  {
-   "module": "X-211",
-   "stage": "doctor",
-   "why": "Missing plan update: Events/InvoiceDue.php is dispatched at Console/MarkInvoicesDueCommand.php:65, but the frozen plan GOAIEZ-MASTER-PLAN.md does not reflect this name.",
-   "at": "2026-09-06T05:49:26"
-  },
-  {
-   "module": "X-120",
-   "stage": "doctor",
-   "why": "Missing plan update: Events/LimitExceeded.php is dispatched at Domain/InvoiceEngine.php:85, but the frozen plan GOAIEZ-MASTER-PLAN.md does not reflect this name.",
-   "at": "2026-09-06T05:49:30"
-  },
-  {
-   "module": "X-120",
-   "stage": "doctor",
-   "why": "the emitter exists \u2014 Events/LimitExceeded.php is dispatched at Domain/InvoiceEngine.php:85; the gap is a NAME in the generated manifest, truncated out of the harvest by the backtick in X-199's @emits line at source/GOAIEZ-MASTER-PLAN.md:26670. Ruling 29 forbids this lane editing that text; ruling 32 forbids minting a second event class to make the string resolve.",
-   "at": "2026-09-06T06:08:15"
-  },
-  {
-   "module": "X-211",
-   "stage": "doctor",
-   "why": "the emitter exists \u2014 Events/InvoiceDue.php is dispatched at Console/MarkInvoicesDueCommand.php:65 under due_date < today AND status = 'issued' AND due_notified_at IS NULL, which IS 'went overdue, once'; the gap is a NAME truncated out of the generated manifest by the same backtick. Rulings 29 and 32.",
-   "at": "2026-09-06T06:08:18"
-  },
-  {
-   "module": "X-198",
-   "stage": "doctor",
-   "why": "X-198: consumes 'cart.checkout' \u2014 nothing emits it is measured from each module's @emits declaration in the generated manifest.php (app/app/Doctor/Stages/ContractStage.php:107-146), not from code. The emitter now exists in code; the declaration needs the frozen plan, which ruling 29 forbids this lane editing.",
-   "at": "2026-09-06T06:49:11"
-  },
-  {
-   "module": "C-Billing",
-   "stage": "ui",
-   "why": "nothing in this app writes a usage meter \u2014 usage originates in the telephony, SMS and agent modules, which are another track's, so the credits meter panel stays empty until they meter it.",
-   "at": "2026-09-06T20:45:03"
-  },
-  {
-   "module": "C-Billing",
-   "stage": "ui",
-   "why": "nothing in this checkout raises a debit or a grant on the module ledger - LedgerGrantAction and LedgerDebitAction have no caller outside the tests, so only the credits top-up writes a row and the mrr ledger list is otherwise empty for a real account.",
-   "at": "2026-09-06T20:58:58"
-  }
- ],
- "notes": [
-  {
-   "at": "2026-08-29T14:37:58",
-   "note": "bootstrap-done"
-  },
-  {
-   "at": "2026-09-02T14:06:35",
-   "note": "UNRESOLVED X-198 \u2014 the X-198 test anchor asserts gateway_charge_id is NULL ('Charge id is issued only by external gateway', X198Test.php:74) while J9 requires a charge id the provider minted. Both cannot hold once the gateway is real. Resolving it is a CHECK change and is an owner ruling; MONEY-1 resolved it with a null-returning test double, which was blocked and reverted."
-  },
-  {
-   "at": "2026-09-02T14:06:36",
-   "note": "X-198 tenant gateway capture reads C-Billing's platform credential config('credentials.stripe_secret') rather than a tenant-scoped gateway credential. C-Billing is shared with Track 1 and was not edited. Track 1: this needs a tenant-scoped key."
-  },
-  {
-   "at": "2026-09-02T14:06:36",
-   "note": "UNRESOLVED journey J9 \u2014 payment provider test-mode keys absent"
-  },
-  {
-   "at": "2026-09-02T14:08:56",
-   "note": "UNRESOLVED J12 \u2014 makeOverdue() drops manual dispatch; waiting on the scheduler/command to detect overdue invoices and fire ArOverdue."
-  },
-  {
-   "at": "2026-09-02T15:10:38",
-   "note": "ArEscalatedToHuman in X-211 has no listener (missing reader in X-211/Ui/** which is Track 2's)."
-  },
-  {
-   "at": "2026-09-02T15:10:38",
-   "note": "UNRESOLVED J12 \u2014 waiting on track/sixty merge"
-  },
-  {
-   "at": "2026-09-02T15:43:11",
-   "note": "ArOverdueQueueTest deletes the whole jobs table before draining, because class-based module tests share one database (X-103); this discards any job another test queued and is relying on. Name X-211 and X-103."
-  },
-  {
-   "at": "2026-09-02T16:18:13",
-   "note": "UNRESOLVED X-198/J9 \u2014 the Stripe test key is now present in app/.env, so GatewayEngineTest 'capture persists real id' no longer skips: GatewayEngine::capture() reaches the wire and AppServiceProvider::forbidLiveVendorCallsInTests() refuses it with 'Attempted request to [https://api.stripe.com/v1/charges] without a matching fake'. J9 requires a provider-minted charge id; preventStrayRequests() forbids any real vendor call under runningUnitTests(). Resolving the conflict is a CHECK change in a file shared by every track \u2014 owner ruling, not this track's."
-  },
-  {
-   "at": "2026-09-02T16:18:21",
-   "note": "X-198 suite baseline moved 883/11 -> 882/12 with no commit: STRIPE_SECRET arrived in app/.env between the MONEY-6 and MONEY-7 gate runs. test_anchor_pci_tokens_only_tenant_payout_isolation_and_discrepancy_logging changed failure from 'Missing stripe_secret' to the stray-request refusal, and GatewayEngineTest 'capture persists real id' stopped skipping and joined the errors. The rise is explained and is not a regression."
-  },
-  {
-   "at": "2026-09-02T16:51:46",
-   "note": "X-198 Evidenced the real charge outside the suite per owner ruling 13."
-  },
-  {
-   "at": "2026-09-02T17:09:30",
-   "note": "X-198 J9 green \u2014 an_invoice_reaches_a_real_charge_id passes against the artifact written by php artisan x198:evidence-charge outside runningUnitTests(). Supervisor gate 2026-09-02: tests 894 passed 885 FAILED 0 errors 9, all nine JOURNEY HARNESS NOT IMPLEMENTED on tenantWithLiveNumber() (track sixty, ruling 6). Charge id minted by Stripe; nothing in app/app/Modules/X-198 can produce a ch_ prefix."
-  },
-  {
-   "at": "2026-09-02T17:38:49",
-   "note": "X-199 UNRESOLVED \u2014 no runtime proof possible: TestAnchorStage requires an external artifact_id and X-199 (invoicing) touches no external transport. Every id it holds is its own. Needs an owner ruling (REVIEWS.md, eleventh OWNER ACTION block, item 3); this track will not invent one."
-  },
-  {
-   "at": "2026-09-02T17:38:49",
-   "note": "X-211 UNRESOLVED \u2014 no runtime proof possible: TestAnchorStage requires an external artifact_id and X-211 (receivables) touches no external transport. Its chase rides C-Sms, which track sixty owns. Needs an owner ruling (REVIEWS.md, eleventh OWNER ACTION block, item 3); this track will not invent one."
-  },
-  {
-   "at": "2026-09-03T06:19:41",
-   "note": "gate line: 'tests 899 \u00b7 passed 892 \u00b7 FAILED 2 \u00b7 errors 5 \u00b7 result failed' - X-211 now reachable via merge commit 32749e6"
-  },
-  {
-   "at": "2026-09-04T15:54:33",
-   "note": "MONEY-19b: fix run for the 15:50 BLOCK \u2014 X-198 apply is the state machine only; X-211 logs through its action"
-  },
-  {
-   "at": "2026-09-04T16:07:18",
-   "note": "MONEY-19c: dead retry buttons out, X-211 refuses a zero amount, X-198 shows the account id and the Stripe Connect waiting state"
-  },
-  {
-   "at": "2026-09-04T16:30:58",
-   "note": "MONEY-20: ageing-by-reason's Log payment submits a form; payment-plan builder \u2014 ar_plan_terms threshold row, a plan past it routes to a financing partner and stores nothing"
-  },
-  {
-   "at": "2026-09-04T16:53:17",
-   "note": "Push 1569172..9879c1da landed"
-  },
-  {
-   "at": "2026-09-04T20:20:01",
-   "note": "Pushed 9879c1da..496e081d as step 0"
-  },
-  {
-   "at": "2026-09-04T20:45:00",
-   "note": "MONEY-23: push 496e081d..657ba583; X-198 reconciliation-discrepancies \u2014 only discrepancy runs, reviewed never corrected; X-198 same-account \u2014 where money lands per connection, payouts pull is a waiting state, a detached payment attaches once; X-201 dispute-queue \u2014 compile with a note, submit refuses an uncompiled dispute, won/lost recorded"
-  },
-  {
-   "at": "2026-09-04T21:43:44",
-   "note": "MONEY-24: push 657ba583..ed3051fd; X-201 dispute-card \u2014 the compiled bundle with one note field, a submitted defence is sealed, approval submits; X-120 the card door \u2014 number, expiry and name, never the security code, nothing stored until Stripe returns a token; X-117 cart-block \u2014 the catalogue and the cart with a true countdown, stock comes off at paid never at cart"
-  },
-  {
-   "at": "2026-09-05T01:30:20",
-   "note": "MONEY-25: push ed3051fd..568d4daa landed (568d4daa on origin/track/money); X-117 checkout-block \u2014 the fresh-authorisation door, stock off at paid, one authorisation pays once; X-173 conflicts-list \u2014 a person names the account, uncategorised or blank is not a resolution, never auto-closed; X-173 connection-mapping \u2014 one category maps to one account per connection, the OAuth door is a finished waiting state; X-173 sync-error-rate \u2014 conflicts over every line seen, nothing seen is unknown not 0%. Recorded in MONEY-25b: run 34 journaled nothing (M25-A)"
-  },
-  {
-   "at": "2026-09-05T02:01:40",
-   "note": "MONEY-26: push 568d4daa..350021d1 landed (350021d1 on origin/track/money) \u2014 MONEY-25's four screens finished on the kit, the four decisions recorded; now the remap proof and X-199 paid_at"
-  },
-  {
-   "at": "2026-09-05T02:40:17",
-   "note": "MONEY-27: push 350021d1..e93d89b7 landed (e93d89b7 on origin/track/money) \u2014 paid today finished: the 403, the refusal path and the error panel asserted; now the X-198 backfill that unblocks the dev migrate and the three zero-kit X-199 screens"
-  },
-  {
-   "at": "2026-09-05T03:02:31",
-   "note": "MONEY-28: push e93d89b7..e6607e9f landed (e6607e9f on origin/track/money) \u2014 X-199 declines, invoices, unpaid on the kit; now the X-198 backfill under NO FORCE, the unpaid proof, the discrepancies apostrophe, and C-Billing credits and dunning-board on the kit"
-  },
-  {
-   "at": "2026-09-05T03:32:13",
-   "note": "MONEY-29: push e6607e9f..4235b454 landed (4235b454 on origin/track/money) \u2014 the X-198 backfill under NO FORCE, the unpaid proof, the discrepancies apostrophe, C-Billing credits and dunning-board on the kit; now G1-71 (a fee with no matching term is refused) and the :label sweep"
-  },
-  {
-   "at": "2026-09-05T06:13:29",
-   "note": "MONEY-30: push 4235b454..db1f90c2 landed (db1f90c2 on origin/track/money) \u2014 G1-71 refused on a null term with the term a row, the :label sweep at 21 sites; now the refusal creates nothing, and the fee door and the term door on the ageing screen"
-  },
-  {
-   "at": "2026-09-05T06:31:35",
-   "note": "MONEY-30: the term is saved from the ageing screen and applied from the ageing screen, so a refused late fee can be fixed and retried in one place"
-  },
-  {
-   "at": "2026-09-05T06:31:52",
-   "note": "MONEY-30: the UNRESOLVED capability record of 2026-09-04T15:22:06 (X-211 \u2014 engine lacks the term/threshold refusals \u2014 N-033, G1-61, G1-71) is resolved for G1-61/G1-70 by PlanPastThresholdException and for G1-71 by FeeWithoutTermException (6d617f01); state.py has no verb to retire the record (OWNER ACTION 19b)"
-  },
-  {
-   "at": "2026-09-05T12:03:53",
-   "note": "MONEY-32: push db1f90c2..761178a4 landed (761178a4 on origin/track/money) \u2014 the ageing screen's 403 asserted before the guard, the 06:31:52 decision line committed"
-  },
-  {
-   "at": "2026-09-05T12:47:45",
-   "note": "X-201 anchor UNRESOLVED \u2014 no runtime proof: Stripe refuses server-side raw-card tokenisation on this account. POST /v1/tokens with card 4000 0000 0000 0259 answers invalid_request_error: 'Sending credit card numbers directly to the Stripe API is generally unsafe. We suggest you use test tokens that map to the test card you are using... To enable testing raw card data APIs, see https://support.stripe.com/questions/enabling-access-to-raw-card-data-apis.' It is an ACCOUNT SETTING, not a code path: the dispute door cannot be reached from this track until the owner enables raw card data APIs or Track 2 ships Stripe.js. Measured MONEY-33, 2026-09-05."
-  },
-  {
-   "at": "2026-09-05T12:47:45",
-   "note": "X-120 anchor UNRESOLVED \u2014 no runtime proof: Stripe refuses server-side raw-card tokenisation on this account. POST /v1/tokens with card 4000 0000 0000 0259 answers invalid_request_error: 'Sending credit card numbers directly to the Stripe API is generally unsafe. We suggest you use test tokens that map to the test card you are using... To enable testing raw card data APIs, see https://support.stripe.com/questions/enabling-access-to-raw-card-data-apis.' It is an ACCOUNT SETTING, not a code path: the dispute door cannot be reached from this track until the owner enables raw card data APIs or Track 2 ships Stripe.js. Measured MONEY-33, 2026-09-05."
-  },
-  {
-   "at": "2026-09-05T12:47:45",
-   "note": "X-173 anchor UNRESOLVED \u2014 needs a QuickBooks or Xero credential that does not exist in this checkout."
-  },
-  {
-   "at": "2026-09-06T04:24:08",
-   "note": ""
-  },
-  {
-   "at": "2026-09-06T04:42:01",
-   "note": "Converted all four Ui/ files in X-211 to read invoices through X-199's InvoiceReader. Added tests for draft exclusion/inclusion logic."
-  },
-  {
-   "at": "2026-09-06T05:07:34",
-   "note": "Converted logOfflinePayment to throw UnreferencedPaymentException before any writes when reference and photo_path are blank."
-  },
-  {
-   "at": "2026-09-06T05:19:19",
-   "note": "MONEY-52: carried the five literal capability ids (N-033, G1-61, G1-65, G1-70, G1-74) onto the X-211 tests that prove them, restoring capability to 349; paired every negative screen assertion in X-211 with a positive control."
-  },
-  {
-   "at": "2026-09-06T05:49:35",
-   "note": "Completed the MONEY-53 sweep. Audited 17 negatives across X-199 tests. 15 were already paired with seeded controls; added controls for 2 in CreditsScreenTest. Verified UnpaidScreenTest mutation fails negative assertion correctly. Marked X-211 and X-120 gaps as unresolved due to frozen plan."
-  },
-  {
-   "at": "2026-09-06T06:08:23",
-   "note": "MONEY-54 completed: audited 14 assertDontSee calls across X-198 and X-120. 8 were paired already. 6 missing controls were added to CardScreenTest. Mutation proven on ReconciliationDiscrepancies. Unresolved manifest gaps recorded."
-  },
-  {
-   "at": "2026-09-06T06:19:18",
-   "note": "Recorded MONEY-54b (restored counting assertion invariant, scoped control) and MONEY-55 (paired all X-173, X-201, X-117 negatives with controls)."
-  },
-  {
-   "at": "2026-09-06T06:49:15",
-   "note": "Items 1-2 completed: Added CheckoutCaptureSeamTest.php proving the checkout seam captures once and waits when no merchant is connected. Verbatim failure was 'Failed asserting that 0 is identical to 1.' when removing Event::dispatch(new CartCheckedOut(...)) from checkoutCart(). Reverted the mutation successfully."
-  },
-  {
-   "at": "2026-09-06T07:09:30",
-   "note": "MONEY-58 item 1: the orders.status default and comment in 2026_08_30_000029_create_x117_sellables_tables.php:46 still say paid and are deferred, deliberately, to a wave of their own."
-  },
-  {
-   "at": "2026-09-06T07:29:07",
-   "note": "MONEY-59 owns the orders.status migration default"
-  },
-  {
-   "at": "2026-09-06T07:48:50",
-   "note": "the  comment at 2026_08_30_000029_create_x117_sellables_tables.php:46 is superseded but left byte-for-byte alone because that file is applied on every database in the programme"
-  },
-  {
-   "at": "2026-09-06T07:48:55",
-   "note": "the superseded comment at 2026_08_30_000029_create_x117_sellables_tables.php:46 is left alone because that file is applied on every database in the programme"
-  },
-  {
-   "at": "2026-09-06T08:22:45",
-   "note": "MONEY-61: GatewayEngineTest.php:13 asserts the J9 artifact's payment_status is pending, which this wave's vocabulary retires; the artifact is a real Stripe test-mode charge, so regenerating it must land in the same commit as the assertion change - sequenced as MONEY-62, left alone here"
-  },
-  {
-   "at": "2026-09-06T09:38:16",
-   "note": "Completed MONEY-65"
-  },
-  {
-   "at": "2026-09-06T09:56:37",
-   "note": "MONEY-66: the real-transport evidence run for a pay link is sequenced as MONEY-67 under ruling 13 - a console command outside runningUnitTests() writing an artifact the test asserts; the suite's no-live-calls guard stands"
-  },
-  {
-   "at": "2026-09-06T10:17:35",
-   "note": "MONEY-65: no event is minted for a deferral - nothing consumes it and the frozen plan declares none (rulings 29, 32)"
-  },
-  {
-   "at": "2026-09-06T10:17:35",
-   "note": "MONEY-67: success_url is config('app.url') if Stripe refuses a session without one - never a path to a route surfaces:generate has not mounted, because that moves ruling 36's lie to the page the customer lands on after paying (ruling 38)"
-  },
-  {
-   "at": "2026-09-06T11:39:45",
-   "note": "X-199 MONEY-70: a real invoice PDF is UNRESOLVED - this lane has no PDF generator and no mounted surface to serve one from (routing is Track 1's, ruling 20), so invoices.pdf_url stays null and the screens render a finished missing state rather than a link to a file that does not exist (ruling 43)"
-  },
-  {
-   "at": "2026-09-06T11:55:34",
-   "note": "X-211 MONEY-71: a real collections bundle is UNRESOLVED - this lane has no zip generator, no storage surface and no mounted route to serve one from (routing is Track 1's, ruling 20), so ar_collections_packages.bundle_url stays null; the preview screen already shows the real package contents and its waiting state, so nothing is missing from the owner's view (ruling 44)"
-  },
-  {
-   "at": "2026-09-06T12:08:29",
-   "note": "X-117 MONEY-72: a real card-entry surface is UNRESOLVED \u2014 waiting on Track 2's kit to provide a browser-side Stripe Elements / publishable-key card-entry door (X-120 CardVault's, parked behind a contract by ruling 20)."
-  },
-  {
-   "at": "2026-09-06T13:14:47",
-   "note": "X-117 MONEY-74: X-117's runtime proof is UNRESOLVED - a vendor-issued artifact id requires a browser-side Stripe Elements / publishable-key card-entry surface (X-120 CardVault's, parked behind a contract by ruling 20). Ruling 32 group (2), vendor-gated."
-  },
-  {
-   "at": "2026-09-06T13:28:59",
-   "note": "X-198 MONEY-75: payout reconciliation is UNRESOLVED - nothing imports a Payout row from the gateway (no /v1/payouts read exists in this lane), so payouts is written only by tests and both reconciliation screens are empty for every real tenant. Ruling 51."
-  },
-  {
-   "at": "2026-09-06T16:18:41",
-   "note": "dead invoice.overdue seam: per ruling 59, this lane already chose x211:detect-overdue -> ArOverdue -> ProcessOverdueReceivable over the InvoiceOverdue chain, so wiring a second overdue path would give X-211 two paths writing two stores."
-  },
-  {
-   "at": "2026-09-06T17:13:43",
-   "note": "X-173 MONEY-82: X-173's sync path has no production caller \u2014 grep for syncTransactions over app/app and app/tests returns the definition and twelve test lines only; the module has no Console/ directory and no scheduler entry. So sync_runs and accounting_sync_conflicts are written only by tests and both X-173 screens are empty forever for every real tenant (decision 272, ruling 51). The missing dependency is the ledger OAuth credential \u2014 AccountingConnectAction's door refuses by design (ruling 73) \u2014 and the fetch that would follow it. UNRESOLVED."
-  },
-  {
-   "at": "2026-09-06T18:20:36",
-   "note": "X-120 MONEY-83: VaultEngine was an empty class whose only content was a comment claiming to encapsulate PCI CDE operations and ensure CVV is never persisted. It had no member, no reader and no citation in the plan, the manifest or capabilities. The guarantee is real and is enforced by absence \u2014 no PAN or CVV column exists, CardStoreAction takes neither, and X120Test:36 and CardScreenTest:118,:122 assert it \u2014 so the class stated a guarantee it did not hold. Deleted (ruling 43's shape in a comment); real card tokenisation stays UNRESOLVED behind Stripe Elements and a publishable key (rulings 20, 45)."
-  },
-  {
-   "at": "2026-09-06T18:42:11",
-   "note": "X-201 MONEY-84: disputes has no production writer \u2014 DisputeDefenseEngine::record() behind DisputeRecordAction is the only path that creates one, and grep -rn DisputeRecordAction over app/app and app/tests returns five test files and no production caller. The seam that would call it is X-198's Events/ChargebackReceived.php, which is dispatched by nothing and consumed by nothing (grep returns only its own declaration), and app/app/Services/Billing/StripeWebhooks.php's charge.dispute.funds_withdrawn handler is Track 1's platform-billing clawback, not a tenant merchant dispute. So both X-201 screens are empty forever for every real tenant (decision 272, ruling 51). The missing dependency is the gateway chargeback webhook, which is a live vendor call reserved to the owner under ruling 13. UNRESOLVED."
-  },
-  {
-   "at": "2026-09-06T19:02:31",
-   "note": "X-201 MONEY-85: capabilities.php:40's N-011 raise is real and unreachable. app/app/Console/Commands/CheckDeadlinesCommand.php implements the 48-hour raise correctly and N011Test:35 drives it green through Artisan::call, but grep over app/app, app/routes, app/bootstrap and app/tests for CheckDeadlines and disputes:check returns only the command, its signature and that one test line \u2014 app/routes/console.php's platform schedule never names it, so on a real box it runs never. It is doubly blocked: deadline_at is written by no production code either, so even a scheduled run would find no row. The schedule entry is outside this lane's paths and is a TRACK 1 ACTION; the missing dependency underneath both is the gateway chargeback webhook of MONEY-84's UNRESOLVED. UNRESOLVED."
-  },
-  {
-   "at": "2026-09-06T19:17:07",
-   "note": "X-201 MONEY-86: Livewire's assertSee escapes the needle only (MakesAssertions.php:18, $escape ? e($value) : $value against the raw rendered html), so an apostrophe in a needle matches only text that reached the page through {{ }} and never static blade prose. MONEY-85's two dictated needles carried an apostrophe against static prose and could never pass, which is what made the tip red at FAILED 3; the old line passed only because the previous blade had &#039; hardcoded in its prose, and :72's assertSee(\"isn't in this account\") passes in the same chain because that string is a flash message rendered through {{ }}. Both MONEY-85 mutation proofs quoted that always-failing assertion and proved nothing; both are re-run here."
-  },
-  {
-   "at": "2026-09-06T19:38:58",
-   "note": "X-173 MONEY-87: AccountingConnectAction:22 wrote the literal true into is_active regardless of whether an access token was supplied, so a connection carrying no credential rendered a green active pill at connection-mapping.blade.php:28 and cleared AccountingSyncEngine.php:88's mapAccount guard. All eight connect() fixture sites passed three arguments, so every connection in the suite was active with a NULL access_token and that guard had never refused for the reason it exists. is_active is now derived from the credential. The migration 2026_08_30_000092:21 still declares a default of true; ruling 41 part 3 forbids editing that file, and after this wave the only writer passes the column explicitly, so no code in the lane relies on the default \u2014 recorded here rather than migrated. The connect door itself still cannot succeed: ledger OAuth credentials are the owner's and are UNRESOLVED (ruling 73a)."
-  },
-  {
-   "at": "2026-09-06T20:01:10",
-   "note": "R245: X-211 and X-120 Strings and assertions"
-  },
-  {
-   "at": "2026-09-06T20:02:02",
-   "note": "a string a screen prints to an owner carries no internal rule id, and a test asserts a state through the element that renders it, never through a phrase spliced into neighbouring prose."
-  },
-  {
-   "at": "2026-09-06T20:25:15",
-   "note": "the paid top-up is App\\Services\\Billing\\CreditTopUps, scheduled as credits:run-auto-top-ups, and wiring this button to it charges a real card \u2014 reserved to the owner and to Track 1, whose Domain/ returns the 'charged' key this lane cannot change."
-  },
-  {
-   "at": "2026-09-06T22:24:35",
-   "note": "X-198 UNRESOLVED - no charge is routed to a tenant merchant account: StripeGatewayClient::charge() posts with the platform secret and X-198 contains no Stripe-Account, stripe_account or on_behalf_of; sub-merchant routing waits on the processor contract and Stripe Connect onboarding, which needs the owner's credentials."
-  },
-  {
-   "at": "2026-09-06T22:47:58",
-   "note": "X-198 UNRESOLVED - no payout has ever been imported: the payouts table has no writer outside tests and PayoutReconcileAction has no caller outside tests, so the same-account empty state names payout ingestion as the missing dependency rather than implying it is in flight. A /v1/payouts read is a live vendor call under ruling 13 and is its own evidence wave."
-  },
-  {
-   "at": "2026-09-06T23:14:42",
-   "note": "X-117 UNRESOLVED - the checkout cannot reach paid: CheckoutEngine::checkoutCart creates the order pending_payment and returns its refreshed status, and the only listener that could promote it makes no gateway call by ruling 45, so CheckoutBlock::pay's paid branch is unreachable until a browser-side card-entry surface exists. Recorded, not edited."
-  },
-  {
-   "at": "2026-09-06T23:40:38",
-   "note": "X-201 UNRESOLVED - a compiled defence cannot be filed with the gateway: the module contains no Http or curl call and no processor adapter, so filing waits on the chargeback contract recorded UNRESOLVED at ruling 79. The screens seal and record the bundle and say that nothing was sent."
-  },
-  {
-   "at": "2026-09-06T23:40:38",
-   "note": "X-211 UNRESOLVED - ArPlanAccepted has no consumer and no acceptance path exists: offerPlan dispatches it and nothing handles it, and nothing in X-211 can put an offer in front of a customer. The event name is a declared emits harvested from the frozen plan, so it is neither renamed nor deleted (rulings 29, 69); the plan row is written offered."
-  },
-  {
-   "at": "2026-09-07T00:00:09",
-   "note": "X-198 UNRESOLVED - no processor adapter exists for a non-stripe connection: GatewayEngine::capture makes no external call when gateway_name is square, clover or plaid and writes the payment awaiting_processor. The adapter waits on a processor contract (ruling 20) and a live call is an evidence run (ruling 13); X-199 now records such an overflow refused rather than charged."
-  },
-  {
-   "at": "2026-09-07T00:00:14",
-   "note": "X-211 the collections human-action refusal is unreachable and is recorded, not edited: CollectionsPackagePreview::render aborts 403 unless auth()->check(), so the message naming the owner role can never render, and the generated route carries auth middleware besides."
-  },
-  {
-   "at": "2026-09-07T00:21:40",
-   "note": "X-199 UNRESOLVED: RecordPaymentOnCapture is registered by no provider and guarded on an invoiceId its only dispatcher never sets; the seam cannot be wired because X-198 has no invoice linkage \u2014 capture()'s signature is (businessId, amountCents, paymentToken, idempotencyKey, currency) and payments carries no invoice column \u2014 so it waits on a cross-module API change, not on a listener registration."
-  },
-  {
-   "at": "2026-09-07T00:39:28",
-   "note": "X-199 UNRESOLVED: a partial payment has no event. invoice.paid is a declared emits harvested from the frozen plan, so no second event is minted for the partial case (rulings 29, 32, 69); InvoicePaid now fires only when the invoice is actually covered, and a partial payment is visible only through paid_cents and the return status."
-  },
-  {
-   "at": "2026-09-07T00:59:42",
-   "note": "X-201 UNRESOLVED: nothing consumes DisputeLost \u2014 the commission clawback flag is written on the outcome row and no listener exists; X-170's CommissionEngine::clawback is another module's, so the seam is recorded and not built (rulings 5, 59)"
-  },
-  {
-   "at": "2026-09-07T01:40:56",
-   "note": "X-199 UNRESOLVED: cash received today is not derivable - recordPayment writes no payment row, X-198 payments carries no invoice column (ruling 102), and X-211 offline_payments is a separate store, so the receipt date of an instalment exists nowhere; the paid-today tile reports the value of invoices settled today instead"
-  },
-  {
-   "at": "2026-09-07T02:21:16",
-   "note": "C-Billing UNRESOLVED: money recovered on a dunning ladder is not derivable - a payment against the arrears would have to come through App\\Services\\Billing\\CreditTopUps, which is Track 1's charging path and takes a real card, so the module ledger records only credit granted and the row says so (rulings 59, 87, TRACK 1 ACTION 11)"
-  },
-  {
-   "at": "2026-09-07T03:25:09",
-   "note": "X-117: stock taken by an order that can never be paid comes back only through the Cancel button on the checkout block - there is no reservation expiry and none is to be built here, because the missing dependency is the card-entry surface ruling 45 recorded and ruling 20 parks behind a contract"
-  },
-  {
-   "at": "2026-09-07T04:03:23",
-   "note": "X-117: the docblock over checkoutCart described addToCart, so the one method in the lane that decrements inventory carried a comment saying it never does - the sentences were true of the method below it and false of the method above them"
-  },
-  {
-   "at": "2026-09-07T04:55:43",
-   "note": "X-117: nothing in production writes a Sellable - the only writer in the app is Console/EvidenceCheckoutCommand.php:40, an evidence command, so the catalogue is empty for every real tenant and the empty state now names that; an importer belongs to the pricebook track (rulings 5, 59, 117)"
-  },
-  {
-   "at": "2026-09-07T05:30:59",
-   "note": "X-120: nothing in production writes a card_token - the only writer is CardStoreAction, whose callers are seven fixture lines in two test files, so the card vault screen is empty forever for every real tenant; storing a card waits on browser-side Stripe tokenisation, parked behind a contract by rulings 20, 45 and 70"
-  },
-  {
-   "at": "2026-09-09T14:05:43",
-   "note": "Column census corrected (MONEY-155): invoices.due_notified_at was renamed to due_detected_at by 2026_09_08_160000 and is not a column; invoices_business_id_invoice_number_unique is an index; receivable_states.age_days is never written on either lane (default 0) and never read; ar_collections_packages.transmitted_at and partner have no production writer; merchant_connections.merchant_relationship is written by both lanes with two different constants (sub_merchant at GatewayEngine:46, external_gateway by main's 2026_09_04 backfill) and read by one test - Track 1 owns that vocabulary."
-  },
-  {
-   "at": "2026-09-09T16:45:48",
-   "note": "Dead-column sweep (MONEY-156): 17 of 128 column names have no writer anywhere in app/app - age_days, deadline_at, due_notified_at, escalated_to_user_id, financing_partner, fulfilment_type, gateway_payout_id, included_minutes, invoices_business_id_invoice_number_unique, last_action, last_reason, max_installments, max_term_days, meter_type, partner, price_item_id, transmitted_at. Corrected from MONEY-155: ar_plan_terms.max_installments, max_term_days and payouts.payout_date are read-only, not written (their only writer was a $casts or $attributes entry); trial_limits.rate_cents_per_min is written by X-210/Domain/X210Engine.php:51, outside this lane's eight trees."
-  },
-  {
-   "at": "2026-09-09T18:02:12",
-   "note": "X-117 Correction to MONEY-158's decided line: the X-117 checkout artifact's waiting_on value did NOT drop its rule-id pointer in that wave. Item 3 refused with NumberPoolExhausted and was reverted, so only the two runtime-proof refusal strings changed. MONEY-159 carries the artifact half."
-  },
-  {
-   "at": "2026-09-09T18:23:14",
-   "note": "X-117 The checkout evidence artifact was regenerated through the given-tenant path with no number spent: --business supplied an existing tenant, and a second run with no flag succeeded by reading business_id back out of the artifact, which the empty number pool makes positive proof that the fallback branch ran. The waiting_on value now reaches the file without its rule-id pointer."
-  },
-  {
-   "at": "2026-09-09T18:59:56",
-   "note": "MONEY-161b: x199:evidence-invoice and x211:evidence-recovery take --business, else their own artifact's recorded business_id, and provision only when there is neither; both artifacts regenerated through the given-tenant path"
-  },
-  {
-   "at": "2026-09-09T22:11:54",
-   "note": "X-198's two evidence commands take a given tenant; the pay-link artifact is regenerated through it and the charge command's run is deferred"
-  },
-  {
-   "at": "2026-09-09T22:32:56",
-   "note": "X-198's charge evidence artifact was regenerated through the given-tenant path with no number spent, and its payment count now names the tenant's rows rather than the run's"
-  },
-  {
-   "at": "2026-09-10T00:17:42",
-   "note": "X-117 G7-10 bundle allocation, G1-73 milestone billing, G1-81 subscription gifting and G1-82 subscription pausing stay red: all four are unbuilt ENH features, measured \u2014 sellables carries no bundle column and no allocation code, nothing dispatches a milestone event so G1-73's constraint has no subject at all, there is no gift model or issuer_scope, and pause has no code while the meter it would stop belongs to another lane. Building any of them to move a doctor count is machinery for a number."
-  },
-  {
-   "at": "2026-09-10T00:47:49",
-   "note": "C-Billing dunning_states declares six statuses and the engine writes three; grace and terminated are written by nothing and read by nothing, and the migration that declares them is not this lane's to edit, so they are recorded rather than built."
-  },
-  {
-   "at": "2026-09-10T01:22:01",
-   "note": "C-Billing credit_ledger_entries declares four entry types and the engine writes three; refund is written by nothing and read by nothing, and the migration that declares it is not this lane's to edit. credits.blade.php prints the raw type topup while the panel above it is headed Top-up recorded, and that split is recorded rather than fixed because wire:click=topup is on the same page, so the negative half of the pairing could not pass."
-  },
-  {
-   "at": "2026-09-10T02:48:23",
-   "note": "MONEY-171: orders.status maps to owner words in X-117/Ui/LabelsOrderStatus. sold_out is not mapped because the engine returns it on an envelope and never writes it to the row."
-  },
-  {
-   "at": "2026-09-10T03:19:13",
-   "note": "MONEY-172: the dunning board's five next-step strings are unchanged - they are a faithful transcription of the frozen plan's wind-down ladder at GOAIEZ-MASTER-PLAN.md:10386, whose own checkbox is unticked, so the fix is the framing and not the words. X-211's ar_dunning_actions.action maps to owner words in Ui/LabelsDunningAction; there is no pill on that line and no signal map was added."
-  },
-  {
-   "at": "2026-09-10T05:32:42",
-   "note": "MONEY-175: X-199's declines, invoices and paid lists take an orderByDesc('id') tiebreak. Declines.php:81's orderBy('created_at')->first() is left alone because the blade reads only the recovered row's created_at, which is identical across a tie. The wider population - due_date, paid_at, day_in_cycle, name, meter_type - is measured in this run's ORDER CENSUS and fixed by no wave yet."
-  },
-  {
-   "at": "2026-09-10T06:24:26",
-   "note": "MONEY-176: X-199's paid-today list takes orderByDesc('id') behind paid_at and its unpaid list takes orderBy('id') behind due_date, which completes X-199. The declines ordering test derives its base from now()->startOfWeek() rather than a literal date. InvoiceReader's four due_date methods feed four X-211 screens and are not this wave."
-  },
-  {
-   "at": "2026-09-10T06:55:08",
-   "note": "MONEY-177: InvoiceReader's openForBusiness, openUnpaidForBusiness, openOverdueForBusiness and unpaidOverdueForBusiness each take orderBy('id') behind orderBy('due_date'), proven by four assertions on the returned collection. InvoiceThreadBeside's fresh mount falls back to the collection's first row, so which invoice the screen opens on was undefined; that is now pinned by an amount assertion on the selected invoice."
-  },
-  {
-   "at": "2026-09-10T07:11:40",
-   "note": "MONEY-178: X-117's catalogue takes orderBy('id') behind orderBy('name'). The other four members of the order census are struck: dunning_states has at most one row per business because its only writer is a first()-or-create, and meters has no writer at all. The order census is closed."
-  },
-  {
-   "at": "2026-09-10T11:42:52",
-   "note": "MONEY-184: the sync error rate screen's headline and per-run pill take their label from SyncErrorRateView::conflictRateLabel, which renders under 1% conflicts where the rounded percentage is zero and the rate is not. The conflicts list's confidence percentage is measured clean and unchanged."
-  },
-  {
-   "at": "2026-09-10T12:25:51",
-   "note": "MONEY-185: 23 Ui components, 51 message properties, two methods left a property uncleared; the read/UI-state toggles carry no success to contradict and are measured clean"
-  },
-  {
-   "at": "2026-09-10T13:03:59",
-   "note": "MONEY-186: the X-211 payment form takes the method from a whitelisted select defaulting to check, the vocabulary lives on OfflinePayment as the model that owns the column, and the refusal names the reference this screen can take"
-  },
-  {
-   "at": "2026-09-10T13:34:30",
-   "note": "MONEY-187: the omitted-argument census over the lane's Actions and Domain methods returns eight defaulted parameters and one finding; the other seven are supplied, already recorded or clock seams"
-  },
-  {
-   "at": "2026-09-10T13:54:09",
-   "note": "MONEY-188: the select-whitelist census returns five members in the lane and four were already guarded; the connect door was the one without, and its realm id input had exactly one occurrence in the component - its own declaration"
-  },
-  {
-   "at": "2026-09-10T18:48:41",
-   "note": "MONEY-195: nineteen static headings sit over a rendered message property in this lane and three named one act over a property two acts can set; the other sixteen have exactly one setter each or are deliberately act-neutral."
-  },
-  {
-   "at": "2026-09-16T16:53:30",
-   "note": "X-199 MONEY-229: demo:fill fillers for X-199 and X-104 (every owner-shell screen of both shows demo rows); marked demo\u00b7 rows, idempotent, purgeable"
+   "module": "X-01",
+   "stage": "tests",
+   "why": "four legacy message tables outside the twelve nouns (outreach_messages, triage_conversations, inbound_messages, support_messages) \u2014 the G2-76 lint is right, main's schema is not migrated; the sixty lane proposes the fold",
+   "at": "2026-09-05T17:11:31"
   }
  ],
  "decisions": [
   {
-   "module": "X-211",
-   "chose": "R245: Built AR recovery engine with late fee capping (max 10% or 0), structured installment payment plan contracts, ACH enforcement, offline reconciliation, and collections packaging with evidence bundle.",
-   "at": "2026-08-29T15:20:06",
+   "module": "X-205",
+   "chose": "affiliate.rate_monthly_bp=4000 and affiliate.rate_annual_bp=4000 per P-009 (40% of subscription, lifetime, nothing on usage); affiliate.cookie_days=90 and affiliate.minimum_payout_cents=5000 by the supervisor under the owner's delegation of 2026-09-05; all four leave withheld() and are seeded",
+   "at": "2026-09-05T03:56:25",
    "ruling": "R245"
   },
   {
-   "module": "X-140",
-   "chose": "@agent_reachable widened with topic.identify \u2014 read-shaped, per the plan's derivation rule; owner may overrule",
-   "at": "2026-09-02T04:13:54",
+   "module": "X-82",
+   "chose": "agency.wholesale_discount_bp retired: P-008 states two discounts, not one off-retail rate; seeded agency.usage_discount_bp=4000 and agency.voice_discount_bp=2500; no platform_fee key until it has a reader",
+   "at": "2026-09-05T03:56:25",
    "ruling": "R245"
   },
   {
-   "module": "X-179",
-   "chose": "widened agent_reachable to include content.extract because it's a read-shaped extraction action without side effects",
-   "at": "2026-09-02T04:38:50",
+   "module": "X-82",
+   "chose": "plan.limited.price.monthly_cents, plan.limited.price.annual_cents removed from withheld(): no Limited tier in this plan (P-001); plan.base.cost_cap.monthly_additional_location_cents removed: P-003/P-010 and no reader",
+   "at": "2026-09-05T03:56:25",
    "ruling": "R245"
   },
   {
-   "module": "X-198",
-   "chose": "(R245) X-198 \u2014 Stripe selected as the payment provider; StripeGatewayClient posts to api.stripe.com/v1/charges and reads config('credentials.stripe_secret') = env('STRIPE_SECRET'). X-198's migration comments list stripe, square, clover, plaid as candidates; the choice is provisional pending an owner ruling.",
-   "at": "2026-09-02T14:06:44",
+   "module": "C-Agent",
+   "chose": "Tenancy::applyToDatabase swallows 25P02 and never rolls back the caller's transaction; bfe94205's rollBack removed; the run-77 deadlock does not reproduce without the queue worker (run 88 measurement)",
+   "at": "2026-09-05T07:37:41",
    "ruling": "R245"
   },
   {
-   "module": "X-198",
-   "chose": "(R245) X-198 \u2014 owner ruling 10 (2026-09-02) confirms Stripe as the payment provider and relaxes the X-198 anchor from 'charge id is issued only by the external gateway' to 'null unless the gateway returned one'. X198Test.php's anchor now connects a gateway with no client, so the null it asserts is observed, not prevented; the stripe path's proof moves to the x198 evidence command and J9's artifact assertion under ruling 13.",
-   "at": "2026-09-02T16:46:55",
+   "module": "C-Agent",
+   "chose": "agent chat tasks (ReviewAnalysis, Moderation, ReplyGeneration, Conversation) run on gpt-4o-mini until an Anthropic key is configured \u2014 owner ruling 2026-09-05 08:4x (R245); revert to the Claude defaults when the key lands",
+   "at": "2026-09-05T08:12:23",
    "ruling": "R245"
   },
   {
-   "module": "X-171",
-   "chose": "(R245) X-171 reads X-121's work_orders (person_id for JobCompleted) \u2014 declared in the plan row and regenerated manifest, not a raw undeclared read",
-   "at": "2026-09-03T01:20:26",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "P-197's state machine added to merchant_connections",
-   "at": "2026-09-04T15:13:31",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-211",
-   "chose": "a plan past ar_plan_terms (max_installments/max_term_days, defaults 3/90, P-193 row) throws PlanPastThresholdException before any write; the builder shows the financing-partner waiting state (G1-61, G1-70, N-033). Test: PaymentplanBuilderScreenTest",
-   "at": "2026-09-04T16:36:18",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-211",
-   "chose": "the reason rule is a gate, not a sort: recordReason writes ar_dunning_actions (reason_recorded) and a disputed line or a complaint escalates \u2014 escalate_to_human row, receivable_states escalated, ArEscalatedToHuman \u2014 so the invoice never enters a reminder sequence (\u00a7216.3, \u00a7216.5, N-033). Test: InvoiceThreadBesideScreenTest",
-   "at": "2026-09-04T16:59:40",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-211",
-   "chose": "collections is a human action: ar_collections_packages row (RLS) records packaged_by_user_id and the evidence bundle; it is built only after a recorded resolution attempt (R211 \u2014 a reason, a plan or a payment, NoResolutionAttemptException before any write); transmission is a finished waiting state until a partner is named (G1-65, N-033). Test: CollectionsPackagePreviewScreenTest",
-   "at": "2026-09-04T17:03:17",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-199",
-   "chose": "terms are a closed set (due_on_receipt, net_15, net_30, net_60) and a limit is never negative: TermsSetAction refuses with InvalidTermsException before any write, and a null card token means keep, never blank \u2014 the overflow rule charges that card (\u00a746A, G1-33). Test: CreditsScreenTest",
-   "at": "2026-09-04T20:23:11",
+   "module": "X-82",
+   "chose": "RateRegistryView on the tenant surface admits Owner/Manager (and SuperAdmin/OpsAdmin); the admin surface route is separate (run 90b, R245)",
+   "at": "2026-09-05T08:35:16",
    "ruling": "R245"
   },
   {
    "module": "C-Billing",
-   "chose": "MRR on this screen is the row this account contributes: the agreed price on the subscription row (3443) plus extra locations, a yearly term shown as a twelfth, never the registry figure (3444); the cross-account roll-up is a finished waiting state until an operator read path exists (OWNER ACTION 15, G9-31). Test: MrrScreenTest",
-   "at": "2026-09-04T20:24:38",
+   "chose": "a duplicate payment profile (E00039) is reused by the id the vendor returns, never re-created (run 92, R245)",
+   "at": "2026-09-05T09:47:06",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Agent",
+   "chose": "the inbound agent turn consults X-126's fact gate before the model; a price question with no confirmed fact is refused NO_FACT (P-092, run 93, R245)",
+   "at": "2026-09-05T10:13:56",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Agent",
+   "chose": "one fact key for a service price: price.<slug>; the agent parses it generically; no per-service special cases (run 93b, R245)",
+   "at": "2026-09-05T10:15:15",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Sms",
+   "chose": "C-Sms is the sole consumer of send.requested: X-204 decides, SmsSendAction sends, one outreach_messages row per grant (run 94, R245)",
+   "at": "2026-09-05T10:55:53",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-121",
+   "chose": "JobCreateAction is the one create path for work_orders; job.created is emitted here and nowhere else (run 96, R245)",
+   "at": "2026-09-05T13:46:19",
    "ruling": "R245"
   },
   {
    "module": "C-Billing",
-   "chose": "revenue recovery counts what came back after the ladder started: top-ups and grants dated from the dunning row's creation, against the agreed monthly value at risk; the phone answers on every rung and the ladder never resets from this screen \u2014 BillingLedgerEngine is Track 1's (\u00a745A, G9-31, G1-19, G1-28, R211). Test: RevenueRecoveryScreenTest",
-   "at": "2026-09-04T20:26:12",
+   "chose": "a duplicate ARB subscription (E00012) is reused, never re-created; the existing id comes from the vendor (run 97, R245)",
+   "at": "2026-09-05T16:22:13",
    "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "X-198 \u2014 a discrepancy is reviewed, never corrected: reconciliation_runs carries reviewed_at/reviewed_by_user_id, GatewayEngine::reviewDiscrepancy refuses a balanced run (NothingToReviewException) and is idempotent on a reviewed one, the numbers on the run are never written again; the screen lists discrepancy_logged runs only and the cross-account roll-up is a finished waiting state (OWNER ACTION 15, X-198 anchor). Test: ReconciliationDiscrepanciesScreenTest",
-   "at": "2026-09-04T20:51:08",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "X-198 \u2014 same account is the account's own proof: per connection where money lands, the payments and payouts that landed there and the last reconciliation; a detached payment (connection row gone) attaches to one of this account's connections once \u2014 GatewayEngine::attachPayment refuses a payment that already lands somewhere (PaymentAlreadyLandedException), a payment is never moved (\u00a7134.1, X-198 anchor); pulling payouts is a finished waiting state until the gateway exposes a payout read. Test: SameAccountScreenTest",
-   "at": "2026-09-04T20:54:10",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-201",
-   "chose": "X-201 \u2014 a dispute is never submitted empty: DisputeDefenseEngine::submit refuses unless the bundle is compiled (DisputeNotCompiledException), the queue compiles the invoice line plus the tenant's note, the outcome is a closed set (won/lost) through DisputeOutcomeAction and a loss records the clawback; evidence from telephony and signature capture and the deadline from the gateway's webhook are finished waiting states (G1-08, X-201 anchor). Test: DisputeQueueScreenTest",
-   "at": "2026-09-04T20:59:03",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-201",
-   "chose": "X-201 \u2014 the tenant's card: the bundle compiles itself and the tenant adds what only they know \u2014 DisputeNoteAction compiles the invoice line with the first note and the note alone after; DisputeDefenseEngine::compile refuses a submitted, won or lost dispute (DisputeAlreadySubmittedException) because a submitted bundle is sealed; approval submits through DisputeSubmitAction; there is no refund verb on the card (N-010) and the deadline is a finished waiting state on the gateway's chargeback webhook (N-011, \u00a7156.3). Test: DisputeCardScreenTest",
-   "at": "2026-09-04T21:46:53",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-120",
-   "chose": "X-120 \u2014 the vault's door takes the number, the expiry and the name and keeps none of them: CardPresentAction checks Luhn, the month, the expiry and the name, derives brand and last four, writes no row, dispatches no event and logs nothing, and answers waiting_on_tokenisation; the screen clears the number in a finally so it is never round-tripped, and the finished state is 'Waiting on Stripe tokenisation' until Stripe Elements or a tokenisation contract exists; the security code has no field of any name (N-046, N-047, N-120-01, P-196, ruling 20/21). Test: CardScreenTest::test_card_door_takes_number_expiry_and_name_stores_nothing_and_never_shows_the_number_again",
-   "at": "2026-09-04T21:48:39",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-117",
-   "chose": "X-117 \u2014 the cart block is the catalogue and the cart, customer-facing behind tenancy: CheckoutEngine::addToCart refuses more than the stock (SoldOutException, before any write), reads inventory and writes only the cart row \u2014 stock comes off at paid, never at cart (\u00a7147.2); the countdown is the row's expires_at, never moved by render, add or remove, restarted only when a cart is new or expired (G16-05); prices are read from sellables, never written; Check out is a finished waiting state on the checkout block, where every charge takes a fresh authorisation (G1-15). Test: CartBlockScreenTest",
-   "at": "2026-09-04T21:52:13",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-117",
-   "chose": "X-117 \u2014 the checkout block is the fresh-authorisation door: CheckoutEngine::checkoutCart refuses a missing, expired_ or ALREADY-USED authorisation (an orders.auth_token match \u2014 G1-15, G1-39: a second charge on a stored token with no new consent is refused), an empty or expired cart, and any short line before anything is written; then one order, N lines, stock off at paid (\u00a7147.2), the cart row deleted, InventoryUpdated per line; a tap on Authorise mints the authorisation event and pay() clears it in a finally so it is never round-tripped; cancel reverses stock through OrderCancelAction; the card is never asked for here (P-160) and the capture through the gateway is a finished waiting state. Test: CheckoutBlockScreenTest",
-   "at": "2026-09-05T01:30:24",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-173",
-   "chose": "X-173 \u2014 the conflicts list is where a person closes a sync conflict and the only place: AccountingSyncEngine::resolveConflict answers status refused for a blank or 'uncategorised' answer (posting to uncategorised is not a resolution) and for a resolved row (a resolution is not overwritten silently), status resolved otherwise \u2014 an array answer, not an exception, is the module's shape; the sync path never calls it, so a conflict row is never auto-closed (anchor, \u00a7141.5); no event \u2014 a person's decision is not an inference; sync.conflict (\u00a7141.5) is absent from the generated manifest, UNRESOLVED on Track 1's scaffold. Test: ConflictsListScreenTest",
-   "at": "2026-09-05T01:30:28",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-173",
-   "chose": "X-173 \u2014 the connection-mapping screen: AccountingSyncEngine::mapAccount maps one category to one ledger account per connection (updateOrCreate keyed on business, connection, category \u2014 a remap replaces, never duplicates; \u00a730.5 reviewed once then automatic), refuses a blank part and an inactive or foreign connection with a status refused answer; AccountingMapAction delegates and returns that array (X173Test reads no return); the OAuth connect is a finished waiting state that writes no row \u2014 a connection with a made-up token is a guess (\u00a7141.5 never guesses silently); QuickBooks/Xero/Sage credentials are UNRESOLVED (owner). Test: ConnectionMappingScreenTest",
-   "at": "2026-09-05T01:30:32",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-173",
-   "chose": "X-173 \u2014 the sync error rate counts every line the run saw: AccountingSyncEngine::rateOf is conflicts over records_synced + conflicts_count and null \u2014 'nothing to sync', never a healthy 0% \u2014 when nothing was seen; errorRate(businessId, runId) reads a run and delegates to it; the overall line is rateOf over the tenant's sums (\u00a730.5 a failed line is a dead letter not a silent gap; the tracker's UNKNOWN-not-STALE invariant); a run's conflicts open under its row in-page because routing is Track 1's. Test: SyncErrorRateScreenTest",
-   "at": "2026-09-05T01:30:36",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-199",
-   "chose": "X-199 \u2014 paid today is the recorded payment time: invoices.paid_at (nullable, indexed) is stamped by InvoiceEngine::recordPayment in the same write that sets status paid, and MoneyPaidToday reads and orders by it \u2014 an old paid invoice edited today is not paid today, and a paid row with null paid_at predates the column and is not counted; the screen reads, it never writes (\u00a758.4). Test: MoneyPaidTodayScreenTest",
-   "at": "2026-09-05T02:04:48",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-211",
-   "chose": "the late-fee term is a ROW on ar_plan_terms \u2014 late_fee_percent and late_fee_cap_cents, nullable, beside the plan threshold; null means the agreement names no late fee and ArEngine::applyLateFee throws FeeWithoutTermException before any write (G1-71); the percent and the cap replace the engine's 10 % / $50 literal (P-193). Rejected: a per-invoice term column (the agreement is the tenant's terms; X-121's quote is Track 1's spine, ruling 8); keeping the literal (P-193); a caller-supplied hasTerm flag (ruling 15 \u2014 a refusal clause is not a refusal). Consequence: a tenant with no term written gets no late fee until the owner writes one. Test: X211Test::test_a_fee_with_no_matching_term_is_refused",
-   "at": "2026-09-05T03:34:23",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-211",
-   "chose": "the ageing screen is the fee door and the term door \u2014 the late-fee term is written on the page through ArSetLateFeeTermAction (ArEngine::setLateFeeTerm, updateOrCreate on the tenant's ar_plan_terms row, ArLateFeeTermSet emitted; percent 1\u2013100 required, cap optional), and a fee is applied per overdue row through ArApplyLateFeeAction; FeeWithoutTermException is rendered as a finished attention state on the same page, never swallowed (G1-71, P-193). Rejected: the term on the paymentplan builder (that page is the schedule threshold, not the fee); a default term seeded on tenant provisioning (a tenant with no term written gets no fee \u2014 the R245 decision of 03:34); a fee button with no amount (the amount is the owner's, the cap is the row's). Consequence: the first fee a tenant applies is refused until the term is written on the same screen. Test: AgeingByReasonScreenTest::test_a_late_fee_is_refused_without_a_term_and_applied_inside_it",
-   "at": "2026-09-05T06:31:52",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-199",
-   "chose": "X-199 owns reads of invoices; X-211 consumes and asks",
-   "at": "2026-09-06T04:24:08",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-199",
-   "chose": "the X-211 screens read invoices only through X-199's InvoiceReader; X-211 owns no query against invoices or invoice_lines",
-   "at": "2026-09-06T04:42:01",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-211",
-   "chose": "logOfflinePayment now refuses input it used to accept, naming G1-74, N-033 and UnreferencedPaymentException",
-   "at": "2026-09-06T05:07:30",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "R245: X-117 and X-198. X-117 emits cart.checkout on every completed checkout (both checkout() and checkoutCart(), inside the transaction); X-198 captures it through GatewayEngine::capture() keyed x117-order-<orderId>; the listener returns without capturing while no merchant connection is connected. (CheckoutCaptureSeamTest)",
-   "at": "2026-09-06T06:49:07",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-117",
-   "chose": "(R245) For X-117 and X-198: The order an unconfirmed checkout creates is pending_payment. Only a non-null gateway_charge_id promotes it to paid. Tested in test_an_unconfirmed_checkout_leaves_the_order_pending.",
-   "at": "2026-09-06T07:09:36",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "(R245) For X-117 and X-198: The order an unconfirmed checkout creates is pending_payment. Only a non-null gateway_charge_id promotes it to paid. Tested in test_an_unconfirmed_checkout_leaves_the_order_pending.",
-   "at": "2026-09-06T07:09:42",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-117",
-   "chose": "(R245) the value checkout returns is read from the row after the checkout event, so a synchronous listener's promotion is visible to the caller",
-   "at": "2026-09-06T07:29:07",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-117",
-   "chose": "(R245) an orders row written without an explicit status defaults to pending_payment, not paid; sold_out and refused are envelope statuses that never reach the row",
-   "at": "2026-09-06T07:48:46",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "(R245) a gateway decline is recorded, not erased: the charge attempt rolls back but a status=failed payment row is written outside that transaction and the original exception is rethrown, so X-199's declines screen has something to show",
-   "at": "2026-09-06T08:00:12",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "(R245) idempotency skips failed rows: an attempt that charged zero times is not the thing being deduplicated, so a card that declines once can be retried on the same key",
-   "at": "2026-09-06T08:00:15",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "(R245) a payment row says what happened: captured on a non-null gateway charge id, awaiting_processor when no adapter was asked, failed when the gateway refused. pending is retired as a writer value.",
-   "at": "2026-09-06T08:22:40",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "(R245) payments.status defaults to awaiting_processor, not captured: a row that does not say what happened to the money has not had money taken.",
-   "at": "2026-09-06T08:22:40",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "(R245) a missing gateway key writes no payment row at all: StripeGatewayClient throws before any HTTP request exists, so nothing is known about the money, and a non-failed row would be honoured by capture()'s idempotency check and silently block the retry after the key is fixed",
-   "at": "2026-09-06T08:46:24",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "(R245) the J9 evidence artifact is regenerated, never edited: payment_status in storage/app/evidence/j9/charge.json is whatever a real test-mode capture wrote, and GatewayEngineTest asserts the file rather than a remembered value",
-   "at": "2026-09-06T09:00:15",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-199",
-   "chose": "(R245) a decline recovered on the same token is counted as recovered: if a later captured row on the same payment_token exists, the failure is marked as recovered",
-   "at": "2026-09-06T09:00:15",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-199",
-   "chose": "(R245) a lane test that seeds rows against a startOfWeek()/startOfDay() filter derives its timestamps from now()->startOfWeek() and keeps the clock frozen through the render; a literal date, or a relative offset with the clock cleared before the assertion, is green in the same second and red across a boundary",
-   "at": "2026-09-06T09:17:10",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-199",
-   "chose": "Deferred declines using DeclineDeferral model",
-   "at": "2026-09-06T09:38:16",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "(R245) a pay link is a real provider object persisted on X-198's own payment_links table keyed by (business_id, payment_id): the unique pair is the idempotency, a second click returns the first link and makes no provider call, and a locally-generated token is never stored because a fabricated URL under a decline is the screen lying about how to collect real money",
-   "at": "2026-09-06T09:56:37",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-199",
-   "chose": "(R245) settle up later is a durable deferral in X-199's own decline_deferrals table, not a column on X-198's payments and not Livewire component state: a hide that a remount undoes is the button lying, and payments' vocabulary is the gateway's alone (MONEY-65, recorded in full)",
-   "at": "2026-09-06T10:17:35",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "(R245) a value a money screen sends to the provider carries the persisted row's own currency and never a method default: PaymentLinkAction passes payment->currency, every StripeGatewayClient method takes its currency from the row it acts on, and the proving test seeds a non-USD payment and asserts the currency the client received (ruling 37)",
-   "at": "2026-09-06T10:17:35",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "(R245) an evidence-artifact test is committed only if the artifact exists: every evidence JSON in this lane is untracked and GatewayEngineTest fails hard on a missing file, so a test committed ahead of its artifact is a permanently red suite no code change can fix - run the command, read the artifact, then write the assertion in the same commit, and if the provider refuses record UNRESOLVED with the quoted error and commit no artifact and no test (ruling 39)",
-   "at": "2026-09-06T10:35:19",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "(R245) a column that stores a provider-issued string is text and a stub that returns a short one tests nothing: payment_links.url was varchar(255) and a live Stripe Checkout URL is 422 characters, invisible to four passing tests because every stub returned the same 44-character fiction - the column is text, at least one double returns a 400+ character URL, and the widening is a NEW migration because an edited one never reaches goaiez_antig_money (ruling 41)",
-   "at": "2026-09-06T10:54:58",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "(R245) a test double returns a value of the real thing's SHAPE and SIZE, read from this lane's evidence artifacts and never invented: the pay-link doubles returned a 42-character /pay/ URL while Stripe issues 477 characters on /c/pay/, and DeclinesScreenTest asserted that never-issued shape on the screen, so the blade's handling of a real URL was untested as well as the column (ruling 41 part 2, MONEY-69)",
-   "at": "2026-09-06T11:05:08",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-199",
-   "chose": "(R245) a persisted constant is worse than a per-mount fabrication: invoices.pdf_url held one hardcoded https://cdn.goaiez.com/invoices/inv.pdf for every invoice of every tenant and two screens rendered it as a live Receipt/Open PDF href to a file nothing generates - the writers stop setting it, the column stays null, the screens render a finished missing state instead of a dead link, and the real PDF is UNRESOLVED because this lane has no generator and no mounted surface to serve one from (ruling 43, MONEY-70)",
-   "at": "2026-09-06T11:36:25",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-211",
-   "chose": "(R245) a fabricated URL with no reader is still a fiction and dropping it is cheapest while nothing consumes it: ArEngine minted a per-invoice collections bundle .zip URL, persisted it on ar_collections_packages.bundle_url and carried it into ArPackaged, while nothing zips anything and no screen or listener reads it - the mint stops, the nullable column stays null, the event property is dropped because an always-null field on a published event propagates the fiction to every future consumer, and the real bundle is UNRESOLVED because this lane has no storage surface and no mounted route to serve one from (ruling 44, MONEY-71)",
-   "at": "2026-09-06T11:55:34",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-117",
-   "chose": "(R245) The checkout listener makes no gateway call and leaves the order pending_payment, waiting for a real token from a connected card-entry surface",
-   "at": "2026-09-06T12:08:29",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "(R245) a wave that deletes a code path owns every test that asserted it: ruling 45 removed the gateway call from CaptureCheckedOutCart and CheckoutCaptureSeamTest's three tests still asserted a Payment row and a paid order, so they are inverted to assert zero gateway calls, zero payment rows and a pending_payment order rather than deleted (ruling 46, MONEY-72b)",
-   "at": "2026-09-06T12:27:22",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-117",
-   "chose": "(R245) the X-117 checkout artifact evidences the checkout alone: the direct tok_visa capture is removed because a real charge id beside an order it did not pay for is a fabricated flow, and X-198's EvidenceChargeCommand plus GatewayEngineTest.php:12-13 already own that proof (ruling 48, MONEY-73)",
-   "at": "2026-09-06T12:48:15",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-117",
-   "chose": "(R245) a wave that deletes an artifact key owns every reader of it: ruling 48 removed gateway_charge_id from evidence/X-117/checkout.json but RuntimeProofCommand read it at :32 and :96, and the derived runtime-proof.json still certified X-117's doctor anchor with ch_3UCN2eFXLB0i1zXl1I413pEA - a charge id from a direct tok_visa capture that touched no cart and no order. After ruling 45 the checkout reaches no vendor, so there is no artifact id to capture: the command refuses and names the dependency, the stale proof is deleted, and X-117's anchor is honestly no runtime proof (ruling 49, MONEY-74)",
-   "at": "2026-09-06T13:14:42",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "(R245) the reconciled figure comes from the row the gateway wrote: reconcilePayout drops its $actualCents parameter and reads payouts.amount_cents, because a discrepancy computed from two caller-supplied numbers is a comparison the app makes against itself and never against the processor (ruling 51, MONEY-75)",
-   "at": "2026-09-06T13:28:59",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-201",
-   "chose": "(R245) N-009's exposure ledger returns null, not a figure: getExposure computed businessId * 100.0, a primary key printed as money (ruling 43), and no delivery or fulfilment store exists in X-117 or X-199 to supply the work-DELIVERED half \u2014 UNRESOLVED names that missing dependency and N009Test asserts null rather than certifying the fiction",
-   "at": "2026-09-06T15:36:54",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-201",
-   "chose": "(R245) getExposure's return type is standalone null, not ?float: a body of 'return null' makes float an unused member of the union at phpstan level 5, so the type the MONEY-79 brief dictated was an error the moment the ruling was obeyed \u2014 null is exact, phpstan-clean, and turns a restored fabrication into a TypeError at the boundary rather than a failed assertion (ruling 66, MONEY-79b)",
-   "at": "2026-09-06T15:57:11",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-173",
-   "chose": "(R245) an accounting line that carries no confidence is not a confident line: syncTransactions defaulted an absent tx['confidence'] to 0.95, above the 0.85 threshold, and an absent tx['category'] to the literal 'Job Revenue', so the least-informative ledger line took the confident branch and was posted to a guessed code \u2014 the exact outcome the TEST ANCHOR at AccountingSyncAction:26 forbids. Absence is now 0.0 and 'uncategorised', and inferCategory drops the $description parameter it never read (ruling 69's shape: fix the arithmetic, record the dead seam)",
-   "at": "2026-09-06T17:13:43",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-173",
-   "chose": "(R245) an empty state names what it waits on, not merely what has not happened: X-173's two empty states were made true by MONEY-82 and still named no dependency, and one of them carried the supervisor's own reviewer-facing sentence, so both now name the ledger OAuth credential that AccountingConnectAction's door refuses for (rulings 50(a), 73)",
-   "at": "2026-09-06T18:20:36",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-201",
-   "chose": "(R245) X-201's two empty states name the gateway chargeback webhook they wait on, and the page no longer claims work nobody does: the queue said the evidence compiles within the hour and the card said the bundle compiles itself, while DisputeCompileAction's only caller is DisputeQueue::compile(), a button the owner clicks. Nothing compiles on a schedule, so the copy says a bundle is compiled from the queue by hand (rulings 50(a), 21, 43)",
-   "at": "2026-09-06T18:42:11",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-201",
-   "chose": "(R245) X-201's per-row copy stops stating an automatic act: the deadline line said a person is raised inside 48 hours whatever the state, which is N-011 stated as fact while the command implementing it sits in no schedule, and the submitted line said the gateway's decision comes back through the queue, when the only writer of an outcome is the Won/Lost button an owner clicks. The line now renders the row's real deadline_at when it carries one and names the webhook dependency when it does not, and the submitted line names the owner as the one who records the decision (rulings 80, 50(a), 43, 59)",
-   "at": "2026-09-06T19:02:34",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-201",
-   "chose": "(R245) an assertion against static blade prose carries no apostrophe and no other e()-escaped character: the needle is escaped and the haystack is not, so the clause asserted is chosen to carry the load-bearing fact in characters that survive both sides (rulings 82, 76, 72)",
-   "at": "2026-09-06T19:17:24",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-173",
-   "chose": "(R245) a connection flag that reports whether an external system is reachable is derived from the credential that would reach it, never written as a literal: is_active is accessToken !== null, so the active pill an owner reads and the mapAccount guard both tell the truth about a checkout with no ledger OAuth (rulings 84, 43, 73a, 74)",
-   "at": "2026-09-06T19:40:23",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-211",
-   "chose": "a string a screen prints to an owner carries no internal rule id",
-   "at": "2026-09-06T20:01:33",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-120",
-   "chose": "a test asserts a state through the element that renders it, never through a phrase spliced into neighbouring prose.",
-   "at": "2026-09-06T20:01:56",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Billing",
-   "chose": "(R245) a screen tells the owner a payment was taken only when a payment was taken; where an action grants credit with no charge, the sentence says so and names the charging path it waits on.",
-   "at": "2026-09-06T20:25:21",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Billing",
-   "chose": "R245: a screen names what has not happened yet and what it waits on, in the owner's words \u2014 never a module id, a rule id, or an automatic act no code performs; and a figure panel renders the rows that exist rather than a fixed list of labels.",
-   "at": "2026-09-06T20:45:10",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-199",
-   "chose": "R245: a screen names what has not happened yet and what it waits on, in the owner's words \u2014 never a module id, a rule id, or an automatic act no code performs; and a figure panel renders the rows that exist rather than a fixed list of labels.",
-   "at": "2026-09-06T20:45:10",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-201",
-   "chose": "R245: a screen names what has not happened yet and what it waits on, in the owner's words \u2014 never a module id, a rule id, or an automatic act no code performs; and a figure panel renders the rows that exist rather than a fixed list of labels.",
-   "at": "2026-09-06T20:45:10",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Billing",
-   "chose": "R245: an owner never reads the schema's own vocabulary - a screen names a meter type through a display map shared by every screen that prints one, and falls back to the raw type so an unmapped meter is never blank. R245",
-   "at": "2026-09-06T20:58:58",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Billing",
-   "chose": "R245: a refusal an owner reads is written in the owner's words and names what it waits on \u2014 never the schema's status vocabulary, never a checker token like REFUSAL:, and never an instruction to retry a door that cannot succeed.",
-   "at": "2026-09-06T21:52:23",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "R245: a screen never tells an owner where their money lands unless the code routes it there - charges in this checkout are taken on the platform account, a recorded merchant account is named as recorded and nothing more, and an error heading names the act that failed rather than the screen it failed on.",
-   "at": "2026-09-06T22:24:35",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "R245: an owner-facing refusal renders in the branch the door that raises it lives in \u2014 a panel inside one arm of an @if is invisible to the empty state whose own button calls it; and a screen that cannot record a merchant account says so rather than promising that payments land or that a payout import is pending.",
-   "at": "2026-09-06T22:47:55",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-173",
-   "chose": "R245: an owner-facing string carries no internal section id, and a screen header describes what the screen does rather than asserting machinery that has never run - the ledger sync has no production caller and the connect door refuses by design, so the header names the dependency instead of the flow.",
-   "at": "2026-09-06T23:14:38",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-201",
-   "chose": "R245: a confirmation a screen shows an owner reports only what this app did - X-201 has no transport of any kind, so submitting a defence seals and records it here and says plainly that nothing was sent; and a payment plan is written offered, never accepted, because no acceptance path exists and nothing in X-211 can reach a customer.",
-   "at": "2026-09-06T23:40:38",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-199",
-   "chose": "R245: an overflow is recorded charged only when the gateway issued a charge id - GatewayEngine::capture calls a processor only for a stripe connection and otherwise returns a payment awaiting_processor without throwing, so deriving charged from the absence of an exception told the owner the card on file had covered money that never moved.",
-   "at": "2026-09-07T00:00:04",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "a capture is announced only when the gateway issued a charge id \u2014 PaymentCaptured fires from GatewayEngine::capture() only on a non-null gateway_charge_id, because capture() makes no external call for a non-stripe connection and an event named for a capture that did not happen propagates to every future listener.",
-   "at": "2026-09-07T00:21:34",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-199",
-   "chose": "a partial payment records the money and nothing else - recordPayment derives the invoice status from paid_cents against total_cents instead of writing paid unconditionally, because every unpaid and overdue query filters on status before the paid_cents clause, so a partially paid invoice left the Unpaid screen, the ageing and the overdue chase while the customer still owed the balance.",
-   "at": "2026-09-07T00:39:25",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-211",
-   "chose": "a partial offline payment keeps the reason the invoice was being chased - logOfflinePayment writes the invoice's own status on the losing branch instead of the issued literal, because ReceivableState moves to current only on paid, so a part-paid overdue invoice read issued while the receivable still said the account was being chased",
-   "at": "2026-09-07T01:40:56",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-199",
-   "chose": "the paid-today tile names the invoice value it sums rather than cash received - the screen totals total_cents over invoices that became paid today, and no per-instalment receipt date is stored anywhere in this lane, so the label states what is computed and the screen names the missing dependency",
-   "at": "2026-09-07T01:40:56",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Billing",
-   "chose": "the revenue-recovery row names the credit it sums rather than money recovered - the figure sums topup and grant ledger entries, the top-up button on the same row grants credit and takes no card, and LedgerGrantAction has no caller outside the tests, so nothing on this ladder is money that came back",
-   "at": "2026-09-07T02:21:16",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Billing",
-   "chose": "the dunning ladder prints its service settings as a recorded intent rather than a state - phone_answering, ai_enabled and voicemail_only are written by advanceDunning and read by no code that switches a phone or an agent, so the row says what the ladder set and not what the account is doing",
-   "at": "2026-09-07T02:21:16",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-117",
-   "chose": "the storefront says stock comes off when the order is placed rather than when it is paid - checkoutCart decrements inventory_quantity in the same transaction that creates the order pending_payment, and ruling 45 leaves no path to paid, so the cart header and the checkout waiting state now say what the engine does and name cancel as the only way back",
-   "at": "2026-09-07T03:25:05",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-117",
-   "chose": "the cart line says the cart expires rather than that stock is reserved - addToCart never touches inventory_quantity and its sold-out guard counts only this cart, so two sessions can each hold the last unit, and the only thing expires_at governs is the cart row itself",
-   "at": "2026-09-07T04:03:23",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-199",
-   "chose": "the declines tile and empty state name the window they are showing - the startOfWeek and deferral filters are both inside the showAll branch, so a tile headed this week counted every decline ever the moment the owner pressed Show all",
-   "at": "2026-09-07T04:03:23",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-117",
-   "chose": "the storefront says the cart expires and holds nothing, and prices come from the catalogue rather than a pricebook this module never reads - addToCart never touches inventory_quantity so no cart holds stock, and X-117 imports no pricebook model at all",
-   "at": "2026-09-07T04:55:37",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-120",
-   "chose": "the card vault empty state says no card has ever been kept and names Stripe tokenisation as what it waits on, and the submit button says Check rather than Keep - card_tokens has no production writer anywhere in the app and CardScreen::present() keeps nothing, so the button contradicted its own result message one click apart",
-   "at": "2026-09-07T05:30:59",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "the same-account pill says recorded only because is_connected is written true unconditionally by connect() and no production path writes false; the column and its capture guard are unchanged",
-   "at": "2026-09-07T07:35:01",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Billing",
-   "chose": "the credits headline is labelled Credit balance because the figure is the single account balance every meter type draws down, not an AI slice; and the ledger empty state names top-up as the only writer this checkout has",
-   "at": "2026-09-07T07:35:01",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-201",
-   "chose": "owner copy on the dispute queue names the missing cross-account read path in owner words and carries no internal action id",
-   "at": "2026-09-07T07:35:01",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-117",
-   "chose": "G18-29's fulfilment-vocabulary refusal is restored from main and adapted to pending_payment because ruling 45 leaves no path to paid; the 81 lines were main's one-sided addition that the 978041fc merge dropped under ruling 54, not a deletion by this lane, and no test in this lane cited G18-29",
-   "at": "2026-09-08T04:51:19",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "the merchant pill says not applied rather than external gateway because every charge in this lane posts with the platform key and no Stripe-Account header exists in X-198, so naming an external gateway denies the property the code has; the pending_kyc arm is unreachable in production because the only ProcessorAdapter binding in the tree is a test double, and that is recorded rather than fixed",
-   "at": "2026-09-08T05:16:27",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-211",
-   "chose": "the collections pill says a handover is recorded rather than sent because transmitted_at and partner have no writer outside a test fixture and the module has no transport of any kind, so the true arm asserted a transmission this app cannot perform; both columns stay, correct the day an operator records a real handover",
-   "at": "2026-09-08T05:16:27",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-201",
-   "chose": "a dispute whose status is submitted reads sealed, not sent because submit() seals a row and the module has no transport, and the screen's own confirmation already said nothing was sent two lines above the pill contradicting it; the status column keeps its vocabulary and only the label changes",
-   "at": "2026-09-08T05:16:27",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-199",
-   "chose": "the declines button offers to make a pay link rather than to send one because X-199 has no Mail, Notification or Http call anywhere and PaymentLinkAction creates and persists a link the owner sends themselves; the action's own catch already said the link was not made",
-   "at": "2026-09-08T05:47:42",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-201",
-   "chose": "the dispute buttons offer to seal rather than to submit because the module has no transport of any kind and submit() only updates a row; the pill and the confirmation on the same screens already say sealed and not sent",
-   "at": "2026-09-08T05:47:46",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-173",
-   "chose": "the conflicts button records an account and the sync engine says a line is recorded rather than posted because X-173 has no Http call anywhere and its connect door cannot succeed, so no ledger exists to post to",
-   "at": "2026-09-08T05:47:46",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-173",
-   "chose": "the sync engine records a mapping rather than posting one because X-173 has no Http call anywhere and its connect door cannot succeed, so no ledger exists to post to; this is the same sentence the conflict path already carries and the fact is not stated two ways",
-   "at": "2026-09-08T06:16:08",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "the connect card heads recorded gateways rather than Connect Gateway because both controls under it refuse - applyForMerchant on the absent processor adapter and connect on the absent Stripe client id - so the card manages nothing and the heading an owner reads in the non-empty arm said it did",
-   "at": "2026-09-08T06:16:08",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-211",
-   "chose": "an escalated invoice is not told it will be spared a reminder sequence because X-211 has no reminder action in its dunning vocabulary and no Mail, Notification or Http call anywhere, so no invoice ever enters one and the clause implied a capability nothing has",
-   "at": "2026-09-08T06:34:28",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-117",
-   "chose": "the checkout card heads nothing authorised yet in an attention state because the auth token is a real one-shot nonce and a fabrication as a payment instrument, so no gateway ever saw it, and the heading and its state carried none of the qualifier the sentence buried at its end",
-   "at": "2026-09-08T06:34:28",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-117",
-   "chose": "the checkout event no longer carries the auth token because that string is minted by this app and ruling 45 traced it to Stripe's source parameter, which only Stripe can issue - the nonce role stays on the order row where the double-charge guard reads it, and the field had no reader on the event at all",
-   "at": "2026-09-08T07:03:42",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "a detached payment names whose reference it is showing, a payments total is grouped by the row currency, and a payouts figure of zero says no payout has ever been imported because nothing imports one - the idempotency key is this app's own string and stood where a gateway charge id belongs, amount_cents was summed across a real per-row currency column, and payouts has no writer outside tests",
-   "at": "2026-09-08T08:20:09",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "the payments cell on the same-account screen is one string built in the component rather than a blade loop because livewire wraps every foreach and if in block marker comments, so an assertSee needle that begins outside the loop and ends inside it can never match - the last reconciliation cell two lines down already had this shape and stayed green throughout",
-   "at": "2026-09-08T08:56:13",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-211",
-   "chose": "money's packageForCollections keeps its ?int $packagedByUserId and main's boolean is not adopted \u2014 a caller-supplied flag certifies itself while a principal id varies and is auditable",
-   "at": "2026-09-08T10:22:42",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-173",
-   "chose": "inferCategory keeps its two-parameter signature and main's test adapts \u2014 the module winning over the caller",
-   "at": "2026-09-08T10:22:54",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-199",
-   "chose": "money's five owner-layout screens open at h2 because the account layout emits the page h1 as sr-only and the blades kept theirs when the merge adopted the layout attribute",
-   "at": "2026-09-08T10:51:08",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-211",
-   "chose": "the offline-payment refusal is asserted on money's own UnreferencedPaymentException and message because the module wins over an adapted test",
-   "at": "2026-09-08T10:51:08",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-211",
-   "chose": "the late-fee refusal is asserted on money's own FeeWithoutTermException and its write-nothing sentence main's needle was a case-sensitive mismatch against money's message and the module wins over an adapted test",
-   "at": "2026-09-08T11:15:27",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-199",
-   "chose": "the evidence artifact evidences the invoice and its number sequence, not an unlinked gateway charge, because payments carries no invoice column so the charge and the invoice status were two unrelated facts printed as one flow",
-   "at": "2026-09-08T13:16:38",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-211",
-   "chose": "the recovery artifact evidences the plan and its refusal, not an unlinked gateway charge, for the same reason",
-   "at": "2026-09-08T13:16:38",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "the j9 evidence artifact evidences the gateway charge and nothing else, because payments carries no invoice column so the charge id and the invoice status were two unrelated facts printed as one flow",
-   "at": "2026-09-08T13:48:14",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "the three merchant screens wear main's agency layout attribute, adopted per hunk with no other main hunk, because the merge resolution that kept money's body dropped it and the screens fell through to the staff console",
-   "at": "2026-09-08T13:48:14",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "J9's method name states what the artifact proves - a real gateway charge id with no invoice tied to it - because payments carries no invoice column, while the evidence slug invoice-to-paid is keyed by Doctor/Stages/JourneyStage.php and may not move",
-   "at": "2026-09-08T14:15:57",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-199",
-   "chose": "the invoice due date comes from the customer's stored credit terms row and not from the caller's termsType argument, because the row already knows and a caller-supplied value is a second place for the truth to disagree; the parameter stays because it founds the terms row when the customer has none",
-   "at": "2026-09-08T14:53:31",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-199",
-   "chose": "the draft path reads the same credit terms row the issue path does and falls back to its dueDays argument only when the customer has no row, because two writers of invoices.due_date that cannot agree is the same defect one path over; the action is kept, not deleted, because it is the only implementation of the declared invoice.draft capability",
-   "at": "2026-09-08T14:53:38",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-199",
-   "chose": "a draft invoice row states that it was never issued and that nothing in this checkout issues a draft, instead of reporting a missing PDF, because pdf_url is permanently null since the fabricated constant was removed and the plan declares invoice.draft as a job.completed subscriber meaning an invoice you finish later; no draft to issued transition is built, because minting one so a plan line comes true inverts the dependency",
-   "at": "2026-09-08T15:13:47",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-173",
-   "chose": "the sync screen says its lines were categorised inside this app and that nothing is posted to a ledger from here, because the module has no transport at all and its other two screens already assert that nothing was posted; the records_synced column is not renamed because it has six readers and synced is the module's own verb for the local categorisation",
-   "at": "2026-09-08T15:53:22",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-199",
-   "chose": "the invoice due latch is named due_detected_at rather than due_notified_at, because the module notifies nobody and the column is written daily by a scheduled command, so its name was the only place the truth could live; the command signature x199:mark-due is left alone although it marks nothing due, because it is pinned in a CHECK file that is another lane's, and X-120's alert_sent is left alone because its declaration line carries a TEST ANCHOR comment",
-   "at": "2026-09-08T15:53:26",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-199",
-   "chose": "a test that reads a row after x199:mark-due re-establishes the tenant with Tenancy::actingAs, because the command ends in Tenancy::forgetAll and Model::fresh bypasses the Eloquent scope but not RLS, so the read returns null with no tenant set; the command is not changed, because a scheduled sweep over every owner must leave no ambient identity behind and X-211's sibling command and its test already work this way",
-   "at": "2026-09-08T16:09:23",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-211",
-   "chose": "a screen that cuts a list says so on the page and keeps the end the screen exists to show, so the invoice thread takes the newest fifty messages and renders them oldest first and the orders list says when older orders are not shown, because an ascending order under a limit throws away the most recent messages which are the ones that explain why an invoice is unpaid; the limit is not removed and no pagination is built, because there is no pagination component in the kit and the kit is another track's",
-   "at": "2026-09-08T16:54:47",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-211",
-   "chose": "an empty state names what has not happened and what it waits on, so the invoice thread screen says no invoice is open and that nothing in this checkout raises one from a completed job, instead of saying every issued invoice is paid; nothing in production creates an invoice at all, so that branch is the state every real tenant is in and the old sentence described a ledger that settled and never existed; the same clause is stated in X-199's existing words so the lane states one fact in one form, and no query, heading, picker or door changes",
-   "at": "2026-09-08T17:40:39",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-211",
-   "chose": "an empty state that reports a settled ledger to an account with no ledger is the same fiction as one that reports a paid one, so the ageing screen says no invoice is past its terms and the payment-plan builder says there is no open invoice to split by either route, instead of saying every issued invoice is inside its terms or already on a plan; and every one of these four screens now names both unbuilt halves rather than one, because the frozen plan raises a draft from a completed job and no draft to issued transition exists, so the hand-off alone fills none of them; no transition, dispatcher, query, heading or door is built to make any sentence true",
-   "at": "2026-09-08T18:01:53",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Billing",
-   "chose": "a screen that reads a table nothing writes may not report a healthy account, so the revenue recovery empty state says no account has been put on the dunning ladder and that nothing in this checkout puts one there, instead of saying this account is current, and the dunning board names the same missing dependency in front of the true sentence it keeps; the only writer of a dunning state sits behind a create branch neither advance button can reach, because both take an existing row id, so the table is empty forever for every real tenant and the empty state is the only thing a real owner ever sees; no writer, scheduler, query, heading or button is built to make either sentence true, because a ladder starts from a missed subscription payment and that path is another track's",
-   "at": "2026-09-08T18:23:07",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-199",
-   "chose": "an empty state that is true but names no dependency still leaves the owner without the one fact they need, so the paid list says no invoice has been paid, the paid-today screen keeps its promise and adds the dependency, the declines screen says a decline is written when a charge on a card on file is refused and that nothing here charges one, and the credit-terms screen stops promising that terms appear the moment a first invoice raises them; nothing in production raises an invoice, the overflow card is never armed because the terms screen can only edit an existing row and never passes a token, and no writer, transition, door or query is built to make any sentence true",
-   "at": "2026-09-08T18:48:33",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-211",
-   "chose": "an empty state that is true and names no dependency leaves the owner without the one fact they need, so the collections list now says no invoice can go overdue because nothing raises one, and the storefront's orders list now says no order can be placed because nothing writes the catalogue a cart is built from; the storefront door works and only the catalogue is missing, so the two screens name different dependencies, and no writer, importer, transition or door is built to make either sentence true",
-   "at": "2026-09-08T19:12:30",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-173",
-   "chose": "a list an owner reads has a defined order, so the card list, the recorded gateways list and the account mappings list are read with an explicit id ordering instead of an unordered get, because an unordered read is returned in heap order and each of these three screens carries a button that rewrites a row in the list it is rendering, so the list could reshuffle with nothing added and nothing removed; two of the three already had an ordered sibling query, one in the same module and one on the line directly above, and no window, paginator, writer or ordering vocabulary is introduced",
-   "at": "2026-09-08T19:35:04",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-173",
-   "chose": "a screen that takes a value from an owner must be able to refuse it in words the owner reads, so the ledger mapping door and the conflict resolution door now refuse a field longer than the 255 characters their column holds and every door in the module ends in a catch that turns any other failure into a sentence, because these were the only two of the lane's twenty-one inputs whose refusal path could not answer the owner and an over-long name reached Postgres as a value-too-long error with nothing to catch it; the column is not widened and no framework validation is introduced, because a second refusal vocabulary is a second place for the truth to disagree",
-   "at": "2026-09-08T20:02:47",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-117",
-   "chose": "Scoped cart line lookups and added a notice for lines missing from the catalogue so the total adds up.",
-   "at": "2026-09-08T20:22:49",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-199",
-   "chose": "The overdue reader takes the business it reads for, and the chase and dispute-evidence reads carry their own business_id.",
-   "at": "2026-09-08T20:43:02",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-211",
-   "chose": "The plan builder reads its threshold row instead of creating one, says the limit is a standing default rather than an account setting, and refuses to preview a split the offer door would refuse.",
-   "at": "2026-09-08T21:10:03",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-211",
-   "chose": "A threshold lookup never writes the row it reads: both the plan builder's render and the engine's refusal comparison read ar_plan_terms or fall back to the model default, so the row exists only when the owner's late-fee door wrote it.",
-   "at": "2026-09-09T00:37:42",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-211",
-   "chose": "The late-fee cap is a ceiling on the invoice and not on one application of it: applyLateFee reads what the receivable already carries, applies only the headroom the term still allows, and refuses at the ceiling instead of writing a zero fee, so the policy the screen prints is the policy the module enforces.",
-   "at": "2026-09-09T01:04:57",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-173",
-   "chose": "A refused capability's stated reason is a measurement that decays: three of the lane's refusal notes described a tree that no longer exists and now state what is true today, and the sync-conflict note says it asserts a constant rather than the capability, with a second call that makes the test's own name true.",
-   "at": "2026-09-09T01:37:06",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-211",
-   "chose": "the overdue sweep counts the invoices it saw as well as the ones it dispatched, so an account whose every overdue invoice is already with a human is no longer reported as having none",
-   "at": "2026-09-09T02:03:20",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "An exception message is owner copy in this lane, because twenty-one Ui catch blocks render it verbatim: the gateway client now states the gateway's own sentence instead of its raw response body, names the missing credential instead of its config key, and X-201's fraud defence names the evidence it still needs in owner words instead of four column tokens.",
-   "at": "2026-09-09T02:25:51",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "A refusal message states what the method did, never what the system did: the gateway client no longer claims nothing was recorded when its caller records a failed payment row and rethrows, and X-199's single log line \u2014 the whole of this lane's operator-facing surface across 264 files \u2014 now names the business, customer, invoice and amount it failed on.",
-   "at": "2026-09-09T02:42:18",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "A pay link is idempotent at the write and not at a pre-check: two presses of one button both reach the gateway, so the loser now hands back the row that won instead of dying on the unique index that was supposed to guarantee it, and the declines panel states the act once instead of three times.",
-   "at": "2026-09-09T03:03:27",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "A capture and a pay link now send the gateway their own Idempotency-Key, namespaced by business because every charge posts with the platform secret and no Stripe-Account, so a repeated request returns the first charge or session instead of taking the money twice or orphaning a payment page.",
-   "at": "2026-09-09T03:23:38",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "A capture's idempotency key carries the number of prior failed attempts for that pair, so two concurrent first attempts are deduped at the gateway while a deliberate retry after a decline gets a fresh key and is actually charged. The pay link keeps its key: it has no durable failure record to count, and its unique row already makes the retry safe locally.",
-   "at": "2026-09-09T03:41:21",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "A pay link's Checkout line item is built from the business and payment rows the action already loads, so the customer sees who is being paid instead of one constant sentence naming nobody, and a capture reads the tenant's declared currency from the businesses row instead of a method default that charged every tenant in dollars.",
-   "at": "2026-09-09T04:16:04",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "a capture records the gateway's own settlement word instead of the mere presence of a charge id, so a charge Stripe has taken but not settled is not announced as captured",
-   "at": "2026-09-09T04:36:48",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-199",
-   "chose": "The credits screen distinguishes an overflow the card refused from one the gateway took and has not settled, because R235 made a pending charge reachable and the row already carries the gateway id that tells them apart; and the same-account total leaves out declined attempts, which moved no money.",
-   "at": "2026-09-09T05:02:55",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-120",
-   "chose": "Cleared the PAN, expiry, and name in makeDefault and addCard methods as well as present's finally block to prevent snapshot leaking.",
-   "at": "2026-09-09T05:27:45",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-120",
-   "chose": "assertDontSee strips wire:snapshot before searching, so the card number - which no blade echoes - was asserted absent from a haystack it could never be in; the payload assertions use assertDontSeeHtml, the instrument the same test already used for CVV",
-   "at": "2026-09-09T06:21:26",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "payments.invoice_id has existed since 2026-09-04 (b64df05f) and has no writer and no reader here: rulings 102, 169 and 173 each recorded that the column did not exist and used it as J9's blocker. The column stays as it is - main's engine writes it, so a money-side dropColumn would arrive on Track 1's reverse merge as a drop of a column main fills. J9 stays UNRESOLVED with its reason corrected: money's capture() takes no invoice id, and the listener that would consume one marks an invoice paid off an event.",
-   "at": "2026-09-09T13:40:44",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-199",
-   "chose": "J9's blocker is the unconnected invoice-payment seam, not a missing column: payments.invoice_id, PaymentCaptured::invoiceId and RecordPaymentOnCapture all exist, capture() takes no invoice id, and the listener is registered by nothing because it would mark an invoice paid off an event. The stale reason is corrected in J9's comment and in X-199's runtime-proof refusal; nothing is wired and nothing is dropped.",
-   "at": "2026-09-09T17:10:06",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-117",
-   "chose": "An operator-facing string carries no internal rule id: X-117's and X-211's runtime-proof refusals and the X-117 checkout artifact's waiting_on value dropped their (ruling NN) pointers. Every factual claim in the four strings is measured true and stays byte-identical; only the pointer to a ledger no reader outside this checkout can resolve is removed.",
-   "at": "2026-09-09T17:39:38",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Billing",
-   "chose": "G1-80's metered billing sync is refused on measurement: C-Billing imports no gateway client and writes no meter row, so there is no usage to meter and nothing to sync it to, and the refusal is now named by a test in the module's own test tree",
-   "at": "2026-09-09T22:53:58",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "A citation names a decision in the frozen package, never a ruling number from this lane's supervisor ledger: the checker resolves an id by existence alone, so a lane number that collides with a real decision passes while pointing at the wrong thing, and one that does not collide is red. Where a comment already states the fact, the id is dropped and the sentence stands.",
-   "at": "2026-09-09T23:20:45",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "R211 is a real package decision and is kept; R101, R233, R235, R236, R237, R239 and R241 were this lane's own supervisor ruling numbers written as package citations, and where the sentence already states the fact the id is dropped. A citation resolving to the wrong decision is silent, because the checker asks whether an id exists and never what it is about, so a green citation stage is not evidence that a citation is right.",
-   "at": "2026-09-09T23:49:33",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-117",
-   "chose": "A specced capability cell is closable when its fifth column constrains a capability this module HAS, and vacuous when it constrains one the module does NOT have: a test written for the second kind is green because it matches nothing, which is the merged-wrong-lint trap, so the cell stays red and is recorded instead. Where the module actively refuses the capability, or satisfies its constraint by construction, the close is a real assertion on the real path and never a placeholder.",
-   "at": "2026-09-10T00:17:42",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Billing",
-   "chose": "A screen that renders a status column shows the ladder stage in the owner's words and never the schema's token, and its signal is derived from the values the engine actually writes: a ternary keyed on a value no code writes is a constant wearing a condition, and a fixture that seeds that value makes the only assertion of the pill certify a state production cannot reach.",
-   "at": "2026-09-10T00:47:45",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Billing",
-   "chose": "A screen shows an enumerated column in the owner's words and never the schema's backing string, and its signal is derived from the column that carries the meaning: an amount stored as an unsigned magnitude cannot answer which way the money went, and a ternary on its sign returns one answer for every row production writes.",
-   "at": "2026-09-10T01:21:56",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-117",
-   "chose": "A screen names an enumerated column in the owner's words, and its signal derives only from values the code can write. The order list rendered the raw token pending_payment, which is the state every real order is in, and its pill state was keyed on paid, which no code writes, so the signal was a constant across both reachable values.",
-   "at": "2026-09-10T02:48:23",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Billing",
-   "chose": "A screen that shows a future step says it is a plan and names what does not perform it, and a screen that shows an enumerated column shows the owner words and never the schema token. The dunning board headed a column Next Step over five strings transcribed from the frozen plan, whose own box is unchecked; nothing puts an account on the ladder, nothing advances it on a clock, and nothing switches a phone, an agent or a number when a day is reached. The invoice thread rendered ar_dunning_actions.action raw beside a reason the engine had already resolved to a label.",
-   "at": "2026-09-10T03:19:09",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-211",
-   "chose": "An invoice carries one plan and one collections package: the engine refuses a second before its first write, in the module's own exception vocabulary, rather than recording a second agreement. Both screens already excluded a planned or packaged invoice from their candidate lists, so a second call can only be a double press or a stale page. Not firstOrCreate, because a stale page may carry different terms and returning the old plan would report an agreement the owner did not ask for; and no unique index, because a raw 23505 reaches a Throwable tail as an SQLSTATE an owner reads, and a racing row cannot be committed from a second connection in this suite.",
-   "at": "2026-09-10T04:43:11",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-199",
-   "chose": "A rendered list orders on a column that cannot tie, or it carries an id tiebreak. Three X-199 lists ordered by created_at alone, and a test that freezes the clock - which ruling 33 requires on the declines screen - gives every row the same timestamp, so the render order was undefined and the paid list's limit decided which row was dropped arbitrarily.",
-   "at": "2026-09-10T05:32:42",
-   "ruling": "R245"
-  },
+  }
+ ],
+ "notes": [
   {
-   "module": "X-199",
-   "chose": "A tiebreak runs the same way as the clause it breaks: a list ordered ascending takes orderBy('id') and one ordered descending takes orderByDesc('id'). A DATE column ties by nature, since it carries no time component, so two invoices due the same day are identical in the ordering column and the render order is undefined without an id behind it.",
-   "at": "2026-09-10T06:24:22",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-199",
-   "chose": "A Domain reader that hands a collection to a screen owns its order: InvoiceReader's four due_date reads carry an ascending id tiebreak, because due_date is a DATE column with no time component and two invoices due the same day are identical in the ordering column. The proof lives on the reader rather than on the four screens that read it, because the contract is the return order and a reader assertion also covers a consumer nobody has written yet.",
-   "at": "2026-09-10T06:55:08",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-117",
-   "chose": "A list ordered on a column the writer does not keep unique is ordered only in part: sellables.name has no unique index and two catalogue items may share a name on purpose, so the catalogue takes an ascending id tiebreak behind the name. The module's own checkout decrements inventory_quantity on a sellable row, so an update moves that row in heap order and the list can reshuffle among same-named items after a sale.",
-   "at": "2026-09-10T07:11:35",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-211",
-   "chose": "a rendered loop that holds a per-row form control carries wire:key with that row's own id, because Livewire morphs an unkeyed loop by position and a row that leaves or moves carries the owner's typed value onto its neighbour",
-   "at": "2026-09-10T08:22:39",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-173",
-   "chose": "A rate above zero never renders as zero percent: round() sends anything under half a percent to zero, so a run with real conflicts printed 0% beside its own non-zero conflict count, and the label is computed in the component rather than in the blade because a blade is the one file in this checkout no analyser reads.",
-   "at": "2026-09-10T11:42:52",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-211",
-   "chose": "A message property is cleared by every action on its component, not only by the action that sets it: a success beside a stale refusal is one screen giving two answers AgeingByReason::logPayment left $refused standing from applyLateFee and CardScreen::makeDefault left $waiting standing from present, while both of their siblings cleared every property",
-   "at": "2026-09-10T12:25:35",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-211",
-   "chose": "A refusal names a remedy the owner can reach on the screen they are standing on, and the value a screen sends for a column with a declared vocabulary comes from the owner rather than from a literal AgeingByReason offered a photo on a form with no file input and recorded every offline payment as a cheque, while packageForCollections renders that word to the owner handing an account to an agency",
-   "at": "2026-09-10T13:03:59",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-199",
-   "chose": "A payment recorded with no amount named is the invoice's outstanding balance, never its full total recordPayment defaulted to total_cents and both screens omit the argument, so every press of Record payment closed the invoice at full value and added the whole total again to anything already part-paid, while Unpaid.php:100 computes the correct balance one cell away",
-   "at": "2026-09-10T13:34:30",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-173",
-   "chose": "A screen refuses a value it cannot use and says so about a value it cannot keep the connect door interpolated an unwhitelisted client-supplied provider into a dependency sentence and discarded the company id the owner typed without saying so, while the column, its writer and its rendered reader all exist",
-   "at": "2026-09-10T13:54:05",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-120",
-   "chose": "the expiry refusal names the four-digit requirement instead of echoing a two-digit year back as expired, because a message that echoes an owner's value is read in the owner's notation and not the app's",
-   "at": "2026-09-10T16:24:26",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-199",
-   "chose": "a payment is only recorded against an open invoice; paid and draft are refused before the first write, using InvoiceReader's own definition of open rather than a second literal list",
-   "at": "2026-09-10T17:03:45",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-201",
-   "chose": "A dispute is outcomed once: won and lost are refused before the first write, using DisputeQueue's own definition of not-yet-outcomed rather than a second literal list",
-   "at": "2026-09-10T17:24:18",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-117",
-   "chose": "An error heading names the act that failed and not the screen it failed on: where two or more acts can set the same message property, each act names its own heading at the top of its method, so a card's heading and its body can never disagree about which act failed.",
-   "at": "2026-09-10T18:48:36",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-211",
-   "chose": "An owner-typed value is bounded by the WIDTH of the column it reaches and not by the width of its name: late_fee_cap_cents is a Postgres integer, so a cap above 2147483647 is refused in ArEngine::setLateFeeTerm before the first write, because a value handed to Postgres returns SQLSTATE[22003] to the owner instead of an answer.",
-   "at": "2026-09-10T20:15:19",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-201",
-   "chose": "a refusal that names a missing input is measured against every surface that can supply it, and where none can it names the dependency instead of an instruction",
-   "at": "2026-09-10T20:48:57",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-211",
-   "chose": "A confirmation for an act that records a QUANTITY the owner supplied echoes that quantity back, read off the row the write produced and never off the input, so a unit mistake is legible at once.",
-   "at": "2026-09-10T22:36:59",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "A concurrent capture on one idempotency key lands one row The pre-check is check-then-act across a live HTTP call, so two concurrent captures both read null and both persist; the money moves once because of the Idempotency-Key header, but the local row lands twice and the same charge is summed twice on the same-account screen. A partial unique index on (business_id, idempotency_key) where status is not failed makes the second writer lose, and a catch arm that re-reads the pre-check's own query hands back the winner. The two are one change: a bare index would put the violation into the RuntimeException arm, which writes a failed row for a charge the gateway took and mints a fresh key on retry.",
-   "at": "2026-09-11T01:50:31",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-117",
-   "chose": "A colliding order number is re-minted, never handed back Two orders that draw the same handle are different orders, so returning the winner's row would hand a customer someone else's order; the partial index and the retry are one change because the index alone turns a cosmetic duplicate into a failed checkout.",
-   "at": "2026-09-11T02:20:24",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-211",
-   "chose": "A raced escalation or receivable state is absorbed into the row that won Every writer of both rows is already firstOrCreate, whose createOrFirst catches a unique violation inside a savepoint and returns the winner; without a unique index nothing raises, so two concurrent writers both insert. The escalation index is partial because an invoice keeps many dunning rows.",
-   "at": "2026-09-11T05:16:17",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-117",
-   "chose": "A raced add-to-cart is absorbed into the one cart for its session Both cart writers are updateOrCreate keyed on business and session token, whose createOrFirst catches a unique violation and returns the winner; without a unique index nothing raises, so two concurrent requests both insert and every reader's first() picks one of two carts.",
-   "at": "2026-09-11T05:31:01",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-173",
-   "chose": "A raced ledger mapping is absorbed into the one row for its category The one mapping writer is updateOrCreate keyed on business, connection and category, whose createOrFirst catches a unique violation and returns the winner; without a unique index nothing raises, so two concurrent requests both insert and the category is mapped twice.",
-   "at": "2026-09-11T05:50:33",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "A raced gateway connect is absorbed into the one connection for its gateway The one connection writer is updateOrCreate keyed on business and gateway name, whose createOrFirst catches a unique violation and returns the winner; without a unique index nothing raises, so two concurrent connects both insert and the business carries two connections for one gateway.",
-   "at": "2026-09-11T06:11:35",
-   "ruling": "R245"
+   "at": "2026-09-03T09:34:34",
+   "note": "bootstrap-done"
   },
   {
-   "module": "X-199",
-   "chose": "A raced terms row is absorbed into the one row for its customer Both terms writers are keyed on business and customer; the engine's was a plain read-then-create, so it becomes firstOrCreate, whose createOrFirst catches a unique violation inside a savepoint and returns the winner, and a unique index gives that catch something to catch. The two land together because the index alone would put an uncaught unique violation into invoice issuing.",
-   "at": "2026-09-11T06:31:50",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-211",
-   "chose": "A raced plan offer or collections package is refused as the guard refuses it An invoice carries one plan and one collections package, and each was guarded by a read before its insert, which refuses a second press but lets two concurrent presses both insert. A unique index on business and invoice makes the second insert fail, and a catch outside the transaction re-reads the row that won and throws the same refusal the guard throws. The loser is refused rather than handed the winner because the two offers can carry different terms.",
-   "at": "2026-09-11T06:55:01",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-117",
-   "chose": "A raced checkout on one authorisation is refused by the guard it raced An authorisation pays once, and checkoutCart guarded that with a read before its insert, which refuses a second press but lets two concurrent presses both place an order. A unique index on business and authorisation token makes the second insert fail inside the checkout's existing retry loop, whose re-run meets the same guard and refuses exactly as a sequential second press is refused, so no new catch is written and the loser's refusal cannot drift from the guard's.",
-   "at": "2026-09-11T07:14:44",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Billing",
-   "chose": "An empty state that says nothing in this app does a thing measures that claim over the whole app, never over the one table its screen reads. The four C-Billing screens read their own dunning ladder, usage meters and ledger, while the app's subscription dunning, call and message usage, and credit ledger live on other tables, so each empty state says what its own table holds and that the rest is recorded elsewhere and not read here.",
-   "at": "2026-09-11T21:44:55",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Billing",
-   "chose": "A balance or top-up confirmation on a money screen names the ledger it actually reads. C-Billing's ledger is a top-up ledger that nothing outside the module spends, while the tenant's plan and bought credit live on a separate credit ledger that the app shows apart, so these screens call it the top-up ledger and say it is separate rather than calling it the tenant's credit balance.",
-   "at": "2026-09-12T02:11:28",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-199",
-   "chose": "An invoice number is allocated from the highest existing number read in numeric order, with no upper digit limit. The counter pads to six digits but does not truncate, so a business past INV-999999 writes INV-1000000, and a read limited to six digits or sorted as a string would find INV-999999 again and be refused by the unique index on every later invoice.",
-   "at": "2026-09-12T05:00:12",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Billing",
-   "chose": "A C-Billing ledger row takes its timestamp from the app clock, never from the column default. The screens that read the ledger filter it against now(), so a row stamped by a second clock can be counted in a month it was not written in, and one clock for the writer and the readers keeps a pinned test clock and a real day in agreement.",
-   "at": "2026-09-12T13:37:49",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-199",
-   "chose": "MONEY-218: X-199 reads people through EntityReadAction and payments through X-198's PaymentReadAction; model imports gone from Ui and Actions",
-   "at": "2026-09-13T08:28:06",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-198",
-   "chose": "MONEY-218: PaymentReadAction is X-198's exported read seam (exists, declined, recovered, links, countForBusiness); read-only, tenant-scoped",
-   "at": "2026-09-13T08:28:06",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-104",
-   "chose": "MONEY-220: plugin install count renders in the owner shell on a real active install; admin door kept",
-   "at": "2026-09-15T11:05:57",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-104",
-   "chose": "MONEY-221: plugin sites list renders in the owner shell on a real install; admin door kept",
-   "at": "2026-09-15T11:51:41",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-188",
-   "chose": "MONEY-222: parked numbers render in the owner shell on a real parked number; admin door kept",
-   "at": "2026-09-15T13:03:46",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-188",
-   "chose": "MONEY-223: the live business number renders in the owner shell on a real assignment; admin door kept",
-   "at": "2026-09-15T14:09:33",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-188",
-   "chose": "MONEY-224: number complaints render in the owner shell on a real number; RLS read; admin door kept",
-   "at": "2026-09-15T16:07:52",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-153",
-   "chose": "MONEY-225: the team alert roster renders in the owner shell on a real alert; RLS read; admin door kept",
-   "at": "2026-09-15T18:01:57",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-153",
-   "chose": "MONEY-226: the fast-path reply codes render in the owner shell on a real live code; admin door kept",
-   "at": "2026-09-15T18:34:21",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-153",
-   "chose": "MONEY-227: the claim-expiry screen reads real claims and renders in the owner shell; admin door kept",
-   "at": "2026-09-15T20:44:31",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Billing",
-   "chose": "MONEY-228: the built Credits screen renders in the owner shell with its real meters, ledger, top-up and explain untouched; fifteen neutrals tokened; C-Billing has no admin door",
-   "at": "2026-09-16T14:52:38",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Billing",
-   "chose": "MONEY-230: the MRR screen lists this account's meters and this month's ledger in the owner shell as Monthly billing; C-Billing has no admin door; CBillingFiller seeds two meters and two ledger rows",
-   "at": "2026-09-16T21:23:03",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Billing",
-   "chose": "MONEY-231: revenue recovery and the dunning board sit in the owner shell; they already read their tenant; C-Billing has no admin door; no demo ladder is seeded \u2014 dunning_states carries no marker column",
-   "at": "2026-09-16T23:00:08",
-   "ruling": "R245"
+   "at": "2026-09-05T12:14:55",
+   "note": "J10: owner ruling 2026-09-05 \u2014 the journey funds its tenant and loads the registers as test setup; TrialEligibility stands in production"
   },
   {
-   "module": "X-211",
-   "chose": "MONEY-232: ageing-by-reason and paymentplan-builder sit in the owner shell as Overdue invoices and Payment plans; both already tenant-scoped; no admin door; X211Filler seeds two invoices, a reason, a receivable state and a plan",
-   "at": "2026-09-17T02:53:42",
-   "ruling": "R245"
+   "at": "2026-09-05T17:33:50",
+   "note": "X-172 generated screen test renders through Fixtures::token() (run 101)"
   },
   {
-   "module": "X-211",
-   "chose": "MONEY-233: collections-package-preview and invoice-thread-beside sit in the owner shell as Collections package and Invoice thread; both already tenant-scoped; no admin door; X211Filler also seeds a packaged invoice waiting on a partner \u2014 all four X-211 screens are now in the shell",
-   "at": "2026-09-17T08:14:46",
-   "ruling": "R245"
+   "at": "2026-09-05T17:42:53",
+   "note": "X-193 quiet_hours_start: answered \u2014 migration 2026_09_04_072838_add_quiet_hours_start_to_notification_classes_table.php on main"
   },
   {
-   "module": "X-120",
-   "chose": "MONEY-234: the card screen sits in the owner shell as Payment methods; already tenant-scoped; no admin door; X120Filler seeds a default visa and an expiring mastercard",
-   "at": "2026-09-17T10:05:54",
-   "ruling": "R245"
+   "at": "2026-09-05T17:42:54",
+   "note": "X-201 deadline_at: answered \u2014 migration 2026_09_04_072843_add_deadline_at_to_disputes_table.php on main"
   },
   {
-   "module": "X-173",
-   "chose": "MONEY-235: the sync conflicts and sync error rate screens sit in the owner shell as Sync conflicts and Sync error rate; both already tenant-scoped; admin doors kept; connection-mapping left for a later wave; X173Filler seeds one ledger connection, two mappings, two runs and two conflicts",
-   "at": "2026-09-17T14:58:38",
-   "ruling": "R245"
+   "at": "2026-09-05T17:42:54",
+   "note": "C-Reviews messageClass: answered \u2014 ReviewRequested carries messageClass since the reviews merge (c3ed23ed); the C-Sms listener consumes send.requested (run 94)"
   },
   {
-   "module": "X-202",
-   "chose": "MONEY-236: queue and audit-export sit in the owner shell as Approvals and Approval history; the queue's businessId is resolved from the tenant at mount for the first time; the decided-items read built; X202Filler seeds a pending and a decided item",
-   "at": "2026-09-17T16:48:35",
-   "ruling": "R245"
+   "at": "2026-09-05T17:42:54",
+   "note": "C-Sms TrialEligibility: answered by owner ruling 2026-09-05 \u2014 the journey funds its tenant as test setup; TrialEligibility stands in production (J10 green since run 96b)"
   },
   {
-   "module": "X-198",
-   "chose": "MONEY-237: reconciliation-discrepancies sits in the owner shell; it was already tenant-resolved so only the layout, the heading demotion and the token swap changed; same-account is NOT convertible while its test asserts the absence of a string the shell's own nav renders",
-   "at": "2026-09-17T18:26:42",
-   "ruling": "R245"
+   "at": "2026-09-06T11:36:06",
+   "note": "X-103 ssl_installed: three migrations add/alter one column (2026_09_05_220831, 2026_09_06_000001, 2026_09_06_053000); order leaves default false; consolidate when X-103 next opens"
   },
   {
-   "module": "X-156",
-   "chose": "MONEY-238: ingest-volume-by and rejectedrows-list sit in the owner shell as Data coming in and Rows we could not take; no tenant work was needed because both screens already resolved and set the tenant, so the wave is the shell, the heading classes and the design tokens; X156Filler seeds a source, two runs and a rejection",
-   "at": "2026-09-17T20:30:00",
-   "ruling": "R245"
+   "at": "2026-09-06T23:16:43",
+   "note": "J8 restore drill: JourneyHarness:814 names its scratch db goaiez_antig_drill_<pid> and :908 force-drops it; the supervisor's wave-119 gate errored 42501 permission denied to terminate process where the coder's gate on the identical tree did not; drill dbs on the box at 2026-09-06 23:10: UNRESOLVED; reproduced in wave 120: no"
   }
  ],
  "resolved": [
   {
-   "module": "X-199",
-   "stage": "boundary",
-   "was": "EvidenceInvoiceCommand creates a Person; X-121 exports no create seam yet \u2014 PersonLookupAction::create arrives from sixty wave 195",
-   "why": "PersonLookupAction::create arrived on main (sixty wave 195, merged as main 356); EvidenceInvoiceCommand creates people through it",
-   "at": "2026-09-13T09:27:39"
+   "module": "X-193",
+   "stage": "tests",
+   "was": "column quiet_hours_start is missing from notification_classes and not named in the brief",
+   "why": "the column arrived: migration 2026_09_04_072838_add_quiet_hours_start_to_notification_classes_table.php (14df5c8a, 2026-09-04) adds quiet_hours_start and quiet_hours_end; X193Test::test_dependency_quiet_hours_start_exists is green; withdrawn on main after UI-135 withdrew it in the ui ledger",
+   "at": "2026-09-17T11:35:21"
   },
   {
-   "module": "X-211",
-   "stage": "boundary",
-   "was": "EvidenceRecoveryCommand creates a Person; same dependency",
-   "why": "same arrival; EvidenceRecoveryCommand creates people through it",
-   "at": "2026-09-13T09:27:39"
+   "module": "X-186",
+   "stage": "capability",
+   "was": "no action enrols a person into a campaign",
+   "why": "the action arrived: CampaignEnrolAction::enrol (9a86b10e, 2026-09-12) enrols a person into a campaign; CampaignEnrolTest proves it in four methods; withdrawn on main after UI-135 withdrew it in the ui ledger",
+   "at": "2026-09-17T11:35:21"
+  },
+  {
+   "module": "X-201",
+   "stage": "tests",
+   "was": "column deadline_at is missing from disputes and not named in the brief",
+   "why": "the column arrived: migration 2026_09_04_072843_add_deadline_at_to_disputes_table.php (14df5c8a, 2026-09-04); Dispute casts it, DisputeDefenseEngine refuses past it, N011Test sets it; withdrawn on main after PB-216 withdrew it in the pricebook ledger",
+   "at": "2026-09-17T11:35:21"
+  },
+  {
+   "module": "X-172",
+   "stage": "tests",
+   "was": "generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook",
+   "why": "the fixture arrived: Fixtures::token mints a portal link through PortalLinkAction (f5cdb825, 2026-09-05); CustomerfacingPortalScreenTest opens the portal by token; withdrawn on main after PB-216 withdrew it in the pricebook ledger",
+   "at": "2026-09-17T11:35:21"
   }
  ]
 }

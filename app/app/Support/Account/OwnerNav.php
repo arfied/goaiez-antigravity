@@ -106,15 +106,16 @@ final class OwnerNav
             OwnerNavItem::make('Your inbox', 'account.inbox'),
 
             OwnerNavItem::make('Messages you sent', 'account.messages'),
-            OwnerNavItem::make('Google reviews', 'account.connections', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Your account', 'account.settings', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Google reviews', 'account.connections', OwnerNavItem::GROUP_MORE, section: 'Reviews & your website'),
+            OwnerNavItem::make('Your account', 'account.settings', OwnerNavItem::GROUP_MORE, section: 'Your account'),
+            OwnerNavItem::make('All screens', 'account.all-screens', OwnerNavItem::GROUP_MORE, section: 'Your account'),
 
             // `44` §2 puts the follow-ups list "under More" and badges that tab
             // with the due-today count. The badge is a KEY resolved at render
             // time by OwnerNavBadges — this list stays static and queries
             // nothing (1446), because it also renders on the on-hold page.
-            OwnerNavItem::make('Follow-ups', 'account.follow-ups', OwnerNavItem::GROUP_MORE, badge: OwnerNavBadges::FOLLOW_UPS_DUE),
-            OwnerNavItem::make('Reply drafts', 'account.replies', OwnerNavItem::GROUP_MORE, badge: OwnerNavBadges::REPLY_DRAFTS),
+            OwnerNavItem::make('Follow-ups', 'account.follow-ups', OwnerNavItem::GROUP_MORE, section: 'Messages & follow-ups', badge: OwnerNavBadges::FOLLOW_UPS_DUE),
+            OwnerNavItem::make('Reply drafts', 'account.replies', OwnerNavItem::GROUP_MORE, section: 'Messages & follow-ups', badge: OwnerNavBadges::REPLY_DRAFTS),
 
             // The recovery queue (2689). Under More beside the other two work
             // queues rather than in the primary row: it is the same shape as
@@ -122,12 +123,12 @@ final class OwnerNav
             // `44` §2's reason for putting one there applies to all three.
             // Badged with the still-open count, which is what stops a
             // conversation sitting untouched because nobody opened the screen.
-            OwnerNavItem::make('Win back customers', 'account.win-back', OwnerNavItem::GROUP_MORE, badge: OwnerNavBadges::TRIAGE_OPEN),
+            OwnerNavItem::make('Win back customers', 'account.win-back', OwnerNavItem::GROUP_MORE, section: 'Customers', badge: OwnerNavBadges::TRIAGE_OPEN),
 
             // Under More because it is done once and then never again, which is
             // the distinction `44` §2 draws when it puts the follow-ups list
             // there rather than in the primary row.
-            OwnerNavItem::make('Import your customers', 'account.customers.import', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Import your customers', 'account.customers.import', OwnerNavItem::GROUP_MORE, section: 'Customers'),
 
             // The widget install (2950). Under More on the same distinction —
             // paste one line, name your website, never think about it again.
@@ -137,7 +138,7 @@ final class OwnerNav
             // `app/` reaches `setAllowedDomains()`. A screen nobody can find
             // would leave every widget serving nobody, which is exactly the
             // defect it was built to close.
-            OwnerNavItem::make('Reviews on your website', 'account.website', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Reviews on your website', 'account.website', OwnerNavItem::GROUP_MORE, section: 'Reviews & your website'),
 
             // The pixel install screen (decision 4979 item 2). Under More on
             // the same distinction as the entry above — paste one line, never
@@ -148,7 +149,7 @@ final class OwnerNav
             // fails the build on an owner screen with neither a nav entry nor a
             // written exclusion, and this is the only screen that will ever
             // mint a key for a tenant who predates the collector.
-            OwnerNavItem::make('Let us see your website', 'account.pixel-install', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Let us see your website', 'account.pixel-install', OwnerNavItem::GROUP_MORE, section: 'Reviews & your website'),
 
             // Under More on the same distinction, and the label is the outcome
             // rather than the mechanism (`22`): an owner is not managing a
@@ -158,14 +159,14 @@ final class OwnerNav
             // nor a written exclusion, which is 1442's rule that both halves
             // land together. A screen nobody can reach is decision 272's shape
             // wearing a route.
-            OwnerNavItem::make('What we answer from', 'account.knowledge', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('What we answer from', 'account.knowledge', OwnerNavItem::GROUP_MORE, section: 'Messages & follow-ups'),
 
             // T137 voice forwarding / `SL-9`. Under More on the same distinction as the two
             // above: forwarding is set up once and then revisited only when the
             // phone system changes. Outcome language (`22`) — an owner is not
             // configuring "call routing", they are deciding what happens to
             // their phone, and the number they need is on the same page.
-            OwnerNavItem::make('Your phone', 'account.calls', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Your phone', 'account.calls', OwnerNavItem::GROUP_MORE, section: 'Phone & texting'),
 
             // T176 §2.4/P6 — where the assistant sends people. Under More on the
             // same distinction as the three above: it is set when the business
@@ -176,7 +177,7 @@ final class OwnerNav
             // `tenant_links` — so a screen nobody can find would leave R13's
             // gating permanently off for every tenant, with the agent falling
             // back to capture-and-handoff for ever and nothing saying why.
-            OwnerNavItem::make('What your assistant can send', 'account.assistant-links', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('What your assistant can send', 'account.assistant-links', OwnerNavItem::GROUP_MORE, section: 'Messages & follow-ups'),
 
             // T176 §2.4/P5, beside the entry above and for the same reason: it is
             // set when the prices change, not every day.
@@ -187,11 +188,11 @@ final class OwnerNav
             // an uploaded sheet. A screen nobody can find would leave every
             // proposal sitting unconfirmed for ever, which reads exactly like a
             // business that never uploaded anything.
-            OwnerNavItem::make('What your assistant can quote', 'account.assistant-answers', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Things your assistant could not do', 'x-124.assistantunsupported-log', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Action preview', 'x-124.preview-card', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Lead routing rules', 'x-10.routing-rules', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Unassigned leads', 'x-10.unassigned-count', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('What your assistant can quote', 'account.assistant-answers', OwnerNavItem::GROUP_MORE, section: 'Messages & follow-ups'),
+            OwnerNavItem::make('Things your assistant could not do', 'x-124.assistantunsupported-log', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Action preview', 'x-124.preview-card', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Lead routing rules', 'x-10.routing-rules', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Unassigned leads', 'x-10.unassigned-count', OwnerNavItem::GROUP_CATALOG),
             // The plan, and the cancellation (2980–2999). Under More on the same
             // distinction as the three above: it is looked at when something
             // about the money changes, not every day.
@@ -202,7 +203,7 @@ final class OwnerNav
             // can cancel any time" with nowhere to press. California's Automatic
             // Renewal Law asks that cancelling be at least as easy as signing
             // up, and a screen nobody can navigate to is not.
-            OwnerNavItem::make('Your plan', 'account.plan', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Your plan', 'account.plan', OwnerNavItem::GROUP_MORE, section: 'Your account'),
 
             // Locations — what the plan covers, and the only way to add one
             // (2753). Under More beside the plan, on the same distinction: it is
@@ -212,7 +213,7 @@ final class OwnerNav
             // makes any, so a tenant who has paid for three would otherwise hold
             // one for ever — the extra-location SKU sold and never delivered,
             // which is a worse defect than the writerless column it started as.
-            OwnerNavItem::make('Your locations', 'account.locations', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Your locations', 'account.locations', OwnerNavItem::GROUP_MORE, section: 'Your account'),
 
             // Credit — balances and top-ups (3482). Under More beside the plan,
             // on the same distinction: it is looked at when something about the
@@ -224,7 +225,7 @@ final class OwnerNav
             // *only* thing in `app/` that reaches `CreditTopUps` — so a screen
             // nobody can find would leave every tenant's purchased balance at
             // zero for ever, which is the state 3482 records.
-            OwnerNavItem::make('Your credit', 'account.credit', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Your credit', 'account.credit', OwnerNavItem::GROUP_MORE, section: 'Your account'),
 
             // Where the tenant's own texting registration has got to (5329,
             // 5420–5439). Under More on the same distinction as the entries
@@ -248,7 +249,7 @@ final class OwnerNav
             // REACHABILITY ARGUMENT IS UNTOUCHED: the wait this page reports is
             // real, and an owner screen still owes a nav entry or a written
             // exclusion whatever is downstream of it.
-            OwnerNavItem::make('Texting from your own number', 'account.texting', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Texting from your own number', 'account.texting', OwnerNavItem::GROUP_MORE, section: 'Phone & texting'),
 
             // Row 10 U1b — what we changed on their website, and the undo.
             // Under More on the same distinction as the entries above: it is a
@@ -263,14 +264,14 @@ final class OwnerNav
             // *"every site change is reversible"* was reversible **by us**:
             // `SiteChanges::revert()` had one caller and it was the automatic
             // rollback. A screen nobody can find would leave it that way.
-            OwnerNavItem::make('What we changed on your website', 'account.site-changes', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('What we changed on your website', 'account.site-changes', OwnerNavItem::GROUP_MORE, section: 'Reviews & your website'),
 
             // T137 `SL-7`. Under More rather than in the primary row: it is the
             // thing you reach for when something is wrong, and the primary row
             // is what the product does when everything is right. Outcome
             // language (`22`) — the label is what the person is about to do,
             // not the module it opens, so no "Support" and no "Tickets".
-            OwnerNavItem::make('Ask us something', 'account.support', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Ask us something', 'account.support', OwnerNavItem::GROUP_MORE, section: 'Your account'),
 
             // The list of forms people gave up on (X-110). Under More because it is
             // a thing checked periodically rather than an everyday surface.
@@ -279,7 +280,7 @@ final class OwnerNav
             // an owner screen with neither a nav entry nor a written exclusion,
             // and this is the only way a person can see these abandoned forms.
             // A screen nobody can find is useless.
-            OwnerNavItem::make('Forms people gave up on', 'x-110.abandoned-forms', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Forms people gave up on', 'x-110.abandoned-forms', OwnerNavItem::GROUP_CATALOG),
 
             // Verifying the tag installation (X-110). Under More on the same
             // distinction — it is used during initial setup or troubleshooting,
@@ -289,7 +290,7 @@ final class OwnerNav
             // and an exclusion. This is the only place a tenant can confirm their
             // tag is working. A screen nobody can reach would leave them guessing
             // whether we are actually collecting their data.
-            OwnerNavItem::make('Is our tag working', 'x-110.install-verify', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Is our tag working', 'x-110.install-verify', OwnerNavItem::GROUP_CATALOG),
 
             // What their pages earn (X-138). Ruled to be under More deliberately,
             // despite being potentially daily: the primary row is a design the
@@ -299,7 +300,7 @@ final class OwnerNav
             // without a nav entry or a written exclusion, and it also refuses
             // hand-written links between screens. A screen without a nav entry
             // would be unreachable, leaving the revenue numbers hidden.
-            OwnerNavItem::make('What your pages earn', 'x-138.attribution-row', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('What your pages earn', 'x-138.attribution-row', OwnerNavItem::GROUP_CATALOG),
 
             // Where the business is listed (X-192). Placed under More because
             // directory registrations are generally set and forgotten.
@@ -308,7 +309,7 @@ final class OwnerNav
             // a written exclusion. This is the canonical owner door for directory
             // memberships, so a screen nobody can navigate to would leave the
             // owner unable to manage their listings.
-            OwnerNavItem::make('Where you are listed', 'x-192.memberships-list', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Where you are listed', 'x-192.memberships-list', OwnerNavItem::GROUP_CATALOG),
 
             // Invoices the owner has sent (X-199). Under More because dealing
             // with past billing is typically periodic, not a daily task.
@@ -317,7 +318,7 @@ final class OwnerNav
             // neither a nav entry nor a written exclusion. This screen runs a
             // real query and renders it on every GET, so it owes a nav entry.
             // Leaving it out of the nav makes the invoices unreachable.
-            OwnerNavItem::make('Invoices you sent', 'x-199.invoices', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Invoices you sent', 'x-199.invoices', OwnerNavItem::GROUP_CATALOG),
 
             // Credit the owner has extended to customers (X-199). Under More on
             // the same distinction as the invoices screen: it is a financial
@@ -328,7 +329,7 @@ final class OwnerNav
             // real query and renders it on every GET, so it owes a nav entry.
             // A screen nobody can find would leave every extended credit invisible
             // to the funder.
-            OwnerNavItem::make("Credit you've extended", 'x-199.credits', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make("Credit you've extended", 'x-199.credits', OwnerNavItem::GROUP_CATALOG),
 
             // People who went quiet (X-110). Under More because re-engaging cold leads
             // is typically periodic, not a daily task.
@@ -337,7 +338,7 @@ final class OwnerNav
             // neither a nav entry nor a written exclusion. This screen runs a
             // real query and renders it on every GET, so it owes a nav entry.
             // A screen nobody can find would leave these cooling leads invisible.
-            OwnerNavItem::make('People who went quiet', 'x-110.cooling', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('People who went quiet', 'x-110.cooling', OwnerNavItem::GROUP_CATALOG),
 
             // Live visitors on the site (X-110). Under More because monitoring
             // live traffic is typically done when checking campaigns rather than
@@ -347,7 +348,7 @@ final class OwnerNav
             // neither a nav entry nor a written exclusion. This screen runs a
             // real query and renders it on every GET, so it owes a nav entry.
             // A screen nobody can find would leave live visitor traffic hidden.
-            OwnerNavItem::make('Who is on your site now', 'x-110.visitors-live', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Who is on your site now', 'x-110.visitors-live', OwnerNavItem::GROUP_CATALOG),
 
             // Campaign ROI dashboard (X-138). Under More because campaign
             // reporting is typically checked periodically, not every day.
@@ -356,7 +357,7 @@ final class OwnerNav
             // neither a nav entry nor a written exclusion. This screen runs a
             // real query and renders it on every GET, so it owes a nav entry.
             // A screen nobody can find would leave campaign revenue numbers hidden.
-            OwnerNavItem::make('What your campaigns earned', 'x-138.roi-dashboard', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('What your campaigns earned', 'x-138.roi-dashboard', OwnerNavItem::GROUP_CATALOG),
 
             // Ad platform connections (X-139). Under More because connection
             // management is set up infrequently, not a daily task.
@@ -365,7 +366,7 @@ final class OwnerNav
             // neither a nav entry nor a written exclusion. This screen runs a
             // real query and renders it on every GET, so it owes a nav entry.
             // A screen nobody can find would leave ad platform connections inaccessible.
-            OwnerNavItem::make('Your ad accounts', 'x-139.adaccount-connect-card', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Your ad accounts', 'x-139.adaccount-connect-card', OwnerNavItem::GROUP_CATALOG),
 
             // Conversions uploaded to ad platforms (X-139). Under More because
             // tracking attribution syncs is typically periodic.
@@ -374,7 +375,7 @@ final class OwnerNav
             // neither a nav entry nor a written exclusion. This screen runs a
             // real query and renders it on every GET, so it owes a nav entry.
             // A screen nobody can find would leave pushed conversion numbers hidden.
-            OwnerNavItem::make('Sales sent back to your ads', 'x-139.conversions-pushed-tile', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Sales sent back to your ads', 'x-139.conversions-pushed-tile', OwnerNavItem::GROUP_CATALOG),
 
             // Rejected conversion uploads (X-139). Under More because reviewing
             // integration failures is an administrative check, not a daily task.
@@ -383,265 +384,271 @@ final class OwnerNav
             // neither a nav entry nor a written exclusion. This screen runs a
             // real query and renders it on every GET, so it owes a nav entry.
             // A screen nobody can find would leave upload rejection rates hidden.
-            OwnerNavItem::make('Uploads your ads rejected', 'x-139.rejection-rate', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Uploads your ads rejected', 'x-139.rejection-rate', OwnerNavItem::GROUP_CATALOG),
 
             // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
             // Architecture/OwnerNavTest fails the build on an owner screen with
             // neither a nav entry nor a written exclusion. This screen runs a
             // real query and renders it on every GET once mount() resolves the
             // tenant, so it owes a nav entry.
-            OwnerNavItem::make('What is booked', 'x-108.calendar', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('What is booked', 'x-108.calendar', OwnerNavItem::GROUP_CATALOG),
 
             // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
             // Architecture/OwnerNavTest fails the build on an owner screen with
             // neither a nav entry nor a written exclusion. This screen runs a
             // real query and renders it on every GET once mount() resolves the
             // tenant, so it owes a nav entry.
-            OwnerNavItem::make('Who is waiting for a slot', 'x-108.waitlist', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Who is waiting for a slot', 'x-108.waitlist', OwnerNavItem::GROUP_CATALOG),
 
             // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
             // Architecture/OwnerNavTest fails the build on an owner screen with
             // neither a nav entry nor a written exclusion. This screen runs a
             // real query and renders it on every GET once mount() resolves the
             // tenant, so it owes a nav entry.
-            OwnerNavItem::make('Estimates you have drafted', 'x-164.estimates-list', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Estimates you have drafted', 'x-164.estimates-list', OwnerNavItem::GROUP_CATALOG),
 
             // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
             // Architecture/OwnerNavTest fails the build on an owner screen with
             // neither a nav entry nor a written exclusion. This screen runs a
             // real query and renders it on every GET once mount() resolves the
             // tenant, so it owes a nav entry.
-            OwnerNavItem::make('Areas you cover', 'x-10.territory-map', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Customer interests', 'x-131.interest-tags', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Areas you cover', 'x-10.territory-map', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Customer interests', 'x-131.interest-tags', OwnerNavItem::GROUP_CATALOG),
 
             // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
             // Architecture/OwnerNavTest fails the build on an owner screen with
             // neither a nav entry nor a written exclusion. This screen runs a
             // real query and renders it on every GET once mount() resolves the
             // tenant, so it owes a nav entry.
-            OwnerNavItem::make('Booked and collected by month', 'x-07.forecast-risk-tiles', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Booked and collected by month', 'x-07.forecast-risk-tiles', OwnerNavItem::GROUP_CATALOG),
 
             // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
             // Architecture/OwnerNavTest fails the build on an owner screen with
             // neither a nav entry nor a written exclusion. This screen runs a
             // real query and renders it on every GET once mount() resolves the
             // tenant, so it owes a nav entry.
-            OwnerNavItem::make('Starter content', 'x-180.pack-browser', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Message sequences you run', 'x-185.digest-line', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Content packs', 'x-185.experiment-board', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Starter content', 'x-180.pack-browser', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Message sequences you run', 'x-185.digest-line', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Content packs', 'x-185.experiment-board', OwnerNavItem::GROUP_CATALOG),
 
             // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
             // Architecture/OwnerNavTest fails the build on an owner screen with
             // neither a nav entry nor a written exclusion. This screen runs a
             // real query and renders it on every GET once mount() resolves the
             // tenant, so it owes a nav entry.
-            OwnerNavItem::make('Posts planned for your week', 'x-184.content-week', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Content calendar', 'x-184.calendar', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Posts planned for your week', 'x-184.content-week', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Content calendar', 'x-184.calendar', OwnerNavItem::GROUP_CATALOG),
 
             // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
             // Architecture/OwnerNavTest fails the build on an owner screen with
             // neither a nav entry nor a written exclusion. This screen runs a
             // real query and renders it on every GET once mount() resolves the
             // tenant, so it owes a nav entry.
-            OwnerNavItem::make('Offers running now', 'x-210.active-promotions', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Offers running now', 'x-210.active-promotions', OwnerNavItem::GROUP_CATALOG),
 
             // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
             // Architecture/OwnerNavTest fails the build on an owner screen with
             // neither a nav entry nor a written exclusion. This screen runs a
             // real query and renders it on every GET once mount() resolves the
             // tenant, so it owes a nav entry.
-            OwnerNavItem::make('Offers your customers used', 'x-210.redemptions', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Offers your customers used', 'x-210.redemptions', OwnerNavItem::GROUP_CATALOG),
 
             // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
             // Architecture/OwnerNavTest fails the build on an owner screen with
             // neither a nav entry nor a written exclusion. This screen saves a
             // real offer through PromotionCreateAction once mount() resolves
             // the tenant, so it owes a nav entry.
-            OwnerNavItem::make('Create an offer', 'x-210.promotion-builder', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Create an offer', 'x-210.promotion-builder', OwnerNavItem::GROUP_CATALOG),
 
             // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
             // Architecture/OwnerNavTest fails the build on an owner screen with
             // neither a nav entry nor a written exclusion. This screen runs a
             // real query and renders it on every GET once mount() resolves the
             // tenant, so it owes a nav entry.
-            OwnerNavItem::make('Drafts written for you', 'x-183.draft-review', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Drafts written for you', 'x-183.draft-review', OwnerNavItem::GROUP_CATALOG),
 
             // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
             // Architecture/OwnerNavTest fails the build on an owner screen with
             // neither a nav entry nor a written exclusion. This screen runs a
             // real query and renders it on every GET once mount() resolves the
             // tenant, so it owes a nav entry.
-            OwnerNavItem::make('Why drafts were held back', 'x-183.gate-rejection-reasons', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Why drafts were held back', 'x-183.gate-rejection-reasons', OwnerNavItem::GROUP_CATALOG),
 
             // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
             // Architecture/OwnerNavTest fails the build on an owner screen with
             // neither a nav entry nor a written exclusion. This screen runs a
             // real query and renders it on every GET once mount() resolves the
             // tenant, so it owes a nav entry.
-            OwnerNavItem::make('Automations you have set up', 'x-125.canvas', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Automations you have set up', 'x-125.canvas', OwnerNavItem::GROUP_CATALOG),
 
             // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
             // Architecture/OwnerNavTest fails the build on an owner screen with
             // neither a nav entry nor a written exclusion. This screen runs a
             // real query and renders it on every GET once mount() resolves the
             // tenant, so it owes a nav entry.
-            OwnerNavItem::make('Automations that ran', 'x-125.runs', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Automation errors', 'x-125.flow-error-dashboard', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Automations that ran', 'x-125.runs', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Automation errors', 'x-125.flow-error-dashboard', OwnerNavItem::GROUP_CATALOG),
 
             // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
             // Architecture/OwnerNavTest fails the build on an owner screen with
             // neither a nav entry nor a written exclusion. This screen runs a
             // real query and renders it on every GET once mount() resolves the
             // tenant, so it owes a nav entry.
-            OwnerNavItem::make('Campaigns stopped or paused', 'x-186.stop-log', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Campaigns stopped or paused', 'x-186.stop-log', OwnerNavItem::GROUP_CATALOG),
 
             // Architecture/OwnerNavTest fails the build on an owner screen with
             // neither a nav entry nor a written exclusion. This screen runs a
             // real query and renders it on every GET once mount() resolves the
             // tenant, so it owes a nav entry.
-            OwnerNavItem::make('Campaigns running now', 'x-186.live-run', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('People in your campaigns', 'x-186.audience-preview-count', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Your campaign sequences', 'x-186.sequence-builder', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Your prices', 'x-163.pricebook', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Prices to confirm', 'x-163.confirmation-screen', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Your members', 'x-165.members', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Your plans', 'x-165.plans', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Daily pricing digest', 'x-163.daily-pricing-digest', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Margin by job', 'x-166.margin-by-job', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Margin by service', 'x-166.by-service', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Margin by source', 'x-166.by-source', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Margin by technician', 'x-166.by-tech', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Churn risk list', 'x-08.risk-list', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Sorted risk rankings', 'x-08.sorted', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Reason per row', 'x-08.reason-per-row', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Person timeline', 'x-132.person-timeline', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Stock by van', 'x-167.stock-by-van', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Reorders', 'x-167.reorders', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Resolution rate & confidence', 'x-132.resolution-rate-confidence', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Timesheets', 'x-168.timesheets', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Prompt copy', 'x-207.promptcopy-editor', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Approvals', 'x-168.approvals', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Social queue', 'x-182.social-queue', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Your hours', 'x-168.own-hours', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Referral slots', 'x-190.slot-board', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Your rates', 'x-82.rate-registry', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Partner network', 'x-190.network-map', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Field assistant', 'x-175.stafffacing-assistant-panel', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Pool depth', 'x-190.pool-depth-per', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Route map', 'x-162.map', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Promotion targeting', 'x-210.targeting-preview', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Number pool', 'x-188.pool-inventory', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Discounts given', 'x-210.earnedvsgiven-panel', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Call attribution', 'x-137.attribution-row', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Connected accounts', 'x-182.connected-accounts', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Commissions', 'x-170.commissions', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Scorecards', 'x-170.scorecard', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Plugin installs', 'x-104.install-count', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Redirect queue', 'x-129.cutover-queue', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Schema status', 'x-176.seo-tab-website', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Chat leads', 'x-102.offline-form-inbox', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Retired devices', 'x-207.retirement-reasons', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Forms', 'x-155.forms', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Plugin sites', 'x-104.plugin-settings-page', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Migration status', 'x-129.migration-card', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Edge deployments', 'x-157.edge-status-per', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Chat thread', 'x-102.thread', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Reveal log', 'x-206.reveal-log', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Form submissions', 'x-155.submissions-thread', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Parked numbers', 'x-188.park-list', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Change history', 'x-121.entity-history-viewer', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Restore tests', 'x-203.dr-dashboard', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Rage clicks', 'x-102.rageclick-rate', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Connections', 'x-206.connections', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Spam rate', 'x-155.spam-rate', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Your number', 'x-188.your-number-card', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Restore test log', 'x-203.restorationtest-log', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Push health', 'x-207.perplatform-delivery-health', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Agent turns', 'c-agent.thread', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Number complaints', 'x-188.pernumber-complaint-board', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Runbooks', 'x-203.runbook-runner', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Google profile', 'x-177.gbp-card', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Team alerts', 'x-153.alert-roster-screen', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Reply codes', 'x-153.alert-reply-by', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Suspension risks', 'x-177.suspensionrisk-events-fleetwide', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Push prompts', 'x-207.one-confirmonce-toggle', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('QA queue', 'x-181.qa-queue-sladueat', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Resolved tickets', 'x-181.resolution', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('QA tickets', 'c-reviews.tickets', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Loss alerts', 'c-reviews.loss-alerts', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Claim expiry', 'x-153.claimexpiry-rate', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Agent refusals', 'c-agent.refusalcode-distribution-per', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('QA report', 'c-reviews.qa-report', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Agent teaching', 'c-agent.teaching-box', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Ticket', 'x-181.ticket', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Reviews', 'c-reviews.reviews-qa-requests', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Agent grounding', 'c-agent.groundcheck-screen', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Affiliate earnings', 'x-205.earnings', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Reveal credential', 'x-206.reveal', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('DNI pool usage', 'x-137.dni-pool-utilisation', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Credits', 'c-billing.credits', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Chat widget', 'x-102.customerfacing-widget', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Branded media', 'x-189.preview-per-destination', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Affiliates', 'x-205.portal', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('AI calls', 'c-ai.model-board', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Failed deliveries', 'x-123.dlq-request-inspector', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Monthly billing', 'c-billing.mrr', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Saved views', 'x-194.saved-views-list', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Affiliate payouts', 'x-205.payout-run', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Email domain', 'c-mail.dns-card', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Domain warm-up', 'c-mail.warmup-calendars-per', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Earned links', 'x-191.links-earned', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Outreach ratio', 'x-191.pitchacquire-ratio', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Dispatch board', 'x-162.dispatch-board', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Revenue recovery', 'c-billing.revenue-recovery', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Dunning board', 'c-billing.dunning-board', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('View', 'x-194.any-view-it', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Calls', 'x-66.calls', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Geo-grid', 'x-16.geogrid-map', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Service area', 'x-16.servicearea-polygon', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Sends by class', 'x-193.sendsbyclass', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Do-not-text list', 'c-sms.donottext-list', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Text thread', 'c-sms.thread', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Overdue invoices', 'x-211.ageing-by-reason', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Payment plans', 'x-211.paymentplan-builder', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Harvest coverage', 'x-16.harvest-coverage-by', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Number health', 'c-sms.pernumber-complaint-monitoring', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Message segments', 'c-sms.composer-segment-warning', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Collections package', 'x-211.collections-package-preview', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Invoice thread', 'x-211.invoice-thread-beside', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Disputes', 'x-201.dispute-card', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Dispute queue', 'x-201.dispute-queue', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Browser extension', 'x-196.extension-popup', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Proposed pages', 'x-140.proposed-pages', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Payment methods', 'x-120.card-screen', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Site editor', 'x-178.site-editor-assistant', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Connect your AI', 'x-142.connect-your-ai', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Webhooks', 'x-142.webhooks', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Sync conflicts', 'x-173.conflicts-list', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Sync error rate', 'x-173.sync-error-rate', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Customers', 'x-01.customers-list', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Inbox', 'x-01.thread', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('First wins', 'x-118.today', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Time to first minute', 'x-118.ttfm-distribution', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Dry-run preview', 'x-212.dryrun-preview', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Import rejections', 'x-212.postimport-audit', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Approvals', 'x-202.queue', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Approval history', 'x-202.audit-export', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Fixer inbox', 'x-209.private-inbox', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Autopilot ladder', 'x-209.ladders-own-state', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Person', 'x-01.person', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Activity', 'x-01.history', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Your documents', 'x-160.upload-drop', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Documents to review', 'x-160.review-screen', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Staff', 'x-113.staff', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Roles', 'x-113.roles', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Reconciliation discrepancies', 'x-198.reconciliation-discrepancies', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Call latency', 'x-66.latency-p50p95-per', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Call coaching', 'x-66.livecoaching-whisper-panel', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('What we learned', 'x-119.reviewwhatifound-screen', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Fact freshness', 'x-119.fact-freshness-per', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Data coming in', 'x-156.ingest-volume-by', OwnerNavItem::GROUP_MORE),
-            OwnerNavItem::make('Rows we could not take', 'x-156.rejectedrows-list', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Campaigns running now', 'x-186.live-run', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('People in your campaigns', 'x-186.audience-preview-count', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Your campaign sequences', 'x-186.sequence-builder', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Your prices', 'x-163.pricebook', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Prices to confirm', 'x-163.confirmation-screen', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Your members', 'x-165.members', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Your plans', 'x-165.plans', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Daily pricing digest', 'x-163.daily-pricing-digest', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Margin by job', 'x-166.margin-by-job', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Margin by service', 'x-166.by-service', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Margin by source', 'x-166.by-source', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Margin by technician', 'x-166.by-tech', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Churn risk list', 'x-08.risk-list', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Sorted risk rankings', 'x-08.sorted', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Reason per row', 'x-08.reason-per-row', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Person timeline', 'x-132.person-timeline', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Stock by van', 'x-167.stock-by-van', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Reorders', 'x-167.reorders', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Resolution rate & confidence', 'x-132.resolution-rate-confidence', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Timesheets', 'x-168.timesheets', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Prompt copy', 'x-207.promptcopy-editor', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Timesheet approvals', 'x-168.approvals', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Social queue', 'x-182.social-queue', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Your hours', 'x-168.own-hours', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Referral slots', 'x-190.slot-board', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Your rates', 'x-82.rate-registry', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Partner network', 'x-190.network-map', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Field assistant', 'x-175.stafffacing-assistant-panel', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Pool depth', 'x-190.pool-depth-per', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Route map', 'x-162.map', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Promotion targeting', 'x-210.targeting-preview', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Number pool', 'x-188.pool-inventory', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Discounts given', 'x-210.earnedvsgiven-panel', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Call attribution', 'x-137.attribution-row', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Connected accounts', 'x-182.connected-accounts', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Commissions', 'x-170.commissions', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Scorecards', 'x-170.scorecard', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Plugin installs', 'x-104.install-count', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Redirect queue', 'x-129.cutover-queue', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Schema status', 'x-176.seo-tab-website', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Chat leads', 'x-102.offline-form-inbox', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Retired devices', 'x-207.retirement-reasons', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Forms', 'x-155.forms', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Plugin sites', 'x-104.plugin-settings-page', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Migration status', 'x-129.migration-card', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Edge deployments', 'x-157.edge-status-per', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Chat thread', 'x-102.thread', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Reveal log', 'x-206.reveal-log', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Form submissions', 'x-155.submissions-thread', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Parked numbers', 'x-188.park-list', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Change history', 'x-121.entity-history-viewer', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Restore tests', 'x-203.dr-dashboard', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Rage clicks', 'x-102.rageclick-rate', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Connections', 'x-206.connections', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Spam rate', 'x-155.spam-rate', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Your number', 'x-188.your-number-card', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Restore test log', 'x-203.restorationtest-log', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Push health', 'x-207.perplatform-delivery-health', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Agent turns', 'c-agent.thread', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Number complaints', 'x-188.pernumber-complaint-board', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Runbooks', 'x-203.runbook-runner', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Google profile', 'x-177.gbp-card', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Team alerts', 'x-153.alert-roster-screen', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Reply codes', 'x-153.alert-reply-by', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Suspension risks', 'x-177.suspensionrisk-events-fleetwide', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Push prompts', 'x-207.one-confirmonce-toggle', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('QA queue', 'x-181.qa-queue-sladueat', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Resolved tickets', 'x-181.resolution', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('QA tickets', 'c-reviews.tickets', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Loss alerts', 'c-reviews.loss-alerts', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Claim expiry', 'x-153.claimexpiry-rate', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Agent refusals', 'c-agent.refusalcode-distribution-per', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('QA report', 'c-reviews.qa-report', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Agent teaching', 'c-agent.teaching-box', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Ticket', 'x-181.ticket', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Reviews', 'c-reviews.reviews-qa-requests', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Agent grounding', 'c-agent.groundcheck-screen', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Affiliate earnings', 'x-205.earnings', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Reveal credential', 'x-206.reveal', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('DNI pool usage', 'x-137.dni-pool-utilisation', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Credits', 'c-billing.credits', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Chat widget', 'x-102.customerfacing-widget', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Branded media', 'x-189.preview-per-destination', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Affiliates', 'x-205.portal', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('AI calls', 'c-ai.model-board', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Failed deliveries', 'x-123.dlq-request-inspector', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Monthly billing', 'c-billing.mrr', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Saved views', 'x-194.saved-views-list', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Affiliate payouts', 'x-205.payout-run', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Email domain', 'c-mail.dns-card', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Domain warm-up', 'c-mail.warmup-calendars-per', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Earned links', 'x-191.links-earned', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Outreach ratio', 'x-191.pitchacquire-ratio', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Dispatch board', 'x-162.dispatch-board', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Revenue recovery', 'c-billing.revenue-recovery', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Dunning board', 'c-billing.dunning-board', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('View', 'x-194.any-view-it', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Calls', 'x-66.calls', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Geo-grid', 'x-16.geogrid-map', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Service area', 'x-16.servicearea-polygon', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Sends by class', 'x-193.sendsbyclass', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Do-not-text list', 'c-sms.donottext-list', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Text thread', 'c-sms.thread', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Overdue invoices', 'x-211.ageing-by-reason', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Payment plans', 'x-211.paymentplan-builder', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Harvest coverage', 'x-16.harvest-coverage-by', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Number health', 'c-sms.pernumber-complaint-monitoring', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Message segments', 'c-sms.composer-segment-warning', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Collections package', 'x-211.collections-package-preview', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Invoice thread', 'x-211.invoice-thread-beside', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Disputes', 'x-201.dispute-card', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Dispute queue', 'x-201.dispute-queue', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Browser extension', 'x-196.extension-popup', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Proposed pages', 'x-140.proposed-pages', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Payment methods', 'x-120.card-screen', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Site editor', 'x-178.site-editor-assistant', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Connect your AI', 'x-142.connect-your-ai', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Webhooks', 'x-142.webhooks', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Sync conflicts', 'x-173.conflicts-list', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Sync error rate', 'x-173.sync-error-rate', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Customers', 'x-01.customers-list', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Inbox', 'x-01.thread', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('First wins', 'x-118.today', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Time to first minute', 'x-118.ttfm-distribution', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Dry-run preview', 'x-212.dryrun-preview', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Import rejections', 'x-212.postimport-audit', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Approvals', 'x-202.queue', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Approval history', 'x-202.audit-export', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Fixer inbox', 'x-209.private-inbox', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Autopilot ladder', 'x-209.ladders-own-state', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Person', 'x-01.person', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Activity', 'x-01.history', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Your documents', 'x-160.upload-drop', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Documents to review', 'x-160.review-screen', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Staff', 'x-113.staff', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Roles', 'x-113.roles', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Reconciliation discrepancies', 'x-198.reconciliation-discrepancies', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Call latency', 'x-66.latency-p50p95-per', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Call coaching', 'x-66.livecoaching-whisper-panel', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('What we learned', 'x-119.reviewwhatifound-screen', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Fact freshness', 'x-119.fact-freshness-per', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Demand in your area', 'x-130.public-index-pages', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Demand by trade', 'x-130.coverage-by-trade', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('WhatsApp templates', 'c-whatsapp.template-status-card', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Template approval queue', 'c-whatsapp.template-approval-queue', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Data coming in', 'x-156.ingest-volume-by', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Rows we could not take', 'x-156.rejectedrows-list', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Onboarding checks', 'x-118.groundcheck', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Field mapping', 'x-212.unmatchedfield-map', OwnerNavItem::GROUP_CATALOG),
         ];
     }
 
@@ -683,9 +690,21 @@ final class OwnerNav
      * "current" visual weight; `currentMoreLabel()` below is what now answers
      * "where am I" — visibly, with the disclosure CLOSED.
      */
+
+    /**
+     * @return array<int, OwnerNavItem>
+     */
+    public static function catalog(): array
+    {
+        return array_values(array_filter(
+            self::all(),
+            fn (OwnerNavItem $item): bool => $item->group === OwnerNavItem::GROUP_CATALOG,
+        ));
+    }
+
     public static function moreIsCurrent(): bool
     {
-        foreach (self::more() as $item) {
+        foreach (array_merge(self::more(), self::catalog()) as $item) {
             if ($item->current()) {
                 return true;
             }
@@ -714,7 +733,7 @@ final class OwnerNav
      */
     public static function currentMoreLabel(): ?string
     {
-        foreach (self::more() as $item) {
+        foreach (array_merge(self::more(), self::catalog()) as $item) {
             if ($item->current()) {
                 return $item->label;
             }

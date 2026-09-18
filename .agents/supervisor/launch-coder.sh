@@ -3,144 +3,82 @@
 # Supervisor's coder dispatcher. Launches ONE Antigravity run on the current
 # KICKOFF.md, detached, logging to /home/goaiez/tmp/agy-run<N>.log.
 #
-#   bash .agents/supervisor/launch-coder.sh                 # auto-numbers the run
-#   bash .agents/supervisor/launch-coder.sh --check         # liveness only, no launch
-#   bash .agents/supervisor/launch-coder.sh --coder claude   # REFUSED since owner ruling 2026-09-11 14:0x
-#   bash .agents/supervisor/launch-coder.sh --allow-merge    # opens GOAIEZ_MERGE_OK
-#   bash .agents/supervisor/launch-coder.sh --allow-harness  # opens GOAIEZ_HARNESS_OK
+#   bash .agents/supervisor/launch-coder.sh                 # Antigravity (default)
+#   bash .agents/supervisor/launch-coder.sh --coder claude  # REFUSED (owner 2026-09-11 14:0x: no
+#                                                           # fallback coder; enabled 10:2x–14:0x
+#                                                           # the same day, refused 09-10 before that)
+#                                                           # (owner 2026-09-05: the
+#                                                           # default account; only
+#                                                           # when agy reports
+#                                                           # "quota reached")
 #
 # Refuses to start if a coder is already running (never two in one tree).
-#
-# --coder (owner ruling 30, OWNER.md 17:1x). Antigravity is the default and the
-# first launch after a quota reset is always agy. `--coder claude` is passed BY
-# HAND OF TICK, only after a redispatch has died a second time on "Individual
-# quota reached", and the tick writes `coder=claude` into the REVIEWS block that
-# records the LAUNCHED line. It is never automatic.
 set -euo pipefail
-cd "$(dirname "$0")/../.." || exit 1
+cd "$(dirname "$(readlink -f "$0")")/../.." || exit 1
 
-PIDFILE=".agents/supervisor/coder.pid"
-CODER="agy"
-# Merge gate. `coder-bin/git:51` refuses merge|pull|cherry-pick|revert unless
-# GOAIEZ_MERGE_OK=1, and says in as many words that only launch-coder.sh may open
-# it. This launcher never exported it, so six raisings of "OWNER ACTION 9(b)" were
-# spent on a door that has been unlocked since 2026-09-05 13:27 (Track 1, OWNER.md
-# 12:2x). Default CLOSED, per dispatch, by hand of tick — never read from BRIEF.md,
-# which is rewritten every tick (the door ruling 26 closed on the push gate).
+CODER=agy
 ALLOW_MERGE=0
-# Harness gate (OWNER.md 17:2x, Track 1 answering site's twice-refused ask).
-# `coder-bin/git` keyed the JourneyHarness.php exemption to the checkout name
-# `grs-antig`, so the lane that OWNS a journey could not fix its own harness —
-# ruling 60's workaround (the supervisor commits what the coder staged) exists for
-# exactly that. The guard now also clears on GOAIEZ_HARNESS_OK=1, set for ONE run.
-# ⛔ It opens the ability to COMMIT, not permission to weaken: provisioning real
-# state so a real code path runs is a fix; deleting an assertion, stubbing a
-# transport or making a journey pass on a constant is a BLOCK, and the supervisor
-# that opened the gate wears it. A tick that passes this flag QUOTES the harness
-# diff in its own REVIEWS block — an unreviewable harness change is the exact shape
-# of the fake green this repo keeps finding. Never a standing flag.
 ALLOW_HARNESS=0
-
-# Liveness (ruling 597). `kill -0 <pidfile pid>` alone is wrong both ways:
-#  - nothing clears the pidfile when a run ends, and this box wraps its pid space
-#    within a day (run 236's wrapper was 678253 at 07:07; new pids were 5-digit by
-#    20:00), so the old pid comes back as some other process. Measured: with the
-#    live grs-antig-ui wrapper's pid in this pidfile, --check printed CODER ALIVE
-#    and the launcher refused. A tick then stops as "coder running" for as long as
-#    that stranger lives.
-#  - the pidfile holds the `nohup bash` wrapper, and the `timeout`/agy children are
-#    separate processes, so a killed wrapper leaves a live coder that read as DEAD,
-#    and a tick would dispatch a second writer into this tree.
-# So: a live pidfile pid counts only if its cwd is this checkout (unreadable = ours,
-# the safe direction), and any agy process whose cwd is this checkout counts even
-# when the pidfile does not name it. agy only: a tick is a `claude` process with
-# this cwd, and matching claude would read every tick as a running coder.
-HERE=$(pwd -P)
-CODER_PID=""
-CODER_NOTE=""
-coder_running() {
-  local pid cwd p
-  pid=""
-  if [ -f "$PIDFILE" ]; then pid=$(cat "$PIDFILE" 2>/dev/null || true); fi
-  if [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null; then
-    cwd=$(readlink "/proc/$pid/cwd" 2>/dev/null || true)
-    if [ -z "$cwd" ] || [ "$cwd" = "$HERE" ]; then CODER_PID="$pid"; return 0; fi
-    CODER_NOTE="pidfile pid $pid is alive but runs in $cwd, not this checkout: a reused pid, ignored"
-  fi
-  for p in $(pgrep -f '/[.]local/bin/agy ' 2>/dev/null || true); do
-    cwd=$(readlink "/proc/$p/cwd" 2>/dev/null || true)
-    if [ "$cwd" = "$HERE" ]; then
-      CODER_PID="$p"
-      CODER_NOTE="the pidfile names no live coder here, but agy process $p runs in this checkout: an orphaned coder"
-      return 0
-    fi
-  done
-  return 1
-}
-
-# --check: report liveness and exit without launching anything. Used by the
-# unattended supervisor tick, whose allowlist has no ps/pgrep/kill.
-if [ "${1:-}" = "--check" ]; then
-  if coder_running; then
-    echo "CODER ALIVE pid=$CODER_PID"
-  else
-    echo "CODER DEAD"
-  fi
-  if [ -n "$CODER_NOTE" ]; then echo "  note: $CODER_NOTE"; fi
-  exit 0
-fi
-
-# --coder agy|claude. Anything else is refused rather than defaulted: a typo that
-# silently launched the wrong coder would be indistinguishable from a deliberate
-# fallback in the log, and ruling 30 requires the choice to be recorded.
-while [ -n "${1:-}" ]; do
+ALLOW_RESTORE=0
+while [ $# -gt 0 ]; do
   case "$1" in
-    --coder)
-      case "${2:-}" in
-        agy) CODER="$2" ;;
-        # Owner ruling 2026-09-11 14:0x (supersedes 10:2x, restores 2026-09-10): the
-        # claude fallback is DISABLED on every track. On "quota reached" the tick
-        # records it and stops; the next tick after the reset dispatches agy.
-        claude) echo "REFUSED: --coder claude is DISABLED (owner ruling 2026-09-11 14:0x). Record the agy quota exit in REVIEWS.md and stop."; exit 1 ;;
-        *) echo "REFUSED: --coder takes 'agy', got '${2:-}'"; exit 1 ;;
-      esac
-      shift 2 ;;
-    --allow-merge) ALLOW_MERGE=1; shift ;;
-    --allow-harness) ALLOW_HARNESS=1; shift ;;
-    *) echo "REFUSED: unknown argument '$1' (expected --check, --coder agy, --allow-merge, --allow-harness)"; exit 1 ;;
+    --coder) CODER="${2:-}"; if [ "$CODER" = claude ]; then echo "REFUSED: --coder claude is DISABLED (owner 2026-09-11 14:0x: no fallback coder; on quota reached, record it in REVIEWS.md and wait for agy)"; exit 1; fi; shift 2;;  # 2026-09-11 14:0x — the owner DISABLED the fallback again (it had been re-enabled at 10:2x the same day). Was, 10:2x–14:0x: `--coder) CODER="${2:-}"; shift 2;;` — and before that, from 2026-09-10:if [ "$CODER" = claude ]; then echo "REFUSED: --coder claude is DISABLED (owner 2026-09-10: no fallback coder for now; on quota reached, wait for the reset)"; exit 1; fi; shift 2;;
+    --allow-merge) ALLOW_MERGE=1; shift;;   # opens the shared coder guard's merge gate (GOAIEZ_MERGE_OK=1) for THIS run only; the guard added it 2026-09-05 13:27
+    --allow-harness) ALLOW_HARNESS=1; shift;;  # opens GOAIEZ_HARNESS_OK=1 for THIS run only (guard, 2026-09-06 17:2x). It opens the ABILITY TO COMMIT app/tests/Journeys/JourneyHarness.php, not permission to weaken it: quote the diff in REVIEWS, and a change that makes a journey easier to pass is a BLOCK.
+    --allow-restore) ALLOW_RESTORE=1; shift;;  # opens GOAIEZ_RESTORE_OK=1 for THIS run only (owner ruling 2026-09-07, reserved-questions item 3B; guard clause added the same day). It permits `git checkout|restore -- <existing file paths>` and NOTHING else: no directory, no option, and supervisor-owned paths (.agents/supervisor, .agents/rules, .claude, CLAUDE.md, bin/supervise.sh, bin/state.py, any .env) stay refused inside it, because restoring one of those discards the supervisor's uncommitted notes — that is run 27. Restoring a SEALED file is the safe direction: it can only discard a local modification, never weaken a committed check.
+    *) echo "REFUSED: unknown argument $1 (takes only --coder agy|claude, --allow-merge, --allow-harness, --allow-restore)"; exit 1;;
   esac
 done
+case "$CODER" in agy|claude) ;; *) echo "REFUSED: --coder must be agy or claude"; exit 1;; esac
 
-if coder_running; then
-  echo "REFUSED: this track's coder is already active (pid $CODER_PID)"
-  if [ -n "$CODER_NOTE" ]; then echo "  note: $CODER_NOTE"; fi
+# GATE/BRIEF AGREEMENT (2026-09-07, tick 125). Run 124 was dispatched on a KICKOFF that
+# opened the merge and harness gates in prose while the flags were absent, so the run got
+# GOAIEZ_MERGE_OK=0 / GOAIEZ_HARNESS_OK=0 and could not do the one thing it was briefed to
+# do. `kill` is denied to this seat, so the mistake was unrecallable — which is exactly the
+# class of error a launcher should refuse rather than a tick should remember.
+#
+# The needles are the supervisor's OWN deliberate phrasing in KICKOFF.md, not a generic word
+# like "merge": a kickoff that says "closed" cannot match, and a kickoff that says neither is
+# silent. Both matched KICKOFF.md when this was written (the positive control — a needle that
+# has never matched anything is not an instrument, wave 122). Fails OPEN by construction: if a
+# needle ever stops matching, the dispatch proceeds exactly as it did before this block.
+if grep -q 'Merge gate \*\*OPEN' .agents/supervisor/KICKOFF.md && [ "$ALLOW_MERGE" = 0 ]; then
+  echo "REFUSED: KICKOFF.md declares 'Merge gate **OPEN' but --allow-merge was not passed."
+  echo "         The run would export GOAIEZ_MERGE_OK=0 and the shared guard would refuse the merge."
   exit 1
 fi
-if [ -n "$CODER_NOTE" ]; then echo "note: $CODER_NOTE"; fi
+if grep -q 'Harness gate \*\*OPEN' .agents/supervisor/KICKOFF.md && [ "$ALLOW_HARNESS" = 0 ]; then
+  echo "REFUSED: KICKOFF.md declares 'Harness gate **OPEN' but --allow-harness was not passed."
+  echo "         The run would export GOAIEZ_HARNESS_OK=0 and could not commit the merged harness."
+  exit 1
+fi
+# N164 (2026-09-10, tick 303): the two arms above read KICKOFF.md ONLY, and the CODER READS
+# BRIEF.md. Tick 303 found the standing wave-269 brief declaring "Merge gate **OPEN** for this
+# run" at item 2 while KICKOFF.md said "Merge gate closed for this run" — a bare dispatch would
+# have passed both arms above, exported GOAIEZ_MERGE_OK=0, and handed the coder a brief telling
+# it the gate was open. That is N103 with the two sources of truth moved one file across, and
+# the guard written for N103 could not see it: it was watching the file the supervisor declares
+# in, not the file the coder obeys. Same needles, same fail-open construction (a brief that says
+# neither is silent; a brief that says "closed" cannot match). Positive control at the time of
+# writing: the needle read 0 in BRIEF.md and KICKOFF.md after tick 303's correction, and 16 in
+# REVIEWS.md — it matches text of this shape, it just does not match a correct mailbox.
+if grep -q 'Merge gate \*\*OPEN' .agents/supervisor/BRIEF.md && [ "$ALLOW_MERGE" = 0 ]; then
+  echo "REFUSED: BRIEF.md declares 'Merge gate **OPEN' but --allow-merge was not passed."
+  echo "         The coder reads BRIEF.md; the run would export GOAIEZ_MERGE_OK=0 and the shared guard would refuse the merge."
+  exit 1
+fi
+if grep -q 'Harness gate \*\*OPEN' .agents/supervisor/BRIEF.md && [ "$ALLOW_HARNESS" = 0 ]; then
+  echo "REFUSED: BRIEF.md declares 'Harness gate **OPEN' but --allow-harness was not passed."
+  echo "         The coder reads BRIEF.md; the run would export GOAIEZ_HARNESS_OK=0 and could not commit the merged harness."
+  exit 1
+fi
+
+PIDFILE=".agents/supervisor/coder.pid"
+if [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
+  echo "REFUSED: this track's coder is already active (pid $(cat "$PIDFILE"))"
+  exit 1
+fi
 [ -s .agents/supervisor/KICKOFF.md ] || { echo "REFUSED: KICKOFF.md missing or empty"; exit 1; }
-
-# Push gate. Added 2026-09-04 14:2x (MONEY-17c) to open the coder's push on a
-# briefed `push: YES`; CLOSED PERMANENTLY 2026-09-05 14:0x (owner ruling 26) —
-# the supervisor runs all git for this lane, the coder never pushes. The gate is
-# no longer derived from BRIEF.md, so a stale `push: YES` cannot reopen it.
-PUSH_OK=0
-echo "push gate: CLOSED — ruling 26, the supervisor pushes the gated tip -> GOAIEZ_PUSH_OK=$PUSH_OK"
-if grep -qE '^push: *\**YES' .agents/supervisor/BRIEF.md 2>/dev/null; then
-  echo "  note: BRIEF.md still carries a 'push: YES' line. Stale, ignored."
-fi
-
-if [ "$ALLOW_MERGE" = 1 ]; then
-  echo "merge gate: OPEN — --allow-merge passed by hand of tick -> GOAIEZ_MERGE_OK=$ALLOW_MERGE"
-else
-  echo "merge gate: closed -> GOAIEZ_MERGE_OK=$ALLOW_MERGE"
-fi
-
-if [ "$ALLOW_HARNESS" = 1 ]; then
-  echo "harness gate: OPEN — --allow-harness passed by hand of tick -> GOAIEZ_HARNESS_OK=$ALLOW_HARNESS"
-  echo "  the REVIEWS block for this run MUST quote the JourneyHarness.php diff (OWNER.md 17:2x)"
-else
-  echo "harness gate: closed -> GOAIEZ_HARNESS_OK=$ALLOW_HARNESS"
-fi
 
 
 # Snapshot the supervisor's uncommitted files before every dispatch (a coder
@@ -148,52 +86,46 @@ fi
 SNAP="/home/goaiez/tmp/sup-snap-$(basename "$PWD")-$(date +%Y%m%d-%H%M%S)"
 mkdir -p "$SNAP/.agents/supervisor" "$SNAP/.claude" "$SNAP/bin"
 cp .agents/supervisor/*.md "$SNAP/.agents/supervisor/" 2>/dev/null
-cp .claude/settings.json "$SNAP/.claude/" 2>/dev/null; cp CLAUDE.md "$SNAP/"; cp bin/supervise.sh "$SNAP/bin/"
+# N104 (2026-09-07, tick 125): the glob above is `*.md`, so the one supervisor file most
+# likely to be edited AT dispatch time — this script — was the one the dispatch-time
+# snapshot did not preserve. A protection whose scope was stated once and never read back.
+cp .agents/supervisor/*.sh "$SNAP/.agents/supervisor/" 2>/dev/null || true
+cp .claude/settings.json "$SNAP/.claude/"
+mkdir -p "$SNAP/.agents/state" && cp .agents/state/BUILD-STATE.json .agents/state/JOURNAL.md "$SNAP/.agents/state/" 2>/dev/null || true 2>/dev/null; cp CLAUDE.md "$SNAP/"; cp bin/supervise.sh "$SNAP/bin/"
 echo "snapshot: $SNAP"
 
-# Run log. It lives INSIDE the checkout from 2026-09-05 13:4x: an unattended tick's
-# tool sandbox is confined to the worktree, so a log under /home/goaiez/tmp cannot be
-# read when it is most needed — diagnosing a run that died without writing REPORT.md
-# (MONEY-36 did exactly that). `.gitignore` ignores `.agents/supervisor/*`, so nothing
-# here is ever committed. Numbering continues across both locations.
-TRACK=$(basename "$PWD")
-LOGDIR=".agents/supervisor/logs"
-mkdir -p "$LOGDIR"
-# One run counter for both coders, and it steps over a name either coder may have
-# taken, in either location — a claude run must never reuse an agy run's number.
 n=1
-while [ -e "/home/goaiez/tmp/agy-${TRACK}-run${n}.log" ] \
-   || [ -e "/home/goaiez/tmp/claude-${TRACK}-run${n}.log" ] \
-   || [ -e "$LOGDIR/agy-run${n}.log" ] \
-   || [ -e "$LOGDIR/claude-run${n}.log" ]; do n=$((n+1)); done
-# Ruling 30(b) names the log /home/goaiez/tmp/claude-<track>-runN.log. It lives in
-# the checkout here for the same reason the agy log does (MONEY-36, 0b925de6): an
-# unattended tick's sandbox cannot read /home/goaiez/tmp, and a fallback run that
-# dies without a REPORT is exactly when the log must be readable. The coder is
-# still named in the filename, which is the property the ruling is after.
-LOG="$LOGDIR/${CODER}-run${n}.log"
+TRACK=$(basename "$PWD")
+while [ -e "/home/goaiez/tmp/agy-${TRACK}-run${n}.log" ] || [ -e "/home/goaiez/tmp/claude-${TRACK}-run${n}.log" ]; do n=$((n+1)); done
+LOG="/home/goaiez/tmp/${CODER}-${TRACK}-run${n}.log"
 
-# BASH_ENV (OWNER.md 16:0x, mechanism 2). `kill` is a bash BUILTIN, so a PATH shim
-# never sees it and every SIGTERM on this box has been unattributable. `coder-bin/
-# shell-init.sh` runs `enable -n kill`, which makes `kill` resolve through PATH to
-# `coder-bin/kill` — it RECORDS time · caller pid · target pid · both cwds · target
-# cmdline to /home/goaiez/tmp/kill-log.tsv and THEN performs the kill. It refuses
-# nothing: killing a pid you started is legitimate. Honest limits, in Track 1's own
-# words — it does not catch os.kill(), a kill(2) from a non-shell process, or a
-# shell that never sourced it. It moves `kill` from a rule to a mechanism for the
-# likely case. `tool_pid` in bin/supervise.sh's gate-runs.tsv is the join key.
-if [ "$CODER" = "claude" ]; then
-  nohup bash -c 'export GOAIEZ_PUSH_OK='"$PUSH_OK"'; export GOAIEZ_MERGE_OK='"$ALLOW_MERGE"'; export GOAIEZ_HARNESS_OK='"$ALLOW_HARNESS"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; export BASH_ENV=/home/goaiez/agents/coder-bin/shell-init.sh;timeout 8h /home/goaiez/.local/bin/claude -p "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --setting-sources user --output-format text < /dev/null > '"$LOG"' 2>&1; echo "CLAUDE_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
+if [ "$CODER" = claude ]; then
+  # Claude Code as the coder, on the DEFAULT account (the owner's ruling). The
+  # same KICKOFF, the same coder-bin git guard, the same gate. `--setting-sources
+  # user` keeps this checkout's .claude/settings.json (the SUPERVISOR's column,
+  # which denies app/**) out of the coder's permissions; the guard and the seal
+  # are what bind it, not that file. Bounded by `timeout 8h` like agy's
+  # --print-timeout.
+  nohup bash -c 'export GOAIEZ_MERGE_OK='"$ALLOW_MERGE"'; export GOAIEZ_HARNESS_OK='"$ALLOW_HARNESS"'; export GOAIEZ_RESTORE_OK='"$ALLOW_RESTORE"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; export BASH_ENV=/home/goaiez/agents/coder-bin/shell-init.sh; timeout -k 60 3h /home/goaiez/.local/bin/claude -p "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --setting-sources user --output-format text < /dev/null > '"$LOG"' 2>&1; echo "CLAUDE_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
 else
-  nohup bash -c 'export GOAIEZ_PUSH_OK='"$PUSH_OK"'; export GOAIEZ_MERGE_OK='"$ALLOW_MERGE"'; export GOAIEZ_HARNESS_OK='"$ALLOW_HARNESS"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; export BASH_ENV=/home/goaiez/agents/coder-bin/shell-init.sh;timeout -k 60 3h /home/goaiez/.local/bin/agy --print "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --effort high --print-timeout 8h < /dev/null > '"$LOG"' 2>&1; echo "AGY_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
+  # BOUND (2026-09-07, backlog item 1 of tick ~01:4x, taken deliberately rather than
+  # inherited from the sixty lane's copy by a merge). `--print-timeout 8h` is agy's OWN
+  # timer and is exactly the thing a hung agy stops honouring, so the enforcer is the
+  # outer `timeout`: 3h, then SIGKILL 60s later. Track 1 builds nothing — its longest
+  # honest wave is one gate plus a 40-minute pest-lock wait — so 3h bounds a hang and
+  # never a run. The inner 8h is left where it is precisely so there is ONE effective
+  # number and it is the outer one; `bound=3h` is printed in the LAUNCHED line so the
+  # value is read back rather than asserted (the drift shape, CLAUDE.md).
+  nohup bash -c 'export GOAIEZ_MERGE_OK='"$ALLOW_MERGE"'; export GOAIEZ_HARNESS_OK='"$ALLOW_HARNESS"'; export GOAIEZ_RESTORE_OK='"$ALLOW_RESTORE"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; export BASH_ENV=/home/goaiez/agents/coder-bin/shell-init.sh; timeout -k 60 3h /home/goaiez/.local/bin/agy --print "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --effort high --print-timeout 8h < /dev/null > '"$LOG"' 2>&1; echo "AGY_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
 fi
 echo $! > "$PIDFILE"
 
 sleep 2
 if kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
-  MG=closed; [ "$ALLOW_MERGE" = 1 ] && MG=OPEN
-  HG=closed; [ "$ALLOW_HARNESS" = 1 ] && HG=OPEN
-  echo "LAUNCHED run $n coder=$CODER merge-gate=$MG harness-gate=$HG (pid $(cat "$PIDFILE")) log=$LOG"
+  # Both gates are printed. Until 2026-09-06 18:4x only merge-gate was, while a REVIEWS
+  # block claimed "harness-gate in the LAUNCHED line" — the drift shape from CLAUDE.md:
+  # two sources of truth in one file, only one of them read back.
+  echo "LAUNCHED run $n (pid $(cat "$PIDFILE")) coder=$CODER bound=3h merge-gate=$([ "$ALLOW_MERGE" = 1 ] && echo OPEN || echo closed) harness-gate=$([ "$ALLOW_HARNESS" = 1 ] && echo OPEN || echo closed) log=$LOG"
 else
   echo "LAUNCH FAILED — check $LOG"; exit 1
 fi

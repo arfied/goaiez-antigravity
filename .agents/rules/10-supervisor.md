@@ -35,15 +35,16 @@ Overwrite the whole file, in this shape, raw output not paraphrase:
 
 ```
 # REPORT — wave <n> / <track> — <ISO timestamp>
-STATUS    : wave closed | stopped: RUNTIME|SEAL|FINISHED|STARVED | brief item done
-COMMITS   : <git log --oneline origin/main..HEAD, pasted>
+STATUS    : wave closed | stopped: RUNTIME|SEAL|FINISHED|STARVED | brief item done   (a STATE, never a verdict — PASS/BLOCK are the supervisor's words)
+COMMITS   : <the full shas this wave made, the MERGE commit first, then the merged tip — never a count, never a paste of every commit since origin/main (N160, N174 note)>
 MODULES   : X-nnn DONE · X-nnn UNRESOLVED (<what is missing>)
-STAGES    : <stage> <before> → <after>   (one line per stage touched, from doctor)
-TESTS     : <file>  grep -c 'test(\|it('  before <n> after <m>
+STAGES    : <stage> <before> → <after> from THIS wave's two doctor files, or `none moved` — never a move carried from an earlier wave>
+TESTS     : <file>  needle `public function test_` for a PHPUnit class, `test(\|it(` for Pest — before <n> after <m>, and baseline + added = suite total>
+GATE      : <the gate's own `tests N · passed N · FAILED N · errors N · result …` line verbatim, followed by ONE `ls -la --time-style=full-iso` of the gate file (N160)>
 DECIDED   : (R245) <one line each, as recorded with state.py decided>
 UNRESOLVED: <stage> <where> — <what is missing>
 REFUSED   : <brief items that would change a CHECK, with the reason> | none
-DOCTOR    : <first line — goaiez doctor · build <stamp>>
+DOCTOR    : <the eight stage counts from `php artisan doctor`, never the `STAGES` line of supervise.sh (N115)>
 RAW       : <doctor output for anything not fixed>
 ```
 
