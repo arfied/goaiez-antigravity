@@ -49,6 +49,7 @@ use App\Http\Middleware\EnsureAdvancedDashboard;
 use App\Http\Middleware\RequireIndustryPages;
 use App\Http\Middleware\ResolveFeedbackPage;
 use App\Livewire\Account\Activity as AccountActivity;
+use App\Livewire\Account\AllScreens as AccountAllScreens;
 use App\Livewire\Account\AssistantAnswers as AccountAssistantAnswers;
 use App\Livewire\Account\AssistantLinks as AccountAssistantLinks;
 use App\Livewire\Account\Calls as AccountCalls;
@@ -1022,6 +1023,10 @@ Route::middleware('auth')
 Route::middleware('auth')
     ->get('/account/locations', AccountLocations::class)
     ->name('account.locations');
+
+Route::middleware('auth')
+    ->get('/account/all-screens', AccountAllScreens::class)
+    ->name('account.all-screens');
 
 /*
 | Credit — what a tenant has, and the only door in `app/` to the funder (3482).

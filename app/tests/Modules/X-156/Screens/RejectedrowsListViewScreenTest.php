@@ -6,7 +6,9 @@ namespace Tests\Modules\X156\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X156\Models\IngestRejection;
 use App\Modules\X156\Ui\RejectedrowsListView;
+use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,7 +20,20 @@ class RejectedrowsListViewScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-156.rejectedrows-list'))->assertOk();
+        $this->get(route('x-156.rejectedrows-list'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console');
+
+        Tenancy::setUser($owner->id);
+        IngestRejection::create([
+            'business_id' => $biz->id,
+            'rejection_reason' => 'Distinctive rejection 4648',
+        ]);
+
+        $this->get(route('x-156.rejectedrows-list'))
+            ->assertOk()
+            ->assertSee('Distinctive rejection 4648');
 
         Livewire::test(RejectedrowsListView::class)->assertOk();
     }

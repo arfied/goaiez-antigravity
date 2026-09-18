@@ -1,6 +1,18 @@
 <div>
-    <x-surface.sample-state module="⭐⭐ **Bringing a tenant's whole business across from ServiceTitan, Jobber, Housecall Pro — or from a spreadsheet.** *Customers, properties, job history, invoices, payments, estimates, photos, notes, agreements, the pricebook, staff and reviews.* ⛔⛔ **AND IT IS A TRANSLATION, NOT A COPY.** *Their job-status enum is not ours; their pricebook shape is not ours; their custom fields have no home.* ⭐⭐⭐ **A migration that maps 80% and silently drops 20% is worse than no migration — because the tenant finds the hole three months later, on a job, in front of a customer.**" screen="unmatchedfield_map" />
     <div class="unmatched-map-view p-4">
-        <h3 class="text-lg font-bold">Map Unmatched Fields</h3>
+        <h2 class="text-lg font-bold text-ink">Field mapping</h2>
+        @if($maps->isEmpty())
+            <x-ui.empty-state heading="Nothing to map yet.">When we bring your business across from another system, anything of yours that has no obvious home here is listed for you to place.</x-ui.empty-state>
+        @else
+            <ul class="divide-y divide-rule">
+                @foreach($maps as $m)
+                    <li class="py-2" wire:key="map-{{ $m->id }}">
+                        <span class="font-semibold">{{ $m->source_field }}</span>
+                        <span class="text-sm text-ink-2">{{ $m->target_entity }}</span>
+                        <span class="text-sm text-ink-2">{{ $m->target_field }}</span>
+                    </li>
+                @endforeach
+            </ul>
+        @endif
     </div>
 </div>

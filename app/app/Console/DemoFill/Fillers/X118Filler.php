@@ -5,6 +5,7 @@ namespace App\Console\DemoFill\Fillers;
 use App\Console\DemoFill\DemoFiller;
 use App\Models\Business;
 use App\Modules\X118\Models\OnboardingRun;
+use App\Modules\X118\Models\OnboardingStep;
 
 class X118Filler implements DemoFiller
 {
@@ -19,7 +20,7 @@ class X118Filler implements DemoFiller
             return 0;
         }
 
-        OnboardingRun::create([
+        $run1 = OnboardingRun::create([
             'business_id' => $business->id,
             'business_name' => self::MARKER.'Ridgeline HVAC',
             'contact_phone' => '+15550100001',
@@ -27,6 +28,30 @@ class X118Filler implements DemoFiller
             'status' => 'live',
             'ttfm_ms' => 950,
             'asked_fields_count' => 2,
+        ]);
+
+        OnboardingStep::create([
+            'business_id' => $business->id,
+            'run_id' => $run1->id,
+            'step_name' => 'demo·business name confirmed',
+            'is_hard_stop' => false,
+            'status' => 'completed',
+        ]);
+
+        OnboardingStep::create([
+            'business_id' => $business->id,
+            'run_id' => $run1->id,
+            'step_name' => 'demo·phone number verified',
+            'is_hard_stop' => false,
+            'status' => 'completed',
+        ]);
+
+        OnboardingStep::create([
+            'business_id' => $business->id,
+            'run_id' => $run1->id,
+            'step_name' => 'demo·industry inferred',
+            'is_hard_stop' => false,
+            'status' => 'completed',
         ]);
 
         OnboardingRun::create([
@@ -39,13 +64,22 @@ class X118Filler implements DemoFiller
             'asked_fields_count' => 2,
         ]);
 
-        return 2;
+        return 5;
     }
 
     public function purge(Business $business): int
     {
-        return OnboardingRun::where('business_id', $business->id)
+        $runs = OnboardingRun::where('business_id', $business->id)
             ->where('business_name', 'like', self::MARKER.'%')
-            ->delete();
+            ->pluck('id');
+
+        if ($runs->isEmpty()) {
+            return 0;
+        }
+
+        $deletedSteps = OnboardingStep::whereIn('run_id', $runs)->delete();
+        $deletedRuns = OnboardingRun::whereIn('id', $runs)->delete();
+
+        return $deletedSteps + $deletedRuns;
     }
 }
