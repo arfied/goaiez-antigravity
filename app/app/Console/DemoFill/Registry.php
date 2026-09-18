@@ -47,6 +47,7 @@ class Registry
             new Fillers\X142Filler,
             new Fillers\X153Filler,
             new Fillers\X155Filler,
+            new Fillers\X156Filler,
             new Fillers\X157Filler,
             new Fillers\X160Filler,
             new Fillers\X162Filler,
