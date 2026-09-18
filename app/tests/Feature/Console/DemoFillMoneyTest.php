@@ -22,7 +22,7 @@ class DemoFillMoneyTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Billing,X-104,X-198,X-199,X-211,X-120,X-173,X-202'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Billing,X-104,X-198,X-199,X-211,X-120,X-173,X-202,X-156'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
 
@@ -46,16 +46,17 @@ class DemoFillMoneyTest extends TestCase
         $this->assertDatabaseHas('sync_runs', ['business_id' => $biz->id, 'records_synced' => 248]);
         $this->assertDatabaseHas('approval_items', ['business_id' => $biz->id, 'subject' => 'demo·Refund for the Ridgeline callback']);
         $this->assertDatabaseHas('reconciliation_runs', ['business_id' => $biz->id, 'discrepancy_reason' => 'demo·A refund landed after the payout closed']);
+        $this->assertDatabaseHas('ingest_sources', ['business_id' => $biz->id, 'source_name' => 'demo·HubSpot contacts']);
 
         $c1 = Invoice::count();
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Billing,X-104,X-198,X-199,X-211,X-120,X-173,X-202'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Billing,X-104,X-198,X-199,X-211,X-120,X-173,X-202,X-156'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
         $this->assertEquals($c1, Invoice::count());
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Billing,X-104,X-198,X-199,X-211,X-120,X-173,X-202', '--purge' => true])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Billing,X-104,X-198,X-199,X-211,X-120,X-173,X-202,X-156', '--purge' => true])->assertExitCode(0);
 
         Tenancy::set($biz->id);
 
@@ -79,6 +80,7 @@ class DemoFillMoneyTest extends TestCase
         $this->assertDatabaseMissing('sync_runs', ['business_id' => $biz->id, 'records_synced' => 248]);
         $this->assertDatabaseMissing('approval_items', ['business_id' => $biz->id, 'subject' => 'demo·Refund for the Ridgeline callback']);
         $this->assertDatabaseMissing('reconciliation_runs', ['business_id' => $biz->id, 'discrepancy_reason' => 'demo·A refund landed after the payout closed']);
+        $this->assertDatabaseMissing('ingest_sources', ['business_id' => $biz->id, 'source_name' => 'demo·HubSpot contacts']);
     }
 
     public function test_the_money_screens_show_the_demo_rows(): void
@@ -87,7 +89,7 @@ class DemoFillMoneyTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Billing,X-104,X-198,X-199,X-211,X-120,X-173,X-202'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'C-Billing,X-104,X-198,X-199,X-211,X-120,X-173,X-202,X-156'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
         $this->actingAs($owner);
@@ -115,5 +117,7 @@ class DemoFillMoneyTest extends TestCase
         $this->get(route('x-202.queue'))->assertOk()->assertSee('demo·Refund for the Ridgeline callback');
         $this->get(route('x-202.audit-export'))->assertOk()->assertSee('demo·Renewal with an ambiguous clause');
         $this->get(route('x-198.reconciliation-discrepancies'))->assertOk()->assertSee('demo·po_0001');
+        $this->get(route('x-156.ingest-volume-by'))->assertOk()->assertSee('demo·HubSpot contacts');
+        $this->get(route('x-156.rejectedrows-list'))->assertOk()->assertSee('demo·missing email on the source row');
     }
 }

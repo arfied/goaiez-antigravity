@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-17T18:08:14",
+ "updated": "2026-09-17T11:35:21",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -140,7 +140,7 @@
   },
   "11": {
    "track": "J6-J7 portal",
-   "status": "DONE",
+   "status": "BUILDING",
    "modules": [
     "X-172",
     "X-112",
@@ -176,7 +176,7 @@
   },
   "15": {
    "track": "channels",
-   "status": "DONE",
+   "status": "BUILDING",
    "modules": [
     "C-Mail",
     "C-Whatsapp",
@@ -194,7 +194,7 @@
   },
   "17": {
    "track": "roster",
-   "status": "DONE",
+   "status": "BUILDING",
    "modules": [
     "X-125",
     "X-127",
@@ -459,108 +459,16 @@
    "unresolved": []
   },
   "X-102": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 12,
    "intent": "INFORM",
-   "unresolved": [
-    {
-     "module": "X-102",
-     "stage": "capability",
-     "why": "CapabilitiesScaffoldCommand rewrites unconditionally and deletes other tracks' hand-written lines (OWNER ACTION 39)",
-     "at": "2026-09-05T18:58:21"
-    },
-    {
-     "module": "X-102",
-     "stage": "capability",
-     "why": "G13-15: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)",
-     "at": "2026-09-05T18:58:29"
-    },
-    {
-     "module": "X-102",
-     "stage": "capability",
-     "why": "G16-21: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)",
-     "at": "2026-09-05T18:58:29"
-    },
-    {
-     "module": "X-102",
-     "stage": "anchor",
-     "why": "no vendor credential for a real-transport anchor run; evidence/ artifacts may only come from a real run (CLAUDE.md forbids the simulation harness)",
-     "at": "2026-09-05T19:19:40"
-    },
-    {
-     "module": "X-102",
-     "stage": "anchor",
-     "why": "The third party is the browser. The chat widget executes on the visitor's page; a browser mints no message-id, call-sid or charge-id. Cite `chat.start` in app/app/Modules/X-102/manifest.php.",
-     "at": "2026-09-06T05:15:50"
-    },
-    {
-     "module": "X-102",
-     "stage": "the renderer is X-102/Ui/, Track 2's under ruling 5; this lane cannot assert a rendering it may not build",
-     "why": "",
-     "at": "2026-09-06T07:39:31"
-    },
-    {
-     "module": "X-102",
-     "stage": "exit-intent trigger does not exist",
-     "why": "",
-     "at": "2026-09-06T07:40:19"
-    },
-    {
-     "module": "X-102",
-     "stage": "capability",
-     "why": "no path in X-102 distinguishes a price question from any other; the price source that would ground one is X-119's",
-     "at": "2026-09-06T10:42:27"
-    },
-    {
-     "module": "X-102",
-     "stage": "boundary",
-     "why": "X-121 exposes no create path for a Person: EntityWriteAction::handle takes string table, int id, int businessId, so it updates a row that already exists, and EntityReadAction reads by id and not by phone, so ChatCaptureAction:36 calls Person::updateOrCreate keyed on business_id and phone directly and BoundaryStage reports the import. X-121 is the spine and belongs to Track 1 under owner ruling 8, which already ruled this disposition for the same fact when pricebook recorded UNRESOLVED - X-121 exposes no create path and refused the raw insert. The missing dependency is a registered find-or-create-by-phone action on the spine. Twenty-four files across about fifteen modules in every lane import X121 Models directly, so the shape is repo-wide and advisory to Track 1; these two rows are this lane own two files.",
-     "at": "2026-09-09T18:01:52"
-    }
-   ]
+   "unresolved": []
   },
   "X-103": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 12,
    "intent": "GROW",
-   "unresolved": [
-    {
-     "module": "X-103",
-     "stage": "contract",
-     "why": "approval.requested correctly emitted by multiple proposing modules per the master plan rule (same shape as send.requested), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
-     "at": "2026-09-05T18:22:27"
-    },
-    {
-     "module": "X-103",
-     "stage": "anchor",
-     "why": "no vendor credential for a real-transport anchor run; evidence/ artifacts may only come from a real run (CLAUDE.md forbids the simulation harness)",
-     "at": "2026-09-05T19:19:40"
-    },
-    {
-     "module": "X-103",
-     "stage": "contract",
-     "why": "correctly emitted by multiple modules per the master plan rule, but sealed ContractStage.php lacks an exemption and unconditionally fails.",
-     "at": "2026-09-06T05:14:40"
-    },
-    {
-     "module": "X-103",
-     "stage": "anchor",
-     "why": "No third party exists. Owner ruling 16 makes the platform itself the publishing target. A module whose whole path is in-process has no vendor to ask, and the stage admits no vendorless module. Cite `site.publish` (line 31) in app/app/Modules/X-103/manifest.php.",
-     "at": "2026-09-06T05:15:54"
-    },
-    {
-     "module": "X-103",
-     "stage": "capability",
-     "why": "X-194 funnel visualization renderer",
-     "at": "2026-09-06T13:28:40"
-    },
-    {
-     "module": "X-103",
-     "stage": "capability",
-     "why": "X-195 marketplace app engine",
-     "at": "2026-09-06T13:28:40"
-    }
-   ]
+   "unresolved": []
   },
   "X-104": {
    "status": "DONE",
@@ -587,59 +495,10 @@
    "unresolved": []
   },
   "X-110": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 8,
    "intent": "OBSERVE",
-   "unresolved": [
-    {
-     "module": "X-110",
-     "stage": "capability",
-     "why": "G13-09: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)",
-     "at": "2026-09-05T18:58:29"
-    },
-    {
-     "module": "X-110",
-     "stage": "anchor",
-     "why": "no vendor credential for a real-transport anchor run; evidence/ artifacts may only come from a real run (CLAUDE.md forbids the simulation harness)",
-     "at": "2026-09-05T19:19:40"
-    },
-    {
-     "module": "X-110",
-     "stage": "contract",
-     "why": "ContractStage:423-428 passes a provided action only if it is in @agent_reachable or the list is literally 'none', so X-110's deliberate partial allowlist under P-209 reports every correctly-excluded action as silence (OWNER ACTION 38)",
-     "at": "2026-09-05T19:19:49"
-    },
-    {
-     "module": "X-110",
-     "stage": "contract",
-     "why": "ContractStage:199 regexes the compiled manifest for @ingress, and ModuleScaffoldCommand::parseHeaders() never harvests that field, so X-110's declared @ingress page.loaded <browser> (plan 26301) cannot reach the manifest and the exemption at :552 never fires (OWNER ACTION 36)",
-     "at": "2026-09-05T19:19:49"
-    },
-    {
-     "module": "X-110",
-     "stage": "anchor",
-     "why": "The third party is the browser. The pixel executes on the visitor's page; a browser mints no message-id, call-sid or charge-id. Cite `pixel.events` (line 33) and `visit.started` (line 36) in app/app/Modules/X-110/manifest.php.",
-     "at": "2026-09-06T05:15:58"
-    },
-    {
-     "module": "X-110",
-     "stage": "contract",
-     "why": "pixel.install is correctly absent from @agent_reachable per GOAIEZ-MASTER-PLAN.md:26300, which declares only pixel.verify reachable because anything that changes config is not; sealed ContractStage.php:405-435 accepts only a total allow-list or the token none, so the only ways to clear it are to widen the agent onto a config-changing action (P-209 forbids) or to drop pixel.verify.",
-     "at": "2026-09-06T12:42:08"
-    },
-    {
-     "module": "X-110",
-     "stage": "contract",
-     "why": "pixel.events is correctly absent from @agent_reachable per GOAIEZ-MASTER-PLAN.md:26300 for the same reason as pixel.install; sealed ContractStage.php:405-435 accepts only a total allow-list or the token none, so no non-regressing fix exists in this lane's column.",
-     "at": "2026-09-06T12:42:08"
-    },
-    {
-     "module": "X-110",
-     "stage": "contract",
-     "why": "page.loaded is declared @ingress at GOAIEZ-MASTER-PLAN.md:26301 and has no emitter by design; sealed ContractStage.php:195-206 builds its ingress exemption by regexing the compiled manifest.php, which carries no annotations (@ingress appears in 0 of 127 manifests), so the exemption at :551-554 is dead code.",
-     "at": "2026-09-06T12:42:08"
-    }
-   ]
+   "unresolved": []
   },
   "X-111": {
    "status": "DONE",
@@ -786,53 +645,10 @@
    "unresolved": []
   },
   "X-137": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 13,
    "intent": "INFORM",
-   "unresolved": [
-    {
-     "module": "X-137",
-     "stage": "capability",
-     "why": "G3-11: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)",
-     "at": "2026-09-05T18:58:29"
-    },
-    {
-     "module": "X-137",
-     "stage": "capability",
-     "why": "G8-13: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)",
-     "at": "2026-09-05T18:58:29"
-    },
-    {
-     "module": "X-137",
-     "stage": "capability",
-     "why": "G13-24: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)",
-     "at": "2026-09-05T18:58:29"
-    },
-    {
-     "module": "X-137",
-     "stage": "capability",
-     "why": "G18-17: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)",
-     "at": "2026-09-05T18:58:29"
-    },
-    {
-     "module": "X-137",
-     "stage": "anchor",
-     "why": "no vendor credential for a real-transport anchor run; evidence/ artifacts may only come from a real run (CLAUDE.md forbids the simulation harness)",
-     "at": "2026-09-05T19:19:40"
-    },
-    {
-     "module": "X-137",
-     "stage": "contract",
-     "why": "message.sent is declared by C-Sms at GOAIEZ-MASTER-PLAN.md:25554 but ModuleScaffoldCommand::field() truncates the list at the first token, so C-Sms/manifest.php:36-38 emits only send.requested (OWNER ACTION 41)",
-     "at": "2026-09-05T19:19:49"
-    },
-    {
-     "module": "X-137",
-     "stage": "anchor",
-     "why": "The vendor belongs to another lane. X-137's transport is Infobip through C-Telephony, which is track sixty's under ruling 5, and X-137 itself arrives here at the sixty merge. The dependency is another lane's credential and merge, named as such.",
-     "at": "2026-09-06T05:16:04"
-    }
-   ]
+   "unresolved": []
   },
   "X-138": {
    "status": "DONE",
@@ -925,47 +741,10 @@
    "unresolved": []
   },
   "X-155": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 12,
    "intent": "OBSERVE",
-   "unresolved": [
-    {
-     "module": "X-155",
-     "stage": "capability",
-     "why": "The scaffold command reads the master plan first and G13-05 appears on line 28087 without the refusal before line 31363, so the thin row wins and the tracker note is ignored.",
-     "at": "2026-09-05T18:22:23"
-    },
-    {
-     "module": "X-155",
-     "stage": "capability",
-     "why": "G13-05: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)",
-     "at": "2026-09-05T18:58:29"
-    },
-    {
-     "module": "X-155",
-     "stage": "anchor",
-     "why": "no vendor credential for a real-transport anchor run; evidence/ artifacts may only come from a real run (CLAUDE.md forbids the simulation harness)",
-     "at": "2026-09-05T19:19:40"
-    },
-    {
-     "module": "X-155",
-     "stage": "anchor",
-     "why": "No third party exists. The form capture path is entirely in-process and has no vendor to ask, and the stage admits no vendorless module. Cite `form.capture` (line 32) in app/app/Modules/X-155/manifest.php.",
-     "at": "2026-09-06T05:16:15"
-    },
-    {
-     "module": "X-155",
-     "stage": "events",
-     "why": "Track 2 Ui/ tenant inbox listener for FormCaptured and missing caller of FormReleaseAction",
-     "at": "2026-09-06T08:07:17"
-    },
-    {
-     "module": "X-155",
-     "stage": "boundary",
-     "why": "X-121 exposes no create path for a Person: EntityWriteAction::handle takes string table, int id, int businessId, so it updates a row that already exists, and EntityReadAction reads by id and not by phone, so FormCaptureAction:55 and :96 call Person::firstOrNew keyed on business_id and phone directly and BoundaryStage reports the import. X-121 is the spine and belongs to Track 1 under owner ruling 8, which already ruled this disposition for the same fact when pricebook recorded UNRESOLVED - X-121 exposes no create path and refused the raw insert. The missing dependency is a registered find-or-create-by-phone action on the spine. Twenty-four files across about fifteen modules in every lane import X121 Models directly, so the shape is repo-wide and advisory to Track 1; these two rows are this lane own two files.",
-     "at": "2026-09-09T18:01:47"
-    }
-   ]
+   "unresolved": []
   },
   "X-156": {
    "status": "DONE",
@@ -974,29 +753,10 @@
    "unresolved": []
   },
   "X-157": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 12,
    "intent": "RECOVER",
-   "unresolved": [
-    {
-     "module": "X-157",
-     "stage": "anchor",
-     "why": "no vendor credential for a real-transport anchor run; evidence/ artifacts may only come from a real run (CLAUDE.md forbids the simulation harness)",
-     "at": "2026-09-05T19:19:40"
-    },
-    {
-     "module": "X-157",
-     "stage": "journey",
-     "why": "publishSite():693 reads $version->ssl_installed, a property nothing writes (OWNER ACTION 28)",
-     "at": "2026-09-05T19:19:43"
-    },
-    {
-     "module": "X-157",
-     "stage": "boundary",
-     "why": "X-163 exposes no catalog-shaped read for a business confirmed price book: BookVersionAction, CalloutLookupAction, PriceConfirmAction, PriceLookupAction, PriceQuoteAction and PriceRangeAction are the whole of its registered surface and every one is per-service or per-quote, so EdgeDeployAction:132 reads X163\\Models\\PriceBookItem directly and BoundaryStage reports the import. X-163 is another lane under ruling 5, so the catalog read is that lane to build. Deleting the read is not available: the OfferCatalog node it feeds is the asserted clause of G8-14, which is credited. This is the same absent seam already filed as capability X-176 at 2026-09-06T16:52:20, counted once and reported by two stages against two modules.",
-     "at": "2026-09-09T18:01:40"
-    }
-   ]
+   "unresolved": []
   },
   "X-158": {
    "status": "DONE",
@@ -1083,17 +843,10 @@
    "unresolved": []
   },
   "X-172": {
-   "status": "UNRESOLVED",
+   "status": "BUILDING",
    "wave": 11,
    "intent": "INFORM",
-   "unresolved": [
-    {
-     "module": "X-172",
-     "stage": "tests",
-     "why": "generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook",
-     "at": "2026-09-05T08:35:23"
-    }
-   ]
+   "unresolved": []
   },
   "X-173": {
    "status": "DONE",
@@ -1108,101 +861,10 @@
    "unresolved": []
   },
   "X-176": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 13,
    "intent": "GROW",
-   "unresolved": [
-    {
-     "module": "X-176",
-     "stage": "anchor",
-     "why": "no vendor credential for a real-transport anchor run; evidence/ artifacts may only come from a real run (CLAUDE.md forbids the simulation harness)",
-     "at": "2026-09-05T19:19:40"
-    },
-    {
-     "module": "X-176",
-     "stage": "anchor",
-     "why": "X-176's index.request (manifest:33) requires a public domain to serve the IndexNow key (plugin:12-18) which this lane lacks, and the protocol mints no captureable id as it responds with bare HTTP statuses (plugin:34-36).",
-     "at": "2026-09-06T05:28:31"
-    },
-    {
-     "module": "X-176",
-     "stage": "capability",
-     "why": "a content generation or compilation pipeline to produce an LLMs.txt file (G3-34)",
-     "at": "2026-09-06T11:21:02"
-    },
-    {
-     "module": "X-176",
-     "stage": "capability",
-     "why": "a site structure or content graph API to compute link associations (G8-02)",
-     "at": "2026-09-06T11:21:02"
-    },
-    {
-     "module": "X-176",
-     "stage": "capability",
-     "why": "a search engine ping endpoint credential and HTTP client (G8-03)",
-     "at": "2026-09-06T11:21:02"
-    },
-    {
-     "module": "X-176",
-     "stage": "capability",
-     "why": "page hierarchy or site tree data to construct breadcrumbs (G8-04)",
-     "at": "2026-09-06T11:21:02"
-    },
-    {
-     "module": "X-176",
-     "stage": "capability",
-     "why": "NLP or content parsing to extract questions and answers from page body (G8-16)",
-     "at": "2026-09-06T11:21:02"
-    },
-    {
-     "module": "X-176",
-     "stage": "capability",
-     "why": "location or coordinates data for the business to build localized schema (G8-22)",
-     "at": "2026-09-06T11:21:02"
-    },
-    {
-     "module": "X-176",
-     "stage": "capability",
-     "why": "an IndexNow API client or Google Indexing API credential (G8-23)",
-     "at": "2026-09-06T11:21:02"
-    },
-    {
-     "module": "X-176",
-     "stage": "capability",
-     "why": "page content relationship data to build the link graph (G8-25)",
-     "at": "2026-09-06T11:21:02"
-    },
-    {
-     "module": "X-176",
-     "stage": "capability",
-     "why": "analytics or link value data to identify low-value links for nofollow (G8-30)",
-     "at": "2026-09-06T11:21:02"
-    },
-    {
-     "module": "X-176",
-     "stage": "capability",
-     "why": "an NLP or entity extraction service to identify semantic entities (G8-33)",
-     "at": "2026-09-06T11:21:02"
-    },
-    {
-     "module": "X-176",
-     "stage": "capability",
-     "why": "no seam for product schema from the pricebook and no same-commit invalidation; app/app/Modules/X-176/Actions/SchemaRenderAction.php:24 receives productOffers as an argument, lacking a read dependency on X-163 or X-119",
-     "at": "2026-09-06T16:31:03"
-    },
-    {
-     "module": "X-176",
-     "stage": "capability",
-     "why": "no seam for Event schema from X-108s calendar; grep for X-108 or calendar returned nothing, and app/app/Modules/X-176/Actions/SchemaRenderAction.php:17-26 has no event parameter, lacking a read dependency on X-108",
-     "at": "2026-09-06T16:31:06"
-    },
-    {
-     "module": "X-176",
-     "stage": "capability",
-     "why": "G8-14 needs an offer catalog for a business and X-163 exposes no catalog-shaped read - X-163/Actions/PriceLookupAction.php:13, X-163/Actions/PriceRangeAction.php:11, X-163/Actions/PriceConfirmAction.php:14, and X-163/Actions/PriceQuoteAction.php:15 are all per-service or per-quote, so X-157/Actions/EdgeDeployAction.php:170 has nothing to pass as productOffers and SchemaRenderAction.php:53 stays dead in production",
-     "at": "2026-09-06T16:52:20"
-    }
-   ]
+   "unresolved": []
   },
   "X-177": {
    "status": "DONE",
@@ -1268,12 +930,6 @@
      "stage": "contract",
      "why": "send.requested correctly emitted by multiple modules per R231, but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
      "at": "2026-09-03T13:47:25"
-    },
-    {
-     "module": "X-186",
-     "stage": "capability",
-     "why": "no action enrols a person into a campaign",
-     "at": "2026-09-04T22:41:56"
     }
    ]
   },
@@ -1315,17 +971,10 @@
    "unresolved": []
   },
   "X-193": {
-   "status": "UNRESOLVED",
+   "status": "BUILDING",
    "wave": 15,
    "intent": "GROW",
-   "unresolved": [
-    {
-     "module": "X-193",
-     "stage": "tests",
-     "why": "column quiet_hours_start is missing from notification_classes and not named in the brief",
-     "at": "2026-09-04T02:05:53"
-    }
-   ]
+   "unresolved": []
   },
   "X-194": {
    "status": "DONE",
@@ -1370,17 +1019,10 @@
    "unresolved": []
   },
   "X-201": {
-   "status": "UNRESOLVED",
+   "status": "BUILDING",
    "wave": 17,
    "intent": "RECOVER",
-   "unresolved": [
-    {
-     "module": "X-201",
-     "stage": "tests",
-     "why": "column deadline_at is missing from disputes and not named in the brief",
-     "at": "2026-09-04T02:05:53"
-    }
-   ]
+   "unresolved": []
   },
   "X-202": {
    "status": "DONE",
@@ -1636,18 +1278,6 @@
    "at": "2026-09-03T14:01:55"
   },
   {
-   "module": "X-193",
-   "stage": "tests",
-   "why": "column quiet_hours_start is missing from notification_classes and not named in the brief",
-   "at": "2026-09-04T02:05:53"
-  },
-  {
-   "module": "X-201",
-   "stage": "tests",
-   "why": "column deadline_at is missing from disputes and not named in the brief",
-   "at": "2026-09-04T02:05:53"
-  },
-  {
    "module": "C-Reviews",
    "stage": "tests",
    "why": "ReviewRequested event lacks messageClass so the module cannot express the send class (marketing) without a legacy change",
@@ -1660,18 +1290,6 @@
    "at": "2026-09-04T08:05:31"
   },
   {
-   "module": "X-186",
-   "stage": "capability",
-   "why": "no action enrols a person into a campaign",
-   "at": "2026-09-04T22:41:56"
-  },
-  {
-   "module": "X-172",
-   "stage": "tests",
-   "why": "generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook",
-   "at": "2026-09-05T08:35:23"
-  },
-  {
    "module": "C-Sms",
    "stage": "capability",
    "why": "TrialEligibility: The journey tenant needs a confirmed Google listing for real credit grant",
@@ -1682,330 +1300,6 @@
    "stage": "tests",
    "why": "four legacy message tables outside the twelve nouns (outreach_messages, triage_conversations, inbound_messages, support_messages) \u2014 the G2-76 lint is right, main's schema is not migrated; the sixty lane proposes the fold",
    "at": "2026-09-05T17:11:31"
-  },
-  {
-   "module": "X-155",
-   "stage": "capability",
-   "why": "The scaffold command reads the master plan first and G13-05 appears on line 28087 without the refusal before line 31363, so the thin row wins and the tracker note is ignored.",
-   "at": "2026-09-05T18:22:23"
-  },
-  {
-   "module": "X-103",
-   "stage": "contract",
-   "why": "approval.requested correctly emitted by multiple proposing modules per the master plan rule (same shape as send.requested), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
-   "at": "2026-09-05T18:22:27"
-  },
-  {
-   "module": "X-102",
-   "stage": "capability",
-   "why": "CapabilitiesScaffoldCommand rewrites unconditionally and deletes other tracks' hand-written lines (OWNER ACTION 39)",
-   "at": "2026-09-05T18:58:21"
-  },
-  {
-   "module": "X-102",
-   "stage": "capability",
-   "why": "G13-15: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)",
-   "at": "2026-09-05T18:58:29"
-  },
-  {
-   "module": "X-102",
-   "stage": "capability",
-   "why": "G16-21: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)",
-   "at": "2026-09-05T18:58:29"
-  },
-  {
-   "module": "X-110",
-   "stage": "capability",
-   "why": "G13-09: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)",
-   "at": "2026-09-05T18:58:29"
-  },
-  {
-   "module": "X-137",
-   "stage": "capability",
-   "why": "G3-11: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)",
-   "at": "2026-09-05T18:58:29"
-  },
-  {
-   "module": "X-137",
-   "stage": "capability",
-   "why": "G8-13: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)",
-   "at": "2026-09-05T18:58:29"
-  },
-  {
-   "module": "X-137",
-   "stage": "capability",
-   "why": "G13-24: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)",
-   "at": "2026-09-05T18:58:29"
-  },
-  {
-   "module": "X-137",
-   "stage": "capability",
-   "why": "G18-17: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)",
-   "at": "2026-09-05T18:58:29"
-  },
-  {
-   "module": "X-155",
-   "stage": "capability",
-   "why": "G13-05: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)",
-   "at": "2026-09-05T18:58:29"
-  },
-  {
-   "module": "X-157",
-   "stage": "anchor",
-   "why": "no vendor credential for a real-transport anchor run; evidence/ artifacts may only come from a real run (CLAUDE.md forbids the simulation harness)",
-   "at": "2026-09-05T19:19:40"
-  },
-  {
-   "module": "X-110",
-   "stage": "anchor",
-   "why": "no vendor credential for a real-transport anchor run; evidence/ artifacts may only come from a real run (CLAUDE.md forbids the simulation harness)",
-   "at": "2026-09-05T19:19:40"
-  },
-  {
-   "module": "X-102",
-   "stage": "anchor",
-   "why": "no vendor credential for a real-transport anchor run; evidence/ artifacts may only come from a real run (CLAUDE.md forbids the simulation harness)",
-   "at": "2026-09-05T19:19:40"
-  },
-  {
-   "module": "X-155",
-   "stage": "anchor",
-   "why": "no vendor credential for a real-transport anchor run; evidence/ artifacts may only come from a real run (CLAUDE.md forbids the simulation harness)",
-   "at": "2026-09-05T19:19:40"
-  },
-  {
-   "module": "X-137",
-   "stage": "anchor",
-   "why": "no vendor credential for a real-transport anchor run; evidence/ artifacts may only come from a real run (CLAUDE.md forbids the simulation harness)",
-   "at": "2026-09-05T19:19:40"
-  },
-  {
-   "module": "X-176",
-   "stage": "anchor",
-   "why": "no vendor credential for a real-transport anchor run; evidence/ artifacts may only come from a real run (CLAUDE.md forbids the simulation harness)",
-   "at": "2026-09-05T19:19:40"
-  },
-  {
-   "module": "X-103",
-   "stage": "anchor",
-   "why": "no vendor credential for a real-transport anchor run; evidence/ artifacts may only come from a real run (CLAUDE.md forbids the simulation harness)",
-   "at": "2026-09-05T19:19:40"
-  },
-  {
-   "module": "X-157",
-   "stage": "journey",
-   "why": "publishSite():693 reads $version->ssl_installed, a property nothing writes (OWNER ACTION 28)",
-   "at": "2026-09-05T19:19:43"
-  },
-  {
-   "module": "X-137",
-   "stage": "contract",
-   "why": "message.sent is declared by C-Sms at GOAIEZ-MASTER-PLAN.md:25554 but ModuleScaffoldCommand::field() truncates the list at the first token, so C-Sms/manifest.php:36-38 emits only send.requested (OWNER ACTION 41)",
-   "at": "2026-09-05T19:19:49"
-  },
-  {
-   "module": "X-110",
-   "stage": "contract",
-   "why": "ContractStage:423-428 passes a provided action only if it is in @agent_reachable or the list is literally 'none', so X-110's deliberate partial allowlist under P-209 reports every correctly-excluded action as silence (OWNER ACTION 38)",
-   "at": "2026-09-05T19:19:49"
-  },
-  {
-   "module": "X-110",
-   "stage": "contract",
-   "why": "ContractStage:199 regexes the compiled manifest for @ingress, and ModuleScaffoldCommand::parseHeaders() never harvests that field, so X-110's declared @ingress page.loaded <browser> (plan 26301) cannot reach the manifest and the exemption at :552 never fires (OWNER ACTION 36)",
-   "at": "2026-09-05T19:19:49"
-  },
-  {
-   "module": "X-103",
-   "stage": "contract",
-   "why": "correctly emitted by multiple modules per the master plan rule, but sealed ContractStage.php lacks an exemption and unconditionally fails.",
-   "at": "2026-09-06T05:14:40"
-  },
-  {
-   "module": "X-102",
-   "stage": "anchor",
-   "why": "The third party is the browser. The chat widget executes on the visitor's page; a browser mints no message-id, call-sid or charge-id. Cite `chat.start` in app/app/Modules/X-102/manifest.php.",
-   "at": "2026-09-06T05:15:50"
-  },
-  {
-   "module": "X-103",
-   "stage": "anchor",
-   "why": "No third party exists. Owner ruling 16 makes the platform itself the publishing target. A module whose whole path is in-process has no vendor to ask, and the stage admits no vendorless module. Cite `site.publish` (line 31) in app/app/Modules/X-103/manifest.php.",
-   "at": "2026-09-06T05:15:54"
-  },
-  {
-   "module": "X-110",
-   "stage": "anchor",
-   "why": "The third party is the browser. The pixel executes on the visitor's page; a browser mints no message-id, call-sid or charge-id. Cite `pixel.events` (line 33) and `visit.started` (line 36) in app/app/Modules/X-110/manifest.php.",
-   "at": "2026-09-06T05:15:58"
-  },
-  {
-   "module": "X-137",
-   "stage": "anchor",
-   "why": "The vendor belongs to another lane. X-137's transport is Infobip through C-Telephony, which is track sixty's under ruling 5, and X-137 itself arrives here at the sixty merge. The dependency is another lane's credential and merge, named as such.",
-   "at": "2026-09-06T05:16:04"
-  },
-  {
-   "module": "X-155",
-   "stage": "anchor",
-   "why": "No third party exists. The form capture path is entirely in-process and has no vendor to ask, and the stage admits no vendorless module. Cite `form.capture` (line 32) in app/app/Modules/X-155/manifest.php.",
-   "at": "2026-09-06T05:16:15"
-  },
-  {
-   "module": "X-176",
-   "stage": "anchor",
-   "why": "X-176's index.request (manifest:33) requires a public domain to serve the IndexNow key (plugin:12-18) which this lane lacks, and the protocol mints no captureable id as it responds with bare HTTP statuses (plugin:34-36).",
-   "at": "2026-09-06T05:28:31"
-  },
-  {
-   "module": "X-102",
-   "stage": "the renderer is X-102/Ui/, Track 2's under ruling 5; this lane cannot assert a rendering it may not build",
-   "why": "",
-   "at": "2026-09-06T07:39:31"
-  },
-  {
-   "module": "X-102",
-   "stage": "exit-intent trigger does not exist",
-   "why": "",
-   "at": "2026-09-06T07:40:19"
-  },
-  {
-   "module": "X-155",
-   "stage": "events",
-   "why": "Track 2 Ui/ tenant inbox listener for FormCaptured and missing caller of FormReleaseAction",
-   "at": "2026-09-06T08:07:17"
-  },
-  {
-   "module": "X-102",
-   "stage": "capability",
-   "why": "no path in X-102 distinguishes a price question from any other; the price source that would ground one is X-119's",
-   "at": "2026-09-06T10:42:27"
-  },
-  {
-   "module": "X-176",
-   "stage": "capability",
-   "why": "a content generation or compilation pipeline to produce an LLMs.txt file (G3-34)",
-   "at": "2026-09-06T11:21:02"
-  },
-  {
-   "module": "X-176",
-   "stage": "capability",
-   "why": "a site structure or content graph API to compute link associations (G8-02)",
-   "at": "2026-09-06T11:21:02"
-  },
-  {
-   "module": "X-176",
-   "stage": "capability",
-   "why": "a search engine ping endpoint credential and HTTP client (G8-03)",
-   "at": "2026-09-06T11:21:02"
-  },
-  {
-   "module": "X-176",
-   "stage": "capability",
-   "why": "page hierarchy or site tree data to construct breadcrumbs (G8-04)",
-   "at": "2026-09-06T11:21:02"
-  },
-  {
-   "module": "X-176",
-   "stage": "capability",
-   "why": "NLP or content parsing to extract questions and answers from page body (G8-16)",
-   "at": "2026-09-06T11:21:02"
-  },
-  {
-   "module": "X-176",
-   "stage": "capability",
-   "why": "location or coordinates data for the business to build localized schema (G8-22)",
-   "at": "2026-09-06T11:21:02"
-  },
-  {
-   "module": "X-176",
-   "stage": "capability",
-   "why": "an IndexNow API client or Google Indexing API credential (G8-23)",
-   "at": "2026-09-06T11:21:02"
-  },
-  {
-   "module": "X-176",
-   "stage": "capability",
-   "why": "page content relationship data to build the link graph (G8-25)",
-   "at": "2026-09-06T11:21:02"
-  },
-  {
-   "module": "X-176",
-   "stage": "capability",
-   "why": "analytics or link value data to identify low-value links for nofollow (G8-30)",
-   "at": "2026-09-06T11:21:02"
-  },
-  {
-   "module": "X-176",
-   "stage": "capability",
-   "why": "an NLP or entity extraction service to identify semantic entities (G8-33)",
-   "at": "2026-09-06T11:21:02"
-  },
-  {
-   "module": "X-110",
-   "stage": "contract",
-   "why": "pixel.install is correctly absent from @agent_reachable per GOAIEZ-MASTER-PLAN.md:26300, which declares only pixel.verify reachable because anything that changes config is not; sealed ContractStage.php:405-435 accepts only a total allow-list or the token none, so the only ways to clear it are to widen the agent onto a config-changing action (P-209 forbids) or to drop pixel.verify.",
-   "at": "2026-09-06T12:42:08"
-  },
-  {
-   "module": "X-110",
-   "stage": "contract",
-   "why": "pixel.events is correctly absent from @agent_reachable per GOAIEZ-MASTER-PLAN.md:26300 for the same reason as pixel.install; sealed ContractStage.php:405-435 accepts only a total allow-list or the token none, so no non-regressing fix exists in this lane's column.",
-   "at": "2026-09-06T12:42:08"
-  },
-  {
-   "module": "X-110",
-   "stage": "contract",
-   "why": "page.loaded is declared @ingress at GOAIEZ-MASTER-PLAN.md:26301 and has no emitter by design; sealed ContractStage.php:195-206 builds its ingress exemption by regexing the compiled manifest.php, which carries no annotations (@ingress appears in 0 of 127 manifests), so the exemption at :551-554 is dead code.",
-   "at": "2026-09-06T12:42:08"
-  },
-  {
-   "module": "X-103",
-   "stage": "capability",
-   "why": "X-194 funnel visualization renderer",
-   "at": "2026-09-06T13:28:40"
-  },
-  {
-   "module": "X-103",
-   "stage": "capability",
-   "why": "X-195 marketplace app engine",
-   "at": "2026-09-06T13:28:40"
-  },
-  {
-   "module": "X-176",
-   "stage": "capability",
-   "why": "no seam for product schema from the pricebook and no same-commit invalidation; app/app/Modules/X-176/Actions/SchemaRenderAction.php:24 receives productOffers as an argument, lacking a read dependency on X-163 or X-119",
-   "at": "2026-09-06T16:31:03"
-  },
-  {
-   "module": "X-176",
-   "stage": "capability",
-   "why": "no seam for Event schema from X-108s calendar; grep for X-108 or calendar returned nothing, and app/app/Modules/X-176/Actions/SchemaRenderAction.php:17-26 has no event parameter, lacking a read dependency on X-108",
-   "at": "2026-09-06T16:31:06"
-  },
-  {
-   "module": "X-176",
-   "stage": "capability",
-   "why": "G8-14 needs an offer catalog for a business and X-163 exposes no catalog-shaped read - X-163/Actions/PriceLookupAction.php:13, X-163/Actions/PriceRangeAction.php:11, X-163/Actions/PriceConfirmAction.php:14, and X-163/Actions/PriceQuoteAction.php:15 are all per-service or per-quote, so X-157/Actions/EdgeDeployAction.php:170 has nothing to pass as productOffers and SchemaRenderAction.php:53 stays dead in production",
-   "at": "2026-09-06T16:52:20"
-  },
-  {
-   "module": "X-157",
-   "stage": "boundary",
-   "why": "X-163 exposes no catalog-shaped read for a business confirmed price book: BookVersionAction, CalloutLookupAction, PriceConfirmAction, PriceLookupAction, PriceQuoteAction and PriceRangeAction are the whole of its registered surface and every one is per-service or per-quote, so EdgeDeployAction:132 reads X163\\Models\\PriceBookItem directly and BoundaryStage reports the import. X-163 is another lane under ruling 5, so the catalog read is that lane to build. Deleting the read is not available: the OfferCatalog node it feeds is the asserted clause of G8-14, which is credited. This is the same absent seam already filed as capability X-176 at 2026-09-06T16:52:20, counted once and reported by two stages against two modules.",
-   "at": "2026-09-09T18:01:40"
-  },
-  {
-   "module": "X-155",
-   "stage": "boundary",
-   "why": "X-121 exposes no create path for a Person: EntityWriteAction::handle takes string table, int id, int businessId, so it updates a row that already exists, and EntityReadAction reads by id and not by phone, so FormCaptureAction:55 and :96 call Person::firstOrNew keyed on business_id and phone directly and BoundaryStage reports the import. X-121 is the spine and belongs to Track 1 under owner ruling 8, which already ruled this disposition for the same fact when pricebook recorded UNRESOLVED - X-121 exposes no create path and refused the raw insert. The missing dependency is a registered find-or-create-by-phone action on the spine. Twenty-four files across about fifteen modules in every lane import X121 Models directly, so the shape is repo-wide and advisory to Track 1; these two rows are this lane own two files.",
-   "at": "2026-09-09T18:01:47"
-  },
-  {
-   "module": "X-102",
-   "stage": "boundary",
-   "why": "X-121 exposes no create path for a Person: EntityWriteAction::handle takes string table, int id, int businessId, so it updates a row that already exists, and EntityReadAction reads by id and not by phone, so ChatCaptureAction:36 calls Person::updateOrCreate keyed on business_id and phone directly and BoundaryStage reports the import. X-121 is the spine and belongs to Track 1 under owner ruling 8, which already ruled this disposition for the same fact when pricebook recorded UNRESOLVED - X-121 exposes no create path and refused the raw insert. The missing dependency is a registered find-or-create-by-phone action on the spine. Twenty-four files across about fifteen modules in every lane import X121 Models directly, so the shape is repo-wide and advisory to Track 1; these two rows are this lane own two files.",
-   "at": "2026-09-09T18:01:52"
   }
  ],
  "decisions": [
@@ -2080,570 +1374,6 @@
    "chose": "a duplicate ARB subscription (E00012) is reused, never re-created; the existing id comes from the vendor (run 97, R245)",
    "at": "2026-09-05T16:22:13",
    "ruling": "R245"
-  },
-  {
-   "module": "X-157",
-   "chose": "X-103 \u2194 X-157 seam: ssl_installed is written in EdgeDeployAction at the exact moment the version goes live. Writing it before the SSL validity check accurately reflects EdgeZone.has_valid_ssl whether the deploy succeeds or is refused.",
-   "at": "2026-09-06T05:55:14",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-137",
-   "chose": "A per-business DNI number pool is implemented under app/app/Modules/X-137/Database/migrations/.",
-   "at": "2026-09-06T06:31:39",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-157",
-   "chose": "route seam",
-   "at": "2026-09-06T06:51:32",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-157",
-   "chose": "a DNI number is per-visitor and per-request, so it cannot be baked into deploy-time static HTML \u2014 one stored file serves every visitor. It is allocated at request time by GET /sites/{business}/{deploy_hash}/dni, a sibling of the existing form route, behind the same deployed and has_valid_ssl guards, and the exhausted path is a refusal rather than a placeholder number.",
-   "at": "2026-09-06T07:21:58",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-155",
-   "chose": "FormReleaseAction clears is_spam and spam_reason, and emits FormCaptured event --ruling R245",
-   "at": "2026-09-06T07:44:23",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-102",
-   "chose": "built refusal for ungrounded price questions per P-092, using existing 'refused' status and NO_GROUNDING_FACT code in ChatEscalateAction --ruling R245",
-   "at": "2026-09-06T08:07:09",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-155",
-   "chose": "changed FormReleaseAction to be a no-op returning 'already_released' when submission is not spam, rather than throwing InvalidArgumentException --ruling R245",
-   "at": "2026-09-06T08:07:09",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-102",
-   "chose": "the assertable half of P-092 is on the answered path, not the refused one, because the refused answer is a constant string and the answered one echoes its input by value --ruling R245",
-   "at": "2026-09-06T10:42:36",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-137",
-   "chose": "Deleted stub test and empty engine enforce methods; capability credits traced to real assertions in tests/Modules/X-137 --ruling R245",
-   "at": "2026-09-06T11:07:25",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-176",
-   "chose": "re-credited G8-14 to existing assertion of product schema from pricebook --ruling R245",
-   "at": "2026-09-06T11:21:12",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-176",
-   "chose": "re-credited G8-15 to existing assertion rendering published schema without event key for calendar tenant --ruling R245",
-   "at": "2026-09-06T11:21:12",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-176",
-   "chose": "re-credited G8-32 to existing assertion validating schema, rendering refused if invalid with SCHEMA_INVALID code --ruling R245",
-   "at": "2026-09-06T11:21:12",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-176",
-   "chose": "re-credited G12-03 to existing assertion rendering schema with specific LocalBusiness vertical type like HVACBusiness --ruling R245",
-   "at": "2026-09-06T11:21:12",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-176",
-   "chose": "re-credited G16-25 to existing assertion rendering VideoObject schema for videos and refuses if invalid --ruling R245",
-   "at": "2026-09-06T11:21:12",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-176",
-   "chose": "re-credited G7-48 to existing assertion that deploy valid html contains application/ld+json and refuses invalid without it --ruling R245",
-   "at": "2026-09-06T11:21:12",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-157",
-   "chose": "EdgeProvisionAction stays test-only: it mints zone_id and ssl_certificate_id with Str::random() and takes has_valid_ssl as an argument, so a production caller would green J11's ssl element off a fabricated certificate. EdgeProvisionRefusalTest asserts the class is unreachable from app/app/. --ruling R245",
-   "at": "2026-09-06T13:01:03",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-176",
-   "chose": "Event schema is rendered from X-108's appointments, passed by EdgeDeployAction on the same seam as videos --ruling R245",
-   "at": "2026-09-06T18:00:55",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-176",
-   "chose": "Hyper-Local schema is rendered from Business.address, passed by EdgeDeployAction on the same seam as videos and events --ruling R245",
-   "at": "2026-09-06T18:22:45",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-176",
-   "chose": "built on the EdgeDeployAction seam, rendering with LlmsTxtRenderAction and writing to local storage alongside the html artifact, as this gives immediate artifact availability on the same deployment pass --ruling R245",
-   "at": "2026-09-06T18:41:39",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-176",
-   "chose": "the seam SchemaRenderAction <- EdgeDeployAction where videos, events and address already occupy --ruling R245",
-   "at": "2026-09-06T19:32:37",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-157",
-   "chose": "the required HTML artifact refuses a failed write and the optional llms.txt artifact never does, logging a warning instead --ruling R245",
-   "at": "2026-09-06T19:32:41",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-176",
-   "chose": "Injected InternalLinkRenderAction into EdgeDeployAction to construct the internal link graph navigation block. --ruling R245",
-   "at": "2026-09-06T20:11:32",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-176",
-   "chose": "The threshold is 2 usable pages because a single link does not form a graph, and a nav block with one self-link is noise rather than structure. --ruling R245",
-   "at": "2026-09-06T20:30:21",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-176",
-   "chose": "X-157 derives productOffers from up to 20 confirmed non-sample PriceBookItems and renders them visibly. --ruling R245",
-   "at": "2026-09-06T20:51:21",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-176",
-   "chose": "the three schema claims are now rendered visibly at the X-157 deploy construction site and asserted to correspond to the JSON-LD --ruling R245",
-   "at": "2026-09-06T21:14:58",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-176",
-   "chose": "an unresolvable or unpublished breadcrumb ancestor drops the whole breadcrumb; ancestor slugs are matched on the normalised form --ruling R245",
-   "at": "2026-09-06T22:33:07",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-176",
-   "chose": "the breadcrumb renders as nav#breadcrumb-x176 before the offers block, from the same derived trail as the JSON-LD; an unresolvable hierarchy emits neither surface --ruling R245",
-   "at": "2026-09-06T22:53:10",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-176",
-   "chose": "the breadcrumb ancestry query is bounded to the ancestor paths across both stored slug forms, and a normalisation collision between two pages refuses the whole trail --ruling R245",
-   "at": "2026-09-06T23:23:45",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-176",
-   "chose": "the breadcrumb ancestry query is bounded on the SQL-normalised slug, so it accepts every form trim('/') accepts and agrees with the internal-link renderer by construction --ruling R245",
-   "at": "2026-09-06T23:43:45",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-176",
-   "chose": "the breadcrumb and event schema assertions are scoped to the block they are about, so a string rendered elsewhere in the document cannot satisfy them --ruling R245",
-   "at": "2026-09-07T00:04:23",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-157",
-   "chose": "Order price book items by id asc for deterministic page head deployment --ruling R245",
-   "at": "2026-09-07T00:22:12",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-176",
-   "chose": "the internal-link query is ordered for a deterministic published nav, and that the cap is applied to the emitted list while the ancestor index is built from the full published set --ruling R245",
-   "at": "2026-09-07T00:46:25",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-176",
-   "chose": "the internal-link cap is a pre-order budget over the built tree, so every emitted link's parent is emitted before it and the published nav can never carry an orphan --ruling R245",
-   "at": "2026-09-07T01:13:04",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-176",
-   "chose": "G8-16 FAQPage schema is read from an faq block in content_blocks on the same seam as G16-25, not using NLP. --ruling R245",
-   "at": "2026-09-07T01:54:31",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-176",
-   "chose": "the internal-link nav refuses a normalised slug held by more than one published page, excluding that key and its descendants, matching the breadcrumb's refusal of an ambiguous ancestry --ruling R245",
-   "at": "2026-09-07T02:40:11",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-102",
-   "chose": "G2-57's asserted clause requires every terminal state of chat_sessions.status to hold a contact method. Of the two terminal states, lead_captured holds one by construction (ChatCaptureAction creates a ChatLead with a NOT NULL phone before the status write) and escalated held none. ChatEscalateAction::handle now refuses a session with no ChatLead, returning capture_required with refusal_code NO_CONTACT_METHOD_ON_SESSION, leaving the session non-terminal and dispatching no ChatEscalated, per GOAIEZ-MASTER-PLAN.md:25618 (the thread never dead-ends). Refused: a contact_method column on chat_sessions (a derived column whose only writer exists to satisfy its reader), reusing offline_form (which means AI credits exhausted), and an exhaustive walk over the old behaviour (which would have asserted the plan's own forbidden outcome). --ruling R245",
-   "at": "2026-09-07T12:35:09",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-102",
-   "chose": "ChatCaptureAction::handle now refuses a blank or whitespace-only phone before any write, throwing DomainException NO_CONTACT_METHOD_ON_CAPTURE, so neither the Person nor the ChatLead is created. This is the input half of SITE-151's terminal-state invariant: that guard is an existence check on ChatLead, and chat_leads.phone is NOT NULL but not non-empty, so a blank phone would have produced a lead the guard admits and a session reaching escalated with no way to reach anyone, which is GOAIEZ-MASTER-PLAN.md:29073's forbidden outcome. It also closes a second consequence of the same input: Person::updateOrCreate keys on business_id and phone, so two blank-phone captures for one business collapsed onto one Person. The predicate is trim() === '', matching the decision already recorded for the email field at ChatCaptureAction:29-30 (R245, 2026-09-05); email stays optional and becomes null, phone is required and is refused. Refused: making chat_leads.phone nullable, adding a non-empty clause to ChatEscalateAction's guard instead of or as well as this refusal (a reader compensating for a writer, and two writers of one invariant), and widening the refusal to email. --ruling R245",
-   "at": "2026-09-07T13:10:43",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-155",
-   "chose": "FormCaptureAction's spam branch keyed its Person on ['phone'] ?? '+15550000000', and the null-coalescing operator fires only on a missing key, never on a blank value. Two consequences, both already decided against in the same file's non-spam branch at line 93 (R245, 2026-09-05): a payload carrying an empty or whitespace-only phone keyed a Person on the empty string, so two blank-phone spam submissions from one business collapsed onto one contact; and a payload with no phone key wrote the reserved fictional number +15550000000 to a production contact row. The spam branch now takes its phone through the same given() normaliser the non-spam branch uses and gives a phone-less spam submission its own contact. The keying changed and nothing else: a spam rejection is still stored and flagged with a non-null person_id, per G3-64 and G13-05 at GOAIEZ-MASTER-PLAN.md:31363. Refused: adding a refusal in the shape of X-102's ChatCaptureAction, which would discard a spam submission and delete a discharged capability; making persons.phone non-nullable; and narrowing X155Test.php:1133, whose assertion is correct but whose fixture reaches only the non-spam branch. --ruling R245",
-   "at": "2026-09-07T13:38:51",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-157",
-   "chose": "The published page omits a schema node whose validator-required strings are blank, rather than emitting it or substituting a label, because SchemaRenderAction refuses the whole document on an empty name and the JSON-LD block is one of J11 seven required elements (R245)",
-   "at": "2026-09-07T14:25:02",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-157",
-   "chose": "--ruling R245 The reddened X157Test assertion that a malformed video block takes the whole JSON-LD off the served page asserted the behaviour SITE-154 changed, not a contract. The guard field lists are byte-identical to SchemaRenderAction validateSchema required-non-empty lists, and the fixture block carries no contentUrl, so it is exactly the member the guard excludes. The test now asserts that the required JSON-LD element survives and that the malformed video does not reach it. The whole-document refusal is preserved and still asserted for the case where it is correct, a blank top-level business name, at X176Test line 290.",
-   "at": "2026-09-07T14:54:29",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-176",
-   "chose": "A top-level schema name or url that is blank after trim now refuses the whole document, as the empty string already did. empty() returns false for a whitespace-only string, so a business whose name was whitespace published a LocalBusiness node carrying a blank name with the document intact and every gate green, while the empty-string case was refused and that refusal is asserted at X176Test line 290. The direction is deliberately opposite to the collection-member seam: a blank enrichment member is omitted and the document survives, but the top-level name is the subject of the whole schema, so the document is refused. The member predicates are unchanged, because two committed falsifiers depend on the validator accepting a whitespace member in order to show that member reaching the page with the page intact. Refused: a guard in EdgeDeployAction as well as or instead of this one, and a non-empty constraint on businesses.name, which is another lane column.",
-   "at": "2026-09-07T15:24:42",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-176",
-   "chose": "--ruling R245 X-176 \u2014 The top-level required-string check no longer refuses a name or url of \"0\". SITE-156 gave the line below it a trim-based blank test that already refuses a missing key, null, a non-string and any blank-after-trim value, which left the older empty() check with exactly one live effect: refusing the non-blank string \"0\", a legitimate name that schema.org validates. G7-48 asks for a refusal only when the schema does not validate, so a business named 0 was serving six of the seven required elements. @type deliberately keeps empty(), because isset on an empty array is true and validType computes 0 === 0 for it, so a uniform rewrite would have admitted an empty @type array. Refused: any change to the member predicates, on which two committed falsifiers depend; to EdgeDeployAction completeness guard, whose blank-name gap is governed by G7-48 requiring the page to render without the schema; and to businesses.name, another lane column.",
-   "at": "2026-09-07T15:55:43",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-176",
-   "chose": "The blank test for a display string on the publish path is now trim-based at all five sites, replacing empty(), which was wrong in both directions over a NOT NULL pages.title column with no non-empty validation. A page legitimately titled 0 was treated as untitled and removed itself and its whole subtree from the published nav and breadcrumb, while a whitespace title was treated as present and rendered an anchor with no visible text. The nav and the breadcrumb are two renderers of one hierarchy, so both were changed together with the identical predicate and one test asserts they agree; changing one alone rebuilds a divergence that appears in no diff of either file. Refused: a non-empty constraint on pages.title, whose only writer has zero production callers so no reader can rely on it; isset, which is always true over a NOT NULL column and would make the guard dead while appearing fixed; and relaxing any test that reddens.",
-   "at": "2026-09-07T16:43:46",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-155",
-   "chose": "--ruling R245 The honeypot presence check no longer uses empty(), which treated a bot writing the string 0 into the hidden field as having left it blank, so the guard did not fire, FormSpamRejected was never dispatched, and FormCaptureAction took the legitimate branch and stored the submission as a real Person and a real lead. G3-64 and G13-05 require that a spam rejection is stored and flagged, never discarded, so a submission that is not recognised as spam at all defeats the clause. The predicate is now present, not null, not the empty string and not an empty array, which is the same emptiness set the Laravel prohibited rule uses at StoreFeedbackRequest line 73, where a comment already records the intended semantics: a human never sees the field and a bot filling every input does. Refused deliberately: a trim based test, which is correct for a display string such as a page title but wrong here, because a honeypot is a presence signal and whitespace in it is something having been written, so trimming would let that bot through a case empty() already catches. The remedy for a blank test is decided by what the value means and is not uniform across the sites one grep returns. Two tests assert the two directions and each is reddened by a different mutation, so the wrong remedy is refused by the suite and not only by a note.",
-   "at": "2026-09-07T17:33:27",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-102",
-   "chose": "--ruling R245 The grounding blank test in answerQuestion no longer uses empty(), which was wrong in both directions over a nullable content string. A grounding fact of the string 0 was treated as absent and refused, so the chat said it had no verified details for a question it could ground; and a whitespace grounding fact was treated as present and answered, returning a content-free answer presented as grounded, which is what G13-15 exists to prevent. The predicate is now null or blank after trim, which admits 0 and refuses whitespace. Refused deliberately: the presence predicate used for the X-155 honeypot, which is correct there because a honeypot is a presence signal and whitespace in it is something having been written, and wrong here because a content string that is only whitespace carries no fact; isset, which is always true for a non-null string and would make the guard dead while appearing fixed; and trimming the echoed answer, which is a separate cosmetic question. The remedy for a blank test is decided by what the value means and is not uniform across the sites one grep returns, and after this wave each of the two remedies is refused by a test in the module where it does not belong. The action has no production caller today; the invariant belongs in it because it is the action that answers, whoever calls it.",
-   "at": "2026-09-07T18:02:19",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-155",
-   "chose": "The blank test guarding the date of birth parse in isUnderEighteen no longer uses empty(). A date of birth field holding only whitespace was treated as a value, reached Carbon::parse, and produced an age verdict that rejected a legitimate adult submission as under eighteen on the live form capture path, which X-157 ModuleServiceProvider line 89 reaches in production. The predicate is now blank after trim, so whitespace is not an age signal and a real date still is. Refused deliberately: the presence predicate used for the X-155 honeypot, which is correct there because a honeypot is a presence signal and whitespace in it is something having been written, and wrong here because a date of birth is a value to be parsed and whitespace is not a value; isset, which is true for any non-null value and would make the guard dead while appearing fixed; and catching the case inside the parser, because a value that is not a value should not reach the parser and a catch that absorbs a case is how the next reader concludes the hazard is closed. Two tests assert the two directions, the whitespace submission being captured and a genuine under eighteen date still being rejected, so the clause is not weakened by the fix.",
-   "at": "2026-09-07T18:23:17",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-176",
-   "chose": "The LlmsTxtRenderAction had two branches disagreeing about whitespace in text blocks. The content branch had a trim-based blank test while the text branch had none (isset), meaning a block with a whitespace text key published a whitespace line. A deploy also threw an ErrorException (Undefined array key \"content\") when a type text block lacked a content key, aborting the publish. The remedy for a display string is trim !== empty while a presence signal wants !== empty with no trim, so the remedy is not uniform across the sites one grep returns. Both branches now use trim((string) ($block[key] ?? \"\")) !== empty to safely reject missing, null, or whitespace-only keys. Additionally, LlmsTxtTest.php:169 assertion was satisfied by the business name, so it is now line-exact to strictly verify the block.",
-   "at": "2026-09-07T18:46:05",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-176",
-   "chose": "SITE-164 added three tests to LlmsTxtTest whose names were taken from the brief that ordered them, an item number and a clause letter, which is coordination vocabulary that does not survive the brief being overwritten. They are renamed to describe what each body asserts. Separately, SITE-164 falsified the whitespace half of the text-key blank test by restoring isset, which cannot falsify the presence half because isset admits the string zero, so the claim that a text key of zero is still emitted was reasoned rather than measured. The presence half is falsified by the wrong remedy instead, the presence predicate that belongs to a honeypot, and this wave measures it. No behaviour changed.",
-   "at": "2026-09-07T19:15:34",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-137",
-   "chose": "The pool-exhaustion fallback guard in CallAttributeAction tested only whether a dni_pool_settings row exists, while the condition it is named for, BUSINESS_NOT_CONFIGURED_FOR_DNI, is whether that row is usable. fallback_number is declared NOT NULL with no non-empty validation and the table has no production writer, so a row holding an empty or whitespace fallback passed the guard and the live DNI route served a token with a blank number and status unattributed, which is the half of the pool-exhaustion clause that says the page renders the static fallback number. The guard now also refuses a fallback that is blank after trimming, throwing the same exception, because the route already maps that exception to a 409 and a test already asserts that body. The trim form is used rather than a bare non-empty comparison because a fallback number is a value rendered for a person to dial, so whitespace is not a value.",
-   "at": "2026-09-07T19:43:55",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-137",
-   "chose": "The pool allocation path collected dni_pool_numbers without asking whether a row is usable. phone_number is declared NOT NULL with no non-empty validation and the table has no production writer, so a row holding an empty or whitespace number was allocated like any other and the live DNI route served a token with a blank number and status active, which is worse than the exhausted case because the status claims the call is tracked while the page renders no number to call and the later attribution join runs against the empty string. The pool is now filtered at the collection site so a number that is blank after trimming never enters it, which makes a pool with no usable number an exhausted pool and hands it to the fallback guard that already refuses an unusable fallback. Exclusion is used rather than refusal because a pool holding one blank and three good numbers must still serve a good number, and the trim form is used rather than a bare non-empty comparison because a phone number is a value rendered for a person to dial, so whitespace is not a value. Refused deliberately: throwing on a blank pool number, which refuses a business whose pool is mostly good; guarding inside allocateToken, whose other callers pass an explicit number where a blank is a caller error and a different question; guarding at the serving route, which leaves the actions other callers exposed when the invariant belongs in the action that allocates; and a non-empty column constraint, which no reader can rely on because the table has no production writer and every fixture bypasses one.",
-   "at": "2026-09-07T20:11:40",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-137",
-   "chose": "The DNI serving route passed request input visitor_session_token with an empty string as its default, so a request omitting the parameter allocated a real pool number and wrote a call token whose visitor session token was blank. That column is declared NOT NULL with no non-empty validation and the table has no production writer outside this action, and unlike the earlier blank-value defects in this lane the value is the attribution key rather than a display string: attributeCall finds the token by its allocated number, marks it joined, dispatches VisitJoinedToCall carrying the blank token and returns a status of attributed, so the record claimed the call was tracked while carrying nothing to track it by. The allocation path now refuses a visitor session token that is blank after trimming, before it queries the pool, so an unattributable request consumes no pool number, and the route maps the resulting domain exception to a 409 through the catch it already has. A new message is used rather than the existing one because the two conditions are different facts and a test asserts the existing message by name. No anonymous-visitor policy is decided here, because the published page emits an empty div with no script and makes no request to this route, so there is no caller for such a policy to serve. Refused deliberately: serving the static fallback or marking the session unattributed, which invents a policy for a caller that does not exist and, in the unattributed form, is worse than the defect because an unattributed token does not hold its number out of the pool and the next visitor can be handed a number an anonymous visitor is already dialling; minting a session token, which fabricates an identifier nothing can correlate; guarding at the route, which leaves the actions other callers exposed when the invariant belongs in the action that allocates; deleting the routes empty-string default, which is an adapter that keeps a missing parameter from becoming a type error the routes catch does not handle; and a non-empty column constraint, which no reader can rely on because the table has no production writer and every fixture bypasses one.",
-   "at": "2026-09-07T20:33:29",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-157",
-   "chose": "The three endpoints under the published-site prefix disagreed about the edge zone. The published page route and the DNI route each abort with a 404 when the deployment has no edge zone or the zone has no valid certificate, and the form capture POST route checked only that the deployment status was deployed, so a business whose certificate had lapsed served no page and no number and still accepted a form submission, storing a contact and a submission row for a site a visitor could not have loaded. That state is not hypothetical because this lane already constructs it: SslDerivedTest updates has_valid_ssl to false against a deployment that is already deployed and asserts the page returns 404 in exactly that state. The form route now carries the same two lines and the same 404 as its two siblings. This enforces an invariant the file already states twice rather than deciding anything new, and it does not claim the state is reachable in production today, because the deploy action refuses a new deploy without a valid certificate and no production writer sets the flag false, so the state arises only by revocation after deploy. Refused deliberately: guarding inside the form capture action, which belongs to another module that knows nothing of edge zones and whose other callers would gain a zone dependency; a different status code, because both siblings answer this condition with 404 and a third code makes the family inconsistent in a new way; relaxing the page and DNI guards to match the form route, which would delete the assertion the served 200 and 404 pair depends on and with it the journey element that pair proves; and adding a writer that revokes the certificate so the state becomes reachable, which is scope nobody asked for and whose vendor half is reserved.",
-   "at": "2026-09-07T21:04:30",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-157",
-   "chose": "The collection-site guards that exclude a malformed video or faq member from the published page decided blankness by casting the caller-supplied value to a string, and that cast was the one step in the collection loop that was not itself protected. content blocks is a JSON column the publish path transforms not at all, so a block whose question or name is a nested array reached a string cast on an array, and the resulting error is upstream of every marker on the page: on the listener path the deploy is abandoned inside a catch and the site stays published with no deployed row and none of the seven required elements. Both sites now test that each required value is a scalar before any cast is reached, and the missing-key defaults are kept unchanged so a missing or null value is excluded exactly as before. The remedy is exclusion rather than refusal because a page carrying one malformed enrichment member and three good ones must still publish, and it is placed at the collection site rather than in the renderer or in publish, because the renderer would make its own validator unreachable from its only caller and publish is the path whose asserted guarantee is that a tenants blocks survive verbatim and in order. Recorded and deliberately not changed: the try and catch around the faq visible block performs no operation that was not already performed on the same values at the collection guard outside it, so the catch cannot fire and its message promises a graceful degradation of a step whose real failure is upstream; it is left in place because deleting a defence is a weakening and the collection site can change. Separately, the test asserting that a failed llms.txt write does not abort the deploy mocked the write with no occurrence expectation, so it was satisfied by the branch never running, and it now requires the call; its sibling mock for the html write is deliberately left alone because an assertion on the captured content already proves that closure ran.",
-   "at": "2026-09-07T21:27:35",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-176",
-   "chose": "Three guards on the published-site paths decided a value by casting it to a string, and in each the cast was the step that was not itself protected. The llms.txt renderer reads two keys off content blocks, a JSON column the publish path transforms not at all, so a nested array reached a string cast; that renderer is called after the deployment row is created and before the html is stored, with the only catch in the file downstream of it, so the throw left no artifact, a deployment that never reached deployed, and through the listeners catch a published site serving none of the seven required elements. The form capture age check reads a date of birth off the raw request array on the live form route, so the value is externally supplied, and its cast sat in an if condition one line above a try whose catch says an unparseable value is not a signal and which would have absorbed the error had the cast been one line lower. All three now require a scalar before any cast is reached, and the missing-key defaults are kept unchanged so a missing or null value behaves exactly as before. The remedy is exclusion for the renderer, because prose that is not prose must not stop a page publishing, and skipping for the age check, because a value that is not a date is not a signal and skipping is the identical outcome the existing catch already produces for an unparseable string. Recorded and deliberately not changed: the age check reads an age key one line above, and is_numeric of an array is false, so that branch was never exposed. Refused deliberately: moving the cast inside the try, which makes ordinary input decided by an exception where the module already decides a non-value explicitly; normalising in publish, whose asserted guarantee is that a tenants blocks survive verbatim and in order; validating in the route, which leaves the actions other callers exposed; and relaxing any test that reddens.",
-   "at": "2026-09-07T21:56:15",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-155",
-   "chose": "The form capture normaliser reported a value as given whenever it was not a blank string, so an array survived it unchanged. The payload reaches this action from the raw request array on the live form route, which the published page advertises as a real form action, and the value then keys a contact lookup or fills a contact row, where the query builder binds an array to a string column and throws; nothing upstream refuses it, because the validator checks presence and completeness and never type, and there is no catch between the action and the route, so an arbitrary submission produced a server error where every sibling path on that prefix answers with its own status vocabulary. The normaliser now reports a non-scalar as not given, which is the decision this module has already recorded three times: a value that is blank or whitespace was not given, a submission that carries no phone gets its own contact rather than a shared one, and only the fields the payload actually carried are written. The remedy is placed in the normaliser rather than at its seven call sites so that one rule covers the contact key and the display fields together, which is safe here only because the module has already decided all three the same way and asserted each. The raw submission is not lost, because the submission row stores the whole payload; only the contact key is not set from it. Refused deliberately: refusing the submission with a new rejected reason, which would refuse a submission this module currently captures and would mint a public status string nothing asserts; validating in the route, which leaves the actions other callers exposed; type checking in the validator, whose subject is spam and completeness and which would refuse rather than normalise; and guarding at the seven call sites, which is the copied-shape error in a method whose whole purpose is to be the single normaliser.",
-   "at": "2026-09-07T22:22:14",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-155",
-   "chose": "FormValidateAction read the honeypot field name with a null-coalescing default over a NOT NULL column carrying a database default, so the fallback could never fire, and a blank or whitespace-only field name made the payload lookup miss and silently disabled the honeypot for that form. The reader now falls back to website_url when the configured name is blank after trim, which is the same literal the line already declared and the same value the column defaults to, so the seam decides nothing new. The trim decides only; the configured name is used verbatim, because a field name is a lookup key and trimming it would silently rewrite a caller key, which is also why a name of 0 is legitimate and is used as given. empty() is refused and the refusal is measured in BOTH directions: empty of three spaces is false, so it would re-admit a whitespace name and leave the original defect standing, and empty of the string 0 is true, so it would treat a form legitimately named 0 as unconfigured and fall back. Both wrong candidates are red under the two new tests. Refused deliberately: refusing the submission, which would refuse a legitimate visitor for a tenant misconfiguration and invert this module posture of capture and normalise; a non-empty database constraint, since no production writer of FormDefinition exists and every fixture bypasses one; guarding in FormCaptureAction, which leaves the validator other callers exposed; and relaxing the presence predicate on the submitted value, which is SITE-161 fix for the honeypot value and is correct.",
-   "at": "2026-09-08T00:01:15",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-157",
-   "chose": "The published form endpoint maps the capture action status to a response code, returning 201 for captured and 422 otherwise, and only the 201 arm was asserted; three route level form posts all assert 201 and no test in this lane exercised the 422 arm. Every assertion on the spam path checked the persisted row and the dispatched events and none checked the returned status string, so a change that made the spam path return captured would have left every module test green and answered a bot with 201. The endpoint now has a test that reads the form action out of the served document, posts a filled honeypot to it, and asserts the 422 status, the rejected status in the body, and the stored submission flagged as spam with its payload intact, which is the storage half of the site law refusal proven at the endpoint rather than at the action. The action level tests are unchanged and still discharge the module clause; this test discharges the response mapping, which is the one line the route contributes beyond the action. Refused deliberately: asserting only the status code, which drops the storage half that this seam can silently lose; constructing the endpoint URL from the identifiers instead of reading the advertised form action; adding an incomplete step route test in the same wave, which is a second claim; and any new capability id literal, which would create a second carrier for a clause already discharged elsewhere.",
-   "at": "2026-09-08T00:29:48",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-157",
-   "chose": "The DNI endpoint aborts with a 404 when the deployment it names is not deployed, and that guard was the last response arm across this lane three published endpoints with no test behind it. The identical line appears three times in the serving module, at the page route, the DNI route and the form route, and two of the three are asserted, but they are three separate calls in three separate route closures, so deleting the DNI one leaves the other two assertions green and the unit of coverage is the call site rather than the source text. The failure mode is a side effect rather than a status code, because the pool allocation creates a call token row and takes a number out of the available pool, so a rolled back or undeployed site, one the page route already refuses and no visitor can reach, would consume a scarce number and write an attribution row against the never a reused token rule. The test therefore asserts both halves, the 404 and a zero token count, with a pool number inserted first so that a route missing its guard genuinely allocates and the zero count is not satisfied by the unconfigured refusal answering 409. No production change: the guard already declares the policy and the test enforces an existing invariant rather than inventing one. Refused deliberately: asserting only the status code, which drops the half this seam can silently lose; inventing a status string the module never writes, where rolled back is what the rollback action and the deploy action both write; adding the form route incomplete step arm in the same wave, which is a second claim; and any new capability id literal, which would create a second carrier for a clause discharged elsewhere.",
-   "at": "2026-09-08T00:57:29",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-157",
-   "chose": "The published form endpoint validates its business and deploy hash segments against the deployments table in the route closure and validates the form segment against nothing there, so the endpoint's tenancy boundary is three files down, in the scoped findOrFail that FormValidateAction and FormCaptureAction each perform on the form definition. That boundary is correct, the model carries no global scope or tenant trait so those clauses are the only application level guard, and no test in this lane exercised a cross tenant form id, which means nothing would have noticed if a clause were dropped and business A's published page would submit into business B's form definition, validated against B's honeypot configuration and B's required steps. The test posts A's advertised address, read out of the served document rather than constructed, carrying B's form id, and asserts both the refusal and that no submission row was written for either business, because when an unasserted arm has a side effect the side effect is the half the seam can silently lose. No production change: the scoping already declares the policy and the test enforces an existing invariant rather than inventing one. Refused deliberately: a scoping guard in the route closure, which would be a second writer of one invariant and would leave the action's other callers exposed; asserting only the status code; constructing the address from the identifiers instead of reading the served action attribute; and any new capability id literal.",
-   "at": "2026-09-08T01:17:59",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-157",
-   "chose": "The published form endpoint forwards the whole request array to the capture action, whose first act is the under-18 gate that returns before the validator and before any write, and the endpoint had no test behind that gate: every assertion on the age clause calls the action directly, so narrowing the forwarded payload to a whitelist would drop a date of birth, write a minor contact row, and leave every module test green. The endpoint now has a test that reads the form action out of the served document, posts a real under-18 date of birth to it, and asserts first that no contact row and no submission row were written and only then the refusal status and reason, because an ordered test reports only its first failure and the assertion placed first is the one the falsifier proves, so the compliance clause is measured while the status mapping, already carried by the spam test on the same one line, is the half left reasoned. No production change: the gate already declares the policy and the test enforces an existing invariant rather than inventing one. Refused deliberately: asserting only the status code, which is the already-carried half and drops the write half this seam can silently lose; constructing the endpoint address from the identifiers instead of reading the advertised form action out of the served page; adding the cross-tenant and under-18 ordering question in the same wave, which is a second claim; and any new capability id literal, which would create a second carrier for a clause discharged elsewhere.",
-   "at": "2026-09-08T01:39:08",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-157",
-   "chose": "The published form endpoint has three refusal arms with three different write behaviours and only two were asserted at the route level: an under-18 signal returns before the validator and writes nothing, a spam rejection is stored and flagged inside the transaction, and an incomplete step returns after the validator and is not stored at all. The third had no route-level test and was unreachable by every existing route fixture, because all seven form definitions in the serving module tests declare an empty steps array, so the required-field loop never ran through the endpoint and the three incomplete-step assertions in the module tests all call the action directly. The distinct claim is not the status mapping, already carried twice, nor the reason string, already carried three times, but that the route forwarding carries the tenant required-field answers to the validator: narrowing that forwarding, the ordinary hardening of a public endpoint that accepts an arbitrary array, would make every submission to a multi-step form refuse as incomplete while every module test stayed green. The satisfied post is asserted before the refusal because an ordered test reports only its first failure and the refusal half cannot prove the seam, over-refusal being what a narrowed payload produces anyway. The test also asserts the missing field list and the step number, which reach the visitor only through the route JSON, and that the refused post wrote no row. No production change: the arm already declares the policy and the test enforces an existing invariant rather than inventing one. Refused deliberately: asserting only the status code, which is the already-carried half; constructing the endpoint address from the identifiers instead of reading the advertised form action out of the served page; asserting the refusal half alone, which cannot fail under a narrowed payload and so proves nothing about the seam; any production change; and any new capability id literal, which would create a second carrier for a clause discharged elsewhere.",
-   "at": "2026-09-08T05:25:53",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-155",
-   "chose": "The multi-step validator guards the required container and not its members: a required list that is not an array is skipped and the step is not enforced, but a member of that list went straight to array_key_exists as a payload key, and steps is a tenant-authored jsonb column cast to array, so a non-scalar member reached a key position, the payload subscript, and the missing list the visitor is shown. The loop was unreachable through the published endpoint until the previous wave, because every form definition in the serving module tests declared an empty steps array. A member that is not a valid array key is not a field name, so it is skipped exactly as a malformed required list already is two lines above, which enforces an invariant the module already declares rather than inventing one, and holds whether the unguarded call threw or merely let an array into the response. Refused deliberately: treating a malformed member as missing, which refuses a visitor for a tenant configuration error and puts an array into the response body; skipping the whole step, which is wider than the existing container guard and silently stops enforcing the valid sibling; validating on write, since the form definition table has no production writer and every fixture bypasses one so the agreement has to live in the reader; and relaxing any assertion that reddens.",
-   "at": "2026-09-08T05:53:04",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-157",
-   "chose": "The published DNI route forwarded the visitor session token from the request straight into an action parameter typed as a string under strict types, so a bracketed query parameter arrived as an array and raised a TypeError, which is an Error and not an Exception and so passed through the route's only catch: a live published endpoint answered with a server error where every sibling arm answers a refusal. The guard cannot live in the action, which is this lane's usual site, because the parameter's own type declaration rejects the value before the first line of the body runs; the route is the only available place. A token that is not a string is not a token, so the route normalises it to blank and the action refuses it with the message it already declares, which the route already maps to a refusal status and which the route tests already assert, so the fix decides nothing new. The test inserts a pool number first, because without one the action would refuse for a different reason carrying the same status and the test would pass proving nothing, and it asserts the refusal message before the status because that is the only assertion which separates the two refusals. Refused deliberately: widening the parameter to mixed, which weakens a correct declaration to suit one caller; casting the input to a string, which moves the server error rather than removing it since an array to string conversion is itself an error; a new status or message, which would be a public interface string nothing asserts; and allocating a pool number for a request that cannot be attributed.",
-   "at": "2026-09-08T06:32:26",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-137",
-   "chose": "The short link redirect endpoint records a click row and dispatches an attribution event before it redirects, and the destination column is a not null text column with no default, no validation and no production writer at all, so a blank destination reached the redirect with the click already counted: an assertion failure (tests: 1, passed: 0, assertions: 1, line: 284, message: Blank destination counted as click - Failed asserting that 1 matches expected 0.). A link whose destination is blank cannot be followed, so it is not a click, and the route now refuses it with the same not found status it already answers for a link that does not resolve, before the click row and the event are written. The guard lives in the reader because the short linker is a shared chokepoint six modules across four lanes reference and its only writing action has no production caller at all, so every fixture bypasses a writer and the agreement has to live where the value is read. The test asserts the zero click count and the undispatched event before the status, because an ordered test reports only its first failure and the status is already carried by two existing tests while the side effect half is carried nowhere. Refused deliberately: validating in the shortening action, which has no production caller and whose seam belongs to other lanes under the shared short linker; a database constraint, for the same reason and because another lane may own the eventual writer; refusing after the click is recorded, which keeps an attribution row for a click that went nowhere; a new status code or a redirect to the site root, which would invent a policy and mint a public behaviour nothing asserts; relaxing any assertion that reddens; and any new capability id literal, since the id this file carries already has three carriers.",
-   "at": "2026-09-08T06:56:50",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-103",
-   "chose": "X-103 exposes PageReadAction as its registered read surface for pages, and X-176 SeoRenderAction and InternalLinkRenderAction read through it instead of importing X103\\Models\\Page directly. BoundaryStage:91 exempts imports whose kind is Events, Actions or Domain and :98 names the registered action as the remedy, so this closes two of the nine cross-module Models imports the revived stage reports for this lane and boundary falls 55 to 53. The queries are moved verbatim including orderBy(slug,asc), which is SITE-129 determinism and not optional. REFUSED: bundling EdgeDeployAction, whose :43 is a cross-module WRITE on the ssl_installed derivation that is J11 own element; adding an exclusion to the sealed BoundaryStage; a new test, because a behaviour-identical refactor needs no assertion and a second carrier obscures which method discharges a clause; fixing one renderer only, which is the copied-shape error that made these two diverge at tick 246.",
-   "at": "2026-09-09T09:57:35",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-157",
-   "chose": "EdgeDeployAction read X-103 pages at three lines, two of them Page::find with no business_id scope and one of them scoped, four lines apart in the same block with businessId in scope for all three. All three now go through X-103 PageReadAction, whose findForBusiness scopes, so the unscoped reads are scoped and the X103\\Models\\Page import is deleted and boundary falls 53 to 52. The exposure of the two unscoped reads differed and only one is falsifiable: the llms.txt read at :295 wrote another business page title and slug straight into the published artifact with nothing downstream, while the breadcrumb read at :212 was absorbed by the scoped ancestry query beside it. It is bounded: EdgeDeployAction has one production caller and SiteEngine publish scopes its page lookup with findOrFail, so the unscoped read was not reachable in production, and the invariant belongs in the reader because the reader publishes whoever calls it. The ancestry query moved verbatim including the trim both slash from slug normalisation, which is SITE-160 and not optional. REFUSED: presenting the scoping as a behaviour-identical refactor, which is how a tenancy change ships with no test; bundling PageVersion, whose :43 is a cross-module WRITE on the ssl_installed derivation that is J11 own element; bundling FormDefinition, a third model and a third claim; adding an exclusion to the sealed BoundaryStage; a new capability id literal.",
-   "at": "2026-09-09T11:11:44",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-155",
-   "chose": "X-155 exposes FormReadAction as its registered read surface for form definitions, and X-157 EdgeDeployAction calls firstIdForBusiness instead of importing X155 Models FormDefinition directly. BoundaryStage exempts imports whose kind is Events, Actions or Domain and its own fix text names the registered action as the remedy, so this closes the last cross-module model read whose target module this lane also owns and boundary falls 52 to 51. Nothing changes behaviour: the call site was already scoped by business id, so this is a boundary closure and not a tenancy fix. The query moves verbatim including the ordering by id, which is determinism and not optional, because form definitions carry no active column so the lowest id is the only available policy for which form a published site posts to and dropping the ordering would make the published form target vary across identical inputs with nothing in this lane able to catch it. The action returns the id rather than the model because the one caller reads exactly the id. REFUSED: an exclusion in the sealed BoundaryStage; bundling PageVersion, whose write at line 43 is the ssl installed derivation that is J11 own element; bundling the X108 and X163 imports, which are other lanes and are a filing not a build; a state.py unresolved, which would name a dependency this lane holds; editing a generated manifest to clear a violation never raised; and a new capability id literal.",
-   "at": "2026-09-09T17:10:06",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-103",
-   "chose": "X-103 exposes PageVersionAction as its registered surface for page versions, and X-157 EdgeDeployAction calls forCommit and recordSslInstalled instead of importing X103 Models PageVersion directly. BoundaryStage iterates use statements and exempts the Events, Actions and Domain kinds, so one import is one violation however many call sites it serves: the read at line 153 and the write at line 43 had to move together, because closing either alone leaves the import and the count does not fall, and a boundary refactor whose falsifier is the checker would then have no falsifier at all. Both queries move verbatim. The tenancy question was decided separately and against scoping: the commit id is a sixteen character random token minted in SiteEngine publish, so a cross tenant collision is not producible; page versions carries forced row level security with a with check clause, so a falsifier removing an application level scope on that table cannot go red; and a test asserting that another business version is not read would pass before the fix too. That is recorded rather than built, so the day the grants question is answered a one line wave can scope both sites with the argument already measured. REFUSED: emitting an event instead of invoking the registered action, which moves a write that lives inside the deploy transaction and on which the site journey depends into a listener with its own ordering semantics; splitting the read and the write into two waves, which is what the import count makes impossible; fully qualifying the model inline to dodge the use scan, which is a lint dodge that leaves the seam where it was; an exclusion in the sealed BoundaryStage; a new capability id literal; and relaxing any assertion that reddens.",
-   "at": "2026-09-09T17:38:39",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-102",
-   "chose": "The chat start route normalises a non-string pixel_session_token to null rather than passing it to a ?string parameter under strict_types, which was a TypeError at parameter binding and a 500 on a public endpoint. The remedy cannot go in the action: the type declaration rejects the value before the first line runs. It uses the shape this module already declares for an optional string in ChatCaptureController, and null is the substitute the parameter default and the pageContext ternary had already chosen, so the fix decides nothing new. Refused: casting to string (array-to-string is itself an Error, which moves the 500); widening the parameter to mixed; returning 400 (the module proceeds when the token is absent, so refusing a whole chat start over an unusable optional analytics token would mint a public behaviour nothing asserts); guarding inside the action; a database constraint.",
-   "at": "2026-09-09T21:52:24",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-102",
-   "chose": "ChatDoorTest used Laravel stock RefreshDatabase, the only file in app/tests/Modules to do so. The project ships Tests\\Concerns\\RefreshesTenantDatabase precisely because stock cannot work here: stock runs migrate:fresh on the default connection, which is the deliberately non-owner runtime role, so the DDL is refused with SQLSTATE 42501 must be owner of table. The file passed in the full suite only because RefreshDatabase guards its migration on the process-global RefreshDatabaseState migrated flag, so a sibling test using the project trait had already migrated; run alone the file was 11 tests, 0 passed, 11 errors. The greens belonged to another test and not to this file. The swap decides nothing new: four sibling files in this lane already declare the project trait, and both its docblock and tests/Pest.php name stock as unusable in this project. Refused: DatabaseTransactions, which silently changes the isolation model the file asked for; an exclusion or a skip; deleting any of the eleven; and editing Pest.php or the Concerns trait, which are shared and whose behaviour no site wave decides.",
-   "at": "2026-09-09T22:25:45",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-102",
-   "chose": "The chat capture controller refuses a blank-after-trim phone with the 400 it already answers, rather than letting it reach ChatCaptureAction's NO_CONTACT_METHOD_ON_CAPTURE guard and 500 on a public unauthenticated endpoint. is_string is not non-blank: the empty string and whitespace clear an is_string guard, which is why the controller and its callee disagreed about what a usable phone is. The trim clause sits LAST in the short-circuiting chain so is_string runs first and an array phone never reaches trim. Refused: a try or catch in the controller, which converts one defect into a silent class of swallowed ones; catching DomainException and mapping it to 400, which would silently 400 every future refusal of that action; removing the action guard, which deletes SITE-152; extending the blank test to name, a display string with a different remedy, or to sessionToken, whose blank already yields the correct 404; and a new status or message, when the endpoint already answers 400 with that body.",
-   "at": "2026-09-09T23:02:07",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-102",
-   "chose": "The chat door scopes its session lookup by business_id in both ChatTurnController and ChatCaptureController. Measured at tick 331: both controllers looked the session up as ChatSession where session_token equals the request value and nothing else, while the businessId passed to the action came from the pixel key, so a public unauthenticated route joined two independent credentials with nothing between them. session_token is unique so a global lookup names exactly one session and cannot collide by accident, which makes presenting another tenant token a deliberate act rather than an accident. chat_sessions carries ENABLE and FORCE ROW LEVEL SECURITY with a tenant_isolation policy, so row level security refuses the cross tenant read one layer beneath the application and the new clause is defence in depth today. It is added anyway because row level security is a property of the database, so a deployment made without runtime goaiez-grants.sql has no second brace and the application clause is the only thing that travels with the code. The policy is already decided four times over in this lane: X-157 three published endpoints, CallAttributeAction every query, FormValidateAction and FormCaptureAction. Consequence for evidence: a falsifier that removes the clause cannot redden because the lower layer enforces the same invariant, so the necessity is not demonstrable at this seam and only the correctness is, by mutating to the wrong business id and watching the same tenant tests redden. Refused: removing the row level security policy to make a falsifier redden; asserting the middleware or the grants file, which are reserved and not this lane column; guarding inside ChatCaptureAction, which leaves ChatTurnController exposed; scoping only one controller; a new status code, since both endpoints already answer 404 for an unresolvable session; and any new capability id literal. ChatStartController is out of scope because it creates a session rather than looking one up.",
-   "at": "2026-09-10T00:02:11",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-102",
-   "chose": "The chat door keeps ONE route-level cross-tenant carrier per route: test_key_for_business_a_and_session_for_business_b_returns_404 for turn and test_capture_scopes_session_lookup_by_business_id for capture, with the start route separately covered by test_key_for_business_a_does_not_produce_row_readable_as_business_b. SITE-203 added a line-for-line duplicate of the turn carrier because the wave was briefed from a measurement of the controllers rather than of the test file; the duplicate is deleted and nothing else is. All three carriers are OUTCOME INVARIANTS and not sentinels: both controllers call Tenancy::set(businessId) immediately before the lookup and chat_sessions has FORCE ROW LEVEL SECURITY with a tenant_isolation policy on that same value, so row-level security and the app-level where(business_id) clause are co-extensional and no HTTP-route test can distinguish them. The clause is kept as defence in depth because row-level security is a property of the database and a deployment without the grants file has no second brace. Its liveness was proven by CORRUPTION, scoping to the wrong business id, which reddens the same-tenant tests; a REMOVAL mutation cannot redden and measures nothing.",
-   "at": "2026-09-10T00:34:18",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-102",
-   "chose": "the chat door records the refusal code the agent returns on the agent chat turn (nullable chat_turns.refusal_code, written by ChatTurnAction) and ChatCaptureAction throws UNDER_18_SIGNAL_ON_SESSION before Person::updateOrCreate when the session holds an UNDER_18 turn; ChatCaptureController maps exactly that refusal to 422 with status rejected and reason under_18, the shape FormCaptureAction returns for the same clause. P-148 and G10-37 assert the under-18 signal at the write, not at the reply. Refused: an age check inside X-102 (a second writer of the C-Agent detector), keying the read on agent_refusals (it has no session key), a session status (two actions overwrite it), catching every DomainException, and deleting a contact row captured before the signal arrived.",
-   "at": "2026-09-11T10:37:56",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-137",
-   "chose": "The X-137 ShortLink model uses BelongsToTenant and implements TenantScoped, the safeguard the short_links creator migration 2026_08_11_130139 names for the platform ShortLink model. short_links carries public_read FOR SELECT USING true and Postgres ORs permissive policies, so row level security restricts no read of the table, and SITE-212 measured the redirect business_id clause as the only tenancy check. The route and LinkQrAction keep their business_id clauses. Measured at SITE-214: with the redirect clause removed and the scope present, test_g13_24_short_code_is_redeemable_only_under_its_own_business stays green; with both removed it answers 302 where it asserts 404. No fixture changed, because TestCase provisionTenant sets tenancy for every fixture. Refused: removing either application check, changing the public_read policy (another lane creates the table), a longer short code or a rate limiter (no clause), and routing X-137 links through the platform resolver (module ownership, a Track 1 question).",
-   "at": "2026-09-12T00:31:11",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-121",
-   "chose": "SITE-216: PersonUpsertAction is X-121's exported write seam for find-or-create-by-phone; null phone always creates; onlyIfNew for spam; only given keys written",
-   "at": "2026-09-13T08:26:30",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-155",
-   "chose": "SITE-216: form capture writes people through PersonUpsertAction; the four R245 rules hold and are tested",
-   "at": "2026-09-13T08:26:30",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-108",
-   "chose": "SITE-218: AppointmentListAction is X-108's exported read-only list of upcoming appointments for a business (owner grant 2026-09-13); site added only AppointmentListAction.php; EdgeDeployAction consumes it; eventual X-108 owner inherits this seam",
-   "at": "2026-09-13T13:20:24",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-176",
-   "chose": "SITE-220: schema status renders in the owner shell on a real schema snapshot",
-   "at": "2026-09-15T11:15:20",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-157",
-   "chose": "SITE-221: edge deployments render in the owner shell on a real deployment; admin door kept",
-   "at": "2026-09-15T12:12:16",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-203",
-   "chose": "SITE-222: restore tests render in the owner shell on a real restore test; the module has no admin door",
-   "at": "2026-09-15T13:24:44",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-203",
-   "chose": "SITE-223: the restore test log renders in the owner shell on a real failed restore test; the module has no admin door",
-   "at": "2026-09-15T14:39:53",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-203",
-   "chose": "SITE-224: runbooks and their runs render in the owner shell on a real runbook; the module has no admin door",
-   "at": "2026-09-15T16:33:52",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-177",
-   "chose": "SITE-225: the Google profile card renders in the owner shell on a real connection; admin door and sample toggle kept",
-   "at": "2026-09-15T17:11:24",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-177",
-   "chose": "SITE-226: the Suspension risks card renders in the owner shell on a real connection; admin door and sample toggle kept",
-   "at": "2026-09-15T18:51:02",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-137",
-   "chose": "SITE-227: the DNI pool usage screen reads the real pool numbers, active tokens and fallback in the owner shell; admin door kept",
-   "at": "2026-09-16T14:44:27",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-123",
-   "chose": "SITE-234: the dead-letter inspector lists real failed deliveries in the owner shell as Failed deliveries; a tenant-scoped read with a mount; admin door kept; X123Filler seeds one event and two dead letters",
-   "at": "2026-09-16T21:12:16",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-191",
-   "chose": "SITE-235: earned links and the outreach ratio sit in the owner shell as Earned links and Outreach ratio; tenant-scoped reads with mounts; admin doors kept; X191Filler seeds a target, three pitches and two placements",
-   "at": "2026-09-16T22:32:51",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-16",
-   "chose": "SITE-236: the geo-grid and service-area screens sit in the owner shell as Geo-grid and Service area; layout attribute only, mounts and reads were already tenant-scoped; 22 fixed neutrals tokened; admin doors and sample toggles kept; X16Filler seeds a grid and two service areas",
-   "at": "2026-09-17T02:28:10",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-16",
-   "chose": "SITE-237: harvest coverage sits in the owner shell as Harvest coverage; layout attribute only, mount and reads were already tenant-scoped; 3 neutrals tokened; admin door and sample toggle kept; X16Filler extended with four harvested places",
-   "at": "2026-09-17T07:50:08",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-140",
-   "chose": "SITE-238: proposed pages sit in the owner shell as Proposed pages; tenant-scoped mount beside the role guard; the topic list rendered with its sources and publish state; X140Filler seeds two topics and their sources",
-   "at": "2026-09-17T09:45:49",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-178",
-   "chose": "SITE-239: the site editor sits in the owner shell as Site editor; tenant-scoped mount beside the role guard; the design-change list rendered with its block, contrast and status; X178Filler seeds two changes",
-   "at": "2026-09-17T14:48:34",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-118",
-   "chose": "SITE-240: today and ttfm-distribution sit in the owner shell as First wins and Time to first minute; both reads built against onboarding_runs under the tenant; X118Filler seeds two runs",
-   "at": "2026-09-17T16:32:29",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-160",
-   "chose": "SITE-241: upload-drop and review-screen sit in the owner shell as Your documents and Documents to review; businessId resolved from the tenant at mount for the first time on both, and both blades render the collections they were already fetching and discarding; X160Filler seeds two documents",
-   "at": "2026-09-17T18:08:14",
-   "ruling": "R245"
   }
  ],
  "notes": [
@@ -2660,228 +1390,58 @@
    "note": "X-172 generated screen test renders through Fixtures::token() (run 101)"
   },
   {
-   "at": "2026-09-05T19:34:11",
-   "note": "X-157 anchor: the missing dependency is not a vendor credential \u2014 owner ruling 16 makes the platform itself the publishing target (GET /sites/{deploy_hash} from local storage), so X-157 has no third party to issue an artifact_id and TestAnchorStage:88-95 accepts none that is self-minted; the stage cannot be satisfied by any honest run of a vendorless module (OWNER ACTION 42)"
+   "at": "2026-09-05T17:42:53",
+   "note": "X-193 quiet_hours_start: answered \u2014 migration 2026_09_04_072838_add_quiet_hours_start_to_notification_classes_table.php on main"
   },
   {
-   "at": "2026-09-06T04:55:20",
-   "note": "the eight capability refusals reached the generated files by regeneration"
+   "at": "2026-09-05T17:42:54",
+   "note": "X-201 deadline_at: answered \u2014 migration 2026_09_04_072843_add_deadline_at_to_disputes_table.php on main"
   },
   {
-   "at": "2026-09-06T06:10:38",
-   "note": "J11 ssl \u2014 JourneyHarness::publishSite() (line 667) creates a Page and calls SiteEngine::publish() and provisions no EdgeZone, so X-157/ModuleServiceProvider.php:73's SitePublished listener returns at :74 before EdgeDeployAction at :87 and ssl_installed keeps SiteEngine.php:57's honest false. The fix is one line in publishSite(), which owner ruling 1 does not open to this lane: publishSite() is a private helper, not a todo(). Filed as TRACK 1 ACTION 1."
+   "at": "2026-09-05T17:42:54",
+   "note": "C-Reviews messageClass: answered \u2014 ReviewRequested carries messageClass since the reviews merge (c3ed23ed); the C-Sms listener consumes send.requested (run 94)"
   },
   {
-   "at": "2026-09-06T06:31:33",
-   "note": "X-137 G18-17 \u2014 the whisper's two-leg assertion needs a real Infobip voice bridge: present on the agent leg, absent on the caller leg. The transport is C-Telephony (track sixty, ruling 5) and the credential is the owner's. X137Test.php:161 asserts whisper_text on the model, which is the most this lane can assert without the bridge."
+   "at": "2026-09-05T17:42:54",
+   "note": "C-Sms TrialEligibility: answered by owner ruling 2026-09-05 \u2014 the journey funds its tenant as test setup; TrialEligibility stands in production (J10 green since run 96b)"
   },
   {
-   "at": "2026-09-06T13:01:03",
-   "note": "X-157 edge.provision (manifest.php:32) is provided by an action that simulates Cloudflare \u2014 no HTTP client, no credential, Str::random() for both vendor identifiers. Real edge provisioning stays UNRESOLVED under ruling 16's vendor line (no CDN credential)."
+   "at": "2026-09-06T11:36:06",
+   "note": "X-103 ssl_installed: three migrations add/alter one column (2026_09_05_220831, 2026_09_06_000001, 2026_09_06_053000); order leaves default false; consolidate when X-103 next opens"
   },
   {
-   "at": "2026-09-06T16:51:57",
-   "note": "X-176 CORRECTION to the G8-14 capability filing of 2026-09-06T16:31:03: its why names a missing read dependency on X-163 or X-119, but both modules exist and are fully built - app/app/Modules/X-163/Models/PriceBookItem.php, PriceBookVersion.php and Events/VersionBumped.php are present with migrations. The blocked thing is not the pricebook. See the SITE-110 measurement below."
-  },
-  {
-   "at": "2026-09-06T16:51:57",
-   "note": "X-176 CORRECTION to the G8-15 capability filing of 2026-09-06T16:31:06: its why implies X-108 is absent, but app/app/Modules/X-108 is fully built with Models/Appointment.php and Events/AppointmentBooked.php and a migration. The blocked thing is not the calendar module."
-  },
-  {
-   "at": "2026-09-06T17:32:43",
-   "note": "X-157 journey: the 2026-09-05 filing is superseded \u2014 EdgeDeployAction:35-36 writes ssl_installed derived from EdgeZone.has_valid_ssl, and JourneyHarness publishSite provisions the zone (71c9168b), so J11 ssl went green at tick 229; SITE-112 moves all seven elements to the served HTTP response per owner ruling 16"
-  },
-  {
-   "at": "2026-09-06T18:00:55",
-   "note": "X-176 G8-15 is BUILT, superseding the UNRESOLVED capability filing of 2026-09-06T16:31:06 and its correction \u2014 X-108 is fully built and the gap was a missing seam, not a missing dependency (rule 09)"
-  },
-  {
-   "at": "2026-09-06T18:22:48",
-   "note": "X-176 G8-22 is BUILT, superseding the UNRESOLVED capability filing \u2014 Business.address is present on the core model and the gap was a missing seam, not a missing dependency (rule 09)"
-  },
-  {
-   "at": "2026-09-06T18:41:39",
-   "note": "X-176 G3-34 is BUILT, superseding the UNRESOLVED capability filing \u2014 measured the referent: the master plan's test condition is 'it is written and ignored gracefully; \u26d4 nothing depends on it being honoured'. Producing it requires no external party or credentials, and we already hold the page title, slug, and content blocks at deploy time, so the gap was a missing seam, not a missing dependency (rule 09)"
-  },
-  {
-   "at": "2026-09-06T19:32:51",
-   "note": "X-176 G8-04 is BUILT, superseding the UNRESOLVED capability filing \u2014 pages has id, business_id, slug, title, is_tenant_edited, is_published, current_version_id, timestamps and no parent column"
-  },
-  {
-   "at": "2026-09-06T20:11:32",
-   "note": "X-176 G8-02/G8-25 measured app/app/Modules/X-157/Actions/EdgeDeployAction.php and found the HTML construction surface via $html .="
-  },
-  {
-   "at": "2026-09-06T20:30:21",
-   "note": "X-176 Supersedes 'capability  X-176  \u2014 a site structure or content graph API to compute link associations (G8-02)' because there is no external content-graph API and none is needed; the graph is generated from the published page set's own slug ancestry, which this lane already holds."
-  },
-  {
-   "at": "2026-09-06T20:30:21",
-   "note": "X-176 Supersedes 'capability  X-176  \u2014 page content relationship data to build the link graph (G8-25)' because there is no external content-graph API and none is needed; the graph is generated from the published page set's own slug ancestry, which this lane already holds."
-  },
-  {
-   "at": "2026-09-06T23:43:45",
-   "note": "X-103 pages has exactly one writer, X-103/Actions/PageCreateAction, and that writer has no production caller, so no page-creation path exists outside tests; a page is created by a tenant editing their site, which is a screen and therefore Track 2's under ruling 5"
-  },
-  {
-   "at": "2026-09-07T01:54:03",
-   "note": "X-176 Superseded : `NLP or content parsing to extract questions and answers from page body (G8-16)`. G8-16 is BUILT from an faq block in content_blocks, on the same seam as G16-25, needing no NLP."
-  },
-  {
-   "at": "2026-09-07T01:54:13",
-   "note": "X-176 Superseded `why`: `NLP or content parsing to extract questions and answers from page body (G8-16)`. G8-16 is BUILT from an faq block in content_blocks, on the same seam as G16-25, needing no NLP."
-  },
-  {
-   "at": "2026-09-07T01:59:28",
-   "note": "X-176 Fixed pint and phpstan"
-  },
-  {
-   "at": "2026-09-07T03:11:13",
-   "note": "X-102 The true dependency is X-102/Ui/ (Track 2 under ruling 5), so this lane cannot assert a rendering it may not build."
-  },
-  {
-   "at": "2026-09-07T05:33:13",
-   "note": "X-102 capability G16-21: the filed UNRESOLVED reason, CapabilitiesScaffoldCommand rewrites unconditionally per OWNER ACTION 39, is FALSE and is superseded by this note. The same sentence was filed in the same second for G13-15, which now carries three credits in app/tests/Modules/X-102/X102Test.php at lines 168, 188 and 203 and no doctor violation, so the scaffold command is not the obstacle for either id. The real missing dependency spans two other lanes. GOAIEZ-MASTER-PLAN.md:29077 gives G16-21 as carousels in the chat, trigger an answer with structured results, refusal a missing asset renders text and never a broken placeholder. The only producer of chat answers in the tree is app/app/Modules/C-Agent/Actions/AgentAnswerAction.php, which is track sixty under ruling 5, and the renderer is app/app/Modules/X-102/Ui/views/customerfacing-widget.blade.php, six lines carrying no message, image or card, which is Track 2 under ruling 5. X-102 Actions are ChatCapture, ChatContextRefresh, ChatEscalate and ChatStart and its models are ChatSession and ChatLead, so no answer, message or asset concept exists in this lane column at all."
-  },
-  {
-   "at": "2026-09-07T05:33:13",
-   "note": "X-103 capability filings dated 2026-09-06T13:28:40: the two UNRESOLVED rows whose why reads X-194 funnel visualization renderer and X-195 marketplace app engine are the capability ids G6-17 and G6-20 respectively. Both rows remain correctly filed and this note adds no row and withdraws none; it exists because each why names the referent and omits the id, so a grep for G6-17 or G6-20 over state.py status returns nothing and an audit reads the pair as unfiled. Recorded so the ids are findable."
-  },
-  {
-   "at": "2026-09-07T05:52:12",
-   "note": "X-176 capability G8-02 is BUILT and credited, superseding the UNRESOLVED capability filing of 2026-09-06T11:21:02 whose why reads: a site structure or content graph API to compute link associations (G8-02). SITE-119 built the internal linking generator at app/app/Modules/X-176/Actions/InternalLinkRenderAction.php, which enumerates the published page set and emits the nav, so the named site structure API is this module own output and was never a dependency. The live doctor reports no G8-02 violation and app/tests/Modules/X-176/ carries one G8-02 credit. This note adds no row and withdraws none."
-  },
-  {
-   "at": "2026-09-07T05:52:12",
-   "note": "X-176 capability G8-25 is BUILT and credited, superseding the UNRESOLVED capability filing of 2026-09-06T11:21:02 whose why reads: page content relationship data to build the link graph (G8-25). SITE-119 derives the relationship from slug ancestry in app/app/Modules/X-176/Actions/InternalLinkRenderAction.php and asserts reachability against the stored artifact DOM, so the named relationship data is this module own output and was never a dependency. The live doctor reports no G8-25 violation and app/tests/Modules/X-176/ carries one G8-25 credit. This note adds no row and withdraws none."
-  },
-  {
-   "at": "2026-09-07T05:52:12",
-   "note": "X-176 capability G8-14 is BUILT and credited, superseding the UNRESOLVED capability filing of 2026-09-06T16:52:20, whose why ends with the claim that EdgeDeployAction.php:170 has nothing to pass as productOffers and that SchemaRenderAction.php:53 stays dead in production. Both halves are false as of SITE-121: app/app/Modules/X-157/Actions/EdgeDeployAction.php line 16 imports the X163 PriceBookItem model, line 129 queries it for the business, line 269 passes productOffers to SchemaRenderAction, and line 305 renders the offers-x176 block into the served artifact. The live doctor reports no G8-14 violation and app/tests/Modules/X-176/ carries one G8-14 credit. This note adds no row and withdraws none."
-  },
-  {
-   "at": "2026-09-07T06:11:27",
-   "note": "X-102 capability: the why filed at 2026-09-05T18:58:29 for this module, CapabilitiesScaffoldCommand rewrites unconditionally and deletes other tracks hand-written lines per OWNER ACTION 39, is FALSE and is superseded by this note for the G13-15 row and for the id-less row filed at 18:58:21. The same sentence was filed in one second as the why for seven capability ids across four modules and six of those seven violations have since cleared, so the scaffold command was never the obstacle for any of them. G13-15 carries three credits in app/tests/Modules/X-102/X102Test.php and the live doctor reports no G13-15 violation. The G16-21 row is the one exception and was superseded separately on 2026-09-07T05:33:13 with its real dependency named. This note adds no row and withdraws none."
-  },
-  {
-   "at": "2026-09-07T06:11:29",
-   "note": "X-110 capability G13-09: the why filed at 2026-09-05T18:58:29, CapabilitiesScaffoldCommand rewrites unconditionally per OWNER ACTION 39, is FALSE and is superseded by this note. That sentence was filed in one second as the why for seven capability ids across four modules and six of the seven violations have since cleared, so the scaffold command was never the obstacle. G13-09 is credited at app/tests/Modules/X-110/X110Test.php line 290, where it is recorded as KILLED under section 44 and P-128 because there is no device-location source and X-139 uploads completed jobs rather than store visits; a killed capability's honest refusal is a refusal. The live doctor reports no G13-09 violation. This note adds no row and withdraws none."
-  },
-  {
-   "at": "2026-09-07T06:11:29",
-   "note": "X-137 capability G3-11, G8-13, G18-17 and G13-24: the why filed for all four at 2026-09-05T18:58:29, CapabilitiesScaffoldCommand rewrites unconditionally per OWNER ACTION 39, is FALSE and is superseded by this note. That sentence was filed in one second as the why for seven capability ids across four modules and six of the seven violations have since cleared, so the scaffold command was never the obstacle. All four are credited by real assertions in app/tests/Modules/X-137/X137Test.php: G3-11 at line 97 allocates two tokens and asserts an unknown caller returns unattributed, G8-13 at line 115 asserts the per-visitor token and campaign source in both directions, G18-17 at line 160 asserts the whisper names its own source and does not name the other, and G13-24 at lines 195, 214 and 256 covers offline reuse and cross-tenant refusal with PoolExhaustionTest carrying the refusal half. The live doctor reports no violation for any of the four. This note adds no row and withdraws none."
-  },
-  {
-   "at": "2026-09-07T06:11:29",
-   "note": "X-155 capability G13-05: two filings name a generator as the obstacle and both are FALSE and are superseded by this note - the why filed at 2026-09-05T18:22:23 blaming the scaffold reading the master plan line order, and the why filed at 2026-09-05T18:58:29 reading CapabilitiesScaffoldCommand rewrites unconditionally per OWNER ACTION 39. The second sentence was filed in one second as the why for seven capability ids across four modules and six of the seven violations have since cleared, so the scaffold command was never the obstacle. G13-05 carries four credits in app/tests/Modules/X-155/X155Test.php at lines 304, 310, 360 and 397, covering tenant release and the spam and bot filtering clause, and the live doctor reports no G13-05 violation. This note adds no row and withdraws none."
-  },
-  {
-   "at": "2026-09-07T06:49:06",
-   "note": "X-176 capability G8-14 is BUILT and credited, superseding the SECOND and older UNRESOLVED capability filing of 2026-09-06T16:31:03, whose why reads: no seam for product schema from the pricebook and no same-commit invalidation; app/app/Modules/X-176/Actions/SchemaRenderAction.php:24 receives productOffers as an argument, lacking a read dependency on X-163 or X-119. G8-14 has TWO rows and the supersession note of 2026-09-07T05:52:12 named only the later one filed at 2026-09-06T16:52:20, because the 16:31:03 row's why contains no G8-14 literal and a grep for the id over state.py status returns only one row. The correction of 2026-09-06T16:51:57 recorded that this why was false but did not supersede it. Both halves of the why are false as of SITE-121: app/app/Modules/X-157/Actions/EdgeDeployAction.php line 16 imports the X163 PriceBookItem model, line 129 queries it for the business, line 269 passes productOffers to SchemaRenderAction, and line 305 renders the offers-x176 block into the served artifact, so the read dependency exists and the seam is not missing. G8-14 is credited at app/tests/Modules/X-176/ProductSchemaTest.php line 17 and test_rendered_schema_contains_derived_offers_in_catalog asserts OfferCatalog, the offer name and the price against the stored artifact rather than against any argument. The live doctor reports no G8-14 violation. This note adds no row and withdraws none."
-  },
-  {
-   "at": "2026-09-07T06:49:10",
-   "note": "X-176 capability: the UNRESOLVED row filed at 2026-09-06T16:31:06, whose why reads no seam for Event schema from X-108s calendar, is the capability id G8-15. It was already superseded by the note of 2026-09-06T18:00:55, which named it by timestamp. This note adds no row, withdraws none and changes no status; it exists because the why names the referent and omits the id, so a grep for G8-15 over state.py status returns nothing and an audit reads the row as unfiled. Recorded so the id is findable, in the same shape as the X-103 note of 2026-09-07T05:33:13 for G6-17 and G6-20."
-  },
-  {
-   "at": "2026-09-07T08:23:07",
-   "note": "X-176 G12-03's artifact leg is falsifier-proven: injecting entityType at EdgeDeployAction's SchemaRenderAction call site reddens the stored-artifact assertion in test_g12_03_capabilities in each direction independently, while the two direct-call assertions stay green. The mutation site is the deploy path's pass-through, which is downstream of the artifact assertion and upstream of neither direct call."
-  },
-  {
-   "at": "2026-09-07T10:23:03",
-   "note": "X-103 G6-27 is CREDIT-ONLY, not discharged: its carrier test_g6_27_header_c_sms (X103Test.php:307) asserts Http::assertNothingSent() and Event::assertNotDispatched(SendRequested::class) after a publish, which is SMS suppression and not a PIN gate. Measured: grep -rniE 'pin|password|passcode' app/app/Modules/X-103/ returns ONE hit, capabilities.php:40, the generated file echoing the tracker note, and the funnels migration has no pin column. No build: GOAIEZ-MASTER-PLAN.md:31352's asserted clause carries only 'expiry on both the page and the asset URL' and the NO-URL rule, never a password, so a PIN gate would be a feature the plan did not ask to be asserted. No filing: G6-27 has no live violation. Recorded so the record does not read as discharged (tick 271)."
-  },
-  {
-   "at": "2026-09-07T10:23:10",
-   "note": "X-103 G12-39 is CREDIT-ONLY and its dependency is C-Reviews, NOT X-104. The built-site construction site is this lane's own app/app/Modules/X-157/Actions/EdgeDeployAction.php, so 'the plugin path is X-104's' names one delivery surface and not the blocker. What this lane cannot mint is GOAIEZ-MASTER-PLAN.md:31354's asserted clause, 'the carousel renders only real reviews, and 1-3 star never reaches it (P-110)': that needs rated review rows, and rating lives at app/app/Modules/C-Reviews/Database/migrations/2026_08_30_000022_create_c_reviews_tables.php:19, track/reviews' column under ruling 5. Its current carrier test_g12_39_the_review_widget_is_not_yet_on_the_built_site (X103Test.php:251) asserts the absence of a block type SiteEngine::publish() can never write; it is the id's only carrier so it is not deleted. No unresolved row: G12-39 has no live violation (tick 271)."
-  },
-  {
-   "at": "2026-09-07T11:12:16",
-   "note": "X-137 G18-17/G18-24 are ONE SPEC at GOAIEZ-MASTER-PLAN.md:29181, whose asserted column is only 'the whisper audio is asserted present on the agent leg and absent on the caller leg, in one test on a real bridge'. That clause is NOT discharged in X-137 and cannot be: it needs C-Telephony, which is track sixty's under ruling 5, on a real Infobip bridge this lane has no credential for. What test_g18_17_whisper_names_the_source (app/tests/Modules/X-137/X137Test.php:160) discharges is the row's DESCRIPTION column, 'the whisper names the SOURCE', asserted in both directions; and test_g18_24_one_whisper_spec (:176) asserts the emitted CallAttributed carries the whisper text plus Http::assertNothingSent(). Both are real, and neither touches the caller leg. No build: the construction site and the transport are another lane's. No unresolved row: G18-17 and G18-24 have no live violation, and a record for a credited id is a note. The dependency is already named in this module's anchor filing of 2026-09-05T19:19:40. Recorded so the record does not read as fully discharged."
-  },
-  {
-   "at": "2026-09-07T11:32:59",
-   "note": "X-155 capability G2-17, G2-20 and G2-39 share the ONE-SPEC plan row at GOAIEZ-MASTER-PLAN.md:31361, whose asserted column has two clauses. Clause (a), doctor asserts NO staging table for a canonical noun (P-163), is discharged by app/tests/Modules/X-155/X155Test.php:669-672 in test_g13_35_no_staging, a different plan row's carrier. Clause (b), a submit is asserted to create the Person and the Conversation in one transaction, is NOT discharged and cannot be: app/app/Modules/X-155/Actions/FormCaptureAction.php:49 and :87 wrap Person::firstOrNew in DB::transaction and never touch Conversation, so the write does not happen and no assertion could discharge it. The build is refused under owner ruling 8: X-121 is the spine and belongs to Track 1, EntityWriteAction::handle and EntityService::write both take an existing int id and are an update path, there is no Conversation model under X-121/Models, so X-121 exposes no create path and the raw insert is not accepted. Recorded as UNRESOLVED in substance under owner ruling 8 option b. This note adds no row and withdraws none."
-  },
-  {
-   "at": "2026-09-07T11:32:59",
-   "note": "X-155 capability G11-01 and G13-35 share the ONE-SPEC plan row at GOAIEZ-MASTER-PLAN.md:31364, whose asserted column reads that abandonment raises a SIGNAL and never a send, per P-068, asserted by absence. It is not discharged and this lane cannot discharge it. P-068 at GOAIEZ-MASTER-PLAN.md:559 forbids minting a SendPermit; SendPermit is X-204's model, sixty's under ruling 5, and grep for SendPermit under app/app/Modules/X-155 returns nothing; FormCaptured has zero consumers anywhere outside X-155. A per-module absence assertion would therefore assert the absence of something nothing in this module or downstream can write, which is the defect this lane refused for X-176 G8-15 and X-103 G12-39. The plan's own stated discharge is at GOAIEZ-MASTER-PLAN.md:422, P-068 asserted as ONE squad-wide grep, a shared architecture lint whose construction site is not this lane's module tests. This note adds no row and withdraws none."
-  },
-  {
-   "at": "2026-09-07T12:35:11",
-   "note": "X-102 G8-36 is credited by test_g8_36_shadow_dom, whose whole body is Livewire::test(CustomerfacingWidget::class)->assertSeeHtml('chat-widget-container') \u2014 the same assertion already made in another method, naming no Shadow DOM, no host CSS and nothing unchanged. grep -rn -iE 'shadow|:host|all: initial' app/app/Modules/X-102/ returns one hit and it is the generated capabilities.php, i.e. the specification quoting itself: there is no Shadow DOM in the module. The asserted clause (rendered inside a hostile stylesheet fixture, the widget is unchanged, asserted visually) has no construction site in this lane \u2014 the widget shell is Ui/views/customerfacing-widget.blade.php, Track 2's under ruling 5, and this tree carries no visual harness. No build here."
-  },
-  {
-   "at": "2026-09-07T17:09:24",
-   "note": "X-176 The 2026-09-07T16:43:46 decision recorded the trim-based blank test as landing at all five publish-path sites. It landed at three: EdgeDeployAction lines 211 and 239 and LlmsTxtRenderAction line 22. InternalLinkRenderAction lines 42 and 55 were not in commit d11a7f69 and still carried empty(), so the published nav continued to drop a page titled 0 together with its whole subtree while the breadcrumb beside it no longer did, which is the divergence between the two renderers of one hierarchy that the decision was written to prevent. SITE-160 applies the identical predicate at both remaining sites and test_f11_blank_title_consistency, which was red on the branch, asserts that the nav and the breadcrumb agree."
-  },
-  {
-   "at": "2026-09-09T18:22:23",
-   "note": "X-157 boundary: CORRECTION to the citation clause in the two boundary filings of 2026-09-09T18:01:35 (X-108) and 2026-09-09T18:01:40 (X-163). Both end with the claim that this is the same absent seam already filed as capability X-176 at 2026-09-06T16:31:06 and at 2026-09-06T16:52:20 respectively, counted once and reported by two stages against two modules. Both cited capability rows are SUPERSEDED and neither is a live filing: 16:31:06 was superseded by the note of 2026-09-06T18:00:55, which reads that G8-15 is BUILT, that X-108 is fully built, and that the gap was a missing seam and not a missing dependency under rule 09; 16:52:20 was superseded by the note of 2026-09-07T05:52:12, which reads that G8-14 is BUILT and credited and that both halves of its why are false as of SITE-121. The true relationship is cause and consequence and not one fact reported twice: the capability was blocked because X-157 had no way to get appointments or offers into the schema, SITE-113 and SITE-121 unblocked it by importing the model directly, and that import is the boundary violation, so the capability filing was closed by the act that opened the boundary one. The dispositions of both boundary rows are UNCHANGED and neither is withdrawn: X-108 and X-163 still expose no read action returning the rows their credited capabilities assert, deleting either read still deletes the asserted clause of a credited capability, and building inside either module is another lane under ruling 5, so both remain correct filings under rule 09. This note adds no row and withdraws none."
-  },
-  {
-   "at": "2026-09-09T23:27:14",
-   "note": "X-102 CORRECTION superseding the decided row of 2026-09-09T23:02:07. That row states that without the controller clause a blank phone reaches ChatCaptureAction and 500s the endpoint. Measured at tick 330 and it does not. Laravel TrimStrings and ConvertEmptyStringsToNull sit uncustomised on the framework default GLOBAL middleware stack (Configuration/Middleware.php lines 461 to 462), the TrimStrings except list is current_password, password and password_confirmation only with an empty neverTrim and no call to trimStrings or convertEmptyStringsToNull or skipWhen anywhere under bootstrap, Providers or Http, and TransformsRequest clean covers the query bag, the JSON bag and the form bag alike. So any request input that is blank after trimming arrives as null, is_string is false, the guard first clause fires, and the trim clause can never be true through the HTTP route. SITE-201 measured this behaviourally in its own state 1 and reported it: the new test passed against the untouched tree with a 400. The same composition makes ChatCaptureAction line 26 NO_CONTACT_METHOD_ON_CAPTURE unreachable in production too, because that action has exactly one production caller and it is this controller, so the guard is dead not because nothing calls the action but because nothing can supply the input it refuses. BOTH guards are correct and BOTH STAY: the deadness is a property of a shared framework configuration this lane does not own, and either becomes live the day anyone adds phone to the TrimStrings except list or drops either middleware from bootstrap. The bound is request input only, query and form and JSON, and not route parameters and not headers. It also retires the blank name item deferred at tick 329, which cannot exist for the same reason. Refused: deleting either guard, which is a weakening; deleting the new test, which is the only thing in the tree that would notice a TrimStrings except list change; a test asserting the middleware itself, which is not this lane column; and a second decided row."
-  },
-  {
-   "at": "2026-09-10T01:18:46",
-   "note": "X-102: line 23 is FALSE (the premise does not hold at source), line 24 is TRUE AND NOT OURS, line 25 is TRUE BUT THE OUTPUT HAS NO CONSUMER, line 26 is TRUE AND NOT OURS, and line 27 is FALSE (the premise does not hold at source); the full measurement is in the docblock at app/tests/Modules/X-102/ChatDoorTest.php:23."
-  },
-  {
-   "at": "2026-09-11T11:04:52",
-   "note": "X-102 G21-01: the killed-capability refusal carrier test_refusal_no_scripted_attendees_social_proof asserted only the absence of an attendees key that nothing in the module can write. Since chat_turns exists and ChatTurnAction writes the author type its caller passes, a scripted message posing as another attendee would be a turn, so the carrier now also asserts that starting a chat writes no turn and that one visitor message writes exactly a visitor turn and an agent turn. No production change; a guard refusing a non-visitor author is not built because the only caller hardcodes visitor and the guard could not fire."
-  },
-  {
-   "at": "2026-09-12T00:00:57",
-   "note": "X-137 CORRECTION to the decided row of 2026-09-08T06:56:50, which calls the short_links destination column a not null text column with no default. Measured at SITE-212 in goaiez_antig_site_test with current_database in the projection: destination_url is NULLABLE. short_links has two creators: app/database/migrations/2026_08_11_130139_create_short_links_table.php sorts first and creates the table without destination_url, the X-137 create in 2026_08_30_000039 is guarded by hasTable and never runs, and its else branch adds destination_url as nullable. That row cited the create that never runs. Its conclusion stands, because the redirect guard trims a string cast and so refuses a null destination exactly as it refuses a blank one. Recorded with it, also measured at SITE-212: short_links carries public_read FOR SELECT USING true beside tenant_isolation and tenant_write, all three PERMISSIVE, so row level security does not restrict a read of this table, and the business_id clause in the X-137 redirect route is the only tenancy check on that read. With the clause removed, test_g13_24_short_code_is_redeemable_only_under_its_own_business answered 302 where it asserts 404. This is the opposite of chat_sessions, pages and form_definitions, where removing the application clause cannot turn a test red. LinkQrAction scopes its read the same way, and both clauses now carry a comment saying so. No decided row and no re-file."
-  },
-  {
-   "at": "2026-09-13T13:20:28",
-   "note": "X-157 3 UNRESOLVED boundary records on X-157 - state.py resolve refused due to duplicates. AppointmentListAction arrived under owner grant 2026-09-13 (SITE-218); EdgeDeployAction lists through it"
-  },
-  {
-   "at": "2026-09-16T16:11:17",
-   "note": "X-157 SITE-228: demo:fill fillers for the site lane's owner-shell modules (X-157 X-176 X-177 X-203 X-108 X-121); marked demo\u00b7 rows, idempotent, purgeable"
-  },
-  {
-   "at": "2026-09-16T18:29:53",
-   "note": "X-177 SITE-229: X177Filler sets location_id \u2014 production's gbp_connections has it NOT NULL (module migration create branch), test databases nullable (core migration first); demo:fill aborted there on 2026-09-16"
-  },
-  {
-   "at": "2026-09-16T19:05:30",
-   "note": "X-177 SITE-230: X177Filler creates a demo Location and sets location_id to its id \u2014 production's gbp_connections.location_id is bigint NOT NULL FK to locations (schema drift vs the tree); SITE-229's string would have failed there"
-  },
-  {
-   "at": "2026-09-16T19:18:09",
-   "note": "X-121 SITE-231: reconciliation migration, half one \u2014 production had 18 NOT NULL columns the migrations leave nullable and lacked qa_settings.ticket_recipient_id (audit 2026-09-16); owner ruled production matches the tree; half two (13 SET NOT NULL, location_id design) open"
-  },
-  {
-   "at": "2026-09-16T20:14:08",
-   "note": "X-121 SITE-232: reconciliation half two (a) \u2014 13 columns the tree requires become NOT NULL on production, tree defaults backfilled, carrier_credentials.business_id only if no null exists; location_id design still an owner decision"
-  },
-  {
-   "at": "2026-09-16T20:33:01",
-   "note": "X-177 SITE-233: location_id is a bigint NOT NULL FK to locations on every database, as production already had it (the live connect flow writes location ids); fixtures create a location; the audit's last type difference closed"
-  },
-  {
-   "at": "2026-09-16T20:42:14",
-   "note": "X-177 SITE-233b: the one remaining X-177 fixture with a string location_id now creates a Location; SITE-233's migration stands"
+   "at": "2026-09-06T23:16:43",
+   "note": "J8 restore drill: JourneyHarness:814 names its scratch db goaiez_antig_drill_<pid> and :908 force-drops it; the supervisor's wave-119 gate errored 42501 permission denied to terminate process where the coder's gate on the identical tree did not; drill dbs on the box at 2026-09-06 23:10: UNRESOLVED; reproduced in wave 120: no"
   }
  ],
  "resolved": [
   {
-   "module": "X-157",
-   "stage": "boundary",
-   "was": "--reason EdgeDeployAction:115 lists appointments; X-108 exports no AppointmentListAction (needs one: appointments for a business, read-only)",
-   "why": "SITE-219: AppointmentListAction arrived under owner grant 2026-09-13 (SITE-218); EdgeDeployAction lists through it",
-   "at": "2026-09-13T16:46:51"
+   "module": "X-193",
+   "stage": "tests",
+   "was": "column quiet_hours_start is missing from notification_classes and not named in the brief",
+   "why": "the column arrived: migration 2026_09_04_072838_add_quiet_hours_start_to_notification_classes_table.php (14df5c8a, 2026-09-04) adds quiet_hours_start and quiet_hours_end; X193Test::test_dependency_quiet_hours_start_exists is green; withdrawn on main after UI-135 withdrew it in the ui ledger",
+   "at": "2026-09-17T11:35:21"
   },
   {
-   "module": "X-157",
-   "stage": "boundary",
-   "was": "X-108 exposes no read action returning a business upcoming booked appointments: AppointmentBookAction, AppointmentCancelAction, AvailabilityRequestAction and WaitlistJoinAction are the whole of its registered surface and AvailabilityRequest returns free slots, not booked rows, so EdgeDeployAction:115 reads X108\\Models\\Appointment directly and BoundaryStage reports the import. X-108 is another lane under ruling 5, so the read action is that lane to build. Deleting the read is not available: the Event node it feeds is the asserted clause of G8-15, which is credited. This is the same absent seam already filed as capability X-176 at 2026-09-06T16:31:06, counted once and reported by two stages against two modules.",
-   "why": "SITE-219: same seam as AppointmentListAction; superseded by SITE-218 grant",
-   "at": "2026-09-13T16:46:55"
+   "module": "X-186",
+   "stage": "capability",
+   "was": "no action enrols a person into a campaign",
+   "why": "the action arrived: CampaignEnrolAction::enrol (9a86b10e, 2026-09-12) enrols a person into a campaign; CampaignEnrolTest proves it in four methods; withdrawn on main after UI-135 withdrew it in the ui ledger",
+   "at": "2026-09-17T11:35:21"
+  },
+  {
+   "module": "X-201",
+   "stage": "tests",
+   "was": "column deadline_at is missing from disputes and not named in the brief",
+   "why": "the column arrived: migration 2026_09_04_072843_add_deadline_at_to_disputes_table.php (14df5c8a, 2026-09-04); Dispute casts it, DisputeDefenseEngine refuses past it, N011Test sets it; withdrawn on main after PB-216 withdrew it in the pricebook ledger",
+   "at": "2026-09-17T11:35:21"
+  },
+  {
+   "module": "X-172",
+   "stage": "tests",
+   "was": "generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook",
+   "why": "the fixture arrived: Fixtures::token mints a portal link through PortalLinkAction (f5cdb825, 2026-09-05); CustomerfacingPortalScreenTest opens the portal by token; withdrawn on main after PB-216 withdrew it in the pricebook ledger",
+   "at": "2026-09-17T11:35:21"
   }
  ]
 }
