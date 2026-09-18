@@ -460,6 +460,17 @@ if [ $want_tests -eq 1 ]; then
 fi
 if [ $want_tests -eq 1 ]; then
   # timeout: a hung suite is a red line, never a 26-minute wait (ruling 2026-09-05 07:0x)
+  #
+  # N205b (2026-09-18): `stdbuf -oL` was added here and then REMOVED, because the
+  # hypothesis behind it was measured and is false. The reasoning was that PHP
+  # block-buffers a redirected stdout, so a hung suite would have flushed nothing and
+  # N205's preservation could never fire — money's live pest file was indeed 0 bytes
+  # fifteen minutes into a hang (found via /proc/<pid>/fd/1). The control: two php
+  # processes printing a line, sleeping 6s, printing another, both redirected to a
+  # file — WITH and WITHOUT stdbuf. Both showed 7 bytes while still running. PHP CLI
+  # does not block-buffer stdout, so stdbuf changes nothing here and the empty file
+  # has a different cause: pest had genuinely printed nothing yet.
+  # Do not re-add it without re-running that control.
   pest_started=$(date -Is)
   ptmp=$(mktemp "${TMPDIR:-/tmp}/pest-XXXXXX"); timeout 1800 ./vendor/bin/pest > "$ptmp" 2>&1 & pjob=$!; pest_pid=$(pgrep -P "$pjob" 2>/dev/null | head -1); pest_pid=${pest_pid:-$pjob}; wait "$pjob"; rc=$?; out=$(cat "$ptmp"); rm -f "$ptmp"
   log_gate pest "$pest_started" "$rc" "${pest_pid:--}"
