@@ -640,6 +640,8 @@ final class OwnerNav
             OwnerNavItem::make('Call coaching', 'x-66.livecoaching-whisper-panel', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('What we learned', 'x-119.reviewwhatifound-screen', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Fact freshness', 'x-119.fact-freshness-per', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('WhatsApp templates', 'c-whatsapp.template-status-card', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Template approval queue', 'c-whatsapp.template-approval-queue', OwnerNavItem::GROUP_MORE),
         ];
     }
 

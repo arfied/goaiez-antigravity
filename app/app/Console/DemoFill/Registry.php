@@ -16,6 +16,7 @@ class Registry
             new Fillers\CMailFiller,
             new Fillers\CReviewsFiller,
             new Fillers\CSmsFiller,
+            new Fillers\CWhatsappFiller,
             new Fillers\X01Filler,
             new Fillers\X07Filler,
             new Fillers\X08Filler,
