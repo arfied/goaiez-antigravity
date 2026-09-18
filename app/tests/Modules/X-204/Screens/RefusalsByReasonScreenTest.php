@@ -7,6 +7,7 @@ namespace Tests\Modules\X204\Screens;
 use App\Enums\UserRole;
 use App\Models\User;
 use App\Modules\X204\Ui\RefusalsByReason;
+use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -16,7 +17,7 @@ class RefusalsByReasonScreenTest extends TestCase
     {
         $user = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $user->id]);
-        \App\Support\Tenancy::set($biz->id);
+        Tenancy::set($biz->id);
         $this->actingAs($user);
 
         $this->get(route('x-204.refusals-by-reason'))->assertOk();
