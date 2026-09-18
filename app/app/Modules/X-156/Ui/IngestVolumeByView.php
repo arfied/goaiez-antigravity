@@ -11,8 +11,10 @@ use App\Modules\X156\Models\IngestSource;
 use App\Support\Tenancy;
 use Illuminate\Support\Carbon;
 use Livewire\Attributes\Locked;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Data coming in'])]
 class IngestVolumeByView extends Component
 {
     #[Locked]
