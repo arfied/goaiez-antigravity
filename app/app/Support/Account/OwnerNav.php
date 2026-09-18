@@ -108,6 +108,7 @@ final class OwnerNav
             OwnerNavItem::make('Messages you sent', 'account.messages'),
             OwnerNavItem::make('Google reviews', 'account.connections', OwnerNavItem::GROUP_MORE, section: 'Reviews & your website'),
             OwnerNavItem::make('Your account', 'account.settings', OwnerNavItem::GROUP_MORE, section: 'Your account'),
+            OwnerNavItem::make('All screens', 'account.all-screens', OwnerNavItem::GROUP_MORE, section: 'Your account'),
 
             // `44` §2 puts the follow-ups list "under More" and badges that tab
             // with the due-today count. The badge is a KEY resolved at render
