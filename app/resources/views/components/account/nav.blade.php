@@ -112,7 +112,25 @@
                 </summary>
 
                 <ul class="absolute end-0 top-full z-30 mt-1.5 min-w-56 max-w-[calc(100vw-2rem)] rounded-[--radius-card] border border-rule bg-card p-1.5 shadow-xl">
-                    @foreach ($more as $item)
+                    @php
+                        $nullSection = [];
+                        $sections = [
+                            'Customers' => [],
+                            'Messages & follow-ups' => [],
+                            'Reviews & your website' => [],
+                            'Phone & texting' => [],
+                            'Your account' => [],
+                        ];
+                        foreach ($more as $item) {
+                            if ($item->section === null) {
+                                $nullSection[] = $item;
+                            } else {
+                                $sections[$item->section][] = $item;
+                            }
+                        }
+                    @endphp
+
+                    @foreach ($nullSection as $item)
                         @php $current = $item->current(); @endphp
                         <li>
                             <a
@@ -133,6 +151,36 @@
                                 @endif
                             </a>
                         </li>
+                    @endforeach
+
+                    @foreach ($sections as $sectionName => $items)
+                        @if (count($items) > 0)
+                            <li role="presentation" class="px-3 pt-3 pb-1 text-[10px] font-bold uppercase tracking-wider text-ink-3">
+                                <span>{{ $sectionName }}</span>
+                            </li>
+                            @foreach ($items as $item)
+                                @php $current = $item->current(); @endphp
+                                <li>
+                                    <a
+                                        href="{{ route($item->route) }}"
+                                        @if ($current) aria-current="page" @endif
+                                        @class([
+                                            'flex min-h-10 items-center justify-between rounded-[--radius-control] px-3 text-xs font-medium transition focus-visible:ring-2 focus-visible:ring-ink focus-visible:outline-none border border-transparent',
+                                            'bg-paper text-ink shadow-xs font-semibold border-rule' => $current,
+                                            'text-ink-2 hover:text-ink hover:bg-paper/50' => ! $current,
+                                        ])
+                                    >
+                                        <span>{{ $item->label }}</span>
+                                        @if ($item->badge !== null && isset($badges[$item->badge]))
+                                            <span
+                                                data-nav-badge="{{ $item->badge }}"
+                                                class="ms-2 inline-flex min-w-5 items-center justify-center rounded-full bg-indigo-600 px-1 text-[10px] font-bold text-white"
+                                            >{{ $badges[$item->badge] }}<span class="sr-only"> {{ OwnerNavBadges::screenReaderSuffix($item->badge) }}</span></span>
+                                        @endif
+                                    </a>
+                                </li>
+                            @endforeach
+                        @endif
                     @endforeach
                     <li class="border-t border-rule mt-1 pt-1">
                         <form method="POST" action="{{ route('logout') }}">
