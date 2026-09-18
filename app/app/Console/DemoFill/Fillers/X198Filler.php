@@ -47,6 +47,7 @@ class X198Filler implements DemoFiller
             'merchant_connection_id' => $connection->id,
             'gateway_charge_id' => 'demo·ch_12345',
             'idempotency_key' => 'demo·idem_payment_1',
+            'payment_token' => 'demo·tok_12345',
         ]);
 
         ReconciliationRun::create([
