@@ -653,6 +653,8 @@ final class OwnerNav
             OwnerNavItem::make('Field mapping', 'x-212.unmatchedfield-map', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Agency Console', 'x-112.agency-console', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Staff', 'x-112.staff', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Migration commit', 'x-212.commit', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Reconciliation report', 'x-212.reconciliation-report', OwnerNavItem::GROUP_CATALOG),
         ];
     }
 
