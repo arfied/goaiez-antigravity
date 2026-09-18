@@ -24,6 +24,7 @@ class X117Filler implements DemoFiller
         $s1 = Sellable::create([
             'business_id' => $business->id,
             'name' => self::MARKER.'Furnace Tune-up',
+            'sku' => self::MARKER.'FURNACE',
             'fulfilment_type' => 'service',
             'inventory_quantity' => 10,
             'unit_price_cents' => 9900,
@@ -32,6 +33,7 @@ class X117Filler implements DemoFiller
         $s2 = Sellable::create([
             'business_id' => $business->id,
             'name' => self::MARKER.'Air Filter (16x25x1)',
+            'sku' => self::MARKER.'FILTER',
             'fulfilment_type' => 'product',
             'inventory_quantity' => 50,
             'unit_price_cents' => 1500,
@@ -40,6 +42,7 @@ class X117Filler implements DemoFiller
         $s3 = Sellable::create([
             'business_id' => $business->id,
             'name' => self::MARKER.'Thermostat Installation',
+            'sku' => self::MARKER.'THERMO',
             'fulfilment_type' => 'service',
             'inventory_quantity' => 0, // sold out
             'unit_price_cents' => 15000,

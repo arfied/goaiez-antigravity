@@ -26,7 +26,7 @@ return [
     // ⭐ There is nothing to earn. @intent still DESCRIBES the action;
     //   it no longer gates when the action may run.
     'ships' => 'n/a',
-    'ceiling' => 'n/a',
+    'ceiling' => '',
 
     'provides' => [
         'consent.decide',

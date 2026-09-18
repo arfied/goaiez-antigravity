@@ -53,7 +53,7 @@ class DemoFillUiTest extends TestCase
         Tenancy::forgetAll();
         $this->artisan('demo:fill', [
             'email' => $owner->email,
-            '--only' => 'X-206,X-207,X-210,X-190,X-186,X-182,X-212,X-113',
+            '--only' => 'X-206,X-207,X-210,X-190,X-186,X-182,X-212,X-113,X-112',
         ])->assertExitCode(0);
 
         Tenancy::set($biz->id);
@@ -63,7 +63,7 @@ class DemoFillUiTest extends TestCase
         $this->artisan('demo:fill', [
             'email' => $owner->email,
             '--purge' => true,
-            '--only' => 'X-206,X-207,X-210,X-190,X-186,X-182,X-212,X-113',
+            '--only' => 'X-206,X-207,X-210,X-190,X-186,X-182,X-212,X-113,X-112',
         ])->assertExitCode(0);
 
         Tenancy::set($biz->id);

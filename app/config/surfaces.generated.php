@@ -409,8 +409,8 @@ return [
             ['label' => 'Demo Ledger Daily', 'route' => 'x-161.demo-ledger-daily.admin', 'module' => 'X-161'],
             ['label' => 'Sendsbyclass', 'route' => 'x-193.sendsbyclass.admin', 'module' => 'X-193'],
             ['label' => 'Quiethour Holds', 'route' => 'x-193.quiethour-holds.admin', 'module' => 'X-193'],
-            ['label' => 'Refusals By Reason', 'route' => 'x-204.refusals-by-reason.admin', 'module' => 'X-204'],
-            ['label' => 'Register Slot States', 'route' => 'x-204.register-slot-states.admin', 'module' => 'X-204'],
+            ['label' => 'Refusals By Reason', 'route' => 'x-204.refusals-by-reason', 'module' => 'X-204'],
+            ['label' => 'Register Slot States', 'route' => 'x-204.register-slot-states', 'module' => 'X-204'],
         ],
         'Operator console' => [
             ['label' => 'Console', 'route' => 'x-111.console.admin', 'module' => 'X-111'],
