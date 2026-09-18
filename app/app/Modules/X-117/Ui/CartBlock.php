@@ -11,9 +11,11 @@ use App\Modules\X117\Models\Cart;
 use App\Modules\X117\Models\Sellable;
 use App\Support\Tenancy;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Cart'])]
 class CartBlock extends Component
 {
     #[Locked]
