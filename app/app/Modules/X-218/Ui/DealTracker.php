@@ -5,19 +5,19 @@ declare(strict_types=1);
 namespace App\Modules\X218\Ui;
 
 use App\Modules\X218\Models\InfluencerDeal;
-use Livewire\Attributes\Locked;
 use Livewire\Component;
+use Livewire\Attributes\Layout;
+use App\Support\Tenancy;
 
+#[Layout('components.account.layout', ['heading' => 'Deal tracker'])]
 class DealTracker extends Component
 {
-    #[Locked]
-    public int $businessId = 0;
-
     public function render()
     {
-        $deals = ($this->businessId > 0)
-            ? InfluencerDeal::where('business_id', $this->businessId)->with('deliverables')->get()
-            : collect();
+        abort_unless(auth()->check() && Tenancy::check(), 403);
+        $businessId = Tenancy::idOrFail();
+
+        $deals = InfluencerDeal::where('business_id', $businessId)->with('deliverables')->get();
 
         return view('x-218::deal-tracker', [
             'deals' => $deals,

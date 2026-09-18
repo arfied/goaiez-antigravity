@@ -6,6 +6,7 @@ namespace App\Modules\X218\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class InfluencerDeal extends Model
 {
@@ -24,5 +25,13 @@ class InfluencerDeal extends Model
     public function deliverables(): HasMany
     {
         return $this->hasMany(Deliverable::class, 'deal_id');
+    }
+
+    /**
+     * @return BelongsTo<InfluencerProfile, $this>
+     */
+    public function influencer(): BelongsTo
+    {
+        return $this->belongsTo(InfluencerProfile::class, 'influencer_id');
     }
 }

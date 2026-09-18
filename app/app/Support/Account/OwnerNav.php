@@ -649,6 +649,8 @@ final class OwnerNav
             OwnerNavItem::make('Rows we could not take', 'x-156.rejectedrows-list', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Onboarding checks', 'x-118.groundcheck', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Field mapping', 'x-212.unmatchedfield-map', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Deal tracker', 'x-218.deal-tracker', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Discovery board', 'x-218.discovery-board', OwnerNavItem::GROUP_CATALOG),
         ];
     }
 
