@@ -13,7 +13,7 @@ use Livewire\Component;
 /**
  * The All screens page listing the 185 module screens by family.
  */
-#[Layout('components.account.layout', ['heading' => 'All screens'])]
+#[Layout('components.account.layout')]
 final class AllScreens extends Component
 {
     public function mount(): void
