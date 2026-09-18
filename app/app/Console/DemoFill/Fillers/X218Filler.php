@@ -6,9 +6,9 @@ namespace App\Console\DemoFill\Fillers;
 
 use App\Console\DemoFill\DemoFiller;
 use App\Models\Business;
-use App\Modules\X218\Models\InfluencerProfile;
-use App\Modules\X218\Models\InfluencerDeal;
 use App\Modules\X218\Models\Deliverable;
+use App\Modules\X218\Models\InfluencerDeal;
+use App\Modules\X218\Models\InfluencerProfile;
 
 class X218Filler implements DemoFiller
 {

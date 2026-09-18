@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Modules\X218\Ui;
 
 use App\Modules\X218\Models\InfluencerProfile;
-use Livewire\Component;
-use Livewire\Attributes\Layout;
 use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
 
 #[Layout('components.account.layout', ['heading' => 'Discovery board'])]
 class DiscoveryBoard extends Component
