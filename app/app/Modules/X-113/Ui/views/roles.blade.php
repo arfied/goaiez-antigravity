@@ -1,13 +1,15 @@
 <div>
-    <x-surface.sample-state module="staff, roles, granular permissions, and the document vault. ⛔ **No scoring, no ranking, no attendance.**" screen="roles" />
     <div class="roles-view p-4">
-        <h3 class="text-lg font-bold">Roles & Permissions</h3>
+        <h2 class="text-lg font-bold text-ink">Roles</h2>
         @if($roles->isEmpty())
-            <p class="text-gray-500">No roles defined.</p>
+            <x-ui.empty-state heading="No roles yet.">A role is the set of things somebody on your crew is allowed to do.</x-ui.empty-state>
         @else
-            <ul>
+            <ul class="divide-y divide-rule">
                 @foreach($roles as $r)
-                    <li>#{{ $r->id }}: {{ $r->name }}</li>
+                    <li class="py-2" wire:key="role-{{ $r->id }}">
+                        <span class="font-semibold">{{ $r->name }}</span>
+                        <span class="text-sm text-ink-2">{{ $r->description }}</span>
+                    </li>
                 @endforeach
             </ul>
         @endif
