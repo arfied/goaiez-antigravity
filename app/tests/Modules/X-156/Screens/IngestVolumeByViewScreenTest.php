@@ -6,7 +6,10 @@ namespace Tests\Modules\X156\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X156\Models\IngestRun;
+use App\Modules\X156\Models\IngestSource;
 use App\Modules\X156\Ui\IngestVolumeByView;
+use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,18 +21,18 @@ class IngestVolumeByViewScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-                $this->get(route('x-156.ingest-volume-by'))
+        $this->get(route('x-156.ingest-volume-by'))
             ->assertOk()
             ->assertSee('Your account')
             ->assertDontSee('Internal Platform Console');
 
-        \App\Support\Tenancy::setUser($owner->id);
-        $source = \App\Modules\X156\Models\IngestSource::create([
+        Tenancy::setUser($owner->id);
+        $source = IngestSource::create([
             'business_id' => $biz->id,
             'source_type' => 'hubspot',
             'source_name' => 'Distinctive Source 4648',
         ]);
-        \App\Modules\X156\Models\IngestRun::create([
+        IngestRun::create([
             'business_id' => $biz->id,
             'source_id' => $source->id,
             'attestation_id' => 'attest_distinctive_4648',

@@ -4,9 +4,9 @@ namespace App\Console\DemoFill\Fillers;
 
 use App\Console\DemoFill\DemoFiller;
 use App\Models\Business;
-use App\Modules\X156\Models\IngestSource;
-use App\Modules\X156\Models\IngestRun;
 use App\Modules\X156\Models\IngestRejection;
+use App\Modules\X156\Models\IngestRun;
+use App\Modules\X156\Models\IngestSource;
 
 class X156Filler implements DemoFiller
 {
@@ -20,30 +20,30 @@ class X156Filler implements DemoFiller
         if (IngestSource::where('business_id', $business->id)->where('source_name', 'like', self::MARKER.'%')->exists()) {
             return 0;
         }
-        
+
         $source = IngestSource::create([
             'business_id' => $business->id,
             'source_type' => 'hubspot',
-            'source_name' => self::MARKER . 'HubSpot contacts'
+            'source_name' => self::MARKER.'HubSpot contacts',
         ]);
-        
+
         IngestRun::create([
             'business_id' => $business->id,
             'source_id' => $source->id,
-            'attestation_id' => self::MARKER . 'attest_0001',
-            'records_ingested' => 240
+            'attestation_id' => self::MARKER.'attest_0001',
+            'records_ingested' => 240,
         ]);
-        
+
         IngestRun::create([
             'business_id' => $business->id,
             'source_id' => $source->id,
-            'attestation_id' => self::MARKER . 'attest_0002',
-            'records_ingested' => 118
+            'attestation_id' => self::MARKER.'attest_0002',
+            'records_ingested' => 118,
         ]);
-        
+
         IngestRejection::create([
             'business_id' => $business->id,
-            'rejection_reason' => self::MARKER . 'missing email on the source row'
+            'rejection_reason' => self::MARKER.'missing email on the source row',
         ]);
 
         return 4;
@@ -59,7 +59,7 @@ class X156Filler implements DemoFiller
             $source->delete();
             $count++;
         }
-        
+
         return $count;
     }
 }
