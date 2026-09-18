@@ -1,7 +1,18 @@
 <div>
-    <x-surface.sample-state module="the front-desk agent on a live call: voice RAG with in-stream hesitation and objection detection" screen="latency_p50p95_per" />
     <div class="latency-metrics p-4">
-        <h3 class="text-lg font-bold">Latency P50 / P95 Performance</h3>
-        <p class="text-gray-500">P95 voice latency ≤ 600ms target satisfied.</p>
+        <h2 class="text-lg font-bold text-ink">Call latency</h2>
+        @if($calls->isEmpty())
+            <x-ui.empty-state heading="No calls to time yet.">Once the assistant answers a call, how quickly it replied is recorded here.</x-ui.empty-state>
+        @else
+            <ul class="divide-y divide-rule">
+                @foreach($calls as $c)
+                    <li class="py-2" wire:key="lat-{{ $c->id }}">
+                        <span class="font-semibold">{{ $c->from_phone }}</span>
+                        <span class="text-sm text-ink-2 tabular-nums">{{ $c->latency_ms }}ms</span>
+                        <span class="text-sm text-ink-2">{{ $c->status }}</span>
+                    </li>
+                @endforeach
+            </ul>
+        @endif
     </div>
 </div>

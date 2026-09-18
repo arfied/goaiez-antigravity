@@ -631,6 +631,13 @@ final class OwnerNav
             OwnerNavItem::make('Autopilot ladder', 'x-209.ladders-own-state', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Person', 'x-01.person', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Activity', 'x-01.history', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Your documents', 'x-160.upload-drop', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Documents to review', 'x-160.review-screen', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Staff', 'x-113.staff', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Roles', 'x-113.roles', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Reconciliation discrepancies', 'x-198.reconciliation-discrepancies', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Call latency', 'x-66.latency-p50p95-per', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Call coaching', 'x-66.livecoaching-whisper-panel', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('What we learned', 'x-119.reviewwhatifound-screen', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Fact freshness', 'x-119.fact-freshness-per', OwnerNavItem::GROUP_MORE),
         ];
