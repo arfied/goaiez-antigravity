@@ -120,6 +120,7 @@ class DemoFillMoneyTest extends TestCase
         $this->get(route('x-202.audit-export'))->assertOk()->assertSee('demo·Renewal with an ambiguous clause');
         $this->get(route('x-198.reconciliation-discrepancies'))->assertOk()->assertSee('demo·po_0001');
         $this->get(route('x-198.connect-card'))->assertOk()->assertSee('demo·acct_ridgeline');
+        $this->get(route('x-198.same-account'))->assertOk()->assertSee('demo·acct_ridgeline');
         $this->get(route('x-156.ingest-volume-by'))->assertOk()->assertSee('demo·HubSpot contacts');
         $this->get(route('x-156.rejectedrows-list'))->assertOk()->assertSee('demo·missing email on the source row');
     }

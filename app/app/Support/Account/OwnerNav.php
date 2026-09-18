@@ -650,6 +650,7 @@ final class OwnerNav
             OwnerNavItem::make('Onboarding checks', 'x-118.groundcheck', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Field mapping', 'x-212.unmatchedfield-map', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Gateway connections', 'x-198.connect-card', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Same account', 'x-198.same-account', OwnerNavItem::GROUP_CATALOG),
         ];
     }
 

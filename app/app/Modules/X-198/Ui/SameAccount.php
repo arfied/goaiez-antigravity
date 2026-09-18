@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
-#[Layout('components.layouts.agency')]
+#[Layout('components.account.layout', ['heading' => 'Same account'])]
 class SameAccount extends Component
 {
     public ?string $error = null;
