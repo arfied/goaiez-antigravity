@@ -604,6 +604,8 @@ final class OwnerNav
             OwnerNavItem::make('Do-not-text list', 'c-sms.donottext-list', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Text thread', 'c-sms.thread', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Overdue invoices', 'x-211.ageing-by-reason', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Your cart', 'x-117.cart-block', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Checkout', 'x-117.checkout-block', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Payment plans', 'x-211.paymentplan-builder', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Harvest coverage', 'x-16.harvest-coverage-by', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Number health', 'c-sms.pernumber-complaint-monitoring', OwnerNavItem::GROUP_CATALOG),
