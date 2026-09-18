@@ -20,7 +20,7 @@ class DemoFillStagesTest extends TestCase
 
     public function test_the_stages_screens_show_the_demo_rows(): void
     {
-        $owner = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
         Tenancy::forgetAll();
@@ -33,7 +33,7 @@ class DemoFillStagesTest extends TestCase
         $this->actingAs($owner);
 
         // X-204
-        $this->get(route('x-204.refusals-by-reason.admin'))->assertOk()->assertSee('demo·+15550100001');
-        $this->get(route('x-204.register-slot-states.admin'))->assertOk()->assertSee('demo·TCPA Safe Harbor');
+        $this->get(route('x-204.refusals-by-reason'))->assertOk()->assertSee('demo·+15550100001');
+        $this->get(route('x-204.register-slot-states'))->assertOk()->assertSee('demo·TCPA Safe Harbor');
     }
 }

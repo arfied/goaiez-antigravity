@@ -12,14 +12,14 @@ use Tests\TestCase;
 
 class RefusalsByReasonScreenTest extends TestCase
 {
-    public function test_screen_renders_for_admin(): void
+    public function test_screen_renders_for_owner(): void
     {
-        $user = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);
-        $this->actingAs($user);
+        $user = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $user->id]);
         \App\Support\Tenancy::set($biz->id);
+        $this->actingAs($user);
 
-        $this->get(route('x-204.refusals-by-reason.admin'))->assertOk();
+        $this->get(route('x-204.refusals-by-reason'))->assertOk();
 
         Livewire::test(RefusalsByReason::class)->assertOk();
     }
