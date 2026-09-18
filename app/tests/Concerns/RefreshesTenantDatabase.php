@@ -6,6 +6,7 @@ namespace Tests\Concerns;
 
 use App\Support\Tenancy;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
 /**
@@ -264,5 +265,6 @@ trait RefreshesTenantDatabase
     protected function afterRefreshingDatabase(): void
     {
         Tenancy::forget();
+        DB::select("SELECT nextval('businesses_id_seq') FROM generate_series(1, 10000)");
     }
 }
