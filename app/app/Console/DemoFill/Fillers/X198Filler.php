@@ -5,6 +5,7 @@ namespace App\Console\DemoFill\Fillers;
 use App\Console\DemoFill\DemoFiller;
 use App\Models\Business;
 use App\Modules\X198\Models\MerchantConnection;
+use App\Modules\X198\Models\Payment;
 use App\Modules\X198\Models\Payout;
 use App\Modules\X198\Models\ReconciliationRun;
 
@@ -38,7 +39,7 @@ class X198Filler implements DemoFiller
             'merchant_connection_id' => $connection->id,
         ]);
 
-        \App\Modules\X198\Models\Payment::create([
+        Payment::create([
             'business_id' => $business->id,
             'amount_cents' => 15000,
             'currency' => 'usd',
@@ -71,7 +72,7 @@ class X198Filler implements DemoFiller
             $count++;
         }
 
-        $payments = \App\Modules\X198\Models\Payment::where('business_id', $business->id)->where('gateway_charge_id', 'like', self::MARKER.'%')->get();
+        $payments = Payment::where('business_id', $business->id)->where('gateway_charge_id', 'like', self::MARKER.'%')->get();
         foreach ($payments as $payment) {
             $payment->delete();
             $count++;
