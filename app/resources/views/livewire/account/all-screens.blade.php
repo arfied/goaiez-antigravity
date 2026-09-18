@@ -1,6 +1,6 @@
 <div class="space-y-8">
     <div>
-        <h1 class="font-display text-2xl font-semibold text-ink">All screens</h1>
+        <h2 class="font-display text-2xl font-semibold text-ink">All screens</h2>
         <p class="mt-1 text-base text-ink-2">
             Every feature we have built, sorted by family.
         </p>
