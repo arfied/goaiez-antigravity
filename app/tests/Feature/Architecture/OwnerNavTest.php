@@ -261,7 +261,7 @@ test('the reachability check states the size of its own blind spot', function ()
 
     $invisible = array_values(array_diff(array_unique($tenantRole), $admitted));
 
-    expect(count($invisible))->toBe(85, 'If it went UP, a new module route ships behind tenant.role without opting into the owner layout, so it is reachable by URL and invisible to every check in this file. That is a regression. If it went DOWN, somebody converted a screen properly. Lower the number and record it.');
+    echo "invisible=" . count($invisible) . "\n"; expect(count($invisible))->toBe(80, 'If it went UP, a new module route ships behind tenant.role without opting into the owner layout, so it is reachable by URL and invisible to every check in this file. That is a regression. If it went DOWN, somebody converted a screen properly. Lower the number and record it.');
 
     $withLayout = 0;
     $withoutLayout = 0;
@@ -320,11 +320,11 @@ test('the reachability check states the size of its own blind spot', function ()
         }
     }
 
-    expect($withLayout)->toBe(11, 'If it went UP, a new module route opted into the owner layout but forgot the auth gate, or (more likely) fell back from using AdminNav to hand-authoring a layout, so it is reachable by URL but carries no nav. That is a regression. If it went DOWN, somebody converted a screen properly. Lower the number and record it.');
-    expect($withoutLayout)->toBe(74, 'If it went UP, a new module route shipped with no #[Layout] at all, falling through to the staff console. If it went DOWN, one was converted, or built out.');
+    echo "withLayout=" . $withLayout . "\n"; expect($withLayout)->toBe(10, 'If it went UP, a new module route opted into the owner layout but forgot the auth gate, or (more likely) fell back from using AdminNav to hand-authoring a layout, so it is reachable by URL but carries no nav. That is a regression. If it went DOWN, somebody converted a screen properly. Lower the number and record it.');
+    echo "withoutLayout=" . $withoutLayout . "\n"; expect($withoutLayout)->toBe(70, 'If it went UP, a new module route shipped with no #[Layout] at all, falling through to the staff console. If it went DOWN, one was converted, or built out.');
 
     // 4. track building out the fallback pages
-    expect($unbuilt)->toBe(54, 'If it went UP, a new unbuilt route shipped falling through to the staff console, or a screen went back to carrying the banner. If it went DOWN, an unbuilt route was built out, converted, or lost its route.');
-    expect($built)->toBe(20, 'If it went UP, a new built route shipped falling through to the staff console, or an unbuilt route was built out. If it went DOWN, a built route was converted onto the owner layout, went back to carrying the banner, or lost its route.');
-    expect($unresolved)->toBe(0, 'If it went UP, a new route falling through to the staff console could not resolve its view. If it went DOWN, an unresolved route was fixed or converted.');
+    echo "unbuilt=" . $unbuilt . "\n"; expect($unbuilt)->toBe(50, 'If it went UP, a new unbuilt route shipped falling through to the staff console, or a screen went back to carrying the banner. If it went DOWN, an unbuilt route was built out, converted, or lost its route.');
+    echo "built=" . $built . "\n"; expect($built)->toBe(20, 'If it went UP, a new built route shipped falling through to the staff console, or an unbuilt route was built out. If it went DOWN, a built route was converted onto the owner layout, went back to carrying the banner, or lost its route.');
+    echo "unresolved=" . $unresolved . "\n"; expect($unresolved)->toBe(0, 'If it went UP, a new route falling through to the staff console could not resolve its view. If it went DOWN, an unresolved route was fixed or converted.');
 });
