@@ -12,10 +12,13 @@ use App\Models\Citation;
 use App\Models\User;
 use App\Support\Tenancy;
 use Livewire\Livewire;
+use Tests\Concerns\RefreshesTenantDatabase;
 use Tests\TestCase;
 
 class AdvancedDashboardTest extends TestCase
 {
+    use RefreshesTenantDatabase;
+
     protected function createTenant(bool $advanced = false): array
     {
         $user = User::factory()->create(['role' => UserRole::Owner]);

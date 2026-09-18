@@ -85,7 +85,7 @@ something already enforced one level up.
 | ✅ **command/query separation** | **EVERY module.** `Queries/` never writes; `Actions/` never returns a read model. Near-zero cost, and it makes *"where does this code go"* mechanical rather than a judgement — which matters enormously when nobody is reviewing 124 modules |
 | :--- | :--- |
 | ✅ **domain events as the only seam** | **EVERY module.** Already mandatory — the boundary lint permits nothing else |
-| ⚠️ **a `Domain/` layer** | **36 of 124 modules, by the mechanical rule in §4.1** |
+| ⚠️ **a `Domain/` layer** | **34 of 124 modules, by the mechanical rule in §4.1** |
 | ⛔ **repository interfaces over Eloquent** | **NO.** Doubles the code, fights the framework, buys portability nobody wants. It is the classic way DDD-in-Laravel goes bad |
 | ⛔ **separate read/write stores** | **NO.** RLS plus one-table-one-owner already gives the isolation |
 | ⛔ **event sourcing** | **NO — and it is not a taste call. See §4.2** |

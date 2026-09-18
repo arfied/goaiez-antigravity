@@ -1,7 +1,7 @@
 <div>
     <div class="p-6 space-y-6">
         <div class="flex items-center justify-between">
-            <h2 class="text-lg font-semibold text-gray-900">Rejected Rows</h2>
+            <h2 class="text-lg font-bold text-ink">Rows we could not take</h2>
             <x-ui.button size="default" variant="secondary" wire:click="toggleSample">
                 {{ $isSample ? 'Exit sample' : 'Show a sample' }}
             </x-ui.button>
@@ -16,16 +16,16 @@
         @else
             <div class="space-y-4" wire:loading.class="opacity-50">
                 @foreach($rejections as $row)
-                    <div class="border rounded-md p-4 bg-white shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div class="border rounded-md p-4 bg-card shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <div class="flex-1">
                             <div class="font-bold whitespace-pre-wrap break-words text-red-600">{{ $row->rejection_reason }}</div>
-                            <div class="text-sm font-semibold text-gray-700 mt-1">
+                            <div class="text-sm font-semibold text-ink mt-1">
                                 {{ $row->source_name }}
                                 @if($row->source_id && !$row->is_active)
-                                    <span class="text-xs text-gray-500">(Paused)</span>
+                                    <span class="text-xs text-ink-2">(Paused)</span>
                                 @endif
                             </div>
-                            <div class="text-sm mt-1 text-gray-600">
+                            <div class="text-sm mt-1 text-ink-2">
                                 {{ $row->created_at->diffForHumans() }}
                                 @if($row->record_count !== null)
                                     &middot; {{ $row->record_count }} records refused

@@ -1,13 +1,16 @@
 <div>
-    <x-surface.sample-state module="C-Sms" screen="donottext_list" />
-    <div class="dnt-list-container p-4">
-        <h3 class="text-lg font-bold">Do-Not-Text / Suppression Registry</h3>
+    <div>
+        <h2 class="text-lg font-bold text-ink">Do-not-text list</h2>
         @if($suppressions->isEmpty())
-            <p class="text-gray-500">No numbers on DNT list.</p>
+            <x-ui.empty-state heading="No numbers on the do-not-text list.">A number that asks you to stop, or that a carrier refuses, is recorded here and never texted again.</x-ui.empty-state>
         @else
-            <ul>
+            <ul class="divide-y divide-rule">
                 @foreach($suppressions as $s)
-                    <li>{{ $s->recipient_phone }} ({{ $s->reason }})</li>
+                    <li class="py-2">
+                        <span class="font-mono text-sm">{{ $s->recipient_phone }}</span>
+                        <span class="text-ink-2">{{ $s->reason }}</span>
+                        <span class="text-sm text-ink-2">{{ $s->suppressed_at?->format('Y-m-d') }}</span>
+                    </li>
                 @endforeach
             </ul>
         @endif

@@ -1,14 +1,15 @@
 <div>
-    <x-surface.sample-state module="C-Sms" screen="thread" />
-    <div class="thread-container p-4">
-        <h3 class="text-lg font-bold">SMS Conversation Thread</h3>
+    <div>
+        <h2 class="text-lg font-bold text-ink">Text thread</h2>
         @if($messages->isEmpty())
-            <p class="text-gray-500">No SMS messages in thread.</p>
+            <x-ui.empty-state heading="No texts yet.">Texts sent from your number are listed here, newest first.</x-ui.empty-state>
         @else
-            <ul class="divide-y divide-gray-200">
+            <ul class="divide-y divide-rule">
                 @foreach($messages as $msg)
                     <li class="py-2">
-                        <span class="font-mono text-sm">{{ $msg->recipient_phone }}</span>: {{ $msg->body }}
+                        <span class="font-mono text-sm">{{ $msg->recipient_phone }}</span>
+                        <span class="text-ink-2">{{ $msg->body }}</span>
+                        <span class="text-sm text-ink-2">{{ $msg->status }}</span>
                     </li>
                 @endforeach
             </ul>

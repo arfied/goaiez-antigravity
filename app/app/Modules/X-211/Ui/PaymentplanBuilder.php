@@ -11,8 +11,10 @@ use App\Modules\X211\Models\ArPlanTerm;
 use App\Modules\X211\Models\PaymentPlan;
 use App\Support\Tenancy;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Payment plans'])]
 class PaymentplanBuilder extends Component
 {
     public array $installments = [];

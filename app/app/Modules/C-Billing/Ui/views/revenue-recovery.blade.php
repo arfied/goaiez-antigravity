@@ -1,6 +1,5 @@
 <div>
-    <x-surface.sample-state module="C-Billing" screen="revenue_recovery" />
-    <h1>Revenue recovery</h1>
+    <h2 class="text-lg font-bold text-ink">Revenue recovery</h2>
 
     <x-ui.attention-card state="attention" heading="One account at a time">
         A cross-account roll-up is an operator view behind row-level security, and no cross-account read path is built in this checkout yet. Below is this account's ladder.
@@ -25,7 +24,7 @@
     @else
         <ul class="space-y-4">
             @foreach($states as $state)
-                <li class="border rounded p-4 shadow bg-white">
+                <li class="bg-card overflow-hidden shadow rounded-[--radius-card] border border-rule p-4">
                     <div class="flex flex-wrap justify-between items-center gap-2">
                         <span class="font-semibold">Day {{ $state->day_in_cycle }} of 21</span>
                         <x-ui.status-pill :state="$state->day_in_cycle >= 21 ? 'attention' : 'ok'" :label="$dunningLabels[$state->status] ?? $state->status" />

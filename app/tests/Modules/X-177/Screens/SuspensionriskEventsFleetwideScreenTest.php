@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Modules\X177\Screens;
 
 use App\Enums\UserRole;
+use App\Models\Location;
 use App\Models\User;
 use App\Modules\X177\Models\GbpConnection;
 use App\Modules\X177\Models\GbpPost;
@@ -29,7 +30,8 @@ class SuspensionriskEventsFleetwideScreenTest extends TestCase
             ->assertSee('No suspension risks on record');
 
         Tenancy::setUser($owner->id);
-        $conn = GbpConnection::create(['business_id' => $biz->id, 'account_ref' => 'acct_distinctive_4503', 'external_label' => 'Distinctive Store 4503', 'profile_status' => 'active']);
+        $loc = Location::factory()->create(['business_id' => $biz->id]);
+        $conn = GbpConnection::create(['business_id' => $biz->id, 'location_id' => $loc->id, 'account_ref' => 'acct_distinctive_4503', 'external_label' => 'Distinctive Store 4503', 'profile_status' => 'active']);
         GbpPost::create(['business_id' => $biz->id, 'connection_id' => $conn->id, 'content' => 'Distinctive risky post 4503', 'status' => 'rejected_risk']);
         Tenancy::forget();
 

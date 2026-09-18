@@ -6,7 +6,9 @@ namespace Tests\Modules\X201\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X201\Models\Dispute;
 use App\Modules\X201\Ui\DisputeQueue;
+use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,7 +20,31 @@ class DisputeQueueScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-201.dispute-queue'))->assertOk();
+        $this->get(route('x-201.dispute-queue'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
+            ->assertDontSee('this screen is planned in')
+            ->assertSee('No open disputes.');
+
+        Tenancy::setUser($owner->id);
+        Dispute::create([
+            'business_id' => $biz->id,
+            'invoice_id' => 4619,
+            'chargeback_amount_cents' => 12345,
+            'reason' => 'Distinctive reason 4619',
+            'status' => 'opened',
+        ]);
+        Tenancy::forget();
+
+        $this->get(route('x-201.dispute-queue'))
+            ->assertOk()
+            ->assertSee('Invoice #4619')
+            ->assertSee('123.45')
+            ->assertSee('Distinctive reason 4619')
+            ->assertSee('no signature yet')
+            ->assertSee('Compile evidence')
+            ->assertDontSee('No open disputes.');
 
         Livewire::test(DisputeQueue::class)->assertOk();
     }

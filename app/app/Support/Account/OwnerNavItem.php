@@ -23,12 +23,14 @@ namespace App\Support\Account;
 final class OwnerNavItem
 {
     /**
-     * The nav's two groups. `more` is `44` §2's More tab — the place its
+     * The nav's three groups. `more` is `44` §2's More tab — the place its
      * follow-ups list and its due-today badge are specified to live.
      */
     public const string GROUP_PRIMARY = 'primary';
 
     public const string GROUP_MORE = 'more';
+
+    public const string GROUP_CATALOG = 'catalog';
 
     /**
      * @param  array<int, string>  $alsoCurrentFor  route names or patterns whose
@@ -46,6 +48,7 @@ final class OwnerNavItem
         public readonly string $label,
         public readonly string $route,
         public readonly string $group,
+        public readonly ?string $section,
         public readonly array $alsoCurrentFor,
         public readonly ?string $badge,
     ) {}
@@ -57,10 +60,11 @@ final class OwnerNavItem
         string $label,
         string $route,
         string $group = self::GROUP_PRIMARY,
+        ?string $section = null,
         array $alsoCurrentFor = [],
         ?string $badge = null,
     ): self {
-        return new self($label, $route, $group, $alsoCurrentFor, $badge);
+        return new self($label, $route, $group, $section, $alsoCurrentFor, $badge);
     }
 
     /**

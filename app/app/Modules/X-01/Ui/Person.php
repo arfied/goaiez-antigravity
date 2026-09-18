@@ -11,14 +11,21 @@ use App\Modules\X01\Models\LeadScore;
 use App\Modules\X01\Models\TakeoverLatch;
 use App\Modules\X121\Actions\EntityReadAction;
 use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Throwable;
 
+#[Layout('components.account.layout', ['heading' => 'Person'])]
 class Person extends Component
 {
     #[Locked]
     public int $personId = 0;
+
+    public function mount(): void
+    {
+        $this->personId = $this->personId ?: (int) request()->query('person', 0);
+    }
 
     public bool $failed = false;
 

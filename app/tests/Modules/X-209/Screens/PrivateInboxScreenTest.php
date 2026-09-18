@@ -6,7 +6,9 @@ namespace Tests\Modules\X209\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X209\Models\FixerCommand;
 use App\Modules\X209\Ui\PrivateInbox;
+use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,7 +20,29 @@ class PrivateInboxScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-209.private-inbox'))->assertOk();
+        $this->get(route('x-209.private-inbox'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
+            ->assertDontSee('this screen is planned in')
+            ->assertSee('No commands yet.');
+
+        Tenancy::setUser($owner->id);
+        FixerCommand::create([
+            'business_id' => $biz->id,
+            'staff_person_id' => 4631,
+            'raw_command' => 'running 20 late to the distinctive job',
+            'parsed_intent' => 'job.eta_updated',
+            'eta_minutes_delayed' => 20,
+            'status' => 'executed',
+        ]);
+        Tenancy::forget();
+
+        $this->get(route('x-209.private-inbox'))
+            ->assertOk()
+            ->assertSee('running 20 late to the distinctive job')
+            ->assertSee('job.eta_updated')
+            ->assertDontSee('No commands yet.');
 
         Livewire::test(PrivateInbox::class)->assertOk();
     }

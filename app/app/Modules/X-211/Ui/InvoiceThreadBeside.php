@@ -13,8 +13,10 @@ use App\Modules\X211\Domain\ArEngine;
 use App\Modules\X211\Models\ArDunningAction;
 use App\Support\Tenancy;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Invoice thread'])]
 class InvoiceThreadBeside extends Component
 {
     use LabelsDunningAction;

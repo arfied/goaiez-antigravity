@@ -12,8 +12,10 @@ use App\Modules\X120\Models\CardToken;
 use App\Support\Tenancy;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Payment methods'])]
 class CardScreen extends Component
 {
     public bool $adding = false;

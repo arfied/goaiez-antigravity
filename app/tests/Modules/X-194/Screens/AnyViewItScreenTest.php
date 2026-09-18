@@ -25,7 +25,8 @@ class AnyViewItScreenTest extends TestCase
         $location->timezone = 'America/Chicago';
         $location->save();
 
-        $this->get(route('x-194.any-view-it'))->assertOk();
+        $this->get(route('x-194.any-view-it'))->assertOk()
+            ->assertSee('Your account')->assertDontSee('Internal Platform Console')->assertDontSee('this screen is planned in')->assertSee('No view selected');
 
         Livewire::test(AnyViewIt::class)->assertOk();
     }
@@ -40,11 +41,12 @@ class AnyViewItScreenTest extends TestCase
         $location->timezone = 'America/Chicago';
         $location->save();
 
-        $view = app(ViewSaveAction::class)->save($biz->id, 'My Initial GET View');
+        $view = app(ViewSaveAction::class)->save($biz->id, 'Distinctive GET View 4611');
 
         $this->get(route('x-194.any-view-it', ['viewId' => $view->id]))
             ->assertOk()
-            ->assertSee('My Initial GET View');
+            ->assertSee('Distinctive GET View 4611')
+            ->assertSee('Your account')->assertDontSee('No view selected');
     }
 
     public function test_location_timezone_from_url(): void

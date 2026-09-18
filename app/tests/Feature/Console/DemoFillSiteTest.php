@@ -3,6 +3,7 @@
 namespace Tests\Feature\Console;
 
 use App\Enums\UserRole;
+use App\Models\Location;
 use App\Models\User;
 use App\Modules\X121\Models\EntityHistoryRecord;
 use App\Support\Tenancy;
@@ -17,14 +18,15 @@ class DemoFillSiteTest extends TestCase
 
         Tenancy::forgetAll();
 
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-157,X-176,X-177,X-203,X-108,X-121'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-157,X-176,X-177,X-203,X-108,X-121,X-123,X-191,X-16,X-140,X-178,X-118,X-160,X-130'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
 
         $this->assertDatabaseHas('edge_zones', ['business_id' => $biz->id, 'domain_name' => 'demo·example.com']);
         $this->assertDatabaseHas('deployments', ['business_id' => $biz->id, 'deploy_hash' => 'demo·a1b2c3d4']);
         $this->assertDatabaseHas('schema_snapshots', ['business_id' => $biz->id, 'entity_type' => 'demo·LocalBusiness']);
-        $this->assertDatabaseHas('gbp_connections', ['business_id' => $biz->id, 'external_label' => 'demo·Demo Store']);
+        $this->assertDatabaseHas('gbp_connections', ['business_id' => $biz->id, 'external_label' => 'demo·Demo Store', 'location_id' => (string) Location::where('business_id', $biz->id)->where('name', 'demo·Demo Location')->value('id')]);
+        $this->assertDatabaseHas('locations', ['business_id' => $biz->id, 'name' => 'demo·Demo Location']);
         $this->assertDatabaseHas('gbp_posts', ['business_id' => $biz->id, 'content' => 'demo·Demo post 1']);
         $this->assertDatabaseHas('gbp_state_log', ['business_id' => $biz->id, 'event_type' => 'demo·demo_event']);
         $this->assertDatabaseHas('restore_tests', ['business_id' => $biz->id, 'backup_id' => 'demo·bkp1']);
@@ -34,21 +36,32 @@ class DemoFillSiteTest extends TestCase
         $this->assertDatabaseHas('waitlists', ['business_id' => $biz->id, 'customer_name' => 'demo·Demo Customer']);
         $this->assertDatabaseHas('people', ['business_id' => $biz->id, 'first_name' => 'demo·Dana']);
         $this->assertDatabaseHas('entity_history', ['business_id' => $biz->id, 'entity_type' => 'demo·people']);
+        $this->assertDatabaseHas('dead_letters', ['business_id' => $biz->id, 'error_message' => 'demo·Webhook endpoint returned 503']);
+        $this->assertDatabaseHas('link_placements', ['business_id' => $biz->id, 'anchor_text' => 'demo·local plumbing guide']);
+        $this->assertDatabaseHas('geo_grids', ['business_id' => $biz->id, 'grid_name' => 'demo·Downtown grid']);
+        $this->assertDatabaseHas('service_polygons', ['business_id' => $biz->id, 'polygon_name' => 'demo·North side']);
+        $this->assertDatabaseHas('places_records', ['business_id' => $biz->id, 'name' => 'demo·Riverside Plumbing']);
+        $this->assertDatabaseHas('content_topics', ['business_id' => $biz->id, 'topic_title' => 'demo·How much does a drain cleaning cost?']);
+        $this->assertDatabaseHas('design_changes', ['business_id' => $biz->id, 'block_ref' => 'demo·hero_heading']);
+        $this->assertDatabaseHas('onboarding_runs', ['business_id' => $biz->id, 'business_name' => 'demo·Ridgeline HVAC']);
+        $this->assertDatabaseHas('documents', ['business_id' => $biz->id, 'title' => 'demo·2026 price list']);
+        $this->assertDatabaseHas('demand_regions', ['region_code' => 'demo·MEM-PLUMB']);
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-157,X-176,X-177,X-203,X-108,X-121'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-157,X-176,X-177,X-203,X-108,X-121,X-123,X-191,X-16,X-140,X-178,X-118,X-160,X-130'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
         $this->assertSame(2, EntityHistoryRecord::where('business_id', $biz->id)->where('entity_type', 'demo·people')->count());
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--purge' => true, '--only' => 'X-157,X-176,X-177,X-203,X-108,X-121'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--purge' => true, '--only' => 'X-157,X-176,X-177,X-203,X-108,X-121,X-123,X-191,X-16,X-140,X-178,X-118,X-160,X-130'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
         $this->assertDatabaseMissing('edge_zones', ['business_id' => $biz->id, 'domain_name' => 'demo·example.com']);
         $this->assertDatabaseMissing('deployments', ['business_id' => $biz->id, 'deploy_hash' => 'demo·a1b2c3d4']);
         $this->assertDatabaseMissing('schema_snapshots', ['business_id' => $biz->id, 'entity_type' => 'demo·LocalBusiness']);
         $this->assertDatabaseMissing('gbp_connections', ['business_id' => $biz->id, 'external_label' => 'demo·Demo Store']);
+        $this->assertDatabaseMissing('locations', ['business_id' => $biz->id, 'name' => 'demo·Demo Location']);
         $this->assertDatabaseMissing('gbp_posts', ['business_id' => $biz->id, 'content' => 'demo·Demo post 1']);
         $this->assertDatabaseMissing('gbp_state_log', ['business_id' => $biz->id, 'event_type' => 'demo·demo_event']);
         $this->assertDatabaseMissing('restore_tests', ['business_id' => $biz->id, 'backup_id' => 'demo·bkp1']);
@@ -58,6 +71,16 @@ class DemoFillSiteTest extends TestCase
         $this->assertDatabaseMissing('waitlists', ['business_id' => $biz->id, 'customer_name' => 'demo·Demo Customer']);
         $this->assertDatabaseMissing('people', ['business_id' => $biz->id, 'first_name' => 'demo·Dana']);
         $this->assertDatabaseMissing('entity_history', ['business_id' => $biz->id, 'entity_type' => 'demo·people']);
+        $this->assertDatabaseMissing('dead_letters', ['business_id' => $biz->id, 'error_message' => 'demo·Webhook endpoint returned 503']);
+        $this->assertDatabaseMissing('link_placements', ['business_id' => $biz->id, 'anchor_text' => 'demo·local plumbing guide']);
+        $this->assertDatabaseMissing('geo_grids', ['business_id' => $biz->id, 'grid_name' => 'demo·Downtown grid']);
+        $this->assertDatabaseMissing('service_polygons', ['business_id' => $biz->id, 'polygon_name' => 'demo·North side']);
+        $this->assertDatabaseMissing('places_records', ['business_id' => $biz->id, 'name' => 'demo·Riverside Plumbing']);
+        $this->assertDatabaseMissing('content_topics', ['business_id' => $biz->id, 'topic_title' => 'demo·How much does a drain cleaning cost?']);
+        $this->assertDatabaseMissing('design_changes', ['business_id' => $biz->id, 'block_ref' => 'demo·hero_heading']);
+        $this->assertDatabaseMissing('onboarding_runs', ['business_id' => $biz->id, 'business_name' => 'demo·Ridgeline HVAC']);
+        $this->assertDatabaseMissing('documents', ['business_id' => $biz->id, 'title' => 'demo·2026 price list']);
+        $this->assertDatabaseMissing('demand_regions', ['region_code' => 'demo·MEM-PLUMB']);
     }
 
     public function test_the_site_screens_show_the_demo_rows(): void
@@ -66,7 +89,7 @@ class DemoFillSiteTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
         Tenancy::forgetAll();
-        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-157,X-176,X-177,X-203,X-108,X-121'])->assertExitCode(0);
+        $this->artisan('demo:fill', ['email' => $owner->email, '--only' => 'X-157,X-176,X-177,X-203,X-108,X-121,X-123,X-191,X-16,X-140,X-178,X-118,X-160,X-130'])->assertExitCode(0);
 
         Tenancy::set($biz->id);
         $this->actingAs($owner);
@@ -81,5 +104,19 @@ class DemoFillSiteTest extends TestCase
         $this->get(route('x-108.waitlist'))->assertOk()->assertSee('demo·Demo Customer');
         $this->get(route('x-108.calendar'))->assertOk()->assertSee('demo·Demo Service');
         $this->get(route('x-121.entity-history-viewer'))->assertOk()->assertSee('demo·people');
+        $this->get(route('x-123.dlq-request-inspector'))->assertOk()->assertSee('demo·Webhook endpoint returned 503');
+        $this->get(route('x-191.links-earned'))->assertOk()->assertSee('demo·local plumbing guide');
+        $this->get(route('x-191.pitchacquire-ratio'))->assertOk()->assertSee('3 pitches sent')->assertSee('2 links earned');
+        $this->get(route('x-16.geogrid-map'))->assertOk()->assertSee('demo·Downtown grid')->assertSee('12 of 25 points scanned');
+        $this->get(route('x-16.servicearea-polygon'))->assertOk()->assertSee('demo·North side')->assertSee('demo·South side');
+        $this->get(route('x-16.harvest-coverage-by'))->assertOk()->assertSee('4 places harvested across 1 territories')->assertSee('demo·North side');
+        $this->get(route('x-140.proposed-pages'))->assertOk()->assertSee('demo·How much does a drain cleaning cost?')->assertSee('published');
+        $this->get(route('x-178.site-editor-assistant'))->assertOk()->assertSee('demo·hero_heading')->assertSee('color_token');
+        $this->get(route('x-118.today'))->assertOk()->assertSee('demo·Ridgeline HVAC');
+        $this->get(route('x-118.ttfm-distribution'))->assertOk()->assertSee('950');
+        $this->get(route('x-160.upload-drop'))->assertOk()->assertSee('demo·2026 price list');
+        $this->get(route('x-160.review-screen'))->assertOk()->assertSee('demo·Ridgeline service agreement');
+        $this->get(route('x-130.public-index-pages'))->assertOk()->assertSee('demo·Memphis metro');
+        $this->get(route('x-130.coverage-by-trade'))->assertOk()->assertSee('hvac');
     }
 }

@@ -1,5 +1,5 @@
 <div>
-    <h1>Payment plan</h1>
+    <h2 class="text-lg font-bold text-ink">Payment plans</h2>
 
     <p class="text-base text-ink-2">Up to {{ $terms->max_installments }} payments over {{ $terms->max_term_days }} days is a schedule. Beyond that it is credit, and it routes to a financing partner. That limit is the standing default, not an account setting: nothing in this checkout changes it yet.</p>
 
@@ -24,7 +24,7 @@
     </div>
 
     @if($plans->isNotEmpty())
-        <h2>Plans in place</h2>
+        <h3 class="font-semibold text-ink">Plans in place</h3>
         <ul class="space-y-2">
             @foreach($plans as $plan)
                 <li class="flex items-center justify-between p-2 border rounded">
@@ -39,14 +39,14 @@
     @if($invoices->isEmpty())
         <x-ui.empty-state heading="Nothing to split.">There is no open invoice to split: either none has been raised, or every one is already on a plan. Nothing in this checkout raises one from a completed job, and a draft is never issued.</x-ui.empty-state>
     @else
-        <h2>Split an open invoice</h2>
+        <h3 class="font-semibold text-ink">Split an open invoice</h3>
         <ul class="space-y-4">
             @foreach($invoices as $inv)
-                <li class="border rounded p-4 shadow bg-white" wire:key="plan-inv-{{ $inv->id }}">
+                <li class="border rounded p-4 shadow bg-card" wire:key="plan-inv-{{ $inv->id }}">
                     <div class="flex justify-between items-center mb-4">
                         <div>
                             <span class="font-semibold">{{ $inv->invoice_number }}</span>
-                            <span class="text-gray-500 text-sm ml-2">Due {{ $inv->due_date->toDateString() }}</span>
+                            <span class="text-ink-2 text-sm ml-2">Due {{ $inv->due_date->toDateString() }}</span>
                         </div>
                         <div class="tabular-nums">{{ number_format($inv->balance_cents / 100, 2) }} owed</div>
                     </div>
