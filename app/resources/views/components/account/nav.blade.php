@@ -41,8 +41,8 @@
     }
 @endphp
 
-<nav aria-label="Your account" class="hidden lg:flex flex-col w-64 shrink-0 border-r border-rule bg-card h-screen sticky top-0 z-40">
-    <div class="shrink-0 p-4 border-b border-rule/60 bg-paper/40 flex flex-col gap-3">
+<nav aria-label="Your account" class="hidden lg:flex flex-col w-64 shrink-0 border-r border-rule bg-card h-screen sticky top-0 overflow-y-auto z-40">
+    <div class="p-4 border-b border-rule/60 bg-paper/40 flex flex-col gap-3">
         <a href="{{ route('account.home') }}" class="font-display text-base font-bold tracking-tight text-ink hover:opacity-80 transition flex items-center gap-2">
             <span class="flex h-6 w-6 items-center justify-center rounded-md bg-ink text-paper text-xs font-black">AI</span>
             <span>{{ config('app.name') }}</span>
@@ -56,7 +56,7 @@
         @endif
     </div>
 
-    <div class="flex-1 min-h-0 overflow-y-auto p-3 flex flex-col gap-1">
+    <div class="flex-1 p-3 flex flex-col gap-1">
         @foreach ($primary as $item)
             @php $current = $item->current(); @endphp
             <a
@@ -161,14 +161,14 @@
             </summary>
             
             <div class="fixed inset-y-0 right-0 z-50 w-72 bg-card border-l border-rule shadow-2xl flex flex-col transition-transform translate-x-full group-open:translate-x-0" style="display: none;">
-                <div class="shrink-0 p-4 border-b border-rule flex items-center justify-between">
+                <div class="p-4 border-b border-rule flex items-center justify-between">
                     <span class="font-bold text-ink">Menu</span>
                     <button type="button" class="p-2 text-ink-2 hover:text-ink focus:outline-none focus:ring-2 focus:ring-ink rounded-md" onclick="this.closest('details').removeAttribute('open')">
                         ✕
                     </button>
                 </div>
                 
-                <div class="flex-1 min-h-0 overflow-y-auto p-3 flex flex-col gap-1">
+                <div class="flex-1 overflow-y-auto p-3 flex flex-col gap-1">
                     @foreach ($primary as $item)
                         @php $current = $item->current(); @endphp
                         <a href="{{ route($item->route) }}" @if($current) aria-current="page" @endif @class([
