@@ -6,7 +6,10 @@ namespace Tests\Modules\X112\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X112\Models\Agency;
+use App\Modules\X112\Models\AgencyClient;
 use App\Modules\X112\Ui\AgencyConsole;
+use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,7 +21,32 @@ class AgencyConsoleScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-112.agency-console'))->assertOk();
+        $this->get(route('x-112.agency-console'))
+            ->assertOk()
+            ->assertSee('Agency Console')
+            ->assertSee('No managed clients provisioned.');
+
+        Tenancy::setUser($owner->id);
+        $agency = Agency::create([
+            'business_id' => $biz->id,
+            'agency_name' => 'Demo Agency',
+            'whitelabel_domain' => 'demo.example',
+            'agency_mode' => 'full_service',
+        ]);
+        AgencyClient::create([
+            'business_id' => $biz->id,
+            'agency_id' => $agency->id,
+            'client_business_id' => $biz->id,
+            'client_name' => 'Client Alpha',
+            'status' => 'active',
+        ]);
+        Tenancy::forget();
+
+        $this->get(route('x-112.agency-console'))
+            ->assertOk()
+            ->assertSee('Client Alpha')
+            ->assertSee('active')
+            ->assertDontSee('No managed clients provisioned.');
 
         Livewire::test(AgencyConsole::class)->assertOk();
     }

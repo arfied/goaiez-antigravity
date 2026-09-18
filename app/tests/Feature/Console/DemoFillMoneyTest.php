@@ -46,6 +46,7 @@ class DemoFillMoneyTest extends TestCase
         $this->assertDatabaseHas('sync_runs', ['business_id' => $biz->id, 'records_synced' => 248]);
         $this->assertDatabaseHas('approval_items', ['business_id' => $biz->id, 'subject' => 'demo·Refund for the Ridgeline callback']);
         $this->assertDatabaseHas('reconciliation_runs', ['business_id' => $biz->id, 'discrepancy_reason' => 'demo·A refund landed after the payout closed']);
+        $this->assertDatabaseHas('payments', ['business_id' => $biz->id, 'gateway_charge_id' => 'demo·ch_12345']);
         $this->assertDatabaseHas('ingest_sources', ['business_id' => $biz->id, 'source_name' => 'demo·HubSpot contacts']);
 
         $c1 = Invoice::count();
@@ -80,6 +81,7 @@ class DemoFillMoneyTest extends TestCase
         $this->assertDatabaseMissing('sync_runs', ['business_id' => $biz->id, 'records_synced' => 248]);
         $this->assertDatabaseMissing('approval_items', ['business_id' => $biz->id, 'subject' => 'demo·Refund for the Ridgeline callback']);
         $this->assertDatabaseMissing('reconciliation_runs', ['business_id' => $biz->id, 'discrepancy_reason' => 'demo·A refund landed after the payout closed']);
+        $this->assertDatabaseMissing('payments', ['business_id' => $biz->id, 'gateway_charge_id' => 'demo·ch_12345']);
         $this->assertDatabaseMissing('ingest_sources', ['business_id' => $biz->id, 'source_name' => 'demo·HubSpot contacts']);
     }
 
@@ -117,6 +119,8 @@ class DemoFillMoneyTest extends TestCase
         $this->get(route('x-202.queue'))->assertOk()->assertSee('demo·Refund for the Ridgeline callback');
         $this->get(route('x-202.audit-export'))->assertOk()->assertSee('demo·Renewal with an ambiguous clause');
         $this->get(route('x-198.reconciliation-discrepancies'))->assertOk()->assertSee('demo·po_0001');
+        $this->get(route('x-198.connect-card'))->assertOk()->assertSee('demo·acct_ridgeline');
+        $this->get(route('x-198.same-account'))->assertOk()->assertSee('demo·acct_ridgeline');
         $this->get(route('x-156.ingest-volume-by'))->assertOk()->assertSee('demo·HubSpot contacts');
         $this->get(route('x-156.rejectedrows-list'))->assertOk()->assertSee('demo·missing email on the source row');
     }

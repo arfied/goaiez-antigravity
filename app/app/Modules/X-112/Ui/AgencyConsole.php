@@ -5,21 +5,17 @@ declare(strict_types=1);
 namespace App\Modules\X112\Ui;
 
 use App\Modules\X112\Models\AgencyClient;
+use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
-use Livewire\Attributes\Locked;
 use Livewire\Component;
 
-#[Layout('components.layouts.agency')]
+#[Layout('components.account.layout', ['heading' => 'Agency Console'])]
 class AgencyConsole extends Component
 {
-    #[Locked]
-    public int $businessId = 0;
-
     public function render()
     {
-        $clients = ($this->businessId > 0)
-            ? AgencyClient::where('business_id', $this->businessId)->get()
-            : collect();
+        abort_unless(Tenancy::check(), 403);
+        $clients = AgencyClient::where('business_id', Tenancy::idOrFail())->get();
 
         return view('x-112::agency-console', [
             'clients' => $clients,
