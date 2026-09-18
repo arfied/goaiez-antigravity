@@ -654,7 +654,7 @@ final class OwnerNav
             OwnerNavItem::make('Gateway connections', 'x-198.connect-card', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Same account', 'x-198.same-account', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Agency Console', 'x-112.agency-console', OwnerNavItem::GROUP_CATALOG),
-            OwnerNavItem::make('Staff', 'x-112.staff', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Agency staff', 'x-112.staff', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Migration commit', 'x-212.commit', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Reconciliation report', 'x-212.reconciliation-report', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Standard Flow', 'x-118.same-flow', OwnerNavItem::GROUP_CATALOG),

@@ -9,7 +9,7 @@ use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
-#[Layout('components.account.layout', ['heading' => 'Staff'])]
+#[Layout('components.account.layout', ['heading' => 'Agency staff'])]
 class Staff extends Component
 {
     public function render()
