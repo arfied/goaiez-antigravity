@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-17T18:45:56",
+ "updated": "2026-09-17T20:45:32",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1518,6 +1518,12 @@
    "module": "X-119",
    "chose": "PB-219: reviewwhatifound-screen and fact-freshness-per sit in the owner shell as What we learned and Fact freshness; both were bare stubs and both reads are built over the facts table through DB::table, because X-119 owns no table and importing X-121's model would add a boundary violation; X119Filler seeds three facts",
    "at": "2026-09-17T18:45:56",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-212",
+   "chose": "PB-220: unmatchedfield-map sits in the owner shell as Field mapping; it was a bare stub and its read is built against migration_field_maps; the existing X212Filler is extended, not duplicated; no migration and no Schema:: call",
+   "at": "2026-09-17T20:45:32",
    "ruling": "R245"
   }
  ],
