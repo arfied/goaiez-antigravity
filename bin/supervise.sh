@@ -466,6 +466,21 @@ if [ $want_tests -eq 1 ]; then
   [ "${lock_held:-0}" -eq 1 ] && flock -u 9 2>/dev/null
   if [ $rc -eq 124 ]; then
     echo "  ✗ pest TIMEOUT after 1800s — the suite hung (a lock wait or a prompt); treat as red"
+    # N205 (2026-09-18): the captured output used to die here with the temp file.
+    # money timed out twice at 1800s and produced NO evidence either time — the one
+    # artefact that names the last test to START was discarded on the single path
+    # where re-running costs half an hour and tells you nothing new. The parser
+    # below finds no result line and prints `tests None`, which reads like a
+    # measurement and is a silence. Same family as N137: an instrument that can
+    # only under-report is safe as a trigger and unsafe as a finding.
+    pto="$ROOT/.agents/supervisor/.pest-timeout-$(date +%Y%m%d-%H%M%S).txt"
+    if printf '%s\n' "$out" > "$pto" 2>/dev/null; then
+      echo "    raw output preserved: $pto ($(wc -l < "$pto" 2>/dev/null) lines)"
+      echo "    last 15 lines — the suite stopped after the last test named here:"
+      tail -15 "$pto" 2>/dev/null | sed 's/^/      /'
+    else
+      echo "    ⚠ could not preserve the raw output (unwritable: $pto) — it is lost, as it was before N205"
+    fi
     out="$out"$'\n''{"tool":"pest","result":"timeout"}'
   elif [ -z "$out" ]; then
     # 2026-09-05 07:2x: a gate printed a blank §7 and an empty last-pest.json.
