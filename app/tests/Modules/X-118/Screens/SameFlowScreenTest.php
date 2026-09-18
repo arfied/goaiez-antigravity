@@ -18,7 +18,20 @@ class SameFlowScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-118.same-flow'))->assertOk();
+        \App\Support\Tenancy::setUser($owner->id);
+        \App\Modules\X118\Models\OnboardingRun::create([
+            'business_id' => $biz->id,
+            'business_name' => 'Demo Biz Same Flow',
+            'contact_phone' => '555-0100',
+        ]);
+        \App\Support\Tenancy::forget();
+
+        $this->get(route('x-118.same-flow'))
+            ->assertOk()
+            ->assertSee('Standard Flow')
+            ->assertSee('Demo Biz Same Flow')
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console');
 
         Livewire::test(SameFlow::class)->assertOk();
     }
