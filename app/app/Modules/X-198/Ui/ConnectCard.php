@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
-#[Layout('components.layouts.agency')]
+#[Layout('components.account.layout', ['heading' => 'Gateway connections'])]
 class ConnectCard extends Component
 {
     public ?string $error = null;

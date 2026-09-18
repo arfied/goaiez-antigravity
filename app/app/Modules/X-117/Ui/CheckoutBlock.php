@@ -12,9 +12,11 @@ use App\Modules\X117\Models\Sellable;
 use App\Support\Tenancy;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Str;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Checkout'])]
 class CheckoutBlock extends Component
 {
     use LabelsOrderStatus;

@@ -5,6 +5,7 @@ namespace App\Console\DemoFill\Fillers;
 use App\Console\DemoFill\DemoFiller;
 use App\Models\Business;
 use App\Modules\X198\Models\MerchantConnection;
+use App\Modules\X198\Models\Payment;
 use App\Modules\X198\Models\Payout;
 use App\Modules\X198\Models\ReconciliationRun;
 
@@ -38,6 +39,17 @@ class X198Filler implements DemoFiller
             'merchant_connection_id' => $connection->id,
         ]);
 
+        Payment::create([
+            'business_id' => $business->id,
+            'amount_cents' => 15000,
+            'currency' => 'usd',
+            'status' => 'succeeded',
+            'merchant_connection_id' => $connection->id,
+            'gateway_charge_id' => 'demo·ch_12345',
+            'idempotency_key' => 'demo·idem_payment_1',
+            'payment_token' => 'demo·tok_12345',
+        ]);
+
         ReconciliationRun::create([
             'business_id' => $business->id,
             'payout_id' => $payout->id,
@@ -58,6 +70,12 @@ class X198Filler implements DemoFiller
         $runs = ReconciliationRun::where('business_id', $business->id)->where('discrepancy_reason', 'like', self::MARKER.'%')->get();
         foreach ($runs as $run) {
             $run->delete();
+            $count++;
+        }
+
+        $payments = Payment::where('business_id', $business->id)->where('gateway_charge_id', 'like', self::MARKER.'%')->get();
+        foreach ($payments as $payment) {
+            $payment->delete();
             $count++;
         }
 
