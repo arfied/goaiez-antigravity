@@ -12,6 +12,7 @@ use Tests\TestCase;
 class DemoFillCommandTest extends TestCase
 {
     use RefreshesTenantDatabase;
+
     protected function tearDown(): void
     {
         Tenancy::forgetAll();
