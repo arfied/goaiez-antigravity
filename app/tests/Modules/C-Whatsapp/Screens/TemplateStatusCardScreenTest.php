@@ -32,7 +32,7 @@ class TemplateStatusCardScreenTest extends TestCase
             'business_id' => $biz->id,
             'name' => 'distinctive_template_4647',
             'body_text' => 'Distinctive body 4647',
-            'status' => 'pending_approval'
+            'status' => 'pending_approval',
         ]);
         Tenancy::forget();
 
