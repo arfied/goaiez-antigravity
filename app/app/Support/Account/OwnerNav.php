@@ -650,6 +650,7 @@ final class OwnerNav
             OwnerNavItem::make('Onboarding checks', 'x-118.groundcheck', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Field mapping', 'x-212.unmatchedfield-map', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Standard Flow', 'x-118.same-flow', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Direct Test Call', 'x-118.test-call', OwnerNavItem::GROUP_CATALOG),
         ];
     }
 

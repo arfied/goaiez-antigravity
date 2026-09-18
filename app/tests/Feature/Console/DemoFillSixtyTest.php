@@ -119,5 +119,6 @@ class DemoFillSixtyTest extends TestCase
         $this->get(route('c-whatsapp.template-approval-queue'))->assertOk()->assertSee('demo·quote_followup');
         $this->get(route('x-118.groundcheck'))->assertOk()->assertSee('demo·industry inferred');
         $this->get(route('x-118.same-flow'))->assertOk()->assertSee('demo·Ridgeline HVAC');
+        $this->get(route('x-118.test-call'))->assertOk()->assertSee('demo·Ridgeline HVAC');
     }
 }
