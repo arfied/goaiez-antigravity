@@ -6,6 +6,7 @@ namespace App\Console\DemoFill\Fillers;
 
 use App\Console\DemoFill\DemoFiller;
 use App\Models\Business;
+use App\Modules\X212\Models\MigrationFieldMap;
 use App\Modules\X212\Models\MigrationReject;
 use App\Modules\X212\Models\MigrationRun;
 
@@ -53,7 +54,7 @@ class X212Filler implements DemoFiller
         ]);
 
         echo "creating\n";
-        \App\Modules\X212\Models\MigrationFieldMap::create([
+        MigrationFieldMap::create([
             'business_id' => $business->id,
             'migration_run_id' => $run->id,
             'source_field' => 'demo·CUSTOMER_NOTES',
@@ -62,7 +63,7 @@ class X212Filler implements DemoFiller
         ]);
 
         echo "creating\n";
-        \App\Modules\X212\Models\MigrationFieldMap::create([
+        MigrationFieldMap::create([
             'business_id' => $business->id,
             'migration_run_id' => $run->id,
             'source_field' => 'demo·JOB_REF_NO',
@@ -80,7 +81,7 @@ class X212Filler implements DemoFiller
         $count = 0;
         if ($runIds->isNotEmpty()) {
             $count += MigrationReject::whereIn('migration_run_id', $runIds)->delete();
-            $count += \App\Modules\X212\Models\MigrationFieldMap::whereIn('migration_run_id', $runIds)->delete();
+            $count += MigrationFieldMap::whereIn('migration_run_id', $runIds)->delete();
             $count += MigrationRun::whereIn('id', $runIds)->delete();
         }
 
