@@ -10,5 +10,6 @@ final class SeasonTurned
         public readonly int $regionId,
         public readonly string $seasonName,
         public readonly float $shiftFactor
-    ) {}
+    ) {
+    }
 }

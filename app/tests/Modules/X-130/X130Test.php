@@ -22,8 +22,8 @@ class X130Test extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->publishAction = new DemandPublishAction;
-        $this->queryAction = new DemandQueryAction;
+        $this->publishAction = new DemandPublishAction();
+        $this->queryAction = new DemandQueryAction();
     }
 
     /**

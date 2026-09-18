@@ -48,7 +48,8 @@ final class OwnerNavItem
         public readonly string $group,
         public readonly array $alsoCurrentFor,
         public readonly ?string $badge,
-    ) {}
+    ) {
+    }
 
     /**
      * @param  array<int, string>  $alsoCurrentFor
