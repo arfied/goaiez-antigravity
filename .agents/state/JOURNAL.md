@@ -1377,3 +1377,5 @@ Therefore, adding a row to the tracker could move only the capability count.
 - `2026-09-12T01:06:31` stage capability = 204
 - `2026-09-12T01:06:34` stage anchor = 128
 - `2026-09-12T01:06:37` stage journey = 3
+- `2026-09-18T03:24:24` (R245) X-204 — RefusalsByReason
+- `2026-09-18T03:24:24` (R245) X-204 — RegisterSlotStates
