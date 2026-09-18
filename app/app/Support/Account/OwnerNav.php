@@ -642,6 +642,8 @@ final class OwnerNav
             OwnerNavItem::make('Fact freshness', 'x-119.fact-freshness-per', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Demand in your area', 'x-130.public-index-pages', OwnerNavItem::GROUP_MORE),
             OwnerNavItem::make('Demand by trade', 'x-130.coverage-by-trade', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('WhatsApp templates', 'c-whatsapp.template-status-card', OwnerNavItem::GROUP_MORE),
+            OwnerNavItem::make('Template approval queue', 'c-whatsapp.template-approval-queue', OwnerNavItem::GROUP_MORE),
         ];
     }
 
