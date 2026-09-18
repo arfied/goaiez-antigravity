@@ -1,7 +1,18 @@
 <div>
-    <x-surface.sample-state module="**the structured resolver: prices, hours and services BYPASS vector search and do an exact lookup against `Fact`**" screen="fact_freshness_per" />
     <div class="fact-freshness p-4">
-        <h3 class="text-lg font-bold">Fact Freshness Monitor</h3>
-        <p class="text-gray-500">All knowledge facts fresh.</p>
+        <h2 class="text-lg font-bold text-ink">Fact freshness</h2>
+        @if($facts->isEmpty())
+            <x-ui.empty-state heading="Nothing recorded yet.">What the assistant knows about your business appears here, oldest first, so you can see what may have gone out of date.</x-ui.empty-state>
+        @else
+            <ul class="divide-y divide-rule">
+                @foreach($facts as $f)
+                    <li class="py-2" wire:key="fresh-{{ $f->id }}">
+                        <span class="font-semibold">{{ $f->key }}</span>
+                        <span class="text-sm text-ink-2">{{ $f->value }}</span>
+                        <span class="text-sm text-ink-2 tabular-nums">{{ $f->updated_at }}</span>
+                    </li>
+                @endforeach
+            </ul>
+        @endif
     </div>
 </div>

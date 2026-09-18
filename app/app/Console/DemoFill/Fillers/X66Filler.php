@@ -6,6 +6,7 @@ namespace App\Console\DemoFill\Fillers;
 
 use App\Console\DemoFill\DemoFiller;
 use App\Models\Business;
+use App\Modules\X66\Models\CallAutopsy;
 use App\Modules\X66\Models\CallSession;
 use App\Modules\X66\Models\CallTurn;
 use App\Modules\X66\Models\Voicemail;
@@ -64,7 +65,24 @@ class X66Filler implements DemoFiller
             'duration_seconds' => 18,
         ]);
 
-        return 2;
+        CallSession::create([
+            'business_id' => $business->id,
+            'call_sid' => self::MARKER.'CA3',
+            'from_phone' => '+15125550188',
+            'to_phone' => '+15125550100',
+            'status' => 'completed',
+            'latency_ms' => 1450,
+            'fallback_triggered' => true,
+        ]);
+
+        CallAutopsy::create([
+            'business_id' => $business->id,
+            'call_session_id' => $session1->id,
+            'sentiment' => 'positive',
+            'coaching_notes' => self::MARKER.'Good rapport — name the price before the objection lands.',
+        ]);
+
+        return 4;
     }
 
     public function purge(Business $business): int
@@ -73,6 +91,7 @@ class X66Filler implements DemoFiller
             ->where('call_sid', 'like', self::MARKER.'%')
             ->pluck('id');
 
+        CallAutopsy::whereIn('call_session_id', $sessionIds)->delete();
         CallTurn::whereIn('session_id', $sessionIds)->delete();
         Voicemail::whereIn('call_session_id', $sessionIds)->delete();
         $sessions = CallSession::whereIn('id', $sessionIds)->delete();
