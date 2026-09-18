@@ -1,10 +1,11 @@
 <?php
 
-use App\Models\User;
-use App\Models\Business;
 use App\Enums\UserRole;
+use App\Models\Business;
+use App\Models\User;
+use Tests\Concerns\RefreshesTenantDatabase;
 
-uses(\Tests\Concerns\RefreshesTenantDatabase::class);
+uses(RefreshesTenantDatabase::class);
 
 test('the owner shell renders the sidebar, sign-out form and skip link', function () {
     $user = User::factory()->create(['role' => UserRole::Owner]);
@@ -21,9 +22,9 @@ test('the owner shell renders the sidebar, sign-out form and skip link', functio
     $response->assertSee('aria-label="Your account"', false);
 
     // the Sign out control is a form with a CSRF field
-    $response->assertSee('<form method="POST" action="' . route('logout') . '">', false);
+    $response->assertSee('<form method="POST" action="'.route('logout').'">', false);
     $response->assertSee('<input type="hidden" name="_token"', false);
-    
+
     // the skip link is present and targets #main
     $response->assertSee('href="#main"', false);
     $response->assertSee('Skip to content', false);
