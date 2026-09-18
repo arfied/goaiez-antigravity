@@ -485,7 +485,19 @@ if [ $want_tests -eq 1 ]; then
     # measurement and is a silence. Same family as N137: an instrument that can
     # only under-report is safe as a trigger and unsafe as a finding.
     pto="$ROOT/.agents/supervisor/.pest-timeout-$(date +%Y%m%d-%H%M%S).txt"
-    if printf '%s\n' "$out" > "$pto" 2>/dev/null; then
+    if [ -z "${out//[$' \t\n']/}" ]; then
+      # N205c (2026-09-18, first firing): do NOT announce "raw output preserved" over an
+      # empty file. `laravel/pao` (composer files-autoload, vendor/laravel/pao/src/Autoload.php)
+      # takes over tool output for an agent: it unsets COLLISION_PRINTER, sets
+      # PEST_PARALLEL_NO_OUTPUT=1, and emits its one {"tool":"pest",…} line from a
+      # register_shutdown_function. SIGTERM from `timeout` does not run shutdown functions,
+      # so a hung suite emits NOTHING and there is nothing to preserve. Measured: a real
+      # captured run is wc -l = 1, and this branch's first firing wrote 1 byte.
+      echo "    ⚠ pest produced NO output to preserve — this is expected under laravel/pao,"
+      echo "      which emits one JSON line from a shutdown function that SIGTERM never runs."
+      echo "      To name the hanging test, re-run with PAO_DISABLE=true and a short timeout;"
+      echo "      do NOT change this script's invocation — §7 parses pao's JSON as tail -1."
+    elif printf '%s\n' "$out" > "$pto" 2>/dev/null; then
       echo "    raw output preserved: $pto ($(wc -l < "$pto" 2>/dev/null) lines)"
       echo "    last 15 lines — the suite stopped after the last test named here:"
       tail -15 "$pto" 2>/dev/null | sed 's/^/      /'
