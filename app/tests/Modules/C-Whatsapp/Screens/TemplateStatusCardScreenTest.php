@@ -6,7 +6,9 @@ namespace Tests\Modules\CWhatsapp\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\CWhatsapp\Models\WhatsappTemplate;
 use App\Modules\CWhatsapp\Ui\TemplateStatusCard;
+use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,7 +20,26 @@ class TemplateStatusCardScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('c-whatsapp.template-status-card'))->assertOk();
+        $this->get(route('c-whatsapp.template-status-card'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
+            ->assertDontSee('this screen is planned in')
+            ->assertSee('No templates yet.');
+
+        Tenancy::setUser($owner->id);
+        WhatsappTemplate::create([
+            'business_id' => $biz->id,
+            'name' => 'distinctive_template_4647',
+            'body_text' => 'Distinctive body 4647',
+            'status' => 'pending_approval',
+        ]);
+        Tenancy::forget();
+
+        $this->get(route('c-whatsapp.template-status-card'))
+            ->assertOk()
+            ->assertSee('distinctive_template_4647')
+            ->assertDontSee('No templates yet.');
 
         Livewire::test(TemplateStatusCard::class)->assertOk();
     }

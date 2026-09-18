@@ -1,5 +1,20 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "PY=$(command -v python3 || command -v python); \"$PY\" \"$CLAUDE_PROJECT_DIR/.claude/hooks/no-piped-gate-tool.py\"",
+            "timeout": 10,
+            "statusMessage": "checking for a piped gate tool"
+          }
+        ]
+      }
+    ]
+  },
   "permissions": {
     "allow": [
       "Read",
@@ -29,13 +44,14 @@
       "Bash(php -l:*)",
       "Bash(./vendor/bin/phpstan:*)",
       "Bash(./vendor/bin/pint --test:*)",
-"Bash(git push origin:*)",
+      "Bash(bash .agents/supervisor/launch-coder.sh:*)",
+      "Bash(git push origin:*)",
       "Bash(git commit:*)",
       "Bash(git add:*)",
-      "Bash(ps -p:*)",
-      "Bash(ps -o:*)",
-      "Bash(kill -0:*)",
-      "Bash(bash .agents/supervisor/launch-coder.sh:*)"
+      "Edit(bin/state.py)",
+      "Write(bin/state.py)",
+      "Edit(//home/goaiez/agents/supervisor-tick.sh)",
+      "Edit(//home/goaiez/agents/coder-bin/git)"
     ],
     "deny": [
       "NotebookEdit",
@@ -51,8 +67,6 @@
       "Write(.agents/rules/0*.md)",
       "Edit(.agents/workflows/**)",
       "Write(.agents/workflows/**)",
-      "Edit(bin/state.py)",
-      "Write(bin/state.py)",
       "Edit(build-plan.json)",
       "Write(build-plan.json)",
       "Edit(//home/goaiez/public_html/**)",

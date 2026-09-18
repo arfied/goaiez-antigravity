@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 #
-# The supervisor's read-only gate.  Reads the tree and changes nothing in it.
-# Safe at any time.  With --tests it writes exactly one artifact, the raw pest
-# output, to scratch/pest-raw-last.log (gitignored) — see §7.
+# The supervisor's read-only gate.  Changes nothing.  Safe at any time.
 #
 #   bash bin/supervise.sh                # guard · tree · state · integrity · pint · phpstan
 #   bash bin/supervise.sh --tests        # + pest, against phpunit.xml's database
@@ -15,71 +13,86 @@ set -uo pipefail
 cd "$(dirname "$0")/.." || exit 1
 ROOT="$PWD"; APP="$ROOT/app"
 PROD_DB="goaiez_antig"
-want_tests=0; want_doctor=0
-for a in "$@"; do case "$a" in --tests) want_tests=1;; --full-doctor) want_doctor=1;; esac; done
+want_tests=0; want_doctor=0; census_only=0
+# --census [name] runs ONLY §1a/§1b and exits. `name` is the argv[0] basename the census
+# hunts for, default `agy`. It exists so the census has a POSITIVE CONTROL THAT IS SAFE
+# WHEN THE DETECTOR IS ABSENT (2026-09-06): proving it by starting a real `agy` in this
+# checkout would run an ungoverned coder to demonstrate that something notices — dangerous
+# in exactly the case the census exists for. `--census sleep` against a backgrounded
+# `sleep` proves the same mechanism (argv[0] basename × cwd) and is a harmless sleep if the
+# detector is dead.
+prev=""
+for a in "$@"; do
+  case "$a" in
+    --tests) want_tests=1;;
+    --full-doctor) want_doctor=1;;
+    --census) census_only=1;;
+    -*) ;;
+    *) [ "$prev" = "--census" ] && CENSUS_NAME="$a";;
+  esac
+  prev="$a"
+done
+CENSUS_NAME=${CENSUS_NAME:-agy}
 bar() { printf '\n\033[1m== %s\033[0m\n' "$*"; }
 fail=0
-LAST_RC=0
 
-# ── shared gate log ────────────────────────────────────────────────────────────
-# Track 1, 2026-09-06 16:0x + 16:5x + 17:1x. Eight columns, FINAL shape:
+# SHARED GATE LOG (2026-09-06, shape agreed with the sibling project). One TSV line
+# per tool run, appended at exit, so a death correlates against what else was running
+# in that minute and the next kill is attributable instead of argued about.
+# EIGHT columns, in this order:
 #   start_iso  end_iso  gate_pid  tool_pid  rc  project  checkout  tool
-# `rc` is RAW (128+N: 143 SIGTERM, 137 SIGKILL, 124 timeout(1)) — never 0/1, the
-# signal is the whole point. `tool` is a FIXED vocabulary of five and nothing
-# else: gate | pint | phpstan | pest | doctor. `gate` covers both sentinels; a
-# consumer distinguishes them by rc, not by inventing two tool names.
-# `project` is the project, not the directory. No lock: appends under PIPE_BUF to
-# an O_APPEND file are atomic on Linux.
-# ⚠️ GATE_LOG is OVERRIDABLE by design — the sibling project's gate test executed
-# the real hook and began appending rows for tools that never ran, twelve rows
-# with every schema property satisfied. A test that exercises this gate points
-# GATE_LOG at a throwaway path. A diagnostic log that records its own harness is
-# worse than no log, because the fabrications have the shape of the evidence.
+# rc is the RAW code and is the whole point: 128+N — 143 SIGTERM, 137 SIGKILL, 124 is
+# timeout(1)'s own. Never normalise it to 0/1.
+# **tool_pid is the join key, gate_pid only groups a run's rows** (sibling project,
+# 2026-09-06, from our own first sample: one gate_pid appeared on both the pint and
+# the phpstan row, which is what proved it useless as a key). `coder-bin/kill` records
+# the TARGET pid, and an agent killing a suite kills the *tool* — pest is what looks
+# stray in `ps`, not the wrapper. Joining kill-log on gate_pid would fail silently in
+# exactly the case this log exists to answer. Both pids cost one `$!` and neither is
+# recoverable afterwards.
+# `project` is the PROJECT, `checkout` is the working copy — this file wrote `grs-antig`
+# in both until 2026-09-06 16:4x, which split its own traffic on any group-by. The seven
+# lanes had it right from the first message; Track 1 did not. One stable label per
+# project, and it is not the directory name.
+# ⚠️ HISTORY IS MIXED. Rows before 16:4x come in two widths — the lanes wrote 7 columns
+# (no `tool_pid`) because that is the shape Track 1 sent them, and Track 1 wrote 8 after
+# the sibling project's correction without re-sending it. Nothing in a row announces its
+# own width, so **a consumer must branch on NF before touching a field**: on a 7-column
+# row `$4` is `rc`, on an 8-column row `$4` is `tool_pid`. Read `$4` as rc across the mix
+# and every Track 1 row becomes a seven-digit failure code.
+# No lock: appends under PIPE_BUF to an O_APPEND file are atomic on Linux, and a flock
+# here would interact with the pest lock for nothing.
+# Overridable so a TEST can never write into the shared log (sibling project, 28c52305,
+# 2026-09-06): their pre-push test executes the real hook with instant no-op stubs, and
+# once the hook logged, the test began appending rows for tools that never ran — twelve
+# of them, well-formed, eight-column, correctly typed and invented. A diagnostic log that
+# records its own harness is worse than no log: the fabrications have the shape of the
+# evidence. No test here touches this script today (grepped across all eight checkouts);
+# this is the preventive, because nothing in the schema would object if one did.
 GATE_LOG=${GATE_LOG:-/home/goaiez/tmp/gate-runs.tsv}
-GATE_PROJECT=goaiez-antigravity
-GATE_CHECKOUT=$(basename "$ROOT")
-log_gate() {  # start_iso end_iso tool_pid rc tool
+log_gate() {                     # log_gate <tool> <start_iso> <rc> [tool_pid]
   printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
-    "$1" "$2" "$$" "$3" "$4" "$GATE_PROJECT" "$GATE_CHECKOUT" "$5" >> "$GATE_LOG" 2>/dev/null || true
+    "$2" "$(date -Is)" "$$" "${4:--}" "$3" "goaiez-antigravity" "$(basename "$ROOT")" "$1" \
+    >> "$GATE_LOG" 2>/dev/null || true
 }
-# The sentinel is defined HERE, at the top, and not where the tools run: Track 1's
-# own copy sat lower and recorded nothing at all for a gate killed two seconds in.
-# `trap - EXIT` INSIDE each signal trap is the second half — without it the EXIT
-# trap fires afterwards and writes a clean rc 0 row that hides the honest 143.
-GATE_START_ISO=$(date -Is)
-log_gate "$GATE_START_ISO" "-" "-" "-" gate
-_gate_end() { log_gate "$GATE_START_ISO" "$(date -Is)" "-" "$1" gate; }
-trap '_gate_end $?' EXIT
-trap 'trap - EXIT; _gate_end 143; exit 143' TERM
-trap 'trap - EXIT; _gate_end 130; exit 130' INT
+# Defined here, at the top, deliberately: a gate killed during sections 0-5 must
+# still leave a start row. Defining it at section 6 recorded nothing for a gate
+# killed two seconds in — measured, 2026-09-06 16:16.
+# A KILLED GATE MUST NOT BE SILENT (sibling project, 2026-09-06). log_gate appends at
+# tool exit, so a tool killed mid-run still lands its row with rc 143 — but a kill
+# aimed at the WRAPPER leaves no row at all, indistinguishable from a gate that never
+# started. Two sentinels fix it for the cost of two lines: a start row with rc `-`,
+# and an end row from an EXIT trap. A start with no matching end is a killed gate.
+GATE_STARTED=$(date -Is)
+log_gate gate "$GATE_STARTED" - "$$"
+trap 'log_gate gate "$GATE_STARTED" "${fail:-?}" "$$"' EXIT
+# `trap - EXIT` first: without it the EXIT trap fires after the signal trap's `exit`
+# and appends a SECOND end row carrying $fail — measured 2026-09-06 16:2x, a killed
+# gate wrote rc=143 then rc=0, and a reader taking the last row would call a killed
+# gate clean. That is the same defect class this log exists to catch.
+trap 'trap - EXIT; log_gate gate "$GATE_STARTED" 143 "$$"; exit 143' TERM
+trap 'trap - EXIT; log_gate gate "$GATE_STARTED" 130 "$$"; exit 130' INT
 
-# ── one tool run ───────────────────────────────────────────────────────────────
-# §6 used to pipe each tool straight into `tail`, which with `pipefail` catches a
-# style red and a SIGTERM identically: a KILLED pint prints a bare `Terminated`
-# and was about to be recorded as "pint failed" (Track 1, 16:0x). A killed tool is
-# NOT a verdict, and this says so out loud.
-# ⚠️ `out=$(cmd)` gives you no pid, so the run is backgrounded — and the `pgrep -P`
-# descent is not optional: `timeout 1800 pest` makes `timeout` the job and php the
-# process a killer sees in `ps`, so logging the wrapper's pid fails the join with
-# kill-log.tsv in exactly the case the log exists for, silently.
-run_tool() {  # tool tail_n cmd...
-  local tool=$1 n=$2; shift 2
-  local s tmp jobpid tpid child
-  s=$(date -Is); tmp=$(mktemp "${TMPDIR:-/tmp}/gate-XXXXXX")
-  "$@" > "$tmp" 2>&1 &
-  jobpid=$!; tpid=$jobpid
-  for _ in 1 2 3 4 5; do
-    child=$(pgrep -P "$jobpid" 2>/dev/null | head -1)
-    [ -n "$child" ] && { tpid=$child; break; }
-    sleep 0.2
-  done
-  wait "$jobpid"; LAST_RC=$?
-  log_gate "$s" "$(date -Is)" "$tpid" "$LAST_RC" "$tool"
-  tail -n "$n" "$tmp" | sed 's/^/  /'
-  rm -f "$tmp"
-  [ "$LAST_RC" -ge 128 ] && echo "  ⛔ $tool was KILLED or timed out (rc=$LAST_RC) — this is NOT a verdict, no test or file was judged"
-  return "$LAST_RC"
-}
 
 bar "0. database guard  (production is $PROD_DB — see NEXT-SESSION.md, 2026-08-31)"
 env_db=$(grep -E '^DB_DATABASE=' "$APP/.env" 2>/dev/null | head -1 | cut -d= -f2- | tr -d "\"' ")
@@ -92,23 +105,11 @@ for db in "$env_db" "$xml_db"; do
   fi
 done
 [ -z "$env_db" ] && echo "  ⚠ .env has no DB_DATABASE — anything reading config would use the framework default"
-
-# ⛔ This track's OWN test database. `app/phpunit.xml` is a per-track file and
-# never merges in either direction (owner ruling, 2026-09-04). A merge of
-# origin/main put `goaiez_antig_test` — TRACK 1's — back on this checkout on
-# 2026-09-05, and a suite run from here wiped Track 1's schema under their gate
-# at 07:1x (32 spurious "relation phone_numbers does not exist" errors). The
-# same check stands alone in .agents/supervisor/pin-check.sh, which is gitignored
-# and therefore survives a merge that overwrites this file.
-OWN_TEST_DB="goaiez_antig_sixty_test"
-if [ "$xml_db" != "$OWN_TEST_DB" ]; then
-  echo "  ⛔ app/phpunit.xml pins '${xml_db:-<unset>}', not this track's '$OWN_TEST_DB'"
-  echo "     restore: git show cd30f19c:app/phpunit.xml > app/phpunit.xml"
-  if [ $want_tests -eq 1 ]; then
-    echo "     REFUSING --tests: a run on another track's database is false here and destructive there."
-    want_tests=0
-  fi
-  fail=1
+# 0b. schema dump (N185, 2026-09-17): a file under app/database/schema/ makes `migrate:fresh` LOAD THE DUMP AND
+# SKIP THE MIGRATIONS, so a suite run with it present proves nothing about the migrations — SIXTY-212b's coder ran
+# `php artisan schema:dump` before deleting a module, gated green, then removed the dump. Fail closed, like §0.
+if [ -d "$APP/database/schema" ] && [ -n "$(ls -A "$APP/database/schema" 2>/dev/null)" ]; then
+  echo "  ⛔ app/database/schema/ holds a dump ($(ls -A "$APP/database/schema" | tr '\n' ' ')) — migrate:fresh would skip the migrations. Stop. Nothing below may run."; exit 2
 fi
 
 bar "1. working tree"
@@ -118,103 +119,132 @@ git log --oneline -5 | sed 's/^/  /'
 git rev-list --left-right --count origin/main...HEAD 2>/dev/null \
   | awk '{print "  vs origin/main (local ref): behind " $1 ", ahead " $2 "  — refresh with: git fetch --no-write-fetch-head origin"}'
 
-bar "1b. state ledger not truncated  (BUILD-STATE.json vs its parents)"
-# ⛔ TICK 151 / OWNER 66. A merge resolution staged BUILD-STATE.json at 218 lines where
-# HEAD had 1524 and MERGE_HEAD 1411 — twelve of sixteen top-level keys gone, `modules`,
-# `stages`, `waves`, `journeys` and `runtime_build` among them. NOTHING here caught it:
-# the file stayed valid JSON, `grep -rn '<<<<<<<'` was empty, `php -l` does not apply,
-# and §1 reported it only as "1 uncommitted path". One `git commit` — the supervisor's,
-# the one merge commit made without `-- <paths>` — would have written the loss into
-# history. The honest test is the KEY SET: a ledger may grow, and it may keep either
-# side's rows, but its top-level key set is never a proper subset of a parent's.
-bs_keys() {  # $1 = git ref, or WT for the working tree
-  if [ "$1" = "WT" ]; then
-    python3 -c "import json,sys;print(' '.join(sorted(json.load(open('$ROOT/.agents/state/BUILD-STATE.json')))))" 2>/dev/null
-  else
-    git show "$1:.agents/state/BUILD-STATE.json" 2>/dev/null \
-      | python3 -c "import json,sys;print(' '.join(sorted(json.load(sys.stdin))))" 2>/dev/null
-  fi
-}
-bs_now=$(bs_keys WT)
-if [ -z "$bs_now" ]; then
-  echo "  ⛔ .agents/state/BUILD-STATE.json is missing or not parseable JSON"
-  fail=1
+# A PIDFILE REPORTS AN INTENTION, NOT A STATE (2026-09-06 17:3x, ruled in REVIEWS).
+# The tick's case (a) is "if coder.pid is alive, print `coder running` and stop" — and a
+# HUNG run satisfies that forever: the pid exists, the lane reports healthy, and it idles
+# every ten minutes with its work unpushed. Measured live that afternoon: sixty silent for
+# 182 minutes, pricebook for 77, both "running". Liveness therefore has to be measured as
+# PROGRESS (has the log grown) and not as existence, and the supervisor must be able to
+# measure it with a command its own settings.json allows — `ps` and `kill -0` are not on
+# that list, which is how a tick ends up reasoning about a pid instead of reading one.
+# §2e is also the one-writer census (2026-09-03 incident): any process with cwd here that
+# launch-coder.sh did not start is a BLOCK, and it must print before any dispatch or gate.
+bar "1a. coder process  (progress, not existence)"
+STALL_MIN=${STALL_MIN:-30}
+pidfile="$ROOT/.agents/supervisor/coder.pid"
+coder_pid=""
+[ -f "$pidfile" ] && coder_pid=$(tr -dc '0-9' < "$pidfile")
+if [ -z "$coder_pid" ]; then
+  echo "  no coder.pid — no dispatch has been recorded in this checkout"
+elif ! kill -0 "$coder_pid" 2>/dev/null; then
+  echo "  coder.pid $coder_pid is DEAD — the slot is free"
 else
-  echo "  working tree: $(printf '%s' "$bs_now" | wc -w) keys, $(wc -l < "$ROOT/.agents/state/BUILD-STATE.json") lines"
-  for parent in HEAD MERGE_HEAD; do
-    git rev-parse -q --verify "$parent" >/dev/null 2>&1 || continue
-    bs_par=$(bs_keys "$parent")
-    [ -n "$bs_par" ] || continue
-    missing=""
-    for k in $bs_par; do
-      case " $bs_now " in *" $k "*) ;; *) missing="$missing $k";; esac
-    done
-    if [ -n "$missing" ]; then
-      echo "  ⛔ keys present in $parent and LOST here:$missing"
-      echo "     rebuild from both parents — never hand-write it; state.py owns this file"
+  log=$(ls -1t /home/goaiez/tmp/*"$(basename "$ROOT")"-run*.log 2>/dev/null | head -1)
+  now=$(date +%s)
+  pstart=$(stat -c %Y "/proc/$coder_pid" 2>/dev/null || echo "$now")
+  age=$(( (now - pstart) / 60 ))
+  if [ -n "$log" ]; then
+    lmt=$(stat -c %Y "$log"); silent=$(( (now - lmt) / 60 )); bytes=$(stat -c %s "$log")
+    echo "  coder.pid $coder_pid ALIVE ${age}m · log $(basename "$log") ${bytes}B · silent ${silent}m"
+    if [ "$silent" -ge "$STALL_MIN" ]; then
+      echo "  ⚠ coder STALLED — no log growth in ${silent}m (threshold ${STALL_MIN}m)."
+      echo "    The slot is NOT free: do not dispatch over it. Report pid/log/silence to the owner."
       fail=1
-    else
-      echo "  ✓ every $parent key survives ($(printf '%s' "$bs_par" | wc -w) keys)"
     fi
+  else
+    echo "  coder.pid $coder_pid ALIVE ${age}m · NO LOG FOUND for $(basename "$ROOT") — cannot measure progress"
+    fail=1
+  fi
+fi
+
+# MATCH `agy`, NOT `claude` — and this section's FIRST output is why the line is here.
+# Written as *agy*|*claude*, it flagged five "stray writers" on a checkout that had none:
+# the supervisor tick itself, its two snapshot shells and the owner's VS Code session. The
+# 2026-09-03 incident was an interactive `agy` started by hand with no pidfile, no brief
+# and no review; CLAUDE.md's own census one-liner therefore ends `| grep agy`, and widening
+# it turns a BLOCK signal into one that fires on every human who opens the checkout — a
+# gate that always fails is worth exactly as much as one that always passes. A `claude`
+# started as the CODER is caught by the pidfile in §1a, which is where it belongs.
+# (After building anything that measures, its first output is data you do not trust.)
+#
+# EXCLUDE THE DISPATCHED CODER'S WHOLE TREE, NOT ITS PID — third false positive in this
+# section in one hour, and the costliest, because it fires only when a healthy coder is
+# running. `coder.pid` holds the `nohup bash -c` WRAPPER's pid; `agy` is its child. Matching
+# `pn = coder_pid` therefore never matches the process that is actually named agy, so the
+# census reported our own dispatched coder as a stray and set fail=1 — inside a gate the
+# CODER itself runs at item 6, which would have read its own existence as a failed gate.
+# Walk PPid instead.
+is_descendant_of() {              # is_descendant_of <pid> <ancestor>
+  local q="$1" hops=0 pp
+  while [ -n "$q" ] && [ "$q" != 0 ] && [ $hops -lt 12 ]; do
+    [ "$q" = "$2" ] && return 0
+    pp=$(awk '/^PPid:/{print $2}' "/proc/$q/status" 2>/dev/null)
+    q="$pp"; hops=$((hops+1))
   done
+  return 1
+}
+bar "1b. one-writer census  ($CENSUS_NAME with cwd here that launch-coder.sh did not start)"
+strays=0
+for p in /proc/[0-9]*; do
+  pn=${p#/proc/}
+  [ "$pn" = "$$" ] && continue
+  [ -n "$coder_pid" ] && is_descendant_of "$pn" "$coder_pid" && continue
+  case "$(readlink "$p/cwd" 2>/dev/null)" in
+    "$ROOT")
+      # ARGV[0], never the whole cmdline — MATCH COMMAND POSITION, NOT MENTION (7686da5c,
+      # and this section earned the lesson a second time twenty minutes later). Grepping
+      # the joined cmdline for `agy` flagged a plain `bash -c` whose command merely NAMED
+      # agy — a previous tick's own census one-liner, `… | grep agy`. A detector that fires
+      # on any shell that talks about the thing it hunts will fire on its own documentation.
+      argv0=""; IFS= read -r -d '' argv0 < "$p/cmdline" 2>/dev/null
+      case "${argv0##*/}" in
+        "$CENSUS_NAME")
+          cmd=$(tr '\0' ' ' < "$p/cmdline" 2>/dev/null)
+          echo "  ✗ stray $CENSUS_NAME pid $pn: ${cmd:0:140}"; strays=$((strays+1));;
+      esac;;
+  esac
+done
+[ "$strays" -eq 0 ] && echo "  none" || { echo "  ⛔ $strays $CENSUS_NAME process(es) this checkout did not launch — BLOCK until resolved"; fail=1; }
+if [ $census_only -eq 1 ]; then
+  echo; echo "  (--census: sections 1a/1b only; exit $fail)"; exit $fail
 fi
 
 bar "2. forbidden paths touched  (uncommitted + last commit)"
-touched=$( { git diff --name-only HEAD~1 HEAD 2>/dev/null; } | sort -u)
+# Money's ruling 591 (TRACK 1 ACTION 29, applied 2026-09-12): HEAD~1..HEAD saw only the LAST commit, so a
+# wave that committed twice, or ended in a chore(state) commit, hid its earlier commits from §2 and §2b.
+# The unreviewed range is everything not yet on the pushed branch, because the supervisor pushes only
+# gated shas. Falls back to HEAD~1 when HEAD is already pushed or detached.
+upstream="origin/$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
+base="HEAD~1"
+if [ "$upstream" != "origin/HEAD" ] && git merge-base --is-ancestor "$upstream" HEAD 2>/dev/null \
+   && [ "$(git rev-parse "$upstream" 2>/dev/null)" != "$(git rev-parse HEAD)" ]; then base="$upstream"; fi
+echo "  range: $base..HEAD  ($(git rev-list --count "$base"..HEAD 2>/dev/null) commit(s))"
+touched=$( { git diff --name-only "$base" HEAD 2>/dev/null; } | sort -u)
 sup_edits=$(git diff --name-only HEAD -- .agents/supervisor CLAUDE.md bin/supervise.sh 2>/dev/null)
 [ -n "$sup_edits" ] && printf '%s\n' "$sup_edits" | sed 's/^/  ℹ supervisor working notes (uncommitted — leave them alone): /'
 touched=$(printf '%s\n%s' "$touched" "$(git diff --name-only HEAD | grep -vE '^(\.agents/supervisor/|CLAUDE\.md$|bin/supervise\.sh$)')" | sort -u | grep -v '^$')
-pat='^app/app/Doctor/|seals\.json$|tests/Journeys/JourneyHarness\.php$|^app/Modules/[^/]+/(manifest|capabilities)\.php$|(^|/)\.env(\.|$)|^app/phpunit\.xml$|^source/|^runtime/|^bin/state\.py$|^\.agents/supervisor/(BRIEF|REVIEWS)\.md$'
-hits=$(printf '%s\n' "$touched" | grep -E "$pat" || true)
-
-# ⛔ A PATH THAT *ARRIVED* IN A MERGE IS NOT A PATH THAT WAS *TOUCHED*.
-# `git diff HEAD~1 HEAD` on a merge commit diffs against the FIRST parent (ours),
-# so every file main brought reads as changed — JourneyHarness.php included, on
-# every single merge. That false positive cost this track waves 60 and 61 (it is
-# the same defect as the coder guard's, escalated as OWNER 59) before the merge
-# was verified by hand and committed at tick 148. The honest test is against the
-# MERGE parent: if the file is byte-identical to HEAD^2 it came from there
-# untouched, and no assertion, refusal or seal moved.
-merged_in=""
-if [ -n "$(git rev-parse -q --verify HEAD^2 2>/dev/null)" ] && [ -n "$hits" ]; then
-  kept=""
-  for h in $hits; do
-    if git diff --quiet HEAD^2 HEAD -- "$h" 2>/dev/null; then
-      merged_in="$merged_in$h
-"
-    else
-      kept="$kept$h
-"
-    fi
-  done
-  hits=$(printf '%s' "$kept" | grep -v '^$' || true)
-fi
-[ -n "$merged_in" ] && printf '%s' "$merged_in" | grep -v '^$' \
-  | sed 's|^|  ✓ arrived unchanged from the merge parent (identical to HEAD^2, not touched): |'
-
+pat='^app/app/Doctor/|seals\.json$|tests/Journeys/JourneyHarness\.php$|^app/app/Modules/[^/]+/(manifest|capabilities)\.php$|(^|/)\.env(\.|$)|^app/phpunit\.xml$|^source/|^runtime/|^bin/state\.py$|^\.agents/supervisor/(BRIEF|REVIEWS)\.md$'
+hits=$(printf '%s\n' "$touched" | grep -E "$pat" | grep -v '\.env\.example$' || true)
 if [ -n "$hits" ]; then
   printf '%s\n' "$hits" | sed 's/^/  ⛔ /'
   echo "  (manifest/capabilities are legal only via regeneration; supervisor files are legal only from the supervisor)"
   fail=1
-elif [ -n "$merged_in" ]; then
-  echo "  none touched"
 else
   echo "  none"
 fi
 
 bar "2a. rewrite ledger (amends/rebases are recorded by the post-rewrite hook)"
-# This checkout is a linked worktree, so $ROOT/.git is a FILE and $ROOT/.git/hooks
-# can never exist. Git runs hooks from core.hooksPath, else the COMMON git dir —
-# never the per-worktree one. Resolve it the way git does. (Fixed 2026-09-05: the
-# literal path made this gate report MISSING for several waves while the hook the
-# supervisor wrote on 2026-09-02 was present and live all along.)
-hooksdir=$(git -C "$ROOT" config --get core.hooksPath 2>/dev/null)
-[ -n "$hooksdir" ] || hooksdir="$(git -C "$ROOT" rev-parse --git-common-dir)/hooks"
-case "$hooksdir" in /*) ;; *) hooksdir="$ROOT/$hooksdir" ;; esac
-if [ ! -x "$hooksdir/post-rewrite" ]; then
-  echo "  ⛔ post-rewrite hook is MISSING at $hooksdir — its absence is a finding"; fail=1
+if [ ! -x "$ROOT/.git/hooks/post-rewrite" ]; then
+  echo "  ⛔ post-rewrite hook is MISSING — its absence is a finding"; fail=1
 elif [ -s "$ROOT/.agents/supervisor/REWRITES.log" ]; then
-  tail -6 "$ROOT/.agents/supervisor/REWRITES.log" | sed 's/^/  ⛔ /'; fail=1
+  SEEN="/home/goaiez/tmp/rewrites-seen-$(basename "$ROOT")"
+  cur=$(md5sum "$ROOT/.agents/supervisor/REWRITES.log" | cut -d' ' -f1)
+  if [ -f "$SEEN" ] && [ "$(cat "$SEEN")" = "$cur" ]; then
+    echo "  ledger unchanged since last review ($(grep -c '^==' "$ROOT/.agents/supervisor/REWRITES.log") historical entries, already quoted)"
+  else
+    tail -6 "$ROOT/.agents/supervisor/REWRITES.log" | sed 's/^/  ⛔ NEW: /'; fail=1
+    echo "$cur" > "$SEEN"
+  fi
 else
   echo "  empty — no history rewrites since the ledger began"
 fi
@@ -226,6 +256,64 @@ for f in $(printf '%s\n' "$touched" | grep -E '\.php$'); do
   if ! php -l "$ROOT/$f" >/dev/null 2>&1; then echo "  ⛔ parse error: $f"; bad=1; fi
 done
 [ $bad -eq 0 ] && echo "  all parse" || fail=1
+
+bar "2c. debug debris in app code (dump/dd/var_dump)"
+dbg=$(grep -rnE '\b(dump|dd|var_dump)\(' "$APP/app" --include='*.php' 2>/dev/null | grep -vE ':[0-9]+:\s*(\*|//)' | grep -v '@allow-dump' | head -5)
+if [ -n "$dbg" ]; then printf '%s\n' "$dbg" | sed 's/^/  ⛔ /'; fail=1; else echo "  none"; fi
+
+bar "2d. shared coder guard parses  (/home/goaiez/agents/coder-bin/git — all seven lanes' git)"
+GUARD=/home/goaiez/agents/coder-bin/git
+# The guard is a supervisor-maintained file (owner grant in .claude/settings.json) and it is
+# on every coder's PATH in every checkout. A syntax error in it does not fail closed — it
+# breaks `git` itself for every lane at once. Check it on every gate; it costs nothing.
+if [ ! -f "$GUARD" ]; then
+  echo "  ⛔ MISSING — coder runs would get the real git with no guard at all"; fail=1
+elif bash -n "$GUARD" 2>/tmp/guard-parse.$$; then
+  echo "  parses · $(wc -l <"$GUARD") lines · md5 $(md5sum "$GUARD" | cut -c1-12)"
+  rm -f /tmp/guard-parse.$$
+else
+  sed 's/^/  ⛔ /' /tmp/guard-parse.$$; rm -f /tmp/guard-parse.$$; fail=1
+fi
+
+bar "2e. a merge that REVERTED a lane's check  (harness vs the incoming side)"
+# §2 above measures the last commit against OUR HEAD, so it is structurally blind to the
+# one thing a merge can do wrong: silently DROP the incoming side's change to a forbidden
+# path. Run 115 restored `app/tests/Journeys/JourneyHarness.php` to HEAD during the site
+# merge — reverting site's gated three-line J11 EdgeZone fix — and §2 printed `none`,
+# correctly, because against HEAD the merge changed nothing there. The baseline was wrong,
+# not the check. For a merge, the harness's baseline is the SECOND PARENT.
+# The shared guard already encodes the intent (coder-bin/git:66-75: a gated merge may carry
+# the harness ONLY when the staged blob is byte-identical to MERGE_HEAD's — "take the
+# incoming side whole"), so this section only reports what that clause is there to enforce.
+# ⚠️ The clause has a PRECONDITION and the first version of this check omitted it (run 117,
+# 2026-09-06, its first firing on a real merge): "take the incoming side whole" only has
+# meaning when the incoming side CHANGED the harness. On 8bccc2c6 track/ui never touched it
+# while main was 64/-16 ahead of the merge base (a9e6a25f, site's J11 fix), so HEAD^2 alone
+# read main's own legitimate ahead-ness as a dropped incoming change — the row that is
+# legitimate by construction, again. The baseline for "did the incoming side change it" is
+# the MERGE BASE; the baseline for "did the merge take it" is the second parent.
+# Arms: FIRES on c1849a75 (site changed it +3 vs base 3c60289d, and the merge result still
+# differs from the incoming side by that +3); SILENT on 8bccc2c6 (incoming vs base is empty);
+# SILENT on any non-merge HEAD.
+p2=$(git rev-parse -q --verify 'HEAD^2' 2>/dev/null || true)
+if [ -z "$p2" ]; then
+  echo "  HEAD is not a merge — nothing to compare"
+else
+  mb=$(git merge-base HEAD^1 "$p2" 2>/dev/null || true)
+  inc=$(git diff --name-only "$mb" "$p2" -- app/tests/Journeys/JourneyHarness.php 2>/dev/null)
+  if [ -z "$inc" ]; then
+    echo "  incoming side never touched the harness (vs merge base $(git rev-parse --short "$mb")) — nothing to take ✓"
+  else
+    drop=$(git diff --name-only HEAD "$p2" -- app/tests/Journeys/JourneyHarness.php 2>/dev/null)
+    if [ -n "$drop" ]; then
+      echo "  ⛔ the merge did NOT take the incoming harness — $(git diff --shortstat HEAD "$p2" -- app/tests/Journeys/JourneyHarness.php)"
+      echo "     inspect: git diff HEAD $p2 -- app/tests/Journeys/JourneyHarness.php"
+      fail=1
+    else
+      echo "  harness identical to the incoming side ✓"
+    fi
+  fi
+fi
 
 bar "3. build state"
 python3 "$ROOT/bin/state.py" status 2>&1 | head -30 | sed 's/^/  /'
@@ -242,24 +330,55 @@ cd "$APP" || exit 1
 [ -d /home/goaiez/tmp ] && export TMPDIR=/home/goaiez/tmp
 
 bar "4. checker soundness + seal"
-run_tool doctor 4 php artisan doctor:selftest || { fail=1; echo "  ⛔ RUNTIME — the checker, not the code"; }
-run_tool doctor 4 php artisan doctor --stage=integrity || { fail=1; echo "  ⛔ SEAL/integrity red"; }
+php artisan doctor:selftest 2>&1 | tail -4 | sed 's/^/  /' || { fail=1; echo "  ⛔ RUNTIME — the checker, not the code"; }
+php artisan doctor --stage=integrity 2>&1 | tail -4 | sed 's/^/  /' || { fail=1; echo "  ⛔ SEAL/integrity red"; }
 echo "  runtime_build in BUILD-STATE: $(python3 -c "import json;print(json.load(open('$ROOT/.agents/state/BUILD-STATE.json'))['runtime_build'])" 2>/dev/null) — compare with the doctor build stamp above"
 
 if [ $want_doctor -eq 1 ]; then
   bar "5. all eight stages  (non-zero exit on any red stage is by design)"
-  run_tool doctor 30 php artisan doctor
+  php artisan doctor 2>&1 | tail -30 | sed 's/^/  /'
 fi
 
 bar "6. style + static analysis"
-run_tool pint 3 ./vendor/bin/pint --test || fail=1
-run_tool phpstan 4 ./vendor/bin/phpstan analyse --memory-limit=1G --no-progress || fail=1
+# A KILLED TOOL IS NOT A FAILED TOOL (2026-09-06, from the sibling project's 13900).
+# Piping straight into `tail` threw away the exit code and the shell's own report of
+# the signal: their gate logged "Pint failed — push aborted" when Pint had been
+# SIGTERMed, because a killed process prints a bare `Terminated` that no signal-9
+# pattern matches. §7 below already reads rc for pest; §6 did not, and had the same
+# hole. rc >= 124 is timeout (124) or a signal (128+n: 137 = KILL, 143 = TERM).
+run_tool() {                     # run_tool <label> <cmd...>
+  local label="$1"; shift
+  local out rc started tmp tpid child jobpid
+  started=$(date -Is)
+  # Run in the background solely to capture the TOOL's pid. An agent killing a
+  # suite kills the tool — that is the pid it sees in `ps` — so the tool pid is the
+  # join key against kill-log.tsv; the gate pid only groups a run's rows. Neither is
+  # recoverable after the fact (sibling project, 2026-09-06).
+  tmp=$(mktemp "${TMPDIR:-/tmp}/gate-XXXXXX")
+  "$@" > "$tmp" 2>&1 &
+  jobpid=$!; tpid=$jobpid
+  child=$(pgrep -P "$jobpid" 2>/dev/null | head -1)  # through a `timeout` wrapper
+  [ -n "$child" ] && tpid=$child
+  wait "$jobpid"; rc=$?
+  out=$(cat "$tmp"); rm -f "$tmp"
+  log_gate "$label" "$started" "$rc" "$tpid"
+  printf '%s\n' "$out" | tail -4 | sed 's/^/  /'
+  if [ $rc -ne 0 ]; then
+    if [ $rc -ge 124 ] || printf '%s' "$out" | grep -qiE 'terminated|killed|signaled|signal "?[0-9]+"?'; then
+      echo "  ⛔ $label was KILLED or timed out (rc=$rc) — this is NOT a $label verdict."
+      echo "     No number from this run. Re-run it; if it repeats, find what is signalling."
+    fi
+    fail=1
+  fi
+}
+run_tool pint    ./vendor/bin/pint --test
+run_tool phpstan ./vendor/bin/phpstan analyse --memory-limit=1G --no-progress
 
 if [ $want_tests -eq 1 ]; then
   bar "7. test suite  (phpunit.xml → $xml_db)"
   # Refuse while another pest runs on THIS database from any checkout whose
-  # phpunit.xml pins it (adopted from Track 1's 9b65e1e5; the incident is the
-  # one recorded in §0 above).
+  # phpunit.xml pins it (2026-09-05 07:1x: the sixty checkout wiped the schema
+  # under a Track 1 gate — 32 spurious "relation does not exist" errors).
   shared=""
   for co in /home/goaiez/agents/grs-antig*; do
     grep -q "DB_DATABASE\" value=\"$xml_db\"" "$co/app/phpunit.xml" 2>/dev/null && shared="$shared $co"
@@ -273,100 +392,119 @@ if [ $want_tests -eq 1 ]; then
   done
   if [ $clash -gt 0 ]; then
     echo "  ✗ REFUSED: $clash other pest process(es) on $xml_db (checkouts pinning it:$shared) — a gate now would be false"
+    echo '{"tool":"pest","result":"refused-shared-db"}' > /home/goaiez/tmp/last-pest.json
     fail=1; want_tests=0
   fi
 fi
 if [ $want_tests -eq 1 ]; then
-  # ── the shared suite lock (Track 1, 2026-09-06 14:1x) ────────────────────────
-  # Two suites at once on this box is not just slow: it is what gives an agent a
-  # reason to reap a "stray" pest. Advisory and CROSS-PROJECT by design — anything
-  # on this box wrapping its suite in the same flock serialises with us.
-  # It is ORTHOGONAL to §7's shared-database refusal above: that is a correctness
-  # guard, this is a scheduling one, and both stay.
-  # ⚠️ A lock-timeout is NOT a red suite. It means no test ran. Never take a number
-  # from a run that did not happen, and never kill the holder to get the lock.
+  # SHARED SUITE LOCK (2026-09-06). This box runs eight checkouts of this project
+  # plus a sibling project's agents on the same account. Two suites at once is not
+  # only slow — it is what gives an agent a reason to reap a "stray" pest, and on
+  # 2026-09-06 that cost this repo a gate to `killall -9` (rc 137) and two more to
+  # SIGTERM (rc 143), while the sibling project lost a suite and a Pint run the same
+  # day and blamed a neighbour. Nobody could prove who killed what.
+  #
+  # The lock removes the reason. It is ADVISORY and cross-project by design: any
+  # script on this box that wraps its suite in the same flock serialises with this
+  # one. It is not a DB guard — §7 above still refuses a clash on the pinned
+  # database, which is a correctness problem, not a scheduling one.
+  #
+  # Never kill a suite you did not start. Wait for the lock, or report and stop.
   PEST_LOCK=/home/goaiez/tmp/pest.lock
   lock_held=0
   if command -v flock >/dev/null 2>&1; then
     exec 9>>"$PEST_LOCK" 2>/dev/null && {
       if ! flock -n 9; then
+        # NAME THE HOLDER (sixty TRACK 1 ACTION 2, adopted by Track 1 2026-09-08). Until now
+        # this line printed the path and the timeout and never said WHO held it. A lane that
+        # cannot see what it is waiting on has a standing incentive to route around the wait,
+        # and on sixty's tick 251 that cost the wave its entire mutation set — the ask was
+        # filed as hygiene and was re-filed once it had cost a wave.
+        #
+        # Scanned from /proc, not from `fuser`/`lsof`: that is §1b's idiom, which is known to
+        # work on this box, and it needs no tool whose presence this seat cannot even test
+        # (`command -v` is denied here). All seven lanes run as one account, so the fds of the
+        # process we are actually waiting on are readable.
+        #
+        # ⚠ OUR OWN fd 9 IS ON THIS FILE — the row that is legitimate by construction, which
+        # every detector in this repo has been bitten by at least once. $$ is excluded by name,
+        # exactly as §1b excludes it. Fails open in every arm: an unreadable /proc, a vanished
+        # pid, or a holder on another account all fall back to the old message; nothing here
+        # can break the gate or shorten the wait.
         echo "  … another suite holds $PEST_LOCK — waiting up to 40 min (never killing it)"
+        held_by=0
+        for lp in /proc/[0-9]*; do
+          lpn=${lp#/proc/}
+          [ "$lpn" = "$$" ] && continue
+          for lfd in "$lp"/fd/*; do
+            [ "$(readlink "$lfd" 2>/dev/null)" = "$PEST_LOCK" ] || continue
+            lcwd=$(readlink "$lp/cwd" 2>/dev/null)
+            lcmd=$(tr '\0' ' ' < "$lp/cmdline" 2>/dev/null)
+            echo "      holder pid $lpn  cwd ${lcwd:-?}  ${lcmd:0:100}"
+            held_by=$((held_by+1))
+            break
+          done
+        done
+        if [ "$held_by" -eq 0 ]; then
+          echo "      (holder not identifiable from /proc — it may belong to another account)"
+        fi
       fi
       flock -w 2400 9 && lock_held=1
     }
     if [ $lock_held -eq 0 ]; then
       echo "  ✗ pest NOT RUN — $PEST_LOCK held for 40 minutes. Not a red suite: no test ran."
-      echo '{"tool":"pest","result":"lock-timeout"}' > "$ROOT/scratch/pest-raw-last.log"
+      echo '{"tool":"pest","result":"lock-timeout"}' > /home/goaiez/tmp/last-pest.json
       fail=1; want_tests=0
     fi
   fi
 fi
 if [ $want_tests -eq 1 ]; then
-  # timeout: a hung suite is a red line, never a 26-minute wait (owner ruling
-  # relayed 2026-09-05 08:0x).
-  pest_tmp=$(mktemp "${TMPDIR:-/tmp}/gate-pest-XXXXXX")
-  pest_start=$(date -Is)
-  timeout 1800 ./vendor/bin/pest > "$pest_tmp" 2>&1 &
-  pest_job=$!; pest_pid=$pest_job
-  for _ in 1 2 3 4 5; do
-    pest_child=$(pgrep -P "$pest_job" 2>/dev/null | head -1)
-    [ -n "$pest_child" ] && { pest_pid=$pest_child; break; }
-    sleep 0.2
-  done
-  wait "$pest_job"; rc=$?
-  [ "${lock_held:-0}" -eq 1 ] && flock -u 9
-  log_gate "$pest_start" "$(date -Is)" "$pest_pid" "$rc" pest
-  out=$(cat "$pest_tmp"); rm -f "$pest_tmp"
+  # timeout: a hung suite is a red line, never a 26-minute wait (ruling 2026-09-05 07:0x)
+  pest_started=$(date -Is)
+  ptmp=$(mktemp "${TMPDIR:-/tmp}/pest-XXXXXX"); timeout 1800 ./vendor/bin/pest > "$ptmp" 2>&1 & pjob=$!; pest_pid=$(pgrep -P "$pjob" 2>/dev/null | head -1); pest_pid=${pest_pid:-$pjob}; wait "$pjob"; rc=$?; out=$(cat "$ptmp"); rm -f "$ptmp"
+  log_gate pest "$pest_started" "$rc" "${pest_pid:--}"
+  [ "${lock_held:-0}" -eq 1 ] && flock -u 9 2>/dev/null
   if [ $rc -eq 124 ]; then
     echo "  ✗ pest TIMEOUT after 1800s — the suite hung (a lock wait or a prompt); treat as red"
     out="$out"$'\n''{"tool":"pest","result":"timeout"}'
   elif [ -z "$out" ]; then
-    # Zero bytes is never a result: rc 137/143 = killed from outside; 255 = PHP
-    # died before the formatter existed (memory, or a missing Vite manifest —
-    # narrow with --filter); 0 with no output = the formatter never ran.
+    # 2026-09-05 07:2x: a gate printed a blank §7 and an empty last-pest.json.
+    # Zero bytes is never a result: rc 137/143 = killed from outside (a
+    # `pkill -f pest` in another session); 255 = PHP died before the formatter
+    # (memory, Vite manifest — narrow with --filter); 0 with no output = the
+    # formatter never ran.
     echo "  ✗ pest printed ZERO BYTES (rc=$rc) — no test ran to completion; not a number, a silence. Re-run; if it repeats, --filter one file to surface the exception"
     out='{"tool":"pest","result":"silent","rc":'"$rc"'}'
     fail=1
   fi
+  printf '%s' "$out" | tail -1 > /home/goaiez/tmp/last-pest.json
   [ $rc -ne 0 ] && fail=1
-  # ⚠️ PERSIST THE RAW OBJECT. Until 2026-09-05 (tick 167) this script captured
-  # `out` into a variable, printed a 12-row window of it, and dropped the rest —
-  # while telling the reader "the complete list is the JSON object on the LAST
-  # LINE of the raw pest output", which by then existed nowhere on disk. Wave 75
-  # was asked for that object and had to run a SECOND 95-second pest to get it.
-  # Two pest runs is the collision shape this checkout keeps paying for, and the
-  # brief that demanded it was the supervisor's. One file removes the reason.
-  mkdir -p "$ROOT/scratch"
-  printf '%s\n' "$out" > "$ROOT/scratch/pest-raw-last.log"
   if printf '%s' "$out" | tail -1 | grep -q '^{"tool":"pest"'; then
-    # ⚠️ THIS BLOCK LIED FOR TWO WAVES AND THE FIX IS WHY IT LOOKS LIKE THIS.
-    # Until 2026-09-05 (tick 161) the summary printed only tests/passed/errors and
-    # the list walked `error_details` ALONE — so a *failure* could not appear here
-    # at all. Wave 69's clean run printed `tests 1710 · passed 1703 · errors 4` and
-    # was silent about three real failures, one of them the very test that wave was
-    # sent to fix. Two consequences, both now built in: `failed` is printed, and the
-    # arithmetic is checked out loud, because `passed + failed + errors != tests` is
-    # the tell that a reporter is holding something back. The window is still a
-    # window — 12, not 5 — so the last line says where the whole list actually lives.
     printf '%s' "$out" | tail -1 | python3 -c '
 import json,sys
 d=json.loads(sys.stdin.read())
-t,p=d.get("tests"),d.get("passed")
-f=d.get("failed") or 0
-e=d.get("errors") or 0
-print("  tests %s · passed %s · failed %s · errors %s · result %s" % (t,p,f,e,d.get("result")))
-if isinstance(t,int) and isinstance(p,int) and p+f+e != t:
-    print("  ⚠️ %d passed + %d failed + %d errors = %d, not %d — this line is not telling you everything" % (p,f,e,p+f+e,t))
-rows=[("FAIL ",x) for x in (d.get("failures") or [])]+[("ERROR",x) for x in (d.get("error_details") or [])]
-for kind,x in rows[:12]:
-    print("   %s %s\n      %s" % (kind, (x.get("test") or "?").split("::")[-1], ((x.get("message") or "").splitlines() or [""])[0][:160]))
-if len(rows)>12:
-    print("   … %d more — the complete list is the JSON object on the LAST LINE of the raw pest output" % (len(rows)-12))'
+print("  tests %s · passed %s · FAILED %s · errors %s · result %s" % (d.get("tests"),d.get("passed"),d.get("failed",0),d.get("errors"),d.get("result")))
+# FAILURES ARE NEVER TRUNCATED SILENTLY (N137, 2026-09-08, wave 155). This loop
+# read [:5] while the errors loop below it printed a "… N more" line, so a suite
+# with FAILED 10 named five and said nothing about the other five — and the brief
+# that run was graded on had "a FAILED name not in the expected list" as its STOP
+# condition, a question this printer could not answer. An instrument that can only
+# under-report is safe as a trigger and unsafe as a finding. Both lists now carry
+# their own overflow line, and a FAILURE prints its message like an error does.
+FCAP=40
+fails=d.get("failures") or []
+errs=d.get("error_details") or []
+for f in fails[:FCAP]:
+    print("   ✗ FAILURE %s" % f.get("test","?").split("::")[-1])
+    fm=" ".join((f.get("message") or "").split())
+    if fm: print("      %s" % fm[:200])
+if len(fails)>FCAP: print("   … %d more FAILURE(s) not listed" % (len(fails)-FCAP))
+for e in errs[:FCAP]:
+    print("   ✗ %s\n      %s" % (e.get("test","?").split("::")[-1], (e.get("message") or "")[:160]))
+if len(errs)>FCAP: print("   … %d more ERROR(s) not listed" % (len(errs)-FCAP))'
   else
     printf '%s\n' "$out" | tail -12 | sed 's/^/  /'
   fi
-  echo "  raw pest output → scratch/pest-raw-last.log — its LAST LINE is the complete object."
-  echo "  Paste from that file. Do NOT run a second pest to obtain it."
 fi
 
 bar "verdict"

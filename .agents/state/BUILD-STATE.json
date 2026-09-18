@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-17T20:36:29",
+ "updated": "2026-09-17T11:35:21",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -11,35 +11,35 @@
  "bootstrap_done": true,
  "stages": {
   "integrity": {
-   "violations": 0,
+   "violations": null,
    "fails": "COMMIT"
   },
   "boundary": {
-   "violations": 39,
+   "violations": null,
    "fails": "COMMIT"
   },
   "contract": {
-   "violations": 85,
+   "violations": null,
    "fails": "COMMIT"
   },
   "citation": {
-   "violations": 0,
+   "violations": null,
    "fails": "COMMIT"
   },
   "schema": {
-   "violations": 16,
+   "violations": null,
    "fails": "MERGE"
   },
   "capability": {
-   "violations": 204,
+   "violations": 372,
    "fails": "MERGE"
   },
   "anchor": {
-   "violations": 128,
+   "violations": null,
    "fails": "WAVE"
   },
   "journey": {
-   "violations": 3,
+   "violations": null,
    "fails": "WAVE"
   }
  },
@@ -140,7 +140,7 @@
   },
   "11": {
    "track": "J6-J7 portal",
-   "status": "DONE",
+   "status": "BUILDING",
    "modules": [
     "X-172",
     "X-112",
@@ -176,7 +176,7 @@
   },
   "15": {
    "track": "channels",
-   "status": "DONE",
+   "status": "BUILDING",
    "modules": [
     "C-Mail",
     "C-Whatsapp",
@@ -194,7 +194,7 @@
   },
   "17": {
    "track": "roster",
-   "status": "DONE",
+   "status": "BUILDING",
    "modules": [
     "X-125",
     "X-127",
@@ -360,23 +360,10 @@
  },
  "modules": {
   "C-Agent": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 5,
    "intent": "SERVE",
-   "unresolved": [
-    {
-     "module": "C-Agent",
-     "stage": "journey",
-     "why": "day-one needs real Infobip environment with voice capability activated (spend decision) and provisioned number; credentials in .env",
-     "at": "2026-09-05T09:56:06"
-    },
-    {
-     "module": "C-Agent",
-     "stage": "journey",
-     "why": "quote-to-booking needs Anthropic/OpenAI API key in .env for agent to answer, and Infobip credentials for webhook to be dispatched correctly",
-     "at": "2026-09-05T09:56:06"
-    }
-   ]
+   "unresolved": []
   },
   "C-Ai": {
    "status": "DONE",
@@ -385,60 +372,16 @@
    "unresolved": []
   },
   "C-Billing": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 9,
    "intent": "INFORM",
-   "unresolved": [
-    {
-     "module": "C-Billing",
-     "stage": "journey",
-     "why": "cancel needs Authorize.Net sandbox login id + transaction key in platform_credentials",
-     "at": "2026-09-05T09:56:06"
-    },
-    {
-     "module": "C-Billing",
-     "stage": "journey",
-     "why": "dunning-by-reason passed with no external artifact id. A real artifact id would come from a real payment gateway (e.g. Stripe or Authorize.Net) or communications vendor sending the dunning notice",
-     "at": "2026-09-05T09:56:06"
-    }
-   ]
+   "unresolved": []
   },
   "C-Mail": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 15,
    "intent": "OBSERVE",
-   "unresolved": [
-    {
-     "module": "C-Mail",
-     "stage": "capability",
-     "why": "G11-03: Nothing performs it: app/app/Modules/C-Mail/Ui/views/dns-card.blade.php:1-4 is a stub and Ui/DnsCard.php:11-14 does not show records.",
-     "at": "2026-09-05T19:48:47"
-    },
-    {
-     "module": "C-Mail",
-     "stage": "capability",
-     "why": "G11-03: Nothing performs it: app/app/Modules/C-Mail/Ui/views/dns-card.blade.php:1-4 is a stub and Ui/DnsCard.php:11-14 does not show records.",
-     "at": "2026-09-05T21:20:14"
-    },
-    {
-     "module": "C-Mail",
-     "stage": "capability",
-     "why": "G11-03: mail_domains.dkim_public_key has no producer \u2014 no keypair generator or provider integration exists in this tree; owned by whichever sending provider C-Mail is configured against",
-     "at": "2026-09-05T22:20:29"
-    },
-    {
-     "module": "C-Mail",
-     "stage": "integrity",
-     "why": "G9-21 (C-Mail: capabilities.php:37): external seed service for primary-vs-spam placement per network",
-     "at": "2026-09-06T02:41:02"
-    },
-    {
-     "module": "C-Mail",
-     "stage": "capability",
-     "why": "G9-21 (capabilities.php:37): external seed service for primary-vs-spam placement per network is an external dependency not owned by this tree",
-     "at": "2026-09-06T02:41:10"
-    }
-   ]
+   "unresolved": []
   },
   "C-Reviews": {
    "status": "UNRESOLVED",
@@ -456,12 +399,6 @@
      "stage": "contract",
      "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
      "at": "2026-09-04T08:05:31"
-    },
-    {
-     "module": "C-Reviews",
-     "stage": "journey",
-     "why": "review-invite needs Infobip credentials in .env for SMS outreach transport",
-     "at": "2026-09-05T09:56:06"
     }
    ]
   },
@@ -473,29 +410,16 @@
     {
      "module": "C-Sms",
      "stage": "capability",
-     "why": "lint asks for enumeration on messageClass, the type is an open string domain, phpstan refuses the enumeration",
-     "at": "2026-09-05T22:41:26"
+     "why": "TrialEligibility: The journey tenant needs a confirmed Google listing for real credit grant",
+     "at": "2026-09-05T11:22:12"
     }
    ]
   },
   "C-Telephony": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 5,
    "intent": "RECOVER",
-   "unresolved": [
-    {
-     "module": "C-Telephony",
-     "stage": "journey",
-     "why": "missed-call-textback: needs Infobip sandbox or real credentials (INFOBIP_SENDER, INFOBIP_API_KEY) in .env, and infobip_webhook_secret in platform_credentials",
-     "at": "2026-09-05T09:54:32"
-    },
-    {
-     "module": "C-Telephony",
-     "stage": "journey",
-     "why": "missed-call-textback needs Infobip sandbox or real credentials (INFOBIP_SENDER, INFOBIP_API_KEY) in .env, and infobip_webhook_secret in platform_credentials",
-     "at": "2026-09-05T09:56:02"
-    }
-   ]
+   "unresolved": []
   },
   "C-Whatsapp": {
    "status": "DONE",
@@ -510,15 +434,9 @@
    "unresolved": [
     {
      "module": "X-01",
-     "stage": "capability",
-     "why": "G11-41: app/app/Modules/X-01/Ui/CustomersList.php:51 does not sort the thread list by LTV. The LTV metric and logic are missing and owned by C-Billing.",
-     "at": "2026-09-05T23:07:57"
-    },
-    {
-     "module": "X-01",
-     "stage": "capability",
-     "why": "G2-16: app/app/Modules/X-01/Ui/views/thread.blade.php lacks 'Rep A is typing' presence. Broadcasting presence channel is missing, requiring WebSocket/Echo setup owned by C-Agent.",
-     "at": "2026-09-05T23:07:57"
+     "stage": "tests",
+     "why": "four legacy message tables outside the twelve nouns (outreach_messages, triage_conversations, inbound_messages, support_messages) \u2014 the G2-76 lint is right, main's schema is not migrated; the sixty lane proposes the fold",
+     "at": "2026-09-05T17:11:31"
     }
    ]
   },
@@ -544,27 +462,13 @@
    "status": "DONE",
    "wave": 12,
    "intent": "INFORM",
-   "unresolved": [
-    {
-     "module": "X-102",
-     "stage": "capability",
-     "why": "G21-01: no scripted attendees logic in app/app/Modules/X-102/Actions/ChatStartAction.php:1-33",
-     "at": "2026-09-05T20:42:20"
-    }
-   ]
+   "unresolved": []
   },
   "X-103": {
    "status": "DONE",
    "wave": 12,
    "intent": "GROW",
-   "unresolved": [
-    {
-     "module": "X-103",
-     "stage": "journey",
-     "why": "site-publish needs site engine hosting/deployment credentials (e.g. Vercel) in platform_credentials",
-     "at": "2026-09-05T09:56:06"
-    }
-   ]
+   "unresolved": []
   },
   "X-104": {
    "status": "DONE",
@@ -669,17 +573,10 @@
    "unresolved": []
   },
   "X-124": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 18,
    "intent": "SERVE",
-   "unresolved": [
-    {
-     "module": "X-124",
-     "stage": "capability",
-     "why": "X-111 owns escalation target",
-     "at": "2026-09-06T01:50:34"
-    }
-   ]
+   "unresolved": []
   },
   "X-125": {
    "status": "DONE",
@@ -748,17 +645,10 @@
    "unresolved": []
   },
   "X-137": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 13,
    "intent": "INFORM",
-   "unresolved": [
-    {
-     "module": "X-137",
-     "stage": "capability",
-     "why": "G13-19: no pool allocation logic found in CallAttributeAction.php. G13-24: no static offline campaign logic found in X-137/Domain",
-     "at": "2026-09-05T20:13:16"
-    }
-   ]
+   "unresolved": []
   },
   "X-138": {
    "status": "DONE",
@@ -953,17 +843,10 @@
    "unresolved": []
   },
   "X-172": {
-   "status": "UNRESOLVED",
+   "status": "BUILDING",
    "wave": 11,
    "intent": "INFORM",
-   "unresolved": [
-    {
-     "module": "X-172",
-     "stage": "tests",
-     "why": "generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook",
-     "at": "2026-09-05T08:35:23"
-    }
-   ]
+   "unresolved": []
   },
   "X-173": {
    "status": "DONE",
@@ -1047,18 +930,6 @@
      "stage": "contract",
      "why": "send.requested correctly emitted by multiple modules per R231, but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
      "at": "2026-09-03T13:47:25"
-    },
-    {
-     "module": "X-186",
-     "stage": "capability",
-     "why": "no action enrols a person into a campaign",
-     "at": "2026-09-04T22:41:56"
-    },
-    {
-     "module": "X-186",
-     "stage": "capability",
-     "why": "G3-55 is a cross reference to G3-37 owned by X-140 (checked app/app/Modules/X-186/capabilities.php:31 and app/app/Modules/X-140/capabilities.php:25)",
-     "at": "2026-09-05T19:32:25"
     }
    ]
   },
@@ -1100,30 +971,16 @@
    "unresolved": []
   },
   "X-193": {
-   "status": "DONE",
+   "status": "BUILDING",
    "wave": 15,
    "intent": "GROW",
-   "unresolved": [
-    {
-     "module": "X-193",
-     "stage": "tests",
-     "why": "column quiet_hours_start is missing from notification_classes and not named in the brief",
-     "at": "2026-09-04T02:05:53"
-    }
-   ]
+   "unresolved": []
   },
   "X-194": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 23,
    "intent": "INFORM",
-   "unresolved": [
-    {
-     "module": "X-194",
-     "stage": "capability",
-     "why": "App\\Models\\Location owns location timezones, X-194 cannot read it",
-     "at": "2026-09-06T01:27:10"
-    }
-   ]
+   "unresolved": []
   },
   "X-195": {
    "status": "DONE",
@@ -1162,17 +1019,10 @@
    "unresolved": []
   },
   "X-201": {
-   "status": "DONE",
+   "status": "BUILDING",
    "wave": 17,
    "intent": "RECOVER",
-   "unresolved": [
-    {
-     "module": "X-201",
-     "stage": "tests",
-     "why": "column deadline_at is missing from disputes and not named in the brief",
-     "at": "2026-09-04T02:05:53"
-    }
-   ]
+   "unresolved": []
   },
   "X-202": {
    "status": "DONE",
@@ -1304,29 +1154,10 @@
    "unresolved": []
   },
   "X-66": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 5,
    "intent": "SERVE",
-   "unresolved": [
-    {
-     "module": "X-66",
-     "stage": "capability",
-     "why": "G16-33: 'enrolment confirms a caller changing their OWN booking; no other use path exists'. Checked app/app/Modules/X-66/capabilities.php:37 and the module code surface. Enrolment confirming a caller's own booking is missing, and THIS LANE OWNS IT.",
-     "at": "2026-09-06T00:21:52"
-    },
-    {
-     "module": "X-66",
-     "stage": "capability",
-     "why": "G16-34: 'the tenant OWN voice only, recorded consent; P-202 disclosure on every message, asserted per channel'. Checked app/app/Modules/X-66/capabilities.php:40 and the module code surface. Recorded consent plus P-202 disclosure per channel is missing, and THIS LANE OWNS IT.",
-     "at": "2026-09-06T00:22:43"
-    },
-    {
-     "module": "X-66",
-     "stage": "capability",
-     "why": "G18-28 half (b): 'the voiceprint is a secure field'. Checked app/app/Modules/X-66/capabilities.php:43 and models. There is no voiceprint column in this tree at all, and THIS LANE OWNS IT.",
-     "at": "2026-09-06T00:22:53"
-    }
-   ]
+   "unresolved": []
   },
   "X-82": {
    "status": "DONE",
@@ -1447,18 +1278,6 @@
    "at": "2026-09-03T14:01:55"
   },
   {
-   "module": "X-193",
-   "stage": "tests",
-   "why": "column quiet_hours_start is missing from notification_classes and not named in the brief",
-   "at": "2026-09-04T02:05:53"
-  },
-  {
-   "module": "X-201",
-   "stage": "tests",
-   "why": "column deadline_at is missing from disputes and not named in the brief",
-   "at": "2026-09-04T02:05:53"
-  },
-  {
    "module": "C-Reviews",
    "stage": "tests",
    "why": "ReviewRequested event lacks messageClass so the module cannot express the send class (marketing) without a legacy change",
@@ -1471,166 +1290,16 @@
    "at": "2026-09-04T08:05:31"
   },
   {
-   "module": "X-186",
-   "stage": "capability",
-   "why": "no action enrols a person into a campaign",
-   "at": "2026-09-04T22:41:56"
-  },
-  {
-   "module": "X-172",
-   "stage": "tests",
-   "why": "generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook",
-   "at": "2026-09-05T08:35:23"
-  },
-  {
-   "module": "C-Telephony",
-   "stage": "journey",
-   "why": "missed-call-textback: needs Infobip sandbox or real credentials (INFOBIP_SENDER, INFOBIP_API_KEY) in .env, and infobip_webhook_secret in platform_credentials",
-   "at": "2026-09-05T09:54:32"
-  },
-  {
-   "module": "C-Telephony",
-   "stage": "journey",
-   "why": "missed-call-textback needs Infobip sandbox or real credentials (INFOBIP_SENDER, INFOBIP_API_KEY) in .env, and infobip_webhook_secret in platform_credentials",
-   "at": "2026-09-05T09:56:02"
-  },
-  {
-   "module": "C-Agent",
-   "stage": "journey",
-   "why": "day-one needs real Infobip environment with voice capability activated (spend decision) and provisioned number; credentials in .env",
-   "at": "2026-09-05T09:56:06"
-  },
-  {
-   "module": "C-Agent",
-   "stage": "journey",
-   "why": "quote-to-booking needs Anthropic/OpenAI API key in .env for agent to answer, and Infobip credentials for webhook to be dispatched correctly",
-   "at": "2026-09-05T09:56:06"
-  },
-  {
-   "module": "C-Reviews",
-   "stage": "journey",
-   "why": "review-invite needs Infobip credentials in .env for SMS outreach transport",
-   "at": "2026-09-05T09:56:06"
-  },
-  {
-   "module": "X-103",
-   "stage": "journey",
-   "why": "site-publish needs site engine hosting/deployment credentials (e.g. Vercel) in platform_credentials",
-   "at": "2026-09-05T09:56:06"
-  },
-  {
-   "module": "C-Billing",
-   "stage": "journey",
-   "why": "cancel needs Authorize.Net sandbox login id + transaction key in platform_credentials",
-   "at": "2026-09-05T09:56:06"
-  },
-  {
-   "module": "C-Billing",
-   "stage": "journey",
-   "why": "dunning-by-reason passed with no external artifact id. A real artifact id would come from a real payment gateway (e.g. Stripe or Authorize.Net) or communications vendor sending the dunning notice",
-   "at": "2026-09-05T09:56:06"
-  },
-  {
    "module": "C-Sms",
    "stage": "capability",
    "why": "TrialEligibility: The journey tenant needs a confirmed Google listing for real credit grant",
    "at": "2026-09-05T11:22:12"
   },
   {
-   "module": "X-186",
-   "stage": "capability",
-   "why": "G3-55 is a cross reference to G3-37 owned by X-140 (checked app/app/Modules/X-186/capabilities.php:31 and app/app/Modules/X-140/capabilities.php:25)",
-   "at": "2026-09-05T19:32:25"
-  },
-  {
-   "module": "C-Mail",
-   "stage": "capability",
-   "why": "G11-03: Nothing performs it: app/app/Modules/C-Mail/Ui/views/dns-card.blade.php:1-4 is a stub and Ui/DnsCard.php:11-14 does not show records.",
-   "at": "2026-09-05T19:48:47"
-  },
-  {
-   "module": "X-137",
-   "stage": "capability",
-   "why": "G13-19: no pool allocation logic found in CallAttributeAction.php. G13-24: no static offline campaign logic found in X-137/Domain",
-   "at": "2026-09-05T20:13:16"
-  },
-  {
-   "module": "X-102",
-   "stage": "capability",
-   "why": "G21-01: no scripted attendees logic in app/app/Modules/X-102/Actions/ChatStartAction.php:1-33",
-   "at": "2026-09-05T20:42:20"
-  },
-  {
-   "module": "C-Mail",
-   "stage": "capability",
-   "why": "G11-03: Nothing performs it: app/app/Modules/C-Mail/Ui/views/dns-card.blade.php:1-4 is a stub and Ui/DnsCard.php:11-14 does not show records.",
-   "at": "2026-09-05T21:20:14"
-  },
-  {
-   "module": "C-Mail",
-   "stage": "capability",
-   "why": "G11-03: mail_domains.dkim_public_key has no producer \u2014 no keypair generator or provider integration exists in this tree; owned by whichever sending provider C-Mail is configured against",
-   "at": "2026-09-05T22:20:29"
-  },
-  {
-   "module": "C-Sms",
-   "stage": "capability",
-   "why": "lint asks for enumeration on messageClass, the type is an open string domain, phpstan refuses the enumeration",
-   "at": "2026-09-05T22:41:26"
-  },
-  {
    "module": "X-01",
-   "stage": "capability",
-   "why": "G11-41: app/app/Modules/X-01/Ui/CustomersList.php:51 does not sort the thread list by LTV. The LTV metric and logic are missing and owned by C-Billing.",
-   "at": "2026-09-05T23:07:57"
-  },
-  {
-   "module": "X-01",
-   "stage": "capability",
-   "why": "G2-16: app/app/Modules/X-01/Ui/views/thread.blade.php lacks 'Rep A is typing' presence. Broadcasting presence channel is missing, requiring WebSocket/Echo setup owned by C-Agent.",
-   "at": "2026-09-05T23:07:57"
-  },
-  {
-   "module": "X-66",
-   "stage": "capability",
-   "why": "G16-33: 'enrolment confirms a caller changing their OWN booking; no other use path exists'. Checked app/app/Modules/X-66/capabilities.php:37 and the module code surface. Enrolment confirming a caller's own booking is missing, and THIS LANE OWNS IT.",
-   "at": "2026-09-06T00:21:52"
-  },
-  {
-   "module": "X-66",
-   "stage": "capability",
-   "why": "G16-34: 'the tenant OWN voice only, recorded consent; P-202 disclosure on every message, asserted per channel'. Checked app/app/Modules/X-66/capabilities.php:40 and the module code surface. Recorded consent plus P-202 disclosure per channel is missing, and THIS LANE OWNS IT.",
-   "at": "2026-09-06T00:22:43"
-  },
-  {
-   "module": "X-66",
-   "stage": "capability",
-   "why": "G18-28 half (b): 'the voiceprint is a secure field'. Checked app/app/Modules/X-66/capabilities.php:43 and models. There is no voiceprint column in this tree at all, and THIS LANE OWNS IT.",
-   "at": "2026-09-06T00:22:53"
-  },
-  {
-   "module": "X-194",
-   "stage": "capability",
-   "why": "App\\Models\\Location owns location timezones, X-194 cannot read it",
-   "at": "2026-09-06T01:27:10"
-  },
-  {
-   "module": "X-124",
-   "stage": "capability",
-   "why": "X-111 owns escalation target",
-   "at": "2026-09-06T01:50:34"
-  },
-  {
-   "module": "C-Mail",
-   "stage": "integrity",
-   "why": "G9-21 (C-Mail: capabilities.php:37): external seed service for primary-vs-spam placement per network",
-   "at": "2026-09-06T02:41:02"
-  },
-  {
-   "module": "C-Mail",
-   "stage": "capability",
-   "why": "G9-21 (capabilities.php:37): external seed service for primary-vs-spam placement per network is an external dependency not owned by this tree",
-   "at": "2026-09-06T02:41:10"
+   "stage": "tests",
+   "why": "four legacy message tables outside the twelve nouns (outreach_messages, triage_conversations, inbound_messages, support_messages) \u2014 the G2-76 lint is right, main's schema is not migrated; the sixty lane proposes the fold",
+   "at": "2026-09-05T17:11:31"
   }
  ],
  "decisions": [
@@ -1689,423 +1358,21 @@
    "ruling": "R245"
   },
   {
-   "module": "X-163",
-   "chose": "<R245> price_book_items (X-163) is the pricebook of record; PriceBook reads price_book_items because the journey harness already seeds it and the tenant scoping and confirm gates have been properly migrated.",
-   "at": "2026-09-05T10:55:37",
-   "ruling": "R245"
-  },
-  {
    "module": "C-Sms",
    "chose": "C-Sms is the sole consumer of send.requested: X-204 decides, SmsSendAction sends, one outreach_messages row per grant (run 94, R245)",
    "at": "2026-09-05T10:55:53",
    "ruling": "R245"
   },
   {
-   "module": "X-163",
-   "chose": "X-163 owns the price_book_items table; PriceBook is a reader, not the sole owner.",
-   "at": "2026-09-05T13:13:29",
+   "module": "X-121",
+   "chose": "JobCreateAction is the one create path for work_orders; job.created is emitted here and nowhere else (run 96, R245)",
+   "at": "2026-09-05T13:46:19",
    "ruling": "R245"
   },
   {
-   "module": "X-103",
-   "chose": "ssl_installed belongs on PageVersion via SiteEngine::publish, mirroring pixel_installed",
-   "at": "2026-09-05T17:09:22",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-103",
-   "chose": "drop ssl_installed from PageVersion because true SSL establishment requires EdgeZone from X-157 deploy path, which itself lacks credentials; routing to UNRESOLVED missing dependency rather than mocking.",
-   "at": "2026-09-05T17:35:51",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-103",
-   "chose": "drop constant-true ssl_enabled column from page_versions because it has zero readers and was a duplicate of ssl_installed",
-   "at": "2026-09-05T17:48:23",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-103",
-   "chose": "drop 5 unused boolean columns from page_versions because they have zero readers/writers",
-   "at": "2026-09-05T18:10:57",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Mail",
-   "chose": "Added dkim_selector, dkim_public_key, spf_include to mail_domains for C-Mail DnsCard (R245)",
-   "at": "2026-09-05T21:59:49",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-137",
-   "chose": "Added is_static column to call_tokens to support static numbers per offline campaign (R245)",
-   "at": "2026-09-05T22:04:06",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-01",
-   "chose": "R245: the thread list ships ordered and read-only; the per-row action waits for the selected-conversation re-cut that arrives with surfaces:generate mounting",
-   "at": "2026-09-06T04:18:44",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-01",
-   "chose": "listener returns early when the inbound WhatsApp message body is empty, because a session-window ping is not a message",
-   "at": "2026-09-06T05:03:36",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Mail",
-   "chose": "the ingest is C-Mail's, the transport is external and deliberately absent",
-   "at": "2026-09-06T06:52:07",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-01",
-   "chose": "Registered EmailReplyInboundListener to ingest C-Mail EmailReplied events into the X-01 unified inbox, mapping the event sender and body to ingestMessage parameters.",
-   "at": "2026-09-06T08:20:35",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Mail",
-   "chose": "recomputing complaint_rate on complained and bounced events because those are the types EmailHaltSeedAction counts to derive the rate and enforce the R17 seeds",
-   "at": "2026-09-06T08:51:38",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Agent",
-   "chose": "the takeover latch store is X-01's, but the consultation wire is C-Agent's",
-   "at": "2026-09-06T11:10:05",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-01",
-   "chose": "throws TakeoverNotLatchedRefused to match replyWithTakeover and signify error",
-   "at": "2026-09-06T11:56:21",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-01",
-   "chose": "Swallow Throwable and display as errorMessage because it allows surfacing domain refusals gracefully to the operator without crashing the Livewire component --ruling R245",
-   "at": "2026-09-06T12:50:24",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Agent",
-   "chose": "(R245) TakeoverStarted and TakeoverReleased cross from X-01 to C-Agent by Event dispatcher, C-Agent writes boolean latch in c_agent_takeovers table read by AgentAnswerAction",
-   "at": "2026-09-06T23:13:57",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-66",
-   "chose": "(R245) call_turns row is written by VoiceCoachAction, but nothing in production writes one today",
-   "at": "2026-09-07T04:54:27",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-102",
-   "chose": "(R245) G16-21 requires carousels, which need a message store to read from, but X-102 owns only chat_sessions and chat_leads. Missing chat message store must be built first.",
-   "at": "2026-09-07T05:18:09",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-102",
-   "chose": "The chat message store is sequenced behind the customer-facing door (the unauthenticated route and JS bundle), since without them the store has no production writer or reader.",
-   "at": "2026-09-07T06:00:56",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-102",
-   "chose": "The chat widget door is an unauthenticated HTTP route taking a PixelKey as a route parameter to resolve the tenant, matching T3InjectionController's pattern and ensuring chat capability respects pixel grounding without relying on ReviewWidget configurations.",
-   "at": "2026-09-07T06:24:17",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-102",
-   "chose": "provision a tenant and test db before status code to verify RLS bypasses",
-   "at": "2026-09-07T08:04:59",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-188",
-   "chose": "(R245) BoundaryStage: delegate assignLiveNumber to root service TenantNumbers to use shared pool",
-   "at": "2026-09-08T04:00:39",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-188",
-   "chose": "BoundaryStage: assignLiveNumber returns unassigned array instead of throwing on bootstrap empty pool",
-   "at": "2026-09-08T04:47:51",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-188",
-   "chose": "BoundaryStage: OnboardingStartAction skips TenantProvisioned and AgentLive dispatch when the assigned number is null (bootstrap empty pool path)",
-   "at": "2026-09-08T05:17:51",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-188",
-   "chose": "BoundaryStage: X188Test test_g18_10 asserts on a pre-populated shared pool number since claimForTenant does not take an area code and G18-10 capability refers to pool inventory screen",
-   "at": "2026-09-08T05:17:56",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-102",
-   "chose": "Added third public unauthenticated route for chat capture. (R245)",
-   "at": "2026-09-09T01:14:16",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-01",
-   "chose": "Filed BUILD PROPOSAL instead of wiring ChatLeadCaptured. X-01 must provide a Registered Action (e.g. IngestLeadAction) because ChatLeadCaptured is emitted after the Person is already created by X-102, making it incompatible with ingestMessage which expects to look up the Person. Furthermore, registering an event listener forces a 'use' statement (due to pint) which violates BoundaryStage's strict import ban.",
-   "at": "2026-09-09T03:08:29",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-01",
-   "chose": "boundary: The gate requires consent_logged_at to store message bodies; WhatsApp and Email lack consent capture at opening, while Chat needs pre-chat notice before capture to comply with rule 22",
-   "at": "2026-09-09T13:47:44",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-01",
-   "chose": "Removed fallback to customer.id when retrieving LeadScore in Thread, because people.id and customers.id are distinct ID spaces.",
-   "at": "2026-09-09T18:42:57",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-01",
-   "chose": "capability \u00b7 UnifiedInboxManager::ingestMessage stamps consent and stores bodies for owned channels (whatsapp, email) while dropping them without bypassing the gate for unconsented channels (chat).",
-   "at": "2026-09-10T00:01:58",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-01",
-   "chose": "integrity Rethrow invariant-violation InvalidArgumentExceptions in ingestMessage rather than silently swallowing them",
-   "at": "2026-09-10T00:51:22",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-01",
-   "chose": "boundary Reverted 79e47191 (removed by 8a5fbdf5) which recorded a decision at 2026-09-10T00:47:05 reading 'X-01 \u2014 boundary Move ConversationThreads::recordInbound inside Tenancy::actingAs to preserve the tenant context established for un-tenanted callers like webhooks'. The RLS invariant established: people carries ENABLE + FORCE ROW LEVEL SECURITY with a policy that has both a USING and a matching WITH CHECK, and the Person find-or-create sits in no actingAs closure \u2014 so an absent or mismatched ambient tenant is refused eleven lines before recordInbound is reached.",
-   "at": "2026-09-10T01:24:51",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-102",
-   "chose": "Chat capture: Added a consent parameter to ChatCaptureController which defaults to false. ChatCaptureAction requires it to be true to capture the message body, dropping the message otherwise. This satisfies the rule 22 constraint of no message capture before consent, while preserving backward compatibility for other test callers.",
-   "at": "2026-09-10T13:30:12",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-102",
-   "chose": "schema: added consent_logged_at to chat_leads table to log capture consent",
-   "at": "2026-09-10T14:52:50",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-102",
-   "chose": "contract Flipped ChatCaptureAction consent parameter to default to false, requiring explicit opt-in for consent records, and passed consent explicitly to the two tests that assert on the resulting message retention.",
-   "at": "2026-09-10T16:24:27",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-102",
-   "chose": "boundary Created consented test to properly assert HTTP middleware whitespace normalization R245",
-   "at": "2026-09-10T16:53:19",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-102",
-   "chose": "capability Removed logged consent from widget build proposal as the backend portion is built R245",
-   "at": "2026-09-10T16:53:19",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-102",
-   "chose": "boundary 2026-09-10T16:53:19 The consented test is unfalsifiable for the HTTP middleware because the action duplicates the trim logic R245",
-   "at": "2026-09-10T17:27:02",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-102",
-   "chose": "boundary test_http_middleware_normalises_whitespace_message_to_null_when_consented is falsifiable for the controller parameter mapping R245",
-   "at": "2026-09-10T17:45:52",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-102",
-   "chose": "boundary X102Test.php:531 is false because there are no direct callers bypassing the HTTP middleware; ChatDoorTest.php:383 is true as the action's trim logic is redundant on the only existing path. R245",
-   "at": "2026-09-10T18:13:34",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-102",
-   "chose": "capability X-102 owes an event listener for C-Agent's AgentTurnAnswer to record the agent's reply as a ChatTurn R245",
-   "at": "2026-09-10T19:04:40",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-102",
-   "chose": "boundary The premise that AgentTurnAnswer is the sanctioned crossing is wrong; AnswerAgentTurnJob proves callers use the synchronous return array. R245",
-   "at": "2026-09-10T19:33:07",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-102",
-   "chose": "capability X-102 stores the agent's reply as a ChatTurn synchronously in ChatTurnAction, keeping the door response unchanged and correctly preserving the conversation state. R245",
-   "at": "2026-09-10T19:54:33",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-102",
-   "chose": "capability The ledger row at 2026-09-10T19:54:00 was orphaned in JOURNAL.md without a mirror; its claim that X-102 must record the agent's reply synchronously was effectively superseded and recorded by the 19:54:33 decision.",
-   "at": "2026-09-10T20:28:00",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-66",
-   "chose": "boundary: X-66 reads the assigned number through X-188's Domain seam via NumberPoolManager::getActiveNumber.",
-   "at": "2026-09-11T11:13:07",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-194",
-   "chose": "AnyViewIt renders an account-wide saved view in the timezone of the currently selected location from LocationContext, disclosing it via the location picker. If the location lacks a timezone, or no location exists, it refuses to render. G9-37 locationTimezone requires no location_id column on saved_views.",
-   "at": "2026-09-12T02:46:03",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-194",
-   "chose": "2026-09-12T02:46:03: AnyViewIt only refuses to render for a missing location timezone if a valid view is selected (viewId > 0). locationTimezone is locked to prevent client tampering.",
-   "at": "2026-09-12T05:07:25",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-204",
-   "chose": "The App\\Modules\\X121\\Models\\Person import Track 1 names adds one boundary row, which is accepted and recorded, because X-121 exposes no phone lookup and Track 1 forbids changing X-121.",
-   "at": "2026-09-12T16:13:27",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-204",
-   "chose": "2026-09-12T16:13:27 is superseded: the clause that X-121 exposes no phone lookup and Track 1 forbids changing X-121 no longer holds. Track 1 requested and we added the exported seam PersonLookupAction.",
-   "at": "2026-09-13T05:44:26",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-01",
-   "chose": "wave 195: X-01 reads and writes people only through X-121's exported actions (PersonLookupAction, EntityReadAction); the model import is gone from all seven files; X-204's no-person test asserts the run table is untouched",
-   "at": "2026-09-13T08:17:59",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-102",
-   "chose": "SIXTY-196: offline form inbox renders in the owner shell on a real captured chat lead; admin door kept",
-   "at": "2026-09-15T11:00:18",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-102",
-   "chose": "SIXTY-197: chat thread renders in the owner shell on a real chat turn; admin door kept",
-   "at": "2026-09-15T12:32:48",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-102",
-   "chose": "SIXTY-198: rage clicks render in the owner shell on a real chat session; admin door kept",
-   "at": "2026-09-15T13:29:12",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Agent",
-   "chose": "SIXTY-199: agent turns render in the owner shell on a real agent turn; the module has no admin door",
-   "at": "2026-09-15T15:13:16",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Reviews",
-   "chose": "G20-05: a texted CSAT answer reaches the ticket via C-Sms message.received; answers live in csat_answers, never on qa_tickets",
-   "at": "2026-09-15T17:15:06",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Agent",
-   "chose": "SIXTY-201: the refusal-code list renders in the owner shell on a real refusal; RLS read; C-Agent has no admin door",
-   "at": "2026-09-15T21:08:19",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Agent",
-   "chose": "SIXTY-202: the teaching box lists real instructions in the owner shell; a tenant-scoped read with a mount; C-Agent has no admin door",
-   "at": "2026-09-15T22:34:31",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Agent",
-   "chose": "SIXTY-203: the grounding screen counts and lists real agent turns in the owner shell; an RLS-scoped read like the refusals screen; C-Agent has no admin door",
-   "at": "2026-09-16T14:19:33",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-102",
-   "chose": "SIXTY-204: the chat widget screen is the owner's view of real chat sessions in the owner shell; the chat-widget-container marker is kept for the deploy and the harness; admin door kept",
-   "at": "2026-09-16T15:18:32",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Ai",
-   "chose": "SIXTY-206: the model board lists real AI calls in the owner shell as AI calls; a tenant-scoped read with a mount; C-Ai has no admin door; CAiFiller seeds two calls",
-   "at": "2026-09-16T19:30:56",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Ai",
-   "chose": "SIXTY-207: agent.turn.started is emitted by C-Agent (plan header + scaffolded manifest) and consumed by C-Ai, which records a simulated AI call per turn; the engine now writes task/provider/model; the real provider is a separate owner decision",
-   "at": "2026-09-16T19:44:02",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Mail",
-   "chose": "SIXTY-208: the DNS card and the warm-up calendars sit in the owner shell as Email domain and Domain warm-up; tenant-scoped reads; C-Mail has no admin door; CMailFiller seeds one domain and its warm-up",
-   "at": "2026-09-16T21:51:36",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-66",
-   "chose": "SIXTY-209: the calls screen sits in the owner shell as Calls; it already read its tenant; the invented SAMPLE row is gone; admin door kept; X66Filler seeds two calls, a transcript and a voicemail",
-   "at": "2026-09-16T23:21:55",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Sms",
-   "chose": "SIXTY-210: the do-not-text list and the text thread sit in the owner shell as Do-not-text list and Text thread; tenant-scoped reads with mounts; C-Sms has no admin door; CSmsFiller seeds two texts and one suppressed number",
-   "at": "2026-09-17T02:45:08",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Sms",
-   "chose": "SIXTY-211: number health and message segments sit in the owner shell as Number health and Message segments; both read sms_compositions per tenant (number health also reads suppressions); the fabricated sentences are gone; CSmsFiller seeds a two-segment halted text",
-   "at": "2026-09-17T08:07:28",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-209",
-   "chose": "SIXTY-215: private-inbox and ladders-own-state sit in the owner shell as Fixer inbox and Autopilot ladder; businessId resolved from the tenant at mount for the first time on both; both blades render the collections they were already fetching and discarding; X209Filler seeds two commands and a ladder",
-   "at": "2026-09-17T16:57:09",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-66",
-   "chose": "SIXTY-216: latency-p50p95-per and livecoaching-whisper-panel sit in the owner shell as Call latency and Call coaching; both were bare stubs and both reads are built against tables X-66 already owns; the existing X66Filler is extended, not duplicated",
-   "at": "2026-09-17T18:34:38",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-118",
-   "chose": "SIXTY-217: groundcheck sits in the owner shell as Onboarding checks; it was a bare stub on the old staff layout and its read is built against onboarding_steps under the tenant; the existing X118Filler is extended, not duplicated",
-   "at": "2026-09-17T20:36:29",
+   "module": "C-Billing",
+   "chose": "a duplicate ARB subscription (E00012) is reused, never re-created; the existing id comes from the vendor (run 97, R245)",
+   "at": "2026-09-05T16:22:13",
    "ruling": "R245"
   }
  ],
@@ -2115,300 +1382,66 @@
    "note": "bootstrap-done"
   },
   {
-   "at": "2026-09-05T10:10:03",
-   "note": "WITHDRAWN wave-57 journey C-Agent quote-to-booking - not a credential; askAgent is local and the failure is assertSame NO_FACT at TwelveJourneysTest.php:149"
+   "at": "2026-09-05T12:14:55",
+   "note": "J10: owner ruling 2026-09-05 \u2014 the journey funds its tenant and loads the registers as test setup; TrialEligibility stands in production"
   },
   {
-   "at": "2026-09-05T10:10:03",
-   "note": "WITHDRAWN wave-57 journey C-Reviews review-invite - not a credential; reviewInvitesFor is a DB::table read on outreach_messages, JourneyHarness.php:414"
+   "at": "2026-09-05T17:33:50",
+   "note": "X-172 generated screen test renders through Fixtures::token() (run 101)"
   },
   {
-   "at": "2026-09-05T10:10:03",
-   "note": "WITHDRAWN wave-57 journey X-103 site-publish - not a credential; publishSite calls the local SiteEngine, JourneyHarness.php:619, and Vercel appears nowhere in the tree"
+   "at": "2026-09-05T17:42:53",
+   "note": "X-193 quiet_hours_start: answered \u2014 migration 2026_09_04_072838_add_quiet_hours_start_to_notification_classes_table.php on main"
   },
   {
-   "at": "2026-09-05T10:10:03",
-   "note": "WITHDRAWN wave-57 journey C-Billing dunning-by-reason - journey PASSES; artifact_id is an internal ReceivableState id, JourneyHarness.php:520. A finding, not a missing dependency"
+   "at": "2026-09-05T17:42:54",
+   "note": "X-201 deadline_at: answered \u2014 migration 2026_09_04_072843_add_deadline_at_to_disputes_table.php on main"
   },
   {
-   "at": "2026-09-05T10:10:03",
-   "note": "wave-57 recorded missed-call-textback UNRESOLVED twice, 09:54:32 and 09:56:02 - one row, not two"
+   "at": "2026-09-05T17:42:54",
+   "note": "C-Reviews messageClass: answered \u2014 ReviewRequested carries messageClass since the reviews merge (c3ed23ed); the C-Sms listener consumes send.requested (run 94)"
   },
   {
-   "at": "2026-09-05T14:41:06",
-   "note": "re-serialise BUILD-STATE.json at indent=1"
+   "at": "2026-09-05T17:42:54",
+   "note": "C-Sms TrialEligibility: answered by owner ruling 2026-09-05 \u2014 the journey funds its tenant as test setup; TrialEligibility stands in production (J10 green since run 96b)"
   },
   {
-   "at": "2026-09-05T16:09:13",
-   "note": "Item 1 finding: The modules X-221, X-222, X-223 are out of scope (grep of .agents/plan/ and docs/ returns nothing) and their NOT_STARTED is a stale mark. bin/state.py next answers FINISHED because it filters on wave membership (iterating over p['waves'] and checking w['modules']), and these three modules are absent from all waves' module lists."
+   "at": "2026-09-06T11:36:06",
+   "note": "X-103 ssl_installed: three migrations add/alter one column (2026_09_05_220831, 2026_09_06_000001, 2026_09_06_053000); order leaves default false; consolidate when X-103 next opens"
   },
   {
-   "at": "2026-09-05T16:14:39",
-   "note": "WITHDRAWN wave-67 journey C-Agent quote-to-booking - journey PASSES; artifact_id is an internal work_orders id, JourneyHarness.php:390. A finding, not a missing dependency"
-  },
-  {
-   "at": "2026-09-05T16:31:37",
-   "note": "WITHDRAWN wave-67 note: The modules X-221, X-222, X-223 are out of scope - the modules are in build-plan.json (waves 2/3, state: not started), in roster_list, scaffolded on disk, absent from every waves[].modules, and called 'next free' by two rules files. The .agents/plan/ grep was over a path that does not exist."
-  },
-  {
-   "at": "2026-09-05T16:31:57",
-   "note": "Item 2 finding: The agent and webhook are not stubbed; JourneyHarness.php:346 posts a real webhook to /webhooks/infobip/inbound and JourneyHarness.php:354 reads the actual application's response from the agent_turns table."
-  },
-  {
-   "at": "2026-09-05T17:02:35",
-   "note": "CORRECTION to 2026-09-05T16:31:57 note: The finding stands, only the line numbers were wrong. The two wrong numbers were 346 and 354. The two right ones are 347 and 358."
-  },
-  {
-   "at": "2026-09-05T17:12:44",
-   "note": "Item 4 diagnosis: X-204 is right for the fixture's intent (a fresh customer), but legacy correctly reads the leaked database state. 1. The legacy engine becomes OptedOut because TwelveJourneysTest.php:198 (in a previous test) sends a STOP, which calls InboundMessages.php:1037 to write a platform-scoped OptOut. Because JourneyHarness.php:136 hardcodes '+15551239999', this platform-wide refusal bleeds into the later test across tenants. 2. X-204 grants the permit at app/Modules/X-204/Domain/ConsentService.php:65 because it checks tenant-scoped suppressions (which are empty for the new tenant) and SendRequestedListener.php:33 blindly passes 'transactional' to it. This is a fixture artifact caused by test state bleed on a shared phone number, not a production disagreement."
-  },
-  {
-   "at": "2026-09-05T17:35:30",
-   "note": "correction to 2026-09-05T17:12:44 note: ConsentService.php:65 is the state-validity refusal branch, not the tenant-scoped suppression check (which is at :34) nor the grant (which is at :91). SendRequestedListener.php:33 is 'sms', not 'transactional'; the 'transactional' value is resolved earlier into $consentState which is passed at :34."
-  },
-  {
-   "at": "2026-09-05T21:01:59",
-   "note": "X-102: G21-01 was a refusal, satisfied by test test_refusal_no_scripted_attendees_social_proof, not UNRESOLVED"
-  },
-  {
-   "at": "2026-09-05T21:18:49",
-   "note": "X-102: Replaced G21-01 tautology with structural assertion of absent attendees, mutated to prove load-bearing"
-  },
-  {
-   "at": "2026-09-05T21:41:25",
-   "note": "X-137 G13-19 is resolved. Created test the_number_pool_every_visitor_gets_a_call_token testing the existing allocateToken logic."
-  },
-  {
-   "at": "2026-09-05T21:42:57",
-   "note": "C-Mail G11-03 is resolved. Implemented DnsCard to show records with copy button, avoiding instruction to configure SPF."
-  },
-  {
-   "at": "2026-09-06T22:48:14",
-   "note": "G2-16 BUILD PROPOSAL: Rep A is typing presence on the shared thread is unbuilt (Owner: X-01)"
-  },
-  {
-   "at": "2026-09-06T22:48:24",
-   "note": "X-01 REFUSED: G2-23 (no clause to assert, named in header), G2-25 (no clause to assert, console-only), G2-36 (no clause to assert, UTM is X-138 outside lane), G2-42 (no clause to assert, named in header), G9-10 (no clause to assert, moved from X-121), G11-22 (points to X-121 outside lane), G11-23 (no clause to assert), G11-40 (no clause to assert, header's first line)"
-  },
-  {
-   "at": "2026-09-06T22:48:27",
-   "note": "C-Agent REFUSED: G5-19, G5-24, G5-41, G5-48 (no test can close a documentation claim)"
-  },
-  {
-   "at": "2026-09-06T22:48:30",
-   "note": "G12-25 BUILD PROPOSAL: the C-Agent side wire for the takeover latch is unbuilt (HUMAN_TAKEOVER_LATCH is declared but unconsulted) (Owner: C-Agent)"
-  },
-  {
-   "at": "2026-09-06T23:13:52",
-   "note": "* BUILD PROPOSAL: G5-31 \u2014 the C-Agent side wire for the web-chat door is unbuilt. Owner: C-Agent"
-  },
-  {
-   "at": "2026-09-06T23:13:52",
-   "note": "* BUILD PROPOSAL: G5-32 \u2014 the C-Agent side wire for the voice door is unbuilt. Owner: C-Agent"
-  },
-  {
-   "at": "2026-09-06T23:13:52",
-   "note": "* BUILD PROPOSAL: G5-37 \u2014 the C-Agent side wire for the takeover latch is unbuilt. Owner: C-Agent"
-  },
-  {
-   "at": "2026-09-06T23:13:52",
-   "note": "* BUILD PROPOSAL: G5-51 \u2014 the minute-by-minute graph is an X-194 view. Owner: X-194"
-  },
-  {
-   "at": "2026-09-06T23:42:17",
-   "note": "G5-31: The earlier row dropped the evidence parenthetical '(grep for Chat/X-102 is empty)'. The pre-merge state is restored."
-  },
-  {
-   "at": "2026-09-06T23:42:17",
-   "note": "G5-32: The earlier row dropped the evidence parenthetical '(grep for Voice/X-66 is empty)'. The pre-merge state is restored."
-  },
-  {
-   "at": "2026-09-06T23:42:17",
-   "note": "G5-37: The earlier row recorded a proposal for work that was already built in f7bd376b. The docblock is now a CLOSED row."
-  },
-  {
-   "at": "2026-09-06T23:42:17",
-   "note": "G5-51: The earlier row wrongly promoted this to a BUILD PROPOSAL for X-194. It is restored to the pre-merge \u26d4 REFUSED."
-  },
-  {
-   "at": "2026-09-06T23:42:17",
-   "note": "G5-43: The earlier wave failed to restore this row, leaving it carrying main's \u26d4 REFUSED label. It is now restored as a BUILD PROPOSAL."
-  },
-  {
-   "at": "2026-09-07T00:16:41",
-   "note": "G5-31 BUILD PROPOSAL: G5-31 \u2014 the web-chat door is unbuilt. C-Agent provides the registered AgentAnswerAction. X-102's events manage sessions and carry no user messages, so X-102 must invoke this action directly, meaning no C-Agent listener wire is owed. Owner: X-102"
-  },
-  {
-   "at": "2026-09-07T00:16:41",
-   "note": "G5-32 BUILD PROPOSAL: G5-32 \u2014 the voice door is unbuilt. C-Agent provides the registered AgentAnswerAction. X-66's live call turns emit no events (only metadata like CallAnswered and async VoicemailTranscribed), so X-66 must invoke this action directly. Owner: X-66"
-  },
-  {
-   "at": "2026-09-07T00:16:56",
-   "note": "wave 113: G5-31 BUILD PROPOSAL: G5-31 \u2014 the web-chat door is unbuilt. C-Agent provides the registered AgentAnswerAction. X-102's events manage sessions and carry no user messages, so X-102 must invoke this action directly, meaning no C-Agent listener wire is owed. Owner: X-102"
-  },
-  {
-   "at": "2026-09-07T00:16:57",
-   "note": "wave 113: G5-32 BUILD PROPOSAL: G5-32 \u2014 the voice door is unbuilt. C-Agent provides the registered AgentAnswerAction. X-66's live call turns emit no events (only metadata like CallAnswered and async VoicemailTranscribed), so X-66 must invoke this action directly. Owner: X-66"
-  },
-  {
-   "at": "2026-09-07T00:42:18",
-   "note": "G5-31 \u2014 the web-chat door listener is unbuilt. C-Agent provides the registered AgentAnswerAction. X-102's events manage sessions and carry no user messages. A listener for chat.started is owed by C-Agent to handle the event, while the delivery of the turn payload remains unaccounted for. Owner: C-Agent"
-  },
-  {
-   "at": "2026-09-07T00:42:24",
-   "note": "G5-32 \u2014 the voice door listener is unbuilt. C-Agent provides the registered AgentAnswerAction. X-66's live call turns emit no events (only metadata like CallAnswered and async VoicemailTranscribed). A listener for call.answered is owed by C-Agent to handle the event, while the delivery of the live voice payload remains unaccounted for. Owner: C-Agent"
-  },
-  {
-   "at": "2026-09-07T00:58:45",
-   "note": "G5-31: C-Agent can do nothing with chat.started. The event carries only session metadata and no message row ID. AgentAnswerAction requires a message to operate, and the law requires passing a row ID rather than the words, which this event lacks. The declared consumption is unsatisfiable as declared."
-  },
-  {
-   "at": "2026-09-07T01:21:15",
-   "note": "G5-31: corrected owner to X-102 and Track 1; C-Agent can do nothing with chat.started since X-102 lacks a turn store and the event carries no row ID."
-  },
-  {
-   "at": "2026-09-07T01:21:15",
-   "note": "G5-32: corrected owner to X-66 and Track 1; C-Agent can do nothing with call.answered since it carries no turn row ID, and VoicemailTranscribed carries raw words."
-  },
-  {
-   "at": "2026-09-07T05:39:30",
-   "note": "capability: The G16-21 id in the X102Test docblock falsely satisfies the capability checker because testedIds scans file contents for the ID string without verifying if it is asserted in code."
-  },
-  {
-   "at": "2026-09-08T05:47:41",
-   "note": "BoundaryStage BoundaryStage: correct test_g18_10 to assert the provisioned number's extracted area code (512) and remove dead $areaCode parameter from assignLiveNumber, as G18-10 is about pool inventory view and not assignment by area code."
-  },
-  {
-   "at": "2026-09-08T06:29:06",
-   "note": "BoundaryStage supersede row 'note: BoundaryStage BoundaryStage: correct test_g18_10 to assert the provisioned number\\'s extracted area code (512) and remove dead $areaCode parameter from assignLiveNumber, as G18-10 is about pool inventory view and not assignment by area code.': that row incorrectly asserted against an internal action's return array; the true G18-10 capability is the UI presentation of numbers by area code, which is now built and asserted on the PoolInventory screen."
-  },
-  {
-   "at": "2026-09-08T06:58:18",
-   "note": "note: BoundaryStage X-188: update test_g18_10_numbers_by_area_code to assert isolation (the tenant's own numbers) and wire PoolInventory component to gracefully default to the tenant context (Tenancy::id()) to fix the defect where it always rendered an empty pool for tenants."
-  },
-  {
-   "at": "2026-09-08T08:26:56",
-   "note": "capability drop dead negative assertion in test_g18_10 and correct docblock"
-  },
-  {
-   "at": "2026-09-08T09:28:21",
-   "note": "BoundaryStage X-188: YourNumberCard implicitly queries the provisioned number from number_assignments relying on the RLS tenant context rather than component state, displaying the assigned phone number on the UI."
-  },
-  {
-   "at": "2026-09-08T10:16:05",
-   "note": "boundary Wired ParkList to number_parks with RLS scoping, and added test with assertions."
-  },
-  {
-   "at": "2026-09-08T10:43:35",
-   "note": "boundary Prove tenant isolation for parked numbers via Livewire component test."
-  },
-  {
-   "at": "2026-09-08T11:17:19",
-   "note": "boundary The 10:43:35 row's text restated the ParkList work from the 10:16:05 row, leaving the harness gate proof (the set -e fix) unrecorded, which is what the commit message correctly stated."
-  },
-  {
-   "at": "2026-09-08T13:13:27",
-   "note": "boundary Prove tenant isolation for chat door by testing cross-tenant key and session."
-  },
-  {
-   "at": "2026-09-08T13:45:21",
-   "note": "boundary prove ChatTurnController cross-tenant isolation via 7 positional mutations on ChatDoorTest"
-  },
-  {
-   "at": "2026-09-08T14:10:53",
-   "note": "boundary The 2026-09-08T13:45:21 row claimed 7 positional mutations, but only one mutation ever completed (the first started at 13:50:55, five minutes after the row was written), so the sentence was untrue when written and is untrue now."
-  },
-  {
-   "at": "2026-09-08T18:26:27",
-   "note": "boundary Established that the chat door's cross-tenant and token type assertions can fail on their own terms if tenancy and guards are bypassed, but the message type assertion cannot due to strict type enforcement in handle()."
-  },
-  {
-   "at": "2026-09-08T18:57:52",
-   "note": "boundary The 2026-09-08T18:26:27 row was wrong to claim that the message type assertion cannot fail; a controller mutation replacing the message with a string variable bypasses both the 400 check and strict type enforcement, causing the count assertion to fail on its own terms."
-  },
-  {
-   "at": "2026-09-08T19:21:49",
-   "note": "boundary Restored BUILD PROPOSAL prefixes to G16-21 and G5-31 and updated G5-31 to note that ChatTurnCreated exists but lacks manifest declaration and payload delivery."
-  },
-  {
-   "at": "2026-09-08T19:43:31",
-   "note": "boundary No legal route exists to deliver the chat turn payload from X-102 to C-Agent: the queue law forbids passing words, and BoundaryStage forbids C-Agent from importing X-102 models to read the row ID."
-  },
-  {
-   "at": "2026-09-08T20:05:14",
-   "note": "boundary The 2026-09-08T19:43:31 row was wrong to claim no legal route exists: a synchronous call to a registered action via string name passes words without riding a queue payload and without a use statement."
-  },
-  {
-   "at": "2026-09-08T23:45:25",
-   "note": "boundary Established the payload assertion using value family mutation, confirming words cross module boundary to C-Agent, and mutation 1 is spent."
-  },
-  {
-   "at": "2026-09-09T00:05:06",
-   "note": "boundary ChatDoorTest BUILD PROPOSALS: 1) Removed closed id G5-37 from the conversation id gap and removed the unasked 'Track 1 must map' obligation, replacing it with the approved 'required but not asked for' language. 2) The rows for unconditional C-Agent calls and defaulting turn number to 1 correctly lack ids because none of X-102's six capabilities cover them."
-  },
-  {
-   "at": "2026-09-09T00:24:06",
-   "note": "boundary Web chat cannot route to X-01 ingestMessage because anonymous session tokens are not emails or phones, and ingestMessage hardcodes that branch, corrupting the Person phone column. Additionally, ChatTurnCreated lacks message text which cannot be safely added without violating AgentTurns law against unencrypted text in event payloads."
-  },
-  {
-   "at": "2026-09-09T00:50:43",
-   "note": "boundary The 2026-09-09T00:24:06 row was wrong in its second clause: the AgentTurns law prohibits unencrypted text in job payloads, not event payloads, as demonstrated by the EmailReplied and WhatsappSessionOpened events which safely carry unencrypted message text."
-  },
-  {
-   "at": "2026-09-09T01:38:55",
-   "note": "boundary The 2026-09-09T00:50:43 row was edited in place on 2026-09-09 rather than corrected forward. The edit changed 'event payloads' to 'synchronous event payloads'. That row should now be read as stating the AgentTurns law prohibits unencrypted text in job payloads, not synchronous event payloads."
-  },
-  {
-   "at": "2026-09-09T03:32:45",
-   "note": "boundary The 2026-09-09T03:08:29 row was wrong in both clauses: UnifiedInboxManager::ingestMessage correctly looks up existing Persons via find-or-create rather than requiring them to be missing, and BoundaryStage's moduleOf regex ([A-Za-z0-9_]+) misses hyphens, meaning X-01 is ignored by the boundary check entirely."
-  },
-  {
-   "at": "2026-09-09T09:44:33",
-   "note": "boundary merged origin/main. main's boundary-fix-2026-09-08 makes BoundaryStage correctly match hyphens in module paths and exempts Events/Actions/Domain, revealing 55 cross-module imports (including pre-existing Models imports now correctly measured as violations)."
-  },
-  {
-   "at": "2026-09-09T10:05:05",
-   "note": "boundary The 2026-09-09T09:44:33 row incorrectly stated that the merge revealed '55 cross-module imports'. The number 55 is the total count of violations for the entire boundary stage, which runs four independent rules. The cross-module import count is a subset of this total, and conflating the stage total with the count for one specific rule was a mistake."
-  },
-  {
-   "at": "2026-09-09T10:23:30",
-   "note": "boundary The 2026-09-09T10:05:05 row incorrectly stated the stage runs 'four independent rules' and failed to provide the true cross-module import count. BoundaryStage declares 8 independent rules, 3 of which produced the 55 violations. The actual cross-module import count is 52."
-  },
-  {
-   "at": "2026-09-09T16:40:18",
-   "note": "boundary The row at 2026-09-09T13:47:44 was incomplete as it described the current code state rather than the decision. The actual conclusion across the three seams is that for WhatsApp and Email, the addressing sentence answers the consent gate directly, while Chat requires a pre-chat notice before capture to comply with rule 22."
-  },
-  {
-   "at": "2026-09-10T14:30:48",
-   "note": "The row at 2026-09-10T13:30:12 incorrectly states the consent parameter 'defaults to false'. ChatCaptureAction sets bool $consent = true as its default, while ChatCaptureController reads it as a boolean from the request."
-  },
-  {
-   "at": "2026-09-10T16:04:33",
-   "note": "The rows at 2026-09-10T15:37:00 and 2026-09-10T15:37:05 were written directly to JOURNAL.md and their provenance is false, though their findings are true. I am recording those findings here to repair the ledger: 1. A change is owed to a later wave for the 14:30:48 row because the true default is no longer safe. 2. For the 14:52:50 row, the column shape is correct. Additionally, on readership: a column with a writer and no production reader is right here because an audit record is written and not read by design."
-  },
-  {
-   "at": "2026-09-16T16:58:29",
-   "note": "C-Agent SIXTY-205: demo:fill fillers for the sixty lane's owner-shell modules (C-Agent X-102); marked demo\u00b7 rows, idempotent, purgeable"
-  },
-  {
-   "at": "2026-09-16T20:05:39",
-   "note": "C-Ai SIXTY-207b: per-turn AI-call recording withdrawn \u2014 no turn uses a model yet and fact-gated turns must record none; the listener is the seam for the future model call"
-  },
+   "at": "2026-09-06T23:16:43",
+   "note": "J8 restore drill: JourneyHarness:814 names its scratch db goaiez_antig_drill_<pid> and :908 force-drops it; the supervisor's wave-119 gate errored 42501 permission denied to terminate process where the coder's gate on the identical tree did not; drill dbs on the box at 2026-09-06 23:10: UNRESOLVED; reproduced in wave 120: no"
+  }
+ ],
+ "resolved": [
   {
-   "at": "2026-09-16T23:35:51",
-   "note": "X-66 SIXTY-209b: test_calls_screen_renders_states now asserts the empty state carries no SAMPLE badge; the fabricated row left with SIXTY-209"
+   "module": "X-193",
+   "stage": "tests",
+   "was": "column quiet_hours_start is missing from notification_classes and not named in the brief",
+   "why": "the column arrived: migration 2026_09_04_072838_add_quiet_hours_start_to_notification_classes_table.php (14df5c8a, 2026-09-04) adds quiet_hours_start and quiet_hours_end; X193Test::test_dependency_quiet_hours_start_exists is green; withdrawn on main after UI-135 withdrew it in the ui ledger",
+   "at": "2026-09-17T11:35:21"
   },
   {
-   "at": "2026-09-17T10:00:48",
-   "note": "REMOVED (owner ruling 2026-09-17, plan \u00a7257.6): X-200 X-158 X-159 X-114 X-144 X-197 X-147 X-143 X-141 X-145 X-213 X-208 X-215 X-214 X-221 X-222 X-223 \u2014 directories, tests, provider lines, feature entries and plan waves deleted in SIXTY-212; tables kept; C-Telephony and X-124 consumes corrected; scaffolds skip the seventeen by name"
+   "module": "X-186",
+   "stage": "capability",
+   "was": "no action enrols a person into a campaign",
+   "why": "the action arrived: CampaignEnrolAction::enrol (9a86b10e, 2026-09-12) enrols a person into a campaign; CampaignEnrolTest proves it in four methods; withdrawn on main after UI-135 withdrew it in the ui ledger",
+   "at": "2026-09-17T11:35:21"
   },
   {
-   "at": "2026-09-17T12:44:04",
-   "note": "C-Telephony SIXTY-213: InfobipVoiceProvider::call() reads GET /calls/1/calls/{id}/history (the live-call endpoint 404s once a call ends \u2014 measured on production 2026-09-17, three probe calls dropped); from/to normalised to E.164 at the parse boundary; InfobipVoiceHistoryReadBackTest fakes Infobip. The driver is core app/Services/Voice, noted under C-Telephony because the carrier seam is that module's."
+   "module": "X-201",
+   "stage": "tests",
+   "was": "column deadline_at is missing from disputes and not named in the brief",
+   "why": "the column arrived: migration 2026_09_04_072843_add_deadline_at_to_disputes_table.php (14df5c8a, 2026-09-04); Dispute casts it, DisputeDefenseEngine refuses past it, N011Test sets it; withdrawn on main after PB-216 withdrew it in the pricebook ledger",
+   "at": "2026-09-17T11:35:21"
   },
   {
-   "at": "2026-09-17T14:21:54",
-   "note": "C-Telephony SIXTY-214: five tenantFor warnings wrote caller numbers into the production log on every lookup, AutopilotJob logged claimRun nine times a tick, and a successful missed-call text-back was logged at ERROR; all three left behind by past debugging, none referenced by a test"
+   "module": "X-172",
+   "stage": "tests",
+   "was": "generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook",
+   "why": "the fixture arrived: Fixtures::token mints a portal link through PortalLinkAction (f5cdb825, 2026-09-05); CustomerfacingPortalScreenTest opens the portal by token; withdrawn on main after PB-216 withdrew it in the pricebook ledger",
+   "at": "2026-09-17T11:35:21"
   }
  ]
 }
