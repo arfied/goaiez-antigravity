@@ -261,7 +261,7 @@ test('the reachability check states the size of its own blind spot', function ()
 
     $invisible = array_values(array_diff(array_unique($tenantRole), $admitted));
 
-    expect(count($invisible))->toBe(62, 'If it went UP, a new module route ships behind tenant.role without opting into the owner layout, so it is reachable by URL and invisible to every check in this file. That is a regression. If it went DOWN, somebody converted a screen properly. Lower the number and record it.');
+    expect(count($invisible))->toBe(60, 'If it went UP, a new module route ships behind tenant.role without opting into the owner layout, so it is reachable by URL and invisible to every check in this file. That is a regression. If it went DOWN, somebody converted a screen properly. Lower the number and record it.');
 
     $withLayout = 0;
     $withoutLayout = 0;
@@ -320,7 +320,7 @@ test('the reachability check states the size of its own blind spot', function ()
         }
     }
 
-    expect($withLayout)->toBe(5, 'If it went UP, a new module route opted into the owner layout but forgot the auth gate, or (more likely) fell back from using AdminNav to hand-authoring a layout, so it is reachable by URL but carries no nav. That is a regression. If it went DOWN, somebody converted a screen properly. Lower the number and record it.');
+    expect($withLayout)->toBe(3, 'If it went UP, a new module route opted into the owner layout but forgot the auth gate, or (more likely) fell back from using AdminNav to hand-authoring a layout, so it is reachable by URL but carries no nav. That is a regression. If it went DOWN, somebody converted a screen properly. Lower the number and record it.');
     expect($withoutLayout)->toBe(57, 'If it went UP, a new module route shipped with no #[Layout] at all, falling through to the staff console. If it went DOWN, one was converted, or built out.');
 
     // 4. track building out the fallback pages
