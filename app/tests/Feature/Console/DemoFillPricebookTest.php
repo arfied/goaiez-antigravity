@@ -43,6 +43,8 @@ class DemoFillPricebookTest extends TestCase
         $this->assertDatabaseHas('contact_tags', ['business_id' => $biz->id, 'tag' => 'demo·repeat customer']);
         $this->assertDatabaseHas('facts', ['business_id' => $biz->id, 'key' => 'demo·hours.saturday']);
         $this->assertDatabaseHas('migration_field_maps', ['business_id' => $biz->id, 'source_field' => 'demo·JOB_REF_NO']);
+        $this->assertDatabaseHas('migration_runs', ['business_id' => $biz->id, 'source_system' => 'demo·jobber']);
+        $this->assertDatabaseHas('migration_rejects', ['business_id' => $biz->id, 'rejection_reason' => 'no phone number on the record']);
 
         $c1 = Affiliate::count();
         Tenancy::forgetAll();
@@ -70,6 +72,8 @@ class DemoFillPricebookTest extends TestCase
         $this->assertDatabaseMissing('contact_tags', ['business_id' => $biz->id, 'tag' => 'demo·repeat customer']);
         $this->assertDatabaseMissing('facts', ['business_id' => $biz->id, 'key' => 'demo·hours.saturday']);
         $this->assertDatabaseMissing('migration_field_maps', ['business_id' => $biz->id, 'source_field' => 'demo·JOB_REF_NO']);
+        $this->assertDatabaseMissing('migration_runs', ['business_id' => $biz->id, 'source_system' => 'demo·jobber']);
+        $this->assertDatabaseMissing('migration_rejects', ['business_id' => $biz->id, 'rejection_reason' => 'no phone number on the record']);
 
     }
 
@@ -98,6 +102,8 @@ class DemoFillPricebookTest extends TestCase
         $this->get(route('x-119.fact-freshness-per'))->assertOk()->assertSee('demo·hours.saturday');
         $this->get(route('x-119.reviewwhatifound-screen'))->assertOk()->assertSee('demo·service.emergency_callout.price_cents');
         $this->get(route('x-212.unmatchedfield-map'))->assertOk()->assertSee('demo·JOB_REF_NO');
+        $this->get(route('x-212.commit'))->assertOk()->assertSee('demo·jobber');
+        $this->get(route('x-212.reconciliation-report'))->assertOk()->assertSee('no phone number on the record');
     }
 
     public function test_x163_filler_is_idempotent(): void
