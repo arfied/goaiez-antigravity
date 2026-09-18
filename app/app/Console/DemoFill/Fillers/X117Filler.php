@@ -4,9 +4,9 @@ namespace App\Console\DemoFill\Fillers;
 
 use App\Console\DemoFill\DemoFiller;
 use App\Models\Business;
-use App\Modules\X117\Models\Sellable;
 use App\Modules\X117\Models\Cart;
 use App\Modules\X117\Models\Order;
+use App\Modules\X117\Models\Sellable;
 
 class X117Filler implements DemoFiller
 {
@@ -23,7 +23,7 @@ class X117Filler implements DemoFiller
 
         $s1 = Sellable::create([
             'business_id' => $business->id,
-            'name' => self::MARKER . 'Furnace Tune-up',
+            'name' => self::MARKER.'Furnace Tune-up',
             'fulfilment_type' => 'service',
             'inventory_quantity' => 10,
             'unit_price_cents' => 9900,
@@ -31,7 +31,7 @@ class X117Filler implements DemoFiller
 
         $s2 = Sellable::create([
             'business_id' => $business->id,
-            'name' => self::MARKER . 'Air Filter (16x25x1)',
+            'name' => self::MARKER.'Air Filter (16x25x1)',
             'fulfilment_type' => 'product',
             'inventory_quantity' => 50,
             'unit_price_cents' => 1500,
@@ -39,7 +39,7 @@ class X117Filler implements DemoFiller
 
         $s3 = Sellable::create([
             'business_id' => $business->id,
-            'name' => self::MARKER . 'Thermostat Installation',
+            'name' => self::MARKER.'Thermostat Installation',
             'fulfilment_type' => 'service',
             'inventory_quantity' => 0, // sold out
             'unit_price_cents' => 15000,
@@ -58,14 +58,14 @@ class X117Filler implements DemoFiller
 
         Order::create([
             'business_id' => $business->id,
-            'order_number' => self::MARKER . 'ORD-1001',
+            'order_number' => self::MARKER.'ORD-1001',
             'status' => 'paid',
             'total_cents' => 9900,
         ]);
 
         Order::create([
             'business_id' => $business->id,
-            'order_number' => self::MARKER . 'ORD-1002',
+            'order_number' => self::MARKER.'ORD-1002',
             'status' => 'pending_payment',
             'total_cents' => 15000,
         ]);
@@ -76,7 +76,7 @@ class X117Filler implements DemoFiller
     public function purge(Business $business): int
     {
         $deletedOrders = Order::where('business_id', $business->id)
-            ->where('order_number', 'like', self::MARKER . '%')
+            ->where('order_number', 'like', self::MARKER.'%')
             ->delete();
 
         $deletedCarts = Cart::where('business_id', $business->id)
@@ -84,7 +84,7 @@ class X117Filler implements DemoFiller
             ->delete();
 
         $deletedSellables = Sellable::where('business_id', $business->id)
-            ->where('name', 'like', self::MARKER . '%')
+            ->where('name', 'like', self::MARKER.'%')
             ->delete();
 
         return $deletedOrders + $deletedCarts + $deletedSellables;
