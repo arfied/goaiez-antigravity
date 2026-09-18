@@ -1,13 +1,16 @@
 <div>
-    <x-surface.sample-state module="staff, roles, granular permissions, and the document vault. ⛔ **No scoring, no ranking, no attendance.**" screen="staff" />
     <div class="staff-view p-4">
-        <h3 class="text-lg font-bold">Staff Members</h3>
+        <h2 class="text-lg font-bold text-ink">Staff</h2>
         @if($staff->isEmpty())
-            <p class="text-gray-500">No staff members enrolled.</p>
+            <x-ui.empty-state heading="Nobody on the crew yet.">The people who work with you appear here, with the role each one holds.</x-ui.empty-state>
         @else
-            <ul>
+            <ul class="divide-y divide-rule">
                 @foreach($staff as $s)
-                    <li>#{{ $s->id }}: {{ $s->name }} ({{ $s->email }}) [{{ $s->is_active ? 'Active' : 'Deactivated' }}]</li>
+                    <li class="py-2" wire:key="staff-{{ $s->id }}">
+                        <span class="font-semibold">{{ $s->name }}</span>
+                        <span class="text-sm text-ink-2">{{ $s->email }}</span>
+                        <span class="text-sm text-ink-2">{{ $s->is_active ? 'Active' : 'Deactivated' }}</span>
+                    </li>
                 @endforeach
             </ul>
         @endif

@@ -36,6 +36,7 @@ class DemoFillSixtyTest extends TestCase
         $this->assertDatabaseHas('ai_calls', ['business_id' => $biz->id, 'task' => 'demo·summary']);
         $this->assertDatabaseHas('mail_domains', ['business_id' => $biz->id, 'domain_name' => 'demo·mail.example.com']);
         $this->assertDatabaseHas('call_sessions', ['business_id' => $biz->id, 'call_sid' => 'demo·CA1']);
+        $this->assertDatabaseHas('call_autopsies', ['business_id' => $biz->id, 'sentiment' => 'positive']);
         $this->assertDatabaseHas('sms_compositions', ['business_id' => $biz->id, 'recipient_phone' => '+15125550142']);
         $this->assertDatabaseHas('sms_compositions', ['business_id' => $biz->id, 'recipient_phone' => '+15125550188', 'status' => 'halted']);
         $this->assertDatabaseHas('suppressions', ['business_id' => $biz->id, 'reason' => 'demo·replied STOP']);
@@ -67,6 +68,7 @@ class DemoFillSixtyTest extends TestCase
         $this->assertDatabaseMissing('ai_calls', ['business_id' => $biz->id, 'task' => 'demo·summary']);
         $this->assertDatabaseMissing('mail_domains', ['business_id' => $biz->id, 'domain_name' => 'demo·mail.example.com']);
         $this->assertDatabaseMissing('call_sessions', ['business_id' => $biz->id, 'call_sid' => 'demo·CA1']);
+        $this->assertDatabaseMissing('call_autopsies', ['business_id' => $biz->id, 'sentiment' => 'positive']);
         $this->assertDatabaseMissing('sms_compositions', ['business_id' => $biz->id, 'recipient_phone' => '+15125550142']);
         $this->assertDatabaseMissing('sms_compositions', ['business_id' => $biz->id, 'recipient_phone' => '+15125550188']);
         $this->assertDatabaseMissing('suppressions', ['business_id' => $biz->id, 'reason' => 'demo·replied STOP']);
@@ -99,6 +101,8 @@ class DemoFillSixtyTest extends TestCase
         $this->get(route('x-102.offline-form-inbox'))->assertOk()->assertSee('demo·John Doe');
         $this->get(route('x-102.thread'))->assertOk()->assertSee('demo·Hello, I need some help.');
         $this->get(route('x-66.calls'))->assertOk()->assertSee('+15125550142')->assertSee('+15125550177')->assertSee('Transcript')->assertSee('Voicemail');
+        $this->get(route('x-66.latency-p50p95-per'))->assertOk()->assertSee('1450ms');
+        $this->get(route('x-66.livecoaching-whisper-panel'))->assertOk()->assertSee('demo·Good rapport');
 
         $this->get(route('c-sms.donottext-list'))->assertOk()->assertSee('+15125550199')->assertSee('demo·replied STOP');
         $this->get(route('c-sms.pernumber-complaint-monitoring'))->assertOk()->assertSee('+15125550142')->assertSee('1 sent · 0 halted')->assertSee('+15125550188')->assertSee('0 sent · 1 halted');
