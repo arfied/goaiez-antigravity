@@ -39,9 +39,13 @@ test('every <x-surface.sample-state> names a real module', function () {
     }
 
     // 3. partition into legal / illegal / unparseable
-    echo "total=" . $total . "\n"; expect($total)->toBe(66);
-    echo "legal=" . $legal . "\n"; expect($legal)->toBe(11, '21 call sites are in known module blade files; they have been converted to x-123.module-name by Track 1. The test prevents them turning back into prose.');
-    echo "unparseable=" . $unparseable . "\n"; expect($unparseable)->toBe(0, 'If it went up, a call to sampleState has an unrecognizable key format. Find it and use either the module syntax or the legacy text syntax.');
-    echo "illegal=" . $illegal . "\n"; expect($illegal)->toBe(55, '219 call sites use a prose description instead of a real module ID (e.g., \'planned in ⭐⭐⭐ **IT IS THE WIZARD...\'). A red means the number moved: up when the generator emits another, down when Track 1 repairs them, and "lower the number and record it" is the honest response to the second. The limit of what was measured: these are call sites in app/app/Modules/**/*.blade.php; no blade has been mapped to a route.');
+    echo 'total='.$total."\n";
+    expect($total)->toBe(66);
+    echo 'legal='.$legal."\n";
+    expect($legal)->toBe(11, '21 call sites are in known module blade files; they have been converted to x-123.module-name by Track 1. The test prevents them turning back into prose.');
+    echo 'unparseable='.$unparseable."\n";
+    expect($unparseable)->toBe(0, 'If it went up, a call to sampleState has an unrecognizable key format. Find it and use either the module syntax or the legacy text syntax.');
+    echo 'illegal='.$illegal."\n";
+    expect($illegal)->toBe(55, '219 call sites use a prose description instead of a real module ID (e.g., \'planned in ⭐⭐⭐ **IT IS THE WIZARD...\'). A red means the number moved: up when the generator emits another, down when Track 1 repairs them, and "lower the number and record it" is the honest response to the second. The limit of what was measured: these are call sites in app/app/Modules/**/*.blade.php; no blade has been mapped to a route.');
     expect($legal + $illegal + $unparseable)->toBe($total);
 });
