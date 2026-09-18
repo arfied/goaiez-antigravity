@@ -10,6 +10,5 @@ final class DemandShifted
         public readonly int $regionId,
         public readonly string $periodDate,
         public readonly float $demandScore
-    ) {
-    }
+    ) {}
 }
