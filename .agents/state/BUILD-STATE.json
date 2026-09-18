@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-17T18:26:42",
+ "updated": "2026-09-17T20:30:00",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2997,6 +2997,12 @@
    "module": "X-198",
    "chose": "MONEY-237: reconciliation-discrepancies sits in the owner shell; it was already tenant-resolved so only the layout, the heading demotion and the token swap changed; same-account is NOT convertible while its test asserts the absence of a string the shell's own nav renders",
    "at": "2026-09-17T18:26:42",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-156",
+   "chose": "MONEY-238: ingest-volume-by and rejectedrows-list sit in the owner shell as Data coming in and Rows we could not take; no tenant work was needed because both screens already resolved and set the tenant, so the wave is the shell, the heading classes and the design tokens; X156Filler seeds a source, two runs and a rejection",
+   "at": "2026-09-17T20:30:00",
    "ruling": "R245"
   }
  ],
