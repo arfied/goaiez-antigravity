@@ -60,6 +60,6 @@ class TodayTest extends TestCase
         $this->seed(UiReviewSeeder::class);
         $owner = User::where('email', 'owner2@business.com')->first();
 
-        $this->actingAs($owner)->get('/home');
+        $this->actingAs($owner)->get('/home')->assertOk();
     }
 }

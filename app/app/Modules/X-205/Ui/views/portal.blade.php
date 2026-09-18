@@ -1,6 +1,14 @@
 <div>
-    <x-surface.sample-state module="**The referral and affiliate layer: every tenant gets an affiliate id; tiers, lifetime attribution, id merging, promo-code sync, a white-labelled portal, clawbacks and the W-9 collection.** ⛔⛔ **Every money row here is `MONEY` / `L1` FOREVER.**" screen="portal" />
     <div class="affiliate-portal-view p-4">
-        <h3 class="text-lg font-bold">Partner Affiliate Portal</h3>
+        <h2 class="text-lg font-bold text-ink">Affiliates</h2>
+        @if($affiliates->isEmpty())
+            <p class="text-ink-2">No affiliates yet.</p>
+        @else
+            <ul>
+                @foreach($affiliates as $af)
+                    <li>{{ $af->partner_name }} ({{ $af->affiliate_code }}): {{ $af->commission_rate_bps }} bps · balance {{ $af->current_balance_cents }} cents · lifetime {{ $af->lifetime_earnings_cents }} cents</li>
+                @endforeach
+            </ul>
+        @endif
     </div>
 </div>

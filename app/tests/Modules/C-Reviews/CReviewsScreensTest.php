@@ -4,8 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Modules\CReviews;
 
+use App\Enums\ReviewSource;
+use App\Enums\ReviewStatus;
 use App\Models\Business;
+use App\Models\Location;
+use App\Models\Review;
 use App\Models\User;
+use App\Modules\CReviews\Actions\PrepareRemovalRequestAction;
 use App\Modules\CReviews\Actions\QaTicketAction;
 use App\Modules\CReviews\Actions\ReviewSyncAction;
 use App\Modules\CReviews\Models\QaSetting;
@@ -18,6 +23,10 @@ use App\Modules\X153\Models\Alert;
 use App\Modules\X181\Models\QaTicket;
 use App\Support\Tenancy;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -212,11 +221,33 @@ class CReviewsScreensTest extends TestCase
         $this->assertNotNull($ticket->resolved_at);
     }
 
+    public function test_tickets_resolve_refuses_an_unowned_ticket_without_disclosing(): void
+    {
+        $otherBiz = self::provisionTenant(['name' => 'Other Biz']);
+        $req = ReviewRequest::create(['business_id' => $otherBiz->id, 'rating' => 2]);
+        app(QaTicketAction::class)->handle($otherBiz->id, $req->id);
+        $ticket = QaTicket::where('business_id', $otherBiz->id)->first();
+
+        try {
+            Livewire::test(Tickets::class, ['businessId' => $this->bizId])
+                ->call('resolve', $ticket->id, 'fixed the scheduling')
+                ->assertDontSee('No query results for model');
+            $this->fail('resolve accepted an id this business cannot see.');
+        } catch (ModelNotFoundException $e) {
+            // the refusal: propagating renders a 404, which discloses nothing
+        }
+
+        Tenancy::set($otherBiz->id);
+        $ticket->refresh();
+        $this->assertNull($ticket->resolved_at);
+        $this->assertNotEquals('resolved', $ticket->status);
+    }
+
     public function test_loss_alerts_mount_and_empty(): void
     {
         Livewire::test(LossAlerts::class, ['businessId' => $this->bizId])
             ->assertOk()
-            ->assertSee('Customer Loss and Churn Risk Alerts')
+            ->assertSee('Loss alerts')
             ->assertSee('No customers at risk right now');
     }
 
@@ -237,7 +268,8 @@ class CReviewsScreensTest extends TestCase
 
         Livewire::test(LossAlerts::class, ['businessId' => $this->bizId])
             ->assertSee('Rating 3 < 4')
-            ->assertSee('Review #'.$req->id);
+            ->assertSee('Review #'.$req->id)
+            ->assertSee('Prepare Removal');
     }
 
     public function test_a_four_star_review_is_not_a_loss_alert_at_the_default_threshold(): void
@@ -267,6 +299,158 @@ class CReviewsScreensTest extends TestCase
         $ticket->refresh();
         $this->assertEquals('resolved', $ticket->status);
         $this->assertSame(1, Alert::where('business_id', $this->bizId)->count());
+    }
+
+    public function test_tickets_resolve_on_a_resolved_ticket_saves_nothing(): void
+    {
+        $ticket = QaTicket::create(['business_id' => $this->bizId, 'subject' => 'test', 'arrived_at' => now(), 'status' => 'resolved', 'sla_due_at' => now()->addHours(2), 'resolved_at' => now()->subHour(), 'resolution_notes' => 'first']);
+
+        Livewire::test(Tickets::class, ['businessId' => $this->bizId])
+            ->call('resolve', $ticket->id, 'second')
+            ->assertSee('Ticket #'.$ticket->id.' is already resolved; nothing was saved.');
+
+        $ticket->refresh();
+        $this->assertEquals('first', $ticket->resolution_notes);
+    }
+
+    public function test_loss_alerts_resolve_on_a_resolved_ticket_sends_no_alert(): void
+    {
+        $ticket = QaTicket::create(['business_id' => $this->bizId, 'subject' => 'test', 'arrived_at' => now(), 'status' => 'resolved', 'sla_due_at' => now()->addHours(2), 'resolved_at' => now()->subHour(), 'resolution_notes' => 'first']);
+
+        $screen = Livewire::test(LossAlerts::class, ['businessId' => $this->bizId])
+            ->call('resolveAndAlert', $ticket->id, 'second');
+
+        $this->assertSame(0, Alert::where('business_id', $this->bizId)->count());
+        $screen->assertSee('Ticket #'.$ticket->id.' is already resolved; nothing was saved. No alert was sent.');
+
+        $ticket->refresh();
+        $this->assertEquals('first', $ticket->resolution_notes);
+    }
+
+    public function test_qa_report_resolve_on_a_resolved_ticket_saves_nothing(): void
+    {
+        $ticket = QaTicket::create(['business_id' => $this->bizId, 'subject' => 'test', 'arrived_at' => now(), 'status' => 'resolved', 'sla_due_at' => now()->addHours(2), 'resolved_at' => now()->subHour(), 'resolution_notes' => 'first']);
+
+        Livewire::test(QaReport::class, ['businessId' => $this->bizId])
+            ->call('resolveTicket', $ticket->id)
+            ->assertSee('Ticket #'.$ticket->id.' is already resolved; nothing was saved.');
+
+        $ticket->refresh();
+        $this->assertEquals('first', $ticket->resolution_notes);
+    }
+
+    public function test_loss_alerts_prepares_removal(): void
+    {
+        $req = ReviewRequest::create(['business_id' => $this->bizId, 'rating' => 1]);
+        $locId = Location::firstOrCreate(['business_id' => $this->bizId, 'name' => 'Main'])->id;
+        Review::create(['business_id' => $this->bizId, 'location_id' => $locId, 'source' => ReviewSource::Google, 'google_review_id' => 'g_123', 'status' => ReviewStatus::Approved, 'rating' => 1]);
+
+        Livewire::test(LossAlerts::class, ['businessId' => $this->bizId])
+            ->call('prepareRemoval', $req->id, 'fake_reviews', 'This is a fake review.', 'g_123')
+            ->assertSee('Removal request prepared.');
+
+        $this->assertDatabaseHas('review_removal_requests', [
+            'business_id' => $this->bizId,
+            'review_request_id' => $req->id,
+            'status' => 'prepared',
+            'tos_ground' => 'fake_reviews',
+        ]);
+    }
+
+    public function test_loss_alerts_confirms_removal(): void
+    {
+        $req = ReviewRequest::create(['business_id' => $this->bizId, 'rating' => 1]);
+        $locId = Location::firstOrCreate(['business_id' => $this->bizId, 'name' => 'Main'])->id;
+        Review::create(['business_id' => $this->bizId, 'location_id' => $locId, 'source' => ReviewSource::Google, 'google_review_id' => 'g_123', 'status' => ReviewStatus::Approved, 'rating' => 1]);
+        $preparer = new PrepareRemovalRequestAction;
+        $removal = $preparer->execute($this->bizId, $req->id, 'fake_reviews', 'This is a fake review.', 'g_123');
+
+        $userId = DB::table('users')->insertGetId(['name' => 'Test', 'email' => Str::random(10).'@example.com', 'password' => 'secret']);
+        $user = User::find($userId);
+
+        Livewire::actingAs($user);
+        Livewire::test(LossAlerts::class, ['businessId' => $this->bizId])
+            ->call('confirmRemoval', $removal->id)
+            ->assertSee('Removal request confirmed.');
+
+        $removal->refresh();
+        $this->assertEquals('confirmed', $removal->status);
+        $this->assertEquals($userId, $removal->confirmed_by_user_id);
+        $this->assertNotNull($removal->confirmed_at);
+    }
+
+    public function test_loss_alerts_confirm_removal_refuses_unauthenticated(): void
+    {
+        $req = ReviewRequest::create(['business_id' => $this->bizId, 'rating' => 1]);
+        $locId = Location::firstOrCreate(['business_id' => $this->bizId, 'name' => 'Main'])->id;
+        Review::create(['business_id' => $this->bizId, 'location_id' => $locId, 'source' => ReviewSource::Google, 'google_review_id' => 'g_123', 'status' => ReviewStatus::Approved, 'rating' => 1]);
+        $preparer = new PrepareRemovalRequestAction;
+        $removal = $preparer->execute($this->bizId, $req->id, 'fake_reviews', 'This is a fake review.', 'g_123');
+
+        Livewire::test(LossAlerts::class, ['businessId' => $this->bizId])
+            ->call('confirmRemoval', $removal->id)
+            ->assertSee('Unauthenticated confirmation refused.');
+
+        $removal->refresh();
+        $this->assertEquals('prepared', $removal->status);
+        $this->assertNull($removal->confirmed_by_user_id);
+        $this->assertNull($removal->confirmed_at);
+    }
+
+    public function test_loss_alerts_shows_removal_requests(): void
+    {
+        $req = ReviewRequest::create(['business_id' => $this->bizId, 'rating' => 1]);
+        $locId = Location::firstOrCreate(['business_id' => $this->bizId, 'name' => 'Main'])->id;
+        Review::create(['business_id' => $this->bizId, 'location_id' => $locId, 'source' => ReviewSource::Google, 'google_review_id' => 'g_123', 'status' => ReviewStatus::Approved, 'rating' => 1]);
+        $preparer = new PrepareRemovalRequestAction;
+        $preparer->execute($this->bizId, $req->id, 'fake_reviews', 'This is a fake review.', 'g_123');
+
+        Livewire::test(LossAlerts::class, ['businessId' => $this->bizId])
+            ->assertSee('fake_reviews')
+            ->assertSee('prepared')
+            ->assertSee('Removal for Review #'.$req->id);
+    }
+
+    public function test_loss_alerts_confirm_removal_refuses_cross_tenant(): void
+    {
+        $otherBiz = self::provisionTenant(['name' => 'Other Biz']);
+        $this->assertEquals((string) $otherBiz->id, \DB::selectOne("select current_setting('app.business_id', true) as v")->v);
+        $req = ReviewRequest::create(['business_id' => $otherBiz->id, 'rating' => 1]);
+        $locId2 = Location::firstOrCreate(['business_id' => $otherBiz->id, 'name' => 'Main2'])->id;
+        Review::create(['business_id' => $otherBiz->id, 'location_id' => $locId2, 'source' => ReviewSource::Google, 'google_review_id' => 'g_123', 'status' => ReviewStatus::Approved, 'rating' => 1]);
+        $preparer = new PrepareRemovalRequestAction;
+        $removal = $preparer->execute($otherBiz->id, $req->id, 'fake_reviews', 'This is a fake review.', 'g_123');
+
+        $userId = DB::table('users')->insertGetId(['name' => 'Test', 'email' => Str::random(10).'@example.com', 'password' => 'secret']);
+        $user = User::find($userId);
+
+        Livewire::actingAs($user);
+        try {
+            Livewire::test(LossAlerts::class, ['businessId' => $this->bizId])
+                ->call('confirmRemoval', $removal->id);
+            $this->fail('confirmRemoval accepted another business\'s removal request.');
+        } catch (ModelNotFoundException $e) {
+            // the refusal: the id is not visible to this business, so there is nothing to confirm
+        }
+
+        Tenancy::set($otherBiz->id);
+        $removal->refresh();
+        $this->assertEquals('prepared', $removal->status);
+    }
+
+    public function test_loss_alerts_prepare_removal_does_not_render_a_database_error_to_the_tenant(): void
+    {
+        $biz = Business::find($this->bizId);
+        $user = User::find($biz->owner_user_id);
+
+        $locId = Location::firstOrCreate(['business_id' => $this->bizId, 'name' => 'Main'])->id;
+        Review::create(['business_id' => $this->bizId, 'location_id' => $locId, 'source' => ReviewSource::Google, 'google_review_id' => 'g_known_id', 'status' => ReviewStatus::Approved, 'rating' => 1]);
+
+        $this->expectException(QueryException::class);
+
+        Livewire::actingAs($user);
+        Livewire::test(LossAlerts::class, ['businessId' => $this->bizId])
+            ->call('prepareRemoval', 999999, 'tos_ground_example', 'Body', 'g_known_id');
     }
 
     public function test_reviews_qa_requests_route_renders(): void

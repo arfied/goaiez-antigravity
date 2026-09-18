@@ -1,7 +1,26 @@
 <div>
-    <x-surface.sample-state module="⭐⭐ **Every platform and tenant credential — API keys, OAuth tokens, gateway credentials, calendar connections — scoped by OWNERSHIP, revealable to its owner, logged on reveal.** ⭐⭐⭐ **Its purpose is ANTI-LOCKOUT: every credential is retrievable by the person who owns it, so nobody is ever held hostage by a lost key — including us.** ⛔⛔ **It is NOT the card vault** *(that is `X-120`, in the PCI CDE)* **and NOT the secure field** *(`P-198`, tenant operational data)*. **Three stores, three scopes, deliberately separate.**" screen="reveal" />
     <div class="reveal-container p-4">
-        <h3 class="text-lg font-bold">Credential Reveal Modal</h3>
-        <p class="text-gray-500">Reveal actions are immutably audited.</p>
+        <h2 class="text-lg font-bold text-ink">Reveal credential</h2>
+        <p class="text-ink-2">Every reveal is logged with who, when and which key.</p>
+        @if($error)
+            <p class="text-ink-2">{{ $error }}</p>
+        @endif
+        @if($revealedSecret !== null)
+            <p class="text-ink-2">Shown once, for this page only:</p>
+            <pre class="font-mono text-sm text-ink">{{ $revealedSecret }}</pre>
+        @endif
+        @if($credentials->isEmpty())
+            <p class="text-ink-2">No credentials to reveal.</p>
+        @else
+            <ul class="divide-y divide-rule">
+                @foreach($credentials as $c)
+                    <li class="py-2">
+                        <span class="font-mono text-sm">{{ $c->service_name }}</span>
+                        <span class="text-ink-2">({{ $c->key_hint }})</span>
+                        <x-ui.button size="default" variant="quiet" wire:click="reveal({{ $c->id }})">Reveal</x-ui.button>
+                    </li>
+                @endforeach
+            </ul>
+        @endif
     </div>
 </div>

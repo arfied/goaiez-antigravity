@@ -6,15 +6,17 @@ namespace App\Modules\X211\Ui;
 
 use App\Models\Conversation;
 use App\Models\Message;
-use App\Modules\X121\Models\Person;
+use App\Modules\X121\Actions\EntityReadAction;
 use App\Modules\X199\Domain\InvoiceReader;
 use App\Modules\X211\Actions\ArRecordReasonAction;
 use App\Modules\X211\Domain\ArEngine;
 use App\Modules\X211\Models\ArDunningAction;
 use App\Support\Tenancy;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Invoice thread'])]
 class InvoiceThreadBeside extends Component
 {
     use LabelsDunningAction;
@@ -86,10 +88,10 @@ class InvoiceThreadBeside extends Component
             $invoice->balance_cents = $invoice->total_cents - $invoice->paid_cents;
             $invoice->days_overdue = $invoice->due_date->isPast() ? (int) $invoice->due_date->diffInDays(today()) : 0;
             $lines = app(InvoiceReader::class)->linesFor($bizId, $invoice->id);
-            $customer = $invoice->customer_id ? Person::where('business_id', $bizId)->find($invoice->customer_id) : null;
+            $customer = $invoice->customer_id ? app(EntityReadAction::class)->handle('people', (int) $invoice->customer_id, $bizId) : null;
 
             if ($customer) {
-                $conversationIds = Conversation::where('business_id', $bizId)->where('person_id', $customer->id)->pluck('id');
+                $conversationIds = Conversation::where('business_id', $bizId)->where('person_id', $invoice->customer_id)->pluck('id');
                 $messages = Message::where('business_id', $bizId)
                     ->whereIn('conversation_id', $conversationIds)
                     ->orderByDesc('created_at')

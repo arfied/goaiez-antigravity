@@ -1,9 +1,8 @@
 <div>
-    <x-surface.sample-state module="commission injection" screen="commissions" />
     <div class="commissions-view p-4">
-        <h3 class="text-lg font-bold">Staff Commissions</h3>
+        <h2 class="text-lg font-bold text-ink">Commissions</h2>
         @if($commissions->isEmpty())
-            <p class="text-gray-500">No commission records.</p>
+            <p class="text-ink-2">No commission records.</p>
         @else
             <ul>
                 @foreach($commissions as $c)

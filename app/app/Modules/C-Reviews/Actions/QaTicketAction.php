@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Modules\CReviews\Actions;
 
-use App\Modules\CReviews\Events\CsatRequested;
 use App\Modules\CReviews\Models\QaSetting;
 use App\Modules\CReviews\Models\ReviewRequest;
 use App\Modules\X181\Actions\QaTicketCreateAction;
@@ -37,25 +36,6 @@ final class QaTicketAction
                 'rating' => $req->rating,
             ];
         });
-    }
-
-    public function resolve(int $businessId, int $ticketId): void
-    {
-        $ticket = app(QaTicketReadAction::class)->findById($businessId, $ticketId);
-
-        if ($ticket->status !== 'resolved') {
-            $ticket->update([
-                'status' => 'resolved',
-                'resolved_at' => now(),
-                'csat_requested_at' => now(),
-            ]);
-
-            CsatRequested::dispatch(
-                $businessId,
-                $ticket->id,
-                $ticket->person_id
-            );
-        }
     }
 
     public function receiveCsat(int $businessId, int $ticketId, int $score): void

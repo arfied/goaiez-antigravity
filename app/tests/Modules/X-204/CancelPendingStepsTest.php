@@ -121,8 +121,31 @@ class CancelPendingStepsTest extends TestCase
         $tenant = self::provisionTenant(['name' => 'No Person Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$tenant->id}'");
 
+        $decoyPerson = Person::create([
+            'business_id' => $tenant->id,
+            'phone' => '+15550008888',
+            'first_name' => 'Decoy',
+            'last_name' => 'Person',
+        ]);
+
+        $decoyRun = CampaignRun::create([
+            'business_id' => $tenant->id,
+            'person_id' => $decoyPerson->id,
+            'campaign_id' => 'decoy-campaign',
+            'current_step' => 1,
+            'is_active' => true,
+            'is_suppressed' => false,
+        ]);
+
+        $beforeCount = CampaignRun::where('business_id', $tenant->id)->count();
+
         $service = new ConsentService;
         $service->suppress($tenant->id, '+15550000000', 'sms', 'opt_out');
-        $this->assertTrue(true, 'Suppression with no person should not throw');
+
+        $afterCount = CampaignRun::where('business_id', $tenant->id)->count();
+        $this->assertSame($beforeCount, $afterCount, 'CampaignRun count should be unchanged');
+
+        $decoyRun->refresh();
+        $this->assertTrue($decoyRun->is_active, 'Decoy CampaignRun should remain untouched');
     }
 }

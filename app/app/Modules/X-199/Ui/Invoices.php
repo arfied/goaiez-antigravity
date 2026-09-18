@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X199\Ui;
 
-use App\Modules\X121\Models\Person;
+use App\Modules\X121\Actions\EntityReadAction;
 use App\Modules\X199\Domain\InvoiceEngine;
 use App\Modules\X199\Models\Invoice;
 use App\Modules\X199\Models\InvoiceLine;
@@ -57,9 +57,8 @@ class Invoices extends Component
             ->groupBy('invoice_id');
 
         foreach ($invoices as $invoice) {
-            $person = Person::where('business_id', Tenancy::idOrFail())
-                ->find($invoice->customer_id);
-            $invoice->customer_name = $person ? trim($person->first_name.' '.$person->last_name) : 'Unknown';
+            $person = app(EntityReadAction::class)->handle('people', (int) $invoice->customer_id, Tenancy::idOrFail());
+            $invoice->customer_name = $person ? trim(($person['first_name'] ?? '').' '.($person['last_name'] ?? '')) : 'Unknown';
             $invoice->lines = $lines->get($invoice->id, collect());
         }
 

@@ -15,3 +15,8 @@ Route::middleware(['web', 'auth', 'can:'.AdminAccess::GATE])->prefix('admin/x-12
     Route::get('/todays-recommendation-strip', TodaysRecommendationStrip::class)->name('x-124.todays-recommendation-strip.admin');
     Route::get('/assistantunsupported-log', AssistantunsupportedLog::class)->name('x-124.assistantunsupported-log.admin');
 });
+Route::middleware(['web', 'auth', 'tenant.role'])->prefix('app/x-124')->group(function () {
+    Route::get('/assistantunsupported-log', AssistantunsupportedLog::class)
+        ->name('x-124.assistantunsupported-log');
+    Route::get('/preview-card', PreviewCard::class)->name('x-124.preview-card');
+});

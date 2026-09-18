@@ -1,7 +1,17 @@
 <div>
-    <x-surface.sample-state module="**the structured resolver: prices, hours and services BYPASS vector search and do an exact lookup against `Fact`**" screen="reviewwhatifound_screen" />
     <div class="review-what-i-found p-4">
-        <h3 class="text-lg font-bold">Review What I Found</h3>
-        <p class="text-gray-500">No unconfirmed facts pending review.</p>
+        <h2 class="text-lg font-bold text-ink">What we learned</h2>
+        @if($facts->isEmpty())
+            <x-ui.empty-state heading="Nothing waiting on you.">When the assistant picks something up about your business that it is not sure of, it waits here for you to say yes or no.</x-ui.empty-state>
+        @else
+            <ul class="divide-y divide-rule">
+                @foreach($facts as $f)
+                    <li class="py-2" wire:key="fact-{{ $f->id }}">
+                        <span class="font-semibold">{{ $f->key }}</span>
+                        <span class="text-sm text-ink-2">{{ $f->value }}</span>
+                    </li>
+                @endforeach
+            </ul>
+        @endif
     </div>
 </div>

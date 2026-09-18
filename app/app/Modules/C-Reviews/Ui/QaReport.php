@@ -10,11 +10,14 @@ use App\Modules\CReviews\Models\ReviewReply;
 use App\Modules\CReviews\Models\ReviewRequest;
 use App\Modules\X181\Actions\QaTicketReadAction;
 use App\Modules\X181\Actions\QaTicketResolveAction;
+use App\Modules\X181\Domain\TicketAlreadyResolvedException;
 use App\Support\Tenancy;
 use Carbon\Carbon;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'QA report'])]
 class QaReport extends Component
 {
     #[Locked]
@@ -80,7 +83,14 @@ class QaReport extends Component
         Tenancy::set($this->businessId);
 
         $action = app(QaTicketResolveAction::class);
-        $action->handle($this->businessId, $ticketId, 'Resolved via QA Report drilldown');
+        try {
+            $action->handle($this->businessId, $ticketId, 'Resolved via QA Report drilldown');
+        } catch (TicketAlreadyResolvedException $e) {
+            $this->noticeType = 'warning';
+            $this->actionNotice = $e->getMessage();
+
+            return;
+        }
 
         $this->noticeType = 'success';
         $this->actionNotice = "✅ Ticket #{$ticketId} resolved.";

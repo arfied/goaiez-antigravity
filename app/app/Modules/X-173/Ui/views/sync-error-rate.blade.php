@@ -1,6 +1,5 @@
 <div>
-    <x-surface.sample-state module="two-way sync to Xero / QuickBooks / Sage" screen="sync_error_rate" />
-    <h1>Sync error rate</h1>
+    <h2 class="text-lg font-bold text-ink">Sync error rate</h2>
     <p>Every line the sync saw counts: a line that could not be placed is a conflict, never a silent gap.</p>
 
     <div wire:loading><x-ui.skeleton label="Reading the sync runs…" /></div>

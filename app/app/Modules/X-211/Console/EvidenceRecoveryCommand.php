@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Modules\X211\Console;
 
 use App\Models\User;
-use App\Modules\X121\Models\Person;
-use App\Modules\X198\Models\Payment;
+use App\Modules\X121\Actions\PersonLookupAction;
+use App\Modules\X198\Actions\PaymentReadAction;
 use App\Modules\X199\Domain\InvoiceEngine;
 use App\Modules\X211\Domain\ArEngine;
 use App\Modules\X211\Domain\NoResolutionAttemptException;
@@ -65,8 +65,7 @@ final class EvidenceRecoveryCommand extends Command
 
         Tenancy::set($businessId);
 
-        $person = Person::create([
-            'business_id' => $businessId,
+        $personId = app(PersonLookupAction::class)->create($businessId, [
             'first_name' => 'Recovery',
             'last_name' => 'Customer',
             'phone' => '+15555555555',
@@ -75,7 +74,7 @@ final class EvidenceRecoveryCommand extends Command
         $lines = [
             ['description' => 'Test Line', 'quantity' => 1, 'unit_price_cents' => 15000],
         ];
-        $invoiceRes = $invoiceEngine->issueInvoice($businessId, $person->id, $lines);
+        $invoiceRes = $invoiceEngine->issueInvoice($businessId, $personId, $lines);
         $invoice = $invoiceRes['invoice'];
 
         $invoice->update(['due_date' => now()->subDays(5)]);
@@ -83,7 +82,7 @@ final class EvidenceRecoveryCommand extends Command
         $arEngine->recordReason($businessId, $invoice->id, 'card_expired');
         $plan = $arEngine->offerPlan($businessId, $invoice->id, 3, 'monthly');
 
-        $invoice2Res = $invoiceEngine->issueInvoice($businessId, $person->id, $lines);
+        $invoice2Res = $invoiceEngine->issueInvoice($businessId, $personId, $lines);
         $invoice2 = $invoice2Res['invoice'];
 
         $refusedWithoutResolution = false;
@@ -95,7 +94,7 @@ final class EvidenceRecoveryCommand extends Command
 
         $data = [
             'business_id' => $businessId,
-            'payments_written' => Payment::where('business_id', $businessId)->count(),
+            'payments_written' => app(PaymentReadAction::class)->countForBusiness($businessId),
             'plan_id' => $plan->id,
             'installment_amount_cents' => $plan->installment_amount_cents,
             'reason' => 'card_expired',

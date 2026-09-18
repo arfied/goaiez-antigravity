@@ -6,7 +6,10 @@ namespace Tests\Modules\X201\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X201\Models\Dispute;
+use App\Modules\X201\Models\DisputeEvidence;
 use App\Modules\X201\Ui\DisputeCard;
+use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,7 +21,37 @@ class DisputeCardScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-201.dispute-card'))->assertOk();
+        $this->get(route('x-201.dispute-card'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
+            ->assertDontSee('this screen is planned in')
+            ->assertSee('No disputes.');
+
+        Tenancy::setUser($owner->id);
+        $dispute = Dispute::create([
+            'business_id' => $biz->id,
+            'invoice_id' => 4620,
+            'chargeback_amount_cents' => 54321,
+            'reason' => 'Distinctive reason 4620',
+            'status' => 'compiled',
+        ]);
+        DisputeEvidence::create([
+            'business_id' => $biz->id,
+            'dispute_id' => $dispute->id,
+            'evidence_type' => 'invoice',
+            'file_url_or_content' => 'Distinctive evidence 4620',
+        ]);
+        Tenancy::forget();
+
+        $this->get(route('x-201.dispute-card'))
+            ->assertOk()
+            ->assertSee('Invoice #4620')
+            ->assertSee('543.21')
+            ->assertSee('1 evidence items')
+            ->assertSee('Distinctive evidence 4620')
+            ->assertSee('Approve and seal')
+            ->assertDontSee('No disputes.');
 
         Livewire::test(DisputeCard::class)->assertOk();
     }

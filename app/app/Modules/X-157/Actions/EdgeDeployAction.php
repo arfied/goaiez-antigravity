@@ -7,13 +7,13 @@ namespace App\Modules\X157\Actions;
 use App\Models\Business;
 use App\Modules\X103\Actions\PageReadAction;
 use App\Modules\X103\Actions\PageVersionAction;
-use App\Modules\X108\Models\Appointment;
+use App\Modules\X108\Actions\AppointmentListAction;
 use App\Modules\X155\Actions\FormReadAction;
 use App\Modules\X157\Events\DeployCompleted;
 use App\Modules\X157\Events\DeployRolledBack;
 use App\Modules\X157\Models\Deployment;
 use App\Modules\X157\Models\EdgeZone;
-use App\Modules\X163\Models\PriceBookItem;
+use App\Modules\X163\Actions\QuotablePriceAction;
 use App\Modules\X176\Actions\InternalLinkRenderAction;
 use App\Modules\X176\Actions\LlmsTxtRenderAction;
 use App\Modules\X176\Actions\SchemaRenderAction;
@@ -112,36 +112,30 @@ final class EdgeDeployAction
             $business = Business::find($businessId);
             $address = is_array($business?->address) ? $business->address : null;
 
-            $appointments = Appointment::where('business_id', $businessId)
-                ->where('start_time', '>=', now())
-                ->orderBy('start_time', 'asc')
-                ->limit(20)
-                ->get();
+            $appointments = app(AppointmentListAction::class)->forBusiness($businessId);
             foreach ($appointments as $apt) {
-                if (trim((string) $apt->service_name) === '' || $apt->start_time === null || $apt->end_time === null) {
+                if (trim((string) $apt['service_name']) === '' || $apt['start_time'] === null || $apt['end_time'] === null) {
                     continue;
                 }
                 $events[] = [
-                    'name' => $apt->service_name,
-                    'startDate' => $apt->start_time->toIso8601String(),
-                    'endDate' => $apt->end_time->toIso8601String(),
+                    'name' => $apt['service_name'],
+                    'startDate' => $apt['start_time']->toIso8601String(),
+                    'endDate' => $apt['end_time']->toIso8601String(),
                 ];
             }
 
             $productOffers = [];
-            $priceBookItems = PriceBookItem::where('business_id', $businessId)
-                ->where('is_confirmed', true)
-                ->where('is_sample', false)
-                ->orderBy('id', 'asc')
-                ->limit(20)
-                ->get();
+            $priceBookItems = app(QuotablePriceAction::class)->options($businessId);
+            // The old code did ->limit(20), so we do array_slice
+            usort($priceBookItems, fn ($a, $b) => $a['id'] <=> $b['id']);
+            $priceBookItems = array_slice($priceBookItems, 0, 20);
             foreach ($priceBookItems as $item) {
-                if (trim((string) $item->service_name) === '') {
+                if (trim((string) $item['service_name']) === '') {
                     continue;
                 }
                 $productOffers[] = [
-                    'name' => $item->service_name,
-                    'price' => $item->price_cents / 100,
+                    'name' => $item['service_name'],
+                    'price' => $item['price_cents'] / 100,
                 ];
             }
 

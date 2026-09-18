@@ -6,8 +6,10 @@ namespace App\Modules\X188\Ui;
 
 use App\Modules\X188\Models\NumberAssignment;
 use App\Modules\X188\Models\NumberPool;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Your number'])]
 class YourNumberCard extends Component
 {
     public function render()

@@ -369,4 +369,32 @@ class ConfirmationScreenTest extends TestCase
         $this->assertEquals(12000, $item->fresh()->price_cents, 'T1 A1 a browser call rewrote a confirmed price');
         $this->assertTrue($refused, 'T1 A2 updatePrice answered a browser call');
     }
+
+    public function test_screen_renders_in_the_owner_shell_for_tenant(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+
+        $this->actingAs($owner);
+        $this->get(route('x-163.confirmation-screen'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
+            ->assertDontSee('this screen is planned in')
+            ->assertSee('Nothing left to confirm');
+
+        Tenancy::setUser($owner->id);
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Unique Service Name For Owner Shell Test',
+            'price_cents' => 15000,
+            'is_sample' => false,
+            'is_confirmed' => false,
+        ]);
+        Tenancy::forget();
+
+        $this->get(route('x-163.confirmation-screen'))
+            ->assertSee('Unique Service Name For Owner Shell Test')
+            ->assertDontSee('Nothing left to confirm');
+    }
 }

@@ -1,5 +1,5 @@
 <div>
-    <h1>The invoice, with its thread beside it</h1>
+    <h2 class="text-lg font-bold text-ink">Invoice thread</h2>
 
     @if($error)
         <x-ui.error-panel heading="We couldn't record that">
@@ -35,14 +35,14 @@
         @endif
 
         <div class="grid gap-4 md:grid-cols-2 mt-4">
-            <section class="border rounded p-4 shadow bg-white">
+            <section class="border rounded p-4 shadow bg-card">
                 <div class="flex justify-between items-center mb-2">
                     <span class="font-semibold">{{ $invoice->invoice_number }}</span>
                     <x-ui.status-pill :state="$invoice->days_overdue > 0 ? 'attention' : 'ok'" :label="$invoice->days_overdue > 0 ? $invoice->days_overdue.' days overdue' : 'not yet due'" />
                 </div>
                 <p class="text-sm text-ink-2">Due {{ $invoice->due_date->toDateString() }} · {{ number_format($invoice->balance_cents / 100, 2) }} owed of {{ number_format($invoice->total_cents / 100, 2) }}</p>
                 @if($customer)
-                    <p class="text-sm text-ink-2">{{ $customer->first_name }} {{ $customer->last_name }}</p>
+                    <p class="text-sm text-ink-2">{{ $customer['first_name'] ?? '' }} {{ $customer['last_name'] ?? '' }}</p>
                 @endif
                 <ul class="mt-3 space-y-1">
                     @foreach($lines as $line)
@@ -51,10 +51,10 @@
                 </ul>
             </section>
 
-            <section class="border rounded p-4 shadow bg-white">
-                <h2>The thread</h2>
+            <section class="border rounded p-4 shadow bg-card">
+                <h3 class="font-semibold text-ink">The thread</h3>
                 @if($messages->isEmpty())
-                    <x-ui.empty-state heading="No messages yet.">Nothing has been said with {{ $customer ? $customer->first_name : 'this customer' }} on any channel.</x-ui.empty-state>
+                    <x-ui.empty-state heading="No messages yet.">Nothing has been said with {{ $customer ? ($customer['first_name'] ?? '') : 'this customer' }} on any channel.</x-ui.empty-state>
                 @else
                     @if($threadTruncated)
                         <p class="text-sm text-ink-2">The 50 most recent messages are shown. Older messages in this conversation are not on this page.</p>
@@ -72,8 +72,8 @@
             </section>
         </div>
 
-        <section class="mt-4 border rounded p-4 shadow bg-white">
-            <h2>Why is it unpaid?</h2>
+        <section class="mt-4 border rounded p-4 shadow bg-card">
+            <h3 class="font-semibold text-ink">Why is it unpaid?</h3>
             <form wire:submit="recordReason({{ $invoice->id }})" class="flex flex-wrap items-center gap-2">
                 <select wire:model="reason.{{ $invoice->id }}" class="border rounded px-2 py-1">
                     <option value="">Pick a reason</option>

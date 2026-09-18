@@ -130,7 +130,7 @@ class X01Test extends TestCase
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $p = $this->createContact->handle($biz->id, 'Alice Bob', '+15125550188');
-        $c = Conversation::create(['business_id' => $biz->id, 'person_id' => $p->id, 'channel' => 'sms', 'status' => 'open']);
+        $c = Conversation::create(['business_id' => $biz->id, 'person_id' => $p['id'], 'channel' => 'sms', 'status' => 'open']);
 
         $read = $this->readConv->handle($biz->id, $c->id);
         $this->assertNotNull($read);
@@ -187,7 +187,7 @@ class X01Test extends TestCase
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $p = $this->createContact->handle($biz->id, 'Scored Lead', '+15125550166');
-        $score = $this->manager->scoreLead($biz->id, $p->id, 85);
+        $score = $this->manager->scoreLead($biz->id, $p['id'], 85);
 
         $this->assertEquals(85, $score->lead_rating);
         $this->assertEquals('A', $score->grade);
@@ -202,31 +202,31 @@ class X01Test extends TestCase
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $p = $this->createContact->handle($biz->id, 'Graded Lead', '+15125550155');
-        $score = $this->manager->scoreLead($biz->id, $p->id, 92);
+        $score = $this->manager->scoreLead($biz->id, $p['id'], 92);
 
         $this->assertGreaterThan(0.9, $score->confidence);
 
-        $atBand = $this->manager->scoreLead($biz->id, $p->id, 80);
+        $atBand = $this->manager->scoreLead($biz->id, $p['id'], 80);
         $this->assertSame('A', $atBand->grade, '80 is the inclusive floor of the A band');
 
-        $underBand = $this->manager->scoreLead($biz->id, $p->id, 79);
+        $underBand = $this->manager->scoreLead($biz->id, $p['id'], 79);
         $this->assertSame('B', $underBand->grade, '79 is one below the A band and grades B');
 
-        $floor = $this->manager->scoreLead($biz->id, $p->id, 0);
+        $floor = $this->manager->scoreLead($biz->id, $p['id'], 0);
         $this->assertSame('F', $floor->grade, 'a zero rating grades F, it does not default to A');
 
         $other = $this->createContact->handle($biz->id, 'Never Scored', '+15125550157');
         $before = LeadScore::where('business_id', $biz->id)->count();
 
         try {
-            $this->manager->scoreLead($biz->id, $other->id, 101);
+            $this->manager->scoreLead($biz->id, $other['id'], 101);
             $this->fail('a rating above 100 must be refused');
         } catch (LeadRatingOutOfRangeRefused $e) {
             $this->assertSame('LEAD_RATING_OUT_OF_RANGE', LeadRatingOutOfRangeRefused::REFUSAL_CODE);
         }
 
         $this->assertSame($before, LeadScore::where('business_id', $biz->id)->count(), 'a refused rating creates no row');
-        $this->assertSame(0, LeadScore::where('business_id', $biz->id)->where('person_id', $other->id)->count(), 'the refused person has no lead_score at all');
+        $this->assertSame(0, LeadScore::where('business_id', $biz->id)->where('person_id', $other['id'])->count(), 'the refused person has no lead_score at all');
         $this->assertSame(0, LeadScore::where('business_id', $biz->id)->where('lead_rating', 101)->count(), 'no row anywhere carries the refused rating');
     }
 
@@ -242,7 +242,7 @@ class X01Test extends TestCase
         DB::statement("SET app.business_id = '{$biz->id}'");
         $p = $this->createContact->handle($biz->id, 'Fence Lead', '+15125550156');
 
-        $score = $this->manager->scoreLead($biz->id, $p->id, 95);
+        $score = $this->manager->scoreLead($biz->id, $p['id'], 95);
 
         $this->assertSame('A', $score->grade, 'the score half of the split is a lead_score');
         Event::assertDispatched(LeadScored::class);
@@ -461,11 +461,11 @@ class X01Test extends TestCase
     {
         $admin = User::factory()->create();
         $biz = TestCase::provisionTenant(['name' => 'Ghost Biz']);
-        $customer = Customer::factory()->create(['business_id' => $biz->id, 'name' => 'Ghosty']);
+        $customer = Customer::factory()->create(['id' => mt_rand(1000000, 9000000), 'business_id' => $biz->id, 'name' => 'Ghosty']);
 
         // Create an unrelated Person that happens to share the Customer's ID.
         $person = Person::create([
-            'id' => $customer->id,
+            'id' => mt_rand(1000000, 9000000),
             'business_id' => $biz->id,
             'first_name' => 'Unrelated',
             'email' => 'unrelated@example.com',
@@ -499,7 +499,7 @@ class X01Test extends TestCase
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $p = $this->createContact->handle($biz->id, 'Alice Bob', '+15125550188');
-        $c = Conversation::create(['business_id' => $biz->id, 'person_id' => $p->id, 'channel' => 'sms', 'status' => 'open']);
+        $c = Conversation::create(['business_id' => $biz->id, 'person_id' => $p['id'], 'channel' => 'sms', 'status' => 'open']);
 
         $this->expectException(TakeoverNotLatchedRefused::class);
         $this->manager->replyWithTakeover($biz->id, $c->id, 'anything');
@@ -580,7 +580,7 @@ class X01Test extends TestCase
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $p = $this->createContact->handle($biz->id, 'Alice Bob', '+15125550188');
-        $c = Conversation::create(['business_id' => $biz->id, 'person_id' => $p->id, 'channel' => 'sms', 'status' => 'open']);
+        $c = Conversation::create(['business_id' => $biz->id, 'person_id' => $p['id'], 'channel' => 'sms', 'status' => 'open']);
 
         $this->takeover->handle($biz->id, $c->id, 42, 'Operator Alice');
 
@@ -725,5 +725,18 @@ class X01Test extends TestCase
             senderName: 'Webhook User',
             body: '   '
         );
+    }
+
+    public function test_global_search_is_proven_through_the_seam(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Search Biz']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->createContact->handle($biz->id, 'Search Person', '+15125550888', 'search@example.com');
+
+        $results = $this->search->handle($biz->id, '+15125550888');
+
+        $this->assertEquals(1, $results['results_count']);
+        $this->assertEquals('+15125550888', $results['contacts'][0]['phone']);
     }
 }

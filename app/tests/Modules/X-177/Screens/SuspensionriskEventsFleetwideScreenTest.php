@@ -5,8 +5,12 @@ declare(strict_types=1);
 namespace Tests\Modules\X177\Screens;
 
 use App\Enums\UserRole;
+use App\Models\Location;
 use App\Models\User;
+use App\Modules\X177\Models\GbpConnection;
+use App\Modules\X177\Models\GbpPost;
 use App\Modules\X177\Ui\SuspensionriskEventsFleetwide;
+use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,7 +22,25 @@ class SuspensionriskEventsFleetwideScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-177.suspensionrisk-events-fleetwide'))->assertOk();
+        $this->get(route('x-177.suspensionrisk-events-fleetwide'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
+            ->assertDontSee('this screen is planned in')
+            ->assertSee('No suspension risks on record');
+
+        Tenancy::setUser($owner->id);
+        $loc = Location::factory()->create(['business_id' => $biz->id]);
+        $conn = GbpConnection::create(['business_id' => $biz->id, 'location_id' => $loc->id, 'account_ref' => 'acct_distinctive_4503', 'external_label' => 'Distinctive Store 4503', 'profile_status' => 'active']);
+        GbpPost::create(['business_id' => $biz->id, 'connection_id' => $conn->id, 'content' => 'Distinctive risky post 4503', 'status' => 'rejected_risk']);
+        Tenancy::forget();
+
+        $this->get(route('x-177.suspensionrisk-events-fleetwide'))
+            ->assertOk()
+            ->assertSee('Distinctive Store 4503')
+            ->assertSee('Risk flagged')
+            ->assertSee('Distinctive risky post 4503')
+            ->assertDontSee('No suspension risks on record');
 
         Livewire::test(SuspensionriskEventsFleetwide::class)->assertOk();
     }

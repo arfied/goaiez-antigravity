@@ -42,6 +42,9 @@ final class ModuleScaffoldCommand extends Command
 
     protected $description = 'Generate app/Modules/<id>/manifest.php from the documented headers. Refuses to invent.';
 
+    /** §257.6 — removed by owner ruling 2026-09-17; their headers stay in the plan as history and are never scaffolded again. */
+    private const REMOVED = ['X-200', 'X-158', 'X-159', 'X-114', 'X-144', 'X-197', 'X-147', 'X-143', 'X-141', 'X-145', 'X-213', 'X-208', 'X-215', 'X-214', 'X-221', 'X-222', 'X-223'];
+
     /** Fields a manifest cannot be written without. */
     private const REQUIRED = ['module', 'intent', 'provides'];
 
@@ -65,6 +68,7 @@ final class ModuleScaffoldCommand extends Command
         }
 
         $written = 0;
+        $skipped = 0;
         $refused = [];
         $gaps = [];
 
@@ -73,6 +77,12 @@ final class ModuleScaffoldCommand extends Command
             //    module. It counted as a 120th module in three separate sweeps
             //    before anyone read it.
             if ($h['module'] === 'X-nnn') {
+                continue;
+            }
+
+            if (in_array($h['module'], self::REMOVED, true)) {
+                $skipped++;
+
                 continue;
             }
 
@@ -100,6 +110,7 @@ final class ModuleScaffoldCommand extends Command
         }
 
         $this->line('  modules scaffolded : '.$written);
+        $this->line('  ⛔ removed (§257.6)  : '.$skipped);
         $this->line('  ⛔ refused          : '.count($refused));
         foreach ($refused as $r) {
             $this->line("     · {$r}");

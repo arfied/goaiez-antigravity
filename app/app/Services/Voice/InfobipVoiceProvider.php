@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Services\Voice;
 
 use App\Contracts\VoiceProvider;
+use App\Enums\OutreachChannel;
+use App\Support\Identifier;
 use App\Support\PlatformCredentials;
 use App\Support\VendorLog;
 use Carbon\CarbonImmutable;
@@ -24,12 +26,12 @@ use Throwable;
  * vendor's inbound MMS payload (4256–4261, where **both** guessed shapes were
  * wrong). The three reads this driver makes, with their pages:
  *
- *   - **`GET /calls/1/calls/{callId}`** —
- *     https://www.infobip.com/docs/api/channels/voice/calls/call-legs/get-call
- *     Response: `id` · `endpoint` · `from` · `to` · `direction` · `state` ·
- *     `media` · `startTime` · `answerTime` · `endTime` · `parentCallId` ·
- *     `machineDetection` · `ringDuration` · `callsConfigurationId` · `platform`
- *     · `conferenceId` · `customData` · `dialogId` · `externalId`.
+ *   - **`GET /calls/1/calls/{callId}/history`** —
+ *     https://www.infobip.com/docs/api/channels/voice/calls/call-legs/get-call-history
+ *     "Get a single call history. Call history retention period is 5 days."
+ *     Response: `callId` · `endpoint` · `from` · `to` · `direction` · `state` ·
+ *     `startTime` · `answerTime` · `endTime` · `duration` · `ringDuration`.
+ *     The live-call endpoint 404s once a call has ended (measured 2026-09-17), and every event this driver acts on fires after the call ends.
  *   - **`GET /calls/1/recordings/calls/{callId}`** —
  *     https://www.infobip.com/docs/api/channels/voice/calls/files-and-recordings/get-call-recordings
  *     Response: `callId` · `endpoint` · `direction` · `files[]` · `status` ·
@@ -166,7 +168,7 @@ final class InfobipVoiceProvider implements VoiceProvider
 
     public function call(string $providerCallId): ?VoiceCallFacts
     {
-        $body = $this->get('/calls/1/calls/'.rawurlencode($providerCallId));
+        $body = $this->get('/calls/1/calls/'.rawurlencode($providerCallId).'/history');
 
         if ($body === null) {
             return null;
@@ -179,7 +181,16 @@ final class InfobipVoiceProvider implements VoiceProvider
             // ⚠️ **UNREADABLE IS NULL, AND NULL LEAVES THE ROW `in_progress`.**
             // A call with no numbers cannot be attributed to a tenant, and
             // guessing at either end is how a stranger gets texted.
-            VendorLog::failure('infobip_voice', 'GET', '/calls/1/calls', 'endpoints_unreadable');
+            VendorLog::failure('infobip_voice', 'GET', '/calls/1/calls/history', 'endpoints_unreadable');
+
+            return null;
+        }
+
+        $from = Identifier::normalise($from, OutreachChannel::Sms);
+        $to = Identifier::normalise($to, OutreachChannel::Sms);
+
+        if ($from === null || $to === null) {
+            VendorLog::failure('infobip_voice', 'GET', '/calls/1/calls/history', 'endpoints_unreadable');
 
             return null;
         }
@@ -188,7 +199,7 @@ final class InfobipVoiceProvider implements VoiceProvider
 
         if (is_string($direction) && mb_strtoupper(trim($direction)) === 'OUTBOUND') {
             // See the class docblock. Refused rather than recorded.
-            VendorLog::failure('infobip_voice', 'GET', '/calls/1/calls', 'outbound_leg_refused');
+            VendorLog::failure('infobip_voice', 'GET', '/calls/1/calls/history', 'outbound_leg_refused');
 
             return null;
         }

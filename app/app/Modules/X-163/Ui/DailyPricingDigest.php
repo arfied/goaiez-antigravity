@@ -8,10 +8,12 @@ use App\Enums\UserRole;
 use App\Modules\X163\Actions\PriceConfirmAction;
 use App\Modules\X163\Models\PriceBookItem;
 use App\Support\Tenancy;
-use Livewire\Component;
-
+use Livewire\Attributes\Layout;
 // (R245) the daily digest lists SAMPLE refusals flagged on the item (§140.1); a NO_FACT agent refusal about pricebook creates a price_cents=0, is_confirmed=false row so the owner sees the gap in the daily digest.
 // (R245) the daily pricing digest is a screen rendered on demand from the refusal flags; no scheduled send this wave
+use Livewire\Component;
+
+#[Layout('components.account.layout', ['heading' => 'Daily pricing digest'])]
 class DailyPricingDigest extends Component
 {
     public array $refusals = [];
@@ -65,6 +67,7 @@ class DailyPricingDigest extends Component
         $businessId = Tenancy::id();
 
         $items = PriceBookItem::where('business_id', $businessId)
+
             ->whereNotNull('refusal_flagged_at')
             ->where('is_confirmed', false)
             ->orderByDesc('refusal_count')

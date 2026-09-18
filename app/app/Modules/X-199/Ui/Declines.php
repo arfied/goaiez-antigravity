@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X199\Ui;
 
 use App\Modules\X198\Actions\PaymentLinkAction;
-use App\Modules\X198\Models\Payment;
-use App\Modules\X198\Models\PaymentLink;
+use App\Modules\X198\Actions\PaymentReadAction;
 use App\Modules\X199\Actions\DeferDeclineAction;
 use App\Modules\X199\Models\DeclineDeferral;
 use App\Support\Tenancy;
@@ -52,55 +51,41 @@ class Declines extends Component
         $this->showAll = ! $this->showAll;
     }
 
-    public function render()
+    public function render(PaymentReadAction $paymentReader)
     {
         abort_unless(auth()->check() && Tenancy::check(), 403);
 
-        $query = Payment::where('business_id', Tenancy::id())
-            ->where('status', 'failed')
-            ->orderByDesc('created_at')
-            ->orderByDesc('id');
-
+        $deferredPaymentIds = [];
         if (! $this->showAll) {
-            $query->where('created_at', '>=', now()->startOfWeek());
-
             $deferredPaymentIds = DeclineDeferral::where('business_id', Tenancy::id())
-                ->pluck('payment_id');
-            $query->whereNotIn('id', $deferredPaymentIds);
+                ->pluck('payment_id')
+                ->toArray();
         }
 
-        $declines = $query->get();
-        $declineIds = $declines->pluck('id');
+        $declines = $paymentReader->declined(Tenancy::id(), $this->showAll, $deferredPaymentIds);
+        $declineIds = array_column($declines, 'id');
 
-        $paymentLinks = PaymentLink::where('business_id', Tenancy::id())
-            ->whereIn('payment_id', $declineIds)
-            ->get()
-            ->keyBy('payment_id');
+        $paymentLinks = $paymentReader->links(Tenancy::id(), $declineIds);
 
         $recoveredCounts = 0;
-        foreach ($declines as $decline) {
-            $recovered = Payment::where('business_id', Tenancy::id())
-                ->where('status', 'captured')
-                ->where('payment_token', $decline->payment_token)
-                ->where('created_at', '>', $decline->created_at)
-                ->orderBy('created_at')
-                ->first();
+        foreach ($declines as &$decline) {
+            $recovered = $paymentReader->recovered(Tenancy::id(), (string) $decline['payment_token'], (string) $decline['created_at']);
 
-            $decline->recovered = $recovered;
+            $decline['recovered'] = $recovered;
             if ($recovered) {
                 $recoveredCounts++;
             }
 
-            $decline->deferred = DeclineDeferral::where('business_id', Tenancy::id())
-                ->where('payment_id', $decline->id)
+            $decline['deferred'] = DeclineDeferral::where('business_id', Tenancy::id())
+                ->where('payment_id', $decline['id'])
                 ->exists();
 
-            $decline->pay_link = $paymentLinks->get($decline->id);
+            $decline['pay_link'] = $paymentLinks[$decline['id']] ?? null;
         }
 
         return view('x-199::declines', [
             'declines' => $declines,
-            'declinesCount' => $declines->count(),
+            'declinesCount' => count($declines),
             'recoveredCount' => $recoveredCounts,
         ]);
     }

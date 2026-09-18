@@ -20,13 +20,13 @@
         <h3 class="text-lg font-medium mb-3">Define a service area</h3>
         <form wire:submit="define" class="space-y-4">
             <div>
-                <label class="block text-sm font-medium text-gray-700">Name</label>
-                <input type="text" wire:model="name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm">
+                <label class="block text-sm font-medium text-ink">Name</label>
+                <input type="text" wire:model="name" class="mt-1 block w-full rounded-md border-rule shadow-sm sm:text-sm">
                 @error('name') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700">Points (lat,lng per line)</label>
-                <textarea wire:model="pointsText" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm"></textarea>
+                <label class="block text-sm font-medium text-ink">Points (lat,lng per line)</label>
+                <textarea wire:model="pointsText" rows="4" class="mt-1 block w-full rounded-md border-rule shadow-sm sm:text-sm"></textarea>
                 @error('pointsText') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
             </div>
             <x-ui.submit target="define" busy="Saving...">
@@ -50,10 +50,10 @@
                                 <x-ui.status-pill state="attention" label="Inactive" class="ml-2" />
                             @endif
                         </div>
-                        <div class="text-sm text-gray-500 mt-1">
+                        <div class="text-sm text-ink-2 mt-1">
                             {{ count($polygon->coordinates) }} points
                         </div>
-                        <div class="text-xs text-gray-400 mt-1">
+                        <div class="text-xs text-ink-2 mt-1">
                             {{ $this->spans($polygon->coordinates) }}
                         </div>
                     </div>

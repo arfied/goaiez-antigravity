@@ -454,4 +454,34 @@ class PricebookScreenTest extends TestCase
         $component->set('inlinePrices.'.$row->id, 45.00);
         $this->assertArrayHasKey($row->id, $component->get('refusals'), 'T1 A3 typing a price cleared the flag before any confirm');
     }
+
+    public function test_screen_renders_in_the_owner_shell_for_tenant(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        $this->get(route('x-163.pricebook'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
+            ->assertDontSee('this screen is planned in')
+            ->assertSee('Add your first price');
+
+        Tenancy::set((int) $biz->id);
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Drain Camera Inspection',
+            'price_cents' => 18900,
+            'is_sample' => false,
+            'is_confirmed' => false,
+            'tax_rate_pct' => 0.0,
+        ]);
+        Tenancy::forget();
+
+        $this->get(route('x-163.pricebook'))
+            ->assertOk()
+            ->assertSee('Drain Camera Inspection')
+            ->assertDontSee('Add your first price');
+    }
 }

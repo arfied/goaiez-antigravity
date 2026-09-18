@@ -9,9 +9,11 @@ use App\Modules\X156\Models\IngestRejection;
 use App\Modules\X156\Models\IngestSource;
 use App\Support\Tenancy;
 use Carbon\Carbon;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Rows we could not take'])]
 class RejectedrowsListView extends Component
 {
     #[Locked]

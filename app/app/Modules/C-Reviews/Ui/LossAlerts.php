@@ -4,15 +4,22 @@ declare(strict_types=1);
 
 namespace App\Modules\CReviews\Ui;
 
+use App\Modules\CReviews\Actions\ConfirmRemovalRequestAction;
+use App\Modules\CReviews\Actions\PrepareRemovalRequestAction;
 use App\Modules\CReviews\Domain\PublicThreshold;
+use App\Modules\CReviews\Domain\UnauthenticatedConfirmationException;
+use App\Modules\CReviews\Models\ReviewRemovalRequest;
 use App\Modules\CReviews\Models\ReviewRequest;
 use App\Modules\X153\Actions\AlertSendAction;
 use App\Modules\X181\Actions\QaTicketReadAction;
 use App\Modules\X181\Actions\QaTicketResolveAction;
+use App\Modules\X181\Domain\TicketAlreadyResolvedException;
 use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Loss alerts'])]
 class LossAlerts extends Component
 {
     #[Locked]
@@ -27,6 +34,14 @@ class LossAlerts extends Component
     public ?int $resolvingTicketId = null;
 
     public string $resolutionNotes = '';
+
+    public ?int $preparingReviewId = null;
+
+    public string $prepareTosGround = '';
+
+    public string $prepareBody = '';
+
+    public string $prepareGoogleId = '';
 
     public function mount(): void
     {
@@ -45,6 +60,10 @@ class LossAlerts extends Component
         $this->isSample = ! $this->isSample;
         $this->resolvingTicketId = null;
         $this->resolutionNotes = '';
+        $this->preparingReviewId = null;
+        $this->prepareTosGround = '';
+        $this->prepareBody = '';
+        $this->prepareGoogleId = '';
         $this->actionNotice = null;
     }
 
@@ -63,48 +82,114 @@ class LossAlerts extends Component
     public function resolveAndAlert(int $ticketId, string $notes): void
     {
         if ($this->isSample) {
+            $this->noticeType = 'warning';
+            $this->actionNotice = 'Sample mode, actions are off. Exit Sample to act on your own rows.';
+
             return;
         }
         Tenancy::set($this->businessId);
+        $action = app(QaTicketResolveAction::class);
         try {
-            $action = app(QaTicketResolveAction::class);
             $action->handle($this->businessId, $ticketId, $notes);
-
-            $alertAction = app(AlertSendAction::class);
-            $alertAction->handle(
-                businessId: $this->businessId,
-                title: 'Loss Alert: Ticket Resolved',
-                body: "Ticket #{$ticketId} was resolved. Notes: {$notes}",
-                alertClass: 'account'
-            );
-
-            $this->noticeType = 'success';
-            $this->actionNotice = '✅ Ticket resolved and team alerted.';
+        } catch (TicketAlreadyResolvedException $e) {
+            $this->noticeType = 'warning';
+            $this->actionNotice = $e->getMessage().' No alert was sent.';
             $this->resolvingTicketId = null;
             $this->resolutionNotes = '';
-        } catch (\Exception $e) {
-            $this->noticeType = 'error';
-            $this->actionNotice = '🚫 Error: '.$e->getMessage();
+
+            return;
         }
+
+        $alertAction = app(AlertSendAction::class);
+        $alertAction->handle(
+            businessId: $this->businessId,
+            title: 'Loss Alert: Ticket Resolved',
+            body: "Ticket #{$ticketId} was resolved. Notes: {$notes}",
+            alertClass: 'account'
+        );
+
+        $this->noticeType = 'success';
+        $this->actionNotice = '✅ Ticket resolved and team alerted.';
+        $this->resolvingTicketId = null;
+        $this->resolutionNotes = '';
     }
 
     public function alertTeam(int $reviewRequestId): void
     {
         if ($this->isSample) {
+            $this->noticeType = 'warning';
+            $this->actionNotice = 'Sample mode, actions are off. Exit Sample to act on your own rows.';
+
+            return;
+        }
+        Tenancy::set($this->businessId);
+        $alertAction = app(AlertSendAction::class);
+        $alertAction->handle(
+            businessId: $this->businessId,
+            title: 'Loss Alert: High Risk Customer',
+            body: "Review Request #{$reviewRequestId} indicates a high risk of churn.",
+            alertClass: 'account'
+        );
+        $this->noticeType = 'success';
+        $this->actionNotice = '✅ Team alerted.';
+    }
+
+    public function startPrepare(int $id): void
+    {
+        $this->preparingReviewId = $id;
+        $this->prepareTosGround = '';
+        $this->prepareBody = '';
+        $this->prepareGoogleId = '';
+    }
+
+    public function cancelPrepare(): void
+    {
+        $this->preparingReviewId = null;
+    }
+
+    public function prepareRemoval(int $reviewRequestId, string $tosGround, string $preparedBody, string $googleReviewId): void
+    {
+        if ($this->isSample) {
+            $this->noticeType = 'warning';
+            $this->actionNotice = 'Sample mode, actions are off. Exit Sample to act on your own rows.';
+
             return;
         }
         Tenancy::set($this->businessId);
         try {
-            $alertAction = app(AlertSendAction::class);
-            $alertAction->handle(
-                businessId: $this->businessId,
-                title: 'Loss Alert: High Risk Customer',
-                body: "Review Request #{$reviewRequestId} indicates a high risk of churn.",
-                alertClass: 'account'
-            );
+            $action = app(PrepareRemovalRequestAction::class);
+            $action->execute($this->businessId, $reviewRequestId, $tosGround, $preparedBody, $googleReviewId);
             $this->noticeType = 'success';
-            $this->actionNotice = '✅ Team alerted.';
-        } catch (\Exception $e) {
+            $this->actionNotice = '✅ Removal request prepared.';
+            $this->preparingReviewId = null;
+        } catch (\InvalidArgumentException $e) {
+            $this->noticeType = 'error';
+            $this->actionNotice = '🚫 Error: '.$e->getMessage();
+        }
+    }
+
+    public function confirmRemoval(int $removalId): void
+    {
+        if ($this->isSample) {
+            $this->noticeType = 'warning';
+            $this->actionNotice = 'Sample mode, actions are off. Exit Sample to act on your own rows.';
+
+            return;
+        }
+        Tenancy::set($this->businessId);
+
+        try {
+            $userId = auth()->id();
+            if ($userId === null) {
+                throw new UnauthenticatedConfirmationException('Unauthenticated confirmation refused.');
+            }
+
+            $removal = ReviewRemovalRequest::where('business_id', $this->businessId)->findOrFail($removalId);
+            $action = app(ConfirmRemovalRequestAction::class);
+            $action->execute($removal, $userId);
+            $this->noticeType = 'success';
+            $this->actionNotice = '✅ Removal request confirmed.';
+        } catch (\InvalidArgumentException|UnauthenticatedConfirmationException $e) {
             $this->noticeType = 'error';
             $this->actionNotice = '🚫 Error: '.$e->getMessage();
         }
@@ -172,10 +257,12 @@ class LossAlerts extends Component
         }
 
         $isEmpty = ! $this->isSample && $alerts->isEmpty();
+        $removalRequests = $this->isSample ? collect() : ReviewRemovalRequest::where('business_id', $this->businessId)->get();
 
         return view('c-reviews::loss-alerts', [
             'alerts' => $alerts,
             'isEmpty' => $isEmpty,
+            'removalRequests' => $removalRequests,
         ]);
     }
 }

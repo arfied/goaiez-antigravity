@@ -42,7 +42,6 @@ return [
     ],
     'consumes' => [
         'send.requested',
-        'call.requested',
         'number.needed',
         'consent.decided',
     ],

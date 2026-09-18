@@ -4,7 +4,17 @@ declare(strict_types=1);
 
 namespace Tests\Modules\CReviews;
 
-use App\Models\ConsentRecord;
+use App\Enums\CapturedBy;
+use App\Enums\CaptureSurface;
+use App\Enums\ConsentType;
+use App\Enums\CreditKind;
+use App\Enums\CreditProduct;
+use App\Enums\OutreachChannel;
+use App\Enums\ReviewSource;
+use App\Enums\ReviewStatus;
+use App\Models\Customer;
+use App\Models\Location;
+use App\Models\Review;
 use App\Modules\CReviews\Actions\ConfirmRemovalRequestAction;
 use App\Modules\CReviews\Actions\PrepareRemovalRequestAction;
 use App\Modules\CReviews\Actions\QaTicketAction;
@@ -12,26 +22,40 @@ use App\Modules\CReviews\Actions\ReviewerContactAction;
 use App\Modules\CReviews\Actions\ReviewReplyAction;
 use App\Modules\CReviews\Actions\ReviewRequestAction;
 use App\Modules\CReviews\Actions\ReviewSyncAction;
+use App\Modules\CReviews\Domain\PublicThreshold;
 use App\Modules\CReviews\Domain\RemovalFilingGate;
+use App\Modules\CReviews\Domain\RemovalNotAddressableException;
 use App\Modules\CReviews\Domain\RemovalNotConfirmedException;
 use App\Modules\CReviews\Events\CsatRequested;
 use App\Modules\CReviews\Events\FirstWin;
 use App\Modules\CReviews\Events\ReplyPublished;
 use App\Modules\CReviews\Events\ReviewReceived;
 use App\Modules\CReviews\Events\ReviewRequested;
+use App\Modules\CReviews\Models\CsatAnswer;
 use App\Modules\CReviews\Models\QaSetting;
 use App\Modules\CReviews\Models\ReviewReply;
 use App\Modules\CReviews\Models\ReviewRequest;
 use App\Modules\CReviews\Ui\LossAlerts;
 use App\Modules\CReviews\Ui\ReviewsQaRequests;
+use App\Modules\CSms\Events\MessageReceived;
 use App\Modules\CSms\Events\SendRequested;
 use App\Modules\X121\Models\Person;
 use App\Modules\X171\Events\JobCompleted;
+use App\Modules\X181\Actions\QaTicketCreateAction;
+use App\Modules\X181\Actions\QaTicketResolveAction;
+use App\Modules\X181\Domain\TicketAlreadyResolvedException;
 use App\Modules\X181\Models\QaTicket;
+use App\Services\Billing\CreditLedger;
+use App\Services\Config\DefaultsRegistry;
+use App\Services\Consent\ConsentCapture;
+use App\Services\Consent\ConsentService;
+use App\Support\HashedIp;
+use App\Support\Tenancy;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -158,30 +182,21 @@ class CReviewsTest extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'CSAT Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $person = Person::create(['business_id' => $biz->id, 'first_name' => 'John', 'last_name' => 'Doe']);
+        $person = Person::create(['business_id' => $biz->id, 'first_name' => 'John', 'last_name' => 'Doe', 'phone' => '+15125550413']);
+        $ticket = app(QaTicketCreateAction::class)->handle($biz->id, $person->id, 'Triage');
 
-        $ticket = QaTicket::create([
-            'business_id' => $biz->id,
-            'person_id' => $person->id,
-            'subject' => 'Triage',
-            'description' => 'Test',
-            'status' => 'open',
-            'arrived_at' => now(),
-            'sla_due_at' => now()->addHours(48),
-        ]);
+        Event::fake([SendRequested::class, CsatRequested::class]);
 
-        Event::fake([CsatRequested::class]);
+        app(QaTicketResolveAction::class)->handle($biz->id, $ticket->id, 'fixed');
+        $this->assertThrows(
+            fn () => app(QaTicketResolveAction::class)->handle($biz->id, $ticket->id, 'fixed twice'),
+            TicketAlreadyResolvedException::class,
+            'Ticket #'.$ticket->id.' is already resolved; nothing was saved.'
+        );
 
-        $action = new QaTicketAction;
-        $action->resolve($biz->id, $ticket->id);
-
-        Event::assertDispatched(CsatRequested::class, function ($e) use ($biz, $ticket) {
-            return $e->businessId === $biz->id && $e->ticketId === $ticket->id && $e->personId === $ticket->person_id;
-        });
-
-        $action->resolve($biz->id, $ticket->id);
-
+        Event::assertDispatched(SendRequested::class, 1);
         Event::assertDispatched(CsatRequested::class, 1);
+        $this->assertEquals('fixed', QaTicket::find($ticket->id)->resolution_notes);
     }
 
     /**
@@ -240,10 +255,10 @@ class CReviewsTest extends TestCase
 
         $ticketId = QaTicket::where('review_request_id', $r->id)->first()->id;
 
-        $this->ticketAction->resolve($biz->id, $ticketId);
+        app(QaTicketResolveAction::class)->handle($biz->id, $ticketId, 'fixed');
 
         $ticket = QaTicket::find($ticketId);
-        $this->assertNotNull($ticket->csat_requested_at);
+        $this->assertNull($ticket->csat_requested_at, 'the ticket has no person, so no CSAT was asked');
         $this->assertEquals('resolved', $ticket->status);
 
         $this->ticketAction->receiveCsat($biz->id, $ticketId, 1);
@@ -258,7 +273,7 @@ class CReviewsTest extends TestCase
         $this->ticketAction->handle($biz->id, $r2->id);
         $ticketId2 = QaTicket::where('review_request_id', $r2->id)->first()->id;
 
-        $this->ticketAction->resolve($biz->id, $ticketId2);
+        app(QaTicketResolveAction::class)->handle($biz->id, $ticketId2, 'fixed');
         $this->ticketAction->receiveCsat($biz->id, $ticketId2, 5);
         $ticket2 = QaTicket::find($ticketId2);
 
@@ -511,8 +526,8 @@ class CReviewsTest extends TestCase
      * [G1-68] assertion placeholder
      * ⛔ REFUSED: surveyed Actions, Database, Events, Listeners, Models, Ui and found no Google review removal preparation or human confirmation logic.
      * ⭐ DISCHARGED 2026-09-10 (run 136). The automation prepares the request but filing requires a human confirmation.
-     *    Gate: app/app/Modules/C-Reviews/Domain/RemovalFilingGate.php:11
-     *    Test: app/tests/Modules/C-Reviews/CReviewsTest.php:512
+     *    Gate: app/app/Modules/C-Reviews/Domain/RemovalFilingGate.php:14
+     *    Test: app/tests/Modules/C-Reviews/CReviewsTest.php:517
      */
     public function test_g1_68_assertion(): void
     {
@@ -525,6 +540,8 @@ class CReviewsTest extends TestCase
             'rating' => 1,
         ]);
 
+        $locId = Location::firstOrCreate(['business_id' => $biz->id, 'name' => 'Main'])->id;
+        Review::create(['business_id' => $biz->id, 'location_id' => $locId, 'source' => ReviewSource::Google, 'google_review_id' => 'google_rev_id', 'status' => ReviewStatus::Approved, 'rating' => 1]);
         $preparer = new PrepareRemovalRequestAction;
         $removal = $preparer->execute($biz->id, $req->id, 'tos_ground_example', 'Prepared Body', 'google_rev_id');
 
@@ -547,6 +564,8 @@ class CReviewsTest extends TestCase
             'rating' => 1,
         ]);
 
+        $locId = Location::firstOrCreate(['business_id' => $biz->id, 'name' => 'Main'])->id;
+        Review::create(['business_id' => $biz->id, 'location_id' => $locId, 'source' => ReviewSource::Google, 'google_review_id' => 'google_rev_id', 'status' => ReviewStatus::Approved, 'rating' => 1]);
         $preparer = new PrepareRemovalRequestAction;
         $removal = $preparer->execute($biz->id, $req->id, 'tos_ground_example', 'Prepared Body', 'google_rev_id');
 
@@ -571,10 +590,12 @@ class CReviewsTest extends TestCase
 
         $userId = \DB::table('users')->insertGetId([
             'name' => 'Test User',
-            'email' => 'testuser@example.com',
+            'email' => Str::random(10).'@example.com',
             'password' => 'secret',
         ]);
 
+        $locId = Location::firstOrCreate(['business_id' => $biz->id, 'name' => 'Main'])->id;
+        Review::create(['business_id' => $biz->id, 'location_id' => $locId, 'source' => ReviewSource::Google, 'google_review_id' => 'google_rev_id', 'status' => ReviewStatus::Approved, 'rating' => 1]);
         $preparer = new PrepareRemovalRequestAction;
         $removal = $preparer->execute($biz->id, $req->id, 'tos_ground_example', 'Prepared Body', 'google_rev_id');
 
@@ -589,7 +610,87 @@ class CReviewsTest extends TestCase
         $gate->assertFilable($removal);
     }
 
-    public function test_g1_68_preparer_cannot_self_confirm(): void
+    public function test_g1_68_gate_refuses_no_google_review_id(): void
+    {
+        $biz = self::provisionTenant(['name' => 'G168 Test Biz']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $req = ReviewRequest::create([
+            'business_id' => $biz->id,
+            'platform' => 'google',
+            'rating' => 1,
+        ]);
+
+        $locId = Location::firstOrCreate(['business_id' => $biz->id, 'name' => 'Main'])->id;
+        Review::create(['business_id' => $biz->id, 'location_id' => $locId, 'source' => ReviewSource::Google, 'google_review_id' => 'google_rev_id', 'status' => ReviewStatus::Approved, 'rating' => 1]);
+        $preparer = new PrepareRemovalRequestAction;
+        $removal = $preparer->execute($biz->id, $req->id, 'tos_ground_example', 'Prepared Body', null);
+
+        $gate = new RemovalFilingGate;
+
+        $this->expectException(RemovalNotAddressableException::class);
+        $this->expectExceptionMessage('This removal request lacks a Google review ID.');
+
+        $gate->assertFilable($removal);
+    }
+
+    public function test_g1_68_gate_refuses_unconfirmed_status_but_has_timestamps(): void
+    {
+        $biz = self::provisionTenant(['name' => 'G168 Test Biz']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $req = ReviewRequest::create([
+            'business_id' => $biz->id,
+            'platform' => 'google',
+            'rating' => 1,
+        ]);
+
+        $userId = \DB::table('users')->insertGetId([
+            'name' => 'Test User',
+            'email' => Str::random(10).'@example.com',
+            'password' => 'secret',
+        ]);
+
+        $locId = Location::firstOrCreate(['business_id' => $biz->id, 'name' => 'Main'])->id;
+        Review::create(['business_id' => $biz->id, 'location_id' => $locId, 'source' => ReviewSource::Google, 'google_review_id' => 'google_rev_id', 'status' => ReviewStatus::Approved, 'rating' => 1]);
+        $preparer = new PrepareRemovalRequestAction;
+        $removal = $preparer->execute($biz->id, $req->id, 'tos_ground_example', 'Prepared Body', 'google_rev_id');
+
+        $confirmer = new ConfirmRemovalRequestAction;
+        $confirmer->execute($removal, $userId);
+
+        $removal->status = 'prepared';
+
+        $gate = new RemovalFilingGate;
+
+        $this->expectException(RemovalNotAddressableException::class);
+        $this->expectExceptionMessage("This removal request is in status 'prepared', expected 'confirmed'.");
+
+        $gate->assertFilable($removal);
+    }
+
+    public function test_g1_68_a_prepared_request_starts_unconfirmed(): void
+    {
+        $biz = self::provisionTenant(['name' => 'G168 Test Biz']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $req = ReviewRequest::create([
+            'business_id' => $biz->id,
+            'platform' => 'google',
+            'rating' => 1,
+        ]);
+
+        $locId = Location::firstOrCreate(['business_id' => $biz->id, 'name' => 'Main'])->id;
+        Review::create(['business_id' => $biz->id, 'location_id' => $locId, 'source' => ReviewSource::Google, 'google_review_id' => 'google_rev_id', 'status' => ReviewStatus::Approved, 'rating' => 1]);
+        $preparer = new PrepareRemovalRequestAction;
+        $removal = $preparer->execute($biz->id, $req->id, 'tos_ground_example', 'Prepared Body', 'google_rev_id');
+
+        $this->assertNull($removal->confirmed_by_user_id);
+        $this->assertNull($removal->confirmed_at);
+        $this->assertEquals('prepared', $removal->status);
+    }
+
+    public function test_g1_68_prepare_refuses_an_unknown_google_review_id(): void
     {
         $biz = self::provisionTenant(['name' => 'G168 Test Biz']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
@@ -601,11 +702,35 @@ class CReviewsTest extends TestCase
         ]);
 
         $preparer = new PrepareRemovalRequestAction;
-        $removal = $preparer->execute($biz->id, $req->id, 'tos_ground_example', 'Prepared Body', 'google_rev_id');
 
-        $this->assertNull($removal->confirmed_by_user_id);
-        $this->assertNull($removal->confirmed_at);
-        $this->assertEquals('prepared', $removal->status);
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Google review ID does not belong to this business.');
+
+        $preparer->execute($biz->id, $req->id, 'tos_ground_example', 'Prepared Body', 'g_does_not_exist');
+    }
+
+    public function test_g1_68_prepare_refuses_another_businesss_google_review_id(): void
+    {
+        $biz = self::provisionTenant(['name' => 'G168 Test Biz']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $req = ReviewRequest::create([
+            'business_id' => $biz->id,
+            'platform' => 'google',
+            'rating' => 1,
+        ]);
+
+        $otherBiz = self::provisionTenant(['name' => 'Other Biz']);
+        $this->assertEquals((string) $otherBiz->id, \DB::selectOne("select current_setting('app.business_id', true) as v")->v);
+        $locId = Location::firstOrCreate(['business_id' => $otherBiz->id, 'name' => 'Main2'])->id;
+        Review::create(['business_id' => $otherBiz->id, 'location_id' => $locId, 'source' => ReviewSource::Google, 'google_review_id' => 'g_other', 'status' => ReviewStatus::Approved, 'rating' => 1]);
+
+        $preparer = new PrepareRemovalRequestAction;
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Google review ID does not belong to this business.');
+
+        $preparer->execute($biz->id, $req->id, 'tos_ground_example', 'Prepared Body', 'g_other');
     }
 
     /**
@@ -613,10 +738,143 @@ class CReviewsTest extends TestCase
      * - app/app/Modules/C-Reviews/Database/migrations/2026_08_30_000022_create_c_reviews_tables.php:19-29 (no location column)
      * - app/app/Modules/C-Reviews/Listeners/AskForReviewOnJobCompleted.php:14-23 (no location passed)
      * - app/app/Models/Business.php:191-193 (Business hasMany Location, so it cannot resolve to one)
+     *
+     * 2026-09-10: P-110 SUPERSEDES the run-134 location_id item (JOURNAL.md:822).
+     * The replacement law is business-scoped:
+     * - app/app/Modules/C-Reviews/Domain/PublicThreshold.php:14 (for() method)
+     * - app/app/Modules/C-Reviews/Database/migrations/2026_08_30_000022_create_c_reviews_tables.php:46 (min_public_stars)
      */
-    public function test_p110_location_gap(): void
+    public function test_p110_threshold_is_business_scoped_not_per_location(): void
     {
-        $this->fail('NOT BUILT: P-110 — review_requests carries no location, so C-Reviews cannot apply the per-location invite_threshold that ReviewGating and DestinationSettings enforce.');
+        $biz1 = TestCase::provisionTenant(['name' => 'Review Biz 1', 'currency' => 'USD']);
+        $biz2 = TestCase::provisionTenant(['name' => 'Review Biz 2', 'currency' => 'USD']);
+        $biz3 = TestCase::provisionTenant(['name' => 'Review Biz 3', 'currency' => 'USD']);
+
+        \DB::statement("SET app.business_id = '{$biz1->id}'");
+        QaSetting::updateOrCreate(
+            ['business_id' => $biz1->id],
+            ['min_public_stars' => 3]
+        );
+
+        \DB::statement("SET app.business_id = '{$biz2->id}'");
+        QaSetting::updateOrCreate(
+            ['business_id' => $biz2->id],
+            ['min_public_stars' => 5]
+        );
+
+        $threshold = app(PublicThreshold::class);
+
+        \DB::statement("SET app.business_id = '{$biz1->id}'");
+        $this->assertSame(3, $threshold->for($biz1->id));
+
+        \DB::statement("SET app.business_id = '{$biz2->id}'");
+        $this->assertSame(5, $threshold->for($biz2->id));
+
+        \DB::statement("SET app.business_id = '{$biz3->id}'");
+        $this->assertSame(PublicThreshold::FALLBACK, $threshold->for($biz3->id));
+    }
+
+    public function test_p110_the_module_reaches_no_per_location_gating_surface(): void
+    {
+        $dir = app_path('Modules/C-Reviews');
+        $this->assertDirectoryExists($dir);
+
+        exec("grep -rnE 'ReviewGating|DestinationSettings|invite_threshold' ".escapeshellarg($dir).' 2>/dev/null', $out, $code);
+
+        $this->assertContains($code, [0, 1], "grep command failed to run correctly (exit code: {$code})");
+
+        $this->assertSame([], $out, "Module contains per-location gating references:\n".implode("\n", $out));
+    }
+
+    public function test_p110_fix_then_ask_has_no_production_csat_source(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Triage Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $person = Person::create(['business_id' => $biz->id, 'first_name' => 'John', 'phone' => '+15125559999']);
+        $ticket = app(QaTicketCreateAction::class)->handle($biz->id, $person->id, 'Triage');
+        app(QaTicketResolveAction::class)->handle($biz->id, $ticket->id, 'fixed');
+
+        CsatAnswer::create([
+            'business_id' => $biz->id,
+            'person_id' => $person->id,
+            'qa_ticket_id' => $ticket->id,
+            'score' => 2,
+            'body' => '2',
+            'is_valid' => true,
+            'received_at' => now(),
+        ]);
+
+        Event::fake([SendRequested::class]);
+
+        Event::dispatch(new JobCompleted($biz->id, 100, 200, $person->id, now()->subDays(61)));
+
+        $req = ReviewRequest::where('business_id', $biz->id)->where('customer_id', $person->id)->latest('id')->first();
+        $this->assertEquals('triaged_internal', $req->status);
+
+        $newTicket = QaTicket::where('business_id', $biz->id)->where('review_request_id', $req->id)->first();
+        $this->assertNotNull($newTicket);
+
+        Event::assertNotDispatched(SendRequested::class);
+    }
+
+    public function test_p110_a_four_or_five_csat_answer_lets_the_ask_go_out(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Go Out Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $person = Person::create(['business_id' => $biz->id, 'first_name' => 'Jane', 'phone' => '+15125559998']);
+        $ticket = app(QaTicketCreateAction::class)->handle($biz->id, $person->id, 'Triage');
+        app(QaTicketResolveAction::class)->handle($biz->id, $ticket->id, 'fixed');
+
+        CsatAnswer::create([
+            'business_id' => $biz->id,
+            'person_id' => $person->id,
+            'qa_ticket_id' => $ticket->id,
+            'score' => 5,
+            'body' => '5',
+            'is_valid' => true,
+            'received_at' => now(),
+        ]);
+
+        Event::fake([SendRequested::class]);
+
+        Event::dispatch(new JobCompleted($biz->id, 100, 200, $person->id, now()->subDays(61)));
+
+        $req = ReviewRequest::where('business_id', $biz->id)->where('customer_id', $person->id)->latest('id')->first();
+        $this->assertEquals('sent', $req->status);
+
+        Event::assertDispatched(SendRequested::class, 1);
+    }
+
+    public function test_p110_a_fresh_job_is_never_triaged(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Fresh Job Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $person = Person::create(['business_id' => $biz->id, 'first_name' => 'Jake', 'phone' => '+15125559997']);
+        $ticket = app(QaTicketCreateAction::class)->handle($biz->id, $person->id, 'Triage');
+        app(QaTicketResolveAction::class)->handle($biz->id, $ticket->id, 'fixed');
+
+        CsatAnswer::create([
+            'business_id' => $biz->id,
+            'person_id' => $person->id,
+            'qa_ticket_id' => $ticket->id,
+            'score' => 2,
+            'body' => '2',
+            'is_valid' => true,
+            'received_at' => now(),
+        ]);
+
+        Event::fake([SendRequested::class]);
+
+        Event::dispatch(new JobCompleted($biz->id, 100, 200, $person->id, now()));
+
+        $req = ReviewRequest::where('business_id', $biz->id)->where('customer_id', $person->id)->latest('id')->first();
+        $this->assertEquals('sent', $req->status);
+
+        $newTicket = QaTicket::where('business_id', $biz->id)->where('review_request_id', $req->id)->first();
+        $this->assertNull($newTicket);
     }
 
     public function test_job_completed_creates_review_request(): void
@@ -749,7 +1007,43 @@ class CReviewsTest extends TestCase
 
     public function test_g20_04_reviewer_name_signal_allowed_with_consent(): void
     {
+        \loadEveryRequiredRegister();
+
         $biz = self::provisionTenant(['name' => 'Reviewer Contact Test Biz 2']);
+
+        $location = Location::forceCreate([
+            'business_id' => $biz->id,
+            'name' => 'HQ',
+            'timezone' => 'America/Chicago',
+        ]);
+
+        app(DefaultsRegistry::class)->set('messaging.quiet_hours_start', '21:00', 'test');
+        app(DefaultsRegistry::class)->set('messaging.quiet_hours_end', '08:00', 'test');
+        $this->travelTo('2026-09-02 18:00:00');
+
+        app(CreditLedger::class)->record(CreditProduct::Sms, CreditKind::Purchase, 100, 'test');
+
+        $customer = Customer::forceCreate([
+            'business_id' => $biz->id,
+            'location_id' => $location->id,
+            'region_code' => 'TX',
+            'phone' => '+15125559999',
+            'name' => 'John',
+        ]);
+
+        $capture = new ConsentCapture(
+            CapturedBy::Platform,
+            CaptureSurface::FeedbackPage,
+            ConsentType::ExpressWritten,
+            'v1.0',
+            'web',
+            [
+                'url' => 'https://example.com',
+                'ip_hash' => HashedIp::hash('127.0.0.1'),
+                'user_agent' => 'test',
+            ]
+        );
+        app(ConsentService::class)->record($customer, OutreachChannel::Sms, $capture, 'test');
 
         $person = Person::create([
             'business_id' => $biz->id,
@@ -757,35 +1051,240 @@ class CReviewsTest extends TestCase
             'phone' => '+15125559999',
         ]);
 
-        // Satisfy the legacy foreign key
-        $customerId = DB::table('customers')->insertGetId([
+        $req = ReviewRequest::create([
             'business_id' => $biz->id,
-            'created_at' => now(),
+            'platform' => 'google',
+            'customer_name' => 'John Doe',
+            'customer_id' => $person->id,
         ]);
 
-        ConsentRecord::create([
+        $action = new ReviewerContactAction;
+        $res = $action->handle($biz->id, $req->id);
+
+        $this->assertEquals('sent', $res['status'], json_encode($res));
+    }
+
+    public function test_g20_04_reviewer_contact_refused_when_the_consent_belongs_to_another_customer(): void
+    {
+        \loadEveryRequiredRegister();
+
+        $biz = self::provisionTenant(['name' => 'Reviewer Contact Refused Biz']);
+
+        $location = Location::forceCreate([
             'business_id' => $biz->id,
-            'customer_id' => $customerId,
-            'channel' => 'sms',
-            'state' => 'opted_in',
-            'captured_by' => 'platform',
-            'capture_surface' => 'feedback_page',
-            'disclosure_version' => '1.0',
-            'proof_hash' => 'dummy',
-            'terms_version' => '1.0',
+            'name' => 'HQ',
+            'timezone' => 'America/Chicago',
+        ]);
+
+        app(DefaultsRegistry::class)->set('messaging.quiet_hours_start', '21:00', 'test');
+        app(DefaultsRegistry::class)->set('messaging.quiet_hours_end', '08:00', 'test');
+        $this->travelTo('2026-09-02 18:00:00');
+
+        app(CreditLedger::class)->record(CreditProduct::Sms, CreditKind::Purchase, 100, 'test');
+
+        $customer = Customer::forceCreate([
+            'business_id' => $biz->id,
+            'location_id' => $location->id,
+            'region_code' => 'TX',
+            'phone' => '+15125559999',
+            'name' => 'John',
+        ]);
+
+        $capture = new ConsentCapture(
+            CapturedBy::Platform,
+            CaptureSurface::FeedbackPage,
+            ConsentType::ExpressWritten,
+            'v1.0',
+            'web',
+            [
+                'url' => 'https://example.com',
+                'ip_hash' => HashedIp::hash('127.0.0.1'),
+                'user_agent' => 'test',
+            ]
+        );
+        app(ConsentService::class)->record($customer, OutreachChannel::Sms, $capture, 'test');
+
+        $person = Person::create([
+            'business_id' => $biz->id,
+            'first_name' => 'Jane',
+            'phone' => '+15125559998',
+        ]);
+
+        $req = ReviewRequest::create([
+            'business_id' => $biz->id,
+            'platform' => 'google',
+            'customer_name' => 'Jane Doe',
+            'customer_id' => $person->id,
+        ]);
+
+        $action = new ReviewerContactAction;
+        $res = $action->handle($biz->id, $req->id);
+
+        $this->assertEquals('refused', $res['status'], json_encode($res));
+        $this->assertEquals('NO_CONSENT_RECORD', $res['refusal_code'], json_encode($res));
+    }
+
+    public function test_g20_04_reviewer_contact_refused_when_the_phone_owner_has_not_consented(): void
+    {
+        \loadEveryRequiredRegister();
+
+        $biz = self::provisionTenant(['name' => 'Reviewer Contact No Consent Biz']);
+
+        $location = Location::forceCreate([
+            'business_id' => $biz->id,
+            'name' => 'HQ',
+            'timezone' => 'America/Chicago',
+        ]);
+
+        app(DefaultsRegistry::class)->set('messaging.quiet_hours_start', '21:00', 'test');
+        app(DefaultsRegistry::class)->set('messaging.quiet_hours_end', '08:00', 'test');
+        $this->travelTo('2026-09-02 18:00:00');
+
+        app(CreditLedger::class)->record(CreditProduct::Sms, CreditKind::Purchase, 100, 'test');
+
+        $customer = Customer::forceCreate([
+            'business_id' => $biz->id,
+            'location_id' => $location->id,
+            'region_code' => 'TX',
+            'phone' => '+15125559999',
+            'name' => 'John',
+        ]);
+
+        $person = Person::create([
+            'business_id' => $biz->id,
+            'first_name' => 'John',
+            'phone' => '+15125559999',
         ]);
 
         $req = ReviewRequest::create([
             'business_id' => $biz->id,
             'platform' => 'google',
             'customer_name' => 'John Doe',
-            'customer_id' => $customerId,
+            'customer_id' => $person->id,
         ]);
 
         $action = new ReviewerContactAction;
         $res = $action->handle($biz->id, $req->id);
 
-        $this->assertEquals('sent', $res['status']);
+        $this->assertEquals('refused', $res['status'], json_encode($res));
+        $this->assertEquals('CONSENT_REFUSED', $res['refusal_code'], json_encode($res));
+        $this->assertEquals('no_consent_record', $res['reason'], json_encode($res));
+    }
+
+    public function test_g20_05_csat_on_resolve_asks_a_person_with_a_phone(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'CSAT Send Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $person = Person::create(['business_id' => $biz->id, 'first_name' => 'Ana', 'phone' => '+15125550411']);
+        $ticket = app(QaTicketCreateAction::class)->handle($biz->id, $person->id, 'Triage');
+
+        Event::fake([SendRequested::class, CsatRequested::class]);
+
+        app(QaTicketResolveAction::class)->handle($biz->id, $ticket->id, 'fixed');
+
+        Event::assertDispatched(SendRequested::class, function ($e) use ($biz, $ticket) {
+            return $e->businessId === $biz->id
+                && $e->compositionId === $ticket->id
+                && $e->recipientPhone === '+15125550411'
+                && $e->messageClass === 'marketing';
+        });
+        Event::assertDispatched(CsatRequested::class, function ($e) use ($biz, $ticket, $person) {
+            return $e->businessId === $biz->id && $e->ticketId === $ticket->id && $e->personId === $person->id;
+        });
+        $this->assertNotNull(QaTicket::find($ticket->id)->csat_requested_at);
+    }
+
+    public function test_g20_05_csat_on_resolve_is_silent_without_a_phone_or_a_person(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'CSAT Silent Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $phoneless = Person::create(['business_id' => $biz->id, 'first_name' => 'Bo']);
+        $withPerson = app(QaTicketCreateAction::class)->handle($biz->id, $phoneless->id, 'Triage');
+        $withoutPerson = app(QaTicketCreateAction::class)->handle($biz->id, null, 'Triage');
+
+        Event::fake([SendRequested::class, CsatRequested::class]);
+
+        app(QaTicketResolveAction::class)->handle($biz->id, $withPerson->id, 'fixed');
+        app(QaTicketResolveAction::class)->handle($biz->id, $withoutPerson->id, 'fixed');
+
+        Event::assertNotDispatched(SendRequested::class);
+        Event::assertNotDispatched(CsatRequested::class);
+        $this->assertNull(QaTicket::find($withPerson->id)->csat_requested_at);
+        $this->assertNull(QaTicket::find($withoutPerson->id)->csat_requested_at);
+    }
+
+    public function test_g20_05_csat_on_resolve_is_suppressed_while_another_ticket_is_open(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'CSAT Suppressed Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $person = Person::create(['business_id' => $biz->id, 'first_name' => 'Cy', 'phone' => '+15125550412']);
+        $resolved = app(QaTicketCreateAction::class)->handle($biz->id, $person->id, 'Triage');
+        $stillOpen = app(QaTicketCreateAction::class)->handle($biz->id, $person->id, 'Second complaint');
+
+        Event::fake([SendRequested::class, CsatRequested::class]);
+
+        app(QaTicketResolveAction::class)->handle($biz->id, $resolved->id, 'fixed');
+
+        $this->assertEquals('open', QaTicket::find($stillOpen->id)->status);
+        Event::assertNotDispatched(SendRequested::class);
+        Event::assertNotDispatched(CsatRequested::class);
+        $this->assertNull(QaTicket::find($resolved->id)->csat_requested_at);
+    }
+
+    public function test_g20_05_csat_answer_has_no_inbound_path(): void
+    {
+        $biz = self::provisionTenant(['name' => 'CSAT Answer 1', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $person = Person::create(['business_id' => $biz->id, 'first_name' => 'Ana', 'phone' => '+15125550413']);
+        $ticket = app(QaTicketCreateAction::class)->handle($biz->id, $person->id, 'Triage');
+        $ticket->update(['status' => 'resolved', 'resolved_at' => now(), 'csat_requested_at' => now()]);
+
+        Tenancy::forget();
+        DB::statement('RESET app.business_id');
+
+        Event::dispatch(new MessageReceived($biz->id, $person->id, '+15125550413', '1', 'msg_distinctive_4500', now()->toIso8601String()));
+
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $ticket->refresh();
+        $this->assertEquals('open', $ticket->status);
+        $this->assertNotNull($ticket->reopened_at);
+        $this->assertDatabaseHas('csat_answers', ['business_id' => $biz->id, 'qa_ticket_id' => $ticket->id, 'score' => 1]);
+    }
+
+    public function test_g20_05_a_five_records_the_answer_and_keeps_the_ticket_resolved(): void
+    {
+        $biz = self::provisionTenant(['name' => 'CSAT Answer 5', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $person = Person::create(['business_id' => $biz->id, 'first_name' => 'Ana', 'phone' => '+15125550414']);
+        $ticket = app(QaTicketCreateAction::class)->handle($biz->id, $person->id, 'Triage');
+        $ticket->update(['status' => 'resolved', 'resolved_at' => now(), 'csat_requested_at' => now()]);
+
+        Event::dispatch(new MessageReceived($biz->id, $person->id, '+15125550414', '5', 'msg_distinctive_4501', now()->toIso8601String()));
+
+        $ticket->refresh();
+        $this->assertEquals('resolved', $ticket->status);
+        $this->assertNull($ticket->reopened_at);
+        $this->assertDatabaseHas('csat_answers', ['business_id' => $biz->id, 'qa_ticket_id' => $ticket->id, 'score' => 5]);
+    }
+
+    public function test_g20_05_a_reply_with_no_pending_ask_is_ignored(): void
+    {
+        $biz = self::provisionTenant(['name' => 'CSAT Answer Ignored', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $person = Person::create(['business_id' => $biz->id, 'first_name' => 'Ana', 'phone' => '+15125550415']);
+        $ticket = app(QaTicketCreateAction::class)->handle($biz->id, $person->id, 'Triage');
+        $ticket->update(['status' => 'resolved', 'resolved_at' => now()]);
+
+        Event::dispatch(new MessageReceived($biz->id, $person->id, '+15125550415', '5', 'msg_distinctive_4502', now()->toIso8601String()));
+
+        $this->assertDatabaseMissing('csat_answers', ['qa_ticket_id' => $ticket->id]);
     }
 
     /**

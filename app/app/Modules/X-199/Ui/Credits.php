@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X199\Ui;
 
-use App\Modules\X121\Models\Person;
+use App\Modules\X121\Actions\EntityReadAction;
 use App\Modules\X199\Actions\TermsSetAction;
 use App\Modules\X199\Domain\InvalidTermsException;
 use App\Modules\X199\Models\CreditTerm;
@@ -70,10 +70,12 @@ class Credits extends Component
         $businessId = Tenancy::idOrFail();
 
         $terms = CreditTerm::where('business_id', $businessId)->orderBy('id')->get();
-        $people = Person::where('business_id', $businessId)
-            ->whereIn('id', $terms->pluck('customer_id')->filter()->all())
-            ->get()
-            ->keyBy('id');
+        $people = [];
+        $customerIds = array_unique($terms->pluck('customer_id')->filter()->all());
+        $entityReader = app(EntityReadAction::class);
+        foreach ($customerIds as $customerId) {
+            $people[$customerId] = $entityReader->handle('people', (int) $customerId, $businessId);
+        }
 
         $charges = OverflowCharge::where('business_id', $businessId)
             ->whereIn('customer_id', $terms->pluck('customer_id')->filter()->all())
@@ -83,7 +85,7 @@ class Credits extends Component
 
         foreach ($terms as $term) {
             $person = $people[$term->customer_id] ?? null;
-            $term->customer_name = $person ? trim($person->first_name.' '.$person->last_name) : 'Customer #'.$term->customer_id;
+            $term->customer_name = $person ? trim(($person['first_name'] ?? '').' '.($person['last_name'] ?? '')) : 'Customer #'.$term->customer_id;
             $term->headroom_cents = $term->credit_limit_cents - $term->current_outstanding_cents;
             $term->label = self::LABELS[$term->terms_type] ?? $term->terms_type;
 
@@ -108,8 +110,8 @@ class Credits extends Component
 
     private function customerName(int $customerId): string
     {
-        $person = Person::where('business_id', Tenancy::idOrFail())->find($customerId);
+        $person = app(EntityReadAction::class)->handle('people', $customerId, Tenancy::idOrFail());
 
-        return $person ? trim($person->first_name.' '.$person->last_name) : 'Customer #'.$customerId;
+        return $person ? trim(($person['first_name'] ?? '').' '.($person['last_name'] ?? '')) : 'Customer #'.$customerId;
     }
 }

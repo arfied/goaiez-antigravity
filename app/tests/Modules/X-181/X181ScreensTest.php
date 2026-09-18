@@ -9,6 +9,7 @@ use App\Modules\X181\Ui\QaQueueSlaDueAt;
 use App\Modules\X181\Ui\Resolution;
 use App\Modules\X181\Ui\Ticket;
 use App\Support\Tenancy;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -29,7 +30,7 @@ class X181ScreensTest extends TestCase
     {
         Livewire::test(QaQueueSlaDueAt::class, ['businessId' => $this->bizId])
             ->assertOk()
-            ->assertSee('QA Queue and SLA Due Watch')
+            ->assertSee('QA queue')
             ->assertSee('The QA queue is clear');
     }
 
@@ -114,6 +115,30 @@ class X181ScreensTest extends TestCase
         $this->assertEquals('fixed', $ticket->resolution_notes);
     }
 
+    public function test_qa_queue_resolve_on_a_resolved_ticket_saves_nothing(): void
+    {
+        $ticket = QaTicket::create(['business_id' => $this->bizId, 'subject' => 'Already resolved', 'arrived_at' => now(), 'status' => 'resolved', 'sla_due_at' => now()->addHours(1), 'resolved_at' => now()->subHour(), 'resolution_notes' => 'first']);
+
+        Livewire::test(QaQueueSlaDueAt::class, ['businessId' => $this->bizId])
+            ->call('resolve', $ticket->id, 'second')
+            ->assertSee('Ticket #'.$ticket->id.' is already resolved; nothing was saved.');
+
+        $ticket->refresh();
+        $this->assertEquals('first', $ticket->resolution_notes);
+    }
+
+    public function test_ticket_resolve_on_a_resolved_ticket_saves_nothing(): void
+    {
+        $ticket = QaTicket::create(['business_id' => $this->bizId, 'subject' => 'Already resolved', 'arrived_at' => now(), 'status' => 'resolved', 'sla_due_at' => now()->addHours(1), 'resolved_at' => now()->subHour(), 'resolution_notes' => 'first']);
+
+        Livewire::test(Ticket::class, ['businessId' => $this->bizId, 'ticketId' => $ticket->id])
+            ->call('resolve', 'second')
+            ->assertSee('Ticket #'.$ticket->id.' is already resolved; nothing was saved.');
+
+        $ticket->refresh();
+        $this->assertEquals('first', $ticket->resolution_notes);
+    }
+
     public function test_resolution_mount_and_empty(): void
     {
         Livewire::test(Resolution::class, ['businessId' => $this->bizId])
@@ -167,20 +192,32 @@ class X181ScreensTest extends TestCase
         $this->assertNull($ticket->resolved_at);
     }
 
-    public function test_ticket_resolve_error_shows_panel(): void
+    public function test_ticket_resolve_refuses_an_absent_ticket_without_disclosing(): void
     {
-        Livewire::test(Ticket::class, ['businessId' => $this->bizId, 'ticketId' => 0])
-            ->call('resolve', 'x')
-            ->assertOk()
-            ->assertSee('Action failed');
+        try {
+            Livewire::test(Ticket::class, ['businessId' => $this->bizId, 'ticketId' => 0])
+                ->call('resolve', 'x')
+                ->assertDontSee('No query results for model');
+            $this->fail('resolve accepted an absent ticket.');
+        } catch (ModelNotFoundException $e) {
+            // propagating renders a 404
+        }
+
+        $this->assertSame(QaTicket::class, $e->getModel());
     }
 
-    public function test_resolution_reopen_error_shows_panel(): void
+    public function test_resolution_reopen_refuses_an_absent_ticket_without_disclosing(): void
     {
-        Livewire::test(Resolution::class, ['businessId' => $this->bizId])
-            ->call('reopen', 999999)
-            ->assertOk()
-            ->assertSee('Action failed');
+        try {
+            Livewire::test(Resolution::class, ['businessId' => $this->bizId])
+                ->call('reopen', 999999)
+                ->assertDontSee('No query results for model');
+            $this->fail('reopen accepted an absent ticket.');
+        } catch (ModelNotFoundException $e) {
+            // propagating renders a 404
+        }
+
+        $this->assertSame(QaTicket::class, $e->getModel());
     }
 
     public function test_ticket_sample_state(): void

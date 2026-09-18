@@ -23,7 +23,7 @@
                 <x-ui.error-panel :heading="$errorHeading ?? 'Could not make that pay link'">{{ $error }}</x-ui.error-panel>
             @endif
             
-            @if($declines->isEmpty())
+            @if(empty($declines))
                 <div wire:loading.remove>
                     <x-ui.empty-state :heading="$showAll ? 'No declines at all.' : 'No declines this week.'" :action="$showAll ? 'Show this week only' : 'Show all'" target="toggleShowAll">
                         You have no declined payments to review. A decline is written when a charge on a card on file is refused, and nothing in this checkout charges a card on file yet.
@@ -35,16 +35,16 @@
                         <div class="overflow-hidden shadow ring-1 ring-rule rounded-[--radius-card] bg-card">
                             <div class="p-4 border-b border-rule">
                                 <h3 class="text-base font-medium text-ink">the bank didn't authorise it — happens all the time</h3>
-                                <p class="mt-1 text-sm text-ink-2">Amount: <span class="tabular-nums font-semibold">{{ number_format($decline->amount_cents / 100, 2) }} {{ $decline->currency }}</span> on {{ $decline->created_at->format('M j, Y g:i A') }}</p>
-                                <p class="mt-1 text-sm text-ink-2">ID: {{ $decline->gateway_charge_id ?: 'no gateway id' }}</p>
-                                @if($decline->recovered)
+                                <p class="mt-1 text-sm text-ink-2">Amount: <span class="tabular-nums font-semibold">{{ number_format($decline['amount_cents'] / 100, 2) }} {{ $decline['currency'] }}</span> on {{ \Illuminate\Support\Carbon::parse($decline['created_at'])->format('M j, Y g:i A') }}</p>
+                                <p class="mt-1 text-sm text-ink-2">ID: {{ $decline['gateway_charge_id'] ?: 'no gateway id' }}</p>
+                                @if($decline['recovered'])
                                     <p class="mt-1">
-                                        <x-ui.status-pill state="ok" label="Recovered {{ $decline->recovered->created_at->format('M j, g:i A') }}" />
+                                        <x-ui.status-pill state="ok" label="Recovered {{ \Illuminate\Support\Carbon::parse($decline['recovered']['created_at'])->format('M j, g:i A') }}" />
                                     </p>
                                 @else
                                     <p class="mt-1">
                                         <x-ui.status-pill state="attention" label="Not recovered" />
-                                        @if($decline->deferred)
+                                        @if($decline['deferred'])
                                             <x-ui.status-pill state="unknown" label="Deferred" />
                                         @endif
                                     </p>
@@ -52,15 +52,15 @@
                                 <p class="mt-3 text-base text-ink">no decline code was recorded for this attempt — switch method</p>
                             </div>
                             <div class="bg-paper px-4 py-4 sm:flex sm:flex-row-reverse sm:px-6">
-                                <x-ui.button size="default" wire:loading.attr="disabled" wire:target="sendPayLink({{ $decline->id }})" wire:click="sendPayLink({{ $decline->id }})" class="sm:ml-3 sm:w-auto">Make a pay link</x-ui.button>
-                                @if(!$decline->deferred)
-                                <x-ui.button size="default" variant="secondary" wire:loading.attr="disabled" wire:target="settleUpLater({{ $decline->id }})" wire:click="settleUpLater({{ $decline->id }})" class="sm:mt-0 sm:w-auto mt-3">Settle up later</x-ui.button>
+                                <x-ui.button size="default" wire:loading.attr="disabled" wire:target="sendPayLink({{ $decline['id'] }})" wire:click="sendPayLink({{ $decline['id'] }})" class="sm:ml-3 sm:w-auto">Make a pay link</x-ui.button>
+                                @if(!$decline['deferred'])
+                                <x-ui.button size="default" variant="secondary" wire:loading.attr="disabled" wire:target="settleUpLater({{ $decline['id'] }})" wire:click="settleUpLater({{ $decline['id'] }})" class="sm:mt-0 sm:w-auto mt-3">Settle up later</x-ui.button>
                                 @endif
                             </div>
-                            @if($decline->pay_link)
+                            @if($decline['pay_link'])
                             <div class="p-4 bg-paper border-t border-rule">
                                 <p class="text-base">Pay link ready — send it by text or email:</p>
-                                <a href="{{ $decline->pay_link->url }}" class="break-all underline text-base">{{ $decline->pay_link->url }}</a>
+                                <a href="{{ $decline['pay_link']['url'] }}" class="break-all underline text-base">{{ $decline['pay_link']['url'] }}</a>
                             </div>
                             @endif
                         </div>

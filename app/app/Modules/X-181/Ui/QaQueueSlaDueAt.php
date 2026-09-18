@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace App\Modules\X181\Ui;
 
 use App\Modules\X181\Actions\QaTicketResolveAction;
+use App\Modules\X181\Domain\TicketAlreadyResolvedException;
 use App\Modules\X181\Models\QaTicket;
 use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'QA queue'])]
 class QaQueueSlaDueAt extends Component
 {
     #[Locked]
@@ -63,18 +66,22 @@ class QaQueueSlaDueAt extends Component
             return;
         }
         Tenancy::set($this->businessId);
+        $action = app(QaTicketResolveAction::class);
         try {
-            $action = app(QaTicketResolveAction::class);
             $action->handle($this->businessId, $ticketId, $notes);
-
-            $this->noticeType = 'success';
-            $this->actionNotice = '✅ Ticket resolved successfully.';
+        } catch (TicketAlreadyResolvedException $e) {
+            $this->noticeType = 'warning';
+            $this->actionNotice = $e->getMessage();
             $this->resolvingTicketId = null;
             $this->resolutionNotes = '';
-        } catch (\Exception $e) {
-            $this->noticeType = 'error';
-            $this->actionNotice = '🚫 Error: '.$e->getMessage();
+
+            return;
         }
+
+        $this->noticeType = 'success';
+        $this->actionNotice = '✅ Ticket resolved successfully.';
+        $this->resolvingTicketId = null;
+        $this->resolutionNotes = '';
     }
 
     public function render()

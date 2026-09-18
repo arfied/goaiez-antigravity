@@ -1,6 +1,6 @@
 <div>
     <div class="p-4 space-y-4">
-        <h3 class="text-lg font-bold text-ink">Customers Directory</h3>
+        <h2 class="text-lg font-bold text-ink">Customers</h2>
         
         @if ($isSample)
             <x-ui.sample />
@@ -25,27 +25,27 @@
                         <x-ui.row>
                             <div class="flex items-center justify-between w-full">
                                 <div>
-                                    <div class="font-medium text-ink">{{ $p->first_name }} {{ $p->last_name }}</div>
+                                    <div class="font-medium text-ink">{{ $p['first_name'] }} {{ $p['last_name'] }}</div>
                                     <div class="text-sm text-ink-2">
-                                        {{ $p->email }}
-                                        @if($p->email && $p->phone) · @endif
-                                        {{ $p->phone }}
+                                        {{ $p['email'] }}
+                                        @if($p['email'] && $p['phone']) · @endif
+                                        {{ $p['phone'] }}
                                     </div>
-                                    @if(isset($leadScores[$p->id]))
+                                    @if(isset($leadScores[$p['id']]))
                                         <div class="mt-1">
-                                            <x-ui.status-pill :state="$leadScores[$p->id]->grade === 'A' ? 'ok' : 'attention'" :label="'Score: ' . $leadScores[$p->id]->lead_rating . ' (' . $leadScores[$p->id]->grade . ')'">
-                                                Score: {{ $leadScores[$p->id]->lead_rating }} ({{ $leadScores[$p->id]->grade }})
+                                            <x-ui.status-pill :state="$leadScores[$p['id']]->grade === 'A' ? 'ok' : 'attention'" :label="'Score: ' . $leadScores[$p['id']]->lead_rating . ' (' . $leadScores[$p['id']]->grade . ')'">
+                                                Score: {{ $leadScores[$p['id']]->lead_rating }} ({{ $leadScores[$p['id']]->grade }})
                                             </x-ui.status-pill>
                                         </div>
                                     @endif
                                 </div>
                                 <div class="flex gap-2">
-                                    @if(isset($latestConversations[$p->id]))
-                                        <x-ui.button wire:click="readConversation({{ $latestConversations[$p->id]->id }})" size="sm">
+                                    @if(isset($latestConversations[$p['id']]))
+                                        <x-ui.button wire:click="readConversation({{ $latestConversations[$p['id']]->id }})" size="sm">
                                             Read Msg
                                         </x-ui.button>
                                     @endif
-                                    <x-ui.button wire:click="openPerson({{ $p->id }})" size="sm">
+                                    <x-ui.button wire:click="openPerson({{ $p['id'] }})" size="sm">
                                         Open Profile
                                     </x-ui.button>
                                 </div>
@@ -55,7 +55,7 @@
                 </x-ui.row-list>
                 
                 <div class="mt-4">
-                    {{ $persons->links() }}
+                    
                 </div>
             @endif
         </div>

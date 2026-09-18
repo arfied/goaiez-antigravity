@@ -8,10 +8,13 @@ use App\Modules\CReviews\Models\ReviewRequest;
 use App\Modules\X121\Actions\EntityReadAction;
 use App\Modules\X181\Actions\QaTicketReadAction;
 use App\Modules\X181\Actions\QaTicketResolveAction;
+use App\Modules\X181\Domain\TicketAlreadyResolvedException;
 use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'QA tickets'])]
 class Tickets extends Component
 {
     #[Locked]
@@ -68,18 +71,32 @@ class Tickets extends Component
         }
         Tenancy::set($this->businessId);
 
+        $action = app(QaTicketResolveAction::class);
         try {
-            $action = app(QaTicketResolveAction::class);
             $action->handle($this->businessId, $ticketId, $notes);
-
-            $this->noticeType = 'success';
-            $this->actionNotice = '✅ Ticket resolved successfully.';
+        } catch (TicketAlreadyResolvedException $e) {
+            $this->noticeType = 'warning';
+            $this->actionNotice = $e->getMessage();
             $this->resolvingTicketId = null;
             $this->resolutionNotes = '';
-        } catch (\Exception $e) {
-            $this->noticeType = 'error';
-            $this->actionNotice = '🚫 Error: '.$e->getMessage();
+
+            return;
         }
+
+        $this->noticeType = 'success';
+        $this->actionNotice = '✅ Ticket resolved successfully.';
+        $this->resolvingTicketId = null;
+        $this->resolutionNotes = '';
+    }
+
+    private function displayName(?array $person): ?string
+    {
+        if ($person === null) {
+            return null;
+        }
+        $name = trim(($person['first_name'] ?? '').' '.($person['last_name'] ?? ''));
+
+        return $name !== '' ? $name : null;
     }
 
     public function render()
@@ -95,7 +112,8 @@ class Tickets extends Component
                 if ($t->person_id) {
                     $person = app(EntityReadAction::class)->handle('people', $t->person_id, $this->businessId);
                     if ($person) {
-                        $t->customer_name = $person['name'];
+                        // PB-206: people carry first_name/last_name, never name.
+                        $t->customer_name = $this->displayName($person) ?? 'Unknown';
                     }
                 }
 

@@ -572,7 +572,10 @@ final class ContractStage implements Stage
         //    modules, and every one of them was legitimate.
         // ⛔ Adding a token to this list WEAKENS A CHECK. It needs an owner ruling and a line
         //    in REVIEWS.md, exactly like this one. Every other token keeps one-event-one-emitter.
-        $multiEmitterOk = ['send.requested', 'approval.requested'];
+        // ⭐ 'win.first' — owner ruling 2026-09-16: two plan-sanctioned emitters, C-Reviews (P-113,
+        //    the first review received) and X-118 (the onboarding test call, plan §27169). Both are
+        //    the plan's own FIRST-WIN, so a second emitter is not the header-split residue this catches.
+        $multiEmitterOk = ['send.requested', 'approval.requested', 'win.first'];
 
         foreach ($emitted as $token => $emitters) {
             $unique = array_values(array_unique($emitters));

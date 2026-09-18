@@ -25,4 +25,13 @@ class CustomerfacingPortalScreenTest extends TestCase
 
         Livewire::test(CustomerfacingPortal::class, ['token' => $token])->assertOk();
     }
+
+    public function test_screen_refuses_an_unknown_token(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        $this->get(route('x-172.customerfacing-portal', ['token' => 'distinctive-no-such-token-4621']))->assertNotFound();
+    }
 }

@@ -7,22 +7,27 @@ namespace App\Modules\X01\Ui;
 use App\Models\Conversation;
 use App\Modules\X01\Actions\ConversationReadAction;
 use App\Modules\X01\Models\LeadScore;
-use App\Modules\X121\Models\Person;
+use App\Modules\X121\Actions\PersonLookupAction;
+use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
-use Livewire\WithPagination;
 use Throwable;
 
+#[Layout('components.account.layout', ['heading' => 'Customers'])]
 class CustomersList extends Component
 {
-    use WithPagination;
-
     #[Locked]
     public int $businessId = 0;
 
     public bool $isSample = false;
 
     public bool $failed = false;
+
+    public function mount(int $businessId = 0): void
+    {
+        $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
+    }
 
     public function openPerson(int $personId)
     {
@@ -43,9 +48,8 @@ class CustomersList extends Component
         try {
             $this->failed = false;
             if ($this->businessId > 0) {
-                $persons = Person::where('business_id', $this->businessId)
-                    ->orderBy('id', 'desc')
-                    ->paginate(15);
+                $personsList = app(PersonLookupAction::class)->listForBusiness($this->businessId);
+                $persons = collect($personsList);
 
                 $personIds = $persons->pluck('id');
                 $leadScores = LeadScore::whereIn('person_id', $personIds)->get()->keyBy('person_id');

@@ -11,12 +11,14 @@ use App\Modules\X01\Actions\ConversationTakeoverReleaseAction;
 use App\Modules\X01\Domain\UnifiedInboxManager;
 use App\Modules\X01\Models\LeadScore;
 use App\Modules\X01\Models\TakeoverLatch;
-use App\Modules\X121\Models\Person;
+use App\Modules\X121\Actions\PersonLookupAction;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Inbox'])]
 class Thread extends Component
 {
     #[Locked]
@@ -59,16 +61,13 @@ class Thread extends Component
             return null;
         }
 
-        return Person::where('business_id', $this->customer->business_id)
-            ->where(function ($q) {
-                if ($this->customer->email) {
-                    $q->where('email', $this->customer->email);
-                }
-                if ($this->customer->phone) {
-                    $q->orWhere('phone', $this->customer->phone);
-                }
-            })
-            ->value('id');
+        $list = app(PersonLookupAction::class)->listForBusiness(
+            $this->customer->business_id,
+            $this->customer->email,
+            $this->customer->phone
+        );
+
+        return ! empty($list) ? $list[0]['id'] : null;
     }
 
     /**
