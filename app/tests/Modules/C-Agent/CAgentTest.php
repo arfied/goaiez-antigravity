@@ -182,7 +182,6 @@ class CAgentTest extends TestCase
         $listener = new \App\Modules\CAgent\Listeners\ChatStartedListener();
         $listener->handle($event);
         
-        $this->assertTrue(true);
     }
 
     /**
@@ -198,7 +197,6 @@ class CAgentTest extends TestCase
         $listener = new \App\Modules\CAgent\Listeners\CallAnsweredListener();
         $listener->handle($event);
         
-        $this->assertTrue(true);
     }
 
     /**
