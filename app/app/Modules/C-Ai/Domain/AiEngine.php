@@ -9,7 +9,7 @@ use App\Modules\CAi\Events\AiCalled;
 use App\Modules\CAi\Events\AiFailedOver;
 use App\Modules\CAi\Models\AiCall;
 use App\Modules\CAi\Models\AiTask;
-use App\Modules\X121\Models\LedgerEntry;
+use App\Modules\X121\Actions\AppendLedgerEntryAction;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 
@@ -82,14 +82,14 @@ final class AiEngine
             // TEST ANCHOR: SUM(ai_calls.cost_cents) * 8 = SUM(ledger AI debits)
             $ledgerDebitCents = $costCents * self::LEDGER_MARKUP_MULTIPLIER;
             if ($ledgerDebitCents > 0) {
-                LedgerEntry::create([
-                    'business_id' => $businessId,
-                    'entry_type' => 'ai_debit',
-                    'amount_cents' => $ledgerDebitCents,
-                    'currency' => 'USD',
-                    'balance_after_cents' => 0,
-                    'description' => "AI debit for call #{$call->id} ({$modelServed})",
-                ]);
+                app(AppendLedgerEntryAction::class)->handle(
+                    businessId: $businessId,
+                    entryType: 'ai_debit',
+                    amountCents: $ledgerDebitCents,
+                    currency: 'USD',
+                    balanceAfterCents: 0,
+                    description: "AI debit for call #{$call->id} ({$modelServed})"
+                );
             }
 
             Event::dispatch(new AiCalled(
