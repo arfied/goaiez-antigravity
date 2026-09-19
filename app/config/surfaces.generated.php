@@ -253,6 +253,8 @@ return [
             ['label' => 'Extraction Error Rate', 'route' => 'x-160.extraction-error-rate', 'module' => 'X-160'],
             ['label' => 'Sendsbyclass', 'route' => 'x-193.sendsbyclass', 'module' => 'X-193'],
             ['label' => 'Quiethour Holds', 'route' => 'x-193.quiethour-holds', 'module' => 'X-193'],
+            ['label' => 'Refusals By Reason', 'route' => 'x-204.refusals-by-reason', 'module' => 'X-204'],
+            ['label' => 'Register Slot States', 'route' => 'x-204.register-slot-states', 'module' => 'X-204'],
             ['label' => 'Connections', 'route' => 'x-206.connections', 'module' => 'X-206'],
             ['label' => 'Reveal', 'route' => 'x-206.reveal', 'module' => 'X-206'],
             ['label' => 'Reveal Log', 'route' => 'x-206.reveal-log', 'module' => 'X-206'],
@@ -409,8 +411,6 @@ return [
             ['label' => 'Demo Ledger Daily', 'route' => 'x-161.demo-ledger-daily.admin', 'module' => 'X-161'],
             ['label' => 'Sendsbyclass', 'route' => 'x-193.sendsbyclass.admin', 'module' => 'X-193'],
             ['label' => 'Quiethour Holds', 'route' => 'x-193.quiethour-holds.admin', 'module' => 'X-193'],
-            ['label' => 'Refusals By Reason', 'route' => 'x-204.refusals-by-reason', 'module' => 'X-204'],
-            ['label' => 'Register Slot States', 'route' => 'x-204.register-slot-states', 'module' => 'X-204'],
         ],
         'Operator console' => [
             ['label' => 'Console', 'route' => 'x-111.console.admin', 'module' => 'X-111'],
@@ -425,19 +425,6 @@ return [
         ],
     ],
     'agency' => [
-        'Today' => [
-            ['label' => 'Day One Signup', 'route' => 'x-118.day-one-signup', 'module' => 'X-118'],
-            ['label' => 'Groundcheck', 'route' => 'x-118.groundcheck', 'module' => 'X-118'],
-            ['label' => 'Test Call', 'route' => 'x-118.test-call', 'module' => 'X-118'],
-            ['label' => 'Today', 'route' => 'x-118.today', 'module' => 'X-118'],
-            ['label' => 'Same Flow', 'route' => 'x-118.same-flow', 'module' => 'X-118'],
-            ['label' => 'Ttfm Distribution', 'route' => 'x-118.ttfm-distribution', 'module' => 'X-118'],
-        ],
-        'Money' => [
-            ['label' => 'Connect Card', 'route' => 'x-198.connect-card', 'module' => 'X-198'],
-            ['label' => 'Same Account', 'route' => 'x-198.same-account', 'module' => 'X-198'],
-            ['label' => 'Reconciliation Discrepancies', 'route' => 'x-198.reconciliation-discrepancies', 'module' => 'X-198'],
-        ],
         'Agency console' => [
             ['label' => 'Agency Console', 'route' => 'x-112.agency-console', 'module' => 'X-112'],
             ['label' => 'Staff', 'route' => 'x-112.staff', 'module' => 'X-112'],
@@ -446,11 +433,5 @@ return [
         ],
     ],
     'tech' => [
-        'Jobs & Field' => [
-            ['label' => 'Margin By Job', 'route' => 'x-166.margin-by-job', 'module' => 'X-166'],
-            ['label' => 'By Tech', 'route' => 'x-166.by-tech', 'module' => 'X-166'],
-            ['label' => 'By Service', 'route' => 'x-166.by-service', 'module' => 'X-166'],
-            ['label' => 'By Source', 'route' => 'x-166.by-source', 'module' => 'X-166'],
-        ],
     ],
 ];
