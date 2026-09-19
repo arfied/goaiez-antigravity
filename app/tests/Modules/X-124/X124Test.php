@@ -287,4 +287,13 @@ class X124Test extends TestCase
             'utterance' => 'Fly me to Mars',
         ]);
     }
+
+    public function test_chat_dock_ask_without_business_id_refuses_cleanly(): void
+    {
+        Livewire::test(ChatDockEvery::class)
+            ->set('utterance', 'show invoices')
+            ->call('ask')
+            ->assertSee('show invoices')
+            ->assertSeeHtml('data-status="unsupported"');
+    }
 }
