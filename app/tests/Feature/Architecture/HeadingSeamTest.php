@@ -15,8 +15,13 @@ test('owner layout heading seam contract', function () {
 
     $directives = [];
     $walkedPaths = [];
+    $moduleTotals = [];
+    $moduleSeams = [];
 
     foreach (glob(base_path('app/Modules/*/Ui/*.php')) as $file) {
+        preg_match('#/Modules/([^/]+)/Ui/#', $file, $m);
+        $module = $m[1] ?? 'Unknown';
+
         $walkedPaths[realpath($file)] = true;
         $content = file_get_contents($file);
 
@@ -25,6 +30,7 @@ test('owner layout heading seam contract', function () {
         }
 
         $total++;
+        $moduleTotals[$module] = ($moduleTotals[$module] ?? 0) + 1;
 
         preg_match('/#\[Layout\([^\]]*\]/', $content, $layoutMatch);
         $layoutAttr = $layoutMatch[0] ?? '';
@@ -37,6 +43,7 @@ test('owner layout heading seam contract', function () {
 
         if ($hasHeading) {
             $seam++;
+            $moduleSeams[$module] = ($moduleSeams[$module] ?? 0) + 1;
         } else {
             $own++;
         }
@@ -180,8 +187,20 @@ test('owner layout heading seam contract', function () {
         }
     }
 
+    $expectedMap = headingSeamCountsByModule();
+    foreach ($expectedMap as $module => $counts) {
+        $actualTotal = $moduleTotals[$module] ?? 0;
+        $actualSeam = $moduleSeams[$module] ?? 0;
+        expect($actualTotal)->toBe($counts['total'], "Module {$module} total count. If it went UP, a new module component uses the owner layout. If it went DOWN, a component dropped the layout or was deleted.");
+        expect($actualSeam)->toBe($counts['seam'], "Module {$module} seam count. If it went UP, a component added the heading key to its layout. If it went DOWN, a component removed it or was deleted.");
+    }
+
+    expect(array_sum(array_column($expectedMap, 'total')))->toBe(204);
+    expect(array_sum(array_column($expectedMap, 'seam')))->toBe(203);
+
     expect($total)->toBe(204, 'If it went UP, a new module component uses the owner layout. If it went DOWN, a component dropped the layout or was deleted.');
     expect($seam)->toBe(203, 'If it went UP, a component added the heading key to its layout. If it went DOWN, a component removed it or was deleted.');
+    expect($seam + $own)->toBe($total, 'Seam plus own must equal total.');
     expect($own)->toBe(1, 'If it went UP, a component kept the layout but brought its own heading, violating T140 §2. If it went DOWN, it deleted the override.');
     expect($unresolvedView)->toBe(0, 'If it went UP, a component uses a first view literal that cannot be resolved. Its known edge: a component with two view( literals lands on the first. If it went DOWN, an unresolved view literal was fixed.');
     expect($skips)->toBe(0, 'If it went UP, a blade\'s first <h[1-6] tag is the wrong level (not h2 for seam, not h1 for own). This reads the blade\'s text, not a response body, and never sees a heading emitted by a component such as <x-ui.empty-state heading="…">. If it went DOWN, a blade heading was fixed.');
@@ -194,3 +213,98 @@ test('owner layout heading seam contract', function () {
     expect($unwalkedSeam)->toBe(0, 'If it went UP, an unwalked component started passing a heading, so the layout now emits its <h1> and that component\'s own view should no longer carry one. If it went DOWN, one stopped, or was deleted, or the scope was widened to reach it. Neither direction is by itself a defect, and the response is to re-read which half of the seam contract applies to that component, never to edit a blade or a component. Limit: it matches the heading key as text, so a heading supplied at runtime is invisible to it.');
     expect($unwalkedSkips)->toBe(0, 'If it went UP via (c), a view\'s first heading is the wrong level for its shape; this IS a defect. If it went UP via (a) or (b), a component\'s view stopped resolving, or a view lost its only heading. (a) and (b) are folded in DELIBERATELY, and neither is by itself a defect. If it went DOWN, one of the three was fixed, or a component left the population. Limits: it reads the blade\'s text, so a heading emitted by a component is not seen; and it is a count of components, not of bad headings.');
 });
+/**
+ * Map of expected heading seam counts by module.
+ *
+ * This map avoids merge conflicts when multiple branches add screens in different modules.
+ * A new module's first owner screen adds a line here rather than bumping a global total.
+ */
+function headingSeamCountsByModule(): array
+{
+    return [
+        'C-Agent' => ['total' => 4, 'seam' => 4],
+        'C-Ai' => ['total' => 1, 'seam' => 1],
+        'C-Billing' => ['total' => 4, 'seam' => 4],
+        'C-Mail' => ['total' => 2, 'seam' => 2],
+        'C-Reviews' => ['total' => 4, 'seam' => 4],
+        'C-Sms' => ['total' => 4, 'seam' => 4],
+        'C-Whatsapp' => ['total' => 2, 'seam' => 2],
+        'X-01' => ['total' => 4, 'seam' => 4],
+        'X-07' => ['total' => 1, 'seam' => 1],
+        'X-08' => ['total' => 3, 'seam' => 3],
+        'X-10' => ['total' => 3, 'seam' => 3],
+        'X-102' => ['total' => 4, 'seam' => 4],
+        'X-104' => ['total' => 2, 'seam' => 2],
+        'X-108' => ['total' => 2, 'seam' => 2],
+        'X-110' => ['total' => 6, 'seam' => 6],
+        'X-112' => ['total' => 2, 'seam' => 2],
+        'X-113' => ['total' => 2, 'seam' => 2],
+        'X-117' => ['total' => 2, 'seam' => 2],
+        'X-118' => ['total' => 5, 'seam' => 5],
+        'X-119' => ['total' => 2, 'seam' => 2],
+        'X-120' => ['total' => 1, 'seam' => 1],
+        'X-121' => ['total' => 1, 'seam' => 1],
+        'X-123' => ['total' => 1, 'seam' => 1],
+        'X-124' => ['total' => 2, 'seam' => 2],
+        'X-125' => ['total' => 3, 'seam' => 3],
+        'X-129' => ['total' => 2, 'seam' => 2],
+        'X-130' => ['total' => 2, 'seam' => 2],
+        'X-131' => ['total' => 1, 'seam' => 1],
+        'X-132' => ['total' => 2, 'seam' => 2],
+        'X-137' => ['total' => 2, 'seam' => 2],
+        'X-138' => ['total' => 2, 'seam' => 2],
+        'X-139' => ['total' => 3, 'seam' => 3],
+        'X-140' => ['total' => 1, 'seam' => 1],
+        'X-142' => ['total' => 2, 'seam' => 2],
+        'X-153' => ['total' => 3, 'seam' => 3],
+        'X-155' => ['total' => 3, 'seam' => 3],
+        'X-156' => ['total' => 2, 'seam' => 2],
+        'X-157' => ['total' => 1, 'seam' => 1],
+        'X-16' => ['total' => 3, 'seam' => 3],
+        'X-160' => ['total' => 2, 'seam' => 2],
+        'X-162' => ['total' => 2, 'seam' => 2],
+        'X-163' => ['total' => 3, 'seam' => 3],
+        'X-164' => ['total' => 1, 'seam' => 1],
+        'X-165' => ['total' => 2, 'seam' => 2],
+        'X-166' => ['total' => 4, 'seam' => 4],
+        'X-167' => ['total' => 2, 'seam' => 2],
+        'X-168' => ['total' => 3, 'seam' => 3],
+        'X-170' => ['total' => 2, 'seam' => 2],
+        'X-173' => ['total' => 2, 'seam' => 2],
+        'X-175' => ['total' => 1, 'seam' => 1],
+        'X-176' => ['total' => 1, 'seam' => 1],
+        'X-177' => ['total' => 2, 'seam' => 2],
+        'X-178' => ['total' => 1, 'seam' => 1],
+        'X-180' => ['total' => 1, 'seam' => 1],
+        'X-181' => ['total' => 3, 'seam' => 3],
+        'X-182' => ['total' => 2, 'seam' => 2],
+        'X-183' => ['total' => 2, 'seam' => 2],
+        'X-184' => ['total' => 2, 'seam' => 2],
+        'X-185' => ['total' => 2, 'seam' => 2],
+        'X-186' => ['total' => 4, 'seam' => 4],
+        'X-188' => ['total' => 4, 'seam' => 4],
+        'X-189' => ['total' => 1, 'seam' => 1],
+        'X-190' => ['total' => 3, 'seam' => 3],
+        'X-191' => ['total' => 2, 'seam' => 2],
+        'X-192' => ['total' => 1, 'seam' => 0],
+        'X-193' => ['total' => 1, 'seam' => 1],
+        'X-194' => ['total' => 2, 'seam' => 2],
+        'X-196' => ['total' => 1, 'seam' => 1],
+        'X-198' => ['total' => 3, 'seam' => 3],
+        'X-199' => ['total' => 5, 'seam' => 5],
+        'X-201' => ['total' => 2, 'seam' => 2],
+        'X-202' => ['total' => 2, 'seam' => 2],
+        'X-203' => ['total' => 3, 'seam' => 3],
+        'X-204' => ['total' => 2, 'seam' => 2],
+        'X-205' => ['total' => 3, 'seam' => 3],
+        'X-206' => ['total' => 3, 'seam' => 3],
+        'X-207' => ['total' => 4, 'seam' => 4],
+        'X-209' => ['total' => 2, 'seam' => 2],
+        'X-210' => ['total' => 5, 'seam' => 5],
+        'X-211' => ['total' => 4, 'seam' => 4],
+        'X-212' => ['total' => 5, 'seam' => 5],
+        'X-218' => ['total' => 2, 'seam' => 2],
+        'X-66' => ['total' => 3, 'seam' => 3],
+        'X-82' => ['total' => 1, 'seam' => 1],
+    ];
+}
