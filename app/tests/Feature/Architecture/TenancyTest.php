@@ -82,7 +82,7 @@ SQL
                 );
             }
         }
-        
+
         $this->assertGreaterThan(0, $examinedCount, 'No unexempt tables were examined. An empty result means the query is broken rather than that the schema is clean.');
     }
 
@@ -108,7 +108,7 @@ SQL
                 );
             }
         }
-        
+
         $this->assertGreaterThan(0, $examinedCount, 'No exempt tables were examined. An empty result means the query is broken rather than that the schema is clean.');
     }
 }
