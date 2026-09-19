@@ -8,7 +8,6 @@ use App\Modules\CSms\Events\SendRequested;
 use App\Modules\CSms\Models\SmsComposition;
 use App\Modules\CSms\Models\SmsModerationResult;
 use App\Modules\X204\Domain\ConsentService;
-use App\Modules\X204\Models\Suppression;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 
