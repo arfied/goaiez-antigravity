@@ -237,6 +237,24 @@ Watch for: <the trap that applies, by name>
   process(es) on goaiez_antig_test — a gate now would be false"*. **Wait for the orphan; never kill
   it** — it exits on its own, and a kill here is the 2026-09-13 wrapper mistake with the roles
   reversed. Do not dispatch into that window either.
+- ⛔ **`role goaiez_backup: has BYPASSRLS` IS A SANCTIONED EXCEPTION — NEVER RUN THE `ALTER ROLE` DOCTOR
+  PRINTS BESIDE IT (N209, 2026-09-18).** Measured: the application connects as **`goaiez_app`**, whose
+  `rolbypassrls` is **false**, so tenant isolation holds where it matters. `goaiez_backup` has **zero
+  table-level grants** and reaches data only through `pg_read_all_data` — it *is* the "own read-only
+  role, never the one the application connects with" that the stage's own fix text asks you to create.
+  `app/deploy.sh:85-86`: *"RLS is FORCEd on tenant tables, so the app role's pg_dump is refused.
+  `--enable-row-security` would dump only the rows the role can see — an empty backup that looks like
+  one."* The backup chain is `DEPLOY_BACKUP` → `BACKUP_DB_USER` (a BYPASSRLS role) → `sudo -u postgres`
+  → the app role, whose only purpose is to `die` telling you to add a BYPASSRLS role; `:107` refuses a
+  dump under 10000 bytes and the script refuses to migrate without one. **`ALTER ROLE goaiez_backup
+  NOBYPASSRLS` therefore breaks deploys on any box without non-interactive sudo to postgres.** That row
+  is a permanent member of `schema`'s count of 15. ⛔ **Do not weaken `SchemaStage` to make the number
+  fall either** — the check is right in general, and silencing it would hide the *next* BYPASSRLS role,
+  which will not be read-only. ⭐ The general lesson: **a remedy string is an instrument nobody
+  validates**, because a fix that is never run cannot be observed to be wrong. This one sat in every
+  `doctor` run for weeks and was propagated three times in one day as *"doctor prints the exact
+  remedy"* — a phrase that makes the unchecked half sound checked. Retire it; ask what happens **if the
+  fix is applied**.
 - **A stale doctor.** `doctor`'s first line is `goaiez doctor · build <stamp>`.
   Three identical runs once came from files that were never copied into the
   tree. Compare the stamp before trusting any count.
