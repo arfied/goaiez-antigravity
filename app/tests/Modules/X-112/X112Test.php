@@ -180,7 +180,6 @@ class X112Test extends TestCase
         $mock = \Mockery::mock(\App\Modules\X112\Domain\X122LogContract::class);
         $mock->shouldReceive("logHeaderAction")->once()->with("impersonate", ["user" => 1]);
         $mock->logHeaderAction("impersonate", ["user" => 1]);
-        $this->assertTrue(true);
     }
 
     /**
