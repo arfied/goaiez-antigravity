@@ -111,7 +111,9 @@ class X129Test extends TestCase
      */
     public function test_n_129_capabilities(): void
     {
-        $this->assertTrue(true);
+        $path = base_path('app/Modules/X-129/Actions');
+        $output = shell_exec(sprintf('grep -rnE %s %s', escapeshellarg('N-129-01'), escapeshellarg($path)));
+        $this->assertEmpty($output, 'N-129-01 is refused structurally.');
     }
 
     /**
