@@ -40,6 +40,7 @@ class ChatDockEvery extends Component
                 'status' => 'unsupported',
             ];
             $this->utterance = '';
+
             return;
         }
 
