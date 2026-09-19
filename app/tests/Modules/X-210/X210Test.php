@@ -239,7 +239,7 @@ class X210Test extends TestCase
         $engine = new X210Engine;
 
         try {
-            $engine->changeRate($limit, 9, false); // Not notified
+            $engine->changeRate($limit->business_id, 9, false); // Not notified
             $this->fail('Rate change was not refused.');
         } catch (\DomainException $e) {
             $this->assertStringContainsString('NOTIFIED', $e->getMessage());
@@ -249,7 +249,7 @@ class X210Test extends TestCase
         $this->assertEquals(7, $limit->rate_cents_per_min);
 
         // Pass case
-        $engine->changeRate($limit, 9, true); // Notified
+        $engine->changeRate($limit->business_id, 9, true); // Notified
         $limit->refresh();
         $this->assertEquals(9, $limit->rate_cents_per_min);
     }

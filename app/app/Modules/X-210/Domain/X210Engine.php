@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X210\Domain;
 
-use App\Modules\CBilling\Models\TrialLimit;
+use App\Modules\CBilling\Actions\TrialRateChangeAction;
 
 final class X210Engine
 {
@@ -42,13 +42,13 @@ final class X210Engine
         return ['status' => 'cancelled'];
     }
 
-    public function changeRate(TrialLimit $limit, int $newRate, bool $isNotified): array
+    public function changeRate(int $businessId, int $newRate, bool $isNotified): array
     {
         if (! $isNotified) {
             throw new \DomainException('REFUSED: rate never changes without a NOTIFIED action');
         }
 
-        $limit->update(['rate_cents_per_min' => $newRate]);
+        app(TrialRateChangeAction::class)->handle($businessId, $newRate);
 
         return ['status' => 'changed'];
     }
