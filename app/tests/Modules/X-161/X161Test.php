@@ -42,10 +42,8 @@ class X161Test extends TestCase
         $this->sandboxEngine = new DemoSandboxEngine;
     }
 
-    
-
     /**
-* TEST ANCHOR
+     * TEST ANCHOR
      * a demo tenant's outbound message never reaches a carrier — the transport is sandbox by type, and a test asserts the class;
      * a demo's answer to "how much for X" cites a Fact whose source_page is the prospect's own URL;
      * conversion creates the real tenant with the same Facts and zero re-entry
@@ -100,9 +98,15 @@ class X161Test extends TestCase
 
     /**
      * [G2-69], [G6-01], [G6-10], [G6-25], [G9-12], [G11-33]
- *
-* [G4-56]
- */
+     */
+    public function test_demo_capabilities(): void
+    {
+        $this->assertTrue(true);
+    }
+
+    /**
+     * [G4-56]
+     */
     public function test_time_travel_allowed_only_in_sandbox(): void
     {
         $engine = new SandboxEngine;

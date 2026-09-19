@@ -6,12 +6,12 @@
  "app/Doctor/InstructionLog.php": "7d8f96421156c137802963bd4cf7a71b131b1919564a73dcaf5f98285985a8fa",
  "app/Doctor/Manifest.php": "ba04b6f17aa37f29d1620ca4067253e6c85c192e5c509a3ca366c6b9f6a43e1f",
  "app/Doctor/ManifestReader.php": "136f096897f60adf2b6fef05cf9c62671a5bbf7f0d0dae281645a3614f8c7c16",
- "app/Doctor/Stages/BoundaryStage.php": "ced741936fd65b00f1358f88184f838c600365cf392f9124bb75d94c1913c13c",
+ "app/Doctor/Stages/BoundaryStage.php": "ed129b6440346e37a9e6a4ffa75a76b03e1b2c926cc67d141a117286bdf9bff4",
  "app/Doctor/Stages/CapabilityStage.php": "d739c6437d9175b65e7d55944f7d538f37b64f4f8e2847107ac9ad8781a3a2b2",
  "app/Doctor/Stages/CitationStage.php": "31be657e053bcd0344a8af16e7d9ad08644711c6c8cdb69b4c6b301c63cb3f8a",
- "app/Doctor/Stages/ContractStage.php": "52e03bf48c5340464ce832b09dec7f8d798734d55c68f71f4bb74508bf5bf340",
+ "app/Doctor/Stages/ContractStage.php": "85d87f57f871718ea26c237dbdccc5df63aa8706a121d3dd425a5cf1601c6eb0",
  "app/Doctor/Stages/JourneyStage.php": "870247c5a2a33437b6045c3c84369666d6640b797288547b4d6fa0d0bef60444",
  "app/Doctor/Stages/SchemaStage.php": "12862c2f45552828ccfca7af61821c76658538b94593b12c20236f875bd7c414",
  "app/Doctor/Stages/Stage.php": "03be8ef5cbfa24c1fb8d8aa4a419bd8f7ca8c75feb3cf3587f01c029011ca545",
- "app/Doctor/Stages/TestAnchorStage.php": "bce030860c6148d470769e01bd8767993bde07841b3d075d6b898c9ec6116094"
+ "app/Doctor/Stages/TestAnchorStage.php": "25e27cdc41ce011f31f70352ea0d36eecee6c05db2d5424505735cacbadbf5f2"
 }

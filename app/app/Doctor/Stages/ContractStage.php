@@ -564,9 +564,22 @@ final class ContractStage implements Stage
         // ⛔ Two emitters for one event: five such cases were residue from a header
         //    split where the OLD block kept declaring what it had given away.
         //    A split is done when the old block stops claiming things.
+        // ⭐ MULTI-EMITTER EXEMPTION — owner ruling 2026-09-07 (reserved questions, item 4).
+        //    The master plan's own rule permits more than one module to emit these two: they
+        //    are fan-in REQUESTS, not capability claims, so a second emitter is not the
+        //    header-split residue the check below exists to catch. Measured at the time of the
+        //    ruling: 'send.requested' had 8 emitters, 'approval.requested' had 5, across 13
+        //    modules, and every one of them was legitimate.
+        // ⛔ Adding a token to this list WEAKENS A CHECK. It needs an owner ruling and a line
+        //    in REVIEWS.md, exactly like this one. Every other token keeps one-event-one-emitter.
+        // ⭐ 'win.first' — owner ruling 2026-09-16: two plan-sanctioned emitters, C-Reviews (P-113,
+        //    the first review received) and X-118 (the onboarding test call, plan §27169). Both are
+        //    the plan's own FIRST-WIN, so a second emitter is not the header-split residue this catches.
+        $multiEmitterOk = ['send.requested', 'approval.requested', 'win.first'];
+
         foreach ($emitted as $token => $emitters) {
             $unique = array_values(array_unique($emitters));
-            if (count($unique) > 1) {
+            if (count($unique) > 1 && ! in_array($token, $multiEmitterOk, true)) {
                 $out[] = [
                     'where' => implode(', ', $unique),
                     'what' => "'{$token}' has {$unique[0]} and ".(count($unique) - 1).' other emitter(s)',

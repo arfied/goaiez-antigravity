@@ -110,7 +110,24 @@ final class TestAnchorStage implements Stage
 
         // ⛔ And the structural half: nothing random may feed an artifact-id field
         //    anywhere in the tree, whatever the tests say.
-        foreach (Finder::create()->files()->in(base_path('app'))->name('*.php') as $f) {
+        // ⛔⛔⛔ THE CHECKER MUST NOT CHECK ITSELF — and this scan did, nine times.
+        //
+        // self::MANUFACTURED holds the literals 'uniqid(', 'Str::ulid(', 'rand(' … as the list
+        // of things to DETECT. This loop then read its own source, found every one of them, and
+        // reported nine violations against TestAnchorStage.php. Of the 13 `anchor` violations on
+        // main, NINE were this file flagging its own constant array.
+        //
+        // ⭐ A detector that reads whole files fires on its own documentation. BoundaryStage hit
+        //   exactly this and its phpFiles() already carries the fix and the reason: notPath()
+        //   silently matched nothing, filter() takes a closure with no version-dependent
+        //   pattern semantics. This is that same proven fix, applied here.
+        //   Owner ruling 2026-09-07 (reserved questions, item 5 — as corrected).
+        $notTheChecker = static fn (\SplFileInfo $f): bool => ! str_contains(
+            str_replace('\\', '/', $f->getPathname()),
+            '/app/Doctor/'
+        );
+
+        foreach (Finder::create()->files()->in(base_path('app'))->name('*.php')->filter($notTheChecker) as $f) {
             $src = $f->getContents();
             if (preg_match('/(call_?sid|message_?id|charge_?id|artifact_?id)/i', $src) !== 1) {
                 continue;
