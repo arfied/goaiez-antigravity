@@ -91,8 +91,4 @@ class X209Test extends TestCase
     /**
      * [N-209-01]
      */
-    public function test_n_209_capabilities(): void
-    {
-        $this->assertTrue(true);
-    }
 }

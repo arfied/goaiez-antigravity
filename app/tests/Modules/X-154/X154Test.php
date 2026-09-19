@@ -61,8 +61,4 @@ class X154Test extends TestCase
     /**
      * [G2-40], [G3-29], [G3-53], [G5-36], [G5-47], [G11-19], [G12-19]
      */
-    public function test_lexicon_capabilities(): void
-    {
-        $this->assertTrue(true);
-    }
 }
