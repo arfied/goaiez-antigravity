@@ -214,6 +214,29 @@ Watch for: <the trap that applies, by name>
     dispatch of the cap.** It is also not the "re-run until green" antipattern: that rule is about an
     *assertion* that flickers, and here no assertion was ever read. Re-dispatch the identical gate, and put
     the `grep` above in the brief so a second kill is diagnosed in the same run rather than in the next tick.
+- ⭐ **THE CLOSING GATE IS THE SUPERVISOR'S. NO BRIEF ASKS A CODER TO RUN A SUITE (N207/N208,
+  2026-09-18).** Two consecutive waves ordered a coder gate and produced **zero** readings. The cause is
+  the runtime, not the wording: Antigravity's `run_command` takes a `WaitMsBeforeAsync` and converts any
+  command that outruns it into a **background task**, which the CLI then kills on exit after a 5-second
+  grace — so a 2m50s suite cannot be foreground, and run 538's log says `I am running the final closing
+  gate in the foreground` and `terminating 1 background task(s) on exit` **four lines apart**. N207's
+  remedy ("say FOREGROUND in the imperative") was therefore unsatisfiable, and its self-test — *"you are
+  not finished until `grep -c '· result '` returns 1"* — could never fire, because the process that
+  would run the grep is the one being terminated. ⛔ **Never write a completion check that a dying
+  process must execute.** A brief now ends at **commit and report**; this seat gates the resulting sha,
+  which is strictly better since the coder is dead by then and the reading needs no "was anything
+  written during the run" caveat (N130). `pint --dirty` and `php artisan doctor` may still be briefed —
+  both finish in seconds — so the rule is about **duration**, not about who may measure: anything that
+  can outrun `WaitMsBeforeAsync` is this seat's. A `GATE` field reading *"not run — the supervisor gates
+  this wave"* is correct, not a gap; wave 534 had it right and N160 closed it in the wrong direction.
+  ⚠️ **And the terminated task's `pest` SURVIVES as an orphan.** The CLI reaps the wrapper; the
+  `php ./vendor/bin/pest` grandchild runs to completion, so for ~3 minutes after a coder dies the
+  checkout holds a live suite that **`coder.pid` DEAD and §1b `none` both fail to report** — §1b matches
+  `argv[0]` of `agy`, and a stray `pest` is not `agy`. `supervise.sh` §7 is the only instrument that
+  sees it, and on 2026-09-18 it refused this seat's own gate unaided: *"REFUSED: 1 other pest
+  process(es) on goaiez_antig_test — a gate now would be false"*. **Wait for the orphan; never kill
+  it** — it exits on its own, and a kill here is the 2026-09-13 wrapper mistake with the roles
+  reversed. Do not dispatch into that window either.
 - **A stale doctor.** `doctor`'s first line is `goaiez doctor · build <stamp>`.
   Three identical runs once came from files that were never copied into the
   tree. Compare the stamp before trusting any count.
