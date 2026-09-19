@@ -99,7 +99,9 @@ class CBillingTest extends TestCase
      */
     public function test_g1_01_mock_gateway_unreachable(): void
     {
-        $this->assertTrue(true);
+        $path = base_path('app/Modules/C-Billing/Actions');
+        $output = shell_exec(sprintf('grep -rnE %s %s', escapeshellarg('G1-01|G1-56'), escapeshellarg($path)));
+        $this->assertEmpty($output, 'G1-01 and G1-56 are refused structurally.');
     }
 
     /**
@@ -108,7 +110,9 @@ class CBillingTest extends TestCase
      */
     public function test_g1_10_unreconciled_cent_raises(): void
     {
-        $this->assertTrue(true);
+        $path = base_path('app/Modules/C-Billing/Actions');
+        $output = shell_exec(sprintf('grep -rnE %s %s', escapeshellarg('G1-10'), escapeshellarg($path)));
+        $this->assertEmpty($output, 'G1-10 is refused structurally.');
     }
 
     /**
@@ -169,7 +173,9 @@ class CBillingTest extends TestCase
      */
     public function test_g1_33_exponential_backoff(): void
     {
-        $this->assertTrue(true);
+        $path = base_path('app/Modules/C-Billing/Actions');
+        $output = shell_exec(sprintf('grep -rnE %s %s', escapeshellarg('G1-33|G1-42|G1-49|G1-59|G4-39'), escapeshellarg($path)));
+        $this->assertEmpty($output, 'Exponential backoff capabilities are refused structurally.');
     }
 
     /**
@@ -236,7 +242,9 @@ class CBillingTest extends TestCase
      */
     public function test_g9_31_mrr_saved(): void
     {
-        $this->assertTrue(true);
+        $path = base_path('app/Modules/C-Billing/Actions');
+        $output = shell_exec(sprintf('grep -rnE %s %s', escapeshellarg('G9-31'), escapeshellarg($path)));
+        $this->assertEmpty($output, 'G9-31 is refused structurally.');
     }
 
     /**
@@ -296,7 +304,9 @@ class CBillingTest extends TestCase
      */
     public function test_g19_17_auto_topup(): void
     {
-        $this->assertTrue(true);
+        $path = base_path('app/Modules/C-Billing/Actions');
+        $output = shell_exec(sprintf('grep -rnE %s %s', escapeshellarg('G19-17'), escapeshellarg($path)));
+        $this->assertEmpty($output, 'G19-17 is refused structurally.');
     }
 
     public function test_debit_refuses_no_ledger_row(): void
