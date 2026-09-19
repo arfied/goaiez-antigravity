@@ -25,6 +25,7 @@ final class TenancyTest extends TestCase
         'places_api_calls' => 'Platform Places API cache and billable consumption tracking across tenants.',
         'voice_usage_events' => 'Global telecom carrier usage events and un-tenanted inbound call logs.',
         'zernio_account_days' => 'Platform-level Zernio aggregation account daily quotas and rate limiters.',
+        'operator_alerts' => 'Deliberately exempt via 2026_09_01_000002_exempt_operator_alerts_from_tenant_rls.php because a nullable business_id makes tenant_isolation WITH CHECK reject rows.',
     ];
 
     public function test_all_rls_exempt_tables_have_documented_reasons(): void
@@ -36,7 +37,7 @@ final class TenancyTest extends TestCase
         }
     }
 
-    public function test_exempt_list_contains_all_eleven_platform_scoped_tables(): void
+    public function test_exempt_list_contains_all_twelve_platform_scoped_tables(): void
     {
         $requiredTables = [
             'opt_outs',
@@ -50,6 +51,7 @@ final class TenancyTest extends TestCase
             'places_api_calls',
             'voice_usage_events',
             'zernio_account_days',
+            'operator_alerts',
         ];
 
         foreach ($requiredTables as $table) {
