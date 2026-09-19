@@ -1,0 +1,78 @@
+c047cc11 test(Architecture): re-pin the suite for the wave-511 merged tree
+a88ab048 merge: track/pricebook - PB-219 (tip 091c5222)
+283a1cc3 style(Architecture): pint after the wave-510 resolution
+c6c028de test(Architecture): re-pin the suite for the wave-510 merged tree
+71bdeac0 merge: track/sixty - SIXTY-216 (tip 31223174)
+1b3ea303 test(Architecture): re-pin the suite for the wave-509 merged tree
+eef2ee97 merge: track/money - MONEY-237 (tip 17721749)
+e0ba5914 test(Architecture): re-pin the suite for the wave-508 merged tree
+01281a4c merge: track/ui - UI-138 (tip d94c6f81)
+3370e6e4 test(Architecture): wave 507 pins
+018a3858 merge: track/site - SITE-241 (tip 5a7939dc)
+091c5222 test(Architecture): PB-219 pins after the X-119 conversion
+0612547c style(X-119): pint (PB-219)
+25d04362 chore(state): decide X-119 PB-219
+64ad02df feat(X-119): PB-219 reviewwhatifound-screen and fact-freshness-per into the owner shell as What we learned and Fact freshness; both reads built over facts through the query builder, never X-121's model; X119Filler
+dc79f35d merge: origin/main into track/pricebook (PB-219)
+31223174 test(Architecture): SIXTY-216 pins after the X-66 conversion
+d94c6f81 style(tests): pint DemoFillUiTest — a blank line carrying whitespace, arrived with the UI-138 wave
+626f9255 style(X-66): pint (SIXTY-216)
+ea10cb7e chore(state): decide X-66 SIXTY-216
+23faf1d2 feat(X-66): SIXTY-216 latency-p50p95-per and livecoaching-whisper-panel into the owner shell as Call latency and Call coaching; both reads built against call_sessions and call_autopsies; X66Filler extended with a slow call and an autopsy
+722be624 merge: origin/main into track/sixty (SIXTY-216)
+17721749 test(Architecture): MONEY-237 pins after the X-198 conversion
+aaac93c0 chore(state): decide X-198 MONEY-237
+6335e414 feat(X-198): MONEY-237 reconciliation-discrepancies into the owner shell as Reconciliation discrepancies; the page h1 demoted to h2 under the shell's own; X198Filler seeds a connection, a payout and a logged discrepancy
+89548cd8 merge: origin/main into track/money (MONEY-237)
+c04125fa test(Architecture): UI-138 pins after the X-113 conversion
+0acbad51 style(X-113): pint (UI-138)
+3abfdede chore(state): decide X-113 UI-138
+ef25f12a feat(X-113): UI-138 staff and roles into the owner shell as Staff and Roles; both queries finally get their tenant, so two already-written lists stop being permanently empty; X113Filler
+01bdf65f merge: origin/main into track/ui (UI-138)
+5a7939dc test(Architecture): SITE-241 pins after the X-160 conversion
+2228d945 style(X-160): pint (SITE-241)
+accd0c5d chore(state): decide X-160 SITE-241
+f8a469fe feat(X-160): SITE-241 upload-drop and review-screen into the owner shell as Your documents and Documents to review; both queries finally get their tenant and both blades finally render what they fetch; X160Filler
+e7243996 merge: origin/main into track/site (SITE-241)
+90ea2617 style(Architecture): re-pin the merged tree from measurement
+cb5c2409 merge: track/pricebook — PB-218 (tip dd796f64)
+452b27e4 style(tests): pint DemoFillSixtyTest — a blank line carrying whitespace, arrived with the SIXTY-215 merge
+f03f0805 test(Architecture): re-measure wave-505 pins on the merged tree (round 4)
+8dbd4ac2 test(Architecture): re-measure wave-505 pins on the merged tree (round 3)
+13afd794 test(Architecture): re-measure wave-505 pins on the merged tree (round 2)
+da00cfc1 test(Architecture): re-measure wave-505 pins on the merged tree
+5bc01246 merge: track/sixty — SIXTY-215 (tip 5e769cd2)
+474a787f style(Architecture): pint after the wave-501 resolution
+26344b23 merge: track/money — MONEY-236 (tip 264a7562)
+196aad62 test(Architecture): re-pin on merged tree
+ebd3a606 merge: track/ui — UI-137 (tip c96972ed)
+eb5cc4fb test(Architecture): re-pin after site merge (wave 502)
+9417927e merge: track/site — SITE-240 (tip 76ab2b2a)
+dd796f64 style(X-01): pint (PB-218)
+f91d8908 chore(state): decide X-01 PB-218
+862ea89e feat(X-01): PB-218 person and history into the owner shell as Person and Activity; person finally seeds its id from the query string; the activity timeline read built over conversations and messages; X01Filler gains a tag
+264a7562 test(Architecture): MONEY-236b pins after the X-202 conversion
+5e769cd2 test(X-209): update pins (SIXTY-215)
+0c4c2f08 merge: origin/main into track/pricebook (PB-218)
+3ce67c63 chore(state): decide X-209 SIXTY-215
+e687c94d feat(X-209): SIXTY-215 private-inbox and ladders-own-state into the owner shell as Fixer inbox and Autopilot ladder; both queries finally get their tenant and both blades finally render what they fetch; X209Filler
+72b1dddc merge: origin/main into track/sixty (SIXTY-215)
+ec452c1d chore(state): decide X-202 MONEY-236
+a48fe4a0 feat(X-202): MONEY-236 queue and audit-export into the owner shell as Approvals and Approval history; the queue query finally gets its tenant; the decided-items read built; X202Filler
+18963348 merge: origin/main into track/money (MONEY-236)
+76ab2b2a test(Architecture): SITE-240 pins
+c96972ed style(X-212): pint (UI-137)
+6a67add9 chore(state): decide X-212 UI-137
+4c45ff6e feat(X-212): UI-137 dryrun-preview and postimport-audit into the owner shell as Dry-run preview and Import rejections; the dry-run query finally gets its tenant; the rejections read built; X212Filler
+b509167b merge: origin/main into track/ui (UI-137)
+04750284 style(X-118): pint (SITE-240)
+d15a309b chore(state): decide X-118 SITE-240
+94bcb477 feat(X-118): SITE-240 today and ttfm-distribution into the owner shell as First wins and Time to first minute; tenant-scoped reads built against onboarding_runs; X118Filler
+a0bf6857 merge: origin/main into track/site (SITE-240)
+6a1372a2 merge: track/sixty — SIXTY-214 (tip 8c8e5a00)
+8c8e5a00 style(logging): SIXTY-214c drop the imports the pool-claim fix left unused
+3a26c6cd test(logging): SIXTY-214b claim the pool number the way the suite's teardown allows — the lookup test passed alone and failed in the suite
+e973e396 style: pint formatting
+c80a4b2c chore(state): note SIXTY-214
+86ccdbaa chore(logging): SIXTY-214 stop writing callers' phone numbers to the production log, drop a per-tick debug warning, and log a successful text-back at info
+944376f1 merge: origin/main into track/sixty (SIXTY-214)
