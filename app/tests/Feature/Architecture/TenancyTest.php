@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Architecture;
 
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 final class TenancyTest extends TestCase
@@ -56,6 +57,50 @@ final class TenancyTest extends TestCase
 
         foreach ($requiredTables as $table) {
             $this->assertArrayHasKey($table, self::$exempt, "Exempt list must document {$table}");
+        }
+    }
+
+    public function test_all_unexempted_tables_are_forced(): void
+    {
+        $rows = DB::select(<<<'SQL'
+select c.relname as t, c.relrowsecurity as r, c.relforcerowsecurity as f
+from pg_class c
+join pg_namespace n on n.oid = c.relnamespace
+join information_schema.columns col
+  on col.table_name = c.relname and col.table_schema = 'public'
+where n.nspname = 'public' and c.relkind = 'r' and col.column_name = 'business_id'
+SQL
+        );
+
+        foreach ($rows as $row) {
+            if (! array_key_exists($row->t, self::$exempt)) {
+                $this->assertTrue(
+                    $row->r && $row->f,
+                    "Table {$row->t} is not exempt but lacks forced RLS. It needs enable+force row level security and a tenant_isolation policy, or a documented \$exempt entry if it is genuinely platform-scoped."
+                );
+            }
+        }
+    }
+
+    public function test_all_exempt_tables_are_unforced(): void
+    {
+        $rows = DB::select(<<<'SQL'
+select c.relname as t, c.relrowsecurity as r, c.relforcerowsecurity as f
+from pg_class c
+join pg_namespace n on n.oid = c.relnamespace
+join information_schema.columns col
+  on col.table_name = c.relname and col.table_schema = 'public'
+where n.nspname = 'public' and c.relkind = 'r' and col.column_name = 'business_id'
+SQL
+        );
+
+        foreach ($rows as $row) {
+            if (array_key_exists($row->t, self::$exempt)) {
+                $this->assertFalse(
+                    $row->r && $row->f,
+                    "Table {$row->t} is exempt but has forced RLS. It should leave \$exempt."
+                );
+            }
         }
     }
 }
