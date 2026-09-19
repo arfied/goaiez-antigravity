@@ -466,6 +466,23 @@ Procedure (the coder runs it, the supervisor reviews the merge commit):
    harness under "do not touch" on the same page as the restore procedure, two
    statements about one path with only one of them qualified, which is the
    drifted-refusal-message shape from the trap list above.
+2b. ⭐ **A GENERATED FILE IS NEVER RESOLVED BY HAND — TAKE EITHER SIDE AND RE-RUN ITS GENERATOR
+   (2026-09-19).** `app/config/surfaces.generated.php` lists **every** route, so any lane that adds a screen
+   regenerates the whole file and two lanes that both add one conflict there every time — measured: it is in
+   the index of the `track/stages` **and** `track/sixty` merges, one of only two files those two lanes both
+   touched. The same holds for `app/Modules/*/manifest.php`, `capabilities.php` and `routes.generated.php`.
+   ⛔ **Hand-resolving a generated file produces a file no generator would emit**, which is worse than either
+   side: it passes the merge and then differs from the next regeneration for reasons nobody can reconstruct.
+   So: `git checkout --ours -- <the generated path>` (the content is about to be overwritten, so the side does
+   not matter), then run its generator and stage the result —
+   `php artisan surfaces:generate` for `config/surfaces.generated.php`, `module:scaffold` for a module's
+   `manifest.php` / `capabilities.php` / `routes.generated.php`.
+   **The proof is idempotence, and it is the report's line:** run the generator a **second** time and
+   `git diff --stat -- <that path>` prints nothing. If the second run changes the file, the generator is not
+   deterministic and **that** is the finding — stop, because a non-deterministic generated file makes every
+   future merge unresolvable by this rule. ⚠️ **Not asserted here as measured**: this seat cannot run a
+   generator (it writes `app/**`), so the idempotence check is the coder's to perform and quote, not a property
+   this file claims. Same discipline as N216 — an instruction that presupposes a property says so.
 3. Commit `merge: track/<x> — <scope>`; proof in the report:
    `git diff HEAD~1 HEAD --stat -- <per-track paths>` prints nothing.
 4. Rebuild if lockfiles/assets moved; full gate on the merge commit; the
