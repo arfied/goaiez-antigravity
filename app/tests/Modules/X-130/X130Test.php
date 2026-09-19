@@ -94,30 +94,26 @@ class X130Test extends TestCase
      * [N-063] ⛔ REFUSED: `php artisan why N-063` reports it is never DEFINED, and its ⑤ in
      *   capabilities.php is boilerplate identical across every N row and across modules —
      *   it names other modules entirely. Nothing to assert. (R245, REV-80/REV-81)
-     * [N-064] ⛔ REFUSED: `php artisan why N-064` reports it is never DEFINED, and its ⑤ in
-     *   capabilities.php is boilerplate identical across every N row and across modules —
-     *   it names other modules entirely. Nothing to assert. (R245, REV-80/REV-81)
-     * [N-067] ⛔ REFUSED: `php artisan why N-067` reports it is never DEFINED, and its ⑤ in
-     *   capabilities.php is boilerplate identical across every N row and across modules —
-     *   it names other modules entirely. Nothing to assert. (R245, REV-80/REV-81)
-     * [N-070] ⛔ REFUSED: `php artisan why N-070` reports it is never DEFINED, and its ⑤ in
-     *   capabilities.php is boilerplate identical across every N row and across modules —
-     *   it names other modules entirely. Nothing to assert. (R245, REV-80/REV-81)
-     * [N-073] ⛔ REFUSED: `php artisan why N-073` reports it is never DEFINED, and its ⑤ in
-     *   capabilities.php is boilerplate identical across every N row and across modules —
-     *   it names other modules entirely. Nothing to assert. (R245, REV-80/REV-81)
-     * [N-076] ⛔ REFUSED: `php artisan why N-076` reports it is never DEFINED, and its ⑤ in
-     *   capabilities.php is boilerplate identical across every N row and across modules —
-     *   it names other modules entirely. Nothing to assert. (R245, REV-80/REV-81)
      * [N-079] ⛔ REFUSED: `php artisan why N-079` reports it is never DEFINED, and its ⑤ in
      *   capabilities.php is boilerplate identical across every N row and across modules —
      *   it names other modules entirely. Nothing to assert. (R245, REV-80/REV-81)
+     * [N-081]
+     * [N-082]
+     * [N-083]
      * [N-085] ⛔ REFUSED: `php artisan why N-085` reports it is never DEFINED, and its ⑤ in
      *   capabilities.php is boilerplate identical across every N row and across modules —
      *   it names other modules entirely. Nothing to assert. (R245, REV-80/REV-81)
      */
     public function test_demand_capabilities(): void
     {
-        $this->assertTrue(true);
+        $engine = new \App\Modules\X130\Domain\DemandEngine();
+
+        // [N-081, N-082, N-083] aggregate only — refuses below N tenants (N=5)
+        $refused = $engine->query(4);
+        $this->assertEquals('refused', $refused['status']);
+        $this->assertEquals('below_n', $refused['reason']);
+
+        $allowed = $engine->query(5);
+        $this->assertEquals('aggregate_only', $allowed['status']);
     }
 }
