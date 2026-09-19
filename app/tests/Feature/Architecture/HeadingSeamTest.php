@@ -195,8 +195,8 @@ test('owner layout heading seam contract', function () {
         expect($actualSeam)->toBe($counts['seam'], "Module {$module} seam count. If it went UP, a component added the heading key to its layout. If it went DOWN, a component removed it or was deleted.");
     }
 
-    expect(array_sum(array_column($expectedMap, 'total')))->toBe(204);
-    expect(array_sum(array_column($expectedMap, 'seam')))->toBe(203);
+    expect(array_sum(array_column($expectedMap, 'total')))->toBe($total);
+    expect(array_sum(array_column($expectedMap, 'seam')))->toBe($seam);
 
     expect($total)->toBe(204, 'If it went UP, a new module component uses the owner layout. If it went DOWN, a component dropped the layout or was deleted.');
     expect($seam)->toBe(203, 'If it went UP, a component added the heading key to its layout. If it went DOWN, a component removed it or was deleted.');
