@@ -142,4 +142,17 @@ final class AiEngine
             'format' => 'mp3',
         ];
     }
+
+    public function getResearchMeter(int $businessId): array
+    {
+        $rows = AiCall::query()
+            ->where('business_id', $businessId)
+            ->where('task', 'research')
+            ->where('created_at', '>=', now()->startOfMonth());
+
+        return [
+            'count' => (int) $rows->count(),
+            'cost_hundredths_cents' => (int) $rows->sum('cost_hundredths_cents'),
+        ];
+    }
 }
