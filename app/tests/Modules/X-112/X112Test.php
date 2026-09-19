@@ -24,6 +24,7 @@ use Tests\TestCase;
 
 class X112Test extends TestCase
 {
+    use \Tests\Concerns\RefreshesTenantDatabase;
     private AgencyEngine $engine;
 
     private AgencyOnboardClientAction $onboardAction;
