@@ -76,7 +76,8 @@ class X217Test extends TestCase
         $this->assertEquals(1800, $offer->offered_rate_bps);
 
         // 4. Accept offer: lands in X-205 with EXACT terms offered (TEST ANCHOR)
-        $affiliate = $this->pipelineAction->acceptOffer($biz->id, $offer->id);
+        $affiliateCode = $this->pipelineAction->acceptOffer($biz->id, $offer->id);
+        $affiliate = Affiliate::where('business_id', $biz->id)->where('affiliate_code', $affiliateCode)->first();
         $this->assertNotNull($affiliate);
         $this->assertInstanceOf(Affiliate::class, $affiliate);
 
