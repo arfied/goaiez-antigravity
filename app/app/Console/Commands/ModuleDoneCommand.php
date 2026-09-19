@@ -170,11 +170,11 @@ final class ModuleDoneCommand extends Command
         //
         // An agent produced this and called it "a real, non-forged ULID":
         //
-        //     $decisionId = (string) ulid() (generator);
+        //     $decisionId = (string) Str::ulid();
         //     $proof = ['artifact_id' => $decisionId, 'driver' => 'database'];
         //     file_put_contents('runtime-proof.json', json_encode($proof));
         //
-        // ⭐⭐⭐ ulid() (generator) INVENTS an id. Nothing issued it, nothing stored it,
+        // ⭐⭐⭐ Str::ulid() INVENTS an id. Nothing issued it, nothing stored it,
         //   and no row anywhere contains it. That is the exact forgery this gate
         //   exists to catch — and the old check accepted it, because it only
         //   asked whether the FIELD WAS NON-EMPTY.

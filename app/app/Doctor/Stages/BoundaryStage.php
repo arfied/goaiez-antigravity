@@ -74,24 +74,8 @@ final class BoundaryStage implements Stage
             // ⛔ Cross-module import. Cross-module change is an EVENT or a
             //    REGISTERED ACTION — never a `use`. A boundary violation caught
             //    at merge has already been built on by three other agents.
-            // @boundary-fix-2026-09-08
-            //
-            // ⭐ THE SEAMS THE RULE ITSELF NAMES. The comment above states the rule: cross-module
-            //   change is "an EVENT or a REGISTERED ACTION". So an `Events\` import IS the
-            //   compliance, not the breach — a Laravel listener must name the event class to bind
-            //   to it, and flagging it punishes the exact pattern this stage demands. `Actions\`
-            //   is the other named seam. `Domain\` is a service seam: four of the nine measured on
-            //   2026-09-07 were every outbound channel consulting X-204's ConsentService, which is
-            //   a chokepoint working as designed.
-            //
-            // ⛔ `Models\` is NOT a seam and stays flagged — that is one module reading another
-            //   module's tables. The house remedy already exists: C-Agent does not read X-01's
-            //   `takeover_latches`, it keeps a projection fed by X-01's events.
-            foreach ($this->imports($src) as [$imported, $kind]) {
-                if (in_array($kind, ['Events', 'Actions', 'Domain'], true)) {
-                    continue;
-                }
-                if ($module !== null && $imported !== '' && $imported !== $module) {
+            foreach ($this->imports($src) as $imported) {
+                if ($module !== null && $imported !== null && $imported !== $module) {
                     $out[] = [
                         'where' => $path,
                         'what' => "imports {$imported} across a module boundary",
@@ -281,54 +265,16 @@ final class BoundaryStage implements Stage
     }
 
     /** @return list<string|null> */
-    /**
-     * @boundary-fix-2026-09-08
-     *
-     * Returns [module, kind] so the caller can tell a SEAM from a reach-in. The second segment
-     * is optional: an import naming no sub-namespace yields '' , which is not a seam and stays
-     * flagged — the check fails CLOSED on a shape it does not recognise.
-     *
-     * @return list<array{0:string,1:string}>
-     */
     private function imports(string $src): array
     {
-        preg_match_all(
-            '/^use\s+App\\\\Modules\\\\([A-Za-z0-9_]+)(?:\\\\([A-Za-z0-9_]+))?/m',
-            $src,
-            $m,
-            PREG_SET_ORDER
-        );
+        preg_match_all('/^use\s+App\\\\Modules\\\\([A-Za-z0-9_]+)/m', $src, $m);
 
-        return array_map(static fn (array $x): array => [$x[1], $x[2] ?? ''], $m);
+        return $m[1] ?? [];
     }
 
     private function moduleOf(string $path): ?string
     {
-        // @boundary-fix-2026-09-08
-        //
-        // ⛔⛔⛔ THIS RETURNED NULL FOR ALMOST EVERY MODULE, AND THE CROSS-MODULE IMPORT CHECK IS
-        //   GUARDED ON `$module !== null` — so that check silently scanned nothing at all. The
-        //   character class had no hyphen and the directories are `X-102`, `C-Agent`, `X-01`.
-        //   Measured 2026-09-07: 81 cross-module `use` statements existed and the stage
-        //   reported 0. It was reported as a DEAD check and ruled for removal; it was BROKEN.
-        //
-        // ⭐ The hyphen is STRIPPED, not merely allowed: imports() yields the NAMESPACE segment
-        //   (`X102`) because that is what a `use` carries, while the path yields the DIRECTORY
-        //   (`X-102`). Allowing the hyphen alone would make every SAME-module import compare
-        //   unequal and fire on everything.
-        // @boundary-fix-2026-09-08b
-        //
-        // ⛔ THE `^app/` ANCHOR COULD NEVER MATCH. This is handed
-        //   $file->getRelativePathname() from a Finder rooted at base_path('app'), so the paths
-        //   arriving here are `Modules/X-102/Domain/Foo.php` and `Enums/AiModel.php` — no `app/`
-        //   prefix. The stage's own violation messages show it (`· Modules/C-Mail/...`). That,
-        //   not the hyphen, is what disabled the cross-module check outright.
-        //
-        // ⭐ The prefix is OPTIONAL so this stays correct whichever root a caller uses — the
-        //   function no longer depends on the Finder's rooting to work at all.
-        return preg_match('#^(?:app/)?Modules/([A-Za-z0-9_-]+)/#', $path, $m) === 1
-            ? str_replace('-', '', $m[1])
-            : null;
+        return preg_match('#^app/Modules/([A-Za-z0-9_]+)/#', $path, $m) === 1 ? $m[1] : null;
     }
 
     /**

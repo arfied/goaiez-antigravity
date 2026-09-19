@@ -29,8 +29,29 @@ class X140Test extends TestCase
         $this->draftAction = new ContentDraftFromConversationAction;
     }
 
+    
+
+    public function test_screen_requires_auth_and_redirects_guest(): void
+    {
+        $this->get('/account/content-topics')
+            ->assertRedirect('/login');
+    }
+
+    public function test_screen_loads_for_authed_user(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'SEO Content Cluster Tenant', 'currency' => 'USD']);
+        $user = User::first();
+
+        Tenancy::set((int) $biz->id);
+
+        $this->actingAs($user)
+            ->get('/account/content-topics')
+            ->assertOk()
+            ->assertSeeLivewire(ProposedPagesView::class);
+    }
+
     /**
-     * TEST ANCHOR
+* TEST ANCHOR
      * a page drafted from a refusal cites the refusal id;
      * a draft containing a SAMPLE price fails the gate and is never published
      */
@@ -93,32 +114,9 @@ class X140Test extends TestCase
 
     /**
      * [G8-07], [G8-24], [G8-40], [G11-21], [G12-16], [G12-21]
-     */
-    public function test_content_capabilities(): void
-    {
-        $this->assertTrue(true);
-    }
-
-    public function test_screen_requires_auth_and_redirects_guest(): void
-    {
-        $this->get('/account/content-topics')
-            ->assertRedirect('/login');
-    }
-
-    public function test_screen_loads_for_authed_user(): void
-    {
-        $biz = TestCase::provisionTenant(['name' => 'SEO Content Cluster Tenant', 'currency' => 'USD']);
-        $user = User::first();
-
-        Tenancy::set((int) $biz->id);
-
-        $this->actingAs($user)
-            ->get('/account/content-topics')
-            ->assertOk()
-            ->assertSeeLivewire(ProposedPagesView::class);
-    }
-
-    /** [G3-37] */
+ *
+[G3-37]
+ */
     public function test_g3_37_doorway_pages_vs_real_content_mechanism(): void
     {
         Event::fake([TopicIdentified::class, ContentCreated::class]);

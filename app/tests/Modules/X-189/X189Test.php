@@ -21,8 +21,10 @@ class X189Test extends TestCase
         $this->overlayAction = new ImageOverlayAction;
     }
 
+    
+
     /**
-     * TEST ANCHOR
+* TEST ANCHOR
      * an asset with no license_source is REFUSED AT INGEST (§226) ·
      * every social image carries a branded overlay layer, asserted on the output file.
      */
@@ -77,13 +79,9 @@ class X189Test extends TestCase
     /**
      * [G16-17], [G16-19], [G17-29], [G19-12]
      * Personalised overlay, branded card, sourcing & single debit
-     */
-    public function test_branded_card_and_capabilities(): void
-    {
-        $this->assertTrue(true);
-    }
-
-    /** [G16-18] */
+ *
+[G16-18]
+ */
     public function test_g16_18_branding_never_injects_location_coordinates(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Branded Media Tenant', 'currency' => 'USD']);

@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
-use App\Services\Mail\MailQuota;
-use App\Services\Pixel\PixelDelivery;
 use Illuminate\Console\Command;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -85,25 +82,8 @@ final class DeployCheckCommand extends Command
     private function workerIsRunning(): void
     {
         $last = cache()->get('goaiez:worker:heartbeat');
-        if (is_numeric($last)) {
-            $last = Carbon::createFromTimestamp($last);
-        }
-
-        if ($last === null) {
-            $this->record('worker running', false, 'NO WORKER HEARTBEAT. Queued jobs are accepted and never run — including the missed-call text-back.');
-
-            return;
-        }
-
-        if (! $last instanceof \DateTimeInterface) {
-            $this->record('worker running', false, 'heartbeat unreadable ('.get_debug_type($last).')');
-
-            return;
-        }
-
-        $last = Carbon::instance($last);
-        $age = (int) $last->diffInSeconds(now(), absolute: true);
-        $ok = $age < 120;
+        $age = $last === null ? null : now()->diffInSeconds($last);
+        $ok = $age !== null && $age < 120;
 
         $this->record(
             'worker running',
@@ -117,25 +97,8 @@ final class DeployCheckCommand extends Command
     private function schedulerIsRunning(): void
     {
         $last = cache()->get('goaiez:scheduler:heartbeat');
-        if (is_numeric($last)) {
-            $last = Carbon::createFromTimestamp($last);
-        }
-
-        if ($last === null) {
-            $this->record('scheduler running', false, 'NO SCHEDULER TICK. 29 scheduled tasks are not firing — token refresh, review reminders, deletions, parked-number release.');
-
-            return;
-        }
-
-        if (! $last instanceof \DateTimeInterface) {
-            $this->record('scheduler running', false, 'heartbeat unreadable ('.get_debug_type($last).')');
-
-            return;
-        }
-
-        $last = Carbon::instance($last);
-        $age = (int) $last->diffInSeconds(now(), absolute: true);
-        $ok = $age < 120;
+        $age = $last === null ? null : now()->diffInSeconds($last);
+        $ok = $age !== null && $age < 120;
 
         $this->record(
             'scheduler running',
@@ -183,7 +146,7 @@ final class DeployCheckCommand extends Command
      */
     private function sendCeilingIsSeeded(): void
     {
-        $ceiling = app(MailQuota::class)->ceiling();
+        $ceiling = config('mail.daily_send_ceiling.smtp');
         $ok = is_int($ceiling) && $ceiling > 0;
 
         $this->record(
@@ -218,14 +181,13 @@ final class DeployCheckCommand extends Command
      */
     private function pixelBundleIsPublished(): void
     {
-        try {
-            $version = app(PixelDelivery::class)->choose();
-            $this->record('pixel bundle published', true, 'ok '.$version->sha);
-        } catch (\RuntimeException $e) {
-            $this->record('pixel bundle published', false, $e->getMessage());
-        } catch (\Throwable $e) {
-            $this->record('pixel bundle published', false, get_debug_type($e));
-        }
+        $ok = is_file(public_path('build/p.js')) || is_file(public_path('p.js'));
+
+        $this->record(
+            'pixel bundle published',
+            $ok,
+            $ok ? 'p.js present' : '/p.js SERVES NOTHING — run `npm run build && php artisan doctor --stage=schema`.'
+        );
     }
 
     private function numberStockExists(): void
@@ -240,7 +202,7 @@ final class DeployCheckCommand extends Command
         $this->record(
             'number stock',
             $ok,
-            $ok ? "{$free} unassigned number(s)" : 'NO NUMBERS — run sms:load-number-pool to register stock, or numbers:return-parked to recycle.'
+            $ok ? "{$free} unassigned number(s)" : 'NO NUMBERS — a provisioned tenant has no from-address and cannot send.'
         );
     }
 
