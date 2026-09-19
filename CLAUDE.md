@@ -237,6 +237,19 @@ Watch for: <the trap that applies, by name>
   process(es) on goaiez_antig_test — a gate now would be false"*. **Wait for the orphan; never kill
   it** — it exits on its own, and a kill here is the 2026-09-13 wrapper mistake with the roles
   reversed. Do not dispatch into that window either.
+  ⭐ **The standalone pre-dispatch check, because §7 only exists inside a three-minute `--tests` gate
+  (N213, 2026-09-18).** `supervise.sh:386-391`'s form, and both stages matter:
+  ```
+  for p in $(pgrep -x php); do tr '\0' ' ' < /proc/$p/cmdline 2>/dev/null | grep -q "bin/pes""t" && echo "pest $p cwd=$(readlink /proc/$p/cwd)"; done
+  ```
+  It matches **`argv[0]` exactly** (`pgrep -x php`) because pest runs as `php ./vendor/bin/pest` and its
+  process *name* is `php`; and the needle is split `"bin/pes""t"` so the detector's own command line
+  cannot match it. ⛔ **`pgrep -a pest` CANNOT MATCH A RUNNING SUITE** — it compares the process name,
+  which is `php`. Six dispatch blocks in `REVIEWS.md` cite it as evidence of a clear window; every one
+  of those readings is vacuous. And `pgrep -af 'vendor/bin/pest'` over-reports by matching the shell
+  running the grep. **Positive control: `pgrep -x php | wc -l` is never zero on this box** (queue
+  workers, horizon, `schedule:work`), so a `0` from stage one means the detector is broken, not that the
+  box is quiet — quote it beside the result or the zero means nothing.
 - ⛔ **`role goaiez_backup: has BYPASSRLS` IS A SANCTIONED EXCEPTION — NEVER RUN THE `ALTER ROLE` DOCTOR
   PRINTS BESIDE IT (N209, 2026-09-18).** Measured: the application connects as **`goaiez_app`**, whose
   `rolbypassrls` is **false**, so tenant isolation holds where it matters. `goaiez_backup` has **zero
