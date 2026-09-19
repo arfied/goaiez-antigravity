@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-17T11:35:21",
+ "updated": "2026-09-19T13:52:23",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -140,7 +140,7 @@
   },
   "11": {
    "track": "J6-J7 portal",
-   "status": "BUILDING",
+   "status": "DONE",
    "modules": [
     "X-172",
     "X-112",
@@ -176,7 +176,7 @@
   },
   "15": {
    "track": "channels",
-   "status": "BUILDING",
+   "status": "DONE",
    "modules": [
     "C-Mail",
     "C-Whatsapp",
@@ -194,7 +194,7 @@
   },
   "17": {
    "track": "roster",
-   "status": "BUILDING",
+   "status": "DONE",
    "modules": [
     "X-125",
     "X-127",
@@ -843,7 +843,7 @@
    "unresolved": []
   },
   "X-172": {
-   "status": "BUILDING",
+   "status": "DONE",
    "wave": 11,
    "intent": "INFORM",
    "unresolved": []
@@ -971,7 +971,7 @@
    "unresolved": []
   },
   "X-193": {
-   "status": "BUILDING",
+   "status": "DONE",
    "wave": 15,
    "intent": "GROW",
    "unresolved": []
@@ -1019,7 +1019,7 @@
    "unresolved": []
   },
   "X-201": {
-   "status": "BUILDING",
+   "status": "DONE",
    "wave": 17,
    "intent": "RECOVER",
    "unresolved": []

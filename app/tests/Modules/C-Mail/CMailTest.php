@@ -649,8 +649,4 @@ class CMailTest extends TestCase
         $this->assertFalse(MailDomain::where('business_id', $biz->id)->findOrFail($domainNegative->id)->is_marketing_paused, 'A4: domain is not paused');
     }
 
-    public function test_header_capabilities(): void
-    {
-        $this->assertTrue(true);
-    }
 }
