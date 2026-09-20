@@ -16,13 +16,13 @@ final class UnsetTenantDefectTest extends TestCase
 
         foreach ($files as $file) {
             $content = file_get_contents($file);
-            if (str_contains($content, 'public int $businessId = 0;') && str_contains($content, 'this->businessId > 0')) {
+            if (str_contains($content, 'public int $businessId') && !str_contains($content, 'Tenancy::id(') && !str_contains($content, 'Tenancy::idOrFail(')) {
                 $count++;
             }
         }
 
         $this->assertEquals(
-            122,
+            17,
             $count,
             'If it went UP, a new screen shipped that renders empty on a real GET. If it went DOWN, one was fixed — lower the number and record it.'
         );
