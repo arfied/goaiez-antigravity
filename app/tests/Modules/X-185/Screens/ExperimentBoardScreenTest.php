@@ -61,4 +61,57 @@ class ExperimentBoardScreenTest extends TestCase
 
         Livewire::test(ExperimentBoard::class)->assertOk();
     }
+
+    public function test_control_writes_and_clears_empty_states(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::setUser($owner->id);
+
+        Livewire::test(ExperimentBoard::class)
+            ->set('packName', 'Summer Sale')
+            ->set('labelText', 'Summer sale is here')
+            ->set('fleetSampleSize', 150)
+            ->set('industry', 'hvac')
+            ->call('promote')
+            ->assertSet('error', null)
+            ->assertSet('success', 'Promoted pack Summer Sale. This feeds the experiment lists; nothing downstream is wired to it yet.');
+
+        $this->assertDatabaseHas('content_packs', [
+            'business_id' => $biz->id,
+            'pack_name' => 'Summer Sale',
+            'label_text' => 'Summer sale is here',
+            'fleet_sample_size' => 150,
+            'industry' => 'hvac',
+        ]);
+
+        $this->get(route('x-185.experiment-board'))
+            ->assertDontSee('No content pack has been tested for you yet')
+            ->assertSee('Summer Sale');
+    }
+
+    public function test_control_refuses_invalid_input(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::setUser($owner->id);
+
+        Livewire::test(ExperimentBoard::class)
+            ->set('packName', '')
+            ->call('promote')
+            ->assertSet('error', 'Pack Name cannot be empty.');
+
+        Livewire::test(ExperimentBoard::class)
+            ->set('packName', 'Small Sample Pack')
+            ->set('fleetSampleSize', 50)
+            ->call('promote')
+            ->assertSet('error', 'Content pack promotion rejected: fleet sample size must be above minimum (TEST ANCHOR & G12-30)');
+
+        $this->assertDatabaseMissing('content_packs', [
+            'business_id' => $biz->id,
+            'pack_name' => 'Small Sample Pack',
+        ]);
+    }
 }
