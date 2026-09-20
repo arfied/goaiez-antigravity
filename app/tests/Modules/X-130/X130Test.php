@@ -15,6 +15,28 @@ use Tests\TestCase;
 
 class X130Test extends TestCase
 {
+    /**
+     * [N-070]
+     */
+    public function test_n_070_does_not_perform_gl_categorisation(): void
+    {
+        $dir = base_path('app/Modules/X-130');
+        $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($dir));
+        $found = false;
+        $match = '';
+        foreach ($files as $file) {
+            if ($file->getExtension() === 'php') {
+                $fileContent = file_get_contents($file->getPathname());
+                if (preg_match('/(gl_category|categorisation|general_ledger|gl_account)/i', $fileContent)) {
+                    $found = true;
+                    $match = $file->getPathname();
+                    break;
+                }
+            }
+        }
+        $this->assertFalse($found, "GL Categorisation found in X-130: $match. This belongs to X-173.");
+    }
+
     private DemandPublishAction $publishAction;
 
     private DemandQueryAction $queryAction;
