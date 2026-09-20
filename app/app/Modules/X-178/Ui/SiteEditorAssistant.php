@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X178\Ui;
 
+use App\Enums\UserRole;
 use App\Modules\X178\Actions\FormGenerateAction;
 use App\Modules\X178\Models\DesignChange;
 use App\Support\Tenancy;
@@ -26,7 +27,7 @@ class SiteEditorAssistant extends Component
     public function mount(int $businessId = 0): void
     {
         $this->businessId = $businessId ?: Tenancy::id() ?? 0;
-        abort_if($this->businessId === 0, 404);
+        abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner, UserRole::Manager, UserRole::SuperAdmin), 403);
     }
 
     public function generate(FormGenerateAction $action): void
@@ -41,7 +42,7 @@ class SiteEditorAssistant extends Component
 
         $result = $action->handle(Tenancy::idOrFail(), $pid, $this->niche);
         
-        $this->success = "Generated form. It places a lead-capture block and invents no price. Block ref: {$result['block_ref']}. This feeds the margin lists; nothing downstream is wired to it yet.";
+        $this->success = "Generated form. It places a lead-capture block and invents no price. Block ref: {$result['block_ref']}. This feeds design changes; nothing downstream is wired to it yet.";
     }
 
     public function render()
