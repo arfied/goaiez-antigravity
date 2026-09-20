@@ -7,7 +7,10 @@ namespace App\Modules\CBilling;
 use App\Modules\CBilling\Ui\Credits;
 use App\Modules\CBilling\Ui\DunningBoard;
 use App\Modules\CBilling\Ui\Mrr;
+use App\Modules\CBilling\Listeners\CreditAccountOnPaymentCaptured;
 use App\Modules\CBilling\Ui\RevenueRecovery;
+use App\Modules\X198\Events\PaymentCaptured;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 
@@ -20,6 +23,8 @@ final class ModuleServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Event::listen(PaymentCaptured::class, CreditAccountOnPaymentCaptured::class);
+
         $this->loadRoutesFrom(__DIR__.'/routes.generated.php');
 
         $this->loadMigrationsFrom(__DIR__.'/Database/migrations');
