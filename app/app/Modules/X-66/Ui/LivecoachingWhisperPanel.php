@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X66\Ui;
 
-use App\Modules\X66\Actions\VoiceSessionEngine;
+use App\Modules\X66\Domain\VoiceSessionEngine;
 use App\Modules\X66\Models\CallAutopsy;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
@@ -21,7 +21,7 @@ class LivecoachingWhisperPanel extends Component
 
     public ?string $error = null;
 
-    public function coach(): void
+    public function coach(VoiceSessionEngine $engine): void
     {
         $this->success = null;
         $this->error = null;
@@ -38,7 +38,7 @@ class LivecoachingWhisperPanel extends Component
         }
 
         $businessId = Tenancy::idOrFail();
-        $autopsy = VoiceSessionEngine::coach($businessId, $this->sessionId, $this->transcript);
+        $autopsy = $engine->coach($businessId, $this->sessionId, $this->transcript);
 
         $this->success = 'Processed transcript for session '.$this->sessionId.'. This feeds the coaching notes. Objection detected: '.($autopsy->sentiment === 'Negative' ? 'yes' : 'no').'.';
     }

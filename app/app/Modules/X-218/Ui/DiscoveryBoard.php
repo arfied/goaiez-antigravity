@@ -25,7 +25,7 @@ class DiscoveryBoard extends Component
 
     public ?string $error = null;
 
-    public function discover(): void
+    public function discover(InfluencerDiscoverAction $action): void
     {
         $this->success = null;
         $this->error = null;
@@ -38,7 +38,7 @@ class DiscoveryBoard extends Component
 
         $businessId = Tenancy::idOrFail();
 
-        $profile = InfluencerDiscoverAction::discoverInfluencer($businessId, $this->handle, $this->platform, $this->audienceSize, $this->engagementRate);
+        $profile = $action->discoverInfluencer($businessId, $this->handle, $this->platform, $this->audienceSize, $this->engagementRate);
 
         $this->success = 'Discovered '.$profile->handle.' on '.$profile->platform.'. This feeds the influencer lists; nothing downstream is wired to it yet.';
         $this->handle = '';

@@ -30,7 +30,7 @@ class PrivateInbox extends Component
         $this->businessId = Tenancy::id() ?? 0;
     }
 
-    public function process(): void
+    public function process(FixerCommandAction $action): void
     {
         $this->success = null;
         $this->error = null;
@@ -47,7 +47,7 @@ class PrivateInbox extends Component
         }
 
         $bizId = Tenancy::idOrFail();
-        $result = FixerCommandAction::processStaffSms($bizId, $this->staffPersonId, $this->smsBody);
+        $result = $action->processStaffSms($bizId, $this->staffPersonId, $this->smsBody);
         $this->success = 'Processed SMS command from staff. Parsed delay: '.($result['eta_delayed'] ?? 0).' minutes. This feeds the inbox; nothing downstream is wired to it yet.';
     }
 

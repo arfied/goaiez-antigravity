@@ -32,7 +32,7 @@ class ExperimentBoard extends Component
         $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
     }
 
-    public function promote(): void
+    public function promote(PackSeedAction $action): void
     {
         $this->success = null;
         $this->error = null;
@@ -46,7 +46,7 @@ class ExperimentBoard extends Component
         $bizId = Tenancy::idOrFail();
 
         try {
-            $pack = PackSeedAction::promotePack($bizId, $this->packName, $this->labelText, $this->fleetSampleSize, $this->industry);
+            $pack = $action->promotePack($bizId, $this->packName, $this->labelText, $this->fleetSampleSize, $this->industry);
             $this->success = 'Promoted pack '.$pack->pack_name.'. This feeds the experiment lists; nothing downstream is wired to it yet.';
             $this->packName = '';
         } catch (\InvalidArgumentException $e) {
