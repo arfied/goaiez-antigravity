@@ -43,4 +43,38 @@ class DnsCardScreenTest extends TestCase
 
         Livewire::test(DnsCard::class)->assertOk();
     }
+
+    public function test_control_adds_domain(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(DnsCard::class)
+            ->set('domainName', 'new-domain.com')
+            ->call('submit')
+            ->assertSet('success', 'Recorded domain as verified; nothing has queried DNS for it yet.')
+            ->assertSet('domainName', '');
+
+        $this->assertDatabaseHas((new MailDomain)->getTable(), [
+            'business_id' => $biz->id,
+            'domain_name' => 'new-domain.com',
+            'dkim_status' => 'verified',
+            'spf_status' => 'verified',
+            'dmarc_status' => 'quarantine',
+        ]);
+
+        $this->get(route('c-mail.dns-card'))
+            ->assertSee('new-domain.com')
+            ->assertDontSee('No sending domain yet.');
+
+        Livewire::test(DnsCard::class)
+            ->set('domainName', '')
+            ->call('submit')
+            ->assertSet('error', 'Domain name is required.');
+
+        Tenancy::forget();
+    }
 }
