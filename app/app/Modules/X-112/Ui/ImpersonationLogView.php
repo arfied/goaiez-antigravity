@@ -17,8 +17,14 @@ class ImpersonationLogView extends Component
 
     public function render(GetImpersonationLogsAction $action)
     {
-        $logs = ($this->businessId > 0)
-            ? $action->handle($this->businessId)
+        $id = $this->businessId;
+        if ($id === 0) {
+            abort_unless(auth()->check() && \App\Support\Tenancy::check(), 403);
+            $id = \App\Support\Tenancy::idOrFail();
+        }
+
+        $logs = ($id > 0)
+            ? $action->handle($id)
             : collect();
 
         return view('x-112::impersonation-log', [
