@@ -40,7 +40,7 @@ class LivecoachingWhisperPanel extends Component
         $businessId = Tenancy::idOrFail();
         $autopsy = $engine->coach($businessId, $this->sessionId, $this->transcript);
 
-        $this->success = 'Processed transcript for session '.$this->sessionId.'. This feeds the coaching notes. Objection detected: '.($autopsy->sentiment === 'Negative' ? 'yes' : 'no').'.';
+        $this->success = 'Processed transcript for session '.$this->sessionId.'. This feeds the coaching notes. Objection detected: '.($autopsy->sentiment === 'negative' ? 'yes' : 'no').'.';
     }
 
     public function render()

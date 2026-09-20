@@ -91,12 +91,12 @@ class LivecoachingWhisperPanelScreenTest extends TestCase
         $this->assertDatabaseHas('call_autopsies', [
             'business_id' => $biz->id,
             'call_session_id' => $session->id,
-            'sentiment' => 'Negative',
+            'sentiment' => 'negative',
         ]);
 
         $this->get(route('x-66.livecoaching-whisper-panel'))
             ->assertDontSee('No coaching notes yet.')
-            ->assertSee('Negative');
+            ->assertSee('negative');
     }
 
     public function test_control_refuses_empty_input(): void
