@@ -16,9 +16,35 @@ class LinksEarned extends Component
     #[Locked]
     public int $businessId = 0;
 
+    public string $placedUrl = '';
+    public string $anchorText = '';
+    public ?string $success = null;
+    public ?string $error = null;
+
     public function mount(int $businessId = 0): void
     {
         $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
+    }
+
+    public function recordPlacement(): void
+    {
+        $this->success = null;
+        $this->error = null;
+
+        if (empty($this->placedUrl)) {
+            $this->error = 'Placed URL is required.';
+            return;
+        }
+
+        $result = app(\App\Modules\X191\Actions\LinkMonitorAction::class)->recordPlacement(
+            Tenancy::idOrFail(),
+            $this->placedUrl,
+            $this->anchorText
+        );
+
+        $this->success = 'Recorded placement on ' . $result->placed_url . '. This feeds the pitch ratios; nothing downstream is wired to it yet.';
+        $this->placedUrl = '';
+        $this->anchorText = '';
     }
 
     public function render()
