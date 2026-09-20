@@ -1,5 +1,4 @@
 <div>
-    <x-surface.sample-state module="**local-first with SQLite on the device — a basement has no signal**" screen="stafffacing_app" />
     <livewire:x-124.chat-dock-every />
     
     <div class="max-w-md mx-auto px-4 py-6" wire:loading.class="opacity-50">
