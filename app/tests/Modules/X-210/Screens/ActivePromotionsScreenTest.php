@@ -40,7 +40,7 @@ class ActivePromotionsScreenTest extends TestCase
             code: 'FALL15',
             discountValue: 1500,
             discountType: 'fixed_cents',
-            maxRedemptions: 10,
+            maxRedemptions: 10, measurementWindowDays: 14,
         );
         Tenancy::forget();
 
