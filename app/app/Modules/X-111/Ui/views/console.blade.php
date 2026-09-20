@@ -1,5 +1,4 @@
 <div>
-    <x-surface.sample-state module="health dashboard" screen="console" />
     <x-ui.systems-strip module="X-111" />
 
     <div class="ops-console-view p-4">
