@@ -187,4 +187,63 @@ class MarginByJobTest extends TestCase
         $this->assertStringContainsString('999.99', $html, 'The per-job screen must still list a sample job');
         $this->assertStringContainsString('<span>Sample</span>', $html, 'The per-job screen must show the sample pill');
     }
+
+    public function test_record_job_cost_from_screen_and_feeds_by_service(): void
+    {
+        $user = User::factory()->create();
+        $user->role = UserRole::Owner;
+        $user->save();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        Event::fake([JobCosted::class, MarginBelowThreshold::class]);
+
+        $this->actingAs($user);
+
+        $this->get(route('x-166.margin-by-job'))->assertOk()->assertSee('No costed jobs yet.');
+
+        Livewire::actingAs($user)->test(MarginByJob::class)
+            ->set('jobId', '500')
+            ->set('priceBookVersion', 'v1.5')
+            ->set('revenueCents', '10000')
+            ->set('laborCostCents', '1000')
+            ->set('materialsCostCents', '1000')
+            ->set('overheadCostCents', '1000')
+            ->call('recordJobCost')
+            ->assertSee('Recorded job cost for job 500.')
+            ->assertSet('jobId', '');
+
+        $this->assertDatabaseHas('x166_job_costs', [
+            'business_id' => $biz->id,
+            'job_id' => 500,
+            'revenue_cents' => 10000,
+        ]);
+
+        $this->get(route('x-166.margin-by-job'))->assertOk()->assertSee('500')->assertSee('100.00');
+
+        $this->get(route('x-166.by-service'))->assertOk()->assertDontSee('No costed jobs yet.');
+    }
+
+    public function test_missing_job_id_writes_no_row_and_shows_reason(): void
+    {
+        $user = User::factory()->create();
+        $user->role = UserRole::Owner;
+        $user->save();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        Event::fake([JobCosted::class, MarginBelowThreshold::class]);
+
+        Livewire::actingAs($user)->test(MarginByJob::class)
+            ->set('jobId', '')
+            ->set('revenueCents', '10000')
+            ->call('recordJobCost')
+            ->assertSee('Job ID is required.');
+
+        $this->assertDatabaseMissing('x166_job_costs', [
+            'business_id' => $biz->id,
+        ]);
+    }
 }
