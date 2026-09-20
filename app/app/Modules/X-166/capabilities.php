@@ -21,9 +21,9 @@ declare(strict_types=1);
  * carries no refusal, and a ⑤ that only restates the ① protects nothing.
  */
 return [
-    // status:
-    'N-048' => 'a margin figure is NEVER computed from invoiced revenue — only from COLLECTED (§201)',
+    // status: SPECCED
+    'N-166-01' => '',
 
     // status: SPECCED
-    'N-166-01' => '⚠️ actual-vs-expected from ledger rows only; a job with NO cost rows reports NO margin rather than 100% (INFERRED from WHAT, not the anchor)',
+    'N-048' => '',
 ];

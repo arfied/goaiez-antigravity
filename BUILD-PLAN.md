@@ -1,6 +1,6 @@
 # GO AI EZ — BUILD PLAN FOR ANTIGRAVITY
 
-**Generated 2026-08-30 by `bin/generate-plan.py`. Do not hand-edit — re-run the generator.**
+**Generated 2026-09-19 by `bin/generate-plan.py`. Do not hand-edit — re-run the generator.**
 
 | | |
 | --- | --- |

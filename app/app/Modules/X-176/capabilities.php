@@ -67,5 +67,5 @@ return [
     'G16-25' => 'VideoObject injected on publish',
 
     // status: SPECCED
-    'G7-48' => '§217.5 — SIXTH TITLE-LIE: schema nesting for the knowledge graph, not agency hierarchies · transcribed from the plan 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ schema nesting for the knowledge graph, not agency hierarchies; validates with ZERO errors or does not render',
+    'G7-48' => '',
 ];

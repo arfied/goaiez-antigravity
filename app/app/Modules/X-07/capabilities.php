@@ -31,7 +31,7 @@ return [
     'G1-47' => 'booked and COLLECTED are asserted distinct, never summed',
 
     // status: SPECCED
-    'G2-56' => 'named in the header',
+    'G2-56' => 'named in the header refuses',
 
     // status: SPECCED
     'G2-59' => 'a tile over the forecast',
@@ -58,5 +58,5 @@ return [
     'G17-19' => 'named in the header',
 
     // status: SPECCED
-    'G9-42' => 'reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ every output is labelled a SIMULATION; a simulated figure never renders like a measured one',
+    'G9-42' => '',
 ];

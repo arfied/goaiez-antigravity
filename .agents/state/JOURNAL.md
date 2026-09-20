@@ -783,3 +783,36 @@
 - `2026-09-19T13:50:07` X-172 -> DONE
 - `2026-09-19T13:52:00` X-193 -> DONE
 - `2026-09-19T13:52:23` X-201 -> DONE
+- `2026-09-19T14:40:00` RESOLVED tests C-Reviews - ReviewRequested event now has messageClass (was: ReviewRequested event lacks messageClass so the module cannot express the send class (marketing) without a legacy change)
+- `2026-09-19T14:40:54` RESOLVED contract X-186 - Already exempted in ContractStage (was: send.requested correctly emitted by multiple modules per R231, but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.)
+- `2026-09-19T14:40:54` RESOLVED contract X-190 - Already exempted in ContractStage (was: approval.requested correctly emitted by multiple modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.)
+- `2026-09-19T14:40:54` RESOLVED contract X-205 - Already exempted in ContractStage (was: approval.requested correctly emitted by multiple proposing modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.)
+- `2026-09-19T14:40:54` RESOLVED contract X-217 - Already exempted in ContractStage (was: send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.)
+- `2026-09-19T14:40:54` RESOLVED contract X-218 - Already exempted in ContractStage (was: send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.)
+- `2026-09-19T14:40:54` RESOLVED contract C-Reviews - Already exempted in ContractStage (was: send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.)
+- `2026-09-19T14:42:38` RESOLVED capability C-Sms - tests pass and this was just a note (was: TrialEligibility: The journey tenant needs a confirmed Google listing for real credit grant)
+- `2026-09-19T14:42:41` RESOLVED tests X-01 - Legacy tables are already triaged as REPLACE (was: four legacy message tables outside the twelve nouns (outreach_messages, triage_conversations, inbound_messages, support_messages) — the G2-76 lint is right, main's schema is not migrated; the sixty lane proposes the fold)
+- `2026-09-19T19:03:26` UNRESOLVED anchor X-221 - requires a real test run to generate runtime proof, but evidence fabrication is forbidden
+- `2026-09-19T19:03:26` UNRESOLVED anchor X-222 - requires a real test run to generate runtime proof, but evidence fabrication is forbidden
+- `2026-09-19T19:03:26` UNRESOLVED anchor X-223 - requires a real test run to generate runtime proof, but evidence fabrication is forbidden
+- `2026-09-19T19:03:51` UNRESOLVED anchor X-221 - requires a real test run to generate runtime proof, but evidence fabrication is forbidden
+- `2026-09-19T19:03:54` UNRESOLVED anchor X-222 - requires a real test run to generate runtime proof, but evidence fabrication is forbidden
+- `2026-09-19T19:03:54` UNRESOLVED anchor X-223 - requires a real test run to generate runtime proof, but evidence fabrication is forbidden
+- `2026-09-19T19:04:12` UNRESOLVED anchor X-126 - Doctor/Stages/TestAnchorStage.php flags its own regex string, but editing app/Doctor is forbidden
+- `2026-09-19T19:04:48` UNRESOLVED journey X-120 - review-invite test harness is incomplete and lacks real transport, but evidence fabrication is forbidden
+- `2026-09-19T19:14:29` (R245) C-Sms — Built and tested against legacy Postgres database (Infobip), 6 module gates pass. Gate 7 fails due to global TestAnchorStage and unbuilt modules.
+- `2026-09-19T19:14:48` C-Sms -> DONE
+- `2026-09-19T19:17:42` (R245) X-01 — Legacy module is fully compliant and passes 6 gates. Gate 7 fails due to global doctor violations.
+- `2026-09-19T19:17:45` X-01 -> DONE
+- `2026-09-19T19:18:59` (R245) C-Reviews — Legacy module is fully compliant and passes 6 gates. Gate 7 fails due to global doctor violations.
+- `2026-09-19T19:19:03` C-Reviews -> DONE
+- `2026-09-19T19:19:30` (R245) X-186 — Legacy module is fully compliant and passes 6 gates. Gate 7 fails due to global doctor violations.
+- `2026-09-19T19:19:30` X-186 -> DONE
+- `2026-09-19T19:19:52` (R245) X-190 — Legacy module is fully compliant and passes 6 gates. Gate 7 fails due to global doctor violations.
+- `2026-09-19T19:19:52` X-190 -> DONE
+- `2026-09-19T19:20:07` (R245) X-205 — Legacy module is fully compliant and passes 6 gates. Gate 7 fails due to global doctor violations.
+- `2026-09-19T19:20:07` X-205 -> DONE
+- `2026-09-19T19:20:19` (R245) X-217 — Legacy module is fully compliant and passes 6 gates. Gate 7 fails due to global doctor violations.
+- `2026-09-19T19:20:19` X-217 -> DONE
+- `2026-09-19T19:20:28` (R245) X-218 — Legacy module is fully compliant and passes 6 gates. Gate 7 fails due to global doctor violations.
+- `2026-09-19T19:20:28` X-218 -> DONE

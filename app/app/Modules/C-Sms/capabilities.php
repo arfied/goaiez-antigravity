@@ -22,17 +22,14 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'R245' => 'C-Sms is the sole consumer of send.requested: X-204 decides, SmsSendAction sends, one outreach_messages row per grant (run 94, R245)',
+    'G3-54' => 'spinning text to evade carrier A2P filtering conflicts with P-064\'s 10DLC path — owner question refuses',
 
     // status: SPECCED
-    'G3-54' => 'spinning text to evade carrier A2P filtering conflicts with P-064\'s 10DLC path — owner question',
+    'G11-32' => 'T677 (owner): the spintax half is reframed as Lexicon Personalization (X-154) — we do not evade carrier filtering. Stripping the URL on a 30007 and degrading honestly is the real mechanism (P-073) refuses',
 
     // status: SPECCED
-    'G11-32' => 'T677 (owner): the spintax half is reframed as Lexicon Personalization (X-154) — we do not evade carrier filtering. Stripping the URL on a 30007 and degrading honestly is the real mechanism (P-073)',
+    'G19-11' => 'R80 — it fires on the RING, not the carrier timeout; transactional, blocked by nothing but STOP (P-061) refuses',
 
     // status: SPECCED
-    'G19-11' => 'R80 — it fires on the RING, not the carrier timeout; transactional, blocked by nothing but STOP (P-061)',
-
-    // status: SPECCED
-    'G19-18' => 'every link rides the short-linker (P-072); 159-char discipline is the segment law',
+    'G19-18' => 'every link rides the short-linker (P-072); 159-char discipline is the segment law refuses',
 ];

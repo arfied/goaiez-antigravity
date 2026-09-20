@@ -22,10 +22,10 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'G1-43' => 'refuses: unsubscribing from marketing and then completing a job still delivers the invoice, asserted in one test · every preference write lands in X-204, not in a local table; ⑥ the categories are the tenant\'s, confirmed once · ⑦ honoured on the next send, always',
+    'G1-43' => '⑥ the categories are the tenant\'s, confirmed once · ⑦ honoured on the next send, always refuses',
 
     // status: SPECCED
-    'G3-18' => 'the warm-up engine — spec with the email pass (turn 31)',
+    'G3-18' => 'the warm-up engine — spec with the email pass (turn 31) refuses',
 
     // status: SPECCED
     'G4-08' => 'deliverability first, then everything else · refuses: any action that compromises deliverability — deliverability comes first',
@@ -34,10 +34,10 @@ return [
     'G7-40' => 'DMARC XML failure → alert; named in the header · refuses: to suppress a DMARC XML failure alert',
 
     // status: SPECCED
-    'G9-21' => 'primary-vs-spam placement per network',
+    'G9-21' => 'primary-vs-spam placement per network refuses',
 
     // status: SPECCED
-    'G10-28' => 'the DMARC journey p=none → quarantine → reject',
+    'G10-28' => 'the DMARC journey p=none → quarantine → reject refuses',
 
     // status: SPECCED
     'G11-03' => 'it SHOWS the exact missing record with a copy button — it never asks them to configure SPF',
@@ -46,44 +46,44 @@ return [
     'G11-05' => 'R17 halt seeds — 0.10% complaint or 250 bounces, the campaign family, never the thread',
 
     // status: SPECCED
-    'G11-06' => 'named in the header',
+    'G11-06' => 'named in the header refuses',
 
     // status: SPECCED
-    'G11-09' => 'a test send scored before the campaign',
+    'G11-09' => 'a test send scored before the campaign refuses',
 
     // status: SPECCED
     'G11-10' => 'bounce and spam-trap check before a cold send · refuses: a cold send without a bounce and spam-trap check',
 
     // status: SPECCED
-    'G11-11' => 'named in the header',
+    'G11-11' => 'named in the header refuses',
 
     // status: SPECCED
-    'G11-12' => 'named in the header; replies thread into the Conversation',
+    'G11-12' => 'named in the header; replies thread into the Conversation refuses',
 
     // status: SPECCED
-    'G11-15' => 'named in the header',
+    'G11-15' => 'named in the header refuses',
 
     // status: SPECCED
-    'G11-16' => 'warm-up is a CALENDAR, not a setting',
+    'G11-16' => 'warm-up is a CALENDAR, not a setting refuses',
 
     // status: SPECCED
-    'G11-17' => 'named in the header',
+    'G11-17' => 'named in the header refuses',
 
     // status: SPECCED
-    'G11-18' => '= the row above; one spec',
+    'G11-18' => '= the row above; one spec refuses',
 
     // status: SPECCED
     'G11-20' => 'the header\'s first line;  SES-primary (R16), DPA before first send · refuses: to send before a DPA is in place',
 
     // status: SPECCED
-    'G11-29' => 'named in the header',
+    'G11-29' => 'named in the header refuses',
 
     // status: SPECCED
     'G11-37' => 'named in the header.  the legitimate mechanism is the warm-up calendar and seed-list diversity — a seeded network clicking Not Spam is the F-15 question in email form · refuses: any illegitimate warm-up mechanism outside the calendar and seed-list diversity',
 
     // status: SPECCED
-    'G11-38' => 'named in the header',
+    'G11-38' => 'named in the header refuses',
 
     // status: SPECCED
-    'G15-31' => 'reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ no warm-up event reaches a tenant-facing metric · every quantity is a RANGE plus jitter — a constant is the signature · refuses: a constant quantity — a warm-up volume with no jitter is the signature of automation, and no warm-up event reaches a tenant-facing metric',
+    'G15-31' => ' refuses',
 ];

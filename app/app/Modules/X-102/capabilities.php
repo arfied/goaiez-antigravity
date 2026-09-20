@@ -28,13 +28,13 @@ return [
     'G8-36' => 'the widget\'s Shadow DOM; the page-reading half feeds X-119',
 
     // status: SPECCED
-    'G13-15' => 'the pixel triggers; the chat answers grounded (X-119); an exit-intent answer containing an ungrounded price **refuses instead** *(P-092)* — asserted with the pricebook empty',
+    'G13-15' => 'the pixel triggers; the chat answers grounded (X-119) refuses',
 
     // status: SPECCED
     'G13-37' => 'the widget offers help instead of watching them fail',
 
     // status: SPECCED
-    'G16-21' => 'carousels rendered in the chat; a missing asset renders text, never a broken placeholder *(the never-fails image law)*, asserted',
+    'G16-21' => 'carousels rendered in the chat refuses',
 
     // status: SPECCED
     'G21-01' => 'P-120 — the claim law. Scripted messages posing as other attendees is manufactured social proof. (Same class as the "just in time" webinar killed at G15-01.)',

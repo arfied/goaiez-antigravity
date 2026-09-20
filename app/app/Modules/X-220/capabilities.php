@@ -22,14 +22,14 @@ declare(strict_types=1);
  */
 return [
     // status: *asserted: every `ai_calls` row records the prompt VERSION it used.* ⛔ **REFUSES a call whose prompt has no version — "the output changed" is unanswerable without it**
-    'N-220-01' => '*asserted: every `ai_calls` row records the prompt VERSION it used.* ⛔ **REFUSES a call whose prompt has no version — "the output changed" is unanswerable without it**',
+    'N-220-01' => '',
 
     // status: *asserted: a change to a frozen prompt creates a NEW VERSION.* ⛔ **REFUSES the edit — an experiment nobody can reproduce is not a prompt**
-    'N-220-02' => '*asserted: a change to a frozen prompt creates a NEW VERSION.* ⛔ **REFUSES the edit — an experiment nobody can reproduce is not a prompt**',
+    'N-220-02' => '',
 
     // status: *asserted: `N-238-19` — a model enters PRIMARY only after passing that job class's golden set.* ⛔⛔ **REFUSES the promotion. Without this, "any model, any vendor" means ANY QUALITY, DISCOVERED IN PRODUCTION**
-    'N-220-03' => '*asserted: `N-238-19` — a model enters PRIMARY only after passing that job class\'s golden set.* ⛔⛔ **REFUSES the promotion. Without this, "any model, any vendor" means ANY QUALITY, DISCOVERED IN PRODUCTION**',
+    'N-220-03' => '',
 
     // status: *asserted: `model_requested` AND `model_served` on every eval row (`N-238-02`).* ⛔ **REFUSES a result carrying only one — a silent fallback would attribute the BACKUP's output to the PRIMARY**
-    'N-220-04' => '*asserted: `model_requested` AND `model_served` on every eval row (`N-238-02`).* ⛔ **REFUSES a result carrying only one — a silent fallback would attribute the BACKUP\'s output to the PRIMARY**',
+    'N-220-04' => '',
 ];

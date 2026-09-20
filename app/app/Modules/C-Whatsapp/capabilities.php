@@ -22,8 +22,8 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'G10-40' => 'refuses: C-Whatsapp; a scan or shortcode registers the opt-in; the permit itself is ConsentService\'s',
+    'G10-40' => 'a scan or shortcode registers the opt-in; the permit itself is ConsentService\'s',
 
     // status: SPECCED
-    'G19-22' => 'refuses: C-Whatsapp; §156.3 — GBP runs through Zernio; every channel lands on ONE Conversation',
+    'G19-22' => '§156.3 — GBP runs through Zernio; every channel lands on ONE Conversation',
 ];

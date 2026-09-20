@@ -82,7 +82,7 @@ final class FindCommand extends Command
         $this->newLine();
         $this->line("— {$hits} module(s) declare it");
 
-        if ($this->option('prose')) {
+        if ($this->option('--prose') === true || $this->option('prose')) {
             $this->newLine();
             $this->line('## IN THE PLAN (⛔ NOT evidence that anything exists)');
             $plan = base_path('GOAIEZ-MASTER-PLAN.md');

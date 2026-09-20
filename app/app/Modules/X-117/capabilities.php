@@ -22,10 +22,10 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'G1-15' => 'refuses: a "one-click upsell" charges a stored card with no new authorisation; every charge requires a fresh authorisation event — asserted by attempting a second charge on a stored token with no new consent · (P-160: tokens only)',
+    'G1-15' => 'every charge requires a fresh authorisation event — asserted by attempting a second charge on a stored token with no new consent · (P-160: tokens only) refuses',
 
     // status: SPECCED
-    'G1-39' => 'refuses: a "one-click upsell" charges a stored card with no new authorisation; every charge requires a fresh authorisation event — asserted by attempting a second charge on a stored token with no new consent · (P-160: tokens only)',
+    'G1-39' => 'every charge requires a fresh authorisation event — asserted by attempting a second charge on a stored token with no new consent · (P-160: tokens only) refuses',
 
     // status: SPECCED
     'G6-02' => 'post-charge upsell on the tokenised card (P-160 — tokens only)',
@@ -43,20 +43,20 @@ return [
     'G16-05' => 'P-120 — a countdown must be true. A timer that resets on refresh is a manufactured claim',
 
     // status: SPECCED
-    'G1-73' => '§226.3 — fires only on a milestone the CUSTOMER accepted, never an internal status change · transcribed from the plan 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ fires ONLY on a milestone the CUSTOMER accepted, never an internal status change — asserted',
+    'G1-73' => '',
 
     // status: SPECCED
-    'G1-75' => '§226.3 — a pricing STRUCTURE, not a promotion · transcribed from the plan 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ a pricing STRUCTURE, not a promotion; the price is looked up or REFUSED (P-092)',
+    'G1-75' => '',
 
     // status: SPECCED
-    'G1-81' => '§226.3 · R190 — a tenant gifts their customer, not us gifting ours · transcribed from the plan 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ issuer_scope=tenant (R190) — a tenant gifts their customer; doctor asserts no platform-scope path',
+    'G1-81' => '',
 
     // status: CLASSIFIED
-    'G1-82' => '§226.3 — pause STOPS the meter, asserted on the next cycle · transcribed from the plan 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads',
+    'G1-82' => '',
 
     // status: SPECCED
-    'G17-31' => 'reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ R204: ONE currency — doctor asserts no conversion path; landed cost is OUT',
+    'G17-31' => '',
 
     // status: CLASSIFIED
-    'G18-29' => 'will-call / pickup routing = commerce fulfilment',
+    'G18-29' => 'will-call / pickup routing = commerce fulfilment refuses',
 ];

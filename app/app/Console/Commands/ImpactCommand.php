@@ -254,7 +254,7 @@ final class ImpactCommand extends Command
      *   `package:discover`, so EVERY artisan command on the whole tree died,
      *   including `composer install`. One private method took the platform down.
      *
-     * @param  list<Manifest>  $all
+     * @param list<Manifest> $all
      */
     private function tableImpact(string $table, array $all): int
     {

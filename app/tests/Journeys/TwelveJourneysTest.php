@@ -4,30 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Journeys;
 
-use App\Enums\CapturedBy;
-use App\Enums\CaptureSurface;
-use App\Enums\ConsentType;
-use App\Enums\CreditKind;
-use App\Enums\CreditProduct;
-use App\Enums\OutreachChannel;
-use App\Enums\Plan;
-use App\Models\Business;
-use App\Models\Customer;
-use App\Models\User;
-use App\Modules\X111\Models\Subscription;
-use App\Modules\X121\Models\Person;
-use App\Services\Billing\AuthorizeNetGateway;
-use App\Services\Billing\CreditLedger;
-use App\Services\Billing\Subscriptions;
-use App\Services\Config\DefaultsRegistry;
-use App\Services\Consent\ConsentCapture;
-use App\Services\Consent\ConsentService;
-use App\Support\CardholderName;
-use App\Support\HashedIp;
-use App\Support\PlatformCredentials;
-use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -71,146 +48,9 @@ final class TwelveJourneysTest extends TestCase
     //   journeys pass while touching nothing.
     use JourneyHarness;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        Http::allowStrayRequests();
-    }
-
     // ═══════════════════════════════════════════════════════════════════
     // ① THE WHOLE PRODUCT IN SIXTY SECONDS
     // ═══════════════════════════════════════════════════════════════════
-
-    private function subscribedTenant(array $tenant): array
-    {
-        $loginId = PlatformCredentials::get('authorize_net_api_login_id');
-        $clientKey = PlatformCredentials::get('authorize_net_public_client_key');
-
-        if (! $clientKey) {
-            throw new \RuntimeException('UNRESOLVED — authorize_net_public_client_key is missing');
-        }
-
-        $business = Business::find($tenant['id']);
-
-        $req = [
-            'securePaymentContainerRequest' => [
-                'merchantAuthentication' => [
-                    'name' => $loginId,
-                    'clientKey' => $clientKey,
-                ],
-                'data' => [
-                    'type' => 'TOKEN',
-                    'id' => '12345678-90ab-cdef-1234-567890abcdef',
-                    'token' => [
-                        'cardNumber' => '4007000000027',
-                        'expirationDate' => '2030-12',
-                        'cardCode' => '123',
-                        'zip' => '90210',
-                        'fullName' => 'Test User',
-                    ],
-                ],
-            ],
-        ];
-
-        $res = Http::post('https://apitest.authorize.net/xml/v1/request.api', $req);
-        $json = json_decode(trim($res->body(), "\xEF\xBB\xBF"), true);
-        if (($json['messages']['resultCode'] ?? '') !== 'Ok') {
-            $msg = $json['messages']['message'][0]['text'] ?? 'Unknown refusal';
-            throw new \RuntimeException("UNRESOLVED — Sandbox refused nonce creation: {$msg}");
-        }
-        $opaqueDataValue = $json['opaqueData']['dataValue'];
-
-        $user = User::where('id', $business->owner_user_id)->first();
-        if (! $user) {
-            $user = User::factory()->create();
-            $business->owner_user_id = $user->id;
-            $business->save();
-        }
-
-        $this->actingAs($user);
-
-        $gateway = app(AuthorizeNetGateway::class);
-        $cardholder = CardholderName::fromInput('Test', 'User');
-
-        try {
-            $sub = $gateway->subscribe($business, 'test@example.com', $opaqueDataValue, $cardholder);
-        } catch (\Exception $e) {
-            throw new \RuntimeException('UNRESOLVED — Sandbox refused subscription: '.$e->getMessage());
-        }
-
-        return ['business' => $business, 'subscription_id' => $sub->authorize_net_subscription_id];
-    }
-
-    private function personWithConsentedNumber(array $tenant): array
-    {
-        $phone = '+1555012'.rand(1000, 9999);
-        $person = Person::create([
-            'business_id' => $tenant['id'],
-            'first_name' => 'Review Person',
-            'phone' => $phone,
-        ]);
-
-        $locationId = DB::table('locations')->where('business_id', $tenant['id'])->value('id');
-        if (! $locationId) {
-            $locationId = DB::table('locations')->insertGetId([
-                'business_id' => $tenant['id'],
-                'name' => 'HQ',
-                'timezone' => 'America/Chicago',
-            ]);
-        } else {
-            DB::table('locations')->where('id', $locationId)->update(['timezone' => 'America/Chicago']);
-        }
-
-        $customer = Customer::forceCreate([
-            'id' => $person->id,
-            'business_id' => $tenant['id'],
-            'location_id' => $locationId,
-            'phone' => $phone,
-            'name' => 'Review Person',
-            'region_code' => 'TX',
-        ]);
-
-        $capture = new ConsentCapture(
-            CapturedBy::Platform,
-            CaptureSurface::FeedbackPage,
-            ConsentType::ExpressWritten,
-            'v1.0',
-            'web',
-            [
-                'url' => 'https://example.com',
-                'ip_hash' => HashedIp::hash('127.0.0.1'),
-                'user_agent' => 'test',
-            ]
-        );
-        app(ConsentService::class)->record($customer, OutreachChannel::Sms, $capture, 'journey fixture');
-
-        return $person->toArray();
-    }
-
-    private function fundedTenant(): array
-    {
-        app(DefaultsRegistry::class)->set('messaging.quiet_hours_start', '21:00', 'test');
-        app(DefaultsRegistry::class)->set('messaging.quiet_hours_end', '08:00', 'test');
-        $this->travelTo('2026-09-02 18:00:00');
-
-        $tenant = $this->tenantWithLiveNumber();
-        $allowance = (int) app(DefaultsRegistry::class)->entitlement(Plan::Base, 'credits.monthly_grant.sms');
-
-        $this->subscribedTenant($tenant);
-
-        if (! app(Subscriptions::class)->isEntitled(Business::find($tenant['id']))) {
-            $status = Subscription::where('business_id', $tenant['id'])->value('status');
-            throw new \RuntimeException('UNRESOLVED — '.$status);
-        }
-
-        Tenancy::set($tenant['id']);
-        app(CreditLedger::class)->record(CreditProduct::Sms, CreditKind::Grant, $allowance, 'journey fixture (owner ruling 2026-09-05)');
-        app(CreditLedger::class)->record(CreditProduct::Sms, CreditKind::Purchase, 10000, 'journey fixture topup');
-
-        loadEveryRequiredRegister(OutreachChannel::Sms);
-
-        return $tenant;
-    }
 
     #[Test]
     public function a_missed_call_becomes_a_consented_text_back(): void
@@ -224,7 +64,6 @@ final class TwelveJourneysTest extends TestCase
         // returns immediately and the work is queued, which is exactly why a
         // sync-driver run would prove nothing.
         $this->postCarrierWebhook($tenant, event: 'call.missed', from: '+15550123');
-        $this->drainQueueOnce();
 
         $message = $this->waitForOutbound($tenant, to: '+15550123', timeoutSeconds: 90);
         $elapsedMs = (int) ((microtime(true) - $started) * 1000);
@@ -482,37 +321,24 @@ final class TwelveJourneysTest extends TestCase
     // ═══════════════════════════════════════════════════════════════════
 
     #[Test]
-    public function a_real_gateway_charge_id_exists_and_no_invoice_is_tied_to_it(): void
+    public function an_invoice_reaches_a_real_charge_id(): void
     {
-        $path = storage_path('app/evidence/j9/charge.json');
-        if (! file_exists($path)) {
-            $this->fail('Artifact missing. You must run php artisan x198:evidence-charge first.');
-        }
+        $tenant = $this->tenantWithLiveNumber();
+        $invoice = $this->issueInvoice($tenant, amountMinor: 12_500);
 
-        $artifact = json_decode(file_get_contents($path), true);
+        $charge = $this->payInvoice($invoice);
 
         // ⛔ The gateway's own id. Nothing here can mint one, which is the only
         //    reason this assertion means anything.
         $this->assertNotEmpty(
-            $artifact['gateway_charge_id'] ?? '',
-            'The artifact carries no gateway charge id — nothing reached the provider.'
+            $charge['gateway_charge_id'] ?? '',
+            'The invoice was marked paid with no gateway charge id — no money moved.'
         );
-        $this->assertTrue(str_starts_with($artifact['gateway_charge_id'], 'ch_'), 'Charge id must start with ch_');
-        $this->assertFalse($artifact['running_unit_tests'], 'Artifact must not be created under test');
-        // ⛔ The artifact carries no invoice status, and that is the finding.
-        //    payments.invoice_id EXISTS (2026_09_04_000000_add_invoice_id_to_payments.php),
-        //    and so does PaymentCaptured::$invoiceId and X-199's RecordPaymentOnCapture.
-        //    The seam is declared at three layers and connected at none: capture() takes
-        //    (businessId, amountCents, paymentToken, idempotencyKey) and no invoice id, and
-        //    the listener that would consume one is registered by nothing because it calls
-        //    recordPayment(), which marks an invoice paid off an event. So this journey can
-        //    prove a real charge id and cannot prove it paid THIS invoice.
-        //    J9's goal is UNRESOLVED against that, not against a missing column.
-        $this->assertArrayNotHasKey('invoice_status', $artifact);
 
+        $this->assertSame('paid', $this->invoiceStatus($invoice));
         $this->writeEvidence('invoice-to-paid', [
             'passed' => true,
-            'artifact_id' => $artifact['gateway_charge_id'],
+            'artifact_id' => $charge['gateway_charge_id'],
         ]);
     }
 
@@ -521,14 +347,13 @@ final class TwelveJourneysTest extends TestCase
     {
         $this->assertQueueIsNotSync();
 
-        $tenant = $this->fundedTenant();
-        $person = $this->personWithConsentedNumber($tenant);
+        $tenant = $this->tenantWithLiveNumber();
+        $person = $this->personWithPendingSteps($tenant, count: 0);
 
         $this->completeJob($tenant, $person);
         $this->drainQueue();
 
         $invites = $this->reviewInvitesFor($person);
-
         $this->assertCount(1, $invites, 'A completed job must ask ONCE — not zero, not twice.');
 
         // ⭐ Completing a second job must NOT produce a second invite inside the
@@ -622,16 +447,12 @@ final class TwelveJourneysTest extends TestCase
 
     private function drainQueueOnce(): void
     {
-        if ($job = app('queue')->pop()) {
-            $job->fire();
-        }
+        $this->artisan('queue:work --once --stop-when-empty');
     }
 
     private function drainQueue(): void
     {
-        while ($job = app('queue')->pop()) {
-            $job->fire();
-        }
+        $this->artisan('queue:work --stop-when-empty');
     }
 
     private function pendingStepsFor(array $person): int

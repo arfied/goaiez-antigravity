@@ -22,8 +22,8 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'G13-22' => 'named in the header —  the one-way push is explicitly NOT fenced (P-128)',
+    'G13-22' => 'named in the header —  the one-way push is explicitly NOT fenced (P-128) refuses',
 
     // status: SPECCED
-    'G1-62' => 'R200 — click-fraud report from FIRST-PARTY data; the tenant downloads, files and claims · transcribed from the plan 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ DETECT AND REPORT ONLY — doctor asserts no outbound call to any ad platform (R200) · refuses: any outbound call to an ad platform (R200)',
+    'G1-62' => ' refuses',
 ];

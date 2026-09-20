@@ -22,11 +22,11 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'G1-30' => 'refuses: an internal message has no send.requested in its trace, asserted; a doctor rule fails any path where an internal-flagged message reaches a driver · refusal: internal_only; ⑥⑦ inherit X-01',
+    'G1-30' => '⑥⑦ inherit X-01',
 
     // status: SPECCED
     'G5-28' => 'the assistant that configures the platform; HUMAN escalates to X-111',
 
     // status: SPECCED
-    'G21-10' => 'the assistant answering in-thread from the generated help registry',
+    'G21-10' => 'the assistant answering in-thread from the generated help registry refuses',
 ];

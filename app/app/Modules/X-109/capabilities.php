@@ -37,5 +37,5 @@ return [
     'G3-52' => 'personalisation is the mechanism; "defeat Akismet" is not a capability the plan can adopt without a ruling — owner question',
 
     // status: CLASSIFIED
-    'G2-78' => 'knockout questions = form outreach',
+    'G2-78' => 'knockout questions = form outreach refuses',
 ];

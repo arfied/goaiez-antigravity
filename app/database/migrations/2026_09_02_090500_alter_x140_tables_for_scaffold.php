@@ -1,6 +1,8 @@
 <?php
 
+
 declare(strict_types=1);
+use Illuminate\Support\Facades\DB;
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -12,10 +14,10 @@ return new class extends Migration
     {
         Schema::table('content_topics', function (Blueprint $table) {
             if (Schema::hasColumn('content_topics', 'name')) {
-                $table->renameColumn('name', 'topic_title');
+                DB::statement('ALTER TABLE content_topics RENAME COLUMN name TO topic_title');
             }
             if (Schema::hasColumn('content_topics', 'intent')) {
-                $table->renameColumn('intent', 'cluster_key');
+                DB::statement('ALTER TABLE content_topics RENAME COLUMN intent TO cluster_key');
             }
             if (! Schema::hasColumn('content_topics', 'slug')) {
                 $table->string('slug')->nullable();

@@ -22,7 +22,6 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    // (R245) Built the ExtensionPopup screen using existing UI components like empty-state, row-list, and row, supporting both empty and active states with scan and inject actions.
     'G2-03' => 'a button in the extension; the write is X-156\'s and carries an attestation_id (P-069)',
 
     // status: SPECCED

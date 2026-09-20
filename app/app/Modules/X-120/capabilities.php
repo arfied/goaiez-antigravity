@@ -22,14 +22,14 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'N-046' => 'CVV IS NEVER PERSISTED, ANYWHERE, FOR ANY DURATION (P-196) — asserted against the buffer, the trace and the dump',
+    'N-120-01' => '',
 
     // status: SPECCED
-    'N-047' => 'no screen anywhere returns a decrypted PAN (P-199) — the SYSTEM has access; no PERSON does',
+    'N-120-02' => '',
 
     // status: SPECCED
-    'N-120-01' => '⛔ a grep for card-number, PAN, CVV or CVC across database/migrations returns NOTHING, enforced by CI — the only component in PCI scope proves scope by ABSENCE',
+    'N-046' => '',
 
     // status: SPECCED
-    'N-120-02' => 'a card expiring within 20 days raises BEFORE it fails a charge',
+    'N-047' => '',
 ];

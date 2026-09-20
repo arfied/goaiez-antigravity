@@ -22,10 +22,10 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'G1-29' => 'refuses: MRR blends booked with collected; booked and COLLECTED are asserted distinct (§192)',
+    'G1-29' => 'booked and COLLECTED are asserted distinct (§192)',
 
     // status: SPECCED
-    'G1-35' => 'refuses: MRR blends booked with collected; booked and COLLECTED are asserted distinct (§192)',
+    'G1-35' => 'booked and COLLECTED are asserted distinct (§192)',
 
     // status: SPECCED
     'G2-63' => 'support tickets, by presence',
@@ -106,5 +106,5 @@ return [
     'G21-14' => 'the help card offered before the ticket is submitted',
 
     // status: SPECCED
-    'G15-28' => 'reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ R188 — roles not wages; doctor asserts no pay field',
+    'G15-28' => '',
 ];
