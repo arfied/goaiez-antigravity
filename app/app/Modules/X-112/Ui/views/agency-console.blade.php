@@ -1,5 +1,5 @@
 <div>
-    <x-surface.sample-state module="white-labelling" screen="agency_console" />
+
     <div class="agency-console p-4">
         <h2 class="text-lg font-bold">Agency Multi-Client Console</h2>
         @if($clients->isEmpty())
