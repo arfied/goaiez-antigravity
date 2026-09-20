@@ -26,7 +26,7 @@ class RefusalsByReasonScreenTest extends TestCase
             'recipient_phone' => '+15551234567',
             'channel' => 'sms',
             'permit_status' => 'refused',
-            'refusal_reason' => 'user_stop',
+            'refusal_reason' => 'archived',
         ]);
 
         $this->get(route('x-204.refusals-by-reason'))
