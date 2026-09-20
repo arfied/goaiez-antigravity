@@ -6,6 +6,7 @@ namespace Tests\Modules\X204\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X204\Models\SendPermit;
 use App\Modules\X204\Ui\RefusalsByReason;
 use App\Support\Tenancy;
 use Livewire\Livewire;
@@ -20,8 +21,20 @@ class RefusalsByReasonScreenTest extends TestCase
         Tenancy::set($biz->id);
         $this->actingAs($user);
 
-        $this->get(route('x-204.refusals-by-reason'))->assertOk();
+        SendPermit::create([
+            'business_id' => $biz->id,
+            'recipient_phone' => '+15551234567',
+            'channel' => 'sms',
+            'permit_status' => 'refused',
+            'refusal_reason' => 'user_stop',
+        ]);
 
-        Livewire::test(RefusalsByReason::class)->assertOk();
+        $this->get(route('x-204.refusals-by-reason'))
+            ->assertOk()
+            ->assertSee('+15551234567');
+
+        Livewire::test(RefusalsByReason::class)
+            ->assertOk()
+            ->assertSee('+15551234567');
     }
 }

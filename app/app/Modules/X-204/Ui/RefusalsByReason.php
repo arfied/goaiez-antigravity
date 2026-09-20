@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X204\Ui;
 
-use App\Modules\X204\Models\SendPermit;
+use App\Modules\X204\Actions\GetRefusalsAction;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
@@ -21,10 +21,10 @@ class RefusalsByReason extends Component
         $this->businessId = Tenancy::id() ?? 0;
     }
 
-    public function render()
+    public function render(GetRefusalsAction $action)
     {
         $refusals = ($this->businessId > 0)
-            ? SendPermit::where('business_id', $this->businessId)->where('permit_status', 'refused')->get()
+            ? $action->handle($this->businessId)
             : collect();
 
         return view('x-204::refusals-by-reason', [

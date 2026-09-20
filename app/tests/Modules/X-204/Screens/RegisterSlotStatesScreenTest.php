@@ -6,6 +6,7 @@ namespace Tests\Modules\X204\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X204\Models\ComplianceRegister;
 use App\Modules\X204\Ui\RegisterSlotStates;
 use App\Support\Tenancy;
 use Livewire\Livewire;
@@ -20,8 +21,18 @@ class RegisterSlotStatesScreenTest extends TestCase
         Tenancy::set($biz->id);
         $this->actingAs($user);
 
-        $this->get(route('x-204.register-slot-states'))->assertOk();
+        ComplianceRegister::create([
+            'business_id' => $biz->id,
+            'register_name' => 'Demo Register 2026',
+            'slot_states' => [],
+        ]);
 
-        Livewire::test(RegisterSlotStates::class)->assertOk();
+        $this->get(route('x-204.register-slot-states'))
+            ->assertOk()
+            ->assertSee('Demo Register 2026');
+
+        Livewire::test(RegisterSlotStates::class)
+            ->assertOk()
+            ->assertSee('Demo Register 2026');
     }
 }
