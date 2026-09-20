@@ -19,6 +19,35 @@ class Calls extends Component
 
     public ?string $errorMessage = null;
 
+    public string $callSid = '';
+    public string $fromPhone = '';
+    public string $toPhone = '';
+    public ?string $success = null;
+    public ?string $error = null;
+
+    public function recordCall(): void
+    {
+        $this->success = null;
+        $this->error = null;
+
+        if (empty($this->callSid)) {
+            $this->error = 'Call SID is required.';
+            return;
+        }
+
+        $result = app(\App\Modules\X66\Domain\VoiceSessionEngine::class)->handleRing(
+            Tenancy::idOrFail(),
+            $this->callSid,
+            $this->fromPhone,
+            $this->toPhone
+        );
+
+        $this->success = 'Recorded call ' . $result->call_sid . '. This feeds the latency lists; nothing downstream is wired to it yet.';
+        $this->callSid = '';
+        $this->fromPhone = '';
+        $this->toPhone = '';
+    }
+
     public function select(int $sessionId): void
     {
         if ($this->selectedSessionId === $sessionId) {

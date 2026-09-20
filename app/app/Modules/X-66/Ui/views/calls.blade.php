@@ -1,5 +1,22 @@
 <div class="flex flex-col gap-6 w-full max-w-3xl mx-auto p-4 md:p-6">
     <h2 class="text-lg font-bold text-ink">Calls</h2>
+    
+    <div class="mb-6 flex flex-col gap-2 bg-surface p-4 rounded mt-4">
+        <h3 class="font-semibold text-ink">Record Call</h3>
+        @if($success)
+            <div class="text-ink-2 bg-paper p-2 border rounded">{{ $success }}</div>
+        @endif
+        @if($error)
+            <div class="text-ink-2 bg-paper p-2 border rounded">{{ $error }}</div>
+        @endif
+        <form wire:submit="recordCall" class="flex flex-col gap-2">
+            <input type="text" wire:model="callSid" class="border rounded p-2 text-ink flex-1 bg-surface" placeholder="Call SID">
+            <input type="text" wire:model="fromPhone" class="border rounded p-2 text-ink flex-1 bg-surface" placeholder="From Phone">
+            <input type="text" wire:model="toPhone" class="border rounded p-2 text-ink flex-1 bg-surface" placeholder="To Phone">
+            <button type="submit" class="bg-surface text-ink border rounded p-2">Submit</button>
+        </form>
+    </div>
+
     <section>
         @if ($errorMessage)
             <x-ui.error-panel heading="Number Unavailable" retry="$refresh">

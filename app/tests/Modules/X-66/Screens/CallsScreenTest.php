@@ -68,4 +68,52 @@ class CallsScreenTest extends TestCase
 
         Livewire::test(Calls::class)->assertOk();
     }
+
+    public function test_control_writes_and_clears_empty_states(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::setUser($owner->id);
+
+        $table = (new CallSession)->getTable();
+
+        Livewire::test(Calls::class)
+            ->set('callSid', 'CS_123456')
+            ->set('fromPhone', '+123')
+            ->set('toPhone', '+456')
+            ->call('recordCall')
+            ->assertSet('callSid', '')
+            ->assertSee('Recorded call CS_123456');
+
+        $this->assertDatabaseHas($table, [
+            'business_id' => $biz->id,
+            'call_sid' => 'CS_123456',
+        ]);
+
+        $this->get(route('x-66.calls'))
+            ->assertSee('+123'); // from phone
+
+        $this->get(route('x-66.latency-p50p95-per'))
+            ->assertDontSee('No calls to time yet.');
+    }
+
+    public function test_control_refuses_empty_input(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::setUser($owner->id);
+
+        $table = (new CallSession)->getTable();
+
+        Livewire::test(Calls::class)
+            ->set('callSid', '')
+            ->call('recordCall')
+            ->assertSet('error', 'Call SID is required.');
+        
+        $this->assertDatabaseMissing($table, [
+            'from_phone' => '+123',
+        ]);
+    }
 }
