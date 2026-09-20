@@ -1,5 +1,5 @@
 <div>
-    <x-surface.sample-state module="each module publishes actions *(id" screen="action_log" />
+
     <x-ui.systems-strip module="X-122" />
 
     <div class="action-log-container p-4">

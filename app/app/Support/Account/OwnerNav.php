@@ -638,6 +638,7 @@ final class OwnerNav
             OwnerNavItem::make('Documents to review', 'x-160.review-screen', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Staff', 'x-113.staff', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Roles', 'x-113.roles', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Action log', 'x-122.action-log', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Reconciliation discrepancies', 'x-198.reconciliation-discrepancies', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Call latency', 'x-66.latency-p50p95-per', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Call coaching', 'x-66.livecoaching-whisper-panel', OwnerNavItem::GROUP_CATALOG),

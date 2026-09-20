@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\Modules\X122\Ui;
 
 use App\Modules\X122\Actions\ActionReverseAction;
+use App\Modules\X122\Actions\GetActionInvocationsAction;
 use App\Modules\X122\Models\ActionInvocation;
 use App\Support\Tenancy;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Livewire\WithPagination;
 
+#[Layout('components.account.layout', ['heading' => 'Action log'])]
 class ActionLog extends Component
 {
     use WithPagination;
@@ -36,20 +38,10 @@ class ActionLog extends Component
         $reverser->handle($invocation->id, $this->businessId, 'operator');
     }
 
-    public function render()
+    public function render(GetActionInvocationsAction $action)
     {
         try {
-            $query = ActionInvocation::query()
-                ->where('business_id', $this->businessId);
-
-            if ($this->search !== '') {
-                $query->where('action_name', 'like', '%'.$this->search.'%');
-            }
-
-            $invocations = $query
-                ->orderByRaw("CASE WHEN status = 'refused' THEN 0 ELSE 1 END ASC")
-                ->orderBy('id', 'desc')
-                ->paginate(15);
+            $invocations = $action->handle($this->businessId, $this->search);
         } catch (\Exception $e) {
             $this->errorMessage = 'Failed to load action log';
             $invocations = collect();

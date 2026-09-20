@@ -6,7 +6,9 @@ namespace Tests\Modules\X122\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X122\Models\ActionInvocation;
 use App\Modules\X122\Ui\ActionLog;
+use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,9 +20,21 @@ class ActionLogScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-122.action-log'))->assertOk();
+        Tenancy::setUser($owner->id);
+        ActionInvocation::factory()->create([
+            'business_id' => $biz->id,
+            'action_name' => 'Demo Action',
+            'status' => 'completed',
+        ]);
+        Tenancy::forget();
 
-        Livewire::test(ActionLog::class)->assertOk();
+        $this->get(route('x-122.action-log'))
+            ->assertOk()
+            ->assertSee('Demo Action');
+
+        Livewire::test(ActionLog::class)
+            ->assertOk()
+            ->assertSee('Demo Action');
     }
 
     public function test_screen_renders_for_admin(): void
