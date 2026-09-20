@@ -36,7 +36,7 @@
                         <span class="text-sm">ROI Open Rate Rising</span>
                     </label>
                 </div>
-                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Evaluate</button>
+                <button type="submit" class="bg-surface text-ink border rounded p-2">Evaluate</button>
             </form>
         </div>
     </div>
