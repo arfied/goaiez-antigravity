@@ -17,8 +17,14 @@ class RefusalAnalytics extends Component
 
     public function render(GetCapabilityDecisionsAction $action)
     {
-        $refusals = ($this->businessId > 0)
-            ? $action->handle($this->businessId)
+        $id = $this->businessId;
+        if ($id === 0) {
+            abort_unless(auth()->check() && \App\Support\Tenancy::check(), 403);
+            $id = \App\Support\Tenancy::idOrFail();
+        }
+
+        $refusals = ($id > 0)
+            ? $action->handle($id)
             : collect();
 
         return view('x-126::refusal-analytics', [
