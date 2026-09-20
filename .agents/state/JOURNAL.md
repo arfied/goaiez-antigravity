@@ -822,3 +822,4 @@
 - `2026-09-19T21:52:20` X-126 -> DONE
 - `2026-09-19T21:56:00` X-114 -> DONE
 - `2026-09-19T22:11:51` note: X-114 reverted: §257.4 DEFERRED, no wave opens in one (supervisor, 2026-09-19)
+- `2026-09-20T00:09:28` note: X-221/X-222/X-223: §257.6 REMOVED, scaffolded only because 6ccb293b0 deleted the REMOVED guard; their 3 anchor violations are permanent debris until the owner rules on removal; no sanctioned route exists to retire a module from BUILD-STATE

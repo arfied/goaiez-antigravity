@@ -1436,6 +1436,10 @@
   {
    "at": "2026-09-19T22:11:51",
    "note": "X-114 reverted: \u00a7257.4 DEFERRED, no wave opens in one (supervisor, 2026-09-19)"
+  },
+  {
+   "at": "2026-09-20T00:09:28",
+   "note": "X-221/X-222/X-223: \u00a7257.6 REMOVED, scaffolded only because 6ccb293b0 deleted the REMOVED guard; their 3 anchor violations are permanent debris until the owner rules on removal; no sanctioned route exists to retire a module from BUILD-STATE"
   }
  ],
  "resolved": [
