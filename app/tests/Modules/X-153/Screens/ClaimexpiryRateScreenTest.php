@@ -8,6 +8,8 @@ use App\Enums\UserRole;
 use App\Models\User;
 use App\Modules\X153\Models\Alert;
 use App\Modules\X153\Models\AlertClaim;
+use App\Modules\X153\Models\ReplyCode;
+use App\Modules\X153\Ui\AlertRosterScreen;
 use App\Modules\X153\Ui\ClaimexpiryRate;
 use App\Support\Tenancy;
 use Illuminate\Support\Carbon;
@@ -88,5 +90,58 @@ class ClaimexpiryRateScreenTest extends TestCase
         $this->get(route('x-153.claimexpiry-rate'))
             ->assertOk()
             ->assertSee('0% expiry rate');
+    }
+
+    public function test_pair_broadcast_and_claim_control(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        // Control 1: Broadcast
+        Livewire::test(AlertRosterScreen::class)
+            ->set('title', 'Emergency Update')
+            ->set('body', 'Please review the latest policy.')
+            ->call('broadcastAlert')
+            ->assertSet('title', '')
+            ->assertSee('Broadcasted alert with reply code ');
+
+        $this->assertDatabaseHas((new Alert)->getTable(), [
+            'business_id' => $biz->id,
+            'title' => 'Emergency Update',
+            'status' => 'pending',
+        ]);
+
+        $replyCode = ReplyCode::where('business_id', $biz->id)->firstOrFail();
+
+        // Control 2: Claim Failure (Invalid code)
+        Livewire::test(ClaimexpiryRate::class)
+            ->set('code', 'invalid_code_123')
+            ->call('claimAlert')
+            ->assertSet('error', 'Reply code invalid_code_123 does not exist')
+            ->assertSee('Reply code invalid_code_123 does not exist');
+
+        // Control 2: Claim Success
+        Livewire::test(ClaimexpiryRate::class)
+            ->set('code', $replyCode->code)
+            ->call('claimAlert')
+            ->assertSet('code', '')
+            ->assertSet('error', null)
+            ->assertSee('Claimed alert '.$replyCode->alert_id);
+
+        $this->assertDatabaseHas((new AlertClaim)->getTable(), [
+            'business_id' => $biz->id,
+            'alert_id' => $replyCode->alert_id,
+            'claimed_by_user_id' => $owner->id,
+        ]);
+
+        // Fan-out assertions
+        $this->get(route('x-153.alert-roster-screen'))
+            ->assertOk()
+            ->assertSee('Emergency Update');
+
+        $this->get(route('x-153.claimexpiry-rate'))
+            ->assertOk()
+            ->assertDontSee('No claims yet.');
     }
 }

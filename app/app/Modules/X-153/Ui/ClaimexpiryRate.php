@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X153\Ui;
 
+use App\Modules\X153\Actions\AlertClaimAction;
 use App\Modules\X153\Models\AlertClaim;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
@@ -16,9 +17,36 @@ class ClaimexpiryRate extends Component
     #[Locked]
     public int $businessId = 0;
 
+    public string $code = '';
+
+    public ?string $success = null;
+
+    public ?string $error = null;
+
     public function mount(int $businessId = 0)
     {
         $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
+    }
+
+    public function claimAlert(AlertClaimAction $action): void
+    {
+        $this->success = null;
+        $this->error = null;
+
+        if (trim($this->code) === '') {
+            $this->error = 'Code is required.';
+
+            return;
+        }
+
+        $result = $action->handle(Tenancy::idOrFail(), $this->code, auth()->id() ?? 1);
+
+        if ($result['status'] === 'claimed') {
+            $this->success = 'Claimed alert '.$result['alert_id'].'. This updates the claim list; nothing downstream is wired to it yet.';
+            $this->code = '';
+        } else {
+            $this->error = $result['message'];
+        }
     }
 
     public function render()
