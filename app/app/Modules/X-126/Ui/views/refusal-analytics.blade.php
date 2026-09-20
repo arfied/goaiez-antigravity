@@ -1,7 +1,7 @@
 <div>
 
     <div class="refusal-analytics-container p-4">
-        <h3 class="text-lg font-bold">Capability Refusal & Autonomy Analytics</h3>
+        <h2 class="text-lg font-bold">Capability Refusal & Autonomy Analytics</h2>
         @if($refusals->isEmpty())
             <p class="text-ink-dim">No capability refusals recorded.</p>
         @else
