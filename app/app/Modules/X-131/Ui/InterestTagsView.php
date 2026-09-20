@@ -17,9 +17,34 @@ class InterestTagsView extends Component
     #[Locked]
     public int $businessId = 0;
 
+    public string $personId = '';
+    public string $topic = '';
+    public ?string $success = null;
+    public ?string $error = null;
+
     public function mount(int $businessId = 0)
     {
         $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
+    }
+
+    public function submit(\App\Modules\X131\Actions\InterestSetAction $action): void
+    {
+        $this->reset(['success', 'error']);
+
+        $personIdInt = (int) $this->personId;
+        if ($personIdInt === 0) {
+            $this->error = 'Person ID is required and cannot be 0.';
+            return;
+        }
+
+        if (empty($this->topic)) {
+            $this->error = 'Topic is required.';
+            return;
+        }
+
+        $interest = $action->set(Tenancy::idOrFail(), $personIdInt, $this->topic);
+        $this->success = "Recorded interest '{$interest->topic}' for customer #{$personIdInt}. It is protected from being overwritten by inference. Nothing downstream is wired to it yet.";
+        $this->reset(['personId', 'topic']);
     }
 
     public function render()
@@ -36,10 +61,10 @@ class InterestTagsView extends Component
 
         $people = [];
         $action = app(EntityReadAction::class);
-        foreach ($interests->pluck('person_id')->unique() as $personId) {
-            $row = $action->handle('people', (int) $personId, $this->businessId);
+        foreach ($interests->pluck('person_id')->unique() as $pId) {
+            $row = $action->handle('people', (int) $pId, $this->businessId);
             if ($row !== null) {
-                $people[(int) $personId] = $row['first_name'].' '.$row['last_name'];
+                $people[(int) $pId] = $row['first_name'].' '.$row['last_name'];
             }
         }
 
