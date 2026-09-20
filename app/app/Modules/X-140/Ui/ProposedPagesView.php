@@ -23,6 +23,26 @@ class ProposedPagesView extends Component
     #[Locked]
     public int $businessId = 0;
 
+    public string $topicTitle = '';
+    public string $clusterKey = 'emergency_repair';
+    public ?string $success = null;
+    public ?string $error = null;
+
+    public function submit(\App\Modules\X140\Actions\TopicIdentifyAction $action): void
+    {
+        $this->reset(['success', 'error']);
+
+        if (empty($this->topicTitle)) {
+            $this->error = 'Topic title is required.';
+            return;
+        }
+
+        $topic = $action->identify(Tenancy::idOrFail(), $this->topicTitle, $this->clusterKey ?: 'emergency_repair');
+        $this->success = "Recorded proposed page '{$topic->topic_title}'. The row is created unpublished; nothing downstream is wired to it yet.";
+        $this->reset(['topicTitle']);
+        $this->clusterKey = 'emergency_repair';
+    }
+
     public function render()
     {
         $topics = ($this->businessId > 0)
