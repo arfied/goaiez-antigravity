@@ -23,6 +23,7 @@ class RefusalAnalyticsScreenTest extends TestCase
         Tenancy::setUser($owner->id);
         CapabilityDecision::create([
             'business_id' => $biz->id,
+            'decision_id' => 'test-decision',
             'capability_name' => 'RefundInvoice',
             'decision' => 'refused',
             'refusal_code' => 'NO_FACT',
