@@ -532,13 +532,24 @@ print("  tests %s · passed %s · FAILED %s · errors %s · result %s" % (d.get(
 FCAP=40
 fails=d.get("failures") or []
 errs=d.get("error_details") or []
+# 2026-09-20: .split("::")[-1] threw away the CLASS, and the class is the identifying
+# half. A gate reporting two failures BOTH named test_screen_renders_for_tenant — a
+# method that exists in 30+ files — cannot be acted on: this seat could not tell which
+# screens were red without running pest, which it is denied. Same family as N137, one
+# level down: the LIST was complete and each ROW was not. Print class::method, and
+# widen the message, which was cutting off before the assertion it was reporting.
+def _tid(t):
+    t=t or "?"
+    if "::" in t:
+        c,m=t.rsplit("::",1); return "%s::%s" % (c.split("\\")[-1], m)
+    return t
 for f in fails[:FCAP]:
-    print("   ✗ FAILURE %s" % f.get("test","?").split("::")[-1])
+    print("   ✗ FAILURE %s" % _tid(f.get("test")))
     fm=" ".join((f.get("message") or "").split())
-    if fm: print("      %s" % fm[:200])
+    if fm: print("      %s" % fm[:400])
 if len(fails)>FCAP: print("   … %d more FAILURE(s) not listed" % (len(fails)-FCAP))
 for e in errs[:FCAP]:
-    print("   ✗ %s\n      %s" % (e.get("test","?").split("::")[-1], (e.get("message") or "")[:160]))
+    print("   ✗ %s\n      %s" % (_tid(e.get("test")), " ".join((e.get("message") or "").split())[:400]))
 if len(errs)>FCAP: print("   … %d more ERROR(s) not listed" % (len(errs)-FCAP))'
   else
     printf '%s\n' "$out" | tail -12 | sed 's/^/  /'
