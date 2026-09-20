@@ -44,4 +44,37 @@ class ConnectionsScreenTest extends TestCase
 
         Livewire::actingAs($owner)->test(Connections::class, ['businessId' => $biz->id])->assertOk();
     }
+
+    public function test_control_adds_connection(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        Livewire::test(Connections::class, ['businessId' => $biz->id])
+            ->set('serviceName', 'stripe')
+            ->set('secret', 'super-secret-key-123')
+            ->call('submit')
+            ->assertSet('success', 'Recorded credentials for stripe (hint: ...-123). Nothing downstream is wired to it yet.')
+            ->assertSet('serviceName', '')
+            ->assertSet('secret', '');
+
+        $this->assertDatabaseHas((new Credential)->getTable(), [
+            'business_id' => $biz->id,
+            'service_name' => 'stripe',
+            'key_hint' => '...-123',
+        ]);
+
+        $this->get(route('x-206.connections'))
+            ->assertSee('stripe')
+            ->assertSee('...-123')
+            ->assertDontSee('super-secret-key-123')
+            ->assertDontSee('No credential connections configured.');
+
+        Livewire::test(Connections::class, ['businessId' => $biz->id])
+            ->set('serviceName', '')
+            ->set('secret', 'test')
+            ->call('submit')
+            ->assertSet('error', 'Service name and secret are required.');
+    }
 }
