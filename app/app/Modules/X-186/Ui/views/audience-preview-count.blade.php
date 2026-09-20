@@ -28,7 +28,7 @@
                     <label class="block text-sm">Person ID</label>
                     <input type="text" wire:model="personId" class="border p-2 w-full">
                 </div>
-                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Enrol</button>
+                <button type="submit" class="bg-surface text-ink border rounded p-2">Enrol</button>
             </form>
         </div>
     </div>
