@@ -56,4 +56,54 @@ class SendsbyclassScreenTest extends TestCase
 
         Livewire::test(Sendsbyclass::class)->assertOk();
     }
+
+    public function test_classify_control(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        // Control: Classify failure (Empty)
+        Livewire::test(Sendsbyclass::class)
+            ->set('callerType', '')
+            ->call('classify')
+            ->assertSet('error', 'Caller type is required.');
+
+        // Control: Classify success (Operational)
+        Livewire::test(Sendsbyclass::class)
+            ->set('callerType', 'missed_call_reminder')
+            ->call('classify')
+            ->assertSet('callerType', '')
+            ->assertSet('error', null)
+            ->assertSee('Derived classification: operational');
+
+        $this->assertDatabaseHas((new NotificationClass)->getTable(), [
+            'business_id' => $biz->id,
+            'caller_type' => 'missed_call_reminder',
+            'classification' => 'operational',
+        ]);
+
+        // Control: Classify success (Account)
+        Livewire::test(Sendsbyclass::class)
+            ->set('callerType', 'dunning_notice')
+            ->call('classify')
+            ->assertSet('callerType', '')
+            ->assertSet('error', null)
+            ->assertSee('Derived classification: account');
+
+        $this->assertDatabaseHas((new NotificationClass)->getTable(), [
+            'business_id' => $biz->id,
+            'caller_type' => 'dunning_notice',
+            'classification' => 'account',
+        ]);
+
+        // Fan-out assertions
+        $this->get(route('x-193.sendsbyclass'))
+            ->assertOk()
+            ->assertSee('missed_call_reminder')
+            ->assertSee('operational')
+            ->assertSee('dunning_notice')
+            ->assertSee('account')
+            ->assertDontSee('No notification classes yet.');
+    }
 }

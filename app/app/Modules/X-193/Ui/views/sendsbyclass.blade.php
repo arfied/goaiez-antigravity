@@ -14,5 +14,18 @@
                 @endforeach
             </ul>
         @endif
+
+        <div class="mb-6 flex flex-col gap-2 bg-surface p-4 rounded mt-4">
+            @if($success)
+                <div class="text-ink font-bold">{{ $success }}</div>
+            @endif
+            @if($error)
+                <div class="text-ink-3 font-bold">{{ $error }}</div>
+            @endif
+            <form wire:submit="classify" class="flex flex-col gap-2">
+                <input type="text" wire:model="callerType" class="border rounded p-2 text-ink flex-1 bg-surface" placeholder="Caller type">
+                <button type="submit" class="bg-surface text-ink border rounded p-2">Classify</button>
+            </form>
+        </div>
     </div>
 </div>
