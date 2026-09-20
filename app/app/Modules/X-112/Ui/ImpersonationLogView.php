@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X112\Ui;
 
 use App\Modules\X112\Actions\GetImpersonationLogsAction;
+use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -19,8 +20,8 @@ class ImpersonationLogView extends Component
     {
         $id = $this->businessId;
         if ($id === 0) {
-            abort_unless(auth()->check() && \App\Support\Tenancy::check(), 403);
-            $id = \App\Support\Tenancy::idOrFail();
+            abort_unless(auth()->check() && Tenancy::check(), 403);
+            $id = Tenancy::idOrFail();
         }
 
         $logs = ($id > 0)

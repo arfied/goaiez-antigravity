@@ -24,7 +24,7 @@ final class UnsetTenantDefectTest extends TestCase
         $this->assertEquals(
             122,
             $count,
-            "If it went UP, a new screen shipped that renders empty on a real GET. If it went DOWN, one was fixed — lower the number and record it."
+            'If it went UP, a new screen shipped that renders empty on a real GET. If it went DOWN, one was fixed — lower the number and record it.'
         );
     }
 }
