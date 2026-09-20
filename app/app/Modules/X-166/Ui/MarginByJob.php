@@ -71,7 +71,7 @@ class MarginByJob extends Component
                 overheadCostCents: (int) $this->overheadCostCents,
                 revenueCents: $revenueCents
             );
-            $this->success = 'Recorded job cost for job '.$cost->job_id.'. This feeds the margin lists, but it is not wired to invoice creation or payroll yet.';
+            $this->success = 'Recorded job cost for job '.$cost->job_id.'. This feeds the margin lists; nothing downstream is wired to it yet.';
 
             $this->jobId = '';
             $this->priceBookVersion = '';

@@ -214,7 +214,7 @@ class MarginByJobTest extends TestCase
             ->assertSee('Recorded job cost for job 500.')
             ->assertSet('jobId', '');
 
-        $this->assertDatabaseHas('x166_job_costs', [
+        $this->assertDatabaseHas('job_costs', [
             'business_id' => $biz->id,
             'job_id' => 500,
             'revenue_cents' => 10000,
@@ -242,7 +242,7 @@ class MarginByJobTest extends TestCase
             ->call('recordJobCost')
             ->assertSee('Job ID is required.');
 
-        $this->assertDatabaseMissing('x166_job_costs', [
+        $this->assertDatabaseMissing('job_costs', [
             'business_id' => $biz->id,
         ]);
     }
