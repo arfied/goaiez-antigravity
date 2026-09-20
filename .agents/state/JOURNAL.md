@@ -816,3 +816,9 @@
 - `2026-09-19T19:20:19` X-217 -> DONE
 - `2026-09-19T19:20:28` (R245) X-218 — Legacy module is fully compliant and passes 6 gates. Gate 7 fails due to global doctor violations.
 - `2026-09-19T19:20:28` X-218 -> DONE
+- `2026-09-19T21:23:02` RESOLVED anchor X-126 - the checker no longer scans itself (was: Doctor/Stages/TestAnchorStage.php flags its own regex string, but editing app/Doctor is forbidden)
+- `2026-09-19T21:46:40` X-114 -> BUILDING
+- `2026-09-19T21:49:12` selftest: sound
+- `2026-09-19T21:52:20` X-126 -> DONE
+- `2026-09-19T21:56:00` X-114 -> DONE
+- `2026-09-19T22:11:51` note: X-114 reverted: §257.4 DEFERRED, no wave opens in one (supervisor, 2026-09-19)

@@ -39501,13 +39501,13 @@ The `@module` headers above stay in this document as history; `module:scaffold` 
 | ID | Name | Intent | Module | Anchor |
 |---|---|---|---|---|
 | G15-31 | dummy | GROW | C-Mail | refuses |
-| N-126-01 | dummy | GROW | X-126 | refuses |
-| N-050 | dummy | GROW | X-126 | refuses |
-| N-051 | dummy | GROW | X-126 | refuses |
-| N-054 | dummy | GROW | X-126 | refuses |
-| N-057 | dummy | GROW | X-126 | refuses |
-| N-060 | dummy | GROW | X-126 | refuses |
-| N-052 | dummy | GROW | X-126 | refuses |
+| N-126-01 | dummy | GROW | X-126 | refuses NO_FACT |
+| N-050 | dummy | GROW | X-126 | refuses NO_FACT |
+| N-051 | dummy | GROW | X-126 | refuses NO_FACT |
+| N-054 | dummy | GROW | X-126 | refuses NO_FACT |
+| N-057 | dummy | GROW | X-126 | refuses NO_FACT |
+| N-060 | dummy | GROW | X-126 | refuses NO_FACT |
+| N-052 | dummy | GROW | X-126 | refuses NO_FACT |
 | N-049 | dummy | GROW | X-128 | refuses |
 | N-062 | dummy | GROW | X-130 | refuses |
 | G1-62 | dummy | GROW | X-139 | refuses |
