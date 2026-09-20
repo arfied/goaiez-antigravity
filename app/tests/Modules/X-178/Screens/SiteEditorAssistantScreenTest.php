@@ -50,3 +50,37 @@ class SiteEditorAssistantScreenTest extends TestCase
         Livewire::test(SiteEditorAssistant::class)->assertOk();
     }
 }
+
+    public function test_generate_control(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set((int) $biz->id);
+
+        $page = app(\App\Modules\X103\Actions\PageCreateAction::class)->handle((int) $biz->id, 'test-slug', 'Test Page');
+
+        $test = Livewire::test(SiteEditorAssistant::class)
+            ->set('pageId', (string) $page->id)
+            ->set('niche', 'plumbing')
+            ->call('generate')
+            ->assertSet('error', '');
+
+        $successMessage = $test->get('success');
+        $this->assertStringContainsString('Generated form. It places a lead-capture block and invents no price. Block ref: block_form_lead_capture_', $successMessage);
+
+        $this->assertDatabaseHas((new DesignChange)->getTable(), [
+            'page_id' => $page->id,
+            'change_type' => 'form_gen',
+        ]);
+
+        $this->get(route('x-178.site-editor-assistant'))
+            ->assertOk()
+            ->assertSee('form_gen')
+            ->assertDontSee('No design changes yet.');
+
+        Livewire::test(SiteEditorAssistant::class)
+            ->set('pageId', '0')
+            ->call('generate')
+            ->assertSet('error', 'Page ID must be provided and cannot be 0.');
+    }
