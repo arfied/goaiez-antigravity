@@ -22,6 +22,15 @@
             </form>
         </div>
 
+        <div class="mb-6 flex flex-col gap-2 bg-surface p-4 rounded mt-4">
+            <h2 class="text-lg font-bold">Onboard Client</h2>
+            <form wire:submit="onboardClient" class="flex flex-col gap-2">
+                <input type="number" wire:model="agencyId" class="border rounded p-2 text-ink bg-surface" placeholder="Agency ID">
+                <input type="text" wire:model="clientName" class="border rounded p-2 text-ink bg-surface" placeholder="Client Name">
+                <button type="submit" class="bg-surface text-ink border rounded p-2">Onboard Client</button>
+            </form>
+        </div>
+
         <div class="mb-6">
             <h2 class="text-lg font-bold">Agencies</h2>
             @forelse($agencies as $agency)

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X112\Ui;
 
 use App\Modules\X112\Actions\AgencyCreateAction;
+use App\Modules\X112\Actions\AgencyOnboardClientAction;
 use App\Modules\X112\Actions\GetAgencyClientsAction;
 use App\Modules\X112\Models\Agency;
 use App\Support\Tenancy;
@@ -15,6 +16,10 @@ use Livewire\Component;
 class AgencyConsole extends Component
 {
     public string $agencyName = '';
+
+    public int $agencyId = 0;
+
+    public string $clientName = '';
 
     public ?string $whitelabelDomain = null;
 
@@ -50,6 +55,30 @@ class AgencyConsole extends Component
         } catch (\InvalidArgumentException $e) {
             $this->error = $e->getMessage();
         }
+    }
+
+    public function onboardClient(AgencyOnboardClientAction $action): void
+    {
+        $this->success = null;
+        $this->error = null;
+
+        if ($this->agencyId === 0) {
+            $this->error = 'Agency ID is required.';
+
+            return;
+        }
+
+        if (trim($this->clientName) === '') {
+            $this->error = 'Client name is required.';
+
+            return;
+        }
+
+        $client = $action->handle(Tenancy::idOrFail(), $this->agencyId, $this->clientName);
+
+        $this->success = "Onboarded client {$client->client_name} (Business ID {$client->client_business_id}) under agency {$client->agency_id}. This provisions a whole new tenant.";
+        $this->agencyId = 0;
+        $this->clientName = '';
     }
 
     public function render(GetAgencyClientsAction $action)
