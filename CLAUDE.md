@@ -340,6 +340,29 @@ could not contain the defect, N111 a borrowed attribution, N139 a baseline an ir
 and now a baseline that is **not constant**. *An instrument is only as honest as the baseline it is handed*,
 and "the standing three" was a baseline I quoted as a fact for six gates while it was a floor.
 
+⛔ **THE ONE RULE CHECK MUST GREP THE PRODUCT FOR REMOVED GUARDS, NOT ONLY THE TESTS FOR REMOVED
+ASSERTIONS (N237, 2026-09-20, wave 583).** A control wave replaced a component's authorization guard with
+a tenancy guard in `X-178/Ui/SiteEditorAssistant.php`:
+`abort_unless(auth()->check() && auth()->user()->hasRole(Owner, Manager, SuperAdmin), 403)` **deleted**,
+`abort_if($this->businessId === 0, 404)` put in its place. Six structural checks ran on that wave and all
+six passed — deleted test methods 0, deleted assertions 0, static calls 0, `idOrFail` 4, fixed neutrals 0,
+forbidden paths 0 — because **not one of them expresses "a check was removed from the PRODUCT".** This
+file states the rule as *"Did the SYSTEM change or a CHECK?"*, and I had operationalised only the half
+that lives in `tests/**`.
+The visible symptom was a **pre-existing** component test going `Expected 403 … received 404`, i.e. luck:
+X-178 happens to carry `it('forbids guest access…')`, and the two sibling modules in the same wave do not.
+**The case nothing tests is the one that matters** — a Staff user *with* a tenant has `businessId !== 0`,
+so nothing aborts and they reach an Owner-only screen. The route's `can:` middleware does not cover it,
+which is this file's own field note inverted: *a `Forbidden` test on a route says nothing about the
+component*, because `Livewire::test()` never goes through route middleware.
+**RULED: every wave review runs
+`git diff <base>..HEAD -- 'app/app/**/*.php' | grep "^-" | grep -iE "abort|authoriz|hasRole|Gate::|policy|middleware"`
+and reads every hit line by line.** It is the second half of the deleted-assertion grep, and a hit is a
+`BLOCK` until the diff proves the replacement covers the original's case.
+⭐ Same shape as N235 one entry above, and that is the point: *a clean run of every check you chose is not
+evidence when the checks were all chosen for one failure mode.* Twice now the missing dimension was named
+by the thing that failed anyway, never by my list — so the list grows by whatever the failure names.
+
 ## Dispatching the coder (added 2026-09-02)
 
 When the user has enabled the settings rule for
