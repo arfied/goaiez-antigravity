@@ -1,5 +1,4 @@
 <div>
-    <x-surface.sample-state module="two-way sync to Xero / QuickBooks / Sage" screen="connection_mapping" />
     <h1>Ledger connection and mapping</h1>
     <p>This screen maps each category to one ledger account, reviewed once by a person. Nothing has synced: connecting a ledger waits on QuickBooks, Xero or Sage OAuth credentials, and none exist in this checkout.</p>
 
