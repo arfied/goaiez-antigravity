@@ -3,7 +3,7 @@
     <x-ui.systems-strip module="X-122" />
 
     <div class="action-log-container p-4">
-        <h3 class="text-lg font-bold mb-4">Action Catalog & Dispatcher Log</h3>
+        <h2 class="text-lg font-bold mb-4">Action Catalog & Dispatcher Log</h2>
 
         <div class="mb-4">
             <input type="text" wire:model.live.debounce.300ms="search" placeholder="Search actions..." class="border rounded p-2" />
