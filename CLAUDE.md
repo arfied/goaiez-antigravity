@@ -279,6 +279,27 @@ Watch for: <the trap that applies, by name>
   lists a brief item under `REFUSED` because it would change a CHECK, that
   refusal stands. Re-read rule 01 before overruling it.
 
+⚠️ **N113'S TEST-COUNT RULE FAILS IN THE OTHER DIRECTION TOO, AND THAT DIRECTION READS AS GOOD NEWS
+(N233, 2026-09-20, wave 577).** N113 was written after a needle returned **0** on a diff that added three
+tests — a false negative that would have under-credited a wave. Wave 577 is the inverse: four control
+commits each **replaced** their screen's existing `test_screen_renders_for_tenant` rather than appending,
+losing five methods across four files, while adding eight. Every summary instrument agreed the wave was
+healthy — net **+3** methods, a rising suite total, and a `REPORT.md` whose per-module before/after counts
+were **correct**, because they count the file after the rewrite. The three assertions lost are the ones
+this file's own field notes exist for: `assertSee('Your account')`, the only proof the owner layout
+rendered at all (`Livewire::test()` never renders it, and every `/admin` screen once 500'd for exactly
+that with green component tests); `assertDontSee('Internal Platform Console')`; and
+`assertDontSee('this screen is planned in')`.
+**RULED: `added − deleted` is measured PER FILE and the deleted count is read on its own, never inferred
+from a total that rose.** The one command is
+`git diff <base>..HEAD -- app/tests/ | grep -cE "^- *public function test_"`, it must be **0** for any
+wave that is not deliberately removing a test, and it belongs in the brief as the coder's own proof as
+well as in the review. ⭐ The general form, and it is the eighth entry in this file's instrument family
+with the sign flipped: *an instrument that can only under-report is safe as a trigger and unsafe as a
+finding — and one that reports a plausible IMPROVEMENT is unsafe as both*, because nothing downstream
+asks a second question of good news. Same family as N123's reversed diff, which returned a well-formed
+number with the wrong sign; here the number is right and the quantity is wrong.
+
 ## Dispatching the coder (added 2026-09-02)
 
 When the user has enabled the settings rule for
