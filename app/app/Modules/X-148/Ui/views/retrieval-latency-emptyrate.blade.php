@@ -1,5 +1,4 @@
 <div>
-    <x-surface.sample-state module="hybrid search *(dense + BM25)*" screen="retrieval_latency_emptyrate" />
     <div class="retrieval-stats-view p-4">
         <h3 class="text-lg font-bold">Retrieval Latency & Empty-Rate Analytics</h3>
         @if($entries->isEmpty())
