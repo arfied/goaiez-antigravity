@@ -300,6 +300,26 @@ finding — and one that reports a plausible IMPROVEMENT is unsafe as both*, bec
 asks a second question of good news. Same family as N123's reversed diff, which returned a well-formed
 number with the wrong sign; here the number is right and the quantity is wrong.
 
+⚠️ **THE GATE NAMED THE DEFECT IN §6 AND I READ §7 (N235, 2026-09-20, wave 579).** Four control commits
+called their writer **statically** — `PackSeedAction::promotePack(…)` on an instance method — and one also
+imported an engine from the wrong sub-namespace. §7 came back `errors 3 → 8`. But **phpstan's count in §6
+had already gone `2 → 6`**, about ninety seconds earlier in the same file, naming all four by file and line
+(`Static call to instance method …`, `Call to static method coach() on an unknown class …`). I had run
+**six** mechanical checks on the wave first — deleted test methods, deleted assertions, fixed neutrals,
+`Tenancy::idOrFail` count, forbidden paths, route GETs — and all six passed, because **every one of them is
+structural**: they ask what a diff removed or what shape it has, and none can see a call that will not
+resolve. I walked past the one instrument in the gate that type-checks, because I had been reading phpstan
+as "the standing 2" — a number I stopped measuring and started remembering, which is **N115's `STAGES` line
+exactly, in an instrument I own**.
+**RULED: the phpstan error count is read and compared against the previous gate's BEFORE §7, on every
+gate**, and a control brief carries `composer exec phpstan` as the coder's own pre-commit check with the
+expected count stated, so it does not depend on me. `CLAUDE.md` already says the blocker is *a count that
+rose*; this is the first time one rose in front of me and was not read.
+⛔ The transferable half is larger than the rule: **a clean run of every check you chose is not evidence
+when the checks were all chosen for one failure mode.** Six greens along one dimension is one green. When a
+review is a list of greps, ask what class of defect no grep in the list could express — here, *does this
+code run* — and name the instrument that answers it.
+
 ## Dispatching the coder (added 2026-09-02)
 
 When the user has enabled the settings rule for
