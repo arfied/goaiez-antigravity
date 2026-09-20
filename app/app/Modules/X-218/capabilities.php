@@ -22,11 +22,11 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'N-218-01' => ' refuses',
+    'N-218-01' => '⛔⛔⛔ a payout NEVER fires without a VERIFIED deliverable — a live URL returning 200, captured and HASHED, asserted present before C-Billing is called. A deal marked delivered with NO ARTIFACT is REFUSED refuses',
 
     // status: SPECCED
-    'N-218-02' => '',
+    'N-218-02' => 'discovery returns only profiles matching audience fit and locality; an unscoped pull is refused',
 
     // status: SPECCED
-    'N-218-03' => '',
+    'N-218-03' => '⭐ the same module serves tenant and GOAIEZ scope (R232) — a TENANT-scoped read returns ZERO GOAIEZ deals and the reverse',
 ];

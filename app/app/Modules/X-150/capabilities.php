@@ -22,29 +22,29 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'N-150-01' => '',
+    'N-050' => 'refuses NO_FACT',
 
     // status: SPECCED
-    'N-150-02' => '',
+    'N-051' => 'refuses NO_FACT',
 
     // status: SPECCED
-    'N-050' => ' refuses',
+    'N-054' => 'refuses NO_FACT',
 
     // status: SPECCED
-    'N-051' => ' refuses',
+    'N-056' => 'it stops at the first VALID SHAPE, never the first 200 · a provider that returns a wrong shape is DEMOTED, not retried · cost order is a config row',
 
     // status: SPECCED
-    'N-054' => ' refuses',
+    'N-057' => 'refuses NO_FACT',
 
     // status: SPECCED
-    'N-057' => ' refuses',
+    'N-058' => 'it stops at the first VALID SHAPE, never the first 200 · a provider that returns a wrong shape is DEMOTED, not retried · cost order is a config row',
 
     // status: SPECCED
-    'N-060' => ' refuses',
+    'N-060' => 'refuses NO_FACT',
 
     // status: SPECCED
-    'N-056' => '',
+    'N-150-01' => '⭐⭐ a phone field of N/A from tier 1 is REJECTED and tier 2 is called — a junk value that satisfies NOT NULL is the expensive failure',
 
     // status: SPECCED
-    'N-058' => '',
+    'N-150-02' => 'the expensive tier\'s call count over a month is bounded and asserted',
 ];

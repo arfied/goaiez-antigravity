@@ -67,5 +67,5 @@ return [
     'G19-20' => '24h · 1h · 10min;  one segment = one credit, a meter and never a fee',
 
     // status: SPECCED
-    'G15-32' => '',
+    'G15-32' => 'reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ R188 — work not pay; doctor asserts no pay field',
 ];

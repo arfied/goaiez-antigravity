@@ -25,7 +25,7 @@ return [
     'G18-14' => 'CSAT on resolve is named in the header refuses',
 
     // status: SPECCED
-    'G19-10' => 'compose-time block on "review for 10% off" — review-gating incentives are banned on every class, and this is the lint that enforces it',
+    'G19-10' => 'refuses: C-Reviews; compose-time block on "review for 10% off" — review-gating incentives are banned on every class, and this is the lint that enforces it',
 
     // status: SPECCED
     'G20-01' => 'P-110 — 1–3★ never reaches a public reply path, which is exactly what makes auto-reply structurally safe',
@@ -34,35 +34,35 @@ return [
     'G20-03' => 'the prompt lint: "how did the repair go", never "mention Dave" (§37.3)',
 
     // status: SPECCED
-    'G20-04' => 'named in the header;  a reviewer\'s name is a signal — contacting them needs a Lane-2 basis they have not given (P-068)',
+    'G20-04' => 'refuses: C-Reviews; named in the header;  a reviewer\'s name is a signal — contacting them needs a Lane-2 basis they have not given (P-068)',
 
     // status: SPECCED
-    'G20-05' => 'CSAT on resolve; a 1★ reopens the ticket in X-111',
+    'G20-05' => 'refuses: C-Reviews; CSAT on resolve; a 1★ reopens the ticket in X-111',
 
     // status: SPECCED
-    'G20-06' => 'named in the header',
+    'G20-06' => 'refuses: C-Reviews; named in the header',
 
     // status: SPECCED
-    'G20-07' => 'day 60, <7 → triage (P-113)',
+    'G20-07' => 'refuses: C-Reviews; day 60, <7 → triage (P-113)',
 
     // status: SPECCED
-    'G20-08' => 'named in the header — Google via Zernio · Yelp · Facebook · BBB',
+    'G20-08' => 'refuses: C-Reviews; named in the header — Google via Zernio · Yelp · Facebook · BBB',
 
     // status: SPECCED
-    'G20-09' => 'the owner\'s original ask, now the header',
+    'G20-09' => 'refuses: C-Reviews; the owner\'s original ask, now the header',
 
     // status: SPECCED
-    'G20-11' => 'P-110 supersedes the legacy review gate as the MECHANISM: every request is triaged, low ratings become a ticket with an SLA, high ratings are asked publicly. The register\'s wording is the old gate\'s name.  keep-gate is still an open reverse word — the owner\'s, not the audit\'s',
+    'G20-11' => 'refuses: C-Reviews; P-110 supersedes the legacy review gate as the MECHANISM: every request is triaged, low ratings become a ticket with an SLA, high ratings are asked publicly. The register\'s wording is the old gate\'s name.  keep-gate is still an open reverse word — the owner\'s, not the audit\'s',
 
     // status: SPECCED
-    'G20-12' => '= Review Gating; one spec, under P-110',
+    'G20-12' => 'refuses: C-Reviews; = Review Gating; one spec, under P-110',
 
     // status: SPECCED
-    'G20-13' => 'named in the header; the send is Marketing class and waits for the window',
+    'G20-13' => 'refuses: C-Reviews; named in the header; the send is Marketing class and waits for the window',
 
     // status: SPECCED
     'G20-14' => 'anything ambiguous is DRAFTED to the inbox, never published — sarcasm read as praise is a brand disaster (§149.1)',
 
     // status: SPECCED
-    'G1-68' => '',
+    'G1-68' => '§216.1 — a GOOGLE REVIEW REMOVAL, not a chargeback. ⛔ ~~L1 FOREVER~~ **STRUCK by `R235`** — ⭐ **the automation RUNS and prepares the request**; a human confirms the ToS violation because that is a JUDGEMENT the AI cannot make *(`R236`: not a permission gate — the AI genuinely cannot decide it)* · transcribed from the plan 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ a GOOGLE REVIEW REMOVAL, not a chargeback · ⛔ ~~L1 FOREVER~~ **STRUCK by `R235`** — ⭐ **the automation RUNS and prepares the request**; a human confirms the ToS violation because that is a JUDGEMENT the AI cannot make *(`R236`: not a permission gate — the AI genuinely cannot decide it)*',
 ];

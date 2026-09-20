@@ -22,13 +22,13 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'G3-15' => '⑥ the watch list, confirmed once · ⑦ raises, never sends',
+    'G3-15' => 'a signal',
 
     // status: SPECCED
     'G3-27' => 'an alert, never a send (P-068)',
 
     // status: SPECCED
-    'G3-28' => '⑥ the watch list, confirmed once · ⑦ raises, never sends',
+    'G3-28' => 'a signal',
 
     // status: SPECCED
     'G3-33' => 'a 30-day re-scan raising a signal',

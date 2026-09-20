@@ -49,16 +49,16 @@ return [
     'G1-32' => 'INTEGER hundredths of a cent throughout (§18), asserted by summing a million operations and diffing to zero · the ledger is the source; the gateway receives period totals refuses',
 
     // status: SPECCED
-    'G1-33' => 'exponential backoff with a hard attempt ceiling, asserted ·  a retry is the SAME refId; a new attempt is a new one (§201.3)',
+    'G1-33' => 'refuses: retries hammer a dead card and rack up decline fees; exponential backoff with a hard attempt ceiling, asserted ·  a retry is the SAME refId; a new attempt is a new one (§201.3)',
 
     // status: SPECCED
-    'G1-42' => 'exponential backoff with a hard attempt ceiling, asserted ·  a retry is the SAME refId; a new attempt is a new one (§201.3)',
+    'G1-42' => 'refuses: retries hammer a dead card and rack up decline fees; exponential backoff with a hard attempt ceiling, asserted ·  a retry is the SAME refId; a new attempt is a new one (§201.3)',
 
     // status: SPECCED
-    'G1-49' => 'exponential backoff with a hard attempt ceiling, asserted ·  a retry is the SAME refId; a new attempt is a new one (§201.3)',
+    'G1-49' => 'refuses: retries hammer a dead card and rack up decline fees; exponential backoff with a hard attempt ceiling, asserted ·  a retry is the SAME refId; a new attempt is a new one (§201.3)',
 
     // status: SPECCED
-    'G1-52' => '',
+    'G1-52' => '**the ledger is the source**; the gateway receives period totals, never per-event usage · transcribed from the G1 audit 2026-08-27',
 
     // status: SPECCED
     'G1-56' => 'X-198\'s MOCK gateway is asserted unreachable from a live tenant (G1-34) refuses',
@@ -67,10 +67,10 @@ return [
     'G1-57' => 'DERIVED from cent-precision ai_calls, never typed — asserted by changing a vendor rate and observing the debit move ·  typed does not survive a vendor price change; derived does',
 
     // status: SPECCED
-    'G1-59' => 'exponential backoff with a hard attempt ceiling, asserted ·  a retry is the SAME refId; a new attempt is a new one (§201.3)',
+    'G1-59' => 'refuses: retries hammer a dead card and rack up decline fees; exponential backoff with a hard attempt ceiling, asserted ·  a retry is the SAME refId; a new attempt is a new one (§201.3)',
 
     // status: SPECCED
-    'G4-39' => '= G1-49 Smart Retries — already specced at §153',
+    'G4-39' => 'refuses: C-Billing; = G1-49 Smart Retries — already specced at §153',
 
     // status: SPECCED
     'G7-01' => '§45A — the 21-day timeline is the ONE ladder; a per-client grace is a date on it, never a second ladder',
@@ -79,7 +79,7 @@ return [
     'G7-15' => 'every AI call writes cent-precision cost; retail debits derive at 8:1, never typed',
 
     // status: SPECCED
-    'G9-31' => 'MRR saved by the one dunning ladder (§45A)',
+    'G9-31' => 'refuses: C-Billing; MRR saved by the one dunning ladder (§45A)',
 
     // status: SPECCED
     'G11-13' => '§45A — the 21-day timeline is the ONE ladder; day-10 is a BANNER, never a lockout',
@@ -94,11 +94,11 @@ return [
     'G19-17' => 'the $50/5,000 figures are dead — auto top-up is universal and the amounts live in X-82 (T469–T474) refuses',
 
     // status: CLASSIFIED
-    'G1-78' => ' refuses',
+    'G1-78' => '§226.3 — already built, Flow B\'s credit block; recorded as covered, not re-specced · transcribed from the plan 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads refuses',
 
     // status: CLASSIFIED
-    'G1-80' => 'Stripe/Authorize.Net metered billing sync',
+    'G1-80' => 'refuses: C-Billing; Stripe/Authorize.Net metered billing sync',
 
     // status: SPECCED
-    'G1-83' => '',
+    'G1-83' => '§226.3 — §197.3 NOTICE BEFORE CHARGE; a conversion with no prior notice FAILS · transcribed from the plan 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ §197.3 NOTICE BEFORE CHARGE — a conversion with no preceding notice event FAILS, asserted with the notice suppressed',
 ];

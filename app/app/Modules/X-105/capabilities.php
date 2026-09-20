@@ -22,7 +22,7 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'G1-25' => 'P-068 — the signal raises; X-204 decides, asserted by absence of a permit write in this module',
+    'G1-25' => 'refuses: the signal becomes the send; P-068 — the signal raises; X-204 decides, asserted by absence of a permit write in this module',
 
     // status: SPECCED
     'G1-26' => 'every opener clause traces to a Fact, asserted; research fires only on distress (P-146), asserted by running it on a healthy prospect and observing no research refuses',
@@ -67,5 +67,5 @@ return [
     'G20-10' => 'named in the header — under 3.5★ is a distress signal (P-146) · refuses: targeting over 3.5★ — under 3.5★ is the distress signal (P-146)',
 
     // status: SPECCED
-    'G15-15' => '',
+    'G15-15' => 'reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ webinar watch time, NOT staff attendance — attendance policy fences the SUBJECT; doctor asserts no staff-directed use',
 ];

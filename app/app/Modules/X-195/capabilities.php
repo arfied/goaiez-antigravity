@@ -43,11 +43,11 @@ return [
     'G19-05' => 'feature flags per tenant — blast-radius control (P-182)',
 
     // status: CLASSIFIED
-    'G1-63' => '',
+    'G1-63' => '§226.4 — uninstall leaves ZERO orphaned subscriptions, asserted · transcribed from the plan 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads',
 
     // status: SPECCED
-    'G4-52' => '',
+    'G4-52' => '§226.4 — sandboxed iframe, no DOM access; a scope not in the manifest cannot be granted · transcribed from the plan 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ no DOM access; a scope not in the manifest CANNOT be granted — asserted',
 
     // status: SPECCED
-    'G4-55' => '',
+    'G4-55' => '§226.4 — a tenant-private connector, invisible cross-tenant. P-186: manifests, code NEVER · transcribed from the plan 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ invisible cross-tenant, proven with two live tenants · P-186: manifests, code NEVER',
 ];

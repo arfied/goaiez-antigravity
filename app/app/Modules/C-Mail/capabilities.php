@@ -85,5 +85,5 @@ return [
     'G11-38' => 'named in the header refuses',
 
     // status: SPECCED
-    'G15-31' => ' refuses',
+    'G15-31' => 'reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ no warm-up event reaches a tenant-facing metric · every quantity is a RANGE plus jitter — a constant is the signature · refuses: a constant quantity — a warm-up volume with no jitter is the signature of automation, and no warm-up event reaches a tenant-facing metric refuses',
 ];
