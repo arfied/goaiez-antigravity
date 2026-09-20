@@ -37,7 +37,7 @@ class WebhooksView extends Component
             return;
         }
 
-        $action->subscribe($this->businessId, $this->url, $this->events);
+        $action->subscribe(Tenancy::idOrFail(), $this->url, $this->events);
 
         $this->success = 'Webhook subscribed. This feeds the webhook list; nothing downstream is wired to it yet.';
         $this->reset(['url', 'events']);

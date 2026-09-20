@@ -43,7 +43,7 @@ class RetirementReasons extends Component
         }
 
         try {
-            $action->handle($this->businessId, $this->deviceToken, $this->reason);
+            $action->handle(Tenancy::idOrFail(), $this->deviceToken, $this->reason);
             $this->success = 'Retired device token. This feeds the retirement list; nothing downstream is wired to it yet.';
             $this->reset(['deviceToken']);
             $this->reason = 'unregistered';

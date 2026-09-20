@@ -43,7 +43,7 @@ class PerplatformDeliveryHealth extends Component
         }
 
         $action->handle(
-            $this->businessId,
+            Tenancy::idOrFail(),
             $this->deviceToken,
             $this->platform,
             null

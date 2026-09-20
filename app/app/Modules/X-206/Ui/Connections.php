@@ -36,7 +36,7 @@ class Connections extends Component
             return;
         }
 
-        $cred = $action->handle($this->businessId, $this->serviceName, $this->secret);
+        $cred = $action->handle(Tenancy::idOrFail(), $this->serviceName, $this->secret);
 
         $this->success = "Recorded credentials for {$cred->service_name} (hint: {$cred->key_hint}). Nothing downstream is wired to it yet.";
         $this->reset(['serviceName', 'secret']);
