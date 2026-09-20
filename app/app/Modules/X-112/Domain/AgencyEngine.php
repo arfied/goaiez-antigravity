@@ -22,6 +22,31 @@ use Illuminate\Support\Facades\Event;
 final class AgencyEngine
 {
     /**
+     * Create an agency.
+     */
+    public function createAgency(
+        int $businessId,
+        string $agencyName,
+        ?string $whitelabelDomain = null,
+        string $agencyMode = 'full_service'
+    ): Agency {
+        if (! in_array($agencyMode, ['full_service', 'co_managed', 'self_service'], true)) {
+            throw new \InvalidArgumentException('Invalid agency mode');
+        }
+
+        if (Agency::where('business_id', $businessId)->where('agency_name', $agencyName)->exists()) {
+            throw new \InvalidArgumentException("Agency '{$agencyName}' already exists.");
+        }
+
+        return Agency::create([
+            'business_id' => $businessId,
+            'agency_name' => $agencyName,
+            'whitelabel_domain' => $whitelabelDomain,
+            'agency_mode' => $agencyMode,
+        ]);
+    }
+
+    /**
      * Onboard agency client business.
      */
     public function onboardClient(int $businessId, int $agencyId, string $clientName): AgencyClient

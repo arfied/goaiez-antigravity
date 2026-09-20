@@ -61,4 +61,87 @@ class AgencyConsoleScreenTest extends TestCase
 
         Livewire::test(AgencyConsole::class)->assertOk();
     }
+
+    public function test_agency_creation(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        // 1. agencies empty state visible on a GET before anything is created
+        $this->get(route('x-112.agency-console'))
+            ->assertOk()
+            ->assertSee('No agencies provisioned.');
+
+        Tenancy::setUser($owner->id);
+
+        // 2. control creating one
+        Livewire::test(AgencyConsole::class)
+            ->set('agencyName', 'Test Agency')
+            ->set('whitelabelDomain', 'test.com')
+            ->set('agencyMode', 'full_service')
+            ->call('createAgency')
+            ->assertSet('success', function ($value) {
+                return str_contains($value, 'Created agency Test Agency with ID ') && str_contains($value, 'Nothing else is wired to it yet.');
+            })
+            ->assertSet('error', null);
+
+        $agency = Agency::where('business_id', $biz->id)->where('agency_name', 'Test Agency')->firstOrFail();
+
+        $this->assertDatabaseHas((new Agency)->getTable(), [
+            'id' => $agency->id,
+            'business_id' => $biz->id,
+            'agency_name' => 'Test Agency',
+            'whitelabel_domain' => 'test.com',
+            'agency_mode' => 'full_service',
+        ]);
+
+        Tenancy::forget();
+
+        // 3. GET afterwards showing agency and losing empty state, clients list empty state still present
+        $this->get(route('x-112.agency-console'))
+            ->assertOk()
+            ->assertSee('Test Agency')
+            ->assertSee('test.com')
+            ->assertDontSee('No agencies provisioned.')
+            ->assertSee('No managed clients provisioned.');
+
+        Tenancy::setUser($owner->id);
+
+        // 4. duplicate refusal
+        Livewire::test(AgencyConsole::class)
+            ->set('agencyName', 'Test Agency')
+            ->set('whitelabelDomain', 'test2.com')
+            ->set('agencyMode', 'full_service')
+            ->call('createAgency')
+            ->assertSet('error', "Agency 'Test Agency' already exists.");
+
+        $this->assertEquals(1, Agency::where('business_id', $biz->id)->where('agency_name', 'Test Agency')->count());
+
+        // 5. invalid agencyMode refused
+        Livewire::test(AgencyConsole::class)
+            ->set('agencyName', 'Another Agency')
+            ->set('agencyMode', 'invalid_mode')
+            ->call('createAgency')
+            ->assertSet('error', 'Invalid agency mode');
+
+        $this->assertDatabaseMissing((new Agency)->getTable(), [
+            'agency_name' => 'Another Agency',
+        ]);
+
+        // 6. empty agencyName refused
+        Livewire::test(AgencyConsole::class)
+            ->set('agencyName', '  ')
+            ->call('createAgency')
+            ->assertSet('error', 'Agency name is required.');
+
+        $this->assertDatabaseMissing((new Agency)->getTable(), [
+            'agency_name' => '',
+        ]);
+        $this->assertDatabaseMissing((new Agency)->getTable(), [
+            'agency_name' => '  ',
+        ]);
+
+        Tenancy::forget();
+    }
 }
