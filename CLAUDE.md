@@ -363,6 +363,29 @@ and reads every hit line by line.** It is the second half of the deleted-asserti
 evidence when the checks were all chosen for one failure mode.* Twice now the missing dimension was named
 by the thing that failed anyway, never by my list — so the list grows by whatever the failure names.
 
+⚠️ **FOUR FALSE NEEDLES OF MY OWN IN TWO DAYS, ALL IN REVIEW CHECKS, ALL HAND-WRITTEN (N240, 2026-09-20).**
+Wave 122 ruled *derive the needle from the file, never from prose*. It was ruled about briefs handed to a
+coder. It applies at least as hard to **the greps I run on a wave before I judge it**, and in two days I
+have got four wrong:
+- `grep -o 'class="built"'` on an artifact returned **31** where 30 rows were marked — the 31st was the
+  page's own prose *describing* the badge (`marked <span class="built">built</span> below`).
+- `grep -cE "^\+.*(R[0-9]{3}|X-[0-9]{3}|P-[0-9]{3})"` for new citation ids returned **5** on a wave that
+  added none — all five were the diff's own `+++ b/app/app/Modules/X-112/…` headers, because **`X-112`
+  matches `X-[0-9]{3}`**. That needle was checking a brief item whose breach would have been a BLOCK.
+- `grep -c 'X113..Actions..StaffInviteAction'` returned **0** on a file that imports exactly that —
+  `..` is two characters and there is **one** backslash between each segment.
+- (and the wave-122 original, `CAgent.Models.TakeoverLatch` against a classmap's doubled backslashes.)
+**Every one over-reported or under-reported in the direction that accuses the coder or hides their work,
+and every one was written from memory of the string rather than copied out of the file.**
+⛔ **RULED, three parts, and they cost one command each.** (1) **A check whose failure mode is a BLOCK
+prints its hits and I read them** — the number alone is never the finding; printing is what turned three
+of the four above into non-events. (2) **A needle gets a positive control before it is believed** — for
+the import check that was grepping the X-112 screen for its own known-good import, which is how the false
+`0` was settled in one command. (3) **A needle that must match a symbol is copied from the file**
+(`grep -n StaffInviteAction <the file>` and read the line), never typed from the name as a human says it.
+⭐ The shape underneath all four is this file's oldest: *an instrument is only as honest as the needle it
+is handed* — and the reviewer's own needles are the ones nobody else checks.
+
 ## Dispatching the coder (added 2026-09-02)
 
 When the user has enabled the settings rule for
