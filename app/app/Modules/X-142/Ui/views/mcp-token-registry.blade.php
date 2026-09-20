@@ -1,5 +1,4 @@
 <div>
-    <x-surface.sample-state module="full read/write across every registered action *(the category leaders ship read-only MCP; ours is complete because the registry was built for it)*" screen="mcp_token_registry" />
     @if($tokens->isEmpty())
         <x-ui.empty-state heading="No tokens yet." icon="○">
             Tokens give external systems access to your account.
