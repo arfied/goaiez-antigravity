@@ -58,4 +58,61 @@ class PluginSettingsPageScreenTest extends TestCase
 
         Livewire::test(PluginSettingsPage::class)->assertOk();
     }
+
+    public function test_control_activates_plugin_and_updates_screens(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        // 1. empty state
+        $this->get(route('x-104.plugin-settings-page'))
+            ->assertSee('No plugin sites connected yet.');
+
+        $this->get(route('x-104.install-count'))
+            ->assertSee('Active plugin sites: 0');
+
+        // 2. drive control
+        Livewire::test(PluginSettingsPage::class)
+            ->set('siteUrl', 'https://example.com')
+            ->set('apiKey', 'my_api_key')
+            ->call('activate')
+            ->assertSet('success', 'Activated plugin for site https://example.com.')
+            ->assertSet('siteUrl', '')
+            ->assertSet('apiKey', '');
+
+        // 3. assert row exists
+        $this->assertDatabaseHas((new PluginInstall)->getTable(), [
+            'business_id' => $biz->id,
+            'site_url' => 'https://example.com',
+            'api_key' => 'my_api_key',
+        ]);
+
+        // 4. GET control's screen and assert new value is visible
+        $this->get(route('x-104.plugin-settings-page'))
+            ->assertSee('https://example.com')
+            ->assertDontSee('No plugin sites connected yet.');
+
+        // 5. GET one of the other screens it feeds and assert it is no longer empty
+        $this->get(route('x-104.install-count'))
+            ->assertSee('Active plugin sites: 1')
+            ->assertDontSee('Active plugin sites: 0');
+    }
+
+    public function test_control_refuses_invalid_input(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        Livewire::test(PluginSettingsPage::class)
+            ->set('siteUrl', '')
+            ->set('apiKey', 'my_api_key')
+            ->call('activate')
+            ->assertSet('error', 'Site URL is required.');
+
+        $this->assertDatabaseMissing((new PluginInstall)->getTable(), [
+            'business_id' => $biz->id,
+        ]);
+    }
 }
