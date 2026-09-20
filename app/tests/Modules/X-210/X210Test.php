@@ -75,7 +75,7 @@ class X210Test extends TestCase
             code: 'SPRING15',
             discountValue: 15,
             discountType: 'percentage',
-            maxRedemptions: 2,
+            maxRedemptions: 2, measurementWindowDays: 14,
             velocityThreshold: 2,
             expiresAt: now()->addDays(7),
             scopes: [['scope_type' => 'service_category', 'scope_value' => 'hvac']]
