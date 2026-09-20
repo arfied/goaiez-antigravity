@@ -55,4 +55,65 @@ class UploadDropScreenTest extends TestCase
 
         Livewire::test(UploadDrop::class)->assertOk();
     }
+
+    public function test_control_writes_and_clears_empty_states(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::setUser($owner->id);
+
+        $table = (new Document)->getTable();
+
+        Livewire::test(UploadDrop::class)
+            ->set('title', 'Test Document 123')
+            ->set('content', 'This is the body of the test doc.')
+            ->call('createDocument')
+            ->assertSet('title', '')
+            ->assertSet('content', '')
+            ->assertSee('Recorded document ');
+
+        $this->assertDatabaseHas($table, [
+            'business_id' => $biz->id,
+            'title' => 'Test Document 123',
+            'status' => 'ingested',
+        ]);
+
+        $this->get(route('x-160.upload-drop'))
+            ->assertSee('Test Document 123')
+            ->assertDontSee('No documents yet.');
+
+        $this->get(route('x-160.review-screen'))
+            ->assertDontSee('Nothing is waiting to be read.');
+    }
+
+    public function test_control_refuses_empty_input(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::setUser($owner->id);
+
+        $table = (new Document)->getTable();
+
+        Livewire::test(UploadDrop::class)
+            ->set('title', '')
+            ->set('content', 'Some content')
+            ->call('createDocument')
+            ->assertSet('error', 'Title and content are required.');
+        
+        $this->assertDatabaseMissing($table, [
+            'title' => '',
+        ]);
+
+        Livewire::test(UploadDrop::class)
+            ->set('title', 'Some title')
+            ->set('content', '')
+            ->call('createDocument')
+            ->assertSet('error', 'Title and content are required.');
+            
+        $this->assertDatabaseMissing($table, [
+            'title' => 'Some title',
+        ]);
+    }
 }
