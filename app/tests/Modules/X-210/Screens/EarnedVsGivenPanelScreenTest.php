@@ -40,7 +40,6 @@ class EarnedVsGivenPanelScreenTest extends TestCase
 
         Livewire::actingAs($owner)->test(EarnedVsGivenPanel::class, ['businessId' => $biz->id])->assertOk();
     }
-}
 
     public function test_redeem_promotion_control(): void
     {
@@ -116,3 +115,4 @@ class EarnedVsGivenPanelScreenTest extends TestCase
             ->assertOk()
             ->assertDontSee('No offers used yet');
     }
+}

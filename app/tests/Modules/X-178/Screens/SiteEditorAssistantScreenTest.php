@@ -49,7 +49,6 @@ class SiteEditorAssistantScreenTest extends TestCase
 
         Livewire::test(SiteEditorAssistant::class)->assertOk();
     }
-}
 
     public function test_generate_control(): void
     {
@@ -84,3 +83,4 @@ class SiteEditorAssistantScreenTest extends TestCase
             ->call('generate')
             ->assertSet('error', 'Page ID must be provided and cannot be 0.');
     }
+}

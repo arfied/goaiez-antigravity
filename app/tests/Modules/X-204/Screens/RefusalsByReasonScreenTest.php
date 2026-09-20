@@ -37,7 +37,6 @@ class RefusalsByReasonScreenTest extends TestCase
             ->assertOk()
             ->assertSee('+15551234567');
     }
-}
 
     public function test_decide_and_suppress_controls(): void
     {
@@ -102,3 +101,4 @@ class RefusalsByReasonScreenTest extends TestCase
             ->call('suppress')
             ->assertSet('error', 'Phone number is required to suppress.');
     }
+}
