@@ -1,8 +1,0 @@
-[19-Sep-2026 23:58:14 UTC] PHP Deprecated:  preg_match_all(): Passing null to parameter #2 ($subject) of type string is deprecated in /home/goaiez/agents/grs-antig/fix_refusals.php on line 3
-[19-Sep-2026 23:58:39 UTC] PHP Deprecated:  preg_match_all(): Passing null to parameter #2 ($subject) of type string is deprecated in /home/goaiez/agents/grs-antig/fix_refusals2.php on line 3
-[19-Sep-2026 23:58:55 UTC] PHP Deprecated:  preg_match_all(): Passing null to parameter #2 ($subject) of type string is deprecated in /home/goaiez/agents/grs-antig/fix_refusals3.php on line 3
-[19-Sep-2026 23:59:07 UTC] PHP Deprecated:  preg_match_all(): Passing null to parameter #2 ($subject) of type string is deprecated in /home/goaiez/agents/grs-antig/fix_refusals4.php on line 3
-[20-Sep-2026 00:00:00 UTC] PHP Warning:  file_get_contents(doctor.txt): Failed to open stream: No such file or directory in /home/goaiez/agents/grs-antig/fix_refusals10.php on line 2
-[20-Sep-2026 00:01:21 UTC] PHP Warning:  file_get_contents(doctor.txt): Failed to open stream: No such file or directory in /home/goaiez/agents/grs-antig/fix_refusals14.php on line 2
-[20-Sep-2026 00:02:07 UTC] PHP Deprecated:  preg_match_all(): Passing null to parameter #2 ($subject) of type string is deprecated in /home/goaiez/agents/grs-antig/fix_refusals15.php on line 3
-[20-Sep-2026 00:02:12 UTC] PHP Deprecated:  preg_replace(): Passing null to parameter #3 ($subject) of type array|string is deprecated in /home/goaiez/agents/grs-antig/fix_refusals16.php on line 3

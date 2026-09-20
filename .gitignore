@@ -21,3 +21,6 @@ __pycache__/
 .agents/supervisor/*
 !.agents/supervisor/launch-coder.sh
 scratch/
+
+# cPanel writes this on every PHP run; tracking it makes every tree dirty (2026-09-20)
+/error_log
