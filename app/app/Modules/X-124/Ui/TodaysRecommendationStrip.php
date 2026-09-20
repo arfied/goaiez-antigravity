@@ -6,6 +6,7 @@ namespace App\Modules\X124\Ui;
 
 use App\Modules\X124\Actions\AssistantActOnRecommendationAction;
 use App\Modules\X124\Models\AssistantRecommendation;
+use App\Support\Tenancy;
 use Exception;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -14,6 +15,11 @@ class TodaysRecommendationStrip extends Component
 {
     #[Locked]
     public int $businessId = 0;
+
+    public function mount(int $businessId = 0): void
+    {
+        $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
+    }
 
     public bool $ready = false;
 
