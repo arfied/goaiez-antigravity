@@ -1,5 +1,4 @@
 <div>
-    <x-surface.sample-state module="golden sets per industry" screen="quality_board" />
     <div class="quality-board-view p-4">
         <h3 class="text-lg font-bold">AI Model & Eval Quality Board</h3>
         @if($series->isEmpty())
