@@ -22,12 +22,12 @@
                 <x-ui.empty-state heading="No actions" description="No action invocations recorded." />
             @endif
         @else
-            <ul class="divide-y divide-gray-200">
+            <ul class="divide-y divide-control">
                 @foreach($invocations as $inv)
                     <li class="py-2 flex justify-between items-center">
                         <div>
                             <span class="font-mono text-sm">{{ $inv->action_name }}</span>
-                            <span class="text-xs text-gray-500">{{ $inv->created_at }} ({{ $inv->geo_city }}, {{ $inv->geo_country }})</span>
+                            <span class="text-xs text-ink-dim">{{ $inv->created_at }} ({{ $inv->geo_city }}, {{ $inv->geo_country }})</span>
                             <x-ui.status-pill :status="$inv->status" />
                         </div>
                         <div>
