@@ -320,6 +320,26 @@ when the checks were all chosen for one failure mode.** Six greens along one dim
 review is a list of greps, ask what class of defect no grep in the list could express — here, *does this
 code run* — and name the instrument that answers it.
 
+⚠️ **§7's ERROR COUNT HAS AN EXTERNALLY VARIABLE BASELINE — COMPARE THE SET OF NAMES, NEVER THE COUNT
+(N236, 2026-09-20).** Four consecutive gates on trees differing by a handful of lines produced errors
+`3 · 4 · 3 · 4`, and the fourth slot held a **different journey each time**: `t581`'s was
+`a_deliberately_corrupted_backup_fails_the_restore` (the shared-Postgres `42501` pid collision, wave 119's
+mechanism), `t582`'s was `cancel_is_one_tap_with_nothing_in_between` — the Authorize.Net sandbox, on a
+*second* journey and with a changed error code (`E00017` → `E00040`). Three names are in every gate: two
+journey-harness stubs that refuse to fake a real transport, and one sandbox refusal. **So "errors 3" is a
+floor, not a constant**, and it is set by a payment sandbox's mood and by which pids the other fifty-nine
+checkouts on this box happen to hold.
+⛔ This file's rule *"the blocker is a count that rose"* is right for `doctor`'s stages, whose inputs are
+all inside this repo, and **unsound for §7**, where a count comparison manufactures a false BLOCK about
+one gate in three — on evidence naming a journey the wave never touched. **RULED: §7 is compared as a SET
+OF NAMES against the previous gate. A NEW NAME is investigated; a count that moved with no new name is
+noise.** One command builds the table:
+`for g in <the gates>; do sed -n '/== 7. test suite/,$p' .agents/supervisor/.gate-$g.txt | grep -E "^ *✗"; done`.
+⭐ Fourth baseline defect in two days, and the family is this file's oldest: §2e was handed a baseline that
+could not contain the defect, N111 a borrowed attribution, N139 a baseline an irreversible step destroyed —
+and now a baseline that is **not constant**. *An instrument is only as honest as the baseline it is handed*,
+and "the standing three" was a baseline I quoted as a fact for six gates while it was a floor.
+
 ## Dispatching the coder (added 2026-09-02)
 
 When the user has enabled the settings rule for
