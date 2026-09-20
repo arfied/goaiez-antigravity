@@ -1,5 +1,4 @@
 <div>
-    <x-surface.sample-state module="⭐⭐⭐ **IT IS THE WIZARD, and it asks for two things: a business name and a phone number. The AI FINDS GBP" screen="test_call" />
     <div class="test-call p-4">
         <h2 class="text-lg font-bold">Direct Test Call</h2>
         <p class="text-ink-2">Test call placed directly to your new live line.</p>
