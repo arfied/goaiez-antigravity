@@ -38,7 +38,7 @@
                     <label class="block text-sm">Body Text</label>
                     <input type="text" wire:model="bodyText" class="border p-2 w-full">
                 </div>
-                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Submit</button>
+                <button type="submit" class="bg-surface text-ink border rounded p-2">Submit</button>
             </form>
         </div>
     </div>
