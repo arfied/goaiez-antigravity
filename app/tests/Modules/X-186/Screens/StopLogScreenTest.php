@@ -11,6 +11,7 @@ use App\Modules\X186\Actions\CampaignCreateAction;
 use App\Modules\X186\Actions\CampaignRunAction;
 use App\Modules\X186\Actions\SequenceStopAction;
 use App\Modules\X186\Ui\StopLog;
+use App\Modules\X204\Domain\ConsentService;
 use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -70,5 +71,40 @@ class StopLogScreenTest extends TestCase
             ->assertDontSee('channel: manual');
 
         Livewire::test(StopLog::class)->assertOk();
+    }
+
+    public function test_suppress_phone_stops_campaign_run_via_event_chain(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        Tenancy::set((int) $biz->id);
+        $phone = '+15551239999';
+        $person = Person::create([
+            'business_id' => $biz->id,
+            'first_name' => 'Chain',
+            'last_name' => 'Tester',
+            'phone' => $phone,
+        ]);
+
+        app(CampaignCreateAction::class)->createCampaign((int) $biz->id, 'chain-campaign', [
+            ['channel' => 'sms', 'template_name' => 'chain_sms', 'delay_days' => 1],
+        ]);
+        app(CampaignRunAction::class)->runNextStep((int) $biz->id, 'chain-campaign', (int) $person->id);
+        Tenancy::forget();
+
+        $this->get(route('x-186.stop-log'))
+            ->assertOk()
+            ->assertSee('No campaign has stopped or paused yet');
+
+        Tenancy::set((int) $biz->id);
+        app(ConsentService::class)->suppress((int) $biz->id, $phone, 'sms', 'opt_out');
+        Tenancy::forget();
+
+        $this->get(route('x-186.stop-log'))
+            ->assertOk()
+            ->assertDontSee('No campaign has stopped or paused yet')
+            ->assertSee('Chain Tester');
     }
 }
