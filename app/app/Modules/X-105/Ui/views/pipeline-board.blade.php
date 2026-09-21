@@ -24,7 +24,7 @@
         </form>
 
         @if($ladders->isEmpty())
-            <x-ui.empty-state title="No ladders found" description="There are no active outreach ladders for this tenant." />
+            <x-ui.empty-state heading="No ladders found">There are no active outreach ladders for this tenant.</x-ui.empty-state>
         @else
             <div class="space-y-4">
                 @foreach($ladders as $ladder)

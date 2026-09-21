@@ -18,7 +18,10 @@ class PipelineBoardScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-105.pipeline-board'))->assertOk();
+        $this->get(route('x-105.pipeline-board'))
+            ->assertOk()
+            ->assertSeeText('Cold Outreach Pipeline Board')
+            ->assertSeeText('No ladders found');
 
         Livewire::test(PipelineBoard::class)->assertOk();
     }
@@ -49,8 +52,8 @@ class PipelineBoardScreenTest extends TestCase
 
         $this->assertDatabaseHas('people', [
             'business_id' => $biz->id,
-            'first_name'  => 'Test Prospect',
-            'email'       => 'test@prospect.com',
+            'first_name' => 'Test Prospect',
+            'email' => 'test@prospect.com',
         ]);
 
         $this->assertDatabaseHas('outreach_ladders', [
