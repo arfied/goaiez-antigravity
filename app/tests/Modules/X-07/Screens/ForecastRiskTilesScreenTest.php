@@ -100,4 +100,94 @@ class ForecastRiskTilesScreenTest extends TestCase
             'period_month' => '2026-09',
         ]);
     }
+
+    public function test_can_record_booked_and_collected_for_a_month()
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Forecasting Tenant', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        Livewire::test(ForecastRiskTiles::class)
+            ->set('amountsMonth', '2026-10')
+            ->set('bookedCents', '1550000')
+            ->set('collectedCents', '1000000')
+            ->call('recordMonth')
+            ->assertSet('amountsError', null)
+            ->assertSet('amountsSuccess', 'Recorded 2026-10: booked $15,500.00, collected $10,000.00. The tiles below read this row; the risk score for the same month is the other form on this screen.');
+
+        $this->assertDatabaseHas((new Forecast)->getTable(), [
+            'business_id' => $biz->id,
+            'period_month' => '2026-10',
+            'booked_cents' => 1550000,
+            'collected_cents' => 1000000,
+        ]);
+    }
+
+    public function test_amounts_and_risk_compose_on_one_forecast_row()
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Forecasting Tenant', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        Livewire::test(ForecastRiskTiles::class)
+            ->set('amountsMonth', '2026-11')
+            ->set('bookedCents', '1600000')
+            ->set('collectedCents', '800000')
+            ->call('recordMonth')
+            ->assertSet('amountsError', null);
+
+        Livewire::test(ForecastRiskTiles::class)
+            ->set('periodMonth', '2026-11')
+            ->set('riskScore', '33')
+            ->call('submit')
+            ->assertSet('error', null);
+
+        $this->assertEquals(1, Forecast::where('business_id', $biz->id)->count());
+
+        $this->assertDatabaseHas((new Forecast)->getTable(), [
+            'business_id' => $biz->id,
+            'period_month' => '2026-11',
+            'booked_cents' => 1600000,
+            'collected_cents' => 800000,
+            'churn_risk_pct' => 33,
+        ]);
+    }
+
+    public function test_refuses_an_empty_booked_amount()
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Forecasting Tenant', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        Livewire::test(ForecastRiskTiles::class)
+            ->set('amountsMonth', '2026-12')
+            ->set('bookedCents', '   ')
+            ->set('collectedCents', '500000')
+            ->call('recordMonth')
+            ->assertSet('amountsError', 'Enter the booked amount in cents.');
+
+        $this->assertDatabaseMissing((new Forecast)->getTable(), [
+            'business_id' => $biz->id,
+            'period_month' => '2026-12',
+        ]);
+    }
+
+    public function test_forecast_tile_shows_the_recorded_amounts()
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Forecasting Tenant', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        Livewire::test(ForecastRiskTiles::class)
+            ->set('amountsMonth', '2027-01')
+            ->set('bookedCents', '2500000')
+            ->set('collectedCents', '2100000')
+            ->call('recordMonth');
+
+        Tenancy::forget();
+
+        $this->actingAs($biz->owner)
+            ->withSession(['tenant_id' => $biz->id])
+            ->get(route('x-07.forecast-risk-tiles'))
+            ->assertOk()
+            ->assertSee('booked $25,000.00')
+            ->assertSee('collected $21,000.00')
+            ->assertDontSee('No forecast yet');
+    }
 }
