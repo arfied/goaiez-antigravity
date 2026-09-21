@@ -7,6 +7,7 @@ namespace Tests\Modules\X160\Screens;
 use App\Enums\UserRole;
 use App\Models\User;
 use App\Modules\X160\Models\Document;
+use App\Modules\X160\Ui\ReviewScreen;
 use App\Modules\X160\Ui\UploadDrop;
 use App\Support\Tenancy;
 use Livewire\Livewire;
@@ -101,7 +102,7 @@ class UploadDropScreenTest extends TestCase
             ->set('content', 'Some content')
             ->call('createDocument')
             ->assertSet('error', 'Title and content are required.');
-        
+
         $this->assertDatabaseMissing($table, [
             'title' => '',
         ]);
@@ -111,9 +112,33 @@ class UploadDropScreenTest extends TestCase
             ->set('content', '')
             ->call('createDocument')
             ->assertSet('error', 'Title and content are required.');
-            
+
         $this->assertDatabaseMissing($table, [
             'title' => 'Some title',
         ]);
+    }
+
+    public function test_upload_drop_shows_the_document_as_confirmed(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::setUser($owner->id);
+
+        Livewire::test(UploadDrop::class)
+            ->set('title', 'Distinctive Spec 4471')
+            ->set('content', 'Some content...')
+            ->call('createDocument');
+
+        $doc = Document::where('business_id', $biz->id)->firstOrFail();
+
+        Livewire::test(ReviewScreen::class)->call('confirmDocument', $doc->id);
+
+        Tenancy::forget();
+
+        $this->get(route('x-160.upload-drop'))
+            ->assertOk()
+            ->assertSee('confirmed')
+            ->assertDontSee('ingested');
     }
 }
