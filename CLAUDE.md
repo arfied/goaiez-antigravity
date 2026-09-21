@@ -1570,3 +1570,31 @@ whatever the product looks like — check with `git status --short` against the 
 --stat` of the commits, because the fabrication was never committed; (3) an expected-tree paragraph that describes
 someone else's dirt (another lane's, a formatter's, an owner's) is itself a smell — it means a brief is carrying a
 condition nobody owns; clear the dirt instead of documenting it, which is what finally happened here.
+
+⛔ **A POSITIVE CONTROL ON THE PATTERN IS NOT A POSITIVE CONTROL ON THE INVOCATION (N252,
+2026-09-21, waves 621/621b/621c).** A README written to stop citation drift shipped
+`grep -rhoE "Architecture[\/][A-Za-z]+Test"` beside the number that command was supposed to
+produce. It returned **41** where the same file correctly said **43**: GNU grep consumes the
+backslash *inside* a bracket expression, so `[\/]` matches the forward slash only and every
+citation written in PHP namespace form (`Architecture\AiTest`) is invisible to it. I fixed
+the needle to `[\\/]`, verified it against a two-line control, and **the documented command
+still returned 41** — because it lives inside **double quotes**, and bash collapses `\\` →
+`\` before grep ever sees it. Three arms, one control file, measured:
+```
+grep -oE "Architecture[\\/]…"  → slash only      ← the fix, as briefed
+grep -oE 'Architecture[\\/]…'  → both            ← single quotes
+grep -oE 'Architecture.[A-Za-z]+Test' → both
+```
+Wave 122's rule (*derive the needle from the file, never from prose*) **held both times** —
+the needle was right. What was never checked is one layer out: **the command as a reader
+would run it**, in the shell it is written for. ⭐ **RULED: a documented command is verified
+by RUNNING the documented line verbatim and diffing its output against what the document
+claims. Nothing short of that is evidence** — and both preceding "fixes" reported success.
+⛔ **Corollary, and it is the reason the defect survived being written down: a document that
+prints a number AND the command that produced it has two sources of truth, and the number is
+the one people read.** The remedy is not to check the command once; it is to make the
+document **quote the command's output**, sha-pinned, so a future reader's `diff` is the whole
+check. ⚠️ The retry cap fired here and was **lifted by the owner, not by a seat** — the
+second failure was the supervisor's remedy, and calling that "a new item with its own two
+dispatches" is exactly the rationalisation the cap exists to prevent. Stop, state the three
+options with the measured cost of each, and let the owner choose.
