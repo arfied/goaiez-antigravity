@@ -129,4 +129,137 @@ class DemoLedgerDailyScreenTest extends TestCase
             'entry_type' => 'debit',
         ]);
     }
+
+    public function test_can_reset_demo_debits(): void
+    {
+        $user = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);
+        $this->actingAs($user);
+        $biz = $this->provisionTenant(['owner_user_id' => $user->id]);
+
+        Livewire::test(DemoLedgerDaily::class)
+            ->set('prospectDomain', 'example.com')
+            ->call('provisionDemo');
+
+        $tenant = DemoTenant::where('business_id', $biz->id)->latest('id')->first();
+
+        $livewire = Livewire::test(DemoLedgerDaily::class);
+        $livewire->set('demoTenantId', $tenant->id)
+            ->set('message', 'Msg 1')
+            ->call('sendTestMessage');
+
+        $livewire->set('demoTenantId', $tenant->id)
+            ->set('message', 'Msg 2')
+            ->call('sendTestMessage');
+
+        Livewire::test(DemoLedgerDaily::class)
+            ->set('resetTenantId', $tenant->id)
+            ->set('confirmReset', true)
+            ->call('resetDemo')
+            ->assertSet('success', 'Reset demo debits for '.$tenant->demo_slug.'. Removed 2 debit entries. The initial credit allocation is untouched.');
+
+        $this->assertDatabaseMissing('demo_ledger', [
+            'business_id' => $biz->id,
+            'demo_tenant_id' => $tenant->id,
+            'entry_type' => 'debit',
+        ]);
+
+        $this->get(route('x-161.demo-ledger-daily.admin'))
+            ->assertOk()
+            ->assertDontSee('Outbound sandbox test message token cost');
+    }
+
+    public function test_reset_demo_preserves_initial_credit(): void
+    {
+        $user = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);
+        $this->actingAs($user);
+        $biz = $this->provisionTenant(['owner_user_id' => $user->id]);
+
+        Livewire::test(DemoLedgerDaily::class)
+            ->set('prospectDomain', 'example.com')
+            ->call('provisionDemo');
+
+        $tenant = DemoTenant::where('business_id', $biz->id)->latest('id')->first();
+
+        $livewire = Livewire::test(DemoLedgerDaily::class);
+        $livewire->set('demoTenantId', $tenant->id)
+            ->set('message', 'Msg 1')
+            ->call('sendTestMessage');
+
+        Livewire::test(DemoLedgerDaily::class)
+            ->set('resetTenantId', $tenant->id)
+            ->set('confirmReset', true)
+            ->call('resetDemo');
+
+        $this->assertDatabaseHas('demo_ledger', [
+            'business_id' => $biz->id,
+            'demo_tenant_id' => $tenant->id,
+            'entry_type' => 'credit',
+        ]);
+
+        $this->get(route('x-161.demo-ledger-daily.admin'))
+            ->assertOk()
+            ->assertSee('Initial Sandbox Demo Credit Allocation');
+    }
+
+    public function test_reset_demo_requires_confirmation(): void
+    {
+        $user = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);
+        $this->actingAs($user);
+        $biz = $this->provisionTenant(['owner_user_id' => $user->id]);
+
+        Livewire::test(DemoLedgerDaily::class)
+            ->set('prospectDomain', 'example.com')
+            ->call('provisionDemo');
+
+        $tenant = DemoTenant::where('business_id', $biz->id)->latest('id')->first();
+
+        $livewire = Livewire::test(DemoLedgerDaily::class);
+        $livewire->set('demoTenantId', $tenant->id)
+            ->set('message', 'Msg 1')
+            ->call('sendTestMessage');
+
+        Livewire::test(DemoLedgerDaily::class)
+            ->set('resetTenantId', $tenant->id)
+            ->set('confirmReset', false)
+            ->call('resetDemo')
+            ->assertSet('error', 'This removes 1 debit entries for '.$tenant->demo_slug.'. Tick confirm and press again.');
+
+        $this->assertDatabaseHas('demo_ledger', [
+            'business_id' => $biz->id,
+            'demo_tenant_id' => $tenant->id,
+            'entry_type' => 'debit',
+        ]);
+    }
+
+    public function test_reset_demo_refuses_when_nothing_to_delete(): void
+    {
+        $user = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);
+        $this->actingAs($user);
+        $biz = $this->provisionTenant(['owner_user_id' => $user->id]);
+
+        Livewire::test(DemoLedgerDaily::class)
+            ->set('prospectDomain', 'example.com')
+            ->call('provisionDemo');
+
+        $tenant = DemoTenant::where('business_id', $biz->id)->latest('id')->first();
+
+        Livewire::test(DemoLedgerDaily::class)
+            ->set('resetTenantId', $tenant->id)
+            ->set('confirmReset', true)
+            ->call('resetDemo')
+            ->assertSet('error', 'There are no debits to remove for this demo tenant.');
+    }
+
+    public function test_reset_demo_refuses_no_tenant_selected(): void
+    {
+        $user = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);
+        $this->actingAs($user);
+        $biz = $this->provisionTenant(['owner_user_id' => $user->id]);
+
+        Livewire::test(DemoLedgerDaily::class)
+            ->set('resetTenantId', 0)
+            ->set('confirmReset', true)
+            ->call('resetDemo')
+            ->assertSet('error', 'Please select a demo tenant.');
+    }
 }

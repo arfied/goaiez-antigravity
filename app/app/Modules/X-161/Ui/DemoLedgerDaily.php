@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X161\Ui;
 
 use App\Modules\X161\Actions\DemoProvisionAction;
+use App\Modules\X161\Actions\DemoResetAction;
 use App\Modules\X161\Domain\DemoSandboxEngine;
 use App\Modules\X161\Models\DemoLedger;
 use App\Modules\X161\Models\DemoTenant;
@@ -20,6 +21,10 @@ class DemoLedgerDaily extends Component
     public string $prospectDomain = '';
 
     public int $demoTenantId = 0;
+
+    public int $resetTenantId = 0;
+
+    public bool $confirmReset = false;
 
     public string $message = '';
 
@@ -62,6 +67,57 @@ class DemoLedgerDaily extends Component
 
         $this->success = 'Recorded a mock debit. Carrier reached: '.($result['carrier_reached'] ? 'true' : 'false').'.';
         $this->reset('demoTenantId', 'message');
+    }
+
+    public function resetDemo(DemoResetAction $action): void
+    {
+        $this->reset('success', 'error');
+
+        if ($this->resetTenantId === 0) {
+            $this->error = 'Please select a demo tenant.';
+
+            return;
+        }
+
+        $tenant = DemoTenant::where('business_id', Tenancy::idOrFail())
+            ->where('id', $this->resetTenantId)
+            ->first();
+
+        if ($tenant === null) {
+            $this->error = 'Please select a valid demo tenant.';
+
+            return;
+        }
+
+        $beforeCount = DemoLedger::where('business_id', Tenancy::idOrFail())
+            ->where('demo_tenant_id', $this->resetTenantId)
+            ->where('entry_type', 'debit')
+            ->count();
+
+        if ($beforeCount === 0) {
+            $this->error = 'There are no debits to remove for this demo tenant.';
+
+            return;
+        }
+
+        if (! $this->confirmReset) {
+            $this->error = 'This removes '.$beforeCount.' debit entries for '.$tenant->demo_slug.'. Tick confirm and press again.';
+
+            return;
+        }
+
+        $action->resetDemo(Tenancy::idOrFail(), $this->resetTenantId);
+
+        $afterCount = DemoLedger::where('business_id', Tenancy::idOrFail())
+            ->where('demo_tenant_id', $this->resetTenantId)
+            ->where('entry_type', 'debit')
+            ->count();
+
+        $deleted = $beforeCount - $afterCount;
+
+        $this->success = 'Reset demo debits for '.$tenant->demo_slug.'. Removed '.$deleted.' debit entries. The initial credit allocation is untouched.';
+        $this->reset('resetTenantId');
+        $this->confirmReset = false;
     }
 
     public function render()
