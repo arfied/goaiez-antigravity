@@ -42,18 +42,18 @@ class CoolingViewScreenTest extends TestCase
         Tenancy::set($biz->id);
 
         Livewire::test(CoolingView::class)
-            ->set('prospectIdentifier', 'acme-roofing')
+            ->set('prospectIdentifier', 'bluewater-hvac')
             ->set('signalType', 'pricing_visit')
             ->set('signalScore', '60')
             ->call('recordSignal')
-            ->assertSet('success', 'Recorded pricing_visit for acme-roofing at 60 — cooling, so it is listed below.');
+            ->assertSet('success', 'Recorded pricing_visit for bluewater-hvac at 60 — cooling, so it is listed below.');
 
         $this->assertDatabaseHas('signals', [
-            'prospect_identifier' => 'acme-roofing',
+            'prospect_identifier' => 'bluewater-hvac',
             'signal_type' => 'pricing_visit',
         ]);
         $this->assertDatabaseHas('signal_scores', [
-            'prospect_identifier' => 'acme-roofing',
+            'prospect_identifier' => 'bluewater-hvac',
             'cooling_status' => 'cooling',
             'is_high_intent' => false,
         ]);
@@ -66,14 +66,14 @@ class CoolingViewScreenTest extends TestCase
         Tenancy::set($biz->id);
 
         Livewire::test(CoolingView::class)
-            ->set('prospectIdentifier', 'acme-roofing')
+            ->set('prospectIdentifier', 'bluewater-hvac')
             ->set('signalType', 'pricing_visit')
             ->set('signalScore', '90')
             ->call('recordSignal')
-            ->assertSet('success', 'Recorded pricing_visit for acme-roofing at 90 — fresh, so it is not on this list; the signal volume screen counts it.');
+            ->assertSet('success', 'Recorded pricing_visit for bluewater-hvac at 90 — fresh, so it is not on this list; the signal volume screen counts it.');
 
         $this->assertDatabaseHas('signal_scores', [
-            'prospect_identifier' => 'acme-roofing',
+            'prospect_identifier' => 'bluewater-hvac',
             'cooling_status' => 'fresh',
             'is_high_intent' => true,
         ]);
@@ -84,7 +84,7 @@ class CoolingViewScreenTest extends TestCase
         $this->get(route('x-136.cooling'))
             ->assertOk()
             ->assertSee('Nobody is cooling')
-            ->assertDontSee('acme-roofing');
+            ->assertDontSee('bluewater-hvac');
     }
 
     public function test_refuses_a_non_numeric_score(): void
@@ -94,17 +94,17 @@ class CoolingViewScreenTest extends TestCase
         Tenancy::set($biz->id);
 
         Livewire::test(CoolingView::class)
-            ->set('prospectIdentifier', 'acme-roofing')
+            ->set('prospectIdentifier', 'bluewater-hvac')
             ->set('signalType', 'pricing_visit')
             ->set('signalScore', 'abc')
             ->call('recordSignal')
             ->assertSet('error', 'Enter the score as a number.');
 
         $this->assertDatabaseMissing('signals', [
-            'prospect_identifier' => 'acme-roofing',
+            'prospect_identifier' => 'bluewater-hvac',
         ]);
         $this->assertDatabaseMissing('signal_scores', [
-            'prospect_identifier' => 'acme-roofing',
+            'prospect_identifier' => 'bluewater-hvac',
         ]);
     }
 
@@ -115,7 +115,7 @@ class CoolingViewScreenTest extends TestCase
         Tenancy::set($biz->id);
 
         Livewire::test(CoolingView::class)
-            ->set('prospectIdentifier', 'acme-roofing')
+            ->set('prospectIdentifier', 'bluewater-hvac')
             ->set('signalType', 'pricing_visit')
             ->set('signalScore', '60')
             ->call('recordSignal');
@@ -125,7 +125,7 @@ class CoolingViewScreenTest extends TestCase
         $this->actingAs($owner);
         $this->get(route('x-136.cooling'))
             ->assertOk()
-            ->assertSee('acme-roofing')
+            ->assertSee('bluewater-hvac')
             ->assertDontSee('Nobody is cooling');
     }
 }
