@@ -23,7 +23,7 @@
         @else
             <ul>
                 @foreach($media as $m)
-                    <li>#{{ $m->id }}: [{{ $m->destination }}] {{ $m->output_media_url }}</li>
+                    <li>#{{ $m->id }}: [{{ $m->destination }}] {{ $m->source_asset_url }} -> {{ $m->output_media_url }}</li>
                 @endforeach
             </ul>
         @endif
