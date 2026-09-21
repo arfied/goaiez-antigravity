@@ -17,9 +17,9 @@
             <x-ui.error-panel heading="We could not load the action log.">{{ $errorMessage }}</x-ui.error-panel>
         @elseif($invocations->isEmpty())
             @if($search !== '')
-                <x-ui.empty-state heading="No results found" description="No actions matched your search." />
+                <x-ui.empty-state heading="No results found">No actions matched your search.</x-ui.empty-state>
             @else
-                <x-ui.empty-state heading="No actions" description="No action invocations recorded." />
+                <x-ui.empty-state heading="No actions">No action invocations recorded.</x-ui.empty-state>
             @endif
         @else
             <ul class="divide-y divide-control">
