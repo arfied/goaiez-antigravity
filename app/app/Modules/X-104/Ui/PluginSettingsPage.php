@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X104\Ui;
 
 use App\Modules\X104\Actions\PluginActivateAction;
+use App\Modules\X104\Actions\PluginDeactivateAction;
 use App\Modules\X104\Models\PluginInstall;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
@@ -24,6 +25,8 @@ class PluginSettingsPage extends Component
     public ?string $error = null;
 
     public ?string $success = null;
+
+    public ?string $deactivateSuccess = null;
 
     public function mount(int $businessId = 0)
     {
@@ -60,6 +63,16 @@ class PluginSettingsPage extends Component
         } catch (\Throwable $e) {
             $this->error = $e->getMessage();
         }
+    }
+
+    public function deactivate(string $siteUrl, PluginDeactivateAction $action): void
+    {
+        $this->deactivateSuccess = null;
+
+        $install = $action->deactivate(Tenancy::idOrFail(), $siteUrl);
+
+        $this->deactivateSuccess = 'Plugin deactivated for '.$install->site_url
+            .'. Its injected assets have been removed; switching it back on needs the site URL and the API key again.';
     }
 
     public function render()

@@ -1,12 +1,21 @@
 <div>
     <div class="plugin-settings-view p-4">
         <h2 class="text-lg font-bold text-ink">Plugin sites</h2>
+
+        @if($deactivateSuccess)
+            <div class="text-ink-2 bg-surface border p-2 mb-4 rounded">{{ $deactivateSuccess }}</div>
+        @endif
+
         @if($installs->isEmpty())
             <p class="text-ink-2">No plugin sites connected yet.</p>
         @else
             <ul>
                 @foreach($installs as $install)
-                    <li>{{ $install->site_url }} — {{ $install->is_active ? 'active' : 'inactive' }}</li>
+                    <li>{{ $install->site_url }} — {{ $install->is_active ? 'active' : 'inactive' }}
+                        @if($install->is_active)
+                            <button type="button" wire:click="deactivate('{{ $install->site_url }}')" class="bg-surface text-ink border rounded px-2 py-1 ml-2">Deactivate</button>
+                        @endif
+                    </li>
                 @endforeach
             </ul>
         @endif
