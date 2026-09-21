@@ -10,5 +10,20 @@
                 @endforeach
             </ul>
         @endif
+
+        <div class="mt-8 p-4 bg-surface border rounded">
+            <h3 class="text-md font-bold text-ink">Teach Fact</h3>
+            @if($success)
+                <div class="mb-4 text-ink">{{ $success }}</div>
+            @endif
+            @if($error)
+                <div class="mb-4 text-ink-2">{{ $error }}</div>
+            @endif
+            <form wire:submit="teachAgent" class="flex flex-col gap-2 mt-4">
+                <input type="text" wire:model="key" placeholder="Key" class="border rounded p-2 text-ink bg-paper">
+                <input type="text" wire:model="value" placeholder="Value" class="border rounded p-2 text-ink bg-paper">
+                <button type="submit" class="bg-surface text-ink border rounded p-2">Teach</button>
+            </form>
+        </div>
     </div>
 </div>
