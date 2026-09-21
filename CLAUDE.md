@@ -1744,3 +1744,74 @@ instead: **is it reachable in production by anyone or anything**, and separately
 filler is not a writer**. Two further questions each refused a row the same day: **is the effect
 visible in a state the owner can actually reach?** (X-183: body text renders nowhere) and **can
 the owner get back?** (X-113 deactivate: no reactivate writer exists anywhere).
+
+⛔ **AN INSTRUMENT BUILT FOR ONE SHAPE REPORTS THE ABSENCE OF THAT SHAPE, NEVER THE ABSENCE OF
+THE THING — AND THAT DIRECTION PRODUCES FALSE REFUSALS (N264, 2026-09-21).** I deferred X-160
+`DocumentConfirmAction` because *"`Document` rows come only from the demo filler and an
+unreached engine"*. Measured afterwards, `UploadDrop.php:39` calls
+`app(\App\Modules\X160\Domain\DocumentExtractionEngine::class)->ingest(...)`, which writes
+`Document` rows with `'status' => 'ingested'` — exactly what `ReviewScreen` lists. The chain was
+complete and owner-driven the whole time. **The needle I had grepped with was the injected-action
+control shape** (`public function …(SomeAction $action)`), and that call is an inline FQN, on a
+`Domain` engine rather than an `Actions` class, with a verb that is not `handle` — three reasons
+one needle could not see it, and the recipe **explicitly permits** the `app(...)` form.
+⭐ Same family as the uncalled-writer pool being blind to update-only writers and to
+cross-module callers, but worse in kind: those hid *candidates*, this **refused one**, and a
+refusal is written down as settled. ⛔ **RULED: before recording a refusal whose reason is "no
+caller / no writer", grep for the OTHER shapes the recipe allows —
+`app(X::class)->`, an inline FQN, a `Domain/` class, and any verb.** What finally caught it was
+an automated precondition filter disagreeing with my note, and four positive controls with
+answers I already knew — one of which came back the opposite way.
+
+⛔ **NOTHING READS A CHECKOUT'S TREE AS A RESULT WHILE A CODER CAN STILL WRITE IT (N265,
+2026-09-21).** Reviewing a wave I ran `git status --short`, saw one modified file, diagnosed it,
+wrote a brief around it and dispatched — and the file had already been reverted. My own watcher
+had printed the reason in the same breath: `REPORT.md written at 18:33:20 — pid 2559323
+alive=yes`. **`REPORT.md` is written at wave close and the coder keeps running afterwards**
+(N117's parked shape), so it was still tidying up. ⛔ **RULED: `git status` is a measurement of a
+moment and is only a measurement of the WAVE once `kill -0 coder.pid` says the writer is dead —
+re-measure liveness immediately before reading the tree, not once at the top of the tick.** It is
+N157's triple moved one object over, and it is N130 inverted: that rule says nothing writes while
+a suite reads; this says nothing reads as a result while a coder can write.
+
+⛔ **A STOP CONDITION MUST BE TOTAL OVER THE STATES IT COMPARES, OR IT LICENSES THE CODER TO
+MANUFACTURE THE MISSING ONE (N267, 2026-09-21).** The brief born of N265 said *"Expected working
+tree: exactly ONE modified path … if anything **else** is dirty, report it and stop."* The tree
+was **clean** — which that sentence does not cover — and the coder ran **bare
+`./vendor/bin/pint`** to recreate the file and committed it. Transcript, parsed (the
+`CommandLine` values are escaped JSON; a plain `grep -o` returns only `"\"`): twenty-five
+diagnostic commands first, including `pint --test` on the committed blob to verify my claim —
+**an excellent investigation, and then the wrong thing done with the answer.** ⭐ It is N188's
+shape (appending a space to twelve files so a status check would match) a second time, and far
+milder: byte-identical to pint's own output, honestly committed, and it satisfies rule 8. ⛔
+**RULED, and it is half the supervisor's: the phrasing is "if the tree differs IN ANY WAY,
+INCLUDING BEING CLEAN, report it and stop", and every brief credits the diagnosis before naming
+the defect.** A brief can be wrong — that one was — and the coder stopping is how that gets
+found.
+
+⛔ **A FIXTURE RULE STATED IN PROSE, WHEN EARLIER BRIEFS WROTE IT AS CODE, IS THE ONE THAT BREAKS
+(N266, 2026-09-21).** Four briefs in one evening carried N261 (`Tenancy::setUser()` is not a
+tenant switch). Three wrote the lines out:
+
+```php
+Tenancy::setUser($ownerB->id);
+Tenancy::set((int) $bizB->id);
+```
+
+The fourth said only *"set tenancy back to B … then A before the call"*. The coder reached for
+`setUser` — what the neighbouring tests in that module use — and the test errored with the right
+exception class **from the wrong line**: the lookup for B's row threw four lines before
+`expectException` was reached, which PHPUnit reports as an error, not a pass. ⭐ **A correct
+exception class arriving from the wrong line is indistinguishable from success if you read only
+the class name; the line number is the whole diagnosis.** ⛔ **RULED: once a rule has appeared as
+lines in any brief, it appears as lines in every later brief.** Copying four lines costs nothing;
+a paraphrase cost a wave. Same family as N126 — the half that fails is always the half a coder
+cannot execute.
+
+⚠️ **A DEPLOYED SHA IS A SAVED NUMBER AND GOES STALE WHILE YOU CARRY IT (N263, 2026-09-21).**
+Three documents of mine said production was `78f5ab0ff` and "far behind"; the owner had deployed
+mid-session and it was `ff661ab53`, six commits back. Measured from the production checkout's own
+`rev-parse` (read-only, in this seat's column) plus `git merge-base --is-ancestor` and
+`git rev-list --count`. It mattered: a published artifact would have told readers that **none** of
+the day's controls were live when in fact **62 of 66** were. ⛔ **Re-measure production's HEAD in
+the tick that cites it**, exactly as the roster rule says a saved board is stale by definition.
