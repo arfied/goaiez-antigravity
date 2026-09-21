@@ -1598,3 +1598,92 @@ check. ⚠️ The retry cap fired here and was **lifted by the owner, not by a s
 second failure was the supervisor's remedy, and calling that "a new item with its own two
 dispatches" is exactly the rationalisation the cap exists to prevent. Stop, state the three
 options with the measured cost of each, and let the owner choose.
+
+⛔ **NO PLACEHOLDER, HEADING OR `x-ui.*` ATTRIBUTE MAY CONTAIN A VALUE A TEST ASSERTS ON (N256,
+2026-09-21, wave 638).** One brief of mine carried `placeholder="Prospect (e.g. acme-roofing)"`
+and, four hundred words later, `assertDontSee('acme-roofing')` **and**
+`assertSee('acme-roofing')`. The placeholder is rendered HTML, so the string is on the page
+whether or not a row exists. One test went red — correctly — and **the other passed off that
+same placeholder while proving nothing**: the cooling row could have failed to render entirely
+and it would still have been green. ⭐ **The red half is the lucky half.** This is the repo's
+own recorded defect (*`assertSee` passes on text that is only an HTML attribute*) reproduced
+from the other side, by supplying the attribute and the assertion in one document.
+**RULED: before a brief ships, `grep -n "<the assertion string>" <the blade>` — it must be 0
+for an `assertDontSee`, and 0 outside the row being proved for an `assertSee`.** The test value
+is chosen to appear nowhere else, and the brief hands the coder that same grep as its own
+proof. ⭐ The general form: *a brief that writes both the page text and the assertion about it
+holds both ends of the check, and nothing else will compare them.*
+
+⛔ **MATCHING A BASENAME IS NOT RESOLVING A SYMBOL, AND IN THIS REPO THAT IS THE NORMAL CASE
+(N258, 2026-09-21).** Screening X-186 I found `Event::listen(SendRequested::class, …)` live in
+`C-Sms/ModuleServiceProvider.php:26` and nearly reported that a proposed control would send an
+SMS. The `use` line four rows above says `App\Modules\CSms\Events\SendRequested`, and
+`find app/Modules -name 'SendRequested.php'` returns **six** classes (C-Sms, X-127, X-186,
+X-207, X-217, X-218). **X-186's has no listener at all.** Ruling from the grep would have
+invented a downstream; ruling from a missing obvious listener would have shipped a send button
+of unknown effect. Three collisions surfaced in one session — `PackSeedAction` (X-180 **and**
+X-185), `CampaignCreateAction` (X-185 **and** X-186), `SendRequested` ×6 — because every module
+names its events and actions after what it does. **Read the `use` line; a basename grep is a
+trigger, never a finding.** Same rule as wave 121's `CAgent\Models\TakeoverLatch`, now shown to
+be routine rather than rare.
+
+⚠️ **A LIVENESS CHECK MUST BE ABLE TO SAY "FINISHED" (N253, 2026-09-21).** My N184 empty-exit
+watcher, armed at launch to fire at +100s, reported `SUSPECT EMPTY-EXIT … pid alive=no,
+artefacts 0` about a run that had **succeeded in 98 seconds** with a commit and a report. Every
+field was true; the verdict was wrong, because the condition required the pid **alive** and a
+finished run fails that exactly as an empty exit does. `artefacts 0` is the same defect twice —
+`.mt*`/`.doctor-pre*` are work-in-progress, absent from a finished wave. Believing it would have
+re-launched a coder into a checkout already holding a finished commit — the one-writer incident
+through a door `--census` cannot watch, since `argv[0]` is gone. **RULED: check `REPORT.md`
+newer than `KICKOFF.md` FIRST; only if that is false does pid-death plus an 11-byte log mean an
+empty exit.** ⭐ And it is this file's oldest rule against its author: *a new instrument's first
+output is data you do not trust* — this one was one tick old.
+
+⚠️ **A POSITIVE CONTROL IS A CASE MEASURED TO BE POSITIVE, NOT ONE OF THE SAME SHAPE AS LAST
+TIME'S (N254, 2026-09-21).** Verifying a report's PINT claim I reused the previous wave's check
+with the module swapped — `X-129\/X129Test.php` → `X-128\/X128Test.php` — expecting **1**. It
+returned **0**: that file is simply clean under pint and had never been in the failing list, so
+it could not have demonstrated anything. Re-run against two files measured to be in the list
+(`X-123\/X123Test.php`, `C-Mail\/CMailTest.php`, both **1**), the needle was sound and the
+finding stood. ⛔ **A control whose expected value equals the finding's cannot discriminate** —
+if both are `0`, the control is a coincidence waiting to be read as evidence. I carried the
+*form* forward and lost the *property*, which is N111's attribution defect in one path
+substitution.
+
+⚠️ **A BRIEF MAY NOT ORDER "DO NOT TOUCH AN EXISTING LINE" AND `pint --dirty` (N255,
+2026-09-21, wave 637).** Both were in one brief; `--dirty` reformats the **whole** of any file
+touched. Six shipped lines changed, including an inline FQN rewritten to an import, and I was
+about to record a deviation. **Proved whose edit it was by running the tool on the OLD blob:**
+`git show <base>:<path> > <scratch>` then `pint --test <scratch>` named five fixers accounting
+for every changed line. ⛔ **A diff cannot tell a formatter's edit from an author's; the only
+witness that can is the formatter, asked about the version before the wave.** A brief that says
+"additive only" must say pint's output is expected and exempt.
+**N255b, from the same measurement:** the report's **PINT field is near-vacuous by
+construction** — the brief orders `--dirty` before the commit, so "none of my files are in the
+list" cannot be false unless the step is skipped. It measures *did `--dirty` run*, not *was the
+code written clean*, and must be reported as that. Same family as N121's `-.*assert` count and
+N115's `STAGES` line.
+
+⚠️ **`.orig` SNAPSHOTS GET COMMITTED BY CONTROL WAVES (N257, 2026-09-21).** Three were tracked
+on `main` — `X-185/Ui/ExperimentBoard.php.orig`, `X-209/Ui/PrivateInbox.php.orig`,
+`X-66/Ui/LivecoachingWhisperPanel.php.orig` — each a pre-edit backup added by the same commit
+that built that screen's control. Verified safe four ways before deletion: `diff` showed **only
+additions** going `.orig` → live (strict subsets), `grep -icE "abort|authoriz|hasRole|Gate::|
+policy|middleware"` was **0** in all three, nothing referenced them, and composer's classmap
+globs `.php` so they were never loadable. Removed in wave 639. **`git ls-files | grep -E
+'\.(orig|rej|bak)$'` must stay empty** — they are stale copies of live components in the same
+directory, and no architecture pin globbing `Ui/*.php` can see them.
+
+⭐ **THE UNCALLED-WRITER QUEUE HAS A THIRD FILTER, AND IT IS THE RECIPE'S OWN RULE (2026-09-21).**
+Beyond *is the writer uncalled* and *does a screen read what it writes*, the question that
+actually decides a row is **is its precondition owner-reachable**. Run the recipe's `int
+$somethingId` rule over the pool and, for each foreign id, ask whether that model has a writer
+**outside `app/Console/DemoFill/`**. X-203 fails it (`Runbook` exists only in `X203Filler`, so a
+"run this runbook" button has nothing to pick on a real tenant); X-162 fails it harder (`tech_id`
+is an unconstrained `unsignedBigInteger` with no model at all). ⛔ **A demo filler is not a
+writer** — it makes a screen look built, which is this project's oldest illusion. Two companion
+filters and both need a positive control before they are believed: *does any other file write
+this model* (a **zero** means the screen is empty for every tenant, which is the strongest wave
+shape there is — but my first version of that needle returned zero for **all 44 rows** and was
+malformed), and the id filter above (whose `wc -w` count is words, not ids — read the list, not
+the number).
