@@ -127,11 +127,13 @@ class SubmissionsThreadScreenTest extends TestCase
         $bizA = $this->provisionTenant(['owner_user_id' => $ownerA->id]);
 
         Tenancy::setUser($ownerB->id);
+        Tenancy::set((int) $bizB->id);
         $form = FormDefinition::create(['business_id' => $bizB->id, 'form_name' => 'Distinctive Form 4487', 'slug' => 'distinctive-4487', 'steps' => [], 'schema' => []]);
         $person = Person::create(['business_id' => $bizB->id, 'first_name' => 'Distinctive', 'phone' => '+15125554487']);
         $submissionB = FormSubmission::create(['business_id' => $bizB->id, 'form_definition_id' => $form->id, 'person_id' => $person->id, 'is_spam' => true, 'payload' => []]);
 
         Tenancy::setUser($ownerA->id);
+        Tenancy::set((int) $bizA->id);
 
         $this->expectException(ModelNotFoundException::class);
         Livewire::test(SubmissionsThread::class)->call('releaseSubmission', $submissionB->id);
