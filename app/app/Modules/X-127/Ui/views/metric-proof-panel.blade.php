@@ -1,6 +1,21 @@
 <div>
     <div class="metric-proof-view p-4">
         <h3 class="text-lg font-bold">Published Metric Proof Panel</h3>
+
+        @if($error)
+            <div class="bg-surface text-ink border rounded p-4 mb-4">{{ $error }}</div>
+        @endif
+        @if($success)
+            <div class="bg-surface text-ink border rounded p-4 mb-4">{{ $success }}</div>
+        @endif
+
+        <form wire:submit="recordMetric" class="mb-6 flex flex-col gap-2 bg-surface p-4 rounded mt-4">
+            <input type="text" wire:model="metricKey" class="border rounded p-2 text-ink flex-1 bg-surface" placeholder="Metric Key">
+            <input type="text" wire:model="publishedValue" class="border rounded p-2 text-ink flex-1 bg-surface" placeholder="Published Value">
+            <textarea wire:model="liveQuery" class="border rounded p-2 text-ink flex-1 bg-surface" placeholder="Live Query"></textarea>
+            <button type="submit" class="bg-surface text-ink border rounded p-2">Submit</button>
+        </form>
+
         @if($metrics->isEmpty())
             <p class="text-gray-500">No public metrics published.</p>
         @else
