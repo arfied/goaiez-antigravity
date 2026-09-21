@@ -9,7 +9,6 @@ use App\Models\User;
 use App\Modules\X113\Actions\RoleCreateAction;
 use App\Modules\X113\Models\RolePermission;
 use App\Modules\X113\Ui\PermissionMatrix;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -113,10 +112,15 @@ class PermissionMatrixScreenTest extends TestCase
         $roleAction = app(RoleCreateAction::class);
         $otherRole = $roleAction->handle($otherBiz->id, 'Other Manager');
 
-        $this->expectException(ModelNotFoundException::class);
         Livewire::test(PermissionMatrix::class)
             ->set('roleId', $otherRole->id)
             ->set('permission', 'view_employee_documents')
-            ->call('grantPermission');
+            ->call('grantPermission')
+            ->assertSet('error', 'Invalid role.');
+
+        $this->assertDatabaseMissing((new RolePermission)->getTable(), [
+            'role_id' => $otherRole->id,
+            'permission' => 'view_employee_documents',
+        ]);
     }
 }

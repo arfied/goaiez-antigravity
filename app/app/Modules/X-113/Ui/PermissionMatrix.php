@@ -43,6 +43,12 @@ class PermissionMatrix extends Component
             return;
         }
 
+        if ($this->permission === '') {
+            $this->error = 'Please select a permission.';
+
+            return;
+        }
+
         try {
             $action->handle(Tenancy::idOrFail(), $this->roleId, $this->permission);
 

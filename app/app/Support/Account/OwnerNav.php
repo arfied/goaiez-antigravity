@@ -638,6 +638,7 @@ final class OwnerNav
             OwnerNavItem::make('Documents to review', 'x-160.review-screen', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Staff', 'x-113.staff', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Roles', 'x-113.roles', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Permissions', 'x-113.permission-matrix', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Action log', 'x-122.action-log', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Capability refusals', 'x-126.refusal-analytics', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Reconciliation discrepancies', 'x-198.reconciliation-discrepancies', OwnerNavItem::GROUP_CATALOG),

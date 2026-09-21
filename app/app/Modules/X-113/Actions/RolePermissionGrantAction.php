@@ -18,7 +18,10 @@ final class RolePermissionGrantAction
             throw new InvalidArgumentException("Unknown permission: '{$permission}'");
         }
 
-        Role::where('business_id', $businessId)->findOrFail($roleId);
+        $role = Role::where('business_id', $businessId)->find($roleId);
+        if (! $role) {
+            throw new InvalidArgumentException('Invalid role.');
+        }
 
         if (RolePermission::where('business_id', $businessId)
             ->where('role_id', $roleId)
