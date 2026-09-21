@@ -18,7 +18,7 @@ Any citation to other `Architecture/<X>Test` names found in this tree came from 
 To check which cited tests are present or missing, you can run this command from the `app/` directory:
 
 ```bash
-for t in $(grep -rhoE "Architecture[\\/][A-Za-z]+Test" app/ resources/ tests/ | sed 's|Architecture.||' | sort -u); do
+for t in $(grep -rhoE 'Architecture[\\/][A-Za-z]+Test' app/ resources/ tests/ | sed 's|Architecture.||' | sort -u); do
   [ -f "tests/Feature/Architecture/$t.php" ] && echo "OK      $t" || echo "MISSING $t"
 done
 ```
