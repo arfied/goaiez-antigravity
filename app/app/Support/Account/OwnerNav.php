@@ -636,6 +636,7 @@ final class OwnerNav
             OwnerNavItem::make('Activity', 'x-01.history', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Your documents', 'x-160.upload-drop', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Documents to review', 'x-160.review-screen', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Document vault', 'x-113.document-vault', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Staff', 'x-113.staff', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Roles', 'x-113.roles', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Permissions', 'x-113.permission-matrix', OwnerNavItem::GROUP_CATALOG),
