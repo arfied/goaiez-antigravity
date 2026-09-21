@@ -12,6 +12,15 @@
             </form>
         </div>
 
+        <div class="mb-6 flex flex-col gap-2 bg-surface p-4 rounded mt-4">
+            <h3 class="font-bold text-ink">Infer Interest</h3>
+            <form wire:submit="inferInterest" class="flex flex-col gap-2">
+                <input type="text" wire:model="inferPersonId" class="border rounded p-2 text-ink flex-1 bg-surface" placeholder="Customer ID (Person ID)">
+                <input type="text" wire:model="inferTopic" class="border rounded p-2 text-ink flex-1 bg-surface" placeholder="Inferred Topic">
+                <button type="submit" class="bg-surface text-ink border rounded p-2">Infer</button>
+            </form>
+        </div>
+
         @if($interests->isEmpty())
             <x-ui.empty-state icon="○" heading="No interests recorded yet">
                 Inferences and tags will show up here.

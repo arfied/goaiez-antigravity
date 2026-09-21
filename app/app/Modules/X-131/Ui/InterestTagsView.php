@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Modules\X131\Ui;
 
 use App\Modules\X121\Actions\EntityReadAction;
+use App\Modules\X131\Actions\InterestInferAction;
+use App\Modules\X131\Actions\InterestSetAction;
 use App\Modules\X131\Models\PersonInterest;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
@@ -18,8 +20,15 @@ class InterestTagsView extends Component
     public int $businessId = 0;
 
     public string $personId = '';
+
     public string $topic = '';
+
+    public string $inferPersonId = '';
+
+    public string $inferTopic = '';
+
     public ?string $success = null;
+
     public ?string $error = null;
 
     public function mount(int $businessId = 0)
@@ -27,24 +36,54 @@ class InterestTagsView extends Component
         $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
     }
 
-    public function submit(\App\Modules\X131\Actions\InterestSetAction $action): void
+    public function submit(InterestSetAction $action): void
     {
         $this->reset(['success', 'error']);
 
         $personIdInt = (int) $this->personId;
         if ($personIdInt === 0) {
             $this->error = 'Person ID is required and cannot be 0.';
+
             return;
         }
 
         if (empty($this->topic)) {
             $this->error = 'Topic is required.';
+
             return;
         }
 
         $interest = $action->set(Tenancy::idOrFail(), $personIdInt, $this->topic);
         $this->success = "Recorded interest '{$interest->topic}' for customer #{$personIdInt}. It is protected from being overwritten by inference. Nothing downstream is wired to it yet.";
         $this->reset(['personId', 'topic']);
+    }
+
+    public function inferInterest(InterestInferAction $action): void
+    {
+        $this->reset(['success', 'error']);
+
+        $personIdInt = (int) $this->inferPersonId;
+        if ($personIdInt === 0) {
+            $this->error = 'Person ID is required and cannot be 0.';
+
+            return;
+        }
+
+        if (empty($this->inferTopic)) {
+            $this->error = 'Topic is required.';
+
+            return;
+        }
+
+        $interest = $action->infer(Tenancy::idOrFail(), $personIdInt, $this->inferTopic, 0.80, 'manual_inference');
+
+        if ($interest->is_tenant_set) {
+            $this->success = "The tenant's own wording was kept and the inference was ignored.";
+        } else {
+            $this->success = "Recorded inferred interest '{$interest->topic}' for customer #{$personIdInt}.";
+        }
+
+        $this->reset(['inferPersonId', 'inferTopic']);
     }
 
     public function render()
