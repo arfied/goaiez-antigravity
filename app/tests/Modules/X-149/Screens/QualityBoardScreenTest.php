@@ -33,4 +33,53 @@ class QualityBoardScreenTest extends TestCase
 
         Livewire::test(QualityBoard::class)->assertOk();
     }
+
+    public function test_can_record_quality(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        Livewire::test(QualityBoard::class)
+            ->set('currentRefusalRate', '0.05')
+            ->set('baselineRefusalRate', '0.10')
+            ->call('recordQuality')
+            ->assertSet('error', null)
+            ->assertSet('success', 'Recorded quality series. Anomaly detected: refusal_rate.fell. This feeds the quality lists; nothing downstream is wired to it yet.');
+
+        $this->assertDatabaseHas('quality_series', [
+            'business_id' => $biz->id,
+            'anomaly_detected' => 1,
+        ]);
+
+        $this->get(route('x-149.quality-board'))
+            ->assertOk()
+            ->assertSee('refusal_rate.fell')
+            ->assertDontSee('No quality metrics recorded.');
+
+        $admin = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);
+        $this->actingAs($admin);
+
+        $this->get(route('x-149.quality-board.admin'))
+            ->assertOk()
+            ->assertSee('refusal_rate.fell')
+            ->assertDontSee('No quality metrics recorded.');
+    }
+
+    public function test_refuses_invalid_quality(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        Livewire::test(QualityBoard::class)
+            ->set('currentRefusalRate', '')
+            ->set('baselineRefusalRate', '0.10')
+            ->call('recordQuality')
+            ->assertSet('error', 'Valid rates are required.');
+
+        $this->assertDatabaseMissing('quality_series', [
+            'business_id' => $biz->id,
+        ]);
+    }
 }
