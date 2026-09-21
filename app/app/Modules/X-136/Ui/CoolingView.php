@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X136\Ui;
 
 use App\Modules\X136\Actions\SignalListAction;
+use App\Modules\X136\Actions\SignalScoreAction;
 use App\Modules\X136\Models\SignalScore;
 use App\Support\Tenancy;
 use Livewire\Attributes\Locked;
@@ -19,6 +20,16 @@ class CoolingView extends Component
 
     public ?string $actionFailed = null;
 
+    public string $prospectIdentifier = '';
+
+    public string $signalType = '';
+
+    public string $signalScore = '';
+
+    public ?string $error = null;
+
+    public ?string $success = null;
+
     public function mount(): void
     {
         if ($this->businessId === 0) {
@@ -32,6 +43,52 @@ class CoolingView extends Component
     public function toggleSample(): void
     {
         $this->isSample = ! $this->isSample;
+    }
+
+    public function recordSignal(SignalScoreAction $action): void
+    {
+        if ($this->isSample) {
+            return;
+        }
+
+        $this->error = null;
+        $this->success = null;
+
+        if (trim($this->prospectIdentifier) === '') {
+            $this->error = 'Enter who the signal is about.';
+
+            return;
+        }
+
+        if (trim($this->signalType) === '') {
+            $this->error = 'Enter the signal type, such as pricing_visit.';
+
+            return;
+        }
+
+        if (trim($this->signalScore) === '' || ! is_numeric(trim($this->signalScore))) {
+            $this->error = 'Enter the score as a number.';
+
+            return;
+        }
+
+        $type = trim($this->signalType);
+
+        $score = $action->recordAndScore(
+            Tenancy::idOrFail(),
+            trim($this->prospectIdentifier),
+            $type,
+            [],
+            (float) $this->signalScore
+        );
+
+        $this->success = $score->cooling_status === 'cooling'
+            ? "Recorded {$type} for {$score->prospect_identifier} at {$score->signal_value} — cooling, so it is listed below."
+            : "Recorded {$type} for {$score->prospect_identifier} at {$score->signal_value} — fresh, so it is not on this list; the signal volume screen counts it.";
+
+        $this->prospectIdentifier = '';
+        $this->signalType = '';
+        $this->signalScore = '';
     }
 
     public function markDecayed(string $prospectIdentifier, SignalListAction $action): void
