@@ -7,6 +7,8 @@ namespace Tests\Modules\X185\Screens;
 use App\Enums\UserRole;
 use App\Models\User;
 use App\Modules\X185\Actions\CampaignCreateAction;
+use App\Modules\X185\Models\Sequence;
+use App\Modules\X185\Models\SequenceStep;
 use App\Modules\X185\Ui\DigestLine;
 use App\Support\Tenancy;
 use Livewire\Livewire;
@@ -51,5 +53,100 @@ class DigestLineScreenTest extends TestCase
         $this->get(route('x-185.digest-line.admin'))->assertOk();
 
         Livewire::test(DigestLine::class)->assertOk();
+    }
+
+    public function test_can_set_up_a_sequence(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(DigestLine::class)
+            ->set('sequenceName', 'Winter tune-up push')
+            ->set('firstStepChannel', 'sms')
+            ->set('firstStepDelayHours', '48')
+            ->call('createSequence')
+            ->assertSet('success', 'Sequence "Winter tune-up push" is set up and running, with a first step on sms after 48 hours. The list below shows the sequence; the step is stored but no screen shows steps yet.')
+            ->assertSet('error', null)
+            ->assertSet('sequenceName', '')
+            ->assertSet('firstStepChannel', '')
+            ->assertSet('firstStepDelayHours', '');
+
+        $this->assertDatabaseHas((new Sequence)->getTable(), [
+            'name' => 'Winter tune-up push',
+            'is_active' => true,
+        ]);
+
+        $this->assertDatabaseHas((new SequenceStep)->getTable(), [
+            'step_number' => 1,
+            'channel' => 'sms',
+            'delay_hours' => 48,
+        ]);
+    }
+
+    public function test_refuses_a_non_numeric_delay(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(DigestLine::class)
+            ->set('sequenceName', 'Winter tune-up push')
+            ->set('firstStepChannel', 'sms')
+            ->set('firstStepDelayHours', 'soon')
+            ->call('createSequence')
+            ->assertSet('error', 'Enter the delay in hours as a number.');
+
+        $this->assertDatabaseMissing((new Sequence)->getTable(), [
+            'name' => 'Winter tune-up push',
+        ]);
+
+        $this->assertDatabaseMissing((new SequenceStep)->getTable(), [
+            'channel' => 'sms',
+        ]);
+    }
+
+    public function test_a_zero_hour_delay_is_allowed(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(DigestLine::class)
+            ->set('sequenceName', 'Winter tune-up push')
+            ->set('firstStepChannel', 'sms')
+            ->set('firstStepDelayHours', '0')
+            ->call('createSequence')
+            ->assertSet('error', null);
+
+        $this->assertDatabaseHas((new SequenceStep)->getTable(), [
+            'delay_hours' => 0,
+        ]);
+    }
+
+    public function test_digest_line_lists_the_new_sequence(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(DigestLine::class)
+            ->set('sequenceName', 'Winter tune-up push')
+            ->set('firstStepChannel', 'sms')
+            ->set('firstStepDelayHours', '48')
+            ->call('createSequence');
+
+        Tenancy::forget();
+
+        $this->get(route('x-185.digest-line'))
+            ->assertOk()
+            ->assertSee('Winter tune-up push')
+            ->assertSee('running')
+            ->assertDontSee('No sequences yet');
     }
 }
