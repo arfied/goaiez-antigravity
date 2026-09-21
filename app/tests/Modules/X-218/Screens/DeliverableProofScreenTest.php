@@ -6,6 +6,7 @@ namespace Tests\Modules\X218\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X218\Actions\InfluencerDiscoverAction;
 use App\Modules\X218\Models\Deliverable;
 use App\Modules\X218\Models\InfluencerDeal;
 use App\Modules\X218\Models\InfluencerProfile;
@@ -107,10 +108,7 @@ class DeliverableProofScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $influencer = InfluencerProfile::create([
-            'business_id' => $biz->id,
-            'handle' => 'test_handle',
-        ]);
+        $influencer = app(InfluencerDiscoverAction::class)->discoverInfluencer($biz->id, 'test_handle');
 
         $deal = InfluencerDeal::create([
             'business_id' => $biz->id,
@@ -126,7 +124,7 @@ class DeliverableProofScreenTest extends TestCase
             ->set('httpStatus', 200)
             ->set('artifactHash', '')
             ->call('submitProof')
-            ->assertSet('error', 'Deliverable rejected: a pass with no artifact DID NOT HAPPEN (TEST ANCHOR)');
+            ->assertSet('error', 'A deliverable needs its proof hash and live URL before it can be verified.');
 
         $this->assertDatabaseMissing((new Deliverable)->getTable(), [
             'business_id' => $biz->id,
@@ -140,10 +138,7 @@ class DeliverableProofScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $influencer = InfluencerProfile::create([
-            'business_id' => $biz->id,
-            'handle' => 'test_handle',
-        ]);
+        $influencer = app(InfluencerDiscoverAction::class)->discoverInfluencer($biz->id, 'test_handle');
 
         $deal = InfluencerDeal::create([
             'business_id' => $biz->id,
@@ -159,7 +154,7 @@ class DeliverableProofScreenTest extends TestCase
             ->set('httpStatus', 404)
             ->set('artifactHash', 'hash123')
             ->call('submitProof')
-            ->assertSet('error', 'Deliverable rejected: live URL must return HTTP 200, got 404 (TEST ANCHOR)');
+            ->assertSet('error', 'The live URL must be recorded as HTTP 200; you entered 404.');
 
         $this->assertDatabaseMissing((new Deliverable)->getTable(), [
             'business_id' => $biz->id,
