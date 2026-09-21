@@ -10,6 +10,7 @@ use App\Modules\X113\Models\RolePermission;
 use App\Modules\X113\Models\StaffDocument;
 use App\Modules\X113\Models\StaffUser;
 use App\Support\Tenancy;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
 use Livewire\Attributes\Layout;
@@ -27,8 +28,11 @@ class DocumentVault extends Component
     public int $businessId = 0;
 
     public ?TemporaryUploadedFile $file = null;
+
     public ?int $selectedStaffId = null;
+
     public string $success = '';
+
     public string $error = '';
 
     public const string UPLOAD_REFUSED = 'We could not take that file. A document needs to be under 2MB.';
@@ -52,6 +56,7 @@ class DocumentVault extends Component
 
         if (! $this->selectedStaffId || ! $this->file) {
             $this->error = 'Please select a staff member and choose a file.';
+
             return;
         }
 
@@ -70,10 +75,11 @@ class DocumentVault extends Component
             );
         } catch (InvalidArgumentException $e) {
             $this->error = $e->getMessage();
+
             return;
         }
 
-        $this->success = 'Uploaded document ' . $document->original_filename . '. This feeds the vault list; nothing downstream is wired to it yet.';
+        $this->success = 'Uploaded document '.$document->original_filename.'. This feeds the vault list; nothing downstream is wired to it yet.';
         $this->reset('file', 'selectedStaffId');
     }
 
@@ -88,7 +94,7 @@ class DocumentVault extends Component
                 ->where('permission', 'view_employee_documents')
                 ->pluck('role_id')
                 ->toArray();
-            
+
             $documents = StaffDocument::where('business_id', $this->businessId)->get()->groupBy('staff_user_id');
 
             foreach ($staffList as $s) {
@@ -115,6 +121,16 @@ class DocumentVault extends Component
         ]);
     }
 
+    public function download(int $documentId)
+    {
+        $businessId = Tenancy::idOrFail();
+
+        $document = StaffDocument::where('business_id', $businessId)
+            ->findOrFail($documentId);
+
+        return Storage::disk('local')->download($document->storage_path, $document->original_filename);
+    }
+
     public function downloadDocument(int $businessId, int $staffUserId, int $documentId): string
     {
         $staff = StaffUser::where('business_id', $businessId)->findOrFail($staffUserId);
@@ -128,6 +144,10 @@ class DocumentVault extends Component
             throw new \Exception('INSUFFICIENT_ROLE_PERMISSIONS');
         }
 
-        return 'document_content_'.$documentId;
+        $document = StaffDocument::where('business_id', $businessId)
+            ->where('staff_user_id', $staffUserId)
+            ->findOrFail($documentId);
+
+        return Storage::disk('local')->get($document->storage_path);
     }
 }

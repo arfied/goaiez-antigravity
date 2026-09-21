@@ -55,7 +55,10 @@
                                 <h4 class="text-sm font-semibold mb-1">Documents:</h4>
                                 <ul class="text-sm text-ink-2 flex flex-col gap-1">
                                     @foreach($s->documents as $doc)
-                                        <li>{{ $doc->original_filename }} ({{ number_format($doc->size_bytes / 1024, 2) }} KB) - Uploaded {{ $doc->created_at->format('Y-m-d') }}</li>
+                                        <li class="flex items-center gap-2">
+                                            <span>{{ $doc->original_filename }} ({{ number_format($doc->size_bytes / 1024, 2) }} KB) - Uploaded {{ $doc->created_at->format('Y-m-d') }}</span>
+                                            <button type="button" wire:click="download({{ $doc->id }})" class="text-sm text-ink-2 underline">Download</button>
+                                        </li>
                                     @endforeach
                                 </ul>
                             </div>

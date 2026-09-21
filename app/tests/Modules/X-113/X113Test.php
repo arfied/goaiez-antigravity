@@ -6,6 +6,7 @@ namespace Tests\Modules\X113;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X113\Actions\DocumentUploadAction;
 use App\Modules\X113\Actions\RoleAssignAction;
 use App\Modules\X113\Actions\SecureFieldRevealAction;
 use App\Modules\X113\Actions\StaffAuthenticateCheckAction;
@@ -18,9 +19,11 @@ use App\Modules\X113\Models\Role;
 use App\Modules\X113\Models\RolePermission;
 use App\Modules\X113\Models\StaffUser;
 use App\Modules\X113\Ui\DocumentVault;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class X113Test extends TestCase
@@ -358,7 +361,11 @@ class X113Test extends TestCase
         ]);
 
         // 3. Allowed path works
-        $this->assertEquals('document_content_999', $vault->downloadDocument($biz->id, $staff->id, 999));
+        Storage::fake('local');
+        $file = UploadedFile::fake()->createWithContent('real_doc.pdf', 'my_real_bytes');
+        $uploadedDoc = app(DocumentUploadAction::class)->handle($biz->id, $staff->id, $file, 1);
+
+        $this->assertEquals('my_real_bytes', $vault->downloadDocument($biz->id, $staff->id, $uploadedDoc->id));
     }
 
     /**
