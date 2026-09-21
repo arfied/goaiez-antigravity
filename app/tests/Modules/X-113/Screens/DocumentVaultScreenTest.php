@@ -6,8 +6,8 @@ namespace Tests\Modules\X113\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X113\Actions\RoleCreateAction;
 use App\Modules\X113\Actions\RolePermissionGrantAction;
-use App\Modules\X113\Models\Role;
 use App\Modules\X113\Models\StaffUser;
 use App\Modules\X113\Ui\DocumentVault;
 use Livewire\Livewire;
@@ -43,8 +43,8 @@ class DocumentVaultScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $role = Role::create(['business_id' => $biz, 'name' => 'Manager']);
-        StaffUser::create(['business_id' => $biz, 'name' => 'Alice', 'role_id' => $role->id, 'email' => 'a@b.c']);
+        $role = app(RoleCreateAction::class)->handle($biz->id, 'Manager');
+        StaffUser::create(['business_id' => $biz->id, 'name' => 'Alice', 'role_id' => $role->id, 'email' => 'a@b.c']);
 
         $this->get(route('x-113.document-vault'))
             ->assertOk()
@@ -59,11 +59,11 @@ class DocumentVaultScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $role = Role::create(['business_id' => $biz, 'name' => 'Manager']);
-        StaffUser::create(['business_id' => $biz, 'name' => 'Alice', 'role_id' => $role->id, 'email' => 'a@b.c']);
+        $role = app(RoleCreateAction::class)->handle($biz->id, 'Manager');
+        StaffUser::create(['business_id' => $biz->id, 'name' => 'Alice', 'role_id' => $role->id, 'email' => 'a@b.c']);
 
         app(RolePermissionGrantAction::class)
-            ->handle($biz, $role->id, 'view_employee_documents');
+            ->handle($biz->id, $role->id, 'view_employee_documents');
 
         $this->get(route('x-113.document-vault'))
             ->assertOk()
@@ -78,7 +78,7 @@ class DocumentVaultScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        StaffUser::create(['business_id' => $biz, 'name' => 'Bob', 'role_id' => null, 'email' => 'b@b.c']);
+        StaffUser::create(['business_id' => $biz->id, 'name' => 'Bob', 'role_id' => null, 'email' => 'b@b.c']);
 
         $this->get(route('x-113.document-vault'))
             ->assertOk()
