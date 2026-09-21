@@ -144,4 +144,105 @@ class ClaimexpiryRateScreenTest extends TestCase
             ->assertOk()
             ->assertDontSee('No claims yet.');
     }
+
+    public function test_can_take_over_alert(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $second = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        Livewire::test(AlertRosterScreen::class)
+            ->set('title', 'Emergency Update')
+            ->set('body', 'Please review the latest policy.')
+            ->call('broadcastAlert');
+
+        $replyCode = ReplyCode::where('business_id', $biz->id)->firstOrFail();
+
+        Livewire::test(ClaimexpiryRate::class)
+            ->set('code', $replyCode->code)
+            ->call('claimAlert');
+
+        $this->actingAs($second);
+        Tenancy::setUser($second->id);
+
+        Livewire::test(ClaimexpiryRate::class)
+            ->set('overrideAlertId', $replyCode->alert_id)
+            ->call('takeOverAlert')
+            ->assertSet('error', null)
+            ->assertSee('Alert #'.$replyCode->alert_id.' is now claimed by you.');
+
+        $this->assertDatabaseHas((new AlertClaim)->getTable(), [
+            'business_id' => $biz->id,
+            'alert_id' => $replyCode->alert_id,
+            'claimed_by_user_id' => $second->id,
+        ]);
+
+        Tenancy::forget();
+
+        $this->get(route('x-153.claimexpiry-rate'))
+            ->assertOk()
+            ->assertSee('claimed by user #'.$second->id);
+    }
+
+    public function test_take_over_refuses_no_claim_for_alert(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::setUser($owner->id);
+
+        Livewire::test(ClaimexpiryRate::class)
+            ->set('overrideAlertId', 9999)
+            ->call('takeOverAlert')
+            ->assertSet('error', 'No claim found for this alert.');
+
+        $this->assertDatabaseMissing((new AlertClaim)->getTable(), [
+            'business_id' => $biz->id,
+            'alert_id' => 9999,
+        ]);
+    }
+
+    public function test_take_over_refuses_already_yours(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::setUser($owner->id);
+
+        Livewire::test(AlertRosterScreen::class)
+            ->set('title', 'Emergency Update')
+            ->set('body', 'Please review the latest policy.')
+            ->call('broadcastAlert');
+
+        $replyCode = ReplyCode::where('business_id', $biz->id)->firstOrFail();
+
+        Livewire::test(ClaimexpiryRate::class)
+            ->set('code', $replyCode->code)
+            ->call('claimAlert');
+
+        Livewire::test(ClaimexpiryRate::class)
+            ->set('overrideAlertId', $replyCode->alert_id)
+            ->call('takeOverAlert')
+            ->assertSet('error', 'You already hold the claim for this alert.');
+
+        $this->assertDatabaseHas((new AlertClaim)->getTable(), [
+            'business_id' => $biz->id,
+            'alert_id' => $replyCode->alert_id,
+            'claimed_by_user_id' => $owner->id,
+        ]);
+    }
+
+    public function test_take_over_refuses_nothing_selected(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::setUser($owner->id);
+
+        Livewire::test(ClaimexpiryRate::class)
+            ->set('overrideAlertId', 0)
+            ->call('takeOverAlert')
+            ->assertSet('error', 'Please select an alert to take over.');
+    }
 }

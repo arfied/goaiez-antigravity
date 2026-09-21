@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X153\Ui;
 
 use App\Modules\X153\Actions\AlertClaimAction;
+use App\Modules\X153\Actions\AlertOverrideAction;
 use App\Modules\X153\Models\AlertClaim;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
@@ -22,6 +23,8 @@ class ClaimexpiryRate extends Component
     public ?string $success = null;
 
     public ?string $error = null;
+
+    public int $overrideAlertId = 0;
 
     public function mount(int $businessId = 0)
     {
@@ -46,6 +49,41 @@ class ClaimexpiryRate extends Component
             $this->code = '';
         } else {
             $this->error = $result['message'];
+        }
+    }
+
+    public function takeOverAlert(AlertOverrideAction $action): void
+    {
+        $this->success = null;
+        $this->error = null;
+
+        if ($this->overrideAlertId === 0) {
+            $this->error = 'Please select an alert to take over.';
+
+            return;
+        }
+
+        $claim = AlertClaim::where('business_id', Tenancy::idOrFail())
+            ->where('alert_id', $this->overrideAlertId)
+            ->first();
+
+        if ($claim === null) {
+            $this->error = 'No claim found for this alert.';
+
+            return;
+        }
+
+        if ($claim->claimed_by_user_id === auth()->id()) {
+            $this->error = 'You already hold the claim for this alert.';
+
+            return;
+        }
+
+        $result = $action->handle(Tenancy::idOrFail(), $this->overrideAlertId, auth()->id());
+
+        if ($result['status'] === 'overridden') {
+            $this->success = 'Alert #'.$this->overrideAlertId.' is now claimed by you.';
+            $this->overrideAlertId = 0;
         }
     }
 
