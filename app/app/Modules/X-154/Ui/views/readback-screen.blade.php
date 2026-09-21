@@ -1,6 +1,49 @@
 <div>
-    <x-surface.sample-state module="the tenant's own vocabulary *(what they call their services, their tone, banned words, the jargon-lint exemptions)* enforced at compose time across every channel, with read-back — *"here's how I'll describe your drain service — is that right?"* Feeds the agent, the content engine and the site so the customer hears one voice." screen="readback_screen" />
     <div class="readback-screen-view p-4">
         <h3 class="text-lg font-bold">Tenant Vocabulary & Jargon Lexicon Readback</h3>
+        
+        @if ($error)
+            <div class="bg-surface text-ink border rounded p-4 mb-4">
+                {{ $error }}
+            </div>
+        @endif
+
+        @if ($success)
+            <div class="bg-surface text-ink border rounded p-4 mb-4">
+                {{ $success }}
+            </div>
+        @endif
+
+        <form wire:submit="setMapping" class="mb-6 flex flex-col gap-4 bg-surface p-4 border rounded mt-4">
+            <div>
+                <label class="text-ink-2">Generic Term</label>
+                <input type="text" wire:model="genericTerm" class="border rounded p-2 text-ink w-full bg-surface">
+            </div>
+            <div>
+                <label class="text-ink-2">Preferred Term</label>
+                <input type="text" wire:model="preferredTerm" class="border rounded p-2 text-ink w-full bg-surface">
+            </div>
+            <div>
+                <label class="text-ink-2">Category</label>
+                <input type="text" wire:model="category" class="border rounded p-2 text-ink w-full bg-surface">
+            </div>
+            <button type="submit" class="bg-surface text-ink border rounded p-2 w-32">Save Mapping</button>
+        </form>
+
+        @if ($lexicons->isEmpty())
+            <x-ui.empty-state heading="No vocabulary mappings recorded">
+                No vocabulary mapping has been configured for this tenant yet.
+            </x-ui.empty-state>
+        @else
+            <div class="flex flex-col gap-2">
+                @foreach ($lexicons as $lexicon)
+                    <div class="bg-surface text-ink border rounded p-4 flex flex-col">
+                        <span><span class="text-ink-2">Generic:</span> {{ $lexicon->generic_term }}</span>
+                        <span><span class="text-ink-2">Preferred:</span> {{ $lexicon->preferred_term }}</span>
+                        <span><span class="text-ink-2">Category:</span> {{ $lexicon->category }}</span>
+                    </div>
+                @endforeach
+            </div>
+        @endif
     </div>
 </div>
