@@ -61,4 +61,35 @@ class ReadbackScreenScreenTest extends TestCase
             'business_id' => $biz->id,
         ]);
     }
+
+    public function test_can_preview_readback(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        Livewire::test(ReadbackScreen::class)
+            ->set('genericTerm', 'plumber')
+            ->set('preferredTerm', 'drain specialist')
+            ->set('category', 'service_name')
+            ->call('setMapping');
+
+        Livewire::test(ReadbackScreen::class)
+            ->set('templateText', 'The plumber will see the patient now.')
+            ->call('previewReadback')
+            ->assertSet('preview', 'The drain specialist will see the service now.');
+    }
+
+    public function test_refuses_empty_preview_text(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        Livewire::test(ReadbackScreen::class)
+            ->set('templateText', '')
+            ->call('previewReadback')
+            ->assertSet('error', 'Please provide text to preview.')
+            ->assertSet('preview', null);
+    }
 }

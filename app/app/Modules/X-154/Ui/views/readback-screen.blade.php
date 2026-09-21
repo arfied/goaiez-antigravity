@@ -30,6 +30,21 @@
             <button type="submit" class="bg-surface text-ink border rounded p-2 w-32">Save Mapping</button>
         </form>
 
+        <form wire:submit="previewReadback" class="mb-6 flex flex-col gap-4 bg-surface p-4 border rounded mt-4">
+            <div>
+                <label class="text-ink-2">Template Text to Preview</label>
+                <input type="text" wire:model="templateText" class="border rounded p-2 text-ink w-full bg-surface">
+            </div>
+            <button type="submit" class="bg-surface text-ink border rounded p-2 w-32">Preview</button>
+        </form>
+
+        @if ($preview !== null)
+            <div class="bg-surface text-ink border rounded p-4 mb-6">
+                <h4 class="text-md font-bold mb-2 text-ink-2">Preview Output:</h4>
+                <p>{{ $preview }}</p>
+            </div>
+        @endif
+
         @if ($lexicons->isEmpty())
             <x-ui.empty-state heading="No vocabulary mappings recorded">
                 No vocabulary mapping has been configured for this tenant yet.
