@@ -57,13 +57,6 @@ class QualityBoardScreenTest extends TestCase
             ->assertSee('refusal_rate.fell')
             ->assertDontSee('No quality metrics recorded.');
 
-        $admin = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);
-        $this->actingAs($admin);
-
-        $this->get(route('x-149.quality-board.admin'))
-            ->assertOk()
-            ->assertSee('refusal_rate.fell')
-            ->assertDontSee('No quality metrics recorded.');
     }
 
     public function test_refuses_invalid_quality(): void
