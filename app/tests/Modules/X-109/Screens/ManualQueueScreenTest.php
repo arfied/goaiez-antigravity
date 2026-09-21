@@ -18,7 +18,9 @@ class ManualQueueScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-109.manual-queue'))->assertOk();
+        $this->get(route('x-109.manual-queue'))
+            ->assertOk()
+            ->assertSeeText('No parked submissions requiring manual review.');
 
         Livewire::test(ManualQueue::class)->assertOk();
     }
