@@ -45,4 +45,79 @@ class QueueScreenTest extends TestCase
 
         Livewire::test(Queue::class)->assertOk();
     }
+    public function test_can_enqueue_approval_item(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::setTenant($biz->id);
+
+        $this->get(route('x-202.queue'))
+            ->assertOk()
+            ->assertSee('Approvals');
+
+        Livewire::test(Queue::class)
+            ->set('itemType', 'test_type')
+            ->set('subject', 'Test Subject Enqueue')
+            ->set('note', 'Just a note')
+            ->call('enqueueItem')
+            ->assertSet('error', null)
+            ->assertSet('success', 'Enqueued an item waiting for a decision; nothing downstream is wired to it yet.');
+
+        $this->assertDatabaseHas((new ApprovalItem)->getTable(), [
+            'business_id' => $biz->id,
+            'item_type' => 'test_type',
+            'subject' => 'Test Subject Enqueue',
+            'status' => 'pending',
+        ]);
+
+        $this->get(route('x-202.queue'))
+            ->assertSee('Test Subject Enqueue');
+
+        $this->get(route('x-202.audit-export'))
+            ->assertDontSee('Test Subject Enqueue');
+    }
+
+    public function test_refuses_empty_payload_in_queue(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::setTenant($biz->id);
+
+        Livewire::test(Queue::class)
+            ->set('itemType', 'test_type')
+            ->set('subject', 'Test Subject Empty')
+            ->set('note', null)
+            ->call('enqueueItem')
+            ->assertSet('error', 'Please fill out all required fields.')
+            ->assertSet('success', null);
+
+        $this->assertDatabaseMissing((new ApprovalItem)->getTable(), [
+            'business_id' => $biz->id,
+            'subject' => 'Test Subject Empty',
+        ]);
+    }
+
+    public function test_refuses_error_only_payload_in_queue(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::setTenant($biz->id);
+
+        Livewire::test(Queue::class)
+            ->set('itemType', 'test_type')
+            ->set('subject', 'Test Subject Error')
+            ->set('note', 'foo')
+            ->set('isErrorOnly', true)
+            ->call('enqueueItem')
+            ->assertSet('error', 'Cannot enqueue bare errors or empty payloads to approval desk')
+            ->assertSet('success', null);
+
+        $this->assertDatabaseMissing((new ApprovalItem)->getTable(), [
+            'business_id' => $biz->id,
+            'subject' => 'Test Subject Error',
+        ]);
+    }
 }
