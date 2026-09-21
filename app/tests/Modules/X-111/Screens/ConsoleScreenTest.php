@@ -18,7 +18,10 @@ class ConsoleScreenTest extends TestCase
         $this->actingAs($user);
         $biz = $this->provisionTenant(['owner_user_id' => $user->id]);
 
-        $this->get(route('x-111.console.admin'))->assertOk();
+        $this->get(route('x-111.console.admin'))
+            ->assertOk()
+            ->assertSeeText('Operator Control Center Console')
+            ->assertSeeText('No support tickets.');
 
         Livewire::test(Console::class)->assertOk();
     }

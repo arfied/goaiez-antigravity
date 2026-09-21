@@ -27,7 +27,7 @@
             <div class="mt-4">
             <h4 class="font-semibold mb-2">Operator Alerts</h4>
             @if($alerts->isEmpty())
-                <x-ui.empty-state heading="No alerts" description="No active operator alerts." />
+                <x-ui.empty-state heading="No alerts">No active operator alerts.</x-ui.empty-state>
             @else
                 <ul class="divide-y divide-gray-200">
                     @foreach($alerts as $a)
@@ -47,7 +47,7 @@
         <div class="mt-8">
             <h4 class="font-semibold mb-2">Escalated Tickets</h4>
             @if($tickets->isEmpty())
-                <x-ui.empty-state heading="No tickets" description="No support tickets." />
+                <x-ui.empty-state heading="No tickets">No support tickets.</x-ui.empty-state>
             @else
                 <ul class="divide-y divide-gray-200">
                     @foreach($tickets as $t)
