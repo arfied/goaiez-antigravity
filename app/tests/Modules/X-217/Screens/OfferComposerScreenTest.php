@@ -6,6 +6,7 @@ namespace Tests\Modules\X217\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X217\Domain\RecruitmentGuard;
 use App\Modules\X217\Models\AffiliateProspect;
 use App\Modules\X217\Models\RecruitmentOffer;
 use App\Modules\X217\Ui\OfferComposer;
@@ -99,7 +100,7 @@ class OfferComposerScreenTest extends TestCase
             ->set('prospectId', (string) $prospect->id)
             ->set('offeredRateBps', '3000') // Above 2500 ceiling
             ->call('makeOffer')
-            ->assertSet('error', 'That rate is above the 2500 bps ceiling, so no offer was made.');
+            ->assertSet('error', 'That rate is above the '.RecruitmentGuard::DEFAULT_MAX_CEILING_BPS.' bps ceiling, so no offer was made.');
 
         $this->assertDatabaseMissing((new RecruitmentOffer)->getTable(), [
             'business_id' => $biz->id,

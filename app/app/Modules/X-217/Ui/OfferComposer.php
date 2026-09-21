@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X217\Ui;
 
 use App\Modules\X217\Actions\AffiliateTermsOfferAction;
+use App\Modules\X217\Domain\RecruitmentGuard;
 use App\Modules\X217\Models\RecruitmentOffer;
 use App\Support\Tenancy;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -56,7 +57,7 @@ class OfferComposer extends Component
             $this->error = 'That prospect was not found in your pipeline.';
         } catch (\InvalidArgumentException $e) {
             // Map "(TEST ANCHOR)" out of the message
-            $this->error = 'That rate is above the 2500 bps ceiling, so no offer was made.';
+            $this->error = 'That rate is above the '.RecruitmentGuard::DEFAULT_MAX_CEILING_BPS.' bps ceiling, so no offer was made.';
         }
     }
 
