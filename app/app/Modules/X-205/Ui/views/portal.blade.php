@@ -10,5 +10,21 @@
                 @endforeach
             </ul>
         @endif
+
+        <div class="mt-8 p-4 bg-surface border rounded">
+            <h3 class="text-md font-bold text-ink">Create Affiliate</h3>
+            @if($success)
+                <div class="mb-4 text-ink">{{ $success }}</div>
+            @endif
+            @if($error)
+                <div class="mb-4 text-ink-2">{{ $error }}</div>
+            @endif
+            <form wire:submit="createAffiliate" class="flex flex-col gap-2 mt-4">
+                <input type="text" wire:model="affiliateCode" placeholder="Affiliate Code" class="border rounded p-2 text-ink bg-paper">
+                <input type="text" wire:model="partnerName" placeholder="Partner Name" class="border rounded p-2 text-ink bg-paper">
+                <input type="number" wire:model="commissionRateBps" placeholder="Commission Rate (bps)" class="border rounded p-2 text-ink bg-paper">
+                <button type="submit" class="bg-surface text-ink border rounded p-2">Create</button>
+            </form>
+        </div>
     </div>
 </div>

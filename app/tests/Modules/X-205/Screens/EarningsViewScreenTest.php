@@ -54,6 +54,39 @@ class EarningsViewScreenTest extends TestCase
             ->assertSee('[none]')
             ->assertDontSee('No commissions earned yet.');
 
-        Livewire::test(EarningsView::class)->assertOk();
+        Livewire::test(EarningsView::class)
+            ->set('affiliateCode', 'aff_distinctive_4495')
+            ->set('orderId', 'new_order_123')
+            ->set('saleAmountCents', 50000)
+            ->call('attributeSale')
+            ->assertSet('success', "Attributed order new_order_123 to affiliate aff_distinctive_4495. Commission is 5000 cents. This feeds the earnings view and updates the affiliate's balance; nothing downstream is wired to it yet.");
+
+        $this->assertDatabaseHas((new AffiliateAttribution)->getTable(), [
+            'affiliate_id' => $affiliate->id,
+            'order_id' => 'new_order_123',
+            'sale_amount_cents' => 50000,
+            'commission_cents' => 5000,
+        ]);
+
+        $this->get(route('x-205.earnings'))
+            ->assertOk()
+            ->assertSee('new_order_123')
+            ->assertSee('5000 cents on 50000');
+
+        $this->get(route('x-205.portal'))
+            ->assertOk()
+            ->assertSee('balance 5000 cents')
+            ->assertSee('lifetime 5000 cents');
+
+        Livewire::test(EarningsView::class)
+            ->set('affiliateCode', 'invalid_code_999')
+            ->set('orderId', 'failed_order_123')
+            ->set('saleAmountCents', 10000)
+            ->call('attributeSale')
+            ->assertSet('error', 'Affiliate not found for the given code.');
+
+        $this->assertDatabaseMissing((new AffiliateAttribution)->getTable(), [
+            'order_id' => 'failed_order_123',
+        ]);
     }
 }

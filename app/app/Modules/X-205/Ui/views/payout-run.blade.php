@@ -10,5 +10,20 @@
                 @endforeach
             </ul>
         @endif
+
+        <div class="mt-8 p-4 bg-surface border rounded">
+            <h3 class="text-md font-bold text-ink">Request Payout</h3>
+            @if($success)
+                <div class="mb-4 text-ink">{{ $success }}</div>
+            @endif
+            @if($error)
+                <div class="mb-4 text-ink-2">{{ $error }}</div>
+            @endif
+            <form wire:submit="requestPayout" class="flex flex-col gap-2 mt-4">
+                <input type="number" wire:model="affiliateId" placeholder="Affiliate ID" class="border rounded p-2 text-ink bg-paper">
+                <input type="number" wire:model="amountCents" placeholder="Amount (cents)" class="border rounded p-2 text-ink bg-paper">
+                <button type="submit" class="bg-surface text-ink border rounded p-2">Request</button>
+            </form>
+        </div>
     </div>
 </div>
