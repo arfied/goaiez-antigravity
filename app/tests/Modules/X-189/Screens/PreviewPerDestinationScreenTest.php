@@ -52,7 +52,7 @@ class PreviewPerDestinationScreenTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
-        Tenancy::setTenant($biz->id);
+        Tenancy::set($biz->id);
 
         $this->get(route('x-189.preview-per-destination'))
             ->assertOk()
@@ -82,7 +82,7 @@ class PreviewPerDestinationScreenTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
-        Tenancy::setTenant($biz->id);
+        Tenancy::set($biz->id);
 
         Livewire::test(PreviewPerDestination::class)
             ->set('sourceAssetUrl', 'https://example.com/test_asset.jpg')

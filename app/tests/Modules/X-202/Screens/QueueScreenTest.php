@@ -50,7 +50,7 @@ class QueueScreenTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
-        Tenancy::setTenant($biz->id);
+        Tenancy::set($biz->id);
 
         $this->get(route('x-202.queue'))
             ->assertOk()
@@ -83,7 +83,7 @@ class QueueScreenTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
-        Tenancy::setTenant($biz->id);
+        Tenancy::set($biz->id);
 
         Livewire::test(Queue::class)
             ->set('itemType', 'test_type')
@@ -104,7 +104,7 @@ class QueueScreenTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
-        Tenancy::setTenant($biz->id);
+        Tenancy::set($biz->id);
 
         Livewire::test(Queue::class)
             ->set('itemType', 'test_type')
