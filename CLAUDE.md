@@ -386,6 +386,37 @@ the import check that was grepping the X-112 screen for its own known-good impor
 ⭐ The shape underneath all four is this file's oldest: *an instrument is only as honest as the needle it
 is handed* — and the reviewer's own needles are the ones nobody else checks.
 
+⚠️ **A PIN'S OWN MESSAGE SAYS WHETHER A MOVE IS BENIGN, AND IT IS THE FIRST THING TO READ (N242/N243,
+2026-09-20, waves 589–592).** Three findings from one X-113 wave, all about pinned architecture counts.
+**(1) `#[Layout('components.account.layout')]` keys THREE pin files, not one.** My brief warned about
+`SchemeTokenTest` and missed `OwnerNavTest` and `HeadingSeamTest`; three of five failures were that
+omission. `grep -rln "components.account.layout" tests/Feature/Architecture/` returns three files and
+costs one command — **run it before briefing any change to a component's layout attribute.**
+**(2) Read the failing pin's MESSAGE before reaching for its number.** Two of the four that moved
+contained the remedy outright: `OwnerNavTest:241` — *"It is a real screen now — move it into `OwnerNav`
+and drop it from `SAMPLE_STATE`"* — and the fix there was a nav entry, not a count. (`sampleStateRoutes()`
+is a hardcoded list of one route, so nothing could be "dropped"; the screen became an owner route the
+instant it declared the layout.) ⭐ **A screen an owner cannot navigate to is not a real screen.**
+**(3) The benign direction is stated, and where it is NOT stated, moving that way is a defect.** Wave 590
+changed eight numbers: six recorded a true deliberate change; two — `$skips 0→1`, `$levelSkips 1→2` —
+were raised to accommodate an `<h3>` that should have been `<h2>`. Every other pin in that file says
+*"If it went DOWN, somebody converted a screen properly. Lower the number and record it."* **Neither of
+those two says that about going UP.** ⛔ **RULED: a pin may be moved only in a direction its own message
+sanctions; a move the message does not bless is a defect to fix, never a number to edit.** The
+distinguishing test is mechanical and needs no judgement — read both directions in the string.
+⭐ **The coder's report is what caught it**, listing every number with a reason, one of which read *"the
+blade's first heading tag is the wrong level"*. **A report honest enough to convict itself is worth more
+than a wave that hides the same thing.**
+⭐ **N243 — a red test that never tested what its name says is MORE dangerous green than red.**
+`test_grant_refuses_other_tenant_role` failed on *"null matches expected 'Invalid role.'"* because nothing
+was refused and nothing should have been: `tests/TestCase.php:191` ends `provisionTenant()` with
+`Tenancy::set($biz->id)`, so a second `provisionTenant()` silently moved the ambient tenant and the
+control acted **as** the "other" tenant. The product was correct throughout. ⛔ Had that been made green
+by relaxing the assertion, the repo would carry a permanently passing test named `refuses_other_tenant_role`
+proving nothing about tenant isolation. **A setup helper with a side effect on ambient state is how a test
+stops testing its own name** — when a tenancy/auth/context assertion fails with *nothing happened*, suspect
+the fixture's ambient state before the product.
+
 ## Dispatching the coder (added 2026-09-02)
 
 When the user has enabled the settings rule for
