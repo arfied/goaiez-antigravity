@@ -10,7 +10,7 @@
                 <div class="p-2 bg-surface text-ink border rounded">{{ $error }}</div>
             @endif
             @if($drafts->isEmpty())
-                <p class="text-ink">No drafts available. Drafts come from DraftReview.</p>
+                <p class="text-ink">No ungated drafts available. Drafts come from DraftReview.</p>
             @else
                 <form wire:submit="gateDraft" class="flex gap-2">
                     <select wire:model="draftId" class="border rounded p-2 text-ink flex-1 bg-surface">

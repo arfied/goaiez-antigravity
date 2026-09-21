@@ -61,7 +61,9 @@ class GateRejectionReasons extends Component
             : ContentDraft::where('business_id', $this->businessId)->whereIn('id', $rejections->pluck('draft_id'))->pluck('title', 'id');
 
         $drafts = ($this->businessId > 0)
-            ? ContentDraft::where('business_id', $this->businessId)->get()
+            ? ContentDraft::where('business_id', $this->businessId)
+                ->whereNotIn('id', GateResult::where('business_id', $this->businessId)->pluck('draft_id'))
+                ->get()
             : collect();
 
         return view('x-183::gate-rejection-reasons', [
