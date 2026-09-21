@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X185\Ui;
 
 use App\Modules\X185\Actions\CampaignCreateAction;
+use App\Modules\X185\Actions\SequenceStopAction;
 use App\Modules\X185\Models\Sequence;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
@@ -30,6 +31,24 @@ class DigestLine extends Component
     public function mount(int $businessId = 0)
     {
         $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
+    }
+
+    public function stopSequence(int $sequenceId, SequenceStopAction $action): void
+    {
+        $this->error = null;
+        $this->success = null;
+
+        $action->stopSequence(Tenancy::idOrFail(), $sequenceId);
+
+        $seq = Sequence::where('business_id', Tenancy::idOrFail())->find($sequenceId);
+
+        if ($seq === null || $seq->is_active) {
+            $this->error = 'That sequence is still running.';
+
+            return;
+        }
+
+        $this->success = 'Sequence "'.$seq->name.'" is stopped. Nothing else reacts to a stop yet.';
     }
 
     public function createSequence(CampaignCreateAction $action): void

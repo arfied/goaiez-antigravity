@@ -19,7 +19,11 @@
         @else
             <ul class="mt-3 space-y-2">
                 @foreach($sequences as $s)
-                    <li class="text-ink">{{ $s->name }} · {{ $s->is_active ? 'running' : 'stopped' }}</li>
+                    <li class="text-ink">{{ $s->name }} · {{ $s->is_active ? 'running' : 'stopped' }}
+                        @if($s->is_active)
+                            <button type="button" wire:click="stopSequence({{ $s->id }})" class="bg-surface text-ink border rounded px-2 py-1 ml-2">Stop</button>
+                        @endif
+                    </li>
                 @endforeach
             </ul>
         @endif

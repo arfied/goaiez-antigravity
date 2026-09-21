@@ -11,6 +11,7 @@ use App\Modules\X185\Models\Sequence;
 use App\Modules\X185\Models\SequenceStep;
 use App\Modules\X185\Ui\DigestLine;
 use App\Support\Tenancy;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -148,5 +149,80 @@ class DigestLineScreenTest extends TestCase
             ->assertSee('Winter tune-up push')
             ->assertSee('running')
             ->assertDontSee('No sequences yet');
+    }
+
+    public function test_can_stop_a_sequence(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(DigestLine::class)
+            ->set('sequenceName', 'Winter tune-up push')
+            ->set('firstStepChannel', 'sms')
+            ->set('firstStepDelayHours', '48')
+            ->call('createSequence');
+
+        $seq = Sequence::where('name', 'Winter tune-up push')->firstOrFail();
+        $id = $seq->id;
+
+        Livewire::test(DigestLine::class)
+            ->call('stopSequence', $id)
+            ->assertSet('success', 'Sequence "Winter tune-up push" is stopped. Nothing else reacts to a stop yet.');
+
+        $this->assertDatabaseHas((new Sequence)->getTable(), ['id' => $id, 'is_active' => false]);
+    }
+
+    public function test_digest_line_shows_a_stopped_sequence(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(DigestLine::class)
+            ->set('sequenceName', 'Winter tune-up push')
+            ->set('firstStepChannel', 'sms')
+            ->set('firstStepDelayHours', '48')
+            ->call('createSequence');
+
+        $seq = Sequence::where('name', 'Winter tune-up push')->firstOrFail();
+        $id = $seq->id;
+
+        Livewire::test(DigestLine::class)
+            ->call('stopSequence', $id);
+
+        Tenancy::forget();
+
+        $this->get(route('x-185.digest-line'))
+            ->assertOk()
+            ->assertSee('Winter tune-up push · stopped')
+            ->assertDontSee('Winter tune-up push · running');
+    }
+
+    public function test_stopping_another_tenants_sequence_is_refused(): void
+    {
+        $ownerB = User::factory()->create(['role' => UserRole::Owner]);
+        $bizB = $this->provisionTenant(['owner_user_id' => $ownerB->id]);
+
+        $ownerA = User::factory()->create(['role' => UserRole::Owner]);
+        $bizA = $this->provisionTenant(['owner_user_id' => $ownerA->id]);
+
+        Tenancy::set((int) $bizB->id);
+        Livewire::test(DigestLine::class)
+            ->set('sequenceName', 'Tenant B sequence')
+            ->set('firstStepChannel', 'sms')
+            ->set('firstStepDelayHours', '24')
+            ->call('createSequence');
+
+        $seq = Sequence::where('name', 'Tenant B sequence')->firstOrFail();
+        $bSequenceId = $seq->id;
+
+        Tenancy::set((int) $bizA->id);
+
+        $this->expectException(ModelNotFoundException::class);
+        Livewire::test(DigestLine::class)->call('stopSequence', $bSequenceId);
     }
 }
