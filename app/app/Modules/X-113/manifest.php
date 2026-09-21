@@ -45,6 +45,7 @@ return [
         'staff_users',
         'roles',
         'role_permissions',
+        'staff_documents',
     ],
     'reads_table' => [],
 
