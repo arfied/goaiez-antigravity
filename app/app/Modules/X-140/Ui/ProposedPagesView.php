@@ -69,7 +69,7 @@ class ProposedPagesView extends Component
             $this->rawContent
         );
 
-        $topicTitle = ContentTopic::find($this->draftTopicId)?->topic_title ?? (string) $this->draftTopicId;
+        $topicTitle = ContentTopic::find($this->draftTopicId)->topic_title ?? (string) $this->draftTopicId;
 
         if ($result['is_published'] === false && isset($result['gate_failure_reason'])) {
             $this->success = "Recorded draft for '{$topicTitle}', but it is not published: {$result['gate_failure_reason']}";
