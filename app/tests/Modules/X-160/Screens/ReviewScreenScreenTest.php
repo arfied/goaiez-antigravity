@@ -116,6 +116,7 @@ class ReviewScreenScreenTest extends TestCase
         $bizA = $this->provisionTenant(['owner_user_id' => $ownerA->id]);
 
         Tenancy::setUser($ownerB->id);
+        Tenancy::set((int) $bizB->id);
         Livewire::test(UploadDrop::class)
             ->set('title', 'Document B')
             ->set('content', 'Content B')
@@ -124,6 +125,7 @@ class ReviewScreenScreenTest extends TestCase
         $docB = Document::where('business_id', $bizB->id)->firstOrFail();
 
         Tenancy::setUser($ownerA->id);
+        Tenancy::set((int) $bizA->id);
 
         $this->expectException(ModelNotFoundException::class);
 
