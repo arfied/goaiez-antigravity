@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X127\Ui;
 
 use App\Modules\X127\Actions\TenantzeroMetricAction;
+use App\Modules\X127\Actions\TenantzeroProofAction;
 use App\Modules\X127\Models\PublishedMetric;
 use App\Support\Tenancy;
 use Livewire\Attributes\Locked;
@@ -24,6 +25,14 @@ class MetricProofPanel extends Component
     public ?string $error = null;
 
     public ?string $success = null;
+
+    public string $verifyKey = '';
+
+    public string $verifyLiveValue = '';
+
+    public ?string $verifyError = null;
+
+    public ?string $verifySuccess = null;
 
     public function mount(int $businessId = 0): void
     {
@@ -45,6 +54,32 @@ class MetricProofPanel extends Component
         $this->metricKey = '';
         $this->publishedValue = '';
         $this->liveQuery = '';
+    }
+
+    public function verifyMetric(TenantzeroProofAction $action): void
+    {
+        if (trim($this->verifyKey) === '') {
+            $this->verifyError = 'Choose the metric to check.';
+
+            return;
+        }
+
+        if (trim($this->verifyLiveValue) === '') {
+            $this->verifyError = 'Enter the value you measured just now.';
+
+            return;
+        }
+
+        $result = $action->handle(Tenancy::idOrFail(), trim($this->verifyKey), trim($this->verifyLiveValue));
+
+        $this->verifySuccess = $result['status'] === 'verified'
+            ? 'Metric '.$result['metric_key'].' checks out at '.$result['value'].'. The published claim matches the live value.'
+            : 'Metric '.$result['metric_key'].' did NOT match — published '.$result['previous_claim']
+              .', live '.$result['live_value'].'. The claim has been PULLED from publication.';
+
+        $this->verifyError = null;
+        $this->verifyKey = '';
+        $this->verifyLiveValue = '';
     }
 
     public function render()
