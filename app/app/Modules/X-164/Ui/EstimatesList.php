@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X164\Ui;
 
 use App\Modules\X164\Actions\EstimateDraftAction;
+use App\Modules\X164\Actions\EstimateSendAction;
 use App\Modules\X164\Models\Estimate;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
@@ -67,6 +68,17 @@ class EstimatesList extends Component
         $this->serviceName = '';
         $this->quantity = 1;
         $this->unitPriceCents = 0;
+    }
+
+    public function sendEstimate(int $estimateId, EstimateSendAction $action): void
+    {
+        $this->error = null;
+        $this->success = null;
+
+        $estimate = $action->handle(Tenancy::idOrFail(), $estimateId);
+
+        $this->success = 'Estimate '.$estimate->estimate_number.' is marked sent. Nothing is delivered '
+            .'to the customer yet — this records the status only.';
     }
 
     public function render()

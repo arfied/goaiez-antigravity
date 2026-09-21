@@ -11,6 +11,7 @@ use App\Modules\X164\Models\Estimate;
 use App\Modules\X164\Models\EstimateLine;
 use App\Modules\X164\Ui\EstimatesList;
 use App\Support\Tenancy;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -128,5 +129,89 @@ class EstimatesListScreenTest extends TestCase
 
         $estimateTable = (new Estimate)->getTable();
         $this->assertDatabaseMissing($estimateTable, ['business_id' => $biz->id]);
+    }
+
+    public function test_can_mark_an_estimate_sent(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(EstimatesList::class)
+            ->set('serviceName', 'Gutter cleaning')
+            ->set('quantity', 1)
+            ->set('unitPriceCents', 5000)
+            ->call('draftEstimate');
+
+        $estimate = Estimate::where('business_id', $biz->id)->first();
+        $estimateNumber = $estimate->estimate_number;
+        $id = $estimate->id;
+
+        Livewire::test(EstimatesList::class)
+            ->call('sendEstimate', $id)
+            ->assertSet('success', 'Estimate '.$estimateNumber.' is marked sent. Nothing is delivered '
+                .'to the customer yet — this records the status only.');
+
+        $estimateTable = (new Estimate)->getTable();
+        $this->assertDatabaseHas($estimateTable, ['id' => $id, 'status' => 'sent', 'business_id' => $biz->id]);
+    }
+
+    public function test_estimates_list_shows_a_sent_estimate(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(EstimatesList::class)
+            ->set('serviceName', 'Gutter cleaning')
+            ->set('quantity', 1)
+            ->set('unitPriceCents', 5000)
+            ->call('draftEstimate');
+
+        $est = Estimate::where('business_id', $biz->id)->first();
+        $id = $est->id;
+
+        Livewire::test(EstimatesList::class)
+            ->call('sendEstimate', $id);
+
+        $est->refresh();
+
+        Tenancy::forget();
+
+        $this->actingAs($owner);
+
+        $row = $est->estimate_number.' · $'.number_format($est->total_cents / 100, 2);
+
+        $this->get(route('x-164.estimates-list'))
+            ->assertOk()
+            ->assertSee($row.' · Sent')
+            ->assertDontSee($row.' · Draft');
+    }
+
+    public function test_marking_another_tenants_estimate_sent_is_refused(): void
+    {
+        $ownerB = User::factory()->create(['role' => UserRole::Owner]);
+        $bizB = $this->provisionTenant(['owner_user_id' => $ownerB->id]);
+
+        $ownerA = User::factory()->create(['role' => UserRole::Owner]);
+        $bizA = $this->provisionTenant(['owner_user_id' => $ownerA->id]);
+
+        Tenancy::set((int) $bizB->id);
+
+        Livewire::test(EstimatesList::class)
+            ->set('serviceName', 'Gutter cleaning')
+            ->set('quantity', 1)
+            ->set('unitPriceCents', 5000)
+            ->call('draftEstimate');
+
+        $estB = Estimate::where('business_id', $bizB->id)->first();
+        $bEstimateId = $estB->id;
+
+        Tenancy::set((int) $bizA->id);
+
+        $this->expectException(ModelNotFoundException::class);
+        Livewire::test(EstimatesList::class)->call('sendEstimate', $bEstimateId);
     }
 }

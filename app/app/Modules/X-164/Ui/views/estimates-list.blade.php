@@ -23,7 +23,11 @@
         @else
             <ul class="mt-3 space-y-2">
                 @foreach($estimates as $est)
-                    <li class="text-ink">{{ $est->estimate_number }} · ${{ number_format($est->total_cents / 100, 2) }} · {{ ucfirst($est->status) }}</li>
+                    <li class="text-ink">{{ $est->estimate_number }} · ${{ number_format($est->total_cents / 100, 2) }} · {{ ucfirst($est->status) }}
+                        @if($est->status === 'draft')
+                            <button type="button" wire:click="sendEstimate({{ $est->id }})" class="bg-surface text-ink border rounded px-2 py-1 ml-2">Mark sent</button>
+                        @endif
+                    </li>
                 @endforeach
             </ul>
         @endif
