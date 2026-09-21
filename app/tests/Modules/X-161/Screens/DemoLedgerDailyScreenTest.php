@@ -22,4 +22,44 @@ class DemoLedgerDailyScreenTest extends TestCase
 
         Livewire::test(DemoLedgerDaily::class)->assertOk();
     }
+
+    public function test_can_provision_demo(): void
+    {
+        $user = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);
+        $this->actingAs($user);
+        $biz = $this->provisionTenant(['owner_user_id' => $user->id]);
+
+        $livewire = Livewire::test(DemoLedgerDaily::class)
+            ->set('prospectDomain', 'example.com')
+            ->call('provisionDemo');
+
+        $tenant = \App\Modules\X161\Models\DemoTenant::where('business_id', $biz->id)->latest('id')->first();
+        
+        $livewire->assertSet('success', 'Provisioned demo for ' . $tenant->demo_slug . '. This is a mock/sandbox demo — no real tenant, no real money.');
+
+        $this->assertDatabaseHas('demo_ledger', [
+            'business_id' => $biz->id,
+            'entry_type' => 'credit',
+            'amount_cents' => 5000,
+        ]);
+
+        $this->get(route('x-161.demo-ledger-daily.admin'))
+            ->assertSee('Initial Sandbox Demo Credit Allocation');
+    }
+
+    public function test_refuses_empty_domain(): void
+    {
+        $user = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);
+        $this->actingAs($user);
+        $biz = $this->provisionTenant(['owner_user_id' => $user->id]);
+
+        Livewire::test(DemoLedgerDaily::class)
+            ->set('prospectDomain', '')
+            ->call('provisionDemo')
+            ->assertSet('error', 'Please provide a prospect domain.');
+
+        $this->assertDatabaseMissing('demo_ledger', [
+            'business_id' => $biz->id,
+        ]);
+    }
 }
