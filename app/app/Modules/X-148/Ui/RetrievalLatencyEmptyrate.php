@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\X148\Ui;
 
+use App\Modules\X148\Actions\RetrievalIndexAction;
+use App\Modules\X148\Actions\RetrievalSearchAction;
 use App\Modules\X148\Models\RetrievalCache;
 use App\Support\Tenancy;
 use Livewire\Attributes\Locked;
@@ -15,9 +17,13 @@ class RetrievalLatencyEmptyrate extends Component
     public int $businessId = 0;
 
     public string $chunkTitle = '';
+
     public string $chunkText = '';
+
     public string $searchQuery = '';
+
     public ?string $success = null;
+
     public ?string $error = null;
 
     public function mount(int $businessId = 0): void
@@ -25,12 +31,13 @@ class RetrievalLatencyEmptyrate extends Component
         $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
     }
 
-    public function indexChunk(\App\Modules\X148\Actions\RetrievalIndexAction $action): void
+    public function indexChunk(RetrievalIndexAction $action): void
     {
         $this->error = null;
         $this->success = null;
         if (empty($this->chunkTitle) || empty($this->chunkText)) {
             $this->error = 'Title and text are required.';
+
             return;
         }
 
@@ -40,17 +47,18 @@ class RetrievalLatencyEmptyrate extends Component
         $this->chunkText = '';
     }
 
-    public function search(\App\Modules\X148\Actions\RetrievalSearchAction $action): void
+    public function search(RetrievalSearchAction $action): void
     {
         $this->error = null;
         $this->success = null;
         if (empty($this->searchQuery)) {
             $this->error = 'Search query is required.';
+
             return;
         }
 
         $result = $action->search(Tenancy::idOrFail(), $this->searchQuery);
-        $this->success = 'Ran retrieval search. Status: ' . $result['status'] . ', count: ' . $result['count'] . '. This feeds the empty-rate lists; nothing downstream is wired to it yet.';
+        $this->success = 'Ran retrieval search. Status: '.$result['status'].', count: '.$result['count'].'. This feeds the empty-rate lists; nothing downstream is wired to it yet.';
         $this->searchQuery = '';
     }
 
