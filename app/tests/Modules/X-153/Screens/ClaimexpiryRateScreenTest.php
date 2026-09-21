@@ -180,9 +180,10 @@ class ClaimexpiryRateScreenTest extends TestCase
 
         Tenancy::forget();
 
+        $this->actingAs($owner);
         $this->get(route('x-153.claimexpiry-rate'))
             ->assertOk()
-            ->assertSee('claimed by user #'.$second->id);
+            ->assertSee('Alert #'.$replyCode->alert_id.' claimed by user #'.$second->id);
     }
 
     public function test_take_over_refuses_no_claim_for_alert(): void

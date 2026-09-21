@@ -81,10 +81,8 @@ class ClaimexpiryRate extends Component
 
         $result = $action->handle(Tenancy::idOrFail(), $this->overrideAlertId, auth()->id());
 
-        if ($result['status'] === 'overridden') {
-            $this->success = 'Alert #'.$this->overrideAlertId.' is now claimed by you.';
-            $this->overrideAlertId = 0;
-        }
+        $this->success = 'Alert #'.$this->overrideAlertId.' is now claimed by you.';
+        $this->overrideAlertId = 0;
     }
 
     public function render()
