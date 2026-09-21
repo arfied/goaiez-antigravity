@@ -325,7 +325,7 @@ test('the reachability check states the size of its own blind spot', function ()
     expect($withoutLayout)->toBe(51, 'If it went UP, a new module route shipped with no #[Layout] at all, falling through to the staff console. If it went DOWN, one was converted, or built out.');
     expect($withLayout + $withoutLayout)->toBe(count($invisible));
 
-    expect($unbuilt)->toBe(23, 'If it went UP, a new unbuilt route shipped falling through to the staff console, or a screen went back to carrying the banner. If it went DOWN, an unbuilt route was built out, converted, or lost its route.');
-    expect($built)->toBe(28, 'If it went UP, a new built route shipped falling through to the staff console, or an unbuilt route was built out. If it went DOWN, a built route was converted onto the owner layout, went back to carrying the banner, or lost its route.');
+    expect($unbuilt)->toBe(21, 'If it went UP, a new unbuilt route shipped falling through to the staff console, or a screen went back to carrying the banner. If it went DOWN, an unbuilt route was built out, converted, or lost its route.');
+    expect($built)->toBe(30, 'If it went UP, a new built route shipped falling through to the staff console, or an unbuilt route was built out. If it went DOWN, a built route was converted onto the owner layout, went back to carrying the banner, or lost its route.');
     expect($unresolved)->toBe(0, 'If it went UP, a new route falling through to the staff console could not resolve its view. If it went DOWN, an unresolved route was fixed or converted.');
 });
