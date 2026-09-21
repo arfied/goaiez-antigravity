@@ -1,6 +1,6 @@
 <div>
     <div class="perm-matrix-view p-4">
-        <h3 class="text-lg font-bold text-ink">RBAC Permission Matrix</h3>
+        <h2 class="text-lg font-bold text-ink">RBAC Permission Matrix</h2>
 
         <div class="mb-6 flex flex-col gap-2 bg-surface p-4 rounded mt-4">
             @if($success)
