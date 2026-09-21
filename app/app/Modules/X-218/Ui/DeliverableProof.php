@@ -64,7 +64,14 @@ class DeliverableProof extends Component
         } catch (ModelNotFoundException $e) {
             $this->error = 'Unknown deal.';
         } catch (InvalidArgumentException $e) {
-            $this->error = $e->getMessage();
+            $msg = $e->getMessage();
+            if (str_contains($msg, 'no artifact')) {
+                $this->error = 'A deliverable needs its proof hash and live URL before it can be verified.';
+            } elseif (str_contains($msg, 'live URL must return HTTP 200, got')) {
+                $this->error = "The live URL must be recorded as HTTP 200; you entered {$this->httpStatus}.";
+            } else {
+                $this->error = $msg;
+            }
         }
     }
 

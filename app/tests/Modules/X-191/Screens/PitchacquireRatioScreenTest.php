@@ -165,7 +165,7 @@ class PitchacquireRatioScreenTest extends TestCase
             ->set('pitchBody', 'Pitching a PBN')
             ->set('pageSpecificFact', 'fact')
             ->call('pitch')
-            ->assertSet('error', 'Pitch rejected: target flagged as PBN/toxic network (TEST ANCHOR)');
+            ->assertSet('error', 'That domain is flagged as a toxic/PBN network, so no pitch was sent.');
 
         $this->assertDatabaseMissing((new LinkPitch)->getTable(), [
             'business_id' => $biz->id,
@@ -189,7 +189,7 @@ class PitchacquireRatioScreenTest extends TestCase
             ->set('targetId', (string) $target->id)
             ->set('pitchBody', 'Pitch with no fact')
             ->call('pitch')
-            ->assertSet('error', 'Pitch rejected: pitch template must contain a page-specific verified fact (TEST ANCHOR & G11-34)');
+            ->assertSet('error', 'A page-specific verified fact is required to send a pitch.');
 
         $this->assertDatabaseMissing((new LinkPitch)->getTable(), [
             'business_id' => $biz->id,

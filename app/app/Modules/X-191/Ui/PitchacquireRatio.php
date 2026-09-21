@@ -106,7 +106,14 @@ class PitchacquireRatio extends Component
         } catch (ModelNotFoundException $e) {
             $this->error = 'Unknown target.';
         } catch (InvalidArgumentException $e) {
-            $this->error = $e->getMessage();
+            $msg = $e->getMessage();
+            if (str_contains($msg, 'flagged as PBN/toxic network')) {
+                $this->error = 'That domain is flagged as a toxic/PBN network, so no pitch was sent.';
+            } elseif (str_contains($msg, 'page-specific verified fact')) {
+                $this->error = 'A page-specific verified fact is required to send a pitch.';
+            } else {
+                $this->error = $msg;
+            }
         }
     }
 
