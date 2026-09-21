@@ -1687,3 +1687,60 @@ this model* (a **zero** means the screen is empty for every tenant, which is the
 shape there is — but my first version of that needle returned zero for **all 44 rows** and was
 malformed), and the id filter above (whose `wc -w` count is words, not ids — read the list, not
 the number).
+
+⛔ **A `<select>` THAT LISTS THE VALUE YOU ASSERT ON MAKES `assertSee` VACUOUS — N256 GENERALISED
+(N262, 2026-09-21, wave 643).** N256 ruled that no *placeholder* may contain a value a test
+asserts on. That was too narrow, and the narrow version shipped a vacuous assertion one day
+later. My brief wrote this blade:
+
+```blade
+@foreach($roles as $r)<option value="{{ $r->id }}">{{ $r->name }}</option>@endforeach
+```
+
+and, in the same document, asked for `assertSee('Dispatcher')` to prove a staff row rendered
+its assigned role. `$roles` is **every role in the tenant, independent of any assignment**, so
+the string renders whether or not anybody holds it. ⛔ **RULED: before asserting that a data
+value renders, grep the blade for EVERY element that can put that value on the page** —
+`<select>`/`<option>`, datalist, autocomplete, hidden input, `wire:key`, a `title=` attribute.
+The one-question test needs no tooling: *could this string appear if the thing I am proving did
+not happen?* ⭐ And the general form is the one this file keeps paying for: **a brief that
+writes both the page text and the assertion about it holds both ends of the check, and nothing
+downstream will ever compare them.**
+⚠️ Not a fix run, and the reason is worth keeping: the same test's `assertDontSee('No role')`
+**is** load-bearing, and the fan-out test proved the property conclusively on a second screen
+that has no role picker. *A redundant assertion beside a sound one is not worth a dispatch* —
+but it is worth writing down, because the next reader would cite it.
+
+⛔ **`Tenancy::setUser()` IS NOT A TENANT SWITCH (N261, 2026-09-21, wave 642).** `Tenancy.php:100-113`
+says so in its own docblock — *"Establish the acting **user**… **Set before the tenant, not
+instead of it.** … It is not an authorization mechanism and must never be treated as one."* My
+brief told a coder to "set tenancy back to B" and, on the same page, to copy the fixture already
+in that test file — which opens with `Tenancy::setUser(...)`. Ambient tenancy therefore never
+moved, and the test inserted tenant B's row under tenant A. **RULED: a two-tenant fixture sets
+`Tenancy::set((int) $biz->id)` for the tenant, and `setUser` only where the acting user is also
+needed.** ⚠️ **Every X-155 screen fixture opens with `setUser`**, so the next author copying one
+for a two-tenant test will make the same mistake.
+⭐ **The red was worth more than the test it broke:** PostgreSQL's `WITH CHECK` refused the
+cross-tenant `INSERT` inside the suite and printed the offending `business_id`. The isolation
+guarantee this repo is built on, demonstrated rather than asserted — and only because a fixture
+accidentally attempted the thing RLS exists to stop.
+
+⚠️ **THE UNCALLED-WRITER POOL IS WRONG IN BOTH DIRECTIONS (N259/N260, 2026-09-21).**
+**Under-reports:** its writes needle saw only `::create|updateOrCreate|firstOrCreate`, so it is
+blind to **update-only** writers — which is precisely the shape of a state-transition verb
+(stop, send, release, assign, deactivate), the verbs an owner presses a button for. Widening it
+took 44 rows to 76; **five of that day's nine waves came out of the 32 the narrow pass could not
+see.** I had quoted the queue file's own warning about this and drew a boundary from the
+instrument anyway — ⛔ *"there is nothing left" is the largest finding you can draw from an
+instrument that under-reports.*
+**Over-reports:** it greps `app/Modules/<the same module>/Ui/` and nothing else, so a caller in
+another module is invisible. X-155 `FormCaptureAction` and X-137 `CallAttributeAction` are both
+called from `X-157/ModuleServiceProvider.php`'s live `POST /sites/{business}/{hash}/forms/{form}`
+route — neither was ever uncalled.
+⭐ **And the screening question that decides a row is not the one I had been asking.** *"Is the
+precondition owner-reachable"* is wrong for rows whose precondition arrives from **runtime or an
+outside actor** — a form submission comes from a visitor, a dead letter from the system. Ask
+instead: **is it reachable in production by anyone or anything**, and separately, ⛔ **a demo
+filler is not a writer**. Two further questions each refused a row the same day: **is the effect
+visible in a state the owner can actually reach?** (X-183: body text renders nowhere) and **can
+the owner get back?** (X-113 deactivate: no reactivate writer exists anywhere).
