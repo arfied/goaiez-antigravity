@@ -7,6 +7,7 @@ namespace Tests\Modules\X110\Screens;
 use App\Enums\UserRole;
 use App\Models\User;
 use App\Modules\X110\Ui\Today;
+use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -49,7 +50,6 @@ class TodayScreenTest extends TestCase
             ->set('visitorId', 'vis-999')
             ->call('recordTestVisit')
             ->assertSet('success', 'Recorded visit for visitor vis-999. This feeds the live visitor list; nothing downstream is wired to it yet.');
-        Tenancy::forget();
 
         $this->assertDatabaseHas('visits', [
             'business_id' => $biz->id,
@@ -65,10 +65,13 @@ class TodayScreenTest extends TestCase
             'event_name' => 'page_view',
         ]);
 
+        Tenancy::forget();
+
         $this->get(route('x-110.today'))
             ->assertOk()
-            ->assertSee('1') // Today's visitors count
             ->assertDontSee('Pixel not verified');
+
+        Livewire::test(Today::class)->assertViewHas('todayVisitsCount', 1);
 
         $this->get(route('x-110.visitors-live'))
             ->assertOk()
@@ -86,10 +89,11 @@ class TodayScreenTest extends TestCase
             ->set('visitorId', '  ')
             ->call('recordTestVisit')
             ->assertSet('error', 'Visitor ID is required.');
-        Tenancy::forget();
 
         $this->assertDatabaseMissing('visits', [
             'business_id' => $biz->id,
         ]);
+
+        Tenancy::forget();
     }
 }

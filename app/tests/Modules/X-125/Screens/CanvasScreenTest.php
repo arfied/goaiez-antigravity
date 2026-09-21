@@ -68,13 +68,14 @@ class CanvasScreenTest extends TestCase
             ->set('stepLabel', 'Do something')
             ->call('createFlow')
             ->assertSet('success', 'Created automation My New Flow. Nothing runs a flow when its trigger event fires.');
-        Tenancy::forget();
 
         $this->assertDatabaseHas('flows', [
             'business_id' => $biz->id,
             'name' => 'My New Flow',
             'trigger_event' => 'page.viewed',
         ]);
+
+        Tenancy::forget();
 
         $this->get(route('x-125.canvas'))
             ->assertOk()
@@ -94,10 +95,11 @@ class CanvasScreenTest extends TestCase
             ->set('triggerEvent', 'page.viewed')
             ->call('createFlow')
             ->assertSet('error', 'Flow name and trigger event are required.');
-        Tenancy::forget();
 
         $this->assertDatabaseMissing('flows', [
             'trigger_event' => 'page.viewed',
         ]);
+
+        Tenancy::forget();
     }
 }
