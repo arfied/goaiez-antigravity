@@ -363,7 +363,7 @@ class X113Test extends TestCase
         // 3. Allowed path works
         Storage::fake('local');
         $file = UploadedFile::fake()->createWithContent('real_doc.pdf', 'my_real_bytes');
-        $uploadedDoc = app(DocumentUploadAction::class)->handle($biz->id, $staff->id, $file, 1);
+        $uploadedDoc = app(DocumentUploadAction::class)->handle($biz->id, $staff->id, $file, null);
 
         $this->assertEquals('my_real_bytes', $vault->downloadDocument($biz->id, $staff->id, $uploadedDoc->id));
     }

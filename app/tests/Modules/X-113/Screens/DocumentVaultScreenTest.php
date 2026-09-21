@@ -138,8 +138,9 @@ class DocumentVaultScreenTest extends TestCase
 
         $otherBiz = $this->provisionTenant();
         $otherStaff = StaffUser::create(['business_id' => $otherBiz->id, 'name' => 'Bob', 'role_id' => null, 'email' => 'b@b.c']);
-        Tenancy::set($biz->id);
         $file = UploadedFile::fake()->createWithContent('contract.pdf', 'real bytes here');
+
+        Tenancy::set($biz->id);
 
         Livewire::test(DocumentVault::class)
             ->set('selectedStaffId', $otherStaff->id)
@@ -205,12 +206,13 @@ class DocumentVaultScreenTest extends TestCase
         Storage::fake('local');
 
         $otherBiz = $this->provisionTenant();
-        Tenancy::set($biz->id); // trap avoided
 
         $otherStaff = StaffUser::create(['business_id' => $otherBiz->id, 'name' => 'Bob', 'role_id' => null, 'email' => 'b@b.c']);
         $file = UploadedFile::fake()->createWithContent('secret.pdf', 'secret bytes');
 
         $doc = app(DocumentUploadAction::class)->handle($otherBiz->id, $otherStaff->id, $file, $owner->id);
+
+        Tenancy::set($biz->id); // trap avoided
 
         $this->expectException(ModelNotFoundException::class);
         Livewire::test(DocumentVault::class)
