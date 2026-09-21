@@ -8,8 +8,12 @@ use App\Enums\UserRole;
 use App\Models\User;
 use App\Modules\X113\Actions\RoleCreateAction;
 use App\Modules\X113\Actions\RolePermissionGrantAction;
+use App\Modules\X113\Models\StaffDocument;
 use App\Modules\X113\Models\StaffUser;
 use App\Modules\X113\Ui\DocumentVault;
+use App\Support\Tenancy;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -86,15 +90,16 @@ class DocumentVaultScreenTest extends TestCase
             ->assertSee('no role')
             ->assertSee('Not permitted');
     }
+
     public function test_can_upload_document_for_staff(): void
     {
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
-        \Illuminate\Support\Facades\Storage::fake('local');
+        Storage::fake('local');
 
         $staff = StaffUser::create(['business_id' => $biz->id, 'name' => 'Alice', 'role_id' => null, 'email' => 'a@b.c']);
-        $file = \Illuminate\Http\UploadedFile::fake()->create('contract.pdf', 1024);
+        $file = UploadedFile::fake()->createWithContent('contract.pdf', 'real bytes here');
 
         Livewire::test(DocumentVault::class)
             ->set('selectedStaffId', $staff->id)
@@ -102,21 +107,21 @@ class DocumentVaultScreenTest extends TestCase
             ->call('uploadDocument')
             ->assertSet('success', 'Uploaded document contract.pdf. This feeds the vault list; nothing downstream is wired to it yet.');
 
-        $this->assertDatabaseHas((new \App\Modules\X113\Models\StaffDocument)->getTable(), [
+        $this->assertDatabaseHas((new StaffDocument)->getTable(), [
             'business_id' => $biz->id,
             'staff_user_id' => $staff->id,
             'original_filename' => 'contract.pdf',
         ]);
 
-        $doc = \App\Modules\X113\Models\StaffDocument::first();
+        $doc = StaffDocument::first();
         $this->assertNotNull($doc);
         $this->assertStringNotContainsString('contract.pdf', $doc->storage_path);
-        
-        \Illuminate\Support\Facades\Storage::disk('local')->assertExists($doc->storage_path);
-        
-        $this->assertNotNull($doc->sha256);
-        $this->assertGreaterThan(0, $doc->size_bytes);
-        
+
+        Storage::disk('local')->assertExists($doc->storage_path);
+
+        $this->assertEquals(hash('sha256', 'real bytes here'), $doc->sha256);
+        $this->assertEquals(strlen('real bytes here'), $doc->size_bytes);
+
         $this->get(route('x-113.document-vault'))
             ->assertOk()
             ->assertSee('contract.pdf');
@@ -127,11 +132,12 @@ class DocumentVaultScreenTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
-        \Illuminate\Support\Facades\Storage::fake('local');
+        Storage::fake('local');
 
         $otherBiz = $this->provisionTenant();
         $otherStaff = StaffUser::create(['business_id' => $otherBiz->id, 'name' => 'Bob', 'role_id' => null, 'email' => 'b@b.c']);
-        $file = \Illuminate\Http\UploadedFile::fake()->create('contract.pdf', 1024);
+        Tenancy::set($biz->id);
+        $file = UploadedFile::fake()->createWithContent('contract.pdf', 'real bytes here');
 
         Livewire::test(DocumentVault::class)
             ->set('selectedStaffId', $otherStaff->id)
@@ -139,11 +145,11 @@ class DocumentVaultScreenTest extends TestCase
             ->call('uploadDocument')
             ->assertSet('error', 'Staff user not found or does not belong to this tenant.');
 
-        $this->assertDatabaseMissing((new \App\Modules\X113\Models\StaffDocument)->getTable(), [
+        $this->assertDatabaseMissing((new StaffDocument)->getTable(), [
             'original_filename' => 'contract.pdf',
         ]);
-        
-        $this->assertEmpty(\Illuminate\Support\Facades\Storage::disk('local')->allFiles());
+
+        $this->assertEmpty(Storage::disk('local')->allFiles());
     }
 
     public function test_refuses_oversized_file(): void
@@ -151,22 +157,22 @@ class DocumentVaultScreenTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
-        \Illuminate\Support\Facades\Storage::fake('local');
+        Storage::fake('local');
 
         $staff = StaffUser::create(['business_id' => $biz->id, 'name' => 'Alice', 'role_id' => null, 'email' => 'a@b.c']);
-        $file = \Illuminate\Http\UploadedFile::fake()->create('big.pdf', 3000);
+        $file = UploadedFile::fake()->create('big.pdf', 3000);
 
         $response = Livewire::test(DocumentVault::class)
             ->set('selectedStaffId', $staff->id)
             ->set('file', $file)
             ->call('uploadDocument');
-            
+
         $response->assertHasErrors(['file']);
-        
+
         $errors = $response->errors();
         $this->assertEquals(DocumentVault::UPLOAD_REFUSED, $errors->first('file'));
 
-        $this->assertDatabaseMissing((new \App\Modules\X113\Models\StaffDocument)->getTable(), [
+        $this->assertDatabaseMissing((new StaffDocument)->getTable(), [
             'original_filename' => 'big.pdf',
         ]);
     }
