@@ -44,7 +44,7 @@ class Canvas extends Component
             Tenancy::idOrFail(),
             $this->flowName,
             $this->triggerEvent,
-            [['type' => 'action', 'label' => $this->stepLabel]]
+            [['type' => 'action', 'label' => $this->stepLabel ?: 'execute step']]
         );
 
         $this->success = 'Created automation '.$this->flowName.'. Nothing runs a flow when its trigger event fires.';
