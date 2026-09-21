@@ -10,6 +10,7 @@ use App\Modules\X113\Models\Role;
 use App\Modules\X113\Models\StaffUser;
 use App\Modules\X113\Ui\Staff;
 use App\Support\Tenancy;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -122,5 +123,95 @@ class StaffScreenTest extends TestCase
             ->call('invite')
             ->assertSet('error', 'This email is already on the crew.');
         $this->assertDatabaseMissing($table, ['name' => 'Duplicate']);
+    }
+
+    public function test_can_assign_a_role_to_a_crew_member(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set((int) $biz->id);
+        Tenancy::setUser($owner->id);
+
+        $role = Role::create(['business_id' => $biz->id, 'name' => 'Dispatcher']);
+        $staff = StaffUser::create(['business_id' => $biz->id, 'name' => 'John Doe', 'email' => 'john@test.com', 'role_id' => null]);
+
+        Livewire::test(Staff::class)
+            ->set('assignStaffId', (string) $staff->id)
+            ->set('assignRoleId', (string) $role->id)
+            ->call('assignRole')
+            ->assertSet('assignError', null)
+            ->assertSet('assignSuccess', 'Assigned Dispatcher to John Doe. The document vault reads this role when it decides who can see employee documents.');
+
+        $this->assertDatabaseHas((new StaffUser)->getTable(), [
+            'id' => $staff->id,
+            'role_id' => $role->id,
+        ]);
+    }
+
+    public function test_refuses_an_assignment_with_no_role_chosen(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set((int) $biz->id);
+        Tenancy::setUser($owner->id);
+
+        $staff = StaffUser::create(['business_id' => $biz->id, 'name' => 'John Doe', 'email' => 'john@test.com', 'role_id' => null]);
+
+        Livewire::test(Staff::class)
+            ->set('assignStaffId', (string) $staff->id)
+            ->set('assignRoleId', '')
+            ->call('assignRole')
+            ->assertSet('assignError', 'Choose a role.');
+
+        $this->assertDatabaseHas((new StaffUser)->getTable(), [
+            'id' => $staff->id,
+            'role_id' => null,
+        ]);
+    }
+
+    public function test_staff_row_shows_the_assigned_role(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set((int) $biz->id);
+        Tenancy::setUser($owner->id);
+
+        $role = Role::create(['business_id' => $biz->id, 'name' => 'Dispatcher']);
+        $staff = StaffUser::create(['business_id' => $biz->id, 'name' => 'John Doe', 'email' => 'john@test.com', 'role_id' => null]);
+
+        Livewire::test(Staff::class)
+            ->set('assignStaffId', (string) $staff->id)
+            ->set('assignRoleId', (string) $role->id)
+            ->call('assignRole');
+
+        Tenancy::forget();
+
+        $this->get(route('x-113.staff'))
+            ->assertSee('Dispatcher')
+            ->assertDontSee('No role');
+    }
+
+    public function test_assigning_another_tenants_role_is_refused(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $bizB = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $bizA = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::setUser($owner->id);
+
+        Tenancy::set((int) $bizB->id);
+        $roleB = Role::create(['business_id' => $bizB->id, 'name' => 'Dispatcher']);
+
+        Tenancy::set((int) $bizA->id);
+        $staffA = StaffUser::create(['business_id' => $bizA->id, 'name' => 'John Doe', 'email' => 'john@test.com', 'role_id' => null]);
+
+        $this->expectException(ModelNotFoundException::class);
+        Livewire::test(Staff::class)
+            ->set('assignStaffId', (string) $staffA->id)
+            ->set('assignRoleId', (string) $roleB->id)
+            ->call('assignRole');
     }
 }

@@ -12,6 +12,7 @@ use App\Modules\X113\Actions\RolePermissionGrantAction;
 use App\Modules\X113\Models\StaffDocument;
 use App\Modules\X113\Models\StaffUser;
 use App\Modules\X113\Ui\DocumentVault;
+use App\Modules\X113\Ui\Staff;
 use App\Support\Tenancy;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\UploadedFile;
@@ -259,5 +260,28 @@ class DocumentVaultScreenTest extends TestCase
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('INSUFFICIENT_ROLE_PERMISSIONS');
         $vault->downloadDocument($biz->id, $staff->id, $doc->id);
+    }
+
+    public function test_document_vault_shows_the_assigned_role(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set((int) $biz->id);
+        Tenancy::setUser($owner->id);
+
+        $role = app(RoleCreateAction::class)->handle($biz->id, 'Dispatcher');
+        $staff = StaffUser::create(['business_id' => $biz->id, 'name' => 'John Doe', 'email' => 'john@test.com', 'role_id' => null]);
+
+        Livewire::test(Staff::class)
+            ->set('assignStaffId', (string) $staff->id)
+            ->set('assignRoleId', (string) $role->id)
+            ->call('assignRole');
+
+        Tenancy::forget();
+
+        $this->get(route('x-113.document-vault'))
+            ->assertSee('(Dispatcher)')
+            ->assertDontSee('(no role)');
     }
 }

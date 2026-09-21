@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Modules\X113\Ui;
 
+use App\Modules\X113\Actions\RoleAssignAction;
 use App\Modules\X113\Actions\StaffInviteAction;
+use App\Modules\X113\Models\Role;
 use App\Modules\X113\Models\StaffUser;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
@@ -24,6 +26,14 @@ class Staff extends Component
     public ?string $success = null;
 
     public ?string $error = null;
+
+    public string $assignStaffId = '';
+
+    public string $assignRoleId = '';
+
+    public ?string $assignSuccess = null;
+
+    public ?string $assignError = null;
 
     public function mount(): void
     {
@@ -73,14 +83,46 @@ class Staff extends Component
         $this->email = '';
     }
 
+    public function assignRole(RoleAssignAction $action): void
+    {
+        $this->assignSuccess = null;
+        $this->assignError = null;
+
+        if (trim($this->assignStaffId) === '') {
+            $this->assignError = 'Choose a crew member.';
+
+            return;
+        }
+
+        if (trim($this->assignRoleId) === '') {
+            $this->assignError = 'Choose a role.';
+
+            return;
+        }
+
+        $staff = $action->handle(Tenancy::idOrFail(), (int) $this->assignStaffId, (int) $this->assignRoleId);
+        $role = Role::where('business_id', Tenancy::idOrFail())->find($staff->role_id);
+
+        $this->assignSuccess = 'Assigned '.$role->name.' to '.$staff->name
+            .'. The document vault reads this role when it decides who can see employee documents.';
+
+        $this->assignStaffId = '';
+        $this->assignRoleId = '';
+    }
+
     public function render()
     {
         $staff = ($this->businessId > 0)
             ? StaffUser::where('business_id', $this->businessId)->orderBy('name')->get()
             : collect();
 
+        $roles = ($this->businessId > 0)
+            ? Role::where('business_id', $this->businessId)->orderBy('name')->get()
+            : collect();
+
         return view('x-113::staff', [
             'staff' => $staff,
+            'roles' => $roles,
         ]);
     }
 }
