@@ -113,7 +113,7 @@ class ProposedPagesViewScreenTest extends TestCase
             ->set('rawContent', 'Customer asked how to replace a flat tire on the highway.')
             ->call('draftFromConversation')
             ->assertSet('error', null)
-            ->assertSet('success', "Drafted content for topic {$topic->id}. This feeds the topic lists; nothing downstream is wired to it yet.");
+            ->assertSet('success', "Drafted content for 'How to replace a tire'. This feeds the topic lists; nothing downstream is wired to it yet.");
 
         $this->assertDatabaseHas((new TopicSource)->getTable(), [
             'business_id' => $biz->id,
@@ -134,7 +134,7 @@ class ProposedPagesViewScreenTest extends TestCase
             ->assertDontSee('No proposed pages yet.');
     }
 
-    public function test_draft_refuses_placeholder_price()
+    public function test_draft_with_placeholder_price_is_recorded_but_not_published()
     {
         $biz = TestCase::provisionTenant(['name' => 'Topic Tenant']);
         Tenancy::set($biz->id);
@@ -150,7 +150,16 @@ class ProposedPagesViewScreenTest extends TestCase
             ->set('draftTopicId', $topic->id)
             ->set('rawContent', 'The cost will be SAMPLE PRICE for this service.')
             ->call('draftFromConversation')
-            ->assertSet('error', 'Contains placeholder sample price');
+            ->assertSet('error', null)
+            ->assertSet('success', "Recorded draft for 'Pricing questions', but it is not published: Contains placeholder sample price")
+            ->assertSet('draftTopicId', 0)
+            ->assertSet('rawContent', '');
+
+        $this->assertDatabaseHas((new TopicSource)->getTable(), [
+            'business_id' => $biz->id,
+            'topic_id' => $topic->id,
+            'raw_content' => 'The cost will be SAMPLE PRICE for this service.',
+        ]);
 
         $this->assertDatabaseHas((new ContentTopic)->getTable(), [
             'id' => $topic->id,

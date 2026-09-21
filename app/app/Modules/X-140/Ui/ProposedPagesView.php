@@ -69,13 +69,16 @@ class ProposedPagesView extends Component
             $this->rawContent
         );
 
+        $topicTitle = ContentTopic::find($this->draftTopicId)?->topic_title ?? (string) $this->draftTopicId;
+
         if ($result['is_published'] === false && isset($result['gate_failure_reason'])) {
-            $this->error = $result['gate_failure_reason'];
+            $this->success = "Recorded draft for '{$topicTitle}', but it is not published: {$result['gate_failure_reason']}";
+            $this->reset(['draftTopicId', 'rawContent']);
 
             return;
         }
 
-        $this->success = "Drafted content for topic {$this->draftTopicId}. This feeds the topic lists; nothing downstream is wired to it yet.";
+        $this->success = "Drafted content for '{$topicTitle}'. This feeds the topic lists; nothing downstream is wired to it yet.";
         $this->reset(['draftTopicId', 'rawContent']);
     }
 
