@@ -22,6 +22,23 @@
             <button type="submit" class="bg-surface text-ink border rounded p-2 w-48">Provision Demo</button>
         </form>
 
+        <form wire:submit="sendTestMessage" class="mb-6 flex flex-col gap-4 bg-surface p-4 border rounded mt-4">
+            <div>
+                <label class="text-ink-2">Demo Tenant</label>
+                <select wire:model="demoTenantId" class="border rounded p-2 text-ink w-full bg-surface">
+                    <option value="0">Select a tenant...</option>
+                    @foreach($tenants as $tenant)
+                        <option value="{{ $tenant->id }}">{{ $tenant->demo_slug }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div>
+                <label class="text-ink-2">Message</label>
+                <input type="text" wire:model="message" class="border rounded p-2 text-ink w-full bg-surface">
+            </div>
+            <button type="submit" class="bg-surface text-ink border rounded p-2 w-48">Send Test Message</button>
+        </form>
+
         @if ($entries->isEmpty())
             <x-ui.empty-state heading="No mock ledger entries">
                 No mock demo ledger entries have been created yet.
