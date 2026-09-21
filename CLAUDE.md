@@ -417,6 +417,40 @@ proving nothing about tenant isolation. **A setup helper with a side effect on a
 stops testing its own name** — when a tenancy/auth/context assertion fails with *nothing happened*, suspect
 the fixture's ambient state before the product.
 
+⛔ **AN IDEMPOTENCE PROOF COMPARES THE ARTEFACT TO ITSELF, NEVER TO `HEAD` — AS I SPECIFIED IT,
+PASSING WAS INDISTINGUISHABLE FROM NOT RUNNING THE CHECK (N250, 2026-09-21, wave 602).** The
+2026-09-19 generated-file rule (§2b) says a generated file is resolved by re-running its generator
+and that **the proof is idempotence**: run it a second time and `git diff --stat -- <that path>`
+prints nothing. Briefing that for real, I wrote *"the second run must print nothing beyond what the
+first run already produced"* — and the report duly quoted `1 file changed, 1 insertion(+)`, which is
+correct **and is also exactly what you get if the second run never happened**, because the working
+tree differs from `HEAD~1` by that insertion either way. The field cannot discriminate, so a skipped
+check reads as a passed one. Same shape as N131's `/**` sentinel — *"the count did not move" is what
+a correctly-applied fix ALSO produces* — and it is the supervisor's defect, not the coder's.
+**RULED: the check is `md5sum <path>` → run the generator → `md5sum <path>`, both quoted, and they
+must match.** An unchanged md5 is the only conclusive evidence a generator is deterministic, exactly
+as a **changed** md5 was the only conclusive evidence at N151 that §2d had read a guard's new bytes.
+⛔ The `git diff --stat` form is sound **only** when the generated file is committed between the two
+runs, which no brief has ever ordered; against a dirty tree it is vacuous.
+⭐ **And name which instrument actually carried the conclusion (N111).** What settled determinism in
+wave 602 was not the check I asked for but the **shape** of the diff: a single `+` line inside
+`owns_table`, with no reordering, no timestamp and no churn anywhere else in the ~60 lines the
+generator rewrote — a non-deterministic generator has to show itself somewhere in those, and it did
+not. That is real evidence honestly obtained; writing it down *as* the evidence, rather than letting
+the named-but-vacuous field take the credit, is the whole of N111.
+
+⭐ **A COROLLARY ABOUT §2, MEASURED THE SAME WAVE.** §2 prints
+`⛔ app/app/Modules/<M>/manifest.php — (manifest/capabilities are legal only via regeneration)` on
+**every legal regeneration**, because a regenerated manifest is by construction a forbidden path the
+commit touched. That is *the row that is legitimate by construction* in the generated-file arm,
+exactly as wave 125 found it in the harness arm — and the asymmetry is the point: the harness arm has
+**§2e** to adjudicate it, the generated-file arm has only a sentence in this file
+(*"the commit that touches them also touches the plan or tracker, or the report says `module:scaffold`
+ran"*), applied by hand. ⛔ **Do not weaken §2** — it is right about every hand-edited manifest, which
+is what it exists to catch. Read it as a pair instead: `git show --name-only HEAD` must list the plan
+or the tracker, and the manifest's diff must be only what that plan edit implies. *Two sibling arms of
+one check and only one of them got an adjudicator* — the N137 tell, in the forbidden-path check.
+
 ## Dispatching the coder (added 2026-09-02)
 
 When the user has enabled the settings rule for
