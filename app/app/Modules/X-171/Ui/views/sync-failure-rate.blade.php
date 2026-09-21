@@ -10,7 +10,7 @@
         @endif
         
         @if($conflicts->isEmpty())
-            <x-ui.empty-state title="No sync conflicts. Every device mutation replayed cleanly." />
+            <x-ui.empty-state>No sync conflicts. Every device mutation replayed cleanly.</x-ui.empty-state>
         @else
             <table class="w-full text-left">
                 <thead>
