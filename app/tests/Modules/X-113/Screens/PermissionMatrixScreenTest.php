@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Modules\X113\Actions\RoleCreateAction;
 use App\Modules\X113\Models\RolePermission;
 use App\Modules\X113\Ui\PermissionMatrix;
+use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -111,6 +112,7 @@ class PermissionMatrixScreenTest extends TestCase
         $otherBiz = $this->provisionTenant();
         $roleAction = app(RoleCreateAction::class);
         $otherRole = $roleAction->handle($otherBiz->id, 'Other Manager');
+        Tenancy::set($biz->id);
 
         Livewire::test(PermissionMatrix::class)
             ->set('roleId', $otherRole->id)
