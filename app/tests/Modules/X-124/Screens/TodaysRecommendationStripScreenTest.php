@@ -6,6 +6,8 @@ namespace Tests\Modules\X124\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X124\Models\AssistantSession;
+use App\Modules\X124\Ui\ChatDockEvery;
 use App\Modules\X124\Ui\TodaysRecommendationStrip;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -29,11 +31,11 @@ class TodaysRecommendationStripScreenTest extends TestCase
         $this->actingAs($admin);
         $biz = $this->provisionTenant(['owner_user_id' => $admin->id]);
 
-        Livewire::test(\App\Modules\X124\Ui\ChatDockEvery::class)
+        Livewire::test(ChatDockEvery::class)
             ->set('utterance', 'Hello assistant')
             ->call('ask');
 
-        $session = \App\Modules\X124\Models\AssistantSession::first();
+        $session = AssistantSession::first();
 
         Livewire::test(TodaysRecommendationStrip::class)
             ->call('load')
@@ -52,8 +54,10 @@ class TodaysRecommendationStripScreenTest extends TestCase
             'status' => 'active',
         ]);
 
-        $this->get(route('x-124.todays-recommendation-strip.admin'))
-            ->assertOk()
+        $this->get(route('x-124.todays-recommendation-strip.admin'))->assertOk();
+
+        Livewire::test(TodaysRecommendationStrip::class)
+            ->call('load')
             ->assertSee('Test Title');
     }
 

@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Modules\X124\Ui;
 
 use App\Modules\X124\Actions\AssistantActOnRecommendationAction;
+use App\Modules\X124\Actions\AssistantRecommendAction;
 use App\Modules\X124\Models\AssistantRecommendation;
+use App\Modules\X124\Models\AssistantSession;
 use App\Support\Tenancy;
 use Exception;
 use Livewire\Attributes\Locked;
@@ -42,17 +44,22 @@ class TodaysRecommendationStrip extends Component
     }
 
     public int $selectedSessionId = 0;
+
     public string $recommendTitle = '';
+
     public string $actionKey = '';
+
     public ?string $success = null;
+
     public ?string $error = null;
 
-    public function recommend(\App\Modules\X124\Actions\AssistantRecommendAction $action): void
+    public function recommend(AssistantRecommendAction $action): void
     {
         $this->error = null;
         $this->success = null;
         if (empty($this->recommendTitle) || empty($this->actionKey) || $this->selectedSessionId === 0) {
             $this->error = 'Session, title, and action key are required.';
+
             return;
         }
 
@@ -74,7 +81,7 @@ class TodaysRecommendationStrip extends Component
                 ? AssistantRecommendation::where('business_id', $this->businessId)->where('status', 'active')->get()
                 : collect();
             $sessions = ($this->businessId > 0)
-                ? \App\Modules\X124\Models\AssistantSession::where('business_id', $this->businessId)->get()
+                ? AssistantSession::where('business_id', $this->businessId)->get()
                 : collect();
         } catch (Exception $e) {
             // A per-test transaction cannot simulate a database failure without dropping the table or purging the connection, which would break the suite.
