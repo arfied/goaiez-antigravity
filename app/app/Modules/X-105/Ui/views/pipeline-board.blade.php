@@ -9,17 +9,17 @@
         @endif
 
         @if($success)
-            <div class="mb-4 p-2 bg-paper border rounded text-gray-800">{{ $success }}</div>
+            <div class="mb-4 p-2 bg-paper border rounded text-ink">{{ $success }}</div>
         @endif
         @if($error)
-            <div class="mb-4 p-2 bg-paper border rounded text-gray-800">{{ $error }}</div>
+            <div class="mb-4 p-2 bg-paper border rounded text-ink">{{ $error }}</div>
         @endif
 
-        <form wire:submit="startOutreach" class="mb-6 flex flex-col gap-2 bg-paper p-4 rounded mt-4 shadow-sm border text-gray-800">
+        <form wire:submit="startOutreach" class="mb-6 flex flex-col gap-2 bg-paper p-4 rounded mt-4 shadow-sm border text-ink">
             <h2 class="font-bold">Start outreach to a new prospect</h2>
             <input type="text" wire:model="prospectName" placeholder="Name" class="border rounded p-2 flex-1">
             <input type="text" wire:model="prospectEmail" placeholder="Email" class="border rounded p-2 flex-1">
-            <button type="submit" class="bg-gray-100 text-gray-800 border rounded p-2 font-bold">Start Outreach</button>
+            <button type="submit" class="bg-surface text-ink border rounded p-2 font-bold">Start Outreach</button>
         </form>
 
         @if($ladders->isEmpty())
@@ -34,7 +34,7 @@
                     <div class="border p-4 rounded bg-paper shadow-sm flex flex-col gap-2">
                         <div class="flex justify-between">
                             <span class="font-bold">Ladder #{{ $ladder->id }}</span>
-                            <span class="text-gray-500 text-sm">Status: {{ $ladder->status }}</span>
+                            <span class="text-ink text-sm">Status: {{ $ladder->status }}</span>
                         </div>
                         <div class="text-sm">
                             <p>Person: {{ optional($ladder->person)->name ?? 'Person #'.$ladder->person_id }}</p>
