@@ -1,6 +1,5 @@
 <div>
     <div class="readback-screen-view p-4">
-        <h3 class="text-lg font-bold">Tenant Vocabulary & Jargon Lexicon Readback</h3>
         
         @if ($error)
             <div class="bg-surface text-ink border rounded p-4 mb-4">
@@ -40,7 +39,7 @@
 
         @if ($preview !== null)
             <div class="bg-surface text-ink border rounded p-4 mb-6">
-                <h4 class="text-md font-bold mb-2 text-ink-2">Preview Output:</h4>
+                <h2 class="text-md font-bold mb-2 text-ink-2">Preview Output:</h2>
                 <p>{{ $preview }}</p>
             </div>
         @endif

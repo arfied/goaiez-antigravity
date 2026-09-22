@@ -668,6 +668,7 @@ final class OwnerNav
             OwnerNavItem::make('Signal volume & precision', 'x-136.signal-volume-precision', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Quality board', 'x-149.quality-board', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Marketplace', 'x-195.marketplace', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Readback screen', 'x-154.readback-screen', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Pipeline board', 'x-105.pipeline-board', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Gateway connections', 'x-198.connect-card', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Same account', 'x-198.same-account', OwnerNavItem::GROUP_CATALOG),
