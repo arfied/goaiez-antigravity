@@ -1,0 +1,299 @@
+ goaiez doctor · build 20260829-0647
+ FAIL capability 47ms 143 violation(s) — fails the MERGE
+ · C-Ai · G2-27: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · C-Mail · G1-43: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · C-Mail · G3-18: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · C-Mail · G9-21: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · C-Mail · G10-28: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · C-Mail · G11-06: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · C-Mail · G11-09: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · C-Mail · G11-11: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · C-Mail · G11-12: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · C-Mail · G11-15: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · C-Mail · G11-16: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · C-Mail · G11-17: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · C-Mail · G11-18: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · C-Mail · G11-29: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · C-Mail · G11-38: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · C-Mail · G15-31: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · C-Reviews · G18-14: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · C-Sms · G3-54: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · C-Sms · G11-32: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · C-Sms · G19-11: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · C-Sms · G19-18: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · C-Telephony · G11-36: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · C-Telephony · G11-39: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · C-Telephony · G18-18: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · C-Telephony · G18-20: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-01 · G2-32: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-07 · G2-56: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-10 · G2-01: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-10 · G2-74: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-102 · G13-15: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-102 · G16-21: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-105 · G1-26: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-105 · G3-17: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-105 · G19-19: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-108 · G1-12: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-108 · G2-58: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-108 · G19-01: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-109 · G2-78: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-110 · G13-09: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-117 · G1-39: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-117 · G18-29: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-118 · G4-38: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-118 · G4-44: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-119 · G3-02: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-119 · G5-25: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-121 · G4-42: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-121 · G4-51: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-121 · G11-14: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-123 · G1-41: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-123 · G4-43: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-123 · G4-50: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-124 · G21-10: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-126 · N-126-01: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-126 · N-050: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-126 · N-051: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-126 · N-054: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-126 · N-057: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-126 · N-060: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-126 · N-052: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-128 · N-049: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-128 · N-050: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-128 · N-051: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-128 · N-054: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-128 · N-057: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-128 · N-060: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-130 · N-062: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-136 · G3-45: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-136 · G7-20: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-137 · G3-11: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-137 · G8-13: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-137 · G13-24: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-137 · G18-17: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-139 · G13-22: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-139 · G1-62: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-142 · G4-18: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-148 · G5-46: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-150 · N-050: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-150 · N-051: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-150 · N-054: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-150 · N-057: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-150 · N-060: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-154 · G3-29: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-154 · G12-19: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-155 · G13-05: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-163 · N-062: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-165 · N-165-01: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-168 · N-062: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-170 · G7-38: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-175 · N-075: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-175 · N-077: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-182 · G12-10: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-183 · G12-05: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-186 · G3-55: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-186 · G11-02: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-188 · G10-02: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-188 · G18-10: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-189 · G16-19: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-198 · G1-34: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-199 · G1-40: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-199 · G1-60: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-202 · G12-04: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-204 · N-013: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-210 · G6-38: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-210 · G15-21: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-211 · N-033: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-211 · G1-70: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-211 · G1-71: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-211 · G1-74: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-212 · G4-54: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-218 · N-218-01: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-66 · G18-23: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · C-Billing · G1-01: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · C-Billing · G1-10: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · C-Billing · G1-18: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · C-Billing · G1-20: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · C-Billing · G19-17: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · C-Billing · G1-78: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · C-Agent · G5-01: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · C-Agent · G5-33: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · C-Agent · G5-41: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · C-Agent · G5-48: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · C-Agent · G10-13: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · C-Agent · G10-37: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-112 · G7-12: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-143 · N-084: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-143 · N-086: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-145 · N-050: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-145 · N-051: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-145 · N-054: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-145 · N-057: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-145 · N-060: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-197 · G18-04: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-158 · G5-02: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-158 · G11-27: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-158 · G12-06: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-158 · G12-23: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-158 · G12-34: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-114 · G16-20: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-215 · N-215-01: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-221 · G14-11: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-221 · G14-30: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-221 · G14-33: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+ · X-221 · G14-35: the ⑤ names no refusal — and this capability CAN refuse
+ fix: name the way it goes WRONG and what the system refuses. R240: this one sends outward, moves money, answers with a fact, or is irreversible — so "what does it refuse" has a real answer.
+
+143 violation(s).
+
+
+ TRIAGED as REPLACE (counted, not blocking): app/Services · app/Livewire · app/Jobs
+ These are legacy paths the owner has ruled are being replaced.
+ This total spans TWO systems:
+ boundary · citation the LEGACY tree (being replaced)
+ contract · capability · anchor the NEW 122-module design
+ journey the new design's seams, unbuilt
+ Triage a legacy file as KEEP or REPLACE before fixing it.

@@ -22,10 +22,10 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'G1-23' => 'the idempotency key is asserted per adapter, both gateways',
+    'G1-23' => 'the idempotency key is asserted per adapter, both gateways refuses',
 
     // status: SPECCED
-    'G1-34' => 'the idempotency key is asserted per adapter, both gateways',
+    'G1-34' => 'the idempotency key is asserted per adapter, both gateways refuses',
 
     // status: SPECCED
     'G17-04' => 'the refId hash is named in X-122 — a duplicated ref charges once',

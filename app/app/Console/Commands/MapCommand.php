@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
-use App\Doctor\Manifest;
 use App\Doctor\ManifestReader;
 use Illuminate\Console\Command;
 
@@ -61,7 +60,7 @@ final class MapCommand extends Command
         return $this->modules($all);
     }
 
-    /** @param list<Manifest> $all */
+    /** @param list<\App\Doctor\Manifest> $all */
     private function modules(array $all): int
     {
         $byIntent = [];
@@ -108,7 +107,7 @@ final class MapCommand extends Command
         return self::SUCCESS;
     }
 
-    /** @param list<Manifest> $all */
+    /** @param list<\App\Doctor\Manifest> $all */
     private function events(array $all): int
     {
         $emit = [];
@@ -162,7 +161,7 @@ final class MapCommand extends Command
         return self::SUCCESS;
     }
 
-    /** @param list<Manifest> $all */
+    /** @param list<\App\Doctor\Manifest> $all */
     private function tables(array $all): int
     {
         $owner = [];

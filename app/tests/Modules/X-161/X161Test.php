@@ -99,10 +99,6 @@ class X161Test extends TestCase
     /**
      * [G2-69], [G6-01], [G6-10], [G6-25], [G9-12], [G11-33]
      */
-    public function test_demo_capabilities(): void
-    {
-        $this->assertTrue(true);
-    }
 
     /**
      * [G4-56]

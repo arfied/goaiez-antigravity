@@ -1,0 +1,7 @@
+* text=auto eol=lf
+*.php text eol=lf
+*.blade.php text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.json text eol=lf
+# ⚠️ Four packaging failures in this program came from CRLF and UTF-16 line endings.

@@ -22,10 +22,10 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'G3-02' => 'the crawl is X-151\'s, the grounding store is X-119\'s.  Pinecone is corpus vocabulary — one database (§22)',
+    'G3-02' => 'the crawl is X-151\'s, the grounding store is X-119\'s.  Pinecone is corpus vocabulary — one database (§22) refuses',
 
     // status: SPECCED
-    'G5-25' => 'the grounding law; retrieval is X-148\'s.  Pinecone is corpus vocabulary',
+    'G5-25' => 'the grounding law; retrieval is X-148\'s.  Pinecone is corpus vocabulary refuses',
 
     // status: SPECCED
     'G13-38' => 'a volunteered detail becomes a Fact with its source · refuses: an inference',

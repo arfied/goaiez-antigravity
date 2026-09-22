@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X10\Actions;
 
-use App\Modules\X121\Models\Person;
+use App\Modules\X121\Actions\PersonUpsertAction;
 
 final class WidgetFallbackAction
 {
@@ -34,18 +34,20 @@ final class WidgetFallbackAction
                 $firstName = $nameParts[0] ?? '';
                 $lastName = $nameParts[1] ?? '';
 
-                $person = Person::create([
-                    'business_id' => $businessId,
-                    'first_name' => $firstName,
-                    'last_name' => $lastName,
-                    'phone' => $fallbackFormData['phone'] ?? null,
-                    'email' => $fallbackFormData['email'] ?? null,
-                ]);
+                $upsert = app(PersonUpsertAction::class)->upsertByPhone(
+                    $businessId,
+                    $fallbackFormData['phone'] ?? null,
+                    [
+                        'first_name' => $firstName,
+                        'last_name' => $lastName,
+                        'email' => $fallbackFormData['email'] ?? null,
+                    ]
+                );
 
                 return [
                     'status' => 'fallback_form_submitted',
-                    'person_created' => true,
-                    'person_id' => $person->id,
+                    'person_created' => $upsert['created'],
+                    'person_id' => $upsert['id'],
                 ];
             }
 

@@ -1,5 +1,4 @@
 <div>
-    <x-surface.sample-state module="X-219" screen="assignment_matrix" />
     <div class="assignment-matrix-container p-4">
         <h3 class="text-lg font-bold">Model Assignment Matrix</h3>
         @if($assignments->isEmpty())

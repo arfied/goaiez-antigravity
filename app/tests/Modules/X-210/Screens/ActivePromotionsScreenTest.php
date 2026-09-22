@@ -33,14 +33,14 @@ class ActivePromotionsScreenTest extends TestCase
             code: 'SPRING20',
             discountValue: 20,
             discountType: 'percentage',
-            maxRedemptions: 50,
+            maxRedemptions: 50, measurementWindowDays: 14,
         );
         app(PromotionCreateAction::class)->createPromotion(
             businessId: (int) $biz->id,
             code: 'FALL15',
             discountValue: 1500,
             discountType: 'fixed_cents',
-            maxRedemptions: 10,
+            maxRedemptions: 10, measurementWindowDays: 14,
         );
         Tenancy::forget();
 

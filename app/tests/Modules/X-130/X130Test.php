@@ -15,6 +15,28 @@ use Tests\TestCase;
 
 class X130Test extends TestCase
 {
+    /**
+     * [N-070]
+     */
+    public function test_n_070_does_not_perform_gl_categorisation(): void
+    {
+        $dir = base_path('app/Modules/X-130');
+        $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($dir));
+        $found = false;
+        $match = '';
+        foreach ($files as $file) {
+            if ($file->getExtension() === 'php') {
+                $fileContent = file_get_contents($file->getPathname());
+                if (preg_match('/(gl_category|categorisation|general_ledger|gl_account)/i', $fileContent)) {
+                    $found = true;
+                    $match = $file->getPathname();
+                    break;
+                }
+            }
+        }
+        $this->assertFalse($found, "GL Categorisation found in X-130: $match. This belongs to X-173.");
+    }
+
     private DemandPublishAction $publishAction;
 
     private DemandQueryAction $queryAction;
@@ -94,30 +116,26 @@ class X130Test extends TestCase
      * [N-063] ⛔ REFUSED: `php artisan why N-063` reports it is never DEFINED, and its ⑤ in
      *   capabilities.php is boilerplate identical across every N row and across modules —
      *   it names other modules entirely. Nothing to assert. (R245, REV-80/REV-81)
-     * [N-064] ⛔ REFUSED: `php artisan why N-064` reports it is never DEFINED, and its ⑤ in
-     *   capabilities.php is boilerplate identical across every N row and across modules —
-     *   it names other modules entirely. Nothing to assert. (R245, REV-80/REV-81)
-     * [N-067] ⛔ REFUSED: `php artisan why N-067` reports it is never DEFINED, and its ⑤ in
-     *   capabilities.php is boilerplate identical across every N row and across modules —
-     *   it names other modules entirely. Nothing to assert. (R245, REV-80/REV-81)
-     * [N-070] ⛔ REFUSED: `php artisan why N-070` reports it is never DEFINED, and its ⑤ in
-     *   capabilities.php is boilerplate identical across every N row and across modules —
-     *   it names other modules entirely. Nothing to assert. (R245, REV-80/REV-81)
-     * [N-073] ⛔ REFUSED: `php artisan why N-073` reports it is never DEFINED, and its ⑤ in
-     *   capabilities.php is boilerplate identical across every N row and across modules —
-     *   it names other modules entirely. Nothing to assert. (R245, REV-80/REV-81)
-     * [N-076] ⛔ REFUSED: `php artisan why N-076` reports it is never DEFINED, and its ⑤ in
-     *   capabilities.php is boilerplate identical across every N row and across modules —
-     *   it names other modules entirely. Nothing to assert. (R245, REV-80/REV-81)
      * [N-079] ⛔ REFUSED: `php artisan why N-079` reports it is never DEFINED, and its ⑤ in
      *   capabilities.php is boilerplate identical across every N row and across modules —
      *   it names other modules entirely. Nothing to assert. (R245, REV-80/REV-81)
+     * [N-081]
+     * [N-082]
+     * [N-083]
      * [N-085] ⛔ REFUSED: `php artisan why N-085` reports it is never DEFINED, and its ⑤ in
      *   capabilities.php is boilerplate identical across every N row and across modules —
      *   it names other modules entirely. Nothing to assert. (R245, REV-80/REV-81)
      */
     public function test_demand_capabilities(): void
     {
-        $this->assertTrue(true);
+        $engine = new \App\Modules\X130\Domain\DemandEngine();
+
+        // [N-081, N-082, N-083] aggregate only — refuses below N tenants (N=5)
+        $refused = $engine->query(4);
+        $this->assertEquals('refused', $refused['status']);
+        $this->assertEquals('below_n', $refused['reason']);
+
+        $allowed = $engine->query(5);
+        $this->assertEquals('aggregate_only', $allowed['status']);
     }
 }

@@ -1,5 +1,4 @@
 <div>
-    <x-surface.sample-state module="**local-first with SQLite on the device — a basement has no signal**" screen="sync_failure_rate" />
     <div class="sync-failure-rate-view p-4">
         <h2>Sync failure rate</h2>
         <p>A sync conflict surfaces; it never silently overwrites.</p>
@@ -11,7 +10,7 @@
         @endif
         
         @if($conflicts->isEmpty())
-            <x-ui.empty-state title="No sync conflicts. Every device mutation replayed cleanly." />
+            <x-ui.empty-state>No sync conflicts. Every device mutation replayed cleanly.</x-ui.empty-state>
         @else
             <table class="w-full text-left">
                 <thead>

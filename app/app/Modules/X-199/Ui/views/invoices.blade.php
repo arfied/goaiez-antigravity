@@ -11,13 +11,51 @@
             </div>
 
             @if($error)
-                <x-ui.error-panel heading="We couldn't record that payment">{{ $error }}</x-ui.error-panel>
+                <x-ui.error-panel heading="We couldn't process that">{{ $error }}</x-ui.error-panel>
             @endif
+
+            @if($success)
+                <div class="mb-6 flex flex-col gap-2 bg-card p-4 ring-1 ring-rule sm:rounded-[--radius-card] mt-4">
+                    <p class="text-sm font-medium text-ink">Success</p>
+                    <p class="text-sm text-ink-2">{{ $success }}</p>
+                </div>
+            @endif
+            
+            <div class="mb-6 flex flex-col gap-2 bg-paper p-4 ring-1 ring-rule sm:rounded-[--radius-card] mt-4">
+                <form wire:submit.prevent="draftInvoice" class="flex flex-col gap-4">
+                    <div class="flex flex-col gap-1">
+                        <label class="text-sm font-medium text-ink">Customer</label>
+                        <select wire:model="customerId" class="border ring-1 ring-rule rounded p-2 text-ink flex-1 bg-card">
+                            <option value="">Select a customer</option>
+                            @foreach($people as $person)
+                                <option value="{{ $person['id'] }}">{{ $person['first_name'] }} {{ $person['last_name'] }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <label class="text-sm font-medium text-ink">Description</label>
+                        <input type="text" wire:model="lineDescription" class="border ring-1 ring-rule rounded p-2 text-ink flex-1 bg-card">
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="flex flex-col gap-1 w-1/4">
+                            <label class="text-sm font-medium text-ink">Quantity</label>
+                            <input type="number" wire:model="lineQuantity" min="1" class="border ring-1 ring-rule rounded p-2 text-ink flex-1 bg-card">
+                        </div>
+                        <div class="flex flex-col gap-1 w-3/4">
+                            <label class="text-sm font-medium text-ink">Unit Price (cents)</label>
+                            <input type="number" wire:model="lineUnitPriceCents" class="border ring-1 ring-rule rounded p-2 text-ink flex-1 bg-card">
+                        </div>
+                    </div>
+                    <div>
+                        <x-ui.button type="submit">Draft Invoice</x-ui.button>
+                    </div>
+                </form>
+            </div>
             
             @if($invoices->isEmpty())
                 <div wire:loading.remove>
                     <x-ui.empty-state heading="No invoices yet." action="Reload list" target="$refresh">
-                        No invoice has been raised for this account. Nothing in this checkout raises one from a completed job, and nothing sends an invoice once it exists, so this list fills when the job hand-off and a delivery are built.
+                        No invoice has been raised for this account. Nothing in this checkout raises one from a completed job, and nothing sends an invoice once it exists, but an owner can raise one here by hand.
                     </x-ui.empty-state>
                 </div>
             @else

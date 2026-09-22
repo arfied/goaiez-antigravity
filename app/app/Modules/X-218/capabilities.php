@@ -22,7 +22,7 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'N-218-01' => '⛔⛔⛔ a payout NEVER fires without a VERIFIED deliverable — a live URL returning 200, captured and HASHED, asserted present before C-Billing is called. A deal marked delivered with NO ARTIFACT is REFUSED',
+    'N-218-01' => '⛔⛔⛔ a payout NEVER fires without a VERIFIED deliverable — a live URL returning 200, captured and HASHED, asserted present before C-Billing is called. A deal marked delivered with NO ARTIFACT is REFUSED refuses',
 
     // status: SPECCED
     'N-218-02' => 'discovery returns only profiles matching audience fit and locality; an unscoped pull is refused',

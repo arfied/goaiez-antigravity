@@ -21,6 +21,30 @@ use Tests\TestCase;
 
 class X210Test extends TestCase
 {
+    /**
+     * [N-032]
+     */
+    public function test_n_032_creating_promotion_with_no_measurement_window_is_refused(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Promotion Tenant N-032', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('A promotion with no measurement window cannot be created.');
+
+        $this->createAction->createPromotion(
+            businessId: $biz->id,
+            code: 'NOWINDOW',
+            discountValue: 10,
+            discountType: 'percentage',
+            maxRedemptions: 5,
+            velocityThreshold: 10,
+            expiresAt: null,
+            measurementWindowDays: null,
+            scopes: []
+        );
+    }
+
     private PromotionCreateAction $createAction;
 
     private PromotionValidateAction $validateAction;
@@ -51,7 +75,7 @@ class X210Test extends TestCase
             code: 'SPRING15',
             discountValue: 15,
             discountType: 'percentage',
-            maxRedemptions: 2,
+            maxRedemptions: 2, measurementWindowDays: 14,
             velocityThreshold: 2,
             expiresAt: now()->addDays(7),
             scopes: [['scope_type' => 'service_category', 'scope_value' => 'hvac']]
@@ -117,7 +141,7 @@ class X210Test extends TestCase
             code: 'FALL10',
             discountValue: 10,
             discountType: 'percentage',
-            maxRedemptions: 1,
+            maxRedemptions: 1, measurementWindowDays: 14,
             velocityThreshold: 1,
             expiresAt: now()->addDays(7),
             scopes: []
@@ -143,7 +167,7 @@ class X210Test extends TestCase
             code: 'NOCAP',
             discountValue: 10,
             discountType: 'percentage',
-            maxRedemptions: null
+            maxRedemptions: null, measurementWindowDays: 14
         );
     }
 
@@ -178,7 +202,7 @@ class X210Test extends TestCase
             code: 'NOCANCELWALL',
             discountValue: 10,
             discountType: 'percentage',
-            maxRedemptions: 5
+            maxRedemptions: 5, measurementWindowDays: 14
         );
         $this->assertNotNull($promo);
         $this->assertEquals('NOCANCELWALL', $promo->code);
@@ -239,7 +263,7 @@ class X210Test extends TestCase
         $engine = new X210Engine;
 
         try {
-            $engine->changeRate($limit, 9, false); // Not notified
+            $engine->changeRate($limit->business_id, 9, false); // Not notified
             $this->fail('Rate change was not refused.');
         } catch (\DomainException $e) {
             $this->assertStringContainsString('NOTIFIED', $e->getMessage());
@@ -249,7 +273,7 @@ class X210Test extends TestCase
         $this->assertEquals(7, $limit->rate_cents_per_min);
 
         // Pass case
-        $engine->changeRate($limit, 9, true); // Notified
+        $engine->changeRate($limit->business_id, 9, true); // Notified
         $limit->refresh();
         $this->assertEquals(9, $limit->rate_cents_per_min);
     }
@@ -268,7 +292,7 @@ class X210Test extends TestCase
             code: 'NOCAP',
             discountValue: 10,
             discountType: 'percentage',
-            maxRedemptions: 1,
+            maxRedemptions: 1, measurementWindowDays: 14,
             velocityThreshold: 2,
             expiresAt: now()->addDays(7),
             scopes: []

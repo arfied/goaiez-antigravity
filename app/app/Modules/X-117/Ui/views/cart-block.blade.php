@@ -1,17 +1,17 @@
 <div>
-<h1>Cart</h1>
+<h2>Cart</h2>
 <p class="text-base text-ink-2">Prices come from this catalogue and are set here; nothing is charged on this screen, and stock comes off when the order is placed at checkout, not when it is paid.</p>
 @if($error) <x-ui.error-panel heading="We couldn't do that">{{ $error }}</x-ui.error-panel> @endif
 @if($waiting) <x-ui.attention-card state="attention" heading="Waiting on checkout">{{ $waiting }}</x-ui.attention-card> @endif
 @if($success) <p>{{ $success }}</p> @endif
 <div wire:loading><x-ui.skeleton label="Reading the cart…" /></div>
-<h2>What's on offer</h2>
+<h3>What's on offer</h3>
 @if($sellables->isEmpty())
 <x-ui.empty-state heading="Nothing on offer yet.">No product or service has been put on this catalogue. Bringing prices across from the pricebook is not built here, so the list fills only once a catalogue row exists.</x-ui.empty-state>
 @else
 <ul class="space-y-2">
 @foreach($sellables as $s)
-<li class="border rounded p-4 shadow bg-white">
+<li class="border rounded p-4 shadow bg-card">
 <span class="font-semibold">{{ $s->name }}</span>
 <span class="tabular-nums">{{ number_format($s->unit_price_cents / 100, 2) }}</span>
 <span class="text-sm text-ink-2">{{ $s->fulfilment_type }}</span>
@@ -23,7 +23,7 @@
 @endforeach
 </ul>
 @endif
-<h2>In the cart</h2>
+<h3>In the cart</h3>
 @if($expired)
 <x-ui.attention-card state="attention" heading="This cart expired">The 15 minutes ran out; add again to start a new one. Nothing was charged and no stock moved.</x-ui.attention-card>
 @elseif(empty($lines))
@@ -31,7 +31,7 @@
 @else
 <ul class="space-y-2">
 @foreach($lines as $line)
-<li class="border rounded p-4 shadow bg-white">
+<li class="border rounded p-4 shadow bg-card">
 <span class="font-semibold">{{ $line['sellable']->name }}</span>
 <span class="tabular-nums">{{ $line['quantity'] }} × {{ number_format($line['sellable']->unit_price_cents / 100, 2) }} = {{ number_format($line['subtotal_cents'] / 100, 2) }}</span>
 <x-ui.button size="default" variant="secondary" wire:click="remove({{ $line['sellable']->id }})" wire:loading.attr="disabled" wire:target="remove({{ $line['sellable']->id }})">Remove</x-ui.button>

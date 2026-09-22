@@ -1,5 +1,4 @@
 <div>
-    <x-surface.sample-state module="persistent chat on every page. **OPERATE** *("text everyone who called last week")*" screen="chat_dock_every" />
     <div class="chat-dock-view p-4">
         <h3 class="text-lg font-bold mb-4">Copilot Assistant Chat Dock</h3>
 

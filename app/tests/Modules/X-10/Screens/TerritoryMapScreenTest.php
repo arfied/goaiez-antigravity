@@ -7,6 +7,7 @@ namespace Tests\Modules\X10\Screens;
 use App\Enums\UserRole;
 use App\Models\User;
 use App\Modules\X10\Actions\TerritoryDefineAction;
+use App\Modules\X10\Models\Territory;
 use App\Modules\X10\Ui\TerritoryMap;
 use App\Support\Tenancy;
 use Livewire\Livewire;
@@ -53,5 +54,45 @@ class TerritoryMapScreenTest extends TestCase
         $this->get(route('x-10.territory-map.admin'))->assertOk();
 
         Livewire::test(TerritoryMap::class)->assertOk();
+    }
+
+    public function test_owner_can_define_a_service_area_from_the_screen(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set((int) $biz->id);
+
+        $this->get(route('x-10.territory-map'))
+            ->assertOk()
+            ->assertSee('No service areas yet');
+
+        Livewire::test(TerritoryMap::class)
+            ->set('name', 'Downtown Denver')
+            ->call('defineArea');
+
+        $this->assertDatabaseHas('territories', [
+            'business_id' => $biz->id,
+            'name' => 'Downtown Denver',
+        ]);
+
+        $this->get(route('x-10.territory-map'))
+            ->assertOk()
+            ->assertSee('Downtown Denver');
+    }
+
+    public function test_defining_empty_area_name_is_refused(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(TerritoryMap::class)
+            ->set('name', '   ')
+            ->call('defineArea')
+            ->assertSee('Name cannot be empty.');
+
+        $this->assertSame(0, Territory::where('business_id', $biz->id)->count());
     }
 }

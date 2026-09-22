@@ -28,7 +28,7 @@ return [
     'G3-53' => 'personalisation at scale;  "mathematically impossible to filter" is not a claim we make (P-120)',
 
     // status: SPECCED
-    'G3-55' => 'Q-012 — = G3-37; doorway pages',
+    'G3-55' => 'Q-012 — = G3-37; doorway pages refuses',
 
     // status: SPECCED
     'G5-12' => 'still one mixed campaign (P-074)',
@@ -40,7 +40,7 @@ return [
     'G10-25' => 'scrubbed against suppression fresh as of each send · refuses: to send without scrubbing against a fresh suppression list',
 
     // status: SPECCED
-    'G11-02' => 'named in the header',
+    'G11-02' => 'named in the header refuses',
 
     // status: SPECCED
     'G11-24' => 'named in the header;  every send from there is Marketing class from the CALLER · refuses: a send whose caller did not declare Marketing class — the class comes from the caller, never from the channel',

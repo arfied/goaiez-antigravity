@@ -127,6 +127,11 @@ Schedule::command('billing:reconcile-purchases')
     ->withoutOverlapping(120)
     ->runInBackground();
 
+Schedule::command('disputes:check-deadlines')
+    ->hourly()
+    ->withoutOverlapping(120)
+    ->runInBackground();
+
 Schedule::command('content:release-holds')
     ->hourly()
     ->withoutOverlapping(120)

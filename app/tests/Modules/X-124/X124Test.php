@@ -287,4 +287,29 @@ class X124Test extends TestCase
             'utterance' => 'Fly me to Mars',
         ]);
     }
+
+    public function test_chat_dock_ask_without_business_id_refuses_cleanly(): void
+    {
+        Livewire::test(ChatDockEvery::class)
+            ->set('utterance', 'show invoices')
+            ->call('ask')
+            ->assertSee('show invoices')
+            ->assertSeeHtml('data-status="unsupported"');
+
+        $this->assertDatabaseCount('assistant_sessions', 0);
+    }
+
+    public function test_chat_dock_resolves_tenant_from_environment(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Chat Dock Biz Resolved', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(ChatDockEvery::class)
+            ->set('utterance', 'show invoices')
+            ->call('ask')
+            ->assertSee('show invoices')
+            ->assertSeeHtml('data-status="answered"');
+
+        $this->assertDatabaseHas('assistant_sessions', ['business_id' => $biz->id]);
+    }
 }

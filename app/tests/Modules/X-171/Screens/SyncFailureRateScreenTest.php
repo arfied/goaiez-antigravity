@@ -18,7 +18,9 @@ class SyncFailureRateScreenTest extends TestCase
         $this->actingAs($user);
         $biz = $this->provisionTenant(['owner_user_id' => $user->id]);
 
-        $this->get(route('x-171.sync-failure-rate.admin'))->assertOk();
+        $this->get(route('x-171.sync-failure-rate.admin'))
+            ->assertOk()
+            ->assertSeeText('No sync conflicts. Every device mutation replayed cleanly.');
 
         Livewire::test(SyncFailureRate::class)->assertOk();
     }

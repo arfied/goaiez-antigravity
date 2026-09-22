@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X135\Ui;
 
-use App\Modules\CAi\Models\AiCall;
+use App\Modules\CAi\Domain\AiEngine;
 use App\Modules\X135\Actions\IcebreakerGenerateAction;
 use App\Modules\X135\Models\ResearchRun;
 use App\Support\Tenancy;
@@ -134,14 +134,11 @@ class ResearchDossierPer extends Component
      */
     public function meter(): array
     {
-        $rows = AiCall::query()
-            ->where('business_id', $this->businessId)
-            ->where('task', 'research')
-            ->where('created_at', '>=', now()->startOfMonth());
+        $meter = app(AiEngine::class)->getResearchMeter($this->businessId);
 
         return [
-            'count' => (int) $rows->count(),
-            'dollars' => number_format(((int) $rows->sum('cost_hundredths_cents')) / 10000, 2),
+            'count' => $meter['count'],
+            'dollars' => number_format($meter['cost_hundredths_cents'] / 10000, 2),
         ];
     }
 

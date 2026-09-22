@@ -83,16 +83,11 @@ class X66Test extends TestCase
         $this->assertEquals('ringing', $session->status);
     }
 
+
+
     /**
      * [G2-48] ElevenLabs is corpus vocabulary — the stack is X-197 (§18F)
      * ⛔ REFUSED: X-197 is on ruling 3's fourteen DEFERRED modules that no lane builds.
-     */
-    public function test_g2_48_elevenlabs_stack(): void
-    {
-        $this->assertTrue(true);
-    }
-
-    /**
      * [G18-21] real-time objection detection; retrieval is X-148's
      * BUILD PROPOSAL: Wire IngestVoiceEventJob (or the real voice path) to call X-66 VoiceSessionEngine to record turns. Owner: Track 1
      */

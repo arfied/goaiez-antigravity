@@ -6,20 +6,33 @@ namespace Tests\Modules\X204\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X204\Models\ComplianceRegister;
 use App\Modules\X204\Ui\RegisterSlotStates;
+use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
 
 class RegisterSlotStatesScreenTest extends TestCase
 {
-    public function test_screen_renders_for_admin(): void
+    public function test_screen_renders_for_owner(): void
     {
-        $user = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);
-        $this->actingAs($user);
+        $user = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::set($biz->id);
+        $this->actingAs($user);
 
-        $this->get(route('x-204.register-slot-states.admin'))->assertOk();
+        ComplianceRegister::create([
+            'business_id' => $biz->id,
+            'register_name' => 'Demo Register 2026',
+            'slot_states' => [],
+        ]);
 
-        Livewire::test(RegisterSlotStates::class)->assertOk();
+        $this->get(route('x-204.register-slot-states'))
+            ->assertOk()
+            ->assertSee('Demo Register 2026');
+
+        Livewire::test(RegisterSlotStates::class)
+            ->assertOk()
+            ->assertSee('Demo Register 2026');
     }
 }

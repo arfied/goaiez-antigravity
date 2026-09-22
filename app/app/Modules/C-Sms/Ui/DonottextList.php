@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\CSms\Ui;
 
-use App\Modules\X204\Models\Suppression;
+use App\Modules\X204\Domain\ConsentService;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
@@ -21,10 +21,10 @@ class DonottextList extends Component
         $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
     }
 
-    public function render()
+    public function render(ConsentService $consentService)
     {
         $suppressions = ($this->businessId > 0)
-            ? Suppression::where('business_id', $this->businessId)->orderByDesc('id')->get()
+            ? $consentService->getSuppressions($this->businessId)
             : collect();
 
         return view('c-sms::donottext-list', [

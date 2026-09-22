@@ -44,7 +44,8 @@ class MapTest extends TestCase
             ->test(Map::class)
             ->assertOk()
             ->assertSee('No routes yet.')
-            ->assertSee("No routes yet. A route appears when a technician's stops are ordered.", false);
+            // The needle is escaped deliberately to match the HTML entity in the blade
+            ->assertSee("No routes yet. A route appears when a technician's stops are ordered.");
     }
 
     public function test_seeded_routes_and_assignments_render_correctly(): void

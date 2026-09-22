@@ -20,8 +20,13 @@ final class PromotionCreateAction
         ?int $maxRedemptions = null,
         int $velocityThreshold = 10,
         ?DateTimeInterface $expiresAt = null,
+        ?int $measurementWindowDays = null,
         array $scopes = []
     ): Promotion {
+        if ($measurementWindowDays === null || $measurementWindowDays <= 0) {
+            throw new \InvalidArgumentException('A promotion with no measurement window cannot be created.');
+        }
+
         if ($maxRedemptions === null || $maxRedemptions <= 0) {
             throw new \InvalidArgumentException('A promotion with no cap cannot be saved.');
         }

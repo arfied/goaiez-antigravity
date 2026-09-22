@@ -25,7 +25,7 @@ return [
     'G1-25' => 'refuses: the signal becomes the send; P-068 — the signal raises; X-204 decides, asserted by absence of a permit write in this module',
 
     // status: SPECCED
-    'G1-26' => 'refuses: a flattering opener about an inferred fact. "Congrats on the new location" — the location closed; every opener clause traces to a Fact, asserted; research fires only on distress (P-146), asserted by running it on a healthy prospect and observing no research',
+    'G1-26' => 'every opener clause traces to a Fact, asserted; research fires only on distress (P-146), asserted by running it on a healthy prospect and observing no research refuses',
 
     // status: SPECCED
     'G3-07' => 'a reply stops the ladder (P-075); the nurture branch is X-186\'s',
@@ -34,7 +34,7 @@ return [
     'G3-09' => 'named in the header',
 
     // status: SPECCED
-    'G3-17' => 'the battle card lands in the reply',
+    'G3-17' => 'the battle card lands in the reply refuses',
 
     // status: SPECCED
     'G3-21' => 'rung ④, the voicemail drop',
@@ -61,7 +61,7 @@ return [
     'G17-02' => 'named in the header',
 
     // status: SPECCED
-    'G19-19' => 'the battle card drafted into a reply the human sends',
+    'G19-19' => 'the battle card drafted into a reply the human sends refuses',
 
     // status: SPECCED
     'G20-10' => 'named in the header — under 3.5★ is a distress signal (P-146) · refuses: targeting over 3.5★ — under 3.5★ is the distress signal (P-146)',

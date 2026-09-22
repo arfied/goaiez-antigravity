@@ -58,4 +58,53 @@ class LinksEarnedScreenTest extends TestCase
 
         Livewire::test(LinksEarned::class)->assertOk();
     }
+
+    public function test_control_writes_and_clears_empty_states(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::setUser($owner->id);
+
+        $table = (new LinkPlacement)->getTable();
+
+        Livewire::test(LinksEarned::class)
+            ->set('placedUrl', 'https://example.com/placed')
+            ->set('anchorText', 'example')
+            ->call('recordPlacement')
+            ->assertSet('placedUrl', '')
+            ->assertSee('Recorded placement on');
+
+        $this->assertDatabaseHas($table, [
+            'business_id' => $biz->id,
+            'placed_url' => 'https://example.com/placed',
+        ]);
+
+        $this->get(route('x-191.links-earned'))
+            ->assertSee('https://example.com/placed')
+            ->assertDontSee('No earned links yet.');
+
+        $this->get(route('x-191.pitchacquire-ratio'))
+            ->assertDontSee('No outreach yet.');
+    }
+
+    public function test_control_refuses_empty_input(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::setUser($owner->id);
+
+        $table = (new LinkPlacement)->getTable();
+
+        Livewire::test(LinksEarned::class)
+            ->set('placedUrl', '')
+            ->set('anchorText', 'example')
+            ->call('recordPlacement')
+            ->assertSet('error', 'Placed URL is required.');
+        
+        $this->assertDatabaseMissing($table, [
+            'anchor_text' => 'example',
+        ]);
+    }
 }

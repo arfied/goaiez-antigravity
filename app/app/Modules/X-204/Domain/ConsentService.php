@@ -12,6 +12,7 @@ use App\Modules\X204\Events\SuppressionAdded;
 use App\Modules\X204\Models\ImportAttestation;
 use App\Modules\X204\Models\SendPermit;
 use App\Modules\X204\Models\Suppression;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 
@@ -166,5 +167,13 @@ final class ConsentService
             ->where('permit_status', 'granted')
             ->where('created_at', '>=', now()->subHours($hours))
             ->count();
+    }
+
+    public function getSuppressions(int $businessId, string $channel = 'sms'): Collection
+    {
+        return Suppression::where('business_id', $businessId)
+            ->where('channel', $channel)
+            ->orderByDesc('id')
+            ->get();
     }
 }

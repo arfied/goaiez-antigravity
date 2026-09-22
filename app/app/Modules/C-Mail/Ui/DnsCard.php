@@ -13,6 +13,25 @@ use Livewire\Component;
 #[Layout('components.account.layout', ['heading' => 'Email domain'])]
 class DnsCard extends Component
 {
+    public string $domainName = '';
+    public ?string $success = null;
+    public ?string $error = null;
+
+    public function submit(\App\Modules\CMail\Actions\EmailDnsCheckAction $action): void
+    {
+        $this->reset(['success', 'error']);
+
+        if (empty($this->domainName)) {
+            $this->error = 'Domain name is required.';
+            return;
+        }
+
+        $action->handle(Tenancy::idOrFail(), $this->domainName);
+
+        $this->success = 'Recorded domain as verified; nothing has queried DNS for it yet.';
+        $this->reset(['domainName']);
+    }
+
     public function render(DefaultsRegistry $defaults)
     {
         $domain = MailDomain::where('business_id', Tenancy::idOrFail())->first();

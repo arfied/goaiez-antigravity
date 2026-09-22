@@ -107,10 +107,6 @@ class X173Test extends TestCase
      *   capabilities.php is boilerplate identical across every N row and across X-141, X-147
      *   and X-173 — it names X-168, X-163 and X-130, which are other modules. Nothing to assert.
      */
-    public function test_accounting_capabilities(): void
-    {
-        $this->assertTrue(true);
-    }
 
     public function test_accounting_connect_stores_no_credential_without_token(): void
     {

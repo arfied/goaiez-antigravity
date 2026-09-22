@@ -118,15 +118,10 @@ class CAiTest extends TestCase
         $this->assertNotNull($res['call_id']);
     }
 
-    /**
-     * [G2-27] the plan's mechanism is grounding + lexicon + the teaching box (P-097); a per-tenant fine-tune is an owner question
-     */
-    public function test_g2_27_grounding_lexicon_mechanism(): void
-    {
-        $this->assertTrue(true);
-    }
+
 
     /**
+     * [G2-27] the plan's mechanism is grounding + lexicon + the teaching box (P-097); a per-tenant fine-tune is an owner question
      * [G5-22] split: the key is C-Ai's; the MRR-discount half is KILLED (T591 — no discounts)
      */
     public function test_g5_22_api_key_vault_and_no_discounts(): void

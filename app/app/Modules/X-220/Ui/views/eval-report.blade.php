@@ -1,5 +1,4 @@
 <div>
-    <x-surface.sample-state module="X-220" screen="eval_report" />
     <div class="eval-report-container p-4">
         <h3 class="text-lg font-bold">Golden Set Eval Report</h3>
         @if($sets->isEmpty())

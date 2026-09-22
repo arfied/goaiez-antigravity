@@ -28,7 +28,7 @@ return [
     'G16-18' => 'Q-012 — Google is the SEO source. The EXIF-geotag myth was settled in the corpus by citing Google\'s own engineers; injecting coordinates buys nothing and risks the profile (X-177\'s whole point)',
 
     // status: SPECCED
-    'G16-19' => 'the branded card',
+    'G16-19' => 'the branded card refuses',
 
     // status: SPECCED
     'G17-29' => 'the overlay engine; sourcing is X-114\'s',

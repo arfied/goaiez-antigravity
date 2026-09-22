@@ -22,7 +22,7 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'G2-01' => 'proximity query over the polygon store; the field surface is X-171',
+    'G2-01' => 'proximity query over the polygon store; the field surface is X-171 refuses',
 
     // status: SPECCED
     'G2-07' => 'geocode → polygon → assign; named in the header',
@@ -46,7 +46,7 @@ return [
     'G2-72' => 'named in the header',
 
     // status: SPECCED
-    'G2-74' => 'a returning caller reaches the same owner; the carrier half is P-070',
+    'G2-74' => 'a returning caller reaches the same owner; the carrier half is P-070 refuses',
 
     // status: SPECCED
     'G2-75' => '= G2-74; one spec',

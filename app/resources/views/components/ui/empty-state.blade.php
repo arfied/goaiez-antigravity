@@ -41,10 +41,11 @@
         DIRECTION. This slot used to emit a bare <button> whenever `action` was
         set, so a label with no `href` and no `target` drew a control that did
         nothing when pressed — the dead-retry defect, on the screen where
-        somebody has already found nothing. The build-failing lint in
-        `Architecture/ScreenStatesTest` names the file instead; this is the
-        second line of defence, so a call site that slips through renders an
-        honest sentence rather than a lie somebody has to press to discover.
+        somebody has already found nothing. No lint in this repository refuses an
+        `action` with no `href` and no `target`; the sibling project has one
+        (`Architecture/ScreenStatesTest`, imported comments still cite it); this
+        `@if` is the only defence in this tree, so do not remove it. See
+        `tests/Feature/Architecture/README.md`.
     --}}
     @if ($action && ($href || $target))
         <div class="mt-1">

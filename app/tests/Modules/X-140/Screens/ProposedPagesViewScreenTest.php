@@ -54,4 +54,133 @@ class ProposedPagesViewScreenTest extends TestCase
 
         Livewire::test(ProposedPagesView::class)->assertOk();
     }
+
+    public function test_can_submit_topic_and_see_on_screen()
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Topic Tenant']);
+        Tenancy::set($biz->id);
+        $this->actingAs($biz->owner);
+
+        Livewire::test(ProposedPagesView::class)
+            ->set('topicTitle', 'How to fix a leaky faucet')
+            ->set('clusterKey', 'plumbing_issues')
+            ->call('submit')
+            ->assertSet('error', null)
+            ->assertSet('success', "Recorded proposed page 'How to fix a leaky faucet'. The row is created unpublished; nothing downstream is wired to it yet.");
+
+        $this->assertDatabaseHas((new ContentTopic)->getTable(), [
+            'business_id' => $biz->id,
+            'topic_title' => 'How to fix a leaky faucet',
+            'is_published' => false,
+        ]);
+
+        $this->withSession(['tenant_id' => $biz->id])
+            ->get('/app/x-140/proposed-pages')
+            ->assertSee('How to fix a leaky faucet')
+            ->assertDontSee('No proposed pages yet.');
+    }
+
+    public function test_refuses_invalid_input()
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Topic Tenant']);
+        Tenancy::set($biz->id);
+        $this->actingAs($biz->owner);
+
+        Livewire::test(ProposedPagesView::class)
+            ->set('topicTitle', '')
+            ->call('submit')
+            ->assertSet('error', 'Topic title is required.');
+
+        $this->assertDatabaseMissing((new ContentTopic)->getTable(), [
+            'business_id' => $biz->id,
+        ]);
+    }
+
+    public function test_can_draft_from_conversation()
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Topic Tenant']);
+        Tenancy::set($biz->id);
+        $this->actingAs($biz->owner);
+
+        Livewire::test(ProposedPagesView::class)
+            ->set('topicTitle', 'How to replace a tire')
+            ->call('submit');
+
+        $topic = ContentTopic::where('business_id', $biz->id)->where('topic_title', 'How to replace a tire')->first();
+
+        Livewire::test(ProposedPagesView::class)
+            ->set('draftTopicId', $topic->id)
+            ->set('rawContent', 'Customer asked how to replace a flat tire on the highway.')
+            ->call('draftFromConversation')
+            ->assertSet('error', null)
+            ->assertSet('success', "Drafted content for 'How to replace a tire'. This feeds the topic lists; nothing downstream is wired to it yet.");
+
+        $this->assertDatabaseHas((new TopicSource)->getTable(), [
+            'business_id' => $biz->id,
+            'topic_id' => $topic->id,
+            'raw_content' => 'Customer asked how to replace a flat tire on the highway.',
+        ]);
+
+        $this->assertDatabaseHas((new ContentTopic)->getTable(), [
+            'id' => $topic->id,
+            'is_published' => true,
+        ]);
+
+        $this->withSession(['tenant_id' => $biz->id])
+            ->get('/app/x-140/proposed-pages')
+            ->assertSee('How to replace a tire')
+            ->assertSee('1 source')
+            ->assertSee('published')
+            ->assertDontSee('No proposed pages yet.');
+    }
+
+    public function test_draft_with_placeholder_price_is_recorded_but_not_published()
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Topic Tenant']);
+        Tenancy::set($biz->id);
+        $this->actingAs($biz->owner);
+
+        Livewire::test(ProposedPagesView::class)
+            ->set('topicTitle', 'Pricing questions')
+            ->call('submit');
+
+        $topic = ContentTopic::where('business_id', $biz->id)->where('topic_title', 'Pricing questions')->first();
+
+        Livewire::test(ProposedPagesView::class)
+            ->set('draftTopicId', $topic->id)
+            ->set('rawContent', 'The cost will be SAMPLE PRICE for this service.')
+            ->call('draftFromConversation')
+            ->assertSet('error', null)
+            ->assertSet('success', "Recorded draft for 'Pricing questions', but it is not published: Contains placeholder sample price")
+            ->assertSet('draftTopicId', 0)
+            ->assertSet('rawContent', '');
+
+        $this->assertDatabaseHas((new TopicSource)->getTable(), [
+            'business_id' => $biz->id,
+            'topic_id' => $topic->id,
+            'raw_content' => 'The cost will be SAMPLE PRICE for this service.',
+        ]);
+
+        $this->assertDatabaseHas((new ContentTopic)->getTable(), [
+            'id' => $topic->id,
+            'is_published' => false,
+        ]);
+    }
+
+    public function test_draft_refuses_empty_input()
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Topic Tenant']);
+        Tenancy::set($biz->id);
+        $this->actingAs($biz->owner);
+
+        Livewire::test(ProposedPagesView::class)
+            ->set('draftTopicId', 0)
+            ->set('rawContent', '')
+            ->call('draftFromConversation')
+            ->assertSet('error', 'Topic and raw content are required.');
+
+        $this->assertDatabaseMissing((new TopicSource)->getTable(), [
+            'business_id' => $biz->id,
+        ]);
+    }
 }

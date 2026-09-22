@@ -8,6 +8,9 @@ use App\Enums\UserRole;
 use App\Models\User;
 use App\Modules\X183\Actions\ContentGateAction;
 use App\Modules\X183\Actions\ContentWriteAction;
+use App\Modules\X183\Models\ContentDraft;
+use App\Modules\X183\Models\GateResult;
+use App\Modules\X183\Ui\DraftReview;
 use App\Modules\X183\Ui\GateRejectionReasons;
 use App\Support\Tenancy;
 use Livewire\Livewire;
@@ -70,5 +73,85 @@ class GateRejectionReasonsScreenTest extends TestCase
         $this->get(route('x-183.gate-rejection-reasons.admin'))->assertOk();
 
         Livewire::test(GateRejectionReasons::class)->assertOk();
+    }
+
+    public function test_can_gate_rejection(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(DraftReview::class)
+            ->set('title', 'Sample Price Draft')
+            ->set('bodyText', 'Price is $XX')
+            ->call('submit')
+            ->assertSet('error', null);
+
+        $draft = ContentDraft::where('business_id', $biz->id)->first();
+
+        Livewire::test(GateRejectionReasons::class)
+            ->set('draftId', $draft->id)
+            ->call('gateDraft')
+            ->assertSet('success', 'Evaluated draft '.$draft->id.'. It was rejected: Draft contains placeholder sample price The draft row\'s own flags were updated; nothing was published anywhere external.');
+
+        $this->assertDatabaseHas((new GateResult)->getTable(), [
+            'business_id' => $biz->id,
+            'draft_id' => $draft->id,
+            'passed' => false,
+            'rejection_reason' => 'Draft contains placeholder sample price',
+        ]);
+
+        $this->get(route('x-183.gate-rejection-reasons'))
+            ->assertSee('Sample Price Draft · Draft contains placeholder sample price');
+    }
+
+    public function test_can_gate_clean_draft(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(DraftReview::class)
+            ->set('title', 'Clean Draft')
+            ->set('bodyText', 'Clean body')
+            ->call('submit')
+            ->assertSet('error', null);
+
+        $draft = ContentDraft::where('business_id', $biz->id)->first();
+
+        Livewire::test(GateRejectionReasons::class)
+            ->set('draftId', $draft->id)
+            ->call('gateDraft')
+            ->assertSet('success', 'Evaluated draft '.$draft->id.'. It passed. The draft row\'s own flags were updated; nothing was published anywhere external.');
+
+        $this->assertDatabaseHas((new GateResult)->getTable(), [
+            'business_id' => $biz->id,
+            'draft_id' => $draft->id,
+            'passed' => true,
+            'rejection_reason' => null,
+        ]);
+
+        $this->get(route('x-183.gate-rejection-reasons'))
+            ->assertDontSee('Clean Draft');
+    }
+
+    public function test_refuses_empty_draft(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(GateRejectionReasons::class)
+            ->call('gateDraft')
+            ->assertSet('error', 'Please select a draft.');
+
+        $this->assertDatabaseMissing((new GateResult)->getTable(), [
+            'business_id' => $biz->id,
+        ]);
     }
 }

@@ -56,6 +56,7 @@ class SurfacesGenerateCommand extends Command
             }
         }
 
+        $seenNavRoutes = [];
         $allNavGroups = [
             'tenant' => [],
             'operator' => [],
@@ -241,6 +242,10 @@ class SurfacesGenerateCommand extends Command
                         if ($surf === 'tenant' && $navGroupSurface === 'other') {
                             continue;
                         }
+                        if (isset($seenNavRoutes[$navRoute])) {
+                            continue;
+                        }
+                        $seenNavRoutes[$navRoute] = true;
                         $allNavGroups[$surf][$navGroup][] = [
                             'label' => $humanName,
                             'route' => $navRoute,

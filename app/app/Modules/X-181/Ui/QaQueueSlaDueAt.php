@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X181\Ui;
 
+use App\Modules\X181\Actions\QaTicketCreateAction;
 use App\Modules\X181\Actions\QaTicketResolveAction;
 use App\Modules\X181\Domain\TicketAlreadyResolvedException;
 use App\Modules\X181\Models\QaTicket;
@@ -27,6 +28,14 @@ class QaQueueSlaDueAt extends Component
     public ?int $resolvingTicketId = null;
 
     public string $resolutionNotes = '';
+
+    public string $ticketSubject = '';
+
+    public string $ticketDescription = '';
+
+    public ?string $error = null;
+
+    public ?string $success = null;
 
     public function mount(): void
     {
@@ -82,6 +91,29 @@ class QaQueueSlaDueAt extends Component
         $this->actionNotice = '✅ Ticket resolved successfully.';
         $this->resolvingTicketId = null;
         $this->resolutionNotes = '';
+    }
+
+    public function createTicket(QaTicketCreateAction $action): void
+    {
+        $this->error = null;
+        $this->success = null;
+
+        if (trim($this->ticketSubject) === '') {
+            $this->error = 'Subject cannot be empty.';
+
+            return;
+        }
+
+        $ticket = $action->handle(
+            businessId: Tenancy::idOrFail(),
+            personId: null,
+            subject: $this->ticketSubject,
+            description: $this->ticketDescription
+        );
+
+        $this->success = 'Created ticket "'.$ticket->subject.'". Due: '.$ticket->sla_due_at->toIso8601String().'.';
+        $this->ticketSubject = '';
+        $this->ticketDescription = '';
     }
 
     public function render()

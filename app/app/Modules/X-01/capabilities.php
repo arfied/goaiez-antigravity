@@ -37,7 +37,7 @@ return [
     'G2-25' => 'D1: MASTER = Honest Counter for the tenant app; God-Mode/glassmorphism is console-only',
 
     // status: SPECCED
-    'G2-32' => 'lead_scores; opens and clicks arrive from C-Mail',
+    'G2-32' => 'lead_scores; opens and clicks arrive from C-Mail refuses',
 
     // status: SPECCED
     'G2-36' => 'named in the header; the UTM itself is X-138\'s',

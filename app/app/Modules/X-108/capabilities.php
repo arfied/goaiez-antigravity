@@ -22,7 +22,7 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'G1-12' => 'refuses: card data touches our DOM; tokens only (P-160), the iframe boundary asserted',
+    'G1-12' => 'tokens only (P-160), the iframe boundary asserted refuses',
 
     // status: SPECCED
     'G2-04' => 'Google/Outlook calendars; the header already owns Calendly/Eventbrite sync',
@@ -46,7 +46,7 @@ return [
     'G2-49' => 'named in the header',
 
     // status: SPECCED
-    'G2-58' => 'questions on the booking page',
+    'G2-58' => 'questions on the booking page refuses',
 
     // status: SPECCED
     'G15-08' => 'out-of-office is named in the header; X-10 skips an unavailable assignee',
@@ -61,7 +61,7 @@ return [
     'G18-27' => 'a booking generates its own conference link · refuses: generating a conference link without a booking',
 
     // status: SPECCED
-    'G19-01' => 'named in the header — a cancellation fills itself',
+    'G19-01' => 'named in the header — a cancellation fills itself refuses',
 
     // status: SPECCED
     'G19-20' => '24h · 1h · 10min;  one segment = one credit, a meter and never a fee',

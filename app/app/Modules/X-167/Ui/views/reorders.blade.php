@@ -3,6 +3,13 @@
         <h2>Reorders</h2>
         <p>Stock at its reorder point is flagged on Stock by van; propose the restock there and the supplier prices it.</p>
         
+        @if($error)
+            <div class="mb-4 bg-surface text-ink border p-4 rounded">{{ $error }}</div>
+        @endif
+        @if($success)
+            <div class="mb-4 bg-surface text-ink border p-4 rounded">{{ $success }}</div>
+        @endif
+
         @if($orders->isEmpty())
             <x-ui.empty-state>No reorders yet. Stock at its reorder point is flagged on Stock by van; propose a restock there and it appears here.</x-ui.empty-state>
         @else
@@ -44,6 +51,10 @@
                             </td>
                             <td>
                                 <x-ui.button size="default" wire:click="toggle({{ $po->id }})">Show items</x-ui.button>
+                                @if($po->status === 'proposed')
+                                    <x-ui.button size="default" variant="quiet" wire:click="requestApproval({{ $po->id }})">Request approval</x-ui.button>
+                                    <x-ui.button size="default" variant="quiet" wire:click="sendPo({{ $po->id }})">Send</x-ui.button>
+                                @endif
                             </td>
                         </tr>
                         @if(isset($expanded[$po->id]))

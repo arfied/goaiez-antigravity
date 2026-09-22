@@ -9,8 +9,22 @@
             <div class="text-red-500 mb-4">Action failed.</div>
         @endif
 
+        @if($success)
+            <div class="mb-4 p-2 bg-white border rounded text-gray-800">{{ $success }}</div>
+        @endif
+        @if($error)
+            <div class="mb-4 p-2 bg-white border rounded text-gray-800">{{ $error }}</div>
+        @endif
+
+        <form wire:submit="startOutreach" class="mb-6 flex flex-col gap-2 bg-white p-4 rounded mt-4 shadow-sm border text-gray-800">
+            <h4 class="font-bold">Start outreach to a new prospect</h4>
+            <input type="text" wire:model="prospectName" placeholder="Name" class="border rounded p-2 flex-1">
+            <input type="text" wire:model="prospectEmail" placeholder="Email" class="border rounded p-2 flex-1">
+            <button type="submit" class="bg-gray-100 text-gray-800 border rounded p-2 font-bold">Start Outreach</button>
+        </form>
+
         @if($ladders->isEmpty())
-            <x-ui.empty-state title="No ladders found" description="There are no active outreach ladders for this tenant." />
+            <x-ui.empty-state heading="No ladders found">There are no active outreach ladders for this tenant.</x-ui.empty-state>
         @else
             <div class="space-y-4">
                 @foreach($ladders as $ladder)

@@ -125,7 +125,10 @@ class X118Test extends TestCase
      */
     public function test_g4_38_sample_conversion(): void
     {
-        $this->assertTrue(true);
+        $path = base_path('app/Modules/X-118');
+        $output = shell_exec(sprintf('grep -rnE %s %s', escapeshellarg('SAMPLE|179\.99'), escapeshellarg($path)));
+        $lines = array_filter(explode("\n", $output ?? ''), fn ($line) => ! empty($line) && ! str_contains($line, 'capabilities.php') && ! str_contains($line, 'manifest.php'));
+        $this->assertEmpty($lines, 'X-118 must not implement the SAMPLE state or hardcode the 179.99 figure.');
     }
 
     /**
@@ -149,7 +152,10 @@ class X118Test extends TestCase
      */
     public function test_g4_45_connect_hub(): void
     {
-        $this->assertTrue(true);
+        $path = base_path('app/Modules/X-118');
+        $output = shell_exec(sprintf('grep -rn %s %s', escapeshellarg('\.connect'), escapeshellarg($path)));
+        $lines = array_filter(explode("\n", $output ?? ''), fn ($line) => ! empty($line) && ! str_contains($line, 'capabilities.php') && ! str_contains($line, 'manifest.php'));
+        $this->assertEmpty($lines, 'X-118 must not implement .connect action or hub logic.');
     }
 
     /**
