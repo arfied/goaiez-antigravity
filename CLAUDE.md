@@ -1912,3 +1912,31 @@ X-156 stopped being "what input UI" once the action turned out to need a **route
 being "how does the owner enter lines" once `DraftInvoiceFromJobAction`'s AI fallback was read.
 ⛔ **Do not ask an owner to choose between options you have not costed** — two of these five
 would have been answered wrongly from the descriptions I first wrote down.
+
+⛔ **A WAVE CAN WEAKEN AN ASSERTION IT NEVER TOUCHED, BY CHANGING THE PAGE UNDER IT (N270,
+2026-09-21, wave 654).** X-199's `InvoicesScreenTest.php:69` has asserted `assertSee('John Doe')`
+since long before that wave, proving `Invoices.php:61-62` puts `$invoice->customer_name` in the
+invoice **table row**. Wave 654 added a customer `<select>` that renders **every person in the
+tenant** as an `<option>`, so `<option>John Doe</option>` now satisfies line 69 by itself. The
+assertion still passes and proves nothing it used to.
+⛔ **Nothing caught it and nothing could.** The gate was `FAILED 0`; §2 was `none`; the deleted-test,
+deleted-assertion, removed-guard, static-call and forbidden-path checks all passed — because every
+one of them asks what a **diff removed**, and this diff removed nothing. The brief had correctly
+told the coder not to touch that file.
+**RULED: when a wave adds a `<select>`, datalist, autocomplete, or any control that renders a LIST
+of existing values, grep that screen's EXISTING test file for every value the new control can now
+render, and read each hit.** It goes in the brief as the coder's own check and in the review. The
+question is N262's unchanged — *could this string appear if the thing being proved did not
+happen?* — but **the thing that changed is the page, not the test**, which is why every previous
+statement of the rule missed it: N256 and N262 are both about *a brief writing both the page text
+and the assertion about it*, and this is a wave invalidating **somebody else's** assertion.
+⭐ **The sibling line is the happy accident worth naming (N111).** `:70`'s
+`assertDontSee('Jane Doe')` names a person in **another tenant**, so a picker that leaked across
+tenants would have turned it red. It did not — a real isolation proof obtained for free, and it
+belongs in the block explicitly rather than inside a green wave's undifferentiated credit.
+⚠️ Related and smaller: the same wave left
+`test_invoices_screen_says_nothing_raises_or_sends_an_invoice_when_the_list_is_empty` **over-claiming
+in its name** — it asserts only the still-true clause, so it passes, while the screen it names can
+now raise an invoice. N243's shape (*a test whose name no longer describes what it proves*), arrived
+at by a page change rather than a fixture side effect. **When a wave makes a screen do something new,
+grep that screen's test file for method NAMES asserting it cannot.**
