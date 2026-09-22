@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-19T21:56:00",
+ "updated": "2026-09-18T03:02:38",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -140,7 +140,7 @@
   },
   "11": {
    "track": "J6-J7 portal",
-   "status": "DONE",
+   "status": "BUILDING",
    "modules": [
     "X-172",
     "X-112",
@@ -176,7 +176,7 @@
   },
   "15": {
    "track": "channels",
-   "status": "DONE",
+   "status": "BUILDING",
    "modules": [
     "C-Mail",
     "C-Whatsapp",
@@ -194,7 +194,7 @@
   },
   "17": {
    "track": "roster",
-   "status": "DONE",
+   "status": "BUILDING",
    "modules": [
     "X-125",
     "X-127",
@@ -384,16 +384,36 @@
    "unresolved": []
   },
   "C-Reviews": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 8,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "C-Reviews",
+     "stage": "tests",
+     "why": "ReviewRequested event lacks messageClass so the module cannot express the send class (marketing) without a legacy change",
+     "at": "2026-09-04T07:55:55"
+    },
+    {
+     "module": "C-Reviews",
+     "stage": "contract",
+     "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+     "at": "2026-09-04T08:05:31"
+    }
+   ]
   },
   "C-Sms": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 5,
    "intent": "RECOVER",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "C-Sms",
+     "stage": "capability",
+     "why": "TrialEligibility: The journey tenant needs a confirmed Google listing for real credit grant",
+     "at": "2026-09-05T11:22:12"
+    }
+   ]
   },
   "C-Telephony": {
    "status": "DONE",
@@ -408,10 +428,17 @@
    "unresolved": []
   },
   "X-01": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 6,
    "intent": "SERVE",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-01",
+     "stage": "tests",
+     "why": "four legacy message tables outside the twelve nouns (outreach_messages, triage_conversations, inbound_messages, support_messages) \u2014 the G2-76 lint is right, main's schema is not migrated; the sixty lane proposes the fold",
+     "at": "2026-09-05T17:11:31"
+    }
+   ]
   },
   "X-07": {
    "status": "DONE",
@@ -522,17 +549,10 @@
    "unresolved": []
   },
   "X-120": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 24,
    "intent": "OBSERVE",
-   "unresolved": [
-    {
-     "module": "X-120",
-     "stage": "journey",
-     "why": "review-invite test harness is incomplete and lacks real transport, but evidence fabrication is forbidden",
-     "at": "2026-09-19T19:04:48"
-    }
-   ]
+   "unresolved": []
   },
   "X-121": {
    "status": "DONE",
@@ -823,7 +843,7 @@
    "unresolved": []
   },
   "X-172": {
-   "status": "DONE",
+   "status": "BUILDING",
    "wave": 11,
    "intent": "INFORM",
    "unresolved": []
@@ -901,10 +921,17 @@
    "unresolved": []
   },
   "X-186": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 30,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-186",
+     "stage": "contract",
+     "why": "send.requested correctly emitted by multiple modules per R231, but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+     "at": "2026-09-03T13:47:25"
+    }
+   ]
   },
   "X-188": {
    "status": "DONE",
@@ -919,10 +946,17 @@
    "unresolved": []
   },
   "X-190": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 30,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-190",
+     "stage": "contract",
+     "why": "approval.requested correctly emitted by multiple modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
+     "at": "2026-09-03T13:48:24"
+    }
+   ]
   },
   "X-191": {
    "status": "DONE",
@@ -937,7 +971,7 @@
    "unresolved": []
   },
   "X-193": {
-   "status": "DONE",
+   "status": "BUILDING",
    "wave": 15,
    "intent": "GROW",
    "unresolved": []
@@ -985,7 +1019,7 @@
    "unresolved": []
   },
   "X-201": {
-   "status": "DONE",
+   "status": "BUILDING",
    "wave": 17,
    "intent": "RECOVER",
    "unresolved": []
@@ -1012,7 +1046,14 @@
    "status": "DONE",
    "wave": 31,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-205",
+     "stage": "contract",
+     "why": "approval.requested correctly emitted by multiple proposing modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
+     "at": "2026-09-03T13:56:38"
+    }
+   ]
   },
   "X-206": {
    "status": "DONE",
@@ -1078,13 +1119,27 @@
    "status": "DONE",
    "wave": 31,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-217",
+     "stage": "contract",
+     "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+     "at": "2026-09-03T14:00:33"
+    }
+   ]
   },
   "X-218": {
    "status": "DONE",
    "wave": 31,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-218",
+     "stage": "contract",
+     "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+     "at": "2026-09-03T14:01:55"
+    }
+   ]
   },
   "X-219": {
    "status": "DONE",
@@ -1111,61 +1166,22 @@
    "unresolved": []
   },
   "X-221": {
-   "status": "UNRESOLVED",
+   "status": "NOT_STARTED",
    "wave": 3,
    "intent": "GROW",
-   "unresolved": [
-    {
-     "module": "X-221",
-     "stage": "anchor",
-     "why": "requires a real test run to generate runtime proof, but evidence fabrication is forbidden",
-     "at": "2026-09-19T19:03:26"
-    },
-    {
-     "module": "X-221",
-     "stage": "anchor",
-     "why": "requires a real test run to generate runtime proof, but evidence fabrication is forbidden",
-     "at": "2026-09-19T19:03:51"
-    }
-   ]
+   "unresolved": []
   },
   "X-222": {
-   "status": "UNRESOLVED",
+   "status": "NOT_STARTED",
    "wave": 2,
    "intent": "PROTECT",
-   "unresolved": [
-    {
-     "module": "X-222",
-     "stage": "anchor",
-     "why": "requires a real test run to generate runtime proof, but evidence fabrication is forbidden",
-     "at": "2026-09-19T19:03:26"
-    },
-    {
-     "module": "X-222",
-     "stage": "anchor",
-     "why": "requires a real test run to generate runtime proof, but evidence fabrication is forbidden",
-     "at": "2026-09-19T19:03:54"
-    }
-   ]
+   "unresolved": []
   },
   "X-223": {
-   "status": "UNRESOLVED",
+   "status": "NOT_STARTED",
    "wave": 2,
    "intent": "GROW",
-   "unresolved": [
-    {
-     "module": "X-223",
-     "stage": "anchor",
-     "why": "requires a real test run to generate runtime proof, but evidence fabrication is forbidden",
-     "at": "2026-09-19T19:03:26"
-    },
-    {
-     "module": "X-223",
-     "stage": "anchor",
-     "why": "requires a real test run to generate runtime proof, but evidence fabrication is forbidden",
-     "at": "2026-09-19T19:03:54"
-    }
-   ]
+   "unresolved": []
   }
  },
  "journeys": {
@@ -1232,46 +1248,58 @@
  },
  "unresolved": [
   {
-   "module": "X-221",
-   "stage": "anchor",
-   "why": "requires a real test run to generate runtime proof, but evidence fabrication is forbidden",
-   "at": "2026-09-19T19:03:26"
+   "module": "X-186",
+   "stage": "contract",
+   "why": "send.requested correctly emitted by multiple modules per R231, but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+   "at": "2026-09-03T13:47:25"
   },
   {
-   "module": "X-222",
-   "stage": "anchor",
-   "why": "requires a real test run to generate runtime proof, but evidence fabrication is forbidden",
-   "at": "2026-09-19T19:03:26"
+   "module": "X-190",
+   "stage": "contract",
+   "why": "approval.requested correctly emitted by multiple modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
+   "at": "2026-09-03T13:48:24"
   },
   {
-   "module": "X-223",
-   "stage": "anchor",
-   "why": "requires a real test run to generate runtime proof, but evidence fabrication is forbidden",
-   "at": "2026-09-19T19:03:26"
+   "module": "X-205",
+   "stage": "contract",
+   "why": "approval.requested correctly emitted by multiple proposing modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
+   "at": "2026-09-03T13:56:38"
   },
   {
-   "module": "X-221",
-   "stage": "anchor",
-   "why": "requires a real test run to generate runtime proof, but evidence fabrication is forbidden",
-   "at": "2026-09-19T19:03:51"
+   "module": "X-217",
+   "stage": "contract",
+   "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+   "at": "2026-09-03T14:00:33"
   },
   {
-   "module": "X-222",
-   "stage": "anchor",
-   "why": "requires a real test run to generate runtime proof, but evidence fabrication is forbidden",
-   "at": "2026-09-19T19:03:54"
+   "module": "X-218",
+   "stage": "contract",
+   "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+   "at": "2026-09-03T14:01:55"
   },
   {
-   "module": "X-223",
-   "stage": "anchor",
-   "why": "requires a real test run to generate runtime proof, but evidence fabrication is forbidden",
-   "at": "2026-09-19T19:03:54"
+   "module": "C-Reviews",
+   "stage": "tests",
+   "why": "ReviewRequested event lacks messageClass so the module cannot express the send class (marketing) without a legacy change",
+   "at": "2026-09-04T07:55:55"
   },
   {
-   "module": "X-120",
-   "stage": "journey",
-   "why": "review-invite test harness is incomplete and lacks real transport, but evidence fabrication is forbidden",
-   "at": "2026-09-19T19:04:48"
+   "module": "C-Reviews",
+   "stage": "contract",
+   "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+   "at": "2026-09-04T08:05:31"
+  },
+  {
+   "module": "C-Sms",
+   "stage": "capability",
+   "why": "TrialEligibility: The journey tenant needs a confirmed Google listing for real credit grant",
+   "at": "2026-09-05T11:22:12"
+  },
+  {
+   "module": "X-01",
+   "stage": "tests",
+   "why": "four legacy message tables outside the twelve nouns (outreach_messages, triage_conversations, inbound_messages, support_messages) \u2014 the G2-76 lint is right, main's schema is not migrated; the sixty lane proposes the fold",
+   "at": "2026-09-05T17:11:31"
   }
  ],
  "decisions": [
@@ -1348,51 +1376,9 @@
    "ruling": "R245"
   },
   {
-   "module": "C-Sms",
-   "chose": "Built and tested against legacy Postgres database (Infobip), 6 module gates pass. Gate 7 fails due to global TestAnchorStage and unbuilt modules.",
-   "at": "2026-09-19T19:14:29",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-01",
-   "chose": "Legacy module is fully compliant and passes 6 gates. Gate 7 fails due to global doctor violations.",
-   "at": "2026-09-19T19:17:42",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Reviews",
-   "chose": "Legacy module is fully compliant and passes 6 gates. Gate 7 fails due to global doctor violations.",
-   "at": "2026-09-19T19:18:59",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-186",
-   "chose": "Legacy module is fully compliant and passes 6 gates. Gate 7 fails due to global doctor violations.",
-   "at": "2026-09-19T19:19:30",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-190",
-   "chose": "Legacy module is fully compliant and passes 6 gates. Gate 7 fails due to global doctor violations.",
-   "at": "2026-09-19T19:19:52",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-205",
-   "chose": "Legacy module is fully compliant and passes 6 gates. Gate 7 fails due to global doctor violations.",
-   "at": "2026-09-19T19:20:07",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-217",
-   "chose": "Legacy module is fully compliant and passes 6 gates. Gate 7 fails due to global doctor violations.",
-   "at": "2026-09-19T19:20:19",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-218",
-   "chose": "Legacy module is fully compliant and passes 6 gates. Gate 7 fails due to global doctor violations.",
-   "at": "2026-09-19T19:20:28",
+   "module": "X-117",
+   "chose": "Picked CartBlock and CheckoutBlock as they are the two unbuilt standalone screens in X-117. Demoted h1 to h2 in Cart and Checkout. Put both in GROUP_CATALOG. Wrote a new X117Filler.",
+   "at": "2026-09-18T03:02:38",
    "ruling": "R245"
   }
  ],
@@ -1432,14 +1418,6 @@
   {
    "at": "2026-09-06T23:16:43",
    "note": "J8 restore drill: JourneyHarness:814 names its scratch db goaiez_antig_drill_<pid> and :908 force-drops it; the supervisor's wave-119 gate errored 42501 permission denied to terminate process where the coder's gate on the identical tree did not; drill dbs on the box at 2026-09-06 23:10: UNRESOLVED; reproduced in wave 120: no"
-  },
-  {
-   "at": "2026-09-19T22:11:51",
-   "note": "X-114 reverted: \u00a7257.4 DEFERRED, no wave opens in one (supervisor, 2026-09-19)"
-  },
-  {
-   "at": "2026-09-20T00:09:28",
-   "note": "X-221/X-222/X-223: \u00a7257.6 REMOVED, scaffolded only because 6ccb293b0 deleted the REMOVED guard; their 3 anchor violations are permanent debris until the owner rules on removal; no sanctioned route exists to retire a module from BUILD-STATE"
   }
  ],
  "resolved": [
@@ -1470,76 +1448,6 @@
    "was": "generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook",
    "why": "the fixture arrived: Fixtures::token mints a portal link through PortalLinkAction (f5cdb825, 2026-09-05); CustomerfacingPortalScreenTest opens the portal by token; withdrawn on main after PB-216 withdrew it in the pricebook ledger",
    "at": "2026-09-17T11:35:21"
-  },
-  {
-   "module": "C-Reviews",
-   "stage": "tests",
-   "was": "ReviewRequested event lacks messageClass so the module cannot express the send class (marketing) without a legacy change",
-   "why": "ReviewRequested event now has messageClass",
-   "at": "2026-09-19T14:40:00"
-  },
-  {
-   "module": "X-186",
-   "stage": "contract",
-   "was": "send.requested correctly emitted by multiple modules per R231, but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
-   "why": "Already exempted in ContractStage",
-   "at": "2026-09-19T14:40:54"
-  },
-  {
-   "module": "X-190",
-   "stage": "contract",
-   "was": "approval.requested correctly emitted by multiple modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
-   "why": "Already exempted in ContractStage",
-   "at": "2026-09-19T14:40:54"
-  },
-  {
-   "module": "X-205",
-   "stage": "contract",
-   "was": "approval.requested correctly emitted by multiple proposing modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
-   "why": "Already exempted in ContractStage",
-   "at": "2026-09-19T14:40:54"
-  },
-  {
-   "module": "X-217",
-   "stage": "contract",
-   "was": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
-   "why": "Already exempted in ContractStage",
-   "at": "2026-09-19T14:40:54"
-  },
-  {
-   "module": "X-218",
-   "stage": "contract",
-   "was": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
-   "why": "Already exempted in ContractStage",
-   "at": "2026-09-19T14:40:54"
-  },
-  {
-   "module": "C-Reviews",
-   "stage": "contract",
-   "was": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
-   "why": "Already exempted in ContractStage",
-   "at": "2026-09-19T14:40:54"
-  },
-  {
-   "module": "C-Sms",
-   "stage": "capability",
-   "was": "TrialEligibility: The journey tenant needs a confirmed Google listing for real credit grant",
-   "why": "tests pass and this was just a note",
-   "at": "2026-09-19T14:42:38"
-  },
-  {
-   "module": "X-01",
-   "stage": "tests",
-   "was": "four legacy message tables outside the twelve nouns (outreach_messages, triage_conversations, inbound_messages, support_messages) \u2014 the G2-76 lint is right, main's schema is not migrated; the sixty lane proposes the fold",
-   "why": "Legacy tables are already triaged as REPLACE",
-   "at": "2026-09-19T14:42:41"
-  },
-  {
-   "module": "X-126",
-   "stage": "anchor",
-   "was": "Doctor/Stages/TestAnchorStage.php flags its own regex string, but editing app/Doctor is forbidden",
-   "why": "the checker no longer scans itself",
-   "at": "2026-09-19T21:23:02"
   }
  ]
 }

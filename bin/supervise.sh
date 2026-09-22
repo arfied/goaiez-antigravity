@@ -460,17 +460,6 @@ if [ $want_tests -eq 1 ]; then
 fi
 if [ $want_tests -eq 1 ]; then
   # timeout: a hung suite is a red line, never a 26-minute wait (ruling 2026-09-05 07:0x)
-  #
-  # N205b (2026-09-18): `stdbuf -oL` was added here and then REMOVED, because the
-  # hypothesis behind it was measured and is false. The reasoning was that PHP
-  # block-buffers a redirected stdout, so a hung suite would have flushed nothing and
-  # N205's preservation could never fire — money's live pest file was indeed 0 bytes
-  # fifteen minutes into a hang (found via /proc/<pid>/fd/1). The control: two php
-  # processes printing a line, sleeping 6s, printing another, both redirected to a
-  # file — WITH and WITHOUT stdbuf. Both showed 7 bytes while still running. PHP CLI
-  # does not block-buffer stdout, so stdbuf changes nothing here and the empty file
-  # has a different cause: pest had genuinely printed nothing yet.
-  # Do not re-add it without re-running that control.
   pest_started=$(date -Is)
   ptmp=$(mktemp "${TMPDIR:-/tmp}/pest-XXXXXX"); timeout 1800 ./vendor/bin/pest > "$ptmp" 2>&1 & pjob=$!; pest_pid=$(pgrep -P "$pjob" 2>/dev/null | head -1); pest_pid=${pest_pid:-$pjob}; wait "$pjob"; rc=$?; out=$(cat "$ptmp"); rm -f "$ptmp"
   log_gate pest "$pest_started" "$rc" "${pest_pid:--}"
@@ -485,19 +474,7 @@ if [ $want_tests -eq 1 ]; then
     # measurement and is a silence. Same family as N137: an instrument that can
     # only under-report is safe as a trigger and unsafe as a finding.
     pto="$ROOT/.agents/supervisor/.pest-timeout-$(date +%Y%m%d-%H%M%S).txt"
-    if [ -z "${out//[$' \t\n']/}" ]; then
-      # N205c (2026-09-18, first firing): do NOT announce "raw output preserved" over an
-      # empty file. `laravel/pao` (composer files-autoload, vendor/laravel/pao/src/Autoload.php)
-      # takes over tool output for an agent: it unsets COLLISION_PRINTER, sets
-      # PEST_PARALLEL_NO_OUTPUT=1, and emits its one {"tool":"pest",…} line from a
-      # register_shutdown_function. SIGTERM from `timeout` does not run shutdown functions,
-      # so a hung suite emits NOTHING and there is nothing to preserve. Measured: a real
-      # captured run is wc -l = 1, and this branch's first firing wrote 1 byte.
-      echo "    ⚠ pest produced NO output to preserve — this is expected under laravel/pao,"
-      echo "      which emits one JSON line from a shutdown function that SIGTERM never runs."
-      echo "      To name the hanging test, re-run with PAO_DISABLE=true and a short timeout;"
-      echo "      do NOT change this script's invocation — §7 parses pao's JSON as tail -1."
-    elif printf '%s\n' "$out" > "$pto" 2>/dev/null; then
+    if printf '%s\n' "$out" > "$pto" 2>/dev/null; then
       echo "    raw output preserved: $pto ($(wc -l < "$pto" 2>/dev/null) lines)"
       echo "    last 15 lines — the suite stopped after the last test named here:"
       tail -15 "$pto" 2>/dev/null | sed 's/^/      /'
@@ -532,24 +509,13 @@ print("  tests %s · passed %s · FAILED %s · errors %s · result %s" % (d.get(
 FCAP=40
 fails=d.get("failures") or []
 errs=d.get("error_details") or []
-# 2026-09-20: .split("::")[-1] threw away the CLASS, and the class is the identifying
-# half. A gate reporting two failures BOTH named test_screen_renders_for_tenant — a
-# method that exists in 30+ files — cannot be acted on: this seat could not tell which
-# screens were red without running pest, which it is denied. Same family as N137, one
-# level down: the LIST was complete and each ROW was not. Print class::method, and
-# widen the message, which was cutting off before the assertion it was reporting.
-def _tid(t):
-    t=t or "?"
-    if "::" in t:
-        c,m=t.rsplit("::",1); return "%s::%s" % (c.split("\\")[-1], m)
-    return t
 for f in fails[:FCAP]:
-    print("   ✗ FAILURE %s" % _tid(f.get("test")))
+    print("   ✗ FAILURE %s" % f.get("test","?").split("::")[-1])
     fm=" ".join((f.get("message") or "").split())
-    if fm: print("      %s" % fm[:400])
+    if fm: print("      %s" % fm[:200])
 if len(fails)>FCAP: print("   … %d more FAILURE(s) not listed" % (len(fails)-FCAP))
 for e in errs[:FCAP]:
-    print("   ✗ %s\n      %s" % (_tid(e.get("test")), " ".join((e.get("message") or "").split())[:400]))
+    print("   ✗ %s\n      %s" % (e.get("test","?").split("::")[-1], (e.get("message") or "")[:160]))
 if len(errs)>FCAP: print("   … %d more ERROR(s) not listed" % (len(errs)-FCAP))'
   else
     printf '%s\n' "$out" | tail -12 | sed 's/^/  /'
