@@ -35,7 +35,7 @@
                         <div class="flex justify-between items-center w-full">
                             <div>
                                 <div class="font-medium">{{ $score->prospect_identifier }}</div>
-                                <div class="text-sm text-gray-500">
+                                <div class="text-sm text-ink">
                                     {{ str_replace('_', ' ', $score->signal_type) }} &middot; 
                                     Score: {{ $score->signal_value }} &middot; 
                                     {{ $score->days_quiet }} days quiet
