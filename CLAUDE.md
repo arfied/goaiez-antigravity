@@ -2133,3 +2133,42 @@ guard — regardless of controls: **16 screens**, of which **6 are new**: `C-Bil
 `X-196 ExtensionPopup`. ⚠️ The raw run returned **20**; four were my needle matching non-models
 (`InvoiceReader` is a `Domain/` class, `TimesheetApproveAction` an `Actions/` class). **Read the
 hits, never the count.**
+
+⛔⛔ **I BRIEFED AN EDIT TO A SEALED FILE AND PUSHED IT, BECAUSE I CHECKED THE CODER GUARD AND NOT
+`seals.json` (N278, 2026-09-22, wave 663).** Wave 663 changed two **comment** lines in
+`app/app/Console/Commands/ModuleDoneCommand.php` so `TestAnchorStage` would stop flagging a guard
+for quoting the forgery it catches. Gated green, pushed. `doctor` then read **`FAIL integrity …
+HAS BEEN MODIFIED since it was shipped — fails the COMMIT`**, where it had been `ok … clean` on
+three prior runs. **A `WAVE`-level red was traded for a `COMMIT`-level one, on a checker.**
+
+**Two failures, and the second is the transferable one.**
+
+⛔ **(1) The wrong register.** Before briefing I read `coder-bin/git`'s never-list — which names
+`app/app/Doctor/*`, `app/tests/Journeys/*`, `seals.json` — found this path absent, and concluded
+the file was editable. **The coder guard governs what a coder may COMMIT; `app/app/Doctor/seals.json`
+is the register of what is SEALED**, and the two are not the same set. The One Rule names
+`seals.json` and I had read that as *"do not edit seals.json"* rather than *"seals.json says what
+you may not edit."*
+**RULED: before briefing any edit outside `app/app/Modules/**`, `grep <basename> app/app/Doctor/seals.json`.**
+One command, and it is the only authority on sealed files.
+
+⛔ **(2) A stage-scoped proof cannot see a stage rise.** The brief's verification was
+`php artisan doctor 2>&1 | grep -A6 "anchor"`, so neither my check nor the coder's `ANCHOR` field
+could ever have shown `integrity` moving. ⭐ **This is N235 committed by its author on the night it
+was cited twice** — *a clean run of every check you chose is not evidence when the checks were all
+chosen for one failure mode* — and `CLAUDE.md` already states the operative half in one line:
+**the blocker is a count that ROSE**, which cannot fire while you read only the count you expect
+to fall.
+⛔ **And the correct habit existed and was dropped.** Wave 661, two waves earlier, diffed the
+**whole** `doctor` head before and after and concluded "only millisecond timings moved" — that is
+what proved it touched no pin.
+**RULED: a wave's doctor proof is the FULL stage list diffed against the pre-wave reading:**
+`diff <(grep -E "^ (ok|FAIL)" before | sed 's/[0-9]*ms//') <(… after …)`. A stage-scoped grep
+answers *did my thing get better*; only the diff answers *did anything get worse*.
+
+⭐ **The underlying finding survives the revert and is the OWNER's**: `TestAnchorStage` flags
+`ModuleDoneCommand.php` for the literal `Str::ulid(` inside a comment documenting the exact
+forgery that command exists to catch — and the stage already exempts `/app/Doctor/` from its own
+scan for precisely that reason, with this file outside the exemption. Both fixes are owner acts:
+**re-seal after review** (the seal's own fix text offers it) or **exempt the file in the stage**
+(a new exclusion, `BLOCK`-level, and worse — it would blind the stage to a real forgery there).
