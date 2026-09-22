@@ -81,7 +81,7 @@ class Pages extends Component
                 if ($deployment && $deployment->status === 'deployed') {
                     $this->success = $page->slug.' is live at '.url('/sites/'.$this->businessId.'/'.$deployment->deploy_hash);
                 } elseif ($deployment && $deployment->status === 'rolled_back') {
-                    $this->success = 'rolled_back with its '.$deployment->rollback_reason;
+                    $this->success = $page->slug.' was published but the deploy was rolled back: '.$deployment->rollback_reason;
                 } else {
                     $this->success = 'published, not yet deployed';
                 }
