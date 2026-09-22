@@ -1,7 +1,5 @@
 <div>
     <div class="marketplace-view p-4">
-        <h3 class="text-lg font-bold">Extension & Module Marketplace</h3>
-
         @if($success)
             <div class="bg-surface p-4 border rounded mb-4 text-ink">{{ $success }}</div>
         @endif
