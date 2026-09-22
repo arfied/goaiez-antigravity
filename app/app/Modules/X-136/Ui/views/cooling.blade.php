@@ -1,6 +1,5 @@
 <div>
-    <div class="flex justify-between items-center mb-4">
-        <h2 class="text-xl font-semibold">Cooling List ({{ $coolingTotal }})</h2>
+    <div class="flex justify-end mb-4">
         <x-ui.button wire:click="toggleSample" size="sm" variant="secondary">
             {{ $isSample ? 'Hide sample' : 'Show sample' }}
         </x-ui.button>
