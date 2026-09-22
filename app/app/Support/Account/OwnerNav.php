@@ -662,6 +662,8 @@ final class OwnerNav
             OwnerNavItem::make('Deal tracker', 'x-218.deal-tracker', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Discovery board', 'x-218.discovery-board', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Deliverable proof', 'x-218.deliverable-proof', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Offer composer', 'x-217.offer-composer', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Recruit pipeline', 'x-217.recruit-pipeline', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Cooling signals', 'x-136.cooling', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Pipeline board', 'x-105.pipeline-board', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Gateway connections', 'x-198.connect-card', OwnerNavItem::GROUP_CATALOG),
