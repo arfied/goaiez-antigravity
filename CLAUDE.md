@@ -1979,3 +1979,24 @@ restated the same symbol wrong twice in one wave without ever opening the file i
 `grep`s would have settled it at any point in the preceding ninety minutes:
 `grep -rn "^namespace" <the class file>` and `grep -n "public function <the method>" <the class file>`.
 **Before a brief names a symbol, open the file and read its namespace line and its signature.**
+
+⛔ **BEFORE WRITING "MEASURED THIS TICK" ABOUT AN ABSENCE, GREP FOR THE ABSENCE BEING DOCUMENTED
+(N272, 2026-09-22).** Wave 657 shipped a comment into `routes/api.php` saying
+`Architecture/PixelTest` *"does NOT exist… The guard is gone"*, and the REVIEWS block called it
+measured this tick. Both true. Both **already written down**, one directory from where I was
+looking: `tests/Feature/Architecture/README.md:56` is `MISSING PixelTest`, inside a list of **40**
+cited-but-missing architecture tests, measured at `cc65dadc0` the day before, with the derivation
+command printed above it.
+⭐ **And the README carries the context that changes the meaning:** those citations *"came from
+the `e737094c1` import and name a lint in the sibling `goaiez-review-system` project, rather than
+a guard here."* So the route comment is not **stale**, it is **foreign** — it describes a lint in
+a different repository. *"The guard is gone"* implies this repo lost something; it never had it.
+**RULED: one command — `grep -rn "<the missing thing>" tests/ docs/ *.md` — before any absence is
+written up as a finding.** Same family as N116 (*before believing a `0`, ask which tree could have
+held a `1`*), with the tree being **prose** rather than code.
+⛔ The consequence was not just an overstated note: it **manufactured a wave**. I announced
+restoring the tripwire as the next dispatch, which would have been restoring 1 of 40 cited-missing
+lints — chosen because I tripped over it — on a premise the README contradicts. Withdrawn before
+dispatch, and the withdrawal recorded rather than the earlier line quietly edited.
+⭐ The general form, and it is this file's oldest shape pointed at documentation: **a repository's
+own prose is an instrument, and not consulting it is not the same as it being silent.**
