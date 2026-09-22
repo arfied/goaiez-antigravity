@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X126\Ui;
 
-use App\Enums\UserRole;
 use App\Modules\X126\Actions\GetCapabilityDecisionsAction;
-use App\Support\Admin\AdminAccess;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
@@ -20,9 +18,10 @@ class RefusalAnalytics extends Component
 
     public function mount(): void
     {
-        abort_unless(auth()->check() && (auth()->user()->hasRole(UserRole::Owner, UserRole::Manager) || auth()->user()->can(AdminAccess::GATE)), 403);
-        $this->businessId = Tenancy::id();
+        abort_unless(auth()->check() && (auth()->user()->hasRole(\App\Enums\UserRole::Owner, \App\Enums\UserRole::Manager) || auth()->user()->can(\App\Support\Admin\AdminAccess::GATE)), 403);
+        $this->businessId = \App\Support\Tenancy::id();
     }
+
 
     public function render(GetCapabilityDecisionsAction $action)
     {

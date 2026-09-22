@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\X112\Ui;
 
-use App\Enums\UserRole;
 use App\Modules\X112\Actions\AgencyImpersonateAction;
 use App\Modules\X112\Actions\GetImpersonationLogsAction;
-use App\Support\Admin\AdminAccess;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
@@ -21,20 +19,15 @@ class ImpersonationLogView extends Component
 
     public function mount(): void
     {
-        abort_unless(auth()->check() && (auth()->user()->hasRole(UserRole::Owner, UserRole::Manager) || auth()->user()->can(AdminAccess::GATE)), 403);
-        $this->businessId = Tenancy::id();
+        abort_unless(auth()->check() && (auth()->user()->hasRole(\App\Enums\UserRole::Owner, \App\Enums\UserRole::Manager) || auth()->user()->can(\App\Support\Admin\AdminAccess::GATE)), 403);
+        $this->businessId = \App\Support\Tenancy::id();
     }
 
     public int $agencyId = 0;
-
     public int $userId = 0;
-
     public int $targetClientBusinessId = 0;
-
     public string $reason = '';
-
     public ?string $success = null;
-
     public ?string $error = null;
 
     public function startImpersonation(AgencyImpersonateAction $action): void
