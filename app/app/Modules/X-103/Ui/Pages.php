@@ -6,6 +6,8 @@ use App\Enums\UserRole;
 use App\Modules\X103\Actions\PageCreateAction;
 use App\Modules\X103\Actions\SitePublishAction;
 use App\Modules\X103\Models\Page;
+use App\Modules\X157\Actions\PlatformSiteAddressAction;
+use App\Modules\X157\Models\Deployment;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
@@ -67,9 +69,22 @@ class Pages extends Component
         }
 
         try {
+            app(PlatformSiteAddressAction::class)->handle($this->businessId);
+
             $result = $action->handle($this->businessId, $page->id, []);
             if ($result['status'] === 'published') {
-                $this->success = $page->slug.' is published — version '.$result['commit_id'].'.';
+                $deployment = Deployment::where('business_id', $this->businessId)
+                    ->where('page_id', $page->id)
+                    ->latest('id')
+                    ->first();
+
+                if ($deployment && $deployment->status === 'deployed') {
+                    $this->success = $page->slug.' is live at '.url('/sites/'.$this->businessId.'/'.$deployment->deploy_hash);
+                } elseif ($deployment && $deployment->status === 'rolled_back') {
+                    $this->success = 'rolled_back with its '.$deployment->rollback_reason;
+                } else {
+                    $this->success = 'published, not yet deployed';
+                }
             }
         } catch (Throwable $e) {
             $this->error = $e->getMessage();
@@ -80,6 +95,16 @@ class Pages extends Component
     {
         $pages = Page::where('business_id', $this->businessId)->orderByDesc('id')->get();
 
-        return view('x-103::pages', ['pages' => $pages]);
+        $deployments = Deployment::where('business_id', $this->businessId)
+            ->whereIn('page_id', $pages->pluck('id'))
+            ->orderByDesc('id')
+            ->get()
+            ->unique('page_id')
+            ->keyBy('page_id');
+
+        return view('x-103::pages', [
+            'pages' => $pages,
+            'deployments' => $deployments,
+        ]);
     }
 }

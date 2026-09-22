@@ -26,6 +26,9 @@
                             <td class="py-2 text-ink">
                                 @if($page->is_published)
                                     <span class="bg-paper border border-rule px-2 py-1 text-ink">Published</span>
+                                    @if(isset($deployments[$page->id]) && $deployments[$page->id]->status === 'deployed')
+                                        <a href="{{ url('/sites/'.$businessId.'/'.$deployments[$page->id]->deploy_hash) }}" class="ml-2 text-ink underline">Live link</a>
+                                    @endif
                                 @else
                                     <span class="bg-paper border border-rule px-2 py-1 text-ink-2">Draft</span>
                                     <button wire:click="publish({{ $page->id }})" class="ml-2 bg-paper border border-rule px-2 py-1 text-ink">Publish</button>
