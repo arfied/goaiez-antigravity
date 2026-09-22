@@ -4,6 +4,7 @@ namespace App\Modules\X103\Ui;
 
 use App\Enums\UserRole;
 use App\Modules\X103\Actions\PageCreateAction;
+use App\Modules\X103\Actions\SitePublishAction;
 use App\Modules\X103\Models\Page;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
@@ -47,6 +48,29 @@ class Pages extends Component
             $this->success = 'Page added.';
             $this->newSlug = '';
             $this->newTitle = '';
+        } catch (Throwable $e) {
+            $this->error = $e->getMessage();
+        }
+    }
+
+    public function publish(int $pageId, SitePublishAction $action): void
+    {
+        $this->error = null;
+        $this->success = null;
+
+        $page = Page::where('business_id', $this->businessId)->findOrFail($pageId);
+
+        if ($page->is_published) {
+            $this->error = 'That page is already published.';
+
+            return;
+        }
+
+        try {
+            $result = $action->handle($this->businessId, $page->id, []);
+            if ($result['status'] === 'published') {
+                $this->success = $page->slug.' is published — version '.$result['commit_id'].'.';
+            }
         } catch (Throwable $e) {
             $this->error = $e->getMessage();
         }

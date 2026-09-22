@@ -28,6 +28,7 @@
                                     <span class="bg-paper border border-rule px-2 py-1 text-ink">Published</span>
                                 @else
                                     <span class="bg-paper border border-rule px-2 py-1 text-ink-2">Draft</span>
+                                    <button wire:click="publish({{ $page->id }})" class="ml-2 bg-paper border border-rule px-2 py-1 text-ink">Publish</button>
                                 @endif
                             </td>
                         </tr>
