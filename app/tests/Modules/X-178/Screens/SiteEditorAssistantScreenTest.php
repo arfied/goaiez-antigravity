@@ -175,6 +175,7 @@ class SiteEditorAssistantScreenTest extends TestCase
 
         Tenancy::setUser($ownerB->id);
         Tenancy::set((int) $bizB->id);
+        $this->actingAs($ownerB);
         $pageB = app(PageCreateAction::class)->handle((int) $bizB->id, 'test-slug', 'Test Page');
         Livewire::test(SiteEditorAssistant::class)
             ->set('pageId', (string) $pageB->id)
@@ -184,6 +185,7 @@ class SiteEditorAssistantScreenTest extends TestCase
 
         Tenancy::setUser($ownerA->id);
         Tenancy::set((int) $bizA->id);
+        $this->actingAs($ownerA);
 
         $this->expectException(ModelNotFoundException::class);
         Livewire::test(SiteEditorAssistant::class)->call('undoChange', $changeB->id);
