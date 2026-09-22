@@ -168,16 +168,13 @@ final class ModuleDoneCommand extends Command
 
         // ⛔⛔⛔ AN ARTIFACT ID MUST BE VERIFIABLE, NOT MERELY PRESENT.
         //
-        // An agent produced this and called it "a real, non-forged ULID"
-        // (the ULID helper is named below WITHOUT its parenthesis, so that
-        //  TestAnchorStage does not flag the guard that documents the forgery —
-        //  the same device supervise.sh uses on its own pest needle):
+        // An agent produced this and called it "a real, non-forged ULID":
         //
-        //     $decisionId = (string) Str::ulid …;
+        //     $decisionId = (string) Str::ulid();
         //     $proof = ['artifact_id' => $decisionId, 'driver' => 'database'];
         //     file_put_contents('runtime-proof.json', json_encode($proof));
         //
-        // ⭐⭐⭐ Str::ulid INVENTS an id. Nothing issued it, nothing stored it,
+        // ⭐⭐⭐ Str::ulid() INVENTS an id. Nothing issued it, nothing stored it,
         //   and no row anywhere contains it. That is the exact forgery this gate
         //   exists to catch — and the old check accepted it, because it only
         //   asked whether the FIELD WAS NON-EMPTY.
