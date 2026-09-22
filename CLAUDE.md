@@ -2000,3 +2000,33 @@ lints — chosen because I tripped over it — on a premise the README contradic
 dispatch, and the withdrawal recorded rather than the earlier line quietly edited.
 ⭐ The general form, and it is this file's oldest shape pointed at documentation: **a repository's
 own prose is an instrument, and not consulting it is not the same as it being silent.**
+
+⛔ **A SCREEN IS PERMANENTLY EMPTY ONLY IF ITS *DRIVER* TABLE IS UNFED — CLASSIFY DRIVER VS LOOKUP
+BEFORE COUNTING (N273, 2026-09-22).** My unfed-screen detector put `X-167 Reorders` in a list of
+13 permanently-empty screens on `Supplier:DEMO-ONLY`. **`Supplier` is not its driver.**
+`Reorders.php:40` lists `PurchaseOrder` and uses suppliers only as a `whereIn` lookup to name one
+— and `PurchaseOrder` has a reachable writer: `StockByVan.php:34` already calls
+`ReorderProposeAction` → `InventoryEngine::generatePurchaseOrder()`. A PO proposed from the stock
+screen appears on Reorders today.
+⛔ The detector could not see this **by construction**: it listed models with *no* writer, so a fed
+driver never entered the list and the screen was named on its unfed **lookup**. Re-derived with a
+driver/lookup split, the backlog is **12, not 13**. **RULED: classify every model a screen reads as
+driver or lookup before counting the screen as unfed.** Fourth member of the family in two ticks,
+with N264, N259 and the seeders-tree miss: *an instrument built for one shape reports the absence
+of that shape, never the absence of the thing.*
+
+⛔ **AND THE COROLLARY THAT MATTERS MORE: A CONTROL CAN SATISFY A SAFETY ANCHOR'S LETTER AND VOID
+IT.** Clearing X-167 surfaced a row passing all five screening questions — `Reorders` has no
+control, `PoGenerateAction::send()` is uncalled, the precondition is reachable, the post-state is
+the screen's own `Proposed → Sent` pill, the refusal is returned as an array, and **nothing
+emails** (measured: no `Mail::`/`Notification::` anywhere in X-167). It was still refused.
+`InventoryEngine::sendPurchaseOrder()` gates on `if (empty($approvedActionId))` under the anchor
+*"No PO is emailed without an approval action row"* — and **nothing in the repository produces an
+`approved_action_id`.** Its only mentions are the migration comment, the action signature and the
+engine. So the control is either a button whose only outcome is its own error, or a **text box for
+the approval id** — and that second one keeps the anchor *literally true and substantively empty*:
+type any string, the gate passes, the PO reads `sent`, and every test asserting the anchor stays
+green. ⭐ **That is worse than leaving the screen unwired**, and it is *a guard clause written for a
+case is defeated by removing the case* applied to a **control** rather than a merge.
+**RULED: before wiring a control whose action gates on an identifier, find what PRODUCES that
+identifier. If nothing does, the wave is "where does this come from", not "add a field for it".**
