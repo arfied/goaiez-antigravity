@@ -233,7 +233,6 @@ class StockByVanTest extends TestCase
             ->assertSee('372.64');
     }
 
-
     public function test_an_item_with_no_van_lands_under_no_van(): void
     {
         $user = User::factory()->create();
@@ -271,5 +270,116 @@ class StockByVanTest extends TestCase
             ->assertSee('An item needs a name and a SKU.');
 
         $this->assertSame(0, StockItem::where('business_id', $biz->id)->count());
+    }
+
+    public function test_recording_use_lowers_the_count_and_warns_when_it_runs_low(): void
+    {
+        $user = User::factory()->create();
+        $user->role = UserRole::Owner;
+        $user->save();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        Event::fake([InventoryConsumed::class, ReorderTriggered::class, StockLow::class, PoSent::class]);
+
+        $item = StockItem::create([
+            'business_id' => $biz->id,
+            'name' => 'Flux Paste 250g',
+            'sku' => 'FLUX-250',
+            'unit' => 'g',
+            'quantity' => 10.0,
+            'reorder_point' => 3.0,
+        ]);
+
+        Livewire::actingAs($user)->test(StockByVan::class)
+            ->set('adjust.'.$item->id, '8')
+            ->call('recordUse', $item->id)
+            ->assertSee('2.00 g on hand')
+            ->assertSee('<span>Low</span>', false);
+
+        $this->assertSame(2.0, (float) $item->fresh()->quantity);
+        Event::assertDispatched(StockLow::class);
+    }
+
+    public function test_returning_to_the_van_raises_the_count_again(): void
+    {
+        $user = User::factory()->create();
+        $user->role = UserRole::Owner;
+        $user->save();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        Event::fake([InventoryConsumed::class, ReorderTriggered::class, StockLow::class, PoSent::class]);
+
+        $item = StockItem::create([
+            'business_id' => $biz->id,
+            'name' => 'Flux Paste 250g',
+            'sku' => 'FLUX-250',
+            'unit' => 'g',
+            'quantity' => 10.0,
+            'reorder_point' => 3.0,
+        ]);
+
+        Livewire::actingAs($user)->test(StockByVan::class)
+            ->set('adjust.'.$item->id, '8')
+            ->call('recordUse', $item->id)
+            ->set('adjust.'.$item->id, '5')
+            ->call('returnToVan', $item->id)
+            ->assertSee('7.00 g on hand');
+
+        $this->assertSame(7.0, (float) $item->fresh()->quantity);
+    }
+
+    public function test_recording_more_use_than_is_on_hand_stops_at_zero(): void
+    {
+        $user = User::factory()->create();
+        $user->role = UserRole::Owner;
+        $user->save();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        Event::fake([InventoryConsumed::class, ReorderTriggered::class, StockLow::class, PoSent::class]);
+
+        $item = StockItem::create([
+            'business_id' => $biz->id,
+            'name' => 'Flux Paste 250g',
+            'sku' => 'FLUX-250',
+            'unit' => 'g',
+            'quantity' => 10.0,
+            'reorder_point' => 3.0,
+        ]);
+
+        Livewire::actingAs($user)->test(StockByVan::class)
+            ->set('adjust.'.$item->id, '999')
+            ->call('recordUse', $item->id)
+            ->assertSee('0.00 g on hand');
+
+        $this->assertSame(0.0, (float) $item->fresh()->quantity);
+    }
+
+    public function test_recording_use_with_no_amount_is_refused_and_moves_nothing(): void
+    {
+        $user = User::factory()->create();
+        $user->role = UserRole::Owner;
+        $user->save();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        Event::fake([InventoryConsumed::class, ReorderTriggered::class, StockLow::class, PoSent::class]);
+
+        $item = StockItem::create([
+            'business_id' => $biz->id,
+            'name' => 'Flux Paste 250g',
+            'sku' => 'FLUX-250',
+            'unit' => 'g',
+            'quantity' => 10.0,
+            'reorder_point' => 3.0,
+        ]);
+
+        Livewire::actingAs($user)->test(StockByVan::class)
+            ->call('recordUse', $item->id)
+            ->assertSee('Enter an amount greater than zero.');
+
+        $this->assertSame(10.0, (float) $item->fresh()->quantity);
     }
 }

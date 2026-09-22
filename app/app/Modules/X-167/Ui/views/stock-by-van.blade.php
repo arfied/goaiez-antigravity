@@ -72,6 +72,9 @@
                                         @else
                                             <x-ui.button size="default" wire:click="proposeRestock({{ $item->id }})">Propose restock</x-ui.button>
                                         @endif
+                                        <input type="number" step="any" min="0" wire:model="adjust.{{ $item->id }}" aria-label="Amount" />
+                                        <x-ui.button size="default" variant="secondary" wire:click="recordUse({{ $item->id }})">Record use</x-ui.button>
+                                        <x-ui.button size="default" variant="secondary" wire:click="returnToVan({{ $item->id }})">Return to van</x-ui.button>
                                     </td>
                                 </tr>
                             @endforeach
