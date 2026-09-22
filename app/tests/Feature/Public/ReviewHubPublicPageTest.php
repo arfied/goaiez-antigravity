@@ -22,13 +22,13 @@ class ReviewHubPublicPageTest extends TestCase
     {
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
-        
+
         Tenancy::setUser($owner->id);
         Tenancy::set((int) $biz->id);
-        
+
         $location = Location::factory()->create();
         AutopilotSettings::factory()->create(['location_id' => $location->id, 'update_review_hub' => true]);
-        
+
         $slug = 'test-slug-pub';
         FeedbackPage::factory()->forLocation($location)->create(['slug' => $slug]);
         ReviewHubPage::factory()->create([
@@ -36,9 +36,9 @@ class ReviewHubPublicPageTest extends TestCase
             'slug' => $slug,
             'is_published' => true,
         ]);
-        
+
         Tenancy::forgetAll();
-        
+
         $this->get(route('review-hub.show', ['slug' => $slug]))
             ->assertOk()
             ->assertSee($location->businessName());
@@ -48,13 +48,13 @@ class ReviewHubPublicPageTest extends TestCase
     {
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
-        
+
         Tenancy::setUser($owner->id);
         Tenancy::set((int) $biz->id);
-        
+
         $location = Location::factory()->create();
         AutopilotSettings::factory()->create(['location_id' => $location->id, 'update_review_hub' => true]);
-        
+
         $slug = 'test-slug-unk';
         FeedbackPage::factory()->forLocation($location)->create(['slug' => $slug]);
         ReviewHubPage::factory()->create([
@@ -62,9 +62,9 @@ class ReviewHubPublicPageTest extends TestCase
             'slug' => $slug,
             'is_published' => true,
         ]);
-        
+
         Tenancy::forgetAll();
-        
+
         $this->get(route('review-hub.show', ['slug' => 'other-slug']))
             ->assertNotFound();
     }
@@ -73,13 +73,13 @@ class ReviewHubPublicPageTest extends TestCase
     {
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
-        
+
         Tenancy::setUser($owner->id);
         Tenancy::set((int) $biz->id);
-        
+
         $location = Location::factory()->create();
         AutopilotSettings::factory()->create(['location_id' => $location->id, 'update_review_hub' => true]);
-        
+
         $slug = 'test-slug-unpub';
         FeedbackPage::factory()->forLocation($location)->create(['slug' => $slug]);
         ReviewHubPage::factory()->create([
@@ -87,18 +87,18 @@ class ReviewHubPublicPageTest extends TestCase
             'slug' => $slug,
             'is_published' => false,
         ]);
-        
+
         Tenancy::forgetAll();
-        
+
         $notFoundResponse = $this->get(route('review-hub.show', ['slug' => 'unknown-slug']));
         $notFoundResponse->assertNotFound();
-        
+
         $response = $this->get(route('review-hub.show', ['slug' => $slug]))
             ->assertNotFound();
-            
+
         $body1 = str_replace('unknown-slug', 'normalized', $notFoundResponse->getContent());
         $body2 = str_replace($slug, 'normalized', $response->getContent());
-        
+
         $this->assertSame(preg_replace('/\s+/', '', strip_tags($body1)), preg_replace('/\s+/', '', strip_tags($body2)));
     }
 
@@ -107,34 +107,34 @@ class ReviewHubPublicPageTest extends TestCase
         // Tenant A
         $ownerA = User::factory()->create(['role' => UserRole::Owner]);
         $bizA = $this->provisionTenant(['owner_user_id' => $ownerA->id]);
-        
+
         Tenancy::setUser($ownerA->id);
         Tenancy::set((int) $bizA->id);
-        
+
         $locationA = Location::factory()->create();
         AutopilotSettings::factory()->create(['location_id' => $locationA->id, 'update_review_hub' => true]);
-        
+
         $slugA = 'shared-slug';
         FeedbackPage::factory()->forLocation($locationA)->create(['slug' => $slugA]);
-        
+
         // Tenant B
         $ownerB = User::factory()->create(['role' => UserRole::Owner]);
         $bizB = $this->provisionTenant(['owner_user_id' => $ownerB->id]);
-        
+
         Tenancy::setUser($ownerB->id);
         Tenancy::set((int) $bizB->id);
-        
+
         $locationB = Location::factory()->create();
         AutopilotSettings::factory()->create(['location_id' => $locationB->id, 'update_review_hub' => true]);
-        
+
         ReviewHubPage::factory()->create([
             'location_id' => $locationB->id,
             'slug' => 'shared-slug', // Tenant B has the hub page slug
             'is_published' => true,
         ]);
-        
+
         Tenancy::forgetAll();
-        
+
         $this->get(route('review-hub.show', ['slug' => 'shared-slug']))
             ->assertNotFound();
     }
