@@ -21,8 +21,9 @@
         @if($items->isEmpty())
             <x-ui.empty-state heading="Nothing is waiting on you.">When the system wants a decision it cannot make alone, it lands here with what it proposes to do.</x-ui.empty-state>
         @else
-            <div class="mb-4">
+            <div class="mb-4 flex gap-2">
                 <input type="text" wire:model="escalateReason" class="border rounded p-2 text-ink bg-surface w-full" placeholder="Reason to escalate">
+                <input type="text" wire:model="decisionComment" class="border rounded p-2 text-ink bg-surface w-full" placeholder="Comment">
             </div>
             <ul class="divide-y divide-rule">
                 @foreach($items as $i)
@@ -32,6 +33,10 @@
                         <span class="text-sm text-ink-2">{{ $i->status }}</span>
                         @if($i->status === 'pending')
                             <button type="button" wire:click="escalateItem({{ $i->id }})" class="bg-surface text-ink border rounded px-2 py-1 ml-2">Escalate</button>
+                        @endif
+                        @if($i->status === 'pending' || $i->status === 'escalated')
+                            <button type="button" wire:click="approveItem({{ $i->id }})" class="bg-surface text-ink border rounded px-2 py-1 ml-2">Approve</button>
+                            <button type="button" wire:click="rejectItem({{ $i->id }})" class="bg-surface text-ink border rounded px-2 py-1 ml-2">Reject</button>
                         @endif
                     </li>
                 @endforeach

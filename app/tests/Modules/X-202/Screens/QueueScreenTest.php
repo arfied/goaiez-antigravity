@@ -258,4 +258,197 @@ class QueueScreenTest extends TestCase
             ->set('escalateReason', 'Escalate')
             ->call('escalateItem', $itemB->id);
     }
+
+    public function test_can_approve_an_item(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(Queue::class)
+            ->set('itemType', 'test_type')
+            ->set('subject', 'Refund over the desk limit')
+            ->set('note', 'Just a note')
+            ->call('enqueueItem');
+
+        $item = ApprovalItem::where('business_id', $biz->id)->firstOrFail();
+
+        $component = Livewire::test(Queue::class)
+            ->set('decisionComment', 'looks good')
+            ->call('approveItem', $item->id)
+            ->assertSet('error', null);
+
+        $success = $component->get('success');
+        $this->assertStringContainsString('is approved and has moved to the approval history', (string) $success);
+        $this->assertStringContainsString('it does not carry out what was asked', (string) $success);
+
+        $this->assertDatabaseHas((new ApprovalItem)->getTable(), [
+            'id' => $item->id,
+            'status' => 'approved',
+        ]);
+        $this->assertNotNull(ApprovalItem::find($item->id)->decided_at);
+    }
+
+    public function test_a_decided_item_leaves_the_queue_and_appears_in_the_history(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::set((int) $biz->id);
+        $this->actingAs($owner);
+
+        Livewire::test(Queue::class)
+            ->set('itemType', 'test_type')
+            ->set('subject', 'Refund over the desk limit')
+            ->set('note', 'Just a note')
+            ->call('enqueueItem');
+
+        $item = ApprovalItem::where('business_id', $biz->id)->firstOrFail();
+
+        Tenancy::forget();
+        $this->get(route('x-202.queue'))
+            ->assertSee('Refund over the desk limit');
+
+        $this->get(route('x-202.audit-export'))
+            ->assertSee('No decisions yet.');
+
+        Tenancy::set((int) $biz->id);
+        Livewire::test(Queue::class)
+            ->set('decisionComment', 'approved it')
+            ->call('approveItem', $item->id);
+
+        Tenancy::forget();
+        $this->get(route('x-202.queue'))
+            ->assertDontSee('Refund over the desk limit');
+
+        $this->get(route('x-202.audit-export'))
+            ->assertSee('Refund over the desk limit')
+            ->assertSee('approved')
+            ->assertDontSee('No decisions yet.');
+    }
+
+    public function test_can_reject_an_item(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(Queue::class)
+            ->set('itemType', 'test_type')
+            ->set('subject', 'Refund over the desk limit')
+            ->set('note', 'Just a note')
+            ->call('enqueueItem');
+
+        $item = ApprovalItem::where('business_id', $biz->id)->firstOrFail();
+
+        $component = Livewire::test(Queue::class)
+            ->set('decisionComment', 'looks bad')
+            ->call('rejectItem', $item->id)
+            ->assertSet('error', null);
+
+        $success = $component->get('success');
+        $this->assertStringContainsString('is rejected and has moved to the approval history', (string) $success);
+        $this->assertStringContainsString('it does not carry out what was asked', (string) $success);
+
+        $this->assertDatabaseHas((new ApprovalItem)->getTable(), [
+            'id' => $item->id,
+            'status' => 'rejected',
+        ]);
+        $this->assertNotNull(ApprovalItem::find($item->id)->decided_at);
+    }
+
+    public function test_the_comment_is_recorded_and_shown_in_the_history(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(Queue::class)
+            ->set('itemType', 'test_type')
+            ->set('subject', 'Refund over the desk limit')
+            ->set('note', 'Just a note')
+            ->call('enqueueItem');
+
+        $item = ApprovalItem::where('business_id', $biz->id)->firstOrFail();
+
+        Livewire::test(Queue::class)
+            ->set('decisionComment', 'Distinctive comment 82746')
+            ->call('approveItem', $item->id);
+
+        Tenancy::forget();
+        $this->get(route('x-202.audit-export'))
+            ->assertSee('Distinctive comment 82746');
+    }
+
+    public function test_deciding_an_already_decided_item_is_refused(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(Queue::class)
+            ->set('itemType', 'test_type')
+            ->set('subject', 'Refund over the desk limit')
+            ->set('note', 'Just a note')
+            ->call('enqueueItem');
+
+        $item = ApprovalItem::where('business_id', $biz->id)->firstOrFail();
+
+        Livewire::test(Queue::class)
+            ->set('decisionComment', 'looks good')
+            ->call('approveItem', $item->id)
+            ->assertSet('error', null);
+
+        $this->assertDatabaseHas((new ApprovalItem)->getTable(), [
+            'id' => $item->id,
+            'status' => 'approved',
+        ]);
+
+        $item = $item->fresh();
+
+        $component = Livewire::test(Queue::class)
+            ->set('decisionComment', 'looks good again')
+            ->call('approveItem', $item->id);
+
+        $error = $component->get('error');
+        $this->assertNotNull($error);
+        $this->assertStringContainsString('That item was already decided on '.$item->decided_at->toDateString(), (string) $error);
+
+        $this->assertDatabaseHas((new ApprovalItem)->getTable(), [
+            'id' => $item->id,
+            'status' => 'approved',
+        ]);
+    }
+
+    public function test_approving_another_tenants_item_is_refused(): void
+    {
+        $ownerB = User::factory()->create(['role' => UserRole::Owner]);
+        $bizB = $this->provisionTenant(['owner_user_id' => $ownerB->id]);
+        Tenancy::setUser($ownerB->id);
+        Tenancy::set((int) $bizB->id);
+        $this->actingAs($ownerB);
+
+        Livewire::test(Queue::class)
+            ->set('itemType', 'test_type')
+            ->set('subject', 'Refund over the desk limit')
+            ->set('note', 'Just a note')
+            ->call('enqueueItem');
+
+        $itemB = ApprovalItem::where('business_id', $bizB->id)->firstOrFail();
+
+        $ownerA = User::factory()->create(['role' => UserRole::Owner]);
+        $bizA = $this->provisionTenant(['owner_user_id' => $ownerA->id]);
+        Tenancy::setUser($ownerA->id);
+        Tenancy::set((int) $bizA->id);
+        $this->actingAs($ownerA);
+
+        $this->expectException(ModelNotFoundException::class);
+
+        Livewire::test(Queue::class)
+            ->set('decisionComment', 'looks good')
+            ->call('approveItem', $itemB->id);
+    }
 }

@@ -32,6 +32,8 @@ class Queue extends Component
 
     public string $escalateReason = '';
 
+    public string $decisionComment = '';
+
     public function mount(): void
     {
         $this->businessId = Tenancy::id() ?? 0;
@@ -100,6 +102,53 @@ class Queue extends Component
             .'this yet, so tell whoever needs to decide it.';
 
         $this->escalateReason = '';
+    }
+
+    private function decideItem(int $itemId, ApprovalDeskEngine $engine, string $decision): void
+    {
+        $this->error = null;
+        $this->success = null;
+
+        $item = ApprovalItem::where('business_id', Tenancy::idOrFail())->findOrFail($itemId);
+
+        if ($item->decided_at !== null) {
+            $this->error = 'That item was already decided on '.$item->decided_at->toDateString().'. Nothing was changed.';
+
+            return;
+        }
+
+        $comment = trim($this->decisionComment) === '' ? null : trim($this->decisionComment);
+
+        $result = $engine->decide(Tenancy::idOrFail(), $item->id, $decision, auth()->id(), $comment);
+
+        if ($result['status'] === 'pending') {
+            $this->success = $item->subject.' moved to the next approval step and is still waiting. '
+                .'It stays on this queue until the last desk decides.';
+
+            return;
+        }
+
+        if ($decision === 'approved') {
+            $this->success = $item->subject.' is approved and has moved to the approval history. '
+                .'Nothing acts on the decision yet — approving records your answer, it does not carry out '
+                .'what was asked.';
+        } else {
+            $this->success = $item->subject.' is rejected and has moved to the approval history. '
+                .'Nothing acts on the decision yet — rejecting records your answer, it does not carry out '
+                .'what was asked.';
+        }
+
+        $this->decisionComment = '';
+    }
+
+    public function approveItem(int $itemId, ApprovalDeskEngine $engine): void
+    {
+        $this->decideItem($itemId, $engine, 'approved');
+    }
+
+    public function rejectItem(int $itemId, ApprovalDeskEngine $engine): void
+    {
+        $this->decideItem($itemId, $engine, 'rejected');
     }
 
     public function render()
