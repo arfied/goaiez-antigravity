@@ -11,6 +11,18 @@
             </ul>
         @endif
 
+        @if($clawbackError) <div class="mb-4 text-ink-2">{{ $clawbackError }}</div> @endif
+        @if($clawbackSuccess) <div class="mb-4 text-ink">{{ $clawbackSuccess }}</div> @endif
+
+        <form wire:submit="proposeClawback" class="mt-6 flex flex-col gap-2 bg-surface p-4 border rounded">
+            <select wire:model="clawbackAttributionId" class="border rounded p-2 text-ink bg-paper">
+                <option value="">Choose a commission</option>
+                @foreach($attributions as $a)<option value="{{ $a->id }}">Attribution #{{ $a->id }}</option>@endforeach
+            </select>
+            <input type="text" wire:model="clawbackDisputeRef" class="border rounded p-2 text-ink bg-paper" placeholder="Dispute reference (optional)">
+            <button type="submit" class="bg-surface text-ink border rounded p-2">Propose clawback</button>
+        </form>
+
         <div class="mt-8 p-4 bg-surface border rounded">
             <h3 class="text-md font-bold text-ink">Attribute Sale</h3>
             @if($success)
