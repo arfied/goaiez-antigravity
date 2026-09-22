@@ -2053,3 +2053,26 @@ by the writer's intent.**
 field was ordered for an unrelated reason, came back with raw output, and one line of that output
 did not fit my model of the repository — which is the argument for fields that paste output rather
 than fields that summarise it.
+
+⛔ **`capability` REPORTS CLEAN AND 83 OF THE IDS IT CREDITS ARE NAMED ONLY ABOVE TESTS THAT
+ASSERT NOTHING (N275, 2026-09-22).** `CapabilityStage::testedIds()` (`:279-288`) scans every
+`.php` under `tests/Modules/{module}` for `\b(G\d+-\d+|N-\d+(?:-\d+)?)\b` and treats a specced id
+as tested when the **string appears anywhere in the file**. Measured: **83 ids across 19 modules**
+whose only mention in the entire test tree is a docblock directly above a method whose body is
+`$this->assertTrue(true);` — X-105 12 · X-186 10 · X-136 9 · X-07 8 · X-177 7 · X-116 6 · X-16 5 ·
+X-190 5, and eleven more. There are **22** such assertion-free tests in the suite.
+⭐ **The stage is not lying** — its violation text is *"specced but no test names this id"*, which
+is exactly what it checks. The gap is between what it measures and what a reader infers from
+`ok capability clean`. Same family as N209's unvalidated remedy string and N115's `STAGES` line:
+*an instrument honest about its own question, read as answering a larger one.*
+⛔ **Not fixable from this seat.** `app/Doctor/**` is sealed; strengthening `testedIds` to require
+a non-vacuous assertion is a CHECK change and would turn `capability` red by roughly 83. Owner
+decision, recorded in `REVIEWS.md` with the per-module breakdown.
+⚠️ **And the finding nearly died as a `0`.** My first instrument sliced each test body as a fixed
+25 lines, so a long test's window swallowed the *next* test's docblock while missing an id 55
+lines inside its own — wrong in both directions, and it reported **0 modules affected**. It was
+disproved by reading X-16 by hand, then rewritten narrowly (ids in the 6 lines above a vacuous
+test, appearing nowhere else in the file) and hand-verified twice before the number was written
+down. ⭐ **The comfortable answer is the one to distrust**: three needles tonight over-reported and
+were caught immediately; the one that under-reported said "nothing here" and almost closed the
+question.
