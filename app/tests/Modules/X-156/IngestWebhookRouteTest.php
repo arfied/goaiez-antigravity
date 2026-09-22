@@ -6,11 +6,14 @@ namespace Tests\Modules\X156;
 
 use App\Modules\X156\Actions\IngestSourcePauseAction;
 use App\Modules\X156\Actions\IngestWebhookAction;
+use App\Modules\X156\Http\Controllers\IngestWebhookController;
 use App\Modules\X156\Models\IngestRun;
 use App\Modules\X156\Models\IngestSource;
 use App\Modules\X156\Ui\ConnectSourceView;
 use App\Support\Tenancy;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Http\Request;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -185,7 +188,7 @@ class IngestWebhookRouteTest extends TestCase
         ]);
     }
 
-    public function test_tenant_is_resolved_not_inherited(): void
+    public function test_the_controller_resolves_the_tenant_from_the_url_not_from_ambient_context(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Acme']);
         $otherBiz = TestCase::provisionTenant(['name' => 'Other']);
@@ -200,20 +203,59 @@ class IngestWebhookRouteTest extends TestCase
         $payload = json_encode([['email' => 'lead1@example.test'], ['email' => 'lead2@example.test']]);
         $signature = 'sha256='.hash_hmac('sha256', $payload, (string) $source->secret_key);
 
+        // A FOREIGN tenant is left in ambient context. The controller must clear it.
         Tenancy::set((int) $otherBiz->id);
 
-        $result = app(IngestWebhookAction::class)->handle(
-            businessId: (int) $biz->id,
-            sourceId: (int) $source->id,
-            rawPayload: $payload,
-            signatureHeader: $signature,
+        $request = Request::create(
+            "/api/ingest/{$biz->id}/{$source->id}",
+            'POST',
+            [], [], [],
+            ['HTTP_X_HUB_SIGNATURE_256' => $signature, 'CONTENT_TYPE' => 'application/json'],
+            $payload
         );
 
-        $this->assertTrue($result['success']);
+        $controller = app(IngestWebhookController::class);
+        $response = $controller(
+            (string) $biz->id,
+            (string) $source->id,
+            $request,
+            app(IngestWebhookAction::class),
+        );
+
+        $this->assertSame(202, $response->getStatusCode());
 
         Tenancy::set((int) $biz->id);
         $this->assertDatabaseHas('ingest_runs', [
+            'business_id' => $biz->id,
             'source_id' => $source->id,
         ]);
+    }
+
+    public function test_the_action_cannot_reach_a_source_outside_the_ambient_tenant(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Acme']);
+        $otherBiz = TestCase::provisionTenant(['name' => 'Other']);
+
+        Tenancy::set((int) $biz->id);
+        Livewire::test(ConnectSourceView::class, ['businessId' => (int) $biz->id])
+            ->set('sourceType', 'meta_lead_ad')
+            ->set('sourceName', 'Bluewater Lead Forms')
+            ->call('connect');
+        $source = IngestSource::where('business_id', $biz->id)->firstOrFail();
+
+        // Row-level security is the floor: the action takes a businessId but does NOT
+        // resolve tenancy, so a foreign ambient tenant makes the row invisible and the
+        // lookup throws. The controller is what establishes the tenant; this proves the
+        // action is not a second, independent way in.
+        Tenancy::set((int) $otherBiz->id);
+
+        $this->expectException(ModelNotFoundException::class);
+
+        app(IngestWebhookAction::class)->handle(
+            businessId: (int) $biz->id,
+            sourceId: (int) $source->id,
+            rawPayload: '[]',
+            signatureHeader: 'sha256=whatever',
+        );
     }
 }
