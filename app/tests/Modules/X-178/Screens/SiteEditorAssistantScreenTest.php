@@ -6,9 +6,11 @@ namespace Tests\Modules\X178\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X103\Actions\PageCreateAction;
 use App\Modules\X178\Models\DesignChange;
 use App\Modules\X178\Ui\SiteEditorAssistant;
 use App\Support\Tenancy;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -57,7 +59,7 @@ class SiteEditorAssistantScreenTest extends TestCase
         $this->actingAs($owner);
         Tenancy::set((int) $biz->id);
 
-        $page = app(\App\Modules\X103\Actions\PageCreateAction::class)->handle((int) $biz->id, 'test-slug', 'Test Page');
+        $page = app(PageCreateAction::class)->handle((int) $biz->id, 'test-slug', 'Test Page');
 
         $test = Livewire::test(SiteEditorAssistant::class)
             ->set('pageId', (string) $page->id)
@@ -82,5 +84,108 @@ class SiteEditorAssistantScreenTest extends TestCase
             ->set('pageId', '0')
             ->call('generate')
             ->assertSet('error', 'Page ID must be provided and cannot be 0.');
+    }
+
+    public function test_can_undo_a_design_change(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set((int) $biz->id);
+
+        $page = app(PageCreateAction::class)->handle((int) $biz->id, 'test-slug', 'Test Page');
+
+        Livewire::test(SiteEditorAssistant::class)
+            ->set('pageId', (string) $page->id)
+            ->set('niche', 'plumbing')
+            ->call('generate')
+            ->assertSet('error', '');
+
+        $change = DesignChange::where('business_id', $biz->id)->firstOrFail();
+
+        Livewire::test(SiteEditorAssistant::class)
+            ->call('undoChange', $change->id)
+            ->assertSet('undoSuccess', 'Change '.$change->block_ref.' is marked undone. Nothing downstream reacts to an undo yet, and no earlier version is restored.');
+
+        $this->assertDatabaseHas((new DesignChange)->getTable(), [
+            'id' => $change->id,
+            'status' => 'undone',
+        ]);
+    }
+
+    public function test_the_list_shows_the_change_as_undone(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set((int) $biz->id);
+
+        $page = app(PageCreateAction::class)->handle((int) $biz->id, 'test-slug', 'Test Page');
+
+        Livewire::test(SiteEditorAssistant::class)
+            ->set('pageId', (string) $page->id)
+            ->set('niche', 'plumbing')
+            ->call('generate');
+
+        $change = DesignChange::where('business_id', $biz->id)->firstOrFail();
+
+        Livewire::test(SiteEditorAssistant::class)
+            ->call('undoChange', $change->id);
+
+        Tenancy::forget();
+
+        $this->get(route('x-178.site-editor-assistant'))
+            ->assertOk()
+            ->assertSee('undone')
+            ->assertDontSee('applied');
+    }
+
+    public function test_the_undo_button_disappears_once_undone(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set((int) $biz->id);
+
+        $page = app(PageCreateAction::class)->handle((int) $biz->id, 'test-slug', 'Test Page');
+
+        Livewire::test(SiteEditorAssistant::class)
+            ->set('pageId', (string) $page->id)
+            ->set('niche', 'plumbing')
+            ->call('generate');
+
+        $change = DesignChange::where('business_id', $biz->id)->firstOrFail();
+
+        Livewire::test(SiteEditorAssistant::class)
+            ->call('undoChange', $change->id);
+
+        Tenancy::forget();
+
+        $this->get(route('x-178.site-editor-assistant'))
+            ->assertOk()
+            ->assertDontSee('undoChange(');
+    }
+
+    public function test_undoing_another_tenants_change_is_refused(): void
+    {
+        $ownerB = User::factory()->create(['role' => UserRole::Owner]);
+        $bizB = $this->provisionTenant(['owner_user_id' => $ownerB->id]);
+        $ownerA = User::factory()->create(['role' => UserRole::Owner]);
+        $bizA = $this->provisionTenant(['owner_user_id' => $ownerA->id]);
+
+        Tenancy::setUser($ownerB->id);
+        Tenancy::set((int) $bizB->id);
+        $pageB = app(PageCreateAction::class)->handle((int) $bizB->id, 'test-slug', 'Test Page');
+        Livewire::test(SiteEditorAssistant::class)
+            ->set('pageId', (string) $pageB->id)
+            ->set('niche', 'plumbing')
+            ->call('generate');
+        $changeB = DesignChange::where('business_id', $bizB->id)->firstOrFail();
+
+        Tenancy::setUser($ownerA->id);
+        Tenancy::set((int) $bizA->id);
+
+        $this->expectException(ModelNotFoundException::class);
+        Livewire::test(SiteEditorAssistant::class)->call('undoChange', $changeB->id);
     }
 }
