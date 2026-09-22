@@ -1854,3 +1854,61 @@ class of UI defect is *generated* by wiring and cannot be found before it: blade
 branches nothing can produce (`[PULLED]`, `inactive`, `stopped`, `(no role)`) and copy that
 promises what the data cannot deliver. Those are fixed **in the same wave as the wiring that
 reveals them**, at no extra cost — several were, that day.
+
+⭐ **OWNER RULINGS, 2026-09-21 23:0x — THE FIVE OPEN DECISIONS, ANSWERED.** The control pool was
+screened end to end and every remaining row needed a product answer rather than a wave. All five
+were put to the owner one at a time, each with its options **measured first**, and all five came
+back. Recorded here because a decision that lives only in a chat transcript is not a decision.
+
+1. ⛔ **X-207 push is VENDOR-GATED. Do not build it, do not re-screen it.** `PushSendAction`
+   writes `'status' => 'delivered'` with no transport: `grep -rniE "fcm|apns|firebase|onesignal"
+   config/` returns **nothing**, `DeviceToken` has one writer (`PushRegisterDeviceAction`) which a
+   mobile app would call and there is no mobile app, and its `SendRequested` has no listener — the
+   only one in the repo binds **C-Sms's** class of that name (N258, tenth instance). It joins
+   GBP/Infobip/the payment sandbox: blocked on *access*, not effort.
+   ⚠️ `PerplatformDeliveryHealth:61` groups `PushDelivery` **by status** and counts, so any future
+   caller populates a health dashboard with fiction. Whoever wires the transport fixes the status
+   value in the same act.
+2. ⭐ **X-156 gets a WEBHOOK ROUTE, not an upload UI.** `IngestWebhookAction` is finished and
+   verifies `'sha256='.hash_hmac('sha256', $rawPayload, $source->secret_key)` — the same shape as
+   the Infobip inbound recipe — refusing a bad signature *before* parsing (G2-46). Sources are
+   already owner-creatable (`ConnectSourceView` ships connect/pause/resume) and runs and rejections
+   already render on three screens. **The only missing piece is an HTTP endpoint**, and X-156 has
+   no route (the `ingest` hits in `routes/api.php` are the *pixel* route; `:206` says so in
+   capitals). ⛔ **`IngestSource.secret_key` is NULLABLE** and `hash_hmac($p, (string) null)` is a
+   signature anyone can compute — a source with no key accepts forged posts. The route refuses a
+   keyless source, in the same wave.
+   ⛔ The upload path (`IngestUploadAction`, `array $records`) stays unbuilt: its P-069 attestation
+   gate was designed for a machine caller, and an owner has no way to obtain an attestation id.
+3. ⭐ **X-199 invoices MIRROR `draftEstimate`.** One line — customer picked from existing people,
+   description, quantity, unit price — exactly the shape X-164 already ships. ⛔ **Not**
+   `DraftInvoiceFromJobAction`: its `$aiEngine` defaults to `null`, so its AI line-structuring
+   **never runs** and the one-line fallback is the only path that executes. Advertising an AI
+   breakdown that cannot happen is the X-207 shape. ⛔ And **not** "make work orders reachable
+   first" — `JobCreateAction` is called from no screen, route or provider.
+   The honesty clause is credit terms: `InvoiceDraftAction` applies a customer's `CreditTerm` row
+   if one exists and otherwise defaults to 30 days; say which happened.
+4. ⭐ **D16 — TEACH THE SYSTEM `'paused'`, do not relabel it as an error.** `FlowPauseAction`
+   writes `'paused'`; `FlowRunAction` matches `'paused_error'` at `:30`, `:45`, `:67`;
+   `FlowErrorDashboard:35` lists only `'paused_error'`. ⛔ And the migration's own comment
+   (`…create_x125_flow_tables.php:21`) documents the valid set as `active, paused_error, draft` —
+   **`'paused'` is not in it**, so this is a defect in the writer, not a design. The ruling is the
+   larger fix, not the one-line one: `FlowRunAction` treats `'paused'` alongside `'paused_error'`
+   on the manual-retry path, the dashboard lists both **labelled differently** (*you paused this*
+   vs *it failed*), and a Resume control ships on that screen. An owner's deliberate pause is not
+   an error and must not be filed as one.
+5. ⭐ **D17 — AN ESCALATED APPROVAL STAYS IN THE QUEUE, MARKED.** `ApprovalEscalateAction` writes
+   `'escalated'`; `Queue:71` filters `status = 'pending'`; `AuditExport:19-20` filters
+   `whereNotNull('decided_at')`. Escalate sets neither, so the item is visible on **no screen**.
+   Widen `Queue` to `whereIn(['pending','escalated'])` with escalated rows labelled, then ship the
+   control. ⛔ **Do not set `decided_at`** to push it into the audit export: escalation is not a
+   decision, and recording it as one would make the audit trail claim somebody decided something
+   nobody decided — the exact class of defect the honesty clauses exist to prevent.
+
+⭐ **The transferable half.** Every one of the five was put with its options *measured*, and in
+three of them the measurement changed the question rather than answering it: X-207 stopped being
+"how do we word it" once `config/` showed no transport and `DeviceToken` showed no writer;
+X-156 stopped being "what input UI" once the action turned out to need a **route**; X-199 stopped
+being "how does the owner enter lines" once `DraftInvoiceFromJobAction`'s AI fallback was read.
+⛔ **Do not ask an owner to choose between options you have not costed** — two of these five
+would have been answered wrongly from the descriptions I first wrote down.
