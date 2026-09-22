@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests\Modules\CBilling\Screens;
 
 use App\Enums\UserRole;
+use App\Models\DunningAttempt;
 use App\Models\User;
-use App\Modules\CBilling\Models\DunningState;
 use App\Modules\CBilling\Ui\DunningBoard;
 use App\Support\Tenancy;
 use Livewire\Livewire;
@@ -14,7 +14,8 @@ use Tests\TestCase;
 
 class DunningBoardScreenTest extends TestCase
 {
-    public function test_screen_renders_for_tenant(): void
+    /** @test */
+    public function test_screen_renders_for_tenant_with_attempts(): void
     {
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
@@ -28,17 +29,15 @@ class DunningBoardScreenTest extends TestCase
             ->assertSee('Nothing on this board yet.');
 
         Tenancy::setUser($owner->id);
-        DunningState::create([
-            'business_id' => $biz->id,
-            'day_in_cycle' => 12,
-            'status' => 'banner',
+        Tenancy::set((int) $biz->id);
+        DunningAttempt::factory()->create([
+            'reason_code' => 'card_expired',
         ]);
         Tenancy::forget();
 
         $this->get(route('c-billing.dunning-board'))
             ->assertOk()
-            ->assertSee('Day 12')
-            ->assertSee('day 21 pause with the phone answering')
+            ->assertSee('card_expired')
             ->assertDontSee('Nothing on this board yet.');
 
         Livewire::test(DunningBoard::class)->assertOk();
