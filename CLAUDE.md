@@ -1815,3 +1815,42 @@ mid-session and it was `ff661ab53`, six commits back. Measured from the producti
 `git rev-list --count`. It mattered: a published artifact would have told readers that **none** of
 the day's controls were live when in fact **62 of 66** were. ⛔ **Re-measure production's HEAD in
 the tick that cites it**, exactly as the roster rule says a saved board is stale by definition.
+
+⭐ **OWNER RULING, 2026-09-21 — "WIRED" IS THE DEFINITION OF DONE FOR A MODULE, NOT A LATER
+PHASE.** The standing plan had been *build every module → wire it all → then fix UI*. Put to the
+owner with the evidence below, the owner's answer was to change it. Three parts, all binding:
+
+1. ⛔ **No new module is built ahead of the backlog.** **87 screens** are already built, read a
+   table, and have **no way in** (measured 2026-09-21: 277 Livewire screens, 147 with a control,
+   130 without, of which 87 read a table and 43 are static by design). Building more modules
+   adds to that pile, not to working product.
+2. ⛔ **A module is not "built" until the three filters have been run over it** — pool,
+   precondition-reachable, post-state-visible (see the filter section and
+   `$CLAUDE_JOB_DIR/tmp/{precond,poststate}.sh`). They are scripts and cost one command each.
+3. ⭐ **Exactly one thing stays batched: the vendor-gated feed work** (GBP, Infobip, the payment
+   sandbox). That is blocked on *access*, not on effort, so it is genuinely a separate phase —
+   and it is the long pole, not the controls.
+
+**Why, and it is all measured on one day's waves.** Wiring is not a step after building; it is
+the **test** of the build. Every significant defect of 2026-09-21 was invisible until someone
+tried to wire it: X-07's screen titled *"Booked and collected"* where nothing could write either
+column · X-113's permission chain complete except the link that puts a person in a role, leaving
+`DocumentVault` reading `(no role)` for every tenant · X-136's two screens empty for every tenant
+**and** a shipped control (`markDecayed`) that had never been reachable · X-202's escalate, which
+makes an item visible on **no** screen · X-125's pause writing `paused` while the only resume
+path matches `paused_error`. **Those are build defects.** Deferring the wiring phase defers all
+of that to one moment, after the inventory of "finished" modules is several times larger, and
+every fix reopens a module already marked done.
+
+⚠️ **The counter-argument is real and is why the old order was not wrong to start with:**
+batching gave tooling leverage. The precondition and post-state filters exist *because* sixteen
+consecutive wirings failed the same way three times. A module-at-a-time interleave from day one
+would not have produced them. ⭐ **But the instruments now exist, so the marginal return on
+batching has gone while the cost of late discovery is rising** — three of the last four rows
+opened that day were refusals.
+
+⭐ **And "fix UI last" is half right, so separate the halves.** Cosmetic UI can wait. But one
+class of UI defect is *generated* by wiring and cannot be found before it: blades carrying
+branches nothing can produce (`[PULLED]`, `inactive`, `stopped`, `(no role)`) and copy that
+promises what the data cannot deliver. Those are fixed **in the same wave as the wiring that
+reveals them**, at no extra cost — several were, that day.
