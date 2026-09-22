@@ -7,9 +7,11 @@ namespace App\Modules\X136\Ui;
 use App\Modules\X136\Models\DecayModel;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Signal Volume & Precision'])]
 class SignalVolumePrecisionView extends Component
 {
     #[Locked]
