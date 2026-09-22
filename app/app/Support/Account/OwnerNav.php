@@ -130,6 +130,12 @@ final class OwnerNav
             // there rather than in the primary row.
             OwnerNavItem::make('Import your customers', 'account.customers.import', OwnerNavItem::GROUP_MORE, section: 'Customers'),
 
+            // The pages list (X-103). Under More because pages aren't edited every day.
+            // ⚠️ THIS ENTRY IS THE ONLY DOOR TO THE PAGES SCREEN.
+            // Architecture/OwnerNavTest fails the build on an owner screen
+            // with neither a nav entry nor a written exclusion.
+            OwnerNavItem::make('Pages', 'x-103.pages', OwnerNavItem::GROUP_MORE, section: 'Reviews & your website'),
+
             // The widget install (2950). Under More on the same distinction —
             // paste one line, name your website, never think about it again.
             // ⚠️ The entry is not optional polish: `Architecture/OwnerNavTest`

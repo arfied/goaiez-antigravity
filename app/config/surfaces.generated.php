@@ -172,6 +172,7 @@ return [
             ['label' => 'Targeting Preview', 'route' => 'x-210.targeting-preview', 'module' => 'X-210'],
         ],
         'Website' => [
+            ['label' => 'Pages', 'route' => 'x-103.pages', 'module' => 'X-103'],
             ['label' => 'Plugin Settings Page', 'route' => 'x-104.plugin-settings-page', 'module' => 'X-104'],
             ['label' => 'Install Count', 'route' => 'x-104.install-count', 'module' => 'X-104'],
             ['label' => 'Migration Card', 'route' => 'x-129.migration-card', 'module' => 'X-129'],
