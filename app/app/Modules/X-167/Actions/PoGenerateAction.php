@@ -10,7 +10,7 @@ final class PoGenerateAction
 {
     public function __construct(private readonly InventoryEngine $engine = new InventoryEngine) {}
 
-    public function send(int $businessId, int $purchaseOrderId, ?string $approvedActionId = null): array
+    public function handle(int $businessId, int $purchaseOrderId, ?string $approvedActionId = null): array
     {
         return $this->engine->sendPurchaseOrder($businessId, $purchaseOrderId, $approvedActionId);
     }

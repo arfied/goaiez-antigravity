@@ -98,7 +98,7 @@ class Reorders extends Component
             return;
         }
 
-        $result = $action->send(Tenancy::idOrFail(), $po->id, (string) $approvalId);
+        $result = $action->handle(Tenancy::idOrFail(), $po->id, (string) $approvalId);
 
         if (($result['status'] ?? null) !== 'sent') {
             $this->error = 'That order was not sent: '.($result['message'] ?? 'unknown reason');
