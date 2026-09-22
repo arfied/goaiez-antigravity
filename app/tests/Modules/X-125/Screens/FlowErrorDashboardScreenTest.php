@@ -107,7 +107,13 @@ class FlowErrorDashboardScreenTest extends TestCase
         $this->actingAs($owner);
         Tenancy::set((int) $biz->id);
 
-        $flow = Canvas::createFlow((int) $biz->id, 'Nightly invoice chase', 'cron', []);
+        Livewire::test(Canvas::class)
+            ->set('flowName', 'Nightly invoice chase')
+            ->set('triggerEvent', 'cron')
+            ->set('stepLabel', 'Do something')
+            ->call('createFlow');
+
+        $flow = Flow::where('business_id', $biz->id)->firstOrFail();
         $flow->update(['status' => 'active']);
 
         Livewire::test(FlowErrorDashboard::class)
@@ -124,7 +130,13 @@ class FlowErrorDashboardScreenTest extends TestCase
         $this->actingAs($owner);
         Tenancy::set((int) $biz->id);
 
-        $flow = Canvas::createFlow((int) $biz->id, 'Nightly invoice chase', 'cron', []);
+        Livewire::test(Canvas::class)
+            ->set('flowName', 'Nightly invoice chase')
+            ->set('triggerEvent', 'cron')
+            ->set('stepLabel', 'Do something')
+            ->call('createFlow');
+
+        $flow = Flow::where('business_id', $biz->id)->firstOrFail();
         $flow->update(['status' => 'paused']);
 
         Tenancy::forget();
@@ -143,7 +155,13 @@ class FlowErrorDashboardScreenTest extends TestCase
         $this->actingAs($owner);
         Tenancy::set((int) $biz->id);
 
-        $flow = Canvas::createFlow((int) $biz->id, 'Nightly invoice chase', 'cron', []);
+        Livewire::test(Canvas::class)
+            ->set('flowName', 'Nightly invoice chase')
+            ->set('triggerEvent', 'cron')
+            ->set('stepLabel', 'Do something')
+            ->call('createFlow');
+
+        $flow = Flow::where('business_id', $biz->id)->firstOrFail();
         $flow->update(['status' => 'active', 'consecutive_errors' => 2, 'max_error_threshold' => 2]);
 
         $action = app(FlowRunAction::class);
@@ -165,7 +183,13 @@ class FlowErrorDashboardScreenTest extends TestCase
         $this->actingAs($owner);
         Tenancy::set((int) $biz->id);
 
-        $flow = Canvas::createFlow((int) $biz->id, 'Nightly invoice chase', 'cron', []);
+        Livewire::test(Canvas::class)
+            ->set('flowName', 'Nightly invoice chase')
+            ->set('triggerEvent', 'cron')
+            ->set('stepLabel', 'Do something')
+            ->call('createFlow');
+
+        $flow = Flow::where('business_id', $biz->id)->firstOrFail();
         $flow->update(['status' => 'paused', 'consecutive_errors' => 2]);
 
         Livewire::test(FlowErrorDashboard::class)
@@ -182,7 +206,13 @@ class FlowErrorDashboardScreenTest extends TestCase
         $this->actingAs($owner);
         Tenancy::set((int) $biz->id);
 
-        $flow = Canvas::createFlow((int) $biz->id, 'Nightly invoice chase', 'cron', []);
+        Livewire::test(Canvas::class)
+            ->set('flowName', 'Nightly invoice chase')
+            ->set('triggerEvent', 'cron')
+            ->set('stepLabel', 'Do something')
+            ->call('createFlow');
+
+        $flow = Flow::where('business_id', $biz->id)->firstOrFail();
         $flow->update(['status' => 'paused']);
 
         $action = app(FlowRunAction::class);
@@ -207,7 +237,13 @@ class FlowErrorDashboardScreenTest extends TestCase
         Tenancy::setUser($ownerB->id);
         Tenancy::set((int) $bizB->id);
         $this->actingAs($ownerB);
-        $flowB = Canvas::createFlow((int) $bizB->id, 'Nightly invoice chase', 'cron', []);
+        Livewire::test(Canvas::class)
+            ->set('flowName', 'Nightly invoice chase')
+            ->set('triggerEvent', 'cron')
+            ->set('stepLabel', 'Do something')
+            ->call('createFlow');
+
+        $flowB = Flow::where('business_id', $bizB->id)->firstOrFail();
 
         Tenancy::setUser($ownerA->id);
         Tenancy::set((int) $bizA->id);
