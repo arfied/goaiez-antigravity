@@ -10,9 +10,11 @@ use App\Modules\X105\Actions\OutreachHaltAction;
 use App\Modules\X105\Actions\OutreachStartAction;
 use App\Modules\X105\Models\OutreachLadder;
 use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Pipeline Board'])]
 class PipelineBoard extends Component
 {
     #[Locked]

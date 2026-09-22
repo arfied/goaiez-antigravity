@@ -198,8 +198,8 @@ test('owner layout heading seam contract', function () {
     expect(array_sum(array_column($expectedMap, 'total')))->toBe($total);
     expect(array_sum(array_column($expectedMap, 'seam')))->toBe($seam);
 
-    expect($total)->toBe(211, 'If it went UP, a new module component uses the owner layout. If it went DOWN, a component dropped the layout or was deleted.');
-    expect($seam)->toBe(210, 'If it went UP, a component added the heading key to its layout. If it went DOWN, a component removed it or was deleted.');
+    expect($total)->toBe(212, 'If it went UP, a new module component uses the owner layout. If it went DOWN, a component dropped the layout or was deleted.');
+    expect($seam)->toBe(211, 'If it went UP, a component added the heading key to its layout. If it went DOWN, a component removed it or was deleted.');
     expect($seam + $own)->toBe($total, 'Seam plus own must equal total.');
     expect($own)->toBe(1, 'If it went UP, a component kept the layout but brought its own heading, violating T140 §2. If it went DOWN, it deleted the override.');
     expect($unresolvedView)->toBe(0, 'If it went UP, a component uses a first view literal that cannot be resolved. Its known edge: a component with two view( literals lands on the first. If it went DOWN, an unresolved view literal was fixed.');
@@ -308,5 +308,6 @@ function headingSeamCountsByModule(): array
         'X-218' => ['total' => 3, 'seam' => 3],
         'X-66' => ['total' => 3, 'seam' => 3],
         'X-82' => ['total' => 1, 'seam' => 1],
+        'X-105' => ['total' => 1, 'seam' => 1],
     ];
 }
