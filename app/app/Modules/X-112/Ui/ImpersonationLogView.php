@@ -17,6 +17,12 @@ class ImpersonationLogView extends Component
     #[Locked]
     public int $businessId = 0;
 
+    public function mount(): void
+    {
+        abort_unless(auth()->check() && (auth()->user()->hasRole(\App\Enums\UserRole::Owner, \App\Enums\UserRole::Manager) || auth()->user()->can(\App\Support\Admin\AdminAccess::GATE)), 403);
+        $this->businessId = \App\Support\Tenancy::id();
+    }
+
     public int $agencyId = 0;
     public int $userId = 0;
     public int $targetClientBusinessId = 0;
