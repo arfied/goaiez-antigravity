@@ -77,4 +77,25 @@ class DnsCardScreenTest extends TestCase
 
         Tenancy::forget();
     }
+
+    public function test_the_copy_button_has_a_clipboard_action(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        Tenancy::setUser($owner->id);
+        MailDomain::create([
+            'business_id' => $biz->id,
+            'domain_name' => 'distinctive-4605.example',
+            'dkim_status' => 'pending',
+            'spf_status' => 'pending',
+            'dmarc_status' => 'pending',
+        ]);
+        Tenancy::forget();
+
+        $this->get(route('c-mail.dns-card'))
+            ->assertSee('navigator.clipboard.writeText', false)
+            ->assertDontSee('copy-affordance');
+    }
 }

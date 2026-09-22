@@ -13,7 +13,7 @@
                             <div class="mt-2">
                                 <span class="font-mono text-sm bg-surface p-1">{{ $record['name'] }}</span>
                                 <span class="font-mono text-sm bg-surface p-1 ml-2">{{ $record['value'] }}</span>
-                                <button class="ml-2 text-blue-500 underline copy-affordance" data-value="{{ $record['value'] }}">Copy</button>
+                                <x-ui.button variant="quiet" size="default" type="button" class="ml-2" x-on:click="navigator.clipboard.writeText(@js($record['value']))">Copy</x-ui.button>
                             </div>
                         </div>
                     @endforeach
