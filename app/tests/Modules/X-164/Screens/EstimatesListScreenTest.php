@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Modules\X164\Actions\EstimateDraftAction;
 use App\Modules\X164\Models\Estimate;
 use App\Modules\X164\Models\EstimateLine;
+use App\Modules\X164\Models\EstimateVersion;
 use App\Modules\X164\Ui\EstimatesList;
 use App\Support\Tenancy;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -213,5 +214,174 @@ class EstimatesListScreenTest extends TestCase
 
         $this->expectException(ModelNotFoundException::class);
         Livewire::test(EstimatesList::class)->call('sendEstimate', $bEstimateId);
+    }
+
+    public function test_can_accept_a_sent_estimate(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(EstimatesList::class)
+            ->set('serviceName', 'Culvert Relining 8309')
+            ->set('quantity', 1)
+            ->set('unitPriceCents', 830900)
+            ->call('draftEstimate');
+
+        $est = Estimate::where('business_id', $biz->id)->first();
+        Livewire::test(EstimatesList::class)->call('sendEstimate', $est->id);
+
+        $component = Livewire::test(EstimatesList::class)
+            ->set('customerSignature', 'Marisol Quintero')
+            ->call('acceptEstimate', $est->id)
+            ->assertSet('error', null);
+
+        $successMsg = $component->get('success');
+        $this->assertStringContainsString('is signed by Marisol Quintero', $successMsg);
+        $this->assertStringContainsString('price-book version is frozen', $successMsg);
+        $this->assertStringContainsString('No deposit has been requested and no money has moved', $successMsg);
+        $this->assertStringContainsString('signed PDF is not produced yet', $successMsg);
+
+        $this->assertDatabaseHas((new Estimate)->getTable(), [
+            'id' => $est->id,
+            'status' => 'accepted',
+            'signed_by_customer' => 'Marisol Quintero',
+        ]);
+    }
+
+    public function test_the_list_reads_accepted_and_the_accept_button_goes(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(EstimatesList::class)
+            ->set('serviceName', 'Culvert Relining 8309')
+            ->set('quantity', 1)
+            ->set('unitPriceCents', 830900)
+            ->call('draftEstimate');
+
+        $est = Estimate::where('business_id', $biz->id)->first();
+        Livewire::test(EstimatesList::class)->call('sendEstimate', $est->id);
+
+        Tenancy::forget();
+        $this->get(route('x-164.estimates-list'))
+            ->assertOk()
+            ->assertSee('Sent')
+            ->assertSee('acceptEstimate(');
+
+        Tenancy::set((int) $biz->id);
+        Livewire::test(EstimatesList::class)
+            ->set('customerSignature', 'Marisol Quintero')
+            ->call('acceptEstimate', $est->id);
+
+        Tenancy::forget();
+        $this->get(route('x-164.estimates-list'))
+            ->assertOk()
+            ->assertSee('Accepted')
+            ->assertSee('8,309.00')
+            ->assertDontSee('acceptEstimate(');
+    }
+
+    public function test_the_frozen_snapshot_records_the_price_book_version(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(EstimatesList::class)
+            ->set('serviceName', 'Culvert Relining 8309')
+            ->set('quantity', 1)
+            ->set('unitPriceCents', 830900)
+            ->call('draftEstimate');
+
+        $est = Estimate::where('business_id', $biz->id)->first();
+        Livewire::test(EstimatesList::class)->call('sendEstimate', $est->id);
+
+        Livewire::test(EstimatesList::class)->set('customerSignature', 'Marisol Quintero')->call('acceptEstimate', $est->id);
+
+        // No UI reads this table
+        $this->assertDatabaseHas((new EstimateVersion)->getTable(), ['estimate_id' => $est->id]);
+    }
+
+    public function test_an_expired_estimate_is_refused_and_reads_expired(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(EstimatesList::class)
+            ->set('serviceName', 'Culvert Relining 8309')
+            ->set('quantity', 1)
+            ->set('unitPriceCents', 830900)
+            ->call('draftEstimate');
+
+        $est = Estimate::where('business_id', $biz->id)->first();
+        Livewire::test(EstimatesList::class)->call('sendEstimate', $est->id);
+
+        $est->update(['expires_at' => now()->subDay()]);
+
+        Livewire::test(EstimatesList::class)
+            ->set('customerSignature', 'Marisol Quintero')
+            ->call('acceptEstimate', $est->id)
+            ->assertSet('error', 'That estimate had already expired, so it was not accepted — and it now reads Expired in the list. Draft a fresh one.');
+
+        $this->assertDatabaseHas((new Estimate)->getTable(), ['id' => $est->id, 'status' => 'expired']);
+
+        Tenancy::forget();
+        $this->get(route('x-164.estimates-list'))->assertOk()->assertSee('Expired');
+    }
+
+    public function test_accepting_without_a_signature_is_refused(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(EstimatesList::class)
+            ->set('serviceName', 'Culvert Relining 8309')
+            ->set('quantity', 1)
+            ->set('unitPriceCents', 830900)
+            ->call('draftEstimate');
+
+        $est = Estimate::where('business_id', $biz->id)->first();
+        Livewire::test(EstimatesList::class)->call('sendEstimate', $est->id);
+
+        Livewire::test(EstimatesList::class)
+            ->set('customerSignature', '')
+            ->call('acceptEstimate', $est->id)
+            ->assertSet('error', 'Type the customer’s name as their signature before accepting.');
+
+        $this->assertDatabaseHas((new Estimate)->getTable(), ['id' => $est->id, 'status' => 'sent']);
+    }
+
+    public function test_accepting_another_tenants_estimate_is_refused(): void
+    {
+        $ownerB = User::factory()->create(['role' => UserRole::Owner]);
+        $bizB = $this->provisionTenant(['owner_user_id' => $ownerB->id]);
+        $ownerA = User::factory()->create(['role' => UserRole::Owner]);
+        $bizA = $this->provisionTenant(['owner_user_id' => $ownerA->id]);
+
+        Tenancy::setUser($ownerB->id);
+        Tenancy::set((int) $bizB->id);
+        $this->actingAs($ownerB);
+
+        Livewire::test(EstimatesList::class)
+            ->set('serviceName', 'Culvert Relining 8309')
+            ->set('quantity', 1)
+            ->set('unitPriceCents', 830900)
+            ->call('draftEstimate');
+
+        $estB = Estimate::where('business_id', $bizB->id)->first();
+        Livewire::test(EstimatesList::class)->call('sendEstimate', $estB->id);
+
+        Tenancy::setUser($ownerA->id);
+        Tenancy::set((int) $bizA->id);
+        $this->actingAs($ownerA);
+
+        $this->expectException(ModelNotFoundException::class);
+        Livewire::test(EstimatesList::class)->set('customerSignature', 'Marisol Quintero')->call('acceptEstimate', $estB->id);
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X164\Ui;
 
+use App\Modules\X164\Actions\EstimateAcceptAction;
 use App\Modules\X164\Actions\EstimateDraftAction;
 use App\Modules\X164\Actions\EstimateSendAction;
 use App\Modules\X164\Models\Estimate;
@@ -17,6 +18,8 @@ class EstimatesList extends Component
 {
     #[Locked]
     public int $businessId = 0;
+
+    public string $customerSignature = '';
 
     public string $serviceName = '';
 
@@ -79,6 +82,35 @@ class EstimatesList extends Component
 
         $this->success = 'Estimate '.$estimate->estimate_number.' is marked sent. Nothing is delivered '
             .'to the customer yet — this records the status only.';
+    }
+
+    public function acceptEstimate(int $estimateId, EstimateAcceptAction $action): void
+    {
+        $this->error = null;
+        $this->success = null;
+
+        if (trim($this->customerSignature) === '') {
+            $this->error = 'Type the customer’s name as their signature before accepting.';
+
+            return;
+        }
+
+        $estimate = Estimate::findOrFail($estimateId);
+        $estimateNumber = $estimate->estimate_number;
+
+        $result = $action->handle(Tenancy::idOrFail(), $estimateId, trim($this->customerSignature));
+
+        if ($result['status'] === 'expired_locked') {
+            $this->error = 'That estimate had already expired, so it was not accepted — and it now reads Expired in the list. Draft a fresh one.';
+
+            return;
+        }
+
+        $this->success = 'Accepted. Estimate '.$estimateNumber.' is signed by '.trim($this->customerSignature)
+            .' and its price-book version is frozen, so later price changes will not move it. '
+            .'No deposit has been requested and no money has moved. A signed PDF is not produced yet.';
+
+        $this->customerSignature = '';
     }
 
     public function render()

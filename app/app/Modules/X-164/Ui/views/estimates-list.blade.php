@@ -21,11 +21,15 @@
                 When you draft an estimate for a customer, it appears here.
             </x-ui.empty-state>
         @else
+            <input type="text" wire:model="customerSignature" class="border rounded p-2 text-ink flex-1 bg-surface mb-4 w-full" placeholder="Customer signature">
             <ul class="mt-3 space-y-2">
                 @foreach($estimates as $est)
                     <li class="text-ink">{{ $est->estimate_number }} · ${{ number_format($est->total_cents / 100, 2) }} · {{ ucfirst($est->status) }}
                         @if($est->status === 'draft')
                             <button type="button" wire:click="sendEstimate({{ $est->id }})" class="bg-surface text-ink border rounded px-2 py-1 ml-2">Mark sent</button>
+                        @endif
+                        @if($est->status === 'sent')
+                            <button type="button" wire:click="acceptEstimate({{ $est->id }})" class="bg-surface text-ink border rounded px-2 py-1 ml-2">Accept</button>
                         @endif
                     </li>
                 @endforeach
