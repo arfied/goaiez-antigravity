@@ -520,6 +520,7 @@ final class OwnerNav
             OwnerNavItem::make('Reorders', 'x-167.reorders', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Resolution rate & confidence', 'x-132.resolution-rate-confidence', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Timesheets', 'x-168.timesheets', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Connect a source', 'x-156.connect-source', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Prompt copy', 'x-207.promptcopy-editor', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Timesheet approvals', 'x-168.approvals', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Social queue', 'x-182.social-queue', OwnerNavItem::GROUP_CATALOG),

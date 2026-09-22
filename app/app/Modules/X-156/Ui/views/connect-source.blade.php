@@ -1,7 +1,6 @@
 <div>
     <div class="p-6 space-y-6">
-        <div class="flex items-center justify-between">
-            <h2 class="text-lg font-semibold text-gray-900">Connect a source</h2>
+        <div class="flex justify-end">
             <x-ui.button size="default" variant="secondary" wire:click="toggleSample">
                 {{ $isSample ? 'Exit sample' : 'Show a sample' }}
             </x-ui.button>
