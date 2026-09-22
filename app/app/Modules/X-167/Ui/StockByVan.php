@@ -26,8 +26,6 @@ class StockByVan extends Component
 
     public string $newSku = '';
 
-    public string $newVan = '';
-
     public string $newUnit = 'units';
 
     public string $newQuantity = '0';
@@ -53,7 +51,6 @@ class StockByVan extends Component
                 $this->businessId,
                 $this->newName,
                 $this->newSku,
-                $this->newVan,
                 $this->newUnit,
                 (float) $this->newQuantity,
                 (float) $this->newReorderPoint,
@@ -61,7 +58,6 @@ class StockByVan extends Component
             $this->success = $item->name.' added.';
             $this->newName = '';
             $this->newSku = '';
-            $this->newVan = '';
         } catch (\InvalidArgumentException $e) {
             $this->error = $e->getMessage();
         } catch (\Throwable $e) {

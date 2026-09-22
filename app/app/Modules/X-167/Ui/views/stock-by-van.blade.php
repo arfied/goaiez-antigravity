@@ -11,7 +11,6 @@
         <form wire:submit.prevent="addItem" class="mb-8">
             <label>Item name <input type="text" wire:model="newName" /></label>
             <label>SKU <input type="text" wire:model="newSku" /></label>
-            <label>Van <input type="text" wire:model="newVan" /></label>
             <label>Unit <input type="text" wire:model="newUnit" /></label>
             <label>On hand <input type="number" step="any" wire:model="newQuantity" /></label>
             <label>Reorder point <input type="number" step="any" wire:model="newReorderPoint" /></label>
@@ -19,7 +18,7 @@
         </form>
 
         @if($itemsGrouped->isEmpty())
-            <x-ui.empty-state>No stock yet. Add your first item above and it appears here, grouped by van.</x-ui.empty-state>
+            <x-ui.empty-state>No stock yet. Add your first item above and it appears here.</x-ui.empty-state>
         @else
             @php
                 $locIds = $itemsGrouped->keys()->sort(function($a, $b) use ($locations) {
