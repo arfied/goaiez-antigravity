@@ -1,66 +1,12 @@
-<?php
-
-declare(strict_types=1);
-
-namespace Tests\Modules\X167\Screens;
-
-use App\Enums\UserRole;
-use App\Models\User;
-use App\Modules\X167\Actions\ReorderProposeAction;
-use App\Modules\X167\Models\PurchaseOrder;
-use App\Modules\X167\Models\Supplier;
-use App\Modules\X167\Ui\Reorders;
-use App\Modules\X202\Models\ApprovalItem;
-use App\Modules\X202\Ui\Queue;
-use App\Support\Tenancy;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Livewire\Livewire;
-use Tests\TestCase;
-
-class ReordersScreenTest extends TestCase
-{
-    public function test_screen_renders_for_tenant(): void
-    {
-        $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
-        $this->actingAs($owner);
-
-        $this->get(route('x-167.reorders'))
-            ->assertOk()
-            ->assertSee('<h2>Reorders</h2>', false)
-            ->assertSee('No reorders yet.');
-
-        $supplier = Supplier::create([
-            'business_id' => $biz->id,
-            'name' => 'Distinctive Supplier 881',
-        ]);
-
-        PurchaseOrder::create([
-            'business_id' => $biz->id,
-            'supplier_id' => $supplier->id,
-            'po_number' => 'PO-9912',
-            'status' => 'proposed',
-            'total_cents' => 5000,
-            'items' => [['sku' => 'SKU-1', 'qty' => 5, 'unit_price_cents' => 1000]],
-            'is_sample' => false,
-        ]);
-
-        $this->get(route('x-167.reorders'))
-            ->assertOk()
-            ->assertSee('Distinctive Supplier 881')
-            ->assertSee('PO-9912');
-
-        Livewire::test(Reorders::class)->assertOk();
-    }
 
     public function test_requesting_approval_enqueues_an_item(): void
     {
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
-        Tenancy::set((int) $biz->id);
+        \App\Support\Tenancy::set((int) $biz->id);
 
-        $po = app(ReorderProposeAction::class)->handle(
+        $po = app(\App\Modules\X167\Actions\ReorderProposeAction::class)->handle(
             (int) $biz->id,
             null,
             [['stock_item_id' => 1, 'sku' => 'A', 'name' => 'B', 'qty' => 5, 'unit' => 'pcs']],
@@ -84,9 +30,9 @@ class ReordersScreenTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
-        Tenancy::set((int) $biz->id);
+        \App\Support\Tenancy::set((int) $biz->id);
 
-        $po = app(ReorderProposeAction::class)->handle(
+        $po = app(\App\Modules\X167\Actions\ReorderProposeAction::class)->handle(
             (int) $biz->id,
             null,
             [['stock_item_id' => 1, 'sku' => 'A', 'name' => 'B', 'qty' => 5, 'unit' => 'pcs']],
@@ -103,14 +49,14 @@ class ReordersScreenTest extends TestCase
         ]);
     }
 
-    public function test_sending_with_a_pendin_g_approval_is_still_refused(): void
+    public function test_sending_with_a_PENDING_approval_is_still_refused(): void
     {
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
-        Tenancy::set((int) $biz->id);
+        \App\Support\Tenancy::set((int) $biz->id);
 
-        $po = app(ReorderProposeAction::class)->handle(
+        $po = app(\App\Modules\X167\Actions\ReorderProposeAction::class)->handle(
             (int) $biz->id,
             null,
             [['stock_item_id' => 1, 'sku' => 'A', 'name' => 'B', 'qty' => 5, 'unit' => 'pcs']],
@@ -135,9 +81,9 @@ class ReordersScreenTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
-        Tenancy::set((int) $biz->id);
+        \App\Support\Tenancy::set((int) $biz->id);
 
-        $po = app(ReorderProposeAction::class)->handle(
+        $po = app(\App\Modules\X167\Actions\ReorderProposeAction::class)->handle(
             (int) $biz->id,
             null,
             [['stock_item_id' => 1, 'sku' => 'A', 'name' => 'B', 'qty' => 5, 'unit' => 'pcs']],
@@ -147,9 +93,9 @@ class ReordersScreenTest extends TestCase
         Livewire::test(Reorders::class)
             ->call('requestApproval', $po->id);
 
-        $item = ApprovalItem::where('subject', 'Send purchase order '.$po->po_number)->firstOrFail();
+        $item = \App\Modules\X202\Models\ApprovalItem::where('subject', 'Send purchase order '.$po->po_number)->firstOrFail();
 
-        Livewire::test(Queue::class)
+        Livewire::test(\App\Modules\X202\Ui\Queue::class)
             ->call('approveItem', $item->id);
 
         Livewire::test(Reorders::class)
@@ -170,34 +116,34 @@ class ReordersScreenTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
-        Tenancy::set((int) $biz->id);
+        \App\Support\Tenancy::set((int) $biz->id);
 
-        $po = app(ReorderProposeAction::class)->handle(
+        $po = app(\App\Modules\X167\Actions\ReorderProposeAction::class)->handle(
             (int) $biz->id,
             null,
             [['stock_item_id' => 1, 'sku' => 'A', 'name' => 'B', 'qty' => 5, 'unit' => 'pcs']],
             0
         );
 
-        Tenancy::forget();
+        \App\Support\Tenancy::forget();
         $this->get(route('x-167.reorders'))
             ->assertOk()
             ->assertSee('Proposed');
 
-        Tenancy::set((int) $biz->id);
+        \App\Support\Tenancy::set((int) $biz->id);
 
         Livewire::test(Reorders::class)
             ->call('requestApproval', $po->id);
 
-        $item = ApprovalItem::where('subject', 'Send purchase order '.$po->po_number)->firstOrFail();
+        $item = \App\Modules\X202\Models\ApprovalItem::where('subject', 'Send purchase order '.$po->po_number)->firstOrFail();
 
-        Livewire::test(Queue::class)
+        Livewire::test(\App\Modules\X202\Ui\Queue::class)
             ->call('approveItem', $item->id);
 
         Livewire::test(Reorders::class)
             ->call('sendPo', $po->id);
 
-        Tenancy::forget();
+        \App\Support\Tenancy::forget();
 
         $this->get(route('x-167.reorders'))
             ->assertOk()
@@ -208,8 +154,8 @@ class ReordersScreenTest extends TestCase
     {
         $ownerB = User::factory()->create(['role' => UserRole::Owner]);
         $bizB = $this->provisionTenant(['owner_user_id' => $ownerB->id]);
-        Tenancy::set((int) $bizB->id);
-        $poB = app(ReorderProposeAction::class)->handle(
+        \App\Support\Tenancy::set((int) $bizB->id);
+        $poB = app(\App\Modules\X167\Actions\ReorderProposeAction::class)->handle(
             (int) $bizB->id,
             null,
             [['stock_item_id' => 1, 'sku' => 'A', 'name' => 'B', 'qty' => 5, 'unit' => 'pcs']],
@@ -219,9 +165,9 @@ class ReordersScreenTest extends TestCase
         $ownerA = User::factory()->create(['role' => UserRole::Owner]);
         $bizA = $this->provisionTenant(['owner_user_id' => $ownerA->id]);
         $this->actingAs($ownerA);
-        Tenancy::set((int) $bizA->id);
+        \App\Support\Tenancy::set((int) $bizA->id);
 
-        $this->expectException(ModelNotFoundException::class);
+        $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
 
         Livewire::test(Reorders::class)
             ->call('requestApproval', $poB->id);
