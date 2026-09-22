@@ -1940,3 +1940,42 @@ in its name** — it asserts only the still-true clause, so it passes, while the
 now raise an invoice. N243's shape (*a test whose name no longer describes what it proves*), arrived
 at by a page change rather than a fixture side effect. **When a wave makes a screen do something new,
 grep that screen's test file for method NAMES asserting it cannot.**
+
+⛔ **A CHECK COMPOSED INSIDE A QUOTED STRING IS NOT THE CHECK YOU WROTE (N271, 2026-09-22, wave
+656c).** Verifying a fix run I ran, inside an `echo "... $(grep -c "…\$bizB->id…" <file>)"`:
+
+```
+grep -c "Flow::where('business_id', \$bizB->id)" <the test file>   → 0   (expected 1)
+```
+
+The line is present, at `:246`, exactly as the brief specified. The `$` did not survive the
+nested double-quoting, so grep was handed a different pattern than the one I wrote. Three sibling
+counts in the same command were correct — because they were plain string literals with no shell
+metacharacters, which is precisely why the fourth was not.
+⛔ Ruling from that `0` would have reported a **missing** line that is present, on a wave already
+twice-blocked: the worst possible moment to accuse a coder of an omission.
+**RULED: a check whose result will be acted on is run as its OWN command, never composed inside
+an `echo`, a `$(...)`, or any larger quoted string.** The composition is the defect, not the
+needle. This is N240's third part (*a needle that must match a symbol is copied from the file,
+never typed*) broken by its own author, and the fourth member of the false-needle family.
+⭐ **What caught it was N265** — the coder was still `ALIVE` when that reading was taken, so the
+tree was not yet a result and everything got re-measured after it exited. A rule written for one
+hazard caught a different one, which is the argument for keeping the cheap ones unconditional.
+
+⭐ **AND THE WAVE THAT PRODUCED IT: ONE SYMBOL, RESTATED WRONG TWICE, COST TWO DISPATCHES AND
+FIRED THE RETRY CAP (2026-09-22, wave 656/656b/656c).** My brief said to build a fixture *"through
+the shipped `Canvas::createFlow` control"*. `Canvas` is a **Livewire component** and `createFlow`
+is one of its actions. That one phrase produced two different failures: the coder first guessed
+`App\Modules\X125\Domain\Canvas` (no `use` line was given), then read `::` as a static call
+(`Non-static method … cannot be called statically`). Both readings were faithful to what I wrote.
+⛔ **The cap fired and the OWNER lifted it, not this seat** — N252's ruling applied for real. The
+tempting clause in this very file (*a defect the supervisor's own brief caused is a new item with
+its own two dispatches*) is exactly the rationalisation N252 names, and it was declined.
+The third brief contained **no class named in prose at all**: the invocation copied verbatim out
+of `CanvasScreenTest.php:65-69`, plus a table naming the two variables that differ per call site.
+It landed first time.
+⭐ The transferable half is not *"give the coder code"* — N266 already says that. It is that **I
+restated the same symbol wrong twice in one wave without ever opening the file it lives in.** Two
+`grep`s would have settled it at any point in the preceding ninety minutes:
+`grep -rn "^namespace" <the class file>` and `grep -n "public function <the method>" <the class file>`.
+**Before a brief names a symbol, open the file and read its namespace line and its signature.**
