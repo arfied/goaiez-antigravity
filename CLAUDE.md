@@ -2076,3 +2076,26 @@ test, appearing nowhere else in the file) and hand-verified twice before the num
 down. ⭐ **The comfortable answer is the one to distrust**: three needles tonight over-reported and
 were caught immediately; the one that under-reported said "nothing here" and almost closed the
 question.
+
+⛔ **N275 IS CORRECTED BY ITS OWN NEXT MEASUREMENT, AND THE CORRECTION REVERSES ITS MEANING
+(N276, 2026-09-22, same tick).** N275 reports *"83 of the ids `capability` credits are named only
+above tests that assert nothing"* — **the number is right and the framing is wrong.** Measured
+immediately afterwards: **all 83 carry `// status: SPECCED` in their module's `capabilities.php`.
+Not one is BUILT.**
+⭐ **A specced-but-unbuilt capability has nothing to assert.** A placeholder test whose docblock
+names the id is therefore the *correct* response, not a way of silencing the stage — and
+`CapabilityStage` is doing exactly what it says: *"specced but no test names this id"*. It is a
+**traceability** check (is every specced id accounted for in the test tree?), never a coverage
+check, and it never claimed otherwise.
+⛔ **So there is no coverage lie, and N275's closing framing — "the gap is between what it
+measures and what a reader infers" — implies built-but-untested behaviour that does not exist.**
+The 22 assertion-free tests are honest markers for unbuilt work. **Read N275 for its numbers and
+this note for its meaning.**
+⭐ The transferable half is the one this file keeps paying for: **I measured a mechanism, wrote
+down what it implied, and did not measure the population it applied to.** One command
+(`grep "status:" capabilities.php` beside each id) turned a "capability is over-reporting
+coverage" finding into "capability is reporting exactly what it says". ⛔ **Before writing that a
+check credits something falsely, establish that the thing credited was ever built.**
+⚠️ The sharper question N275 should have asked survives and is answered: **is any id that is
+BUILT credited only by a vacuous test?** Of these 83, **zero** — because all 83 are SPECCED. That
+is the question worth re-running if the vacuous-test count ever rises.
