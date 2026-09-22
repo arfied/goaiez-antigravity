@@ -2,8 +2,24 @@
     <div class="stock-van-view p-4">
         <h2>Stock by van</h2>
         
+        @if($error)
+            <x-ui.error-panel heading="We couldn't add that item">{{ $error }}</x-ui.error-panel>
+        @endif
+        @if($success)
+            <p>{{ $success }}</p>
+        @endif
+        <form wire:submit.prevent="addItem" class="mb-8">
+            <label>Item name <input type="text" wire:model="newName" /></label>
+            <label>SKU <input type="text" wire:model="newSku" /></label>
+            <label>Van <input type="text" wire:model="newVan" /></label>
+            <label>Unit <input type="text" wire:model="newUnit" /></label>
+            <label>On hand <input type="number" step="any" wire:model="newQuantity" /></label>
+            <label>Reorder point <input type="number" step="any" wire:model="newReorderPoint" /></label>
+            <x-ui.button type="submit">Add item</x-ui.button>
+        </form>
+
         @if($itemsGrouped->isEmpty())
-            <x-ui.empty-state>No stock yet. The parts list is inferred from your invoices.</x-ui.empty-state>
+            <x-ui.empty-state>No stock yet. Add your first item above and it appears here, grouped by van.</x-ui.empty-state>
         @else
             @php
                 $locIds = $itemsGrouped->keys()->sort(function($a, $b) use ($locations) {

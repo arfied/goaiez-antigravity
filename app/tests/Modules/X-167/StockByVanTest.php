@@ -48,7 +48,7 @@ class StockByVanTest extends TestCase
         Tenancy::setUser($user->id);
 
         Livewire::actingAs($user)->test(StockByVan::class)
-            ->assertSee('No stock yet. The parts list is inferred from your invoices.');
+            ->assertSee('No stock yet. Add your first item above and it appears here, grouped by van.');
     }
 
     public function test_seeded_items_show_in_van(): void
@@ -231,5 +231,71 @@ class StockByVanTest extends TestCase
             ->get(route('x-167.stock-by-van'))
             ->assertOk()
             ->assertSee('372.64');
+    }
+
+    public function test_owner_adds_an_item_and_it_appears_under_its_van(): void
+    {
+        $user = User::factory()->create();
+        $user->role = UserRole::Owner;
+        $user->save();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        Livewire::actingAs($user)->test(StockByVan::class)
+            ->set('newName', 'Torque Wrench 12mm')
+            ->set('newSku', 'TORQ-12')
+            ->set('newVan', 'Van 11')
+            ->set('newUnit', 'ea')
+            ->set('newQuantity', '4')
+            ->set('newReorderPoint', '2')
+            ->call('addItem')
+            ->assertSee('Torque Wrench 12mm')
+            ->assertSee('Van 11');
+
+        $item = StockItem::where('business_id', $biz->id)->where('sku', 'TORQ-12')->first();
+        $this->assertNotNull($item);
+        $this->assertSame('Torque Wrench 12mm', $item->name);
+        $this->assertNotNull($item->location_id);
+    }
+
+    public function test_an_item_with_no_van_lands_under_no_van(): void
+    {
+        $user = User::factory()->create();
+        $user->role = UserRole::Owner;
+        $user->save();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        Livewire::actingAs($user)->test(StockByVan::class)
+            ->set('newName', 'Bay 3 Sealant')
+            ->set('newSku', 'SEAL-01')
+            ->set('newVan', '')
+            ->call('addItem')
+            ->assertSee('Bay 3 Sealant')
+            ->assertSee('No van');
+
+        $item = StockItem::where('business_id', $biz->id)->where('sku', 'SEAL-01')->first();
+        $this->assertNotNull($item);
+        $this->assertNull($item->location_id);
+    }
+
+    public function test_adding_an_item_without_a_name_is_refused_and_writes_nothing(): void
+    {
+        $user = User::factory()->create();
+        $user->role = UserRole::Owner;
+        $user->save();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        Livewire::actingAs($user)->test(StockByVan::class)
+            ->set('newName', '')
+            ->set('newSku', 'NOPE-1')
+            ->call('addItem')
+            ->assertSee('An item needs a name and a SKU.');
+
+        $this->assertSame(0, StockItem::where('business_id', $biz->id)->count());
     }
 }

@@ -6,6 +6,7 @@ namespace App\Modules\X167\Ui;
 
 use App\Enums\UserRole;
 use App\Modules\X167\Actions\ReorderProposeAction;
+use App\Modules\X167\Actions\StockItemCreateAction;
 use App\Modules\X167\Models\StockItem;
 use App\Modules\X167\Models\StockLocation;
 use App\Support\Tenancy;
@@ -21,10 +22,51 @@ class StockByVan extends Component
 
     public array $proposed = [];
 
+    public string $newName = '';
+
+    public string $newSku = '';
+
+    public string $newVan = '';
+
+    public string $newUnit = 'units';
+
+    public string $newQuantity = '0';
+
+    public string $newReorderPoint = '5';
+
+    public ?string $error = null;
+
+    public ?string $success = null;
+
     public function mount(): void
     {
         abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner, UserRole::Manager), 403);
         $this->businessId = Tenancy::id();
+    }
+
+    public function addItem(StockItemCreateAction $action): void
+    {
+        $this->error = null;
+        $this->success = null;
+        try {
+            $item = $action->handle(
+                $this->businessId,
+                $this->newName,
+                $this->newSku,
+                $this->newVan,
+                $this->newUnit,
+                (float) $this->newQuantity,
+                (float) $this->newReorderPoint,
+            );
+            $this->success = $item->name.' added.';
+            $this->newName = '';
+            $this->newSku = '';
+            $this->newVan = '';
+        } catch (\InvalidArgumentException $e) {
+            $this->error = $e->getMessage();
+        } catch (\Throwable $e) {
+            $this->error = 'We could not add that item: '.$e->getMessage();
+        }
     }
 
     public function proposeRestock(int $itemId): void
