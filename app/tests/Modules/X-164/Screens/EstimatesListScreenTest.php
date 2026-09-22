@@ -384,4 +384,162 @@ class EstimatesListScreenTest extends TestCase
         $this->expectException(ModelNotFoundException::class);
         Livewire::test(EstimatesList::class)->set('customerSignature', 'Marisol Quintero')->call('acceptEstimate', $estB->id);
     }
+
+    public function test_can_refresh_an_expired_estimate(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(EstimatesList::class)
+            ->set('serviceName', 'Bore Lining')->set('quantity', 1)->set('unitPriceCents', 612755)
+            ->call('draftEstimate');
+        $est = Estimate::where('business_id', $biz->id)->firstOrFail();
+        Livewire::test(EstimatesList::class)->call('sendEstimate', $est->id);
+        $est->update(['expires_at' => now()->subDay()]);
+        Livewire::test(EstimatesList::class)
+            ->set('customerSignature', 'Ingrid Halvorsen')->call('acceptEstimate', $est->id);
+        // status is now 'expired'
+
+        $component = Livewire::test(EstimatesList::class)
+            ->set('refreshedUnitPriceCents', '491820')
+            ->call('refreshEstimate', $est->id)
+            ->assertSet('error', null);
+
+        $successMsg = $component->get('success');
+        $this->assertStringContainsString('is back to Sent at $4,918.20', $successMsg);
+        $this->assertStringContainsString('book version 2', $successMsg);
+        $this->assertStringContainsString('nothing has been charged', $successMsg);
+
+        $this->assertDatabaseHas((new Estimate)->getTable(), [
+            'id' => $est->id,
+            'status' => 'sent',
+            'total_cents' => 491820,
+            'price_book_version' => 2,
+        ]);
+    }
+
+    public function test_the_line_is_updated_too_so_the_header_and_lines_agree(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(EstimatesList::class)
+            ->set('serviceName', 'Bore Lining')->set('quantity', 1)->set('unitPriceCents', 612755)
+            ->call('draftEstimate');
+        $est = Estimate::where('business_id', $biz->id)->firstOrFail();
+        Livewire::test(EstimatesList::class)->call('sendEstimate', $est->id);
+        $est->update(['expires_at' => now()->subDay()]);
+        Livewire::test(EstimatesList::class)
+            ->set('customerSignature', 'Ingrid Halvorsen')->call('acceptEstimate', $est->id);
+
+        Livewire::test(EstimatesList::class)
+            ->set('refreshedUnitPriceCents', '491820')
+            ->call('refreshEstimate', $est->id);
+
+        // The action matches lines by service_name, so this assertion proves the control passed the row's own name and not a typed one.
+        $this->assertDatabaseHas((new EstimateLine)->getTable(), [
+            'estimate_id' => $est->id,
+            'unit_price_cents' => 491820,
+            'subtotal_cents' => 491820,
+        ]);
+    }
+
+    public function test_the_list_shows_the_new_total_and_the_refresh_button_goes(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(EstimatesList::class)
+            ->set('serviceName', 'Bore Lining')->set('quantity', 1)->set('unitPriceCents', 612755)
+            ->call('draftEstimate');
+        $est = Estimate::where('business_id', $biz->id)->firstOrFail();
+        Livewire::test(EstimatesList::class)->call('sendEstimate', $est->id);
+        $est->update(['expires_at' => now()->subDay()]);
+        Livewire::test(EstimatesList::class)
+            ->set('customerSignature', 'Ingrid Halvorsen')->call('acceptEstimate', $est->id);
+
+        Tenancy::forget();
+        $this->get(route('x-164.estimates-list'))
+            ->assertOk()
+            ->assertSee('Expired')
+            ->assertSee('6,127.55')
+            ->assertSee('refreshEstimate(');
+
+        Tenancy::set((int) $biz->id);
+        Livewire::test(EstimatesList::class)
+            ->set('refreshedUnitPriceCents', '491820')
+            ->call('refreshEstimate', $est->id);
+
+        Tenancy::forget();
+        $this->get(route('x-164.estimates-list'))
+            ->assertOk()
+            ->assertSee('Sent')
+            ->assertSee('4,918.20')
+            ->assertDontSee('6,127.55')
+            ->assertDontSee('refreshEstimate(');
+    }
+
+    public function test_refreshing_a_sent_estimate_is_refused(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(EstimatesList::class)
+            ->set('serviceName', 'Bore Lining')->set('quantity', 1)->set('unitPriceCents', 612755)
+            ->call('draftEstimate');
+        $est = Estimate::where('business_id', $biz->id)->firstOrFail();
+        Livewire::test(EstimatesList::class)->call('sendEstimate', $est->id);
+
+        Livewire::test(EstimatesList::class)
+            ->set('refreshedUnitPriceCents', '491820')
+            ->call('refreshEstimate', $est->id)
+            ->assertSet('error', 'Only an expired estimate can be refreshed. This one reads Sent.');
+
+        $this->assertDatabaseHas((new Estimate)->getTable(), [
+            'id' => $est->id,
+            'price_book_version' => 1,
+        ]);
+
+        Livewire::test(EstimatesList::class)
+            ->set('refreshedUnitPriceCents', '')
+            ->call('refreshEstimate', $est->id)
+            ->assertSet('error', 'Type the new unit price in whole cents before refreshing.');
+    }
+
+    public function test_refreshing_another_tenants_estimate_is_refused(): void
+    {
+        $ownerB = User::factory()->create(['role' => UserRole::Owner]);
+        $bizB = $this->provisionTenant(['owner_user_id' => $ownerB->id]);
+
+        $ownerA = User::factory()->create(['role' => UserRole::Owner]);
+        $bizA = $this->provisionTenant(['owner_user_id' => $ownerA->id]);
+
+        Tenancy::setUser($ownerB->id);
+        Tenancy::set((int) $bizB->id);
+        $this->actingAs($ownerB);
+
+        Livewire::test(EstimatesList::class)
+            ->set('serviceName', 'Bore Lining')->set('quantity', 1)->set('unitPriceCents', 612755)
+            ->call('draftEstimate');
+        $estB = Estimate::where('business_id', $bizB->id)->firstOrFail();
+        Livewire::test(EstimatesList::class)->call('sendEstimate', $estB->id);
+        $estB->update(['expires_at' => now()->subDay()]);
+        Livewire::test(EstimatesList::class)
+            ->set('customerSignature', 'Ingrid Halvorsen')->call('acceptEstimate', $estB->id);
+
+        Tenancy::setUser($ownerA->id);
+        Tenancy::set((int) $bizA->id);
+        $this->actingAs($ownerA);
+
+        $this->expectException(ModelNotFoundException::class);
+        Livewire::test(EstimatesList::class)->set('refreshedUnitPriceCents', '491820')->call('refreshEstimate', $estB->id);
+    }
 }

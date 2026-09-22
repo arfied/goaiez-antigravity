@@ -21,7 +21,10 @@
                 When you draft an estimate for a customer, it appears here.
             </x-ui.empty-state>
         @else
-            <input type="text" wire:model="customerSignature" class="border rounded p-2 text-ink flex-1 bg-surface mb-4 w-full" placeholder="Customer signature">
+            <div class="flex gap-2 mb-4">
+                <input type="text" wire:model="customerSignature" class="border rounded p-2 text-ink flex-1 bg-surface w-full" placeholder="Customer signature">
+                <input type="text" wire:model="refreshedUnitPriceCents" class="border rounded p-2 text-ink flex-1 bg-surface w-full" placeholder="New price (cents)">
+            </div>
             <ul class="mt-3 space-y-2">
                 @foreach($estimates as $est)
                     <li class="text-ink">{{ $est->estimate_number }} · ${{ number_format($est->total_cents / 100, 2) }} · {{ ucfirst($est->status) }}
@@ -30,6 +33,9 @@
                         @endif
                         @if($est->status === 'sent')
                             <button type="button" wire:click="acceptEstimate({{ $est->id }})" class="bg-surface text-ink border rounded px-2 py-1 ml-2">Accept</button>
+                        @endif
+                        @if($est->status === 'expired')
+                            <button type="button" wire:click="refreshEstimate({{ $est->id }})" class="bg-surface text-ink border rounded px-2 py-1 ml-2">Refresh</button>
                         @endif
                     </li>
                 @endforeach
