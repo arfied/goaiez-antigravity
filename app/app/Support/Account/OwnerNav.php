@@ -661,6 +661,7 @@ final class OwnerNav
             OwnerNavItem::make('Compliance registers', 'x-204.register-slot-states', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Deal tracker', 'x-218.deal-tracker', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Discovery board', 'x-218.discovery-board', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Deliverable proof', 'x-218.deliverable-proof', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Gateway connections', 'x-198.connect-card', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Same account', 'x-198.same-account', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Agency Console', 'x-112.agency-console', OwnerNavItem::GROUP_CATALOG),

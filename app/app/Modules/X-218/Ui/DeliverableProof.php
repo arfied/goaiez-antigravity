@@ -9,9 +9,11 @@ use App\Modules\X218\Models\Deliverable;
 use App\Support\Tenancy;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use InvalidArgumentException;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Deliverable proof'])]
 class DeliverableProof extends Component
 {
     #[Locked]
