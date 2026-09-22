@@ -6,9 +6,11 @@ namespace Tests\Modules\X202\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X202\Domain\ApprovalDeskEngine;
 use App\Modules\X202\Models\ApprovalItem;
 use App\Modules\X202\Ui\Queue;
 use App\Support\Tenancy;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -45,6 +47,7 @@ class QueueScreenTest extends TestCase
 
         Livewire::test(Queue::class)->assertOk();
     }
+
     public function test_can_enqueue_approval_item(): void
     {
         $owner = User::factory()->create(['role' => UserRole::Owner]);
@@ -119,5 +122,140 @@ class QueueScreenTest extends TestCase
             'business_id' => $biz->id,
             'subject' => 'Test Subject Error',
         ]);
+    }
+
+    public function test_can_escalate_a_pending_item(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set($biz->id);
+
+        Livewire::test(Queue::class)
+            ->set('itemType', 'test_type')
+            ->set('subject', 'Refund above the desk limit')
+            ->set('note', 'Just a note')
+            ->call('enqueueItem');
+
+        $item = ApprovalItem::where('business_id', $biz->id)->firstOrFail();
+
+        $component = Livewire::test(Queue::class)
+            ->set('escalateReason', 'Need more eyes on this')
+            ->call('escalateItem', $item->id)
+            ->assertSet('error', null);
+
+        $success = $component->get('success');
+        $this->assertStringContainsString('stays on this queue, now marked escalated', (string) $success);
+        $this->assertStringContainsString('Nobody is notified', (string) $success);
+
+        $this->assertDatabaseHas((new ApprovalItem)->getTable(), [
+            'id' => $item->id,
+            'status' => 'escalated',
+        ]);
+    }
+
+    public function test_an_escalated_item_stays_on_the_queue(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set($biz->id);
+
+        Livewire::test(Queue::class)
+            ->set('itemType', 'test_type')
+            ->set('subject', 'Refund above the desk limit')
+            ->set('note', 'Just a note')
+            ->call('enqueueItem');
+
+        $item = ApprovalItem::where('business_id', $biz->id)->firstOrFail();
+
+        Livewire::test(Queue::class)
+            ->set('escalateReason', 'Need more eyes on this')
+            ->call('escalateItem', $item->id);
+
+        // Before the fix this GET showed the empty state
+        $this->get(route('x-202.queue'))
+            ->assertSee('Refund above the desk limit')
+            ->assertSee('escalated')
+            ->assertDontSee('Nothing is waiting on you.');
+    }
+
+    public function test_an_expired_item_is_visible_too(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set($biz->id);
+
+        Livewire::test(Queue::class)
+            ->set('itemType', 'test_type')
+            ->set('subject', 'Refund above the desk limit')
+            ->set('note', 'Just a note')
+            ->call('enqueueItem');
+
+        $item = ApprovalItem::where('business_id', $biz->id)->firstOrFail();
+        $item->update(['expires_at' => now()->subDay()]);
+
+        app(ApprovalDeskEngine::class)->processExpirations($biz->id);
+
+        // processExpirations's docblock promises expired items "appear on a human's screen, not in a void" — this test is the first thing that makes that true.
+        $this->get(route('x-202.queue'))
+            ->assertSee('Refund above the desk limit')
+            ->assertSee('expired');
+    }
+
+    public function test_escalating_without_a_reason_is_refused(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set($biz->id);
+
+        Livewire::test(Queue::class)
+            ->set('itemType', 'test_type')
+            ->set('subject', 'Refund above the desk limit')
+            ->set('note', 'Just a note')
+            ->call('enqueueItem');
+
+        $item = ApprovalItem::where('business_id', $biz->id)->firstOrFail();
+
+        Livewire::test(Queue::class)
+            ->set('escalateReason', '   ')
+            ->call('escalateItem', $item->id)
+            ->assertSet('error', 'Say why this needs to go higher before escalating.');
+
+        $this->assertDatabaseHas((new ApprovalItem)->getTable(), [
+            'id' => $item->id,
+            'status' => 'pending',
+        ]);
+    }
+
+    public function test_escalating_another_tenants_item_is_refused(): void
+    {
+        $ownerB = User::factory()->create(['role' => UserRole::Owner]);
+        $bizB = $this->provisionTenant(['owner_user_id' => $ownerB->id]);
+        Tenancy::setUser($ownerB->id);
+        Tenancy::set((int) $bizB->id);
+        $this->actingAs($ownerB);
+
+        Livewire::test(Queue::class)
+            ->set('itemType', 'test_type')
+            ->set('subject', 'Refund above the desk limit')
+            ->set('note', 'Just a note')
+            ->call('enqueueItem');
+
+        $itemB = ApprovalItem::where('business_id', $bizB->id)->firstOrFail();
+
+        $ownerA = User::factory()->create(['role' => UserRole::Owner]);
+        $bizA = $this->provisionTenant(['owner_user_id' => $ownerA->id]);
+        Tenancy::setUser($ownerA->id);
+        Tenancy::set((int) $bizA->id);
+        $this->actingAs($ownerA);
+
+        $this->expectException(ModelNotFoundException::class);
+
+        Livewire::test(Queue::class)
+            ->set('escalateReason', 'Escalate')
+            ->call('escalateItem', $itemB->id);
     }
 }

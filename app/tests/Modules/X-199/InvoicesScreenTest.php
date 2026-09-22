@@ -66,7 +66,7 @@ class InvoicesScreenTest extends TestCase
         Livewire::actingAs($owner)->test(Invoices::class)
             ->assertOk()
             ->assertSeeInOrder([$inv2->invoice_number, $inv1->invoice_number])
-            ->assertSee('John Doe')
+            ->assertSeeInOrder([$inv2->invoice_number, 'John Doe'])
             ->assertDontSee('Jane Doe')
             ->assertDontSee('777.00')
             ->assertSee('Receipt not available')
@@ -80,7 +80,7 @@ class InvoicesScreenTest extends TestCase
         $this->assertEquals('paid', Invoice::find($inv2->id)->status);
     }
 
-    public function test_invoices_screen_says_nothing_raises_or_sends_an_invoice_when_the_list_is_empty(): void
+    public function test_invoices_screen_says_nothing_issues_or_sends_an_invoice_when_the_list_is_empty(): void
     {
         $biz = self::provisionTenant();
         $owner = User::findOrFail($biz->owner_user_id);

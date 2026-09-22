@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X202\Ui;
 
+use App\Modules\X202\Actions\ApprovalEscalateAction;
 use App\Modules\X202\Domain\ApprovalDeskEngine;
 use App\Modules\X202\Models\ApprovalItem;
 use App\Support\Tenancy;
@@ -18,11 +19,18 @@ class Queue extends Component
     public int $businessId = 0;
 
     public ?string $itemType = null;
+
     public ?string $subject = null;
+
     public ?string $note = null;
+
     public bool $isErrorOnly = false;
+
     public ?string $success = null;
+
     public ?string $error = null;
+
+    public string $escalateReason = '';
 
     public function mount(): void
     {
@@ -34,8 +42,9 @@ class Queue extends Component
         $this->success = null;
         $this->error = null;
 
-        if (empty($this->itemType) || empty($this->subject) || (empty($this->note) && !$this->isErrorOnly)) {
+        if (empty($this->itemType) || empty($this->subject) || (empty($this->note) && ! $this->isErrorOnly)) {
             $this->error = 'Please fill out all required fields.';
+
             return;
         }
 
@@ -53,6 +62,7 @@ class Queue extends Component
 
         if (($result['status'] ?? null) === 'refused') {
             $this->error = $result['message'] ?? 'Refused';
+
             return;
         }
 
@@ -64,11 +74,39 @@ class Queue extends Component
         $this->isErrorOnly = false;
     }
 
+    public function escalateItem(int $itemId, ApprovalEscalateAction $action): void
+    {
+        $this->error = null;
+        $this->success = null;
+
+        if (trim($this->escalateReason) === '') {
+            $this->error = 'Say why this needs to go higher before escalating.';
+
+            return;
+        }
+
+        $item = ApprovalItem::where('business_id', Tenancy::idOrFail())->findOrFail($itemId);
+
+        if ($item->status !== 'pending') {
+            $this->error = 'Only an item still waiting for a decision can be escalated. This one reads '.$item->status.'.';
+
+            return;
+        }
+
+        $action->handle(Tenancy::idOrFail(), $itemId, $this->escalateReason);
+
+        $this->success = 'Escalated. '.$item->subject.' stays on this queue, now marked escalated, '
+            .'so it is still in front of you. Nobody is notified — there is no manager queue behind '
+            .'this yet, so tell whoever needs to decide it.';
+
+        $this->escalateReason = '';
+    }
+
     public function render()
     {
         $items = ($this->businessId > 0)
             ? ApprovalItem::where('business_id', $this->businessId)
-                ->where('status', 'pending')
+                ->whereIn('status', ['pending', 'escalated', 'expired'])
                 ->orderByDesc('id')
                 ->get()
             : collect();
