@@ -2099,3 +2099,37 @@ check credits something falsely, establish that the thing credited was ever buil
 ⚠️ The sharper question N275 should have asked survives and is answered: **is any id that is
 BUILT credited only by a vacuous test?** Of these 83, **zero** — because all 83 are SPECCED. That
 is the question worth re-running if the vacuous-test count ever rises.
+
+⛔ **N273's CONCLUSION IS WITHDRAWN: REACHABILITY IS TRANSITIVE AND I CHECKED EXACTLY ONE HOP
+(N277, 2026-09-22).** N273 removed `X-167 Reorders` from the unfed-screen backlog on this
+reasoning: *"`PurchaseOrder` has a reachable writer — `StockByVan.php:34` calls
+`ReorderProposeAction` → `InventoryEngine::generatePurchaseOrder()`. A PO proposed from the stock
+screen appears on Reorders today."* **Every link in that sentence is true and the conclusion is
+false.** Measured, one hop further:
+
+```
+1. Reorders' driver = PurchaseOrder            creator: InventoryEngine        ✓
+2. that creator reachable from                 StockByVan                      ✓
+3. StockByVan::proposeReorder does             StockItem::findOrFail($itemId)  ← needs a row
+4. StockItem creators outside DemoFill:        0                               ⛔ broken at the root
+```
+
+`StockItem` is also the **driver** of `StockByVan`'s own list (`$itemsGrouped`, the variable its
+blade's `isEmpty()` guard reads), so that screen is permanently empty too, and its control can
+never run. Its empty state says so: *"No stock yet. The parts list is inferred from your
+invoices."*
+**RULED: a screen is fed only if its driver's creator is reachable from a control THAT CAN ITSELF
+RUN. Walk the chain until it terminates in something needing no row, or in a demo filler.** One
+hop is not reachability; it is the first link of it.
+⭐ N273 got the *mechanism* right (Supplier is a lookup, PurchaseOrder is the driver) and stopped
+one question short — which is this file's oldest shape, *an instrument is only as honest as the
+baseline it is handed*, with the baseline being **depth**.
+
+⭐ **AND THE DERIVATION IT CORRECTS WAS SCOPED WRONG TOO.** The 02:0x backlog examined only
+screens **without a control**, so a screen that has one and is still permanently empty could not
+appear. Re-derived on the **driver** — the model behind each blade's own `@if($x->isEmpty())`
+guard — regardless of controls: **16 screens**, of which **6 are new**: `C-Billing Mrr`,
+`X-130 CoverageByTrade`, `X-130 PublicIndexPages`, `X-155 Forms`, `X-167 StockByVan`,
+`X-196 ExtensionPopup`. ⚠️ The raw run returned **20**; four were my needle matching non-models
+(`InvoiceReader` is a `Domain/` class, `TimesheetApproveAction` an `Actions/` class). **Read the
+hits, never the count.**
