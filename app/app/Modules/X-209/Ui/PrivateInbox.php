@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X209\Ui;
 
 use App\Modules\X209\Actions\FixerCommandAction;
+use App\Modules\X209\Actions\FixerDelegateAction;
 use App\Modules\X209\Models\FixerCommand;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
@@ -24,6 +25,14 @@ class PrivateInbox extends Component
     public ?string $success = null;
 
     public ?string $error = null;
+
+    public string $delegateCommandId = '';
+
+    public string $delegateReason = '';
+
+    public ?string $delegateSuccess = null;
+
+    public ?string $delegateError = null;
 
     public function mount(): void
     {
@@ -49,6 +58,31 @@ class PrivateInbox extends Component
         $bizId = Tenancy::idOrFail();
         $result = $action->processStaffSms($bizId, $this->staffPersonId, $this->smsBody);
         $this->success = 'Processed SMS command from staff. Parsed delay: '.($result['eta_delayed'] ?? 0).' minutes. This feeds the inbox; nothing downstream is wired to it yet.';
+    }
+
+    public function delegateCommand(FixerDelegateAction $action): void
+    {
+        $this->delegateSuccess = null;
+        $this->delegateError = null;
+
+        if (trim($this->delegateCommandId) === '') {
+            $this->delegateError = 'Choose the command to hand on.';
+
+            return;
+        }
+        if (trim($this->delegateReason) === '') {
+            $this->delegateError = 'Say why you are handing it on.';
+
+            return;
+        }
+
+        $command = $action->delegate(Tenancy::idOrFail(), (int) $this->delegateCommandId, trim($this->delegateReason));
+
+        $this->delegateSuccess = 'Command “'.$command->raw_command.'” is now '.$command->status
+            .'. The reason you gave is not stored — it is passed to an event nothing listens to yet.';
+
+        $this->delegateCommandId = '';
+        $this->delegateReason = '';
     }
 
     public function render()

@@ -17,6 +17,18 @@
             </form>
         </div>
 
+        @if($delegateError) <div class="text-ink-2 bg-surface border p-2 mb-4 rounded">{{ $delegateError }}</div> @endif
+        @if($delegateSuccess) <div class="text-ink-2 bg-surface border p-2 mb-4 rounded">{{ $delegateSuccess }}</div> @endif
+
+        <form wire:submit.prevent="delegateCommand" class="mb-6 flex flex-col gap-2 bg-surface p-4 rounded border">
+            <select wire:model="delegateCommandId" class="border rounded p-2 text-ink bg-surface">
+                <option value="">Choose a command</option>
+                @foreach($commands as $c)<option value="{{ $c->id }}">Command #{{ $c->id }}</option>@endforeach
+            </select>
+            <input type="text" wire:model="delegateReason" class="border rounded p-2 text-ink bg-surface" placeholder="Why you are handing it on">
+            <button type="submit" class="bg-surface text-ink border rounded p-2">Hand on</button>
+        </form>
+
         @if($commands->isEmpty())
             <x-ui.empty-state heading="No commands yet.">When someone on the crew texts the assistant, what they asked and what it did appears here.</x-ui.empty-state>
         @else
