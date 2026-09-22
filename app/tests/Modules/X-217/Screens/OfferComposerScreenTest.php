@@ -25,7 +25,10 @@ class OfferComposerScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-217.offer-composer'))->assertOk();
+        $this->get(route('x-217.offer-composer'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console');
 
         Livewire::test(OfferComposer::class)->assertOk();
     }
