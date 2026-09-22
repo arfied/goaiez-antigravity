@@ -2030,3 +2030,26 @@ green. ⭐ **That is worse than leaving the screen unwired**, and it is *a guard
 case is defeated by removing the case* applied to a **control** rather than a merge.
 **RULED: before wiring a control whose action gates on an identifier, find what PRODUCES that
 identifier. If nothing does, the wave is "where does this come from", not "add a field for it".**
+
+⛔ **A TRACKED `REPORT.md` AT THE REPO ROOT SHADOWED THE MAILBOX ONE, AND THIS FILE NAMES IT
+UNQUALIFIED TEN TIMES (N274, 2026-09-22, wave 658b).** A brief said *"append one line to
+`REPORT.md`"* with no path. The coder appended to `/home/goaiez/agents/grs-antig/REPORT.md` — a
+**tracked** file, last committed `ee628a1e2` on 2026-09-13 as *"docs: PB-185 close report"*,
+holding a closed wave report from the **pricebook** lane about X-166. That resolution was
+reasonable: from the repo root, `REPORT.md` *is* that file.
+⛔ **The ambiguity is this contract's, not the brief's.** `grep -n "REPORT.md" CLAUDE.md` returns
+ten hits — the role table, the mailbox table, session-start step 2, and seven trap entries — and
+every one means `.agents/supervisor/REPORT.md`. The root file has shadowed all of them since
+2026-09-13 and nothing noticed, because no brief had ever told a coder to *append* rather than
+overwrite by full path.
+**RULED, two parts.** (1) **The stale root file is deleted** — nine days old, superseded by ~70
+waves, another lane's module, referenced by nothing as a path; keeping it preserves the exact
+ambiguity. (2) **A brief names artefact paths in full, always** — `.agents/supervisor/REPORT.md`,
+never `REPORT.md`. This is N172's ruling (*a brief names artefact paths INSIDE the checkout*)
+extended from *which directory* to *which file*, and it is the same defect as naming a symbol
+without its namespace (N273's corollary): **a bare name is resolved by the reader's context, not
+by the writer's intent.**
+⭐ Worth keeping about how it surfaced: the coder's own `N270-SWEEP` field is what exposed it. The
+field was ordered for an unrelated reason, came back with raw output, and one line of that output
+did not fit my model of the repository — which is the argument for fields that paste output rather
+than fields that summarise it.
