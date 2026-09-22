@@ -8,7 +8,10 @@
             <ul class="text-ink mb-6 mt-4">
                 @foreach($offers as $offer)
                     <li class="border rounded p-2 mb-2 bg-surface">
-                        {{ $offer->prospect->partner_name ?? 'Unknown' }} - {{ $offer->offered_rate_bps }} bps (ceiling: {{ $offer->ceiling_rate_bps }} bps) - {{ $offer->terms_summary }}
+                        {{ $offer->prospect->partner_name ?? 'Unknown' }} - {{ $offer->offered_rate_bps }} bps (ceiling: {{ $offer->ceiling_rate_bps }} bps) - {{ $offer->terms_summary }} - {{ $offer->is_accepted ? 'accepted' : 'open' }}
+                        @if(! $offer->is_accepted)
+                            <button type="button" wire:click="acceptOffer({{ $offer->id }})" class="bg-surface text-ink border rounded px-2 py-1 ml-2">Accept</button>
+                        @endif
                     </li>
                 @endforeach
             </ul>

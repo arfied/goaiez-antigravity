@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X217\Ui;
 
+use App\Modules\X217\Actions\AffiliatePipelineAction;
 use App\Modules\X217\Actions\AffiliateTermsOfferAction;
 use App\Modules\X217\Domain\RecruitmentGuard;
 use App\Modules\X217\Models\RecruitmentOffer;
@@ -70,5 +71,28 @@ class OfferComposer extends Component
         return view('x-217::offer-composer', [
             'offers' => $offers,
         ]);
+    }
+
+    public function acceptOffer(AffiliatePipelineAction $action, int $offerId): void
+    {
+        $this->success = '';
+        $this->error = '';
+
+        $offer = RecruitmentOffer::where('business_id', Tenancy::idOrFail())->findOrFail($offerId);
+
+        if ($offer->is_accepted) {
+            $this->error = 'That offer was already accepted, so nothing was done. Accepting it twice would create a second affiliate for the same partner.';
+
+            return;
+        }
+
+        $partnerName = $offer->prospect->partner_name ?? 'The partner';
+        $rateBps = $offer->offered_rate_bps;
+
+        $code = $action->acceptOffer(Tenancy::idOrFail(), $offer->id);
+
+        $this->success = 'Accepted. '.$partnerName.' is now an affiliate under code '.$code
+            .' at '.$rateBps.' bps — the exact rate that was offered. Their balance is 0 cents and '
+            .'nothing has been paid yet. Nobody is notified, so send them the code yourself.';
     }
 }
