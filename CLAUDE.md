@@ -312,8 +312,9 @@ resolve. I walked past the one instrument in the gate that type-checks, because 
 as "the standing 2" — a number I stopped measuring and started remembering, which is **N115's `STAGES` line
 exactly, in an instrument I own**.
 **RULED: the phpstan error count is read and compared against the previous gate's BEFORE §7, on every
-gate**, and a control brief carries `composer exec phpstan` as the coder's own pre-commit check with the
-expected count stated, so it does not depend on me. `CLAUDE.md` already says the blocker is *a count that
+gate**, and a control brief carries `./vendor/bin/phpstan analyse --memory-limit=1G --no-progress` as the
+coder's own pre-commit check with the expected count stated, so it does not depend on me. ⛔ **NOT
+`composer exec phpstan` — see N288, that form cannot work and this line ordered it for many waves.** `CLAUDE.md` already says the blocker is *a count that
 rose*; this is the first time one rose in front of me and was not read.
 ⛔ The transferable half is larger than the rule: **a clean run of every check you chose is not evidence
 when the checks were all chosen for one failure mode.** Six greens along one dimension is one green. When a
@@ -2172,3 +2173,89 @@ forgery that command exists to catch — and the stage already exempts `/app/Doc
 scan for precisely that reason, with this file outside the exemption. Both fixes are owner acts:
 **re-seal after review** (the seal's own fix text offers it) or **exempt the file in the stage**
 (a new exclusion, `BLOCK`-level, and worse — it would blind the stage to a real forgery there).
+
+⛔ **`composer exec phpstan` CANNOT WORK, AND EVERY CONTROL BRIEF HAS ORDERED IT SINCE N235 (N288,
+2026-09-22, wave 667).** Reproduced from this seat, so it is not the coder's machine:
+
+```
+composer exec phpstan                                          → rc=255,   78 bytes, no count
+./vendor/bin/phpstan analyse --memory-limit=1G --no-progress   → rc=1,   1301 bytes, "errors":2
+```
+
+`composer.json` defines **no** `phpstan` script, and the flag that matters is `--memory-limit=1G` — this
+repo's oldest trap (`phpunit.xml.dist` pins 512M for the suite) arriving in the static analyser. ⛔ **So
+the coder has had no static-analysis feedback for as many waves as N235's ruling has been in force.** The
+field never exposed it because the honest answer to a dead instrument — *"standing count is 2"* — is
+character-identical to a real measurement, which is **N160's shape moved from the gate's result line to
+the analyser's**: a missing number reads as good news. N235 exists so a static-call defect cannot reach
+the suite; only *this seat's* copy of that instrument was ever alive.
+**RULED: every brief orders `./vendor/bin/phpstan analyse --memory-limit=1G --no-progress`, and a report
+quoting a count without the `"errors":N` JSON beside it is treated as UNMEASURED.** ⭐ It surfaced only
+because one brief told the coder to state the raw output rather than the standing number — the
+instruction and the finding are one wave apart, which is the argument for fields that paste output over
+fields that summarise it (N274).
+
+⛔ **A PROOF COMMAND THAT MIRRORS A CHECK IS COPIED OUT OF THE CHECK, EXCLUSIONS INCLUDED (N287,
+2026-09-22, wave 667).** My brief's proof grep for X-167's `[G6-40]` anchor paraphrased the assertion and
+dropped its own `array_filter` exclusions — `cascadeOnDelete` and `nullOnDelete` — so it returned **six**
+pre-existing migration hits on a tree the anchor is satisfied with. The coder read the hits and reported
+them as pre-existing rather than stopping, which is the only reason it cost nothing.
+**RULED: `sed -n` the assertion's own filter and reproduce it verbatim, or cite the test and let the coder
+run the test.** Wave 122's rule (*derive the needle from the file, never from prose*) broken by its author
+one wave after re-ruling on it, and the fifth member of the false-needle family. ⚠️ Same tick, same cause:
+my pint positive control read `0` for the wave files **and** `0` for the control because the whole check
+was composed inside `printf "$(...)"` — **N271 exactly**, whose ruling is *a check whose result will be
+acted on is run as its OWN command*. Re-run standalone the control read `1`. Three false readings in one
+session from one habit.
+
+⛔ **X-219 IS A CLOSED-LOOP DUPLICATE OF THE LIVE AI ROUTER, AND THE SEALED CHECK'S OWN FIX STRING POINTS
+AT A MECHANISM THAT DOES NOT EXIST (N289, 2026-09-22).** Screened as the next backlog candidate and
+**refused**. Measured:
+- X-219's four actions (`ModelAssign`, `ModelResolve`, `ProviderHealth`, `RosterList`) have **zero**
+  callers outside `X219Test.php`. Nothing anywhere creates an `AiModel` row (corrected creator needle,
+  positive control: `StockItem` reads FED since wave 666, `DunningAttempt` FED via `Dunning.php:633`).
+- The live router is `app/Services/Ai/AiRouter.php`, whose own docblock says it is *"THE ONLY WAY THIS
+  APPLICATION CALLS A MODEL"*. It routes on **`App\Enums\AiModel`**, a PHP enum — a different class from
+  `App\Modules\X219\Models\AiModel` (N258, eleventh instance). It never touches `ai_models`.
+- ⛔ `BoundaryStage.php:117-125` carries a fix string marked in the source as *"THE FIX STRING THE OWNER
+  CAUGHT AS WRONG"*, corrected once already, which now reads *"ask C-Ai for the model —
+  `$ai->for($moduleId, $jobClass, $slot)`"*. **`for()` is defined in no file under `app/Modules/C-Ai/` or
+  `app/Services/Ai/`**, and `ai_module_assignments` — the table it names — is read only by X-219's own
+  uncalled actions. ⭐ **N209 in its purest form: a remedy string is an instrument nobody validates**, and
+  this one survived a round of owner correction because the correction was about *wording*, not about
+  whether the named mechanism exists. ⛔ **Ask what happens IF THE FIX IS APPLIED**, every time.
+**Wiring `RosterAdmin` would ship a screen where an owner configures a roster the router will never
+consult — the X-207 shape (a control whose only outcome is fiction), and there is no real table to
+repoint at because the live side is an enum.** The product question — *are models rows (P-194) or an enum
+(AiRouter)?* — is an **OWNER DECISION** with a sealed check on one side of it.
+
+⛔ **THE UNFED BACKLOG IS EXHAUSTED OF WAVE-SHAPED WORK, AND THE REASON IS UNIFORM: EVERY REMAINING
+SCREEN IS BROKEN AT THE ROOT, NOT AT THE CONTROL (N290, 2026-09-22).** Denominator stated (N281): the 11
+rows derived at `af4ef24e2`, of which 4 were already settled vendor-gated and X-167 StockByVan shipped in
+waves 666/667. The remaining six, every one measured with the corrected creator needle and then read by
+hand:
+
+| screen | driver | creator outside DemoFill | every in-module action |
+| :-- | :-- | :-- | :-- |
+| X-220 EvalReport | `GoldenSet` | **none** | `findOrFail` |
+| X-220 PromptHistory | `AiPrompt` | **none** | `findOrFail` |
+| X-196 ExtensionPopup | `ExtensionSession` | demo only | `findOrFail($sessionId)` |
+| X-190 SlotBoard | `ReferralSlot` | demo only | `findOrFail($slotId)` |
+| X-10 RoutingRules | `RoutingRule` | demo only | **no action names it at all** |
+| X-136 SignalVolumePrecisionView | `DecayModel` | **none** | — |
+
+⭐ **Not one module has a create path for its own driver.** Every action mutates a row that must already
+exist, so there is no control to wire — the wave would be *build the creator*, and for several the
+precondition arrives from outside the product entirely (X-196 needs a browser extension that does not
+exist; X-190 needs a referral partner network). **RULED: when a module's every action opens with
+`findOrFail`, the module is not missing a control — it is missing its writer, and that is a different
+and larger question.** This is N277's ruling (*walk the chain until it terminates*) applied at the root
+rather than one hop in, and it is why the honest count of remaining controls is **zero**, not six.
+⚠️ **And one of the six is a live defect rather than an empty screen.** `X-10/Actions/LeadAssignAction.php`
+opens *"Assigns lead according to routing rules"* and then hardcodes the ladder in its own body —
+returning-caller affinity, then territory, then workload, then `?? 1`. The `RoutingRule` table the
+`RoutingRules` screen lists is consulted by **nothing**. That is the C-Billing Dunning shape a second
+time (a screen showing config the live path ignores), and it is **P-193's own rule** — *every operational
+value is a ROW, changeable in admin with NO deploy* — broken by a hardcoded policy ladder in the module
+whose screen exists to change it. ⛔ Wiring it changes live lead assignment, so it is an **OWNER
+DECISION** (what does a rule row mean — precedence, override, or replacement?), not a wave.
