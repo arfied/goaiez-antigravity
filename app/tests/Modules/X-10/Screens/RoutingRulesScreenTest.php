@@ -6,7 +6,8 @@ namespace Tests\Modules\X10\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X10\Models\RoutingRule;
+use App\Modules\X10\Actions\RoutingRulesEnsureAction;
+use App\Modules\X10\Enums\RoutingRuleType;
 use App\Modules\X10\Ui\RoutingRules;
 use App\Support\Tenancy;
 use Livewire\Livewire;
@@ -21,20 +22,14 @@ class RoutingRulesScreenTest extends TestCase
         $this->actingAs($owner);
 
         $this->get(route('x-10.routing-rules'))
-            ->assertOk()
-            ->assertSee('No routing rules configured.');
+            ->assertOk();
 
         Tenancy::set($biz->id);
-        RoutingRule::create([
-            'business_id' => $biz->id,
-            'name' => 'Test Routing Rule 123',
-            'rule_type' => 'some_type',
-            'priority' => 1,
-        ]);
+        app(RoutingRulesEnsureAction::class)->handle($biz->id);
 
         $this->get(route('x-10.routing-rules'))
             ->assertOk()
-            ->assertSee('Test Routing Rule 123');
+            ->assertSee(RoutingRuleType::RETURNING_CALLER->label());
 
         Livewire::test(RoutingRules::class, ['businessId' => $biz->id])->assertOk();
     }

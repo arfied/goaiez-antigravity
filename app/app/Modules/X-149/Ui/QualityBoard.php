@@ -7,9 +7,11 @@ namespace App\Modules\X149\Ui;
 use App\Modules\X149\Actions\TrackQualitySeriesAction;
 use App\Modules\X149\Models\QualitySeries;
 use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Quality Board'])]
 class QualityBoard extends Component
 {
     #[Locked]

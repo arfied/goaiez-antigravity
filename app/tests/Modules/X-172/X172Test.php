@@ -10,6 +10,7 @@ use App\Modules\X172\Actions\PortalLinkAction;
 use App\Modules\X172\Actions\PortalViewAction;
 use App\Modules\X172\Events\PortalAction;
 use App\Modules\X172\Events\PortalViewed;
+use App\Services\Config\DefaultsRegistry;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -25,7 +26,7 @@ class X172Test extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->linkAction = new PortalLinkAction;
+        $this->linkAction = new PortalLinkAction(app(DefaultsRegistry::class));
         $this->viewAction = new PortalViewAction;
         $this->actionHandler = new PortalActionHandler;
     }

@@ -13,6 +13,7 @@ use App\Models\SupportTicket;
 use App\Models\User;
 use App\Notifications\SupportReplyPosted;
 use App\Services\AuditService;
+use App\Services\Config\DefaultsRegistry;
 use App\Services\Mail\PlatformMailer;
 use App\Support\Tenancy;
 use Carbon\CarbonImmutable;
@@ -73,7 +74,18 @@ final class SupportDesk
         private readonly AuditService $audit,
         private readonly PlatformMailer $mailer,
         private readonly SupportMacros $macros,
+        private readonly DefaultsRegistry $registry,
     ) {}
+
+    public function subjectLimit(): int
+    {
+        return $this->registry->int('support.ticket.subject_limit');
+    }
+
+    public function bodyLimit(): int
+    {
+        return $this->registry->int('support.ticket.body_limit');
+    }
 
     /**
      * The tenant raises a request. Runs in the tenant already established by
@@ -428,7 +440,7 @@ final class SupportDesk
             $ticket = SupportTicket::query()->create([
                 'opened_by_user_id' => $openedByUserId,
                 'channel' => $channel,
-                'subject' => $this->trimTo($subject, self::SUBJECT_LIMIT),
+                'subject' => $this->trimTo($subject, $this->subjectLimit()),
                 'status' => SupportTicketStatus::Open,
                 'last_message_at' => $now,
             ]);
@@ -463,7 +475,7 @@ final class SupportDesk
             'author' => $author,
             'author_user_id' => $authorUserId,
             'channel' => $channel,
-            'body' => $this->trimTo($body, self::BODY_LIMIT),
+            'body' => $this->trimTo($body, $this->bodyLimit()),
             'external_ref' => $externalRef,
             'created_at' => CarbonImmutable::now(),
         ]);

@@ -16,7 +16,7 @@ final class AffiliateAttributeAction
 
     public function __construct(?AffiliateEngine $engine = null)
     {
-        $this->engine = $engine ?? new AffiliateEngine;
+        $this->engine = $engine ?? app(AffiliateEngine::class);
     }
 
     /**

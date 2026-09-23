@@ -10,6 +10,7 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module X-66
+ *
  * @intent SERVE under §227.2
  */
 return [
@@ -60,7 +61,6 @@ return [
     'renders' => [
         'calls',
         'livecoaching_whisper_panel',
-        'customerfacing_call_itself',
         'latency_p50p95_per',
     ],
 

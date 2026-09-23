@@ -7,9 +7,11 @@ namespace App\Modules\X217\Ui;
 use App\Modules\X217\Actions\AffiliateRecruitAction;
 use App\Modules\X217\Models\AffiliateProspect;
 use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Recruitment Pipeline'])]
 class RecruitPipeline extends Component
 {
     #[Locked]

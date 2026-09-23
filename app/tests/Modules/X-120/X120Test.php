@@ -10,6 +10,7 @@ use App\Modules\X120\Actions\CardRotateAction;
 use App\Modules\X120\Actions\CardStoreAction;
 use App\Modules\X120\Events\CardExpiring;
 use App\Modules\X120\Events\CardStored;
+use App\Services\Config\DefaultsRegistry;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -27,7 +28,7 @@ class X120Test extends TestCase
     {
         parent::setUp();
         $this->storeAction = new CardStoreAction;
-        $this->scanAction = new CardExpiringScanAction;
+        $this->scanAction = new CardExpiringScanAction(app(DefaultsRegistry::class));
         $this->rotateAction = new CardRotateAction;
     }
 
@@ -101,8 +102,6 @@ class X120Test extends TestCase
     /**
      * [N-120-01], [N-120-02]
      */
-
-
     public function test_card_present_action_derives_brand(): void
     {
         $action = new CardPresentAction;

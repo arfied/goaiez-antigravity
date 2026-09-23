@@ -18,7 +18,10 @@ class QualityBoardScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-149.quality-board'))->assertOk();
+        $this->get(route('x-149.quality-board'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console');
 
         Livewire::test(QualityBoard::class)->assertOk();
     }

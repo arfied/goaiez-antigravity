@@ -4,12 +4,24 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X103;
 
+use App\Enums\TenantLinkKind;
+use App\Enums\UserRole;
+use App\Models\Location;
+use App\Models\PlatformSetting;
+use App\Models\Review;
+use App\Models\TenantLinkRecord;
+use App\Models\User;
 use App\Modules\CReviews\Models\ReviewRequest;
 use App\Modules\CSms\Events\SendRequested;
+use App\Modules\X103\Actions\FaqDraftAction;
 use App\Modules\X103\Actions\FunnelBuildAction;
 use App\Modules\X103\Actions\PageCreateAction;
+use App\Modules\X103\Actions\SeoDraftAction;
 use App\Modules\X103\Actions\SiteBuildAction;
+use App\Modules\X103\Actions\SiteCopyPolishAction;
+use App\Modules\X103\Actions\SiteDraftAction;
 use App\Modules\X103\Actions\SitePublishAction;
+use App\Modules\X103\Domain\SiteBlockRenderer;
 use App\Modules\X103\Domain\SiteEngine;
 use App\Modules\X103\Events\ApprovalRequested;
 use App\Modules\X103\Events\PagePublished;
@@ -17,12 +29,21 @@ use App\Modules\X103\Events\SitePublished;
 use App\Modules\X103\Models\Funnel;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
+use App\Modules\X103\Models\SiteInventoryImage;
+use App\Modules\X103\Models\SiteInventoryPage;
+use App\Modules\X103\Ui\Pages;
+use App\Modules\X113\Actions\StaffDeactivateAction;
+use App\Modules\X113\Actions\StaffInviteAction;
+use App\Modules\X113\Models\Role;
+use App\Modules\X163\Models\PriceBookItem;
 use App\Modules\X199\Models\Invoice;
 use App\Modules\X199\Models\InvoiceLine;
+use App\Support\Tenancy;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class X103Test extends TestCase
@@ -57,6 +78,7 @@ class X103Test extends TestCase
     {
         Event::fake([ApprovalRequested::class]);
 
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Site Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
@@ -95,6 +117,7 @@ class X103Test extends TestCase
     {
         Event::fake([PagePublished::class, SitePublished::class]);
 
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Site Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
@@ -110,6 +133,7 @@ class X103Test extends TestCase
      */
     public function test_short_linker_device_routing_and_caps(): void
     {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Linker Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
@@ -134,6 +158,7 @@ class X103Test extends TestCase
     /** [G16-07] (R245) an expiring short link (P-072) */
     public function test_g16_07_an_expired_short_link_is_refused(): void
     {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Linker Expiry Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
@@ -171,6 +196,7 @@ class X103Test extends TestCase
     /** [G19-07] (R245) expiring and click-capped short links */
     public function test_g19_07_a_capped_short_link_is_refused(): void
     {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Linker Cap Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
@@ -207,6 +233,7 @@ class X103Test extends TestCase
 
     public function test_g9_04_every_built_page_version_carries_the_pixel(): void
     {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Pixel Tenant']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
@@ -224,6 +251,7 @@ class X103Test extends TestCase
      */
     public function test_g9_04_a_published_version_carries_the_three_site_law_flags(): void
     {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Law Tenant']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
@@ -250,6 +278,7 @@ class X103Test extends TestCase
      */
     public function test_g12_39_the_review_widget_is_not_yet_on_the_built_site(): void
     {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Widget Tenant']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
@@ -280,6 +309,7 @@ class X103Test extends TestCase
     /** [G6-15] [G6-16] (R245) */
     public function test_g6_16_header_tenant_offer(): void
     {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Offer Tenant']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
@@ -309,6 +339,7 @@ class X103Test extends TestCase
         Http::fake();
         Event::fake([SendRequested::class]);
 
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'SMS Tenant']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
@@ -316,6 +347,7 @@ class X103Test extends TestCase
         $this->publishAction->handle($biz->id, $page->id, []);
 
         Http::assertNothingSent();
+        PlatformSetting::query()->where('key', 'ai.monthly_cap_per_tenant')->delete();
         Event::assertNotDispatched(SendRequested::class);
     }
 
@@ -323,6 +355,7 @@ class X103Test extends TestCase
     public function test_g6_32_header_x199(): void
     {
 
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Invoice Tenant']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
@@ -339,6 +372,7 @@ class X103Test extends TestCase
     public function test_g7_18_header_c_reviews(): void
     {
 
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Review Tenant']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
@@ -352,6 +386,7 @@ class X103Test extends TestCase
 
     public function test_page_create_and_site_publish_resolve_from_container(): void
     {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Container Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
@@ -374,5 +409,601 @@ class X103Test extends TestCase
         $this->assertArrayHasKey('facts_invalidation_commit_id', $res);
         $this->assertEquals('published', $res['status']);
         $this->assertEquals($page->id, $res['page_id']);
+    }
+
+    public function test_draft_adds_gallery_from_stored_images(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $biz = TestCase::provisionTenant(['name' => 'Gallery Tenant', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        $location = Location::factory()->create(['business_id' => $biz->id, 'website_url' => 'https://example.com', 'website_confirmed_at' => now()]);
+
+        $inventoryPage = SiteInventoryPage::create([
+            'business_id' => $biz->id,
+            'location_id' => $location->id,
+            'url' => 'https://example.com',
+        ]);
+
+        // 3 stored images
+        SiteInventoryImage::create([
+            'business_id' => $biz->id,
+            'page_id' => $inventoryPage->id,
+            'source_url' => 'https://example.com/a-hero.jpg',
+            'path' => 'inventory/hero.jpg',
+            'mime' => 'image/jpeg',
+            'bytes' => 1234,
+            'status' => 'stored',
+            'attribution' => 'example.com',
+        ]);
+        SiteInventoryImage::create([
+            'business_id' => $biz->id,
+            'page_id' => $inventoryPage->id,
+            'source_url' => 'https://example.com/gal1.jpg',
+            'path' => 'inventory/gal1.jpg',
+            'mime' => 'image/jpeg',
+            'bytes' => 1234,
+            'status' => 'stored',
+            'attribution' => 'example.com',
+        ]);
+        SiteInventoryImage::create([
+            'business_id' => $biz->id,
+            'page_id' => $inventoryPage->id,
+            'source_url' => 'https://example.com/gal2.jpg',
+            'path' => 'inventory/gal2.jpg',
+            'mime' => 'image/jpeg',
+            'bytes' => 1234,
+            'status' => 'stored',
+            'attribution' => 'example.com',
+        ]);
+
+        $action = app(SiteDraftAction::class);
+        $res = $action->handle($biz->id, $location->id);
+
+        $home = Page::where('slug', 'home')->first();
+        $this->assertNotNull($home);
+
+        $galleryBlock = collect($home->draft_blocks)->firstWhere('type', 'gallery');
+        $this->assertNotNull($galleryBlock);
+        $this->assertCount(2, $galleryBlock['items']);
+        $this->assertEquals('inventory/gal1.jpg', $galleryBlock['items'][0]['image_path']);
+        $this->assertEquals('inventory/gal2.jpg', $galleryBlock['items'][1]['image_path']);
+        $this->assertEquals('inventory', $galleryBlock['source']);
+
+        Http::fake();
+        $html = (new SiteBlockRenderer)->render($home->draft_blocks, ['tenant_storage_url_prefix' => 'https://site.test/media/']);
+        $this->assertEquals(2, substr_count($html, 'https://site.test/media/gal'));
+        $this->assertStringContainsString('<img', $html);
+        Http::assertNothingSent();
+        PlatformSetting::query()->where('key', 'ai.monthly_cap_per_tenant')->delete();
+    }
+
+    public function test_draft_adds_team_from_active_staff(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $biz = TestCase::provisionTenant(['name' => 'Team Tenant', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        $location = Location::factory()->create(['business_id' => $biz->id]);
+
+        $role = Role::create(['business_id' => $biz->id, 'name' => 'Tester Role']);
+
+        $inviteAction = app(StaffInviteAction::class);
+        $active1 = $inviteAction->handle($biz->id, 't1@example.com', 'UniqueNameAlpha', $role->id);
+        $active2 = $inviteAction->handle($biz->id, 't2@example.com', 'UniqueNameBeta', $role->id);
+        $deactivated = $inviteAction->handle($biz->id, 't3@example.com', 'UniqueNameGamma', $role->id);
+
+        app(StaffDeactivateAction::class)->handle($biz->id, $deactivated->id);
+
+        $action = app(SiteDraftAction::class);
+        $action->handle($biz->id, $location->id);
+
+        $about = Page::where('slug', 'about')->first();
+        $this->assertNotNull($about);
+
+        $teamBlock = collect($about->draft_blocks)->firstWhere('type', 'team');
+        $this->assertNotNull($teamBlock);
+        $this->assertCount(2, $teamBlock['items']);
+        $this->assertEquals('Tester Role', $teamBlock['items'][0]['role']);
+        $this->assertEquals('staff', $teamBlock['source']);
+
+        $html = (new SiteBlockRenderer)->render($about->draft_blocks, []);
+
+        $this->assertStringContainsString('UniqueNameAlpha', $html);
+        $this->assertStringContainsString('UniqueNameBeta', $html);
+        $this->assertStringNotContainsString('UniqueNameGamma', $html);
+    }
+
+    public function test_draft_skips_team_below_minimum(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $biz = TestCase::provisionTenant(['name' => 'No Team Tenant', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+        $location = Location::factory()->create(['business_id' => $biz->id]);
+
+        $action = app(SiteDraftAction::class);
+        $action->handle($biz->id, $location->id);
+
+        $about = Page::where('slug', 'about')->first();
+        if ($about) {
+            $teamBlock = collect($about->draft_blocks)->firstWhere('type', 'team');
+            $this->assertNull($teamBlock);
+        } else {
+            $this->assertNull($about);
+        }
+    }
+
+    public function test_draft_site_action()
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $biz = TestCase::provisionTenant(['name' => 'Draft Site Tenant', 'currency' => 'USD']);
+
+        $location = Location::where('business_id', $biz->id)->first();
+        if (! $location) {
+            $location = Location::factory()->create(['business_id' => $biz->id, 'website_url' => 'https://example.com', 'website_confirmed_at' => now()]);
+        } else {
+            $location->update(['website_url' => 'https://example.com', 'website_confirmed_at' => now()]);
+        }
+
+        Tenancy::set($biz->id);
+
+        $invPage = SiteInventoryPage::create([
+            'business_id' => $biz->id,
+            'location_id' => $location->id,
+            'url' => 'https://example.com',
+            'title' => 'Home Page',
+            'headings' => ['Welcome to Draft Site Tenant H1'],
+            'text' => 'This is the first paragraph. '.str_repeat('A', 150),
+            'status' => 'fetched',
+            'fetched_at' => now(),
+            'phones' => ['555-1234'],
+            'emails' => ['hello@example.com'],
+        ]);
+
+        SiteInventoryPage::create([
+            'business_id' => $biz->id,
+            'location_id' => $location->id,
+            'url' => 'https://example.com/about',
+            'title' => 'About Us',
+            'text' => 'This is the longest text block. '.str_repeat('B', 1200),
+            'status' => 'fetched',
+            'fetched_at' => now(),
+        ]);
+
+        SiteInventoryImage::create([
+            'business_id' => $biz->id,
+            'page_id' => $invPage->id,
+            'source_url' => 'https://example.com/img1.jpg',
+            'path' => 'inventory/img1.jpg',
+            'mime' => 'image/jpeg',
+            'bytes' => 1234,
+            'status' => 'stored',
+            'attribution' => 'example.com',
+        ]);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Service 1',
+            'price_cents' => 10000,
+            'is_confirmed' => true,
+            'confirmed_at' => now(),
+        ]);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Service 2',
+            'price_cents' => 20000,
+            'is_confirmed' => true,
+            'confirmed_at' => now(),
+        ]);
+
+        Review::factory()->create([
+            'location_id' => $location->id,
+            'display_on_website' => true,
+            'rating' => 5,
+            'comment' => 'Great!',
+            'reviewer_name' => 'Alice',
+        ]);
+
+        Review::factory()->create([
+            'location_id' => $location->id,
+            'display_on_website' => true,
+            'rating' => 2,
+            'comment' => 'Bad!',
+            'reviewer_name' => 'Bob',
+        ]);
+
+        (new TenantLinkRecord)->forceFill([
+            'business_id' => $biz->id,
+            'kind' => TenantLinkKind::Booking,
+            'label' => 'Booking Link',
+            'destination' => 'https://booking.com',
+        ])->save();
+
+        $action = app(SiteDraftAction::class);
+        $res = $action->handle($biz->id, $location->id);
+
+        $this->assertEquals(3, $res['pages']);
+
+        $home = Page::where('slug', 'home')->first();
+        $this->assertNotNull($home);
+
+        $types = array_column($home->draft_blocks, 'type');
+        $this->assertContains('hero', $types);
+        $this->assertContains('about', $types);
+        $this->assertContains('services', $types);
+        $this->assertContains('reviews_strip', $types);
+        $this->assertContains('booking_button', $types);
+        $this->assertContains('contact', $types);
+
+        foreach ($home->draft_blocks as $block) {
+            $this->assertArrayHasKey('source', $block);
+            if ($block['type'] === 'services') {
+                $this->assertCount(2, $block['items']);
+            }
+            if ($block['type'] === 'reviews_strip') {
+                $this->assertCount(1, $block['items']); // Only rating 5 is displayable (>= 4)
+                $this->assertEquals(5, $block['items'][0]['rating']);
+            }
+        }
+
+        // no prices -> no services block
+        PriceBookItem::where('business_id', $biz->id)->delete();
+        Page::where('business_id', $biz->id)->delete();
+        $res2 = $action->handle($biz->id, $location->id);
+
+        $home2 = Page::where('slug', 'home')->first();
+        $types2 = array_column($home2->draft_blocks, 'type');
+        $this->assertNotContains('services', $types2);
+
+        // no booking link -> no button
+        TenantLinkRecord::where('business_id', $biz->id)->delete();
+        Page::where('business_id', $biz->id)->delete();
+        $res3 = $action->handle($biz->id, $location->id);
+
+        $home3 = Page::where('slug', 'home')->first();
+        $types3 = array_column($home3->draft_blocks, 'type');
+        $this->assertNotContains('booking_button', $types3);
+
+        // slug taken -> skipped; run twice -> second run skips
+        $res4 = $action->handle($biz->id, $location->id);
+        $this->assertContains('home', $res4['skipped']);
+        $this->assertContains('services', $res4['skipped']);
+        $this->assertContains('contact', $res4['skipped']);
+        $this->assertEquals(0, $res4['pages']);
+
+        // publish through SiteEngine
+        Http::fake();
+
+        // HTML contains escaped headline
+        $html = (new SiteBlockRenderer)->render($home3->draft_blocks, ['tenant_storage_url_prefix' => 'https://site.test/media/']);
+        $this->assertStringContainsString(htmlspecialchars('Welcome to Draft Site Tenant H1', ENT_QUOTES, 'UTF-8'), $html);
+        Http::assertNothingSent();
+        PlatformSetting::query()->where('key', 'ai.monthly_cap_per_tenant')->delete();
+    }
+
+    public function test_polish_rewrites_hero_and_about_and_records_the_model(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $biz = TestCase::provisionTenant(['name' => 'Polish Test', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'home',
+            'title' => 'Home',
+            'draft_blocks' => [
+                ['type' => 'hero', 'text' => 'Hero text'],
+                ['type' => 'about', 'text' => 'About text'],
+                ['type' => 'contact', 'text' => 'Contact text'],
+            ],
+            'is_published' => false,
+        ]);
+
+        Http::fake([
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_eval',
+                'choices' => [
+                    ['message' => ['content' => 'Polished text']],
+                ],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ]),
+        ]);
+
+        $action = app(SiteCopyPolishAction::class);
+        $res = $action->handle($biz->id, $page->id);
+
+        $this->assertEquals('polished', $res['status']);
+        $this->assertEquals(2, $res['blocks']);
+        $this->assertEquals('openai-4o-mini', $res['model']);
+
+        $page->refresh();
+        $blocks = $page->draft_blocks;
+
+        $this->assertEquals('Polished text', $blocks[0]['text']);
+        $this->assertEquals('Hero text', $blocks[0]['original_text']);
+        $this->assertEquals('ai', $blocks[0]['source']);
+        $this->assertEquals('openai-4o-mini', $blocks[0]['model']);
+
+        $this->assertEquals('Polished text', $blocks[1]['text']);
+        $this->assertEquals('About text', $blocks[1]['original_text']);
+        $this->assertEquals('ai', $blocks[1]['source']);
+        $this->assertEquals('openai-4o-mini', $blocks[1]['model']);
+
+        $this->assertEquals('Contact text', $blocks[2]['text']);
+        $this->assertArrayNotHasKey('original_text', $blocks[2]);
+
+        Http::assertSentCount(2);
+    }
+
+    public function test_polish_refuses_when_the_budget_is_out(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $biz = TestCase::provisionTenant(['name' => 'Budget Test', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 0, 'test');
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'home',
+            'title' => 'Home',
+            'draft_blocks' => [
+                ['type' => 'hero', 'text' => 'Hero text'],
+            ],
+            'is_published' => false,
+        ]);
+
+        Http::fake();
+
+        $action = app(SiteCopyPolishAction::class);
+        $res = $action->handle($biz->id, $page->id);
+
+        $this->assertEquals('refused', $res['status']);
+        $this->assertEquals('ai_cost_cap_reached', $res['reason'] ?? $res['status']); // fallback in case it's different
+
+        $page->refresh();
+        $blocks = $page->draft_blocks;
+        $this->assertEquals('Hero text', $blocks[0]['text']);
+        $this->assertArrayNotHasKey('original_text', $blocks[0]);
+
+        Http::assertNothingSent();
+        PlatformSetting::query()->where('key', 'ai.monthly_cap_per_tenant')->delete();
+    }
+
+    public function test_restore_puts_the_original_back(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $biz = TestCase::provisionTenant(['name' => 'Restore Test', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        Tenancy::set($biz->id);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'home',
+            'title' => 'Home',
+            'draft_blocks' => [
+                [
+                    'type' => 'hero',
+                    'text' => 'Polished hero',
+                    'original_text' => 'Original hero',
+                    'source' => 'ai',
+                    'model' => 'openai-4o-mini',
+                ],
+            ],
+            'is_published' => false,
+        ]);
+
+        $component = Livewire::actingAs($owner)
+            ->test(Pages::class)
+            ->call('restoreOriginal', $page->id);
+
+        $page->refresh();
+        $blocks = $page->draft_blocks;
+
+        $this->assertEquals('Original hero', $blocks[0]['text']);
+        $this->assertArrayNotHasKey('original_text', $blocks[0]);
+        $this->assertArrayNotHasKey('source', $blocks[0]);
+        $this->assertArrayNotHasKey('model', $blocks[0]);
+    }
+
+    public function test_faq_draft_asks_the_router_once_and_parks_the_answer(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $biz = TestCase::provisionTenant(['name' => 'Faq Test', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'faq',
+            'title' => 'FAQ',
+            'draft_blocks' => [],
+            'is_published' => false,
+        ]);
+
+        Http::fake([
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_faq',
+                'choices' => [
+                    ['message' => ['content' => json_encode(['items' => [
+                        ['question' => 'Q1', 'answer' => 'A1'],
+                        ['question' => 'Q2', 'answer' => 'A2'],
+                    ]])]],
+                ],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ]),
+        ]);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Service 1',
+            'price_cents' => 1000,
+            'is_confirmed' => true,
+            'is_sample' => false,
+            'confirmed_at' => now(),
+        ]);
+
+        $action = app(FaqDraftAction::class);
+        $res = $action->handle($biz->id, $page->id);
+
+        $this->assertEquals('drafted', $res['status']);
+
+        $page->refresh();
+        $meta = $page->draft_meta;
+        $this->assertNotNull($meta['pending_faq']);
+        $this->assertCount(2, $meta['pending_faq']['items']);
+        $this->assertEquals('Q1', $meta['pending_faq']['items'][0]['question']);
+        $this->assertEmpty($page->draft_blocks);
+
+        Http::assertSentCount(1);
+    }
+
+    public function test_faq_draft_refuses_when_the_budget_is_out(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $biz = TestCase::provisionTenant(['name' => 'Faq Budget Test', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 0, 'test');
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'faq',
+            'title' => 'FAQ',
+            'draft_blocks' => [],
+            'is_published' => false,
+        ]);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Service 1',
+            'price_cents' => 1000,
+            'is_confirmed' => true,
+            'is_sample' => false,
+            'confirmed_at' => now(),
+        ]);
+
+        Http::fake();
+
+        $action = app(FaqDraftAction::class);
+        $res = $action->handle($biz->id, $page->id);
+
+        $this->assertEquals('refused', $res['status']);
+
+        $page->refresh();
+        $this->assertNull($page->draft_meta['pending_faq'] ?? null);
+
+        Http::assertNothingSent();
+        PlatformSetting::query()->where('key', 'ai.monthly_cap_per_tenant')->delete();
+    }
+
+    public function test_faq_place_moves_the_pairs_into_one_block_and_render_shows_them(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = TestCase::provisionTenant(['name' => 'Faq Place Test', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        Tenancy::set($biz->id);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'faq',
+            'title' => 'FAQ',
+            'draft_blocks' => [],
+            'draft_meta' => [
+                'pending_faq' => [
+                    'items' => [
+                        ['question' => 'Is it fast?', 'answer' => 'Yes.'],
+                        ['question' => 'Is it cheap?', 'answer' => 'Very.'],
+                    ],
+                    'model' => 'test-model',
+                    'drafted_at' => now()->toIso8601String(),
+                ],
+            ],
+            'is_published' => false,
+        ]);
+
+        $component = Livewire::actingAs($owner)
+            ->test(Pages::class)
+            ->call('placeFaq', $page->id);
+
+        $page->refresh();
+        $this->assertNull($page->draft_meta['pending_faq'] ?? null);
+        $blocks = $page->draft_blocks;
+        $this->assertCount(1, $blocks);
+        $this->assertEquals('faq', $blocks[0]['type']);
+        $this->assertEquals('ai', $blocks[0]['source']);
+        $this->assertCount(2, $blocks[0]['items']);
+
+        $renderer = app(SiteBlockRenderer::class);
+        $html = $renderer->render($blocks, []);
+        $this->assertStringContainsString('Is it fast?', $html);
+        $this->assertStringContainsString('Is it cheap?', $html);
+    }
+
+    public function test_seo_draft_writes_title_and_description_within_limits(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        PlatformSetting::write('sites.seo.title_max_chars', 60, 'test');
+        PlatformSetting::write('sites.seo.description_max_chars', 155, 'test');
+        $biz = TestCase::provisionTenant(['name' => 'SEO Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'home',
+            'title' => 'Home',
+            'draft_blocks' => [
+                ['type' => 'hero', 'text' => 'Hero text'],
+            ],
+            'is_published' => false,
+        ]);
+
+        $longTitle = 'This is a very long title that exceeds the limit of sixty characters by a significant margin';
+
+        Http::fake([
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_seo',
+                'choices' => [
+                    ['message' => ['content' => json_encode(['title' => $longTitle, 'description' => 'Short desc'])]],
+                ],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10],
+            ]),
+        ]);
+
+        $action = app(SeoDraftAction::class);
+        $res = $action->handle($biz->id, $page->id);
+
+        $this->assertEquals('drafted', $res['status']);
+
+        $page->refresh();
+        $this->assertTrue(mb_strlen($page->seo_title) <= 60);
+        $this->assertEquals('Short desc', $page->seo_description);
+
+        Http::assertSentCount(1);
+    }
+
+    public function test_seo_draft_refuses_when_the_budget_is_out(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 0, 'test');
+        $biz = TestCase::provisionTenant(['name' => 'SEO Tenant No Budget']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'home',
+            'title' => 'Home',
+            'draft_blocks' => [],
+            'is_published' => false,
+        ]);
+
+        Http::fake();
+
+        $action = app(SeoDraftAction::class);
+        $res = $action->handle($biz->id, $page->id);
+
+        $this->assertEquals('refused', $res['status']);
+        $this->assertNull($page->refresh()->seo_title);
+
+        Http::assertNothingSent();
+        PlatformSetting::query()->where('key', 'ai.monthly_cap_per_tenant')->delete();
     }
 }

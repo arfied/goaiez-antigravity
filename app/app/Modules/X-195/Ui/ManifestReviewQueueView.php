@@ -7,8 +7,10 @@ namespace App\Modules\X195\Ui;
 use App\Modules\X195\Models\MarketItem;
 use App\Support\Tenancy;
 use Livewire\Attributes\Locked;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Manifest Review Queue'])]
 class ManifestReviewQueueView extends Component
 {
     #[Locked]

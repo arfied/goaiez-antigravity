@@ -249,7 +249,7 @@ final class TableHorizons
 
             'sending_health_windows' => [
                 'command' => 'messaging:prune-sending-health',
-                'keeps' => SendingHealth::RETENTION_DAYS.' days',
+                'keeps' => app(SendingHealth::class)->retentionDays().' days',
                 'scope' => RetentionScope::Rows,
                 'key' => null,
             ],

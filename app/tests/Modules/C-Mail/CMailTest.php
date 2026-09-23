@@ -46,7 +46,7 @@ class CMailTest extends TestCase
         $consentService = app(ConsentService::class);
         $this->sendAction = new EmailSendAction($consentService);
         $this->dnsAction = new EmailDnsCheckAction;
-        $this->warmupAction = new EmailWarmupAction;
+        $this->warmupAction = new EmailWarmupAction(app(DefaultsRegistry::class));
         $this->unsubscribeAction = new EmailUnsubscribeAction($consentService);
         $this->haltSeedAction = new EmailHaltSeedAction;
     }
@@ -648,5 +648,4 @@ class CMailTest extends TestCase
         $this->assertSame('processed', $acceptedSend['status'], 'A4: send should be processed when not paused');
         $this->assertFalse(MailDomain::where('business_id', $biz->id)->findOrFail($domainNegative->id)->is_marketing_paused, 'A4: domain is not paused');
     }
-
 }

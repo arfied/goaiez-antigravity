@@ -8,6 +8,7 @@ use App\Enums\ContactView;
 use App\Enums\ReviewStatus;
 use App\Models\Customer;
 use App\Models\Review;
+use App\Services\Config\DefaultsRegistry;
 use App\Support\Tenancy;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -58,7 +59,10 @@ final class CustomerDirectory
     /** How many contacts one page of the list shows. */
     public const int PER_PAGE = 25;
 
-    public function __construct(private readonly CrmTasks $tasks) {}
+    public function __construct(
+        private readonly CrmTasks $tasks,
+        private readonly DefaultsRegistry $defaults,
+    ) {}
 
     /**
      * The tenant's contacts, most recently active first.
@@ -96,7 +100,7 @@ final class CustomerDirectory
             ->when($needsFollowUp, fn (Builder $query): Builder => $this->needsFollowUp($query))
             ->orderByRaw('last_activity_at DESC NULLS LAST')
             ->orderByDesc('id')
-            ->paginate(self::PER_PAGE);
+            ->paginate($this->defaults->int('crm.directory.per_page'));
     }
 
     /**

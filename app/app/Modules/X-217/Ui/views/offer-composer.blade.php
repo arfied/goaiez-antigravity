@@ -1,6 +1,5 @@
 <div>
     <div class="offer-composer-view p-4">
-        <h3 class="text-lg font-bold text-ink">Affiliate Terms Offer Composer</h3>
 
         @if($offers->isEmpty())
             <x-ui.empty-state heading="No offers">No offers have been made yet.</x-ui.empty-state>
@@ -18,7 +17,7 @@
         @endif
 
         <div class="mb-6 flex flex-col gap-2 bg-surface p-4 rounded mt-4 border">
-            <h3 class="font-bold text-ink">Make an offer</h3>
+            <h2 class="font-bold text-ink">Make an offer</h2>
             @if($success)
                 <div class="bg-surface text-ink border rounded p-4 mb-4">{{ $success }}</div>
             @endif

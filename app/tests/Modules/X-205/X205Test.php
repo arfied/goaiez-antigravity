@@ -35,7 +35,7 @@ class X205Test extends TestCase
         $this->attributeAction = new AffiliateAttributeAction;
         $this->clawbackAction = new AffiliateProposeClawbackAction;
         $this->payoutAction = new AffiliatePayoutRequestAction;
-        $this->engine = new AffiliateEngine;
+        $this->engine = app(AffiliateEngine::class);
     }
 
     /**

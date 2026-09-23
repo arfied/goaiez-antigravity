@@ -72,7 +72,7 @@ class CReviewsTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->requestAction = new ReviewRequestAction;
+        $this->requestAction = new ReviewRequestAction(app(DefaultsRegistry::class));
         $this->replyAction = new ReviewReplyAction;
         $this->syncAction = new ReviewSyncAction;
         $this->ticketAction = new QaTicketAction;
@@ -968,7 +968,7 @@ class CReviewsTest extends TestCase
             'first_name' => 'Test Customer',
         ]);
 
-        $action = new ReviewRequestAction;
+        $action = new ReviewRequestAction(app(DefaultsRegistry::class));
         $result = $action->handle($biz->id, $customerId, 'How did the repair go? Please leave us a review!', 'google');
 
         $this->assertEquals('sent', $result['status']);

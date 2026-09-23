@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Modules\X209;
 
 use App\Modules\X209\Ui\LaddersOwnState;
-use App\Modules\X209\Ui\NeverSetting;
 use App\Modules\X209\Ui\OnetapApprovalCard;
 use App\Modules\X209\Ui\PrivateInbox;
 use Illuminate\Support\ServiceProvider;
@@ -29,7 +28,6 @@ final class ModuleServiceProvider extends ServiceProvider
             Livewire::component('x-209.private-inbox', PrivateInbox::class);
             Livewire::component('x-209.onetap-approval-card', OnetapApprovalCard::class);
             Livewire::component('x-209.ladders-own-state', LaddersOwnState::class);
-            Livewire::component('x-209.never-setting', NeverSetting::class);
         }
     }
 }

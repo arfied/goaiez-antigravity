@@ -7,6 +7,7 @@ namespace App\Services\Crm;
 use App\Models\CrmNote;
 use App\Models\Customer;
 use App\Models\User;
+use App\Services\Config\DefaultsRegistry;
 use App\Support\Tenancy;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -48,6 +49,11 @@ final class CrmNotes
      */
     public const int MAX_LENGTH = 2000;
 
+    public function maxLength(): int
+    {
+        return app(DefaultsRegistry::class)->int('crm.notes.max_length');
+    }
+
     /**
      * Append a note to a contact.
      *
@@ -77,9 +83,9 @@ final class CrmNotes
             );
         }
 
-        if (mb_strlen($body) > self::MAX_LENGTH) {
+        if (mb_strlen($body) > $this->maxLength()) {
             throw new InvalidArgumentException(
-                'A note is longer than '.self::MAX_LENGTH.' characters. The form refuses '
+                'A note is longer than '.$this->maxLength().' characters. The form refuses '
                 .'this first; reaching here means a caller skipped validation.',
             );
         }

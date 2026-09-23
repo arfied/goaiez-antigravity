@@ -132,7 +132,6 @@ use App\Livewire\Advanced\Segments;
 use App\Livewire\Advanced\Settings;
 use App\Livewire\Advanced\Visibility;
 use App\Livewire\Advanced\Voice;
-use App\Livewire\Advanced\WebsiteBuilder;
 use App\Livewire\Setup\Done;
 use App\Livewire\Setup\FindBusiness;
 use App\Livewire\Setup\HowCustomersReach;
@@ -1391,7 +1390,7 @@ Route::middleware(['auth', EnsureAdvancedDashboard::class])
         Route::get('/integrations', Integrations::class)->name('integrations');
         Route::get('/posts', Posts::class)->name('posts');
         Route::get('/voice', Voice::class)->name('voice');
-        Route::get('/website-builder', WebsiteBuilder::class)->name('website-builder');
+        Route::get('/website-builder', fn () => redirect()->route('x-103.pages'))->name('website-builder');
     });
 
 /*

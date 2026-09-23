@@ -13,6 +13,7 @@ use App\Models\Conversation;
 use App\Models\Customer;
 use App\Models\User;
 use App\Services\AuditService;
+use App\Services\Config\DefaultsRegistry;
 use App\Services\Consent\ConsentService;
 use App\Services\Messaging\Outbound\OutboundMessage;
 use App\Services\Messaging\Outbound\SendKey;
@@ -94,7 +95,13 @@ final class InboxReplies
         private readonly AgentThreads $threads,
         private readonly ConversationThreads $store,
         private readonly AuditService $audit,
+        private readonly DefaultsRegistry $registry,
     ) {}
+
+    public function bodyLimit(): int
+    {
+        return $this->registry->int('conversations.reply.body_limit');
+    }
 
     /**
      * Answer one thread.
@@ -130,7 +137,7 @@ final class InboxReplies
 
         $body = trim($body);
 
-        if ($body === '' || mb_strlen($body) > self::BODY_LIMIT) {
+        if ($body === '' || mb_strlen($body) > $this->bodyLimit()) {
             throw new InvalidArgumentException(
                 'A reply must have something in it and must fit inside the Inbox ceiling. The '
                 .'screen validates both before calling this; arriving here means neither did.',

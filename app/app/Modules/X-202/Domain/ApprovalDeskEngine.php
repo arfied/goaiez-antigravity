@@ -10,12 +10,24 @@ use App\Modules\X202\Events\ApprovalExpired;
 use App\Modules\X202\Events\ApprovalRaised;
 use App\Modules\X202\Models\ApprovalChain;
 use App\Modules\X202\Models\ApprovalItem;
+use App\Services\Config\DefaultsRegistry;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 
 final class ApprovalDeskEngine
 {
+    public const EXPIRY_HOURS = 72;
+
+    public function __construct(
+        private readonly DefaultsRegistry $registry
+    ) {}
+
+    private function expiryHours(): int
+    {
+        return $this->registry->int('approvals.expiry_hours');
+    }
+
     /**
      * Enqueue approval item with bare error rejection (TEST ANCHOR).
      */
@@ -26,9 +38,10 @@ final class ApprovalDeskEngine
         ?array $payload,
         string $autonomyLevel = 'L2',
         bool $isL1Forever = false,
-        int $expiresInHours = 72
+        ?int $expiresInHours = null
     ): array {
         // 1. Bare error check: Enqueue a bare error the write is REFUSED (TEST ANCHOR)
+        $expiresInHours ??= $this->expiryHours();
         if (empty($itemType) || empty($subject) || empty($payload) || isset($payload['error_only'])) {
             return [
                 'status' => 'refused',

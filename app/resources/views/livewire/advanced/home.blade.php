@@ -92,7 +92,7 @@
             <p class="text-sm text-ink-2">24/7 conversational voice call answering, emergency forwarding to owner mobile, and automated appointment calendar links.</p>
         </a>
 
-        <a href="{{ route('advanced.website-builder') }}" class="block p-6 bg-card border-2 border-rule rounded-lg hover:border-indigo-500 transition shadow-xs">
+        <a href="{{ route('x-103.pages') }}" class="block p-6 bg-card border-2 border-rule rounded-lg hover:border-indigo-500 transition shadow-xs">
             <div class="text-ink font-semibold text-lg mb-2 flex items-center justify-between">
                 <span>🌐 Visual Website & Funnel Builder</span>
                 <span class="text-[10px] uppercase font-bold bg-sample-bg text-sample px-2 py-0.5 rounded-full">New</span>

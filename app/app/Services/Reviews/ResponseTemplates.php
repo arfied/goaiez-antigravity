@@ -11,6 +11,7 @@ use App\Models\Business;
 use App\Models\Location;
 use App\Models\ResponseTemplate;
 use App\Services\AuditService;
+use App\Services\Config\DefaultsRegistry;
 use App\Services\Impersonation\Impersonation;
 use App\Support\Tenancy;
 use Illuminate\Support\Collection;
@@ -110,7 +111,18 @@ final class ResponseTemplates
         private readonly ReplyGuardrails $guardrails,
         private readonly AuditService $audit,
         private readonly Impersonation $impersonation,
+        private readonly DefaultsRegistry $registry,
     ) {}
+
+    public function maxNameLength(): int
+    {
+        return $this->registry->int('reviews.templates.max_name_length');
+    }
+
+    public function maxBodyLength(): int
+    {
+        return $this->registry->int('reviews.templates.max_body_length');
+    }
 
     /**
      * Refuse a role that may not curate what the drafter copies.
@@ -230,7 +242,7 @@ final class ResponseTemplates
             throw ResponseTemplateRefused::blank();
         }
 
-        if (mb_strlen($name) > self::MAX_NAME_LENGTH || mb_strlen($body) > self::MAX_BODY_LENGTH) {
+        if (mb_strlen($name) > $this->maxNameLength() || mb_strlen($body) > $this->maxBodyLength()) {
             throw ResponseTemplateRefused::tooLong();
         }
 

@@ -18,7 +18,10 @@ class FetchBoardScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-151.fetch-board'))->assertOk();
+        $this->get(route('x-151.fetch-board'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console');
 
         Livewire::test(FetchBoard::class)->assertOk();
     }

@@ -6,9 +6,11 @@ namespace App\Modules\X160\Ui;
 
 use App\Modules\X160\Models\ExtractionRun;
 use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Extraction error rate'])]
 class ExtractionErrorRate extends Component
 {
     #[Locked]

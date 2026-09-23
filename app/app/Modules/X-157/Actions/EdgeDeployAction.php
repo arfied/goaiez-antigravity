@@ -7,6 +7,7 @@ namespace App\Modules\X157\Actions;
 use App\Models\Business;
 use App\Modules\X103\Actions\PageReadAction;
 use App\Modules\X103\Actions\PageVersionAction;
+use App\Modules\X103\Domain\SiteBlockRenderer;
 use App\Modules\X108\Actions\AppointmentListAction;
 use App\Modules\X155\Actions\FormReadAction;
 use App\Modules\X157\Events\DeployCompleted;
@@ -18,6 +19,7 @@ use App\Modules\X176\Actions\InternalLinkRenderAction;
 use App\Modules\X176\Actions\LlmsTxtRenderAction;
 use App\Modules\X176\Actions\SchemaRenderAction;
 use App\Modules\X176\Actions\SeoRenderAction;
+use App\Services\Config\DefaultsRegistry;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
@@ -26,15 +28,23 @@ use Illuminate\Support\Str;
 
 final class EdgeDeployAction
 {
+    public const SPEED_BUDGET_MS = 1500;
+
+    public const PRICEBOOK_ITEMS_MAX = 20;
+
+    public function __construct(private DefaultsRegistry $defaults) {}
+
     public function handle(
         int $businessId,
         int $edgeZoneId,
         int $measuredTtfbMs = 120,
-        int $speedBudgetMs = 1500,
+        ?int $speedBudgetMs = null,
         ?int $pageId = null,
         ?string $commitId = null,
         ?string $businessName = null
     ): array {
+        $speedBudgetMs ??= $this->defaults->int('sites.deploy.speed_budget_ms');
+
         return DB::transaction(function () use ($businessId, $edgeZoneId, $measuredTtfbMs, $speedBudgetMs, $commitId, $pageId, $businessName) {
             $zone = EdgeZone::where('business_id', $businessId)->findOrFail($edgeZoneId);
 
@@ -128,7 +138,7 @@ final class EdgeDeployAction
             $priceBookItems = app(QuotablePriceAction::class)->options($businessId);
             // The old code did ->limit(20), so we do array_slice
             usort($priceBookItems, fn ($a, $b) => $a['id'] <=> $b['id']);
-            $priceBookItems = array_slice($priceBookItems, 0, 20);
+            $priceBookItems = array_slice($priceBookItems, 0, $this->defaults->int('sites.deploy.pricebook_items_max'));
             foreach ($priceBookItems as $item) {
                 if (trim((string) $item['service_name']) === '') {
                     continue;
@@ -141,6 +151,62 @@ final class EdgeDeployAction
 
             $html = '<html><head>';
             $html .= "<meta name=\"ssl\" content=\"valid\">\n";
+
+            $x176Usable = false;
+            $breadcrumbs = [];
+            if ($pageId !== null && $businessName !== null && $commitId !== null) {
+                $x176Usable = true;
+                $page = app(PageReadAction::class)->findForBusiness($businessId, $pageId);
+                if ($page && ! empty($page->slug) && trim((string) $page->title) !== '') {
+                    $parts = explode('/', trim($page->slug, '/'));
+                    $paths = [];
+                    $current = '';
+                    foreach ($parts as $part) {
+                        $current = $current ? $current.'/'.$part : $part;
+                        $paths[] = $current;
+                    }
+                    $pages = app(PageReadAction::class)->publishedForSlugs($businessId, $paths);
+                    $hierarchyPages = [];
+                    foreach ($pages as $p) {
+                        $norm = trim((string) $p->slug, '/');
+                        if (isset($hierarchyPages[$norm])) {
+                            $x176Usable = false;
+                            break;
+                        }
+                        $hierarchyPages[$norm] = $p;
+                    }
+                    if ($x176Usable) {
+                        foreach ($paths as $path) {
+                            if (! isset($hierarchyPages[$path]) || trim((string) $hierarchyPages[$path]->title) === '') {
+                                $x176Usable = false;
+                                break;
+                            }
+                            if (count($parts) > 1) {
+                                $breadcrumbs[] = [
+                                    'name' => $hierarchyPages[$path]->title,
+                                    'slug' => $path,
+                                ];
+                            }
+                        }
+                    }
+                    if (! $x176Usable) {
+                        $breadcrumbs = [];
+                    }
+                }
+            }
+
+            $headPage = null;
+            if ($pageId !== null) {
+                $headPage = app(PageReadAction::class)->findForBusiness($businessId, $pageId);
+            }
+            if (! $x176Usable) {
+                $seoTitle = $headPage ? ($headPage->seo_title ?: $headPage->title ?: $businessName) : $businessName;
+                $html .= '<title>'.e((string) $seoTitle)."</title>\n";
+                if ($headPage && ! empty($headPage->seo_description)) {
+                    $html .= '<meta name="description" content="'.e($headPage->seo_description)."\">\n";
+                }
+            }
+
             $html .= "</head><body>\n";
 
             if ($commitId) {
@@ -201,50 +267,7 @@ final class EdgeDeployAction
                 }
             }
 
-            $breadcrumbs = [];
-            if ($pageId !== null && $businessName !== null && $commitId !== null) {
-                $page = app(PageReadAction::class)->findForBusiness($businessId, $pageId);
-                if ($page && ! empty($page->slug) && trim((string) $page->title) !== '') {
-                    $parts = explode('/', trim($page->slug, '/'));
-                    if (count($parts) > 1) {
-                        $paths = [];
-                        $current = '';
-                        foreach ($parts as $part) {
-                            $current = $current ? $current.'/'.$part : $part;
-                            $paths[] = $current;
-                        }
-
-                        $pages = app(PageReadAction::class)->publishedForSlugs($businessId, $paths);
-
-                        $hierarchyPages = [];
-                        $usable = true;
-                        foreach ($pages as $p) {
-                            $norm = trim((string) $p->slug, '/');
-                            if (isset($hierarchyPages[$norm])) {
-                                $usable = false;
-                                break;
-                            }
-                            $hierarchyPages[$norm] = $p;
-                        }
-
-                        if ($usable) {
-                            foreach ($paths as $path) {
-                                if (! isset($hierarchyPages[$path]) || trim((string) $hierarchyPages[$path]->title) === '') {
-                                    $usable = false;
-                                    break;
-                                }
-                                $breadcrumbs[] = [
-                                    'name' => $hierarchyPages[$path]->title,
-                                    'slug' => $path,
-                                ];
-                            }
-                        }
-                        if (! $usable) {
-                            $breadcrumbs = [];
-                        }
-                    }
-                }
-
+            if ($x176Usable) {
                 $seoResult = app(SeoRenderAction::class)->handle(
                     $businessId,
                     $pageId,
@@ -264,7 +287,9 @@ final class EdgeDeployAction
                     "<link rel=\"canonical\" href=\"{$escapedCanonical}\">\n</head>",
                     $html
                 );
+            }
 
+            if ($pageId !== null && $businessName !== null && $commitId !== null) {
                 $schemaResult = app(SchemaRenderAction::class)->handle(
                     $businessId,
                     $pageId,
@@ -295,6 +320,13 @@ final class EdgeDeployAction
                     if (Storage::disk('local')->put("sites/{$deployHash}.llms.txt", $llmsTxtContent) === false) {
                         Log::warning("the llms.txt artifact could not be written: sites/{$deployHash}.llms.txt");
                     }
+
+                    $context = [
+                        'businessName' => $businessName,
+                        'deployHash' => $deployHash,
+                        'tenant_storage_url_prefix' => route('x-157.site.media', ['business' => $businessId, 'deploy_hash' => $deployHash], absolute: false).'/',
+                    ];
+                    $html .= app(SiteBlockRenderer::class)->render($contentBlocks, $context);
                 }
             }
 
@@ -340,26 +372,6 @@ final class EdgeDeployAction
                 $html .= implode(', ', $parts);
                 $html .= "</div>\n";
                 $html .= "</div>\n";
-            }
-
-            if (! empty($videos)) {
-                $html .= "<div id=\"videos-x176\">\n";
-                foreach ($videos as $video) {
-                    $html .= '  <div class="video-item" data-name="'.e($video['name']).'" data-url="'.e($video['contentUrl']).'">'.e($video['name'])."</div>\n";
-                }
-                $html .= "</div>\n";
-            }
-
-            if (! empty($faqs)) {
-                try {
-                    $html .= "<div id=\"faq-x176\">\n";
-                    foreach ($faqs as $faq) {
-                        $html .= '  <div class="faq-item" data-question="'.e((string) ($faq['question'] ?? '')).'">'.e((string) ($faq['question'] ?? '')).' - '.e((string) ($faq['answer'] ?? ''))."</div>\n";
-                    }
-                    $html .= "</div>\n";
-                } catch (\Throwable $e) {
-                    Log::warning('the faq block could not be rendered: '.$e->getMessage());
-                }
             }
 
             $internalLinksHtml = app(InternalLinkRenderAction::class)->handle($businessId);

@@ -22,7 +22,7 @@
                             </div>
                             <div class="text-right">
                                 <div class="font-medium text-blue-600">{{ $stat->precision_pct }}% Precision</div>
-                                <div class="text-xs text-ink-3 mt-1">Decay: {{ $stat->decay_model }}</div>
+                                <div class="text-xs text-ink-2 mt-1">Decay: {{ $stat->decay_model }}</div>
                             </div>
                         </div>
                         

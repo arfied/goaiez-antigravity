@@ -1,6 +1,5 @@
 <div>
     <div class="recruit-pipeline-view p-4 bg-surface">
-        <h3 class="text-lg font-bold text-ink">Partner Affiliate Recruitment Pipeline</h3>
 
         @if($success)
             <div class="mb-4 p-2 bg-surface border rounded text-ink">{{ $success }}</div>

@@ -198,15 +198,15 @@ test('owner layout heading seam contract', function () {
     expect(array_sum(array_column($expectedMap, 'total')))->toBe($total);
     expect(array_sum(array_column($expectedMap, 'seam')))->toBe($seam);
 
-    expect($total)->toBe(209, 'If it went UP, a new module component uses the owner layout. If it went DOWN, a component dropped the layout or was deleted.');
-    expect($seam)->toBe(208, 'If it went UP, a component added the heading key to its layout. If it went DOWN, a component removed it or was deleted.');
+    expect($total)->toBe(240, 'If it went UP, a new module component uses the owner layout. If it went DOWN, a component dropped the layout or was deleted.');
+    expect($seam)->toBe(239, 'If it went UP, a component added the heading key to its layout. If it went DOWN, a component removed it or was deleted.');
     expect($seam + $own)->toBe($total, 'Seam plus own must equal total.');
     expect($own)->toBe(1, 'If it went UP, a component kept the layout but brought its own heading, violating T140 §2. If it went DOWN, it deleted the override.');
     expect($unresolvedView)->toBe(0, 'If it went UP, a component uses a first view literal that cannot be resolved. Its known edge: a component with two view( literals lands on the first. If it went DOWN, an unresolved view literal was fixed.');
     expect($skips)->toBe(0, 'If it went UP, a blade\'s first <h[1-6] tag is the wrong level (not h2 for seam, not h1 for own). This reads the blade\'s text, not a response body, and never sees a heading emitted by a component such as <x-ui.empty-state heading="…">. If it went DOWN, a blade heading was fixed.');
-    expect($noHeading)->toBe(1, 'If it went UP, a resolved view has no <h[1-6] tag at all. This reads the blade\'s text, so a heading emitted by a component (<x-ui.empty-state heading="…"> renders its own <h2>) is not seen, and a $seam member landing in this bucket is not a defect while an $own member is. If it went DOWN, a heading was added or the view was removed.');
+    expect($noHeading)->toBe(15, 'If it went UP, a resolved view has no <h[1-6] tag at all. This reads the blade\'s text, so a heading emitted by a component (<x-ui.empty-state heading="…"> renders its own <h2>) is not seen, and a $seam member landing in this bucket is not a defect while an $own member is. If it went DOWN, a heading was added or the view was removed.');
     expect($levelSkips)->toBe(1, 'If it went UP, a view\'s heading sequence descends by more than one level. This reads the blade\'s text, so a heading emitted by a component is not in the sequence. It is a count of views, not of bad steps. The <h1> prepended for a $seam member is an ASSUMPTION this code makes about the layout, not something it measures. The sequence is the blade\'s text in document order, so headings in mutually exclusive @if/@elseif/@else arms are concatenated into a sequence no rendered page emits — which can both flag a skip that never renders and hide one that does. If it went DOWN, a view\'s heading sequence was fixed.');
-    expect($conditionalHeadings)->toBe(36, 'This is a count of views, not headings (once per view), containing at least one <h[1-6] tag at an @if or @unless nesting depth >= 1 (the depth arithmetic tracks @if and @unless only, and the size of what it does not track is pinned below). Because it counts single-heading views, which cannot skip anything, and nested conditionals, whose headings do co-render in document order — so it is an upper bound on how many views the text-order assumption could be wrong about, not a count of views it is wrong about. If it went UP, a view gained a heading inside a conditional and the blind spot grew. If it went DOWN, a heading moved out of a conditional, or a view left the population. Neither is by itself a defect — it is the size of a known limit, and the response to a move is to re-read whether the arms it counts are mutually exclusive, not to edit a view.');
+    expect($conditionalHeadings)->toBe(42, 'This is a count of views, not headings (once per view), containing at least one <h[1-6] tag at an @if or @unless nesting depth >= 1 (the depth arithmetic tracks @if and @unless only, and the size of what it does not track is pinned below). Because it counts single-heading views, which cannot skip anything, and nested conditionals, whose headings do co-render in document order — so it is an upper bound on how many views the text-order assumption could be wrong about, not a count of views it is wrong about. If it went UP, a view gained a heading inside a conditional and the blind spot grew. If it went DOWN, a heading moved out of a conditional, or a view left the population. Neither is by itself a defect — it is the size of a known limit, and the response to a move is to re-read whether the arms it counts are mutually exclusive, not to edit a view.');
     expect($inlineConditionalHeadings)->toBe(0, 'This counts views containing at least one line with both a <h[1-6] tag and one of the four directives the depth arithmetic tracks (@if, @unless, @endif, @endunless). If it went UP, a view gained a heading sharing a line with a conditional; if it went DOWN, one left. Neither is by itself a defect — it is the size of a known limit. Limit: it reads the blade\'s text line by line and cannot tell a heading nested inside the conditional from one merely typed beside it.');
     expect(implode(', ', $untrackedOpeners))->toBe('error, foreach, forelse, php', 'This counts distinct directive names in these views for which an @end<name> also occurs, other than the two the depth arithmetic tracks. If it went UP, the population gained a block construct; if it went DOWN, one left. Neither direction is by itself a defect. Instead, ask whether the name that arrived or left creates mutually exclusive arms. Only such a member can make conditionalHeadings stop being an upper bound. A block construct that always emits its body in document order changes nothing about the bound. The response is never to edit a view. Limit: it sees only a block whose closer follows the @end<name> convention and appears in this same population; a @section closed by @stop, or an opener whose closer lives in another file, is invisible to it. Found: '.implode(', ', $untrackedOpeners));
     expect($unwalked)->toBe(26, 'This counts components declaring the owner layout that this test\'s own scope does not walk. If it went UP, a new owner-layout component landed outside the walked scope, so every pin in this file now covers a smaller fraction of the set the file is named for. If it went DOWN, one was deleted, or the scope was widened to reach it. Neither direction is by itself a defect, and the response is to re-read the scope, never to edit a blade or a component. Limit: it matches the #[Layout(\'components.account.layout\')] literal as text, so a component that sets its layout at runtime is invisible to it.');
@@ -225,18 +225,20 @@ function headingSeamCountsByModule(): array
         'C-Agent' => ['total' => 4, 'seam' => 4],
         'C-Ai' => ['total' => 1, 'seam' => 1],
         'C-Billing' => ['total' => 4, 'seam' => 4],
-        'C-Mail' => ['total' => 2, 'seam' => 2],
+        'C-Mail' => ['total' => 3, 'seam' => 3],
         'C-Reviews' => ['total' => 4, 'seam' => 4],
         'C-Sms' => ['total' => 4, 'seam' => 4],
         'C-Whatsapp' => ['total' => 2, 'seam' => 2],
-        'X-01' => ['total' => 4, 'seam' => 4],
+        'X-01' => ['total' => 5, 'seam' => 5],
         'X-07' => ['total' => 1, 'seam' => 1],
         'X-08' => ['total' => 3, 'seam' => 3],
         'X-10' => ['total' => 3, 'seam' => 3],
         'X-102' => ['total' => 4, 'seam' => 4],
+        'X-103' => ['total' => 3, 'seam' => 3],
         'X-104' => ['total' => 2, 'seam' => 2],
         'X-108' => ['total' => 2, 'seam' => 2],
         'X-110' => ['total' => 6, 'seam' => 6],
+        'X-109' => ['total' => 2, 'seam' => 2],
         'X-112' => ['total' => 2, 'seam' => 2],
         'X-113' => ['total' => 4, 'seam' => 4],
         'X-117' => ['total' => 2, 'seam' => 2],
@@ -250,6 +252,7 @@ function headingSeamCountsByModule(): array
         'X-125' => ['total' => 3, 'seam' => 3],
         'X-126' => ['total' => 1, 'seam' => 1],
         'X-129' => ['total' => 2, 'seam' => 2],
+        'X-127' => ['total' => 1, 'seam' => 1],
         'X-130' => ['total' => 2, 'seam' => 2],
         'X-131' => ['total' => 1, 'seam' => 1],
         'X-132' => ['total' => 2, 'seam' => 2],
@@ -260,10 +263,10 @@ function headingSeamCountsByModule(): array
         'X-142' => ['total' => 2, 'seam' => 2],
         'X-153' => ['total' => 3, 'seam' => 3],
         'X-155' => ['total' => 3, 'seam' => 3],
-        'X-156' => ['total' => 2, 'seam' => 2],
+        'X-156' => ['total' => 3, 'seam' => 3],
         'X-157' => ['total' => 1, 'seam' => 1],
         'X-16' => ['total' => 3, 'seam' => 3],
-        'X-160' => ['total' => 2, 'seam' => 2],
+        'X-160' => ['total' => 3, 'seam' => 3],
         'X-162' => ['total' => 2, 'seam' => 2],
         'X-163' => ['total' => 3, 'seam' => 3],
         'X-164' => ['total' => 1, 'seam' => 1],
@@ -285,29 +288,40 @@ function headingSeamCountsByModule(): array
         'X-185' => ['total' => 2, 'seam' => 2],
         'X-186' => ['total' => 4, 'seam' => 4],
         'X-188' => ['total' => 4, 'seam' => 4],
-        'X-189' => ['total' => 1, 'seam' => 1],
+        'X-189' => ['total' => 2, 'seam' => 2],
         'X-190' => ['total' => 3, 'seam' => 3],
         'X-191' => ['total' => 2, 'seam' => 2],
         'X-192' => ['total' => 1, 'seam' => 0],
-        'X-193' => ['total' => 1, 'seam' => 1],
+        'X-193' => ['total' => 2, 'seam' => 2],
         'X-194' => ['total' => 2, 'seam' => 2],
         'X-196' => ['total' => 1, 'seam' => 1],
         'X-198' => ['total' => 3, 'seam' => 3],
         'X-199' => ['total' => 5, 'seam' => 5],
         'X-201' => ['total' => 2, 'seam' => 2],
-        'X-202' => ['total' => 2, 'seam' => 2],
+        'X-202' => ['total' => 3, 'seam' => 3],
         'X-203' => ['total' => 3, 'seam' => 3],
         'X-204' => ['total' => 2, 'seam' => 2],
         'X-205' => ['total' => 3, 'seam' => 3],
         'X-206' => ['total' => 3, 'seam' => 3],
         'X-207' => ['total' => 4, 'seam' => 4],
-        'X-209' => ['total' => 2, 'seam' => 2],
+        'X-209' => ['total' => 3, 'seam' => 3],
         'X-210' => ['total' => 5, 'seam' => 5],
         'X-211' => ['total' => 4, 'seam' => 4],
         'X-212' => ['total' => 5, 'seam' => 5],
-        'X-218' => ['total' => 2, 'seam' => 2],
+        'X-218' => ['total' => 3, 'seam' => 3],
         'X-220' => ['total' => 1, 'seam' => 1],
         'X-66' => ['total' => 3, 'seam' => 3],
         'X-82' => ['total' => 1, 'seam' => 1],
+        'X-105' => ['total' => 1, 'seam' => 1],
+        'X-135' => ['total' => 1, 'seam' => 1],
+        'X-136' => ['total' => 2, 'seam' => 2],
+        'X-149' => ['total' => 1, 'seam' => 1],
+        'X-195' => ['total' => 2, 'seam' => 2],
+        'X-179' => ['total' => 2, 'seam' => 2],
+        'X-154' => ['total' => 1, 'seam' => 1],
+        'X-150' => ['total' => 1, 'seam' => 1],
+        'X-151' => ['total' => 1, 'seam' => 1],
+        'X-217' => ['total' => 2, 'seam' => 2],
+        'X-219' => ['total' => 2, 'seam' => 2],
     ];
 }

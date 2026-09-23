@@ -12,6 +12,7 @@ use App\Modules\X165\Actions\RenewalReminderAction;
 use App\Modules\X165\Events\MembershipRenewed;
 use App\Modules\X165\Events\MembershipStarted;
 use App\Modules\X165\Models\Membership;
+use App\Services\Config\DefaultsRegistry;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -31,7 +32,7 @@ class X165Test extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->planAction = new PlanProposeAction;
+        $this->planAction = new PlanProposeAction(app(DefaultsRegistry::class));
         $this->startAction = new MembershipStartAction;
         $this->renewAction = new MembershipRenewAction;
         $this->scheduleAction = new PrioritySchedulingAction;

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\Messaging\Composer;
 
+use App\Services\Config\DefaultsRegistry;
+
 /**
  * `name.normalizer` — the greeting name for one contact, or nothing at all.
  *
@@ -46,7 +48,12 @@ final class NameNormaliser
      * company name, an address, or a sentence somebody typed into the wrong box
      * — before it can eat a budget that only has 159 units in it.
      */
-    private const int MAX_LENGTH = 24;
+    public const int MAX_LENGTH = 24;
+
+    public function maxLength(): int
+    {
+        return app(DefaultsRegistry::class)->int('messaging.composer.name_max_length');
+    }
 
     /**
      * The strings that are in the name column and are not names.
@@ -64,7 +71,7 @@ final class NameNormaliser
      *
      * @var list<string>
      */
-    private const array NOT_A_NAME = [
+    public const array NOT_A_NAME = [
         'client', 'clients', 'customer', 'customers', 'consumer', 'contact', 'friend', 'guest',
         'member', 'na', 'n/a', 'nil', 'none', 'null', 'patient', 'resident', 'sir', 'madam',
         'test', 'testing', 'tbd', 'unknown', 'undefined', 'user', 'valued', 'visitor',
@@ -96,7 +103,7 @@ final class NameNormaliser
         // `Bartholomew Fitzwilliam-Featherstonehaugh` is a perfectly ordinary
         // full name and a hopeless greeting; checking the field would refuse it
         // outright, and checking the token keeps `Bartholomew`.
-        if (mb_strlen($token) < 2 || mb_strlen($token) > self::MAX_LENGTH) {
+        if (mb_strlen($token) < 2 || mb_strlen($token) > $this->maxLength()) {
             return null;
         }
 

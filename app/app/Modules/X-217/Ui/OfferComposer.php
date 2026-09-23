@@ -10,9 +10,11 @@ use App\Modules\X217\Domain\RecruitmentGuard;
 use App\Modules\X217\Models\RecruitmentOffer;
 use App\Support\Tenancy;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Offer Composer'])]
 class OfferComposer extends Component
 {
     #[Locked]

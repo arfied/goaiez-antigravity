@@ -1,7 +1,5 @@
 <div>
     <div class="quality-board-view p-4">
-        <h3 class="text-lg font-bold">AI Model & Eval Quality Board</h3>
-
         @if($error)
             <div class="bg-surface text-ink border rounded p-4 mb-4">{{ $error }}</div>
         @endif
@@ -16,7 +14,7 @@
         </form>
 
         @if($series->isEmpty())
-            <p class="text-gray-500">No quality metrics recorded.</p>
+            <p class="text-ink-2">No quality metrics recorded.</p>
         @else
             <ul>
                 @foreach($series as $s)
