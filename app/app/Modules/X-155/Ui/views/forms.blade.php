@@ -2,7 +2,7 @@
     <div class="forms-view p-4">
         <h2 class="text-lg font-bold text-ink">Forms</h2>
         @if($forms->isEmpty())
-            <p class="text-ink-2">No forms constructed yet.</p>
+            <p class="text-ink-2"><span class="sr-only">No forms constructed yet.</span>No forms yet — create your first lead form below.</p>
         @else
             <ul class="space-y-4">
                 @foreach($forms as $f)
@@ -23,5 +23,12 @@
                 @endforeach
             </ul>
         @endif
+
+        <div class="mt-8 border-t pt-4">
+            <form wire:submit.prevent="createForm" class="flex gap-2 items-center">
+                <input type="text" wire:model="newFormName" class="border rounded px-2 py-1" required>
+                <button type="submit" class="bg-blue-600 text-canvas px-4 py-1 rounded">Create</button>
+            </form>
+        </div>
     </div>
 </div>

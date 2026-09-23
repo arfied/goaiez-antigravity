@@ -2502,4 +2502,80 @@ class X157Test extends TestCase
         $this->assertStringContainsString('hash-b', $xml);
         $this->assertStringNotContainsString('hash-a', $xml);
     }
+
+    public function test_a_drafted_form_submission_reaches_form_capture(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant Form', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Lead Form',
+            'slug' => 'lead',
+            'steps' => [['required' => ['name', 'phone']]],
+            'schema' => [],
+            'honeypot_field' => 'website_url',
+        ]);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, [
+                [
+                    'type' => 'form',
+                    'definition_id' => $form->id,
+                    'fields' => [
+                        ['name' => 'name', 'label' => 'Name', 'type' => 'text'],
+                        ['name' => 'phone', 'label' => 'Phone', 'type' => 'tel'],
+                        ['name' => 'email', 'label' => 'Email', 'type' => 'email'],
+                        ['name' => 'message', 'label' => 'Message', 'type' => 'textarea'],
+                    ],
+                    'required' => ['name', 'phone'],
+                    'honeypot' => 'website_url',
+                ],
+            ]);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        $actionUrl = "/sites/{$biz->id}/{$deploy['deploy_hash']}/forms/{$form->id}";
+
+        $res1 = $this->post($actionUrl, [
+            'name' => 'Alice',
+            'phone' => '1234567890',
+            'email' => 'alice@example.com',
+            'message' => 'Hello',
+        ]);
+        $res1->assertStatus(201);
+
+        $submission1 = FormSubmission::where('form_definition_id', $form->id)->first();
+        $this->assertFalse($submission1->is_spam);
+
+        $res2 = $this->post($actionUrl, [
+            'name' => 'Bob',
+            'phone' => '0987654321',
+            'email' => 'bob@example.com',
+            'message' => 'Spam',
+            'website_url' => 'http://spam.com',
+        ]);
+        $res2->assertStatus(422);
+
+        $submission2 = FormSubmission::where('form_definition_id', $form->id)->orderBy('id', 'desc')->first();
+        $this->assertTrue($submission2->is_spam);
+        $this->assertEquals('honeypot_triggered', $submission2->spam_reason);
+    }
 }

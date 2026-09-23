@@ -49,6 +49,19 @@ class FormsScreenTest extends TestCase
         Livewire::test(Forms::class)->assertOk();
     }
 
+    public function test_owner_creates_a_form_from_the_screen(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::setUser($owner->id);
+
+        Livewire::test(Forms::class)
+            ->set('newFormName', 'Quote request')
+            ->call('createForm')
+            ->assertSee('Quote request');
+    }
+
     public function test_screen_renders_for_admin(): void
     {
         $user = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);
