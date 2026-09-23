@@ -7,6 +7,7 @@ namespace App\Services\Audit;
 use App\Contracts\AuditCheck;
 use App\Enums\AuditStatus;
 use App\Models\PublicAudit;
+use App\Services\Config\DefaultsRegistry;
 
 /**
  * Runs the four checks against one audit row and writes what they find, as they
@@ -46,6 +47,7 @@ final class AuditEngine
      * @param  list<AuditCheck>  $checks  In AuditCheckKey::inRunOrder().
      */
     public function __construct(
+        private readonly DefaultsRegistry $defaults,
         private readonly AuditContextBuilder $contexts,
         private readonly array $checks,
     ) {}
@@ -154,5 +156,10 @@ final class AuditEngine
             // than snapping from nothing to a final number at the end.
             'score' => AuditScore::from($results),
         ])->save();
+    }
+
+    public function budgetSeconds(): int
+    {
+        return $this->defaults->int('audit.engine.budget_seconds');
     }
 }

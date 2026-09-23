@@ -26,7 +26,10 @@ class ProspecttenantfacingTop3PreviewScreenTest extends TestCase
         $matchAction->matchAndRender($biz->id, 123);
         $prospectId = 123;
 
-        $this->get(route('x-179.prospecttenantfacing-top3-preview', ['prospectId' => $prospectId]))->assertOk();
+        $this->get(route('x-179.prospecttenantfacing-top3-preview', ['prospectId' => $prospectId]))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console');
 
         Livewire::test(ProspecttenantfacingTop3Preview::class, ['prospectId' => $prospectId])->assertOk();
     }

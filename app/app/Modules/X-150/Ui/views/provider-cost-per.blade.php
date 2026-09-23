@@ -1,6 +1,5 @@
 <div>
     <div class="p-6 space-y-6">
-        <h2 class="text-lg font-semibold text-gray-900">Provider cost per valid record</h2>
 
         @if($actionNotice && str_starts_with($actionNotice, 'Provider'))
             <div class="bg-green-50 text-green-800 p-4 rounded-md">
@@ -23,15 +22,15 @@
                 </x-ui.empty-state>
             @else
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                    <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm" data-tile="spend" data-value="{{ $totalSpendCents }}">
-                        <div class="font-medium text-gray-900">Total spend</div>
-                        <div class="text-2xl font-semibold text-gray-900 mt-2">
+                    <div class="bg-paper border border-rule rounded-lg p-4 shadow-sm" data-tile="spend" data-value="{{ $totalSpendCents }}">
+                        <div class="font-medium text-ink">Total spend</div>
+                        <div class="text-2xl font-semibold text-ink mt-2">
                             ${{ number_format($totalSpendCents / 100, 2) }}
                         </div>
                     </div>
-                    <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm" data-tile="valid" data-value="{{ $totalValid }}">
-                        <div class="font-medium text-gray-900">Total valid</div>
-                        <div class="text-2xl font-semibold text-gray-900 mt-2">
+                    <div class="bg-paper border border-rule rounded-lg p-4 shadow-sm" data-tile="valid" data-value="{{ $totalValid }}">
+                        <div class="font-medium text-ink">Total valid</div>
+                        <div class="text-2xl font-semibold text-ink mt-2">
                             {{ $totalValid }}
                         </div>
                     </div>
@@ -39,22 +38,22 @@
 
                 <div class="space-y-4">
                     @foreach($roster as $p)
-                        <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                        <div class="bg-paper border border-rule rounded-lg p-4 shadow-sm">
                             <div class="flex justify-between items-start">
                                 <div>
-                                    <div class="text-sm font-medium text-gray-900">
+                                    <div class="text-sm font-medium text-ink">
                                         {{ $p->provider_name }} (Tier {{ $p->tier_level }})
                                     </div>
-                                    <div class="text-xs text-gray-500 mt-1">
+                                    <div class="text-xs text-ink-2 mt-1">
                                         {{ $p->attempts }} attempts &middot; {{ $p->valid }} valid &middot; {{ $p->junk }} junk &middot; {{ $p->cost_per_lookup_cents }}c/lookup
                                     </div>
-                                    <div class="text-lg font-semibold text-gray-900 mt-2">
+                                    <div class="text-lg font-semibold text-ink mt-2">
                                         @if($p->cost_per_valid_cents !== null)
                                             ${{ number_format($p->cost_per_valid_cents / 100, 2) }}
                                         @else
                                             &mdash;
                                         @endif
-                                        <span class="text-xs text-gray-500 font-normal">/ valid</span>
+                                        <span class="text-xs text-ink-2 font-normal">/ valid</span>
                                     </div>
                                 </div>
                                 <div>

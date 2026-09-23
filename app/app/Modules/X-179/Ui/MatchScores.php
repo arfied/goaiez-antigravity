@@ -8,8 +8,10 @@ use App\Enums\UserRole;
 use App\Modules\X179\Models\TemplateMatch;
 use App\Support\Tenancy;
 use Livewire\Attributes\Locked;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Industry Template Matching Scores'])]
 class MatchScores extends Component
 {
     #[Locked]

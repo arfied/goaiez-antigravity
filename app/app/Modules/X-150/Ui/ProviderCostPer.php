@@ -8,9 +8,11 @@ use App\Modules\X150\Actions\ProviderColdAction;
 use App\Modules\X150\Models\ProviderAttempt;
 use App\Modules\X150\Models\ProviderRoster;
 use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Provider cost per valid record'])]
 class ProviderCostPer extends Component
 {
     #[Locked]

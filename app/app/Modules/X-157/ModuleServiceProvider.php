@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X157;
 
 use App\Models\Business;
+use App\Modules\X103\Events\PageUnpublished;
 use App\Modules\X103\Events\SitePublished;
 use App\Modules\X137\Actions\CallAttributeAction;
 use App\Modules\X155\Actions\FormCaptureAction;
@@ -54,6 +55,27 @@ final class ModuleServiceProvider extends ServiceProvider
             return response($html, 200)->header('Content-Type', 'text/html');
         })->whereNumber('business');
 
+        Route::get('/sites/{business}/{deploy_hash}/media/{file?}', function (string $business, string $deployHash, string $file = '') {
+            if ($file === '') {
+                abort(404);
+            }
+            $businessId = (int) $business;
+            Tenancy::set($businessId);
+
+            $deployment = Deployment::where('business_id', $businessId)->where('deploy_hash', $deployHash)->firstOrFail();
+            abort_if($deployment->status !== 'deployed', 404);
+
+            $zone = $deployment->edgeZone;
+            abort_if($zone === null || ! $zone->has_valid_ssl, 404);
+
+            $content = Storage::disk('local')->get("site-inventory/{$businessId}/{$file}");
+            abort_if($content === null, 404);
+
+            $mime = (new \finfo(FILEINFO_MIME_TYPE))->buffer($content);
+
+            return response($content, 200)->header('Content-Type', $mime ?: 'application/octet-stream');
+        })->name('x-157.site.media')->whereNumber('business')->where('file', '[A-Za-z0-9._-]+');
+
         Route::get('/sites/{business}/{deploy_hash}/dni', function (string $business, string $deployHash, Request $request) {
             $businessId = (int) $business;
             Tenancy::set($businessId);
@@ -99,6 +121,13 @@ final class ModuleServiceProvider extends ServiceProvider
 
             return response()->json($result, $result['status'] === 'captured' ? 201 : 422);
         })->whereNumber('business')->whereNumber('form');
+
+        Event::listen(PageUnpublished::class, function (PageUnpublished $e): void {
+            Deployment::where('business_id', $e->businessId)
+                ->where('page_id', $e->pageId)
+                ->where('status', 'deployed')
+                ->update(['status' => 'unpublished']);
+        });
 
         Event::listen(SitePublished::class, function (SitePublished $event): void {
             $zone = EdgeZone::where('business_id', $event->businessId)

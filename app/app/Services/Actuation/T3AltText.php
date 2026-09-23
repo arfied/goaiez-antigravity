@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Actuation;
 
 use App\Enums\T3InjectionKind;
+use App\Services\Config\DefaultsRegistry;
 
 /**
  * Alt text for one image already on the page.
@@ -35,11 +36,14 @@ final readonly class T3AltText implements T3Operation
      */
     public static function fromFields(array $fields): ?self
     {
+        $registry = app(DefaultsRegistry::class);
+        $maxChars = $registry->int('actuation.alt_text.max_chars');
+
         // The `src` as the page spells it, or the tail of it. Quotes are refused
         // because the module compares strings and a quote in one would only ever
         // be somebody hoping it did not.
         $image = T3Value::text($fields['image'] ?? null, 512);
-        $text = T3Value::text($fields['alt'] ?? null, self::MAX_TEXT);
+        $text = T3Value::text($fields['alt'] ?? null, $maxChars);
 
         if ($image === null || $text === null) {
             return null;

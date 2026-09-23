@@ -1,6 +1,5 @@
 <div>
-    <div class="flex justify-between items-center mb-4">
-        <h2 class="text-xl font-semibold">Cooling List ({{ $coolingTotal }})</h2>
+    <div class="flex justify-end mb-4">
         <x-ui.button wire:click="toggleSample" size="sm" variant="secondary">
             {{ $isSample ? 'Hide sample' : 'Show sample' }}
         </x-ui.button>
@@ -36,7 +35,7 @@
                         <div class="flex justify-between items-center w-full">
                             <div>
                                 <div class="font-medium">{{ $score->prospect_identifier }}</div>
-                                <div class="text-sm text-gray-500">
+                                <div class="text-sm text-ink">
                                     {{ str_replace('_', ' ', $score->signal_type) }} &middot; 
                                     Score: {{ $score->signal_value }} &middot; 
                                     {{ $score->days_quiet }} days quiet

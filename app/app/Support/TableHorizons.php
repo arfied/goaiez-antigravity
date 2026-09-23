@@ -175,7 +175,7 @@ final class TableHorizons
             // the table is the day, and the day is a literal in that method.
             'magic_link_tokens' => [
                 'command' => 'auth:prune-magic-links',
-                'keeps' => 'a day past expiry ('.MagicLinkService::LIFETIME_MINUTES.' minutes)',
+                'keeps' => 'a day past expiry ('.app(MagicLinkService::class)->lifetimeMinutes().' minutes)',
                 'scope' => RetentionScope::Rows,
                 'key' => null,
             ],
@@ -242,7 +242,7 @@ final class TableHorizons
 
             'ingest_rejects' => [
                 'command' => 'pixel:prune-rejects',
-                'keeps' => IngestRejects::RETENTION_DAYS.' days',
+                'keeps' => app(IngestRejects::class)->retentionDays().' days',
                 'scope' => RetentionScope::Rows,
                 'key' => null,
             ],
@@ -269,7 +269,7 @@ final class TableHorizons
             ],
             'operator_alerts' => [
                 'command' => 'ops:watch-platform-health',
-                'keeps' => OperatorAlerts::RETENTION_DAYS.' days, or the quiet window if that is longer',
+                'keeps' => app(OperatorAlerts::class)->retentionDays().' days, or the quiet window if that is longer',
                 'scope' => RetentionScope::Rows,
                 'key' => null,
             ],
@@ -409,7 +409,7 @@ final class TableHorizons
 
         $days = [
             'l1' => WarehouseRetention::L1_RETENTION_DAYS,
-            'l2' => WarehouseRetention::L2_RETENTION_DAYS,
+            'l2' => WarehouseRetention::l2RetentionDays(),
         ];
 
         foreach (DerivedTables::DERIVED_TABLES as $layer => $tables) {

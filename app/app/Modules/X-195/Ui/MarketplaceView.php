@@ -7,19 +7,26 @@ namespace App\Modules\X195\Ui;
 use App\Modules\X195\Actions\MarketPublishAction;
 use App\Modules\X195\Models\MarketItem;
 use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Extension & Module Marketplace'])]
 class MarketplaceView extends Component
 {
     #[Locked]
     public int $businessId = 0;
 
     public string $itemName = '';
+
     public string $itemSlug = '';
+
     public string $version = '';
+
     public string $summary = '';
+
     public string $success = '';
+
     public string $error = '';
 
     public function mount(int $businessId = 0): void
@@ -34,6 +41,7 @@ class MarketplaceView extends Component
 
         if (empty($this->itemName) || empty($this->itemSlug) || empty($this->version) || empty($this->summary)) {
             $this->error = 'Item name, slug, version, and summary are required.';
+
             return;
         }
 

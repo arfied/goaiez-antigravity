@@ -10,7 +10,6 @@ use App\Modules\X202\Ui\AuditExport;
 use App\Modules\X202\Ui\Item;
 use App\Modules\X202\Ui\Mobile;
 use App\Modules\X202\Ui\Queue;
-use App\Modules\X202\Ui\Slack;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
@@ -36,7 +35,6 @@ final class ModuleServiceProvider extends ServiceProvider
             Livewire::component('x-202.item', Item::class);
             Livewire::component('x-202.audit-export', AuditExport::class);
             Livewire::component('x-202.mobile', Mobile::class);
-            Livewire::component('x-202.slack', Slack::class);
         }
     }
 }

@@ -82,6 +82,7 @@ final class ContentSelfAudit
      * either moved.
      */
     public function __construct(
+        private readonly DefaultsRegistry $defaults,
         private readonly GrowthPages $pages,
         private readonly SearchConsoleClient $searchConsole,
         private readonly SearchConsoleProperties $properties,
@@ -134,7 +135,7 @@ final class ContentSelfAudit
         $threshold = $this->registry->int(ContentQuality::MIN_UNIQUENESS_KEY);
 
         $texts = array_map(
-            static fn (PublishCandidate $page): string => $page->copy->fullText(),
+            fn (PublishCandidate $page): string => $page->copy->fullText(),
             $published,
         );
 
@@ -174,8 +175,8 @@ final class ContentSelfAudit
 
         $old = array_values(array_filter(
             $published,
-            static fn (PublishCandidate $page): bool => $page->publishedAt !== null
-                && $page->publishedAt->lessThanOrEqualTo($now->subDays(self::IMPRESSION_WINDOW_DAYS)),
+            fn (PublishCandidate $page): bool => $page->publishedAt !== null
+                && $page->publishedAt->lessThanOrEqualTo($now->subDays($this->impressionWindowDays())),
         ));
 
         if ($old === []) {
@@ -202,7 +203,7 @@ final class ContentSelfAudit
             $impressions = $this->searchConsole->pageImpressions(
                 $business,
                 (string) $property->site_url,
-                $now->subDays(self::IMPRESSION_WINDOW_DAYS),
+                $now->subDays($this->impressionWindowDays()),
                 $now,
             );
         } catch (SearchConsoleRequestFailed) {
@@ -244,7 +245,7 @@ final class ContentSelfAudit
 
         $this->audit->record('content.generation_paused', 'autopilot', $location, [
             'findings' => array_map(
-                static fn (ContentAuditFinding $finding): string => $finding->value,
+                fn (ContentAuditFinding $finding): string => $finding->value,
                 $findings,
             ),
         ]);
@@ -255,7 +256,7 @@ final class ContentSelfAudit
             [
                 'automation' => 'content.self_audit',
                 'findings' => array_map(
-                    static fn (ContentAuditFinding $finding): string => $finding->value,
+                    fn (ContentAuditFinding $finding): string => $finding->value,
                     $findings,
                 ),
             ],
@@ -279,5 +280,10 @@ final class ContentSelfAudit
         ])->save();
 
         $this->audit->record('content.generation_resumed', 'autopilot', $location);
+    }
+
+    public function impressionWindowDays(): int
+    {
+        return $this->defaults->int('content.self_audit.impression_window_days');
     }
 }

@@ -9,7 +9,9 @@ use App\Contracts\EmbeddingClient;
 use App\Enums\AiModel;
 use App\Enums\AiProvider;
 use App\Enums\PlatformHealthSignal;
+use App\Modules\X220\Actions\PromptRegisterAction;
 use App\Services\Ops\PlatformHealth;
+use App\Support\Tenancy;
 use Illuminate\Support\Facades\Log;
 use LogicException;
 
@@ -143,13 +145,27 @@ final class AiRouter
             return AiResponse::failed($model, $refusal);
         }
 
+        $key = $request->promptKey ?? $request->task->value;
+        $effectiveText = ($request->system ?? '').$request->prompt;
+
+        // @phpstan-ignore class.notFound
+        $registered = app(PromptRegisterAction::class)->handle(
+            Tenancy::idOrFail(),
+            $key,
+            debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1]['class'] ?? 'unknown',
+            $effectiveText
+        );
+
+        $promptId = $registered->id;
+        $promptVersion = $registered->version;
+
         $response = $this->client($model)->complete($request);
 
         // Recorded whatever happened — answered, refused, or failed. A refusal
         // bills for what was generated before the classifier fired, and a call
         // that errors after the model has read the prompt can still bill for
         // input. See AiSpend::record().
-        $this->spend->record($request->task, $response);
+        $this->spend->record($request->task, $response, $promptId, $promptVersion);
 
         $this->watch($model, $response->failureReason);
 
@@ -216,9 +232,17 @@ final class AiRouter
             return EmbeddingResponse::failed($model, $refusal);
         }
 
+        // @phpstan-ignore class.notFound
+        $registered = app(PromptRegisterAction::class)->handle(
+            Tenancy::idOrFail(),
+            $request->task->value,
+            debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1]['class'] ?? 'unknown',
+            ''
+        );
+
         $response = $this->embeddingClient($model)->embed($request);
 
-        $this->spend->recordEmbedding($request->task, $response);
+        $this->spend->recordEmbedding($request->task, $response, $registered->id, $registered->version);
 
         $this->watch($model, $response->failureReason);
 

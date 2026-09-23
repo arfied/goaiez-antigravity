@@ -10,8 +10,10 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module X-175
+ *
  * @intent INFORM under §227.2
-         * @ingress note.voice <human>
+ *
+ * @ingress note.voice <human>
  */
 return [
     'module' => 'X-175',
@@ -51,8 +53,6 @@ return [
 
     'renders' => [
         'stafffacing_assistant_panel',
-        'customerfacing_none',
-        'by_design',
     ],
 
     // P-209 — silence fails OPEN. `none` is a decision; absence is not.

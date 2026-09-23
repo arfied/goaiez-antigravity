@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X220\Models;
 
+use App\Models\AiCall;
 use Illuminate\Database\Eloquent\Model;
 
 class AiPrompt extends Model
@@ -16,4 +17,9 @@ class AiPrompt extends Model
         'version' => 'integer',
         'frozen_at' => 'datetime',
     ];
+
+    public function calls()
+    {
+        return $this->hasMany(AiCall::class, 'prompt_id');
+    }
 }

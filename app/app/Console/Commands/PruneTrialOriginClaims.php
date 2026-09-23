@@ -58,7 +58,7 @@ final class PruneTrialOriginClaims extends Command
      * ⚠️ **DERIVED RATHER THAN PICKED, AND THE DERIVATION IS THE POINT.** The
      * floor is what the velocity control needs in order to still be true when a
      * grant is minted: the trial is `billing.trial_days` (14), the burst window
-     * is {@see TrialEligibility::SIGNUP_ORIGIN_WINDOW_DAYS} either side of the
+     * is {@see app(\App\Services\Billing\TrialEligibility::class)->signupOriginWindowDays()} either side of the
      * anchor (30), and a grant can only be minted for an account that still
      * exists and is at or near trial. That is roughly 44 days of span, and
      * anything comfortably beyond it preserves everything 3224 needs **without

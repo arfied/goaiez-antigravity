@@ -13,6 +13,7 @@ use App\Models\Conversation;
 use App\Services\Ai\AiRequest;
 use App\Services\Ai\AiRouter;
 use App\Services\Assistant\PriceBook;
+use App\Services\Config\DefaultsRegistry;
 use App\Services\Knowledge\KnowledgeSnippet;
 use App\Services\Links\TenantLink;
 use App\Services\Reviews\PromptFence;
@@ -98,7 +99,12 @@ final class AgentComposer
      * per snippet so that four sources each contribute something rather than the
      * first one filling the prompt.
      */
-    private const int SNIPPET_CHARACTERS = 700;
+    public const int SNIPPET_CHARACTERS = 700;
+
+    public function snippetCharacters(): int
+    {
+        return $this->defaults->int('agent.compose.snippet_chars');
+    }
 
     public function __construct(
         private readonly AiRouter $router,
@@ -106,6 +112,7 @@ final class AgentComposer
         private readonly ReplyGuardrails $guardrails,
         private readonly PriceBook $prices,
         private readonly LinkRegistry $links,
+        private readonly DefaultsRegistry $defaults,
         // ⛔ **INJECTED RATHER THAN PASSED IN, UNLIKE `$reviewAsk` AND
         // `$hasInboundMedia`, AND THE DIFFERENCE IS THAT READING AN ADDRESS
         // WRITES NOTHING** (6104). Those two are passed in because minting a
@@ -190,6 +197,7 @@ final class AgentComposer
             task: AiTask::Conversation,
             prompt: $prompt,
             system: $this->system($businessName, $skills),
+            promptKey: 'agent.compose',
         ));
 
         // ⚠️ **ONE CHECK FOR THREE OUTCOMES, AND THAT IS `AiResponse`'s DESIGN
@@ -638,7 +646,7 @@ final class AgentComposer
             $notes = [];
 
             foreach ($snippets as $snippet) {
-                $notes[] = '- '.mb_substr(trim($snippet->text), 0, self::SNIPPET_CHARACTERS);
+                $notes[] = '- '.mb_substr(trim($snippet->text), 0, $this->snippetCharacters());
             }
 
             $blocks[] = "Business notes — answer service questions from these and nothing else:\n".implode("\n", $notes);

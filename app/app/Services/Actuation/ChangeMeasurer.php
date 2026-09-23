@@ -13,6 +13,7 @@ use App\Exceptions\SearchConsoleRequestFailed;
 use App\Models\Business;
 use App\Models\Location;
 use App\Services\ActivityService;
+use App\Services\Config\DefaultsRegistry;
 use App\Services\Gsc\SearchAnalyticsResult;
 use App\Services\Tenant\LocationWebsite;
 use App\Services\Visibility\ConnectionState;
@@ -103,7 +104,7 @@ final readonly class ChangeMeasurer
      */
     private const string UNRECORDED_REGRESSION = 'Measured as worse than the fortnight before the change.';
 
-    public function __construct(
+    public function __construct(private readonly DefaultsRegistry $registry,
         private SiteMeasurements $measurements,
         private SiteChangeQuarantines $quarantines,
         private PageTraffic $pageTraffic,
@@ -175,15 +176,15 @@ final readonly class ChangeMeasurer
                 : SiteMeasurementOutcome::NotDue;
         }
 
-        if ($now->lessThan($subject->appliedAt->addDays(SiteMeasurements::MEASURED_WINDOW_ENDS_DAYS))) {
+        if ($now->lessThan($subject->appliedAt->addDays($this->registry->int('sites.measure.window_ends_days')))) {
             return SiteMeasurementOutcome::NotDue;
         }
 
         $baselineTo = $subject->appliedAt->subDay()->startOfDay();
-        $baselineFrom = $baselineTo->subDays(SiteMeasurements::BASELINE_DAYS - 1);
+        $baselineFrom = $baselineTo->subDays($this->registry->int('sites.measure.baseline_days') - 1);
 
-        $measuredFrom = $subject->appliedAt->addDays(SiteMeasurements::MEASURED_WINDOW_STARTS_DAYS)->startOfDay();
-        $measuredTo = $subject->appliedAt->addDays(SiteMeasurements::MEASURED_WINDOW_ENDS_DAYS)->startOfDay();
+        $measuredFrom = $subject->appliedAt->addDays($this->registry->int('sites.measure.window_starts_days'))->startOfDay();
+        $measuredTo = $subject->appliedAt->addDays($this->registry->int('sites.measure.window_ends_days'))->startOfDay();
 
         $search = $this->search($location, $subject, $measuredFrom, $measuredTo, $baselineFrom, $baselineTo, $now);
 
@@ -480,7 +481,7 @@ final readonly class ChangeMeasurer
             if ($measured->firstIncompleteDate !== null
                 && $measured->firstIncompleteDate->lessThanOrEqualTo($measuredTo)) {
                 $waitedUntil = $subject->appliedAt
-                    ->addDays(SiteMeasurements::MEASURED_WINDOW_ENDS_DAYS + self::SETTLEMENT_GRACE_DAYS);
+                    ->addDays($this->registry->int('sites.measure.window_ends_days') + self::SETTLEMENT_GRACE_DAYS);
 
                 if ($now->lessThan($waitedUntil)) {
                     return null;

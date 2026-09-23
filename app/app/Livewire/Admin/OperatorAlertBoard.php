@@ -637,11 +637,11 @@ final class OperatorAlertBoard extends Component
      * source is the column. ⛔ **And gating it on the page filling is the defect
      * being fixed**, so the read is unconditional and is stated rather than
      * hidden: one grouped aggregate, on `fired_at`'s own index, over a
-     * population {@see OperatorAlerts::RETENTION_DAYS} bounds, on a screen
+     * population {@see app(OperatorAlerts::class)->retentionDays()} bounds, on a screen
      * behind the admin gate that already runs a `COUNT(*)` for its paginator.
      *
      * ⚠️ **THE WINDOW IS THIS SCREEN'S {@see self::RINGING_HOURS} AND NOT
-     * {@see OperatorAlerts::PUSH_BUDGET_HOURS}, THOUGH BOTH ARE TWENTY-FOUR.**
+     * {@see app(OperatorAlerts::class)->pushBudgetHours()}, THOUGH BOTH ARE TWENTY-FOUR.**
      * 7581's rule: a value read by two things with opposite interests is a
      * coupling nobody stated. This section is part of *still ringing* and
      * follows it; the budget is a bound on sending and moves for its own
@@ -722,7 +722,7 @@ final class OperatorAlertBoard extends Component
      * ⛔ **"EVERYTHING" ACQUIRED A HORIZON ON 2026-08-22 AND THE SCREEN SAYS SO
      * RATHER THAN THIS DOCBLOCK SAYING IT ALONE** (7520–7539).
      * `OperatorAlerts::prune()` removes a row after
-     * {@see OperatorAlerts::RETENTION_DAYS}, so this listing ends at a year and
+     * {@see app(OperatorAlerts::class)->retentionDays()}, so this listing ends at a year and
      * an empty one is no longer *"this has never happened"*. ⚠️ **A screen whose
      * heading says everything and whose data stops silently is the failure the
      * horizon would otherwise introduce**, which is why the retention is
@@ -821,7 +821,7 @@ final class OperatorAlertBoard extends Component
      *
      * ⚠️ **ONE ROW READS NO REGISTRY KEY AT ALL AND IS NOT AN EXCEPTION TO THE
      * RULE ABOVE** (8120–8139). {@see OperatorAlertKind::PagerBudgetSpent}'s
-     * gate is {@see OperatorAlerts::PUSH_BUDGET_PER_KIND}, a **constant** —
+     * gate is {@see app(OperatorAlerts::class)->pushBudgetPerKind()}, a **constant** —
      * 7830 refuses to make a bound on how loudly a stranger may ring the pager
      * editable from the same screen as the pager — so there is nothing an
      * operator could have zeroed and nothing for {@see self::switched()} to
@@ -1064,8 +1064,8 @@ final class OperatorAlertBoard extends Component
                 'state' => SignalState::Ok,
                 'status' => 'Watching',
                 'detail' => 'Rings when any one bell here has already been emailed or texted '
-                    .OperatorAlerts::PUSH_BUDGET_PER_KIND.' times in '
-                    .OperatorAlerts::PUSH_BUDGET_HOURS.' hours and another of that kind is recorded, '
+                    .app(OperatorAlerts::class)->pushBudgetPerKind().' times in '
+                    .app(OperatorAlerts::class)->pushBudgetHours().' hours and another of that kind is recorded, '
                     .'so that a pager going quiet is never mistaken for a problem going away. '
                     .'It has no setting: the limit is fixed in the code, so there is nothing here to '
                     .'turn up or switch off. Where no address and no number are set nothing is ever '
@@ -1267,7 +1267,7 @@ final class OperatorAlertBoard extends Component
                 'status' => 'Watching',
                 'detail' => 'Rings the first time a QUEUED platform email is refused or is not '
                     .'accepted by the mailer, and then not again about that mailer for '
-                    .OperatorAlerts::MAIL_PATH_REPEAT_HOURS.' hours. It has no threshold and no '
+                    .app(OperatorAlerts::class)->mailPathRepeatHours().' hours. It has no threshold and no '
                     .'off switch: a mail transport that has stopped is stopped at three messages an '
                     .'hour exactly as much as at ten thousand, so there is no figure that would be '
                     .'honest here. Its own email is sent through the mailer it reports on, so on a '
@@ -1684,7 +1684,7 @@ final class OperatorAlertBoard extends Component
             // The constant itself, never a copy of the number. A screen carrying
             // its own idea of how long rows last is a screen that goes on saying
             // "a year" after somebody shortens the horizon.
-            'retentionDays' => OperatorAlerts::RETENTION_DAYS,
+            'retentionDays' => app(OperatorAlerts::class)->retentionDays(),
         ]);
     }
 }

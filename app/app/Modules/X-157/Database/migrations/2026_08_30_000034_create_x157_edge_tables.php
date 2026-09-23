@@ -31,7 +31,7 @@ return new class extends Migration
                 $table->foreignId('business_id')->constrained('businesses')->cascadeOnDelete();
                 $table->foreignId('edge_zone_id')->constrained('edge_zones')->cascadeOnDelete();
                 $table->string('deploy_hash')->index();
-                $table->string('status')->default('deployed'); // deploying, deployed, rolled_back, failed_ssl, superseded
+                $table->string('status')->default('deployed'); // deploying, deployed, rolled_back, failed_ssl, superseded, unpublished
                 $table->unsignedInteger('speed_score')->default(100);
                 $table->unsignedInteger('speed_budget_ms')->default(1500); // 1.5s TTFB budget
                 $table->unsignedInteger('measured_ttfb_ms')->default(120);

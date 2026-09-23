@@ -1,6 +1,6 @@
 <div>
     <div class="deliverable-proof-view p-4">
-        <h3 class="text-lg font-bold">Verified Deliverable Proof & Hash Verification</h3>
+        
         
         @if($deliverables->isEmpty())
             <x-ui.empty-state heading="No deliverables submitted.">A deliverable is verified here and its proof link stored.</x-ui.empty-state>
@@ -17,15 +17,15 @@
             </ul>
         @endif
 
-        <div class="mt-8 border p-4 rounded bg-white">
-            <h4 class="font-bold mb-4">Submit Deliverable</h4>
+        <div class="mt-8 border p-4 rounded bg-paper">
+            <h2 class="font-bold mb-4">Submit Deliverable</h2>
             
             @if($success)
-                <div class="p-2 border mb-4 rounded bg-white">{{ $success }}</div>
+                <div class="p-2 border mb-4 rounded bg-paper">{{ $success }}</div>
             @endif
             
             @if($error)
-                <div class="p-2 border mb-4 rounded bg-white">{{ $error }}</div>
+                <div class="p-2 border mb-4 rounded bg-paper">{{ $error }}</div>
             @endif
 
             <form wire:submit="submitProof" class="flex flex-col gap-4">

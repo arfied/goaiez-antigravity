@@ -7,6 +7,7 @@ namespace App\Services\Audit;
 use App\Enums\AuditStatus;
 use App\Jobs\PublicAuditJob;
 use App\Models\PublicAudit;
+use App\Services\Config\DefaultsRegistry;
 use App\Services\Places\PlaceResolver;
 use Illuminate\Support\Carbon;
 
@@ -31,10 +32,16 @@ final class PublicAuditStarter
      * produce an identical result and differ only in having burned a Nearby
      * Search to do it.
      */
-    private const int REUSE_WINDOW_SECONDS = 86400;
+    public const int REUSE_WINDOW_SECONDS = 86400;
+
+    public function reuseWindowSeconds(): int
+    {
+        return $this->defaults->int('audit.public.reuse_window_seconds');
+    }
 
     public function __construct(
         private readonly PlaceResolver $resolver,
+        private readonly DefaultsRegistry $defaults,
     ) {}
 
     /**
@@ -86,7 +93,7 @@ final class PublicAuditStarter
             ->live()
             ->where('place_id', $placeId)
             ->where('status', AuditStatus::Complete)
-            ->where('created_at', '>', Carbon::now()->subSeconds(self::REUSE_WINDOW_SECONDS))
+            ->where('created_at', '>', Carbon::now()->subSeconds($this->reuseWindowSeconds()))
             ->latest('created_at')
             ->first();
     }

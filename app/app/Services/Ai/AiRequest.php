@@ -37,6 +37,7 @@ final readonly class AiRequest
         public string $prompt,
         public ?string $system = null,
         public ?array $jsonSchema = null,
+        public ?string $promptKey = null,
     ) {}
 
     public function wantsJson(): bool

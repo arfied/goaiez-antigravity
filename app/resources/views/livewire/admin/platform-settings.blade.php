@@ -19,6 +19,23 @@
         </p>
     </div>
 
+    <div class="flex flex-wrap gap-3">
+        @foreach (\App\Support\DefaultsManifest::GROUPS as $g)
+            @if (isset($groups[$g]))
+                <a href="#group-{{ str()->slug($g) }}" class="text-sm font-medium text-ink underline decoration-rule underline-offset-4">
+                    {{ $g }} ({{ count($groups[$g]) }})
+                </a>
+            @endif
+        @endforeach
+    </div>
+
+    <div>
+        <input wire:model.live.debounce.300ms="search" type="search" placeholder="Search keys and descriptions..." class="rounded-[--radius-field] border border-rule bg-paper px-3 py-2 text-ink w-full max-w-md">
+        @if ($search !== '')
+            <p class="mt-2 text-sm text-ink-2">{{ $matchCount }} settings match</p>
+        @endif
+    </div>
+
     {{--
         empty-state: absent because the groups are the defaults registry
         rendered, not a query — every setting this platform has is seeded by
@@ -26,7 +43,7 @@
         lint satisfied by dead code is worse than the gap it closes.
     --}}
     @foreach ($groups as $group => $rows)
-        <section class="rounded-[--radius-panel] border border-rule bg-card p-5">
+        <section id="group-{{ str()->slug($group) }}" class="rounded-[--radius-panel] border border-rule bg-card p-5">
             <h2 class="font-display text-lg font-semibold text-ink">{{ $group }}</h2>
 
             <ul class="mt-4 space-y-5 max-h-[600px] overflow-y-auto pr-2">

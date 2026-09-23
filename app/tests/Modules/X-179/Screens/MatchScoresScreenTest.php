@@ -26,7 +26,10 @@ class MatchScoresScreenTest extends TestCase
         $matchAction->matchAndRender($biz->id, 123);
         $prospectId = 123;
 
-        $this->get(route('x-179.match-scores', ['prospectId' => $prospectId]))->assertOk();
+        $this->get(route('x-179.match-scores', ['prospectId' => $prospectId]))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console');
 
         Livewire::test(MatchScores::class, ['prospectId' => $prospectId])->assertOk();
     }

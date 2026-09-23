@@ -8,6 +8,7 @@ use App\Enums\AiModel;
 use App\Enums\AiTask;
 use App\Enums\CreditVerdict;
 use App\Models\AiCall;
+use App\Modules\X219\Actions\ModelResolveAction;
 use App\Services\Config\DefaultsRegistry;
 use App\Support\Tenancy;
 use Illuminate\Support\Carbon;
@@ -193,8 +194,28 @@ final class AiSpend
      * something: no settings row can point this application at a model it was
      * never priced for.
      */
+    /**
+     * The model that will answer this task.
+     *
+     * Resolution order:
+     * 1. Tenant assignment (ModelResolveAction) if a tenant is set
+     * 2. Platform registry key (ai.model.<task>)
+     * 3. Task default (AiTask::defaultModel())
+     */
     public function modelFor(AiTask $task): AiModel
     {
+        if ($this->hasTenant()) {
+            $action = app(ModelResolveAction::class);
+            $assignment = $action->handle(Tenancy::idOrFail(), $task->value);
+
+            if ($assignment !== null) {
+                $model = AiModel::tryFrom($assignment);
+                if ($model !== null && $model->isEmbedding() === $task->producesEmbedding()) {
+                    return $model;
+                }
+            }
+        }
+
         $configured = $this->registry->stringOrNull($task->settingKey());
 
         if ($configured === null) {
@@ -390,7 +411,7 @@ final class AiSpend
      * The tenant comes from BelongsToTenant, so this cannot be written against a
      * business other than the ambient one.
      */
-    public function record(AiTask $task, AiResponse $response): AiCall
+    public function record(AiTask $task, AiResponse $response, int $promptId, int $promptVersion): AiCall
     {
         $cost = $response->costInHundredthsOfCents();
         $retail = $this->credits->retailFor($cost);
@@ -405,6 +426,8 @@ final class AiSpend
             'retail_hundredths_cents' => $retail,
             'refused' => $response->refused,
             'failure_reason' => $response->failureReason,
+            'prompt_id' => $promptId,
+            'prompt_version' => $promptVersion,
         ]);
 
         // ⛔ THE DEBIT, AND IT COMES AFTER THE ROW ON PURPOSE (3424). The provider
@@ -443,7 +466,7 @@ final class AiSpend
      * The tenant comes from BelongsToTenant, so this cannot be written against a
      * business other than the ambient one.
      */
-    public function recordEmbedding(AiTask $task, EmbeddingResponse $response): AiCall
+    public function recordEmbedding(AiTask $task, EmbeddingResponse $response, int $promptId, int $promptVersion): AiCall
     {
         $cost = $response->costInHundredthsOfCents();
         $retail = $this->credits->retailFor($cost);
@@ -458,6 +481,8 @@ final class AiSpend
             'retail_hundredths_cents' => $retail,
             'refused' => false,
             'failure_reason' => $response->failureReason,
+            'prompt_id' => $promptId,
+            'prompt_version' => $promptVersion,
         ]);
 
         // ⛔ EMBEDDINGS DEBIT TOO, AND LEAVING THEM OUT WOULD HAVE BEEN THE

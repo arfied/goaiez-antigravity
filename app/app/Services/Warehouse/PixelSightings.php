@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Warehouse;
 
 use App\Models\L1Event;
+use App\Services\Config\DefaultsRegistry;
 use App\Support\Tenancy;
 use Illuminate\Support\Carbon;
 
@@ -79,7 +80,7 @@ final class PixelSightings
 
         return L1Event::query()
             ->whereIn('page_host', array_unique([$host, $bare, 'www.'.$bare]))
-            ->where('received_at', '>=', Carbon::now()->subDays(self::FRESH_DAYS))
+            ->where('received_at', '>=', Carbon::now()->subDays(app(DefaultsRegistry::class)->int('warehouse.sightings_fresh_days')))
             ->exists();
     }
 }

@@ -117,7 +117,7 @@ final class PruneWarehouse extends Command
                 .str('account')->plural($accounts).'.'
             : 'Pruned '.$deleted['l1'].' conformed '.str('event')->plural($deleted['l1'])
                 .' past '.WarehouseRetention::L1_RETENTION_DAYS.' days and '.$deleted['l2'].' rollup '
-                .str('row')->plural($deleted['l2']).' past '.WarehouseRetention::L2_RETENTION_DAYS
+                .str('row')->plural($deleted['l2']).' past '.WarehouseRetention::l2RetentionDays()
                 .' days across '.$accounts.' '.str('account')->plural($accounts).'.');
 
         // ⚠️ AFTER the line above rather than instead of it — `PruneTenantExports`'
@@ -169,7 +169,7 @@ final class PruneWarehouse extends Command
                 (int) $businessId,
                 fn (): array => $retention->prune(
                     WarehouseRetention::L1_RETENTION_DAYS,
-                    WarehouseRetention::L2_RETENTION_DAYS,
+                    WarehouseRetention::l2RetentionDays(),
                 ),
             );
 

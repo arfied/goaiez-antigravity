@@ -10,6 +10,7 @@ use App\Modules\X108\Models\Appointment;
 use App\Modules\X108\Models\AvailabilityRule;
 use App\Modules\X108\Models\SlotLock;
 use App\Modules\X108\Models\Waitlist;
+use App\Services\Config\DefaultsRegistry;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -17,6 +18,13 @@ use Illuminate\Support\Facades\Event;
 
 final class SchedulingEngine
 {
+    public const array SLOT_HOURS = [9, 11, 14, 16];
+
+    private function slotHours(): array
+    {
+        return app(DefaultsRegistry::class)->intList('scheduling.slot_hours');
+    }
+
     /**
      * Request availability with strict window adherence and VIP member priority (TEST ANCHOR).
      */
@@ -25,7 +33,7 @@ final class SchedulingEngine
         $baseDate = Carbon::parse($date)->startOfDay();
 
         // Standard potential slots: 09:00, 11:00, 14:00, 16:00
-        $allSlotHours = [9, 11, 14, 16];
+        $allSlotHours = $this->slotHours();
 
         $bookedIntervals = Appointment::where('business_id', $businessId)
             ->whereDate('start_time', $baseDate->toDateString())

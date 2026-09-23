@@ -6,6 +6,7 @@ namespace Tests\Modules\X195\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X195\Models\MarketItem;
 use App\Modules\X195\Ui\MarketplaceView;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -18,7 +19,10 @@ class MarketplaceViewScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-195.marketplace'))->assertOk();
+        $this->get(route('x-195.marketplace'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console');
 
         Livewire::test(MarketplaceView::class)->assertOk();
     }
@@ -48,7 +52,7 @@ class MarketplaceViewScreenTest extends TestCase
             ->call('publish')
             ->assertSet('success', 'Item Test Item (1.0.0) is listed. A repeat for the same slug edits the listing.');
 
-        $this->assertDatabaseHas((new \App\Modules\X195\Models\MarketItem)->getTable(), [
+        $this->assertDatabaseHas((new MarketItem)->getTable(), [
             'business_id' => $biz->id,
             'item_slug' => 'test-item',
             'item_name' => 'Test Item',
@@ -70,7 +74,7 @@ class MarketplaceViewScreenTest extends TestCase
             ->call('publish')
             ->assertSet('error', 'Item name, slug, version, and summary are required.');
 
-        $this->assertDatabaseMissing((new \App\Modules\X195\Models\MarketItem)->getTable(), [
+        $this->assertDatabaseMissing((new MarketItem)->getTable(), [
             'business_id' => $biz->id,
         ]);
     }

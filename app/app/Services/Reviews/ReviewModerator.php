@@ -70,6 +70,7 @@ final class ReviewModerator
             prompt: $this->prompt($rating, $comment, $fence),
             system: $this->system($fence),
             jsonSchema: $this->schema(),
+            promptKey: 'review.moderate',
         ));
 
         // A refusal is a successful 200 (AiResponse). The classifier declining to

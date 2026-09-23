@@ -8,6 +8,7 @@ use App\Console\Commands\PruneMagicLinkTokens;
 use App\Models\MagicLinkToken;
 use App\Models\User;
 use App\Notifications\MagicLinkLogin;
+use App\Services\Config\DefaultsRegistry;
 use App\Services\Mail\PlatformMailer;
 use App\Support\MagicLinkRateLimits;
 use Illuminate\Support\Carbon;
@@ -42,7 +43,10 @@ use Illuminate\Support\Str;
  */
 final class MagicLinkService
 {
-    public function __construct(private readonly PlatformMailer $mailer) {}
+    public function __construct(
+        private readonly PlatformMailer $mailer,
+        private readonly DefaultsRegistry $defaults,
+    ) {}
 
     /**
      * Minutes a link stays usable.
@@ -52,6 +56,11 @@ final class MagicLinkService
      * it.
      */
     public const int LIFETIME_MINUTES = 15;
+
+    public function lifetimeMinutes(): int
+    {
+        return $this->defaults->int('auth.magic_link.lifetime_minutes');
+    }
 
     /**
      * Issue a link, if the address belongs to someone.
@@ -106,7 +115,7 @@ final class MagicLinkService
         MagicLinkToken::create([
             'email' => $email,
             'token_hash' => self::hash($token),
-            'expires_at' => Carbon::now()->addMinutes(self::LIFETIME_MINUTES),
+            'expires_at' => Carbon::now()->addMinutes($this->lifetimeMinutes()),
             'requested_ip_hash' => $ipHash,
         ]);
 
@@ -159,7 +168,7 @@ final class MagicLinkService
             $email,
             new MagicLinkLogin(
                 route('magic-link.consume', ['token' => $token]),
-                self::LIFETIME_MINUTES,
+                $this->lifetimeMinutes(),
             ),
         );
     }

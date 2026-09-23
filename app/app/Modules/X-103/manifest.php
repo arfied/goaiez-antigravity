@@ -10,6 +10,7 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module X-103
+ *
  * @intent GROW under §227.2
  */
 return [
@@ -28,6 +29,7 @@ return [
     'ceiling' => 'L2',
 
     'provides' => [
+        'site_build',
         'site.build',
         'site.publish',
         'page.create',
@@ -57,7 +59,7 @@ return [
     'reads_table' => [],
 
     'renders' => [
-        'none',
+        'pages',
     ],
 
     // P-209 — silence fails OPEN. `none` is a decision; absence is not.

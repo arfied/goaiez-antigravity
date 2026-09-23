@@ -8,6 +8,7 @@ use App\Enums\AutopilotActionType;
 use App\Enums\ReplyPublicationState;
 use App\Enums\ReplyStatus;
 use App\Enums\ReviewSource;
+use App\Events\ReplyApproved;
 use App\Exceptions\GbpRequestFailed;
 use App\Exceptions\ReplyGuardrailRefused;
 use App\Jobs\Reviews\PostReplyJob;
@@ -16,6 +17,7 @@ use App\Models\Business;
 use App\Models\Location;
 use App\Models\Reply;
 use App\Models\Review;
+use App\Modules\X220\Actions\PromptResolveAction;
 use App\Services\ActivityService;
 use App\Services\AuditService;
 use App\Services\Config\DefaultsRegistry;
@@ -856,6 +858,23 @@ final class ReviewReplies
             (int) $reply->business_id,
             (int) $reply->review()->firstOrFail()->location_id,
             (int) $reply->id,
+        );
+
+        // The reply row has no provenance column linking it to the AiCall that drafted it,
+        // so we pass the latest reply.generate prompt.
+        $prompt = app(PromptResolveAction::class)->handle(
+            (int) $reply->business_id,
+            'reply.generate',
+        );
+
+        ReplyApproved::dispatch(
+            (int) $reply->business_id,
+            (int) $reply->id,
+            (int) $reply->review_id,
+            $reply->review()->firstOrFail()->comment,
+            $text,
+            $prompt?->id ? (string) $prompt->id : null,
+            $prompt?->version ? (string) $prompt->version : null,
         );
 
         return $reply;

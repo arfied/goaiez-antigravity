@@ -99,7 +99,7 @@ final class WatchPlatformHealth extends Command
      * be a setting whose only possible effect is to make the table bigger. Thirty
      * days is long enough for an incident review to look at last week.
      *
-     * ⛔ **IT IS NOT `OperatorAlerts::RETENTION_DAYS` AND THE TWO MUST NOT BE
+     * ⛔ **IT IS NOT `$alerts->retentionDays()` AND THE TWO MUST NOT BE
      * HARMONISED** (7520–7539). This is the **measurement**; that is the
      * **bell that was rung about it**, and `operator_alerts.context` is jsonb
      * precisely so an incident review can read the figures after these buckets
@@ -142,7 +142,7 @@ final class WatchPlatformHealth extends Command
         // horizon applied here — without the quiet window in front of it —
         // re-arms every alert that was already sent. This command deliberately
         // passes a number and knows nothing about the dedupe.
-        $alerts->prune(OperatorAlerts::RETENTION_DAYS);
+        $alerts->prune($alerts->retentionDays());
 
         return self::SUCCESS;
     }
