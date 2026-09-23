@@ -45,7 +45,7 @@ final class GrowthPageFactory extends Factory
                 .'Kitchen drains block most often in this town. Tree roots cause the rest. '
                 .'We charge one flat price for a home visit and tell you before we start.',
             'target_keyword' => 'blocked drain same day',
-            'quality_score' => null,
+            'quality_rating' => null,
             'status' => GrowthPageStatus::Draft,
             'hold_until' => null,
         ];
