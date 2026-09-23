@@ -70,7 +70,7 @@ abstract class TestCase extends BaseTestCase
         try {
             // Release numbers so journeys committing their transactions do not exhaust the pool
             DB::table('phone_numbers')
-                ->where('e164', 'like', '+1512555%')
+                ->where('e164', 'like', '+1512556%')
                 ->update([
                     'business_id' => null,
                     'location_id' => null,
@@ -170,8 +170,9 @@ abstract class TestCase extends BaseTestCase
 
     public static function provisionTenant(array $attributes = []): Business
     {
+        // The pool uses the 556 exchange to avoid colliding with hand-written fixtures on 555 (693c).
         static $numberSeed = 1000;
-        app(TenantNumbers::class)->addToPool('+1512555'.$numberSeed++);
+        app(TenantNumbers::class)->addToPool('+1512556'.$numberSeed++);
 
         $owner = isset($attributes['owner_user_id']) ? User::find($attributes['owner_user_id']) : User::factory()->create();
         $name = $attributes['name'] ?? 'Test Business';
