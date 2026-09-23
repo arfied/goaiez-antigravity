@@ -8,9 +8,11 @@ use App\Modules\X127\Actions\TenantzeroMetricAction;
 use App\Modules\X127\Actions\TenantzeroProofAction;
 use App\Modules\X127\Models\PublishedMetric;
 use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Metric proof panel'])]
 class MetricProofPanel extends Component
 {
     #[Locked]

@@ -20,7 +20,7 @@ class MetricProofPanelScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-127.metric-proof-panel'))->assertOk();
+        $this->get(route('x-127.metric-proof-panel'))->assertOk()->assertSee('Your account')->assertDontSee('Internal Platform Console');
 
         Livewire::test(MetricProofPanel::class)->assertOk();
     }
