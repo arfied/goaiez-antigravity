@@ -7,6 +7,8 @@ namespace App\Modules\X193\Actions;
 use App\Modules\X193\Events\NotificationClassified;
 use App\Modules\X193\Models\NotificationClass;
 use Carbon\Carbon;
+use App\Services\Config\DefaultsRegistry;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 
 final class NotificationClassifyAction
@@ -35,8 +37,8 @@ final class NotificationClassifyAction
                     str_contains($callerType, 'dunning') || str_contains($callerType, 'account') || str_contains($callerType, 'missed_call') || str_contains($callerType, 'chat') || str_contains($callerType, 'alert') => false,
                     default => true,
                 },
-                'quiet_hours_start' => 21,
-                'quiet_hours_end' => 8,
+                'quiet_hours_start' => app(\App\Services\Config\DefaultsRegistry::class)->int('notifications.quiet_hours.start'),
+                'quiet_hours_end' => app(\App\Services\Config\DefaultsRegistry::class)->int('notifications.quiet_hours.end'),
             ]
         );
 
@@ -55,6 +57,17 @@ final class NotificationClassifyAction
         if ($notifClass->respects_quiet_hours && $isQuietHours) {
             $deliveryDecision = 'hold_until_window';
             $heldUntil = $time->copy()->hour($notifClass->quiet_hours_end)->minute(0)->second(0)->toIso8601String();
+
+            DB::table('notification_holds')->insert([
+                'business_id' => $businessId,
+                'caller_type' => $callerType,
+                'classification' => $classification,
+                'held_until' => Carbon::parse($heldUntil)->toDateTimeString(),
+                'source' => 'classify',
+                'run_reference' => null,
+                'created_at' => Carbon::now()->toDateTimeString(),
+                'updated_at' => Carbon::now()->toDateTimeString(),
+            ]);
         }
 
         Event::dispatch(new NotificationClassified(

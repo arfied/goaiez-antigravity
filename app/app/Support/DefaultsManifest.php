@@ -2826,6 +2826,21 @@ final class DefaultsManifest
                 'group' => 'Agency',
                 'description' => 'The agency discount off voice, in basis points (P-008 2026-09-05).',
             ],
+            'notifications.quiet_hours.start' => [
+                'seed' => 21,
+                'group' => 'Notifications',
+                'description' => 'The hour the quiet window starts.',
+            ],
+            'notifications.quiet_hours.end' => [
+                'seed' => 8,
+                'group' => 'Notifications',
+                'description' => 'The hour the quiet window ends.',
+            ],
+            'notifications.holds.window_days' => [
+                'seed' => 7,
+                'group' => 'Notifications',
+                'description' => 'How many days of holds the screen shows.',
+            ],
         ];
 
         return array_merge($settings, self::mailSendingCeilings());
