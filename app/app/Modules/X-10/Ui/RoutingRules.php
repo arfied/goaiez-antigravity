@@ -7,6 +7,7 @@ namespace App\Modules\X10\Ui;
 use App\Modules\X10\Enums\RoutingRuleType;
 use App\Modules\X10\Models\RoutingRule;
 use App\Support\Tenancy;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -76,7 +77,7 @@ class RoutingRules extends Component
             : collect();
 
         $staffUsers = ($this->businessId > 0)
-            ? \Illuminate\Support\Facades\DB::table('staff_users')->where('business_id', $this->businessId)->get()
+            ? DB::table('staff_users')->where('business_id', $this->businessId)->get()
             : collect();
 
         return view('x-10::routing-rules', [

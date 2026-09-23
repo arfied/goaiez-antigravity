@@ -11,17 +11,17 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('routing_rules', function (Blueprint $table): void {
-            $table->id();
-            $table->foreignId('business_id')->constrained('businesses')->cascadeOnDelete();
-            $table->string('name');
-            $table->string('rule_type')->default('polygon_territory'); // polygon_territory, returning_caller, workload_balanced
-            $table->unsignedInteger('priority')->default(1);
-            $table->boolean('is_active')->default(true);
-            $table->jsonb('settings')->nullable();
-            $table->unique(['business_id', 'rule_type']);
-            $table->timestamps();
-        });
+        if (! Schema::hasTable('routing_rules')) {
+            Schema::create('routing_rules', function (Blueprint $table): void {
+                $table->id();
+                $table->foreignId('business_id')->constrained('businesses')->cascadeOnDelete();
+                $table->string('name');
+                $table->string('rule_type')->default('polygon_territory'); // polygon_territory, returning_caller, workload_balanced
+                $table->unsignedInteger('priority')->default(1);
+                $table->boolean('is_active')->default(true);
+                $table->timestamps();
+            });
+        }
 
         if (! Schema::hasTable('territories')) {
             Schema::create('territories', function (Blueprint $table): void {
