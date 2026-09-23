@@ -7,6 +7,9 @@ namespace App\Support;
 use App\Enums\AiTask;
 use App\Enums\Plan;
 use App\Enums\StoredObjectKind;
+use App\Jobs\AutopilotJob;
+use App\Jobs\PublicAuditJob;
+use App\Jobs\RunCampaignJob;
 use App\Services\Activity\ActivityFeed;
 use App\Services\Actuation\SiteChanges;
 use App\Services\Actuation\SiteMeasurements;
@@ -3180,6 +3183,52 @@ final class DefaultsManifest
                 'group' => 'Scheduling',
                 'description' => 'Standard potential slots in hours.',
             ],
+        ];
+
+        $settings['campaigns.run.barren_pass_minutes'] = [
+            'seed' => RunCampaignJob::BARREN_PASS_MINUTES,
+            'group' => 'Messaging',
+            'description' => 'How many minutes a campaign pass that found nothing to do waits before it tries again.',
+        ];
+        $settings['campaigns.run.max_deferral_days'] = [
+            'seed' => RunCampaignJob::MAX_DEFERRAL_DAYS,
+            'group' => 'Messaging',
+            'description' => 'How many days a contact can have deferred a message before the campaign drops them.',
+        ];
+        $settings['autopilot.abandoned_repeat_hours'] = [
+            'seed' => AutopilotJob::ABANDONED_REPEAT_HOURS,
+            'group' => 'Content',
+            'description' => 'How many hours between sending automated follow-ups.',
+        ];
+        $settings['audit.public.unique_for_seconds'] = [
+            'seed' => PublicAuditJob::UNIQUE_FOR_SECONDS,
+            'group' => 'Reviews',
+            'description' => 'How long an audit is kept unique in the queue.',
+        ];
+        $settings['queue.backoff.standard_seconds'] = [
+            'seed' => implode(',', QueueBackoff::STANDARD),
+            'group' => 'Operations',
+            'description' => 'Standard backoff ladder for background jobs.',
+        ];
+        $settings['queue.backoff.media_seconds'] = [
+            'seed' => implode(',', QueueBackoff::MEDIA),
+            'group' => 'Operations',
+            'description' => 'Backoff ladder for media-related background jobs.',
+        ];
+        $settings['queue.backoff.actuation_seconds'] = [
+            'seed' => implode(',', QueueBackoff::ACTUATION),
+            'group' => 'Operations',
+            'description' => 'Backoff ladder for actuation background jobs.',
+        ];
+        $settings['queue.backoff.voice_seconds'] = [
+            'seed' => implode(',', QueueBackoff::VOICE),
+            'group' => 'Operations',
+            'description' => 'Backoff ladder for voice-related background jobs.',
+        ];
+        $settings['queue.backoff.pixel_archive_seconds'] = [
+            'seed' => implode(',', QueueBackoff::PIXEL_ARCHIVE),
+            'group' => 'Operations',
+            'description' => 'Backoff ladder for pixel archiving background jobs.',
         ];
 
         return array_merge($settings, self::mailSendingCeilings());

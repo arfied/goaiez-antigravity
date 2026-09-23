@@ -11,6 +11,7 @@ use App\Enums\OperatorAlertKind;
 use App\Models\AutomationRun;
 use App\Models\Location;
 use App\Services\ActivityService;
+use App\Services\Config\DefaultsRegistry;
 use App\Services\Ops\OperatorAlerts;
 use App\Services\Tenant\TenantPause;
 use App\Services\Tenant\TenantSuspension;
@@ -302,11 +303,10 @@ abstract class AutopilotJob implements ShouldQueue
      */
     public function backoff(): array
     {
-        return [
-            $this->jittered(60),
-            $this->jittered(300),
-            $this->jittered(900),
-        ];
+        return array_map(
+            fn (int $step): int => $this->jittered($step),
+            QueueBackoff::fromSetting('queue.backoff.voice_seconds')
+        );
     }
 
     /**
@@ -393,7 +393,7 @@ abstract class AutopilotJob implements ShouldQueue
             if ($alerts->rangSince(
                 OperatorAlertKind::AutomationAbandoned,
                 $this->automationKey(),
-                CarbonImmutable::now()->subHours(self::ABANDONED_REPEAT_HOURS),
+                CarbonImmutable::now()->subHours(app(DefaultsRegistry::class)->int('autopilot.abandoned_repeat_hours')),
             )) {
                 return;
             }
@@ -416,7 +416,7 @@ abstract class AutopilotJob implements ShouldQueue
                     // above; `null` where the queue failed the job without one,
                     // which `Job::fail()` permits.
                     'exception' => $exception === null ? null : $exception::class,
-                    'repeat_quiet_hours' => self::ABANDONED_REPEAT_HOURS,
+                    'repeat_quiet_hours' => app(DefaultsRegistry::class)->int('autopilot.abandoned_repeat_hours'),
                 ],
                 origin: AlertOrigin::Platform,
             );
@@ -657,7 +657,7 @@ abstract class AutopilotJob implements ShouldQueue
         return $automation.' ran out of retries, so work it was doing is abandoned and nothing '
             .'picks it up. First seen on account '.$businessId.'; others hitting the same fault '
             .'are not paged separately. Quiet about this automation for '
-            .self::ABANDONED_REPEAT_HOURS.'h. Read that account\'s automation runs.';
+            .app(DefaultsRegistry::class)->int('autopilot.abandoned_repeat_hours').'h. Read that account\'s automation runs.';
     }
 
     final public function handle(): void

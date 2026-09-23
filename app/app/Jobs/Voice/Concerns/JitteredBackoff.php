@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Jobs\Voice\Concerns;
 
+use App\Support\QueueBackoff;
+
 /**
  * `AutopilotJob`'s retry ladder, for the one job on this path that cannot
  * extend it.
@@ -21,11 +23,10 @@ trait JitteredBackoff
      */
     public function backoff(): array
     {
-        return [
-            $this->jittered(60),
-            $this->jittered(300),
-            $this->jittered(900),
-        ];
+        return array_map(
+            fn (int $step): int => $this->jittered($step),
+            QueueBackoff::fromSetting('queue.backoff.voice_seconds')
+        );
     }
 
     /**

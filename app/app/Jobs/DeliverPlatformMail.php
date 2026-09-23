@@ -13,6 +13,7 @@ use App\Services\Mail\PlatformMailIdentity;
 use App\Services\Ops\OperatorAlerts;
 use App\Services\Ops\PlatformHealthChecks;
 use App\Support\CredentialManifest;
+use App\Support\QueueBackoff;
 use Carbon\CarbonImmutable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -120,10 +121,10 @@ final class DeliverPlatformMail implements ShouldQueue
      */
     public int $tries = 3;
 
-    /**
-     * @var list<int>
-     */
-    public array $backoff = [60, 300];
+    public function backoff(): array
+    {
+        return QueueBackoff::ladder(QueueBackoff::fromSetting('queue.backoff.standard_seconds'));
+    }
 
     /**
      * ⚠️ **THE IDENTITY IS SERIALISED INTO THE PAYLOAD AND CARRIES NO PERSONAL
