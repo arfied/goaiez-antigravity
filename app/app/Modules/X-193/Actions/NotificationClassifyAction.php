@@ -6,8 +6,8 @@ namespace App\Modules\X193\Actions;
 
 use App\Modules\X193\Events\NotificationClassified;
 use App\Modules\X193\Models\NotificationClass;
-use Carbon\Carbon;
 use App\Services\Config\DefaultsRegistry;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 
@@ -37,8 +37,8 @@ final class NotificationClassifyAction
                     str_contains($callerType, 'dunning') || str_contains($callerType, 'account') || str_contains($callerType, 'missed_call') || str_contains($callerType, 'chat') || str_contains($callerType, 'alert') => false,
                     default => true,
                 },
-                'quiet_hours_start' => app(\App\Services\Config\DefaultsRegistry::class)->int('notifications.quiet_hours.start'),
-                'quiet_hours_end' => app(\App\Services\Config\DefaultsRegistry::class)->int('notifications.quiet_hours.end'),
+                'quiet_hours_start' => app(DefaultsRegistry::class)->int('notifications.quiet_hours.start'),
+                'quiet_hours_end' => app(DefaultsRegistry::class)->int('notifications.quiet_hours.end'),
             ]
         );
 

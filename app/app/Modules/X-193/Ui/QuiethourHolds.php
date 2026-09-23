@@ -22,7 +22,7 @@ class QuiethourHolds extends Component
     public function mount(int $businessId = 0): void
     {
         $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
-        $this->days = app(\App\Services\Config\DefaultsRegistry::class)->int('notifications.holds.window_days');
+        $this->days = app(DefaultsRegistry::class)->int('notifications.holds.window_days');
     }
 
     public function window(int $days): void
@@ -37,8 +37,8 @@ class QuiethourHolds extends Component
         abort_unless($this->businessId > 0, 403);
 
         $holds = $action->handle($this->businessId, $this->days);
-        $windowStart = app(\App\Services\Config\DefaultsRegistry::class)->int('notifications.quiet_hours.start');
-        $windowEnd = app(\App\Services\Config\DefaultsRegistry::class)->int('notifications.quiet_hours.end');
+        $windowStart = app(DefaultsRegistry::class)->int('notifications.quiet_hours.start');
+        $windowEnd = app(DefaultsRegistry::class)->int('notifications.quiet_hours.end');
 
         return view('x-193::quiethour-holds', [
             'holds' => $holds,

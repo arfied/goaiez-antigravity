@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X193;
 
+use App\Enums\AutomationRunStatus;
+use App\Models\AutomationRun;
 use App\Modules\X193\Actions\NotificationClassifyAction;
 use App\Modules\X193\Events\NotificationClassified;
 use App\Modules\X193\Models\NotificationClass;
-use App\Models\AutomationRun;
 use App\Modules\X193\Ui\QuiethourHolds;
 use App\Services\Config\DefaultsRegistry;
 use Carbon\Carbon;
@@ -162,17 +163,18 @@ class X193Test extends TestCase
             ->count();
         $this->assertEquals(1, $count);
     }
+
     public function test_classify_writes_notification_holds_row_and_registry_drives_window(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Holds Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
-        app(\App\Services\Config\DefaultsRegistry::class)->set('notifications.quiet_hours.start', 22, "test");
-        app(\App\Services\Config\DefaultsRegistry::class)->set('notifications.quiet_hours.end', 7, "test");
+        app(DefaultsRegistry::class)->set('notifications.quiet_hours.start', 22, 'test');
+        app(DefaultsRegistry::class)->set('notifications.quiet_hours.end', 7, 'test');
 
         // Inside the window (23:00)
         Carbon::setTestNow('2026-08-30 23:00:00');
-        
+
         $res = $this->classifyAction->handle($biz->id, 'marketing_newsletter');
         $this->assertEquals('hold_until_window', $res['delivery_decision']);
 
@@ -196,9 +198,9 @@ class X193Test extends TestCase
         $biz1 = TestCase::provisionTenant(['name' => 'Tenant 1', 'currency' => 'USD']);
         $biz2 = TestCase::provisionTenant(['name' => 'Tenant 2', 'currency' => 'USD']);
 
-        app(\App\Services\Config\DefaultsRegistry::class)->set('notifications.quiet_hours.start', 21, "test");
-        app(\App\Services\Config\DefaultsRegistry::class)->set('notifications.quiet_hours.end', 8, "test");
-        app(\App\Services\Config\DefaultsRegistry::class)->set('notifications.holds.window_days', 7, "test");
+        app(DefaultsRegistry::class)->set('notifications.quiet_hours.start', 21, 'test');
+        app(DefaultsRegistry::class)->set('notifications.quiet_hours.end', 8, 'test');
+        app(DefaultsRegistry::class)->set('notifications.holds.window_days', 7, 'test');
 
         DB::statement("SET app.business_id = '{$biz1->id}'");
 
@@ -219,10 +221,10 @@ class X193Test extends TestCase
         ]);
 
         // AutomationRun hold
-        $run = new AutomationRun();
+        $run = new AutomationRun;
         $run->business_id = $biz1->id;
         $run->automation_key = 'job_class_hold';
-        $run->status = \App\Enums\AutomationRunStatus::Completed;
+        $run->status = AutomationRunStatus::Completed;
         $run->output = ['held' => true, 'reason' => 'quiet_hours', 'window' => Carbon::now()->addHours(2)->toDateTimeString()];
         $run->started_at = Carbon::now();
         $run->finished_at = Carbon::now();

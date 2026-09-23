@@ -601,6 +601,7 @@ final class OwnerNav
             OwnerNavItem::make('Geo-grid', 'x-16.geogrid-map', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Service area', 'x-16.servicearea-polygon', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Sends by class', 'x-193.sendsbyclass', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Quiet-hour holds', 'x-193.quiethour-holds', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Do-not-text list', 'c-sms.donottext-list', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Text thread', 'c-sms.thread', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Overdue invoices', 'x-211.ageing-by-reason', OwnerNavItem::GROUP_CATALOG),
