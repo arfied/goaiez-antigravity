@@ -79,6 +79,31 @@
                                         </form>
                                     </div>
                                 </details>
+                                <button wire:click="toggleHistory({{ $page->id }})" class="mt-2 text-ink underline cursor-pointer">History</button>
+                                @if(!empty($showHistory[$page->id]) && isset($versions[$page->id]))
+                                    <div class="p-2 mt-2 bg-paper border border-rule">
+                                        @foreach($versions[$page->id] as $version)
+                                            <div class="mb-2 border-b border-rule pb-2">
+                                                <div>
+                                                    <strong>{{ $version->commit_id }}</strong>
+                                                    <span class="text-ink-2 text-sm ml-2">{{ $version->created_at }}</span>
+                                                    @if($page->current_version_id === $version->id)
+                                                        <span class="ml-2 text-ink">(Current)</span>
+                                                    @endif
+                                                </div>
+                                                <div class="text-sm text-ink-2 mt-1">
+                                                    @php
+                                                        $authoredCount = collect($version->content_blocks)->filter(fn($b) => in_array($b['type'] ?? '', ['faq', 'video_embed']))->count();
+                                                    @endphp
+                                                    {{ $authoredCount }} authored block(s)
+                                                </div>
+                                                @if($page->current_version_id !== $version->id)
+                                                    <button wire:click="restore({{ $page->id }}, {{ $version->id }})" class="mt-1 bg-paper border border-rule px-2 py-1 text-sm">Restore</button>
+                                                @endif
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @endif
                             </td>
                         </tr>
                     @endforeach
