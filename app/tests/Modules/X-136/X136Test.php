@@ -154,7 +154,7 @@ class X136Test extends TestCase
 
         $this->assertEquals(1, Signal::where('business_id', $biz->id)->count());
         $this->assertEquals(1, SignalScore::where('business_id', $biz->id)->count());
-        $this->assertEquals(0, DecayModel::where('business_id', $biz->id)->count());
+        $this->assertEquals(1, DecayModel::where('business_id', $biz->id)->count());
 
         $signal = Signal::where('business_id', $biz->id)->first();
         $this->assertEquals(480000, $signal->payload['price_cents']);

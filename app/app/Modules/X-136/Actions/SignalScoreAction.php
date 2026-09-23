@@ -31,6 +31,8 @@ final class SignalScoreAction
             'payload' => $payload,
         ]);
 
+        app(DecayModelEnsureAction::class)->handle($businessId, $signalType);
+
         Event::dispatch(new SignalDetected($businessId, $signal->id, $prospectIdentifier, $signalType));
 
         $isHighIntent = ($baseScore >= 75.0);

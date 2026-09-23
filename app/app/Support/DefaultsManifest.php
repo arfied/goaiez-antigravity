@@ -2820,6 +2820,16 @@ final class DefaultsManifest
                 'group' => 'Agency',
                 'description' => 'The agency discount off voice, in basis points (P-008 2026-09-05).',
             ],
+            'signals.decay.half_life_days' => [
+                'seed' => 14,
+                'group' => 'Signals',
+                'description' => 'The default half-life in days for signal decay models (C1).',
+            ],
+            'signals.decay.rate_pct' => [
+                'seed' => 5.0,
+                'group' => 'Signals',
+                'description' => 'The default decay rate percentage for signal decay models (C1).',
+            ],
         ];
 
         return array_merge($settings, self::mailSendingCeilings());
