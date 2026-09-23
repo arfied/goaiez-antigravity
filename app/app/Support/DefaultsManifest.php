@@ -2891,6 +2891,24 @@ final class DefaultsManifest
                 'group' => 'Sites',
                 'description' => 'Minimum rating required for a review to be included in the drafted reviews strip block.',
             ],
+
+            'sites.faq.max_sources' => [
+                'seed' => 8,
+                'group' => 'Content',
+                'description' => 'Maximum number of service lines from PriceBook to send to the AI router.',
+            ],
+
+            'sites.faq.max_items' => [
+                'seed' => 6,
+                'group' => 'Content',
+                'description' => 'Maximum number of FAQ items drafted.',
+            ],
+
+            'sites.faq.system_prompt' => [
+                'seed' => 'Write at most 6 plain-language question and answer pairs a customer of a local service business would ask. Use ONLY the facts given, include no prices not present, and make no promises.',
+                'group' => 'Content',
+                'description' => 'System prompt for generating the FAQ block.',
+            ],
         ];
 
         return array_merge($settings, self::mailSendingCeilings());

@@ -80,6 +80,10 @@ body { background: var(--color-canvas); color: var(--color-ink); font-family: sa
             return true;
         }
         if ($type === 'faq') {
+            if (isset($block['items']) && is_array($block['items']) && count($block['items']) > 0) {
+                return true;
+            }
+
             return $this->hasScalar($block, 'question') && $this->hasScalar($block, 'answer');
         }
         if ($type === 'video_embed') {

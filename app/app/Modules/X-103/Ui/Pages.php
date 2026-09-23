@@ -3,6 +3,7 @@
 namespace App\Modules\X103\Ui;
 
 use App\Enums\UserRole;
+use App\Modules\X103\Actions\FaqDraftAction;
 use App\Modules\X103\Actions\PageCreateAction;
 use App\Modules\X103\Actions\PageDeleteAction;
 use App\Modules\X103\Actions\PageDuplicateAction;
@@ -335,6 +336,64 @@ class Pages extends Component
             $page->update(['draft_blocks' => $blocks]);
         }
         $this->success = "Restored {$restored} blocks.";
+    }
+
+    public function draftFaq(int $pageId, FaqDraftAction $action): void
+    {
+        abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        try {
+            $res = $action->handle($this->businessId, $pageId);
+            if ($res['status'] === 'refused') {
+                $this->success = $res['reason'];
+            } else {
+                $this->success = "Drafted {$res['items']} questions with {$res['model']}";
+            }
+        } catch (Throwable $e) {
+            $this->error = $e->getMessage();
+        }
+    }
+
+    public function placeFaq(int $pageId): void
+    {
+        abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        $page = Page::where('business_id', $this->businessId)->findOrFail($pageId);
+        $meta = $page->draft_meta ?? [];
+        if (isset($meta['pending_faq'])) {
+            $blocks = $page->draft_blocks ?? [];
+            $blocks[] = [
+                'type' => 'faq',
+                'items' => $meta['pending_faq']['items'] ?? [],
+                'source' => 'ai',
+                'model' => $meta['pending_faq']['model'] ?? 'unknown',
+            ];
+            unset($meta['pending_faq']);
+            $page->update([
+                'draft_blocks' => $blocks,
+                'draft_meta' => $meta,
+            ]);
+            $this->success = 'FAQ placed on page.';
+        }
+    }
+
+    public function discardFaq(int $pageId): void
+    {
+        abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        $page = Page::where('business_id', $this->businessId)->findOrFail($pageId);
+        $meta = $page->draft_meta ?? [];
+        if (isset($meta['pending_faq'])) {
+            unset($meta['pending_faq']);
+            $page->update(['draft_meta' => $meta]);
+            $this->success = 'Pending FAQ discarded.';
+        }
     }
 
     public function render()

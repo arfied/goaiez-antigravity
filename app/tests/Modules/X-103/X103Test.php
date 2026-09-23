@@ -13,6 +13,7 @@ use App\Models\TenantLinkRecord;
 use App\Models\User;
 use App\Modules\CReviews\Models\ReviewRequest;
 use App\Modules\CSms\Events\SendRequested;
+use App\Modules\X103\Actions\FaqDraftAction;
 use App\Modules\X103\Actions\FunnelBuildAction;
 use App\Modules\X103\Actions\PageCreateAction;
 use App\Modules\X103\Actions\SiteBuildAction;
@@ -803,5 +804,137 @@ class X103Test extends TestCase
         $this->assertArrayNotHasKey('original_text', $blocks[0]);
         $this->assertArrayNotHasKey('source', $blocks[0]);
         $this->assertArrayNotHasKey('model', $blocks[0]);
+    }
+
+    public function test_faq_draft_asks_the_router_once_and_parks_the_answer(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $biz = TestCase::provisionTenant(['name' => 'Faq Test', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'faq',
+            'title' => 'FAQ',
+            'draft_blocks' => [],
+            'is_published' => false,
+        ]);
+
+        Http::fake([
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_faq',
+                'choices' => [
+                    ['message' => ['content' => json_encode(['items' => [
+                        ['question' => 'Q1', 'answer' => 'A1'],
+                        ['question' => 'Q2', 'answer' => 'A2'],
+                    ]])]],
+                ],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ]),
+        ]);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Service 1',
+            'price_cents' => 1000,
+            'is_confirmed' => true,
+            'is_sample' => false,
+            'confirmed_at' => now(),
+        ]);
+
+        $action = app(FaqDraftAction::class);
+        $res = $action->handle($biz->id, $page->id);
+
+        $this->assertEquals('drafted', $res['status']);
+
+        $page->refresh();
+        $meta = $page->draft_meta;
+        $this->assertNotNull($meta['pending_faq']);
+        $this->assertCount(2, $meta['pending_faq']['items']);
+        $this->assertEquals('Q1', $meta['pending_faq']['items'][0]['question']);
+        $this->assertEmpty($page->draft_blocks);
+
+        Http::assertSentCount(1);
+    }
+
+    public function test_faq_draft_refuses_when_the_budget_is_out(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $biz = TestCase::provisionTenant(['name' => 'Faq Budget Test', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 0, 'test');
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'faq',
+            'title' => 'FAQ',
+            'draft_blocks' => [],
+            'is_published' => false,
+        ]);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Service 1',
+            'price_cents' => 1000,
+            'is_confirmed' => true,
+            'is_sample' => false,
+            'confirmed_at' => now(),
+        ]);
+
+        Http::fake();
+
+        $action = app(FaqDraftAction::class);
+        $res = $action->handle($biz->id, $page->id);
+
+        $this->assertEquals('refused', $res['status']);
+
+        $page->refresh();
+        $this->assertNull($page->draft_meta['pending_faq'] ?? null);
+
+        Http::assertNothingSent();
+        PlatformSetting::query()->where('key', 'ai.monthly_cap_per_tenant')->delete();
+    }
+
+    public function test_faq_place_moves_the_pairs_into_one_block_and_render_shows_them(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = TestCase::provisionTenant(['name' => 'Faq Place Test', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        Tenancy::set($biz->id);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'faq',
+            'title' => 'FAQ',
+            'draft_blocks' => [],
+            'draft_meta' => [
+                'pending_faq' => [
+                    'items' => [
+                        ['question' => 'Is it fast?', 'answer' => 'Yes.'],
+                        ['question' => 'Is it cheap?', 'answer' => 'Very.'],
+                    ],
+                    'model' => 'test-model',
+                    'drafted_at' => now()->toIso8601String(),
+                ],
+            ],
+            'is_published' => false,
+        ]);
+
+        $component = Livewire::actingAs($owner)
+            ->test(Pages::class)
+            ->call('placeFaq', $page->id);
+
+        $page->refresh();
+        $this->assertNull($page->draft_meta['pending_faq'] ?? null);
+        $blocks = $page->draft_blocks;
+        $this->assertCount(1, $blocks);
+        $this->assertEquals('faq', $blocks[0]['type']);
+        $this->assertEquals('ai', $blocks[0]['source']);
+        $this->assertCount(2, $blocks[0]['items']);
+
+        $renderer = app(SiteBlockRenderer::class);
+        $html = $renderer->render($blocks, []);
+        $this->assertStringContainsString('Is it fast?', $html);
+        $this->assertStringContainsString('Is it cheap?', $html);
     }
 }

@@ -15,6 +15,7 @@ use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
 use App\Modules\X103\Ui\Pages;
 use App\Modules\X157\Models\Deployment;
+use App\Modules\X163\Models\PriceBookItem;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
@@ -856,5 +857,59 @@ class PagesScreenTest extends TestCase
 
         $page->refresh();
         $this->assertEquals('Hero text', $page->draft_blocks[0]['text']);
+    }
+
+    public function test_faq_controls(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $biz = TestCase::provisionTenant(['name' => 'Faq Controls Test', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        Tenancy::set($biz->id);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'faq-controls',
+            'title' => 'FAQ',
+            'draft_blocks' => [],
+            'is_published' => false,
+        ]);
+
+        Http::fake([
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_faq',
+                'choices' => [
+                    ['message' => ['content' => json_encode(['items' => [
+                        ['question' => 'Q1', 'answer' => 'A1'],
+                    ]])]],
+                ],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ]),
+        ]);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Service 1',
+            'price_cents' => 1000,
+            'is_confirmed' => true,
+            'is_sample' => false,
+            'confirmed_at' => now(),
+        ]);
+
+        Livewire::actingAs($owner)
+            ->test(Pages::class)
+            ->call('draftFaq', $page->id)
+            ->assertSet('success', 'Drafted 1 questions with openai-4o-mini');
+
+        Livewire::actingAs($owner)
+            ->test(Pages::class)
+            ->call('placeFaq', $page->id)
+            ->assertSet('success', 'FAQ placed on page.');
+
+        $page->update(['draft_meta' => ['pending_faq' => ['items' => []]]]);
+
+        Livewire::actingAs($owner)
+            ->test(Pages::class)
+            ->call('discardFaq', $page->id)
+            ->assertSet('success', 'Pending FAQ discarded.');
     }
 }

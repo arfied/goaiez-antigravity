@@ -16,5 +16,6 @@ class Page extends Model
         'is_tenant_edited' => 'boolean',
         'is_published' => 'boolean',
         'draft_blocks' => 'array',
+        'draft_meta' => 'array',
     ];
 }
