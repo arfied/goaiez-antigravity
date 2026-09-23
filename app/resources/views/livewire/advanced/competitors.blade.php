@@ -18,48 +18,24 @@
         </div>
     </div>
 
-    <!-- Competitor Radar Table -->
-    <div class="bg-card shadow-card rounded-card border border-rule overflow-x-auto overflow-y-hidden mb-8" tabindex="0">
-        <table class="min-w-full divide-y divide-rule">
-            <thead class="bg-paper">
-                <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-ink-3 uppercase tracking-wider">Business</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-ink-3 uppercase tracking-wider">Google Rating</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-ink-3 uppercase tracking-wider">Total Reviews</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-ink-3 uppercase tracking-wider">Monthly Velocity</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-ink-3 uppercase tracking-wider">Catchment Rank</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-ink-3 uppercase tracking-wider">Trajectory</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-rule text-sm">
-                <tr class="bg-paper font-medium">
-                    <td class="px-6 py-4 flex items-center gap-2">
-                        <span class="w-2.5 h-2.5 rounded-full bg-ink"></span>
-                        <div class="text-ink">Your Business (Rachel Taylor)</div>
-                    </td>
-                    <td class="px-6 py-4 text-ink font-bold">4.9 ★</td>
-                    <td class="px-6 py-4 text-ink">186</td>
-                    <td class="px-6 py-4 text-ok font-semibold">+18 / mo</td>
-                    <td class="px-6 py-4"><span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-paper text-ink-2 border border-rule">#1 in Area</span></td>
-                    <td class="px-6 py-4 text-ok font-semibold">▲ Accelerating</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-4 text-ink">Apex Local Services</td>
-                    <td class="px-6 py-4 text-ink">4.7 ★</td>
-                    <td class="px-6 py-4 text-ink-2">142</td>
-                    <td class="px-6 py-4 text-ink-2">+6 / mo</td>
-                    <td class="px-6 py-4 text-ink-2">#2 in Area</td>
-                    <td class="px-6 py-4 text-ink-2">▶ Steady</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-4 text-ink">Metro Pro Solutions</td>
-                    <td class="px-6 py-4 text-ink">4.3 ★</td>
-                    <td class="px-6 py-4 text-ink-2">98</td>
-                    <td class="px-6 py-4 text-ink-2">+2 / mo</td>
-                    <td class="px-6 py-4 text-ink-2">#4 in Area</td>
-                    <td class="px-6 py-4 text-alert">▼ Declining</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+    @if($rows->isEmpty())
+        <div class="bg-card shadow-card rounded-card border border-rule p-8 text-center">
+            <p class="text-ink-2">Add a location to compare against nearby competitors.</p>
+        </div>
+    @else
+        <div class="space-y-6">
+            @foreach($rows as $row)
+                <div class="bg-card shadow-card rounded-card border border-rule p-6">
+                    <h2 class="text-lg font-bold text-ink mb-2">{{ $row->location->name }}</h2>
+                    <p class="text-ink-2">
+                        @if($row->comparison->isMeasured())
+                            {{ $row->comparison->sentence() }}
+                        @else
+                            {{ $row->comparison->absenceSentence() ?? 'Not measured yet — competitor signals refresh on their schedule.' }}
+                        @endif
+                    </p>
+                </div>
+            @endforeach
+        </div>
+    @endif
 </div>
