@@ -56,8 +56,8 @@ class HomeScreenTest extends TestCase
         $response->assertSee('Published pages');
         $response->assertSee('Calls, last 30 days');
         $response->assertSee('Broadcasts');
-        $response->assertDontSee('89%');
-        $response->assertDontSee('#1.6');
+        $response->assertDontSee('top 3 dominance');
+        $response->assertDontSee('#1.6 Avg');
         $response->assertDontSee('dominance');
         $response->assertDontSee('catchment');
     }

@@ -51,7 +51,7 @@ class SegmentsScreenTest extends TestCase
         $response->assertSee('Dormant customers');
         $response->assertSee('Active customers');
         $response->assertDontSee('VIP');
-        $response->assertDontSee('142');
+        $response->assertDontSee('5-Star Google Reviewers');
         $response->assertDontSee('Propensity');
     }
 
