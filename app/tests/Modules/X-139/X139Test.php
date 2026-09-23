@@ -9,6 +9,7 @@ use App\Modules\X139\Domain\ConversionUploadEngine;
 use App\Modules\X139\Events\ConversionRejected;
 use App\Modules\X139\Events\ConversionUploaded;
 use App\Modules\X139\Models\ConversionUpload;
+use App\Services\Config\DefaultsRegistry;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -23,8 +24,8 @@ class X139Test extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->engine = new ConversionUploadEngine;
-        $this->uploadAction = new ConversionUploadAction($this->engine);
+        $this->engine = new ConversionUploadEngine(app(DefaultsRegistry::class));
+        $this->uploadAction = new ConversionUploadAction($this->engine, app(DefaultsRegistry::class));
     }
 
     /**

@@ -12,6 +12,7 @@ use App\Modules\X137\Events\LinkClicked;
 use App\Modules\X137\Events\VisitJoinedToCall;
 use App\Modules\X137\Models\CallToken;
 use App\Modules\X137\Models\LinkClick;
+use App\Services\Config\DefaultsRegistry;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -31,7 +32,7 @@ class X137Test extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->attributeAction = new CallAttributeAction;
+        $this->attributeAction = new CallAttributeAction(app(DefaultsRegistry::class));
         $this->shortAction = new LinkShortAction;
         $this->qrAction = new LinkQrAction;
     }

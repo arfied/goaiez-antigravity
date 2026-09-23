@@ -32,7 +32,7 @@ class DecayModelTest extends TestCase
         app(DefaultsRegistry::class)->set('signals.decay.half_life_days', 22, 'test');
         app(DefaultsRegistry::class)->set('signals.decay.rate_pct', 8.5, 'test');
 
-        $action = new SignalScoreAction;
+        $action = new SignalScoreAction(app(DefaultsRegistry::class));
         $action->recordAndScore($this->businessId, 'prospect-1', 'test_type', [], 80.0);
 
         $model = DecayModel::where('business_id', $this->businessId)
@@ -78,7 +78,7 @@ class DecayModelTest extends TestCase
         app(DefaultsRegistry::class)->set('signals.decay.rate_pct', 5.0, 'test'); // wait, rate_pct is 5.0 usually?
 
         // the view renders 14 days / 5% when rate is 0.05 because $decay->decay_rate * 100
-        $action = new SignalScoreAction;
+        $action = new SignalScoreAction(app(DefaultsRegistry::class));
         $action->recordAndScore($this->businessId, 'p2', 'hiring', [], 80.0);
 
         // "real GET shows '14 days / 5%' for a scored type"

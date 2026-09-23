@@ -13,6 +13,7 @@ use App\Modules\X219\Events\ModelResolved;
 use App\Modules\X219\Events\ProviderDegraded;
 use App\Modules\X219\Models\AiModel;
 use App\Modules\X219\Models\AiProvider;
+use App\Services\Config\DefaultsRegistry;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use InvalidArgumentException;
@@ -33,7 +34,7 @@ class X219Test extends TestCase
         parent::setUp();
         $this->resolver = new ModelResolveAction;
         $this->assigner = new ModelAssignAction;
-        $this->health = new ProviderHealthAction;
+        $this->health = new ProviderHealthAction(app(DefaultsRegistry::class));
         $this->roster = new RosterListAction;
     }
 

@@ -7,8 +7,24 @@ namespace App\Support;
 use App\Enums\AiTask;
 use App\Enums\Plan;
 use App\Enums\StoredObjectKind;
+use App\Modules\CBilling\Domain\BillingLedgerEngine;
+use App\Modules\CMail\Actions\EmailWarmupAction;
+use App\Modules\CReviews\Actions\ReviewRequestAction;
 use App\Modules\X01\Domain\UnifiedInboxManager;
+use App\Modules\X120\Actions\CardExpiringScanAction;
+use App\Modules\X136\Actions\SignalScoreAction;
+use App\Modules\X137\Actions\CallAttributeAction;
+use App\Modules\X139\Domain\ConversionUploadEngine;
+use App\Modules\X153\Actions\AlertSendAction;
 use App\Modules\X157\Actions\EdgeDeployAction;
+use App\Modules\X165\Actions\PlanProposeAction;
+use App\Modules\X172\Actions\PortalLinkAction;
+use App\Modules\X176\Actions\InternalLinkRenderAction;
+use App\Modules\X181\Actions\QaTicketCreateAction;
+use App\Modules\X191\Actions\LinkPitchAction;
+use App\Modules\X199\Actions\InvoiceDraftAction;
+use App\Modules\X199\Domain\InvoiceEngine;
+use App\Modules\X202\Domain\ApprovalDeskEngine;
 use App\Modules\X205\Domain\AffiliateEngine;
 use App\Services\Actuation\SiteChanges;
 use App\Services\Actuation\SiteMeasurements;
@@ -21,6 +37,7 @@ use App\Services\Actuation\T3MetaUpsert as MetaUpsert;
 use App\Services\Actuation\WordPress\WordPressRestClient;
 use App\Services\Billing\PurchaseReconciliation;
 use App\Services\Gbp\ZernioSpend;
+use App\Modules\X219\Actions\ProviderHealthAction;
 use App\Services\Mail\MailDrivers;
 use App\Services\Mail\MailQuota;
 use App\Services\Mail\MailSendRate;
@@ -112,6 +129,51 @@ final class DefaultsManifest
                 'seed' => 30,
                 'group' => 'Marketing',
                 'description' => 'Number of days to look back when evaluating a staff member\'s workload.',
+            ],
+            'reviews.request.cadence_window_days' => [
+                'seed' => ReviewRequestAction::CADENCE_WINDOW_DAYS,
+                'group' => 'Reviews',
+                'description' => 'Days between review requests; changing it applies to newly scheduled requests.',
+            ],
+            'reviews.request.low_csat_below' => [
+                'seed' => ReviewRequestAction::LOW_CSAT_BELOW,
+                'group' => 'Reviews',
+                'description' => 'CSAT score threshold for low rating alerts; changing it applies to newly rated jobs.',
+            ],
+            'reviews.request.low_csat_job_age_days' => [
+                'seed' => ReviewRequestAction::LOW_CSAT_JOB_AGE_DAYS,
+                'group' => 'Reviews',
+                'description' => 'Days before a low CSAT job is archived; changing it applies to newly rated jobs.',
+            ],
+            'billing.card.expiring_warning_days' => [
+                'seed' => CardExpiringScanAction::EXPIRING_WARNING_DAYS,
+                'group' => 'Billing',
+                'description' => 'Days before expiry to warn about a credit card; changing it applies to newly scanned cards.',
+            ],
+            'alerts.claim.expiry_minutes' => [
+                'seed' => AlertSendAction::CLAIM_EXPIRY_MINUTES,
+                'group' => 'Operations',
+                'description' => 'Minutes before an alert claim expires; changing it applies to newly claimed alerts.',
+            ],
+            'approvals.expiry_hours' => [
+                'seed' => ApprovalDeskEngine::EXPIRY_HOURS,
+                'group' => 'Operations',
+                'description' => 'Hours before an approval request expires; changing it applies to newly created requests.',
+            ],
+            'portal.link.ttl_hours' => [
+                'seed' => PortalLinkAction::TTL_HOURS,
+                'group' => 'Messaging',
+                'description' => 'Hours before a portal link expires; changing it applies to newly generated links.',
+            ],
+            'qa.ticket.sla_hours' => [
+                'seed' => QaTicketCreateAction::SLA_HOURS,
+                'group' => 'Operations',
+                'description' => 'Hours before a QA ticket breaches SLA; changing it applies to newly created tickets.',
+            ],
+            'attribution.call.ttl_minutes' => [
+                'seed' => CallAttributeAction::TTL_MINUTES,
+                'group' => 'Marketing',
+                'description' => 'Minutes before a call attribution expires; changing it applies to newly attributed calls.',
             ],
             'crm.lead_score.tier_hot' => [
                 'seed' => UnifiedInboxManager::TIER_HOT,
@@ -3199,6 +3261,66 @@ final class DefaultsManifest
                 'seed' => 40,
                 'group' => 'Brand',
                 'description' => 'Maximum characters allowed in the badge text.',
+            ],
+            'billing.topup.daily_ceiling_cents' => [
+                'seed' => BillingLedgerEngine::DAILY_TOPUP_CEILING_CENTS,
+                'group' => 'Billing',
+                'description' => 'Daily ceiling for ledger topups.',
+            ],
+            'billing.cycle.voicemail_only_from_day' => [
+                'seed' => BillingLedgerEngine::VOICEMAIL_ONLY_FROM_DAY,
+                'group' => 'Billing',
+                'description' => 'Day in the cycle when voicemail-only restrictions apply.',
+            ],
+            'invoices.default_credit_limit_cents' => [
+                'seed' => InvoiceEngine::DEFAULT_CREDIT_LIMIT_CENTS,
+                'group' => 'Billing',
+                'description' => 'Default credit limit for invoices in cents.',
+            ],
+            'invoices.default_due_days' => [
+                'seed' => InvoiceDraftAction::DEFAULT_DUE_DAYS,
+                'group' => 'Billing',
+                'description' => 'Default due days for invoices.',
+            ],
+            'plans.default_interval_months' => [
+                'seed' => PlanProposeAction::DEFAULT_INTERVAL_MONTHS,
+                'group' => 'Billing',
+                'description' => 'Default interval in months for plans.',
+            ],
+            'mail.warmup.jitter_pct' => [
+                'seed' => EmailWarmupAction::JITTER_PCT,
+                'group' => 'Messaging',
+                'description' => 'Jitter percentage for email warmup.',
+            ],
+            'mail.warmup.daily_allowance' => [
+                'seed' => EmailWarmupAction::DAILY_ALLOWANCE,
+                'group' => 'Messaging',
+                'description' => 'Daily allowance for email warmup.',
+            ],
+            'links.pitch.monthly_send_ceiling' => [
+                'seed' => LinkPitchAction::MONTHLY_SEND_CEILING,
+                'group' => 'Marketing',
+                'description' => 'Monthly send ceiling for link pitches.',
+            ],
+            'links.internal.emitted_max' => [
+                'seed' => InternalLinkRenderAction::EMITTED_MAX,
+                'group' => 'Content',
+                'description' => 'Maximum number of internal links emitted.',
+            ],
+            'attribution.conversion.window_days' => [
+                'seed' => ConversionUploadEngine::ATTRIBUTION_WINDOW_DAYS,
+                'group' => 'Marketing',
+                'description' => 'Attribution window days for conversions.',
+            ],
+            'signals.high_intent_score' => [
+                'seed' => SignalScoreAction::HIGH_INTENT_SCORE,
+                'group' => 'Marketing',
+                'description' => 'High intent score for signals.',
+            ],
+            'ai.provider.degraded_error_rate_pct' => [
+                'seed' => ProviderHealthAction::DEGRADED_ERROR_RATE_PCT,
+                'group' => 'Operations',
+                'description' => 'Degraded error rate percentage for AI providers.',
             ],
         ];
 

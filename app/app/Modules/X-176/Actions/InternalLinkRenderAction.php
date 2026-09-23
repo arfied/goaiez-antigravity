@@ -5,12 +5,22 @@ declare(strict_types=1);
 namespace App\Modules\X176\Actions;
 
 use App\Modules\X103\Actions\PageReadAction;
+use App\Services\Config\DefaultsRegistry;
 
 final class InternalLinkRenderAction
 {
+    public const EMITTED_MAX = 20;
+
     /**
      * (R245) Render internal link graph for the given business.
      */
+    private function emittedMax(): int
+    {
+        return $this->registry->int('links.internal.emitted_max');
+    }
+
+    public function __construct(private DefaultsRegistry $registry) {}
+
     public function handle(int $businessId): string
     {
         $pages = app(PageReadAction::class)->publishedFor($businessId);
@@ -88,13 +98,13 @@ final class InternalLinkRenderAction
 
         $emittedCount = 0;
         $renderTree = function (array $nodes) use (&$renderTree, &$emittedCount): string {
-            if (empty($nodes) || $emittedCount >= 20) {
+            if (empty($nodes) || $emittedCount >= $this->emittedMax()) {
                 return '';
             }
 
             $itemsHtml = '';
             foreach ($nodes as $node) {
-                if ($emittedCount >= 20) {
+                if ($emittedCount >= $this->emittedMax()) {
                     break;
                 }
                 $emittedCount++;

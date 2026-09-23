@@ -25,6 +25,7 @@ use App\Modules\X199\Listeners\NotifyInvoiceOpened;
 use App\Modules\X199\Models\CreditTerm;
 use App\Modules\X199\Models\Invoice;
 use App\Modules\X199\Models\InvoiceLine;
+use App\Services\Config\DefaultsRegistry;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -48,11 +49,11 @@ class X199Test extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->engine = new InvoiceEngine;
-        $this->draftAction = new InvoiceDraftAction;
+        $this->engine = new InvoiceEngine(app(DefaultsRegistry::class));
+        $this->draftAction = new InvoiceDraftAction(app(DefaultsRegistry::class));
         $this->issueAction = new InvoiceIssueAction($this->engine);
         $this->offlineAction = new InvoiceRecordOfflineAction($this->engine);
-        $this->termsAction = new TermsSetAction;
+        $this->termsAction = new TermsSetAction(app(DefaultsRegistry::class));
     }
 
     /**
@@ -87,7 +88,7 @@ class X199Test extends TestCase
         ]);
 
         // Set net-30 credit limit to $1,000.00 (100,000 cents)
-        $termsAction = new TermsSetAction;
+        $termsAction = new TermsSetAction(app(DefaultsRegistry::class));
         $termsAction->handle(
             businessId: $biz->id,
             customerId: $customer->id,
@@ -208,7 +209,7 @@ class X199Test extends TestCase
 
         $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'John', 'last_name' => 'Doe']);
 
-        $draftAction = new InvoiceDraftAction;
+        $draftAction = new InvoiceDraftAction(app(DefaultsRegistry::class));
         $action = new DraftInvoiceFromJobAction($draftAction);
 
         // Without an AI engine, it fails to one line at the total
