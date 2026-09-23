@@ -54,9 +54,6 @@ class SiteBuildScreenTest extends TestCase
             ->test(SiteBuild::class)
             ->call('runBuild');
 
-        if ($test->get('error')) {
-            dd($test->get('error'));
-        }
 
         $test->assertSet('buildStatus', 'completed')
             ->assertSee('Status: completed')
