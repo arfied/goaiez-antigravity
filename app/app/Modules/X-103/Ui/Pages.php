@@ -9,6 +9,7 @@ use App\Modules\X103\Actions\PageDuplicateAction;
 use App\Modules\X103\Actions\PageRenameAction;
 use App\Modules\X103\Actions\PageRestoreVersionAction;
 use App\Modules\X103\Actions\PageUnpublishAction;
+use App\Modules\X103\Actions\SiteCopyPolishAction;
 use App\Modules\X103\Actions\SitePublishAction;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
@@ -290,6 +291,50 @@ class Pages extends Component
         } catch (Throwable $e) {
             $this->error = $e->getMessage();
         }
+    }
+
+    public function polish(int $pageId, SiteCopyPolishAction $action): void
+    {
+        abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        try {
+            $res = $action->handle($this->businessId, $pageId);
+            if ($res['status'] === 'refused') {
+                $this->success = $res['reason'];
+            } else {
+                $this->success = "Polished {$res['blocks']} blocks with {$res['model']}";
+            }
+        } catch (Throwable $e) {
+            $this->error = $e->getMessage();
+        }
+    }
+
+    public function restoreOriginal(int $pageId): void
+    {
+        abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        $page = Page::where('business_id', $this->businessId)->findOrFail($pageId);
+        $blocks = $page->draft_blocks ?? [];
+        $restored = 0;
+
+        foreach ($blocks as $i => $block) {
+            if (isset($block['original_text'])) {
+                $blocks[$i]['text'] = $block['original_text'];
+                unset($blocks[$i]['original_text']);
+                unset($blocks[$i]['source']);
+                unset($blocks[$i]['model']);
+                $restored++;
+            }
+        }
+
+        if ($restored > 0) {
+            $page->update(['draft_blocks' => $blocks]);
+        }
+        $this->success = "Restored {$restored} blocks.";
     }
 
     public function render()

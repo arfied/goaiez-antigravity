@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Modules\X103\Screens;
 
 use App\Enums\UserRole;
+use App\Models\PlatformSetting;
 use App\Models\User;
 use App\Modules\X103\Actions\PageCreateAction;
 use App\Modules\X103\Actions\SitePublishAction;
@@ -16,6 +17,7 @@ use App\Modules\X103\Ui\Pages;
 use App\Modules\X157\Models\Deployment;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -24,6 +26,7 @@ class PagesScreenTest extends TestCase
 {
     public function test_screen_renders_for_tenant(): void
     {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
@@ -39,6 +42,7 @@ class PagesScreenTest extends TestCase
 
     public function test_owner_adds_a_page(): void
     {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
@@ -71,6 +75,7 @@ class PagesScreenTest extends TestCase
 
     public function test_owner_publishes_a_draft_page(): void
     {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
@@ -106,6 +111,7 @@ class PagesScreenTest extends TestCase
 
     public function test_publish_refuses_an_already_published_page(): void
     {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
@@ -135,6 +141,7 @@ class PagesScreenTest extends TestCase
 
     public function test_publishing_deploys_to_the_platform_address(): void
     {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
@@ -173,6 +180,7 @@ class PagesScreenTest extends TestCase
 
     public function test_publishing_twice_reuses_the_platform_zone(): void
     {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
@@ -217,6 +225,7 @@ class PagesScreenTest extends TestCase
 
     public function test_owner_authors_a_faq_and_it_publishes_into_the_page(): void
     {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
@@ -255,6 +264,7 @@ class PagesScreenTest extends TestCase
 
     public function test_owner_authors_a_video_and_it_publishes(): void
     {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
@@ -289,6 +299,7 @@ class PagesScreenTest extends TestCase
 
     public function test_a_non_https_video_url_is_refused(): void
     {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
@@ -309,6 +320,7 @@ class PagesScreenTest extends TestCase
 
     public function test_removing_a_block_drops_it_from_the_next_publish(): void
     {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
@@ -365,6 +377,7 @@ class PagesScreenTest extends TestCase
 
     public function test_owner_unpublishes_a_live_page(): void
     {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
@@ -393,6 +406,7 @@ class PagesScreenTest extends TestCase
 
     public function test_republishing_serves_again(): void
     {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
@@ -413,6 +427,7 @@ class PagesScreenTest extends TestCase
 
     public function test_unpublishing_a_draft_is_refused(): void
     {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
@@ -429,6 +444,7 @@ class PagesScreenTest extends TestCase
 
     public function test_owner_renames_a_page(): void
     {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
@@ -455,6 +471,7 @@ class PagesScreenTest extends TestCase
 
     public function test_rename_refuses_a_duplicate_slug(): void
     {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
@@ -492,6 +509,7 @@ class PagesScreenTest extends TestCase
 
     public function test_history_lists_versions_newest_first_and_marks_current(): void
     {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
@@ -528,6 +546,7 @@ class PagesScreenTest extends TestCase
 
     public function test_restoring_a_previous_version_publishes_its_blocks_again(): void
     {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
@@ -610,6 +629,7 @@ class PagesScreenTest extends TestCase
 
     public function test_restore_of_the_current_version_is_refused(): void
     {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
@@ -635,6 +655,7 @@ class PagesScreenTest extends TestCase
 
     public function test_staff_cannot_restore(): void
     {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
@@ -652,6 +673,7 @@ class PagesScreenTest extends TestCase
 
     public function test_owner_deletes_a_never_published_page(): void
     {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
@@ -673,6 +695,7 @@ class PagesScreenTest extends TestCase
 
     public function test_deleting_a_published_page_is_refused(): void
     {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
@@ -695,6 +718,7 @@ class PagesScreenTest extends TestCase
 
     public function test_deleting_an_unpublished_page_with_history_is_refused(): void
     {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
@@ -716,6 +740,7 @@ class PagesScreenTest extends TestCase
 
     public function test_owner_duplicates_a_page(): void
     {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
@@ -789,5 +814,47 @@ class PagesScreenTest extends TestCase
         Livewire::test(Pages::class)
             ->call('duplicatePage', 1)
             ->assertForbidden();
+    }
+
+    public function test_polish_copy_and_restore_original_controls(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = TestCase::provisionTenant(['name' => 'Pages Test', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        Tenancy::set($biz->id);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'home',
+            'title' => 'Home',
+            'draft_blocks' => [
+                ['type' => 'hero', 'text' => 'Hero text'],
+            ],
+            'is_published' => false,
+        ]);
+
+        Http::fake([
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_eval',
+                'choices' => [
+                    ['message' => ['content' => 'Polished UI text']],
+                ],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ]),
+        ]);
+
+        Livewire::actingAs($owner)
+            ->test(Pages::class)
+            ->call('polish', $page->id)->assertSet('success', 'Polished 1 blocks with openai-4o-mini');
+
+        $page->refresh();
+        $this->assertEquals('Polished UI text', $page->draft_blocks[0]['text']);
+
+        Livewire::actingAs($owner)
+            ->test(Pages::class)
+            ->call('restoreOriginal', $page->id);
+
+        $page->refresh();
+        $this->assertEquals('Hero text', $page->draft_blocks[0]['text']);
     }
 }

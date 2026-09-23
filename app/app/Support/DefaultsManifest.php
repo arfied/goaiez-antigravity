@@ -75,6 +75,22 @@ final class DefaultsManifest
     public static function settings(): array
     {
         $settings = [
+            'ai.model.site_copy' => [
+                'seed' => 'gpt-4o-mini',
+                'group' => 'Content',
+                'description' => 'The model router\'s per-task override for site_copy (seed = the same model the Conversation task seeds).',
+            ],
+            'sites.copy.system_prompt' => [
+                'seed' => 'Rewrite this text for a small local service business. Keep every fact and number, use plain words, and output at most {max_chars} characters.',
+                'group' => 'Content',
+                'description' => 'The system prompt used to polish drafted site copy.',
+            ],
+            'sites.copy.max_chars' => [
+                'seed' => 600,
+                'group' => 'Content',
+                'description' => 'Maximum characters for polished site copy.',
+            ],
+
             /*
              * Billing shape. Not prices — those are per-plan and live in
              * entitlements() below — but the terms every plan shares.

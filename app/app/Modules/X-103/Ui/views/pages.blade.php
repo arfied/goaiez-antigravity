@@ -34,6 +34,8 @@
                                 @else
                                     <span class="bg-paper border border-rule px-2 py-1 text-ink-2">Draft</span>
                                     <button wire:click="publish({{ $page->id }})" class="ml-2 bg-paper border border-rule px-2 py-1 text-ink">Publish</button>
+                                    <button wire:click="polish({{ $page->id }})" class="ml-2 bg-paper border border-rule px-2 py-1 text-ink">Polish copy</button>
+                                    <button wire:click="restoreOriginal({{ $page->id }})" class="ml-2 bg-paper border border-rule px-2 py-1 text-ink">Restore original</button>
                                     @if(empty($hasVersions[$page->id]))
                                         <button wire:click="deletePage({{ $page->id }})" class="ml-2 bg-paper border border-rule px-2 py-1 text-ink">Delete</button>
                                     @endif
